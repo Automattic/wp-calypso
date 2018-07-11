@@ -34,7 +34,7 @@ export const remoteValuesSchema = {
 					type: 'object',
 					properties: {
 						dismissedAt: { type: 'number', minimum: 0 },
-						type: { type: 'string', enum: [ 'dismiss', 'already-listed' ] },
+						type: { type: 'string', enum: [ 'dismiss' ] },
 					},
 					required: [ 'dismissedAt', 'type' ],
 				},

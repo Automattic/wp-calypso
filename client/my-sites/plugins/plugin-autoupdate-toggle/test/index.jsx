@@ -32,8 +32,8 @@ describe( 'PluginAutoupdateToggle', () => {
 	};
 
 	afterEach( () => {
-		mockedActions.togglePluginAutoUpdate.reset();
-		mockedProps.recordGoogleEvent.reset();
+		mockedActions.togglePluginAutoUpdate.resetHistory();
+		mockedProps.recordGoogleEvent.resetHistory();
 	} );
 
 	test( 'should render the component', () => {

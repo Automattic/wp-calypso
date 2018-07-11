@@ -17,7 +17,7 @@ import { get } from 'lodash';
 import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isDomainOnlySite } from 'state/selectors';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { isPlan } from 'lib/products-values';
 import { addItem } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
@@ -25,7 +25,9 @@ import { PLAN_PREMIUM } from 'lib/plans/constants';
 class CartPlanAd extends Component {
 	addToCartAndRedirect = event => {
 		event.preventDefault();
-		addItem( cartItems.premiumPlan( PLAN_PREMIUM, { isFreeTrial: false } ) );
+		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const domainToBundle = get( domainRegistrations, '[0].meta', '' );
+		addItem( cartItems.premiumPlan( PLAN_PREMIUM, { domainToBundle } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 

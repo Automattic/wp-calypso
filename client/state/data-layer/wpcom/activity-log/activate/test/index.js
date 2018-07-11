@@ -1,11 +1,4 @@
 /** @format */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
 /**
  * Internal dependencies
  */
@@ -16,28 +9,24 @@ const siteId = 77203074;
 
 describe( 'activateSucceeded', () => {
 	test( 'should dispatch rewind activate success action', () => {
-		const dispatch = sinon.spy();
-		activateSucceeded( { dispatch }, { siteId } );
-		expect( dispatch ).to.have.been.calledWith( rewindActivateSuccess( siteId ) );
+		expect( activateSucceeded( { siteId } ) ).toEqual( rewindActivateSuccess( siteId ) );
 	} );
 } );
 
 describe( 'activateFailed', () => {
 	test( 'should dispatch rewind activate failed action', () => {
-		const dispatch = sinon.spy();
-		activateFailed( { dispatch }, { siteId }, { message: 'some problem' } );
-		expect( dispatch ).to.have.been.calledWith( rewindActivateFailure( siteId ) );
+		expect( activateFailed( { siteId }, { message: 'some problem' } ) ).toContainEqual(
+			rewindActivateFailure( siteId )
+		);
 	} );
 
 	test( 'should dispatch an error notice', () => {
-		const dispatch = sinon.spy();
-		activateFailed( { dispatch }, { siteId }, { message: 'some problem' } );
-		expect( dispatch ).to.have.been.calledWith(
-			sinon.match( {
-				notice: {
+		expect( activateFailed( { siteId }, { message: 'some problem' } ) ).toContainEqual(
+			expect.objectContaining( {
+				notice: expect.objectContaining( {
 					status: 'is-error',
 					text: 'Problem activating rewind: some problem',
-				},
+				} ),
 			} )
 		);
 	} );

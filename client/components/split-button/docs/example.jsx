@@ -101,4 +101,6 @@ class SplitButtonExample extends React.PureComponent {
 	}
 }
 
+SplitButtonExample.displayName = 'SplitButton';
+
 export default SplitButtonExample;

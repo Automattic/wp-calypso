@@ -20,5 +20,6 @@ render() {
 
 #### Props
 
+* `id` (`string`) - ID for the header (optional)
 * `headerText` (`string`) - The main header text
 * `subHeaderText` (`node`) - Sub header text (optional)

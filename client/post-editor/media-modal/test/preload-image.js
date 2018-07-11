@@ -27,12 +27,13 @@ describe( '#preloadImage()', () => {
 	} );
 
 	test( 'should load an image', () => {
-		var src = 'example.jpg';
+		const src = 'example.jpg';
 
 		preloadImage( src );
 
 		expect( Image ).to.have.been.calledOnce;
-		expect( Image.thisValues[ 0 ].src ).to.equal( src );
+		expect( Image ).to.have.been.calledWithNew;
+		expect( Image.returnValues[ 0 ].src ).to.equal( src );
 	} );
 
 	test( 'should only load an image once per `src`', () => {

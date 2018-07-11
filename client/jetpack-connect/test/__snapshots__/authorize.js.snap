@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`JetpackAuthorize renders as expected 1`] = `
-<JetpackConnectMainWrapper
-  isWide={false}
->
+<Connect(Localized(JetpackConnectMainWrapper))>
   <div
     className="jetpack-connect__authorize-form"
   >
@@ -56,11 +54,9 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <LoggedOutFormFooter
           className="jetpack-connect__action-disclaimer"
         >
-          <p
-            className="jetpack-connect__tos-link"
-          >
-            By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.
-          </p>
+          <Connect(Localized(JetpackConnectDisclaimer))
+            siteName="Example Blog"
+          />
           <Button
             disabled={false}
             onClick={[Function]}
@@ -95,12 +91,10 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <Connect(Localized(JetpackConnectHappychatButton))
           eventName="calypso_jpc_authorize_chat_initiated"
         >
-          <Localized(JetpackConnectHelpButton)
-            onClick={[Function]}
-          />
+          <Connect(Localized(JetpackConnectHelpButton)) />
         </Connect(Localized(JetpackConnectHappychatButton))>
       </LoggedOutFormLinks>
     </div>
   </div>
-</JetpackConnectMainWrapper>
+</Connect(Localized(JetpackConnectMainWrapper))>
 `;

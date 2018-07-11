@@ -24,7 +24,6 @@ export class PluginAutoUpdateToggle extends Component {
 			disabled,
 			site,
 			plugin,
-			notices,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
@@ -34,7 +33,7 @@ export class PluginAutoUpdateToggle extends Component {
 		}
 
 		PluginsActions.togglePluginAutoUpdate( site, plugin );
-		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
+		PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 		if ( plugin.autoupdate ) {
 			recordGAEvent(
@@ -185,7 +184,10 @@ PluginAutoUpdateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect( null, {
-	recordGoogleEvent,
-	recordTracksEvent,
-} )( localize( PluginAutoUpdateToggle ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+	}
+)( localize( PluginAutoUpdateToggle ) );

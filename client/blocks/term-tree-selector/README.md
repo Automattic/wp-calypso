@@ -1,7 +1,7 @@
 TermTreeSelector
 ============
 
-The `TermTreeSelector` component renders a hierarchical list of Terms with corresponding form actions (radio or checkboxes) and a search box for filtering.
+The `TermTreeSelector` component renders a hierarchical list of terms from the currently selected site with corresponding form actions (radio or checkboxes) and a search box for filtering.
 
 Under the hood, it uses [`<QueryTerms />`](../../components/data/query-terms) to ensure that the requested term data is always made available to the global application terms state.
 
@@ -10,19 +10,10 @@ Under the hood, it uses [`<QueryTerms />`](../../components/data/query-terms) to
 ```jsx
 import TermSelector from 'blocks/term-tree-selector';
 
-<TermTreeSelector siteId={ this.props.siteId } taxonomy="category" />
+<TermTreeSelector taxonomy="category" />
 ```
 
 ## Props
-
-### `siteId`
-
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>Yes</td></tr>
-</table>
-
-The site ID for which terms should be queried.
 
 ### `taxonomy`
 
@@ -112,3 +103,33 @@ An optional classname to apply to the term selector wrapping element.
 </table>
 
 An optional height to apply to the term selector results element
+
+### `addTerm`
+
+<table>
+	<tr><th>Type</th><td>Boolean</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>false</code></td></tr>
+</table>
+
+Optionally show an "Add New {Taxonomy}" button that toggles the `TermFormDialog`
+
+### `postType`
+
+<table>
+	<tr><th>Type</th><td>String</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>'post'</code></td></tr>
+</table>
+
+Post type for which to display taxonomies.
+
+### `onAddTermSuccess`
+
+<table>
+	<tr><th>Type</th><td>Function</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>() => {}</code></td></tr>
+</table>
+
+A function to invoke when a new term is successfully added. The function will be passed the new term.

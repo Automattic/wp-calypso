@@ -14,13 +14,13 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { areLocationsLoaded, getStates } from 'woocommerce/state/sites/locations/selectors';
+import { areLocationsLoaded, getStates } from 'woocommerce/state/sites/data/locations/selectors';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { decodeEntities } from 'lib/formatting';
-import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
+import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';

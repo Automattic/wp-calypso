@@ -9,7 +9,7 @@ import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 
 jest.mock( 'lib/warn', () => () => {} );
 
-const streamId = 'special-chicken-stream';
+const streamKey = 'special-chicken-stream';
 const mark = Date.now();
 
 describe( '#watermarks', () => {
@@ -18,42 +18,42 @@ describe( '#watermarks', () => {
 	} );
 
 	test( 'can add a new stream to empty state', () => {
-		const action = viewStream( { streamId, mark } );
+		const action = viewStream( { streamKey, mark } );
 		expect( watermarks( {}, action ) ).toEqual( {
-			[ streamId ]: mark,
+			[ streamKey ]: mark,
 		} );
 	} );
 
 	test( 'can update an existing stream', () => {
-		const prevState = { [ streamId ]: mark };
+		const prevState = { [ streamKey ]: mark };
 		const newMark = mark + 2;
-		const action = viewStream( { streamId, mark: newMark } );
+		const action = viewStream( { streamKey, mark: newMark } );
 		expect( watermarks( prevState, action ) ).toEqual( {
-			[ streamId ]: newMark,
+			[ streamKey ]: newMark,
 		} );
 	} );
 
 	test( 'will reject an attempt to update to an older mark', () => {
-		const prevState = { [ streamId ]: mark };
+		const prevState = { [ streamKey ]: mark };
 		const newMark = mark - 2;
-		const action = viewStream( { streamId, mark: newMark } );
+		const action = viewStream( { streamKey, mark: newMark } );
 		expect( watermarks( prevState, action ) ).toEqual( {
-			[ streamId ]: mark,
+			[ streamKey ]: mark,
 		} );
 	} );
 
 	test( 'will skip deserializing invalid marks', () => {
-		const invalidState = { [ streamId ]: 'invalid' };
+		const invalidState = { [ streamKey ]: 'invalid' };
 		expect( watermarks( invalidState, { type: DESERIALIZE } ) ).toEqual( {} );
 	} );
 
 	test( 'will deserialize valid mark', () => {
-		const validState = { [ streamId ]: 42 };
+		const validState = { [ streamKey ]: 42 };
 		expect( watermarks( validState, { type: DESERIALIZE } ) ).toEqual( validState );
 	} );
 
 	test( 'will serialize', () => {
-		const validState = { [ streamId ]: 42 };
+		const validState = { [ streamKey ]: 42 };
 		expect( watermarks( validState, { type: SERIALIZE } ) ).toEqual( validState );
 	} );
 } );

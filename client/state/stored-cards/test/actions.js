@@ -27,7 +27,7 @@ describe( 'actions', () => {
 	const spy = sinon.spy();
 
 	beforeEach( () => {
-		spy.reset();
+		spy.resetHistory();
 	} );
 
 	const error = {
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 		useSandbox( newSandbox => ( sandbox = newSandbox ) );
 
 		test( 'should dispatch complete action when API returns card item', () => {
-			sandbox.stub( wp, 'undocumented', () => ( {
+			sandbox.stub( wp, 'undocumented' ).callsFake( () => ( {
 				me: () => ( {
 					storedCardAdd: ( token, callback ) => callback( null, item ),
 				} ),
@@ -129,6 +129,7 @@ describe( 'actions', () => {
 
 				expect( spy ).to.have.been.calledWith( {
 					type: STORED_CARDS_DELETE,
+					card,
 				} );
 
 				return promise.then( () => {
@@ -152,11 +153,13 @@ describe( 'actions', () => {
 
 				expect( spy ).to.have.been.calledWith( {
 					type: STORED_CARDS_DELETE,
+					card,
 				} );
 
 				return promise.then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: STORED_CARDS_DELETE_FAILED,
+						card,
 						error: error.message,
 					} );
 				} );

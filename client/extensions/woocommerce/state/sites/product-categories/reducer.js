@@ -110,7 +110,7 @@ export function queries( state = {}, action ) {
  */
 export function total( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
-		const query = getSerializedProductCategoriesQuery( omit( action.query, 'page' ) );
+		const query = getSerializedProductCategoriesQuery( omit( action.query, [ 'page', 'offset' ] ) );
 		return Object.assign( {}, state, { [ query ]: action.total } );
 	}
 
@@ -126,7 +126,7 @@ export function total( state = {}, action ) {
  */
 export function totalPages( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
-		const query = getSerializedProductCategoriesQuery( omit( action.query, 'page' ) );
+		const query = getSerializedProductCategoriesQuery( omit( action.query, [ 'page', 'offset' ] ) );
 		return Object.assign( {}, state, { [ query ]: action.totalPages } );
 	}
 

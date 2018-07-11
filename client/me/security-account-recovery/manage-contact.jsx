@@ -128,7 +128,7 @@ class ManageContact extends Component {
 	};
 
 	recordEvent( action ) {
-		const event = `calypso_security_account-recovery_${ this.props.type }_${ action }_click`;
+		const event = `calypso_security_account_recovery_${ this.props.type }_${ action }_click`;
 		analytics.tracks.recordEvent( event );
 	}
 }

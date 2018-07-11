@@ -21,7 +21,7 @@ import { SYNC_RECORD_NAMESPACE } from './constants';
  * @return {String} request key
  */
 export const generateKey = ( params, applyHash = true ) => {
-	var key = `${ params.apiVersion || '' }-${ params.method }-${ params.path }`;
+	let key = `${ params.apiVersion || '' }-${ params.method }-${ params.path }`;
 
 	if ( params.query ) {
 		// sort parameters alphabetically

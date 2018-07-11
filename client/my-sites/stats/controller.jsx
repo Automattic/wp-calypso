@@ -5,21 +5,22 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { find, pick } from 'lodash';
+import { find, pick, get, isEqual } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { getSiteFragment, getStatsDefaultSitePage, sectionify } from 'lib/route';
+import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
 import analytics from 'lib/analytics';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
-import titlecase from 'to-title-case';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { savePreference } from 'state/preferences/actions';
-import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
+import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import { isWpComFreePlan } from 'lib/plans';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 import FollowList from 'lib/follow-list';
 import StatsInsights from './stats-insights';
 import StatsOverview from './overview';
@@ -28,8 +29,11 @@ import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
-
-const analyticsPageTitle = 'Stats';
+import config from 'config';
+import { isDesktop } from 'lib/viewport';
+import { setFilter } from 'state/activity-log/actions';
+import { queryToFilterState } from 'state/activity-log/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -116,27 +120,20 @@ export default {
 		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
 	},
 
-	redirectToDefaultSitePage: function( context, next ) {
+	redirectToDefaultSitePage: function( context ) {
 		const siteFragment = getSiteFragment( context.path );
 
-		if ( siteFragment ) {
-			// if we are redirecting we need to retain our intended layout-focus
-			const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
-			context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
-			page.redirect( getStatsDefaultSitePage( siteFragment ) );
-		} else {
-			next();
-		}
+		// if we are redirecting we need to retain our intended layout-focus
+		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
+		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
+		page.redirect( getStatsDefaultSitePage( siteFragment ) );
+	},
+
+	redirectToDefaultModulePage: function( context ) {
+		page.redirect( `/stats/day/${ context.params.module }/${ context.params.site }` );
 	},
 
 	insights: function( context, next ) {
-		const basePath = sectionify( context.path );
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
-
-		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
-
 		context.primary = <StatsInsights followList={ new FollowList() } />;
 		next();
 	},
@@ -161,12 +158,8 @@ export default {
 				{ title: i18n.translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' },
 			];
 		};
-		const basePath = sectionify( context.path );
 
 		window.scrollTo( 0, 0 );
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
 		const activeFilter = find( filters(), filter => {
 			return (
@@ -177,103 +170,85 @@ export default {
 
 		// Validate that date filter is legit
 		if ( ! activeFilter ) {
-			next();
-		} else {
-			analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
-			analytics.pageView.record(
-				basePath,
-				analyticsPageTitle + ' > ' + titlecase( activeFilter.period )
-			);
-
-			const props = {
-				period: activeFilter.period,
-				path: context.pathname,
-			};
-			context.primary = <StatsOverview { ...props } />;
-			next();
+			return next();
 		}
+
+		analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
+
+		context.primary = <StatsOverview period={ activeFilter.period } path={ context.pathname } />;
+		next();
 	},
 
 	site: function( context, next ) {
-		let siteId = context.params.site_id;
-		const filters = getSiteFilters( siteId );
-		const queryOptions = context.query;
-		let date;
-		let chartTab;
-		let period;
-		let numPeriodAgo = 0;
-		const basePath = sectionify( context.path );
-		let baseAnalyticsPath;
+		const {
+			params: { site: givenSiteId },
+			query: queryOptions,
+			store,
+		} = context;
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
+		if ( 'simplePaymentsEmailTour' === get( queryOptions, 'tour' ) ) {
+			if ( ! isDesktop() ) {
+				context.store.dispatch(
+					recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'mobile' } )
+				);
+				window.location.href = 'https://support.wordpress.com/simple-payments/';
+				return;
+			}
+			context.store.dispatch(
+				recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'desktop' } )
+			);
+		}
 
-		const currentSite = getSite( context.store.getState(), siteId );
-		siteId = currentSite ? currentSite.ID || 0 : 0;
+		const filters = getSiteFilters( givenSiteId );
+		const state = store.getState();
+		const currentSite = getSite( state, givenSiteId );
+		const siteId = currentSite ? currentSite.ID || 0 : 0;
 
-		const activeFilter = find( filters, filter => {
-			return (
+		const activeFilter = find(
+			filters,
+			filter =>
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
-			);
-		} );
+		);
 
 		if ( ! activeFilter ) {
-			next();
-		} else {
-			if ( currentSite && currentSite.domain ) {
-				// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-				context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
-			}
-
-			const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
-			const momentSiteZone = i18n
-				.moment()
-				.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
-			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid() ) {
-				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
-				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
-			} else {
-				date = rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
-			}
-
-			numPeriodAgo = parseInt( numPeriodAgo, 10 );
-			if ( numPeriodAgo ) {
-				if ( numPeriodAgo > 9 ) {
-					numPeriodAgo = '10plus';
-				}
-				numPeriodAgo = '-' + numPeriodAgo;
-			} else {
-				numPeriodAgo = '';
-			}
-
-			baseAnalyticsPath = basePath + '/:site';
-
-			analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
-			analytics.pageView.record(
-				baseAnalyticsPath,
-				analyticsPageTitle + ' > ' + titlecase( activeFilter.period )
-			);
-			recordPlaceholdersTiming();
-
-			period = rangeOfPeriod( activeFilter.period, date );
-			chartTab = queryOptions.tab || 'views';
-
-			const props = {
-				path: context.pathname,
-				date,
-				chartTab,
-				context,
-				period,
-			};
-
-			context.primary = <StatsSite { ...props } />;
-			next();
+			return next();
 		}
+
+		const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+		const momentSiteZone = i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+		const isValidStartDate =
+			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+
+		const date = isValidStartDate
+			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
+
+		const parsedPeriod = isValidStartDate
+			? parseInt( getNumPeriodAgo( momentSiteZone, date, activeFilter.period ), 10 )
+			: 0;
+
+		// eslint-disable-next-line no-nested-ternary
+		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
+
+		analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
+		recordPlaceholdersTiming();
+
+		context.primary = (
+			<StatsSite
+				path={ context.pathname }
+				date={ date }
+				chartTab={ queryOptions.tab || 'views' }
+				context={ context }
+				period={ rangeOfPeriod( activeFilter.period, date ) }
+			/>
+		);
+
+		next();
 	},
 
 	summary: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		const siteFragment = getSiteFragment( context.path );
 		const queryOptions = context.query;
 		const contextModule = context.params.module;
@@ -288,8 +263,6 @@ export default {
 			{ path: '/stats/month/' + contextModule + '/' + siteId, id: 'stats-month', period: 'month' },
 			{ path: '/stats/year/' + contextModule + '/' + siteId, id: 'stats-year', period: 'year' },
 		];
-		let date;
-		let period;
 
 		const validModules = [
 			'posts',
@@ -304,7 +277,6 @@ export default {
 			'annualstats',
 		];
 		let momentSiteZone = i18n.moment();
-		const basePath = sectionify( context.path );
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -318,88 +290,71 @@ export default {
 
 		if ( siteFragment && 0 === siteId ) {
 			// site is not in the user's site list
-			window.location = '/stats';
-		} else if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
-			next();
-		} else {
-			const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
-			if ( Number.isFinite( gmtOffset ) ) {
-				momentSiteZone = i18n.moment().utcOffset( gmtOffset );
-			}
-			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid() ) {
-				date = i18n.moment( queryOptions.startDate );
-			} else {
-				date = momentSiteZone.endOf( activeFilter.period );
-			}
-			period = rangeOfPeriod( activeFilter.period, date );
-
-			const extraProps =
-				context.params.module === 'videodetails'
-					? { postId: parseInt( queryOptions.post, 10 ) }
-					: {};
-
-			let statsQueryOptions = {};
-
-			// All Time Summary Support
-			if ( queryOptions.summarize && queryOptions.num ) {
-				statsQueryOptions = pick( queryOptions, [ 'num', 'summarize' ] );
-				statsQueryOptions.period = 'day';
-			}
-
-			analytics.pageView.record(
-				basePath,
-				analyticsPageTitle +
-					' > ' +
-					titlecase( activeFilter.period ) +
-					' > ' +
-					titlecase( context.params.module )
-			);
-
-			const props = {
-				path: context.pathname,
-				statsQueryOptions,
-				date,
-				context,
-				period,
-				...extraProps,
-			};
-			context.primary = <StatsSummary { ...props } />;
-			next();
+			return ( window.location = '/stats' );
 		}
+
+		if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
+			return next();
+		}
+
+		const gmtOffset = getSiteOption( context.store.getState(), siteId, 'gmt_offset' );
+		if ( Number.isFinite( gmtOffset ) ) {
+			momentSiteZone = i18n.moment().utcOffset( gmtOffset );
+		}
+		const isValidStartDate =
+			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
+		const date = isValidStartDate
+			? i18n.moment( queryOptions.startDate )
+			: momentSiteZone.endOf( activeFilter.period );
+		const period = rangeOfPeriod( activeFilter.period, date );
+
+		const extraProps =
+			context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
+
+		let statsQueryOptions = {};
+
+		// All Time Summary Support
+		if ( queryOptions.summarize && queryOptions.num ) {
+			statsQueryOptions = pick( queryOptions, [ 'num', 'summarize' ] );
+			statsQueryOptions.period = 'day';
+		}
+
+		context.primary = (
+			<StatsSummary
+				path={ context.pathname }
+				statsQueryOptions={ statsQueryOptions }
+				date={ date }
+				context={ context }
+				period={ period }
+				{ ...extraProps }
+			/>
+		);
+
+		next();
 	},
 
 	post: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		const postId = parseInt( context.params.post_id, 10 );
-		const pathParts = context.path.split( '/' );
-		const postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page';
-
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
 
 		if ( 0 === siteId ) {
 			window.location = '/stats';
-		} else {
-			analytics.pageView.record(
-				'/stats/' + postOrPage + '/:post_id/:site',
-				analyticsPageTitle + ' > Single ' + titlecase( postOrPage )
-			);
-
-			const props = {
-				path: context.path,
-				postId,
-				context,
-			};
-			context.primary = <StatsPostDetail { ...props } />;
+			return next();
 		}
+
+		context.primary = (
+			<StatsPostDetail path={ context.path } postId={ postId } context={ context } />
+		);
+
 		next();
 	},
 
 	follows: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
-		const basePath = sectionify( context.path );
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -409,53 +364,64 @@ export default {
 
 		if ( 0 === siteId ) {
 			window.location = '/stats';
-		} else {
-			pageNum = parseInt( pageNum, 10 );
-
-			if ( ! pageNum || pageNum < 1 ) {
-				pageNum = 1;
-			}
-
-			analytics.pageView.record(
-				basePath.replace( '/' + pageNum, '' ),
-				analyticsPageTitle + ' > Followers > Comment'
-			);
-
-			const props = {
-				path: context.path,
-				page: pageNum,
-				perPage: 20,
-				total: 10,
-				domain: siteDomain,
-				siteId,
-				followList,
-			};
-			context.primary = <StatsCommentFollows { ...props } />;
+			return next();
 		}
+
+		pageNum = parseInt( pageNum, 10 );
+
+		if ( ! pageNum || pageNum < 1 ) {
+			pageNum = 1;
+		}
+
+		context.primary = (
+			<StatsCommentFollows
+				path={ context.path }
+				page={ pageNum }
+				perPage="20"
+				total="10"
+				domain={ siteDomain }
+				siteId={ siteId }
+				followList={ followList }
+			/>
+		);
+
 		next();
 	},
 
 	activityLog: function( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
+		const siteHasWpcomFreePlan = isWpComFreePlan(
+			get( getCurrentPlan( state, siteId ), 'productSlug' )
+		);
 		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
 			? context.query.startDate
 			: undefined;
 
-		if ( siteId && ! isJetpack ) {
+		if ( siteId && siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
 			page.redirect( '/stats' );
-		} else {
-			analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
-
-			const props = {
-				path: context.path,
-				siteId,
-				context,
-				startDate,
-			};
-			context.primary = <ActivityLog { ...props } />;
+			return next();
 		}
+
+		const filter = getActivityLogFilter( state, siteId );
+		const queryFilter = queryToFilterState( context.query );
+
+		if ( ! isEqual( filter, queryFilter ) ) {
+			context.store.dispatch( {
+				...setFilter( siteId, queryFilter ),
+				meta: { skipUrlUpdate: true },
+			} );
+		}
+
+		context.primary = (
+			<ActivityLog
+				path={ context.path }
+				siteId={ siteId }
+				context={ context }
+				startDate={ startDate }
+			/>
+		);
+
 		next();
 	},
 };

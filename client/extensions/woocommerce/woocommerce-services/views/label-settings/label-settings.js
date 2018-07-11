@@ -22,6 +22,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import {
@@ -36,6 +37,7 @@ import {
 	getMasterUserInfo,
 	getPaperSize,
 	getPaymentMethods,
+	getPaymentMethodsWarning,
 	getSelectedPaymentMethodId,
 	isPristine,
 	userCanEditSettings,
@@ -111,6 +113,23 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	refetchSettings = () => {
+		this.props.fetchSettings( this.props.siteId );
+	};
+
+	renderPaymentWarningNotice = () => {
+		const { paymentMethodsWarning, translate } = this.props;
+		if ( ! paymentMethodsWarning ) {
+			return;
+		}
+
+		return (
+			<Notice status="is-warning" showDismiss={ false } text={ paymentMethodsWarning }>
+				<NoticeAction onClick={ this.refetchSettings }>{ translate( 'Retry' ) }</NoticeAction>
+			</Notice>
+		);
+	};
+
 	renderSettingsPermissionNotice = () => {
 		const { canEditSettings, masterUserName, masterUserLogin, translate } = this.props;
 		if ( canEditSettings ) {
@@ -133,9 +152,31 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	renderAddCardExternalInfo = () => {
+		const { masterUserWpcomLogin, masterUserEmail, translate } = this.props;
+
+		if ( ! masterUserWpcomLogin ) {
+			return null;
+		}
+
+		return (
+			<p>
+				{ translate(
+					'Credit cards are retrieved from the following WordPress.com account: %(wpcomLogin)s <%(wpcomEmail)s>',
+					{
+						args: {
+							wpcomLogin: masterUserWpcomLogin,
+							wpcomEmail: masterUserEmail,
+						},
+					}
+				) }
+			</p>
+		);
+	};
+
 	onVisibilityChange = () => {
 		if ( ! document.hidden ) {
-			this.props.fetchSettings( this.props.siteId );
+			this.refetchSettings();
 		}
 		if ( this.addCreditCardWindow && this.addCreditCardWindow.closed ) {
 			document.removeEventListener( 'visibilitychange', this.onVisibilityChange );
@@ -184,9 +225,9 @@ class ShippingLabels extends Component {
 					<p className="label-settings__credit-card-description">{ summary }</p>
 					{ canEditPayments && (
 						<p className="label-settings__credit-card-description">
-							<a href="#" onClick={ expand }>
+							<Button onClick={ expand } borderless>
 								{ translate( 'Choose a different card' ) }
-							</a>
+							</Button>
 						</p>
 					) }
 				</div>
@@ -235,6 +276,7 @@ class ShippingLabels extends Component {
 			<div>
 				{ this.renderPaymentPermissionNotice() }
 				<p className="label-settings__credit-card-description">{ description }</p>
+				{ ! isReloading && this.renderPaymentWarningNotice() }
 
 				<QueryStoredCards />
 				{ isReloading ? (
@@ -252,9 +294,12 @@ class ShippingLabels extends Component {
 				<Button className="label-settings__internal" onClick={ openDialog } compact>
 					{ buttonLabel }
 				</Button>
-				<Button className="label-settings__external" onClick={ onAddCardExternal } compact>
-					{ buttonLabel } <Gridicon icon="external" />
-				</Button>
+				<div className="label-settings__credit-card-description label-settings__external">
+					{ this.renderAddCardExternalInfo() }
+					<Button onClick={ onAddCardExternal } compact>
+						{ buttonLabel } <Gridicon icon="external" />
+					</Button>
+				</div>
 			</div>
 		);
 	};
@@ -359,6 +404,7 @@ export default connect(
 			isReloading: areSettingsFetching( state, siteId ) && areSettingsLoaded( state, siteId ),
 			pristine: isPristine( state, siteId ),
 			paymentMethods: getPaymentMethods( state, siteId ),
+			paymentMethodsWarning: getPaymentMethodsWarning( state, siteId ),
 			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
 			paperSize: getPaperSize( state, siteId ),
 			storeOptions: getLabelSettingsStoreOptions( state, siteId ),

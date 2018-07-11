@@ -11,12 +11,16 @@ import deepFreeze from 'deep-freeze';
 import reducer, { items, itemReducer } from '../reducer';
 import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { addLiker, removeLiker, like, unlike } from '../actions';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useFakeTimers, useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( sandbox => {
 		sandbox.stub( console, 'warn' );
 	} );
+
+	const FAKE_NOW = 1000;
+
+	useFakeTimers( FAKE_NOW );
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [ 'items' ] );
@@ -27,6 +31,7 @@ describe( 'reducer', () => {
 			likes: undefined,
 			iLike: false,
 			found: 0,
+			lastUpdated: undefined,
 		} );
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
@@ -54,6 +59,7 @@ describe( 'reducer', () => {
 						likes,
 						found: 2,
 						iLike: false,
+						lastUpdated: FAKE_NOW,
 					},
 				},
 			} );
@@ -95,6 +101,7 @@ describe( 'reducer', () => {
 						likes: likes2,
 						found: 3,
 						iLike: true,
+						lastUpdated: FAKE_NOW,
 					},
 				},
 			} );
@@ -134,6 +141,7 @@ describe( 'reducer', () => {
 						likes: likes2,
 						found: 3,
 						iLike: true,
+						lastUpdated: FAKE_NOW,
 					},
 				},
 			} );
@@ -168,6 +176,7 @@ describe( 'reducer', () => {
 						likes: likes2,
 						found: 3,
 						iLike: true,
+						lastUpdated: FAKE_NOW,
 					},
 				},
 			} );
@@ -207,6 +216,7 @@ describe( 'reducer', () => {
 				],
 				found: 2,
 				iLike: false,
+				lastUpdated: FAKE_NOW,
 			} );
 		} );
 
@@ -219,6 +229,7 @@ describe( 'reducer', () => {
 							likes,
 							found: 2,
 							iLike: false,
+							lastUpdated: 2000,
 						},
 					},
 				} ),
@@ -233,6 +244,7 @@ describe( 'reducer', () => {
 						likes,
 						found: 2,
 						iLike: false,
+						lastUpdated: 2000,
 					},
 				},
 			} );
@@ -247,6 +259,7 @@ describe( 'reducer', () => {
 							likes,
 							found: 2,
 							iLike: false,
+							lastUpdated: 4000,
 						},
 					},
 				} ),
@@ -261,6 +274,7 @@ describe( 'reducer', () => {
 						likes,
 						found: 2,
 						iLike: false,
+						lastUpdated: 4000,
 					},
 				},
 			} );

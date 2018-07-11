@@ -19,7 +19,8 @@ import config from 'config';
 import PrivacyPolicyDialog from './privacy-policy-dialog';
 import QueryPrivacyPolicy from 'components/data/query-privacy-policy';
 
-import { getPrivacyPolicyByEntity, getCurrentUserRegisterDate } from 'state/selectors';
+import getCurrentUserRegisterDate from 'state/selectors/get-current-user-register-date';
+import getPrivacyPolicyByEntity from 'state/selectors/get-privacy-policy-by-entity';
 
 import { AUTOMATTIC_ENTITY, PRIVACY_POLICY_PREFERENCE } from './constants';
 
@@ -168,4 +169,7 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PrivacyPolicyBanner ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( PrivacyPolicyBanner ) );

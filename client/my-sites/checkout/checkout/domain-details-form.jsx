@@ -16,7 +16,6 @@ import QueryContactDetailsCache from 'components/data/query-contact-details-cach
 import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
-import analytics from 'lib/analytics';
 import FormButton from 'components/forms/form-button';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
 import wp from 'lib/wp';
@@ -32,8 +31,9 @@ import {
 	addGoogleAppsRegistrationData,
 } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
-import { getContactDetailsCache } from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
@@ -50,11 +50,8 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	componentDidMount() {
-		if ( analytics ) {
-			analytics.pageView.record(
-				'/checkout/domain-contact-information',
-				'Checkout > Domain Contact Information'
-			);
+		if ( this.props.recordTracksEvent ) {
+			this.props.recordTracksEvent( 'calypso_checkout_domain_contact_information_view' );
 		}
 	}
 
@@ -179,7 +176,7 @@ export class DomainDetailsForm extends PureComponent {
 	};
 
 	renderDomainContactDetailsFields() {
-		const { contactDetails, translate } = this.props;
+		const { contactDetails, translate, userCountryCode } = this.props;
 		const labelTexts = {
 			submitButton: this.getSubmitButtonText(),
 			organization: translate(
@@ -192,6 +189,7 @@ export class DomainDetailsForm extends PureComponent {
 		};
 		return (
 			<ContactDetailsFormFields
+				userCountryCode={ userCountryCode }
 				contactDetails={ contactDetails }
 				needsFax={ this.needsFax() }
 				needsOnlyGoogleAppsDetails={ this.needsOnlyGoogleAppsDetails() }
@@ -306,6 +304,10 @@ export class DomainDetailsFormContainer extends PureComponent {
 	}
 }
 
-export default connect( state => ( { contactDetails: getContactDetailsCache( state ) } ), {
-	updateContactDetailsCache,
-} )( localize( DomainDetailsFormContainer ) );
+export default connect(
+	state => ( { contactDetails: getContactDetailsCache( state ) } ),
+	{
+		recordTracksEvent,
+		updateContactDetailsCache,
+	}
+)( localize( DomainDetailsFormContainer ) );

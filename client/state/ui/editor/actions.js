@@ -4,17 +4,34 @@
  * External dependencies
  */
 
-import { filter } from 'lodash';
+import { defaults, filter, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { EDITOR_PASTE_EVENT, EDITOR_START, EDITOR_STOP } from 'state/action-types';
+import wpcom from 'lib/wp';
+import versionCompare from 'lib/version-compare';
+import {
+	EDITOR_AUTOSAVE,
+	EDITOR_AUTOSAVE_RESET,
+	EDITOR_AUTOSAVE_SUCCESS,
+	EDITOR_AUTOSAVE_FAILURE,
+	EDITOR_LOADING_ERROR_RESET,
+	EDITOR_PASTE_EVENT,
+	EDITOR_RESET,
+	EDITOR_START,
+	EDITOR_STOP,
+	EDITOR_EDIT_RAW_CONTENT,
+	EDITOR_RESET_RAW_CONTENT,
+	EDITOR_INIT_RAW_CONTENT,
+} from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { editPost } from 'state/posts/actions';
 
 /**
  * Constants
@@ -33,15 +50,28 @@ export const MODAL_VIEW_STATS = {
  *
  * @param  {Number}  siteId   Site ID
  * @param  {?Number} postId   Post ID
- * @param  {String}  postType Post Type
- * @return {Object}           Action object
+ * @return {Action}           Action object
  */
-export function startEditingPost( siteId, postId, postType = 'post' ) {
-	return {
-		type: EDITOR_START,
-		siteId,
-		postId,
-		postType,
+export function startEditingPost( siteId, postId ) {
+	return dispatch => {
+		dispatch( editorReset( { isLoading: true } ) );
+		dispatch( { type: EDITOR_START, siteId, postId } );
+	};
+}
+
+export function startEditingNewPost( siteId, post ) {
+	return dispatch => {
+		const postAttributes = defaults( post, {
+			status: 'draft',
+			type: 'post',
+			content: '',
+			title: '',
+		} );
+
+		dispatch( editorReset( { isLoading: true } ) );
+		dispatch( { type: EDITOR_START, siteId, postId: null } );
+		dispatch( editPost( siteId, null, postAttributes ) );
+		dispatch( editorReset() );
 	};
 }
 
@@ -51,13 +81,12 @@ export function startEditingPost( siteId, postId, postType = 'post' ) {
  *
  * @param  {Number}  siteId Site ID
  * @param  {?Number} postId Post ID
- * @return {Object}         Action object
+ * @return {Action}         Action object
  */
 export function stopEditingPost( siteId, postId ) {
-	return {
-		type: EDITOR_STOP,
-		siteId,
-		postId,
+	return dispatch => {
+		dispatch( editorReset() );
+		dispatch( { type: EDITOR_STOP, siteId, postId } );
 	};
 }
 
@@ -125,5 +154,96 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 		);
 
 		dispatch( bumpStat( 'calypso_publish_confirmation', isEnabled ? 'enabled' : 'disabled' ) );
+	};
+}
+
+export const editorAutosaveReset = () => ( {
+	type: EDITOR_AUTOSAVE_RESET,
+} );
+
+export const editorAutosaveSuccess = autosave => ( {
+	type: EDITOR_AUTOSAVE_SUCCESS,
+	autosave,
+} );
+
+export const editorAutosaveFailure = error => ( {
+	type: EDITOR_AUTOSAVE_FAILURE,
+	error,
+} );
+
+export const editorAutosave = post => ( dispatch, getState ) => {
+	const site = getSelectedSite( getState() );
+
+	if (
+		! post.ID ||
+		! site ||
+		( site.jetpack && versionCompare( site.options.jetpack_version, '3.7.0-dev', '<' ) )
+	) {
+		return Promise.reject( new Error( 'NO_AUTOSAVE' ) );
+	}
+
+	dispatch( { type: EDITOR_AUTOSAVE } );
+
+	const autosaveResult = wpcom
+		.undocumented()
+		.site( post.site_ID )
+		.postAutosave( post.ID, {
+			content: post.content,
+			title: post.title,
+			excerpt: post.excerpt,
+		} );
+
+	autosaveResult
+		.then( autosave => dispatch( editorAutosaveSuccess( autosave ) ) )
+		.catch( error => dispatch( editorAutosaveFailure( error ) ) );
+
+	return autosaveResult;
+};
+
+/**
+ * Edits the raw TinyMCE content of a post
+ *
+ * @param {string} content Raw content
+ * @returns {Action} Action object
+ */
+export function editorEditRawContent( content ) {
+	return {
+		type: EDITOR_EDIT_RAW_CONTENT,
+		content,
+	};
+}
+
+/**
+ * Unsets the raw TinyMCE content value
+ * @returns {Action} Action object
+ */
+export function editorResetRawContent() {
+	return {
+		type: EDITOR_RESET_RAW_CONTENT,
+	};
+}
+
+export function editorInitRawContent( content ) {
+	return {
+		type: EDITOR_INIT_RAW_CONTENT,
+		content,
+	};
+}
+
+export function editorReset( options ) {
+	return {
+		type: EDITOR_RESET,
+		isLoading: get( options, 'isLoading', false ),
+		loadingError: get( options, 'loadingError', null ),
+	};
+}
+
+export function editorSetLoadingError( loadingError ) {
+	return editorReset( { loadingError } );
+}
+
+export function editorLoadingErrorReset() {
+	return {
+		type: EDITOR_LOADING_ERROR_RESET,
 	};
 }

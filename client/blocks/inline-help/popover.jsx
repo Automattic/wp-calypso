@@ -13,19 +13,23 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import { abtest } from 'lib/abtest';
+import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
-import HelpContact from 'me/help/help-contact';
-import { getSearchQuery } from 'state/inline-help/selectors';
+import InlineHelpRichResult from './inline-help-rich-result';
+import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
+import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
+import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
+		setDialogState: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -33,26 +37,13 @@ class InlineHelpPopover extends Component {
 	};
 
 	state = {
-		showContactForm: false,
+		showSecondaryView: false,
+		activeSecondaryView: '',
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.state.showContactForm && this.props.searchQuery !== nextProps.searchQuery ) {
-			this.toggleContactForm();
-		}
-	}
-
-	openResult = href => {
-		if ( ! href ) {
-			return;
-		}
-
-		this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', {
-			search_query: this.props.searchQuery,
-			result_url: href,
-		} );
-
-		window.location = href;
+	openResultView = event => {
+		event.preventDefault();
+		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 
 	moreHelpClicked = () => {
@@ -60,40 +51,76 @@ class InlineHelpPopover extends Component {
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
 	};
 
-	toggleContactForm = () => {
-		if ( this.state.showContactForm ) {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_hide' );
-		} else {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_show' );
-		}
-		this.setState( { showContactForm: ! this.state.showContactForm } );
+	setSecondaryViewKey = secondaryViewKey => {
+		this.setState( { activeSecondaryView: secondaryViewKey } );
+	};
+
+	openSecondaryView = secondaryViewKey => {
+		this.setSecondaryViewKey( secondaryViewKey );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show` );
+		this.setState( { showSecondaryView: true } );
+	};
+
+	closeSecondaryView = () => {
+		this.setSecondaryViewKey( '' );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
+		this.props.selectResult( -1 );
+		this.props.resetContactForm();
+		this.setState( { showSecondaryView: false } );
+	};
+
+	openContactView = () => {
+		this.openSecondaryView( VIEW_CONTACT );
+	};
+
+	renderSecondaryView = () => {
+		const classes = classNames(
+			'inline-help__secondary-view',
+			`inline-help__${ this.state.activeSecondaryView }`
+		);
+		return (
+			<div className={ classes }>
+				{
+					{
+						contact: <InlineHelpContactView />,
+						richresult: (
+							<InlineHelpRichResult
+								result={ this.props.selectedResult }
+								setDialogState={ this.props.setDialogState }
+							/>
+						),
+					}[ this.state.activeSecondaryView ]
+				}
+			</div>
+		);
 	};
 
 	render() {
 		const { translate } = this.props;
-		const { showContactForm } = this.state;
-		const popoverClasses = { 'is-help-active': showContactForm };
-		const showContactButton = abtest( 'inlineHelpWithContactForm' ) === 'inlinecontact';
+		const { showSecondaryView } = this.state;
+		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
 
 		return (
 			<Popover
 				isVisible
 				onClose={ this.props.onClose }
-				position="top right"
+				position="top left"
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
+				<QuerySupportTypes />
 				<div className="inline-help__search">
-					<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
+					<InlineHelpSearchCard
+						openResult={ this.openResultView }
+						query={ this.props.searchQuery }
+					/>
 					<InlineHelpSearchResults
-						openResult={ this.openResult }
+						openResult={ this.openResultView }
 						searchQuery={ this.props.searchQuery }
 					/>
 				</div>
 
-				<div className="inline-help__contact">
-					<HelpContact compact={ true } selectedSite={ this.props.selectedSite } />
-				</div>
+				{ this.renderSecondaryView() }
 
 				<div className="inline-help__footer">
 					<Button
@@ -106,20 +133,18 @@ class InlineHelpPopover extends Component {
 						{ translate( 'More help' ) }
 					</Button>
 
-					{ showContactButton && (
-						<Button
-							onClick={ this.toggleContactForm }
-							className="inline-help__contact-button"
-							borderless
-						>
-							<Gridicon icon="chat" className="inline-help__gridicon-left" />
-							{ translate( 'Contact us' ) }
-							<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
-						</Button>
-					) }
+					<Button
+						onClick={ this.openContactView }
+						className="inline-help__contact-button"
+						borderless
+					>
+						<Gridicon icon="chat" className="inline-help__gridicon-left" />
+						{ translate( 'Contact us' ) }
+						<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
+					</Button>
 
 					<Button
-						onClick={ this.toggleContactForm }
+						onClick={ this.closeSecondaryView }
 						className="inline-help__cancel-button"
 						borderless
 					>
@@ -136,8 +161,11 @@ export default connect(
 	state => ( {
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
+		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	} ),
 	{
 		recordTracksEvent,
+		selectResult,
+		resetContactForm: resetInlineHelpContactForm,
 	}
 )( localize( InlineHelpPopover ) );

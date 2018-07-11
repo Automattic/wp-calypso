@@ -10,22 +10,29 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { get, isNull } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import actions from 'lib/posts/actions';
 import accept from 'lib/accept';
-import * as utils from 'lib/posts/utils';
 import Button from 'components/button';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { trashPost } from 'state/posts/actions';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 class EditorDeletePost extends React.Component {
 	static displayName = 'EditorDeletePost';
 
 	static propTypes = {
-		site: PropTypes.object,
-		post: PropTypes.object,
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		postType: PropTypes.string,
+		postStatus: PropTypes.string,
+		canDelete: PropTypes.bool,
 		onTrashingPost: PropTypes.func,
 	};
 
@@ -34,32 +41,33 @@ class EditorDeletePost extends React.Component {
 	};
 
 	sendToTrash = () => {
-		if ( ! utils.userCan( 'delete_post', this.props.post ) ) {
+		const { siteId, postId, canDelete } = this.props;
+
+		if ( ! canDelete ) {
 			return;
+		}
+
+		if ( this.props.onTrashingPost ) {
+			this.props.onTrashingPost();
 		}
 
 		this.setState( { isTrashing: true } );
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.trash( this.props.site, this.props.post, error => {
-			this.setState( { isTrashing: false } );
-
-			if ( this.props.onTrashingPost ) {
-				this.props.onTrashingPost( error );
-			}
-		} );
+		this.props.trashPost( siteId, postId );
 	};
 
 	onSendToTrash = () => {
-		let message;
+		const { translate, postType } = this.props;
+
 		if ( this.state.isTrashing ) {
 			return;
 		}
 
-		if ( this.props.post.type === 'page' ) {
-			message = this.props.translate( 'Are you sure you want to trash this page?' );
+		let message;
+		if ( postType === 'page' ) {
+			message = translate( 'Are you sure you want to trash this page?' );
 		} else {
-			message = this.props.translate( 'Are you sure you want to trash this post?' );
+			message = translate( 'Are you sure you want to trash this post?' );
 		}
 
 		accept(
@@ -69,23 +77,21 @@ class EditorDeletePost extends React.Component {
 					this.sendToTrash();
 				}
 			},
-			this.props.translate( 'Move to trash' ),
-			this.props.translate( 'Back' )
+			translate( 'Move to trash' ),
+			translate( 'Back' )
 		);
 	};
 
 	render() {
-		const { post } = this.props;
-		if ( ! post || ! post.ID || post.status === 'trash' ) {
+		const { canDelete, postId, postStatus, translate } = this.props;
+		if ( ! canDelete || ! postId || postStatus === 'trash' ) {
 			return null;
 		}
 
 		const classes = classnames( 'editor-delete-post__button', {
 			'is-trashing': this.state.isTrashing,
 		} );
-		const label = this.state.isTrashing
-			? this.props.translate( 'Trashing...' )
-			: this.props.translate( 'Move to trash' );
+		const label = this.state.isTrashing ? translate( 'Trashing…' ) : translate( 'Move to trash' );
 
 		return (
 			<div className="editor-delete-post">
@@ -103,6 +109,22 @@ class EditorDeletePost extends React.Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-} ) )( localize( EditorDeletePost ) );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+
+		const userId = getCurrentUserId( state );
+		const isAuthor = ! isNull( userId ) && get( post, [ 'author', 'ID' ], null ) === userId;
+
+		return {
+			siteId,
+			postId,
+			postType: get( post, 'type', null ),
+			postStatus: get( post, 'status', null ),
+			canDelete: canCurrentUser( state, siteId, isAuthor ? 'delete_posts' : 'delete_others_posts' ),
+		};
+	},
+	{ trashPost }
+)( localize( EditorDeletePost ) );

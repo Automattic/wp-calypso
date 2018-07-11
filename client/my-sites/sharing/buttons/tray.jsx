@@ -57,15 +57,14 @@ class SharingButtonsTray extends React.Component {
 			return this.props.translate( 'Edit visible buttons', {
 				context: 'Sharing: Buttons editor heading',
 			} );
-		} else {
-			return this.props.translate( 'Edit “More” buttons', {
-				context: 'Sharing: Buttons editor heading',
-			} );
 		}
+		return this.props.translate( 'Edit “More” buttons', {
+			context: 'Sharing: Buttons editor heading',
+		} );
 	};
 
 	getInstructionText = () => {
-		var labels = {
+		const labels = {
 			touch: this.props.translate( 'Tap the buttons you would like to add or remove.', {
 				textOnly: true,
 				context: 'Sharing: Buttons editor instructions',
@@ -85,7 +84,7 @@ class SharingButtonsTray extends React.Component {
 		};
 
 		return Object.keys( labels ).map( function( context ) {
-			var label = labels[ context ];
+			let label = labels[ context ];
 
 			if ( 'hidden' === this.props.visibility ) {
 				label +=
@@ -112,7 +111,7 @@ class SharingButtonsTray extends React.Component {
 	};
 
 	onButtonsReordered = order => {
-		var buttons = [];
+		let buttons = [];
 
 		this.getButtonsOfCurrentVisibility().forEach( function( button, i ) {
 			buttons[ order[ i ] ] = button;
@@ -128,7 +127,7 @@ class SharingButtonsTray extends React.Component {
 	};
 
 	onButtonClick = button => {
-		var buttons = this.props.buttons.slice( 0 ),
+		let buttons = this.props.buttons.slice( 0 ),
 			currentButton = find( buttons, { ID: button.ID } ),
 			isEnabled;
 
@@ -175,7 +174,7 @@ class SharingButtonsTray extends React.Component {
 
 	getButtonElements = () => {
 		if ( this.state.isReordering ) {
-			var buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
+			const buttons = this.getButtonsOfCurrentVisibility().map( function( button ) {
 				return (
 					<ButtonsPreviewButton
 						key={ button.ID }
@@ -187,21 +186,20 @@ class SharingButtonsTray extends React.Component {
 			}, this );
 
 			return <SortableList onChange={ this.onButtonsReordered }>{ buttons }</SortableList>;
-		} else {
-			return (
-				<ButtonsPreviewButtons
-					buttons={ this.props.buttons }
-					visibility={ this.props.visibility }
-					style={ this.props.style }
-					showMore={ false }
-					onButtonClick={ this.onButtonClick }
-				/>
-			);
 		}
+		return (
+			<ButtonsPreviewButtons
+				buttons={ this.props.buttons }
+				visibility={ this.props.visibility }
+				style={ this.props.style }
+				showMore={ false }
+				onButtonClick={ this.onButtonClick }
+			/>
+		);
 	};
 
 	render() {
-		var classes = classNames(
+		const classes = classNames(
 			'sharing-buttons-preview__panel',
 			'is-bottom',
 			'sharing-buttons-tray',

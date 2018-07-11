@@ -25,6 +25,15 @@ import {
 import { combineReducers } from 'state/utils';
 import { timelineSchema } from './schema';
 
+// We compare incoming timestamps against a known future Unix time in seconds date
+// to determine if the timestamp is in seconds or milliseconds resolution. If the former,
+// we "upgrade" it by multiplying by 1000.
+//
+// This will all be removed once the server-side is fully converted.
+const UNIX_TIMESTAMP_2023_IN_SECONDS = 1700000000;
+export const maybeUpscaleTimePrecision = time =>
+	time < UNIX_TIMESTAMP_2023_IN_SECONDS ? time * 1000 : time;
+
 export const lastActivityTimestamp = ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE:
@@ -77,7 +86,7 @@ const timelineEvent = ( state = {}, action ) => {
 				message: message.text,
 				name: message.user.name,
 				image: message.user.avatarURL,
-				timestamp: message.timestamp,
+				timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 				user_id: message.user.id,
 				type: get( message, 'type', 'message' ),
 				links: get( message, 'meta.links' ),
@@ -131,7 +140,7 @@ export const timeline = ( state = [], action ) => {
 						message: message.text,
 						name: message.user.name,
 						image: message.user.picture,
-						timestamp: message.timestamp,
+						timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 						user_id: message.user.id,
 						type: get( message, 'type', 'message' ),
 						links: get( message, 'meta.links' ),

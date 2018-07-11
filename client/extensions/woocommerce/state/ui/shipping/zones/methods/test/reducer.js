@@ -38,7 +38,7 @@ describe( 'reducer', () => {
 			expect( newState.currentlyEditingChanges.methodType ).to.equal( 'flat_rate' );
 			expect( newState.currentlyEditingChanges.title ).to.equal( 'Flat rate' );
 			// Check that the method was initialized:
-			expect( newState.currentlyEditingChanges.cost ).to.be.a.number;
+			expect( newState.currentlyEditingChanges.cost ).to.be.a( 'number' );
 		} );
 	} );
 
@@ -241,7 +241,7 @@ describe( 'reducer', () => {
 					updates: [ { id: 7, methodType: 'free_shipping', title: 'MyMethod' } ],
 					deletes: [],
 					currentlyEditingId: 7,
-					currentlyEditingChanges: { id: 7, methodType: 'flat_rate' },
+					currentlyEditingChanges: { id: 7, methodType: 'flat_rate', cost: 12 },
 					currentlyEditingChangedType: true,
 				};
 
@@ -254,7 +254,7 @@ describe( 'reducer', () => {
 				expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
 				expect( newState.creates[ 0 ]._originalId ).to.equal( 7 );
 				// Check that the method was initialized:
-				expect( newState.creates[ 0 ].cost ).to.be.a.number;
+				expect( newState.creates[ 0 ].cost ).to.be.a( 'number' );
 			}
 		);
 
@@ -267,7 +267,7 @@ describe( 'reducer', () => {
 					updates: [],
 					deletes: [],
 					currentlyEditingId: { index: 0 },
-					currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate' },
+					currentlyEditingChanges: { id: { index: 0 }, methodType: 'flat_rate', cost: 12 },
 					currentlyEditingChangedType: true,
 				};
 
@@ -280,7 +280,7 @@ describe( 'reducer', () => {
 				expect( newState.creates[ 0 ].methodType ).to.equal( 'flat_rate' );
 				expect( newState.creates[ 0 ]._originalId ).to.deep.equal( { index: 0 } );
 				// Check that the method was initialized:
-				expect( newState.creates[ 0 ].cost ).to.be.a.number;
+				expect( newState.creates[ 0 ].cost ).to.be.a( 'number' );
 			}
 		);
 

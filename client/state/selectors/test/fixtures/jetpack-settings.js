@@ -24,16 +24,3 @@ export const normalizedSettings = {
 		wp_mobile_featured_images: true,
 	},
 };
-
-export const requests = {
-	12345678: {
-		requesting: false,
-		updating: true,
-		regeneratingPostByEmail: true,
-	},
-	87654321: {
-		requesting: true,
-		updating: false,
-		regeneratingPostByEmail: false,
-	},
-};

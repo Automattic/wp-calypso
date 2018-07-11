@@ -33,7 +33,7 @@ describe( 'index', () => {
 	describe( 'cart change functions', () => {
 		describe( 'flow( changeFunctions... )', () => {
 			test( 'should combine multiple cart operations into a single step', () => {
-				var addTwo, newCart;
+				let addTwo, newCart;
 
 				addTwo = flow(
 					cartItems.add( PREMIUM_PRODUCT ),
@@ -48,7 +48,7 @@ describe( 'index', () => {
 
 		describe( 'cartItems.add( cartItem )', () => {
 			test( 'should add the cartItem to the products array', () => {
-				var initialCart = cartValues.emptyCart( TEST_BLOG_ID ),
+				let initialCart = cartValues.emptyCart( TEST_BLOG_ID ),
 					newCart = cartItems.add( PREMIUM_PRODUCT )( initialCart ),
 					expectedCart = {
 						blog_id: TEST_BLOG_ID,
@@ -61,7 +61,7 @@ describe( 'index', () => {
 
 		describe( 'cartItems.remove( cartItem )', () => {
 			test( 'should remove the cartItem from the products array', () => {
-				var initialCart, newCart, expectedCart;
+				let initialCart, newCart, expectedCart;
 
 				initialCart = {
 					blog_id: TEST_BLOG_ID,
@@ -80,7 +80,7 @@ describe( 'index', () => {
 
 	describe( 'cartItems.hasProduct( cart, productSlug )', () => {
 		test( 'should return a boolean that says whether the product is in the cart items', () => {
-			var cartWithPremium, cartWithoutPremium;
+			let cartWithPremium, cartWithoutPremium;
 
 			cartWithPremium = {
 				blog_id: TEST_BLOG_ID,
@@ -114,7 +114,7 @@ describe( 'index', () => {
 
 	describe( 'cartItems.hasOnlyProductsOf( cart, productSlug )', () => {
 		test( 'should return a boolean that says whether only products of productSlug are in the cart items', () => {
-			var cartWithSameProductSlugs, cartWithMultipleProductSlugs, emptyCart;
+			let cartWithSameProductSlugs, cartWithMultipleProductSlugs, emptyCart;
 
 			cartWithMultipleProductSlugs = {
 				blog_id: TEST_BLOG_ID,

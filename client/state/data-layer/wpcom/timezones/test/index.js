@@ -1,11 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import { addTimezones, fetchTimezones, fromApi } from '../';
@@ -16,19 +10,17 @@ describe( 'timezones request', () => {
 	describe( 'successful requests', () => {
 		test( 'should dispatch HTTP GET request to /timezones endpoint', () => {
 			const action = { type: 'DUMMY' };
-			const dispatch = spy();
 
-			fetchTimezones( { dispatch }, action );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
-				http(
-					{
-						apiNamespace: 'wpcom/v2',
-						method: 'GET',
-						path: '/timezones',
-					},
-					action
+			expect( fetchTimezones( action ) ).toEqual(
+				expect.objectContaining(
+					http(
+						{
+							apiNamespace: 'wpcom/v2',
+							method: 'GET',
+							path: '/timezones',
+						},
+						action
+					)
 				)
 			);
 		} );
@@ -57,12 +49,10 @@ describe( 'timezones request', () => {
 				},
 			};
 			const action = timezonesReceive( fromApi( responseData ) );
-			const dispatch = spy();
 
-			addTimezones( { dispatch }, action, responseData );
-
-			expect( dispatch ).to.have.been.calledOncee;
-			expect( dispatch ).to.have.been.calledWith( timezonesReceive( fromApi( responseData ) ) );
+			expect( addTimezones( action, fromApi( responseData ) ) ).toEqual(
+				expect.objectContaining( timezonesReceive( fromApi( responseData ) ) )
+			);
 		} );
 	} );
 } );

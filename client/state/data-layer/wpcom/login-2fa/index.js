@@ -12,7 +12,6 @@ import { get } from 'lodash';
 import config from 'config';
 import {
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
-	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 } from 'state/action-types';
@@ -26,6 +25,7 @@ import { http } from 'state/http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
+import { receivedTwoFactorPushNotificationApproved } from 'state/login/actions.js';
 
 /**
  * Module constants
@@ -60,8 +60,8 @@ const requestTwoFactorPushNotificationStatus = ( store, action ) => {
 	);
 };
 
-const receivedTwoFactorPushNotificationApproved = ( { dispatch } ) =>
-	dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } );
+const receivedTwoFactorPushNotificationApprovedResponse = ( { dispatch }, _, response ) =>
+	dispatch( receivedTwoFactorPushNotificationApproved( get( response, 'body.data.token_links' ) ) );
 
 /**
  * Receive error from the two factor push notification status http request
@@ -97,7 +97,7 @@ const receivedTwoFactorPushNotificationError = ( store, action, error ) => {
 
 const makePushNotificationRequest = dispatchRequest(
 	requestTwoFactorPushNotificationStatus,
-	receivedTwoFactorPushNotificationApproved,
+	receivedTwoFactorPushNotificationApprovedResponse,
 	receivedTwoFactorPushNotificationError
 );
 

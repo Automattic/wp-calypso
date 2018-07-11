@@ -1,8 +1,10 @@
 /** @format */
+
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import createReactClass from 'create-react-class';
@@ -21,7 +23,8 @@ import Security2faProgress from 'me/security-2fa-progress';
 import analytics from 'lib/analytics';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
-import { forSms as countriesList } from 'lib/countries-list';
+import getCountries from 'state/selectors/get-countries';
+import QuerySmsCountries from 'components/data/query-countries/sms';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 
@@ -40,6 +43,7 @@ const Security2faSMSSettings = createReactClass( {
 	mixins: [ formBase, observe( 'userSettings' ) ],
 
 	propTypes: {
+		countriesList: PropTypes.array.isRequired,
 		onCancel: PropTypes.func.isRequired,
 		onVerifyByApp: PropTypes.func.isRequired,
 		onVerifyBySMS: PropTypes.func.isRequired,
@@ -174,6 +178,7 @@ const Security2faSMSSettings = createReactClass( {
 			<div className="security-2fa-sms-settings__container">
 				<form className="security-2fa-sms-settings">
 					<Security2faProgress step={ 1 } />
+
 					<p>
 						{ this.props.translate(
 							'First, we need your Mobile Phone number to ' +
@@ -182,10 +187,12 @@ const Security2faSMSSettings = createReactClass( {
 								'unavailable.'
 						) }
 					</p>
+
 					<div className="security-2fa-sms-settings__fieldset-container">
+						<QuerySmsCountries />
 						<FormPhoneInput
 							ref="phoneInput"
-							countriesList={ countriesList }
+							countriesList={ this.props.countriesList }
 							disabled={ this.state.submittingForm }
 							countrySelectProps={ {
 								onFocus: function() {
@@ -203,8 +210,10 @@ const Security2faSMSSettings = createReactClass( {
 							) }
 							onChange={ this.onChangePhoneInput }
 						/>
+
 						{ this.possiblyRenderError() }
 					</div>
+
 					<FormButtonsBar className="security-2fa-sms-settings__buttons">
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
@@ -215,6 +224,7 @@ const Security2faSMSSettings = createReactClass( {
 						>
 							{ this.state.submittingForm ? savingLabel : this.props.translate( 'Verify via App' ) }
 						</FormButton>
+
 						<FormButton
 							disabled={ this.getSubmitDisabled() }
 							isPrimary={ false }
@@ -225,6 +235,7 @@ const Security2faSMSSettings = createReactClass( {
 						>
 							{ this.state.submittingForm ? savingLabel : this.props.translate( 'Verify via SMS' ) }
 						</FormButton>
+
 						<FormButton
 							className="security-2fa-sms-settings__cancel-button"
 							isPrimary={ false }
@@ -242,4 +253,10 @@ const Security2faSMSSettings = createReactClass( {
 	},
 } );
 
-export default flowRight( protectForm, localize )( Security2faSMSSettings );
+export default flowRight(
+	protectForm,
+	localize,
+	connect( state => ( {
+		countriesList: getCountries( state, 'sms' ),
+	} ) )
+)( Security2faSMSSettings );

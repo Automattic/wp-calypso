@@ -1,8 +1,6 @@
 /** @format */
 
-const types = require( 'babel-types' );
-
-module.exports = function() {
+module.exports = function( { types } ) {
 	return {
 		visitor: {
 			ImportDeclaration( path ) {

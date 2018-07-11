@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Banner from 'components/banner';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 export const UnavailabilityNotice = ( {
 	adminUrl,
@@ -27,6 +27,17 @@ export const UnavailabilityNotice = ( {
 	}
 
 	switch ( reason ) {
+		case 'missing_plan':
+			return (
+				<Banner
+					plan="personal-bundle"
+					href={ `/plans/${ slug }` }
+					callToAction={ translate( 'Upgrade' ) }
+					title={ translate(
+						'Upgrade your Jetpack plan to restore your site to events in the past.'
+					) }
+				/>
+			);
 		case 'no_connected_jetpack':
 			return (
 				<Banner

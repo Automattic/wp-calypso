@@ -15,7 +15,7 @@ import { recordEvents } from './cart-analytics';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
-import { applyCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
+import { applyCoupon, removeCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
@@ -124,6 +124,10 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 			update( applyCoupon( action.coupon ) );
 			break;
 
+		case UpgradesActionTypes.CART_COUPON_REMOVE:
+			update( removeCoupon() );
+			break;
+
 		case UpgradesActionTypes.CART_ITEM_REMOVE:
 			update(
 				cartItems.removeItemAndDependencies(
@@ -132,6 +136,10 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 					action.domainsWithPlansOnly
 				)
 			);
+			break;
+
+		case UpgradesActionTypes.CART_ITEM_REPLACE:
+			update( cartItems.replaceItem( action.oldItem, action.newItem ) );
 			break;
 	}
 } );

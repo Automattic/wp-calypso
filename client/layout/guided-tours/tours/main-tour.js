@@ -32,8 +32,8 @@ import { ViewSiteButton } from '../button-labels';
 
 const scrollSidebarToTop = () => scrollTo( { y: 0, container: getScrollableSidebar() } );
 
-// note that this tour checks for a non-existent feature flag.
-// this is kept as an example, while making sure it never gets triggered
+// Note that this tour checks for a non-existent feature flag so it never gets triggered.
+// We use this tour as an example and playground only.
 export const MainTour = makeTour(
 	<Tour
 		name="main"
@@ -41,7 +41,7 @@ export const MainTour = makeTour(
 		path="/"
 		when={ and( isNewUser, isEnabled( 'guided-tours/main' ) ) }
 	>
-		<Step name="init" placement="right">
+		<Step name="init" placement="right" style={ { animationDelay: '2s' } }>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>

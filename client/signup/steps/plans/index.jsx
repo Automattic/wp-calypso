@@ -16,21 +16,23 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import { getSiteBySlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 
 class PlansStep extends Component {
-	constructor( props ) {
-		super( props );
-
-		this.onSelectPlan = this.onSelectPlan.bind( this );
-		this.plansFeaturesSelection = this.plansFeaturesSelection.bind( this );
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
 	}
 
-	onSelectPlan( cartItem ) {
+	onSelectPlan = cartItem => {
 		const {
 				additionalStepData,
 				stepSectionName,
@@ -70,7 +72,7 @@ class PlansStep extends Component {
 		SignupActions.submitSignupStep( step, [], providedDependencies );
 
 		goToNextStep();
-	}
+	};
 
 	getDomainName() {
 		return (
@@ -78,8 +80,12 @@ class PlansStep extends Component {
 		);
 	}
 
+	handleFreePlanButtonClick = () => {
+		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+	};
+
 	plansFeaturesList() {
-		const { hideFreePlan, selectedSite } = this.props;
+		const { hideFreePlan, isDomainOnly, selectedSite } = this.props;
 
 		return (
 			<div>
@@ -94,11 +100,18 @@ class PlansStep extends Component {
 					displayJetpackPlans={ false }
 					domainName={ this.getDomainName() }
 				/>
+				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
+				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
+				   * unless we've already selected an option that implies a paid plan.
+				   * This is in particular true for domain names. */
+				hideFreePlan &&
+					! isDomainOnly &&
+					! this.getDomainName() && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
 			</div>
 		);
 	}
 
-	plansFeaturesSelection() {
+	plansFeaturesSelection = () => {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( "Pick a plan that's right for you." );
@@ -115,7 +128,7 @@ class PlansStep extends Component {
 				stepContent={ this.plansFeaturesList() }
 			/>
 		);
-	}
+	};
 
 	render() {
 		const classes = classNames( 'plans plans-step', {
@@ -141,5 +154,6 @@ export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
 	// This step could be used to set up an existing site, in which case
 	// some descendants of this component may display discounted prices if
 	// they apply to the given site.
+	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
 	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 } ) )( localize( PlansStep ) );

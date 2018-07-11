@@ -206,7 +206,7 @@ describe( 'selectors', () => {
 		} );
 
 		afterEach( () => {
-			lodash.find.reset();
+			lodash.find.resetHistory();
 		} );
 
 		test( 'should return invite', () => {

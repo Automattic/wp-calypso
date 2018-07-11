@@ -15,7 +15,7 @@ import EmailForwardingItem from './email-forwarding-item';
 
 class EmailForwardingList extends React.Component {
 	render() {
-		var emailForwardingItems,
+		let emailForwardingItems,
 			{ list, hasLoadedFromServer } = this.props.emailForwarding;
 
 		if ( ! list && ! hasLoadedFromServer ) {

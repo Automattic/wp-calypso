@@ -10,7 +10,7 @@ import { isInteger } from 'lodash';
  * Internal dependencies
  */
 import { MinimumImageDimensions } from 'state/ui/editor/image-editor/constants';
-import { getImageEditorOriginalAspectRatio } from 'state/selectors';
+import getImageEditorOriginalAspectRatio from 'state/selectors/get-image-editor-original-aspect-ratio';
 
 /**
  * Returns whether the original image size is greater than minimumImageDimensions values.

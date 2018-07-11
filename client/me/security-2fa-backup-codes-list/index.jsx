@@ -250,7 +250,7 @@ class Security2faBackupCodesList extends React.Component {
 				</p>
 				<ol className="security-2fa-backup-codes-list__codes">
 					{ backupCodes.map( function( backupCode, index ) {
-						let spacedCode = backupCode.concat( ' ' );
+						const spacedCode = backupCode.concat( ' ' );
 						// we add a space to each backup code so that if the user wants to copy and paste the entire list
 						// the backup codes aren't placed in the clipboard as a single long number
 						return (

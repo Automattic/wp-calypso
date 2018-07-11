@@ -19,24 +19,22 @@ import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
 import { getPlugin, isFetched, isFetching } from 'state/plugins/wporg/selectors';
-import PluginsActions from 'lib/plugins/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginSections from 'my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { canJetpackSiteManage, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins,
-	getSelectedOrAllSitesWithPlugins,
-	isSiteAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
+import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 
@@ -104,10 +102,6 @@ const SinglePlugin = createReactClass( {
 			textOnly: true,
 			context: 'Page title: Plugin detail',
 		} );
-	},
-
-	removeNotice( error ) {
-		PluginsActions.removePluginsNotices( error );
 	},
 
 	recordEvent( eventAction ) {
@@ -224,6 +218,12 @@ const SinglePlugin = createReactClass( {
 		return <DocumentHead title={ this.getPageTitle() } />;
 	},
 
+	renderPageViewTracker() {
+		const analyticsPath = this.props.selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+
+		return <PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />;
+	},
+
 	renderSitesList( plugin ) {
 		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
@@ -266,7 +266,6 @@ const SinglePlugin = createReactClass( {
 					{ this.displayHeader() }
 					<PluginMeta
 						isPlaceholder
-						notices={ this.state.notices }
 						isInstalledOnSite={
 							this.isFetchingSites()
 								? null
@@ -305,7 +304,6 @@ const SinglePlugin = createReactClass( {
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
-						notices={ {} }
 						isInstalledOnSite={
 							!! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
 						}
@@ -343,6 +341,7 @@ const SinglePlugin = createReactClass( {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
+					{ this.renderPageViewTracker() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
@@ -365,11 +364,11 @@ const SinglePlugin = createReactClass( {
 			<MainComponent>
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
+				{ this.renderPageViewTracker() }
 				<SidebarNavigation />
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
-						notices={ this.state.notices }
 						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }

@@ -11,8 +11,6 @@ import i18n from 'i18n-calypso';
  */
 import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
 import PeopleLogStore from 'lib/people/log-store';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
@@ -77,7 +75,6 @@ function renderPeopleList( context, next ) {
 		filter: filter,
 		search: context.query.s,
 	} );
-	analytics.pageView.record( 'people/' + filter + '/:site', 'People > ' + titlecase( filter ) );
 	next();
 }
 

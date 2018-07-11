@@ -62,6 +62,9 @@ class ProfileLinksAddWordPressSite extends Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( ProfileLinksAddWordPressSite );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( ProfileLinksAddWordPressSite );

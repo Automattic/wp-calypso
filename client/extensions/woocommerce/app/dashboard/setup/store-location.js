@@ -21,13 +21,13 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
-import { getContactDetailsCache } from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,
 	getAllCountries,
 	getCountriesWithStates,
-} from 'woocommerce/state/sites/locations/selectors';
+} from 'woocommerce/state/sites/data/locations/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './footer';
@@ -350,4 +350,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreLocationSetupView ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( StoreLocationSetupView ) );

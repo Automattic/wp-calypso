@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { assign, clone, find, get, isEmpty, map, omit } from 'lodash';
+import { assign, clone, filter, find, get, isEmpty, map, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:signup-progress-store' );
 import store from 'store';
@@ -15,7 +15,8 @@ import store from 'store';
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 import SignupDependencyStore from './dependency-store';
-import steps from 'signup/config/steps';
+import flows from 'signup/config/flows';
+import steps from 'signup/config/steps-pure';
 
 /**
  * Constants
@@ -27,7 +28,7 @@ const STORAGE_KEY = 'signupProgress';
  */
 let signupProgress = [];
 
-var SignupProgressStore = {
+const SignupProgressStore = {
 	get: function() {
 		return clone( signupProgress );
 	},
@@ -150,8 +151,14 @@ function addStorableDependencies( step, action ) {
 	return { ...step, providedDependencies };
 }
 
+function removeUnneededStep( flowName ) {
+	const flowSteps = flows.getFlow( flowName ).steps;
+	signupProgress = filter( signupProgress, ( { stepName } ) => flowSteps.indexOf( stepName ) > -1 );
+	handleChange();
+}
+
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		step = addTimestamp( action.data );
 
 	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );
@@ -177,6 +184,10 @@ SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'PROCESSED_SIGNUP_STEP':
 			debug( 'complete step' );
 			completeStep( addStorableDependencies( step, action ) );
+			break;
+		case 'CHANGE_SIGNUP_FLOW':
+			debug( 'change flow' );
+			removeUnneededStep( action.flow );
 			break;
 	}
 } );

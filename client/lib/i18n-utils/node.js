@@ -13,11 +13,14 @@ import config from 'config';
 export {
 	addLocaleToPath,
 	addLocaleToWpcomUrl,
+	getForumUrl,
 	getLanguage,
+	getLanguageSlugs,
 	getLocaleFromPath,
+	getSupportSiteLocale,
 	isDefaultLocale,
 	isLocaleVariant,
-	hasTranslationSet,
+	canBeTranslated,
 	removeLocaleFromPath,
 } from './utils';
 

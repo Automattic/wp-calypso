@@ -83,13 +83,13 @@ class StatsListItem extends React.Component {
 	};
 
 	onClick = event => {
-		var gaEvent,
+		let gaEvent,
 			moduleName = titlecase( this.props.moduleName );
 
 		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
 			if ( this.props.children ) {
-				var moduleState = this.state.active ? 'Collapsed ' : 'Expanded ';
+				const moduleState = this.state.active ? 'Collapsed ' : 'Expanded ';
 				gaEvent = moduleState + moduleName;
 
 				this.setState( {
@@ -128,7 +128,7 @@ class StatsListItem extends React.Component {
 	};
 
 	buildActions = () => {
-		var data = this.props.data,
+		let data = this.props.data,
 			moduleName = titlecase( this.props.moduleName ),
 			actionMenu = data.actionMenu,
 			actionClassSet = classNames( 'module-content-list-item-actions', {
@@ -138,15 +138,15 @@ class StatsListItem extends React.Component {
 
 		// If we have more than a default action build out actions ul
 		if ( data.actions ) {
-			var actionItems = [];
+			const actionItems = [];
 
 			data.actions.forEach( function( action ) {
-				var actionItem;
+				let actionItem;
 
 				switch ( action.type ) {
 					case 'follow':
 						if ( action.data && this.props.followList ) {
-							var followSite = this.props.followList.add( action.data );
+							const followSite = this.props.followList.add( action.data );
 							actionItem = (
 								<Follow followSite={ followSite } key={ action.type } moduleName={ moduleName } />
 							);
@@ -188,7 +188,7 @@ class StatsListItem extends React.Component {
 	};
 
 	buildLabel = () => {
-		var data = this.props.data,
+		let data = this.props.data,
 			labelData = data.label,
 			wrapperClassSet,
 			label;
@@ -202,7 +202,7 @@ class StatsListItem extends React.Component {
 		} );
 
 		label = labelData.map( function( labelItem, i ) {
-			var iconClassSetOptions = { avatar: true },
+			let iconClassSetOptions = { avatar: true },
 				icon,
 				gridiconSpan,
 				itemLabel;
@@ -241,7 +241,7 @@ class StatsListItem extends React.Component {
 							event.shiftKey ||
 							event.altKey;
 						recordTrack( 'calypso_reader_stats_module_site_stream_link_click', {
-							siteId,
+							site_id: siteId,
 							module_name: this.props.moduleName,
 							modifier_pressed: modifierPressed,
 						} );
@@ -276,7 +276,7 @@ class StatsListItem extends React.Component {
 	};
 
 	buildValue = () => {
-		var data = this.props.data,
+		let data = this.props.data,
 			valueData = data.value,
 			value;
 
@@ -301,7 +301,7 @@ class StatsListItem extends React.Component {
 	};
 
 	render() {
-		var data = this.props.data,
+		let data = this.props.data,
 			rightClassOptions = {
 				'module-content-list-item-right': true,
 			},

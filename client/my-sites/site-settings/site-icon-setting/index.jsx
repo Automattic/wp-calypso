@@ -40,12 +40,10 @@ import {
 	getImageEditorCrop,
 	getImageEditorTransform,
 } from 'state/ui/editor/image-editor/selectors';
-import {
-	getSiteIconId,
-	getSiteIconUrl,
-	isPrivateSite,
-	isSiteSupportingImageEditor,
-} from 'state/selectors';
+import getSiteIconId from 'state/selectors/get-site-icon-id';
+import getSiteIconUrl from 'state/selectors/get-site-icon-url';
+import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
 import { errorNotice } from 'state/notices/actions';
 
 class SiteIconSetting extends Component {
@@ -245,7 +243,6 @@ class SiteIconSetting extends Component {
 			buttonProps = {
 				type: 'button',
 				onClick: this.showModal,
-				'data-tip-target': 'settings-site-icon-change',
 				onMouseEnter: this.preloadModal,
 			};
 		} else {
@@ -293,6 +290,7 @@ class SiteIconSetting extends Component {
 				<Button
 					{ ...buttonProps }
 					className="site-icon-setting__button"
+					data-tip-target="settings-site-icon-change"
 					disabled={ isSaving }
 					compact
 				>
@@ -327,7 +325,7 @@ class SiteIconSetting extends Component {
 											onDone: this.setSiteIcon,
 											onCancel: this.cancelEditingSiteIcon,
 										},
-									}
+								  }
 								: {} ) }
 							visible={ isModalVisible }
 							labels={ {

@@ -12,10 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostTypeList from 'my-sites/post-type-list';
 import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
+import titlecase from 'to-title-case';
 import config from 'config';
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -41,6 +43,35 @@ class PostsMain extends React.Component {
 		}
 	}
 
+	getAnalyticsPath() {
+		const { siteId, statusSlug, author } = this.props;
+		let analyticsPath = '/posts';
+
+		if ( author ) {
+			analyticsPath += '/my';
+		}
+
+		if ( statusSlug ) {
+			analyticsPath += `/${ statusSlug }`;
+		}
+
+		if ( siteId ) {
+			analyticsPath += '/:site';
+		}
+
+		return analyticsPath;
+	}
+
+	getAnalyticsTitle() {
+		const { statusSlug } = this.props;
+
+		if ( statusSlug ) {
+			return 'Blog Posts > ' + titlecase( statusSlug );
+		}
+
+		return 'Blog Posts > Published';
+	}
+
 	render() {
 		const { author, category, search, siteId, statusSlug, tag } = this.props;
 		const classes = classnames( 'posts', {
@@ -62,6 +93,7 @@ class PostsMain extends React.Component {
 
 		return (
 			<Main className={ classes }>
+				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<SidebarNavigation />
 				<div className="posts__primary">
 					<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
@@ -101,6 +133,9 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, {
-	warningNotice,
-} )( localize( PostsMain ) );
+export default connect(
+	mapStateToProps,
+	{
+		warningNotice,
+	}
+)( localize( PostsMain ) );

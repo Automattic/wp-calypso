@@ -41,4 +41,7 @@ export class QuerySiteCommentCounts extends PureComponent {
 	}
 }
 
-export default connect( null, { requestCommentCounts } )( QuerySiteCommentCounts );
+export default connect(
+	null,
+	{ requestCommentCounts }
+)( QuerySiteCommentCounts );

@@ -21,27 +21,25 @@ import {
 	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading, goToManagePurchase, recordPageView } from '../utils';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { hasPrivacyProtection, isRefundable } from 'lib/purchases';
-import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
-import { managePurchase, purchasesRoot } from '../paths';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import { CALYPSO_CONTACT } from 'lib/url/support';
-
-const user = userFactory();
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class CancelPrivacyProtection extends Component {
 	static propTypes = {
-		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
-		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+		purchase: PropTypes.object,
+		purchaseId: PropTypes.number.isRequired,
+		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	static initialState = {
@@ -53,14 +51,10 @@ class CancelPrivacyProtection extends Component {
 
 	componentWillMount() {
 		this.redirectIfDataIsInvalid();
-
-		recordPageView( 'cancel_private_registration', this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.redirectIfDataIsInvalid( nextProps );
-
-		recordPageView( 'cancel_private_registration', this.props, nextProps );
 	}
 
 	redirectIfDataIsInvalid = ( props = this.props ) => {
@@ -70,21 +64,20 @@ class CancelPrivacyProtection extends Component {
 	};
 
 	isDataValid = ( props = this.props ) => {
-		if ( isDataLoading( props ) ) {
+		if ( ! props.hasLoadedUserPurchasesFromServer ) {
 			return true;
 		}
 
-		const { selectedSite } = props,
-			purchase = getPurchase( props );
+		const { purchase } = props;
 
-		return selectedSite && purchase && hasPrivacyProtection( purchase );
+		return purchase && hasPrivacyProtection( purchase );
 	};
 
 	cancel = event => {
 		// We call blur on the cancel button to remove the blue outline that shows up when you click on the button
 		event.target.blur();
 
-		const { id, meta: domain } = getPurchase( this.props );
+		const { id, meta: domain } = this.props.purchase;
 
 		this.setState( {
 			disabled: true,
@@ -106,7 +99,7 @@ class CancelPrivacyProtection extends Component {
 					{ persistent: true }
 				);
 
-				page( managePurchase( this.props.selectedSite.slug, id ) );
+				page( managePurchase( this.props.siteSlug, id ) );
 			} )
 			.catch( () => {
 				this.resetState();
@@ -116,7 +109,7 @@ class CancelPrivacyProtection extends Component {
 	resetState = () => this.setState( this.constructor.initialState );
 
 	renderDescriptionText = () => {
-		const purchase = getPurchase( this.props );
+		const { purchase } = this.props;
 
 		return (
 			<p>
@@ -134,7 +127,7 @@ class CancelPrivacyProtection extends Component {
 	};
 
 	renderWarningText = () => {
-		const purchase = getPurchase( this.props );
+		const { purchase } = this.props;
 
 		return (
 			<strong>
@@ -178,7 +171,7 @@ class CancelPrivacyProtection extends Component {
 
 	render() {
 		const classes = classNames( 'cancel-privacy-protection__card', {
-			'is-placeholder': isDataLoading( this.props ),
+			'is-placeholder': ! this.props.hasLoadedUserPurchasesFromServer,
 		} );
 
 		let notice,
@@ -195,7 +188,7 @@ class CancelPrivacyProtection extends Component {
 				</p>
 			);
 
-		if ( ! isDataLoading( this.props ) && this.isDataValid() ) {
+		if ( this.props.hasLoadedUserPurchasesFromServer && this.isDataValid() ) {
 			notice = this.renderNotice();
 			button = this.renderButton();
 			descriptionText = this.renderDescriptionText();
@@ -204,8 +197,16 @@ class CancelPrivacyProtection extends Component {
 
 		return (
 			<Main>
-				<QueryUserPurchases userId={ user.get().ID } />
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
+				<TrackPurchasePageView
+					eventName="calypso_cancel_private_registration_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
+				<PageViewTracker
+					path="/me/purchases/:site/:purchaseId/cancel-privacy-protection"
+					title="Purchases > Cancel Privacy Protection"
+				/>
+				<QueryUserPurchases userId={ this.props.userId } />
+				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
 					{ titles.cancelPrivacyProtection }
 				</HeaderCake>
 				{ notice }
@@ -227,10 +228,9 @@ class CancelPrivacyProtection extends Component {
 export default connect(
 	( state, props ) => ( {
 		error: getPurchasesError( state ),
-		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
+		purchase: getByPurchaseId( state, props.purchaseId ),
+		userId: getCurrentUserId( state ),
 	} ),
 	{ cancelPrivacyProtection }
 )( localize( CancelPrivacyProtection ) );

@@ -14,13 +14,15 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { activateRewind as activateRewindAction } from 'state/activity-log/actions';
-import { isRewindActivating } from 'state/selectors';
+import { activateRewind } from 'state/activity-log/actions';
+import isRewindActivating from 'state/selectors/is-rewind-activating';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		label: PropTypes.string,
+		isVpMigrate: PropTypes.bool,
 
 		// mappedSelectors
 		isActivating: PropTypes.bool.isRequired,
@@ -35,13 +37,10 @@ class ActivityLogRewindToggle extends Component {
 	static defaultProps = {
 		isActivating: false,
 		label: '',
+		isVpMigrate: false,
 	};
 
-	activateRewind = () => {
-		const { activateRewind, siteId } = this.props;
-
-		activateRewind( siteId );
-	};
+	activateRewind = () => this.props.activateRewind( this.props.siteId, this.props.isVpMigrate );
 
 	render() {
 		const { isActivating, siteId, translate, label } = this.props;
@@ -68,6 +67,12 @@ export default connect(
 		isActivating: isRewindActivating( state, siteId ),
 	} ),
 	{
-		activateRewind: activateRewindAction,
+		activateRewind: ( siteId, isVpMigrate ) =>
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_vp_migrate_rewind', {
+					rewind_opt_in: isVpMigrate,
+				} ),
+				activateRewind( siteId, isVpMigrate )
+			),
 	}
 )( localize( ActivityLogRewindToggle ) );

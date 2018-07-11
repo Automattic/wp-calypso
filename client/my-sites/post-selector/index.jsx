@@ -89,6 +89,7 @@ export default class extends React.PureComponent {
 			emptyMessage,
 			createLink,
 			selected,
+			excludeTree,
 			showTypeLabels,
 			suppressFirstPageLoad,
 		} = this.props;
@@ -103,6 +104,7 @@ export default class extends React.PureComponent {
 				emptyMessage={ emptyMessage }
 				createLink={ createLink }
 				selected={ selected }
+				excludePost={ excludeTree }
 				showTypeLabels={ showTypeLabels }
 				suppressFirstPageLoad={ suppressFirstPageLoad }
 			/>

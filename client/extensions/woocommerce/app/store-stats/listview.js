@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getUnitPeriod } from './utils';
+import { getQueries } from './utils';
 import JetpackColophon from 'components/jetpack-colophon';
 import List from './store-stats-list';
 import Main from 'components/main';
@@ -20,6 +20,8 @@ import Module from './store-stats-module';
 import { topProducts, topCategories, topCoupons } from 'woocommerce/app/store-stats/constants';
 import QuerySiteStats from 'components/data/query-site-stats';
 import StoreStatsPeriodNav from 'woocommerce/app/store-stats/store-stats-period-nav';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 const listType = {
 	products: topProducts,
@@ -32,45 +34,44 @@ class StoreStatsListView extends Component {
 		path: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
-		querystring: PropTypes.string,
 		type: PropTypes.string.isRequired,
 		unit: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { siteId, slug, selectedDate, type, unit } = this.props;
-		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
-		const listviewQuery = {
-			unit,
-			date: unitSelectedDate,
-			limit: 100,
-		};
+		const { siteId, slug, selectedDate, type, unit, queryParams } = this.props;
+		const { topListQuery } = getQueries( unit, selectedDate, { topListQuery: { limit: 100 } } );
 		const statType = listType[ type ].statType;
 		return (
 			<Main className="store-stats__list-view woocommerce" wideLayout>
+				<PageViewTracker
+					path={ `/store/stats/${ type }/${ unit }/:site` }
+					title={ `Store > Stats > ${ titlecase( type ) } > ${ titlecase( unit ) }` }
+				/>
 				{ siteId && (
-					<QuerySiteStats statType={ statType } siteId={ siteId } query={ listviewQuery } />
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ topListQuery } />
 				) }
 				<StoreStatsPeriodNav
 					type={ type }
 					selectedDate={ selectedDate }
 					unit={ unit }
 					slug={ slug }
-					query={ listviewQuery }
+					query={ topListQuery }
 					statType={ statType }
 					title={ listType[ type ].title }
+					queryParams={ queryParams }
 				/>
 				<Module
 					siteId={ siteId }
 					emptyMessage={ listType[ type ].empty }
-					query={ listviewQuery }
+					query={ topListQuery }
 					statType={ statType }
 				>
 					<List
 						siteId={ siteId }
 						values={ listType[ type ].values }
-						query={ listviewQuery }
+						query={ topListQuery }
 						statType={ statType }
 					/>
 				</Module>

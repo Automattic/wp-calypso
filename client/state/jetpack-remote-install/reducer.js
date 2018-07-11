@@ -33,7 +33,23 @@ export const errorCodeReducer = keyedReducer( 'url', ( state = null, { type, err
 	}
 } );
 
+export const errorMessageReducer = keyedReducer(
+	'url',
+	( state = null, { type, errorMessage } ) => {
+		switch ( type ) {
+			case JETPACK_REMOTE_INSTALL_FAILURE:
+				return errorMessage;
+			case JETPACK_REMOTE_INSTALL_SUCCESS:
+			case JETPACK_REMOTE_INSTALL:
+				return null;
+			default:
+				return state;
+		}
+	}
+);
+
 export default combineReducers( {
 	errorCode: errorCodeReducer,
+	errorMessage: errorMessageReducer,
 	isComplete,
 } );

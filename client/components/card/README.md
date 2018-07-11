@@ -1,12 +1,11 @@
 Card
-=========
+===
 
-This is a set of two very similar components to be used as containers. One is the `Card` component and the other is `CompactCard`. As you may have already guessed, the latter is a bit more compact and meant more for list items.
+Cards are used as containers to group similar information and tasks together to make it easier to scan and read.
 
-The `CompactCard` component slightly modifies the `Card` component.
+> Includes both `Card` and `CompactCard`
 
-
-#### How to use:
+## Usage
 
 ```jsx
 import Card from 'components/card';
@@ -27,11 +26,29 @@ render: function() {
 }
 ```
 
-#### Props
+### Props
 
-* `className`: You can add classes to either.
-* `href` (Optional): If set then the card becomes a link, with a Gridicon chevron on the right.
-* `tagName` (Optional): Allows you to control the tag name of the card wrapper (only if `href` is not specified).
-* `target` (Optional): If set and used with `href` then this controls where the link opens. It also changes the Gridicon to "external"
-* `compact` (Optional): Whether the card should be rendered as compact
-* `highlight` (Optional): The specific highlight of this card. Can be one of the following: `false` (no highlight, default), `info`, `success`, `error` or `warning`.
+Name | Type | Default | Description
+--- | --- | --- | ---
+`className` | `string` | null | Adds CSS classes.
+`href` | `string` | null | URL of the card. Adds a right chevron icon.
+`tagName` | `string` | null | Allows you to control the tag name of the card wrapper (only if `href` is not specified).
+`target` | `string` | null | If used with `href`, this specifies where the link opens. Changes the icon to `external`.
+`compact` | `bool` | false | Decreases the size of the card.
+`highlight` | `string` | `false` | Displays a colored highlight. Can be `false` (no highlight, default), `info`, `success`, `error`, or `warning`.
+
+### Additional usage information
+
+* **Compact**: Use to save vertical space when displaying many consecutive cards in a list. The `CompactCard` component slightly modifies the `Card` component.
+* **Highlight**: Use when you need to highlight information that is neither a `Notice` or `Banner`.
+
+### General guidelines
+
+* Avoid using cards within cards. This is an inefficient use of space.
+* Don't display more than one primary button or action in a single card.
+
+## Related components
+
+* To expand/collapse a card, use the [FoldableCard](./foldable-card) component.
+* To add a text heading to a card, use the [CardHeading](./card-heading) component.
+* To add a call to action, use the [ActionCard](./action-card) component.

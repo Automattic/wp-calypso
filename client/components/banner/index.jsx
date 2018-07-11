@@ -8,23 +8,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, noop, size } from 'lodash';
+import { noop, size } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import {
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'lib/plans/constants';
+import { isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -36,7 +26,7 @@ import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
-class Banner extends Component {
+export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
@@ -205,24 +195,9 @@ class Banner extends Component {
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },
-			{
-				'is-upgrade-personal': includes(
-					[ PLAN_PERSONAL, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ],
-					plan
-				),
-			},
-			{
-				'is-upgrade-premium': includes(
-					[ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ],
-					plan
-				),
-			},
-			{
-				'is-upgrade-business': includes(
-					[ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ],
-					plan
-				),
-			},
+			{ 'is-upgrade-personal': plan && isPersonalPlan( plan ) },
+			{ 'is-upgrade-premium': plan && isPremiumPlan( plan ) },
+			{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
 			{ 'is-dismissible': dismissPreferenceName }
 		);
 
@@ -257,4 +232,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 } );
 
-export default connect( mapStateToProps, { recordTracksEvent } )( Banner );
+export default connect(
+	mapStateToProps,
+	{ recordTracksEvent }
+)( Banner );

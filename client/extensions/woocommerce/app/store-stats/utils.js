@@ -1,12 +1,11 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { find, includes, forEach, findIndex, round } from 'lodash';
 import classnames from 'classnames';
-import { moment, translate } from 'i18n-calypso';
+import { moment, translate, numberFormat } from 'i18n-calypso';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ export function calculateDelta( item, previousItem, attr, unit ) {
 	if ( previousItem && previousItem[ attr ] !== 0 ) {
 		const current = item[ attr ];
 		const previous = previousItem[ attr ];
-		value = Math.round( ( current - previous ) / previous * 100 );
+		value = Math.round( ( ( current - previous ) / previous ) * 100 );
 	}
 	const isIncrease = value > 0;
 	const isIncreaseFavorable = includes( negativeIsBeneficialAttributes, attr )
@@ -147,14 +146,15 @@ export function getStartPeriod( date, unit ) {
  * @param {(string|number)} value - string or number to be formatted
  * @param {string} format - string of 'text', 'number' or 'currency'
  * @param {string} [code] - optional currency code
+ * @param {number} [decimals] - optional number of decimal places
  * @return {string|number} - formatted number or string value
  */
-export function formatValue( value, format, code ) {
+export function formatValue( value, format, code, decimals ) {
 	switch ( format ) {
 		case 'currency':
 			return formatCurrency( value, code );
 		case 'number':
-			return Math.round( value * 100 ) / 100;
+			return numberFormat( value, decimals );
 		case 'percent':
 			return translate( '%(percentage)s%% ', { args: { percentage: value }, context: 'percent' } );
 		case 'text':
@@ -224,7 +224,7 @@ export function getConversionRateData( visitorData, orderData, unit ) {
 		if ( visitorRow.visitors > 0 && orderData[ index ] ) {
 			return {
 				period: unitPeriod,
-				conversionRate: round( orders / visitorRow.visitors * 100, 2 ),
+				conversionRate: round( ( orders / visitorRow.visitors ) * 100, 2 ),
 			};
 		}
 		return { period: unitPeriod, conversionRate: 0 };
@@ -258,11 +258,11 @@ export function getQueries( unit, baseDate, overrides = {} ) {
 		...( overrides.referrerQuery || {} ),
 	};
 
-	const topEarnersQuery = {
+	const topListQuery = {
 		...baseQuery,
 		date: getUnitPeriod( baseDate, unit ),
 		limit: 10,
-		...( overrides.topEarnersQuery || {} ),
+		...( overrides.topListQuery || {} ),
 	};
 
 	const visitorQuery = {
@@ -275,7 +275,26 @@ export function getQueries( unit, baseDate, overrides = {} ) {
 	return {
 		orderQuery,
 		referrerQuery,
-		topEarnersQuery,
+		topListQuery,
 		visitorQuery,
 	};
+}
+
+/**
+ * Create the common Store Stats url ending used for links to widgets and lists. Url query parameters
+ * persist from view to view (ie, startDate) and should be reflected in the url.
+ * Url's have this basic shape:
+ *
+ * /store/stats/<page>/<unit>/<slug>?param1=1&param2=2
+ *
+ * this util is for constructing the /<unit>/<slug>?param1=1&param2=2
+ *
+ * @param {string} unit - day, week, month, or year
+ * @param {string} slug - site slug
+ * @param {Object} urlQuery - url query params represented as an object
+ * @return {string} - widget path url portion
+ */
+export function getWidgetPath( unit, slug, urlQuery ) {
+	const query = qs.stringify( urlQuery, { addQueryPrefix: true } );
+	return `/${ unit }/${ slug }${ query }`;
 }

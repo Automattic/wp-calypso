@@ -339,7 +339,7 @@ export default {
 		onSuccess: verifyLike, // update the Redux store if need be
 		onError: undoLike, // remove the like if we failed
 		onProgress: updateProgress, // update progress tracking UI
-		fromApi: makeParser( likeSchema, {}, toLike ), // validate and convert to internal Calypso object
+		fromApi: makeJsonSchemaParser( likeSchema, toLike ), // validate and convert to internal Calypso object
 	} ) ]
 }
 ```

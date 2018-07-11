@@ -20,7 +20,7 @@ import {
 	getTriedCustomizerDuringInitialSetup,
 	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
-import Checklist from 'components/checklist';
+import Checklist from 'blocks/checklist';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
@@ -40,25 +40,25 @@ class SetupTasks extends Component {
 	};
 
 	componentDidMount = () => {
-		const { site } = this.props;
+		const { site, productsLoaded } = this.props;
 
 		if ( site && site.ID ) {
 			this.props.fetchPaymentMethods( site.ID );
 
-			if ( ! areProductsLoaded ) {
+			if ( ! productsLoaded ) {
 				this.props.fetchProducts( site.ID, { page: 1 } );
 			}
 		}
 	};
 
 	componentWillReceiveProps = newProps => {
-		const { site } = this.props;
+		const { site, productsLoaded } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 
 		if ( newSiteId && oldSiteId !== newSiteId ) {
-			if ( ! areProductsLoaded ) {
+			if ( ! productsLoaded ) {
 				this.props.fetchProducts( newSiteId, { page: 1 } );
 			}
 		}
@@ -200,4 +200,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasks ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( SetupTasks ) );

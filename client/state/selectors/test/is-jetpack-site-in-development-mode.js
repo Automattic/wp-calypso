@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isJetpackSiteInDevelopmentMode } from 'state/selectors';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackSiteInDevelopmentMode()', () => {
@@ -34,6 +34,19 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 				},
 			},
 			siteId = 12345678;
+		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
+		expect( output ).to.be.false;
+	} );
+
+	test( 'should return false if the site is not in development mode with isActive: 0', () => {
+		const stateIn = {
+				jetpack: {
+					connection: {
+						items: ITEMS_FIXTURE,
+					},
+				},
+			},
+			siteId = 987654321;
 		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
 		expect( output ).to.be.false;
 	} );

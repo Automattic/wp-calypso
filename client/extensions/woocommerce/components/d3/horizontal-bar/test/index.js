@@ -34,7 +34,7 @@ describe( 'HorizontalBar', () => {
 		const dataMax = 100;
 		const extent = [ 0, dataMax ];
 		const bar = mount( <HorizontalBar width={ width } data={ data } extent={ extent } /> );
-		const correctWidth = data / dataMax * width;
+		const correctWidth = ( data / dataMax ) * width;
 		const rectAttribures = bar
 			.render()
 			.find( 'rect' )

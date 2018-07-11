@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingSharingButtons } from 'state/selectors';
+import isRequestingSharingButtons from 'state/selectors/is-requesting-sharing-buttons';
 
 describe( 'isRequestingSharingButtons()', () => {
 	test( 'should return false if the site is not attached', () => {

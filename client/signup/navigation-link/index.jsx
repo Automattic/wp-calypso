@@ -28,10 +28,13 @@ export class NavigationLink extends Component {
 		previousPath: PropTypes.string,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string.isRequired,
+		// Allows to force a back button in the first step for example.
+		allowBackFirstStep: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		labelText: '',
+		allowBackFirstStep: false,
 	};
 
 	/**
@@ -104,7 +107,8 @@ export class NavigationLink extends Component {
 		if (
 			this.props.positionInFlow === 0 &&
 			this.props.direction === 'back' &&
-			! this.props.stepSectionName
+			! this.props.stepSectionName &&
+			! this.props.allowBackFirstStep
 		) {
 			return null;
 		}

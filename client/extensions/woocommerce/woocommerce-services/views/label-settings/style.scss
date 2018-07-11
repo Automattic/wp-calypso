@@ -2,6 +2,10 @@
 	margin-bottom: 4px;
 	color: $gray-text-min;
 	padding-bottom: 8px;
+
+	button {
+		color: $blue-wordpress;
+	}
 }
 
 .card.label-settings__card {
@@ -99,8 +103,4 @@
 &.dialog.card.add-credit-card-modal .dialog__content {
 	max-width: 720px;
 	padding: 0;
-	
-	.header-cake {
-		margin-bottom: 0;
-	}
 }

@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React from 'react';
 
 /**
@@ -13,16 +11,11 @@ import React from 'react';
 import PublicizeOptions from './publicize-options';
 import SharingLikeOptions from './sharing-like-options';
 
-export default function EditorSharing( { post, site } ) {
+export default function EditorSharing() {
 	return (
 		<div className="editor-sharing">
-			<PublicizeOptions post={ post } site={ site } />
-			<SharingLikeOptions post={ post } site={ site } />
+			<PublicizeOptions />
+			<SharingLikeOptions />
 		</div>
 	);
 }
-
-EditorSharing.propTypes = {
-	site: PropTypes.object,
-	post: PropTypes.object,
-};

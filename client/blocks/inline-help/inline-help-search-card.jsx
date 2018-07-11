@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
 import {
 	getInlineHelpCurrentlySelectedLink,
+	getSelectedResultIndex,
 	isRequestingInlineHelpSearchResultsForQuery,
 } from 'state/inline-help/selectors';
 import {
@@ -42,8 +43,8 @@ class InlineHelpSearchCard extends Component {
 	};
 
 	onKeyDown = event => {
-		// ignore keyboard access when manipulating a text selection in input
-		if ( event.getModifierState() ) {
+		// ignore keyboard access when manipulating a text selection in input etc.
+		if ( event.getModifierState( 'Shift' ) ) {
 			return;
 		}
 		// take over control if and only if it's one of our keys
@@ -60,9 +61,11 @@ class InlineHelpSearchCard extends Component {
 			case 'ArrowDown':
 				this.props.selectNextResult();
 				break;
-			case 'Enter':
-				this.props.openResult( this.props.selectedLink );
+			case 'Enter': {
+				const hasSelection = this.props.selectedResultIndex >= 0;
+				hasSelection && this.props.openResult( event );
 				break;
+			}
 		}
 	};
 
@@ -90,6 +93,7 @@ class InlineHelpSearchCard extends Component {
 const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
 	selectedLink: getInlineHelpCurrentlySelectedLink( state ),
+	selectedResultIndex: getSelectedResultIndex( state ),
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,
@@ -98,4 +102,7 @@ const mapDispatchToProps = {
 	selectPreviousResult,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( InlineHelpSearchCard ) );

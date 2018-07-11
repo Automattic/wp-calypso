@@ -82,10 +82,19 @@ class DomainConnectAuthorize extends Component {
 		} );
 
 		wpcom.applyDnsTemplateSyncFlow( domain, providerId, serviceId, params ).then(
-			() => {
+			result => {
+				let action = actionType.CLOSE;
+				let noticeMessage = translate( 'Hurray! Your new service is now all set up.' );
+				if ( result.redirect_uri ) {
+					action = actionType.REDIRECTING;
+					noticeMessage = translate(
+						"Please wait while we redirect you back to the service provider's site to finalize this update."
+					);
+					window.location.assign( result.redirect_uri );
+				}
 				this.setState( {
-					action: actionType.CLOSE,
-					noticeMessage: translate( 'Hurray! Your new service is now all set up.' ),
+					action,
+					noticeMessage,
 					noticeType: noticeType.SUCCESS,
 				} );
 			},
@@ -143,6 +152,7 @@ class DomainConnectAuthorize extends Component {
 						dnsTemplateError={ this.state.dnsTemplateError }
 					/>
 					<DomainConnectAuthorizeRecords
+						domain={ domain }
 						dnsTemplateRecords={ this.state.dnsTemplateRecords }
 						dnsTemplateConflicts={ this.state.dnsTemplateConflicts }
 						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }

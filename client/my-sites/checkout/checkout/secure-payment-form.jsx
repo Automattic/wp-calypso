@@ -14,22 +14,24 @@ import { connect } from 'react-redux';
  */
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
+import EmergentPaywallBox from './emergent-paywall-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
-import SourcePaymentBox from './source-payment-box';
+import RedirectPaymentBox from './redirect-payment-box';
 import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
 import { setPayment } from 'lib/upgrades/actions';
-import { forPayments as countriesListForPayments } from 'lib/countries-list';
 import debugFactory from 'debug';
 import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
+import getCountries from 'state/selectors/get-countries';
+import QueryPaymentCountries from 'components/data/query-countries/payments';
 
 /**
  * Module variables
@@ -42,7 +44,9 @@ const SecurePaymentForm = createReactClass( {
 	mixins: [ TransactionStepsMixin ],
 
 	propTypes: {
+		countriesList: PropTypes.array.isRequired,
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
+		handleCheckoutExternalRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
 	},
@@ -166,7 +170,9 @@ const SecurePaymentForm = createReactClass( {
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
 				presaleChatAvailable={ this.props.presaleChatAvailable }
-			/>
+			>
+				{ this.props.children }
+			</CreditsPaymentBox>
 		);
 	},
 
@@ -192,6 +198,26 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
+	renderEmergentPaywallBox() {
+		return (
+			<PaymentBox
+				classSet="emergent-payments-box"
+				cart={ this.props.cart }
+				paymentMethods={ this.props.paymentMethods }
+				currentPaymentMethod="emergent-paywall"
+				onSelectPaymentMethod={ this.selectPaymentBox }
+			>
+				<EmergentPaywallBox
+					cart={ this.props.cart }
+					selectedSite={ this.props.selectedSite }
+					transaction={ this.props.transaction }
+				>
+					{ this.props.children }
+				</EmergentPaywallBox>
+			</PaymentBox>
+		);
+	},
+
 	renderCreditCardPaymentBox() {
 		return (
 			<PaymentBox
@@ -201,17 +227,20 @@ const SecurePaymentForm = createReactClass( {
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
+				<QueryPaymentCountries />
 				<CreditCardPaymentBox
 					cards={ this.props.cards }
 					transaction={ this.props.transaction }
 					cart={ this.props.cart }
-					countriesList={ countriesListForPayments }
+					countriesList={ this.props.countriesList }
 					initialCard={ this.getInitialCard() }
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					transactionStep={ this.props.transaction.step }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-				/>
+				>
+					{ this.props.children }
+				</CreditCardPaymentBox>
 			</PaymentBox>
 		);
 	},
@@ -225,35 +254,42 @@ const SecurePaymentForm = createReactClass( {
 				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
+				<QueryPaymentCountries />
 				<PayPalPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
-					countriesList={ countriesListForPayments }
+					countriesList={ this.props.countriesList }
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-				/>
+				>
+					{ this.props.children }
+				</PayPalPaymentBox>
 			</PaymentBox>
 		);
 	},
 
-	renderSourcePaymentBox( paymentType ) {
+	renderRedirectPaymentBox( paymentType ) {
 		return (
 			<PaymentBox
-				classSet="source-payment-box"
+				classSet="redirect-payment-box"
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ paymentType }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
-				<SourcePaymentBox
+				<QueryPaymentCountries />
+				<RedirectPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
+					countriesList={ this.props.countriesList }
 					selectedSite={ this.props.selectedSite }
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
-				/>
+				>
+					{ this.props.children }
+				</RedirectPaymentBox>
 			</PaymentBox>
 		);
 	},
@@ -310,20 +346,26 @@ const SecurePaymentForm = createReactClass( {
 						{ this.renderPayPalPaymentBox() }
 					</div>
 				);
-
+			case 'emergent-paywall':
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderEmergentPaywallBox() }
+					</div>
+				);
 			case 'alipay':
 			case 'bancontact':
 			case 'eps':
 			case 'giropay':
 			case 'ideal':
 			case 'p24':
+			case 'brazil-tef':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
-						{ this.renderSourcePaymentBox( visiblePaymentBox ) }
+						{ this.renderRedirectPaymentBox( visiblePaymentBox ) }
 					</div>
 				);
-
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
 				return null;
@@ -347,7 +389,7 @@ const SecurePaymentForm = createReactClass( {
 		if ( this.state.visiblePaymentBox === null ) {
 			return (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/illustration-500.svg"
+					illustration="/calypso/images/illustrations/error.svg"
 					title={ this.props.translate( 'Checkout is not available' ) }
 					line={ this.props.translate(
 						"We're hard at work on the issue. Please check back shortly."
@@ -367,8 +409,12 @@ const SecurePaymentForm = createReactClass( {
 	},
 } );
 
-export default connect( state => {
-	return {
-		presaleChatAvailable: isPresalesChatAvailable( state ),
-	};
-}, null )( localize( SecurePaymentForm ) );
+export default connect(
+	state => {
+		return {
+			countriesList: getCountries( state, 'payments' ),
+			presaleChatAvailable: isPresalesChatAvailable( state ),
+		};
+	},
+	null
+)( localize( SecurePaymentForm ) );

@@ -12,7 +12,7 @@ class StoredCard extends React.Component {
 	static displayName = 'StoredCard';
 
 	render() {
-		var card = this.props.card,
+		let card = this.props.card,
 			expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' ),
 			cardClasses = 'stored-card ' + card.card_type.toLowerCase();
 

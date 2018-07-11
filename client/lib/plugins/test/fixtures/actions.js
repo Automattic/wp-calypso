@@ -310,8 +310,8 @@ export default {
 		},
 	},
 
-	removeErrorNotice: {
+	removeErrorNotices: {
 		type: 'REMOVE_PLUGINS_NOTICES',
-		logs: [ { status: 'error', action: 'UPDATE_PLUGIN', site: site, plugin: plugins[ 2 ] } ],
+		logs: [ 'error' ],
 	},
 };

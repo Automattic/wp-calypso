@@ -1,8 +1,4 @@
 /** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -28,7 +24,7 @@ describe( 'ThemeQueryManager', () => {
 			const keys = [ ...originalKeys ];
 
 			ThemeQueryManager.sort( keys );
-			expect( keys ).to.deep.equal( originalKeys );
+			expect( keys ).toEqual( originalKeys );
 		} );
 	} );
 } );

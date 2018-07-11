@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, some } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -23,11 +24,13 @@ class EditorFeaturedImagePreview extends Component {
 		siteId: PropTypes.number,
 		image: PropTypes.object,
 		maxWidth: PropTypes.number,
+		showEditIcon: PropTypes.bool,
 	};
 
 	static initialState = {
 		height: null,
 		transientSrc: null,
+		showEditIcon: false,
 	};
 
 	state = this.constructor.initialState;
@@ -100,7 +103,13 @@ class EditorFeaturedImagePreview extends Component {
 
 		let placeholder;
 		if ( this.state.transientSrc ) {
-			placeholder = <img src={ this.state.transientSrc } />;
+			placeholder = (
+				<img
+					src={ this.state.transientSrc }
+					className="editor-featured-image__preview-image"
+					alt="placeholder"
+				/>
+			);
 		} else {
 			placeholder = <SpinnerLine />;
 		}
@@ -114,6 +123,9 @@ class EditorFeaturedImagePreview extends Component {
 					onLoad={ this.clearState }
 					className="editor-featured-image__preview-image"
 				/>
+				{ this.props.showEditIcon && (
+					<Gridicon icon="pencil" className="editor-featured-image__edit-icon" />
+				) }
 			</div>
 		);
 	}

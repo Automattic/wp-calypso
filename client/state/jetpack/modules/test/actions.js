@@ -30,7 +30,7 @@ describe( 'actions', () => {
 	const spy = sinon.spy();
 
 	beforeEach( () => {
-		spy.reset();
+		spy.resetHistory();
 	} );
 
 	describe( '#activateJetpackModule', () => {

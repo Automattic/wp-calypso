@@ -22,6 +22,7 @@ import { warningNotice } from 'state/notices/actions';
 class AccountDialog extends Component {
 	static propTypes = {
 		accounts: PropTypes.arrayOf( PropTypes.object ),
+		disclaimerText: PropTypes.string,
 		isVisible: PropTypes.bool,
 		onAccountSelected: PropTypes.func,
 		service: PropTypes.object,
@@ -114,6 +115,8 @@ class AccountDialog extends Component {
 
 	getAccountElements( accounts ) {
 		const selectedAccount = this.getSelectedAccount();
+		const defaultAccountIcon =
+			this.props.service.ID === 'google_my_business' ? 'institution' : null;
 
 		return accounts.map( account => (
 			<AccountDialogAccount
@@ -126,6 +129,7 @@ class AccountDialog extends Component {
 					this.areAccountsConflicting( account, selectedAccount )
 				}
 				onChange={ this.onSelectedAccountChanged.bind( null, account ) }
+				defaultIcon={ defaultAccountIcon }
 			/>
 		) );
 	}
@@ -160,6 +164,10 @@ class AccountDialog extends Component {
 	}
 
 	getDisclaimerText() {
+		if ( this.props.disclaimerText ) {
+			return this.props.disclaimerText;
+		}
+
 		if ( 1 === this.props.accounts.length ) {
 			// If a single account is available, show a simple confirmation
 			// prompt to ask the user to confirm their connection.
@@ -214,4 +222,7 @@ class AccountDialog extends Component {
 	}
 }
 
-export default connect( null, { warningNotice } )( localize( AccountDialog ) );
+export default connect(
+	null,
+	{ warningNotice }
+)( localize( AccountDialog ) );

@@ -19,6 +19,7 @@ import AutoDirection from 'components/auto-direction';
 import Notice from 'components/notice';
 import { editComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent } from 'reader/stats';
+import PostCommentFormTextarea from './form-textarea';
 
 class PostCommentForm extends Component {
 	constructor( props ) {
@@ -35,31 +36,6 @@ class PostCommentForm extends Component {
 			commentText: nextProps.commentText || '',
 		} );
 	}
-
-	componentDidMount() {
-		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
-		if ( this.props.parentCommentId && this._textareaNode ) {
-			this._textareaNode.focus();
-		}
-	}
-
-	componentDidUpdate() {
-		const commentTextNode = this.refs.commentText;
-
-		if ( ! commentTextNode ) {
-			return;
-		}
-
-		const commentText = this.getCommentText();
-		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
-		commentTextNode.style.height = commentText.length
-			? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px'
-			: null;
-	}
-
-	handleTextAreaNode = textareaNode => {
-		this._textareaNode = textareaNode;
-	};
 
 	handleSubmit = event => {
 		event.preventDefault();
@@ -165,39 +141,38 @@ class PostCommentForm extends Component {
 			'expanding-area': true,
 		} );
 
+		const isReply = !! this.props.parentCommentId;
+
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__edit-form">
 				<fieldset>
-					<label>
-						<div className={ expandingAreaClasses }>
-							<pre>
-								<span>{ this.state.commentText }</span>
-								<br />
-							</pre>
-							<AutoDirection>
-								<textarea
-									value={ this.state.commentText }
-									ref={ this.handleTextAreaNode }
-									onKeyUp={ this.handleKeyUp }
-									onKeyDown={ this.handleKeyDown }
-									onFocus={ this.handleFocus }
-									onBlur={ this.handleBlur }
-									onChange={ this.handleTextChange }
-								/>
-							</AutoDirection>
-						</div>
-						<button
-							ref="commentButton"
-							className={ buttonClasses }
-							disabled={ this.state.commentText.length === 0 }
-							onClick={ this.handleSubmit }
-						>
-							{ translate( 'Send' ) }
-						</button>
-						{ this.renderError() }
-					</label>
+					<div className={ expandingAreaClasses }>
+						<pre>
+							<span>{ this.state.commentText }</span>
+							<br />
+						</pre>
+						<AutoDirection>
+							<PostCommentFormTextarea
+								value={ this.state.commentText }
+								onKeyUp={ this.handleKeyUp }
+								onKeyDown={ this.handleKeyDown }
+								onFocus={ this.handleFocus }
+								onBlur={ this.handleBlur }
+								onChange={ this.handleTextChange }
+								enableAutoFocus={ isReply }
+							/>
+						</AutoDirection>
+					</div>
+					<button
+						className={ buttonClasses }
+						disabled={ this.state.commentText.length === 0 }
+						onClick={ this.handleSubmit }
+					>
+						{ translate( 'Send' ) }
+					</button>
+					{ this.renderError() }
 				</fieldset>
 			</form>
 		);
@@ -220,4 +195,7 @@ PostCommentForm.defaultProps = {
 
 const mapDispatchToProps = dispatch => bindActionCreators( { editComment }, dispatch );
 
-export default connect( null, mapDispatchToProps )( PostCommentForm );
+export default connect(
+	null,
+	mapDispatchToProps
+)( PostCommentForm );

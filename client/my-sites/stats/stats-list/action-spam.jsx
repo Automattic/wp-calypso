@@ -25,7 +25,7 @@ class StatsActionSpam extends React.Component {
 	};
 
 	clickHandler = event => {
-		var spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
+		let spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew',
 			gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam',
 			wpcomSite;
 		event.stopPropagation();
@@ -45,24 +45,24 @@ class StatsActionSpam extends React.Component {
 	};
 
 	render() {
-		var label = this.state.spammed
+		let label = this.state.spammed
 				? this.props.translate( 'Not Spam' )
 				: this.props.translate( 'Spam', {
 						context: 'Stats: Action to mark an item as spam',
 						comment: 'Default label (changes into "Not Spam").',
-					} ),
+				  } ),
 			title = this.state.spammed
 				? this.props.translate( 'Not Spam', {
 						textOnly: true,
 						context: 'Stats: Action to undo marking an item as spam',
 						comment:
 							'Secondary label (default label is "Spam"). Recommended to use a very short label.',
-					} )
+				  } )
 				: this.props.translate( 'Spam', {
 						textOnly: true,
 						context: 'Stats: Action to mark an item as spam',
 						comment: 'Default label (changes into "Not Spam").',
-					} ),
+				  } ),
 			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
 				spam: ! this.state.spammed,
 				unspam: this.state.spammed,

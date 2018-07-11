@@ -12,18 +12,20 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import ThankYouCard from 'components/thank-you-card';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class RebrandCitiesThankYou extends Component {
 	renderLogo() {
-		return <img src="/calypso/images/rebrand-cities/wp-rebrand-cities-logo.svg" />;
+		return <img alt="" src="/calypso/images/rebrand-cities/wp-rebrand-cities-logo.svg" />;
 	}
 
 	render() {
-		const { receipt, translate } = this.props;
+		const { analyticsProperties, receipt, translate } = this.props;
 		const displayPrice = get( receipt, 'data.displayPrice' );
 
 		return (
 			<div className="plan-thank-you-card checkout-thank-you__rebrand-cities">
+				<PageViewTracker { ...analyticsProperties } title="Checkout Thank You" />
 				<ThankYouCard
 					name={ translate( 'Rebrand Cities package' ) }
 					price={ displayPrice }

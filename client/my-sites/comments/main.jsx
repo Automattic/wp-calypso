@@ -20,7 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
 import CommentTree from './comment-tree';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { preventWidows } from 'lib/formatting';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { updatePlugin } from 'state/plugins/installed/actions';
@@ -31,6 +31,7 @@ import { NEWEST_FIRST } from './constants';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
+		analyticsPath: PropTypes.string,
 		comments: PropTypes.array,
 		page: PropTypes.number,
 		postId: PropTypes.number,
@@ -61,6 +62,7 @@ export class CommentsManagement extends Component {
 
 	render() {
 		const {
+			analyticsPath,
 			changePage,
 			page,
 			postId,
@@ -78,7 +80,7 @@ export class CommentsManagement extends Component {
 		return (
 			<Main className="comments" wideLayout>
 				{ showJetpackUpdateScreen && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
-				<PageViewTracker path="/comments/:status/:site" title="Comments" />
+				<PageViewTracker path={ analyticsPath } title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
 				{ showJetpackUpdateScreen && (
 					<EmptyContent
@@ -101,7 +103,7 @@ export class CommentsManagement extends Component {
 							line={ preventWidows(
 								translate( "If you think you should, contact this site's administrator." )
 							) }
-							illustration="/calypso/images/illustrations/illustration-500.svg"
+							illustration="/calypso/images/illustrations/error.svg"
 						/>
 					) }
 				{ showCommentList && (
@@ -167,4 +169,7 @@ const mapDispatchToProps = {
 	infoNotice,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentsManagement ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CommentsManagement ) );

@@ -18,7 +18,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
-import { getConciergeAppointmentDetails, getConciergeSignupForm } from 'state/selectors';
+import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
+import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import {
 	rescheduleConciergeAppointment,

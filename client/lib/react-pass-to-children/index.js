@@ -8,7 +8,7 @@ import { assign } from 'lodash';
 import React from 'react';
 
 export default function( element, additionalProps ) {
-	var props = assign( {}, element.props, additionalProps ),
+	let props = assign( {}, element.props, additionalProps ),
 		childElements;
 
 	delete props.children;

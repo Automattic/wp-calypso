@@ -133,7 +133,7 @@ describe( 'selectors', () => {
 			const allProducts = getAllProductsWithVariations( loadedState, 123 );
 			expect( allProducts ).to.be.an( 'array' );
 			expect( allProducts ).to.include( products[ 1 ] );
-			expect( allProducts ).to.include( { ...productVariations[ 15 ][ 0 ], productId: 15 } );
+			expect( allProducts ).to.deep.include( { ...productVariations[ 15 ][ 0 ], productId: 15 } );
 			expect( allProducts.length ).to.eql( 4 );
 		} );
 	} );

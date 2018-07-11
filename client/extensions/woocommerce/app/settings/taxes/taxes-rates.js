@@ -25,12 +25,12 @@ import {
 	getAllCountries,
 	getCountryName,
 	getStates,
-} from 'woocommerce/state/sites/locations/selectors';
+} from 'woocommerce/state/sites/data/locations/selectors';
 import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
 import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
-import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
+import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import FormToggle from 'components/forms/form-toggle';
 import Notice from 'components/notice';
@@ -298,4 +298,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( TaxesRates ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( TaxesRates ) );

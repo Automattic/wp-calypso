@@ -51,7 +51,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	handleKeyPress = event => {
-		if ( 13 === event.keyCode ) {
+		if ( 13 === event.keyCode && ! this.isFormSubmitDisabled() ) {
 			this.props.onSubmit();
 		}
 	};
@@ -60,11 +60,11 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		const { translate } = this.props;
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
-				return translate( 'Connect Now' );
+				return translate( 'Continue' );
 			}
 			return translate( 'Start Installation' );
 		}
-		return translate( 'Connecting…' );
+		return translate( 'Setting up…' );
 	}
 
 	getTermsOfJetpackSyncUrl() {
@@ -75,11 +75,18 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		return 'https://' + getLocaleSlug() + '.wordpress.com/tos/';
 	}
 
+	isFormSubmitDisabled() {
+		const { isError, isFetching, url } = this.props;
+		const hasError = isError && 'notExists' !== isError;
+
+		return ! url || isFetching || hasError;
+	}
+
 	renderTermsOfServiceLink() {
 		return (
 			<p className="jetpack-connect__tos-link">
 				{ this.props.translate(
-					'By connecting you agree to our fascinating {{tosLinkText}}Terms of Service{{/tosLinkText}} ' +
+					'By setting up Jetpack you agree to our fascinating {{tosLinkText}}Terms of Service{{/tosLinkText}} ' +
 						'and to sync {{syncLinkText}}certain data and settings{{/syncLinkText}} to WordPress.com',
 					{
 						components: {
@@ -109,8 +116,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	render() {
-		const { isError, isFetching, onChange, onSubmit, translate, url, autoFocus } = this.props;
-		const hasError = isError && 'notExists' !== isError;
+		const { isFetching, onChange, onSubmit, translate, url, autoFocus } = this.props;
 
 		return (
 			<div>
@@ -135,7 +141,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 					<Button
 						className="jetpack-connect__connect-button"
 						primary
-						disabled={ ! url || isFetching || hasError }
+						disabled={ this.isFormSubmitDisabled() }
 						onClick={ onSubmit }
 					>
 						{ this.renderButtonLabel() }

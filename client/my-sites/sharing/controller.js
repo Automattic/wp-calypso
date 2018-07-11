@@ -12,13 +12,11 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import notices from 'notices';
-import { pageView } from 'lib/analytics';
-import { sectionify } from 'lib/route';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	isJetpackSite,
 	isJetpackModuleActive,
@@ -26,8 +24,6 @@ import {
 	getSiteOption,
 } from 'state/sites/selectors';
 import versionCompare from 'lib/version-compare';
-
-const analyticsPageTitle = 'Sharing';
 
 export const layout = ( context, next ) => {
 	const { contentComponent, path } = context;
@@ -37,13 +33,9 @@ export const layout = ( context, next ) => {
 };
 
 export const connections = ( context, next ) => {
-	const { store, path } = context;
+	const { store } = context;
 	const state = store.getState();
-
 	const siteId = getSelectedSiteId( state );
-
-	const basePath = sectionify( path );
-	const baseAnalyticsPath = siteId ? basePath + '/:site' : basePath;
 
 	if ( siteId && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
 		notices.error(
@@ -66,8 +58,6 @@ export const connections = ( context, next ) => {
 				: '/stats'
 		);
 	} else {
-		pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Connections' );
-
 		context.contentComponent = createElement( SharingConnections );
 	}
 
@@ -75,15 +65,9 @@ export const connections = ( context, next ) => {
 };
 
 export const buttons = ( context, next ) => {
-	const { store, path } = context;
+	const { store } = context;
 	const state = store.getState();
-
 	const siteId = getSelectedSiteId( state );
-
-	const basePath = sectionify( path );
-	const baseAnalyticsPath = siteId ? basePath + '/:site' : basePath;
-
-	pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > Sharing Buttons' );
 
 	if ( siteId && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 		notices.error(

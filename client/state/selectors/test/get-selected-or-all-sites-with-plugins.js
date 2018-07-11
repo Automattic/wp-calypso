@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
+import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 import { userState } from './fixtures/user-state';
 
 describe( 'getSelectedOrAllSitesWithPlugins()', () => {

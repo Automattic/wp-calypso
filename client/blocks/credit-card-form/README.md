@@ -27,3 +27,4 @@ render() {
 * `recordFormSubmitEvent`: Function to be executed when the user clicks the _Save Card_ button.
 * `saveStoredCard`: Optional function returning _Promise_ to be executed when a credit card token is created after the user clicked the _Save Card_ button. By default `wpcom.updateCreditCard` Redux action is executed because of legacy reasons.
 * `successCallback`: Function to be executed when a credit card is successfully stored.
+* `autoFocus`: Whether the first field (cardholder name) should steal the focus when this component is rendered.  Default `true`.

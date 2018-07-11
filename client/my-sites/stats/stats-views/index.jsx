@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSiteStatsViewSummary } from 'state/selectors';
+import getSiteStatsViewSummary from 'state/selectors/get-site-stats-view-summary';
 import Card from 'components/card';
 import Months from './months';
 import SegmentedControl from 'components/segmented-control';

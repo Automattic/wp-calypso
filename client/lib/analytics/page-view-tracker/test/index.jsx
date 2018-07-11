@@ -27,7 +27,9 @@ describe( 'PageViewTracker', () => {
 	test( 'should immediately fire off event when given no delay', () => {
 		const recorder = spy();
 
-		mount( <PageViewTracker path="/test" title="test" recorder={ recorder } /> );
+		mount(
+			<PageViewTracker path="/test" title="test" recorder={ recorder } hasSelectedSiteLoaded />
+		);
 
 		expect( recorder ).to.have.been.calledOnce;
 	} );
@@ -35,7 +37,15 @@ describe( 'PageViewTracker', () => {
 	test( 'should wait for the delay before firing off the event', () => {
 		const recorder = spy();
 
-		mount( <PageViewTracker delay={ 500 } path="/test" title="test" recorder={ recorder } /> );
+		mount(
+			<PageViewTracker
+				delay={ 500 }
+				path="/test"
+				title="test"
+				recorder={ recorder }
+				hasSelectedSiteLoaded
+			/>
+		);
 
 		expect( recorder ).to.not.have.been.called;
 
@@ -47,7 +57,9 @@ describe( 'PageViewTracker', () => {
 	test( 'should pass the appropriate event information', () => {
 		const recorder = spy();
 
-		mount( <PageViewTracker path="/test" title="test" recorder={ recorder } /> );
+		mount(
+			<PageViewTracker path="/test" title="test" recorder={ recorder } hasSelectedSiteLoaded />
+		);
 
 		expect( recorder ).to.have.been.calledWith( '/test', 'test' );
 	} );

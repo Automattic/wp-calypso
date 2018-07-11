@@ -115,7 +115,7 @@ class StatsPostPerformance extends Component {
 										},
 										components: {
 											href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
-											postTitle: <Emojify>{ postTitle }</Emojify>,
+											postTitle: <Emojify tagName="span">{ postTitle }</Emojify>,
 										},
 										context:
 											'Stats: Sentence showing how much time has passed since the last post, and how the stats are',
@@ -164,4 +164,7 @@ const connectComponent = connect(
 	{ recordTracksEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsPostPerformance );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsPostPerformance );

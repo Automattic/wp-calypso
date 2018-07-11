@@ -66,6 +66,9 @@ export const sanitizeSettings = settings => {
 			case 'jetpack_testimonial_posts_per_page':
 			case 'jetpack_portfolio_posts_per_page':
 			case 'post_by_email_address':
+				if ( settings[ key ] === 'regenerate' ) {
+					memo[ key ] = settings[ key ];
+				}
 				break;
 			case 'infinite_scroll':
 				if ( settings[ key ] === 'default' ) {

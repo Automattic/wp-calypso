@@ -15,10 +15,11 @@ import { connect } from 'react-redux';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planHasFeature } from 'lib/plans';
+import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 import PlanStorageBar from './bar';
 
-class PlanStorage extends Component {
+export class PlanStorage extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
@@ -34,7 +35,7 @@ class PlanStorage extends Component {
 			return null;
 		}
 
-		if ( sitePlanSlug === PLAN_BUSINESS ) {
+		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
 			return null;
 		}
 

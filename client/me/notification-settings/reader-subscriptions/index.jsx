@@ -31,6 +31,7 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
 import Main from 'components/main';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const NotificationSubscriptions = createReactClass( {
 	displayName: 'NotificationSubscriptions',
@@ -75,6 +76,10 @@ const NotificationSubscriptions = createReactClass( {
 	render() {
 		return (
 			<Main className="notifications-settings">
+				<PageViewTracker
+					path="/me/notifications/subscriptions"
+					title="Me > Notifications > Subscriptions Delivery"
+				/>
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
@@ -246,6 +251,13 @@ const NotificationSubscriptions = createReactClass( {
 	},
 } );
 
-const connectComponent = connect( null, { recordGoogleEvent } );
+const connectComponent = connect(
+	null,
+	{ recordGoogleEvent }
+);
 
-export default flowRight( connectComponent, localize, protectForm )( NotificationSubscriptions );
+export default flowRight(
+	connectComponent,
+	localize,
+	protectForm
+)( NotificationSubscriptions );

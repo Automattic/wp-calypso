@@ -1,12 +1,12 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import page from 'page';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -15,9 +15,18 @@ import HeaderCake from 'components/header-cake';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import Intervals from 'blocks/stats-navigation/intervals';
 import DatePicker from 'my-sites/stats/stats-date-picker';
+import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
 
-const goBack = () => {
-	window && window.history.back();
+const goBack = ( unit, slug, queryParams ) => {
+	const { startDate } = queryParams;
+	const query = startDate ? { startDate } : {};
+	const widgetPath = getWidgetPath( unit, slug, query );
+	const url = `/store/stats/orders${ widgetPath }`;
+	return () => {
+		setTimeout( () => {
+			page( url );
+		} );
+	};
 };
 
 const StoreStatsPeriodNav = ( {
@@ -29,14 +38,19 @@ const StoreStatsPeriodNav = ( {
 	query,
 	title,
 	statType,
+	queryParams,
 } ) => {
+	// eslint-disable-next-line no-unused-vars
+	const { startDate, ...intervalQuery } = queryParams;
+	const intervalQueryString = qs.stringify( intervalQuery, { addQueryPrefix: true } );
 	return (
 		<Fragment>
-			<HeaderCake onClick={ goBack }>{ title }</HeaderCake>
+			<HeaderCake onClick={ goBack( unit, slug, queryParams ) }>{ title }</HeaderCake>
 			<StatsPeriodNavigation
 				date={ selectedDate }
 				period={ unit }
 				url={ `/store/stats/${ type }/${ unit }/${ slug }` }
+				queryParams={ queryParams }
 			>
 				<DatePicker
 					period={ unit }
@@ -54,7 +68,7 @@ const StoreStatsPeriodNav = ( {
 			</StatsPeriodNavigation>
 			<Intervals
 				selected={ unit }
-				pathTemplate={ `/store/stats/${ type }/{{ interval }}/${ slug }` }
+				pathTemplate={ `/store/stats/${ type }/{{ interval }}/${ slug }${ intervalQueryString }` }
 				standalone
 			/>
 		</Fragment>
@@ -69,6 +83,7 @@ StoreStatsPeriodNav.propTypes = {
 	query: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	statType: PropTypes.string.isRequired,
+	queryParams: PropTypes.object,
 };
 
 export default localize( StoreStatsPeriodNav );

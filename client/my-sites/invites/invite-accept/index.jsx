@@ -10,7 +10,6 @@ import Debug from 'debug';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal Dependencies
@@ -19,7 +18,6 @@ import InviteHeader from 'my-sites/invites/invite-header';
 import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
 import { login } from 'lib/paths';
-import _user from 'lib/user';
 import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-accept-validation';
 import EmptyContent from 'components/empty-content';
@@ -30,18 +28,17 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import userUtils from 'lib/user/utils';
 import LocaleSuggestions from 'components/locale-suggestions';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Module variables
  */
 const debug = new Debug( 'calypso:invite-accept' );
-const userModule = _user();
 
 class InviteAccept extends React.Component {
 	state = {
 		invite: false,
 		error: false,
-		user: userModule.get(),
 		matchEmailError: false,
 	};
 
@@ -51,18 +48,12 @@ class InviteAccept extends React.Component {
 			fetchInvite( this.props.siteId, this.props.inviteKey );
 		}
 
-		userModule.on( 'change', this.refreshUser );
 		InvitesStore.on( 'change', this.refreshInvite );
 	}
 
 	componentWillUnmount() {
 		InvitesStore.off( 'change', this.refreshInvite );
-		userModule.off( 'change', this.refreshUser );
 	}
-
-	refreshUser = () => {
-		this.setState( { user: userModule.get() } );
-	};
 
 	refreshInvite = () => {
 		const invite = InvitesStore.getInvite( this.props.siteId, this.props.inviteKey );
@@ -79,8 +70,8 @@ class InviteAccept extends React.Component {
 	};
 
 	isMatchEmailError = () => {
-		const { invite, user } = this.state;
-		return invite && invite.forceMatchingEmail && user.email !== invite.sentTo;
+		const { invite } = this.state;
+		return invite && invite.forceMatchingEmail && this.props.user.email !== invite.sentTo;
 	};
 
 	isInvalidInvite = () => {
@@ -103,7 +94,7 @@ class InviteAccept extends React.Component {
 		let loginUrl = login( { redirectTo: window.location.href } );
 
 		if ( invite && invite.sentTo ) {
-			let presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
+			const presetEmail = '&email_address=' + encodeURIComponent( invite.sentTo );
 			loginUrl += presetEmail;
 		}
 
@@ -115,7 +106,7 @@ class InviteAccept extends React.Component {
 	};
 
 	localeSuggestions = () => {
-		if ( this.state.user || ! this.props.locale ) {
+		if ( this.props.user || ! this.props.locale ) {
 			return;
 		}
 
@@ -123,14 +114,14 @@ class InviteAccept extends React.Component {
 	};
 
 	renderForm = () => {
-		const { invite, user } = this.state;
+		const { invite } = this.state;
 		if ( ! invite ) {
 			debug( 'Not rendering form - Invite not set' );
 			return null;
 		}
 		debug( 'Rendering invite' );
 
-		let props = {
+		const props = {
 			invite: this.state.invite,
 			redirectTo: getRedirectAfterAccept( this.state.invite ),
 			decline: this.decline,
@@ -138,14 +129,18 @@ class InviteAccept extends React.Component {
 			forceMatchingEmail: this.isMatchEmailError(),
 		};
 
-		return user ? <LoggedIn { ...props } user={ this.state.user } /> : <LoggedOut { ...props } />;
+		return this.props.user ? (
+			<LoggedIn { ...props } user={ this.props.user } />
+		) : (
+			<LoggedOut { ...props } />
+		);
 	};
 
 	renderError = () => {
 		const { error } = this.state;
-		debug( 'Rendering error: ' + JSON.stringify( error ) );
+		debug( 'Rendering error: %o', error );
 
-		let props = {
+		const props = {
 			title: this.props.translate( 'Oops, that invite is not valid', {
 				context: 'Title that is display to users when attempting to accept an invalid invite.',
 			} ),
@@ -187,7 +182,8 @@ class InviteAccept extends React.Component {
 	};
 
 	renderNoticeAction = () => {
-		const { user, invite } = this.state;
+		const { invite } = this.state;
+		const { user } = this.props;
 
 		if ( ! user && ! invite.knownUser ) {
 			return;
@@ -211,9 +207,10 @@ class InviteAccept extends React.Component {
 
 	render() {
 		const formClasses = classNames( 'invite-accept__form', {
-				'is-error': !! this.isInvalidInvite(),
-			} ),
-			{ invite, user } = this.state;
+			'is-error': !! this.isInvalidInvite(),
+		} );
+		const { invite } = this.state;
+		const { user } = this.props;
 
 		return (
 			<div className="invite-accept">
@@ -239,6 +236,9 @@ class InviteAccept extends React.Component {
 	}
 }
 
-export default connect( null, dispatch =>
-	bindActionCreators( { successNotice, infoNotice }, dispatch )
+export default connect(
+	state => ( {
+		user: getCurrentUser( state ),
+	} ),
+	{ successNotice, infoNotice }
 )( localize( InviteAccept ) );

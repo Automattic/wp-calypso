@@ -42,23 +42,6 @@ describe( 'JetpackConnectMain', () => {
 		page.redirect.mockReset();
 	} );
 
-	describe( 'cleanUrl', () => {
-		test( 'should prepare entered urls for network access', () => {
-			const cleanUrl = new JetpackConnectMain( REQUIRED_PROPS ).cleanUrl;
-			const results = [
-				{ input: '', expected: '' },
-				{ input: 'a', expected: 'http://a' },
-				{ input: 'example.com', expected: 'http://example.com' },
-				{ input: '  example.com   ', expected: 'http://example.com' },
-				{ input: 'http://example.com/', expected: 'http://example.com' },
-				{ input: 'eXAmple.com', expected: 'http://example.com' },
-				{ input: 'example.com/wp-admin', expected: 'http://example.com' },
-			];
-
-			results.forEach( ( { input, expected } ) => expect( cleanUrl( input ) ).toBe( expected ) );
-		} );
-	} );
-
 	describe( 'makeSafeRedirectionFunction', () => {
 		test( 'should make a function that can calls the wrapper function', () => {
 			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );

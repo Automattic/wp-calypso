@@ -20,23 +20,14 @@ export function removeNotice( noticeId ) {
 	};
 }
 
-export function createNotice( status, text, options = {} ) {
-	const notice = {
-		noticeId: options.id || uniqueId(),
-		duration: options.duration,
-		showDismiss: typeof options.showDismiss === 'boolean' ? options.showDismiss : true,
-		isPersistent: options.isPersistent || false,
-		displayOnNextPage: options.displayOnNextPage || false,
-		status: status,
-		text: text,
-		button: options.button,
-		href: options.href,
-		onClick: options.onClick,
-	};
-
+export function createNotice( status, text, { id, ...noticeOptions } = {} ) {
 	return {
 		type: NOTICE_CREATE,
-		notice: notice,
+		notice: Object.assign( { showDismiss: true }, noticeOptions, {
+			noticeId: id || uniqueId(),
+			status,
+			text,
+		} ),
 	};
 }
 

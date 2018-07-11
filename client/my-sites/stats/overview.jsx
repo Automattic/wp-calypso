@@ -13,16 +13,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteOverview from './stats-site-overview';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
 import DatePicker from './stats-date-picker';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsNavigation from 'blocks/stats-navigation';
+import titlecase from 'to-title-case';
 import Main from 'components/main';
 import StatsFirstView from './stats-first-view';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getVisibleSites } from 'state/selectors';
+import getVisibleSites from 'state/selectors/get-visible-sites';
 
 class StatsOverview extends Component {
 	static propTypes = {
@@ -33,7 +36,7 @@ class StatsOverview extends Component {
 	};
 
 	render() {
-		const { moment, path, period, sites } = this.props;
+		const { moment, path, period, sites, translate } = this.props;
 		const statsPath = path === '/stats' ? '/stats/day' : path;
 		const sitesSorted = sites.map( site => {
 			let momentSiteZone = moment();
@@ -96,6 +99,11 @@ class StatsOverview extends Component {
 
 		return (
 			<Main wideLayout>
+				<DocumentHead title={ translate( 'Stats' ) } />
+				<PageViewTracker
+					path={ `/stats/${ period }` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'traffic' } interval={ period } />

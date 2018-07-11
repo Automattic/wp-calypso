@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import SectionHeader from 'components/section-header';
-import { isValidThemeFilterTerm } from 'state/selectors';
+import isValidThemeFilterTerm from 'state/selectors/is-valid-theme-filter-term';
 
 const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) => {
 	if ( isEmpty( features ) ) {

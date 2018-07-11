@@ -7,11 +7,6 @@
 	margin-bottom: 24px;
 	padding: 12px 16px;
 
-	// This seems totally broken on mobile, and just, like an abandoned idea for a UI.
-	@include breakpoint( "<660px" ) {
-		display: none;
-	}
-
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 8px;
 	}
@@ -73,12 +68,6 @@
 	}
 }
 
-.editor-sidebar .editor-action-bar {
-	@include breakpoint( ">660px" ) {
-		display: none;
-	}
-}
-
 .editor-action-bar .button {
 	color: $gray-darken-10;
 	background: transparent;
@@ -98,6 +87,11 @@
 	.gridicon {
 		top: 4px;
 	}
+}
+
+.editor-action-bar__podcasting-indicator .gridicon {
+	position: relative;
+	top: 2px;
 }
 
 .editor-action-bar__view-post-tooltip .popover__inner {

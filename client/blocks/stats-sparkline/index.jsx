@@ -25,7 +25,7 @@ const StatsSparkline = ( { isJetpack, siteUrl, className, siteId, highestViews, 
 	const title = highestViews
 		? translate( 'Highest hourly views %(highestViews)s', {
 				args: { highestViews },
-			} )
+		  } )
 		: null;
 
 	return (

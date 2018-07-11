@@ -23,7 +23,7 @@ import {
 } from 'state/analytics/actions';
 import { changeCommentStatus, replyComment } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
@@ -228,4 +228,7 @@ const mapDispatchToProps = ( dispatch, { commentId, commentsListQuery } ) => ( {
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentReply ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CommentReply ) );

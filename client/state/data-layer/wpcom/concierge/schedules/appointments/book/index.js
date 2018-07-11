@@ -18,6 +18,7 @@ import {
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKING_ERROR,
 	CONCIERGE_ERROR_NO_AVAILABLE_STAFF,
+	CONCIERGE_ERROR_ALREADY_HAS_APPOINTMENT,
 } from 'me/concierge/constants';
 import fromApi from './from-api';
 import toApi from './to-api';
@@ -38,6 +39,19 @@ export const bookConciergeAppointment = action => {
 	];
 };
 
+export const errorMessage = code => {
+	switch ( code ) {
+		case CONCIERGE_ERROR_NO_AVAILABLE_STAFF:
+			return translate( 'This session is no longer available. Please select a different time.' );
+		case CONCIERGE_ERROR_ALREADY_HAS_APPOINTMENT:
+			return translate(
+				'You already have an upcoming appointment. A second can not be scheduled yet.'
+			);
+		default:
+			return translate( 'We could not book your appointment. Please try again later.' );
+	}
+};
+
 export const onSuccess = ( { type } ) => {
 	const trackEvent =
 		CONCIERGE_APPOINTMENT_RESCHEDULE === type
@@ -56,17 +70,12 @@ export const onError = ( { type }, error ) => {
 			? 'calypso_concierge_appointment_rescheduling_error'
 			: 'calypso_concierge_appointment_booking_error';
 
-	const errorMessage =
-		CONCIERGE_ERROR_NO_AVAILABLE_STAFF === error.code
-			? translate( 'This session is no longer available. Please select a different time.' )
-			: translate( 'We could not book your appointment. Please try again later.' );
-
 	return [
 		withAnalytics(
 			recordTracksEvent( trackEvent ),
 			updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR )
 		),
-		errorNotice( errorMessage ),
+		errorNotice( errorMessage( error.code ) ),
 	];
 };
 

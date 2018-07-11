@@ -3,9 +3,11 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { union } from 'lodash';
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:track-form' );
 
 export const trackForm = WrappedComponent =>
 	class TrackFormComponent extends Component {
@@ -22,11 +24,13 @@ export const trackForm = WrappedComponent =>
 					...fields,
 				},
 			};
+			debug( 'updateFields', { fields, newState } );
 
 			this.setState( newState, callback );
 		};
 
 		replaceFields = ( fields, callback, keepPrevFields = true ) => {
+			debug( 'replaceFields', { fields, keepPrevFields } );
 			const prevFields = keepPrevFields ? this.state.fields : {};
 			const newFields = {
 				...prevFields,
@@ -37,6 +41,7 @@ export const trackForm = WrappedComponent =>
 		};
 
 		clearDirtyFields = () => {
+			debug( 'clearDirtyFields' );
 			this.setState( {
 				dirtyFields: [],
 			} );

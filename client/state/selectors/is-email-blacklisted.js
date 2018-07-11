@@ -7,7 +7,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteSetting } from 'state/selectors';
+import getSiteSetting from 'state/selectors/get-site-setting';
 
 /**
  * Check if a site blacklist contains an email address.

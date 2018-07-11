@@ -66,14 +66,7 @@ const Head = ( { title = 'WordPress.com', faviconURL, children, cdn } ) => {
 
 			<link
 				rel="stylesheet"
-				/* eslint-disable max-len */
 				href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
-				/* eslint-disable max-len */
-			/>
-			<link
-				rel="stylesheet"
-				id="noticons-css"
-				href={ cdn + '/i/noticons/noticons.css?v=20150727' }
 			/>
 
 			{ children }

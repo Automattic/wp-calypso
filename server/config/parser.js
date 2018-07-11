@@ -12,7 +12,7 @@ const fs = require( 'fs' ),
 	debug = require( 'debug' )( 'config' );
 
 function getDataFromFile( file ) {
-	var fileData = {};
+	let fileData = {};
 
 	if ( fs.existsSync( file ) ) {
 		debug( 'getting data from config file: %o', file );
@@ -25,7 +25,7 @@ function getDataFromFile( file ) {
 }
 
 module.exports = function( configPath, defaultOpts ) {
-	var opts = assign(
+	const opts = assign(
 			{
 				env: 'development',
 			},

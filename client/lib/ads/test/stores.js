@@ -50,7 +50,7 @@ describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', () => {
 		} );
 
 		test( 'The store should return an object', () => {
-			var earnings = EarningsStore.getById( site.ID ),
+			const earnings = EarningsStore.getById( site.ID ),
 				settings = SettingsStore.getById( site.ID ),
 				tos = TosStore.getById( site.ID );
 
@@ -60,7 +60,7 @@ describe( 'Ads Stores; EarningsStore, SettingsStore, TosStore', () => {
 		} );
 
 		test( 'The object should not be null after RECEIVE', () => {
-			var earnings = EarningsStore.getById( site.ID ),
+			const earnings = EarningsStore.getById( site.ID ),
 				settings = SettingsStore.getById( site.ID ),
 				tos = TosStore.getById( site.ID );
 

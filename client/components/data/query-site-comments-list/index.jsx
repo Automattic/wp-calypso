@@ -47,4 +47,7 @@ export class QuerySiteCommentsList extends PureComponent {
 	}
 }
 
-export default connect( null, { requestCommentsList } )( QuerySiteCommentsList );
+export default connect(
+	null,
+	{ requestCommentsList }
+)( QuerySiteCommentsList );

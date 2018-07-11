@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { get, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,11 +25,14 @@ import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import DnsTemplates from '../name-servers/dns-templates';
 import VerticalNav from 'components/vertical-nav';
+import DomainConnectRecord from './domain-connect-record';
+import { domainConnect } from 'lib/domains/constants';
 
 class Dns extends React.Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
 		dns: PropTypes.object.isRequired,
+		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
@@ -52,11 +56,25 @@ class Dns extends React.Component {
 	}
 
 	render() {
-		const { dns, selectedDomainName, selectedSite, translate } = this.props;
+		const {
+			dns,
+			isRequestingSiteDomains,
+			selectedDomainName,
+			selectedSite,
+			translate,
+		} = this.props;
 
-		if ( ! dns.hasLoadedFromServer ) {
+		if ( ! dns.hasLoadedFromServer || isRequestingSiteDomains ) {
 			return <DomainMainPlaceholder goBack={ this.goBack } />;
 		}
+
+		const domain = getSelectedDomain( this.props );
+		const hasWpcomNameservers = get( domain, 'hasWpcomNameservers', false );
+		const domainConnectEnabled = some( dns.records, {
+			name: domainConnect.DISCOVERY_TXT_RECORD_NAME,
+			data: domainConnect.API_URL,
+			type: 'TXT',
+		} );
 
 		return (
 			<Main className="dns">
@@ -72,6 +90,12 @@ class Dns extends React.Component {
 						dns={ dns }
 						selectedSite={ selectedSite }
 						selectedDomainName={ selectedDomainName }
+					/>
+
+					<DomainConnectRecord
+						enabled={ domainConnectEnabled }
+						selectedDomainName={ selectedDomainName }
+						hasWpcomNameservers={ hasWpcomNameservers }
 					/>
 
 					<DnsAddNew

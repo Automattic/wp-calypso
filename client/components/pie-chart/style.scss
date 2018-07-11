@@ -1,0 +1,87 @@
+.pie-chart__placeholder,
+.pie-chart {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.pie-chart__placeholder-drawing,
+.pie-chart__chart-drawing {
+	max-width: 40%;
+}
+.pie-chart__placeholder-title,
+.pie-chart__title {
+	margin-top: 15px;
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.pie-chart__chart-section-0,
+.pie-chart__legend-sample-0 {
+	fill: $blue-dark;
+}
+
+.pie-chart__chart-section-1,
+.pie-chart__legend-sample-1 {
+	fill: $blue-medium;
+}
+
+.pie-chart__chart-section-2,
+.pie-chart__legend-sample-2 {
+	fill: $blue-light;
+}
+
+.pie-chart__chart-drawing-empty {
+	fill: $gray;
+}
+
+.pie-chart__legend {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	.legend-item:not( :first-child ) {
+		margin-top: 20px;
+	}
+}
+
+.pie-chart__placeholder-legend {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	.legend-item__placeholder:not( :first-child ) {
+		margin-top: 20px;
+	}
+}
+
+.pie-chart__placeholder-legend-drawing {
+	height: 12px;
+	width: 12px;
+	margin-right: 7px;
+}
+
+.pie-chart__placeholder-title {
+	@include placeholder();
+}
+
+.pie-chart__placeholder-drawing-element {
+	@include placeholder();
+	fill: lighten( $gray, 30% );
+}
+
+.pie-chart__placeholder-legend-item {
+	display: flex;
+	margin-top: 22px;
+}
+
+.pie-chart__placeholder-legend-item-detail {
+	flex: 0 0 100%;
+}
+
+.pie-chart__placeholder-legend-item-detail-element {
+	@include placeholder();
+	width: 90%;
+	height: 20px;
+	margin-bottom: 14px;
+}

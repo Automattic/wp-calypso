@@ -21,6 +21,7 @@ export default class extends React.Component {
 	static propTypes = {
 		onError: PropTypes.func,
 		onSelect: PropTypes.func,
+		value: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -51,7 +52,9 @@ export default class extends React.Component {
 			this.hasTrackedStats = true;
 		}
 
-		if ( ! address ) {
+		// If the address query matches value in props, we want to just display, not search, so we return
+		// no results in that case.
+		if ( ! address || address === this.props.value ) {
 			this.setState( {
 				results: [],
 			} );
@@ -83,22 +86,22 @@ export default class extends React.Component {
 		} );
 	};
 
-	onSelect = result => {
-		this.refs.search.clear();
-		this.props.onSelect( result );
-	};
-
 	render() {
 		const { results, isSearching } = this.state;
+
+		// Cast undefined "value" to empty string because Search treats the two
+		// differently in componentWillReceiveProps().
+		const value = this.props.value || '';
 
 		return (
 			<div className="editor-location__search">
 				<SearchCard
-					ref="search"
 					onSearch={ this.geocode }
 					searching={ isSearching }
 					delaySearch
 					compact
+					value={ value }
+					initialValue={ value }
 				/>
 				<ul className="editor-location__search-results">
 					{ results.map( result => {
@@ -106,7 +109,7 @@ export default class extends React.Component {
 							<li key={ result.formatted_address }>
 								<EditorLocationSearchResult
 									result={ result }
-									onClick={ this.onSelect.bind( null, result ) }
+									onClick={ this.props.onSelect.bind( null, result ) }
 								/>
 							</li>
 						);

@@ -98,6 +98,9 @@ class ProfileLink extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( ProfileLink );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( ProfileLink );

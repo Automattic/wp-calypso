@@ -6,12 +6,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import FormTextInput from 'components/forms/form-text-input';
-import { localize } from 'i18n-calypso';
 
 const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) => {
 	const contentClassName = classNames(
@@ -33,7 +33,7 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 					<Gridicon size={ 24 } icon="globe" />
 					<FormTextInput
 						className="example-components__browser-chrome-url"
-						disabled="true"
+						disabled
 						placeholder={ url }
 					/>
 				</div>
@@ -44,11 +44,11 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 				<div className="example-components__content-wp-admin-main">
 					<div className="example-components__content-wp-admin-connect-banner">
 						{ ! isLegacy ? (
-							<div className="example-components__content-wp-admin-plugin-name" aria-hidden="true">
+							<div className="example-components__content-wp-admin-plugin-name" aria-hidden>
 								{ translate( 'Connect Jetpack to WordPress.com' ) }
 							</div>
 						) : null }
-						<div className="example-components__content-wp-admin-connect-button" aria-hidden="true">
+						<div className="example-components__content-wp-admin-connect-button" aria-hidden>
 							{ translate( 'Set up Jetpack' ) }
 						</div>
 					</div>

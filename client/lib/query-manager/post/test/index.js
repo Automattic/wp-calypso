@@ -1,8 +1,4 @@
 /** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -98,7 +94,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true for a matching title search', () => {
@@ -109,7 +105,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true for a falsey title search', () => {
@@ -120,7 +116,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true for a matching content search', () => {
@@ -131,7 +127,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should search case-insensitive', () => {
@@ -142,7 +138,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should separately test title and content fields', () => {
@@ -153,7 +149,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 		} );
 
@@ -166,7 +162,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false if post is not after date', () => {
@@ -177,7 +173,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if post is after date', () => {
@@ -188,7 +184,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -201,7 +197,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false if post is not before date', () => {
@@ -212,7 +208,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if post is before date', () => {
@@ -223,7 +219,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -236,7 +232,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false if post is not modified after date', () => {
@@ -247,7 +243,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if post is modified after date', () => {
@@ -258,7 +254,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -271,7 +267,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false if post is not modified before date', () => {
@@ -282,7 +278,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if post is modified before date', () => {
@@ -293,7 +289,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -306,7 +302,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false on a partial match', () => {
@@ -317,7 +313,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if post includes tag by name', () => {
@@ -328,7 +324,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if post includes tag by slug', () => {
@@ -339,7 +335,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should search case-insensitive', () => {
@@ -350,7 +346,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -363,7 +359,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false on a partial match', () => {
@@ -374,7 +370,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if post includes category by name', () => {
@@ -385,7 +381,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if post includes category by slug', () => {
@@ -396,7 +392,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should search case-insensitive', () => {
@@ -407,7 +403,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -422,7 +418,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false if one but not both term slug queries match', () => {
@@ -436,7 +432,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if post includes term by slug', () => {
@@ -449,7 +445,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if post includes one of comma-separated term slugs', () => {
@@ -462,7 +458,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if post includes both of comma-separated term slugs', () => {
@@ -475,7 +471,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -491,7 +487,7 @@ describe( 'PostQueryManager', () => {
 					post
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return false if type does not match', () => {
@@ -502,7 +498,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if type matches', () => {
@@ -513,7 +509,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -526,7 +522,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if numeric parent matches', () => {
@@ -540,7 +536,7 @@ describe( 'PostQueryManager', () => {
 					post
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if object parent matches', () => {
@@ -556,7 +552,7 @@ describe( 'PostQueryManager', () => {
 					post
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -569,7 +565,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false if ID matches array of excludes', () => {
@@ -580,7 +576,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if ID does not match single exclude', () => {
@@ -591,7 +587,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if ID does not match array of excludes', () => {
@@ -602,7 +598,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -619,7 +615,7 @@ describe( 'PostQueryManager', () => {
 					stickyPost
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if "include" and not sticky', () => {
@@ -630,7 +626,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true if "require" and sticky', () => {
@@ -641,7 +637,7 @@ describe( 'PostQueryManager', () => {
 					stickyPost
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return false if "require" and not sticky', () => {
@@ -652,7 +648,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return false if "exclude" and sticky', () => {
@@ -663,7 +659,7 @@ describe( 'PostQueryManager', () => {
 					stickyPost
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if "exclude" and not sticky', () => {
@@ -674,7 +670,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -691,7 +687,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if author matches by nested object', () => {
@@ -702,7 +698,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return false if author does not match by scalar value', () => {
@@ -713,7 +709,7 @@ describe( 'PostQueryManager', () => {
 					postWithScalarAuthor
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if author matches by scalar value', () => {
@@ -724,7 +720,7 @@ describe( 'PostQueryManager', () => {
 					postWithScalarAuthor
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 
@@ -737,7 +733,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return false if status does not match', () => {
@@ -748,7 +744,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if status matches', () => {
@@ -759,7 +755,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return false if none of comma-separated values match', () => {
@@ -770,7 +766,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true if one of comma-separated values match', () => {
@@ -781,7 +777,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should gracefully handle non-string search values', () => {
@@ -792,7 +788,7 @@ describe( 'PostQueryManager', () => {
 					DEFAULT_POST
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 		} );
 	} );
@@ -806,7 +802,7 @@ describe( 'PostQueryManager', () => {
 					} )
 				);
 
-				expect( sorted ).to.eql( [ { ID: 400 }, { ID: 200 } ] );
+				expect( sorted ).toEqual( [ { ID: 400 }, { ID: 200 } ] );
 			} );
 
 			test( 'should reverse order when specified as ascending', () => {
@@ -817,7 +813,7 @@ describe( 'PostQueryManager', () => {
 					} )
 				);
 
-				expect( sorted ).to.eql( [ { ID: 200 }, { ID: 400 } ] );
+				expect( sorted ).toEqual( [ { ID: 200 }, { ID: 400 } ] );
 			} );
 		} );
 
@@ -835,7 +831,7 @@ describe( 'PostQueryManager', () => {
 				test( 'should order by date', () => {
 					const sorted = [ olderPost, newerPost ].sort( makeComparator( {} ) );
 
-					expect( sorted ).to.eql( [ newerPost, olderPost ] );
+					expect( sorted ).toEqual( [ newerPost, olderPost ] );
 				} );
 			} );
 
@@ -856,7 +852,7 @@ describe( 'PostQueryManager', () => {
 						} )
 					);
 
-					expect( sorted ).to.eql( [ newerPost, olderPost ] );
+					expect( sorted ).toEqual( [ newerPost, olderPost ] );
 				} );
 			} );
 
@@ -877,7 +873,7 @@ describe( 'PostQueryManager', () => {
 						} )
 					);
 
-					expect( sorted ).to.eql( [ zPost, aPost ] );
+					expect( sorted ).toEqual( [ zPost, aPost ] );
 				} );
 			} );
 
@@ -902,7 +898,7 @@ describe( 'PostQueryManager', () => {
 						} )
 					);
 
-					expect( sorted ).to.eql( [ popularPost, unpopularPost ] );
+					expect( sorted ).toEqual( [ popularPost, unpopularPost ] );
 				} );
 			} );
 
@@ -914,7 +910,7 @@ describe( 'PostQueryManager', () => {
 						} )
 					);
 
-					expect( sorted ).to.eql( [ { ID: 400 }, { ID: 200 } ] );
+					expect( sorted ).toEqual( [ { ID: 400 }, { ID: 200 } ] );
 				} );
 			} );
 		} );

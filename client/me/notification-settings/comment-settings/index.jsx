@@ -23,6 +23,7 @@ import QueryUserDevices from 'components/data/query-user-devices';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggle, saveSettings } from 'lib/notification-settings-store/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class NotificationCommentsSettings extends Component {
 	state = { settings: null };
@@ -75,6 +76,10 @@ class NotificationCommentsSettings extends Component {
 
 		return (
 			<Main>
+				<PageViewTracker
+					path="/me/notifications/comments"
+					title="Me > Notifications > Comments on other sites"
+				/>
 				<QueryUserDevices />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
@@ -95,6 +100,7 @@ class NotificationCommentsSettings extends Component {
 	}
 }
 
-export default connect( null, { errorNotice, successNotice } )(
-	localize( NotificationCommentsSettings )
-);
+export default connect(
+	null,
+	{ errorNotice, successNotice }
+)( localize( NotificationCommentsSettings ) );

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,8 +15,18 @@ import FormLegend from 'components/forms/form-legend';
 import FieldError from '../field-error';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-const Dropdown = ( { id, valuesMap, title, description, value, updateValue, error, disabled, className } ) => {
-	const onChange = ( event ) => updateValue( event.target.value );
+const Dropdown = ( {
+	id,
+	valuesMap,
+	title,
+	description,
+	value,
+	updateValue,
+	error,
+	disabled,
+	className,
+} ) => {
+	const onChange = event => updateValue( event.target.value );
 
 	return (
 		<FormFieldset className={ className }>
@@ -25,18 +37,17 @@ const Dropdown = ( { id, valuesMap, title, description, value, updateValue, erro
 				value={ value }
 				onChange={ onChange }
 				disabled={ Boolean( disabled ) }
-				isError={ Boolean( error ) } >
+				isError={ Boolean( error ) }
+			>
 				{ Object.keys( valuesMap ).map( key => {
 					return (
-						<option
-							key={ key }
-							value={ key }>
+						<option key={ key } value={ key }>
 							{ valuesMap[ key ] }
 						</option>
 					);
 				} ) }
 			</FormSelect>
-			{ error && <FieldError text={ error } /> }
+			{ error && typeof error === 'string' && <FieldError text={ error } /> }
 			{ ! error && description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
 		</FormFieldset>
 	);
@@ -49,10 +60,7 @@ Dropdown.propTypes = {
 	description: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	updateValue: PropTypes.func.isRequired,
-	error: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.bool,
-	] ),
+	error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	disabled: PropTypes.bool,
 	className: PropTypes.string,
 };

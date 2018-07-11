@@ -7,23 +7,28 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { getFormValues } from 'redux-form';
 import { localize } from 'i18n-calypso';
-import { find, isNumber, pick, noop, get } from 'lodash';
+import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
-import { getSimplePayments } from 'state/selectors';
+import { getSiteSlug, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
 import Notice from 'components/notice';
 import Navigation from './navigation';
-import ProductForm, { getProductFormValues, isProductFormValid, isProductFormDirty } from './form';
+import ProductForm, {
+	getProductFormValues,
+	isProductFormValid,
+	isProductFormDirty,
+	REDUX_FORM_NAME,
+} from './form';
 import ProductList from './list';
 import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'state/current-user/selectors';
 import wpcom from 'lib/wp';
@@ -40,7 +45,12 @@ import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
 
@@ -60,7 +70,19 @@ const createPaymentButton = siteId => ( dispatch, getState ) => {
 		.addPost( productCustomPost )
 		.then( newPost => {
 			const newProduct = customPostToProduct( newPost );
-			dispatch( receiveUpdateProduct( siteId, newProduct ) );
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_create', {
+							price: newProduct.price,
+							currency: newProduct.currency,
+							id: newProduct.ID,
+						} ),
+						bumpStat( 'calypso_simple_payments', 'button_created' )
+					),
+					receiveUpdateProduct( siteId, newProduct )
+				)
+			);
 			return newProduct;
 		} );
 };
@@ -75,7 +97,19 @@ const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
 		.update( productCustomPost )
 		.then( updatedPost => {
 			const updatedProduct = customPostToProduct( updatedPost );
-			dispatch( receiveUpdateProduct( siteId, updatedProduct ) );
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_update', {
+							id: paymentId,
+							currency: updatedProduct.currency,
+							price: updatedProduct.price,
+						} ),
+						bumpStat( 'calypso_simple_payments', 'button_updated' )
+					),
+					receiveUpdateProduct( siteId, updatedProduct )
+				)
+			);
 			return updatedProduct;
 		} );
 };
@@ -88,7 +122,17 @@ const trashPaymentButton = ( siteId, paymentId ) => dispatch => {
 	return post
 		.delete()
 		.then( () => post.delete() )
-		.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) );
+		.then( () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_delete', { id: paymentId } ),
+						bumpStat( 'calypso_simple_payments', 'button_deleted' )
+					),
+					receiveDeleteProduct( siteId, paymentId )
+				)
+			)
+		);
 };
 
 class SimplePaymentsDialog extends Component {
@@ -126,16 +170,17 @@ class SimplePaymentsDialog extends Component {
 			selectedPaymentId: null,
 			isSubmitting: false,
 			errorMessage: null,
+			isDirtyAfterImageEdit: false,
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		// When transitioning from hidden to visible, show and initialize the form
-		if ( nextProps.showDialog && ! this.props.showDialog ) {
-			if ( nextProps.editPaymentId ) {
+		if ( this.props.showDialog && ! prevProps.showDialog ) {
+			if ( this.props.editPaymentId ) {
 				// Explicitly ordered to edit a particular button
-				this.showButtonForm( nextProps.editPaymentId );
-			} else if ( isEmptyArray( nextProps.paymentButtons ) ) {
+				this.showButtonForm( this.props.editPaymentId );
+			} else if ( isEmptyArray( this.props.paymentButtons ) ) {
 				// If the button list is loaded and empty, show the "Add New" form
 				this.showButtonForm( null );
 			} else {
@@ -145,7 +190,7 @@ class SimplePaymentsDialog extends Component {
 		}
 
 		// If the list has finished loading and is empty, switch from list to the "Add New" form
-		if ( this.props.paymentButtons === null && isEmptyArray( nextProps.paymentButtons ) ) {
+		if ( prevProps.paymentButtons === null && isEmptyArray( this.props.paymentButtons ) ) {
 			this.showButtonForm( null );
 		}
 	}
@@ -251,22 +296,21 @@ class SimplePaymentsDialog extends Component {
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
 		} else {
-			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => {
-				dispatch(
-					recordTracksEvent( 'calypso_simple_payments_button_create', {
-						price: newProduct.price,
-						currency: newProduct.currency,
-						id: newProduct.ID,
-					} )
-				);
-				return newProduct.ID;
-			} );
+			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => newProduct.ID );
 		}
 
 		productId
-			.then( id => {
-				this.props.onInsert( { id } );
-				dispatch( recordTracksEvent( 'calypso_simple_payments_button_insert', { id } ) );
+			.then( id =>
+				dispatch( ( d, getState ) => getSimplePayments( getState(), this.props.siteId, id ) )
+			)
+			.then( product => {
+				this.props.onInsert( { id: product.ID } );
+				dispatch(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } ),
+						bumpStat( 'calypso_simple_payments', 'button_inserted' )
+					)
+				);
 			} )
 			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
 			.then( () => this.setIsSubmitting( false ) );
@@ -312,7 +356,6 @@ class SimplePaymentsDialog extends Component {
 
 				const { siteId, dispatch } = this.props;
 
-				dispatch( recordTracksEvent( 'calypso_simple_payments_button_delete', { id: paymentId } ) );
 				dispatch( trashPaymentButton( siteId, paymentId ) )
 					.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
 					.then( () => this.setIsSubmitting( false ) );
@@ -325,11 +368,18 @@ class SimplePaymentsDialog extends Component {
 		);
 	};
 
-	getActionButtons() {
-		const { formIsValid, formIsDirty, translate } = this.props;
-		const { activeTab, editedPaymentId, isSubmitting } = this.state;
+	// The only thing we track about image in Simple Payments product form is its media id.
+	// However this doesn't change when the image is edited, and as a result redux form
+	// isDirty selector is not detecting any update, so it's not possible to submit changes
+	// after editing the image (even though they are saved behind the scenes in Media library).
+	// This allows us to force re-enabling of the save button in that case.
+	makeDirtyAfterImageEdit = () => this.setState( { isDirtyAfterImageEdit: true } );
 
-		const formCanBeSubmitted = formIsValid && formIsDirty;
+	getActionButtons() {
+		const { formIsValid, formIsDirty, translate, featuredImageId } = this.props;
+		const { activeTab, editedPaymentId, isSubmitting, isDirtyAfterImageEdit } = this.state;
+
+		const formCanBeSubmitted = formIsValid && ( formIsDirty || isDirtyAfterImageEdit );
 
 		let cancelHandler, finishHandler, finishDisabled, finishLabel;
 		if ( activeTab === 'form' && isNumber( editedPaymentId ) ) {
@@ -352,6 +402,12 @@ class SimplePaymentsDialog extends Component {
 			finishLabel = translate( 'Insert' );
 		}
 
+		// Already uploaded images have numeric ids (eg. 11) while the ones that are
+		// still being uploaded use strings instead (eg. 'media-41')
+		// We are relying on that here to determine if we should disable the form
+		// save button until the image is ready.
+		const isUploadingImage = ! isEmpty( featuredImageId ) && ! isNumber( featuredImageId );
+
 		return [
 			<Button onClick={ cancelHandler } disabled={ isSubmitting }>
 				{ translate( 'Cancel' ) }
@@ -359,7 +415,7 @@ class SimplePaymentsDialog extends Component {
 			<Button
 				onClick={ finishHandler }
 				busy={ isSubmitting }
-				disabled={ isSubmitting || finishDisabled }
+				disabled={ isSubmitting || finishDisabled || isUploadingImage }
 				primary
 			>
 				{ isSubmitting ? translate( 'Saving…' ) : finishLabel }
@@ -485,7 +541,11 @@ class SimplePaymentsDialog extends Component {
 					<Notice status="is-error" text={ errorMessage } onDismissClick={ this.dismissError } />
 				) }
 				{ activeTab === 'form' ? (
-					<ProductForm initialValues={ initialFormValues } showError={ this.showError } />
+					<ProductForm
+						initialValues={ initialFormValues }
+						showError={ this.showError }
+						makeDirtyAfterImageEdit={ this.makeDirtyAfterImageEdit }
+					/>
 				) : (
 					<ProductList
 						siteId={ siteId }
@@ -518,5 +578,6 @@ export default connect( ( state, { siteId } ) => {
 		formIsValid: isProductFormValid( state ),
 		formIsDirty: isProductFormDirty( state ),
 		currentUserEmail: getCurrentUserEmail( state ),
+		featuredImageId: get( getFormValues( REDUX_FORM_NAME )( state ), 'featuredImageId' ),
 	};
 } )( localize( SimplePaymentsDialog ) );

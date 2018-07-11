@@ -28,11 +28,7 @@ class MySitesNavigation extends React.Component {
 					siteBasePath={ this.props.siteBasePath }
 					onClose={ this.preventPickerDefault }
 				/>
-				<Sidebar
-					allSitesPath={ this.props.allSitesPath }
-					path={ this.props.path }
-					siteBasePath={ this.props.siteBasePath }
-				/>
+				<Sidebar path={ this.props.path } siteBasePath={ this.props.siteBasePath } />
 			</div>
 		);
 	}

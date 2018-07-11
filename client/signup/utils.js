@@ -8,7 +8,7 @@ import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
  * Internal dependencies
  */
 import { getLanguage } from 'lib/i18n-utils';
-import steps from 'signup/config/steps';
+import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';

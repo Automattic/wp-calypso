@@ -16,18 +16,21 @@ import React from 'react';
  */
 import CartButtons from '../cart-buttons';
 import { recordStub } from 'lib/mixins/analytics';
+import page from 'page';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 jest.mock( 'lib/mixins/analytics', () => {
-	const recordStub = require( 'sinon' ).stub();
+	const recordEventStub = require( 'sinon' ).stub();
 
 	const analytics = () => ( {
-		recordEvent: recordStub,
+		recordEvent: recordEventStub,
 	} );
-	analytics.recordStub = recordStub;
+	analytics.recordStub = recordEventStub;
 
 	return analytics;
 } );
+
+jest.mock( 'page', () => require( 'sinon' ).stub() );
 
 describe( 'cart-buttons', () => {
 	let cartButtonsComponent, onKeepSearchingClickStub;
@@ -68,6 +71,7 @@ describe( 'cart-buttons', () => {
 		test( 'should track "checkoutButtonClick" event', () => {
 			cartButtonsComponent.find( '.cart-checkout-button' ).simulate( 'click' );
 			expect( recordStub ).to.have.been.calledWith( 'checkoutButtonClick' );
+			expect( page ).to.have.been.calledWith( '/checkout/example.com' );
 		} );
 	} );
 } );

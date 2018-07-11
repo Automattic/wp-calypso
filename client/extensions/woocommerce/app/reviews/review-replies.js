@@ -1,9 +1,7 @@
+/** @format */
 /**
- * External depedencies
- *
- * @format
+ * External dependencies
  */
-
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -45,14 +43,14 @@ class ReviewReplies extends Component {
 		}
 	}
 
-	renderReply = ( replyId, i ) => {
+	renderReply = ( reply, i ) => {
 		const { siteId, review } = this.props;
-		return <ReviewReply siteId={ siteId } key={ i } reviewId={ review.id } replyId={ replyId } />;
+		return <ReviewReply siteId={ siteId } key={ i } reviewId={ review.id } replyId={ reply.id } />;
 	};
 
 	render() {
-		const { siteId, replyIds, review } = this.props;
-		const repliesOutput = ( replyIds.length && replyIds.map( this.renderReply ) ) || null;
+		const { siteId, replies, review } = this.props;
+		const repliesOutput = replies.map( this.renderReply );
 		return (
 			<div className="reviews__replies">
 				{ repliesOutput }
@@ -67,11 +65,10 @@ export default connect(
 	( state, props ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
-		const replies = getReviewReplies( state, props.review.id );
-		const replyIds = ( replies && replies.map( reply => reply.id ) ) || [];
+		const replies = getReviewReplies( state, props.review.id ) || [];
 		return {
 			siteId,
-			replyIds,
+			replies,
 		};
 	},
 	dispatch => bindActionCreators( { fetchReviewReplies }, dispatch )

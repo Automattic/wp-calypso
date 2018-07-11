@@ -127,7 +127,7 @@ const recordEvent = ( eventType, plugin, site, error ) => {
 };
 
 const PluginsActions = {
-	removePluginsNotices: logs => {
+	removePluginsNotices: ( ...logs ) => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PLUGINS_NOTICES',
 			logs: logs,

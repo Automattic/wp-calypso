@@ -13,7 +13,7 @@ import { createReducer, keyedReducer } from 'state/utils';
 import schema from './watermark-schema';
 
 export const watermarks = keyedReducer(
-	'streamId',
+	'streamKey',
 	createReducer(
 		{},
 		{

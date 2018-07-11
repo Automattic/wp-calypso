@@ -14,11 +14,11 @@ import { some, partial, map, get } from 'lodash';
  */
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
-import PostActions from 'lib/posts/actions';
 import { generateGalleryShortcode } from 'lib/media/utils';
 import markup from 'post-editor/media-modal/markup';
 import { bumpStat } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
+import { blockSave } from 'state/ui/editor/save-blockers/actions';
 
 class EditorMediaModal extends Component {
 	static propTypes = {
@@ -56,7 +56,7 @@ class EditorMediaModal extends Component {
 		}
 
 		if ( some( items, 'transient' ) ) {
-			PostActions.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+			this.props.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
 		}
 
 		if ( media ) {
@@ -93,5 +93,8 @@ export default connect(
 	state => ( {
 		site: getSelectedSite( state ),
 	} ),
-	{ bumpStat }
+	{
+		blockSave,
+		bumpStat,
+	}
 )( EditorMediaModal );

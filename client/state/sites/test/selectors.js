@@ -2,14 +2,13 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
 import {
-	getRawSite,
 	getSite,
 	getSiteCollisions,
 	isSiteConflicting,
@@ -56,10 +55,11 @@ import {
 	getJetpackComputedAttributes,
 	hasDefaultSiteTitle,
 	siteSupportsJetpackSettingsUi,
+	getSiteComputedAttributes,
 } from '../selectors';
 import config from 'config';
 import { userState } from 'state/selectors/test/fixtures/user-state';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { setFeatureFlag } from 'test/helpers/config';
 
 describe( 'selectors', () => {
 	const createStateWithItems = items =>
@@ -77,47 +77,8 @@ describe( 'selectors', () => {
 		getSiteBySlug.memoizedSelector.cache.clear();
 	} );
 
-	describe( '#getRawSite()', () => {
-		test( 'it should return null if there is no such site', () => {
-			const rawSite = getRawSite(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203199
-			);
-
-			expect( rawSite ).to.be.null;
-		} );
-
-		test( 'it should return the raw site object for site with that ID', () => {
-			const site = {
-				ID: 77203199,
-				URL: 'https://example.com',
-			};
-			const rawSite = getRawSite(
-				{
-					sites: {
-						items: {
-							77203199: site,
-						},
-					},
-				},
-				77203199
-			);
-
-			expect( rawSite ).to.eql( site );
-		} );
-	} );
-
 	describe( '#getSite()', () => {
-		useSandbox( sandbox => {
-			sandbox
-				.stub( config, 'isEnabled' )
-				.withArgs( 'preview-layout' )
-				.returns( true );
-		} );
+		setFeatureFlag( 'preview-layout', true );
 
 		test( 'should return null if the site is not known', () => {
 			const site = getSite(
@@ -130,7 +91,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( site ).to.be.null;
+			chaiExpect( site ).to.be.null;
 		} );
 
 		test( 'should return a normalized site with computed attributes', () => {
@@ -181,17 +142,17 @@ describe( 'selectors', () => {
 			};
 
 			const site = getSite( state, 2916284 );
-			expect( site ).to.eql( expectedSite );
+			expect( site ).toEqual( expectedSite );
 
 			// Verify that getting by slug returns the object memoized when previously getting by ID
 			const memoizedSlugSite = getSite( state, 'example.com' );
-			expect( memoizedSlugSite ).to.equal( site );
+			chaiExpect( memoizedSlugSite ).to.equal( site );
 
 			// Clear the memo cache and verify computed attributes are computed when getting by slug
 			getSite.clearCache();
 			const nonMemoizedSlugSite = getSite( state, 'example.com' );
-			expect( nonMemoizedSlugSite ).to.not.equal( memoizedSlugSite );
-			expect( nonMemoizedSlugSite ).to.eql( expectedSite );
+			chaiExpect( nonMemoizedSlugSite ).to.not.equal( memoizedSlugSite );
+			chaiExpect( nonMemoizedSlugSite ).to.eql( expectedSite );
 		} );
 
 		test( 'should return a normalized site with correct slug when sites with collisions are passed in attributes', () => {
@@ -227,7 +188,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( site ).to.eql( {
+			chaiExpect( site ).to.eql( {
 				ID: 2916284,
 				name: 'WordPress.com Example Blog',
 				URL: 'https://example.wordpress.com',
@@ -262,9 +223,9 @@ describe( 'selectors', () => {
 			// Calling the selector two times on the same state should return identical value
 			const firstSite = getSite( state, 123 );
 			const secondSite = getSite( state, 123 );
-			expect( firstSite ).to.be.ok;
-			expect( secondSite ).to.be.ok;
-			expect( firstSite ).to.equal( secondSite );
+			chaiExpect( firstSite ).to.be.ok;
+			chaiExpect( secondSite ).to.be.ok;
+			chaiExpect( firstSite ).to.equal( secondSite );
 
 			// Construct an updated state with new items, but the first site object itself is unmodified
 			const altSite = {
@@ -283,11 +244,11 @@ describe( 'selectors', () => {
 			};
 			// Check that the new site is returned
 			const altGotSite = getSite( updatedState, 456 );
-			expect( altGotSite ).to.have.property( 'ID', 456 );
+			chaiExpect( altGotSite ).to.have.property( 'ID', 456 );
 
 			// And that the old one was memoized and identical site object is returned
 			const thirdSite = getSite( updatedState, 123 );
-			expect( thirdSite ).to.equal( firstSite );
+			chaiExpect( thirdSite ).to.equal( firstSite );
 		} );
 	} );
 
@@ -302,7 +263,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( collisions ).to.eql( [] );
+			chaiExpect( collisions ).to.eql( [] );
 		} );
 
 		test( 'should return an array of conflicting site IDs', () => {
@@ -315,7 +276,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( collisions ).to.eql( [ 77203199 ] );
+			chaiExpect( collisions ).to.eql( [ 77203199 ] );
 		} );
 
 		test( 'should ignore URL protocol in considering conflict', () => {
@@ -328,7 +289,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( collisions ).to.eql( [ 77203199 ] );
+			chaiExpect( collisions ).to.eql( [ 77203199 ] );
 		} );
 	} );
 
@@ -346,7 +307,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( isConflicting ).to.be.false;
+			chaiExpect( isConflicting ).to.be.false;
 		} );
 
 		test( 'should return true if the specified site ID is included in the conflicting set', () => {
@@ -362,7 +323,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( isConflicting ).to.be.true;
+			chaiExpect( isConflicting ).to.be.true;
 		} );
 	} );
 
@@ -378,7 +339,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( singleUserSite ).to.be.null;
+			chaiExpect( singleUserSite ).to.be.null;
 		} );
 
 		test( 'it should return true if the site is a single user site', () => {
@@ -401,7 +362,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( singleUserSite ).to.be.true;
+			chaiExpect( singleUserSite ).to.be.true;
 		} );
 
 		test( 'it should return false if the site is not a single user site', () => {
@@ -424,7 +385,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( singleUserSite ).to.be.false;
+			chaiExpect( singleUserSite ).to.be.false;
 		} );
 	} );
 
@@ -439,7 +400,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( jetpackSite ).to.be.null;
+			chaiExpect( jetpackSite ).to.be.null;
 		} );
 
 		test( 'it should return true if the site is a jetpack site', () => {
@@ -454,7 +415,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( jetpackSite ).to.be.true;
+			chaiExpect( jetpackSite ).to.be.true;
 		} );
 
 		test( 'it should return false if the site is not a jetpack site', () => {
@@ -469,7 +430,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( jetpackSite ).to.be.false;
+			chaiExpect( jetpackSite ).to.be.false;
 		} );
 	} );
 
@@ -485,7 +446,7 @@ describe( 'selectors', () => {
 				'custom-content-types'
 			);
 
-			expect( isActive ).to.be.null;
+			chaiExpect( isActive ).to.be.null;
 		} );
 
 		test( 'should return null if the site is known and not a Jetpack site', () => {
@@ -506,7 +467,7 @@ describe( 'selectors', () => {
 				'custom-content-types'
 			);
 
-			expect( isActive ).to.be.null;
+			chaiExpect( isActive ).to.be.null;
 		} );
 
 		test( 'should return false if the site is a Jetpack site without the module active', () => {
@@ -529,7 +490,7 @@ describe( 'selectors', () => {
 				'custom-content-types'
 			);
 
-			expect( isActive ).to.be.false;
+			chaiExpect( isActive ).to.be.false;
 		} );
 
 		test( 'should return true if the site is a Jetpack site and the module is active', () => {
@@ -552,7 +513,7 @@ describe( 'selectors', () => {
 				'custom-content-types'
 			);
 
-			expect( isActive ).to.be.true;
+			chaiExpect( isActive ).to.be.true;
 		} );
 	} );
 
@@ -568,7 +529,7 @@ describe( 'selectors', () => {
 				'4.1.0'
 			);
 
-			expect( isMeetingMinimum ).to.be.null;
+			chaiExpect( isMeetingMinimum ).to.be.null;
 		} );
 
 		test( 'should return null if the site is not a Jetpack site', () => {
@@ -588,7 +549,7 @@ describe( 'selectors', () => {
 				'4.1.0'
 			);
 
-			expect( isMeetingMinimum ).to.be.null;
+			chaiExpect( isMeetingMinimum ).to.be.null;
 		} );
 
 		test( 'should return null if the site option is not known', () => {
@@ -608,7 +569,7 @@ describe( 'selectors', () => {
 				'4.1.0'
 			);
 
-			expect( isMeetingMinimum ).to.be.null;
+			chaiExpect( isMeetingMinimum ).to.be.null;
 		} );
 
 		test( 'should return true if meeting the minimum version', () => {
@@ -631,7 +592,7 @@ describe( 'selectors', () => {
 				'4.1.0'
 			);
 
-			expect( isMeetingMinimum ).to.be.true;
+			chaiExpect( isMeetingMinimum ).to.be.true;
 		} );
 
 		test( 'should return false if not meeting the minimum version', () => {
@@ -654,7 +615,7 @@ describe( 'selectors', () => {
 				'4.1.0'
 			);
 
-			expect( isMeetingMinimum ).to.be.false;
+			chaiExpect( isMeetingMinimum ).to.be.false;
 		} );
 	} );
 
@@ -669,7 +630,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( slug ).to.be.null;
+			chaiExpect( slug ).to.be.null;
 		} );
 
 		test( 'should return the unmapped hostname for a redirect site', () => {
@@ -691,7 +652,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( slug ).to.equal( 'example.wordpress.com' );
+			chaiExpect( slug ).to.equal( 'example.wordpress.com' );
 		} );
 
 		test( 'should return the unmapped hostname for a conflicting site', () => {
@@ -715,7 +676,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( slug ).to.equal( 'testtwosites2014.wordpress.com' );
+			chaiExpect( slug ).to.equal( 'testtwosites2014.wordpress.com' );
 		} );
 
 		test( 'should return the URL with scheme removed and paths separated', () => {
@@ -733,7 +694,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( slug ).to.equal( 'testtwosites2014.wordpress.com::path::to::site' );
+			chaiExpect( slug ).to.equal( 'testtwosites2014.wordpress.com::path::to::site' );
 		} );
 	} );
 
@@ -748,7 +709,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( domain ).to.be.null;
+			chaiExpect( domain ).to.be.null;
 		} );
 
 		test( 'should strip the protocol off', () => {
@@ -766,7 +727,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( domain ).to.equal( 'example.com' );
+			chaiExpect( domain ).to.equal( 'example.com' );
 		} );
 
 		test( 'should return the unmapped slug for a redirect site', () => {
@@ -788,7 +749,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( domain ).to.equal( 'example.wordpress.com' );
+			chaiExpect( domain ).to.equal( 'example.wordpress.com' );
 		} );
 
 		test( 'should return the site slug for a conflicting site', () => {
@@ -812,7 +773,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( domain ).to.equal( 'testtwosites2014.wordpress.com' );
+			chaiExpect( domain ).to.equal( 'testtwosites2014.wordpress.com' );
 		} );
 	} );
 
@@ -827,7 +788,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( title ).to.be.null;
+			chaiExpect( title ).to.be.null;
 		} );
 
 		test( 'should return the trimmed name of the site', () => {
@@ -846,7 +807,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( title ).to.equal( 'Example Site' );
+			chaiExpect( title ).to.equal( 'Example Site' );
 		} );
 
 		test( 'should fall back to the domain if the site name is empty', () => {
@@ -865,18 +826,13 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( title ).to.equal( 'example.com' );
+			chaiExpect( title ).to.equal( 'example.com' );
 		} );
 	} );
 
 	describe( 'isSitePreviewable()', () => {
 		describe( 'config disabled', () => {
-			useSandbox( sandbox => {
-				sandbox
-					.stub( config, 'isEnabled' )
-					.withArgs( 'preview-layout' )
-					.returns( false );
-			} );
+			setFeatureFlag( 'preview-layout', false );
 
 			test( 'should return false', () => {
 				const isPreviewable = isSitePreviewable(
@@ -896,17 +852,12 @@ describe( 'selectors', () => {
 					77203199
 				);
 
-				expect( isPreviewable ).to.be.false;
+				chaiExpect( isPreviewable ).to.be.false;
 			} );
 		} );
 
 		describe( 'config enabled', () => {
-			useSandbox( sandbox => {
-				sandbox
-					.stub( config, 'isEnabled' )
-					.withArgs( 'preview-layout' )
-					.returns( true );
-			} );
+			setFeatureFlag( 'preview-layout', true );
 
 			test( 'should return null if the site is not known', () => {
 				const isPreviewable = isSitePreviewable(
@@ -918,7 +869,7 @@ describe( 'selectors', () => {
 					77203199
 				);
 
-				expect( isPreviewable ).to.be.null;
+				chaiExpect( isPreviewable ).to.be.null;
 			} );
 
 			test( 'should return false if the site is VIP', () => {
@@ -940,7 +891,7 @@ describe( 'selectors', () => {
 					77203199
 				);
 
-				expect( isPreviewable ).to.be.false;
+				chaiExpect( isPreviewable ).to.be.false;
 			} );
 
 			test( 'should return false if the site unmapped URL is unknown', () => {
@@ -958,7 +909,7 @@ describe( 'selectors', () => {
 					77203199
 				);
 
-				expect( isPreviewable ).to.be.false;
+				chaiExpect( isPreviewable ).to.be.false;
 			} );
 
 			test( 'should return false if the site unmapped URL is non-HTTPS', () => {
@@ -979,7 +930,7 @@ describe( 'selectors', () => {
 					77203199
 				);
 
-				expect( isPreviewable ).to.be.false;
+				chaiExpect( isPreviewable ).to.be.false;
 			} );
 
 			test( 'should return true if the site unmapped URL is HTTPS', () => {
@@ -1000,7 +951,7 @@ describe( 'selectors', () => {
 					77203199
 				);
 
-				expect( isPreviewable ).to.be.true;
+				chaiExpect( isPreviewable ).to.be.true;
 			} );
 		} );
 	} );
@@ -1017,7 +968,7 @@ describe( 'selectors', () => {
 				'example_option'
 			);
 
-			expect( siteOption ).to.be.null;
+			chaiExpect( siteOption ).to.be.null;
 		} );
 
 		test( 'should return null if the options are not known for that site', () => {
@@ -1036,7 +987,7 @@ describe( 'selectors', () => {
 				'example_option'
 			);
 
-			expect( siteOption ).to.be.null;
+			chaiExpect( siteOption ).to.be.null;
 		} );
 
 		test( 'should return null if the option is not known for that site', () => {
@@ -1058,7 +1009,7 @@ describe( 'selectors', () => {
 				'example_option'
 			);
 
-			expect( siteOption ).to.be.null;
+			chaiExpect( siteOption ).to.be.null;
 		} );
 
 		test( 'should return the option value if the option is known for that site', () => {
@@ -1080,7 +1031,7 @@ describe( 'selectors', () => {
 				'example_option'
 			);
 
-			expect( siteOption ).to.eql( 'example value' );
+			chaiExpect( siteOption ).to.eql( 'example value' );
 		} );
 	} );
 
@@ -1092,7 +1043,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.false;
+			chaiExpect( isRequesting ).to.be.false;
 		} );
 
 		test( 'should return true if a request is in progress', () => {
@@ -1102,7 +1053,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.true;
+			chaiExpect( isRequesting ).to.be.true;
 		} );
 	} );
 
@@ -1117,7 +1068,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.false;
+			chaiExpect( isRequesting ).to.be.false;
 		} );
 
 		test( 'should return true if a request is in progress', () => {
@@ -1132,7 +1083,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.true;
+			chaiExpect( isRequesting ).to.be.true;
 		} );
 
 		test( 'should return false after a request has completed', () => {
@@ -1147,7 +1098,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.false;
+			chaiExpect( isRequesting ).to.be.false;
 		} );
 	} );
 
@@ -1162,7 +1113,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( seoTitleFormats ).to.eql( {} );
+			chaiExpect( seoTitleFormats ).to.eql( {} );
 		} );
 
 		test( 'should return an empty object when unavailable for a known site', () => {
@@ -1183,7 +1134,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( seoTitleFormats ).to.eql( {} );
+			chaiExpect( seoTitleFormats ).to.eql( {} );
 		} );
 
 		test( 'should return seo title formats by type if available', () => {
@@ -1215,7 +1166,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( seoTitleFormats ).to.eql( {
+			chaiExpect( seoTitleFormats ).to.eql( {
 				archives: [],
 				frontPage: [
 					{
@@ -1242,7 +1193,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( seoTitle ).to.eql( '' );
+			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
 		test( 'should convert site name and tagline for front page title type', () => {
@@ -1283,7 +1234,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Site Title | Site Tagline' );
+			chaiExpect( seoTitle ).to.eql( 'Site Title | Site Tagline' );
 		} );
 
 		test( 'should default to site name for front page title type if no other title is set', () => {
@@ -1313,7 +1264,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Site Title' );
+			chaiExpect( seoTitle ).to.eql( 'Site Title' );
 		} );
 
 		test( 'should convert site name, tagline and post title for posts title type', () => {
@@ -1364,7 +1315,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Post Title' );
+			chaiExpect( seoTitle ).to.eql( 'Site Title | Site Tagline > Post Title' );
 		} );
 
 		test( 'should default to post title for posts title type if no other title is set', () => {
@@ -1397,7 +1348,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Post Title' );
+			chaiExpect( seoTitle ).to.eql( 'Post Title' );
 		} );
 
 		test( 'should return empty string as post title for posts title type if post title is missing', () => {
@@ -1428,7 +1379,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( '' );
+			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
 		test( 'should convert site name, tagline and page title for pages title type', () => {
@@ -1479,7 +1430,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Page Title' );
+			chaiExpect( seoTitle ).to.eql( 'Site Title | Site Tagline > Page Title' );
 		} );
 
 		test( 'should default to empty string for pages title type if no other title is set', () => {
@@ -1512,7 +1463,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( '' );
+			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
 		test( 'should return empty string as page title for pages title type if page title is missing', () => {
@@ -1543,7 +1494,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( '' );
+			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
 		test( 'should convert site name, tagline and group name for groups title type', () => {
@@ -1592,7 +1543,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > Tag Name' );
+			chaiExpect( seoTitle ).to.eql( 'Site Title | Site Tagline > Tag Name' );
 		} );
 
 		test( 'should default to empty string for groups title type if no other title is set', () => {
@@ -1622,7 +1573,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( '' );
+			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
 		test( 'should convert site name, tagline and date for archives title type', () => {
@@ -1671,7 +1622,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Site Title | Site Tagline > January 2000' );
+			chaiExpect( seoTitle ).to.eql( 'Site Title | Site Tagline > January 2000' );
 		} );
 
 		test( 'should default to empty string for archives title type if no other title is set', () => {
@@ -1701,7 +1652,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( '' );
+			chaiExpect( seoTitle ).to.eql( '' );
 		} );
 
 		test( 'should default to post title for a misc title type', () => {
@@ -1732,7 +1683,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Post Title' );
+			chaiExpect( seoTitle ).to.eql( 'Post Title' );
 		} );
 
 		test( 'should default to site name for a misc title type if post title is missing', () => {
@@ -1760,7 +1711,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( seoTitle ).to.eql( 'Site Title' );
+			chaiExpect( seoTitle ).to.eql( 'Site Title' );
 		} );
 	} );
 
@@ -1775,7 +1726,7 @@ describe( 'selectors', () => {
 				'testtwosites2014.wordpress.com'
 			);
 
-			expect( site ).to.be.null;
+			chaiExpect( site ).to.be.null;
 		} );
 
 		test( 'should return a matched site', () => {
@@ -1791,7 +1742,7 @@ describe( 'selectors', () => {
 			};
 			const site = getSiteBySlug( state, 'testtwosites2014.wordpress.com' );
 
-			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+			chaiExpect( site ).to.equal( state.sites.items[ 77203199 ] );
 		} );
 
 		test( 'should return a matched site with nested path', () => {
@@ -1808,7 +1759,7 @@ describe( 'selectors', () => {
 			};
 			const site = getSiteBySlug( state, 'testtwosites2014.wordpress.com::path::to::site' );
 
-			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+			chaiExpect( site ).to.equal( state.sites.items[ 77203199 ] );
 		} );
 
 		test( 'should return a matched site jetpack site when the sites conflict', () => {
@@ -1833,7 +1784,7 @@ describe( 'selectors', () => {
 				},
 			};
 			const site = getSiteBySlug( state, 'example.com' );
-			expect( site ).to.equal( state.sites.items[ 2 ] );
+			chaiExpect( site ).to.equal( state.sites.items[ 2 ] );
 		} );
 	} );
 
@@ -1848,7 +1799,7 @@ describe( 'selectors', () => {
 				'https://testtwosites2014.wordpress.com'
 			);
 
-			expect( site ).to.be.null;
+			chaiExpect( site ).to.be.null;
 		} );
 
 		test( 'should return a matched site', () => {
@@ -1864,7 +1815,7 @@ describe( 'selectors', () => {
 			};
 			const site = getSiteByUrl( state, 'https://testtwosites2014.wordpress.com' );
 
-			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+			chaiExpect( site ).to.equal( state.sites.items[ 77203199 ] );
 		} );
 
 		test( 'should return a matched site with nested path', () => {
@@ -1880,7 +1831,7 @@ describe( 'selectors', () => {
 			};
 			const site = getSiteByUrl( state, 'https://testtwosites2014.wordpress.com/path/to/site' );
 
-			expect( site ).to.equal( state.sites.items[ 77203199 ] );
+			chaiExpect( site ).to.equal( state.sites.items[ 77203199 ] );
 		} );
 	} );
 
@@ -1895,7 +1846,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( sitePlan ).to.be.null;
+			chaiExpect( sitePlan ).to.be.null;
 		} );
 
 		test( "it should return site's plan object.", () => {
@@ -1918,7 +1869,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( sitePlan ).to.eql( {
+			chaiExpect( sitePlan ).to.eql( {
 				product_id: 1008,
 				product_slug: 'business-bundle',
 				product_name_short: 'Business',
@@ -1947,7 +1898,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( sitePlan ).to.eql( {
+			chaiExpect( sitePlan ).to.eql( {
 				product_id: 1,
 				product_slug: 'free_plan',
 				product_name_short: 'Free',
@@ -1978,7 +1929,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( sitePlan ).to.eql( {
+			chaiExpect( sitePlan ).to.eql( {
 				product_id: 2002,
 				product_slug: 'jetpack_free',
 				product_name_short: 'Free',
@@ -1999,7 +1950,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( planSlug ).to.be.undefined;
+			chaiExpect( planSlug ).to.be.undefined;
 		} );
 
 		test( 'should return the plan slug if it is known', () => {
@@ -2020,7 +1971,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( planSlug ).to.eql( 'fake-plan' );
+			chaiExpect( planSlug ).to.eql( 'fake-plan' );
 		} );
 	} );
 
@@ -2036,7 +1987,7 @@ describe( 'selectors', () => {
 				1008
 			);
 
-			expect( isCurrent ).to.be.null;
+			chaiExpect( isCurrent ).to.be.null;
 		} );
 
 		test( 'should return null if the planProductId is not supplied', () => {
@@ -2056,7 +2007,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( isCurrent ).to.be.null;
+			chaiExpect( isCurrent ).to.be.null;
 		} );
 
 		test( "it should return true if the site's plan matches supplied planProductId", () => {
@@ -2077,7 +2028,7 @@ describe( 'selectors', () => {
 				1008
 			);
 
-			expect( isCurrent ).to.be.true;
+			chaiExpect( isCurrent ).to.be.true;
 		} );
 
 		test( "it should return false if the site's plan doesn't match supplied planProductId", () => {
@@ -2098,7 +2049,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			expect( isCurrent ).to.be.false;
+			chaiExpect( isCurrent ).to.be.false;
 		} );
 	} );
 
@@ -2121,7 +2072,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			expect( isPaid ).to.equal( true );
+			chaiExpect( isPaid ).to.equal( true );
 		} );
 		test( 'it should return false if free plan', () => {
 			const isPaid = isCurrentPlanPaid(
@@ -2141,7 +2092,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			expect( isPaid ).to.equal( false );
+			chaiExpect( isPaid ).to.equal( false );
 		} );
 
 		test( 'it should return null if plan is missing', () => {
@@ -2159,7 +2110,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			expect( isPaid ).to.equal( null );
+			chaiExpect( isPaid ).to.equal( null );
 		} );
 	} );
 
@@ -2174,7 +2125,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( showcasePath ).to.be.null;
+			chaiExpect( showcasePath ).to.be.null;
 		} );
 
 		test( 'it should return null if site is jetpack', () => {
@@ -2190,7 +2141,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			expect( showcasePath ).to.be.null;
+			chaiExpect( showcasePath ).to.be.null;
 		} );
 
 		test( 'it should return null if theme_slug is not pub or premium', () => {
@@ -2212,7 +2163,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			expect( showcasePath ).to.be.null;
+			chaiExpect( showcasePath ).to.be.null;
 		} );
 
 		test( 'it should return the theme showcase path on non-premium themes', () => {
@@ -2234,7 +2185,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			expect( showcasePath ).to.eql( '/theme/motif/testonesite2014.wordpress.com' );
+			chaiExpect( showcasePath ).to.eql( '/theme/motif/testonesite2014.wordpress.com' );
 		} );
 
 		test( 'it should return the theme setup path on premium themes', () => {
@@ -2256,7 +2207,9 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			expect( showcasePath ).to.eql( '/theme/journalistic/setup/testonesite2014.wordpress.com' );
+			chaiExpect( showcasePath ).to.eql(
+				'/theme/journalistic/setup/testonesite2014.wordpress.com'
+			);
 		} );
 	} );
 
@@ -2280,7 +2233,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( frontPage ).to.be.not.ok;
+			chaiExpect( frontPage ).to.be.not.ok;
 		} );
 
 		test( 'should return falsey if the site is not known', () => {
@@ -2293,7 +2246,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( frontPage ).to.be.not.ok;
+			chaiExpect( frontPage ).to.be.not.ok;
 		} );
 
 		test( 'should return the page ID if the site has a static page set as the front page', () => {
@@ -2315,7 +2268,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( frontPage ).to.eql( 1 );
+			chaiExpect( frontPage ).to.eql( 1 );
 		} );
 	} );
 
@@ -2339,7 +2292,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( hasFrontPage ).to.eql( false );
+			chaiExpect( hasFrontPage ).to.eql( false );
 		} );
 
 		test( 'should return false if the site does not have a `page_on_front` value', () => {
@@ -2360,7 +2313,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( hasFrontPage ).to.eql( false );
+			chaiExpect( hasFrontPage ).to.eql( false );
 		} );
 
 		test( 'should return false if the site is not known', () => {
@@ -2373,7 +2326,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( hasFrontPage ).to.eql( false );
+			chaiExpect( hasFrontPage ).to.eql( false );
 		} );
 
 		test( 'should return true if the site has a static page set as the front page', () => {
@@ -2395,7 +2348,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( hasFrontPage ).to.eql( true );
+			chaiExpect( hasFrontPage ).to.eql( true );
 		} );
 	} );
 
@@ -2420,7 +2373,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( postsPage ).to.be.not.ok;
+			chaiExpect( postsPage ).to.be.not.ok;
 		} );
 
 		test( 'should return falsey if the site is not known', () => {
@@ -2433,7 +2386,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( postsPage ).to.be.not.ok;
+			chaiExpect( postsPage ).to.be.not.ok;
 		} );
 
 		test( 'should return the page ID if the site has a static page set as the posts page', () => {
@@ -2456,7 +2409,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( postsPage ).to.eql( 2 );
+			chaiExpect( postsPage ).to.eql( 2 );
 		} );
 	} );
 
@@ -2471,7 +2424,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( frontPageType ).to.be.not.ok;
+			chaiExpect( frontPageType ).to.be.not.ok;
 		} );
 
 		test( "should return the site's front page type", () => {
@@ -2494,14 +2447,14 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( frontPageType ).to.eql( 'page' );
+			chaiExpect( frontPageType ).to.eql( 'page' );
 		} );
 	} );
 
 	describe( '#canJetpackSiteManage()', () => {
 		test( 'it should return `null` for a non-existing site', () => {
 			const canManage = canJetpackSiteManage( stateWithNoItems, nonExistingSiteId );
-			expect( canManage ).to.equal( null );
+			chaiExpect( canManage ).to.equal( null );
 		} );
 
 		test( 'it should return `null` for a non jetpack site', () => {
@@ -2513,7 +2466,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
-			expect( canManage ).to.equal( null );
+			chaiExpect( canManage ).to.equal( null );
 		} );
 
 		test( 'it should return `true` if jetpack version is strictly less than 3.4', () => {
@@ -2529,7 +2482,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
-			expect( canManage ).to.equal( true );
+			chaiExpect( canManage ).to.equal( true );
 		} );
 
 		test( 'it should return `true` if the modules has not yet been fetched', () => {
@@ -2546,7 +2499,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
-			expect( canManage ).to.equal( true );
+			chaiExpect( canManage ).to.equal( true );
 		} );
 
 		test( 'it should return `true` if jetpack version is greater or equal to 3.4 and the manage module is active', () => {
@@ -2563,7 +2516,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
-			expect( canManage ).to.equal( true );
+			chaiExpect( canManage ).to.equal( true );
 		} );
 
 		test( 'it should return `false` if jetpack version is greater or equal to 3.4 and the manage module is not active', () => {
@@ -2580,14 +2533,14 @@ describe( 'selectors', () => {
 			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
-			expect( canManage ).to.equal( false );
+			chaiExpect( canManage ).to.equal( false );
 		} );
 	} );
 
 	describe( '#canJetpackSiteUpdateFiles()', () => {
 		test( 'should return `null` for a non-existing site', () => {
 			const canUpdateFiles = canJetpackSiteUpdateFiles( stateWithNoItems, nonExistingSiteId );
-			expect( canUpdateFiles ).to.equal( null );
+			chaiExpect( canUpdateFiles ).to.equal( null );
 		} );
 
 		test( 'it should return `false` for a non jetpack site', () => {
@@ -2599,7 +2552,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			expect( canUpdateFiles ).to.equal( null );
+			chaiExpect( canUpdateFiles ).to.equal( null );
 		} );
 
 		test( 'it should return `false` if jetpack version is smaller than minimum version', () => {
@@ -2615,7 +2568,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			expect( canUpdateFiles ).to.equal( false );
+			chaiExpect( canUpdateFiles ).to.equal( false );
 		} );
 
 		test( 'it should return `false` if is a multi-network site', () => {
@@ -2632,7 +2585,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			expect( canUpdateFiles ).to.equal( false );
+			chaiExpect( canUpdateFiles ).to.equal( false );
 		} );
 
 		test( "it should return `false` if is not a main network site (urls don't match)", () => {
@@ -2652,7 +2605,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			expect( canUpdateFiles ).to.equal( false );
+			chaiExpect( canUpdateFiles ).to.equal( false );
 		} );
 
 		test( 'it should return `false` if `disallow_file_mods` is disabled', () => {
@@ -2673,7 +2626,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			expect( canUpdateFiles ).to.equal( false );
+			chaiExpect( canUpdateFiles ).to.equal( false );
 		} );
 
 		test( 'it should return `false` if `has_no_file_system_write_access` is disabled', () => {
@@ -2694,7 +2647,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			expect( canUpdateFiles ).to.equal( false );
+			chaiExpect( canUpdateFiles ).to.equal( false );
 		} );
 
 		test( 'it should return `true` for the site right configurations', () => {
@@ -2715,7 +2668,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
-			expect( canUpdateFiles ).to.equal( true );
+			chaiExpect( canUpdateFiles ).to.equal( true );
 		} );
 	} );
 
@@ -2735,7 +2688,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canAutoUpdateFiles = canJetpackSiteAutoUpdateFiles( state, siteId );
-			expect( canAutoUpdateFiles ).to.equal( true );
+			chaiExpect( canAutoUpdateFiles ).to.equal( true );
 		} );
 
 		test( 'it should return `false` if the `file_mod_disabled` option contains `automatic_updater_disabled`', () => {
@@ -2753,7 +2706,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canAutoUpdateFiles = canJetpackSiteAutoUpdateFiles( state, siteId );
-			expect( canAutoUpdateFiles ).to.equal( false );
+			chaiExpect( canAutoUpdateFiles ).to.equal( false );
 		} );
 	} );
 
@@ -2773,7 +2726,7 @@ describe( 'selectors', () => {
 			} );
 
 			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
-			expect( canAutoUpdateCore ).to.equal( true );
+			chaiExpect( canAutoUpdateCore ).to.equal( true );
 		} );
 
 		test( 'it should return `false` if the `file_mod_disabled` option contains `automatic_updater_disabled`', () => {
@@ -2791,14 +2744,14 @@ describe( 'selectors', () => {
 			} );
 
 			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
-			expect( canAutoUpdateCore ).to.equal( false );
+			chaiExpect( canAutoUpdateCore ).to.equal( false );
 		} );
 	} );
 
 	describe( '#siteHasMinimumJetpackVersion()', () => {
 		test( 'it should return `null` for a non-existing site', () => {
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( stateWithNoItems, nonExistingSiteId );
-			expect( hasMinimumVersion ).to.equal( null );
+			chaiExpect( hasMinimumVersion ).to.equal( null );
 		} );
 
 		test( 'it should return `null` for a non jetpack site', () => {
@@ -2810,7 +2763,7 @@ describe( 'selectors', () => {
 			} );
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			expect( hasMinimumVersion ).to.equal( null );
+			chaiExpect( hasMinimumVersion ).to.equal( null );
 		} );
 
 		test( 'it should return `true` if jetpack version is greater that minimum version', () => {
@@ -2826,7 +2779,7 @@ describe( 'selectors', () => {
 			} );
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			expect( hasMinimumVersion ).to.equal( true );
+			chaiExpect( hasMinimumVersion ).to.equal( true );
 		} );
 
 		test( 'it should return `true` if jetpack version is equal to minimum version', () => {
@@ -2842,7 +2795,7 @@ describe( 'selectors', () => {
 			} );
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			expect( hasMinimumVersion ).to.equal( true );
+			chaiExpect( hasMinimumVersion ).to.equal( true );
 		} );
 
 		test( 'it should return `false` if jetpack version is smaller than minimum version', () => {
@@ -2858,7 +2811,7 @@ describe( 'selectors', () => {
 			} );
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
-			expect( hasMinimumVersion ).to.equal( false );
+			chaiExpect( hasMinimumVersion ).to.equal( false );
 		} );
 	} );
 
@@ -2876,7 +2829,7 @@ describe( 'selectors', () => {
 			} );
 
 			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
-			expect( hasThemes ).to.equal( false );
+			chaiExpect( hasThemes ).to.equal( false );
 		} );
 
 		test( 'it should return `true` if jetpack version is greater or equal to 3.7-beta', () => {
@@ -2892,7 +2845,7 @@ describe( 'selectors', () => {
 			} );
 
 			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
-			expect( hasThemes ).to.equal( true );
+			chaiExpect( hasThemes ).to.equal( true );
 		} );
 	} );
 
@@ -2909,7 +2862,7 @@ describe( 'selectors', () => {
 				state,
 				siteId
 			);
-			expect( hasThemesExtendedFeatures ).to.be.null;
+			chaiExpect( hasThemesExtendedFeatures ).to.be.null;
 		} );
 
 		test( 'it should return `false` if jetpack version is smaller than 4.7', () => {
@@ -2928,7 +2881,7 @@ describe( 'selectors', () => {
 				state,
 				siteId
 			);
-			expect( hasThemesExtendedFeatures ).to.be.false;
+			chaiExpect( hasThemesExtendedFeatures ).to.be.false;
 		} );
 
 		test( 'it should return `true` if jetpack version is greater or equal to 4.7', () => {
@@ -2947,7 +2900,7 @@ describe( 'selectors', () => {
 				state,
 				siteId
 			);
-			expect( hasThemesExtendedFeatures ).to.be.true;
+			chaiExpect( hasThemesExtendedFeatures ).to.be.true;
 		} );
 	} );
 
@@ -2962,7 +2915,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isMultisite ).to.be.null;
+			chaiExpect( isMultisite ).to.be.null;
 		} );
 
 		test( 'should return null if the site is not a Jetpack site', () => {
@@ -2981,7 +2934,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isMultisite ).to.be.null;
+			chaiExpect( isMultisite ).to.be.null;
 		} );
 
 		test( 'should return true if the site is a Jetpack multisite', () => {
@@ -3000,7 +2953,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isMultisite ).to.be.true;
+			chaiExpect( isMultisite ).to.be.true;
 		} );
 
 		test( 'should return false if the site is a Jetpack single site', () => {
@@ -3019,14 +2972,14 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isMultisite ).to.be.false;
+			chaiExpect( isMultisite ).to.be.false;
 		} );
 	} );
 
 	describe( '#isJetpackSiteSecondaryNetworkSite()', () => {
 		test( 'should return `null` for a non-existing site', () => {
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( stateWithNoItems, nonExistingSiteId );
-			expect( isSecondary ).to.equal( null );
+			chaiExpect( isSecondary ).to.equal( null );
 		} );
 
 		test( 'it should return `false` for non multisite site', () => {
@@ -3040,7 +2993,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
-			expect( isSecondary ).to.equal( false );
+			chaiExpect( isSecondary ).to.equal( false );
 		} );
 
 		test( 'it should return `false` for non-multisite/non-multinetwork sites', () => {
@@ -3056,7 +3009,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
-			expect( isSecondary ).to.equal( false );
+			chaiExpect( isSecondary ).to.equal( false );
 		} );
 
 		test( 'it should return `false` for multisite sites without unmapped url', () => {
@@ -3074,7 +3027,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
-			expect( isSecondary ).to.equal( false );
+			chaiExpect( isSecondary ).to.equal( false );
 		} );
 
 		test( 'it should return `false` for multisite sites without main_network_site', () => {
@@ -3092,7 +3045,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
-			expect( isSecondary ).to.equal( false );
+			chaiExpect( isSecondary ).to.equal( false );
 		} );
 
 		test( 'it should return `true` for multisite sites which unmapped_url does not match their main_network_site', () => {
@@ -3110,7 +3063,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
-			expect( isSecondary ).to.equal( true );
+			chaiExpect( isSecondary ).to.equal( true );
 		} );
 	} );
 
@@ -3119,7 +3072,7 @@ describe( 'selectors', () => {
 			const modulesActive = verifyJetpackModulesActive( stateWithNoItems, nonExistingSiteId, [
 				'manage',
 			] );
-			expect( modulesActive ).to.equal( null );
+			chaiExpect( modulesActive ).to.equal( null );
 		} );
 
 		test( 'it should return `null` for a non jetpack site', () => {
@@ -3132,7 +3085,7 @@ describe( 'selectors', () => {
 			} );
 
 			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'manage' ] );
-			expect( modulesActive ).to.equal( null );
+			chaiExpect( modulesActive ).to.equal( null );
 		} );
 
 		test( 'it should return `true` if all given modules are active for a site', () => {
@@ -3152,7 +3105,7 @@ describe( 'selectors', () => {
 				'sso',
 				'photon',
 			] );
-			expect( modulesActive ).to.equal( true );
+			chaiExpect( modulesActive ).to.equal( true );
 		} );
 
 		test( 'it should return `false` if not all given modules are active for a site', () => {
@@ -3171,7 +3124,7 @@ describe( 'selectors', () => {
 				'after-the-deadline',
 				'manage',
 			] );
-			expect( modulesActive ).to.equal( false );
+			chaiExpect( modulesActive ).to.equal( false );
 		} );
 	} );
 
@@ -3181,7 +3134,7 @@ describe( 'selectors', () => {
 				stateWithNoItems,
 				nonExistingSiteId
 			);
-			expect( managementUrl ).to.equal( null );
+			chaiExpect( managementUrl ).to.equal( null );
 		} );
 
 		test( 'it should return `false` for a non jetpack site', () => {
@@ -3193,7 +3146,7 @@ describe( 'selectors', () => {
 			} );
 
 			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
-			expect( managementUrl ).to.equal( null );
+			chaiExpect( managementUrl ).to.equal( null );
 		} );
 
 		test( 'it should return the correct url for version of jetpack less than 3.4', () => {
@@ -3211,7 +3164,7 @@ describe( 'selectors', () => {
 			} );
 
 			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
-			expect( managementUrl ).to.equal(
+			chaiExpect( managementUrl ).to.equal(
 				'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=json-api'
 			);
 		} );
@@ -3231,7 +3184,7 @@ describe( 'selectors', () => {
 			} );
 
 			const managementUrl = getJetpackSiteRemoteManagementUrl( state, siteId );
-			expect( managementUrl ).to.equal(
+			chaiExpect( managementUrl ).to.equal(
 				'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=manage'
 			);
 		} );
@@ -3240,7 +3193,7 @@ describe( 'selectors', () => {
 	describe( '#hasJetpackSiteCustomDomain()', () => {
 		test( 'should return `null` for a non-existing site', () => {
 			const hasCustomDomain = hasJetpackSiteCustomDomain( stateWithNoItems, nonExistingSiteId );
-			expect( hasCustomDomain ).to.equal( null );
+			chaiExpect( hasCustomDomain ).to.equal( null );
 		} );
 
 		test( 'it should return `true` if `URL` and `unmapped_url` have different domains', () => {
@@ -3256,7 +3209,7 @@ describe( 'selectors', () => {
 			} );
 
 			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
-			expect( hasCustomDomain ).to.equal( true );
+			chaiExpect( hasCustomDomain ).to.equal( true );
 		} );
 
 		test( 'it should return `false` if `URL` and `unmapped_url` have the same domain', () => {
@@ -3272,7 +3225,7 @@ describe( 'selectors', () => {
 			} );
 
 			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
-			expect( hasCustomDomain ).to.equal( false );
+			chaiExpect( hasCustomDomain ).to.equal( false );
 		} );
 	} );
 
@@ -3289,7 +3242,7 @@ describe( 'selectors', () => {
 			} );
 
 			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId );
-			expect( reason ).to.deep.equal( [
+			chaiExpect( reason ).to.deep.equal( [
 				'The file permissions on this host prevent editing files.',
 			] );
 		} );
@@ -3306,7 +3259,7 @@ describe( 'selectors', () => {
 			} );
 
 			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId );
-			expect( reason ).to.deep.equal( [
+			chaiExpect( reason ).to.deep.equal( [
 				'File modifications are explicitly disabled by a site administrator.',
 			] );
 		} );
@@ -3323,7 +3276,7 @@ describe( 'selectors', () => {
 			} );
 
 			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
-			expect( reason ).to.deep.equal( [
+			chaiExpect( reason ).to.deep.equal( [
 				'Any autoupdates are explicitly disabled by a site administrator.',
 			] );
 		} );
@@ -3340,7 +3293,7 @@ describe( 'selectors', () => {
 			} );
 
 			const reason = getJetpackSiteUpdateFilesDisabledReasons( state, siteId, 'autoupdateCore' );
-			expect( reason ).to.deep.equal( [
+			chaiExpect( reason ).to.deep.equal( [
 				'Core autoupdates are explicitly disabled by a site administrator.',
 			] );
 		} );
@@ -3349,7 +3302,7 @@ describe( 'selectors', () => {
 	describe( '#isJetpackSiteMainNetworkSite()', () => {
 		test( 'should return `null` for a non-existing site', () => {
 			const isMainNetwork = isJetpackSiteMainNetworkSite( stateWithNoItems, nonExistingSiteId );
-			expect( isMainNetwork ).to.equal( null );
+			chaiExpect( isMainNetwork ).to.equal( null );
 		} );
 
 		test( 'it should return `false` for non multisite site', () => {
@@ -3363,7 +3316,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
-			expect( isMainNetwork ).to.equal( false );
+			chaiExpect( isMainNetwork ).to.equal( false );
 		} );
 
 		test( 'it should return `false` for multisite sites without unmapped url', () => {
@@ -3381,7 +3334,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
-			expect( isMainNetwork ).to.equal( false );
+			chaiExpect( isMainNetwork ).to.equal( false );
 		} );
 
 		test( 'it should return `false` for multisite sites without main_network_site', () => {
@@ -3399,7 +3352,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
-			expect( isMainNetwork ).to.equal( false );
+			chaiExpect( isMainNetwork ).to.equal( false );
 		} );
 
 		test( 'it should return `true` for multisite sites and unmapped_url matches with main_network_site', () => {
@@ -3418,7 +3371,7 @@ describe( 'selectors', () => {
 			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
-			expect( isMainNetwork ).to.equal( true );
+			chaiExpect( isMainNetwork ).to.equal( true );
 		} );
 	} );
 
@@ -3433,7 +3386,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( adminUrl ).to.be.null;
+			chaiExpect( adminUrl ).to.be.null;
 		} );
 
 		test( 'should return the root admin url if no path specified', () => {
@@ -3454,7 +3407,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/' );
+			chaiExpect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/' );
 		} );
 
 		test( 'should return the admin url concatenated with path', () => {
@@ -3476,7 +3429,7 @@ describe( 'selectors', () => {
 				'customize.php'
 			);
 
-			expect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/customize.php' );
+			chaiExpect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/customize.php' );
 		} );
 
 		test( 'should return the admin url with path left slash trimmed automatically', () => {
@@ -3498,7 +3451,7 @@ describe( 'selectors', () => {
 				'/customize.php'
 			);
 
-			expect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/customize.php' );
+			chaiExpect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/customize.php' );
 		} );
 	} );
 
@@ -3513,7 +3466,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( customizerUrl ).to.equal( '/customize' );
+			chaiExpect( customizerUrl ).to.equal( '/customize' );
 		} );
 
 		test( 'should return customizer URL for WordPress.com site', () => {
@@ -3532,7 +3485,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( customizerUrl ).to.equal( '/customize/example.com' );
+			chaiExpect( customizerUrl ).to.equal( '/customize/example.com' );
 		} );
 
 		test( 'should return null if admin URL for Jetpack site is not known', () => {
@@ -3551,7 +3504,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( customizerUrl ).to.be.null;
+			chaiExpect( customizerUrl ).to.be.null;
 		} );
 
 		test( 'should return customizer URL for Jetpack site', () => {
@@ -3573,7 +3526,7 @@ describe( 'selectors', () => {
 				77203199
 			);
 
-			expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
+			chaiExpect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
 		} );
 
 		test( 'should prepend panel path parameter for WordPress.com site', () => {
@@ -3593,7 +3546,7 @@ describe( 'selectors', () => {
 				'identity'
 			);
 
-			expect( customizerUrl ).to.equal( '/customize/identity/example.com' );
+			chaiExpect( customizerUrl ).to.equal( '/customize/identity/example.com' );
 		} );
 
 		test( 'should prepend panel path parameter for Jetpack site', () => {
@@ -3616,7 +3569,7 @@ describe( 'selectors', () => {
 				'identity'
 			);
 
-			expect( customizerUrl ).to.equal(
+			chaiExpect( customizerUrl ).to.equal(
 				'https://example.com/wp-admin/customize.php?autofocus%5Bsection%5D=title_tagline'
 			);
 		} );
@@ -3653,7 +3606,7 @@ describe( 'selectors', () => {
 					77203199
 				);
 
-				expect( customizerUrl ).to.equal(
+				chaiExpect( customizerUrl ).to.equal(
 					'https://example.com/wp-admin/customize.php?return=https%3A%2F%2Fwordpress.com'
 				);
 			} );
@@ -3679,7 +3632,7 @@ describe( 'selectors', () => {
 					77203199
 				);
 
-				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
+				chaiExpect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
 			} );
 		} );
 	} );
@@ -3701,7 +3654,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( supportsJetpackSettingsUI ).to.be.null;
+			chaiExpect( supportsJetpackSettingsUI ).to.be.null;
 		} );
 
 		test( 'should return null if the site is not a Jetpack site', () => {
@@ -3719,7 +3672,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( supportsJetpackSettingsUI ).to.be.null;
+			chaiExpect( supportsJetpackSettingsUI ).to.be.null;
 		} );
 
 		test( 'should return false if the Jetpack version is older than 4.5', () => {
@@ -3741,7 +3694,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( supportsJetpackSettingsUI ).to.be.false;
+			chaiExpect( supportsJetpackSettingsUI ).to.be.false;
 		} );
 
 		test( 'should return true if the Jetpack version is 4.5', () => {
@@ -3763,7 +3716,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( supportsJetpackSettingsUI ).to.be.true;
+			chaiExpect( supportsJetpackSettingsUI ).to.be.true;
 		} );
 
 		test( 'should return true if the Jetpack version is newer than 4.5', () => {
@@ -3785,7 +3738,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( supportsJetpackSettingsUI ).to.be.true;
+			chaiExpect( supportsJetpackSettingsUI ).to.be.true;
 		} );
 	} );
 
@@ -3800,7 +3753,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( hasDefaultTitle ).to.be.null;
+			chaiExpect( hasDefaultTitle ).to.be.null;
 		} );
 
 		test( 'should return true if the site title is "Site Title"', () => {
@@ -3819,7 +3772,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( hasDefaultTitle ).to.be.true;
+			chaiExpect( hasDefaultTitle ).to.be.true;
 		} );
 
 		test( 'should return true if the site title is equal to the site slug', () => {
@@ -3838,7 +3791,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( hasDefaultTitle ).to.be.true;
+			chaiExpect( hasDefaultTitle ).to.be.true;
 		} );
 
 		test( 'should return false if the site title is any other title', () => {
@@ -3857,7 +3810,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			expect( hasDefaultTitle ).to.be.false;
+			chaiExpect( hasDefaultTitle ).to.be.false;
 		} );
 	} );
 
@@ -3883,13 +3836,13 @@ describe( 'selectors', () => {
 			};
 
 			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
-			expect( noNewAttributes.hasMinimumJetpackVersion ).to.equal( undefined );
-			expect( noNewAttributes.canAutoupdateFiles ).to.equal( undefined );
-			expect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
-			expect( noNewAttributes.canManage ).to.equal( undefined );
-			expect( noNewAttributes.isMainNetworkSite ).to.equal( undefined );
-			expect( noNewAttributes.isSecondaryNetworkSite ).to.equal( undefined );
-			expect( noNewAttributes.isSiteUpgradeable ).to.equal( undefined );
+			chaiExpect( noNewAttributes.hasMinimumJetpackVersion ).to.equal( undefined );
+			chaiExpect( noNewAttributes.canAutoupdateFiles ).to.equal( undefined );
+			chaiExpect( noNewAttributes.canUpdateFiles ).to.equal( undefined );
+			chaiExpect( noNewAttributes.canManage ).to.equal( undefined );
+			chaiExpect( noNewAttributes.isMainNetworkSite ).to.equal( undefined );
+			chaiExpect( noNewAttributes.isSecondaryNetworkSite ).to.equal( undefined );
+			chaiExpect( noNewAttributes.isSiteUpgradeable ).to.equal( undefined );
 		} );
 
 		test( 'should return exists for attributes if a site is Jetpack', () => {
@@ -3912,13 +3865,94 @@ describe( 'selectors', () => {
 				},
 			};
 			const noNewAttributes = getJetpackComputedAttributes( state, 77203074 );
-			expect( noNewAttributes.hasMinimumJetpackVersion ).to.have.property;
-			expect( noNewAttributes.canAutoupdateFiles ).to.have.property;
-			expect( noNewAttributes.canUpdateFiles ).to.have.property;
-			expect( noNewAttributes.canManage ).to.have.property;
-			expect( noNewAttributes.isMainNetworkSite ).to.have.property;
-			expect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
-			expect( noNewAttributes.isSiteUpgradeable ).to.have.property;
+			chaiExpect( noNewAttributes.hasMinimumJetpackVersion ).to.have.property;
+			chaiExpect( noNewAttributes.canAutoupdateFiles ).to.have.property;
+			chaiExpect( noNewAttributes.canUpdateFiles ).to.have.property;
+			chaiExpect( noNewAttributes.canManage ).to.have.property;
+			chaiExpect( noNewAttributes.isMainNetworkSite ).to.have.property;
+			chaiExpect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
+			chaiExpect( noNewAttributes.isSiteUpgradeable ).to.have.property;
+		} );
+	} );
+	describe( 'getSiteComputedAttributes()', () => {
+		test( 'should return null if site is not found', () => {
+			const state = {
+				...userState,
+				sites: {
+					items: {},
+				},
+			};
+			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
+			expect( computedAttributes ).toBeNull();
+		} );
+
+		test( 'should return the "mandatory" attributes', () => {
+			const state = {
+				...userState,
+				sites: {
+					items: {
+						2916288: {
+							ID: 2916288,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.wordpress.com',
+							jetpack: false,
+						},
+					},
+				},
+			};
+
+			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
+			expect( computedAttributes ).toEqual( {
+				title: 'WordPress.com Example Blog',
+				is_previewable: false,
+				is_customizable: false,
+				hasConflict: false,
+				domain: 'example.wordpress.com',
+				slug: 'example.wordpress.com',
+				options: {},
+			} );
+		} );
+
+		test( 'should return the "mandatory" and optional attributes if conditions for those are met', () => {
+			const options = {
+				default_post_format: 'test',
+				is_mapped_domain: true,
+				unmapped_url: 'https://unmapped-url.wordpress.com',
+				is_redirect: true,
+			};
+			const state = {
+				...userState,
+				sites: {
+					items: {
+						2916288: {
+							ID: 2916288,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.wordpress.com',
+							jetpack: false,
+							options,
+						},
+						2916289: {
+							ID: 2916289,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.wordpress.com',
+							jetpack: true,
+						},
+					},
+				},
+			};
+
+			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
+			expect( computedAttributes ).toEqual( {
+				title: 'WordPress.com Example Blog',
+				is_previewable: false,
+				is_customizable: false,
+				hasConflict: true,
+				domain: 'unmapped-url.wordpress.com',
+				slug: 'unmapped-url.wordpress.com',
+				options,
+				wpcom_url: 'unmapped-url.wordpress.com',
+				URL: 'https://unmapped-url.wordpress.com',
+			} );
 		} );
 	} );
 } );

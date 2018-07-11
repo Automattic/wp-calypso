@@ -1,9 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
-
-import { isEmpty, pick } from 'lodash';
+import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -12,6 +12,7 @@ import { stringify } from 'qs';
 import { serverRender } from 'render';
 import { setSection as setSectionMiddlewareFactory } from '../../client/controller';
 import { setRoute as setRouteAction } from 'state/ui/actions';
+import { setShouldServerSideRender } from '../render';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function( route, ...middlewares ) {
@@ -38,6 +39,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
 					setRouteMiddleware,
+					setShouldServerSideRender,
 					...middlewares
 				),
 				serverRender
@@ -85,7 +87,8 @@ function applyMiddlewares( context, expressNext, ...middlewares ) {
 				next();
 			}
 		} )
-	 );
+	); // prettier-ignore
+
 	compose( ...liftedMiddlewares )();
 }
 
@@ -93,15 +96,10 @@ function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => () => f( composed ), () => {} );
 }
 
-export function getCacheKey( context ) {
-	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
-		return context.pathname;
+export function getNormalizedPath( pathname, query ) {
+	if ( isEmpty( query ) ) {
+		return pathname;
 	}
 
-	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
-	return (
-		context.pathname +
-		'?' +
-		stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
-	);
+	return pathname + '?' + stringify( query, { sort: ( a, b ) => a.localeCompare( b ) } );
 }

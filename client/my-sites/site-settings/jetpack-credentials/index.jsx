@@ -13,10 +13,11 @@ import { some } from 'lodash';
 import CompactCard from 'components/card/compact';
 import CredentialsSetupFlow from './credentials-setup-flow';
 import CredentialsConfigured from './credentials-configured';
-import Gridicon from 'gridicons';
+import Notice from 'components/notice';
 import QueryRewindState from 'components/data/query-rewind-state';
+import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 import { getSiteSlug } from 'state/sites/selectors';
 
 class JetpackCredentials extends Component {
@@ -28,19 +29,16 @@ class JetpackCredentials extends Component {
 		return (
 			<div className="jetpack-credentials">
 				<QueryRewindState siteId={ siteId } />
-				<CompactCard className="jetpack-credentials__header">
-					<span>{ translate( 'Backups and security scans' ) }</span>
+				<SectionHeader label={ translate( 'Backups and security scans' ) }>
 					{ hasAuthorized && (
-						<span className="jetpack-credentials__connected">
-							<Gridicon
-								icon="checkmark"
-								size={ 18 }
-								className="jetpack-credentials__connected-checkmark"
-							/>
-							{ translate( 'Connected' ) }
-						</span>
+						<Notice
+							icon="checkmark"
+							isCompact
+							status="is-success"
+							text={ translate( 'Connected' ) }
+						/>
 					) }
-				</CompactCard>
+				</SectionHeader>
 				{ hasCredentials ? (
 					<CredentialsConfigured siteId={ siteId } />
 				) : (

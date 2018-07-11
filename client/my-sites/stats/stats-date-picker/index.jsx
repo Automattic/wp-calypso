@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
-import { getSiteStatsQueryDate } from 'state/selectors';
+import getSiteStatsQueryDate from 'state/selectors/get-site-stats-query-date';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
@@ -149,7 +149,7 @@ class StatsDatePicker extends Component {
 						),
 					},
 					comment: 'Example: "Activity for December 2017"',
-				} )
+			  } )
 			: translate( 'Stats for {{period/}}', {
 					components: {
 						period: (
@@ -163,7 +163,7 @@ class StatsDatePicker extends Component {
 					context: 'Stats: Main stats page heading',
 					comment:
 						'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"',
-				} );
+			  } );
 
 		return (
 			<div>
@@ -210,4 +210,7 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsDatePicker );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsDatePicker );

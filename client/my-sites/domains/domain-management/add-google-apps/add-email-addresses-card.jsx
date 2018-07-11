@@ -38,6 +38,7 @@ const AddEmailAddressesCard = createReactClass( {
 
 	propTypes: {
 		domains: PropTypes.object.isRequired,
+		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
 	},
 
@@ -53,7 +54,7 @@ const AddEmailAddressesCard = createReactClass( {
 
 		if ( this.props.selectedDomainName ) {
 			domain = this.props.selectedDomainName;
-		} else if ( this.props.domains.hasLoadedFromServer ) {
+		} else if ( ! this.props.isRequestingSiteDomains ) {
 			domain = this.getFirstDomainName();
 		} else {
 			domain = null;
@@ -88,13 +89,13 @@ const AddEmailAddressesCard = createReactClass( {
 	needsToUpdateDomainFields( prevProps ) {
 		return (
 			! this.props.selectedDomainName &&
-			! prevProps.domains.hasLoadedFromServer &&
-			this.props.domains.hasLoadedFromServer
+			prevProps.isRequestingSiteDomains &&
+			! this.props.isRequestingSiteDomains
 		);
 	},
 
 	getFirstDomainName() {
-		const domains = getGoogleAppsSupportedDomains( this.props.domains.list );
+		const domains = getGoogleAppsSupportedDomains( this.props.domains );
 		return domains[ 0 ].name;
 	},
 
@@ -149,6 +150,7 @@ const AddEmailAddressesCard = createReactClass( {
 			select = (
 				<DomainsSelect
 					domains={ this.props.domains }
+					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
 					value={ this.state.fieldsets[ index ].domain.value }
 					onChange={ this.handleFieldChange.bind( this, 'domain', index ) }
 					onFocus={ this.handleFieldFocus.bind( this, 'Domain', index ) }
@@ -217,10 +219,7 @@ const AddEmailAddressesCard = createReactClass( {
 	formButtons() {
 		return (
 			<FormFooter className="add-email-addresses-card__footer">
-				<FormButton
-					onClick={ this.handleContinue }
-					disabled={ ! this.props.domains.hasLoadedFromServer }
-				>
+				<FormButton onClick={ this.handleContinue } disabled={ this.props.isRequestingSiteDomains }>
 					{ this.props.translate( 'Continue' ) }
 				</FormButton>
 
@@ -228,7 +227,7 @@ const AddEmailAddressesCard = createReactClass( {
 					type="button"
 					isPrimary={ false }
 					onClick={ this.handleCancel }
-					disabled={ ! this.props.domains.hasLoadedFromServer }
+					disabled={ this.props.isRequestingSiteDomains }
 				>
 					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
@@ -303,7 +302,7 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	} );
 
 	return map( groups, function( users, domain ) {
-		const domainInfo = find( domains.list, { name: domain } );
+		const domainInfo = find( domains, { name: domain } );
 		let item;
 
 		if ( hasGoogleApps( domainInfo ) ) {

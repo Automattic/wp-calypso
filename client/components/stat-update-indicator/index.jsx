@@ -60,7 +60,7 @@ const StatUpdateIndicator = createReactClass( {
 	},
 
 	render: function() {
-		var className = classNames( {
+		const className = classNames( {
 			'stat-update-indicator': true,
 			'is-updating': this.state.updating,
 		} );

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteStatsViewSummary } from 'state/selectors';
+import getSiteStatsViewSummary from 'state/selectors/get-site-stats-view-summary';
 
 describe( 'getSiteStatsViewSummary()', () => {
 	test( 'should return null if no data exists', () => {

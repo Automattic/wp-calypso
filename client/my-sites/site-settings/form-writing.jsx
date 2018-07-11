@@ -27,7 +27,9 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import FeedSettings from 'my-sites/site-settings/feed-settings';
+import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
 import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
@@ -68,9 +70,10 @@ class SiteSettingsFormWriting extends Component {
 			handleAutosavingToggle,
 			handleAutosavingRadio,
 			handleSubmitForm,
+			isPodcastingSupported,
+			isMasterbarSectionVisible,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackMasterbarSupported,
 			jetpackSettingsUISupported,
 			onChangeField,
 			setFieldValue,
@@ -89,16 +92,15 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__general-settings"
 			>
-				{ siteIsJetpack &&
-					jetpackMasterbarSupported && (
-						<div>
-							{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
-							<Masterbar
-								isSavingSettings={ isSavingSettings }
-								isRequestingSettings={ isRequestingSettings }
-							/>
-						</div>
-					) }
+				{ isMasterbarSectionVisible && (
+					<div>
+						{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
+						<Masterbar
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+						/>
+					</div>
+				) }
 
 				{ config.isEnabled( 'manage/site-settings/categories' ) && (
 					<div className="site-settings__taxonomies">
@@ -168,6 +170,11 @@ class SiteSettingsFormWriting extends Component {
 					onChangeField={ onChangeField }
 				/>
 
+				{ isPodcastingSupported &&
+					config.isEnabled( 'manage/site-settings/podcasting' ) && (
+						<PodcastingLink fields={ fields } />
+					) }
+
 				{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
 
 				<ThemeEnhancements
@@ -212,13 +219,21 @@ class SiteSettingsFormWriting extends Component {
 const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const siteIsJetpack = isJetpackSite( state, siteId );
+		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
 
 		return {
 			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
-			jetpackMasterbarSupported: isJetpackMinimumVersion( state, siteId, '4.8' ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteIsJetpack,
 			siteId,
 			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
+			isMasterbarSectionVisible:
+				siteIsJetpack &&
+				isJetpackMinimumVersion( state, siteId, '4.8' ) &&
+				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
+				! siteIsAutomatedTransfer,
+			isPodcastingSupported,
 		};
 	},
 	{ requestPostTypes },
@@ -269,6 +284,7 @@ const getFormSettings = settings => {
 		'time_format',
 		'timezone_string',
 		'lazy-images',
+		'podcasting_category_id',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values
@@ -282,6 +298,7 @@ const getFormSettings = settings => {
 	return formSettings;
 };
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	SiteSettingsFormWriting
-);
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormWriting );

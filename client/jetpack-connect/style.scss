@@ -4,6 +4,21 @@
 
 	.logged-out-form__links {
 		max-width: 100%;
+
+		/* Move up to the Card above */
+		margin-top: -10px;
+		@include breakpoint( '>480px' ) {
+			margin-top: -16px;
+		}
+	}
+
+	.signup-form__social-top {
+		.logged-out-form__links {
+			margin-top: 0px;
+			@include breakpoint( '>480px' ) {
+				margin-top: 0px;
+			}
+		}
 	}
 
 	.formatted-header {
@@ -22,21 +37,21 @@
 
 	.button.is-primary {
 		background-color: $green-jetpack;
-		border-color: darken($green-jetpack, 5%);
+		border-color: darken( $green-jetpack, 5% );
 
 		&:hover,
 		&:focus {
-			border-color: darken($green-jetpack, 30%);
+			border-color: darken( $green-jetpack, 30% );
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px lighten($green-jetpack, 25%);
+			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
 		}
 
 		&[disabled],
 		&:disabled {
-			background: tint($green-jetpack, 50%);
-			border-color: tint($green-jetpack, 35%);
+			background: tint( $green-jetpack, 50% );
+			border-color: tint( $green-jetpack, 35% );
 			color: $white;
 		}
 	}
@@ -44,10 +59,6 @@
 
 .jetpack-connect__main-logo {
 	text-align: center;
-
-	.jetpack-logo__icon {
-		fill: $green-jetpack;
-	}
 
 	@include breakpoint( '<660px' ) {
 		margin-top: 20px;
@@ -98,7 +109,8 @@
 	.example-components__site-address-container {
 		position: relative;
 
-		.gridicon {
+		.gridicons-user,
+		.gridicons-globe {
 			position: absolute;
 			top: 8px;
 			left: 8px;
@@ -146,6 +158,10 @@
 
 .jetpack-connect__back-button {
 	margin-top: 16px;
+}
+
+.jetpack-connect__install {
+	margin-bottom: 16px;
 }
 
 .jetpack-connect__install-steps {
@@ -223,7 +239,7 @@
 	position: relative;
 	margin: 0;
 	line-height: 0;
-	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 }
 
 .example-components__install-plugin-header {
@@ -330,7 +346,7 @@
 		background-color: #518d2a;
 		border-color: #518d2a;
 		border-radius: 4px;
-		box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2), 0 4px 0 0 #3e6c20;
+		box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, 0.2 ), 0 4px 0 0 #3e6c20;
 	}
 }
 
@@ -429,7 +445,7 @@
 }
 
 .jetpack-connect__connect-button-card {
-	background: lighten($gray, 34%);
+	background: lighten( $gray, 34% );
 	border-top: 1px solid $gray-lighten-30;
 	box-shadow: none;
 	margin: 16px -16px -16px -16px;
@@ -516,16 +532,6 @@
 	margin-bottom: 16px;
 }
 
-.jetpack-connect__plans-nav-buttons {
-	text-align: center;
-	margin-bottom: 17px;
-
-	.button .gridicon {
-		padding-left: 4px;
-		margin-right: -5px;
-	}
-}
-
 .jetpack-connect__happychat-button {
 	background: none;
 	border: none;
@@ -601,12 +607,8 @@
 	}
 }
 
-.jetpack-connect__auth-form-header-image {
-	text-align: center;
-}
-
 .jetpack-connect__hide-plan-icons {
-	.jetpack-connect__plans-nav-buttons {
+	.plans-skip-button {
 		margin-bottom: 0;
 	}
 
@@ -626,7 +628,6 @@
 }
 
 .jetpack-connect__credentials-submit {
-	margin-bottom: 20px;
 	transition: none;
 
 	&.is-error,
@@ -636,7 +637,7 @@
 
 	&.is-primary {
 		background-color: $green-jetpack;
-		border-color: darken($green-jetpack, 5%);
+		border-color: darken( $green-jetpack, 5% );
 	}
 }
 
@@ -648,8 +649,14 @@
 	.spinner {
 		z-index: z-index(
 			'root',
-			'.jetpack-connect__password-container .jetpack-connect__creds-form-spinner'
+			'.jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner'
 		);
+	}
+}
+
+.jetpack-connect__creds-form-footer {
+	.button {
+		margin-top: 22px;
 	}
 }
 
@@ -658,7 +665,7 @@
 
 	.gridicons-lock {
 		position: absolute;
-		z-index: z-index('root', '.jetpack-connect__password-form .gridicon');
+		z-index: z-index( 'root', '.jetpack-connect__password-form .gridicon' );
 		left: 8px;
 		top: 7px;
 		fill: $gray-lighten-20;
@@ -666,7 +673,9 @@
 }
 
 .jetpack-connect__password-form-input {
-	text-indent: 27px;
+	&[type='password'] {
+		padding-left: 40px;
+	}
 }
 
 .jetpack-connect__creds-form-spinner {
@@ -678,10 +687,32 @@
 	text-align: center;
 }
 
-.layout.has-chat.is-section-jetpack-connect:not(.is-group-editor):not(.is-section-theme):not(.is-group-reader)
+.layout.has-chat.is-section-jetpack-connect:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader )
 	.layout__content {
 	@include breakpoint( '>1040px' ) {
 		padding-left: 32px;
 		padding-right: 319px;
 	}
+}
+
+.jetpack-connect__plan-info {
+	text-align: center;
+	max-width: 500px;
+	margin-top: 40px;
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+
+.jetpack-connect__plan-info-illustration {
+	max-width: 200px;
+}
+
+.jetpack-connect__plan-info-buttons {
+	.button + .button {
+		margin-left: 10px;
+	}
+}
+
+.jetpack-connect__connect-button {
+	text-align: center;
 }

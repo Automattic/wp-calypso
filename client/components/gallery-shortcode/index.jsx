@@ -13,7 +13,7 @@ import { assign, omit, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Shortcode from 'components/shortcode';
+import Shortcode from 'blocks/shortcode';
 import { parse as parseShortcode } from 'lib/shortcode';
 import { generateGalleryShortcode } from 'lib/media/utils';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
@@ -83,7 +83,7 @@ export default class GalleryShortcode extends React.Component {
 	};
 
 	getAttributes = () => {
-		let attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
+		const attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
 
 		if ( this.props.children ) {
 			assign( attributes, parseShortcode( this.props.children ).attrs.named );

@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import reducer, { errorCodeReducer, isComplete } from '../reducer';
+import reducer, { errorCodeReducer, errorMessageReducer, isComplete } from '../reducer';
 import {
 	JETPACK_REMOTE_INSTALL,
 	JETPACK_REMOTE_INSTALL_FAILURE,
@@ -11,6 +11,7 @@ import {
 
 const url = 'https://yourgroovydomain.com';
 const errorCodeString = 'INVALID_CREDENTIALS';
+const errorMessageString = 'bad password';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
@@ -18,6 +19,7 @@ describe( 'reducer', () => {
 
 		expect( state ).toHaveProperty( 'isComplete' );
 		expect( state ).toHaveProperty( 'errorCode' );
+		expect( state ).toHaveProperty( 'errorMessage' );
 	} );
 
 	describe( 'isComplete', () => {
@@ -60,6 +62,38 @@ describe( 'reducer', () => {
 
 		test( 'should be cleared on install request', () => {
 			const state = errorCodeReducer( errorState, { type: JETPACK_REMOTE_INSTALL, url } );
+			expect( state[ url ] ).not.toBeDefined();
+		} );
+	} );
+
+	describe( 'errorMessage', () => {
+		const errorState = {
+			[ url ]: {
+				errorCode: errorCodeString,
+				errorMessage: errorMessageString,
+			},
+		};
+
+		test( 'should store error message by url', () => {
+			const state = errorMessageReducer( undefined, {
+				type: JETPACK_REMOTE_INSTALL_FAILURE,
+				url,
+				errorCode: errorCodeString,
+				errorMessage: errorMessageString,
+			} );
+			expect( state[ url ] ).toEqual( errorMessageString );
+		} );
+
+		test( 'should be cleared on successful install', () => {
+			const state = errorMessageReducer( errorState, {
+				type: JETPACK_REMOTE_INSTALL_SUCCESS,
+				url,
+			} );
+			expect( state[ url ] ).not.toBeDefined();
+		} );
+
+		test( 'should be cleared on install request', () => {
+			const state = errorMessageReducer( errorState, { type: JETPACK_REMOTE_INSTALL, url } );
 			expect( state[ url ] ).not.toBeDefined();
 		} );
 	} );

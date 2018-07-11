@@ -9,7 +9,7 @@ import Emitter from 'lib/mixins/emitter';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:ticker' );
 
-var ticker = {};
+const ticker = {};
 
 Emitter( ticker );
 

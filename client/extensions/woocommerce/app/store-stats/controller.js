@@ -13,11 +13,8 @@ import { moment, translate } from 'i18n-calypso';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { getQueryDate, getUnitPeriod } from './utils';
-import analytics from 'lib/analytics';
-import titlecase from 'to-title-case';
+import { getQueryDate, getQueries } from './utils';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import { UNITS } from './constants';
 import config from 'config';
 
 function isValidParameters( context ) {
@@ -41,18 +38,13 @@ export default function StatsController( context, next ) {
 		page.redirect( `/store/stats/orders/day/${ context.params.site }` );
 	}
 
-	analytics.pageView.record(
-		`/store/stats/${ context.params.type }/${ context.params.unit }`,
-		`Store > Stats > ${ titlecase( context.params.type ) } > ${ titlecase( context.params.unit ) }`
-	);
-
 	const props = {
-		querystring: context.querystring,
 		type: context.params.type,
 		unit: context.params.unit,
 		path: context.pathname,
 		queryDate: getQueryDate( context ),
 		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
+		queryParams: context.query || {},
 	};
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
@@ -99,16 +91,12 @@ export default function StatsController( context, next ) {
 			);
 			break;
 		case 'referrers':
-			const referrersQuery = {
-				unit: props.unit,
-				date: getUnitPeriod( props.queryDate, props.unit ),
-				quantity: UNITS[ props.unit ].quantity,
-			};
+			const { referrerQuery } = getQueries( props.unit, props.queryDate );
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
 					require="extensions/woocommerce/app/store-stats/referrers"
-					query={ referrersQuery }
+					query={ referrerQuery }
 					{ ...props }
 				/>
 			);

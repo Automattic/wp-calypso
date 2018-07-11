@@ -16,12 +16,10 @@ import React from 'react';
  */
 import { EditPostStatus } from '../';
 
-jest.mock( 'lib/user', () => () => {} );
-
 describe( 'EditPostStatus', () => {
 	test( 'should hide sticky option for password protected posts', () => {
 		const wrapper = shallow(
-			<EditPostStatus post={ { password: 'password' } } isPostPrivate={ false } type={ 'post' } />
+			<EditPostStatus post={ { type: 'post', status: 'draft', password: 'password' } } />
 		);
 
 		expect( wrapper.find( '.edit-post-status__sticky' ) ).to.have.lengthOf( 0 );
@@ -29,7 +27,7 @@ describe( 'EditPostStatus', () => {
 
 	test( 'should hide sticky option for private posts', () => {
 		const wrapper = shallow(
-			<EditPostStatus post={ { password: '' } } isPostPrivate={ true } type={ 'post' } />
+			<EditPostStatus post={ { type: 'post', status: 'private', password: '' } } />
 		);
 
 		expect( wrapper.find( '.edit-post-status__sticky' ) ).to.have.lengthOf( 0 );
@@ -38,9 +36,7 @@ describe( 'EditPostStatus', () => {
 	test( 'should show sticky option for published posts', () => {
 		const wrapper = shallow(
 			<EditPostStatus
-				post={ { password: '' } }
-				type={ 'post' }
-				isPostPrivate={ false }
+				post={ { type: 'post', status: 'published', password: '' } }
 				translate={ noop }
 			/>
 		);

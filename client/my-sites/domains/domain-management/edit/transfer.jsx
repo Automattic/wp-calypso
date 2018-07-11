@@ -21,7 +21,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { transferStatus } from 'lib/domains/constants';
 import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED } from 'lib/url/support';
 import { restartInboundTransfer } from 'lib/domains';
-import { fetchDomains } from 'lib/upgrades/actions';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -153,7 +153,7 @@ class Transfer extends React.PureComponent {
 				this.props.successNotice( translate( 'The transfer has been successfully restarted.' ), {
 					duration: 5000,
 				} );
-				fetchDomains( selectedSite.ID );
+				this.props.fetchSiteDomains( selectedSite.ID );
 			} else {
 				this.props.errorNotice(
 					error.message || translate( 'We were unable to restart the transfer.' ),
@@ -257,6 +257,7 @@ const paymentSettingsClick = domain =>
 
 export default connect( null, {
 	errorNotice,
+	fetchSiteDomains,
 	paymentSettingsClick,
 	successNotice,
 } )( localize( Transfer ) );

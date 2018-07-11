@@ -23,6 +23,15 @@ const JETPACK_ACTOR = (
 	</div>
 );
 
+const HAPPINESS_ACTOR = (
+	<div className="activity-log-item__actor">
+		<JetpackLogo size={ 40 } />
+		<div className="activity-log-item__actor-info">
+			<div className="activity-log-item__actor-name">Happiness Engineer</div>
+		</div>
+	</div>
+);
+
 export default class ActivityActor extends PureComponent {
 	static propTypes = {
 		actor: PropTypes.shape( {
@@ -38,6 +47,10 @@ export default class ActivityActor extends PureComponent {
 
 		if ( actorName === 'Jetpack' && actorType === 'Application' ) {
 			return JETPACK_ACTOR;
+		}
+
+		if ( actorName === 'Happiness Engineer' && actorType === 'Happiness Engineer' ) {
+			return HAPPINESS_ACTOR;
 		}
 
 		return (

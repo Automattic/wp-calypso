@@ -1,3 +1,5 @@
+/** @format */
+
 export const LOCALIZED_LANGUAGE_NAMES_DATA_DE = {
 	it: {
 		localized: 'Italienisch',
@@ -28,4 +30,3 @@ export const LOCALIZED_LANGUAGE_NAMES_DATA_IT = {
 		en: 'Italian',
 	},
 };
-

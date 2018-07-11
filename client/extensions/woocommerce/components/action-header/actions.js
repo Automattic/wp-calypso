@@ -78,8 +78,14 @@ class ActionButtons extends Component {
 					return;
 				}
 				/* eslint-disable react/no-string-refs */
-				const buttonWidth = ReactDom.findDOMNode( this.refs[ 'button-' + index ] ).offsetWidth;
+				const node = ReactDom.findDOMNode( this.refs[ 'button-' + index ] );
 				/* eslint-enable react/no-string-refs */
+
+				if ( ! node ) {
+					return;
+				}
+
+				const buttonWidth = node.offsetWidth;
 				totalWidth += buttonWidth;
 			}.bind( this )
 		);

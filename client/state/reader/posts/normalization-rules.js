@@ -39,14 +39,15 @@ import linkJetpackCarousels from 'lib/post-normalizer/rule-content-link-jetpack-
 import makeLinksSafe from 'lib/post-normalizer/rule-make-links-safe';
 import makeContentLinksSafe from 'lib/post-normalizer/rule-content-make-links-safe';
 
-/**
- * Module vars
- */
-export const READER_CONTENT_WIDTH = 800,
-	PHOTO_ONLY_MIN_WIDTH = 440,
-	PHOTO_ONLY_MAX_CHARACTER_COUNT = 85,
-	GALLERY_MIN_IMAGES = 4,
-	GALLERY_MIN_IMAGE_WIDTH = 100;
+import {
+	READER_CONTENT_WIDTH,
+	PHOTO_ONLY_MIN_WIDTH,
+	PHOTO_ONLY_MAX_CHARACTER_COUNT,
+	GALLERY_MIN_IMAGES,
+	GALLERY_MIN_IMAGE_WIDTH,
+	MIN_IMAGE_WIDTH,
+	MIN_IMAGE_HEIGHT,
+} from './sizes';
 
 function getCharacterCount( post ) {
 	if ( ! post || ! post.content_no_html ) {
@@ -57,7 +58,7 @@ function getCharacterCount( post ) {
 }
 
 export function imageIsBigEnoughForGallery( image ) {
-	return image.width >= GALLERY_MIN_IMAGE_WIDTH;
+	return image.width >= GALLERY_MIN_IMAGE_WIDTH && image.height >= MIN_IMAGE_HEIGHT;
 }
 
 const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
@@ -68,10 +69,8 @@ const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHAR
  * @return {object}            The classified post
  */
 export function classifyPost( post ) {
-	const canonicalImage = post.canonical_image;
 	const imagesForGallery = filter( post.content_images, imageIsBigEnoughForGallery );
-	let displayType = DISPLAY_TYPES.UNCLASSIFIED,
-		canonicalAspect;
+	let displayType = DISPLAY_TYPES.UNCLASSIFIED;
 
 	if ( imagesForGallery.length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
@@ -82,25 +81,6 @@ export function classifyPost( post ) {
 		hasShortContent( post )
 	) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
-	}
-
-	if ( canonicalImage ) {
-		// TODO do we still need aspect logic here and any of these?
-		if ( canonicalImage.width >= 600 ) {
-			displayType ^= DISPLAY_TYPES.LARGE_BANNER;
-		}
-
-		if ( canonicalImage.height && canonicalImage.width ) {
-			canonicalAspect = canonicalImage.width / canonicalImage.height;
-
-			if ( canonicalAspect >= 2 && canonicalImage.width >= 600 ) {
-				displayType ^= DISPLAY_TYPES.LANDSCAPE_BANNER;
-			} else if ( canonicalAspect < 1 && canonicalImage.height > 160 ) {
-				displayType ^= DISPLAY_TYPES.PORTRAIT_BANNER;
-			} else if ( canonicalAspect > 0.7 && canonicalAspect < 1.3 && canonicalImage.width < 200 ) {
-				displayType ^= DISPLAY_TYPES.THUMBNAIL;
-			}
-		}
 	}
 
 	if ( post.canonical_media && post.canonical_media.mediaType === 'video' ) {
@@ -153,7 +133,7 @@ export function runFastRules( post ) {
 }
 
 const slowSyncRules = flow( [
-	keepValidImages( 144, 72 ),
+	keepValidImages( MIN_IMAGE_WIDTH, MIN_IMAGE_HEIGHT ),
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,

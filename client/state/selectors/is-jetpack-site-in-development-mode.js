@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getJetpackConnectionStatus } from 'state/selectors';
+import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
 
 /**
  * Returns true if we the Jetpack site is in development mode. False otherwise.
@@ -20,5 +20,13 @@ import { getJetpackConnectionStatus } from 'state/selectors';
  * @return {?Boolean}          Whether the site is in development mode.
  */
 export default function isJetpackSiteInDevelopmentMode( state, siteId ) {
-	return get( getJetpackConnectionStatus( state, siteId ), [ 'devMode', 'isActive' ], null );
+	const isDevMode = get(
+		getJetpackConnectionStatus( state, siteId ),
+		[ 'devMode', 'isActive' ],
+		null
+	);
+	if ( isDevMode === null ) {
+		return null;
+	}
+	return !! isDevMode;
 }

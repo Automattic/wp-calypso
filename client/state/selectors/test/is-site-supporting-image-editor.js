@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isSiteSupportingImageEditor } from 'state/selectors';
+import isSiteSupportingImageEditor from 'state/selectors/is-site-supporting-image-editor';
 
 describe( 'isSiteSupportingImageEditor()', () => {
 	test( 'should return true if site is not tracked', () => {

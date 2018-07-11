@@ -37,4 +37,18 @@ export default function() {
 			clientRender
 		);
 	}
+
+	if ( config.isEnabled( 'manage/site-settings/podcasting' ) ) {
+		page( '/settings/podcasting', siteSelection, sites, makeLayout, clientRender );
+
+		page(
+			'/settings/podcasting/:site_id',
+			siteSelection,
+			navigation,
+			settingsController.setScroll,
+			controller.podcasting,
+			makeLayout,
+			clientRender
+		);
+	}
 }

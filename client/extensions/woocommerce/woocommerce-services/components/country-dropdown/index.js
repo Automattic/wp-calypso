@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -9,17 +11,12 @@ import PropTypes from 'prop-types';
  */
 import Dropdown from '../dropdown';
 
-const CountryDropdown = ( props ) => {
+const CountryDropdown = props => {
 	const valuesMap = {};
-	Object.keys( props.countriesData ).forEach( ( countryCode ) => {
+	Object.keys( props.countriesData ).forEach( countryCode => {
 		valuesMap[ countryCode ] = props.countriesData[ countryCode ].name;
 	} );
-	return (
-		<Dropdown
-			{ ...props }
-			valuesMap={ valuesMap }
-			/>
-	);
+	return <Dropdown { ...props } valuesMap={ valuesMap } />;
 };
 
 CountryDropdown.propTypes = {
@@ -29,10 +26,7 @@ CountryDropdown.propTypes = {
 	description: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	updateValue: PropTypes.func.isRequired,
-	error: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.bool,
-	] ),
+	error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	className: PropTypes.string,
 };
 

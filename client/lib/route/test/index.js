@@ -7,24 +7,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { Route } from 'page';
 
 /**
  * Internal dependencies
  */
 import * as route from '../';
-
-const checkoutRoutes = [
-	new Route( '/checkout/thank-you' ),
-	new Route( '/checkout/thank-you/:receipt' ),
-	new Route( '/checkout/:product' ),
-	new Route( '/checkout/:product/renew/:receipt' ),
-];
-
-const commentsRoutes = [
-	new Route( '/comments/approved/:domain' ),
-	new Route( '/comments/pending/:domain' ),
-];
 
 describe( 'route', function() {
 	describe( '#addQueryArgs()', () => {
@@ -204,6 +191,34 @@ describe( 'route', function() {
 			} );
 			test( 'should not return a non-safe numeric site', () => {
 				expect( route.getSiteFragment( '/stats/day/1000000000000000000000' ) ).to.be.false;
+			} );
+		} );
+		describe( 'for purchases paths', function() {
+			test( 'should return the correct site fragment when working with purchases', function() {
+				expect( route.getSiteFragment( '/me/purchases/example.wordpress.com' ) ).to.equal(
+					'example.wordpress.com'
+				);
+				expect( route.getSiteFragment( '/me/purchases/2916284' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/me/purchases/example.wordpress.com/cancel' ) ).to.equal(
+					'example.wordpress.com'
+				);
+				expect( route.getSiteFragment( '/me/purchases/2916284/cancel' ) ).to.equal( 2916284 );
+				expect(
+					route.getSiteFragment(
+						'/me/purchases/example.wordpress.com/12345678/cancel-privacy-protection'
+					)
+				).to.equal( 'example.wordpress.com' );
+				expect(
+					route.getSiteFragment( '/me/purchases/2916284/12345678/cancel-privacy-protection' )
+				).to.equal( 2916284 );
+				expect(
+					route.getSiteFragment(
+						'/me/purchases/example.wordpress.com/12345678/payment/edit/87654321'
+					)
+				).to.equal( 'example.wordpress.com' );
+				expect(
+					route.getSiteFragment( '/me/purchases/2916284/12345678/payment/edit/87654321' )
+				).to.equal( 2916284 );
 			} );
 		} );
 	} );
@@ -453,128 +468,6 @@ describe( 'route', function() {
 				expect( route.sectionify( '/domains/manage/not-a-site', 'not-a-site' ) ).to.equal(
 					'/domains/manage'
 				);
-			} );
-		} );
-	} );
-	describe( 'sectionifyWithRoutes', function() {
-		describe( 'for checkout paths', function() {
-			test( 'should parameterize checkout thank you paths', function() {
-				expect( route.sectionifyWithRoutes( '/checkout/thank-you', checkoutRoutes ) ).to.deep.equal(
-					{
-						routePath: '/checkout/thank-you',
-						routeParams: {},
-					}
-				);
-				expect(
-					route.sectionifyWithRoutes( '/checkout/thank-you/25222194', checkoutRoutes )
-				).to.deep.equal( {
-					routePath: '/checkout/thank-you/:receipt',
-					routeParams: {
-						receipt: '25222194',
-					},
-				} );
-			} );
-			test( 'should parameterize checkout paths', function() {
-				expect( route.sectionifyWithRoutes( '/checkout/gapps', checkoutRoutes ) ).to.deep.equal( {
-					routePath: '/checkout/:product',
-					routeParams: {
-						product: 'gapps',
-					},
-				} );
-				expect(
-					route.sectionifyWithRoutes( '/checkout/theme:elemin', checkoutRoutes )
-				).to.deep.equal( {
-					routePath: '/checkout/:product',
-					routeParams: {
-						product: 'theme:elemin',
-					},
-				} );
-				expect(
-					route.sectionifyWithRoutes( '/checkout/domain_map:69thclergycouncil.com', checkoutRoutes )
-				).to.deep.equal( {
-					routePath: '/checkout/:product',
-					routeParams: {
-						product: 'domain_map:69thclergycouncil.com',
-					},
-				} );
-			} );
-			test( 'should parameterize checkout renew paths', function() {
-				expect(
-					route.sectionifyWithRoutes( '/checkout/gapps/renew/6527469', checkoutRoutes )
-				).to.deep.equal( {
-					routePath: '/checkout/:product/renew/:receipt',
-					routeParams: {
-						product: 'gapps',
-						receipt: '6527469',
-					},
-				} );
-				expect(
-					route.sectionifyWithRoutes(
-						'/checkout/jetpack_premium_monthly/renew/7980613',
-						checkoutRoutes
-					)
-				).to.deep.equal( {
-					routePath: '/checkout/:product/renew/:receipt',
-					routeParams: {
-						product: 'jetpack_premium_monthly',
-						receipt: '7980613',
-					},
-				} );
-				expect(
-					route.sectionifyWithRoutes( '/checkout/personal-bundle/renew/6611954', checkoutRoutes )
-				).to.deep.equal( {
-					routePath: '/checkout/:product/renew/:receipt',
-					routeParams: {
-						product: 'personal-bundle',
-						receipt: '6611954',
-					},
-				} );
-				expect(
-					route.sectionifyWithRoutes(
-						'/checkout/domain_map:69thclergycouncil.com/renew/5164008',
-						checkoutRoutes
-					)
-				).to.deep.equal( {
-					routePath: '/checkout/:product/renew/:receipt',
-					routeParams: {
-						product: 'domain_map:69thclergycouncil.com',
-						receipt: '5164008',
-					},
-				} );
-			} );
-			test( 'should parameterize comment paths', function() {
-				expect( route.sectionifyWithRoutes( '/comments/approved', commentsRoutes ) ).to.deep.equal(
-					{
-						routePath: '/comments/approved',
-						routeParams: {},
-					}
-				);
-				expect( route.sectionifyWithRoutes( '/comments/pending', commentsRoutes ) ).to.deep.equal( {
-					routePath: '/comments/pending',
-					routeParams: {},
-				} );
-				expect(
-					route.sectionifyWithRoutes(
-						'/comments/approved/elmundodelaliteraturasite.wordpress.com',
-						commentsRoutes
-					)
-				).to.deep.equal( {
-					routePath: '/comments/approved/:domain',
-					routeParams: {
-						domain: 'elmundodelaliteraturasite.wordpress.com',
-					},
-				} );
-				expect(
-					route.sectionifyWithRoutes(
-						'/comments/pending/17evasetyowatimm2.wordpress.com',
-						commentsRoutes
-					)
-				).to.deep.equal( {
-					routePath: '/comments/pending/:domain',
-					routeParams: {
-						domain: '17evasetyowatimm2.wordpress.com',
-					},
-				} );
 			} );
 		} );
 	} );

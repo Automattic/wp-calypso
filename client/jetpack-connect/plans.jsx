@@ -12,12 +12,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import PlansSkipButton from './plans-skip-button';
+import PlansExtendedInfo from './plans-extended-info';
+import PlansSkipButton from 'components/plans/plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { addItem } from 'lib/upgrades/actions';
@@ -33,12 +35,10 @@ import { JPC_PATH_PLANS } from './constants';
 import { mc } from 'lib/analytics';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	canCurrentUser,
-	hasInitializedSites,
-	isRtl,
-	isSiteAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import isRtl from 'state/selectors/is-rtl';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -73,24 +73,23 @@ class Plans extends Component {
 
 	maybeRedirect() {
 		if ( this.props.isAutomatedTransfer ) {
-			externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			return externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 		if ( this.props.selectedPlan ) {
-			this.selectPlan( this.props.selectedPlan );
+			return this.selectPlan( this.props.selectedPlan );
 		}
 		if ( this.props.hasPlan || this.props.notJetpack ) {
-			this.redirect( CALYPSO_PLANS_PAGE );
+			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
 			// Invalid site
-			this.redirect( JPC_PATH_PLANS );
+			return this.redirect( JPC_PATH_PLANS );
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.calypsoStartedConnection ) {
-				this.redirectToCalypso();
-			} else {
-				this.redirectToWpAdmin();
+				return this.redirectToCalypso();
 			}
+			return this.redirectToWpAdmin();
 		}
 	}
 
@@ -98,9 +97,9 @@ class Plans extends Component {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
 		if ( selectedSiteSlug && canPurchasePlans ) {
-			// Redirect to "My Plan" page with the "Main Tour" guided tour enabled.
+			// Redirect to "My Plan" page with the "Jetpack Basic Tour" guided tour enabled.
 			// For more details about guided tours, see layout/guided-tours/README.md
-			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'main' } );
+			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'jetpack' } );
 		}
 
 		return this.redirect( CALYPSO_REDIRECTION_PAGE );
@@ -110,10 +109,6 @@ class Plans extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
 
 		this.selectFreeJetpackPlan();
-	};
-
-	handleHelpButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
 	redirectToWpAdmin() {
@@ -188,6 +183,12 @@ class Plans extends Component {
 		);
 	}
 
+	handleInfoButtonClick = info => () => {
+		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
+			help_type: info,
+		} );
+	};
+
 	render() {
 		const { interval, isRtlLayout, selectedSite, translate } = this.props;
 
@@ -204,10 +205,11 @@ class Plans extends Component {
 
 		return (
 			<Fragment>
+				<DocumentHead title={ translate( 'Plans' ) } />
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
-					basePlansPath={ '/jetpack/connect/plans' }
+					basePlansPath={ this.props.basePlansPath }
 					onSelect={ this.selectPlan }
 					hideFreePlan={ true }
 					isLanding={ false }
@@ -215,12 +217,13 @@ class Plans extends Component {
 					selectedSite={ selectedSite }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
+					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }
 							eventName="calypso_jpc_plans_chat_initiated"
 						>
-							<HelpButton onClick={ this.handleHelpButtonClick } label={ helpButtonLabel } />
+							<HelpButton label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>

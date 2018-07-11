@@ -23,6 +23,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 const book = ( context, next ) => {
 	context.primary = (
 		<ConciergeMain
+			analyticsPath="/me/concierge/:site/book"
+			analyticsTitle="Concierge > Book"
 			skeleton={ BookSkeleton }
 			siteSlug={ context.params.siteSlug }
 			steps={ [ BookInfoStep, BookCalendarStep, BookConfirmationStep ] }
@@ -34,6 +36,8 @@ const book = ( context, next ) => {
 const cancel = ( context, next ) => {
 	context.primary = (
 		<ConciergeCancel
+			analyticsPath="/me/concierge/:site/:appointment/cancel"
+			analyticsTitle="Concierge > Cancel"
 			appointmentId={ context.params.appointmentId }
 			siteSlug={ context.params.siteSlug }
 		/>
@@ -44,6 +48,8 @@ const cancel = ( context, next ) => {
 const reschedule = ( context, next ) => {
 	context.primary = (
 		<ConciergeMain
+			analyticsPath="/me/concierge/:site/:appointment/reschedule"
+			analyticsTitle="Concierge > Reschedule"
 			appointmentId={ context.params.appointmentId }
 			skeleton={ RescheduleSkeleton }
 			siteSlug={ context.params.siteSlug }

@@ -13,7 +13,7 @@ import { camelCase, difference, filter, get, includes, isEmpty, keys, map, pick 
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -63,17 +63,6 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 				{ text }
 			</option>
 		) );
-		this.errorMessages = {
-			dotukRegistrationNumberFormat: translate(
-				'A Company Registration Number is 8 numerals, or 2 letters followed by 6 numerals (e.g. AB123456 or 12345678).'
-			),
-			dotukRegistrantTypeRequiresRegistrationNumber: translate(
-				'A registration number is required for this registrant type.'
-			),
-			dotukRegistrantTypeRequiresTradingName: translate(
-				'A trading name is required for this registrant type.'
-			),
-		};
 	}
 
 	componentWillMount() {
@@ -182,19 +171,13 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		);
 	}
 
-	errorMessageFromCode( errorCode ) {
-		return (
-			this.errorMessages[ errorCode ] ||
-			this.props.translate( 'There was a problem with this field.' )
-		);
-	}
-
-	renderValidationError = errorCode => {
+	renderValidationError = ( { errorCode, errorMessage } ) => {
+		const { translate } = this.props;
 		return (
 			<FormInputValidation
 				isError
 				key={ errorCode }
-				text={ this.errorMessageFromCode( errorCode ) }
+				text={ errorMessage || translate( 'There was a problem with this field.' ) }
 			/>
 		);
 	};

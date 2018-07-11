@@ -5,7 +5,6 @@
  */
 import debugFactory from 'debug';
 import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
-import async from 'async';
 import { parse as parseURL } from 'url';
 import page from 'page';
 
@@ -25,12 +24,13 @@ import { isDomainTransfer } from 'lib/products-values';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
-import { getSiteId } from 'state/selectors';
+import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
 import { getProductsList } from 'state/products-list/selectors';
+import { promisify } from '../../utils';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -225,16 +225,13 @@ function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
 }
 
 export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
-	async.parallel(
-		[
-			callback => fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ),
-			callback => {
-				user.once( 'change', callback );
-				user.fetch();
-			},
-		],
-		onComplete
-	);
+	Promise.all( [
+		promisify( fetchSitesUntilSiteAppears )( siteSlug, reduxStore ),
+		new Promise( resolve => {
+			user.once( 'change', resolve );
+			user.fetch();
+		} ),
+	] ).then( onComplete );
 }
 
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
@@ -356,6 +353,7 @@ export function createAccount(
 				if ( errors ) {
 					callback( errors );
 				} else {
+					analytics.tracks.recordEvent( 'calypso_user_registration_social_complete' );
 					callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 				}
 			}
@@ -381,7 +379,7 @@ export function createAccount(
 							// url of the WordPress.com authorize page for this OAuth2 client
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-						}
+					  }
 					: null
 			),
 			( error, response ) => {

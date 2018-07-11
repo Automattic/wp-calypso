@@ -46,6 +46,10 @@ export function domainManagementEditContactInfo( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'edit-contact-info' );
 }
 
+export function domainManagementManageConsent( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'manage-consent' );
+}
+
 export function domainManagementEmail( siteName, domainName ) {
 	let path;
 
@@ -130,9 +134,22 @@ export function domainTransferIn( siteName, domain ) {
 	return path;
 }
 
+export function domainUseYourDomain( siteName, domain ) {
+	let path = `/domains/add/use-your-domain/${ siteName }`;
+	if ( domain ) {
+		path += `?initialQuery=${ domain }`;
+	}
+
+	return path;
+}
+
 export function getSectionName( pathname ) {
 	const regExp = new RegExp( '^' + domainManagementRoot() + '/[^/]+/([^/]+)', 'g' );
 	const matches = regExp.exec( pathname );
 
 	return matches ? matches[ 1 ] : null;
+}
+
+export function domainManagementDomainConnectMapping( siteName, domainName ) {
+	return domainManagementEdit( siteName, domainName, 'domain-connect-mapping' );
 }

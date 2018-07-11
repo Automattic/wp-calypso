@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionPanel from 'my-sites/site-settings/action-panel';
-import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
-import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
-import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
-import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
+import ActionPanel from 'components/action-panel';
+import ActionPanelTitle from 'components/action-panel/title';
+import ActionPanelBody from 'components/action-panel/body';
+import ActionPanelFooter from 'components/action-panel/footer';
+import ActionPanelFigure from 'components/action-panel/figure';
 import Notice from 'components/notice';
 import Button from 'components/button';
 import ActiveThemeScreenshot from './active-theme-screenshot';

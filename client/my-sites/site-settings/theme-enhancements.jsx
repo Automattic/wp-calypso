@@ -24,9 +24,8 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getCustomizerUrl } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import SupportInfo from 'components/support-info';
 
 class ThemeEnhancements extends Component {
 	static defaultProps = {
@@ -87,21 +86,11 @@ class ThemeEnhancements extends Component {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
-
-				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
-					<InfoPopover position="left">
-						{ translate( 'Control how additional posts are loaded.' ) }
-						<br />
-						<ExternalLink
-							href="https://support.wordpress.com/infinite-scroll/"
-							icon
-							target="_blank"
-						>
-							{ translate( 'Learn more' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
-
+				<SupportInfo
+					text={ translate( 'Control how additional posts are loaded.' ) }
+					link="https://support.wordpress.com/infinite-scroll/"
+					privacyLink={ false }
+				/>
 				{ this.renderToggle(
 					'infinite_scroll',
 					blockedByFooter,
@@ -129,15 +118,12 @@ class ThemeEnhancements extends Component {
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
-
-				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
-					<InfoPopover position="left">
-						<ExternalLink href="https://jetpack.com/support/infinite-scroll" icon target="_blank">
-							{ translate( 'Learn more about Infinite Scroll.' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
-
+				<SupportInfo
+					text={ translate(
+						'Loads the next posts automatically when the reader approaches the bottom of the page.'
+					) }
+					link="https://jetpack.com/support/infinite-scroll/"
+				/>
 				{ this.renderRadio(
 					'infinite_scroll',
 					'default',
@@ -163,13 +149,13 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset>
-				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
-					<InfoPopover position="left">
-						<ExternalLink href="https://jetpack.com/support/mobile-theme" icon target="_blank">
-							{ translate( 'Learn more about Mobile Theme.' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
+				<SupportInfo
+					text={ translate(
+						'Enables a lightweight, mobile-friendly theme ' +
+							'that will be displayed to visitors on mobile devices.'
+					) }
+					link="https://jetpack.com/support/mobile-theme/"
+				/>
 
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }

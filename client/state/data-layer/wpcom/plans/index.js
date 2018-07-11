@@ -25,7 +25,7 @@ import {
 export const requestPlans = action =>
 	http(
 		{
-			apiVersion: '1.4',
+			apiVersion: '1.5',
 			method: 'GET',
 			path: '/plans',
 		},

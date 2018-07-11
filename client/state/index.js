@@ -6,20 +6,19 @@
 
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
-// import the reducer directly from a submodule to prevent bundling the whole Redux Form
-// library into the `build` chunk.
-// TODO: change this back to `from 'redux-form'` after upgrade to Webpack 4.0 and a version
-//       of Redux Form that uses the `sideEffects: false` flag
-import form from 'redux-form/es/reducer';
+import { reducer as form } from 'redux-form';
 import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
+import account from './account/reducer';
 import actionLogger from './action-log';
+import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
+import applicationPasswords from './application-passwords/reducer';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import extensionsModule from 'extensions';
@@ -31,6 +30,7 @@ import checklist from './checklist/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import concierge from './concierge/reducer';
+import connectedApplications from './connected-applications/reducer';
 import consoleDispatcher from './console-dispatch';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
@@ -38,14 +38,14 @@ import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
-import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
+import googleMyBusiness from './google-my-business/reducer';
 import help from './help/reducer';
+import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
-import jetpackOnboarding from './jetpack-onboarding/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
@@ -54,9 +54,11 @@ import happinessEngineers from './happiness-engineers/reducer';
 import happychat from './happychat/reducer';
 import login from './login/reducer';
 import media from './media/reducer';
+import memberships from './memberships/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
+import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
@@ -64,7 +66,6 @@ import postFormats from './post-formats/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
-import preview from './preview/reducer';
 import privacyPolicy from './privacy-policy/reducer';
 import productsList from './products-list/reducer';
 import pushNotifications from './push-notifications/reducer';
@@ -77,8 +78,9 @@ import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
 import simplePayments from './simple-payments/reducer';
 import sites from './sites/reducer';
+import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
-import siteRename from './site-rename/reducer';
+import siteAddressChange from './site-address-change/reducer';
 import siteSettings from './site-settings/reducer';
 import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
@@ -107,16 +109,20 @@ const extensions = combineReducers(
 );
 
 const reducers = {
+	account,
 	analyticsTracking,
 	accountRecovery,
+	activePromotions,
 	activityLog,
 	application,
+	applicationPasswords,
 	automatedTransfer,
 	billingTransactions,
 	checklist,
 	comments,
 	componentsUsageStats,
 	concierge,
+	connectedApplications,
 	countries,
 	countryStates,
 	currentUser,
@@ -125,16 +131,16 @@ const reducers = {
 	domains,
 	extensions,
 	form,
-	geo,
 	googleAppsUsers,
+	googleMyBusiness,
 	happinessEngineers,
 	happychat,
 	help,
+	httpData,
 	i18n,
 	inlineHelpSearchResults,
 	invites,
 	jetpackConnect,
-	jetpackOnboarding,
 	jetpack,
 	jetpackRemoteInstall,
 	jetpackSync,
@@ -144,6 +150,7 @@ const reducers = {
 	notices,
 	npsSurvey,
 	oauth2Clients,
+	orderTransactions,
 	pageTemplates,
 	plugins,
 	plans,
@@ -151,7 +158,6 @@ const reducers = {
 	posts,
 	postTypes,
 	preferences,
-	preview,
 	privacyPolicy,
 	productsList,
 	purchases,
@@ -163,8 +169,9 @@ const reducers = {
 	shortcodes,
 	signup,
 	sites,
+	siteKeyrings,
 	siteRoles,
-	siteRename,
+	siteAddressChange,
 	siteSettings,
 	simplePayments,
 	stats,
@@ -181,6 +188,9 @@ const reducers = {
 	wordads,
 };
 
+if ( config.isEnabled( 'memberships' ) ) {
+	reducers.memberships = memberships;
+}
 export const reducer = combineReducers( reducers );
 
 /**
@@ -224,6 +234,7 @@ export function createReduxStore( initialState = {} ) {
 
 	const enhancers = [
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+		httpDataEnhancer,
 		applyMiddleware( ...middlewares ),
 		isBrowser && window.app && window.app.isDebug && actionLogger,
 		isBrowser && window.devToolsExtension && window.devToolsExtension(),

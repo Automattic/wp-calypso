@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isHiddenSite } from 'state/selectors';
+import isHiddenSite from 'state/selectors/is-hidden-site';
 
 describe( 'isHiddenSite()', () => {
 	test( 'should return null if the site is not known', () => {

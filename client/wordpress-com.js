@@ -20,13 +20,6 @@ const sections = [
 		secondary: true,
 	},
 	{
-		name: 'paladin',
-		paths: [ '/paladin' ],
-		module: 'my-sites/paladin',
-		group: 'sites',
-		secondary: true,
-	},
-	{
 		name: 'me',
 		paths: [ '/me' ],
 		module: 'me',
@@ -37,6 +30,13 @@ const sections = [
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'me/account',
+		group: 'me',
+		secondary: true,
+	},
+	{
+		name: 'account-close',
+		paths: [ '/me/account/close' ],
+		module: 'me/account-close',
 		group: 'me',
 		secondary: true,
 	},
@@ -60,6 +60,7 @@ const sections = [
 		module: 'me/purchases',
 		group: 'me',
 		secondary: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'notification-settings',
@@ -113,7 +114,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
 		group: 'sites',
@@ -187,6 +188,7 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'checklist',
@@ -199,8 +201,10 @@ const sections = [
 		name: 'google-my-business',
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',
+		enableLoggedOut: true,
 		secondary: true,
 		group: 'sites',
+		css: 'google-my-business',
 	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
@@ -237,6 +241,7 @@ const sections = [
 		module: 'my-sites/checkout',
 		secondary: true,
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'plans',
@@ -294,11 +299,21 @@ sections.push( {
 
 sections.push( {
 	name: 'reader',
+	paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c' ],
+	module: 'reader',
+	secondary: true,
+	group: 'reader',
+	enableLoggedOut: true,
+} );
+
+sections.push( {
+	name: 'reader',
 	paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 	module: 'reader/full-post',
 	secondary: false,
 	group: 'reader',
 	css: 'reader-full-post',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -307,6 +322,7 @@ sections.push( {
 	module: 'reader/discover',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -315,6 +331,7 @@ sections.push( {
 	module: 'reader/following',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -323,6 +340,7 @@ sections.push( {
 	module: 'reader/tag-stream',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -331,6 +349,7 @@ sections.push( {
 	module: 'reader/liked-stream',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -339,6 +358,7 @@ sections.push( {
 	module: 'reader/search',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -347,6 +367,7 @@ sections.push( {
 	module: 'reader/list',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -355,6 +376,7 @@ sections.push( {
 	module: 'reader/conversations',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -421,7 +443,7 @@ sections.push( {
 	name: 'domain-connect-authorize',
 	paths: [ '/domain-connect' ],
 	module: 'my-sites/domains/domain-management/domain-connect',
-	enableLoggedOut: false,
+	enableLoggedOut: true,
 	secondary: false,
 	isomorphic: false,
 } );

@@ -18,13 +18,11 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import { STRONG_PASSWORD } from 'lib/url/support';
-import {
-	getAccountRecoveryResetUserData,
-	getAccountRecoveryResetSelectedMethod,
-	getAccountRecoveryValidationKey,
-	getAccountRecoveryResetPasswordError,
-	isRequestingResetPassword,
-} from 'state/selectors';
+import getAccountRecoveryResetPasswordError from 'state/selectors/get-account-recovery-reset-password-error';
+import getAccountRecoveryResetSelectedMethod from 'state/selectors/get-account-recovery-reset-selected-method';
+import getAccountRecoveryResetUserData from 'state/selectors/get-account-recovery-reset-user-data';
+import getAccountRecoveryValidationKey from 'state/selectors/get-account-recovery-validation-key';
+import isRequestingResetPassword from 'state/selectors/is-requesting-reset-password';
 import { requestResetPassword } from 'state/account-recovery/reset/actions';
 
 class ResetPasswordConfirmForm extends Component {
@@ -69,7 +67,6 @@ class ResetPasswordConfirmForm extends Component {
 						id="password"
 						onChange={ this.updateNewPassword }
 						value={ newPassword }
-						autoFocus
 					/>
 					<FormButton
 						className="reset-password-confirm-form__button generate-password-button"

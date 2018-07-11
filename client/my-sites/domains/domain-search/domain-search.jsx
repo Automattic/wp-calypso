@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ import Main from 'components/main';
 import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
 import cartItems from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
-import { isSiteUpgradeable } from 'state/selectors';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
@@ -42,10 +43,14 @@ class DomainSearch extends Component {
 
 	state = {
 		domainRegistrationAvailable: true,
+		domainRegistrationMaintenanceEndTime: null,
 	};
 
-	handleDomainsAvailabilityChange = isAvailable => {
-		this.setState( { domainRegistrationAvailable: isAvailable } );
+	handleDomainsAvailabilityChange = ( isAvailable, maintenanceEndTime = null ) => {
+		this.setState( {
+			domainRegistrationAvailable: isAvailable,
+			domainRegistrationMaintenanceEndTime: maintenanceEndTime,
+		} );
 	};
 
 	handleAddRemoveDomain = suggestion => {
@@ -111,18 +116,30 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate } = this.props,
-			classes = classnames( 'main-column', {
-				'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
-			} );
+		const { selectedSite, selectedSiteSlug, translate } = this.props;
+		const classes = classnames( 'main-column', {
+			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
+		} );
+		const { domainRegistrationMaintenanceEndTime } = this.state;
 		let content;
 
 		if ( ! this.state.domainRegistrationAvailable ) {
+			let maintenanceEndTime = translate( 'shortly', {
+				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
+			} );
+			if ( domainRegistrationMaintenanceEndTime ) {
+				maintenanceEndTime = moment.unix( domainRegistrationMaintenanceEndTime ).fromNow();
+			}
+
 			content = (
 				<EmptyContent
-					illustration="/calypso/images/illustrations/illustration-500.svg"
+					illustration="/calypso/images/illustrations/error.svg"
 					title={ translate( 'Domain registration is unavailable' ) }
-					line={ translate( "We're hard at work on the issue. Please check back shortly." ) }
+					line={ translate( "We're hard at work on the issue. Please check back %(timePeriod)s.", {
+						args: {
+							timePeriod: maintenanceEndTime,
+						},
+					} ) }
 					action={ translate( 'Back to Plans' ) }
 					actionURL={ '/plans/' + selectedSiteSlug }
 				/>
@@ -162,7 +179,7 @@ class DomainSearch extends Component {
 		}
 
 		return (
-			<Main className={ classes }>
+			<Main className={ classes } wideLayout>
 				<QueryProductsList />
 				<SidebarNavigation />
 				{ content }

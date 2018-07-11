@@ -20,7 +20,6 @@ class Header extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
-		settingPrimaryDomain: PropTypes.bool,
 	};
 
 	render() {
@@ -41,11 +40,7 @@ class Header extends React.Component {
 				<DomainTransferFlag domain={ domain } />
 
 				{ renderButton && (
-					<PrimaryDomainButton
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						settingPrimaryDomain={ this.props.settingPrimaryDomain }
-					/>
+					<PrimaryDomainButton domain={ domain } selectedSite={ this.props.selectedSite } />
 				) }
 			</SectionHeader>
 		);

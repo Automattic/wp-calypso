@@ -3,31 +3,31 @@
 /**
  * External dependencies
  */
-import { assign, difference, isEmpty, pick } from 'lodash';
+import { assign, difference, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	JETPACK_PLANS,
 	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
 	PLAN_CHARGEBACK,
 	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	GROUP_JETPACK,
 } from 'lib/plans/constants';
-import { domainProductSlugs } from 'lib/domains/constants';
 
+import { planMatches, isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'lib/plans';
+import { domainProductSlugs } from 'lib/domains/constants';
 import schema from './schema.json';
 
 const productDependencies = {
@@ -37,6 +37,24 @@ const productDependencies = {
 		gapps_extra_license: true,
 		gapps_unlimited: true,
 		private_whois: true,
+	},
+	[ PLAN_BUSINESS ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_BUSINESS_2_YEARS ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PERSONAL ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PERSONAL_2_YEARS ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PREMIUM ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PREMIUM_2_YEARS ]: {
+		domain_redemption: true,
 	},
 	[ domainProductSlugs.TRANSFER_IN ]: {
 		[ domainProductSlugs.TRANSFER_IN_PRIVACY ]: true,
@@ -101,30 +119,24 @@ export function isFreeTrial( product ) {
 }
 
 export function isPersonal( product ) {
-	const personalProducts = [ PLAN_PERSONAL, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
-
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return personalProducts.indexOf( product.product_slug ) >= 0;
+	return isPersonalPlan( product.product_slug );
 }
 
 export function isPremium( product ) {
-	const premiumProducts = [ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
-
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return premiumProducts.indexOf( product.product_slug ) >= 0;
+	return isPremiumPlan( product.product_slug );
 }
 
 export function isBusiness( product ) {
-	const businessProducts = [ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
-
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return businessProducts.indexOf( product.product_slug ) >= 0;
+	return isBusinessPlan( product.product_slug );
 }
 
 export function isEnterprise( product ) {
@@ -138,7 +150,7 @@ export function isJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return JETPACK_PLANS.indexOf( product.product_slug ) >= 0;
+	return planMatches( product.product_slug, { group: GROUP_JETPACK } );
 }
 
 export function isJetpackBusiness( product ) {
@@ -166,11 +178,25 @@ export function isJetpackMonthlyPlan( product ) {
 	return isMonthly( product ) && isJetpackPlan( product );
 }
 
-export function isMonthly( product ) {
-	product = formatProduct( product );
+export function isMonthly( rawProduct ) {
+	const product = formatProduct( rawProduct );
 	assertValidProduct( product );
 
 	return parseInt( product.bill_period, 10 ) === PLAN_MONTHLY_PERIOD;
+}
+
+export function isYearly( rawProduct ) {
+	const product = formatProduct( rawProduct );
+	assertValidProduct( product );
+
+	return parseInt( product.bill_period, 10 ) === PLAN_ANNUAL_PERIOD;
+}
+
+export function isBiennially( rawProduct ) {
+	const product = formatProduct( rawProduct );
+	assertValidProduct( product );
+
+	return parseInt( product.bill_period, 10 ) === PLAN_BIENNIAL_PERIOD;
 }
 
 export function isJpphpBundle( product ) {
@@ -293,6 +319,18 @@ export function getDomainProductRanking( product ) {
 	}
 }
 
+export function getDomain( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	const domainToBundle = get( product, 'extra.domain_to_bundle', false );
+	if ( domainToBundle ) {
+		return domainToBundle;
+	}
+
+	return product.meta;
+}
+
 export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
 	let isPlansOnlyDependent = false;
 
@@ -314,7 +352,7 @@ export function isDependentProduct( product, dependentProduct, domainsWithPlansO
 		isPlansOnlyDependent ||
 		( productDependencies[ slug ] &&
 			productDependencies[ slug ][ dependentSlug ] &&
-			product.meta === dependentProduct.meta )
+			getDomain( product ) === getDomain( dependentProduct ) )
 	);
 }
 export function isFreeWordPressComDomain( product ) {

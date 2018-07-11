@@ -3,12 +3,12 @@
  * Internal dependencies
  */
 import {
-	ACTIVITY_LOG_REQUEST,
-	ACTIVITY_LOG_UPDATE,
-	ACTIVITY_LOG_WATCH,
+	ACTIVITY_LOG_FILTER_SET,
+	ACTIVITY_LOG_FILTER_UPDATE,
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
+	REWIND_CLONE,
 	REWIND_DEACTIVATE_FAILURE,
 	REWIND_DEACTIVATE_REQUEST,
 	REWIND_DEACTIVATE_SUCCESS,
@@ -30,13 +30,15 @@ import {
 /**
  * Turn the 'rewind' feature on for a site.
  *
- * @param {String|number} siteId site ID
- * @return {Object} action object
+ * @param  {String|number} siteId      Site ID
+ * @param  {bool}          isVpMigrate Whether this is a VaultPress migration.
+ * @return {Object}        Action object
  */
-export function activateRewind( siteId ) {
+export function activateRewind( siteId, isVpMigrate ) {
 	return {
 		type: REWIND_ACTIVATE_REQUEST,
 		siteId,
+		isVpMigrate,
 	};
 }
 
@@ -51,53 +53,6 @@ export function rewindActivateFailure( siteId ) {
 	return {
 		type: REWIND_ACTIVATE_FAILURE,
 		siteId,
-	};
-}
-
-/**
- * Activity endpoint query parameters.
- *
- * The API is subject to change, this documentation has been provided as a basis. For up to
- * date information, it's best to check the current state of the API.
- *
- * @typedef {Object} ActivityParams
- *
- * @property {number} dateStart Filter activity after this date (Unix millisecond timestamp).
- * @property {number} dateEnd   Filter activity before this date (Unix millisecond timestamp).
- * @property {number} number    Maximum number of results to return.
- */
-
-/**
- * Requests activity from the API
- *
- * You may optionally pass an object of parameters for the query to this action.
- * @see ActivityParams
- *
- * @param  {number}         siteId site ID
- * @param  {ActivityParams} params Optional. Parameters to pass to the endpoint
- * @return {Object}                The request action
- */
-export function activityLogRequest( siteId, params ) {
-	return {
-		type: ACTIVITY_LOG_REQUEST,
-		params,
-		siteId,
-		meta: {
-			dataLayer: {
-				trackRequest: true,
-			},
-		},
-	};
-}
-
-export function activityLogUpdate( siteId, data, found, oldestItemTs, query ) {
-	return {
-		type: ACTIVITY_LOG_UPDATE,
-		siteId,
-		data,
-		found,
-		oldestItemTs,
-		query,
 	};
 }
 
@@ -168,6 +123,15 @@ export function rewindRestore( siteId, timestamp ) {
 		type: REWIND_RESTORE,
 		siteId,
 		timestamp,
+	};
+}
+
+export function rewindClone( siteId, timestamp, payload ) {
+	return {
+		type: REWIND_CLONE,
+		siteId,
+		timestamp,
+		payload,
 	};
 }
 
@@ -301,14 +265,14 @@ export function dismissRewindBackupProgress( siteId, downloadId ) {
 	};
 }
 
-export const startWatching = siteId => ( {
-	type: ACTIVITY_LOG_WATCH,
-	isWatching: true,
+export const setFilter = ( siteId, filter ) => ( {
+	type: ACTIVITY_LOG_FILTER_SET,
 	siteId,
+	filter,
 } );
 
-export const stopWatching = siteId => ( {
-	type: ACTIVITY_LOG_WATCH,
-	isWatching: false,
+export const updateFilter = ( siteId, filter ) => ( {
+	type: ACTIVITY_LOG_FILTER_UPDATE,
 	siteId,
+	filter,
 } );

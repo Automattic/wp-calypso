@@ -19,7 +19,7 @@ class NotificationSettingsNavigation extends React.Component {
 	static displayName = 'NotificationSettingsNavigation';
 
 	render() {
-		var navItems = [
+		const navItems = [
 			this.navItem( '/me/notifications' ),
 			this.navItem( '/me/notifications/comments' ),
 			this.navItem( '/me/notifications/updates' ),

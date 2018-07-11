@@ -15,7 +15,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import SignupActions from 'lib/signup/actions';
 import ActivityLogRewindToggle from 'my-sites/stats/activity-log/activity-log-rewind-toggle';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 class RewindMigrate extends Component {
 	static propTypes = {
@@ -70,6 +70,7 @@ class RewindMigrate extends Component {
 					<ActivityLogRewindToggle
 						siteId={ siteId }
 						label={ translate( 'Migrate your credentials' ) }
+						isVpMigrate={ true }
 					/>
 				</Card>
 				<div className="rewind-migrate__warning">
@@ -101,11 +102,14 @@ class RewindMigrate extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
-	const rewindState = getRewindState( state, siteId );
-	return {
-		siteId,
-		rewindIsNowActive: 'provisioning' === rewindState.state,
-	};
-}, null )( localize( RewindMigrate ) );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
+		const rewindState = getRewindState( state, siteId );
+		return {
+			siteId,
+			rewindIsNowActive: 'provisioning' === rewindState.state,
+		};
+	},
+	null
+)( localize( RewindMigrate ) );

@@ -39,7 +39,10 @@ function promiseForImage( image ) {
 	} );
 }
 
-const promiseForURL = flow( imageForURL, promiseForImage );
+const promiseForURL = flow(
+	imageForURL,
+	promiseForImage
+);
 
 export default function waitForImagesToLoad( post ) {
 	return new Promise( resolve => {
@@ -102,8 +105,9 @@ export default function waitForImagesToLoad( post ) {
 		const imagesLoaded = {};
 
 		// convert to image objects to start the load process
-		// only check the first 5 images
-		let promises = map( take( imagesToCheck, 5 ), imageUrl => {
+		// only check the first x images
+		const NUMBER_OF_IMAGES_TO_CHECK = 10;
+		let promises = map( take( imagesToCheck, NUMBER_OF_IMAGES_TO_CHECK ), imageUrl => {
 			if ( imageUrl in knownImages ) {
 				return Promise.resolve( knownImages[ imageUrl ] );
 			}

@@ -12,6 +12,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import TermTreeSelectorTerms from './terms';
+import TermSelectorAddTerm from './add-term';
 
 export default class extends React.Component {
 	static displayName = 'TermTreeSelector';
@@ -26,6 +27,10 @@ export default class extends React.Component {
 		taxonomy: PropTypes.string,
 		height: PropTypes.number,
 		compact: PropTypes.bool,
+		addTerm: PropTypes.bool,
+		postType: PropTypes.string,
+		onAddTermSuccess: PropTypes.func,
+		podcastingCategoryId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -34,6 +39,9 @@ export default class extends React.Component {
 		taxonomy: 'category',
 		onChange: () => {},
 		height: 300,
+		addTerm: false,
+		postType: 'post',
+		onAddTermSuccess: () => {},
 	};
 
 	state = {
@@ -64,6 +72,10 @@ export default class extends React.Component {
 			multiple,
 			height,
 			compact,
+			addTerm,
+			postType,
+			onAddTermSuccess,
+			podcastingCategoryId,
 		} = this.props;
 
 		const classes = classNames( className );
@@ -85,7 +97,15 @@ export default class extends React.Component {
 					multiple={ multiple }
 					height={ height }
 					compact={ compact }
+					podcastingCategoryId={ podcastingCategoryId }
 				/>
+				{ addTerm && (
+					<TermSelectorAddTerm
+						taxonomy={ taxonomy }
+						postType={ postType }
+						onSuccess={ onAddTermSuccess }
+					/>
+				) }
 			</div>
 		);
 	}

@@ -15,6 +15,7 @@ import { initialSiteState } from './reducer';
 import { getSite } from 'state/sites/selectors';
 import { createSitePlanObject } from './assembler';
 import createSelector from 'lib/create-selector';
+import { calculateMonthlyPriceForPlan } from 'lib/plans';
 import { PLANS_LIST } from 'lib/plans/constants';
 
 /**
@@ -111,8 +112,7 @@ export function getPlanDiscountedRawPrice(
 		return null;
 	}
 	const discountPrice = plan.rawPrice;
-
-	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;
+	return isMonthly ? calculateMonthlyPriceForPlan( productSlug, discountPrice ) : discountPrice;
 }
 
 /**
@@ -133,7 +133,7 @@ export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = f
 
 	const price = plan.rawPrice + get( plan, 'rawDiscount', 0 );
 
-	return isMonthly ? parseFloat( ( price / 12 ).toFixed( 2 ) ) : price;
+	return isMonthly ? calculateMonthlyPriceForPlan( productSlug, price ) : price;
 }
 
 /**
@@ -153,7 +153,9 @@ export function getPlanRawDiscount( state, siteId, productSlug, { isMonthly = fa
 		return null;
 	}
 
-	return isMonthly ? parseFloat( ( plan.rawDiscount / 12 ).toFixed( 2 ) ) : plan.rawDiscount;
+	return isMonthly
+		? calculateMonthlyPriceForPlan( productSlug, plan.rawDiscount )
+		: plan.rawDiscount;
 }
 
 export function hasDomainCredit( state, siteId ) {

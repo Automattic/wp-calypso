@@ -105,7 +105,7 @@
 		margin-bottom: 1px;
 	}
 
-	.form-fieldset input[type="number"] {
+	.form-fieldset input[type="tel"] {
 		text-align: center;
 	}
 
@@ -116,7 +116,7 @@
 		}
 	}
 
-	input[type="number"]::-webkit-inner-spin-button {
+	input[type="tel"]::-webkit-inner-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
 	}

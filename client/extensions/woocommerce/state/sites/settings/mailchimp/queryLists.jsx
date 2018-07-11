@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -16,7 +18,7 @@ class QueryMailChimpLists extends Component {
 		siteId: PropTypes.number.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		requestLists: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		this.request( this.props );

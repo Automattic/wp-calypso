@@ -5,7 +5,7 @@
  */
 
 import debug from 'debug';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { MEDIA_REQUEST, MEDIA_ITEM_REQUEST } from 'state/action-types';
 import {
@@ -23,18 +23,11 @@ import {
  */
 const log = debug( 'calypso:middleware-media' );
 
-/**
- * Issues an API request to fetch media for a site and query.
- *
- * @param  {Object}  store  Redux store
- * @param  {Object}  action Action object
- */
-export function requestMedia( { dispatch }, action ) {
-	dispatch( requestingMedia( action.siteId, action.query ) );
-
+export function requestMedia( action ) {
 	log( 'Request media for site %d using query %o', action.siteId, action.query );
 
-	dispatch(
+	return [
+		requestingMedia( action.siteId, action.query ),
 		http(
 			{
 				method: 'GET',
@@ -42,27 +35,24 @@ export function requestMedia( { dispatch }, action ) {
 				apiVersion: '1.1',
 			},
 			action
-		)
-	);
+		),
+	];
 }
 
-export function requestMediaSuccess( { dispatch }, { siteId, query }, { media, found } ) {
-	dispatch( receiveMedia( siteId, media, found, query ) );
-	dispatch( successMediaRequest( siteId, query ) );
-}
+export const requestMediaSuccess = ( { siteId, query }, { media, found } ) => [
+	receiveMedia( siteId, media, found, query ),
+	successMediaRequest( siteId, query ),
+];
 
-export function requestMediaError( { dispatch }, { siteId, query } ) {
-	dispatch( failMediaRequest( siteId, query ) );
-}
+export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
 
-export function handleMediaItemRequest( { dispatch }, action ) {
+export function handleMediaItemRequest( action ) {
 	const { mediaId, query, siteId } = action;
-
-	dispatch( requestingMediaItem( siteId, query ) );
 
 	log( 'Request media item %d for site %d', mediaId, siteId );
 
-	dispatch(
+	return [
+		requestingMediaItem( siteId, query ),
 		http(
 			{
 				apiVersion: '1.2',
@@ -71,22 +61,31 @@ export function handleMediaItemRequest( { dispatch }, action ) {
 				query,
 			},
 			action
-		)
-	);
+		),
+	];
 }
 
-export function receiveMediaItem( { dispatch }, { mediaId, siteId }, media ) {
-	dispatch( receiveMedia( siteId, media ) );
-	dispatch( successMediaItemRequest( siteId, mediaId ) );
-}
+export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
+	receiveMedia( siteId, media ),
+	successMediaItemRequest( siteId, mediaId ),
+];
 
-export function receiveMediaItemError( { dispatch }, { mediaId, siteId } ) {
-	dispatch( failMediaItemRequest( siteId, mediaId ) );
-}
+export const receiveMediaItemError = ( { mediaId, siteId } ) =>
+	failMediaItemRequest( siteId, mediaId );
 
 export default {
-	[ MEDIA_REQUEST ]: [ dispatchRequest( requestMedia, requestMediaSuccess, requestMediaError ) ],
+	[ MEDIA_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch: requestMedia,
+			onSuccess: requestMediaSuccess,
+			onError: requestMediaError,
+		} ),
+	],
 	[ MEDIA_ITEM_REQUEST ]: [
-		dispatchRequest( handleMediaItemRequest, receiveMediaItem, receiveMediaItemError ),
+		dispatchRequestEx( {
+			fetch: handleMediaItemRequest,
+			onSuccess: receiveMediaItem,
+			onError: receiveMediaItemError,
+		} ),
 	],
 };

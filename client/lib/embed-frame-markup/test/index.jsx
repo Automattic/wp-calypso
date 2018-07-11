@@ -10,7 +10,6 @@ import { expect } from 'chai';
  */
 import generateEmbedFrameMarkup from '../';
 
-/* eslint-disable max-len */
 describe( '#generateEmbedFrameMarkup()', () => {
 	test( 'should return an empty string if no arguments passed', () => {
 		expect( generateEmbedFrameMarkup() ).to.equal( '' );

@@ -18,6 +18,7 @@ import {
 	hasAnsweredNpsSurveyWithNoScore,
 	getNpsSurveyName,
 	getNpsSurveyScore,
+	getNpsSurveyFeedback,
 } from 'state/nps-survey/selectors';
 
 class NpsSurveyExample extends PureComponent {
@@ -47,6 +48,7 @@ class NpsSurveyExample extends PureComponent {
 							<ul>
 								<li>Survey name: { this.props.surveyName }</li>
 								<li>Score: { this.props.surveyScore }</li>
+								<li>Contextual feedback: { this.props.surveyFeedback }</li>
 							</ul>
 						</div>
 					) }
@@ -68,6 +70,7 @@ const mapStateToProps = state => {
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
 		surveyName: getNpsSurveyName( state ),
 		surveyScore: getNpsSurveyScore( state ),
+		surveyFeedback: getNpsSurveyFeedback( state ),
 	};
 };
 

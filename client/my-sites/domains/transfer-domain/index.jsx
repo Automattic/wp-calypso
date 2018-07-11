@@ -16,7 +16,7 @@ import { cartItems } from 'lib/cart-values';
 import { addItem, addItems } from 'lib/upgrades/actions';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
-import { isSiteUpgradeable } from 'state/selectors';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';
@@ -62,7 +62,7 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleTransferDomain = ( domain, supportsPrivacy ) => {
+	handleTransferDomain = ( domain, authCode, supportsPrivacy ) => {
 		const { selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
@@ -72,7 +72,10 @@ export class TransferDomain extends Component {
 		transferItems.push(
 			cartItems.domainTransfer( {
 				domain,
-				extra: { privacy_available: supportsPrivacy },
+				extra: {
+					auth_code: authCode,
+					privacy_available: supportsPrivacy,
+				},
 			} )
 		);
 

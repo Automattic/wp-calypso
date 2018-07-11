@@ -13,7 +13,7 @@ import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 import PluginsDataActions from './actions';
 
-var _shortLists = {},
+let _shortLists = {},
 	_fullLists = {},
 	_fetching = {},
 	_currentSearchTerm = null,
@@ -55,7 +55,7 @@ const PluginsListsStore = {
 	},
 
 	getSearchList: function( searchTerm ) {
-		var isSearching = _fetching.search !== false;
+		let isSearching = _fetching.search !== false;
 		if ( ! searchTerm ) {
 			return;
 		}
@@ -79,7 +79,7 @@ const PluginsListsStore = {
 };
 
 PluginsListsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	switch ( action.type ) {
 		case 'RECEIVE_WPORG_PLUGINS_LIST':
 			if ( action.data ) {

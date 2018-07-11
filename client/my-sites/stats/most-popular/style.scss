@@ -22,7 +22,7 @@
 	padding: 20px 0;
 	color: $gray-dark;
 
-	@include breakpoint ('<960px') {
+	@include breakpoint( '<960px' ) {
 		width: 100%;
 
 		&:first-child {
@@ -61,7 +61,7 @@
 	text-align: center;
 	line-height: 24px;
 	clear: both;
-	z-index: z-index('root', '.stats-popular__empty');
+	z-index: z-index( 'root', '.stats-popular__empty' );
 }
 
 .most-popular__notice {

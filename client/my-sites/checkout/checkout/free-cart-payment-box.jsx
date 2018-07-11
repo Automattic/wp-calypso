@@ -15,6 +15,7 @@ import PayButton from './pay-button';
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
 import CartToggle from './cart-toggle';
+import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 
 class FreeCartPaymentBox extends React.Component {
 	static propTypes = {
@@ -22,48 +23,52 @@ class FreeCartPaymentBox extends React.Component {
 	};
 
 	content = () => {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
-				<div className="payment-box-section">
-					<div className="checkout__payment-box-section-content">
-						<h6>
-							{ cart.has_bundle_credit
-								? this.props.translate( 'You have a free domain credit!' )
-								: this.props.translate( "Woohoo! You don't owe us anything!" ) }
-						</h6>
+			<React.Fragment>
+				<form onSubmit={ this.props.onSubmit }>
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<div className="payment-box-section">
+						<div className="checkout__payment-box-section-content">
+							<h6>
+								{ cart.has_bundle_credit
+									? this.props.translate( 'You have a free domain credit!' )
+									: this.props.translate( "Woohoo! You don't owe us anything!" ) }
+							</h6>
 
-						<span>
-							{ cart.has_bundle_credit
-								? this.props.translate(
-										'You get one free domain with your subscription to %(productName)s. Time to celebrate!',
-										{ args: { productName: this.getProductName() } }
-									)
-								: this.props.translate(
-										'Just complete checkout to add these upgrades to your site.'
-									) }
-						</span>
+							<span>
+								{ cart.has_bundle_credit
+									? this.props.translate(
+											'You get one free domain with your subscription to %(productName)s. Time to celebrate!',
+											{ args: { productName: this.getProductName() } }
+									  )
+									: this.props.translate(
+											'Just complete checkout to add these upgrades to your site.'
+									  ) }
+							</span>
+						</div>
 					</div>
-				</div>
 
-				<TermsOfService />
+					<TermsOfService />
 
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<div className="payment-box-actions">
+						<PayButton
+							cart={ cart }
+							transactionStep={ this.props.transactionStep }
+							beforeSubmitText={ this.props.translate( 'Complete Checkout' ) }
+						/>
+					</div>
+				</form>
+				<CartCoupon cart={ cart } />
 				<CartToggle />
-
-				<div className="payment-box-actions">
-					<PayButton
-						cart={ cart }
-						transactionStep={ this.props.transactionStep }
-						beforeSubmitText={ this.props.translate( 'Complete Checkout' ) }
-					/>
-				</div>
-			</form>
+			</React.Fragment>
 		);
 	};
 
 	getProductName = () => {
-		var cart = this.props.cart,
+		let cart = this.props.cart,
 			product;
 
 		if ( cart.has_bundle_credit && this.props.selectedSite.plan ) {
@@ -72,9 +77,8 @@ class FreeCartPaymentBox extends React.Component {
 
 		if ( product ) {
 			return product.product_name;
-		} else {
-			return '';
 		}
+		return '';
 	};
 
 	render() {

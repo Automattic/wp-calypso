@@ -105,7 +105,7 @@ export const ActivityLogTour = makeTour(
 			name="actions"
 			arrow="top-right"
 			target={
-				'.has-expanded-summary .activity-log-item:not(.is-discarded) ' +
+				'.has-expanded-summary .activity-log-item' +
 				'.foldable-card__secondary .foldable-card__summary-expanded .ellipsis-menu__toggle'
 			}
 			placement="below"

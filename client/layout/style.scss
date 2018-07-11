@@ -238,6 +238,25 @@
 	}
 }
 
+// Display sidebar as a panel under a main payment component in mobile checkout
+.layout.is-section-checkout {
+	@media (max-width: 660px) {
+		.layout__content {
+			display: flex;
+			flex-flow: column;
+		}
+		.layout__primary {
+			order: 1;
+		}
+		.layout__secondary {
+			order: 2;
+			position: relative;
+			transform: none;
+			top: 10px;
+		}
+	}
+}
+
 // Try to clean things up a bit when printing.
 .layout {
 	.masterbar,

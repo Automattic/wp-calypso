@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 class ModuleChartBar extends Component {
 	static propTypes = {
@@ -35,7 +35,7 @@ class ModuleChartBar extends Component {
 		const { active, data, max } = this.props;
 		const { nestedValue, value } = data;
 
-		const percentage = Math.ceil( value / max * 10000 ) / 100,
+		const percentage = Math.ceil( ( value / max ) * 10000 ) / 100,
 			remain = 100 - percentage,
 			remainFloor = Math.max( 1, Math.floor( remain ) ),
 			sections = [],
@@ -57,7 +57,7 @@ class ModuleChartBar extends Component {
 		);
 
 		if ( nestedValue ) {
-			nestedPercentage = value ? Math.ceil( nestedValue / value * 10000 ) / 100 : 0;
+			nestedPercentage = value ? Math.ceil( ( nestedValue / value ) * 10000 ) / 100 : 0;
 
 			nestedStyle = { height: nestedPercentage + '%' };
 
@@ -156,7 +156,7 @@ class ModuleChartBar extends Component {
 		const barClass = classNames( 'chart__bar', this.props.className );
 		const count = this.props.count || 1;
 		const barStyle = {
-			width: 1 / count * 100 + '%',
+			width: ( 1 / count ) * 100 + '%',
 		};
 
 		return (

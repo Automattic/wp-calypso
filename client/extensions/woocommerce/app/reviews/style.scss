@@ -9,6 +9,11 @@
 	.section-nav {
 		margin-top: 8px;
 	}
+
+	.search,
+	.search .search__open-icon {
+		z-index: initial;
+	}
 }
 
 .reviews__list {
@@ -76,10 +81,6 @@
 	.reviews__header {
 		display: flex;
 		align-items: center;
-
-		&.is-preview {
-			cursor: pointer;
-		}
 
 		.reviews__action-collapse .gridicon {
 			fill: $gray;
@@ -384,6 +385,11 @@
 		}
 		&.is-visible.has-scrollbar {
 			transform: translate3d( -84px, 0, 0 );
+		}
+
+		.accessible-focus &:focus {
+			border-color: $blue-medium;
+			box-shadow: 0 0 0 2px $blue-light;
 		}
 	}
 }

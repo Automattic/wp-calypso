@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -16,7 +15,7 @@ describe( 'QueryKey', () => {
 			const original = deepFreeze( { ok: true } );
 			const pruned = QueryKey.omit( original );
 
-			expect( pruned ).to.equal( original );
+			expect( pruned ).toBe( original );
 		} );
 
 		test( 'should omit values matching default query of extending class', () => {
@@ -26,7 +25,7 @@ describe( 'QueryKey', () => {
 
 			const pruned = QueryKeyWithDefaults.omit( { ok: true, foo: null } );
 
-			expect( pruned ).to.eql( { foo: null } );
+			expect( pruned ).toEqual( { foo: null } );
 		} );
 
 		test( 'should omit null values if configured by extending class', () => {
@@ -36,7 +35,7 @@ describe( 'QueryKey', () => {
 
 			const pruned = QueryKeyWithNullOmission.omit( { ok: true, foo: null } );
 
-			expect( pruned ).to.eql( { ok: true } );
+			expect( pruned ).toEqual( { ok: true } );
 		} );
 	} );
 
@@ -44,7 +43,7 @@ describe( 'QueryKey', () => {
 		test( 'should return a JSON string of the object', () => {
 			const key = QueryKey.stringify( { ok: true } );
 
-			expect( key ).to.equal( '[["ok",true]]' );
+			expect( key ).toBe( '[["ok",true]]' );
 		} );
 
 		test( 'should prune by omission behavior', () => {
@@ -55,14 +54,14 @@ describe( 'QueryKey', () => {
 
 			const key = QueryKeyWithOmission.stringify( { ok: true, foo: null } );
 
-			expect( key ).to.equal( '[]' );
+			expect( key ).toBe( '[]' );
 		} );
 
 		test( 'should return the same string for two objects with different property creation order', () => {
 			const original = QueryKey.stringify( { a: 1, b: 2 } );
 			const reversed = QueryKey.stringify( { b: 2, a: 1 } );
 
-			expect( original ).to.equal( reversed );
+			expect( original ).toBe( reversed );
 		} );
 	} );
 
@@ -70,7 +69,7 @@ describe( 'QueryKey', () => {
 		test( 'should return an object of the JSON string', () => {
 			const query = QueryKey.parse( '[["ok",true]]' );
 
-			expect( query ).to.eql( { ok: true } );
+			expect( query ).toEqual( { ok: true } );
 		} );
 
 		test( 'should prune by omission behavior', () => {
@@ -81,7 +80,7 @@ describe( 'QueryKey', () => {
 
 			const query = QueryKeyWithOmission.parse( '[["ok",true],["foo",null]]' );
 
-			expect( query ).to.eql( {} );
+			expect( query ).toEqual( {} );
 		} );
 	} );
 } );

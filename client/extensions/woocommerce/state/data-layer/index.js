@@ -9,6 +9,9 @@ import { addHandlers } from 'state/data-layer/extensions-middleware';
 import actionList from './action-list';
 import coupons from '../sites/coupons/handlers';
 import customers from './customers';
+import currencies from './data/currencies';
+import locations from './data/locations';
+import counts from './data/counts';
 import orderNotes from './orders/notes';
 import orderRefunds from './orders/refunds';
 import orders from './orders';
@@ -32,8 +35,11 @@ const debug = debugFactory( 'woocommerce:errors' );
 
 const handlers = mergeHandlers(
 	actionList,
+	counts,
 	coupons,
 	customers,
+	currencies,
+	locations,
 	orderNotes,
 	orderRefunds,
 	orders,

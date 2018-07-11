@@ -26,6 +26,10 @@
 	padding: 16px 24px;
 }
 
+.taxonomy-manager .ReactVirtualized__List {
+	direction: ltr !important;
+}
+
 .taxonomy-manager__nested-list {
 	margin-left: 2em;
 }
@@ -79,6 +83,15 @@
 			color: $blue-medium;
 			font-size: 12px;
 			margin-left: 10px;
+		}
+
+		.taxonomy-manager__podcast-indicator {
+			margin-left: 6px;
+
+			.gridicon {
+				position: relative;
+				top: 2px;
+			}
 		}
 	}
 

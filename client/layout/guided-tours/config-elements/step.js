@@ -62,6 +62,7 @@ export default class Step extends Component {
 		canSkip: PropTypes.bool,
 		wait: PropTypes.func,
 		onTargetDisappear: PropTypes.func,
+		keepRepositioning: PropTypes.bool,
 		children: PropTypes.func.isRequired,
 	};
 
@@ -103,6 +104,9 @@ export default class Step extends Component {
 			window.addEventListener( 'resize', this.onScrollOrResize );
 			this.watchTarget();
 		} );
+		if ( this.props.keepRepositioning ) {
+			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
+		}
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
@@ -117,6 +121,11 @@ export default class Step extends Component {
 			this.setStepPosition( nextProps, shouldScrollTo );
 			this.watchTarget();
 		} );
+		if ( ! nextProps.keepRepositioning ) {
+			clearInterval( this.repositionInterval );
+		} else if ( ! this.repositionInterval ) {
+			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
+		}
 	}
 
 	componentWillUnmount() {
@@ -127,8 +136,8 @@ export default class Step extends Component {
 		if ( this.scrollContainer ) {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		}
-
 		this.unwatchTarget();
+		clearInterval( this.repositionInterval );
 	}
 
 	/*

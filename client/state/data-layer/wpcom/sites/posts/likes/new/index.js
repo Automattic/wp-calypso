@@ -13,16 +13,23 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_LIKE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
-export const fetch = action =>
-	http(
+export const fetch = action => {
+	const query = {};
+	if ( action.source ) {
+		query.source = action.source;
+	}
+
+	return http(
 		{
 			method: 'POST',
 			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/new`,
 			body: {},
 			apiVersion: '1.1',
+			query,
 		},
 		action
 	);
+};
 
 export const onSuccess = ( { siteId, postId }, { likeCount, liker } ) =>
 	addLiker( siteId, postId, likeCount, liker );

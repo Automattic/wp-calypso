@@ -4,18 +4,24 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import closest from 'component-closest';
-import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
-import { last, map, range, uniq } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { find, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import tableRows from './table-rows';
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownLabel from 'components/select-dropdown/label';
+import DropdownSeparator from 'components/select-dropdown/separator';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { setApp, setDate } from 'state/ui/billing-transactions/actions';
+import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
+import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-transaction-date-filter-values';
+import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
 
 class TransactionsHeader extends React.Component {
 	state = {
@@ -39,17 +45,20 @@ class TransactionsHeader extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
-	getDatePopoverItemClickHandler( analyticsEvent, filter ) {
+	getDatePopoverItemClickHandler( analyticsEvent, date ) {
 		return () => {
+			const { transactionType } = this.props;
 			this.recordClickEvent( 'Date Popover Item: ' + analyticsEvent );
-			this.handlePickerSelection( filter );
+			this.props.setDate( transactionType, date.month, date.operator );
+			this.setState( { activePopover: '' } );
 		};
 	}
 
-	getAppPopoverItemClickHandler( analyticsEvent, filter ) {
+	getAppPopoverItemClickHandler( analyticsEvent, app ) {
 		return () => {
 			this.recordClickEvent( 'App Popover Item: ' + analyticsEvent );
-			this.handlePickerSelection( filter );
+			this.props.setApp( this.props.transactionType, app );
+			this.setState( { activePopover: '' } );
 		};
 	}
 
@@ -87,80 +96,41 @@ class TransactionsHeader extends React.Component {
 		);
 	}
 
-	setFilter( filter ) {
-		this.setState( { activePopover: '' } );
-		this.props.onNewFilter( filter );
-	}
-
 	renderDatePopover() {
-		const isVisible = 'date' === this.state.activePopover,
-			classes = classNames( {
-				'filter-popover': true,
-				'is-popped': isVisible,
-			} ),
-			previousMonths = range( 6 ).map( function( n ) {
-				return this.props.moment().subtract( n, 'months' );
-			}, this ),
-			monthPickers = previousMonths.map( function( month, index ) {
-				let analyticsEvent = 'Current Month';
-
-				if ( 1 === index ) {
-					analyticsEvent = '1 Month Before';
-				} else if ( 1 < index ) {
-					analyticsEvent = index + ' Months Before';
-				}
-
-				return this.renderDatePicker(
-					month.format( 'MMM YYYY' ),
-					month.format( 'MMM YYYY' ),
-					{ month: month },
-					analyticsEvent
-				);
-			}, this );
+		const { dateFilters, filter, translate } = this.props;
+		const selectedFilter = find( dateFilters, { value: filter.date } );
+		const selectedText = selectedFilter ? selectedFilter.title : translate( 'Date' );
 
 		return (
-			<div className={ classes }>
-				<strong
-					className="filter-popover-toggle date-toggle"
-					onClick={ this.handleDatePopoverLinkClick }
-				>
-					{ this.props.translate( 'Date' ) }
-					<Gridicon icon="chevron-down" size={ 18 } />
-				</strong>
-				<div className="filter-popover-content datepicker">
-					<div className="overflow">
-						<table>
-							<thead>
-								<tr>
-									<th colSpan="2">{ this.props.translate( 'Recent Transactions' ) }</th>
-								</tr>
-							</thead>
-							<tbody>
-								{ this.renderDatePicker( '5 Newest', this.props.translate( '5 Newest' ), {
-									newest: 5,
-								} ) }
-								{ this.renderDatePicker( '10 Newest', this.props.translate( '10 Newest' ), {
-									newest: 10,
-								} ) }
-							</tbody>
-							<thead>
-								<tr>
-									<th>{ this.props.translate( 'By Month' ) }</th>
-									<th className="transactions-header__count">
-										{ this.props.translate( 'Transactions' ) }
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{ monthPickers }
-								{ this.renderDatePicker( 'Older', this.props.translate( 'Older' ), {
-									before: last( previousMonths ),
-								} ) }
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
+			<SelectDropdown
+				selectedText={ selectedText }
+				onClick={ this.handleAppsPopoverLinkClick }
+				className="billing-history__transactions-header-select-dropdown"
+			>
+				<DropdownLabel>{ translate( 'Recent Transactions' ) }</DropdownLabel>
+				{ this.renderDatePicker(
+					'Newest',
+					translate( 'Newest' ),
+					{
+						month: null,
+						operator: null,
+					},
+					null
+				) }
+				<DropdownSeparator />
+				<DropdownLabel>{ translate( 'By Month' ) }</DropdownLabel>
+				{ dateFilters.map( function( { count, title, value }, index ) {
+					let analyticsEvent = 'Current Month';
+
+					if ( 1 === index ) {
+						analyticsEvent = '1 Month Before';
+					} else if ( 1 < index ) {
+						analyticsEvent = index + ' Months Before';
+					}
+
+					return this.renderDatePicker( index, title, value, count, analyticsEvent );
+				}, this ) }
+			</SelectDropdown>
 		);
 	}
 
@@ -175,116 +145,77 @@ class TransactionsHeader extends React.Component {
 		this.setState( { activePopover: activePopover } );
 	}
 
-	renderDatePicker( titleKey, titleTranslated, date, analyticsEvent ) {
-		const filter = { date };
-		const currentDate = this.props.filter.date || {};
-		let isSelected;
-
-		if ( date.newest ) {
-			isSelected = date.newest === currentDate.newest;
-		} else if ( date.month && currentDate.month ) {
-			isSelected = date.month.isSame( currentDate.month, 'month' );
-		} else if ( date.before ) {
-			isSelected = Boolean( currentDate.before );
-		} else {
-			isSelected = false;
-		}
-
-		const classes = classNames( {
-			'transactions-header__date-picker': true,
-			selected: isSelected,
-		} );
-
+	renderDatePicker( titleKey, titleTranslated, value, count, analyticsEvent ) {
+		const currentDate = this.props.filter.date;
+		const isSelected = isEqual( currentDate, value );
 		analyticsEvent = 'undefined' === typeof analyticsEvent ? titleKey : analyticsEvent;
 
 		return (
-			<tr
+			<DropdownItem
 				key={ titleKey }
-				className={ classes }
-				onClick={ this.getDatePopoverItemClickHandler( analyticsEvent, filter ) }
+				selected={ isSelected }
+				onClick={ this.getDatePopoverItemClickHandler( analyticsEvent, value ) }
+				count={ count }
 			>
-				<td className="descriptor">{ titleTranslated }</td>
-				<td className="transactions-header__count">
-					{ date.newest ? '' : this.getFilterCount( filter ) }
-				</td>
-			</tr>
+				{ titleTranslated }
+			</DropdownItem>
 		);
-	}
-
-	handlePickerSelection( filter ) {
-		this.setFilter( filter );
-		this.setState( { searchValue: '' } );
-	}
-
-	getFilterCount( filter ) {
-		if ( ! this.props.transactions ) {
-			return;
-		}
-
-		return tableRows.filter( this.props.transactions, filter ).length;
 	}
 
 	renderAppsPopover() {
-		const isVisible = 'apps' === this.state.activePopover;
-		const classes = classNames( {
-			'filter-popover': true,
-			'is-popped': isVisible,
-		} );
-		const appPickers = this.getApps().map( function( app ) {
-			return this.renderAppPicker( app, app, 'Specific App' );
-		}, this );
+		const { appFilters, filter, translate } = this.props;
+		const selectedFilter = find( appFilters, { value: filter.app } );
+		const selectedText = selectedFilter ? selectedFilter.title : translate( 'All Apps' );
 
 		return (
-			<div className={ classes }>
-				<strong
-					className="filter-popover-toggle app-toggle"
-					onClick={ this.handleAppsPopoverLinkClick }
-				>
-					{ this.props.translate( 'All Apps' ) }
-					<Gridicon icon="chevron-down" size={ 18 } />
-				</strong>
-				<div className="filter-popover-content app-list">
-					<table>
-						<thead>
-							<tr>
-								<th>{ this.props.translate( 'App Name' ) }</th>
-								<th>{ this.props.translate( 'Transactions' ) }</th>
-							</tr>
-						</thead>
-						<tbody>
-							{ this.renderAppPicker( this.props.translate( 'All Apps' ), 'all' ) }
-							{ appPickers }
-						</tbody>
-					</table>
-				</div>
-			</div>
+			<SelectDropdown
+				selectedText={ selectedText }
+				onClick={ this.handleAppsPopoverLinkClick }
+				className="billing-history__transactions-header-select-dropdown"
+			>
+				<DropdownLabel>{ translate( 'App Name' ) }</DropdownLabel>
+				{ this.renderAppPicker( translate( 'All Apps' ), 'all' ) }
+				{ appFilters.map( function( { title, value, count } ) {
+					return this.renderAppPicker( title, value, count, 'Specific App' );
+				}, this ) }
+			</SelectDropdown>
 		);
 	}
 
-	getApps() {
-		return uniq( map( this.props.transactions, 'service' ) );
-	}
-
-	renderAppPicker( title, app, analyticsEvent ) {
-		const filter = { app };
-		const classes = classNames( {
-			'app-picker': true,
-			selected: app === this.props.filter.app,
-		} );
+	renderAppPicker( title, app, count, analyticsEvent ) {
+		const selected = app === this.props.filter.app;
 
 		return (
-			<tr
+			<DropdownItem
 				key={ app }
-				className={ classes }
-				onClick={ this.getAppPopoverItemClickHandler( analyticsEvent, filter ) }
+				selected={ selected }
+				onClick={ this.getAppPopoverItemClickHandler( analyticsEvent, app ) }
+				count={ count }
 			>
-				<td className="descriptor">{ title }</td>
-				<td className="transactions-header__count">{ this.getFilterCount( filter ) }</td>
-			</tr>
+				{ title }
+			</DropdownItem>
 		);
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( TransactionsHeader ) );
+TransactionsHeader.propTypes = {
+	//connected props
+	appFilters: PropTypes.array.isRequired,
+	dateFilters: PropTypes.array.isRequired,
+	filter: PropTypes.object.isRequired,
+	//own props
+	transactionType: PropTypes.string.isRequired,
+};
+
+export default connect(
+	( state, { transactionType } ) => ( {
+		appFilters: getBillingTransactionAppFilterValues( state, transactionType ),
+		dateFilters: getBillingTransactionDateFilterValues( state, transactionType ),
+		filter: getBillingTransactionFilters( state, transactionType ),
+	} ),
+	{
+		recordGoogleEvent,
+		setApp,
+		setDate,
+	}
+)( localize( TransactionsHeader ) );

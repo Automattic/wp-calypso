@@ -15,11 +15,11 @@ import {
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
-	ANALYTICS_TRACKS_ANONID_SET,
 	ANALYTICS_TRACKS_OPT_OUT,
 } from 'state/action-types';
-
 import { getCurrentOAuth2ClientId } from 'state/ui/oauth2-clients/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { withEnhancers } from 'state/utils';
 
 const mergedMetaData = ( a, b ) => [
 	...get( a, 'meta.analytics', [] ),
@@ -31,7 +31,7 @@ const joinAnalytics = ( analytics, action ) =>
 		? dispatch => {
 				dispatch( analytics );
 				dispatch( action );
-			}
+		  }
 		: merge( {}, action, { meta: { analytics: mergedMetaData( analytics, action ) } } );
 
 export const composeAnalytics = ( ...analytics ) => ( {
@@ -67,25 +67,13 @@ export const recordEvent = ( service, args ) => ( {
 	},
 } );
 
-export const setTracksAnonymousUserId = anonId => ( {
-	type: ANALYTICS_TRACKS_ANONID_SET,
-	meta: {
-		analytics: [
-			{
-				type: ANALYTICS_TRACKS_ANONID_SET,
-				payload: anonId,
-			},
-		],
-	},
-} );
-
 export const loadTrackingTool = trackingTool => ( {
 	type: ANALYTICS_TRACKING_ON,
 	meta: {
 		analytics: [
 			{
 				type: ANALYTICS_TRACKING_ON,
-				payload: trackingTool,
+				payload: { trackingTool },
 			},
 		],
 	},
@@ -97,7 +85,7 @@ export const setTracksOptOut = isOptingOut => ( {
 		analytics: [
 			{
 				type: ANALYTICS_TRACKS_OPT_OUT,
-				payload: isOptingOut,
+				payload: { isOptingOut },
 			},
 		],
 	},
@@ -115,7 +103,7 @@ export const recordCustomFacebookConversionEvent = ( name, properties ) =>
 export const recordCustomAdWordsRemarketingEvent = properties =>
 	recordEvent( 'adwords', { properties } );
 
-export const recordPageView = ( url, title, service ) => ( {
+export const recordPageView = ( url, title, service, properties = {} ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
 	meta: {
 		analytics: [
@@ -125,6 +113,7 @@ export const recordPageView = ( url, title, service ) => ( {
 					service,
 					url,
 					title,
+					...properties,
 				},
 			},
 		],
@@ -133,29 +122,49 @@ export const recordPageView = ( url, title, service ) => ( {
 
 export const recordGooglePageView = ( url, title ) => recordPageView( url, title, 'ga' );
 
-const withClientId = actionCreator => ( ...args ) => ( dispatch, getState ) => {
-	const action = actionCreator( ...args );
+/**
+ * Enhances any Redux action that denotes the recording of an analytics event with an additional property which
+ * specifies the type of the current selected site.
+ *
+ * @param {Object} action - Redux action as a plain object
+ * @param {Function} getState - Redux function that can be used to retrieve the current state tree
+ * @returns {Object} the new Redux action
+ * @see client/state/utils/withEnhancers
+ */
+export const enhanceWithSiteType = ( action, getState ) => {
+	const site = getSelectedSite( getState() );
 
-	if ( typeof action !== 'object' ) {
-		throw new Error(
-			'withClientId only works with action creators that return plain action object'
-		);
+	if ( site !== null ) {
+		if ( action.type === ANALYTICS_EVENT_RECORD ) {
+			set(
+				action,
+				'meta.analytics[0].payload.properties.site_type',
+				site.jetpack ? 'jetpack' : 'wpcom'
+			);
+		} else {
+			set( action, 'meta.analytics[0].payload.site_type', site.jetpack ? 'jetpack' : 'wpcom' );
+		}
 	}
 
+	return action;
+};
+
+const enhanceWithClientId = ( action, getState ) => {
 	const clientId = getCurrentOAuth2ClientId( getState() );
 
 	if ( clientId ) {
-		set(
-			action,
-			action.type === ANALYTICS_EVENT_RECORD
-				? 'meta.analytics[0].payload.properties.client_id'
-				: 'meta.analytics[0].payload.client_id',
-			clientId
-		);
+		if ( action.type === ANALYTICS_EVENT_RECORD ) {
+			set( action, 'meta.analytics[0].payload.properties.client_id', clientId );
+		} else {
+			set( action, 'meta.analytics[0].payload.client_id', clientId );
+		}
 	}
 
-	return dispatch( action );
+	return action;
 };
 
-export const recordTracksEventWithClientId = withClientId( recordTracksEvent );
-export const recordPageViewWithClientId = withClientId( recordPageView );
+export const recordTracksEventWithClientId = withEnhancers(
+	recordTracksEvent,
+	enhanceWithClientId
+);
+export const recordPageViewWithClientId = withEnhancers( recordPageView, enhanceWithClientId );

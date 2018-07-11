@@ -6,58 +6,70 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 import page from 'page';
-import { findIndex } from 'lodash';
-import { moment, translate } from 'i18n-calypso';
+import { findIndex, find } from 'lodash';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import Delta from 'woocommerce/components/delta';
 import ElementChart from 'components/chart';
-import formatCurrency from 'lib/format-currency';
-import { getPeriodFormat } from 'state/stats/lists/utils';
-import { getDelta } from '../utils';
-import {
-	getSiteStatsNormalizedData,
-	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
 import Legend from 'components/chart/legend';
-import Tabs from 'my-sites/stats/stats-tabs';
-import Tab from 'my-sites/stats/stats-tabs/tab';
-import { UNITS, chartTabs as tabs } from 'woocommerce/app/store-stats/constants';
 import { recordTrack } from 'woocommerce/lib/analytics';
+import { getWidgetPath, formatValue } from 'woocommerce/app/store-stats/utils';
+import { UNITS } from 'woocommerce/app/store-stats/constants';
 
 class StoreStatsChart extends Component {
 	static propTypes = {
+		basePath: PropTypes.string.isRequired,
+		chartTitle: PropTypes.node,
 		data: PropTypes.array.isRequired,
-		deltas: PropTypes.array.isRequired,
-		isRequesting: PropTypes.bool.isRequired,
-		path: PropTypes.string.isRequired,
-		query: PropTypes.object.isRequired,
+		renderTabs: PropTypes.func.isRequired,
 		selectedDate: PropTypes.string.isRequired,
-		siteId: PropTypes.number,
+		slug: PropTypes.string,
+		tabs: PropTypes.array.isRequired,
 		unit: PropTypes.string.isRequired,
+		urlQueryParam: PropTypes.object,
 	};
 
-	state = {
-		selectedTabIndex: 0,
+	static defaultProps = {
+		urlQueryParam: {},
 	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			selectedTabIndex: 0,
+			activeCharts: props.tabs[ 0 ].availableCharts,
+		};
+	}
 
 	barClick = bar => {
-		page.redirect( `${ this.props.path }?startDate=${ bar.data.period }` );
+		const { unit, slug, basePath, urlQueryParam } = this.props;
+		const query = Object.assign( { startDate: bar.data.period }, urlQueryParam );
+		const path = getWidgetPath( unit, slug, query );
+		page( `${ basePath }${ path }` );
 	};
 
 	tabClick = tab => {
+		const { tabs } = this.props;
+		const tabData = tabs[ tab.index ];
 		this.setState( {
 			selectedTabIndex: tab.index,
+			activeCharts: tabData.availableCharts,
 		} );
 
 		recordTrack( 'calypso_woocommerce_stats_chart_tab_click', {
-			tab: tabs[ tab.index ].attr,
+			tab: tabData.attr,
+		} );
+	};
+
+	legendClick = attr => {
+		const activeCharts = this.state.activeCharts.indexOf( attr ) === -1 ? [ attr ] : [];
+		this.setState( {
+			activeCharts,
 		} );
 	};
 
@@ -74,10 +86,9 @@ class StoreStatsChart extends Component {
 	};
 
 	buildToolTipData = ( item, selectedTab ) => {
-		const value =
-			selectedTab.type === 'currency'
-				? formatCurrency( item[ selectedTab.attr ], item.currency )
-				: Math.round( item[ selectedTab.attr ] * 100 ) / 100;
+		const { tabs } = this.props;
+		const { activeCharts } = this.state;
+		const value = formatValue( item[ selectedTab.attr ] || 0, selectedTab.type, item.currency );
 		const data = [
 			{ className: 'is-date-label', value: null, label: this.createTooltipDate( item ) },
 			{
@@ -85,32 +96,48 @@ class StoreStatsChart extends Component {
 				label: selectedTab.label,
 			},
 		];
-		if ( selectedTab.attr === 'gross_sales' ) {
+		activeCharts.forEach( attr => {
 			data.push( {
-				value: formatCurrency( item.net_sales, item.currency ),
-				label: translate( 'Net Sales' ),
+				value: formatValue( item[ attr ], selectedTab.type, item.currency ),
+				label: find( tabs, tab => tab.attr === attr ).label,
 			} );
-		}
+		} );
 		return data;
 	};
 
 	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
+		const { activeCharts } = this.state;
 		const className = classnames( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
+		const nestedValue = item[ activeCharts[ 0 ] ];
 		return {
 			label: item[ chartFormat ],
-			value: item[ selectedTab.attr ],
-			nestedValue: selectedTab.attr === 'gross_sales' ? item.net_sales : null,
+			value: item[ selectedTab.attr ] || 0,
+			nestedValue,
 			data: item,
 			tooltipData: this.buildToolTipData( item, selectedTab ),
 			className,
 		};
 	};
 
+	renderLegend = selectedTabIndex => {
+		const { tabs } = this.props;
+		const activeTab = tabs[ selectedTabIndex ];
+		return (
+			<Legend
+				activeTab={ activeTab }
+				availableCharts={ activeTab.availableCharts }
+				activeCharts={ this.state.activeCharts }
+				tabs={ tabs }
+				clickHandler={ this.legendClick }
+			/>
+		);
+	};
+
 	render() {
-		const { data, deltas, selectedDate, unit } = this.props;
+		const { chartTitle, className, data, renderTabs, selectedDate, tabs, unit } = this.props;
 		const { selectedTabIndex } = this.state;
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
@@ -118,62 +145,23 @@ class StoreStatsChart extends Component {
 		const chartData = data.map( item => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, d => d.period === selectedDate );
 		return (
-			<Card className="store-stats-chart stats-module">
-				{ selectedTab.attr === 'gross_sales' ? (
-					<Legend
-						activeTab={ selectedTab }
-						availableCharts={ [ 'net_sales' ] }
-						tabs={ [ { label: translate( 'Net Sales' ), attr: 'net_sales' } ] }
-					/>
-				) : (
-					<Legend activeTab={ selectedTab } />
-				) }
+			<Card className={ classnames( className, 'stats-module' ) }>
+				<div className="store-stats-chart__top">
+					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
+					{ this.renderLegend( selectedTabIndex ) }
+				</div>
 				<ElementChart loading={ isLoading } data={ chartData } barClick={ this.barClick } />
-				<Tabs data={ chartData }>
-					{ tabs.map( ( tab, tabIndex ) => {
-						if ( ! isLoading ) {
-							const itemChartData = this.buildChartData( data[ selectedIndex ], tabs[ tabIndex ] );
-							const delta = getDelta( deltas, selectedDate, tab.attr );
-							const deltaValue =
-								delta.direction === 'is-undefined-increase'
-									? '-'
-									: Math.abs( Math.round( delta.percentage_change * 100 ) );
-							const periodFormat = getPeriodFormat( unit, delta.reference_period );
-							return (
-								<Tab
-									key={ tab.attr }
-									index={ tabIndex }
-									label={ tab.tabLabel || tab.label }
-									selected={ tabIndex === selectedTabIndex }
-									tabClick={ this.tabClick }
-								>
-									<span className="store-stats-chart__value value">
-										{ tab.type === 'currency'
-											? formatCurrency( itemChartData.value, data[ selectedIndex ].currency )
-											: Math.round( itemChartData.value * 100 ) / 100 }
-									</span>
-									<Delta
-										value={ `${ deltaValue }%` }
-										className={ `${ delta.favorable } ${ delta.direction }` }
-										suffix={ `since ${ moment( delta.reference_period, periodFormat ).format(
-											UNITS[ unit ].shortFormat
-										) }` }
-									/>
-								</Tab>
-							);
-						}
+				{ ! isLoading &&
+					renderTabs( {
+						chartData,
+						selectedIndex,
+						selectedTabIndex,
+						selectedDate,
+						unit,
+						tabClick: this.tabClick,
 					} ) }
-				</Tabs>
 			</Card>
 		);
 	}
 }
-
-export default connect( ( state, { query, siteId } ) => {
-	const statsData = getSiteStatsNormalizedData( state, siteId, 'statsOrders', query );
-	return {
-		data: statsData.data,
-		deltas: statsData.deltas,
-		isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
-	};
-} )( StoreStatsChart );
+export default StoreStatsChart;

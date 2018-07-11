@@ -13,9 +13,11 @@ import {
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import actionLog from './action-log/reducer';
+import billingTransactions from './billing-transactions/reducer';
 import comments from './comments/reducer';
 import dropZone from './drop-zone/reducer';
 import editor from './editor/reducer';
+import googleMyBusiness from './google-my-business/reducer';
 import guidedTour from './guided-tours/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
@@ -97,9 +99,11 @@ export const masterbarVisibility = ( state = true, { type, isVisible } ) =>
 
 const reducer = combineReducers( {
 	actionLog,
+	billingTransactions,
 	comments,
 	dropZone,
 	editor,
+	googleMyBusiness,
 	guidedTour,
 	hasSidebar,
 	isLoading,

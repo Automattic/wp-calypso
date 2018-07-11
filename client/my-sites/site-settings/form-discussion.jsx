@@ -13,6 +13,7 @@ import { flowRight, pick } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import SupportInfo from 'components/support-info';
 import CommentDisplaySettings from './comment-display-settings';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -27,7 +28,7 @@ import SectionHeader from 'components/section-header';
 import Subscriptions from './subscriptions';
 import wrapSettingsForm from './wrap-settings-form';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import JetpackModuleToggle from './jetpack-module-toggle';
 
@@ -185,12 +186,28 @@ class SiteSettingsFormDiscussion extends Component {
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
 				</CompactFormToggle>
+
+				{ this.props.isJetpack && (
+					<SupportInfo
+						text={ translate( 'Hovercards appear when you place your mouse over any Gravatar.' ) }
+						link="https://jetpack.com/support/gravatar-hovercards/"
+					/>
+				) }
 				<JetpackModuleToggle
 					disabled={ isRequestingSettings || isSavingSettings }
 					label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
 					moduleSlug="gravatar-hovercards"
 					siteId={ siteId }
 				/>
+
+				{ this.props.isJetpack && (
+					<SupportInfo
+						text={ translate(
+							'Comment Likes are a fun, easy way to demonstrate your appreciation or agreement.'
+						) }
+						link="https://jetpack.com/support/comment-likes/"
+					/>
+				) }
 				<JetpackModuleToggle
 					disabled={ isRequestingSettings || isSavingSettings }
 					label={ translate( 'Enable comment likes' ) }
@@ -395,15 +412,10 @@ class SiteSettingsFormDiscussion extends Component {
 		const {
 			fields,
 			handleAutosavingToggle,
-			isJetpack,
 			isRequestingSettings,
 			isSavingSettings,
 			translate,
 		} = this.props;
-		// follows are not supported on Jetpack sites
-		if ( isJetpack ) {
-			return null;
-		}
 
 		return (
 			<CompactFormToggle
@@ -678,6 +690,7 @@ const getFormSettings = settings => {
 	] );
 };
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	SiteSettingsFormDiscussion
-);
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormDiscussion );

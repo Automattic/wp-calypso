@@ -53,6 +53,9 @@ class QueryUsers extends Component {
 	}
 }
 
-export default connect( state => ( { currentUserId: getCurrentUserId( state ) } ), {
-	requestUsers,
-} )( QueryUsers );
+export default connect(
+	state => ( { currentUserId: getCurrentUserId( state ) } ),
+	{
+		requestUsers,
+	}
+)( QueryUsers );

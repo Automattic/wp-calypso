@@ -5,15 +5,18 @@
  */
 
 import React from 'react';
+import { map, chunk } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DelayRender from 'devdocs/delay-render';
+import ComponentPlayground from 'devdocs/design/component-playground';
+import LazyRender from 'react-lazily-render';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
-import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
+import ReadmeViewer from 'components/readme-viewer';
 import Placeholder from 'devdocs/devdocs-async-load/placeholder';
+import { getExampleCodeFromComponent } from './playground-utils';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );
@@ -36,7 +39,7 @@ const shouldShowInstance = ( example, filter, component ) => {
 const Collection = ( {
 	children,
 	component,
-	examplesToMount = 20,
+	examplesToMount = 10,
 	filter,
 	section = 'design',
 } ) => {
@@ -50,6 +53,12 @@ const Collection = ( {
 
 		const exampleName = getComponentName( example );
 		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
+		const readmeFilePath =
+			'/client/' +
+			( section === 'blocks' ? 'blocks' : 'components' ) +
+			'/' +
+			example.props.readmeFilePath +
+			'/README.md';
 
 		showCounter++;
 
@@ -61,14 +70,28 @@ const Collection = ( {
 			);
 		}
 
+		const exampleCode = getExampleCodeFromComponent( example );
+		if ( exampleCode ) {
+			return (
+				<div>
+					<ComponentPlayground
+						code={ exampleCode }
+						name={ exampleName }
+						unique={ !! component }
+						url={ exampleLink }
+						component={ component }
+					/>
+					{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
+				</div>
+			);
+		}
+
 		return (
 			<div>
 				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
 					{ example }
 				</DocsExampleWrapper>
-				{ component && (
-					<ReadmeViewer section={ section } readmeFilePath={ example.props.readmeFilePath } />
-				) }
+				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 			</div>
 		);
 	} );
@@ -82,30 +105,21 @@ const Collection = ( {
 						{ summary }
 					</div>
 				) }
-			{ /*
-				The entire list of examples for `/devdocs/blocks` and
-				`/devdocs/design` takes a long time to mount, so we use
-				`DelayRender` to render just the first few components.
-				This means the page change feels a lot faster, especially
-				on lower-end machines and on Firefox.
-			*/ }
-			{ examples.length <= examplesToMount ? (
-				examples
-			) : (
-				<React.Fragment>
-					{ examples.slice( 0, examplesToMount ) }
 
-					<DelayRender>
+			{ /* Load first chunk, lazy load all others as needed. */ }
+
+			{ examples.slice( 0, examplesToMount ) }
+
+			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), exampleGroup => {
+				const groupKey = map( exampleGroup, example => example.key ).join( '_' );
+				return (
+					<LazyRender key={ groupKey }>
 						{ shouldRender =>
-							shouldRender ? (
-								examples.slice( examplesToMount )
-							) : (
-								<Placeholder count={ examplesToMount } />
-							)
+							shouldRender ? exampleGroup : <Placeholder count={ examplesToMount } />
 						}
-					</DelayRender>
-				</React.Fragment>
-			) }
+					</LazyRender>
+				);
+			} ) }
 		</div>
 	);
 };

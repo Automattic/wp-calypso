@@ -73,6 +73,13 @@ const SignupActions = {
 			providedDependencies,
 		} );
 	},
+
+	changeSignupFlow( flow ) {
+		Dispatcher.handleViewAction( {
+			type: 'CHANGE_SIGNUP_FLOW',
+			flow,
+		} );
+	},
 };
 
 export default SignupActions;

@@ -51,7 +51,9 @@ export function getAvailableExternalAccounts( state, service ) {
 					keyringConnection.additional_external_users.map( externalUser => ( {
 						ID: externalUser.external_ID,
 						name: externalUser.external_name,
+						description: externalUser.external_description,
 						picture: externalUser.external_profile_picture,
+						meta: externalUser.external_meta,
 						keyringConnectionId: keyringConnection.ID,
 						isConnected: isConnected( keyringConnection.ID, externalUser.external_ID ),
 						isExternal: true,

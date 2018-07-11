@@ -1,5 +1,5 @@
 /** @format */
-var dummyPluginList = [
+const dummyPluginList = [
 	{
 		name: 'Jetpack',
 		slug: 'jetpack',

@@ -19,10 +19,10 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormCurrencyInput from 'components/forms/form-currency-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redux-form-fieldset';
-import UploadImage from 'blocks/upload-image';
 import { getCurrencyDefaults } from 'lib/format-currency';
+import ProductImagePicker from './product-image-picker';
 
-const REDUX_FORM_NAME = 'simplePaymentsForm';
+export const REDUX_FORM_NAME = 'simplePaymentsForm';
 
 // Export some selectors that are needed by the code that submits the form
 export const getProductFormValues = state => getFormValues( REDUX_FORM_NAME )( state );
@@ -125,10 +125,6 @@ const validate = ( values, props ) => {
 		} );
 	}
 
-	if ( values.featuredImageId && values.featuredImageId === 'uploading' ) {
-		errors.featuredImageId = 'uploading';
-	}
-
 	return errors;
 };
 
@@ -153,37 +149,16 @@ const renderPriceField = ( { price, currency, ...props } ) => {
 	);
 };
 
-// helper to render UploadImage as a form field
-class UploadImageField extends Component {
-	handleImageEditorDone = () => this.props.input.onChange( 'uploading' );
-	handleImageUploadDone = uploadedImage => this.props.input.onChange( uploadedImage.ID );
-	handleImageRemove = () => this.props.input.onChange( null );
-
-	render() {
-		return (
-			<UploadImage
-				defaultImage={ this.props.input.value }
-				onImageEditorDone={ this.handleImageEditorDone }
-				onImageUploadDone={ this.handleImageUploadDone }
-				onImageRemove={ this.handleImageRemove }
-				onError={ this.props.onError }
-			/>
-		);
-	}
-}
-
 class ProductForm extends Component {
-	handleUploadImageError = ( errorCode, errorMessage ) => this.props.showError( errorMessage );
-
 	render() {
-		const { translate } = this.props;
+		const { translate, makeDirtyAfterImageEdit } = this.props;
 
 		return (
 			<form className="editor-simple-payments-modal__form">
 				<Field
 					name="featuredImageId"
-					onError={ this.handleUploadImageError }
-					component={ UploadImageField }
+					component={ ProductImagePicker }
+					makeDirtyAfterImageEdit={ makeDirtyAfterImageEdit }
 				/>
 				<div className="editor-simple-payments-modal__form-fields">
 					<ReduxFormFieldset
@@ -204,24 +179,26 @@ class ProductForm extends Component {
 						label={ translate( 'Price' ) }
 						component={ renderPriceField }
 					/>
-					<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
-						{ translate( 'Allow people to buy more than one item at a time.' ) }
-					</ReduxFormFieldset>
-					<ReduxFormFieldset
-						name="email"
-						label={ translate( 'Email' ) }
-						explanation={ translate(
-							'This is where PayPal will send your money.' +
-								" To claim a payment, you'll need a {{paypalLink}}PayPal account{{/paypalLink}}" +
-								' connected to a bank account.',
-							{
-								components: {
-									paypalLink: <ExternalLink href="https://paypal.com" target="_blank" />,
-								},
-							}
-						) }
-						component={ FormTextInput }
-					/>
+					<div>
+						<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
+							{ translate( 'Allow people to buy more than one item at a time.' ) }
+						</ReduxFormFieldset>
+						<ReduxFormFieldset
+							name="email"
+							label={ translate( 'Email' ) }
+							explanation={ translate(
+								'This is where PayPal will send your money.' +
+									" To claim a payment, you'll need a {{paypalLink}}PayPal account{{/paypalLink}}" +
+									' connected to a bank account.',
+								{
+									components: {
+										paypalLink: <ExternalLink href="https://paypal.com" target="_blank" />,
+									},
+								}
+							) }
+							component={ FormTextInput }
+						/>
+					</div>
 				</div>
 			</form>
 		);

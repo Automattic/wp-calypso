@@ -4,14 +4,14 @@
  * Internal dependencies
  */
 import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants';
-import { getJetpackOnboardingPendingSteps } from 'state/selectors';
+import getJetpackOnboardingPendingSteps from 'state/selectors/get-jetpack-onboarding-pending-steps';
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 
 describe( 'getJetpackOnboardingPendingSteps()', () => {
 	test( 'should return pending status for the contact form step', () => {
 		const siteId = 2916284;
-		const action = saveJetpackOnboardingSettings( siteId, {
+		const action = saveJetpackSettings( siteId, {
 			onboarding: {
 				addContactForm: true,
 			},
@@ -44,7 +44,7 @@ describe( 'getJetpackOnboardingPendingSteps()', () => {
 
 	test( 'should return pending status for the woocommerce step', () => {
 		const siteId = 2916284;
-		const action = saveJetpackOnboardingSettings( siteId, {
+		const action = saveJetpackSettings( siteId, {
 			onboarding: {
 				installWooCommerce: true,
 			},
@@ -77,7 +77,7 @@ describe( 'getJetpackOnboardingPendingSteps()', () => {
 
 	test( 'should return pending status for the stats step', () => {
 		const siteId = 2916284;
-		const action = saveJetpackOnboardingSettings( siteId, {
+		const action = saveJetpackSettings( siteId, {
 			onboarding: {
 				stats: true,
 			},

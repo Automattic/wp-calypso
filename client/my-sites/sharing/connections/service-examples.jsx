@@ -32,6 +32,7 @@ const SERVICES_WHITELIST = [
 	'eventbrite',
 	'facebook',
 	'google_plus',
+	'google_my_business',
 	'instagram',
 	'linkedin',
 	'path',
@@ -198,6 +199,26 @@ class SharingServiceExamples extends Component {
 					{
 						components: {
 							link: <a href={ this.getSharingButtonsLink() } />,
+						},
+					}
+				),
+			},
+		];
+	}
+
+	google_my_business() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/google-my-business/stats-screenshot-cropped.png',
+					alt: this.props.translate( 'Manage Google My Business locations', { textOnly: true } ),
+				},
+				label: this.props.translate(
+					'{{strong}}Connect{{/strong}} to view stats and other useful information from your ' +
+						'Google My Business account inside WordPress.com.',
+					{
+						components: {
+							strong: <strong />,
 						},
 					}
 				),

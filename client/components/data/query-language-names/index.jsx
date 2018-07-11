@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getLocalizedLanguageNames } from 'state/selectors';
+import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { requestLanguageNames } from 'state/i18n/language-names/actions';
 
 class QueryLanguageNames extends Component {

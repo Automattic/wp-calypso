@@ -8,7 +8,16 @@ import cookie from 'cookie';
 import debug from 'debug';
 import { parse } from 'qs';
 import url from 'url';
-import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
+import {
+	assign,
+	includes,
+	isObjectLike,
+	isUndefined,
+	omit,
+	pickBy,
+	startsWith,
+	times,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,9 +25,10 @@ import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } fr
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { doNotTrack, isPiiUrl, shouldReportOmitBlogId, hashPii } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
+	mayWeTrackCurrentUserGdpr,
 	retarget,
 	recordAliasInFloodlight,
 	recordPageViewInFloodlight,
@@ -32,8 +42,16 @@ const mcDebug = debug( 'calypso:analytics:mc' );
 const gaDebug = debug( 'calypso:analytics:ga' );
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 const tracksDebug = debug( 'calypso:analytics:tracks' );
+const statsdDebug = debug( 'calypso:analytics:statsd' );
 
 let _superProps, _user, _selectedSite, _siteCount, _dispatch, _loadTracksError;
+
+/**
+ * Tracks uses a bunch of special query params that should not be used as property name
+ * See internal Nosara repo?
+ */
+const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
+const EVENT_NAME_EXCEPTIONS = [ 'a8c_cookie_banner_ok' ];
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
@@ -112,14 +130,20 @@ loadScript( '//stats.wp.com/w.js?56', function( error ) {
  *
  * This function returns false if:
  *
- * 1. `google_analytics_enabled` is disabled
+ * 1. `google-analytics` feature is disabled
  * 2. `Do Not Track` is enabled
- * 3. `document.location.href` may contain personally identifiable information
+ * 3. the current user could be in the GDPR zone and hasn't consented to tracking
+ * 4. `document.location.href` may contain personally identifiable information
  *
  * @returns {Boolean} true if GA is allowed.
  */
 function isGoogleAnalyticsAllowed() {
-	return config( 'google_analytics_enabled' ) && ! doNotTrack() && ! isPiiUrl();
+	return (
+		config.isEnabled( 'google-analytics' ) &&
+		! doNotTrack() &&
+		! isPiiUrl() &&
+		mayWeTrackCurrentUserGdpr()
+	);
 }
 
 function buildQuerystring( group, name ) {
@@ -267,29 +291,66 @@ const analytics = {
 
 			eventProperties = eventProperties || {};
 
-			if ( process.env.NODE_ENV !== 'production' ) {
+			if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
+				if (
+					! /^calypso(?:_[a-z]+){2,}$/.test( eventName ) &&
+					! includes( EVENT_NAME_EXCEPTIONS, eventName )
+				) {
+					//eslint-disable-next-line no-console
+					console.error(
+						'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z]+){2,}$/ and is ' +
+							'not a listed exception. Please use a compliant event name.',
+						eventName
+					);
+				}
+
 				for ( const key in eventProperties ) {
-					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
+					if ( isObjectLike( eventProperties[ key ] ) ) {
 						const errorMessage =
-							`Unable to record event "${ eventName }" because nested` +
+							`Tracks: Unable to record event "${ eventName }" because nested ` +
 							`properties are not supported by Tracks. Check '${ key }' on`;
 						console.error( errorMessage, eventProperties ); //eslint-disable-line no-console
-
 						return;
+					}
+
+					if ( ! /^[a-z_][a-z0-9_]*$/.test( key ) ) {
+						//eslint-disable-next-line no-console
+						console.error(
+							'Tracks: Event `%s` will be rejected because property name `%s` does not match /^[a-z_][a-z0-9_]*$/. ' +
+								'Please use a compliant property name.',
+							eventName,
+							key
+						);
+					}
+
+					if ( TRACKS_SPECIAL_PROPS_NAMES.indexOf( key ) !== -1 ) {
+						//eslint-disable-next-line no-console
+						console.error(
+							"Tracks: Event property `%s` will be overwritten because it uses one of Tracks' internal prop name: %s. " +
+								'Please use another property name.',
+							key,
+							TRACKS_SPECIAL_PROPS_NAMES.join( ', ' )
+						);
 					}
 				}
 			}
 
 			tracksDebug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
-			if ( eventName.indexOf( 'calypso_' ) !== 0 ) {
-				tracksDebug( '- Event name must be prefixed by "calypso_"' );
+			if (
+				eventName.indexOf( 'calypso_' ) !== 0 &&
+				! includes( EVENT_NAME_EXCEPTIONS, eventName )
+			) {
+				tracksDebug(
+					'- Event name must be prefixed by "calypso_" or added to `EVENT_NAME_EXCEPTIONS`'
+				);
 				return;
 			}
 
 			if ( _superProps ) {
 				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				superProperties = _superProps.getAll( _selectedSite, _siteCount );
+				const site = shouldReportOmitBlogId( eventProperties.path ) ? null : _selectedSite;
+				superProperties = _superProps.getAll( site, _siteCount );
 				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
 
@@ -348,10 +409,6 @@ const analytics = {
 			return cookies.tk_ai;
 		},
 
-		setAnonymousUserId: function( anonId ) {
-			window._tkq.push( [ 'identifyAnonUser', anonId ] );
-		},
-
 		setOptOut: function( isOptingOut ) {
 			window._tkq.push( [ 'setOptOut', isOptingOut ] );
 		},
@@ -386,7 +443,17 @@ const analytics = {
 					featureSlug = 'read_post_id__id';
 				} else if ( ( matched = featureSlug.match( /^start_(.*)_(..)$/ ) ) != null ) {
 					featureSlug = `start_${ matched[ 1 ] }`;
+				} else if ( startsWith( featureSlug, 'page__' ) ) {
+					// Fold post editor routes for page, post and CPT into one generic 'post__*' one
+					featureSlug = featureSlug.replace( /^page__/, 'post__' );
+				} else if ( startsWith( featureSlug, 'edit_' ) ) {
+					// use non-greedy +? operator to match the custom post type slug
+					featureSlug = featureSlug.replace( /^edit_.+?__/, 'post__' );
 				}
+
+				statsdDebug(
+					`Recording timing: path=${ featureSlug } event=${ eventType } duration=${ duration }ms`
+				);
 
 				const imgUrl = statsdTimingUrl( featureSlug, eventType, duration );
 				new Image().src = imgUrl;
@@ -402,11 +469,11 @@ const analytics = {
 			const parameters = {};
 			if ( ! analytics.ga.initialized ) {
 				if ( _user && _user.get() ) {
-					parameters.userId = 'u-' + _user.get().ID;
+					parameters.userId = hashPii( _user.get().ID );
 				}
 
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
-
+				window.ga( 'set', 'anonymizeIp', true );
 				analytics.ga.initialized = true;
 			}
 		},
@@ -463,7 +530,12 @@ const analytics = {
 	// HotJar tracking
 	hotjar: {
 		addHotJarScript: function() {
-			if ( ! config( 'hotjar_enabled' ) || doNotTrack() || isPiiUrl() ) {
+			if (
+				! config( 'hotjar_enabled' ) ||
+				doNotTrack() ||
+				isPiiUrl() ||
+				! mayWeTrackCurrentUserGdpr()
+			) {
 				hotjarDebug( 'Not loading HotJar script' );
 				return;
 			}
@@ -506,6 +578,23 @@ const analytics = {
 		window._tkq.push( [ 'clearIdentity' ] );
 	},
 };
+
+/**
+ * Loading Google analytics independently from the rest of the tracking scripts.
+ *
+ * Why? Because ad-tracking and google-analytics have two different switches and we
+ * would probably not want one to stop the other.
+ *
+ * Moreover, analytics gets loaded with the page load, while the tracking is lazy-loaded
+ * during actions.
+ */
+if ( isGoogleAnalyticsAllowed() ) {
+	try {
+		loadScript( 'https://www.google-analytics.com/analytics.js' );
+	} catch ( error ) {
+		debug( 'GA script failed to load properly: ', error );
+	}
+}
 
 /**
  * Wrap Google Analytics with debugging, possible analytics supression, and initialization

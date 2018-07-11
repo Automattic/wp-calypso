@@ -15,7 +15,7 @@ import { some, forEach, isEqual, without } from 'lodash';
 import { isRequestingSites, isRequestingSite, hasAllSitesList } from 'state/sites/selectors';
 import { requestSites, requestSite } from 'state/sites/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 class QuerySites extends Component {
 	componentWillMount() {
@@ -82,7 +82,11 @@ class QuerySites extends Component {
 QuerySites.propTypes = {
 	allSites: PropTypes.bool,
 	primaryAndRecent: PropTypes.bool,
-	siteId: PropTypes.number,
+	siteId: PropTypes.oneOfType( [
+		PropTypes.number,
+		// The actions and selectors we use also work with site slugs. Needed by jetpack-onboarding/main.
+		PropTypes.string,
+	] ),
 	requestingSites: PropTypes.bool,
 	requestingSite: PropTypes.bool,
 	requestSites: PropTypes.func,

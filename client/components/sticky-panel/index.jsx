@@ -61,7 +61,7 @@ export default class extends React.Component {
 	};
 
 	updateIsSticky = () => {
-		var isSticky = window.pageYOffset > this.threshold;
+		const isSticky = window.pageYOffset > this.threshold;
 
 		if (
 			( this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ) ||
@@ -80,7 +80,7 @@ export default class extends React.Component {
 	};
 
 	getBlockStyle = () => {
-		var offset;
+		let offset;
 
 		if ( this.state.isSticky ) {
 			// Offset to account for Master Bar by finding body visual top
@@ -95,7 +95,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var classes = classNames( 'sticky-panel', this.props.className, {
+		const classes = classNames( 'sticky-panel', this.props.className, {
 			'is-sticky': this.state.isSticky,
 		} );
 

@@ -10,15 +10,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { PLAN_FREE } from 'lib/plans/constants';
+import { isFreePlan } from 'lib/plans';
 import { getSite } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 
-class SitePickerSubmit extends React.Component {
+export const siteHasPaidPlan = selectedSite =>
+	selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug );
+
+export class SitePickerSubmit extends React.Component {
 	componentWillMount() {
 		const { stepSectionName, stepName, goToStep, selectedSite } = this.props,
-			hasPaidPlan =
-				selectedSite && selectedSite.plan && selectedSite.plan.product_slug !== PLAN_FREE,
+			hasPaidPlan = siteHasPaidPlan( selectedSite ),
 			{ ID: siteId, slug: siteSlug } = selectedSite;
 
 		SignupActions.submitSignupStep(

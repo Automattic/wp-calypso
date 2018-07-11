@@ -3,43 +3,38 @@
 /**
  * External dependencies
  */
-
-import { identity } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
 import HelpTeaserButton from '../help-teaser-button';
-import { isBusinessPlanUser } from 'state/selectors';
+import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
 
 class ChatBusinessConciergeNotice extends Component {
 	static propTypes = {
-		translate: PropTypes.func,
-		isBusinessPlanUser: PropTypes.bool.isRequired,
 		from: PropTypes.string.isRequired,
+		isBusinessPlanUser: PropTypes.bool.isRequired,
+		moment: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		to: PropTypes.string.isRequired,
-	};
-
-	static defaultProps = {
-		translate: identity,
+		translate: PropTypes.func.isRequired,
 	};
 
 	trackConciergeOfferClick = () => {
 		analytics.tracks.recordEvent( 'calypso_help_concierge_offer_click' );
 	};
 
-	render = () => {
-		const { selectedSite, translate } = this.props;
-		const fromDate = i18n.moment( this.props.from );
-		const toDate = i18n.moment( this.props.to );
+	render() {
+		const { moment, selectedSite, translate } = this.props;
+		const fromDate = moment( this.props.from );
+		const toDate = moment( this.props.to );
 
-		if ( ! i18n.moment().isAfter( fromDate ) || ! i18n.moment().isBefore( toDate ) ) {
+		if ( ! moment().isAfter( fromDate ) || ! moment().isBefore( toDate ) ) {
 			return null;
 		}
 
@@ -63,7 +58,7 @@ class ChatBusinessConciergeNotice extends Component {
 				description={ translate( 'Click here to get one-on-one help with a Happiness Engineer.' ) }
 			/>
 		);
-	};
+	}
 }
 
 export default connect( state => ( {

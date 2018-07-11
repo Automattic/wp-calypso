@@ -30,6 +30,7 @@ import SectionHeader from 'components/section-header';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { protectForm } from 'lib/protect-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
@@ -60,6 +61,7 @@ const Profile = createReactClass( {
 
 		return (
 			<Main className="profile">
+				<PageViewTracker path="/me" title="Me > My Profile" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
@@ -164,6 +166,13 @@ const Profile = createReactClass( {
 	},
 } );
 
-const connectComponent = connect( null, { recordGoogleEvent } );
+const connectComponent = connect(
+	null,
+	{ recordGoogleEvent }
+);
 
-export default flowRight( connectComponent, protectForm, localize )( Profile );
+export default flowRight(
+	connectComponent,
+	protectForm,
+	localize
+)( Profile );

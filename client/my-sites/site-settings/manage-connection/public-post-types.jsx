@@ -65,6 +65,8 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'jetpack_sync_non_public_post_stati' ] );
 };
 
-export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
-	PublicPostTypes
-);
+export default flowRight(
+	connectComponent,
+	localize,
+	wrapSettingsForm( getFormSettings )
+)( PublicPostTypes );

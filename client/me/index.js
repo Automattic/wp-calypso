@@ -10,7 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import controller from './controller';
+import * as controller from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
@@ -20,17 +20,6 @@ export default function() {
 		// Redirect previous URLs
 		page( '/me/profile', controller.profileRedirect, makeLayout, clientRender );
 		page( '/me/public-profile', controller.profileRedirect, makeLayout, clientRender );
-	}
-
-	if ( config.isEnabled( 'me/next-steps' ) ) {
-		page(
-			'/me/next/:welcome?',
-			controller.sidebar,
-			controller.nextStepsWelcomeRedirect,
-			controller.nextSteps,
-			makeLayout,
-			clientRender
-		);
 	}
 
 	// Trophies and Find-Friends only exist in Atlas

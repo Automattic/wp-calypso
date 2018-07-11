@@ -1,0 +1,14 @@
+@import 'my-sites/google-my-business/style';
+
+.gmb-new-account__wrapper {
+	max-width: 660px;
+}
+
+.gmb-new-account__illustration {
+	margin-bottom: 10px;
+	max-width: 200px;
+
+	@include breakpoint( '>960px' ) {
+		max-width: 300px;
+	}
+}

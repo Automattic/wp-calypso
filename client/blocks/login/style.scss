@@ -1,6 +1,5 @@
 .login {
 
-	.jetpack-logo__icon { fill: $green-jetpack }
 	&.is-jetpack {
 		.button.is-primary {
 			background-color: $green-jetpack;
@@ -217,4 +216,10 @@
 
 .login__form-password.is-hidden {
 	display: none;
+}
+
+.login__jetpack-logo {
+	@include breakpoint( '<660px' ) {
+		margin-top: 20px;
+	}
 }

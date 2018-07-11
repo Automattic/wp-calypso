@@ -64,6 +64,7 @@
 		display: inline;
 		margin: auto;
 
+		&.emoji,
 		&.emojify__emoji {
 			height: 1em;
 			margin-bottom: 0;
@@ -154,6 +155,7 @@
 			display: block;
 			margin: 0 auto;
 
+			&.emoji,
 			&.emojify__emoji {
 				display: inline;
 			}
@@ -250,7 +252,7 @@
 			padding: 0 16px 16px 0;
 		}
 
-		@media ( min-width: 1400px ) {
+		@include breakpoint( '>1400px' ) {
 			&.right,
 			&.alignright {
 				position: absolute;
@@ -259,7 +261,7 @@
 			}
 		}
 
-		@media ( max-width: 1400px ) {
+		@include breakpoint( '<1400px' ) {
 			&.right,
 			&.alignright,
 			&.left,
@@ -333,6 +335,11 @@
 			margin-bottom: 0;
 		}
 	}
+}
+
+// WP.com support Full Post View Styles
+.blog-9619154 .reader-full-post__story-content .toc-jump {
+	display: none;
 }
 
 // gizmodo fixes

@@ -110,6 +110,8 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight( connectComponent, localize, redirectNonJetpack() )(
-	ConfirmDisconnection
-);
+export default flowRight(
+	connectComponent,
+	localize,
+	redirectNonJetpack()
+)( ConfirmDisconnection );

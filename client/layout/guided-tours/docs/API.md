@@ -6,6 +6,12 @@ Guided Tours are declared in JSX as a tree of elements. All of them are availabl
 
 Tour is a React component that declares the top-level of a tour. It consists of a series of Step elements and defines when a tour should start by setting appropriate props.
 
+There are three ways a tour can get triggered:
+
+1. If the user navigates to a path that matches the tour's `path` property and the tour's `when` property evaluates to true and there is no other tour that is either running or could also be triggered (in the case of multiple tours that could be triggered we just choose the first match). Every tour will be triggered only once for a user when using this mechanism. 
+2. If the user navigates to a URL that contains the tour's name in the `tour` query argument -- e.g., `?tour=editorBasicsTour`. This will ignore the `path` and `when` props as well as the user's tour history.
+3. We can dispatch the Redux action `requestGuidedTour( tour )` to trigger a tour as well. This will ignore the `path` and `when` props as well as the user's tour history.
+
 ### Props
 
 * `name`: (string) Unique name of tour in camelCase.
@@ -19,11 +25,13 @@ Tour is a React component that declares the top-level of a tour. It consists of 
 ```jsx
 // tour with a single step
 <Tour path="/me" name="exampleTour" when={ isNewUser }>
-	<Step>
-		…
-	</Step>
+  <Step>
+    …
+  </Step>
 </Tour>
 ```
+
+Note that you can use e.g. `lodash`'s `overEvery` as an `and` function to connect different `when` conditions. When you do so, consider your conditions' order: the function stops evaluating its argument functions as soon as one condition is false. This will affect you if you're assigning users to an A/B test, for example. Also think about how computing-intensive the functions are -- ideally order them so that you can bail with the least amount of resources as possible.
 
 For more comprehensive examples of tours, look at [TUTORIAL.md](TUTORIAL.md) or explore existing tours in `client/layout/guided-tours/tours`.
 
@@ -43,6 +51,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 * `next`: (string, optional) Define this to tell Guided Tours the name of the step it should skip to when `when` evaluates to false.
 * `scrollContainer`: (string, optional) This is a CSS selector for the container that the framework should attempt to scroll in case the target isn't visible. E.g. if the target is a menu item that could be invisible because of a scrolled sidebar, we'd want the framework to scroll the sidebar until the target is visible. The CSS selector to pass would then be `.sidebar__region`. Note: there were some differences for the sidebar between desktop and tablet that don't seem to be a problem anymore, but in any case have been [documented in  this issue](https://github.com/Automattic/wp-calypso/issues/7208).
 * `children`: (component) Content of the step. Unlike most other components' children, this one takes a so called render prop as a single child. It's a component (function or class) to be rendered when the step is actually displayed. The `translate` function is passed as a prop to the child component. The content is usually a paragraph of instructions and some controls for the tour. See below for available options. Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
+* `onTargetDisappear`: (function, optional) In some cases the target that a step points to will disappear after Guided Tours has rendered a step. In those cases we can end up with steps unhelpfully pointing at (0, 0). The `onTargetDisappear` prop takes a function that will be called when the framework can't find the target anymore. The function will be passed an object containing two functions: `quit` and `next`. In your callback you can decide how to handle the disappearing target and then use those functions to either quit the whole tour or proceed to the next step. This is e.g. used in `checklist-site-icon-tour.js`.
 
 ### Example
 
@@ -56,16 +65,16 @@ Here is the code used:
 <Step name="example" placement="below" target="my-sites" arrow="top-left">
 	{ ( { translate } ) => (
 		<Fragment>
-			<p>Plain text description.</p>
-			<p>Multiple lines.</p>
-			<Continue step="next-step" click target="my-sites" icon="my-sites" />
-			<ButtonRow>
-				<Next step="next-step" />
-				<Quit />
-			</ButtonRow>
-			<Link href="https://learn.wordpress.com">
-				{ translate( 'Learn more about WordPress.com' ) }
-			</Link>
+  <p>Plain text description.</p>
+  <p>Multiple lines.</p>
+  <Continue step="next-step" click target="my-sites" icon="my-sites" />
+  <ButtonRow>
+    <Next step="next-step" />
+    <Quit />
+  </ButtonRow>
+  <Link href="https://learn.wordpress.com">
+    { translate( 'Learn more about WordPress.com' ) }
+  </Link>
 		</Fragment>
 	) }
 </Step>
@@ -81,11 +90,11 @@ ButtonRow is a React component to display button controls in Step and takes care
 <Step>
 	{ () => (
 		<Fragment>
-			<p>ButtonRow Example</p>
-			<ButtonRow>
-				<Next step="next-step" />
-				<Quit />
-			</ButtonRow>
+  <p>ButtonRow Example</p>
+  <ButtonRow>
+    <Next step="next-step" />
+    <Quit />
+  </ButtonRow>
 		</Fragment>
 	) }
 </Step>
@@ -188,13 +197,13 @@ Place Link after ButtonRow (if present) for correct styling.
 <Step>
 	{ ( { translate } ) => (
 		<Fragment>
-			<p>This is the last step!</p>
-			<ButtonRow>
-				<Quit />
-			</ButtonRow>
-			<Link href="https://learn.wordpress.com">
-				{ translate( 'Learn more about WordPress.com' ) }
-			</Link>
+  <p>This is the last step!</p>
+  <ButtonRow>
+    <Quit />
+  </ButtonRow>
+  <Link href="https://learn.wordpress.com">
+    { translate( 'Learn more about WordPress.com' ) }
+  </Link>
 		</Fragment>
 	) }
 </Step>
@@ -210,9 +219,9 @@ In the file where the tour is defined, wrap the `Tour` declaration with `makeTou
 
 ```jsx
 export const MyTour = makeTour(
-	<Tour name="my" …>
-		…
-	</Tour>
+  <Tour name="my" …>
+    …
+  </Tour>
 );
 ```
 
@@ -224,9 +233,9 @@ This is a factory for the top-level component of Guided Tours. You shouldn't be 
 
 ```jsx
 combineTours( {
-	main: MainTour,
-	anotherTour: AnotherTour,
-	thirdTour: ThirdTour,
+  main: MainTour,
+  anotherTour: AnotherTour,
+  thirdTour: ThirdTour,
 } );
 ```
 
@@ -281,7 +290,7 @@ We treat the `target` prop as a CSS selector if it contains `.`, `#`, or a space
 
 ```jsx
 // target element
-<Step target="body">
+<Step target=" body">
 ```
 
 Notice the space before "body" in the last example. **This is a hack** that forces the framework to use the value directly as a CSS selector and not as `[data-tip-target="body"]`. Please consider using any other way (CSS class, ID, custom attribute…) before settling with this one.

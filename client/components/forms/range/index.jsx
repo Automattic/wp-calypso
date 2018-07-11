@@ -50,10 +50,10 @@ export default class extends React.Component {
 	};
 
 	getValueLabelElement = () => {
-		var left, offset;
+		let left, offset;
 
 		if ( this.props.showValueLabel ) {
-			left = 100 * ( this.props.value - this.props.min ) / ( this.props.max - this.props.min );
+			left = ( 100 * ( this.props.value - this.props.min ) ) / ( this.props.max - this.props.min );
 
 			// The center of the slider thumb is not aligned to the same
 			// percentage stops as an absolute positioned element will be.
@@ -86,7 +86,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var classes = classnames( this.props.className, 'range', {
+		const classes = classnames( this.props.className, 'range', {
 			'has-min-content': !! this.props.minContent,
 			'has-max-content': !! this.props.maxContent,
 		} );

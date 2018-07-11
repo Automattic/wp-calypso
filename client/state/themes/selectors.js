@@ -13,6 +13,7 @@ import createSelector from 'lib/create-selector';
  */
 import config from 'config';
 import {
+	getCustomizerUrl,
 	getSiteSlug,
 	getSiteOption,
 	isJetpackSite,
@@ -21,7 +22,6 @@ import {
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
-import { getCustomizerUrl } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import {
 	getDeserializedThemesQueryDetails,

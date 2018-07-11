@@ -18,12 +18,9 @@ import {
 import { MODULE_NOTICES } from './constants';
 import { successNotice, errorNotice } from 'state/notices/actions';
 
-export const onJetpackModuleActivationActionMessage = (
-	dispatch,
-	{ type, moduleSlug, silent }
-) => {
+export const onJetpackModuleActivationActionMessage = ( { type, moduleSlug, silent } ) => {
 	if ( silent ) {
-		return;
+		return null;
 	}
 
 	const noticeSettings = { duration: 10000 };
@@ -52,12 +49,12 @@ export const onJetpackModuleActivationActionMessage = (
 	}
 
 	if ( ! message ) {
-		return;
+		return null;
 	}
 
 	if ( messageType === 'success' ) {
-		dispatch( successNotice( message, noticeSettings ) );
+		return successNotice( message, noticeSettings );
 	} else if ( messageType === 'error' ) {
-		dispatch( errorNotice( message, noticeSettings ) );
+		return errorNotice( message, noticeSettings );
 	}
 };

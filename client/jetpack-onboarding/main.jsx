@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { compact, get } from 'lodash';
+import { compact, get, includes } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -15,31 +15,28 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
-import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import QuerySites from 'components/data/query-sites';
 import Wizard from 'components/wizard';
 import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
+	JETPACK_ONBOARDING_ANALYTICS_TITLES as ANALYTICS_TITLES,
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 } from './constants';
-import {
-	getJetpackOnboardingCompletedSteps,
-	getJetpackOnboardingSettings,
-	getRequest,
-	getSiteId,
-	getUnconnectedSite,
-	getUnconnectedSiteUserHash,
-	getUnconnectedSiteIdBySlug,
-} from 'state/selectors';
+import getJetpackOnboardingCompletedSteps from 'state/selectors/get-jetpack-onboarding-completed-steps';
+import getJetpackOnboardingSettings from 'state/selectors/get-jetpack-onboarding-settings';
+import getJpoUserHash from 'state/selectors/get-jpo-user-hash';
+import getSiteId from 'state/selectors/get-site-id';
+import getUnconnectedSite from 'state/selectors/get-unconnected-site';
+import getUnconnectedSiteIdBySlug from 'state/selectors/get-unconnected-site-id-by-slug';
+import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import {
-	requestJetpackOnboardingSettings,
-	saveJetpackOnboardingSettings,
-} from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 
 class JetpackOnboardingMain extends React.PureComponent {
@@ -112,13 +109,15 @@ class JetpackOnboardingMain extends React.PureComponent {
 		} );
 	};
 
-	getSkipLinkText() {
-		const { stepName, stepsCompleted, translate } = this.props;
+	shouldHideForwardLink() {
+		const { stepName, stepsCompleted } = this.props;
+		const stepsWithSuccessScreens = [ STEPS.CONTACT_FORM, STEPS.BUSINESS_ADDRESS, STEPS.STATS ];
 
-		if ( get( stepsCompleted, stepName ) ) {
-			return translate( 'Next' );
+		if ( ! includes( stepsWithSuccessScreens, stepName ) ) {
+			return false;
 		}
-		return null;
+
+		return get( stepsCompleted, stepName, false );
 	}
 
 	render() {
@@ -136,12 +135,18 @@ class JetpackOnboardingMain extends React.PureComponent {
 			steps,
 			translate,
 		} = this.props;
+		const basePath = '/jetpack/start';
+		const pageTitle = get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' );
+		const analyticsPageTitle = get( ANALYTICS_TITLES, stepName ) + ' ‹ ' + 'Jetpack Start';
 
 		return (
 			<Main className="jetpack-onboarding">
-				<DocumentHead
-					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
+				<DocumentHead title={ pageTitle } />
+				<PageViewTracker
+					path={ [ basePath, stepName, ':site' ].join( '/' ) }
+					title={ analyticsPageTitle }
 				/>
+
 				{ /* It is important to use `<QuerySites siteId={ siteSlug } />` here, however wrong that seems.
 				   * The reason is that we rely on an `isRequestingSite()` check to tell whether we've
 				   * finished fetching site details, which will tell us whether the site is connected,
@@ -157,15 +162,15 @@ class JetpackOnboardingMain extends React.PureComponent {
 				   * the site is a connected Jetpack site or not, and a network request that uses
 				   * the wrong argument can mess up our request tracking quite badly. */
 				this.state.hasFinishedRequestingSite && (
-					<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
+					<QueryJetpackSettings query={ jpoAuth } siteId={ siteId } />
 				) }
 				{ siteId ? (
 					<Wizard
 						action={ action }
-						basePath="/jetpack/start"
+						basePath={ basePath }
 						baseSuffix={ siteSlug }
 						components={ COMPONENTS }
-						forwardText={ this.getSkipLinkText() }
+						hideForwardLink={ this.shouldHideForwardLink() }
 						hideNavigation={ stepName === STEPS.SUMMARY }
 						isRequestingSettings={ isRequestingSettings }
 						isRequestingWhetherConnected={ isRequestingWhetherConnected }
@@ -187,7 +192,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 	}
 }
 export default connect(
-	( state, { action, siteSlug } ) => {
+	( state, { siteSlug } ) => {
 		let siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
 		if ( ! siteId ) {
 			// We rely on the fact that all sites are being requested automatically early in <Layout />.
@@ -220,18 +225,9 @@ export default connect(
 			};
 		}
 
-		const isRequestingSettings = getRequest(
-			state,
-			requestJetpackOnboardingSettings( siteId, jpoAuth )
-		).isLoading;
+		const isRequestingSettings = isRequestingJetpackSettings( state, siteId, jpoAuth );
 
-		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
-
-		// Only show the Stats Step either if we aren't connected to WP.com yet,
-		// or if we're just being redirected back to JP Onboarding right after
-		// going through JP Connect, in which case the `action` query arg will be
-		// set to `activate_stats`.
-		const showStatsStep = ! isConnected || action === 'activate_stats';
+		const userIdHashed = getJpoUserHash( state, siteId );
 
 		const steps = compact( [
 			STEPS.SITE_TITLE,
@@ -240,7 +236,7 @@ export default connect(
 			STEPS.CONTACT_FORM,
 			isBusiness && STEPS.BUSINESS_ADDRESS,
 			isBusiness && STEPS.WOOCOMMERCE,
-			showStatsStep && STEPS.STATS,
+			STEPS.STATS,
 			STEPS.SUMMARY,
 		] );
 		const stepsCompleted = getJetpackOnboardingCompletedSteps( state, siteId, steps );
@@ -259,12 +255,12 @@ export default connect(
 			userIdHashed,
 		};
 	},
-	{ recordTracksEvent, saveJetpackOnboardingSettings, setSelectedSiteId },
+	{ recordTracksEvent, saveJetpackSettings, setSelectedSiteId },
 	(
 		{ siteId, jpoAuth, userIdHashed, ...stateProps },
 		{
 			recordTracksEvent: recordTracksEventAction,
-			saveJetpackOnboardingSettings: saveJetpackOnboardingSettingsAction,
+			saveJetpackSettings: saveJetpackSettingsAction,
 			...dispatchProps
 		},
 		ownProps
@@ -281,7 +277,7 @@ export default connect(
 				...additionalProperties,
 			} ),
 		saveJpoSettings: ( s, settings ) =>
-			saveJetpackOnboardingSettingsAction( s, {
+			saveJetpackSettingsAction( s, {
 				onboarding: { ...settings, ...get( jpoAuth, 'onboarding' ) },
 			} ),
 		...dispatchProps,

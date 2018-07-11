@@ -80,7 +80,7 @@
 }
 
 .billing-history__header-row {
-	padding: 8px 0;
+	height: 59px;
 }
 
 .billing-history__transaction td {
@@ -131,138 +131,6 @@
 	a {
 		padding-right: 8px;
 	}
-}
-
-// Filter Popovers
-// =============================================
-
-.filter-popover {
-	position: relative;
-	display: inline-block;
-	padding: 8px;
-	vertical-align: top;
-}
-
-.filter-popover-content {
-	display: none;
-	position: absolute;
-	top: 35px;
-	z-index: z-index( 'root', '.billing-history-page .filter-popover-content' );
-	border-radius: 4px;
-	background-color: $white;
-	box-shadow: 0 1px 6px rgba(0,0,0,0.2), 0 0 25px 10px rgba(0,0,0,0.1);
-	outline: 0;
-
-	&.datepicker {
-		right: -115px;
-	}
-
-	&.app {
-		right: -147px;
-	}
-}
-
-.filter-popover.is-popped .filter-popover-content {
-	display: block;
-}
-
-.filter-popover-content:before {
-	@include clear-text;
-
-	display: block;
-	position: absolute;
-	top: -25px;
-	left: 21px;
-	color: $blue-wordpress;
-	content: '\f500';
-	font-family: Noticons;
-	font-size: 20px;
-}
-
-.filter-popover-content .overflow {
-	overflow-x: auto;
-	overflow-y: hidden;
-}
-
-.filter-popover-content table {
-	margin-bottom: 0;
-}
-
-.filter-popover-content tr:hover td {
-	background: rgba(0,0,0,0.02);
-	cursor: pointer;
-	color: $blue-light;
-}
-
-.filter-popover-content tr.selected td {
-	background-color: $gray-dark;
-	color: $white;
-}
-
-.filter-popover-content th {
-	@include clear-text;
-	padding: 8px 10px;
-	font-size: 12px;
-	font-weight: 600;
-	color: $white;
-	background: $blue-wordpress;
-	text-shadow: 0 -1px 0 rgba(0,0,0,0.2);
-	text-align: left;
-	border-bottom: 1px solid rgba(0,0,0,0.3);
-	white-space: nowrap;
-}
-
-.filter-popover-content thead:first-of-type th:first-child {
-	border-top-left-radius: 4px;
-}
-
-.filter-popover-content thead:first-of-type th:last-child {
-	border-top-right-radius: 4px;
-}
-
-.filter-popover-content td {
-	padding: 8px 10px;
-	font-size: 13px;
-	border-top: 1px dotted rgba(0,0,0,0.1);
-	color: $blue-wordpress;
-}
-.filter-popover-content td.descriptor {
-	font-weight: 400;
-	font-size: 13px;
-}
-.filter-popover-content td.transactions-header__count {
-	font-weight: 600;
-	font-size: 14px;
-	text-align: right;
-	color: #777;
-	color: rgba(0,0,0,0.8);
-}
-
-.filter-popover-toggle {
-	padding: 5px 10px;
-	border-radius: 3px;
-	color: $gray;
-	font-size: 13px;
-	cursor: pointer;
-	border-radius: 3px;
-	border: 1px solid transparent;
-	text-transform: uppercase;
-
-	&:hover {
-		background-color: $white;
-		border-color: rgba(0,0,0,0.05);
-	}
-
-	.gridicon {
-		margin-left: 4px;
-		vertical-align: bottom;
-	}
-}
-
-.filter-popover.is-popped .filter-popover-toggle {
-	background-color: rgba(0,0,0,0.1);
-	border-color: rgba(0,0,0,0.05);
-	box-shadow: 0 1px 0 rgba(255,255,255,0.4);
 }
 
 // View Receipt
@@ -511,4 +379,13 @@
 			display: none;
 		}
 	}
+}
+
+.billing-history__date {
+	width: 170px;
+}
+
+.billing-history__transactions-header-select-dropdown {
+	padding: 8px 12px;
+	position: absolute;
 }

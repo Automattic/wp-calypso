@@ -8,7 +8,14 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import signupForm, { firstname, lastname, timezone, message, status } from '../reducer';
+import signupForm, {
+	firstname,
+	lastname,
+	timezone,
+	message,
+	status,
+	isRebrandCitiesSite,
+} from '../reducer';
 import { CONCIERGE_SIGNUP_FORM_UPDATE, CONCIERGE_UPDATE_BOOKING_STATUS } from 'state/action-types';
 
 describe( 'concierge/signupForm/reducer', () => {
@@ -18,6 +25,7 @@ describe( 'concierge/signupForm/reducer', () => {
 		timezone: 'UTC',
 		message: 'hello',
 		status: 'booking',
+		isRebrandCitiesSite: true,
 	};
 	const mockStatus = 'booking';
 
@@ -81,6 +89,18 @@ describe( 'concierge/signupForm/reducer', () => {
 		} );
 	} );
 
+	describe( 'isRebrandCitiesSite', () => {
+		test( 'should be defaulted as false', () => {
+			expect( isRebrandCitiesSite( undefined, {} ) ).toBe( false );
+		} );
+
+		test( 'should return isRebrandCitiesSite from the update action', () => {
+			expect( isRebrandCitiesSite( undefined, updateForm ) ).toEqual(
+				mockSignupForm.isRebrandCitiesSite
+			);
+		} );
+	} );
+
 	describe( 'signupForm', () => {
 		test( 'should combine all defaults as null.', () => {
 			expect( signupForm( undefined, {} ) ).toEqual( {
@@ -89,6 +109,7 @@ describe( 'concierge/signupForm/reducer', () => {
 				timezone: moment.tz.guess(),
 				message: '',
 				status: null,
+				isRebrandCitiesSite: false,
 			} );
 		} );
 

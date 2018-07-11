@@ -20,11 +20,13 @@ import Countries from '../stats-countries';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsFirstView from '../stats-first-view';
+import titlecase from 'to-title-case';
 import QueryMedia from 'components/data/query-media';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getMediaItem } from 'state/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
 import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
 
 const StatsStrings = statsStringsFactory();
@@ -221,8 +223,14 @@ class StatsSummary extends Component {
 
 		summaryViews.push( summaryView );
 
+		const { module } = this.props.context.params;
+
 		return (
 			<Main wideLayout={ true }>
+				<PageViewTracker
+					path={ `/stats/${ period }/${ module }/:site` }
+					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
+				/>
 				<StatsFirstView />
 				<div id="my-stats-content">
 					<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>

@@ -68,7 +68,7 @@ export default createReactClass( {
 	},
 
 	render: function() {
-		var classes = classNames(
+		const classes = classNames(
 			'sharing-buttons-preview-button',
 			'style-' + this.props.style,
 			'share-' + this.props.button.ID,

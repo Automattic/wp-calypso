@@ -9,12 +9,20 @@ import { filter, forEach, compact, partition, get } from 'lodash';
  * Internal dependencies
  */
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
-import analytics, { mc } from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import wpcom from 'lib/wp';
-import { keyForPost } from 'reader/post-key';
-import { pageViewForPost } from 'reader/stats';
+import { keyForPost, keyToString } from 'reader/post-key';
 import { hasPostBeenSeen } from './selectors';
+import { receiveLikes } from 'state/posts/likes/actions';
+
+// TODO: make underlying lib/analytics and reader/stats capable of existing in test code without mocks
+// OR switch to analytics middleware
+let analytics = { tracks: { recordEvent: () => {} }, mc: { bumpStat: () => {} } };
+let pageViewForPost = () => {};
+if ( process.env.NODE_ENV !== 'test' ) {
+	pageViewForPost = require( 'reader/stats' ).pageViewForPost;
+	analytics = require( 'lib/analytics' ).default;
+}
 
 function trackRailcarRender( post ) {
 	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );
@@ -51,6 +59,18 @@ export const receivePosts = posts => dispatch => {
 
 	const normalizedPosts = compact( toProcess ).map( runFastRules );
 
+	// dispatch post like additions before the posts. Cuts down on rerenders a bit.
+	forEach( normalizedPosts, post => {
+		if ( ! post.is_external ) {
+			dispatch(
+				receiveLikes( post.site_ID, post.ID, {
+					iLike: Boolean( post.i_like ),
+					found: +post.like_count,
+				} )
+			);
+		}
+	} );
+
 	// save the posts after running the fast rules
 	dispatch( {
 		type: READER_POSTS_RECEIVE,
@@ -71,10 +91,25 @@ export const receivePosts = posts => dispatch => {
 	return Promise.resolve( normalizedPosts );
 };
 
+const requestsInFlight = new Set();
 export const fetchPost = postKey => dispatch => {
+	const requestKey = keyToString( postKey );
+	if ( requestsInFlight.has( requestKey ) ) {
+		return;
+	}
+	requestsInFlight.add( requestKey );
+	function removeKey() {
+		requestsInFlight.delete( requestKey );
+	}
 	return fetchForKey( postKey )
-		.then( data => dispatch( receivePosts( [ data ] ) ) )
-		.catch( error => dispatch( receiveErrorForPostKey( error, postKey ) ) );
+		.then( data => {
+			removeKey();
+			return dispatch( receivePosts( [ data ] ) );
+		} )
+		.catch( error => {
+			removeKey();
+			return dispatch( receiveErrorForPostKey( error, postKey ) );
+		} );
 };
 
 function receiveErrorForPostKey( error, postKey ) {
@@ -119,7 +154,10 @@ export const markPostSeen = ( post, site ) => ( dispatch, getState ) => {
 		if ( site && site.ID ) {
 			if ( site.is_private || ! isAdmin ) {
 				pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
-				mc.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
+				analytics.mc.bumpStat(
+					'reader_pageviews',
+					site.is_private ? 'private_view' : 'public_view'
+				);
 			}
 		}
 	}

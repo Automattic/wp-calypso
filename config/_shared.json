@@ -16,7 +16,6 @@
 	"discover_logged_out_redirect_url": false,
 	"facebook_api_key": false,
 	"features": {},
-	"google_analytics_enabled": false,
 	"google_analytics_key": false,
 	"google_adwords_conversion_id": false,
 	"google_adwords_conversion_id_jetpack": false,
@@ -35,7 +34,10 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-    "support_locales": [ "en", "es", "pt-br" ],
+    "livechat_support_locales": [ "en", "es", "pt-br" ],
+    "support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
+    "forum_locales": [ "ar", "de", "el", "en", "es", "fa", "fi", "fr", "he", "id", "it", "ja", "nl", "pt", "pt-br", "ru", "sv", "th", "tl", "tr" ],
+    "magnificent_non_en_locales": [ "es", "pt-br", "de", "fr", "he", "ja", "it", "nl", "ru", "tr", "id", "zh-cn", "zh-tw", "ko", "ar", "sv" ],
     "english_locales": [ "en", "en-gb"],
     "languages": [
         { "value": 2, "langSlug": "af", "name": "Afrikaans", "wpLocale": "af", "territories": [ "002" ] },
@@ -86,7 +88,7 @@
         { "value": 474, "langSlug": "fr-ch", "name": "Français de Suisse", "wpLocale": "", "territories": [ "155" ] },
         { "value": 25, "langSlug": "fur", "name": "Friulian", "wpLocale": "fur", "territories": [ "039" ] },
         { "value": 26, "langSlug": "fy", "name": "Frysk", "wpLocale": "fy", "territories": [ "155" ] },
-        { "value": 27, "langSlug": "ga", "name": "Gaelige", "wpLocale": "ga", "territories": [ "154" ] },
+        { "value": 27, "langSlug": "ga", "name": "Gaeilge", "wpLocale": "ga", "territories": [ "154" ] },
         { "value": 476, "langSlug": "gd", "name": "Gàidhlig", "wpLocale": "gd", "territories": [ "154" ] },
         { "value": 457, "langSlug": "gl", "name": "Galego", "wpLocale": "gl_ES", "territories": [ "039" ] },
         { "value": 430, "langSlug": "gn", "name": "Avañe'ẽ", "wpLocale": "gn", "territories": [ "019" ] },
@@ -153,7 +155,7 @@
         { "value": 459, "langSlug": "so", "name": "Afsoomaali", "wpLocale": "so_SO", "territories": [ "002" ] },
         { "value": 66, "langSlug": "sq", "name": "Shqip", "wpLocale": "sq", "territories": [ "039" ] },
         { "value": 67, "langSlug": "sr", "name": "Српски језик", "wpLocale": "sr_RS", "territories": [ "039" ] },
-        { "value": 67, "langSlug": "sr_latin", "name": "Srpski (latinica)", "wpLocale": "sr_RS", "parentLangSlug": "sr", "territories": [ "039" ] },
+        { "value": 901, "langSlug": "sr_latin", "name": "Srpski (latinica)", "wpLocale": "sr_RS", "parentLangSlug": "sr", "territories": [ "039" ] },
         { "value": 441, "langSlug": "su", "name": "Basa Sunda", "wpLocale": "su_ID", "territories": [ "035" ] },
         { "value": 68, "langSlug": "sv", "name": "Svenska", "wpLocale": "sv_SE", "popular": 17, "territories": [ "154" ] },
         { "value": 69, "langSlug": "ta", "name": "தமிழ்", "wpLocale": "ta_IN", "territories": [ "034", "035" ] },
@@ -190,5 +192,6 @@
 	"wpcom_concierge_schedule_id": 1,
 	"wpcom_signup_id": false,
 	"wpcom_signup_key": false,
-	"statsd_analytics_response_time_max_logs_per_second": 50
+	"statsd_analytics_response_time_max_logs_per_second": 50,
+	"google_maps_and_places_api_key": "AIzaSyAznW1ev6zto9Dc6lsrWkrMs5R8xDTFWXs"
 }

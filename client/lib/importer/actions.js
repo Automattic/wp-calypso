@@ -175,7 +175,7 @@ export const setUploadProgress = ( importerId, data ) => ( {
 
 export const startImport = ( siteId, importerType ) => {
 	// Use a fake ID until the server returns the real one
-	let importerId = `${ ID_GENERATOR_PREFIX }${ Math.round( Math.random() * 10000 ) }`;
+	const importerId = `${ ID_GENERATOR_PREFIX }${ Math.round( Math.random() * 10000 ) }`;
 
 	return {
 		type: IMPORTS_IMPORT_START,
@@ -186,7 +186,10 @@ export const startImport = ( siteId, importerType ) => {
 };
 
 export function startImporting( importerStatus ) {
-	const { importerId, site: { ID: siteId } } = importerStatus;
+	const {
+		importerId,
+		site: { ID: siteId },
+	} = importerStatus;
 
 	unlockImport( importerId );
 
@@ -199,7 +202,10 @@ export function startImporting( importerStatus ) {
 }
 
 export const startUpload = ( importerStatus, file ) => dispatch => {
-	let { importerId, site: { ID: siteId } } = importerStatus;
+	const {
+		importerId,
+		site: { ID: siteId },
+	} = importerStatus;
 
 	wpcom
 		.uploadExportFile( siteId, {
@@ -218,8 +224,18 @@ export const startUpload = ( importerStatus, file ) => dispatch => {
 		} )
 		.then( data => Object.assign( data, { siteId } ) )
 		.then( fromApi )
-		.then( flowRight( dispatch, finishUpload( importerId ) ) )
-		.catch( flowRight( dispatch, failUpload( importerId ) ) );
+		.then(
+			flowRight(
+				dispatch,
+				finishUpload( importerId )
+			)
+		)
+		.catch(
+			flowRight(
+				dispatch,
+				failUpload( importerId )
+			)
+		);
 
 	dispatch( {
 		type: IMPORTS_UPLOAD_START,

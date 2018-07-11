@@ -4,11 +4,10 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, startsWith } from 'lodash';
+import { get, startsWith, pickBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -38,13 +37,11 @@ import Comments from 'blocks/comments';
 import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { getSiteName } from 'reader/get-helpers';
-import { keyForPost } from 'reader/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts';
 import { getStreamUrlFromPost } from 'reader/route';
-import { likePost, unlikePost } from 'lib/like-store/actions';
-import LikeStore from 'lib/like-store/like-store';
+import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
 import FeaturedImage from 'blocks/reader-full-post/featured-image';
 import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
@@ -57,14 +54,17 @@ import ReaderFullPostUnavailable from './unavailable';
 import BackButton from 'components/back-button';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
-import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
-import { getLastStore } from 'reader/controller-helper';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import config from 'config';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
+import isLikedPost from 'state/selectors/is-liked-post';
+import QueryPostLikes from 'components/data/query-post-likes';
+import getCurrentStream from 'state/selectors/get-reader-current-stream';
+import getNextItem from 'state/selectors/get-reader-stream-next-item';
+import getPreviousItem from 'state/selectors/get-reader-stream-prev-item';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -75,6 +75,7 @@ export class FullPostView extends React.Component {
 	};
 
 	hasScrolledToCommentAnchor = false;
+	commentsWrapper = React.createRef();
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
@@ -146,14 +147,19 @@ export class FullPostView extends React.Component {
 	};
 
 	handleLike = () => {
-		const { site_ID: siteId, ID: postId } = this.props.post;
-		let liked;
+		// cannot like posts backed by rss feeds
+		if ( ! this.props.post || this.props.post.is_external ) {
+			return;
+		}
 
-		if ( LikeStore.isPostLikedByCurrentUser( siteId, postId ) ) {
-			unlikePost( siteId, postId );
+		const { site_ID: siteId, ID: postId } = this.props.post;
+		let liked = this.props.liked;
+
+		if ( liked ) {
+			this.props.unlikePost( siteId, postId, { source: 'reader' } );
 			liked = false;
 		} else {
-			likePost( siteId, postId );
+			this.props.likePost( siteId, postId, { source: 'reader' } );
 			liked = true;
 		}
 
@@ -208,7 +214,7 @@ export class FullPostView extends React.Component {
 
 		this._scrolling = true;
 		setTimeout( () => {
-			const commentsNode = ReactDom.findDOMNode( this.refs.commentsWrapper );
+			const commentsNode = this.commentsWrapper.current;
 			if ( commentsNode && commentsNode.offsetTop ) {
 				scrollTo( {
 					x: 0,
@@ -217,7 +223,7 @@ export class FullPostView extends React.Component {
 					onComplete: () => {
 						// check to see if the comment node moved while we were scrolling
 						// and scroll to the end position
-						const commentsNodeAfterScroll = ReactDom.findDOMNode( this.refs.commentsWrapper );
+						const commentsNodeAfterScroll = this.commentsWrapper.current;
 						if ( commentsNodeAfterScroll && commentsNodeAfterScroll.offsetTop ) {
 							window.scrollTo( 0, commentsNodeAfterScroll.offsetTop - 48 );
 						}
@@ -260,31 +266,21 @@ export class FullPostView extends React.Component {
 	};
 
 	goToNextPost = () => {
-		const store = getLastStore();
-		if ( store ) {
-			if ( ! store.getSelectedPostKey() ) {
-				store.selectItem( keyForPost( this.props.post ), store.id );
-			}
-			FeedStreamStoreActions.selectNextItem( store.getID() );
-			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
+		if ( this.props.nextPost ) {
+			showSelectedPost( { postKey: this.props.nextPost } );
 		}
 	};
 
 	goToPreviousPost = () => {
-		const store = getLastStore();
-		if ( store ) {
-			if ( ! store.getSelectedPostKey() ) {
-				store.selectItem( keyForPost( this.props.post ), store.id );
-			}
-			FeedStreamStoreActions.selectPrevItem( store.getID() );
-			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
+		if ( this.props.previousPost ) {
+			showSelectedPost( { postKey: this.props.previousPost } );
 		}
 	};
 
 	render() {
 		const { post, site, feed, referralPost, referral, blogId, feedId, postId } = this.props;
 
-		if ( post._state === 'error' ) {
+		if ( post.is_error ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
 		}
 
@@ -319,6 +315,7 @@ export class FullPostView extends React.Component {
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			<ReaderMain className={ classNames( classes ) }>
+				{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 				{ ! post || post._state === 'pending' ? (
 					<DocumentHead title={ translate( 'Loading' ) } />
 				) : (
@@ -376,12 +373,13 @@ export class FullPostView extends React.Component {
 									postId={ +post.ID }
 									fullPost={ true }
 									tagName="div"
+									likeSource={ 'reader' }
 								/>
 							) }
 						</div>
 					</div>
 					<Emojify>
-						<article className="reader-full-post__story" ref="article">
+						<article className="reader-full-post__story">
 							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 							{ post.featured_image &&
@@ -443,11 +441,10 @@ export class FullPostView extends React.Component {
 								/>
 							) }
 
-							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
+							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
 								{ shouldShowComments( post ) && (
 									<Comments
 										showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
-										ref="commentsList"
 										post={ post }
 										initialSize={ startingCommentId ? commentCount : 10 }
 										pageSize={ 25 }
@@ -483,11 +480,16 @@ export class FullPostView extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const { feedId, blogId, postId } = ownProps;
-		const post = getPostByKey( state, { feedId, blogId, postId } ) || { _state: 'pending' };
+		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
+		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
 
 		const { site_ID: siteId, is_external: isExternal } = post;
 
-		const props = { post };
+		const props = {
+			post,
+			liked: isLikedPost( state, siteId, post.ID ),
+			postKey,
+		};
 
 		if ( ! isExternal && siteId ) {
 			props.site = getSite( state, siteId );
@@ -499,7 +501,13 @@ export default connect(
 			props.referralPost = getPostByKey( state, ownProps.referral );
 		}
 
+		const currentStreamKey = getCurrentStream( state );
+		if ( currentStreamKey ) {
+			props.previousPost = getPreviousItem( state, postKey );
+			props.nextPost = getNextItem( state, postKey );
+		}
+
 		return props;
 	},
-	{ markPostSeen }
+	{ markPostSeen, likePost, unlikePost }
 )( FullPostView );

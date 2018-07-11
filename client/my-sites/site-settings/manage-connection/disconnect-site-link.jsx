@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import SiteToolsLink from 'my-sites/site-settings/site-tools/link';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class DisconnectSiteLink extends PureComponent {

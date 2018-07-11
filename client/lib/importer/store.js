@@ -166,7 +166,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case IMPORTS_UPLOAD_SET_PROGRESS:
 			newState = state.setIn(
 				[ 'importers', action.importerId, 'percentComplete' ],
-				action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) * 100
+				( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100
 			);
 			break;
 

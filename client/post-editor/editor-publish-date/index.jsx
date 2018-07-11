@@ -24,17 +24,12 @@ import { getSelectedSite } from 'state/ui/selectors';
 export class EditorPublishDate extends React.Component {
 	static propTypes = {
 		post: PropTypes.object,
-		postDate: PropTypes.string,
 		setPostDate: PropTypes.func,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			isOpen: false,
-		};
-	}
+	state = {
+		isOpen: false,
+	};
 
 	componentWillUnmount() {
 		window.removeEventListener( 'click', this.handleOutsideClick );
@@ -69,7 +64,7 @@ export class EditorPublishDate extends React.Component {
 	};
 
 	setImmediate = () => {
-		this.props.setPostDate( null );
+		this.props.setPostDate( false );
 		this.setState( { isOpen: false } );
 	};
 
@@ -124,7 +119,7 @@ export class EditorPublishDate extends React.Component {
 				className="editor-publish-date__immediate"
 				onClick={ this.setImmediate }
 			>
-				{ this.props.translate( 'Publish Immediately' ) }
+				{ this.props.translate( 'Cancel scheduling' ) }
 			</Button>
 		);
 	}

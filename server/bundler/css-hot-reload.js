@@ -13,16 +13,17 @@ const fs = require( 'fs' ),
 
 /**
  * Initialize server CSS hot-reloading logic
+ * @param {Object} io socket io socket
  */
 function setup( io ) {
 	const SCSS_PATHS = [ path.join( '.', 'assets', 'stylesheets' ), path.join( '.', 'client' ) ];
 	const ROOT_DIR = path.resolve( __dirname, '..', '..' );
 	const PUBLIC_DIR = path.join( ROOT_DIR, 'public' );
 
-	var cssMake = null,
+	let cssMake = null,
 		errors = '',
-		scheduleBuild = false,
-		publicCssFiles = {}; // { path, hash } dictionary
+		scheduleBuild = false;
+	const publicCssFiles = {}; // { path, hash } dictionary
 
 	function spawnMake() {
 		// If a build is already in progress schedule another build for later
@@ -61,9 +62,10 @@ function setup( io ) {
 
 	/**
 	 * Handle 'make build-css' success or failure
+	 * @param {Number} code The exit code
 	 */
 	function onexit( code ) {
-		var changedFiles;
+		let changedFiles;
 
 		cssMake.stderr.removeListener( 'data', onstderr );
 		cssMake.stdout.removeListener( 'data', onstdout );
@@ -78,9 +80,10 @@ function setup( io ) {
 			changedFiles = updateChangedCssFiles();
 			if ( 0 !== changedFiles.length ) {
 				debug( chalk.green( 'css reload' ) );
-				io
-					.of( '/css-hot-reload' )
-					.emit( 'css-hot-reload', { status: 'reload', changedFiles: changedFiles } );
+				io.of( '/css-hot-reload' ).emit( 'css-hot-reload', {
+					status: 'reload',
+					changedFiles: changedFiles,
+				} );
 			} else {
 				debug( chalk.green( 'css up to date' ) );
 				io.of( '/css-hot-reload' ).emit( 'css-hot-reload', { status: 'up-to-date' } );
@@ -88,20 +91,21 @@ function setup( io ) {
 		} else {
 			// 'make build-css' failed
 			debug( chalk.red( 'css build failed' ) );
-			io
-				.of( '/css-hot-reload' )
-				.emit( 'css-hot-reload', { status: 'build-failed', error: errors } );
+			io.of( '/css-hot-reload' ).emit( 'css-hot-reload', {
+				status: 'build-failed',
+				error: errors,
+			} );
 		}
 	}
 
 	/**
 	 * Updates the MD5 hash of the public CSS files and returns the changed ones
 	 * in a list.
+	 * @returns {Array} an array of changed files (string)
 	 */
 	function updateChangedCssFiles() {
-		var hash,
-			filePath,
-			changedFiles = [];
+		let hash, filePath;
+		const changedFiles = [];
 		for ( filePath in publicCssFiles ) {
 			hash = md5File.sync( filePath );
 			if ( hash !== publicCssFiles[ filePath ] ) {
@@ -130,7 +134,7 @@ function setup( io ) {
 
 	// Watch .scss files
 
-	var watcher = chokidar.watch( SCSS_PATHS, {
+	const watcher = chokidar.watch( SCSS_PATHS, {
 		ignored: /^.*\.(js[x]?|md|json|unison\.tmp)$/,
 		usePolling: false,
 		persistent: true,
@@ -139,8 +143,8 @@ function setup( io ) {
 	// The add/addDir events are fired during initialization generating an
 	// avalanche of refreshes on the client so we stick to the change events
 	// only for now until we can exclude the initial add/addDir events.
-	watcher.on( 'all', function( event, path ) {
-		if ( 'change' === event && path.match( /^.*\.scss$/ ) ) {
+	watcher.on( 'all', function( event, filepath ) {
+		if ( 'change' === event && filepath.match( /^.*\.scss$/ ) ) {
 			spawnMake();
 		}
 	} );

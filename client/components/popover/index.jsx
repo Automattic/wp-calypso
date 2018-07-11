@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -24,7 +23,7 @@ import {
 	constrainLeft,
 	offset,
 } from './util';
-import { isRtl as isRtlSelector } from 'state/selectors';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Module variables
@@ -57,6 +56,12 @@ class Popover extends Component {
 		showDelay: PropTypes.number,
 		onClose: PropTypes.func,
 		onShow: PropTypes.func,
+		// Bypass position calculations and provide custom position values
+		customPosition: PropTypes.shape( {
+			top: PropTypes.number,
+			left: PropTypes.number,
+			positionClass: PropTypes.oneOf( [ 'top', 'right', 'bottom', 'left' ] ),
+		} ),
 	};
 
 	static defaultProps = {
@@ -154,6 +159,7 @@ class Popover extends Component {
 					! this.domContext ||
 					! isVisible
 				) {
+					this.isUpdatingPosition = false;
 					return;
 				}
 
@@ -203,10 +209,10 @@ class Popover extends Component {
 		this.close( true );
 	}
 
-	// --- cliclout side ---
+	// --- click outside ---
 	bindClickoutHandler( el = this.domContainer ) {
 		if ( ! el ) {
-			this.debug( 'no element to bind clickout side ' );
+			this.debug( 'no element to bind clickout ' );
 			return null;
 		}
 
@@ -288,7 +294,7 @@ class Popover extends Component {
 	}
 
 	/**
-	 * Adjusts positition swapping left and right values
+	 * Adjusts position swapping left and right values
 	 * when right-to-left directionality is found.
 	 *
 	 * @param  {String} position Original position
@@ -381,7 +387,22 @@ class Popover extends Component {
 
 	setPosition() {
 		this.debug( 'updating position' );
-		const position = this.computePosition();
+
+		let position;
+
+		// Do we have a custom position provided?
+		if ( this.props.customPosition ) {
+			position = Object.assign(
+				{
+					// Use the default if positionClass hasn't been provided
+					positionClass: this.getPositionClass( this.constructor.defaultProps.position ),
+				},
+				this.props.customPosition
+			);
+		} else {
+			position = this.computePosition();
+		}
+
 		if ( ! position ) {
 			return null;
 		}
@@ -410,7 +431,7 @@ class Popover extends Component {
 	}
 
 	hide() {
-		// unbind clickout-side event every time the component is hidden.
+		// unbind click outside event every time the component is hidden.
 		this.unbindClickoutHandler();
 		this.unbindDebouncedReposition();
 		this.unbindEscKeyListener();

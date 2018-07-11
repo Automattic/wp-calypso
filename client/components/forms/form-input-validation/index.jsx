@@ -17,22 +17,24 @@ export default class extends React.Component {
 		isWarning: PropTypes.bool,
 		text: PropTypes.node,
 		icon: PropTypes.string,
+		id: PropTypes.string,
 	};
 
-	static defaultProps = { isError: false };
+	static defaultProps = { isError: false, id: null };
 
 	render() {
 		const classes = classNames( {
 			'form-input-validation': true,
 			'is-warning': this.props.isWarning,
 			'is-error': this.props.isError,
+			'is-hidden': this.props.isHidden,
 		} );
 
 		const icon = this.props.isError || this.props.isWarning ? 'notice-outline' : 'checkmark';
 
 		return (
 			<div className={ classes } role="alert">
-				<span>
+				<span id={ this.props.id }>
 					<Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } />{' '}
 					{ this.props.text }
 				</span>

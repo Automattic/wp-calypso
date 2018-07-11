@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ const ConversationCaterpillarExample = () => {
 					blogId={ 123 }
 					postId={ 12 }
 					commentsTree={ commentsTree }
+					commentCount={ size( comments ) }
 					commentsToShow={ {} }
 					expandComments={ () => {} }
 				/>

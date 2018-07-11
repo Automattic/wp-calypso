@@ -23,7 +23,6 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import superProps from 'lib/analytics/super-props';
-import translatorJumpstart from 'lib/translator-jumpstart';
 import emailVerification from 'components/email-verification';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { pruneStaleRecords } from 'lib/wp/sync-handler';
@@ -36,6 +35,7 @@ import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import * as controller from 'controller';
 
 const debug = debugFactory( 'calypso' );
+const TWO_DAYS_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 2;
 
 function renderLayout( reduxStore ) {
 	const Layout = controller.ReduxWrappedLayout;
@@ -52,10 +52,8 @@ function renderLayout( reduxStore ) {
 export function utils() {
 	debug( 'Executing WordPress.com utils.' );
 
-	// prune sync-handler records more than two days old
-	pruneStaleRecords( '2 days' );
-
-	translatorJumpstart.init();
+	// prune sync-handler records more than two days old ()
+	pruneStaleRecords( TWO_DAYS_IN_MILLISECONDS );
 }
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {

@@ -145,9 +145,8 @@ class MediaLibraryHeader extends React.Component {
 
 		if ( this.props.sticky ) {
 			return <StickyPanel minLimit={ 660 }>{ card }</StickyPanel>;
-		} else {
-			return card;
 		}
+		return card;
 	}
 }
 

@@ -4,21 +4,20 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
-import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormInputValidation from 'components/forms/form-input-validation';
 import Card from 'components/card';
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormLabel from 'components/forms/form-label';
+import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
 import { localize } from 'i18n-calypso';
 import { getTwoFactorAuthRequestError } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -124,14 +123,14 @@ class VerificationCodeForm extends Component {
 		if ( twoFactorAuthType === 'backup' ) {
 			helpText = translate(
 				"If you can't access your phone enter one of the 10 backup codes that were provided " +
-					'when you set up two-step authentication to continue.'
+				'when you set up two-step authentication to continue.'
 			);
 			labelText = translate( 'Backup code' );
 			smallPrint = (
 				<div className="two-factor-authentication__small-print">
 					{ translate(
 						'If you lose your device, accidentally remove the authenticator app, or are otherwise ' +
-							'locked out of your account, the only way to get back in to your account is by using a backup code.'
+						'locked out of your account, the only way to get back in to your account is by using a backup code.'
 					) }
 				</div>
 			);
@@ -145,19 +144,15 @@ class VerificationCodeForm extends Component {
 					<FormFieldset>
 						<FormLabel htmlFor="twoStepCode">{ labelText }</FormLabel>
 
-						<FormTextInput
-							autoComplete="off"
+						<FormVerificationCodeInput
 							autoFocus
 							value={ this.state.twoStepCode }
 							onChange={ this.onChangeField }
-							className={ classNames( {
-								'is-error': requestError && requestError.field === 'twoStepCode',
-							} ) }
+							isError={ requestError && requestError.field === 'twoStepCode' }
 							name="twoStepCode"
-							pattern="[0-9 ]*"
+							method={ twoFactorAuthType }
 							ref={ this.saveRef }
 							disabled={ this.state.isDisabled }
-							type="tel"
 						/>
 
 						{ requestError &&

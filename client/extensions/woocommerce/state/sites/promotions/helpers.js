@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -60,7 +62,7 @@ export function createProductUpdateFromPromotion( promotion ) {
 
 export function createPromotionFromCoupon( coupon ) {
 	const promotionTypeMeta = find( coupon.meta_data, { key: 'promotion_type' } );
-	const promotionType = ( promotionTypeMeta ? promotionTypeMeta.value : coupon.discount_type );
+	const promotionType = promotionTypeMeta ? promotionTypeMeta.value : coupon.discount_type;
 	const couponCode = coupon.code;
 	const startDate = coupon.date_created;
 	const endDate = coupon.date_expires || undefined;
@@ -68,12 +70,8 @@ export function createPromotionFromCoupon( coupon ) {
 	const usageLimit = coupon.usage_limit || undefined;
 	const usageLimitPerUser = coupon.usage_limit_per_user || undefined;
 	const freeShipping = coupon.free_shipping || undefined;
-	const minimumAmount = (
-		( '0.00' !== coupon.minimum_amount ) ? coupon.minimum_amount : undefined
-	);
-	const maximumAmount = (
-		( '0.00' !== coupon.maximum_amount ) ? coupon.maximum_amount : undefined
-	);
+	const minimumAmount = '0.00' !== coupon.minimum_amount ? coupon.minimum_amount : undefined;
+	const maximumAmount = '0.00' !== coupon.maximum_amount ? coupon.maximum_amount : undefined;
 
 	const promotion = {
 		id: 'c' + coupon.id,
@@ -116,8 +114,15 @@ export function createCouponUpdateFromPromotion( promotion ) {
 	let freeShipping = promotion.freeShipping;
 	let discountType = promotion.type;
 	const meta = [ { key: 'promotion_type', value: promotion.type } ];
-	const productIds = ( appliesTo && appliesTo.productIds ) || undefined;
-	const productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
+
+	let productIds = ( appliesTo && appliesTo.productIds ) || undefined;
+	let productCategoryIds = ( appliesTo && appliesTo.productCategoryIds ) || undefined;
+
+	// If 'all' was selected, pass in empty arrays to reset product ids and category ids
+	if ( appliesTo && appliesTo.all ) {
+		productIds = [];
+		productCategoryIds = [];
+	}
 
 	// If end date is null, that means it was enabled but not selected, so use today as default.
 	const endDate = null === promotion.endDate ? new Date().toISOString() : promotion.endDate;
@@ -174,11 +179,11 @@ function calculateCouponAppliesTo( coupon ) {
 }
 
 export function isCategoryExplicitlySelected( promotion, category ) {
-	return Boolean( find( promotion.appliesTo.productCategoryIds, ( id ) => ( id === category.id ) ) );
+	return Boolean( find( promotion.appliesTo.productCategoryIds, id => id === category.id ) );
 }
 
 export function isProductExplicitlySelected( promotion, product ) {
-	return Boolean( find( promotion.appliesTo.productIds, ( id ) => ( id === product.id ) ) );
+	return Boolean( find( promotion.appliesTo.productIds, id => id === product.id ) );
 }
 
 export function isCategorySelected( promotion, category ) {
@@ -217,4 +222,3 @@ export function isProductSelected( promotion, product ) {
 	// Couldn't find anything that selected this product.
 	return false;
 }
-

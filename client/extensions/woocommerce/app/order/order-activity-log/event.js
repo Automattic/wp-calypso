@@ -66,8 +66,9 @@ class OrderEvent extends Component {
 				icon: 'time',
 				content: (
 					<div>
-						{ translate( 'Label #%(labelNum)d refund requested (%(amount)s)', {
+						{ translate( '%(service)s label (#%(labelNum)d) refund requested (%(amount)s)', {
 							args: {
+								service: event.serviceName,
 								labelNum: event.labelIndex + 1,
 								amount: formatCurrency( event.amount, event.currency ),
 							},
@@ -83,8 +84,9 @@ class OrderEvent extends Component {
 				icon: 'refund',
 				content: (
 					<div>
-						{ translate( 'Label #%(labelNum)d refunded (%(amount)s)', {
+						{ translate( '%(service)s label (#%(labelNum)d) refunded (%(amount)s)', {
 							args: {
+								service: event.serviceName,
 								labelNum: event.labelIndex + 1,
 								amount: formatCurrency( event.amount, event.currency ),
 							},
@@ -100,9 +102,29 @@ class OrderEvent extends Component {
 				icon: 'cross-small',
 				content: (
 					<div>
-						{ translate( 'Label #%(labelNum)d refund rejected', {
+						{ translate( '%(service)s label (#%(labelNum)d) refund rejected', {
+							service: event.serviceName,
 							args: { labelNum: event.labelIndex + 1 },
 						} ) }
+					</div>
+				),
+			};
+		},
+
+		[ EVENT_TYPES.REFUND_NOTE ]: event => {
+			const { translate } = this.props;
+			return {
+				icon: 'credit-card',
+				heading: translate( 'Refund' ),
+				content: (
+					<div>
+						{ translate( 'Refunded %(amount)s', {
+							args: {
+								amount: formatCurrency( event.amount, event.currency ),
+							},
+						} ) }
+						<br />
+						{ event.reason }
 					</div>
 				),
 			};
@@ -112,9 +134,19 @@ class OrderEvent extends Component {
 		[ undefined ]: () => ( {} ),
 	};
 
+	renderDefaultEvent = event => {
+		const { translate } = this.props;
+		return {
+			icon: 'aside',
+			heading: translate( 'Note' ),
+			content: event.content,
+		};
+	};
+
 	render() {
 		const { moment, event } = this.props;
-		const { icon, heading, content } = this.eventPropsByType[ event.type ]( event );
+		const renderEvent = this.eventPropsByType[ event.type ] || this.renderDefaultEvent;
+		const { icon, heading, content } = renderEvent( event );
 
 		return (
 			<div className="order-activity-log__note">

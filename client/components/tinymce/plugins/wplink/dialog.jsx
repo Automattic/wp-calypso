@@ -31,7 +31,7 @@ import { recordEvent, recordStat } from 'lib/posts/stats';
 /**
  * Module variables
  */
-var REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+let REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
 	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i,
 	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
@@ -57,7 +57,7 @@ class LinkDialog extends React.Component {
 	}
 
 	getLink = () => {
-		var editor = this.props.editor;
+		const editor = this.props.editor;
 
 		return editor.dom.getParent( editor.selection.getNode(), 'a' );
 	};
@@ -77,7 +77,7 @@ class LinkDialog extends React.Component {
 	};
 
 	updateEditor = () => {
-		var editor = this.props.editor,
+		let editor = this.props.editor,
 			attrs,
 			link,
 			linkText;
@@ -121,7 +121,7 @@ class LinkDialog extends React.Component {
 	};
 
 	hasSelectedText = linkNode => {
-		var editor = this.props.editor,
+		let editor = this.props.editor,
 			html = editor.selection.getContent(),
 			nodes,
 			i;
@@ -152,7 +152,7 @@ class LinkDialog extends React.Component {
 	};
 
 	getInferredUrl = () => {
-		var selectedText = this.props.editor.selection.getContent(),
+		let selectedText = this.props.editor.selection.getContent(),
 			selectedNode,
 			parsedImage,
 			knownImage;
@@ -179,7 +179,7 @@ class LinkDialog extends React.Component {
 	};
 
 	getState = () => {
-		var editor = this.props.editor,
+		let editor = this.props.editor,
 			selectedNode = editor.selection.getNode(),
 			linkNode = editor.dom.getParent( selectedNode, 'a[href]' ),
 			onlyText = this.hasSelectedText( linkNode ),
@@ -244,7 +244,7 @@ class LinkDialog extends React.Component {
 	};
 
 	getButtons = () => {
-		var buttonText, buttons;
+		let buttonText, buttons;
 
 		if ( this.state.isNew ) {
 			buttonText = this.props.translate( 'Add Link' );
@@ -274,7 +274,7 @@ class LinkDialog extends React.Component {
 	};
 
 	setExistingContent = post => {
-		let state = { url: post.URL };
+		const state = { url: post.URL };
 		const shouldSetLinkText =
 			! this.state.isUserDefinedLinkText &&
 			! this.props.editor.selection.getContent() &&

@@ -22,8 +22,8 @@ import {
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
-	JETPACK_SETTINGS_RECEIVE,
-	JETPACK_SETTINGS_UPDATE_SUCCESS,
+	JETPACK_SETTINGS_UPDATE,
+	JETPACK_SETTINGS_SAVE_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -104,7 +104,7 @@ describe( 'reducer', () => {
 					},
 				},
 				action = {
-					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
+					type: JETPACK_SETTINGS_SAVE_SUCCESS,
 					siteId,
 					settings: {
 						'related-posts': true,
@@ -139,7 +139,7 @@ describe( 'reducer', () => {
 					},
 				},
 				action = {
-					type: JETPACK_SETTINGS_RECEIVE,
+					type: JETPACK_SETTINGS_UPDATE,
 					siteId,
 					settings: {
 						'related-posts': true,

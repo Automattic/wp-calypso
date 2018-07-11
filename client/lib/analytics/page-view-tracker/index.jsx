@@ -7,13 +7,20 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flowRight, noop } from 'lodash';
+import { get, isNumber, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { recordPageView } from 'state/analytics/actions';
+import { getSiteFragment } from 'lib/route';
+import {
+	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteType,
+} from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Module variables
@@ -27,7 +34,10 @@ export class PageViewTracker extends React.Component {
 		delay: PropTypes.number,
 		path: PropTypes.string.isRequired,
 		recorder: PropTypes.func,
+		hasSelectedSiteLoaded: PropTypes.bool,
+		selectedSiteId: PropTypes.number,
 		title: PropTypes.string.isRequired,
+		properties: PropTypes.object,
 	};
 
 	state = {
@@ -44,17 +54,33 @@ export class PageViewTracker extends React.Component {
 		clearTimeout( this.state.timer );
 	}
 
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.path !== this.props.path ||
+			prevProps.selectedSiteId !== this.props.selectedSiteId
+		) {
+			this.queuePageView();
+		}
+	}
+
 	queuePageView = () => {
-		const { delay = 0, path, recorder = noop, title } = this.props;
+		const {
+			delay = 0,
+			path,
+			recorder = noop,
+			hasSelectedSiteLoaded,
+			title,
+			properties,
+		} = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
-		if ( this.state.timer ) {
+		if ( ! hasSelectedSiteLoaded || this.state.timer ) {
 			return;
 		}
 
 		if ( ! delay ) {
-			return recorder( path, title );
+			return recorder( path, title, 'default', properties );
 		}
 
 		this.setState( {
@@ -67,8 +93,28 @@ export class PageViewTracker extends React.Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	recorder: flowRight( dispatch, recordPageView ),
-} );
+const mapStateToProps = state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
+	const currentSlug =
+		typeof window === 'undefined' ? '' : getSiteFragment( get( window, 'location.pathname', '' ) );
 
-export default connect( null, mapDispatchToProps )( PageViewTracker );
+	const hasSelectedSiteLoaded =
+		! currentSlug ||
+		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
+		currentSlug === selectedSiteSlug;
+
+	return {
+		hasSelectedSiteLoaded,
+		selectedSiteId,
+	};
+};
+
+const mapDispatchToProps = {
+	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( PageViewTracker );

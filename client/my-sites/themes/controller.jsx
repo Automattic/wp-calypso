@@ -20,17 +20,17 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
 import { getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
-import { getThemeFilters } from 'state/selectors';
+import getThemeFilters from 'state/selectors/get-theme-filters';
 
 const debug = debugFactory( 'calypso:themes' );
 
 function getProps( context ) {
-	const { tier, filter, vertical, site_id: siteId } = context.params;
+	const { tier, filter, vertical } = context.params;
 
-	const { basePath, analyticsPageTitle } = getAnalyticsData( context.path, tier, siteId );
+	const { analyticsPath, analyticsPageTitle } = getAnalyticsData( context.path, context.params );
 
 	const boundTrackScrollPage = function() {
-		trackScrollPage( basePath, analyticsPageTitle, 'Themes' );
+		trackScrollPage( analyticsPath, analyticsPageTitle, 'Themes' );
 	};
 
 	return {
@@ -38,7 +38,7 @@ function getProps( context ) {
 		filter,
 		vertical,
 		analyticsPageTitle,
-		analyticsPath: basePath,
+		analyticsPath,
 		search: context.query.s,
 		pathName: context.pathname,
 		trackScrollPage: boundTrackScrollPage,

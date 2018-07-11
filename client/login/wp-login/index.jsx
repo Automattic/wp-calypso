@@ -15,17 +15,19 @@ import { startCase } from 'lodash';
  */
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import GlobalNotices from 'components/global-notices';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
 import LoginLinks from './login-links';
 import Main from 'components/main';
-import notices from 'notices';
 import PrivateSite from './private-site';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
+import {
+	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteType,
+} from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 
 export class Login extends React.Component {
 	static propTypes = {
@@ -127,7 +129,10 @@ export class Login extends React.Component {
 						</a>
 					</div>
 				) : (
-					<img src="/calypso/images/jetpack/powered-by-jetpack.svg" alt="Powered by Jetpack" />
+					<img
+						src="/calypso/images/jetpack/powered-by-jetpack.svg?v=20180619"
+						alt="Powered by Jetpack"
+					/>
 				) }
 			</div>
 		);
@@ -166,7 +171,7 @@ export class Login extends React.Component {
 
 	render() {
 		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
-		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/login', locale );
+		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/log-in', locale );
 
 		return (
 			<div>
@@ -176,9 +181,8 @@ export class Login extends React.Component {
 					<DocumentHead
 						title={ translate( 'Log In' ) }
 						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
+						meta={ [ { name: 'description', content: 'Log in to WordPress.com' } ] }
 					/>
-
-					<GlobalNotices id="notices" notices={ notices.list } />
 
 					<div>
 						<div className="wp-login__container">{ this.renderContent() }</div>
@@ -206,6 +210,6 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
-		recordPageView,
+		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 	}
 )( localize( Login ) );

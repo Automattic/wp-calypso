@@ -21,8 +21,12 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 
-class PayButton extends React.Component {
+export class PayButton extends React.Component {
 	buttonState = () => {
+		if ( this.isRecalculatingCart() ) {
+			return this.recalculating();
+		}
+
 		let state;
 
 		switch ( this.props.transactionStep.name ) {
@@ -121,6 +125,13 @@ class PayButton extends React.Component {
 		};
 	};
 
+	recalculating = () => {
+		return {
+			disabled: true,
+			text: this.props.translate( 'Calculating price' ),
+		};
+	};
+
 	sending = () => {
 		return {
 			disabled: true,
@@ -146,6 +157,10 @@ class PayButton extends React.Component {
 			text: text,
 		};
 	};
+
+	isRecalculatingCart() {
+		return this.props.cart.hasPendingServerUpdates;
+	}
 
 	render() {
 		const buttonState = this.buttonState();

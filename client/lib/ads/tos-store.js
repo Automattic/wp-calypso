@@ -18,13 +18,13 @@ import emitter from 'lib/mixins/emitter';
  */
 const debug = debugModule( 'calypso:wordads:store' );
 
-var _tos = {},
-	_loadingError = null,
+let _loadingError = null,
 	_notice = null,
-	_isLoading = false,
-	WordadsTosStore;
+	_isLoading = false;
 
-WordadsTosStore = {
+const _tos = {};
+
+const WordadsTosStore = {
 	get: function() {
 		return _tos;
 	},
@@ -70,7 +70,7 @@ function setLoadingError( error ) {
 }
 
 WordadsTosStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	switch ( action.type ) {
 		case 'FETCHING_WORDADS_TOS':
 		case 'SIGNING_WORDADS_TOS':

@@ -4,16 +4,19 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import * as postUtils from 'lib/posts/utils';
-import { isEnabled } from 'config';
+import { isPage, isPublished } from 'lib/posts/utils';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 import { recordEvent, recordStat } from 'lib/posts/stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
 export const isSaveAvailableFn = ( {
 	isSaving = false,
@@ -21,30 +24,20 @@ export const isSaveAvailableFn = ( {
 	isDirty = false,
 	hasContent = false,
 	post = null,
-} ) =>
-	! isSaving &&
-	! isSaveBlocked &&
-	isDirty &&
-	hasContent &&
-	!! post &&
-	! postUtils.isPublished( post );
+} ) => ! isSaving && ! isSaveBlocked && isDirty && hasContent && !! post && ! isPublished( post );
 
 const QuickSaveButtons = ( {
 	isSaving,
 	isSaveBlocked,
 	isDirty,
 	hasContent,
-	loadRevision,
 	post,
 	translate,
 	onSave,
-	showRevisions = true,
 } ) => {
 	const onSaveButtonClick = () => {
 		onSave();
-		const eventLabel = postUtils.isPage( post )
-			? 'Clicked Save Page Button'
-			: 'Clicked Save Post Button';
+		const eventLabel = isPage( post ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
 		recordEvent( eventLabel );
 		recordStat( 'save_draft_clicked' );
 	};
@@ -57,10 +50,9 @@ const QuickSaveButtons = ( {
 		post,
 	} );
 
-	const showingStatusLabel = isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
+	const showingStatusLabel = isSaving || ( post && post.ID && ! isPublished( post ) );
 	const showingSaveStatus = isSaveAvailable || showingStatusLabel;
-	const hasRevisions =
-		showRevisions && isEnabled( 'post-editor/revisions' ) && get( post, 'revisions.length' );
+	const hasRevisions = post && ! isEmpty( post.revisions );
 
 	if ( ! ( showingSaveStatus || hasRevisions ) ) {
 		return null;
@@ -68,7 +60,7 @@ const QuickSaveButtons = ( {
 
 	return (
 		<div className="editor-ground-control__quick-save">
-			{ hasRevisions && <HistoryButton loadRevision={ loadRevision } /> }
+			{ hasRevisions && <HistoryButton /> }
 			{ showingSaveStatus && (
 				<div className="editor-ground-control__status">
 					{ isSaveAvailable && (
@@ -100,7 +92,6 @@ QuickSaveButtons.propTypes = {
 	isSaveBlocked: PropTypes.bool,
 	isDirty: PropTypes.bool,
 	hasContent: PropTypes.bool,
-	loadRevision: PropTypes.func.isRequired,
 	post: PropTypes.object,
 	onSave: PropTypes.func,
 
@@ -116,4 +107,10 @@ QuickSaveButtons.defaultProps = {
 	post: null,
 };
 
-export default localize( QuickSaveButtons );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const post = getEditedPost( state, siteId, postId );
+
+	return { post };
+} )( localize( QuickSaveButtons ) );

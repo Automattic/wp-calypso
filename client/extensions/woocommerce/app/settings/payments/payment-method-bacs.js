@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -62,7 +60,10 @@ class PaymentMethodBACS extends Component {
 	}
 
 	getAccountData = props => {
-		const { method: { settings } } = props || this.props;
+		const {
+			method: { settings },
+		} =
+			props || this.props;
 		const accountData = get( settings, [ 'accounts', 'value' ], [] );
 
 		return accountData.length
@@ -74,7 +75,7 @@ class PaymentMethodBACS extends Component {
 					bic: '',
 					iban: '',
 					sort_code: '',
-				};
+			  };
 	};
 
 	onEditFieldHandler = e => {
@@ -105,7 +106,11 @@ class PaymentMethodBACS extends Component {
 	];
 
 	render() {
-		const { method, method: { settings }, translate } = this.props;
+		const {
+			method,
+			method: { settings },
+			translate,
+		} = this.props;
 		const accountData = this.getAccountData();
 		const { showInternational } = this.state;
 		const classes = classNames( 'payments__dialog woocommerce', {

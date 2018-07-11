@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,9 +13,17 @@ import classNames from 'classnames';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 
-function renderField( fieldName, fieldModel, promotion, edit, currency, showEmptyValidationErrors ) {
+function renderField(
+	fieldName,
+	fieldModel,
+	promotion,
+	edit,
+	currency,
+	showEmptyValidationErrors
+) {
 	const { component, validate } = fieldModel;
-	const validationError = validate && validate( fieldName, promotion, currency, showEmptyValidationErrors );
+	const validationError =
+		validate && validate( fieldName, promotion, currency, showEmptyValidationErrors );
 
 	const props = {
 		key: fieldName,
@@ -44,22 +54,26 @@ const PromotionFormCard = ( {
 	showEmptyValidationErrors,
 } ) => {
 	const edit = promotionFieldEdit( siteId, promotion, editPromotion );
-	const fields = Object.keys( cardModel.fields ).map( ( fieldName ) => {
+	const fields = Object.keys( cardModel.fields ).map( fieldName => {
 		const fieldModel = cardModel.fields[ fieldName ];
-		return renderField( fieldName, fieldModel, promotion, edit, currency, showEmptyValidationErrors );
+		return renderField(
+			fieldName,
+			fieldModel,
+			promotion,
+			edit,
+			currency,
+			showEmptyValidationErrors
+		);
 	} );
 
-	const classes = classNames(
-		'promotions__promotion-form-card',
-		{ [ cardModel.cssClass ]: cardModel.cssClass }
-	);
+	const classes = classNames( 'promotions__promotion-form-card', {
+		[ cardModel.cssClass ]: cardModel.cssClass,
+	} );
 
 	return (
 		<div>
 			<SectionHeader label={ cardModel.labelText } />
-			<Card className={ classes }>
-				{ fields }
-			</Card>
+			<Card className={ classes }>{ fields }</Card>
 		</div>
 	);
 };
@@ -80,4 +94,3 @@ PromotionFormCard.propTypes = {
 };
 
 export default PromotionFormCard;
-

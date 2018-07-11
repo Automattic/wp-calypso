@@ -21,7 +21,8 @@ import { hasTouch } from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import { installPerfmonPageHandlers } from 'lib/perfmon';
-import { getSections, setupRoutes } from 'sections-middleware';
+import { setupRoutes } from 'sections-middleware';
+import { getSections } from 'sections-helper';
 import { checkFormHandler } from 'lib/protect-form';
 import notices from 'notices';
 import authController from 'auth/controller';
@@ -75,6 +76,13 @@ const setupContextMiddleware = reduxStore => {
 
 		next();
 	} );
+
+	page.exit( '*', ( context, next ) => {
+		if ( ! context.store ) {
+			context.store = reduxStore;
+		}
+		next();
+	} );
 };
 
 // We need to require sections to load React with i18n mixin
@@ -102,11 +110,19 @@ const loggedOutMiddleware = currentUser => {
 	const validSections = getSections().reduce( ( acc, section ) => {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
 	}, [] );
+
 	const isValidSection = sectionPath =>
-		some( validSections, validPath => startsWith( sectionPath, validPath ) );
+		some(
+			validSections,
+			validPath => startsWith( sectionPath, validPath ) || sectionPath.match( validPath )
+		);
 
 	page( '*', ( context, next ) => {
-		if ( isValidSection( context.path ) ) {
+		if ( context.path && isValidSection( context.path ) ) {
+			// redirect to login page if we're not on it already, only for stats for now
+			if ( startsWith( context.path, '/stats' ) ) {
+				return page.redirect( '/log-in/?redirect_to=' + encodeURIComponent( context.path ) );
+			}
 			next();
 		}
 	} );

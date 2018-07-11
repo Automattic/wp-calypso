@@ -70,6 +70,8 @@
 				top: 0;
 			}
 		}
+
+		z-index: z-index( 'root', '.reader-recommended-sites__recommended-site-dismiss' );
 	}
 
 	.reader-subscription-list-item {

@@ -12,19 +12,18 @@ import i18n from 'i18n-calypso';
 import { abtest } from 'lib/abtest';
 import { sectionify } from 'lib/route';
 import feedLookup from 'lib/feed-lookup';
-import feedStreamFactory from 'lib/feed-stream-store';
 import {
-	ensureStoreLoading,
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
 	setPageTitle,
+	getStartDate,
 } from './controller-helper';
 import FeedError from 'reader/feed-error';
 import StreamComponent from 'reader/following/main';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
 import { recordTrack } from 'reader/stats';
-import { preload } from 'sections-preload';
+import { preload } from 'sections-helper';
 import AsyncLoad from 'components/async-load';
 
 const analyticsPageTitle = 'Reader';
@@ -127,15 +126,10 @@ const exported = {
 	},
 
 	following( context, next ) {
-		const basePath = sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
-			followingStore = feedStreamFactory( 'following' ),
-			mcKey = 'following';
-
-		const recommendationsStore = feedStreamFactory( 'custom_recs_posts_with_images' );
-		recommendationsStore.perPage = 4;
-
-		ensureStoreLoading( followingStore, context );
+		const basePath = sectionify( context.path );
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
+		const mcKey = 'following';
+		const startDate = getStartDate( context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_following_loaded' );
@@ -146,8 +140,9 @@ const exported = {
 		context.primary = React.createElement( StreamComponent, {
 			key: 'following',
 			listName: i18n.translate( 'Followed Sites' ),
-			postsStore: followingStore,
-			recommendationsStore,
+			streamKey: 'following',
+			startDate,
+			recsStreamKey: 'custom_recs_posts_with_images',
 			showPrimaryFollowButtonOnCards: false,
 			trackScrollPage: trackScrollPage.bind(
 				null,
@@ -176,24 +171,20 @@ const exported = {
 	},
 
 	feedListing( context, next ) {
-		const basePath = '/read/feeds/:feed_id',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + context.params.feed_id,
-			feedStore = feedStreamFactory( 'feed:' + context.params.feed_id ),
-			mcKey = 'blog';
-
-		ensureStoreLoading( feedStore, context );
+		const basePath = '/read/feeds/:feed_id';
+		const feedId = context.params.feed_id;
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + feedId;
+		const mcKey = 'blog';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		recordTrack( 'calypso_reader_blog_preview', {
-			feed_id: context.params.feed_id,
-		} );
+		recordTrack( 'calypso_reader_blog_preview', { feed_id: feedId } );
 
 		context.primary = (
 			<AsyncLoad
 				require="reader/feed-stream"
-				key={ 'feed-' + context.params.feed_id }
-				postsStore={ feedStore }
-				feedId={ +context.params.feed_id }
+				key={ 'feed-' + feedId }
+				streamKey={ 'feed:' + feedId }
+				feedId={ +feedId }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
@@ -211,12 +202,11 @@ const exported = {
 	},
 
 	blogListing( context, next ) {
-		const basePath = '/read/blogs/:blog_id',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + context.params.blog_id,
-			feedStore = feedStreamFactory( 'site:' + context.params.blog_id ),
-			mcKey = 'blog';
-
-		ensureStoreLoading( feedStore, context );
+		const basePath = '/read/blogs/:blog_id';
+		const blogId = context.params.blog_id;
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + blogId;
+		const streamKey = 'site:' + blogId;
+		const mcKey = 'blog';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_blog_preview', {
@@ -226,9 +216,9 @@ const exported = {
 		context.primary = (
 			<AsyncLoad
 				require="reader/site-stream"
-				key={ 'site-' + context.params.blog_id }
-				postsStore={ feedStore }
-				siteId={ +context.params.blog_id }
+				key={ 'site-' + blogId }
+				streamKey={ streamKey }
+				siteId={ +blogId }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
@@ -246,24 +236,23 @@ const exported = {
 	},
 
 	readA8C( context, next ) {
-		const basePath = sectionify( context.path ),
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C',
-			feedStore = feedStreamFactory( 'a8c' ),
-			mcKey = 'a8c';
-
-		ensureStoreLoading( feedStore, context );
+		const basePath = sectionify( context.path );
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C';
+		const mcKey = 'a8c';
+		const streamKey = 'a8c';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 		setPageTitle( context, 'Automattic' );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
 				require="reader/team/main"
 				key="read-a8c"
 				className="is-a8c"
 				listName="Automattic"
-				postsStore={ feedStore }
+				streamKey={ streamKey }
 				trackScrollPage={ trackScrollPage.bind(
 					null,
 					basePath,
@@ -275,6 +264,7 @@ const exported = {
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
 };

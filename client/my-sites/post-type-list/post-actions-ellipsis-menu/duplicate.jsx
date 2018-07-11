@@ -14,7 +14,7 @@ import { includes } from 'lodash';
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
-import { canCurrentUserEditPost } from 'state/selectors';
+import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
 import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { bumpStatGenerator } from './utils';
@@ -81,6 +81,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onDuplicateClick } );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
-	localize( PostActionsEllipsisMenuDuplicate )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( localize( PostActionsEllipsisMenuDuplicate ) );

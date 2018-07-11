@@ -27,8 +27,7 @@ const wpcom = wpcomUndocumented( handler );
 two methods to invalidate records:
 
 #### syncHandler#pruneStaleRecords( [lifetime] );
-Prune records older than the given `lifetime` (milliseconds or [natural
-language](https://github.com/rauchg/ms.js)). By default the value of the lifetime is `2 days`.
+Prune records older than the given `lifetime` (milliseconds). By default the value of the lifetime is `172800000` (2 days).
 
 ```es6
 // prune the records that are older than one hour of life
@@ -36,7 +35,7 @@ syncHandler.pruneStaleRecords( 1000 * 60 * 60 );
 
 // prune older than 10 hours old
 syncHandler
-	.pruneStaleRecords( '10 hours' )
+	.pruneStaleRecords( 1000 * 60 * 60 * 10 )
 	.then( records => {
 		console.log( 'current records count: %s', records.length );
 	} );
@@ -89,5 +88,5 @@ It allows access to `cache-index` API from the dev console. For instance:
 
 ```es6
 // prune records older than 25 minutes of lifetime.
-cacheIndex.pruneStaleRecords( '25 minutes' );
+cacheIndex.pruneStaleRecords( 1000 * 60 * 25 );
 ```

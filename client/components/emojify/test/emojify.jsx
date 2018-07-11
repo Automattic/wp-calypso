@@ -36,6 +36,13 @@ describe( 'Emojify', () => {
 			expect( wrapper.html() ).to.equal( '<div class="emojify"><p>Bar</p></div>' );
 		} );
 
+		test( 'wraps a block in a certain tag, if tagName is specified', () => {
+			const wrapper = shallow( <Emojify tagName="span">Bar</Emojify>, {
+				disableLifecycleMethods: true,
+			} );
+			expect( wrapper.html() ).to.equal( '<span class="emojify">Bar</span>' );
+		} );
+
 		test( 'replaces emoji in a string', () => {
 			const wrapper = mount( <Emojify twemojiUrl={ twemojiUrl }>🙂</Emojify> );
 

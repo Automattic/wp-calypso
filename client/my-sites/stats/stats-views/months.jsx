@@ -145,7 +145,7 @@ const StatsViewsMonths = props => {
 			}
 
 			if ( value > 0 ) {
-				const level = Math.ceil( value / highestMonth * 5 );
+				const level = Math.ceil( ( value / highestMonth ) * 5 );
 				className = `stats-views__month level-${ level }`;
 				totals.years[ year ] += value;
 				totals.months[ month ] += value;

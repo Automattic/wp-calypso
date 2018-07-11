@@ -78,3 +78,17 @@ Button target, to use in conjunction with `buttonHref`
   - **Default:** `undefined`
 
 Button onClick handler
+
+### `compact`
+  - **Type:** `Boolean`
+  - **Required:** `no`
+  - **Default:** `true`
+
+Determines whether or not this is a compact card
+
+### `illustration`
+  - **Type:** `String`
+  - **Required:** `no`
+  - **Default:** `undefined`
+
+The URL of an illustration to show on the card

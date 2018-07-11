@@ -13,5 +13,6 @@ import { siteSelection, sites } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/sites/:sitesFilter?', siteSelection, sites, makeLayout, clientRender );
+	page( '/sites/:site', context => page.redirect( '/stats/insights/' + context.params.site ) );
+	page( '/sites', siteSelection, sites, makeLayout, clientRender );
 }

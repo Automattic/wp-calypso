@@ -15,7 +15,7 @@ import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 import EmailFollowersStore from 'lib/email-followers/store';
 
-var EmailFollowersActions = {
+const EmailFollowersActions = {
 	fetchFollowers: ( fetchOptions, silentUpdate = false ) => {
 		Object.assign( fetchOptions, { type: 'email' } );
 		const paginationData = EmailFollowersStore.getPaginationData( fetchOptions );

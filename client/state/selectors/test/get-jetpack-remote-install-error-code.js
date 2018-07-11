@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getJetpackRemoteInstallErrorCode } from 'state/selectors';
+import getJetpackRemoteInstallErrorCode from 'state/selectors/get-jetpack-remote-install-error-code';
 
 const url = 'https://yourgroovydomain.com';
 

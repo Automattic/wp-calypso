@@ -10,12 +10,13 @@ import page from 'page';
 import config from 'config';
 import { conversations, conversationsA8c } from './controller';
 import { initAbTests, preloadReaderBundle, sidebar, updateLastRoute } from 'reader/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 
 export default function() {
 	if ( config.isEnabled( 'reader/conversations' ) ) {
 		page(
 			'/read/conversations',
+			redirectLoggedOut,
 			preloadReaderBundle,
 			updateLastRoute,
 			initAbTests,
@@ -27,6 +28,7 @@ export default function() {
 
 		page(
 			'/read/conversations/a8c',
+			redirectLoggedOut,
 			preloadReaderBundle,
 			updateLastRoute,
 			initAbTests,

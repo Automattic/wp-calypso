@@ -12,9 +12,21 @@ export const jetpackConnectAuthorizeSchema = {
 			required: [ 'timestamp' ],
 			properties: {
 				authorizationCode: { type: 'string' },
-				authorizeError: { type: [ 'boolean', 'null' ] },
+				authorizeError: {
+					anyOf: [
+						{
+							type: 'object',
+							properties: {
+								error: { type: 'string' },
+								message: { type: 'string' },
+								status: { type: 'integer' },
+							},
+						},
+						{ type: 'boolean' },
+						{ type: 'null' },
+					],
+				},
 				authorizeSuccess: { type: 'boolean' },
-				bearerToken: { type: 'string' },
 				clientId: { type: 'integer' },
 				clientNotResponding: { type: 'boolean' },
 				isAuthorizing: { type: 'boolean' },
@@ -22,7 +34,6 @@ export const jetpackConnectAuthorizeSchema = {
 				siteReceived: { type: 'boolean' },
 				timestamp: { type: 'integer' },
 				userAlreadyConnected: { type: 'boolean' },
-				userData: { type: 'object' },
 			},
 		},
 	],

@@ -22,7 +22,6 @@ const PrimaryDomainButton = createReactClass( {
 	propTypes: {
 		domain: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
-		settingPrimaryDomain: PropTypes.bool.isRequired,
 	},
 
 	handleClick() {
@@ -36,11 +35,7 @@ const PrimaryDomainButton = createReactClass( {
 		let label;
 
 		if ( domain && ! domain.isPrimary ) {
-			if ( this.props.settingPrimaryDomain ) {
-				label = this.props.translate( 'Saving…' );
-			} else {
-				label = this.props.translate( 'Make Primary' );
-			}
+			label = this.props.translate( 'Make Primary' );
 
 			return (
 				<Button

@@ -38,7 +38,7 @@ function addSingle( siteId, item ) {
 }
 
 function receiveSingle( siteId, item, itemId ) {
-	var index;
+	let index;
 
 	if ( ! itemId ) {
 		itemId = item.ID;
@@ -64,7 +64,7 @@ function receiveMany( siteId, items ) {
 }
 
 function removeSingle( siteId, item ) {
-	var index;
+	let index;
 
 	if ( ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return;
@@ -94,7 +94,7 @@ MediaLibrarySelectedStore.getAll = function( siteId ) {
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );
 

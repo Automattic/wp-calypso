@@ -3,31 +3,32 @@
 /**
  * External dependencies
  */
-
-import { find } from 'lodash';
-import { localize } from 'i18n-calypso';
-import React from 'react';
 import debugModule from 'debug';
+import React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
 import analytics from 'lib/analytics';
-import { getCurrentUserId, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import Button from 'components/button';
+import CompactCard from 'components/card/compact';
 import HappinessEngineers from 'me/help/help-happiness-engineers';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpTeaserButton from './help-teaser-button';
-import CompactCard from 'components/card/compact';
-import Button from 'components/button';
-import SectionHeader from 'components/section-header';
-import HelpResult from './help-results/item';
 import HelpUnverifiedWarning from './help-unverified-warning';
-import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import Main from 'components/main';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import SectionHeader from 'components/section-header';
+import { getCurrentUserId, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { getSupportSiteLocale } from 'lib/i18n-utils';
+import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
+import { isWpComBusinessPlan } from 'lib/plans';
 
 /**
  * Module variables
@@ -39,6 +40,14 @@ class Help extends React.PureComponent {
 
 	getHelpfulArticles = () => {
 		const helpfulResults = [
+			{
+				link:
+					'https://en.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/',
+				title: this.props.translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
+				description: this.props.translate(
+					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
+				),
+			},
 			{
 				link: 'https://en.support.wordpress.com/business-plan/',
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
@@ -54,7 +63,7 @@ class Help extends React.PureComponent {
 				),
 			},
 			{
-				link: 'https://en.support.wordpress.com/start/',
+				link: `https://${ getSupportSiteLocale() }.support.wordpress.com/start/`,
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
@@ -99,7 +108,7 @@ class Help extends React.PureComponent {
 			<div className="help__support-links">
 				<CompactCard
 					className="help__support-link"
-					href="https://support.wordpress.com/"
+					href={ `https://${ getSupportSiteLocale() }.support.wordpress.com` }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
@@ -226,6 +235,7 @@ class Help extends React.PureComponent {
 
 		return (
 			<Main className="help">
+				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
@@ -239,13 +249,16 @@ class Help extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+function purchaseIsWpComBusinessPlan( { productSlug } ) {
+	return isWpComBusinessPlan( productSlug );
+}
+
+export const mapStateToProps = ( state, ownProps ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
 	const isLoading = isFetchingUserPurchases( state );
-	const isBusinessPlanUser =
-		purchases && !! find( purchases, purchase => purchase.productSlug === PLAN_BUSINESS );
+	const isBusinessPlanUser = some( purchases, purchaseIsWpComBusinessPlan );
 	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
 
 	return {
@@ -255,4 +268,6 @@ export default connect( ( state, ownProps ) => {
 		isLoading,
 		isEmailVerified,
 	};
-} )( localize( Help ) );
+};
+
+export default connect( mapStateToProps )( localize( Help ) );

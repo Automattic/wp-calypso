@@ -33,14 +33,9 @@
 		margin-top: -4px;
 	}
 
-	.gridicon[height="16"] {
-		position: relative;
-		top: 2px;
-	}
-
 	.gridicon[height="18"] {
 		position: relative;
-		top: 3px;
+		top: 0;
 	}
 
 	.tours__title {
@@ -71,7 +66,6 @@
 	animation-duration: 0.25s;
 	animation-name: guided-tours__step-slidein;
 	animation-timing-function: ease-out;
-	animation-delay: 2s;
 	animation-fill-mode: both;
 }
 
@@ -111,21 +105,15 @@
 .guided-tours__choice-button-row {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 }
 
+.guided-tours__choice-button-row,
 .guided-tours__single-button-row {
 	text-align: center;
-}
 
-.guided-tours__choice-button-row, .guided-tours__single-button-row {
 	.button {
-		width: 48%;
-	}
-	.guided-tours__button-link {
-		text-align: center;
-	}
-	.button:nth-child(1) {
-		margin-right: 4%;
+		min-width: 48%;
 	}
 	.guided-tours__quit-button {
 		color: darken( $white, 20% );

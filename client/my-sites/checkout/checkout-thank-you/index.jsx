@@ -61,7 +61,7 @@ import PremiumPlanDetails from './premium-plan-details';
 import BusinessPlanDetails from './business-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import PurchaseDetail from 'components/purchase-detail';
-import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
+import { planMatches, getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
@@ -74,13 +74,12 @@ import {
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-import {
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
-import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
+import { GROUP_WPCOM, GROUP_JETPACK, TYPE_BUSINESS } from 'lib/plans/constants';
+
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 function getPurchases( props ) {
 	return [
@@ -99,7 +98,7 @@ function findPurchaseAndDomain( purchases, predicate ) {
 	return [ purchase, purchase.meta ];
 }
 
-class CheckoutThankYou extends React.Component {
+export class CheckoutThankYou extends React.Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
@@ -254,11 +253,54 @@ class CheckoutThankYou extends React.Component {
 
 	isEligibleForLiveChat = () => {
 		const { planSlug } = this.props;
-		return planSlug === PLAN_JETPACK_BUSINESS || planSlug === PLAN_JETPACK_BUSINESS_MONTHLY;
+		return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
 	};
 
 	isNewUser = () => {
 		return moment( this.props.userDate ).isAfter( moment().subtract( 2, 'hours' ) );
+	};
+
+	getAnalyticsProperties = () => {
+		const { gsuiteReceiptId, receiptId, selectedFeature: feature, selectedSite } = this.props;
+		const site = get( selectedSite, 'slug' );
+
+		if ( gsuiteReceiptId ) {
+			return {
+				path: '/checkout/thank-you/:site/:receipt_id/with-gsuite/:gsuite_receipt_id',
+				properties: { gsuite_receipt_id: gsuiteReceiptId, receipt_id: receiptId, site },
+			};
+		}
+		if ( feature && receiptId ) {
+			return {
+				path: '/checkout/thank-you/features/:feature/:site/:receipt_id',
+				properties: { feature, receipt_id: receiptId, site },
+			};
+		}
+		if ( feature && ! receiptId ) {
+			return {
+				path: '/checkout/thank-you/features/:feature/:site',
+				properties: { feature, site },
+			};
+		}
+		if ( receiptId && selectedSite ) {
+			return {
+				path: '/checkout/thank-you/:site/:receipt_id',
+				properties: { receipt_id: receiptId, site },
+			};
+		}
+		if ( receiptId && ! selectedSite ) {
+			return {
+				path: '/checkout/thank-you/no-site/:receipt_id',
+				properties: { receipt_id: receiptId },
+			};
+		}
+		if ( selectedSite ) {
+			return {
+				path: '/checkout/thank-you/:site',
+				properties: { site },
+			};
+		}
+		return { path: '/checkout/thank-you/no-site', properties: {} };
 	};
 
 	render() {
@@ -291,12 +333,21 @@ class CheckoutThankYou extends React.Component {
 		}
 
 		// Rebrand Cities thanks page
+
 		if (
 			this.props.selectedSite &&
 			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
-			PLAN_BUSINESS === this.props.selectedSite.plan.product_slug
+			planMatches( this.props.selectedSite.plan.product_slug, {
+				type: TYPE_BUSINESS,
+				group: GROUP_WPCOM,
+			} )
 		) {
-			return <RebrandCitiesThankYou receipt={ this.props.receipt } />;
+			return (
+				<RebrandCitiesThankYou
+					receipt={ this.props.receipt }
+					analyticsProperties={ this.getAnalyticsProperties() }
+				/>
+			);
 		}
 
 		const { hasPendingAT, isAtomicSite } = this.props;
@@ -304,6 +355,7 @@ class CheckoutThankYou extends React.Component {
 		if ( wasDotcomPlanPurchased && ( hasPendingAT || isAtomicSite ) ) {
 			return (
 				<Main className="checkout-thank-you">
+					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					{ this.renderConfirmationNotice() }
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
@@ -324,6 +376,7 @@ class CheckoutThankYou extends React.Component {
 			// streamlined paid NUX thanks page
 			return (
 				<Main className="checkout-thank-you">
+					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
@@ -331,6 +384,7 @@ class CheckoutThankYou extends React.Component {
 		} else if ( wasJetpackPlanPurchased && config.isEnabled( 'plans/jetpack-config-v2' ) ) {
 			return (
 				<Main className="checkout-thank-you">
+					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					{ this.renderConfirmationNotice() }
 					<JetpackThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
@@ -342,6 +396,7 @@ class CheckoutThankYou extends React.Component {
 
 			return (
 				<Main className="checkout-thank-you">
+					<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 					{ this.renderConfirmationNotice() }
 
 					<ThankYouCard
@@ -365,6 +420,7 @@ class CheckoutThankYou extends React.Component {
 		// standard thanks page
 		return (
 			<Main className="checkout-thank-you">
+				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 				<HeaderCake onClick={ this.goBack } isCompact backText={ goBackText } />
 
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>

@@ -64,8 +64,21 @@ class EditorSticky extends React.Component {
 		this.setState( { tooltip: false } );
 	};
 
+	stickyPostButtonRef = React.createRef();
+
 	render() {
-		const classes = classnames( 'editor-sticky', { 'is-sticky': this.props.sticky } );
+		const { sticky, translate } = this.props;
+		const classes = classnames( 'editor-sticky', { 'is-sticky': sticky } );
+		const tooltipLabel = sticky ? (
+			<span>{ translate( 'Marked as sticky' ) }</span>
+		) : (
+			<div>
+				{ translate( 'Mark as sticky' ) }
+				<span className="editor-sticky__explanation">
+					{ translate( 'Stick post to the front page' ) }
+				</span>
+			</div>
+		);
 
 		return (
 			<Button
@@ -74,20 +87,18 @@ class EditorSticky extends React.Component {
 				onClick={ this.toggleStickyStatus }
 				onMouseEnter={ this.enableTooltip }
 				onMouseLeave={ this.disableTooltip }
-				aria-label={ this.props.translate( 'Stick post to the front page' ) }
-				ref="stickyPostButton"
+				aria-label={ translate( 'Stick post to the front page' ) }
+				ref={ this.stickyPostButtonRef }
 			>
 				<Gridicon icon="bookmark" />
-				{ this.props.sticky && (
-					<Tooltip
-						className="editor-sticky__tooltip"
-						context={ this.refs && this.refs.stickyPostButton }
-						isVisible={ this.state.tooltip }
-						position="bottom left"
-					>
-						<span>{ this.props.translate( 'Marked as sticky' ) }</span>
-					</Tooltip>
-				) }
+				<Tooltip
+					className="editor-sticky__tooltip"
+					context={ this.stickyPostButtonRef.current }
+					isVisible={ this.state.tooltip }
+					position="bottom left"
+				>
+					{ tooltipLabel }
+				</Tooltip>
 			</Button>
 		);
 	}

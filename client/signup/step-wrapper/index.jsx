@@ -22,6 +22,13 @@ class StepWrapper extends Component {
 		hideFormattedHeader: PropTypes.bool,
 		hideBack: PropTypes.bool,
 		hideSkip: PropTypes.bool,
+		// Allows to force a back button in the first step for example.
+		// You should only force this when you're passing a backUrl.
+		allowBackFirstStep: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		allowBackFirstStep: false,
 	};
 
 	renderBack() {
@@ -38,6 +45,7 @@ class StepWrapper extends Component {
 				backUrl={ this.props.backUrl }
 				signupProgress={ this.props.signupProgress }
 				labelText={ this.props.backLabelText }
+				allowBackFirstStep={ this.props.allowBackFirstStep }
 			/>
 		);
 	}
@@ -87,14 +95,18 @@ class StepWrapper extends Component {
 
 	render() {
 		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
-		const classes = classNames( 'step-wrapper', {
+		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
 
 		return (
 			<div className={ classes }>
 				{ ! hideFormattedHeader && (
-					<FormattedHeader headerText={ this.headerText() } subHeaderText={ this.subHeaderText() }>
+					<FormattedHeader
+						id={ 'step-header' }
+						headerText={ this.headerText() }
+						subHeaderText={ this.subHeaderText() }
+					>
 						{ headerButton }
 					</FormattedHeader>
 				) }

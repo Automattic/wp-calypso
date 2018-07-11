@@ -38,7 +38,7 @@ import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getTagStreamUrl } from 'reader/route';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getSubscribedLists } from 'state/reader/lists/selectors';
-import { getReaderTeams } from 'state/selectors';
+import getReaderTeams from 'state/selectors/get-reader-teams';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 
@@ -56,7 +56,7 @@ export const ReaderSidebar = createReactClass( {
 	},
 
 	handleClick( event ) {
-		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span', true ) ) {
+		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 			window.scrollTo( 0, 0 );
 		}
@@ -120,7 +120,7 @@ export const ReaderSidebar = createReactClass( {
 	handleReaderSidebarA8cConversationsClicked() {
 		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
-		recordTrack( 'calypso_reader_sidebar_a8c_conversations_clicked' );
+		recordTrack( 'calypso_reader_sidebar_automattic_conversations_clicked' );
 	},
 
 	handleReaderSidebarDiscoverClicked() {
@@ -142,7 +142,7 @@ export const ReaderSidebar = createReactClass( {
 	},
 
 	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace,max-len */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
@@ -292,7 +292,7 @@ export const ReaderSidebar = createReactClass( {
 				<SidebarFooter />
 			</Sidebar>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace,max-len */
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	},
 } );
 

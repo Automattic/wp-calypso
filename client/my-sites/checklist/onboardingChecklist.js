@@ -10,17 +10,6 @@ import { isDesktop } from 'lib/viewport';
  * Internal dependencies
  */
 const tasks = {
-	about_page_updated: {
-		title: 'Create your About page',
-		description:
-			'It’s the first place we all go! Don’t miss the opportunity to tell people more about you and your site.',
-		duration: '10 mins',
-		completedTitle: 'You updated your About page',
-		completedButtonText: 'Change',
-		image: '/calypso/images/stats/tasks/about.svg',
-		url: '/pages/$siteSlug',
-		tour: 'checklistAboutPage',
-	},
 	avatar_uploaded: {
 		title: 'Upload your profile picture',
 		description:
@@ -62,16 +51,6 @@ const tasks = {
 		url: '/post/$siteSlug/2',
 		tour: 'checklistContactPage',
 	},
-	custom_domain_registered: {
-		title: 'Register a custom domain',
-		description:
-			'Memorable domain names make it easy for people to remember your address — and search engines love ’em.',
-		duration: '2 mins',
-		completedTitle: 'You registered a custom domain',
-		completedButtonText: 'Add email',
-		url: '/domains/add/$siteSlug',
-		image: '/calypso/images/stats/tasks/domains.svg',
-	},
 	domain_selected: {
 		title: 'Pick a website address',
 		description: 'Choose an address so people can find you on the internet.',
@@ -104,15 +83,6 @@ const tasks = {
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/upload-icon.svg',
 		tour: 'checklistSiteIcon',
-	},
-	social_links_set: {
-		title: 'Display links to your social accounts',
-		description: 'Let your audience know where else they can find you online.',
-		duration: '2 mins',
-		completedTitle: 'You added your social accounts.',
-		completedButtonText: 'Change',
-		url: '/customize/$siteSlug?guide=social-media',
-		image: '/calypso/images/stats/tasks/social-links.svg',
 	},
 };
 

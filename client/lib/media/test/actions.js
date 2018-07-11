@@ -47,19 +47,22 @@ jest.mock( 'lib/impure-lodash', () => ( {
 	uniqueId: () => 'media-1',
 } ) );
 
+let mockReduxPostId = null;
+jest.mock( 'lib/redux-bridge', () => ( {
+	reduxGetState: () => ( { ui: { editor: { postId: mockReduxPostId } } } ),
+} ) );
+
 describe( 'MediaActions', () => {
-	let MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore;
+	let MediaActions, sandbox, Dispatcher, MediaListStore;
 
 	beforeAll( function() {
 		Dispatcher = require( 'dispatcher' );
-		PostEditStore = require( 'lib/posts/post-edit-store' );
 		MediaListStore = require( '../list-store' );
-
 		MediaActions = require( '../actions' );
 	} );
 
 	beforeEach( () => {
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		sandbox.stub( Dispatcher, 'handleServerAction' );
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		sandbox.stub( stubs, 'mediaGet' ).callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
@@ -73,6 +76,7 @@ describe( 'MediaActions', () => {
 		MediaActions._fetching = {};
 		window.FileList = function() {};
 		window.URL = { createObjectURL: sandbox.stub() };
+		mockReduxPostId = null;
 	} );
 
 	afterEach( () => {
@@ -96,7 +100,7 @@ describe( 'MediaActions', () => {
 	describe( '#fetch()', () => {
 		test( 'should call to the WordPress.com REST API', done => {
 			Dispatcher.handleViewAction.restore();
-			sandbox.stub( Dispatcher, 'handleViewAction', function() {
+			sandbox.stub( Dispatcher, 'handleViewAction' ).callsFake( function() {
 				expect( MediaActions._fetching ).to.have.all.keys( [
 					[ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join(),
 				] );
@@ -250,7 +254,7 @@ describe( 'MediaActions', () => {
 		} );
 
 		test( 'should attach file upload to a post if one is being edited', () => {
-			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
+			mockReduxPostId = 200;
 
 			return MediaActions.add( site, DUMMY_UPLOAD ).then( () => {
 				expect( stubs.mediaAdd ).to.have.been.calledWithMatch(
@@ -264,7 +268,7 @@ describe( 'MediaActions', () => {
 		} );
 
 		test( 'should attach URL upload to a post if one is being edited', () => {
-			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
+			mockReduxPostId = 200;
 
 			return MediaActions.add( site, DUMMY_URL ).then( () => {
 				expect( stubs.mediaAddUrls ).to.have.been.calledWithMatch(

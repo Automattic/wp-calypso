@@ -25,7 +25,6 @@ export default class PostCommentWithError extends React.Component {
 
 		return (
 			<PostCommentForm
-				ref="postCommentForm"
 				post={ post }
 				parentCommentId={ commentParentId }
 				commentText={ commentText }

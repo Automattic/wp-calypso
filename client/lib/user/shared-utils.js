@@ -9,27 +9,9 @@ import { assign, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { decodeEntities } from 'lib/formatting';
+import { getLanguage } from 'lib/i18n-utils/utils';
 import { withoutHttp } from 'lib/url';
-
-/**
- * Module variables
- */
-const languages = config( 'languages' );
-
-export function getLanguage( slug ) {
-	const { length: len } = languages;
-	let language;
-	for ( let index = 0; index < len; index++ ) {
-		if ( slug === languages[ index ].langSlug ) {
-			language = languages[ index ];
-			break;
-		}
-	}
-
-	return language;
-}
 
 function getSiteSlug( url ) {
 	const slug = withoutHttp( url );

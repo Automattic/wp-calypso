@@ -81,7 +81,7 @@ class MapDomainStep extends React.Component {
 			? {
 					cost: this.props.products.domain_map.cost_display,
 					product_slug: this.props.products.domain_map.product_slug,
-				}
+			  }
 			: { cost: null, product_slug: '' };
 		const { translate } = this.props;
 
@@ -213,7 +213,11 @@ class MapDomainStep extends React.Component {
 					site = get( this.props, 'selectedSite.slug', null );
 				}
 
-				const { message, severity } = getAvailabilityNotice( domain, status, site );
+				const maintenanceEndTime = get( result, 'maintenance_end_time', null );
+				const { message, severity } = getAvailabilityNotice( domain, status, {
+					site,
+					maintenanceEndTime,
+				} );
 				this.setState( { notice: message, noticeSeverity: severity } );
 			}
 		);

@@ -35,7 +35,7 @@ export default class RootChild extends React.Component {
 	}
 
 	renderChildren = () => {
-		var content;
+		let content;
 
 		if ( this.props && ( Object.keys( this.props ).length > 1 || ! this.props.children ) ) {
 			content = <div { ...this.props }>{ this.props.children }</div>;

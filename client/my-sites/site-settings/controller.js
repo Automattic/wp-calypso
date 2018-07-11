@@ -20,7 +20,9 @@ import ThemeSetup from './theme-setup';
 import ManageConnection from './manage-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser, isSiteAutomatedTransfer, isVipSite } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isVipSite from 'state/selectors/is-vip-site';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 import { setSection } from 'state/ui/actions';
 

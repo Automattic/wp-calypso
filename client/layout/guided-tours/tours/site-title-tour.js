@@ -46,7 +46,7 @@ export const SiteTitleTour = makeTour(
 			isAbTestInVariant( 'siteTitleTour', 'enabled' )
 		) }
 	>
-		<Step name="init" placement="right" next="click-settings">
+		<Step name="init" placement="right" next="click-settings" style={ { animationDelay: '2s' } }>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>

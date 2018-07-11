@@ -15,6 +15,7 @@ import Button from 'components/button';
 import ConnectedApplicationIcon from 'me/connected-application-icon';
 import FoldableCard from 'components/foldable-card';
 import safeProtocolUrl from 'lib/safe-protocol-url';
+import { deleteConnectedApplication } from 'state/connected-applications/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class ConnectedApplicationItem extends React.Component {
@@ -39,15 +40,19 @@ class ConnectedApplicationItem extends React.Component {
 			return;
 		}
 
-		const { connection: { title, ID } } = this.props;
+		const {
+			connection: { title, ID },
+		} = this.props;
 		event.stopPropagation();
 		this.recordClickEvent( 'Disconnect Connected Application Link', title );
-		this.props.revoke( ID );
+		this.props.deleteConnectedApplication( ID );
 	};
 
 	renderAccessScopeBadge() {
-		const { connection: { scope, site } } = this.props;
-		var meta = '';
+		const {
+			connection: { scope, site },
+		} = this.props;
+		let meta = '';
 
 		if ( ! this.props.connection ) {
 			return;
@@ -67,8 +72,10 @@ class ConnectedApplicationItem extends React.Component {
 	}
 
 	renderScopeMessage() {
-		const { connection: { scope, site } } = this.props;
-		var message;
+		const {
+			connection: { scope, site },
+		} = this.props;
+		let message;
 		if ( ! this.props.connection ) {
 			return;
 		}
@@ -120,7 +127,9 @@ class ConnectedApplicationItem extends React.Component {
 	}
 
 	renderDetail() {
-		const { connection: { URL, authorized, permissions } } = this.props;
+		const {
+			connection: { URL, authorized, permissions },
+		} = this.props;
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
@@ -191,7 +200,7 @@ class ConnectedApplicationItem extends React.Component {
 	}
 
 	render() {
-		let classes = classNames( {
+		const classes = classNames( {
 			'connected-application-item': true,
 			'is-placeholder': this.props.isPlaceholder,
 		} );
@@ -211,6 +220,10 @@ class ConnectedApplicationItem extends React.Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( ConnectedApplicationItem ) );
+export default connect(
+	null,
+	{
+		deleteConnectedApplication,
+		recordGoogleEvent,
+	}
+)( localize( ConnectedApplicationItem ) );

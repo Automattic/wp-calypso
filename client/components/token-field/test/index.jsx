@@ -10,7 +10,6 @@ import { expect } from 'chai';
 import { render, mount } from 'enzyme';
 import { filter, map } from 'lodash';
 import React from 'react';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -22,7 +21,6 @@ import TokenFieldWrapper from './lib/token-field-wrapper';
  * Module constants
  */
 const jestExpect = global.expect;
-
 jest.mock( 'components/tooltip', () => require( 'components/empty-component' ) );
 
 /**
@@ -221,35 +219,33 @@ describe( 'TokenField', () => {
 			expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.at );
 		} );
 
-		test(
-			'should manage the selected suggestion based on both keyboard and mouse events',
-			sinon.test( function() {
-				setText( 't' );
-				expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.t );
-				expect( getSelectedSuggestion() ).to.equal( null );
-				sendKeyDown( keyCodes.downArrow ); // 'the'
-				expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'he' ] );
-				sendKeyDown( keyCodes.downArrow ); // 'to'
-				expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'o' ] );
+		test( 'should manage the selected suggestion based on both keyboard and mouse events', () => {
+			jest.useFakeTimers();
+			setText( 't' );
+			expect( getSuggestionsText() ).to.deep.equal( fixtures.matchingSuggestions.t );
+			expect( getSelectedSuggestion() ).to.equal( null );
+			sendKeyDown( keyCodes.downArrow ); // 'the'
+			expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'he' ] );
+			sendKeyDown( keyCodes.downArrow ); // 'to'
+			expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'o' ] );
 
-				const hoverSuggestion = wrapper.find( '.token-field__suggestion' ).at( 5 ); // 'it'
-				expect( getSuggestionNodeText( hoverSuggestion ) ).to.deep.equal( [ 'i', 't' ] );
+			const hoverSuggestion = wrapper.find( '.token-field__suggestion' ).at( 5 ); // 'it'
+			expect( getSuggestionNodeText( hoverSuggestion ) ).to.deep.equal( [ 'i', 't' ] );
 
-				// before sending a hover event, we need to wait for
-				// SuggestionList#_scrollingIntoView to become false
-				this.clock.tick( 100 );
+			// before sending a hover event, we need to wait for
+			// SuggestionList#_scrollingIntoView to become false
+			jest.runAllTimers();
 
-				hoverSuggestion.simulate( 'mouseEnter' );
-				expect( getSelectedSuggestion() ).to.deep.equal( [ 'i', 't' ] );
-				sendKeyDown( keyCodes.upArrow );
-				expect( getSelectedSuggestion() ).to.deep.equal( [ 'wi', 't', 'h' ] );
-				sendKeyDown( keyCodes.upArrow );
-				expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'his' ] );
-				hoverSuggestion.simulate( 'click' );
-				expect( getSelectedSuggestion() ).to.equal( null );
-				expect( getTokensHTML() ).to.deep.equal( [ 'foo', 'bar', 'it' ] );
-			} )
-		);
+			hoverSuggestion.simulate( 'mouseEnter' );
+			expect( getSelectedSuggestion() ).to.deep.equal( [ 'i', 't' ] );
+			sendKeyDown( keyCodes.upArrow );
+			expect( getSelectedSuggestion() ).to.deep.equal( [ 'wi', 't', 'h' ] );
+			sendKeyDown( keyCodes.upArrow );
+			expect( getSelectedSuggestion() ).to.deep.equal( [ 't', 'his' ] );
+			hoverSuggestion.simulate( 'click' );
+			expect( getSelectedSuggestion() ).to.equal( null );
+			expect( getTokensHTML() ).to.deep.equal( [ 'foo', 'bar', 'it' ] );
+		} );
 	} );
 
 	describe( 'adding tokens', () => {
@@ -355,32 +351,25 @@ describe( 'TokenField', () => {
 			);
 		} );
 
-		test(
-			'should not add the suggested token when the (blank) input field loses focus',
-			sinon.test( function() {
-				testOnBlur(
-					'', // initialText
-					true, // selectSuggestion
-					'of', // expectedSuggestion
-					[ 'foo', 'bar' ], // expectedTokens
-					this.clock
-				);
-			} )
-		);
+		test( 'should not add the suggested token when the (blank) input field loses focus', () => {
+			testOnBlur(
+				'', // initialText
+				true, // selectSuggestion
+				'of', // expectedSuggestion
+				[ 'foo', 'bar' ] // expectedTokens
+			);
+		} );
 
-		test(
-			'should not lose focus when a suggestion is clicked',
-			sinon.test( function() {
-				// prevents regression of https://github.com/Automattic/wp-calypso/issues/1884
+		test( 'should not lose focus when a suggestion is clicked', () => {
+			// prevents regression of https://github.com/Automattic/wp-calypso/issues/1884
 
-				const firstSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 0 );
-				firstSuggestion.simulate( 'click' );
+			const firstSuggestion = tokenFieldNode.find( '.token-field__suggestion' ).at( 0 );
+			firstSuggestion.simulate( 'click' );
 
-				// wait for setState call
-				this.clock.tick( 10 );
-				expect( wrapper.find( '.is-active' ).length ).to.equal( 1 );
-			} )
-		);
+			// wait for setState call
+			jest.runTimersToTime( 10 );
+			expect( wrapper.find( '.is-active' ).length ).to.equal( 1 );
+		} );
 
 		test( 'should add tokens in the middle of the current tokens', () => {
 			sendKeyDown( keyCodes.leftArrow );

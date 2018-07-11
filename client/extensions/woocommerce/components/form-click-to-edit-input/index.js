@@ -77,7 +77,6 @@ class FormClickToEditInput extends Component {
 				<FormTextInput
 					{ ...omit( props, [ 'updateAriaLabel', 'editAriaLabel' ] ) }
 					onBlur={ this.editEnd }
-					autoFocus
 					className="form-click-to-edit-input__input"
 				/>
 				<Button
@@ -97,6 +96,8 @@ class FormClickToEditInput extends Component {
 			'is-empty': ! value,
 			'has-value': value,
 		} );
+		// Accessible labeled button provided. Clickable text is optional and not the only way to activate edit.
+		/* eslint-disable jsx-a11y/click-events-have-key-events */
 		return (
 			<span className={ classes }>
 				<span
@@ -113,6 +114,7 @@ class FormClickToEditInput extends Component {
 				) }
 			</span>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events */
 	}
 
 	render() {

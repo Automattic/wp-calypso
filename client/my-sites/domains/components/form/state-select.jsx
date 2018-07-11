@@ -58,10 +58,13 @@ class StateSelect extends Component {
 			name,
 			value,
 			disabled,
+			onBlur,
 			onChange,
 			isError,
 			inputRef,
+			selectText,
 		} = this.props;
+		const validationId = `validation-field-${ this.props.name }`;
 
 		return (
 			<div>
@@ -74,18 +77,21 @@ class StateSelect extends Component {
 							{ this.props.label }
 						</FormLabel>
 						<FormSelect
+							aria-invalid={ isError }
+							aria-describedby={ validationId }
 							ref="input"
 							id={ `${ this.constructor.name }-${ this.instance }` }
 							name={ name }
 							value={ value }
 							disabled={ disabled }
+							onBlur={ onBlur }
 							onChange={ onChange }
 							onClick={ this.recordStateSelectClick }
 							isError={ isError }
 							inputRef={ inputRef }
 						>
 							<option key="--" value="" disabled="disabled">
-								{ this.props.translate( 'Select State' ) }
+								{ selectText || this.props.translate( 'Select State' ) }
 							</option>
 							{ countryStates.map( state => (
 								<option key={ state.code } value={ state.code }>
@@ -93,7 +99,9 @@ class StateSelect extends Component {
 								</option>
 							) ) }
 						</FormSelect>
-						{ errorMessage && <FormInputValidation text={ errorMessage } isError /> }
+						{ errorMessage && (
+							<FormInputValidation id={ validationId } text={ errorMessage } isError />
+						) }
 					</div>
 				) }
 			</div>
@@ -113,6 +121,7 @@ StateSelect.propTypes = {
 	name: PropTypes.string,
 	onChange: PropTypes.func,
 	value: PropTypes.string,
+	selectText: PropTypes.string,
 	inputRef: PropTypes.func,
 };
 

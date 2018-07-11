@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -9,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize, moment } from 'i18n-calypso';
-import { sortBy, find } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +35,7 @@ import QuerySiteStats from 'components/data/query-site-stats';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { savePreference } from 'state/preferences/actions';
 import SelectDropdown from 'components/select-dropdown';
+import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
 import Stat from './stat';
 import { withAnalytics } from 'state/analytics/actions';
 
@@ -148,6 +148,7 @@ class StatsWidget extends Component {
 				data={ ( orderData && orderData.data ) || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				type="number"
 			/>
 		);
@@ -167,6 +168,7 @@ class StatsWidget extends Component {
 				data={ ( orderData && orderData.data ) || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				type="currency"
 			/>
 		);
@@ -183,6 +185,7 @@ class StatsWidget extends Component {
 				data={ visitorData || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				statType="statsVisits"
 				query={ queries.visitorQuery }
 				attribute="visitors"
@@ -200,9 +203,13 @@ class StatsWidget extends Component {
 			<Stat
 				site={ site }
 				label={ translate( 'Conversion rate' ) }
+				labelToolTip={ translate( 'Number of orders by unique visitors', {
+					context: 'Conversion rate tooltip',
+				} ) }
 				data={ data || [] }
 				delta={ delta }
 				date={ date }
+				unit={ unit }
 				statType="statsOrders"
 				query={ queries.orderQuery }
 				attribute="conversionRate"
@@ -215,9 +222,8 @@ class StatsWidget extends Component {
 		const { site, translate, unit, referrerData, queries, viewStats } = this.props;
 		const { referrerQuery } = queries;
 
-		const row = find( referrerData, d => d.date === referrerQuery.date );
-		const fetchedData =
-			( row && sortBy( row.data, r => -r.sales ).slice( 0, dashboardListLimit ) ) || [];
+		const selectedData = find( referrerData, d => d.date === referrerQuery.date ) || { data: [] };
+		const sortedData = sortBySales( selectedData.data, dashboardListLimit );
 
 		const values = [
 			{ key: 'referrer', title: translate( 'Referrer' ), format: 'text' },
@@ -229,7 +235,7 @@ class StatsWidget extends Component {
 			'day' === unit
 				? translate(
 						'Data is being processed. Switch to the week or month view to see your latest referrers.'
-					)
+				  )
 				: translate( 'No referral activity has been recorded for this time period.' );
 
 		const viewLink = config.isEnabled( 'woocommerce/extension-referrers' )
@@ -246,7 +252,7 @@ class StatsWidget extends Component {
 				viewText={ translate( 'View referrers' ) }
 				viewLink={ viewLink }
 				onViewClick={ viewStats }
-				fetchedData={ fetchedData }
+				fetchedData={ sortedData }
 				emptyMessage={ emptyMessage }
 			/>
 		);
@@ -254,7 +260,7 @@ class StatsWidget extends Component {
 
 	renderProducts = () => {
 		const { site, translate, unit, topEarnersData, queries, viewStats } = this.props;
-		const { topEarnersQuery } = queries;
+		const { topListQuery } = queries;
 		const values = [
 			{ key: 'name', title: translate( 'Product' ), format: 'text' },
 			{ key: 'total', title: translate( 'Sales' ), format: 'currency' },
@@ -266,7 +272,7 @@ class StatsWidget extends Component {
 				statType="statsTopEarners"
 				unit={ unit }
 				values={ values }
-				query={ topEarnersQuery }
+				query={ topListQuery }
 				fetchedData={ topEarnersData }
 				viewText={ translate( 'View top products' ) }
 				viewLink={ getLink( `/store/stats/products/${ unit }/:site`, site ) }
@@ -283,12 +289,12 @@ class StatsWidget extends Component {
 			return null;
 		}
 
-		const { orderQuery, topEarnersQuery, referrerQuery, visitorQuery } = queries;
+		const { orderQuery, topListQuery, referrerQuery, visitorQuery } = queries;
 		return (
 			<Fragment>
 				<QueryPreferences />
 				<QuerySiteStats statType="statsOrders" siteId={ site.ID } query={ orderQuery } />
-				<QuerySiteStats statType="statsTopEarners" siteId={ site.ID } query={ topEarnersQuery } />
+				<QuerySiteStats statType="statsTopEarners" siteId={ site.ID } query={ topListQuery } />
 				<QuerySiteStats statType="statsStoreReferrers" siteId={ site.ID } query={ referrerQuery } />
 				<QuerySiteStats statType="statsVisits" siteId={ site.ID } query={ visitorQuery } />
 			</Fragment>
@@ -340,9 +346,9 @@ function mapStateToProps( state ) {
 
 	const queries = getQueries( unit, moment().format( 'YYYY-MM-DD' ), {
 		referrerQuery: { quantity: 1 },
-		topEarnersQuery: { limit: dashboardListLimit },
+		topListQuery: { limit: dashboardListLimit },
 	} );
-	const { orderQuery, topEarnersQuery, referrerQuery, visitorQuery } = queries;
+	const { orderQuery, topListQuery, referrerQuery, visitorQuery } = queries;
 
 	const orderData = getSiteStatsNormalizedData( state, site.ID, 'statsOrders', orderQuery );
 	const visitorData = getSiteStatsNormalizedData( state, site.ID, 'statsVisits', visitorQuery );
@@ -350,7 +356,7 @@ function mapStateToProps( state ) {
 		state,
 		site.ID,
 		'statsTopEarners',
-		topEarnersQuery
+		topListQuery
 	);
 	const referrerData = getSiteStatsNormalizedData(
 		state,
@@ -388,4 +394,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( StatsWidget ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( StatsWidget ) );

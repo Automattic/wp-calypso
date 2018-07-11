@@ -204,7 +204,9 @@ const newNode = ( text, range = {} ) => ( {
 const joinResults = ( [ reduced, remainder ] ) =>
 	reduced.length // eslint-disable-line no-nested-ternary
 		? compact( reduced.concat( remainder ) )
-		: remainder.length ? [ remainder ] : [];
+		: remainder.length
+			? [ remainder ]
+			: [];
 
 /**
  * Parses a formatted text block into typed nodes
@@ -225,7 +227,9 @@ const joinResults = ( [ reduced, remainder ] ) =>
  * @returns {Array} parsed results: text and nodes
  */
 const parse = ( [ prev, text, offset ], nextRange ) => {
-	const { indices: [ start, end ] } = nextRange;
+	const {
+		indices: [ start, end ],
+	} = nextRange;
 	const offsetStart = start - offset;
 	const offsetEnd = end - offset;
 
@@ -264,5 +268,5 @@ export const parseBlock = block =>
 					.sort( rangeSort )
 					.reduce( addRange, [] )
 					.reduce( parse, [ [], block.text, 0 ] )
-			)
+		  )
 		: [ newNode( block ) ];

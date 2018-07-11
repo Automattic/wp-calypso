@@ -19,6 +19,8 @@ import Gridicon from 'gridicons';
 import ScreenReaderText from 'components/screen-reader-text';
 
 class FoldableCard extends Component {
+	static displayName = 'FoldableCard';
+
 	static propTypes = {
 		actionButton: PropTypes.element,
 		actionButtonExpanded: PropTypes.element,

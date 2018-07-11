@@ -14,12 +14,13 @@ import filesize from 'filesize';
  * Internal dependencies
  */
 import ProgressBar from 'components/progress-bar';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planHasFeature } from 'lib/plans';
+import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;
 
-class PlanStorageBar extends Component {
+export class PlanStorageBar extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		mediaStorage: PropTypes.object,
@@ -34,7 +35,7 @@ class PlanStorageBar extends Component {
 	render() {
 		const { className, mediaStorage, sitePlanSlug, siteSlug, translate } = this.props;
 
-		if ( sitePlanSlug === PLAN_BUSINESS ) {
+		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
 			return null;
 		}
 
@@ -43,7 +44,8 @@ class PlanStorageBar extends Component {
 		}
 
 		const percent = Math.min(
-			Math.round( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes * 1000 ) / 10,
+			Math.round( ( mediaStorage.storage_used_bytes / mediaStorage.max_storage_bytes ) * 1000 ) /
+				10,
 			100
 		);
 

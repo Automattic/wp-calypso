@@ -16,7 +16,7 @@ export class TwitterPreview extends PureComponent {
 	render() {
 		const { url, title, type, description, image } = this.props;
 
-		var previewImageStyle = {
+		const previewImageStyle = {
 			backgroundImage: 'url(' + image + ')',
 		};
 

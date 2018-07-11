@@ -74,7 +74,7 @@ const updateComment = ( commentId, newProperties ) => comment => {
 					url: newProperties.authorUrl,
 				},
 				content: newProperties.commentContent,
-			}
+		  }
 		: { ...comment, ...newProperties };
 
 	return {
