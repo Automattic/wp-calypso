@@ -1,15 +1,10 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-import { loadScript } from 'lib/load-script';
-
-/**
 + * Internal dependencies
 + */
 import config from 'config';
+import { loadScript } from 'lib/load-script';
 
 /**
  * Module variables
