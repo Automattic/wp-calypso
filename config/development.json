@@ -188,6 +188,7 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
+		"upsell/nudge-a-palooza": true,
 		"webpack/hot-loader": false,
 		"webpack/persistent-caching": false,
 		"woocommerce/extension-dashboard": true,
