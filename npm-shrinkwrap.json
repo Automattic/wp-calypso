@@ -8015,9 +8015,9 @@
       "dev": true
     },
     "gzip-size": {
-      "version": "4.1.0",
-      "resolved": "https://registry.npmjs.org/gzip-size/-/gzip-size-4.1.0.tgz",
-      "integrity": "sha1-iuCWJX6r59acRb4rZ8RIEk/7UXw=",
+      "version": "5.0.0",
+      "resolved": "https://registry.npmjs.org/gzip-size/-/gzip-size-5.0.0.tgz",
+      "integrity": "sha512-5iI7omclyqrnWw4XbXAmGhPsABkSIDQonv2K0h61lybgofWa6iZyvrI3r2zsJH4P8Nb64fFVzlvfhs0g7BBxAA==",
       "requires": {
         "duplexer": "^0.1.1",
         "pify": "^3.0.0"
@@ -18484,6 +18484,22 @@
         "ws": "^4.0.0"
       },
       "dependencies": {
+        "gzip-size": {
+          "version": "4.1.0",
+          "resolved": "https://registry.npmjs.org/gzip-size/-/gzip-size-4.1.0.tgz",
+          "integrity": "sha1-iuCWJX6r59acRb4rZ8RIEk/7UXw=",
+          "dev": true,
+          "requires": {
+            "duplexer": "^0.1.1",
+            "pify": "^3.0.0"
+          }
+        },
+        "pify": {
+          "version": "3.0.0",
+          "resolved": "https://registry.npmjs.org/pify/-/pify-3.0.0.tgz",
+          "integrity": "sha1-5aSs0sEB/fPZpNB/DbxNtJ3SgXY=",
+          "dev": true
+        },
         "ws": {
           "version": "4.1.0",
           "resolved": "https://registry.npmjs.org/ws/-/ws-4.1.0.tgz",
