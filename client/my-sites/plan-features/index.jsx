@@ -31,6 +31,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import getActiveDiscount from 'state/selectors/get-active-discount';
+// import getFirstActiveDiscount from 'lib/discounts';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
@@ -671,6 +672,7 @@ export default connect(
 			planProperties,
 			selectedSiteSlug,
 			siteType,
+			// getFirstActiveDiscount,
 
 			activeDiscount: getActiveDiscount( state ),
 		};
