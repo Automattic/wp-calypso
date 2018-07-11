@@ -44,21 +44,21 @@ class ReaderCombinedCardPost extends React.Component {
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
-			if ( closest( event.target, '.reader-combined-card__post-title-link', true, rootNode ) ) {
+			if ( closest( event.target, '.reader-combined-card__post-title-link', rootNode ) ) {
 				recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
 			return;
 		}
 
 		// declarative ignore
-		if ( closest( event.target, '.ignore-click, [rel~=external]', true, rootNode ) ) {
+		if ( closest( event.target, '.ignore-click, [rel~=external]', rootNode ) ) {
 			return;
 		}
 
 		// ignore clicks on anchors inside inline content
 		if (
-			closest( event.target, 'a', true, rootNode ) &&
-			closest( event.target, '.reader-excerpt', true, rootNode )
+			closest( event.target, 'a', rootNode ) &&
+			closest( event.target, '.reader-excerpt', rootNode )
 		) {
 			return;
 		}

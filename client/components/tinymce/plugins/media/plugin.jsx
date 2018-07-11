@@ -792,7 +792,7 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		const caption = closest( event.target, '.wp-caption-dd', true );
+		const caption = closest( event.target, '.wp-caption-dd' );
 		if ( caption ) {
 			editor.selection.select( caption );
 		}
@@ -834,7 +834,7 @@ function mediaButton( editor ) {
 				return;
 			}
 
-			const wrapper = closest( caption, '.wp-caption' );
+			const wrapper = closest( caption.parentNode, '.wp-caption' );
 			const img = wrapper.querySelector( 'img' );
 			editor.dom.replace( img, wrapper.parentNode );
 		} );
