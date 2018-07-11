@@ -20,22 +20,20 @@ class UpgradeBanner extends Component {
 			return null;
 		}
 		return (
-			<div>
-				<div className="activity-log-banner__upgrade">
-					<Banner
-						callToAction={ translate( 'Upgrade' ) }
-						dismissPreferenceName="activity-upgrade-banner-simple"
-						event="activity_log_upgrade_click_wpcom"
-						feature={ FEATURE_NO_ADS }
-						list={ [
-							translate( 'Get a custom domain name' ),
-							translate( 'Remove WordPress.com ads' ),
-							translate( 'See 30 days of past activity' ),
-						] }
-						plan={ PLAN_PERSONAL }
-						title={ translate( 'Upgrade your WordPress.com experience' ) }
-					/>
-				</div>
+			<div className="activity-log-banner__upgrade">
+				<Banner
+					callToAction={ translate( 'Upgrade' ) }
+					dismissPreferenceName="activity-upgrade-banner-simple"
+					event="activity_log_upgrade_click_wpcom"
+					feature={ FEATURE_NO_ADS }
+					list={ [
+						translate( 'Get a custom domain name' ),
+						translate( 'Remove WordPress.com ads' ),
+						translate( 'See 30 days of past activity' ),
+					] }
+					plan={ PLAN_PERSONAL }
+					title={ translate( 'Upgrade your WordPress.com experience' ) }
+				/>
 			</div>
 		);
 	}
