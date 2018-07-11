@@ -3,7 +3,8 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 /**
@@ -21,6 +22,9 @@ import { userCan } from 'lib/posts/utils';
 import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';
 import ReaderVisitLink from 'blocks/reader-visit-link';
+import QueryPostLikes from 'components/data/query-post-likes';
+import countPostLikes from 'state/selectors/count-post-likes';
+import getPostLikes from 'state/selectors/get-post-likes';
 
 const ReaderPostActions = props => {
 	const {
@@ -52,73 +56,76 @@ const ReaderPostActions = props => {
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
-		<ul className={ listClassnames }>
-			{ showVisit && (
-				<li className="reader-post-actions__item reader-post-actions__visit">
-					<ReaderVisitLink
-						href={ visitUrl || post.URL }
-						iconSize={ iconSize }
-						onClick={ onPermalinkVisit }
-					>
-						{ translate( 'Visit' ) }
-					</ReaderVisitLink>
-				</li>
-			) }
-			{ showEdit &&
-				site &&
-				userCan( 'edit_post', post ) && (
-					<li className="reader-post-actions__item">
-						<PostEditButton
-							post={ post }
-							site={ site }
-							onClick={ onEditClick }
+		<Fragment>
+			{ site && <QueryPostLikes siteId={ site.ID } postId={ post.ID } needsLikers={ true } /> }
+			<ul className={ listClassnames }>
+				{ showVisit && (
+					<li className="reader-post-actions__item reader-post-actions__visit">
+						<ReaderVisitLink
+							href={ visitUrl || post.URL }
 							iconSize={ iconSize }
+							onClick={ onPermalinkVisit }
+						>
+							{ translate( 'Visit' ) }
+						</ReaderVisitLink>
+					</li>
+				) }
+				{ showEdit &&
+					site &&
+					userCan( 'edit_post', post ) && (
+						<li className="reader-post-actions__item">
+							<PostEditButton
+								post={ post }
+								site={ site }
+								onClick={ onEditClick }
+								iconSize={ iconSize }
+							/>
+						</li>
+					) }
+				{ shouldShowShare( post ) && (
+					<li className="reader-post-actions__item">
+						<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
+					</li>
+				) }
+				{ shouldShowComments( post ) && (
+					<li className="reader-post-actions__item">
+						<CommentButton
+							key="comment-button"
+							commentCount={ post.discussion.comment_count }
+							onClick={ onCommentClick }
+							tagName="div"
+							size={ iconSize }
 						/>
 					</li>
 				) }
-			{ shouldShowShare( post ) && (
-				<li className="reader-post-actions__item">
-					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
-				</li>
-			) }
-			{ shouldShowComments( post ) && (
-				<li className="reader-post-actions__item">
-					<CommentButton
-						key="comment-button"
-						commentCount={ post.discussion.comment_count }
-						onClick={ onCommentClick }
-						tagName="div"
-						size={ iconSize }
-					/>
-				</li>
-			) }
-			{ shouldShowLikes( post ) && (
-				<li className="reader-post-actions__item">
-					<LikeButton
-						key="like-button"
-						siteId={ +post.site_ID }
-						postId={ +post.ID }
-						post={ post }
-						site={ site }
-						fullPost={ fullPost }
-						tagName="div"
-						forceCounter={ true }
-						iconSize={ iconSize }
-						showZeroCount={ false }
-						likeSource={ 'reader' }
-					/>
-				</li>
-			) }
-			{ showMenu && (
-				<li className="reader-post-actions__item">
-					<ReaderPostOptionsMenu
-						className="ignore-click"
-						showFollow={ showMenuFollow }
-						post={ post }
-					/>
-				</li>
-			) }
-		</ul>
+				{ shouldShowLikes( post ) && (
+					<li className="reader-post-actions__item">
+						<LikeButton
+							key="like-button"
+							siteId={ +post.site_ID }
+							postId={ +post.ID }
+							post={ post }
+							site={ site }
+							fullPost={ fullPost }
+							tagName="div"
+							forceCounter={ true }
+							iconSize={ iconSize }
+							showZeroCount={ false }
+							likeSource={ 'reader' }
+						/>
+					</li>
+				) }
+				{ showMenu && (
+					<li className="reader-post-actions__item">
+						<ReaderPostOptionsMenu
+							className="ignore-click"
+							showFollow={ showMenuFollow }
+							post={ post }
+						/>
+					</li>
+				) }
+			</ul>
+		</Fragment>
 	);
 	/* eslint-enable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 };
@@ -143,4 +150,15 @@ ReaderPostActions.defaultProps = {
 	showMenuFollow: true,
 };
 
-export default localize( ReaderPostActions );
+export default connect( ( state, { site, post } ) => {
+	// @todo destructure IDs in here
+	if ( ! site || ! post.ID ) {
+		return {};
+	}
+	const likeCount = countPostLikes( state, site.ID, post.ID );
+	const likes = getPostLikes( state, site.ID, post.ID );
+	return {
+		likeCount,
+		likes,
+	};
+} )( localize( ReaderPostActions ) );
