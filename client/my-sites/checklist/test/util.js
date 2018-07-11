@@ -6,70 +6,62 @@
 import { mergeObjectIntoArrayById } from '../util';
 
 describe( 'mergeObjectIntoArrayById', () => {
-	const arr = [
-		{
-			id: 'jetpack_spam_filtering',
-			completedTitle: "We've automatically turned on spam filtering.",
-			completed: true,
-		},
-		{
-			id: 'jetpack_backups',
-			title: 'Backups & Scanning',
-			description:
-				"Connect your site's server to Jetpack to perform backups, rewinds, and security scans.",
-			completed: true,
-			completedTitle: 'You turned on backups and scanning.',
-			completedButtonText: 'Change',
-			duration: '2 min',
-			url: '/stats/activity/$siteSlug',
-		},
-		{
-			id: 'jetpack_monitor',
-			title: 'Jetpack Monitor',
-			description:
-				"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications.",
-			completedTitle: 'You turned on Jetpack Monitor.',
-			completedButtonText: 'Change',
-			duration: '3 min',
-			tour: 'jetpackMonitoring',
-			url: '/settings/security/$siteSlug',
-		},
-	];
-	const obj = {
-		jetpack_spam_filtering: { completed: true },
-		jetpack_backups: { completed: false },
-		jetpack_monitor: { completed: true },
-	};
+	test( 'should produce a new array', () => {
+		const arr = [ { id: 'a', prop: 'prop' } ];
+		const obj = { a: { newProp: 'newProp' } };
+		expect( mergeObjectIntoArrayById( arr, obj ) ).not.toBe( arr );
+	} );
 
-	test( 'feature-flag server-side-render should enable SSR (default behavior)', () => {
+	test( 'should produce a new object when merging', () => {
+		const arr = [ { id: 'a', prop: 'prop' } ];
+		const obj = { a: { newProp: 'newProp' } };
+
+		const result = mergeObjectIntoArrayById( arr, obj );
+		expect( result[ 0 ] ).not.toBe( arr[ 0 ] );
+		expect( result[ 0 ] ).not.toBe( obj );
+	} );
+
+	test( 'should not replace unchanged objects', () => {
+		const arr = [ { id: 'a', prop: 'prop' }, { id: 'b' } ];
+		const obj = { a: { newProp: 'newProp' } };
+
+		expect( mergeObjectIntoArrayById( arr, obj )[ 1 ] ).toBe( arr[ 1 ] );
+	} );
+
+	test( 'should overwrite existing props', () => {
+		const arr = [ { id: 'a', prop: 'prop' } ];
+		const obj = { a: { prop: 'updated' } };
+
 		expect( mergeObjectIntoArrayById( arr, obj ) ).toEqual( [
 			{
-				id: 'jetpack_spam_filtering',
-				completedTitle: "We've automatically turned on spam filtering.",
-				completed: true,
+				id: 'a',
+				prop: 'updated',
 			},
+		] );
+	} );
+
+	test( 'should keep existing props', () => {
+		const arr = [ { id: 'a', prop: 'prop', untouched: 'stay-the-same' } ];
+		const obj = { a: { prop: 'updated' } };
+
+		expect( mergeObjectIntoArrayById( arr, obj ) ).toEqual( [
 			{
-				id: 'jetpack_backups',
-				title: 'Backups & Scanning',
-				description:
-					"Connect your site's server to Jetpack to perform backups, rewinds, and security scans.",
-				completed: false,
-				completedTitle: 'You turned on backups and scanning.',
-				completedButtonText: 'Change',
-				duration: '2 min',
-				url: '/stats/activity/$siteSlug',
+				id: 'a',
+				prop: 'updated',
+				untouched: 'stay-the-same',
 			},
+		] );
+	} );
+
+	test( 'should add new props', () => {
+		const arr = [ { id: 'a', prop: 'prop' } ];
+		const obj = { a: { newProp: 'add me' } };
+
+		expect( mergeObjectIntoArrayById( arr, obj ) ).toEqual( [
 			{
-				id: 'jetpack_monitor',
-				title: 'Jetpack Monitor',
-				description:
-					"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications.",
-				completed: true,
-				completedTitle: 'You turned on Jetpack Monitor.',
-				completedButtonText: 'Change',
-				duration: '3 min',
-				tour: 'jetpackMonitoring',
-				url: '/settings/security/$siteSlug',
+				id: 'a',
+				prop: 'prop',
+				newProp: 'add me',
 			},
 		] );
 	} );
