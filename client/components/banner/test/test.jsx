@@ -160,6 +160,41 @@ describe( 'Banner basic tests', () => {
 		const comp = shallow( <Banner { ...props } /> );
 		assert.lengthOf( comp.find( 'TrackComponentView' ), 0 );
 	} );
+
+	test( 'should not render with is-jetpack class when isJetpack is undefined', () => {
+		const comp = shallow( <Banner { ...props } description="test" /> );
+		assert.lengthOf( comp.find( '.is-jetpack' ), 0 );
+	} );
+
+	test( 'should render with is-jetpack class when isJetpack is true', () => {
+		const comp = shallow( <Banner { ...props } isJetpack={ true } description="test" /> );
+		assert.lengthOf( comp.find( '.is-jetpack' ), 1 );
+	} );
+
+	test( 'should not render Jetpack logo when isJetpack is undefined', () => {
+		const comp = shallow( <Banner { ...props } description="test" /> );
+		assert.lengthOf( comp.find( 'JetpackLogo' ), 0 );
+	} );
+
+	test( 'should render Jetpack logo when isJetpack is true', () => {
+		const comp = shallow( <Banner { ...props } isJetpack={ true } description="test" /> );
+		assert.lengthOf( comp.find( 'JetpackLogo' ), 1 );
+	} );
+
+	test( 'should render Jetpack logo when isJetpack is true and plan is defined', () => {
+		const comp = shallow(
+			<Banner { ...props } isJetpack={ true } plan={ PLAN_PERSONAL } description="test" />
+		);
+		assert.lengthOf( comp.find( 'JetpackLogo' ), 1 );
+		assert.lengthOf( comp.find( 'PlanIcon' ), 0 );
+	} );
+
+	test( 'should not render plan class name when isJetpack is true', () => {
+		const comp = shallow(
+			<Banner { ...props } isJetpack={ true } plan={ PLAN_PERSONAL } description="test" />
+		);
+		assert.lengthOf( comp.find( '.is-upgrade-personal' ), 0 );
+	} );
 } );
 
 describe( 'Banner should have a class name corresponding to appropriate plan', () => {

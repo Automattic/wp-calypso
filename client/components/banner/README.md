@@ -22,6 +22,7 @@ render() {
 			feature={ FEATURE_ADVANCED_SEO }
 			href="https://wordpress.com/"
 			icon="star"
+			isJetpack={ false }
 			list={ [ 'A feature', 'Another feature' ] }
 			onClick={ someFunction }
 			plan={ PLAN_BUSINESS }
@@ -47,6 +48,7 @@ render() {
 | `feature` | `string` | null | Slug of the feature to highlight in the plans compare card. |
 | `href` | `string` | null | The component target URL. |
 | `icon` | `string` | null | The component icon. |
+| `isJetpack` | `bool` | false | When true, banner is branded with Jetpack colours and if the icon is undefined, with jetpack icon. |
 | `list` | `string` | null | A list of the upgrade features. |
 | `onClick` | `string` | null | A function associated to the click on the whole banner or just the CTA or dismiss button. |
 | `plan` | `string` | null | PlanSlug of the plan that upgrade leads to. |
@@ -58,5 +60,3 @@ render() {
 * If `href` is not provided, `feature` can auto-generate it.
 * If `callToAction` is provided, `href` and `onClick` are not applied to the whole banner, but to the `callToAction` button only.
 * If `dismissPreferenceName` is provided, `href` is only applied if `callToAction` is provided.
-
-
