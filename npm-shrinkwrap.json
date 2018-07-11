@@ -12481,9 +12481,12 @@
       "integrity": "sha512-FTMyFUm2wBcGHnH2eXmz7tC6IwlqQZ6mVZ+6dm6vZ4IQIHjs6FdNsQBuKGPuUUUY6NfJw2PshC08Tn6LzLDOag=="
     },
     "object-path-immutable": {
-      "version": "0.5.3",
-      "resolved": "https://registry.npmjs.org/object-path-immutable/-/object-path-immutable-0.5.3.tgz",
-      "integrity": "sha512-MKKU8uPX+Xa2PlQw7ibOh6Qh8GUxQVd2g/19Ym8bVa04XXSoPebzXoiV+a4298tnDtjDtSwDfcHLjoYmKHSz8Q=="
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/object-path-immutable/-/object-path-immutable-3.0.0.tgz",
+      "integrity": "sha512-T/KtAbX2oNH6gjJdkI7kXxEh9W+Zyt/Cie+XXW8HkzpKFO8bKtI+jOldyGHkxJu0FzGWWYlcbPh3zVh2GY0+qg==",
+      "requires": {
+        "is-plain-object": "^2.0.4"
+      }
     },
     "object-visit": {
       "version": "1.0.1",
