@@ -112,7 +112,7 @@
     "node-sass": "4.9.2",
     "notifications-panel": "2.1.10",
     "npm-run-all": "4.1.3",
-    "object-path-immutable": "0.5.3",
+    "object-path-immutable": "3.0.0",
     "objectpath": "1.2.1",
     "page": "1.8.6",
     "path-browserify": "1.0.0",
