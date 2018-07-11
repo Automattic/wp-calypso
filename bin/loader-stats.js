@@ -53,7 +53,6 @@ filesToLoadPerSection = sectionsToLoad.map(section => {
 
 async function calculateSizes( section ) {
 	const fileSizePromises = section.filesToLoad.map( f => gzipSize.file( f ) );
-
 	const fileSizes = await Promise.all( fileSizePromises );
 
 	const filesWithSizes = _.zipObject( section.filesToLoad, fileSizes );
@@ -79,7 +78,7 @@ async function go() {
 	console.log("Total Load: " + (totalSize / 1000) + "kb");
 }
 
-go();
+go().catch( console.error );
 
 
 
