@@ -278,7 +278,10 @@ class SelectDropdown extends Component {
 	}
 
 	toggleDropdown() {
-		if ( this.props && this.props.disabled ) return;
+		if ( this.props && this.props.disabled ) {
+			return;
+		}
+
 		this.setState( {
 			isOpen: ! this.state.isOpen,
 		} );
