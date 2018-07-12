@@ -1,5 +1,14 @@
 /** @format */
 export default {
+	nudgeAPalooza: {
+		datestamp: '20180711',
+		variations: {
+			sidebarUpsells: 20,
+			control: 80,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	springSale30PercentOff: {
 		datestamp: '20180413',
 		variations: {

@@ -40,6 +40,11 @@ import getSitesItems from 'state/selectors/get-sites-items';
 import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import getRawSite from 'state/selectors/get-raw-site';
 import canCurrentUser from 'state/selectors/can-current-user';
+import { transferStates } from '../automated-transfer/constants';
+import isSiteAutomatedTransfer from '../selectors/is-site-automated-transfer';
+import hasSitePendingAutomatedTransfer from '../selectors/has-site-pending-automated-transfer';
+import { getAutomatedTransferStatus } from '../automated-transfer/selectors';
+import { getSelectedSiteId } from '../ui/selectors';
 
 /**
  * Returns the slug for a site, or null if the site is unknown.
@@ -330,6 +335,30 @@ export function isSitePreviewable( state, siteId ) {
 
 	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
 	return !! unmappedUrl && isHttps( unmappedUrl );
+}
+
+/**
+ * Returns true if current user can see and use Store option in menu
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canCurrentUserUseStore( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const isSiteAT = !! isSiteAutomatedTransfer( state, siteId );
+
+	const hasSitePendingAT = hasSitePendingAutomatedTransfer( state, siteId );
+	const transferStatus = getAutomatedTransferStatus( state, siteId );
+	const siteHasBackgroundTransfer = hasSitePendingAT && transferStatus !== transferStates.ERROR;
+
+	return (
+		( canUserManageOptions && isSiteAT ) ||
+		( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
+	);
 }
 
 /**

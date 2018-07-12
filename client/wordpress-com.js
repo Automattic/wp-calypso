@@ -269,6 +269,14 @@ const sections = [
 		module: 'mailing-lists',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'feature-upsell',
+		paths: [ '/feature' ],
+		module: 'my-sites/feature-upsell',
+		group: 'sites',
+		secondary: true,
+		css: 'feature-upsell',
+	},
 ];
 
 sections.push( {

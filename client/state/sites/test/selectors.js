@@ -36,6 +36,7 @@ import {
 	getSitePostsPage,
 	getSiteFrontPageType,
 	hasStaticFrontPage,
+	canCurrentUserUseStore,
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
@@ -3953,6 +3954,58 @@ describe( 'selectors', () => {
 				wpcom_url: 'unmapped-url.wordpress.com',
 				URL: 'https://unmapped-url.wordpress.com',
 			} );
+		} );
+	} );
+
+	describe( 'canCurrentUserUseStore()', () => {
+		const createState = (
+			manage_options,
+			is_automated_transfer,
+			has_pending_automated_transfer
+		) => ( {
+			ui: {
+				selectedSiteId: 1,
+			},
+			currentUser: {
+				capabilities: {
+					1: {
+						manage_options,
+					},
+				},
+			},
+			sites: {
+				items: {
+					1: {
+						options: {
+							is_automated_transfer,
+							has_pending_automated_transfer,
+						},
+					},
+				},
+			},
+		} );
+
+		test( 'should return true if site is AT and user can manage it', () => {
+			expect( canCurrentUserUseStore( createState( true, true, false ) ) ).toBe( true );
+		} );
+
+		test( 'should return false if site is not AT and user can manage it', () => {
+			expect( canCurrentUserUseStore( createState( true, false, false ) ) ).toBe( false );
+		} );
+
+		test( "should return false if site is AT and user can't manage it", () => {
+			expect( canCurrentUserUseStore( createState( false, true, false ) ) ).toBe( false );
+		} );
+
+		test( "should return true if user can't manage a site, but it has background transfer and atomic store flow is enabled", () => {
+			const oldEnabled = config.isEnabled;
+			config.isEnabled = () => true;
+			expect( canCurrentUserUseStore( createState( false, false, true ) ) ).toBe( true );
+			config.isEnabled = oldEnabled;
+		} );
+
+		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
+			expect( canCurrentUserUseStore( createState( false, false, true ) ) ).toBe( false );
 		} );
 	} );
 } );
