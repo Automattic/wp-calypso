@@ -362,6 +362,22 @@ export function canCurrentUserUseStore( state, siteId = null ) {
 }
 
 /**
+ * Returns true if current user can see and use WordAds option in menu
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canCurrentUserUseAds( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const site = getSite( state, siteId );
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	return site && site.options.wordads && canUserManageOptions;
+}
+
+/**
  * Returns a site option for a site
  *
  * @param  {Object}  state  Global state tree

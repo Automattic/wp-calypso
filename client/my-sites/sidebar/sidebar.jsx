@@ -47,6 +47,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackSite,
 	isSitePreviewable,
+	canCurrentUserUseAds,
 	canCurrentUserUseStore,
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
@@ -172,23 +173,49 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	ads() {
-		const { path, site, canUserManageOptions } = this.props;
-		const adsLink = '/ads/earnings' + this.props.siteSuffix;
-		const canManageAds = site && site.options.wordads && canUserManageOptions;
+	trackAdsUpsellClick = () => {
+		this.trackMenuItemClick( 'ads' );
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'store_ads',
+		} );
+		this.onNavigate();
+	};
 
-		return (
-			canManageAds && (
+	ads() {
+		const { path, canUserManageOptions, canUserUseAds } = this.props;
+
+		if ( canUserUseAds ) {
+			return (
 				<SidebarItem
 					label={ this.props.isJetpack ? 'Ads' : 'WordAds' }
 					selected={ itemLinkMatches( '/ads', path ) }
-					link={ adsLink }
+					link={ '/ads/earnings' + this.props.siteSuffix }
 					onNavigate={ this.trackAdsClick }
 					icon="speaker"
 					tipTarget="wordads"
 				/>
-			)
-		);
+			);
+		}
+
+		if (
+			! this.props.isJetpack &&
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			canUserManageOptions &&
+			abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
+		) {
+			return (
+				<SidebarItem
+					label={ 'WordAds' }
+					selected={ itemLinkMatches( '/feature/ads', path ) }
+					link={ '/feature/ads' + this.props.siteSuffix }
+					onNavigate={ this.trackAdsUpsellClick }
+					icon="speaker"
+					tipTarget="wordads"
+				/>
+			);
+		}
+
+		return null;
 	}
 
 	trackCustomizeClick = () => {
@@ -750,6 +777,7 @@ function mapStateToProps( state ) {
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
+		canUserUseAds: canCurrentUserUseAds( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),

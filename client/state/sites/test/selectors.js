@@ -36,6 +36,7 @@ import {
 	getSitePostsPage,
 	getSiteFrontPageType,
 	hasStaticFrontPage,
+	canCurrentUserUseAds,
 	canCurrentUserUseStore,
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
@@ -4006,6 +4007,46 @@ describe( 'selectors', () => {
 
 		test( "should return false if user can't manage a site, but it has background transfer and atomic store flow is disabled", () => {
 			expect( canCurrentUserUseStore( createState( false, false, true ) ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'canCurrentUserUseAds()', () => {
+		const createState = ( manage_options, wordads ) => ( {
+			ui: {
+				selectedSiteId: 1,
+			},
+			currentUser: {
+				capabilities: {
+					1: {
+						manage_options,
+					},
+				},
+			},
+			sites: {
+				items: {
+					1: {
+						options: {
+							wordads,
+						},
+					},
+				},
+			},
+		} );
+
+		test( 'should return true if site has WordAds user can manage it', () => {
+			expect( canCurrentUserUseAds( createState( true, true ) ) ).toBe( true );
+		} );
+
+		test( "should return false if site doesn't have WordAds and user can manage it", () => {
+			expect( canCurrentUserUseAds( createState( true, false ) ) ).toBe( false );
+		} );
+
+		test( 'should return false if site has WordAds user can not manage it', () => {
+			expect( canCurrentUserUseAds( createState( false, true ) ) ).toBe( false );
+		} );
+
+		test( 'should return false if site doesn\t have WordAds and user can not manage it', () => {
+			expect( canCurrentUserUseAds( createState( false, false ) ) ).toBe( false );
 		} );
 	} );
 } );
