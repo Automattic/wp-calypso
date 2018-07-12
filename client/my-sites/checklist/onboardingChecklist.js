@@ -1,7 +1,6 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 import page from 'page';
 import { isDesktop } from 'lib/viewport';
