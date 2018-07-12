@@ -1,14 +1,25 @@
 /** @format */
 
 import activeDiscounts from './active-discounts';
-// import debugFactory from 'debug';
-// const debug = debugFactory( 'calypso:acitve-discounts' );
 
-// export function getFirstActiveDiscount() {
-// 	console.log( 'TRAVIS' );
-// 	console.log( activeDiscounts );
-// 	debug( 'TESTING THIS!' );
-// 	return activeDiscounts;
-// }
+function getDiscountByName( discountName ) {
+	const discount = activeDiscounts.find( function( discount ) {
+		if ( discountName !== discount.name ) {
+			return false;
+		}
 
-export { activeDiscounts };
+		const now = new Date();
+		if (
+			( discount.startsAt && discount.startsAt > now ) ||
+			( discount.endsAt && discount.endsAt < now )
+		) {
+			return false;
+		}
+
+		return true;
+	} );
+
+	return typeof discount !== 'undefined' ? discount : false;
+}
+
+export { activeDiscounts, getDiscountByName };
