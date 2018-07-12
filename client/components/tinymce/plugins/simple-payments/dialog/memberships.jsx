@@ -148,13 +148,13 @@ class MembershipsDialog extends Component {
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		// When transitioning from hidden to visible, show and initialize the form
-		if ( nextProps.showDialog && ! this.props.showDialog ) {
-			if ( nextProps.editPaymentId ) {
+		if ( this.props.showDialog && ! prevProps.showDialog ) {
+			if ( this.props.editPaymentId ) {
 				// Explicitly ordered to edit a particular button
-				this.showButtonForm( nextProps.editPaymentId );
-			} else if ( isEmptyArray( nextProps.paymentButtons ) ) {
+				this.showButtonForm( this.props.editPaymentId );
+			} else if ( isEmptyArray( this.props.paymentButtons ) ) {
 				// If the button list is loaded and empty, show the "Add New" form
 				this.showButtonForm( null );
 			} else {
@@ -164,7 +164,7 @@ class MembershipsDialog extends Component {
 		}
 
 		// If the list has finished loading and is empty, switch from list to the "Add New" form
-		if ( this.props.paymentButtons === null && isEmptyArray( nextProps.paymentButtons ) ) {
+		if ( prevProps.paymentButtons === null && isEmptyArray( this.props.paymentButtons ) ) {
 			this.showButtonForm( null );
 		}
 	}
