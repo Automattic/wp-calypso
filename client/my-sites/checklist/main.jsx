@@ -22,13 +22,10 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { createNotice } from 'state/notices/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 
 class ChecklistMain extends PureComponent {
 	getHeaderTitle( displayMode ) {
@@ -84,7 +81,7 @@ class ChecklistMain extends PureComponent {
 					<ChecklistShowShare
 						className="checklist__share"
 						siteSlug={ this.props.siteSlug }
-						recordTracksEvent={ this.props.track }
+						recordTracksEvent={ this.props.recordTracksEvent }
 					/>
 				</Fragment>
 			);
@@ -170,14 +167,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = {
-	track: recordTracksEvent,
-	notify: createNotice,
-	requestTour: requestGuidedTour,
-	update: requestSiteChecklistTaskUpdate,
-};
-
 export default connect(
 	mapStateToProps,
-	mapDispatchToProps
+	{ recordTracksEvent }
 )( localize( ChecklistMain ) );
