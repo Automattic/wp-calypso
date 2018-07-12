@@ -15,9 +15,7 @@ import { requestProducts } from 'state/memberships/product-list/actions';
 
 class QueryMemberships extends Component {
 	static propTypes = {
-		productId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
-		requestProduct: PropTypes.func,
 		requestProducts: PropTypes.func,
 	};
 
@@ -25,29 +23,16 @@ class QueryMemberships extends Component {
 		productId: null,
 	};
 
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId || nextProps.productId !== this.props.productId ) {
-			this.request( nextProps );
-		}
-	}
-
-	request( props ) {
-		const { siteId, productId } = props;
-
-		if ( ! siteId ) {
+	componentDidMount() {
+		if ( this.props.requesting ) {
 			return;
 		}
 
-		// Products are indexed from 1.
-		if ( productId === 0 ) {
+		if ( ! this.props.siteId ) {
 			return;
 		}
 
-		props.requestProducts( siteId );
+		this.props.requestProducts( this.props.siteId );
 	}
 
 	render() {
