@@ -31,7 +31,7 @@ export const navItems = {
 	wordads: {
 		label: translate( 'WordAds' ),
 		path: '/stats/wordads',
-		showIntervals: false,
+		showIntervals: true,
 	},
 	googleMyBusiness: {
 		label: translate( 'Google My Business' ),

@@ -24,6 +24,7 @@ import StatsSite from './site';
 import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
+import WordAds from './wordads';
 import { isDesktop } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -100,6 +101,30 @@ function getSiteFilters( siteId ) {
 			title: i18n.translate( 'Years' ),
 			path: '/stats/year/' + siteId,
 			id: 'stats-year',
+			period: 'year',
+		},
+		{
+			title: i18n.translate( 'WordAds - Days' ),
+			path: '/stats/wordads/day/' + siteId,
+			id: 'stats-wordads-day',
+			period: 'day',
+		},
+		{
+			title: i18n.translate( 'WordAds - Weeks' ),
+			path: '/stats/wordads/week/' + siteId,
+			id: 'stats-wordads-week',
+			period: 'week',
+		},
+		{
+			title: i18n.translate( 'WordAds - Months' ),
+			path: '/stats/wordads/month/' + siteId,
+			id: 'stats-wordads-month',
+			period: 'month',
+		},
+		{
+			title: i18n.translate( 'WordAds - Years' ),
+			path: '/stats/wordads/year/' + siteId,
+			id: 'stats-wordads-year',
 			period: 'year',
 		},
 	];
@@ -202,7 +227,8 @@ export default {
 				context.pathname === filter.path ||
 				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
 		);
-
+		console.log( filters );
+		console.log( context );
 		if ( ! activeFilter ) {
 			return next();
 		}
@@ -384,31 +410,56 @@ export default {
 	},
 
 	wordAds: function( context, next ) {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const siteHasWpcomFreePlan = isWpComFreePlan(
-			get( getCurrentPlan( state, siteId ), 'productSlug' )
-		);
-		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
-			? context.query.startDate
-			: undefined;
+		const {
+			params: { site: givenSiteId },
+			query: queryOptions,
+			store,
+		} = context;
 
-		if ( siteId && siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
-			page.redirect( '/broken' );
+		const filters = getSiteFilters( givenSiteId );
+		const state = store.getState();
+		const currentSite = getSite( state, givenSiteId );
+		const siteId = currentSite ? currentSite.ID || 0 : 0;
+
+		const activeFilter = find(
+			filters,
+			filter =>
+				context.pathname === filter.path ||
+				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
+		);
+
+		if ( ! activeFilter ) {
 			return next();
 		}
 
-		const filter = getActivityLogFilter( state, siteId );
-		const queryFilter = queryToFilterState( context.query );
+		const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
+		const momentSiteZone = i18n.moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
+		const isValidStartDate =
+			queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid();
 
-		if ( ! isEqual( filter, queryFilter ) ) {
-			context.store.dispatch( {
-				...setFilter( siteId, queryFilter ),
-				meta: { skipUrlUpdate: true },
-			} );
-		}
+		const date = isValidStartDate
+			? i18n.moment( queryOptions.startDate ).locale( 'en' )
+			: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
 
-		context.primary = <span>Test for site { siteId }</span>;
+		const parsedPeriod = isValidStartDate
+			? parseInt( getNumPeriodAgo( momentSiteZone, date, activeFilter.period ), 10 )
+			: 0;
+
+		// eslint-disable-next-line no-nested-ternary
+		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
+
+		analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
+		recordPlaceholdersTiming();
+
+		context.primary = (
+			<WordAds
+				path={ context.pathname }
+				date={ date }
+				chartTab={ queryOptions.tab || 'ads-shown' }
+				context={ context }
+				period={ rangeOfPeriod( activeFilter.period, date ) }
+			/>
+		);
 
 		next();
 	},
