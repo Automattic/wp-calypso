@@ -48,10 +48,16 @@ export default function safeImageUrl( url ) {
 		return url;
 	}
 
-	const { hostname } = parseUrl( url, false, true );
+	const { hostname, query } = parseUrl( url, false, true );
+
 	if ( REGEXP_A8C_HOST.test( hostname ) ) {
 		// Safely promote Automattic domains to HTTPS
 		return url.replace( /^http:/, 'https:' );
+	}
+
+	// If there's a query string, bail out because Photon doesn't support them on external URLs
+	if ( query && query.length > 0 ) {
+		return null;
 	}
 
 	return photon( url );
