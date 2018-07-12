@@ -1768,7 +1768,7 @@
         "@babel/traverse": "7.0.0-beta.44",
         "@babel/types": "7.0.0-beta.44",
         "babylon": "7.0.0-beta.44",
-        "eslint-scope": "~3.7.1",
+        "eslint-scope": "3.7.1",
         "eslint-visitor-keys": "^1.0.0"
       }
     },
@@ -5739,7 +5739,7 @@
         "cross-spawn": "^5.1.0",
         "debug": "^3.1.0",
         "doctrine": "^2.1.0",
-        "eslint-scope": "^3.7.1",
+        "eslint-scope": "3.7.1",
         "eslint-visitor-keys": "^1.0.0",
         "espree": "^3.5.4",
         "esquery": "^1.0.0",
@@ -6079,9 +6079,9 @@
       }
     },
     "eslint-scope": {
-      "version": "3.7.2",
-      "resolved": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-3.7.2.tgz",
-      "integrity": "sha512-tava3nCx6wgTGpAECrAWSdS638CQBNgfQbJ4Mo1SmFL3TkFjM3G43WIn2zweFIkOfcRKzQwjPE5o2yFdQqwUWw==",
+      "version": "3.7.1",
+      "resolved": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-3.7.1.tgz",
+      "integrity": "sha1-PWPD7f2gLgbgGkUq2IyqzHzctug=",
       "requires": {
         "esrecurse": "^4.1.0",
         "estraverse": "^4.1.1"
@@ -17936,7 +17936,7 @@
         "ajv-keywords": "^3.1.0",
         "chrome-trace-event": "^1.0.0",
         "enhanced-resolve": "^4.1.0",
-        "eslint-scope": "^3.7.1",
+        "eslint-scope": "3.7.1",
         "json-parse-better-errors": "^1.0.2",
         "loader-runner": "^2.3.0",
         "loader-utils": "^1.1.0",
