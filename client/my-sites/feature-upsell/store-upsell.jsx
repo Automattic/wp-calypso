@@ -16,7 +16,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PurchaseDetail from 'components/purchase-detail';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getPlan, getPlanPath } from 'lib/plans';
+import { getPlan, getPlanPath, isFreePlan } from 'lib/plans';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import page from 'page';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -46,7 +46,7 @@ class StoreUpsellComponent extends Component {
 	};
 
 	render() {
-		const { price, loadingPrice } = this.props;
+		const { price, loadingPrice, currentSitePlanSlug } = this.props;
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell feature-upsell-store">
 				{ ! price && (
@@ -112,15 +112,28 @@ class StoreUpsellComponent extends Component {
 							description={ 'Start bringing traffic immediately with Google AdWords.' }
 						/>
 					</div>
-					<div className="product-purchase-features-list__item">
-						<PurchaseDetail
-							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
-							title={ 'Custom site address' }
-							description={
-								".com, .shop, or any other dot - it's on us. You choose an address and we pay for it."
-							}
-						/>
-					</div>
+					{ isFreePlan( currentSitePlanSlug ) ? (
+						<div className="product-purchase-features-list__item">
+							<PurchaseDetail
+								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+								title={ 'Custom site address' }
+								description={
+									".com, .shop, or any other dot - it's on us. You choose an address and we pay for it."
+								}
+							/>
+						</div>
+					) : (
+						<div className="product-purchase-features-list__item">
+							<PurchaseDetail
+								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+								title={ 'Install Plugins' }
+								description={
+									'Plugins are like smartphone apps for WordPress. They provide features like: ' +
+									'SEO and marketing, lead generation, appointment booking, and much, much more.'
+								}
+							/>
+						</div>
+					) }
 					<div className="product-purchase-features-list__item">
 						<PurchaseDetail
 							icon={ <img alt="" src="/calypso/images/illustrations/ads-removed.svg" /> }
@@ -131,13 +144,23 @@ class StoreUpsellComponent extends Component {
 						/>
 					</div>
 					<div className="product-purchase-features-list__item">
-						<PurchaseDetail
-							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
-							title={ 'Even more!' }
-							description={
-								'Install plugins, start using advanced SEO features, and even more. We give you all the tools to make your store successful.'
-							}
-						/>
+						{ isFreePlan( currentSitePlanSlug ) ? (
+							<PurchaseDetail
+								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+								title={ 'Even more!' }
+								description={
+									'Install plugins, start using advanced SEO features, and even more. We give you all the tools to make your store successful.'
+								}
+							/>
+						) : (
+							<PurchaseDetail
+								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+								title={ 'Even more!' }
+								description={
+									'Upload your own themes, start using advanced SEO features, and even more. We give you all the tools to make your store successful.'
+								}
+							/>
+						) }
 					</div>
 				</div>
 			</div>
@@ -184,6 +207,7 @@ const mapStateToProps = state => {
 		price,
 		selectedSite,
 		currentSitePlan,
+		currentSitePlanSlug: currentSitePlan ? currentSitePlan.productSlug : '',
 		loadingPrice:
 			! price &&
 			( isRequestingPlans( state ) ||
