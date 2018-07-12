@@ -26,7 +26,7 @@ export const tasks = [
 		id: 'blogname_set',
 		title: translate( 'Give your site a name' ),
 		description: translate( 'Give your site a descriptive name to entice visitors.' ),
-		duration: translate( '%d min', '%d min', { count: 1, args: [ 1 ] } ),
+		duration: translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ),
 		completedTitle: translate( 'You updated your site title' ),
 		completedButtonText: translate( 'Edit' ),
 		url: '/settings/general/$siteSlug',
@@ -39,7 +39,7 @@ export const tasks = [
 		description: translate(
 			'Help people recognize your site in browser tabs — just like the WordPress.com W!'
 		),
-		duration: translate( '%d min', '%d min', { count: 1, args: [ 1 ] } ),
+		duration: translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ),
 		completedTitle: translate( 'You uploaded a site icon' ),
 		completedButtonText: translate( 'Change' ),
 		url: '/settings/general/$siteSlug',
@@ -50,7 +50,7 @@ export const tasks = [
 		id: 'blogdescription_set',
 		title: translate( 'Create a tagline' ),
 		description: translate( 'Pique readers’ interest with a little more detail about your site.' ),
-		duration: translate( '%d min', '%d min', { count: 2, args: [ 2 ] } ),
+		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
 		completedTitle: translate( 'You created a tagline' ),
 		completedButtonText: translate( 'Change' ),
 		url: '/settings/general/$siteSlug',
@@ -63,7 +63,7 @@ export const tasks = [
 		description: translate(
 			'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.'
 		),
-		duration: translate( '%d min', '%d min', { count: 2, args: [ 2 ] } ),
+		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
 		completedTitle: translate( 'You uploaded a profile picture' ),
 		completedButtonText: translate( 'Change' ),
 		url: '/me',
@@ -76,7 +76,7 @@ export const tasks = [
 		description: translate(
 			'Encourage visitors to get in touch — a website is for connecting with people.'
 		),
-		duration: translate( '%d min', '%d min', { count: 2, args: [ 2 ] } ),
+		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
 		completedTitle: translate( 'You updated your Contact page' ),
 		completedButtonText: translate( 'Edit' ),
 		image: '/calypso/images/stats/tasks/contact.svg',
@@ -87,7 +87,7 @@ export const tasks = [
 		id: 'post_published',
 		title: translate( 'Publish your first blog post' ),
 		description: translate( 'Introduce yourself to the world! That’s why you’re here.' ),
-		duration: translate( '%d min', '%d min', { count: 10, args: [ 10 ] } ),
+		duration: translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ),
 		completedTitle: translate( 'You published your first blog post' ),
 		completedButtonText: translate( 'Edit' ),
 		url: '/post/$siteSlug',
