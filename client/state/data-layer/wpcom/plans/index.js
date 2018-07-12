@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { registerHandlers } from 'state/data-layer/handler-loading';
+import { registerHandlers } from 'state/data-layer/handler-registry';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { PLANS_REQUEST } from 'state/action-types';

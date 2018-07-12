@@ -9,7 +9,7 @@ import { isEmpty, get } from 'lodash';
  * Internal dependencies
  */
 import { errorNotice } from 'state/notices/actions';
-import { registerHandlers } from 'state/data-layer/handler-loading';
+import { registerHandlers } from 'state/data-layer/handler-registry';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';

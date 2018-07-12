@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
-import { registerHandlers } from 'state/data-layer/handler-loading';
+import { registerHandlers } from 'state/data-layer/handler-registry';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';

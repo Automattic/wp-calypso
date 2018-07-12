@@ -4,20 +4,18 @@
  * Internal dependencies
  */
 import { bypassDataLayer } from './utils';
-import { getHandlers, registerHandlers } from 'state/data-layer/handler-loading';
+import { getHandlers, registerHandlers } from 'state/data-layer/handler-registry';
 import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
 import httpHandlers from 'state/http';
 import thirdPartyHandlers from './third-party';
 import wpcomHandlers from './wpcom';
 
-registerHandlers(
-	[ 'httpData', httpData ],
-	[ 'httpHandlers', httpHandlers ],
-	[ 'wpcomHttpHandlers', wpcomHttpHandlers ],
-	[ 'thirdPartyHandlers', thirdPartyHandlers ],
-	[ 'wpcomHandlers', wpcomHandlers ]
-);
+registerHandlers( 'httpData', httpData );
+registerHandlers( 'httpHandlers', httpHandlers );
+registerHandlers( 'wpcomHttpHandlers', wpcomHttpHandlers );
+registerHandlers( 'thirdPartyHandlers', thirdPartyHandlers );
+registerHandlers( 'wpcomHandlers', wpcomHandlers );
 
 const shouldNext = action => {
 	const meta = action.meta;

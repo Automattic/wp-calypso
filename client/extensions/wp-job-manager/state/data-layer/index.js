@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import { registerHandlers } from 'state/data-layer/handler-loading';
+import { registerHandlers } from 'state/data-layer/handler-registry';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import settings from './settings';
 import setup from './setup';

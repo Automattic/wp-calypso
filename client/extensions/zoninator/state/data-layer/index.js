@@ -5,7 +5,7 @@
  */
 
 import { mergeHandlers } from 'state/action-watchers/utils';
-import { registerHandlers } from 'state/data-layer/handler-loading';
+import { registerHandlers } from 'state/data-layer/handler-registry';
 import feeds from './feeds';
 import locks from './locks';
 import zones from './zones';
