@@ -91,16 +91,13 @@ const setUnknownState = ( { siteId }, error ) => {
 	);
 };
 
-registerHandlers( [
-	'state/data-layer/wpcom/sites/rewind',
-	{
-		[ REWIND_STATE_REQUEST ]: [
-			dispatchRequestEx( {
-				fetch: fetchRewindState,
-				onSuccess: updateRewindState,
-				onError: setUnknownState,
-				fromApi: makeJsonSchemaParser( rewindStatus, transformApi ),
-			} ),
-		],
-	},
-] );
+registerHandlers( 'state/data-layer/wpcom/sites/rewind', {
+	[ REWIND_STATE_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch: fetchRewindState,
+			onSuccess: updateRewindState,
+			onError: setUnknownState,
+			fromApi: makeJsonSchemaParser( rewindStatus, transformApi ),
+		} ),
+	],
+} );

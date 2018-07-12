@@ -13,16 +13,17 @@ const registeredNames = new Set();
 /**
  * Loads action handlers into the data layer
  *
- * @param {Array<[string, Object]>} requires pairs of names and handler sets
- * @returns {*} please ignore return value
+ * @param {string} id name of handler set
+ * @param {Object<string, Array<Function>>} handlers set of handlers to inject
  */
-export const registerHandlers = ( ...requires ) =>
-	requires
-		.filter( ( [ id /* handler */ ] ) => ! registeredNames.has( id ) )
-		.forEach( ( [ id, handlers ] ) => {
-			registeredNames.add( id );
-			registeredHandlers = mergeHandlers( registeredHandlers, handlers );
-		} );
+export const registerHandlers = ( id, handlers ) => {
+	if ( registeredNames.has( id ) ) {
+		return;
+	}
+
+	registeredNames.add( id );
+	registeredHandlers = mergeHandlers( registeredHandlers, handlers );
+};
 
 /**
  * Returns list of handlers for given action type else undefined

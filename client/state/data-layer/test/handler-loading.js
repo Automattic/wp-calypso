@@ -12,20 +12,20 @@ describe( 'handler loading', () => {
 	} );
 
 	test( 'should return handlers when loaded by type', () => {
-		registerHandlers( [ 'birthday', { BIRTHDAY: [ () => 5 ] } ] );
+		registerHandlers( 'birthday', { BIRTHDAY: [ () => 5 ] } );
 
 		expect( getHandlers( 'BIRTHDAY' )[ 0 ]() ).toEqual( 5 );
 	} );
 
 	test( 'should not return anything if no handlers associated to action type', () => {
-		registerHandlers( [ 'birthday', { BIRTHDAY: [ () => 5 ] } ] );
+		registerHandlers( 'birthday', { BIRTHDAY: [ () => 5 ] } );
 
 		expect( getHandlers( 'SHAMROCK' ) ).toBeFalsy();
 	} );
 
 	test( 'should only load handler sets once', () => {
-		registerHandlers( [ 'birthday', { BIRTHDAY: [ () => 5 ] } ] );
-		registerHandlers( [ 'birthday', { BIRTHDAY: [ () => 7 ] } ] );
+		registerHandlers( 'birthday', { BIRTHDAY: [ () => 5 ] } );
+		registerHandlers( 'birthday', { BIRTHDAY: [ () => 7 ] } );
 
 		const handlers = getHandlers( 'BIRTHDAY' );
 
@@ -34,8 +34,8 @@ describe( 'handler loading', () => {
 	} );
 
 	test( 'should merge lists for different handler sets', () => {
-		registerHandlers( [ 'birthday', { BIRTHDAY: [ () => 5 ] } ] );
-		registerHandlers( [ 'shamrock', { BIRTHDAY: [ () => 7 ] } ] );
+		registerHandlers( 'birthday', { BIRTHDAY: [ () => 5 ] } );
+		registerHandlers( 'shamrock', { BIRTHDAY: [ () => 7 ] } );
 
 		const handlers = getHandlers( 'BIRTHDAY' );
 

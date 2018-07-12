@@ -16,7 +16,7 @@ const debug = debugFactory( 'zoninator:errors' );
 const handlers = mergeHandlers( feeds, locks, zones );
 
 export default function installActionHandlers() {
-	const added = registerHandlers( [ 'zoninator', handlers ] );
+	const added = registerHandlers( 'zoninator', handlers );
 
 	if ( ! added ) {
 		debug( 'Failed to add action handlers for "zoninator.zones"' );

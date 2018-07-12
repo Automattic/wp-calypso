@@ -60,7 +60,7 @@ const handlers = mergeHandlers(
 );
 
 export default function installActionHandlers() {
-	const added = registerHandlers( [ 'woocommerce', handlers ] );
+	const added = registerHandlers( 'woocommerce', handlers );
 	if ( ! added ) {
 		debug( 'Failed to add action handlers for "woocommerce"' );
 	}

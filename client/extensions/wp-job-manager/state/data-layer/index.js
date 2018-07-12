@@ -13,7 +13,7 @@ const debug = debugFactory( 'wp-job-manager:errors' );
 const handlers = mergeHandlers( settings, setup );
 
 export default function installActionHandlers() {
-	const added = registerHandlers( [ 'wp-job-manager', handlers ] );
+	const added = registerHandlers( 'wp-job-manager', handlers );
 
 	if ( ! added ) {
 		debug( 'Failed to add action handlers for "wp-job-manager"' );

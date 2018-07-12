@@ -61,9 +61,6 @@ export const dispatchPlansRequest = dispatchRequestEx( {
 	onError: receiveError,
 } );
 
-registerHandlers( [
-	'state/data-layer/wpcom/plans',
-	{
-		[ PLANS_REQUEST ]: [ dispatchPlansRequest ],
-	},
-] );
+registerHandlers( 'state/data-layer/wpcom/plans', {
+	[ PLANS_REQUEST ]: [ dispatchPlansRequest ],
+} );
