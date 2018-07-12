@@ -94,6 +94,16 @@ export const tasks = [
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
 	},
+	{
+		id: 'custom_domain_registered',
+		title: 'Register a custom domain',
+		description:
+			'Memorable domain names make it easy for people to remember your address — and search engines love ’em.',
+		duration: '2 min',
+		completedTitle: 'You registered a custom domain',
+		completedButtonText: 'Edit',
+		url: '/domains/add/$siteSlug',
+	},
 ];
 
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
