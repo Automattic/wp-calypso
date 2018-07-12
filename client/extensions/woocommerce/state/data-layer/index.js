@@ -5,7 +5,7 @@
  */
 
 import { mergeHandlers } from 'state/action-watchers/utils';
-import { addHandlers } from 'state/data-layer/extensions-middleware';
+import { registerHandlers } from 'state/data-layer/handler-loading';
 import actionList from './action-list';
 import coupons from '../sites/coupons/handlers';
 import customers from './customers';
@@ -60,7 +60,7 @@ const handlers = mergeHandlers(
 );
 
 export default function installActionHandlers() {
-	const added = addHandlers( 'woocommerce', handlers );
+	const added = registerHandlers( [ 'woocommerce', handlers ] );
 	if ( ! added ) {
 		debug( 'Failed to add action handlers for "woocommerce"' );
 	}
