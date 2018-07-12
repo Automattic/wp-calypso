@@ -14,7 +14,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import Card from 'components/card';
-import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
 
 function GoogleMyBusinessLocationPlaceholder( { isCompact } ) {
 	const classes = classNames( 'gmb-location', 'is-loading', { 'is-compact': isCompact } );
@@ -22,9 +21,7 @@ function GoogleMyBusinessLocationPlaceholder( { isCompact } ) {
 	return (
 		<Card className={ classes }>
 			<div className="gmb-location__content">
-				<div className="gmb-location__logo">
-					<GoogleMyBusinessLogo height="30" width="30" />
-				</div>
+				<Gridicon icon="institution" height="60px" width="60px" />
 				<div className="gmb-location__description">
 					<div className="gmb-location__name" />
 					<div className="gmb-location__address" />
@@ -53,9 +50,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 						src={ location.picture }
 					/>
 				) : (
-					<div className="gmb-location__logo">
-						<GoogleMyBusinessLogo height="30" width="30" />
-					</div>
+					<Gridicon icon="institution" height="60px" width="60px" />
 				) }
 
 				<div className="gmb-location__description">

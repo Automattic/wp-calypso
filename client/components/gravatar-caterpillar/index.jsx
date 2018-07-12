@@ -27,7 +27,7 @@ class GravatarCaterpillar extends React.Component {
 
 		// Only display authors with a gravatar, and only display each author once
 		const displayedUsers = takeRight(
-			filter( uniqBy( users, 'email' ), 'avatar_URL' ),
+			filter( uniqBy( users, 'avatar_URL' ), 'avatar_URL' ),
 			maxGravatarsToDisplay
 		);
 		const displayedUsersCount = size( displayedUsers );

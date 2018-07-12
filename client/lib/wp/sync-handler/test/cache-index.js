@@ -4,7 +4,6 @@
  */
 import { expect } from 'chai';
 import localforageMock from 'localforage';
-import ms from 'ms';
 
 /**
  * Internal dependencies
@@ -19,6 +18,8 @@ jest.mock( 'localforage', () => require( './mocks/localforage' ) );
 const localData = () => localforageMock.getLocalData();
 const setLocalData = data => localforageMock.setLocalData( data );
 const clearLocal = () => setLocalData( {} );
+
+const ONE_DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 describe( 'cache-index', () => {
 	beforeEach( clearLocal ); // also do inside nested blocks with >1 test
@@ -91,7 +92,7 @@ describe( 'cache-index', () => {
 				postListWithSearchLocalRecord,
 			} = testData;
 			const now = Date.now();
-			const yesterday = now - ms( '1 day' );
+			const yesterday = now - ONE_DAY_IN_MILLISECONDS;
 			setLocalData( {
 				[ postListKey ]: postListLocalRecord,
 				[ postListWithSearchKey ]: postListWithSearchLocalRecord,
@@ -100,7 +101,7 @@ describe( 'cache-index', () => {
 					{ key: postListWithSearchKey, timestamp: yesterday },
 				],
 			} );
-			return cacheIndex.pruneStaleRecords( '1 hour' ).then( () => {
+			return cacheIndex.pruneStaleRecords( 1000 * 60 * 60 ).then( () => {
 				const freshData = localData();
 				const currentIndex = freshData[ RECORDS_LIST_KEY ];
 				expect( currentIndex ).to.eql( [ { key: postListKey, timestamp: now } ] );

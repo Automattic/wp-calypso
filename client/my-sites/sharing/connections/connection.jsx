@@ -50,6 +50,9 @@ class SharingConnection extends Component {
 		translate: identity,
 		userHasCaps: false,
 		userId: 0,
+		defaultServiceIcon: {
+			google_my_business: 'institution',
+		},
 	};
 
 	disconnect = () => {
@@ -113,6 +116,12 @@ class SharingConnection extends Component {
 					'sharing-connection__account-avatar is-fallback ' + this.props.connection.service
 				}
 			>
+				{ this.props.defaultServiceIcon[ this.props.connection.service ] && (
+					<Gridicon
+						icon={ this.props.defaultServiceIcon[ this.props.connection.service ] }
+						size={ 36 }
+					/>
+				) }
 				<span className="screen-reader-text">{ this.props.connection.label }</span>
 			</span>
 		);

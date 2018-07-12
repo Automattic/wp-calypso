@@ -34,6 +34,8 @@ import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ChecklistShow from 'my-sites/checklist/checklist-show';
+import { isEnabled } from 'config';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -83,11 +85,12 @@ class CurrentPlan extends Component {
 			domains,
 			context,
 			currentPlan,
-			isExpiring,
-			shouldShowDomainWarnings,
 			hasDomainsLoaded,
-			translate,
 			isAutomatedTransfer,
+			isExpiring,
+			isJetpack,
+			shouldShowDomainWarnings,
+			translate,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
@@ -141,6 +144,9 @@ class CurrentPlan extends Component {
 						isAutomatedTransfer={ isAutomatedTransfer }
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
+					{ isEnabled( 'jetpack/checklist' ) &&
+						isJetpack &&
+						! isAutomatedTransfer && <ChecklistShow /> }
 					<div
 						className={ classNames( 'current-plan__header-text current-plan__text', {
 							'is-placeholder': { isLoading },
@@ -162,7 +168,7 @@ export default connect( ( state, ownProps ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
 
-	const isWpcom = ! isJetpackSite( state, selectedSiteId );
+	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 	return {
@@ -173,8 +179,9 @@ export default connect( ( state, ownProps ) => {
 		context: ownProps.context,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-		shouldShowDomainWarnings: isWpcom || isAutomatedTransfer,
+		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		isJetpack,
 	};
 } )( localize( CurrentPlan ) );

@@ -1,12 +1,12 @@
 /** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import deepfreeze from 'deep-freeze';
 import moment from 'moment';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import {
 	receivePage,
@@ -35,6 +35,7 @@ jest.mock( 'lib/wp', () => ( {
 		} ),
 	} ),
 } ) );
+jest.mock( 'lib/user', () => () => {} );
 
 const TIME1 = '2018-01-01T00:00:00.000Z';
 const TIME2 = '2018-01-02T00:00:00.000Z';
@@ -70,6 +71,54 @@ describe( 'streams.items reducer', () => {
 		const nextState = items( prevState, action );
 
 		expect( nextState ).toEqual( [ lastKey, time2PostKey ] );
+	} );
+
+	it( 'should combine consecutive x-posts for the same original post', () => {
+		const xPostMetadata = {
+			blogId: 123,
+			postId: 1,
+		};
+
+		// First x-post
+		const postKey1 = {
+			...time1PostKey,
+			url: 'http://example.com/posts/one',
+			xPostMetadata,
+		};
+
+		// Second x-post (should merge into first x-post)
+		const postKey2 = {
+			...time2PostKey,
+			url: 'http://example.com/posts/two',
+			xPostMetadata,
+		};
+
+		// Third x-post (should also merge into first x-post)
+		const postKey3 = {
+			...time2PostKey,
+			postId: 3,
+			url: 'http://example.com/posts/three',
+			xPostMetadata,
+		};
+
+		const postKey4 = {
+			...time2PostKey,
+			postId: 4,
+			url: 'http://example.com/posts/four',
+			xPostMetadata: null,
+		};
+
+		const prevState = deepfreeze( [] );
+		const action = receivePage( { streamItems: [ postKey1, postKey2, postKey3, postKey4 ] } );
+		const nextState = items( prevState, action );
+
+		expect( nextState ).toEqual( [
+			{
+				...postKey1,
+				xPostUrls: [ postKey2.url, postKey3.url ],
+			},
+			postKey4,
+		] );
 	} );
 } );
 

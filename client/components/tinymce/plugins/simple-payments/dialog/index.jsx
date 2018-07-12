@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { getFormValues } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
 
@@ -14,8 +15,7 @@ import { find, isNumber, pick, noop, get, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import getSimplePayments from 'state/selectors/get-simple-payments';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -45,10 +45,14 @@ import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
 import EmptyContent from 'components/empty-content';
 import Banner from 'components/banner';
-import { getFormValues } from 'redux-form';
 
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
@@ -66,7 +70,19 @@ const createPaymentButton = siteId => ( dispatch, getState ) => {
 		.addPost( productCustomPost )
 		.then( newPost => {
 			const newProduct = customPostToProduct( newPost );
-			dispatch( receiveUpdateProduct( siteId, newProduct ) );
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_create', {
+							price: newProduct.price,
+							currency: newProduct.currency,
+							id: newProduct.ID,
+						} ),
+						bumpStat( 'calypso_simple_payments', 'button_created' )
+					),
+					receiveUpdateProduct( siteId, newProduct )
+				)
+			);
 			return newProduct;
 		} );
 };
@@ -81,7 +97,19 @@ const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
 		.update( productCustomPost )
 		.then( updatedPost => {
 			const updatedProduct = customPostToProduct( updatedPost );
-			dispatch( receiveUpdateProduct( siteId, updatedProduct ) );
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_update', {
+							id: paymentId,
+							currency: updatedProduct.currency,
+							price: updatedProduct.price,
+						} ),
+						bumpStat( 'calypso_simple_payments', 'button_updated' )
+					),
+					receiveUpdateProduct( siteId, updatedProduct )
+				)
+			);
 			return updatedProduct;
 		} );
 };
@@ -94,7 +122,17 @@ const trashPaymentButton = ( siteId, paymentId ) => dispatch => {
 	return post
 		.delete()
 		.then( () => post.delete() )
-		.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) );
+		.then( () =>
+			dispatch(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_delete', { id: paymentId } ),
+						bumpStat( 'calypso_simple_payments', 'button_deleted' )
+					),
+					receiveDeleteProduct( siteId, paymentId )
+				)
+			)
+		);
 };
 
 class SimplePaymentsDialog extends Component {
@@ -136,13 +174,13 @@ class SimplePaymentsDialog extends Component {
 		};
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		// When transitioning from hidden to visible, show and initialize the form
-		if ( nextProps.showDialog && ! this.props.showDialog ) {
-			if ( nextProps.editPaymentId ) {
+		if ( this.props.showDialog && ! prevProps.showDialog ) {
+			if ( this.props.editPaymentId ) {
 				// Explicitly ordered to edit a particular button
-				this.showButtonForm( nextProps.editPaymentId );
-			} else if ( isEmptyArray( nextProps.paymentButtons ) ) {
+				this.showButtonForm( this.props.editPaymentId );
+			} else if ( isEmptyArray( this.props.paymentButtons ) ) {
 				// If the button list is loaded and empty, show the "Add New" form
 				this.showButtonForm( null );
 			} else {
@@ -152,7 +190,7 @@ class SimplePaymentsDialog extends Component {
 		}
 
 		// If the list has finished loading and is empty, switch from list to the "Add New" form
-		if ( this.props.paymentButtons === null && isEmptyArray( nextProps.paymentButtons ) ) {
+		if ( prevProps.paymentButtons === null && isEmptyArray( this.props.paymentButtons ) ) {
 			this.showButtonForm( null );
 		}
 	}
@@ -258,16 +296,7 @@ class SimplePaymentsDialog extends Component {
 		if ( activeTab === 'list' ) {
 			productId = Promise.resolve( this.state.selectedPaymentId );
 		} else {
-			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => {
-				dispatch(
-					recordTracksEvent( 'calypso_simple_payments_button_create', {
-						price: newProduct.price,
-						currency: newProduct.currency,
-						id: newProduct.ID,
-					} )
-				);
-				return newProduct.ID;
-			} );
+			productId = dispatch( createPaymentButton( siteId ) ).then( newProduct => newProduct.ID );
 		}
 
 		productId
@@ -277,7 +306,10 @@ class SimplePaymentsDialog extends Component {
 			.then( product => {
 				this.props.onInsert( { id: product.ID } );
 				dispatch(
-					recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } )
+					composeAnalytics(
+						recordTracksEvent( 'calypso_simple_payments_button_insert', { id: product.ID } ),
+						bumpStat( 'calypso_simple_payments', 'button_inserted' )
+					)
 				);
 			} )
 			.catch( () => this.showError( translate( 'The payment button could not be inserted.' ) ) )
@@ -324,7 +356,6 @@ class SimplePaymentsDialog extends Component {
 
 				const { siteId, dispatch } = this.props;
 
-				dispatch( recordTracksEvent( 'calypso_simple_payments_button_delete', { id: paymentId } ) );
 				dispatch( trashPaymentButton( siteId, paymentId ) )
 					.catch( () => this.showError( translate( 'The payment button could not be deleted.' ) ) )
 					.then( () => this.setIsSubmitting( false ) );

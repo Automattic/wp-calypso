@@ -49,6 +49,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		coverImageUrl: PropTypes.string,
 		onRemove: PropTypes.func,
 		onSelect: PropTypes.func,
+		onUploadStateChange: PropTypes.func,
 		isDisabled: PropTypes.bool,
 	};
 
@@ -90,6 +91,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		const transientMediaId = uniqueId( 'podcast-cover-image' );
 
 		this.setState( { transientMediaId } );
+		this.onUploadStateChange( true );
 
 		const checkUploadComplete = () => {
 			// MediaStore tracks pointers from transient media to the persisted
@@ -118,6 +120,7 @@ class PodcastCoverImageSetting extends PureComponent {
 
 			// Remove transient image so that new image shows or if failed upload, the prior image
 			this.setState( { transientMediaId: null } );
+			this.onUploadStateChange( false );
 		};
 
 		MediaStore.on( 'change', checkUploadComplete );
@@ -128,6 +131,11 @@ class PodcastCoverImageSetting extends PureComponent {
 			fileName,
 		} );
 	}
+
+	onUploadStateChange = isUploading => {
+		this.props.onUploadStateChange( isUploading );
+		this.setState( { isUploading } );
+	};
 
 	setCoverImage = ( error, blob ) => {
 		if ( error || ! blob ) {
@@ -186,6 +194,7 @@ class PodcastCoverImageSetting extends PureComponent {
 
 	renderChangeButton() {
 		const { coverImageId, coverImageUrl, translate, isDisabled } = this.props;
+		const { isUploading } = this.state;
 		const isCoverSet = coverImageId || coverImageUrl;
 
 		return (
@@ -194,7 +203,7 @@ class PodcastCoverImageSetting extends PureComponent {
 				compact
 				onClick={ this.showModal }
 				onMouseEnter={ this.preloadModal }
-				disabled={ isDisabled }
+				disabled={ isDisabled || isUploading }
 			>
 				{ isCoverSet ? translate( 'Change' ) : translate( 'Add' ) }
 			</Button>
@@ -203,7 +212,7 @@ class PodcastCoverImageSetting extends PureComponent {
 
 	renderCoverPreview() {
 		const { coverImageUrl, siteId, translate, isDisabled } = this.props;
-		const { transientMediaId } = this.state;
+		const { transientMediaId, isUploading } = this.state;
 		const media = transientMediaId && MediaStore.get( siteId, transientMediaId );
 		const imageUrl = ( media && media.URL ) || coverImageUrl;
 		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
@@ -221,7 +230,7 @@ class PodcastCoverImageSetting extends PureComponent {
 				onClick={ this.showModal }
 				onMouseEnter={ this.preloadModal }
 				type="button" // default is "submit" which saves settings on click
-				disabled={ isDisabled }
+				disabled={ isDisabled || isUploading }
 			>
 				{ imageSrc ? (
 					<Image className="podcast-cover-image-setting__img" src={ imageSrc } alt="" />
@@ -274,6 +283,7 @@ class PodcastCoverImageSetting extends PureComponent {
 
 	renderRemoveButton() {
 		const { coverImageId, coverImageUrl, onRemove, translate, isDisabled } = this.props;
+		const { isUploading } = this.state;
 		const isCoverSet = coverImageId || coverImageUrl;
 
 		return (
@@ -283,7 +293,7 @@ class PodcastCoverImageSetting extends PureComponent {
 					compact
 					onClick={ onRemove }
 					scary
-					disabled={ isDisabled }
+					disabled={ isDisabled || isUploading }
 				>
 					{ translate( 'Remove' ) }
 				</Button>

@@ -82,10 +82,13 @@ export const makeRemoteLoginRequest = ( loginLink, requestTimeout = 25000 ) => {
 		document.body.appendChild( iframe );
 	} );
 
-	return Promise.race( [ iframeLoadPromise, createTimingOutPromise( requestTimeout ) ] ).finally(
-		() => {
-			iframe.parentElement.removeChild( iframe );
-		}
+	const removeIframe = () => {
+		iframe.parentElement.removeChild( iframe );
+	};
+
+	return Promise.race( [ iframeLoadPromise, createTimingOutPromise( requestTimeout ) ] ).then(
+		removeIframe,
+		removeIframe
 	);
 };
 

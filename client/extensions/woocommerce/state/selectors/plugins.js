@@ -9,14 +9,14 @@ import { every, find } from 'lodash';
 import config from 'config';
 import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
 import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
-import { getSelectedSiteWithFallback } from '../sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean|null} Whether the given site has woocommerce services installed & active
  */
-export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state ) ) => {
+export const isWcsEnabled = ( state, siteId = getSelectedSiteId( state ) ) => {
 	if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
 		return false;
 	}
@@ -36,10 +36,7 @@ export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean|null} Whether the given site has all required plugins installed & active
  */
-export const areAllRequiredPluginsActive = (
-	state,
-	siteId = getSelectedSiteWithFallback( state )
-) => {
+export const areAllRequiredPluginsActive = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const siteIds = [ siteId ];
 
 	if ( isRequestingForSites( state, siteIds ) ) {

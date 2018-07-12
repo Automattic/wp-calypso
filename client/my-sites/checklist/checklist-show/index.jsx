@@ -11,13 +11,11 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import Checklist from 'blocks/checklist';
 import { jetpackTasks } from '../jetpack-checklist';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { launchTask, onboardingTasks } from '../onboardingChecklist';
@@ -70,11 +68,9 @@ const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteChecklist = getSiteChecklist( state, siteId );
-	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const tasks = isJetpack ? jetpackTasks( siteChecklist ) : onboardingTasks( siteChecklist );
 	return {
-		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
 		siteId,
 		siteSlug,
 		tasks,

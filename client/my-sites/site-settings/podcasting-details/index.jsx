@@ -39,10 +39,17 @@ import isPrivateSite from 'state/selectors/is-private-site';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isRequestingTermsForQueryIgnoringPage, getTerm } from 'state/terms/selectors';
+import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
+	constructor() {
+		super();
+		this.state = {
+			isCoverImageUploading: false,
+		};
+	}
+
 	renderExplicitContent() {
 		const {
 			fields,
@@ -78,16 +85,29 @@ class PodcastingDetails extends Component {
 			isRequestingCategories,
 			translate,
 		} = this.props;
+		const { isCoverImageUploading } = this.state;
+
+		const saveButtonDisabled =
+			isRequestingSettings || isSavingSettings || isRequestingCategories || isCoverImageUploading;
+		let saveButtonText;
+		if ( isCoverImageUploading ) {
+			saveButtonText = translate( 'Image uploading…' );
+		} else if ( isSavingSettings ) {
+			saveButtonText = translate( 'Saving…' );
+		} else {
+			saveButtonText = translate( 'Save Settings' );
+		}
+
 		return (
 			<Button
 				compact={ true }
 				onClick={ handleSubmitForm }
 				primary={ true }
 				type="submit"
-				disabled={ isRequestingSettings || isSavingSettings || isRequestingCategories }
+				disabled={ saveButtonDisabled }
 				busy={ isSavingSettings }
 			>
-				{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+				{ saveButtonText }
 			</Button>
 		);
 	}
@@ -161,16 +181,6 @@ class PodcastingDetails extends Component {
 		);
 	}
 
-	renderFeedUrl() {
-		const { podcastingFeedUrl } = this.props;
-
-		if ( ! podcastingFeedUrl ) {
-			return;
-		}
-
-		return <PodcastFeedUrl feedUrl={ podcastingFeedUrl } />;
-	}
-
 	render() {
 		const {
 			handleSubmitForm,
@@ -180,6 +190,8 @@ class PodcastingDetails extends Component {
 			isPodcastingEnabled,
 			isSavingSettings,
 		} = this.props;
+		const { isCoverImageUploading } = this.state;
+
 		if ( ! siteId ) {
 			return null;
 		}
@@ -213,7 +225,12 @@ class PodcastingDetails extends Component {
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
 					{ isPodcastingEnabled && (
 						<div className="podcasting-details__disable-podcasting">
-							<Button onClick={ this.onCategoryCleared } scary busy={ isSavingSettings }>
+							<Button
+								onClick={ this.onCategoryCleared }
+								scary
+								busy={ isSavingSettings }
+								disabled={ isCoverImageUploading }
+							>
 								{ translate( 'Disable Podcast' ) }
 							</Button>
 							<p>
@@ -229,13 +246,7 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const {
-			siteId,
-			podcastingCategoryId,
-			podcastingFeedUrl,
-			isCategoryChanging,
-			translate,
-		} = this.props;
+		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
 
 		return (
 			<Fragment>
@@ -266,7 +277,7 @@ class PodcastingDetails extends Component {
 						/>
 					) }
 				</FormFieldset>
-				{ podcastingFeedUrl && <PodcastFeedUrl feedUrl={ podcastingFeedUrl } /> }
+				<PodcastFeedUrl categoryId={ podcastingCategoryId } />
 			</Fragment>
 		);
 	}
@@ -281,6 +292,7 @@ class PodcastingDetails extends Component {
 					coverImageUrl={ fields.podcasting_image }
 					onRemove={ this.onCoverImageRemoved }
 					onSelect={ this.onCoverImageSelected }
+					onUploadStateChange={ this.onCoverImageUploadStateChanged }
 					isDisabled={ ! isPodcastingEnabled }
 				/>
 				<div className="podcasting-details__title-subtitle-wrapper">
@@ -386,6 +398,12 @@ class PodcastingDetails extends Component {
 			podcasting_image: coverUrl,
 		} );
 	};
+
+	onCoverImageUploadStateChanged = isUploading => {
+		this.setState( {
+			isCoverImageUploading: isUploading,
+		} );
+	};
 }
 
 const getFormSettings = settings => {
@@ -418,10 +436,6 @@ const connectComponent = connect( ( state, ownProps ) => {
 		Number( ownProps.fields.podcasting_category_id );
 	const isPodcastingEnabled = podcastingCategoryId > 0;
 
-	const selectedCategory =
-		isPodcastingEnabled && getTerm( state, siteId, 'category', podcastingCategoryId );
-	const podcastingFeedUrl = selectedCategory && selectedCategory.feed_url;
-
 	const isSavingSettings = isSavingSiteSettings( state, siteId );
 	const isCategoryChanging =
 		! isSavingSettings &&
@@ -437,11 +451,10 @@ const connectComponent = connect( ( state, ownProps ) => {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		isPrivate: isPrivateSite( state, siteId ),
-		podcastingCategoryId,
 		isPodcastingEnabled,
+		podcastingCategoryId,
 		isCategoryChanging,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
-		podcastingFeedUrl,
 		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 		isSavingSettings,

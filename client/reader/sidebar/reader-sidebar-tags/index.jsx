@@ -49,7 +49,7 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	unfollowTag = event => {
-		const node = closest( event.target, '[data-tag-slug]', true );
+		const node = closest( event.target, '[data-tag-slug]' );
 		event.preventDefault();
 		const slug = node && node.dataset && node.dataset.tagSlug;
 		if ( slug ) {

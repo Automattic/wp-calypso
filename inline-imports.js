@@ -56,12 +56,12 @@ function transformIt( babel ) {
 			// we haven't deleted the `import` statement yet
 			// so if we don't skip it then we'll enter a cycle
 			if ( t.isImportSpecifier( path.parentPath ) ) {
-				return path.skip();
+				return;
 			}
 
 			const name = path.node.name;
 			if ( ! this.myTypes.hasOwnProperty( name ) ) {
-				return path.skip();
+				return;
 			}
 
 			path.replaceWith( t.stringLiteral( this.myTypes[ name ] ) );
@@ -83,7 +83,7 @@ function transformIt( babel ) {
 				// this is a very-specific transform because
 				// we don't want to mess up other imports
 				if ( name !== 'state/action-types' ) {
-					return path.skip();
+					return;
 				}
 
 				const myTypes = path.node.specifiers
