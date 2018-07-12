@@ -34,7 +34,7 @@ describe( 'WordPress.com API Middleware', () => {
 		const handlers = Object.create( null );
 		const action = { type: 'UNSUPPORTED_ACTION' };
 
-		middleware( { handlers } )( store )( next )( action );
+		middleware( actionType => handlers[ actionType ] )( store )( next )( action );
 
 		expect( store.dispatch ).to.not.have.been.called;
 		expect( next ).to.have.been.calledWith( action );
@@ -47,7 +47,7 @@ describe( 'WordPress.com API Middleware', () => {
 		} );
 		const action = bypassDataLayer( { type: 'ADD' } );
 
-		middleware( { handlers } )( store )( next )( action );
+		middleware( actionType => handlers[ actionType ] )( store )( next )( action );
 
 		expect( next ).to.have.been.calledWith( action );
 		expect( adder ).to.not.have.been.called;
@@ -60,7 +60,7 @@ describe( 'WordPress.com API Middleware', () => {
 		} );
 		const action = { type: 'ADD', meta: { semigroup: true } };
 
-		middleware( { handlers } )( store )( next )( action );
+		middleware( actionType => handlers[ actionType ] )( store )( next )( action );
 
 		expect( next ).to.have.been.calledOnce;
 		expect( adder ).to.have.been.calledWith( store, action );
@@ -73,7 +73,7 @@ describe( 'WordPress.com API Middleware', () => {
 		} );
 		const action = { type: 'ADD', meta: { dataLayer: { groupoid: 42 } } };
 
-		middleware( { handlers } )( store )( next )( action );
+		middleware( actionType => handlers[ actionType ] )( store )( next )( action );
 
 		expect( next ).to.have.been.calledOnce;
 		expect( adder ).to.have.been.calledWith( store, action );
@@ -86,7 +86,7 @@ describe( 'WordPress.com API Middleware', () => {
 		} );
 		const action = { type: 'ADD' };
 
-		middleware( { handlers } )( store )( next )( action );
+		middleware( actionType => handlers[ actionType ] )( store )( next )( action );
 
 		expect( next ).to.not.have.been.calledWith( action );
 		expect( adder ).to.have.been.calledWith( store, action );
@@ -99,7 +99,7 @@ describe( 'WordPress.com API Middleware', () => {
 		} );
 		const action = { type: 'ADD' };
 
-		middleware( { handlers } )( store )( next )( action );
+		middleware( actionType => handlers[ actionType ] )( store )( next )( action );
 
 		expect( next ).to.have.been.calledOnce;
 		expect( next ).to.have.been.calledWith( bypassDataLayer( action ) );
@@ -114,7 +114,7 @@ describe( 'WordPress.com API Middleware', () => {
 		} );
 		const action = { type: 'MATHS' };
 
-		middleware( { handlers } )( store )( next )( action );
+		middleware( actionType => handlers[ actionType ] )( store )( next )( action );
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
@@ -134,7 +134,7 @@ describe( 'WordPress.com API Middleware', () => {
 		);
 		const action = { type: 'MATHS' };
 
-		middleware( { handlers } )( store )( next )( action );
+		middleware( actionType => handlers[ actionType ] )( store )( next )( action );
 
 		expect( adder ).to.have.been.calledWith( store, action );
 		expect( doubler ).to.have.been.calledWith( store, action );
@@ -156,7 +156,7 @@ describe( 'WordPress.com API Middleware', () => {
 		test( 'should not pass along actions for a network response that contains headers', () => {
 			const meta = { dataLayer: { headers: {} } };
 
-			middleware( { handlers } )( store )( next )( { ...action, meta } );
+			middleware( actionType => handlers[ actionType ] )( store )( next )( { ...action, meta } );
 
 			expect( next ).to.have.not.been.called;
 		} );
@@ -164,7 +164,7 @@ describe( 'WordPress.com API Middleware', () => {
 		test( 'should not pass along actions for a network response that contains data', () => {
 			const meta = { dataLayer: { data: {} } };
 
-			middleware( { handlers } )( store )( next )( { ...action, meta } );
+			middleware( actionType => handlers[ actionType ] )( store )( next )( { ...action, meta } );
 
 			expect( next ).to.have.not.been.called;
 		} );
@@ -172,7 +172,7 @@ describe( 'WordPress.com API Middleware', () => {
 		test( 'should not pass along actions for a network response that contains an error', () => {
 			const meta = { dataLayer: { error: {} } };
 
-			middleware( { handlers } )( store )( next )( { ...action, meta } );
+			middleware( actionType => handlers[ actionType ] )( store )( next )( { ...action, meta } );
 
 			expect( next ).to.have.not.been.called;
 		} );
@@ -180,7 +180,7 @@ describe( 'WordPress.com API Middleware', () => {
 		test( 'should not pass along actions for a network response that contains a progress report', () => {
 			const meta = { dataLayer: { progress: { total: 1, loaded: 1 } } };
 
-			middleware( { handlers } )( store )( next )( { ...action, meta } );
+			middleware( actionType => handlers[ actionType ] )( store )( next )( { ...action, meta } );
 
 			expect( next ).to.have.not.been.called;
 		} );

@@ -4,25 +4,40 @@
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
 
-export const state = {
-	handlers: {},
-};
+/** Stores lists of handlers by action type */
+let registeredHandlers = {};
 
-const requiredHandlers = new Set();
+/** Stores names of already-included handler sets */
+const registeredNames = new Set();
 
-export const registerHandlers = ( ...requires ) => {
-	let nextHandlers = state.handlers;
+/**
+ * Loads action handlers into the data layer
+ *
+ * @param {Array<[string, Object]>} requires pairs of names and handler sets
+ * @returns {*} please ignore return value
+ */
+export const registerHandlers = ( ...requires ) =>
+	requires
+		.filter( ( [ id /* handler */ ] ) => ! registeredNames.has( id ) )
+		.forEach( ( [ id, handlers ] ) => {
+			registeredNames.add( id );
+			registeredHandlers = mergeHandlers( registeredHandlers, handlers );
+		} );
 
-	requires.forEach( ( [ id, handlers ] ) => {
-		if ( requiredHandlers.has( id ) ) {
-			return;
-		}
+/**
+ * Returns list of handlers for given action type else undefined
+ *
+ * @param {string} actionType requested action type
+ * @return {?Array<Function>} list of handlers for type
+ */
+export const getHandlers = actionType => registeredHandlers[ actionType ];
 
-		requiredHandlers.add( id );
-		nextHandlers = mergeHandlers( nextHandlers, handlers );
-	} );
-
-	if ( state.handlers !== nextHandlers ) {
-		state.handlers = nextHandlers;
+/**
+ * For testing only: reset handlers
+ */
+export const testReset = () => {
+	if ( 'test' === process.env.NODE_ENV ) {
+		registeredHandlers = {};
+		registeredNames.clear();
 	}
 };

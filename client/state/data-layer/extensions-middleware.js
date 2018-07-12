@@ -58,7 +58,7 @@ export function removeHandlers( name, config = configuration ) {
 export function buildMiddleware( handlersByExtension ) {
 	const allHandlers = mergeHandlers( ...Object.values( handlersByExtension ) ) || [];
 
-	return middleware( { handlers: allHandlers } );
+	return middleware( actionType => allHandlers[ actionType ] );
 }
 
 /**

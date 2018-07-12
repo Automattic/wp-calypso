@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { bypassDataLayer } from './utils';
-import { registerHandlers, state } from 'state/data-layer/handler-loading';
+import { getHandlers, registerHandlers } from 'state/data-layer/handler-loading';
 import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
 import httpHandlers from 'state/http';
@@ -59,10 +59,10 @@ const shouldNext = action => {
  * The optimizations reduce function-calling and object
  * property lookup where possible.
  *
- * @param {Object} handlerState contains handlers map
+ * @param {Function} handlersFor returns list of handlers for given action type
  * @returns {Function} middleware handler
  */
-export const middleware = handlerState => store => next => {
+export const middleware = handlersFor => store => next => {
 	/**
 	 * Middleware handler
 	 *
@@ -71,7 +71,7 @@ export const middleware = handlerState => store => next => {
 	 * @returns {undefined} please do not use
 	 */
 	return action => {
-		const handlerChain = handlerState.handlers[ action.type ];
+		const handlerChain = handlersFor( action.type );
 
 		// if no handler is defined for the action type
 		// then pass it along the chain untouched
@@ -99,4 +99,4 @@ export const middleware = handlerState => store => next => {
 	};
 };
 
-export default middleware( state );
+export default middleware( getHandlers );
