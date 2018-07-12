@@ -1,9 +1,12 @@
 /** @format */
 
+/**
+ * Internal dependencies
+ */
 import activeDiscounts from './active-discounts';
 
 function getDiscountByName( discountName ) {
-	const discount = activeDiscounts.find( function( discount ) {
+	const activeDiscount = activeDiscounts.find( function( discount ) {
 		if ( discountName !== discount.name ) {
 			return false;
 		}
@@ -19,7 +22,7 @@ function getDiscountByName( discountName ) {
 		return true;
 	} );
 
-	return typeof discount !== 'undefined' ? discount : false;
+	return typeof activeDiscount !== 'undefined' ? activeDiscount : false;
 }
 
 export { activeDiscounts, getDiscountByName };
