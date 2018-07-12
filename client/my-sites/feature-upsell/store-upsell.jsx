@@ -50,11 +50,11 @@ class StoreUpsellComponent extends Component {
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell feature-upsell-store">
 				{ ! price && (
-					<>
+					<React.Fragment>
 						<QueryPlans />
 						<QuerySitePlans siteId={ this.props.selectedSiteId } />
 						<QueryActivePromotions />
-					</>
+					</React.Fragment>
 				) }
 
 				<PageViewTracker path={ '/feature/store/:site' } title="StoreUpsell" />
@@ -72,7 +72,7 @@ class StoreUpsellComponent extends Component {
 					{ loadingPrice ? (
 						<div className="feature-upsell-placeholder feature-upsell-placeholder--cta" />
 					) : (
-						<>
+						<React.Fragment>
 							<button
 								onClick={ this.handleUpgradeButtonClick }
 								className="button is-primary feature-upsell-cta__button"
@@ -80,7 +80,7 @@ class StoreUpsellComponent extends Component {
 								Upgrade for { this.renderPrice() } and get started
 							</button>
 							<span className="feature-upsell-cta__guarantee">30-day money back guarantee</span>
-						</>
+						</React.Fragment>
 					) }
 				</div>
 
