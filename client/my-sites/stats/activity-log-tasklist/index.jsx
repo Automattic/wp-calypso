@@ -109,9 +109,11 @@ class ActivityLogTasklist extends Component {
 			trackDismiss( item );
 		} else {
 			items = union(
-				coreWithUpdate.map( p => p.slug ),
 				pluginWithUpdate.map( p => p.slug ),
-				themeWithUpdate.map( p => p.slug )
+				themeWithUpdate.map( t => t.slug ),
+				// Although core doesn't have a slug, we call it 'wordpress'
+				// to work with it like plugins or themes.
+				coreWithUpdate.map( c => c.slug )
 			);
 			trackDismissAll();
 		}
@@ -256,7 +258,7 @@ class ActivityLogTasklist extends Component {
 
 		each( itemsWithUpdate, item => {
 			const { slug, updateStatus, type, name } = item;
-			// Finds in either prevProps.pluginWithUpdate or prevProps.themeWithUpdate
+			// Finds in prevProps.pluginWithUpdate, prevProps.themeWithUpdate or prevpros.coreWithUpdate
 			const prevItemWithUpdate = find( prevProps[ `${ type }WithUpdate` ], { slug } );
 
 			if ( false === get( prevItemWithUpdate, [ 'updateStatus' ], false ) ) {
