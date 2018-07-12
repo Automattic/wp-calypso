@@ -1,16 +1,61 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 import page from 'page';
 import { isDesktop } from 'lib/viewport';
 
-/**
- * Internal dependencies
- */
-const tasks = {
-	avatar_uploaded: {
+export const tasks = [
+	{
+		id: 'site_created',
+		title: 'Create your site',
+		description: 'This is where your adventure begins.',
+		completedTitle: 'You created your site',
+		completed: true,
+	},
+	{
+		id: 'domain_selected',
+		title: 'Pick a website address',
+		description: 'Choose an address so people can find you on the internet.',
+		completedTitle: 'You picked a website address',
+		completed: true,
+		image: '/calypso/images/stats/tasks/domains.svg',
+	},
+	{
+		id: 'blogname_set',
+		title: 'Give your site a name',
+		description: 'Give your site a descriptive name to entice visitors.',
+		duration: '1 min',
+		completedTitle: 'You updated your site title',
+		completedButtonText: 'Edit',
+		url: '/settings/general/$siteSlug',
+		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
+		tour: 'checklistSiteTitle',
+	},
+	{
+		id: 'site_icon_set',
+		title: 'Upload a site icon',
+		description: 'Help people recognize your site in browser tabs — just like the WordPress.com W!',
+		duration: '1 min',
+		completedTitle: 'You uploaded a site icon',
+		completedButtonText: 'Change',
+		url: '/settings/general/$siteSlug',
+		image: '/calypso/images/stats/tasks/upload-icon.svg',
+		tour: 'checklistSiteIcon',
+	},
+	{
+		id: 'blogdescription_set',
+		title: 'Create a tagline',
+		description: 'Pique readers’ interest with a little more detail about your site.',
+		duration: '2 mins',
+		completedTitle: 'You created a tagline',
+		completedButtonText: 'Change',
+		url: '/settings/general/$siteSlug',
+		image: '/calypso/images/stats/tasks/create-tagline.svg',
+		tour: 'checklistSiteTagline',
+	},
+	{
+		id: 'avatar_uploaded',
 		title: 'Upload your profile picture',
 		description:
 			'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.',
@@ -21,27 +66,8 @@ const tasks = {
 		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
 		tour: 'checklistUserAvatar',
 	},
-	blogname_set: {
-		title: 'Give your site a name',
-		description: 'Give your site a descriptive name to entice visitors.',
-		duration: '1 min',
-		completedTitle: 'You updated your site title',
-		completedButtonText: 'Edit',
-		url: '/settings/general/$siteSlug',
-		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
-		tour: 'checklistSiteTitle',
-	},
-	blogdescription_set: {
-		title: 'Create a tagline',
-		description: 'Pique readers’ interest with a little more detail about your site.',
-		duration: '2 mins',
-		completedTitle: 'You created a tagline',
-		completedButtonText: 'Change',
-		url: '/settings/general/$siteSlug',
-		image: '/calypso/images/stats/tasks/create-tagline.svg',
-		tour: 'checklistSiteTagline',
-	},
-	contact_page_updated: {
+	{
+		id: 'contact_page_updated',
 		title: 'Personalize your Contact page',
 		description: 'Encourage visitors to get in touch — a website is for connecting with people.',
 		duration: '2 mins',
@@ -51,14 +77,8 @@ const tasks = {
 		url: '/post/$siteSlug/2',
 		tour: 'checklistContactPage',
 	},
-	domain_selected: {
-		title: 'Pick a website address',
-		description: 'Choose an address so people can find you on the internet.',
-		completedTitle: 'You picked a website address',
-		completed: true,
-		image: '/calypso/images/stats/tasks/domains.svg',
-	},
-	post_published: {
+	{
+		id: 'post_published',
 		title: 'Publish your first blog post',
 		description: 'Introduce yourself to the world! That’s why you’re here.',
 		duration: '10 mins',
@@ -68,33 +88,6 @@ const tasks = {
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
 	},
-	site_created: {
-		title: 'Create your site',
-		description: 'This is where your adventure begins.',
-		completedTitle: 'You created your site',
-		completed: true,
-	},
-	site_icon_set: {
-		title: 'Upload a site icon',
-		description: 'Help people recognize your site in browser tabs — just like the WordPress.com W!',
-		duration: '1 min',
-		completedTitle: 'You uploaded a site icon',
-		completedButtonText: 'Change',
-		url: '/settings/general/$siteSlug',
-		image: '/calypso/images/stats/tasks/upload-icon.svg',
-		tour: 'checklistSiteIcon',
-	},
-};
-
-const sequence = [
-	'site_created',
-	'domain_selected',
-	'blogname_set',
-	'site_icon_set',
-	'blogdescription_set',
-	'avatar_uploaded',
-	'contact_page_updated',
-	'post_published',
 ];
 
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
@@ -126,17 +119,4 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
-}
-
-export function onboardingTasks( checklist ) {
-	if ( ! checklist || ! checklist.tasks ) {
-		return null;
-	}
-
-	return sequence.map( id => {
-		const task = tasks[ id ];
-		const taskFromServer = checklist.tasks[ id ];
-
-		return { id, ...task, ...taskFromServer };
-	} );
 }
