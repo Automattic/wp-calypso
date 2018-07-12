@@ -36,6 +36,7 @@
 		"gdpr-banner": true,
 		"google-analytics": true,
 		"google-my-business": true,
+		"gutenberg": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,

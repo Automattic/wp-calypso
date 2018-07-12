@@ -40,6 +40,7 @@
 		"gdpr-banner": false,
 		"google-my-business": true,
 		"google-analytics": false,
+		"gutenberg": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
