@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Fragment, PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -21,6 +22,10 @@ import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
 class ChecklistShow extends PureComponent {
+	static propTypes = {
+		tasks: PropTypes.array,
+	};
+
 	handleAction = id => {
 		const { requestTour, siteSlug, tasks, track } = this.props;
 		const task = find( tasks, { id } );
