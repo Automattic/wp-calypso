@@ -16,11 +16,12 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import { TYPE_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Banner from 'components/banner';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -39,6 +40,7 @@ export const EligibilityWarnings = ( {
 	isPlaceholder,
 	onProceed,
 	onCancel,
+	site,
 	siteId,
 	siteSlug,
 	translate,
@@ -74,7 +76,13 @@ export const EligibilityWarnings = ( {
 								? 'calypso-plugin-eligibility-upgrade-nudge'
 								: 'calypso-theme-eligibility-upgrade-nudge'
 						}
-						plan={ PLAN_BUSINESS }
+						plan={
+							site &&
+							site.plan &&
+							findFirstSimilarPlanKey( site.plan.product_slug, {
+								type: TYPE_BUSINESS,
+							} )
+						}
 						title={ translate( 'Business plan required' ) }
 					/>
 				) }
@@ -153,6 +161,7 @@ EligibilityWarnings.defaultProps = {
 };
 
 const mapStateToProps = state => {
+	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 	const eligibilityData = getEligibility( state, siteId );
@@ -168,6 +177,7 @@ const mapStateToProps = state => {
 		isEligible,
 		isJetpack,
 		isPlaceholder: ! dataLoaded,
+		site,
 		siteId,
 		siteSlug,
 	};
