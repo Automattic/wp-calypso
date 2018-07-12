@@ -121,17 +121,13 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			const minDate = moment( last( streamItems ).date );
 
 			// only retain posts that are newer than ones we already have
-			if ( state.lastUpdated ) {
-				streamItems = streamItems.filter( item =>
-					moment( item.date ).isAfter( state.lastUpdated )
-				);
-			}
+			const newItems = state.lastUpdated
+				? streamItems.filter( item => moment( item.date ).isAfter( state.lastUpdated ) )
+				: [ ...streamItems ];
 
-			if ( streamItems.length === 0 ) {
+			if ( newItems.length === 0 ) {
 				return state;
 			}
-
-			const newItems = [ ...streamItems ];
 
 			// there is a gap if the oldest item in the poll is newer than last update time
 			if ( state.lastUpdated && minDate.isAfter( state.lastUpdated ) ) {
