@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get, unionBy } from 'lodash';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -60,7 +61,9 @@ export default WrappedComponent => {
 		return {
 			plugins: getPluginsWithUpdates( state, [ siteId ] ),
 			themes: get( alertsData, 'data.updates.themes', emptyList ),
-			core: get( alertsData, 'data.updates.core', emptyList ),
+			core: config.isEnabled( 'activity-log-core-update' )
+				? get( alertsData, 'data.updates.core', emptyList )
+				: emptyList,
 		};
 	} )( ToUpdate );
 };
