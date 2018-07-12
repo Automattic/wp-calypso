@@ -218,7 +218,6 @@ export function createReduxStore( initialState = {} ) {
 		// responses. Therefore we need to inject the data layer
 		// as early as possible into the middleware chain.
 		require( './data-layer/wpcom-api-middleware.js' ).default,
-		isBrowser && require( './data-layer/extensions-middleware.js' ).default,
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default,
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,

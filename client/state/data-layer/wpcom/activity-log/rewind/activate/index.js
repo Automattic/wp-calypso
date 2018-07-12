@@ -17,6 +17,7 @@ import {
 	REWIND_STATE_UPDATE,
 } from 'state/action-types';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { requestRewindState } from 'state/rewind/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 export const fetch = action => {
@@ -52,7 +53,7 @@ export const storeAndAnnounce = ( { siteId, noticeId }, { rewind_state } ) => [
 	// right now the `/activate` endpoint returns before the
 	// server realizes we're now in the 'active' state so we
 	// need to make the additional update here to clear that up
-	{ type: 'REWIND_STATE_REQUEST', siteId },
+	requestRewindState( siteId ),
 	// the API transform could fail and the rewind data might
 	// be unavailable so if that's the case just let it go
 	// for now. we'll improve our rigor as time goes by.

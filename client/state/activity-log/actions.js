@@ -27,6 +27,8 @@ import {
 	REWIND_BACKUP_DISMISS_PROGRESS,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/rewind/downloads';
+
 /**
  * Turn the 'rewind' feature on for a site.
  *
