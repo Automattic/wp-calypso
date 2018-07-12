@@ -12843,9 +12843,9 @@
       }
     },
     "postcss-custom-properties": {
-      "version": "6.3.1",
-      "resolved": "https://registry.npmjs.org/postcss-custom-properties/-/postcss-custom-properties-6.3.1.tgz",
-      "integrity": "sha512-zoiwn4sCiUFbr4KcgcNZLFkR6gVQom647L+z1p/KBVHZ1OYwT87apnS42atJtx6XlX2yI7N5fjXbFixShQO2QQ==",
+      "version": "7.0.0",
+      "resolved": "https://registry.npmjs.org/postcss-custom-properties/-/postcss-custom-properties-7.0.0.tgz",
+      "integrity": "sha512-dl/CNaM6z2RBa0vZZqsV6Hunj4HD6Spu7FcAkiVp5B2tgm6xReKKYzI7x7QNx3wTMBNj5v+ylfVcQGMW4xdkHw==",
       "requires": {
         "balanced-match": "^1.0.0",
         "postcss": "^6.0.18"
