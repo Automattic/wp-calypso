@@ -6,6 +6,8 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { getSitePlan } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Internal dependencies
@@ -15,15 +17,23 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import { connectOptions } from './theme-options';
 import Banner from 'components/banner';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, TYPE_PREMIUM } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import { getSiteSlug } from 'state/sites/selectors';
 
-const ConnectedSingleSiteWpcom = connectOptions( props => {
-	const { hasUnlimitedPremiumThemes, requestingSitePlans, siteId, siteSlug, translate } = props;
+export const ConnectedSingleSiteWpcom = props => {
+	const {
+		hasUnlimitedPremiumThemes,
+		requestingSitePlans,
+		currentPlanSlug,
+		siteId,
+		siteSlug,
+		translate,
+	} = props;
 
 	const upsellUrl = `/plans/${ siteSlug }`;
 	return (
@@ -33,7 +43,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 			{ ! requestingSitePlans &&
 				! hasUnlimitedPremiumThemes && (
 					<Banner
-						plan={ PLAN_PREMIUM }
+						plan={ findFirstSimilarPlanKey( currentPlanSlug, { type: TYPE_PREMIUM } ) }
 						title={ translate(
 							'Access all our premium themes with our Premium and Business plans!'
 						) }
@@ -51,10 +61,11 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 			</ThemeShowcase>
 		</div>
 	);
-} );
+};
 
 export default connect( ( state, { siteId } ) => ( {
 	siteSlug: getSiteSlug( state, siteId ),
+	currentPlanSlug: ( getSitePlan( state, getSelectedSiteId( state ) ) || {} ).product_slug,
 	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),
-} ) )( ConnectedSingleSiteWpcom );
+} ) )( connectOptions( ConnectedSingleSiteWpcom ) );
