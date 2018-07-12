@@ -28,23 +28,24 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { navigate } from 'state/ui/actions';
 
 /**
- * Checks if the supplied plugins or themes are currently updating.
+ * Checks if the supplied core update, plugins, or themes are being updated.
  *
- * @param {Array} s List of plugin or theme objects to check their update status.
+ * @param {Array} updatables List of plugin, theme or core update objects to check their update status.
  *
- * @returns {bool}  True if one or more plugins or themes are updating.
+ * @returns {boolean}  True if one or more plugins or themes are updating.
  */
-const isItemUpdating = s => s.some( p => 'inProgress' === get( p, 'updateStatus.status' ) );
+const isItemUpdating = updatables =>
+	updatables.some( item => 'inProgress' === get( item, 'updateStatus.status' ) );
 
 /**
- * Checks if the plugin or theme is enqueued to be updated, searching it in the list by its slug.
+ * Checks if the plugin, theme or core update is enqueued to be updated, searching it in the list by its slug.
  *
- * @param {string} g Plugin or theme slug.
- * @param {array}  q Collection of plugins or themes currently in the update queue.
+ * @param {string} updateSlug  Plugin or theme slug, or 'wordpress' for core updates.
+ * @param {array}  updateQueue Collection of plugins or themes currently queued to be updated.
  *
- * @returns {bool}   True if the plugin or theme is enqueued to be updated.
+ * @returns {boolean}   True if the plugin or theme is enqueued to be updated.
  */
-const isItemEnqueued = ( g, q ) => !! find( q, { slug: g } );
+const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
 
 class ActivityLogTasklist extends Component {
 	static propTypes = {
@@ -109,11 +110,11 @@ class ActivityLogTasklist extends Component {
 			trackDismiss( item );
 		} else {
 			items = union(
-				pluginWithUpdate.map( p => p.slug ),
-				themeWithUpdate.map( t => t.slug ),
+				pluginWithUpdate.map( plugin => plugin.slug ),
+				themeWithUpdate.map( theme => theme.slug ),
 				// Although core doesn't have a slug, we call it 'wordpress'
 				// to work with it like plugins or themes.
-				coreWithUpdate.map( c => c.slug )
+				coreWithUpdate.map( core => core.slug )
 			);
 			trackDismissAll();
 		}
@@ -398,7 +399,7 @@ class ActivityLogTasklist extends Component {
  * @param {bool}   isUpdateComplete If update actually produced what is expected to be after a successful update.
  *                                  In themes, the 'update' prop of the theme object is nullified when an update is succesful.
  *
- * @returns {bool|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
+ * @returns {boolean|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
  */
 const getNormalizedStatus = ( state, isUpdateComplete ) => {
@@ -423,7 +424,7 @@ const getNormalizedStatus = ( state, isUpdateComplete ) => {
  * @param {number} siteId  Site Id.
  * @param {string} themeId Theme slug.
  *
- * @returns {bool|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
+ * @returns {boolean|object} False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
  */
 const getStatusForTheme = ( siteId, themeId ) => {
@@ -437,7 +438,7 @@ const getStatusForTheme = ( siteId, themeId ) => {
  * Get data about the status of a core update.
  * @param {number} siteId      Site Id.
  * @param {string} coreVersion Version of core that the WP installation will be updated to.
- * @returns {bool|Object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
+ * @returns {boolean|Object}      False is update hasn't started. One of 'inProgress', 'error', 'completed', when
  * the update is running, failed, or was successfully completed, respectively.
  */
 const getStatusForCore = ( siteId, coreVersion ) => {
