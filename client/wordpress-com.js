@@ -448,4 +448,13 @@ sections.push( {
 	isomorphic: false,
 } );
 
+sections.push( {
+	name: 'gutenberg-editor',
+	paths: [ '/gutenberg' ],
+	module: 'gutenberg/editor',
+	group: 'editor',
+	css: 'gutenberg-editor',
+	secondary: true,
+} );
+
 module.exports = sections;
