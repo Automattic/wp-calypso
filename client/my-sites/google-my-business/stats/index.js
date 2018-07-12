@@ -96,7 +96,7 @@ class GoogleMyBusinessStats extends Component {
 		if ( interval === 'quarter' ) {
 			return this.props.translate(
 				'%(value)d action on the week of %(monday)s',
-				'%(value)d action on the week of %(monday)s',
+				'%(value)d actions on the week of %(monday)s',
 				{
 					count: actionCount,
 					args: {
