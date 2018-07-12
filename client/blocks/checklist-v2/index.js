@@ -19,6 +19,14 @@ export default class Checklist extends PureComponent {
 	render() {
 		const { children } = this.props;
 
+		// Doesn't seem to capture connected props :(
+		let completed = 0;
+		Children.forEach( children, child => {
+			if ( child.props.completed ) {
+				completed++;
+			}
+		} );
+
 		return (
 			<div
 				className={ classNames( 'checklist-v2', 'checklist', {
@@ -28,7 +36,7 @@ export default class Checklist extends PureComponent {
 			>
 				<ChecklistHeader
 					total={ Children.count( children ) }
-					completed={ /* @TODO get count */ 1 }
+					completed={ completed }
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 				/>
