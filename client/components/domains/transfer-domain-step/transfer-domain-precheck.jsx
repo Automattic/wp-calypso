@@ -293,7 +293,7 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	setAuthCode = event => {
-		this.setState( { authCode: event.target.value } );
+		this.setState( { authCode: event.target.value.trim() } );
 	};
 
 	getHeader() {
