@@ -12,7 +12,7 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import Checklist from 'blocks/checklist';
-import { tasks as jetpackTasks } from '../jetpack-checklist';
+import JetpackChecklist from '../jetpack-checklist';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
@@ -49,17 +49,21 @@ class ChecklistShow extends PureComponent {
 	};
 
 	render() {
-		const { siteId, tasks } = this.props;
+		const { isJetpack, siteId, tasks } = this.props;
 
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				<Checklist
-					isLoading={ ! tasks }
-					tasks={ tasks }
-					onAction={ this.handleAction }
-					onToggle={ this.handleToggle }
-				/>
+				{ isJetpack ? (
+					<JetpackChecklist siteId={ siteId } />
+				) : (
+					<Checklist
+						isLoading={ ! tasks }
+						tasks={ tasks }
+						onAction={ this.handleAction }
+						onToggle={ this.handleToggle }
+					/>
+				) }
 			</Fragment>
 		);
 	}
@@ -68,12 +72,12 @@ class ChecklistShow extends PureComponent {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
-	const siteChecklist = getSiteChecklist( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
-	const tasks = isJetpack ? jetpackTasks : wpcomTasks;
-	const tasksFromServer = get( siteChecklist, [ 'tasks' ] );
+	const tasks = isJetpack ? null : wpcomTasks;
+	const tasksFromServer = isJetpack ? null : get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
 
 	return {
+		isJetpack,
 		siteId,
 		siteSlug,
 		tasks: tasksFromServer ? mergeObjectIntoArrayById( tasks, tasksFromServer ) : null,

@@ -280,3 +280,17 @@
 		}
 	}
 }
+
+.checklist-v2__items {
+	display: flex;
+	flex-direction: column;
+}
+
+.checklist-v2__item {
+	width: 100%;
+	order: 100;
+
+	&.is-completed {
+		order: 0;
+	}
+}
