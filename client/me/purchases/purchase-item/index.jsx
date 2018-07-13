@@ -174,6 +174,7 @@ class PurchaseItem extends Component {
 		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack } = this.props;
 		const classes = classNames(
 			'purchase-item',
+			{ 'is-disconnected-site': isDisconnectedSite }, // Required for e2e tests, see https://github.com/Automattic/wp-e2e-tests/pull/1349
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
