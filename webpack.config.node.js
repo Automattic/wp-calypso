@@ -4,6 +4,8 @@
  * @format
  */
 
+/* eslint-disable import/no-nodejs-modules */
+
 /**
  * External dependencies
  */
@@ -11,7 +13,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
-const threadLoader = require( 'thread-loader' );
+const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -38,8 +40,7 @@ function getExternals() {
 
 	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 	// with modules that are incompatible with webpack bundling.
-	fs
-		.readdirSync( 'node_modules' )
+	fs.readdirSync( 'node_modules' )
 		.filter( function( module ) {
 			return [ '.bin' ].indexOf( module ) === -1;
 		} )
@@ -76,8 +77,6 @@ const babelLoader = {
 	},
 };
 
-threadLoader.warmup( {}, [ 'babel-loader' ] );
-
 const webpackConfig = {
 	devtool: 'source-map',
 	entry: './index.js',
@@ -105,7 +104,13 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				use: [ 'thread-loader', babelLoader ],
+				use: [
+					{
+						loader: 'thread-loader',
+						options: { workers: Math.max( Math.floor( os.cpus().length / 2 ), 1 ) },
+					},
+					babelLoader,
+				],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
