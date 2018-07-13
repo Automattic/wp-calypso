@@ -5210,11 +5210,6 @@
         }
       }
     },
-    "dom-walk": {
-      "version": "0.1.1",
-      "resolved": "https://registry.npmjs.org/dom-walk/-/dom-walk-0.1.1.tgz",
-      "integrity": "sha1-ZyIm3HTI95mtNTB9+TaroRrNYBg="
-    },
     "domain-browser": {
       "version": "1.2.0",
       "resolved": "https://registry.npmjs.org/domain-browser/-/domain-browser-1.2.0.tgz",
@@ -7845,22 +7840,6 @@
       "version": "0.3.0",
       "resolved": "https://registry.npmjs.org/glob-to-regexp/-/glob-to-regexp-0.3.0.tgz",
       "integrity": "sha1-jFoUlNIGbFcMw7/kSWF1rMTVAqs="
-    },
-    "global": {
-      "version": "4.3.2",
-      "resolved": "https://registry.npmjs.org/global/-/global-4.3.2.tgz",
-      "integrity": "sha1-52mJJopsdMOJCLEwWxD8DjlOnQ8=",
-      "requires": {
-        "min-document": "^2.19.0",
-        "process": "~0.5.1"
-      },
-      "dependencies": {
-        "process": {
-          "version": "0.5.2",
-          "resolved": "https://registry.npmjs.org/process/-/process-0.5.2.tgz",
-          "integrity": "sha1-FjjYqONML0QKkduVq5rrZ3/Bhc8="
-        }
-      }
     },
     "global-modules": {
       "version": "1.0.0",
@@ -11278,14 +11257,6 @@
       "resolved": "https://registry.npmjs.org/mimic-response/-/mimic-response-1.0.1.tgz",
       "integrity": "sha512-j5EctnkH7amfV/q5Hgmoal1g2QHFJRraOtmx0JpIqkxhBhI/lJSl1nMpQ45hVarwNETOoWEimndZ4QK0RHxuxQ=="
     },
-    "min-document": {
-      "version": "2.19.0",
-      "resolved": "https://registry.npmjs.org/min-document/-/min-document-2.19.0.tgz",
-      "integrity": "sha1-e9KC4/WELtKVu3SM3Z8f+iyCRoU=",
-      "requires": {
-        "dom-walk": "^0.1.0"
-      }
-    },
     "minimalistic-assert": {
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/minimalistic-assert/-/minimalistic-assert-1.0.1.tgz",
@@ -14074,31 +14045,6 @@
         "prop-types": "^15.6.0"
       }
     },
-    "react-hot-loader": {
-      "version": "4.3.3",
-      "resolved": "https://registry.npmjs.org/react-hot-loader/-/react-hot-loader-4.3.3.tgz",
-      "integrity": "sha512-N2yYEfI8mIeE9DffyMHrHQz0WryDdF8d1CJ4rpQ15hNAu3xco6wQ6JtKIIc/8w0igFWh2XpV0rIkuE4tpKLivQ==",
-      "requires": {
-        "fast-levenshtein": "^2.0.6",
-        "global": "^4.3.0",
-        "hoist-non-react-statics": "^2.5.0",
-        "prop-types": "^15.6.1",
-        "react-lifecycles-compat": "^3.0.4",
-        "shallowequal": "^1.0.2"
-      },
-      "dependencies": {
-        "fast-levenshtein": {
-          "version": "2.0.6",
-          "resolved": "https://registry.npmjs.org/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz",
-          "integrity": "sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc="
-        },
-        "hoist-non-react-statics": {
-          "version": "2.5.5",
-          "resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz",
-          "integrity": "sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw=="
-        }
-      }
-    },
     "react-is": {
       "version": "16.4.1",
       "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.4.1.tgz",
@@ -15387,11 +15333,6 @@
         "charenc": ">= 0.0.1",
         "crypt": ">= 0.0.1"
       }
-    },
-    "shallowequal": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/shallowequal/-/shallowequal-1.1.0.tgz",
-      "integrity": "sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ=="
     },
     "shebang-command": {
       "version": "1.2.0",
