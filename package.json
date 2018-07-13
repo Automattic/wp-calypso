@@ -274,7 +274,7 @@
     "socket.io": "2.1.1",
     "stacktrace-gps": "3.0.2",
     "stylelint": "9.3.0",
-    "supertest": "2.0.1",
+    "supertest": "3.1.0",
     "terminal-kit": "1.17.12",
     "webpack-bundle-analyzer": "2.13.1",
     "webpack-hot-middleware": "2.22.2"
