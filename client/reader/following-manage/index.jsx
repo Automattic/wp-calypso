@@ -18,6 +18,7 @@ import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
+import getDismissedSites from 'state/selectors/get-dismissed-sites';
 import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
 import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
 import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
@@ -133,9 +134,14 @@ class FollowingManage extends Component {
 	}
 
 	shouldRequestMoreRecs = () => {
-		const { recommendedSites, blockedSites } = this.props;
+		const { recommendedSites, blockedSites, dismissedSites } = this.props;
 
-		return reject( recommendedSites, site => includes( blockedSites, site.blogId ) ).length <= 4;
+		return (
+			reject(
+				recommendedSites,
+				site => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
+			).length <= 4
+		);
 	};
 
 	handleShowMoreClicked = () => {
@@ -177,6 +183,7 @@ class FollowingManage extends Component {
 			recommendedSites,
 			recommendedSitesPagingOffset,
 			blockedSites,
+			dismissedSites,
 			followsCount,
 			readerAliasedFollowFeedUrl,
 		} = this.props;
@@ -187,9 +194,9 @@ class FollowingManage extends Component {
 		const showFollowByUrl = this.shouldShowFollowByUrl();
 		const isFollowByUrlWithNoSearchResults = showFollowByUrl && searchResultsCount === 0;
 
-		// @todo change this to reject dismissed sites too
-		const filteredRecommendedSites = reject( recommendedSites, site =>
-			includes( blockedSites, site.blogId )
+		const filteredRecommendedSites = reject(
+			recommendedSites,
+			site => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
 		);
 
 		/* eslint-disable jsx-a11y/no-autofocus */
@@ -287,6 +294,7 @@ export default connect( ( state, { sitesQuery } ) => ( {
 	recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
 	recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset( state, recommendationsSeed ),
 	blockedSites: getBlockedSites( state ),
+	dismissedSites: getDismissedSites( state ),
 	readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
 	followsCount: getReaderFollowsCount( state ),
 } ) )( localize( FollowingManage ) );
