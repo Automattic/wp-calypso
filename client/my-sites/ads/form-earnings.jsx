@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import notices from 'notices';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
