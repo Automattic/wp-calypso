@@ -127,7 +127,7 @@ const webpackConfig = {
 					{
 						loader: 'thread-loader',
 						options: {
-							workers: Math.max( Math.floor( os.cpus().length / 2 ), 1 ),
+							workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
 						},
 					},
 					babelLoader,
