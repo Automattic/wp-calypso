@@ -36,6 +36,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ChecklistShow from 'my-sites/checklist/checklist-show';
 import { isEnabled } from 'config';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -146,7 +147,12 @@ class CurrentPlan extends Component {
 					/>
 					{ isEnabled( 'jetpack/checklist' ) &&
 						isJetpack &&
-						! isAutomatedTransfer && <ChecklistShow /> }
+						! isAutomatedTransfer && (
+							<Fragment>
+								<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+								<ChecklistShow />
+							</Fragment>
+						) }
 					<div
 						className={ classNames( 'current-plan__header-text current-plan__text', {
 							'is-placeholder': { isLoading },
