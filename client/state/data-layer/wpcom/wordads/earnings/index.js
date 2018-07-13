@@ -10,9 +10,18 @@ import { WORDADS_EARNINGS_REQUEST } from 'state/action-types';
 import { receiveEarnings } from 'state/wordads/earnings/actions';
 
 export default {
-	[ WORDADS_EARNINGS_REQUEST ]: dispatchRequestEx( {
-		fetch: action => http( `/sites/${ action.siteId }/wordads/earnings`, action ),
-		onSuccess: ( { siteId }, { earnings } ) => receiveEarnings( siteId, earnings ),
-		onError: ( action, error ) => errorNotice( error ),
-	} ),
+	[ WORDADS_EARNINGS_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch: action =>
+				http(
+					{
+						method: 'GET',
+						path: `/sites/${ action.siteId }/wordads/earnings`,
+					},
+					action
+				),
+			onSuccess: ( { siteId }, { earnings } ) => receiveEarnings( siteId, earnings ),
+			onError: ( action, error ) => errorNotice( error ),
+		} ),
+	],
 };

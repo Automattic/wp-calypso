@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { WORDADS_EARNINGS_REQUEST, WORDADS_EARNINGS_REQUEST_RECEIVE } from 'state/action-types';
+import { WORDADS_EARNINGS_REQUEST, WORDADS_EARNINGS_RECEIVE } from 'state/action-types';
 
 export const requestWordadsEarnings = siteId => dispatch => {
 	dispatch( {
@@ -15,8 +15,8 @@ export const requestWordadsEarnings = siteId => dispatch => {
 
 export const receiveEarnings = ( siteId, earnings ) => dispatch => {
 	dispatch( {
-		type: WORDADS_EARNINGS_REQUEST_RECEIVE,
+		type: WORDADS_EARNINGS_RECEIVE,
 		siteId,
-		earnings: earnings,
+		earnings,
 	} );
 };

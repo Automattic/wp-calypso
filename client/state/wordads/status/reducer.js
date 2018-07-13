@@ -17,4 +17,6 @@ export const items = keyedReducer( 'siteId', ( state, action ) => {
 	}
 } );
 
+items.schema = wordadsStatusSchema;
+
 export default items;

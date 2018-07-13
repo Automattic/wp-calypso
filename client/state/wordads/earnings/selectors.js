@@ -7,9 +7,9 @@
  * @returns {Object}        WordAds Error
  */
 export function getWordAdsEarnings( state, siteId ) {
-	if ( ! state.wordads.earnings.items ) {
+	if ( ! state.wordads.earnings ) {
 		return null;
 	}
 
-	return state.wordads.earnings.items[ siteId ];
+	return state.wordads.earnings[ siteId ];
 }
