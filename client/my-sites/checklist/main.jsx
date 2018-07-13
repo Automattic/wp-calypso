@@ -2,11 +2,11 @@
 /**
  * External dependencies
  */
+import page from 'page';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { find, some } from 'lodash';
-import page from 'page';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
