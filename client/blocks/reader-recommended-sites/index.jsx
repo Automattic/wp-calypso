@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
  */
 import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
 import Button from 'components/button';
-import { blockSite } from 'state/reader/site-blocks/actions';
+import { dismissSite } from 'state/reader/streams/actions';
 import ConnectedSubscriptionListItem from 'blocks/reader-subscription-list-item/connected';
 
 export class RecommendedSites extends React.PureComponent {
@@ -29,7 +29,7 @@ export class RecommendedSites extends React.PureComponent {
 			ui_position: uiIndex,
 		} );
 		recordAction( 'calypso_reader_recommended_site_dismissed' );
-		this.props.blockSite( siteId );
+		this.props.dismissSite( siteId );
 	};
 
 	handleSiteClick = ( siteId, uiIndex ) => {
@@ -96,5 +96,5 @@ export class RecommendedSites extends React.PureComponent {
 
 export default connect(
 	null,
-	{ blockSite }
+	{ dismissSite }
 )( localize( RecommendedSites ) );

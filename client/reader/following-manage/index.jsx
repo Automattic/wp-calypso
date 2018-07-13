@@ -186,6 +186,8 @@ class FollowingManage extends Component {
 		const sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		const showFollowByUrl = this.shouldShowFollowByUrl();
 		const isFollowByUrlWithNoSearchResults = showFollowByUrl && searchResultsCount === 0;
+
+		// @todo change this to reject dismissed sites too
 		const filteredRecommendedSites = reject( recommendedSites, site =>
 			includes( blockedSites, site.blogId )
 		);
