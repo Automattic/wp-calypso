@@ -41,7 +41,9 @@ export const JetpackSignInTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue target=".sso__card .form-toggle__switch" step="finish" click hidden />
-						<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
+						<SiteLink href="/plans/my-plan/:site">
+							{ translate( 'Return to the checklist' ) }
+						</SiteLink>
 					</ButtonRow>
 				</Fragment>
 			) }
@@ -63,7 +65,7 @@ export const JetpackSignInTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<SiteLink isButton href={ '/checklist/:site' }>
+						<SiteLink isButton href={ '/plans/my-plan/:site' }>
 							{ translate( "Yes, let's do it." ) }
 						</SiteLink>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>
