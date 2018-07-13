@@ -42,7 +42,6 @@ export function geocode( address ) {
 }
 
 export function reverseGeocode( latitude, longitude ) {
-	console.log( { location: { lat: parseFloat( latitude ), lng: parseFloat( longitude ) } } );
 	return queryGoogleMapsApi( {
 		location: { lat: parseFloat( latitude ), lng: parseFloat( longitude ) },
 	} );
