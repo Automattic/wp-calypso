@@ -11,12 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { requestWordadsStatus } from 'state/wordads/status/actions';
 
 class QueryWordadsStatus extends Component {
 	static propTypes = {
-		isRequestingWordadsStatus: PropTypes.bool,
 		requestWordadsStatus: PropTypes.func,
 		siteId: PropTypes.number,
 	};
@@ -41,8 +39,6 @@ class QueryWordadsStatus extends Component {
 }
 
 export default connect(
-	( state, props ) => ( {
-		isRequestingWordadsStatus: isRequestingWordadsStatus( state, props.siteId ),
-	} ),
+	null,
 	{ requestWordadsStatus }
 )( QueryWordadsStatus );

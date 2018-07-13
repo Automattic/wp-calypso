@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -37,4 +38,7 @@ class QueryWordadsEarnings extends Component {
 	}
 }
 
-export default QueryWordadsEarnings;
+export default connect(
+	null,
+	{ requestWordadsEarnings }
+)( QueryWordadsEarnings );

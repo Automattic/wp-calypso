@@ -37,7 +37,7 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteFragment } from 'lib/route';
-import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
+import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -47,7 +47,6 @@ import { isJetpackSite } from 'state/sites/selectors';
 class AdsMain extends Component {
 	static propTypes = {
 		adsProgramName: PropTypes.string,
-		isRequestingWordadsStatus: PropTypes.bool.isRequired,
 		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
 		requestingWordAdsApproval: PropTypes.bool.isRequired,
 		requestWordAdsApproval: PropTypes.func.isRequired,
@@ -140,7 +139,6 @@ class AdsMain extends Component {
 								disabled={
 									this.props.site.options.wordads ||
 									( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) ||
-									this.props.isRequestingWordadsStatus ||
 									this.props.isUnsafe !== false
 								}
 								onClick={ this.props.requestWordAdsApproval }
@@ -299,7 +297,6 @@ const mapStateToProps = state => {
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
 		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
-		isRequestingWordadsStatus: isRequestingWordadsStatus( state, siteId ),
 		adsProgramName: isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds',
 	};
 };

@@ -10,11 +10,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items, fetchingItems } from '../reducer';
-import {
-	WORDADS_STATUS_REQUEST,
-	WORDADS_STATUS_REQUEST_SUCCESS,
-	WORDADS_STATUS_REQUEST_FAILURE,
-} from 'state/action-types';
+import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
@@ -35,7 +31,7 @@ describe( 'reducer', () => {
 				active: false,
 			} );
 			const state = items( undefined, {
-				type: WORDADS_STATUS_REQUEST_SUCCESS,
+				type: WORDADS_STATUS_RECEIVE,
 				siteId,
 				status: {
 					unsafe: 'mature',
@@ -59,7 +55,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, {
-				type: WORDADS_STATUS_REQUEST_SUCCESS,
+				type: WORDADS_STATUS_RECEIVE,
 				status: {
 					active: true,
 				},
@@ -100,7 +96,7 @@ describe( 'reducer', () => {
 				2916284: true,
 			} );
 			const state = fetchingItems( originalState, {
-				type: WORDADS_STATUS_REQUEST_SUCCESS,
+				type: WORDADS_STATUS_RECEIVE,
 				siteId: 2916284,
 			} );
 
@@ -114,7 +110,7 @@ describe( 'reducer', () => {
 				2916284: true,
 			} );
 			const state = fetchingItems( originalState, {
-				type: WORDADS_STATUS_REQUEST_FAILURE,
+				type: WORDADS_STATUS_RECEIVE,
 				siteId: 2916284,
 			} );
 
