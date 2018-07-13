@@ -1026,6 +1026,12 @@
         "samsam": "1.3.0"
       }
     },
+    "@sinonjs/samsam": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/@sinonjs/samsam/-/samsam-2.0.0.tgz",
+      "integrity": "sha512-D7VxhADdZbDJ0HjUTMnSQ5xIGb4H2yWpg8k9Sf1T08zfFiQYlaxM8LZydpR4FQ2E6LZJX8IlabNZ5io4vdChwg==",
+      "dev": true
+    },
     "@types/commander": {
       "version": "2.12.2",
       "resolved": "https://registry.npmjs.org/@types/commander/-/commander-2.12.2.tgz",
@@ -11942,6 +11948,29 @@
       "integrity": "sha512-cRnohjy0ysfB7EWbkeDO5bLGC9Q3a9OKVtJpkXmbzPqBQjVpGCAmOYW5Ax/CLcdy+clNvqXpjNTVmeHM4Nr5dQ==",
       "requires": {
         "ajv": "^6.5.1"
+      },
+      "dependencies": {
+        "ajv": {
+          "version": "6.5.2",
+          "resolved": "https://registry.npmjs.org/ajv/-/ajv-6.5.2.tgz",
+          "integrity": "sha512-hOs7GfvI6tUI1LfZddH82ky6mOMyTuY0mk7kE2pWpmhhUSkumzaTO5vbVwij39MdwPQWCV4Zv57Eo06NtL/GVA==",
+          "requires": {
+            "fast-deep-equal": "^2.0.1",
+            "fast-json-stable-stringify": "^2.0.0",
+            "json-schema-traverse": "^0.4.1",
+            "uri-js": "^4.2.1"
+          }
+        },
+        "fast-deep-equal": {
+          "version": "2.0.1",
+          "resolved": "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-2.0.1.tgz",
+          "integrity": "sha1-ewUhjd+WZ79/Nwv3/bLLFf3Qqkk="
+        },
+        "json-schema-traverse": {
+          "version": "0.4.1",
+          "resolved": "https://registry.npmjs.org/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz",
+          "integrity": "sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg=="
+        }
       }
     },
     "npm-merge-driver": {
@@ -15407,12 +15436,13 @@
       "dev": true
     },
     "sinon": {
-      "version": "5.1.1",
-      "resolved": "https://registry.npmjs.org/sinon/-/sinon-5.1.1.tgz",
-      "integrity": "sha512-h/3uHscbt5pQNxkf7Y/Lb9/OM44YNCicHakcq73ncbrIS8lXg+ZGOZbtuU+/km4YnyiCYfQQEwANaReJz7KDfw==",
+      "version": "6.1.3",
+      "resolved": "https://registry.npmjs.org/sinon/-/sinon-6.1.3.tgz",
+      "integrity": "sha512-yeTza8xIZZdiXntCHJAzKll/sSYE+DuJOS8hiSapzaLqdW8eCNVVC9je9SZYYTkPm2bLts9x6UYxwuMAVVrM6Q==",
       "dev": true,
       "requires": {
         "@sinonjs/formatio": "^2.0.0",
+        "@sinonjs/samsam": "^2.0.0",
         "diff": "^3.5.0",
         "lodash.get": "^4.4.2",
         "lolex": "^2.4.2",
