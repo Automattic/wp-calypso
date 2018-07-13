@@ -18,12 +18,22 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
+import { query } from 'layout/guided-tours/positioning';
 
 export const JetpackPluginUpdatesTour = makeTour(
 	<Tour name="jetpackPluginUpdates" version="20180611">
+		{ /* Phantom step, wait for placeholder to disappear, then advance */ }
 		<Step
 			name="init"
+			target=".plugin-item.is-placeholder"
+			onTargetDisappear={ ( { next } ) => next() }
+			next="onLoaded"
+		/>
+		<Step
+			name="onLoaded"
+			wait={ () => !! query( '.plugin-item-jetpack .form-toggle:enabled' ).length }
 			target=".plugin-item-jetpack .form-toggle__switch"
+			onTargetDisappear={ /** Errors if missing */ () => {} }
 			arrow="top-left"
 			placement="below"
 			style={ {
