@@ -1361,6 +1361,7 @@
       "resolved": "https://registry.npmjs.org/align-text/-/align-text-0.1.4.tgz",
       "integrity": "sha1-DNkKVhCT810KmSVsIrcGlDP60Rc=",
       "dev": true,
+      "optional": true,
       "requires": {
         "kind-of": "^3.0.2",
         "longest": "^1.0.1",
@@ -6769,11 +6770,13 @@
         },
         "balanced-match": {
           "version": "1.0.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "brace-expansion": {
           "version": "1.1.11",
           "bundled": true,
+          "optional": true,
           "requires": {
             "balanced-match": "^1.0.0",
             "concat-map": "0.0.1"
@@ -6786,15 +6789,18 @@
         },
         "code-point-at": {
           "version": "1.1.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "concat-map": {
           "version": "0.0.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "console-control-strings": {
           "version": "1.1.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "core-util-is": {
           "version": "1.0.2",
@@ -6897,7 +6903,8 @@
         },
         "inherits": {
           "version": "2.0.3",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "ini": {
           "version": "1.3.5",
@@ -6907,6 +6914,7 @@
         "is-fullwidth-code-point": {
           "version": "1.0.0",
           "bundled": true,
+          "optional": true,
           "requires": {
             "number-is-nan": "^1.0.0"
           }
@@ -6919,17 +6927,20 @@
         "minimatch": {
           "version": "3.0.4",
           "bundled": true,
+          "optional": true,
           "requires": {
             "brace-expansion": "^1.1.7"
           }
         },
         "minimist": {
           "version": "0.0.8",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "minipass": {
           "version": "2.2.4",
           "bundled": true,
+          "optional": true,
           "requires": {
             "safe-buffer": "^5.1.1",
             "yallist": "^3.0.0"
@@ -6946,6 +6957,7 @@
         "mkdirp": {
           "version": "0.5.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "minimist": "0.0.8"
           }
@@ -7018,7 +7030,8 @@
         },
         "number-is-nan": {
           "version": "1.0.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "object-assign": {
           "version": "4.1.1",
@@ -7028,6 +7041,7 @@
         "once": {
           "version": "1.4.0",
           "bundled": true,
+          "optional": true,
           "requires": {
             "wrappy": "1"
           }
@@ -7133,6 +7147,7 @@
         "string-width": {
           "version": "1.0.2",
           "bundled": true,
+          "optional": true,
           "requires": {
             "code-point-at": "^1.0.0",
             "is-fullwidth-code-point": "^1.0.0",
@@ -10411,7 +10426,8 @@
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/longest/-/longest-1.0.1.tgz",
       "integrity": "sha1-MKCy2jj3N3DoKUoNIuZiXtd9AJc=",
-      "dev": true
+      "dev": true,
+      "optional": true
     },
     "longest-streak": {
       "version": "2.0.2",
@@ -16555,9 +16571,9 @@
       "integrity": "sha512-Rj5MiQxSpwDIaaXo3WsfZqLfLBUi6jLZRrIpg1cbRurhSLwaNcTgAGqxHFjNELlm7zR2xSGzzlq5B/mGlsiJSg=="
     },
     "title-case-minors": {
-      "version": "0.0.2",
-      "resolved": "https://registry.npmjs.org/title-case-minors/-/title-case-minors-0.0.2.tgz",
-      "integrity": "sha1-VaGhz0bM9S7kgjqaBx1rs7j5D4k="
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/title-case-minors/-/title-case-minors-1.0.0.tgz",
+      "integrity": "sha1-UfFwN8KUdHodHNpCS1AEyG2OsRU="
     },
     "tmp": {
       "version": "0.0.33",
@@ -16584,11 +16600,11 @@
       "integrity": "sha1-fSKbH8xjfkZsoIEYCDanqr/4P0M="
     },
     "to-capital-case": {
-      "version": "0.1.1",
-      "resolved": "https://registry.npmjs.org/to-capital-case/-/to-capital-case-0.1.1.tgz",
-      "integrity": "sha1-fgS22Bo8Cr/jCoxKhqF1vd9CjA0=",
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/to-capital-case/-/to-capital-case-1.0.0.tgz",
+      "integrity": "sha1-pXxQFP1aNyF88FCZ/4pCG7+cm38=",
       "requires": {
-        "to-no-case": "0.1.1"
+        "to-space-case": "^1.0.0"
       }
     },
     "to-fast-properties": {
@@ -16597,9 +16613,9 @@
       "integrity": "sha1-3F5pjL0HkmW8c+A3doGk5Og/YW4="
     },
     "to-no-case": {
-      "version": "0.1.1",
-      "resolved": "https://registry.npmjs.org/to-no-case/-/to-no-case-0.1.1.tgz",
-      "integrity": "sha1-zzPHDg8oFo2V5BWavxUOjFQu+f4="
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/to-no-case/-/to-no-case-1.0.2.tgz",
+      "integrity": "sha1-xyKQcWTvaxeBMsjmmTAhLRtKoWo="
     },
     "to-object-path": {
       "version": "0.3.0",
@@ -16639,14 +16655,31 @@
         }
       }
     },
-    "to-title-case": {
-      "version": "0.1.5",
-      "resolved": "https://registry.npmjs.org/to-title-case/-/to-title-case-0.1.5.tgz",
-      "integrity": "sha1-AIHfk7KrJ0+fauljredxp8MjRTw=",
+    "to-sentence-case": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/to-sentence-case/-/to-sentence-case-1.0.0.tgz",
+      "integrity": "sha1-xIO/NkdzflxzjvcAb+Ng1fmcVy4=",
       "requires": {
-        "escape-regexp-component": "1.0.2",
-        "title-case-minors": "0.0.2",
-        "to-capital-case": "0.1.1"
+        "to-no-case": "^1.0.0"
+      }
+    },
+    "to-space-case": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/to-space-case/-/to-space-case-1.0.0.tgz",
+      "integrity": "sha1-sFLar7Gysp3HcM6gFj5ewOvJ/Bc=",
+      "requires": {
+        "to-no-case": "^1.0.0"
+      }
+    },
+    "to-title-case": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/to-title-case/-/to-title-case-1.0.0.tgz",
+      "integrity": "sha1-rKiPidYGTeUBCKl86g20SCfoAGE=",
+      "requires": {
+        "escape-regexp-component": "^1.0.2",
+        "title-case-minors": "^1.0.0",
+        "to-capital-case": "^1.0.0",
+        "to-sentence-case": "^1.0.0"
       }
     },
     "tough-cookie": {
