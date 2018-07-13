@@ -1,12 +1,12 @@
 /** @format */
-
 /**
  * External dependencies
  */
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, some } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -28,6 +28,39 @@ import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class ChecklistMain extends PureComponent {
+	componentDidMount() {
+		this.maybeRedirectJetpack();
+	}
+
+	componentDidUpdate( prevProps ) {
+		this.maybeRedirectJetpack( prevProps );
+	}
+
+	/**
+	 * Redirect Jetpack checklists to /plans/my-plan/:siteSlug
+	 *
+	 * Guard for relevant props updated and correct conditions
+	 *
+	 * @param {Object}   prevProps           Optional. Previous props from componentDidUpdate.
+	 * @param {?boolean} prevProps.isAtomic  Previous isAtomic
+	 * @param {?boolean} prevProps.isJetpack Previous isJetpack
+	 * @param {?string}  prevProps.siteSlug  Previous siteSlug
+	 */
+	maybeRedirectJetpack( { isAtomic, isJetpack, siteSlug } = {} ) {
+		if (
+			this.props.siteSlug &&
+			false === this.props.isAtomic &&
+			this.props.isJetpack &&
+			some( [
+				this.props.siteSlug !== siteSlug,
+				this.props.isAtomic !== isAtomic,
+				this.props.isJetpack !== isJetpack,
+			] )
+		) {
+			page.redirect( `/plans/my-plan/${ this.props.siteSlug }` );
+		}
+	}
+
 	getHeaderTitle( displayMode ) {
 		const { translate } = this.props;
 
@@ -161,6 +194,8 @@ const mapStateToProps = state => {
 	const isJetpack = isJetpackSite( state, siteId );
 	return {
 		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
+		isAtomic,
+		isJetpack,
 		siteId,
 		siteSlug,
 		user: getCurrentUser( state ),
