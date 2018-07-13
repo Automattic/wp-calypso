@@ -1426,9 +1426,9 @@
       }
     },
     "aria-query": {
-      "version": "0.7.1",
-      "resolved": "https://registry.npmjs.org/aria-query/-/aria-query-0.7.1.tgz",
-      "integrity": "sha1-Jsu1r/ZBRLCoJb4YRuCxbPoAsR4=",
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/aria-query/-/aria-query-3.0.0.tgz",
+      "integrity": "sha1-ZbP8wcoRVajJrmTW7uKX8V1RM8w=",
       "dev": true,
       "requires": {
         "ast-types-flow": "0.0.7",
@@ -1718,9 +1718,9 @@
       "integrity": "sha512-32NDda82rhwD9/JBCCkB+MRYDp0oSvlo2IL6rQWA10PQi7tDUM3eqMSltXmY+Oyl/7N3P3qNtAlv7X0d9bI28w=="
     },
     "axobject-query": {
-      "version": "0.1.0",
-      "resolved": "https://registry.npmjs.org/axobject-query/-/axobject-query-0.1.0.tgz",
-      "integrity": "sha1-YvWdvFnJ+SQnWco0mWDnov48NsA=",
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/axobject-query/-/axobject-query-2.0.1.tgz",
+      "integrity": "sha1-Bd+nBa2orZ25k/polvItOVsLCgc=",
       "dev": true,
       "requires": {
         "ast-types-flow": "0.0.7"
@@ -4981,18 +4981,19 @@
       "dev": true
     },
     "eslint-plugin-jsx-a11y": {
-      "version": "6.0.3",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.0.3.tgz",
-      "integrity": "sha1-VFg9GuRCSDFi4EDhPMMYZUZRAOU=",
+      "version": "6.1.1",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.1.1.tgz",
+      "integrity": "sha512-JsxNKqa3TwmPypeXNnI75FntkUktGzI1wSa1LgNZdSOMI+B4sxnr1lSF8m8lPiz4mKiC+14ysZQM4scewUrP7A==",
       "dev": true,
       "requires": {
-        "aria-query": "^0.7.0",
+        "aria-query": "^3.0.0",
         "array-includes": "^3.0.3",
-        "ast-types-flow": "0.0.7",
-        "axobject-query": "^0.1.0",
-        "damerau-levenshtein": "^1.0.0",
-        "emoji-regex": "^6.1.0",
-        "jsx-ast-utils": "^2.0.0"
+        "ast-types-flow": "^0.0.7",
+        "axobject-query": "^2.0.1",
+        "damerau-levenshtein": "^1.0.4",
+        "emoji-regex": "^6.5.1",
+        "has": "^1.0.3",
+        "jsx-ast-utils": "^2.0.1"
       }
     },
     "eslint-plugin-react": {
