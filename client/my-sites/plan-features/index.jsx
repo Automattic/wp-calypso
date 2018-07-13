@@ -128,6 +128,12 @@ class PlanFeatures extends Component {
 				icon="info-outline"
 				status="is-success"
 			>
+				{ activeDiscount.plansPageNoticeTextTitle && (
+					<strong>
+						{ activeDiscount.plansPageNoticeTextTitle }
+						{ <br /> }
+					</strong>
+				) }
 				{ activeDiscount.plansPageNoticeText }
 			</Notice>,
 			bannerContainer
