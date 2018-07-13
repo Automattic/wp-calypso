@@ -1766,9 +1766,9 @@
       "integrity": "sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg=="
     },
     "babel-eslint": {
-      "version": "8.2.5",
-      "resolved": "https://registry.npmjs.org/babel-eslint/-/babel-eslint-8.2.5.tgz",
-      "integrity": "sha512-TcdEGCHHquOPQOlH6Fe6MLwPWWWJLdeKhcGoLfOTShETpoH8XYWhjWJw38KCKaTca7c/EdxLolnbakixKxnXDg==",
+      "version": "8.2.6",
+      "resolved": "https://registry.npmjs.org/babel-eslint/-/babel-eslint-8.2.6.tgz",
+      "integrity": "sha512-aCdHjhzcILdP8c9lej7hvXKvQieyRt20SF102SIGyY4cUIiw6UaAtK4j2o3dXX74jEmy0TJ0CEhv4fTIM3SzcA==",
       "dev": true,
       "requires": {
         "@babel/code-frame": "7.0.0-beta.44",
