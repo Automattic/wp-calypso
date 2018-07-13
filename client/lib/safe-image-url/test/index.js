@@ -95,6 +95,7 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( 'https://example.com/foo.jpeg?bar' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.gif?bar' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.png?bar' ) ).toBeNull();
+			expect( safeImageUrl( 'https://example.com/foo.png?width=90' ) ).toBeNull();
 		} );
 	}
 

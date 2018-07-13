@@ -48,7 +48,11 @@ export default function safeImageUrl( url ) {
 		return url;
 	}
 
-	const { hostname, query } = parseUrl( url, false, true );
+	const { hostname, query } = parseUrl(
+		url,
+		/* parseQueryString */ false,
+		/* slashesDenoteHost */ true
+	);
 
 	if ( REGEXP_A8C_HOST.test( hostname ) ) {
 		// Safely promote Automattic domains to HTTPS
