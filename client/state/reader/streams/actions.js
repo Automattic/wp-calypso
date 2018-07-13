@@ -120,15 +120,15 @@ export const dismissPost = ( { streamKey, postKey } ) => {
 	};
 };
 
-export const dismissSite = blogId => {
+export const dismissSite = siteId => {
 	// @todo move to data layer
 	wpcom
 		.undocumented()
 		.me()
-		.dismissSite( blogId );
+		.dismissSite( siteId );
 
 	return {
 		type: READER_STREAMS_DISMISS_SITE,
-		payload: { blogId },
+		payload: { siteId },
 	};
 };
