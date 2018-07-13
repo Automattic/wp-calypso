@@ -42,5 +42,8 @@ export function geocode( address ) {
 }
 
 export function reverseGeocode( latitude, longitude ) {
-	return queryGoogleMapsApi( { location: { lat: latitude, lng: longitude } } );
+	console.log( { location: { lat: parseFloat( latitude ), lng: parseFloat( longitude ) } } );
+	return queryGoogleMapsApi( {
+		location: { lat: parseFloat( latitude ), lng: parseFloat( longitude ) },
+	} );
 }
