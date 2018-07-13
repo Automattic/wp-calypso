@@ -29,6 +29,7 @@ import DocumentHead from 'components/data/document-head';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
+import TipInfo from 'components/purchase-detail/tip-info';
 import { getPlanRawPrice, isRequestingPlans } from 'state/plans/selectors';
 import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -110,6 +111,13 @@ class StoreUpsellComponent extends Component {
 							icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
 							title={ '$100 for Google AdWords' }
 							description={ 'Start bringing traffic immediately with Google AdWords.' }
+							body={
+								<div className="google-voucher__initial-step">
+									<TipInfo
+										info={ 'Offer valid in US after spending the first $25 on Google AdWords.' }
+									/>
+								</div>
+							}
 						/>
 					</div>
 					{ isFreePlan( currentSitePlanSlug ) ? (
