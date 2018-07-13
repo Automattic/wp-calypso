@@ -127,5 +127,6 @@ export default {
 			show: 50,
 		},
 		defaultVariation: 'noShow',
+		allowExistingUsers: true,
 	},
 };
