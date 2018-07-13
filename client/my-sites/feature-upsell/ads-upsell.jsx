@@ -68,7 +68,9 @@ class WordAdsUpsellComponent extends Component {
 					</p>
 				</header>
 
-				<h2 className="feature-upsell__section-header">How it works?</h2>
+				<h2 className="feature-upsell-section-header">
+					Here's how WordAds can help you make money:
+				</h2>
 
 				<div className="feature-upsell__video-container">
 					<div className="feature-upsell__placeholder feature-upsell__placeholder--cover" />
