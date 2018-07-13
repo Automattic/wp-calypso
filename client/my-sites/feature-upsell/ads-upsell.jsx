@@ -80,8 +80,8 @@ class WordAdsUpsellComponent extends Component {
 						height="100%"
 						className="feature-upsell__video"
 						src="https://videopress.com/embed/kRaHRuHQ"
-						frameborder="0"
-						allowfullscreen
+						frameBorder="0"
+						allowFullScreen={ true }
 					/>
 				</div>
 
