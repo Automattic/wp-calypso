@@ -18,10 +18,13 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import Button from 'components/button';
 import Popover from 'components/popover';
+import ProgressBar from 'components/progress-bar';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
+import getSiteChecklistSummary from 'state/selectors/get-site-checklist-summary';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
@@ -95,6 +98,40 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
+	renderChecklistProgress = () => {
+		/**
+		 * @TODO hide on checklist page?
+		 * @TODO move to own component
+		 */
+		const { checklistSummary, onClose, searchQuery, selectedSiteSlug, translate } = this.props;
+		const { numComplete, totalTasks } = checklistSummary;
+
+		if ( searchQuery || ! totalTasks || this.state.showSecondaryView ) {
+			return false;
+		}
+
+		if ( numComplete === totalTasks ) {
+			// @TODO show something else instead and / or kick off the next level of checklist
+			return false;
+		}
+
+		const href = '/checklist' + ( selectedSiteSlug ? `/${ selectedSiteSlug }` : '' );
+
+		return (
+			<div className="inline-help__checklist-progress">
+				<Button href={ href } className="inline-help__checklist-button" onClick={ onClose }>
+					<span className="inline-help__checklist-progress-label">
+						{ translate( 'Site Checklist Progress' ) }
+					</span>
+					<ProgressBar compact total={ totalTasks } value={ numComplete } />
+					<span className="inline-help__checklist-icon-wrapper">
+						<Gridicon icon="checkmark" className="inline-help__gridicon-checkmark" />
+					</span>
+				</Button>
+			</div>
+		);
+	};
+
 	render() {
 		const { translate } = this.props;
 		const { showSecondaryView } = this.state;
@@ -121,6 +158,7 @@ class InlineHelpPopover extends Component {
 				</div>
 
 				{ this.renderSecondaryView() }
+				{ this.renderChecklistProgress() }
 
 				<div className="inline-help__footer">
 					<Button
@@ -159,8 +197,10 @@ class InlineHelpPopover extends Component {
 
 export default connect(
 	state => ( {
+		checklistSummary: getSiteChecklistSummary( state ),
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
+		selectedSiteSlug: getSelectedSiteSlug( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 	} ),
 	{
