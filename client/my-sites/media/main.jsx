@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
+import { isString } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,6 +43,7 @@ class Media extends Component {
 		editedVideoItem: null,
 		selectedItems: [],
 		source: '',
+		folder: 'recent',
 	};
 
 	componentDidMount() {
@@ -281,6 +283,15 @@ class Media extends Component {
 		return '/media/:site';
 	};
 
+	onFolderChange = folderId => {
+		if ( ! folderId || ! isString( folderId ) ) return;
+
+		this.setState( {
+			folder: folderId,
+			search: undefined,
+		} );
+	};
+
 	render() {
 		const site = this.props.selectedSite;
 		return (
@@ -336,10 +347,12 @@ class Media extends Component {
 								single={ false }
 								filter={ this.props.filter }
 								source={ this.state.source }
+								folder={ this.state.folder }
 								onEditItem={ this.openDetailsModalForASingleImage }
 								onViewDetails={ this.openDetailsModalForAllSelected }
 								onDeleteItem={ this.handleDeleteMediaEvent }
 								onSourceChange={ this.handleSourceChange }
+								onFolderChange={ this.onFolderChange }
 								modal={ false }
 								containerWidth={ this.state.containerWidth }
 							/>
