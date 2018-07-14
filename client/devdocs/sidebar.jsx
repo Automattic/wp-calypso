@@ -13,6 +13,7 @@ import Sidebar from 'layout/sidebar';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
+import { isEnabled } from 'config';
 
 export default class DevdocsSidebar extends React.PureComponent {
 	static displayName = 'DevdocsSidebar';
@@ -103,6 +104,15 @@ export default class DevdocsSidebar extends React.PureComponent {
 							link="/devdocs/blocks"
 							selected={ this.isItemSelected( '/devdocs/blocks', false ) }
 						/>
+						{ isEnabled( 'devdocs/gutenberg' ) && (
+							<SidebarItem
+								className="devdocs__navigation-item"
+								icon="grid"
+								label="Gutenberg Blocks"
+								link="/devdocs/gutenberg"
+								selected={ this.isItemSelected( '/devdocs/gutenberg', false ) }
+							/>
+						) }
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="code"
