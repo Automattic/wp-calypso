@@ -11,7 +11,6 @@ import React from 'react';
  * Internal dependencies
  */
 import { url as mediaUrl } from 'lib/media/utils';
-import Gridicon from 'gridicons';
 import Count from 'components/count';
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
 
@@ -98,10 +97,6 @@ export default class extends React.Component {
 					className="media-library__list-item-folder-name"
 					style={ { fontSize: 10 * ( 1 + this.props.scale ) } }
 				>
-					{ this.props.scale >= 0.2 && (
-						<Gridicon className="media-library__list-item-name-icon" icon={ this.props.icon } />
-					) }
-
 					<figcaption className="media-library__list-item-folder-name-text">
 						{ this.props.media.name }
 					</figcaption>
