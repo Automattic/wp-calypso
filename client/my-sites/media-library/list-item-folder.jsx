@@ -93,7 +93,6 @@ export default class extends React.Component {
 						alt={ this.props.media.alt || this.props.media.title }
 						style={ this.getImageStyle() }
 					/>
-					<Gridicon size={ 124 * ( 1 - this.props.scale ) } icon="image-multiple" />
 				</div>
 				<div
 					className="media-library__list-item-folder-name"

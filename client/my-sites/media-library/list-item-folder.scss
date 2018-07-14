@@ -33,17 +33,6 @@
 	vertical-align: middle;
 }
 
-.media-library__list-item-folder-thumbnail {
-	.gridicon {
-		position: absolute;
-		top: 40%;
-		left: 50%;
-		fill: #fff;
-		opacity: 0.2;
-		transform: translate( -50%, -50% );
-	}
-}
-
 .media-library__list-item-folder-count {
 	position: absolute;
 	top: 10px;
