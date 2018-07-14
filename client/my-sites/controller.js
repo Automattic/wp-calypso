@@ -243,10 +243,9 @@ function onSelectedSiteAvailable( context ) {
  */
 function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
-	const path = context.prevPath ? sectionify( context.prevPath ) : '/stats';
 
 	// This path sets the URL to be visited once a site is selected
-	const basePath = contextPath === '/sites' ? path : contextPath;
+	const basePath = contextPath === '/sites' ? '/stats' : contextPath;
 
 	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
 
