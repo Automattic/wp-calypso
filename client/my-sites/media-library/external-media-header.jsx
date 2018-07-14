@@ -21,7 +21,8 @@ import MediaActions from 'lib/media/actions';
 import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
 import MediaFolderDropdown from './media-folder-dropdown';
-import FormToggle from 'components/forms/form-toggle';
+import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
 
 const DEBOUNCE_TIME = 250;
 
@@ -94,7 +95,7 @@ class MediaLibraryExternalHeader extends React.Component {
 	getState() {
 		return {
 			fetching: MediaListStore.isFetchingNextPage( this.props.site.ID ),
-			folderViewToggle: false,
+			mediaViewType: 'recent',
 		};
 	}
 
@@ -150,12 +151,14 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	onToggleChange( value ) {
-		this.setState( {
-			folderViewToggle: value,
-		} );
+		return function() {
+			this.setState( {
+				mediaViewType: value,
+			} );
 
-		const folder = value ? '/' : 'recent';
-		this.props.onFolderChange( folder );
+			const folder = value === 'recent' ? 'recent' : '/';
+			this.props.onFolderChange( folder );
+		}.bind( this );
 	}
 
 	renderCard() {
@@ -169,7 +172,7 @@ class MediaLibraryExternalHeader extends React.Component {
 			folder,
 		} = this.props;
 
-		const folderViewActive = this.state.folderViewToggle;
+		const folderViewActive = this.state.mediaViewType === 'folders';
 
 		const showBackButton = hasFolders && folderViewActive && folder !== '/' && folder !== 'recent';
 		const foldersWithPhotos = this.props.folders.filter( folderItem => folderItem.children );
@@ -179,17 +182,27 @@ class MediaLibraryExternalHeader extends React.Component {
 				{ hasAttribution && this.renderPexelsAttribution() }
 
 				{ hasFolders && (
-					<FormToggle
-						onChange={ this.onToggleChange }
-						onKeyDown={ this.onToggleChange }
-						checked={ this.state.folderViewToggle }
-						disabled={ false }
-						id="media-folder-view-toggle"
-						wrapperClassName="media-library__header-item media-library__header-folder-toggle"
-						aria-label={ translate( 'Browse Albums' ) }
+					<SegmentedControl
+						primary={ true }
+						compact={ true }
+						className="media-library__header-item media-library__header-folder-toggle"
 					>
-						{ translate( 'Browse Albums' ) }
-					</FormToggle>
+						<ControlItem
+							title={ translate( 'Recent photos' ) }
+							selected={ this.state.mediaViewType === 'recent' }
+							onClick={ this.onToggleChange( 'recent' ) }
+						>
+							{ translate( 'Recent' ) }
+						</ControlItem>
+
+						<ControlItem
+							title={ translate( 'Album view' ) }
+							selected={ this.state.mediaViewType === 'folders' }
+							onClick={ this.onToggleChange( 'folders' ) }
+						>
+							{ translate( 'Albums' ) }
+						</ControlItem>
+					</SegmentedControl>
 				) }
 
 				{ showBackButton && (
