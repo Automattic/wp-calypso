@@ -287,7 +287,6 @@ class AdsMain extends Component {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-
 	return {
 		site,
 		siteId,

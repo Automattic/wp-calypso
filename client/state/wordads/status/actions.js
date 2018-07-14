@@ -14,7 +14,7 @@ export const requestWordadsStatus = siteId => dispatch => {
 	} );
 };
 
-export const receiveStatus = siteId => dispatch => {
+export const receiveStatus = ( siteId, status ) => dispatch => {
 	dispatch( {
 		type: WORDADS_STATUS_RECEIVE,
 		siteId,
