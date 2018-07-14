@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Gutenberg should render 1`] = `
+<Main
+  className="devdocs devdocs__gutenberg"
+>
+  <Connect(DocumentHead)
+    title="Gutenberg Blocks"
+  />
+  <ReadmeViewer
+    readmeFilePath="/client/devdocs/gutenberg/README.md"
+  />
+</Main>
+`;
