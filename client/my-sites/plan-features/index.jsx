@@ -30,7 +30,7 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
-import getActiveDiscount from 'state/selectors/get-active-discount';
+import { getDiscountByName } from 'lib/discounts';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
@@ -109,15 +109,14 @@ class PlanFeatures extends Component {
 	}
 
 	renderDiscountNotice() {
-		const { canPurchase, hasPlaceholders, withDiscount, activeDiscount } = this.props;
-
+		const { canPurchase, hasPlaceholders, withDiscount } = this.props;
 		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
 		if ( ! bannerContainer ) {
 			return false;
 		}
 
-		const showActiveDiscount = activeDiscount && withDiscount === activeDiscount.name;
-		if ( ! showActiveDiscount || hasPlaceholders || ! canPurchase ) {
+		const activeDiscount = getDiscountByName( withDiscount );
+		if ( ! activeDiscount || hasPlaceholders || ! canPurchase ) {
 			return ReactDOM.createPortal( <div />, bannerContainer );
 		}
 
@@ -671,8 +670,6 @@ export default connect(
 			planProperties,
 			selectedSiteSlug,
 			siteType,
-
-			activeDiscount: getActiveDiscount( state ),
 		};
 	},
 	{
