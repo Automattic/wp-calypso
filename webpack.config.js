@@ -269,6 +269,9 @@ if ( shouldMinify ) {
 					 */
 					collapse_vars: false,
 				},
+				mangle: {
+					safari10: true,
+				},
 				ecma: 5,
 			},
 		} )
