@@ -318,6 +318,12 @@ MediaActions.setLibrarySelectedItems = function( siteId, items ) {
 	} );
 };
 
+MediaActions.clearLibrarySelectedItems = function( siteId ) {
+	debug( 'Clearing selected items for %d', siteId );
+
+	MediaActions.setLibrarySelectedItems( siteId, [] );
+};
+
 MediaActions.clearValidationErrors = function( siteId, itemId ) {
 	debug( 'Clearing validation errors for %d, with item ID %d', siteId, itemId );
 	Dispatcher.handleViewAction( {

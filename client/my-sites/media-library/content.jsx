@@ -66,6 +66,7 @@ class MediaLibraryContent extends React.Component {
 		this.state = { folders: [] };
 
 		this.parseFolders = this.parseFolders.bind( this );
+		this.handleFolderChange = this.handleFolderChange.bind( this );
 	}
 
 	parseFolders( { media } ) {
@@ -83,6 +84,14 @@ class MediaLibraryContent extends React.Component {
 		this.setState( {
 			folders,
 		} );
+	}
+
+	handleFolderChange( val ) {
+		// Clear any selected items when changing folder view
+		if ( this.props.site ) {
+			MediaActions.clearLibrarySelectedItems( this.props.site.ID );
+		}
+		this.props.onFolderChange( val );
 	}
 
 	renderErrors() {
@@ -307,7 +316,7 @@ class MediaLibraryContent extends React.Component {
 						single={ this.props.single }
 						scrollable={ this.props.scrollable }
 						onEditItem={ this.props.onEditItem }
-						onHandleEnter={ this.props.onFolderChange }
+						onHandleEnter={ this.handleFolderChange }
 					/>
 				</MediaLibrarySelectedData>
 			</MediaListData>
@@ -330,7 +339,7 @@ class MediaLibraryContent extends React.Component {
 					folder={ this.props.folder }
 					folders={ this.state.folders }
 					onSourceChange={ this.props.onSourceChange }
-					onFolderChange={ this.props.onFolderChange }
+					onFolderChange={ this.handleFolderChange }
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
