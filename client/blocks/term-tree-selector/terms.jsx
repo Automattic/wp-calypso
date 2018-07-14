@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -7,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import AutoSizer from 'react-virtualized/AutoSizer';
 import List from 'react-virtualized/List';
 import {
 	debounce,
@@ -62,7 +64,6 @@ class TermTreeSelectorList extends Component {
 		onChange: PropTypes.func,
 		isError: PropTypes.bool,
 		height: PropTypes.number,
-		width: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -135,14 +136,6 @@ class TermTreeSelectorList extends Component {
 		if ( this.isSmall() ) {
 			this.forceUpdate();
 		}
-	};
-
-	setSelectorRef = selectorRef => {
-		if ( ! selectorRef ) {
-			return;
-		}
-
-		this.setState( { selectorRef } );
 	};
 
 	getPageForIndex = index => {
@@ -262,15 +255,6 @@ class TermTreeSelectorList extends Component {
 		return range( 0, this.getRowCount() ).reduce( ( memo, index ) => {
 			return memo + this.getRowHeight( { index } );
 		}, 0 );
-	};
-
-	getResultsWidth = () => {
-		const { selectorRef } = this.state;
-		if ( selectorRef ) {
-			return selectorRef.clientWidth;
-		}
-
-		return 0;
 	};
 
 	getRowCount = () => {
@@ -417,7 +401,7 @@ class TermTreeSelectorList extends Component {
 		const showSearch =
 			( searchLength > 0 || ! isSmall ) &&
 			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
-		const { className, isError, loading, siteId, taxonomy, query, height, width } = this.props;
+		const { className, isError, loading, siteId, taxonomy, query, height } = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
 			'is-small': isSmall,
@@ -426,7 +410,7 @@ class TermTreeSelectorList extends Component {
 		} );
 
 		return (
-			<div ref={ this.setSelectorRef } className={ classes }>
+			<div className={ classes }>
 				{ this.state.requestedPages.map( page => (
 					<QueryTerms
 						key={ `query-${ page }` }
@@ -438,18 +422,22 @@ class TermTreeSelectorList extends Component {
 				{ taxonomy === 'category' && siteId && <QuerySiteSettings siteId={ siteId } /> }
 
 				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
-				<List
-					ref={ this.setListRef }
-					width={ width || this.getResultsWidth() }
-					height={ isSmall ? this.getCompactContainerHeight() : height }
-					onRowsRendered={ this.setRequestedPages }
-					rowCount={ rowCount }
-					estimatedRowSize={ ITEM_HEIGHT }
-					rowHeight={ this.getRowHeight }
-					rowRenderer={ this.cellRendererWrapper }
-					noRowsRenderer={ this.renderNoResults }
-					className="term-tree-selector__results"
-				/>
+				<AutoSizer disableHeight>
+					{ ( { width } ) => (
+						<List
+							ref={ this.setListRef }
+							width={ width }
+							height={ isSmall ? this.getCompactContainerHeight() : height }
+							onRowsRendered={ this.setRequestedPages }
+							rowCount={ rowCount }
+							estimatedRowSize={ ITEM_HEIGHT }
+							rowHeight={ this.getRowHeight }
+							rowRenderer={ this.cellRendererWrapper }
+							noRowsRenderer={ this.renderNoResults }
+							className="term-tree-selector__results"
+						/>
+					) }
+				</AutoSizer>
 			</div>
 		);
 	}
