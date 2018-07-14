@@ -4,9 +4,8 @@
  * External dependencies
  */
 
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
-import createReactClass from 'create-react-class';
 import i18n from 'i18n-calypso';
 
 /**
@@ -16,14 +15,12 @@ import Card from 'components/card';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
 
-export const Sites = createReactClass( {
-	displayName: 'Sites',
-
-	propTypes: {
+export class Sites extends Component {
+	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
-	},
+	};
 
-	filterSites( site ) {
+	filterSites = site => {
 		const path = this.props.siteBasePath;
 
 		// Filter out jetpack sites when on particular routes
@@ -37,9 +34,9 @@ export const Sites = createReactClass( {
 		}
 
 		return site;
-	},
+	};
 
-	getHeaderText() {
+	getHeaderText = () => {
 		if ( this.props.getSiteSelectionHeaderText ) {
 			return this.props.getSiteSelectionHeaderText();
 		}
@@ -84,9 +81,9 @@ export const Sites = createReactClass( {
 				strong: <strong />,
 			},
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<Main className="sites">
 				<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
@@ -99,7 +96,7 @@ export const Sites = createReactClass( {
 				</Card>
 			</Main>
 		);
-	},
-} );
+	}
+}
 
 export default Sites;
