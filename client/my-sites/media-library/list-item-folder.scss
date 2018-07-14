@@ -1,9 +1,24 @@
 .media-library__list-item-folder {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
 
 .media-library__list-item-folder-thumbnail {
+	background-repeat: no-repeat;
+	background-position: center center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 75%;
+	display: flex;
+	align-items: center;
+
 	img {
-		width: 100%;
+		@include hide-content-accessibly();
 	}
 }
 
@@ -11,10 +26,12 @@
 	font-size: 16px;
 	position: absolute;
 	bottom: 0;
+	right: 0;
 	left: 0;
-	width: 100%;
 	padding: 10px 15px;
 	background-color: $gray-light;
+	border: 1px solid #d9e3ea;
+	border-top: 0;
 	box-sizing: border-box;
 
 	.gridicon {

@@ -83,9 +83,13 @@ export default class extends React.Component {
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
 		} );
 
+		const thumbnailStyle = {
+			backgroundImage: `url(${ url })`,
+		};
+
 		return (
 			<div className="media-library__list-item-folder">
-				<div className="media-library__list-item-folder-thumbnail">
+				<div className="media-library__list-item-folder-thumbnail" style={ thumbnailStyle }>
 					<img
 						src={ url }
 						onLoad={ this.setUnknownImageDimensions }
