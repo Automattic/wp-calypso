@@ -24,12 +24,12 @@ export class Sites extends Component {
 		const path = this.props.siteBasePath;
 
 		// Filter out jetpack sites when on particular routes
-		if ( /^\/customize/.test( path ) ) {
+		if ( /^\/customize/.test( path ) || /^\/domains/.test( path ) ) {
 			return ! site.jetpack;
 		}
 
 		// Filter out sites with no upgrades on particular routes
-		if ( /^\/domains/.test( path ) || /^\/plans/.test( path ) ) {
+		if ( /^\/plans/.test( path ) ) {
 			return ! site.jetpack || site.isSiteUpgradeable;
 		}
 
