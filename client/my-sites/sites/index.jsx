@@ -21,11 +21,11 @@ export const Sites = createReactClass( {
 	displayName: 'Sites',
 
 	propTypes: {
-		path: PropTypes.string.isRequired,
+		siteBasePath: PropTypes.string.isRequired,
 	},
 
 	filterSites( site ) {
-		const path = this.props.path;
+		const path = this.props.siteBasePath;
 
 		// Filter out jetpack sites when on particular routes
 		if ( /^\/customize/.test( path ) ) {
@@ -33,7 +33,7 @@ export const Sites = createReactClass( {
 		}
 
 		// Filter out sites with no upgrades on particular routes
-		if ( /^\/domains/.test( path ) || /^\/plans/.test( this.props.basePath ) ) {
+		if ( /^\/domains/.test( path ) || /^\/plans/.test( path ) ) {
 			return ! site.jetpack || site.isSiteUpgradeable;
 		}
 
@@ -45,7 +45,7 @@ export const Sites = createReactClass( {
 			return this.props.getSiteSelectionHeaderText();
 		}
 
-		let path = this.props.path.split( '?' )[ 0 ].split( '/' )[ 1 ];
+		let path = this.props.siteBasePath.split( '?' )[ 0 ].split( '/' )[ 1 ];
 		if ( typeof path !== 'undefined' ) {
 			path = path.toLowerCase();
 		}
@@ -53,7 +53,7 @@ export const Sites = createReactClass( {
 		switch ( path ) {
 			case 'stats':
 				path = i18n.translate( 'Insights' );
-				if ( '/stats/activity' === this.props.path ) {
+				if ( '/stats/activity' === this.props.siteBasePath ) {
 					path = i18n.translate( 'Activity' );
 				}
 				break;

@@ -251,9 +251,7 @@ function createSitesComponent( context ) {
 
 	return (
 		<SitesComponent
-			path={ context.path }
 			siteBasePath={ basePath }
-			user={ user }
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 		/>
 	);
