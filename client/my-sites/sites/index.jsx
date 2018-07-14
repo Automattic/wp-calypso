@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -103,4 +102,4 @@ export const Sites = createReactClass( {
 	},
 } );
 
-export default connect()( Sites );
+export default Sites;
