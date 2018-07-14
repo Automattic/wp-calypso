@@ -112,6 +112,9 @@ const webpackConfig = {
 						 */
 						collapse_vars: false,
 					},
+					mangle: {
+						safari10: true,
+					},
 					ecma: 5,
 				},
 			} ),
@@ -251,30 +254,6 @@ if ( isDevelopment ) {
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
-if ( shouldMinify ) {
-	webpackConfig.plugins.push(
-		new UglifyJsPlugin( {
-			cache: 'docker' !== process.env.CONTAINER,
-			parallel: true,
-			sourceMap: Boolean( process.env.SOURCEMAP ),
-			uglifyOptions: {
-				compress: {
-					/**
-					 * Produces inconsistent results
-					 * Enable when the following is resolved:
-					 * https://github.com/mishoo/UglifyJS2/issues/3010
-					 */
-					collapse_vars: false,
-				},
-				mangle: {
-					safari10: true,
-				},
-				ecma: 5,
-			},
-		} )
 	);
 }
 
