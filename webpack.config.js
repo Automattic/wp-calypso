@@ -83,8 +83,8 @@ const webpackConfig = {
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].[chunkhash].opt.js', // prefer the chunkhash, which depends on the chunk, not the entire build
-		chunkFilename: '[name].[chunkhash].opt.js', // ditto
+		filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
+		chunkFilename: '[name].[chunkhash].min.js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	optimization: {
@@ -111,6 +111,9 @@ const webpackConfig = {
 						 * https://github.com/mishoo/UglifyJS2/issues/3010
 						 */
 						collapse_vars: false,
+					},
+					mangle: {
+						safari10: true,
 					},
 					ecma: 5,
 				},
@@ -251,27 +254,6 @@ if ( isDevelopment ) {
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
-if ( shouldMinify ) {
-	webpackConfig.plugins.push(
-		new UglifyJsPlugin( {
-			cache: 'docker' !== process.env.CONTAINER,
-			parallel: true,
-			sourceMap: Boolean( process.env.SOURCEMAP ),
-			uglifyOptions: {
-				compress: {
-					/**
-					 * Produces inconsistent results
-					 * Enable when the following is resolved:
-					 * https://github.com/mishoo/UglifyJS2/issues/3010
-					 */
-					collapse_vars: false,
-				},
-				ecma: 5,
-			},
-		} )
 	);
 }
 
