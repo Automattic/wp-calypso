@@ -24,7 +24,7 @@ import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import StickyPanel from 'components/sticky-panel';
 
-class MediaLibraryHeader extends React.Component {
+class MediaLibraryHeader extends React.PureComponent {
 	static displayName = 'MediaLibraryHeader';
 
 	static propTypes = {

@@ -35,7 +35,7 @@ import MediaLibraryList from './list';
 import InlineConnection from 'my-sites/sharing/connections/inline-connection';
 import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
 
-class MediaLibraryContent extends React.Component {
+class MediaLibraryContent extends React.PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 		mediaValidationErrors: PropTypes.object,
@@ -344,5 +344,5 @@ export default connect(
 	} ),
 	null,
 	null,
-	{ pure: false }
+	{ pure: true }
 )( localize( MediaLibraryContent ) );

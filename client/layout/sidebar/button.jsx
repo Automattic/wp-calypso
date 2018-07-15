@@ -12,6 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { isExternal } from 'lib/url';
+import compareProps from 'lib/compare-props';
 import { preload } from 'sections-helper';
 
 class SidebarButton extends React.Component {
@@ -43,6 +44,15 @@ class SidebarButton extends React.Component {
 		return isExternal( this.props.href ) ? '_blank' : null;
 	};
 
+	shouldSkipRender = compareProps( { ignore: [ 'onClick' ] } );
+	shouldComponentUpdate( nextProps ) {
+		return ! this.shouldSkipRender( this.props, nextProps );
+	}
+
+	onClick = ( ...args ) => {
+		return this.props.onClick( ...args );
+	};
+
 	render() {
 		if ( ! this.props.href ) {
 			return null;
@@ -51,7 +61,7 @@ class SidebarButton extends React.Component {
 		return (
 			<a
 				rel={ isExternal( this.props.href ) ? 'external' : null }
-				onClick={ this.props.onClick }
+				onClick={ this.onClick }
 				href={ this.props.href }
 				target={ this.getTarget() }
 				className="sidebar__button"

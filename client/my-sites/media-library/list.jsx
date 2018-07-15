@@ -27,7 +27,7 @@ import isRtlSelector from 'state/selectors/is-rtl';
 
 const GOOGLE_MAX_RESULTS = 1000;
 
-export class MediaLibraryList extends React.Component {
+export class MediaLibraryList extends React.PureComponent {
 	static displayName = 'MediaLibraryList';
 
 	static propTypes = {
@@ -294,5 +294,5 @@ export default connect(
 	} ),
 	null,
 	null,
-	{ pure: false }
+	{ pure: true }
 )( MediaLibraryList );

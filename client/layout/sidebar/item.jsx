@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import { isExternal } from 'lib/url';
 import { preload } from 'sections-helper';
 import TranslatableString from 'components/translatable/proptype';
+import compareProps from 'lib/compare-props';
 
 export default class SidebarItem extends React.Component {
 	static propTypes = {
@@ -39,6 +40,15 @@ export default class SidebarItem extends React.Component {
 		}
 	};
 
+	shouldSkipRender = compareProps( { ignore: [ 'onNavigate' ] } );
+	shouldComponentUpdate( nextProps ) {
+		return ! this.shouldSkipRender( this.props, nextProps );
+	}
+
+	onNavigate = e => {
+		return this.props.onNavigate( e );
+	};
+
 	render() {
 		const isExternalLink = isExternal( this.props.link );
 		const showAsExternal = isExternalLink && ! this.props.forceInternalLink;
@@ -51,7 +61,7 @@ export default class SidebarItem extends React.Component {
 				data-post-type={ this.props.postType }
 			>
 				<a
-					onClick={ this.props.onNavigate }
+					onClick={ this.onNavigate }
 					href={ this.props.link }
 					target={ showAsExternal ? '_blank' : null }
 					rel={ isExternalLink ? 'noopener noreferrer' : null }

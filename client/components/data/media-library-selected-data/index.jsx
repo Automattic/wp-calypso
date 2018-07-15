@@ -19,7 +19,7 @@ function getStateData( siteId ) {
 	};
 }
 
-export default class extends React.Component {
+export default class extends React.PureComponent {
 	static displayName = 'MediaLibrarySelectedData';
 
 	static propTypes = {
@@ -36,7 +36,7 @@ export default class extends React.Component {
 		MediaLibrarySelectedStore.off( 'change', this.updateState );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.setState( getStateData( nextProps.siteId ) );
 		}

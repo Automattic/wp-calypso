@@ -30,6 +30,7 @@ import {
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
+import compareProps from 'lib/compare-props';
 
 class SiteNotice extends React.Component {
 	static propTypes = {
@@ -37,6 +38,11 @@ class SiteNotice extends React.Component {
 	};
 
 	static defaultProps = {};
+
+	shouldSkipRender = compareProps( { deep: [ 'activeDiscount' ] } );
+	shouldComponentUpdate( nextProps ) {
+		return ! this.shouldSkipRender( this.props, nextProps );
+	}
 
 	getSiteRedirectNotice( site ) {
 		if ( ! site || this.props.isDomainOnly ) {

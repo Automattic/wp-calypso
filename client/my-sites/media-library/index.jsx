@@ -23,6 +23,7 @@ import FilterBar from './filter-bar';
 import MediaValidationData from 'components/data/media-validation-data';
 import QueryPreferences from 'components/data/query-preferences';
 import searchUrl from 'lib/search-url';
+import compareProps from 'lib/compare-props';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnections,
@@ -88,6 +89,12 @@ class MediaLibrary extends Component {
 			// If we have changed to an external data source then check for a keyring connection
 			this.props.requestKeyringConnections();
 		}
+	}
+
+	shouldSkipRender = compareProps( { deep: [ 'connectedServices' ] } );
+	shouldComponentUpdate( nextProps, nextState ) {
+		const stateMatches = this.state === nextState;
+		return ! this.shouldSkipRender( this.props, nextProps ) || ! stateMatches;
 	}
 
 	doSearch = keywords => {

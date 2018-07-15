@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -13,12 +13,13 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import Count from 'components/count';
+import compareProps from 'lib/compare-props';
 import { preload } from 'sections-helper';
 
 /**
  * Main
  */
-class NavItem extends PureComponent {
+class NavItem extends Component {
 	static propTypes = {
 		itemType: PropTypes.string,
 		path: PropTypes.string,
@@ -42,6 +43,18 @@ class NavItem extends PureComponent {
 		}
 	};
 
+	shouldSkipRender = compareProps( { ignore: [ 'onClick' ] } );
+
+	shouldComponentUpdate( nextProps ) {
+		return ! this.shouldSkipRender( this.props, nextProps );
+	}
+
+	onClick = e => {
+		if ( ! this.props.disabled ) {
+			return this.props.onClick( e );
+		}
+	};
+
 	render() {
 		const itemClassPrefix = this.props.itemType ? this.props.itemType : 'tab';
 		const itemClasses = {
@@ -51,14 +64,10 @@ class NavItem extends PureComponent {
 		itemClasses[ 'section-nav-' + itemClassPrefix ] = true;
 		const itemClassName = classNames( this.props.className, itemClasses );
 
-		let target, onClick;
+		let target;
 
 		if ( this.props.isExternalLink ) {
 			target = '_blank';
-		}
-
-		if ( ! this.props.disabled ) {
-			onClick = this.props.onClick;
 		}
 
 		return (
@@ -67,7 +76,7 @@ class NavItem extends PureComponent {
 					href={ this.props.path }
 					target={ target }
 					className={ 'section-nav-' + itemClassPrefix + '__link' }
-					onClick={ onClick }
+					onClick={ this.onClick }
 					onMouseEnter={ this.preload }
 					tabIndex={ this.props.tabIndex || 0 }
 					aria-selected={ this.props.selected }
