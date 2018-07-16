@@ -18,7 +18,12 @@ describe( 'selectors', () => {
 		sharing: {
 			keyring: {
 				items: {
-					1: { ID: 1, service: 'twitter', sites: [ '2916284' ], additional_external_users: [] },
+					1: {
+						ID: 1,
+						service: 'twitter',
+						sites: [ '2916284' ],
+						additional_external_users: [],
+					},
 					2: {
 						ID: 2,
 						service: 'instagram',
@@ -58,7 +63,31 @@ describe( 'selectors', () => {
 					2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 },
 				},
 			},
+			services: {
+				items: {
+					facebook: {
+						ID: 'facebook',
+						label: 'Facebook',
+						type: 'publicize',
+						multiple_external_user_ID_support: true,
+						external_users_only: true,
+						jetpack_support: true,
+						jetpack_module_required: 'publicize',
+					},
+					twitter: {
+						ID: 'twitter',
+						label: 'Twitter',
+						type: 'publicize',
+						multiple_external_user_ID_support: false,
+						external_users_only: false,
+						jetpack_support: true,
+						jetpack_module_required: 'publicize',
+					},
+					isFetching: false,
+				},
+			},
 		},
+
 		ui: {
 			selectedSiteId: 2916284,
 		},
@@ -83,8 +112,6 @@ describe( 'selectors', () => {
 			const connections = getAvailableExternalAccounts( state, 'facebook' );
 
 			expect( connections ).to.eql( [
-				{ isConnected: false, keyringConnectionId: 3, name: undefined, picture: undefined },
-				{ isConnected: false, keyringConnectionId: 4, name: undefined, picture: undefined },
 				{
 					ID: 1,
 					isConnected: false,
