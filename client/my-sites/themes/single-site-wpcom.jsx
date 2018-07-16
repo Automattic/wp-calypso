@@ -41,7 +41,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 					className="is-theme-showcase-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
 					title={ 'Unlock ALL premium themes with our Premium and Business plans!' }
 					event="themes_plans_free_personal"
-					callToAction={ translate( 'View plans' ) }
+					callToAction={ 'View Plans' }
 				/>
 			);
 		} else {
