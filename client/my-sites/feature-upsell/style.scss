@@ -2,7 +2,7 @@
 	margin-top: 48px;
 }
 
-.feature-upsell-placeholder--cta {
+.feature-upsell__placeholder-cta {
 	animation: pulse-light 800ms ease-in-out infinite;
 	background: $gray-lighten-20;
 	display: inline-block;
@@ -43,11 +43,11 @@
 	}
 }
 
-.feature-upsell-cta {
+.feature-upsell__cta {
 	margin-top: 30px;
 	text-align: center;
 
-	&__button {
+	&-button {
 		font-size: 25px;
 		margin: 0 auto;
 		padding: 13px 20px;
@@ -61,7 +61,7 @@
 		}
 	}
 
-	&__guarantee {
+	&-guarantee {
 		display: block;
 		margin-top: 8px;
 		opacity: 0.8;

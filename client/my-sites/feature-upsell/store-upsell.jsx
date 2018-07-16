@@ -69,18 +69,18 @@ class StoreUpsellComponent extends Component {
 					</p>
 				</header>
 
-				<div className="feature-upsell-cta">
+				<div className="feature-upsell__cta">
 					{ loadingPrice ? (
-						<div className="feature-upsell-placeholder feature-upsell-placeholder--cta" />
+						<div className="feature-upsell__placeholder-cta" />
 					) : (
 						<React.Fragment>
 							<button
 								onClick={ this.handleUpgradeButtonClick }
-								className="button is-primary feature-upsell-cta__button"
+								className="button is-primary feature-upsell__cta-button"
 							>
 								Upgrade for { this.renderPrice() } and get started
 							</button>
-							<span className="feature-upsell-cta__guarantee">30-day money back guarantee</span>
+							<span className="feature-upsell__cta-guarantee">30-day money back guarantee</span>
 						</React.Fragment>
 					) }
 				</div>
