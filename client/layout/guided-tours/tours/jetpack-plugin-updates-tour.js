@@ -31,7 +31,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 		/>
 		<Step
 			name="onLoaded"
-			wait={ () => !! query( '.plugin-item-jetpack .form-toggle:enabled' ).length }
+			wait={ () => ! query( '.plugin-item-jetpack .form-toggle:enabled' ).length }
 			target=".plugin-item-jetpack .form-toggle__switch"
 			onTargetDisappear={ /** Errors if missing */ () => {} }
 			arrow="top-left"
