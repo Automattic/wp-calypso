@@ -18,22 +18,32 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
+import PluginsStore from 'lib/plugins/store';
+import { getSelectedSite } from 'state/ui/selectors';
 import { query } from 'layout/guided-tours/positioning';
 
+window.pstore = PluginsStore;
+
 export const JetpackPluginUpdatesTour = makeTour(
-	<Tour name="jetpackPluginUpdates" version="20180611">
-		{ /* Phantom step, wait for placeholder to disappear, then advance */ }
+	<Tour
+		name="jetpackPluginUpdates"
+		version="20180611"
+		when={ state => PluginsStore.getSitePlugin( getSelectedSite( state ), 'jetpack' ) }
+	>
 		<Step
 			name="init"
-			target=".plugin-item.is-placeholder"
-			onTargetDisappear={ ( { next } ) => next() }
-			next="onLoaded"
-		/>
-		<Step
-			name="onLoaded"
-			wait={ () => ! query( '.plugin-item-jetpack .form-toggle:enabled' ).length }
+			wait={ () => !! query( '.plugin-item-jetpack .form-toggle:enabled' ).length }
 			target=".plugin-item-jetpack .form-toggle__switch"
-			onTargetDisappear={ /** Errors if missing */ () => {} }
+			onTargetDisappear={
+				/**
+				 * noop
+				 *
+				 * Wait doesn't _wait_ for it's condition before calling this.
+				 * This will therefore be called _before_ we've shown the tour.
+				 * We don't want to quit in those cases :/
+				 */
+				() => {}
+			}
 			arrow="top-left"
 			placement="below"
 			style={ {
