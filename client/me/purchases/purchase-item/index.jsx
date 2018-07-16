@@ -207,7 +207,12 @@ class PurchaseItem extends Component {
 		}
 
 		return (
-			<CompactCard className={ classes } onClick={ onClick } href={ href }>
+			<CompactCard
+				className={ classes }
+				data-e2e-connected-site={ ! isDisconnectedSite }
+				href={ href }
+				onClick={ onClick }
+			>
 				{ content }
 			</CompactCard>
 		);
