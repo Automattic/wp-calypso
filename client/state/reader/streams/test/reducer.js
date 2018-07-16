@@ -28,13 +28,6 @@ import {
 } from '../reducer';
 
 jest.mock( 'lib/warn', () => () => {} );
-jest.mock( 'lib/wp', () => ( {
-	undocumented: () => ( {
-		me: () => ( {
-			dismissSite: () => {},
-		} ),
-	} ),
-} ) );
 jest.mock( 'lib/user', () => () => {} );
 
 const TIME1 = '2018-01-01T00:00:00.000Z';
