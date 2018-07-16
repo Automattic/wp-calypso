@@ -27,7 +27,7 @@ function getModuleVersion( id ) {
  */
 module.exports = JSON.stringify( {
 	'babel-loader': getModuleVersion( 'babel-loader' ),
-	'babel-core': getModuleVersion( 'babel-core' ),
+	'babel-core': getModuleVersion( '@babel/core' ),
 	'babel-plugin-transform-wpcalypso-async': getModuleVersion(
 		'../babel-plugin-transform-wpcalypso-async'
 	),
