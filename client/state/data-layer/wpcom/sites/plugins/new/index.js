@@ -54,6 +54,14 @@ const showErrorNotice = error => {
 		return errorNotice( knownError );
 	}
 
+	const uploadingErrors = {
+		invalid_plugin_package: translate( 'The uploaded file is not a valid plugin package.' ),
+	};
+
+	if ( error && error.error && uploadingErrors[ error.error ] ) {
+		return errorNotice( uploadingErrors[ error.error ] );
+	}
+
 	if ( error.error ) {
 		return errorNotice(
 			translate( 'Upload problem: %(error)s.', {
