@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { READER_STREAMS_DISMISS_SITE } from 'state/action-types';
+import { READER_DISMISS_SITE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -21,7 +21,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {} );
 
 			const state = items( original, {
-				type: READER_STREAMS_DISMISS_SITE,
+				type: READER_DISMISS_SITE,
 				payload: { siteId: 123 },
 			} );
 
