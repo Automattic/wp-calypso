@@ -44,16 +44,15 @@ export function getAvailableExternalAccounts( state, serviceName ) {
 	// Iterate over Keyring connections for this service and generate a
 	// flattened array of all accounts, including external users
 	return getKeyringConnectionsByName( state, serviceName ).reduce( ( memo, keyringConnection ) => {
-		if (
-			! service.external_users_only ||
-			isConnected( keyringConnection.ID, keyringConnection.external_ID )
-		) {
+		if ( ! service.external_users_only ) {
 			memo = memo.concat( [
 				{
+					ID: keyringConnection.external_ID,
 					name: keyringConnection.external_display || keyringConnection.external_name,
 					picture: keyringConnection.external_profile_picture,
 					keyringConnectionId: keyringConnection.ID,
 					isConnected: isConnected( keyringConnection.ID, keyringConnection.external_ID ),
+					isExternal: false,
 				},
 			] );
 		}

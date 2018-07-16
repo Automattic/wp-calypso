@@ -50,13 +50,16 @@ const SharingServiceAction = ( {
 		label = translate( 'Connecting…', {
 			context: 'Sharing: Publicize connect pending button label',
 		} );
-	} else if ( 'connected' === status ) {
+	} else if ( 'connected' === status || 'must-disconnect' === status ) {
 		if ( removableConnections.length > 1 ) {
 			label = translate( 'Disconnect All', {
 				context: 'Sharing: Publicize disconnect button label',
 			} );
 		} else {
 			label = translate( 'Disconnect', { context: 'Sharing: Publicize disconnect button label' } );
+		}
+		if ( 'must-disconnect' === status ) {
+			warning = true;
 		}
 	} else if ( 'reconnect' === status ) {
 		label = translate( 'Reconnect', {

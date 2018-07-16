@@ -1,5 +1,4 @@
 .foldable-card.sharing-service {
-
 	.sharing-service__logo {
 		float: left;
 		margin-right: 8px;
@@ -7,14 +6,14 @@
 
 	&.facebook {
 		h2,
-		.sharing-service__logo{
+		.sharing-service__logo {
 			color: $color-facebook;
 		}
 	}
 
 	&.twitter {
 		h2,
-		.sharing-service__logo{
+		.sharing-service__logo {
 			color: $color-twitter;
 		}
 	}
@@ -31,31 +30,30 @@
 		.sharing-service__logo {
 			color: $color-linkedin;
 		}
-
 	}
 
-	&.tumblr{
+	&.tumblr {
 		h2,
 		.sharing-service__logo {
 			color: $color-tumblr;
 		}
 	}
 
-	&.path{
+	&.path {
 		h2,
 		.sharing-service__logo {
 			color: $color-path;
 		}
 	}
 
-	&.eventbrite{
+	&.eventbrite {
 		h2,
 		.sharing-service__logo {
 			color: $color-eventbrite;
 		}
 	}
 
-	&.instagram{
+	&.instagram {
 		h2,
 		.sharing-service__logo {
 			color: $color-instagram;
@@ -95,13 +93,13 @@
 		margin-bottom: 0.5em;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 0 0.25em;
 	}
 }
 
 .sharing-settings.sharing-connections {
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 16px 0;
 	}
 
@@ -110,7 +108,7 @@
 		vertical-align: top;
 		width: 48%;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: block;
 			width: 100%;
 			margin: 20px 0;
@@ -120,12 +118,12 @@
 		&:first-child {
 			padding-right: 4%;
 
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				border-bottom: 1px solid $gray-lighten-30;
 				padding-bottom: 10px;
 			}
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				margin-bottom: 16px;
 				padding: 0 0 16px 0;
 			}
@@ -151,7 +149,7 @@
 	.sharing-service-tip {
 		margin-top: 16px;
 		font-size: 14px;
-		color: darken( $gray,10 );
+		color: darken( $gray, 10 );
 
 		.gridicons-info {
 			margin-right: 3px;
@@ -183,7 +181,6 @@
 	}
 
 	.sharing-service-accounts-detail {
-
 		h2 {
 			font-size: 1.2em;
 		}
@@ -205,15 +202,15 @@
 
 .sharing-service-action {
 	position: absolute;
-		right: 64px;
-		top: 26px;
+	right: 64px;
+	top: 26px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		right: 10px;
 		top: 15px;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		top: 11px;
 	}
 
@@ -248,10 +245,10 @@
 	&.is-placeholder::before {
 		content: '';
 		position: absolute;
-			top: 16px;
-			right: 16px;
-			bottom: 16px;
-			left: 16px;
+		top: 16px;
+		right: 16px;
+		bottom: 16px;
+		left: 16px;
 		background-color: $gray-lighten-20;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
@@ -280,7 +277,7 @@
 	width: 50px;
 	border-radius: 4px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		height: 21px;
 		padding-top: 5px;
 		margin: 2px 8px 0 32px;
@@ -302,14 +299,14 @@
 	}
 }
 
-@include sharing-service( "facebook", $color-facebook );
-@include sharing-service( "twitter", $color-twitter );
-@include sharing-service( "google_plus", $color-gplus );
-@include sharing-service( "tumblr", $color-tumblr );
-@include sharing-service( "linkedin", $color-linkedin );
-@include sharing-service( "path", $color-path );
-@include sharing-service( "instagram", $color-instagram );
-@include sharing-service( "eventbrite", $color-eventbrite );
+@include sharing-service( 'facebook', $color-facebook );
+@include sharing-service( 'twitter', $color-twitter );
+@include sharing-service( 'google_plus', $color-gplus );
+@include sharing-service( 'tumblr', $color-tumblr );
+@include sharing-service( 'linkedin', $color-linkedin );
+@include sharing-service( 'path', $color-path );
+@include sharing-service( 'instagram', $color-instagram );
+@include sharing-service( 'eventbrite', $color-eventbrite );
 
 .sharing-service__name {
 	clear: none;
@@ -320,7 +317,7 @@
 	color: $gray-darken-20;
 	font-size: 14px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }
@@ -329,18 +326,19 @@
 	font-style: italic;
 }
 
-.sharing-service.reconnect .sharing-service__description {
+.sharing-service.reconnect .sharing-service__description,
+.sharing-service.must-disconnect .sharing-service__description {
 	font-weight: bold;
 }
 
 .sharing-service__content-toggle {
 	position: absolute;
-		right: 16px;
-		top: 30px;
+	right: 16px;
+	top: 30px;
 	font-size: 22px;
 	color: #aeb8be;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		left: 14px;
 		top: 20px;
 	}
@@ -362,7 +360,7 @@
 	position: absolute;
 	left: 80px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 30%;
 	}
 }
@@ -408,7 +406,7 @@
 		padding-bottom: 0;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding-right: 0;
 	}
 }
@@ -416,7 +414,7 @@
 .sharing-service.reconnect .sharing-connection__account-status {
 	padding-right: 200px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding-right: 0;
 	}
 }
@@ -438,7 +436,7 @@
 	display: block;
 }
 
-.sharing-connection__account-sitewide-connection input[type="checkbox"] {
+.sharing-connection__account-sitewide-connection input[type='checkbox'] {
 	margin-top: 3px;
 }
 
@@ -449,11 +447,11 @@
 
 .sharing-connection__account-actions {
 	position: absolute;
-		right: -10px;
-		top: 50%;
+	right: -10px;
+	top: 50%;
 	margin-top: -16px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		position: static;
 		margin-top: 4px;
 		text-align: right;
@@ -467,13 +465,14 @@
 	line-height: 16px;
 }
 
-.sharing-connection__account-action.reconnect {
+.sharing-connection__account-action.reconnect,
+.sharing-connection__account-action.must-disconnect {
 	color: $alert-yellow;
 
 	.gridicon {
 		margin-right: 4px;
 		position: relative;
-			top: 3px;
+		top: 3px;
 	}
 }
 
@@ -517,7 +516,7 @@
 }
 
 .sharing-buttons-tray__buttons {
-	@include breakpoint ( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin-right: -16px;
 	}
 }
@@ -545,7 +544,7 @@
 	border: 1px solid #ccc;
 	border-radius: 2px;
 	background-color: $white;
-	box-shadow: 0px 5px 20px rgba( 0, 0, 0, .2 );
+	box-shadow: 0px 5px 20px rgba( 0, 0, 0, 0.2 );
 }
 
 .sharing-buttons-preview-buttons__more-inner .sharing-buttons-preview-button,
@@ -555,17 +554,17 @@
 }
 
 .sharing-buttons-preview-buttons__more::before {
-	content: "";
+	content: '';
 	position: absolute;
-		top: 8px;
-		left: 20px  #{"/*rtl:ignore*/"};
+	top: 8px;
+	left: 20px #{'/*rtl:ignore*/'};
 	display: block;
 	width: 8px;
 	height: 8px;
 	transform: rotate( 45deg );
 	background-color: $white;
 	border-top: 1px solid #ccc;
-	border-left: 1px solid #ccc  #{"/*rtl:ignore*/"};
+	border-left: 1px solid #ccc #{'/*rtl:ignore*/'};
 }
 
 .sharing-buttons__panel {
@@ -581,7 +580,7 @@
 	@include clear-fix;
 	margin: 0 -3%;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0;
 	}
 }
@@ -593,14 +592,14 @@
 	padding: 0 3%;
 	margin-bottom: 20px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 		padding: 0;
 	}
 }
 
-.sharing-buttons__fieldset input[type="radio"],
-.sharing-buttons__fieldset input[type="checkbox"] {
+.sharing-buttons__fieldset input[type='radio'],
+.sharing-buttons__fieldset input[type='checkbox'] {
 	margin-right: 8px;
 }
 
@@ -688,7 +687,7 @@
 	background-color: $white;
 	color: $blue-wordpress;
 
-	@include breakpoint( "<480px") {
+	@include breakpoint( '<480px' ) {
 		padding-right: 0;
 	}
 
@@ -729,7 +728,7 @@
 
 	&.is-bottom {
 		margin-top: 14px;
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			margin: 14px 1% 0;
 		}
 	}
@@ -760,7 +759,7 @@
 }
 
 .sharing-buttons-preview__button-tray-actions {
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin: 0 -6%;
 	}
 }
@@ -768,24 +767,24 @@
 .sharing-buttons-preview-action + .sharing-buttons-preview-action {
 	margin-left: 8px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin-left: 1%;
 	}
 }
 
 .sharing-buttons-preview-action:last-child {
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		width: 46%;
 	}
 }
 
 .sharing-buttons-preview-action {
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		width: 50%;
 	}
 
 	&::before {
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			float: left;
 			margin: 6px 6px 0 0;
 		}
@@ -853,7 +852,7 @@
 	color: #777;
 	background: #f8f8f8;
 	border: 1px solid #ccc;
-	box-shadow: 0 1px 0 rgba( 0, 0, 0, .08 );
+	box-shadow: 0 1px 0 rgba( 0, 0, 0, 0.08 );
 	line-height: 23px;
 	padding: 1px 8px 0px 5px;
 
@@ -936,25 +935,24 @@
 	}
 }
 
-@include sharing-button-service( "facebook", $color-facebook );
-@include sharing-button-service( "twitter", $color-twitter );
-@include sharing-button-service( "press-this", $blue-wordpress );
-@include sharing-button-service( "path", $color-path );
-@include sharing-button-service( "google-plus-1", $color-gplus );
-@include sharing-button-service( "instagram", $color-instagram );
-@include sharing-button-service( "eventbrite", $color-eventbrite );
-@include sharing-button-service( "linkedin", $color-linkedin );
-@include sharing-button-service( "stumbleupon", $color-stumbleupon );
-@include sharing-button-service( "tumblr", $color-tumblr );
-@include sharing-button-service( "reddit", $color-reddit );
-@include sharing-button-service( "pinterest", $color-pinterest );
-@include sharing-button-service( "pocket", $color-pocket );
-@include sharing-button-service( "email", $color-email );
-@include sharing-button-service( "print", $color-print );
-@include sharing-button-service( "skype", $color-skype );
-@include sharing-button-service( "telegram", $color-telegram );
-@include sharing-button-service( "jetpack-whatsapp", $color-whatsapp );
-
+@include sharing-button-service( 'facebook', $color-facebook );
+@include sharing-button-service( 'twitter', $color-twitter );
+@include sharing-button-service( 'press-this', $blue-wordpress );
+@include sharing-button-service( 'path', $color-path );
+@include sharing-button-service( 'google-plus-1', $color-gplus );
+@include sharing-button-service( 'instagram', $color-instagram );
+@include sharing-button-service( 'eventbrite', $color-eventbrite );
+@include sharing-button-service( 'linkedin', $color-linkedin );
+@include sharing-button-service( 'stumbleupon', $color-stumbleupon );
+@include sharing-button-service( 'tumblr', $color-tumblr );
+@include sharing-button-service( 'reddit', $color-reddit );
+@include sharing-button-service( 'pinterest', $color-pinterest );
+@include sharing-button-service( 'pocket', $color-pocket );
+@include sharing-button-service( 'email', $color-email );
+@include sharing-button-service( 'print', $color-print );
+@include sharing-button-service( 'skype', $color-skype );
+@include sharing-button-service( 'telegram', $color-telegram );
+@include sharing-button-service( 'jetpack-whatsapp', $color-whatsapp );
 
 .sharing-buttons-preview__panel {
 	position: relative;
@@ -968,7 +966,7 @@
 		content: '';
 		position: absolute;
 		border: 1px solid $gray-lighten-20;
-		border-right-width: 0  #{"/*rtl:ignore*/"};
+		border-right-width: 0 #{'/*rtl:ignore*/'};
 		border-bottom-width: 0;
 		background: $white;
 		display: block;
@@ -984,12 +982,12 @@
 	&.is-top::before {
 		bottom: -7px;
 		left: 30px;
-		border-width: 0 1px 1px 0  #{"/*rtl:ignore*/"};
+		border-width: 0 1px 1px 0 #{'/*rtl:ignore*/'};
 	}
 
 	&.is-bottom {
 		margin: 14px 0 0;
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			margin: 15px -8px 0 -8px;
 		}
 	}
@@ -1055,21 +1053,21 @@
 .sharing-buttons-preview__panel-content .sharing-buttons-preview-button {
 	margin-top: 8px;
 	cursor: pointer;
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin: 18px 18px 0 0;
 	}
 
 	&.style-icon:hover {
 		border: none;
-		opacity: .6;
+		opacity: 0.6;
 	}
 
 	&.is-enabled {
-		opacity: .3;
+		opacity: 0.3;
 	}
 
 	&.is-enabled.style-icon {
-		opacity: .2;
+		opacity: 0.2;
 	}
 }
 
@@ -1077,7 +1075,9 @@
 	opacity: 1;
 }
 
-.sharing-buttons-preview__panel.is-reordering .sortable-list__item.is-draggable.is-active .sharing-buttons-preview-button {
+.sharing-buttons-preview__panel.is-reordering
+	.sortable-list__item.is-draggable.is-active
+	.sharing-buttons-preview-button {
 	margin: 0;
 }
 
@@ -1101,8 +1101,7 @@
 	max-width: 300px;
 }
 
-@include breakpoint( "<660px" ) {
-
+@include breakpoint( '<660px' ) {
 	.right-column {
 		box-sizing: border-box;
 	}

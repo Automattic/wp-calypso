@@ -167,7 +167,7 @@ class SharingServiceDescription extends Component {
 	render() {
 		let description;
 
-		if ( 'reconnect' === this.props.status ) {
+		if ( 'reconnect' === this.props.status || 'must-disconnect' === this.props.status ) {
 			description = this.props.translate( 'There is an issue connecting to %(service)s.', {
 				args: { service: this.props.service.label },
 				context: 'Sharing: Publicize',
