@@ -90,7 +90,6 @@
 		"reader": true,
 		"reader/following-intro": true,
 		"reader/full-errors": false,
-		"reader/search": true,
 		"reader/conversations": false,
 		"reader/user-mention-suggestions": false,
 		"resume-editing": true,

@@ -134,7 +134,6 @@
 		"reader/new-post-notifications": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
-		"reader/search": true,
 		"reader/high-watermark": true,
 		"reader/tags-with-elasticsearch": false,
 		"resume-editing": true,
