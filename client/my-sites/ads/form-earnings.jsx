@@ -301,8 +301,7 @@ class AdsFormEarnings extends Component {
 	}
 
 	render() {
-		const { earnings, translate } = this.props;
-		const siteId = getSelectedSiteId( state );
+		const { siteId, earnings, translate } = this.props;
 		const infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline',
 			classes = classNames( 'earnings_breakdown', {
 				'is-showing-info': this.state.showEarningsNotice,
