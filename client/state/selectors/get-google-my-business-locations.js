@@ -21,7 +21,6 @@ export default function getGoogleMyBusinessLocations( state, siteId ) {
 	}
 
 	const externalUsers = filter( getAvailableExternalAccounts( state, 'google_my_business' ), {
-		isExternal: true,
 		keyringConnectionId: googleMyBusinessSiteKeyring.keyring_id,
 	} );
 
