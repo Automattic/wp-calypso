@@ -85,7 +85,7 @@ class StoreUpsellComponent extends Component {
 					) }
 				</div>
 
-				<h2 className="feature-upsell-section-header">Price includes:</h2>
+				<h2 className="feature-upsell__section-header">Price includes:</h2>
 
 				<div className="product-purchase-features-list">
 					<div className="product-purchase-features-list__item">

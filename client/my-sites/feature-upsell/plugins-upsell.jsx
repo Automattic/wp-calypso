@@ -19,6 +19,7 @@ import DocumentHead from 'components/data/document-head';
 import page from 'page';
 import { getPlanPath } from 'lib/plans';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
+import PurchaseDetail from 'components/purchase-detail';
 
 class PluginsUpsellComponent extends Component {
 	static propTypes = {
@@ -36,6 +37,7 @@ class PluginsUpsellComponent extends Component {
 		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
 	};
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		return (
 			<div role="main" className="main is-wide-layout feature-upsell__main">
@@ -60,9 +62,77 @@ class PluginsUpsellComponent extends Component {
 						Click here to upgrade your site to the Business plan now!
 					</button>
 				</div>
+
+				<h2 className="feature-upsell__section-header">
+					Upgrade today to unlock these incredible Business plan features:
+				</h2>
+
+				<div className="product-purchase-features-list">
+					<div className="product-purchase-features-list__item">
+						<PurchaseDetail
+							icon={ <img alt="Plugins" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+							title="Install as Many WordPress Plugins as You Want"
+							description="Plugins are like smartphone apps for WordPress. They improve your site with features like:  SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and MailChimp integration, Google Analytics, and much, much more."
+						/>
+					</div>
+
+					<div className="product-purchase-features-list__item">
+						<PurchaseDetail
+							icon={ <img alt="Themes" src="/calypso/images/illustrations/jetpack-themes.svg" /> }
+							title="Access our Entire Library of Premium Themes"
+							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of 197 premium site themes for no additional fee."
+						/>
+					</div>
+
+					<div className="product-purchase-features-list__item">
+						<PurchaseDetail
+							icon={
+								<img alt="Concierge" src="/calypso/images/illustrations/jetpack-concierge.svg" />
+							}
+							title="A Free 30 minute Consultation with a Website Expert"
+							description="One of our highly-trained specialists will join you for a 30 minute call to help you get started. Whether you have questions about marketing, design, or anything in between, you’ll get plenty of guidance during this free call."
+						/>
+					</div>
+
+					<div className="product-purchase-features-list__item">
+						<PurchaseDetail
+							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-support.svg" /> }
+							title="Unlimited 24/7 Design and Tech Support"
+							description="In addition to the 30 minute call, the Business plan upgrade includes unlimited access to our world-class live chat and email support. No matter how complicated your question, our team will find you an answer, guaranteed."
+						/>
+					</div>
+
+					<div className="product-purchase-features-list__item">
+						<PurchaseDetail
+							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-payments.svg" /> }
+							title={
+								<span>
+									Easily Accept Credit Card Payments with <i>Simple Payments</i>
+								</span>
+							}
+							description={
+								<span>
+									The Simple Payments feature lets you accept credit card payments right on your
+									site. Whether you’re selling products or services, collecting membership fees, or
+									receiving donations, you’ll have a secure checkout process that you can turn on
+									with the click of a button.
+								</span>
+							}
+						/>
+					</div>
+
+					<div className="product-purchase-features-list__item">
+						<PurchaseDetail
+							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+							title="World-class SEO Tools Built-In"
+							description="The Business plan comes with advanced search engine optimization (SEO) tools that automatically “bake in” the most important SEO best practices. If you want to get as much search engine traffic as possible, the Business plan is for you"
+						/>
+					</div>
+				</div>
 			</div>
 		);
 	}
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 const mapStateToProps = state => {
