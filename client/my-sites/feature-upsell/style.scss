@@ -1,4 +1,4 @@
-.main.feature-upsell-store {
+.feature-upsell__main {
 	margin-top: 48px;
 }
 
@@ -11,10 +11,10 @@
 	height: 50px;
 }
 
-.feature-upsell-header {
+.feature-upsell__header {
 	text-align: center;
 
-	&__title {
+	&-title {
 		font-size: 68px;
 		font-weight: 300;
 		line-height: 1;
@@ -28,7 +28,7 @@
 		}
 	}
 
-	&__subtitle {
+	&-subtitle {
 		margin-top: 15px;
 		font-size: 30px;
 		font-weight: 300;

@@ -49,7 +49,7 @@ class StoreUpsellComponent extends Component {
 	render() {
 		const { price, loadingPrice, currentSitePlanSlug } = this.props;
 		return (
-			<div role="main" className="main is-wide-layout feature-upsell feature-upsell-store">
+			<div role="main" className="main is-wide-layout feature-upsell__main">
 				{ ! price && (
 					<React.Fragment>
 						<QueryPlans />
@@ -61,9 +61,9 @@ class StoreUpsellComponent extends Component {
 				<PageViewTracker path={ '/feature/store/:site' } title="StoreUpsell" />
 				<DocumentHead title={ 'Store' } />
 
-				<header className="feature-upsell-header">
-					<h1 className="feature-upsell-header__title">Add an eCommerce store to this site</h1>
-					<p className="feature-upsell-header__subtitle">
+				<header className="feature-upsell__header">
+					<h1 className="feature-upsell__header-title">Add an eCommerce store to this site</h1>
+					<p className="feature-upsell__header-subtitle">
 						Start selling now in United States - or go global - with the world’s most customizable
 						platform. We will even help you get rolling.
 					</p>
