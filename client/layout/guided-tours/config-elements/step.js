@@ -113,6 +113,10 @@ export default class Step extends Component {
 		}
 	}
 
+	componentDidUpdate() {
+		debug( '<Step/> updated. Name: %s', this.props.name );
+	}
+
 	componentWillReceiveProps( nextProps, nextContext ) {
 		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 		this.wait( nextProps, nextContext ).then( () => {
