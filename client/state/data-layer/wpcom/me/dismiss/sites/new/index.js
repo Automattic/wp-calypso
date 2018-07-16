@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { READER_STREAMS_DISMISS_SITE } from 'state/action-types';
+import { READER_STREAMS_DISMISS_SITE, READER_STREAMS_DISMISS_POST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -46,6 +46,14 @@ export function receiveSiteDismissError() {
 
 export default {
 	[ READER_STREAMS_DISMISS_SITE ]: [
+		dispatchRequestEx( {
+			fetch: requestSiteDismiss,
+			onSuccess: receiveSiteDismiss,
+			onError: receiveSiteDismissError,
+			fromApi,
+		} ),
+	],
+	[ READER_STREAMS_DISMISS_POST ]: [
 		dispatchRequestEx( {
 			fetch: requestSiteDismiss,
 			onSuccess: receiveSiteDismiss,

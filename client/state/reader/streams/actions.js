@@ -17,7 +17,6 @@ import {
 } from 'state/action-types';
 import getStream from 'state/selectors/get-reader-stream';
 import { getStreamType } from 'reader/utils';
-import wpcom from 'lib/wp';
 
 /**
  * Fetch posts into a stream
@@ -108,15 +107,9 @@ export function fillGap( { streamKey, gap } ) {
 }
 
 export const dismissPost = ( { streamKey, postKey } ) => {
-	// @todo move to data layer
-	wpcom
-		.undocumented()
-		.me()
-		.dismissSite( postKey.blogId );
-
 	return {
 		type: READER_STREAMS_DISMISS_POST,
-		payload: { streamKey, postKey },
+		payload: { streamKey, postKey, siteId: postKey.blogId },
 	};
 };
 
