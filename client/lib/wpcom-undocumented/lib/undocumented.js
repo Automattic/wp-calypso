@@ -2383,28 +2383,6 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
 };
 
 /**
- * Get WordAds Status of a site.
- *
- * @param {int}       siteId            The site ID
- * @returns {Promise}
- */
-Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
-	debug( '/sites/:site:/wordads/status' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
-};
-
-/**
- * Get WordAds Earnings for a site.
- *
- * @param {int}       siteId            The site ID
- * @returns {Promise}
- */
-Undocumented.prototype.getWordadsEarnings = function( siteId, fn ) {
-	debug( '/sites/:site:/wordads/earnings' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/earnings', fn );
-};
-
-/**
  * Initiate the Automated Transfer process, uploading a theme and/or selecting
  * a community plugin.
  *
