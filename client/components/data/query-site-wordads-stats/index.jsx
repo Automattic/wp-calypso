@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSiteStats } from 'state/stats/lists/actions';
+import { requestWordadsStats } from 'state/wordads/stats/actions';
 
 class QuerySiteWordAdsStats extends Component {
 	static propTypes = {

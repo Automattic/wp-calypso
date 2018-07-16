@@ -240,14 +240,13 @@ class WordAdsChartTabs extends Component {
 
 		return (
 			<div>
-				{ /* @TODO update
 				{ siteId && (
 					<QuerySiteWordAdsStats statType="statsVisits" siteId={ siteId } query={ quickQuery } />
 				) }
 				{ siteId && (
 					<QuerySiteWordAdsStats statType="statsVisits" siteId={ siteId } query={ fullQuery } />
 				) }
-*/ }
+
 				<Card className={ classNames( ...classes ) }>
 					<Legend
 						tabs={ this.props.charts }
