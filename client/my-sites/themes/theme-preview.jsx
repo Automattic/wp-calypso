@@ -34,7 +34,6 @@ class ThemePreview extends React.Component {
 
 	static propTypes = {
 		// connected props
-		belowToolbar: PropTypes.element,
 		demoUrl: PropTypes.string,
 		isActivating: PropTypes.bool,
 		isActive: PropTypes.bool,
@@ -113,7 +112,6 @@ class ThemePreview extends React.Component {
 		return (
 			<div>
 				{ this.props.isJetpack && <QueryTheme themeId={ themeId } siteId="wporg" /> }
-				{ this.props.children }
 				{ this.props.demoUrl && (
 					<WebPreview
 						showPreview={ true }
@@ -122,7 +120,6 @@ class ThemePreview extends React.Component {
 						onClose={ this.props.hideThemePreview }
 						previewUrl={ this.props.demoUrl + '?demo=true&iframe=true&theme_preview=true' }
 						externalUrl={ this.props.demoUrl }
-						belowToolbar={ this.props.belowToolbar }
 					>
 						{ showActionIndicator && <PulsingDot active={ true } /> }
 						{ ! showActionIndicator && this.renderSecondaryButton() }
