@@ -11,8 +11,6 @@ import {
 	READER_STREAMS_SELECT_FIRST_ITEM,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
-	READER_DISMISS_POST,
-	READER_DISMISS_SITE,
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
 import getStream from 'state/selectors/get-reader-stream';
@@ -105,17 +103,3 @@ export function fillGap( { streamKey, gap } ) {
 		gap,
 	} );
 }
-
-export const dismissPost = ( { streamKey, postKey } ) => {
-	return {
-		type: READER_DISMISS_POST,
-		payload: { streamKey, postKey, siteId: postKey.blogId },
-	};
-};
-
-export const dismissSite = siteId => {
-	return {
-		type: READER_DISMISS_SITE,
-		payload: { siteId },
-	};
-};

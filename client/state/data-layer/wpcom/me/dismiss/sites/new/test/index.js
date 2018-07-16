@@ -5,7 +5,7 @@
  */
 import { requestSiteDismiss, receiveSiteDismiss, fromApi, receiveSiteDismissError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dismissSite } from 'state/reader/streams/actions';
+import { dismissSite } from 'state/reader/site-dismissals/actions';
 
 describe( 'site-dismissals', () => {
 	describe( 'requestSiteDismiss', () => {

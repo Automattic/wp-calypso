@@ -15,8 +15,8 @@ import {
 	selectNextItem,
 	selectPrevItem,
 	requestPage,
-	dismissPost,
 } from '../actions';
+import { dismissPost } from 'state/reader/site-dismissals/actions';
 import {
 	items,
 	selected,
