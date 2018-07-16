@@ -103,14 +103,6 @@ export default {
 		},
 		defaultVariation: 'domainsbot',
 	},
-	staleCartNotice: {
-		datestamp: '20180618',
-		variations: {
-			siteDeservesBoost: 50,
-			cartAwaitingPayment: 50,
-		},
-		defaultVariation: 'siteDeservesBoost',
-	},
 	aboutSuggestionMatches: {
 		datestamp: '20180704',
 		variations: {
