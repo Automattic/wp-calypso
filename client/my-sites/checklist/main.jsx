@@ -46,15 +46,15 @@ class ChecklistMain extends PureComponent {
 	 * @param {?boolean} prevProps.isJetpack Previous isJetpack
 	 * @param {?string}  prevProps.siteSlug  Previous siteSlug
 	 */
-	maybeRedirectJetpack( { isAtomic, isJetpack, siteSlug } = {} ) {
+	maybeRedirectJetpack( prevProps = {} ) {
 		if (
 			this.props.siteSlug &&
 			false === this.props.isAtomic &&
 			this.props.isJetpack &&
 			some( [
-				this.props.siteSlug !== siteSlug,
-				this.props.isAtomic !== isAtomic,
-				this.props.isJetpack !== isJetpack,
+				this.props.siteSlug !== prevProps.siteSlug,
+				this.props.isAtomic !== prevProps.isAtomic,
+				this.props.isJetpack !== prevProps.isJetpack,
 			] )
 		) {
 			page.redirect( `/plans/my-plan/${ this.props.siteSlug }` );
