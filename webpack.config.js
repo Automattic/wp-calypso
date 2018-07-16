@@ -17,7 +17,7 @@ const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
-const threadLoader = require( 'thread-loader' );
+const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -71,8 +71,6 @@ const babelLoader = {
 		cacheIdentifier,
 	},
 };
-
-threadLoader.warmup( {}, [ 'babel-loader' ] );
 
 const webpackConfig = {
 	bail: ! isDevelopment,
@@ -128,7 +126,15 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				use: [ 'thread-loader', babelLoader ],
+				use: [
+					{
+						loader: 'thread-loader',
+						options: {
+							workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
+						},
+					},
+					babelLoader,
+				],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
