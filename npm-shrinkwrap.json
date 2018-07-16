@@ -4974,6 +4974,7 @@
       "version": "3.7.1",
       "resolved": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-3.7.1.tgz",
       "integrity": "sha1-PWPD7f2gLgbgGkUq2IyqzHzctug=",
+      "dev": true,
       "requires": {
         "esrecurse": "^4.1.0",
         "estraverse": "^4.1.1"
@@ -15729,9 +15730,9 @@
       "dev": true
     },
     "webpack": {
-      "version": "4.16.0",
-      "resolved": "https://registry.npmjs.org/webpack/-/webpack-4.16.0.tgz",
-      "integrity": "sha512-oNx9djAd6uAcccyfqN3hyXLNMjZHiRySZmBQ4c8FNmf1SNJGhx7n9TSvHNyXxgToRdH65g/Q97s94Ip9N6F7xg==",
+      "version": "4.16.1",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-4.16.1.tgz",
+      "integrity": "sha512-6jpzObU18y7lXDJz7XCLvzgrqcJ0rZ2jhKvnTivza9gM2GvPW93xxtmEll2GgmdC0zVQAtbHrH/9BtyMjSDZfA==",
       "requires": {
         "@webassemblyjs/ast": "1.5.13",
         "@webassemblyjs/helper-module-context": "1.5.13",
@@ -15744,7 +15745,7 @@
         "ajv-keywords": "^3.1.0",
         "chrome-trace-event": "^1.0.0",
         "enhanced-resolve": "^4.1.0",
-        "eslint-scope": "^3.7.1",
+        "eslint-scope": "^4.0.0",
         "json-parse-better-errors": "^1.0.2",
         "loader-runner": "^2.3.0",
         "loader-utils": "^1.1.0",
@@ -15806,6 +15807,15 @@
                 "is-extendable": "^0.1.0"
               }
             }
+          }
+        },
+        "eslint-scope": {
+          "version": "4.0.0",
+          "resolved": "https://registry.npmjs.org/eslint-scope/-/eslint-scope-4.0.0.tgz",
+          "integrity": "sha512-1G6UTDi7Jc1ELFwnR58HV4fK9OQK4S6N985f166xqXxpjU6plxFISJa2Ba9KCQuFa8RCnj/lSFJbHo7UFDBnUA==",
+          "requires": {
+            "esrecurse": "^4.1.0",
+            "estraverse": "^4.1.1"
           }
         },
         "expand-brackets": {
