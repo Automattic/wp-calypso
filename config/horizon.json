@@ -115,7 +115,6 @@
 		"simple-payments": true,
 		"memberships": false,
 		"support-user": true,
-		"sync-handler": true,
 		"ui/first-view": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,

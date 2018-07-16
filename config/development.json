@@ -173,7 +173,6 @@
 		"simple-payments": true,
 		"memberships": false,
 		"support-user": true,
-		"sync-handler": true,
 		"try/preconnect": true,
 		"try/preload": true,
 		"try/single-cdn": true,
