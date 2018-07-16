@@ -29,7 +29,6 @@
     "@babel/runtime": "7.0.0-beta.44",
     "autoprefixer": "8.6.5",
     "autosize": "4.0.2",
-    "babel-core": "7.0.0-bridge.0",
     "babel-loader": "8.0.0-beta.3",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-transform-class-properties": "6.24.1",
@@ -236,6 +235,7 @@
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\""
   },
   "devDependencies": {
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "8.2.6",
     "babel-jest": "23.4.0",
     "chai": "4.1.2",
