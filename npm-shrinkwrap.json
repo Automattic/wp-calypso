@@ -12239,9 +12239,9 @@
       }
     },
     "react-virtualized": {
-      "version": "9.19.1",
-      "resolved": "https://registry.npmjs.org/react-virtualized/-/react-virtualized-9.19.1.tgz",
-      "integrity": "sha512-2l6uFicZKZ3x4rdnS0W+1TfyLmPO/+hfZKsCtoChoSmH5aEezGLpSuHc7oplekNIOaEwChfCk30zjx+Zw6B8YQ==",
+      "version": "9.20.1",
+      "resolved": "https://registry.npmjs.org/react-virtualized/-/react-virtualized-9.20.1.tgz",
+      "integrity": "sha512-xIWxBsyNAjceqD3hsE0nw5TcDVxKbIepsHhvS2XneHmNz0KlKxdLdGBmGZBM9ZesEmbZ5EO0Sw70TB1MeCmpbQ==",
       "requires": {
         "babel-runtime": "^6.26.0",
         "classnames": "^2.2.3",
