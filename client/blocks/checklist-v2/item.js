@@ -111,7 +111,7 @@ export class Item extends PureComponent {
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
-					{ <Gridicon icon="checkmark" size={ 18 } /> }
+					<Gridicon icon="checkmark" size={ 18 } />
 				</Focusable>
 			</CompactCard>
 		);
