@@ -14,7 +14,7 @@ import Item from 'blocks/checklist-v2/item';
 
 export function JetpackChecklist( { siteId, translate } ) {
 	return (
-		<Checklist>
+		<Checklist siteId={ siteId }>
 			<Item
 				siteId={ siteId }
 				taskId="jetpack_brute_force"
