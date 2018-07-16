@@ -63,7 +63,7 @@ export default class Step extends Component {
 		wait: PropTypes.func,
 		onTargetDisappear: PropTypes.func,
 		keepRepositioning: PropTypes.bool,
-		children: PropTypes.func,
+		children: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -90,11 +90,7 @@ export default class Step extends Component {
 		this.wait( this.props, this.context ).then( () => {
 			this.start();
 			this.setStepSection( this.context, { init: true } );
-			debug(
-				'Step#componentWillMount: stepSection: %s, name: %s',
-				this.stepSection,
-				this.props.name
-			);
+			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 			this.skipIfInvalidContext( this.props, this.context );
 			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
 			this.setStepPosition( this.props );
@@ -111,10 +107,6 @@ export default class Step extends Component {
 		if ( this.props.keepRepositioning ) {
 			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
 		}
-	}
-
-	componentDidUpdate() {
-		debug( '<Step/> updated. Name: %s', this.props.name );
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
@@ -385,10 +377,10 @@ export default class Step extends Component {
 
 		const style = { ...this.props.style, ...stepCoords };
 
-		return ContentComponent ? (
+		return (
 			<Card className={ classNames( ...classes ) } style={ style }>
 				<ContentComponent translate={ translate } />
 			</Card>
-		) : null;
+		);
 	}
 }
