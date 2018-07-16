@@ -183,6 +183,9 @@ const webpackConfig = {
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example',
 			},
+			{
+				'@wordpress/utils': path.resolve( __dirname, 'vendor/gutenberg/utils' ),
+			},
 			getAliasesForExtensions()
 		),
 	},
