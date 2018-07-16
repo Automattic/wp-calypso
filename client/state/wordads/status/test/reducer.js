@@ -13,10 +13,6 @@ import reducer, { items } from '../reducer';
 import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
-	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items' ] );
-	} );
-
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );

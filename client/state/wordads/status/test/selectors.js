@@ -14,17 +14,11 @@ describe( 'selectors', () => {
 	const state = {
 		wordads: {
 			status: {
-				items: {
-					2916284: {
-						unsafe: 'mature',
-						active: true,
-					},
-					77203074: {},
+				2916284: {
+					unsafe: 'mature',
+					active: true,
 				},
-				fetchingItems: {
-					2916284: true,
-					77203074: false,
-				},
+				77203074: {},
 			},
 		},
 	};
