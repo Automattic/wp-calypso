@@ -1,8 +1,8 @@
-.main.feature-upsell-store {
+.feature-upsell__main {
 	margin-top: 48px;
 }
 
-.feature-upsell-placeholder--cta {
+.feature-upsell__placeholder-cta {
 	animation: pulse-light 800ms ease-in-out infinite;
 	background: $gray-lighten-20;
 	display: inline-block;
@@ -11,10 +11,10 @@
 	height: 50px;
 }
 
-.feature-upsell-header {
+.feature-upsell__header {
 	text-align: center;
 
-	&__title {
+	&-title {
 		font-size: 68px;
 		font-weight: 300;
 		line-height: 1;
@@ -28,7 +28,7 @@
 		}
 	}
 
-	&__subtitle {
+	&-subtitle {
 		margin-top: 15px;
 		font-size: 30px;
 		font-weight: 300;
@@ -43,11 +43,11 @@
 	}
 }
 
-.feature-upsell-cta {
+.feature-upsell__cta {
 	margin-top: 30px;
 	text-align: center;
 
-	&__button {
+	&-button {
 		font-size: 25px;
 		margin: 0 auto;
 		padding: 13px 20px;
@@ -61,14 +61,14 @@
 		}
 	}
 
-	&__guarantee {
+	&-guarantee {
 		display: block;
 		margin-top: 8px;
 		opacity: 0.8;
 	}
 }
 
-.feature-upsell-section-header {
+.feature-upsell__section-header {
 	margin: 40px 0 20px 0;
 	text-align: center;
 	font-size: 36px;
