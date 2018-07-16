@@ -52,10 +52,8 @@ export class Item extends PureComponent {
 			track: this.props.recordTracksEvent,
 		} );
 
-	handleToggle = void this.props.requestSiteChecklistTaskUpdate(
-		this.props.siteId,
-		this.props.taskId
-	);
+	handleToggle = () =>
+		void this.props.requestSiteChecklistTaskUpdate( this.props.siteId, this.props.taskId );
 
 	render() {
 		const {
