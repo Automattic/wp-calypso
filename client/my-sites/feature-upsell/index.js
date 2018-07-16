@@ -37,5 +37,26 @@ export default function() {
 
 			return page.redirect( '/feature/store' );
 		} );
+
+		page( '/feature/plugins', siteSelection, sites, makeLayout, clientRender );
+
+		page(
+			'/feature/plugins/:domain',
+			siteSelection,
+			navigation,
+			controller.pluginsUpsell,
+			makeLayout,
+			clientRender
+		);
+
+		page( '/feature/plugins/*', ( { path } ) => {
+			const siteFragment = getSiteFragment( path );
+
+			if ( siteFragment ) {
+				return page.redirect( `/feature/plugins/${ siteFragment }` );
+			}
+
+			return page.redirect( '/feature/plugins' );
+		} );
 	}
 }
