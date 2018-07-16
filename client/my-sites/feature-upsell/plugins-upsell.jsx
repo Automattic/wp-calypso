@@ -13,18 +13,23 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getPlanRawPrice } from 'state/plans/selectors';
+import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
+import { getPlan, getPlanPath } from 'lib/plans';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import page from 'page';
-import { getPlanPath } from 'lib/plans';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import PurchaseDetail from 'components/purchase-detail';
+import { getCurrencyObject } from 'lib/format-currency';
 
 class PluginsUpsellComponent extends Component {
 	static propTypes = {
-		trackTracksEvent: PropTypes.func.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
+		price: PropTypes.number,
+		trackTracksEvent: PropTypes.func.isRequired,
 	};
 
 	handleUpgradeButtonClick = () => {
@@ -36,6 +41,24 @@ class PluginsUpsellComponent extends Component {
 
 		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
 	};
+
+	formatPrice( price ) {
+		const priceObject = getCurrencyObject( price, this.props.currencyCode );
+		if ( price.toFixed( 5 ).split( '.' )[ 1 ] !== '00000' ) {
+			return `${ priceObject.symbol }${ priceObject.integer }${ priceObject.fraction }`;
+		}
+		return `${ priceObject.symbol }${ priceObject.integer }`;
+	}
+
+	getPlanMonthlyPrice() {
+		const { price } = this.props;
+		return price ? this.formatPrice( price / 12 ) : '';
+	}
+
+	getPlanDailyPrice() {
+		const { price } = this.props;
+		return price ? this.formatPrice( price / 366 ) : '';
+	}
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
@@ -112,10 +135,10 @@ class PluginsUpsellComponent extends Component {
 							}
 							description={
 								<span>
-									The Simple Payments feature lets you accept credit card payments right on your
-									site. Whether you’re selling products or services, collecting membership fees, or
-									receiving donations, you’ll have a secure checkout process that you can turn on
-									with the click of a button.
+									The <i>Simple Payments</i> feature lets you accept credit card payments right on
+									your site. Whether you’re selling products or services, collecting membership
+									fees, or receiving donations, you’ll have a secure checkout process that you can
+									turn on with the click of a button.
 								</span>
 							}
 						/>
@@ -129,6 +152,59 @@ class PluginsUpsellComponent extends Component {
 						/>
 					</div>
 				</div>
+
+				<h2 className="feature-upsell__section-header">
+					Upgrade to the Business plan today for just { this.getPlanMonthlyPrice() } per month.
+				</h2>
+
+				<p>
+					For less than { this.getPlanDailyPrice() } per day, you’ll gain access to all of the
+					features described above. And that list includes just a few of the highlights.
+				</p>
+
+				<p>The Business plan also includes features like:</p>
+
+				<ul>
+					<li>A free custom domain name.</li>
+					<li>Unlimited storage space.</li>
+					<li>Unlimited bandwidth.</li>
+					<li>Advanced design and CSS customization.</li>
+					<li>$100 advertising credit to Google AdWords.</li>
+					<li>Unlimited video hosting.</li>
+					<li>Instant access to the WordAds ad platform.</li>
+					<li>Social media marketing tools.</li>
+				</ul>
+
+				<p>
+					If you’re serious about your site, you owe it to yourself to try the WordPress.com
+					Business plan. And thanks to our full money-back guarantee, you can try it out for
+					yourself completely risk free.
+				</p>
+
+				<h2 className="feature-upsell__section-header">
+					You’re protected by our 30 Day full money-back guarantee
+				</h2>
+
+				<p>
+					Your Business plan upgrade comes with our 30 day money-back guarantee. So if you decide to
+					not keep the Business plan for any reason, just let us know at any point during the first
+					30 days and we’ll give you a full refund.
+				</p>
+
+				<p>
+					If you accept our offer for a free domain, and you later decide that the Business plan
+					isn’t for you, the domain is yours keep. All we ask is that you to cover the domain
+					registration fees.
+				</p>
+
+				<div className="feature-upsell__cta">
+					<button
+						onClick={ this.handleUpgradeButtonClick }
+						className="button is-primary feature-upsell__cta-button"
+					>
+						Click here to upgrade your site to the Business plan now!
+					</button>
+				</div>
 			</div>
 		);
 	}
@@ -137,10 +213,19 @@ class PluginsUpsellComponent extends Component {
 
 const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const currentPlan = getPlan( PLAN_BUSINESS );
+	const currentPlanId = currentPlan.getProductId();
+	const rawPrice = getPlanRawPrice( state, currentPlanId, false );
+	const discountedRawPrice = getPlanDiscountedRawPrice( state, selectedSiteId, PLAN_BUSINESS, {
+		isMonthly: false,
+	} );
+	const price = discountedRawPrice || rawPrice;
 
 	return {
-		trackTracksEvent: recordTracksEvent,
+		currencyCode: getCurrentUserCurrencyCode( state ),
+		price,
 		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
+		trackTracksEvent: recordTracksEvent,
 	};
 };
 
