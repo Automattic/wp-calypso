@@ -174,7 +174,6 @@ class PurchaseItem extends Component {
 		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack } = this.props;
 		const classes = classNames(
 			'purchase-item',
-			{ 'is-disconnected-site': isDisconnectedSite }, // Required for e2e tests, see https://github.com/Automattic/wp-e2e-tests/pull/1349
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
@@ -208,7 +207,12 @@ class PurchaseItem extends Component {
 		}
 
 		return (
-			<CompactCard className={ classes } onClick={ onClick } href={ href }>
+			<CompactCard
+				className={ classes }
+				data-e2e-connected-site={ ! isDisconnectedSite }
+				href={ href }
+				onClick={ onClick }
+			>
 				{ content }
 			</CompactCard>
 		);
