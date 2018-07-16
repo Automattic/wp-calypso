@@ -165,10 +165,10 @@ export function getSupportSiteLocale() {
  *
  * Checks for a valid bb forum against a list `forum_locales` defined in config/_shared.json.
  *
+ * @param {string} localeSlug Forum subdomain locale. Default is getLocaleSlug().
  * @returns {string} //{locale}.forums.wordpress.com
  */
-export function getForumUrl() {
-	const localeSlug = getLocaleSlug();
+export function getForumUrl( localeSlug = getLocaleSlug() ) {
 	if ( config( 'forum_locales' ).indexOf( localeSlug ) > -1 ) {
 		return `//${ localeSlug }.forums.wordpress.com`;
 	}

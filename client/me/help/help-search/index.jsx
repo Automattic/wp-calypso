@@ -24,7 +24,7 @@ class HelpSearch extends React.PureComponent {
 	static displayName = 'HelpSearch';
 
 	state = {
-		helpLinks: [],
+		helpLinks: {},
 		searchQuery: '',
 	};
 
@@ -41,7 +41,7 @@ class HelpSearch extends React.PureComponent {
 	};
 
 	onSearch = searchQuery => {
-		this.setState( { helpLinks: [], searchQuery: searchQuery } );
+		this.setState( { helpLinks: {}, searchQuery: searchQuery } );
 		analytics.tracks.recordEvent( 'calypso_help_search', { query: searchQuery } );
 		HelpSearchActions.fetch( searchQuery );
 	};
@@ -75,6 +75,7 @@ class HelpSearch extends React.PureComponent {
 		if (
 			isEmpty( this.state.helpLinks.wordpress_support_links ) &&
 			isEmpty( this.state.helpLinks.wordpress_forum_links ) &&
+			isEmpty( this.state.helpLinks.wordpress_forum_links_localized ) &&
 			isEmpty( this.state.helpLinks.jetpack_support_links )
 		) {
 			return (
@@ -98,13 +99,23 @@ class HelpSearch extends React.PureComponent {
 					iconTypeDescription="book"
 					searchLink={ 'https://en.support.wordpress.com?s=' + this.state.searchQuery }
 				/>
-				<HelpResults
-					header={ this.props.translate( 'Community Answers' ) }
-					helpLinks={ this.state.helpLinks.wordpress_forum_links }
-					footer={ this.props.translate( 'See more from Community Forum…' ) }
-					iconTypeDescription="comment"
-					searchLink={ getForumUrl() + '/search/' + this.state.searchQuery }
-				/>
+				{ this.state.helpLinks.wordpress_forum_links_localized ? (
+					<HelpResults
+						header={ this.props.translate( 'Community Answers' ) }
+						helpLinks={ this.state.helpLinks.wordpress_forum_links_localized }
+						footer={ this.props.translate( 'See more from Community Forum…' ) }
+						iconTypeDescription="comment"
+						searchLink={ getForumUrl() + '/search/' + this.state.searchQuery }
+					/>
+				) : (
+					<HelpResults
+						header={ this.props.translate( 'Community Answers' ) }
+						helpLinks={ this.state.helpLinks.wordpress_forum_links }
+						footer={ this.props.translate( 'See more from Community Forum…' ) }
+						iconTypeDescription="comment"
+						searchLink={ getForumUrl( 'en' ) + '/search/' + this.state.searchQuery }
+					/>
+				) }
 				<HelpResults
 					header={ this.props.translate( 'Jetpack Documentation' ) }
 					helpLinks={ this.state.helpLinks.jetpack_support_links }
