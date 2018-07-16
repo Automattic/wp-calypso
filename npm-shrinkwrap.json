@@ -1663,16 +1663,43 @@
       "integrity": "sha1-ri1acpR38onWDdf5amMUoi3Wwio="
     },
     "autoprefixer": {
-      "version": "8.6.5",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-8.6.5.tgz",
-      "integrity": "sha512-PLWJN3Xo/rycNkx+mp8iBDMTm3FeWe4VmYaZDSqL5QQB9sLsQkG5k8n+LNDFnhh9kdq2K+egL/icpctOmDHwig==",
+      "version": "9.0.0",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.0.0.tgz",
+      "integrity": "sha512-bMt9puCb+xk5ds1ghr1zzfJ09+SjOcseHCEawhMjibM5KfxkodW8PQMhhEnllyj4Cz3Yixy9A+/0De2VC9R+dQ==",
       "requires": {
-        "browserslist": "^3.2.8",
-        "caniuse-lite": "^1.0.30000864",
+        "browserslist": "^4.0.1",
+        "caniuse-lite": "^1.0.30000865",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
-        "postcss": "^6.0.23",
+        "postcss": "^7.0.0",
         "postcss-value-parser": "^3.2.3"
+      },
+      "dependencies": {
+        "browserslist": {
+          "version": "4.0.1",
+          "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.0.1.tgz",
+          "integrity": "sha512-QqiiIWchEIkney3wY53/huI7ZErouNAdvOkjorUALAwRcu3tEwOV3Sh6He0DnP38mz1JjBpCBb50jQBmaYuHPw==",
+          "requires": {
+            "caniuse-lite": "^1.0.30000865",
+            "electron-to-chromium": "^1.3.52",
+            "node-releases": "^1.0.0-alpha.10"
+          }
+        },
+        "postcss": {
+          "version": "7.0.0",
+          "resolved": "https://registry.npmjs.org/postcss/-/postcss-7.0.0.tgz",
+          "integrity": "sha512-ACgL/mXREjfCothsspfbxdiXIQowQeEyW7TJgsvAgCK8igWa2ZNCsbGNGnasbEF1++L9xb7qYpo23Aa3rGmiCg==",
+          "requires": {
+            "chalk": "^2.4.1",
+            "source-map": "^0.6.1",
+            "supports-color": "^5.4.0"
+          }
+        },
+        "source-map": {
+          "version": "0.6.1",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz",
+          "integrity": "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="
+        }
       }
     },
     "autosize": {
@@ -9980,6 +10007,14 @@
         "which": "^1.3.0"
       }
     },
+    "node-releases": {
+      "version": "1.0.0-alpha.10",
+      "resolved": "https://registry.npmjs.org/node-releases/-/node-releases-1.0.0-alpha.10.tgz",
+      "integrity": "sha512-BSQrRgOfN6L/MoKIa7pRUc7dHvflCXMcqyTBvphixcSsgJTuUd24vAFONuNfVsuwTyz28S1HEc9XN6ZKylk4Hg==",
+      "requires": {
+        "semver": "^5.3.0"
+      }
+    },
     "node-sass": {
       "version": "4.9.2",
       "resolved": "https://registry.npmjs.org/node-sass/-/node-sass-4.9.2.tgz",
@@ -14196,6 +14231,20 @@
           "resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-2.2.1.tgz",
           "integrity": "sha1-tDLdM1i2NM914eRmQ2gkBTPB3b4=",
           "dev": true
+        },
+        "autoprefixer": {
+          "version": "8.6.5",
+          "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-8.6.5.tgz",
+          "integrity": "sha512-PLWJN3Xo/rycNkx+mp8iBDMTm3FeWe4VmYaZDSqL5QQB9sLsQkG5k8n+LNDFnhh9kdq2K+egL/icpctOmDHwig==",
+          "dev": true,
+          "requires": {
+            "browserslist": "^3.2.8",
+            "caniuse-lite": "^1.0.30000864",
+            "normalize-range": "^0.1.2",
+            "num2fraction": "^1.2.2",
+            "postcss": "^6.0.23",
+            "postcss-value-parser": "^3.2.3"
+          }
         },
         "camelcase": {
           "version": "4.1.0",
