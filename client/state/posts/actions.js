@@ -97,16 +97,7 @@ function requestPosts( siteId, query = {} ) {
 			query,
 		} );
 
-		let source = wpcom;
-		if ( source.skipLocalSyncResult ) {
-			source = source.skipLocalSyncResult();
-		}
-
-		if ( siteId ) {
-			source = source.site( siteId );
-		} else {
-			source = source.me();
-		}
+		const source = siteId ? wpcom.site( siteId ) : wpcom.me();
 
 		return source
 			.postsList( { ...query } )

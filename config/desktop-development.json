@@ -152,7 +152,6 @@
 		"signup/wpcc": true,
 		"simple-payments": true,
 		"support-user": true,
-		"sync-handler": true,
 		"try/preconnect": true,
 		"try/preload": true,
 		"try/single-cdn": true,

@@ -3,10 +3,7 @@
 /**
  * External dependencies
  */
-
-import { SyncHandler, syncOptOut } from './sync-handler';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:wp' );
 
 /**
  * Internal dependencies
@@ -20,21 +17,14 @@ import * as oauthToken from 'lib/oauth-token';
 import wpcomXhrWrapper from 'lib/wpcom-xhr-wrapper';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 
-const addSyncHandlerWrapper = config.isEnabled( 'sync-handler' );
+const debug = debugFactory( 'calypso:wp' );
+
 let wpcom;
 
 if ( config.isEnabled( 'oauth' ) ) {
-	const requestHandler = addSyncHandlerWrapper
-		? new SyncHandler( wpcomXhrWrapper )
-		: wpcomXhrWrapper;
-
-	wpcom = wpcomUndocumented( oauthToken.getToken(), requestHandler );
+	wpcom = wpcomUndocumented( oauthToken.getToken(), wpcomXhrWrapper );
 } else {
-	const requestHandler = addSyncHandlerWrapper
-		? new SyncHandler( wpcomProxyRequest )
-		: wpcomProxyRequest;
-
-	wpcom = wpcomUndocumented( requestHandler );
+	wpcom = wpcomUndocumented( wpcomProxyRequest );
 
 	// Upgrade to "access all users blogs" mode
 	wpcom.request(
@@ -48,10 +38,6 @@ if ( config.isEnabled( 'oauth' ) ) {
 			debug( 'Proxy now running in "access all user\'s blogs" mode' );
 		}
 	);
-}
-
-if ( addSyncHandlerWrapper ) {
-	wpcom = syncOptOut( wpcom );
 }
 
 if ( config.isEnabled( 'support-user' ) ) {

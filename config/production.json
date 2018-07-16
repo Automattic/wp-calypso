@@ -125,7 +125,6 @@
 		"memberships": false,
 		"ssr/sample-log-cache-misses": true,
 		"support-user": true,
-		"sync-handler": true,
 		"ui/first-view": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
