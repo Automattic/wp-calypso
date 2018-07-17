@@ -1,6 +1,12 @@
-
 .activity-log-example {
-	margin-bottom: 1px;
+	.formatted-header {
+		margin-top: 35px;
+		margin-bottom: 35px;
+		@include breakpoint( '<480px' ) {
+			margin-top: 40px;
+			margin-bottom: 20px;
+		}
+	}
 
 	.feature-example {
 		// Make overflowing border visible
