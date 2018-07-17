@@ -70,7 +70,7 @@ class SetupTasks extends Component {
 			this.props.setTriedCustomizerDuringInitialSetup( this.props.site.ID, true );
 			window.open( url );
 		} else {
-			page.redirect( url );
+			page.show( url );
 		}
 	};
 
