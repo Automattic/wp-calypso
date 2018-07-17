@@ -1,7 +1,13 @@
 Gutenberg Blocks
 ====
 
-Gutenberg Blocks are the components used in the Guterberg editor for creating content. 
+[Gutenberg](https://wordpress.org/gutenberg/) is the new publishing experience for WordPress.
 
-Check out the [Gutenberg Blocks documentation](client/gutenberg-blocks/README.md) for more 
-information.
+The Gutenberg editor uses 
+[blocks](https://github.com/WordPress/gutenberg/blob/master/blocks/README.md) to create all types
+of content. A Gutenberg block is the abstract term used to describe units of markup that, 
+composed together, form the content or layout of a webpage.
+
+Calypso provides all the 
+[built-in Gutenberg blocks](https://github.com/WordPress/gutenberg/tree/master/core-blocks), so 
+they can be used in any React component. 

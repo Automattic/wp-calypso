@@ -10,8 +10,6 @@ You will encounter the following types of components in Calypso:
 
 * [UI components](../client/components/README.md) (UI primitives)
 * [Blocks](../client/blocks/README.md) (components which are connected to state, or otherwise directly represent application entities)
-* [Gutenberg Blocks](../client/gutenberg-blocks/README.md) (components which are used in the 
-Gutenberg editor for creating content)
 * [Query components](./our-approach-to-data.md#query-components) (which handle data querying but don’t render anything)
 * Higher-order components (which encapsulate and provide functionality)
 * Section components (which are domain specific and not meant to be reused)
