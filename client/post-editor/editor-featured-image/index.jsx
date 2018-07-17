@@ -17,7 +17,7 @@ import { noop } from 'lodash';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
-import * as stats from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'lib/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import FeaturedImageDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
@@ -86,8 +86,8 @@ class EditorFeaturedImage extends Component {
 			featured_image: value.items[ 0 ].ID,
 		} );
 
-		stats.recordStat( 'featured_image_set' );
-		stats.recordEvent( 'Featured image set' );
+		recordStat( 'featured_image_set' );
+		recordEvent( 'Featured image set' );
 
 		this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
 			source: 'medialibrary',
@@ -98,8 +98,8 @@ class EditorFeaturedImage extends Component {
 	removeImage = () => {
 		this.props.editPost( this.props.siteId, this.props.postId, { featured_image: '' } );
 
-		stats.recordStat( 'featured_image_removed' );
-		stats.recordEvent( 'Featured image removed' );
+		recordStat( 'featured_image_removed' );
+		recordEvent( 'Featured image removed' );
 	};
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,

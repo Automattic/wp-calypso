@@ -17,7 +17,7 @@ import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormTextarea from 'components/forms/form-textarea';
 import InfoPopover from 'components/info-popover';
 import TrackInputChanges from 'components/track-input-changes';
-import * as stats from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'lib/posts/stats';
 
 class PublicizeMessage extends Component {
 	static propTypes = {
@@ -49,8 +49,8 @@ class PublicizeMessage extends Component {
 	};
 
 	recordStats = () => {
-		stats.recordStat( 'sharing_message_changed' );
-		stats.recordEvent( 'Publicize Sharing Message Changed' );
+		recordStat( 'sharing_message_changed' );
+		recordEvent( 'Publicize Sharing Message Changed' );
 	};
 
 	shouldPreFillMessage() {

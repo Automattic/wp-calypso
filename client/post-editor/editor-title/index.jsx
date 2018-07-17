@@ -19,7 +19,7 @@ import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
-import * as stats from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'lib/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
 import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
@@ -80,8 +80,8 @@ class EditorTitle extends Component {
 
 	recordChangeStats = () => {
 		const isPage = PostUtils.isPage( this.props.post );
-		stats.recordStat( isPage ? 'page_title_changed' : 'post_title_changed' );
-		stats.recordEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
+		recordStat( isPage ? 'page_title_changed' : 'post_title_changed' );
+		recordEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
 	};
 
 	render() {

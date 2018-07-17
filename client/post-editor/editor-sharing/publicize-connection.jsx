@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
  */
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
-import * as PostStats from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'lib/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -71,8 +71,8 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				this.props.postId,
 				'_wpas_skip_' + connection.keyring_connection_ID
 			);
-			PostStats.recordStat( 'sharing_enabled_' + connection.service );
-			PostStats.recordEvent( 'Publicize Service', connection.service, 'enabled' );
+			recordStat( 'sharing_enabled_' + connection.service );
+			recordEvent( 'Publicize Service', connection.service, 'enabled' );
 		} else {
 			this.props.updatePostMetadata(
 				this.props.siteId,
@@ -80,8 +80,8 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				'_wpas_skip_' + connection.keyring_connection_ID,
 				1
 			);
-			PostStats.recordStat( 'sharing_disabled_' + connection.service );
-			PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
+			recordStat( 'sharing_disabled_' + connection.service );
+			recordEvent( 'Publicize Service', connection.service, 'disabled' );
 		}
 	};
 

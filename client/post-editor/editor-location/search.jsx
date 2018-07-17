@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { geocode } from 'lib/geocoding';
-import * as stats from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'lib/posts/stats';
 import SearchCard from 'components/search-card';
 import EditorLocationSearchResult from './search-result';
 
@@ -47,8 +47,8 @@ export default class extends React.Component {
 		const { onError } = this.props;
 
 		if ( ! this.hasTrackedStats ) {
-			stats.recordStat( 'location_search' );
-			stats.recordEvent( 'Location Searched' );
+			recordStat( 'location_search' );
+			recordEvent( 'Location Searched' );
 			this.hasTrackedStats = true;
 		}
 
