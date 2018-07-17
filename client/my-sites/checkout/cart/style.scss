@@ -34,7 +34,7 @@
 		}
 
 		.product-domain {
-			color: $gray-darken-10;
+			color: $gray-text-min;
 			display: block;
 			font-size: 12px;
 			text-overflow: ellipsis;
@@ -46,7 +46,7 @@
 		}
 
 		.product-price {
-			color: $gray-darken-10;
+			color: $gray-text-min;
 			display: block;
 			font-size: 13px;
 		}
@@ -65,7 +65,7 @@
 		}
 
 		.product-monthly-price {
-			color: $gray;
+			color: $gray-text-min;
 			display: block;
 			font-size: 11px;
 			font-style: italic;
@@ -74,7 +74,7 @@
 		.cart__remove-item {
 			box-shadow: none;
 			cursor: pointer;
-			color: $alert-red;
+			color: $gray;
 			border: 0;
 			background: transparent;
 			padding: 0;
@@ -83,6 +83,10 @@
 			position: absolute;
 			right: 0;
 			top: 0;
+
+			&:hover {
+				color: $alert-red;
+			}
 
 			&:focus {
 				outline: none;
@@ -96,14 +100,14 @@
 
 	.cart-item__loading-placeholder {
 		.cart__remove-item {
-			@include placeholder(23%);
+			@include placeholder( 23% );
 			border-radius: 0;
 			width: 25px;
 		}
 	}
 
 	.cart-total {
-		color: $gray-darken-10;
+		color: $gray-text-min;
 		font-weight: 600;
 		font-size: 14px;
 
@@ -122,7 +126,7 @@
 	.cart__coupon {
 		font-size: 11px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 
@@ -137,7 +141,7 @@
 			margin: 15px -15px 0 -15px;
 			padding: 15px 15px 0 15px;
 
-			input[type=text] {
+			input[type='text'] {
 				font-size: 12px;
 				margin: 0 4% 0 0;
 				width: 70%;
@@ -174,7 +178,7 @@
 	margin: 15px 15px 0px 15px;
 	padding: 10px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -207,8 +211,8 @@
 		color: $gray-dark;
 		cursor: pointer;
 		position: absolute;
-		    top: 12px;
-		    right: 12px;
+		top: 12px;
+		right: 12px;
 	}
 
 	&:focus {
@@ -243,13 +247,13 @@
 
 @keyframes pulsing-badge {
 	0% {
-		box-shadow: 0 0 0 0 rgba(0,170,220, 0.4);
+		box-shadow: 0 0 0 0 rgba( 0, 170, 220, 0.4 );
 	}
 	70% {
-		box-shadow: 0 0 0 10px rgba(0,170,220, 0);
+		box-shadow: 0 0 0 10px rgba( 0, 170, 220, 0 );
 	}
 	100% {
-		box-shadow: 0 0 0 0 rgba(0,170,220, 0);
+		box-shadow: 0 0 0 0 rgba( 0, 170, 220, 0 );
 	}
 }
 
@@ -302,11 +306,9 @@ div.popover-cart__popover {
 }
 
 .popover-cart__mobile-cart {
-
 	background-color: $white;
 	border: 1px solid $gray-lighten-20;
-	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
-		0 0 56px rgba( 0, 0, 0, 0.075 );
+	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
 	position: relative;
 
@@ -365,21 +367,19 @@ div.popover-cart__popover {
 			border-left-color: transparent;
 			border-right-color: transparent;
 
-			content: " ";
+			content: ' ';
 			left: 50%;
 			margin-left: -10px;
 			position: absolute;
 			top: 2px;
 		}
-
 	}
 }
-
 
 .secondary-cart {
 	background: $white;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		left: 0;
 		margin-top: 10px;
 		max-height: 100%;
@@ -388,7 +388,7 @@ div.popover-cart__popover {
 	}
 }
 
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	.secondary-cart__hidden {
 		display: none;
 	}
@@ -396,7 +396,7 @@ div.popover-cart__popover {
 
 .cart-item__loading-placeholder {
 	span {
-		@include placeholder(23%);
+		@include placeholder( 23% );
 		margin-bottom: 1px;
 	}
 
