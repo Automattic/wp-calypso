@@ -16,7 +16,7 @@ export default {
 				http(
 					{
 						method: 'GET',
-						path: `/sites/${ action.siteId }/wordads/earnings`, // @TODO convert to new stats endpoint
+						path: `/sites/${ action.siteId }/wordads/stats`,
 					},
 					action
 				),

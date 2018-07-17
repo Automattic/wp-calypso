@@ -19,8 +19,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import StatsPeriodNavigation from '../stats-period-navigation'; // @TODO remove?
 import DatePicker from '../stats-date-picker'; // @TODO remove?
-import Countries from '../stats-countries'; // @TODO remove
-import StatsModule from '../stats-module'; // @TODO remove
 import statsStrings from '../stats-strings'; // @TODO remove
 import titlecase from 'to-title-case';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -148,28 +146,8 @@ class WordAds extends Component {
 						</StatsPeriodNavigation>
 					</StickyPanel>
 */ }
-					<div className="stats__module-list is-events">
-						<div className="stats__module-column">
-							{
-								// <AdsEarnings site={ this.props.site } />
-							 }
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false }
-							/>
-						</div>
-						<div className="stats__module-column">
-							<StatsModule
-								path="referrers"
-								moduleStrings={ moduleStrings.referrers }
-								period={ this.props.period }
-								query={ query }
-								statType="statsReferrers"
-								showSummaryLink
-							/>
-						</div>
+					<div className="stats__module-list">
+						<AdsEarnings site={ this.props.site } />
 					</div>
 				</div>
 				<JetpackColophon />
