@@ -37,6 +37,10 @@ import { isRequestingActivePromotions } from 'state/active-promotions/selectors'
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+/*
+ * This is just for english audience and is not translated on purpose, remember to add
+ * translate() calls before removing a/b test check and enabling it for everyone
+ */
 class StoreUpsellComponent extends Component {
 	static propTypes = {
 		trackTracksEvent: PropTypes.func.isRequired,

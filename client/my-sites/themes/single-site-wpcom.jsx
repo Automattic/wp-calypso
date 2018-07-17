@@ -35,6 +35,8 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 	let upsellBanner = null;
 	if ( displayUpsellBanner ) {
 		if ( bannerLocationBelowSearch ) {
+			// This is just for english audience and is not translated on purpose, remember to add
+			// translate() calls before removing a/b test check and enabling it for everyone
 			upsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
