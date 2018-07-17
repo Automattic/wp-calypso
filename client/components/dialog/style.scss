@@ -108,6 +108,8 @@
 .dialog__action-buttons .button {
 	margin-left: 10px;
 	min-width: 80px;
+	display: flex;
+	flex-direction: column-reverse;
 
 	.is-left-aligned {
 		margin-left: 0;
@@ -115,8 +117,7 @@
 	}
 
 	@include breakpoint( "<480px" ) {
-		margin-top: 2px;
-		margin-bottom: 2px;
+		margin: 2px 0;
 	}
 }
 
