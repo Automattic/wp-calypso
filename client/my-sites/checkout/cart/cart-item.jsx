@@ -280,7 +280,7 @@ export class CartItem extends React.Component {
 					onClick={ this.removeFromCart }
 					aria-label={ translate( 'Remove item' ) }
 				>
-					<Gridicon icon="cross-small" />
+					<Gridicon icon="trash" size={ 18 } />
 				</button>
 			);
 		}
