@@ -5,16 +5,19 @@
 import classNames from 'classnames';
 import React, { Children, PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { times } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ChecklistHeader from 'blocks/checklist/checklist-header';
+import ChecklistPlaceholder from 'blocks/checklist/checklist-placeholder';
 
 export default class Checklist extends PureComponent {
 	static propTyps = {
 		completedCount: PropTypes.number,
 		inferCompletedCount: PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
 	};
 
 	state = { hideCompleted: false };
@@ -22,7 +25,22 @@ export default class Checklist extends PureComponent {
 	toggleCompleted = () =>
 		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
 
+	renderPlaceholder() {
+		return (
+			<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
+				<ChecklistHeader total={ 0 } completed={ 0 } />
+				{ times( Children.count( this.props.children ), index => (
+					<ChecklistPlaceholder key={ index } />
+				) ) }
+			</div>
+		);
+	}
+
 	render() {
+		if ( this.props.isPlaceholder ) {
+			return this.renderPlaceholder();
+		}
+
 		const { children, completedCount, inferCompletedCount } = this.props;
 
 		const count = inferCompletedCount
