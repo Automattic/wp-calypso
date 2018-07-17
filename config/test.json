@@ -33,7 +33,7 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/components-usage-stats": false,
-		"devdocs/gutenberg": true,
+		"devdocs/gutenberg-blocks": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"gdpr-banner": false,
 		"google-analytics": false,

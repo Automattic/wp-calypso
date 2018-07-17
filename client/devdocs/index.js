@@ -72,11 +72,11 @@ export default function() {
 		page( '/devdocs/start', controller.pleaseLogIn, makeLayout, clientRender );
 		page( '/devdocs/welcome', controller.sidebar, controller.welcome, makeLayout, clientRender );
 
-		if ( config.isEnabled( 'devdocs/gutenberg' ) ) {
+		if ( config.isEnabled( 'devdocs/gutenberg-blocks' ) ) {
 			page(
-				'/devdocs/gutenberg',
+				'/devdocs/gutenberg-blocks',
 				controller.sidebar,
-				controller.gutenberg,
+				controller.gutenbergBlocks,
 				makeLayout,
 				clientRender
 			);

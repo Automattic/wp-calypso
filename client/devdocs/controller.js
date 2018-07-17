@@ -164,9 +164,9 @@ const devdocs = {
 	},
 
 	// Gutenberg Blocks
-	gutenberg: function( context, next ) {
+	gutenbergBlocks: function( context, next ) {
 		context.primary = (
-			<AsyncLoad component={ context.params.component } require="./design/gutenberg" />
+			<AsyncLoad component={ context.params.component } require="./design/gutenberg-blocks" />
 		);
 		next();
 	},

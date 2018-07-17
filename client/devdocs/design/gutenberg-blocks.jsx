@@ -12,14 +12,14 @@ import Main from 'components/main';
 import ReadmeViewer from 'components/readme-viewer';
 
 
-export default class Gutenberg extends React.Component {
+export default class GutenbergBlocks extends React.Component {
 	render() {
-		const className = classnames( 'devdocs', 'devdocs__gutenberg' );
+		const className = classnames( 'devdocs', 'devdocs__gutenberg-blocks' );
 
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Gutenberg Blocks"/>
-				<ReadmeViewer readmeFilePath="/client/devdocs/gutenberg/README.md"/>
+				<ReadmeViewer readmeFilePath="/client/devdocs/gutenberg-blocks/README.md"/>
 			</Main>
 		);
 	}

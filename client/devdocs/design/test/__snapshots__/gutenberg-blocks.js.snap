@@ -2,13 +2,13 @@
 
 exports[`Gutenberg should render 1`] = `
 <Main
-  className="devdocs devdocs__gutenberg"
+  className="devdocs devdocs__gutenberg-blocks"
 >
   <Connect(DocumentHead)
     title="Gutenberg Blocks"
   />
   <ReadmeViewer
-    readmeFilePath="/client/devdocs/gutenberg/README.md"
+    readmeFilePath="/client/devdocs/gutenberg-blocks/README.md"
   />
 </Main>
 `;
