@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -65,7 +64,7 @@ describe( 'utils', () => {
 					},
 				}
 			);
-			expect( isEqual ).to.be.true;
+			expect( isEqual ).toBe( true );
 		} );
 
 		test( 'should return false if term edits are not the same as saved terms', () => {
@@ -98,7 +97,7 @@ describe( 'utils', () => {
 					},
 				}
 			);
-			expect( isEqual ).to.be.false;
+			expect( isEqual ).toBe( false );
 		} );
 
 		test( 'should return false savedTerms is missing a taxonomy', () => {
@@ -108,14 +107,14 @@ describe( 'utils', () => {
 				},
 				{}
 			);
-			expect( isEqual ).to.be.false;
+			expect( isEqual ).toBe( false );
 		} );
 	} );
 
 	describe( 'normalizePostForApi()', () => {
 		test( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForApi();
-			expect( normalizedPost ).to.be.null;
+			expect( normalizedPost ).toBeNull();
 		} );
 
 		test( 'should return a normalized post object', () => {
@@ -131,7 +130,7 @@ describe( 'utils', () => {
 			};
 
 			const normalizedPost = normalizePostForApi( post );
-			expect( normalizedPost ).to.eql( {
+			expect( normalizedPost ).toEqual( {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -146,7 +145,7 @@ describe( 'utils', () => {
 	describe( 'normalizePostForDisplay()', () => {
 		test( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForDisplay();
-			expect( normalizedPost ).to.be.null;
+			expect( normalizedPost ).toBeNull();
 		} );
 
 		test( 'should return a normalized post object', () => {
@@ -166,7 +165,7 @@ describe( 'utils', () => {
 			};
 
 			const normalizedPost = normalizePostForDisplay( post );
-			expect( normalizedPost ).to.eql( {
+			expect( normalizedPost ).toEqual( {
 				...post,
 				title: 'Ribs & Chicken',
 				author: {
@@ -238,8 +237,8 @@ describe( 'utils', () => {
 			} );
 			const revised = normalizePostForState( original );
 
-			expect( revised ).to.not.equal( original );
-			expect( revised ).to.eql( {
+			expect( revised ).not.toEqual( original );
+			expect( revised ).toEqual( {
 				ID: 814,
 				meta: {
 					data: { autosave: true },
@@ -291,7 +290,7 @@ describe( 'utils', () => {
 				number: 20,
 			} );
 
-			expect( query ).to.eql( {
+			expect( query ).toEqual( {
 				page: 4,
 			} );
 		} );
@@ -304,7 +303,7 @@ describe( 'utils', () => {
 				page: 1,
 			} );
 
-			expect( serializedQuery ).to.equal( '{"type":"page"}' );
+			expect( serializedQuery ).toBe( '{"type":"page"}' );
 		} );
 
 		test( 'should prefix site ID if specified', () => {
@@ -315,7 +314,7 @@ describe( 'utils', () => {
 				2916284
 			);
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
+			expect( serializedQuery ).toBe( '2916284:{"search":"Hello"}' );
 		} );
 	} );
 
@@ -323,7 +322,7 @@ describe( 'utils', () => {
 		test( 'should return undefined query and site if string does not contain JSON', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( 'bad' );
 
-			expect( queryDetails ).to.eql( {
+			expect( queryDetails ).toEqual( {
 				siteId: undefined,
 				query: undefined,
 			} );
@@ -332,7 +331,7 @@ describe( 'utils', () => {
 		test( 'should return query but not site if string does not contain site prefix', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( '{"search":"hello"}' );
 
-			expect( queryDetails ).to.eql( {
+			expect( queryDetails ).toEqual( {
 				siteId: undefined,
 				query: { search: 'hello' },
 			} );
@@ -341,7 +340,7 @@ describe( 'utils', () => {
 		test( 'should return query and site if string contains site prefix and JSON', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( '2916284:{"search":"hello"}' );
 
-			expect( queryDetails ).to.eql( {
+			expect( queryDetails ).toEqual( {
 				siteId: 2916284,
 				query: { search: 'hello' },
 			} );
@@ -355,7 +354,7 @@ describe( 'utils', () => {
 				page: 2,
 			} );
 
-			expect( serializedQuery ).to.equal( '{"type":"page"}' );
+			expect( serializedQuery ).toBe( '{"type":"page"}' );
 		} );
 
 		test( 'should prefix site ID if specified', () => {
@@ -367,7 +366,7 @@ describe( 'utils', () => {
 				2916284
 			);
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
+			expect( serializedQuery ).toBe( '2916284:{"search":"Hello"}' );
 		} );
 	} );
 
@@ -377,7 +376,7 @@ describe( 'utils', () => {
 				tags_by_id: [ 4, 5, 6 ],
 			} );
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				tags_by_id: [ 4, 5, 6 ],
 			} );
 		} );
@@ -390,7 +389,7 @@ describe( 'utils', () => {
 				{}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				tags_by_id: [ 4, 5, 6 ],
 			} );
 		} );
@@ -405,7 +404,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				tags_by_id: [ 4, 6 ],
 			} );
 		} );
@@ -420,7 +419,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				tags_by_id: [ 1, 2, 3, 4 ],
 			} );
 		} );
@@ -435,7 +434,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				discussion: { comments_open: false, pings_open: false },
 			} );
 		} );
@@ -450,7 +449,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '20', operation: 'update' } ],
 			} );
 		} );
@@ -465,7 +464,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				metadata: [
 					{ key: 'geo_latitude', value: '10', operation: 'update' },
 					{ key: 'geo_longitude', value: '20', operation: 'update' },
@@ -485,7 +484,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( edited ).to.eql( {
+			expect( edited ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '20' } ],
 			} );
 		} );
@@ -500,7 +499,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( edited ).to.eql( {
+			expect( edited ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '10' }, { key: 'geo_longitude', value: '20' } ],
 			} );
 		} );
@@ -515,7 +514,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( edited ).to.eql( {
+			expect( edited ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '10' } ],
 			} );
 		} );
@@ -529,7 +528,7 @@ describe( 'utils', () => {
 				metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
 			} );
 
-			expect( edited ).to.eql( post );
+			expect( edited ).toEqual( post );
 		} );
 
 		test( 'should return unchanged object on noop delete', () => {
@@ -541,7 +540,7 @@ describe( 'utils', () => {
 				metadata: [ { key: 'geo_longitude', value: '10', operation: 'delete' } ],
 			} );
 
-			expect( edited ).to.eql( post );
+			expect( edited ).toEqual( post );
 		} );
 
 		test( 'should return metadata array after applying edits to a false value', () => {
@@ -553,7 +552,7 @@ describe( 'utils', () => {
 				metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
 			} );
 
-			expect( edited ).to.eql( {
+			expect( edited ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '10' } ],
 			} );
 		} );
@@ -565,7 +564,7 @@ describe( 'utils', () => {
 				title: 'Chewbacca Saves',
 			} );
 
-			expect( normalizedPostEdits ).to.eql( {
+			expect( normalizedPostEdits ).toEqual( {
 				title: 'Chewbacca Saves',
 			} );
 		} );
@@ -585,7 +584,7 @@ describe( 'utils', () => {
 
 			const normalizedPostEdits = getTermIdsFromEdits( originalPost );
 
-			expect( normalizedPostEdits ).to.eql( {
+			expect( normalizedPostEdits ).toEqual( {
 				title: 'Chewbacca Saves',
 				terms: {
 					wookie_post_types: {
@@ -609,7 +608,7 @@ describe( 'utils', () => {
 				},
 			} );
 
-			expect( normalizedPostEdits ).to.eql( {
+			expect( normalizedPostEdits ).toEqual( {
 				title: 'Chewbacca Saves',
 				terms: {
 					wookie_post_types: {},
@@ -628,7 +627,7 @@ describe( 'utils', () => {
 				},
 			} );
 
-			expect( normalizedPostEdits ).to.eql( {
+			expect( normalizedPostEdits ).toEqual( {
 				title: 'Chewbacca Saves',
 				terms: {
 					wookie_post_tags: [ 'raaar', 'uggggaaarr' ],
