@@ -1,4 +1,7 @@
 Gutenberg Blocks
 ====
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ut arcu et mauris fermentum tempus. In vel lacinia lorem, nec accumsan tortor. Nulla non tellus interdum, vestibulum nisl sed, placerat metus.
+Gutenberg Blocks are the components used in the Guterberg editor for creating content. 
+
+Check out the [Gutenberg Blocks documentation](client/gutenberg-blocks/README.md) for more 
+information.
