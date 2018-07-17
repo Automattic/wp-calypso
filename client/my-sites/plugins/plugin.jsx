@@ -39,6 +39,8 @@ import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-al
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
+import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { getToursHistory } from 'state/ui/guided-tours/selectors';
 
 const SinglePlugin = createReactClass( {
 	displayName: 'SinglePlugin',
@@ -54,6 +56,7 @@ const SinglePlugin = createReactClass( {
 	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
+		this.hasAlreadyShownTheTour = false;
 	},
 
 	getInitialState() {
@@ -63,6 +66,7 @@ const SinglePlugin = createReactClass( {
 	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
+		this.hasAlreadyShownTheTour = false;
 		if ( this.pluginRefreshTimeout ) {
 			clearTimeout( this.pluginRefreshTimeout );
 		}
@@ -220,6 +224,14 @@ const SinglePlugin = createReactClass( {
 		};
 	},
 
+	isPluginInstalledOnsite() {
+		if ( this.isFetchingSites() ) {
+			return null;
+		}
+
+		return !! PluginsStore.getSitePlugin( this.props.selectedSite, this.state.plugin.slug );
+	},
+
 	renderDocumentHead() {
 		return <DocumentHead title={ this.getPageTitle() } />;
 	},
@@ -272,11 +284,7 @@ const SinglePlugin = createReactClass( {
 					{ this.displayHeader() }
 					<PluginMeta
 						isPlaceholder
-						isInstalledOnSite={
-							this.isFetchingSites()
-								? null
-								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
-						}
+						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						plugin={ this.getPlugin() }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
@@ -311,9 +319,7 @@ const SinglePlugin = createReactClass( {
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
-						isInstalledOnSite={
-							!! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
-						}
+						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						plugin={ this.getPlugin() }
 						siteUrl={ 'no-real-url' }
 						sites={ [ selectedSite ] }
@@ -327,8 +333,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	render() {
-		const { selectedSite } = this.props;
-
+		const { selectedSite, requestTour } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
@@ -369,6 +374,16 @@ const SinglePlugin = createReactClass( {
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
 		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
 
+		if ( calypsoify && this.isPluginInstalledOnsite() && ! this.hasAlreadyShownTheTour ) {
+			const pluginsToursSeen = this.props.toursHistory.filter(
+				tour => tour.tourName === 'pluginsBasicTour'
+			);
+			if ( pluginsToursSeen.length < 3 ) {
+				this.hasAlreadyShownTheTour = true;
+				requestTour( 'pluginsBasicTour' );
+			}
+		}
+
 		return (
 			<MainComponent>
 				<NonSupportedJetpackVersionNotice />
@@ -382,11 +397,7 @@ const SinglePlugin = createReactClass( {
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
-						isInstalledOnSite={
-							this.isFetchingSites()
-								? null
-								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
-						}
+						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						isInstalling={ installing }
 						allowedActions={ allowedPluginActions }
 						calypsoify={ calypsoify }
@@ -419,10 +430,12 @@ export default connect(
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
 				: canCurrentUserManagePlugins( state ),
 			sites: getSelectedOrAllSitesWithPlugins( state ),
+			toursHistory: getToursHistory( state ),
 		};
 	},
 	{
 		recordGoogleEvent,
 		wporgFetchPluginData,
+		requestTour: requestGuidedTour,
 	}
 )( localize( SinglePlugin ) );
