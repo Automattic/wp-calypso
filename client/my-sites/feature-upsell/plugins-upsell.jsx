@@ -25,6 +25,10 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import PurchaseDetail from 'components/purchase-detail';
 import { getCurrencyObject } from 'lib/format-currency';
 
+/*
+ * This is just for english audience and is not translated on purpose, remember to add
+ * translate() calls before removing a/b test check and enabling it for everyone
+ */
 class PluginsUpsellComponent extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string.isRequired,
