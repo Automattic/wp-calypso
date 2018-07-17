@@ -55,7 +55,7 @@ class CartPlanAdTheme extends Component {
 
 	render() {
 		// Nothing here is translated on purpose - this is a part of an A/B test that we are launching
-		// only for US english audience. Remember to add translate() calls before concluding a test and
+		// only for english audience. Remember to add translate() calls before concluding a test and
 		// enabling this for everyone!
 		if ( ! this.shouldDisplayAd() ) {
 			return null;
