@@ -21,7 +21,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import { hasTouch } from 'lib/touch-detect';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'state/posts/stats';
 import { tracks } from 'lib/analytics';
 import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';

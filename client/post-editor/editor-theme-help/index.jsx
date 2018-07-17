@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteThemeShowcasePath } from 'state/sites/selectors';
-import { recordStat } from 'lib/posts/stats';
+import { recordStat } from 'state/posts/stats';
 
 class EditorThemeHelp extends PureComponent {
 	static propTypes = {

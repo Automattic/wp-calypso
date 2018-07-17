@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  */
 import { isPage, isPublished } from 'lib/posts/utils';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';

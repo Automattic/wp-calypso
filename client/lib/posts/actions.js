@@ -14,7 +14,7 @@ import wpcom from 'lib/wp';
 import { decodeEntities } from 'lib/formatting';
 import PreferencesStore from 'lib/preferences/store';
 import * as utils from './utils';
-import { recordSaveEvent } from './stats';
+import { recordSaveEvent } from 'state/posts/stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import { getSelectedSiteId } from 'state/ui/selectors';

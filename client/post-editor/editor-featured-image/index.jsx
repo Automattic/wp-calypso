@@ -17,7 +17,7 @@ import { noop } from 'lodash';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import FeaturedImageDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';

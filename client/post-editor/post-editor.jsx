@@ -30,7 +30,7 @@ import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
 import * as utils from 'lib/posts/utils';
 import EditorPreview from './editor-preview';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {

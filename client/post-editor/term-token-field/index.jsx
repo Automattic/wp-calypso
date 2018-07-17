@@ -21,7 +21,7 @@ import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { editPost } from 'state/posts/actions';
 import TokenField from 'components/token-field';
 import { decodeEntities } from 'lib/formatting';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import QueryTerms from 'components/data/query-terms';
 
 const debug = _debug( 'calypso:post-editor:editor-terms' );

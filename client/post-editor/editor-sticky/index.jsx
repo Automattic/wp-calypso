@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
  */
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';

@@ -11,7 +11,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { geocode } from 'lib/geocoding';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import SearchCard from 'components/search-card';
 import EditorLocationSearchResult from './search-result';
 

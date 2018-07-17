@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import AccordionSection from 'components/accordion/section';
 import TextInput from 'components/forms/form-text-input';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';

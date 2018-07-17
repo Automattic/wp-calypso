@@ -17,7 +17,7 @@ import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
 import * as postUtils from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';

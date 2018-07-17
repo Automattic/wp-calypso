@@ -19,7 +19,7 @@ import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
 import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';

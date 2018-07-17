@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
  */
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isJetpackModuleActive } from 'state/sites/selectors';

@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordEvent } from 'lib/posts/stats';
+import { recordEvent } from 'state/posts/stats';
 import * as postUtils from 'lib/posts/utils';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';

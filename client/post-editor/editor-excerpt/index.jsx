@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import TrackInputChanges from 'components/track-input-changes';
 import FormTextarea from 'components/forms/form-textarea';
 import { getSelectedSiteId } from 'state/ui/selectors';

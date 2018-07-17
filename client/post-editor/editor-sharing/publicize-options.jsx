@@ -20,7 +20,7 @@ import { publicizeConnections } from 'lib/paths';
 import PostMetadata from 'lib/post-metadata';
 import PopupMonitor from 'lib/popup-monitor';
 import Button from 'components/button';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';

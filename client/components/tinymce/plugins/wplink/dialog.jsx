@@ -26,7 +26,7 @@ import PostSelector from 'my-sites/post-selector';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 import { decodeEntities } from 'lib/formatting';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'state/posts/stats';
 
 /**
  * Module variables

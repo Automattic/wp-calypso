@@ -16,7 +16,7 @@ import { stringify } from 'qs';
  */
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import { reverseGeocode } from '../../lib/geocoding';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'state/posts/stats';
 import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
 import Notice from 'components/notice';

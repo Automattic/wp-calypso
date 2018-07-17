@@ -16,7 +16,7 @@ import { get } from 'lodash';
 import Gravatar from 'components/gravatar';
 import AuthorSelector from 'blocks/author-selector';
 import { hasTouch } from 'lib/touch-detect';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSite } from 'state/sites/selectors';

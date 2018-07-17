@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
  */
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { getSelectedSiteId } from 'state/ui/selectors';

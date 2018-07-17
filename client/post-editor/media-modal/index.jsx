@@ -29,7 +29,7 @@ import {
  */
 import MediaLibrary from 'my-sites/media-library';
 import analytics from 'lib/analytics';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'state/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import * as MediaUtils from 'lib/media/utils';

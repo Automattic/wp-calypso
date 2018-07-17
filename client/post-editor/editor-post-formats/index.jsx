@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
  */
 import FormRadio from 'components/forms/form-radio';
 import QueryPostFormats from 'components/data/query-post-formats';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 import AccordionSection from 'components/accordion/section';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
 import { getSelectedSiteId } from 'state/ui/selectors';

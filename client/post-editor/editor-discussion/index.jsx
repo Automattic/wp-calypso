@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import InfoPopover from 'components/info-popover';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEvent, recordStat } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';

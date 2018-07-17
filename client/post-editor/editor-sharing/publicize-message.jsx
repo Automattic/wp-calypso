@@ -17,7 +17,7 @@ import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormTextarea from 'components/forms/form-textarea';
 import InfoPopover from 'components/info-popover';
 import TrackInputChanges from 'components/track-input-changes';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordStat, recordEvent } from 'state/posts/stats';
 
 class PublicizeMessage extends Component {
 	static propTypes = {
