@@ -29,7 +29,7 @@ import {
  */
 import MediaLibrary from 'my-sites/media-library';
 import analytics from 'lib/analytics';
-import { recordEvent, recordStat } from 'state/posts/stats';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import * as MediaUtils from 'lib/media/utils';
@@ -299,8 +299,8 @@ export class EditorMediaModal extends Component {
 	};
 
 	onAddMedia = () => {
-		recordStat( 'media_explorer_upload' );
-		recordEvent( 'Upload Media' );
+		this.props.recordEditorStat( 'media_explorer_upload' );
+		this.props.recordEditorEvent( 'Upload Media' );
 	};
 
 	onAddAndEditImage = () => {
@@ -665,5 +665,7 @@ export default connect(
 			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
 			partial( setEditorMediaModalView, ModalViews.DETAIL )
 		),
+		recordEditorEvent,
+		recordEditorStat,
 	}
 )( localize( EditorMediaModal ) );

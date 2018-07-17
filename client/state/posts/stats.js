@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import * as utils from 'state/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -20,12 +20,12 @@ import { getEditedPost, getSitePost } from 'state/posts/selectors';
  */
 const debug = debugModule( 'calypso:posts:stats' );
 
-export function recordStat( action ) {
-	analytics.mc.bumpStat( 'editor_actions', action );
+export function recordEditorStat( action ) {
+	return bumpStat( 'editor_actions', action );
 }
 
-export function recordEvent( action, label, value ) {
-	analytics.ga.recordEvent( 'Editor', action, label, value );
+export function recordEditorEvent( action, label, value ) {
+	return recordGoogleEvent( 'Editor', action, label, value );
 }
 
 export const recordSaveEvent = () => ( dispatch, getState ) => {
@@ -69,21 +69,21 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 	if ( usageAction ) {
 		const source = isJetpackSite( state, siteId ) ? 'jetpack' : 'wpcom';
 
-		analytics.mc.bumpStat( 'editor_usage', usageAction );
-		analytics.mc.bumpStat( 'editor_usage_' + source, usageAction );
+		dispatch( bumpStat( 'editor_usage', usageAction ) );
+		dispatch( bumpStat( 'editor_usage_' + source, usageAction ) );
 		if ( post.type ) {
-			analytics.mc.bumpStat( 'editor_cpt_usage_' + source, post.type + '_' + usageAction );
+			dispatch( bumpStat( 'editor_cpt_usage_' + source, post.type + '_' + usageAction ) );
 		}
 	}
 
 	// if this action has an mc stat name, record it
 	if ( statName ) {
-		recordStat( statName );
+		dispatch( recordEditorStat( statName ) );
 	}
 
 	// if this action has a GA event, record it
 	if ( statEvent ) {
-		recordEvent( statEvent );
+		dispatch( recordEditorEvent( statEvent ) );
 	}
 
 	debug(
@@ -93,12 +93,14 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 		nextStatus
 	);
 
-	analytics.tracks.recordEvent( tracksEventName, {
-		post_id: post.ID,
-		post_type: post.type,
-		visibility: utils.getVisibility( post ),
-		current_status: currentStatus,
-		next_status: nextStatus,
-		context: eventContext,
-	} );
+	dispatch(
+		recordTracksEvent( tracksEventName, {
+			post_id: post.ID,
+			post_type: post.type,
+			visibility: utils.getVisibility( post ),
+			current_status: currentStatus,
+			next_status: nextStatus,
+			context: eventContext,
+		} )
+	);
 };
