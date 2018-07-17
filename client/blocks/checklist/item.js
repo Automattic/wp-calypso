@@ -22,8 +22,8 @@ export class ConnectedItem extends PureComponent {
 		completed: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
 		taskId: PropTypes.string.isRequired,
-		tourId: PropTypes.string,
-		tourUrl: PropTypes.string,
+		tourId: PropTypes.string.isRequired,
+		tourUrl: PropTypes.string.isRequired,
 	};
 
 	handleClick = () =>
