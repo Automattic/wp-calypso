@@ -9,8 +9,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { items } from '../reducer';
-import { WORDADS_STATUS_REQUEST, WORDADS_STATUS_RECEIVE } from 'state/action-types';
+import { items } from '../reducer';
+import { WORDADS_STATUS_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
