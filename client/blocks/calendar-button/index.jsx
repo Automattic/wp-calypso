@@ -87,7 +87,7 @@ class CalendarButton extends Component {
 				'closeOnEsc',
 				'disabledDays',
 				'events',
-				'enableOutsideDays',
+				'showOutsideDays',
 				'ignoreContext',
 				'isVisible',
 				'modifiers',

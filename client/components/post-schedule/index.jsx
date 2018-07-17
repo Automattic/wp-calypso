@@ -247,7 +247,7 @@ class PostSchedule extends Component {
 					events={ this.events() }
 					locale={ this.locale() }
 					disabledDays={ this.props.disabledDays }
-					enableOutsideDays={ this.props.enableOutsideDays }
+					showOutsideDays={ this.props.showOutsideDays }
 					modifiers={ this.props.modifiers }
 					selectedDay={ this.state.localizedDate ? this.state.localizedDate.toDate() : null }
 					timeReference={ this.getCurrentDate() }

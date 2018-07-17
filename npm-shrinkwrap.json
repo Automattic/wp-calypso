@@ -4626,7 +4626,7 @@
         "cross-spawn": "^5.1.0",
         "debug": "^3.1.0",
         "doctrine": "^2.1.0",
-        "eslint-scope": "^3.7.1",
+        "eslint-scope": "3.7.1",
         "eslint-visitor-keys": "^1.0.0",
         "espree": "^3.5.4",
         "esquery": "^1.0.0",
@@ -12105,12 +12105,11 @@
       }
     },
     "react-day-picker": {
-      "version": "6.2.1",
-      "resolved": "https://registry.npmjs.org/react-day-picker/-/react-day-picker-6.2.1.tgz",
-      "integrity": "sha1-/CK4Cdt5I4bRRo0/RtclrZHgTbk=",
+      "version": "7.1.10",
+      "resolved": "https://registry.npmjs.org/react-day-picker/-/react-day-picker-7.1.10.tgz",
+      "integrity": "sha512-UoI3ktYU8oN0UTxX5ZbG02TZePHh4znUGT6/h4g+tLNM1O4GGCiafqyFEIp22HYb1sCPQ4UMyw6QFcxu+lFDVQ==",
       "requires": {
-        "object-assign": "^4.1.1",
-        "prop-types": "^15.6.0"
+        "prop-types": "^15.6.1"
       }
     },
     "react-dom": {

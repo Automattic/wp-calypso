@@ -124,7 +124,7 @@
     "qs": "6.5.2",
     "react": "16.4.1",
     "react-click-outside": "3.0.1",
-    "react-day-picker": "6.2.1",
+    "react-day-picker": "7.1.10",
     "react-dom": "16.4.1",
     "react-lazily-render": "1.0.1",
     "react-live": "1.11.0",

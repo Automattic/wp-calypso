@@ -73,7 +73,7 @@ class CalendarPopover extends Component {
 				'posts',
 				'site',
 				'disabledDays',
-				'enableOutsideDays',
+				'showOutsideDays',
 				'modifiers',
 				'onDateChange',
 				'onMonthChange',
