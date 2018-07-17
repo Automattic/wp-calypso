@@ -15218,9 +15218,9 @@
       "optional": true
     },
     "twemoji": {
-      "version": "2.3.0",
-      "resolved": "https://registry.npmjs.org/twemoji/-/twemoji-2.3.0.tgz",
-      "integrity": "sha1-RbSvQpLULy/fLY7FuG1aiplrwBg="
+      "version": "2.5.1",
+      "resolved": "https://registry.npmjs.org/twemoji/-/twemoji-2.5.1.tgz",
+      "integrity": "sha1-KWZHxhY8fwR0WIccKuviXqj/6DQ="
     },
     "type-check": {
       "version": "0.3.2",
