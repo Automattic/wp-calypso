@@ -37,8 +37,8 @@ function getMatchReasonPhrasesMap( tld ) {
 		[
 			'tld-common',
 			tld === 'com'
-				? translate( 'Most common extension, ".com"' )
-				: translate( 'Common extension, ".%(tld)s"', { args: { tld } } ),
+				? translate( 'Most common extension: ".com"' )
+				: translate( 'Common extension: ".%(tld)s"', { args: { tld } } ),
 		],
 	] );
 }
