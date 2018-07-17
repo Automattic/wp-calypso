@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -19,13 +20,49 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import formatCurrency from 'lib/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QueryMedia from 'components/data/query-media';
+import { isJetpackSite } from 'state/sites/selectors';
+import QuerySitePlans from 'components/data/query-site-plans';
+import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
+import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { translate, productId, product, siteId } = this.props;
+		const {
+			translate,
+			productId,
+			product,
+			siteId,
+			isJetpack,
+			shouldQuerySitePlans,
+			planHasSimplePaymentsFeature,
+		} = this.props;
 
 		if ( ! product ) {
 			return <QuerySimplePayments siteId={ siteId } productId={ productId } />;
+		}
+
+		if ( shouldQuerySitePlans ) {
+			return <QuerySitePlans siteId={ siteId } />;
+		}
+
+		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
+			const unsupportedMessage = isJetpack
+				? translate( 'Simple Payments is not supported by your current Jetpack Plan.' )
+				: translate( 'Simple Payments is not supported by your Plan.' );
+			return (
+				<div className="wpview-content wpview-type-simple-payments">
+					<div className="wpview-type-simple-payments__unsupported">
+						<div className="wpview-type-simple-payments__unsupported-icon">
+							<Gridicon icon="cross" />
+						</div>
+						<p
+							className="wpview-type-simple-payments__unsupported-message"
+							//eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ { __html: unsupportedMessage } }
+						/>
+					</div>
+				</div>
+			);
 		}
 
 		const { productImage } = this.props;
@@ -97,6 +134,9 @@ SimplePaymentsView = connect( ( state, props ) => {
 		siteId,
 		product,
 		productImage: getMediaItem( state, siteId, get( product, 'featuredImageId' ) ),
+		isJetpack: isJetpackSite( state, siteId ),
+		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
+		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 	};
 } )( localize( SimplePaymentsView ) );
 
