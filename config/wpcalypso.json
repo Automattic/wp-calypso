@@ -159,7 +159,7 @@
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
-		"upsell/nudge-a-palooza": false,
+		"upsell/nudge-a-palooza": true,
 		"woocommerce/extension-dashboard": true,
 		"woocommerce/extension-dashboard-stats-widget": true,
 		"woocommerce/extension-orders": true,
