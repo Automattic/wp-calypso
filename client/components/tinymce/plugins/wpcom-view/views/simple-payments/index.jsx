@@ -20,7 +20,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import formatCurrency from 'lib/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QueryMedia from 'components/data/query-media';
-import { isJetpackSite } from 'state/sites/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
@@ -32,7 +31,6 @@ class SimplePaymentsView extends Component {
 			productId,
 			product,
 			siteId,
-			isJetpack,
 			shouldQuerySitePlans,
 			planHasSimplePaymentsFeature,
 		} = this.props;
@@ -46,9 +44,6 @@ class SimplePaymentsView extends Component {
 		}
 
 		if ( ! shouldQuerySitePlans && ! planHasSimplePaymentsFeature ) {
-			const unsupportedMessage = isJetpack
-				? translate( 'Simple Payments is not supported by your current Jetpack Plan.' )
-				: translate( 'Simple Payments is not supported by your Plan.' );
 			return (
 				<div className="wpview-content wpview-type-simple-payments">
 					<div className="wpview-type-simple-payments__unsupported">
@@ -58,7 +53,7 @@ class SimplePaymentsView extends Component {
 						<p
 							className="wpview-type-simple-payments__unsupported-message"
 							//eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ { __html: unsupportedMessage } }
+							dangerouslySetInnerHTML={ { __html: "Your plan doesn't include Simple Payments." } }
 						/>
 					</div>
 				</div>
@@ -134,7 +129,6 @@ SimplePaymentsView = connect( ( state, props ) => {
 		siteId,
 		product,
 		productImage: getMediaItem( state, siteId, get( product, 'featuredImageId' ) ),
-		isJetpack: isJetpackSite( state, siteId ),
 		shouldQuerySitePlans: getSitePlanSlug( state, siteId ) === null,
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 	};
