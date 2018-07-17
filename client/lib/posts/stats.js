@@ -116,9 +116,3 @@ export function recordTinyMCEButtonClick( buttonName ) {
 	analytics.ga.recordEvent( 'Editor', 'Clicked TinyMCE Button', buttonName );
 	debug( 'TinyMCE button click', buttonName, 'mc=', shouldBumpStat );
 }
-
-export function recordTinyMCEHTMLButtonClick( buttonName ) {
-	maybeBumpStat( 'html-editor-button', 'calypso_' + buttonName );
-	analytics.ga.recordEvent( 'Editor', 'Clicked TinyMCE HTML Button', buttonName );
-	debug( 'TinyMCE HTML button click', buttonName, 'mc=', shouldBumpStat );
-}
