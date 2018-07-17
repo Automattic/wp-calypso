@@ -39,7 +39,7 @@ const BLACKLISTED_SECTIONS = [
 	'checkout-thank-you', // thank you page
 ];
 
-const getToursHistory = state => getPreference( state, 'guided-tours-history' );
+export const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
 
 const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );
