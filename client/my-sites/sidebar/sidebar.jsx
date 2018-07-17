@@ -55,6 +55,7 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 
 /**
  * Module variables
@@ -182,7 +183,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	ads() {
-		const { path, canUserManageOptions, canUserUseAds } = this.props;
+		const { path, canUserManageOptions, canUserUpgradeSite, canUserUseAds } = this.props;
 
 		if ( canUserUseAds ) {
 			return (
@@ -201,6 +202,7 @@ export class MySitesSidebar extends Component {
 			! this.props.isJetpack &&
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 			canUserManageOptions &&
+			canUserUpgradeSite &&
 			abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
 		) {
 			return (
@@ -778,6 +780,7 @@ function mapStateToProps( state ) {
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserUseStore: canCurrentUserUseStore( state, siteId ),
 		canUserUseAds: canCurrentUserUseAds( state, siteId ),
+		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
