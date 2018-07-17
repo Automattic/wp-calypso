@@ -283,7 +283,7 @@ export default connect(
 		return {
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			currentUser: getCurrentUser( state ),
-			isConnectionTransferSupported: isJetpackMinimumVersion( state, siteId, '6.2' ),
+			isConnectionTransferSupported: isJetpackMinimumVersion( state, siteId, '6.3.3' ),
 			isCurrentPlanOwner,
 			isPaidPlan,
 			siteId,
