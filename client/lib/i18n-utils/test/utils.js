@@ -286,5 +286,20 @@ describe( 'utils', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'xxxx' );
 			expect( getForumUrl() ).toEqual( '//en.forums.wordpress.com' );
 		} );
+
+		test( 'should prioritize passed argument over current local', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( getForumUrl( 'ja' ) ).toEqual( '//ja.forums.wordpress.com' );
+		} );
+
+		test( 'should return `en` if passed argument is not available in config', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( getForumUrl( 'boom!' ) ).toEqual( '//en.forums.wordpress.com' );
+		} );
+
+		test( 'should return `en` for if neither current i18n locale slug nor passed argument is available in config', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'bonnie' );
+			expect( getForumUrl( 'clyde' ) ).toEqual( '//en.forums.wordpress.com' );
+		} );
 	} );
 } );
