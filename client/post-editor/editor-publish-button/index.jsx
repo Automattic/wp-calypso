@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { recordEvent } from 'state/posts/stats';
-import * as postUtils from 'lib/posts/utils';
+import * as postUtils from 'state/posts/utils';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';

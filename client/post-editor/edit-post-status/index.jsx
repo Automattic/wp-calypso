@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
-import * as postUtils from 'lib/posts/utils';
+import * as postUtils from 'state/posts/utils';
 import InfoPopover from 'components/info-popover';
 import { recordStat, recordEvent } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';

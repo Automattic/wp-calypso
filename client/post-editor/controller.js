@@ -24,7 +24,7 @@ import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
-import { getEditURL } from 'lib/posts/utils';
+import { getEditURL } from 'state/posts/utils';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -240,7 +240,7 @@ export default {
 			return next();
 		}
 
-		const  { primarySiteSlug } = getCurrentUser( context.store.getState() );
+		const { primarySiteSlug } = getCurrentUser( context.store.getState() );
 
 		if ( ! primarySiteSlug ) {
 			return next();

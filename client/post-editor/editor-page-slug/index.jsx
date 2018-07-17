@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import EditorSlug from 'post-editor/editor-slug';
-import * as utils from 'lib/posts/utils';
+import * as utils from 'state/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';

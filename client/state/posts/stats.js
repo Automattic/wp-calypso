@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import * as utils from 'lib/posts/utils';
+import * as utils from 'state/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getEditorPostId, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';

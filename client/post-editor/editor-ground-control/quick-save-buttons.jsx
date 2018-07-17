@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isPage, isPublished } from 'lib/posts/utils';
+import { isPage, isPublished } from 'state/posts/utils';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 import { recordEvent, recordStat } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';

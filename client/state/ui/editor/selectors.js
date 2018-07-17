@@ -14,7 +14,7 @@ import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { getEditedPost, getSitePost } from 'state/posts/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { isPublished, isBackDatedPublished, isFutureDated, getPreviewURL } from 'lib/posts/utils';
+import { isPublished, isBackDatedPublished, isFutureDated, getPreviewURL } from 'state/posts/utils';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.

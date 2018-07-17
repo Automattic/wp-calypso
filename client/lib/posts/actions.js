@@ -13,9 +13,14 @@ import { assign, clone, get, includes, isEmpty, pick, reduce } from 'lodash';
 import wpcom from 'lib/wp';
 import { decodeEntities } from 'lib/formatting';
 import PreferencesStore from 'lib/preferences/store';
-import * as utils from './utils';
 import { recordSaveEvent } from 'state/posts/stats';
-import { normalizeTermsForApi } from 'state/posts/utils';
+import {
+	getFeaturedImageId,
+	isBackDated,
+	isFutureDated,
+	isPublished,
+	normalizeTermsForApi,
+} from 'state/posts/utils';
 import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -137,7 +142,7 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
 			] );
 
 			postAttributes.title = decodeEntities( postToCopy.title );
-			postAttributes.featured_image = utils.getFeaturedImageId( postToCopy );
+			postAttributes.featured_image = getFeaturedImageId( postToCopy );
 
 			/**
 			 * A post metadata whitelist for the `updatePostMetadata()` action.
@@ -246,8 +251,8 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	}
 
 	if (
-		( changedAttributes && changedAttributes.status === 'future' && utils.isFutureDated( post ) ) ||
-		( changedAttributes && changedAttributes.status === 'publish' && utils.isBackDated( post ) )
+		( changedAttributes && changedAttributes.status === 'future' && isFutureDated( post ) ) ||
+		( changedAttributes && changedAttributes.status === 'publish' && isBackDated( post ) )
 	) {
 		// HACK: This is necessary because for some reason v1.1 and v1.2 of the update post endpoints
 		// don't accept a status of 'future' under any conditions.
@@ -311,7 +316,7 @@ export const autosave = () => async ( dispatch, getState ) => {
 	store.set( 'wpcom-autosave:' + siteId + ':' + postId, post );
 
 	// TODO: incorporate post locking
-	if ( utils.isPublished( savedPost ) || utils.isPublished( post ) ) {
+	if ( isPublished( savedPost ) || isPublished( post ) ) {
 		await dispatch( editorAutosave( post ) );
 		return null;
 	}

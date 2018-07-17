@@ -13,7 +13,7 @@ import { some } from 'lodash';
  */
 import AsyncLoad from 'components/async-load';
 import EditorSticky from 'post-editor/editor-sticky';
-import * as utils from 'lib/posts/utils';
+import * as utils from 'state/posts/utils';
 import EditorViewLink from './view-link';
 import EditorStatusLabel from 'post-editor/editor-status-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
