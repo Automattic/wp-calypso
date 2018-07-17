@@ -25,7 +25,7 @@ import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
 import isRtlSelector from 'state/selectors/is-rtl';
 
-const GOOGLE_MAX_RESULTS = 1000;
+const GOOGLE_MAX_RESULTS = 300;
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';
@@ -217,7 +217,7 @@ export class MediaLibraryList extends React.Component {
 		if ( source === 'google_photos' && media && media.length >= GOOGLE_MAX_RESULTS ) {
 			// Google Photos won't return more than 1000 photos - suggest ways round this to the user
 			const message = translate(
-				'Use the search button to access more photos. You can search for dates, locations, and things.'
+				'Current restrictions only allow us to display only the first 300 items from your library. Use the search button to access more photos. You can search for dates, locations, and things.'
 			);
 
 			return (
