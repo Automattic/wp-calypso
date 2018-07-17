@@ -3,15 +3,27 @@
 /**
  * External dependencies
  */
-
 import tinymce from 'tinymce/tinymce';
 import closest from 'component-closest';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-import { recordTinyMCEButtonClick } from 'lib/posts/stats';
+import analytics from 'lib/analytics';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+
+const debug = debugModule( 'calypso:posts:stats' );
+
+const shouldBumpStat = Math.random() <= 0.01 || process.env.NODE_ENV === 'development';
+
+function recordTinyMCEButtonClick( buttonName ) {
+	if ( shouldBumpStat ) {
+		analytics.mc.bumpStat( 'editor-button', 'calypso_' + buttonName );
+	}
+	analytics.ga.recordEvent( 'Editor', 'Clicked TinyMCE Button', buttonName );
+	debug( 'TinyMCE button click', buttonName, 'mc=', shouldBumpStat );
+}
 
 function editorButtonAnalytics( editor ) {
 	function editorEventAncestor( event, selector ) {

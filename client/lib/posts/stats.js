@@ -3,7 +3,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -107,12 +107,3 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 		context: eventContext,
 	} );
 };
-
-const shouldBumpStat = Math.random() <= 0.01 || process.env.NODE_ENV === 'development';
-const maybeBumpStat = shouldBumpStat ? analytics.mc.bumpStat : noop;
-
-export function recordTinyMCEButtonClick( buttonName ) {
-	maybeBumpStat( 'editor-button', 'calypso_' + buttonName );
-	analytics.ga.recordEvent( 'Editor', 'Clicked TinyMCE Button', buttonName );
-	debug( 'TinyMCE button click', buttonName, 'mc=', shouldBumpStat );
-}
