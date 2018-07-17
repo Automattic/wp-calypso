@@ -1,14 +1,15 @@
 /** @format */
-
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
 import Gridicon from 'gridicons';
+import React, { Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
+import PluginsStore from 'lib/plugins/store';
+import { getSelectedSite } from 'state/ui/selectors';
 import {
 	ButtonRow,
 	Continue,
@@ -18,32 +19,18 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
-import PluginsStore from 'lib/plugins/store';
-import { getSelectedSite } from 'state/ui/selectors';
-import { query } from 'layout/guided-tours/positioning';
-
-window.pstore = PluginsStore;
 
 export const JetpackPluginUpdatesTour = makeTour(
-	<Tour
-		name="jetpackPluginUpdates"
-		version="20180611"
-		when={ state => PluginsStore.getSitePlugin( getSelectedSite( state ), 'jetpack' ) }
-	>
+	<Tour name="jetpackPluginUpdates" version="20180611">
 		<Step
 			name="init"
-			wait={ () => !! query( '.plugin-item-jetpack .form-toggle:enabled' ).length }
+			when={ state => {
+				const site = getSelectedSite( state );
+				const res =
+					! PluginsStore.isFetchingSite( site ) && !! PluginsStore.getSitePlugin( site, 'jetpack' );
+				return res;
+			} }
 			target=".plugin-item-jetpack .form-toggle__switch"
-			onTargetDisappear={
-				/**
-				 * noop
-				 *
-				 * Wait doesn't _wait_ for it's condition before calling this.
-				 * This will therefore be called _before_ we've shown the tour.
-				 * We don't want to quit in those cases :/
-				 */
-				() => {}
-			}
 			arrow="top-left"
 			placement="below"
 			style={ {
