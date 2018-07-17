@@ -37,6 +37,7 @@ import {
 	STATS,
 	getAppBannerData,
 	getNewDismissTimes,
+	getCurrentPathFragment,
 	getCurrentSection,
 	isDismissed,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
@@ -115,7 +116,7 @@ class AppBanner extends Component {
 	};
 
 	getDeepLink() {
-		const { currentSection } = this.props;
+		const { currentPathFragment, currentSection } = this.props;
 
 		if ( this.isAndroid() ) {
 			//TODO: update when section deep links are available.
@@ -131,9 +132,21 @@ class AppBanner extends Component {
 			}
 		}
 
-		//TODO: update when deferred deep links are available
 		if ( this.isiOS() ) {
-			return 'itms://itunes.apple.com/us/app/wordpress/id335703880?mt=8';
+			switch ( currentSection ) {
+				case EDITOR:
+					return 'https://apps.wordpress.com/get#post';
+				case NOTES:
+					return 'https://apps.wordpress.com/get#notifications';
+				case READER:
+					if ( currentPathFragment.length === 0 ) {
+						return 'https://apps.wordpress.com/get#read';
+					}
+
+					return 'https://apps.wordpress.com/get#' + currentPathFragment;
+				case STATS:
+					return 'https://apps.wordpress.com/get#' + currentPathFragment;
+			}
 		}
 
 		return null;
@@ -201,6 +214,7 @@ const mapStateToProps = state => {
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
+		currentPathFragment: getCurrentPathFragment( state ),
 		fetchingPreferences: isFetchingPreferences( state ),
 		siteId: getSelectedSiteId( state ),
 	};
