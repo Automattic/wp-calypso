@@ -120,4 +120,13 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
+	plansBannerFromDomainNudge: {
+		datestamp: '20180712',
+		variations: {
+			noShow: 50,
+			show: 50,
+		},
+		defaultVariation: 'noShow',
+		allowExistingUsers: true,
+	},
 };

@@ -48,4 +48,10 @@ export default [
 			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
 		],
 	},
+	{
+		name: 'free_domain',
+		plansPageNoticeTextTitle: 'Get a free domain name by upgrading to any plan listed below!',
+		plansPageNoticeText:
+			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice.',
+	},
 ];
