@@ -620,6 +620,7 @@ class ThemeSheet extends React.Component {
 
 		let pageUpsellBanner, previewUpsellBanner;
 		const hasUpsellBanner =
+			this.props.price > 0 &&
 			! hasUnlimitedPremiumThemes &&
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 			abtest( 'nudgeAPalooza' ) === 'themesUpsells';
