@@ -5,19 +5,15 @@
 import classNames from 'classnames';
 import React, { Children, PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import ChecklistHeader from 'blocks/checklist/checklist-header';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
 
-export class Checklist extends PureComponent {
-	static propTypes = {
-		checklistStatus: PropTypes.objectOf( PropTypes.shape( { completed: PropTypes.bool } ) ),
-		siteId: PropTypes.number.isRequired,
+export default class Checklist extends PureComponent {
+	static propTyps = {
+		completedCount: PropTypes.number.isRequired,
 	};
 
 	state = { hideCompleted: false };
@@ -26,18 +22,7 @@ export class Checklist extends PureComponent {
 		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
 
 	render() {
-		const { children } = this.props;
-
-		// Doesn't seem to capture connected props :(
-		let completed = 0;
-		Children.forEach( children, child => {
-			if (
-				child.props.completed ||
-				get( this.props, [ 'checklistStatus', child.props.taskId, 'completed' ] )
-			) {
-				completed++;
-			}
-		} );
+		const { children, completedCount } = this.props;
 
 		return (
 			<div
@@ -48,7 +33,7 @@ export class Checklist extends PureComponent {
 			>
 				<ChecklistHeader
 					total={ Children.count( children ) }
-					completed={ completed }
+					completed={ completedCount }
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 				/>
@@ -57,9 +42,3 @@ export class Checklist extends PureComponent {
 		);
 	}
 }
-
-export default connect( ( state, { siteId } ) => {
-	return {
-		checklistStatus: get( getSiteChecklist( state, siteId ), [ 'tasks' ], null ),
-	};
-} )( Checklist );
