@@ -60,7 +60,7 @@ class JetpackChecklist extends PureComponent {
 					completedTitle={ translate( 'You turned on backups and scanning.' ) }
 					completedButtonText={ translate( 'Change' ) }
 					duration={ translate( '2 min' ) }
-					url="/stats/activity/$siteSlug"
+					tourUrl="/stats/activity/$siteSlug"
 				/>
 				<ConnectedItem
 					siteId={ siteId }
@@ -85,7 +85,7 @@ class JetpackChecklist extends PureComponent {
 					completedTitle={ translate( 'You turned on automatic plugin updates.' ) }
 					completedButtonText={ translate( 'Change' ) }
 					duration={ translate( '3 min' ) }
-					url="/plugins/manage/$siteSlug"
+					tourUrl="/plugins/manage/$siteSlug"
 				/>
 				<ConnectedItem
 					siteId={ siteId }
