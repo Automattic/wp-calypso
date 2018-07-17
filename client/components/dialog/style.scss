@@ -91,6 +91,11 @@
 		padding-left: 24px;
 		padding-right: 24px;
 	}
+	
+	@include breakpoint( "<480px" ) {
+		display: flex;
+		flex-direction: column-reverse;
+	}
 
 	&:before {
 		content: "";
@@ -108,8 +113,6 @@
 .dialog__action-buttons .button {
 	margin-left: 10px;
 	min-width: 80px;
-	display: flex;
-	flex-direction: column-reverse;
 
 	.is-left-aligned {
 		margin-left: 0;
