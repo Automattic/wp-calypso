@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/Automattic/i18n-calypso#readme",
   "dependencies": {
-    "async": "^1.5.2",
     "commander": "^2.9.0",
     "create-react-class": "^15.6.2",
     "debug": "^3.1.0",
