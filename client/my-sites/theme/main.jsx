@@ -624,6 +624,8 @@ class ThemeSheet extends React.Component {
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 			abtest( 'nudgeAPalooza' ) === 'themesUpsells';
 		if ( hasUpsellBanner ) {
+			// This is just for US-english audience and is not translated, remember to add translate() calls before
+			// removing a/b test check and enabling it for everyone
 			pageUpsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
