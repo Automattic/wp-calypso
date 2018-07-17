@@ -13,7 +13,8 @@ import ChecklistHeader from 'blocks/checklist/checklist-header';
 
 export default class Checklist extends PureComponent {
 	static propTyps = {
-		completedCount: PropTypes.number.isRequired,
+		completedCount: PropTypes.number,
+		inferCompletedCount: PropTypes.bool,
 	};
 
 	state = { hideCompleted: false };
@@ -22,7 +23,14 @@ export default class Checklist extends PureComponent {
 		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
 
 	render() {
-		const { children, completedCount } = this.props;
+		const { children, completedCount, inferCompletedCount } = this.props;
+
+		const count = inferCompletedCount
+			? Children.map( children, child => child.props.completed ).reduce(
+					( acc, completed ) => ( true === completed ? acc + 1 : acc ),
+					0
+			  )
+			: completedCount;
 
 		return (
 			<div
@@ -33,7 +41,7 @@ export default class Checklist extends PureComponent {
 			>
 				<ChecklistHeader
 					total={ Children.count( children ) }
-					completed={ completedCount }
+					completed={ count }
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 				/>
