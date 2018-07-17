@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -17,7 +18,7 @@ import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getForumUrl } from 'lib/i18n-utils';
 
 class HelpSearch extends React.PureComponent {
@@ -36,14 +37,11 @@ class HelpSearch extends React.PureComponent {
 		HelpSearchStore.removeListener( 'change', this.refreshHelpLinks );
 	}
 
-	refreshHelpLinks = () => {
-		this.setState( { helpLinks: HelpSearchStore.getHelpLinks() } );
-	};
+	refreshHelpLinks = () => this.setState( { helpLinks: HelpSearchStore.getHelpLinks() } );
 
 	onSearch = searchQuery => {
 		this.setState( { helpLinks: {}, searchQuery: searchQuery } );
-		analytics.tracks.recordEvent( 'calypso_help_search', { query: searchQuery } );
-		HelpSearchActions.fetch( searchQuery );
+		this.props.fetchSearchResults( searchQuery );
 	};
 
 	displaySearchResults = () => {
@@ -139,4 +137,12 @@ class HelpSearch extends React.PureComponent {
 	}
 }
 
-export default localize( HelpSearch );
+export default connect(
+	null,
+	dispatch => ( {
+		fetchSearchResults: searchQuery => {
+			dispatch( recordTracksEvent( 'calypso_help_search', { query: searchQuery } ) );
+			HelpSearchActions.fetch( searchQuery );
+		},
+	} )
+)( localize( HelpSearch ) );
