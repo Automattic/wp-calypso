@@ -20,7 +20,6 @@ import {
 	isEqual,
 	last,
 	pick,
-	some,
 	startsWith,
 } from 'lodash';
 import { translate } from 'i18n-calypso';
@@ -104,7 +103,6 @@ class Signup extends React.Component {
 			hasCartItems: false,
 			plans: false,
 			previousFlowName: null,
-			resumedAfterLogin: false,
 		};
 	}
 
@@ -379,17 +377,10 @@ class Signup extends React.Component {
 		flows.resumingFlow = true;
 
 		const firstUnsubmittedStep = this.firstUnsubmittedStepName(),
-			hasResumedAfterLogin = some( this.props.progress, { resumeAfterLogin: true } ),
 			stepSectionName = firstUnsubmittedStep.stepSectionName;
 
 		// set `resumingStep` so we don't render/animate anything until we have mounted this step
 		this.setState( { firstUnsubmittedStep } );
-
-		// Reset loadingScreenStartTime only once when the flow resumed after login
-		// in order to prevent the flow from getting stuck in the processing screen.
-		if ( hasResumedAfterLogin && ! this.state.resumedAfterLogin ) {
-			this.setState( { resumedAfterLogin: true, loadingScreenStartTime: undefined } );
-		}
 
 		return page.redirect(
 			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
