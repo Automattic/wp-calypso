@@ -48,10 +48,6 @@ jest.mock( 'lib/media/actions', () => ( {
 	delete: () => {},
 	setLibrarySelectedItems: () => {},
 } ) );
-jest.mock( 'lib/posts/stats', () => ( {
-	recordEvent: () => {},
-	recordState: () => {},
-} ) );
 jest.mock( 'my-sites/media-library', () => require( 'components/empty-component' ) );
 
 /**
