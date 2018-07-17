@@ -29,7 +29,7 @@ import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
 import ThemePreview from 'my-sites/themes/theme-preview';
-import { Banner } from 'components/banner';
+import Banner from 'components/banner';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
