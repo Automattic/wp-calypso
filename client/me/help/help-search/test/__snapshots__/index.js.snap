@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HelpSearch should render  1`] = `
+<div
+  className="help-search"
+>
+  <SearchCard
+    analyticsGroup="Help"
+    delaySearch={true}
+    onSearch={[Function]}
+    placeholder="How can we help?"
+  />
+</div>
+`;
