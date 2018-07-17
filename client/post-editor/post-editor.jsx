@@ -16,7 +16,7 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { autosave, saveEdited } from 'lib/posts/actions';
+import { autosave, saveEdited } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import FeaturedImage from 'post-editor/editor-featured-image';

@@ -16,7 +16,7 @@ import { startsWith } from 'lodash';
  * Internal dependencies
  */
 import { recordPlaceholdersTiming } from 'lib/perfmon';
-import { startEditingPostCopy, startEditingExistingPost } from 'lib/posts/actions';
+import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
