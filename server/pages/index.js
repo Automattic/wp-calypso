@@ -182,6 +182,12 @@ function getAcceptedLanguagesFromHeader( header ) {
 		.filter( lang => lang );
 }
 
+function getEntrypoints( entrypoint = 'build' ) {
+	return getAssets().entrypoints[ entrypoint ].assets.filter(
+		asset => ! asset.startsWith( 'manifest' )
+	);
+}
+
 function getDefaultContext( request ) {
 	let initialServerState = {};
 	let sectionCss;
@@ -233,9 +239,7 @@ function getDefaultContext( request ) {
 		isDebug,
 		badge: false,
 		lang,
-		entrypoint: getAssets().entrypoints.build.assets.filter(
-			asset => ! asset.startsWith( 'manifest' )
-		),
+		entrypoint: getEntrypoints( request.context.entrypoint ),
 		manifest: getAssets().manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
@@ -658,7 +662,7 @@ module.exports = function() {
 				app.get( pathRegex, function( req, res, next ) {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
 
-					if ( config.isEnabled( 'code-splitting' ) ) {
+					if ( config.isEnabled( 'code-splitting' ) && ! section.entrypoint ) {
 						req.context.chunkFiles = getFilesForChunk( section.name );
 					} else {
 						req.context.chunkFiles = [];
@@ -674,6 +678,10 @@ module.exports = function() {
 
 					if ( section.css && req.context ) {
 						req.context.sectionCss = section.css;
+					}
+
+					if ( section.entrypoint && req.context ) {
+						req.context.entrypoint = section.entrypoint;
 					}
 
 					next();

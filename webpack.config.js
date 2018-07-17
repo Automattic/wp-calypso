@@ -118,7 +118,10 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
-		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
+		entry: {
+			build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
+			login: [ path.join( __dirname, 'client', 'boot', 'login' ) ],
+		},
 		profile: shouldEmitStats,
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),

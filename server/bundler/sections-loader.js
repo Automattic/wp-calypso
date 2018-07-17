@@ -58,7 +58,12 @@ const loader = function() {
 	const sections = require( this.resourcePath );
 
 	return addModuleImportToSections( {
-		sections: withCss( sections ),
+		sections: withCss(
+			// @TODO this needs some more work as `forceRequire` is not a reasonable
+			// indicator for being on the server side: only load sections on the client
+			// which don't have an own entry point (like login)
+			forceRequire ? sections : sections.filter( section => ! section.entrypoint )
+		),
 		shouldSplit: config.isEnabled( 'code-splitting' ) && ! forceRequire,
 		onlyIsomorphic,
 	} );
