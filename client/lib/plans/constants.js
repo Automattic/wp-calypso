@@ -1278,16 +1278,14 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
 		getDescription: () =>
-			i18n.translate(
-				'Hands-on support to help you set up your site ' + 'exactly how you want it.'
-			),
+			i18n.translate( 'Live chat support to help you get started with your site.' ),
 	},
 
 	[ FEATURE_PREMIUM_SUPPORT ]: {
 		getSlug: () => FEATURE_PREMIUM_SUPPORT,
 		getTitle: () => i18n.translate( 'Priority Support' ),
 		getDescription: () =>
-			i18n.translate( 'Hands-on support to help you set up your site exactly how you want it.' ),
+			i18n.translate( 'Live chat support to help you get started with Jetpack.' ),
 	},
 
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
