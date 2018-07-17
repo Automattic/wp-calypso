@@ -107,7 +107,7 @@ export default class extends React.Component {
 		}
 
 		return (
-			<>
+			<div className="devdocs__body">
 				<a
 					className="devdocs__doc-edit-link"
 					href={ editURL }
@@ -118,11 +118,10 @@ export default class extends React.Component {
 				</a>
 				<div
 					className="devdocs__doc-content"
-					ref="body"
 					//eslint-disable-next-line react/no-danger
 					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, body ) } }
 				/>
-			</>
+			</div>
 		);
 	}
 
