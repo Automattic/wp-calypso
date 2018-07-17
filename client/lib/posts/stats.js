@@ -20,17 +20,6 @@ import { getEditedPost, getSitePost } from 'state/posts/selectors';
  */
 const debug = debugModule( 'calypso:posts:stats' );
 
-function recordUsageStats( siteIsJetpack, action, postType ) {
-	analytics.mc.bumpStat( 'editor_usage', action );
-
-	const source = siteIsJetpack ? 'jetpack' : 'wpcom';
-	analytics.mc.bumpStat( 'editor_usage_' + source, action );
-
-	if ( postType ) {
-		analytics.mc.bumpStat( 'editor_cpt_usage_' + source, postType + '_' + action );
-	}
-}
-
 export function recordStat( action ) {
 	analytics.mc.bumpStat( 'editor_actions', action );
 }
@@ -78,7 +67,13 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 	}
 
 	if ( usageAction ) {
-		recordUsageStats( isJetpackSite( state, siteId ), usageAction, post.type );
+		const source = isJetpackSite( state, siteId ) ? 'jetpack' : 'wpcom';
+
+		analytics.mc.bumpStat( 'editor_usage', usageAction );
+		analytics.mc.bumpStat( 'editor_usage_' + source, usageAction );
+		if ( post.type ) {
+			analytics.mc.bumpStat( 'editor_cpt_usage_' + source, post.type + '_' + usageAction );
+		}
 	}
 
 	// if this action has an mc stat name, record it
