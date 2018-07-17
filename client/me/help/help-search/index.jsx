@@ -47,11 +47,13 @@ class HelpSearch extends React.PureComponent {
 	};
 
 	displaySearchResults = () => {
-		if ( isEmpty( this.state.searchQuery ) ) {
+		const { searchQuery, helpLinks } = this.state;
+
+		if ( isEmpty( searchQuery ) ) {
 			return null;
 		}
 
-		if ( isEmpty( this.state.helpLinks ) ) {
+		if ( isEmpty( helpLinks ) ) {
 			return (
 				<div className="help-results__placeholder">
 					<HelpResults
@@ -73,16 +75,16 @@ class HelpSearch extends React.PureComponent {
 		}
 
 		if (
-			isEmpty( this.state.helpLinks.wordpress_support_links ) &&
-			isEmpty( this.state.helpLinks.wordpress_forum_links ) &&
-			isEmpty( this.state.helpLinks.wordpress_forum_links_localized ) &&
-			isEmpty( this.state.helpLinks.jetpack_support_links )
+			isEmpty( helpLinks.wordpress_support_links ) &&
+			isEmpty( helpLinks.wordpress_forum_links ) &&
+			isEmpty( helpLinks.wordpress_forum_links_localized ) &&
+			isEmpty( helpLinks.jetpack_support_links )
 		) {
 			return (
 				<CompactCard className="help-search__no-results">
 					<NoResults
 						text={ this.props.translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', {
-							args: { searchQuery: this.state.searchQuery },
+							args: { searchQuery },
 							components: { em: <em /> },
 						} ) }
 					/>
@@ -90,35 +92,29 @@ class HelpSearch extends React.PureComponent {
 			);
 		}
 
+		const forumBaseUrl = helpLinks.wordpress_forum_links_localized
+			? getForumUrl()
+			: getForumUrl( 'en' );
+
 		return (
 			<div>
 				<HelpResults
 					header={ this.props.translate( 'WordPress.com Documentation' ) }
-					helpLinks={ this.state.helpLinks.wordpress_support_links }
+					helpLinks={ helpLinks.wordpress_support_links }
 					footer={ this.props.translate( 'See more from WordPress.com Documentation…' ) }
 					iconTypeDescription="book"
-					searchLink={ 'https://en.support.wordpress.com?s=' + this.state.searchQuery }
+					searchLink={ 'https://en.support.wordpress.com?s=' + searchQuery }
 				/>
-				{ this.state.helpLinks.wordpress_forum_links_localized ? (
-					<HelpResults
-						header={ this.props.translate( 'Community Answers' ) }
-						helpLinks={ this.state.helpLinks.wordpress_forum_links_localized }
-						footer={ this.props.translate( 'See more from Community Forum…' ) }
-						iconTypeDescription="comment"
-						searchLink={ getForumUrl() + '/search/' + this.state.searchQuery }
-					/>
-				) : (
-					<HelpResults
-						header={ this.props.translate( 'Community Answers' ) }
-						helpLinks={ this.state.helpLinks.wordpress_forum_links }
-						footer={ this.props.translate( 'See more from Community Forum…' ) }
-						iconTypeDescription="comment"
-						searchLink={ getForumUrl( 'en' ) + '/search/' + this.state.searchQuery }
-					/>
-				) }
+				<HelpResults
+					header={ this.props.translate( 'Community Answers' ) }
+					helpLinks={ helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links }
+					footer={ this.props.translate( 'See more from Community Forum…' ) }
+					iconTypeDescription="comment"
+					searchLink={ `${ forumBaseUrl }/search/${ searchQuery }` }
+				/>
 				<HelpResults
 					header={ this.props.translate( 'Jetpack Documentation' ) }
-					helpLinks={ this.state.helpLinks.jetpack_support_links }
+					helpLinks={ helpLinks.jetpack_support_links }
 					footer={ this.props.translate( 'See more from Jetpack Documentation…' ) }
 					iconTypeDescription="jetpack"
 					searchLink="https://jetpack.me/support/"
