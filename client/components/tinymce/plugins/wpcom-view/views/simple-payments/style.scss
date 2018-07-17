@@ -150,14 +150,15 @@
 	flex-flow: row;
 	flex-wrap: nowrap;
 	padding: 1em;
-}
-.wpview-type-simple-payments__unsupported-icon {
-	flex-shrink: 1;
-	flex-grow: 0;
-	fill: $alert-red;
-	margin-right: 1em;
-}
-.wpview-type-simple-payments__unsupported-message {
-	flex-grow: 1;
-	line-height: 1.7;
+	.wpview-type-simple-payments__unsupported-icon {
+		flex-shrink: 1;
+		flex-grow: 0;
+		fill: $alert-red;
+		line-height: 0;
+		margin-right: 1em;
+	}
+	.wpview-type-simple-payments__unsupported-message {
+		flex-grow: 1;
+		line-height: 1.7;
+	}
 }
