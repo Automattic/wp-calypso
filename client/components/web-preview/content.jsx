@@ -257,6 +257,7 @@ export class WebPreviewContent extends Component {
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 				/>
+				{ this.props.belowToolbar }
 				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div className="web-preview__placeholder">
 					{ showLoadingMessage && (
@@ -288,6 +289,8 @@ export class WebPreviewContent extends Component {
 }
 
 WebPreviewContent.propTypes = {
+	// Additional elements to display below the toolbar
+	belowToolbar: PropTypes.element,
 	// Display the preview
 	showPreview: PropTypes.bool,
 	// Show external link button
@@ -338,6 +341,7 @@ WebPreviewContent.propTypes = {
 };
 
 WebPreviewContent.defaultProps = {
+	belowToolbar: null,
 	showExternal: true,
 	showClose: true,
 	showSEO: true,
