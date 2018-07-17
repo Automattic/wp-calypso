@@ -1825,9 +1825,9 @@
       }
     },
     "babel-loader": {
-      "version": "8.0.0-beta.3",
-      "resolved": "https://registry.npmjs.org/babel-loader/-/babel-loader-8.0.0-beta.3.tgz",
-      "integrity": "sha512-yvaAx7cBEjh+R2oGL2vIPmveO6daS5TYP2FSPq4b6CUYjU/ilD4HHyfLIa9KUj6OKBcR9fQcl1NvUOTWNaJ6mw==",
+      "version": "8.0.0-beta.4",
+      "resolved": "https://registry.npmjs.org/babel-loader/-/babel-loader-8.0.0-beta.4.tgz",
+      "integrity": "sha512-fQMCj8jRpF/2CPuVnpFrOb8+8pRuquKqoC+tspy5RWBmL37/2qc104sLLLqpwWltrFzpYb30utPpKc3H6P3ETQ==",
       "requires": {
         "find-cache-dir": "^1.0.0",
         "loader-utils": "^1.0.2",
