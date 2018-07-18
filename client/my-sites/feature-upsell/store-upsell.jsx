@@ -65,31 +65,33 @@ class StoreUpsellComponent extends Component {
 				<PageViewTracker path={ '/feature/store/:site' } title="StoreUpsell" />
 				<DocumentHead title={ 'Store' } />
 
-				<header className="feature-upsell__header">
-					<h1 className="feature-upsell__header-title">Add an eCommerce store to this site</h1>
-					<p className="feature-upsell__header-subtitle">
-						Start selling now in United States - or go global - with the world’s most customizable
-						platform. We'll help you get rolling.
-					</p>
-				</header>
+				<div className="feature-upsell__text-content">
+					<header className="feature-upsell__header">
+						<h1 className="feature-upsell__header-title">Add an eCommerce store to this site</h1>
+						<p className="feature-upsell__header-subtitle">
+							Start selling now in United States - or go global - with the world’s most customizable
+							platform. We'll help you get rolling.
+						</p>
+					</header>
 
-				<div className="feature-upsell__cta">
-					{ loadingPrice ? (
-						<div className="feature-upsell__placeholder feature-upsell__placeholder--cta" />
-					) : (
-						<React.Fragment>
-							<button
-								onClick={ this.handleUpgradeButtonClick }
-								className="button is-primary feature-upsell__cta-button"
-							>
-								Upgrade to Business plan for { this.renderPrice() } and get started
-							</button>
-							<span className="feature-upsell__cta-guarantee">30-day money back guarantee</span>
-						</React.Fragment>
-					) }
+					<div className="feature-upsell__cta">
+						{ loadingPrice ? (
+							<div className="feature-upsell__placeholder feature-upsell__placeholder--cta" />
+						) : (
+							<React.Fragment>
+								<button
+									onClick={ this.handleUpgradeButtonClick }
+									className="button is-primary feature-upsell__cta-button"
+								>
+									Upgrade to Business plan for { this.renderPrice() } and get started
+								</button>
+								<span className="feature-upsell__cta-guarantee">30-day money back guarantee</span>
+							</React.Fragment>
+						) }
+					</div>
+
+					<h2 className="feature-upsell__section-header">Price includes:</h2>
 				</div>
-
-				<h2 className="feature-upsell__section-header">Price includes:</h2>
 
 				<div className="product-purchase-features-list">
 					<div className="product-purchase-features-list__item">

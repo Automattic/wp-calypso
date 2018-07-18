@@ -68,32 +68,37 @@ class PluginsUpsellComponent extends Component {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		return (
-			<div role="main" className="main is-wide-layout feature-upsell__main">
+			<div
+				role="main"
+				className="main is-wide-layout feature-upsell__main feature-upsell__main--plugins"
+			>
 				<PageViewTracker path={ '/feature/plugins/:site' } title="PluginsUpsell" />
 				<DocumentHead title={ 'Plugins' } />
 
-				<header className="feature-upsell__header">
-					<h1 className="feature-upsell__header-title">
-						WordPress Plugins are now available on the Business plan.
-					</h1>
-					<p className="feature-upsell__header-subtitle">
-						Upgrading to the Business plan unlocks access to more than 50,000 WordPress Plugins and
-						197 premium Themes, making it our most powerful plan ever.
-					</p>
-				</header>
+				<div className="feature-upsell__text-content">
+					<header className="feature-upsell__header">
+						<h1 className="feature-upsell__header-title">
+							WordPress Plugins are now available on the Business plan.
+						</h1>
+						<p className="feature-upsell__header-subtitle">
+							Upgrading to the Business plan unlocks access to more than 50,000 WordPress Plugins
+							and 197 premium Themes, making it our most powerful plan ever.
+						</p>
+					</header>
 
-				<div className="feature-upsell__cta">
-					<button
-						onClick={ this.handleUpgradeButtonClick }
-						className="button is-primary feature-upsell__cta-button"
-					>
-						Click here to upgrade your site to the Business plan now!
-					</button>
+					<div className="feature-upsell__cta">
+						<button
+							onClick={ this.handleUpgradeButtonClick }
+							className="button is-primary feature-upsell__cta-button"
+						>
+							Click here to upgrade your site to the Business plan now!
+						</button>
+					</div>
+
+					<h2 className="feature-upsell__section-header">
+						Upgrade today to unlock these incredible Business plan features:
+					</h2>
 				</div>
-
-				<h2 className="feature-upsell__section-header">
-					Upgrade today to unlock these incredible Business plan features:
-				</h2>
 
 				<div className="product-purchase-features-list">
 					<div className="product-purchase-features-list__item">
@@ -158,75 +163,95 @@ class PluginsUpsellComponent extends Component {
 					</div>
 				</div>
 
-				<h2 className="feature-upsell__section-header">
-					Upgrade to the Business plan today for just { this.getPlanMonthlyPrice() } per month.
-				</h2>
+				<div className="feature-upsell__text-content">
+					<h2 className="feature-upsell__section-header">
+						Upgrade to the Business plan today for just { this.getPlanMonthlyPrice() } per month.
+					</h2>
 
-				<p>
-					For less than { this.getPlanDailyPrice() } per day, you’ll gain access to all of the
-					features described above. And that list includes just a few of the highlights.
-				</p>
+					<p>
+						For less than { this.getPlanDailyPrice() } per day, you’ll gain access to all of the
+						features described above. And that list includes just a few of the highlights.
+					</p>
 
-				<h2 className="feature-upsell__section-header">
-					The Business plan also includes features like:
-				</h2>
+					<h2 className="feature-upsell__section-header">
+						The Business plan also includes features like:
+					</h2>
 
-				<ul>
-					<li className="feature-upsell__list-item">
-						<Gridicon icon="checkmark" /> A free custom domain name.
-					</li>
-					<li className="feature-upsell__list-item">
-						<Gridicon icon="checkmark" /> Unlimited bandwidth.
-					</li>
-					<li className="feature-upsell__list-item">
-						<Gridicon icon="checkmark" /> Advanced design and CSS customization.
-					</li>
-					<li className="feature-upsell__list-item">
-						<Gridicon icon="checkmark" /> Unlimited storage space.
-					</li>
-					<li className="feature-upsell__list-item">
-						<Gridicon icon="checkmark" /> $100 advertising credit to Google AdWords.
-					</li>
-					<li className="feature-upsell__list-item">
-						<Gridicon icon="checkmark" /> Unlimited video hosting.
-					</li>
-					<li className="feature-upsell__list-item">
-						<Gridicon icon="checkmark" /> Instant access to the WordAds ad platform.
-					</li>
-					<li className="feature-upsell__list-item">
-						<Gridicon icon="checkmark" /> Social media marketing tools.
-					</li>
-				</ul>
+					<div className="feature-upsell__list-wrapper">
+						<ul className="feature-upsell__list">
+							<li className="feature-upsell__list-item">
+								<Gridicon icon="checkmark" className="feature-upsell__list-item-icon" />
+								<span className="feature-upsell__list-item-text">A free custom domain name.</span>
+							</li>
+							<li className="feature-upsell__list-item">
+								<Gridicon icon="checkmark" className="feature-upsell__list-item-icon" />
+								<span className="feature-upsell__list-item-text">Unlimited bandwidth.</span>
+							</li>
+							<li className="feature-upsell__list-item">
+								<Gridicon icon="checkmark" className="feature-upsell__list-item-icon" />
+								<span className="feature-upsell__list-item-text">
+									Advanced design and CSS customization.
+								</span>
+							</li>
+							<li className="feature-upsell__list-item">
+								<Gridicon icon="checkmark" className="feature-upsell__list-item-icon" />
+								<span className="feature-upsell__list-item-text">Unlimited storage space.</span>
+							</li>
+							<li className="feature-upsell__list-item">
+								<Gridicon icon="checkmark" className="feature-upsell__list-item-icon" />
+								<span className="feature-upsell__list-item-text">
+									$100 advertising credit to Google AdWords.
+								</span>
+							</li>
+							<li className="feature-upsell__list-item">
+								<Gridicon icon="checkmark" className="feature-upsell__list-item-icon" />
+								<span className="feature-upsell__list-item-text">Unlimited video hosting.</span>
+							</li>
+							<li className="feature-upsell__list-item">
+								<Gridicon icon="checkmark" className="feature-upsell__list-item-icon" />
+								<span className="feature-upsell__list-item-text">
+									Instant access to the WordAds ad platform.
+								</span>
+							</li>
+							<li className="feature-upsell__list-item">
+								<Gridicon icon="checkmark" className="feature-upsell__list-item-icon" />
+								<span className="feature-upsell__list-item-text">
+									Social media marketing tools.
+								</span>
+							</li>
+						</ul>
+					</div>
 
-				<p>
-					If you’re serious about your site, you owe it to yourself to try the WordPress.com
-					Business plan. And thanks to our full money-back guarantee, you can try it out for
-					yourself completely risk free.
-				</p>
+					<p>
+						If you’re serious about your site, you owe it to yourself to try the WordPress.com
+						Business plan. And thanks to our full money-back guarantee, you can try it out for
+						yourself completely risk free.
+					</p>
 
-				<h2 className="feature-upsell__section-header">
-					You’re protected by our 30 Day full money-back guarantee
-				</h2>
+					<h2 className="feature-upsell__section-header">
+						You’re protected by our 30 Day full money-back guarantee
+					</h2>
 
-				<p>
-					Your Business plan upgrade comes with our 30 day money-back guarantee. So if you decide to
-					not keep the Business plan for any reason, just let us know at any point during the first
-					30 days and we’ll give you a full refund.
-				</p>
+					<p>
+						Your Business plan upgrade comes with our 30 day money-back guarantee. So if you decide
+						to not keep the Business plan for any reason, just let us know at any point during the
+						first 30 days and we’ll give you a full refund.
+					</p>
 
-				<p>
-					If you accept our offer for a free domain, and you later decide that the Business plan
-					isn’t for you, the domain is yours keep. All we ask is that you to cover the domain
-					registration fees.
-				</p>
+					<p>
+						If you accept our offer for a free domain, and you later decide that the Business plan
+						isn’t for you, the domain is yours keep. All we ask is that you to cover the domain
+						registration fees.
+					</p>
 
-				<div className="feature-upsell__cta">
-					<button
-						onClick={ this.handleUpgradeButtonClick }
-						className="button is-primary feature-upsell__cta-button"
-					>
-						Click here to upgrade your site to the Business plan now!
-					</button>
+					<div className="feature-upsell__cta">
+						<button
+							onClick={ this.handleUpgradeButtonClick }
+							className="button is-primary feature-upsell__cta-button"
+						>
+							Click here to upgrade your site to the Business plan now!
+						</button>
+					</div>
 				</div>
 			</div>
 		);

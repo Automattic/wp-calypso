@@ -60,17 +60,19 @@ class WordAdsUpsellComponent extends Component {
 				<PageViewTracker path={ '/feature/ads/:site' } title="AdsUpsell" />
 				<DocumentHead title={ 'Ads' } />
 
-				<header className="feature-upsell__header">
-					<h1 className="feature-upsell__header-title">Start making money with this site!</h1>
-					<p className="feature-upsell__header-subtitle">
-						Welcome to WordAds: the advertising platform where internet’s top ad suppliers bid
-						against each other to get their ads to your site.
-					</p>
-				</header>
+				<div className="feature-upsell__text-content">
+					<header className="feature-upsell__header">
+						<h1 className="feature-upsell__header-title">Start making money with this site!</h1>
+						<p className="feature-upsell__header-subtitle">
+							Welcome to WordAds: the advertising platform where internet’s top ad suppliers bid
+							against each other to get their ads to your site.
+						</p>
+					</header>
 
-				<h2 className="feature-upsell__section-header">
-					Here's how WordAds can help you make money:
-				</h2>
+					<h2 className="feature-upsell__section-header">
+						Here's how WordAds can help you make money:
+					</h2>
+				</div>
 
 				<div className="feature-upsell__video-container">
 					<div className="feature-upsell__placeholder feature-upsell__placeholder--cover" />
@@ -85,76 +87,78 @@ class WordAdsUpsellComponent extends Component {
 					/>
 				</div>
 
-				{ this.renderCTA() }
+				<div className="feature-upsell__text-content">
+					{ this.renderCTA() }
 
-				<h2 className="feature-upsell__section-header">We do the work, you make the money</h2>
+					<h2 className="feature-upsell__section-header">We do the work, you make the money</h2>
 
-				<ul className="feature-upsell__benefits-list">
-					<li className="feature-upsell__benefits-list-item">
-						<div className="feature-upsell__benefits-list-marker">1.</div>
-						<div className="feature-upsell__benefits-list-item-content">
-							<div className="feature-upsell__benefits-list-name">Enable WordAds</div>
-							<div className="feature-upsell__benefits-list-description">
-								Once you upgrade, install WordAds on your site (we'll help!) in just a few clicks.
-								WordAds places ads automatically, optimizing their placement on your site to give
-								you the best return. No need to approve individual ads - turn WordAds on, and it
-								does the rest.
+					<ul className="feature-upsell__benefits-list">
+						<li className="feature-upsell__benefits-list-item">
+							<div className="feature-upsell__benefits-list-marker">1.</div>
+							<div className="feature-upsell__benefits-list-item-content">
+								<div className="feature-upsell__benefits-list-name">Enable WordAds</div>
+								<div className="feature-upsell__benefits-list-description">
+									Once you upgrade, install WordAds on your site (we'll help!) in just a few clicks.
+									WordAds places ads automatically, optimizing their placement on your site to give
+									you the best return. No need to approve individual ads - turn WordAds on, and it
+									does the rest.
+								</div>
 							</div>
-						</div>
-						<div className="feature-upsell__benefits-list-image-wrapper">
-							<img
-								alt=""
-								className="feature-upsell__benefits-list-image"
-								src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_turn-on-ads@2x.png"
-							/>
-						</div>
-					</li>
-					<li className="feature-upsell__benefits-list-item">
-						<div className="feature-upsell__benefits-list-marker">2.</div>
-						<div className="feature-upsell__benefits-list-item-content">
-							<div className="feature-upsell__benefits-list-name">
-								Display high quality ads on your site
+							<div className="feature-upsell__benefits-list-image-wrapper">
+								<img
+									alt=""
+									className="feature-upsell__benefits-list-image"
+									src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_turn-on-ads@2x.png"
+								/>
 							</div>
-							<div className="feature-upsell__benefits-list-description">
-								We only partner with advertisers that offer family-friendly ads, and our fraud
-								prevention team proactively identifies malicious ads. That means WordAds won't show
-								ads that contains nudity, promotes gambling, or makes fraudulent claims, and you
-								don't have to worry what visitors will see. If you ever do have a question or
-								concern, Automattic’s global team of Happiness Engineers are always available.
+						</li>
+						<li className="feature-upsell__benefits-list-item">
+							<div className="feature-upsell__benefits-list-marker">2.</div>
+							<div className="feature-upsell__benefits-list-item-content">
+								<div className="feature-upsell__benefits-list-name">
+									Display high quality ads on your site
+								</div>
+								<div className="feature-upsell__benefits-list-description">
+									We only partner with advertisers that offer family-friendly ads, and our fraud
+									prevention team proactively identifies malicious ads. That means WordAds won't
+									show ads that contains nudity, promotes gambling, or makes fraudulent claims, and
+									you don't have to worry what visitors will see. If you ever do have a question or
+									concern, Automattic’s global team of Happiness Engineers are always available.
+								</div>
 							</div>
-						</div>
-						<div className="feature-upsell__benefits-list-image-wrapper">
-							<img
-								alt=""
-								className="feature-upsell__benefits-list-image"
-								src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_high-quality-ads@2x.png"
-							/>
-						</div>
-					</li>
-					<li className="feature-upsell__benefits-list-item">
-						<div className="feature-upsell__benefits-list-marker">3.</div>
-						<div className="feature-upsell__benefits-list-item-content">
-							<div className="feature-upsell__benefits-list-name">Collect your payout</div>
-							<div className="feature-upsell__benefits-list-description">
-								You’re paid whenever the ad is seen by a visitor, whether they click on it or not,
-								so the more visits you get, and the more pages each visitor visits, the more you’ll
-								earn. WordAds pays monthly via PayPal (if you earn less than $100 in a month, your
-								earnings will carry over to the next month instead).
+							<div className="feature-upsell__benefits-list-image-wrapper">
+								<img
+									alt=""
+									className="feature-upsell__benefits-list-image"
+									src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_high-quality-ads@2x.png"
+								/>
 							</div>
-						</div>
-						<div className="feature-upsell__benefits-list-image-wrapper">
-							<img
-								alt=""
-								className="feature-upsell__benefits-list-image"
-								src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_impressions-2017-Q3.@2x.png"
-							/>
-						</div>
-					</li>
-				</ul>
+						</li>
+						<li className="feature-upsell__benefits-list-item">
+							<div className="feature-upsell__benefits-list-marker">3.</div>
+							<div className="feature-upsell__benefits-list-item-content">
+								<div className="feature-upsell__benefits-list-name">Collect your payout</div>
+								<div className="feature-upsell__benefits-list-description">
+									You’re paid whenever the ad is seen by a visitor, whether they click on it or not,
+									so the more visits you get, and the more pages each visitor visits, the more
+									you’ll earn. WordAds pays monthly via PayPal (if you earn less than $100 in a
+									month, your earnings will carry over to the next month instead).
+								</div>
+							</div>
+							<div className="feature-upsell__benefits-list-image-wrapper">
+								<img
+									alt=""
+									className="feature-upsell__benefits-list-image"
+									src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_impressions-2017-Q3.@2x.png"
+								/>
+							</div>
+						</li>
+					</ul>
 
-				{ this.renderCTA() }
+					{ this.renderCTA() }
 
-				<h2 className="feature-upsell__section-header">Price includes also:</h2>
+					<h2 className="feature-upsell__section-header">Price includes also:</h2>
+				</div>
 
 				<div className="product-purchase-features-list">
 					<div className="product-purchase-features-list__item">
@@ -224,8 +228,8 @@ class WordAdsUpsellComponent extends Component {
 							onClick={ this.handleUpgradeButtonClick }
 							className="button is-primary feature-upsell__cta-button"
 						>
-							Upgrade to a Premium plan for { this.renderPrice() } and start earning revenue from
-							your site
+							Upgrade to a Premium plan for { this.renderPrice() } <br />
+							and start earning revenue from your site
 						</button>
 						<span className="feature-upsell__cta-guarantee">30-day money back guarantee</span>
 					</React.Fragment>
