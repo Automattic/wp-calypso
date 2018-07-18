@@ -35,6 +35,10 @@
 	}
 }
 
+.plugins__installed-header {
+	margin-bottom: 1px;
+}
+
 .plugins__header-buttons {
 	display: flex;
 
@@ -58,7 +62,7 @@
 	margin: 40px 0 20px;
 	padding: 0 15px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
 }
