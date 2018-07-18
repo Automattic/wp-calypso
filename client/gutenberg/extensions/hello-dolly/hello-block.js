@@ -1,4 +1,9 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import wp from 'wp';
+
 wp.blocks.registerBlockType( 'calypsoberg/hello-dolly', {
 	title: 'Hello Dolly',
 	icon: 'format-audio',
