@@ -56,7 +56,10 @@ const AddressFields = props => {
 
 	const fieldErrors = isObject( errors ) ? errors : {};
 
-	if ( isNormalized ) {
+	if ( isNormalized && ! fieldErrors.phone ) {
+		//                 ^^ Special case: The "phone" field can be made invalid by other step
+		// (changing the Destination address to a foreign country, since that makes the origin phone required),
+		// so even if the origin address was correctly normalized, the form needs to be displayed again
 		const confirmAddressSuggestionHandler = () =>
 			props.confirmAddressSuggestion( orderId, siteId, group );
 
@@ -127,6 +130,7 @@ const AddressFields = props => {
 					value={ getValue( 'phone' ) }
 					updateValue={ updateValue( 'phone' ) }
 					className="address-step__phone"
+					error={ fieldErrors.phone }
 				/>
 			</div>
 			{ generalErrorOnly && (

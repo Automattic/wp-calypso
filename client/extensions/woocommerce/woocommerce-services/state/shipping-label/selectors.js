@@ -209,7 +209,7 @@ export const getCountriesData = ( state, orderId, siteId = getSelectedSiteId( st
 	};
 };
 
-const getAddressErrors = ( addressData, countriesData ) => {
+const getAddressErrors = ( addressData, countriesData, shouldValidatePhone = false ) => {
 	const {
 		values,
 		isNormalized,
@@ -229,7 +229,7 @@ const getAddressErrors = ( addressData, countriesData ) => {
 		};
 	}
 
-	const { postcode, state, country } = getAddressValues( addressData );
+	const { phone, postcode, state, country } = getAddressValues( addressData );
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
 	requiredFields.forEach( field => {
@@ -248,6 +248,22 @@ const getAddressErrors = ( addressData, countriesData ) => {
 
 		if ( ! isEmpty( countriesData[ country ].states ) && ! state ) {
 			errors.state = translate( 'This field is required' );
+		}
+	}
+
+	if ( shouldValidatePhone ) {
+		// EasyPost requires an origin phone number for international shipments.
+		// This validation ensures that EasyPost will accept it, even though the phone may be invalid.
+		if ( ! phone ) {
+			errors.phone = translate( 'Origin phone number is required for international shipments' );
+		} else if (
+			10 !==
+			phone
+				.split( /\D+/g )
+				.join( '' )
+				.replace( /^1/, '' ).length
+		) {
+			errors.phone = translate( 'Invalid phone number' );
 		}
 	}
 
@@ -424,8 +440,9 @@ export const getFormErrors = createSelector(
 		const destinationCountryName = getCountriesData( state, orderId, siteId )[
 			destinationCountryCode
 		];
+		const shouldValidateOriginPhone = isCustomsFormRequired( state, orderId, siteId );
 		return {
-			origin: getAddressErrors( form.origin, countriesData ),
+			origin: getAddressErrors( form.origin, countriesData, shouldValidateOriginPhone ),
 			destination: getAddressErrors( form.destination, countriesData ),
 			packages: getPackagesErrors( form.packages.selected ),
 			customs: getCustomsErrors(
