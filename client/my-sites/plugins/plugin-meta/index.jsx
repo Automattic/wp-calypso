@@ -580,7 +580,7 @@ export class PluginMeta extends Component {
 							{ this.renderName() }
 							<div className="plugin-meta__meta">{ this.renderAuthorUrl() }</div>
 						</div>
-						{ this.renderActions() }
+						{ ! this.props.calypsoify && this.renderActions() }
 					</div>
 				</Card>
 
@@ -604,6 +604,7 @@ export class PluginMeta extends Component {
 								this.props.selectedSite && this.props.selectedSite.options.software_version
 							}
 							hasUpdate={ this.getAvailableNewVersions().length > 0 }
+							calypsoify={ this.props.calypsoify }
 						/>
 					) }
 

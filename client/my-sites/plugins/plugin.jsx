@@ -9,6 +9,7 @@ import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes, uniq } from 'lodash';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -132,8 +133,8 @@ const SinglePlugin = createReactClass( {
 		return '/plugins/manage/' + ( this.props.siteUrl || '' );
 	},
 
-	displayHeader() {
-		if ( ! this.props.selectedSite ) {
+	displayHeader( calypsoify ) {
+		if ( ! this.props.selectedSite || calypsoify ) {
 			return <Card className="plugins__installed-header" />;
 		}
 
@@ -210,7 +211,7 @@ const SinglePlugin = createReactClass( {
 	getAllowedPluginActions( plugin ) {
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
 		const hiddenForAutomatedTransfer =
-			this.props.isSiteAutomatedTransfer && includes( autoManagedPlugins, plugin.slug );
+			this.props.isAtomicSite && includes( autoManagedPlugins, plugin.slug );
 
 		return {
 			autoupdate: ! hiddenForAutomatedTransfer,
@@ -280,6 +281,7 @@ const SinglePlugin = createReactClass( {
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
+						isAtomicSite={ this.props.isAtomicSite }
 					/>
 				</div>
 			</MainComponent>
@@ -317,6 +319,7 @@ const SinglePlugin = createReactClass( {
 						sites={ [ selectedSite ] }
 						selectedSite={ selectedSite }
 						isMock={ true }
+						isAtomicSite={ this.props.isAtomicSite }
 					/>
 				</div>
 			</MainComponent>
@@ -364,6 +367,7 @@ const SinglePlugin = createReactClass( {
 			PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
 
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
+		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
 
 		return (
 			<MainComponent>
@@ -372,7 +376,7 @@ const SinglePlugin = createReactClass( {
 				{ this.renderPageViewTracker() }
 				<SidebarNavigation />
 				<div className="plugin__page">
-					{ this.displayHeader() }
+					{ this.displayHeader( calypsoify ) }
 					<PluginMeta
 						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
@@ -385,6 +389,7 @@ const SinglePlugin = createReactClass( {
 						}
 						isInstalling={ installing }
 						allowedActions={ allowedPluginActions }
+						calypsoify={ calypsoify }
 					/>
 					{ plugin.wporg ? (
 						<PluginSections plugin={ plugin } isWpcom={ isWpcom } />
@@ -406,9 +411,9 @@ export default connect(
 			wporgPlugins: state.plugins.wporg.items,
 			wporgFetching: isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
 			selectedSite: getSelectedSite( state ),
+			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
 			canJetpackSiteManage: selectedSiteId && canJetpackSiteManage( state, selectedSiteId ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
 			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
