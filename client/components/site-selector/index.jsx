@@ -269,6 +269,47 @@ class SiteSelector extends Component {
 
 	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
 
+	renderAllSites() {
+		if ( this.props.showAllSites && ! this.props.sitesFound && this.props.allSitesPath ) {
+			this.visibleSites.push( ALL_SITES );
+
+			const isHighlighted = this.isHighlighted( ALL_SITES );
+
+			return (
+				<AllSites
+					key="selector-all-sites"
+					sites={ this.props.sites }
+					onSelect={ this.onAllSitesSelect }
+					onMouseEnter={ this.onAllSitesHover }
+					isHighlighted={ isHighlighted }
+					isSelected={ this.isSelected( ALL_SITES ) }
+				/>
+			);
+		}
+	}
+
+	renderRecentSites() {
+		const sitesById = keyBy( this.props.sites, 'ID' );
+		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
+
+		if (
+			! sites ||
+			this.props.sitesFound ||
+			! this.shouldShowGroups() ||
+			this.props.visibleSiteCount <= 11
+		) {
+			return null;
+		}
+
+		const recentSites = sites.map( this.renderSite, this );
+
+		if ( ! recentSites ) {
+			return null;
+		}
+
+		return <div className="site-selector__recent">{ recentSites }</div>;
+	}
+
 	renderSites() {
 		let sites;
 
@@ -309,25 +350,6 @@ class SiteSelector extends Component {
 		return siteElements;
 	}
 
-	renderAllSites() {
-		if ( this.props.showAllSites && ! this.props.sitesFound && this.props.allSitesPath ) {
-			this.visibleSites.push( ALL_SITES );
-
-			const isHighlighted = this.isHighlighted( ALL_SITES );
-
-			return (
-				<AllSites
-					key="selector-all-sites"
-					sites={ this.props.sites }
-					onSelect={ this.onAllSitesSelect }
-					onMouseEnter={ this.onAllSitesHover }
-					isHighlighted={ isHighlighted }
-					isSelected={ this.isSelected( ALL_SITES ) }
-				/>
-			);
-		}
-	}
-
 	renderSite( site ) {
 		if ( ! site ) {
 			return null;
@@ -348,28 +370,6 @@ class SiteSelector extends Component {
 				isSelected={ this.isSelected( site ) }
 			/>
 		);
-	}
-
-	renderRecentSites() {
-		const sitesById = keyBy( this.props.sites, 'ID' );
-		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
-
-		if (
-			! sites ||
-			this.props.sitesFound ||
-			! this.shouldShowGroups() ||
-			this.props.visibleSiteCount <= 11
-		) {
-			return null;
-		}
-
-		const recentSites = sites.map( this.renderSite, this );
-
-		if ( ! recentSites ) {
-			return null;
-		}
-
-		return <div className="site-selector__recent">{ recentSites }</div>;
 	}
 
 	render() {
