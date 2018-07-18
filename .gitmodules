@@ -1,4 +1,0 @@
-[submodule "vendor/gutenberg"]
-	path = vendor/gutenberg
-	url = https://github.com/WordPress/gutenberg.git
-	branch = add/components-package
