@@ -9,7 +9,12 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { PluginsUpsellComponent, StoreUpsellComponent, ThemesUpsellComponent, WordAdsUpsellComponent } from './main';
+import {
+	PluginsUpsellComponent,
+	StoreUpsellComponent,
+	ThemesUpsellComponent,
+	WordAdsUpsellComponent,
+} from './main';
 import { getSiteFragment } from 'lib/route';
 import {
 	canCurrentUserUseStore,
@@ -17,8 +22,6 @@ import {
 	canAdsBeEnabledOnCurrentSite,
 	canCurrentUserUpgradeSite,
 } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 export default {
 	storeUpsell: function( context, next ) {
@@ -64,12 +67,6 @@ export default {
 
 		const state = context.store.getState();
 		if ( ! canCurrentUserUpgradeSite( state ) ) {
-			return page.redirect( '/stats/' + siteFragment );
-		}
-
-		const siteId = getSelectedSiteId( state );
-		const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-		if ( ! canUserManageOptions ) {
 			return page.redirect( '/stats/' + siteFragment );
 		}
 
