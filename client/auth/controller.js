@@ -48,7 +48,7 @@ export default {
 
 		// Check we have an OAuth token, otherwise redirect to auth/login page
 		if ( OAuthToken.getToken() === false && ! isValidSection ) {
-			if ( config( 'env_id' ) === 'desktop' ) {
+			if ( config( 'env_id' ) === 'desktop' || config( 'env_id' ) === 'desktop-development' ) {
 				return page( config( 'login_url' ) );
 			}
 
