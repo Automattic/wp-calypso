@@ -2,6 +2,13 @@ $feature-upsell-break-at: '1040px';
 
 .feature-upsell__main {
 	margin-top: 48px;
+	/*
+	 * Hack for IE 11 - max-width is in place to limit constraints but it still
+	 * needs an explicit rule for width
+	 */
+	.product-purchase-feature-list__item {
+		width: 100%;
+	}
 }
 
 .feature-upsell__placeholder {
