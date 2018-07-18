@@ -3,7 +3,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -94,22 +94,26 @@ const ReaderPostActions = props => {
 				</li>
 			) }
 			{ shouldShowLikes( post ) && (
-				<li className="reader-post-actions__item">
-					<PostLikesCaterpillar blogId={ +post.site_ID } postId={ +post.ID } />
-					<LikeButton
-						key="like-button"
-						siteId={ +post.site_ID }
-						postId={ +post.ID }
-						post={ post }
-						site={ site }
-						fullPost={ fullPost }
-						tagName="div"
-						forceCounter={ true }
-						iconSize={ iconSize }
-						showZeroCount={ false }
-						likeSource={ 'reader' }
-					/>
-				</li>
+				<Fragment>
+					<li className="reader-post-actions__item">
+						<PostLikesCaterpillar blogId={ +post.site_ID } postId={ +post.ID } />
+					</li>
+					<li className="reader-post-actions__item">
+						<LikeButton
+							key="like-button"
+							siteId={ +post.site_ID }
+							postId={ +post.ID }
+							post={ post }
+							site={ site }
+							fullPost={ fullPost }
+							tagName="div"
+							forceCounter={ true }
+							iconSize={ iconSize }
+							showZeroCount={ false }
+							likeSource={ 'reader' }
+						/>
+					</li>
+				</Fragment>
 			) }
 			{ showMenu && (
 				<li className="reader-post-actions__item">

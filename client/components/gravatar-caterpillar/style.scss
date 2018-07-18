@@ -18,8 +18,15 @@
 	&.is-hidden-on-small-screens {
 		display: none;
 
-		@include breakpoint( ">660px" ) {
-   			display: inline;
-   		}
+		@include breakpoint( '>660px' ) {
+			display: inline;
+		}
 	}
+}
+
+.gravatar-caterpillar__count {
+	height: 50%;
+	margin-top: 6px;
+	color: $gray;
+	border-color: $gray;
 }
