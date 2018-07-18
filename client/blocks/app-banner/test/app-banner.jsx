@@ -30,6 +30,9 @@ describe( 'AppBanner', () => {
 		expect( wrapper.instance().getiOSDeepLink( '/post/discover.wordpress.com', EDITOR ) ).equal(
 			'https://apps.wordpress.com/get#%2Fpost'
 		);
+		expect( wrapper.instance().getiOSDeepLink( null, EDITOR ) ).equal(
+			'https://apps.wordpress.com/get#%2Fpost'
+		);
 	} );
 
 	test( 'iOS deep links return correct URIs for NOTES', () => {
@@ -37,6 +40,9 @@ describe( 'AppBanner', () => {
 			'https://apps.wordpress.com/get#%2Fnotifications'
 		);
 		expect( wrapper.instance().getiOSDeepLink( '/notifications/12345', NOTES ) ).equal(
+			'https://apps.wordpress.com/get#%2Fnotifications'
+		);
+		expect( wrapper.instance().getiOSDeepLink( null, NOTES ) ).equal(
 			'https://apps.wordpress.com/get#%2Fnotifications'
 		);
 	} );
@@ -48,6 +54,9 @@ describe( 'AppBanner', () => {
 		expect( wrapper.instance().getiOSDeepLink( '/read/feeds/12345/posts/6789', READER ) ).equal(
 			'https://apps.wordpress.com/get#%2Fread%2Ffeeds%2F12345%2Fposts%2F6789'
 		);
+		expect( wrapper.instance().getiOSDeepLink( null, READER ) ).equal(
+			'https://apps.wordpress.com/get#%2Fread'
+		);
 	} );
 
 	test( 'iOS deep links return correct URIs for STATS', () => {
@@ -56,6 +65,9 @@ describe( 'AppBanner', () => {
 		);
 		expect( wrapper.instance().getiOSDeepLink( '/stats/day/discover.wordpress.com', STATS ) ).equal(
 			'https://apps.wordpress.com/get#%2Fstats%2Fday%2Fdiscover.wordpress.com'
+		);
+		expect( wrapper.instance().getiOSDeepLink( null, STATS ) ).equal(
+			'https://apps.wordpress.com/get#%2Fstats'
 		);
 	} );
 } );

@@ -139,6 +139,7 @@ export class AppBanner extends Component {
 	}
 
 	getiOSDeepLink( currentRoute, currentSection ) {
+		const hasRoute = currentRoute !== null && currentRoute !== '/';
 		let fragment;
 
 		switch ( currentSection ) {
@@ -152,10 +153,10 @@ export class AppBanner extends Component {
 				// The Reader is generally accessed at the root of WordPress.com ('/').
 				// In this case, we need to manually add the section name to the
 				// URL so that the iOS app knows which section to open.
-				fragment = currentRoute === '/' ? '/read' : currentRoute;
+				fragment = hasRoute ? currentRoute : '/read';
 				break;
 			case STATS:
-				fragment = currentRoute;
+				fragment = hasRoute ? currentRoute : '/stats';
 				break;
 		}
 
