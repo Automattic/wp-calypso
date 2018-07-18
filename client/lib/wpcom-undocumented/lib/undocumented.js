@@ -2383,17 +2383,6 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
 };
 
 /**
- * Get WordAds Status of a site.
- *
- * @param {int}       siteId            The site ID
- * @returns {Promise}
- */
-Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
-	debug( '/sites/:site:/wordads/status' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
-};
-
-/**
  * Initiate the Automated Transfer process, uploading a theme and/or selecting
  * a community plugin.
  *

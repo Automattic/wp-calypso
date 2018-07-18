@@ -18,29 +18,6 @@ import wpcom from 'lib/wp';
 const debug = debugModule( 'calypso:wordads:actions' );
 
 const WordadsActions = {
-	fetchEarnings: site => {
-		debug( 'WordAds Actions fetchEarnings', site );
-		if ( site.capabilities && site.capabilities.manage_options ) {
-			Dispatcher.handleViewAction( {
-				type: 'FETCHING_EARNINGS',
-				site: site,
-			} );
-
-			wpcom
-				.site( site.ID )
-				.wordAds()
-				.earnings()
-				.get( ( error, data ) => {
-					Dispatcher.handleServerAction( {
-						type: 'RECEIVE_EARNINGS',
-						site: site,
-						error: error,
-						data: data,
-					} );
-				} );
-		}
-	},
-
 	fetchSettings: site => {
 		debug( 'WordAds Actions fetchSettings', site );
 		Dispatcher.handleViewAction( {

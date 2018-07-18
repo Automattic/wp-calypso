@@ -30,6 +30,7 @@ import themeFilters from './theme-filters';
 import timezones from './timezones';
 import usersAuthOptions from './users/auth-options';
 import videos from './videos';
+import wordads from './wordads';
 
 export const handlers = mergeHandlers(
 	accountRecovery,
@@ -56,7 +57,8 @@ export const handlers = mergeHandlers(
 	themeFilters,
 	timezones,
 	usersAuthOptions,
-	videos
+	videos,
+	wordads
 );
 
 export default handlers;

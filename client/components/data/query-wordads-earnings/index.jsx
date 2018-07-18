@@ -11,25 +11,25 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestWordadsStatus } from 'state/wordads/status/actions';
+import { requestWordadsEarnings } from 'state/wordads/earnings/actions';
 
-class QueryWordadsStatus extends Component {
+class QueryWordadsEarnings extends Component {
 	static propTypes = {
-		requestWordadsStatus: PropTypes.func,
+		requestWordadsEarnings: PropTypes.func,
 		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
-		requestWordadsStatus: () => {},
+		requestWordadsEarnings: () => {},
 	};
 
 	componentDidMount() {
-		this.props.requestWordadsStatus( this.props.siteId );
+		this.props.requestWordadsEarnings( this.props.siteId );
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.siteId !== prevProps.siteId ) {
-			this.props.requestWordadsStatus( this.props.siteId );
+			this.props.requestWordadsEarnings( this.props.siteId );
 		}
 	}
 
@@ -40,5 +40,5 @@ class QueryWordadsStatus extends Component {
 
 export default connect(
 	null,
-	{ requestWordadsStatus }
-)( QueryWordadsStatus );
+	{ requestWordadsEarnings }
+)( QueryWordadsEarnings );
