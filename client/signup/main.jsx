@@ -13,15 +13,13 @@ import {
 	assign,
 	defer,
 	delay,
-	filter,
 	find,
 	get,
 	indexOf,
 	isEmpty,
+	isEqual,
 	last,
-	matchesProperty,
 	pick,
-	some,
 	startsWith,
 } from 'lodash';
 import { translate } from 'i18n-calypso';
@@ -43,9 +41,7 @@ import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-trac
 import * as oauthToken from 'lib/oauth-token';
 import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 import SignupActions from 'lib/signup/actions';
-import SignupDependencyStore from 'lib/signup/dependency-store';
 import SignupFlowController from 'lib/signup/flow-controller';
-import SignupProgressStore from 'lib/signup/progress-store';
 import { disableCart } from 'lib/upgrades/actions';
 
 // State actions and selectors
@@ -54,6 +50,7 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
 import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
 // Current directory dependencies
@@ -61,7 +58,14 @@ import steps from './config/steps';
 import flows from './config/flows';
 import stepComponents from './config/step-components';
 import FlowProgressIndicator from './flow-progress-indicator';
-import { getDestination, canResumeFlow, getStepUrl } from './utils';
+import {
+	canResumeFlow,
+	getCompletedSteps,
+	getDestination,
+	getFilteredSteps,
+	getFirstInvalidStep,
+	getStepUrl,
+} from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 
 /**
@@ -88,11 +92,10 @@ class Signup extends React.Component {
 
 	constructor( props, context ) {
 		super( props, context );
-		SignupDependencyStore.setReduxStore( context.store );
 
 		this.state = {
+			controllerHasReset: false,
 			login: false,
-			progress: SignupProgressStore.get(),
 			dependencies: props.signupDependencies,
 			loadingScreenStartTime: undefined,
 			resumingStep: undefined,
@@ -100,11 +103,10 @@ class Signup extends React.Component {
 			hasCartItems: false,
 			plans: false,
 			previousFlowName: null,
-			resumedAfterLogin: false,
 		};
 	}
 
-	componentWillMount() {
+	UNSAFE_componentWillMount() {
 		// Signup updates the cart through `SignupCart`. To prevent
 		// synchronization issues and unnecessary polling, the cart is disabled
 		// here.
@@ -128,16 +130,15 @@ class Signup extends React.Component {
 			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
-		this.loadProgressFromStore();
+		this.updateLoadingScreenStartTime();
 
-		if ( canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
-			// we loaded progress from local storage, attempt to resume progress
+		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
+			// Resume progress if possible
 			return this.resumeProgress();
 		}
 
 		if ( this.getPositionInFlow() !== 0 ) {
-			// no progress was resumed and we're on a non-zero step
-			// redirect to the beginning of the flow
+			// Flow is not resumable; redirect to the beginning of the flow
 			return page.redirect(
 				getStepUrl(
 					this.props.flowName,
@@ -152,7 +153,7 @@ class Signup extends React.Component {
 		this.recordStep();
 	}
 
-	componentWillReceiveProps( { signupDependencies, stepName, flowName } ) {
+	UNSAFE_componentWillReceiveProps( { signupDependencies, stepName, flowName, progress } ) {
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName );
 		}
@@ -169,18 +170,16 @@ class Signup extends React.Component {
 			this.signupFlowController.changeFlowName( flowName );
 		}
 
+		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
+			this.updateLoadingScreenStartTime( progress );
+		}
+
 		this.checkForCartItems( signupDependencies );
 	}
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.recordSignupStart();
-		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-	}
-
-	componentWillUnmount() {
-		debug( 'Signup component unmounted' );
-		SignupProgressStore.off( 'change', this.loadProgressFromStore );
 	}
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
@@ -225,24 +224,20 @@ class Signup extends React.Component {
 		}
 	}
 
-	loadProgressFromStore = () => {
-		const newProgress = SignupProgressStore.get(),
-			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
-			// skipLoadingScreen = some( newProgress, matchesProperty( '', '' ) ),
-			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
+	updateLoadingScreenStartTime = ( progress = this.props.progress ) => {
+		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress ),
+			waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress ),
 			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
 
-		this.setState( { progress: newProgress } );
-
-		if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
+		if ( this.isEveryStepSubmitted( progress ) ) {
+			this.goToFirstInvalidStep( progress );
 		}
 
 		if ( startLoadingScreen ) {
 			this.setState( { loadingScreenStartTime: Date.now() } );
 		}
 
-		if ( invalidSteps ) {
+		if ( hasInvalidSteps ) {
 			this.setState( { loadingScreenStartTime: undefined } );
 		}
 	};
@@ -291,12 +286,11 @@ class Signup extends React.Component {
 	};
 
 	handleFlowComplete = ( dependencies, destination ) => {
-		debug( 'The flow is completed. Logging you in...' );
+		debug( 'The flow is completed. Destination: %s', destination );
 
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 		recordSignupCompletion();
 
-		this.signupFlowController.reset();
 		if (
 			dependencies.cartItem ||
 			dependencies.domainItem ||
@@ -317,6 +311,10 @@ class Signup extends React.Component {
 			destination = event.redirectTo;
 		}
 
+		debug( `Logging you in to "${ destination }"` );
+
+		this.setState( { controllerHasReset: true } );
+
 		if ( userIsLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
@@ -324,20 +322,23 @@ class Signup extends React.Component {
 			}
 
 			// deferred in case the user is logged in and the redirect triggers a dispatch
-			defer(
-				function() {
-					page( destination );
-				}.bind( this )
-			);
+			defer( () => {
+				debug( `Redirecting you to "${ destination }"` );
+				this.signupFlowController.reset();
+				window.location.href = destination;
+			} );
 		}
 
 		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
+			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
+			this.signupFlowController.reset();
 			window.location.href = destination;
 			return;
 		}
 
 		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
+			debug( `Handling regular login` );
 			this.setState( {
 				bearerToken: dependencies.bearer_token,
 				username: dependencies.username,
@@ -363,10 +364,7 @@ class Signup extends React.Component {
 
 	firstUnsubmittedStepName = () => {
 		const currentSteps = flows.getFlow( this.props.flowName ).steps,
-			signupProgress = filter(
-				SignupProgressStore.get(),
-				step => -1 !== currentSteps.indexOf( step.stepName )
-			),
+			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress ),
 			nextStepName = currentSteps[ signupProgress.length ],
 			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
 			firstInProgressStepName = firstInProgressStep.stepName;
@@ -379,17 +377,10 @@ class Signup extends React.Component {
 		flows.resumingFlow = true;
 
 		const firstUnsubmittedStep = this.firstUnsubmittedStepName(),
-			hasResumedAfterLogin = some( SignupProgressStore.get(), { resumeAfterLogin: true } ),
 			stepSectionName = firstUnsubmittedStep.stepSectionName;
 
 		// set `resumingStep` so we don't render/animate anything until we have mounted this step
 		this.setState( { firstUnsubmittedStep } );
-
-		// Reset loadingScreenStartTime only once when the flow resumed after login
-		// in order to prevent the flow from getting stuck in the processing screen.
-		if ( hasResumedAfterLogin && ! this.state.resumedAfterLogin ) {
-			this.setState( { resumedAfterLogin: true, loadingScreenStartTime: undefined } );
-		}
 
 		return page.redirect(
 			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
@@ -433,7 +424,7 @@ class Signup extends React.Component {
 		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
+			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
 			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
@@ -444,8 +435,8 @@ class Signup extends React.Component {
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
 
-	goToFirstInvalidStep = () => {
-		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
+	goToFirstInvalidStep = ( progress = this.props.progress ) => {
+		const firstInvalidStep = getFirstInvalidStep( this.props.flowName, progress );
 
 		if ( firstInvalidStep ) {
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
@@ -455,21 +446,19 @@ class Signup extends React.Component {
 
 			if ( firstInvalidStep.stepName === this.props.stepName ) {
 				// No need to redirect
+				debug( `Already navigated to the first invalid step: ${ firstInvalidStep.stepName }` );
 				return;
 			}
 
+			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
 			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
 	};
 
-	isEveryStepSubmitted = () => {
+	isEveryStepSubmitted = ( progress = this.props.progress ) => {
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-		const signupProgress = filter(
-			SignupProgressStore.get(),
-			step => -1 !== flowSteps.indexOf( step.stepName ) && 'in-progress' !== step.status
-		);
-
-		return flowSteps.length === signupProgress.length;
+		const completedSteps = getCompletedSteps( this.props.flowName, progress );
+		return flowSteps.length === completedSteps.length;
 	};
 
 	getPositionInFlow() {
@@ -478,7 +467,7 @@ class Signup extends React.Component {
 
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
-		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
+		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
@@ -500,7 +489,7 @@ class Signup extends React.Component {
 				{ this.state.loadingScreenStartTime ? (
 					<SignupProcessingScreen
 						hasCartItems={ this.state.hasCartItems }
-						steps={ this.state.progress }
+						steps={ this.props.progress }
 						loginHandler={ this.state.loginHandler }
 						signupDependencies={ this.props.signupDependencies }
 						flowName={ this.props.flowName }
@@ -518,7 +507,7 @@ class Signup extends React.Component {
 						goToStep={ this.goToStep }
 						previousFlowName={ this.state.previousFlowName }
 						flowName={ this.props.flowName }
-						signupProgress={ this.state.progress }
+						signupProgress={ this.props.progress }
 						signupDependencies={ this.props.signupDependencies }
 						stepSectionName={ this.props.stepSectionName }
 						positionInFlow={ this.getPositionInFlow() }
@@ -533,7 +522,7 @@ class Signup extends React.Component {
 	render() {
 		if (
 			! this.props.stepName ||
-			( this.getPositionInFlow() > 0 && this.state.progress.length === 0 ) ||
+			( this.getPositionInFlow() > 0 && this.props.progress.length === 0 ) ||
 			this.state.resumingStep
 		) {
 			return null;
@@ -584,6 +573,7 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
+		progress: getSignupProgress( state ),
 		signupDependencies: getSignupDependencyStore( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
