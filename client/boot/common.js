@@ -37,7 +37,7 @@ const switchUserLocale = ( currentUser, reduxStore ) => {
 	}
 };
 
-const setupContextMiddleware = reduxStore => {
+export const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = url.parse( context.canonicalPath, true );
