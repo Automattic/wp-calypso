@@ -58,5 +58,26 @@ export default function() {
 
 			return page.redirect( '/feature/plugins' );
 		} );
+
+		page( '/feature/themes', siteSelection, sites, makeLayout, clientRender );
+
+		page(
+			'/feature/themes/:domain',
+			siteSelection,
+			navigation,
+			controller.themesUpsell,
+			makeLayout,
+			clientRender
+		);
+
+		page( '/feature/themes/*', ( { path } ) => {
+			const siteFragment = getSiteFragment( path );
+
+			if ( siteFragment ) {
+				return page.redirect( `/feature/themes/${ siteFragment }` );
+			}
+
+			return page.redirect( '/feature/themes' );
+		} );
 	}
 }

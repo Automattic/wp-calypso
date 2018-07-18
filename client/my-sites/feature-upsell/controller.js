@@ -9,7 +9,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { PluginsUpsellComponent, StoreUpsellComponent } from './main';
+import { PluginsUpsellComponent, StoreUpsellComponent, ThemesUpsellComponent } from './main';
 import { getSiteFragment } from 'lib/route';
 import { canCurrentUserUseStore } from 'state/sites/selectors';
 
@@ -36,6 +36,16 @@ export default {
 
 		// Render
 		context.primary = React.createElement( PluginsUpsellComponent );
+		next();
+	},
+	themesUpsell: function( context, next ) {
+		const siteFragment = getSiteFragment( context.path );
+		if ( ! siteFragment ) {
+			return page.redirect( '/feature/themes' );
+		}
+
+		// Render
+		context.primary = React.createElement( ThemesUpsellComponent );
 		next();
 	},
 };
