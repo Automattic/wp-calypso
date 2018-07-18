@@ -16,7 +16,8 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { getSectionName, getSelectedSiteId, getCurrentRoute } from 'state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import {
