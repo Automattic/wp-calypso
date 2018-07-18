@@ -69,7 +69,7 @@ class StoreUpsellComponent extends Component {
 					<h1 className="feature-upsell__header-title">Add an eCommerce store to this site</h1>
 					<p className="feature-upsell__header-subtitle">
 						Start selling now in United States - or go global - with the world’s most customizable
-						platform. We will even help you get rolling.
+						platform. We'll help you get rolling.
 					</p>
 				</header>
 
@@ -82,7 +82,7 @@ class StoreUpsellComponent extends Component {
 								onClick={ this.handleUpgradeButtonClick }
 								className="button is-primary feature-upsell__cta-button"
 							>
-								Upgrade for { this.renderPrice() } and get started
+								Upgrade to Business plan for { this.renderPrice() } and get started
 							</button>
 							<span className="feature-upsell__cta-guarantee">30-day money back guarantee</span>
 						</React.Fragment>
@@ -95,9 +95,9 @@ class StoreUpsellComponent extends Component {
 					<div className="product-purchase-features-list__item">
 						<PurchaseDetail
 							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-concierge.svg" /> }
-							title={ '1 on 1 session with us' }
+							title={ 'A one-on-one session with us' }
 							description={
-								'Getting where you want is easier when you have a guide. An expert will show you around and help you with setup.'
+								'Getting where you want is easier with an expert guide. Our experts will flatten out your learning curve.'
 							}
 						/>
 					</div>
@@ -106,7 +106,7 @@ class StoreUpsellComponent extends Component {
 							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-support.svg" /> }
 							title={ 'Priority support' }
 							description={
-								'Need help? A Happiness Engineer can answer any question you may have about your store and your account.'
+								'Need help? Our Happiness Engineers can answer any questions about your new store and account.'
 							}
 						/>
 					</div>
@@ -114,7 +114,7 @@ class StoreUpsellComponent extends Component {
 						<PurchaseDetail
 							icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
 							title={ '$100 for Google AdWords' }
-							description={ 'Start bringing traffic immediately with Google AdWords.' }
+							description={ 'Attract new (and more!) traffic immediately with Google AdWords.' }
 							body={
 								<div className="google-voucher__initial-step">
 									<TipInfo
@@ -130,7 +130,7 @@ class StoreUpsellComponent extends Component {
 								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
 								title={ 'Custom site address' }
 								description={
-									".com, .shop, or any other dot - it's on us. You choose an address and we pay for it."
+									'Make your site memorable and professional - choose a .com, .shop, or any other dot.'
 								}
 							/>
 						</div>
@@ -151,28 +151,18 @@ class StoreUpsellComponent extends Component {
 							icon={ <img alt="" src="/calypso/images/illustrations/ads-removed.svg" /> }
 							title={ 'Access to premium themes' }
 							description={
-								'Make your site perfect in just a few clicks with beautiful premium themes we prepared.'
+								'You don’t have to be a designer to make a beautiful site. Choose from a range of business-focused layouts created by pros.'
 							}
 						/>
 					</div>
 					<div className="product-purchase-features-list__item">
-						{ isFreePlan( currentSitePlanSlug ) ? (
-							<PurchaseDetail
-								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
-								title={ 'Even more!' }
-								description={
-									'Install plugins, start using advanced SEO features, and even more. We give you all the tools to make your store successful.'
-								}
-							/>
-						) : (
-							<PurchaseDetail
-								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
-								title={ 'Even more!' }
-								description={
-									'Upload your own themes, start using advanced SEO features, and even more. We give you all the tools to make your store successful.'
-								}
-							/>
-						) }
+						<PurchaseDetail
+							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+							title={ 'Even more!' }
+							description={
+								'Install plugins, access advanced SEO features, and more. You’ll have all the tools for a successful store.'
+							}
+						/>
 					</div>
 				</div>
 			</div>
