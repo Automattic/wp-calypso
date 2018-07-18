@@ -100,7 +100,7 @@ class SiteNotice extends React.Component {
 
 		const { site, translate } = this.props;
 		let href = '/plans/' + site.slug;
-		if ( abtest( 'plansBannerFromDomainNudge' ) === 'show' ) {
+		if ( abtest( 'nudgeAPalooza' ) === 'plansBannerUpsells' ) {
 			href = href + '/?discount=free_domain';
 		}
 

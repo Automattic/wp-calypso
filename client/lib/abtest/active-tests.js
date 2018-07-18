@@ -5,7 +5,8 @@ export default {
 		variations: {
 			sidebarUpsells: 20,
 			themesUpsells: 20,
-			control: 60,
+			plansBannerUpsells: 20,
+			control: 40,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -119,14 +120,5 @@ export default {
 			enhancedSort: 50,
 		},
 		defaultVariation: 'control',
-	},
-	plansBannerFromDomainNudge: {
-		datestamp: '20180712',
-		variations: {
-			noShow: 50,
-			show: 50,
-		},
-		defaultVariation: 'noShow',
-		allowExistingUsers: true,
 	},
 };
