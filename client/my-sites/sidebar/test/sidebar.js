@@ -53,7 +53,7 @@ describe( 'MySitesSidebar', () => {
 			);
 			const Sidebar = new MySitesSidebar( {
 				isSiteAutomatedTransfer: false,
-				canUserManageOptions: true,
+				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
 			const Store = () => Sidebar.store();
@@ -85,11 +85,11 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( 'Should return null item if managing user can not use store on this site (control a/b group)', () => {
+		test( 'Should return null item if user who can upgrade can not use store on this site (control a/b group)', () => {
 			abtest.mockImplementation( () => 'control' );
 			const Sidebar = new MySitesSidebar( {
 				canUserUseStore: false,
-				canUserManageOptions: true,
+				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
 			const Store = () => Sidebar.store();
@@ -98,11 +98,11 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( 'Should return null if non-managing user can not use store on this site (control a/b group)', () => {
+		test( "Should return null if user who can't upgrade  user can not use store on this site (control a/b group)", () => {
 			abtest.mockImplementation( () => 'control' );
 			const Sidebar = new MySitesSidebar( {
 				canUserUseStore: false,
-				canUserManageOptions: true,
+				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
 			const Store = () => Sidebar.store();
@@ -111,10 +111,10 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( 'Should return upsell item if managing user can not use store on this site (nudge-a-palooza enabled)', () => {
+		test( 'Should return upsell item if user who can upgrade can not use store on this site (nudge-a-palooza enabled)', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseStore: false,
-				canUserManageOptions: true,
+				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
 			const Store = () => Sidebar.store();
@@ -126,7 +126,7 @@ describe( 'MySitesSidebar', () => {
 		test( 'Should return upsell if non-managing user can not use store on this site (nudge-a-palooza enabled)', () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseStore: false,
-				canUserManageOptions: true,
+				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
 			const Store = () => Sidebar.store();
@@ -183,10 +183,9 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.html() ).toEqual( null );
 		} );
 
-		test( "Should return upsell menu item if user can't use ads on this site but can manage options and upgrade site", () => {
+		test( "Should return upsell menu item if user can't use ads on this site but can upgrade site", () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseAds: false,
-				canUserManageOptions: true,
 				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
@@ -196,37 +195,10 @@ describe( 'MySitesSidebar', () => {
 			expect( wrapper.props().link ).toEqual( '/feature/ads/mysite.com' );
 		} );
 
-		test( "Should return null if user can't use ads on this site and can't manage options or upgrade site", () => {
+		test( "Should return null if user can't use ads on this site upgrade site", () => {
 			const Sidebar = new MySitesSidebar( {
 				canUserUseAds: false,
-				canUserManageOptions: false,
 				canUserUpgradeSite: false,
-				...defaultProps,
-			} );
-			const Ads = () => Sidebar.ads();
-
-			const wrapper = shallow( <Ads /> );
-			expect( wrapper.html() ).toEqual( null );
-		} );
-
-		test( "Should return null if user can't use ads on this site and can manage options but can't upgrade site", () => {
-			const Sidebar = new MySitesSidebar( {
-				canUserUseAds: false,
-				canUserManageOptions: true,
-				canUserUpgradeSite: false,
-				...defaultProps,
-			} );
-			const Ads = () => Sidebar.ads();
-
-			const wrapper = shallow( <Ads /> );
-			expect( wrapper.html() ).toEqual( null );
-		} );
-
-		test( "Should return null if user can't use ads on this site and can't manage options but can upgrade site", () => {
-			const Sidebar = new MySitesSidebar( {
-				canUserUseAds: false,
-				canUserManageOptions: false,
-				canUserUpgradeSite: true,
 				...defaultProps,
 			} );
 			const Ads = () => Sidebar.ads();

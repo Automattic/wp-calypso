@@ -23,53 +23,46 @@ import {
 	canCurrentUserUpgradeSite,
 } from 'state/sites/selectors';
 
-export default {
-	storeUpsell: function( context, next ) {
+const featurePageController = ( url, callback ) => {
+	return function( context, next ) {
+		// Upsell is site-specific so site fragment is required
 		const siteFragment = getSiteFragment( context.path );
 		if ( ! siteFragment ) {
-			return page.redirect( '/feature/store' );
+			return page.redirect( url );
 		}
 
-		if ( canCurrentUserUseStore( context.store.getState() ) ) {
-			return page.redirect( '/store/' + siteFragment );
-		}
-
-		// Render
-		context.primary = React.createElement( StoreUpsellComponent );
-		next();
-	},
-
-	pluginsUpsell: function( context, next ) {
-		const siteFragment = getSiteFragment( context.path );
-		if ( ! siteFragment ) {
-			return page.redirect( '/feature/plugins' );
-		}
-
-		// Render
-		context.primary = React.createElement( PluginsUpsellComponent );
-		next();
-	},
-	themesUpsell: function( context, next ) {
-		const siteFragment = getSiteFragment( context.path );
-		if ( ! siteFragment ) {
-			return page.redirect( '/feature/themes' );
-		}
-
-		// Render
-		context.primary = React.createElement( ThemesUpsellComponent );
-		next();
-	},
-	wordAdsUpsell: function( context, next ) {
-		const siteFragment = getSiteFragment( context.path );
-		if ( ! siteFragment ) {
-			return page.redirect( '/feature/ads' );
-		}
-
+		// Access control, users without rights to upgrade should not see these pages
 		const state = context.store.getState();
 		if ( ! canCurrentUserUpgradeSite( state ) ) {
 			return page.redirect( '/stats/' + siteFragment );
 		}
 
+		return callback( context, next, siteFragment );
+	};
+};
+
+export default {
+	storeUpsell: featurePageController( '/feature/store', function( context, next, siteFragment ) {
+		if ( canCurrentUserUseStore( context.store.getState() ) ) {
+			return page.redirect( '/store/' + siteFragment );
+		}
+
+		context.primary = React.createElement( StoreUpsellComponent );
+		next();
+	} ),
+
+	pluginsUpsell: featurePageController( '/feature/plugins', function( context, next ) {
+		context.primary = React.createElement( PluginsUpsellComponent );
+		next();
+	} ),
+
+	themesUpsell: featurePageController( '/feature/themes', function( context, next ) {
+		context.primary = React.createElement( ThemesUpsellComponent );
+		next();
+	} ),
+
+	wordAdsUpsell: featurePageController( '/feature/ads', function( context, next, siteFragment ) {
+		const state = context.store.getState();
 		if ( canCurrentUserUseAds( state ) ) {
 			return page.redirect( '/ads/earnings/' + siteFragment );
 		}
@@ -81,5 +74,5 @@ export default {
 		// Render
 		context.primary = React.createElement( WordAdsUpsellComponent );
 		next();
-	},
+	} ),
 };
