@@ -142,7 +142,7 @@
 
 .banner.is-theme-showcase-banner {
 	@include banner-dark();
-
 	margin-top: 15px;
 	margin-bottom: 15px;
+	z-index: z-index( 'root', '.banner.is-theme-showcase-banner' );
 }
