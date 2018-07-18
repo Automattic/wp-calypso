@@ -9,7 +9,12 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isFunction, noop } from 'lodash';
 import Gridicon from 'gridicons';
+
+/**
+ * Internal dependencies
+ */
 import TranslatableString from 'components/translatable/proptype';
+import compareProps from 'lib/compare-props';
 
 class MasterbarItem extends Component {
 	static propTypes = {
@@ -36,6 +41,15 @@ class MasterbarItem extends Component {
 		}
 	};
 
+	shouldSkipRender = compareProps( { ignore: [ 'onClick' ] } );
+	shouldComponentUpdate( nextProps ) {
+		return ! this.shouldSkipRender( this.props, nextProps );
+	}
+
+	onClick = e => {
+		return this.props.onClick( e );
+	};
+
 	render() {
 		const itemClasses = classNames( 'masterbar__item', this.props.className, {
 			'is-active': this.props.isActive,
@@ -45,7 +59,7 @@ class MasterbarItem extends Component {
 			<a
 				data-tip-target={ this.props.tipTarget }
 				href={ this.props.url }
-				onClick={ this.props.onClick }
+				onClick={ this.onClick }
 				title={ this.props.tooltip }
 				className={ itemClasses }
 				onTouchStart={ this.preload }
