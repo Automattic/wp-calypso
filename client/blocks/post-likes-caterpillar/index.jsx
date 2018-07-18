@@ -45,7 +45,7 @@ export default connect( ( state, { blogId, postId } ) => {
 	//const likeCount = countPostLikes( state, blogId, postId );
 	const likes = getPostLikes( state, blogId, postId );
 	return {
-		likeCount,
+		//likeCount,
 		likes,
 	};
 } )( localize( PostLikesCaterpillar ) );

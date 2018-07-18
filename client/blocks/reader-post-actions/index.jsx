@@ -96,9 +96,6 @@ const ReaderPostActions = props => {
 			{ shouldShowLikes( post ) && (
 				<Fragment>
 					<li className="reader-post-actions__item">
-						<PostLikesCaterpillar blogId={ +post.site_ID } postId={ +post.ID } />
-					</li>
-					<li className="reader-post-actions__item">
 						<LikeButton
 							key="like-button"
 							siteId={ +post.site_ID }
@@ -112,6 +109,9 @@ const ReaderPostActions = props => {
 							showZeroCount={ false }
 							likeSource={ 'reader' }
 						/>
+					</li>
+					<li className="reader-post-actions__item">
+						<PostLikesCaterpillar blogId={ +post.site_ID } postId={ +post.ID } />
 					</li>
 				</Fragment>
 			) }
