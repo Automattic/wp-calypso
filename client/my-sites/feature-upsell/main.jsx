@@ -9,5 +9,6 @@
  */
 import PluginsUpsellComponent from './plugins-upsell';
 import StoreUpsellComponent from './store-upsell';
+import ThemesUpsellComponent from './themes-upsell';
 
-export { PluginsUpsellComponent, StoreUpsellComponent };
+export { PluginsUpsellComponent, StoreUpsellComponent, ThemesUpsellComponent };
