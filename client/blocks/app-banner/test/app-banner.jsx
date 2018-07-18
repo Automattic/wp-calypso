@@ -12,61 +12,47 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { AppBanner } from 'blocks/app-banner';
+import { getiOSDeepLink } from 'blocks/app-banner';
 import { EDITOR, NOTES, READER, STATS } from 'blocks/app-banner/utils';
 
-describe( 'AppBanner', () => {
-	let wrapper;
-
-	beforeEach( () => {
-		wrapper = shallow( <AppBanner /> );
-	} );
-
-	test( 'iOS deep links return correct URIs for EDITOR', () => {
-		expect( wrapper.instance().getiOSDeepLink( '/post', EDITOR ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fpost'
-		);
-		expect( wrapper.instance().getiOSDeepLink( '/post/discover.wordpress.com', EDITOR ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fpost'
-		);
-		expect( wrapper.instance().getiOSDeepLink( null, EDITOR ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fpost'
+describe( 'iOS deep links', () => {
+	test( 'returns correct URIs for each route', () => {
+		[ STATS, READER, EDITOR, NOTES ].forEach( section =>
+			expect( getiOSDeepLink( '/test', section ) ).toMatchSnapshot()
 		);
 	} );
 
-	test( 'iOS deep links return correct URIs for NOTES', () => {
-		expect( wrapper.instance().getiOSDeepLink( '/notifications', NOTES ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fnotifications'
-		);
-		expect( wrapper.instance().getiOSDeepLink( '/notifications/12345', NOTES ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fnotifications'
-		);
-		expect( wrapper.instance().getiOSDeepLink( null, NOTES ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fnotifications'
+	test( 'returns a valid Reader URI for the root path', () => {
+		expect( getiOSDeepLink( '/', READER ).split( '#' )[ 1 ] ).toBe( '%2Fread' );
+	} );
+
+	test( 'passes through a non-root Reader URI as the fragment', () => {
+		expect( getiOSDeepLink( '/read/feeds/12345/posts/6789', READER ).split( '#' )[ 1 ] ).toBe(
+			'%2Fread%2Ffeeds%2F12345%2Fposts%2F6789'
 		);
 	} );
 
-	test( 'iOS deep links return correct URIs for READER', () => {
-		expect( wrapper.instance().getiOSDeepLink( '/', READER ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fread'
-		);
-		expect( wrapper.instance().getiOSDeepLink( '/read/feeds/12345/posts/6789', READER ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fread%2Ffeeds%2F12345%2Fposts%2F6789'
-		);
-		expect( wrapper.instance().getiOSDeepLink( null, READER ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fread'
+	test( 'passes through a Stats URI as the fragment', () => {
+		expect( getiOSDeepLink( '/stats/day/discover.wordpress.com', STATS ).split( '#' )[ 1 ] ).toBe(
+			'%2Fstats%2Fday%2Fdiscover.wordpress.com'
 		);
 	} );
 
-	test( 'iOS deep links return correct URIs for STATS', () => {
-		expect( wrapper.instance().getiOSDeepLink( '/stats', STATS ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fstats'
-		);
-		expect( wrapper.instance().getiOSDeepLink( '/stats/day/discover.wordpress.com', STATS ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fstats%2Fday%2Fdiscover.wordpress.com'
-		);
-		expect( wrapper.instance().getiOSDeepLink( null, STATS ) ).toBe(
-			'https://apps.wordpress.com/get#%2Fstats'
+	test( 'adds link info in fragment', () => {
+		expect( getiOSDeepLink( 'test', STATS ).includes( '#' ) ).toBeTruthy();
+	} );
+
+	test( 'returns correct URIs for other sections', () => {
+		expect( getiOSDeepLink( 'test', 'example' ).includes( '#' ) ).toBeFalsy();
+	} );
+
+	test( 'properly encodes tricky fragments', () => {
+		expect( getiOSDeepLink( '?://&#', STATS ).split( '#' )[ 1 ] ).toEqual( '%3F%3A%2F%2F%26%23' );
+	} );
+
+	test( 'returns a URI even if the path is null', () => {
+		[ STATS, READER, EDITOR, NOTES ].forEach( section =>
+			expect( getiOSDeepLink( null, section ) ).toMatchSnapshot()
 		);
 	} );
 } );

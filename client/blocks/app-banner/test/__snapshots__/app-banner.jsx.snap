@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`iOS deep links returns a URI even if the path is null 1`] = `"https://apps.wordpress.com/get#%2Fstats"`;
+
+exports[`iOS deep links returns a URI even if the path is null 2`] = `"https://apps.wordpress.com/get#%2Fread"`;
+
+exports[`iOS deep links returns a URI even if the path is null 3`] = `"https://apps.wordpress.com/get#%2Fpost"`;
+
+exports[`iOS deep links returns a URI even if the path is null 4`] = `"https://apps.wordpress.com/get#%2Fnotifications"`;
+
+exports[`iOS deep links returns correct URIs for each route 1`] = `"https://apps.wordpress.com/get#%2Ftest"`;
+
+exports[`iOS deep links returns correct URIs for each route 2`] = `"https://apps.wordpress.com/get#%2Ftest"`;
+
+exports[`iOS deep links returns correct URIs for each route 3`] = `"https://apps.wordpress.com/get#%2Fpost"`;
+
+exports[`iOS deep links returns correct URIs for each route 4`] = `"https://apps.wordpress.com/get#%2Fnotifications"`;

@@ -132,35 +132,10 @@ export class AppBanner extends Component {
 		}
 
 		if ( this.isiOS() ) {
-			return this.getiOSDeepLink( currentRoute, currentSection );
+			return getiOSDeepLink( currentRoute, currentSection );
 		}
 
 		return null;
-	}
-
-	getiOSDeepLink( currentRoute, currentSection ) {
-		const hasRoute = currentRoute !== null && currentRoute !== '/';
-		let fragment;
-
-		switch ( currentSection ) {
-			case EDITOR:
-				fragment = '/post';
-				break;
-			case NOTES:
-				fragment = '/notifications';
-				break;
-			case READER:
-				// The Reader is generally accessed at the root of WordPress.com ('/').
-				// In this case, we need to manually add the section name to the
-				// URL so that the iOS app knows which section to open.
-				fragment = hasRoute ? currentRoute : '/read';
-				break;
-			case STATS:
-				fragment = hasRoute ? currentRoute : '/stats';
-				break;
-		}
-
-		return `https://apps.wordpress.com/get#${ encodeURIComponent( fragment ) }`;
 	}
 
 	render() {
@@ -216,6 +191,33 @@ export class AppBanner extends Component {
 			</Card>
 		);
 	}
+}
+
+export function getiOSDeepLink( currentRoute, currentSection ) {
+	const hasRoute = currentRoute !== null && currentRoute !== '/';
+	let fragment;
+
+	switch ( currentSection ) {
+		case EDITOR:
+			fragment = '/post';
+			break;
+		case NOTES:
+			fragment = '/notifications';
+			break;
+		case READER:
+			// The Reader is generally accessed at the root of WordPress.com ('/').
+			// In this case, we need to manually add the section name to the
+			// URL so that the iOS app knows which section to open.
+			fragment = hasRoute ? currentRoute : '/read';
+			break;
+		case STATS:
+			fragment = hasRoute ? currentRoute : '/stats';
+			break;
+		default:
+			return 'https://apps.wordpress.com/get';
+	}
+
+	return `https://apps.wordpress.com/get#${ encodeURIComponent( fragment ) }`;
 }
 
 const mapStateToProps = state => {
