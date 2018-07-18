@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, flow, get, includes, keyBy, noop, size } from 'lodash';
+import { filter, flow, get, includes, noop, size } from 'lodash';
 import scrollIntoView from 'dom-scroll-into-view';
 import debugFactory from 'debug';
 
@@ -295,8 +295,12 @@ class SiteSelector extends Component {
 			return null;
 		}
 
-		const sitesById = keyBy( this.props.sites, 'ID' );
-		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
+		const sites = [];
+		for ( let i = 0; i < this.props.sites.length; i++ ) {
+			if ( includes( this.props.recentSites, this.props.sites[ i ].ID ) ) {
+				sites.push( this.props.sites[ i ] );
+			}
+		}
 
 		if ( ! sites ) {
 			return null;
