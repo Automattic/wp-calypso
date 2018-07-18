@@ -171,6 +171,7 @@ export class EditorMediaModal extends Component {
 		this.setState(
 			{
 				source: '',
+				folder: '',
 				search: undefined,
 			},
 			() => {
