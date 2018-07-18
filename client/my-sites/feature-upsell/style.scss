@@ -80,3 +80,11 @@
 		font-size: 20px;
 	}
 }
+
+.feature-upsell__list-item {
+	list-style-type: none;
+
+	svg {
+		fill: $blue-wordpress;
+	}
+}

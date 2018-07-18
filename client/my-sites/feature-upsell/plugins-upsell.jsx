@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -166,17 +167,35 @@ class PluginsUpsellComponent extends Component {
 					features described above. And that list includes just a few of the highlights.
 				</p>
 
-				<p>The Business plan also includes features like:</p>
+				<h2 className="feature-upsell__section-header">
+					The Business plan also includes features like:
+				</h2>
 
 				<ul>
-					<li>A free custom domain name.</li>
-					<li>Unlimited storage space.</li>
-					<li>Unlimited bandwidth.</li>
-					<li>Advanced design and CSS customization.</li>
-					<li>$100 advertising credit to Google AdWords.</li>
-					<li>Unlimited video hosting.</li>
-					<li>Instant access to the WordAds ad platform.</li>
-					<li>Social media marketing tools.</li>
+					<li className="feature-upsell__list-item">
+						<Gridicon icon="checkmark" /> A free custom domain name.
+					</li>
+					<li className="feature-upsell__list-item">
+						<Gridicon icon="checkmark" /> Unlimited bandwidth.
+					</li>
+					<li className="feature-upsell__list-item">
+						<Gridicon icon="checkmark" /> Advanced design and CSS customization.
+					</li>
+					<li className="feature-upsell__list-item">
+						<Gridicon icon="checkmark" /> Unlimited storage space.
+					</li>
+					<li className="feature-upsell__list-item">
+						<Gridicon icon="checkmark" /> $100 advertising credit to Google AdWords.
+					</li>
+					<li className="feature-upsell__list-item">
+						<Gridicon icon="checkmark" /> Unlimited video hosting.
+					</li>
+					<li className="feature-upsell__list-item">
+						<Gridicon icon="checkmark" /> Instant access to the WordAds ad platform.
+					</li>
+					<li className="feature-upsell__list-item">
+						<Gridicon icon="checkmark" /> Social media marketing tools.
+					</li>
 				</ul>
 
 				<p>
