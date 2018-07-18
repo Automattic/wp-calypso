@@ -194,6 +194,17 @@ export class AppBanner extends Component {
 }
 
 export function getiOSDeepLink( currentRoute, currentSection ) {
+	const baseURI = 'https://apps.wordpress.com/get';
+	const fragment = buildDeepLinkFragment( currentRoute, currentSection );
+
+	if ( fragment.length === 0 ) {
+		return baseURI;
+	}
+
+	return `${ baseURI }#${ fragment }`;
+}
+
+export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	const hasRoute = currentRoute !== null && currentRoute !== '/';
 	let fragment;
 
@@ -214,10 +225,11 @@ export function getiOSDeepLink( currentRoute, currentSection ) {
 			fragment = hasRoute ? currentRoute : '/stats';
 			break;
 		default:
-			return 'https://apps.wordpress.com/get';
+			fragment = '';
+			break;
 	}
 
-	return `https://apps.wordpress.com/get#${ encodeURIComponent( fragment ) }`;
+	return encodeURIComponent( fragment );
 }
 
 const mapStateToProps = state => {
