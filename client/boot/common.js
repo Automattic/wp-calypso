@@ -9,7 +9,6 @@ import page from 'page';
 import { parse } from 'qs';
 import { some, startsWith } from 'lodash';
 import url from 'url';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -35,11 +34,6 @@ const switchUserLocale = ( currentUser, reduxStore ) => {
 
 	if ( localeSlug ) {
 		reduxStore.dispatch( setLocale( localeSlug, localeVariant ) );
-		if ( localeSlug !== 'en' ) {
-			import( 'moment/locale/' + localeSlug ).then( () => {
-				moment.locale( localeSlug );
-			} );
-		}
 	}
 };
 
