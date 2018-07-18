@@ -28,6 +28,7 @@
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": true,
+		"calypsoify/plugins": true,
 		"catch-js-errors": false,
 		"code-splitting": true,
 		"desktop-promo": true,

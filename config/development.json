@@ -35,6 +35,7 @@
 		"ad-tracking": false,
 		"automated-transfer": true,
 		"apple-pay": true,
+		"calypsoify/plugins": true,
 		"code-splitting": true,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,

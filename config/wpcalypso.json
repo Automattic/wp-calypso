@@ -22,6 +22,7 @@
 		"automated-transfer": true,
 		"apple-pay": true,
 		"comments/management/threaded-view": false,
+		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"desktop-promo": true,
