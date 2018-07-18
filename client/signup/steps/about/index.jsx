@@ -35,6 +35,7 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 import Card from 'components/card';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -548,6 +549,9 @@ class AboutStep extends Component {
 									defaultValue={ siteTitle }
 									onChange={ this.handleChangeEvent }
 								/>
+								<FormSettingExplanation>
+									{ translate( "Don't worry, you can change this anytime." ) }
+								</FormSettingExplanation>
 							</FormFieldset>
 
 							<FormFieldset>
@@ -570,6 +574,9 @@ class AboutStep extends Component {
 									suggestions={ this.getSuggestions() }
 									suggest={ this.handleSuggestionMouseDown }
 								/>
+								<FormSettingExplanation>
+									{ translate( "We'll start you off with a theme designed for you." ) }
+								</FormSettingExplanation>
 							</FormFieldset>
 
 							<FormFieldset>
