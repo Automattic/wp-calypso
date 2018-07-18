@@ -91,7 +91,7 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 		test( `Should render different message for paid plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( { ...props, currentSitePlan: { productSlug } } );
 			expect( comp.getDiscountTooltipMessage() ).toBe(
-				"We'll deduct the cost of your current plan from the full price (%(price)s) for the next 12 months."
+				"You'll receive a discount from the full price of %(price)s because you already have a plan."
 			);
 		} );
 	} );
