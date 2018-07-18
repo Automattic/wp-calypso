@@ -75,7 +75,7 @@ class StoreUpsellComponent extends Component {
 
 				<div className="feature-upsell__cta">
 					{ loadingPrice ? (
-						<div className="feature-upsell__placeholder-cta" />
+						<div className="feature-upsell__placeholder feature-upsell__placeholder--cta" />
 					) : (
 						<React.Fragment>
 							<button
