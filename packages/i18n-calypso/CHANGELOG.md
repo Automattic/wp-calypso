@@ -1,3 +1,14 @@
+2.0.0
+------
+
+* Update xgettext-js [#55](https://github.com/Automattic/i18n-calypso/pull/55).
+* Update to circlci v2 configuration [#57](https://github.com/Automattic/i18n-calypso/pull/57).
+* Update npm audit vulnerabilities [#56](https://github.com/Automattic/i18n-calypso/pull/56).
+* Drop obsolete react-test-env dependency [#58](https://github.com/Automattic/i18n-calypso/pull/58).
+* Remove the `this.translate()` mixin, see [#59](https://github.com/Automattic/i18n-calypso/pull/59).
+* Fix circular reference when calling JSON.stringify with the Community Translator enabled in Calypso  [#54](https://github.com/Automattic/i18n-calypso/pull/54).
+* Update CI image to node:10 and use `npm cit`, see [#63](https://github.com/Automattic/i18n-calypso/pull/63).
+
 1.9.1
 ------
 Fix a reference to an undefined value.
