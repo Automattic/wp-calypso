@@ -1086,7 +1086,7 @@ export class PostEditor extends React.Component {
 
 			// `this.findBookmarkedPosition` inserted some markup into the TinyMCE content.
 			// Reset it back to the original.
-			this.editor.setEditorContent( content );
+			//this.editor.setEditorContent( content );
 
 			if ( this.state.selectedText ) {
 				// Word count is not available in the HTML mode
@@ -1096,7 +1096,7 @@ export class PostEditor extends React.Component {
 
 			this.editor.setSelection( selectionRange );
 		} else if ( mode === 'tinymce' ) {
-			this.addHTMLBookmarkInTextAreaContent();
+			//this.addHTMLBookmarkInTextAreaContent();
 			this.editor._editor.on( 'SetContent', this.focusHTMLBookmarkInVisualEditor );
 		}
 
