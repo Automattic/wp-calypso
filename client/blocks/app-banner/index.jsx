@@ -197,39 +197,31 @@ export function getiOSDeepLink( currentRoute, currentSection ) {
 	const baseURI = 'https://apps.wordpress.com/get';
 	const fragment = buildDeepLinkFragment( currentRoute, currentSection );
 
-	if ( fragment.length === 0 ) {
-		return baseURI;
-	}
-
-	return `${ baseURI }#${ fragment }`;
+	return fragment.length > 0 ? `${ baseURI }#${ fragment }` : baseURI;
 }
 
 export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	const hasRoute = currentRoute !== null && currentRoute !== '/';
-	let fragment;
 
-	switch ( currentSection ) {
-		case EDITOR:
-			fragment = '/post';
-			break;
-		case NOTES:
-			fragment = '/notifications';
-			break;
-		case READER:
-			// The Reader is generally accessed at the root of WordPress.com ('/').
-			// In this case, we need to manually add the section name to the
-			// URL so that the iOS app knows which section to open.
-			fragment = hasRoute ? currentRoute : '/read';
-			break;
-		case STATS:
-			fragment = hasRoute ? currentRoute : '/stats';
-			break;
-		default:
-			fragment = '';
-			break;
-	}
+	const getFragment = () => {
+		switch ( currentSection ) {
+			case EDITOR:
+				return '/post';
+			case NOTES:
+				return '/notifications';
+			case READER:
+				// The Reader is generally accessed at the root of WordPress.com ('/').
+				// In this case, we need to manually add the section name to the
+				// URL so that the iOS app knows which section to open.
+				return hasRoute ? currentRoute : '/read';
+			case STATS:
+				return hasRoute ? currentRoute : '/stats';
+			default:
+				return '';
+		}
+	};
 
-	return encodeURIComponent( fragment );
+	return encodeURIComponent( getFragment() );
 }
 
 const mapStateToProps = state => {
