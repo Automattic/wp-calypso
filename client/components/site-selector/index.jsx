@@ -270,22 +270,24 @@ class SiteSelector extends Component {
 	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
 
 	renderAllSites() {
-		if ( this.props.showAllSites && ! this.props.sitesFound && this.props.allSitesPath ) {
-			this.visibleSites.push( ALL_SITES );
-
-			const isHighlighted = this.isHighlighted( ALL_SITES );
-
-			return (
-				<AllSites
-					key="selector-all-sites"
-					sites={ this.props.sites }
-					onSelect={ this.onAllSitesSelect }
-					onMouseEnter={ this.onAllSitesHover }
-					isHighlighted={ isHighlighted }
-					isSelected={ this.isSelected( ALL_SITES ) }
-				/>
-			);
+		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
+			return null;
 		}
+
+		this.visibleSites.push( ALL_SITES );
+
+		const isHighlighted = this.isHighlighted( ALL_SITES );
+
+		return (
+			<AllSites
+				key="selector-all-sites"
+				sites={ this.props.sites }
+				onSelect={ this.onAllSitesSelect }
+				onMouseEnter={ this.onAllSitesHover }
+				isHighlighted={ isHighlighted }
+				isSelected={ this.isSelected( ALL_SITES ) }
+			/>
+		);
 	}
 
 	renderRecentSites() {
