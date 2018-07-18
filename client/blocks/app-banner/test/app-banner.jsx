@@ -11,7 +11,10 @@ import { EDITOR, NOTES, READER, STATS } from 'blocks/app-banner/utils';
 
 describe( 'iOS deep link fragments', () => {
 	test( 'properly encodes tricky fragments', () => {
-		expect( buildDeepLinkFragment( '?://&#', STATS ) ).toEqual( '%3F%3A%2F%2F%26%23' );
+		const funnyFragment = '?://&#';
+		expect( buildDeepLinkFragment( funnyFragment, STATS ) ).toEqual(
+			encodeURIComponent( funnyFragment )
+		);
 	} );
 
 	test( 'returns a fragment for a null path', () => {
@@ -33,15 +36,13 @@ describe( 'iOS deep link fragments', () => {
 	} );
 
 	test( 'passes through a non-root Reader path', () => {
-		expect( buildDeepLinkFragment( '/read/feeds/12345/posts/6789', READER ) ).toBe(
-			'%2Fread%2Ffeeds%2F12345%2Fposts%2F6789'
-		);
+		const path = '/read/feeds/12345/posts/6789';
+		expect( buildDeepLinkFragment( path, READER ) ).toBe( encodeURIComponent( path ) );
 	} );
 
 	test( 'passes through a Stats path', () => {
-		expect( buildDeepLinkFragment( '/stats/day/discover.wordpress.com', STATS ) ).toBe(
-			'%2Fstats%2Fday%2Fdiscover.wordpress.com'
-		);
+		const path = '/stats/day/discover.wordpress.com';
+		expect( buildDeepLinkFragment( path, STATS ) ).toBe( encodeURIComponent( path ) );
 	} );
 } );
 
