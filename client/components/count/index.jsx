@@ -14,20 +14,28 @@ import { omit } from 'lodash';
  */
 import formatNumberCompact from 'lib/format-number-compact';
 
-export const Count = ( { count, compact, numberFormat, primary, ...inheritProps } ) => {
+export const Count = ( { count, compact, numberFormat, primary, className, ...inheritProps } ) => {
+	let formattedCount = count;
+	// Only attempt to format the count if we've been handed a number
+	if ( ! isNaN( count ) ) {
+		formattedCount = compact
+			? formatNumberCompact( count ) || numberFormat( count )
+			: numberFormat( count );
+	}
+
 	return (
 		// Omit props passed from the `localize` higher-order component that we don't need.
 		<span
-			className={ classnames( 'count', { 'is-primary': primary } ) }
+			className={ classnames( 'count', { 'is-primary': primary }, className ) }
 			{ ...omit( inheritProps, [ 'translate', 'moment' ] ) }
 		>
-			{ compact ? formatNumberCompact( count ) || numberFormat( count ) : numberFormat( count ) }
+			{ formattedCount }
 		</span>
 	);
 };
 
 Count.propTypes = {
-	count: PropTypes.number.isRequired,
+	count: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
 	numberFormat: PropTypes.func,
 	primary: PropTypes.bool,
 	compact: PropTypes.bool,
