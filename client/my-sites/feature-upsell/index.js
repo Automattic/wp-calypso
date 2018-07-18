@@ -36,18 +36,6 @@ export default function() {
 			clientRender
 		);
 
-		page( '/feature/:feature/*', ( { path, params } ) => {
-			const siteFragment = getSiteFragment( path );
-
-			if ( siteFragment ) {
-				return page.redirect( `/feature/${ params.feature }/${ siteFragment }` );
-			}
-
-			return page.redirect( `/feature/${ params.feature }` );
-		} );
-
-		page( '/feature/plugins', siteSelection, sites, makeLayout, clientRender );
-
 		page(
 			'/feature/plugins/:domain',
 			siteSelection,
@@ -56,18 +44,6 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-
-		page( '/feature/plugins/*', ( { path } ) => {
-			const siteFragment = getSiteFragment( path );
-
-			if ( siteFragment ) {
-				return page.redirect( `/feature/plugins/${ siteFragment }` );
-			}
-
-			return page.redirect( '/feature/plugins' );
-		} );
-
-		page( '/feature/themes', siteSelection, sites, makeLayout, clientRender );
 
 		page(
 			'/feature/themes/:domain',
@@ -78,14 +54,14 @@ export default function() {
 			clientRender
 		);
 
-		page( '/feature/themes/*', ( { path } ) => {
+		page( '/feature/:feature/*', ( { path, params } ) => {
 			const siteFragment = getSiteFragment( path );
 
 			if ( siteFragment ) {
-				return page.redirect( `/feature/themes/${ siteFragment }` );
+				return page.redirect( `/feature/${ params.feature }/${ siteFragment }` );
 			}
 
-			return page.redirect( '/feature/themes' );
+			return page.redirect( `/feature/${ params.feature }` );
 		} );
 	}
 }
