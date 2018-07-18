@@ -35,7 +35,7 @@ export function fromApi( response ) {
 }
 
 export function receiveSiteDismiss() {
-	return successNotice( translate( "We won't recommend you that site again." ), {
+	return successNotice( translate( "We won't recommend this site to you again." ), {
 		duration: 5000,
 	} );
 }
