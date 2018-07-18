@@ -291,15 +291,14 @@ class SiteSelector extends Component {
 	}
 
 	renderRecentSites() {
+		if ( ! this.props.showRecentSites || ! this.shouldShowGroups() || this.props.sitesFound ) {
+			return null;
+		}
+
 		const sitesById = keyBy( this.props.sites, 'ID' );
 		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
 
-		if (
-			! sites ||
-			this.props.sitesFound ||
-			! this.shouldShowGroups() ||
-			this.props.visibleSiteCount <= 11
-		) {
+		if ( ! sites ) {
 			return null;
 		}
 
