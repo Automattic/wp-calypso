@@ -30,6 +30,7 @@ import {
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
+import { abtest } from 'lib/abtest';
 
 class SiteNotice extends React.Component {
 	static propTypes = {
@@ -98,12 +99,16 @@ class SiteNotice extends React.Component {
 		}
 
 		const { site, translate } = this.props;
+		let href = '/plans/' + site.slug;
+		if ( abtest( 'nudgeAPalooza' ) === 'plansBannerUpsells' ) {
+			href = href + '/?discount=free_domain';
+		}
 
 		return (
 			<SidebarBanner
 				ctaName="free-to-paid-sidebar"
 				ctaText={ translate( 'Upgrade' ) }
-				href={ `/plans/${ site.slug }` }
+				href={ href }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
 			/>

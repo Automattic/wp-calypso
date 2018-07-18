@@ -5,7 +5,8 @@ export default {
 		variations: {
 			sidebarUpsells: 20,
 			themesUpsells: 20,
-			control: 60,
+			plansBannerUpsells: 20,
+			control: 40,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
