@@ -16,7 +16,7 @@ const CalendarButtonExample = () => {
 	return (
 		<CalendarButton
 			primary
-			enableOutsideDays={ false }
+			showOutsideDays={ false }
 			disabledDays={ [ { before: new Date() } ] }
 			selectedDay={ tomorrow }
 		/>

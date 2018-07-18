@@ -41,4 +41,5 @@ class UpgradeBanner extends Component {
 
 export default connect( ( state, { siteId } ) => ( {
 	isJetpack: isJetpackSite( state, siteId ),
+	siteId: siteId,
 } ) )( localize( UpgradeBanner ) );

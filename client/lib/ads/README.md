@@ -3,42 +3,6 @@ Users
 
 A [flux](https://facebook.github.io/flux/docs/overview.html#content) approach for interacting with a site's WordAds data.
 
-### The Data
-The Data is stored in a private variable but can be accessed though the stores public methods.
-#### Earnings
-The Data that is stored in a site's WordAds earnings store looks like this:
-```
-{
-	123456: { // site.ID
-		total_earnings: '3.50'
-		total_amount_owed: '2.00'
-		wordads: {
-			'2015-09': { // period YYYY-MM
-				amount: 12.34
-				pageviews: '1234'
-				status: '1'
-			}, etc.
-
-		},
-		sponsored: {
-			'2015-09': { // period YYYY-MM
-				amount: 12.34
-				pageviews: '1234'
-				status: '1'
-			}, etc.
-
-		},
-		adjustment: {
-			'2015-09': { // period YYYY-MM
-				amount: 12.34
-				pageviews: '1234'
-				status: '1'
-			}, etc.
-
-		},
-	}, etc.
-}
-```
 #### Settings
 The Data that is stored in a site's WordAds settings store looks like this:
 ```
@@ -69,18 +33,6 @@ The Data that is stored in a site's WordAds TOS store looks like this:
 }
 ```
 #### Public Methods
-
-**EarningsStore.getById( site.ID )**
-Returns object with earnings data and some flags:
-```
-{
-	earnings: { see above },
-	isLoading: true | false,
-	error: { API error object } | null
-}
-```
-
----
 
 **WordadsSettingsStore.getById( site.ID )**
 Returns object with settings data and some flags:
@@ -124,8 +76,6 @@ Actions get triggered by views and stores.
 
 #### Public methods.
 
-**WordadsActions.fetchEarnings( site );**
-
 **WordadsActions.fetchSettings( site );**
 
 **WordadsActions.updateSettings( site, settings );**
@@ -148,8 +98,8 @@ import React from 'react';
  */
 import SettingsStore from 'lib/ads/settings-store';
 
-export default class extends React.Component { 
-	static displayName = 'yourComponent'; 
+export default class extends React.Component {
+	static displayName = 'yourComponent';
 
 	state = this.getSettingsFromStore();
 

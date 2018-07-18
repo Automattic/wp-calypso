@@ -45,6 +45,9 @@ import isSiteAutomatedTransfer from '../selectors/is-site-automated-transfer';
 import hasSitePendingAutomatedTransfer from '../selectors/has-site-pending-automated-transfer';
 import { getAutomatedTransferStatus } from '../automated-transfer/selectors';
 import { getSelectedSiteId } from '../ui/selectors';
+import { FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { isCurrentUserCurrentPlanOwner } from './plans/selectors';
 
 /**
  * Returns the slug for a site, or null if the site is unknown.
@@ -338,6 +341,26 @@ export function isSitePreviewable( state, siteId ) {
 }
 
 /**
+ * Returns true if current user can purchase upgrades for this site
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canCurrentUserUpgradeSite( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	if ( ! canUserManageOptions ) {
+		return false;
+	}
+
+	const isPaid = isCurrentPlanPaid( state, siteId );
+	return ! isPaid || isCurrentUserCurrentPlanOwner( state, siteId );
+}
+
+/**
  * Returns true if current user can see and use Store option in menu
  *
  * @param  {Object}   state  Global state tree
@@ -359,6 +382,37 @@ export function canCurrentUserUseStore( state, siteId = null ) {
 		( canUserManageOptions && isSiteAT ) ||
 		( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
 	);
+}
+
+/**
+ * Returns true if current user can see and use WordAds option in menu
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canCurrentUserUseAds( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const site = getSite( state, siteId );
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	return site && site.options.wordads && canUserManageOptions;
+}
+
+/**
+ * Returns true if current user can see and use WordAds option in menu
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canAdsBeEnabledOnCurrentSite( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const site = getSite( state, siteId );
+	return site && hasFeature( state, siteId, FEATURE_WORDADS_INSTANT );
 }
 
 /**

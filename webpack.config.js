@@ -17,7 +17,7 @@ const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
-const threadLoader = require( 'thread-loader' );
+const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -72,19 +72,17 @@ const babelLoader = {
 	},
 };
 
-threadLoader.warmup( {}, [ 'babel-loader' ] );
-
 const webpackConfig = {
 	bail: ! isDevelopment,
-	entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
+	entry: { build: [ '@babel/polyfill', path.join( __dirname, 'client', 'boot', 'app' ) ] },
 	profile: shouldEmitStats,
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: isDevelopment ? '#eval' : process.env.SOURCEMAP || false, // in production builds you can specify a source-map via env var
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].[chunkhash].opt.js', // prefer the chunkhash, which depends on the chunk, not the entire build
-		chunkFilename: '[name].[chunkhash].opt.js', // ditto
+		filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
+		chunkFilename: '[name].[chunkhash].min.js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	optimization: {
@@ -112,6 +110,9 @@ const webpackConfig = {
 						 */
 						collapse_vars: false,
 					},
+					mangle: {
+						safari10: true,
+					},
 					ecma: 5,
 				},
 			} ),
@@ -125,7 +126,15 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				use: [ 'thread-loader', babelLoader ],
+				use: [
+					{
+						loader: 'thread-loader',
+						options: {
+							workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
+						},
+					},
+					babelLoader,
+				],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
@@ -247,27 +256,6 @@ if ( isDevelopment ) {
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
-if ( shouldMinify ) {
-	webpackConfig.plugins.push(
-		new UglifyJsPlugin( {
-			cache: 'docker' !== process.env.CONTAINER,
-			parallel: true,
-			sourceMap: Boolean( process.env.SOURCEMAP ),
-			uglifyOptions: {
-				compress: {
-					/**
-					 * Produces inconsistent results
-					 * Enable when the following is resolved:
-					 * https://github.com/mishoo/UglifyJS2/issues/3010
-					 */
-					collapse_vars: false,
-				},
-				ecma: 5,
-			},
-		} )
 	);
 }
 

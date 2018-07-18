@@ -91,6 +91,11 @@
 		padding-left: 24px;
 		padding-right: 24px;
 	}
+	
+	@include breakpoint( "<480px" ) {
+		display: flex;
+		flex-direction: column-reverse;
+	}
 
 	&:before {
 		content: "";
@@ -112,6 +117,10 @@
 	.is-left-aligned {
 		margin-left: 0;
 		margin-right: 10px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin: 2px 0;
 	}
 }
 

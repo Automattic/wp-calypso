@@ -170,10 +170,7 @@ class SiteSettingsFormWriting extends Component {
 					onChangeField={ onChangeField }
 				/>
 
-				{ isPodcastingSupported &&
-					config.isEnabled( 'manage/site-settings/podcasting' ) && (
-						<PodcastingLink fields={ fields } />
-					) }
+				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
 
 				{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
 

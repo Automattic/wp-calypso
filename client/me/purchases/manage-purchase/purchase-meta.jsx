@@ -30,8 +30,7 @@ import {
 import { isMonthly } from 'lib/plans/constants';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
 import PaymentLogo from 'components/payment-logo';
@@ -45,7 +44,8 @@ class PurchaseMeta extends Component {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
 		purchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		site: PropTypes.object,
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -139,13 +139,10 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOn() {
-		const { purchase, translate, moment } = this.props;
+		const { moment, purchase, siteSlug, translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			const attachedPlanUrl = managePurchase(
-				this.props.selectedSite.slug,
-				purchase.attachedToPurchaseId
-			);
+			const attachedPlanUrl = managePurchase( siteSlug, purchase.attachedToPurchaseId );
 
 			return (
 				<span>
@@ -224,16 +221,14 @@ class PurchaseMeta extends Component {
 			! canEditPaymentDetails( purchase ) ||
 			! isPaidWithCreditCard( purchase ) ||
 			! cardProcessorSupportsUpdates( purchase ) ||
-			! this.props.selectedSite
+			! this.props.site
 		) {
 			return <li>{ paymentDetails }</li>;
 		}
 
 		return (
 			<li>
-				<a href={ getEditCardDetailsPath( this.props.selectedSite.slug, purchase ) }>
-					{ paymentDetails }
-				</a>
+				<a href={ getEditCardDetailsPath( this.props.siteSlug, purchase ) }>{ paymentDetails }</a>
 			</li>
 		);
 	}
@@ -241,7 +236,7 @@ class PurchaseMeta extends Component {
 	renderContactSupportToRenewMessage() {
 		const { purchase, translate } = this.props;
 
-		if ( this.props.selectedSite ) {
+		if ( this.props.site ) {
 			return null;
 		}
 
@@ -332,14 +327,14 @@ class PurchaseMeta extends Component {
 	}
 }
 
-export default connect( ( state, props ) => {
-	const purchase = getByPurchaseId( state, props.purchaseId );
+export default connect( ( state, { purchaseId } ) => {
+	const purchase = getByPurchaseId( state, purchaseId );
 
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
-		selectedSite: getSelectedSite( state ),
+		site: purchase ? getSite( state, purchase.siteId ) : null,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 	};
 } )( localize( PurchaseMeta ) );
