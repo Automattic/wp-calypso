@@ -183,7 +183,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	ads() {
-		const { path, canUserManageOptions, canUserUpgradeSite, canUserUseAds } = this.props;
+		const { path, canUserUpgradeSite, canUserUseAds } = this.props;
 
 		if ( canUserUseAds ) {
 			return (
@@ -201,7 +201,6 @@ export class MySitesSidebar extends Component {
 		if (
 			! this.props.isJetpack &&
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			canUserManageOptions &&
 			canUserUpgradeSite &&
 			abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
 		) {
@@ -421,7 +420,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { canUserManageOptions, site, canUserUseStore } = this.props;
+		const { canUserUpgradeSite, site, canUserUseStore } = this.props;
 
 		if ( ! config.isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
@@ -430,7 +429,7 @@ export class MySitesSidebar extends Component {
 		if ( ! canUserUseStore ) {
 			if (
 				config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-				canUserManageOptions &&
+				canUserUpgradeSite &&
 				abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
 			) {
 				return this.storeUpsellSidebarItem();
