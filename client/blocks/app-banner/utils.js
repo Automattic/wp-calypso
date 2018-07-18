@@ -6,8 +6,6 @@
 
 import { get, includes, reduce } from 'lodash';
 
-import getCurrentRoute from 'state/selectors/get-current-route';
-
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
 export const EDITOR = 'post-editor';
 export const NOTES = 'notifications';
@@ -61,13 +59,6 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 	}
 
 	return null;
-}
-
-export function getCurrentPathFragment( state ) {
-	const route = getCurrentRoute( state );
-
-	// Strip off the leading forward slash for use as a fragment
-	return route.substring( 1 );
 }
 
 export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
