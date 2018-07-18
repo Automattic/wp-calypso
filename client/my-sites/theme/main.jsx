@@ -579,7 +579,7 @@ class ThemeSheet extends React.Component {
 
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
-		const { id, siteId, retired, hasUnlimitedPremiumThemes } = this.props;
+		const { id, siteId, retired, isPremium, hasUnlimitedPremiumThemes } = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
@@ -620,6 +620,7 @@ class ThemeSheet extends React.Component {
 
 		let pageUpsellBanner, previewUpsellBanner;
 		const hasUpsellBanner =
+			isPremium &&
 			! hasUnlimitedPremiumThemes &&
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 			abtest( 'nudgeAPalooza' ) === 'themesUpsells';

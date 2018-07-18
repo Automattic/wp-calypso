@@ -1,14 +1,34 @@
+$feature-upsell-break-at: '1040px';
+
 .feature-upsell__main {
 	margin-top: 48px;
+	/*
+	 * Hack for IE 11 - max-width is in place to limit constraints but it still
+	 * needs an explicit rule for width
+	 */
+	.product-purchase-feature-list__item {
+		width: 100%;
+	}
 }
 
-.feature-upsell__placeholder-cta {
+.feature-upsell__placeholder {
 	animation: pulse-light 800ms ease-in-out infinite;
 	background: $gray-lighten-20;
-	display: inline-block;
+}
+
+.feature-upsell__placeholder--cta {
 	width: 350px;
 	max-width: 80%;
 	height: 50px;
+	margin: 0 auto;
+}
+
+.feature-upsell__placeholder--cover {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
 
 .feature-upsell__header {
@@ -77,6 +97,121 @@
 	}
 
 	@include breakpoint( '<660px' ) {
-		font-size: 20px;
+		margin: 30px 0 10px 0;
+	}
+}
+
+.feature-upsell__video-container {
+	max-width: 800px;
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	padding-top: 56.25%;
+	margin: 0 auto;
+}
+
+.feature-upsell__video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	iframe {
+		position: relative;
+		z-index: 10;
+	}
+}
+
+.feature-upsell__benefits-list {
+	padding: 0;
+	margin: 0;
+	list-style-type: decimal;
+
+	&-item {
+		width: 100%;
+		display: flex;
+		flex-flow: row;
+		padding: 0;
+		margin: 35px 0;
+
+		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
+			flex-flow: row wrap;
+		}
+		@include breakpoint( '<660px' ) {
+			margin: 15px 0;
+		}
+	}
+
+	&-item-content {
+		order: 2;
+		width: 100%;
+		display: flex;
+		flex-flow: column;
+		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
+			flex-basis: 90%;
+		}
+	}
+
+	&-marker {
+		order: 1;
+		margin-right: 5px;
+		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
+			margin-left: 3%;
+		}
+	}
+
+	&-name,
+	&-marker {
+		font-size: 26px;
+		@include breakpoint( '<1280px' ) {
+			font-size: 22px;
+		}
+	}
+
+	&-description {
+		font-size: 16px;
+		margin-top: 5px;
+		@include breakpoint( '<660px' ) {
+			margin-top: 15px;
+		}
+	}
+
+	&-item:nth-child( 2n ) {
+		.feature-upsell__benefits-list-image-wrapper {
+			@include breakpoint( '>#{$feature-upsell-break-at}' ) {
+				order: 0;
+				margin-left: 0;
+				margin-right: 50px;
+			}
+		}
+	}
+
+	&-image-wrapper {
+		order: 3;
+		margin-left: 30px;
+		max-width: 40%;
+
+		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
+			flex-basis: 100%;
+			max-width: 70%;
+			margin: 15px auto;
+		}
+
+		@include breakpoint( '<660px' ) {
+			max-width: 90%;
+		}
+	}
+
+	&-image {
+		width: 100%;
+	}
+}
+
+.feature-upsell__list-item {
+	list-style-type: none;
+
+	svg {
+		fill: $blue-wordpress;
 	}
 }

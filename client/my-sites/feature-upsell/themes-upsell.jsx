@@ -30,7 +30,7 @@ import { getCurrencyObject } from 'lib/format-currency';
  * This is just for english audience and is not translated on purpose, remember to add
  * translate() calls before removing a/b test check and enabling it for everyone
  */
-class PluginsUpsellComponent extends Component {
+class ThemesUpsellComponent extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string.isRequired,
 		price: PropTypes.number,
@@ -41,7 +41,7 @@ class PluginsUpsellComponent extends Component {
 		const { trackTracksEvent, selectedSiteSlug } = this.props;
 
 		trackTracksEvent( 'calypso_upsell_landing_page_cta_click', {
-			cta_name: 'plugins-upsell',
+			cta_name: 'themes-upsell',
 		} );
 
 		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
@@ -73,12 +73,10 @@ class PluginsUpsellComponent extends Component {
 				<DocumentHead title={ 'Plugins' } />
 
 				<header className="feature-upsell__header">
-					<h1 className="feature-upsell__header-title">
-						WordPress Plugins are now available on the Business plan.
-					</h1>
+					<h1 className="feature-upsell__header-title">Use any theme with a Business plan</h1>
 					<p className="feature-upsell__header-subtitle">
-						Upgrading to the Business plan unlocks access to more than 50,000 WordPress Plugins and
-						197 premium Themes, making it our most powerful plan ever.
+						Customize your site with your own theme, gain access to thousands of plugins, and start
+						getting more traffic today! We’ll even help you get started.
 					</p>
 				</header>
 
@@ -98,17 +96,17 @@ class PluginsUpsellComponent extends Component {
 				<div className="product-purchase-features-list">
 					<div className="product-purchase-features-list__item">
 						<PurchaseDetail
-							icon={ <img alt="Plugins" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
-							title="Install as Many WordPress Plugins as You Want"
-							description="Plugins are like smartphone apps for WordPress. They improve your site with features like:  SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and MailChimp integration, Google Analytics, and much, much more."
+							icon={ <img alt="Themes" src="/calypso/images/illustrations/jetpack-themes.svg" /> }
+							title="Access our Entire Library of Premium Themes"
+							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of 197 premium site themes for no additional fee."
 						/>
 					</div>
 
 					<div className="product-purchase-features-list__item">
 						<PurchaseDetail
-							icon={ <img alt="Themes" src="/calypso/images/illustrations/jetpack-themes.svg" /> }
-							title="Access our Entire Library of Premium Themes"
-							description="Professional site designs can be expensive, so we’ve negotiated deals on your behalf with many of the most prominent WordPress theme designers in the world. As a Business plan customer, you’ll gain access to our entire library of 197 premium site themes for no additional fee."
+							icon={ <img alt="Plugins" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+							title="Install as Many WordPress Plugins as You Want"
+							description="Plugins are like smartphone apps for WordPress. They improve your site with features like:  SEO and marketing tools, lead generation tools, appointment booking and management, SalesForce and MailChimp integration, Google Analytics, and much, much more."
 						/>
 					</div>
 
@@ -252,4 +250,4 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( PluginsUpsellComponent ) );
+export default connect( mapStateToProps )( localize( ThemesUpsellComponent ) );
