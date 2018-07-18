@@ -7,19 +7,15 @@ import { translate } from 'i18n-calypso';
 export const tasks = [
 	{
 		id: 'jetpack_brute_force',
-		completedTitle: translate(
-			"We've automatically protected you from brute force login attacks."
-		),
+		title: translate( "We've automatically protected you from brute force login attacks." ),
 		completed: true,
-		title: '', // Required prop, item is always complete
 		description: '', // Required prop, item is always complete
 	},
 	{
 		id: 'jetpack_spam_filtering',
-		completedTitle: translate( "We've automatically turned on spam filtering." ),
+		title: translate( "We've automatically turned on spam filtering." ),
 		completed: true,
 		description: '', // Required prop, item is always complete
-		title: '', // Required prop, item is always complete
 	},
 	{
 		id: 'jetpack_backups',
