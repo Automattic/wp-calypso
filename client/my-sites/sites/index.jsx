@@ -23,12 +23,12 @@ export class Sites extends Component {
 	filterSites = site => {
 		const path = this.props.siteBasePath;
 
-		// Filter out jetpack sites when on particular routes
-		if ( /^\/customize/.test( path ) || /^\/domains/.test( path ) ) {
-			return ! site.jetpack;
+		// Domains can be managed on Simple and Atomic sites, not Jetpack.
+		if ( /^\/domains/.test( path ) ) {
+			return ! site.jetpack || site.options.is_automated_transfer;
 		}
 
-		// Filter out sites with no upgrades on particular routes
+		// Plans are for Upgradeable sites, not Jetpack.
 		if ( /^\/plans/.test( path ) ) {
 			return ! site.jetpack || site.isSiteUpgradeable;
 		}
