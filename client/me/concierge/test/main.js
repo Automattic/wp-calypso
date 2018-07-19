@@ -48,6 +48,7 @@ import { ConciergeMain } from '../main';
 const props = {
 	steps: [ 'Step1' ],
 	availableTimes: [],
+	nextAppointment: null,
 	site: {
 		plan: {},
 	},

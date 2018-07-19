@@ -28,7 +28,9 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import { planMatches } from 'lib/plans';
 import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-times';
+import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 import getUserSettings from 'state/selectors/get-user-settings';
+import PendingAppointment from './pending-appointment/pending-appointment';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 import { getSite } from 'state/sites/selectors';
 import Upsell from './shared/upsell';
@@ -52,7 +54,14 @@ export class ConciergeMain extends Component {
 	};
 
 	getDisplayComponent = () => {
-		const { appointmentId, availableTimes, site, steps, userSettings } = this.props;
+		const {
+			appointmentId,
+			availableTimes,
+			nextAppointment,
+			site,
+			steps,
+			userSettings,
+		} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
 		const Skeleton = this.props.skeleton;
@@ -63,6 +72,10 @@ export class ConciergeMain extends Component {
 
 		if ( ! planMatches( site.plan.product_slug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) ) {
 			return <Upsell site={ site } />;
+		}
+
+		if ( nextAppointment && ! appointmentId ) {
+			return <PendingAppointment nextAppointment={ nextAppointment } site={ site } />;
 		}
 
 		// We have shift data and this is a business site — show the signup steps
@@ -95,6 +108,7 @@ export class ConciergeMain extends Component {
 
 export default connect( ( state, props ) => ( {
 	availableTimes: getConciergeAvailableTimes( state ),
+	nextAppointment: getConciergeNextAppointment( state ),
 	site: getSite( state, props.siteSlug ),
 	userSettings: getUserSettings( state ),
 } ) )( ConciergeMain );
