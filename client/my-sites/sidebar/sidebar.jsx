@@ -16,7 +16,7 @@ import page from 'page';
  */
 import { abtest } from 'lib/abtest';
 import Button from 'components/button';
-import config from 'config';
+import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
@@ -70,7 +70,7 @@ export class MySitesSidebar extends Component {
 		currentUser: PropTypes.object,
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		isSiteAutomatedTransfer: PropTypes.bool,
+		isAtomicSite: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -108,6 +108,7 @@ export class MySitesSidebar extends Component {
 			<ManageMenu
 				siteId={ this.props.siteId }
 				path={ this.props.path }
+				isAtomicSite={ this.props.isAtomicSite }
 				onNavigate={ this.onNavigate }
 			/>
 		);
@@ -200,7 +201,7 @@ export class MySitesSidebar extends Component {
 
 		if (
 			! this.props.isJetpack &&
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			isEnabled( 'upsell/nudge-a-palooza' ) &&
 			canUserUpgradeSite &&
 			abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
 		) {
@@ -226,14 +227,14 @@ export class MySitesSidebar extends Component {
 
 	themes() {
 		const { path, site, translate, canUserEditThemeOptions } = this.props,
-			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
+			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
 			return null;
 		}
 
-		if ( ! config.isEnabled( 'manage/themes' ) ) {
+		if ( ! isEnabled( 'manage/themes' ) ) {
 			return null;
 		}
 
@@ -282,8 +283,9 @@ export class MySitesSidebar extends Component {
 	};
 
 	plugins() {
-		const pluginsLink = '/plugins' + this.props.siteSuffix;
-		const managePluginsLink = '/plugins/manage' + this.props.siteSuffix;
+		if ( isEnabled( 'calypsoify/plugins' ) ) {
+			return null;
+		}
 
 		// checks for manage plugins capability across all sites
 		if ( ! this.props.canManagePlugins ) {
@@ -294,6 +296,9 @@ export class MySitesSidebar extends Component {
 		if ( this.props.siteId && ! this.props.canUserManageOptions ) {
 			return null;
 		}
+
+		const pluginsLink = '/plugins' + this.props.siteSuffix;
+		const managePluginsLink = '/plugins/manage' + this.props.siteSuffix;
 
 		const manageButton =
 			this.props.isJetpack || ( ! this.props.siteId && this.props.hasJetpackSites ) ? (
@@ -338,7 +343,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
+		if ( this.props.isJetpack && ! this.props.isAtomicSite ) {
 			return null;
 		}
 
@@ -422,18 +427,19 @@ export class MySitesSidebar extends Component {
 	store() {
 		const { canUserUpgradeSite, site, canUserUseStore } = this.props;
 
-		if ( ! config.isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
 
 		if ( ! canUserUseStore ) {
 			if (
-				config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+				isEnabled( 'upsell/nudge-a-palooza' ) &&
 				canUserUpgradeSite &&
 				abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
 			) {
 				return this.storeUpsellSidebarItem();
 			}
+
 			return null;
 		}
 
@@ -596,7 +602,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! this.useWPAdminFlows() && ! this.props.isSiteAutomatedTransfer ) {
+		if ( ! this.useWPAdminFlows() && ! this.props.isAtomicSite ) {
 			return null;
 		}
 
@@ -787,7 +793,7 @@ function mapStateToProps( state ) {
 		isJetpack,
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isSharingEnabledOnJetpackSite,
-		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',

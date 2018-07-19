@@ -16,6 +16,7 @@ import { receiveSite, requestSite } from 'state/sites/actions';
 import {
 	getSite,
 	getSiteSlug,
+	getSiteAdminUrl,
 	isJetpackModuleActive,
 	isJetpackSite,
 	isRequestingSites,
@@ -37,6 +38,7 @@ import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getSiteId from 'state/selectors/get-site-id';
 import getSites from 'state/selectors/get-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import {
 	domainManagementAddGoogleApps,
 	domainManagementContactsPrivacy,
@@ -375,6 +377,20 @@ export function siteSelection( context, next ) {
 
 	const siteId = getSiteId( getState(), siteFragment );
 	if ( siteId ) {
+		const isAtomicSite = isSiteAutomatedTransfer( getState(), siteId );
+		const calypsoify = isAtomicSite && config.isEnabled( 'calypsoify/plugins' );
+
+		if (
+			window &&
+			window.location &&
+			window.location.replace &&
+			calypsoify &&
+			/^\/plugins/.test( basePath )
+		) {
+			const pluginLink = getSiteAdminUrl( getState(), siteId ) + 'plugin-install.php?calypsoify=1';
+			return window.location.replace( pluginLink );
+		}
+
 		dispatch( setSelectedSiteId( siteId ) );
 		const selectionComplete = onSelectedSiteAvailable( context );
 

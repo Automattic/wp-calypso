@@ -21,6 +21,7 @@
 		"ad-tracking": false,
 		"apple-pay": false,
 		"automated-transfer": true,
+		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"devdocs": false,

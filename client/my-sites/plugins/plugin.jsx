@@ -9,12 +9,14 @@ import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes, uniq } from 'lodash';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
  */
 import PluginSiteList from 'my-sites/plugins/plugin-site-list';
 import HeaderCake from 'components/header-cake';
+import Card from 'components/card';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
@@ -37,6 +39,8 @@ import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-al
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
+import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { getToursHistory } from 'state/ui/guided-tours/selectors';
 
 const SinglePlugin = createReactClass( {
 	displayName: 'SinglePlugin',
@@ -52,6 +56,7 @@ const SinglePlugin = createReactClass( {
 	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
+		this.hasAlreadyShownTheTour = false;
 	},
 
 	getInitialState() {
@@ -61,6 +66,7 @@ const SinglePlugin = createReactClass( {
 	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
+		this.hasAlreadyShownTheTour = false;
 		if ( this.pluginRefreshTimeout ) {
 			clearTimeout( this.pluginRefreshTimeout );
 		}
@@ -131,7 +137,11 @@ const SinglePlugin = createReactClass( {
 		return '/plugins/manage/' + ( this.props.siteUrl || '' );
 	},
 
-	displayHeader() {
+	displayHeader( calypsoify ) {
+		if ( ! this.props.selectedSite || calypsoify ) {
+			return <Card className="plugins__installed-header" />;
+		}
+
 		const recordEvent = this.recordEvent.bind( this, 'Clicked Header Plugin Back Arrow' );
 		return (
 			<HeaderCake
@@ -205,13 +215,21 @@ const SinglePlugin = createReactClass( {
 	getAllowedPluginActions( plugin ) {
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
 		const hiddenForAutomatedTransfer =
-			this.props.isSiteAutomatedTransfer && includes( autoManagedPlugins, plugin.slug );
+			this.props.isAtomicSite && includes( autoManagedPlugins, plugin.slug );
 
 		return {
 			autoupdate: ! hiddenForAutomatedTransfer,
 			activation: ! hiddenForAutomatedTransfer,
 			remove: ! hiddenForAutomatedTransfer,
 		};
+	},
+
+	isPluginInstalledOnsite() {
+		if ( this.isFetchingSites() ) {
+			return null;
+		}
+
+		return !! PluginsStore.getSitePlugin( this.props.selectedSite, this.state.plugin.slug );
 	},
 
 	renderDocumentHead() {
@@ -266,15 +284,12 @@ const SinglePlugin = createReactClass( {
 					{ this.displayHeader() }
 					<PluginMeta
 						isPlaceholder
-						isInstalledOnSite={
-							this.isFetchingSites()
-								? null
-								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
-						}
+						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						plugin={ this.getPlugin() }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
+						isAtomicSite={ this.props.isAtomicSite }
 					/>
 				</div>
 			</MainComponent>
@@ -304,14 +319,13 @@ const SinglePlugin = createReactClass( {
 				<div className="plugin__page">
 					{ this.displayHeader() }
 					<PluginMeta
-						isInstalledOnSite={
-							!! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
-						}
+						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						plugin={ this.getPlugin() }
 						siteUrl={ 'no-real-url' }
 						sites={ [ selectedSite ] }
 						selectedSite={ selectedSite }
 						isMock={ true }
+						isAtomicSite={ this.props.isAtomicSite }
 					/>
 				</div>
 			</MainComponent>
@@ -319,8 +333,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	render() {
-		const { selectedSite } = this.props;
-
+		const { selectedSite, requestTour } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
@@ -359,6 +372,17 @@ const SinglePlugin = createReactClass( {
 			PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
 
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
+		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
+
+		if ( calypsoify && this.isPluginInstalledOnsite() && ! this.hasAlreadyShownTheTour ) {
+			const pluginsToursSeen = this.props.toursHistory.filter(
+				tour => tour.tourName === 'pluginsBasicTour'
+			);
+			if ( pluginsToursSeen.length < 3 ) {
+				this.hasAlreadyShownTheTour = true;
+				requestTour( 'pluginsBasicTour' );
+			}
+		}
 
 		return (
 			<MainComponent>
@@ -367,19 +391,16 @@ const SinglePlugin = createReactClass( {
 				{ this.renderPageViewTracker() }
 				<SidebarNavigation />
 				<div className="plugin__page">
-					{ this.displayHeader() }
+					{ this.displayHeader( calypsoify ) }
 					<PluginMeta
 						plugin={ plugin }
 						siteUrl={ this.props.siteUrl }
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
-						isInstalledOnSite={
-							this.isFetchingSites()
-								? null
-								: !! PluginsStore.getSitePlugin( selectedSite, this.state.plugin.slug )
-						}
+						isInstalledOnSite={ this.isPluginInstalledOnsite() }
 						isInstalling={ installing }
 						allowedActions={ allowedPluginActions }
+						calypsoify={ calypsoify }
 					/>
 					{ plugin.wporg ? (
 						<PluginSections plugin={ plugin } isWpcom={ isWpcom } />
@@ -401,18 +422,20 @@ export default connect(
 			wporgPlugins: state.plugins.wporg.items,
 			wporgFetching: isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
 			selectedSite: getSelectedSite( state ),
+			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
 			canJetpackSiteManage: selectedSiteId && canJetpackSiteManage( state, selectedSiteId ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
 			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
 				: canCurrentUserManagePlugins( state ),
 			sites: getSelectedOrAllSitesWithPlugins( state ),
+			toursHistory: getToursHistory( state ),
 		};
 	},
 	{
 		recordGoogleEvent,
 		wporgFetchPluginData,
+		requestTour: requestGuidedTour,
 	}
 )( localize( SinglePlugin ) );

@@ -22,6 +22,7 @@ import { JetpackBasicTour } from 'layout/guided-tours/tours/jetpack-basic-tour';
 import { JetpackMonitoringTour } from 'layout/guided-tours/tours/jetpack-monitoring-tour';
 import { JetpackSignInTour } from 'layout/guided-tours/tours/jetpack-sign-in-tour';
 import { SimplePaymentsEmailTour } from 'layout/guided-tours/tours/simple-payments-email-tour';
+import { PluginsBasicTour } from 'layout/guided-tours/tours/plugins-basic-tour';
 
 export default combineTours( {
 	checklistAboutPage: ChecklistAboutPageTour,
@@ -41,4 +42,5 @@ export default combineTours( {
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	simplePaymentsTour: SimplePaymentsTour,
 	simplePaymentsEmailTour: SimplePaymentsEmailTour,
+	pluginsBasicTour: PluginsBasicTour,
 } );

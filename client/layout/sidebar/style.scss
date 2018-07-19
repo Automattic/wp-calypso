@@ -4,12 +4,12 @@
 	overflow: auto;
 	padding: 0;
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 	}
 }
@@ -20,7 +20,7 @@
 
 	.current-site,
 	.sidebar__footer {
-		flex-shrink: 0;	// prevents items from squishing together under their initial height in Safari
+		flex-shrink: 0; // prevents items from squishing together under their initial height in Safari
 	}
 
 	ul {
@@ -48,14 +48,14 @@
 .sidebar__menu {
 	display: block;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 24px;
 	}
 
 	li {
 		display: flex;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			background-color: $gray-light;
 			border-bottom: 1px solid lighten( $gray, 25 );
 
@@ -74,19 +74,15 @@
 			content: '';
 			text-align: right;
 			position: absolute;
-				top: 0;
-				right: 0;
-				bottom: 0;
+			top: 0;
+			right: 0;
+			bottom: 0;
 			width: 15%;
 
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
 
-			@include breakpoint( "<660px" ) {
-
-				background: linear-gradient(
-					to right,
-					rgba( $gray-light, 0 ),
-					rgba( $gray-light, 1 ) 50% );
+			@include breakpoint( '<660px' ) {
+				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
 			}
 		}
 	}
@@ -114,7 +110,7 @@
 			}
 		}
 
-		-webkit-tap-highlight-color: rgba( $gray-dark, .2 );
+		-webkit-tap-highlight-color: rgba( $gray-dark, 0.2 );
 
 		.sidebar__menu-link-secondary-text {
 			padding: 3px 8px 4px 8px;
@@ -140,14 +136,12 @@
 		// External indicator for sections that aren't available in Calypso
 		&.gridicons-external {
 			position: absolute;
-				top: 13px;
-				right: 8px;
-				left: auto;
+			top: 13px;
+			right: 8px;
+			left: auto;
 			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
 			height: 18px;
 			margin-right: 0;
-
-
 		}
 	}
 }
@@ -170,7 +164,7 @@ form.sidebar__button {
 	border-radius: 3px;
 	border: 1px solid $gray-lighten-20;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 14px;
 		height: 30px;
 		line-height: 23px;
@@ -190,8 +184,8 @@ form.sidebar__button input {
 }
 
 // Selected Menu
-@include breakpoint( ">660px" ) {
-	.sidebar__menu .selected {
+@include breakpoint( '>660px' ) {
+	.sidebar__menu .selected:not( .sidebar__plugins-item ) {
 		background-color: var( --sidebar-menu-selected-background-color );
 
 		a {
@@ -202,7 +196,9 @@ form.sidebar__button input {
 			}
 
 			&:first-child:after {
-				background: overflow-gradient( var( --sidebar-menu-selected-a-first-child-after-background ) );
+				background: overflow-gradient(
+					var( --sidebar-menu-selected-a-first-child-after-background )
+				);
 			}
 		}
 
@@ -222,19 +218,15 @@ form.sidebar__button input {
 
 		&.is-action-button-selected a {
 			&:first-child:after {
-				background: linear-gradient(
-					to right,
-					rgba( $gray-light, 0 ),
-					rgba( $gray-light, 1 ) 50% );
+				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
 			}
 		}
 	}
 }
 
-
 // Menu Hover
 .notouch .sidebar__menu li:hover {
-	&:not(.selected) {
+	&:not( .selected ) {
 		background-color: lighten( $sidebar-bg-color, 3% );
 
 		a,
@@ -243,7 +235,8 @@ form.sidebar__button input {
 				background: linear-gradient(
 					to right,
 					rgba( lighten( $sidebar-bg-color, 3% ), 0 ),
-					rgba( lighten( $sidebar-bg-color, 3% ), 1 ) 50% );
+					rgba( lighten( $sidebar-bg-color, 3% ), 1 ) 50%
+				);
 			}
 
 			&.sidebar__button {
@@ -253,7 +246,7 @@ form.sidebar__button input {
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		background-color: $gray-light;
 
 		a,
@@ -261,10 +254,7 @@ form.sidebar__button input {
 			color: $blue-medium;
 
 			&:first-child:after {
-				background: linear-gradient(
-					to right,
-					rgba( $gray-light, 0 ),
-					rgba( $gray-light, 1 ) 50% );
+				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
 			}
 
 			&.sidebar__button {
@@ -279,7 +269,7 @@ form.sidebar__button input {
 	}
 }
 
-.notouch .sidebar__menu li:not(.selected) {
+.notouch .sidebar__menu li:not( .selected ) {
 	a,
 	form {
 		&.sidebar__button:hover {
@@ -291,7 +281,8 @@ form.sidebar__button input {
 		border-color: darken( $sidebar-bg-color, 10% );
 	}
 
-	a:hover, form:hover {
+	a:hover,
+	form:hover {
 		color: $blue-medium;
 
 		.sidebar__menu-link-secondary-text {
@@ -343,7 +334,7 @@ form.sidebar__button input {
 		color: $gray-dark;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding: 16px;
 	}
 
@@ -354,7 +345,6 @@ form.sidebar__button input {
 		top: auto;
 		margin-top: auto;
 	}
-
 }
 
 .sidebar__region {
@@ -405,7 +395,9 @@ form.sidebar__button input {
 		cursor: default;
 		pointer-events: none;
 
-		.gridicon, span, .sidebar__button {
+		.gridicon,
+		span,
+		.sidebar__button {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: lighten( $gray, 25% );
 			color: transparent;
@@ -425,8 +417,9 @@ form.sidebar__button input {
 }
 
 .sidebar__chevron-right {
-	position: absolute;
-	right: 0;
+	position: relative;
+	width: 36px;
+	height: 46px;
 	pointer-events: none;
 
 	.gridicon {
