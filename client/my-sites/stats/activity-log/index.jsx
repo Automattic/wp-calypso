@@ -394,7 +394,7 @@ class ActivityLog extends Component {
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
-				{ 'awaitingCredentials' === rewindState.state && (
+				{ 'awaitingCredentials' === rewindState.state && ! this.props.siteIsOnFreePlan && (
 					<Banner
 						icon="history"
 						href={
