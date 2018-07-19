@@ -96,12 +96,13 @@ export const tasks = [
 	},
 	{
 		id: 'custom_domain_registered',
-		title: 'Register a custom domain',
-		description:
-			'Memorable domain names make it easy for people to remember your address — and search engines love ’em.',
-		duration: '2 min',
-		completedTitle: 'You registered a custom domain',
-		completedButtonText: 'Edit',
+		title: translate( 'Register a custom domain' ),
+		description: translate(
+			'Memorable domain names make it easy for people to remember your address — and search engines love ’em.'
+		),
+		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
+		completedTitle: translate( 'You registered a custom domain' ),
+		completedButtonText: translate( 'Edit' ),
 		url: '/domains/add/$siteSlug',
 		tour: 'checklistDomainRegister',
 	},
