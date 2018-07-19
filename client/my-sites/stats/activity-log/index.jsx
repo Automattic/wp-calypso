@@ -24,7 +24,6 @@ import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import { isFreePlan } from 'lib/plans';
-import FoldableCard from 'components/foldable-card';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -320,17 +319,16 @@ class ActivityLog extends Component {
 		// The network request is still ongoing
 		return (
 			<section className="activity-log__wrapper">
+				<div className="activity-log__time-period is-loading">
+					<span />
+				</div>
 				{ [ 1, 2, 3 ].map( i => (
-					<FoldableCard
-						key={ i }
-						className="activity-log-day__placeholder"
-						header={
-							<div>
-								<div className="activity-log-day__day" />
-								<div className="activity-log-day__events" />
-							</div>
-						}
-					/>
+					<div key={ i } className="activity-log-item is-loading">
+						<div className="activity-log-item__type">
+							<div className="activity-log-item__activity-icon" />
+						</div>
+						<div className="card foldable-card activity-log-item__card" />
+					</div>
 				) ) }
 			</section>
 		);
