@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -21,7 +22,10 @@ export default class GutenbergBlocks extends React.Component {
 			<Main className={ className }>
 				<DocumentHead title="Gutenberg Blocks" />
 				<ReadmeViewer readmeFilePath="/client/devdocs/gutenberg-blocks/README.md" />
+
+				<Button>My Button</Button>
 			</Main>
 		);
 	}
+
 }
