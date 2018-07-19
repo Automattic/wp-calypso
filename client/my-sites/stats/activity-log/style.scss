@@ -42,6 +42,15 @@
 	@include breakpoint( '<660px' ) {
 		margin-left: 10px;
 	}
+
+	&.is-loading span {
+		display: block;
+		height: 23px;
+		width: 100px;
+		margin: 3px 0;
+		background-color: $gray-lighten-20;
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
 }
 
 .activity-log__rewind-toggle {
