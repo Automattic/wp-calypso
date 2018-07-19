@@ -41,7 +41,7 @@ const edit = ( { attributes: { notes }, className, isSelected, setAttributes } )
 const save = () => null;
 
 wp.blocks.registerBlockType( 'a8c/editor-notes', {
-	title: 'Editor Notes',
+	title: "Editor's Notes",
 	icon: 'welcome-write-blog',
 	category: 'common',
 	attributes,
