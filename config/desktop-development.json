@@ -149,7 +149,6 @@
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
 		"signup/wpcc": true,
-		"simple-payments": true,
 		"support-user": true,
 		"try/preconnect": true,
 		"try/preload": true,

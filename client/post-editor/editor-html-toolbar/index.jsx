@@ -509,51 +509,49 @@ export class EditorHtmlToolbar extends Component {
 
 		return (
 			<div className={ insertContentClasses }>
-				<div
+				<button
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openMediaModal }
 				>
 					<Gridicon icon="image" />
 					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
-				</div>
+				</button>
 
 				{ config.isEnabled( 'external-media/google-photos' ) && (
-					<div
+					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openGoogleModal }
 					>
 						<Gridicon icon="shutter" />
 						<span data-e2e-insert-type="google-media">{ translate( 'Media from Google' ) }</span>
-					</div>
+					</button>
 				) }
 
 				{ config.isEnabled( 'external-media/free-photo-library' ) && (
-					<div
+					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openPexelsModal }
 					>
 						<Gridicon icon="image-multiple" />
 						<span data-e2e-insert-type="pexels">{ translate( 'Free photo library' ) }</span>
-					</div>
+					</button>
 				) }
 
-				<div
+				<button
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openContactFormDialog }
 				>
 					<Gridicon icon="mention" />
 					<span data-e2e-insert-type="contact-form">{ translate( 'Contact form' ) }</span>
-				</div>
+				</button>
 
-				{ config.isEnabled( 'simple-payments' ) && (
-					<div
-						className="editor-html-toolbar__insert-content-dropdown-item"
-						onClick={ this.openSimplePaymentsDialog }
-					>
-						<Gridicon icon="money" />
-						<span data-e2e-insert-type="payment-button">{ translate( 'Payment button' ) }</span>
-					</div>
-				) }
+				<button
+					className="editor-html-toolbar__insert-content-dropdown-item"
+					onClick={ this.openSimplePaymentsDialog }
+				>
+					<Gridicon icon="money" />
+					<span data-e2e-insert-type="payment-button">{ translate( 'Payment button' ) }</span>
+				</button>
 			</div>
 		);
 	};
