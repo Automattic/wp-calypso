@@ -43,6 +43,10 @@ const fetchProgress = action => {
 		return;
 	}
 
+	if ( ! restoreId ) {
+		return;
+	}
+
 	recentRequests.set( key, now );
 
 	return http(
