@@ -11,8 +11,9 @@ import { LOCALE_SET } from 'state/action-types';
 function updateMoment( action ) {
 	if ( action && action.type === LOCALE_SET && action.localeSlug !== 'en' ) {
 		// load moment and update the locale
-		asyncRequire( 'moment', moment => {
-			asyncRequire( 'moment/locale/' + action.localeSlug, () => {
+		import( 'moment' ).then( moment => {
+			import( /* webpackInclude: /\.js$/ */
+			`moment/locale/${ action.localeSlug }` ).then( () => {
 				moment.locale( action.localeSlug );
 			} );
 		} );
