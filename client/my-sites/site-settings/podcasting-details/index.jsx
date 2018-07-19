@@ -32,6 +32,7 @@ import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
+import PodcastingPublishNotice from './publish-notice';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -246,12 +247,21 @@ class PodcastingDetails extends Component {
 	}
 
 	renderCategorySetting() {
-		const { siteId, podcastingCategoryId, isCategoryChanging, translate } = this.props;
+		const {
+			siteId,
+			isPodcastingEnabled,
+			podcastingCategoryId,
+			isCategoryChanging,
+			translate,
+		} = this.props;
 
 		return (
 			<Fragment>
 				<QueryTerms siteId={ siteId } taxonomy="category" />
 				<FormFieldset>
+					{ isPodcastingEnabled && (
+						<PodcastingPublishNotice podcastingCategoryId={ podcastingCategoryId } />
+					) }
 					<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
 					<FormSettingExplanation>
 						{ translate(
