@@ -42,10 +42,10 @@ export const UnavailabilityNotice = ( {
 						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
 						plan={ PLAN_JETPACK_PERSONAL }
-						title={ translate( 'Upgrade' ) }
+						title={ translate( 'Stay Safe' ) }
 						description={ translate(
-							'Get daily off-site backups and keep an eye on your site ' +
-								'with more activity types and details'
+							'Protect your data with daily off-site backups, ' +
+								'and keep a closer eye on your site with expanded activity logs.'
 						) }
 					/>
 				);

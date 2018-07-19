@@ -26,13 +26,12 @@ class UpgradeBanner extends Component {
 					dismissPreferenceName="activity-upgrade-banner-simple"
 					event="activity_log_upgrade_click_wpcom"
 					feature={ FEATURE_JETPACK_ESSENTIAL }
-					list={ [
-						translate( 'Get a custom domain name' ),
-						translate( 'Remove WordPress.com ads' ),
-						translate( 'Keep an eye on your site with more activities types and details' ),
-					] }
 					plan={ PLAN_PERSONAL }
-					title={ translate( 'Upgrade your WordPress.com experience' ) }
+					title={ translate( 'Enhance your WP.com experience' ) }
+					description={ translate(
+						'Improve your SEO, protect your site from spammers, ' +
+							'and keep a closer eye on your site with expanded activity logs.'
+					) }
 				/>
 			</div>
 		);
