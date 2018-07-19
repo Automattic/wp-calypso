@@ -462,7 +462,7 @@ sections.push( {
 	module: 'gutenberg/editor',
 	group: 'editor',
 	css: 'gutenberg-editor',
-	secondary: true,
+	secondary: false,
 } );
 
 module.exports = sections;
