@@ -75,7 +75,11 @@
 }
 
 .activity-log__pagination {
-	margin: 14px 0 48px;
+	margin: 32px 0 14px;
+
+	&.is-bottom-pagination {
+		margin: 14px 0 48px;
+	}
 }
 
 .card.activity-log__threats {

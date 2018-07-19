@@ -426,6 +426,16 @@ class ActivityLog extends Component {
 					this.renderNoLogsContent()
 				) : (
 					<div>
+						<Pagination
+							className="activity-log__pagination"
+							key="activity-list-pagination-top"
+							nextLabel={ translate( 'Older' ) }
+							page={ actualPage }
+							pageClick={ this.changePage }
+							perPage={ PAGE_SIZE }
+							prevLabel={ translate( 'Newer' ) }
+							total={ logs.length }
+						/>
 						<section className="activity-log__wrapper">
 							{ theseLogs.map( log => (
 								<Fragment key={ log.activityId }>
@@ -442,8 +452,8 @@ class ActivityLog extends Component {
 							) ) }
 						</section>
 						<Pagination
-							className="activity-log__pagination"
-							key="activity-list-pagination"
+							className="activity-log__pagination is-bottom-pagination"
+							key="activity-list-pagination-bottom"
 							nextLabel={ translate( 'Older' ) }
 							page={ actualPage }
 							pageClick={ this.changePage }
