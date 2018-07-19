@@ -233,12 +233,7 @@ $feature-upsell-break-at: '1040px';
 	display: inline-block;
 	margin: 0 auto;
 	text-align: left;
-}
-
-.feature-upsell__list {
-	display: inline-block;
-	margin: 0 auto;
-	text-align: left;
+	min-width: 380px; // IE11 really wants to squish the list, this helps
 }
 
 .feature-upsell__list-item {
