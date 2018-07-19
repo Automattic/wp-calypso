@@ -18,6 +18,7 @@ const config = {
 		externals: {
 			...baseConfig.externals,
 			wp: 'wp',
+			'@automattic/simple-components': 'automattic-components',
 		},
 		optimization: {
 			splitChunks: false,
