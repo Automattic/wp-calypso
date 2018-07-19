@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
  */
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isJetpackModuleActive } from 'state/sites/selectors';
@@ -80,8 +80,8 @@ class SharingLikeOptions extends React.Component {
 		mcStat += event.target.checked ? '_enabled' : '_disabled';
 		eventStat += event.target.checked ? ' Enabled' : ' Disabled';
 
-		recordStat( mcStat );
-		recordEvent( eventStat );
+		this.props.recordEditorStat( mcStat );
+		this.props.recordEditorEvent( eventStat );
 	}
 
 	render() {
@@ -142,7 +142,5 @@ export default connect(
 			isShowingLikeButton: isShowingLikeButton( site, post, isNew ),
 		};
 	},
-	{
-		editPost,
-	}
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( SharingLikeOptions ) );

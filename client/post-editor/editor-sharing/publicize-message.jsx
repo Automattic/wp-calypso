@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
@@ -17,7 +18,7 @@ import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormTextarea from 'components/forms/form-textarea';
 import InfoPopover from 'components/info-popover';
 import TrackInputChanges from 'components/track-input-changes';
-import * as stats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 
 class PublicizeMessage extends Component {
 	static propTypes = {
@@ -49,8 +50,8 @@ class PublicizeMessage extends Component {
 	};
 
 	recordStats = () => {
-		stats.recordStat( 'sharing_message_changed' );
-		stats.recordEvent( 'Publicize Sharing Message Changed' );
+		this.props.recordEditorStat( 'sharing_message_changed' );
+		this.props.recordEditorEvent( 'Publicize Sharing Message Changed' );
 	};
 
 	shouldPreFillMessage() {
@@ -139,4 +140,7 @@ class PublicizeMessage extends Component {
 	}
 }
 
-export default localize( PublicizeMessage );
+export default connect(
+	null,
+	{ recordEditorStat, recordEditorEvent }
+)( localize( PublicizeMessage ) );

@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteThemeShowcasePath } from 'state/sites/selectors';
-import { recordStat } from 'lib/posts/stats';
+import { recordEditorStat } from 'state/posts/stats';
 
 class EditorThemeHelp extends PureComponent {
 	static propTypes = {
@@ -22,14 +22,7 @@ class EditorThemeHelp extends PureComponent {
 		classname: PropTypes.string,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.recordClick = this.recordClick.bind( this );
-	}
-
-	recordClick() {
-		recordStat( 'clicked_theme_help_link' );
-	}
+	recordClick = () => this.props.recordEditorStat( 'clicked_theme_help_link' );
 
 	render() {
 		const { translate, themeHelpPath, className } = this.props;
@@ -46,10 +39,13 @@ class EditorThemeHelp extends PureComponent {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
 
-	return {
-		themeHelpPath: getSiteThemeShowcasePath( state, siteId ),
-	};
-} )( localize( EditorThemeHelp ) );
+		return {
+			themeHelpPath: getSiteThemeShowcasePath( state, siteId ),
+		};
+	},
+	{ recordEditorStat }
+)( localize( EditorThemeHelp ) );

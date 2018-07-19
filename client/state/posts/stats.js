@@ -3,13 +3,13 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import * as utils from 'lib/posts/utils';
+import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import * as utils from 'state/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getEditorPostId, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
@@ -20,23 +20,12 @@ import { getEditedPost, getSitePost } from 'state/posts/selectors';
  */
 const debug = debugModule( 'calypso:posts:stats' );
 
-function recordUsageStats( siteIsJetpack, action, postType ) {
-	analytics.mc.bumpStat( 'editor_usage', action );
-
-	const source = siteIsJetpack ? 'jetpack' : 'wpcom';
-	analytics.mc.bumpStat( 'editor_usage_' + source, action );
-
-	if ( postType ) {
-		analytics.mc.bumpStat( 'editor_cpt_usage_' + source, postType + '_' + action );
-	}
+export function recordEditorStat( action ) {
+	return bumpStat( 'editor_actions', action );
 }
 
-export function recordStat( action ) {
-	analytics.mc.bumpStat( 'editor_actions', action );
-}
-
-export function recordEvent( action, label, value ) {
-	analytics.ga.recordEvent( 'Editor', action, label, value );
+export function recordEditorEvent( action, label, value ) {
+	return recordGoogleEvent( 'Editor', action, label, value );
 }
 
 export const recordSaveEvent = () => ( dispatch, getState ) => {
@@ -78,17 +67,23 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 	}
 
 	if ( usageAction ) {
-		recordUsageStats( isJetpackSite( state, siteId ), usageAction, post.type );
+		const source = isJetpackSite( state, siteId ) ? 'jetpack' : 'wpcom';
+
+		dispatch( bumpStat( 'editor_usage', usageAction ) );
+		dispatch( bumpStat( 'editor_usage_' + source, usageAction ) );
+		if ( post.type ) {
+			dispatch( bumpStat( 'editor_cpt_usage_' + source, post.type + '_' + usageAction ) );
+		}
 	}
 
 	// if this action has an mc stat name, record it
 	if ( statName ) {
-		recordStat( statName );
+		dispatch( recordEditorStat( statName ) );
 	}
 
 	// if this action has a GA event, record it
 	if ( statEvent ) {
-		recordEvent( statEvent );
+		dispatch( recordEditorEvent( statEvent ) );
 	}
 
 	debug(
@@ -98,27 +93,14 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 		nextStatus
 	);
 
-	analytics.tracks.recordEvent( tracksEventName, {
-		post_id: post.ID,
-		post_type: post.type,
-		visibility: utils.getVisibility( post ),
-		current_status: currentStatus,
-		next_status: nextStatus,
-		context: eventContext,
-	} );
+	dispatch(
+		recordTracksEvent( tracksEventName, {
+			post_id: post.ID,
+			post_type: post.type,
+			visibility: utils.getVisibility( post ),
+			current_status: currentStatus,
+			next_status: nextStatus,
+			context: eventContext,
+		} )
+	);
 };
-
-const shouldBumpStat = Math.random() <= 0.01 || process.env.NODE_ENV === 'development';
-const maybeBumpStat = shouldBumpStat ? analytics.mc.bumpStat : noop;
-
-export function recordTinyMCEButtonClick( buttonName ) {
-	maybeBumpStat( 'editor-button', 'calypso_' + buttonName );
-	analytics.ga.recordEvent( 'Editor', 'Clicked TinyMCE Button', buttonName );
-	debug( 'TinyMCE button click', buttonName, 'mc=', shouldBumpStat );
-}
-
-export function recordTinyMCEHTMLButtonClick( buttonName ) {
-	maybeBumpStat( 'html-editor-button', 'calypso_' + buttonName );
-	analytics.ga.recordEvent( 'Editor', 'Clicked TinyMCE HTML Button', buttonName );
-	debug( 'TinyMCE HTML button click', buttonName, 'mc=', shouldBumpStat );
-}

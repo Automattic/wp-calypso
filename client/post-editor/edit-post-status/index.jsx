@@ -15,9 +15,9 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
-import * as postUtils from 'lib/posts/utils';
+import * as postUtils from 'state/posts/utils';
 import InfoPopover from 'components/info-popover';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -49,8 +49,8 @@ export class EditPostStatus extends Component {
 			stickyEventLabel = 'Off';
 		}
 
-		recordStat( stickyStat );
-		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
+		this.props.recordEditorStat( stickyStat );
+		this.props.recordEditorEvent( 'Changed Sticky Setting', stickyEventLabel );
 
 		this.props.editPost( this.props.siteId, this.props.postId, {
 			sticky: ! this.props.post.sticky,
@@ -60,8 +60,11 @@ export class EditPostStatus extends Component {
 	togglePendingStatus = () => {
 		const pending = this.props.post.status === 'pending';
 
-		recordStat( 'status_changed' );
-		recordEvent( 'Changed Pending Status', pending ? 'Marked Draft' : 'Marked Pending' );
+		this.props.recordEditorStat( 'status_changed' );
+		this.props.recordEditorEvent(
+			'Changed Pending Status',
+			pending ? 'Marked Draft' : 'Marked Pending'
+		);
 
 		this.props.editPost( this.props.siteId, this.props.postId, {
 			status: pending ? 'draft' : 'pending',
@@ -168,5 +171,5 @@ export default connect(
 			canUserPublishPosts,
 		};
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( EditPostStatus ) );

@@ -14,7 +14,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as postUtils from 'lib/posts/utils';
+import * as postUtils from 'state/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';

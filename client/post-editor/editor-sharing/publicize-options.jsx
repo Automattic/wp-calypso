@@ -20,7 +20,7 @@ import { publicizeConnections } from 'lib/paths';
 import PostMetadata from 'lib/post-metadata';
 import PopupMonitor from 'lib/popup-monitor';
 import Button from 'components/button';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -75,8 +75,8 @@ class EditorSharingPublicizeOptions extends React.Component {
 
 	newConnection = () => {
 		this.newConnectionPopup();
-		recordStat( 'sharing_create_service' );
-		recordEvent( 'Opened Create New Sharing Service Dialog' );
+		this.props.recordEditorStat( 'sharing_create_service' );
+		this.props.recordEditorEvent( 'Opened Create New Sharing Service Dialog' );
 	};
 
 	renderServices = () => {
@@ -192,8 +192,5 @@ export default connect(
 			connections: getSiteUserConnections( state, siteId, userId ),
 		};
 	},
-	{
-		requestConnections,
-		updatePostMetadata,
-	}
+	{ requestConnections, updatePostMetadata, recordEditorStat, recordEditorEvent }
 )( localize( EditorSharingPublicizeOptions ) );

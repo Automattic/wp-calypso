@@ -7,12 +7,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { recordEvent } from 'lib/posts/stats';
-import * as postUtils from 'lib/posts/utils';
+import { recordEditorEvent } from 'state/posts/stats';
+import * as postUtils from 'state/posts/utils';
 import Button from 'components/button';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -51,12 +52,17 @@ export class EditorPublishButton extends Component {
 		needsVerification: PropTypes.bool,
 		isPasswordProtectedWithInvalidPassword: PropTypes.bool,
 		isConfirmationSidebarEnabled: PropTypes.bool,
+		recordEditorEvent: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		recordEditorEvent: noop,
 	};
 
 	trackClick() {
 		const events = postUtils.isPage( this.props.currentPost ) ? PAGE_EVENTS : POST_EVENTS;
-		recordEvent( events[ this.props.publishButtonStatus ] );
-		recordEvent( 'Clicked Primary Button' );
+		this.props.recordEditorEvent( events[ this.props.publishButtonStatus ] );
+		this.props.recordEditorEvent( 'Clicked Primary Button' );
 	}
 
 	getButtonLabel() {
@@ -145,20 +151,23 @@ export class EditorPublishButton extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const currentPost = getSitePost( state, siteId, postId );
-	const publishButtonStatus = getEditorPublishButtonStatus( state );
-	const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
-	const isPasswordProtectedWithInvalidPassword =
-		isEditedPostPasswordProtected( state, siteId, postId ) &&
-		! isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const currentPost = getSitePost( state, siteId, postId );
+		const publishButtonStatus = getEditorPublishButtonStatus( state );
+		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+		const isPasswordProtectedWithInvalidPassword =
+			isEditedPostPasswordProtected( state, siteId, postId ) &&
+			! isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId );
 
-	return {
-		currentPost,
-		publishButtonStatus,
-		canUserPublishPosts,
-		isPasswordProtectedWithInvalidPassword,
-	};
-} )( localize( EditorPublishButton ) );
+		return {
+			currentPost,
+			publishButtonStatus,
+			canUserPublishPosts,
+			isPasswordProtectedWithInvalidPassword,
+		};
+	},
+	{ recordEditorEvent }
+)( localize( EditorPublishButton ) );

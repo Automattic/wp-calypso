@@ -21,8 +21,8 @@ import FormTextInput from 'components/forms/form-text-input';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import { hasTouch } from 'lib/touch-detect';
-import { recordEvent, recordStat } from 'lib/posts/stats';
-import { tracks } from 'lib/analytics';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
+import { recordTracksEvent } from 'state/analytics/actions';
 import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
 import { getEditedPost, getSitePost } from 'state/posts/selectors';
@@ -80,9 +80,9 @@ class EditorVisibility extends React.Component {
 
 	recordStats = newVisibility => {
 		if ( this.getVisibility() !== newVisibility ) {
-			recordStat( 'visibility-set-' + newVisibility );
-			recordEvent( 'Changed visibility', newVisibility );
-			tracks.recordEvent( 'calypso_editor_visibility_set', {
+			this.props.recordEditorStat( 'visibility-set-' + newVisibility );
+			this.props.recordEditorEvent( 'Changed visibility', newVisibility );
+			this.props.recordTracksEvent( 'calypso_editor_visibility_set', {
 				context: this.props.context,
 				visibility: newVisibility,
 			} );
@@ -304,5 +304,5 @@ export default connect(
 			isPrivateSite: isPrivateSiteSelector( state, siteId ),
 		};
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent, recordTracksEvent }
 )( localize( EditorVisibility ) );

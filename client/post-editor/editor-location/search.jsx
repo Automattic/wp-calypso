@@ -6,18 +6,17 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { geocode } from 'lib/geocoding';
-import * as stats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import SearchCard from 'components/search-card';
 import EditorLocationSearchResult from './search-result';
 
-export default class extends React.Component {
-	static displayName = 'EditorLocationSearch';
-
+class EditorLocationSearch extends React.Component {
 	static propTypes = {
 		onError: PropTypes.func,
 		onSelect: PropTypes.func,
@@ -47,8 +46,8 @@ export default class extends React.Component {
 		const { onError } = this.props;
 
 		if ( ! this.hasTrackedStats ) {
-			stats.recordStat( 'location_search' );
-			stats.recordEvent( 'Location Searched' );
+			this.props.recordEditorStat( 'location_search' );
+			this.props.recordEditorEvent( 'Location Searched' );
 			this.hasTrackedStats = true;
 		}
 
@@ -119,3 +118,8 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default connect(
+	null,
+	{ recordEditorStat, recordEditorEvent }
+)( EditorLocationSearch );

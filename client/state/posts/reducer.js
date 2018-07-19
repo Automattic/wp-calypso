@@ -57,7 +57,7 @@ import {
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getFeaturedImageId } from 'state/posts/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.

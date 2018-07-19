@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -21,6 +20,16 @@ import {
 	isTermsEqual,
 	applyPostEdits,
 	mergePostEdits,
+	getEditURL,
+	getFeaturedImageId,
+	getPagePath,
+	getPermalinkBasePath,
+	getVisibility,
+	isBackDatedPublished,
+	isPending,
+	isPrivate,
+	isPublished,
+	removeSlug,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -55,7 +64,7 @@ describe( 'utils', () => {
 					},
 				}
 			);
-			expect( isEqual ).to.be.true;
+			expect( isEqual ).toBe( true );
 		} );
 
 		test( 'should return false if term edits are not the same as saved terms', () => {
@@ -88,7 +97,7 @@ describe( 'utils', () => {
 					},
 				}
 			);
-			expect( isEqual ).to.be.false;
+			expect( isEqual ).toBe( false );
 		} );
 
 		test( 'should return false savedTerms is missing a taxonomy', () => {
@@ -98,14 +107,14 @@ describe( 'utils', () => {
 				},
 				{}
 			);
-			expect( isEqual ).to.be.false;
+			expect( isEqual ).toBe( false );
 		} );
 	} );
 
 	describe( 'normalizePostForApi()', () => {
 		test( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForApi();
-			expect( normalizedPost ).to.be.null;
+			expect( normalizedPost ).toBeNull();
 		} );
 
 		test( 'should return a normalized post object', () => {
@@ -121,7 +130,7 @@ describe( 'utils', () => {
 			};
 
 			const normalizedPost = normalizePostForApi( post );
-			expect( normalizedPost ).to.eql( {
+			expect( normalizedPost ).toEqual( {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -136,7 +145,7 @@ describe( 'utils', () => {
 	describe( 'normalizePostForDisplay()', () => {
 		test( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForDisplay();
-			expect( normalizedPost ).to.be.null;
+			expect( normalizedPost ).toBeNull();
 		} );
 
 		test( 'should return a normalized post object', () => {
@@ -156,7 +165,7 @@ describe( 'utils', () => {
 			};
 
 			const normalizedPost = normalizePostForDisplay( post );
-			expect( normalizedPost ).to.eql( {
+			expect( normalizedPost ).toEqual( {
 				...post,
 				title: 'Ribs & Chicken',
 				author: {
@@ -228,8 +237,8 @@ describe( 'utils', () => {
 			} );
 			const revised = normalizePostForState( original );
 
-			expect( revised ).to.not.equal( original );
-			expect( revised ).to.eql( {
+			expect( revised ).not.toEqual( original );
+			expect( revised ).toEqual( {
 				ID: 814,
 				meta: {
 					data: { autosave: true },
@@ -281,7 +290,7 @@ describe( 'utils', () => {
 				number: 20,
 			} );
 
-			expect( query ).to.eql( {
+			expect( query ).toEqual( {
 				page: 4,
 			} );
 		} );
@@ -294,7 +303,7 @@ describe( 'utils', () => {
 				page: 1,
 			} );
 
-			expect( serializedQuery ).to.equal( '{"type":"page"}' );
+			expect( serializedQuery ).toBe( '{"type":"page"}' );
 		} );
 
 		test( 'should prefix site ID if specified', () => {
@@ -305,7 +314,7 @@ describe( 'utils', () => {
 				2916284
 			);
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
+			expect( serializedQuery ).toBe( '2916284:{"search":"Hello"}' );
 		} );
 	} );
 
@@ -313,7 +322,7 @@ describe( 'utils', () => {
 		test( 'should return undefined query and site if string does not contain JSON', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( 'bad' );
 
-			expect( queryDetails ).to.eql( {
+			expect( queryDetails ).toEqual( {
 				siteId: undefined,
 				query: undefined,
 			} );
@@ -322,7 +331,7 @@ describe( 'utils', () => {
 		test( 'should return query but not site if string does not contain site prefix', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( '{"search":"hello"}' );
 
-			expect( queryDetails ).to.eql( {
+			expect( queryDetails ).toEqual( {
 				siteId: undefined,
 				query: { search: 'hello' },
 			} );
@@ -331,7 +340,7 @@ describe( 'utils', () => {
 		test( 'should return query and site if string contains site prefix and JSON', () => {
 			const queryDetails = getDeserializedPostsQueryDetails( '2916284:{"search":"hello"}' );
 
-			expect( queryDetails ).to.eql( {
+			expect( queryDetails ).toEqual( {
 				siteId: 2916284,
 				query: { search: 'hello' },
 			} );
@@ -345,7 +354,7 @@ describe( 'utils', () => {
 				page: 2,
 			} );
 
-			expect( serializedQuery ).to.equal( '{"type":"page"}' );
+			expect( serializedQuery ).toBe( '{"type":"page"}' );
 		} );
 
 		test( 'should prefix site ID if specified', () => {
@@ -357,7 +366,7 @@ describe( 'utils', () => {
 				2916284
 			);
 
-			expect( serializedQuery ).to.equal( '2916284:{"search":"Hello"}' );
+			expect( serializedQuery ).toBe( '2916284:{"search":"Hello"}' );
 		} );
 	} );
 
@@ -367,7 +376,7 @@ describe( 'utils', () => {
 				tags_by_id: [ 4, 5, 6 ],
 			} );
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				tags_by_id: [ 4, 5, 6 ],
 			} );
 		} );
@@ -380,7 +389,7 @@ describe( 'utils', () => {
 				{}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				tags_by_id: [ 4, 5, 6 ],
 			} );
 		} );
@@ -395,7 +404,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				tags_by_id: [ 4, 6 ],
 			} );
 		} );
@@ -410,7 +419,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				tags_by_id: [ 1, 2, 3, 4 ],
 			} );
 		} );
@@ -425,7 +434,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				discussion: { comments_open: false, pings_open: false },
 			} );
 		} );
@@ -440,7 +449,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '20', operation: 'update' } ],
 			} );
 		} );
@@ -455,7 +464,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( merged ).to.eql( {
+			expect( merged ).toEqual( {
 				metadata: [
 					{ key: 'geo_latitude', value: '10', operation: 'update' },
 					{ key: 'geo_longitude', value: '20', operation: 'update' },
@@ -475,7 +484,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( edited ).to.eql( {
+			expect( edited ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '20' } ],
 			} );
 		} );
@@ -490,7 +499,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( edited ).to.eql( {
+			expect( edited ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '10' }, { key: 'geo_longitude', value: '20' } ],
 			} );
 		} );
@@ -505,7 +514,7 @@ describe( 'utils', () => {
 				}
 			);
 
-			expect( edited ).to.eql( {
+			expect( edited ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '10' } ],
 			} );
 		} );
@@ -519,7 +528,7 @@ describe( 'utils', () => {
 				metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
 			} );
 
-			expect( edited ).to.eql( post );
+			expect( edited ).toEqual( post );
 		} );
 
 		test( 'should return unchanged object on noop delete', () => {
@@ -531,7 +540,7 @@ describe( 'utils', () => {
 				metadata: [ { key: 'geo_longitude', value: '10', operation: 'delete' } ],
 			} );
 
-			expect( edited ).to.eql( post );
+			expect( edited ).toEqual( post );
 		} );
 
 		test( 'should return metadata array after applying edits to a false value', () => {
@@ -543,7 +552,7 @@ describe( 'utils', () => {
 				metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
 			} );
 
-			expect( edited ).to.eql( {
+			expect( edited ).toEqual( {
 				metadata: [ { key: 'geo_latitude', value: '10' } ],
 			} );
 		} );
@@ -555,7 +564,7 @@ describe( 'utils', () => {
 				title: 'Chewbacca Saves',
 			} );
 
-			expect( normalizedPostEdits ).to.eql( {
+			expect( normalizedPostEdits ).toEqual( {
 				title: 'Chewbacca Saves',
 			} );
 		} );
@@ -575,7 +584,7 @@ describe( 'utils', () => {
 
 			const normalizedPostEdits = getTermIdsFromEdits( originalPost );
 
-			expect( normalizedPostEdits ).to.eql( {
+			expect( normalizedPostEdits ).toEqual( {
 				title: 'Chewbacca Saves',
 				terms: {
 					wookie_post_types: {
@@ -599,7 +608,7 @@ describe( 'utils', () => {
 				},
 			} );
 
-			expect( normalizedPostEdits ).to.eql( {
+			expect( normalizedPostEdits ).toEqual( {
 				title: 'Chewbacca Saves',
 				terms: {
 					wookie_post_types: {},
@@ -618,12 +627,244 @@ describe( 'utils', () => {
 				},
 			} );
 
-			expect( normalizedPostEdits ).to.eql( {
+			expect( normalizedPostEdits ).toEqual( {
 				title: 'Chewbacca Saves',
 				terms: {
 					wookie_post_tags: [ 'raaar', 'uggggaaarr' ],
 				},
 			} );
+		} );
+	} );
+
+	describe( '#getEditURL', () => {
+		test( 'should return correct path type=post is supplied', () => {
+			const url = getEditURL( { ID: 123, type: 'post' }, { slug: 'en.blog.wordpress.com' } );
+			expect( url ).toEqual( '/post/en.blog.wordpress.com/123' );
+		} );
+
+		test( 'should return correct path type=page is supplied', () => {
+			const url = getEditURL( { ID: 123, type: 'page' }, { slug: 'en.blog.wordpress.com' } );
+			expect( url ).toEqual( '/page/en.blog.wordpress.com/123' );
+		} );
+
+		test( 'should return correct path when custom post type is supplied', () => {
+			const url = getEditURL(
+				{ ID: 123, type: 'jetpack-portfolio' },
+				{ slug: 'en.blog.wordpress.com' }
+			);
+			expect( url ).toEqual( '/edit/jetpack-portfolio/en.blog.wordpress.com/123' );
+		} );
+
+		test( 'should default to type=post if no post type is supplied', () => {
+			const url = getEditURL( { ID: 123, type: '' }, { slug: 'en.blog.wordpress.com' } );
+			expect( url ).toEqual( '/post/en.blog.wordpress.com/123' );
+		} );
+	} );
+
+	describe( '#getVisibility', () => {
+		test( 'should return null when no post is supplied', () => {
+			expect( getVisibility() ).toBeNull();
+		} );
+
+		test( 'should return public when password and private are not set', () => {
+			expect( getVisibility( {} ) ).toEqual( 'public' );
+		} );
+
+		test( 'should return private when post#status is private', () => {
+			expect( getVisibility( { status: 'private' } ) ).toEqual( 'private' );
+		} );
+
+		test( 'should return password when post#password is set', () => {
+			expect( getVisibility( { password: 'unicorn' } ) ).toEqual( 'password' );
+		} );
+	} );
+
+	describe( '#isPrivate', () => {
+		test( 'should return false when no post is supplied', () => {
+			expect( isPrivate() ).toBe( false );
+		} );
+
+		test( 'should return true when post.status is private', () => {
+			expect( isPrivate( { status: 'private' } ) ).toBe( true );
+		} );
+
+		test( 'should return false when post.status is not private', () => {
+			expect( isPrivate( { status: 'draft' } ) ).toBe( false );
+		} );
+	} );
+
+	describe( '#isPublished', () => {
+		test( 'should return false when no post is supplied', () => {
+			expect( isPublished() ).toBe( false );
+		} );
+
+		test( 'should return true when post.status is private', () => {
+			expect( isPublished( { status: 'private' } ) ).toBe( true );
+		} );
+
+		test( 'should return true when post.status is publish', () => {
+			expect( isPublished( { status: 'publish' } ) ).toBe( true );
+		} );
+
+		test( 'should return false when post.status is not publish or private', () => {
+			expect( isPublished( { status: 'draft' } ) ).toBe( false );
+		} );
+	} );
+
+	describe( '#isPending', () => {
+		test( 'should return false when no post is supplied', () => {
+			expect( isPending() ).toBe( false );
+		} );
+
+		test( 'should return true when post.status is pending', () => {
+			expect( isPending( { status: 'pending' } ) ).toBe( true );
+		} );
+
+		test( 'should return false when post.status is not pending', () => {
+			expect( isPending( { status: 'draft' } ) ).toBe( false );
+		} );
+	} );
+
+	describe( '#isBackDatedPublished', () => {
+		test( 'should return false when no post is supplied', () => {
+			expect( isBackDatedPublished() ).toBe( false );
+		} );
+
+		test( 'should return false when status !== future', () => {
+			expect( isBackDatedPublished( { status: 'draft' } ) ).toBe( false );
+		} );
+
+		test( 'should return false when status === future and date is in future', () => {
+			const tenMinutes = 1000 * 60;
+			const postDate = Date.now() + tenMinutes;
+
+			expect( isBackDatedPublished( { status: 'future', date: postDate } ) ).toBe( false );
+		} );
+
+		test( 'should return true when status === future and date is in the past', () => {
+			const tenMinutes = 1000 * 60;
+			const postDate = Date.now() - tenMinutes;
+
+			expect( isBackDatedPublished( { status: 'future', date: postDate } ) ).toBe( true );
+		} );
+	} );
+
+	describe( '#removeSlug', () => {
+		test( 'should return undefined when no path is supplied', () => {
+			expect( removeSlug() ).toBeUndefined();
+		} );
+
+		test( 'should strip slug on post URL', () => {
+			const noSlug = removeSlug( 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/' );
+			expect( noSlug ).toEqual( 'https://en.blog.wordpress.com/2015/08/26/' );
+		} );
+
+		test( 'should strip slug on page URL', () => {
+			const noSlug = removeSlug( 'https://en.blog.wordpress.com/a-test-page/' );
+			expect( noSlug ).toEqual( 'https://en.blog.wordpress.com/' );
+		} );
+	} );
+
+	describe( '#getPermalinkBasePath', () => {
+		test( 'should return undefined when no post is supplied', () => {
+			expect( getPermalinkBasePath() ).toBeUndefined();
+		} );
+
+		test( 'should return post.URL when post is published', () => {
+			const path = getPermalinkBasePath( {
+				status: 'publish',
+				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/',
+			} );
+			expect( path ).toEqual( 'https://en.blog.wordpress.com/2015/08/26/' );
+		} );
+
+		test( 'should use permalink_URL when not published and present', () => {
+			const path = getPermalinkBasePath( {
+				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' },
+				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/',
+			} );
+			expect( path ).toEqual( 'http://zo.mg/a/permalink/' );
+		} );
+	} );
+
+	describe( '#getPagePath', () => {
+		test( 'should return undefined when no post is supplied', () => {
+			expect( getPagePath() ).toBeUndefined();
+		} );
+
+		test( 'should return post.URL without slug when page is published', () => {
+			const path = getPagePath( {
+				status: 'publish',
+				URL: 'http://zo.mg/a/permalink/',
+			} );
+			expect( path ).toEqual( 'http://zo.mg/a/' );
+		} );
+
+		test( 'should use permalink_URL when not published and present', () => {
+			const path = getPagePath( {
+				status: 'draft',
+				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' },
+			} );
+			expect( path ).toEqual( 'http://zo.mg/a/permalink/' );
+		} );
+	} );
+
+	describe( '#getFeaturedImageId()', () => {
+		test( 'should return undefined when no post is specified', () => {
+			expect( getFeaturedImageId() ).toBeUndefined();
+		} );
+
+		test( 'should return a non-URL featured_image property', () => {
+			const id = getFeaturedImageId( {
+				featured_image: 'media-1',
+				post_thumbnail: {
+					ID: 1,
+				},
+			} );
+
+			expect( id ).toEqual( 'media-1' );
+		} );
+
+		test( 'should return a `null` featured_image property', () => {
+			// This describes the behavior of unassigning a featured image
+			// from the current post
+			const id = getFeaturedImageId( {
+				featured_image: null,
+				post_thumbnail: {
+					ID: 1,
+				},
+			} );
+
+			expect( id ).toBeNull();
+		} );
+
+		test( 'should return empty string if that is the featured_image value', () => {
+			// These values are typical for posts without a featured image
+			const id = getFeaturedImageId( {
+				featured_image: '',
+				post_thumbnail: null,
+			} );
+
+			expect( id ).toEqual( '' );
+		} );
+
+		test( 'should fall back to post thumbnail object ID if exists, if featured_image is URL', () => {
+			const id = getFeaturedImageId( {
+				featured_image: 'https://example.com/image.png',
+				post_thumbnail: {
+					ID: 1,
+				},
+			} );
+
+			expect( id ).toEqual( 1 );
+		} );
+
+		test( "should return undefined if featured_image is URL and post thumbnail object doesn't exist", () => {
+			const id = getFeaturedImageId( {
+				featured_image: 'https://example.com/image.png',
+			} );
+
+			expect( id ).toBeUndefined();
 		} );
 	} );
 } );
