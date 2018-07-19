@@ -452,8 +452,8 @@ class ActivityLog extends Component {
 							) ) }
 						</section>
 						<Pagination
-							className="activity-log__pagination"
-							key="activity-list-pagination"
+							className="activity-log__pagination is-bottom-pagination"
+							key="activity-list-pagination-bottom"
 							nextLabel={ translate( 'Older' ) }
 							page={ actualPage }
 							pageClick={ this.changePage }
