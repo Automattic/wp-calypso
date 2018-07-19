@@ -19,7 +19,6 @@
 		"pt-br"
 	],
 	"features": {
-		"activity-log-core-update": true,
 		"activity-log-wpcom-free": true,
 		"ad-tracking": false,
 		"apple-pay": true,
