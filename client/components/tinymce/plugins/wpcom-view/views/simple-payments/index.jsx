@@ -50,11 +50,9 @@ class SimplePaymentsView extends Component {
 						<div className="wpview-type-simple-payments__unsupported-icon">
 							<Gridicon icon="cross" />
 						</div>
-						<p
-							className="wpview-type-simple-payments__unsupported-message"
-							//eslint-disable-next-line react/no-danger
-							dangerouslySetInnerHTML={ { __html: "Your plan doesn't include Simple Payments." } }
-						/>
+						<p className="wpview-type-simple-payments__unsupported-message">
+							{ translate( "Your plan doesn't include Simple Payments." ) }
+						</p>
 					</div>
 				</div>
 			);
