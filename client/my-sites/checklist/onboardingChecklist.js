@@ -103,6 +103,7 @@ export const tasks = [
 		completedTitle: 'You registered a custom domain',
 		completedButtonText: 'Edit',
 		url: '/domains/add/$siteSlug',
+		tour: 'checklistDomainRegister',
 	},
 ];
 
