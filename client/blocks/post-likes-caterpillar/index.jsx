@@ -31,9 +31,9 @@ const PostLikesCaterpillar = props => {
 			{ likes && (
 				<GravatarCaterpillar
 					users={ likes }
-					showCount={ true }
 					gravatarSize={ gravatarSize }
-					maxGravatarsToDisplay={ 5 }
+					maxGravatarsToDisplay={ 3 }
+					showCount={ false }
 				/>
 			) }
 		</div>
