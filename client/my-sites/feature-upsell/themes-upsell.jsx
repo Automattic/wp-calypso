@@ -131,11 +131,7 @@ class ThemesUpsellComponent extends Component {
 					<div className="product-purchase-features-list__item">
 						<PurchaseDetail
 							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-payments.svg" /> }
-							title={
-								<span>
-									Easily Accept Credit Card Payments with <i>Simple Payments</i>
-								</span>
-							}
+							title="Easily Accept Credit Card Payments with Simple Payments"
 							description={
 								<span>
 									The <i>Simple Payments</i> feature lets you accept credit card payments right on
