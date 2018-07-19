@@ -1044,8 +1044,9 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Jetpack Essential Features' ),
 		getDescription: () =>
 			i18n.translate(
-				'Jetpack is a powerful plugin that includes SEO, spam protection, ' +
-					'social sharing, site stats, and more.'
+				'Improve your SEO results, protect your site from spammers, ' +
+					"keep an eye on your site's activity and stats, " +
+					'and instantly share on social media with the help of Jetpack.'
 			),
 	},
 

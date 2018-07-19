@@ -13,6 +13,11 @@ import Banner from 'components/banner';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getRewindState from 'state/selectors/get-rewind-state';
+import {
+	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+	PLAN_PERSONAL,
+	PLAN_JETPACK_PERSONAL,
+} from 'lib/plans/constants';
 
 export const UnavailabilityNotice = ( {
 	adminUrl,
@@ -21,16 +26,35 @@ export const UnavailabilityNotice = ( {
 	slug,
 	translate,
 	siteId,
+	siteIsOnFreePlan,
 } ) => {
 	if ( rewindState !== 'unavailable' ) {
 		return null;
 	}
 
 	switch ( reason ) {
+		case 'host_not_supported':
+			if ( siteIsOnFreePlan ) {
+				return (
+					<Banner
+						callToAction={ translate( 'Upgrade' ) }
+						dismissPreferenceName="activity-upgrade-banner-jetpack"
+						event="activity_log_upgrade_click_jetpack"
+						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
+						plan={ PLAN_JETPACK_PERSONAL }
+						title={ translate( 'Upgrade' ) }
+						description={ translate(
+							'Get daily off-site backups and keep an eye on your site ' +
+								'with more activity types and details'
+						) }
+					/>
+				);
+			}
+			return 'null';
 		case 'missing_plan':
 			return (
 				<Banner
-					plan="personal-bundle"
+					plan={ PLAN_PERSONAL }
 					href={ `/plans/${ slug }` }
 					callToAction={ translate( 'Upgrade' ) }
 					title={ translate(
@@ -67,7 +91,7 @@ export const UnavailabilityNotice = ( {
 	}
 };
 
-const mapStateToProps = ( state, { siteId } ) => {
+const mapStateToProps = ( state, { siteId, siteIsOnFreePlan } ) => {
 	const { reason, state: rewindState } = getRewindState( state, siteId );
 
 	return {
@@ -76,6 +100,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 		rewindState,
 		slug: getSelectedSiteSlug( state ),
 		siteId,
+		siteIsOnFreePlan,
 	};
 };
 

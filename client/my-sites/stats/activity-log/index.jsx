@@ -393,7 +393,9 @@ class ActivityLog extends Component {
 				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
-					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
+					'unavailable' === rewindState.state && (
+						<UnavailabilityNotice siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
+					) }
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
 						icon="history"
