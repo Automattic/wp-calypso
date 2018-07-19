@@ -16477,54 +16477,6 @@
         }
       }
     },
-    "wpcom-oauth": {
-      "version": "0.3.4",
-      "resolved": "https://registry.npmjs.org/wpcom-oauth/-/wpcom-oauth-0.3.4.tgz",
-      "integrity": "sha512-EJfIhiIRsgppbaTN2+GuTnGdtCG+0Lie0Fbu9G9vxBnyReLP52uUK8EFqjt42QSm6sx2MjIDTtsMEAgqVgqXnA==",
-      "requires": {
-        "debug": "*",
-        "superagent": "^3.8.3"
-      },
-      "dependencies": {
-        "form-data": {
-          "version": "2.3.2",
-          "resolved": "https://registry.npmjs.org/form-data/-/form-data-2.3.2.tgz",
-          "integrity": "sha1-SXBJi+YEwgwAXU9cI67NIda0kJk=",
-          "requires": {
-            "asynckit": "^0.4.0",
-            "combined-stream": "1.0.6",
-            "mime-types": "^2.1.12"
-          }
-        },
-        "superagent": {
-          "version": "3.8.3",
-          "resolved": "https://registry.npmjs.org/superagent/-/superagent-3.8.3.tgz",
-          "integrity": "sha512-GLQtLMCoEIK4eDv6OGtkOoSMt3D+oq0y3dsxMuYuDvaNUvuT8eFBuLmfR0iYYzHC1e8hpzC6ZsxbuP6DIalMFA==",
-          "requires": {
-            "component-emitter": "^1.2.0",
-            "cookiejar": "^2.1.0",
-            "debug": "^3.1.0",
-            "extend": "^3.0.0",
-            "form-data": "^2.3.1",
-            "formidable": "^1.2.0",
-            "methods": "^1.1.1",
-            "mime": "^1.4.1",
-            "qs": "^6.5.1",
-            "readable-stream": "^2.3.5"
-          },
-          "dependencies": {
-            "debug": {
-              "version": "3.1.0",
-              "resolved": "https://registry.npmjs.org/debug/-/debug-3.1.0.tgz",
-              "integrity": "sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==",
-              "requires": {
-                "ms": "2.0.0"
-              }
-            }
-          }
-        }
-      }
-    },
     "wpcom-proxy-request": {
       "version": "5.0.0",
       "resolved": "https://registry.npmjs.org/wpcom-proxy-request/-/wpcom-proxy-request-5.0.0.tgz",
