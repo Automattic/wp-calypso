@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +23,8 @@ import { shouldShowShare } from 'blocks/reader-share/helper';
 import { userCan } from 'lib/posts/utils';
 import * as stats from 'reader/stats';
 import PostLikesCaterpillar from 'blocks/post-likes-caterpillar';
+import countPostLikes from 'state/selectors/count-post-likes';
+import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
 const ReaderPostActions = props => {
 	const {
@@ -33,6 +37,9 @@ const ReaderPostActions = props => {
 		iconSize,
 		className,
 		fullPost,
+		translate,
+		likeCount,
+		commentCount,
 	} = props;
 
 	const onEditClick = () => {
@@ -52,9 +59,29 @@ const ReaderPostActions = props => {
 					<PostLikesCaterpillar
 						blogId={ +post.site_ID }
 						postId={ +post.ID }
-						gravatarSize={ 18 }
+						gravatarSize={ 12 }
 						className="reader-post-actions__post-likes-caterpillar"
 					/>
+					{ commentCount > 0 && (
+						<div className="reader-post-actions__item-text">
+							{ translate( '%(count)d comment', '%(count)d comments', {
+								count: commentCount,
+								args: {
+									count: commentCount,
+								},
+							} ) }
+						</div>
+					) }
+					{ likeCount > 0 && (
+						<div className="reader-post-actions__item-text">
+							{ translate( '%(count)d like', '%(count)d likes', {
+								count: likeCount,
+								args: {
+									count: likeCount,
+								},
+							} ) }
+						</div>
+					) }
 				</li>
 			) }
 			{ showEdit &&
@@ -136,4 +163,19 @@ ReaderPostActions.defaultProps = {
 	showMenuFollow: true,
 };
 
-export default localize( ReaderPostActions );
+export default connect( ( state, ownProps ) => {
+	const { post, post: { site_ID: siteId, ID: postId } = {} } = ownProps;
+
+	if ( ! siteId || ! postId ) {
+		return {};
+	}
+
+	const postCommentCount = get( post, [ 'discussion', 'comment_count' ] );
+
+	const likeCount = countPostLikes( state, siteId, postId ) || 0;
+	const commentCount = getPostTotalCommentsCount( state, siteId, postId ) || postCommentCount;
+	return {
+		likeCount,
+		commentCount,
+	};
+} )( localize( ReaderPostActions ) );
