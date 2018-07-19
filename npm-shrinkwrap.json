@@ -8940,6 +8940,13 @@
             "promise": "^7.0.3",
             "ua-parser-js": "^0.7.9",
             "whatwg-fetch": "^0.9.0"
+          },
+          "dependencies": {
+            "core-js": {
+              "version": "1.2.7",
+              "resolved": "https://registry.npmjs.org/core-js/-/core-js-1.2.7.tgz",
+              "integrity": "sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY="
+            }
           }
         },
         "immutable": {
