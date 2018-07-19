@@ -50,6 +50,7 @@
     "cookie": "0.3.1",
     "cookie-parser": "1.4.3",
     "copy-webpack-plugin": "4.5.2",
+    "core-js": "2.5.7",
     "cpf_cnpj": "0.2.0",
     "create-react-class": "15.6.3",
     "creditcards": "3.0.1",
