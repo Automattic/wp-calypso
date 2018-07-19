@@ -500,7 +500,7 @@ export class PluginsBrowser extends Component {
 		}
 
 		const { siteSlug, translate } = this.props;
-		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
+		const plan = findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
 		const title = translate( 'Upgrade to the Business plan to install plugins.' );
