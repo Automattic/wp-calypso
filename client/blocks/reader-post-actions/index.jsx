@@ -3,7 +3,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -20,7 +20,6 @@ import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowShare } from 'blocks/reader-share/helper';
 import { userCan } from 'lib/posts/utils';
 import * as stats from 'reader/stats';
-import ReaderVisitLink from 'blocks/reader-visit-link';
 import PostLikesCaterpillar from 'blocks/post-likes-caterpillar';
 
 const ReaderPostActions = props => {
@@ -29,14 +28,11 @@ const ReaderPostActions = props => {
 		site,
 		onCommentClick,
 		showEdit,
-		showVisit,
 		showMenu,
 		showMenuFollow,
 		iconSize,
 		className,
-		visitUrl,
 		fullPost,
-		translate,
 	} = props;
 
 	const onEditClick = () => {
@@ -45,24 +41,20 @@ const ReaderPostActions = props => {
 		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', post );
 	};
 
-	function onPermalinkVisit() {
-		stats.recordPermalinkClick( 'card', post );
-	}
-
 	const listClassnames = classnames( 'reader-post-actions', className );
+	const showLikes = shouldShowLikes( post );
 
 	/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	return (
 		<ul className={ listClassnames }>
-			{ showVisit && (
+			{ showLikes && (
 				<li className="reader-post-actions__item reader-post-actions__visit">
-					<ReaderVisitLink
-						href={ visitUrl || post.URL }
-						iconSize={ iconSize }
-						onClick={ onPermalinkVisit }
-					>
-						{ translate( 'Visit' ) }
-					</ReaderVisitLink>
+					<PostLikesCaterpillar
+						blogId={ +post.site_ID }
+						postId={ +post.ID }
+						gravatarSize={ 18 }
+						className="reader-post-actions__post-likes-caterpillar"
+					/>
 				</li>
 			) }
 			{ showEdit &&
@@ -93,27 +85,22 @@ const ReaderPostActions = props => {
 					/>
 				</li>
 			) }
-			{ shouldShowLikes( post ) && (
-				<Fragment>
-					<li className="reader-post-actions__item">
-						<LikeButton
-							key="like-button"
-							siteId={ +post.site_ID }
-							postId={ +post.ID }
-							post={ post }
-							site={ site }
-							fullPost={ fullPost }
-							tagName="div"
-							forceCounter={ true }
-							iconSize={ iconSize }
-							showZeroCount={ false }
-							likeSource={ 'reader' }
-						/>
-					</li>
-					<li className="reader-post-actions__item">
-						<PostLikesCaterpillar blogId={ +post.site_ID } postId={ +post.ID } />
-					</li>
-				</Fragment>
+			{ showLikes && (
+				<li className="reader-post-actions__item">
+					<LikeButton
+						key="like-button"
+						siteId={ +post.site_ID }
+						postId={ +post.ID }
+						post={ post }
+						site={ site }
+						fullPost={ fullPost }
+						tagName="div"
+						forceCounter={ true }
+						iconSize={ iconSize }
+						showZeroCount={ false }
+						likeSource={ 'reader' }
+					/>
+				</li>
 			) }
 			{ showMenu && (
 				<li className="reader-post-actions__item">

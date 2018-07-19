@@ -17,7 +17,7 @@ import getPostLikes from 'state/selectors/get-post-likes';
 import GravatarCaterpillar from 'components/gravatar-caterpillar';
 
 const PostLikesCaterpillar = props => {
-	const { blogId, postId, className, likes /*, likeCount*/ } = props;
+	const { blogId, postId, className, likes /*, likeCount*/, gravatarSize } = props;
 
 	if ( ! blogId || ! postId ) {
 		return null;
@@ -28,7 +28,14 @@ const PostLikesCaterpillar = props => {
 	return (
 		<div className={ containerClassnames }>
 			{ ! likes && <QueryPostLikes siteId={ blogId } postId={ postId } needsLikers={ true } /> }
-			{ likes && <GravatarCaterpillar users={ likes } showCount={ true } /> }
+			{ likes && (
+				<GravatarCaterpillar
+					users={ likes }
+					showCount={ true }
+					gravatarSize={ gravatarSize }
+					maxGravatarsToDisplay={ 5 }
+				/>
+			) }
 		</div>
 	);
 };

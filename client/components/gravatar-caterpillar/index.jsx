@@ -19,7 +19,7 @@ class GravatarCaterpillar extends React.Component {
 	};
 
 	render() {
-		const { users, onClick, maxGravatarsToDisplay, showCount } = this.props;
+		const { users, onClick, maxGravatarsToDisplay, showCount, gravatarSize } = this.props;
 
 		if ( size( users ) < 1 ) {
 			return null;
@@ -50,7 +50,12 @@ class GravatarCaterpillar extends React.Component {
 					}
 
 					return (
-						<Gravatar className={ gravClasses } key={ user.avatar_URL } user={ user } size={ 32 } />
+						<Gravatar
+							className={ gravClasses }
+							key={ user.avatar_URL }
+							user={ user }
+							size={ gravatarSize }
+						/>
 					);
 				} ) }
 				{ // @todo handle the increased count for small screens, because fewer avatars are displayed
@@ -70,6 +75,7 @@ GravatarCaterpillar.defaultProps = {
 	onClick: noop,
 	maxGravatarsToDisplay: 10,
 	showCount: false,
+	gravatarSize: 32,
 };
 
 export default GravatarCaterpillar;
