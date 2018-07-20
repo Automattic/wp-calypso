@@ -1,0 +1,30 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { Button } from '@wordpress/components';
+
+
+Button.displayName = 'Button';
+
+export default class extends React.PureComponent {
+	static displayName = 'Button';
+
+	render() {
+		return (
+			<div>
+				<Button isPrimary>Primary button</Button>
+				<Button isDefault>Default button</Button>
+				<Button isPrimary isLarge>Large primary button</Button>
+				<Button isPrimary isSmall>Small primary button</Button>
+				<Button isPrimary isBusy>Busy primary button</Button>
+				<Button isLink href="https://wordpress.com" target="_blank">Link button</Button>
+				<Button isLink isDestructive>Destructive link button</Button>
+				<Button isPrimary disabled>Disabled primary button</Button>
+				<Button isDefault disabled>Disabled default button</Button>
+			</div>
+		);
+	}
+};

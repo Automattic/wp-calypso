@@ -55,7 +55,7 @@ const Collection = ( {
 		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
 		const readmeFilePath =
 			'/client/' +
-			( section === 'blocks' ? 'blocks' : 'components' ) +
+			( section === 'design' ? 'components' : section ) +
 			'/' +
 			example.props.readmeFilePath +
 			'/README.md';
