@@ -59,8 +59,6 @@ if ( inputFiles.length === 0 ) {
 
 inputPaths = globby.sync( inputFiles );
 
-console.log( 'Reading inputFiles:\n\t- ' + inputPaths.join( '\n\t- ' ) );
-
 inputPaths.forEach( function( inputFile ) {
 	if ( ! fs.existsSync( inputFile ) ) {
 		console.error( 'Error: inputFile, `' + inputFile + '`, does not exist' );

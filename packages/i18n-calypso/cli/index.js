@@ -53,6 +53,7 @@ module.exports = function( config ) {
 
 	function getFileMatches( inputFiles ) {
 		return inputFiles.map( function( inputFile ) {
+			console.log( 'Parsing inputFile: ' + inputFile );
 			var relativeInputFilePath = path.relative( __dirname, inputFile ).replace( /^[\/.]+/, '' );
 			return parser.getMatches( fs.readFileSync( inputFile, 'utf8' ) ).map( function( match ) {
 				match.line = relativeInputFilePath + ':' + match.line;
