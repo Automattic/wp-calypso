@@ -29,7 +29,8 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 
 	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes;
 	const bannerLocationBelowSearch =
-		config.isEnabled( 'upsell/nudge-a-palooza' ) && abtest( 'nudgeAPalooza' ) === 'themesUpsells';
+		config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+		abtest( 'nudgeAPalooza' ) === 'themesNudgesUpdates';
 
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;

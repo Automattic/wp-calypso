@@ -4,8 +4,8 @@ export default {
 		datestamp: '20180711',
 		variations: {
 			sidebarUpsells: 20,
-			themesUpsells: 20,
-			pluginUpsells: 20,
+			themesNudgesUpdates: 20,
+			customPluginAndThemeLandingPages: 20,
 			plansBannerUpsells: 20,
 			control: 40,
 		},
