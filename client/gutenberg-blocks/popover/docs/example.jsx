@@ -33,7 +33,7 @@ export default class extends React.PureComponent {
 						onClick={ ( event ) => event.stopPropagation() }
 						focusOnMount
 					>
-						Popover is toggled!
+						<input type="text" tabIndex="1"/>
 					</Popover>
 				) }
 			</button>
