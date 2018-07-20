@@ -235,7 +235,6 @@ class ProductForm extends Component {
 					label={ translate( 'Renewal Schedule' ) }
 					component={ FormSelect }
 				>
-					<option value="1 week">{ translate( '1 Week' ) }</option>
 					<option value="1 month">{ translate( '1 Month' ) }</option>
 					<option value="1 year">{ translate( '1 Year' ) }</option>
 				</ReduxFormFieldset>
