@@ -152,7 +152,13 @@ const announceFailure( { dispatch, getState }, action, error ) => {
 };
 
 export default {
-	[ SPLINES_REQUEST ]: [ dispatchRequest( fetchSplines, addSplines, announceFailure ) ],
+	[ SPLINES_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch: fetchSplines,
+			onSuccess: addSplines,
+			onError: announceFailure,
+		} ),
+	],
 }
 
 // middlware.js
