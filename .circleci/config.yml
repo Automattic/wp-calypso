@@ -57,6 +57,7 @@ jobs:
           name: Build calypso-strings.pot
           command: |
             npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
+            exit 1
             mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
 
       - run:
