@@ -30,6 +30,7 @@ jobs:
       - run:
           name: Create Directories for Results and Artifacts
           command: |
+            set -o errexit
             mkdir -p $CIRCLE_ARTIFACTS
             mkdir -p $CIRCLE_TEST_REPORTS
 
@@ -56,6 +57,7 @@ jobs:
       - run:
           name: Build calypso-strings.pot
           command: |
+            set -o errexit
             npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
             exit 1
             mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
