@@ -1,27 +1,30 @@
-/*global wp*/
+
+// Since this is a Jetpack originated block in Calypso codebase,
+// we're relaxing className rules.
 /* eslint wpcalypso/jsx-classname-namespace: 0 */
 
 /**
  * External Dependencies
  */
-import React from 'react';
+import wp from 'wp';
 import pick from 'lodash/pick';
 
 /**
- * WordPress dependencies (npm)
+ * Internal dependencies
  */
-const { Component } = wp.element;
-const { __ } = wp.i18n;
-const { mediaUpload } = wp.utils;
+import JetpackGalleryBlockSave from './save.js';
 
 /**
  * WordPress dependencies
  */
+const { Component } = wp.element;
+const { __ } = wp.i18n;
+const { mediaUpload } = wp.utils;
 const {
 	IconButton,
 	DropZone,
 	Toolbar,
-	Panel,
+	PanelBody,
 	RangeControl,
 	SelectControl,
 } = wp.components;
@@ -31,11 +34,6 @@ const {
 	InspectorControls,
 	BlockControls,
 } = wp.editor;
-
-/**
- * Internal dependencies
- */
-import JetpackGalleryBlockSave from './save.js';
 
 const MAX_COLUMNS = 8;
 const linkOptions = [
@@ -53,7 +51,7 @@ class JetpackGalleryBlockEditor extends Component {
 		this.setLinkTo = this.setLinkTo.bind( this );
 		this.setColumnsNumber = this.setColumnsNumber.bind( this );
 		this.setImageAttributes = this.setImageAttributes.bind( this );
-		//this.addFiles = this.addFiles.bind( this );
+		this.addFiles = this.addFiles.bind( this );
 
 		this.state = {
 			selectedImage: null,
@@ -171,10 +169,13 @@ class JetpackGalleryBlockEditor extends Component {
 					key="gallery-placeholder"
 					className={ className }
 					icon="format-gallery"
-					label={ __( 'Jetpack Gallery' ) }
+					labels={ {
+						title: __(  'Jetpack Gallery' ),
+						name: __( 'a gallery' ),
+					} }
 					onSelect={ this.onSelectImages }
 					multiple
-				/>,
+				/>
 			];
 		}
 
@@ -193,7 +194,7 @@ class JetpackGalleryBlockEditor extends Component {
 			controls,
 			isSelected && (
 				<InspectorControls key="inspector">
-					<Panel header={ __( 'Jetpack Gallery Settings' ) }>
+					<PanelBody title={ __( 'Jetpack Gallery Settings' ) }>
 						{ images.length > 1 && <RangeControl
 							label={ __( 'Columns' ) }
 							value={ columns }
@@ -207,7 +208,7 @@ class JetpackGalleryBlockEditor extends Component {
 							onChange={ this.setLinkTo }
 							options={ linkOptions }
 						/>
-					</Panel>
+					</PanelBody>
 				</InspectorControls>
 			),
 			imageTiles,

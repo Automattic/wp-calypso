@@ -1,15 +1,18 @@
-/*global wp*/
-
 /**
- * WordPress dependencies
+ * External dependencies
  */
-const { __ } = wp.i18n;
+import wp from 'wp';
 
 /**
  * Internal dependencies
  */
 import JetpackGalleryBlockEditor from './edit.js';
 import JetpackGalleryBlockSave from './save.js';
+
+/**
+ * WordPress dependencies
+ */
+const { __ } = wp.i18n;
 
 const JetpackGalleryBlockType = 'jetpack/gallery';
 

@@ -1,17 +1,19 @@
-/*global wp*/
-/* eslint wpcalypso/jsx-classname-namespace: 0 */
 
-/**
- * WordPress dependencies (npm)
- */
-const { withSelect } = wp.data;
-const { Component } = wp.element;
+// Since this is a Jetpack originated block in Calypso codebase,
+// we're relaxing className rules.
+/* eslint wpcalypso/jsx-classname-namespace: 0 */
 
 /**
  * External Dependencies
  */
-import React from 'react';
+import wp from 'wp';
 import get from 'lodash/get';
+
+/**
+ * WordPress dependencies
+ */
+const { withSelect } = wp.data;
+const { Component } = wp.element;
 
 class TiledGalleryImage extends Component {
 
@@ -35,8 +37,8 @@ class TiledGalleryImage extends Component {
 
 		return (
 			<figure>
-				<meta itemprop="width" content={ width } />
-				<meta itemprop="height" content={ height } />
+				<meta itemProp="width" content={ width } />
+				<meta itemProp="height" content={ height } />
 				<img
 					src={ url } alt={ alt } data-id={ id } data-link={ link }
 					width={ width }
@@ -81,9 +83,9 @@ function TiledGalleryItem( props ) {
 		<div
 			key={ props.id || props.url }
 			className={ classes.join( ' ' ) }
-			itemprop="associatedMedia"
-			itemscope=""
-			itemtype="http://schema.org/ImageObject">
+			itemProp="associatedMedia"
+			itemScope=""
+			itemType="http://schema.org/ImageObject">
 			{ href ? <a href={ href }>{ img }</a> : img }
 		</div>
 	);

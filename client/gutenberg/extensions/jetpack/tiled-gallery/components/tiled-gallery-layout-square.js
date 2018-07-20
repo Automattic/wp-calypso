@@ -1,20 +1,22 @@
-/*global wp*/
-/* eslint wpcalypso/jsx-classname-namespace: 0 */
 
-/**
- * WordPress dependencies (npm)
- */
-const { Component } = wp.element;
+// Since this is a Jetpack originated block in Calypso codebase,
+// we're relaxing className rules.
+/* eslint wpcalypso/jsx-classname-namespace: 0 */
 
 /**
  * External Dependencies
  */
-import React from 'react';
+import wp from 'wp';
 
 /**
  * Internal dependencies
  */
 import TiledGalleryItem from './tiled-gallery-item.js';
+
+/**
+ * WordPress dependencies
+ */
+const { Component } = wp.element;
 
 // hard coded for now - ideally we'd inject $content_width
 // not sure how critical this is, likely necessary to work nicely with themes

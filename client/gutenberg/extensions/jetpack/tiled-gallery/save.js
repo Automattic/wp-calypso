@@ -1,9 +1,4 @@
 /**
- * External Dependencies
- */
-import React from 'react';
-
-/**
  * Internal dependencies
  */
 import TiledGalleryLayoutSquare from './components/tiled-gallery-layout-square.js';
