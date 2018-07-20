@@ -11,9 +11,8 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
+import AsyncLoad from 'components/async-load';
 import config from 'config';
-import Layout from 'layout';
-import LayoutLoggedOut from 'layout/logged-out';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -29,9 +28,14 @@ const user = userFactory();
 export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() ) ? (
-			<Layout primary={ primary } secondary={ secondary } user={ user } />
+			<AsyncLoad require="layout" primary={ primary } secondary={ secondary } user={ user } />
 		) : (
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			<AsyncLoad
+				require="layout/logged-out"
+				primary={ primary }
+				secondary={ secondary }
+				redirectUri={ redirectUri }
+			/>
 		) }
 	</ReduxProvider>
 );
