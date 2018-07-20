@@ -33,6 +33,7 @@ import {
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
+import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -259,8 +260,11 @@ class DomainsStep extends React.Component {
 	};
 
 	domainForm = () => {
+		const { siteTitle } = this.props;
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
+
+		const suggestion = get( this.props, 'queryObject.new', siteTitle );
 
 		return (
 			<RegisterDomainStep
@@ -282,7 +286,7 @@ class DomainsStep extends React.Component {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ get( this.props, 'queryObject.new', '' ) }
+				suggestion={ suggestion }
 				designType={ this.getDesignType() }
 			/>
 		);
@@ -469,6 +473,7 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
+		siteTitle: getSiteTitle( state ),
 		surveyVertical: getSurveyVertical( state ),
 		designType: getDesignType( state ),
 	} ),
