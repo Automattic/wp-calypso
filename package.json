@@ -86,7 +86,7 @@
     "he": "1.1.1",
     "html-loader": "0.5.5",
     "html-to-react": "1.3.3",
-    "i18n-calypso": "git+https://github.com/Automattic/i18n-calypso.git#28b8f5b5132b6eb4ac8e3488d5b2ab1463af9862",
+    "i18n-calypso": "2.0.0",
     "immutability-helper": "2.7.1",
     "immutable": "3.7.6",
     "imports-loader": "0.8.0",
