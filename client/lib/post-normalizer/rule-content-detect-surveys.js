@@ -19,9 +19,15 @@ export default function detectSurveys( post, dom ) {
 
 	forEach( surveys, survey => {
 		// Get survey details
-		const { domain: surveyDomain, id: surveySlug } = JSON.parse(
-			survey.getAttribute( 'data-settings' )
-		);
+		let surveyDetails = null;
+
+		try {
+			surveyDetails = JSON.parse( survey.getAttribute( 'data-settings' ) );
+		} catch ( e ) {
+			return;
+		}
+
+		const { domain: surveyDomain, id: surveySlug } = surveyDetails;
 
 		if ( ! surveyDomain || ! surveySlug ) {
 			return;
