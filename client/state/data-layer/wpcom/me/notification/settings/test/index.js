@@ -26,7 +26,7 @@ describe( 'updateSettings()', () => {
 		const settings = {};
 		const action = updateSettings( null, settings );
 
-		expect( action ).toBe( {
+		expect( action ).toEqual( {
 			type: NOTIFICATION_SETTINGS_UPDATE,
 			settings,
 		} );
