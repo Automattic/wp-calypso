@@ -6,6 +6,7 @@
 
 import photon from 'photon';
 import { parse as parseUrl } from 'url';
+import { endsWith } from 'lodash';
 
 /**
  * Pattern matching URLs to be left unmodified.
@@ -48,7 +49,7 @@ export default function safeImageUrl( url ) {
 		return url;
 	}
 
-	const { hostname, query } = parseUrl(
+	const { hostname, path, query } = parseUrl(
 		url,
 		/* parseQueryString */ false,
 		/* slashesDenoteHost */ true
@@ -61,6 +62,11 @@ export default function safeImageUrl( url ) {
 
 	// If there's a query string, bail out because Photon doesn't support them on external URLs
 	if ( query && query.length > 0 ) {
+		return null;
+	}
+
+	// Photon doesn't support SVGs
+	if ( endsWith( path, '.svg' ) ) {
 		return null;
 	}
 
