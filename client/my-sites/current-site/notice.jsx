@@ -31,6 +31,7 @@ import {
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
 import { abtest } from 'lib/abtest';
+import config from 'config';
 
 class SiteNotice extends React.Component {
 	static propTypes = {
@@ -100,7 +101,10 @@ class SiteNotice extends React.Component {
 
 		const { site, translate } = this.props;
 		let href = '/plans/' + site.slug;
-		if ( abtest( 'nudgeAPalooza' ) === 'plansBannerUpsells' ) {
+		if (
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'plansBannerUpsells'
+		) {
 			href = href + '/?discount=free_domain';
 		}
 
