@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -194,17 +194,17 @@ class Plans extends Component {
 
 		if ( this.shouldShowPlaceholder() ) {
 			return (
-				<Fragment>
+				<>
 					<QueryPlans />
 					<Placeholder />
-				</Fragment>
+				</>
 			);
 		}
 
 		const helpButtonLabel = translate( 'Need help?' );
 
 		return (
-			<Fragment>
+			<>
 				<DocumentHead title={ translate( 'Plans' ) } />
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
@@ -227,7 +227,7 @@ class Plans extends Component {
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>
-			</Fragment>
+			</>
 		);
 	}
 }
