@@ -26,7 +26,7 @@ const devicesFromApi = devices =>
  * Dispatches a request to fetch all available WordPress.com plans
  *
  * @param   {Object} action Redux action
- * @returns {Object} dispatched http action
+ * @returns {Object} http request action
  */
 export const requestUserDevices = action =>
 	http(
@@ -42,19 +42,15 @@ export const requestUserDevices = action =>
  * Dispatches a user devices add action then the request for user devices succeeded.
  *
  * @param   {Object}   action   Redux action
- * @param   {Array}    devices  array of raw device data returned from the endpoint
- * @returns {Object}            user devices add action
+ * @param   {Object}   devices  Devices, returned from the endpoint
+ * @returns {Object}            User devices add action
  */
-export const handleSuccess = ( action, devices ) =>
-	userDevicesAdd( {
-		devices,
-	} );
+export const handleSuccess = ( action, devices ) => userDevicesAdd( devices );
 
 /**
  * Dispatches an error notice action when the request for user devices fails
  *
- * @param   {Function} dispatch Redux dispatcher
- * @returns {Object}            dispatched error notice action
+ * @returns {Object}            Error notice action
  */
 export const handleError = () =>
 	errorNotice( translate( "We couldn't load your devices, please try again." ) );
