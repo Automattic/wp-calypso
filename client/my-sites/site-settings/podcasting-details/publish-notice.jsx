@@ -11,7 +11,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import PodcastingSupportLink from './support-link';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getTerm } from 'state/terms/selectors';
 
@@ -33,10 +32,7 @@ function PodcastingPublishNotice( { translate, podcastingCategoryName } ) {
 	return (
 		<div className="podcasting-details__publish-notice">
 			<Gridicon icon="microphone" size={ 24 } />
-			<span className="podcasting-details__publish-notice-text">
-				{ podcastNoticeText }
-				<PodcastingSupportLink />
-			</span>
+			<span className="podcasting-details__publish-notice-text">{ podcastNoticeText }</span>
 		</div>
 	);
 }
