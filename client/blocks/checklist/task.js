@@ -11,13 +11,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import getChecklistTask from 'state/selectors/get-checklist-task';
-import ItemComponent from 'components/checklist/item';
+import TaskComponent from 'components/checklist/task';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 
-export class Item extends PureComponent {
+export class Task extends PureComponent {
 	static propTypes = {
 		completed: PropTypes.bool,
 		id: PropTypes.string.isRequired,
@@ -52,7 +52,7 @@ export class Item extends PureComponent {
 
 	render() {
 		return (
-			<ItemComponent
+			<TaskComponent
 				buttonPrimary={ this.props.buttonPrimary }
 				completed={ this.props.completed }
 				completedButtonText={ this.props.completedButtonText }
@@ -79,4 +79,4 @@ export default connect(
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
 	}
-)( Item );
+)( Task );

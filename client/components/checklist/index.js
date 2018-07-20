@@ -11,7 +11,7 @@ import { times } from 'lodash';
  * Internal dependencies
  */
 import ChecklistHeader from 'components/checklist/header';
-import ItemPlaceholder from 'components/checklist/item-placeholder';
+import TaskPlaceholder from 'components/checklist/task-placeholder';
 
 export default class Checklist extends PureComponent {
 	static propTyps = {
@@ -29,9 +29,11 @@ export default class Checklist extends PureComponent {
 		return (
 			<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
 				<ChecklistHeader total={ 0 } completed={ 0 } />
-				{ times( Children.count( this.props.children ), index => (
-					<ItemPlaceholder key={ index } />
-				) ) }
+				<div className="checklist__tasks">
+					{ times( Children.count( this.props.children ), index => (
+						<TaskPlaceholder key={ index } />
+					) ) }
+				</div>
 			</div>
 		);
 	}
@@ -52,7 +54,7 @@ export default class Checklist extends PureComponent {
 
 		return (
 			<div
-				className={ classNames( 'checklist-v2', 'checklist', {
+				className={ classNames( 'checklist', {
 					'is-expanded': ! this.state.hideCompleted,
 					'hide-completed': this.state.hideCompleted,
 				} ) }
@@ -63,7 +65,7 @@ export default class Checklist extends PureComponent {
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
 				/>
-				<div className="checklist-v2__items">{ children }</div>
+				<div className="checklist__tasks">{ children }</div>
 			</div>
 		);
 	}

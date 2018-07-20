@@ -86,7 +86,23 @@
 	}
 }
 
+.checklist__tasks {
+	display: flex;
+	flex-direction: column;
+}
+
 .checklist__task {
+	width: 100%;
+	order: 100;
+
+	.hide-completed &.is-completed {
+		display: none;
+	}
+
+	&.is-completed {
+		order: 0;
+	}
+
 	&.card {
 		display: flex;
 		flex-direction: row;
@@ -278,23 +294,5 @@
 		.checklist__task-duration {
 			width: 50%;
 		}
-	}
-}
-
-.checklist-v2__items {
-	display: flex;
-	flex-direction: column;
-}
-
-.checklist-v2__item {
-	width: 100%;
-	order: 100;
-
-	.hide-completed &.is-completed {
-		display: none;
-	}
-
-	&.is-completed {
-		order: 0;
 	}
 }

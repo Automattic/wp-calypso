@@ -16,7 +16,7 @@ import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
 import ScreenReaderText from 'components/screen-reader-text';
 
-export class Item extends PureComponent {
+export class Task extends PureComponent {
 	static propTypes = {
 		completed: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -51,7 +51,7 @@ export class Item extends PureComponent {
 
 		return (
 			<CompactCard
-				className={ classNames( 'checklist-v2__item', 'checklist__task', {
+				className={ classNames( 'checklist__task', {
 					'is-completed': completed,
 					'has-actionlink': hasActionlink,
 				} ) }
@@ -100,4 +100,4 @@ export class Item extends PureComponent {
 	}
 }
 
-export default localize( Item );
+export default localize( Task );

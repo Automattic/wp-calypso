@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import ScreenReaderText from 'components/screen-reader-text';
 import ProgressBar from 'components/progress-bar';
+import ScreenReaderText from 'components/screen-reader-text';
 
 export class ChecklistHeader extends PureComponent {
 	static propTypes = {

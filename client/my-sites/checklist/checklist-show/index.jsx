@@ -15,8 +15,8 @@ import { localize } from 'i18n-calypso';
 import Checklist from 'components/checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import Item from 'blocks/checklist/item';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
+import Task from 'blocks/checklist/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
 import { tasks as jetpackTasks } from '../jetpack-checklist';
@@ -43,7 +43,7 @@ class ChecklistShow extends PureComponent {
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<Checklist isPlaceholder={ ! taskStatuses } completedCount={ completedCount }>
 					{ tasks.map( taskProps => (
-						<Item { ...taskProps } key={ taskProps.id } siteId={ siteId } siteSlug={ siteSlug } />
+						<Task { ...taskProps } key={ taskProps.id } siteId={ siteId } siteSlug={ siteSlug } />
 					) ) }
 				</Checklist>
 			</Fragment>

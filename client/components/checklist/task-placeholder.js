@@ -9,7 +9,7 @@ import React from 'react';
  */
 import Card from 'components/card';
 
-export default function ItemPlaceholder() {
+export default function TaskPlaceholder() {
 	return (
 		<Card compact className="checklist__task is-placeholder">
 			<div className="checklist__task-primary">

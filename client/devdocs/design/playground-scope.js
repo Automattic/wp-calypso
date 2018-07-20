@@ -21,7 +21,7 @@ export Button from 'components/button';
 export Card from 'components/card';
 export CardHeading from 'components/card-heading';
 export Checklist from 'components/checklist';
-export ChecklistItem from 'components/checklist/item';
+export ChecklistTask from 'components/checklist/task';
 export ClipboardButtonInput from 'components/clipboard-button-input';
 export ClipboardButton from 'components/forms/clipboard-button';
 export Collection from 'devdocs/design/search-collection';

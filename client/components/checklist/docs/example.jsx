@@ -10,7 +10,7 @@ import React, { PureComponent } from 'react';
 import accept from 'lib/accept';
 import Button from 'components/button';
 import Checklist from '../';
-import Item from '../item';
+import Task from '../task';
 
 export default class ChecklistExample extends PureComponent {
 	static displayName = 'ChecklistExample';
@@ -39,7 +39,7 @@ export default class ChecklistExample extends PureComponent {
 					{ this.state.showPlaceholder ? 'Hide Placeholder' : 'Show Placeholder' }
 				</Button>
 				<Checklist isPlaceholder={ this.state.showPlaceholder } inferCompletedCount>
-					<Item
+					<Task
 						onClick={ this.getClickHandler( 'reticulateSplines' ) }
 						onDismiss={ this.getToggleHandler( 'reticulateSplines' ) }
 						title="Reticulate splines"
@@ -50,7 +50,7 @@ export default class ChecklistExample extends PureComponent {
 						duration="1 minute"
 						completed={ this.state.reticulateSplines }
 					/>
-					<Item
+					<Task
 						onClick={ this.getClickHandler( 'shaveYak' ) }
 						onDismiss={ this.getToggleHandler( 'shaveYak' ) }
 						title="Shave yaks!"

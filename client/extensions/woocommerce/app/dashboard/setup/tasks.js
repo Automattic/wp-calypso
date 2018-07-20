@@ -20,7 +20,7 @@ import {
 	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import Checklist from 'components/checklist';
-import Item from 'components/checklist/item';
+import Task from 'components/checklist/task';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
@@ -95,7 +95,7 @@ class SetupTasks extends Component {
 					isPlaceholder={ this.props.loading || ! this.props.productsLoaded }
 					inferCompletedCount
 				>
-					<Item
+					<Task
 						onClick={ this.getClickHandler(
 							'add-product',
 							getLink( '/store/product/:site', site )
@@ -109,7 +109,7 @@ class SetupTasks extends Component {
 						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
 						completed={ hasProducts }
 					/>
-					<Item
+					<Task
 						onClick={ this.getClickHandler(
 							'set-up-shipping',
 							getLink( '/store/settings/shipping/:site', site )
@@ -123,7 +123,7 @@ class SetupTasks extends Component {
 						duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 						completed={ shippingIsSetUp }
 					/>
-					<Item
+					<Task
 						onClick={ this.getClickHandler(
 							'set-up-payments',
 							getLink( '/store/settings/payments/:site', site )
@@ -137,7 +137,7 @@ class SetupTasks extends Component {
 						duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 						completed={ paymentsAreSetUp }
 					/>
-					<Item
+					<Task
 						onClick={ this.getClickHandler(
 							'set-up-taxes',
 							getLink( '/store/settings/taxes/:site', site )
@@ -151,7 +151,7 @@ class SetupTasks extends Component {
 						duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 						completed={ taxesAreSetUp }
 					/>
-					<Item
+					<Task
 						onClick={ this.getClickHandler(
 							'view-and-customize',
 							getLink(

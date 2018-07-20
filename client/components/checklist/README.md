@@ -1,9 +1,9 @@
 Checklist
 =======
 
-`Checklist` and `Item` are components used to render checklists.
+`Checklist` and `Task` are components used to render checklists.
 
-If your checklist items use checklist state from Redux, you can use `Item` from `blocks/checklist/item` to pull state by the `id` prop.
+If your checklist tasks use checklist state from Redux, you can use `Task` from `blocks/checklist/tasks` to pull state by the `id` prop.
 
 ## `Checklist` props
 
@@ -13,15 +13,15 @@ Render as a placeholder.
 
 ### `inferCompletedCount { bool } - default: false`
 
-If `Item` children will have a provided `complete` prop, the `Checklist` will count the completed
-items. This will not work when using connected items (see `blocks/checklist/item`).
+If `Task` children will have a provided `complete` prop, the `Checklist` will count the completed
+tasks. This will not work when using connected tasks (see `blocks/checklist/task`).
 
 ### `completedCount { number }`
 
-If you cannot use `inferCompletedCount` (you're using connected `Item`s), provide the completion
+If you cannot use `inferCompletedCount` (you're using connected `Task`s), provide the completion
 count here.
 
-## `Item` props
+## `Task` props
 
 ### `completed { bool }`
 
@@ -59,13 +59,13 @@ Translate as `translate( '%d minutes', '%d minutes', { count: 2, args: [ 2 ] } )
 
 ### `title { node }`
 
-Item title
+Task title
 
 ## Usage
 
 ```jsx
 <Checklist inferCompletedCount>
-	<Item
+	<Task
 		onClick={ handleSplineClick }
 		onDismiss={ handleSplineDismiss }
 		title="Reticulate splines"
@@ -76,7 +76,7 @@ Item title
 		duration="1 minute"
 		completed
 	/>
-	<Item
+	<Task
 		onClick={ handleYakClick }
 		onDismiss={ handleYakDismiss }
 		title="Shave yaks!"
