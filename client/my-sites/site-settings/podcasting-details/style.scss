@@ -33,6 +33,12 @@
 	}
 }
 
+.podcasting-details__publish-wrapper {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 16px;
+}
+
 .podcasting-details__publish-notice {
 	position: relative;
 	background: $gray-lighten-30;
@@ -48,10 +54,6 @@
 	flex-grow: 1;
 	align-items: center;
 
-	.podcasting-details__category-wrapper & {
-		margin-bottom: 16px;
-	}
-
 	.gridicons-microphone {
 		flex-shrink: 0;
 		margin-right: 6px;
@@ -62,6 +64,19 @@
 		color: $gray-dark;
 		text-decoration: underline;
 	}
+
+	.podcasting-details__support-link {
+		margin-left: 4px;
+	}
+}
+
+.podcasting-details__publish-button {
+	color: $gray-darken-20;
+	font-weight: 600;
+	flex-shrink: 0;
+	margin-left: 12px;
+	// For viewports/translations when the text is taller than the button
+	align-self: center;
 }
 
 .podcasting-details__link.is-enabled {
@@ -71,15 +86,14 @@
 }
 
 @include breakpoint( '<800px' ) {
-	.podcasting-details__link.is-enabled {
-		.podcasting-details__link-action-container {
-			display: block;
-			text-align: right;
-		}
-		.podcasting-details__link-info,
-		.podcasting-details__publish-notice {
-			margin-bottom: 8px;
-		}
+	.podcasting-details__link.is-enabled .podcasting-details__link-action-container,
+	.podcasting-details__publish-wrapper {
+		display: block;
+		text-align: right;
+	}
+	.podcasting-details__link.is-enabled .podcasting-details__link-info,
+	.podcasting-details__publish-notice {
+		margin-bottom: 8px;
 	}
 }
 

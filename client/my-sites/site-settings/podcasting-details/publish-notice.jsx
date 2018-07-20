@@ -11,24 +11,23 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import PodcastingSupportLink from './support-link';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getTerm } from 'state/terms/selectors';
 
-function PodcastingPublishNotice( { translate, podcastingCategoryName, newPostUrl } ) {
+function PodcastingPublishNotice( { translate, podcastingCategoryName } ) {
 	return (
 		<div className="podcasting-details__publish-notice">
 			<Gridicon icon="microphone" size={ 24 } />
 			<span className="podcasting-details__publish-notice-text">
 				{ translate(
-					'{{newPostLink}}Publish a post{{/newPostLink}} in the {{strong}}%s{{/strong}} category to add a new episode.',
+					'Publish blog posts in the {{strong}}%s{{/strong}} category to add new episodes.',
 					{
 						args: podcastingCategoryName,
-						components: {
-							strong: <strong />,
-							newPostLink: <a href={ newPostUrl } />,
-						},
+						components: { strong: <strong /> },
 					}
 				) }
+				<PodcastingSupportLink />
 			</span>
 		</div>
 	);
@@ -40,14 +39,9 @@ export default connect( ( state, ownProps ) => {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-
 	const podcastingCategory = getTerm( state, siteId, 'category', ownProps.podcastingCategoryId );
-
-	const newPostUrl = `/post/${ siteSlug }`;
 
 	return {
 		podcastingCategoryName: podcastingCategory && podcastingCategory.name,
-		newPostUrl,
 	};
 } )( localize( PodcastingPublishNotice ) );
