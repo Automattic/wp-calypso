@@ -157,7 +157,7 @@ class SetupTasks extends Component {
 			this.props.setTriedCustomizerDuringInitialSetup( this.props.site.ID, true );
 			window.open( task.url );
 		} else {
-			page.redirect( task.url );
+			page.show( task.url );
 		}
 	};
 
