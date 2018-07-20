@@ -23,7 +23,7 @@ describe( 'actions', () => {
 	describe( '#updateNotificationSettings()', () => {
 		test( 'should return an action object', () => {
 			const settings = {};
-			const action = updateNotificationSettings( { settings } );
+			const action = updateNotificationSettings( settings );
 
 			expect( action ).to.eql( { type: NOTIFICATION_SETTINGS_UPDATE, settings } );
 		} );
