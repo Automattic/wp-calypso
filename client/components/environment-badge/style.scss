@@ -1,10 +1,9 @@
 .environment-badge {
 	padding: 16px 0;
 	position: fixed;
-		bottom: 0;
-		right: 16px;
+	bottom: 0;
+	right: 16px;
 	z-index: z-index( 'root', '.environment-badge' );
-	backface-visibility: hidden;
 
 	&:hover .environment {
 		display: inline-block;
@@ -59,7 +58,7 @@
 			background-color: $alert-yellow;
 		}
 		&.is-wpcalypso {
-			background-color: #B1EED0;
+			background-color: #b1eed0;
 		}
 		&.is-dev {
 			background-color: $alert-red;
@@ -84,7 +83,7 @@
 	}
 }
 
-@include breakpoint( "<960px" ) {
+@include breakpoint( '<960px' ) {
 	// Don't show environment badge on smaller screens. It just gets in the way.
 	.environment-badge {
 		display: none;
