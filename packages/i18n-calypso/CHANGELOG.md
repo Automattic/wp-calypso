@@ -1,3 +1,10 @@
+2.0.1
+------
+
+* Update parseOptions passed to xgettext to include more modern features https://github.com/Automattic/i18n-calypso/pull/68
+* Switch to hash.js from sha1 for hashing to cut size https://github.com/Automattic/i18n-calypso/pull/67
+* Remove async dependency, as it was unused https://github.com/Automattic/i18n-calypso/pull/66
+
 2.0.0
 ------
 
