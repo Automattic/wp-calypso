@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { isJetpackSite } from 'state/sites/selectors';
 import Banner from 'components/banner';
-import { PLAN_PERSONAL, FEATURE_NO_ADS } from 'lib/plans/constants';
+import { PLAN_PERSONAL, FEATURE_JETPACK_ESSENTIAL } from 'lib/plans/constants';
 
 class UpgradeBanner extends Component {
 	render() {
@@ -25,14 +25,13 @@ class UpgradeBanner extends Component {
 					callToAction={ translate( 'Upgrade' ) }
 					dismissPreferenceName="activity-upgrade-banner-simple"
 					event="activity_log_upgrade_click_wpcom"
-					feature={ FEATURE_NO_ADS }
-					list={ [
-						translate( 'Get a custom domain name' ),
-						translate( 'Remove WordPress.com ads' ),
-						translate( 'See 30 days of past activity' ),
-					] }
+					feature={ FEATURE_JETPACK_ESSENTIAL }
 					plan={ PLAN_PERSONAL }
-					title={ translate( 'Upgrade your WordPress.com experience' ) }
+					title={ translate( 'Enhance your WP.com experience' ) }
+					description={ translate(
+						'Improve your SEO, protect your site from spammers, ' +
+							'and keep a closer eye on your site with expanded activity logs.'
+					) }
 				/>
 			</div>
 		);
