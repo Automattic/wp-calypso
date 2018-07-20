@@ -1,9 +1,9 @@
 .vscode
-assets/
-bin/
-!bin/generate-proptypes-index.js
-build/
-docs/
-public/
+/assets/
+/bin/
+!/bin/generate-proptypes-index.js
+/build/
+/docs/
+/public/
 !.eslintrc.js
-server/devdocs/search-index.js
+/server/devdocs/search-index.js
