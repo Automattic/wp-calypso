@@ -1,0 +1,97 @@
+/* =Tiled Gallery Default Styles
+-------------------------------------------------------------- */
+
+.tiled-gallery {
+	clear: both;
+	margin: 0 0 20px;
+	overflow: hidden;
+}
+.tiled-gallery img {
+	margin: 2px !important; /* Ensure that this value isn't overridden by themes that give content images blanket margins */
+}
+.tiled-gallery .gallery-group {
+	float: left;
+	position: relative;
+}
+.tiled-gallery .tiled-gallery-item {
+	float: left;
+	margin: 0;
+	position: relative;
+	width: inherit; /* prevents ie8 bug with inline width styles */
+}
+.tiled-gallery .gallery-row {
+	 overflow: hidden;
+}
+.tiled-gallery .tiled-gallery-item a { /* Needs to reset some properties for theme compatibility */
+	background: transparent;
+	border: none;
+	color: inherit;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	width: auto;
+}
+.tiled-gallery .tiled-gallery-item figure {
+	margin: 0;
+}
+.tiled-gallery .tiled-gallery-item img,
+.tiled-gallery .tiled-gallery-item img:hover { /* Needs to reset some properties for theme compatibility */
+	background: none;
+	border: none;
+	box-shadow: none;
+	max-width: 100%;
+	padding: 0;
+	vertical-align: middle;
+}
+.tiled-gallery-caption { /* Captions */
+	background: #eee;
+	background: rgba( 255,255,255,0.8 );
+	color: #333;
+	font-size: 13px;
+	font-weight: 400;
+	overflow: hidden;
+	padding: 10px 0;
+	position: absolute;
+		bottom: 0;
+	text-indent: 10px;
+	text-overflow: ellipsis;
+	width: 100%;
+	white-space: nowrap;
+}
+.tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
+	font-size: 11px;
+}
+
+/* Hide galleries in widgets until they've been resized to fit.
+   Gallery widgets are almost guaranteed to need resizing, and
+   the jump is a little more obvious than galleries in content. */
+.widget-gallery .tiled-gallery-unresized {
+	visibility: hidden;
+	height: 0px;
+	overflow: hidden;
+}
+
+/* =Greyscale
+-------------------------------------------------------------- */
+
+.tiled-gallery .tiled-gallery-item img.grayscale {
+	position: absolute;
+		left: 0;
+		top: 0;
+}
+.tiled-gallery .tiled-gallery-item img.grayscale:hover {
+	opacity: 0;
+}
+
+
+/* =Circles Layout
+-------------------------------------------------------------- */
+
+.tiled-gallery.type-circle .tiled-gallery-item img {
+	border-radius: 50% !important; /* Ensure that circles are displayed in themes that add border-radius to all images as a default */
+}
+.tiled-gallery.type-circle .tiled-gallery-caption {
+	display: none;
+	opacity: 0;
+}
+
