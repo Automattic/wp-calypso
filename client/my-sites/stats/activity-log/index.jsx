@@ -118,7 +118,7 @@ class ActivityLog extends Component {
 	}
 
 	findExistingRewind = ( { siteId, rewindState } ) => {
-		if ( rewindState.rewind ) {
+		if ( rewindState.rewind && rewindState.rewind.restoreId ) {
 			this.props.getRewindRestoreProgress( siteId, rewindState.rewind.restoreId );
 		}
 	};
