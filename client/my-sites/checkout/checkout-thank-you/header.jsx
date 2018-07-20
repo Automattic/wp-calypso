@@ -86,7 +86,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		if ( isPlan( primaryPurchase ) ) {
 			return translate(
 				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. ' +
-					"It's doing somersaults in excitement!",
+					preventWidows( "It's doing somersaults in excitement!" ),
 				{
 					args: { productName: primaryPurchase.productName },
 					components: { strong: <strong /> },
