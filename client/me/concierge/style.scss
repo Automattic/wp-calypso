@@ -2,9 +2,15 @@
 
 .book__skeleton-site-block .site__content,
 .book__info-step-site-block .site__content,
+.pending-appointment__detail-block .site__content,
 .shared__site-block .site__content {
 	// Override the site block's padding to use the containing card's padding instead
 	padding: 0;
+}
+
+.pending-appointment__detail-block .site__content {
+	// Apply padding to the bottom of the site card so there's equal spacing above and below.
+	padding-bottom: 1.5em;
 }
 
 .shared__available-time-card.is-expanded {
@@ -47,8 +53,7 @@
 	max-width: 182px;
 }
 
-.cancel__reschedule-button,
-.pending-appointment__reschedule-button {
+.cancel__reschedule-button {
 	margin-right: 10px;
 }
 

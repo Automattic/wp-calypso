@@ -10,10 +10,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { localize, moment } from 'i18n-calypso';
+import CompactCard from 'components/card/compact';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
-import Confirmation from '../shared/confirmation';
-import Button from 'components/button';
+import PrimaryHeader from '../shared/primary-header';
+import Site from 'blocks/site';
+import { localize, moment } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class PendingAppointment extends Component {
@@ -27,39 +28,63 @@ class PendingAppointment extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const beginTimestamp = moment( this.props.nextAppointment.beginTimestamp ).format( 'LLLL' );
+		const { nextAppointment, site, translate } = this.props;
+
+		const appointmentDateTime = moment( nextAppointment.beginTimestamp )
+			.tz( nextAppointment.meta.timezone )
+			.format( 'LLLL z' );
+
+		const cancelLink = '/me/concierge/' + site.slug + '/' + nextAppointment.id + '/cancel';
+		const rescheduleLink = '/me/concierge/' + site.slug + '/' + nextAppointment.id + '/reschedule';
 
 		return (
 			<div>
-				<Confirmation
-					description={ translate( "It's scheduled for %(time)s.", {
-						args: {
-							time: beginTimestamp,
-						},
-					} ) }
-					title={ translate( 'You have a pending appointment' ) }
-				>
-					<Button
-						className="pending-appointment__reschedule-button"
-						href={ `/me/concierge/${ this.props.site.slug }/${
-							this.props.nextAppointment.id
-						}/reschedule` }
-					>
-						{ translate( 'Reschedule session' ) }
-					</Button>
+				<PrimaryHeader />
 
-					<Button
-						className="pending-appointment__confirmation-button"
-						primary={ true }
-						scary={ true }
-						href={ `/me/concierge/${ this.props.site.slug }/${
-							this.props.nextAppointment.id
-						}/cancel` }
-					>
-						{ translate( 'Cancel session' ) }
-					</Button>
-				</Confirmation>
+				<CompactCard className="pending-appointment__detail-block">
+					<p>
+						{ translate( 'Your upcoming appointment is %(dateTime)s.', {
+							args: {
+								dateTime: appointmentDateTime,
+							},
+						} ) }
+					</p>
+
+					<Site siteId={ site.ID } />
+
+					<p>{ translate( "Here's what you told us:" ) }</p>
+
+					<p>
+						{ translate(
+							'{{strong}}Q:{{/strong}} What are you hoping to accomplish with your site?',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+						<br />
+						{ translate( '{{strong}}A:{{/strong}}', {
+							comment: 'Abbreviation for labelling an answer.',
+							components: {
+								strong: <strong />,
+							},
+						} ) }{' '}
+						{ nextAppointment.meta.message }
+					</p>
+
+					<p>
+						{ translate(
+							'If needed you can {{reschedule}}reschedule{{/reschedule}} or {{cancel}}cancel{{/cancel}} this session.',
+							{
+								components: {
+									cancel: <a href={ cancelLink } />,
+									reschedule: <a href={ rescheduleLink } />,
+								},
+							}
+						) }
+					</p>
+				</CompactCard>
 			</div>
 		);
 	}
