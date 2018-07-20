@@ -191,6 +191,7 @@ const webpackConfig = {
 				'gridicons/example': 'gridicons/dist/example',
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example',
+				debug: path.resolve( __dirname, 'node_modules/debug' ),
 			},
 			getAliasesForExtensions()
 		),
