@@ -23,7 +23,10 @@ describe( 'requestUserDevices()', () => {
 
 describe( 'handleSuccess()', () => {
 	test( 'should return an action to add user devices', () => {
-		const devices = [ { id: 1, name: 'Mobile Phone' }, { id: 2, name: 'Tablet' } ];
+		const devices = {
+			1: { id: 1, name: 'Mobile Phone' },
+			2: { id: 2, name: 'Tablet' },
+		};
 
 		const action = handleSuccess( null, devices );
 
