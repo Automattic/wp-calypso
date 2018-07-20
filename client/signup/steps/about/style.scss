@@ -25,6 +25,15 @@
 	opacity: 0;
 }
 
+.about__info-popover {
+	margin-left: 5px;
+	margin-bottom: -2px;
+
+	.gridicon {
+		color: $gray;
+	}
+}
+
 .about__checkboxes {
 	border: 1px solid $gray-lighten-20;
 	border-radius: 3px;
