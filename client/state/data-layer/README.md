@@ -120,6 +120,8 @@ Let's look at a full example:
  */
 import { addSplines } from 'state/splines/actions';
 import { errorNotice } from 'state/notices/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Transform the API response into consumble data
