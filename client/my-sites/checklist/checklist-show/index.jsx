@@ -41,7 +41,7 @@ class ChecklistShow extends PureComponent {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				<Checklist completedCount={ completedCount }>
+				<Checklist isPlaceholder={ ! taskStatuses } completedCount={ completedCount }>
 					{ tasks.map( taskProps => (
 						<Item { ...taskProps } key={ taskProps.id } siteId={ siteId } siteSlug={ siteSlug } />
 					) ) }
