@@ -5,7 +5,7 @@
  */
 
 import {
-	MEMBERSHIPS_SUBSCRIPTIONS_LIST,
+	MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,
 	MEMBERSHIPS_SUBSCRIPTION_STOP,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
@@ -13,7 +13,7 @@ import {
 import wpcom from 'lib/wp';
 
 export const requestSubscriptionsList = () => ( {
-	type: MEMBERSHIPS_SUBSCRIPTIONS_LIST,
+	type: MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,
 } );
 
 export const requestSubscriptionStop = subscriptionId => {

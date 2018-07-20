@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 import {
 	MEMBERSHIPS_PRODUCTS_RECEIVE,
 	MEMBERSHIPS_PRODUCTS_LIST,
-	MEMBERSHIPS_SUBSCRIPTIONS_LIST,
+	MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,
 	MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE,
 } from 'state/action-types';
 
@@ -73,5 +73,5 @@ export const handleSubscribedMembershipsList = dispatchRequestEx( {
 } );
 export default {
 	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
-	[ MEMBERSHIPS_SUBSCRIPTIONS_LIST ]: [ handleSubscribedMembershipsList ],
+	[ MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST ]: [ handleSubscribedMembershipsList ],
 };
