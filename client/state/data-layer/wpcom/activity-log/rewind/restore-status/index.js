@@ -39,10 +39,6 @@ const fetchProgress = action => {
 	const lastUpdate = recentRequests.get( key ) || -Infinity;
 	const now = Date.now();
 
-	if ( ! restoreId ) {
-		return;
-	}
-
 	if ( now - lastUpdate < POLL_INTERVAL ) {
 		return;
 	}
