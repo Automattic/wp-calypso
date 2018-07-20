@@ -9,15 +9,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	MEMBERSHIPS_PRODUCTS_RECEIVE,
-	MEMBERSHIPS_PRODUCTS_LIST,
-	MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,
-	MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE,
-} from 'state/action-types';
-
+import { MEMBERSHIPS_PRODUCTS_RECEIVE, MEMBERSHIPS_PRODUCTS_LIST } from 'state/action-types';
+import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import subscriptionsHandlers from './subscriptions';
 
 export const membershipProductFromApi = product => ( {
 	ID: product.id || product.connected_account_product_id,
@@ -55,23 +51,9 @@ export const handleMembershipProductsList = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export const handleSubscribedMembershipsList = dispatchRequestEx( {
-	fetch: action =>
-		http(
-			{
-				method: 'GET',
-				path: '/me/memberships/subscriptions',
-			},
-			action
-		),
-	onSuccess: ( {}, { subscriptions, total } ) => ( {
-		type: MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE,
-		subscriptions,
-		total,
-	} ),
-	onError: noop,
-} );
-export default {
-	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
-	[ MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST ]: [ handleSubscribedMembershipsList ],
-};
+export default mergeHandlers(
+	{
+		[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
+	},
+	subscriptionsHandlers
+);
