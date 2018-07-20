@@ -12,17 +12,21 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { next } from 'lib/shortcode';
+import Notice from 'components/notice';
 import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
+import canCurrentUser from 'state/selectors/can-current-user';
 import getMediaItem from 'state/selectors/get-media-item';
 import getSimplePayments from 'state/selectors/get-simple-payments';
+import { hasFeature } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import formatCurrency from 'lib/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QueryMedia from 'components/data/query-media';
+import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { translate, productId, product, siteId } = this.props;
+		const { translate, productId, product, siteId, planHasFeature, canManageSite } = this.props;
 
 		if ( ! product ) {
 			return <QuerySimplePayments siteId={ siteId } productId={ productId } />;
@@ -41,6 +45,12 @@ class SimplePaymentsView extends Component {
 		return (
 			<div className="wpview-content wpview-type-simple-payments">
 				{ productImageId && <QueryMedia siteId={ siteId } mediaId={ productImageId } /> }
+				{ ! planHasFeature &&
+					canManageSite && (
+						<Notice status="is-error" showDismiss={ false }>
+							{ translate( 'Simple Payments is not supported by your current Plan.' ) }
+						</Notice>
+					) }
 				<div className="wpview-type-simple-payments__wrapper">
 					{ productImage && (
 						<div className="wpview-type-simple-payments__image-part">
@@ -97,6 +107,8 @@ SimplePaymentsView = connect( ( state, props ) => {
 		siteId,
 		product,
 		productImage: getMediaItem( state, siteId, get( product, 'featuredImageId' ) ),
+		planHasFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
+		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 } )( localize( SimplePaymentsView ) );
 
