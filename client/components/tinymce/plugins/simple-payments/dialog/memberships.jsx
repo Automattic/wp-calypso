@@ -148,7 +148,7 @@ class MembershipsDialog extends Component {
 		};
 	}
 
-	getDerivedStateFromProps( props, state ) {
+	static getDerivedStateFromProps( props, state ) {
 		const openedDialog = props.showDialog && ! state.showDialog;
 		const loadedAndEmpty = state.paymentButtons === null && isEmptyArray( props.paymentButtons );
 
