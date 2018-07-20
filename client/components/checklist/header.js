@@ -38,6 +38,7 @@ export class ChecklistHeader extends PureComponent {
 					<ProgressBar compact total={ total } value={ completed } />
 				</div>
 				<div className="checklist__header-secondary">
+					{ /* eslint-disable-next-line jsx-a11y/label-has-for */ }
 					<label htmlFor="checklist__header-action" className="checklist__header-summary">
 						{ buttonText }
 					</label>
