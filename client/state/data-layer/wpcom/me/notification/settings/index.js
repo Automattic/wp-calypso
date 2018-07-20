@@ -35,12 +35,9 @@ export const requestNotificationSettings = action =>
  *
  * @param   {Object}   action    Redux action
  * @param   {Object}   settings  raw notification settings object returned by the endpoint
- * @returns {Object}             user devices add action
+ * @returns {Object}             notification settings update action
  */
-export const updateSettings = ( action, settings ) =>
-	updateNotificationSettings( {
-		settings,
-	} );
+export const updateSettings = ( action, settings ) => updateNotificationSettings( settings );
 
 /**
  * Returns an error notice action when the request fails

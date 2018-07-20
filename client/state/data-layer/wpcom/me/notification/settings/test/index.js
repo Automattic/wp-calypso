@@ -23,11 +23,12 @@ describe( 'requestNotificationSettings()', () => {
 
 describe( 'updateSettings()', () => {
 	test( 'should return a notification settings update action', () => {
-		const action = updateSettings( null, {} );
+		const settings = {};
+		const action = updateSettings( null, settings );
 
-		expect( action ).toEqual( {
+		expect( action ).toBe( {
 			type: NOTIFICATION_SETTINGS_UPDATE,
-			settings: {},
+			settings,
 		} );
 	} );
 } );
