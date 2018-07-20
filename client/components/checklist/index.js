@@ -10,8 +10,8 @@ import { times } from 'lodash';
 /**
  * Internal dependencies
  */
-import ChecklistHeader from 'blocks/checklist/checklist-header';
-import ChecklistPlaceholder from 'blocks/checklist/checklist-placeholder';
+import ChecklistHeader from 'components/checklist/header';
+import ItemPlaceholder from 'components/checklist/item-placeholder';
 
 export default class Checklist extends PureComponent {
 	static propTyps = {
@@ -30,7 +30,7 @@ export default class Checklist extends PureComponent {
 			<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
 				<ChecklistHeader total={ 0 } completed={ 0 } />
 				{ times( Children.count( this.props.children ), index => (
-					<ChecklistPlaceholder key={ index } />
+					<ItemPlaceholder key={ index } />
 				) ) }
 			</div>
 		);
