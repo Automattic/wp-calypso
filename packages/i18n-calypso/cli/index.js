@@ -35,7 +35,20 @@ module.exports = function( config ) {
 
 	parser = new Xgettext( {
 		keywords: parserKeywords,
-		parseOptions: { plugins: [ 'jsx', 'classProperties', 'objectRestSpread', 'exportExtensions', 'trailingFunctionCommas', 'asyncFunctions' ], allowImportExportEverywhere: true }
+		parseOptions: {
+			plugins: [
+				'asyncFunctions',
+				'classProperties',
+				'dynamicImport',
+				'exportDefaultFrom',
+				'exportExtensions',
+				'exportNamespaceFrom',
+				'jsx',
+				'objectRestSpread',
+				'trailingFunctionCommas'
+			],
+			allowImportExportEverywhere: true
+		}
 	} );
 
 	function getFileMatches( inputFiles ) {
