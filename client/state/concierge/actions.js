@@ -4,8 +4,6 @@
  * Internal dependencies
  */
 import {
-	CONCIERGE_AVAILABLE_TIMES_REQUEST,
-	CONCIERGE_AVAILABLE_TIMES_UPDATE,
 	CONCIERGE_APPOINTMENT_CANCEL,
 	CONCIERGE_APPOINTMENT_CREATE,
 	CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
@@ -27,16 +25,6 @@ export const updateConciergeAppointmentDetails = ( appointmentId, appointmentDet
 	type: CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
 	appointmentId,
 	appointmentDetails,
-} );
-
-export const requestConciergeAvailableTimes = scheduleId => ( {
-	type: CONCIERGE_AVAILABLE_TIMES_REQUEST,
-	scheduleId,
-} );
-
-export const updateConciergeAvailableTimes = availableTimes => ( {
-	type: CONCIERGE_AVAILABLE_TIMES_UPDATE,
-	availableTimes,
 } );
 
 export const requestConciergeInitial = scheduleId => ( {

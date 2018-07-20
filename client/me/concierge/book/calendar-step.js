@@ -15,7 +15,7 @@ import HeaderCake from 'components/header-cake';
 import CompactCard from 'components/card/compact';
 import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
 import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment, requestConciergeAvailableTimes } from 'state/concierge/actions';
+import { bookConciergeAppointment, requestConciergeInitial } from 'state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
 import {
 	CONCIERGE_STATUS_BOOKED,
@@ -65,7 +65,7 @@ class CalendarStep extends Component {
 			this.props.onComplete();
 		} else if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
 			// request new available times
-			this.props.requestConciergeAvailableTimes( WPCOM_CONCIERGE_SCHEDULE_ID );
+			this.props.requestConciergeInitial( WPCOM_CONCIERGE_SCHEDULE_ID );
 		}
 	}
 
@@ -99,5 +99,5 @@ export default connect(
 		currentUserId: getCurrentUserId( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 	} ),
-	{ bookConciergeAppointment, recordTracksEvent, requestConciergeAvailableTimes }
+	{ bookConciergeAppointment, recordTracksEvent, requestConciergeInitial }
 )( localize( CalendarStep ) );
