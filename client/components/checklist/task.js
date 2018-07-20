@@ -82,16 +82,22 @@ export class Task extends PureComponent {
 				<ToggleContainer
 					className="checklist__task-icon"
 					onClick={ onDismiss }
-					aria-pressed={ onDismiss ? ( completed ? 'true' : 'false' ) : undefined }
+					aria-pressed={
+						/* eslint-disable-next-line no-nested-ternary */
+						onDismiss ? ( completed ? 'true' : 'false' ) : undefined
+					}
 				>
 					<ScreenReaderText>
-						{ onDismiss
+						{ /* eslint-disable no-nested-ternary */
+						onDismiss
 							? completed
 								? translate( 'Mark as uncompleted' )
 								: translate( 'Mark as completed' )
 							: completed
 								? translate( 'Complete' )
-								: translate( 'Not complete' ) }
+								: translate( 'Not complete' )
+						/* eslint-enable no-nested-ternary */
+						 }
 					</ScreenReaderText>
 					<Gridicon icon="checkmark" size={ 18 } />
 				</ToggleContainer>
