@@ -22,7 +22,6 @@ import observe from 'lib/mixins/data-observe';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import TranslatorLauncher from './community-translator/launcher';
-import GuidedTours from 'layout/guided-tours';
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
 import OfflineStatus from 'layout/offline-status';
@@ -119,7 +118,7 @@ const Layout = createReactClass( {
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
 				<QueryPreferences />
-				{ <GuidedTours /> }
+				<AsyncLoad require="layout/guided-tours" />
 				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
