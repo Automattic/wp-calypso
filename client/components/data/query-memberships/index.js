@@ -19,11 +19,7 @@ class QueryMemberships extends Component {
 		requestProducts: PropTypes.func,
 	};
 
-	static defaultProps = {
-		productId: null,
-	};
-
-	componentDidMount() {
+	request() {
 		if ( this.props.requesting ) {
 			return;
 		}
@@ -33,6 +29,16 @@ class QueryMemberships extends Component {
 		}
 
 		this.props.requestProducts( this.props.siteId );
+	}
+
+	componentDidMount() {
+		this.request();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( this.props.siteId !== prevProps.siteId ) {
+			this.request();
+		}
 	}
 
 	render() {
