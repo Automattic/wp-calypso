@@ -4,7 +4,7 @@
 var debug = require( 'debug' )( 'i18n-calypso' ),
 	Jed = require( 'jed' ),
 	moment = require( 'moment-timezone' ),
-	sha1 = require( 'sha1' ),
+	sha1 = require( 'hash.js/lib/hash/sha/1' ),
 	EventEmitter = require( 'events' ).EventEmitter,
 	interpolateComponents = require( 'interpolate-components' ).default,
 	LRU = require( 'lru' ),
@@ -201,16 +201,17 @@ I18N.prototype.setLocale = function( localeData ) {
 		var hashLength, minHashLength, maxHashLength, keyHash = localeData[ '' ][ 'key-hash' ];
 
 		var transform = function( string, hashLength ) {
-			if ( typeof hashCache[ hashLength + string ] !== 'undefined' ) {
-				return hashCache[ hashLength + string ];
+			const lookupPrefix = hashLength === false ? '' : String( hashLength );
+			if ( typeof hashCache[ lookupPrefix + string ] !== 'undefined' ) {
+				return hashCache[ lookupPrefix + string ];
 			}
-			var hash = sha1( string );
+			var hash = sha1().update( string ).digest('hex');
 
 			if ( hashLength ) {
-				return hashCache[ hashLength + string ] = hash.substr( 0, hashLength );
+				return hashCache[ lookupPrefix + string ] = hash.substr( 0, hashLength );
 			}
 
-			return hashCache[ hashLength + string ] = hash;
+			return hashCache[ lookupPrefix + string ] = hash;
 		};
 
 		var generateLookup = function( hashLength ) {

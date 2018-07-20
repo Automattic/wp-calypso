@@ -24,6 +24,7 @@
     "create-react-class": "^15.6.2",
     "debug": "^3.1.0",
     "globby": "^6.1.0",
+    "hash.js": "^1.1.5",
     "interpolate-components": "1.1.1",
     "jed": "1.0.2",
     "jstimezonedetect": "1.0.5",
@@ -32,7 +33,6 @@
     "lru": "^3.1.0",
     "moment-timezone": "0.5.11",
     "react": "0.14.8 || ^15.5.0 || ^16.0.0",
-    "sha1": "^1.1.1",
     "xgettext-js": "^2.0.0"
   },
   "devDependencies": {

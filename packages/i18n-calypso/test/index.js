@@ -328,4 +328,49 @@ describe( 'I18n', function() {
 			} );
 		} );
 	} );
+
+	describe( 'hashed locale data', function() {
+		it( 'should find keys when looked up by simple hash', function() {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'xx-pig-latin',
+					'key-hash': 'sha1'
+				},
+				'0f7d0d088b6ea936fb25b477722d734706fe8b40': [
+					null,
+					'implesa'
+				]
+			});
+			assert.equal( i18n.translate( 'simple' ), 'implesa' );
+		} );
+
+		it( 'should find keys when looked up by single length hash', function() {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'xx-pig-latin',
+					'key-hash': 'sha1-1'
+				},
+				'0': [
+					null,
+					'implesa'
+				]
+			});
+			assert.equal( i18n.translate( 'simple' ), 'implesa' );
+		} );
+
+		it( 'should find keys when looked up by multi length hash', function() {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'xx-pig-latin',
+					'key-hash': 'sha1-1-2'
+				},
+				'0': [ null,'implesa' ],
+				'78': [ null, 'edra' ],  // red has a sha1 of 78988010b890ce6f4d2136481f392787ec6d6106
+				'7d': [ null, 'reyga' ] // grey has a sha1 of 7d1f8f911da92c0ea535cad461fd773281a79638
+			});
+			assert.equal( i18n.translate( 'simple' ), 'implesa' );
+			assert.equal( i18n.translate( 'red' ), 'edra' );
+			assert.equal( i18n.translate( 'grey' ), 'reyga' );
+		} );
+	} );
 } );
