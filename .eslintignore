@@ -1,7 +1,6 @@
 .vscode
 /assets/
 /bin/
-!/bin/generate-proptypes-index.js
 /build/
 /docs/
 /public/
