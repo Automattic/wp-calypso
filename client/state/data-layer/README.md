@@ -116,6 +116,12 @@ Let's look at a full example:
  */
 
 /**
+ * Internal dependencies
+ */
+import { addSplines } from 'state/splines/actions';
+import { errorNotice } from 'state/notices/actions';
+
+/**
  * Transform the API response into consumble data
  */
 const apiTransformer = data => data.splines;
@@ -148,7 +154,7 @@ const handleSuccess = ( action, splines ) =>
  * @TODO: Explain why and provide better alternatives
  */
 const announceFailure = () =>
-	createError( `Could not retrieve the splines. Please try again.` );
+	errorNotice( `Could not retrieve the splines. Please try again.` );
 
 export default {
 	[ SPLINES_REQUEST ]: [
