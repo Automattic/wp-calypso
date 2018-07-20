@@ -184,27 +184,6 @@ class MembershipsDialog extends Component {
 		};
 	}
 
-	// componentDidUpdate( prevProps ) {
-	// 	// When transitioning from hidden to visible, show and initialize the form
-	// 	if ( this.props.showDialog && ! prevProps.showDialog ) {
-	// 		if ( this.props.editPaymentId ) {
-	// 			// Explicitly ordered to edit a particular button
-	// 			this.showButtonForm( this.props.editPaymentId );
-	// 		} else if ( isEmptyArray( this.props.paymentButtons ) ) {
-	// 			// If the button list is loaded and empty, show the "Add New" form
-	// 			this.showButtonForm( null );
-	// 		} else {
-	// 			// If the list is loading or is non-empty, show it
-	// 			this.showButtonList();
-	// 		}
-	// 	}
-	//
-	// 	// If the list has finished loading and is empty, switch from list to the "Add New" form
-	// 	if ( prevProps.paymentButtons === null && isEmptyArray( this.props.paymentButtons ) ) {
-	// 		this.showButtonForm( null );
-	// 	}
-	// }
-
 	componentDidMount() {
 		this._isMounted = true;
 	}
