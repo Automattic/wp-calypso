@@ -53,7 +53,6 @@ import {
 	getAllCountries,
 	getStates,
 	hasStates,
-	getCountryName,
 } from 'woocommerce/state/sites/data/locations/selectors';
 
 export const getShippingLabel = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
