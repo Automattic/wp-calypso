@@ -23,7 +23,7 @@ const devicesFromApi = devices =>
 	);
 
 /**
- * Dispatches a request to fetch all available WordPress.com plans
+ * Returns an action for HTTP request to fetch all available WordPress.com plans
  *
  * @param   {Object} action Redux action
  * @returns {Object} http request action
@@ -39,7 +39,7 @@ export const requestUserDevices = action =>
 	);
 
 /**
- * Dispatches a user devices add action then the request for user devices succeeded.
+ * Returns a user devices add action then the request for user devices succeeded.
  *
  * @param   {Object}   action   Redux action
  * @param   {Object}   devices  Devices, returned from the endpoint
@@ -48,7 +48,7 @@ export const requestUserDevices = action =>
 export const handleSuccess = ( action, devices ) => userDevicesAdd( devices );
 
 /**
- * Dispatches an error notice action when the request for user devices fails
+ * Returns an error notice action when the request for user devices fails
  *
  * @returns {Object}            Error notice action
  */
