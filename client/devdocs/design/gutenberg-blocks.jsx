@@ -20,7 +20,7 @@ import { slugToCamelCase } from 'devdocs/docs-example/util';
 /**
  * Docs examples
  */
-import { Autocomplete, Button } from 'gutenberg-blocks/examples';
+import { Autocomplete, Button, Popover } from 'gutenberg-blocks/examples';
 
 export default class extends React.Component {
 	state = { filter: '' };
@@ -55,6 +55,7 @@ export default class extends React.Component {
 				<Collection component={ component } filter={ filter } section="gutenberg-blocks">
 					<Autocomplete />
 					<Button readmeFilePath="button" />
+					<Popover />
 				</Collection>
 			</Main>
 		);
