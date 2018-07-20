@@ -27,7 +27,7 @@
     "@babel/preset-react": "7.0.0-beta.44",
     "@babel/preset-stage-2": "7.0.0-beta.44",
     "@babel/runtime": "7.0.0-beta.44",
-    "@wordpress/components": "1.0.0",
+    "@wordpress/components": "1.0.1",
     "autoprefixer": "8.6.5",
     "autosize": "4.0.2",
     "babel-loader": "8.0.0-beta.4",

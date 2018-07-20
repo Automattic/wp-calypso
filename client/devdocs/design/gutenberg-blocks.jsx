@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -20,7 +21,6 @@ import { slugToCamelCase } from 'devdocs/docs-example/util';
  * Docs examples
  */
 import Button from 'gutenberg-blocks/button/docs/example';
-import page from 'page';
 
 export default class extends React.Component {
 	state = { filter: '' };

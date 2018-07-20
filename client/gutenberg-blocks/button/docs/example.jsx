@@ -12,8 +12,8 @@ Button.displayName = 'Button';
 export default class extends React.PureComponent {
 	static displayName = 'Button';
 
-	render() {
-		return (
+	static defaultProps = {
+		exampleCode: (
 			<div>
 				<Button isPrimary>Primary button</Button>
 				<Button isDefault>Default button</Button>
@@ -25,6 +25,10 @@ export default class extends React.PureComponent {
 				<Button isPrimary disabled>Disabled primary button</Button>
 				<Button isDefault disabled>Disabled default button</Button>
 			</div>
-		);
+		),
+	};
+
+	render() {
+		return this.props.exampleCode;
 	}
 };

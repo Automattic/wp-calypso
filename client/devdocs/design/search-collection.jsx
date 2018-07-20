@@ -80,6 +80,7 @@ const Collection = ( {
 						unique={ !! component }
 						url={ exampleLink }
 						component={ component }
+						section={ section }
 					/>
 					{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
 				</div>
