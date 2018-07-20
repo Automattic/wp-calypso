@@ -28,7 +28,7 @@ describe( 'actions', () => {
 				1: { id: 1, name: 'Mobile Phone' },
 				2: { id: 2, name: 'Tablet' },
 			};
-			const action = userDevicesAdd( { devices } );
+			const action = userDevicesAdd( devices );
 
 			expect( action ).to.eql( {
 				type: USER_DEVICES_ADD,
