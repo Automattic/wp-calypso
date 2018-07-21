@@ -1347,6 +1347,7 @@
       "resolved": "https://registry.npmjs.org/align-text/-/align-text-0.1.4.tgz",
       "integrity": "sha1-DNkKVhCT810KmSVsIrcGlDP60Rc=",
       "dev": true,
+      "optional": true,
       "requires": {
         "kind-of": "^3.0.2",
         "longest": "^1.0.1",
@@ -6060,11 +6061,13 @@
         },
         "balanced-match": {
           "version": "1.0.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "brace-expansion": {
           "version": "1.1.11",
           "bundled": true,
+          "optional": true,
           "requires": {
             "balanced-match": "^1.0.0",
             "concat-map": "0.0.1"
@@ -6077,15 +6080,18 @@
         },
         "code-point-at": {
           "version": "1.1.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "concat-map": {
           "version": "0.0.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "console-control-strings": {
           "version": "1.1.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "core-util-is": {
           "version": "1.0.2",
@@ -6188,7 +6194,8 @@
         },
         "inherits": {
           "version": "2.0.3",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "ini": {
           "version": "1.3.5",
@@ -6198,6 +6205,7 @@
         "is-fullwidth-code-point": {
           "version": "1.0.0",
           "bundled": true,
+          "optional": true,
           "requires": {
             "number-is-nan": "^1.0.0"
           }
@@ -6210,17 +6218,20 @@
         "minimatch": {
           "version": "3.0.4",
           "bundled": true,
+          "optional": true,
           "requires": {
             "brace-expansion": "^1.1.7"
           }
         },
         "minimist": {
           "version": "0.0.8",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "minipass": {
           "version": "2.2.4",
           "bundled": true,
+          "optional": true,
           "requires": {
             "safe-buffer": "^5.1.1",
             "yallist": "^3.0.0"
@@ -6237,6 +6248,7 @@
         "mkdirp": {
           "version": "0.5.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "minimist": "0.0.8"
           }
@@ -6309,7 +6321,8 @@
         },
         "number-is-nan": {
           "version": "1.0.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "object-assign": {
           "version": "4.1.1",
@@ -6319,6 +6332,7 @@
         "once": {
           "version": "1.4.0",
           "bundled": true,
+          "optional": true,
           "requires": {
             "wrappy": "1"
           }
@@ -6424,6 +6438,7 @@
         "string-width": {
           "version": "1.0.2",
           "bundled": true,
+          "optional": true,
           "requires": {
             "code-point-at": "^1.0.0",
             "is-fullwidth-code-point": "^1.0.0",
@@ -9169,7 +9184,8 @@
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/longest/-/longest-1.0.1.tgz",
       "integrity": "sha1-MKCy2jj3N3DoKUoNIuZiXtd9AJc=",
-      "dev": true
+      "dev": true,
+      "optional": true
     },
     "longest-streak": {
       "version": "2.0.2",
@@ -13515,17 +13531,17 @@
       "dev": true
     },
     "sinon": {
-      "version": "6.1.3",
-      "resolved": "https://registry.npmjs.org/sinon/-/sinon-6.1.3.tgz",
-      "integrity": "sha512-yeTza8xIZZdiXntCHJAzKll/sSYE+DuJOS8hiSapzaLqdW8eCNVVC9je9SZYYTkPm2bLts9x6UYxwuMAVVrM6Q==",
+      "version": "6.1.4",
+      "resolved": "https://registry.npmjs.org/sinon/-/sinon-6.1.4.tgz",
+      "integrity": "sha512-NFEts+4D4jp2sBjL94fQpZk5o73kzn/g58+I9Dp15i9vsnT4Lk1UEyUf2jACODWLG6Pz/llF0sArYUw47Aarmg==",
       "dev": true,
       "requires": {
         "@sinonjs/formatio": "^2.0.0",
         "@sinonjs/samsam": "^2.0.0",
         "diff": "^3.5.0",
         "lodash.get": "^4.4.2",
-        "lolex": "^2.4.2",
-        "nise": "^1.3.3",
+        "lolex": "^2.7.1",
+        "nise": "^1.4.2",
         "supports-color": "^5.4.0",
         "type-detect": "^4.0.8"
       }
