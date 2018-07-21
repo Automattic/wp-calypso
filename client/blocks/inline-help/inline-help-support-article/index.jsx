@@ -19,6 +19,7 @@ import QueryReaderPost from 'components/data/query-reader-post';
 import QueryReaderSite from 'components/data/query-reader-site';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
+import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -26,9 +27,9 @@ export class FullPostView extends React.Component {
 	};
 
 	render() {
-		const { post, site, blogId, postId } = this.props;
+		const { post, site, postId } = this.props;
 		const isLoading = ! post;
-		const postKey = { blogId, postId };
+		const postKey = { blogId: SUPPORT_BLOG_ID, postId };
 
 		/*eslint-disable react/no-danger */
 		return (
@@ -55,8 +56,8 @@ export class FullPostView extends React.Component {
 	}
 }
 
-export default connect( ( state, { blogId, postId } ) => {
-	const post = getPostByKey( state, { blogId, postId } );
+export default connect( ( state, { postId } ) => {
+	const post = getPostByKey( state, { blogId: SUPPORT_BLOG_ID, postId } );
 	const siteId = get( post, 'site_ID' );
 	const site = siteId && getSite( state, siteId );
 
