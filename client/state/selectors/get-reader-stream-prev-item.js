@@ -1,11 +1,7 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-/**
- * Internal dependencie
+ * Internal dependencies
  */
 import getReaderStreamOffsetItem from 'state/selectors/get-reader-stream-offset-item';
 

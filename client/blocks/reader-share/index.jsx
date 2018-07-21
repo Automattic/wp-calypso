@@ -223,11 +223,8 @@ class ReaderShare extends React.Component {
 						{ this.props.hasSites && (
 							<SiteSelector
 								className="reader-share__site-selector"
-								siteBasePath="/post"
 								onSiteSelect={ this.pickSiteToShareTo }
-								showAddNewSite={ false }
-								indicator={ false }
-								groups={ true }
+								groups
 							/>
 						) }
 					</ReaderPopoverMenu>

@@ -59,6 +59,10 @@
 	@include breakpoint( '<480px' ) {
 		margin: -2px 8px 0 0px;
 	}
+
+	.is-loading & {
+		align-self: center;
+	}
 }
 
 .activity-log-item__time {
@@ -108,6 +112,20 @@
 	&.is-error {
 		background: $alert-red;
 	}
+
+	.is-loading & {
+		width: 48px;
+		height: 48px;
+		margin-top: 0px;
+		padding: 0;
+		background-color: $gray-lighten-20;
+
+		@include breakpoint( '<480px' ) {
+			width: 32px;
+			height: 32px;
+			margin: 2px 0 0 2px;
+		}
+	}
 }
 
 .activity-log-item__card {
@@ -126,6 +144,11 @@
 		padding: 16px;
 		font-size: 14px;
 		color: $gray-darken-20;
+	}
+
+	.is-loading & {
+		height: 80px;
+		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 

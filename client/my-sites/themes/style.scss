@@ -142,7 +142,11 @@
 
 .banner.is-theme-showcase-banner {
 	@include banner-dark();
-
 	margin-top: 15px;
 	margin-bottom: 15px;
+}
+
+// prevent themes panel from appearing on top of the sidebar when you click back
+.is-section-themes.focus-sidebar #secondary {
+	z-index: z-index( 'root', '.is-section-themes.focus-sidebar #secondary' );
 }

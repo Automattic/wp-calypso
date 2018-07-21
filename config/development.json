@@ -29,7 +29,6 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
 	"features": {
-		"activity-log-core-update": true,
 		"activity-log-wpcom-free": true,
 		"account-recovery": true,
 		"ad-tracking": false,
@@ -79,7 +78,6 @@
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack/google-analytics-for-stores-enhanced": true,
-		"jetpack/ownership-change": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"login/magic-login": true,

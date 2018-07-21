@@ -19,7 +19,6 @@
 		"pt-br"
 	],
 	"features": {
-		"activity-log-core-update": true,
 		"activity-log-wpcom-free": true,
 		"ad-tracking": false,
 		"apple-pay": true,
@@ -52,7 +51,6 @@
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack/google-analytics-for-stores-enhanced": true,
-		"jetpack/ownership-change": true,
 		"jitms": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
