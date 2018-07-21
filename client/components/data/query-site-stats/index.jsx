@@ -9,6 +9,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import shallowEqual from 'react-pure-render/shallowEqual';
 
+import { defer } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -17,11 +19,11 @@ import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class QuerySiteStats extends Component {
-	componentWillMount() {
-		this.request( this.props );
+	UNSAFE_componentWillMount() {
+		defer( () => this.request( this.props ) );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			this.props.siteId === nextProps.siteId &&
 			this.props.statType === nextProps.statType &&
