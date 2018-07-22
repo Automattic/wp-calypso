@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { throttle } from 'lodash';
+import { throttle, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import React from 'react';
@@ -33,14 +33,16 @@ export default class extends React.Component {
 	};
 
 	componentDidMount() {
-		// Determine and cache vertical threshold from rendered element's
-		// offset relative the document
-		this.threshold = ReactDom.findDOMNode( this ).offsetTop;
+		defer( () => {
+			// Determine and cache vertical threshold from rendered element's
+			// offset relative the document
+			this.threshold = ReactDom.findDOMNode( this ).offsetTop;
+			this.updateIsSticky();
+		} );
 		this.throttleOnResize = throttle( this.onWindowResize, 200 );
 
 		window.addEventListener( 'scroll', this.onWindowScroll );
 		window.addEventListener( 'resize', this.throttleOnResize );
-		this.updateIsSticky();
 	}
 
 	componentWillUnmount() {

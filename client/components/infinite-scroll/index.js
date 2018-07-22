@@ -5,7 +5,7 @@
  */
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { throttle } from 'lodash';
+import { throttle, defer } from 'lodash';
 
 const SCROLL_CHECK_RATE_IN_MS = 400;
 
@@ -20,12 +20,17 @@ export default class InfiniteScroll extends Component {
 	);
 
 	componentDidMount() {
+		this.initialMount = true;
 		window.addEventListener( 'scroll', this.checkScrollPositionHandler );
-		this.checkScrollPosition( false );
+		defer( () => this.checkScrollPosition( false ) );
 	}
 
 	componentDidUpdate() {
-		this.checkScrollPosition( false );
+		if ( this.initialMount ) {
+			this.initialMount = false;
+		} else {
+			this.checkScrollPosition( false );
+		}
 	}
 
 	componentWillUnmount() {
