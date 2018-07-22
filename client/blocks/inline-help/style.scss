@@ -1,5 +1,3 @@
-@import './inline-help-support-article/support-article';
-
 .inline-help {
 	position: fixed;
 		right: 24px;
@@ -228,10 +226,6 @@
 .inline-help__richresult__dialog.dialog.card {
 	width: 80vw;
 	max-width: 850px;
-}
-
-.inline-help__richresult__dialog.dialog.card.article {
-	max-width: none;
 }
 
 .inline-help__richresult__dialog__video {
