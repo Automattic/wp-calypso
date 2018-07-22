@@ -45,6 +45,7 @@ import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-la
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
+import inlineSupportArticle from './inline-support-article/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpack from './jetpack/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
@@ -139,6 +140,7 @@ const reducers = {
 	httpData,
 	i18n,
 	inlineHelpSearchResults,
+	inlineSupportArticle,
 	invites,
 	jetpackConnect,
 	jetpack,

@@ -27,6 +27,7 @@ import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSearchQuery } from 'state/inline-help/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
@@ -86,12 +87,7 @@ class InlineHelpRichResult extends Component {
 			}
 		} else if ( type === RESULT_ARTICLE && postId ) {
 			event.preventDefault();
-			this.props.setDialogState( {
-				showDialog: true,
-				dialogType: 'article',
-				dialogPostHref: href,
-				dialogPostId: postId,
-			} );
+			this.props.openSupportArticleDialog( { postId, postUrl: href } );
 		} else {
 			if ( ! href ) {
 				return;
@@ -134,6 +130,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 const mapDispatchToProps = {
 	recordTracksEvent,
 	requestGuidedTour,
+	openSupportArticleDialog,
 };
 
 export default connect(
