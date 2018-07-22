@@ -6,7 +6,6 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import { every } from 'lodash';
 import store from 'store';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -52,14 +51,14 @@ export const shouldRenderAppPromo = ( options = {} ) => {
 		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent ),
 	} = options;
 
-	return every( [
-		! isDesktopPromoDisabled,
-		isUserLocaleEnglish,
-		! isViewportMobile,
-		! isUserOnChromeOs,
-		isDesktopPromoConfiguredToRun,
-		! isUserDesktopAppUser,
-	] );
+	return (
+		! isDesktopPromoDisabled &&
+		isUserLocaleEnglish &&
+		! isViewportMobile &&
+		! isUserOnChromeOs &&
+		isDesktopPromoConfiguredToRun &&
+		! isUserDesktopAppUser
+	);
 };
 
 export default connect( state => {
