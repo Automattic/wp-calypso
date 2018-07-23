@@ -148,25 +148,40 @@ class MembershipsDialog extends Component {
 		};
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		// When transitioning from hidden to visible, show and initialize the form
-		if ( nextProps.showDialog && ! this.props.showDialog ) {
-			if ( nextProps.editPaymentId ) {
-				// Explicitly ordered to edit a particular button
-				this.showButtonForm( nextProps.editPaymentId );
-			} else if ( isEmptyArray( nextProps.paymentButtons ) ) {
-				// If the button list is loaded and empty, show the "Add New" form
-				this.showButtonForm( null );
-			} else {
-				// If the list is loading or is non-empty, show it
-				this.showButtonList();
-			}
+	static getDerivedStateFromProps( props, state ) {
+		const openedDialog = props.showDialog && ! state.showDialog;
+		const loadedAndEmpty = state.paymentButtons === null && isEmptyArray( props.paymentButtons );
+
+		if ( ! openedDialog && ! loadedAndEmpty ) {
+			return null;
 		}
 
-		// If the list has finished loading and is empty, switch from list to the "Add New" form
-		if ( this.props.paymentButtons === null && isEmptyArray( nextProps.paymentButtons ) ) {
-			this.showButtonForm( null );
-		}
+		const buttonFormState = editedPaymentId => ( {
+			activeTab: 'form',
+			editedPaymentId,
+			initialFormValues: this.getInitialFormFields( editedPaymentId ),
+		} );
+
+		const dialogState = () => {
+			if ( props.editPaymentId ) {
+				return buttonFormState( props.editPaymentId );
+			}
+
+			if ( isEmptyArray( props.paymentButtons ) ) {
+				return buttonFormState( null );
+			}
+
+			return { activeTab: 'list' };
+		};
+
+		const formState = () => buttonFormState( null );
+
+		return {
+			...( openedDialog ? dialogState() : {} ),
+			...( loadedAndEmpty ? formState() : {} ),
+			showDialog: props.showDialog,
+			paymentButtons: props.paymentButtons,
+		};
 	}
 
 	componentDidMount() {
