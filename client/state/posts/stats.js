@@ -40,6 +40,7 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 	const podcastingCategoryId = getPodcastingCategoryId( state, siteId );
 	const isPodcastEpisode =
 		podcastingCategoryId &&
+		post.terms &&
 		post.terms.category &&
 		some( post.terms.category, { ID: podcastingCategoryId } );
 	let tracksEventName = 'calypso_editor_';
