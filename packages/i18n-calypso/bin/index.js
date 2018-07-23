@@ -69,16 +69,16 @@ inputPaths.forEach( function( inputFile ) {
 
 if ( linesFile ) {
 	if ( ! fs.existsSync( linesFile ) ) {
-      console.error( 'Error: linesFile, `' + linesFile + '`, does not exist' );
-  }
+		console.error( 'Error: linesFile, `' + linesFile + '`, does not exist' );
+	}
 
 	lines = JSON.parse( fs.readFileSync( linesFile, 'utf8') );
 	for ( var line in lines ) {
-		lines[line] = lines[line].map( String );
+		lines[ line ] = lines[ line ].map( String );
 		var modPath = path.relative( __dirname, line ).replace( /^[\/.]+/, '' );
 		if (  modPath !== line ) {
-			lines[ modPath ] = lines[line];
-			delete lines[line];
+			lines[ modPath ] = lines[ line ];
+			delete lines[ line ];
 		}
 	}
 }
