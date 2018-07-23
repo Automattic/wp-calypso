@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	appendToPostEditsLog,
 	normalizePostForDisplay,
 	normalizePostForState,
 	normalizePostForApi,
@@ -367,6 +368,28 @@ describe( 'utils', () => {
 			);
 
 			expect( serializedQuery ).toBe( '2916284:{"search":"Hello"}' );
+		} );
+	} );
+
+	describe( 'appendToPostEditsLog', () => {
+		test( 'should create a new log when input log is empty', () => {
+			const newLog = appendToPostEditsLog( null, { title: 'Hello' } );
+			expect( newLog ).toEqual( [ { title: 'Hello' } ] );
+		} );
+
+		test( 'should append edit to an empty log', () => {
+			const newLog = appendToPostEditsLog( [], { title: 'Hello' } );
+			expect( newLog ).toEqual( [ { title: 'Hello' } ] );
+		} );
+
+		test( 'should merge with last edit if it is not a save marker', () => {
+			const newLog = appendToPostEditsLog( [ { title: 'Hello' } ], { content: 'World' } );
+			expect( newLog ).toEqual( [ { title: 'Hello', content: 'World' } ] );
+		} );
+
+		test( 'should append a new edit if the last one is a save marker', () => {
+			const newLog = appendToPostEditsLog( [ { title: 'Hello' }, 'marker' ], { content: 'World' } );
+			expect( newLog ).toEqual( [ { title: 'Hello' }, 'marker', { content: 'World' } ] );
 		} );
 	} );
 
