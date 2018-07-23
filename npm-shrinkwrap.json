@@ -16027,9 +16027,9 @@
       "dev": true
     },
     "webpack": {
-      "version": "4.16.1",
-      "resolved": "https://registry.npmjs.org/webpack/-/webpack-4.16.1.tgz",
-      "integrity": "sha512-6jpzObU18y7lXDJz7XCLvzgrqcJ0rZ2jhKvnTivza9gM2GvPW93xxtmEll2GgmdC0zVQAtbHrH/9BtyMjSDZfA==",
+      "version": "4.16.2",
+      "resolved": "https://registry.npmjs.org/webpack/-/webpack-4.16.2.tgz",
+      "integrity": "sha512-Fw+RtyJD9ekQ6Mh6e/hYeoafIKK6bP6qS7EVnZ3hejt+1Ah3JCJZTGE0e5S6Eq4ijIVht6ktWOEqJfm92+5MLw==",
       "requires": {
         "@webassemblyjs/ast": "1.5.13",
         "@webassemblyjs/helper-module-context": "1.5.13",
