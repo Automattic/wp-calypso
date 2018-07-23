@@ -24,19 +24,14 @@ describe( 'ReaderSidebarPromo', () => {
 		isUserDesktopAppUser: false,
 	};
 
-	const readerSidebarDefaultProps = {
-		path: '/',
-	};
-
 	test( 'should render the AppPromo when the shouldRenderAppPromo property is true', () => {
-		const adjustedProperties = { ...readerSidebarDefaultProps, shouldRenderAppPromo: true };
+		const adjustedProperties = { shouldRenderAppPromo: true };
 		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
 		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not render the AppPromo when the shouldRenderAppPromo property is false', () => {
 		const adjustedProperties = {
-			...readerSidebarDefaultProps,
 			shouldRenderAppPromo: false,
 		};
 		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );

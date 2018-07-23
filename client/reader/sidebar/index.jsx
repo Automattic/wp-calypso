@@ -3,14 +3,12 @@
  * External dependencies
  */
 import closest from 'component-closest';
-import createReactClass from 'create-react-class';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith, identity } from 'lodash';
 import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -37,24 +35,20 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { toggleReaderSidebarLists, toggleReaderSidebarTags } from 'state/ui/reader/sidebar/actions';
 import ReaderSidebarPromo from './promo';
 
-export const ReaderSidebar = createReactClass( {
-	displayName: 'ReaderSidebar',
-
-	getInitialState() {
-		return {};
-	},
+export class ReaderSidebar extends React.Component {
+	state = {};
 
 	componentDidMount() {
 		// If we're browsing a tag or list, open the sidebar menu
 		this.openExpandableMenuForCurrentTagOrList();
-	},
+	}
 
-	handleClick( event ) {
+	handleClick = event => {
 		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 			window.scrollTo( 0, 0 );
 		}
-	},
+	};
 
 	highlightNewTag( tagSlug ) {
 		const tagStreamUrl = getTagStreamUrl( tagSlug );
@@ -64,9 +58,9 @@ export const ReaderSidebar = createReactClass( {
 				window.scrollTo( 0, 0 );
 			} );
 		}
-	},
+	}
 
-	openExpandableMenuForCurrentTagOrList() {
+	openExpandableMenuForCurrentTagOrList = () => {
 		const pathParts = this.props.path.split( '/' );
 
 		if ( startsWith( this.props.path, '/tag/' ) ) {
@@ -91,49 +85,49 @@ export const ReaderSidebar = createReactClass( {
 				}
 			}
 		}
-	},
+	};
 
 	handleReaderSidebarFollowedSitesClicked() {
 		recordAction( 'clicked_reader_sidebar_followed_sites' );
 		recordGaEvent( 'Clicked Reader Sidebar Followed Sites' );
 		recordTrack( 'calypso_reader_sidebar_followed_sites_clicked' );
-	},
+	}
 
 	handleReaderSidebarFollowManageClicked() {
 		recordAction( 'clicked_reader_sidebar_follow_manage' );
 		recordGaEvent( 'Clicked Reader Sidebar Follow Manage' );
 		recordTrack( 'calypso_reader_sidebar_follow_manage_clicked' );
-	},
+	}
 
 	handleReaderSidebarConversationsClicked() {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
 		recordTrack( 'calypso_reader_sidebar_conversations_clicked' );
-	},
+	}
 
 	handleReaderSidebarA8cConversationsClicked() {
 		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
 		recordTrack( 'calypso_reader_sidebar_automattic_conversations_clicked' );
-	},
+	}
 
 	handleReaderSidebarDiscoverClicked() {
 		recordAction( 'clicked_reader_sidebar_discover' );
 		recordGaEvent( 'Clicked Reader Sidebar Discover' );
 		recordTrack( 'calypso_reader_sidebar_discover_clicked' );
-	},
+	}
 
 	handleReaderSidebarSearchClicked() {
 		recordAction( 'clicked_reader_sidebar_search' );
 		recordGaEvent( 'Clicked Reader Sidebar Search' );
 		recordTrack( 'calypso_reader_sidebar_search_clicked' );
-	},
+	}
 
 	handleReaderSidebarLikeActivityClicked() {
 		recordAction( 'clicked_reader_sidebar_like_activity' );
 		recordGaEvent( 'Clicked Reader Sidebar Like Activity' );
 		recordTrack( 'calypso_reader_sidebar_like_activity_clicked' );
-	},
+	}
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -281,8 +275,8 @@ export const ReaderSidebar = createReactClass( {
 			</Sidebar>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	},
-} );
+	}
+}
 
 ReaderSidebar.defaultProps = {
 	translate: identity,
@@ -297,14 +291,9 @@ export default connect(
 			teams: getReaderTeams( state ),
 		};
 	},
-	dispatch => {
-		return bindActionCreators(
-			{
-				toggleListsVisibility: toggleReaderSidebarLists,
-				toggleTagsVisibility: toggleReaderSidebarTags,
-				setNextLayoutFocus,
-			},
-			dispatch
-		);
+	{
+		toggleListsVisibility: toggleReaderSidebarLists,
+		toggleTagsVisibility: toggleReaderSidebarTags,
+		setNextLayoutFocus,
 	}
 )( localize( ReaderSidebar ) );
