@@ -6,7 +6,8 @@ const babel = require( '@babel/core' );
 
 describe( 'babel-plugin-transform-wpcalypso-async', () => {
 	function transform( code, async = true ) {
-		return babel.transform( code, {
+		return babel.transformSync( code, {
+			configFile: false,
 			plugins: [ '@babel/plugin-syntax-jsx', [ require( '..' ), { async } ] ],
 		} ).code;
 	}

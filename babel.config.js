@@ -23,7 +23,6 @@ const config = {
 				shippedProposals: true, // allows es7 features like Promise.prototype.finally
 			},
 		],
-		'@babel/stage-2',
 		'@babel/react',
 	],
 	plugins: _.compact( [
@@ -45,6 +44,8 @@ const config = {
 			{ async: isCalypsoClient && codeSplit },
 		],
 		'@babel/plugin-proposal-export-default-from',
+		'@babel/plugin-proposal-export-namespace-from',
+		'@babel/plugin-syntax-dynamic-import',
 		[
 			'@babel/transform-runtime',
 			{
