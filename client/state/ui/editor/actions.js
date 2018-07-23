@@ -21,6 +21,7 @@ import {
 	EDITOR_RESET,
 	EDITOR_START,
 	EDITOR_STOP,
+	EDITOR_SAVE,
 	EDITOR_EDIT_RAW_CONTENT,
 	EDITOR_RESET_RAW_CONTENT,
 	EDITOR_INIT_RAW_CONTENT,
@@ -247,3 +248,10 @@ export function editorLoadingErrorReset() {
 		type: EDITOR_LOADING_ERROR_RESET,
 	};
 }
+
+export const editorSave = ( siteId, postId, saveMarker ) => ( {
+	type: EDITOR_SAVE,
+	siteId,
+	postId,
+	saveMarker,
+} );
