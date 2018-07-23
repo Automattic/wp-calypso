@@ -541,7 +541,7 @@ class AboutStep extends Component {
 							<FormFieldset>
 								<FormLabel htmlFor="siteTitle">
 									{ translate( 'What would you like to name your site?' ) }
-									<InfoPopover className="about__info-popover" position="right">
+									<InfoPopover className="about__info-popover" position="top">
 										{ translate(
 											"We'll use this as your site title. " +
 												"Don't worry, you can change this later."
@@ -560,7 +560,7 @@ class AboutStep extends Component {
 							<FormFieldset>
 								<FormLabel htmlFor="siteTopic">
 									{ translate( 'What will your site be about?' ) }
-									<InfoPopover className="about__info-popover" position="right">
+									<InfoPopover className="about__info-popover" position="top">
 										{ translate( "We'll use this to personalize your site and experience." ) }
 									</InfoPopover>
 								</FormLabel>
