@@ -80,7 +80,7 @@ class DomainSearchResults extends React.Component {
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
-		let availabilityElement, domainSuggestionElement, offer;
+		let availabilityElement, offer;
 
 		if (
 			domain &&
@@ -182,10 +182,7 @@ class DomainSearchResults extends React.Component {
 
 		return (
 			<div className="domain-search-results__domain-availability">
-				<div className={ availabilityElementClasses }>
-					{ availabilityElement }
-					{ domainSuggestionElement }
-				</div>
+				<div className={ availabilityElementClasses }>{ availabilityElement }</div>
 			</div>
 		);
 	}

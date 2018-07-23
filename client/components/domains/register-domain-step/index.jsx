@@ -109,7 +109,7 @@ function getQueryObject( props ) {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
 		vendor: searchVendor,
-		includeSubdomain: props.includeWordPressDotCom,
+		includeSubdomain: props.includeWordPressDotCom || props.includeDotBlogSubdomain,
 		surveyVertical: props.surveyVertical,
 	};
 }
@@ -209,7 +209,9 @@ class RegisterDomainStep extends React.Component {
 			lastDomainStatus: null,
 			lastDomainIsTransferrable: false,
 			loadingResults,
-			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
+			loadingSubdomainResults:
+				( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) &&
+				loadingResults,
 			showNotice: false,
 			pageNumber: 1,
 			searchResults: null,
@@ -279,7 +281,7 @@ class RegisterDomainStep extends React.Component {
 			if ( state.lastSurveyVertical && state.lastSurveyVertical !== this.props.surveyVertical ) {
 				state.loadingResults = true;
 
-				if ( this.props.includeWordPressDotCom ) {
+				if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 					state.loadingSubdomainResults = true;
 				}
 
@@ -775,12 +777,10 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	getSubdomainSuggestions = ( domain, timestamp ) => {
-		const includeWordPressDotCom =
-			this.props.surveyVertical && this.props.includeDotBlogSubdomain ? false : true;
 		const subdomainQuery = {
 			query: domain,
 			quantity: 1,
-			include_wordpressdotcom: includeWordPressDotCom,
+			include_wordpressdotcom: ! this.props.includeDotBlogSubdomain,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'wpcom',
@@ -1114,8 +1114,11 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	showValidationErrorMessage( domain, error, errorData ) {
-		const { TRANSFERRABLE } = domainAvailability;
-		if ( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) {
+		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE } = domainAvailability;
+		if (
+			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
+			( this.props.isSignupStep && DOTBLOG_SUBDOMAIN === error )
+		) {
 			return;
 		}
 		this.setState( { showNotice: true, error, errorData } );

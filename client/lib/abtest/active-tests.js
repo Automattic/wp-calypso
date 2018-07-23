@@ -114,4 +114,12 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
+	includeDotBlogSubdomain: {
+		datestamp: '20180723',
+		variations: {
+			yes: 50,
+			no: 50,
+		},
+		defaultVariation: 'no',
+	},
 };
