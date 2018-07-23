@@ -2,13 +2,16 @@
 
 .domain-suggestion {
 	box-sizing: border-box;
-	display: flex;
-	align-items: center;
 
 	@include clear-fix;
 
 	@include breakpoint( '>660px' ) {
 		padding: 15px 20px;
+	}
+
+	@include breakpoint( '>480px' ) {
+		display: flex;
+		align-items: center;
 	}
 
 	&.is-clickable {
@@ -103,27 +106,45 @@
 	}
 }
 
+.domain-product-price__price {
+	font-size: 1.2em;
+
+	@include breakpoint( '>480px' ) {
+		font-size: 1em;
+	}
+}
+
 .domain-registration-suggestion__title {
-	align-self: center;
-	line-height: 1.25;
-	padding-right: 2em;
+	font-size: 1.3em;
+
+	@include breakpoint( '>480px' ) {
+		align-self: center;
+		padding-right: 2em;
+		font-size: 1em;
+		line-height: 1.25;
+	}
 }
 
 .button.domain-suggestion__action {
-	flex: 1 0 auto;
 	min-width: 66px;
 	text-align: center;
 	color: $blue-medium;
+	margin-top: 0.5em;
+	padding: 0.25em 3em;
+	float: right;
 
 	&.is-primary {
 		color: $white;
-		margin-left: 1em;
-		padding: 0.25em 3em;
 		transition: all 0.1s linear;
 
 		&:hover {
 			background-color: lighten( $blue-medium, 4% );
 			border-color: darken( $blue-medium, 4% );
+		}
+
+		@include breakpoint( '>480px' ) {
+			margin-left: 1em;
+			margin-top: 0;
 		}
 	}
 
@@ -135,6 +156,23 @@
 		color: transparent;
 		margin-left: 40px;
 		min-height: 26px;
+	}
+
+	@include breakpoint( '>480px' ) {
+		flex: 1 0 auto;
+		float: none;
+	}
+}
+
+.domain-transfer-suggestion {
+	display: flex;
+	align-items: center;
+
+	.button.domain-suggestion__action {
+		flex: 1 0 auto;
+		margin: 0;
+		padding-left: 0;
+		padding-right: 0;
 	}
 }
 
