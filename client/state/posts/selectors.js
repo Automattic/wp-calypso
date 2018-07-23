@@ -20,6 +20,7 @@ import {
 	isDiscussionEqual,
 	areAllMetadataEditsApplied,
 	applyPostEdits,
+	mergePostEdits,
 	normalizePostForEditing,
 	normalizePostForDisplay,
 } from './utils';
@@ -318,6 +319,26 @@ export function isRequestingSitePost( state, siteId, postId ) {
 }
 
 /**
+ * Returns an object of edited post attributes for the site ID post ID pairing.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} postId Post ID
+ * @return {Object}        Post revisions
+ */
+export const getPostEdits = createSelector(
+	( state, siteId, postId ) => {
+		const postEditsLog = get( state.posts.edits, [ siteId, postId || '' ] );
+		if ( ! postEditsLog ) {
+			return null;
+		}
+
+		return normalizePostForEditing( mergePostEdits( ...postEditsLog ) );
+	},
+	state => [ state.posts.edits ]
+);
+
+/**
  * Returns a post object by site ID post ID pairing, with editor revisions.
  *
  * @param  {Object} state  Global state tree
@@ -337,19 +358,6 @@ export const getEditedPost = createSelector(
 	},
 	state => [ state.posts.queries, state.posts.edits ]
 );
-
-/**
- * Returns an object of edited post attributes for the site ID post ID pairing.
- *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post ID
- * @return {Object}        Post revisions
- */
-export function getPostEdits( state, siteId, postId ) {
-	const { edits } = state.posts;
-	return normalizePostForEditing( get( edits, [ siteId, postId || '' ], null ) );
-}
 
 /**
  * Returns the assigned value for the edited post by field key.
