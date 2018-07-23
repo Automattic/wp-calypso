@@ -44,7 +44,7 @@
     "babel-runtime": "^6.9.2",
     "debug": "^3.1.0",
     "qs": "^6.5.2",
-    "wpcom-xhr-request": "^1.1.1"
+    "wpcom-xhr-request": "^1.1.2"
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
