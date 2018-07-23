@@ -1,5 +1,6 @@
 /** @format */
 const path = require( 'path' );
+const fs = require( 'fs' );
 const webpack = require( 'webpack' );
 
 const __rootDir = path.resolve( __dirname, '../../' );
@@ -31,6 +32,27 @@ const config = {
 	},
 };
 
+const funcName = 'gutenberg_register_block_' + blockName.replace( '-', '_' );
+const blockRegistration = `<?php
+add_action( 'enqueue_block_editor_assets', '${ funcName }' );
+function ${ funcName }() {
+	wp_enqueue_style(
+		'${ blockName }',
+		plugins_url( '/blocks/blocks-${ blockName }.css', __FILE__ ),
+	);
+
+	wp_enqueue_script(
+		'${ blockName }',
+		plugins_url( '/blocks/blocks-${ blockName }.js', __FILE__ ),
+	);
+}
+`;
+
 const compiler = webpack( config );
 
-compiler.run( ( error, stats ) => console.log( stats.toString() ) );
+compiler.run(
+	( error, stats ) => {
+		console.log( stats.toString() );
+		fs.writeFileSync( path.join( outputDir, `blocks-${ blockName }.php` ), blockRegistration );
+	}
+);
