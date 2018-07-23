@@ -187,26 +187,47 @@ function mergeMetadataEdits( edits, nextEdits ) {
 }
 
 /**
- * Merges two post edits objects into one. Essentially performs a deep merge of two objects,
- * except that arrays are treated as atomic values and overwritten rather than merged.
- * That's important especially for term removals.
+ * Merges an array of post edits (called 'edits log') into one object. Essentially performs
+ * a repeated deep merge of two objects, except:
+ * - arrays are treated as atomic values and overwritten rather than merged.
+ *   That's important especially for term removals.
+ * - metadata edits, which are also arrays, are merged with a special algorithm.
  *
- * @param  {Object} edits     Destination edits object for merge
- * @param  {Object} nextEdits Edits object to be merged
- * @return {Object}           Merged edits object with changes from both sources
+ * @param  {Array<Object>} postEditsLog Edits objects to be merged
+ * @return {Object?}                    Merged edits object with changes from all sources
  */
-export function mergePostEdits( edits, nextEdits ) {
-	return mergeWith( cloneDeep( edits ), nextEdits, ( objValue, srcValue, key, obj, src, stack ) => {
-		if ( key === 'metadata' && stack.size === 0 ) {
-			// merge metadata specially
-			return mergeMetadataEdits( objValue, srcValue );
-		}
+export const mergePostEdits = ( ...postEditsLog ) =>
+	reduce(
+		postEditsLog,
+		( mergedEdits, nextEdits ) => {
+			// filter out save markers
+			if ( isString( nextEdits ) ) {
+				return mergedEdits;
+			}
 
-		if ( Array.isArray( srcValue ) ) {
-			return srcValue;
-		}
-	} );
-}
+			// return the input object if it's the first one to merge (optimization that avoids cloning)
+			if ( mergedEdits === null ) {
+				return nextEdits;
+			}
+
+			// proceed to do the merge
+			return mergeWith(
+				cloneDeep( mergedEdits ),
+				nextEdits,
+				( objValue, srcValue, key, obj, src, stack ) => {
+					if ( key === 'metadata' && stack.size === 0 ) {
+						// merge metadata specially
+						return mergeMetadataEdits( objValue, srcValue );
+					}
+
+					if ( Array.isArray( srcValue ) ) {
+						return srcValue;
+					}
+				}
+			);
+		},
+		null
+	);
 
 /**
  * Memoization cache for `normalizePostForDisplay`. If an identical `post` object was
