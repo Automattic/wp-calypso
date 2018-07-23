@@ -5,7 +5,6 @@
  */
 import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -18,6 +17,7 @@ import SectionHeader from 'components/section-header';
 import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingSupportLink from './support-link';
+import PodcastingPublishNotice from './publish-notice';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isPrivateSite from 'state/selectors/is-private-site';
 import { getTerm } from 'state/terms/selectors';
@@ -43,7 +43,6 @@ class PodcastingLink extends Component {
 			isPrivate,
 			isPodcastingEnabled,
 			podcastingCategoryId,
-			podcastingCategoryName,
 			detailsLink,
 			translate,
 		} = this.props;
@@ -72,18 +71,7 @@ class PodcastingLink extends Component {
 		return (
 			<Fragment>
 				<div className="podcasting-details__link-action-container">
-					<div className="podcasting-details__link-info">
-						<Gridicon icon="microphone" size={ 24 } />
-						<span className="podcasting-details__link-info-text">
-							{ translate(
-								'Publish blog posts in the {{strong}}%s{{/strong}} category to add new episodes.',
-								{
-									args: podcastingCategoryName,
-									components: { strong: <strong /> },
-								}
-							) }
-						</span>
-					</div>
+					<PodcastingPublishNotice podcastingCategoryId={ podcastingCategoryId } />
 					<Button className="podcasting-details__link-button" href={ detailsLink }>
 						{ translate( 'Manage Details' ) }
 					</Button>
@@ -113,7 +101,6 @@ export default connect( ( state, ownProps ) => {
 		isPrivate: isPrivateSite( state, siteId ),
 		isPodcastingEnabled: !! podcastingCategory,
 		podcastingCategoryId,
-		podcastingCategoryName: podcastingCategory && podcastingCategory.name,
 		detailsLink,
 	};
 } )( localize( PodcastingLink ) );

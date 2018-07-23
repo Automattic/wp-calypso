@@ -15,13 +15,13 @@
 		.podcasting-details__link-info {
 			flex-grow: 1;
 			color: $gray-text;
-			margin-right: 12px;
 		}
 
 		.podcasting-details__link-button {
 			color: $gray-darken-20;
 			font-weight: 600;
 			flex-shrink: 0;
+			margin-left: 12px;
 			// For viewports/translations when the text is taller than the button
 			align-self: center;
 		}
@@ -33,42 +33,67 @@
 	}
 }
 
-.podcasting-details__link.is-enabled {
-	.podcasting-details__link-info {
-		position: relative;
-		background: $gray-lighten-30;
-		border-radius: 4px;
-		align-self: stretch;
-		padding: 4px 6px 4px 0;
-		// Center contents vertically
-		// Note this element contains a <span> container to ensure normal
-		// display (whitespace) between text items
-		display: flex;
-		align-items: center;
-	}
+.podcasting-details__publish-wrapper {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 16px;
+}
+
+.podcasting-details__publish-notice {
+	position: relative;
+	background: $gray-lighten-30;
+	border-radius: 4px;
+	align-self: stretch;
+	padding: 6px;
+	font-size: 14px;
+	text-align: left;
+	// Center contents vertically
+	// Note this element contains a <span> container to ensure normal
+	// display (whitespace) between text items
+	display: flex;
+	flex-grow: 1;
+	align-items: center;
 
 	.gridicons-microphone {
 		flex-shrink: 0;
-		margin: 0 4px 0 6px;
+		margin-right: 6px;
 		color: $podcasting-purple;
 	}
 
+	a {
+		color: $gray-dark;
+		text-decoration: underline;
+	}
+
+	.podcasting-details__support-link {
+		margin-left: 4px;
+	}
+}
+
+.podcasting-details__publish-button {
+	color: $gray-darken-20;
+	font-weight: 600;
+	flex-shrink: 0;
+	margin-left: 12px;
+	// For viewports/translations when the text is taller than the button
+	align-self: center;
+}
+
+.podcasting-details__link.is-enabled {
 	.podcasting-details__link-feed {
 		margin-top: 20px;
 	}
 }
 
 @include breakpoint( '<800px' ) {
-	.podcasting-details__link.is-enabled {
-		.podcasting-details__link-action-container {
-			display: block;
-			text-align: right;
-		}
-		.podcasting-details__link-info {
-			text-align: left;
-			margin-right: 0;
-			margin-bottom: 8px;
-		}
+	.podcasting-details__link.is-enabled .podcasting-details__link-action-container,
+	.podcasting-details__publish-wrapper {
+		display: block;
+		text-align: right;
+	}
+	.podcasting-details__link.is-enabled .podcasting-details__link-info,
+	.podcasting-details__publish-notice {
+		margin-bottom: 8px;
 	}
 }
 
