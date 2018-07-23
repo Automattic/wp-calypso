@@ -52,10 +52,10 @@
     "babel-preset-stage-2": "^6.11.0",
     "babel-register": "^6.9.0",
     "eslint": "^3.6.1",
-    "mocha": "^2.5.3",
+    "mocha": "^5.2.0",
     "n8-make": "1.4.0",
     "webpack": "^1.13.1",
     "wpcom-oauth-cors": "^1.0.0",
-    "wpcom-proxy-request": "^3.0.0"
+    "wpcom-proxy-request": "^5.0.0"
   }
 }
