@@ -181,11 +181,13 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {
 						2916284: {
-							841: {
-								title: '',
-								content: '',
-								excerpt: '',
-							},
+							841: [
+								{
+									title: '',
+									content: '',
+									excerpt: '',
+								},
+							],
 						},
 					},
 				},
@@ -209,9 +211,7 @@ describe( 'editedPostHasContent()', () => {
 					queries: {},
 					edits: {
 						2916284: {
-							841: {
-								title: 'chicken',
-							},
+							841: [ { title: 'chicken' } ],
 						},
 					},
 				},
@@ -235,9 +235,7 @@ describe( 'editedPostHasContent()', () => {
 					queries: {},
 					edits: {
 						2916284: {
-							841: {
-								content: 'ribs',
-							},
+							841: [ { content: 'ribs' } ],
 						},
 					},
 				},
@@ -261,9 +259,7 @@ describe( 'editedPostHasContent()', () => {
 					queries: {},
 					edits: {
 						2916284: {
-							841: {
-								excerpt: 'chicken ribs',
-							},
+							841: [ { excerpt: 'chicken ribs' } ],
 						},
 					},
 				},

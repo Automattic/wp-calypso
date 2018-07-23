@@ -290,9 +290,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': {
-									type: 'jetpack-portfolio',
-								},
+								'': [ { type: 'jetpack-portfolio' } ],
 							},
 						},
 					},
@@ -361,12 +359,12 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return "update" if the post was originally published and is still slated to be published', () => {
-			const state = editorState( { status: 'publish' }, {} );
+			const state = editorState( { status: 'publish' }, null );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
 		} );
 
 		test( 'should return "update" if the post was originally published and is currently reverted to non-published status', () => {
-			const state = editorState( { status: 'publish' }, { status: 'draft' } );
+			const state = editorState( { status: 'publish' }, [ { status: 'draft' } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
 		} );
 
@@ -374,7 +372,7 @@ describe( 'selectors', () => {
 			const date = moment()
 				.add( 1, 'month' )
 				.format();
-			const state = editorState( { status: 'draft' }, { date } );
+			const state = editorState( { status: 'draft' }, [ { date } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'schedule' );
 		} );
 
@@ -382,7 +380,7 @@ describe( 'selectors', () => {
 			const date = moment()
 				.add( 1, 'month' )
 				.format();
-			const state = editorState( { status: 'publish' }, { date } );
+			const state = editorState( { status: 'publish' }, [ { date } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'schedule' );
 		} );
 
@@ -390,7 +388,7 @@ describe( 'selectors', () => {
 			const date = moment()
 				.add( 1, 'month' )
 				.format();
-			const state = editorState( { status: 'future', date }, { title: 'change' } );
+			const state = editorState( { status: 'future', date }, [ { title: 'change' } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
 		} );
 
@@ -398,7 +396,9 @@ describe( 'selectors', () => {
 			const date = moment()
 				.add( 1, 'month' )
 				.format();
-			const state = editorState( { status: 'future', date }, { title: 'change', status: 'draft' } );
+			const state = editorState( { status: 'future', date }, [
+				{ title: 'change', status: 'draft' },
+			] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
 		} );
 
@@ -406,7 +406,7 @@ describe( 'selectors', () => {
 			const date = moment()
 				.subtract( 1, 'month' )
 				.format();
-			const state = editorState( { status: 'future', date }, { title: 'change' } );
+			const state = editorState( { status: 'future', date }, [ { title: 'change' } ] );
 			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'publish' );
 		} );
 
