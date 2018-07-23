@@ -1,3 +1,10 @@
+5.4.2 / 2018-07-23
+==================
+
+ * upgrade dependency 'debug' to 3.1.0
+ * upgrade dependency 'qs' to 6.5.2
+ * upgrade dependency 'wpcom-xhr-request' to 1.1.2
+ * stop bundling Node.js 'fs' polyfill in browser package
 
 5.3.0 / 2016-10-25
 ==================
