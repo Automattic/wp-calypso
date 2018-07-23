@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -28,6 +29,8 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import WarningList from './warning-list';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 export const EligibilityWarnings = ( {
 	backUrl,
@@ -60,27 +63,58 @@ export const EligibilityWarnings = ( {
 			'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
 		);
 		const title = translate( 'Business plan required' );
+		const plan = PLAN_BUSINESS;
 
 		if ( 'plugins' === context ) {
-			businessUpsellBanner = (
-				<Banner
-					description={ description }
-					feature={ FEATURE_UPLOAD_PLUGINS }
-					event={ 'calypso-plugin-eligibility-upgrade-nudge' }
-					plan={ PLAN_BUSINESS }
-					title={ title }
-				/>
-			);
-		} else {
-			businessUpsellBanner = (
-				<Banner
-					description={ description }
-					feature={ FEATURE_UPLOAD_THEMES }
-					event={ 'calypso-theme-eligibility-upgrade-nudge' }
-					plan={ PLAN_BUSINESS }
-					title={ title }
-				/>
-			);
+			if (
+				config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
+			) {
+				businessUpsellBanner = (
+					<Banner
+						href={ '/feature/plugins/' + siteSlug }
+						description={ description }
+						event="calypso-plugin-eligibility-upgrade-nudge-upsell"
+						plan={ plan }
+						title={ title }
+					/>
+				);
+			} else {
+				businessUpsellBanner = (
+					<Banner
+						description={ description }
+						feature={ FEATURE_UPLOAD_PLUGINS }
+						event="calypso-plugin-eligibility-upgrade-nudge"
+						plan={ plan }
+						title={ title }
+					/>
+				);
+			}
+		} else if ( 'themes' === context ) {
+			if (
+				config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
+			) {
+				businessUpsellBanner = (
+					<Banner
+						href={ '/feature/themes/' + siteSlug }
+						description={ description }
+						event="calypso-theme-eligibility-upgrade-nudge-upsell"
+						plan={ plan }
+						title={ title }
+					/>
+				);
+			} else {
+				businessUpsellBanner = (
+					<Banner
+						description={ description }
+						feature={ FEATURE_UPLOAD_THEMES }
+						event="calypso-theme-eligibility-upgrade-nudge"
+						plan={ plan }
+						title={ title }
+					/>
+				);
+			}
 		}
 	}
 
