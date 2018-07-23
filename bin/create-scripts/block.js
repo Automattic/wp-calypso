@@ -37,6 +37,10 @@ const compiler = webpack( config );
 
 compiler.run( ( error, stats ) => console.log( stats.toString() ) );
 
+if ( ! fs.existsSync( outputDir ) ) {
+	fs.mkdirSync( outputDir );
+}
+
 const cssOutFile = path.resolve( outputDir, `blocks-${ blockName }.css` );
 sass.render(
 	{
