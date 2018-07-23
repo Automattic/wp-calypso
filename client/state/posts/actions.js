@@ -62,6 +62,7 @@ import {
 	editorReset,
 	editorSetLoadingError,
 	editorInitRawContent,
+	editorSave,
 } from 'state/ui/editor/actions';
 import {
 	getEditorPostId,
@@ -256,19 +257,21 @@ export function deletePostMetadata( siteId, postId = null, metaKeys ) {
 /**
  * Returns an action object to be used in signalling that a post has been saved
  *
- * @param  {Number}   siteId    Site ID
- * @param  {Number}   postId    Post ID
- * @param  {Object}   savedPost Updated post
- * @param  {Object}   post      Post attributes
- * @return {Object}             Action thunk
+ * @param  {Number}   siteId     Site ID
+ * @param  {Number}   postId     Post ID
+ * @param  {Object}   savedPost  Updated post
+ * @param  {Object}   post       Post attributes
+ * @param  {?String}  saveMarker Save marker in the edits log
+ * @return {Object}              Action thunk
  */
-export function savePostSuccess( siteId, postId = null, savedPost, post ) {
+export function savePostSuccess( siteId, postId = null, savedPost, post, saveMarker = null ) {
 	return {
 		type: POST_SAVE_SUCCESS,
 		siteId,
 		postId,
 		savedPost,
 		post,
+		saveMarker,
 	};
 }
 
@@ -625,6 +628,8 @@ export const startEditingPostCopy = ( siteId, postToCopyId ) => dispatch => {
 		} );
 };
 
+let saveMarkerId = 0;
+
 /*
  * Calls out to API to save a Post object
  *
@@ -666,6 +671,9 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	if ( isEmpty( changedAttributes ) ) {
 		return null;
 	}
+
+	const saveMarker = `save-marker-${ ++saveMarkerId }`;
+	dispatch( editorSave( siteId, postId, saveMarker ) );
 
 	changedAttributes = normalizeApiAttributes( changedAttributes );
 	const mode = PreferencesStore.get( 'editor-mode' );
@@ -722,7 +730,7 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	// `post.ID` can be null/undefined, which means we're saving new post.
 	// `savePostSuccess` will convert the temporary ID (empty string key) in Redux
 	// to the newly assigned ID in `receivedPost.ID`.
-	dispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {} ) );
+	dispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {}, saveMarker ) );
 	dispatch( receivePost( receivedPost ) );
 
 	// Only re-init the rawContent if the mode hasn't changed since the request was initiated.
