@@ -54,6 +54,36 @@ export const EligibilityWarnings = ( {
 		'eligibility-warnings__placeholder': isPlaceholder,
 	} );
 
+	let businessUpsellBanner = null;
+	if ( ! hasBusinessPlan && ! isJetpack ) {
+		const description = translate(
+			'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
+		);
+		const title = translate( 'Business plan required' );
+
+		if ( 'plugins' === context ) {
+			businessUpsellBanner = (
+				<Banner
+					description={ description }
+					feature={ FEATURE_UPLOAD_PLUGINS }
+					event={ 'calypso-plugin-eligibility-upgrade-nudge' }
+					plan={ PLAN_BUSINESS }
+					title={ title }
+				/>
+			);
+		} else {
+			businessUpsellBanner = (
+				<Banner
+					description={ description }
+					feature={ FEATURE_UPLOAD_THEMES }
+					event={ 'calypso-theme-eligibility-upgrade-nudge' }
+					plan={ PLAN_BUSINESS }
+					title={ title }
+				/>
+			);
+		}
+	}
+
 	return (
 		<div className={ classes }>
 			<PageViewTracker path="plugins/:plugin/eligibility/:site" title="Plugins > Eligibility" />
@@ -62,22 +92,7 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			{ ! hasBusinessPlan &&
-				! isJetpack && (
-					<Banner
-						description={ translate(
-							'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
-						) }
-						feature={ 'plugins' === context ? FEATURE_UPLOAD_PLUGINS : FEATURE_UPLOAD_THEMES }
-						event={
-							'plugins' === context
-								? 'calypso-plugin-eligibility-upgrade-nudge'
-								: 'calypso-theme-eligibility-upgrade-nudge'
-						}
-						plan={ PLAN_BUSINESS }
-						title={ translate( 'Business plan required' ) }
-					/>
-				) }
+			{ businessUpsellBanner }
 			{ hasBusinessPlan &&
 				! isJetpack &&
 				includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
