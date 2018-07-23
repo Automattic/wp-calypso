@@ -10,6 +10,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import {
+	FeaturesComponent,
 	PluginsUpsellComponent,
 	StoreUpsellComponent,
 	ThemesUpsellComponent,
@@ -42,6 +43,11 @@ const featurePageController = ( url, callback ) => {
 };
 
 export default {
+	features: featurePageController( '/feature', function( context, next ) {
+		context.primary = React.createElement( FeaturesComponent );
+		next();
+	} ),
+
 	storeUpsell: featurePageController( '/feature/store', function( context, next, siteFragment ) {
 		if ( canCurrentUserUseStore( context.store.getState() ) ) {
 			return page.redirect( '/store/' + siteFragment );
