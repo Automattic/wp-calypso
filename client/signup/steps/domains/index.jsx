@@ -374,7 +374,7 @@ class DomainsStep extends React.Component {
 
 	getSubHeaderText() {
 		const { translate } = this.props;
-		return 'transfer' === this.props.stepSectionName
+		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
 			? translate( 'Use a domain you already own with your new WordPress.com site.' )
 			: translate(
 					"Enter your site's name, or some keywords that describe it - " +
