@@ -203,6 +203,7 @@
     "distclean": "npm run -s clean && npm run -s rm -- node_modules",
     "docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
     "eslint-branch": "node bin/eslint-branch.js",
+    "gutenblock": "node bin/create-scripts/block.js",
     "install-if-deps-outdated": "node bin/install-if-deps-outdated.js",
     "install-if-no-packages": "node bin/install-if-no-packages.js",
     "lint": "run-s -s lint:*",
