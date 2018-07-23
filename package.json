@@ -28,7 +28,7 @@
     "@babel/preset-env": "7.0.0-beta.53",
     "@babel/preset-react": "7.0.0-beta.53",
     "@babel/runtime": "7.0.0-beta.53",
-    "autoprefixer": "9.0.0",
+    "autoprefixer": "9.0.1",
     "autosize": "4.0.2",
     "babel-loader": "8.0.0-beta.4",
     "babel-plugin-add-module-exports": "0.2.1",
