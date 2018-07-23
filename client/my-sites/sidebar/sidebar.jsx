@@ -695,6 +695,13 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
+		// For the duration of nudgeAPalooza test we need to allocate all users who visit calypso.
+		// Having it here is an easy solution that makes it possible to avoid touching redux store
+		// middleware structure
+		if ( isEnabled( 'upsell/nudge-a-palooza' ) ) {
+			abtest( 'nudgeAPalooza' );
+		}
+
 		const manage = !! this.manage(),
 			configuration =
 				!! this.sharing() ||
