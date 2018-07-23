@@ -73,6 +73,12 @@ class SiteSettingsImporterError extends React.PureComponent {
 			case 'importError':
 				actionMessage = this.getImportError();
 				break;
+
+			case 'validationError':
+				actionMessage = this.props.description
+					? this.props.description
+					: this.props.translate( 'Data you entered are not valid' );
+				break;
 		}
 
 		return actionMessage;
