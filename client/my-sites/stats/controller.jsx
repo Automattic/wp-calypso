@@ -238,7 +238,7 @@ export default {
 			<StatsSite
 				path={ context.pathname }
 				date={ date }
-				chartTab={ queryOptions.tab || 'views' }
+				chartTab={ queryOptions.tab }
 				context={ context }
 				period={ rangeOfPeriod( activeFilter.period, date ) }
 			/>
