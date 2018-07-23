@@ -69,7 +69,7 @@ module.exports = function( config ) {
 			return match;
 		}) ];
 	} else {
-		matches = getFileMatches( config.inputPaths );
+		matches = getFileMatches( config.inputPaths, config.lines );
 	}
 
 	if ( config.extras ) {
@@ -84,7 +84,12 @@ module.exports = function( config ) {
 	// Flatten array, so that it has all entries in just one level.
 	matches = [].concat.apply( [], matches );
 
-	debug( 'matches', matches );
+	if ( config.lines ) {
+		matches = matches.filter( function( match ) {
+			var line = match.line.split(':');
+			return ( 'undefined' != typeof config.lines[ line[0] ] && -1 != config.lines[ line[0] ].indexOf( line[1] ) )
+			});
+	}
 
 	if ( 'string' === typeof formatter ) {
 		formatter = formatters[ formatter ];
