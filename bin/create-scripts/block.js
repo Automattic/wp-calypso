@@ -37,7 +37,7 @@ const compiler = webpack( config );
 
 compiler.run( ( error, stats ) => console.log( stats.toString() ) );
 
-const cssOutFile = path.resolve( outputDir, 'style.css' );
+const cssOutFile = path.resolve( outputDir, `blocks-${ blockName }.css` );
 sass.render(
 	{
 		file: path.resolve( sourceDir, 'style.scss' ),
@@ -47,7 +47,7 @@ sass.render(
 	},
 	( error, result ) => {
 		if ( error ) {
-			console.warn( 'Failed to process SCSS', extension, error );
+			console.warn( 'Failed to process SCSS', blockName, error );
 			return;
 		}
 
@@ -55,7 +55,7 @@ sass.render(
 
 		fs.writeFile( cssOutFile, result.css, fileError => {
 			if ( fileError ) {
-				console.warn( 'Failed to save CSS', extension, fileError );
+				console.warn( 'Failed to save CSS', blockName, fileError );
 				return;
 			}
 			console.log( 'Wrote CSS to ' + cssOutFile );
@@ -63,7 +63,7 @@ sass.render(
 
 		fs.writeFile( cssOutFile + '.map', result.map, fileError => {
 			if ( fileError ) {
-				console.warn( 'Failed to save sourcemap', extension, fileError );
+				console.warn( 'Failed to save sourcemap', blockName, fileError );
 				return;
 			}
 			console.log( 'Wrote Source Map to ' + cssOutFile + '.map' );
