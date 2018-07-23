@@ -4,8 +4,6 @@ const stats = require( path.join( __dirname, '..', 'server', 'bundler', 'assets.
 const _ = require( 'lodash' );
 const gzipSize = require( 'gzip-size' );
 
-
-
 function getChunkByName( name ) {
 	return stats.chunks.find( chunk => chunk.names.indexOf( name ) !== -1 );
 }
@@ -29,11 +27,10 @@ if ( sectionChunks.length !== sectionsToCheck.length ) {
 	console.log( `bad section chunk name` );
 }
 
-const sectionsToLoad = [];
-sectionsToLoad.push({
-	name: 'boot',
-	chunks: getChunkAndSiblings('build')
-});
+const sectionsToLoad = [].concat( [ 'build', 'login' ].map( entry => ( {
+	name: `boot:${entry}`,
+	chunks: getChunkAndSiblings( entry )
+} ) ) );
 sectionChunks.forEach(section => {
 	sectionsToLoad.push({
 		name: section.names.join(','),
