@@ -563,7 +563,7 @@ export class PluginMeta extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		if (
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'pluginUpsells'
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
 		) {
 			return (
 				<div className="plugin-meta__upgrade_nudge">

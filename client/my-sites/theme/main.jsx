@@ -623,7 +623,7 @@ class ThemeSheet extends React.Component {
 			isPremium &&
 			! hasUnlimitedPremiumThemes &&
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'themesUpsells';
+			abtest( 'nudgeAPalooza' ) === 'themesNudgesUpdates';
 		if ( hasUpsellBanner ) {
 			// This is just for US-english audience and is not translated, remember to add translate() calls before
 			// removing a/b test check and enabling it for everyone

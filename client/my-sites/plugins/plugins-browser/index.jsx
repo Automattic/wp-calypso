@@ -507,7 +507,7 @@ export class PluginsBrowser extends Component {
 
 		if (
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'pluginUpsells'
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
 		) {
 			const href = '/feature/plugins/' + siteSlug;
 			return (
