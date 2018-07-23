@@ -390,11 +390,10 @@ class ActivityLog extends Component {
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
-				{ siteId &&
-					'unavailable' === rewindState.state && (
+				{ siteId && 'unavailable' === rewindState.state && (
 						<UnavailabilityNotice siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 					) }
-				{ 'awaitingCredentials' === rewindState.state && (
+				{ 'awaitingCredentials' === rewindState.state && ! siteIsOnFreePlan && (
 					<Banner
 						icon="history"
 						href={
