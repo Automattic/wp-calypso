@@ -8,6 +8,7 @@ import {
 	set,
 	omit,
 	omitBy,
+	isEmpty,
 	isEqual,
 	reduce,
 	merge,
@@ -22,6 +23,7 @@ import {
 import PostQueryManager from 'lib/query-manager/post';
 import { combineReducers, createReducer } from 'state/utils';
 import {
+	EDITOR_SAVE,
 	EDITOR_START,
 	EDITOR_STOP,
 	POST_DELETE,
@@ -46,6 +48,7 @@ import counts from './counts/reducer';
 import likes from './likes/reducer';
 import revisions from './revisions/reducer';
 import {
+	appendToPostEditsLog,
 	getSerializedPostsQuery,
 	getUnappliedMetadataEdits,
 	isAuthorEqual,
@@ -415,7 +418,10 @@ export function edits( state = {}, action ) {
 					// Receive a new version of a post object, in most cases returned in the POST
 					// response after a successful save. Removes the edits that have been applied
 					// and leaves only the ones that are not noops.
-					const postEdits = get( memoState, [ post.site_ID, post.ID ] );
+					const postEditsLog = get( memoState, [ post.site_ID, post.ID ] ) || [];
+
+					// merge the array of edits into one object
+					const postEdits = mergePostEdits( ...postEditsLog );
 
 					if ( ! postEdits ) {
 						return memoState;
@@ -461,7 +467,8 @@ export function edits( state = {}, action ) {
 						}
 					}
 
-					return set( memoState, [ post.site_ID, post.ID ], unappliedPostEdits );
+					const newEditsLog = isEmpty( unappliedPostEdits ) ? null : [ unappliedPostEdits ];
+					return set( memoState, [ post.site_ID, post.ID ], newEditsLog );
 				},
 				state
 			);
@@ -470,14 +477,14 @@ export function edits( state = {}, action ) {
 			// process new edit for a post: merge it into the existing edits
 			const siteId = action.siteId;
 			const postId = action.postId || '';
-			const postEdits = get( state, [ siteId, postId ] );
-			const mergedEdits = mergePostEdits( postEdits, action.post );
+			const postEditsLog = get( state, [ siteId, postId ] );
+			const newEditsLog = appendToPostEditsLog( postEditsLog, action.post );
 
 			return {
 				...state,
 				[ siteId ]: {
 					...state[ siteId ],
-					[ postId ]: mergedEdits,
+					[ postId ]: newEditsLog,
 				},
 			};
 		}
@@ -499,21 +506,69 @@ export function edits( state = {}, action ) {
 				[ action.siteId ]: omit( state[ action.siteId ], action.postId || '' ),
 			} );
 
-		case POST_SAVE_SUCCESS:
-			if ( ! state.hasOwnProperty( action.siteId ) || ! action.savedPost || action.postId ) {
+		case EDITOR_SAVE: {
+			if ( ! action.saveMarker ) {
 				break;
 			}
-			const { siteId, savedPost } = action;
 
-			// a new post (edited with a transient postId of '') has been just saved and assigned
-			// a real numeric ID. Rewrite the state key with the new postId.
+			const siteId = action.siteId;
+			const postId = action.postId || '';
+			const postEditsLog = get( state, [ siteId, postId ] );
+
+			if ( isEmpty( postEditsLog ) ) {
+				break;
+			}
+
+			const newEditsLog = [ ...postEditsLog, action.saveMarker ];
+
 			return {
 				...state,
-				[ siteId ]: mapKeys(
-					state[ siteId ],
-					( value, key ) => ( '' === key ? savedPost.ID : key )
-				),
+				[ siteId ]: {
+					...state[ siteId ],
+					[ postId ]: newEditsLog,
+				},
 			};
+		}
+
+		case POST_SAVE_SUCCESS: {
+			const siteId = action.siteId;
+			const postId = action.postId || '';
+			const postEditsLog = get( state, [ siteId, postId ] );
+
+			if ( ! postEditsLog ) {
+				break;
+			}
+
+			// if the save action has a marker, remove the edits before that marker
+			if ( action.saveMarker ) {
+				const markerIndex = postEditsLog.indexOf( action.saveMarker );
+				if ( markerIndex !== -1 ) {
+					const newEditsLog = postEditsLog.slice( markerIndex + 1 );
+					state = {
+						...state,
+						[ siteId ]: {
+							...state[ siteId ],
+							[ postId ]: newEditsLog,
+						},
+					};
+				}
+			}
+
+			// if new post (edited with a transient postId of '') has been just saved and assigned
+			// a real numeric ID, rewrite the state key with the new postId.
+			if ( postId === '' && action.savedPost ) {
+				const newPostId = action.savedPost.ID;
+				state = {
+					...state,
+					[ siteId ]: mapKeys(
+						state[ siteId ],
+						( value, key ) => ( key === '' ? newPostId : key )
+					),
+				};
+			}
+
+			return state;
+		}
 	}
 
 	return state;
