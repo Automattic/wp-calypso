@@ -390,23 +390,25 @@ class ActivityLog extends Component {
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
-				{ siteId && 'unavailable' === rewindState.state && (
+				{ siteId &&
+					'unavailable' === rewindState.state && (
 						<UnavailabilityNotice siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 					) }
-				{ 'awaitingCredentials' === rewindState.state && ! siteIsOnFreePlan && (
-					<Banner
-						icon="history"
-						href={
-							rewindState.canAutoconfigure
-								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
-								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
-						}
-						title={ translate( 'Add site credentials' ) }
-						description={ translate(
-							'Backups and security scans require access to your site to work properly.'
-						) }
-					/>
-				) }
+				{ 'awaitingCredentials' === rewindState.state &&
+					! siteIsOnFreePlan && (
+						<Banner
+							icon="history"
+							href={
+								rewindState.canAutoconfigure
+									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
+									: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
+							}
+							title={ translate( 'Add site credentials' ) }
+							description={ translate(
+								'Backups and security scans require access to your site to work properly.'
+							) }
+						/>
+					) }
 				{ 'provisioning' === rewindState.state && (
 					<Banner
 						icon="history"
@@ -450,6 +452,14 @@ class ActivityLog extends Component {
 								</Fragment>
 							) ) }
 						</section>
+						{ siteIsOnFreePlan && (
+							<p className="activity-log__limit-notice">
+								{ translate(
+									"Since you're on a free plan, " +
+										"you'll see a limited number of events in your activity log."
+								) }
+							</p>
+						) }
 						<Pagination
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
