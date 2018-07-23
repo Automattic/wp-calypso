@@ -129,6 +129,15 @@ class Customize extends React.Component {
 		page.back( path );
 	};
 
+	navigateTo = destination => {
+		if ( ! startsWith( destination, '/checkout' ) ) {
+			return;
+		}
+
+		debug( 'navigating to', destination );
+		page( destination );
+	};
+
 	waitForLoading = () => {
 		debug( 'waiting for iframe to load' );
 		this.cancelWaitingTimer();
@@ -256,6 +265,14 @@ class Customize extends React.Component {
 				case 'purchased':
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
 					Actions.purchase( themeSlug, site );
+					break;
+				case 'navigateTo':
+					const destination = message.destination;
+					if ( ! destination ) {
+						debug( 'missing destination' );
+						return;
+					}
+					this.navigateTo( destination );
 					break;
 			}
 		}
