@@ -37,6 +37,11 @@ const compiler = webpack( config );
 
 compiler.run( ( error, stats ) => console.log( stats.toString() ) );
 
+const sassInputFile = path.resolve( sourceDir, 'style.scss' );
+if ( ! fs.existsSync( outputDir ) ) {
+	return;
+}
+
 if ( ! fs.existsSync( outputDir ) ) {
 	fs.mkdirSync( outputDir );
 }
@@ -44,7 +49,7 @@ if ( ! fs.existsSync( outputDir ) ) {
 const cssOutFile = path.resolve( outputDir, `blocks-${ blockName }.css` );
 sass.render(
 	{
-		file: path.resolve( sourceDir, 'style.scss' ),
+		file: sassInputFile,
 		outFile: cssOutFile,
 		sourceMap: true,
 		outputStyle: 'compressed',
