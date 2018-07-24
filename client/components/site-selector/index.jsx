@@ -308,10 +308,6 @@ class SiteSelector extends Component {
 
 		const recentSites = sites.map( this.renderSite, this );
 
-		if ( ! recentSites ) {
-			return null;
-		}
-
 		return <div className="site-selector__recent">{ recentSites }</div>;
 	}
 
