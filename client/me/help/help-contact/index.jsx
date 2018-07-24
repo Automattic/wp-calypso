@@ -75,7 +75,6 @@ const debug = debugFactory( 'calypso:help-contact' );
  */
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 const wpcom = wpcomLib.undocumented();
-let savedContactForm = null;
 
 const startShowingEaster2018ClosureNoticeAt = i18n.moment( 'Thu, 29 Mar 2018 00:00:00 +0000' );
 const stopShowingEaster2018ClosureNoticeAt = i18n.moment( 'Mon, 2 Apr 2018 00:00:00 +0000' );
@@ -95,6 +94,8 @@ class HelpContact extends React.Component {
 		wasAdditionalSupportOptionShown: false,
 	};
 
+	savedContactForm = null;
+
 	componentDidMount() {
 		this.prepareDirectlyWidget();
 	}
@@ -110,8 +111,12 @@ class HelpContact extends React.Component {
 		page( '/help' );
 	};
 
-	clearSavedContactForm = () => {
-		savedContactForm = null;
+	clearSavedContactForm() {
+		this.savedContactForm = null;
+	}
+
+	updateSavedContactForm = formValues => {
+		this.savedContactForm = formValues;
 	};
 
 	startHappychat = contactForm => {
@@ -417,8 +422,8 @@ class HelpContact extends React.Component {
 			disabled: isSubmitting,
 			showHelpLanguagePrompt,
 			valueLink: {
-				value: savedContactForm,
-				requestChange: contactForm => ( savedContactForm = contactForm ),
+				value: this.savedContactForm,
+				requestChange: this.updateSavedContactForm,
 			},
 		};
 	};
