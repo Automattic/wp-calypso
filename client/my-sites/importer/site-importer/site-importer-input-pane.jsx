@@ -292,6 +292,8 @@ class SiteImporterInputPane extends React.Component {
 								onChange={ this.setUrl }
 								onKeyPress={ this.validateOnEnter }
 								value={ this.state.siteURLInput }
+								placeholder="https://example.com/"
+								autoFocus={ true }
 							/>
 							<Button
 								disabled={ this.state.loading }
