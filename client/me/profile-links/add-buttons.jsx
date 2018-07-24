@@ -71,7 +71,7 @@ class AddProfileLinksButtons extends React.Component {
 					onClick={ this.props.onShowPopoverMenu }
 				>
 					<Gridicon icon="add-outline" />
-					{ this.props.translate( 'Add' ) }
+					<span>{ this.props.translate( 'Add' ) }</span>
 				</Button>
 			</div>
 		);
