@@ -136,7 +136,7 @@ class SiteImporterInputPane extends React.Component {
 
 		let errorMessage;
 		if ( ! siteURL ) {
-			errorMessage = this.props.translate( 'Please enter a URL.' );
+			errorMessage = this.props.translate( 'Please enter a valid URL.' );
 		} else if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
 			errorMessage = this.props.translate(
 				'The URL you entered is for the Wix editor which is only accessible to you. Please enter a public URL of your site using one of the formats described below.'
