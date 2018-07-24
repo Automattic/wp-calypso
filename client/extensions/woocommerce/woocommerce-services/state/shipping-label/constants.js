@@ -1,5 +1,5 @@
 // "Countries" from when USPS can ship a package. That is, the countries or territories with at least 1 USPS post office
-export const ACCEPTED_USPS_ORIGIN_COUNTRY_CODES = [
+export const ACCEPTED_USPS_ORIGIN_COUNTRIES = [
 	'US', // United States
 	'PR', // Puerto Rico
 	'VI', // Virgin Islands

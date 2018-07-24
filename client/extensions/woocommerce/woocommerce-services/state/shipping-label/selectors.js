@@ -41,7 +41,7 @@ import {
 import { isEnabled } from 'config';
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 import {
-	ACCEPTED_USPS_ORIGIN_COUNTRY_CODES,
+	ACCEPTED_USPS_ORIGIN_COUNTRIES,
 	US_MILITARY_STATES,
 	DOMESTIC_US_TERRITORIES,
 } from './constants';
@@ -231,7 +231,7 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 	} );
 
 	if (
-		includes( ACCEPTED_USPS_ORIGIN_COUNTRY_CODES, country ) &&
+		includes( ACCEPTED_USPS_ORIGIN_COUNTRIES, country ) &&
 		! /^\d{5}(?:-\d{4})?$/.test( postcode )
 	) {
 		errors.postcode = translate( 'Invalid ZIP code format' );
@@ -559,7 +559,7 @@ export const getOriginCountryNames = createSelector(
 	( state, siteId = getSelectedSiteId( state ) ) => {
 		const allNames = getAllCountryNames( state, siteId );
 		return isEnabled( 'woocommerce/extension-wcservices/international-labels' )
-			? pick( allNames, ACCEPTED_USPS_ORIGIN_COUNTRY_CODES )
+			? pick( allNames, ACCEPTED_USPS_ORIGIN_COUNTRIES )
 			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
 	_getSelectorDependants( 0 )

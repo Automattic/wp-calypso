@@ -24,7 +24,7 @@ import {
 	isLabelDataFetchError,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import {
-	ACCEPTED_USPS_ORIGIN_COUNTRY_CODES,
+	ACCEPTED_USPS_ORIGIN_COUNTRIES,
 	US_MILITARY_STATES,
 	DOMESTIC_US_TERRITORIES,
 } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
@@ -149,9 +149,7 @@ class OrderFulfillment extends Component {
 	isAddressValidForLabels( address, type ) {
 		if ( isEnabled( 'woocommerce/extension-wcservices/international-labels' ) ) {
 			// If international labels is enabled, origin must be a country with a USPS office, destination can be anywhere in the world
-			return (
-				'destination' === type || includes( ACCEPTED_USPS_ORIGIN_COUNTRY_CODES, address.country )
-			);
+			return 'destination' === type || includes( ACCEPTED_USPS_ORIGIN_COUNTRIES, address.country );
 		}
 
 		// If international labels is disabled, restrict origin and destination to "domestic", that is, US, Puerto Rico and Virgin Islands
