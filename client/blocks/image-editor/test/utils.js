@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -64,7 +66,10 @@ describe( 'getDefaultAspectRatio', () => {
 			describe( 'when the given aspectRatio is invalid', () => {
 				it( 'returns the value of AspectRatios.FREE', () => {
 					const expected = AspectRatios.FREE;
-					const actual = getDefaultAspectRatio( 'INVALID_ASPECT', [ 'INVALID_ASPECT', 'ASPECT_1X1' ] );
+					const actual = getDefaultAspectRatio( 'INVALID_ASPECT', [
+						'INVALID_ASPECT',
+						'ASPECT_1X1',
+					] );
 
 					expect( actual ).to.equal( expected );
 				} );

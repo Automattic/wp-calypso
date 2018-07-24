@@ -53,7 +53,9 @@ class ActionHeader extends React.Component {
 					<Gridicon icon="chevron-left" />
 				</Button>
 				<div className="action-header__content">
-					<SiteIcon site={ site } />
+					<a href={ site.URL } aria-label={ site.title }>
+						<SiteIcon site={ site } />
+					</a>
 					<div className="action-header__details">
 						{ site && <p className="action-header__site-title">{ site.title }</p> }
 						{ this.renderBreadcrumbs() }

@@ -232,4 +232,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 } );
 
-export default connect( mapStateToProps, { recordTracksEvent } )( Banner );
+export default connect(
+	mapStateToProps,
+	{ recordTracksEvent }
+)( Banner );

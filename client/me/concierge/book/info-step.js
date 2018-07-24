@@ -25,7 +25,8 @@ import Timezone from 'components/timezone';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
-import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
+import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
+import getUserSettings from 'state/selectors/get-user-settings';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -60,13 +61,18 @@ class InfoStep extends Component {
 	};
 
 	canSubmitForm = () => {
-		const { signupForm: { firstname, message } } = this.props;
+		const {
+			signupForm: { firstname, message },
+		} = this.props;
 
 		return !! firstname.trim() && !! message.trim();
 	};
 
 	componentDidMount() {
-		const { userSettings, signupForm: { firstname, lastname } } = this.props;
+		const {
+			userSettings,
+			signupForm: { firstname, lastname },
+		} = this.props;
 
 		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
 

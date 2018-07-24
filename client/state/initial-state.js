@@ -150,7 +150,7 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 		if ( shouldAddSympathy() ) {
 			// eslint-disable-next-line no-console
 			console.log(
-				'%cSkipping initial state rehydration to recreate first-load experience.',
+				'%cSkipping initial state rehydration. (This runs during random page requests in the Calypso development environment, to simulate loading the application with an empty cache.)',
 				'font-size: 14px; color: red;'
 			);
 

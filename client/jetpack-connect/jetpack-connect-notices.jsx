@@ -4,60 +4,51 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import {
-	ACTIVATION_FAILURE,
-	ACTIVATION_RESPONSE_ERROR,
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
 	ALREADY_OWNED,
 	DEFAULT_AUTHORIZE_ERROR,
 	INSTALL_RESPONSE_ERROR,
+	INVALID_CREDENTIALS,
 	IS_DOT_COM,
 	JETPACK_IS_DISCONNECTED,
 	JETPACK_IS_VALID,
-	LOGIN_FAILURE,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
 	NOT_EXISTS,
 	NOT_JETPACK,
 	NOT_WORDPRESS,
 	OUTDATED_JETPACK,
-	INVALID_PERMISSIONS,
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
-	UNKNOWN_REMOTE_INSTALL_ERROR,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
+	XMLRPC_ERROR,
 } from './connection-notice-types';
-import { JETPACK_MINIMUM_WORDPRESS_VERSION } from './constants';
 import Notice from 'components/notice';
-import { addQueryArgs } from 'lib/route';
-import { getConnectingSite } from 'state/jetpack-connect/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import NoticeAction from 'components/notice/notice-action';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {
 		// Supply a function that will be called for flow-ending error cases
 		// instead of showing a notice.
+		onActionClick: PropTypes.func,
 		onTerminalError: PropTypes.func,
 		noticeType: PropTypes.oneOf( [
-			ACTIVATION_FAILURE,
-			ACTIVATION_RESPONSE_ERROR,
 			ALREADY_CONNECTED,
 			ALREADY_CONNECTED_BY_OTHER_USER,
 			ALREADY_OWNED,
 			DEFAULT_AUTHORIZE_ERROR,
 			INSTALL_RESPONSE_ERROR,
+			INVALID_CREDENTIALS,
 			IS_DOT_COM,
-			LOGIN_FAILURE,
 			JETPACK_IS_DISCONNECTED,
 			JETPACK_IS_VALID,
 			NOT_ACTIVE_JETPACK,
@@ -66,37 +57,15 @@ export class JetpackConnectNotices extends Component {
 			NOT_JETPACK,
 			NOT_WORDPRESS,
 			OUTDATED_JETPACK,
-			INVALID_PERMISSIONS,
 			RETRY_AUTH,
 			RETRYING_AUTH,
 			SECRET_EXPIRED,
-			UNKNOWN_REMOTE_INSTALL_ERROR,
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
+			XMLRPC_ERROR,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
-	};
-
-	getHelperUrl( helpType ) {
-		const { siteToConnect } = this.props;
-
-		// show full instructions
-		if ( helpType === 'manual' ) {
-			return addQueryArgs( { url: siteToConnect }, '/jetpack/connect/instructions' );
-		}
-
-		if ( helpType === 'support' ) {
-			return 'https://jetpack.com/support/installing-jetpack/';
-		}
-	}
-
-	trackManualInstallClick = () => {
-		this.props.recordTracksEvent( 'calypso_remote_install_manual_install_click' );
-	};
-
-	trackSupportClick = () => {
-		this.props.recordTracksEvent( 'calypso_remote_install_support_click' );
 	};
 
 	getNoticeValues() {
@@ -115,38 +84,6 @@ export class JetpackConnectNotices extends Component {
 		}
 
 		switch ( noticeType ) {
-			case ACTIVATION_FAILURE:
-				noticeValues.text = translate(
-					'We were unable to activate Jetpack. Please upgrade to the latest version ' +
-						'of WordPress. Jetpack needs version %(jetpackWPVersion)s or higher.',
-					{
-						args: {
-							jetpackWPVersion: JETPACK_MINIMUM_WORDPRESS_VERSION,
-						},
-					}
-				);
-				return noticeValues;
-
-			case ACTIVATION_RESPONSE_ERROR:
-				noticeValues.text = translate(
-					'We were unable to activate Jetpack. You can either {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
-						'or {{support}}contact support{{/support}} for help.',
-					{
-						components: {
-							manualInstall: (
-								<a
-									href={ this.getHelperUrl( 'manual' ) }
-									onClick={ this.trackManualInstallClick }
-								/>
-							),
-							support: (
-								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
-							),
-						},
-					}
-				);
-				return noticeValues;
-
 			case NOT_EXISTS:
 				return noticeValues;
 
@@ -171,10 +108,6 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.text = translate( 'You must update Jetpack before connecting.' );
 				return noticeValues;
 
-			case INVALID_PERMISSIONS:
-				noticeValues.text = translate( 'User has no permissions to install plugins.' );
-				return noticeValues;
-
 			case JETPACK_IS_DISCONNECTED:
 				noticeValues.icon = 'link-break';
 				noticeValues.text = translate( 'Jetpack is currently disconnected.' );
@@ -184,47 +117,6 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-success';
 				noticeValues.icon = 'plugins';
 				noticeValues.text = translate( 'Jetpack is connected.' );
-				return noticeValues;
-
-			case LOGIN_FAILURE:
-				noticeValues.text = translate(
-					'Invalid credentials. ' +
-						'Try again, {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
-						'or {{support}}contact support{{/support}} for help.',
-					{
-						components: {
-							manualInstall: (
-								<a
-									href={ this.getHelperUrl( 'manual' ) }
-									onClick={ this.trackManualInstallClick }
-								/>
-							),
-							support: (
-								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
-							),
-						},
-					}
-				);
-				return noticeValues;
-
-			case INSTALL_RESPONSE_ERROR:
-				noticeValues.text = translate(
-					'We were unable to install Jetpack. You can either {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
-						'or {{support}}contact support{{/support}} for help.',
-					{
-						components: {
-							manualInstall: (
-								<a
-									href={ this.getHelperUrl( 'manual' ) }
-									onClick={ this.trackManualInstallClick }
-								/>
-							),
-							support: (
-								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
-							),
-						},
-					}
-				);
 				return noticeValues;
 
 			case NOT_JETPACK:
@@ -298,26 +190,29 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.icon = 'notice';
 				return noticeValues;
 
-			case UNKNOWN_REMOTE_INSTALL_ERROR:
+			case XMLRPC_ERROR:
+				noticeValues.text = translate( 'We had trouble connecting.' );
+				return noticeValues;
+
+			case INVALID_CREDENTIALS:
 				noticeValues.text = translate(
-					'Something went wrong. You can try again, {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
-						'or {{support}}contact support{{/support}} for help.',
-					{
-						components: {
-							manualInstall: (
-								<a
-									href={ this.getHelperUrl( 'manual' ) }
-									onClick={ this.trackManualInstallClick }
-								/>
-							),
-							support: (
-								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
-							),
-						},
-					}
+					'Oops, the credentials you entered were invalid. Please try again'
 				);
+				noticeValues.status = 'is-error';
+				noticeValues.icon = 'notice';
 				return noticeValues;
 		}
+	}
+
+	getNoticeActionText() {
+		const { noticeType, translate } = this.props;
+
+		switch ( noticeType ) {
+			case XMLRPC_ERROR:
+				return translate( 'Try again' );
+		}
+
+		return null;
 	}
 
 	componentDidUpdate() {
@@ -337,6 +232,17 @@ export class JetpackConnectNotices extends Component {
 		return notice && ! notice.userCanRetry;
 	}
 
+	renderNoticeAction() {
+		const { onActionClick } = this.props;
+		const noticeActionText = this.getNoticeActionText();
+
+		if ( ! onActionClick || ! noticeActionText ) {
+			return null;
+		}
+
+		return <NoticeAction onClick={ onActionClick }>{ noticeActionText }</NoticeAction>;
+	}
+
 	render() {
 		const noticeValues = this.getNoticeValues();
 		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
@@ -345,19 +251,12 @@ export class JetpackConnectNotices extends Component {
 		if ( noticeValues ) {
 			return (
 				<div className="jetpack-connect__notices-container">
-					<Notice { ...noticeValues } />
+					<Notice { ...noticeValues }>{ this.renderNoticeAction() }</Notice>
 				</div>
 			);
 		}
 		return null;
 	}
 }
-export default connect(
-	state => {
-		const jetpackConnectSite = getConnectingSite( state );
-		return {
-			siteToConnect: get( jetpackConnectSite, 'url', '' ),
-		};
-	},
-	{ recordTracksEvent }
-)( localize( JetpackConnectNotices ) );
+
+export default localize( JetpackConnectNotices );

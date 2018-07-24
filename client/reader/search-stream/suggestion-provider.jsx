@@ -11,7 +11,7 @@ import { map, sampleSize } from 'lodash';
  */
 import { getLocaleSlug } from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
-import { getReaderFollowedTags } from 'state/selectors';
+import getReaderFollowedTags from 'state/selectors/get-reader-followed-tags';
 import analytics from 'lib/analytics';
 
 /**

@@ -2,24 +2,34 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import {
 	WOOCOMMERCE_COUNT_REQUEST,
 	WOOCOMMERCE_COUNT_REQUEST_SUCCESS,
 	WOOCOMMERCE_COUNT_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
 
-export default createReducer( null, {
-	[ WOOCOMMERCE_COUNT_REQUEST ]: () => {
-		return LOADING;
-	},
+export function isLoading( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_COUNT_REQUEST:
+		case WOOCOMMERCE_COUNT_REQUEST_SUCCESS:
+		case WOOCOMMERCE_COUNT_REQUEST_FAILURE:
+			return WOOCOMMERCE_COUNT_REQUEST === action.type;
+		default:
+			return state;
+	}
+}
 
-	[ WOOCOMMERCE_COUNT_REQUEST_SUCCESS ]: ( state, { counts } ) => {
-		return counts;
-	},
+export function items( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_COUNT_REQUEST_SUCCESS:
+			return action.counts;
+		default:
+			return state;
+	}
+}
 
-	[ WOOCOMMERCE_COUNT_REQUEST_FAILURE ]: () => {
-		return false;
-	},
+export default combineReducers( {
+	isLoading,
+	items,
 } );

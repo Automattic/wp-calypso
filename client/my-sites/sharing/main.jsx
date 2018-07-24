@@ -13,7 +13,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { canCurrentUser, isJetpackModuleActive } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import DocumentHead from 'components/data/document-head';
 import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';

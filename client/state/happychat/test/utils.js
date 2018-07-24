@@ -43,7 +43,7 @@ describe( 'auth promise', () => {
 		} );
 
 		test( 'should return a fulfilled Promise', () => {
-			expect( getHappychatAuth( state )() ).resolves.toMatchObject( {
+			return expect( getHappychatAuth( state )() ).resolves.toMatchObject( {
 				url: config( 'happychat_url' ),
 				user: {
 					signer_user_id: state.users.items[ 3 ].ID,
@@ -69,7 +69,7 @@ describe( 'auth promise', () => {
 		} );
 
 		test( 'should return a rejected Promise', () => {
-			expect( getHappychatAuth( state )() ).rejects.toThrow(
+			return expect( getHappychatAuth( state )() ).rejects.toMatch(
 				'Failed to start an authenticated Happychat session: failed request'
 			);
 		} );
@@ -85,6 +85,8 @@ describe( 'auth promise', () => {
 				},
 			},
 		};
-		expect( getHappychatAuth( noUserState )() ).rejects.toThrow();
+		return expect( getHappychatAuth( noUserState )() ).rejects.toMatch(
+			'Failed to start an authenticated Happychat session: No current user found'
+		);
 	} );
 } );

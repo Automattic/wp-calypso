@@ -1,21 +1,20 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
 const BulkSelect = ( {
-	totalElements,
-	selectedElements,
 	className,
 	disabled,
-	readOnly,
+	id,
 	onToggle,
+	readOnly,
+	selectedElements,
+	totalElements,
 } ) => {
 	const hasAllElementsSelected = selectedElements && selectedElements === totalElements;
 	const hasSomeElementsSelected = selectedElements && selectedElements < totalElements;
@@ -31,14 +30,15 @@ const BulkSelect = ( {
 	};
 
 	return (
-		<span className={ containerClasses } onClick={ handleToggle }>
+		<span className={ containerClasses }>
 			<span className="bulk-select__container">
 				<input
+					id={ id }
 					type="checkbox"
 					className={ inputClasses }
+					onChange={ handleToggle }
 					checked={ hasAllElementsSelected }
 					disabled={ disabled }
-					readOnly
 				/>
 				{ hasSomeElementsSelected ? (
 					<Gridicon className={ iconClasses } icon="minus-small" size={ 18 } />

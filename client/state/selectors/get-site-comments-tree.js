@@ -28,7 +28,7 @@ export const getSiteCommentsTree = createSelector(
 			? filter(
 					siteTree,
 					comment => 'approved' === comment.status || 'unapproved' === comment.status
-				)
+			  )
 			: filter( siteTree, { status } );
 	},
 	( state, siteId ) => [ get( state, [ 'comments', 'trees', siteId ] ) ]

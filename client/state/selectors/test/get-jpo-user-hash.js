@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getJpoUserHash } from 'state/selectors';
+import getJpoUserHash from 'state/selectors/get-jpo-user-hash';
 
 describe( '#getJpoUserHash()', () => {
 	const userEmail = 'contact@yourgroovydomain.com';

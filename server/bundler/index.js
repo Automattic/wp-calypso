@@ -12,6 +12,7 @@ const webpackConfig = require( 'webpack.config' );
 const config = require( 'config' );
 
 const port = process.env.PORT || config( 'port' );
+const shouldProfile = process.env.PROFILE === 'true';
 
 function middleware( app ) {
 	const compiler = webpack( webpackConfig );
@@ -23,11 +24,13 @@ function middleware( app ) {
 
 	app.set( 'compiler', compiler );
 
-	compiler.apply(
-		new webpack.ProgressPlugin( {
-			profile: true,
-		} )
-	);
+	if ( shouldProfile ) {
+		compiler.apply(
+			new webpack.ProgressPlugin( {
+				profile: true,
+			} )
+		);
+	}
 
 	compiler.plugin( 'done', function() {
 		built = true;
@@ -72,8 +75,15 @@ function middleware( app ) {
 				</head>
 				<body>
 					<h1>Welcome to Calypso!</h1>
-					<p>Please wait until webpack has finished compiling and you see <code style="font-size: 1.2em; color: blue; font-weight: bold;">READY!</code> in the server console. This page should then refresh automatically. If it hasn&rsquo;t, hit <em>Refresh</em>.</p>
-					<p>In the meantime, try to follow all the emotions of the allmoji: <img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/fa5781cf7a8c5685.gif" width="36" style="vertical-align: middle;">
+					<p>
+						Please wait until webpack has finished compiling and you see
+						<code style="font-size: 1.2em; color: blue; font-weight: bold;">READY!</code> in
+						the server console. This page should then refresh automatically. If it hasn&rsquo;t, hit <em>Refresh</em>.
+					</p>
+					<p>
+						In the meantime, try to follow all the emotions of the allmoji:
+						<img src="https://emoji.slack-edge.com/T024FN1V2/allmoji/fa5781cf7a8c5685.gif"
+							width="36" style="vertical-align: middle;">
 				</body>
 			` );
 		} else {
@@ -85,6 +95,7 @@ function middleware( app ) {
 	app.use( waitForCompiler );
 	app.use(
 		webpackMiddleware( compiler, {
+			mode: 'development',
 			publicPath: '/calypso/',
 			stats: {
 				colors: true,
@@ -92,13 +103,13 @@ function middleware( app ) {
 				version: false,
 				timings: true,
 				assets: false,
-				chunks: true,
-				chunkModules: false,
+				chunks: false,
 				modules: false,
 				cached: false,
 				reasons: false,
 				source: false,
 				errorDetails: true,
+				entrypoints: true,
 			},
 		} )
 	);

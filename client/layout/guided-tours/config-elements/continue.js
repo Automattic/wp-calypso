@@ -83,7 +83,7 @@ export default class Continue extends Component {
 		return this.props.icon
 			? translate( 'Click the {{icon/}} to continue.', {
 					components: { icon: <Gridicon icon={ this.props.icon } /> },
-				} )
+			  } )
 			: translate( 'Click to continue.' );
 	}
 

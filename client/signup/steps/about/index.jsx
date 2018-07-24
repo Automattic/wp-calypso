@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, shuffle } from 'lodash';
+import { invoke, noop, findKey, escapeRegExp } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -19,8 +19,6 @@ import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { setSiteGoalsArray } from 'state/signup/steps/site-goals-array/actions';
-import { getSiteGoalsArray } from 'state/signup/steps/site-goals-array/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -28,11 +26,10 @@ import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
-import userFactory from 'lib/user';
-const user = userFactory();
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
+import { isUserLoggedIn } from 'state/current-user/selectors';
 
 //Form components
 import Card from 'components/card';
@@ -49,6 +46,7 @@ import Suggestions from 'components/suggestions';
 class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
+		this._isMounted = false;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
@@ -58,7 +56,8 @@ class AboutStep extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
+		this._isMounted = true;
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle', 'siteGoals', 'siteTopic' ],
 			validatorFunction: noop,
@@ -76,34 +75,15 @@ class AboutStep extends Component {
 				},
 			},
 		} );
-
 		this.setFormState( this.formStateController.getInitialState() );
 	}
 
-	componentDidMount() {
-		if ( this.props.siteGoalsArray.length === 0 ) {
-			const localStorageOptions = localStorage.getItem( 'setSiteGoalsArray' );
-			let arrayValues = [
-				'shareOption',
-				'promoteOption',
-				'educateOption',
-				'sellOption',
-				'showcaseOption',
-			];
-
-			if ( abtest( 'siteGoalsShuffle' ) === 'variant' ) {
-				arrayValues = shuffle( arrayValues );
-			}
-
-			const optionsArray = localStorageOptions ? localStorageOptions.split( ',' ) : arrayValues;
-
-			localStorage.setItem( 'setSiteGoalsArray', optionsArray );
-			this.props.setSiteGoalsArray( optionsArray );
-		}
+	componentWillUnmount() {
+		this._isMounted = false;
 	}
 
 	setFormState = state => {
-		this.setState( { form: state } );
+		this._isMounted && this.setState( { form: state } );
 	};
 
 	setPressableStore = ref => {
@@ -118,14 +98,13 @@ class AboutStep extends Component {
 		this.setState( { query: '' } );
 	};
 
-	handleSuggestionChangeEvent = event => {
-		this.setState( { query: event.target.value } );
-		this.setState( { siteTopicValue: event.target.value } );
+	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
+		this.setState( { query: value } );
+		this.setState( { siteTopicValue: value } );
 
-		this.formStateController.handleFieldChange( {
-			name: event.target.name,
-			value: event.target.value,
-		} );
+		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
+
+		this.formStateController.handleFieldChange( { name, value } );
 	};
 
 	handleSuggestionKeyDown = event => {
@@ -192,8 +171,19 @@ class AboutStep extends Component {
 	};
 
 	getSuggestions() {
+		const query = this.state.query && escapeRegExp( this.state.query ).toLowerCase();
+		const regex = new RegExp( query, 'i' );
+
+		// Prioritize suggestions starting with query input first
+		const sortFunction = ( a, b ) =>
+			abtest( 'aboutSuggestionMatches' ) === 'enhancedSort'
+				? a.localeCompare( b ) -
+				  2 * ( b.toLowerCase().indexOf( query ) - a.toLowerCase().indexOf( query ) )
+				: a.localeCompare( b );
+
 		return Object.values( hints )
-			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
+			.filter( hint => query && hint.match( regex ) )
+			.sort( sortFunction )
 			.map( hint => ( { label: hint } ) );
 	}
 
@@ -265,12 +255,13 @@ class AboutStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { goToNextStep, stepName, translate } = this.props;
+		const { goToNextStep, stepName, flowName, previousFlowName, translate } = this.props;
 
 		//Defaults
 		let themeRepo = 'pub/radcliffe-2',
 			designType = 'blog',
-			siteTitleValue = 'Site Title';
+			siteTitleValue = 'Site Title',
+			nextFlowName = flowName;
 
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
@@ -295,6 +286,9 @@ class AboutStep extends Component {
 			findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
 		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
+			value: eventAttributes.site_topic,
+		} );
 
 		this.props.setSurvey( {
 			vertical: englishSiteTopicInput,
@@ -320,7 +314,7 @@ class AboutStep extends Component {
 		} );
 
 		//User Experience
-		if ( ! user.get() && userExperienceInput !== '' ) {
+		if ( ! this.props.isLoggedIn && userExperienceInput !== '' ) {
 			this.props.setUserExperience( userExperienceInput );
 			eventAttributes.user_experience = userExperienceInput;
 		}
@@ -328,7 +322,12 @@ class AboutStep extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
 
 		//Store
-		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
+		if ( designType === DESIGN_TYPE_STORE ) {
+			nextFlowName =
+				siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
+					? previousFlowName
+					: 'store-nux';
+		}
 
 		//Pressable
 		if (
@@ -365,7 +364,7 @@ class AboutStep extends Component {
 	};
 
 	renderGoalCheckboxes() {
-		const { translate, siteGoalsArray } = this.props;
+		const { translate } = this.props;
 		// Note that the key attributes will be used in the name of a tracks event attribute so can not
 		// contain whitespace.
 		const options = {
@@ -392,6 +391,14 @@ class AboutStep extends Component {
 				formLabel: translate( 'Showcase your portfolio' ),
 			},
 		};
+
+		const siteGoalsArray = [
+			'shareOption',
+			'promoteOption',
+			'educateOption',
+			'sellOption',
+			'showcaseOption',
+		];
 
 		return (
 			<div className="about__checkboxes">
@@ -425,9 +432,9 @@ class AboutStep extends Component {
 	}
 
 	renderExperienceOptions() {
-		const { translate } = this.props;
+		const { translate, isLoggedIn } = this.props;
 
-		if ( user.get() ) {
+		if ( isLoggedIn ) {
 			return null;
 		}
 
@@ -593,7 +600,7 @@ class AboutStep extends Component {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Let’s create a site' ) }
+				headerText={ translate( 'Let’s create a site.' ) }
 				subHeaderText={ translate(
 					'Please answer these questions so we can help you make the site you need.'
 				) }
@@ -608,15 +615,14 @@ export default connect(
 	state => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
-		siteGoalsArray: getSiteGoalsArray( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		setSiteTitle,
 		setDesignType,
 		setSiteGoals,
-		setSiteGoalsArray,
 		setSurvey,
 		setUserExperience,
 		recordTracksEvent,

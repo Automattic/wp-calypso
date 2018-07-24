@@ -86,4 +86,7 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( Navigation );
+export default flowRight(
+	connectComponent,
+	localize
+)( Navigation );

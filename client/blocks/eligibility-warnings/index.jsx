@@ -26,6 +26,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import WarningList from './warning-list';
 
 export const EligibilityWarnings = ( {
@@ -55,6 +56,7 @@ export const EligibilityWarnings = ( {
 
 	return (
 		<div className={ classes }>
+			<PageViewTracker path="plugins/:plugin/eligibility/:site" title="Plugins > Eligibility" />
 			<QueryEligibility siteId={ siteId } />
 			<TrackComponentView
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
@@ -188,6 +190,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	return Object.assign( {}, ownProps, stateProps, dispatchProps, { onCancel, onProceed, context } );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )(
-	localize( EligibilityWarnings )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( localize( EligibilityWarnings ) );

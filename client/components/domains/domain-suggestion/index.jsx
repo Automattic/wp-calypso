@@ -12,7 +12,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import Button from 'components/button';
 
@@ -30,14 +29,12 @@ class DomainSuggestion extends React.Component {
 	};
 
 	static defaultProps = {
-		buttonProps: config.isEnabled( 'domains/kracken-ui' )
-			? { primary: true }
-			: { borderless: true },
-		showChevron: ! config.isEnabled( 'domains/kracken-ui' ),
+		buttonProps: { primary: true },
+		showChevron: false,
 	};
 
 	render() {
-		const { hidePrice, price, isAdded, extraClasses, children, priceRule } = this.props;
+		const { children, extraClasses, hidePrice, isAdded, price, priceRule } = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -45,7 +42,6 @@ class DomainSuggestion extends React.Component {
 			'is-clickable',
 			{
 				'is-added': isAdded,
-				'is-kracken-ui': config.isEnabled( 'domains/kracken-ui' ),
 			},
 			extraClasses
 		);
@@ -60,7 +56,7 @@ class DomainSuggestion extends React.Component {
 			>
 				<div className="domain-suggestion__content">
 					{ children }
-					{ ! hidePrice && <DomainProductPrice rule={ priceRule } price={ price } /> }
+					{ ! hidePrice && <DomainProductPrice price={ price } rule={ priceRule } /> }
 				</div>
 				<Button className="domain-suggestion__action" { ...this.props.buttonProps }>
 					{ this.props.buttonContent }

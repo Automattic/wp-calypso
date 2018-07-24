@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { areAllSitesSingleUser } from 'state/selectors';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';

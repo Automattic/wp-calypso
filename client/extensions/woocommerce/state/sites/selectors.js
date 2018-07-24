@@ -5,7 +5,7 @@
  */
 
 import { getCurrentUserSiteCount } from 'state/current-user/selectors';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 

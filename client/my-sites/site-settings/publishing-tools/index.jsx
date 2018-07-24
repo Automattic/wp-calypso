@@ -22,14 +22,11 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode,
-	isRegeneratingJetpackPostByEmail,
-} from 'state/selectors';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
+import isRegeneratingJetpackPostByEmail from 'state/selectors/is-regenerating-jetpack-post-by-email';
+import SupportInfo from 'components/support-info';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import PressThis from '../press-this';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
@@ -118,21 +115,12 @@ class PublishingTools extends Component {
 
 		return (
 			<FormFieldset>
-				<div className="publishing-tools__info-link-container site-settings__info-link-container">
-					<InfoPopover position="left">
-						{ translate(
-							'Allows you to publish new posts by sending an email to a special address.'
-						) }{' '}
-						<ExternalLink
-							href="https://jetpack.com/support/post-by-email/"
-							icon={ false }
-							target="_blank"
-						>
-							{ translate( 'Learn more' ) }
-						</ExternalLink>
-					</InfoPopover>
-				</div>
-
+				<SupportInfo
+					text={ translate(
+						'Allows you to publish new posts by sending an email to a special address.'
+					) }
+					link="https://jetpack.com/support/post-by-email/"
+				/>
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
 					moduleSlug="post-by-email"

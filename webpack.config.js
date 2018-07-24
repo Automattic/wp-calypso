@@ -10,13 +10,14 @@
 const _ = require( 'lodash' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const fs = require( 'fs' );
-const HappyPack = require( 'happypack' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
-const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
-const AssetsPlugin = require( 'assets-webpack-plugin' );
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const AssetsWriter = require( './server/bundler/assets-writer' );
+const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
+const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -29,22 +30,13 @@ const config = require( './server/config' );
  */
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
-const isDevelopment = bundleEnv === 'development';
-const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
-	? process.env.MINIFY_JS === 'true'
-	: ! isDevelopment;
-
-// load in the babel config from babelrc and disable commonjs transform
-// this enables static analysis from webpack including treeshaking
-// also disable add-module-exports. TODO: remove add-module-exports from babelrc. requires fixing tests
-const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
-const babelPresetEnv = _.find( babelConfig.presets, preset => preset[ 0 ] === 'env' );
-babelPresetEnv[ 1 ].modules = false;
-_.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
-
-// remove the babel-lodash-es plugin from env.test -- it's needed only for Jest tests.
-// The Webpack-using NODE_ENV=test build doesn't need it, as there is a special loader for that.
-_.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) );
+const isDevelopment = bundleEnv !== 'production';
+const shouldMinify =
+	process.env.MINIFY_JS === 'true' ||
+	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
+const shouldEmitStats = process.env.EMIT_STATS === 'true';
+const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
+const codeSplit = config.isEnabled( 'code-splitting' );
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -74,37 +66,57 @@ function getAliasesForExtensions() {
 
 const babelLoader = {
 	loader: 'babel-loader',
-	options: Object.assign( {}, babelConfig, {
-		babelrc: false,
+	options: {
 		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-		cacheIdentifier: cacheIdentifier,
-		plugins: [
-			...babelConfig.plugins,
-			[
-				path.join(
-					__dirname,
-					'server',
-					'bundler',
-					'babel',
-					'babel-plugin-transform-wpcalypso-async'
-				),
-				{ async: config.isEnabled( 'code-splitting' ) },
-			],
-			'inline-imports.js',
-		],
-	} ),
+		cacheIdentifier,
+	},
 };
 
 const webpackConfig = {
 	bail: ! isDevelopment,
-	entry: {},
+	entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
+	profile: shouldEmitStats,
+	mode: isDevelopment ? 'development' : 'production',
 	devtool: isDevelopment ? '#eval' : process.env.SOURCEMAP || false, // in production builds you can specify a source-map via env var
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].[chunkhash].opt.js', // prefer the chunkhash, which depends on the chunk, not the entire build
-		chunkFilename: '[name].[chunkhash].opt.js', // ditto
+		filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
+		chunkFilename: '[name].[chunkhash].min.js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
+	},
+	optimization: {
+		splitChunks: {
+			chunks: codeSplit ? 'all' : 'async',
+			name: isDevelopment || shouldEmitStats,
+			maxAsyncRequests: 20,
+			maxInitialRequests: 5,
+		},
+		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
+		moduleIds: 'named',
+		chunkIds: isDevelopment ? 'named' : 'natural',
+		minimize: shouldMinify,
+		minimizer: [
+			new UglifyJsPlugin( {
+				cache: 'docker' !== process.env.CONTAINER,
+				parallel: true,
+				sourceMap: Boolean( process.env.SOURCEMAP ),
+				uglifyOptions: {
+					compress: {
+						/**
+						 * Produces inconsistent results
+						 * Enable when the following is resolved:
+						 * https://github.com/mishoo/UglifyJS2/issues/3010
+						 */
+						collapse_vars: false,
+					},
+					mangle: {
+						safari10: true,
+					},
+					ecma: 5,
+				},
+			} ),
+		],
 	},
 	module: {
 		// avoids this warning:
@@ -114,7 +126,15 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				loader: [ 'happypack/loader' ],
+				use: [
+					{
+						loader: 'thread-loader',
+						options: {
+							workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
+						},
+					},
+					babelLoader,
+				],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
@@ -171,12 +191,14 @@ const webpackConfig = {
 				'gridicons/example': 'gridicons/dist/example',
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example',
+				debug: path.resolve( __dirname, 'node_modules/debug' ),
 			},
 			getAliasesForExtensions()
 		),
 	},
 	node: false,
 	plugins: _.compact( [
+		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
@@ -187,26 +209,31 @@ const webpackConfig = {
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
 		] ),
-		new HappyPack( {
-			loaders: _.compact( [
-				isDevelopment && config.isEnabled( 'webpack/hot-loader' ) && 'react-hot-loader',
-				babelLoader,
-			] ),
-		} ),
-		new webpack.NamedModulesPlugin(),
-		new webpack.NamedChunksPlugin( chunk => {
-			if ( chunk.name ) {
-				return chunk.name;
-			}
-
-			return chunk.modules.map( m => path.relative( m.context, m.request ) ).join( '_' );
-		} ),
-		new NameAllModulesPlugin(),
-		new AssetsPlugin( {
+		new AssetsWriter( {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
 		} ),
-		process.env.NODE_ENV === 'production' && new webpack.optimize.ModuleConcatenationPlugin(),
+		shouldCheckForCycles &&
+			new CircularDependencyPlugin( {
+				exclude: /node_modules/,
+				failOnError: false,
+				allowAsyncCycles: false,
+				cwd: process.cwd(),
+			} ),
+		shouldEmitStats &&
+			new StatsWriter( {
+				filename: 'stats.json',
+				path: __dirname,
+				stats: {
+					assets: true,
+					children: true,
+					modules: true,
+					source: false,
+					reasons: false,
+					issuer: false,
+					timings: true,
+				},
+			} ),
 	] ),
 	externals: [ 'electron' ],
 };
@@ -214,44 +241,8 @@ const webpackConfig = {
 if ( calypsoEnv === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
+	webpackConfig.output.chunkFilename = '[name].js';
 } else {
-	// vendor chunk
-	webpackConfig.entry.vendor = [
-		'classnames',
-		'create-react-class',
-		'gridicons',
-		'i18n-calypso',
-		'immutable',
-		'localforage',
-		'lodash',
-		'moment',
-		'page',
-		'prop-types',
-		'react',
-		'react-dom',
-		'react-modal',
-		'react-redux',
-		'redux',
-		'redux-thunk',
-		'social-logos',
-		'store',
-		'wpcom',
-	];
-
-	// for details on what the manifest is, see: https://webpack.js.org/guides/caching/
-	// tldr: webpack maintains a mapping from chunk ids --> filenames.  whenever a filename changes
-	// then the mapping changes.  By providing a non-existing chunkname to CommonsChunkPlugin,
-	// it extracts the "runtime" so that the frequently changing mapping doesn't break caching of the entry chunks
-	// NOTE: order matters. vendor must be before manifest.
-	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
-		new webpack.optimize.CommonsChunkPlugin( {
-			async: 'tinymce',
-			minChunks: ( { resource } ) => resource && /node_modules[\/\\]tinymce/.test( resource ),
-		} ),
-		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } ),
-	] );
-
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254
 	webpackConfig.externals.push( 'jquery' );
@@ -263,43 +254,13 @@ if ( isDevelopment ) {
 	webpackConfig.output.filename = '[name].js';
 	webpackConfig.output.chunkFilename = '[name].js';
 
-	webpackConfig.plugins = webpackConfig.plugins.concat( [
-		new webpack.HotModuleReplacementPlugin(),
-		new webpack.LoaderOptionsPlugin( { debug: true } ),
-	] );
-	webpackConfig.entry.build = [
-		'webpack-hot-middleware/client',
-		path.join( __dirname, 'client', 'boot', 'app' ),
-	];
-	webpackConfig.devServer = { hot: true, inline: true };
-} else {
-	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
+	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
+	webpackConfig.entry.build.unshift( 'webpack-hot-middleware/client' );
 }
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
-if ( shouldMinify ) {
-	webpackConfig.plugins.push(
-		new UglifyJsPlugin( {
-			cache: 'docker' !== process.env.CONTAINER,
-			parallel: true,
-			sourceMap: Boolean( process.env.SOURCEMAP ),
-			uglifyOptions: {
-				compress: {
-					/**
-					 * Produces inconsistent results
-					 * Enable when the following is resolved:
-					 * https://github.com/mishoo/UglifyJS2/issues/3010
-					 */
-					collapse_vars: false,
-				},
-				ecma: 5,
-			},
-		} )
 	);
 }
 

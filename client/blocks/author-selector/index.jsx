@@ -25,9 +25,10 @@ class AuthorSelector extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		onSelect: PropTypes.func,
-		exclude: PropTypes.arrayOf( PropTypes.number ),
+		exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
 		allowSingleUser: PropTypes.bool,
 		popoverPosition: PropTypes.string,
+		transformAuthor: PropTypes.func,
 	};
 
 	static defaultProps = {

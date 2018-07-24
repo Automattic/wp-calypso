@@ -16,7 +16,11 @@ import { addQueryArgs } from 'lib/route';
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
+import {
+	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteType,
+} from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 
 const nativeLoginUrl = login( { isNative: true, twoFactorAuthType: 'link' } );
 
@@ -76,7 +80,10 @@ class EmailedLoginLinkExpired extends React.Component {
 
 const mapDispatchToProps = {
 	hideMagicLoginRequestForm,
-	recordPageView,
+	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect( null, mapDispatchToProps )( localize( EmailedLoginLinkExpired ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( EmailedLoginLinkExpired ) );

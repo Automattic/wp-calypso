@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import PostSelector from '../';
 import FormLabel from 'components/forms/form-label';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 class PostSelectorExample extends Component {
 	state = {

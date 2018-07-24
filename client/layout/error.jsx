@@ -24,7 +24,7 @@ const log = debug( 'calypso:layout' );
 
 const LoadingErrorMessage = localize( ( { translate } ) => (
 	<EmptyContent
-		illustration="/calypso/images/illustrations/illustration-500.svg"
+		illustration="/calypso/images/illustrations/error.svg"
 		title={ translate( "We're sorry, but an unexpected error has occurred" ) }
 	/>
 ) );

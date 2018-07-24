@@ -22,7 +22,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SiteIcon from 'blocks/site-icon';
 import { editLinkForPage, statsLinkForPage } from '../helpers';
-import * as utils from 'lib/posts/utils';
+import * as utils from 'state/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
@@ -35,6 +35,7 @@ import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { withoutNotice } from 'state/notices/actions';
+import { isEnabled } from 'config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -203,6 +204,32 @@ class Page extends Component {
 		);
 	}
 
+	setFrontPage() {
+		alert( 'This feature is still being developed.' );
+	}
+
+	getFrontPageItem() {
+		if ( ! isEnabled( 'manage/pages/set-front-page' ) ) {
+			return null;
+		}
+
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+			return null;
+		}
+
+		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
+			return null;
+		}
+
+		return [
+			<MenuSeparator key="separator" />,
+			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
+				<Gridicon icon="house" size={ 18 } />
+				{ this.props.translate( 'Set as Front Page' ) }
+			</PopoverMenuItem>,
+		];
+	}
+
 	getSendToTrashItem() {
 		if ( ( this.props.hasStaticFrontPage && this.props.isPostsPage ) || this.props.isFrontPage ) {
 			return null;
@@ -344,6 +371,7 @@ class Page extends Component {
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
+		const frontPageItem = this.getFrontPageItem();
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
 		const copyItem = this.getCopyItem();
@@ -355,6 +383,7 @@ class Page extends Component {
 			editItem ||
 			statsItem ||
 			restoreItem ||
+			frontPageItem ||
 			sendToTrashItem ||
 			moreInfoItem;
 
@@ -370,6 +399,7 @@ class Page extends Component {
 				{ statsItem }
 				{ copyItem }
 				{ restoreItem }
+				{ frontPageItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
 			</EllipsisMenu>
@@ -609,4 +639,10 @@ const mapDispatch = {
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 };
 
-export default flow( localize, connect( mapState, mapDispatch ) )( Page );
+export default flow(
+	localize,
+	connect(
+		mapState,
+		mapDispatch
+	)
+)( Page );

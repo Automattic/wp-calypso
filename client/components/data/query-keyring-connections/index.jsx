@@ -16,13 +16,18 @@ import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 
 class QueryKeyringConnections extends Component {
 	static propTypes = {
+		forceRefresh: PropTypes.bool,
 		isRequesting: PropTypes.bool,
 		requestKeyringConnections: PropTypes.func,
 	};
 
+	static defaultProps = {
+		forceRefresh: false,
+	};
+
 	componentWillMount() {
 		if ( ! this.props.isRequesting ) {
-			this.props.requestKeyringConnections();
+			this.props.requestKeyringConnections( this.props.forceRefresh );
 		}
 	}
 

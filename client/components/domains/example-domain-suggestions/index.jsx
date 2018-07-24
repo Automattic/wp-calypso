@@ -26,12 +26,11 @@ class DomainSuggestionsExample extends React.Component {
 
 		const showDomainOption = siteDesignType !== DESIGN_TYPE_STORE;
 
-		/* eslint-disable max-len */
 		return (
 			<div className="example-domain-suggestions">
 				<p className="example-domain-suggestions__explanation">
 					{ translate(
-						'A domain name is what people type into their browser to visit your site.'
+						'A domain name is the site address people type into their browser to visit your site.'
 					) }
 				</p>
 				{ showDomainOption && (
@@ -66,7 +65,6 @@ class DomainSuggestionsExample extends React.Component {
 				</div>
 			</div>
 		);
-		/* eslint-enable max-len */
 	}
 }
 

@@ -160,13 +160,13 @@ class EasyTab extends Component {
 												{ key === 'prime'
 													? translate( 'Fetching %(url)s to prime cache', {
 															args: { url: site && site.URL },
-														} )
+													  } )
 													: translate( 'Fetching %(key)s copy of %(url)s', {
 															args: {
 																key: key,
 																url: site && site.URL,
 															},
-														} ) }
+													  } ) }
 												<Gridicon
 													className="wp-super-cache__cache-test-results-icon"
 													icon={
@@ -245,4 +245,7 @@ const getFormSettings = settings => {
 	return pick( settings, [ 'cache_mod_rewrite', 'is_cache_enabled' ] );
 };
 
-export default flowRight( connectComponent, WrapSettingsForm( getFormSettings ) )( EasyTab );
+export default flowRight(
+	connectComponent,
+	WrapSettingsForm( getFormSettings )
+)( EasyTab );

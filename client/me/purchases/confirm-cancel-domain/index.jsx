@@ -23,26 +23,25 @@ import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
-import { isDomainOnlySite as isDomainOnly } from 'state/selectors';
+import isDomainOnly from 'state/selectors/is-domain-only-site';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getName as getDomainName } from 'lib/purchases';
-import { getPurchase, goToCancelPurchase, isDataLoading, recordPageView } from '../utils';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { isDataLoading } from '../utils';
+import { getSelectedSite } from 'state/ui/selectors';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
-import { purchasesRoot } from 'me/purchases/paths';
+import { cancelPurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import SelectDropdown from 'components/select-dropdown';
 import { setAllSitesSelected } from 'state/ui/actions';
 import titles from 'me/purchases/titles';
-import userFactory from 'lib/user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-
-const user = userFactory();
+import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {
@@ -50,9 +49,11 @@ class ConfirmCancelDomain extends React.Component {
 		isDomainOnlySite: PropTypes.bool,
 		purchaseId: PropTypes.number.isRequired,
 		receiveDeletedSite: PropTypes.func.isRequired,
-		selectedPurchase: PropTypes.object,
+		purchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		setAllSitesSelected: PropTypes.func.isRequired,
+		siteSlug: PropTypes.string.isRequired,
+		userId: PropTypes.number,
 	};
 
 	state = {
@@ -61,10 +62,6 @@ class ConfirmCancelDomain extends React.Component {
 		confirmed: false,
 		submitting: false,
 	};
-
-	componentWillMount() {
-		recordPageView( 'confirm_cancel_domain', this.props );
-	}
 
 	componentDidMount() {
 		this.redirectIfDataIsInvalid( this.props );
@@ -79,7 +76,7 @@ class ConfirmCancelDomain extends React.Component {
 			return null;
 		}
 
-		const purchase = getPurchase( props );
+		const { purchase } = props;
 
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
 			page.redirect( purchasesRoot );
@@ -96,15 +93,11 @@ class ConfirmCancelDomain extends React.Component {
 		return [ 'other_host', 'transfer' ].indexOf( selectedReason.value ) === -1;
 	};
 
-	goToCancelPurchase = () => {
-		goToCancelPurchase( this.props );
-	};
-
 	onSubmit = event => {
 		event.preventDefault();
 
-		const purchase = getPurchase( this.props ),
-			purchaseName = getDomainName( purchase );
+		const { purchase } = this.props;
+		const purchaseName = getDomainName( purchase );
 
 		const data = {
 			domain_cancel_reason: this.state.selectedReason.value,
@@ -250,29 +243,34 @@ class ConfirmCancelDomain extends React.Component {
 		if ( isDataLoading( this.props ) ) {
 			return (
 				<div>
-					<QueryUserPurchases userId={ user.get().ID } />
+					<QueryUserPurchases userId={ this.props.userId } />
 					<ConfirmCancelDomainLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						selectedSite={ this.props.selectedSite }
 					/>
-					;
 				</div>
 			);
 		}
 
-		const purchase = getPurchase( this.props );
+		const { purchase } = this.props;
 		const domain = getDomainName( purchase );
 		const selectedReason = this.state.selectedReason;
 
 		return (
 			<Main className="confirm-cancel-domain">
+				<TrackPurchasePageView
+					eventName="calypso_confirm_cancel_domain_purchase_view"
+					purchaseId={ this.props.purchaseId }
+				/>
 				<PageViewTracker
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"
 				/>
-				<HeaderCake onClick={ this.goToCancelPurchase }>{ titles.confirmCancelDomain }</HeaderCake>
+				<HeaderCake backHref={ cancelPurchase( this.props.siteSlug, this.props.purchaseId ) }>
+					{ titles.confirmCancelDomain }
+				</HeaderCake>
 				<Card>
-					<FormSectionHeading className="is-primary">
+					<FormSectionHeading>
 						{ this.props.translate( 'Canceling %(domain)s', { args: { domain } } ) }
 					</FormSectionHeading>
 					<p>
@@ -304,14 +302,15 @@ class ConfirmCancelDomain extends React.Component {
 
 export default connect(
 	( state, props ) => {
-		const selectedSite = getSelectedSiteSelector( state );
+		const selectedSite = getSelectedSite( state );
 
 		return {
 			hasLoadedSites: ! isRequestingSites( state ),
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			isDomainOnlySite: isDomainOnly( state, selectedSite && selectedSite.ID ),
-			selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+			purchase: getByPurchaseId( state, props.purchaseId ),
 			selectedSite,
+			userId: getCurrentUserId( state ),
 		};
 	},
 	{

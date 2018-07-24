@@ -20,6 +20,8 @@ import Module from './store-stats-module';
 import { topProducts, topCategories, topCoupons } from 'woocommerce/app/store-stats/constants';
 import QuerySiteStats from 'components/data/query-site-stats';
 import StoreStatsPeriodNav from 'woocommerce/app/store-stats/store-stats-period-nav';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 const listType = {
 	products: topProducts,
@@ -43,6 +45,10 @@ class StoreStatsListView extends Component {
 		const statType = listType[ type ].statType;
 		return (
 			<Main className="store-stats__list-view woocommerce" wideLayout>
+				<PageViewTracker
+					path={ `/store/stats/${ type }/${ unit }/:site` }
+					title={ `Store > Stats > ${ titlecase( type ) } > ${ titlecase( unit ) }` }
+				/>
 				{ siteId && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ topListQuery } />
 				) }

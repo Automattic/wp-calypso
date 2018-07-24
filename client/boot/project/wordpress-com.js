@@ -23,10 +23,8 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import superProps from 'lib/analytics/super-props';
-import translatorJumpstart from 'lib/translator-jumpstart';
 import emailVerification from 'components/email-verification';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
-import { pruneStaleRecords } from 'lib/wp/sync-handler';
 import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -47,15 +45,6 @@ function renderLayout( reduxStore ) {
 	ReactDom.render( layoutElement, document.getElementById( 'wpcom' ) );
 
 	debug( 'Main layout rendered.' );
-}
-
-export function utils() {
-	debug( 'Executing WordPress.com utils.' );
-
-	// prune sync-handler records more than two days old
-	pruneStaleRecords( '2 days' );
-
-	translatorJumpstart.init();
 }
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {

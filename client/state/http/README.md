@@ -14,12 +14,12 @@ import {
 	EXAMPLE_DATA_ADD,
 	NOTICE_CREATE,
 } from 'state/action-types';
-import { dispatchRequest } from 'state/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/wpcom-http/utils';
 import { http } from 'state/http/actions';
 import { get } from 'lodash';
 
-const requestExampleData = ( { dispatch }, action ) => {
-	dispatch( http( {
+const requestExampleData = action =>
+	http( {
 		url: 'https://api.example.com/endpoint',
 		method: 'POST',
 		headers: [
@@ -27,23 +27,30 @@ const requestExampleData = ( { dispatch }, action ) => {
 		],
 		body: {
 			user_id: 123,
-		}
-	}, action ) );
+		},
+	}, action );
 };
 
-const receivedExampleData = ( { dispatch }, action, data ) =>
-	dispatch( { type: EXAMPLE_DATA_ADD, data } );
+const receivedExampleData = ( action, data ) =>
+	{
+		type: EXAMPLE_DATA_ADD,
+		data,
+	};
 
-const receivedExampleDataError = ( { dispatch }, action, error ) => {
-	dispatch( { type: NOTICE_CREATE, notice: { text: get( error, 'response.body.error', null ) } } );
-};
+const receivedExampleDataError = ( action, error ) => {
+	{
+		type: NOTICE_CREATE,
+		notice: {
+			text: get( error, 'response.body.error', null ),
+		},
+	};
 
 export default {
 	[ GET_EXAMPLE_DATA ]: [
-		dispatchRequest(
-			requestExampleData,
-			receivedExampleData,
-			receivedExampleDataError
+		dispatchRequestEx(
+			fetch: requestExampleData,
+			onSuccess: receivedExampleData,
+			onError: receivedExampleDataError,
 	 	)
 	],
 };

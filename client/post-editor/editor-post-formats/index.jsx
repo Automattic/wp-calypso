@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { map } from 'lodash';
+import { get, map } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -16,32 +16,48 @@ import Gridicon from 'gridicons';
  */
 import FormRadio from 'components/forms/form-radio';
 import QueryPostFormats from 'components/data/query-post-formats';
-import PostActions from 'lib/posts/actions';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import AccordionSection from 'components/accordion/section';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
+import { editPost } from 'state/posts/actions';
+
+const ICONS = {
+	aside: 'aside',
+	image: 'image',
+	video: 'video-camera',
+	quote: 'quote',
+	link: 'link',
+	gallery: 'image-multiple',
+	status: 'pencil',
+	audio: 'audio',
+	chat: 'comment',
+};
+
+function getPostFormatIcon( postFormatSlug ) {
+	return get( ICONS, [ postFormatSlug ], 'posts' );
+}
 
 class EditorPostFormats extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number,
-		value: PropTypes.string,
+		postId: PropTypes.number,
 		postFormats: PropTypes.object,
+		formatValue: PropTypes.string,
 	};
 
-	static defaultProps = {
-		value: 'standard',
-	};
+	getSelectedPostFormat() {
+		const { formatValue } = this.props;
+		const isSupportedFormat = !! this.getPostFormats()[ formatValue ];
 
-	getSelectedPostFormat = () => {
-		const { value } = this.props;
-		const isSupportedFormat = !! this.getPostFormats()[ value ];
+		return isSupportedFormat ? formatValue : 'standard';
+	}
 
-		return isSupportedFormat ? value : 'standard';
-	};
-
-	getPostFormats = () => {
+	getPostFormats() {
 		let formats = {
 			standard: this.props.translate( 'Standard', {
 				context: 'Post format',
@@ -53,35 +69,17 @@ class EditorPostFormats extends React.Component {
 		}
 
 		return formats;
-	};
-
-	getPostFormatIcon = postFormatSlug => {
-		const icons = {
-			aside: 'aside',
-			image: 'image',
-			video: 'video-camera',
-			quote: 'quote',
-			link: 'link',
-			gallery: 'image-multiple',
-			status: 'pencil',
-			audio: 'audio',
-			chat: 'comment',
-		};
-
-		return icons[ postFormatSlug ] ? icons[ postFormatSlug ] : 'posts';
-	};
+	}
 
 	onChange = event => {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( {
-			format: event.target.value,
-		} );
+		const format = event.target.value;
 
-		recordStat( 'post_format_changed' );
-		recordEvent( 'Changed Post Format', event.target.value );
+		this.props.editPost( this.props.siteId, this.props.postId, { format } );
+		this.props.recordEditorStat( 'post_format_changed' );
+		this.props.recordEditorEvent( 'Changed Post Format', format );
 	};
 
-	renderPostFormats = () => {
+	renderPostFormats() {
 		const selectedFormat = this.getSelectedPostFormat();
 
 		return map( this.getPostFormats(), ( postFormatLabel, postFormatSlug ) => {
@@ -96,7 +94,7 @@ class EditorPostFormats extends React.Component {
 						/>
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' }>
-								<Gridicon icon={ this.getPostFormatIcon( postFormatSlug ) } size={ 18 } />
+								<Gridicon icon={ getPostFormatIcon( postFormatSlug ) } size={ 18 } />
 							</span>
 							{ postFormatLabel }
 						</span>
@@ -104,7 +102,7 @@ class EditorPostFormats extends React.Component {
 				</li>
 			);
 		} );
-	};
+	}
 
 	render() {
 		return (
@@ -117,11 +115,16 @@ class EditorPostFormats extends React.Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const postFormats = getPostFormats( state, siteId );
+		const formatValue =
+			getEditedPostValue( state, siteId, postId, 'format' ) ||
+			getSiteDefaultPostFormat( state, siteId );
 
-	return {
-		siteId,
-		postFormats: getPostFormats( state, siteId ),
-	};
-} )( localize( EditorPostFormats ) );
+		return { siteId, postId, postFormats, formatValue };
+	},
+	{ editPost, recordEditorStat, recordEditorEvent }
+)( localize( EditorPostFormats ) );

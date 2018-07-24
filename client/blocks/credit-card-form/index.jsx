@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -6,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
+import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 
 /**
@@ -14,29 +16,33 @@ import Gridicon from 'gridicons';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import CreditCardFormFields from 'components/credit-card-form-fields';
-import { forPayments as countriesList } from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import notices from 'notices';
-import { validateCardDetails } from 'lib/credit-card-details';
+import { validatePaymentDetails } from 'lib/checkout';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
+import getCountries from 'state/selectors/get-countries';
+import QueryPaymentCountries from 'components/data/query-countries/payments';
 
 const wpcom = wpcomFactory.undocumented();
 
-class CreditCardForm extends Component {
+export class CreditCardForm extends Component {
 	static displayName = 'CreditCardForm';
 
 	static propTypes = {
 		apiParams: PropTypes.object,
 		createCardToken: PropTypes.func.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		initialValues: PropTypes.object,
 		recordFormSubmitEvent: PropTypes.func.isRequired,
 		saveStoredCard: PropTypes.func,
 		successCallback: PropTypes.func.isRequired,
 		showUsedForExistingPurchasesInfo: PropTypes.bool,
 		autoFocus: PropTypes.bool,
+		heading: PropTypes.string,
+		onCancel: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -216,7 +222,7 @@ class CreditCardForm extends Component {
 	}
 
 	getValidationErrors() {
-		const validationResult = validateCardDetails( this.getCardDetails() );
+		const validationResult = validatePaymentDetails( this.getCardDetails() );
 
 		// Maps keys from credit card validator to work with formState.
 		return mapKeys( validationResult.errors, ( value, key ) => {
@@ -232,13 +238,15 @@ class CreditCardForm extends Component {
 	}
 
 	render() {
-		const { translate, autoFocus } = this.props;
+		const { translate, autoFocus, heading, onCancel } = this.props;
 		return (
 			<form onSubmit={ this.onSubmit } ref={ this.storeForm }>
 				<Card className="credit-card-form__content">
+					{ heading && <div className="credit-card-form__heading">{ heading }</div> }
+					<QueryPaymentCountries />
 					<CreditCardFormFields
 						card={ this.getCardDetails() }
-						countriesList={ countriesList }
+						countriesList={ this.props.countriesList }
 						eventFormName="Edit Card Details Form"
 						onFieldChange={ this.onFieldChange }
 						getErrorMessage={ this.getErrorMessage }
@@ -277,16 +285,21 @@ class CreditCardForm extends Component {
 				</Card>
 				<CompactCard className="credit-card-form__footer">
 					<em>{ translate( 'All fields required' ) }</em>
+					{ onCancel && (
+						<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
+							{ translate( 'Cancel' ) }
+						</FormButton>
+					) }
 					<FormButton disabled={ this.state.formSubmitting } type="submit">
 						{ this.state.formSubmitting
 							? translate( 'Saving Card…', {
 									context: 'Button label',
 									comment: 'Credit card',
-								} )
+							  } )
 							: translate( 'Save Card', {
 									context: 'Button label',
 									comment: 'Credit card',
-								} ) }
+							  } ) }
 					</FormButton>
 				</CompactCard>
 			</form>
@@ -309,4 +322,6 @@ class CreditCardForm extends Component {
 	}
 }
 
-export default localize( CreditCardForm );
+export default connect( state => ( {
+	countriesList: getCountries( state, 'payments' ),
+} ) )( localize( CreditCardForm ) );

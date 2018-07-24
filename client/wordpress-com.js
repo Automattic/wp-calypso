@@ -34,6 +34,13 @@ const sections = [
 		secondary: true,
 	},
 	{
+		name: 'account-close',
+		paths: [ '/me/account/close' ],
+		module: 'me/account-close',
+		group: 'me',
+		secondary: true,
+	},
+	{
 		name: 'security',
 		paths: [ '/me/security' ],
 		module: 'me/security',
@@ -53,6 +60,7 @@ const sections = [
 		module: 'me/purchases',
 		group: 'me',
 		secondary: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'notification-settings',
@@ -180,6 +188,7 @@ const sections = [
 		module: 'my-sites/stats',
 		secondary: true,
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 	{
 		name: 'checklist',
@@ -192,6 +201,7 @@ const sections = [
 		name: 'google-my-business',
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',
+		enableLoggedOut: true,
 		secondary: true,
 		group: 'sites',
 		css: 'google-my-business',
@@ -259,6 +269,14 @@ const sections = [
 		module: 'mailing-lists',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'feature-upsell',
+		paths: [ '/feature' ],
+		module: 'my-sites/feature-upsell',
+		group: 'sites',
+		secondary: true,
+		css: 'feature-upsell',
+	},
 ];
 
 sections.push( {
@@ -289,11 +307,21 @@ sections.push( {
 
 sections.push( {
 	name: 'reader',
+	paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c' ],
+	module: 'reader',
+	secondary: true,
+	group: 'reader',
+	enableLoggedOut: true,
+} );
+
+sections.push( {
+	name: 'reader',
 	paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 	module: 'reader/full-post',
 	secondary: false,
 	group: 'reader',
 	css: 'reader-full-post',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -302,6 +330,7 @@ sections.push( {
 	module: 'reader/discover',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -310,6 +339,7 @@ sections.push( {
 	module: 'reader/following',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -318,6 +348,7 @@ sections.push( {
 	module: 'reader/tag-stream',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -326,6 +357,7 @@ sections.push( {
 	module: 'reader/liked-stream',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -334,6 +366,7 @@ sections.push( {
 	module: 'reader/search',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -342,6 +375,7 @@ sections.push( {
 	module: 'reader/list',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -350,6 +384,7 @@ sections.push( {
 	module: 'reader/conversations',
 	secondary: true,
 	group: 'reader',
+	enableLoggedOut: true,
 } );
 
 sections.push( {
@@ -416,9 +451,18 @@ sections.push( {
 	name: 'domain-connect-authorize',
 	paths: [ '/domain-connect' ],
 	module: 'my-sites/domains/domain-management/domain-connect',
-	enableLoggedOut: false,
+	enableLoggedOut: true,
 	secondary: false,
 	isomorphic: false,
+} );
+
+sections.push( {
+	name: 'gutenberg-editor',
+	paths: [ '/gutenberg' ],
+	module: 'gutenberg/editor',
+	group: 'editor',
+	css: 'gutenberg-editor',
+	secondary: true,
 } );
 
 module.exports = sections;

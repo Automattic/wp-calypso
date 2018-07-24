@@ -19,6 +19,7 @@ describe( 'reducer', () => {
 			'comments',
 			'dropZone',
 			'editor',
+			'googleMyBusiness',
 			'guidedTour',
 			'hasSidebar',
 			'isLoading',

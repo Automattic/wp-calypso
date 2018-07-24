@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { getAccountRecoveryResetRequestError } from 'state/selectors';
+import getAccountRecoveryResetRequestError from 'state/selectors/get-account-recovery-reset-request-error';
 
 describe( 'getAccountRecoveryResetRequestError()', () => {
 	test( 'should return the error field in the request-reset substate treee.', () => {

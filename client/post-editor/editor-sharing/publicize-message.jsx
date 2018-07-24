@@ -5,18 +5,20 @@
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import CountedTextarea from 'components/forms/counted-textarea';
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormTextarea from 'components/forms/form-textarea';
 import InfoPopover from 'components/info-popover';
 import TrackInputChanges from 'components/track-input-changes';
-import PostActions from 'lib/posts/actions';
-import * as stats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 
 class PublicizeMessage extends Component {
 	static propTypes = {
@@ -36,32 +38,24 @@ class PublicizeMessage extends Component {
 		acceptableLength: 280,
 		requireCount: false,
 		displayMessageHeading: true,
+		onChange: noop,
 		preFilledMessage: '',
 	};
-	constructor() {
-		super( ...arguments );
-		this.state = {
-			userHasEditedMessage: false,
-		};
-	}
+
+	userHasEditedMessage = false;
 
 	onChange = event => {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		this.setState( { userHasEditedMessage: true } );
-		if ( this.props.onChange ) {
-			this.props.onChange( event.target.value );
-		} else {
-			PostActions.updateMetadata( '_wpas_mess', event.target.value );
-		}
+		this.userHasEditedMessage = true;
+		this.props.onChange( event.target.value );
 	};
 
 	recordStats = () => {
-		stats.recordStat( 'sharing_message_changed' );
-		stats.recordEvent( 'Publicize Sharing Message Changed' );
+		this.props.recordEditorStat( 'sharing_message_changed' );
+		this.props.recordEditorEvent( 'Publicize Sharing Message Changed' );
 	};
 
 	shouldPreFillMessage() {
-		return ! this.state.userHasEditedMessage && '' === this.props.message;
+		return ! this.userHasEditedMessage && '' === this.props.message;
 	}
 
 	getMessage() {
@@ -74,7 +68,7 @@ class PublicizeMessage extends Component {
 	renderInfoPopover() {
 		return (
 			<InfoPopover
-				className="publicize-message-counter-info"
+				className="editor-sharing__publicize-message-counter-info"
 				position="bottom left"
 				gaEventCategory="Editor"
 				popoverName="SharingMessage"
@@ -105,37 +99,48 @@ class PublicizeMessage extends Component {
 					{ this.renderInfoPopover() }
 				</CountedTextarea>
 			);
-		} else {
-			return (
-				<div>
-					<FormTextarea
-						disabled={ this.props.disabled }
-						value={ this.getMessage() }
-						placeholder={ placeholder }
-						onChange={ this.onChange }
-						className="editor-sharing__message-input"
-					/>
-				</div>
-			);
 		}
+		return (
+			<FormTextarea
+				disabled={ this.props.disabled }
+				value={ this.getMessage() }
+				placeholder={ placeholder }
+				onChange={ this.onChange }
+				className="editor-sharing__message-input"
+			/>
+		);
 	}
 
 	render() {
+		const { displayMessageHeading, translate } = this.props;
 		return (
 			<div className="editor-sharing__publicize-message">
-				{ this.props.displayMessageHeading && (
-					<h5 className="editor-sharing__message-heading">
-						{ this.props.translate( 'Customize the message', {
+				{ displayMessageHeading && (
+					<EditorDrawerLabel
+						helpText={ translate(
+							'The following text will be shared along with a link to your post.'
+						) }
+						labelText={ translate( 'Customize the message', {
 							context: 'Post editor sharing message heading',
 						} ) }
-					</h5>
+					>
+						<TrackInputChanges onNewValue={ this.recordStats }>
+							{ this.renderTextarea() }
+						</TrackInputChanges>
+					</EditorDrawerLabel>
 				) }
-				<TrackInputChanges onNewValue={ this.recordStats }>
-					{ this.renderTextarea() }
-				</TrackInputChanges>
+
+				{ ! displayMessageHeading && (
+					<TrackInputChanges onNewValue={ this.recordStats }>
+						{ this.renderTextarea() }
+					</TrackInputChanges>
+				) }
 			</div>
 		);
 	}
 }
 
-export default localize( PublicizeMessage );
+export default connect(
+	null,
+	{ recordEditorStat, recordEditorEvent }
+)( localize( PublicizeMessage ) );

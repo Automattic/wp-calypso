@@ -22,7 +22,8 @@ import CommentDeleteWarning from 'my-sites/comment/comment-delete-warning';
 import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { preventWidows } from 'lib/formatting';
-import { getSiteComment, canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getSiteComment from 'state/selectors/get-site-comment';
 import getSiteId from 'state/selectors/get-site-id';
 
 export class CommentView extends Component {
@@ -72,7 +73,7 @@ export class CommentView extends Component {
 						line={ preventWidows(
 							translate( "If you think you should, contact this site's administrator." )
 						) }
-						illustration="/calypso/images/illustrations/illustration-500.svg"
+						illustration="/calypso/images/illustrations/error.svg"
 					/>
 				) }
 				{ canModerateComments && (

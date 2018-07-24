@@ -12,18 +12,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getFeaturedImageId } from 'state/posts/utils';
 import Accordion from 'components/accordion';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import FeaturedImage from 'post-editor/editor-featured-image';
 import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
 class EditorDrawerFeaturedImage extends Component {
 	static propTypes = {
-		site: PropTypes.object,
-		post: PropTypes.object,
 		translate: PropTypes.func,
+		hasFeaturedImage: PropTypes.bool,
 		isDrawerHidden: PropTypes.bool,
 	};
 
@@ -39,7 +41,7 @@ class EditorDrawerFeaturedImage extends Component {
 	endSelecting = () => this.setState( { isSelecting: false } );
 
 	render() {
-		const { translate, site, post, isDrawerHidden } = this.props;
+		const { translate, hasFeaturedImage, isDrawerHidden } = this.props;
 
 		return (
 			<Accordion
@@ -49,7 +51,7 @@ class EditorDrawerFeaturedImage extends Component {
 			>
 				<EditorDrawerWell
 					label={ translate( 'Set Featured Image' ) }
-					empty={ ! site || ! post || ! getFeaturedImageId( post ) }
+					empty={ ! hasFeaturedImage }
 					onClick={ this.startSelecting }
 					customDropZone={ <FeaturedImageDropZone /> }
 					isHidden={ isDrawerHidden }
@@ -57,8 +59,6 @@ class EditorDrawerFeaturedImage extends Component {
 					<FeaturedImage
 						selecting={ this.state.isSelecting }
 						onImageSelected={ this.endSelecting }
-						site={ site }
-						post={ post }
 					/>
 				</EditorDrawerWell>
 			</Accordion>
@@ -66,6 +66,12 @@ class EditorDrawerFeaturedImage extends Component {
 	}
 }
 
-export default connect( state => ( {
-	isDrawerHidden: isDropZoneVisible( state, 'featuredImage' ),
-} ) )( localize( EditorDrawerFeaturedImage ) );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const post = getEditedPost( state, siteId, postId );
+	const hasFeaturedImage = !! getFeaturedImageId( post );
+	const isDrawerHidden = isDropZoneVisible( state, 'featuredImage' );
+
+	return { hasFeaturedImage, isDrawerHidden };
+} )( localize( EditorDrawerFeaturedImage ) );

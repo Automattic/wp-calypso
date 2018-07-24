@@ -17,7 +17,7 @@ import MediaStore from 'lib/media/store';
 import { getSectionName, getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { hasDefaultSiteTitle, isCurrentPlanPaid } from 'state/sites/selectors';
 
 const { getAll: getAllMedia } = MediaStore;

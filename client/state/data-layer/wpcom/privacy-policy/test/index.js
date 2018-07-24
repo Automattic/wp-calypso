@@ -51,7 +51,7 @@ describe( 'privacy-policy request', () => {
 
 			addPrivacyPolicy( { dispatch }, action, responseData );
 
-			expect( dispatch ).to.have.been.calledOncee;
+			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( privacyPolicyReceive( responseData.entities ) );
 		} );
 	} );

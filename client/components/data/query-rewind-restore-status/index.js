@@ -30,4 +30,7 @@ class QueryRewindRestoreStatus extends Component {
 	}
 }
 
-export default connect( null, { getRewindRestoreProgress } )( QueryRewindRestoreStatus );
+export default connect(
+	null,
+	{ getRewindRestoreProgress }
+)( QueryRewindRestoreStatus );

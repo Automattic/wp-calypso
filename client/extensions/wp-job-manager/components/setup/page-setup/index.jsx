@@ -255,6 +255,9 @@ const createReduxForm = reduxForm( {
 
 export default compose(
 	localize, // Must be the outer HOC, as the validation function relies on `translate` prop
-	connect( mapStateToProps, mapDispatchToProps ),
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	),
 	createReduxForm
 )( PageSetup );

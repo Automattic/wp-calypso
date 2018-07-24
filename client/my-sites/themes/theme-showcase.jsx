@@ -26,13 +26,11 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import ThemePreview from './theme-preview';
 import config from 'config';
-import {
-	getThemeFilterTerms,
-	getThemeFilterToTermTable,
-	getThemeShowcaseDescription,
-	getThemeShowcaseTitle,
-	prependThemeFilterKeys,
-} from 'state/selectors';
+import getThemeFilterTerms from 'state/selectors/get-theme-filter-terms';
+import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
+import getThemeShowcaseDescription from 'state/selectors/get-theme-showcase-description';
+import getThemeShowcaseTitle from 'state/selectors/get-theme-showcase-title';
+import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
@@ -74,6 +72,7 @@ class ThemeShowcase extends React.Component {
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
+		upsellBanner: PropTypes.element,
 		trackATUploadClick: PropTypes.func,
 	};
 
@@ -81,6 +80,7 @@ class ThemeShowcase extends React.Component {
 		tier: '',
 		search: '',
 		emptyContent: null,
+		upsellBanner: false,
 		showUploadButton: true,
 	};
 
@@ -239,6 +239,7 @@ class ThemeShowcase extends React.Component {
 						showTierThemesControl={ ! isMultisite }
 						select={ this.onTierSelect }
 					/>
+					{ this.props.upsellBanner }
 					{ this.showUploadButton() && (
 						<Button
 							className="themes__upload-button"
@@ -307,4 +308,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 const mapDispatchToProps = {
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 };
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemeShowcase ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ThemeShowcase ) );

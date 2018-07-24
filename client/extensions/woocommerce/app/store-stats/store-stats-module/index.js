@@ -1,13 +1,12 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { isEqual } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -29,6 +28,7 @@ class StoreStatsModule extends Component {
 		statType: PropTypes.string,
 		query: PropTypes.object,
 		fetchedData: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ),
+		className: PropTypes.string,
 	};
 
 	state = {
@@ -46,13 +46,13 @@ class StoreStatsModule extends Component {
 	}
 
 	render() {
-		const { header, children, data, emptyMessage } = this.props;
+		const { header, children, data, emptyMessage, className } = this.props;
 		const { loaded } = this.state;
 		const isLoading = ! loaded && ! ( data && data.length );
 		const hasEmptyData = loaded && data && data.length === 0;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="store-stats-module">
+			<div className={ classnames( 'store-stats-module', className ) }>
 				{ header }
 				{ isLoading && (
 					<Card>

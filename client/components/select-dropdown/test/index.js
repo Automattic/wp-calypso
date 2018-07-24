@@ -103,7 +103,7 @@ describe( 'index', () => {
 
 			const dropdown = shallowRenderDropdown();
 
-			getInitialSelectedItemStub.reset().returns( 'scheduled' );
+			getInitialSelectedItemStub.resetHistory().returns( 'scheduled' );
 
 			const initialSelectedText = dropdown.instance().getSelectedText();
 
@@ -124,7 +124,7 @@ describe( 'index', () => {
 				<SelectDropdown options={ dropdownOptions } onSelect={ onSelectSpy } />
 			);
 
-			setStateStub.reset();
+			setStateStub.resetHistory();
 
 			const newSelectedOption = dropdownOptions[ 2 ];
 			dropdown.instance().selectItem( newSelectedOption );
@@ -246,7 +246,9 @@ describe( 'index', () => {
 			sinon.assert.calledOnce( fakeEvent.preventDefault );
 
 			const {
-				refs: { dropdownContainer: { focus: focusSpy } },
+				refs: {
+					dropdownContainer: { focus: focusSpy },
+				},
 				closeDropdown: closeDropdownSpy,
 			} = fakeContext;
 			sinon.assert.calledOnce( closeDropdownSpy );

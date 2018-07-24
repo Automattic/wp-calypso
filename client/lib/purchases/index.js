@@ -12,9 +12,9 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	isJetpackPlan,
 	isDomainRegistration,
 	isDomainTransfer,
+	isJetpackPlan,
 	isPlan,
 	isTheme,
 } from 'lib/products-values';
@@ -61,10 +61,6 @@ function getPurchasesBySite( purchases, sites ) {
 function getName( purchase ) {
 	if ( isDomainRegistration( purchase ) ) {
 		return purchase.meta;
-	}
-
-	if ( isJetpackPlan( purchase ) ) {
-		return `Jetpack ${ purchase.productName }`;
 	}
 
 	return purchase.productName;
@@ -183,6 +179,7 @@ function isRemovable( purchase ) {
 	}
 
 	return (
+		isJetpackPlan( purchase ) ||
 		isExpiring( purchase ) ||
 		isExpired( purchase ) ||
 		( isDomainTransfer( purchase ) &&

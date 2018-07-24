@@ -105,4 +105,7 @@ class ReaderImportButton extends React.Component {
 	}
 }
 
-export default connect( null, { successNotice, errorNotice } )( localize( ReaderImportButton ) );
+export default connect(
+	null,
+	{ successNotice, errorNotice }
+)( localize( ReaderImportButton ) );

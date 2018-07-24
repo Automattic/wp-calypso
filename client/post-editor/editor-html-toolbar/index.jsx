@@ -22,7 +22,6 @@ import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import { getMimePrefix } from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
-import PostActions from 'lib/posts/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import markup from 'post-editor/media-modal/markup';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -32,6 +31,7 @@ import {
 	fieldUpdate,
 	settingsUpdate,
 } from 'state/ui/editor/contact-form/actions';
+import { blockSave } from 'state/ui/editor/save-blockers/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import Button from 'components/button';
@@ -163,7 +163,9 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	splitEditorContent() {
-		const { content: { selectionEnd, selectionStart, value } } = this.props;
+		const {
+			content: { selectionEnd, selectionStart, value },
+		} = this.props;
 		return {
 			before: value.substring( 0, selectionStart ),
 			inner: value.substring( selectionStart, selectionEnd ),
@@ -205,7 +207,11 @@ export class EditorHtmlToolbar extends Component {
 
 	updateEditorContentFirefox( before, newContent, after ) {
 		const fullContent = before + newContent + after;
-		const { content, content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
+		const {
+			content,
+			content: { selectionEnd, value },
+			onToolbarChangeContent,
+		} = this.props;
 		this.props.content.value = fullContent;
 		content.focus();
 		document.execCommand( 'insertText', false, newContent );
@@ -216,7 +222,10 @@ export class EditorHtmlToolbar extends Component {
 
 	updateEditorContentIE11( before, newContent, after ) {
 		const fullContent = before + newContent + after;
-		const { content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
+		const {
+			content: { selectionEnd, value },
+			onToolbarChangeContent,
+		} = this.props;
 		this.props.content.value = fullContent;
 		onToolbarChangeContent( fullContent );
 		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
@@ -288,7 +297,9 @@ export class EditorHtmlToolbar extends Component {
 	}
 
 	insertHtmlTag( tag ) {
-		const { content: { selectionEnd, selectionStart } } = this.props;
+		const {
+			content: { selectionEnd, selectionStart },
+		} = this.props;
 		if ( selectionEnd === selectionStart ) {
 			this.isTagOpen( tag.name ) ? this.insertHtmlTagClose( tag ) : this.insertHtmlTagOpen( tag );
 		} else {
@@ -476,7 +487,7 @@ export class EditorHtmlToolbar extends Component {
 			// For single image upload, insert into post content, blocking save
 			// until the image has finished upload
 			if ( selectedItems[ 0 ].transient ) {
-				PostActions.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
+				this.props.blockSave( 'MEDIA_MODAL_TRANSIENT_INSERT' );
 			}
 
 			this.onInsertMedia( markup.get( site, selectedItems[ 0 ] ) );
@@ -498,51 +509,49 @@ export class EditorHtmlToolbar extends Component {
 
 		return (
 			<div className={ insertContentClasses }>
-				<div
+				<button
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openMediaModal }
 				>
 					<Gridicon icon="image" />
 					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
-				</div>
+				</button>
 
 				{ config.isEnabled( 'external-media/google-photos' ) && (
-					<div
+					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openGoogleModal }
 					>
 						<Gridicon icon="shutter" />
 						<span data-e2e-insert-type="google-media">{ translate( 'Media from Google' ) }</span>
-					</div>
+					</button>
 				) }
 
 				{ config.isEnabled( 'external-media/free-photo-library' ) && (
-					<div
+					<button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openPexelsModal }
 					>
 						<Gridicon icon="image-multiple" />
 						<span data-e2e-insert-type="pexels">{ translate( 'Free photo library' ) }</span>
-					</div>
+					</button>
 				) }
 
-				<div
+				<button
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openContactFormDialog }
 				>
 					<Gridicon icon="mention" />
 					<span data-e2e-insert-type="contact-form">{ translate( 'Contact form' ) }</span>
-				</div>
+				</button>
 
-				{ config.isEnabled( 'simple-payments' ) && (
-					<div
-						className="editor-html-toolbar__insert-content-dropdown-item"
-						onClick={ this.openSimplePaymentsDialog }
-					>
-						<Gridicon icon="money" />
-						<span data-e2e-insert-type="payment-button">{ translate( 'Payment button' ) }</span>
-					</div>
-				) }
+				<button
+					className="editor-html-toolbar__insert-content-dropdown-item"
+					onClick={ this.openSimplePaymentsDialog }
+				>
+					<Gridicon icon="money" />
+					<span data-e2e-insert-type="payment-button">{ translate( 'Payment button' ) }</span>
+				</button>
 			</div>
 		);
 	};
@@ -699,10 +708,14 @@ const mapStateToProps = state => ( {
 } );
 
 const mapDispatchToProps = {
+	blockSave,
 	fieldAdd,
 	fieldRemove,
 	fieldUpdate,
 	settingsUpdate,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorHtmlToolbar ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( EditorHtmlToolbar ) );

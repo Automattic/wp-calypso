@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SectionHeader from 'components/section-header';
+import SupportInfo from 'components/support-info';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -28,7 +29,7 @@ const SeoSettingsHelpCard = ( {
 } ) => {
 	const seoHelpLink = siteIsJetpack
 		? 'https://jetpack.com/support/seo-tools/'
-		: 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/';
+		: 'https://wpbizseo.wordpress.com/';
 
 	return (
 		<div id="seo">
@@ -50,6 +51,16 @@ const SeoSettingsHelpCard = ( {
 						) }
 					</p>
 
+					{ siteIsJetpack && (
+						<SupportInfo
+							text={ translate(
+								'To help improve your search page ranking, you can customize how the content titles' +
+									' appear for your site. You can reorder items such as ‘Site Name’ and ‘Tagline’,' +
+									' and also add custom separators between the items.'
+							) }
+							link="https://jetpack.com/support/seo-tools/"
+						/>
+					) }
 					{ siteIsJetpack && (
 						<JetpackModuleToggle
 							siteId={ siteId }

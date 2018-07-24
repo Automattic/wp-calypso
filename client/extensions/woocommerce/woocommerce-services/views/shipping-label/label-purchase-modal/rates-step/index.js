@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -15,7 +17,10 @@ import ShippingRates from './list';
 import StepContainer from '../step-container';
 import formatCurrency from 'lib/format-currency';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import { toggleStep, updateRate } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
+import {
+	toggleStep,
+	updateRate,
+} from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
 	isLoaded,
@@ -23,7 +28,6 @@ import {
 	getTotalPriceBreakdown,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
-import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getOrderShippingTotal } from 'woocommerce/lib/order-values/totals';
 import { getOrderShippingMethod } from 'woocommerce/lib/order-values';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
@@ -87,13 +91,8 @@ const getRatesStatus = ( { retrievalInProgress, errors, available, form } ) => {
 	return { isSuccess: true };
 };
 
-const showCheckoutShippingInfo = ( props ) => {
-	const {
-		shippingMethod,
-		shippingCost,
-		currency,
-		translate,
-	} = props;
+const showCheckoutShippingInfo = props => {
+	const { shippingMethod, shippingCost, translate } = props;
 
 	if ( shippingMethod ) {
 		let shippingInfo;
@@ -103,31 +102,38 @@ const showCheckoutShippingInfo = ( props ) => {
 				'Your customer selected {{shippingMethod/}} and paid {{shippingCost/}}',
 				{
 					components: {
-						shippingMethod: <span className="rates-step__shipping-info-method">{ shippingMethod }</span>,
-						shippingCost: <span className="rates-step__shipping-info-cost">{ formatCurrency( shippingCost, currency ) }</span>,
+						shippingMethod: (
+							<span className="rates-step__shipping-info-method">{ shippingMethod }</span>
+						),
+						shippingCost: (
+							<span className="rates-step__shipping-info-cost">
+								{ formatCurrency( shippingCost, 'USD' ) }
+							</span>
+						),
 					},
 				}
 			);
 		} else {
-			shippingInfo = translate(
-				'Your customer selected {{shippingMethod/}}',
-				{
-					components: {
-						shippingMethod: <span className="rates-step__shipping-info-method">{ shippingMethod }</span>,
-					},
-				}
-			);
+			shippingInfo = translate( 'Your customer selected {{shippingMethod/}}', {
+				components: {
+					shippingMethod: (
+						<span className="rates-step__shipping-info-method">{ shippingMethod }</span>
+					),
+				},
+			} );
 		}
 
 		return (
 			<div className="rates-step__shipping-info">
-				<Notice showDismiss={ false }>{ shippingInfo }</Notice>
+				<Notice status="is-info" showDismiss={ false }>
+					{ shippingInfo }
+				</Notice>
 			</div>
 		);
 	}
 };
 
-const RatesStep = ( props ) => {
+const RatesStep = props => {
 	const {
 		siteId,
 		orderId,
@@ -142,7 +148,8 @@ const RatesStep = ( props ) => {
 	} = props;
 	const summary = ratesSummary( values, available, ratesTotal, form.packages.saved, translate );
 	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'rates' );
-	const updateRateHandler = ( packageId, value ) => props.updateRate( orderId, siteId, packageId, value );
+	const updateRateHandler = ( packageId, value ) =>
+		props.updateRate( orderId, siteId, packageId, value );
 
 	return (
 		<StepContainer
@@ -150,7 +157,8 @@ const RatesStep = ( props ) => {
 			summary={ summary }
 			expanded={ expanded }
 			toggleStep={ toggleStepHandler }
-			{ ...getRatesStatus( props ) } >
+			{ ...getRatesStatus( props ) }
+		>
 			{ ! isEmpty( available ) && showCheckoutShippingInfo( props ) }
 			<ShippingRates
 				id="rates"
@@ -160,7 +168,8 @@ const RatesStep = ( props ) => {
 				selectedRates={ values }
 				availableRates={ available }
 				updateRate={ updateRateHandler }
-				errors={ errors } />
+				errors={ errors }
+			/>
 		</StepContainer>
 	);
 };
@@ -188,14 +197,16 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		errors: loaded && getFormErrors( state, orderId, siteId ).rates,
 		ratesTotal: priceBreakdown ? priceBreakdown.total : 0,
 		allPackages: getAllPackageDefinitions( state, siteId ),
-		currency: getPaymentCurrencySettings( state, siteId ),
 		shippingCost: getOrderShippingTotal( order ),
 		shippingMethod: getOrderShippingMethod( order ),
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { toggleStep, updateRate }, dispatch );
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( RatesStep ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( RatesStep ) );

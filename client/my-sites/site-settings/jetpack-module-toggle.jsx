@@ -14,12 +14,10 @@ import { localize } from 'i18n-calypso';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { activateModule, deactivateModule } from 'state/jetpack/modules/actions';
-import {
-	getJetpackModule,
-	isActivatingJetpackModule,
-	isDeactivatingJetpackModule,
-	isJetpackModuleActive,
-} from 'state/selectors';
+import getJetpackModule from 'state/selectors/get-jetpack-module';
+import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'state/sites/selectors';
 
 class JetpackModuleToggle extends Component {

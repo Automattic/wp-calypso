@@ -32,10 +32,10 @@ describe( 'MediaListStore', () => {
 		MediaStore = require( '../store' );
 		Dispatcher = require( 'dispatcher' );
 
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
-		sandbox.stub( MediaStore, 'get', function( siteId, postId ) {
+		sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
 			if ( DUMMY_MEDIA_OBJECT.ID === postId ) {
 				return DUMMY_MEDIA_OBJECT;
 			}
@@ -140,13 +140,13 @@ describe( 'MediaListStore', () => {
 		} );
 
 		test( 'should sort media by date, with newest first', () => {
-			var media = [
+			const media = [
 				DUMMY_MEDIA_OBJECT,
 				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: '2015-06-19T11:36:09-04:00' } ),
 			];
 
 			MediaStore.get.restore();
-			sandbox.stub( MediaStore, 'get', function( siteId, postId ) {
+			sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
 				return find( media, { ID: postId } );
 			} );
 
@@ -156,13 +156,13 @@ describe( 'MediaListStore', () => {
 		} );
 
 		test( 'should secondary sort media by ID, with larger first', () => {
-			var media = [
+			const media = [
 				DUMMY_MEDIA_OBJECT,
 				assign( {}, DUMMY_MEDIA_OBJECT, { ID: 20, date: DUMMY_MEDIA_OBJECT.date } ),
 			];
 
 			MediaStore.get.restore();
-			sandbox.stub( MediaStore, 'get', function( siteId, postId ) {
+			sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
 				return find( media, { ID: postId } );
 			} );
 
@@ -181,7 +181,7 @@ describe( 'MediaListStore', () => {
 			MediaStore.get.restore();
 			dispatchSetQuery( { query } );
 
-			sandbox.stub( MediaStore, 'get', function( siteId, postId ) {
+			sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
 				return find( media, { ID: postId } );
 			} );
 
@@ -220,7 +220,7 @@ describe( 'MediaListStore', () => {
 		} );
 
 		test( 'should preserve the query from the previous request', () => {
-			var query = { mime_type: 'audio/' };
+			const query = { mime_type: 'audio/' };
 			dispatchSetQuery( { query: query } );
 			dispatchFetchMedia();
 			dispatchReceiveMediaItems();
@@ -237,7 +237,7 @@ describe( 'MediaListStore', () => {
 		} );
 
 		test( 'should reset the page handle when the query changes', () => {
-			var query = { mime_type: 'audio/' };
+			const query = { mime_type: 'audio/' };
 			dispatchReceiveMediaItems();
 			dispatchSetQuery( { query: query } );
 
@@ -295,68 +295,62 @@ describe( 'MediaListStore', () => {
 	} );
 
 	describe( '#isItemMatchingQuery', () => {
-		var isItemMatchingQuery;
+		let isItemMatchingQuery;
 
 		beforeAll( function() {
 			isItemMatchingQuery = MediaListStore.isItemMatchingQuery;
 		} );
 
 		test( 'should return true if no query exists for site', () => {
-			var matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.true;
 		} );
 
 		test( "should return false if a search query is specified, but the item doesn't match", () => {
-			var matches;
 			dispatchSetQuery( { query: { search: 'Notmyitem' } } );
 
-			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.false;
 		} );
 
 		test( 'should return true if a search query is specified, and the item matches', () => {
-			var matches;
 			dispatchSetQuery( { query: { search: 'Imag' } } );
 
-			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.true;
 		} );
 
 		test( 'should return true if a search query is specified, and the item matches case insensitive', () => {
-			var matches;
 			dispatchSetQuery( { query: { search: 'imag' } } );
 
-			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.true;
 		} );
 
 		test( 'should return false if a search query and mime_type are specified, and the item matches on title, but not mime_type', () => {
-			var matches;
 			dispatchSetQuery( { query: { search: 'Imag', mime_type: 'audio/' } } );
 
-			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.false;
 		} );
 
 		test( "should return false if a mime_type is specified, but the item doesn't match", () => {
-			var matches;
 			dispatchSetQuery( { query: { mime_type: 'audio/' } } );
 
-			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.false;
 		} );
 
 		test( 'should return true if a mime_type is specified, and the item matches', () => {
-			var matches;
 			dispatchSetQuery( { query: { mime_type: 'image/' } } );
 
-			matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
+			const matches = isItemMatchingQuery( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
 			expect( matches ).to.be.true;
 		} );
@@ -418,11 +412,10 @@ describe( 'MediaListStore', () => {
 		} );
 
 		test( 'should replace an item when RECEIVE_MEDIA_ITEM includes ID', () => {
-			var newItem = assign( {}, DUMMY_MEDIA_OBJECT, { ID: DUMMY_MEDIA_ID + 1 } ),
-				allItems;
+			const newItem = assign( {}, DUMMY_MEDIA_OBJECT, { ID: DUMMY_MEDIA_ID + 1 } );
 
 			MediaStore.get.restore();
-			sandbox.stub( MediaStore, 'get', function( siteId, postId ) {
+			sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, postId ) {
 				if ( siteId !== DUMMY_SITE_ID ) {
 					return;
 				}
@@ -440,7 +433,7 @@ describe( 'MediaListStore', () => {
 			dispatchReceiveMediaItem();
 			dispatchReceiveMediaItem( { id: DUMMY_MEDIA_ID, data: newItem } );
 
-			allItems = MediaListStore.getAllIds( DUMMY_SITE_ID );
+			const allItems = MediaListStore.getAllIds( DUMMY_SITE_ID );
 			expect( allItems ).to.not.contain( DUMMY_MEDIA_ID );
 			expect( allItems ).to.contain( newItem.ID );
 		} );

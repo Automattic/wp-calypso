@@ -4,14 +4,16 @@
  * @format
  */
 
+/* eslint-disable import/no-nodejs-modules */
+
 /**
  * External dependencies
  */
 const fs = require( 'fs' );
-const HappyPack = require( 'happypack' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
+const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -23,15 +25,9 @@ const bundleEnv = config( 'env' );
 /**
  * Internal variables
  */
+const isDevelopment = bundleEnv === 'development';
+
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
-
-// disable add-module-exports. TODO: remove add-module-exports from babelrc. requires fixing jest tests
-const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
-_.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
-
-// remove the babel-lodash-es plugin from env.test -- it's needed only for Jest tests.
-// The Webpack-using NODE_ENV=test build doesn't need it, as there is a special loader for that.
-_.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) );
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -44,8 +40,7 @@ function getExternals() {
 
 	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 	// with modules that are incompatible with webpack bundling.
-	fs
-		.readdirSync( 'node_modules' )
+	fs.readdirSync( 'node_modules' )
 		.filter( function( module ) {
 			return [ '.bin' ].indexOf( module ) === -1;
 		} )
@@ -77,23 +72,8 @@ function getExternals() {
 const babelLoader = {
 	loader: 'babel-loader',
 	options: {
-		...babelConfig,
-		babelrc: false,
-		plugins: [
-			...babelConfig.plugins,
-			[
-				path.join(
-					__dirname,
-					'server',
-					'bundler',
-					'babel',
-					'babel-plugin-transform-wpcalypso-async'
-				),
-				{ async: false },
-			],
-		],
 		cacheDirectory: path.join( __dirname, 'build', '.babel-server-cache' ),
-		cacheIdentifier: cacheIdentifier,
+		cacheIdentifier,
 	},
 };
 
@@ -105,6 +85,8 @@ const webpackConfig = {
 		path: path.join( __dirname, 'build' ),
 		filename: 'bundle.js',
 	},
+	mode: isDevelopment ? 'development' : 'production',
+	optimization: { minimize: false },
 	module: {
 		rules: [
 			{
@@ -122,7 +104,13 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
-				loader: [ 'happypack/loader' ],
+				use: [
+					{
+						loader: 'thread-loader',
+						options: { workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ) },
+					},
+					babelLoader,
+				],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
@@ -162,7 +150,6 @@ const webpackConfig = {
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
-		new HappyPack( { loaders: [ babelLoader ] } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM

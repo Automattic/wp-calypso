@@ -21,14 +21,12 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
-import {
-	getPostSharePublishedActions,
-	getPostShareScheduledActions,
-	getScheduledPublicizeShareActionTime,
-	isPublicizeEnabled,
-	isSchedulingPublicizeShareAction,
-	isSchedulingPublicizeShareActionError,
-} from 'state/selectors';
+import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';
+import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
+import getScheduledPublicizeShareActionTime from 'state/selectors/get-scheduled-publicize-share-action-time';
+import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
+import isSchedulingPublicizeShareAction from 'state/selectors/is-scheduling-publicize-share-action';
+import isSchedulingPublicizeShareActionError from 'state/selectors/is-scheduling-publicize-share-action-error';
 import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
@@ -51,10 +49,8 @@ import Notice from 'components/notice';
 import {
 	hasFeature,
 	isRequestingSitePlans as siteIsRequestingPlans,
-	getSitePlanRawPrice,
-	getPlanDiscountedRawPrice,
 } from 'state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE, PLAN_PREMIUM, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
 import { UpgradeToPremiumNudge } from 'blocks/post-share/nudges';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList, { NoConnectionsNotice } from './connections-list';
@@ -317,7 +313,7 @@ class PostShare extends Component {
 						className="post-share__schedule-button"
 						disabled={ this.isDisabled() }
 						disabledDays={ [ { before: new Date() } ] }
-						enableOutsideDays={ false }
+						showOutsideDays={ false }
 						title={ translate( 'Set date and time' ) }
 						selectedDay={ this.state.scheduledDate }
 						tabIndex={ 3 }
@@ -578,10 +574,6 @@ class PostShare extends Component {
 	}
 }
 
-const getDiscountedOrRegularPrice = ( state, siteId, plan ) =>
-	getPlanDiscountedRawPrice( state, siteId, plan, { isMonthly: true } ) ||
-	getSitePlanRawPrice( state, siteId, plan, { isMonthly: true } );
-
 export default connect(
 	( state, props ) => {
 		const { siteId } = props;
@@ -607,8 +599,6 @@ export default connect(
 			failed: sharePostFailure( state, siteId, postId ),
 			success: sharePostSuccessMessage( state, siteId, postId ),
 			scheduledAt: getScheduledPublicizeShareActionTime( state, siteId, postId ),
-			premiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_PREMIUM ),
-			jetpackPremiumPrice: getDiscountedOrRegularPrice( state, siteId, PLAN_JETPACK_PREMIUM ),
 			userCurrency: getCurrentUserCurrencyCode( state ),
 			scheduledActions: getPostShareScheduledActions( state, siteId, postId ),
 			publishedActions: getPostSharePublishedActions( state, siteId, postId ),

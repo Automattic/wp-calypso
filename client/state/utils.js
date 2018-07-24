@@ -130,7 +130,7 @@ export const keyedReducer = ( keyPath, reducer, globalActions = [ SERIALIZE, DES
 	// some keys are invalid
 	if ( 'string' !== typeof keyPath ) {
 		throw new TypeError(
-			`Key name passed into ``keyedReducer`` must be a string but I detected a ${ typeof keyName }`
+			'Key name passed into '`keyedReducer`` must be a string but I detected a ${ typeof keyName }`
 		);
 	}
 
@@ -142,7 +142,7 @@ export const keyedReducer = ( keyPath, reducer, globalActions = [ SERIALIZE, DES
 
 	if ( 'function' !== typeof reducer ) {
 		throw new TypeError(
-			`Reducer passed into ``keyedReducer`` must be a function but I detected a ${ typeof reducer }`
+			'Reducer passed into '`keyedReducer`` must be a function but I detected a ${ typeof reducer }`
 		);
 	}
 
@@ -197,6 +197,7 @@ export const keyedReducer = ( keyPath, reducer, globalActions = [ SERIALIZE, DES
  * @param  {(Function|Object)} action Action object or thunk
  * @param  {Object}            data   Additional data to include in action
  * @return {(Function|Object)}        Augmented action object or thunk
+ * @see client/state/utils/withEnhancers for a more advanced alternative
  */
 export function extendAction( action, data ) {
 	if ( 'function' !== typeof action ) {
@@ -208,6 +209,40 @@ export function extendAction( action, data ) {
 		return action( newDispatch, getState );
 	};
 }
+
+/**
+ * Dispatches the specified Redux action creator once enhancers have been applied to the result of its call. Enhancers
+ * have access to the state tree and can be used to modify an action, e.g. to add an additional property to an analytics
+ * event.
+ *
+ * @param {Function} actionCreator - Redux action creator function
+ * @param {Function|Array} enhancers - either a single function or a list of functions that can be used to modify a Redux action
+ * @returns {Function} enhanced action creator
+ * @see client/state/analytics/actions/enhanceWithSiteType for an example
+ * @see client/state/extendAction for a simpler alternative
+ */
+export const withEnhancers = ( actionCreator, enhancers ) => ( ...args ) => (
+	dispatch,
+	getState
+) => {
+	const action = actionCreator( ...args );
+
+	if ( ! Array.isArray( enhancers ) ) {
+		enhancers = [ enhancers ];
+	}
+
+	if ( typeof action === 'function' ) {
+		const newDispatch = actionValue =>
+			dispatch(
+				enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), actionValue )
+			);
+		return action( newDispatch, getState );
+	}
+
+	return dispatch(
+		enhancers.reduce( ( result, enhancer ) => enhancer( result, getState ), action )
+	);
+};
 
 function getInitialState( reducer ) {
 	return reducer( undefined, { type: '@@calypso/INIT' } );

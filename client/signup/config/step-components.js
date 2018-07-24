@@ -3,6 +3,13 @@
  * Internal dependencies
  */
 import AboutStepComponent from 'signup/steps/about';
+import CloneStartComponent from 'signup/steps/clone-start';
+import CloneDestinationComponent from 'signup/steps/clone-destination';
+import CloneCredentialsComponent from 'signup/steps/clone-credentials';
+import ClonePointComponent from 'signup/steps/clone-point';
+import CloneJetpackComponent from 'signup/steps/clone-jetpack';
+import CloneReadyComponent from 'signup/steps/clone-ready';
+import CloneCloningComponent from 'signup/steps/clone-cloning';
 import CredsConfirmComponent from 'signup/steps/creds-confirm';
 import CredsCompleteComponent from 'signup/steps/creds-complete';
 import CredsPermissionComponent from 'signup/steps/creds-permission';
@@ -29,6 +36,13 @@ import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
 
 export default {
 	about: AboutStepComponent,
+	'clone-start': CloneStartComponent,
+	'clone-destination': CloneDestinationComponent,
+	'clone-credentials': CloneCredentialsComponent,
+	'clone-point': ClonePointComponent,
+	'clone-jetpack': CloneJetpackComponent,
+	'clone-ready': CloneReadyComponent,
+	'clone-cloning': CloneCloningComponent,
 	'creds-confirm': CredsConfirmComponent,
 	'creds-complete': CredsCompleteComponent,
 	'creds-permission': CredsPermissionComponent,

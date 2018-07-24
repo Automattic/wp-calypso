@@ -39,6 +39,9 @@ class ProfileGravatar extends Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( ProfileGravatar ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( localize( ProfileGravatar ) );

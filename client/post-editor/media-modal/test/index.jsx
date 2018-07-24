@@ -48,13 +48,6 @@ jest.mock( 'lib/media/actions', () => ( {
 	delete: () => {},
 	setLibrarySelectedItems: () => {},
 } ) );
-jest.mock( 'lib/posts/actions', () => ( {
-	blockSave: () => {},
-} ) );
-jest.mock( 'lib/posts/stats', () => ( {
-	recordEvent: () => {},
-	recordState: () => {},
-} ) );
 jest.mock( 'my-sites/media-library', () => require( 'components/empty-component' ) );
 
 /**
@@ -70,21 +63,34 @@ const DUMMY_VIDEO_MEDIA = [
 ];
 
 describe( 'EditorMediaModal', () => {
-	let spy, deleteMedia, onClose;
+	let spy, deleteMedia, setLibrarySelectedItems, onClose;
 
 	useSandbox( sandbox => {
 		spy = sandbox.spy();
-		sandbox.stub( mediaActions, 'setLibrarySelectedItems' );
+		setLibrarySelectedItems = sandbox.stub( mediaActions, 'setLibrarySelectedItems' );
 		deleteMedia = sandbox.stub( mediaActions, 'delete' );
 		onClose = sandbox.stub();
 	} );
 
 	afterEach( () => {
-		accept.reset();
+		accept.resetHistory();
+	} );
+
+	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				single={ true }
+				site={ DUMMY_SITE }
+				view={ null }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+			/>
+		).instance();
+		tree.componentWillMount();
+		expect( setLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 
 	test( 'should prompt to delete a single item from the list view', done => {
-		var media = DUMMY_MEDIA.slice( 0, 1 ),
+		let media = DUMMY_MEDIA.slice( 0, 1 ),
 			tree;
 
 		tree = shallow(
@@ -108,7 +114,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete multiple items from the list view', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
@@ -129,7 +135,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the detail view', done => {
-		var media = DUMMY_MEDIA[ 0 ],
+		let media = DUMMY_MEDIA[ 0 ],
 			tree;
 
 		tree = shallow(
@@ -153,7 +159,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the detail view, even when multiple selected', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
@@ -192,7 +198,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should revert to an earlier media item when the last item is deleted from detail view', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }

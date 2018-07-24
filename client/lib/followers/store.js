@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:wpcom-followers-store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-var _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
+let _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
 	_followersBySite = {}, // store user objects
 	_totalFollowersByNamespace = {}, // store total found for params
 	_followersFetchedByNamespace = {}, // store fetch progress
@@ -23,10 +23,10 @@ var _fetchingFollowersByNamespace = {}, // store fetching state (boolean)
 	_followerIDsByNamespace = {}, // store user order
 	_removingFromSite = {};
 
-var FollowersStore = {
+const FollowersStore = {
 	// This data may help with infinite scrolling
 	getPaginationData: function( fetchOptions ) {
-		var namespace = getNamespace( fetchOptions );
+		const namespace = getNamespace( fetchOptions );
 		debug( 'getPaginationData:', namespace );
 		return {
 			fetchInitialized: _followersFetchedByNamespace.hasOwnProperty( namespace ),
@@ -43,7 +43,7 @@ var FollowersStore = {
 	},
 
 	getFollowers: function( fetchOptions ) {
-		var namespace = getNamespace( fetchOptions ),
+		let namespace = getNamespace( fetchOptions ),
 			siteId = fetchOptions.siteId;
 
 		debug( 'getFollowers:', namespace );
@@ -54,7 +54,7 @@ var FollowersStore = {
 		if ( ! _followerIDsByNamespace[ namespace ] ) {
 			return false;
 		}
-		let followers = [];
+		const followers = [];
 		_followerIDsByNamespace[ namespace ].forEach( followerId => {
 			if ( _followersBySite[ siteId ][ followerId ] ) {
 				followers.push( _followersBySite[ siteId ][ followerId ] );
@@ -86,7 +86,7 @@ function updateFollower( siteId, id, follower ) {
 }
 
 function updateFollowers( fetchOptions, followers, total ) {
-	var namespace = getNamespace( fetchOptions ),
+	let namespace = getNamespace( fetchOptions ),
 		page = fetchOptions.page;
 
 	debug( 'updateFollowers:', namespace );
@@ -156,7 +156,7 @@ function removeFollowerFromNamespaces( siteId, followerId ) {
 }
 
 FollowersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		namespace;
 	debug( 'register event Type', action.type, payload );
 

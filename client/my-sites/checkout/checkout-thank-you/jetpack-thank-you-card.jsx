@@ -478,7 +478,7 @@ export class JetpackThankYouCard extends Component {
 				? [
 						{ slug: 'vaultpress', status: 'wait', error: true },
 						{ slug: 'akismet', status: 'wait', error: true },
-					]
+				  ]
 				: this.props.plugins;
 
 		const pluginsStatus = reduce(
@@ -535,10 +535,10 @@ export class JetpackThankYouCard extends Component {
 						return ( total += 1 );
 					},
 					0
-				);
+			  );
 
 		// We're intentionally showing at least 10% progress to indicate that setup has started.
-		return Math.max( 10, Math.ceil( completed / features.length * 100 ) );
+		return Math.max( 10, Math.ceil( ( completed / features.length ) * 100 ) );
 	}
 
 	renderAction( progress = 0 ) {

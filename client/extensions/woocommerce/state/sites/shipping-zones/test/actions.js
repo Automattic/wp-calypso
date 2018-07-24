@@ -81,7 +81,7 @@ describe( 'actions', () => {
 			} );
 			const dispatch = spy();
 			fetchShippingZones( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.beenCalled;
+			expect( dispatch ).to.not.have.been.called;
 		} );
 	} );
 } );

@@ -21,7 +21,7 @@ const dummyStorage = {};
 function _initStorage( options ) {
 	const dbInfo = {};
 	if ( options ) {
-		for ( let i in options ) {
+		for ( const i in options ) {
 			dbInfo[ i ] = options[ i ];
 		}
 	}
@@ -41,7 +41,7 @@ function clear( callback ) {
 			.then( () => {
 				const db = this._dbInfo.db;
 
-				for ( let key in db ) {
+				for ( const key in db ) {
 					if ( db.hasOwnProperty( key ) ) {
 						delete db[ key ];
 					}
@@ -90,7 +90,7 @@ function iterate( callback ) {
 				try {
 					const db = this._dbInfo.db;
 
-					for ( let key in db ) {
+					for ( const key in db ) {
 						const result = db[ key ];
 
 						callback( result, key );
@@ -116,7 +116,7 @@ function _key( n, callback ) {
 				let result = null;
 				let index = 0;
 
-				for ( let key in db ) {
+				for ( const key in db ) {
 					if ( db.hasOwnProperty( key ) && db[ key ] !== undefined ) {
 						if ( n === index ) {
 							result = key;
@@ -142,7 +142,7 @@ function _keys( callback ) {
 				const db = this._dbInfo.db;
 				const keys = [];
 
-				for ( let key in db ) {
+				for ( const key in db ) {
 					if ( db.hasOwnProperty( key ) ) {
 						keys.push( key );
 					}
@@ -213,7 +213,7 @@ function setItem( key, value, callback ) {
 				// Save the original value to pass to the callback.
 				const originalValue = value;
 
-				let db = this._dbInfo.db;
+				const db = this._dbInfo.db;
 				db[ key ] = value;
 				resolve( originalValue );
 			} )

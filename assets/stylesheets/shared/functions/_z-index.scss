@@ -43,6 +43,7 @@ $z-layers: (
 		'.reader-post-card__title': 0,
 		'.reader-feed-header': 0,
 		'.reader-feed-header__back-and-follow': 0,
+		'.reader-recommended-sites__recommended-site-dismiss': 1,
 		'.reader-related-card.card': 0,
 		'.reader-full-post__sidebar-comment-like': 1,
 		'.list-stream__header-follow': 0,
@@ -69,6 +70,7 @@ $z-layers: (
 		'.stats-popular__empty': 1,
 		'.people-list-item__label': 1,
 		'.is-actionable .theme__active-focus': 1,
+		'.is-section-themes.focus-sidebar #secondary': 1,
 		'.accessible-focus .current-theme__button:focus': 1,
 		'.signup-processing-screen__processing-step.is-processing:before': 1,
 		'.accessible-focus .theme__more-button button:focus': 1,
@@ -100,7 +102,7 @@ $z-layers: (
 		'ul.module-content-list-item-actions.collapsed': 3,
 		'.auth__input-wrapper .gridicon': 3,
 		'.jetpack-connect__password-form .gridicon': 3,
-		'.jetpack-connect__password-container .jetpack-connect__creds-form-spinner':3,
+		'.jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner':3,
 		'.auth__self-hosted-instructions': 4,
 		'.auth__form .form-password-input__toggle-visibility': 4,
 		'.site-selector': 10,
@@ -140,6 +142,7 @@ $z-layers: (
 		'.notices-list.is-pinned': 180,
 		'.notices-list.is-pinned .notice': 180,
 		'.masterbar': 180,
+		'.gdpr-banner': 185,
 		'.detail-page__backdrop': 190,
 		'.layout__loader': 200,
 		'.offline-status': 200,
@@ -270,7 +273,6 @@ $z-layers: (
 		'.button-group .button:focus': 1
 	),
 	'progress-indicator-parent': (
-		'.progress-indicator__cancel.noticon:before': 1,
 		'.progress-indicator .is-success': 2
 	),
 	'section-nav-tabs__dropdown-parent': (

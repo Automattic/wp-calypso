@@ -7,12 +7,12 @@
 	vertical-align: middle;
 	width: 35px;
 
-	$cc-payment-types: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
-	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24';
+	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
+	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef', 'emergent-paywall';
 
-	@each $type in $cc-payment-types {
-		&.is-#{$type} {
-			background-image: url('/calypso/images/upgrades/cc-#{$type}.svg');
+	@each $brand in $payment-cc-brands {
+		&.is-#{$brand} {
+			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
 		}
 	}
 
@@ -57,5 +57,17 @@
 		height: 20px;
 		background-size: 70px auto;
 		width: 70px;
+	}
+
+	&.is-brazil-tef {
+		background-size: 100px auto;
+		width: 100px;
+	}
+
+	&.is-emergent-paywall {
+		background-size: 200px auto;
+		width: 200px;
+		margin-top: 5px;
+		height: 30px;
 	}
 }

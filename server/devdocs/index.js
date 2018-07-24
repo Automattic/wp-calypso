@@ -127,13 +127,13 @@ function makeSnippet( doc, query ) {
 
 /**
  * Escapes a string
- * @param {string} str The string to escape
- * @returns {string} An escaped string
+ * @param {lunr.Token} token The string to escape
+ * @returns {lunr.Token} An escaped string
  */
-function escapeRegexString( str ) {
+function escapeRegexString( token ) {
 	// taken from: https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
 	const matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
-	return str.replace( matchOperatorsRe, '\\$&' );
+	return token.update( str => str.replace( matchOperatorsRe, '\\$&' ) );
 }
 
 /**

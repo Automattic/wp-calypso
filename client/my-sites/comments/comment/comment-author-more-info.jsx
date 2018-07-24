@@ -18,12 +18,10 @@ import ExternalLink from 'components/external-link';
 import Popover from 'components/popover';
 import { decodeEntities } from 'lib/formatting';
 import { urlToDomainAndPath } from 'lib/url';
-import {
-	canCurrentUser,
-	getSiteComment,
-	getSiteSetting,
-	isEmailBlacklisted,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getSiteComment from 'state/selectors/get-site-comment';
+import getSiteSetting from 'state/selectors/get-site-setting';
+import isEmailBlacklisted from 'state/selectors/is-email-blacklisted';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -258,4 +256,7 @@ const mapDispatchToProps = dispatch => ( {
 		),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentAuthorMoreInfo ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CommentAuthorMoreInfo ) );

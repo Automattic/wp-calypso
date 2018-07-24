@@ -1,13 +1,11 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment, translate } from 'i18n-calypso';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,7 +14,7 @@ import Main from 'components/main';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import Chart from './store-stats-chart';
+import Chart from './store-stats-orders-chart';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import Module from './store-stats-module';
@@ -29,11 +27,14 @@ import {
 	topProducts,
 	topCategories,
 	topCoupons,
+	noDataMsg,
 } from 'woocommerce/app/store-stats/constants';
-import { getUnitPeriod, getEndPeriod, getQueries, getWidgetPath } from './utils';
+import { getEndPeriod, getQueries, getWidgetPath } from './utils';
 import QuerySiteStats from 'components/data/query-site-stats';
 import config from 'config';
 import StoreStatsReferrerWidget from './store-stats-referrer-widget';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 class StoreStats extends Component {
 	static propTypes = {
@@ -46,8 +47,7 @@ class StoreStats extends Component {
 	};
 
 	render() {
-		const { path, queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
-		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
+		const { queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const { orderQuery, referrerQuery } = getQueries( unit, queryDate );
 		const { topListQuery } = getQueries( unit, selectedDate );
@@ -56,6 +56,10 @@ class StoreStats extends Component {
 
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
+				<PageViewTracker
+					path={ `/store/stats/orders/${ unit }/:site` }
+					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
+				/>
 				{ siteId && (
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
@@ -69,11 +73,11 @@ class StoreStats extends Component {
 					interval={ unit }
 				/>
 				<Chart
-					path={ path }
 					query={ orderQuery }
 					selectedDate={ endSelectedDate }
 					siteId={ siteId }
 					unit={ unit }
+					slug={ slug }
 				/>
 				<StatsPeriodNavigation
 					date={ selectedDate }
@@ -106,7 +110,7 @@ class StoreStats extends Component {
 						) }
 						<Module
 							siteId={ siteId }
-							emptyMessage={ translate( 'No data found' ) }
+							emptyMessage={ noDataMsg }
 							query={ referrerQuery }
 							statType="statsStoreReferrers"
 							header={
@@ -123,7 +127,9 @@ class StoreStats extends Component {
 								siteId={ siteId }
 								query={ referrerQuery }
 								statType="statsStoreReferrers"
-								selectedDate={ unitSelectedDate }
+								endSelectedDate={ endSelectedDate }
+								limit={ 5 }
+								pageType="orders"
 							/>
 						</Module>
 					</div>
@@ -133,7 +139,7 @@ class StoreStats extends Component {
 						<div className="store-stats__widgets-column widgets" key={ index }>
 							<Module
 								siteId={ siteId }
-								emptyMessage={ translate( 'No data found' ) }
+								emptyMessage={ noDataMsg }
 								query={ orderQuery }
 								statType="statsOrders"
 							>

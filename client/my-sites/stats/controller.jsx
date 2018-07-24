@@ -5,20 +5,22 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { find, pick } from 'lodash';
+import { find, pick, get, isEqual } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { getSiteFragment, getStatsDefaultSitePage, sectionify } from 'lib/route';
+import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
 import analytics from 'lib/analytics';
 import { recordPlaceholdersTiming } from 'lib/perfmon';
-import titlecase from 'to-title-case';
 import { savePreference } from 'state/preferences/actions';
-import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
+import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import { isWpComFreePlan } from 'lib/plans';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 import FollowList from 'lib/follow-list';
 import StatsInsights from './stats-insights';
 import StatsOverview from './overview';
@@ -27,8 +29,11 @@ import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
-
-const analyticsPageTitle = 'Stats';
+import config from 'config';
+import { isDesktop } from 'lib/viewport';
+import { setFilter } from 'state/activity-log/actions';
+import { queryToFilterState } from 'state/activity-log/utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -115,24 +120,20 @@ export default {
 		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
 	},
 
-	redirectToDefaultSitePage: function( context, next ) {
+	redirectToDefaultSitePage: function( context ) {
 		const siteFragment = getSiteFragment( context.path );
 
-		if ( siteFragment ) {
-			// if we are redirecting we need to retain our intended layout-focus
-			const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
-			context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
-			page.redirect( getStatsDefaultSitePage( siteFragment ) );
-		} else {
-			next();
-		}
+		// if we are redirecting we need to retain our intended layout-focus
+		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
+		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
+		page.redirect( getStatsDefaultSitePage( siteFragment ) );
+	},
+
+	redirectToDefaultModulePage: function( context ) {
+		page.redirect( `/stats/day/${ context.params.module }/${ context.params.site }` );
 	},
 
 	insights: function( context, next ) {
-		const basePath = sectionify( context.path );
-
-		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
-
 		context.primary = <StatsInsights followList={ new FollowList() } />;
 		next();
 	},
@@ -157,7 +158,6 @@ export default {
 				{ title: i18n.translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' },
 			];
 		};
-		const basePath = sectionify( context.path );
 
 		window.scrollTo( 0, 0 );
 
@@ -174,19 +174,32 @@ export default {
 		}
 
 		analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
-		analytics.pageView.record(
-			basePath,
-			analyticsPageTitle + ' > ' + titlecase( activeFilter.period )
-		);
 
 		context.primary = <StatsOverview period={ activeFilter.period } path={ context.pathname } />;
 		next();
 	},
 
 	site: function( context, next ) {
-		const { params: { site_id: givenSiteId }, path, query: queryOptions, store } = context;
+		const {
+			params: { site: givenSiteId },
+			query: queryOptions,
+			store,
+		} = context;
+
+		if ( 'simplePaymentsEmailTour' === get( queryOptions, 'tour' ) ) {
+			if ( ! isDesktop() ) {
+				context.store.dispatch(
+					recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'mobile' } )
+				);
+				window.location.href = 'https://support.wordpress.com/simple-payments/';
+				return;
+			}
+			context.store.dispatch(
+				recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'desktop' } )
+			);
+		}
+
 		const filters = getSiteFilters( givenSiteId );
-		const basePath = sectionify( path );
 		const state = store.getState();
 		const currentSite = getSite( state, givenSiteId );
 		const siteId = currentSite ? currentSite.ID || 0 : 0;
@@ -217,13 +230,8 @@ export default {
 
 		// eslint-disable-next-line no-nested-ternary
 		const numPeriodAgo = parsedPeriod ? ( parsedPeriod > 9 ? '10plus' : '-' + parsedPeriod ) : '';
-		const baseAnalyticsPath = basePath + '/:site';
 
 		analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
-		analytics.pageView.record(
-			baseAnalyticsPath,
-			analyticsPageTitle + ' > ' + titlecase( activeFilter.period )
-		);
 		recordPlaceholdersTiming();
 
 		context.primary = (
@@ -240,7 +248,7 @@ export default {
 	},
 
 	summary: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		const siteFragment = getSiteFragment( context.path );
 		const queryOptions = context.query;
 		const contextModule = context.params.module;
@@ -269,7 +277,6 @@ export default {
 			'annualstats',
 		];
 		let momentSiteZone = i18n.moment();
-		const basePath = sectionify( context.path );
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -312,15 +319,6 @@ export default {
 			statsQueryOptions.period = 'day';
 		}
 
-		analytics.pageView.record(
-			basePath,
-			analyticsPageTitle +
-				' > ' +
-				titlecase( activeFilter.period ) +
-				' > ' +
-				titlecase( context.params.module )
-		);
-
 		context.primary = (
 			<StatsSummary
 				path={ context.pathname }
@@ -336,11 +334,8 @@ export default {
 	},
 
 	post: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		const postId = parseInt( context.params.post_id, 10 );
-		const pathParts = context.path.split( '/' );
-		const postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page';
-
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
 
@@ -348,11 +343,6 @@ export default {
 			window.location = '/stats';
 			return next();
 		}
-
-		analytics.pageView.record(
-			'/stats/' + postOrPage + '/:post_id/:site',
-			analyticsPageTitle + ' > Single ' + titlecase( postOrPage )
-		);
 
 		context.primary = (
 			<StatsPostDetail path={ context.path } postId={ postId } context={ context } />
@@ -362,10 +352,9 @@ export default {
 	},
 
 	follows: function( context, next ) {
-		let siteId = context.params.site_id;
+		let siteId = context.params.site;
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
-		const basePath = sectionify( context.path );
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -383,11 +372,6 @@ export default {
 		if ( ! pageNum || pageNum < 1 ) {
 			pageNum = 1;
 		}
-
-		analytics.pageView.record(
-			basePath.replace( '/' + pageNum, '' ),
-			analyticsPageTitle + ' > Followers > Comment'
-		);
 
 		context.primary = (
 			<StatsCommentFollows
@@ -407,17 +391,27 @@ export default {
 	activityLog: function( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
+		const siteHasWpcomFreePlan = isWpComFreePlan(
+			get( getCurrentPlan( state, siteId ), 'productSlug' )
+		);
 		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
 			? context.query.startDate
 			: undefined;
 
-		if ( siteId && ! isJetpack ) {
+		if ( siteId && siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
 			page.redirect( '/stats' );
 			return next();
 		}
 
-		analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
+		const filter = getActivityLogFilter( state, siteId );
+		const queryFilter = queryToFilterState( context.query );
+
+		if ( ! isEqual( filter, queryFilter ) ) {
+			context.store.dispatch( {
+				...setFilter( siteId, queryFilter ),
+				meta: { skipUrlUpdate: true },
+			} );
+		}
 
 		context.primary = (
 			<ActivityLog

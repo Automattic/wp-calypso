@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import MediaLibraryListItem from 'my-sites/media-library/list-item';
 import EditorMediaModalGalleryCaption from './caption';
 import EditorMediaModalGalleryRemoveButton from './remove-button';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 class EditorMediaModalGalleryEditItem extends Component {
 	static propTypes = {

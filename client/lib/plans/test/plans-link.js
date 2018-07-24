@@ -14,21 +14,19 @@ describe( 'plansLink', () => {
 	} );
 
 	test( 'should append site slug if provided', () => {
-		expect( plansLink( '/plans', { slug: 'example.com' } ) ).toBe( '/plans/example.com' );
+		expect( plansLink( '/plans', 'example.com' ) ).toBe( '/plans/example.com' );
 	} );
 
 	test( 'should append monthly followed by site slug if provided', () => {
-		expect( plansLink( '/plans', { slug: 'example.com' }, 'monthly' ) ).toBe(
-			'/plans/monthly/example.com'
-		);
+		expect( plansLink( '/plans', 'example.com', 'monthly' ) ).toBe( '/plans/monthly/example.com' );
 	} );
 
 	test( 'should append site slug if provided and yearly', () => {
-		expect( plansLink( '/plans', { slug: 'example.com' }, 'yearly' ) ).toBe( '/plans/example.com' );
+		expect( plansLink( '/plans', 'example.com', 'yearly' ) ).toBe( '/plans/example.com' );
 	} );
 
 	test( 'should leave query string untouched when modifying url', () => {
-		expect( plansLink( '/plans?query-key=query-value', { slug: 'example.com' }, 'monthly' ) ).toBe(
+		expect( plansLink( '/plans?query-key=query-value', 'example.com', 'monthly' ) ).toBe(
 			'/plans/monthly/example.com?query-key=query-value'
 		);
 	} );

@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,22 +71,25 @@ class NpsSurveyNotice extends Component {
 	}
 
 	render() {
+		if ( this.props.isSupportUser || ! this.props.isSectionAndSessionEligible ) {
+			return null;
+		}
+
 		return (
-			this.props.isSectionAndSessionEligible && (
-				<Dialog
-					additionalClassNames="nps-survey-notice"
-					isVisible={ this.props.isNpsSurveyDialogShowing }
-					onClose={ this.handleDialogClose }
-				>
-					<NpsSurvey name={ SURVEY_NAME } onClose={ this.handleSurveyClose } />
-				</Dialog>
-			)
+			<Dialog
+				additionalClassNames="nps-survey-notice"
+				isVisible={ this.props.isNpsSurveyDialogShowing }
+				onClose={ this.handleDialogClose }
+			>
+				<NpsSurvey name={ SURVEY_NAME } onClose={ this.handleSurveyClose } />
+			</Dialog>
 		);
 	}
 }
 
 const mapStateToProps = state => {
 	return {
+		isSupportUser: get( state, 'support.isSupportUser', false ),
 		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAnsweredWithNoScore: hasAnsweredNpsSurveyWithNoScore( state ),
@@ -94,10 +98,13 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, {
-	setNpsSurveyDialogShowing,
-	submitNpsSurveyWithNoScore,
-	setupNpsSurveyDevTrigger,
-	setupNpsSurveyEligibility,
-	markNpsSurveyShownThisSession,
-} )( NpsSurveyNotice );
+export default connect(
+	mapStateToProps,
+	{
+		setNpsSurveyDialogShowing,
+		submitNpsSurveyWithNoScore,
+		setupNpsSurveyDevTrigger,
+		setupNpsSurveyEligibility,
+		markNpsSurveyShownThisSession,
+	}
+)( NpsSurveyNotice );

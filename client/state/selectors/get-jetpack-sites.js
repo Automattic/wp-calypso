@@ -5,7 +5,7 @@
  */
 
 import createSelector from 'lib/create-selector';
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 import { isJetpackSite } from 'state/sites/selectors';
 
 /**

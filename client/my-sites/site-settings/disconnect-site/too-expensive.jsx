@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import CompactCard from 'components/card/compact';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { getCurrentPlanPurchaseId } from 'state/selectors';
+import getCurrentPlanPurchaseId from 'state/selectors/get-current-plan-purchase-id';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { addQueryArgs } from 'lib/url';

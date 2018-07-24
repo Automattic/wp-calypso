@@ -69,16 +69,28 @@ menuItems.push( {
 	cmd: 'wpcomContactForm',
 } );
 
-if ( config.isEnabled( 'simple-payments' ) ) {
+menuItems.push( {
+	name: 'insert_payment_button',
+	item: (
+		<GridiconButton
+			icon="money"
+			label={ i18n.translate( 'Payment button' ) }
+			e2e="payment-button"
+		/>
+	),
+	cmd: 'simplePaymentsButton',
+} );
+
+if ( config.isEnabled( 'memberships' ) ) {
 	menuItems.push( {
-		name: 'insert_payment_button',
+		name: 'insert_memberships_button',
 		item: (
 			<GridiconButton
 				icon="money"
-				label={ i18n.translate( 'Payment button' ) }
-				e2e="payment-button"
+				label={ i18n.translate( 'Recurring Payment' ) }
+				e2e="memberships"
 			/>
 		),
-		cmd: 'simplePaymentsButton',
+		cmd: 'membershipsButton',
 	} );
 }

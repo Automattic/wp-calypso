@@ -15,7 +15,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSiteInDevelopmentMode } from 'state/selectors';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 
 const JetpackDevModeNotice = ( {

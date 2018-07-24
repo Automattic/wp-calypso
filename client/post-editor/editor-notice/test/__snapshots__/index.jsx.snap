@@ -23,7 +23,6 @@ exports[`EditorNotice should display publish success for custom post type 1`] = 
       Array [
         "jetpack-testimonial published on ",
         <a
-          href={undefined}
           onClick={[Function]}
         >
           Example Site
@@ -46,7 +45,6 @@ exports[`EditorNotice should display publish success for page 1`] = `
       Array [
         "Page published on ",
         <a
-          href={undefined}
           onClick={[Function]}
         >
           Example Site
@@ -75,7 +73,6 @@ exports[`EditorNotice should display publish success for post 1`] = `
       Array [
         "post published on ",
         <a
-          href={undefined}
           onClick={[Function]}
         >
           Example Site

@@ -89,7 +89,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	initiateFromForm = event => {
-		let fileSelector = this.refs.fileSelector;
+		const fileSelector = this.refs.fileSelector;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -105,7 +105,7 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	openFileSelector = () => {
-		let fileSelector = this.refs.fileSelector;
+		const fileSelector = this.refs.fileSelector;
 
 		fileSelector.click();
 	};
@@ -144,7 +144,10 @@ class UploadingPane extends React.PureComponent {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	startUpload: flowRight( dispatch, startUpload ),
+	startUpload: flowRight(
+		dispatch,
+		startUpload
+	),
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( localize( UploadingPane ) );

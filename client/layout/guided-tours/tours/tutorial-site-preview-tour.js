@@ -38,6 +38,7 @@ export const TutorialSitePreviewTour = makeTour(
 			arrow="top-left"
 			placement="below"
 			scrollContainer=".sidebar__region"
+			style={ { animationDelay: '2s' } }
 		>
 			{ ( { translate } ) => (
 				<Fragment>

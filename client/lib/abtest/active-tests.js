@@ -1,5 +1,26 @@
 /** @format */
 export default {
+	nudgeAPalooza: {
+		datestamp: '20180711',
+		variations: {
+			sidebarUpsells: 20,
+			themesNudgesUpdates: 20,
+			customPluginAndThemeLandingPages: 20,
+			plansBannerUpsells: 20,
+			control: 40,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	springSale30PercentOff: {
+		datestamp: '20180413',
+		variations: {
+			upsell: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
 		variations: {
@@ -64,51 +85,41 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	upgradePricingDisplayV2: {
-		datestamp: '20180305',
+	jetpackSignupGoogleTop: {
+		datestamp: '20180427',
 		variations: {
 			original: 50,
-			modified: 50,
+			top: 50,
 		},
 		defaultVariation: 'original',
 	},
-	redesignedSidebarBanner: {
-		datestamp: '20180222',
+	domainSuggestionKrakenV322: {
+		datestamp: '20180709',
 		variations: {
-			newBanner: 50,
-			oldBanner: 50,
+			domainsbot: 0,
+			group_1: 27200,
+			group_3: 27200,
+			group_4: 27200,
+			group_6: 1000,
+			group_7: 1000,
+			group_8: 27200,
 		},
-		defaultVariation: 'oldBanner',
+		defaultVariation: 'domainsbot',
 	},
-	siteGoalsShuffle: {
-		datestamp: '20180214',
+	aboutSuggestionMatches: {
+		datestamp: '20180704',
 		variations: {
 			control: 50,
-			variant: 50,
+			enhancedSort: 50,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
 	},
-	mobilePlansTablesOnSignup: {
-		datestamp: '20180330',
+	includeDotBlogSubdomain: {
+		datestamp: '20180723',
 		variations: {
-			original: 50,
-			vertical: 50,
+			yes: 50,
+			no: 50,
 		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
-	domainSuggestionKrakenV313: {
-		datestamp: '20180329',
-		variations: {
-			group_0: 1, // Default group
-			group_1: 1000,
-			group_2: 1000,
-			group_3: 1000,
-			group_4: 1000,
-			group_5: 1000,
-		},
-		defaultVariation: 'group_0',
-		allowExistingUsers: true,
+		defaultVariation: 'no',
 	},
 };

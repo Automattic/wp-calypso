@@ -23,7 +23,7 @@
 		margin-bottom: 24px;
 
 		.foldable-card__expand .gridicon {
-			transform: rotate(180deg);
+			transform: rotate( 180deg );
 		}
 	}
 }
@@ -43,35 +43,8 @@
 .activity-log-item .foldable-card__secondary {
 	flex-grow: 0;
 
-	.foldable-card__summary-expanded {
+	.foldable-card__summary {
 		margin-right: 0;
-	}
-}
-
-.activity-log-item .is-discarded {
-	margin-left: 80px;
-
-	@include breakpoint( '<480px' ) {
-		margin-left: 60px;
-	}
-
-	&:before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 33px;
-		height: 100%;
-		border-left: 2px dotted $gray-lighten-20;
-
-		@include breakpoint( '<480px' ) {
-			left: 22px;
-		}
-	}
-
-	&:last-of-type {
-		&:before {
-			display: none;
-		}
 	}
 }
 
@@ -85,6 +58,10 @@
 
 	@include breakpoint( '<480px' ) {
 		margin: -2px 8px 0 0px;
+	}
+
+	.is-loading & {
+		align-self: center;
 	}
 }
 
@@ -136,10 +113,18 @@
 		background: $alert-red;
 	}
 
-	.is-discarded & {
-		color: $gray-text;
-		background: none;
-		border: 1px solid transparentize($gray-lighten-20, 0.5);
+	.is-loading & {
+		width: 48px;
+		height: 48px;
+		margin-top: 0px;
+		padding: 0;
+		background-color: $gray-lighten-20;
+
+		@include breakpoint( '<480px' ) {
+			width: 32px;
+			height: 32px;
+			margin: 2px 0 0 2px;
+		}
 	}
 }
 
@@ -161,9 +146,9 @@
 		color: $gray-darken-20;
 	}
 
-	.is-discarded & {
-		background: none;
-		box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5);
+	.is-loading & {
+		height: 80px;
+		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
@@ -219,16 +204,8 @@
 		}
 	}
 
-	.gravatar {
-		.is-discarded & {
-			filter: grayscale(1);
-		}
-	}
-
-	.jetpack-logo {
-		.is-discarded & {
-			opacity: 0.75;
-		}
+	.jetpack-logo__icon-circle {
+		fill: $gray-darken-10;
 	}
 }
 
@@ -252,6 +229,8 @@
 }
 
 .activity-log-item__actor-role {
+	text-transform: capitalize;
+
 	@include breakpoint( '<480px' ) {
 		display: inline-block;
 		margin-left: 8px;
@@ -260,7 +239,6 @@
 
 .activity-log-item__actor-role,
 .activity-log-item__description-summary {
-	text-transform: capitalize;
 	font-size: 12px;
 	color: $gray-text-min;
 
@@ -317,5 +295,29 @@
 	@include breakpoint( '<480px' ) {
 		display: table;
 		margin-top: 1.5rem;
+	}
+}
+
+.activity-log-item__quick-action-progress {
+}
+
+.activity-log-item__quick-action-success {
+	color: $alert-green;
+	animation-name: fade-out-success;
+	animation-fill-mode: forwards;
+	animation-delay: 2s;
+	animation-duration: 2s;
+}
+
+.activity-log-item__quick-action-error {
+	color: $alert-red;
+}
+
+@keyframes fade-out-success {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
 	}
 }

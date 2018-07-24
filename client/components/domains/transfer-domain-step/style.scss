@@ -1,3 +1,5 @@
+/** @format */
+
 .transfer-domain-step {
 	padding: 0;
 
@@ -15,7 +17,7 @@
 		margin-bottom: 20px;
 		min-width: 0;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			float: right;
 			margin-bottom: 0;
 		}
@@ -68,12 +70,6 @@
 .transfer-domain-step__domain-description {
 	font-size: 16px;
 	margin-bottom: 20px;
-
-	.transfer-domain-step__illustration {
-		display: block;
-		margin: 0 auto 20px;
-		max-width: 250px;
-	}
 }
 
 .transfer-domain-step__go {
@@ -185,7 +181,8 @@
 		color: $gray;
 	}
 
-	&.transfer-domain-step__unlocked {
+	&.transfer-domain-step__unlocked,
+	&.transfer-domain-step__auth-code-valid {
 		color: $alert-green;
 	}
 
@@ -213,9 +210,18 @@
 }
 
 .transfer-domain-step__continue-text {
+	flex-grow: 1;
+
 	p {
 		color: $gray-darken-10;
 		font-size: 14px;
+	}
+}
+
+input {
+	&.transfer-domain-step__auth-code-input {
+		width: 200px;
+		margin-top: 15px;
 	}
 }
 

@@ -20,7 +20,7 @@ import site from './lib/mock-site';
 const options = { siteId: site.ID };
 
 describe( 'WPCOM Followers Store', () => {
-	var Dispatcher, FollowersStore;
+	let Dispatcher, FollowersStore;
 
 	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );
@@ -37,18 +37,18 @@ describe( 'WPCOM Followers Store', () => {
 		} );
 
 		test( 'Should update the store on RECEIVE_FOLLOWERS', () => {
-			var followers = FollowersStore.getFollowers( options );
+			const followers = FollowersStore.getFollowers( options );
 			assert.equal( 2, followers.length );
 		} );
 
 		test( 'The store should return an array of objects when fetching followers', () => {
-			var followers = FollowersStore.getFollowers( options );
+			const followers = FollowersStore.getFollowers( options );
 			assert.isArray( followers );
 			assert.isObject( followers[ 0 ] );
 		} );
 
 		test( 'Fetching more followers should update the array in the store', () => {
-			var followers = FollowersStore.getFollowers( options ),
+			let followers = FollowersStore.getFollowers( options ),
 				followersAgain;
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
@@ -57,7 +57,7 @@ describe( 'WPCOM Followers Store', () => {
 		} );
 
 		test( 'Pagination data should update when we fetch more followers', () => {
-			var pagination = FollowersStore.getPaginationData( options );
+			let pagination = FollowersStore.getPaginationData( options );
 			assert.equal( pagination.totalFollowers, 4 );
 			assert.equal( pagination.numFollowersFetched, 2 );
 			assert.equal( pagination.followersCurrentPage, 1 );
@@ -73,7 +73,7 @@ describe( 'WPCOM Followers Store', () => {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 		test( 'Should remove a single follower.', () => {
-			var followers = FollowersStore.getFollowers( options ),
+			let followers = FollowersStore.getFollowers( options ),
 				followersAgain;
 
 			assert.equal( followers.length, 2 );
@@ -83,7 +83,7 @@ describe( 'WPCOM Followers Store', () => {
 			assert.equal( followersAgain.length, 1 );
 		} );
 		test( 'Should restore a single follower on removal error.', () => {
-			var followers = FollowersStore.getFollowers( options ),
+			let followers = FollowersStore.getFollowers( options ),
 				followersAfterRemove,
 				followersAfterError;
 			assert.equal( followers.length, 2 );

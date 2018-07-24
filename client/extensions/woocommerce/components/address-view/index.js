@@ -75,7 +75,10 @@ class AddressView extends Component {
 	};
 
 	renderEditableCountry = () => {
-		const { address: { country }, onChange } = this.props;
+		const {
+			address: { country },
+			onChange,
+		} = this.props;
 
 		return (
 			<FormFieldSet className="address-view__country">
@@ -85,7 +88,10 @@ class AddressView extends Component {
 	};
 
 	renderEditableState = () => {
-		const { address: { country, state }, onChange } = this.props;
+		const {
+			address: { country, state },
+			onChange,
+		} = this.props;
 		return (
 			<FormFieldSet className="address-view__editable-state">
 				<FormStateSelectFromApi country={ country } value={ state } onChange={ onChange } />

@@ -41,9 +41,8 @@ export default class extends React.PureComponent {
 					<path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-.39 12.335l-3.14-.8c-.798-.202-1.18-1.11-.77-1.822l3.91-6.773v9.395zm4.84-2.048l-3.91 6.773V9.665l3.14.8c.798.202 1.18 1.11.77 1.822z" />
 				</svg>
 			);
-		} else {
-			return <Gridicon className={ iconClass } icon={ iconTypeDescription } size={ iconSize } />;
 		}
+		return <Gridicon className={ iconClass } icon={ iconTypeDescription } size={ iconSize } />;
 	};
 
 	render() {

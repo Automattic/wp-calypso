@@ -15,8 +15,11 @@ import {
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
+	isAuthorEqual,
+	isDateEqual,
 	isDiscussionEqual,
-	mergeIgnoringArrays,
+	areAllMetadataEditsApplied,
+	applyPostEdits,
 	normalizePostForEditing,
 	normalizePostForDisplay,
 } from './utils';
@@ -24,6 +27,7 @@ import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import { addQueryArgs } from 'lib/route';
+import { getFeaturedImageId } from 'state/posts/utils';
 
 /**
  * Returns the PostsQueryManager from the state tree for a given site ID (or
@@ -329,13 +333,9 @@ export const getEditedPost = createSelector(
 			return post;
 		}
 
-		if ( ! post ) {
-			return edits;
-		}
-
-		return mergeIgnoringArrays( {}, post, edits );
+		return applyPostEdits( post, edits );
 	},
-	state => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits ]
 );
 
 /**
@@ -365,27 +365,27 @@ export function getEditedPostValue( state, siteId, postId, field ) {
 }
 
 /**
- * Returns true if the edited post visibility is private.
+ * Returns true if the edited post is password protected.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether edited post visibility is private
+ * @return {Boolean}        Result of the check
  */
-export function isEditedPostPrivate( state, siteId, postId ) {
+export function isEditedPostPasswordProtected( state, siteId, postId ) {
 	const password = getEditedPostValue( state, siteId, postId, 'password' );
 	return !! ( password && password.length > 0 );
 }
 
 /**
- * Returns true if a valid password is set for the edited post with private visibility.
+ * Returns true if the edited post is password protected and has a valid password set
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether password for the edited post with private visibility is valid
+ * @return {Boolean}        Result of the check
  */
-export function isPrivateEditedPostPasswordValid( state, siteId, postId ) {
+export function isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId ) {
 	const password = getEditedPostValue( state, siteId, postId, 'password' );
 	return !! ( password && password.trim().length > 0 );
 }
@@ -404,21 +404,30 @@ export const isEditedPostDirty = createSelector(
 		const post = getSitePost( state, siteId, postId );
 		const edits = getPostEdits( state, siteId, postId );
 
-		return some( edits, ( value, key ) => {
+		const editsDirty = some( edits, ( value, key ) => {
 			if ( key === 'type' ) {
 				return false;
 			}
 
 			if ( post ) {
 				switch ( key ) {
-					case 'date': {
-						return ! moment( value ).isSame( post.date );
+					case 'author': {
+						return ! isAuthorEqual( value, post.author );
 					}
-					case 'parent': {
-						return get( post, 'parent.ID', 0 ) !== value;
+					case 'date': {
+						return ! isDateEqual( value, post.date );
 					}
 					case 'discussion': {
 						return ! isDiscussionEqual( value, post.discussion );
+					}
+					case 'featured_image': {
+						return value !== getFeaturedImageId( post );
+					}
+					case 'metadata': {
+						return ! areAllMetadataEditsApplied( value, post.metadata );
+					}
+					case 'parent': {
+						return get( post, 'parent.ID', 0 ) !== value;
 					}
 				}
 				return post[ key ] !== value;
@@ -428,8 +437,12 @@ export const isEditedPostDirty = createSelector(
 				! DEFAULT_NEW_POST_VALUES.hasOwnProperty( key ) || value !== DEFAULT_NEW_POST_VALUES[ key ]
 			);
 		} );
+
+		const { initial, current } = state.ui.editor.rawContent;
+		const rawContentDirty = initial !== current;
+		return editsDirty || rawContentDirty;
 	},
-	state => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits, state.ui.editor.rawContent ]
 );
 
 /**

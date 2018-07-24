@@ -106,6 +106,13 @@ const devdocs = {
 		next();
 	},
 
+	playground: function( context, next ) {
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/playground" />
+		);
+		next();
+	},
+
 	selectors: function( context, next ) {
 		context.primary = (
 			<AsyncLoad
@@ -153,6 +160,14 @@ const devdocs = {
 	// Welcome screen
 	welcome: function( context, next ) {
 		context.primary = React.createElement( DevWelcome, {} );
+		next();
+	},
+
+	// Gutenberg Blocks
+	gutenbergBlocks: function( context, next ) {
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/gutenberg-blocks" />
+		);
 		next();
 	},
 };

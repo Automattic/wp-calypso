@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -32,10 +34,10 @@ const ShippingServiceGroups = ( {
 	const servicesWithSettings = services.map( svc => Object.assign( {}, svc, settings[ svc.id ] ) );
 	const serviceGroups = groupBy( servicesWithSettings, svc => svc.group );
 
-	const renderServiceGroup = ( serviceGroup ) => {
+	const renderServiceGroup = serviceGroup => {
 		const groupFields = map( serviceGroups[ serviceGroup ], 'id' );
 		const groupErrors = {};
-		groupFields.forEach( ( fieldName ) => {
+		groupFields.forEach( fieldName => {
 			if ( errors[ fieldName ] ) {
 				groupErrors[ fieldName ] = errors[ fieldName ];
 			}
@@ -60,7 +62,9 @@ const ShippingServiceGroups = ( {
 			<FormLegend dangerouslySetInnerHTML={ sanitizeHTML( title ) } />
 			<FieldDescription text={ description } />
 			<div className={ classNames( 'shipping-services__inner', { 'is-error': generalError } ) }>
-				{ Object.keys( serviceGroups ).sort().map( renderServiceGroup ) }
+				{ Object.keys( serviceGroups )
+					.sort()
+					.map( renderServiceGroup ) }
 			</div>
 			{ generalError ? <FieldError text={ generalError } /> : null }
 		</div>

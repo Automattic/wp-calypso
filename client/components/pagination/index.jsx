@@ -15,11 +15,13 @@ import PaginationPage from './pagination-page';
 
 class Pagination extends Component {
 	static propTypes = {
-		page: PropTypes.number.isRequired,
-		perPage: PropTypes.number.isRequired,
-		total: PropTypes.number,
-		pageClick: PropTypes.func.isRequired,
 		compact: PropTypes.bool,
+		nextLabel: PropTypes.string,
+		page: PropTypes.number.isRequired,
+		pageClick: PropTypes.func.isRequired,
+		perPage: PropTypes.number.isRequired,
+		prevLabel: PropTypes.string,
+		total: PropTypes.number,
 	};
 
 	getPageList = ( page, pageCount ) => {
@@ -53,7 +55,16 @@ class Pagination extends Component {
 	};
 
 	render() {
-		const { page, pageClick, perPage, total, compact } = this.props;
+		const {
+			className,
+			compact,
+			nextLabel,
+			page,
+			pageClick,
+			perPage,
+			prevLabel,
+			total,
+		} = this.props;
 		const pageCount = Math.ceil( total / perPage );
 
 		if ( pageCount <= 1 ) {
@@ -65,17 +76,19 @@ class Pagination extends Component {
 			return (
 				<PaginationPage
 					key={ index }
-					pageNumber={ pageNumber }
-					currentPage={ page }
-					totalPages={ pageCount }
-					pageClick={ pageClick }
 					compact={ compact }
+					currentPage={ page }
+					nextLabel={ nextLabel }
+					pageClick={ pageClick }
+					pageNumber={ pageNumber }
+					prevLabel={ prevLabel }
+					totalPages={ pageCount }
 				/>
 			);
 		} );
 
 		return (
-			<div className={ classnames( 'pagination', { 'is-compact': compact } ) }>
+			<div className={ classnames( 'pagination', className, { 'is-compact': compact } ) }>
 				<ul className="pagination__list">{ pageListRendered }</ul>
 			</div>
 		);

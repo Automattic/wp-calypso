@@ -1,130 +1,99 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
 import page from 'page';
 import { isDesktop } from 'lib/viewport';
+import { translate } from 'i18n-calypso';
 
-/**
- * Internal dependencies
- */
-const tasks = {
-	about_page_updated: {
-		title: 'Create your About page',
-		description:
-			'It’s the first place we all go! Don’t miss the opportunity to tell people more about you and your site.',
-		duration: '10 mins',
-		completedTitle: 'You updated your About page',
-		completedButtonText: 'Change',
-		image: '/calypso/images/stats/tasks/about.svg',
-		url: '/pages/$siteSlug',
-		tour: 'checklistAboutPage',
+export const tasks = [
+	{
+		id: 'site_created',
+		title: translate( 'Create your site' ),
+		description: translate( 'This is where your adventure begins.' ),
+		completedTitle: translate( 'You created your site' ),
+		completed: true,
 	},
-	avatar_uploaded: {
-		title: 'Upload your profile picture',
-		description:
-			'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.',
-		duration: '2 mins',
-		completedTitle: 'You uploaded a profile picture',
-		completedButtonText: 'Change',
-		url: '/me',
-		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
-		tour: 'checklistUserAvatar',
+	{
+		id: 'domain_selected',
+		title: translate( 'Pick a website address' ),
+		description: translate( 'Choose an address so people can find you on the internet.' ),
+		completedTitle: translate( 'You picked a website address' ),
+		completed: true,
+		image: '/calypso/images/stats/tasks/domains.svg',
 	},
-	blogname_set: {
-		title: 'Give your site a name',
-		description: 'Give your site a descriptive name to entice visitors.',
-		duration: '1 min',
-		completedTitle: 'You updated your site title',
-		completedButtonText: 'Edit',
+	{
+		id: 'blogname_set',
+		title: translate( 'Give your site a name' ),
+		description: translate( 'Give your site a descriptive name to entice visitors.' ),
+		duration: translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ),
+		completedTitle: translate( 'You updated your site title' ),
+		completedButtonText: translate( 'Edit' ),
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/personalize-your-site.svg',
 		tour: 'checklistSiteTitle',
 	},
-	blogdescription_set: {
-		title: 'Create a tagline',
-		description: 'Pique readers’ interest with a little more detail about your site.',
-		duration: '2 mins',
-		completedTitle: 'You created a tagline',
-		completedButtonText: 'Change',
-		url: '/settings/general/$siteSlug',
-		image: '/calypso/images/stats/tasks/create-tagline.svg',
-		tour: 'checklistSiteTagline',
-	},
-	contact_page_updated: {
-		title: 'Personalize your Contact page',
-		description: 'Encourage visitors to get in touch — a website is for connecting with people.',
-		duration: '2 mins',
-		completedTitle: 'You updated your Contact page',
-		completedButtonText: 'Edit',
-		image: '/calypso/images/stats/tasks/contact.svg',
-		url: '/post/$siteSlug/2',
-		tour: 'checklistContactPage',
-	},
-	custom_domain_registered: {
-		title: 'Register a custom domain',
-		description:
-			'Memorable domain names make it easy for people to remember your address — and search engines love ’em.',
-		duration: '2 mins',
-		completedTitle: 'You registered a custom domain',
-		completedButtonText: 'Add email',
-		url: '/domains/add/$siteSlug',
-		image: '/calypso/images/stats/tasks/domains.svg',
-	},
-	domain_selected: {
-		title: 'Pick a website address',
-		description: 'Choose an address so people can find you on the internet.',
-		completedTitle: 'You picked a website address',
-		completed: true,
-		image: '/calypso/images/stats/tasks/domains.svg',
-	},
-	post_published: {
-		title: 'Publish your first blog post',
-		description: 'Introduce yourself to the world! That’s why you’re here.',
-		duration: '10 mins',
-		completedTitle: 'You published your first blog post',
-		completedButtonText: 'Edit',
-		url: '/post/$siteSlug',
-		image: '/calypso/images/stats/tasks/first-post.svg',
-		tour: 'checklistPublishPost',
-	},
-	site_created: {
-		title: 'Create your site',
-		description: 'This is where your adventure begins.',
-		completedTitle: 'You created your site',
-		completed: true,
-	},
-	site_icon_set: {
-		title: 'Upload a site icon',
-		description: 'Help people recognize your site in browser tabs — just like the WordPress.com W!',
-		duration: '1 min',
-		completedTitle: 'You uploaded a site icon',
-		completedButtonText: 'Change',
+	{
+		id: 'site_icon_set',
+		title: translate( 'Upload a site icon' ),
+		description: translate(
+			'Help people recognize your site in browser tabs — just like the WordPress.com W!'
+		),
+		duration: translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ),
+		completedTitle: translate( 'You uploaded a site icon' ),
+		completedButtonText: translate( 'Change' ),
 		url: '/settings/general/$siteSlug',
 		image: '/calypso/images/stats/tasks/upload-icon.svg',
 		tour: 'checklistSiteIcon',
 	},
-	social_links_set: {
-		title: 'Display links to your social accounts',
-		description: 'Let your audience know where else they can find you online.',
-		duration: '2 mins',
-		completedTitle: 'You added your social accounts.',
-		completedButtonText: 'Change',
-		url: '/customize/$siteSlug?guide=social-media',
-		image: '/calypso/images/stats/tasks/social-links.svg',
+	{
+		id: 'blogdescription_set',
+		title: translate( 'Create a tagline' ),
+		description: translate( 'Pique readers’ interest with a little more detail about your site.' ),
+		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
+		completedTitle: translate( 'You created a tagline' ),
+		completedButtonText: translate( 'Change' ),
+		url: '/settings/general/$siteSlug',
+		image: '/calypso/images/stats/tasks/create-tagline.svg',
+		tour: 'checklistSiteTagline',
 	},
-};
-
-const sequence = [
-	'site_created',
-	'domain_selected',
-	'blogname_set',
-	'site_icon_set',
-	'blogdescription_set',
-	'avatar_uploaded',
-	'contact_page_updated',
-	'post_published',
+	{
+		id: 'avatar_uploaded',
+		title: translate( 'Upload your profile picture' ),
+		description: translate(
+			'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.'
+		),
+		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
+		completedTitle: translate( 'You uploaded a profile picture' ),
+		completedButtonText: translate( 'Change' ),
+		url: '/me',
+		image: '/calypso/images/stats/tasks/upload-profile-picture.svg',
+		tour: 'checklistUserAvatar',
+	},
+	{
+		id: 'contact_page_updated',
+		title: translate( 'Personalize your Contact page' ),
+		description: translate(
+			'Encourage visitors to get in touch — a website is for connecting with people.'
+		),
+		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
+		completedTitle: translate( 'You updated your Contact page' ),
+		completedButtonText: translate( 'Edit' ),
+		image: '/calypso/images/stats/tasks/contact.svg',
+		url: '/post/$siteSlug/2',
+		tour: 'checklistContactPage',
+	},
+	{
+		id: 'post_published',
+		title: translate( 'Publish your first blog post' ),
+		description: translate( 'Introduce yourself to the world! That’s why you’re here.' ),
+		duration: translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ),
+		completedTitle: translate( 'You published your first blog post' ),
+		completedButtonText: translate( 'Edit' ),
+		url: '/post/$siteSlug',
+		image: '/calypso/images/stats/tasks/first-post.svg',
+		tour: 'checklistPublishPost',
+	},
 ];
 
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
@@ -156,17 +125,4 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
-}
-
-export function onboardingTasks( checklist ) {
-	if ( ! checklist || ! checklist.tasks ) {
-		return null;
-	}
-
-	return sequence.map( id => {
-		const task = tasks[ id ];
-		const taskFromServer = checklist.tasks[ id ];
-
-		return { id, ...task, ...taskFromServer };
-	} );
 }

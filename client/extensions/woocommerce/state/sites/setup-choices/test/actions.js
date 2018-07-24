@@ -96,7 +96,7 @@ describe( 'actions', () => {
 			} );
 			const dispatch = spy();
 			fetchSetupChoices( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.beenCalled;
+			expect( dispatch ).to.not.have.been.called;
 		} );
 	} );
 

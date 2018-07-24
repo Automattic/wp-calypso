@@ -6,10 +6,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
@@ -19,17 +21,16 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import InfiniteScroll from 'components/infinite-scroll';
 import NoResults from 'my-sites/no-results';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
 import urlSearch from 'lib/url-search';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import {
-	canCurrentUser,
-	getSelectedOrAllSitesJetpackCanManage,
-	hasJetpackSites,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getSitePlan,
@@ -46,6 +47,7 @@ import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -55,6 +57,14 @@ const visibleCategories = [ 'new', 'popular', 'featured' ];
 
 export class PluginsBrowser extends Component {
 	static displayName = 'PluginsBrowser';
+
+	static propTypes = {
+		trackPageView: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		trackPageViews: true,
+	};
 
 	state = this.getPluginsLists( this.props.search );
 
@@ -489,16 +499,52 @@ export class PluginsBrowser extends Component {
 			return null;
 		}
 
+		const { siteSlug, translate } = this.props;
+		const plan = findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
+			type: TYPE_BUSINESS,
+		} );
+		const title = translate( 'Upgrade to the Business plan to install plugins.' );
+
+		if (
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
+		) {
+			const href = '/feature/plugins/' + siteSlug;
+			return (
+				<Banner
+					event="calypso_plugins_browser_upgrade_nudge_upsell"
+					href={ href }
+					plan={ plan }
+					title={ title }
+				/>
+			);
+		}
+
 		return (
 			<Banner
 				feature={ FEATURE_UPLOAD_PLUGINS }
-				event={ 'calypso_plugins_browser_upgrade_nudge' }
-				plan={ findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
-					type: TYPE_BUSINESS,
-				} ) }
-				title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
+				event="calypso_plugins_browser_upgrade_nudge"
+				plan={ plan }
+				title={ title }
 			/>
 		);
+	}
+
+	renderPageViewTracker() {
+		const { category, selectedSiteId, trackPageViews } = this.props;
+
+		const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
+		let analyticsPath = category ? `/plugins/${ category }` : '/plugins';
+
+		if ( selectedSiteId ) {
+			analyticsPath += '/:site';
+		}
+
+		if ( trackPageViews ) {
+			return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+		}
+
+		return null;
 	}
 
 	render() {
@@ -516,6 +562,7 @@ export class PluginsBrowser extends Component {
 
 		return (
 			<MainComponent wideLayout>
+				{ this.renderPageViewTracker() }
 				<InfiniteScroll nextPageMethod={ this.fetchNextPagePlugins } />
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }

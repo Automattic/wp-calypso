@@ -112,7 +112,10 @@ const recordInputFocus = ( userIndex, fieldName, inputValue ) =>
 		inputValue
 	);
 
-export default connect( null, {
-	recordAddUserClick,
-	recordInputFocus,
-} )( localize( GoogleAppsUsers ) );
+export default connect(
+	null,
+	{
+		recordAddUserClick,
+		recordInputFocus,
+	}
+)( localize( GoogleAppsUsers ) );

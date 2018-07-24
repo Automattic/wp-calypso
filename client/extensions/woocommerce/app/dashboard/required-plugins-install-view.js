@@ -14,16 +14,20 @@ import { localize } from 'i18n-calypso';
  */
 import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
 import Button from 'components/button';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import { getRequiredPluginsList } from 'woocommerce/lib/get-required-plugins';
+import { getPlugins, getStatusForSite } from 'state/plugins/installed/selectors';
+import {
+	getRequiredPluginsForCalypso,
+	getPluginsForStoreSetup,
+} from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
-import { hasSitePendingAutomatedTransfer } from 'state/selectors';
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { recordTrack } from 'woocommerce/lib/analytics';
@@ -55,10 +59,11 @@ transferStatusesToTimes[ transferStates.COMPLETE ] =
 
 class RequiredPluginsInstallView extends Component {
 	static propTypes = {
+		fixMode: PropTypes.bool,
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
-		title: PropTypes.string,
+		skipConfirmation: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -130,7 +135,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInitialization = () => {
-		const { site, sitePlugins, wporg } = this.props;
+		const { fixMode, site, sitePlugins, wporg } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -159,9 +164,9 @@ class RequiredPluginsInstallView extends Component {
 
 		// Iterate over the required plugins, fetching plugin
 		// data from wordpress.org for each into state
-		const requiredPlugins = getRequiredPluginsList();
+		const requiredPlugins = fixMode ? getRequiredPluginsForCalypso() : getPluginsForStoreSetup();
 		let pluginDataLoaded = true;
-		for ( const requiredPluginSlug in requiredPlugins ) {
+		for ( const requiredPluginSlug of requiredPlugins ) {
 			const pluginData = getPlugin( wporg, requiredPluginSlug );
 			// pluginData will be null until the action has had
 			// a chance to try and fetch data for the plugin slug
@@ -188,7 +193,7 @@ class RequiredPluginsInstallView extends Component {
 		const toInstall = [];
 		const toActivate = [];
 		let pluginInstallationTotalSteps = 0;
-		for ( const requiredPluginSlug in requiredPlugins ) {
+		for ( const requiredPluginSlug of requiredPlugins ) {
 			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
 			if ( ! pluginFound ) {
 				toInstall.push( requiredPluginSlug );
@@ -227,7 +232,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInstallation = () => {
-		const { site, sitePlugins, wporg } = this.props;
+		const { pluginsStatus, site, sitePlugins, wporg } = this.props;
 
 		// If we are working on nothing presently, get the next thing to install and install it
 		if ( 0 === this.state.workingOn.length ) {
@@ -242,7 +247,10 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			const workingOn = toInstall.shift();
-			this.props.installPlugin( site.ID, getPlugin( wporg, workingOn ) );
+			const thisPlugin = getPlugin( wporg, workingOn );
+			// Set a default ID if needed.
+			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
+			this.props.installPlugin( site.ID, thisPlugin );
 
 			this.setState( {
 				toInstall,
@@ -257,6 +265,14 @@ class RequiredPluginsInstallView extends Component {
 			this.setState( {
 				workingOn: '',
 				progress: this.state.progress + this.getPluginInstallationTime(),
+			} );
+		}
+
+		// Or, it's in the error state
+		const pluginStatus = pluginsStatus[ this.state.workingOn ];
+		if ( pluginStatus && 'error' === pluginStatus.status ) {
+			this.setState( {
+				engineState: 'DONEFAILURE',
 			} );
 		}
 	};
@@ -395,13 +411,58 @@ class RequiredPluginsInstallView extends Component {
 		return TIME_TO_PLUGIN_INSTALLATION;
 	};
 
+	renderContactSupport() {
+		const { translate, wporg } = this.props;
+		const { workingOn } = this.state;
+		const plugin = getPlugin( wporg, workingOn );
+
+		const subtitle = [
+			<p key="line-1">
+				{ translate(
+					"Your store is missing some required plugins. We can't fix this automatically " +
+						'due to a problem with the {{b}}%(pluginName)s{{/b}} plugin.',
+					{
+						args: { pluginName: plugin.name || workingOn },
+						components: { b: <strong /> },
+					}
+				) }
+			</p>,
+			<p key="line-2">
+				{ translate( "Please contact support and we'll get your store back up and running!" ) }
+			</p>,
+		];
+
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<div className="card dashboard__plugins-install-view">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
+						imageWidth={ 160 }
+						title={ translate( "We can't update your store" ) }
+						subtitle={ subtitle }
+					>
+						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+							{ this.props.translate( 'Get in touch' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
-		const { hasPendingAT, title, translate } = this.props;
+		const { hasPendingAT, fixMode, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
 			return this.renderConfirmScreen();
 		}
+
+		if ( 'DONEFAILURE' === engineState ) {
+			return this.renderContactSupport();
+		}
+
+		const title = fixMode ? translate( 'Updating your store' ) : translate( 'Building your store' );
 
 		return (
 			<div className="dashboard__setup-wrapper setup__wrapper">
@@ -410,7 +471,7 @@ class RequiredPluginsInstallView extends Component {
 					<SetupHeader
 						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 						imageWidth={ 160 }
-						title={ title || translate( 'Building your store' ) }
+						title={ title }
 						subtitle={ translate( "Give us a minute and we'll move right along." ) }
 					>
 						<ProgressBar value={ progress } total={ totalSeconds } isPulsing />
@@ -426,11 +487,13 @@ function mapStateToProps( state ) {
 	const siteId = site.ID;
 
 	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
+	const pluginsStatus = getStatusForSite( state, siteId );
 
 	return {
 		site,
 		siteId,
 		sitePlugins,
+		pluginsStatus,
 		wporg: state.plugins.wporg.items,
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 		hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
@@ -450,6 +513,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( RequiredPluginsInstallView )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( RequiredPluginsInstallView ) );

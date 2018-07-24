@@ -70,7 +70,7 @@ describe( 'actions', () => {
 	}
 
 	beforeEach( () => {
-		spy.reset();
+		spy.resetHistory();
 	} );
 
 	describe( '#receiveTheme()', () => {
@@ -534,7 +534,7 @@ describe( 'actions', () => {
 		);
 
 		describe( 'on a WordPress.com site', () => {
-			stub.reset();
+			stub.resetHistory();
 			const fakeGetState = () => ( {
 				sites: {
 					items: {
@@ -568,7 +568,7 @@ describe( 'actions', () => {
 				},
 			};
 			describe( 'if the theme is already installed', () => {
-				stub.reset();
+				stub.resetHistory();
 				const fakeGetState = () => ( {
 					...sitesState,
 					themes: {
@@ -593,7 +593,7 @@ describe( 'actions', () => {
 			} );
 
 			describe( "if the theme isn't installed", () => {
-				stub.reset();
+				stub.resetHistory();
 				const fakeGetState = () => ( {
 					...sitesState,
 					themes: {
@@ -995,7 +995,7 @@ describe( 'actions', () => {
 		);
 
 		describe( 'on a WordPress.com site', () => {
-			stub.reset();
+			stub.resetHistory();
 			const fakeGetState = () => ( {
 				sites: {
 					items: {
@@ -1029,7 +1029,7 @@ describe( 'actions', () => {
 				},
 			};
 			describe( 'if the theme is already installed', () => {
-				stub.reset();
+				stub.resetHistory();
 				const fakeGetState = () => ( {
 					...sitesState,
 					themes: {
@@ -1054,7 +1054,7 @@ describe( 'actions', () => {
 			} );
 
 			describe( "if the theme isn't installed", () => {
-				stub.reset();
+				stub.resetHistory();
 				const fakeGetState = () => ( {
 					...sitesState,
 					themes: {

@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -12,9 +14,9 @@ import NumberField from 'woocommerce/woocommerce-services/components/number-fiel
 import Text from 'woocommerce/woocommerce-services/components/text';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import RadioButtons from 'woocommerce/woocommerce-services/components/radio-buttons';
+import getPackagingManagerLink from 'woocommerce/woocommerce-services/lib/utils/get-packaging-manager-link';
 import ShippingServiceGroups from '../shipping-services';
 import FormLegend from 'components/forms/form-legend';
-import { getLink } from 'woocommerce/lib/nav-utils';
 
 const SettingsItem = ( {
 	formData,
@@ -27,12 +29,12 @@ const SettingsItem = ( {
 	site,
 } ) => {
 	const id = layout.key ? layout.key : layout;
-	const updateValue = ( value ) => formValueActions.updateField( id, value );
+	const updateValue = value => formValueActions.updateField( id, value );
 	const updateSubValue = ( key, val ) => formValueActions.updateField( [ id ].concat( key ), val );
 	const fieldValue = formData[ id ];
 	const fieldSchema = schema.properties[ id ];
 	const fieldType = layout.type || fieldSchema.type || '';
-	const fieldError = errors[ '' ] ? ( errors[ '' ].value || layout.validation_hint || '' ) : false;
+	const fieldError = errors[ '' ] ? errors[ '' ].value || layout.validation_hint || '' : false;
 
 	switch ( fieldType ) {
 		case 'radios':
@@ -66,14 +68,11 @@ const SettingsItem = ( {
 			return (
 				<div>
 					<FormLegend>{ translate( 'Saved Packages' ) }</FormLegend>
-					{ translate(
-						'Add and edit saved packages using the {{a}}Packaging Manager{{/a}}.',
-						{
-							components: {
-								a: <a href={ getLink( '/store/settings/shipping/:site/', site ) } />,
-							},
-						}
-					) }
+					{ translate( 'Add and edit saved packages using the {{a}}Packaging Manager{{/a}}.', {
+						components: {
+							a: <a href={ getPackagingManagerLink( site ) } />,
+						},
+					} ) }
 				</div>
 			);
 
@@ -116,10 +115,8 @@ const SettingsItem = ( {
 };
 
 SettingsItem.propTypes = {
-	layout: PropTypes.oneOfType( [
-		PropTypes.string.isRequired,
-		PropTypes.object.isRequired,
-	] ).isRequired,
+	layout: PropTypes.oneOfType( [ PropTypes.string.isRequired, PropTypes.object.isRequired ] )
+		.isRequired,
 	schema: PropTypes.object.isRequired,
 	storeOptions: PropTypes.object.isRequired,
 	formValueActions: PropTypes.object.isRequired,

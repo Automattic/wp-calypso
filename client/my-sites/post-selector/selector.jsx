@@ -64,6 +64,7 @@ class PostSelectorPosts extends React.Component {
 		emptyMessage: PropTypes.string,
 		createLink: PropTypes.string,
 		selected: PropTypes.number,
+		excludePost: PropTypes.number,
 		onSearch: PropTypes.func,
 		onChange: PropTypes.func,
 		multiple: PropTypes.bool,
@@ -303,7 +304,10 @@ class PostSelectorPosts extends React.Component {
 	};
 
 	renderItem = ( item, _recurse = false ) => {
-		if ( item.parent && ! _recurse && includes( this.postIds, item.parent.ID ) ) {
+		if (
+			this.props.excludePost === item.ID ||
+			( item.parent && ! _recurse && includes( this.postIds, item.parent.ID ) )
+		) {
 			return;
 		}
 

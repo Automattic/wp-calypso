@@ -9,7 +9,6 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -23,14 +22,12 @@ import FormLabel from 'components/forms/form-label';
 import EditorConfirmationSidebarHeader from './header';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getPublishButtonStatus } from 'post-editor/editor-publish-button';
+import { getEditorPostId, getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
 import {
-	isEditedPostPrivate,
-	isPrivateEditedPostPasswordValid,
+	isEditedPostPasswordProtected,
+	isEditedPostPasswordProtectedWithValidPassword,
 	getEditedPost,
 } from 'state/posts/selectors';
-import { canCurrentUser, isPrivateSite as isPrivateSiteSelector } from 'state/selectors';
 
 class EditorConfirmationSidebar extends Component {
 	static propTypes = {
@@ -38,9 +35,7 @@ class EditorConfirmationSidebar extends Component {
 		onPrivatePublish: PropTypes.func,
 		onPublish: PropTypes.func,
 		post: PropTypes.object,
-		savedPost: PropTypes.object,
-		isPrivatePost: PropTypes.bool,
-		isPrivatePostPasswordValid: PropTypes.bool,
+		isPasswordProtectedWithInvalidPassword: PropTypes.bool,
 		setPostDate: PropTypes.func,
 		setStatus: PropTypes.func,
 		status: PropTypes.string,
@@ -67,20 +62,15 @@ class EditorConfirmationSidebar extends Component {
 	}
 
 	renderPublishButton() {
-		if ( ! this.props.siteId || ! this.props.post || ! this.props.savedPost ) {
-			return;
+		if ( this.props.publishButtonStatus === null ) {
+			return null;
 		}
 
-		const publishButtonStatus = getPublishButtonStatus(
-			this.props.post,
-			this.props.savedPost,
-			this.props.canUserPublishPosts
-		);
-		const buttonLabel = this.getPublishButtonLabel( publishButtonStatus );
-		const enabled = ! this.props.isPrivatePost || this.props.isPrivatePostPasswordValid;
+		const buttonLabel = this.getPublishButtonLabel( this.props.publishButtonStatus );
+		const disabled = this.props.isPasswordProtectedWithInvalidPassword;
 
 		return (
-			<Button disabled={ ! enabled } onClick={ this.closeAndPublish }>
+			<Button disabled={ disabled } onClick={ this.closeAndPublish }>
 				{ buttonLabel }
 			</Button>
 		);
@@ -102,45 +92,20 @@ class EditorConfirmationSidebar extends Component {
 	}
 
 	renderPrivacyControl() {
-		const { isPrivateSite, post, onPrivatePublish } = this.props;
-
-		if ( ! post ) {
-			return;
-		}
-
-		const { password, type } = post || {};
-		const status = get( post, 'status', 'draft' );
-		const savedStatus = get( this.props, 'savedPost.status' );
-		const savedPassword = get( this.props, 'savedPost.password' );
-		const props = {
-			onPrivatePublish,
-			isPrivateSite,
-			type,
-			password,
-			status,
-			savedStatus,
-			savedPassword,
-			context: 'confirmation-sidebar',
-		};
-
-		return <EditorVisibility { ...props } />;
+		return (
+			<EditorVisibility
+				onPrivatePublish={ this.props.onPrivatePublish }
+				context="confirmation-sidebar"
+			/>
+		);
 	}
 
 	renderPublishingBusyButton() {
-		if ( 'publishing' !== this.props.status ) {
-			return;
+		if ( 'publishing' !== this.props.status || this.props.publishButtonStatus === null ) {
+			return null;
 		}
 
-		if ( ! this.props.site || ! this.props.post || ! this.props.savedPost ) {
-			return;
-		}
-
-		const publishButtonStatus = getPublishButtonStatus(
-			this.props.post,
-			this.props.savedPost,
-			this.props.canUserPublishPosts
-		);
-		const buttonLabel = this.getBusyButtonLabel( publishButtonStatus );
+		const buttonLabel = this.getBusyButtonLabel( this.props.publishButtonStatus );
 
 		return (
 			<Button
@@ -228,19 +193,17 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
-		const isPrivatePost = isEditedPostPrivate( state, siteId, postId );
-		const isPrivatePostPasswordValid = isPrivateEditedPostPasswordValid( state, siteId, postId );
-		const isPrivateSite = isPrivateSiteSelector( state, siteId );
-		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+		const isPasswordProtectedWithInvalidPassword =
+			isEditedPostPasswordProtected( state, siteId, postId ) &&
+			! isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId );
+		const publishButtonStatus = getEditorPublishButtonStatus( state );
 
 		return {
 			siteId,
 			postId,
 			post,
-			isPrivatePost,
-			isPrivateSite,
-			isPrivatePostPasswordValid,
-			canUserPublishPosts,
+			isPasswordProtectedWithInvalidPassword,
+			publishButtonStatus,
 		};
 	},
 	{ editPost }

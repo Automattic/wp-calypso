@@ -93,7 +93,7 @@ MediaStore.getAll = function( siteId ) {
 };
 
 MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaValidationStore.dispatchToken ] );
 

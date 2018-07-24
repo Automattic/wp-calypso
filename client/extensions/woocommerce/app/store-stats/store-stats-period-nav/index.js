@@ -1,13 +1,12 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import qs from 'qs';
 
 /**
  * Internal dependencies
@@ -41,6 +40,9 @@ const StoreStatsPeriodNav = ( {
 	statType,
 	queryParams,
 } ) => {
+	// eslint-disable-next-line no-unused-vars
+	const { startDate, ...intervalQuery } = queryParams;
+	const intervalQueryString = qs.stringify( intervalQuery, { addQueryPrefix: true } );
 	return (
 		<Fragment>
 			<HeaderCake onClick={ goBack( unit, slug, queryParams ) }>{ title }</HeaderCake>
@@ -48,6 +50,7 @@ const StoreStatsPeriodNav = ( {
 				date={ selectedDate }
 				period={ unit }
 				url={ `/store/stats/${ type }/${ unit }/${ slug }` }
+				queryParams={ queryParams }
 			>
 				<DatePicker
 					period={ unit }
@@ -65,7 +68,7 @@ const StoreStatsPeriodNav = ( {
 			</StatsPeriodNavigation>
 			<Intervals
 				selected={ unit }
-				pathTemplate={ `/store/stats/${ type }/{{ interval }}/${ slug }` }
+				pathTemplate={ `/store/stats/${ type }/{{ interval }}/${ slug }${ intervalQueryString }` }
 				standalone
 			/>
 		</Fragment>

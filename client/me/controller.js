@@ -5,89 +5,57 @@
  */
 
 import React from 'react';
-import { includes } from 'lodash';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
 import SidebarComponent from 'me/sidebar';
 import AppsComponent from 'me/get-apps';
-import NextSteps from './next-steps';
 
-export default {
-	sidebar( context, next ) {
-		context.secondary = React.createElement( SidebarComponent, {
-			context: context,
-		} );
+export function sidebar( context, next ) {
+	context.secondary = React.createElement( SidebarComponent, {
+		context: context,
+	} );
 
-		next();
-	},
+	next();
+}
 
-	profile( context, next ) {
-		context.store.dispatch( setTitle( i18n.translate( 'My Profile', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+export function profile( context, next ) {
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'My Profile', { textOnly: true } ) ) );
 
-		const ProfileComponent = require( 'me/profile' ).default;
+	const ProfileComponent = require( 'me/profile' ).default;
 
-		context.primary = React.createElement( ProfileComponent, {
-			userSettings: userSettings,
-			path: context.path,
-		} );
-		next();
-	},
+	context.primary = React.createElement( ProfileComponent, {
+		userSettings: userSettings,
+		path: context.path,
+	} );
+	next();
+}
 
-	apps( context, next ) {
-		context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+export function apps( context, next ) {
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) );
 
-		context.primary = React.createElement( AppsComponent, {
-			userSettings: userSettings,
-			path: context.path,
-		} );
-		next();
-	},
+	context.primary = React.createElement( AppsComponent, {
+		userSettings: userSettings,
+		path: context.path,
+	} );
+	next();
+}
 
-	nextSteps( context, next ) {
-		const isWelcome = 'welcome' === context.params.welcome;
+export function profileRedirect() {
+	page.redirect( '/me' );
+}
 
-		context.store.dispatch( setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+export function trophiesRedirect() {
+	page.redirect( '/me' );
+}
 
-		if ( isWelcome ) {
-			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-		}
-
-		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
-
-		context.primary = React.createElement( NextSteps, {
-			path: context.path,
-			isWelcome: isWelcome,
-		} );
-		next();
-	},
-
-	// Users that are redirected to `/me/next?welcome` after signup should visit
-	// `/me/next/welcome` instead.
-	nextStepsWelcomeRedirect( context, next ) {
-		if ( includes( context.path, '?welcome' ) ) {
-			return page.redirect( '/me/next/welcome' );
-		}
-
-		next();
-	},
-
-	profileRedirect() {
-		page.redirect( '/me' );
-	},
-
-	trophiesRedirect() {
-		page.redirect( '/me' );
-	},
-
-	findFriendsRedirect() {
-		page.redirect( '/me' );
-	},
-};
+export function findFriendsRedirect() {
+	page.redirect( '/me' );
+}

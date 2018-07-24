@@ -199,4 +199,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent }
 );
 
-export default flowRight( connectComponent, localize )( StatsComments );
+export default flowRight(
+	connectComponent,
+	localize
+)( StatsComments );

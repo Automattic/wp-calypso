@@ -63,7 +63,7 @@ class SiteSettingsImporterError extends React.PureComponent {
 	};
 
 	getErrorMessage = () => {
-		var actionMessage;
+		let actionMessage;
 
 		switch ( this.props.type ) {
 			case 'uploadError':

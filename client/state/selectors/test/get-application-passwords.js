@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getApplicationPasswords } from 'state/selectors';
+import getApplicationPasswords from 'state/selectors/get-application-passwords';
 
 describe( 'getApplicationPasswords()', () => {
 	test( 'should return application passwords of the current user', () => {

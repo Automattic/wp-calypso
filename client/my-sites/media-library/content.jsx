@@ -87,8 +87,8 @@ class MediaLibraryContent extends React.Component {
 					upgradeNudgeName = 'plan-media-storage-error-video';
 					upgradeNudgeFeature = 'video-upload';
 					message = this.props.translate(
-						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.', // eslint-disable-line max-len
-						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.', // eslint-disable-line max-len
+						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
+						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
 						i18nOptions
 					);
 					break;

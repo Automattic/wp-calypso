@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, identity, pick } from 'lodash';
+import { get, identity, noop, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,10 +16,10 @@ import { connect } from 'react-redux';
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import InfoPopover from 'components/info-popover';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 
@@ -37,11 +37,15 @@ export class EditorDiscussion extends React.Component {
 		post: PropTypes.object,
 		site: PropTypes.object,
 		translate: PropTypes.func.isRequired,
+		recordEditorStat: PropTypes.func.isRequired,
+		recordEditorEvent: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
 		isNew: false,
 		translate: identity,
+		recordEditorStat: noop,
+		recordEditorEvent: noop,
 	};
 
 	getDiscussionSetting() {
@@ -86,8 +90,8 @@ export class EditorDiscussion extends React.Component {
 			gaEvent = 'Trackback status changed';
 		}
 
-		recordStat( statName );
-		recordEvent( gaEvent, newStatus );
+		this.props.recordEditorStat( statName );
+		this.props.recordEditorEvent( gaEvent, newStatus );
 
 		const siteId = get( this.props.site, 'ID', null );
 		const postId = get( this.props.post, 'ID', null );
@@ -138,11 +142,11 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const isNew = isEditorNewPost( state );
+		const site = getSite( state, siteId );
+		const post = getEditedPost( state, siteId, postId );
 
-		return {
-			site: getSite( state, siteId ),
-			post: getEditedPost( state, siteId, postId ),
-		};
+		return { site, post, isNew };
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( EditorDiscussion ) );

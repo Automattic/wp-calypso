@@ -1,22 +1,18 @@
 /** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import { createPurchasesArray } from 'lib/purchases/assembler';
 import {
-	getPurchases,
 	getByPurchaseId,
-	isFetchingUserPurchases,
-	isFetchingSitePurchases,
 	getIncludedDomainPurchase,
+	getPurchases,
 	getSitePurchases,
+	isFetchingSitePurchases,
+	isFetchingUserPurchases,
 	isUserPaid,
 } from '../selectors';
-import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'selectors', () => {
 	describe( 'getPurchases', () => {
@@ -37,9 +33,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPurchases( state ) ).to.deep.equal(
-				purchasesAssembler.createPurchasesArray( initialPurchases )
-			);
+			expect( getPurchases( state ) ).toEqual( createPurchasesArray( initialPurchases ) );
 
 			const newPurchases = Object.freeze( [
 				{ ID: 3, product_name: 'business plan', blog_id: 3117 },
@@ -53,7 +47,7 @@ describe( 'selectors', () => {
 						},
 					} )
 				)
-			).to.deep.equal( purchasesAssembler.createPurchasesArray( newPurchases ) );
+			).toEqual( createPurchasesArray( newPurchases ) );
 		} );
 	} );
 
@@ -73,7 +67,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getByPurchaseId( state, 2 ) ).to.be.eql( {
+			expect( getByPurchaseId( state, 2 ) ).toEqual( {
 				id: 2,
 				productName: 'premium plan',
 				siteId: 1337,
@@ -134,7 +128,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isFetchingUserPurchases( state ) ).to.be.true;
+			expect( isFetchingUserPurchases( state ) ).toBe( true );
 		} );
 	} );
 
@@ -151,7 +145,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isFetchingSitePurchases( state ) ).to.be.true;
+			expect( isFetchingSitePurchases( state ) ).toBe( true );
 		} );
 	} );
 
@@ -183,9 +177,9 @@ describe( 'selectors', () => {
 
 			const result = getSitePurchases( state, 1234 );
 
-			expect( result.length ).to.equal( 2 );
-			expect( result[ 0 ].siteId ).to.equal( 1234 );
-			expect( result[ 1 ].siteId ).to.equal( 1234 );
+			expect( result.length ).toBe( 2 );
+			expect( result[ 0 ].siteId ).toBe( 1234 );
+			expect( result[ 1 ].siteId ).toBe( 1234 );
 		} );
 	} );
 
@@ -226,9 +220,7 @@ describe( 'selectors', () => {
 				purchase => purchase.productSlug === 'value_bundle'
 			);
 
-			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).to.equal(
-				'dev.live'
-			);
+			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).toBe( 'dev.live' );
 		} );
 	} );
 
@@ -251,7 +243,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).to.be.false;
+			expect( isUserPaid( state, targetUserId ) ).toBe( false );
 		} );
 
 		test( 'should return true because there are purchases from the target user', () => {
@@ -266,7 +258,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).to.be.true;
+			expect( isUserPaid( state, targetUserId ) ).toBe( true );
 		} );
 
 		test( 'should return false because there are no purchases from this user', () => {
@@ -281,7 +273,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, 65535 ) ).to.be.false;
+			expect( isUserPaid( state, 65535 ) ).toBe( false );
 		} );
 
 		test( 'should return false because the data is not ready.', () => {
@@ -296,7 +288,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isUserPaid( state, targetUserId ) ).to.be.false;
+			expect( isUserPaid( state, targetUserId ) ).toBe( false );
 		} );
 	} );
 } );

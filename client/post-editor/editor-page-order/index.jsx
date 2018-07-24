@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import AccordionSection from 'components/accordion/section';
 import TextInput from 'components/forms/form-text-input';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
@@ -47,8 +47,8 @@ class EditorPageOrder extends Component {
 
 		if ( ! this.statTracked ) {
 			this.statTracked = true;
-			recordStat( 'advanced_menu_order_changed' );
-			recordEvent( 'Changed page menu order' );
+			this.props.recordEditorStat( 'advanced_menu_order_changed' );
+			this.props.recordEditorEvent( 'Changed page menu order' );
 		}
 
 		this.props.editPost( siteId, postId, { menu_order: newOrder } );
@@ -85,5 +85,5 @@ export default connect(
 
 		return { siteId, postId, menuOrder };
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( EditorPageOrder ) );

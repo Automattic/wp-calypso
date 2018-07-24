@@ -23,6 +23,7 @@ import ChartTabs from './stats-chart-tabs';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StatsFirstView from './stats-first-view';
 import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
@@ -32,8 +33,10 @@ import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
+import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
-import { isGoogleMyBusinessStatsNudgeVisible as isGoogleMyBusinessStatsNudgeVisibleSelector } from 'state/selectors';
+import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -133,7 +136,13 @@ class StatsSite extends Component {
 
 		return (
 			<Main wideLayout={ true }>
+				<QueryKeyringConnections />
+				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Stats' ) } />
+				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
 				<PrivacyPolicyBanner />
 				<StatsFirstView />
 				<SidebarNavigation />
@@ -145,8 +154,12 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
-					{ isGoogleMyBusinessStatsNudgeVisible && (
-						<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } />
+					{ siteId && (
+						<GoogleMyBusinessStatsNudge
+							siteSlug={ slug }
+							siteId={ siteId }
+							visible={ isGoogleMyBusinessStatsNudgeVisible }
+						/>
 					) }
 					<ChartTabs
 						barClick={ this.barClick }

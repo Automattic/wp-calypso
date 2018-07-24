@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -7,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import AutoSizer from 'react-virtualized/AutoSizer';
 import List from 'react-virtualized/List';
 import {
 	debounce,
@@ -34,6 +36,9 @@ import {
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
 } from 'state/terms/selectors';
+import PodcastIndicator from 'components/podcast-indicator';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 /**
  * Constants
@@ -59,7 +64,6 @@ class TermTreeSelectorList extends Component {
 		onChange: PropTypes.func,
 		isError: PropTypes.bool,
 		height: PropTypes.number,
-		width: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -132,14 +136,6 @@ class TermTreeSelectorList extends Component {
 		if ( this.isSmall() ) {
 			this.forceUpdate();
 		}
-	};
-
-	setSelectorRef = selectorRef => {
-		if ( ! selectorRef ) {
-			return;
-		}
-
-		this.setState( { selectorRef } );
 	};
 
 	getPageForIndex = index => {
@@ -261,15 +257,6 @@ class TermTreeSelectorList extends Component {
 		}, 0 );
 	};
 
-	getResultsWidth = () => {
-		const { selectorRef } = this.state;
-		if ( selectorRef ) {
-			return selectorRef.clientWidth;
-		}
-
-		return 0;
-	};
-
 	getRowCount = () => {
 		let count = 0;
 
@@ -322,8 +309,16 @@ class TermTreeSelectorList extends Component {
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const { multiple, defaultTermId, translate, selected } = this.props;
+		const {
+			multiple,
+			defaultTermId,
+			translate,
+			selected,
+			taxonomy,
+			podcastingCategoryId,
+		} = this.props;
 		const itemId = item.ID;
+		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const checked = includes( selected, itemId );
 		const inputType = multiple ? 'checkbox' : 'radio';
@@ -344,7 +339,10 @@ class TermTreeSelectorList extends Component {
 			<div key={ itemId } ref={ setItemRef } className="term-tree-selector__list-item">
 				<label>
 					{ input }
-					<span className="term-tree-selector__label">{ name }</span>
+					<span className="term-tree-selector__label">
+						{ name }
+						{ isPodcastingCategory && <PodcastIndicator size={ 18 } /> }
+					</span>
 				</label>
 				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
@@ -403,7 +401,7 @@ class TermTreeSelectorList extends Component {
 		const showSearch =
 			( searchLength > 0 || ! isSmall ) &&
 			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
-		const { className, isError, loading, siteId, taxonomy, query, height, width } = this.props;
+		const { className, isError, loading, siteId, taxonomy, query, height } = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
 			'is-small': isSmall,
@@ -412,7 +410,7 @@ class TermTreeSelectorList extends Component {
 		} );
 
 		return (
-			<div ref={ this.setSelectorRef } className={ classes }>
+			<div className={ classes }>
 				{ this.state.requestedPages.map( page => (
 					<QueryTerms
 						key={ `query-${ page }` }
@@ -421,19 +419,25 @@ class TermTreeSelectorList extends Component {
 						query={ { ...query, page } }
 					/>
 				) ) }
+				{ taxonomy === 'category' && siteId && <QuerySiteSettings siteId={ siteId } /> }
+
 				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
-				<List
-					ref={ this.setListRef }
-					width={ width || this.getResultsWidth() }
-					height={ isSmall ? this.getCompactContainerHeight() : height }
-					onRowsRendered={ this.setRequestedPages }
-					rowCount={ rowCount }
-					estimatedRowSize={ ITEM_HEIGHT }
-					rowHeight={ this.getRowHeight }
-					rowRenderer={ this.cellRendererWrapper }
-					noRowsRenderer={ this.renderNoResults }
-					className="term-tree-selector__results"
-				/>
+				<AutoSizer disableHeight>
+					{ ( { width } ) => (
+						<List
+							ref={ this.setListRef }
+							width={ width }
+							height={ isSmall ? this.getCompactContainerHeight() : height }
+							onRowsRendered={ this.setRequestedPages }
+							rowCount={ rowCount }
+							estimatedRowSize={ ITEM_HEIGHT }
+							rowHeight={ this.getRowHeight }
+							rowRenderer={ this.cellRendererWrapper }
+							noRowsRenderer={ this.renderNoResults }
+							className="term-tree-selector__results"
+						/>
+					) }
+				</AutoSizer>
 			</div>
 		);
 	}
@@ -443,11 +447,20 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const { taxonomy, query } = ownProps;
 
+	// A parent component may pass in the podcasting category ID (like in the
+	// settings page, where the user may not have saved their selection yet)...
+	let podcastingCategoryId = ownProps.podcastingCategoryId;
+	if ( typeof podcastingCategoryId === 'undefined' && taxonomy === 'category' ) {
+		// ... or we may fetch it from state ourselves (like in the editor).
+		podcastingCategoryId = getPodcastingCategoryId( state, siteId );
+	}
+
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query,
+		podcastingCategoryId,
 	};
 } )( localize( TermTreeSelectorList ) );

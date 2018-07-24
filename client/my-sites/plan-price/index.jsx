@@ -31,7 +31,7 @@ export default class PlanPrice extends Component {
 				<span className={ classes }>
 					{ price.symbol }
 					{ price.integer }
-					{ rawPrice > 0 && price.fraction }
+					{ rawPrice - price.integer > 0 && price.fraction }
 				</span>
 			);
 		}
@@ -40,7 +40,9 @@ export default class PlanPrice extends Component {
 			<h4 className={ classes }>
 				<sup className="plan-price__currency-symbol">{ price.symbol }</sup>
 				<span className="plan-price__integer">{ price.integer }</span>
-				<sup className="plan-price__fraction">{ rawPrice > 0 && price.fraction }</sup>
+				<sup className="plan-price__fraction">
+					{ rawPrice - price.integer > 0 && price.fraction }
+				</sup>
 			</h4>
 		);
 	}

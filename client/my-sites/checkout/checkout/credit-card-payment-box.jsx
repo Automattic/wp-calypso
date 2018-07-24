@@ -21,6 +21,7 @@ import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
+	REDIRECTING_FOR_AUTHORIZATION,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
@@ -37,14 +38,13 @@ export class CreditCardPaymentBox extends React.Component {
 		transaction: PropTypes.object.isRequired,
 		transactionStep: PropTypes.object.isRequired,
 		cards: PropTypes.array,
-		countriesList: PropTypes.object,
+		countriesList: PropTypes.array.isRequired,
 		initialCard: PropTypes.object,
 		onSubmit: PropTypes.func,
 	};
 
 	static defaultProps = {
 		cards: [],
-		countriesList: {},
 		initialCard: null,
 		onSubmit: noop,
 	};
@@ -82,7 +82,7 @@ export class CreditCardPaymentBox extends React.Component {
 
 	tick = () => {
 		// increase the progress of the progress bar by 0.5% of the remaining progress each tick
-		const progress = this.state.progress + 1 / 200 * ( 100 - this.state.progress );
+		const progress = this.state.progress + ( 1 / 200 ) * ( 100 - this.state.progress );
 
 		this.setState( { progress } );
 	};
@@ -106,6 +106,7 @@ export class CreditCardPaymentBox extends React.Component {
 
 			case SUBMITTING_PAYMENT_KEY_REQUEST:
 			case SUBMITTING_WPCOM_REQUEST:
+			case REDIRECTING_FOR_AUTHORIZATION:
 				return true;
 
 			case RECEIVED_WPCOM_RESPONSE:
@@ -150,10 +151,6 @@ export class CreditCardPaymentBox extends React.Component {
 					</div>
 				</div>
 
-				<CartCoupon cart={ cart } />
-
-				<CartToggle />
-
 				{ showPaymentChatButton && (
 					<PaymentChatButton
 						paymentType="credits"
@@ -186,20 +183,26 @@ export class CreditCardPaymentBox extends React.Component {
 		const { cart, cards, countriesList, initialCard, transaction } = this.props;
 
 		return (
-			<form autoComplete="off" onSubmit={ this.submit }>
-				<CreditCardSelector
-					cards={ cards }
-					countriesList={ countriesList }
-					initialCard={ initialCard }
-					transaction={ transaction }
-				/>
+			<React.Fragment>
+				<form autoComplete="off" onSubmit={ this.submit }>
+					<CreditCardSelector
+						cards={ cards }
+						countriesList={ countriesList }
+						initialCard={ initialCard }
+						transaction={ transaction }
+					/>
 
-				<TermsOfService
-					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
-				/>
+					{ this.props.children }
 
-				{ this.paymentBoxActions() }
-			</form>
+					<TermsOfService
+						hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) }
+					/>
+
+					{ this.paymentBoxActions() }
+				</form>
+				<CartCoupon cart={ cart } />
+				<CartToggle />
+			</React.Fragment>
 		);
 	};
 }

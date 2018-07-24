@@ -25,7 +25,7 @@ describe( 'WPORG Plugins Lists Store', () => {
 	}
 
 	beforeEach( () => {
-		actionsSpies.fetchPluginsList.reset();
+		actionsSpies.fetchPluginsList.resetHistory();
 		resetListsStore();
 	} );
 

@@ -122,7 +122,6 @@ class DesignTypeWithAtomicStoreStep extends Component {
 			<Tile
 				buttonLabel={ choice.label }
 				description={ choice.description }
-				href="#"
 				image={ choice.image }
 				key={ choice.type }
 				onClick={ this.handleChoiceClick( choice.type ) }
@@ -134,7 +133,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		const { translate } = this.props;
 		const disclaimerText = translate(
 			'Not sure? Pick the closest option. You can always change your settings later.'
-		); // eslint-disable-line max-len
+		);
 
 		const storeWrapperClassName = classNames( 'design-type-with-store__store-wrapper', {
 			'is-hidden': ! this.state.showStore,
@@ -202,7 +201,10 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	setDesignType,
-} )( localize( DesignTypeWithAtomicStoreStep ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+		setDesignType,
+	}
+)( localize( DesignTypeWithAtomicStoreStep ) );

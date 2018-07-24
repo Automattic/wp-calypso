@@ -6,11 +6,6 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import { mapValues } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import { sectionify } from 'lib/route';
-
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
 	analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
@@ -31,16 +26,24 @@ function appendActionTracking( option, name ) {
 	} );
 }
 
-export function getAnalyticsData( path, tier, site_id ) {
-	let basePath = sectionify( path );
+export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
+	let analyticsPath = '/themes';
 	let analyticsPageTitle = 'Themes';
 
+	if ( vertical ) {
+		analyticsPath += `/${ vertical }`;
+	}
+
 	if ( tier ) {
-		basePath += '/type/:tier';
+		analyticsPath += `/${ tier }`;
+	}
+
+	if ( filter ) {
+		analyticsPath += `/filter/${ filter }`;
 	}
 
 	if ( site_id ) {
-		basePath += '/:site_id';
+		analyticsPath += '/:site';
 		analyticsPageTitle += ' > Single Site';
 	}
 
@@ -48,5 +51,5 @@ export function getAnalyticsData( path, tier, site_id ) {
 		analyticsPageTitle += ` > Type > ${ titlecase( tier ) }`;
 	}
 
-	return { basePath, analyticsPageTitle };
+	return { analyticsPath, analyticsPageTitle };
 }

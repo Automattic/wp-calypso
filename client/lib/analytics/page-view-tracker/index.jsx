@@ -7,14 +7,18 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flowRight, get, isNumber, noop } from 'lodash';
+import { get, isNumber, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { getSiteFragment } from 'lib/route';
-import { recordPageView } from 'state/analytics/actions';
+import {
+	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteType,
+} from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
@@ -33,6 +37,7 @@ export class PageViewTracker extends React.Component {
 		hasSelectedSiteLoaded: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		title: PropTypes.string.isRequired,
+		properties: PropTypes.object,
 	};
 
 	state = {
@@ -59,7 +64,14 @@ export class PageViewTracker extends React.Component {
 	}
 
 	queuePageView = () => {
-		const { delay = 0, path, recorder = noop, hasSelectedSiteLoaded, title } = this.props;
+		const {
+			delay = 0,
+			path,
+			recorder = noop,
+			hasSelectedSiteLoaded,
+			title,
+			properties,
+		} = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
@@ -68,7 +80,7 @@ export class PageViewTracker extends React.Component {
 		}
 
 		if ( ! delay ) {
-			return recorder( path, title );
+			return recorder( path, title, 'default', properties );
 		}
 
 		this.setState( {
@@ -98,8 +110,11 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	recorder: flowRight( dispatch, recordPageView ),
-} );
+const mapDispatchToProps = {
+	recorder: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
+};
 
-export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( PageViewTracker );

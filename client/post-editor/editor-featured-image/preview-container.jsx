@@ -13,7 +13,6 @@ import { defer } from 'lodash';
  */
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
-import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
 
 export default class extends React.Component {
@@ -23,6 +22,8 @@ export default class extends React.Component {
 		siteId: PropTypes.number.isRequired,
 		itemId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
 		maxWidth: PropTypes.number,
+		onImageChange: PropTypes.func,
+		showEditIcon: PropTypes.bool,
 	};
 
 	state = {
@@ -68,18 +69,19 @@ export default class extends React.Component {
 		} );
 
 		defer( () => {
-			if ( image && image.ID !== this.props.itemId ) {
-				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				PostActions.edit( {
-					featured_image: image.ID,
-				} );
+			if ( this.props.onImageChange && image && image.ID ) {
+				this.props.onImageChange( image.ID );
 			}
 		} );
 	};
 
 	render() {
 		return (
-			<EditorFeaturedImagePreview image={ this.state.image } maxWidth={ this.props.maxWidth } />
+			<EditorFeaturedImagePreview
+				image={ this.state.image }
+				maxWidth={ this.props.maxWidth }
+				showEditIcon
+			/>
 		);
 	}
 }

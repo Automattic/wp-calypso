@@ -8,11 +8,21 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { createRefundFailure, createRefundSuccess, sendRefund } from '../actions';
+import {
+	createRefundFailure,
+	createRefundSuccess,
+	fetchRefunds,
+	fetchRefundsFailure,
+	fetchRefundsSuccess,
+	sendRefund,
+} from '../actions';
 import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
 	WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
+	WOOCOMMERCE_ORDER_REFUNDS_REQUEST,
+	WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS,
+	WOOCOMMERCE_ORDER_REFUNDS_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
@@ -21,6 +31,41 @@ describe( 'actions', () => {
 		reason: 'Testing',
 		api_refund: false,
 	};
+
+	describe( '#fetchRefunds()', () => {
+		test( 'should return an action', () => {
+			const action = fetchRefunds( 123, 38 );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST,
+				siteId: 123,
+				orderId: 38,
+			} );
+		} );
+	} );
+
+	describe( '#fetchRefundsFailure()', () => {
+		test( 'should return an action', () => {
+			const action = fetchRefundsFailure( 123, 38, {} );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST_FAILURE,
+				siteId: 123,
+				orderId: 38,
+				error: {},
+			} );
+		} );
+	} );
+
+	describe( '#fetchRefundsSuccess()', () => {
+		test( 'should return an action', () => {
+			const action = fetchRefundsSuccess( 123, 38, [ refund ] );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_REFUNDS_REQUEST_SUCCESS,
+				siteId: 123,
+				orderId: 38,
+				refunds: [ refund ],
+			} );
+		} );
+	} );
 
 	describe( '#sendRefund()', () => {
 		test( 'should return an action', () => {

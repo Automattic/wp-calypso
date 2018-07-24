@@ -11,17 +11,18 @@ import React from 'react';
  */
 import Badge from 'components/badge';
 
-const BadgeExample = () => (
-	<div>
-		<div className="docs__design-badge-row">
+const BadgeExample = () => this.props.exampleCode;
+
+Badge.displayName = 'Badge';
+BadgeExample.displayName = 'Badge';
+
+BadgeExample.defaultProps = {
+	exampleCode: (
+		<div>
 			<Badge type="success">Success Badge</Badge>
-		</div>
-		<div className="docs__design-badge-row">
 			<Badge type="warning">Warning Badge</Badge>
 		</div>
-	</div>
-);
-
-BadgeExample.displayName = 'Badge';
+	),
+};
 
 export default BadgeExample;

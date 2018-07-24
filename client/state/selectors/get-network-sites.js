@@ -10,7 +10,8 @@ import { filter } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { isMainSiteOf, getSitesItems } from 'state/selectors';
+import getSitesItems from 'state/selectors/get-sites-items';
+import isMainSiteOf from 'state/selectors/is-main-site-of';
 import { getSite, isJetpackSiteMainNetworkSite } from 'state/sites/selectors';
 
 /**

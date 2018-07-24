@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
-import { castArray, get, isEmpty, map, once, reduce, replace, set } from 'lodash';
+import { castArray, get, isEmpty, map, once, reduce, replace, update } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
@@ -32,47 +32,55 @@ export function disableSubmitButton( children ) {
 	);
 }
 
+/*
+ * Lookup error in schema to produce { path, errorMessage, errorCode } format.
+ *
+ * e.g {
+ *     path: "extra.uk.registrationNumber",
+ *     errorMessage: "A registration number is required for this registrant type.",
+ *     errorCode: "dotukRegistrantTypeRequiresRegistrationNumber",
+ * }
+ */
 export function interpretIMJVError( error, schema ) {
-	let explicitPath, errorCode;
+	let explicitPath, errorCode, errorMessage;
 
 	if ( schema ) {
 		// Search up the schema for an explicit errorField & message
 		const path = [ ...castArray( error.schemaPath ) ];
 
+		// The errorCode is primary because messages are localized, so without
+		// the code consumers couldn't do anything other than display errors.
 		do {
 			const node = get( schema, path, {} );
-			errorCode = errorCode || node.errorCode;
+			if ( ! errorCode && node.errorCode ) {
+				errorCode = node.errorCode;
+				errorMessage = node.errorMessage;
+			}
 			explicitPath = explicitPath || node.errorField;
 		} while ( path.pop() && ! ( explicitPath && errorCode ) );
 	}
 
 	// use field from error
-	const inferredPath = replace( error.field, /^data\./, '' );
+	const path = explicitPath || replace( error.field, /^data\./, '' );
 
-	return {
-		errorCode: errorCode || error.message,
-		path: explicitPath || inferredPath,
-	};
+	return { errorMessage, errorCode, path };
 }
 
 /*
- * @returns errors by field, like: { 'extra.field: name, errors: [ string ] }
+ * @returns errors by field, like: { extra: { tld: { fieldName: [ errors ] } } }
  */
 export function formatIMJVErrors( errors, schema ) {
 	return reduce(
 		errors,
-		( accumulatedErrors, error ) => {
-			// scan for errorField and errorCode at or above the failed rule
-			const details = interpretIMJVError( error, schema );
+		( accumulatedErrors, rawError ) => {
+			// Compare the error to the schema and try to find an appropriate
+			// error message
+			const error = interpretIMJVError( rawError, schema );
 
-			const { path, errorCode } = details;
-
-			// TODO: get localize user facing strings
-			const message = errorCode;
-
-			const previousErrorsForField = get( accumulatedErrors, path, [] );
-
-			return set( accumulatedErrors, path, [ ...previousErrorsForField, message ] );
+			return update( accumulatedErrors, error.path, errorsForField => [
+				...( errorsForField || [] ),
+				error,
+			] );
 		},
 		{}
 	);

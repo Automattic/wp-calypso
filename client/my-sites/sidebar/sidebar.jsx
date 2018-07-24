@@ -14,8 +14,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import Button from 'components/button';
-import config from 'config';
+import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ManageMenu from './manage-menu';
 import Sidebar from 'layout/sidebar';
@@ -26,20 +27,19 @@ import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import JetpackLogo from 'components/jetpack-logo';
 import { isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins,
-	getPrimarySiteId,
-	hasJetpackSites,
-	isDomainOnlySite,
-	isSiteAutomatedTransfer,
-	hasSitePendingAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import hasJetpackSites from 'state/selectors/has-jetpack-sites';
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -47,12 +47,15 @@ import {
 	isJetpackModuleActive,
 	isJetpackSite,
 	isSitePreviewable,
+	canCurrentUserUseAds,
+	canCurrentUserUseStore,
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { canCurrentUserUpgradeSite } from '../../state/sites/selectors';
 
 /**
  * Module variables
@@ -67,7 +70,7 @@ export class MySitesSidebar extends Component {
 		currentUser: PropTypes.object,
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		isSiteAutomatedTransfer: PropTypes.bool,
+		isAtomicSite: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -105,6 +108,7 @@ export class MySitesSidebar extends Component {
 			<ManageMenu
 				siteId={ this.props.siteId }
 				path={ this.props.path }
+				isAtomicSite={ this.props.isAtomicSite }
 				onNavigate={ this.onNavigate }
 			/>
 		);
@@ -128,7 +132,10 @@ export class MySitesSidebar extends Component {
 				tipTarget="menus"
 				label={ translate( 'Stats' ) }
 				className="stats"
-				selected={ itemLinkMatches( [ '/stats', '/store/stats' ], path ) }
+				selected={ itemLinkMatches(
+					[ '/stats', '/store/stats', '/google-my-business/stats' ],
+					path
+				) }
 				link={ statsLink }
 				onNavigate={ this.trackStatsClick }
 				icon="stats-alt"
@@ -168,40 +175,66 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	ads() {
-		const { path, site, canUserManageOptions } = this.props;
-		const adsLink = '/ads/earnings' + this.props.siteSuffix;
-		const canManageAds = site && site.options.wordads && canUserManageOptions;
+	trackAdsUpsellClick = () => {
+		this.trackMenuItemClick( 'ads' );
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'store_ads',
+		} );
+		this.onNavigate();
+	};
 
-		return (
-			canManageAds && (
+	ads() {
+		const { path, canUserUpgradeSite, canUserUseAds } = this.props;
+
+		if ( canUserUseAds ) {
+			return (
 				<SidebarItem
 					label={ this.props.isJetpack ? 'Ads' : 'WordAds' }
 					selected={ itemLinkMatches( '/ads', path ) }
-					link={ adsLink }
+					link={ '/ads/earnings' + this.props.siteSuffix }
 					onNavigate={ this.trackAdsClick }
 					icon="speaker"
 					tipTarget="wordads"
 				/>
-			)
-		);
+			);
+		}
+
+		if (
+			! this.props.isJetpack &&
+			isEnabled( 'upsell/nudge-a-palooza' ) &&
+			canUserUpgradeSite &&
+			abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
+		) {
+			return (
+				<SidebarItem
+					label={ 'WordAds' }
+					selected={ itemLinkMatches( '/feature/ads', path ) }
+					link={ '/feature/ads' + this.props.siteSuffix }
+					onNavigate={ this.trackAdsUpsellClick }
+					icon="speaker"
+					tipTarget="wordads"
+				/>
+			);
+		}
+
+		return null;
 	}
 
-	trackThemesClick = () => {
-		this.trackMenuItemClick( 'themes' );
+	trackCustomizeClick = () => {
+		this.trackMenuItemClick( 'customize' );
 		this.onNavigate();
 	};
 
 	themes() {
 		const { path, site, translate, canUserEditThemeOptions } = this.props,
-			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
+			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
 			return null;
 		}
 
-		if ( ! config.isEnabled( 'manage/themes' ) ) {
+		if ( ! isEnabled( 'manage/themes' ) ) {
 			return null;
 		}
 
@@ -215,21 +248,22 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ translate( 'Themes' ) }
+				label={ translate( 'Customize' ) }
 				tipTarget="themes"
-				selected={ itemLinkMatches( '/themes', path ) }
-				link={ themesLink }
-				onNavigate={ this.trackThemesClick }
-				icon="themes"
-				preloadSectionName="themes"
+				selected={ itemLinkMatches( '/customize', path ) }
+				link={ this.props.customizeUrl }
+				onNavigate={ this.trackCustomizeClick }
+				icon="customize"
+				preloadSectionName="customize"
+				forceInternalLink
 			>
 				<SidebarButton
-					onClick={ this.trackSidebarButtonClick( 'customize' ) }
-					href={ this.props.customizeUrl }
-					preloadSectionName="customize"
+					onClick={ this.trackSidebarButtonClick( 'themes' ) }
+					href={ themesLink }
+					preloadSectionName="themes"
 					forceTargetInternal
 				>
-					{ this.props.translate( 'Customize' ) }
+					{ this.props.translate( 'Themes' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
@@ -249,8 +283,9 @@ export class MySitesSidebar extends Component {
 	};
 
 	plugins() {
-		const pluginsLink = '/plugins' + this.props.siteSuffix;
-		const managePluginsLink = '/plugins/manage' + this.props.siteSuffix;
+		if ( isEnabled( 'calypsoify/plugins' ) ) {
+			return null;
+		}
 
 		// checks for manage plugins capability across all sites
 		if ( ! this.props.canManagePlugins ) {
@@ -261,6 +296,9 @@ export class MySitesSidebar extends Component {
 		if ( this.props.siteId && ! this.props.canUserManageOptions ) {
 			return null;
 		}
+
+		const pluginsLink = '/plugins' + this.props.siteSuffix;
+		const managePluginsLink = '/plugins/manage' + this.props.siteSuffix;
 
 		const manageButton =
 			this.props.isJetpack || ( ! this.props.siteId && this.props.hasJetpackSites ) ? (
@@ -305,7 +343,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
+		if ( this.props.isJetpack && ! this.props.isAtomicSite ) {
 			return null;
 		}
 
@@ -378,37 +416,68 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
+	trackStoreUpsellClick = () => {
+		this.trackMenuItemClick( 'store' );
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'store_sidebar',
+		} );
+		this.onNavigate();
+	};
+
 	store() {
-		const {
-			canUserManageOptions,
-			site,
-			siteSuffix,
-			translate,
-			siteHasBackgroundTransfer,
-		} = this.props;
+		const { canUserUpgradeSite, site, canUserUseStore } = this.props;
 
-		if ( ! config.isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
 
-		const isPermittedSite = canUserManageOptions && this.props.isSiteAutomatedTransfer;
+		if ( ! canUserUseStore ) {
+			if (
+				isEnabled( 'upsell/nudge-a-palooza' ) &&
+				canUserUpgradeSite &&
+				abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
+			) {
+				return this.storeUpsellSidebarItem();
+			}
 
-		if (
-			! isPermittedSite &&
-			! ( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
-		) {
 			return null;
 		}
 
-		const storeLink = '/store' + siteSuffix;
+		return this.storeSidebarItem();
+	}
 
+	storeSidebarItem() {
+		const { siteSuffix, translate } = this.props;
 		return (
 			<SidebarItem
 				label={ translate( 'Store' ) }
-				link={ storeLink }
+				link={ '/store' + siteSuffix }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
 			>
+				<div className="sidebar__chevron-right">
+					<Gridicon icon="chevron-right" />
+				</div>
+			</SidebarItem>
+		);
+	}
+
+	storeUpsellSidebarItem() {
+		const { siteSuffix, translate, path } = this.props;
+		return (
+			<SidebarItem
+				label={ translate( 'Store' ) }
+				link={ '/feature/store' + siteSuffix }
+				selected={ itemLinkMatches( '/feature/store', path ) }
+				onNavigate={ this.trackStoreUpsellClick }
+				icon="cart"
+			>
+				<TrackComponentView
+					eventName="calypso_upgrade_nudge_impression"
+					eventProperties={ {
+						cta_name: 'store_upsell',
+					} }
+				/>
 				<div className="sidebar__chevron-right">
 					<Gridicon icon="chevron-right" />
 				</div>
@@ -533,12 +602,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		// Ignore Jetpack sites as they've opted into this interface.
-		if ( this.props.isJetpack && ! this.props.isSiteAutomatedTransfer ) {
-			return null;
-		}
-
-		if ( ! this.useWPAdminFlows() && ! this.props.isSiteAutomatedTransfer ) {
+		if ( ! this.useWPAdminFlows() && ! this.props.isAtomicSite ) {
 			return null;
 		}
 
@@ -686,7 +750,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<Sidebar>
 				<SidebarRegion>
-					<CurrentSite allSitesPath={ this.props.allSitesPath } />
+					<CurrentSite />
 					{ this.renderSidebarMenus() }
 				</SidebarRegion>
 				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
@@ -719,6 +783,9 @@ function mapStateToProps( state ) {
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
+		canUserUseStore: canCurrentUserUseStore( state, siteId ),
+		canUserUseAds: canCurrentUserUseAds( state, siteId ),
+		canUserUpgradeSite: canCurrentUserUpgradeSite( state, siteId ),
 		currentUser,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		hasJetpackSites: hasJetpackSites( state ),
@@ -726,7 +793,7 @@ function mapStateToProps( state ) {
 		isJetpack,
 		isPreviewable: isSitePreviewable( state, selectedSiteId ),
 		isSharingEnabledOnJetpackSite,
-		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
+		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		siteId,
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
@@ -734,9 +801,12 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, {
-	recordGoogleEvent,
-	recordTracksEvent,
-	setLayoutFocus,
-	setNextLayoutFocus,
-} )( localize( MySitesSidebar ) );
+export default connect(
+	mapStateToProps,
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+		setLayoutFocus,
+		setNextLayoutFocus,
+	}
+)( localize( MySitesSidebar ) );

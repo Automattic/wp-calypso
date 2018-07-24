@@ -21,7 +21,7 @@ import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { editPost } from 'state/posts/actions';
 import TokenField from 'components/token-field';
 import { decodeEntities } from 'lib/formatting';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import QueryTerms from 'components/data/query-terms';
 
 const debug = _debug( 'calypso:post-editor:editor-terms' );
@@ -48,8 +48,8 @@ class TermTokenField extends React.Component {
 			termStat = 'term_removed';
 			termEventLabel = 'Removed Term';
 		}
-		recordStat( termStat );
-		recordEvent( 'Changed Terms', termEventLabel );
+		this.props.recordEditorStat( termStat );
+		this.props.recordEditorEvent( 'Changed Terms', termEventLabel );
 
 		const { siteId, postId, taxonomyName } = this.props;
 		this.props.editPost( siteId, postId, {
@@ -121,5 +121,5 @@ export default connect(
 			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
 		};
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( TermTokenField );

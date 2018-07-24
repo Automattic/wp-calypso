@@ -16,6 +16,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import Banner from 'components/banner';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -27,7 +28,13 @@ import FormAnalyticsStores from './form-analytics-stores';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium } from 'lib/products-values';
+import {
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness,
+	isJetpackPremium,
+	isVipPlan,
+} from 'lib/products-values';
 import {
 	getSiteOption,
 	isJetpackMinimumVersion,
@@ -36,14 +43,14 @@ import {
 	siteSupportsGoogleAnalyticsBasicEcommerceTracking,
 	siteSupportsGoogleAnalyticsEnhancedEcommerceTracking,
 } from 'state/sites/selectors';
-import { isJetpackModuleActive } from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { FEATURE_GOOGLE_ANALYTICS, TYPE_BUSINESS, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
-const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
+const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness, isVipPlan );
 
 export class GoogleAnalyticsForm extends Component {
 	state = {
@@ -179,6 +186,14 @@ export class GoogleAnalyticsForm extends Component {
 					<Card className="analytics-settings site-settings__analytics-settings">
 						{ siteIsJetpack && (
 							<fieldset>
+								<SupportInfo
+									text={ translate(
+										'Reports help you track the path visitors take' +
+											' through your site, and goal conversion lets you' +
+											' measure how visitors complete specific tasks.'
+									) }
+									link="https://jetpack.com/support/google-analytics/"
+								/>
 								<JetpackModuleToggle
 									siteId={ siteId }
 									moduleSlug="google-analytics"
@@ -332,10 +347,16 @@ const mapStateToProps = state => {
 	};
 };
 
-const connectComponent = connect( mapStateToProps, null, null, { pure: false } );
+const connectComponent = connect(
+	mapStateToProps,
+	null,
+	null,
+	{ pure: false }
+);
 
 const getFormSettings = partialRight( pick, [ 'wga' ] );
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	GoogleAnalyticsForm
-);
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( GoogleAnalyticsForm );

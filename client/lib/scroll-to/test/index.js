@@ -14,11 +14,11 @@ describe( 'scroll-to', () => {
 
 	beforeAll( () => {
 		scrollTo = require( '..' );
-		sinon.spy( window, 'scrollTo' );
+		sinon.stub( window, 'scrollTo' );
 	} );
 
 	afterEach( () => {
-		window.scrollTo.reset();
+		window.scrollTo.resetHistory();
 	} );
 
 	test( 'window position x', done => {

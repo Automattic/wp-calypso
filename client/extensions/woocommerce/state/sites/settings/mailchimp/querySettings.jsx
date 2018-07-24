@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,10 +15,10 @@ import { isRequestingSettings } from './selectors';
 
 class QueryMailChimpSettings extends Component {
 	static propTypes = {
-		siteId:	PropTypes.number.isRequired,
+		siteId: PropTypes.number.isRequired,
 		isRequesting: PropTypes.bool.isRequired,
 		requestSettings: PropTypes.func.isRequired,
-	}
+	};
 
 	componentDidMount() {
 		this.request( this.props );

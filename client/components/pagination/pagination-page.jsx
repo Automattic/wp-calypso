@@ -17,11 +17,13 @@ import Button from 'components/button';
 
 class PaginationPage extends Component {
 	static propTypes = {
-		pageNumber: PropTypes.node.isRequired,
-		currentPage: PropTypes.number.isRequired,
-		totalPages: PropTypes.number.isRequired,
-		pageClick: PropTypes.func.isRequired,
 		compact: PropTypes.bool,
+		currentPage: PropTypes.number.isRequired,
+		nextLabel: PropTypes.string,
+		pageClick: PropTypes.func.isRequired,
+		pageNumber: PropTypes.node.isRequired,
+		prevLabel: PropTypes.string,
+		totalPages: PropTypes.number.isRequired,
 	};
 
 	clickHandler = event => {
@@ -51,7 +53,16 @@ class PaginationPage extends Component {
 	};
 
 	render() {
-		const { translate, currentPage, numberFormat, pageNumber, totalPages, compact } = this.props;
+		const {
+			translate,
+			currentPage,
+			nextLabel,
+			numberFormat,
+			pageNumber,
+			prevLabel,
+			totalPages,
+			compact,
+		} = this.props;
 
 		switch ( pageNumber ) {
 			case 'more':
@@ -68,7 +79,7 @@ class PaginationPage extends Component {
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler } disabled={ currentPage <= 1 }>
 							<Gridicon icon="arrow-left" size={ 18 } />
-							{ ! compact && translate( 'Previous' ) }
+							{ ! compact && ( prevLabel || translate( 'Previous' ) ) }
 						</Button>
 					</li>
 				);
@@ -80,7 +91,7 @@ class PaginationPage extends Component {
 				return (
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler } disabled={ currentPage >= totalPages }>
-							{ ! compact && translate( 'Next' ) }
+							{ ! compact && ( nextLabel || translate( 'Next' ) ) }
 							<Gridicon icon="arrow-right" size={ 18 } />
 						</Button>
 					</li>

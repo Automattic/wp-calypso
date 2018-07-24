@@ -3,38 +3,25 @@
 /**
  * Internal dependencies
  */
+import { getLanguage, getLanguageSlugs } from 'lib/i18n-utils';
 
-import { getLanguage } from 'lib/i18n-utils';
+const lang = `(${ getLanguageSlugs().join( '|' ) })`;
 
 export default function( router ) {
-	router( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', setUpLocale );
+	// The idea is to look out for optional `lang` route params matching our whitelist,
+	// and fall through to the next route def (with free form `flowName`, `stepName`,
+	// and `stepSectionName` route params) if we don't match one.
+	router( `/start/:lang${ lang }?`, setUpLocale );
+	router( `/start/:flowName/:lang${ lang }?`, setUpLocale );
+	router( `/start/:flowName/:stepName/:lang${ lang }?`, setUpLocale );
+	router( `/start/:flowName/:stepName/:stepSectionName/:lang${ lang }?`, setUpLocale );
 }
 
-// Set up the locale in case it has ended up in the flow param
+// Set up the locale if there is one
 function setUpLocale( context, next ) {
-	let { flowName, stepName, stepSectionName, lang } = context.params;
-
-	if ( ! lang && stepSectionName && getLanguage( stepSectionName ) ) {
-		lang = stepSectionName;
-		stepSectionName = undefined;
-	} else if ( ! lang && stepName && getLanguage( stepName ) ) {
-		lang = stepName;
-		stepName = undefined;
-	} else if ( ! lang && flowName && getLanguage( flowName ) ) {
-		lang = flowName;
-		flowName = undefined;
-	}
-
-	context.params = Object.assign( {}, context.params, {
-		flowName,
-		stepName,
-		stepSectionName,
-		lang,
-	} );
-
-	const language = getLanguage( lang );
+	const language = getLanguage( context.params.lang );
 	if ( language ) {
-		context.lang = lang;
+		context.lang = context.params.lang;
 		if ( language.rtl ) {
 			context.isRTL = true;
 		}

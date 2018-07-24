@@ -25,7 +25,10 @@ import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser, isPrivateSite } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPrivateSite from 'state/selectors/is-private-site';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
 /**
  * Module variables
@@ -82,6 +85,10 @@ export const People = createReactClass( {
 		if ( isJetpack && ! jetpackPeopleSupported ) {
 			return (
 				<Main>
+					<PageViewTracker
+						path={ `/people/${ filter }/:site` }
+						title={ `People > ${ titlecase( filter ) }` }
+					/>
 					<SidebarNavigation />
 					<JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.7" />
 				</Main>
@@ -90,6 +97,10 @@ export const People = createReactClass( {
 		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
+					<PageViewTracker
+						path={ `/people/${ filter }/:site` }
+						title={ `People > ${ titlecase( filter ) }` }
+					/>
 					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
@@ -100,6 +111,10 @@ export const People = createReactClass( {
 		}
 		return (
 			<Main>
+				<PageViewTracker
+					path={ `/people/${ filter }/:site` }
+					title={ `People > ${ titlecase( filter ) }` }
+				/>
 				<SidebarNavigation />
 				<div>
 					{

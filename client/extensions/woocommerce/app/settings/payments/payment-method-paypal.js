@@ -57,7 +57,10 @@ class PaymentMethodPaypal extends Component {
 	];
 
 	render() {
-		const { method: { settings }, translate } = this.props;
+		const {
+			method: { settings },
+			translate,
+		} = this.props;
 		return (
 			<Dialog
 				additionalClassNames="payments__dialog woocommerce"

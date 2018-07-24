@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -22,11 +23,12 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import AuthorSelector from 'blocks/author-selector';
 import { deleteUser } from 'lib/users/actions';
 import accept from 'lib/accept';
-import analytics from 'lib/analytics';
 import Gravatar from 'components/gravatar';
 import { localize } from 'i18n-calypso';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-class DeleteUser extends React.PureComponent {
+class DeleteUser extends React.Component {
 	static displayName = 'DeleteUser';
 
 	static propTypes = {
@@ -77,18 +79,12 @@ class DeleteUser extends React.PureComponent {
 		updateObj[ name ] = value;
 
 		this.setState( updateObj );
-		analytics.ga.recordEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
+		this.props.recordGoogleEvent( 'People', 'Selected Delete User Assignment', 'Assign', value );
 	};
 
-	setReassignLabel = label => {
-		this.reassignLabel = label;
-	};
+	setReassignLabel = label => ( this.reassignLabel = label );
 
-	onSelectAuthor = author => {
-		this.setState( {
-			reassignUser: author,
-		} );
-	};
+	onSelectAuthor = author => this.setState( { reassignUser: author } );
 
 	removeUser = () => {
 		const { translate } = this.props;
@@ -104,23 +100,23 @@ class DeleteUser extends React.PureComponent {
 										username: this.props.user.name,
 									},
 								}
-							)
+						  )
 						: translate(
 								'If you remove this user, he or she will no longer be able to access this site, ' +
 									'but any content that was created by this user will remain on the site.'
-							) }
+						  ) }
 				</p>
 				<p>{ translate( 'Would you still like to remove this user?' ) }</p>
 			</div>,
 			accepted => {
 				if ( accepted ) {
-					analytics.ga.recordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
 					deleteUser( this.props.siteId, this.props.user.ID );
 				} else {
-					analytics.ga.recordEvent(
+					this.props.recordGoogleEvent(
 						'People',
 						'Clicked Cancel Remove User on Edit User Network Site'
 					);
@@ -128,7 +124,7 @@ class DeleteUser extends React.PureComponent {
 			},
 			translate( 'Remove' )
 		);
-		analytics.ga.recordEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Network Site' );
 	};
 
 	deleteUser = event => {
@@ -143,7 +139,7 @@ class DeleteUser extends React.PureComponent {
 		}
 
 		deleteUser( this.props.siteId, this.props.user.ID, reassignUserId );
-		analytics.ga.recordEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
+		this.props.recordGoogleEvent( 'People', 'Clicked Remove User on Edit User Single Site' );
 	};
 
 	getAuthorSelectPlaceholder = () => {
@@ -206,11 +202,11 @@ class DeleteUser extends React.PureComponent {
 											username: this.props.user.name,
 										},
 									}
-								)
+							  )
 							: translate(
 									'You have the option of reassigning all content created by ' +
 										'this user, or deleting the content entirely.'
-								) }
+							  ) }
 					</p>
 
 					<FormFieldset>
@@ -239,14 +235,14 @@ class DeleteUser extends React.PureComponent {
 											args: {
 												username: this.props.user.name ? this.props.user.name : '',
 											},
-										} )
+									  } )
 									: translate( 'Delete all content created by this user' ) }
 							</span>
 						</FormLabel>
 					</FormFieldset>
 
 					<FormButtonsBar>
-						<FormButton disabled={ this.isDeleteButtonDisabled() }>
+						<FormButton scary={ true } disabled={ this.isDeleteButtonDisabled() }>
 							{ translate( 'Delete user', { context: 'Button label' } ) }
 						</FormButton>
 					</FormButtonsBar>
@@ -279,4 +275,11 @@ class DeleteUser extends React.PureComponent {
 	}
 }
 
-export default localize( DeleteUser );
+export default localize(
+	connect(
+		state => ( {
+			currentUser: getCurrentUser( state ),
+		} ),
+		{ recordGoogleEvent }
+	)( DeleteUser )
+);

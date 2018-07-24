@@ -170,7 +170,7 @@ describe( 'actions', () => {
 			} );
 			const dispatch = spy();
 			fetchSettingsProducts( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.beenCalled;
+			expect( dispatch ).to.not.have.been.called;
 		} );
 	} );
 
@@ -244,7 +244,7 @@ describe( 'actions', () => {
 			} );
 			const dispatch = spy();
 			saveWeightAndDimensionsUnits( siteId )( dispatch, getState );
-			expect( dispatch ).to.not.have.beenCalled;
+			expect( dispatch ).to.not.have.been.called;
 		} );
 
 		const getState = () => ( {

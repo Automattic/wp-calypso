@@ -16,7 +16,7 @@ import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-hap
 import { initConnection, sendEvent } from 'state/happychat/connection/actions';
 import { openChat } from 'state/happychat/ui/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
@@ -46,16 +46,17 @@ export const primeHappychat = ( { dispatch, getState } ) => {
 	}
 };
 
-export const request = ( { dispatch }, action ) => {
+export const request = action => {
 	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 30000 } );
-	const { notice: { noticeId } } = notice;
-
-	dispatch( notice );
+	const {
+		notice: { noticeId },
+	} = notice;
 
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
 
-	dispatch(
+	return [
+		notice,
 		http(
 			{
 				apiVersion: '1.1',
@@ -64,44 +65,42 @@ export const request = ( { dispatch }, action ) => {
 				body: { credentials },
 			},
 			{ ...action, noticeId }
-		)
-	);
+		),
+	];
 };
 
-export const success = ( { dispatch }, action, { rewind_state } ) => {
-	dispatch( {
+export const success = ( action, { rewind_state } ) => [
+	{
 		type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 		siteId: action.siteId,
-	} );
+	},
 
-	dispatch( {
+	{
 		type: JETPACK_CREDENTIALS_STORE,
 		credentials: {
 			main: action.credentials,
 		},
 		siteId: action.siteId,
-	} );
-
-	dispatch(
-		successNotice( i18n.translate( 'Your site is now connected.' ), {
-			duration: 4000,
-			id: action.noticeId,
-		} )
-	);
-
+	},
+	successNotice( i18n.translate( 'Your site is now connected.' ), {
+		duration: 4000,
+		id: action.noticeId,
+	} ),
 	// the API transform could fail and the rewind data might
 	// be unavailable so if that's the case just let it go
 	// for now. we'll improve our rigor as time goes by.
-	try {
-		dispatch( {
-			type: REWIND_STATE_UPDATE,
-			siteId: action.siteId,
-			data: transformApi( rewind_state ),
-		} );
-	} catch ( e ) {}
-};
+	( () => {
+		try {
+			return {
+				type: REWIND_STATE_UPDATE,
+				siteId: action.siteId,
+				data: transformApi( rewind_state ),
+			};
+		} catch ( e ) {}
+	} )(),
+];
 
-export const failure = ( { dispatch, getState }, action, error ) => {
+export const failure = ( action, error ) => ( dispatch, getState ) => {
 	dispatch( {
 		type: JETPACK_CREDENTIALS_UPDATE_FAILURE,
 		error,
@@ -146,10 +145,9 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		case 'service_unavailable':
 			announce(
 				translate(
-					"Our service isn't working at the moment. We'll get it up and " +
-						'running as fast as we can, so please try again later.'
+					'A error occurred when we were trying to validate your site information. Please make sure your credentials and host URL are correct and try again. If you need help, please click on the support chat link.'
 				),
-				{ button: translate( 'Try again' ), onClick: () => dispatch( action ) }
+				{ button: translate( 'Support chat' ), onClick: getHelp }
 			);
 			spreadHappiness(
 				'Rewind Credentials: update request failed on timeout (could be us or remote site)'
@@ -176,7 +174,7 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		case 'invalid_credentials':
 			announce(
 				translate(
-					"Oops! We couldn't connect to your site with these credentials — let's give it another try."
+					"We couldn't connect to your site. Please verify your credentials and give it another try."
 				)
 			);
 			spreadHappiness( 'Rewind Credentials: invalid credentials' );
@@ -221,5 +219,12 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 };
 
 export default {
-	[ JETPACK_CREDENTIALS_UPDATE ]: [ primeHappychat, dispatchRequest( request, success, failure ) ],
+	[ JETPACK_CREDENTIALS_UPDATE ]: [
+		primeHappychat,
+		dispatchRequestEx( {
+			fetch: request,
+			onSuccess: success,
+			onError: failure,
+		} ),
+	],
 };

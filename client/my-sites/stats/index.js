@@ -8,13 +8,16 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { getStatsDefaultSitePage } from 'lib/route';
 import statsController from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
+	page( '/stats/activity', siteSelection, sites, makeLayout, clientRender );
+
 	page(
-		'/stats/activity/:site_id',
+		'/stats/activity/:site',
 		siteSelection,
 		navigation,
 		statsController.activityLog,
@@ -23,8 +26,11 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'manage/stats' ) ) {
+		// Redirect this to default /stats/day/ view in order to keep
+		// the paths and page view reporting consistent.
+		page( '/stats', () => page.redirect( getStatsDefaultSitePage() ) );
+
 		// Stat Overview Page
-		page( '/stats', siteSelection, navigation, statsController.overview, makeLayout, clientRender );
 		page(
 			'/stats/day',
 			siteSelection,
@@ -58,9 +64,11 @@ export default function() {
 			clientRender
 		);
 
+		page( '/stats/insights', siteSelection, navigation, sites, makeLayout, clientRender );
+
 		// Stat Insights Page
 		page(
-			'/stats/insights/:site_id',
+			'/stats/insights/:site',
 			siteSelection,
 			navigation,
 			statsController.insights,
@@ -70,7 +78,7 @@ export default function() {
 
 		// Stat Site Pages
 		page(
-			'/stats/day/:site_id',
+			'/stats/day/:site',
 			siteSelection,
 			navigation,
 			statsController.site,
@@ -78,7 +86,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/week/:site_id',
+			'/stats/week/:site',
 			siteSelection,
 			navigation,
 			statsController.site,
@@ -86,7 +94,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/month/:site_id',
+			'/stats/month/:site',
 			siteSelection,
 			navigation,
 			statsController.site,
@@ -94,7 +102,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/year/:site_id',
+			'/stats/year/:site',
 			siteSelection,
 			navigation,
 			statsController.site,
@@ -102,9 +110,29 @@ export default function() {
 			clientRender
 		);
 
+		const validModules = [
+			'posts',
+			'referrers',
+			'clicks',
+			'countryviews',
+			'authors',
+			'videoplays',
+			'videodetails',
+			'podcastdownloads',
+			'searchterms',
+			'annualstats',
+		];
+
+		// Redirect this to default /stats/day/:module/:site view to
+		// keep the paths and page view reporting consistent.
+		page(
+			`/stats/:module(${ validModules.join( '|' ) })/:site`,
+			statsController.redirectToDefaultModulePage
+		);
+
 		// Stat Summary Pages
 		page(
-			'/stats/:module/:site_id',
+			`/stats/day/:module(${ validModules.join( '|' ) })/:site`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -112,7 +140,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/day/:module/:site_id',
+			`/stats/week/:module(${ validModules.join( '|' ) })/:site`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -120,7 +148,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/week/:module/:site_id',
+			`/stats/month/:module(${ validModules.join( '|' ) })/:site`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -128,15 +156,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/month/:module/:site_id',
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/year/:module/:site_id',
+			`/stats/year/:module(${ validModules.join( '|' ) })/:site`,
 			siteSelection,
 			navigation,
 			statsController.summary,
@@ -146,7 +166,7 @@ export default function() {
 
 		// Stat Single Post Page
 		page(
-			'/stats/post/:post_id/:site_id',
+			'/stats/post/:post_id/:site',
 			siteSelection,
 			navigation,
 			statsController.post,
@@ -154,7 +174,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/page/:post_id/:site_id',
+			'/stats/page/:post_id/:site',
 			siteSelection,
 			navigation,
 			statsController.post,
@@ -164,7 +184,7 @@ export default function() {
 
 		// Stat Follows Page
 		page(
-			'/stats/follows/comment/:site_id',
+			'/stats/follows/comment/:site',
 			siteSelection,
 			navigation,
 			statsController.follows,
@@ -172,7 +192,7 @@ export default function() {
 			clientRender
 		);
 		page(
-			'/stats/follows/comment/:page_num/:site_id',
+			'/stats/follows/comment/:page_num/:site',
 			siteSelection,
 			navigation,
 			statsController.follows,
@@ -185,14 +205,7 @@ export default function() {
 			page( '/stats/reset-first-view', statsController.resetFirstView, makeLayout, clientRender );
 		}
 
-		// Anything else should require site-selection
-		page(
-			'/stats/(.*)',
-			siteSelection,
-			statsController.redirectToDefaultSitePage,
-			sites,
-			makeLayout,
-			clientRender
-		);
+		// Anything else should redirect to default stats page
+		page( '/stats/(.*)', statsController.redirectToDefaultSitePage );
 	}
 }

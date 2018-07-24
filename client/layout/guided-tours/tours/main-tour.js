@@ -41,7 +41,7 @@ export const MainTour = makeTour(
 		path="/"
 		when={ and( isNewUser, isEnabled( 'guided-tours/main' ) ) }
 	>
-		<Step name="init" placement="right">
+		<Step name="init" placement="right" style={ { animationDelay: '2s' } }>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>

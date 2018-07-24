@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 

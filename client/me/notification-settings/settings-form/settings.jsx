@@ -15,7 +15,7 @@ import Immutable from 'immutable';
 import Labels from './labels';
 import Stream from './stream';
 import StreamSelector from './stream-selector';
-import { getUserDevices } from 'state/selectors';
+import getUserDevices from 'state/selectors/get-user-devices';
 
 /**
  * Module variables

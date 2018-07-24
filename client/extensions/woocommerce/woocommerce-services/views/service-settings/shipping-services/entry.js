@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,36 +16,22 @@ import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
 import FormSelect from 'components/forms/form-select';
 import NumberInput from 'woocommerce/woocommerce-services/components/number-field/number-input';
 
-const ShippingServiceEntry = ( props ) => {
-	const {
-		currencySymbol,
-		updateValue,
-		errors,
-		service,
-	} = props;
+const ShippingServiceEntry = props => {
+	const { currencySymbol, updateValue, errors, service } = props;
 
-	const {
-		enabled,
-		name,
-		adjustment,
-		adjustment_type,
-	} = service;
+	const { enabled, name, adjustment, adjustment_type } = service;
 
 	const hasError = Boolean( errors[ service.id ] );
 
-	const onToggleEnabled = ( event ) => updateValue( 'enabled', event.target.checked );
-	const onUpdateAdjustment = ( event ) => updateValue( 'adjustment', event.target.value );
-	const onUpdateAdjustmentType = ( event ) => updateValue( 'adjustment_type', event.target.value );
+	const onToggleEnabled = event => updateValue( 'enabled', event.target.checked );
+	const onUpdateAdjustment = event => updateValue( 'adjustment', event.target.value );
+	const onUpdateAdjustmentType = event => updateValue( 'adjustment_type', event.target.value );
 	const id = 'service_' + snakeCase( service.name );
 
 	return (
-		<div className={ classNames( 'shipping-services__entry', { 'wcc-error': hasError } ) } >
+		<div className={ classNames( 'shipping-services__entry', { 'wcc-error': hasError } ) }>
 			<label className="shipping-services__entry-title" htmlFor={ id }>
-				<Checkbox
-					id={ id }
-					checked={ enabled }
-					onChange={ onToggleEnabled }
-				/>
+				<Checkbox id={ id } checked={ enabled } onChange={ onToggleEnabled } />
 				<span>{ name }</span>
 			</label>
 			{ hasError ? <Gridicon icon="notice" /> : null }
@@ -70,10 +58,7 @@ ShippingServiceEntry.propTypes = {
 		id: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
 		enabled: PropTypes.bool,
-		adjustment: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number,
-		] ),
+		adjustment: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		adjustment_type: PropTypes.string,
 	} ),
 	currencySymbol: PropTypes.string.isRequired,

@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -40,14 +39,7 @@ export class SidebarBanner extends Component {
 
 	render() {
 		const { className, ctaName, ctaText, href, icon, text } = this.props;
-		const variation = abtest( 'redesignedSidebarBanner' );
-		const classes = classnames(
-			{
-				'sidebar-banner': variation === 'oldBanner',
-				'sidebar-banner-new': variation === 'newBanner',
-			},
-			className
-		);
+		const classes = classnames( 'sidebar-banner', className );
 
 		return (
 			<div className={ classes }>
@@ -56,11 +48,9 @@ export class SidebarBanner extends Component {
 					eventProperties={ { cta_name: ctaName } }
 				/>
 				<a className="sidebar-banner__link" onClick={ this.onClick } href={ href }>
-					{ variation === 'oldBanner' && (
-						<span className="sidebar-banner__icon-wrapper">
-							<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
-						</span>
-					) }
+					<span className="sidebar-banner__icon-wrapper">
+						<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
+					</span>
 					<span className="sidebar-banner__content">
 						<span className="sidebar-banner__text">{ text }</span>
 					</span>
@@ -74,4 +64,7 @@ export class SidebarBanner extends Component {
 const mapStateToProps = null;
 const mapDispatchToProps = { track: recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SidebarBanner ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( SidebarBanner ) );

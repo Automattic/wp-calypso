@@ -9,31 +9,24 @@ import page from 'page';
  */
 import checkoutController from './controller';
 import SiftScience from 'lib/siftscience';
-import userFactory from 'lib/user';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
 
 export default function() {
-	const user = userFactory();
-	const isLoggedOut = ! user.get();
-
 	SiftScience.recordUser();
 
-	// TODO (seear): Temporary logged-out handling. Remove when a general solution arrives in #23785.
-	if ( isLoggedOut ) {
-		page(
-			'/checkout/:domain/:product?',
-			redirectLoggedOut,
-			siteSelection,
-			checkoutController.checkout,
-			makeLayout,
-			clientRender
-		);
-		return;
-	}
+	page(
+		'/checkout/thank-you/no-site/pending/:orderId',
+		redirectLoggedOut,
+		siteSelection,
+		checkoutController.checkoutPending,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/thank-you/no-site/:receiptId?',
+		redirectLoggedOut,
 		noSite,
 		checkoutController.checkoutThankYou,
 		makeLayout,
@@ -41,7 +34,17 @@ export default function() {
 	);
 
 	page(
+		'/checkout/thank-you/:site/pending/:orderId',
+		redirectLoggedOut,
+		siteSelection,
+		checkoutController.checkoutPending,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/checkout/thank-you/:site/:receiptId?',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutController.checkoutThankYou,
 		makeLayout,
@@ -50,6 +53,7 @@ export default function() {
 
 	page(
 		'/checkout/thank-you/:site/:receiptId/with-gsuite/:gsuiteReceiptId',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutController.checkoutThankYou,
 		makeLayout,
@@ -58,6 +62,7 @@ export default function() {
 
 	page(
 		'/checkout/thank-you/features/:feature/:site/:receiptId?',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutController.checkoutThankYou,
 		makeLayout,
@@ -66,6 +71,7 @@ export default function() {
 
 	page(
 		'/checkout/no-site',
+		redirectLoggedOut,
 		noSite,
 		checkoutController.sitelessCheckout,
 		makeLayout,
@@ -74,6 +80,7 @@ export default function() {
 
 	page(
 		'/checkout/features/:feature/:domain/:plan_name?',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutController.checkout,
 		makeLayout,
@@ -82,6 +89,7 @@ export default function() {
 
 	page(
 		'/checkout/:domain/:product?',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutController.checkout,
 		makeLayout,
@@ -90,6 +98,7 @@ export default function() {
 
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutController.checkout,
 		makeLayout,
@@ -98,6 +107,7 @@ export default function() {
 
 	page(
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',
+		redirectLoggedOut,
 		siteSelection,
 		checkoutController.gsuiteNudge,
 		makeLayout,

@@ -39,8 +39,8 @@ describe( 'index', () => {
 	} );
 
 	beforeEach( () => {
-		getNotificationSettingsStub.reset();
-		changeSpy.reset();
+		getNotificationSettingsStub.resetHistory();
+		changeSpy.resetHistory();
 	} );
 
 	test( 'should have a dispatch token', () => {

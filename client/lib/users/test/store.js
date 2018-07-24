@@ -17,7 +17,7 @@ import site from './fixtures/site';
 import usersData from './fixtures/users';
 
 describe( 'Users Store', () => {
-	var Dispatcher, UsersStore, siteId, options;
+	let Dispatcher, UsersStore, siteId, options;
 
 	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );

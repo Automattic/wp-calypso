@@ -27,7 +27,6 @@ const DEFAULT_PROPS = {
 		jpVersion: '5.4',
 		nonce: 'fooBarNonce',
 		redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack`,
-		// eslint-disable-next-line max-len
 		redirectUri: `http://${ SITE_SLUG }/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2F${ SITE_SLUG }%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack`,
 		scope: 'administrator:fooBarBaz',
 		secret: 'fooBarSecret',

@@ -68,7 +68,7 @@ export function getCurrencyObject( number, code, options = {} ) {
 					decimals: precision,
 					thousandsSep: grouping,
 					decPoint: decimal,
-				} ).slice( 1 )
+			  } ).slice( 1 )
 			: '';
 	return {
 		sign,

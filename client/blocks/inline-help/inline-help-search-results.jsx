@@ -13,15 +13,18 @@ import classNames from 'classnames';
  * Internal Dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
+import pathToSection from 'lib/path-to-section';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import {
 	getInlineHelpSearchResultsForQuery,
-	getSelectedResult,
+	getSelectedResultIndex,
 	isRequestingInlineHelpSearchResultsForQuery,
 } from 'state/inline-help/selectors';
-import { setSearchResults } from 'state/inline-help/actions';
+import { getLastRouteAction } from 'state/ui/action-log/selectors';
+import { setSearchResults, selectResult } from 'state/inline-help/actions';
+import { getContextResults } from './contextual-help';
 
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
@@ -33,42 +36,6 @@ class InlineHelpSearchResults extends Component {
 	static defaultProps = {
 		translate: identity,
 		searchQuery: '',
-	};
-
-	getContextResults = () => {
-		// going without context for now -- let's just provide the top x recommended links
-		// copied from client/me/help/main for now
-		const helpfulResults = [
-			{
-				link: 'https://en.support.wordpress.com/business-plan/',
-				title: this.props.translate( 'Uploading custom plugins and themes' ),
-				description: this.props.translate(
-					'Learn more about installing a custom theme or plugin using the Business plan.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/all-about-domains/',
-				title: this.props.translate( 'All About Domains' ),
-				description: this.props.translate(
-					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/start/',
-				title: this.props.translate( 'Get Started' ),
-				description: this.props.translate(
-					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
-				title: this.props.translate( 'Privacy Settings' ),
-				description: this.props.translate(
-					'Limit your site’s visibility or make it completely private.'
-				),
-			},
-		];
-		return helpfulResults;
 	};
 
 	renderSearchResults() {
@@ -100,40 +67,33 @@ class InlineHelpSearchResults extends Component {
 	}
 
 	renderContextHelp() {
-		const links = this.getContextResults();
+		const section = pathToSection( this.props.lastRoute.path );
+		const links = getContextResults( section );
 		return (
 			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
 		);
 	}
 
-	getSelectedUrl = () => {
-		if ( this.props.selectedResult === -1 ) {
-			return false;
-		}
-
-		const links = this.props.searchResults || this.getContextResults();
-		const selectedLink = links[ this.props.selectedResult ];
-		if ( ! selectedLink || ! selectedLink.link ) {
-			return false;
-		}
-		return selectedLink.link;
-	};
-
 	componentDidMount() {
-		this.props.setSearchResults( '', this.getContextResults() );
+		const section = pathToSection( this.props.lastRoute.path );
+		this.props.setSearchResults( '', getContextResults( section ) );
 	}
 
-	onHelpLinkClick = event => {
-		this.props.openResult( event, event.target.href );
+	onHelpLinkClick = selectionIndex => event => {
+		this.props.selectResult( selectionIndex );
+		this.props.openResult( event );
 	};
 
 	renderHelpLink = ( link, index ) => {
-		const classes = { 'is-selected': this.props.selectedResult === index };
+		const classes = { 'is-selected': this.props.selectedResultIndex === index };
 		return (
-			<li key={ link.link } className={ classNames( 'inline-help__results-item', classes ) }>
+			<li
+				key={ link.link ? link.link : link.key }
+				className={ classNames( 'inline-help__results-item', classes ) }
+			>
 				<a
 					href={ link.link }
-					onClick={ this.onHelpLinkClick }
+					onClick={ this.onHelpLinkClick( index ) }
 					title={ decodeEntities( link.description ) }
 				>
 					{ preventWidows( decodeEntities( link.title ) ) }
@@ -156,15 +116,18 @@ class InlineHelpSearchResults extends Component {
 }
 
 const mapStateToProps = ( state, ownProps ) => ( {
+	lastRoute: getLastRouteAction( state ),
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	selectedResult: getSelectedResult( state ),
+	selectedResultIndex: getSelectedResultIndex( state ),
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,
 	setSearchResults,
+	selectResult,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )(
-	localize( InlineHelpSearchResults )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( InlineHelpSearchResults ) );

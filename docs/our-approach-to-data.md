@@ -191,7 +191,7 @@ export default connect( ( state, ownProps ) => {
 } )( PostsList );
 ```
 
-In this example, the `PostsList` function defines the visual `PostsList` component. 
+In this example, the `PostsList` function defines the visual `PostsList` component.
 It expects an array of `posts` passed as a prop, which it renders as a `ul`. The `connect` function wraps this purely presentational component to produce an app component.
 
 `connect` accepts two arguments. Both pass props to the component. The first argument provides data; the second sets the component up to handle behavior.
@@ -227,7 +227,7 @@ export default connect(
 )( localize( PostDeleteButton ) );
 ```
 
-In this example we pass both arguments to `connect`. 
+In this example we pass both arguments to `connect`.
 
 `connect` is a [currying](https://www.sitepoint.com/currying-in-functional-javascript/) function: after we invoke it with the `mapStateToProps` and `mapDispatchToProps` arguments we call it a second time, this time passing the `PostDeleteButton` visual component. `connect` takes this component class and returns a new one which is connected to the store. The resulting component can have additional props which were not defined in the original class.
 
@@ -264,7 +264,7 @@ Much like action types, because selectors operate on the entire global state obj
 When using selectors, you can import directly from `state/selectors`. For example:
 
 ```js
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 ```
 
 In this example, the logic for the selector exists at the file `state/selectors/can-current-user.js`.

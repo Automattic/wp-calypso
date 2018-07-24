@@ -1,0 +1,48 @@
+/** @format */
+
+.marked-lines {
+	padding: 0;
+	background-color: $gray-lighten-30;
+	font-family: $monospace;
+	display: flex;
+	flex-direction: row;
+	overflow-x: scroll;
+}
+
+.marked-lines__marked-line {
+	background-color: rgba( $alert-red, 0.2 );
+}
+
+.marked-lines__line-numbers {
+	display: flex;
+	flex-direction: column;
+	text-align: right;
+}
+
+.marked-lines__line-number {
+	padding: 0 4px;
+	background-color: $gray-lighten-20;
+	color: $gray-text-min;
+
+	&.marked-lines__marked-line {
+		background-color: rgba( $alert-red, 0.15 );
+	}
+}
+
+.marked-lines__lines {
+	display: flex;
+	flex-direction: column;
+	white-space: pre;
+	overflow-x: visible;
+}
+
+.marked-lines__line {
+	padding-left: 8px;
+}
+
+.marked-lines__mark {
+	background-color: $alert-red;
+	color: white;
+	border-radius: 4px;
+	padding: 2px 4px;
+}

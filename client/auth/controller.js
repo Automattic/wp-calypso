@@ -48,7 +48,7 @@ export default {
 
 		// Check we have an OAuth token, otherwise redirect to auth/login page
 		if ( OAuthToken.getToken() === false && ! isValidSection ) {
-			if ( config( 'env_id' ) === 'desktop' ) {
+			if ( config( 'env_id' ) === 'desktop' || config( 'env_id' ) === 'desktop-development' ) {
 				return page( config( 'login_url' ) );
 			}
 
@@ -97,6 +97,7 @@ export default {
 
 		// Extract this into a component...
 		context.primary = (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<Main className="auth">
 				<p className="auth__welcome">Loading user...</p>
 				<PulsingDot active />

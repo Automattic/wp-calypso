@@ -22,7 +22,7 @@ The tour first asks the user whether they want to know more and then walks them 
 These are the **core use cases** we currently see for Guided Tours:
 
 - Help new users understand what they should be doing next. E.g. guide a new user who hasn't written a blog post yet through the creation of their first one.
-- Provide immersive tutorials that help semi-advanced users understand Calypso better. E.g. explain how to set up publicize. Such a tour could be triggered by certain user behavior, or could be linked to using a special URL (see e.g. the experimental `main` tour: [https://wordpress.com/?tour=main](https://wordpress.com/?tour=main)).
+- Provide immersive tutorials that help semi-advanced users understand Calypso better. E.g. explain how to set up publicize. Such a tour could be triggered by certain user behavior, or could be linked to using a special URL (see e.g. the experimental `main` tour: [https://wordpress.com/?tour=main](https://wordpress.com/?tour=main)). There's also a Redux acton to trigger a tour -- see [docs/API.md](docs/API.md) for details.
 - Tours that help address common oversights, such as the title tour mentioned above.
 - Announce new or changed features.
 

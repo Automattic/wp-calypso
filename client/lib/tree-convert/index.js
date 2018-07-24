@@ -26,7 +26,7 @@ function TreeConvert( key ) {
 }
 
 TreeConvert.prototype.treeify = function( items ) {
-	var tree = [],
+	let tree = [],
 		indexedNodes = {};
 
 	items.forEach( function( item, i ) {
@@ -34,7 +34,7 @@ TreeConvert.prototype.treeify = function( items ) {
 	}, this );
 
 	items.forEach( function( item ) {
-		var parentNode;
+		let parentNode;
 
 		if ( item.parent > 0 && indexedNodes[ item.parent ] ) {
 			parentNode = indexedNodes[ item.parent ];
@@ -66,7 +66,7 @@ TreeConvert.prototype.untreeify = function( tree, list ) {
 };
 
 TreeConvert.prototype.sortItems = function( itemTrees ) {
-	var root = {};
+	const root = {};
 
 	root.items = itemTrees;
 
@@ -82,7 +82,7 @@ TreeConvert.prototype.sortItems = function( itemTrees ) {
 };
 
 TreeConvert.prototype.removeOrderProperty = function( itemTrees ) {
-	var root = {};
+	const root = {};
 
 	root.items = itemTrees;
 

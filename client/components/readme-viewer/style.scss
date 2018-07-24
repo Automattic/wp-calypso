@@ -1,0 +1,69 @@
+// README.md Viewer
+.readme-viewer__wrapper {
+	break-inside: avoid;
+
+	p, li {
+		font-size: 1.5rem;
+	}
+
+	p {
+		margin-bottom: 0.5rem;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+
+		th, td {
+			border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
+			text-align: left;
+		}
+
+		th {
+			color: $blue-dark;
+			font-size: 0.75em;
+			padding: 0.25em 3em 0.25em 0;
+		}
+
+		td {
+			font-size: 0.83em;
+			padding: 1.17em 3em 1.17em 0;
+		}
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		display: block;
+		margin-bottom: 0.5em;
+		margin-left: 0;
+	}
+
+	h1 {
+		font-size: 1.33em;
+	}
+
+	h2 {
+		font-size: 1.17em;
+	}
+
+	h3 {
+		font-size: 1em;
+	}
+
+	h4 {
+		font-size: 0.83em;
+	}
+
+	h5 {
+		font-size: 0.67em;
+	}
+
+	h6 {
+		font-size: 0.5em;
+	}
+}
+
+.readme-viewer__not-available {
+	font-family: $sans;
+	text-align: center;
+	color: $gray-text-min;
+}

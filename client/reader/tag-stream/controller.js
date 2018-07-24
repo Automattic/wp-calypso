@@ -8,13 +8,12 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import {
-	ensureStoreLoading,
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
+	getStartDate,
 } from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 import { TAG_PAGE } from 'reader/follow-sources';
@@ -29,10 +28,9 @@ export const tagListing = ( context, next ) => {
 		.replace( /\s+/g, '-' )
 		.replace( /-{2,}/g, '-' );
 	const encodedTag = encodeURIComponent( tagSlug ).toLowerCase();
-	const tagStore = feedStreamFactory( 'tag:' + tagSlug );
+	const streamKey = 'tag:' + tagSlug;
 	const mcKey = 'topic';
-
-	ensureStoreLoading( tagStore, context );
+	const startDate = getStartDate( context );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack( 'calypso_reader_tag_loaded', {
@@ -43,7 +41,7 @@ export const tagListing = ( context, next ) => {
 		<AsyncLoad
 			require="reader/tag-stream/main"
 			key={ 'tag-' + encodedTag }
-			postsStore={ tagStore }
+			streamKey={ streamKey }
 			encodedTagSlug={ encodedTag }
 			decodedTagSlug={ tagSlug }
 			trackScrollPage={ trackScrollPage.bind(
@@ -54,6 +52,7 @@ export const tagListing = ( context, next ) => {
 				analyticsPageTitle,
 				mcKey
 			) }
+			startDate={ startDate }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
 			showBack={ !! context.lastRoute }
 			showPrimaryFollowButtonOnCards={ true }

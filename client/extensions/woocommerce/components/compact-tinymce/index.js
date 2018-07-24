@@ -19,7 +19,8 @@ import i18n from 'components/tinymce/i18n';
 import { wpautop } from 'lib/formatting';
 // TinyMCE plugins & dependencies
 import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
-import { isRtl as isRtlSelector, getCurrentLocaleSlug } from 'state/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 class CompactTinyMCE extends Component {
 	static contextTypes = {
@@ -92,7 +93,7 @@ class CompactTinyMCE extends Component {
 
 		tinymce.init( {
 			selector: '#' + this._id,
-			skin_url: '//s1.wp.com/wp-includes/js/tinymce/skins/lightgray',
+			skin_url: '/calypso/tinymce/skins/lightgray',
 			skin: 'lightgray',
 			body_class: 'description',
 			content_css: '/calypso/tinymce/skins/woocommerce/content.css',

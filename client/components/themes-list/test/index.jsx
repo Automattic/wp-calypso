@@ -6,82 +6,58 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
-import { noop } from 'lodash';
 import React from 'react';
-import ShallowRenderer from 'react-test-renderer/shallow';
+import deepFreeze from 'deep-freeze';
+import { identity, noop } from 'lodash';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
+import EmptyContent from 'components/empty-content';
+import Theme from 'components/theme';
 import { ThemesList } from '../';
 
-jest.mock( 'components/pulsing-dot', () => require( 'components/empty-component' ) );
-jest.mock( 'components/theme/more-button', () => require( 'components/empty-component' ) );
+const defaultProps = deepFreeze( {
+	themes: [
+		{
+			id: '1',
+			name: 'kubrick',
+			screenshot: '/theme/kubrick/screenshot.png',
+		},
+		{
+			id: '2',
+			name: 'picard',
+			screenshot: '/theme/picard/screenshot.png',
+		},
+	],
+	lastPage: true,
+	loading: false,
+	fetchNextPage: noop,
+	getButtonOptions: noop,
+	onScreenshotClick: noop,
+	translate: identity,
+} );
 
 describe( 'ThemesList', () => {
-	let props, themesList, themesListElement;
-
-	beforeEach( () => {
-		props = {
-			themes: [
-				{
-					id: '1',
-					name: 'kubrick',
-					screenshot: '/theme/kubrick/screenshot.png',
-				},
-				{
-					id: '2',
-					name: 'picard',
-					screenshot: '/theme/picard/screenshot.png',
-				},
-			],
-			lastPage: true,
-			loading: false,
-			fetchNextPage: noop,
-			getButtonOptions: noop,
-			onScreenshotClick: noop,
-			translate: x => x, // Mock translate()
-		};
-
-		themesList = React.createElement( ThemesList, props );
+	test( 'should declare propTypes', () => {
+		expect( ThemesList ).toHaveProperty( 'propTypes' );
 	} );
 
-	describe( 'propTypes', () => {
-		test( 'specifies the required propType', () => {
-			assert( themesList.type.propTypes.themes, 'themes propType missing' );
-		} );
+	test( 'should render a div with a className of "themes-list"', () => {
+		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
+		expect( wrapper ).toMatchSnapshot();
+		expect( wrapper.hasClass( 'themes-list' ) ).toBe( true );
+		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
 	} );
 
-	describe( 'rendering', () => {
-		beforeEach( () => {
-			const renderer = new ShallowRenderer();
+	test( 'should render a <Theme /> child for each provided theme', () => {
+		const wrapper = shallow( <ThemesList { ...defaultProps } /> );
+		expect( wrapper.find( Theme ) ).toHaveLength( defaultProps.themes.length );
+	} );
 
-			renderer.render( themesList );
-			themesListElement = renderer.getRenderOutput();
-		} );
-
-		test( 'should render a div with a className of "themes-list"', () => {
-			assert( themesListElement, 'element does not exist' );
-			assert(
-				themesListElement.props.className === 'themes-list',
-				'className does not equal "themes-list"'
-			);
-		} );
-
-		describe( 'when no themes are found', () => {
-			beforeEach( () => {
-				const renderer = new ShallowRenderer();
-				props.themes = [];
-				themesList = React.createElement( ThemesList, props );
-
-				renderer.render( themesList );
-				themesListElement = renderer.getRenderOutput();
-			} );
-
-			test( 'displays the EmptyContent component', () => {
-				assert( themesListElement.type.displayName === 'EmptyContent', 'No EmptyContent' );
-			} );
-		} );
+	test( 'should display the EmptyContent component when no themes are found', () => {
+		const wrapper = shallow( <ThemesList { ...defaultProps } themes={ [] } /> );
+		expect( wrapper.type() ).toBe( EmptyContent );
 	} );
 } );

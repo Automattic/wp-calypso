@@ -45,13 +45,14 @@ export const rewind = {
 	type: 'object',
 	properties: {
 		links: { type: 'object' },
+		restore_id: { type: 'integer' },
 		rewind_id: { type: 'string' },
 		status: { type: 'string', enum: [ 'failed', 'finished', 'queued', 'running' ] },
 		started_at: { type: 'string' },
 		progress: { type: 'integer' },
 		reason: { type: 'string' },
 	},
-	required: [ 'rewind_id', 'status' ],
+	required: [ 'restore_id', 'rewind_id', 'status' ],
 };
 
 export const unavailable = stateSchema( 'unavailable', {

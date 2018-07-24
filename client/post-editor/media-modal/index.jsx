@@ -29,7 +29,7 @@ import {
  */
 import MediaLibrary from 'my-sites/media-library';
 import analytics from 'lib/analytics';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import * as MediaUtils from 'lib/media/utils';
@@ -69,6 +69,7 @@ export class EditorMediaModal extends Component {
 		visible: PropTypes.bool,
 		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onClose: PropTypes.func,
+		isBackdropVisible: PropTypes.bool,
 		isParentReady: PropTypes.func,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -81,12 +82,16 @@ export class EditorMediaModal extends Component {
 		resetView: PropTypes.func,
 		postId: PropTypes.number,
 		disableLargeImageSources: PropTypes.bool,
+		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
+		onImageEditorDoneHook: PropTypes.func,
+		onRestoreMediaHook: PropTypes.func,
 	};
 
 	static defaultProps = {
 		visible: false,
 		mediaLibrarySelectedItems: Object.freeze( [] ),
 		onClose: noop,
+		isBackdropVisible: true,
 		isParentReady: () => true,
 		labels: Object.freeze( {} ),
 		setView: noop,
@@ -96,10 +101,13 @@ export class EditorMediaModal extends Component {
 		imageEditorProps: {},
 		deleteMedia: () => {},
 		disableLargeImageSources: false,
+		disabledDataSources: [],
+		onImageEditorDoneHook: noop,
+		onRestoreMediaHook: noop,
 	};
 
 	constructor( props ) {
-		super( ...props );
+		super( props );
 		this.state = this.getDefaultState( props );
 	}
 
@@ -129,8 +137,8 @@ export class EditorMediaModal extends Component {
 	}
 
 	componentWillMount() {
-		const { view, mediaLibrarySelectedItems, site } = this.props;
-		if ( ! isEmpty( mediaLibrarySelectedItems ) && view === ModalViews.LIST ) {
+		const { view, mediaLibrarySelectedItems, site, single } = this.props;
+		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
 		}
 	}
@@ -222,7 +230,7 @@ export class EditorMediaModal extends Component {
 						type: ModalViews.GALLERY === view ? 'gallery' : 'media',
 						items: mediaLibrarySelectedItems,
 						settings: this.state.gallerySettings,
-					}
+				  }
 				: undefined;
 			this.props.onClose( value );
 		}
@@ -291,8 +299,8 @@ export class EditorMediaModal extends Component {
 	};
 
 	onAddMedia = () => {
-		recordStat( 'media_explorer_upload' );
-		recordEvent( 'Upload Media' );
+		this.props.recordEditorStat( 'media_explorer_upload' );
+		this.props.recordEditorEvent( 'Upload Media' );
 	};
 
 	onAddAndEditImage = () => {
@@ -307,6 +315,8 @@ export class EditorMediaModal extends Component {
 		}
 
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+
+		this.props.onRestoreMediaHook();
 	};
 
 	onImageEditorDone = ( error, blob, imageEditorProps ) => {
@@ -338,6 +348,8 @@ export class EditorMediaModal extends Component {
 		resetAllImageEditorState();
 
 		this.props.setView( ModalViews.DETAIL );
+
+		this.props.onImageEditorDoneHook();
 	};
 
 	handleUpdatePoster = ( { ID, posterUrl } ) => {
@@ -608,6 +620,7 @@ export class EditorMediaModal extends Component {
 						mediaLibrarySelectedItems={ this.props.mediaLibrarySelectedItems }
 						postId={ this.props.postId }
 						disableLargeImageSources={ this.props.disableLargeImageSources }
+						disabledDataSources={ this.props.disabledDataSources }
 						scrollable
 					/>
 				);
@@ -624,6 +637,7 @@ export class EditorMediaModal extends Component {
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
+				isBackdropVisible={ this.props.isBackdropVisible }
 				shouldCloseOnOverlayClick={ this.shouldClose() }
 				shouldCloseOnEsc={ false }
 			>
@@ -651,5 +665,7 @@ export default connect(
 			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
 			partial( setEditorMediaModalView, ModalViews.DETAIL )
 		),
+		recordEditorEvent,
+		recordEditorStat,
 	}
 )( localize( EditorMediaModal ) );

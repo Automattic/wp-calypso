@@ -18,10 +18,6 @@ import ReactDom from 'react-dom';
 import { EditorDiscussion } from '../';
 
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/posts/stats', () => ( {
-	recordEvent: () => {},
-	recordStat: () => {},
-} ) );
 
 /**
  * Module variables

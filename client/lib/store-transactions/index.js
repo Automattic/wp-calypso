@@ -13,16 +13,20 @@ import inherits from 'inherits';
  * Internal dependencies
  */
 import paymentGatewayLoader from 'lib/payment-gateway-loader';
-import { validateCardDetails } from 'lib/credit-card-details';
+import { validatePaymentDetails } from 'lib/checkout';
 import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
 	RECEIVED_WPCOM_RESPONSE,
+	REDIRECTING_FOR_AUTHORIZATION,
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
 import wp from 'lib/wp';
-import { isEbanxEnabledForCountry, translatedEbanxError } from 'lib/credit-card-details/ebanx';
+import {
+	isEbanxCreditCardProcessingEnabledForCountry,
+	translatedEbanxError,
+} from 'lib/checkout/ebanx';
 
 const wpcom = wp.undocumented();
 
@@ -89,7 +93,8 @@ TransactionFlow.prototype._paymentHandlers = {
 
 	WPCOM_Billing_MoneyPress_Paygate: function() {
 		const { newCardDetails } = this._initialData.payment,
-			validation = validateCardDetails( newCardDetails );
+			{ successUrl, cancelUrl } = this._initialData,
+			validation = validatePaymentDetails( newCardDetails );
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this._pushStep( {
@@ -114,9 +119,11 @@ TransactionFlow.prototype._paymentHandlers = {
 					name,
 					zip,
 					country,
+					successUrl,
+					cancelUrl,
 				};
 
-				if ( isEbanxEnabledForCountry( country ) ) {
+				if ( isEbanxCreditCardProcessingEnabledForCountry( country ) ) {
 					const ebanxPaymentData = {
 						state: newCardDetails.state,
 						city: newCardDetails.city,
@@ -125,6 +132,7 @@ TransactionFlow.prototype._paymentHandlers = {
 						street_number: newCardDetails[ 'street-number' ],
 						phone_number: newCardDetails[ 'phone-number' ],
 						document: newCardDetails.document,
+						device_id: gatewayData.deviceId,
 					};
 
 					paymentData = { ...paymentData, ...ebanxPaymentData };
@@ -170,12 +178,19 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	};
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
-
 	wpcom.transactions( 'POST', transaction, ( error, data ) => {
 		if ( error ) {
 			return this._pushStep( {
 				name: RECEIVED_WPCOM_RESPONSE,
 				error,
+				last: true,
+			} );
+		}
+
+		if ( data.redirect_url ) {
+			return this._pushStep( {
+				name: REDIRECTING_FOR_AUTHORIZATION,
+				data: data,
 				last: true,
 			} );
 		}
@@ -203,7 +218,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 			}
 
 			paymentGatewayLoader
-				.ready( configuration.js_url, 'Paygate', true )
+				.ready( configuration.js_url, 'Paygate' )
 				.then( Paygate => {
 					Paygate.setProcessor( configuration.processor );
 					Paygate.setApiUrl( configuration.api_url );
@@ -254,7 +269,12 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 					Ebanx.config.setCountry( cardDetails.country.toLowerCase() );
 
 					const parameters = getEbanxParameters( cardDetails );
-					Ebanx.card.createToken( parameters, createTokenCallback );
+					Ebanx.card.createToken( parameters, function( ebanxResponse ) {
+						Ebanx.deviceFingerprint.setup( function( deviceId ) {
+							ebanxResponse.data.deviceId = deviceId;
+							createTokenCallback( ebanxResponse );
+						} );
+					} );
 				} )
 				.catch( loaderError => {
 					callback( loaderError );
@@ -297,7 +317,7 @@ function getEbanxParameters( cardDetails ) {
 }
 
 export function createCardToken( requestType, cardDetails, callback ) {
-	if ( isEbanxEnabledForCountry( cardDetails.country ) ) {
+	if ( isEbanxCreditCardProcessingEnabledForCountry( cardDetails.country ) ) {
 		return createEbanxToken( requestType, cardDetails, callback );
 	}
 

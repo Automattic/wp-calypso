@@ -30,6 +30,8 @@ class EditorPermalink extends Component {
 		slug: PropTypes.string,
 	};
 
+	permalinkToggleReference = React.createRef();
+
 	constructor() {
 		super( ...arguments );
 		this.showPopover = this.showPopover.bind( this );
@@ -40,21 +42,9 @@ class EditorPermalink extends Component {
 
 		this.state = {
 			showPopover: false,
-			popoverVisible: false,
 			showCopyConfirmation: false,
 			tooltip: false,
 		};
-	}
-
-	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.showPopover !== prevState.showPopover ) {
-			// The contents of <Popover /> are only truly rendered into the
-			// DOM after its `componentDidUpdate` finishes executing, so we
-			// wait to render the clipboard button until after the update.
-			this.setState( {
-				popoverVisible: this.state.showPopover,
-			} );
-		}
 	}
 
 	componentWillUnmount() {
@@ -96,9 +86,6 @@ class EditorPermalink extends Component {
 	}
 
 	renderCopyButton() {
-		if ( ! this.state.popoverVisible ) {
-			return;
-		}
 		const { path, slug, translate } = this.props;
 
 		let label;
@@ -135,13 +122,13 @@ class EditorPermalink extends Component {
 					className="editor-permalink__toggle"
 					icon="link"
 					onClick={ this.showPopover }
-					ref="popoverButton"
+					ref={ this.permalinkToggleReference }
 				/>
 				<Popover
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
 					position={ 'bottom right' }
-					context={ this.refs && this.refs.popoverButton }
+					context={ this.permalinkToggleReference.current }
 					className="editor-permalink__popover"
 				>
 					<Slug
@@ -152,7 +139,7 @@ class EditorPermalink extends Component {
 					{ this.renderCopyButton() }
 				</Popover>
 				<Tooltip
-					context={ this.refs && this.refs.popoverButton }
+					context={ this.permalinkToggleReference.current }
 					isVisible={ this.state.tooltip }
 					position="bottom"
 				>

@@ -2,8 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import ReactDom from 'react-dom';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { over } from 'lodash';
 
@@ -12,7 +11,11 @@ import { over } from 'lodash';
  */
 import Popover from 'components/popover';
 
-class PopoverMenu extends React.Component {
+const isInvalidTarget = target => {
+	return target.tagName === 'HR';
+};
+
+class PopoverMenu extends Component {
 	static propTypes = {
 		autoPosition: PropTypes.bool,
 		isVisible: PropTypes.bool.isRequired,
@@ -22,6 +25,7 @@ class PopoverMenu extends React.Component {
 		rootClassName: PropTypes.string,
 		popoverComponent: PropTypes.func,
 		popoverTitle: PropTypes.string, // used by ReaderPopover
+		customPosition: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -30,34 +34,47 @@ class PopoverMenu extends React.Component {
 		popoverComponent: Popover,
 	};
 
+	menu = React.createRef();
+
 	componentWillUnmount() {
 		// Make sure we don't hold on to reference to the DOM reference
 		this._previouslyFocusedElement = null;
 	}
 
 	render() {
-		const children = React.Children.map( this.props.children, this._setPropsOnChild, this );
-		const PopoverComponent = this.props.popoverComponent;
+		const {
+			popoverComponent: PopoverComponent,
+			autoPosition,
+			className,
+			context,
+			customPosition,
+			isVisible,
+			popoverTitle,
+			position,
+			rootClassName,
+		} = this.props;
+
 		return (
 			<PopoverComponent
-				isVisible={ this.props.isVisible }
-				context={ this.props.context }
-				autoPosition={ this.props.autoPosition }
-				position={ this.props.position }
 				onClose={ this._onClose }
 				onShow={ this._onShow }
-				className={ this.props.className }
-				rootClassName={ this.props.rootClassName }
-				popoverTitle={ this.props.popoverTitle }
+				autoPosition={ autoPosition }
+				className={ className }
+				context={ context }
+				customPosition={ customPosition }
+				isVisible={ isVisible }
+				popoverTitle={ popoverTitle }
+				position={ position }
+				rootClassName={ rootClassName }
 			>
 				<div
-					ref="menu"
+					ref={ this.menu }
 					role="menu"
 					className="popover__menu"
 					onKeyDown={ this._onKeyDown }
 					tabIndex="-1"
 				>
-					{ children }
+					{ React.Children.map( this.props.children, this._setPropsOnChild, this ) }
 				</div>
 			</PopoverComponent>
 		);
@@ -81,17 +98,13 @@ class PopoverMenu extends React.Component {
 	};
 
 	_onShow = () => {
-		const elementToFocus = ReactDom.findDOMNode( this.refs.menu );
+		const elementToFocus = this.menu.current;
 
 		this._previouslyFocusedElement = document.activeElement;
 
 		if ( elementToFocus ) {
 			elementToFocus.focus();
 		}
-	};
-
-	_isInvalidTarget = target => {
-		return target.tagName === 'HR';
 	};
 
 	/*
@@ -101,7 +114,7 @@ class PopoverMenu extends React.Component {
 	 * bottom.
 	 */
 	_getClosestSibling = ( target, isDownwardMotion = true ) => {
-		const menu = ReactDom.findDOMNode( this.refs.menu );
+		const menu = this.menu.current;
 
 		let first = menu.firstChild,
 			last = menu.lastChild;
@@ -119,7 +132,7 @@ class PopoverMenu extends React.Component {
 
 		const sibling = closest || last;
 
-		return this._isInvalidTarget( sibling )
+		return isInvalidTarget( sibling )
 			? this._getClosestSibling( sibling, isDownwardMotion )
 			: sibling;
 	};

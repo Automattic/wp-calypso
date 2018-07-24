@@ -8,9 +8,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema';
 import { APPLICATION_PASSWORD_CREATE } from 'state/action-types';
-import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
@@ -44,9 +45,9 @@ export const addApplicationPassword = action =>
  * - a create application password success action
  * - a user application passwords receive action
  *
- * @param   {Object} action Redux action
- * @param   {Array}  data   Response from the endpoint
- * @returns {Array}         Dispatched actions
+ * @param   {Object} action      Redux action
+ * @param   {Array}  appPassword Response from the endpoint
+ * @returns {Array}              Dispatched actions
  */
 export const handleAddSuccess = ( action, appPassword ) => [
 	createApplicationPasswordSuccess( appPassword ),
@@ -72,7 +73,7 @@ export default {
 			fetch: addApplicationPassword,
 			onSuccess: handleAddSuccess,
 			onError: handleAddError,
-			fromApi: makeParser( schema, {}, apiTransformer ),
+			fromApi: makeJsonSchemaParser( schema, apiTransformer ),
 		} ),
 	],
 };

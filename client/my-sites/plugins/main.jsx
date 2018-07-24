@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { find, flow, isEmpty, some } from 'lodash';
+import { capitalize, find, flow, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,18 +24,17 @@ import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginsList from './plugins-list';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
-import {
-	canCurrentUser,
-	canCurrentUserManagePlugins,
-	getSelectedOrAllSitesWithPlugins,
-	hasJetpackSites,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
+import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
+import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
@@ -285,6 +284,26 @@ export class PluginsMain extends Component {
 		return <DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 	}
 
+	renderPageViewTracking() {
+		const { selectedSiteId, filter, selectedSiteIsJetpack } = this.props;
+
+		const analyticsPageTitle = filter ? `Plugins > ${ capitalize( filter ) }` : 'Plugins';
+
+		// 'All' view corresponds to '/plugins/manage' path.
+		// Other filters appear unchanged in path (eg. Active -> /plugins/active)
+		const currentFilter = filter === 'all' ? 'manage' : filter;
+
+		const analyticsPath = selectedSiteId
+			? `/plugins/${ currentFilter }/:site`
+			: `/plugins/${ currentFilter }`;
+
+		if ( selectedSiteId && ! selectedSiteIsJetpack ) {
+			return null;
+		}
+
+		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+	}
+
 	renderPluginsContent() {
 		const { plugins = [] } = this.state;
 		const { filter, search } = this.props;
@@ -336,6 +355,7 @@ export class PluginsMain extends Component {
 				path={ this.props.context.path }
 				search={ search }
 				searchTitle={ searchTitle }
+				trackPageViews={ false }
 			/>
 		);
 
@@ -442,6 +462,7 @@ export class PluginsMain extends Component {
 			return (
 				<Main>
 					{ this.renderDocumentHead() }
+					{ this.renderPageViewTracking() }
 					<SidebarNavigation />
 					<JetpackManageErrorPage
 						template="optInManage"
@@ -475,6 +496,7 @@ export class PluginsMain extends Component {
 			<Main wideLayout>
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
+				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
 				<div className="plugins__header">
 					<SectionNav selectedText={ this.getSelectedText() }>

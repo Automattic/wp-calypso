@@ -16,7 +16,7 @@ import { localize } from 'i18n-calypso';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { blockSite } from 'state/reader/site-blocks/actions';
-import * as PostUtils from 'lib/posts/utils';
+import * as PostUtils from 'state/posts/utils';
 import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
 import * as stats from 'reader/stats';
@@ -26,7 +26,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderTeams from 'components/data/query-reader-teams';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
-import { getReaderTeams } from 'state/selectors';
+import getReaderTeams from 'state/selectors/get-reader-teams';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
@@ -34,7 +34,7 @@ import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
 
 class ReaderPostOptionsMenu extends React.Component {
 	static propTypes = {
-		post: PropTypes.object.isRequired,
+		post: PropTypes.object,
 		feed: PropTypes.object,
 		onBlock: PropTypes.func,
 		showFollow: PropTypes.bool,

@@ -14,55 +14,72 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { recordTracksEvent } from 'state/analytics/actions';
-import SectionHeader from 'components/section-header';
+import isGoogleMyBusinessStatsNudgeDismissed from 'state/selectors/is-google-my-business-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
-import {
-	isGoogleMyBusinessStatsNudgeDismissed,
-	getGoogleMyBusinessStatsNudgeDismissCount,
-} from 'state/selectors';
+import SectionHeader from 'components/section-header';
 import { dismissNudge } from './actions';
+import { enhanceWithDismissCount } from 'my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
-		siteSlug: PropTypes.string.isRequired,
-		siteId: PropTypes.number.isRequired,
 		isDismissed: PropTypes.bool.isRequired,
-		dismissCount: PropTypes.number.isRequired,
-		trackNudgeDismissClick: PropTypes.func.isRequired,
-		trackNudgeStartNowClick: PropTypes.func.isRequired,
-		trackNudgeView: PropTypes.func.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		visible: PropTypes.bool,
 	};
 
-	componentWillMount() {
-		if ( ! this.props.isDismissed ) {
-			this.props.trackNudgeView( this.props.dismissCount );
+	static defaultProps = {
+		visible: true,
+	};
+
+	componentDidMount() {
+		this.recordView();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.siteId && this.props.siteId && this.props.siteId !== prevProps.siteId ) {
+			this.recordView();
+		}
+	}
+
+	recordView() {
+		if ( this.isVisible() ) {
+			this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_view' );
 		}
 	}
 
 	onDismissClick = () => {
-		this.props.trackNudgeDismissClick( this.props.dismissCount );
+		this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_dismiss_icon_click' );
 		this.props.dismissNudge();
 	};
 
 	onStartNowClick = () => {
-		this.props.trackNudgeStartNowClick( this.props.dismissCount );
+		this.props.recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click' );
 	};
 
+	isVisible() {
+		return ! this.props.isDismissed && this.props.visible;
+	}
+
 	render() {
-		if ( this.props.isDismissed ) {
+		if ( ! this.isVisible() ) {
 			return null;
 		}
 
 		return (
 			<Card className="google-my-business-stats-nudge">
 				<QueryPreferences />
+
 				<Gridicon
 					icon="cross"
 					className="google-my-business-stats-nudge__close-icon"
 					onClick={ this.onDismissClick }
 				/>
+
 				<SectionHeader
 					className="google-my-business-stats-nudge__header"
 					label={ this.props.translate( 'Recommendations from WordPress.com' ) }
@@ -90,7 +107,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 						<div className="google-my-business-stats-nudge__button-row">
 							<Button
-								href={ `/google-my-business/${ this.props.siteSlug }/select-business-type` }
+								href={ `/google-my-business/${ this.props.siteSlug }` }
 								primary
 								onClick={ this.onStartNowClick }
 							>
@@ -107,21 +124,12 @@ class GoogleMyBusinessStatsNudge extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state, ownProps.siteId ),
-		dismissCount: getGoogleMyBusinessStatsNudgeDismissCount( state, ownProps.siteId ),
 	} ),
 	{
-		trackNudgeView: dismissCount =>
-			recordTracksEvent( 'calypso_google_my_business_stats_nudge_view', {
-				dismiss_count: dismissCount,
-			} ),
-		trackNudgeDismissClick: dismissCount =>
-			recordTracksEvent( 'calypso_google_my_business_stats_nudge_dismiss_icon_click', {
-				dismiss_count: dismissCount,
-			} ),
-		trackNudgeStartNowClick: dismissCount =>
-			recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click', {
-				dismiss_count: dismissCount,
-			} ),
 		dismissNudge,
+		recordTracksEvent: withEnhancers( recordTracksEvent, [
+			enhanceWithDismissCount,
+			enhanceWithSiteType,
+		] ),
 	}
 )( localize( GoogleMyBusinessStatsNudge ) );

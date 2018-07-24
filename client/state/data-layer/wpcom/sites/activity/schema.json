@@ -13,7 +13,6 @@
 		"summary": { "type": "string" },
 		"totalItems": { "type": "integer" },
 		"totalPages": { "type": "integer" },
-		"oldestItemTs": { "type": "integer" },
 		"type": { "type": "string" },
 		"current": {
 			"type": "object",
@@ -64,7 +63,6 @@
 				},
 				"generator": { "type": "object" },
 				"gridicon": { "type": "string" },
-				"is_discarded": { "type": "boolean" },
 				"is_rewindable": { "type": "boolean" },
 				"rewind_id": { "type": [ "null", "string" ] },
 				"items": {

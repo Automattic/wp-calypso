@@ -32,7 +32,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getShippingZoneMethod( state, 17, 123 ) ).to.be.falsey;
+			expect( getShippingZoneMethod( state, 17, 123 ) ).to.be.undefined;
 		} );
 
 		test( 'should return the shipping zone method if it exists', () => {

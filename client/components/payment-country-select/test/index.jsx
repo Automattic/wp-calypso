@@ -16,6 +16,9 @@ import emitter from 'lib/mixins/emitter';
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import { PaymentCountrySelect } from '../';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'PaymentCountrySelect', () => {
 	let props;
 
@@ -23,20 +26,16 @@ describe( 'PaymentCountrySelect', () => {
 		props = {
 			name: 'test-country-select',
 			label: 'Test country select',
-			countriesList: {
-				get: function() {
-					return [
-						{
-							code: 'US',
-							name: 'United States',
-						},
-						{
-							code: 'AR',
-							name: 'Argentina',
-						},
-					];
+			countriesList: [
+				{
+					code: 'US',
+					name: 'United States',
 				},
-			},
+				{
+					code: 'AR',
+					name: 'Argentina',
+				},
+			],
 			countryCode: 'US',
 		};
 		emitter( props.countriesList );

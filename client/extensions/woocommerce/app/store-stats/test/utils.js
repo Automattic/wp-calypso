@@ -299,9 +299,9 @@ describe( 'formatValue', () => {
 		assert.strictEqual( response, '$12.34' );
 	} );
 	test( 'should return a correctly formatted number to 2 decimals', () => {
-		const response = formatValue( 12.3456, 'number' );
-		assert.isNumber( response );
-		assert.strictEqual( response, 12.35 );
+		const response = formatValue( 12.3456, 'number', null, 2 );
+		// assert.isNumber( response );
+		assert.strictEqual( response, '12.35' );
 	} );
 	test( 'should return a correctly formatted string', () => {
 		const response = formatValue( 'string', 'text' );

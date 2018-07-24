@@ -13,7 +13,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import { getRawSite } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';

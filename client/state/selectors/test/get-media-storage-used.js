@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMediaStorageUsed } from 'state/selectors';
+import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
 
 describe( 'getMediaStorageUsed()', () => {
 	test( 'should return null if the site is unknown', () => {

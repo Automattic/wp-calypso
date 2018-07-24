@@ -19,7 +19,7 @@ class PlanIntervalDiscount extends Component {
 		discountPrice: PropTypes.number.isRequired,
 		isYearly: PropTypes.bool.isRequired,
 		originalPrice: PropTypes.number.isRequired,
-		site: PropTypes.object,
+		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -56,13 +56,13 @@ class PlanIntervalDiscount extends Component {
 		}
 
 		const price = this.getDiscountPriceObject();
-		const { site, translate } = this.props;
+		const { siteSlug, translate } = this.props;
 		return translate(
 			'Save {{b}}%(symbol)s%(integer)s%(fraction)s{{/b}} when you {{Link}}buy yearly{{/Link}}.',
 			{
 				args: price,
 				components: {
-					Link: <a href={ plansLink( basePlansPath, site, 'yearly' ) } />,
+					Link: <a href={ plansLink( basePlansPath, siteSlug, 'yearly' ) } />,
 					b: <b />,
 				},
 			}

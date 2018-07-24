@@ -30,8 +30,8 @@ jest.mock( 'page', () => {
 
 describe( 'MapDomain component', () => {
 	beforeEach( () => {
-		pageSpy.reset();
-		pageSpy.redirect.reset();
+		pageSpy.resetHistory();
+		pageSpy.redirect.resetHistory();
 	} );
 
 	const defaultProps = {

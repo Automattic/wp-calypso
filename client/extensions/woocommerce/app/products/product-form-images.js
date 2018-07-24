@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -117,19 +115,21 @@ class ProductFormImages extends Component {
 		const { placeholder } = image;
 		return (
 			<figure>
-				<img src={ placeholder || <span /> } />
+				<img src={ placeholder || '' } alt="" />
 				<Spinner />
 			</figure>
 		);
 	};
 
-	renderUploaded = image => {
-		const { src, placeholder } = image;
+	renderUploaded = ( { src, placeholder }, thumb ) => {
+		const { translate } = this.props;
+
 		return (
 			<figure>
 				<ImagePreloader
 					src={ src }
-					placeholder={ ( placeholder && <img src={ placeholder } /> ) || <span /> }
+					alt={ thumb ? translate( 'Product thumbnail' ) : translate( 'Featured product image' ) }
+					placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
 				/>
 			</figure>
 		);
@@ -137,6 +137,7 @@ class ProductFormImages extends Component {
 
 	renderImage = ( image, thumb = true ) => {
 		const { src } = image;
+		const { translate } = this.props;
 		const id = image.id || image.transientId;
 
 		const removeImage = () => {
@@ -150,10 +151,11 @@ class ProductFormImages extends Component {
 
 		return (
 			<div className={ classes } key={ id }>
-				{ ( src && this.renderUploaded( image ) ) || this.renderPlaceholder( image ) }
+				{ src ? this.renderUploaded( image, thumb ) : this.renderPlaceholder( image ) }
 				<Button
 					onClick={ removeImage }
 					compact
+					aria-label={ translate( 'Remove image' ) }
 					className="products__product-form-images-item-remove"
 				>
 					<Gridicon

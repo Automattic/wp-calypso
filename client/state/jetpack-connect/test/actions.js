@@ -14,8 +14,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
-	JETPACK_CONNECT_CREATE_ACCOUNT,
-	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -192,12 +190,10 @@ describe( '#authorize()', () => {
 				} )
 				.reply(
 					400,
-					/* eslint-disable indent */
 					{
 						error: 'not_verified',
 						message: 'Could not verify your request.',
 					},
-					/* eslint-enable indent */
 					{ 'Content-Type': 'application/json' }
 				);
 		} );
@@ -258,13 +254,11 @@ describe( '#validateSSONonce()', () => {
 				} )
 				.reply(
 					200,
-					/* eslint-disable indent */
 					{
 						success: true,
 						blog_details: blogDetails,
 						shared_details: sharedDetails,
 					},
-					/* eslint-enable indent */
 					{ 'Content-Type': 'application/json' }
 				);
 		} );
@@ -303,12 +297,10 @@ describe( '#validateSSONonce()', () => {
 				} )
 				.reply(
 					400,
-					/* eslint-disable indent */
 					{
 						error: 'invalid_input',
 						message: 'sso_nonce is a required parameter for this endpoint',
 					},
-					/* eslint-enable indent */
 					{ 'Content-Type': 'application/json' }
 				);
 		} );
@@ -376,16 +368,10 @@ describe( '#authorizeSSO()', () => {
 				.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-authorize', {
 					sso_nonce: ssoNonce,
 				} )
-				.reply(
-					400,
-					/* eslint-disable indent */
-					{
-						error: 'invalid_input',
-						message: 'sso_nonce is a required parameter for this endpoint',
-					},
-					/* eslint-enable indent */
-					{ 'Content-Type': 'application/json' }
-				);
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'sso_nonce is a required parameter for this endpoint',
+				} );
 		} );
 
 		test( 'should dispatch receive action when request completes', async () => {
@@ -410,53 +396,73 @@ describe( '#createAccount()', () => {
 
 	beforeEach( jest.restoreAllMocks );
 
-	test( 'should dispatch create action', () => {
-		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( null, {} );
-			},
-		} ) );
-
-		const spy = jest.fn();
-		createAccount()( spy );
-		expect( spy ).toHaveBeenCalledWith( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
-	} );
-
-	test( 'should dispatch receive action with appropriate data', () => {
+	test( 'should resolve with the username and bearer token', async () => {
 		const userData = { username: 'happyuser' };
-		const data = { some: 'data' };
+		const data = { bearer_token: '1234 abcd' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( null, data );
+			async usersNew() {
+				return data;
 			},
 		} ) );
 
-		const spy = jest.fn();
-		createAccount( userData )( spy );
-		expect( spy ).toHaveBeenCalledWith( {
-			data,
-			error: null,
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData,
+		await expect( createAccount( userData )( () => {} ) ).resolves.toEqual( {
+			username: userData.username,
+			bearerToken: data.bearer_token,
 		} );
 	} );
 
-	test( 'should dispatch receive action with error data', () => {
-		const userData = { username: 'saduser' };
-		const error = { code: 'error' };
+	test( 'should reject with the error', async () => {
+		const userData = { username: 'happyuser' };
+		const error = { code: 'user_exists' };
 		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
-			usersNew( _, callback ) {
-				callback( error, null );
+			async usersNew() {
+				throw error;
 			},
 		} ) );
 
-		const spy = jest.fn();
-		createAccount( userData )( spy );
-		expect( spy ).toHaveBeenCalledWith( {
-			data: null,
-			error,
-			type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-			userData,
+		await expect( createAccount( userData )( () => {} ) ).rejects.toBe( error );
+	} );
+} );
+
+describe( '#createSocialAccount()', () => {
+	const { createSocialAccount } = actions;
+
+	beforeEach( jest.restoreAllMocks );
+
+	test( 'should reject with the error', async () => {
+		const error = {
+			data: { email: 'email@example.com' },
+			error: 'an_error_code',
+			message: 'An error message',
+		};
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			async usersSocialNew() {
+				throw error;
+			},
+		} ) );
+
+		await expect( createSocialAccount()( () => {} ) ).rejects.toEqual( {
+			code: error.error,
+			data: error.data,
+			message: error.message,
+		} );
+	} );
+
+	test( 'should resolve with the username and bearer token', async () => {
+		const bearerToken = 'foobar';
+		const username = 'a_happy_user';
+		jest.spyOn( wpcom, 'undocumented' ).mockImplementation( () => ( {
+			async usersSocialNew() {
+				return {
+					bearer_token: bearerToken,
+					username,
+				};
+			},
+		} ) );
+
+		await expect( createSocialAccount()( () => {} ) ).resolves.toEqual( {
+			bearerToken,
+			username,
 		} );
 	} );
 } );

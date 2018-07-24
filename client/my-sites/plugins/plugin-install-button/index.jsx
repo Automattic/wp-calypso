@@ -19,7 +19,7 @@ import ExternalLink from 'components/external-link';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import { getSiteConnectionStatus } from 'state/selectors';
+import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
 
 export class PluginInstallButton extends Component {
 	installAction = () => {
@@ -29,7 +29,6 @@ export class PluginInstallButton extends Component {
 			siteId,
 			isInstalling,
 			plugin,
-			notices,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
@@ -38,7 +37,7 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		PluginsActions.removePluginsNotices( notices.completed.concat( notices.errors ) );
+		PluginsActions.removePluginsNotices( 'completed', 'error' );
 		PluginsActions.installPlugin( selectedSite, plugin );
 
 		if ( isEmbed ) {
@@ -302,7 +301,6 @@ PluginInstallButton.propTypes = {
 	plugin: PropTypes.object.isRequired,
 	isEmbed: PropTypes.bool,
 	isInstalling: PropTypes.bool,
-	notices: PropTypes.object,
 	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
 };

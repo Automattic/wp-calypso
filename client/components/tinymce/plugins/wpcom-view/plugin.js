@@ -31,7 +31,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {object} editor The TinyMCE instance.
  */
 function wpview( editor ) {
-	var $ = editor.$,
+	let $ = editor.$,
 		selected,
 		Env = tinymce.Env,
 		VK = tinymce.util.VK,
@@ -53,14 +53,14 @@ function wpview( editor ) {
 	 * @return {boolean} True if the replacement succeeded; false if it failed.
 	 */
 	function replaceMarkers() {
-		var markers = $( '.wpview-marker' );
+		const markers = $( '.wpview-marker' );
 
 		if ( ! markers.length ) {
 			return false;
 		}
 
 		markers.each( function( index, node ) {
-			var text = editor.dom.getAttrib( node, 'data-wpview-text' ),
+			let text = editor.dom.getAttrib( node, 'data-wpview-text' ),
 				type = editor.dom.getAttrib( node, 'data-wpview-type' );
 			editor.dom.replace(
 				editor.dom.createFragment(
@@ -153,7 +153,7 @@ function wpview( editor ) {
 	}
 
 	function setViewCursor( before, view ) {
-		var location = before ? 'before' : 'after',
+		let location = before ? 'before' : 'after',
 			offset = before ? 0 : 1;
 		deselect();
 		editor.selection.setCursorLocation(
@@ -164,7 +164,7 @@ function wpview( editor ) {
 	}
 
 	function handleEnter( view, before, key ) {
-		var dom = editor.dom,
+		let dom = editor.dom,
 			padNode = dom.create( 'p' );
 
 		if ( ! ( Env.ie && Env.ie < 11 ) ) {
@@ -198,7 +198,7 @@ function wpview( editor ) {
 	}
 
 	function select( viewNode ) {
-		var clipboard,
+		let clipboard,
 			dom = editor.dom;
 
 		if ( ! viewNode ) {
@@ -248,7 +248,7 @@ function wpview( editor ) {
 	 * Deselect a selected view and remove clipboard
 	 */
 	function deselect() {
-		var clipboard,
+		let clipboard,
 			dom = editor.dom;
 
 		if ( selected ) {
@@ -278,7 +278,7 @@ function wpview( editor ) {
 	}
 
 	function setMarkers() {
-		var content, processedContent;
+		let content, processedContent;
 
 		if ( editor.isHidden() ) {
 			return;
@@ -306,7 +306,7 @@ function wpview( editor ) {
 	// matching view patterns, and transform the matches into
 	// view wrappers.
 	editor.on( 'BeforeSetContent', function( event ) {
-		var node;
+		let node;
 
 		if ( ! event.selection ) {
 			$( '.wpview-wrap .wpview-body' ).each( function( i, viewBody ) {
@@ -346,7 +346,7 @@ function wpview( editor ) {
 	// When pasting strip all tags and check if the string is an URL.
 	// Then replace the pasted content with the cleaned URL.
 	editor.on( 'pastePreProcess', function( event ) {
-		var pastedStr = event.content;
+		let pastedStr = event.content;
 
 		if ( pastedStr ) {
 			pastedStr = tinymce.trim( pastedStr.replace( /<[^>]+>/g, '' ) );
@@ -373,7 +373,7 @@ function wpview( editor ) {
 
 	// Set the cursor before or after a view when clicking next to it.
 	editor.on( 'click', function( event ) {
-		var x = event.clientX,
+		let x = event.clientX,
 			y = event.clientY,
 			body = editor.getBody(),
 			bodyRect = body.getBoundingClientRect(),
@@ -398,7 +398,7 @@ function wpview( editor ) {
 			event.preventDefault();
 		} else if ( x < bodyRect.left || x > bodyRect.right ) {
 			tinymce.each( editor.dom.select( '.wpview-wrap' ), function( view ) {
-				var rect = view.getBoundingClientRect();
+				const rect = view.getBoundingClientRect();
 
 				if ( y < rect.top ) {
 					return false;
@@ -420,14 +420,14 @@ function wpview( editor ) {
 	} );
 
 	editor.on( 'init', function() {
-		var scrolled = false,
+		let scrolled = false,
 			selection = editor.selection,
 			MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
 		// When a view is selected, ensure content that is being pasted
 		// or inserted is added to a text node (instead of the view).
 		editor.on( 'BeforeSetContent', function() {
-			var walker,
+			let walker,
 				target,
 				view = getView( selection.getNode() );
 
@@ -459,7 +459,7 @@ function wpview( editor ) {
 		editor.on(
 			'mousedown mouseup click touchend',
 			function( event ) {
-				var view = getView( event.target );
+				const view = getView( event.target );
 
 				firstFocus = false;
 
@@ -569,7 +569,7 @@ function wpview( editor ) {
 
 	// (De)select views when arrow keys are used to navigate the content of the editor.
 	editor.on( 'keydown', function( event ) {
-		var key = event.keyCode,
+		let key = event.keyCode,
 			dom = editor.dom,
 			selection = editor.selection,
 			node,
@@ -776,7 +776,7 @@ function wpview( editor ) {
 	} );
 
 	editor.on( 'focus', function() {
-		var view;
+		let view;
 
 		focus = true;
 		editor.dom.addClass( editor.getBody(), 'has-focus' );
@@ -796,7 +796,7 @@ function wpview( editor ) {
 	} );
 
 	editor.on( 'NodeChange', function( event ) {
-		var dom = editor.dom,
+		let dom = editor.dom,
 			views = editor.dom.select( '.wpview-wrap' ),
 			className = event.element.className,
 			view = getView( event.element ),
@@ -855,7 +855,7 @@ function wpview( editor ) {
 	} );
 
 	editor.on( 'BeforeExecCommand', function() {
-		var node = editor.selection.getNode(),
+		let node = editor.selection.getNode(),
 			view;
 
 		if (
@@ -870,7 +870,7 @@ function wpview( editor ) {
 	} );
 
 	editor.on( 'ExecCommand', function( args ) {
-		var toSelect, node;
+		let toSelect, node;
 
 		// Don't steal the focus from `.embed-dialog__url`
 		if ( 'embedDialog' === args.command ) {
@@ -912,7 +912,7 @@ function wpview( editor ) {
 			editor.on(
 				'wptoolbar',
 				function() {
-					var type;
+					let type;
 
 					if ( ! selected ) {
 						return;
@@ -924,7 +924,7 @@ function wpview( editor ) {
 			);
 		},
 		onClick: function() {
-			var type;
+			let type;
 
 			if ( ! selected ) {
 				return;

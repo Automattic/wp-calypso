@@ -10,7 +10,8 @@ import { forIn, keys, mapValues } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getThemeFilters, getThemeFilterTermFromString } from 'state/selectors';
+import getThemeFilters from 'state/selectors/get-theme-filters';
+import getThemeFilterTermFromString from 'state/selectors/get-theme-filter-term-from-string';
 
 /**
  * Return a table of all theme filter terms indexed by

@@ -10,7 +10,17 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, forEach, intersection, snakeCase } from 'lodash';
+import {
+	endsWith,
+	get,
+	includes,
+	pick,
+	flatten,
+	forEach,
+	intersection,
+	snakeCase,
+	split,
+} from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -21,7 +31,7 @@ import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
-import { serverRouter, getCacheKey } from 'isomorphic-routing';
+import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
 import { serverRender, serverRenderError, renderJsx } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
@@ -30,6 +40,7 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
+import { getLanguage } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -79,6 +90,34 @@ const getAssets = ( () => {
 	};
 } )();
 
+const getFilesForChunk = chunkName => {
+	const assets = getAssets();
+
+	function getChunkByName( _chunkName ) {
+		return assets.chunks.find( chunk => chunk.names.some( name => name === _chunkName ) );
+	}
+
+	function getChunkById( chunkId ) {
+		return assets.chunks.find( chunk => chunk.id === chunkId );
+	}
+
+	const chunk = getChunkByName( chunkName );
+	if ( ! chunk ) {
+		console.warn( 'cannot find the chunk ' + chunkName );
+		console.warn( 'available chunks:' );
+		assets.chunks.forEach( c => {
+			console.log( '    ' + c.id + ': ' + c.names.join( ',' ) );
+		} );
+		return [];
+	}
+
+	const allTheFiles = chunk.files.concat(
+		flatten( chunk.siblings.map( sibling => getChunkById( sibling ).files ) )
+	);
+
+	return allTheFiles;
+};
+
 /**
  * Generate an object that maps asset names name to a server-relative urls.
  * Assets in request and static files are included.
@@ -87,10 +126,10 @@ const getAssets = ( () => {
  **/
 function generateStaticUrls() {
 	const urls = { ...staticFilesUrls };
-	const assets = getAssets();
+	const assets = getAssets().assetsByChunkName;
 
 	forEach( assets, ( asset, name ) => {
-		urls[ name ] = asset.js;
+		urls[ name ] = asset;
 	} );
 
 	return urls;
@@ -145,11 +184,16 @@ function getAcceptedLanguagesFromHeader( header ) {
 
 function getDefaultContext( request ) {
 	let initialServerState = {};
+	let sectionCss;
+	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
-	const cacheKey = getCacheKey( request );
+	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
+	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
+	// called before route-specific middleware, so it's up to the cache *writes* in server
+	// render to make sure that Redux state and markup are only cached for whitelisted query args.
+	const cacheKey = getNormalizedPath( request.path, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
-	let sectionCss;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -172,6 +216,12 @@ function getDefaultContext( request ) {
 		sectionCss = request.context.sectionCss;
 	}
 
+	// We assign request.context.lang in the handleLocaleSubdomains()
+	// middleware function if we detect a language slug in subdomain
+	if ( request.context && request.context.lang ) {
+		lang = request.context.lang;
+	}
+
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -182,8 +232,11 @@ function getDefaultContext( request ) {
 		isRTL: config( 'rtl' ),
 		isDebug,
 		badge: false,
-		lang: config( 'i18n_default_locale_slug' ),
-		jsFile: 'build',
+		lang,
+		entrypoint: getAssets().entrypoints.build.assets.filter(
+			asset => ! asset.startsWith( 'manifest' )
+		),
+		manifest: getAssets().manifests.manifest,
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
@@ -370,7 +423,6 @@ function setUpCSP( req, res, next ) {
 	];
 
 	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
-	req.context.analyticsScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
 
 	const policy = {
 		'default-src': [ "'self'" ],
@@ -379,16 +431,27 @@ function setUpCSP( req, res, next ) {
 			"'report-sample'",
 			"'unsafe-eval'",
 			'stats.wp.com',
+			'https://widgets.wp.com',
+			'*.wordpress.com',
 			'https://apis.google.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
-			`'nonce-${ req.context.analyticsScriptNonce }'`,
+			'www.google-analytics.com',
 			...inlineScripts.map( hash => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
 		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
 		'form-action': [ "'self'" ],
 		'object-src': [ "'none'" ],
-		'img-src': [ "'self'", '*.wp.com', 'https://www.google-analytics.com' ],
+		'img-src': [
+			"'self'",
+			'data',
+			'*.wp.com',
+			'*.files.wordpress.com',
+			'*.gravatar.com',
+			'https://www.google-analytics.com',
+			'https://amplifypixel.outbrain.com',
+			'https://img.youtube.com',
+		],
 		'frame-src': [ "'self'", 'https://public-api.wordpress.com', 'https://accounts.google.com/' ],
 		'font-src': [
 			"'self'",
@@ -397,7 +460,7 @@ function setUpCSP( req, res, next ) {
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
-		'connect-src': [ "'self'", 'https://wordpress.com/' ],
+		'connect-src': [ "'self'", 'https://*.wordpress.com/', 'https://*.wp.com' ],
 		'report-uri': [ '/cspreport' ],
 	};
 
@@ -429,6 +492,44 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
+/**
+ * Sets language properties to context if
+ * a WordPress.com language slug is detected in the hostname
+ *
+ * @param {Object} req Express request object
+ * @param {Object} res Express response object
+ * @param {Function} next a callback to call when done
+ * @returns {Function|Undefined} res.redirect if not logged in
+ */
+function handleLocaleSubdomains( req, res, next ) {
+	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
+		? split( req.hostname, '.' )[ 0 ]
+		: null;
+
+	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
+		// Retrieve the language object for the RTL information.
+		const language = getLanguage( langSlug );
+
+		// Switch locales only in a logged-out state.
+		if ( language && ! req.cookies.wordpress_logged_in ) {
+			req.context = {
+				...req.context,
+				lang: language.langSlug,
+				isRTL: !! language.rtl,
+			};
+		} else {
+			// Strip the langSlug and redirect using hostname
+			// so that the user's locale preferences take priority.
+			const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+			const port = process.env.PORT || config( 'port' ) || '';
+			const hostname = req.hostname.substr( langSlug.length + 1 );
+			const redirectUrl = `${ protocol }://${ hostname }:${ port }${ req.path }`;
+			return res.redirect( redirectUrl );
+		}
+	}
+	next();
+}
+
 module.exports = function() {
 	const app = express();
 
@@ -436,6 +537,7 @@ module.exports = function() {
 
 	app.use( logSectionResponseTime );
 	app.use( cookieParser() );
+	app.use( handleLocaleSubdomains );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
@@ -537,7 +639,9 @@ module.exports = function() {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
 
 					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunk = section.name;
+						req.context.chunkFiles = getFilesForChunk( section.name );
+					} else {
+						req.context.chunkFiles = [];
 					}
 
 					if ( section.secondary && req.context ) {
@@ -617,6 +721,7 @@ module.exports = function() {
 					authorized: true,
 					supportUser: req.query.support_user,
 					supportToken: req.query._support_token,
+					supportPath: req.query.support_path,
 				} )
 			);
 		}
@@ -654,6 +759,7 @@ module.exports = function() {
 					authorized: true,
 					supportUser: req.query.support_user,
 					supportToken: req.query._support_token,
+					supportPath: req.query.support_path,
 				} )
 			);
 		} );

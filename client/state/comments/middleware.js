@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { COMMENTS_DELETE, COMMENTS_CHANGE_STATUS } from 'state/action-types';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {

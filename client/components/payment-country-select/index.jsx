@@ -12,13 +12,13 @@ import { filter, isFunction, noop, omit } from 'lodash';
  * Internal dependencies
  */
 import CountrySelect from 'my-sites/domains/components/form/country-select';
-import { getPaymentCountryCode } from 'state/selectors';
+import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
 import { setPaymentCountryCode } from 'state/ui/payment/actions';
 
 export class PaymentCountrySelect extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		onCountrySelected: PropTypes.func,
 		countryCode: PropTypes.string,
 		updateGlobalCountryCode: PropTypes.func,
@@ -34,7 +34,7 @@ export class PaymentCountrySelect extends Component {
 		// Notify the callback function about the country (or lack thereof)
 		// that is pre-selected at the time the component is first displayed.
 		let countryCode = this.props.countryCode;
-		if ( ! filter( this.props.countriesList.get(), { code: countryCode } ).length ) {
+		if ( ! filter( this.props.countriesList, { code: countryCode } ).length ) {
 			// If the stored payment country isn't one of the allowed countries
 			// for this component, pass along the default value instead (so
 			// that the value the callback function receives never represents a

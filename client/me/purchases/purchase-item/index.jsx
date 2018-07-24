@@ -171,7 +171,7 @@ class PurchaseItem extends Component {
 	}
 
 	render() {
-		const { isPlaceholder, isDisconnectedSite, purchase } = this.props;
+		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack } = this.props;
 		const classes = classNames(
 			'purchase-item',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
@@ -195,19 +195,24 @@ class PurchaseItem extends Component {
 			);
 		}
 
-		let props;
+		let onClick;
+		let href;
 		if ( ! isPlaceholder ) {
-			props = {
-				onClick: this.scrollToTop,
-			};
-
-			if ( ! isDisconnectedSite ) {
-				props.href = managePurchase( this.props.slug, this.props.purchase.id );
+			// A "disconnected" Jetpack site's purchases may be managed.
+			// A "disconnected" WordPress.com site may not (the user has been removed).
+			if ( ! isDisconnectedSite || isJetpack ) {
+				onClick = this.scrollToTop;
+				href = managePurchase( this.props.slug, this.props.purchase.id );
 			}
 		}
 
 		return (
-			<CompactCard className={ classes } { ...props }>
+			<CompactCard
+				className={ classes }
+				data-e2e-connected-site={ ! isDisconnectedSite }
+				href={ href }
+				onClick={ onClick }
+			>
 				{ content }
 			</CompactCard>
 		);
@@ -219,6 +224,7 @@ PurchaseItem.propTypes = {
 	isDisconnectedSite: PropTypes.bool,
 	purchase: PropTypes.object,
 	slug: PropTypes.string,
+	isJetpack: PropTypes.bool,
 };
 
 export default localize( PurchaseItem );

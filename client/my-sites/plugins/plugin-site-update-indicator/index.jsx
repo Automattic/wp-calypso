@@ -34,9 +34,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 		ev.stopPropagation();
 
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
-		PluginsActions.removePluginsNotices(
-			this.props.notices.completed.concat( this.props.notices.errors )
-		);
+		PluginsActions.removePluginsNotices( 'completed', 'error' );
 		analytics.ga.recordEvent(
 			'Plugins',
 			'Clicked Update Single Site Plugin',

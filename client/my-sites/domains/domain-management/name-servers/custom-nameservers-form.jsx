@@ -233,9 +233,12 @@ const resetToDefaultsClick = domainName =>
 		} )
 	);
 
-export default connect( null, {
-	customNameServersLearnMoreClick,
-	customNameServersLookUpClick,
-	resetToDefaultsClick,
-	saveCustomNameServersClick,
-} )( localize( CustomNameserversForm ) );
+export default connect(
+	null,
+	{
+		customNameServersLearnMoreClick,
+		customNameServersLookUpClick,
+		resetToDefaultsClick,
+		saveCustomNameServersClick,
+	}
+)( localize( CustomNameserversForm ) );

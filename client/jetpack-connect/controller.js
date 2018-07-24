@@ -5,9 +5,7 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import validator from 'is-my-json-valid';
 import { get, isEmpty, some } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -27,16 +25,14 @@ import Plans from './plans';
 import PlansLanding from './plans-landing';
 import versionCompare from 'lib/version-compare';
 import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
-import { authorizeQueryDataSchema } from './schema';
-import { authQueryTransformer } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
+import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack/onboarding/actions';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
 import { urlToSlug } from 'lib/url';
 import {
@@ -61,15 +57,6 @@ const analyticsPageTitleByType = {
 
 const removeSidebar = context =>
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
-
-const jetpackNewSiteSelector = context => {
-	removeSidebar( context );
-	context.primary = React.createElement( JetpackNewSite, {
-		path: context.path,
-		context: context,
-		locale: context.params.locale,
-	} );
-};
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
@@ -123,7 +110,8 @@ export function maybeOnboard( { query, store }, next ) {
 
 export function newSite( context, next ) {
 	analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
-	jetpackNewSiteSelector( context );
+	removeSidebar( context );
+	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
 	next();
 }
 
@@ -166,15 +154,16 @@ export function connect( context, next ) {
 
 	removeSidebar( context );
 
-	context.primary = React.createElement( JetpackConnect, {
-		context,
-		locale: params.locale,
-		path,
-		type,
-		url: query.url,
-		ctaId: query.cta_id, // origin tracking params
-		ctaFrom: query.cta_from,
-	} );
+	context.primary = (
+		<JetpackConnect
+			ctaFrom={ query.cta_from /* origin tracking params */ }
+			ctaId={ query.cta_id /* origin tracking params */ }
+			locale={ params.locale }
+			path={ path }
+			type={ type }
+			url={ query.url }
+		/>
+	);
 	next();
 }
 
@@ -204,28 +193,13 @@ export function signupForm( context, next ) {
 	removeSidebar( context );
 
 	const { query } = context;
-	const validQueryObject = validator( authorizeQueryDataSchema )( query );
-
-	if ( validQueryObject ) {
-		const transformedQuery = authQueryTransformer( query );
+	const transformedQuery = parseAuthorizationQuery( query );
+	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
-		let interval = context.params.interval;
-		let locale = context.params.locale;
-		if ( context.params.localeOrInterval ) {
-			if ( [ 'monthly', 'yearly' ].indexOf( context.params.localeOrInterval ) >= 0 ) {
-				interval = context.params.localeOrInterval;
-			} else {
-				locale = context.params.localeOrInterval;
-			}
-		}
+		const { locale } = context.params;
 		context.primary = (
-			<JetpackSignup
-				path={ context.path }
-				interval={ interval }
-				locale={ locale }
-				authQuery={ transformedQuery }
-			/>
+			<JetpackSignup path={ context.path } locale={ locale } authQuery={ transformedQuery } />
 		);
 	} else {
 		context.primary = <NoDirectAccessError />;
@@ -244,10 +218,8 @@ export function authorizeForm( context, next ) {
 	removeSidebar( context );
 
 	const { query } = context;
-	const validQueryObject = validator( authorizeQueryDataSchema )( query );
-
-	if ( validQueryObject ) {
-		const transformedQuery = authQueryTransformer( query );
+	const transformedQuery = parseAuthorizationQuery( query );
+	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
 	} else {
@@ -264,12 +236,14 @@ export function sso( context, next ) {
 
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
-	context.primary = React.createElement( JetpackSsoForm, {
-		path: context.path,
-		locale: context.params.locale,
-		siteId: context.params.siteId,
-		ssoNonce: context.params.ssoNonce,
-	} );
+	context.primary = (
+		<JetpackSsoForm
+			locale={ context.params.locale }
+			path={ context.path }
+			siteId={ context.params.siteId }
+			ssoNonce={ context.params.ssoNonce }
+		/>
+	);
 	next();
 }
 
@@ -280,15 +254,12 @@ export function plansLanding( context, next ) {
 
 	removeSidebar( context );
 
-	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
-
 	analytics.tracks.recordEvent( 'calypso_plans_view' );
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<PlansLanding
 			context={ context }
-			destinationType={ context.params.destinationType }
 			interval={ context.params.interval }
 			url={ context.query.site }
 		/>
@@ -303,9 +274,6 @@ export function plansSelection( context, next ) {
 
 	removeSidebar( context );
 
-	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
-
 	analytics.tracks.recordEvent( 'calypso_plans_view' );
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
@@ -318,7 +286,6 @@ export function plansSelection( context, next ) {
 						: JPC_PATH_PLANS
 				}
 				context={ context }
-				destinationType={ context.params.destinationType }
 				interval={ context.params.interval }
 				queryRedirect={ context.query.redirect }
 			/>

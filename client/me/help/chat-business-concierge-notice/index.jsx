@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import HelpTeaserButton from '../help-teaser-button';
-import { isBusinessPlanUser } from 'state/selectors';
+import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
 
 class ChatBusinessConciergeNotice extends Component {
 	static propTypes = {

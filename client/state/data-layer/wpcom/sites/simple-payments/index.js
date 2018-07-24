@@ -9,26 +9,27 @@ import { get, noop, toPairs } from 'lodash';
 /**
  * Internal dependencies
  */
+import formatCurrency from 'lib/format-currency';
+import { decodeEntities } from 'lib/formatting';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { getFeaturedImageId } from 'state/posts/utils';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
+import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
+import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
+import { TransformerError } from 'lib/make-json-schema-parser';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_GET,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD,
-	SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE,
+	SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT,
 } from 'state/action-types';
 import {
+	receiveDeleteProduct,
 	receiveProductsList,
 	receiveUpdateProduct,
-	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
-import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequestEx, TransformerError } from 'state/data-layer/wpcom-http/utils';
-import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
-import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
-import formatCurrency from 'lib/format-currency';
-import { getFeaturedImageId } from 'lib/posts/utils';
-import { decodeEntities } from 'lib/formatting';
 
 /**
  * Convert custom post metadata array to product attributes

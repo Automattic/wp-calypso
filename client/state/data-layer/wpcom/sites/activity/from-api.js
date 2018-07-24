@@ -2,14 +2,14 @@
 /**
  * External dependencies
  */
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { parseBlock } from 'lib/notifications/note-block-parser';
-import { makeParser } from 'state/data-layer/wpcom-http/utils';
 import apiResponseSchema from './schema';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import { parseBlock } from 'lib/notifications/note-block-parser';
 
 /**
  * Module constants
@@ -24,16 +24,7 @@ export const DEFAULT_GRIDICON = 'info-outline';
  * @return {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
-	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
-
-	return Object.assign(
-		{
-			items: map( orderedItems, processItem ),
-			oldestItemTs: get( apiResponse, [ 'oldestItemTs' ], Infinity ),
-			totalItems: get( apiResponse, [ 'totalItems' ], orderedItems.length ),
-		},
-		apiResponse.nextAfter && { nextAfter: apiResponse.nextAfter }
-	);
+	return get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem );
 }
 
 /**
@@ -44,8 +35,14 @@ export function transformer( apiResponse ) {
  */
 export function processItem( item ) {
 	const { actor, object, published } = item;
-	const activityMeta =
-		'2' === get( item, [ 'object', 'error_code' ], '' ) ? { errorCode: 'bad_credentials' } : {};
+	const activityMeta = {};
+	switch ( item.name ) {
+		case 'rewind__backup_error':
+			if ( '2' === get( item.object, 'error_code', '' ) ) {
+				activityMeta.errorCode = 'bad_credentials';
+			}
+			break;
+	}
 
 	return Object.assign(
 		{
@@ -62,7 +59,6 @@ export function processItem( item ) {
 			activityGroup: ( item.name || '' ).split( '__', 1 )[ 0 ], // split always returns at least one item
 			activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
 			activityId: item.activity_id,
-			activityIsDiscarded: item.is_discarded,
 			activityIsRewindable: item.is_rewindable,
 			activityName: item.name,
 			activityTitle: item.summary,
@@ -77,4 +73,4 @@ export function processItem( item ) {
 }
 
 // fromApi default export
-export default makeParser( apiResponseSchema, {}, transformer );
+export default makeJsonSchemaParser( apiResponseSchema, transformer );

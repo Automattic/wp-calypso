@@ -19,7 +19,7 @@ import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
@@ -39,12 +39,6 @@ export const Sites = createReactClass( {
 		// selected the filterbar operates as if we're on /sites
 		if ( this.props.selectedSite ) {
 			path = '/sites';
-		}
-
-		// Filters sites based on public or private nature
-		// for paths `/public` and `/private` only
-		if ( path === '/sites/private' ) {
-			return site.is_private;
 		}
 
 		// Filter out jetpack sites when on particular routes
@@ -78,6 +72,9 @@ export const Sites = createReactClass( {
 		switch ( path ) {
 			case 'stats':
 				path = i18n.translate( 'Insights' );
+				if ( '/stats/activity' === this.props.path ) {
+					path = i18n.translate( 'Activity' );
+				}
 				break;
 			case 'plans':
 				path = i18n.translate( 'Plans' );

@@ -12,17 +12,15 @@ import { connect } from 'react-redux';
 import PurchaseDetail from 'components/purchase-detail';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 const JetpackBackupSecurity = ( { backupEngine, site, siteId, translate } ) => (
 	<div className="product-purchase-features-list__item">
 		<QueryRewindState siteId={ siteId } />
 		<PurchaseDetail
-			icon="flag"
+			icon={ <img alt="" src="/calypso/images/illustrations/jetpack-security.svg" /> }
 			title={ translate( 'Site Security' ) }
-			description={ translate(
-				'Your site is safe with secure backups and real-time scans.'
-			) }
+			description={ translate( 'Your site is safe with secure backups and real-time scans.' ) }
 			buttonText={
 				backupEngine === 'rewind'
 					? translate( 'View Activity Log' )

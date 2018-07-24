@@ -65,7 +65,7 @@ export const clear = memoryStore => {
 	return () => {
 		debug( 'Bypassing localStorage', 'clear' );
 
-		for ( let _key in memoryStore ) {
+		for ( const _key in memoryStore ) {
 			delete memoryStore[ _key ];
 		}
 	};

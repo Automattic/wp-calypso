@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,11 +12,12 @@ import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 
+const title = translate( 'My Likes' );
+const documentTitle = translate( '%s ‹ Reader', { args: title } );
+
 class LikedStream extends React.Component {
 	render() {
-		var title = this.props.translate( 'My Likes' ),
-			emptyContent = <EmptyContent />;
-
+		const emptyContent = <EmptyContent />;
 		return (
 			<Stream
 				{ ...this.props }
@@ -24,10 +25,10 @@ class LikedStream extends React.Component {
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 			>
-				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
+				<DocumentHead title={ documentTitle } />
 			</Stream>
 		);
 	}
 }
 
-export default localize( LikedStream );
+export default LikedStream;

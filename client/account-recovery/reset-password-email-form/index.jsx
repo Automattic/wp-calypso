@@ -38,4 +38,7 @@ const ResetPasswordEmailSent = props => {
 	);
 };
 
-export default connect( null, { clearResetMethod } )( localize( ResetPasswordEmailSent ) );
+export default connect(
+	null,
+	{ clearResetMethod }
+)( localize( ResetPasswordEmailSent ) );

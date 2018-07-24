@@ -3,14 +3,19 @@
 /**
  * Internal dependencies
  */
-import { ORDER_TRANSACTION_FETCH, ORDER_TRANSACTION_SET } from 'state/action-types';
+import {
+	ORDER_TRANSACTION_FETCH,
+	ORDER_TRANSACTION_FETCH_ERROR,
+	ORDER_TRANSACTION_SET,
+} from 'state/action-types';
 
-import { fetchOrderTransaction, setOrderTransaction } from '../actions';
+import { fetchOrderTransaction, setOrderTransaction, setOrderTransactionError } from '../actions';
 
 describe( '/state/order-transactions/actions', () => {
+	const orderId = 123;
+
 	describe( 'fetchOrderTransaction()', () => {
 		test( 'should return expected action.', () => {
-			const orderId = 123;
 			expect( fetchOrderTransaction( orderId ) ).toEqual( {
 				type: ORDER_TRANSACTION_FETCH,
 				orderId,
@@ -19,15 +24,27 @@ describe( '/state/order-transactions/actions', () => {
 	} );
 
 	describe( 'setOrderTransaction()', () => {
-		const orderId = 123;
-		const detail = {
+		const transaction = {
 			status: 'success',
 		};
 		test( 'should return expected action.', () => {
-			expect( setOrderTransaction( orderId, detail ) ).toEqual( {
+			expect( setOrderTransaction( orderId, transaction ) ).toEqual( {
 				type: ORDER_TRANSACTION_SET,
 				orderId,
-				detail,
+				transaction,
+			} );
+		} );
+	} );
+
+	describe( 'setOrderTransactionError()', () => {
+		test( 'should return expected action.', () => {
+			const error = {
+				message: 'something goes wrong!',
+			};
+			expect( setOrderTransactionError( orderId, error ) ).toEqual( {
+				type: ORDER_TRANSACTION_FETCH_ERROR,
+				orderId,
+				error,
 			} );
 		} );
 	} );

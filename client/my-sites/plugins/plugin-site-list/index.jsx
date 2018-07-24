@@ -11,7 +11,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { isConnectedSecondaryNetworkSite, getNetworkSites } from 'state/selectors';
+import getNetworkSites from 'state/selectors/get-network-sites';
+
+import isConnectedSecondaryNetworkSite from 'state/selectors/is-connected-secondary-network-site';
 import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
 import PluginsStore from 'lib/plugins/store';
 import SectionHeader from 'components/section-header';

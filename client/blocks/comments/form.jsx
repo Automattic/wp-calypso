@@ -19,6 +19,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { isCommentableDiscoverPost } from 'blocks/comments/helper';
+import PostCommentFormTextarea from './form-textarea';
 
 class PostCommentForm extends React.Component {
 	constructor( props ) {
@@ -40,31 +41,6 @@ class PostCommentForm extends React.Component {
 		this.setState( {
 			commentText: nextProps.commentText || '',
 		} );
-	}
-
-	componentDidMount() {
-		// If it's a reply, give the input focus if commentText exists ( can not exist if comments are closed )
-		if ( this.props.parentCommentId && this._textareaNode ) {
-			this._textareaNode.focus();
-		}
-	}
-
-	componentDidUpdate() {
-		const commentTextNode = this.refs.commentText;
-
-		if ( ! commentTextNode ) {
-			return;
-		}
-
-		const commentText = this.getCommentText();
-		const currentHeight = parseInt( commentTextNode.style.height, 10 ) || 0;
-		commentTextNode.style.height = commentText.length
-			? Math.max( commentTextNode.scrollHeight, currentHeight ) + 'px'
-			: null;
-	}
-
-	handleTextAreaNode( textareaNode ) {
-		this._textareaNode = textareaNode;
 	}
 
 	handleSubmit( event ) {
@@ -202,42 +178,41 @@ class PostCommentForm extends React.Component {
 			'expanding-area': true,
 		} );
 
+		const isReply = !! this.props.parentCommentId;
+
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
-			<form className="comments__form" ref="commentForm">
+			<form className="comments__form">
 				<fieldset>
 					<Gravatar user={ this.props.currentUser } />
-					<label>
-						<div className={ expandingAreaClasses }>
-							<pre>
-								<span>{ this.state.commentText }</span>
-								<br />
-							</pre>
-							<AutoDirection>
-								<textarea
-									className="comments__form-textarea"
-									value={ this.state.commentText }
-									placeholder={ translate( 'Enter your comment here…' ) }
-									ref={ this.handleTextAreaNode }
-									onKeyUp={ this.handleKeyUp }
-									onKeyDown={ this.handleKeyDown }
-									onFocus={ this.handleFocus }
-									onBlur={ this.handleBlur }
-									onChange={ this.handleTextChange }
-								/>
-							</AutoDirection>
-						</div>
-						<button
-							ref="commentButton"
-							className={ buttonClasses }
-							disabled={ this.state.commentText.length === 0 }
-							onClick={ this.handleSubmit }
-						>
-							{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
-						</button>
-						{ this.renderError() }
-					</label>
+					<div className={ expandingAreaClasses }>
+						<pre>
+							<span>{ this.state.commentText }</span>
+							<br />
+						</pre>
+						<AutoDirection>
+							<PostCommentFormTextarea
+								value={ this.state.commentText }
+								placeholder={ translate( 'Enter your comment here…' ) }
+								onKeyUp={ this.handleKeyUp }
+								onKeyDown={ this.handleKeyDown }
+								onFocus={ this.handleFocus }
+								onBlur={ this.handleBlur }
+								onChange={ this.handleTextChange }
+								siteId={ post.site_ID }
+								enableAutoFocus={ isReply }
+							/>
+						</AutoDirection>
+					</div>
+					<button
+						className={ buttonClasses }
+						disabled={ this.state.commentText.length === 0 }
+						onClick={ this.handleSubmit }
+					>
+						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
+					</button>
+					{ this.renderError() }
 				</fieldset>
 			</form>
 		);

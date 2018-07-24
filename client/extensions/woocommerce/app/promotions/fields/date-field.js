@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -11,11 +13,11 @@ import { localize } from 'i18n-calypso';
 import DatePicker from 'components/date-picker';
 import FormField from './form-field';
 
-const DateField = ( props ) => {
+const DateField = props => {
 	const { fieldName, explanationText, disabledDays, value, edit, moment } = props;
-	const selectedDay = ( value ? new Date( value ) : new Date() );
+	const selectedDay = value ? new Date( value ) : new Date();
 
-	const onSelectDay = ( day ) => {
+	const onSelectDay = day => {
 		edit( fieldName, moment( day ).format( 'YYYY-MM-DDTHH:mm:ss' ) );
 	};
 
@@ -40,4 +42,3 @@ DateField.propTypes = {
 };
 
 export default localize( DateField );
-

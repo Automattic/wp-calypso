@@ -5,17 +5,11 @@
  */
 
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
 import { setPosterUrl, showError, showUploadProgress } from 'state/ui/editor/video-editor/actions';
 
-/**
- * Updates the poster for a video.
- *
- * @param  {Object} store Redux store
- * @param  {Object} action Action object
- */
-export const updatePoster = ( { dispatch }, action ) => {
+export const updatePoster = action => {
 	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {
 		return;
 	}
@@ -31,33 +25,26 @@ export const updatePoster = ( { dispatch }, action ) => {
 		atTime !== undefined && { body: { at_time: atTime } }
 	);
 
-	dispatch( http( params, action ) );
+	return http( params, action );
 };
 
-export const receivePosterUrl = ( { dispatch }, action, { poster: posterUrl } ) => {
-	dispatch( setPosterUrl( posterUrl ) );
+export const receivePosterUrl = ( action, { poster: posterUrl } ) => setPosterUrl( posterUrl );
+
+export const receiveUploadProgress = ( action, progress ) => {
+	const hasProgressData = 'loaded' in progress && 'total' in progress;
+	const percentage = hasProgressData
+		? Math.min( Math.round( ( progress.loaded / ( Number.EPSILON + progress.total ) ) * 100 ), 100 )
+		: 0;
+
+	return showUploadProgress( percentage );
 };
 
-export const receivePosterError = ( { dispatch } ) => {
-	dispatch( showError() );
-};
-
-export const receiveUploadProgress = ( { dispatch }, action, progress ) => {
-	let percentage = 0;
-
-	if ( 'loaded' in progress && 'total' in progress ) {
-		percentage = Math.min( Math.round( progress.loaded / progress.total * 100 ), 100 );
-	}
-
-	dispatch( showUploadProgress( percentage ) );
-};
-
-export const dispatchPosterRequest = dispatchRequest(
-	updatePoster,
-	receivePosterUrl,
-	receivePosterError,
-	{ onProgress: receiveUploadProgress }
-);
+export const dispatchPosterRequest = dispatchRequestEx( {
+	fetch: updatePoster,
+	onSuccess: receivePosterUrl,
+	onError: showError,
+	onProgress: receiveUploadProgress,
+} );
 
 export default {
 	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchPosterRequest ],

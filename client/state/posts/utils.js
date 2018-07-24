@@ -5,10 +5,13 @@
  */
 
 import {
+	concat,
 	get,
 	isEmpty,
 	isPlainObject,
+	filter,
 	flow,
+	includes,
 	map,
 	mapValues,
 	mergeWith,
@@ -22,7 +25,11 @@ import {
 	every,
 	unset,
 	xor,
+	find,
+	reject,
 } from 'lodash';
+import { moment } from 'i18n-calypso';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -33,6 +40,7 @@ import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import stripHtml from 'lib/post-normalizer/rule-strip-html';
+import postNormalizer from 'lib/post-normalizer';
 
 /**
  * Constants
@@ -116,17 +124,84 @@ export function getSerializedPostsQueryWithoutPage( query, siteId ) {
 	return getSerializedPostsQuery( omit( query, 'page' ), siteId );
 }
 
-/**
- * Merges objects like Lodash `merge` but takes array values directly from the
- * source object rather than attempting to merge by index.  Used to ensure that
- * edits to post terms (especially term removals) are reflected correctly.
- *
- * @param  {Object}    object  Destination object for merge
- * @param  {...Object} sources Source objects for merge
- * @return {Object}            Merged object with values from all sources
+/*
+ * Applies a metadata edit operation (either update or delete) to an existing array of
+ * metadata values.
  */
-export function mergeIgnoringArrays( object, ...sources ) {
-	return mergeWith( object, ...sources, ( objValue, srcValue ) => {
+function applyMetadataEdit( metadata, edit ) {
+	switch ( edit.operation ) {
+		case 'update': {
+			// Either update existing key's value or append a new one at the end
+			const { key, value } = edit;
+			if ( find( metadata, { key } ) ) {
+				return map( metadata, m => ( m.key === key ? { key, value } : m ) );
+			}
+			return concat( metadata || [], { key, value } );
+		}
+		case 'delete': {
+			// Remove a value from the metadata array. If the key is not present,
+			// return unmodified original value.
+			const { key } = edit;
+			if ( find( metadata, { key } ) ) {
+				return reject( metadata, { key } );
+			}
+			return metadata;
+		}
+	}
+
+	return metadata;
+}
+
+function applyMetadataEdits( metadata, edits ) {
+	return reduce( edits, applyMetadataEdit, metadata );
+}
+
+/**
+ * Merges edits into a post object. Essentially performs a deep merge of two objects,
+ * except that arrays are treated as atomic values and overwritten rather than merged.
+ * That's important especially for term removals.
+ *
+ * @param  {Object} post  Destination post for merge
+ * @param  {Object} edits Objects with edits
+ * @return {Object}       Merged post with applied edits
+ */
+export function applyPostEdits( post, edits ) {
+	return mergeWith( cloneDeep( post ), edits, ( objValue, srcValue, key, obj, src, stack ) => {
+		// Merge metadata specially. Only a `metadata` key at top level gets special treatment,
+		// keys with the same name in nested objects do not.
+		if ( key === 'metadata' && stack.size === 0 ) {
+			return applyMetadataEdits( objValue, srcValue );
+		}
+
+		if ( Array.isArray( srcValue ) ) {
+			return srcValue;
+		}
+	} );
+}
+
+function mergeMetadataEdits( edits, nextEdits ) {
+	// remove existing edits that get updated in `nextEdits`
+	const newEdits = reject( edits, edit => find( nextEdits, { key: edit.key } ) );
+	// append the new edits at the end
+	return concat( newEdits, nextEdits );
+}
+
+/**
+ * Merges two post edits objects into one. Essentially performs a deep merge of two objects,
+ * except that arrays are treated as atomic values and overwritten rather than merged.
+ * That's important especially for term removals.
+ *
+ * @param  {Object} edits     Destination edits object for merge
+ * @param  {Object} nextEdits Edits object to be merged
+ * @return {Object}           Merged edits object with changes from both sources
+ */
+export function mergePostEdits( edits, nextEdits ) {
+	return mergeWith( cloneDeep( edits ), nextEdits, ( objValue, srcValue, key, obj, src, stack ) => {
+		if ( key === 'metadata' && stack.size === 0 ) {
+			// merge metadata specially
+			return mergeMetadataEdits( objValue, srcValue );
+		}
+
 		if ( Array.isArray( srcValue ) ) {
 			return srcValue;
 		}
@@ -197,7 +272,7 @@ export function normalizePostForState( post ) {
 			...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] ),
 		],
 		( memo, path ) => {
-			unset( memo, path.concat( 'meta' ) );
+			unset( memo, path.concat( 'meta', 'links' ) );
 			return memo;
 		},
 		normalizedPost
@@ -298,6 +373,76 @@ export function isDiscussionEqual( localDiscussionEdits, savedDiscussion ) {
 }
 
 /**
+ * Returns true if the locally edited author ID is equal to the saved post author's ID. Other
+ * properties of the `author` object are irrelevant.
+ *
+ * @param  {Object}  localAuthorEdit locally edited author object
+ * @param  {Object}  savedAuthor     author property returned from API POST
+ * @return {Boolean}                 are the locally edited and saved values equal?
+ */
+export function isAuthorEqual( localAuthorEdit, savedAuthor ) {
+	return get( localAuthorEdit, 'ID' ) === get( savedAuthor, 'ID' );
+}
+
+export function isDateEqual( localDateEdit, savedDate ) {
+	// if the local date edit is false, it means we are asking the server to reset
+	// the scheduled date to "now". In that case, we accept the date value returned
+	// by the server and consider the edit saved.
+	if ( localDateEdit === false ) {
+		return true;
+	}
+
+	return localDateEdit && moment( localDateEdit ).isSame( savedDate );
+}
+
+export function isStatusEqual( localStatusEdit, savedStatus ) {
+	// When receiving a request to change the `status` attribute, the server
+	// treats `publish` and `future` as synonyms. It's really the post's `date`
+	// that determines the resulting status, not the requested value.
+	// Therefore, the `status` edit is considered saved and removed from the
+	// local edits even if the value returned by server is different.
+	if ( includes( [ 'publish', 'future' ], localStatusEdit ) ) {
+		return includes( [ 'publish', 'future' ], savedStatus );
+	}
+
+	// All other statuses (draft, private, pending) are 1:1. The only possible
+	// exception is requesting `publish` and not having rights to publish new
+	// posts. Then the server sets a `pending` status. But we check for this case
+	// in the UI and request `pending` instead of `publish` if the user doesn't
+	// have the rights.
+	return localStatusEdit === savedStatus;
+}
+
+function isUnappliedMetadataEdit( edit, savedMetadata ) {
+	const savedRecord = find( savedMetadata, { key: edit.key } );
+
+	// is an update already performed?
+	if ( edit.operation === 'update' ) {
+		return ! savedRecord || savedRecord.value !== edit.value;
+	}
+
+	// is a property already deleted?
+	if ( edit.operation === 'delete' ) {
+		return !! savedRecord;
+	}
+
+	return false;
+}
+
+/*
+ * Returns edits that are not yet applied, i.e.:
+ * - when updating, the property doesn't already have the desired value in `savedMetadata`
+ * - when deleting, the property is still present in `savedMetadata`
+ */
+export function getUnappliedMetadataEdits( edits, savedMetadata ) {
+	return filter( edits, edit => isUnappliedMetadataEdit( edit, savedMetadata ) );
+}
+
+export function areAllMetadataEditsApplied( edits, savedMetadata ) {
+	return every( edits, edit => ! isUnappliedMetadataEdit( edit, savedMetadata ) );
+}
+
+/**
  * Returns a normalized post object for sending to the API
  *
  * @param  {Object} post Raw post object
@@ -310,3 +455,293 @@ export function normalizePostForApi( post ) {
 
 	return normalizeApiFlow( post );
 }
+
+export const getEditURL = function( post, site ) {
+	if ( ! site ) {
+		return '/post';
+	}
+
+	if ( ! post ) {
+		return `/post/${ site.slug }`;
+	}
+
+	let path;
+
+	const type = post.type || 'post';
+	switch ( type ) {
+		case 'post':
+			path = '/post';
+			break;
+		case 'page':
+			path = '/page';
+			break;
+		default:
+			path = `/edit/${ type }`;
+			break;
+	}
+
+	path += `/${ site.slug }`;
+
+	if ( post.ID ) {
+		path += `/${ post.ID }`;
+	}
+
+	return path;
+};
+
+export const getPreviewURL = function( site, post, autosavePreviewUrl ) {
+	let parsed, previewUrl;
+
+	if ( ! post || ! post.URL || post.status === 'trash' ) {
+		return '';
+	}
+
+	if ( autosavePreviewUrl ) {
+		previewUrl = autosavePreviewUrl;
+	} else if ( post.status === 'publish' ) {
+		previewUrl = post.URL;
+	} else {
+		parsed = url.parse( post.URL, true );
+		parsed.query.preview = 'true';
+		delete parsed.search;
+		previewUrl = url.format( parsed );
+	}
+
+	if ( post.site_ID ) {
+		if ( ! ( site && site.options ) ) {
+			// site info is still loading, just use what we already have until it does
+			return previewUrl;
+		}
+		if ( site.options.is_mapped_domain ) {
+			previewUrl = previewUrl.replace( site.URL, site.options.unmapped_url );
+		}
+		if ( site.options.frame_nonce ) {
+			parsed = url.parse( previewUrl, true );
+			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
+			delete parsed.search;
+			previewUrl = url.format( parsed );
+		}
+	}
+
+	return previewUrl;
+};
+
+export const userCan = function( capability, post ) {
+	const hasCap = post.capabilities && post.capabilities[ capability ];
+
+	if ( capability === 'edit_post' ) {
+		return hasCap && post.status !== 'trash';
+	}
+
+	return hasCap;
+};
+
+// Return backdated-published status of a post. Optionally, the `status` can be overridden
+// with a custom value: what would the post status be if a `status` edit was applied?
+export const isBackDatedPublished = function( post, status ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	const effectiveStatus = status || post.status;
+
+	return effectiveStatus === 'future' && moment( post.date ).isBefore( moment() );
+};
+
+// Return published status of a post. Optionally, the `status` can be overridden
+// with a custom value: what would the post status be if a `status` edit was applied?
+export const isPublished = function( post, status ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	const effectiveStatus = status || post.status;
+
+	return (
+		effectiveStatus === 'publish' ||
+		effectiveStatus === 'private' ||
+		isBackDatedPublished( post, status )
+	);
+};
+
+export const isScheduled = function( post ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'future';
+};
+
+export const isPrivate = function( post ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'private';
+};
+
+export const isPending = function( post ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	return post.status === 'pending';
+};
+
+export const getEditedTime = function( post ) {
+	if ( ! post ) {
+		return;
+	}
+
+	if ( post.status === 'publish' || post.status === 'future' ) {
+		return post.date;
+	}
+
+	return post.modified;
+};
+
+export const isFutureDated = function( post ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	const oneMinute = 1000 * 60;
+
+	return post && +new Date() + oneMinute < +new Date( post.date );
+};
+
+export const isBackDated = function( post ) {
+	if ( ! post || ! post.date || ! post.modified ) {
+		return false;
+	}
+
+	return moment( post.date ).isBefore( moment( post.modified ) );
+};
+
+export const isPage = function( post ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	return post && 'page' === post.type;
+};
+
+export const normalizeSync = function( post, callback ) {
+	const imageWidth = 653;
+	postNormalizer(
+		post,
+		[
+			postNormalizer.decodeEntities,
+			postNormalizer.stripHTML,
+			postNormalizer.safeImageProperties( imageWidth ),
+			postNormalizer.withContentDOM( [
+				postNormalizer.content.removeStyles,
+				postNormalizer.content.makeImagesSafe( imageWidth ),
+				postNormalizer.content.detectMedia,
+			] ),
+			postNormalizer.pickCanonicalImage,
+		],
+		callback
+	);
+};
+
+export const getVisibility = function( post ) {
+	if ( ! post ) {
+		return null;
+	}
+
+	if ( post.password ) {
+		return 'password';
+	}
+
+	if ( 'private' === post.status ) {
+		return 'private';
+	}
+
+	return 'public';
+};
+
+export const normalizeAsync = function( post, callback ) {
+	postNormalizer( post, [ postNormalizer.keepValidImages( 72, 72 ) ], callback );
+};
+
+export const removeSlug = function( path ) {
+	if ( ! path ) {
+		return;
+	}
+
+	const pathParts = path.slice( 0, -1 ).split( '/' );
+	pathParts[ pathParts.length - 1 ] = '';
+
+	return pathParts.join( '/' );
+};
+
+export const getPermalinkBasePath = function( post ) {
+	if ( ! post ) {
+		return;
+	}
+
+	let path = post.URL;
+
+	// if we have a permalink_URL, utlize that
+	if ( ! isPublished( post ) && post.other_URLs && post.other_URLs.permalink_URL ) {
+		path = post.other_URLs.permalink_URL;
+	}
+
+	return removeSlug( path );
+};
+
+export const getPagePath = function( post ) {
+	if ( ! post ) {
+		return;
+	}
+	if ( ! isPublished( post ) ) {
+		return getPermalinkBasePath( post );
+	}
+
+	return removeSlug( post.URL );
+};
+
+/**
+ * Returns the ID of the featured image assigned to the specified post, or
+ * `undefined` otherwise. A utility function is useful because the format
+ * of a post varies between the retrieve and update endpoints. When
+ * retrieving a post, the thumbnail ID is assigned in `post_thumbnail`, but
+ * in creating a post, the thumbnail ID is assigned to `featured_image`.
+ *
+ * @param  {Object} post Post object
+ * @returns {*} featured image id or undefined
+ */
+export const getFeaturedImageId = function( post ) {
+	if ( ! post ) {
+		return;
+	}
+
+	if ( 'featured_image' in post && ! /^https?:\/\//.test( post.featured_image ) ) {
+		// Return the `featured_image` property if it does not appear to be
+		// formatted as a URL
+		return post.featured_image;
+	}
+
+	if ( post.post_thumbnail ) {
+		// After the initial load from the REST API, pull the numeric ID
+		// from the thumbnail object if one exists
+		return post.post_thumbnail.ID;
+	}
+};
+
+/**
+ * Return date with timezone offset.
+ * If `date` is not defined it returns `now`.
+ *
+ * @param {String|Date} date - date
+ * @param {String} tz - timezone
+ * @return {Moment} moment instance
+ */
+export const getOffsetDate = function( date, tz ) {
+	if ( ! tz ) {
+		return moment( date );
+	}
+
+	return moment( moment.tz( date, tz ) );
+};

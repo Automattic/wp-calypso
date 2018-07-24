@@ -19,7 +19,7 @@ export default class extends React.Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		var nextVisible = !! nextProps.isVisible;
+		const nextVisible = !! nextProps.isVisible;
 		if ( nextVisible !== this.state.visible ) {
 			this.setState( {
 				visible: nextVisible,
@@ -40,7 +40,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var welcomeClassName = this.props.additionalClassName
+		const welcomeClassName = this.props.additionalClassName
 			? this.props.additionalClassName + ' welcome-message'
 			: 'welcome-message';
 
@@ -53,8 +53,7 @@ export default class extends React.Component {
 					{ this.props.children }
 				</div>
 			);
-		} else {
-			return null;
 		}
+		return null;
 	}
 }

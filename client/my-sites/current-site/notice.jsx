@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import url from 'url';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -14,17 +15,23 @@ import { localize } from 'i18n-calypso';
 import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import getActiveDiscount from 'state/selectors/get-active-discount';
 import { domainManagementList } from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { canCurrentUser, isDomainOnlySite, isEligibleForFreeToPaidUpsell } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import isEligibleForFreeToPaidUpsell from 'state/selectors/is-eligible-for-free-to-paid-upsell';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
+import QueryActivePromotions from 'components/data/query-active-promotions';
 import {
 	isStarted as isJetpackPluginsStarted,
 	isFinished as isJetpackPluginsFinished,
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
+import { abtest } from 'lib/abtest';
+import config from 'config';
 
 class SiteNotice extends React.Component {
 	static propTypes = {
@@ -93,16 +100,57 @@ class SiteNotice extends React.Component {
 		}
 
 		const { site, translate } = this.props;
+		let href = '/plans/' + site.slug;
+		if (
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'plansBannerUpsells'
+		) {
+			href = href + '/?discount=free_domain';
+		}
 
 		return (
 			<SidebarBanner
 				ctaName="free-to-paid-sidebar"
 				ctaText={ translate( 'Upgrade' ) }
-				href={ `/plans/${ site.slug }` }
+				href={ href }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
 			/>
 		);
+	}
+
+	activeDiscountNotice() {
+		if ( ! this.props.activeDiscount ) {
+			return null;
+		}
+
+		const { site, activeDiscount } = this.props;
+		const { nudgeText, nudgeEndsTodayText, ctaText, name } = activeDiscount;
+
+		const bannerText =
+			nudgeEndsTodayText && this.promotionEndsToday( activeDiscount )
+				? nudgeEndsTodayText
+				: nudgeText;
+
+		if ( ! bannerText ) {
+			return null;
+		}
+
+		return (
+			<SidebarBanner
+				ctaName="free-to-paid-sidebar"
+				ctaText={ ctaText || 'Upgrade' }
+				href={ `/plans/${ site.slug }?discount=${ name }` }
+				icon="info-outline"
+				text={ bannerText }
+			/>
+		);
+	}
+
+	promotionEndsToday( { endsAt } ) {
+		const now = new Date();
+		const format = 'YYYYMMDD';
+		return moment( now ).format( format ) === moment( endsAt ).format( format );
 	}
 
 	jetpackPluginsSetupNotice() {
@@ -138,8 +186,8 @@ class SiteNotice extends React.Component {
 		}
 		return (
 			<div className="site__notices">
-				{ this.freeToPaidPlanNotice() }
-				<DomainToPaidPlanNotice />
+				<QueryActivePromotions />
+				{ this.activeDiscountNotice() || this.freeToPaidPlanNotice() || <DomainToPaidPlanNotice /> }
 				{ this.getSiteRedirectNotice( site ) }
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.domainCreditNotice() }
@@ -155,6 +203,7 @@ export default connect(
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
+			activeDiscount: getActiveDiscount( state ),
 			hasDomainCredit: hasDomainCredit( state, siteId ),
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			pausedJetpackPluginsSetup:

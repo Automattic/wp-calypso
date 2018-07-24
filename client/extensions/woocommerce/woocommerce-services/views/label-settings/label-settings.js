@@ -152,6 +152,28 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	renderAddCardExternalInfo = () => {
+		const { masterUserWpcomLogin, masterUserEmail, translate } = this.props;
+
+		if ( ! masterUserWpcomLogin ) {
+			return null;
+		}
+
+		return (
+			<p>
+				{ translate(
+					'Credit cards are retrieved from the following WordPress.com account: %(wpcomLogin)s <%(wpcomEmail)s>',
+					{
+						args: {
+							wpcomLogin: masterUserWpcomLogin,
+							wpcomEmail: masterUserEmail,
+						},
+					}
+				) }
+			</p>
+		);
+	};
+
 	onVisibilityChange = () => {
 		if ( ! document.hidden ) {
 			this.refetchSettings();
@@ -203,9 +225,9 @@ class ShippingLabels extends Component {
 					<p className="label-settings__credit-card-description">{ summary }</p>
 					{ canEditPayments && (
 						<p className="label-settings__credit-card-description">
-							<a href="#" onClick={ expand }>
+							<Button onClick={ expand } borderless>
 								{ translate( 'Choose a different card' ) }
-							</a>
+							</Button>
 						</p>
 					) }
 				</div>
@@ -272,9 +294,12 @@ class ShippingLabels extends Component {
 				<Button className="label-settings__internal" onClick={ openDialog } compact>
 					{ buttonLabel }
 				</Button>
-				<Button className="label-settings__external" onClick={ onAddCardExternal } compact>
-					{ buttonLabel } <Gridicon icon="external" />
-				</Button>
+				<div className="label-settings__credit-card-description label-settings__external">
+					{ this.renderAddCardExternalInfo() }
+					<Button onClick={ onAddCardExternal } compact>
+						{ buttonLabel } <Gridicon icon="external" />
+					</Button>
+				</div>
 			</div>
 		);
 	};

@@ -13,7 +13,7 @@ import { camelCase, debounce, difference, get, isEmpty, keys, map, pick } from '
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
+import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -147,23 +147,17 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.props.updateContactDetailsCache( { ...newContactDetails } );
 	};
 
-	shouldRenderOrganizationField() {
-		return this.props.ccTldDetails && this.props.ccTldDetails.legalType === 'CCO';
+	needsOrganization() {
+		return get( this.props.ccTldDetails, 'legalType' ) === 'CCO';
 	}
 
 	organizationFieldIsValid() {
-		if ( this.shouldRenderOrganizationField() ) {
-			return (
-				! isEmpty( this.props.contactDetails.organization ) &&
-				isEmpty( this.state.errorMessages.organization )
-			);
-		}
-		return true;
+		return isEmpty( this.getOrganizationErrorMessage() );
 	}
 
 	getOrganizationErrorMessage() {
 		let message = ( this.state.errorMessages.organization || [] ).join( '\n' );
-		if ( isEmpty( this.props.contactDetails.organization ) ) {
+		if ( this.needsOrganization() && isEmpty( this.props.contactDetails.organization ) ) {
 			message = this.props.translate(
 				'An organization name is required for Canadian corporations'
 			);
@@ -173,6 +167,11 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 	renderOrganizationField() {
 		const { translate, contactDetails } = this.props;
+		const label = {
+			label: translate( 'Organization' ),
+			...( this.needsOrganization() ? {} : { labelProps: { optional: true } } ),
+		};
+
 		return (
 			<FormFieldset>
 				<Input
@@ -181,7 +180,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 					value={ contactDetails.organization || '' }
 					isError={ ! this.organizationFieldIsValid() }
 					errorMessage={ this.getOrganizationErrorMessage() }
-					label={ translate( 'Organization' ) }
+					{ ...label }
 					onChange={ this.handleChangeEvent }
 				/>
 			</FormFieldset>
@@ -194,6 +193,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			...defaultValues,
 			...this.props.ccTldDetails,
 		};
+
 		const formIsValid = ciraAgreementAccepted && this.organizationFieldIsValid();
 		const validatingSubmitButton = formIsValid ? children : disableSubmitButton( children );
 
@@ -237,7 +237,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ this.shouldRenderOrganizationField() && this.renderOrganizationField() }
+				{ this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);

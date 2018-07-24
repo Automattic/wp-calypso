@@ -12,11 +12,11 @@ import { invoke } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import Card from 'components/card';
+import Tile from 'components/tile-grid/tile';
+import TileGrid from 'components/tile-grid';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PressableStoreStep from './pressable-store';
-import { BlogImage, PageImage, GridImage, StoreImage } from '../design-type-with-store/type-images';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 
 import { getThemeForDesignType } from 'signup/utils';
@@ -48,25 +48,25 @@ class DesignTypeWithStoreStep extends Component {
 				type: 'blog',
 				label: translate( 'Start with a blog' ),
 				description: blogText,
-				image: <BlogImage />,
+				image: '/calypso/images/illustrations/type-blog.svg',
 			},
 			{
 				type: 'page',
 				label: translate( 'Start with a website' ),
 				description: siteText,
-				image: <PageImage />,
+				image: '/calypso/images/illustrations/type-website.svg',
 			},
 			{
 				type: 'grid',
 				label: translate( 'Start with a portfolio' ),
 				description: gridText,
-				image: <GridImage />,
+				image: '/calypso/images/illustrations/type-portfolio.svg',
 			},
 			{
 				type: 'store',
 				label: translate( 'Start with an online store' ),
 				description: storeText,
-				image: <StoreImage />,
+				image: '/calypso/images/illustrations/type-e-commerce.svg',
 			},
 		];
 	}
@@ -117,19 +117,13 @@ class DesignTypeWithStoreStep extends Component {
 
 	renderChoice = choice => {
 		return (
-			<Card className="design-type-with-store__choice" key={ choice.type }>
-				<a
-					className="design-type-with-store__choice-link"
-					href="#"
-					onClick={ this.handleChoiceClick( choice.type ) }
-				>
-					<div className="design-type-with-store__image">{ choice.image }</div>
-					<div className="design-type-with-store__choice-copy">
-						<span className="button is-compact design-type-with-store__cta">{ choice.label }</span>
-						<p className="design-type-with-store__choice-description">{ choice.description }</p>
-					</div>
-				</a>
-			</Card>
+			<Tile
+				buttonLabel={ choice.label }
+				description={ choice.description }
+				image={ choice.image }
+				key={ choice.type }
+				onClick={ this.handleChoiceClick( choice.type ) }
+			/>
 		);
 	};
 
@@ -137,7 +131,7 @@ class DesignTypeWithStoreStep extends Component {
 		const { translate } = this.props;
 		const disclaimerText = translate(
 			'Not sure? Pick the closest option. You can always change your settings later.'
-		); // eslint-disable-line max-len
+		);
 
 		const storeWrapperClassName = classNames( 'design-type-with-store__store-wrapper', {
 			'is-hidden': ! this.state.showStore,
@@ -157,8 +151,9 @@ class DesignTypeWithStoreStep extends Component {
 						isVisible={ this.state.showStore }
 					/>
 				</div>
+
 				<div className={ designTypeListClassName }>
-					{ this.getChoices().map( this.renderChoice ) }
+					<TileGrid>{ this.getChoices().map( this.renderChoice ) }</TileGrid>
 
 					<p className="design-type-with-store__disclaimer">{ disclaimerText }</p>
 				</div>
@@ -211,7 +206,10 @@ class DesignTypeWithStoreStep extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	setDesignType,
-} )( localize( DesignTypeWithStoreStep ) );
+export default connect(
+	null,
+	{
+		recordTracksEvent,
+		setDesignType,
+	}
+)( localize( DesignTypeWithStoreStep ) );

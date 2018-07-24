@@ -51,7 +51,11 @@
 		flex-wrap: nowrap;
 
 		.gridicon {
-			top: 0;
+			top: 1px;
+
+			.pagination.is-compact & {
+				top: 0;
+			}
 		}
 	}
 

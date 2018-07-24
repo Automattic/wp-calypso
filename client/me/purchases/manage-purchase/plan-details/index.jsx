@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-
-import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,12 +20,28 @@ import SectionHeader from 'components/section-header';
 import PlanBillingPeriod from './billing-period';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getPurchase, isDataLoading } from 'me/purchases/utils';
+import { isDataLoading } from 'me/purchases/utils';
 import { getName, isExpired } from 'lib/purchases';
 import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
 import { getPluginsForSite } from 'state/plugins/premium/selectors';
 
 class PurchasePlanDetails extends Component {
+	static propTypes = {
+		purchaseId: PropTypes.number,
+
+		// Connected props
+		purchase: PropTypes.object,
+		hasLoadedSites: PropTypes.bool,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool,
+		pluginList: PropTypes.arrayOf(
+			PropTypes.shape( {
+				slug: PropTypes.string.isRequired,
+				key: PropTypes.string.isRequired,
+			} ).isRequired
+		).isRequired,
+		siteId: PropTypes.number,
+	};
+
 	renderPlaceholder() {
 		return (
 			<div className="plan-details__wrapper is-placeholder">
@@ -48,15 +64,14 @@ class PurchasePlanDetails extends Component {
 	}
 
 	render() {
-		const { selectedSite, pluginList, translate } = this.props;
-		const purchase = getPurchase( this.props );
+		const { pluginList, purchase, siteId, translate } = this.props;
 
 		// Short out as soon as we know it's not a Jetpack plan
 		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
 			return null;
 		}
 
-		if ( isDataLoading( this.props ) || ! this.props.selectedSite ) {
+		if ( isDataLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
 
@@ -72,7 +87,7 @@ class PurchasePlanDetails extends Component {
 
 		return (
 			<div className="plan-details">
-				<QueryPluginKeys siteId={ selectedSite.ID } />
+				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
 				<SectionHeader label={ headerText } />
 				<Card>
 					<PlanBillingPeriod purchase={ purchase } />
@@ -93,11 +108,15 @@ class PurchasePlanDetails extends Component {
 	}
 }
 
-// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading,
-// selectedPurchase is used in getPurchase
-export default connect( ( state, props ) => ( {
-	hasLoadedSites: ! isRequestingSites( state ),
-	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-	selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-	pluginList: props.selectedSite ? getPluginsForSite( state, props.selectedSite.ID ) : [],
-} ) )( localize( PurchasePlanDetails ) );
+// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
+export default connect( ( state, props ) => {
+	const purchase = getByPurchaseId( state, props.purchaseId );
+	const siteId = purchase ? purchase.siteId : null;
+	return {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		purchase,
+		pluginList: getPluginsForSite( state, siteId ),
+		siteId,
+	};
+} )( localize( PurchasePlanDetails ) );

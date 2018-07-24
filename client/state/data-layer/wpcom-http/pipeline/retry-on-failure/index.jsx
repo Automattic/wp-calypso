@@ -11,7 +11,11 @@ import { default as defaultPolicy } from './policies';
 const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
 
 export const retryOnFailure = ( getDelay = defaultDelay ) => inboundData => {
-	const { nextError, originalRequest, store: { dispatch } } = inboundData;
+	const {
+		nextError,
+		originalRequest,
+		store: { dispatch },
+	} = inboundData;
 
 	// if the request came back successfully
 	// then we have no need to intercept it

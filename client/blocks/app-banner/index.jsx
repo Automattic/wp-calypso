@@ -16,9 +16,10 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'state/ui/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
-import { isNotificationsOpen } from 'state/selectors';
+import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -27,7 +28,7 @@ import {
 } from 'state/analytics/actions';
 import { savePreference } from 'state/preferences/actions';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { getSelectedSiteId } from 'state/ui/selectors';
+
 import { get, identity, includes, noop } from 'lodash';
 import {
 	ALLOWED_SECTIONS,
@@ -46,7 +47,7 @@ import versionCompare from 'lib/version-compare';
 const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
 
-class AppBanner extends Component {
+export class AppBanner extends Component {
 	static propTypes = {
 		saveDismissTime: PropTypes.func,
 		translate: PropTypes.func,
@@ -115,7 +116,7 @@ class AppBanner extends Component {
 	};
 
 	getDeepLink() {
-		const { currentSection } = this.props;
+		const { currentRoute, currentSection } = this.props;
 
 		if ( this.isAndroid() ) {
 			//TODO: update when section deep links are available.
@@ -131,9 +132,8 @@ class AppBanner extends Component {
 			}
 		}
 
-		//TODO: update when deferred deep links are available
 		if ( this.isiOS() ) {
-			return 'itms://itunes.apple.com/us/app/wordpress/id335703880?mt=8';
+			return getiOSDeepLink( currentRoute, currentSection );
 		}
 
 		return null;
@@ -194,6 +194,37 @@ class AppBanner extends Component {
 	}
 }
 
+export function getiOSDeepLink( currentRoute, currentSection ) {
+	const baseURI = 'https://apps.wordpress.com/get';
+	const fragment = buildDeepLinkFragment( currentRoute, currentSection );
+
+	return fragment.length > 0 ? `${ baseURI }#${ fragment }` : baseURI;
+}
+
+export function buildDeepLinkFragment( currentRoute, currentSection ) {
+	const hasRoute = currentRoute !== null && currentRoute !== '/';
+
+	const getFragment = () => {
+		switch ( currentSection ) {
+			case EDITOR:
+				return '/post';
+			case NOTES:
+				return '/notifications';
+			case READER:
+				// The Reader is generally accessed at the root of WordPress.com ('/').
+				// In this case, we need to manually add the section name to the
+				// URL so that the iOS app knows which section to open.
+				return hasRoute ? currentRoute : '/read';
+			case STATS:
+				return hasRoute ? currentRoute : '/stats';
+			default:
+				return '';
+		}
+	};
+
+	return encodeURIComponent( getFragment() );
+}
+
 const mapStateToProps = state => {
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
@@ -201,6 +232,7 @@ const mapStateToProps = state => {
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
+		currentRoute: getCurrentRoute( state ),
 		fetchingPreferences: isFetchingPreferences( state ),
 		siteId: getSelectedSiteId( state ),
 	};
@@ -225,4 +257,7 @@ const mapDispatchToProps = {
 		),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( AppBanner ) );

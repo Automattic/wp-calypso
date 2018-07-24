@@ -16,7 +16,6 @@ export {
 	getStatsPathForTab,
 	mapPostStatus,
 	sectionify,
-	sectionifyWithRoutes,
 } from './path';
 
 const appendQueryString = ( basepath, querystring ) =>

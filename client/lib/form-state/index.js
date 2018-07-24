@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import {
 	assign,
 	camelCase,
@@ -24,7 +23,7 @@ import {
 import update from 'immutability-helper';
 
 function Controller( options ) {
-	var debounceWait;
+	let debounceWait;
 
 	if ( ! ( this instanceof Controller ) ) {
 		return new Controller( options );
@@ -42,6 +41,7 @@ function Controller( options ) {
 
 	this._sanitizerFunction = options.sanitizerFunction;
 	this._validatorFunction = options.validatorFunction;
+	this._skipSanitizeAndValidateOnFieldChange = options.skipSanitizeAndValidateOnFieldChange;
 	this._loadFunction = options.loadFunction;
 	this._onNewState = options.onNewState;
 	this._onError = options.onError;
@@ -81,18 +81,23 @@ assign( Controller.prototype, {
 	},
 
 	handleFieldChange: function( change ) {
-		var formState = this._currentState,
+		let formState = this._currentState,
 			name = camelCase( change.name ),
 			value = change.value,
 			hideError = this._hideFieldErrorsOnChange || change.hideError;
 
 		this._setState( changeFieldValue( formState, name, value, hideError ) );
-		this._debouncedSanitize();
-		this._debouncedValidate();
+
+		// If we want to handle sanitize/validate differently in the component (e.g. onBlur)
+		// FormState handleSubmit() will sanitize/validate if not done yet
+		if ( ! this._skipSanitizeAndValidateOnFieldChange ) {
+			this._debouncedSanitize();
+			this._debouncedValidate();
+		}
 	},
 
 	handleSubmit: function( onComplete ) {
-		var isAlreadyValid =
+		const isAlreadyValid =
 			! this._pendingValidation &&
 			! needsValidation( this._currentState ) &&
 			isEveryFieldInitialized( this._currentState );
@@ -119,7 +124,7 @@ assign( Controller.prototype, {
 	},
 
 	sanitize: function() {
-		var fieldValues = getAllFieldValues( this._currentState );
+		const fieldValues = getAllFieldValues( this._currentState );
 
 		if ( ! this._sanitizerFunction ) {
 			return;
@@ -134,7 +139,7 @@ assign( Controller.prototype, {
 	},
 
 	validate: function() {
-		var fieldValues = getAllFieldValues( this._currentState ),
+		let fieldValues = getAllFieldValues( this._currentState ),
 			id = uniqueId();
 
 		this._setState( setFieldsValidating( this._currentState ) );
@@ -173,7 +178,7 @@ assign( Controller.prototype, {
 } );
 
 function changeFieldValue( formState, name, value, hideFieldErrorsOnChange ) {
-	var fieldState = getField( formState, name ),
+	let fieldState = getField( formState, name ),
 		command = {},
 		errors;
 
@@ -227,7 +232,7 @@ function setFieldErrors( formState, fieldErrors, hideFieldErrorsOnChange ) {
 		{},
 		formState,
 		updateFields( getFieldsValidating( formState ), function( name ) {
-			var newFields = {
+			const newFields = {
 				errors: fieldErrors[ name ] || [],
 				isPendingValidation: false,
 				isValidating: false,
@@ -312,19 +317,19 @@ function isEveryFieldInitialized( formState ) {
 }
 
 function isFieldInvalid( formState, fieldName ) {
-	var field = getField( formState, fieldName );
+	const field = getField( formState, fieldName );
 
 	return isInitialized( field ) && field.isShowingErrors && ! isEmpty( field.errors );
 }
 
 function isFieldPendingValidation( formState, fieldName ) {
-	var field = getField( formState, fieldName );
+	const field = getField( formState, fieldName );
 
 	return field.isPendingValidation;
 }
 
 function isFieldValidating( formState, fieldName ) {
-	var field = getField( formState, fieldName );
+	const field = getField( formState, fieldName );
 
 	return field.isValidating;
 }
@@ -335,7 +340,7 @@ function getInvalidFields( formState ) {
 	} );
 }
 function getErrorMessages( formState ) {
-	var invalidFields = getInvalidFields( formState );
+	const invalidFields = getInvalidFields( formState );
 
 	return flatten( map( invalidFields, 'errors' ) );
 }
@@ -345,7 +350,7 @@ function isSubmitButtonDisabled( formState ) {
 }
 
 function isFieldDisabled( formState, fieldName ) {
-	var field = getField( formState, fieldName );
+	const field = getField( formState, fieldName );
 	return ! isInitialized( field );
 }
 

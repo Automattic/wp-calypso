@@ -99,7 +99,7 @@ class Site extends React.Component {
 						this.props.homeLink
 							? translate( 'View site %(domain)s', {
 									args: { domain: site.domain },
-								} )
+							  } )
 							: site.domain
 					}
 					onClick={ this.onSelect }
@@ -109,7 +109,7 @@ class Site extends React.Component {
 						this.props.homeLink
 							? translate( 'View site %(domain)s', {
 									args: { domain: site.domain },
-								} )
+							  } )
 							: site.domain
 					}
 				>

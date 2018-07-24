@@ -15,7 +15,7 @@ import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 const ruleWhiteList = [
@@ -28,6 +28,8 @@ const ruleWhiteList = [
 	'wrongNSMappedDomains',
 	'pendingGappsTosAcceptanceDomains',
 	'transferStatus',
+	'newTransfersWrongNS',
+	'pendingConsent',
 ];
 
 const CurrentSiteDomainWarnings = ( { domains, isAtomic, isJetpack, selectedSite } ) => {

@@ -1,15 +1,14 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
 } from 'state/action-types';
+import 'state/data-layer/wpcom/plans';
 
 /**
  * Action creator function: RECEIVE

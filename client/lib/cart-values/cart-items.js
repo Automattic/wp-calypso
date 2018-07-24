@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import update from 'immutability-helper';
 import {
 	assign,
@@ -19,6 +18,7 @@ import {
 	merge,
 	reject,
 	some,
+	toLower,
 	uniq,
 } from 'lodash';
 
@@ -27,6 +27,7 @@ import {
  */
 import {
 	formatProduct,
+	getDomain,
 	isCustomDesign,
 	isDependentProduct,
 	isDomainMapping,
@@ -52,7 +53,14 @@ import {
 import sortProducts from 'lib/products-values/sort';
 import { getTld } from 'lib/domains';
 import { domainProductSlugs } from 'lib/domains/constants';
-import { isPersonalPlan, isPremiumPlan, isBusinessPlan, isWpComFreePlan } from 'lib/plans';
+import {
+	getTermDuration,
+	getPlan,
+	isPersonalPlan,
+	isPremiumPlan,
+	isBusinessPlan,
+	isWpComFreePlan,
+} from 'lib/plans';
 
 /**
  * Adds the specified item to a shopping cart.
@@ -127,11 +135,25 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
  */
 export function remove( cartItemToRemove ) {
 	function rejectItem( products ) {
-		return reject( products, function( existingCartItem ) {
+		const productsLeft = reject( products, function( existingCartItem ) {
 			return (
 				cartItemToRemove.product_slug === existingCartItem.product_slug &&
 				cartItemToRemove.meta === existingCartItem.meta
 			);
+		} );
+
+		const isRemovingDomainProduct =
+			isDomainMapping( cartItemToRemove ) || isDomainRegistration( cartItemToRemove );
+		return productsLeft.map( existingCartItem => {
+			if (
+				isPlan( existingCartItem ) &&
+				isRemovingDomainProduct &&
+				getDomain( cartItemToRemove ) === getDomain( existingCartItem )
+			) {
+				return update( existingCartItem, { extra: { $merge: { domain_to_bundle: '' } } } );
+			}
+
+			return existingCartItem;
 		} );
 	}
 
@@ -153,6 +175,19 @@ export function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPl
 	const changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
 
 	return flow.apply( null, changes );
+}
+
+/**
+ * Removes the specified item and its dependency items from a shopping cart.
+ *
+ * @param {Object} oldItem - item as `CartItemValue` object
+ * @param {Object} newItem - item as `CartItemValue` object
+ * @returns {Function} the function that removes the items from a shopping cart
+ */
+export function replaceItem( oldItem, newItem ) {
+	return function( cart ) {
+		return flow( [ remove( oldItem ), add( newItem ) ] )( cart );
+	};
 }
 
 /**
@@ -366,6 +401,23 @@ export function hasOnlyRenewalItems( cart ) {
 }
 
 /**
+ * Returns a bill period of given cartItem
+ *
+ * @param {Object} cartItem - cartItem
+ * @returns {Number|null} bill period of given cartItem
+ */
+export function getCartItemBillPeriod( cartItem ) {
+	let billPeriod = cartItem.bill_period;
+	if ( ! Number.isInteger( billPeriod ) ) {
+		const plan = getPlan( cartItem.product_slug );
+		if ( plan ) {
+			billPeriod = getTermDuration( plan.term );
+		}
+	}
+	return billPeriod;
+}
+
+/**
  * Determines whether any product in the specified shopping cart is a renewable subscription.
  * Will return false if the cart is empty.
  *
@@ -373,25 +425,28 @@ export function hasOnlyRenewalItems( cart ) {
  * @returns {boolean} true if any product in the cart renews
  */
 export function hasRenewableSubscription( cart ) {
-	return cart.products && some( getAll( cart ), cartItem => cartItem.bill_period > 0 );
+	return cart.products && some( getAll( cart ), cartItem => getCartItemBillPeriod( cartItem ) > 0 );
 }
 
 /**
  * Creates a new shopping cart item for a plan.
  *
  * @param {Object} productSlug - the unique string that identifies the product
- * @param {boolean} isFreeTrialItem - optionally specifies if this is a free trial or not
+ * @param {Object} properties - list of properties
  * @returns {Object} the new item as `CartItemValue` object
  */
-export function planItem( productSlug, isFreeTrialItem = false ) {
+export function planItem( productSlug, properties ) {
 	// Free plan doesn't have shopping cart.
 	if ( isWpComFreePlan( productSlug ) ) {
 		return null;
 	}
 
+	const domainToBundle = get( properties, 'domainToBundle', '' );
+
 	return {
 		product_slug: productSlug,
-		free_trial: isFreeTrialItem,
+		free_trial: get( properties, 'isFreeTrialItem', false ),
+		...( domainToBundle ? { extra: { domain_to_bundle: domainToBundle } } : {} ),
 	};
 }
 
@@ -403,7 +458,7 @@ export function planItem( productSlug, isFreeTrialItem = false ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 export function personalPlan( slug, properties ) {
-	return planItem( slug, properties.isFreeTrial );
+	return planItem( slug, properties );
 }
 
 /**
@@ -414,7 +469,7 @@ export function personalPlan( slug, properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 export function premiumPlan( slug, properties ) {
-	return planItem( slug, properties.isFreeTrial );
+	return planItem( slug, properties );
 }
 
 /**
@@ -425,7 +480,7 @@ export function premiumPlan( slug, properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 export function businessPlan( slug, properties ) {
-	return planItem( slug, properties.isFreeTrial );
+	return planItem( slug, properties );
 }
 
 /**
@@ -690,7 +745,7 @@ export function getRenewalItemFromProduct( product, properties ) {
 	}
 
 	if ( isPlan( product ) ) {
-		cartItem = planItem( product.product_slug, false );
+		cartItem = planItem( product.product_slug );
 	}
 
 	if ( isGoogleApps( product ) ) {
@@ -869,6 +924,12 @@ export function isNextDomainFree( cart ) {
 	return !! ( cart && cart.next_domain_is_free );
 }
 
+export function isDomainBundledWithPlan( cart, domain ) {
+	const bundledDomain = get( cart, 'bundled_domain', '' );
+
+	return '' !== bundledDomain && toLower( domain ) === toLower( get( cart, 'bundled_domain', '' ) );
+}
+
 export function isDomainBeingUsedForPlan( cart, domain ) {
 	if ( cart && domain && hasPlan( cart ) ) {
 		const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
@@ -991,6 +1052,7 @@ export default {
 	remove,
 	removeItemAndDependencies,
 	removePrivacyFromAllDomains,
+	replaceItem,
 	siteRedirect,
 	shouldBundleDomainWithPlan,
 	spaceUpgradeItem,

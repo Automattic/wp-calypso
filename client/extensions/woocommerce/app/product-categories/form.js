@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -167,6 +165,7 @@ class ProductCategoryForm extends Component {
 
 	renderImage = () => {
 		const { src, placeholder, isUploading } = this.state;
+		const { translate } = this.props;
 
 		let image = null;
 		if ( src && ! isUploading ) {
@@ -174,14 +173,15 @@ class ProductCategoryForm extends Component {
 				<figure>
 					<ImagePreloader
 						src={ src }
-						placeholder={ ( placeholder && <img src={ placeholder } /> ) || <span /> }
+						alt={ translate( 'Category thumbnail' ) }
+						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
 					/>
 				</figure>
 			);
 		} else if ( isUploading ) {
 			image = (
 				<figure>
-					<img src={ placeholder || null } />
+					<img src={ placeholder || '' } alt="" />
 					<Spinner />
 				</figure>
 			);
@@ -196,6 +196,7 @@ class ProductCategoryForm extends Component {
 			<Button
 				compact
 				onClick={ this.removeImage }
+				aria-label={ translate( 'Remove image' ) }
 				className="product-categories__form-image-remove"
 			>
 				<Gridicon icon="cross" size={ 24 } className="product-categories__form-image-remove-icon" />
@@ -284,7 +285,6 @@ class ProductCategoryForm extends Component {
 											onChange={ this.setParent }
 											multiple={ false }
 											height={ 300 }
-											width={ 400 }
 											hideTermAndChildren={ ( isNumber( category.id ) && category.id ) || null }
 											query={ query }
 											onSearch={ this.onSearch }

@@ -134,4 +134,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ShippingUnits ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ShippingUnits ) );

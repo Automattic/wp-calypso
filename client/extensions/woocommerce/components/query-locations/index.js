@@ -32,4 +32,7 @@ class QueryLocations extends Component {
 	};
 }
 
-export default connect( null, { fetchLocations } )( QueryLocations );
+export default connect(
+	null,
+	{ fetchLocations }
+)( QueryLocations );

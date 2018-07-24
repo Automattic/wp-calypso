@@ -80,7 +80,13 @@ export const receiveSuccess = ( { dispatch }, action, users ) => {
 		);
 	}
 
-	map( normalizedUsers, flow( receiveUser, dispatch ) );
+	map(
+		normalizedUsers,
+		flow(
+			receiveUser,
+			dispatch
+		)
+	);
 };
 
 const dispatchUsersRequest = dispatchRequest( fetchUsers, receiveSuccess, noop );

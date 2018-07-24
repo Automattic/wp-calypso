@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -14,7 +16,7 @@ import QueryPostStats from 'components/data/query-post-stats';
 import PostLikesPopover from 'blocks/post-likes/popover';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { getPostStat } from 'state/stats/posts/selectors';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
@@ -25,17 +27,17 @@ class PostActionCounts extends PureComponent {
 		globalId: PropTypes.string,
 	};
 
-	onActionClick = ( action ) => () => {
+	onActionClick = action => () => {
 		const { recordTracksEvent: record, type } = this.props;
 
 		record( 'calypso_post_list_action_click', {
 			action,
-			postType: type,
+			post_type: type,
 			context: 'action_counts',
 		} );
 	};
 
-	onLikesClick = ( event ) => {
+	onLikesClick = event => {
 		this.onActionClick( 'likes' )();
 		event.preventDefault();
 
@@ -46,12 +48,19 @@ class PostActionCounts extends PureComponent {
 		this.props.hideActiveLikesPopover();
 	};
 
-	setLikesPopoverContext = ( element ) => {
+	setLikesPopoverContext = element => {
 		this.setState( { likesPopoverContext: element } );
 	};
 
 	renderCommentCount() {
-		const { commentCount: count, numberFormat, postId, showComments, siteSlug, translate } = this.props;
+		const {
+			commentCount: count,
+			numberFormat,
+			postId,
+			showComments,
+			siteSlug,
+			translate,
+		} = this.props;
 
 		if ( count < 1 || ! showComments ) {
 			return null;
@@ -59,15 +68,14 @@ class PostActionCounts extends PureComponent {
 
 		return (
 			<li>
-				<a href={ `/comments/all/${ siteSlug }/${ postId }` } onClick={ this.onActionClick( 'comments' ) } >
-					{ translate(
-						'%(count)s Comment',
-						'%(count)s Comments',
-						{
-							count,
-							args: { count: numberFormat( count ) },
-						}
-					) }
+				<a
+					href={ `/comments/all/${ siteSlug }/${ postId }` }
+					onClick={ this.onActionClick( 'comments' ) }
+				>
+					{ translate( '%(count)s Comment', '%(count)s Comments', {
+						count,
+						args: { count: numberFormat( count ) },
+					} ) }
 				</a>
 			</li>
 		);
@@ -92,14 +100,10 @@ class PostActionCounts extends PureComponent {
 		return (
 			<li ref={ this.setLikesPopoverContext }>
 				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onLikesClick }>
-					{ translate(
-						'%(count)s Like',
-						'%(count)s Likes',
-						{
-							count,
-							args: { count: numberFormat( count ) },
-						}
-					) }
+					{ translate( '%(count)s Like', '%(count)s Likes', {
+						count,
+						args: { count: numberFormat( count ) },
+					} ) }
 				</a>
 				{ isCurrentLikesPopoverOpen && (
 					<PostLikesPopover
@@ -124,15 +128,14 @@ class PostActionCounts extends PureComponent {
 
 		return (
 			<li>
-				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onActionClick( 'stats' ) } >
-					{ translate(
-						'%(count)s View',
-						'%(count)s Views',
-						{
-							count,
-							args: { count: numberFormat( count ) },
-						}
-					) }
+				<a
+					href={ `/stats/post/${ postId }/${ siteSlug }` }
+					onClick={ this.onActionClick( 'stats' ) }
+				>
+					{ translate( '%(count)s View', '%(count)s Views', {
+						count,
+						args: { count: numberFormat( count ) },
+					} ) }
 				</a>
 			</li>
 		);
@@ -152,38 +155,41 @@ class PostActionCounts extends PureComponent {
 	}
 }
 
-export default connect( ( state, { globalId } ) => {
-	const post = getNormalizedPost( state, globalId );
-	const postId = post && post.ID;
-	const siteId = post && post.site_ID;
+export default connect(
+	( state, { globalId } ) => {
+		const post = getNormalizedPost( state, globalId );
+		const postId = post && post.ID;
+		const siteId = post && post.site_ID;
 
-	const isJetpack = isJetpackSite( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
 
-	const showComments =
-		( ! isJetpack || isJetpackModuleActive( state, siteId, 'comments' ) ) &&
-		post &&
-		post.discussion &&
-		post.discussion.comments_open;
-	const showLikes = ! isJetpack || isJetpackModuleActive( state, siteId, 'likes' );
-	const showViews =
-		canCurrentUser( state, siteId, 'view_stats' ) &&
-		( ! isJetpack || isJetpackModuleActive( state, siteId, 'stats' ) );
+		const showComments =
+			( ! isJetpack || isJetpackModuleActive( state, siteId, 'comments' ) ) &&
+			post &&
+			post.discussion &&
+			post.discussion.comments_open;
+		const showLikes = ! isJetpack || isJetpackModuleActive( state, siteId, 'likes' );
+		const showViews =
+			canCurrentUser( state, siteId, 'view_stats' ) &&
+			( ! isJetpack || isJetpackModuleActive( state, siteId, 'stats' ) );
 
-	return {
-		commentCount: get( post, 'discussion.comment_count', null ),
-		likeCount: get( post, 'like_count', null ),
-		postId,
-		showComments,
-		showLikes,
-		showViews,
-		siteId,
-		siteSlug: getSiteSlug( state, siteId ),
-		type: get( post, 'type', 'unknown' ),
-		viewCount: getPostStat( state, siteId, postId, 'views' ),
-		isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
-	};
-}, {
-	hideActiveLikesPopover,
-	toggleLikesPopover,
-	recordTracksEvent,
-} )( localize( PostActionCounts ) );
+		return {
+			commentCount: get( post, 'discussion.comment_count', null ),
+			likeCount: get( post, 'like_count', null ),
+			postId,
+			showComments,
+			showLikes,
+			showViews,
+			siteId,
+			siteSlug: getSiteSlug( state, siteId ),
+			type: get( post, 'type', 'unknown' ),
+			viewCount: getPostStat( state, siteId, postId, 'views' ),
+			isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
+		};
+	},
+	{
+		hideActiveLikesPopover,
+		toggleLikesPopover,
+		recordTracksEvent,
+	}
+)( localize( PostActionCounts ) );

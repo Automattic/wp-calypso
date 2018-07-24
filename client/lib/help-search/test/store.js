@@ -6,7 +6,7 @@ import actions from './lib/mock-actions';
 import { assert } from 'chai';
 
 describe( 'Help search Store', () => {
-	var Dispatcher, HelpSearchStore;
+	let Dispatcher, HelpSearchStore;
 
 	beforeEach( () => {
 		Dispatcher = require( 'dispatcher' );
@@ -15,14 +15,14 @@ describe( 'Help search Store', () => {
 
 	describe( 'Get Help Links', () => {
 		test( 'Should return empty array when there are no help links', () => {
-			var helpLinks = HelpSearchStore.getHelpLinks();
+			const helpLinks = HelpSearchStore.getHelpLinks();
 
 			assert( Array.isArray( helpLinks ), 'help links is not an array' );
 			assert( 0 === helpLinks.length, 'help links is empty' );
 		} );
 
 		test( 'Should return an array of help link when there are help links', () => {
-			var helpLinks;
+			let helpLinks;
 
 			Dispatcher.handleServerAction( actions.fetchedHelpLinks );
 			helpLinks = HelpSearchStore.getHelpLinks();

@@ -15,7 +15,7 @@ import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
 import FollowersStore from 'lib/followers/store';
 
-var FollowersActions = {
+const FollowersActions = {
 	fetchFollowers: ( fetchOptions, silentUpdate = false ) => {
 		const paginationData = FollowersStore.getPaginationData( fetchOptions );
 		if ( paginationData.fetchingUsers ) {

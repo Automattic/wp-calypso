@@ -20,7 +20,7 @@ import wp from 'lib/wp';
 import { domainManagementList } from 'my-sites/domains/paths';
 import Notice from 'components/notice';
 import { currentUserHasFlag } from 'state/current-user/selectors';
-import { isSiteUpgradeable } from 'state/selectors';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import QueryProductsList from 'components/data/query-products-list';
 import { getProductsList } from 'state/products-list/selectors';

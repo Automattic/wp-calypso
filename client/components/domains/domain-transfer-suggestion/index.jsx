@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 
 class DomainTransferSuggestion extends React.Component {
@@ -24,22 +23,15 @@ class DomainTransferSuggestion extends React.Component {
 			context: 'Domain transfer or mapping suggestion button',
 		} );
 
-		const props = config.isEnabled( 'domains/kracken-ui' )
-			? {
-					buttonProps: { borderless: true },
-					extraClasses: 'is-visible domain-transfer-suggestion is-kracken-ui',
-					showChevron: true,
-				}
-			: {};
-
 		return (
 			<DomainSuggestion
-				extraClasses="is-visible domain-transfer-suggestion"
 				buttonContent={ buttonContent }
-				onButtonClick={ this.props.onButtonClick }
-				tracksButtonClickSource={ this.props.tracksButtonClickSource }
+				buttonProps={ { borderless: true } }
+				extraClasses="is-visible domain-transfer-suggestion"
 				hidePrice={ true }
-				{ ...props }
+				onButtonClick={ this.props.onButtonClick }
+				showChevron
+				tracksButtonClickSource={ this.props.tracksButtonClickSource }
 			>
 				<div className="domain-transfer-suggestion__domain-description">
 					<h3>

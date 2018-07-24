@@ -3,65 +3,56 @@
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { NOTIFICATION_SETTINGS_REQUEST } from 'state/action-types';
 import { updateNotificationSettings } from 'state/notification-settings/actions';
 import { errorNotice } from 'state/notices/actions';
 
 /**
- * Dispatches a request to fetch the current user notification settings
+ * Returns an action for HTTP request to fetch the current user notification settings
  *
- * @param   {Function} dispatch Redux dispatcher
  * @param   {Object}   action   Redux action
- * @returns {Object}            dispatched http action
+ * @returns {Object}            http action
  */
-export const requestNotificationSettings = ( { dispatch }, action ) =>
-	dispatch(
-		http(
-			{
-				apiVersion: '1.1',
-				method: 'GET',
-				path: '/me/notifications/settings',
-			},
-			action
-		)
+export const requestNotificationSettings = action =>
+	http(
+		{
+			apiVersion: '1.1',
+			method: 'GET',
+			path: '/me/notifications/settings',
+		},
+		action
 	);
 
 /**
- * Dispatches a notification settings receive action then the request succeeded.
+ * Returns a notification settings receive action then the request succeeded.
  *
- * @param   {Function} dispatch  Redux dispatcher
  * @param   {Object}   action    Redux action
  * @param   {Object}   settings  raw notification settings object returned by the endpoint
- * @returns {Object}             disparched user devices add action
+ * @returns {Object}             notification settings update action
  */
-export const updateSettings = ( { dispatch }, action, settings ) =>
-	dispatch(
-		updateNotificationSettings( {
-			settings,
-		} )
-	);
+export const updateSettings = ( action, settings ) => updateNotificationSettings( settings );
 
 /**
- * Dispatches a error notice action when the request fails
+ * Returns an error notice action when the request fails
  *
- * @param   {Function} dispatch Redux dispatcher
- * @returns {Object}            dispatched error notice action
+ * @returns {Object}   error notice action
  */
-export const handleError = ( { dispatch } ) =>
-	dispatch(
-		errorNotice( translate( "We couldn't load your notification settings, please try again." ) )
-	);
+export const handleError = () =>
+	errorNotice( translate( "We couldn't load your notification settings, please try again." ) );
 
 export default {
 	[ NOTIFICATION_SETTINGS_REQUEST ]: [
-		dispatchRequest( requestNotificationSettings, updateSettings, handleError ),
+		dispatchRequestEx( {
+			fetch: requestNotificationSettings,
+			onSuccess: updateSettings,
+			onError: handleError,
+		} ),
 	],
 };

@@ -20,10 +20,11 @@ import Card from 'components/card';
 import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getSiteChecklist } from 'state/selectors';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
-import ChecklistShowShare from 'my-sites/checklist/checklist-show/share';
+import { launchTask, tasks as onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
+import { mergeObjectIntoArrayById } from 'my-sites/checklist/util';
+import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { getABTestVariation } from 'lib/abtest';
@@ -152,7 +153,7 @@ export class ChecklistBanner extends Component {
 	render() {
 		const { completed, total, translate, siteId } = this.props;
 		const task = this.getNextTask();
-		const percentage = Math.round( completed / total * 100 ) || 0;
+		const percentage = Math.round( ( completed / total ) * 100 ) || 0;
 
 		if ( ! this.canShow() ) {
 			return null;
@@ -209,7 +210,10 @@ export class ChecklistBanner extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const tasks = onboardingTasks( getSiteChecklist( state, siteId ) );
+	const tasksFromServer = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
+	const tasks = tasksFromServer
+		? mergeObjectIntoArrayById( onboardingTasks, tasksFromServer )
+		: null;
 	const task = find( tasks, { completed: false } );
 	const { true: completed } = countBy( tasks, 'completed' );
 	const siteSlug = getSiteSlug( state, siteId );
@@ -229,4 +233,7 @@ const mapDispatchToProps = {
 	requestTour: requestGuidedTour,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistBanner ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ChecklistBanner ) );

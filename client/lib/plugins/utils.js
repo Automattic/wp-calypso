@@ -164,6 +164,9 @@ export function normalizePluginData( plugin, pluginData ) {
 			case 'sections':
 				const cleanItem = {};
 				for ( const sectionKey of Object.keys( item ) ) {
+					if ( ! item[ sectionKey ] ) {
+						throw new Error( `Section expected for key ${ sectionKey }` );
+					}
 					cleanItem[ sectionKey ] = sanitizeSectionContent( item[ sectionKey ] );
 				}
 				returnData.sections = cleanItem;

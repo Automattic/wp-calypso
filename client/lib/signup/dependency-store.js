@@ -4,26 +4,25 @@
  * External dependencies
  */
 
-import { keys, difference, isEmpty } from 'lodash';
+import { get, keys, difference, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { SIGNUP_COMPLETE_RESET, SIGNUP_DEPENDENCY_STORE_UPDATE } from 'state/action-types';
-
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { updateDependencies, resetDependencies } from 'state/signup/dependency-store/actions';
 import Dispatcher from 'dispatcher';
-import steps from 'signup/config/steps';
+import steps from 'signup/config/steps-pure';
 
 const SignupDependencyStore = {
-	get: function() {
+	get() {
 		return getSignupDependencyStore( SignupDependencyStore.reduxStore.getState() );
 	},
-	reset: function() {
-		SignupDependencyStore.reduxStore.dispatch( {
-			type: SIGNUP_COMPLETE_RESET,
-			data: {},
-		} );
+	update( dependencies ) {
+		SignupDependencyStore.reduxStore.dispatch( updateDependencies( dependencies ) );
+	},
+	reset() {
+		SignupDependencyStore.reduxStore.dispatch( resetDependencies() );
 	},
 	setReduxStore( reduxStore ) {
 		this.reduxStore = reduxStore;
@@ -31,8 +30,8 @@ const SignupDependencyStore = {
 };
 
 function assertValidDependencies( action ) {
-	const providesDependencies = steps[ action.data.stepName ].providesDependencies || [],
-		extraDependencies = difference( keys( action.providedDependencies ), providesDependencies );
+	const providesDependencies = get( steps, [ action.data.stepName, 'providesDependencies' ], [] );
+	const extraDependencies = difference( keys( action.providedDependencies ), providesDependencies );
 
 	if ( ! isEmpty( extraDependencies ) ) {
 		throw new Error(
@@ -41,7 +40,7 @@ function assertValidDependencies( action ) {
 				') provides an unspecified dependency [' +
 				extraDependencies.join( ', ' ) +
 				'].' +
-				' Make sure to specify it in /signup/config/steps.js, using the providesDependencies property.'
+				' Make sure to specify it in /signup/config/steps-pure.js, using the providesDependencies property.'
 		);
 	}
 
@@ -61,10 +60,7 @@ SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
 			case 'SUBMIT_SIGNUP_STEP':
 				if ( action.type === 'PROVIDE_SIGNUP_DEPENDENCIES' || assertValidDependencies( action ) ) {
 					// any dependency from `PROVIDE_SIGNUP_DEPENDENCIES` is valid as it is not associated with a step
-					SignupDependencyStore.reduxStore.dispatch( {
-						type: SIGNUP_DEPENDENCY_STORE_UPDATE,
-						data: action.providedDependencies,
-					} );
+					SignupDependencyStore.update( action.providedDependencies );
 				}
 				break;
 		}

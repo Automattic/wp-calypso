@@ -59,24 +59,25 @@
 		&.is-#{$side} .popover__arrow,
 		&.is-#{$side}-#{$cross-side} .popover__arrow,
 		&.is-#{$side}-#{$cross-opposite-side} .popover__arrow {
-			@mixin shared-between-base-and-before {
-				#{$cross-side}: 50% #{"/*rtl:ignore*/"};
-				margin-#{$cross-side}: -10px#{"/*rtl:ignore*/"};
-				border-#{$side}-style: solid#{"/*rtl:ignore*/"};
-				border-#{$opposite-side}: none#{"/*rtl:ignore*/"};
-				border-#{$cross-side}-color: transparent#{"/*rtl:ignore*/"};
-				border-#{$cross-opposite-side}-color: transparent#{"/*rtl:ignore*/"};
-			}
-
 			#{$opposite-side}: 0 #{"/*rtl:ignore*/"};
-			@include shared-between-base-and-before;
+			#{$cross-side}: 50% #{"/*rtl:ignore*/"};
+			margin-#{$cross-side}: -10px#{"/*rtl:ignore*/"};
+			border-#{$side}-style: solid#{"/*rtl:ignore*/"};
+			border-#{$opposite-side}: none#{"/*rtl:ignore*/"};
+			border-#{$cross-side}-color: transparent#{"/*rtl:ignore*/"};
+			border-#{$cross-opposite-side}-color: transparent#{"/*rtl:ignore*/"};
 
 			&::before {
 				#{$opposite-side}: 2px #{"/*rtl:ignore*/"};
 				border: 10px solid $white;
 				content: " ";
 				position: absolute;
-				@include shared-between-base-and-before;
+				#{$cross-side}: 50% #{"/*rtl:ignore*/"};
+				margin-#{$cross-side}: -10px#{"/*rtl:ignore*/"};
+				border-#{$side}-style: solid#{"/*rtl:ignore*/"};
+				border-#{$opposite-side}: none#{"/*rtl:ignore*/"};
+				border-#{$cross-side}-color: transparent#{"/*rtl:ignore*/"};
+				border-#{$cross-opposite-side}-color: transparent#{"/*rtl:ignore*/"};
 			}
 		}
 	}

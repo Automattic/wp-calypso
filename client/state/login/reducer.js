@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, isEmpty, omit, startsWith } from 'lodash';
+import { get, isEmpty, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -162,15 +162,29 @@ const updateTwoStepNonce = ( state, { twoStepNonce, nonceType } ) =>
 		[ `two_step_nonce_${ nonceType }` ]: twoStepNonce,
 	} );
 
+const twoFactorProperties = [
+	'push_web_token',
+	'phone_number',
+	'two_step_id',
+	'two_step_nonce',
+	'two_step_supported_auth_types',
+	'two_step_notification_sent',
+	'two_step_nonce_backup',
+	'two_step_nonce_sms',
+	'two_step_nonce_authenticator',
+	'two_step_nonce_push',
+	'user_id',
+];
+
 export const twoFactorAuth = createReducer( null, {
 	[ LOGIN_REQUEST ]: () => null,
 	[ LOGIN_REQUEST_FAILURE ]: () => null,
 	[ LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		if ( data ) {
-			const rest = omit( data, 'redirect_to' );
+			const twoFactorData = pick( data, twoFactorProperties );
 
-			if ( ! isEmpty( rest ) ) {
-				return rest;
+			if ( ! isEmpty( twoFactorData ) ) {
+				return twoFactorData;
 			}
 		}
 
@@ -180,10 +194,10 @@ export const twoFactorAuth = createReducer( null, {
 	[ SOCIAL_LOGIN_REQUEST_FAILURE ]: () => null,
 	[ SOCIAL_LOGIN_REQUEST_SUCCESS ]: ( state, { data } ) => {
 		if ( data ) {
-			const rest = omit( data, 'redirect_to' );
+			const twoFactorData = pick( data, twoFactorProperties );
 
-			if ( ! isEmpty( rest ) ) {
-				return rest;
+			if ( ! isEmpty( twoFactorData ) ) {
+				return twoFactorData;
 			}
 		}
 

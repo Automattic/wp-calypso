@@ -1,0 +1,62 @@
+.gmb-location {
+	display: flex;
+	justify-content: space-between;
+
+	@include breakpoint( '<960px' ) {
+		flex-direction: column;
+	}
+
+	&:after {
+		display: none; // Disables clearfix that messes up with Flexbox alignment
+	}
+
+	&.is-loading {
+		.gmb-location__name {
+			@include placeholder();
+			height: 25px;
+			width: 150px;
+			margin: 5px;
+		}
+		.gmb-location__address {
+			@include placeholder();
+			height: 80px;
+			width: 200px;
+			margin: 5px;
+		}
+	}
+}
+
+.gmb-location__content {
+	display: flex;
+}
+
+.gmb-location__picture {
+	border-radius: 50%;
+	height: 60px;
+	width: 60px;
+}
+
+.gmb-location__description {
+	align-self: center;
+	flex-grow: 1;
+	margin-left: 15px;
+}
+
+.gmb-location__name {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.gmb-location__address p {
+	margin-bottom: 0;
+}
+
+.gmb-location__verified {
+	margin-top: 10px;
+}
+
+.gmb-location__verified-icon {
+	color: $alert-green;
+	margin-left: -2px;
+	vertical-align: text-bottom;
+}

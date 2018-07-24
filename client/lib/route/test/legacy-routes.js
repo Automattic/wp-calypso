@@ -17,7 +17,7 @@ let features = [];
 describe( 'legacy-routes', () => {
 	describe( '#isLegacyRoute()', () => {
 		beforeAll( () => {
-			sinon.stub( config, 'isEnabled', flag => {
+			sinon.stub( config, 'isEnabled' ).callsFake( flag => {
 				return features.indexOf( flag ) > -1;
 			} );
 		} );
@@ -61,10 +61,6 @@ describe( 'legacy-routes', () => {
 			test( 'should return false for /me/billing', () => {
 				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
 			} );
-
-			test( 'should return false for /me/next', () => {
-				expect( isLegacyRoute( '/me/next' ) ).to.be.false;
-			} );
 		} );
 
 		describe( 'when `me/my-profile` feature flag is disabled', () => {
@@ -79,10 +75,6 @@ describe( 'legacy-routes', () => {
 
 			test( 'should return false for /me/billing', () => {
 				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
-			} );
-
-			test( 'should return false for /me/next', () => {
-				expect( isLegacyRoute( '/me/next' ) ).to.be.false;
 			} );
 		} );
 	} );

@@ -57,12 +57,15 @@ class ReaderExportButton extends React.Component {
 
 	render() {
 		return (
-			<div className="reader-export-button" onClick={ this.onClick }>
+			<button className="reader-export-button" onClick={ this.onClick }>
 				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
 				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
-			</div>
+			</button>
 		);
 	}
 }
 
-export default connect( null, { errorNotice } )( localize( ReaderExportButton ) );
+export default connect(
+	null,
+	{ errorNotice }
+)( localize( ReaderExportButton ) );

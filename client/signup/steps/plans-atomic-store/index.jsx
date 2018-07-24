@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { isEmpty, filter, get } from 'lodash';
+import { isEmpty, filter } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -14,23 +14,32 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
-import { getSiteBySlug } from 'state/sites/selectors';
+import getSiteId from 'state/selectors/get-site-id';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 import { isEnabled } from 'config';
 import PlanFeatures from 'my-sites/plan-features';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 
-class PlansAtomicStoreStep extends Component {
+import { planMatches } from 'lib/plans';
+import {
+	GROUP_WPCOM,
+	TYPE_BUSINESS,
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+} from 'lib/plans/constants';
+
+export class PlansAtomicStoreStep extends Component {
 	static propTypes = {
 		additionalStepData: PropTypes.object,
 		goToNextStep: PropTypes.func.isRequired,
 		hideFreePlan: PropTypes.bool,
-		selectedSite: PropTypes.object,
+		siteId: PropTypes.number,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
@@ -66,7 +75,10 @@ class PlansAtomicStoreStep extends Component {
 			// If we're inside the store signup flow and the cart item is a Business Plan,
 			// set a flag on it. It will trigger Automated Transfer when the product is being
 			// activated at the end of the checkout process.
-			if ( designType === DESIGN_TYPE_STORE && cartItem.product_slug === PLAN_BUSINESS ) {
+			if (
+				designType === DESIGN_TYPE_STORE &&
+				planMatches( cartItem.product_slug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } )
+			) {
 				cartItem.extra = Object.assign( cartItem.extra || {}, {
 					is_store_signup: true,
 				} );
@@ -102,7 +114,7 @@ class PlansAtomicStoreStep extends Component {
 	}
 
 	plansFeaturesList() {
-		const { hideFreePlan, selectedSite, designType } = this.props;
+		const { hideFreePlan, siteId, designType } = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
@@ -123,13 +135,13 @@ class PlansAtomicStoreStep extends Component {
 		return (
 			<div>
 				<QueryPlans />
-				<QuerySitePlans siteId={ get( selectedSite, 'ID' ) } />
+				<QuerySitePlans siteId={ siteId } />
 
 				<PlanFeatures
 					plans={ plans }
 					onUpgradeClick={ this.onSelectPlan }
 					isInSignup={ true }
-					site={ selectedSite || {} }
+					siteId={ siteId }
 					domainName={ this.getDomainName() }
 					displayJetpackPlans={ false }
 				/>
@@ -181,6 +193,6 @@ class PlansAtomicStoreStep extends Component {
 }
 
 export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
-	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+	siteId: getSiteId( state, siteSlug ),
 	designType: getDesignType( state ),
 } ) )( localize( PlansAtomicStoreStep ) );

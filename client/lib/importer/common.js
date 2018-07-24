@@ -60,7 +60,7 @@ function replaceUserInfoWithIds( customData ) {
 				author.mappedTo
 					? Object.assign( {}, author, {
 							mappedTo: author.mappedTo.ID,
-						} )
+					  } )
 					: author
 		),
 	} );

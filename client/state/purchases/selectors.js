@@ -10,7 +10,7 @@ import { get, find } from 'lodash';
  * Internal Dependencies
  */
 import createSelector from 'lib/create-selector';
-import purchasesAssembler from 'lib/purchases/assembler';
+import { createPurchasesArray } from 'lib/purchases/assembler';
 import { isSubscription } from 'lib/purchases';
 import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
 
@@ -21,7 +21,7 @@ import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
  * @return {Array} Purchases
  */
 export const getPurchases = createSelector(
-	state => purchasesAssembler.createPurchasesArray( state.purchases.data ),
+	state => createPurchasesArray( state.purchases.data ),
 	state => [ state.purchases.data ]
 );
 

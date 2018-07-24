@@ -12,7 +12,6 @@ import {
 	WOOCOMMERCE_COUNT_REQUEST,
 	WOOCOMMERCE_COUNT_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import { LOADING } from 'woocommerce/state/constants';
 import reducer from 'woocommerce/state/sites/reducer';
 
 describe( 'reducer', () => {
@@ -24,7 +23,7 @@ describe( 'reducer', () => {
 		};
 
 		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].data.counts ).to.eql( LOADING );
+		expect( newSiteData[ siteId ].data.counts.isLoading ).to.be.true;
 	} );
 
 	test( 'should store data from the action', () => {
@@ -51,6 +50,6 @@ describe( 'reducer', () => {
 		};
 		const newState = reducer( {}, action );
 		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].data.counts ).to.deep.equal( counts );
+		expect( newState[ siteId ].data.counts.items ).to.deep.equal( counts );
 	} );
 } );

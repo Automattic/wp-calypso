@@ -8,7 +8,8 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getPostRevisions, getPostRevisionsDiff } from 'state/selectors';
+import getPostRevisions from 'state/selectors/get-post-revisions';
+import getPostRevisionsDiff from 'state/selectors/get-post-revisions-diff';
 
 const getPostRevisionsComparisons = createSelector(
 	( state, siteId, postId ) => {

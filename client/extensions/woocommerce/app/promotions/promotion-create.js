@@ -23,7 +23,6 @@ import { fetchProductCategories } from 'woocommerce/state/sites/product-categori
 import { fetchPromotions, createPromotion } from 'woocommerce/state/sites/promotions/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
-import { getProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
 import {
 	getCurrentlyEditingPromotionId,
@@ -71,7 +70,7 @@ class PromotionCreate extends React.Component {
 		const { site } = this.props;
 
 		if ( site && site.ID ) {
-			this.props.fetchProductCategories( site.ID );
+			this.props.fetchProductCategories( site.ID, { offset: 0 } );
 			this.props.fetchPromotions( site.ID );
 			this.props.fetchSettingsGeneral( site.ID );
 		}
@@ -82,7 +81,7 @@ class PromotionCreate extends React.Component {
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchProductCategories( newSiteId );
+			this.props.fetchProductCategories( newSiteId, { offset: 0 } );
 			this.props.fetchPromotions( newSiteId );
 			this.props.fetchSettingsGeneral( newSiteId );
 		}
@@ -168,15 +167,7 @@ class PromotionCreate extends React.Component {
 	};
 
 	render() {
-		const {
-			site,
-			currency,
-			className,
-			promotion,
-			hasEdits,
-			products,
-			productCategories,
-		} = this.props;
+		const { site, currency, className, promotion, hasEdits, products } = this.props;
 		const { saveAttempted, busy } = this.state;
 
 		return (
@@ -194,7 +185,6 @@ class PromotionCreate extends React.Component {
 					promotion={ promotion }
 					editPromotion={ this.props.editPromotion }
 					products={ products }
-					productCategories={ productCategories }
 					showEmptyValidationErrors={ saveAttempted }
 				/>
 			</Main>
@@ -211,7 +201,6 @@ function mapStateToProps( state ) {
 	const hasEdits = Boolean( getPromotionEdits( state, promotionId, site.ID ) );
 	const productsLoading = areProductsLoading( state, site.ID );
 	const products = productsLoading ? null : getAllProducts( state, site.ID );
-	const productCategories = getProductCategories( state, {}, site.ID );
 
 	return {
 		hasEdits,
@@ -219,7 +208,6 @@ function mapStateToProps( state ) {
 		promotion,
 		currency,
 		products,
-		productCategories,
 	};
 }
 
@@ -238,4 +226,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PromotionCreate ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( PromotionCreate ) );

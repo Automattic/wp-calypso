@@ -39,7 +39,7 @@ import getSkills from 'state/happychat/selectors/get-skills';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getCurrentRoute } from 'state/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 const getRouteSetMessage = ( state, path ) => {

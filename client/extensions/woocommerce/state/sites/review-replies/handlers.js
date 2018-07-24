@@ -122,7 +122,7 @@ export function handleDeleteReviewReply( { dispatch }, action ) {
 	dispatch( request( siteId, action, '/wp/v2' ).del( `comments/${ replyId }?force=true` ) );
 }
 
-export function announceDeleteSuccess( { dispatch, getState }, action ) {
+export function announceDeleteSuccess( { dispatch }, action ) {
 	const { siteId, reviewId, replyId } = action;
 
 	dispatch( {

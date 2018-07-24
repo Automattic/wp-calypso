@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { errorNotice } from 'state/notices/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_RESTORE_PROGRESS_REQUEST } from 'state/action-types';
 import { updateRewindRestoreProgress } from 'state/activity-log/actions';
@@ -19,6 +19,9 @@ const POLL_INTERVAL = 1500;
 /** @type {Map<String, Number>} stores most-recent polling times */
 const recentRequests = new Map();
 
+/** @type {string} Request error notice id. Prevents polling from creating endless notices */
+const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
+
 /**
  * Fetch status updates for restore operations
  *
@@ -26,10 +29,10 @@ const recentRequests = new Map();
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param {Function} dispatch Redux dispatcher
- * @param {Object} action Redux action
+ * @param  {Object} action Redux action
+ * @return {Object}        Redux action
  */
-const fetchProgress = ( { dispatch }, action ) => {
+const fetchProgress = action => {
 	const { restoreId, siteId } = action;
 	const key = `${ siteId }-${ restoreId }`;
 
@@ -42,15 +45,13 @@ const fetchProgress = ( { dispatch }, action ) => {
 
 	recentRequests.set( key, now );
 
-	dispatch(
-		http(
-			{
-				apiVersion: '1',
-				method: 'GET',
-				path: `/activity-log/${ siteId }/rewind/${ restoreId }/restore-status`,
-			},
-			action
-		)
+	return http(
+		{
+			apiVersion: '1',
+			method: 'GET',
+			path: `/activity-log/${ siteId }/rewind/${ restoreId }/restore-status`,
+		},
+		action
 	);
 };
 
@@ -62,6 +63,7 @@ export const fromApi = ( {
 		percent = 0,
 		status = '',
 		rewind_id = '',
+		context = '',
 	} = {},
 } ) => ( {
 	errorCode: error_code,
@@ -70,20 +72,25 @@ export const fromApi = ( {
 	percent: +percent,
 	status,
 	rewindId: rewind_id,
+	context,
 } );
 
-export const updateProgress = ( { dispatch }, { siteId, restoreId, timestamp }, data ) =>
-	dispatch( updateRewindRestoreProgress( siteId, timestamp, restoreId, data ) );
+export const updateProgress = ( { siteId, restoreId, timestamp }, data ) =>
+	updateRewindRestoreProgress( siteId, timestamp, restoreId, data );
 
-export const announceFailure = ( { dispatch } ) =>
-	dispatch(
-		errorNotice(
-			translate( "Hmm, we can't update the status of your restore. Please refresh this page." )
-		)
+export const announceFailure = () =>
+	errorNotice(
+		translate( "Hmm, we can't update the status of your restore. Please refresh this page." ),
+		{ id: ERROR_NOTICE_ID }
 	);
 
 export default {
 	[ REWIND_RESTORE_PROGRESS_REQUEST ]: [
-		dispatchRequest( fetchProgress, updateProgress, announceFailure, { fromApi } ),
+		dispatchRequestEx( {
+			fetch: fetchProgress,
+			onSuccess: updateProgress,
+			onError: announceFailure,
+			fromApi,
+		} ),
 	],
 };

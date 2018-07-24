@@ -3,15 +3,12 @@
 /**
  * External dependencies
  */
-
 import update from 'immutability-helper';
 
 /**
  * Internal dependencies
  */
 import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
-import DomainsStore from 'lib/domains/store';
-import { getSelectedDomain } from 'lib/domains';
 
 const initialDomainState = {
 	hasLoadedFromServer: false,
@@ -67,18 +64,13 @@ function reducer( state, payload ) {
 
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
 			const { data } = state[ action.domainName ],
-				domainData = getSelectedDomain( {
-					domains: DomainsStore.getBySite( action.siteId ),
-					selectedDomainName: action.domainName,
-				} ),
-				locked = ! action.unlock && data.locked,
-				pendingTransfer = ! domainData.privateDomain && ! locked;
+				locked = ! action.unlock && data.locked;
 
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					locked,
-					pendingTransfer,
 				} ),
+				needsUpdate: true,
 			} );
 
 		case UpgradesActionTypes.DOMAIN_TRANSFER_ACCEPT_COMPLETED:

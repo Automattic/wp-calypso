@@ -15,12 +15,8 @@ import Button from 'components/button';
 export default class FoldableCardExample extends PureComponent {
 	static displayName = 'FoldableCardExample';
 
-	handleClick = () => console.log( 'Clicked!' );
-	handleClose = () => console.log( 'Closed!' );
-	handleOpen = () => console.log( 'Opened!' );
-
-	render() {
-		return (
+	static defaultProps = {
+		exampleCode: (
 			<div>
 				<div>
 					<FoldableCard header="This is a foldable card" screenReaderText="More">
@@ -101,14 +97,28 @@ export default class FoldableCardExample extends PureComponent {
 				<div>
 					<FoldableCard
 						header="This card includes click, open and close actions. Check your console!"
-						onClick={ this.handleClick }
-						onClose={ this.handleClose }
-						onOpen={ this.handleOpen }
+						onClick={ function() {
+							console.log( 'Clicked!' );
+						} }
+						onClose={ function() {
+							console.log( 'Closed!' );
+						} }
+						onOpen={ function() {
+							console.log( 'Opened!' );
+						} }
 					>
 						Nothing to see here. Keep walking!
 					</FoldableCard>
 				</div>
 			</div>
-		);
+		),
+	};
+
+	handleClick = () => console.log( 'Clicked!' );
+	handleClose = () => console.log( 'Closed!' );
+	handleOpen = () => console.log( 'Opened!' );
+
+	render() {
+		return this.props.exampleCode;
 	}
 }

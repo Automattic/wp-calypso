@@ -10,10 +10,11 @@ import { omit, pick } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
+import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
-import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
+import { clearPlan } from 'jetpack-connect/persistence-utils';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
@@ -29,8 +30,6 @@ import {
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
-	JETPACK_CONNECT_CREATE_ACCOUNT,
-	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_RETRY_AUTH,
@@ -41,7 +40,6 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
@@ -82,7 +80,6 @@ export function checkUrl( url, isUrlOnSites ) {
 			return;
 		}
 		if ( isUrlOnSites ) {
-			persistSession( url );
 			dispatch( {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: url,
@@ -107,7 +104,6 @@ export function checkUrl( url, isUrlOnSites ) {
 		}
 		_fetching[ url ] = true;
 		setTimeout( () => {
-			persistSession( url );
 			dispatch( {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: url,
@@ -196,29 +192,86 @@ export function retryAuth( url, attemptNumber ) {
 	};
 }
 
-export function createAccount( userData ) {
-	return dispatch => {
-		dispatch( recordTracksEvent( 'calypso_jpc_create_account', {} ) );
+/**
+ * Create a user account
+ *
+ * !! Must have same return shape as createAccount !!
+ *
+ * @param  {Object}  socialInfo              …
+ * @param  {string}  socialInfo.service      The name of the social service
+ * @param  {string}  socialInfo.access_token An OAuth2 acccess token
+ * @param  {?string} socialInfo.id_token     (Optional) a JWT id_token which contains the signed user info
+ *
+ * @return {Promise}                         Resolves to { username, bearerToken }
+ */
+export function createSocialAccount( socialInfo ) {
+	return async dispatch => {
+		dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount' ) );
 
-		dispatch( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
-		wpcom.undocumented().usersNew( userData, ( error, data ) => {
-			if ( error ) {
-				dispatch(
-					recordTracksEvent( 'calypso_jpc_create_account_error', {
-						error: JSON.stringify( error ),
-						error_code: error.code,
-					} )
-				);
-			} else {
-				dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
-			}
-			dispatch( {
-				type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-				data,
-				error,
-				userData,
+		try {
+			const { username, bearer_token } = await wpcom.undocumented().usersSocialNew( {
+				...socialInfo,
+				signup_flow_name: 'jetpack-connect',
 			} );
-		} );
+			dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
+			return { username, bearerToken: bearer_token };
+		} catch ( error ) {
+			const err = {
+				code: error.error,
+				message: error.message,
+				data: error.data,
+			};
+			dispatch(
+				recordTracksEvent( 'calypso_jpc_social_createaccount_error', {
+					error: JSON.stringify( err ),
+					error_code: err.code,
+				} )
+			);
+			throw err;
+		}
+	};
+}
+
+/**
+ * Create a user account
+ *
+ * !! Must have same return shape as createSocialAccount !!
+ *
+ * @param  {Object} userData          …
+ * @param  {string} userData.username Username
+ * @param  {string} userData.password Password
+ * @param  {string} userData.email    Email
+ *
+ * @return {Promise}                  Resolves to { username, bearerToken }
+ */
+export function createAccount( userData ) {
+	return async dispatch => {
+		dispatch( recordTracksEvent( 'calypso_jpc_create_account' ) );
+
+		try {
+			const data = await wpcom.undocumented().usersNew( userData );
+			const bearerToken = makeJsonSchemaParser(
+				{
+					type: 'object',
+					required: [ 'bearer_token' ],
+					properties: {
+						bearer_token: { type: 'string' },
+					},
+				},
+				( { bearer_token } ) => bearer_token
+			)( data );
+
+			dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
+			return { username: userData.username, bearerToken };
+		} catch ( error ) {
+			dispatch(
+				recordTracksEvent( 'calypso_jpc_create_account_error', {
+					error_code: error.code,
+					error: JSON.stringify( error ),
+				} )
+			);
+			throw error;
+		}
 	};
 }
 
@@ -298,7 +351,7 @@ export function authorize( queryObject ) {
 				} );
 				return wpcom
 					.undocumented()
-					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version );
+					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version, from );
 			} )
 			.then( data => {
 				debug( 'Jetpack authorize complete. Updating sites list.', data );
@@ -326,10 +379,7 @@ export function authorize( queryObject ) {
 					} )
 				);
 				debug( 'Site updated', data );
-				dispatch( {
-					type: SITE_RECEIVE,
-					site: data,
-				} );
+				dispatch( receiveSite( data ) );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 				} );

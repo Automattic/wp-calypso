@@ -69,7 +69,7 @@ const emptyState = {
 describe( 'selectors', () => {
 	describe( '#areShippingZoneLocationsLoaded', () => {
 		test( 'should return false when woocommerce state is not available.', () => {
-			expect( areShippingZoneLocationsLoaded( emptyState, zoneId, 123 ) ).to.be.falsey;
+			expect( areShippingZoneLocationsLoaded( emptyState, zoneId, 123 ) ).to.be.undefined;
 		} );
 
 		test( 'should return true when zone locations are loaded.', () => {
@@ -81,7 +81,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return false when zone locations are loaded only for a different site.', () => {
-			expect( areShippingZoneLocationsLoaded( loadedState, zoneId, 456 ) ).to.be.falsey;
+			expect( areShippingZoneLocationsLoaded( loadedState, zoneId, 456 ) ).to.be.undefined;
 		} );
 
 		test( 'should return false when zone locations are loaded only for a different zone.', () => {
@@ -95,7 +95,7 @@ describe( 'selectors', () => {
 
 	describe( '#areShippingZoneLocationsLoading', () => {
 		test( 'should return false when woocommerce state is not available.', () => {
-			expect( areShippingZoneLocationsLoading( emptyState, zoneId, 123 ) ).to.be.falsey;
+			expect( areShippingZoneLocationsLoading( emptyState, zoneId, 123 ) ).to.be.undefined;
 		} );
 
 		test( 'should return false when zone locations are loaded.', () => {
@@ -107,7 +107,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return false when zone locations are being loaded only for a different site.', () => {
-			expect( areShippingZoneLocationsLoading( loadingState, zoneId, 456 ) ).to.be.falsey;
+			expect( areShippingZoneLocationsLoading( loadingState, zoneId, 456 ) ).to.be.undefined;
 		} );
 
 		test( 'should return false when zone locations are being loaded only for a different zone.', () => {

@@ -35,13 +35,21 @@
 	text-align: right;
 }
 
+.credentials-configured__revoke-icon {
+	color: $alert-red;
+	margin-right: .5rem;
+}
+
 .credentials-configured__revoke-button.is-borderless {
 	margin-right: 2rem;
 	position: relative;
 	top: -5px;
-}
 
-.credentials-configured__revoke-icon {
-	color: $alert-red;
-	margin-right: .5rem;
+	&:hover .credentials-configured__revoke-icon {
+		color: darken( $alert-red, 20% );
+	}
+
+	&:disabled .credentials-configured__revoke-icon {
+		color: lighten( $alert-red, 30% );
+	}
 }

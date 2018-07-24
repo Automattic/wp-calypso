@@ -62,7 +62,7 @@ export default class extends React.Component {
 	}
 
 	render() {
-		var childrenProps = Object.assign( omit( this.props, 'children' ), this.state );
+		const childrenProps = Object.assign( omit( this.props, 'children' ), this.state );
 		// Clone the child element along and pass along state (containing data from the store)
 		return React.cloneElement( this.props.children, childrenProps );
 	}
@@ -73,7 +73,7 @@ export default class extends React.Component {
 	};
 
 	_getState = fetchOptions => {
-		var paginationData, users;
+		let paginationData, users;
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		fetchOptions = Object.assign( {}, defaultOptions, fetchOptions );
 		paginationData = UsersStore.getPaginationData( fetchOptions );
@@ -114,7 +114,7 @@ export default class extends React.Component {
 		}
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( function() {
-			var paginationData = UsersStore.getPaginationData( fetchOptions );
+			const paginationData = UsersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingUsers ) {
 				return;
 			}

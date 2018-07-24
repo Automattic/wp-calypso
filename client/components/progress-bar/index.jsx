@@ -18,6 +18,7 @@ export default class ProgressBar extends PureComponent {
 		total: 100,
 		compact: false,
 		isPulsing: false,
+		canGoBackwards: false,
 	};
 
 	static propTypes = {
@@ -28,14 +29,25 @@ export default class ProgressBar extends PureComponent {
 		compact: PropTypes.bool,
 		className: PropTypes.string,
 		isPulsing: PropTypes.bool,
+		canGoBackwards: PropTypes.bool,
 	};
+
+	static getDerivedStateFromProps( props, state ) {
+		return {
+			allTimeMax: Math.max( state.allTimeMax, props.value ),
+		};
+	}
 
 	state = {
 		allTimeMax: this.props.value,
 	};
 
 	getCompletionPercentage() {
-		const percentage = Math.ceil( this.state.allTimeMax / this.props.total * 100 );
+		const percentage = Math.ceil(
+			( ( this.props.canGoBackwards ? this.props.value : this.state.allTimeMax ) /
+				this.props.total ) *
+				100
+		);
 
 		// The percentage should not be allowed to be more than 100
 		return Math.min( percentage, 100 );
@@ -56,10 +68,6 @@ export default class ProgressBar extends PureComponent {
 				{ title }
 			</div>
 		);
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( { allTimeMax: Math.max( this.state.allTimeMax, nextProps.value ) } );
 	}
 
 	render() {

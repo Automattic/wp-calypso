@@ -48,6 +48,20 @@ export const recordAddDomainButtonClickInTransferDomain = ( domainName, section 
 		} )
 	);
 
+export const recordAddDomainButtonClickInUseYourDomain = ( domainName, section ) =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Search',
+			'Clicked "Use Your Domain" Button on a Domain Search Step',
+			'Domain Name',
+			domainName
+		),
+		recordTracksEvent( 'calypso_transfer_domain_step_add_domain_click', {
+			domain_name: domainName,
+			section,
+		} )
+	);
+
 export const recordStartTransferClickInThankYou = domainName =>
 	recordTracksEvent( 'calypso_thank_you_start_transfer', {
 		meta: domainName,

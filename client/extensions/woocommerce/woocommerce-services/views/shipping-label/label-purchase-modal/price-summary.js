@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,9 +15,7 @@ import Gridicon from 'gridicons';
 import Card from 'components/card';
 import Tooltip from 'components/tooltip';
 import formatCurrency from 'lib/format-currency';
-import {
-	getTotalPriceBreakdown,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getTotalPriceBreakdown } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class PriceSummary extends Component {
 	constructor( props ) {
@@ -48,13 +48,17 @@ class PriceSummary extends Component {
 					icon="help-outline"
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
-					size={ 18 } />
+					size={ 18 }
+				/>
 				<Tooltip
 					className="label-purchase-modal__price-item-tooltip is-dialog-visible"
 					isVisible={ this.state.tooltipVisible }
-					context={ this.state.tooltipContext } >
-				{ translate( 'WooCommerce Services gives you access to USPS ' +
-					'Commercial Pricing, which is discounted over Retail rates.' ) }
+					context={ this.state.tooltipContext }
+				>
+					{ translate(
+						'WooCommerce Services gives you access to USPS ' +
+							'Commercial Pricing, which is discounted over Retail rates.'
+					) }
 				</Tooltip>
 			</div>
 		);
@@ -66,11 +70,11 @@ class PriceSummary extends Component {
 		} );
 		return (
 			<div key={ key } className={ className }>
-				<div className="label-purchase-modal__price-item-name">
-					{ itemName }
-				</div>
+				<div className="label-purchase-modal__price-item-name">{ itemName }</div>
 				{ isDiscount && this.renderDiscountExplanation() }
-				<div className="label-purchase-modal__price-item-amount">{ formatCurrency( itemCost, 'USD' ) }</div>
+				<div className="label-purchase-modal__price-item-amount">
+					{ formatCurrency( itemCost, 'USD' ) }
+				</div>
 			</div>
 		);
 	};
@@ -85,8 +89,12 @@ class PriceSummary extends Component {
 
 		return (
 			<Card>
-				{ prices.map( ( service, index ) => this.renderRow( service.title, service.retailRate, index ) ) }
-				{ 0 < discount ? this.renderRow( translate( 'Your discount' ), -discount, 'discount', false, true ) : null }
+				{ prices.map( ( service, index ) =>
+					this.renderRow( service.title, service.retailRate, index )
+				) }
+				{ 0 < discount
+					? this.renderRow( translate( 'Your discount' ), -discount, 'discount', false, true )
+					: null }
 				{ this.renderRow( translate( 'Total' ), total, 'total', true ) }
 			</Card>
 		);
