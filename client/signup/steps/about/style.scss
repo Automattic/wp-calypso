@@ -96,11 +96,11 @@
 	text-align: center;
 	margin-bottom: 20px;
 	padding: 0 15px;
+}
 
-	.button {
-		@include breakpoint( '<480px' ) {
-			width: 100%;
-		}
+.about__submit-wrapper .button {
+	@include breakpoint( '<480px' ) {
+		width: 100%;
 	}
 }
 
