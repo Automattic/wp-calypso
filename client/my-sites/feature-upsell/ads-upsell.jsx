@@ -29,6 +29,7 @@ import DocumentHead from 'components/data/document-head';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
+import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import { getPlanRawPrice, isRequestingPlans } from 'state/plans/selectors';
 import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -63,38 +64,37 @@ class WordAdsUpsellComponent extends Component {
 				<div className="feature-upsell__text-content">
 					<header className="feature-upsell__header">
 						<h1 className="feature-upsell__header-title">Start making money with this site!</h1>
-						<p className="feature-upsell__header-subtitle">
-							Welcome to WordAds: the advertising platform where internet’s top ad suppliers bid
-							against each other to get their ads to your site.
-						</p>
 					</header>
-
-					<h2 className="feature-upsell__section-header">
-						Here's how WordAds can help you make money:
-					</h2>
 				</div>
 
-				<div className="feature-upsell__video-container">
-					<div className="feature-upsell__placeholder feature-upsell__placeholder--cover" />
-					<iframe
-						title="How WordAds work?"
-						width="100%"
-						height="100%"
-						className="feature-upsell__video"
-						src="https://videopress.com/embed/kRaHRuHQ"
-						frameBorder="0"
-						allowFullScreen={ true }
-					/>
+				<div className="feature-upsell__video-box">
+					<div className="feature-upsell__video-container">
+						<div className="feature-upsell__placeholder feature-upsell__placeholder--cover" />
+						<iframe
+							title="How WordAds work?"
+							width="100%"
+							height="100%"
+							className="feature-upsell__video"
+							src="https://videopress.com/embed/kRaHRuHQ"
+							frameBorder="0"
+							allowFullScreen={ true }
+						/>
+					</div>
+					<div className="feature-upsell__video-description">
+						<p>
+							<b>Welcome to WordAds</b>: the advertising platform where internet’s top ad suppliers
+							bid against each other to get their ads to your site.
+						</p>
+
+						{ this.renderCTA( 'feature-upsell__cta--in-video-box' ) }
+					</div>
 				</div>
 
 				<div className="feature-upsell__text-content">
-					{ this.renderCTA() }
-
-					<h2 className="feature-upsell__section-header">We do the work, you make the money</h2>
+					<h2 className="feature-upsell__section-header">We'll do the work, you make the money</h2>
 
 					<ul className="feature-upsell__benefits-list">
 						<li className="feature-upsell__benefits-list-item">
-							<div className="feature-upsell__benefits-list-marker">1.</div>
 							<div className="feature-upsell__benefits-list-item-content">
 								<div className="feature-upsell__benefits-list-name">Enable WordAds</div>
 								<div className="feature-upsell__benefits-list-description">
@@ -108,12 +108,11 @@ class WordAdsUpsellComponent extends Component {
 								<img
 									alt=""
 									className="feature-upsell__benefits-list-image"
-									src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_turn-on-ads@2x.png"
+									src="/calypso/images/illustrations/jetpack-updates.svg"
 								/>
 							</div>
 						</li>
 						<li className="feature-upsell__benefits-list-item">
-							<div className="feature-upsell__benefits-list-marker">2.</div>
 							<div className="feature-upsell__benefits-list-item-content">
 								<div className="feature-upsell__benefits-list-name">
 									Display high quality ads on your site
@@ -130,12 +129,11 @@ class WordAdsUpsellComponent extends Component {
 								<img
 									alt=""
 									className="feature-upsell__benefits-list-image"
-									src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_high-quality-ads@2x.png"
+									src="/calypso/images/illustrations/ads-removed.svg"
 								/>
 							</div>
 						</li>
 						<li className="feature-upsell__benefits-list-item">
-							<div className="feature-upsell__benefits-list-marker">3.</div>
 							<div className="feature-upsell__benefits-list-item-content">
 								<div className="feature-upsell__benefits-list-name">Collect your payout</div>
 								<div className="feature-upsell__benefits-list-description">
@@ -149,15 +147,20 @@ class WordAdsUpsellComponent extends Component {
 								<img
 									alt=""
 									className="feature-upsell__benefits-list-image"
-									src="https://s2.wp.com/wp-content/themes/a8c/wordads/i/wordads_impressions-2017-Q3.@2x.png"
+									src="/calypso/images/illustrations/jetpack-themes.svg"
 								/>
+							</div>
+						</li>
+						<li className="feature-upsell__benefits-list-item">
+							<div className="feature-upsell__benefits-list-item-content">
+								{ this.renderCTA( 'feature-upsell__cta--in-benefit' ) }
 							</div>
 						</li>
 					</ul>
 
-					{ this.renderCTA() }
-
-					<h2 className="feature-upsell__section-header">Price includes also:</h2>
+					<h2 className="feature-upsell__section-header feature-upsell__section-header--h4">
+						Price also includes
+					</h2>
 				</div>
 
 				<div className="product-purchase-features-list">
@@ -211,27 +214,33 @@ class WordAdsUpsellComponent extends Component {
 						/>
 					</div>
 				</div>
+				<RefundAsterisk />
 			</div>
 		);
 	}
 
-	renderCTA() {
+	renderCTA( className = '' ) {
 		const { loadingPrice } = this.props;
 
 		return (
-			<div className="feature-upsell__cta">
+			<div className={ 'feature-upsell__cta ' + className }>
 				{ loadingPrice ? (
 					<div className="feature-upsell__placeholder feature-upsell__placeholder--cta" />
 				) : (
 					<React.Fragment>
+						<p className="feature-upsell__cta-pitch">
+							<b>
+								Upgrade to a Premium plan for { this.renderPrice() } and start earning revenue from
+								your site
+							</b>
+						</p>
 						<button
 							onClick={ this.handleUpgradeButtonClick }
 							className="button is-primary feature-upsell__cta-button"
 						>
-							Upgrade to a Premium plan for { this.renderPrice() } <br />
-							and start earning revenue from your site
+							Upgrade now
 						</button>
-						<span className="feature-upsell__cta-guarantee">30-day money back guarantee</span>
+						<span className="feature-upsell__cta-guarantee">* 30-day money back guarantee</span>
 					</React.Fragment>
 				) }
 			</div>
