@@ -108,7 +108,7 @@ const ShippingServiceGroup = props => {
 
 ShippingServiceGroup.propTypes = {
 	title: PropTypes.string.isRequired,
-	deliveryEstimate: PropTypes.string,
+	deliveryEstimate: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	services: PropTypes.arrayOf(
 		PropTypes.shape( {
 			id: PropTypes.string.isRequired,
