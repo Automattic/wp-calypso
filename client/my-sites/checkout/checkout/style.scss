@@ -661,19 +661,19 @@
 		display: flex;
 		flex-wrap: wrap;
 	}
-}
 
-.payment-box__payment-buttons .pay-button {
-	margin-right: 10px;
+	.pay-button {
+		margin-right: 10px;
 
-	@include breakpoint( '<960px' ) {
-		flex: 1 0 50%;
+		@include breakpoint( '<960px' ) {
+			flex: 1 0 50%;
+		}
 	}
-}
 
-.payment-box__payment-buttons .pay-button__button {
-	@include breakpoint( '<960px' ) {
-		width: 100%;
+	.pay-button__button {
+		@include breakpoint( '<960px' ) {
+			width: 100%;
+		}
 	}
 }
 
