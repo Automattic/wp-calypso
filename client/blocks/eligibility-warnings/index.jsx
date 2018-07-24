@@ -64,58 +64,40 @@ export const EligibilityWarnings = ( {
 		);
 		const title = translate( 'Business plan required' );
 		const plan = PLAN_BUSINESS;
+		const useUpsellPage =
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages';
+		let feature = null;
+		let href = null;
+		let event = null;
 
 		if ( 'plugins' === context ) {
-			if (
-				config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
-			) {
-				businessUpsellBanner = (
-					<Banner
-						href={ '/feature/plugins/' + siteSlug }
-						description={ description }
-						event="calypso-plugin-eligibility-upgrade-nudge-upsell"
-						plan={ plan }
-						title={ title }
-					/>
-				);
+			feature = FEATURE_UPLOAD_PLUGINS;
+			if ( useUpsellPage ) {
+				href = '/feature/plugins/' + siteSlug;
+				event = 'calypso-plugin-eligibility-upgrade-nudge-upsell';
 			} else {
-				businessUpsellBanner = (
-					<Banner
-						description={ description }
-						feature={ FEATURE_UPLOAD_PLUGINS }
-						event="calypso-plugin-eligibility-upgrade-nudge"
-						plan={ plan }
-						title={ title }
-					/>
-				);
+				event = 'calypso-plugin-eligibility-upgrade-nudge';
 			}
-		} else if ( 'themes' === context ) {
-			if (
-				config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
-			) {
-				businessUpsellBanner = (
-					<Banner
-						href={ '/feature/themes/' + siteSlug }
-						description={ description }
-						event="calypso-theme-eligibility-upgrade-nudge-upsell"
-						plan={ plan }
-						title={ title }
-					/>
-				);
+		} else {
+			feature = FEATURE_UPLOAD_THEMES;
+			if ( useUpsellPage ) {
+				href = '/feature/themes/' + siteSlug;
+				event = 'calypso-theme-eligibility-upgrade-nudge-upsell';
 			} else {
-				businessUpsellBanner = (
-					<Banner
-						description={ description }
-						feature={ FEATURE_UPLOAD_THEMES }
-						event="calypso-theme-eligibility-upgrade-nudge"
-						plan={ plan }
-						title={ title }
-					/>
-				);
+				event = 'calypso-theme-eligibility-upgrade-nudge';
 			}
 		}
+		businessUpsellBanner = (
+			<Banner
+				href={ href }
+				description={ description }
+				feature={ feature }
+				event={ event }
+				plan={ plan }
+				title={ title }
+			/>
+		);
 	}
 
 	return (
