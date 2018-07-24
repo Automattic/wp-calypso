@@ -147,6 +147,7 @@
 }
 
 // prevent themes panel from appearing on top of the sidebar when you click back
-.is-section-themes.focus-sidebar #secondary {
+.is-section-themes.focus-sidebar #secondary,
+.is-section-themes.focus-sites #secondary {
 	z-index: z-index( 'root', '.is-section-themes.focus-sidebar #secondary' );
 }
