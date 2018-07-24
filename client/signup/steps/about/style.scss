@@ -95,6 +95,13 @@
 .about__submit-wrapper {
 	text-align: center;
 	margin-bottom: 20px;
+	padding: 0 15px;
+
+	.button {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+		}
+	}
 }
 
 .about__last-fieldset {
