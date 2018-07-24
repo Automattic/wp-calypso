@@ -120,7 +120,6 @@
 		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/full-errors": true,
-		"reader/nesting-arrow": true,
 		"reader/paste-to-link": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,

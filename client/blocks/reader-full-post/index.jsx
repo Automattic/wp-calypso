@@ -56,7 +56,6 @@ import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
-import config from 'config';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
@@ -444,7 +443,7 @@ export class FullPostView extends React.Component {
 							<div className="reader-full-post__comments-wrapper" ref={ this.commentsWrapper }>
 								{ shouldShowComments( post ) && (
 									<Comments
-										showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
+										showNestingReplyArrow={ true }
 										post={ post }
 										initialSize={ startingCommentId ? commentCount : 10 }
 										pageSize={ 25 }
