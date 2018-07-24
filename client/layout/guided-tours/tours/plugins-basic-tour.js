@@ -13,16 +13,27 @@ import { makeTour, Tour, Step, ButtonRow, Quit } from 'layout/guided-tours/confi
 import { isEnabled } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 const isAtomic = state => isSiteAutomatedTransfer( state, getSelectedSiteId( state ) );
+
+const userCanManagePlugins = state => {
+	const siteId = getSelectedSiteId( state );
+	if ( siteId ) {
+		return canCurrentUser( state, siteId, 'manage_options' );
+	}
+
+	return canCurrentUserManagePlugins( state );
+};
 
 export const PluginsBasicTour = makeTour(
 	<Tour
 		name="pluginsBasicTour"
 		version="20180718"
 		path={ [ '/stats', '/plugins' ] }
-		when={ and( isAtomic, isDesktop, isEnabled( 'calypsoify/plugins' ) ) }
+		when={ and( userCanManagePlugins, isAtomic, isDesktop, isEnabled( 'calypsoify/plugins' ) ) }
 	>
 		<Step
 			name="init"
