@@ -234,11 +234,14 @@ export default {
 		analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
 		recordPlaceholdersTiming();
 
+		const validTabs = [ 'views', 'visitors', 'likes', 'comments' ];
+		const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';
+
 		context.primary = (
 			<StatsSite
 				path={ context.pathname }
 				date={ date }
-				chartTab={ queryOptions.tab }
+				chartTab={ chartTab }
 				context={ context }
 				period={ rangeOfPeriod( activeFilter.period, date ) }
 			/>
