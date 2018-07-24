@@ -35,6 +35,7 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 import Card from 'components/card';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
+import InfoPopover from 'components/info-popover';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -540,6 +541,12 @@ class AboutStep extends Component {
 							<FormFieldset>
 								<FormLabel htmlFor="siteTitle">
 									{ translate( 'What would you like to name your site?' ) }
+									<InfoPopover className="about__info-popover" position="top">
+										{ translate(
+											"We'll use this as your site title. " +
+												"Don't worry, you can change this later."
+										) }
+									</InfoPopover>
 								</FormLabel>
 								<FormTextInput
 									id="siteTitle"
@@ -553,6 +560,9 @@ class AboutStep extends Component {
 							<FormFieldset>
 								<FormLabel htmlFor="siteTopic">
 									{ translate( 'What will your site be about?' ) }
+									<InfoPopover className="about__info-popover" position="top">
+										{ translate( "We'll use this to personalize your site and experience." ) }
+									</InfoPopover>
 								</FormLabel>
 								<FormTextInput
 									id="siteTopic"
