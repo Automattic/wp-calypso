@@ -10,10 +10,7 @@ import nock from 'nock';
 /**
  * Internal dependencies
  */
-import {
-	openPrintingFlow,
-	convertToApiPackage,
-} from '../actions';
+import { openPrintingFlow, convertToApiPackage } from '../actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
@@ -263,7 +260,7 @@ describe( 'Shipping label Actions', () => {
 					{
 						product_id: 123,
 						quantity: 2,
-					}
+					},
 				],
 			};
 
@@ -274,12 +271,10 @@ describe( 'Shipping label Actions', () => {
 					description: 'Product',
 					tariffNumber: '098',
 					originCountry: 'US',
-				}
+				},
 			};
 
-			expect(
-				convertToApiPackage( pckg, null, null, null, customsItems )
-			).to.deep.equal( {
+			expect( convertToApiPackage( pckg, null, null, null, customsItems ) ).to.deep.equal( {
 				id: 'id',
 				box_id: 'box_id',
 				service_id: 'service_id',
@@ -301,7 +296,7 @@ describe( 'Shipping label Actions', () => {
 						weight: 8,
 						hs_tariff_number: '098',
 						origin_country: 'US',
-					}
+					},
 				],
 			} );
 		} );
