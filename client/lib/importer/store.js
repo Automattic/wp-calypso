@@ -17,11 +17,9 @@ import {
 	IMPORTS_FETCH_FAILED,
 	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_IMPORT_CANCEL,
-	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_IMPORT_START,
-	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_STORE_RESET,
 	IMPORTS_UPLOAD_FAILED,
@@ -31,6 +29,8 @@ import {
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { createReducerStore } from 'lib/store';
+import isImporterLocked from 'state/imports/selectors/is-importer-locked';
+import { reduxGetState } from 'lib/redux-bridge';
 
 /**
  * Module variables
@@ -38,7 +38,6 @@ import { createReducerStore } from 'lib/store';
 const initialState = Immutable.fromJS( {
 	count: 0,
 	importers: {},
-	importerLocks: {},
 	api: {
 		isHydrated: false,
 		isFetching: false,
@@ -52,19 +51,6 @@ const increment = a => a + 1;
 const removableStates = [ appStates.CANCEL_PENDING, appStates.DEFUNCT ];
 const shouldRemove = importer =>
 	removableStates.some( partial( equals, importer.get( 'importerState' ) ) );
-
-const adjustImporterLock = ( state, { action } ) => {
-	switch ( action.type ) {
-		case IMPORTS_IMPORT_LOCK:
-			return state.setIn( [ 'importerLocks', action.importerId ], true );
-
-		case IMPORTS_IMPORT_UNLOCK:
-			return state.setIn( [ 'importerLocks', action.importerId ], false );
-
-		default:
-			return state;
-	}
-};
 
 const ImporterStore = createReducerStore( function( state, payload ) {
 	let { action } = payload,
@@ -145,21 +131,19 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 
 		case IMPORTS_IMPORT_RECEIVE:
 			newState = state.setIn( [ 'api', 'isHydrated' ], true );
+			const importerId = action.importerStatus.importerId;
 
-			if ( newState.getIn( [ 'importerLocks', action.importerStatus.importerId ], false ) ) {
+			if ( isImporterLocked( reduxGetState(), importerId ) ) {
 				break;
 			}
 
 			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
-				newState = newState.deleteIn( [ 'importers', action.importerStatus.importerId ] );
+				newState = newState.deleteIn( [ 'importers', importerId ] );
 				break;
 			}
 
 			newState = newState
-				.setIn(
-					[ 'importers', action.importerStatus.importerId ],
-					Immutable.fromJS( action.importerStatus )
-				)
+				.setIn( [ 'importers', importerId ], Immutable.fromJS( action.importerStatus ) )
 				.update( 'importers', importers => importers.filterNot( shouldRemove ) );
 			break;
 
@@ -200,8 +184,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			newState = state;
 			break;
 	}
-
-	newState = adjustImporterLock( newState, payload );
 
 	return newState;
 }, initialState );

@@ -5,7 +5,7 @@
  */
 
 import Dispatcher from 'dispatcher';
-import { flowRight, includes, partial } from 'lodash';
+import { flowRight, includes } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
@@ -19,11 +19,9 @@ import {
 	IMPORTS_FETCH_FAILED,
 	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_IMPORT_CANCEL,
-	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
 	IMPORTS_IMPORT_START,
-	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
@@ -31,6 +29,13 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
+import {
+	cancelImport as reduxCancelImport,
+	resetImport as reduxResetImport,
+	startMappingAuthors as reduxStartMappingAuthors,
+	startImporting as reduxStartImporting,
+} from 'state/imports/importer-locks/actions';
+import { reduxDispatch } from 'lib/redux-bridge';
 import { fromApi, toApi } from './common';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
@@ -66,13 +71,6 @@ const apiFailure = data => {
 
 	return data;
 };
-const setImportLock = ( shouldEnableLock, importerId ) => {
-	const type = shouldEnableLock ? IMPORTS_IMPORT_LOCK : IMPORTS_IMPORT_UNLOCK;
-
-	Dispatcher.handleViewAction( { type, importerId } );
-};
-const lockImport = partial( setImportLock, true );
-const unlockImport = partial( setImportLock, false );
 
 const asArray = a => [].concat( a );
 
@@ -84,7 +82,7 @@ function receiveImporterStatus( importerStatus ) {
 }
 
 export function cancelImport( siteId, importerId ) {
-	lockImport( importerId );
+	reduxDispatch( reduxCancelImport( importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_CANCEL,
@@ -140,7 +138,7 @@ export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) => ( {
 
 export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	lockImport( importerId );
+	reduxDispatch( reduxResetImport( importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_RESET,
@@ -158,7 +156,7 @@ export function resetImport( siteId, importerId ) {
 }
 
 export function startMappingAuthors( importerId ) {
-	lockImport( importerId );
+	reduxDispatch( reduxStartMappingAuthors( importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_AUTHORS_START_MAPPING,
@@ -191,7 +189,7 @@ export function startImporting( importerStatus ) {
 		site: { ID: siteId },
 	} = importerStatus;
 
-	unlockImport( importerId );
+	reduxDispatch( reduxStartImporting( importerId ) );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_START_IMPORTING,
