@@ -12,8 +12,10 @@ import {
 	isNil,
 	map,
 	merge,
+	mergeWith,
 	pullAll,
 	startsWith,
+	isArray,
 } from 'lodash';
 
 /**
@@ -237,7 +239,21 @@ export const getCurrentlyOpenShippingZoneMethod = (
 		? false !== openMethod.enabled
 		: false !== zone.methods.currentlyEditingChanges.enabled;
 
-	return merge( {}, defaultValues, openMethod, zone.methods.currentlyEditingChanges, { enabled } );
+	// Overwrites the default behavior of `merge` while ignoring arrays and focusing on objects.
+	const customizer = ( objValue, srcValue ) => {
+		if ( isArray( objValue ) ) {
+			return srcValue;
+		}
+	};
+
+	return mergeWith(
+		{},
+		defaultValues,
+		openMethod,
+		zone.methods.currentlyEditingChanges,
+		{ enabled },
+		customizer
+	);
 };
 
 /**
