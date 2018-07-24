@@ -15,6 +15,8 @@ import nock from 'nock';
  */
 import posts from 'state/posts/reducer';
 import preferences from 'state/preferences/reducer';
+import sites from 'state/sites/reducer';
+import siteSettings from 'state/site-settings/reducer';
 import { selectedSiteId } from 'state/ui/reducer';
 import editor from 'state/ui/editor/reducer';
 import { setSelectedSiteId } from 'state/ui/actions';
@@ -30,6 +32,8 @@ const GLOBAL_ID = '123-456';
 const reducer = combineReducers( {
 	posts,
 	preferences,
+	sites,
+	siteSettings,
 	ui: combineReducers( {
 		selectedSiteId,
 		editor,
