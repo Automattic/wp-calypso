@@ -8,7 +8,8 @@ import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop, every, has, defer, get } from 'lodash';
+import { noop, every, has, defer, get, trim } from 'lodash';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -128,17 +129,49 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	validateSite = () => {
-		const siteURL = this.state.siteURLInput;
+		const siteURL = trim( this.state.siteURLInput );
+		const { hostname, pathname } = url.parse(
+			siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
+		);
 
-		this.setState( { loading: true }, this.resetErrors );
+		let errorMessage;
+		if ( ! siteURL ) {
+			errorMessage = this.props.translate( 'Please enter a URL.' );
+		} else if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
+			errorMessage = this.props.translate(
+				'The URL you entered is for the Wix editor which is only accessible to you. Please enter a public URL of your site using one of the formats described below.'
+			);
+		} else if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
+			errorMessage = this.props.translate(
+				'The URL you entered is not complete. Please include the part of URL which comes after wixsite.com. See below for an example.'
+			);
+		}
+
+		if ( errorMessage ) {
+			this.setState( {
+				loading: false,
+				error: true,
+				errorMessage,
+				errorType: 'validationError',
+			} );
+			return;
+		}
+
+		// normalized URL
+		const urlForImport = hostname + pathname;
+
+		this.setState( {
+			loading: true,
+			...NO_ERROR_STATE,
+		} );
 
 		this.props.recordTracksEvent( 'calypso_site_importer_validate_site', {
 			blog_id: this.props.site.ID,
-			site_url: siteURL,
+			site_url: urlForImport,
 		} );
 
 		loadmShotsPreview( {
-			url: siteURL,
+			url: urlForImport,
 			maxRetries: 1,
 		} ).catch( noop ); // We don't care about the error, this is just a preload
 
@@ -146,7 +179,7 @@ class SiteImporterInputPane extends React.Component {
 			.get( {
 				path: `/sites/${
 					this.props.site.ID
-				}/site-importer/is-site-importable?site_url=${ siteURL }`,
+				}/site-importer/is-site-importable?site_url=${ urlForImport }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( resp => {
@@ -158,14 +191,15 @@ class SiteImporterInputPane extends React.Component {
 						unsupported: resp.unsupported_content,
 						favicon: resp.favicon,
 						engine: resp.engine,
+						url: resp.url,
 					},
 					loading: false,
-					importSiteURL: siteURL,
+					importSiteURL: resp.site_url,
 				} );
 
 				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_done', {
 					blog_id: this.props.site.ID,
-					site_url: this.state.importSiteURL,
+					site_url: resp.site_url,
 					supported_content: resp.supported_content
 						.slice( 0 )
 						.sort()
@@ -186,7 +220,7 @@ class SiteImporterInputPane extends React.Component {
 
 				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
 					blog_id: this.props.site.ID,
-					site_url: this.state.importSiteURL,
+					site_url: urlForImport,
 				} );
 			} );
 	};
@@ -276,7 +310,7 @@ class SiteImporterInputPane extends React.Component {
 		this.setState( {
 			loading: false,
 			importStage: 'idle',
-			...NO_ERROR_STATE
+			...NO_ERROR_STATE,
 		} );
 	};
 
@@ -318,7 +352,30 @@ class SiteImporterInputPane extends React.Component {
 					</div>
 				) }
 				{ this.state.error && (
-					<ErrorPane type="importError" description={ this.state.errorMessage } />
+					<ErrorPane
+						type={ this.state.errorType || 'importError' }
+						description={ this.state.errorMessage }
+						retryImport={ this.validateSite }
+					/>
+				) }
+				{ this.state.importStage === 'idle' && (
+					<div>
+						<p>
+							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
+						</p>
+						<ul>
+							<li>
+								<span className="site-importer__site-importer-example-domain">example.com</span> -{' '}
+								{ this.props.translate( 'a paid custom domain' ) }
+							</li>
+							<li>
+								<span className="site-importer__site-importer-example-domain">
+									example-account.wixsite.com/my-site
+								</span>{' '}
+								- { this.props.translate( 'a free domain that comes with every site' ) }
+							</li>
+						</ul>
+					</div>
 				) }
 			</div>
 		);
