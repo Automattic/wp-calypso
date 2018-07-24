@@ -71,6 +71,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderSecondaryView = () => {
+		const { onClose } = this.props;
 		const classes = classNames(
 			'inline-help__secondary-view',
 			`inline-help__${ this.state.activeSecondaryView }`
@@ -79,7 +80,7 @@ class InlineHelpPopover extends Component {
 			<div className={ classes }>
 				{
 					{
-						contact: <HelpContact compact selectedSite={ this.props.selectedSite } />,
+						contact: <HelpContact compact selectedSite={ this.props.selectedSite } closeInlineHelp={ onClose } />,
 						richresult: <InlineHelpRichResult result={ this.props.selectedResult } />,
 					}[ this.state.activeSecondaryView ]
 				}
