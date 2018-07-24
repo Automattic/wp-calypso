@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	appendToPostEditsLog,
 	normalizePostForDisplay,
 	normalizePostForState,
 	normalizePostForApi,
@@ -370,7 +371,79 @@ describe( 'utils', () => {
 		} );
 	} );
 
+	describe( 'appendToPostEditsLog', () => {
+		test( 'should create a new log when input log is empty', () => {
+			const newLog = appendToPostEditsLog( null, { title: 'Hello' } );
+			expect( newLog ).toEqual( [ { title: 'Hello' } ] );
+		} );
+
+		test( 'should append edit to an empty log', () => {
+			const newLog = appendToPostEditsLog( [], { title: 'Hello' } );
+			expect( newLog ).toEqual( [ { title: 'Hello' } ] );
+		} );
+
+		test( 'should merge with last edit if it is not a save marker', () => {
+			const newLog = appendToPostEditsLog( [ { title: 'Hello' } ], { content: 'World' } );
+			expect( newLog ).toEqual( [ { title: 'Hello', content: 'World' } ] );
+		} );
+
+		test( 'should append a new edit if the last one is a save marker', () => {
+			const newLog = appendToPostEditsLog( [ { title: 'Hello' }, 'marker' ], { content: 'World' } );
+			expect( newLog ).toEqual( [ { title: 'Hello' }, 'marker', { content: 'World' } ] );
+		} );
+	} );
+
 	describe( 'mergePostEdits', () => {
+		test( 'should return null when there are no objects to merge', () => {
+			expect( mergePostEdits() ).toBeNull();
+		} );
+
+		test( 'should return null when there are no objects to merge, only markers', () => {
+			expect( mergePostEdits( 'marker' ) ).toBeNull();
+		} );
+
+		test( 'should return identical object when called with only one object', () => {
+			const postEdit = deepFreeze( { title: 'Hello' } );
+			const merged = mergePostEdits( postEdit );
+			expect( merged ).toBe( postEdit );
+		} );
+
+		test( 'should return identical object when called with only one object + markers', () => {
+			const postEdit = deepFreeze( { title: 'Hello' } );
+			const merged = mergePostEdits( 'marker1', postEdit, 'marker2' );
+			expect( merged ).toBe( postEdit );
+		} );
+
+		test( 'should merge multiple objects', () => {
+			const merged = mergePostEdits(
+				deepFreeze( { title: 'Hello' } ),
+				deepFreeze( { content: 'World' } ),
+				deepFreeze( { excerpt: 'Hi' } )
+			);
+
+			expect( merged ).toEqual( {
+				title: 'Hello',
+				content: 'World',
+				excerpt: 'Hi',
+			} );
+		} );
+
+		test( 'should merge multiple objects with interlaced markers', () => {
+			const merged = mergePostEdits(
+				deepFreeze( { title: 'Hello' } ),
+				'marker1',
+				deepFreeze( { content: 'World' } ),
+				'marker2',
+				deepFreeze( { excerpt: 'Hi' } )
+			);
+
+			expect( merged ).toEqual( {
+				title: 'Hello',
+				content: 'World',
+				excerpt: 'Hi',
+			} );
+		} );
+
 		test( 'should merge into an empty object', () => {
 			const merged = mergePostEdits( deepFreeze( {} ), {
 				tags_by_id: [ 4, 5, 6 ],

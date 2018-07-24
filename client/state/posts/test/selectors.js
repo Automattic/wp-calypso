@@ -969,14 +969,13 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': {
-									title: 'Ribs &amp; Chicken',
-								},
+								'': [ { title: 'Ribs &amp; Chicken' } ],
 							},
 						},
 					},
 				},
-				2916284
+				2916284,
+				null
 			);
 
 			expect( editedPost ).to.eql( { title: 'Ribs &amp; Chicken' } );
@@ -990,9 +989,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								841: {
-									title: 'Hello World!',
-								},
+								841: [ { title: 'Hello World!' } ],
 							},
 						},
 					},
@@ -1024,9 +1021,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									title: 'Hello World!',
-								},
+								841: [ { title: 'Hello World!' } ],
 							},
 						},
 					},
@@ -1035,10 +1030,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( editedPost ).to.eql( {
-				...postObject,
-				title: 'Hello World!',
-			} );
+			expect( editedPost ).to.eql( { ...postObject, title: 'Hello World!' } );
 		} );
 
 		test( 'should return revisions merged with original post nested properties', () => {
@@ -1063,11 +1055,13 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									discussion: {
-										pings_open: true,
+								841: [
+									{
+										discussion: {
+											pings_open: true,
+										},
 									},
-								},
+								],
 							},
 						},
 					},
@@ -1118,11 +1112,13 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									terms: {
-										post_tag: [ 'tag2', 'tag3' ],
+								841: [
+									{
+										terms: {
+											post_tag: [ 'tag2', 'tag3' ],
+										},
 									},
-								},
+								],
 							},
 						},
 					},
@@ -1173,11 +1169,13 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									terms: {
-										post_tag: [ 'tag1' ],
+								841: [
+									{
+										terms: {
+											post_tag: [ 'tag1' ],
+										},
 									},
-								},
+								],
 							},
 						},
 					},
@@ -1223,9 +1221,7 @@ describe( 'selectors', () => {
 					},
 					edits: {
 						2916284: {
-							841: {
-								title: 'Hello World',
-							},
+							841: [ { title: 'Hello World' } ],
 						},
 					},
 				},
@@ -1247,9 +1243,7 @@ describe( 'selectors', () => {
 			// edits key will not change
 			const edits = {
 				2916284: {
-					841: {
-						title: 'Hello World',
-					},
+					841: [ { title: 'Hello World' } ],
 				},
 			};
 
@@ -1331,17 +1325,13 @@ describe( 'selectors', () => {
 			// edits are different for each state
 			const edits1 = {
 				2916284: {
-					841: {
-						title: 'Hello World',
-					},
+					841: [ { title: 'Hello World' } ],
 				},
 			};
 
 			const edits2 = {
 				2916284: {
-					841: {
-						title: 'Hello World!',
-					},
+					841: [ { title: 'Hello World!' } ],
 				},
 			};
 
@@ -1411,9 +1401,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': {
-									title: 'Hello World!',
-								},
+								'': [ { title: 'Hello World!' } ],
 							},
 						},
 					},
@@ -1434,9 +1422,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								841: {
-									title: 'Hello World!',
-								},
+								841: [ { title: 'Hello World!' } ],
 							},
 						},
 					},
@@ -1489,9 +1475,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									title: 'Hello World!',
-								},
+								841: [ { title: 'Hello World!' } ],
 							},
 						},
 					},
@@ -1526,11 +1510,13 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									discussion: {
-										pings_open: true,
+								841: [
+									{
+										discussion: {
+											pings_open: true,
+										},
 									},
-								},
+								],
 							},
 						},
 					},
@@ -1582,9 +1568,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									password: '',
-								},
+								841: [ { password: '' } ],
 							},
 						},
 					},
@@ -1617,9 +1601,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									password: 'secret',
-								},
+								841: [ { password: 'secret' } ],
 							},
 						},
 					},
@@ -1652,9 +1634,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									password: ' ',
-								},
+								841: [ { password: ' ' } ],
 							},
 						},
 					},
@@ -1705,9 +1685,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									password: '',
-								},
+								841: [ { password: '' } ],
 							},
 						},
 					},
@@ -1740,9 +1718,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									password: 'secret',
-								},
+								841: [ { password: 'secret' } ],
 							},
 						},
 					},
@@ -1775,9 +1751,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									password: ' ',
-								},
+								841: [ { password: ' ' } ],
 							},
 						},
 					},
@@ -1843,9 +1817,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									type: 'post',
-								},
+								841: [ { type: 'post' } ],
 							},
 						},
 					},
@@ -1869,9 +1841,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': {
-									type: 'jetpack-portfolio',
-								},
+								'': [ { type: 'jetpack-portfolio' } ],
 							},
 						},
 					},
@@ -1894,9 +1864,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': {
-									status: 'draft',
-								},
+								'': [ { status: 'draft' } ],
 							},
 						},
 					},
@@ -1919,9 +1887,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': {
-									status: 'publish',
-								},
+								'': [ { status: 'publish' } ],
 							},
 						},
 					},
@@ -1944,9 +1910,7 @@ describe( 'selectors', () => {
 						queries: {},
 						edits: {
 							2916284: {
-								'': {
-									author: 'testonesite2014',
-								},
+								'': [ { author: 'testonesite2014' } ],
 							},
 						},
 					},
@@ -1980,9 +1944,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									title: 'Hello World',
-								},
+								841: [ { title: 'Hello World' } ],
 							},
 						},
 					},
@@ -2017,9 +1979,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									content: 'Hello World',
-								},
+								841: [ { content: 'Hello World' } ],
 							},
 						},
 					},
@@ -2057,9 +2017,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									title: 'Hello World!',
-								},
+								841: [ { title: 'Hello World!' } ],
 							},
 						},
 					},
@@ -2093,9 +2051,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									parent: 10,
-								},
+								841: [ { parent: 10 } ],
 							},
 						},
 					},
@@ -2132,9 +2088,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									parent: 10,
-								},
+								841: [ { parent: 10 } ],
 							},
 						},
 					},
@@ -2169,9 +2123,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									date: moment( '2017-09-14T15:47:33-04:00' ),
-								},
+								841: [ { date: moment( '2017-09-14T15:47:33-04:00' ) } ],
 							},
 						},
 					},
@@ -2206,9 +2158,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									date: moment( '2016-09-14T15:47:33-04:00' ),
-								},
+								841: [ { date: moment( '2016-09-14T15:47:33-04:00' ) } ],
 							},
 						},
 					},
@@ -2248,12 +2198,14 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									discussion: {
-										comment_status: 'closed',
-										ping_status: 'open',
+								841: [
+									{
+										discussion: {
+											comment_status: 'closed',
+											ping_status: 'open',
+										},
 									},
-								},
+								],
 							},
 						},
 					},
@@ -2293,12 +2245,14 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									discussion: {
-										comment_status: 'open',
-										ping_status: 'open',
+								841: [
+									{
+										discussion: {
+											comment_status: 'open',
+											ping_status: 'open',
+										},
 									},
-								},
+								],
 							},
 						},
 					},
@@ -2336,12 +2290,14 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									author: {
-										ID: 123,
-										name: 'Bob Trujillo',
+								841: [
+									{
+										author: {
+											ID: 123,
+											name: 'Bob Trujillo',
+										},
 									},
-								},
+								],
 							},
 						},
 					},
@@ -2379,9 +2335,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									featured_image: 123,
-								},
+								841: [ { featured_image: 123 } ],
 							},
 						},
 					},
@@ -2414,15 +2368,17 @@ describe( 'selectors', () => {
 			// check unapplied metadata update
 			const updateEdits = {
 				2916284: {
-					841: {
-						metadata: [
-							{
-								key: 'seo_description',
-								value: 'Hello World',
-								operation: 'update',
-							},
-						],
-					},
+					841: [
+						{
+							metadata: [
+								{
+									key: 'seo_description',
+									value: 'Hello World',
+									operation: 'update',
+								},
+							],
+						},
+					],
 				},
 			};
 
@@ -2447,9 +2403,7 @@ describe( 'selectors', () => {
 			// check unapplied metadata delete
 			const deleteEdits = {
 				2916284: {
-					841: {
-						metadata: [ { key: 'seo_description', operation: 'delete' } ],
-					},
+					841: [ { metadata: [ { key: 'seo_description', operation: 'delete' } ] } ],
 				},
 			};
 
@@ -2490,16 +2444,18 @@ describe( 'selectors', () => {
 							},
 							edits: {
 								2916284: {
-									841: {
-										metadata: [
-											{
-												key: 'seo_description',
-												value: 'Hello World',
-												operation: 'update',
-											},
-											{ key: 'geo_latitude', operation: 'delete' },
-										],
-									},
+									841: [
+										{
+											metadata: [
+												{
+													key: 'seo_description',
+													value: 'Hello World',
+													operation: 'update',
+												},
+												{ key: 'geo_latitude', operation: 'delete' },
+											],
+										},
+									],
 								},
 							},
 						},
@@ -2524,9 +2480,7 @@ describe( 'selectors', () => {
 			// edits key will not change
 			const edits = {
 				2916284: {
-					841: {
-						title: 'Hello World',
-					},
+					841: [ { title: 'Hello World' } ],
 				},
 			};
 
@@ -3095,9 +3049,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									slug: 'jedi',
-								},
+								841: [ { slug: 'jedi' } ],
 							},
 						},
 					},
@@ -3190,9 +3142,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									slug: 'ewok',
-								},
+								841: [ { slug: 'ewok' } ],
 							},
 						},
 					},
@@ -3226,9 +3176,7 @@ describe( 'selectors', () => {
 						},
 						edits: {
 							2916284: {
-								841: {
-									slug: '',
-								},
+								841: [ { slug: '' } ],
 							},
 						},
 					},
