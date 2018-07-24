@@ -16,7 +16,7 @@ import { get } from 'lodash';
 import Gravatar from 'components/gravatar';
 import AuthorSelector from 'blocks/author-selector';
 import { hasTouch } from 'lib/touch-detect';
-import * as stats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getSite } from 'state/sites/selectors';
@@ -73,8 +73,8 @@ export class EditorAuthor extends Component {
 	}
 
 	onSelect = author => {
-		stats.recordStat( 'advanced_author_changed' );
-		stats.recordEvent( 'Changed Author' );
+		this.props.recordEditorStat( 'advanced_author_changed' );
+		this.props.recordEditorEvent( 'Changed Author' );
 
 		const siteId = get( this.props.site, 'ID', null );
 		const postId = get( this.props.post, 'ID', null );
@@ -111,5 +111,5 @@ export default connect(
 
 		return { site, post, author, isNew };
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( EditorAuthor ) );

@@ -7,7 +7,7 @@ const babel = require( '@babel/core' );
 
 describe( 'babel-lodash-es', () => {
 	function transform( code ) {
-		return babel.transform( code, { plugins: [ require( '..' ) ] } ).code;
+		return babel.transformSync( code, { configFile: false, plugins: [ require( '..' ) ] } ).code;
 	}
 
 	test( 'should transform named import from top-level package', () => {

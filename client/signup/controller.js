@@ -78,13 +78,14 @@ export default {
 		const flowName = getFlowName( context.params );
 		const localeFromParams = getLocale( context.params );
 		const localeFromStore = store.get( 'signup-locale' );
+		SignupProgressStore.setReduxStore( context.store );
 
 		// if flow can be resumed, use saved locale
 		if (
 			! user.get() &&
 			! localeFromParams &&
 			localeFromStore &&
-			canResumeFlow( flowName, SignupProgressStore.getFromCache() )
+			canResumeFlow( flowName, SignupProgressStore.get() )
 		) {
 			window.location =
 				getStepUrl(

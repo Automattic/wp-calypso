@@ -80,7 +80,7 @@ class DomainSearchResults extends React.Component {
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
-		let availabilityElement, domainSuggestionElement, offer;
+		let availabilityElement, offer;
 
 		if (
 			domain &&
@@ -182,10 +182,7 @@ class DomainSearchResults extends React.Component {
 
 		return (
 			<div className="domain-search-results__domain-availability">
-				<div className={ availabilityElementClasses }>
-					{ availabilityElement }
-					{ domainSuggestionElement }
-				</div>
+				<div className={ availabilityElementClasses }>{ availabilityElement }</div>
 			</div>
 		);
 	}
@@ -227,11 +224,13 @@ class DomainSearchResults extends React.Component {
 				<FeaturedDomainSuggestions
 					cart={ this.props.cart }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					fetchAlgo={ this.props.fetchAlgo }
 					isSignupStep={ this.props.isSignupStep }
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
 					primarySuggestion={ first( bestMatchSuggestions ) }
 					query={ this.props.lastDomainSearched }
+					railcarSeed={ this.props.railcarSeed }
 					secondarySuggestion={ first( bestAlternativeSuggestions ) }
 					selectedSite={ this.props.selectedSite }
 				/>
@@ -250,8 +249,8 @@ class DomainSearchResults extends React.Component {
 						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-${ i }` }
-						uiPosition={ i }
+						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-${ i + 2 }` }
+						uiPosition={ i + 2 }
 						fetchAlgo={
 							endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo
 						}

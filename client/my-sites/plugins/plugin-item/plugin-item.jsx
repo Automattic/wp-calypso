@@ -343,7 +343,9 @@ class PluginItem extends Component {
 			pluginActions = this.renderActions();
 		}
 
-		const pluginItemClasses = classNames( 'plugin-item', { disabled } );
+		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug, {
+			disabled,
+		} );
 
 		return (
 			<CompactCard className={ pluginItemClasses }>

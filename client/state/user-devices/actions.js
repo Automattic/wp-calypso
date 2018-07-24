@@ -18,4 +18,4 @@ export const requestUserDevices = () => ( { type: USER_DEVICES_REQUEST } );
  * @param  {Object} devices Object containing one or more devices, keyed by id.
  * @return {Object}         Action object
  */
-export const userDevicesAdd = ( { devices } ) => ( { type: USER_DEVICES_ADD, devices } );
+export const userDevicesAdd = devices => ( { type: USER_DEVICES_ADD, devices } );

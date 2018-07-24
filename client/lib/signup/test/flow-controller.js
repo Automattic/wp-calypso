@@ -6,42 +6,89 @@
 /**
  * External dependencies
  */
-import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
-import { ary, defer } from 'lodash';
+import { ary } from 'lodash';
 import { createStore } from 'redux';
 
 /**
  * Internal dependencies
  */
 import { reducer } from 'state';
+import SignupActions from '../actions';
+import SignupDependencyStore from '../dependency-store';
+import SignupFlowController from '../flow-controller';
+import SignupProgressStore from '../progress-store';
 
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'lib/user', () => () => ( { get: () => ( {} ) } ) );
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
 jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
 
 describe( 'flow-controller', () => {
-	let SignupProgressStore,
-		SignupDependencyStore,
-		SignupFlowController,
-		SignupActions,
-		signupFlowController;
-
-	beforeAll( () => {
-		SignupProgressStore = require( '../progress-store' );
-		SignupDependencyStore = require( '../dependency-store' );
-		SignupFlowController = require( '../flow-controller' );
-		SignupActions = require( '../actions' );
-		SignupProgressStore.reset();
-
-		const store = createStore( reducer );
-		SignupDependencyStore.setReduxStore( store );
-	} );
+	let signupFlowController;
+	const store = createStore( reducer );
 
 	afterEach( () => {
 		signupFlowController.reset();
-		SignupDependencyStore.reset();
-		SignupProgressStore.reset();
+	} );
+
+	describe( 'setup', () => {
+		test( 'should have a redux store attached', () => {
+			signupFlowController = SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+			expect( signupFlowController._reduxStore ).toEqual( store );
+		} );
+
+		test( 'should bind its redux store to both progress and dependency stores', () => {
+			expect( SignupProgressStore.reduxStore ).toEqual( store );
+			expect( SignupDependencyStore.reduxStore ).toEqual( store );
+		} );
+
+		test( 'should invoke a changeSignupFlow flux action to flush out invalid steps', () => {
+			SignupProgressStore.setReduxStore( store );
+			SignupProgressStore.set( [
+				{ stepName: 'stepA' },
+				{ stepName: 'stepB' },
+				{ stepName: 'stepC' },
+			] );
+			expect( SignupProgressStore.get() ).toHaveLength( 3 );
+			signupFlowController = SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+			const progress = SignupProgressStore.get();
+			expect( progress ).toHaveLength( 2 );
+			expect( progress.map( step => step.stepName ) ).toEqual( [ 'stepA', 'stepB' ] );
+		} );
+
+		test( 'should reset stores if there are processing steps in the state upon instantitaion', () => {
+			SignupProgressStore.setReduxStore( store );
+			SignupProgressStore.set( [
+				{ stepName: 'stepA', status: 'processing' },
+				{ stepName: 'stepB' },
+				{ stepName: 'stepC' },
+			] );
+			signupFlowController = SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+			expect( SignupProgressStore.get() ).toHaveLength( 0 );
+		} );
+		test( 'should reset stores if user is logged in and there is a user step in the saved progress', () => {
+			SignupProgressStore.setReduxStore( store );
+			SignupProgressStore.set( [ { stepName: 'user' } ] );
+			signupFlowController = SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+			expect( SignupProgressStore.get() ).toHaveLength( 0 );
+		} );
 	} );
 
 	describe( 'controlling a simple flow', () => {
@@ -49,9 +96,10 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'simple_flow',
 				onComplete: function( dependencies, destination ) {
-					assert.equal( destination, '/' );
+					expect( destination ).toEqual( '/' );
 					done();
 				},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( { stepName: 'stepA' } );
@@ -61,7 +109,10 @@ describe( 'flow-controller', () => {
 
 	describe( 'controlling a flow w/ an asynchronous step', () => {
 		beforeEach( () => {
-			signupFlowController = SignupFlowController( { flowName: 'flow_with_async' } );
+			signupFlowController = SignupFlowController( {
+				flowName: 'flow_with_async',
+				reduxStore: store,
+			} );
 		} );
 
 		test( 'should call apiRequestFunction on steps with that property', done => {
@@ -69,7 +120,7 @@ describe( 'flow-controller', () => {
 
 			SignupActions.submitSignupStep( {
 				stepName: 'asyncStep',
-				done: done,
+				done,
 			} );
 		} );
 
@@ -77,7 +128,7 @@ describe( 'flow-controller', () => {
 			SignupActions.submitSignupStep( { stepName: 'userCreation' }, [], { bearer_token: 'TOKEN' } );
 			SignupActions.submitSignupStep( {
 				stepName: 'asyncStep',
-				done: done,
+				done,
 			} );
 
 			// resubmit the first step to initiate another call to SignupFlowController#_process
@@ -91,15 +142,16 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flow_with_dependencies',
 				onComplete: function( dependencies, destination ) {
-					assert.equal( destination, '/checkout/testsite.wordpress.com' );
+					expect( destination ).toEqual( '/checkout/testsite.wordpress.com' );
 					done();
 				},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
 				stepName: 'siteCreation',
 				stepCallback: function( dependencies ) {
-					assert.deepEqual( dependencies, { bearer_token: 'TOKEN' } );
+					expect( dependencies ).toEqual( { bearer_token: 'TOKEN' } );
 				},
 			} );
 
@@ -112,12 +164,13 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'invalid_flow_with_dependencies',
 				onComplete: function() {},
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( { stepName: 'siteCreation' } );
-			assert.throws( function() {
-				SignupActions.submitSignupStep( { stepName: 'userCreationWithoutToken' } );
-			} );
+			expect( () =>
+				SignupActions.submitSignupStep( { stepName: 'userCreationWithoutToken' } )
+			).toThrow();
 		} );
 	} );
 
@@ -126,52 +179,48 @@ describe( 'flow-controller', () => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
 				stepName: 'delayedStep',
 				stepCallback: function() {
-					assert.equal( SignupProgressStore.get().length, 2 );
+					expect( SignupProgressStore.get() ).toHaveLength( 2 );
 				},
 			} );
 
-			defer( function() {
-				SignupActions.submitSignupStep( { stepName: 'stepA' } );
-			} );
+			SignupActions.submitSignupStep( { stepName: 'stepA' } );
 		} );
 
 		test( 'should not submit delayed steps if some steps are in-progress', done => {
 			signupFlowController = SignupFlowController( {
 				flowName: 'flowWithDelay',
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {
 				stepName: 'delayedStep',
 				stepCallback: function() {
-					assert.equal( SignupProgressStore.get()[ 1 ].status, 'completed' );
+					expect( SignupProgressStore.get()[ 1 ].status ).toEqual( 'completed' );
 				},
 			} );
 
-			defer( function() {
-				// saving the step should not trigger the callback on `delayedStep`…
-				SignupActions.saveSignupStep( { stepName: 'stepA' } );
-
-				defer( function() {
-					// …but submitting it should
-					SignupActions.submitSignupStep( { stepName: 'stepA' } );
-				} );
-			} );
+			// stepA should have status saving the step should not trigger the callback on `delayedStep`…
+			SignupActions.saveSignupStep( { stepName: 'stepA' } );
+			// …but submitting it should
+			SignupActions.submitSignupStep( { stepName: 'stepA' } );
 		} );
 	} );
 
 	describe( 'controlling a flow w/ dependencies provided in query', () => {
 		test( 'should throw an error if the given flow requires dependencies from query but none are given', () => {
-			assert.throws( function() {
+			expect( () =>
 				SignupFlowController( {
 					flowName: 'flowWithProvidedDependencies',
-				} );
-			} );
+					reduxStore: store,
+				} )
+			).toThrow();
 		} );
 
 		test( 'should run `onComplete` once all steps are submitted without an error', done => {
@@ -179,6 +228,7 @@ describe( 'flow-controller', () => {
 				flowName: 'flowWithProvidedDependencies',
 				providedDependencies: { siteSlug: 'foo' },
 				onComplete: ary( done, 0 ),
+				reduxStore: store,
 			} );
 
 			SignupActions.submitSignupStep( {

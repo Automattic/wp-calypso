@@ -74,7 +74,7 @@ const babelLoader = {
 
 const webpackConfig = {
 	bail: ! isDevelopment,
-	entry: { build: [ '@babel/polyfill', path.join( __dirname, 'client', 'boot', 'app' ) ] },
+	entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
 	profile: shouldEmitStats,
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: isDevelopment ? '#eval' : process.env.SOURCEMAP || false, // in production builds you can specify a source-map via env var
@@ -191,6 +191,7 @@ const webpackConfig = {
 				'gridicons/example': 'gridicons/dist/example',
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example',
+				debug: path.resolve( __dirname, 'node_modules/debug' ),
 			},
 			getAliasesForExtensions()
 		),

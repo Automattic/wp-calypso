@@ -16,7 +16,7 @@ import classNames from 'classnames';
  */
 import TrackInputChanges from 'components/track-input-changes';
 import FormTextInput from 'components/forms/form-text-input';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostSlug } from 'state/posts/selectors';
@@ -91,23 +91,23 @@ class PostEditorSlug extends Component {
 	recordChangeStats() {
 		switch ( this.props.instanceName ) {
 			case 'post-sidebar':
-				recordStat( 'slug-edited-post-sidebar' );
-				recordEvent( 'Slug Edited (Post Sidebar)' );
+				this.props.recordEditorStat( 'slug-edited-post-sidebar' );
+				this.props.recordEditorEvent( 'Slug Edited (Post Sidebar)' );
 				break;
 
 			case 'post-popover':
-				recordStat( 'slug-edited-post-popover' );
-				recordEvent( 'Slug Edited (Post Permalink Popover)' );
+				this.props.recordEditorStat( 'slug-edited-post-popover' );
+				this.props.recordEditorEvent( 'Slug Edited (Post Permalink Popover)' );
 				break;
 
 			case 'page-sidebar':
-				recordStat( 'slug-edited-page-sidebar' );
-				recordEvent( 'Slug Edited (Page Sidebar)' );
+				this.props.recordEditorStat( 'slug-edited-page-sidebar' );
+				this.props.recordEditorEvent( 'Slug Edited (Page Sidebar)' );
 				break;
 
 			case 'page-permalink':
-				recordStat( 'slug-edited-page-permalink' );
-				recordEvent( 'Slug Edited (Page Permalink)' );
+				this.props.recordEditorStat( 'slug-edited-page-permalink' );
+				this.props.recordEditorEvent( 'Slug Edited (Page Permalink)' );
 				break;
 		}
 	}
@@ -150,5 +150,5 @@ export default connect(
 
 		return { siteId, postId, slug };
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( PostEditorSlug ) );

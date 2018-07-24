@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
  */
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -47,8 +47,8 @@ class EditorSticky extends React.Component {
 			stickyEventLabel = 'Off';
 		}
 
-		recordStat( stickyStat );
-		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
+		this.props.recordEditorStat( stickyStat );
+		this.props.recordEditorEvent( 'Changed Sticky Setting', stickyEventLabel );
 
 		this.props.editPost( this.props.siteId, this.props.postId, {
 			sticky: ! this.props.sticky,
@@ -110,11 +110,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const sticky = getEditedPostValue( state, siteId, postId, 'sticky' );
 
-		return {
-			postId,
-			siteId,
-			sticky,
-		};
+		return { postId, siteId, sticky };
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( EditorSticky ) );

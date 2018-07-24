@@ -12,7 +12,7 @@ import { get, noop, toPairs } from 'lodash';
 import formatCurrency from 'lib/format-currency';
 import { decodeEntities } from 'lib/formatting';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getFeaturedImageId } from 'state/posts/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';

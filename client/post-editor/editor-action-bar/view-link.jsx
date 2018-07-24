@@ -13,7 +13,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import { decodeEntities } from 'lib/formatting';
-import { isPublished } from 'lib/posts/utils';
+import { isPublished } from 'state/posts/utils';
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
 import QueryPostTypes from 'components/data/query-post-types';

@@ -121,11 +121,9 @@ export class CartItem extends React.Component {
 		if ( cartItem && cartItem.product_cost ) {
 			return (
 				<span>
-					{ ! this.isDomainProductDiscountedTo0() ? (
-						<span className="cart__free-with-plan">
-							{ cartItem.product_cost } { cartItem.currency }
-						</span>
-					) : null }
+					<span className="cart__free-with-plan">
+						{ cartItem.product_cost } { cartItem.currency }
+					</span>
 					<span className="cart__free-text">{ translate( 'Free with your plan' ) }</span>
 				</span>
 			);

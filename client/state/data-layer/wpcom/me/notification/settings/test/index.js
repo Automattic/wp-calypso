@@ -1,26 +1,17 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import { requestNotificationSettings, updateSettings, handleError } from '../';
 import { NOTIFICATION_SETTINGS_UPDATE, NOTICE_CREATE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( '#requestNotificationSettings()', () => {
-	test( 'should dispatch HTTP request to the user notification settings endpoint', () => {
-		const dispatch = spy();
+describe( 'requestNotificationSettings()', () => {
+	test( 'should return an HTTP action to fetch the user notification settings', () => {
+		const action = requestNotificationSettings();
 
-		requestNotificationSettings( { dispatch } );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( action ).toEqual(
 			http( {
 				apiVersion: '1.1',
 				method: 'GET',
@@ -30,28 +21,23 @@ describe( '#requestNotificationSettings()', () => {
 	} );
 } );
 
-describe( '#updateSettings()', () => {
-	test( 'should dispatch notification settings', () => {
-		const dispatch = spy();
+describe( 'updateSettings()', () => {
+	test( 'should return a notification settings update action', () => {
+		const settings = {};
+		const action = updateSettings( null, settings );
 
-		updateSettings( { dispatch }, null, {} );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith( {
+		expect( action ).toEqual( {
 			type: NOTIFICATION_SETTINGS_UPDATE,
-			settings: {},
+			settings,
 		} );
 	} );
 } );
 
-describe( '#handleError()', () => {
-	test( 'should dispatch error notice', () => {
-		const dispatch = spy();
+describe( 'handleError()', () => {
+	test( 'should return an action for an error notice', () => {
+		const action = handleError();
 
-		handleError( { dispatch } );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWithMatch( {
+		expect( action ).toMatchObject( {
 			type: NOTICE_CREATE,
 			notice: {
 				status: 'is-error',

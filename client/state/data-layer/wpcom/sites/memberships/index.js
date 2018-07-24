@@ -10,10 +10,10 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { MEMBERSHIPS_PRODUCTS_RECEIVE, MEMBERSHIPS_PRODUCTS_LIST } from 'state/action-types';
-
+import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import { TransformerError } from 'lib/make-json-schema-parser';
+import subscriptionsHandlers from './subscriptions';
 
 export const membershipProductFromApi = product => ( {
 	ID: product.id || product.connected_account_product_id,
@@ -30,7 +30,7 @@ export const membershipProductFromApi = product => ( {
 	renewal_schedule: product.interval,
 } );
 
-export const handleMembershipsList = dispatchRequestEx( {
+export const handleMembershipProductsList = dispatchRequestEx( {
 	fetch: action =>
 		http(
 			{
@@ -40,12 +40,6 @@ export const handleMembershipsList = dispatchRequestEx( {
 			action
 		),
 	fromApi: function( endpointResponse ) {
-		if ( ! endpointResponse.products ) {
-			throw new TransformerError(
-				'This is from Simple Payments response. We have to disregard it since' +
-					'for some reason data layer does not handle multiple handlers corretly.'
-			);
-		}
 		const products = endpointResponse.products.map( membershipProductFromApi );
 		return products;
 	},
@@ -57,6 +51,9 @@ export const handleMembershipsList = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export default {
-	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipsList ],
-};
+export default mergeHandlers(
+	{
+		[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
+	},
+	subscriptionsHandlers
+);

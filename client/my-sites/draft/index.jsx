@@ -19,7 +19,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import photon from 'photon';
 import { hasTouch } from 'lib/touch-detect';
-import * as utils from 'lib/posts/utils';
+import * as utils from 'state/posts/utils';
 import { getSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
 

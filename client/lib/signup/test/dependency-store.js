@@ -27,6 +27,7 @@ describe( 'dependency-store', () => {
 
 		const store = createStore( reducer );
 		SignupDependencyStore.setReduxStore( store );
+		SignupProgressStore.setReduxStore( store );
 	} );
 
 	afterEach( () => {

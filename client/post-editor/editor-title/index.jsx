@@ -14,12 +14,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import * as PostUtils from 'lib/posts/utils';
+import * as PostUtils from 'state/posts/utils';
 import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
-import * as stats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
 import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
@@ -80,8 +80,8 @@ class EditorTitle extends Component {
 
 	recordChangeStats = () => {
 		const isPage = PostUtils.isPage( this.props.post );
-		stats.recordStat( isPage ? 'page_title_changed' : 'post_title_changed' );
-		stats.recordEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
+		this.props.recordEditorStat( isPage ? 'page_title_changed' : 'post_title_changed' );
+		this.props.recordEditorEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
 	};
 
 	render() {
@@ -137,5 +137,5 @@ export default connect(
 			siteId,
 		};
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( EditorTitle ) );

@@ -15,39 +15,30 @@ import { requestProducts } from 'state/memberships/product-list/actions';
 
 class QueryMemberships extends Component {
 	static propTypes = {
-		productId: PropTypes.number,
 		siteId: PropTypes.number.isRequired,
-		requestProduct: PropTypes.func,
 		requestProducts: PropTypes.func,
 	};
 
-	static defaultProps = {
-		productId: null,
-	};
-
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId || nextProps.productId !== this.props.productId ) {
-			this.request( nextProps );
-		}
-	}
-
-	request( props ) {
-		const { siteId, productId } = props;
-
-		if ( ! siteId ) {
+	request() {
+		if ( this.props.requesting ) {
 			return;
 		}
 
-		// Products are indexed from 1.
-		if ( productId === 0 ) {
+		if ( ! this.props.siteId ) {
 			return;
 		}
 
-		props.requestProducts( siteId );
+		this.props.requestProducts( this.props.siteId );
+	}
+
+	componentDidMount() {
+		this.request();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( this.props.siteId !== prevProps.siteId ) {
+			this.request();
+		}
 	}
 
 	render() {

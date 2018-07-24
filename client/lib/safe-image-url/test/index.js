@@ -97,6 +97,11 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( 'https://example.com/foo.png?bar' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.png?width=90' ) ).toBeNull();
 		} );
+
+		test( 'should return null for SVG images', () => {
+			expect( safeImageUrl( 'https://example.com/foo.svg' ) ).toBeNull();
+			expect( safeImageUrl( 'https://example.com/foo.svg?ssl=1' ) ).toBeNull();
+		} );
 	}
 
 	describe( 'browser', () => {

@@ -24,7 +24,6 @@ import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import { isFreePlan } from 'lib/plans';
-import FoldableCard from 'components/foldable-card';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -119,7 +118,7 @@ class ActivityLog extends Component {
 	}
 
 	findExistingRewind = ( { siteId, rewindState } ) => {
-		if ( rewindState.rewind ) {
+		if ( rewindState.rewind && rewindState.rewind.restoreId ) {
 			this.props.getRewindRestoreProgress( siteId, rewindState.rewind.restoreId );
 		}
 	};
@@ -320,17 +319,16 @@ class ActivityLog extends Component {
 		// The network request is still ongoing
 		return (
 			<section className="activity-log__wrapper">
+				<div className="activity-log__time-period is-loading">
+					<span />
+				</div>
 				{ [ 1, 2, 3 ].map( i => (
-					<FoldableCard
-						key={ i }
-						className="activity-log-day__placeholder"
-						header={
-							<div>
-								<div className="activity-log-day__day" />
-								<div className="activity-log-day__events" />
-							</div>
-						}
-					/>
+					<div key={ i } className="activity-log-item is-loading">
+						<div className="activity-log-item__type">
+							<div className="activity-log-item__activity-icon" />
+						</div>
+						<div className="card foldable-card activity-log-item__card" />
+					</div>
 				) ) }
 			</section>
 		);
@@ -392,9 +390,10 @@ class ActivityLog extends Component {
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
-				{ siteId &&
-					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
-				{ 'awaitingCredentials' === rewindState.state && (
+				{ siteId && 'unavailable' === rewindState.state && (
+						<UnavailabilityNotice siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
+					) }
+				{ 'awaitingCredentials' === rewindState.state && ! siteIsOnFreePlan && (
 					<Banner
 						icon="history"
 						href={
@@ -426,6 +425,16 @@ class ActivityLog extends Component {
 					this.renderNoLogsContent()
 				) : (
 					<div>
+						<Pagination
+							className="activity-log__pagination"
+							key="activity-list-pagination-top"
+							nextLabel={ translate( 'Older' ) }
+							page={ actualPage }
+							pageClick={ this.changePage }
+							perPage={ PAGE_SIZE }
+							prevLabel={ translate( 'Newer' ) }
+							total={ logs.length }
+						/>
 						<section className="activity-log__wrapper">
 							{ theseLogs.map( log => (
 								<Fragment key={ log.activityId }>
@@ -442,8 +451,8 @@ class ActivityLog extends Component {
 							) ) }
 						</section>
 						<Pagination
-							className="activity-log__pagination"
-							key="activity-list-pagination"
+							className="activity-log__pagination is-bottom-pagination"
+							key="activity-list-pagination-bottom"
 							nextLabel={ translate( 'Older' ) }
 							page={ actualPage }
 							pageClick={ this.changePage }

@@ -19,7 +19,6 @@
 		"pt-br"
 	],
 	"features": {
-		"activity-log-core-update": true,
 		"activity-log-wpcom-free": true,
 		"ad-tracking": false,
 		"apple-pay": true,
@@ -52,7 +51,6 @@
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack/google-analytics-for-stores-enhanced": true,
-		"jetpack/ownership-change": true,
 		"jitms": true,
 		"login/magic-login": true,
 		"login/native-login-links": true,
@@ -111,7 +109,6 @@
 		"reader/following-intro": true,
 		"reader/full-errors": false,
 		"reader/likes-hover": true,
-		"reader/nesting-arrow": true,
 		"reader/paste-to-link": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
@@ -130,7 +127,6 @@
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
 		"signup/wpcc": true,
-		"simple-payments": true,
 		"support-user": true,
 		"ui/first-view": true,
 		"upgrades/checkout": true,

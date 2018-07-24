@@ -50,8 +50,8 @@ const exported = {
 					}
 				} else if ( meta.key === 'xpost_origin' ) {
 					const ids = meta.value.split( ':' );
-					xPostMetadata.blogId = ids[ 0 ];
-					xPostMetadata.postId = ids[ 1 ];
+					xPostMetadata.blogId = +ids[ 0 ];
+					xPostMetadata.postId = +ids[ 1 ];
 				}
 			}
 		}

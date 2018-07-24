@@ -15,11 +15,6 @@ import React from 'react';
  */
 import { EditorSharingPublicizeConnection as PublicizeConnection } from '../publicize-connection';
 
-jest.mock( 'lib/posts/stats', () => ( {
-	recordEvent: () => {},
-	recordState: () => {},
-} ) );
-
 /**
  * Module variables
  */

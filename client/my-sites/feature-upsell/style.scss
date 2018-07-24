@@ -6,8 +6,17 @@ $feature-upsell-break-at: '1040px';
 	 * Hack for IE 11 - max-width is in place to limit constraints but it still
 	 * needs an explicit rule for width
 	 */
-	.product-purchase-feature-list__item {
+	.product-purchase-features-list__item {
 		width: 100%;
+	}
+}
+
+.feature-upsell__main--themes,
+.feature-upsell__main--plugins {
+	.purchase-detail,
+	.product-purchase-features-list__item {
+		width: 100%;
+		max-width: 100%;
 	}
 }
 
@@ -71,6 +80,7 @@ $feature-upsell-break-at: '1040px';
 		font-size: 25px;
 		margin: 0 auto;
 		padding: 13px 20px;
+		line-height: 1.2;
 
 		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
@@ -208,10 +218,40 @@ $feature-upsell-break-at: '1040px';
 	}
 }
 
-.feature-upsell__list-item {
-	list-style-type: none;
-
-	svg {
-		fill: $blue-wordpress;
+.feature-upsell__text-content {
+	@include breakpoint( '<660px' ) {
+		padding: 0 2em;
 	}
+}
+
+.feature-upsell__list-wrapper {
+	text-align: center;
+	margin-bottom: 1.5em;
+}
+
+.feature-upsell__list {
+	display: inline-block;
+	margin: 0 auto;
+	text-align: left;
+	min-width: 380px; // IE11 really wants to squish the list, this helps
+}
+
+.feature-upsell__list-item {
+	display: flex;
+	list-style-type: none;
+	align-items: center;
+
+	@include breakpoint( '<660px' ) {
+		align-items: flex-start;
+	}
+}
+
+.feature-upsell__list-item-icon {
+	fill: $blue-wordpress;
+	margin-right: 4px;
+}
+
+.feature-upsell__list-item-text {
+	flex: 1;
+	font-size: 18px;
 }

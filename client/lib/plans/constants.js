@@ -243,7 +243,7 @@ const getPlanPremiumDetails = () => ( {
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 		] ),
@@ -323,7 +323,7 @@ const getPlanBusinessDetails = () => ( {
 			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_NO_ADS,
 			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_BUSINESS_ONBOARDING,
@@ -556,7 +556,7 @@ export const PLANS_LIST = {
 				FEATURE_EASY_SITE_MIGRATION,
 				FEATURE_PREMIUM_SUPPORT,
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
+				FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY,
@@ -608,7 +608,7 @@ export const PLANS_LIST = {
 				FEATURE_EASY_SITE_MIGRATION,
 				FEATURE_PREMIUM_SUPPORT,
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
+				FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY,
@@ -749,7 +749,7 @@ export const PLANS_LIST = {
 				FEATURE_PREMIUM_SUPPORT,
 				FEATURE_SEARCH,
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
+				FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
@@ -810,7 +810,7 @@ export const PLANS_LIST = {
 				FEATURE_EASY_SITE_MIGRATION,
 				FEATURE_PREMIUM_SUPPORT,
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
+				FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
@@ -1044,8 +1044,9 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Jetpack Essential Features' ),
 		getDescription: () =>
 			i18n.translate(
-				'Jetpack is a powerful plugin that includes SEO, spam protection, ' +
-					'social sharing, site stats, and more.'
+				'Improve your SEO, protect your site from spammers, ' +
+					'keep a closer eye on your site with expanded activity logs, ' +
+					'and automate social media sharing.'
 			),
 	},
 

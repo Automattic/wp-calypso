@@ -13,8 +13,7 @@
 .layout__secondary,
 .layout__secondary .sidebar,
 .layout__secondary .site-selector {
-	transition: transform 0.15s ease-in-out,
-				opacity 0.15s ease-out;
+	transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
 }
 
 // If things take a bit to load...
@@ -24,8 +23,8 @@
 	height: 46px;
 	margin-left: -10%;
 	position: absolute;
-		left: 50%;
-		top: 0;
+	left: 50%;
+	top: 0;
 	width: 20%;
 	z-index: z-index( 'root', '.layout__loader' );
 
@@ -77,7 +76,7 @@
 	}
 
 	// Tablets
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		padding: 71px 24px 24px ( $sidebar-width-min + 24px + 1px );
 
 		.has-no-sidebar & {
@@ -96,7 +95,7 @@
 	}
 
 	// Mobile (Full Width)
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-left: 0;
 		padding: 0;
 		padding-top: 47px;
@@ -115,26 +114,27 @@
 // the site-selector elements.
 .layout__secondary {
 	position: fixed;
-		top: 47px;
-		left: 0;
-		bottom: 0;
+	top: 47px;
+	left: 0;
+	bottom: 0;
 	color: var( --sidebar-color );
 	background: var( --sidebar-background );
 	border-right: 1px solid darken( $sidebar-bg-color, 5% );
 	width: $sidebar-width-max;
 	overflow: hidden;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		width: $sidebar-width-min;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 	}
 
 	// The editor has its own sidebar which doesnt
 	// use the secondary element.
 	.is-section-post-editor &,
+	.is-section-gutenberg-editor &,
 	// Some screens (like /theme/) simply dont have
 	// a sidebar.
 	.has-no-sidebar & {
@@ -146,10 +146,10 @@
 // position is off screen.
 .layout__secondary .site-selector {
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	pointer-events: none;
 	transform: translateX( -$sidebar-width-max );
 
@@ -163,12 +163,11 @@
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 		transform: translateX( -100% );
 	}
 }
-
 
 /*
 	Focus States
@@ -179,10 +178,10 @@
 
 // Adjust the content as needed when focused on the site selector
 // or sidebar, but never in the editor.
-.layout.focus-sites:not(.is-section-post-editor),
-.layout.focus-sidebar:not(.is-section-post-editor) {
+.layout.focus-sites:not( .is-section-post-editor ),
+.layout.focus-sidebar:not( .is-section-post-editor ) {
 	.layout__primary .main {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			pointer-events: none;
 			overflow: hidden;
 			max-height: calc( 100vh - 47px );
@@ -205,13 +204,13 @@
 		pointer-events: none;
 		transform: translateX( $sidebar-width-max );
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			transform: translateX( 100% );
 		}
 	}
 
 	.layout__primary .main {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			pointer-events: none;
 			opacity: 0.25;
 		}
@@ -221,7 +220,7 @@
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
 .layout.focus-content {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		.layout__secondary {
 			transform: translateX( -100% );
 		}

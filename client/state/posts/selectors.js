@@ -27,7 +27,7 @@ import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import { addQueryArgs } from 'lib/route';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getFeaturedImageId } from 'state/posts/utils';
 
 /**
  * Returns the PostsQueryManager from the state tree for a given site ID (or

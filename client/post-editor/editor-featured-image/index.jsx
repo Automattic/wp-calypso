@@ -17,14 +17,14 @@ import { noop } from 'lodash';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
-import * as stats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import FeaturedImageDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import Button from 'components/button';
 import RemoveButton from 'components/remove-button';
 import getMediaItem from 'state/selectors/get-media-item';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getFeaturedImageId } from 'state/posts/utils';
 import QueryMedia from 'components/data/query-media';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -86,8 +86,8 @@ class EditorFeaturedImage extends Component {
 			featured_image: value.items[ 0 ].ID,
 		} );
 
-		stats.recordStat( 'featured_image_set' );
-		stats.recordEvent( 'Featured image set' );
+		this.props.recordEditorStat( 'featured_image_set' );
+		this.props.recordEditorEvent( 'Featured image set' );
 
 		this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
 			source: 'medialibrary',
@@ -98,8 +98,8 @@ class EditorFeaturedImage extends Component {
 	removeImage = () => {
 		this.props.editPost( this.props.siteId, this.props.postId, { featured_image: '' } );
 
-		stats.recordStat( 'featured_image_removed' );
-		stats.recordEvent( 'Featured image removed' );
+		this.props.recordEditorStat( 'featured_image_removed' );
+		this.props.recordEditorEvent( 'Featured image removed' );
 	};
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
@@ -196,6 +196,8 @@ export default connect(
 	},
 	{
 		editPost,
+		recordEditorStat,
+		recordEditorEvent,
 		recordTracksEvent,
 	}
 )( localize( EditorFeaturedImage ) );

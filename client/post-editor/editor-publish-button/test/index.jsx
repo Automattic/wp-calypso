@@ -18,10 +18,6 @@ import sinon from 'sinon';
  */
 import { EditorPublishButton } from '../';
 
-jest.mock( 'lib/posts/stats', () => ( {
-	recordEvent: () => {},
-} ) );
-
 /**
  * Module variables
  */

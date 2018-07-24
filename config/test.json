@@ -28,6 +28,7 @@
 	"features": {
 		"ad-tracking": false,
 		"apple-pay": true,
+		"calypsoify/plugins": true,
 		"catch-js-errors": false,
 		"code-splitting": true,
 		"desktop-promo": true,
@@ -43,7 +44,6 @@
 		"jetpack/checklist": true,
 		"jetpack/connect/remote-install": true,
 		"jetpack/happychat": true,
-		"jetpack/ownership-change": true,
 		"jitms": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,

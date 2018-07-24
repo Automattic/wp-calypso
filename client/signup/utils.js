@@ -2,7 +2,7 @@
 /**
  * Exernal dependencies
  */
-import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
+import { filter, find, includes, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -189,12 +189,21 @@ export function getSiteTypeForSiteGoals( siteGoals, flow ) {
 	return 'blog';
 }
 
+export function getFilteredSteps( flowName, progress ) {
+	const flow = flows.getFlow( flowName );
+	return filter( progress, step => includes( flow.steps, step.stepName ) );
+}
+
+export function getFirstInvalidStep( flowName, progress ) {
+	return find( getFilteredSteps( flowName, progress ), { status: 'invalid' } );
+}
+
+export function getCompletedSteps( flowName, progress ) {
+	return filter( getFilteredSteps( flowName, progress ), step => 'in-progress' !== step.status );
+}
+
 export function canResumeFlow( flowName, progress ) {
 	const flow = flows.getFlow( flowName );
-	const flowStepsInProgressStore = filter(
-		progress,
-		step => -1 !== flow.steps.indexOf( step.stepName )
-	);
-
+	const flowStepsInProgressStore = getCompletedSteps( flowName, progress );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }

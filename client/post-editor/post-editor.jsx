@@ -16,7 +16,7 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { autosave, saveEdited } from 'lib/posts/actions';
+import { autosave, saveEdited } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import FeaturedImage from 'post-editor/editor-featured-image';
@@ -28,9 +28,9 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import * as utils from 'lib/posts/utils';
+import * as utils from 'state/posts/utils';
 import EditorPreview from './editor-preview';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import {
@@ -212,11 +212,11 @@ export class PostEditor extends React.Component {
 		switch ( confirmationSidebar ) {
 			case 'closed':
 				this.props.setLayoutFocus( editorSidebarPreference );
-				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
+				this.props.recordTracksEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
 				break;
 			case 'open':
 				this.props.setLayoutFocus( 'editor-confirmation-sidebar' );
-				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
+				this.props.recordTracksEvent( 'calypso_editor_confirmation_sidebar_open' );
 				break;
 		}
 	};
@@ -591,8 +591,10 @@ export class PostEditor extends React.Component {
 	onTrashingPost = () => {
 		const { type } = this.props;
 
-		recordStat( type + '_trashed' );
-		recordEvent( 'page' === type ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
+		this.props.recordEditorStat( type + '_trashed' );
+		this.props.recordEditorEvent(
+			'page' === type ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button'
+		);
 		this.props.markSaved();
 
 		page( this.getAllPostsUrl( 'trashed' ) );
@@ -791,7 +793,7 @@ export class PostEditor extends React.Component {
 
 		this.props.editPost( siteId, postId, { date: dateValue } );
 
-		analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
+		this.props.recordTracksEvent( 'calypso_editor_publish_date_change', {
 			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
 		} );
 	};
@@ -1152,6 +1154,8 @@ const enhance = flow(
 			saveConfirmationSidebarPreference,
 			recordTracksEvent,
 			recordGoogleEvent,
+			recordEditorStat,
+			recordEditorEvent,
 			closeEditorSidebar,
 			openEditorSidebar,
 			editorEditRawContent,

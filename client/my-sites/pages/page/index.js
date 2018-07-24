@@ -22,7 +22,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import SiteIcon from 'blocks/site-icon';
 import { editLinkForPage, statsLinkForPage } from '../helpers';
-import * as utils from 'lib/posts/utils';
+import * as utils from 'state/posts/utils';
 import classNames from 'classnames';
 import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';

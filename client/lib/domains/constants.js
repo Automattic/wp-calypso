@@ -26,6 +26,7 @@ export const registrar = {
 export const domainAvailability = {
 	AVAILABLE: 'available',
 	BLACKLISTED: 'blacklisted_domain',
+	DOTBLOG_SUBDOMAIN: 'dotblog_subdomain',
 	EMPTY_QUERY: 'empty_query',
 	EMPTY_RESULTS: 'empty_results',
 	FORBIDDEN: 'forbidden_domain',

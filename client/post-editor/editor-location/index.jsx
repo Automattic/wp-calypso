@@ -16,7 +16,7 @@ import { stringify } from 'qs';
  */
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import { reverseGeocode } from '../../lib/geocoding';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
 import Notice from 'components/notice';
@@ -72,7 +72,7 @@ class EditorLocation extends React.Component {
 			geo_public: '1',
 		} );
 
-		recordStat( 'location_geolocate_success' );
+		this.props.recordEditorStat( 'location_geolocate_success' );
 
 		reverseGeocode( latitude, longitude )
 			.then( results => {
@@ -86,14 +86,14 @@ class EditorLocation extends React.Component {
 					} );
 				}
 
-				recordStat( 'location_reverse_geocode_success' );
+				this.props.recordEditorStat( 'location_reverse_geocode_success' );
 			} )
 			.catch( () => {
 				this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 					geo_address: latitude + ', ' + longitude,
 				} );
 
-				recordStat( 'location_reverse_geocode_failed' );
+				this.props.recordEditorStat( 'location_reverse_geocode_failed' );
 			} )
 			.then( () => {
 				this.setState( {
@@ -107,7 +107,7 @@ class EditorLocation extends React.Component {
 			error: error,
 			locating: false,
 		} );
-		recordStat( 'location_geolocate_failed' );
+		this.props.recordEditorStat( 'location_geolocate_failed' );
 	};
 
 	resetError = () => {
@@ -126,8 +126,8 @@ class EditorLocation extends React.Component {
 			enableHighAccuracy: true,
 		} );
 
-		recordStat( 'location_geolocate' );
-		recordEvent( 'Location Geolocated' );
+		this.props.recordEditorStat( 'location_geolocate' );
+		this.props.recordEditorEvent( 'Location Geolocated' );
 	};
 
 	clear = () => {
@@ -267,5 +267,7 @@ export default connect(
 	{
 		updatePostMetadata,
 		deletePostMetadata,
+		recordEditorStat,
+		recordEditorEvent,
 	}
 )( localize( EditorLocation ) );

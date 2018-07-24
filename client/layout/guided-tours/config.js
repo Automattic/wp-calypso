@@ -20,8 +20,10 @@ import { ChecklistSiteTitleTour } from 'layout/guided-tours/tours/checklist-site
 import { ChecklistUserAvatarTour } from 'layout/guided-tours/tours/checklist-user-avatar-tour';
 import { JetpackBasicTour } from 'layout/guided-tours/tours/jetpack-basic-tour';
 import { JetpackMonitoringTour } from 'layout/guided-tours/tours/jetpack-monitoring-tour';
+import { JetpackPluginUpdatesTour } from 'layout/guided-tours/tours/jetpack-plugin-updates-tour';
 import { JetpackSignInTour } from 'layout/guided-tours/tours/jetpack-sign-in-tour';
 import { SimplePaymentsEmailTour } from 'layout/guided-tours/tours/simple-payments-email-tour';
+import { PluginsBasicTour } from 'layout/guided-tours/tours/plugins-basic-tour';
 
 export default combineTours( {
 	checklistAboutPage: ChecklistAboutPageTour,
@@ -33,6 +35,7 @@ export default combineTours( {
 	checklistUserAvatar: ChecklistUserAvatarTour,
 	jetpack: JetpackBasicTour,
 	jetpackMonitoring: JetpackMonitoringTour,
+	jetpackPluginUpdates: JetpackPluginUpdatesTour,
 	jetpackSignIn: JetpackSignInTour,
 	main: MainTour,
 	editorBasicsTour: EditorBasicsTour,
@@ -41,4 +44,5 @@ export default combineTours( {
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	simplePaymentsTour: SimplePaymentsTour,
 	simplePaymentsEmailTour: SimplePaymentsEmailTour,
+	pluginsBasicTour: PluginsBasicTour,
 } );

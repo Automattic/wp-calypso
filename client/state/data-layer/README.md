@@ -114,45 +114,59 @@ Let's look at a full example:
  * retry if it fails (up to a certain point where
  * it will give up and launch the failure handler)
  */
-const fetchSplines = ( { dispatch }, action ) => {
-	dispatch( http( {
-		method: 'GET',
-		apiVersion: 'v1.1',
-		path: '/splines',
-		query: {
-			site_id: action.siteId,
-		}
-	}, action ) );
+
+/**
+ * Internal dependencies
+ */
+import { addSplines } from 'state/splines/actions';
+import { errorNotice } from 'state/notices/actions';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+
+/**
+ * Transform the API response into consumble data
+ */
+const apiTransformer = data => data.splines;
+
+/**
+ * Issue the HTTP request to fetch the splines
+ */
+const fetchSplines = action =>
+	http(
+		{
+			method: 'GET',
+			apiVersion: 'v1.1',
+			path: '/splines',
+			query: {
+				site_id: action.siteId,
+			},
+		}, action
+	);
 };
 
 /**
  * Take spline data from API request and inject into state
- *
- * If the data is invalid we can abort and announce the failure
  */
-const addSplines = ( store, action, responseData ) => {
-	const splines = fromApi( responseData );
-	
-	if ( ! splines ) {
-		return announceFailure( store, action );
-	}
-	
-	splines.forEach( spline => dispatch( addSpline( action.siteId, spline ) ) );
-};
+const handleSuccess = ( action, splines ) =>
+	addSplines( action.siteId, splines );
 
 /**
  * Notify customer that we failed to get splines for site
  *
  * @TODO: Explain why and provide better alternatives
  */
-const announceFailure( { dispatch, getState }, action, error ) => {
-	const siteName = getSiteName( getState(), action.siteId );
-
-	dispatch( createError( `Could not retrieve the splines for ${ siteName }. Please try again.` ) );
-};
+const announceFailure = () =>
+	errorNotice( `Could not retrieve the splines. Please try again.` );
 
 export default {
-	[ SPLINES_REQUEST ]: [ dispatchRequest( fetchSplines, addSplines, announceFailure ) ],
+	[ SPLINES_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch: fetchSplines,
+			onSuccess: handleSuccess,
+			onError: announceFailure,
+			fromApi: apiTransformer,
+		} ),
+	],
 }
 
 // middlware.js

@@ -13,6 +13,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
@@ -36,6 +37,7 @@ import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
+import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 
 const productsList = productsListFactory();
 
@@ -258,9 +260,22 @@ class DomainsStep extends React.Component {
 		return this.props.designType;
 	};
 
+	shouldIncludeDotBlogSubdomain() {
+		const { flowName, siteGoals } = this.props;
+		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
+
+		return (
+			// 'subdomain' flow coming from .blog landing pages
+			flowName === 'subdomain' ||
+			// User picked only 'share' on the `about` step
+			( abtest( 'includeDotBlogSubdomain' ) === 'yes' &&
+				siteGoalsArray.length === 1 &&
+				siteGoalsArray.indexOf( 'share' ) !== -1 )
+		);
+	}
+
 	domainForm = () => {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
 
 		return (
 			<RegisterDomainStep
@@ -272,13 +287,14 @@ class DomainsStep extends React.Component {
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
+				useYourDomainUrl={ this.getUseYourDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerUnavailableOption={ ! this.props.isDomainOnly }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
-				includeDotBlogSubdomain={ includeDotBlogSubdomain }
+				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
@@ -358,7 +374,7 @@ class DomainsStep extends React.Component {
 
 	getSubHeaderText() {
 		const { translate } = this.props;
-		return 'transfer' === this.props.stepSectionName
+		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
 			? translate( 'Use a domain you already own with your new WordPress.com site.' )
 			: translate(
 					"Enter your site's name, or some keywords that describe it - " +
@@ -465,12 +481,13 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 
 export default connect(
 	state => ( {
+		designType: getDesignType( state ),
 		// no user = DOMAINS_WITH_PLANS_ONLY
 		domainsWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
+		siteGoals: getSiteGoals( state ),
 		surveyVertical: getSurveyVertical( state ),
-		designType: getDesignType( state ),
 	} ),
 	{
 		recordAddDomainButtonClick,
