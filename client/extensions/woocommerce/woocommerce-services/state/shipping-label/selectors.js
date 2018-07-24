@@ -202,7 +202,7 @@ export const getProductValueFromOrder = createSelector(
 	]
 );
 
-const getAddressErrors = ( addressData, reduxState, siteId, shouldValidatePhone = false ) => {
+const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = false ) => {
 	const {
 		values,
 		isNormalized,
@@ -237,7 +237,7 @@ const getAddressErrors = ( addressData, reduxState, siteId, shouldValidatePhone 
 		errors.postcode = translate( 'Invalid ZIP code format' );
 	}
 
-	if ( ! state && hasStates( reduxState, country, siteId ) ) {
+	if ( ! state && hasStates( appState, country, siteId ) ) {
 		errors.state = translate( 'This field is required' );
 	}
 

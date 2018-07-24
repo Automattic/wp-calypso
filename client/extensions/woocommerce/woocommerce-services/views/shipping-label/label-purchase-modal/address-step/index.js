@@ -27,7 +27,7 @@ import { getCountryName, getStateName } from 'woocommerce/state/sites/data/locat
 
 const renderSummary = (
 	addressData,
-	reduxState,
+	appState,
 	siteId,
 	errors,
 	translate,
@@ -49,12 +49,12 @@ const renderSummary = (
 	// Summary format: "city, state  postcode [, country]"
 	let str = city + ', ';
 	if ( state ) {
-		const stateStr = expandStateName ? getStateName( reduxState, country, state, siteId ) : state;
+		const stateStr = expandStateName ? getStateName( appState, country, state, siteId ) : state;
 		str += stateStr + '\xa0 '; // append two spaces: non-breaking and normal
 	}
 	str += 'US' === country ? postcode.split( '-' )[ 0 ] : postcode;
 	if ( showCountry ) {
-		str += ', ' + getCountryName( reduxState, country, siteId );
+		str += ', ' + getCountryName( appState, country, siteId );
 	}
 	return str;
 };
