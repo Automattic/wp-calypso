@@ -183,7 +183,7 @@ export const submitStep = ( orderId, siteId, stepName ) => ( dispatch, getState 
 	expandFirstErroneousStep( orderId, siteId, dispatch, getState );
 };
 
-const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems ) => {
+export const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems ) => {
 	const apiPckg = pick( pckg, [
 		'id',
 		'box_id',
