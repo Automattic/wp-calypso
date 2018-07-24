@@ -20,7 +20,7 @@ import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class QuerySiteStats extends Component {
 	UNSAFE_componentWillMount() {
-		defer( () => this.request( this.props ) );
+		this.deferredTimer = defer( () => this.request( this.props ) );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -37,6 +37,7 @@ class QuerySiteStats extends Component {
 
 	componentWillUnmount() {
 		this.clearInterval();
+		clearTimeout( this.deferredTimer );
 	}
 
 	request( props ) {
