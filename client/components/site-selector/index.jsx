@@ -269,6 +269,35 @@ class SiteSelector extends Component {
 
 	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
 
+	sitesToBeRendered() {
+		let sites;
+
+		if ( this.props.sitesFound ) {
+			sites = this.props.sitesFound;
+		} else {
+			sites = this.props.visibleSites;
+		}
+
+		if ( this.props.filter ) {
+			sites = sites.filter( this.props.filter );
+		}
+
+		if ( this.props.hideSelected && this.props.selected ) {
+			sites = sites.filter( site => site.slug !== this.props.selected );
+		}
+
+		return sites;
+	}
+
+	shouldRenderRecentSites() {
+		return (
+			this.props.showRecentSites &&
+			this.shouldShowGroups() &&
+			! this.props.sitesFound &&
+			size( this.props.recentSites )
+		);
+	}
+
 	renderAllSites() {
 		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
 			return null;
@@ -291,13 +320,15 @@ class SiteSelector extends Component {
 	}
 
 	renderRecentSites() {
-		if ( ! this.props.showRecentSites || ! this.shouldShowGroups() || this.props.sitesFound ) {
+		if ( ! this.shouldRenderRecentSites() ) {
 			return null;
 		}
 
+		const sitesToBeRendered = this.sitesToBeRendered();
+
 		const sites = [];
 		for ( const siteId of this.props.recentSites ) {
-			const site = find( this.props.sites, { ID: siteId } );
+			const site = find( sitesToBeRendered, { ID: siteId } );
 			if ( site ) {
 				sites.push( site );
 			}
@@ -319,23 +350,12 @@ class SiteSelector extends Component {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
-		if ( this.props.sitesFound ) {
-			sites = this.props.sitesFound;
-		} else {
-			sites = this.props.visibleSites;
+		sites = this.sitesToBeRendered();
 
-			const { showRecentSites, recentSites } = this.props;
-			if ( showRecentSites && this.shouldShowGroups() && size( recentSites ) ) {
-				sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
-			}
-		}
-
-		if ( this.props.filter ) {
-			sites = sites.filter( this.props.filter );
-		}
-
-		if ( this.props.hideSelected && this.props.selected ) {
-			sites = sites.filter( site => site.slug !== this.props.selected );
+		// Filter recentSites
+		if ( this.shouldRenderRecentSites() ) {
+			const recentSites = this.props.recentSites;
+			sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
 		}
 
 		// Render sites
