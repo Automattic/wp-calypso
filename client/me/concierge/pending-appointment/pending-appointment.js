@@ -24,7 +24,7 @@ class PendingAppointment extends Component {
 	};
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_concierge_pending_appointment' );
+		this.props.recordTracksEvent( 'calypso_concierge_pending_appointment_view' );
 	}
 
 	render() {
