@@ -36,6 +36,7 @@ const shouldMinify =
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 const shouldEmitStats = process.env.EMIT_STATS === 'true';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
+const shouldSkipFlagImages = process.env.SKIP_FLAG_IMAGES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 
 /**
@@ -206,9 +207,10 @@ const webpackConfig = {
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( /^props$/ ),
-		new CopyWebpackPlugin( [
-			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
-		] ),
+		! shouldSkipFlagImages &&
+			new CopyWebpackPlugin( [
+				{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
+			] ),
 		new AssetsWriter( {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
