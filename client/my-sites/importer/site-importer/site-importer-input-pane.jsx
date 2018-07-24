@@ -34,6 +34,11 @@ import { loadmShotsPreview } from './site-preview-actions';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 
+const NO_ERROR_STATE = {
+	error: false,
+	errorMessage: '',
+	errorType: null,
+};
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
 
@@ -55,6 +60,7 @@ class SiteImporterInputPane extends React.Component {
 		importStage: 'idle',
 		error: false,
 		errorMessage: '',
+		errorType: null,
 		siteURLInput: '',
 	};
 
@@ -111,13 +117,6 @@ class SiteImporterInputPane extends React.Component {
 				} );
 			}
 		}
-	};
-
-	resetErrors = () => {
-		this.setState( {
-			error: false,
-			errorMessage: '',
-		} );
 	};
 
 	setUrl = event => {
@@ -193,7 +192,10 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	importSite = () => {
-		this.setState( { loading: true }, this.resetErrors );
+		this.setState( {
+			loading: true,
+			...NO_ERROR_STATE,
+		} );
 
 		this.props.recordTracksEvent( 'calypso_site_importer_start_import', {
 			blog_id: this.props.site.ID,
@@ -271,13 +273,11 @@ class SiteImporterInputPane extends React.Component {
 			previous_stage: this.state.importStage,
 		} );
 
-		this.setState(
-			{
-				loading: false,
-				importStage: 'idle',
-			},
-			this.resetErrors
-		);
+		this.setState( {
+			loading: false,
+			importStage: 'idle',
+			...NO_ERROR_STATE
+		} );
 	};
 
 	render() {
