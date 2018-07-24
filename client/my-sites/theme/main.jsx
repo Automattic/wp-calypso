@@ -183,6 +183,10 @@ class ThemeSheet extends React.Component {
 		this.trackButtonClick( 'css_forum' );
 	};
 
+	trackPreviewClick = () => {
+		this.trackButtonClick( 'preview' );
+	};
+
 	renderBar = () => {
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = this.props.name || placeholder;
@@ -212,6 +216,7 @@ class ThemeSheet extends React.Component {
 			return;
 		}
 		event.preventDefault();
+		this.trackPreviewClick();
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions( this.props.defaultOption, this.props.secondaryOption );
