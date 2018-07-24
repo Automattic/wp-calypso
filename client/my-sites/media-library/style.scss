@@ -161,6 +161,15 @@
 	}
 }
 
+.media-library__filter-bar {
+	.plan-storage {
+		@include breakpoint("480px-660px") {
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+	}
+}
+
 .media-library__heading {
 	@include heading;
 	display: inline-block;
