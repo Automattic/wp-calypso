@@ -455,8 +455,7 @@ class ActivityLog extends Component {
 						{ siteIsOnFreePlan && (
 							<p className="activity-log__limit-notice">
 								{ translate(
-									"Since you're on a free plan, " +
-										"you'll see a limited number of events in your activity log."
+									"Since you're on a free plan, you'll see limited events in your activity."
 								) }
 							</p>
 						) }
