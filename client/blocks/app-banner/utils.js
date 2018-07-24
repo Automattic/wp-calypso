@@ -54,6 +54,11 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 		return NOTES;
 	}
 
+	if ( window && window.location.href.indexOf( '/stats/activity/' ) !== -1 ) {
+		//don't show app banner in activity log
+		return null;
+	}
+
 	if ( includes( ALLOWED_SECTIONS, currentSection ) ) {
 		return currentSection;
 	}
