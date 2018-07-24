@@ -19,20 +19,20 @@ import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class QuerySiteStats extends Component {
-	UNSAFE_componentWillMount() {
-		this.deferredTimer = defer( () => this.request( this.props ) );
+	componentDidMount() {
+		this.deferredTimer = defer( () => this.request() );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.siteId === nextProps.siteId &&
-			this.props.statType === nextProps.statType &&
-			shallowEqual( this.props.query, nextProps.query )
+			this.props.siteId === prevProps.siteId &&
+			this.props.statType === prevProps.statType &&
+			shallowEqual( this.props.query, prevProps.query )
 		) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request();
 	}
 
 	componentWillUnmount() {
@@ -40,13 +40,13 @@ class QuerySiteStats extends Component {
 		clearTimeout( this.deferredTimer );
 	}
 
-	request( props ) {
-		const { requesting, siteId, statType, query, heartbeat } = props;
+	request() {
+		const { requesting, siteId, statType, query, heartbeat } = this.props;
 		if ( requesting ) {
 			return;
 		}
 
-		props.requestSiteStats( siteId, statType, query );
+		this.props.requestSiteStats( siteId, statType, query );
 		this.clearInterval();
 		if ( heartbeat && isAutoRefreshAllowedForQuery( query ) ) {
 			this.interval = setInterval( this.heartbeatRequest, heartbeat );
