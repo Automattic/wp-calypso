@@ -91,7 +91,7 @@ const loadInitialState = initialState => {
 	}
 	const localforageState = deserialize( initialState );
 	const serverState = getInitialServerState();
-	const mergedState = Object.assign( {}, localforageState, serverState );
+	const mergedState = Object.assign( {}, serverState, localforageState );
 	return createReduxStore( mergedState );
 };
 
