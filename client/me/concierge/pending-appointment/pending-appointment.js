@@ -55,21 +55,12 @@ class PendingAppointment extends Component {
 					<p>{ translate( "Here's what you told us:" ) }</p>
 
 					<p>
-						{ translate(
-							'{{strong}}Q:{{/strong}} What are you hoping to accomplish with your site?',
-							{
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-						<br />
-						{ translate( '{{strong}}A:{{/strong}}', {
-							comment: 'Abbreviation for labelling an answer.',
+						{ translate( '{{strong}}What are you hoping to accomplish with your site?{{/strong}}', {
 							components: {
 								strong: <strong />,
 							},
-						} ) }{' '}
+						} ) }
+						<br />
 						{ nextAppointment.meta.message }
 					</p>
 
