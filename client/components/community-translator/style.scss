@@ -56,16 +56,31 @@
 		font-style: italic;
 		color: $gray-lighten-10;
 	}
+	.community-translator__translation-area {
+		flex-grow: 1;
+	}
 	dfn {
 		margin-bottom: 5px;
 		display: block;
 		font-size: 14px;
 	}
-	textarea {
-		min-height: auto;
-		padding: 7px;
-		line-height: 1;
+	.community-translator__editor {
+		border: 1px solid $gray-lighten-20;
+		background-color: $gray-light;
+	}
+	.community-translator__input {
+		display: block;
+		border: none;
+		padding: 8px;
+		box-sizing: border-box;
+		width: 100%;
+		background: $white;
+		min-height: 50px;
+	}
+	.community-translator__suggestion-panel {
+		padding: 8px;
 		font-size: 12px;
+		color: $gray-darken-20;
 	}
 	&.placeholder > span {
 		animation: pulse-light 800ms ease-in-out infinite;
@@ -79,3 +94,21 @@
 	margin-left: 7px;
 }
 
+.community-translator__inline-token {
+	color: $blue-medium;
+}
+
+.community-translator__token {
+	cursor: pointer;
+	padding: 2px 4px;
+	border-radius: 4px;
+
+	&:hover {
+		color: $blue-medium;
+		background-color: $gray-lighten-30;
+	}
+	&[disabled] {
+		opacity: .5;
+		pointer-events: none;
+	}
+}

@@ -34,8 +34,7 @@ export class Translatable extends Component {
 		return ! isEmpty( this.state.originalData ) || ! isEmpty( this.state.error );
 	}
 
-	handleTranslationChange = event => {
-		const { name, value } = event.target;
+	handleTranslationChange = ( name, value ) => {
 		this.setState( {
 			formState: {
 				...this.state.formState,
@@ -176,7 +175,7 @@ export class Translatable extends Component {
 				fieldName="translatedSingular"
 				onChange={ this.handleTranslationChange }
 				disabled={ submitting }
-				value={ formState.translatedSingular }
+				initialValue={ formState.translatedSingular }
 			/>,
 
 			this.state.formState.translatedPlural && (
@@ -187,7 +186,7 @@ export class Translatable extends Component {
 					fieldName="translatedPlural"
 					onChange={ this.handleTranslationChange }
 					disabled={ submitting }
-					value={ formState.translatedPlural }
+					initialValue={ formState.translatedPlural }
 				/>
 			),
 		];
