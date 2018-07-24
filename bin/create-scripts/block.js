@@ -2,9 +2,6 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
-// TODO: move this to the npm script, see #26258
-process.env[ 'SKIP_FLAG_IMAGES' ] = 'true';
-
 const __rootDir = path.resolve( __dirname, '../../' );
 const entryPath = path.resolve( process.argv[ 2 ] );
 const sourceDir = path.dirname( entryPath );
