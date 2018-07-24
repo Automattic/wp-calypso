@@ -33,7 +33,7 @@ export default class extends React.Component {
 	};
 
 	componentDidMount() {
-		defer( () => {
+		this.deferredTimer = defer( () => {
 			// Determine and cache vertical threshold from rendered element's
 			// offset relative the document
 			this.threshold = ReactDom.findDOMNode( this ).offsetTop;
@@ -49,6 +49,7 @@ export default class extends React.Component {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
 		window.removeEventListener( 'resize', this.throttleOnResize );
 		window.cancelAnimationFrame( this.rafHandle );
+		window.clearTimeout( this.deferredTimer );
 	}
 
 	onWindowScroll = () => {

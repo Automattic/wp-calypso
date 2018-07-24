@@ -22,7 +22,7 @@ export default class InfiniteScroll extends Component {
 	componentDidMount() {
 		this.initialMount = true;
 		window.addEventListener( 'scroll', this.checkScrollPositionHandler );
-		defer( () => this.checkScrollPosition( false ) );
+		this.deferredTimer = defer( () => this.checkScrollPosition( false ) );
 	}
 
 	componentDidUpdate() {
@@ -35,6 +35,7 @@ export default class InfiniteScroll extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.checkScrollPositionHandler );
+		window.clearTimeout( this.deferredTimer );
 	}
 
 	checkScrollPosition( triggeredByScroll ) {
