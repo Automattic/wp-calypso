@@ -14,6 +14,7 @@ import { createStore } from 'redux';
  */
 import { isEnabled } from 'config';
 import localforage from 'lib/localforage';
+import userFactory from 'lib/user';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import { useSandbox, useFakeTimers } from 'test/helpers/use-sinon';
 
@@ -90,6 +91,7 @@ describe( 'initial-state', () => {
 					let state, sandbox;
 					useSandbox( _sandbox => ( sandbox = _sandbox ) );
 					const savedState = {
+						currentUser: { id: 123456789 },
 						postTypes: {
 							items: {
 								2916284: {
@@ -103,7 +105,7 @@ describe( 'initial-state', () => {
 					beforeAll( done => {
 						isEnabled.mockReturnValue( true );
 						isSupportUserSession.mockReturnValue( true );
-						window.initialReduxState = { currentUser: { id: 123456789 } };
+						window.initialReduxState = { currentUser: { currencyCode: 'USD' } };
 						sandbox.spy( console, 'error' );
 						sandbox.stub( localforage, 'getItem' ).returns(
 							new Promise( function( resolve ) {
@@ -131,7 +133,7 @@ describe( 'initial-state', () => {
 						chaiExpect( state._timestamp ).to.equal( undefined );
 					} );
 					test( 'does not build state using server state', () => {
-						chaiExpect( state.currentUser.id ).to.equal( null );
+						chaiExpect( state.currentUser.currencyCode ).to.equal( null );
 					} );
 				} );
 			} );
@@ -295,21 +297,81 @@ describe( 'initial-state', () => {
 					chaiExpect( state._timestamp ).to.equal( undefined );
 				} );
 			} );
+			describe( 'with invalid persisted data and no initial server data', () => {
+				let state, sandbox;
+				useSandbox( _sandbox => ( sandbox = _sandbox ) );
+
+				const savedState = {
+						// Create an invalid state by forcing the user ID
+						// stored in the state to differ from the current
+						// mocked user ID.
+						currentUser: { id: userFactory().get().ID + 1 },
+						postTypes: {
+							items: {
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' },
+								},
+							},
+						},
+						_timestamp: Date.now(),
+					},
+					serverState = {};
+				beforeAll( done => {
+					window.initialReduxState = serverState;
+					isEnabled.mockReturnValue( true );
+					sandbox.spy( console, 'error' );
+					sandbox.stub( localforage, 'getItem' ).returns(
+						new Promise( function( resolve ) {
+							resolve( savedState );
+						} )
+					);
+					const reduxReady = function( reduxStore ) {
+						state = reduxStore.getState();
+						done();
+					};
+					createReduxStoreFromPersistedInitialState( reduxReady );
+				} );
+				afterAll( () => {
+					window.initialReduxState = null;
+					isEnabled.mockReturnValue( false );
+				} );
+				test( 'builds store without errors', () => {
+					chaiExpect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
+				} );
+				test( 'does not build using local forage state', () => {
+					chaiExpect( state.postTypes.items[ 2916284 ] ).to.equal( undefined );
+				} );
+				test( 'does not add timestamp to store', () => {
+					chaiExpect( state._timestamp ).to.equal( undefined );
+				} );
+			} );
 		} );
 	} );
 
 	describe( '#persistOnChange()', () => {
 		let store, setItemSpy;
 
+		const reducer = ( state, { data: newData, userId: userId } ) => {
+			if ( newData && newData !== state.data ) {
+				state = Object.assign( {}, state, { data: newData } );
+			}
+			if ( userId && userId !== state.currentUser.id ) {
+				state = Object.assign( {}, state, { currentUser: { id: userId } } );
+			}
+			return state;
+		};
+
+		// Create a valid initial state (with a stored user ID that matches the
+		// current mocked user ID).
+		const initialState = { currentUser: { id: 123456789 } };
+
 		beforeEach( () => {
 			setItemSpy = jest
 				.spyOn( localforage, 'setItem' )
 				.mockImplementation( () => Promise.resolve() );
 
-			store = persistOnChange(
-				createStore( ( state, { data: nextState } ) => nextState ),
-				state => state
-			);
+			store = persistOnChange( createStore( reducer, initialState ), state => state );
 		} );
 
 		afterEach( () => {
@@ -326,6 +388,20 @@ describe( 'initial-state', () => {
 			clock.tick( SERIALIZE_THROTTLE );
 
 			expect( setItemSpy ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'should not persist invalid state', () => {
+			// Create an invalid state by forcing the user ID stored in the
+			// state to differ from the current mocked user ID.
+			store.dispatch( {
+				type: 'foo',
+				data: 1,
+				userId: userFactory().get().ID + 1,
+			} );
+
+			clock.tick( SERIALIZE_THROTTLE );
+
+			expect( setItemSpy ).toHaveBeenCalledTimes( 0 );
 		} );
 
 		test( 'should persist state for changed state', () => {
@@ -395,8 +471,14 @@ describe( 'initial-state', () => {
 			clock.tick( SERIALIZE_THROTTLE );
 
 			expect( setItemSpy ).toHaveBeenCalledTimes( 2 );
-			expect( setItemSpy ).toHaveBeenCalledWith( 'redux-state-123456789', 3 );
-			expect( setItemSpy ).toHaveBeenCalledWith( 'redux-state-123456789', 5 );
+			expect( setItemSpy ).toHaveBeenCalledWith(
+				'redux-state-123456789',
+				Object.assign( {}, initialState, { data: 3 } )
+			);
+			expect( setItemSpy ).toHaveBeenCalledWith(
+				'redux-state-123456789',
+				Object.assign( {}, initialState, { data: 5 } )
+			);
 		} );
 	} );
 } );
