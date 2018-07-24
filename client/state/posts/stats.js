@@ -3,7 +3,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import { get } from 'lodash';
+import { get, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getEditorPostId, isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
 import { getEditedPost, getSitePost } from 'state/posts/selectors';
+import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
 
 /**
  * Module variables
@@ -36,6 +37,12 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 	const currentStatus = get( getSitePost( state, siteId, postId ), 'status', 'draft' );
 	const confirmationSidebarEnabled = isConfirmationSidebarEnabled( state, siteId );
 	const nextStatus = post.status;
+	const podcastingCategoryId = getPodcastingCategoryId( state, siteId );
+	const isPodcastEpisode =
+		podcastingCategoryId &&
+		post.terms &&
+		post.terms.category &&
+		some( post.terms.category, { ID: podcastingCategoryId } );
 	let tracksEventName = 'calypso_editor_';
 	let statName = false;
 	let statEvent = false;
@@ -101,6 +108,7 @@ export const recordSaveEvent = () => ( dispatch, getState ) => {
 			current_status: currentStatus,
 			next_status: nextStatus,
 			context: eventContext,
+			is_podcast_episode: isPodcastEpisode,
 		} )
 	);
 };
