@@ -14,6 +14,7 @@ import NumberField from 'woocommerce/woocommerce-services/components/number-fiel
 import Text from 'woocommerce/woocommerce-services/components/text';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import RadioButtons from 'woocommerce/woocommerce-services/components/radio-buttons';
+import TokenField from 'woocommerce/woocommerce-services/components/token-field';
 import getPackagingManagerLink from 'woocommerce/woocommerce-services/lib/utils/get-packaging-manager-link';
 import ShippingServiceGroups from '../shipping-services';
 import FormLegend from 'components/forms/form-legend';
@@ -96,6 +97,35 @@ const SettingsItem = ( {
 					placeholder={ layout.placeholder }
 					updateValue={ updateValue }
 					error={ fieldError }
+				/>
+			);
+
+		case 'shipping_classes':
+			const items = [
+				{ id: 'method-a', label: 'Method A' },
+				{ id: 'method-b', label: 'Method B' },
+				{ id: 'method-c', label: 'Method C' },
+			];
+
+			return (
+				<TokenField
+					id={ id }
+					title={ fieldSchema.title }
+					description={ fieldSchema.description }
+					value={ fieldValue }
+					suggestions={ items.map( item => item.id ) }
+					updateValue={ updateValue }
+					saveTransform={ token => {
+						token = token.trim().toUpperCase();
+						const transformed = items.find( item => item.id.toUpperCase() === token );
+
+						return transformed ? transformed.id : '';
+					} }
+					displayTransform={ token => {
+						const found = items.find( item => item.id === token );
+
+						return found ? found.label : token;
+					} }
 				/>
 			);
 
