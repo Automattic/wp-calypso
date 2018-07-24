@@ -21,6 +21,7 @@ import DomainRegistrationSuggestion from 'components/domains/domain-registration
 import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
@@ -109,11 +110,12 @@ class MapDomainStep extends React.Component {
 					/>
 
 					<div className="map-domain-step__add-domain" role="group">
-						<input
+						<FormTextInputWithAffixes
+							prefix="http://"
 							className="map-domain-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }
-							placeholder={ translate( 'Enter a domain' ) }
+							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus }
