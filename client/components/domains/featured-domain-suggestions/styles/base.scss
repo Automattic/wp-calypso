@@ -38,10 +38,15 @@
 	}
 
 	.domain-registration-suggestion__title {
-		font-size: 2em;
+		font-size: 1.6em;
 		font-weight: 600;
 		line-height: 1.2;
-		margin-bottom: 0.125em;
+		margin-bottom: 0.25em;
+
+		@include breakpoint( '>480px' ) {
+			font-size: 2em;
+			margin-bottom: 0.125em;
+		}
 	}
 
 	// .card used to increase specificity
@@ -104,10 +109,6 @@
 @include breakpoint( '<660px' ) {
 	.featured-domain-suggestions {
 		flex-flow: wrap;
-
-		.featured-domain-suggestion .domain-suggestion__action.button.is-primary {
-			width: initial;
-		}
 	}
 }
 
