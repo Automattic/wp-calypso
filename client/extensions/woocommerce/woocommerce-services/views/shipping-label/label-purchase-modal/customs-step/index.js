@@ -33,7 +33,9 @@ const CustomsStep = ( props ) => {
 		isSubmitted,
 		packageDescriptions,
 	} = props;
-	const summary = hasNonEmptyLeaves( errors ) ? translate( 'Customs information incomplete' ) : translate( 'Customs information valid' );
+	const summary = hasNonEmptyLeaves( errors )
+		? translate( 'Customs information incomplete' )
+		: translate( 'Customs information valid' );
 
 	return (
 		<StepContainer
