@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "bin": {
-    "wp-calypso-sdk": "./bin/create-scripts/block.js"
+    "calypso-gutenberg-sdk": "./bin/sdk-cli.js"
   },
   "browserslist": [
     "last 2 versions",
