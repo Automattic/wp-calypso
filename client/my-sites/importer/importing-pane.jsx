@@ -237,6 +237,7 @@ class ImportingPane extends React.PureComponent {
 						sourceAuthors={ customData.sourceAuthors }
 						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
 						targetTitle={ siteName }
+						sourceType={ this.props.title }
 					/>
 				) }
 				{ this.isImporting() &&

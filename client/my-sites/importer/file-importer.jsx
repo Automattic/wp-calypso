@@ -79,7 +79,7 @@ export default class extends React.PureComponent {
 					<ErrorPane type={ state.errorData.type } description={ state.errorData.description } />
 				) }
 				{ includes( importingStates, state.importerState ) && (
-					<ImportingPane importerStatus={ state } site={ this.props.site } />
+					<ImportingPane importerStatus={ state } { ...{ site, title } } />
 				) }
 				{ includes( uploadingStates, state.importerState ) && (
 					<UploadingPane description={ uploadDescription } importerStatus={ state } />
