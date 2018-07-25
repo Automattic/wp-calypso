@@ -136,11 +136,13 @@ export class CreditCardFormFields extends React.Component {
 
 					{ this.createField( 'cvv', Input, {
 						inputMode: 'numeric',
+						placeholder: translate( 'CVV', {
+							context: '3 digit security number on credit card form',
+						} ),
 						label: translate(
 							'CVV {{infoPopover}}{{image/}}This is the 3-digit number printed on the ' +
 								'signature panel on the back of your card.{{/infoPopover}}',
 							{
-								context: '3 digit security number on credit card form',
 								components: {
 									infoPopover: (
 										<InfoPopover position="top" className="credit-card-form-fields__cvv-info" />
