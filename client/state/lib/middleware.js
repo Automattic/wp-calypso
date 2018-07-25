@@ -27,7 +27,6 @@ import {
 	SELECTED_SITE_UNSUBSCRIBE,
 } from 'state/action-types';
 import analytics from 'lib/analytics';
-import cartStore from 'lib/cart/store';
 import userFactory from 'lib/user';
 import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
 import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
@@ -163,16 +162,6 @@ const updateSelectedSiteForAnalytics = ( dispatch, action, getState ) => {
 };
 
 /**
- * Sets the selectedSiteId for lib/cart/store
- *
- * @param {function} dispatch - redux dispatch function
- * @param {number}   siteId   - the selected siteId
- */
-const updateSelectedSiteForCart = ( dispatch, { siteId } ) => {
-	cartStore.setSelectedSiteId( siteId );
-};
-
-/**
  * Sets the selectedSite for lib/keyboard-shortcuts/global
  *
  * @param {function} dispatch - redux dispatch function
@@ -256,7 +245,6 @@ const handler = ( dispatch, action, getState ) => {
 
 		case SELECTED_SITE_SET:
 			//let this fall through
-			updateSelectedSiteForCart( dispatch, action );
 			updateSelectedSiteIdForSubscribers( dispatch, action );
 
 		case SITE_RECEIVE:
