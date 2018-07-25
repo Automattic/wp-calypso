@@ -7,8 +7,23 @@ import Dispatcher from 'dispatcher';
 
 let reduxStore = null;
 
+let resolveReduxStorePromise;
+const reduxStorePromise = new Promise( resolve => {
+	resolveReduxStorePromise = resolve;
+} );
+
 export function setReduxStore( store ) {
 	reduxStore = store;
+	resolveReduxStorePromise( store );
+}
+
+/**
+ * Asynchronously get the current Redux store. Returns a Promise that gets resolved only
+ * after the store is set by `setReduxStore`.
+ * @returns {Promise<ReduxStore>} Promise of the Redux store object.
+ */
+export function getReduxStore() {
+	return reduxStorePromise;
 }
 
 /**
