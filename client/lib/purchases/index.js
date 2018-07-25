@@ -154,10 +154,50 @@ function cardProcessorSupportsUpdates( purchase ) {
 }
 
 /**
- * Checks if a purchase can be canceled and refunded.
+ * Checks if a purchase might be in the refund period, whether refundable or not.
+ *
+ * If you need to determine whether a purchase can be programmatically refunded
+ * via the WordPress.com API, use isRefundable() instead.
+ *
+ * This function attempts to catch some additional edge cases in which a
+ * purchase is refundable by policy but where isRefundable() returns false and
+ * which would therefore require the assistance of a Happiness Engineer to
+ * actually refund it.
+ *
+ * The results aren't guaranteed to be reliable, so don't use them to promise
+ * or deny a refund to a user. Instead, for example, use it to decide whether
+ * to display or highlight general help text about the refund policy to users
+ * who are likely to be eligible for one.
+ */
+function maybeWithinRefundPeriod( purchase ) {
+	if ( isRefundable( purchase ) ) {
+		return true;
+	}
+
+	// This looks at how much time has elapsed since the subscription date,
+	// which should be relatively reliable for new subscription refunds, but
+	// not renewals. To be completely accurate, this would need to look at the
+	// transaction date instead, but by definition this function needs to work
+	// in scenarios where we don't know exactly which transaction needs to be
+	// refunded.
+	// Another source of uncertainty here is that it relies on the user's
+	// clock, which might not be accurate.
+	return (
+		'undefined' !== typeof purchase.subscribedDate &&
+		'undefined' !== typeof purchase.refundPeriodInDays &&
+		moment().diff( moment( purchase.subscribedDate ), 'days' ) <= purchase.refundPeriodInDays
+	);
+}
+
+/**
+ * Checks if a purchase can be canceled and refunded via the WordPress.com API.
  * Purchases usually can be refunded up to 30 days after purchase.
  * Domains and domain mappings can be refunded up to 48 hours.
  * Purchases included with plan can't be refunded.
+ *
+ * If this function returns false but you want to see if the subscription may
+ * still be within its refund period (and therefore refundable if the user
+ * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
  *
  * @param {Object} purchase - the purchase with which we are concerned
  * @return {boolean} if the purchase is refundable
@@ -340,6 +380,7 @@ export {
 	isRenewal,
 	isRenewing,
 	isSubscription,
+	maybeWithinRefundPeriod,
 	paymentLogoType,
 	purchaseType,
 	cardProcessorSupportsUpdates,
