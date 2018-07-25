@@ -9,6 +9,9 @@
     "url": "https://github.com/Automattic/wp-calypso.git"
   },
   "main": "index.js",
+  "bin": {
+    "calypso-gutenberg-sdk": "./bin/sdk-cli.js"
+  },
   "browserslist": [
     "last 2 versions",
     "Safari >= 10",
