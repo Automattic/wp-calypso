@@ -8,5 +8,6 @@ export const labelRefund = ( orderId, labelId ) => `connect/label/${ orderId }/$
 export const labelsPrint = () => 'connect/label/print';
 export const labelsTestPrint = () => 'connect/label/preview';
 export const addressNormalization = () => 'connect/normalize-address';
+export const shippingClasses = () => 'products/shipping_classes';
 export const serviceSettings = ( methodId, instanceId = 0 ) =>
 	`connect/services/${ methodId }/${ instanceId }`;
