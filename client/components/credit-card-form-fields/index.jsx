@@ -92,6 +92,37 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
+	getCvvPopover = () => {
+		const { translate, card } = this.props;
+		const brand = getCreditCardType( card.number );
+
+		let popoverText = translate(
+			'This is the 3-digit number printed on the signature panel on the back of your card.'
+		);
+		let popoverImage = '/calypso/images/upgrades/cc-cvv-back.svg';
+
+		if ( brand === 'amex' ) {
+			popoverText = translate(
+				'This is the 4-digit number printed above the account number ' +
+					'on the front of your card.'
+			);
+			popoverImage = '/calypso/images/upgrades/cc-cvv-front.svg';
+		}
+
+		return (
+			<InfoPopover position="top" className="credit-card-form-fields__cvv-info">
+				<img
+					className="credit-card-form-fields__cvv-illustration"
+					src={ popoverImage }
+					width="42"
+					height="30"
+					alt="Credit card CVV location illustration"
+				/>
+				{ popoverText }
+			</InfoPopover>
+		);
+	};
+
 	shouldRenderEbanxFields() {
 		// The add/update card endpoints do not process Ebanx payment details
 		// so we only show Ebanx fields at checkout,
@@ -139,26 +170,11 @@ export class CreditCardFormFields extends React.Component {
 						placeholder: translate( 'CVV', {
 							context: '3 digit security number on credit card form',
 						} ),
-						label: translate(
-							'CVV {{infoPopover}}{{image/}}This is the 3-digit number printed on the ' +
-								'signature panel on the back of your card.{{/infoPopover}}',
-							{
-								components: {
-									infoPopover: (
-										<InfoPopover position="top" className="credit-card-form-fields__cvv-info" />
-									),
-									image: (
-										<img
-											className="credit-card-form-fields__cvv-illustration"
-											src="/calypso/images/upgrades/cc-cvv-back.svg"
-											width="42"
-											height="30"
-											alt="Credit card CVV location illustration"
-										/>
-									),
-								},
-							}
-						),
+						label: translate( 'CVV {{infoPopover/}}', {
+							components: {
+								infoPopover: this.getCvvPopover(),
+							},
+						} ),
 					} ) }
 
 					{ this.createField( 'country', PaymentCountrySelect, {
