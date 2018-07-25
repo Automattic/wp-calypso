@@ -104,7 +104,7 @@
     "localforage": "1.7.2",
     "lodash": "4.17.10",
     "lru": "3.1.0",
-    "lunr": "2.3.0",
+    "lunr": "2.3.1",
     "markdown-loader": "3.0.0",
     "marked": "0.4.0",
     "mkdirp": "0.5.1",
