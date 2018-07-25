@@ -32,7 +32,7 @@ class ImporterMappingPane extends React.PureComponent {
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,
 		targetTitle: PropTypes.string.isRequired,
-		sourceType: PropTypes.string.isRequierd,
+		sourceType: PropTypes.string,
 	};
 
 	getFetchOptions = ( options = {} ) => {
