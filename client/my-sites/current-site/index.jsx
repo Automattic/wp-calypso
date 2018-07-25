@@ -19,14 +19,10 @@ import Card from 'components/card';
 import Site from 'blocks/site';
 import Gridicon from 'gridicons';
 import SiteNotice from './notice';
-import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSectionName, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
 import getVisibleSites from 'state/selectors/get-visible-sites';
-import { infoNotice, removeNotice } from 'state/notices/actions';
-import { getNoticeLastTimeShown } from 'state/notices/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { hasAllSitesList } from 'state/sites/selectors';
 
 class CurrentSite extends Component {
@@ -36,50 +32,6 @@ class CurrentSite extends Component {
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
-	};
-
-	componentWillMount() {
-		CartStore.on( 'change', this.showStaleCartItemsNotice );
-	}
-
-	componentWillUnmount() {
-		CartStore.off( 'change', this.showStaleCartItemsNotice );
-	}
-
-	showStaleCartItemsNotice = () => {
-		const { selectedSite } = this.props,
-			cartItems = require( 'lib/cart-values' ).cartItems,
-			staleCartItemNoticeId = 'stale-cart-item-notice';
-
-		// Remove any existing stale cart notice
-		this.props.removeNotice( staleCartItemNoticeId );
-
-		// Don't show on the checkout page?
-		if ( this.props.sectionName === 'upgrades' ) {
-			return null;
-		}
-
-		// Show a notice if there are stale items in the cart and it hasn't been shown in the last 10 minutes (cart abandonment)
-		if (
-			selectedSite &&
-			cartItems.hasStaleItem( CartStore.get() ) &&
-			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
-		) {
-			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
-
-			this.props.infoNotice( this.props.translate( 'Your cart is awaiting payment.' ), {
-				id: staleCartItemNoticeId,
-				isPersistent: false,
-				duration: 10000,
-				button: this.props.translate( 'Complete your purchase' ),
-				href: '/checkout/' + selectedSite.slug,
-				onClick: this.clickStaleCartItemsNotice,
-			} );
-		}
-	};
-
-	clickStaleCartItemsNotice = () => {
-		this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_click' );
 	};
 
 	switchSites = event => {
@@ -133,6 +85,7 @@ class CurrentSite extends Component {
 
 				<SiteNotice site={ selectedSite } />
 				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
+				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 			</Card>
 		);
 	}
@@ -143,9 +96,7 @@ export default connect(
 		selectedSite: getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getVisibleSites( state ).length,
-		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
-		sectionName: getSectionName( state ),
 		hasAllSitesList: hasAllSitesList( state ),
 	} ),
-	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent }
+	{ setLayoutFocus }
 )( localize( CurrentSite ) );
