@@ -179,25 +179,9 @@ class TransferDomainStep extends React.Component {
 						<div className="transfer-domain-step__domain-heading">
 							{ translate( 'Manage your domain and site together on WordPress.com.' ) }
 						</div>
-						<div className="transfer-domain-step__domain-text">
-							{ translate(
-								'Transfer your domain away from your current provider to WordPress.com so you can update settings, ' +
-									"renew your domain, and more \u2013 right in your dashboard. We'll renew it for another year " +
-									'when the transfer is successful. {{a}}Learn more{{/a}}',
-								{
-									components: {
-										a: (
-											<a
-												href={ INCOMING_DOMAIN_TRANSFER }
-												rel="noopener noreferrer"
-												target="_blank"
-											/>
-										),
-									},
-								}
-							) }
-						</div>
 					</div>
+
+					<div className="domain-product-price">{ domainProductPrice }</div>
 
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInputWithAffixes
@@ -208,7 +192,6 @@ class TransferDomainStep extends React.Component {
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onFocus={ this.recordInputFocus }
-							suffix={ domainProductPrice }
 							autoFocus
 						/>
 						<Button
@@ -221,6 +204,25 @@ class TransferDomainStep extends React.Component {
 						</Button>
 					</div>
 					{ this.domainRegistrationUpsell() }
+
+					<div className="transfer-domain-step__domain-text">
+						{ translate(
+							'Transfer your domain away from your current provider to WordPress.com so you can update settings, ' +
+								"renew your domain, and more \u2013 right in your dashboard. We'll renew it for another year " +
+								'when the transfer is successful. {{a}}Learn more{{/a}}',
+							{
+								components: {
+									a: (
+										<a
+											href={ INCOMING_DOMAIN_TRANSFER }
+											rel="noopener noreferrer"
+											target="_blank"
+										/>
+									),
+								},
+							}
+						) }
+					</div>
 				</form>
 			</div>
 		);

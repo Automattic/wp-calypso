@@ -8,16 +8,14 @@
 		margin-bottom: 9px;
 	}
 
-	p {
-		margin-bottom: 0;
-	}
-
 	.domain-product-price {
 		float: left;
+		line-height: inherit;
 		margin-bottom: 20px;
 		min-width: 0;
+		padding-right: 0;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( '>660px' ) {
 			float: right;
 			margin-bottom: 0;
 		}
@@ -67,13 +65,9 @@
 	}
 }
 
-.transfer-domain-step__domain-description {
-	font-size: 1em;
-	margin-bottom: 20px;
-}
-
 .transfer-domain-step__domain-text {
 	font-size: 0.9em;
+	margin-top: 20px;
 }
 
 .transfer-domain-step__go {
@@ -88,8 +82,14 @@
 }
 
 .transfer-domain-step__domain-heading {
-	font-weight: 500;
-	margin-bottom: 5px;
+	font-size: 1em;
+	font-weight: 600;
+
+	@include breakpoint( '>660px' ) {
+		max-width: 75%;
+		float: left;
+		margin-bottom: 20px;
+	}
 }
 
 .transfer-domain-step__add-domain {

@@ -6,18 +6,14 @@
 		margin-bottom: 9px;
 	}
 
-	p {
-		font-size: 1em;
-		font-weight: 600;
-		margin-bottom: 0;
-	}
-
 	.domain-product-price {
 		float: left;
+		line-height: inherit;
 		margin-bottom: 20px;
 		min-width: 0;
+		padding-right: 0;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( '>660px' ) {
 			float: right;
 			margin-bottom: 0;
 		}
@@ -32,8 +28,11 @@
 	}
 }
 
-.map-domain-step__domain-description {
-	@include breakpoint( '>960px' ) {
+.map-domain-step__domain-heading {
+	font-size: 1em;
+	font-weight: 600;
+
+	@include breakpoint( '>660px' ) {
 		max-width: 75%;
 		float: left;
 		margin-bottom: 20px;
