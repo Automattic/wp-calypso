@@ -738,7 +738,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE ] = (
 					[ packageId ]: {
 						...state.form.packages.selected[ packageId ],
 						restrictionType,
-						restrictionExplanation: '',
+						restrictionComments: '',
 					},
 				},
 			},
@@ -748,7 +748,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE ] = (
 
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION ] = (
 	state,
-	{ packageId, restrictionExplanation }
+	{ packageId, restrictionComments }
 ) => {
 	return {
 		...state,
@@ -760,7 +760,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION ] = (
 					...state.form.packages.selected,
 					[ packageId ]: {
 						...state.form.packages.selected[ packageId ],
-						restrictionExplanation,
+						restrictionComments,
 					},
 				},
 			},

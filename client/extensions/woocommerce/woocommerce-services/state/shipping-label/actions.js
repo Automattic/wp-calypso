@@ -201,7 +201,7 @@ export const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems 
 		}
 		apiPckg.restriction_type = pckg.restrictionType || 'none';
 		if ( 'other' === pckg.restrictionType ) {
-			apiPckg.restriction_comments = pckg.restrictionExplanation;
+			apiPckg.restriction_comments = pckg.restrictionComments;
 		}
 		apiPckg.non_delivery_option = pckg.abandonOnNonDelivery ? 'abandon' : 'return';
 		apiPckg.itn = pckg.itn || '';

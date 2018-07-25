@@ -338,8 +338,8 @@ export const getCustomsErrors = (
 				);
 			}
 
-			if ( 'other' === pckg.restrictionType && ! pckg.restrictionExplanation ) {
-				errors.restrictionExplanation = translate(
+			if ( 'other' === pckg.restrictionType && ! pckg.restrictionComments ) {
+				errors.restrictionComments = translate(
 					'Please describe what kind of restrictions this package must have'
 				);
 			}
