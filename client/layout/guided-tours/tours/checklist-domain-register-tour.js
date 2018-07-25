@@ -15,7 +15,6 @@ import {
 	ButtonRow,
 	Continue,
 	makeTour,
-	Next,
 	Quit,
 	SiteLink,
 	Step,
@@ -53,7 +52,6 @@ export const ChecklistDomainRegisterTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue hidden when={ whenLeavesAddDomainsRoute } step="finish" />
-						<Next step="finish" />
 						<SiteLink isButton={ false } href="/checklist/:site">
 							{ translate( 'Return to the checklist' ) }
 						</SiteLink>
@@ -76,9 +74,7 @@ export const ChecklistDomainRegisterTour = makeTour(
 							'Just complete your purchase and your site will be sporting a cool new address!'
 						) }
 					</p>
-					<ButtonRow>
-						<Quit primary>{ translate( 'Done' ) }</Quit>
-					</ButtonRow>
+					<Quit primary>{ translate( 'Hide' ) }</Quit>
 				</Fragment>
 			) }
 		</Step>

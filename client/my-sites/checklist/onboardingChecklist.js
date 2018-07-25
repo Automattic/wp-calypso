@@ -102,8 +102,9 @@ export const tasks = [
 		),
 		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
 		completedTitle: translate( 'You registered a custom domain' ),
-		completedButtonText: translate( 'Edit' ),
+		completedButtonText: translate( 'Change' ),
 		url: '/domains/add/$siteSlug',
+		image: '/calypso/images/stats/tasks/custom-domain.svg',
 		tour: 'checklistDomainRegister',
 	},
 ];
