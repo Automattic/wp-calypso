@@ -4,7 +4,7 @@ $feature-upsell-break-at: '1040px';
 	display: flex;
 	margin: 0;
 	padding: 45px 55px;
-	color: $color-tumblr;
+	color: inherit;
 	box-shadow: 0 0 0 1px rgba( 200, 215, 225, 0.5 ), 0 1px 2px #e9eff3;
 	box-sizing: border-box;
 	background-color: white;
@@ -12,94 +12,62 @@ $feature-upsell-break-at: '1040px';
 
 .feature-upsell__main {
 	margin-top: 48px;
-	/*
-	 * Hack for IE 11 - max-width is in place to limit constraints but it still
-	 * needs an explicit rule for width
-	 */
-	.product-purchase-features-list__item {
-		width: 100%;
-	}
-
-	.purchase-detail {
-		color: inherit;
-	}
-
-	.purchase-detail__content {
-		flex-flow: row wrap;
-		padding: 38px 55px;
-	}
-
-	.purchase-detail__text {
-		width: 100%;
-	}
-
-	.purchase-detail__title {
-		font-weight: bold;
-		font-size: 23px;
-		line-height: 1.2;
-		color: inherit;
-	}
-
-	.purchase-detail__description {
-		margin-top: 20px;
-		font-size: 16px;
-		margin-bottom: 0;
-		color: inherit;
-	}
-}
-
-.feature-upsell__main--themes,
-.feature-upsell__main--plugins {
-	.purchase-detail,
-	.product-purchase-features-list__item {
-		width: 100%;
-		max-width: 100%;
-	}
+	color: $gray-dark;
 }
 
 .feature-upsell__placeholder {
 	animation: pulse-light 800ms ease-in-out infinite;
 	background: $gray-lighten-20;
-}
 
-.feature-upsell__placeholder--cta {
-	width: 350px;
-	max-width: 80%;
-	height: 50px;
-	//margin: 0 auto;
-}
+	&--cta {
+		width: 350px;
+		max-width: 80%;
+		height: 50px;
+		//margin: 0 auto;
+	}
 
-.feature-upsell__placeholder--cover {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+	&--cover {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
 }
 
 .feature-upsell__header-title,
 .feature-upsell__section-header {
-	font-size: 34px;
-	font-weight: 500;
-	line-height: 1;
-	margin-top: 45px;
-	margin-bottom: 20px;
+	font-size: 36px;
+	line-height: 1.1;
+	font-weight: 400;
+	margin-top: 40px;
+	margin-bottom: 15px;
 	text-align: center;
-
-	&--h4 {
-		font-size: 22px;
-		margin-bottom: 5px;
-	}
 
 	@include breakpoint( '<1280px' ) {
 		font-size: 40px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		font-size: 30px;
+	}
+}
+
+.feature-upsell__section-header {
+	font-size: 32px;
+	line-height: 1;
+
+	&--h4 {
+		font-size: 20px;
+	}
+
+	@include breakpoint( '<1280px' ) {
 		&--h4 {
 			font-size: 18px;
 		}
 	}
 
 	@include breakpoint( '<660px' ) {
-		font-size: 30px;
 		&--h4 {
 			font-size: 16px;
 		}
@@ -130,8 +98,8 @@ $feature-upsell-break-at: '1040px';
 
 	&-button {
 		display: block;
-		font-size: 18px;
-		padding: 13px 50px;
+		font-size: 16px;
+		padding: 14px 48px;
 		line-height: 1.2;
 
 		@include breakpoint( '<1280px' ) {
@@ -147,14 +115,13 @@ $feature-upsell-break-at: '1040px';
 		display: block;
 		opacity: 0.8;
 		color: $green-jetpack;
-		font-size: 16px;
+		font-size: 15px;
+		line-height: 31px;
 		font-weight: 300;
 	}
 
 	&--in-video-box {
 		margin-top: 30px;
-		.feature-upsell__cta-pitch {
-		}
 		.feature-upsell__cta-button {
 			margin: 20px 0 0;
 			@include breakpoint( '<1280px' ) {
@@ -179,7 +146,7 @@ $feature-upsell-break-at: '1040px';
 			order: 1;
 			line-height: 1.25;
 			font-size: 26px;
-			font-weight: bold;
+			font-weight: 300;
 			padding-right: 30px;
 			@include breakpoint( '<1280px' ) {
 				font-size: 22px;
@@ -216,51 +183,53 @@ $feature-upsell-break-at: '1040px';
 	}
 }
 
-.feature-upsell__video-box {
-	@include feature-upsell-bordered-box;
-	flex-flow: row wrap;
-}
-
-.feature-upsell__video-container {
-	flex: 1;
-	position: relative;
-	overflow: hidden;
-	padding-top: 27.25%;
-	margin: 0 auto;
-	@include breakpoint( '<1280px' ) {
-		flex-basis: 100%;
-		padding-top: 41%;
-	}
-}
-
 .feature-upsell__video {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	border: 0;
-	iframe {
+	&-box {
+		@include feature-upsell-bordered-box;
+		flex-flow: row wrap;
+	}
+
+	&-container {
+		flex: 1;
 		position: relative;
-		z-index: 10;
-	}
-}
-
-.feature-upsell__video-description {
-	flex: 0;
-	flex-basis: 340px;
-	margin-left: 30px;
-	font-size: 17px;
-	line-height: 1.8;
-
-	@include breakpoint( '<1280px' ) {
-		flex-basis: 100%;
-		margin-top: 20px;
-		margin-left: 0;
+		overflow: hidden;
+		padding-top: 27.25%;
+		margin: 0 auto;
+		@include breakpoint( '<1280px' ) {
+			flex-basis: 100%;
+			padding-top: 41%;
+		}
 	}
 
-	.feature-upsell__cta {
-		margin-top: 30px;
+	&-frame {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border: 0;
+		iframe {
+			position: relative;
+			z-index: 10;
+		}
+	}
+
+	&-description {
+		flex: 0;
+		flex-basis: 340px;
+		margin-left: 32px;
+		font-size: 16px;
+		line-height: 1.625;
+
+		@include breakpoint( '<1280px' ) {
+			flex-basis: 100%;
+			margin-top: 20px;
+			margin-left: 0;
+		}
+
+		.feature-upsell__cta {
+			margin-top: 22px;
+		}
 	}
 }
 
@@ -271,9 +240,24 @@ $feature-upsell-break-at: '1040px';
 
 	&-item {
 		@include feature-upsell-bordered-box;
+
+		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
+			flex-flow: row wrap;
+			margin-bottom: 20px;
+		}
+
+		@include breakpoint( '>#{$feature-upsell-break-at}' ) {
+			&--is-enable-wordads {
+				.feature-upsell__benefits-list-image-wrapper {
+					width: 160px;
+					margin-left: 65px;
+				}
+			}
+		}
 	}
 
 	&-item-content {
+		order: 2;
 		flex: 1;
 		width: 100%;
 		display: flex;
@@ -284,15 +268,17 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-name {
-		font-size: 26px;
-		font-weight: bold;
+		font-size: 24px;
+		font-weight: 300;
+		color: $gray-darken-30;
 		@include breakpoint( '<1280px' ) {
-			font-size: 22px;
+			font-size: 20px;
 		}
 	}
 
 	&-description {
-		font-size: 17px;
+		font-size: 16px;
+		line-height: 1.625;
 		margin-top: 10px;
 		@include breakpoint( '<660px' ) {
 			margin-top: 15px;
@@ -300,18 +286,21 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-image-wrapper {
-		margin-left: 30px;
+		order: 3;
+		width: 180px;
 		max-width: 40%;
+		margin-left: 45px;
 
 		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
+			order: 1;
 			flex-basis: 100%;
-			max-width: 70%;
-			margin: 15px auto;
+			max-width: 30%;
+			margin: 0 auto 20px 0;
 		}
 
-		@include breakpoint( '<660px' ) {
-			max-width: 90%;
-		}
+		//@include breakpoint( '<660px' ) {
+		//	max-width: 90%;
+		//}
 	}
 
 	&-image {
@@ -325,45 +314,45 @@ $feature-upsell-break-at: '1040px';
 	}
 }
 
-.feature-upsell__list-wrapper {
-	text-align: center;
-	margin-bottom: 1.5em;
-}
-
 .feature-upsell__list {
 	display: inline-block;
 	margin: 0 auto;
 	text-align: left;
 	min-width: 380px; // IE11 really wants to squish the list, this helps
-}
 
-.feature-upsell__list-item {
-	display: flex;
-	list-style-type: none;
-	align-items: center;
-
-	@include breakpoint( '<660px' ) {
-		align-items: flex-start;
+	&--wrapper {
+		text-align: center;
+		margin-bottom: 1.5em;
 	}
-}
 
-.feature-upsell__list-item-icon {
-	fill: $blue-wordpress;
-	margin-right: 4px;
-}
+	&-item {
+		display: flex;
+		list-style-type: none;
+		align-items: center;
 
-.feature-upsell__list-item-text {
-	flex: 1;
-	font-size: 18px;
+		@include breakpoint( '<660px' ) {
+			align-items: flex-start;
+		}
+	}
+
+	&-item-icon {
+		fill: $blue-wordpress;
+		margin-right: 4px;
+	}
+
+	&-item-text {
+		flex: 1;
+		font-size: 18px;
+	}
 }
 
 .feature-upsell__refund-asterisk {
 	position: relative;
-	margin-top: 20px;
+	margin-top: 15px;
 	padding-left: 20px;
 	font-size: 13px;
 	line-height: 1.2;
-	color: $gray-text-min;
+	color: $gray-darken-20;
 
 	&:before {
 		position: absolute;
@@ -377,5 +366,81 @@ $feature-upsell-break-at: '1040px';
 
 	p {
 		margin: 15px 0;
+	}
+}
+
+.feature-upsell__features-list {
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	&-item {
+		page-break-inside: avoid; // For Firefox
+		break-inside: avoid-column; // For IE
+		-webkit-column-break-inside: avoid; // For others
+
+		padding-bottom: 28px;
+		max-width: 150%;
+		/*
+		 * Hack for IE 11 - max-width is in place to limit constraints but it still
+		 * needs an explicit rule for width
+		 */
+		width: 100%;
+
+		@include breakpoint( '>1040px' ) {
+			max-width: calc( 100% / 2 - 10px );
+		}
+	}
+
+	&--full-size {
+		.feature-upsell__features-list-item {
+			width: 100%;
+			max-width: 100%;
+		}
+	}
+}
+
+.feature-upsell__feature {
+	height: 100%;
+	color: inherit;
+
+	&-content {
+		@include feature-upsell-bordered-box;
+		flex-flow: row wrap;
+		height: 100%;
+		padding: 33px 48px 28px 43px;
+	}
+
+	&-text {
+		width: 100%;
+		flex-grow: 1;
+	}
+
+	&-title {
+		font-weight: 300;
+		font-size: 21px;
+		line-height: 1.5;
+		color: $gray-darken-30;
+		clear: none;
+		margin-top: 10px;
+	}
+
+	&-description {
+		font-size: 14px;
+		line-height: 1.6;
+		margin: 11px 0 0;
+	}
+
+	&-icon {
+		display: block;
+		width: 48px;
+		height: 48px;
+		margin: 0;
+		padding: 11px 14px;
+		border-radius: 100px;
+		background: $gray-darken-30;
+		color: #fff;
 	}
 }
