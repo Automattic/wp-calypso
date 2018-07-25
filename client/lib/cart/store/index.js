@@ -17,6 +17,8 @@ const productsList = productsListFactory();
 import Dispatcher from 'dispatcher';
 import { applyCoupon, removeCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
 import wp from 'lib/wp';
+import { getReduxStore } from 'lib/redux-bridge';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const wpcom = wp.undocumented();
 
@@ -33,30 +35,29 @@ const CartStore = {
 			hasPendingServerUpdates: hasPendingServerUpdates(),
 		} );
 	},
-	setSelectedSiteId( selectedSiteId ) {
-		if ( selectedSiteId && _cartKey === selectedSiteId ) {
-			return;
-		}
-
-		if ( ! selectedSiteId ) {
-			_cartKey = 'no-site';
-		} else {
-			_cartKey = selectedSiteId;
-		}
-
-		if ( _synchronizer && _poller ) {
-			PollerPool.remove( _poller );
-			_synchronizer.off( 'change', emitChange );
-		}
-
-		_synchronizer = cartSynchronizer( _cartKey, wpcom );
-		_synchronizer.on( 'change', emitChange );
-
-		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
-	},
 };
 
 emitter( CartStore );
+
+function setSelectedSiteId( selectedSiteId ) {
+	const newCartKey = selectedSiteId || 'no-site';
+
+	if ( _cartKey === newCartKey ) {
+		return;
+	}
+
+	_cartKey = newCartKey;
+
+	if ( _synchronizer && _poller ) {
+		PollerPool.remove( _poller );
+		_synchronizer.off( 'change', emitChange );
+	}
+
+	_synchronizer = cartSynchronizer( _cartKey, wpcom );
+	_synchronizer.on( 'change', emitChange );
+
+	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
+}
 
 function hasLoadedFromServer() {
 	return _synchronizer && _synchronizer.hasLoadedFromServer();
@@ -145,3 +146,8 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 } );
 
 export default CartStore;
+
+// Subscribe to the Redux store to get updates about the selected site
+getReduxStore().then( store =>
+	store.subscribe( () => setSelectedSiteId( getSelectedSiteId( store.getState() ) ) )
+);
