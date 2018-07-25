@@ -183,7 +183,7 @@ export const submitStep = ( orderId, siteId, stepName ) => ( dispatch, getState 
 	expandFirstErroneousStep( orderId, siteId, dispatch, getState );
 };
 
-const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems ) => {
+export const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems ) => {
 	const apiPckg = pick( pckg, [
 		'id',
 		'box_id',
@@ -208,15 +208,19 @@ const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems ) => {
 				? getProductValueFromOrder( state, productId, orderId, siteId )
 				: customsItems[ productId ].value;
 
-		apiPckg.items = uniqBy( pckg.items, 'product_id' ).map( ( { product_id } ) => ( {
-			description: customsItems[ product_id ].description,
-			quantity: sumBy( filter( pckg.items, { product_id } ), 'quantity' ),
-			value: getProductValue( product_id ),
-			weight: customsItems[ product_id ].weight,
-			hs_tariff_number: customsItems[ product_id ].tariffNumber,
-			origin_country: customsItems[ product_id ].originCountry,
-			product_id,
-		} ) );
+		apiPckg.items = uniqBy( pckg.items, 'product_id' ).map( ( { product_id } ) => {
+			const quantity = sumBy( filter( pckg.items, { product_id } ), 'quantity' );
+
+			return {
+				description: customsItems[ product_id ].description,
+				quantity,
+				value: quantity * getProductValue( product_id ),
+				weight: quantity * customsItems[ product_id ].weight,
+				hs_tariff_number: customsItems[ product_id ].tariffNumber,
+				origin_country: customsItems[ product_id ].originCountry,
+				product_id,
+			};
+		} );
 	}
 	return apiPckg;
 };
