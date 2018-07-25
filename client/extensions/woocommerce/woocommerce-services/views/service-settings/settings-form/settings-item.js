@@ -103,7 +103,7 @@ const SettingsItem = ( {
 
 		case 'shipping_classes':
 			// If there are no shipping classes, no input for them is needed.
-			if ( 0 === shippingClasses.length ) {
+			if ( false === shippingClasses || 0 === shippingClasses.length ) {
 				return null;
 			}
 

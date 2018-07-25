@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { forEach } from 'lodash';
+import { map, forEach } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,7 +39,7 @@ export default class TokenField extends React.Component {
 					name={ id }
 					placeholder={ placeholder }
 					value={ value.map( selected => selected + '' ) }
-					suggestions={ options.map( option => option.id + '' ) }
+					suggestions={ map( options, option => option.id + '' ) }
 					isError={ Boolean( error ) }
 					onChange={ this.onChange.bind( this ) }
 					saveTransform={ this.saveTransform.bind( this ) }
