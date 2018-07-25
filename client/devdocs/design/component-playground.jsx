@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import Gridicon from 'gridicons';
-import * as playgroundScopeForGutenbergBlocks from '@wordpress/components';
+import * as playgroundScopeForGutenbergComponents from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -45,7 +45,7 @@ class ComponentPlayground extends Component {
 		} );
 		let scope = playgroundScopeForComponents;
 		if ( 'gutenberg-components' === this.props.section ) {
-			scope = playgroundScopeForGutenbergBlocks;
+			scope = playgroundScopeForGutenbergComponents;
 		}
 		return (
 			<LiveProvider
