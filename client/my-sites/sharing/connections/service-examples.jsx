@@ -143,12 +143,12 @@ class SharingServiceExamples extends Component {
 			{
 				image: {
 					src: '/calypso/images/sharing/facebook-profile.png',
-					alt: this.props.translate( 'Share posts to your Facebook page or profile', {
+					alt: this.props.translate( 'Share posts to your Facebook page', {
 						textOnly: true,
 					} ),
 				},
 				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page or profile.',
+					'{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page.',
 					{
 						components: {
 							strong: <strong />,

@@ -18,9 +18,16 @@ describe( 'selectors', () => {
 		sharing: {
 			keyring: {
 				items: {
-					1: { ID: 1, service: 'twitter', sites: [ '2916284' ], additional_external_users: [] },
+					1: {
+						ID: 1,
+						external_ID: '23455664',
+						service: 'twitter',
+						sites: [ '2916284' ],
+						additional_external_users: [],
+					},
 					2: {
 						ID: 2,
+						external_ID: '6675433',
 						service: 'instagram',
 						sites: [ '77203074' ],
 						keyring_connection_user_ID: 1,
@@ -28,6 +35,7 @@ describe( 'selectors', () => {
 					},
 					3: {
 						ID: 3,
+						external_ID: '35332233',
 						service: 'facebook',
 						sites: [ '2916284', '77203074' ],
 						shared: true,
@@ -35,12 +43,13 @@ describe( 'selectors', () => {
 					},
 					4: {
 						ID: 4,
+						external_ID: '99009233',
 						service: 'facebook',
 						sites: [ '77203074' ],
 						shared: false,
 						additional_external_users: [
 							{
-								external_ID: 1,
+								external_ID: '1222',
 								external_name: 'John',
 								external_profile_picture: undefined,
 							},
@@ -58,7 +67,31 @@ describe( 'selectors', () => {
 					2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 },
 				},
 			},
+			services: {
+				items: {
+					facebook: {
+						ID: 'facebook',
+						label: 'Facebook',
+						type: 'publicize',
+						multiple_external_user_ID_support: true,
+						external_users_only: true,
+						jetpack_support: true,
+						jetpack_module_required: 'publicize',
+					},
+					twitter: {
+						ID: 'twitter',
+						label: 'Twitter',
+						type: 'publicize',
+						multiple_external_user_ID_support: false,
+						external_users_only: false,
+						jetpack_support: true,
+						jetpack_module_required: 'publicize',
+					},
+					isFetching: false,
+				},
+			},
 		},
+
 		ui: {
 			selectedSiteId: 2916284,
 		},
@@ -75,7 +108,14 @@ describe( 'selectors', () => {
 			const connections = getAvailableExternalAccounts( state, 'twitter' );
 
 			expect( connections ).to.eql( [
-				{ isConnected: false, keyringConnectionId: 1, name: undefined, picture: undefined },
+				{
+					ID: '23455664',
+					isConnected: false,
+					isExternal: false,
+					keyringConnectionId: 1,
+					name: undefined,
+					picture: undefined,
+				},
 			] );
 		} );
 
@@ -83,10 +123,8 @@ describe( 'selectors', () => {
 			const connections = getAvailableExternalAccounts( state, 'facebook' );
 
 			expect( connections ).to.eql( [
-				{ isConnected: false, keyringConnectionId: 3, name: undefined, picture: undefined },
-				{ isConnected: false, keyringConnectionId: 4, name: undefined, picture: undefined },
 				{
-					ID: 1,
+					ID: '1222',
 					isConnected: false,
 					isExternal: true,
 					keyringConnectionId: 4,
