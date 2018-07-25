@@ -195,12 +195,14 @@ export const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems 
 		'signature',
 	] );
 	if ( customsItems ) {
-		apiPckg.contents_type =
-			'other' !== pckg.contentsType ? pckg.contentsType || 'merchandise' : pckg.contentsExplanation;
-		apiPckg.restriction_type =
-			'other' !== pckg.restrictionType
-				? pckg.restrictionType || 'none'
-				: pckg.restrictionExplanation;
+		apiPckg.contents_type = pckg.contentsType || 'merchandise';
+		if ( 'other' === pckg.contentsType ) {
+			apiPckg.contents_explanation = pckg.contentsExplanation;
+		}
+		apiPckg.restriction_type = pckg.restrictionType || 'none';
+		if ( 'other' === pckg.restrictionType ) {
+			apiPckg.restriction_comments = pckg.restrictionExplanation;
+		}
 		apiPckg.non_delivery_option = pckg.abandonOnNonDelivery ? 'abandon' : 'return';
 		apiPckg.itn = pckg.itn || '';
 		const getProductValue = productId =>
