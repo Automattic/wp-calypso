@@ -101,14 +101,6 @@ const webpackConfig = {
 			name: isDevelopment || shouldEmitStats,
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
-			cacheGroups: {
-				styles: {
-					name: 'styles',
-					test: /\.css$/,
-					chunks: 'all',
-					enforce: true,
-				},
-			},
 		},
 		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 		moduleIds: 'named',
@@ -145,7 +137,7 @@ const webpackConfig = {
 				test: /\.scss$/,
 				use: [
 					{
-						loader: MiniCssExtractPlugin.loader,
+						loader: 'style-loader',
 					},
 					{ loader: 'css-loader' },
 					{

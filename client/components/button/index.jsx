@@ -5,8 +5,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-import { default as MaterialButton } from '@material/react-button';
 //import '@material/react-button/index.scss';
 
 export default class Button extends PureComponent {
@@ -48,6 +46,6 @@ export default class Button extends PureComponent {
 
 		const { compact, primary, scary, busy, borderless, target, rel, ...props } = this.props;
 
-		return <MaterialButton { ...props } className={ className } />;
+		return <button { ...props } className={ className } />;
 	}
 }

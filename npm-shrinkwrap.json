@@ -14816,6 +14816,15 @@
       "resolved": "https://registry.npmjs.org/striptags/-/striptags-2.2.1.tgz",
       "integrity": "sha1-TEULcI1BuL85zyTEn/I0/Gqr/TI="
     },
+    "style-loader": {
+      "version": "0.21.0",
+      "resolved": "https://registry.npmjs.org/style-loader/-/style-loader-0.21.0.tgz",
+      "integrity": "sha512-T+UNsAcl3Yg+BsPKs1vd22Fr8sVT+CJMtzqc6LEw9bbJZb43lm9GoeIfUcDEefBSWC0BhYbcdupV1GtI4DGzxg==",
+      "requires": {
+        "loader-utils": "^1.1.0",
+        "schema-utils": "^0.4.5"
+      }
+    },
     "style-search": {
       "version": "0.1.0",
       "resolved": "https://registry.npmjs.org/style-search/-/style-search-0.1.0.tgz",
