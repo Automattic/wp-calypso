@@ -40,6 +40,8 @@ import {
 	setTaxLocation,
 } from 'lib/cart-values';
 import wp from 'lib/wp';
+import { getReduxStore } from 'lib/redux-bridge';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
 
@@ -59,15 +61,13 @@ const CartStore = {
 		} );
 	},
 	setSelectedSiteId( selectedSiteId ) {
-		if ( selectedSiteId && _cartKey === selectedSiteId ) {
+		const newCartKey = selectedSiteId || 'no-site';
+
+		if ( _cartKey === newCartKey ) {
 			return;
 		}
 
-		if ( ! selectedSiteId ) {
-			_cartKey = 'no-site';
-		} else {
-			_cartKey = selectedSiteId;
-		}
+		_cartKey = newCartKey;
 
 		if ( _synchronizer && _poller ) {
 			PollerPool.remove( _poller );
@@ -226,3 +226,8 @@ CartStore.dispatchToken = Dispatcher.register( payload => {
 } );
 
 export default CartStore;
+
+// Subscribe to the Redux store to get updates about the selected site
+getReduxStore().then( store =>
+	store.subscribe( () => CartStore.setSelectedSiteId( getSelectedSiteId( store.getState() ) ) )
+);
