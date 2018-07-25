@@ -13,11 +13,9 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import controller from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
-import { getSiteFragment } from 'lib/route';
 
 export default function() {
 	if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
-		page( '/feature/:feature', siteSelection, sites, makeLayout, clientRender );
 		page(
 			'/feature/store/:domain',
 			siteSelection,
@@ -54,14 +52,18 @@ export default function() {
 			clientRender
 		);
 
-		page( '/feature/:feature/*', ( { path, params } ) => {
-			const siteFragment = getSiteFragment( path );
+		// Specific feature's page
+		page( /\/feature\/([a-zA-Z0-9\-]+)$/, siteSelection, sites, makeLayout, clientRender );
 
-			if ( siteFragment ) {
-				return page.redirect( `/feature/${ params.feature }/${ siteFragment }` );
-			}
-
-			return page.redirect( `/feature/${ params.feature }` );
-		} );
+		// General features page
+		page(
+			'/feature/:domain',
+			siteSelection,
+			navigation,
+			controller.features,
+			makeLayout,
+			clientRender
+		);
+		page( '/feature', siteSelection, sites, makeLayout, clientRender );
 	}
 }
