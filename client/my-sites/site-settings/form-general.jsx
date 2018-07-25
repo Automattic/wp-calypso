@@ -38,6 +38,7 @@ import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
+import { getSelectedSite } from '../../state/ui/selectors';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
@@ -115,6 +116,24 @@ export class SiteSettingsFormGeneral extends Component {
 				</div>
 				<SiteIconSetting />
 			</div>
+		);
+	}
+
+	WordPressVersion() {
+		const { translate, selectedSite } = this.props;
+
+		return (
+			<FormFieldset>
+				<FormLabel htmlFor="wpversion">{ translate( 'WordPress Version' ) }</FormLabel>
+				<FormInput
+					name="wpversion"
+					id="wpversion"
+					data-tip-target="site-title-input"
+					type="text"
+					value={ get( selectedSite, 'options.software_version' ) }
+					disabled
+				/>
+			</FormFieldset>
 		);
 	}
 
@@ -490,6 +509,7 @@ export class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
+						{ siteIsJetpack && this.WordPressVersion() }
 					</form>
 				</Card>
 
@@ -571,12 +591,14 @@ const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
+		const selectedSite = getSelectedSite( state );
 
 		return {
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsLanguageSelection:
 				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.9-alpha' ),
+			selectedSite,
 		};
 	},
 	null,
