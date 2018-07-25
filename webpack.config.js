@@ -68,6 +68,8 @@ function getAliasesForExtensions() {
 const babelLoader = {
 	loader: 'babel-loader',
 	options: {
+		configFile: path.resolve( __dirname, 'babel.config.js' ),
+		babelrc: false,
 		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 		cacheIdentifier,
 	},
