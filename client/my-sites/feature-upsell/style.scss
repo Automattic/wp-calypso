@@ -11,6 +11,7 @@ $feature-upsell-break-at: '1040px';
 }
 
 .feature-upsell__main {
+	max-width: 960px;
 	margin-top: 48px;
 	color: $gray-dark;
 }
@@ -19,14 +20,14 @@ $feature-upsell-break-at: '1040px';
 	animation: pulse-light 800ms ease-in-out infinite;
 	background: $gray-lighten-20;
 
-	&--cta {
+	&.is-cta {
 		width: 350px;
 		max-width: 80%;
 		height: 50px;
 		//margin: 0 auto;
 	}
 
-	&--cover {
+	&.is-cover {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -35,57 +36,81 @@ $feature-upsell-break-at: '1040px';
 	}
 }
 
-.feature-upsell__header-title,
-.feature-upsell__section-header {
-	font-size: 36px;
-	line-height: 1.1;
-	font-weight: 400;
-	margin-top: 40px;
-	margin-bottom: 15px;
-	text-align: center;
+.feature-upsell__header {
+	&-title {
+		font-size: 36px;
+		line-height: 1.1;
+		font-weight: 400;
+		margin-top: 40px;
+		margin-bottom: 15px;
+		text-align: center;
 
-	@include breakpoint( '<1280px' ) {
-		font-size: 40px;
-	}
+		@include breakpoint( '<1280px' ) {
+			font-size: 30px;
+		}
 
-	@include breakpoint( '<660px' ) {
-		font-size: 30px;
-	}
-}
-
-.feature-upsell__section-header {
-	font-size: 32px;
-	line-height: 1;
-
-	&--h4 {
-		font-size: 20px;
-	}
-
-	@include breakpoint( '<1280px' ) {
-		&--h4 {
-			font-size: 18px;
+		@include breakpoint( '<660px' ) {
+			font-size: 26px;
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
-		&--h4 {
-			font-size: 16px;
+	&-subtitle {
+		font-size: 26px;
+		line-height: 1.2;
+		font-weight: 300;
+		text-align: center;
+
+		@include breakpoint( '<1280px' ) {
+			font-size: 24px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			font-size: 20px;
 		}
 	}
-}
 
-.feature-upsell__header-subtitle {
-	margin-top: 15px;
-	font-size: 30px;
-	font-weight: 300;
-	text-align: center;
+	&-section {
+		font-size: 32px;
+		line-height: 1;
+		font-weight: 400;
+		margin-top: 40px;
+		margin-bottom: 15px;
+		text-align: center;
 
-	@include breakpoint( '<1280px' ) {
-		font-size: 24px;
+		@include breakpoint( '<1280px' ) {
+			font-size: 28px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			font-size: 24px;
+		}
 	}
 
-	@include breakpoint( '<660px' ) {
-		font-size: 18px;
+	&-title,
+	&-subtitle,
+	&-section {
+		&.is-bold {
+			font-weight: 500;
+		}
+
+		&.is-left {
+			text-align: left;
+		}
+
+		&.is-h4 {
+			font-size: 20px;
+			@include breakpoint( '<1280px' ) {
+				&.is-h4 {
+					font-size: 18px;
+				}
+			}
+
+			@include breakpoint( '<660px' ) {
+				&.is-h4 {
+					font-size: 16px;
+				}
+			}
+		}
 	}
 }
 
@@ -120,7 +145,18 @@ $feature-upsell-break-at: '1040px';
 		font-weight: 300;
 	}
 
-	&--in-video-box {
+	&.is-centered {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	&.is-large-gap {
+		margin-top: 40px;
+		margin-bottom: 40px;
+	}
+
+	&.is-in-video-box {
 		margin-top: 30px;
 		.feature-upsell__cta-button {
 			margin: 20px 0 0;
@@ -137,7 +173,7 @@ $feature-upsell-break-at: '1040px';
 		}
 	}
 
-	&--in-benefit {
+	&.is-in-benefit {
 		display: flex;
 		flex-flow: row wrap;
 
@@ -247,7 +283,7 @@ $feature-upsell-break-at: '1040px';
 		}
 
 		@include breakpoint( '>#{$feature-upsell-break-at}' ) {
-			&--is-enable-wordads {
+			&.is-enable-wordads {
 				.feature-upsell__benefits-list-image-wrapper {
 					width: 160px;
 					margin-left: 65px;
@@ -314,16 +350,12 @@ $feature-upsell-break-at: '1040px';
 	}
 }
 
-.feature-upsell__list {
+.feature-upsell__checklist {
 	display: inline-block;
-	margin: 0 auto;
 	text-align: left;
-	min-width: 380px; // IE11 really wants to squish the list, this helps
-
-	&--wrapper {
-		text-align: center;
-		margin-bottom: 1.5em;
-	}
+	margin: 0 0 10px;
+	padding: 0;
+	list-style-type: none;
 
 	&-item {
 		display: flex;
@@ -342,7 +374,6 @@ $feature-upsell-break-at: '1040px';
 
 	&-item-text {
 		flex: 1;
-		font-size: 18px;
 	}
 }
 
@@ -394,7 +425,7 @@ $feature-upsell-break-at: '1040px';
 		}
 	}
 
-	&--full-size {
+	&.is-full-size {
 		.feature-upsell__features-list-item {
 			width: 100%;
 			max-width: 100%;
@@ -442,5 +473,9 @@ $feature-upsell-break-at: '1040px';
 		border-radius: 100px;
 		background: $gray-darken-30;
 		color: #fff;
+	}
+
+	.purchase-detail__info {
+		margin-left: 0;
 	}
 }
