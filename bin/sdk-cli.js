@@ -7,6 +7,7 @@ const execSync = require( 'child_process' ).execSync;
 const path = require( 'path' );
 
 const buildBlockScript = path.resolve( __dirname, 'create-scripts/block.js' );
+const crossEnvShell = path.resolve( __dirname, '../node_modules/.bin/cross-env-shell' );
 let args = process.argv;
 
 // Remove `node` and SDK script
@@ -20,7 +21,7 @@ if ( ! args.length || task !== 'build-block' ) {
 	process.exit(1);
 }
 
-execSync( `cross-env-shell SKIP_FLAG_IMAGES=true node ${ buildBlockScript } ${ args.join( ' ' ) }`, {
+execSync( `${ crossEnvShell } SKIP_FLAG_IMAGES=true node ${ buildBlockScript } ${ args.join( ' ' ) }`, {
 	shell: true,
 	stdio: 'inherit',
 } );
