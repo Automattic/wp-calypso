@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 import Gridicon from 'gridicons';
+import * as playgroundScopeForGutenbergBlocks from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
-import * as playgroundScope from 'devdocs/design/playground-scope';
+import * as playgroundScopeForComponents from 'devdocs/design/playground-scope';
 
 class ComponentPlayground extends Component {
 	static propTypes = {
@@ -42,10 +43,14 @@ class ComponentPlayground extends Component {
 			'design__component-playground-code': true,
 			'show-code': toggleCode ? this.state.showCode : true,
 		} );
+		let scope = playgroundScopeForComponents;
+		if ( 'gutenberg-components' === this.props.section ) {
+			scope = playgroundScopeForGutenbergBlocks;
+		}
 		return (
 			<LiveProvider
 				code={ this.props.code }
-				scope={ playgroundScope }
+				scope={ scope }
 				mountStylesheet={ false }
 				className="design__component-playground"
 			>

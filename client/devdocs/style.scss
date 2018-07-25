@@ -2,12 +2,11 @@ $devdocs-max-width: 720px;
 
 // Sidebar Title
 .devdocs__title {
-    color: $gray-darken-30;
-    font-weight: 300;
-    font-size: 24px;
-    padding: 24px;
+	color: $gray-darken-30;
+	font-weight: 300;
+	font-size: 24px;
+	padding: 24px;
 }
-
 
 // Search
 .devdocs__result {
@@ -47,16 +46,15 @@ $devdocs-max-width: 720px;
 	}
 }
 
-
 // Block and Component examples
 .main.devdocs.devdocs__blocks,
-.main.devdocs.devdocs__components {
+.main.devdocs.devdocs__components,
+.main.devdocs.devdocs__gutenberg-components {
 	// Make way for showing big components and multiple columns
 	max-width: 100%;
 }
 
 .design__collection {
-
 	// Use multiple columns when listing components
 	.main.devdocs.is-list & {
 		column-gap: 24px;
@@ -66,7 +64,7 @@ $devdocs-max-width: 720px;
 			column-count: 2;
 		}
 
-		@media ( min-width: 2000px ) {
+		@media (min-width: 2000px) {
 			column-count: 3;
 		}
 	}
@@ -113,7 +111,8 @@ $devdocs-max-width: 720px;
 		letter-spacing: 1px;
 		border-bottom: 1px solid rgba( $gray-lighten-20, 0.65 );
 
-		a, a:visited {
+		a,
+		a:visited {
 			text-decoration: underline;
 
 			&:hover {
@@ -129,9 +128,9 @@ $devdocs-max-width: 720px;
 
 		// Grid background
 		background-image: linear-gradient( rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
-		linear-gradient( 90deg, rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
-		linear-gradient( rgba( $gray-dark, 0.025 ) 1px, transparent 1px ),
-		linear-gradient( 90deg, rgba( $gray-dark, 0.025 ) 1px, transparent 1px );
+			linear-gradient( 90deg, rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
+			linear-gradient( rgba( $gray-dark, 0.025 ) 1px, transparent 1px ),
+			linear-gradient( 90deg, rgba( $gray-dark, 0.025 ) 1px, transparent 1px );
 		background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
 		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 
@@ -178,15 +177,15 @@ $devdocs-max-width: 720px;
 			max-width: $devdocs-max-width;
 		}
 
-		@media ( min-width: 2000px ) {
+		@media (min-width: 2000px) {
 			padding-top: 60px;
 
 			.docs-example__wrapper-header-title a {
 				position: absolute;
-					top: 0;
-					right: 0;
-					bottom: 0;
-					left: 0;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
 			}
 
 			.docs-example__wrapper-content {
@@ -211,30 +210,29 @@ $devdocs-max-width: 720px;
 	top: 10px;
 	right: 24px;
 	z-index: 1;
-    position: absolute;
+	position: absolute;
 }
 
 // Some components/blocks need some space to look right
 .docs__design-button-row,
 .design__button-row {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 // !important's :(
 .docs__design-button-row .button,
 .design__button-row .button {
-    margin-right: 16px !important;
+	margin-right: 16px !important;
 }
 
 .docs__design-button-row .button-group .button,
 .docs__design-button-row .split-button__main {
-    margin-right: 0 !important;
+	margin-right: 0 !important;
 }
 
 .docs__design-button-group-row {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
-
 
 // State Selectors
 .docs-selectors__results {
@@ -338,7 +336,6 @@ $devdocs-max-width: 720px;
 	}
 }
 
-
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content {
 	max-width: $devdocs-max-width;
@@ -350,7 +347,12 @@ $devdocs-max-width: 720px;
 		text-decoration: underline;
 	}
 
-	h1, h2, h3, h4, h5, h6 {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
 		font-weight: 600;
 		line-height: 1.2;
 		margin: 32px 0 16px;
@@ -374,11 +376,13 @@ $devdocs-max-width: 720px;
 		font-size: 24px;
 	}
 
-	p, li {
+	p,
+	li {
 		line-height: 1.6;
 	}
 
-	ul, ol {
+	ul,
+	ol {
 		margin: 0 0 32px 48px;
 	}
 
@@ -474,4 +478,11 @@ a.devdocs__doc-edit-link {
 	text-decoration: underline;
 	float: right;
 	position: relative;
+}
+
+.docs__gutenberg-components-button {
+	.components-button {
+		margin-right: 16px;
+		margin-bottom: 16px;
+	}
 }

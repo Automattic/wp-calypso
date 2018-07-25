@@ -53,12 +53,19 @@ const Collection = ( {
 
 		const exampleName = getComponentName( example );
 		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
-		const readmeFilePath =
-			'/client/' +
-			( section === 'blocks' ? 'blocks' : 'components' ) +
-			'/' +
-			example.props.readmeFilePath +
-			'/README.md';
+		let readmeFilePath = null;
+		let showEditLink = true;
+
+		if ( 'design' === section ) {
+			readmeFilePath = `/client/components/${ example.props.readmeFilePath }/README.md`;
+		} else if ( 'gutenberg-components' === section ) {
+			readmeFilePath = `/node_modules/@wordpress/components/src/${
+				example.props.readmeFilePath
+			}/README.md`;
+			showEditLink = false;
+		} else {
+			readmeFilePath = `/client/${ section }/${ example.props.readmeFilePath }/README.md`;
+		}
 
 		showCounter++;
 
@@ -80,8 +87,11 @@ const Collection = ( {
 						unique={ !! component }
 						url={ exampleLink }
 						component={ component }
+						section={ section }
 					/>
-					{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
+					{ component && (
+						<ReadmeViewer readmeFilePath={ readmeFilePath } showEditLink={ showEditLink } />
+					) }
 				</div>
 			);
 		}
@@ -91,7 +101,9 @@ const Collection = ( {
 				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
 					{ example }
 				</DocsExampleWrapper>
-				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
+				{ component && (
+					<ReadmeViewer readmeFilePath={ readmeFilePath } showEditLink={ showEditLink } />
+				) }
 			</div>
 		);
 	} );
