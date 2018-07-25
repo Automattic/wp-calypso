@@ -83,9 +83,9 @@ ItemRow.propTypes = {
 };
 
 const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
-	const loaded = isLoaded( state, orderId, siteId );
+	const isShippingLabelLoaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const storeOptions = loaded ? shippingLabel.storeOptions : {};
+	const storeOptions = isShippingLabelLoaded ? shippingLabel.storeOptions : {};
 	const { description, defaultDescription, tariffNumber, originCountry } = shippingLabel.form.customs.items[ productId ];
 
 	return {
@@ -93,7 +93,7 @@ const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
 		defaultDescription,
 		tariffNumber,
 		originCountry,
-		errors: loaded ? getFormErrors( state, orderId, siteId ).customs.items[ productId ] : {},
+		errors: isShippingLabelLoaded ? getFormErrors( state, orderId, siteId ).customs.items[ productId ] : {},
 		countriesData: storeOptions.countriesData || {},
 	};
 };
