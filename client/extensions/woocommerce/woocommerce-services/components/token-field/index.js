@@ -56,9 +56,13 @@ export default class TokenField extends React.Component {
 		const { options } = this.props;
 
 		let result = '';
+		const numericToken = parseInt( token );
 
 		forEach( options, option => {
-			if ( option.name.toLowerCase() === token.toLowerCase().trim() ) {
+			if (
+				( !! numericToken && option.id === numericToken ) ||
+				option.name.toLowerCase() === token.toLowerCase().trim()
+			) {
 				result = option.id + '';
 			}
 		} );
