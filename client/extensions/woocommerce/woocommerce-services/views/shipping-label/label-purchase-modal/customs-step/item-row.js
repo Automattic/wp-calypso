@@ -86,9 +86,13 @@ const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const storeOptions = loaded ? shippingLabel.storeOptions : {};
+	const { description, defaultDescription, tariffNumber, originCountry } = shippingLabel.form.customs.items[ productId ];
 
 	return {
-		...shippingLabel.form.customs.items[ productId ],
+		description,
+		defaultDescription,
+		tariffNumber,
+		originCountry,
 		errors: loaded ? getFormErrors( state, orderId, siteId ).customs.items[ productId ] : {},
 		countriesData: storeOptions.countriesData || {},
 	};
