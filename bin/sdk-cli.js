@@ -8,13 +8,7 @@ const path = require( 'path' );
 
 const buildBlockScript = path.resolve( __dirname, 'create-scripts/block.js' );
 const crossEnvShell = path.resolve( __dirname, '../node_modules/.bin/cross-env-shell' );
-let args = process.argv;
-
-// Remove `node` and SDK script
-args.splice(0, 2);
-
-// First argument should always be the task name
-const task = args.shift();
+const [ /* node */, /* bin/sdk-cli.js */, task, ...args ] = process.argv;
 
 if ( ! args.length || task !== 'build-block' ) {
 	console.log( chalk.red( 'usage: npx calypso-gutenberg-sdk build-block <block>' ) );
