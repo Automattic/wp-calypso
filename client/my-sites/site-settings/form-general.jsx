@@ -35,10 +35,9 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
-import { getSelectedSite } from '../../state/ui/selectors';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
