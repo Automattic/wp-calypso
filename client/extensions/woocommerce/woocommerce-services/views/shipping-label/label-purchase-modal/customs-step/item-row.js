@@ -106,7 +106,7 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId, productId } ) => ( {
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ItemRow ) );
 
-export const Header = localize( ( { translate } ) => (
+export const ItemRowHeader = localize( ( { translate } ) => (
 	<div className="customs-step__item-rows-header">
 		<span className="customs-step__item-description-column">{ translate( 'Description' ) }</span>
 		<span className="customs-step__item-country-column">{ translate( 'Origin country' ) }</span>

@@ -10,7 +10,7 @@ import { map, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import ItemRow, { Header as ItemRowHeader } from './item-row';
+import ItemRow, { ItemRowHeader } from './item-row';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
