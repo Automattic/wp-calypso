@@ -11,7 +11,7 @@ import { get, isArray } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-const getAllShippingClassesLoadState = ( state, siteId = getSelectedSiteId( state ) ) => {
+const getShippingClassesFromState = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
 		state,
 		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingClasses' ],
@@ -25,7 +25,7 @@ const getAllShippingClassesLoadState = ( state, siteId = getSelectedSiteId( stat
  * @return {boolean} Whether the shipping classes have been successfully loaded from the server
  */
 export const areShippingClassesLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return isArray( getAllShippingClassesLoadState( state, siteId ) );
+	return isArray( getShippingClassesFromState( state, siteId ) );
 };
 
 /**
@@ -34,5 +34,14 @@ export const areShippingClassesLoaded = ( state, siteId = getSelectedSiteId( sta
  * @return {boolean} Whether the shipping classes are currently being retrieved from the server
  */
 export const areShippingClassesLoading = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getAllShippingClassesLoadState( state, siteId );
+	return LOADING === getShippingClassesFromState( state, siteId );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} The list of available shipping classes.
+ */
+export const getShippingClassOptions = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return getShippingClassesFromState( state, siteId );
 };

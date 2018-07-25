@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,50 +16,64 @@ import FormToggleInput from 'components/token-field';
 import FieldError from '../field-error';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-const TokenField = ( {
-	id,
-	title,
-	description,
-	value,
-	placeholder,
-	updateValue,
-	error,
-	className,
-	suggestions,
-	saveTransform,
-	displayTransform,
-} ) => {
-	return (
-		<FormFieldset className={ className }>
-			<FormLabel htmlFor={ id }>{ title }</FormLabel>
-			<FormToggleInput
-				id={ id }
-				name={ id }
-				placeholder={ placeholder }
-				value={ value }
-				onChange={ updateValue }
-				isError={ Boolean( error ) }
-				suggestions={ suggestions }
-				saveTransform={ saveTransform }
-				displayTransform={ displayTransform }
-			/>
-			{ error && typeof error === 'string' && <FieldError text={ error } /> }
-			{ ! error && description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
-		</FormFieldset>
-	);
-};
+export default class TokenField extends React.Component {
+	static propTypes = {
+		id: PropTypes.string.isRequired,
+		title: PropTypes.string,
+		description: PropTypes.string,
+		value: PropTypes.array.isRequired,
+		updateValue: PropTypes.func,
+		error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		className: PropTypes.string,
+		options: PropTypes.array,
+	};
 
-TokenField.propTypes = {
-	id: PropTypes.string.isRequired,
-	title: PropTypes.string,
-	description: PropTypes.string,
-	value: PropTypes.array.isRequired,
-	updateValue: PropTypes.func,
-	error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-	className: PropTypes.string,
-	suggestions: PropTypes.array,
-	displayTransform: PropTypes.func,
-	saveTransform: PropTypes.func,
-};
+	render() {
+		const { id, title, description, value, placeholder, error, className, options } = this.props;
 
-export default TokenField;
+		return (
+			<FormFieldset className={ className }>
+				<FormLabel htmlFor={ id }>{ title }</FormLabel>
+				<FormToggleInput
+					id={ id }
+					name={ id }
+					placeholder={ placeholder }
+					value={ value.map( selected => selected + '' ) }
+					suggestions={ options.map( option => option.id + '' ) }
+					isError={ Boolean( error ) }
+					onChange={ this.onChange.bind( this ) }
+					saveTransform={ this.saveTransform.bind( this ) }
+					displayTransform={ this.transformForDisplay.bind( this ) }
+				/>
+				{ error && typeof error === 'string' && <FieldError text={ error } /> }
+				{ ! error &&
+					description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
+			</FormFieldset>
+		);
+	}
+
+	saveTransform( token ) {
+		const { options } = this.props;
+
+		let result = '';
+
+		forEach( options, option => {
+			if ( option.name.toLowerCase() === token.toLowerCase().trim() ) {
+				result = option.id + '';
+			}
+		} );
+
+		return result;
+	}
+
+	transformForDisplay( token ) {
+		const { options } = this.props;
+		const option = options.find( item => item.id === parseInt( token ) );
+		return option ? option.name : token;
+	}
+
+	onChange( strings ) {
+		const { updateValue } = this.props;
+		updateValue( strings.map( selected => parseInt( selected ) ) );
+	}
+}

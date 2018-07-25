@@ -28,6 +28,7 @@ const SettingsItem = ( {
 	errors,
 	translate,
 	site,
+	shippingClasses,
 } ) => {
 	const id = layout.key ? layout.key : layout;
 	const updateValue = value => formValueActions.updateField( id, value );
@@ -101,11 +102,10 @@ const SettingsItem = ( {
 			);
 
 		case 'shipping_classes':
-			const items = [
-				{ id: 'method-a', label: 'Method A' },
-				{ id: 'method-b', label: 'Method B' },
-				{ id: 'method-c', label: 'Method C' },
-			];
+			// If there are no shipping classes, no input for them is needed.
+			if ( 0 === shippingClasses.length ) {
+				return null;
+			}
 
 			return (
 				<TokenField
@@ -113,19 +113,8 @@ const SettingsItem = ( {
 					title={ fieldSchema.title }
 					description={ fieldSchema.description }
 					value={ fieldValue }
-					suggestions={ items.map( item => item.id ) }
+					options={ shippingClasses }
 					updateValue={ updateValue }
-					saveTransform={ token => {
-						token = token.trim().toUpperCase();
-						const transformed = items.find( item => item.id.toUpperCase() === token );
-
-						return transformed ? transformed.id : '';
-					} }
-					displayTransform={ token => {
-						const found = items.find( item => item.id === token );
-
-						return found ? found.label : token;
-					} }
 				/>
 			);
 
