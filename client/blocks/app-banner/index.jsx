@@ -228,11 +228,12 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 const mapStateToProps = state => {
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
+	const currentRoute = getCurrentRoute( state );
 
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
-		currentSection: getCurrentSection( sectionName, isNotesOpen ),
-		currentRoute: getCurrentRoute( state ),
+		currentSection: getCurrentSection( sectionName, isNotesOpen, currentRoute ),
+		currentRoute,
 		fetchingPreferences: isFetchingPreferences( state ),
 		siteId: getSelectedSiteId( state ),
 	};

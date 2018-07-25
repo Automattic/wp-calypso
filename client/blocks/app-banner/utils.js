@@ -49,12 +49,12 @@ export function getAppBannerData( translate, sectionName ) {
 	}
 }
 
-export function getCurrentSection( currentSection, isNotesOpen ) {
+export function getCurrentSection( currentSection, isNotesOpen, currentRoute ) {
 	if ( isNotesOpen ) {
 		return NOTES;
 	}
 
-	if ( window && window.location.href.indexOf( '/stats/activity/' ) !== -1 ) {
+	if ( currentRoute && currentRoute.indexOf( '/stats/activity/' ) !== -1 ) {
 		//don't show app banner in activity log
 		return null;
 	}
