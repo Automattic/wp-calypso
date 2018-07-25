@@ -21,38 +21,38 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
+import { getLastRouteAction } from 'state/ui/action-log/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+
+function getAddDomainsPath( state ) {
+	const site = getSelectedSite( state );
+	return `/domains/add/${ site.domain }`;
+}
+
+function whenLeavesAddDomainsRoute( state ) {
+	const lastRoute = getLastRouteAction( state );
+	return ! ( lastRoute.path === getAddDomainsPath( state ) );
+}
 
 export const ChecklistDomainRegisterTour = makeTour(
 	<Tour name="checklistDomainRegister" version="20180717" path="/domains/add" when={ noop }>
 		<Step
 			name="init"
-			target=".search__icon-navigation"
-			arrow="top-left"
-			placement="below"
+			placement="right"
 			style={ {
 				animationDelay: '0.7s',
-				zIndex: 1,
+				marginTop: '-14px',
 			} }
 		>
 			{ ( { translate } ) => (
 				<Fragment>
-					<p>{ translate( 'Type a memorable name here to help people find your site.' ) }</p>
+					<p>
+						{ translate(
+							'Type a memorable name in the search field or pick one of the suggestions to get started. When you find a name that you like, go ahead and press Select/Upgrade to continue.'
+						) }
+					</p>
 					<ButtonRow>
-						<Continue target=".search__input" step="search-results" click hidden />
-						<Next step="search-results" />
-						<SiteLink isButton={ false } href="/checklist/:site">
-							{ translate( 'Return to the checklist' ) }
-						</SiteLink>
-					</ButtonRow>
-				</Fragment>
-			) }
-		</Step>
-
-		<Step name="search-results" arrow="bottom-left" placement="right">
-			{ ( { translate } ) => (
-				<Fragment>
-					<p> { translate( 'When you find a name you like, click "Select"' ) }</p>
-					<ButtonRow>
+						<Continue hidden when={ whenLeavesAddDomainsRoute } step="finish" />
 						<Next step="finish" />
 						<SiteLink isButton={ false } href="/checklist/:site">
 							{ translate( 'Return to the checklist' ) }
@@ -69,7 +69,7 @@ export const ChecklistDomainRegisterTour = makeTour(
 						<span className="tours__completed-icon-wrapper">
 							<Gridicon icon="checkmark" className="tours__completed-icon" />
 						</span>
-						{ translate( 'Excellent, you’re done!' ) }
+						{ translate( 'Excellent, you’re on your way!' ) }
 					</h1>
 					<p>
 						{ translate(
