@@ -351,7 +351,8 @@ $feature-upsell-break-at: '1040px';
 }
 
 .feature-upsell__checklist {
-	display: inline-block;
+	display: block;
+	width: 100%;
 	text-align: left;
 	margin: 0 0 10px;
 	padding: 0;
@@ -359,6 +360,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-item {
 		display: flex;
+		width: 100%;
 		list-style-type: none;
 		align-items: center;
 
