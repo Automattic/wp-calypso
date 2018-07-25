@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -28,6 +29,8 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import WarningList from './warning-list';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 export const EligibilityWarnings = ( {
 	backUrl,
@@ -54,6 +57,49 @@ export const EligibilityWarnings = ( {
 		'eligibility-warnings__placeholder': isPlaceholder,
 	} );
 
+	let businessUpsellBanner = null;
+	if ( ! hasBusinessPlan && ! isJetpack ) {
+		const description = translate(
+			'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
+		);
+		const title = translate( 'Business plan required' );
+		const plan = PLAN_BUSINESS;
+		const useUpsellPage =
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages';
+		let feature = null;
+		let href = null;
+		let event = null;
+
+		if ( 'plugins' === context ) {
+			feature = FEATURE_UPLOAD_PLUGINS;
+			if ( useUpsellPage ) {
+				href = '/feature/plugins/' + siteSlug;
+				event = 'calypso-plugin-eligibility-upgrade-nudge-upsell';
+			} else {
+				event = 'calypso-plugin-eligibility-upgrade-nudge';
+			}
+		} else {
+			feature = FEATURE_UPLOAD_THEMES;
+			if ( useUpsellPage ) {
+				href = '/feature/themes/' + siteSlug;
+				event = 'calypso-theme-eligibility-upgrade-nudge-upsell';
+			} else {
+				event = 'calypso-theme-eligibility-upgrade-nudge';
+			}
+		}
+		businessUpsellBanner = (
+			<Banner
+				href={ href }
+				description={ description }
+				feature={ feature }
+				event={ event }
+				plan={ plan }
+				title={ title }
+			/>
+		);
+	}
+
 	return (
 		<div className={ classes }>
 			<PageViewTracker path="plugins/:plugin/eligibility/:site" title="Plugins > Eligibility" />
@@ -62,22 +108,7 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			{ ! hasBusinessPlan &&
-				! isJetpack && (
-					<Banner
-						description={ translate(
-							'Also get unlimited themes, advanced customization, no ads, live chat support, and more.'
-						) }
-						feature={ 'plugins' === context ? FEATURE_UPLOAD_PLUGINS : FEATURE_UPLOAD_THEMES }
-						event={
-							'plugins' === context
-								? 'calypso-plugin-eligibility-upgrade-nudge'
-								: 'calypso-theme-eligibility-upgrade-nudge'
-						}
-						plan={ PLAN_BUSINESS }
-						title={ translate( 'Business plan required' ) }
-					/>
-				) }
+			{ businessUpsellBanner }
 			{ hasBusinessPlan &&
 				! isJetpack &&
 				includes( bannerHolds, 'NOT_USING_CUSTOM_DOMAIN' ) && (
