@@ -201,7 +201,7 @@ export const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems 
 			'other' !== pckg.restrictionType
 				? pckg.restrictionType || 'none'
 				: pckg.restrictionExplanation;
-		apiPckg.abandon_on_non_delivery = Boolean( pckg.abandonOnNonDelivery );
+		apiPckg.non_delivery_option = pckg.abandonOnNonDelivery ? 'abandon' : 'return';
 		apiPckg.itn = pckg.itn || '';
 		const getProductValue = productId =>
 			isNil( customsItems[ productId ].value )
