@@ -1,0 +1,6 @@
+{
+	"name": "Editor Notes",
+	"author": "Automattic",
+	"description": "Allows the author to write their posts with editor notes, which will be hidden from the end user.",
+	"version": "0.0.1"
+}
