@@ -1,85 +1,109 @@
 $feature-upsell-break-at: '1040px';
 
-.feature-upsell__main {
-	margin-top: 48px;
-	/*
-	 * Hack for IE 11 - max-width is in place to limit constraints but it still
-	 * needs an explicit rule for width
-	 */
-	.product-purchase-features-list__item {
-		width: 100%;
-	}
+@mixin feature-upsell-card {
+	display: flex;
+	margin: 0;
+	padding: 45px 55px;
+	color: inherit;
+	box-shadow: 0 0 0 1px rgba( 200, 215, 225, 0.5 ), 0 1px 2px #e9eff3;
+	box-sizing: border-box;
+	background-color: white;
 }
 
-.feature-upsell__main--themes,
-.feature-upsell__main--plugins {
-	.purchase-detail,
-	.product-purchase-features-list__item {
-		width: 100%;
-		max-width: 100%;
-	}
+.feature-upsell__main {
+	max-width: 960px;
+	margin-top: 48px;
+	color: $gray-dark;
 }
 
 .feature-upsell__placeholder {
 	animation: pulse-light 800ms ease-in-out infinite;
 	background: $gray-lighten-20;
-}
 
-.feature-upsell__placeholder--cta {
-	width: 350px;
-	max-width: 80%;
-	height: 50px;
-	margin: 0 auto;
-}
-
-.feature-upsell__placeholder--cover {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-}
-
-.feature-upsell__header {
-	text-align: center;
-
-	&-title {
-		font-size: 68px;
-		font-weight: 300;
-		line-height: 1;
-
-		@include breakpoint( '<1280px' ) {
-			font-size: 40px;
-		}
-
-		@include breakpoint( '<660px' ) {
-			font-size: 30px;
-		}
+	&.is-cta {
+		width: 350px;
+		max-width: 80%;
+		height: 50px;
+		//margin: 0 auto;
 	}
 
-	&-subtitle {
-		margin-top: 15px;
+	&.is-cover {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.feature-upsell__header-title {
+	font-size: 36px;
+	line-height: 1.1;
+	font-weight: 400;
+	margin-top: 40px;
+	margin-bottom: 15px;
+	text-align: center;
+
+	@include breakpoint( '<1280px' ) {
 		font-size: 30px;
-		font-weight: 300;
+	}
 
+	@include breakpoint( '<660px' ) {
+		font-size: 26px;
+	}
+}
+
+.feature-upsell__header-section {
+	font-size: 32px;
+	line-height: 1;
+	font-weight: 400;
+	margin-top: 40px;
+	margin-bottom: 15px;
+	text-align: center;
+
+	@include breakpoint( '<1280px' ) {
+		font-size: 28px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		font-size: 24px;
+	}
+
+	&.is-bold {
+		font-weight: 500;
+	}
+
+	&.is-left {
+		text-align: left;
+	}
+
+	&.is-h4 {
+		font-size: 20px;
 		@include breakpoint( '<1280px' ) {
-			font-size: 24px;
+			&.is-h4 {
+				font-size: 18px;
+			}
 		}
 
-		@include breakpoint( '<660px' ) {
-			font-size: 18px;
-		}
+		//@include breakpoint( '<660px' ) {
+		//	&.is-h4 {
+		//		font-size: 16px;
+		//	}
+		//}
 	}
 }
 
 .feature-upsell__cta {
-	margin-top: 30px;
-	text-align: center;
+	line-height: 1.6;
+
+	&-pitch {
+		margin: 0;
+	}
 
 	&-button {
-		font-size: 25px;
-		margin: 0 auto;
-		padding: 13px 20px;
+		display: block;
+		font-size: 16px;
+		padding: 14px 48px;
 		line-height: 1.2;
 
 		@include breakpoint( '<1280px' ) {
@@ -93,43 +117,195 @@ $feature-upsell-break-at: '1040px';
 
 	&-guarantee {
 		display: block;
-		margin-top: 8px;
 		opacity: 0.8;
+		color: $green-jetpack;
+		font-size: 15px;
+		line-height: 31px;
+		font-weight: 300;
+	}
+
+	&.is-centered {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	&.is-large-gap {
+		margin-top: 40px;
+		margin-bottom: 40px;
+	}
+
+	&.is-in-video-box {
+		margin-top: 30px;
+		.feature-upsell__cta-button {
+			margin: 20px 0 0;
+			@include breakpoint( '<1280px' ) {
+				margin-left: auto;
+				margin-right: auto;
+			}
+		}
+		.feature-upsell__cta-guarantee {
+			margin-top: 8px;
+			@include breakpoint( '<1280px' ) {
+				text-align: center;
+			}
+		}
+	}
+
+	&.is-in-benefit {
+		display: flex;
+		flex-flow: row wrap;
+
+		.feature-upsell__cta-pitch {
+			flex-basis: calc( 100% - 250px );
+			order: 1;
+			line-height: 1.25;
+			font-size: 26px;
+			font-weight: 300;
+			padding-right: 30px;
+			@include breakpoint( '<1280px' ) {
+				font-size: 22px;
+			}
+		}
+		.feature-upsell__cta-button {
+			flex-basis: 220px;
+			align-self: center;
+			order: 2;
+			margin: 0;
+		}
+		.feature-upsell__cta-guarantee {
+			flex-basis: 100%;
+			order: 3;
+			margin-top: 10px;
+		}
+
+		@include breakpoint( '<1040px' ) {
+			text-align: center;
+
+			.feature-upsell__cta-pitch {
+				flex-basis: 100%;
+				padding-right: 0;
+			}
+
+			.feature-upsell__cta-button {
+				margin: 10px auto 0;
+			}
+
+			.feature-upsell__cta-guarantee {
+				margin-top: 5px;
+			}
+		}
 	}
 }
 
-.feature-upsell__section-header {
-	margin: 40px 0 20px 0;
-	text-align: center;
-	font-size: 36px;
-	@include breakpoint( '<1280px' ) {
-		font-size: 26px;
+.feature-upsell__card {
+	@include feature-upsell-card();
+	display: block;
+	margin-bottom: 20px;
+
+	&-header.is-capital {
+		font-size: 36px;
+		line-height: 1.1;
+		font-weight: 400;
+		margin-bottom: 20px;
+
+		@include breakpoint( '<1280px' ) {
+			font-size: 30px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			font-size: 26px;
+		}
 	}
 
-	@include breakpoint( '<660px' ) {
-		margin: 30px 0 10px 0;
+	&-header.is-title {
+		font-size: 24px;
+		color: $gray-darken-30;
+		margin-bottom: 20px;
+		@include breakpoint( '<1280px' ) {
+			font-size: 20px;
+		}
 	}
-}
 
-.feature-upsell__video-container {
-	max-width: 800px;
-	width: 100%;
-	position: relative;
-	overflow: hidden;
-	padding-top: 56.25%;
-	margin: 0 auto;
+	&-header.is-sub {
+		font-size: 21px;
+		font-weight: 300;
+		color: $gray-darken-30;
+		margin-bottom: 20px;
+		@include breakpoint( '<1280px' ) {
+			font-size: 18px;
+		}
+	}
+
+	&-header.is-main {
+		font-weight: 600;
+	}
+
+	&-content {
+		font-size: 16px;
+		line-height: 1.625;
+		margin-top: 20px;
+		@include breakpoint( '<660px' ) {
+			margin-top: 15px;
+		}
+
+		> :first-child {
+			margin-top: 0;
+		}
+
+		> :last-child {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .feature-upsell__video {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	border: 0;
-	iframe {
+	&-box {
+		@include feature-upsell-card;
+		flex-flow: row wrap;
+	}
+
+	&-container {
+		flex: 1;
 		position: relative;
-		z-index: 10;
+		overflow: hidden;
+		padding-top: 27.25%;
+		margin: 0 auto;
+		@include breakpoint( '<1280px' ) {
+			flex-basis: 100%;
+			padding-top: 41%;
+		}
+	}
+
+	&-frame {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		border: 0;
+		iframe {
+			position: relative;
+			z-index: 10;
+		}
+	}
+
+	&-description {
+		flex: 0;
+		flex-basis: 340px;
+		margin-left: 32px;
+		font-size: 16px;
+		line-height: 1.625;
+
+		@include breakpoint( '<1280px' ) {
+			flex-basis: 100%;
+			margin-top: 20px;
+			margin-left: 0;
+		}
+
+		.feature-upsell__cta {
+			margin-top: 22px;
+		}
 	}
 }
 
@@ -139,22 +315,26 @@ $feature-upsell-break-at: '1040px';
 	list-style-type: decimal;
 
 	&-item {
-		width: 100%;
-		display: flex;
-		flex-flow: row;
-		padding: 0;
-		margin: 35px 0;
+		@include feature-upsell-card;
 
 		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
 			flex-flow: row wrap;
+			margin-bottom: 20px;
 		}
-		@include breakpoint( '<660px' ) {
-			margin: 15px 0;
+
+		@include breakpoint( '>#{$feature-upsell-break-at}' ) {
+			&.is-enable-wordads {
+				.feature-upsell__benefits-list-image-wrapper {
+					width: 160px;
+					margin-left: 65px;
+				}
+			}
 		}
 	}
 
 	&-item-content {
 		order: 2;
+		flex: 1;
 		width: 100%;
 		display: flex;
 		flex-flow: column;
@@ -163,54 +343,40 @@ $feature-upsell-break-at: '1040px';
 		}
 	}
 
-	&-marker {
-		order: 1;
-		margin-right: 5px;
-		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
-			margin-left: 3%;
-		}
-	}
-
-	&-name,
-	&-marker {
-		font-size: 26px;
+	&-name {
+		font-size: 24px;
+		font-weight: 600;
+		color: $gray-darken-30;
 		@include breakpoint( '<1280px' ) {
-			font-size: 22px;
+			font-size: 20px;
 		}
 	}
 
 	&-description {
 		font-size: 16px;
-		margin-top: 5px;
+		line-height: 1.625;
+		margin-top: 10px;
 		@include breakpoint( '<660px' ) {
 			margin-top: 15px;
 		}
 	}
 
-	&-item:nth-child( 2n ) {
-		.feature-upsell__benefits-list-image-wrapper {
-			@include breakpoint( '>#{$feature-upsell-break-at}' ) {
-				order: 0;
-				margin-left: 0;
-				margin-right: 50px;
-			}
-		}
-	}
-
 	&-image-wrapper {
 		order: 3;
-		margin-left: 30px;
+		width: 180px;
 		max-width: 40%;
+		margin-left: 45px;
 
 		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
+			order: 1;
 			flex-basis: 100%;
-			max-width: 70%;
-			margin: 15px auto;
+			max-width: 30%;
+			margin: 0 auto 20px 0;
 		}
 
-		@include breakpoint( '<660px' ) {
-			max-width: 90%;
-		}
+		//@include breakpoint( '<660px' ) {
+		//	max-width: 90%;
+		//}
 	}
 
 	&-image {
@@ -224,34 +390,139 @@ $feature-upsell-break-at: '1040px';
 	}
 }
 
-.feature-upsell__list-wrapper {
-	text-align: center;
-	margin-bottom: 1.5em;
-}
-
-.feature-upsell__list {
-	display: inline-block;
-	margin: 0 auto;
+.feature-upsell__checklist {
+	display: block;
+	width: 100%;
 	text-align: left;
-	min-width: 380px; // IE11 really wants to squish the list, this helps
-}
-
-.feature-upsell__list-item {
-	display: flex;
+	margin: 0 0 1.5em;
+	padding: 0;
 	list-style-type: none;
-	align-items: center;
 
-	@include breakpoint( '<660px' ) {
-		align-items: flex-start;
+	&-item {
+		display: flex;
+		width: 100%;
+		list-style-type: none;
+		align-items: center;
+		margin-bottom: 8px;
+
+		@include breakpoint( '<660px' ) {
+			align-items: flex-start;
+		}
+	}
+
+	&-item-icon {
+		fill: $blue-wordpress;
+		margin-right: 11px;
+	}
+
+	&-item-text {
+		flex: 1;
 	}
 }
 
-.feature-upsell__list-item-icon {
-	fill: $blue-wordpress;
-	margin-right: 4px;
+.feature-upsell__refund-asterisk {
+	position: relative;
+	margin-top: 15px;
+	padding-left: 20px;
+	font-size: 13px;
+	line-height: 1.2;
+	color: $gray-darken-20;
+
+	&:before {
+		position: absolute;
+		top: 0;
+		left: 0;
+		display: block;
+		width: 20px;
+		content: '*';
+		text-align: center;
+	}
+
+	p {
+		margin: 15px 0;
+	}
 }
 
-.feature-upsell__list-item-text {
-	flex: 1;
-	font-size: 18px;
+.feature-upsell__features-list {
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	&-item {
+		page-break-inside: avoid; // For Firefox
+		break-inside: avoid-column; // For IE
+		-webkit-column-break-inside: avoid; // For others
+
+		padding-bottom: 28px;
+		max-width: 150%;
+		/*
+		 * Hack for IE 11 - max-width is in place to limit constraints but it still
+		 * needs an explicit rule for width
+		 */
+		width: 100%;
+
+		@include breakpoint( '>1040px' ) {
+			max-width: calc( 100% / 2 - 10px );
+		}
+	}
+
+	&.is-full-size {
+		.feature-upsell__features-list-item {
+			width: 100%;
+			max-width: 100%;
+		}
+	}
+}
+
+.feature-upsell__feature {
+	height: 100%;
+	color: inherit;
+
+	&-content {
+		@include feature-upsell-card;
+		display: block;
+		height: 100%;
+		padding: 33px 48px 28px 43px;
+	}
+
+	&-text {
+		width: 100%;
+		flex-grow: 1;
+	}
+
+	&-title {
+		font-weight: 600;
+		font-size: 21px;
+		line-height: 1.5;
+		color: $gray-darken-30;
+		clear: none;
+		margin-top: 10px;
+	}
+
+	&-description {
+		font-size: 14px;
+		line-height: 1.6;
+		margin: 11px 0 0;
+
+		@include breakpoint( '<1040px' ) {
+			font-size: 16px;
+		}
+	}
+
+	&-icon {
+		display: block;
+		width: 48px;
+		height: 48px;
+		margin: 0;
+		padding: 11px 14px;
+		border-radius: 100px;
+		background: $gray-darken-30;
+		color: #fff;
+	}
+
+	.purchase-detail__info {
+		margin-left: 0;
+	}
 }

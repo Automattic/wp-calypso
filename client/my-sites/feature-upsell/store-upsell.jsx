@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -14,26 +15,24 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PurchaseDetail from 'components/purchase-detail';
+import Feature from 'my-sites/feature-upsell/feature';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getPlan, getPlanPath, isFreePlan } from 'lib/plans';
+import { getPlanPath, isFreePlan } from 'lib/plans';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import page from 'page';
 import { getSiteSlug } from 'state/sites/selectors';
-import {
-	getCurrentPlan,
-	getPlanDiscountedRawPrice,
-	isRequestingSitePlans,
-} from 'state/sites/plans/selectors';
+import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import DocumentHead from 'components/data/document-head';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
+import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import TipInfo from 'components/purchase-detail/tip-info';
-import { getPlanRawPrice, isRequestingPlans } from 'state/plans/selectors';
+import { isRequestingPlans } from 'state/plans/selectors';
 import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
+import { getUpsellPlanPrice } from './utils';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -65,18 +64,18 @@ class StoreUpsellComponent extends Component {
 				<PageViewTracker path={ '/feature/store/:site' } title="StoreUpsell" />
 				<DocumentHead title={ 'Store' } />
 
-				<div className="feature-upsell__text-content">
-					<header className="feature-upsell__header">
-						<h1 className="feature-upsell__header-title">Add an eCommerce store to this site</h1>
-						<p className="feature-upsell__header-subtitle">
-							Start selling now in United States - or go global - with the world’s most customizable
-							platform. We'll help you get rolling.
-						</p>
-					</header>
+				<div className="feature-upsell__card">
+					<h1 className="feature-upsell__card-header is-capital is-main">
+						Add an eCommerce store to this site
+					</h1>
+					<h2 className="feature-upsell__card-header is-sub">
+						Start selling now in United States - or go global - with the world’s most customizable
+						platform. We'll help you get rolling.
+					</h2>
 
 					<div className="feature-upsell__cta">
 						{ loadingPrice ? (
-							<div className="feature-upsell__placeholder feature-upsell__placeholder--cta" />
+							<div className="feature-upsell__placeholder is-cta" />
 						) : (
 							<React.Fragment>
 								<button
@@ -85,36 +84,38 @@ class StoreUpsellComponent extends Component {
 								>
 									Upgrade to Business plan for { this.renderPrice() } and get started
 								</button>
-								<span className="feature-upsell__cta-guarantee">30-day money back guarantee</span>
+								<span className="feature-upsell__cta-guarantee">* 30-day money-back guarantee</span>
 							</React.Fragment>
 						) }
 					</div>
-
-					<h2 className="feature-upsell__section-header">Price includes:</h2>
 				</div>
 
-				<div className="product-purchase-features-list">
-					<div className="product-purchase-features-list__item">
-						<PurchaseDetail
-							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-concierge.svg" /> }
+				<div className="feature-upsell__text-content">
+					<h4 className="feature-upsell__header-section is-h4">Price also includes:</h4>
+				</div>
+
+				<div className="feature-upsell__features-list">
+					<div className="feature-upsell__features-list-item">
+						<Feature
+							icon={ <Gridicon icon="user" size={ 48 } /> }
 							title={ 'A one-on-one session with us' }
 							description={
 								'Getting where you want is easier with an expert guide. Our experts will flatten out your learning curve.'
 							}
 						/>
 					</div>
-					<div className="product-purchase-features-list__item">
-						<PurchaseDetail
-							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-support.svg" /> }
+					<div className="feature-upsell__features-list-item">
+						<Feature
+							icon={ <Gridicon icon="chat" size={ 48 } /> }
 							title={ 'Priority support' }
 							description={
 								'Need help? Our Happiness Engineers can answer any questions about your new store and account.'
 							}
 						/>
 					</div>
-					<div className="product-purchase-features-list__item">
-						<PurchaseDetail
-							icon={ <img alt="" src="/calypso/images/illustrations/google-adwords.svg" /> }
+					<div className="feature-upsell__features-list-item">
+						<Feature
+							icon={ <Gridicon icon="money" size={ 48 } /> }
 							title={ '$100 for Google AdWords' }
 							description={ 'Attract new (and more!) traffic immediately with Google AdWords.' }
 							body={
@@ -127,9 +128,9 @@ class StoreUpsellComponent extends Component {
 						/>
 					</div>
 					{ isFreePlan( currentSitePlanSlug ) ? (
-						<div className="product-purchase-features-list__item">
-							<PurchaseDetail
-								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+						<div className="feature-upsell__features-list-item">
+							<Feature
+								icon={ <Gridicon icon="domains" size={ 48 } /> }
 								title={ 'Custom site address' }
 								description={
 									'Make your site memorable and professional - choose a .com, .shop, or any other dot.'
@@ -137,9 +138,9 @@ class StoreUpsellComponent extends Component {
 							/>
 						</div>
 					) : (
-						<div className="product-purchase-features-list__item">
-							<PurchaseDetail
-								icon={ <img alt="" src="/calypso/images/illustrations/jetpack-apps.svg" /> }
+						<div className="feature-upsell__features-list-item">
+							<Feature
+								icon={ <Gridicon icon="plugins" size={ 48 } /> }
 								title={ 'Install Plugins' }
 								description={
 									'Plugins are like smartphone apps for WordPress. They provide features like: ' +
@@ -148,18 +149,18 @@ class StoreUpsellComponent extends Component {
 							/>
 						</div>
 					) }
-					<div className="product-purchase-features-list__item">
-						<PurchaseDetail
-							icon={ <img alt="" src="/calypso/images/illustrations/ads-removed.svg" /> }
+					<div className="feature-upsell__features-list-item">
+						<Feature
+							icon={ <Gridicon icon="themes" size={ 48 } /> }
 							title={ 'Access to premium themes' }
 							description={
 								'You don’t have to be a designer to make a beautiful site. Choose from a range of business-focused layouts created by pros.'
 							}
 						/>
 					</div>
-					<div className="product-purchase-features-list__item">
-						<PurchaseDetail
-							icon={ <img alt="" src="/calypso/images/illustrations/jetpack-updates.svg" /> }
+					<div className="feature-upsell__features-list-item">
+						<Feature
+							icon={ <Gridicon icon="gift" size={ 48 } /> }
 							title={ 'Even more!' }
 							description={
 								'Install plugins, access advanced SEO features, and more. You’ll have all the tools for a successful store.'
@@ -167,6 +168,7 @@ class StoreUpsellComponent extends Component {
 						/>
 					</div>
 				</div>
+				<RefundAsterisk />
 			</div>
 		);
 	}
@@ -198,14 +200,7 @@ const mapStateToProps = state => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
-
-	const currentPlan = getPlan( PLAN_BUSINESS );
-	const currentPlanId = currentPlan.getProductId();
-	const rawPrice = getPlanRawPrice( state, currentPlanId, false );
-	const discountedRawPrice = getPlanDiscountedRawPrice( state, selectedSiteId, PLAN_BUSINESS, {
-		isMonthly: false,
-	} );
-	const price = discountedRawPrice || rawPrice;
+	const price = getUpsellPlanPrice( state, PLAN_BUSINESS, selectedSiteId );
 
 	return {
 		price,
