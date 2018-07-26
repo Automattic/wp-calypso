@@ -28,6 +28,7 @@ import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
+import { CHANGE_NAME_SERVERS } from 'lib/url/support';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -59,14 +60,8 @@ class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Thank you!' );
 		}
 
-		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
-			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
-				return preventWidows( translate( 'Almost done!' ) );
-			}
-
-			return preventWidows(
-				translate( 'Check your email! There are important next steps waiting in your inbox.' )
-			);
+		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
+			return preventWidows( translate( 'Almost done!' ) );
 		}
 
 		return translate( 'Congratulations on your purchase!' );
@@ -186,12 +181,19 @@ class CheckoutThankYouHeader extends PureComponent {
 			}
 
 			return translate(
-				'We sent an email with an important link. Please open the email and click the link to confirm ' +
-					'that you want to transfer {{strong}}%(domainName)s{{/strong}} to WordPress.com. ' +
-					"The transfer can't complete until you do!",
+				'Your domain {{strong}}%(domain)s{{/strong}} was added to your site. ' +
+					'To make your newly transferred domain work with WordPress.com, you need to ' +
+					'{{updateNameserversLink}}update the nameservers{{/updateNameserversLink}}.',
 				{
-					args: { domainName: primaryPurchase.meta },
-					components: { strong: <strong /> },
+					args: {
+						domain: primaryPurchase.meta,
+					},
+					components: {
+						strong: <strong />,
+						updateNameserversLink: (
+							<a href={ CHANGE_NAME_SERVERS } target="_blank" rel="noopener noreferrer" />
+						),
+					},
 				}
 			);
 		}
