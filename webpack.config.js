@@ -8,7 +8,6 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const autoprefixer = require( 'autoprefixer' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -19,7 +18,6 @@ const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 
 /**
  * Internal dependencies
@@ -80,10 +78,7 @@ const babelLoader = {
 const webpackConfig = {
 	bail: ! isDevelopment,
 	entry: {
-		build: [
-			path.join( __dirname, 'client', 'styles.scss' ),
-			path.join( __dirname, 'client', 'boot', 'app' ),
-		],
+		build: [ path.join( __dirname, 'client', 'boot', 'app' ) ],
 	},
 	profile: shouldEmitStats,
 	mode: isDevelopment ? 'development' : 'production',
@@ -133,27 +128,6 @@ const webpackConfig = {
 		// https://github.com/localForage/localForage/issues/577
 		noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
 		rules: [
-			{
-				test: /\.scss$/,
-				use: [
-					{
-						loader: 'style-loader',
-					},
-					{ loader: 'css-loader' },
-					{
-						loader: 'postcss-loader',
-						options: {
-							plugins: () => [ autoprefixer() ],
-						},
-					},
-					{
-						loader: 'sass-loader',
-						options: {
-							includePaths: [ './node_modules' ],
-						},
-					},
-				],
-			},
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
@@ -230,12 +204,6 @@ const webpackConfig = {
 	node: false,
 	plugins: _.compact( [
 		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
-		new MiniCssExtractPlugin( {
-			// Options similar to the same options in webpackOptions.output
-			// both options are optional
-			filename: 'bundled-styles.css',
-			chunkFilename: 'styles-for-[id].css',
-		} ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
