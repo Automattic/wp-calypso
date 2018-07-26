@@ -14,6 +14,7 @@ import CompactCard from 'components/card/compact';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
 import PrimaryHeader from '../shared/primary-header';
 import Site from 'blocks/site';
+import { cancelLink, rescheduleLink } from '../utils';
 import { localize, moment } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -33,9 +34,6 @@ class PendingAppointment extends Component {
 		const appointmentDateTime = moment( nextAppointment.beginTimestamp )
 			.tz( nextAppointment.meta.timezone )
 			.format( 'LLLL z' );
-
-		const cancelLink = '/me/concierge/' + site.slug + '/' + nextAppointment.id + '/cancel';
-		const rescheduleLink = '/me/concierge/' + site.slug + '/' + nextAppointment.id + '/reschedule';
 
 		return (
 			<div>
@@ -69,8 +67,8 @@ class PendingAppointment extends Component {
 							'If needed you can {{reschedule}}reschedule{{/reschedule}} or {{cancel}}cancel{{/cancel}} this session.',
 							{
 								components: {
-									cancel: <a href={ cancelLink } />,
-									reschedule: <a href={ rescheduleLink } />,
+									cancel: <a href={ cancelLink( site, nextAppointment ) } />,
+									reschedule: <a href={ rescheduleLink( site, nextAppointment ) } />,
 								},
 							}
 						) }
