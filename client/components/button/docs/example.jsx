@@ -3,14 +3,13 @@
 /**
  * External dependencies
  */
-
+import Button from '@material/react-button';
 import React from 'react';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
