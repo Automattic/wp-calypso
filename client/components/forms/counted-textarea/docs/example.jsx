@@ -30,6 +30,8 @@ export default class extends React.PureComponent {
 				value={ this.state.value }
 				onChange={ this.onChange }
 				acceptableLength={ 20 }
+				maxLength={ 50 }
+				helpText={ 'Some helper text' }
 			/>
 		);
 	}

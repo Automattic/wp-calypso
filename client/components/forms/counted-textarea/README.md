@@ -40,4 +40,8 @@ If a `className` prop is passed, it will be applied to the wrapper node.
 
 ### `acceptableLength`
 
-If passed and the value of the input exceeds the acceptable character count length, warning styles will be applied to the rendered output. If a maximum length is desired, use the browser default [`maxLength` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textareaattr-maxlength).
+If passed and the value of the input exceeds the acceptable character count length, warning styles will be applied to the rendered output. If a maximum length is desired, use the browser default [`maxLength` attribute](https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XUL/Attribute/maxlength).
+
+### `helpText`
+
+If passed a string of help text, an [InfoPopover component](https://github.com/Automattic/wp-calypso/blob/master/client/components/info-popover/README.md) will be rendered alongside the text count.

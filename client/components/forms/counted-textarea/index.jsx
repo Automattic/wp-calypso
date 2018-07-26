@@ -14,6 +14,7 @@ import { omit, noop } from 'lodash';
  * Internal dependencies
  */
 import FormTextarea from 'components/forms/form-textarea';
+import InfoPopover from 'components/info-popover';
 
 export class CountedTextarea extends React.Component {
 	static propTypes = {
@@ -24,6 +25,7 @@ export class CountedTextarea extends React.Component {
 		acceptableLength: PropTypes.number,
 		showRemainingCharacters: PropTypes.bool,
 		translate: PropTypes.func,
+		helpText: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -43,11 +45,19 @@ export class CountedTextarea extends React.Component {
 
 		let panelText;
 		if ( this.props.showRemainingCharacters && this.props.acceptableLength ) {
-			panelText = this.props.translate( '%d character remaining', '%d characters remaining', {
-				context: 'Input length',
-				args: [ this.props.acceptableLength - length ],
-				count: this.props.acceptableLength - length,
-			} );
+			if ( this.props.maxLength ) {
+				panelText = this.props.translate( '%d character remaining', '%d characters remaining', {
+					context: 'Input length',
+					args: [ this.props.maxLength - length ],
+					count: this.props.maxLength - length,
+				} );
+			} else {
+				panelText = this.props.translate( '%d character remaining', '%d characters remaining', {
+					context: 'Input length',
+					args: [ this.props.acceptableLength - length ],
+					count: this.props.acceptableLength - length,
+				} );
+			}
 		} else {
 			panelText = this.props.translate( '%d character', '%d characters', {
 				context: 'Input length',
@@ -60,15 +70,27 @@ export class CountedTextarea extends React.Component {
 			<div className="counted-textarea__count-panel">
 				{ panelText }
 				{ this.props.children }
+				{ this.props.helpText ? this.renderInfoPopover() : null }
 			</div>
 		);
 	};
 
+	renderInfoPopover = () => {
+		return <InfoPopover position="top left">{ this.props.helpText }</InfoPopover>;
+	};
+
+	getClassNames = () => {
+		if ( this.props.maxLength && this.props.value.length >= this.props.maxLength ) {
+			return 'is-exceeding-max-length is-exceeding-length';
+		}
+
+		if ( this.props.acceptableLength && this.props.value.length > this.props.acceptableLength ) {
+			return 'is-exceeding-acceptable-length is-exceeding-length';
+		}
+	};
+
 	render() {
-		const classes = classNames( 'counted-textarea', this.props.className, {
-			'is-exceeding-acceptable-length':
-				this.props.acceptableLength && this.props.value.length > this.props.acceptableLength,
-		} );
+		const classes = classNames( 'counted-textarea', this.props.className, this.getClassNames() );
 
 		return (
 			<div className={ classes }>

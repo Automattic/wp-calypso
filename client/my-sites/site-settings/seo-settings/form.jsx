@@ -434,7 +434,7 @@ export class SeoForm extends React.Component {
 										id="advanced_seo_front_page_description"
 										value={ frontPageMetaDescription || '' }
 										disabled={ isSeoDisabled }
-										maxLength="300"
+										maxLength={ 300 }
 										acceptableLength={ 159 }
 										onChange={ this.handleMetaChange }
 										className="seo-settings__front-page-description"

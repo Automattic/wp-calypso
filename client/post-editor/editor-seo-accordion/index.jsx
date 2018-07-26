@@ -67,12 +67,17 @@ class EditorSeoAccordion extends Component {
 						labelText={ translate( 'Meta Description' ) }
 					>
 						<CountedTextarea
-							maxLength="300"
+							maxLength={ 300 }
 							acceptableLength={ 159 }
 							placeholder={ translate( 'Write a description…' ) }
 							aria-label={ translate( 'Write a description…' ) }
 							value={ metaDescription }
 							onChange={ this.onMetaChange }
+							showRemainingCharacters={ true }
+							helpText={ translate(
+								'Search engines display up to 320 characters, but meta ' +
+									'descriptions around 160 characters work best.'
+							) }
 						/>
 					</EditorDrawerLabel>
 					{ isJetpack && (
