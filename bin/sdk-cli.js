@@ -44,8 +44,7 @@ yargs
 		} ),
 		handler: buildBlock
 	} )
-	.conflicts( 'block', [ 'editor-script' ] )
-	.requiresArg( [ 'block', 'editor-script', 'output-dir' ] )
+	.requiresArg( [ 'editor-script', 'output-dir' ] )
 	.demandCommand( 1, chalk.red( 'You must provide a valid command!' ) )
 	.alias( 'help', 'h' )
 	.version( false )
