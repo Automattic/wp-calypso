@@ -43,7 +43,7 @@ const FollowingStream = props => {
 	return (
 		<Stream { ...props }>
 			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
-			<MaterialButton>Howdy</MaterialButton>
+			<MaterialButton className="following__button">Howdy</MaterialButton>
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }

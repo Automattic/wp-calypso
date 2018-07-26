@@ -1,3 +1,11 @@
+@import '@material/button/_mixins.scss';
+@import '@material/ripple/_mixins.scss';
+
+.following__button {
+	@include mdc-button-ink-color( $blue-wordpress );
+	@include mdc-states( $blue-wordpress );
+}
+
 .following .search {
 	margin-bottom: 0;
 }
@@ -36,17 +44,16 @@
 	background-size: 450px;
 	min-height: 140px;
 
-	@media ( min-width: 661px ) and ( max-width: 773px ) {
+	@media (min-width: 661px) and (max-width: 773px) {
 		background-position: 150px 20px;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		background-position: 120px 20px;
 	}
 
 	.following__intro-copy-hidden {
-
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 			visibility: hidden;
 		}
@@ -58,11 +65,11 @@
 		min-height: 140px;
 
 		// Hides the character when main content column gets too narrow
-		@media ( min-width: 661px ) and ( max-width: 773px ) {
+		@media (min-width: 661px) and (max-width: 773px) {
 			display: none;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			background-size: 106px;
 		}
 	}
@@ -82,20 +89,20 @@
 	justify-content: center;
 	margin-left: 24px;
 
-	@media ( min-width: 661px ) and ( max-width: 773px ) {
+	@media (min-width: 661px) and (max-width: 773px) {
 		margin-bottom: 20px;
 		margin-top: 20px;
 	}
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		font-size: 16px;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		font-size: 18px;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		font-size: 16px;
 	}
 }
@@ -103,7 +110,7 @@
 .following__search {
 	margin-top: 8px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-top: 30px;
 	}
 }
@@ -142,15 +149,14 @@
 		display: block;
 		height: 20px;
 		position: absolute;
-			left: 2px;
-			top: 2px;
+		left: 2px;
+		top: 2px;
 		z-index: z-index( 'root', '.following__intro-close-icon-bg' );
 		width: 20px;
 	}
 }
 
 .following__intro .following__intro-close {
-
 	.following__intro-close-icon {
 		fill: $gray-lighten-10;
 	}
