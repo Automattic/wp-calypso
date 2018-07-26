@@ -45,6 +45,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 					title={ 'Unlock ALL premium themes with our Premium and Business plans!' }
 					event="themes_plans_free_personal"
 					callToAction={ 'View Plans' }
+					forceHref={ true }
 				/>
 			);
 		} else {

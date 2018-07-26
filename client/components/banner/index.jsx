@@ -31,6 +31,7 @@ export class Banner extends Component {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		forceHref: PropTypes.bool,
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
@@ -49,6 +50,7 @@ export class Banner extends Component {
 	};
 
 	static defaultProps = {
+		forceHref: false,
 		disableHref: false,
 		dismissTemporary: false,
 		onClick: noop,
@@ -125,7 +127,17 @@ export class Banner extends Component {
 	}
 
 	getContent() {
-		const { callToAction, description, event, feature, list, price, title, target } = this.props;
+		const {
+			callToAction,
+			forceHref,
+			description,
+			event,
+			feature,
+			list,
+			price,
+			title,
+			target,
+		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
 
@@ -164,17 +176,22 @@ export class Banner extends Component {
 								<PlanPrice rawPrice={ prices[ 1 ] } discounted />
 							</div>
 						) }
-						{ callToAction && (
-							<Button
-								compact
-								href={ this.getHref() }
-								onClick={ this.handleClick }
-								primary
-								target={ target }
-							>
-								{ callToAction }
-							</Button>
-						) }
+						{ callToAction &&
+							( forceHref ? (
+								<Button compact primary target={ target }>
+									{ callToAction }
+								</Button>
+							) : (
+								<Button
+									compact
+									href={ this.getHref() }
+									onClick={ this.handleClick }
+									primary
+									target={ target }
+								>
+									{ callToAction }
+								</Button>
+							) ) }
 					</div>
 				) }
 			</div>
@@ -185,6 +202,7 @@ export class Banner extends Component {
 		const {
 			callToAction,
 			className,
+			forceHref,
 			disableHref,
 			dismissPreferenceName,
 			dismissTemporary,
@@ -218,8 +236,8 @@ export class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ disableHref || callToAction ? null : this.getHref() }
-				onClick={ callToAction ? noop : this.handleClick }
+				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
+				onClick={ callToAction && ! forceHref ? noop : this.handleClick }
 			>
 				{ this.getIcon() }
 				{ this.getContent() }
