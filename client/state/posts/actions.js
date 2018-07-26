@@ -77,25 +77,28 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * Returns an action object to be used in signalling that a post object has
  * been received.
  *
- * @param  {Object} post Post received
- * @return {Object}      Action object
+ * @param  {Object}  post       Post received
+ * @param  {?String} saveMarker Save marker in the edits log
+ * @return {Object}             Action object
  */
-export function receivePost( post ) {
-	return receivePosts( [ post ] );
+export function receivePost( post, saveMarker ) {
+	return receivePosts( [ post ], saveMarker );
 }
 
 /**
  * Returns an action object to be used in signalling that post objects have
  * been received.
  *
- * @param  {Array}  posts Posts received
- * @return {Object}       Action object
+ * @param  {Array}   posts      Posts received
+ * @param  {?String} saveMarker Save marker in the edits log
+ * @return {Object}             Action object
  */
-export function receivePosts( posts ) {
-	return {
-		type: POSTS_RECEIVE,
-		posts,
-	};
+export function receivePosts( posts, saveMarker ) {
+	const action = { type: POSTS_RECEIVE, posts };
+	if ( saveMarker ) {
+		action.saveMarker = saveMarker;
+	}
+	return action;
 }
 
 /**
@@ -261,17 +264,15 @@ export function deletePostMetadata( siteId, postId = null, metaKeys ) {
  * @param  {Number}   postId     Post ID
  * @param  {Object}   savedPost  Updated post
  * @param  {Object}   post       Post attributes
- * @param  {?String}  saveMarker Save marker in the edits log
  * @return {Object}              Action thunk
  */
-export function savePostSuccess( siteId, postId = null, savedPost, post, saveMarker = null ) {
+export function savePostSuccess( siteId, postId = null, savedPost, post ) {
 	return {
 		type: POST_SAVE_SUCCESS,
 		siteId,
 		postId,
 		savedPost,
 		post,
-		saveMarker,
 	};
 }
 
@@ -730,8 +731,8 @@ export const saveEdited = options => async ( dispatch, getState ) => {
 	// `post.ID` can be null/undefined, which means we're saving new post.
 	// `savePostSuccess` will convert the temporary ID (empty string key) in Redux
 	// to the newly assigned ID in `receivedPost.ID`.
-	dispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {}, saveMarker ) );
-	dispatch( receivePost( receivedPost ) );
+	dispatch( savePostSuccess( receivedPost.site_ID, post.ID, receivedPost, {} ) );
+	dispatch( receivePost( receivedPost, saveMarker ) );
 
 	// Only re-init the rawContent if the mode hasn't changed since the request was initiated.
 	// Changing the mode re-initializes the rawContent, so we don't want to stomp on it
