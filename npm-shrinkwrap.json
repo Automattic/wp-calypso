@@ -910,6 +910,37 @@
         "@material/theme": "^0.35.0"
       }
     },
+    "@material/floating-label": {
+      "version": "0.37.1",
+      "resolved": "https://registry.npmjs.org/@material/floating-label/-/floating-label-0.37.1.tgz",
+      "integrity": "sha512-y/nH5zh56HvL5do9vZ84/ky70Cdd6/ws+IXXDPouUp9MFSP2jhXuuWDDns2vYFIZI/I58ldCtfPsn9bJTqmpTw==",
+      "requires": {
+        "@material/base": "^0.35.0",
+        "@material/rtl": "^0.36.0",
+        "@material/theme": "^0.35.0",
+        "@material/typography": "^0.37.1"
+      }
+    },
+    "@material/line-ripple": {
+      "version": "0.35.0",
+      "resolved": "https://registry.npmjs.org/@material/line-ripple/-/line-ripple-0.35.0.tgz",
+      "integrity": "sha512-0w0kLYo2dGBiR2kgHxybifO7z4UxIYbL55EKOqkg+rG0dC+NkzFoURhjwoll6910EOlS//5UNo1N/u3to3uNjg==",
+      "requires": {
+        "@material/animation": "^0.34.0",
+        "@material/base": "^0.35.0",
+        "@material/theme": "^0.35.0"
+      }
+    },
+    "@material/notched-outline": {
+      "version": "0.37.1",
+      "resolved": "https://registry.npmjs.org/@material/notched-outline/-/notched-outline-0.37.1.tgz",
+      "integrity": "sha512-IDaVgYWzzyYwOqjrhX8cdKFjBRnQvukwJNaBqlGv/Ikc+q7Q5UQLNGKQijYlCTR7lrzifIT3z6KpTFmYivbfDg==",
+      "requires": {
+        "@material/animation": "^0.34.0",
+        "@material/base": "^0.35.0",
+        "@material/theme": "^0.35.0"
+      }
+    },
     "@material/react-button": {
       "version": "0.3.0",
       "resolved": "https://registry.npmjs.org/@material/react-button/-/react-button-0.3.0.tgz",
@@ -988,6 +1019,22 @@
       "version": "0.36.0",
       "resolved": "https://registry.npmjs.org/@material/rtl/-/rtl-0.36.0.tgz",
       "integrity": "sha512-uCMwWGdKG0ooYh1kVINz7vTgSY++9wnvU3kOqjRdfOY+PZHWSa/X/EqRdE9Q1pUFwYlQeU2PXE/Z2dTK/nlziw=="
+    },
+    "@material/textfield": {
+      "version": "0.37.1",
+      "resolved": "https://registry.npmjs.org/@material/textfield/-/textfield-0.37.1.tgz",
+      "integrity": "sha512-Pjuy1+FOFmLpId+Wm3ncrhJcPI+Fct5wpErFZO8/eMhtfRs41+LqlTSDSggcYg8AjNo20/8P0Y5RIo67rkaYHQ==",
+      "requires": {
+        "@material/animation": "^0.34.0",
+        "@material/base": "^0.35.0",
+        "@material/floating-label": "^0.37.1",
+        "@material/line-ripple": "^0.35.0",
+        "@material/notched-outline": "^0.37.1",
+        "@material/ripple": "^0.37.1",
+        "@material/rtl": "^0.36.0",
+        "@material/theme": "^0.35.0",
+        "@material/typography": "^0.37.1"
+      }
     },
     "@material/theme": {
       "version": "0.35.0",
