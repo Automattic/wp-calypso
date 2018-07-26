@@ -39,7 +39,7 @@ const buildBlock = argv => {
 		console.log( chalk.red( 'Missing a block entryfile.' ) );
 		process.exit( 1 );
 	}
-	spawnSync( 'node', [ buildBlockScript, entryFile, ( argv.output || '' ) ], {
+	spawnSync( 'node', [ buildBlockScript, entryFile, ( argv.outputDir || '' ) ], {
 		env: {
 			SKIP_FLAG_IMAGES: true,
 		},
@@ -71,7 +71,7 @@ yargs
 				type: 'string',
 				coerce: path.resolve,
 			},
-			'output': {
+			'output-dir': {
 				alias: 'o',
 				description: 'Output directory for the built block assets.',
 				type: 'string',
@@ -81,7 +81,7 @@ yargs
 		handler: buildBlock
 	} )
 	.conflicts( 'block', [ 'editor-js' ] )
-	.requiresArg( [ 'block', 'editor-js', 'output' ] )
+	.requiresArg( [ 'block', 'editor-js', 'output-dir' ] )
 	.demandCommand( 1, chalk.red( 'You must provide a valid command!' ) )
 	.alias( 'help', 'h' )
 	.version( false )
