@@ -9,29 +9,23 @@ const chalk = require( 'chalk' );
 const path = require( 'path' );
 const spawnSync = require( 'child_process' ).spawnSync;
 const yargs = require( 'yargs' );
+const fs = require( 'fs' );
 
 const buildBlockScript = path.resolve( __dirname, 'create-scripts/block.js' );
+
 const extensionsDir = path.resolve( __dirname, '../client/gutenberg/extensions' );
-const prePackagedBlocks = [
-	'editor-notes',
-	'hello-dolly',
-];
+const prePackagedBlocks = fs.readdirSync(extensionsDir)
+	.filter( name => fs.lstatSync( path.join( extensionsDir, name ) ).isDirectory() );
 
 const buildBlock = argv => {
 	let entryFile;
 
 	if ( argv.block ) {
-		switch ( argv.block ) {
-			case 'editor-notes':
-				entryFile = path.join( extensionsDir, 'editor-notes/index.js' );
-				break;
-			case 'hello-dolly':
-				entryFile = path.join( extensionsDir, 'hello-dolly/hello-block.js' );
-				break;
-			default:
-				console.log( chalk.red( `Unknown block "${ argv.block }" - list available blocks with "list-blocks"` ) );
-				process.exit( 1 );
+		if ( prePackagedBlocks.indexOf( argv.block ) < 0 ) {
+			console.log( chalk.red( `Unknown block "${ argv.block }" - list available blocks with "list-blocks"` ) );
+			process.exit( 1 );
 		}
+		entryFile = path.join( extensionsDir, argv.block );
 	} else if ( argv.editorJs ) {
 		entryFile = argv.editorJs;
 	} else {
