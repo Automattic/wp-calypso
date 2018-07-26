@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "bin": {
-    "calypso-gutenberg-sdk": "./bin/sdk-cli.js"
+    "sdk-gb": "./bin/sdk-cli.js"
   },
   "browserslist": [
     "last 2 versions",
