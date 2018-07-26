@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import React from 'react';
 import { shallow } from 'enzyme';
 
@@ -12,14 +11,30 @@ import { shallow } from 'enzyme';
  */
 import ReadmeViewer from 'components/readme-viewer';
 
+ReadmeViewer.prototype.componentDidMount = jest.fn( function() {
+	this.setState( {
+		readme: 'foo',
+	} );
+} );
+
 describe( 'ReadmeViewer', () => {
-	it( 'should render README.md when given readmeFilePath', () => {
-		const readme = shallow( <ReadmeViewer readmeFilePath="foo" /> );
-		expect( readme ).to.have.className( 'readme-viewer__wrapper' );
+	test( 'should render README.md when given readmeFilePath', () => {
+		const readme = shallow( <ReadmeViewer readmeFilePath="foo2" /> );
+		expect( readme.hasClass( 'readme-viewer__wrapper' ) ).toBe( true );
 	} );
 
-	it( 'should not render a README.md when not given readmeFilePath', () => {
+	test( 'should not render a README.md when not given readmeFilePath', () => {
 		const readme = shallow( <ReadmeViewer /> );
-		expect( readme ).to.not.have.className( 'readme-viewer__wrapper' );
+		expect( readme.hasClass( 'readme-viewer__wrapper' ) ).toBe( false );
+	} );
+
+	test( 'should render an edit link by default', () => {
+		const readme = shallow( <ReadmeViewer readmeFilePath="foo2" /> );
+		expect( readme.find( '.readme-viewer__doc-edit-link' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should not render an edit link when showEditLink is false', () => {
+		const readme = shallow( <ReadmeViewer readmeFilePath="foo" showEditLink={ false } /> );
+		expect( readme.find( '.readme-viewer__doc-edit-link' ) ).toHaveLength( 0 );
 	} );
 } );
