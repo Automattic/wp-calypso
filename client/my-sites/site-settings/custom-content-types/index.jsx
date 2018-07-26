@@ -59,54 +59,52 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderPostsPerPageField( fieldName, postTypeLabel ) {
-		const { fields, onChangeField, translate } = this.props;
-		const numberFieldName = fieldName === 'post' ? 'posts_per_page' : fieldName + '_posts_per_page';
-		const isDisabled = this.isFormPending() || ( ! fields[ fieldName ] && fieldName !== 'post' );
-
-		return (
-			<div className="custom-content-types__indented-form-field indented-form-field">
-				{ translate( 'Display {{field /}} %s per page', {
-					args: postTypeLabel.toLowerCase(),
-					components: {
-						field: (
-							<FormTextInput
-								name={ numberFieldName }
-								type="number"
-								step="1"
-								min="0"
-								id={ numberFieldName }
-								value={
-									'undefined' === typeof fields[ numberFieldName ] ? 10 : fields[ numberFieldName ]
-								}
-								onChange={ onChangeField( numberFieldName ) }
-								disabled={ isDisabled }
-							/>
-						),
-					},
-				} ) }
-			</div>
-		);
-	}
-
 	renderContentTypeSettings( name, label, description ) {
-		const { activatingCustomContentTypesModule, fields, handleAutosavingToggle } = this.props;
+		const {
+			activatingCustomContentTypesModule,
+			fields,
+			handleAutosavingToggle,
+			onChangeField,
+			translate,
+		} = this.props;
+		const numberFieldIdentifier = name === 'post' ? 'posts_per_page' : name + '_posts_per_page';
+		const isDisabled = this.isFormPending() || ( ! fields[ name ] && name !== 'post' );
 		return (
 			<div className="custom-content-types__module-settings">
-				{ name !== 'post' ? (
+				{ name !== 'post' && (
 					<CompactFormToggle
 						checked={ !! fields[ name ] }
 						disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 						onChange={ handleAutosavingToggle( name ) }
-					>
-						{ label }
-					</CompactFormToggle>
-				) : (
-					<div className="custom-content-types__label">{ label }</div>
+					/>
 				) }
-
-				{ this.renderPostsPerPageField( name, label ) }
-
+				<div id={ numberFieldIdentifier } className="custom-content-types__label">
+					{ label }
+				</div>
+				<div className="custom-content-types__indented-form-field indented-form-field">
+					{ translate( 'Display {{field /}} per page', {
+						comment:
+							'The field value is a number that refers to site content type, e.g., blog post, testimonial or portfolio project',
+						components: {
+							field: (
+								<FormTextInput
+									name={ numberFieldIdentifier }
+									type="number"
+									step="1"
+									min="0"
+									aria-labelledby={ numberFieldIdentifier }
+									value={
+										'undefined' === typeof fields[ numberFieldIdentifier ]
+											? 10
+											: fields[ numberFieldIdentifier ]
+									}
+									onChange={ onChangeField( numberFieldIdentifier ) }
+									disabled={ isDisabled }
+								/>
+							),
+						},
+					} ) }
+				</div>
 				<FormSettingExplanation isIndented>{ description }</FormSettingExplanation>
 			</div>
 		);
