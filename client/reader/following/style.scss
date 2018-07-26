@@ -1,5 +1,6 @@
 @import '@material/button/_mixins.scss';
 @import '@material/ripple/_mixins.scss';
+@import '@material/react-text-field/index.scss';
 
 .following__button {
 	@include mdc-button-ink-color( $blue-wordpress );

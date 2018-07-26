@@ -889,6 +889,35 @@
       "resolved": "https://registry.npmjs.org/@material/base/-/base-0.35.0.tgz",
       "integrity": "sha512-PYuluVzcH8hxtionVvpTSygTENlgyOHvJ5ka7JfbCRQfXlxjV8zKYwhh9u/1HqA6y1OonG1oGFCaBHopbdsNEQ=="
     },
+    "@material/button": {
+      "version": "0.37.1",
+      "resolved": "https://registry.npmjs.org/@material/button/-/button-0.37.1.tgz",
+      "integrity": "sha512-sI6YRk2Z5hcAyBCV0k6i+QuWS7tlHO008jDNm7rjUPt3bJ5z/JaLaAaHIc6kEtgVSp+NMKlu6HhYtDl9KLq3xg==",
+      "requires": {
+        "@material/elevation": "^0.36.1",
+        "@material/ripple": "^0.37.1",
+        "@material/rtl": "^0.36.0",
+        "@material/theme": "^0.35.0",
+        "@material/typography": "^0.37.1"
+      },
+      "dependencies": {
+        "@material/ripple": {
+          "version": "0.37.1",
+          "resolved": "https://registry.npmjs.org/@material/ripple/-/ripple-0.37.1.tgz",
+          "integrity": "sha512-FSBZd8Qs7cFcfnVhGLAq4KnMteJQ6HnnEXYmpQxNFHxtkc4FpVh9AwwBsvzCzxbyuMqaKk9YsQubMjyhuuhQ9A==",
+          "requires": {
+            "@material/animation": "^0.34.0",
+            "@material/base": "^0.35.0",
+            "@material/theme": "^0.35.0"
+          }
+        },
+        "@material/typography": {
+          "version": "0.37.1",
+          "resolved": "https://registry.npmjs.org/@material/typography/-/typography-0.37.1.tgz",
+          "integrity": "sha512-njbRrUwSte+Ag2ZsQxYCZVXqYphm7Wbe1iFCzljRAZEcZJUuKkz30rx3IK5CrmwoIpLxcE2Y/2WoAj8a2Ear0A=="
+        }
+      }
+    },
     "@material/elevation": {
       "version": "0.36.1",
       "resolved": "https://registry.npmjs.org/@material/elevation/-/elevation-0.36.1.tgz",

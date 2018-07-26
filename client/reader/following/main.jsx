@@ -19,6 +19,7 @@ import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
 import config from 'config';
 import MaterialButton from '@material/react-button';
+import MaterialTextField, { Input } from '@material/react-text-field';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -44,6 +45,9 @@ const FollowingStream = props => {
 		<Stream { ...props }>
 			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
 			<MaterialButton className="following__button">Howdy</MaterialButton>
+			<MaterialTextField label="Dog">
+				<Input />
+			</MaterialTextField>
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
