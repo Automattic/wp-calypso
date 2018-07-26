@@ -1,0 +1,7 @@
+$mdc-theme-primary: $blue-wordpress;
+$mdc-theme-secondary: $orange-jazzy;
+$mdc-theme-on-primary: $white;
+$mdc-theme-on-secondary: $white;
+
+@import '@material/button/mdc-button';
+@import '@material/elevation/mdc-elevation';
