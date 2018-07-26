@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import React from 'react';
 import classNames from 'classnames';
+import afterLayoutFlush from 'lib/after-layout-flush';
 
 /**
  * Internal dependencies
@@ -63,7 +64,7 @@ export default class extends React.Component {
 		} );
 	};
 
-	updateIsSticky = () => {
+	updateIsSticky = afterLayoutFlush( () => {
 		const isSticky = window.pageYOffset > this.threshold;
 
 		if (
@@ -80,7 +81,7 @@ export default class extends React.Component {
 				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
 			} );
 		}
-	};
+	} );
 
 	getBlockStyle = () => {
 		let offset;
