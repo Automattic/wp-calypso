@@ -181,7 +181,7 @@ class TransferDomainStep extends React.Component {
 						</div>
 					</div>
 
-					<div className="domain-product-price">{ domainProductPrice }</div>
+					<div className="transfer-domain-step__price">{ domainProductPrice }</div>
 
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInputWithAffixes
