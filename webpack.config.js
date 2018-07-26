@@ -17,6 +17,7 @@ const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const os = require( 'os' );
 
 /**
@@ -140,6 +141,20 @@ const webpackConfig = {
 				],
 			},
 			{
+				test: /\.(sc|sa|c)ss$/,
+				use: [
+					isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+					'css-loader',
+					'postcss-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							includePaths: [ path.join( __dirname, 'client' ) ],
+						},
+					},
+				],
+			},
+			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
 				loader: 'babel-loader',
 				options: {
@@ -216,6 +231,10 @@ const webpackConfig = {
 		new AssetsWriter( {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
+		} ),
+		new MiniCssExtractPlugin( {
+			filename: '[name].css',
+			chunkFilename: '[id].css',
 		} ),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {

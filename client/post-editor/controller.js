@@ -26,6 +26,8 @@ import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 
+import '../../assets/stylesheets/editor.scss';
+
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
 		return null;

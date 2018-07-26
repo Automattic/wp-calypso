@@ -2,6 +2,6 @@
 @import 'shared/typography';
 @import 'shared/mixins/breakpoints';
 
-@import 'components/tinymce/iframe';
-@import 'components/tinymce/plugins/media/style';
-@import 'components/tinymce/plugins/wpcom-view/views/simple-payments/style';
+@import '../../client/components/tinymce/iframe';
+@import '../../client/components/tinymce/plugins/media/style';
+@import '../../client/components/tinymce/plugins/wpcom-view/views/simple-payments/style';
