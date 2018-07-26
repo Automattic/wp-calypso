@@ -116,7 +116,7 @@ export class CreditCardFormFields extends React.Component {
 					src={ popoverImage }
 					width="42"
 					height="30"
-					alt="Credit card CVV location illustration"
+					alt={ translate( 'Credit card CVV illustration' ) }
 				/>
 				{ popoverText }
 			</InfoPopover>
