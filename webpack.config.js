@@ -259,6 +259,10 @@ if ( calypsoEnv === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
 	webpackConfig.output.chunkFilename = '[name].js';
+} else {
+	// jquery is only needed in the build for the desktop app
+	// see electron bug: https://github.com/atom/electron/issues/254
+	webpackConfig.externals.push( 'jquery' );
 }
 
 if ( isDevelopment ) {
@@ -275,10 +279,6 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
 	);
-} else {
-	// jquery is only needed in the build for the desktop app
-	// see electron bug: https://github.com/atom/electron/issues/254
-	webpackConfig.externals.push( 'jquery' );
 }
 
 module.exports = webpackConfig;
