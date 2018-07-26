@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
+import { isEmpty, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -34,12 +34,13 @@ const QuickSaveButtons = ( {
 	post,
 	translate,
 	onSave,
+	...props
 } ) => {
 	const onSaveButtonClick = () => {
 		onSave();
 		const eventLabel = isPage( post ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
-		this.props.recordEditorEvent( eventLabel );
-		this.props.recordEditorStat( 'save_draft_clicked' );
+		props.recordEditorEvent( eventLabel );
+		props.recordEditorStat( 'save_draft_clicked' );
 	};
 
 	const isSaveAvailable = isSaveAvailableFn( {
@@ -93,10 +94,14 @@ QuickSaveButtons.propTypes = {
 	isDirty: PropTypes.bool,
 	hasContent: PropTypes.bool,
 	post: PropTypes.object,
-	onSave: PropTypes.func,
+	onSave: PropTypes.func.isRequired,
 
 	// localize
 	translate: PropTypes.func,
+
+	// connected
+	recordEditorEvent: PropTypes.func,
+	recordEditorStat: PropTypes.func,
 };
 
 QuickSaveButtons.defaultProps = {
@@ -105,6 +110,8 @@ QuickSaveButtons.defaultProps = {
 	isSaveBlocked: false,
 	isSaving: false,
 	post: null,
+	recordEditorEvent: noop,
+	recordEditorStat: noop,
 };
 
 export default connect(
