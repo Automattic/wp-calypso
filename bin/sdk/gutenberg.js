@@ -9,7 +9,6 @@ const CopyWebpackPlugin = require( path.resolve( __rootDir, 'server/bundler/copy
 const entryPath = path.resolve( __rootDir, process.argv[ 2 ] );
 const sourceDir = path.dirname( entryPath );
 const outputDir = process.argv[ 3 ] ? process.argv[ 3 ] : path.join( sourceDir, 'build' );
-const blockName = path.basename( path.dirname( entryPath ) );
 
 const baseConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
 
@@ -18,7 +17,9 @@ const config = {
 	...{
 		context: __rootDir,
 		mode: 'production',
-		entry: entryPath,
+		entry: {
+			'editor-js': entryPath,
+		},
 		externals: {
 			...baseConfig.externals,
 			wp: 'wp',
@@ -28,9 +29,9 @@ const config = {
 		},
 		output: {
 			path: outputDir,
-			filename: `blocks-${ blockName }.js`,
+			filename: `[name].js`,
 			libraryTarget: 'window',
-			library: `blocks-${ blockName }`,
+			library: `plugins-[name]`,
 		},
 		plugins: [
 			...baseConfig.plugins.filter( plugin => ! ( plugin instanceof CopyWebpackPlugin ) ),
