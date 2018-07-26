@@ -31,6 +31,7 @@
     "@babel/preset-env": "7.0.0-beta.53",
     "@babel/preset-react": "7.0.0-beta.53",
     "@babel/runtime": "7.0.0-beta.53",
+    "@wordpress/blocks": "1.0.0",
     "@wordpress/data": "1.0.1",
     "autoprefixer": "9.0.1",
     "autosize": "4.0.2",

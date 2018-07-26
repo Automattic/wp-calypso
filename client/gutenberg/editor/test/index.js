@@ -4,6 +4,11 @@
  */
 
 /**
+ * External dependencies
+ */
+import { noop } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -13,6 +18,8 @@ import {
 	dispatch,
 	select,
 } from '@wordpress/data';
+
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 
 describe( 'Gutenberg @wordress/data package', () => {
 	describe( 'registerStore', () => {
@@ -98,6 +105,46 @@ describe( 'Gutenberg @wordress/data package', () => {
 
 			expect( select( 'reducer' ).selector() ).toEqual( 'test-result' );
 			expect( selector ).toBeCalledWith( store.getState() );
+		} );
+	} );
+} );
+
+describe( 'Gutenberg @wordress/blocks package', () => {
+	describe( 'createBlock', () => {
+		it( 'should create a block given its blockType, attributes, inner blocks', () => {
+			registerBlockType( 'core/test-block', {
+				attributes: {
+					align: {
+						type: 'string',
+					},
+					includesDefault: {
+						type: 'boolean',
+						default: true,
+					},
+					includesFalseyDefault: {
+						type: 'number',
+						default: 0,
+					},
+				},
+				save: noop,
+				category: 'common',
+				title: 'test block',
+			} );
+
+			const block = createBlock( 'core/test-block', { align: 'left' }, [
+				createBlock( 'core/test-block' ),
+			] );
+
+			expect( block.name ).toEqual( 'core/test-block' );
+			expect( block.attributes ).toEqual( {
+				includesDefault: true,
+				includesFalseyDefault: 0,
+				align: 'left',
+			} );
+			expect( block.isValid ).toBe( true );
+			expect( block.innerBlocks ).toHaveLength( 1 );
+			expect( block.innerBlocks[ 0 ].name ).toBe( 'core/test-block' );
+			expect( typeof block.clientId ).toBe( 'string' );
 		} );
 	} );
 } );
