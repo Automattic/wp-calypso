@@ -1,6 +1,6 @@
 $feature-upsell-break-at: '1040px';
 
-@mixin feature-upsell-bordered-box {
+@mixin feature-upsell-card {
 	display: flex;
 	margin: 0;
 	padding: 45px 55px;
@@ -36,81 +36,60 @@ $feature-upsell-break-at: '1040px';
 	}
 }
 
-.feature-upsell__header {
-	&-title {
-		font-size: 36px;
-		line-height: 1.1;
-		font-weight: 400;
-		margin-top: 40px;
-		margin-bottom: 15px;
-		text-align: center;
+.feature-upsell__header-title {
+	font-size: 36px;
+	line-height: 1.1;
+	font-weight: 400;
+	margin-top: 40px;
+	margin-bottom: 15px;
+	text-align: center;
 
-		@include breakpoint( '<1280px' ) {
-			font-size: 30px;
-		}
-
-		@include breakpoint( '<660px' ) {
-			font-size: 26px;
-		}
+	@include breakpoint( '<1280px' ) {
+		font-size: 30px;
 	}
 
-	&-subtitle {
+	@include breakpoint( '<660px' ) {
 		font-size: 26px;
-		line-height: 1.2;
-		font-weight: 300;
-		text-align: center;
+	}
+}
 
-		@include breakpoint( '<1280px' ) {
-			font-size: 24px;
-		}
+.feature-upsell__header-section {
+	font-size: 32px;
+	line-height: 1;
+	font-weight: 400;
+	margin-top: 40px;
+	margin-bottom: 15px;
+	text-align: center;
 
-		@include breakpoint( '<660px' ) {
-			font-size: 20px;
-		}
+	@include breakpoint( '<1280px' ) {
+		font-size: 28px;
 	}
 
-	&-section {
-		font-size: 32px;
-		line-height: 1;
-		font-weight: 400;
-		margin-top: 40px;
-		margin-bottom: 15px;
-		text-align: center;
-
-		@include breakpoint( '<1280px' ) {
-			font-size: 28px;
-		}
-
-		@include breakpoint( '<660px' ) {
-			font-size: 24px;
-		}
+	@include breakpoint( '<660px' ) {
+		font-size: 24px;
 	}
 
-	&-title,
-	&-subtitle,
-	&-section {
-		&.is-bold {
-			font-weight: 500;
-		}
+	&.is-bold {
+		font-weight: 500;
+	}
 
-		&.is-left {
-			text-align: left;
-		}
+	&.is-left {
+		text-align: left;
+	}
 
-		&.is-h4 {
-			font-size: 20px;
-			@include breakpoint( '<1280px' ) {
-				&.is-h4 {
-					font-size: 18px;
-				}
-			}
-
-			@include breakpoint( '<660px' ) {
-				&.is-h4 {
-					font-size: 16px;
-				}
+	&.is-h4 {
+		font-size: 20px;
+		@include breakpoint( '<1280px' ) {
+			&.is-h4 {
+				font-size: 18px;
 			}
 		}
+
+		//@include breakpoint( '<660px' ) {
+		//	&.is-h4 {
+		//		font-size: 16px;
+		//	}
+		//}
 	}
 }
 
@@ -219,9 +198,70 @@ $feature-upsell-break-at: '1040px';
 	}
 }
 
+.feature-upsell__card {
+	@include feature-upsell-card();
+	display: block;
+	margin-bottom: 20px;
+
+	&-header.is-capital {
+		font-size: 36px;
+		line-height: 1.1;
+		font-weight: 400;
+		margin-bottom: 20px;
+
+		@include breakpoint( '<1280px' ) {
+			font-size: 30px;
+		}
+
+		@include breakpoint( '<660px' ) {
+			font-size: 26px;
+		}
+	}
+
+	&-header.is-title {
+		font-size: 24px;
+		color: $gray-darken-30;
+		margin-bottom: 20px;
+		@include breakpoint( '<1280px' ) {
+			font-size: 20px;
+		}
+	}
+
+	&-header.is-sub {
+		font-size: 21px;
+		font-weight: 300;
+		color: $gray-darken-30;
+		margin-bottom: 20px;
+		@include breakpoint( '<1280px' ) {
+			font-size: 18px;
+		}
+	}
+
+	&-header.is-main {
+		font-weight: 600;
+	}
+
+	&-content {
+		font-size: 16px;
+		line-height: 1.625;
+		margin-top: 20px;
+		@include breakpoint( '<660px' ) {
+			margin-top: 15px;
+		}
+
+		> :first-child {
+			margin-top: 0;
+		}
+
+		> :last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
 .feature-upsell__video {
 	&-box {
-		@include feature-upsell-bordered-box;
+		@include feature-upsell-card;
 		flex-flow: row wrap;
 	}
 
@@ -275,7 +315,7 @@ $feature-upsell-break-at: '1040px';
 	list-style-type: decimal;
 
 	&-item {
-		@include feature-upsell-bordered-box;
+		@include feature-upsell-card;
 
 		@include breakpoint( '<#{$feature-upsell-break-at}' ) {
 			flex-flow: row wrap;
@@ -305,7 +345,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-name {
 		font-size: 24px;
-		font-weight: 300;
+		font-weight: 600;
 		color: $gray-darken-30;
 		@include breakpoint( '<1280px' ) {
 			font-size: 20px;
@@ -354,7 +394,7 @@ $feature-upsell-break-at: '1040px';
 	display: block;
 	width: 100%;
 	text-align: left;
-	margin: 0 0 10px;
+	margin: 0 0 1.5em;
 	padding: 0;
 	list-style-type: none;
 
@@ -363,6 +403,7 @@ $feature-upsell-break-at: '1040px';
 		width: 100%;
 		list-style-type: none;
 		align-items: center;
+		margin-bottom: 8px;
 
 		@include breakpoint( '<660px' ) {
 			align-items: flex-start;
@@ -371,7 +412,7 @@ $feature-upsell-break-at: '1040px';
 
 	&-item-icon {
 		fill: $blue-wordpress;
-		margin-right: 4px;
+		margin-right: 11px;
 	}
 
 	&-item-text {
@@ -440,8 +481,8 @@ $feature-upsell-break-at: '1040px';
 	color: inherit;
 
 	&-content {
-		@include feature-upsell-bordered-box;
-		flex-flow: row wrap;
+		@include feature-upsell-card;
+		display: block;
 		height: 100%;
 		padding: 33px 48px 28px 43px;
 	}
@@ -452,7 +493,7 @@ $feature-upsell-break-at: '1040px';
 	}
 
 	&-title {
-		font-weight: 300;
+		font-weight: 600;
 		font-size: 21px;
 		line-height: 1.5;
 		color: $gray-darken-30;
@@ -464,6 +505,10 @@ $feature-upsell-break-at: '1040px';
 		font-size: 14px;
 		line-height: 1.6;
 		margin: 11px 0 0;
+
+		@include breakpoint( '<1040px' ) {
+			font-size: 16px;
+		}
 	}
 
 	&-icon {

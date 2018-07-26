@@ -13,16 +13,18 @@ import { localize } from 'i18n-calypso';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 const RefundAsterisk = () => (
-	<div className="feature-upsell__refund-asterisk">
-		<p>Purchases made on WordPress.com can be cancelled and refunded during the refund period.</p>
-		<p>
-			For new domain registrations, you must cancel within 48 hours of purchase to receive a refund.
-			There are no refunds, pro-rated or otherwise, after 48 hours.
-		</p>
-		<p>
-			For plans and all other purchases, you must cancel within 30 days of purchase to receive a
-			refund.
-		</p>
+	<div className="feature-upsell__text-content">
+		<div className="feature-upsell__refund-asterisk">
+			<p>Purchases made on WordPress.com can be cancelled and refunded during the refund period.</p>
+			<p>
+				For new domain registrations, you must cancel within 48 hours of purchase to receive a
+				refund. There are no refunds, pro-rated or otherwise, after 48 hours.
+			</p>
+			<p>
+				For plans and all other purchases, you must cancel within 30 days of purchase to receive a
+				refund.
+			</p>
+		</div>
 	</div>
 );
 

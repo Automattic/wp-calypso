@@ -238,7 +238,7 @@ class WordAdsUpsellComponent extends Component {
 						>
 							Upgrade now
 						</button>
-						<span className="feature-upsell__cta-guarantee">* 30-day money back guarantee</span>
+						<span className="feature-upsell__cta-guarantee">* 30-day money-back guarantee</span>
 					</React.Fragment>
 				) }
 			</div>

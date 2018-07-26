@@ -26,6 +26,7 @@ import DocumentHead from 'components/data/document-head';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
+import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import TipInfo from 'components/purchase-detail/tip-info';
 import { isRequestingPlans } from 'state/plans/selectors';
 import { getCurrencyObject } from 'lib/format-currency';
@@ -63,16 +64,16 @@ class StoreUpsellComponent extends Component {
 				<PageViewTracker path={ '/feature/store/:site' } title="StoreUpsell" />
 				<DocumentHead title={ 'Store' } />
 
-				<div className="feature-upsell__text-content">
-					<header className="feature-upsell__header">
-						<h1 className="feature-upsell__header-title">Add an eCommerce store to this site</h1>
-						<p className="feature-upsell__header-subtitle">
-							Start selling now in United States - or go global - with the world’s most customizable
-							platform. We'll help you get rolling.
-						</p>
-					</header>
+				<div className="feature-upsell__card">
+					<h1 className="feature-upsell__card-header is-capital is-main">
+						Add an eCommerce store to this site
+					</h1>
+					<h2 className="feature-upsell__card-header is-sub">
+						Start selling now in United States - or go global - with the world’s most customizable
+						platform. We'll help you get rolling.
+					</h2>
 
-					<div className="feature-upsell__cta is-centered">
+					<div className="feature-upsell__cta">
 						{ loadingPrice ? (
 							<div className="feature-upsell__placeholder is-cta" />
 						) : (
@@ -83,11 +84,13 @@ class StoreUpsellComponent extends Component {
 								>
 									Upgrade to Business plan for { this.renderPrice() } and get started
 								</button>
-								<span className="feature-upsell__cta-guarantee">30-day money back guarantee</span>
+								<span className="feature-upsell__cta-guarantee">* 30-day money-back guarantee</span>
 							</React.Fragment>
 						) }
 					</div>
+				</div>
 
+				<div className="feature-upsell__text-content">
 					<h4 className="feature-upsell__header-section is-h4">Price also includes:</h4>
 				</div>
 
@@ -137,7 +140,7 @@ class StoreUpsellComponent extends Component {
 					) : (
 						<div className="feature-upsell__features-list-item">
 							<Feature
-								icon={ <Gridicon icon="custom-post-type" size={ 48 } /> }
+								icon={ <Gridicon icon="plugins" size={ 48 } /> }
 								title={ 'Install Plugins' }
 								description={
 									'Plugins are like smartphone apps for WordPress. They provide features like: ' +
@@ -165,6 +168,7 @@ class StoreUpsellComponent extends Component {
 						/>
 					</div>
 				</div>
+				<RefundAsterisk />
 			</div>
 		);
 	}
