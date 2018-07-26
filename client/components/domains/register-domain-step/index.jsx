@@ -859,7 +859,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.isSignupStep ) {
-			searchVendor = abtest( 'domainSuggestionKrakenV322' );
+			searchVendor = abtest( 'domainSuggestionKrakenV323' );
 		}
 
 		enqueueSearchStatReport( { query: searchQuery, section: this.props.analyticsSection } );
