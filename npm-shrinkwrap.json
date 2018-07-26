@@ -15265,9 +15265,9 @@
       "integrity": "sha512-2NM0auVBGft5tee/OxP4PI3d8WItkDM+fPnaRAVo6xTDI2knbz9eC5ArWGqtGlYqiH3RU5yMpdyTTO7MguC4ow=="
     },
     "tinymce": {
-      "version": "4.8.0",
-      "resolved": "https://registry.npmjs.org/tinymce/-/tinymce-4.8.0.tgz",
-      "integrity": "sha512-Rj5MiQxSpwDIaaXo3WsfZqLfLBUi6jLZRrIpg1cbRurhSLwaNcTgAGqxHFjNELlm7zR2xSGzzlq5B/mGlsiJSg=="
+      "version": "4.8.1",
+      "resolved": "https://registry.npmjs.org/tinymce/-/tinymce-4.8.1.tgz",
+      "integrity": "sha512-ZSXfVXDkTSPcvvOENFL+NCK/oHdDL5JsgiBP4ljEnED5eHoI7Mbi2sX+CjGFix38dRNKI/CXN0pUCoIHCyUmlQ=="
     },
     "title-case-minors": {
       "version": "1.0.0",
