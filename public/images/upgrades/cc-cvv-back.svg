@@ -1,17 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="42px" height="30px" viewBox="0 0 42 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
-    <title>cc-cvv-back</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Visa,-MC,-Discover" transform="translate(-288.000000, -190.000000)">
-            <g id="cc-cvv-back" transform="translate(288.000000, 190.000000)">
-                <path d="M39.375,0 L2.625,0 C1.171875,0 0.009375,1.171875 0,2.625 L0,2.653125 L0,27.346875 L0,27.375 C0.01875,28.828125 1.171875,30 2.625,30 L39.375,30 C40.8375,30 42,28.809375 42,27.346875 L42,2.653125 C42,1.190625 40.8375,0 39.375,0 Z M4.228125,3 L37.7625,3 C38.409375,3 38.896875,3.478125 38.990625,4.125 L38.990625,6 L3,6 L3,4.096875 C3.09375,3.459375 3.590625,3 4.228125,3 Z M37.771875,27 L4.228125,27 C3.58125,27 3.09375,26.540625 3,25.903125 L3,15 L39,15 L39,25.875 C38.90625,26.521875 38.409375,27 37.771875,27 Z" id="Shape" fill="#2E4453" fill-rule="nonzero"></path>
-                <rect id="Rectangle-path" fill="#D3DEE7" fill-rule="nonzero" x="6" y="18" width="18" height="6"></rect>
-                <rect id="Rectangle-path-Copy" fill="#2E4453" fill-rule="nonzero" x="27" y="18" width="6" height="2"></rect>
-                <rect id="Rectangle" stroke="#D54E21" stroke-width="2" x="24" y="15" width="12" height="8"></rect>
-            </g>
-        </g>
-    </g>
-</svg>
+<svg width="42" height="30" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M39.375 0H2.625A2.627 2.627 0 0 0 0 2.625V27.375C.019 28.828 1.172 30 2.625 30h36.75C40.837 30 42 28.81 42 27.347V2.653C42 1.191 40.837 0 39.375 0zM4.228 3h33.535c.646 0 1.134.478 1.228 1.125V6H3V4.097C3.094 3.459 3.59 3 4.228 3zm33.544 24H4.228c-.647 0-1.134-.46-1.228-1.097V15h36v10.875c-.094.647-.59 1.125-1.228 1.125z" fill="#2E4453" fill-rule="nonzero"/><path fill="#D3DEE7" fill-rule="nonzero" d="M6 18h18v6H6z"/><path fill="#2E4453" fill-rule="nonzero" d="M27 18h6v2h-6z"/><path stroke="#D54E21" stroke-width="2" d="M24 15h12v8H24z"/></g></svg>
