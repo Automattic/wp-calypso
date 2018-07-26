@@ -19,8 +19,6 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import { isWpComFreePlan } from 'lib/plans';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
 import FollowList from 'lib/follow-list';
 import StatsInsights from './stats-insights';
 import StatsOverview from './overview';
@@ -29,7 +27,6 @@ import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
-import config from 'config';
 import { isDesktop } from 'lib/viewport';
 import { setFilter } from 'state/activity-log/actions';
 import { queryToFilterState } from 'state/activity-log/utils';
@@ -391,17 +388,9 @@ export default {
 	activityLog: function( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
-		const siteHasWpcomFreePlan = isWpComFreePlan(
-			get( getCurrentPlan( state, siteId ), 'productSlug' )
-		);
 		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
 			? context.query.startDate
 			: undefined;
-
-		if ( siteId && siteHasWpcomFreePlan && ! config.isEnabled( 'activity-log-wpcom-free' ) ) {
-			page.redirect( '/stats' );
-			return next();
-		}
 
 		const filter = getActivityLogFilter( state, siteId );
 		const queryFilter = queryToFilterState( context.query );
