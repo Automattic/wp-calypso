@@ -5,7 +5,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { startCase } from 'lodash';
@@ -89,12 +89,7 @@ export class Login extends React.Component {
 			return null;
 		}
 
-		return (
-			<Fragment>
-				<TranslatorInvite locale={ locale } path={ path } />
-				<LocaleSuggestions locale={ locale } path={ path } />
-			</Fragment>
-		);
+		return <LocaleSuggestions locale={ locale } path={ path } />;
 	}
 
 	renderFooter() {
@@ -176,9 +171,8 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
+		const { locale, path, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
 		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/log-in', locale );
-
 		return (
 			<div>
 				<Main className="wp-login__main">
@@ -200,6 +194,7 @@ export class Login extends React.Component {
 								twoFactorAuthType={ twoFactorAuthType }
 							/>
 						) }
+						<TranslatorInvite locale={ locale } path={ path } />
 					</div>
 				</Main>
 
