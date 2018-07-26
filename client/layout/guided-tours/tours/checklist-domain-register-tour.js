@@ -47,7 +47,7 @@ export const ChecklistDomainRegisterTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Type a memorable name in the search field or pick one of the suggestions to get started. When you find a name that you like, go ahead and press Select/Upgrade to continue.'
+							'Pick one of the suggestions below or type a memorable name to get started.'
 						) }
 					</p>
 					<ButtonRow>
