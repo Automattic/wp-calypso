@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -17,11 +16,8 @@ import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'state/selectors/is-site-store';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
-import { isWpComFreePlan } from 'lib/plans';
 
 class StatsNavigation extends Component {
 	static propTypes = {
@@ -34,32 +30,11 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = item => {
-		const {
-			isGoogleMyBusinessLocationConnected,
-			isStore,
-			isJetpack,
-			siteId,
-			isWpComPaidPlan,
-		} = this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, siteId } = this.props;
 
 		switch ( item ) {
 			case 'store':
 				return isStore;
-
-			case 'activity':
-				if ( 'undefined' === typeof siteId ) {
-					return false;
-				}
-
-				if ( isJetpack ) {
-					return true;
-				}
-
-				if ( isWpComPaidPlan ) {
-					return true;
-				}
-
-				return config.isEnabled( 'activity-log-wpcom-free' );
 
 			case 'googleMyBusiness':
 				if ( 'undefined' === typeof siteId ) {
@@ -107,15 +82,12 @@ class StatsNavigation extends Component {
 }
 
 export default connect( ( state, { siteId } ) => {
-	const productSlug = get( getCurrentPlan( state, siteId ), 'productSlug' );
 	return {
 		isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
 			state,
 			siteId
 		),
 		isStore: isSiteStore( state, siteId ),
-		isJetpack: isJetpackSite( state, siteId ),
-		isWpComPaidPlan: ! isWpComFreePlan( productSlug ),
 		siteId,
 	};
 } )( StatsNavigation );

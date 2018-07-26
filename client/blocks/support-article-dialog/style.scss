@@ -1,9 +1,13 @@
 @import 'content';
 
-.inline-help-support-article__story {
+.support-article-dialog.dialog.card {
+	width: 80vw;
+}
+
+.support-article-dialog__story {
 	padding: 0 20px 20px;
 
-	.inline-help-support-article__header-title {
+	.support-article-dialog__header-title {
 		margin: 12px 0 0;
 	}
 
@@ -17,7 +21,7 @@
 	}
 }
 
-.inline-help-support-article__story-content {
+.support-article-dialog__story-content {
 	.toc-jump {
 		display: none;
 	}
@@ -27,15 +31,15 @@
 	line-height: 28px;
 }
 
-.inline-help-support-article__story-content img {
+.support-article-dialog__story-content img {
 	margin-bottom: 12px;
 }
 
-.inline-help-support-article__story-content figure img {
+.support-article-dialog__story-content figure img {
 	margin-bottom: 0;
 }
 
-.inline-help-support-article__header-title a {
+.support-article-dialog__header-title a {
 	text-decoration: none;
 	clear: none;
 	color: $gray-dark;
@@ -62,23 +66,23 @@
 		margin-top: 8px;
 	}
 
-	.inline-help-support-article__header-title-link {
+	.support-article-dialog__header-title-link {
 		display: block;
 	}
 
-	.inline-help-support-article__header-title-link,
-	.inline-help-support-article__header-title-link:hover {
+	.support-article-dialog__header-title-link,
+	.support-article-dialog__header-title-link:hover {
 		text-decoration: underline;
 		color: $gray-dark;
 	}
 }
 
-.inline-help-support-article__header {
+.support-article-dialog__header {
 	margin-bottom: 23px;
 }
 
-.inline-help-support-article .embed-youtube,
-.inline-help-support-article .embed-vimeo {
+.support-article-dialog .embed-youtube,
+.support-article-dialog .embed-vimeo {
 	display: block;
 	margin-bottom: 25px;
 	position: relative;
@@ -95,18 +99,18 @@
 	}
 }
 
-.inline-help-support-article .embed-vimeo {
+.support-article-dialog .embed-vimeo {
 	margin-bottom: 0;
 }
 
 // Placeholders
-.inline-help-support-article__header-title {
+.support-article-dialog__header-title {
 	&.is-placeholder {
 		@include placeholder();
 	}
 }
 
-.inline-help-support-article__placeholder-text {
+.support-article-dialog__placeholder-text {
 	@include placeholder();
 	margin-bottom: 16px;
 	min-height: 200px;

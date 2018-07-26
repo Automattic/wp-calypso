@@ -637,6 +637,7 @@ class ThemeSheet extends React.Component {
 					}
 					event="themes_plan_particular_free_with_plan"
 					callToAction={ 'View plans' }
+					forceHref={ true }
 				/>
 			);
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {

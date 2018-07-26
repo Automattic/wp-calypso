@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, isEqual, find, replace, some, isFunction } from 'lodash';
+import { every, filter, identity, isEqual, find, replace, some, isFunction } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -94,7 +94,10 @@ export class SharingService extends Component {
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus && this.canRemoveConnection() ) {
+		if (
+			( 'connected' === connectionStatus && this.canRemoveConnection() ) ||
+			'must-disconnect' === connectionStatus
+		) {
 			this.removeConnection();
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
 		} else if ( 'reconnect' === connectionStatus ) {
@@ -337,12 +340,27 @@ export class SharingService extends Component {
 		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
+		} else if ( ! this.areAllConnectionsStillAvailable() ) {
+			// A valid connection is not available anymore, user must reconnect
+			status = 'must-disconnect';
 		} else {
 			// If all else passes, assume service is connected
 			status = 'connected';
 		}
 
 		return status;
+	}
+
+	areAllConnectionsStillAvailable() {
+		// Ignore connected connections I do not own as those won't be available
+		const connectedConnections = filter(
+			this.getConnections(),
+			connection => connection.status === 'ok' && connection.user_ID === this.props.userId
+		);
+		const availableExternalAccounts = this.props.availableExternalAccounts || [];
+		return every( connectedConnections, connection =>
+			some( availableExternalAccounts, { ID: connection.external_ID } )
+		);
 	}
 
 	/**
@@ -508,6 +526,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				service,
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
+				userId,
 			};
 
 			return isFunction( mapStateToProps ) ? mapStateToProps( state, props ) : props;

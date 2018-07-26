@@ -77,20 +77,44 @@ export class EditorNotice extends Component {
 
 		switch ( key ) {
 			case 'publishFailure':
+				if ( 'post' === type ) {
+					return translate( 'Publishing of post failed.' );
+				}
+
+				if ( 'page' === type ) {
+					return translate( 'Publishing of page failed.' );
+				}
+
 				return translate( 'Publishing of %(typeLabel)s failed.', {
-					args: { typeLabel: typeLabel.toLowerCase() },
+					args: { typeLabel: typeLabel },
 				} );
 
 			case 'saveFailure':
 				return translate( 'Saving of draft failed.' );
 
 			case 'trashFailure':
+				if ( 'page' === type ) {
+					return translate( 'Trashing of page failed!' );
+				}
+
+				if ( 'post' === type ) {
+					return translate( 'Trashing of post failed!' );
+				}
+
 				return translate( 'Trashing of %(typeLabel)s failed.', {
-					args: { typeLabel: typeLabel.toLowerCase() },
+					args: { typeLabel: typeLabel },
 				} );
 
 			case 'published':
 				if ( ! site ) {
+					if ( 'page' === type ) {
+						return translate( 'Page published!' );
+					}
+
+					if ( 'post' === type ) {
+						return translate( 'Post published!' );
+					}
+
 					return translate( '%(typeLabel)s published!', { args: { typeLabel: typeLabel } } );
 				}
 
@@ -108,6 +132,20 @@ export class EditorNotice extends Component {
 					} );
 				}
 
+				if ( 'post' === type ) {
+					return translate( 'Post published on {{postLink/}}! {{a}}Add another post{{/a}}', {
+						components: {
+							postLink: (
+								<a href={ postUrl } onClick={ this.handleViewPostClick }>
+									{ site.title }
+								</a>
+							),
+							a: <a href={ `/post/${ site.slug }` } onClick={ this.handleAddPagePromptClick } />,
+						},
+						comment: 'Editor: Message displayed when a post is published, with a link to the post.',
+					} );
+				}
+
 				return translate( '%(typeLabel)s published on {{postLink/}}!', {
 					args: { typeLabel: typeLabel },
 					components: {
@@ -122,10 +160,26 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'scheduled':
+				if ( 'post' === type ) {
+					return translate( 'Post scheduled for %(formattedPostDate)s!', {
+						args: { formattedPostDate },
+						comment:
+							'Editor: Message displayed when a post is scheduled, with the scheduled date and time.',
+					} );
+				}
+
+				if ( 'page' === type ) {
+					return translate( 'Page scheduled for %(formattedPostDate)s!', {
+						args: { formattedPostDate },
+						comment:
+							'Editor: Message displayed when a page is scheduled, with the scheduled date and time.',
+					} );
+				}
+
 				return translate( '%(typeLabel)s scheduled for %(formattedPostDate)s!', {
 					args: { typeLabel, formattedPostDate },
 					comment:
-						'Editor: Message displayed when a post, page, or post of a custom type is scheduled, with the scheduled date and time.',
+						'Editor: Message displayed when a post of a custom type is scheduled, with the scheduled date and time.',
 				} );
 
 			case 'publishedPrivately':
@@ -146,13 +200,33 @@ export class EditorNotice extends Component {
 				return translate( 'View Preview' );
 
 			case 'updated':
+				if ( 'page' === type ) {
+					return translate( 'Page updated! {{pageLink}}Visit page{{/pageLink}}.', {
+						components: {
+							pageLink: <a href={ postUrl } onClick={ this.handleViewPostClick } />,
+						},
+						comment:
+							'Editor: Message displayed when a page is updated, with a link to the updated page.',
+					} );
+				}
+
+				if ( 'post' === type ) {
+					return translate( 'Post updated! {{postLink}}Visit post{{/postLink}}.', {
+						components: {
+							postLink: <a href={ postUrl } onClick={ this.handleViewPostClick } />,
+						},
+						comment:
+							'Editor: Message displayed when a post is updated, with a link to the updated post.',
+					} );
+				}
+
 				return translate( '%(typeLabel)s updated! {{postLink}}Visit %(typeLabel)s{{/postLink}}.', {
 					args: { typeLabel },
 					components: {
 						postLink: <a href={ postUrl } onClick={ this.handleViewPostClick } />,
 					},
 					comment:
-						'Editor: Message displayed when a page, post, or post of a custom type is updated, with a link to the updated post.',
+						'Editor: Message displayed when a post of a custom type is updated, with a link to the updated post.',
 				} );
 		}
 	}

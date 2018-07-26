@@ -38,6 +38,7 @@ import { hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
 import InlineHelp from 'blocks/inline-help';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
+import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
@@ -155,6 +156,7 @@ const Layout = createReactClass( {
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
 				<InlineHelp />
+				<SupportArticleDialog />
 				<AppBanner />
 				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
 			</div>

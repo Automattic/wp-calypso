@@ -115,7 +115,7 @@ class DomainConnectMapping extends React.Component {
 					<div>
 						<p>
 							{ translate(
-								'Your domain provider supports automattically configuring your ' +
+								'Your domain provider supports automatically configuring your ' +
 									'domain to use it with WordPress.com.'
 							) }
 						</p>

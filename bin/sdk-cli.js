@@ -2,22 +2,50 @@
 
 /** @format */
 
+/**
+ * External dependencies
+ */
 const chalk = require( 'chalk' );
 const path = require( 'path' );
 const spawnSync = require( 'child_process' ).spawnSync;
+const yargs = require( 'yargs' );
 
-const buildBlockScript = path.resolve( __dirname, 'create-scripts/block.js' );
-const [ /* node */, /* bin/sdk-cli.js */, task, ...args ] = process.argv;
+const buildBlock = argv => {
+	const compiler = path.resolve( __dirname, 'create-scripts/block.js' );
+	const editorScript = path.resolve( __dirname, '../', argv.editorScript );
 
-if ( ! args.length || task !== 'build-block' ) {
-	console.log( chalk.red( 'usage: npx calypso-gutenberg-sdk build-block <block>' ) );
-	process.exit(1);
-}
+	spawnSync( 'node', [ compiler, editorScript, ( argv.outputDir || '' ) ], {
+		env: {
+			SKIP_FLAG_IMAGES: true,
+		},
+		shell: true,
+		stdio: 'inherit',
+	} );
+};
 
-spawnSync( 'node', [ buildBlockScript, ...args ], {
-	env: {
-		SKIP_FLAG_IMAGES: true,
-	},
-	shell: true,
-	stdio: 'inherit',
-} );
+yargs
+	.scriptName( 'calypso-gutenberg-sdk' )
+	.usage( 'Usage: $0 <command> [options]' )
+	.command( {
+		command: 'build-block',
+		desc: 'Build a block',
+		builder: yargs => yargs.options( {
+			'editor-script': {
+				description: 'Entry for editor side JavaScript file',
+				type: 'string',
+				required: true,
+			},
+			'output-dir': {
+				alias: 'o',
+				description: 'Output directory for the built block assets.',
+				type: 'string',
+				coerce: path.resolve,
+			}
+		} ),
+		handler: buildBlock
+	} )
+	.requiresArg( [ 'editor-script', 'output-dir' ] )
+	.demandCommand( 1, chalk.red( 'You must provide a valid command!' ) )
+	.alias( 'help', 'h' )
+	.version( false )
+	.argv;

@@ -36,6 +36,7 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
+import { noop } from 'lodash';
 import React from 'react';
 import {
 	PLAN_FREE,
@@ -159,6 +160,51 @@ describe( 'Banner basic tests', () => {
 	test( 'should not record Tracks event when event is not specified', () => {
 		const comp = shallow( <Banner { ...props } /> );
 		assert.lengthOf( comp.find( 'TrackComponentView' ), 0 );
+	} );
+
+	test( 'should render Card with href if href prop is passed', () => {
+		const comp = shallow( <Banner { ...props } href={ '/' } /> );
+		assert.lengthOf( comp.find( 'Card' ), 1 );
+		assert.equal( '/', comp.find( 'Card' ).props().href );
+	} );
+
+	test( 'should render Card with no href if href prop is passed but disableHref is true', () => {
+		const comp = shallow( <Banner { ...props } href={ '/' } disableHref={ true } /> );
+		assert.lengthOf( comp.find( 'Card' ), 1 );
+		assert.equal( undefined, comp.find( 'Card' ).props().href );
+	} );
+
+	test( 'should render Card with href if href prop is passed but disableHref is true and forceHref is true', () => {
+		const comp = shallow(
+			<Banner { ...props } href={ '/' } disableHref={ true } forceHref={ true } />
+		);
+		assert.lengthOf( comp.find( 'Card' ), 1 );
+		assert.equal( '/', comp.find( 'Card' ).props().href );
+	} );
+
+	test( 'should render Card with no href and CTA button with href if href prop is passed and callToAction is also passed', () => {
+		const comp = shallow( <Banner { ...props } href={ '/' } callToAction="Go WordPress!" /> );
+		assert.lengthOf( comp.find( 'Card' ), 1 );
+		assert.equal( undefined, comp.find( 'Card' ).props().href );
+		assert.equal( noop, comp.find( 'Card' ).props().onClick );
+
+		assert.lengthOf( comp.find( 'Button' ), 1 );
+		assert.equal( '/', comp.find( 'Button' ).props().href );
+		assert.equal( 'Go WordPress!', comp.find( 'Button' ).props().children );
+		assert.equal( comp.instance().handleClick, comp.find( 'Button' ).props().onClick );
+	} );
+
+	test( 'should render Card with href and CTA button with no href if href prop is passed and callToAction is also passed and forceHref is true', () => {
+		const comp = shallow(
+			<Banner { ...props } href={ '/' } callToAction="Go WordPress!" forceHref={ true } />
+		);
+		assert.lengthOf( comp.find( 'Card' ), 1 );
+		assert.equal( '/', comp.find( 'Card' ).props().href );
+		assert.equal( comp.instance().handleClick, comp.find( 'Card' ).props().onClick );
+
+		assert.lengthOf( comp.find( 'Button' ), 1 );
+		assert.equal( undefined, comp.find( 'Button' ).props().href );
+		assert.equal( 'Go WordPress!', comp.find( 'Button' ).props().children );
 	} );
 } );
 

@@ -319,6 +319,22 @@ describe( 'EditorMediaModal', () => {
 		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
 	} );
 
+	test( 'should show an insert button if multiple images are selected when gallery view is disabled', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+				view={ ModalViews.DETAIL }
+				setView={ spy }
+				galleryViewEnabled={ false }
+			/>
+		).instance();
+
+		const buttons = tree.getModalButtons();
+
+		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+	} );
+
 	describe( '#confirmSelection()', () => {
 		test( 'should close modal if viewing local media and button is pressed', done => {
 			const tree = shallow(

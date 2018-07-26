@@ -24,8 +24,6 @@ import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
-import SupportArticle from 'blocks/inline-help/inline-help-support-article';
-import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
 
 /**
  * Module variables
@@ -111,35 +109,18 @@ class InlineHelp extends Component {
 	};
 
 	// @TODO: Instead of prop drilling this should be done via redux
-	setDialogState = ( {
-		showDialog,
-		videoLink = null,
-		dialogType,
-		dialogPostId = null,
-		dialogPostHref = null,
-	} ) =>
+	setDialogState = ( { showDialog, videoLink = null, dialogType } ) =>
 		this.setState( {
 			showDialog,
 			videoLink,
 			dialogType,
-			dialogPostId,
-			dialogPostHref,
 		} );
 
 	closeDialog = () => this.setState( { showDialog: false } );
 
 	getDialogButtons() {
 		const { translate } = this.props;
-		const { dialogType, dialogPostHref } = this.state;
-
-		if ( dialogType === 'article' ) {
-			return [
-				<Button href={ dialogPostHref } target="_blank" primary>
-					{ translate( 'Visit Article' ) } <Gridicon icon="external" size={ 12 } />
-				</Button>,
-				<Button onClick={ this.closeDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
-			];
-		}
+		const { dialogType } = this.state;
 
 		if ( dialogType === 'video' ) {
 			return [
@@ -152,7 +133,7 @@ class InlineHelp extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const { showInlineHelp, showDialog, videoLink, dialogType, dialogPostId } = this.state;
+		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = { 'inline-help__button': true, 'is-active': showInlineHelp };
 
 		/* @TODO: This class is not valid and this tricks the linter
@@ -190,9 +171,6 @@ class InlineHelp extends Component {
 						onCancel={ this.closeDialog }
 						onClose={ this.closeDialog }
 					>
-						{ dialogType === 'article' && (
-							<SupportArticle blogId={ SUPPORT_BLOG_ID } postId={ dialogPostId } />
-						) }
 						{ dialogType === 'video' && (
 							<div className={ iframeClasses }>
 								<ResizableIframe
