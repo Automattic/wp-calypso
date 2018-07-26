@@ -1,7 +1,0 @@
-{
-	"name": "hello-block",
-	"author": "Automattic",
-	"description": "An example Gutenberg block",
-	"version": "0.0.1",
-	"main": "hello-block.js"
-}

@@ -9,36 +9,12 @@ const chalk = require( 'chalk' );
 const path = require( 'path' );
 const spawnSync = require( 'child_process' ).spawnSync;
 const yargs = require( 'yargs' );
-const fs = require( 'fs' );
-
-const buildBlockScript = path.resolve( __dirname, 'create-scripts/block.js' );
-
-const extensionsDir = path.resolve( __dirname, '../client/gutenberg/extensions' );
-const prePackagedBlocks = fs.readdirSync(extensionsDir)
-	.filter( name => fs.lstatSync( path.join( extensionsDir, name ) ).isDirectory() );
 
 const buildBlock = argv => {
-	let entryFile;
+	const compiler = path.resolve( __dirname, 'create-scripts/block.js' );
+	const editorScript = path.resolve( __dirname, '../', argv.editorScript );
 
-	if ( argv.block ) {
-		if ( prePackagedBlocks.indexOf( argv.block ) < 0 ) {
-			console.log( chalk.red( `Unknown block "${ argv.block }" - list available blocks with "list-blocks"` ) );
-			process.exit( 1 );
-		}
-		entryFile = path.join( extensionsDir, argv.block );
-	} else if ( argv.editorJs ) {
-		entryFile = argv.editorJs;
-	} else {
-		yargs.showHelp();
-		console.log( chalk.red( 'Missing a block entryfile.' ) );
-		process.exit( 1 );
-	}
-
-	const defaultOutputDir = fs.lstatSync( entryFile ).isDirectory()
-		? path.join( entryFile, 'build' )
-		: path.dirname( entryFile );
-
-	spawnSync( 'node', [ buildBlockScript, entryFile, ( argv.outputDir || defaultOutputDir ) ], {
+	spawnSync( 'node', [ compiler, editorScript, ( argv.outputDir || '' ) ], {
 		env: {
 			SKIP_FLAG_IMAGES: true,
 		},
@@ -51,36 +27,25 @@ yargs
 	.scriptName( 'calypso-gutenberg-sdk' )
 	.usage( 'Usage: $0 <command> [options]' )
 	.command( {
-		command: 'list-blocks',
-		desc: 'List pre-packaged blocks; build them with --block',
-		handler: () => console.log( prePackagedBlocks.join( '\n' ) )
-	} )
-	.command( {
 		command: 'build-block',
 		desc: 'Build a block',
 		builder: yargs => yargs.options( {
-			'block': {
-				alias: 'b',
-				description: 'Build a pre-packaged block.',
-				type: 'string',
-				choises: prePackagedBlocks,
-			},
-			'editor-js': {
+			'editor-script': {
 				description: 'Entry for editor side JavaScript file',
 				type: 'string',
-				coerce: path.resolve,
+				required: true,
 			},
 			'output-dir': {
 				alias: 'o',
 				description: 'Output directory for the built block assets.',
 				type: 'string',
-				coerce: path.resolve
+				coerce: path.resolve,
 			}
 		} ),
 		handler: buildBlock
 	} )
-	.conflicts( 'block', [ 'editor-js' ] )
-	.requiresArg( [ 'block', 'editor-js', 'output-dir' ] )
+	.conflicts( 'block', [ 'editor-script' ] )
+	.requiresArg( [ 'block', 'editor-script', 'output-dir' ] )
 	.demandCommand( 1, chalk.red( 'You must provide a valid command!' ) )
 	.alias( 'help', 'h' )
 	.version( false )
