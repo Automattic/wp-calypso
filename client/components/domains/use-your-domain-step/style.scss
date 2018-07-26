@@ -15,6 +15,7 @@
 
 	.use-your-domain-step__option-inner-wrap {
 		display: flex;
+		flex-basis: 100%;
 		justify-content: space-between;
 		flex-direction: column;
 	}
@@ -33,6 +34,10 @@
 		display: flex;
 		justify-content: center;
 		margin: 1em 0;
+		max-height: 150px;
+	}
+
+	.use-your-domain-step__option-illustration img {
 		max-height: 150px;
 	}
 
