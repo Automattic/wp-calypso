@@ -78,6 +78,7 @@ export class EditorMediaModal extends Component {
 		defaultFilter: PropTypes.string,
 		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
 		view: PropTypes.oneOf( values( ModalViews ) ),
+		galleryViewEnabled: PropTypes.bool,
 		setView: PropTypes.func,
 		resetView: PropTypes.func,
 		postId: PropTypes.number,
@@ -98,6 +99,7 @@ export class EditorMediaModal extends Component {
 		resetView: noop,
 		translate: identity,
 		view: ModalViews.LIST,
+		galleryViewEnabled: true,
 		imageEditorProps: {},
 		deleteMedia: () => {},
 		disableLargeImageSources: false,
@@ -473,6 +475,7 @@ export class EditorMediaModal extends Component {
 		}
 
 		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const galleryViewEnabled = this.props.galleryViewEnabled;
 		const isDisabled = areMediaActionsDisabled(
 			this.props.view,
 			selectedItems,
@@ -507,6 +510,7 @@ export class EditorMediaModal extends Component {
 		} else if (
 			ModalViews.GALLERY !== this.props.view &&
 			selectedItems.length > 1 &&
+			galleryViewEnabled &&
 			! some( selectedItems, item => MediaUtils.getMimePrefix( item ) !== 'image' )
 		) {
 			buttons.push( {
