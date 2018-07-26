@@ -179,7 +179,7 @@ class TransferDomainStep extends React.Component {
 						<div className="transfer-domain-step__domain-heading">
 							{ translate( 'Manage your domain and site together on WordPress.com.' ) }
 						</div>
-						<div>
+						<div className="transfer-domain-step__domain-text">
 							{ translate(
 								'Transfer your domain away from your current provider to WordPress.com so you can update settings, ' +
 									"renew your domain, and more \u2013 right in your dashboard. We'll renew it for another year " +
@@ -211,15 +211,15 @@ class TransferDomainStep extends React.Component {
 							suffix={ domainProductPrice }
 							autoFocus
 						/>
+						<Button
+							disabled={ ! getTld( searchQuery ) || submitting }
+							busy={ submitting }
+							className="transfer-domain-step__go button is-primary"
+							onClick={ this.handleFormSubmit }
+						>
+							{ translate( 'Transfer' ) }
+						</Button>
 					</div>
-					<Button
-						disabled={ ! getTld( searchQuery ) || submitting }
-						busy={ submitting }
-						className="transfer-domain-step__go button is-primary"
-						onClick={ this.handleFormSubmit }
-					>
-						{ translate( 'Transfer to WordPress.com' ) }
-					</Button>
 					{ this.domainRegistrationUpsell() }
 				</form>
 			</div>
