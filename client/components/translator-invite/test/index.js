@@ -16,6 +16,7 @@ import { TranslatorInvite } from '../';
 
 describe( 'TranslatorInvite', () => {
 	const defaultProps = {
+		translate: x => x,
 		localizedLanguageNames: {
 			'en-gb': {
 				localized: 'British English',
@@ -54,38 +55,38 @@ describe( 'TranslatorInvite', () => {
 			} );
 		} );
 
-		test( 'should render using browser locales', () => {
+		test( 'should render', () => {
 			const wrapper = shallow( <TranslatorInvite { ...defaultProps } /> );
 			expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.translator-invite__content a' ).text() ).toBe( 'Maltese' );
 		} );
 
-		test( 'should render using path prop over browser locale', () => {
+		test( 'should get non-English locale using browser locales', () => {
+			const wrapper = shallow( <TranslatorInvite { ...defaultProps } /> );
+			expect( wrapper.instance().getLocale() ).toBe( 'mt' );
+		} );
+
+		test( 'should get non-English locale using path prop over browser locale', () => {
 			const wrapper = shallow( <TranslatorInvite path="/log-in/uk" { ...defaultProps } /> );
-			expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.translator-invite__content a' ).text() ).toBe( 'Ukrainian' );
+			expect( wrapper.instance().getLocale() ).toBe( 'uk' );
 		} );
 
-		test( 'should render using locale prop over path and browser locale', () => {
+		test( 'should get non-English locale using locale prop over path and browser locale', () => {
 			const wrapper = shallow(
 				<TranslatorInvite path="/log-in/uk" locale="tl" { ...defaultProps } />
 			);
-			expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.translator-invite__content a' ).text() ).toBe( 'Filipino' );
+			expect( wrapper.instance().getLocale() ).toBe( 'tl' );
 		} );
 
-		test( 'should render using path when locale is defaultish', () => {
+		test( 'should get non-English locale using path when locale is defaultish', () => {
 			const wrapper = shallow(
 				<TranslatorInvite path="/log-in/uk" locale="en-gb" { ...defaultProps } />
 			);
-			expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.translator-invite__content a' ).text() ).toBe( 'Ukrainian' );
+			expect( wrapper.instance().getLocale() ).toBe( 'uk' );
 		} );
 
-		test( 'should render using path when path is default', () => {
+		test( 'should get non-English locale using browser locale when path is a default lang', () => {
 			const wrapper = shallow( <TranslatorInvite path="/log-in/en" { ...defaultProps } /> );
-			expect( wrapper.find( '.translator-invite__content' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.translator-invite__content a' ).text() ).toBe( 'Maltese' );
+			expect( wrapper.instance().getLocale() ).toBe( 'mt' );
 		} );
 	} );
 } );

@@ -34,6 +34,7 @@ export class Login extends React.Component {
 	static propTypes = {
 		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
+		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
@@ -47,7 +48,7 @@ export class Login extends React.Component {
 		twoFactorAuthType: PropTypes.string,
 	};
 
-	static defaultProps = { isJetpack: false };
+	static defaultProps = { isJetpack: false, isLoginView: true };
 
 	componentDidMount() {
 		this.recordPageView( this.props );
@@ -83,9 +84,9 @@ export class Login extends React.Component {
 	}
 
 	renderI18nSuggestions() {
-		const { locale, path, twoFactorAuthType, socialConnect } = this.props;
+		const { locale, path, isLoginView } = this.props;
 
-		if ( twoFactorAuthType || socialConnect ) {
+		if ( ! isLoginView ) {
 			return null;
 		}
 
@@ -171,7 +172,15 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const { locale, path, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
+		const {
+			isLoginView,
+			locale,
+			path,
+			privateSite,
+			socialConnect,
+			translate,
+			twoFactorAuthType,
+		} = this.props;
 		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/log-in', locale );
 		return (
 			<div>
@@ -194,7 +203,7 @@ export class Login extends React.Component {
 								twoFactorAuthType={ twoFactorAuthType }
 							/>
 						) }
-						<TranslatorInvite locale={ locale } path={ path } />
+						{ isLoginView && <TranslatorInvite locale={ locale } path={ path } /> }
 					</div>
 				</Main>
 
@@ -205,10 +214,11 @@ export class Login extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state, props ) => ( {
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
+		isLoginView: ! props.twoFactorAuthType || ! props.socialConnect,
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
