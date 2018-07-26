@@ -7,7 +7,7 @@ export default {
 			themesNudgesUpdates: 20,
 			customPluginAndThemeLandingPages: 20,
 			plansBannerUpsells: 20,
-			control: 40,
+			control: 20,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
