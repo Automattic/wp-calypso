@@ -5,6 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+//import '@material/react-button/index.scss';
 
 export default class Button extends PureComponent {
 	static propTypes = {

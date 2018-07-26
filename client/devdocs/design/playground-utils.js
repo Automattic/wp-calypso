@@ -15,7 +15,7 @@ export const getExampleCodeFromComponent = ExampleComponent => {
 	}
 
 	return jsxToString( ExampleComponent.props.exampleCode, { useFunctionCode: true } ).replace(
-		/Localized\((\w+)\)/g,
+		/\w+\((\w+)\)/g,
 		'$1'
 	);
 };

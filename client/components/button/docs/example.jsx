@@ -3,14 +3,13 @@
 /**
  * External dependencies
  */
-
+import Button from '@material/react-button';
 import React from 'react';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
@@ -48,30 +47,30 @@ class Buttons extends React.PureComponent {
 					</Button>
 				</div>
 				<div className="docs__design-button-row">
-					<Button primary>Primary button</Button>
-					<Button primary>
+					<Button raised>Primary button</Button>
+					<Button raised>
 						<Gridicon icon="camera" />
 						<span>Primary icon button</span>
 					</Button>
-					<Button primary>
+					<Button raised>
 						<Gridicon icon="time" />
 					</Button>
-					<Button primary disabled>
+					<Button raised disabled>
 						Primary disabled button
 					</Button>
 				</div>
 				<div className="docs__design-button-row">
-					<Button primary scary>
+					<Button raised scary>
 						Primary scary button
 					</Button>
-					<Button primary scary>
+					<Button raised scary>
 						<Gridicon icon="user-circle" />
 						<span>Primary scary icon button</span>
 					</Button>
-					<Button primary scary>
+					<Button raised scary>
 						<Gridicon icon="cart" />
 					</Button>
-					<Button primary scary disabled>
+					<Button raised scary disabled>
 						Primary scary disabled button
 					</Button>
 				</div>
@@ -97,22 +96,22 @@ class Buttons extends React.PureComponent {
 					</Button>
 				</div>
 				<div className="docs__design-button-row">
-					<Button borderless primary>
+					<Button borderless raised>
 						<Gridicon icon="cross" />
 						<span>Remove</span>
 					</Button>
-					<Button borderless primary>
+					<Button borderless raised>
 						<Gridicon icon="trash" />
 						<span>Trash</span>
 					</Button>
-					<Button borderless primary>
+					<Button borderless raised>
 						<Gridicon icon="link-break" />
 						<span>Disconnect</span>
 					</Button>
-					<Button borderless primary>
+					<Button borderless raised>
 						<Gridicon icon="trash" />
 					</Button>
-					<Button borderless primary disabled>
+					<Button borderless raised disabled>
 						<Gridicon icon="cross" />
 						<span>Remove</span>
 					</Button>
@@ -161,13 +160,13 @@ class Buttons extends React.PureComponent {
 				</div>
 				<div className="docs__design-button-row">
 					<Button busy>Busy button</Button>
-					<Button primary busy>
+					<Button raised busy>
 						<Gridicon icon="time" />
 					</Button>
-					<Button primary busy>
+					<Button raised busy>
 						Primary busy button
 					</Button>
-					<Button primary scary busy>
+					<Button raised scary busy>
 						<Gridicon icon="trash" />
 						<span>Primary scary busy button</span>
 					</Button>

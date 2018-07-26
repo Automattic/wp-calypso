@@ -18,6 +18,8 @@ import Suggestion from 'reader/search-stream/suggestion';
 import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
 import config from 'config';
+import MaterialButton from '@material/react-button';
+import MaterialTextField, { Input } from '@material/react-text-field';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -26,6 +28,20 @@ function handleSearch( query ) {
 
 	if ( trim( query ) !== '' ) {
 		page( '/read/search?q=' + encodeURIComponent( query ) + '&focus=1' );
+	}
+}
+
+class LilComponent extends React.Component {
+	state = { value: '' };
+
+	changeHandler = e => this.setState( { value: e.target.value } );
+
+	render() {
+		return (
+			<MaterialTextField label="Dog">
+				<Input value={ this.state.value } onChange={ this.changeHandler } />
+			</MaterialTextField>
+		);
 	}
 }
 
@@ -42,6 +58,8 @@ const FollowingStream = props => {
 	return (
 		<Stream { ...props }>
 			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
+			<MaterialButton className="following__button">Howdy</MaterialButton>
+			<LilComponent />
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
