@@ -774,3 +774,11 @@ export const autosave = () => async ( dispatch, getState ) => {
 
 	return await dispatch( saveEdited( { recordSaveEvent: false, autosave: true } ) );
 };
+
+export const saveRevision = ( siteId, post ) =>
+	savePost( siteId, null, {
+		...pick( post, [ 'content', 'excerpt', 'title' ] ),
+		status: 'inherit',
+		type: 'revision',
+		parent: post.ID,
+	} );

@@ -16,7 +16,7 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { autosave, saveEdited } from 'state/posts/actions';
+import { autosave, saveEdited, saveRevision } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import FeaturedImage from 'post-editor/editor-featured-image';
@@ -538,6 +538,10 @@ export class PostEditor extends React.Component {
 			const saveResult = await this.props.autosave();
 			if ( ! savingPublishedPost ) {
 				this.onSaveDraftSuccess( saveResult );
+
+				// Create a revision separately from the autosave
+				// @TODO throttle / debounce this separately?
+				this.props.saveRevision( this.props.siteId, this.props.post );
 			}
 		} catch ( error ) {
 			if ( ! savingPublishedPost ) {
@@ -1147,6 +1151,7 @@ const enhance = flow(
 		{
 			autosave,
 			saveEdited,
+			saveRevision,
 			editPost,
 			setEditorModePreference: partial( savePreference, 'editor-mode' ),
 			setLayoutFocus,
