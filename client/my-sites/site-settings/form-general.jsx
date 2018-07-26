@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { flowRight, get, has } from 'lodash';
+import MaterialTextField, { Input } from '@material/react-text-field';
 
 /**
  * Internal dependencies
@@ -82,18 +83,20 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className="site-settings__site-options">
 				<div className="site-settings__site-title-tagline">
 					<FormFieldset>
-						<FormLabel htmlFor="blogname">{ translate( 'Site Title' ) }</FormLabel>
-						<FormInput
-							name="blogname"
-							id="blogname"
-							data-tip-target="site-title-input"
-							type="text"
-							value={ fields.blogname || '' }
-							onChange={ onChangeField( 'blogname' ) }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Title Field' ) }
-							onKeyPress={ uniqueEventTracker( 'Typed in Site Title Field' ) }
-						/>
+						<MaterialTextField outlined label={ translate( 'Site Title' ) }>
+							<Input
+								key={ fields.blogname || '' }
+								name="blogname"
+								id="blogname"
+								data-tip-target="site-title-input"
+								type="text"
+								value={ fields.blogname || '' }
+								onChange={ onChangeField( 'blogname' ) }
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Title Field' ) }
+								onKeyPress={ uniqueEventTracker( 'Typed in Site Title Field' ) }
+							/>
+						</MaterialTextField>
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel htmlFor="blogdescription">{ translate( 'Site Tagline' ) }</FormLabel>
