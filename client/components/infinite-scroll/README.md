@@ -12,7 +12,7 @@ First, require the component with
 import InfiniteScroll from 'components/infinite-scroll';
 ```
 
-and in your component's `render` method, render it, passing a name of method that fetches next page.
+and in your component's `render` method, render it, passing a name of method that fetches next page. Be sure to place it at the bottom of your content list, so that it can serve as an anchor point for a new load.
 
 If there are conditions when next page should not be loaded (e.g. next page is already loading, or last page was reached, it must be checked in that method.
 
@@ -38,8 +38,8 @@ class List extends Component {
 	render() {
 		return (
 			<div>
-				<InfiniteScroll fetchNextPage={ this.fetchNextPage } />
 				{ this.props.items.map( this.renderItem ) }
+				<InfiniteScroll fetchNextPage={ this.fetchNextPage } />
 			</div>
 		);
 	}

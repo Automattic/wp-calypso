@@ -4,9 +4,6 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
 <div
   className="themes-list"
 >
-  <InfiniteScroll
-    nextPageMethod={[Function]}
-  />
   <Connect(Localized(Theme))
     actionLabel=""
     active={false}
@@ -82,6 +79,9 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
   <div
     className="themes-list__spacer"
     key="themes-list__spacer-10"
+  />
+  <InfiniteScroll
+    nextPageMethod={[Function]}
   />
 </div>
 `;

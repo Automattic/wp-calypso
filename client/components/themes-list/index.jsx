@@ -122,10 +122,10 @@ export class ThemesList extends React.Component {
 
 		return (
 			<div className="themes-list">
-				<InfiniteScroll nextPageMethod={ this.fetchNextPage } />
 				{ this.props.themes.map( this.renderTheme, this ) }
 				{ this.props.loading && this.renderLoadingPlaceholders() }
 				{ this.renderTrailingItems() }
+				<InfiniteScroll nextPageMethod={ this.fetchNextPage } />
 			</div>
 		);
 	}
