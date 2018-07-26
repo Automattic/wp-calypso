@@ -33,7 +33,12 @@ const buildBlock = argv => {
 		console.log( chalk.red( 'Missing a block entryfile.' ) );
 		process.exit( 1 );
 	}
-	spawnSync( 'node', [ buildBlockScript, entryFile, ( argv.outputDir || '' ) ], {
+
+	const defaultOutputDir = fs.lstatSync( entryFile ).isDirectory()
+		? path.join( entryFile, 'build' )
+		: path.dirname( entryFile );
+
+	spawnSync( 'node', [ buildBlockScript, entryFile, ( argv.outputDir || defaultOutputDir ) ], {
 		env: {
 			SKIP_FLAG_IMAGES: true,
 		},
