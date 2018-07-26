@@ -22,12 +22,14 @@ class UpgradeBanner extends Component {
 		return (
 			<div className="activity-log-banner__upgrade">
 				<Banner
-					callToAction={ translate( 'Upgrade' ) }
+					callToAction={ translate( 'More Details' ) }
 					dismissPreferenceName="activity-upgrade-banner-simple"
 					event="activity_log_upgrade_click_wpcom"
 					feature={ FEATURE_JETPACK_ESSENTIAL }
 					plan={ PLAN_PERSONAL }
-					title={ translate( 'Enhance your WP.com experience' ) }
+					title={ translate(
+						'Upgrade your site today to unlock many powerful features, including:'
+					) }
 					description={ translate(
 						'Improve your SEO, protect your site from spammers, ' +
 							'and keep a closer eye on your site with expanded activity logs.'
