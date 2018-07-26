@@ -17,6 +17,9 @@ import createReduxStoreFromPersistedInitialState from 'state/initial-state';
 import detectHistoryNavigation from 'lib/detect-history-navigation';
 import userFactory from 'lib/user';
 
+import '../../assets/stylesheets/style.scss';
+import '../../assets/stylesheets/editor.scss';
+
 const debug = debugFactory( 'calypso' );
 
 const boot = currentUser => {
