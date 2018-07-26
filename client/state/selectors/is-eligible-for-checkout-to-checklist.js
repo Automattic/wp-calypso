@@ -29,6 +29,14 @@ export default function isEligibleForCheckoutToChecklist( state, siteId, cart ) 
 		return false;
 	}
 
+	if (
+		cartItems.hasDomainMapping( cart ) ||
+		cartItems.hasDomainRegistration( cart ) ||
+		cartItems.hasTransferProduct( cart )
+	) {
+		return false;
+	}
+
 	return (
 		isNewSite &&
 		'blog' === designType &&
