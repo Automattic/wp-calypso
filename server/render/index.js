@@ -63,6 +63,9 @@ export function renderJsx( view, props ) {
 	  | (_| (_| | | |_| | |_) \\__ \\ (_) |
 	   \\___\\__,_|_|\\__, | .__/|___/\\___/
 	               |___/|_|
+
+	to join the fun, visit: https://automattic.com/work-with-us/
+
 -->`;
 	return doctype + ReactDomServer.renderToStaticMarkup( React.createElement( component, props ) );
 }
