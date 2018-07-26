@@ -4,8 +4,8 @@
 	form.map-domain-step__form {
 		padding: 20px;
 		margin-bottom: 9px;
-  }
-  
+	}
+
 	.domain-product-price {
 		float: left;
 		line-height: inherit;
@@ -17,6 +17,11 @@
 			float: right;
 			margin: 0;
 		}
+	}
+
+	.domain-product-price__is-with-plans-only {
+		color: $alert-green;
+		line-height: 25px;
 	}
 
 	.notice {

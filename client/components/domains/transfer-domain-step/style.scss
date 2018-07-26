@@ -23,6 +23,13 @@
 		}
 	}
 
+	.transfer-domain-step__free-with-plan {
+		color: $alert-green;
+		font-weight: 400;
+		font-size: 0.9em;
+		line-height: 25px;
+	}
+
 	.notice {
 		margin-top: 25px;
 	}

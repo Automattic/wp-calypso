@@ -164,11 +164,31 @@ class TransferDomainStep extends React.Component {
 		return domainProductPrice;
 	};
 
+	getProductPriceClass = () => {
+		const { cart, domainsWithPlansOnly, isSignupStep, selectedSite } = this.props;
+		const { searchQuery } = this.state;
+		const domainsWithPlansOnlyButNoPlan =
+			domainsWithPlansOnly && ( ( selectedSite && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+
+		let domainProductClass = 'transfer-domain-step__price';
+
+		if (
+			isNextDomainFree( cart ) ||
+			isDomainBundledWithPlan( cart, searchQuery ) ||
+			domainsWithPlansOnlyButNoPlan
+		) {
+			domainProductClass += ' transfer-domain-step__free-with-plan';
+		}
+
+		return domainProductClass;
+	};
+
 	addTransfer() {
 		const { translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
 		const domainProductPrice = this.getProductPriceText();
+		const domainProductClass = this.getProductPriceClass();
 
 		return (
 			<div>
@@ -181,7 +201,7 @@ class TransferDomainStep extends React.Component {
 						</div>
 					</div>
 
-					<div className="transfer-domain-step__price">{ domainProductPrice }</div>
+					<div className={ domainProductClass }>{ domainProductPrice }</div>
 
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInputWithAffixes
