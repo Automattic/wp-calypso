@@ -41,12 +41,15 @@ class AccountDialog extends Component {
 
 	onClose = action => {
 		const accountToConnect = this.getAccountToConnect();
+		const externalUserId = this.props.service.multiple_external_user_ID_support
+			? accountToConnect.ID
+			: 0;
 
 		if ( 'connect' === action && accountToConnect ) {
 			this.props.onAccountSelected(
 				this.props.service,
 				accountToConnect.keyringConnectionId,
-				accountToConnect.ID
+				externalUserId
 			);
 		} else {
 			this.props.onAccountSelected();
