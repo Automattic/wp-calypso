@@ -31,6 +31,20 @@ function handleSearch( query ) {
 	}
 }
 
+class LilComponent extends React.Component {
+	state = { value: '' };
+
+	changeHandler = e => this.setState( { value: e.target.value } );
+
+	render() {
+		return (
+			<MaterialTextField label="Dog">
+				<Input value={ this.state.value } onChange={ this.changeHandler } />
+			</MaterialTextField>
+		);
+	}
+}
+
 const FollowingStream = props => {
 	const suggestionList =
 		props.suggestions &&
@@ -45,9 +59,7 @@ const FollowingStream = props => {
 		<Stream { ...props }>
 			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
 			<MaterialButton className="following__button">Howdy</MaterialButton>
-			<MaterialTextField label="Dog">
-				<Input />
-			</MaterialTextField>
+			<LilComponent />
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
