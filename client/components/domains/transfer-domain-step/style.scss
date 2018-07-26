@@ -9,15 +9,16 @@
 	}
 
 	.domain-product-price {
+		font-size: 17px;
 		float: left;
 		line-height: inherit;
-		margin-bottom: 20px;
+		margin: 0 0 10px;
 		min-width: 0;
 		padding-right: 0;
 
 		@include breakpoint( '>660px' ) {
 			float: right;
-			margin-bottom: 0;
+			margin: 0;
 		}
 	}
 
@@ -84,6 +85,7 @@
 .transfer-domain-step__domain-heading {
 	font-size: 1em;
 	font-weight: 600;
+	margin-bottom: 10px;
 
 	@include breakpoint( '>660px' ) {
 		max-width: 75%;

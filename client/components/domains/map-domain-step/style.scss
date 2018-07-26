@@ -9,13 +9,13 @@
 	.domain-product-price {
 		float: left;
 		line-height: inherit;
-		margin-bottom: 20px;
+		margin: 10px 0;
 		min-width: 0;
 		padding-right: 0;
 
 		@include breakpoint( '>660px' ) {
 			float: right;
-			margin-bottom: 0;
+			margin: 0;
 		}
 	}
 
