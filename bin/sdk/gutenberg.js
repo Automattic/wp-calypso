@@ -57,6 +57,13 @@ exports.compile = args => {
 		}
 
 		console.log( stats.toString() );
-		console.log( chalk.green( 'Successfully built Gutenberg extension' ) );
+
+		if ( stats.hasErrors() ) {
+			console.log( chalk.red( 'Finished building Gutenberg extension but with errors.' ) );
+		} else if ( stats.hasWarnings() ) {
+			console.log( chalk.yellow( 'Successfully built Gutenberg extension but with warnings.' ) );
+		} else {
+			console.log( chalk.green( 'Successfully built Gutenberg extension' ) );
+		}
 	} );
 };
