@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -19,13 +20,30 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import formatCurrency from 'lib/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';
 import QueryMedia from 'components/data/query-media';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { translate, productId, product, siteId } = this.props;
+		const { translate, productId, product, siteId, planHasSimplePaymentsFeature } = this.props;
 
 		if ( ! product ) {
 			return <QuerySimplePayments siteId={ siteId } productId={ productId } />;
+		}
+
+		if ( ! planHasSimplePaymentsFeature ) {
+			return (
+				<div className="wpview-content wpview-type-simple-payments">
+					<div className="wpview-type-simple-payments__unsupported">
+						<div className="wpview-type-simple-payments__unsupported-icon">
+							<Gridicon icon="cross" />
+						</div>
+						<p className="wpview-type-simple-payments__unsupported-message">
+							{ translate( "Your plan doesn't include Simple Payments." ) }
+						</p>
+					</div>
+				</div>
+			);
 		}
 
 		const { productImage } = this.props;
@@ -97,6 +115,7 @@ SimplePaymentsView = connect( ( state, props ) => {
 		siteId,
 		product,
 		productImage: getMediaItem( state, siteId, get( product, 'featuredImageId' ) ),
+		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 	};
 } )( localize( SimplePaymentsView ) );
 
