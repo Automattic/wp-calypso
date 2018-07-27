@@ -143,6 +143,7 @@
     "redux": "4.0.0",
     "redux-form": "7.4.2",
     "redux-thunk": "2.3.0",
+    "rmwc": "1.8.3",
     "rtlcss": "2.4.0",
     "social-logos": "2.0.0",
     "socket.io-client": "2.1.1",
