@@ -4,8 +4,7 @@
  * Internal dependencies
  */
 
-import * as api from '../../api';
-import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
+import { errorNotice } from 'state/notices/actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST,
 	WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST_SUCCESS,
@@ -20,6 +19,12 @@ export const fetchShippingClassesSuccess = ( siteId, data ) => {
 	};
 };
 
+export const fetchShippingClassesFailure = () => {
+	return errorNotice(
+		`Could not retrieve the shipping classes for this website. Please refresh and try again!`
+	);
+};
+
 export const fetchShippingClasses = siteId => ( dispatch, getState ) => {
 	if (
 		areShippingClassesLoaded( getState(), siteId ) ||
@@ -28,15 +33,8 @@ export const fetchShippingClasses = siteId => ( dispatch, getState ) => {
 		return;
 	}
 
-	const getAction = {
+	return dispatch( {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST,
 		siteId,
-	};
-
-	dispatch( getAction );
-
-	return api
-		.get( siteId, api.url.shippingClasses() )
-		.then( data => dispatch( fetchShippingClassesSuccess( siteId, data ) ) )
-		.catch( err => dispatch( setError( siteId, getAction, err ) ) );
+	} );
 };
