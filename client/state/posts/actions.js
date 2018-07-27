@@ -42,6 +42,7 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'state/action-types';
+import { POST_REVISION_FIELDS } from 'state/posts/constants';
 import { getSitePost, getEditedPost, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { recordSaveEvent } from 'state/posts/stats';
 import {
@@ -783,7 +784,7 @@ export const autosave = () => async ( dispatch, getState ) => {
  */
 export const saveRevision = ( siteId, post ) =>
 	savePost( siteId, null, {
-		...pick( post, [ 'content', 'excerpt', 'title' ] ),
+		...pick( post, POST_REVISION_FIELDS ),
 		parent: post.ID,
 		status: 'inherit',
 		type: 'revision',

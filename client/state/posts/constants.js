@@ -26,3 +26,5 @@ export const DEFAULT_NEW_POST_VALUES = {
 	format: 'default',
 	featured_image: '',
 };
+
+export const POST_REVISION_FIELDS = [ 'content', 'excerpt', 'title' ];
