@@ -24,7 +24,7 @@ yargs
 	.scriptName( 'calypso-sdk' )
 	.usage( 'Usage: $0 <command> [options]' )
 	.command( {
-		command: 'build-gutenberg',
+		command: 'gutenberg',
 		desc: 'Build a Gutenberg extension',
 		builder: yargs => yargs.options( {
 			'editor-script': {

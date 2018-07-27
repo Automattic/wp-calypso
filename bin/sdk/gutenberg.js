@@ -4,11 +4,14 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
+const [ /* node */, /* this-script */, givenEditorScript, givenOutputDir ] = process.argv;
+
 const __rootDir = path.resolve( __dirname, '../../' );
 const CopyWebpackPlugin = require( path.resolve( __rootDir, 'server/bundler/copy-webpack-plugin' ) );
-const entryPath = path.resolve( __rootDir, process.argv[ 2 ] );
-const sourceDir = path.dirname( entryPath );
-const outputDir = process.argv[ 3 ] ? process.argv[ 3 ] : path.join( sourceDir, 'build' );
+const editorScript = path.resolve( __rootDir, givenEditorScript );
+const sourceDir = path.dirname( editorScript );
+const name = path.basename( sourceDir.replace( /\/$/, '' ) );
+const outputDir = givenOutputDir ? givenOutputDir : path.join( sourceDir, 'build' );
 
 const baseConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
 
@@ -18,7 +21,7 @@ const config = {
 		context: __rootDir,
 		mode: 'production',
 		entry: {
-			'editor-js': entryPath,
+			[ `${ name }-editor-script` ]: editorScript,
 		},
 		externals: {
 			...baseConfig.externals,
@@ -29,9 +32,9 @@ const config = {
 		},
 		output: {
 			path: outputDir,
-			filename: `[name].js`,
+			filename: `${ name }-editor.js`,
 			libraryTarget: 'window',
-			library: `plugins-[name]`,
+			library: `plugins-${ name }-editor`,
 		},
 		plugins: [
 			...baseConfig.plugins.filter( plugin => ! ( plugin instanceof CopyWebpackPlugin ) ),
