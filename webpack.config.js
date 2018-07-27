@@ -143,7 +143,7 @@ const webpackConfig = {
 			{
 				test: /\.(sc|sa|c)ss$/,
 				use: [
-					isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+					MiniCssExtractPlugin.loader,
 					'css-loader',
 					'postcss-loader',
 					{

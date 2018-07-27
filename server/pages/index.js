@@ -15,6 +15,7 @@ import {
 	get,
 	includes,
 	pick,
+	filter,
 	flatten,
 	forEach,
 	intersection,
@@ -90,7 +91,7 @@ const getAssets = ( () => {
 	};
 } )();
 
-const getFilesForChunk = chunkName => {
+const getFilesForChunk = ( chunkName, ext ) => {
 	const assets = getAssets();
 
 	function getChunkByName( _chunkName ) {
@@ -112,7 +113,11 @@ const getFilesForChunk = chunkName => {
 	}
 
 	const allTheFiles = chunk.files.concat(
-		flatten( chunk.siblings.map( sibling => getChunkById( sibling ).files ) )
+		flatten(
+			chunk.siblings.map( sibling =>
+				filter( getChunkById( sibling ).files, file => endsWith( file, ext ) )
+			)
+		)
 	);
 
 	return allTheFiles;
@@ -233,8 +238,11 @@ function getDefaultContext( request ) {
 		isDebug,
 		badge: false,
 		lang,
-		entrypoint: getAssets().entrypoints.build.assets.filter(
-			asset => ! asset.startsWith( 'manifest' )
+		entrypointJs: getAssets().entrypoints.build.assets.filter(
+			asset => ! asset.startsWith( 'manifest' ) && endsWith( asset, '.js' )
+		),
+		entrypointCss: getAssets().entrypoints.build.assets.filter(
+			asset => ! asset.startsWith( 'manifest' ) && endsWith( asset, '.css' )
 		),
 		manifest: getAssets().manifests.manifest,
 		faviconURL: '//s1.wp.com/i/favicon.ico',
@@ -639,9 +647,11 @@ module.exports = function() {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
 
 					if ( config.isEnabled( 'code-splitting' ) ) {
-						req.context.chunkFiles = getFilesForChunk( section.name );
+						req.context.chunkJsFiles = getFilesForChunk( section.name, '.js' );
+						req.context.chunkCssFiles = getFilesForChunk( section.name, '.css' );
 					} else {
-						req.context.chunkFiles = [];
+						req.context.chunkJsFiles = [];
+						req.context.chunkCssFiles = [];
 					}
 
 					if ( section.secondary && req.context ) {

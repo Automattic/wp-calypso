@@ -26,14 +26,16 @@ class Document extends React.Component {
 	render() {
 		const {
 			app,
-			chunkFiles,
+			chunkCssFiles,
+			chunkJsFiles,
 			commitSha,
 			faviconURL,
 			head,
 			i18nLocaleScript,
 			initialReduxState,
 			isRTL,
-			entrypoint,
+			entrypointJs,
+			entrypointCss,
 			manifest,
 			lang,
 			renderedLayout,
@@ -75,7 +77,6 @@ class Document extends React.Component {
 				<Head title={ head.title } faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
 					{ head.metas.map( ( props, index ) => <meta { ...props } key={ index } /> ) }
 					{ head.links.map( ( props, index ) => <link { ...props } key={ index } /> ) }
-
 					<link
 						rel="stylesheet"
 						id="main-css"
@@ -92,6 +93,8 @@ class Document extends React.Component {
 							type="text/css"
 						/>
 					) }
+					{ entrypointCss && <link rel="stylesheet" href={ entrypointCss } type="text/css" /> }
+					{ chunkCssFiles.map( file => <link rel="stylesheet" href={ file } type="text/css" /> ) }
 				</Head>
 				<body className={ classNames( { rtl: isRTL } ) }>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
@@ -162,8 +165,8 @@ class Document extends React.Component {
 							} }
 						/>
 					) }
-					{ entrypoint.map( asset => <script key={ asset } src={ asset } /> ) }
-					{ chunkFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
+					{ entrypointJs.map( asset => <script key={ asset } src={ asset } /> ) }
+					{ chunkJsFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">
 						window.AppBoot();
 					</script>
