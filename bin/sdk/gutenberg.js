@@ -39,7 +39,6 @@ exports.compile = args => {
 				path: options.outputDir,
 				filename: `${ name }-editor.js`,
 				libraryTarget: 'window',
-				library: `plugins-${ name }-editor`,
 			},
 			plugins: [
 				...baseConfig.plugins.filter( plugin => ! ( plugin instanceof CopyWebpackPlugin ) ),
