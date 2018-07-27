@@ -34,7 +34,7 @@ yargs
 				alias: 'm',
 				description: 'Enable or disable production optimizations.',
 				type: 'string',
-				choises: [ 'production', 'development' ],
+				choices: [ 'production', 'development' ],
 				default: 'production',
 				requiresArg: true,
 			},
