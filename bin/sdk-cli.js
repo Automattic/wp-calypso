@@ -19,10 +19,17 @@ const buildGutenberg = argv => {
 		stdio: 'inherit',
 	} );
 };
+// Script name is used in help instructions;
+// pick between `npm run calypso-sdk` and `npx calypso-sdk`.
+// Show also how npm scripts require delimiter to pass arguments.
+const calleeScript = path.basename( process.argv[ 1 ] );
+const scriptName = calleeScript === path.basename( __filename ) ? 'npm run calypso-sdk' : calleeScript;
+const delimit = scriptName.substring( 0, 3 ) === 'npm' ? '-- ' : '';
 
 yargs
-	.scriptName( 'calypso-sdk' )
-	.usage( 'Usage: $0 <command> [options]' )
+	.scriptName( scriptName )
+	.usage( `Usage: $0 <command> ${ delimit }[options]` )
+	.example( `$0 gutenberg ${ delimit }--editor-script=hello-dolly.js` )
 	.command( {
 		command: 'gutenberg',
 		desc: 'Build a Gutenberg extension',
