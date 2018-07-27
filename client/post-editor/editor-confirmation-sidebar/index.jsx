@@ -46,6 +46,8 @@ class EditorConfirmationSidebar extends Component {
 		status: PropTypes.string,
 	};
 
+	mountSidebar = false;
+
 	getCloseOverlayHandler = context => () => this.props.setStatus( { status: 'closed', context } );
 
 	closeAndPublish = () => {
@@ -149,46 +151,50 @@ class EditorConfirmationSidebar extends Component {
 		const isSidebarActive = this.props.status === 'open';
 		const isOverlayActive = this.props.status !== 'closed';
 
-		return (
-			<div
-				className={ classnames( {
-					'editor-confirmation-sidebar': true,
-					'is-active': isOverlayActive,
-				} ) }
-			>
-				{ this.renderPublishingBusyButton() }
+		this.mountSidebar = this.mountSidebar || isOverlayActive;
 
+		return (
+			this.mountSidebar && (
 				<div
 					className={ classnames( {
-						'editor-confirmation-sidebar__sidebar': true,
-						'is-active': isSidebarActive,
+						'editor-confirmation-sidebar': true,
+						'is-active': isOverlayActive,
 					} ) }
 				>
-					<div className="editor-confirmation-sidebar__ground-control">
-						<div className="editor-confirmation-sidebar__close">
-							<Button
-								borderless
-								onClick={ this.getCloseOverlayHandler( 'dismiss_x' ) }
-								title={ this.props.translate( 'Close sidebar' ) }
-								aria-label={ this.props.translate( 'Close sidebar' ) }
-							>
-								<Gridicon icon="cross" />
-							</Button>
+					{ this.renderPublishingBusyButton() }
+
+					<div
+						className={ classnames( {
+							'editor-confirmation-sidebar__sidebar': true,
+							'is-active': isSidebarActive,
+						} ) }
+					>
+						<div className="editor-confirmation-sidebar__ground-control">
+							<div className="editor-confirmation-sidebar__close">
+								<Button
+									borderless
+									onClick={ this.getCloseOverlayHandler( 'dismiss_x' ) }
+									title={ this.props.translate( 'Close sidebar' ) }
+									aria-label={ this.props.translate( 'Close sidebar' ) }
+								>
+									<Gridicon icon="cross" />
+								</Button>
+							</div>
+							<div className="editor-confirmation-sidebar__action">
+								{ this.renderPublishButton() }
+							</div>
 						</div>
-						<div className="editor-confirmation-sidebar__action">
-							{ this.renderPublishButton() }
+						<div className="editor-confirmation-sidebar__content-wrap">
+							<EditorConfirmationSidebarHeader post={ this.props.post } />
+							<EditorPublishDate post={ this.props.post } setPostDate={ this.props.setPostDate } />
+							<div className="editor-confirmation-sidebar__privacy-control">
+								{ this.renderPrivacyControl() }
+							</div>
 						</div>
+						{ this.renderNoticeDisplayPreferenceCheckbox() }
 					</div>
-					<div className="editor-confirmation-sidebar__content-wrap">
-						<EditorConfirmationSidebarHeader post={ this.props.post } />
-						<EditorPublishDate post={ this.props.post } setPostDate={ this.props.setPostDate } />
-						<div className="editor-confirmation-sidebar__privacy-control">
-							{ this.renderPrivacyControl() }
-						</div>
-					</div>
-					{ this.renderNoticeDisplayPreferenceCheckbox() }
 				</div>
-			</div>
+			)
 		);
 	}
 }
