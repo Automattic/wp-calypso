@@ -5,6 +5,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { Button as MaterialButton } from 'rmwc/Button';
 
 export default class Button extends PureComponent {
 	static propTypes = {
@@ -32,19 +33,8 @@ export default class Button extends PureComponent {
 			'is-borderless': this.props.borderless,
 		} );
 
-		if ( this.props.href ) {
-			const { compact, primary, scary, busy, borderless, type, ...props } = this.props;
-
-			// block referrers when external link
-			const rel = props.target
-				? ( props.rel || '' ).replace( /noopener|noreferrer/g, '' ) + ' noopener noreferrer'
-				: props.rel;
-
-			return <a { ...props } rel={ rel } className={ className } />;
-		}
-
 		const { compact, primary, scary, busy, borderless, target, rel, ...props } = this.props;
 
-		return <button { ...props } className={ className } />;
+		return <MaterialButton { ...props } className={ className } />;
 	}
 }
