@@ -16,7 +16,7 @@ import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
 class InlineSupportLink extends Component {
 	static propTypes = {
-		supportPostId: PropTypes.number,
+		supportPostId: PropTypes.number.isRequired,
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
 		text: PropTypes.string,
@@ -33,7 +33,7 @@ class InlineSupportLink extends Component {
 		iconSize: 14,
 	};
 
-	handleOpenInline = event => {
+	handleClick = event => {
 		const { supportPostId, supportLink } = this.props;
 
 		event.preventDefault();
@@ -59,7 +59,7 @@ class InlineSupportLink extends Component {
 			<a
 				className="inline-support-link"
 				href={ supportLink }
-				onClick={ this.handleOpenInline }
+				onClick={ this.handleClick }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
