@@ -92,6 +92,14 @@
 		text-align: left;
 		padding: 10px;
 		cursor: pointer;
+
+		&.included {
+			background-color: lightgreen;
+		}
+
+		&.excluded {
+			background-color: lightcoral;
+		}
 	}
 
 	.activity-log-search__filter-group-icon,
