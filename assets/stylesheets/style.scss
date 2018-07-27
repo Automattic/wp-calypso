@@ -10,6 +10,9 @@
 @import 'shared/dropdowns';                    // dropdown styling
 @import 'shared/welcome';                      // welcome messages
 
+// Material
+@import 'node_modules/material-components-web/dist/material-components-web.min';
+
 // Main
 @import 'main';                                // global layout and responsive styles
 
