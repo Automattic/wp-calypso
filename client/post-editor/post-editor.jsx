@@ -123,6 +123,10 @@ export class PostEditor extends React.Component {
 		};
 	}
 
+	autosaveFlushToRevision = () => {
+		this.props.saveRevision( this.props.siteId, this.props.post );
+	};
+
 	componentWillMount() {
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
 		this.throttledAutosave = throttle( this.autosave, 20000 );
@@ -130,6 +134,7 @@ export class PostEditor extends React.Component {
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
+		this.debouncedAutosaveFlushToRevision = debounce( this.autosaveFlushToRevision, 30000 );
 		this.useDefaultSidebarFocus();
 		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
@@ -144,6 +149,7 @@ export class PostEditor extends React.Component {
 		if ( nextState.isSaving && ! this.state.isSaving ) {
 			this.debouncedAutosave.cancel();
 			this.throttledAutosave.cancel();
+			this.debouncedAutosaveFlushToRevision.cancel();
 		}
 
 		if ( nextProps.isDirty ) {
@@ -170,6 +176,8 @@ export class PostEditor extends React.Component {
 		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
+		this.debouncedAutosaveFlushToRevision.cancel();
+		this.autosaveFlushToRevision();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
 	}
@@ -540,8 +548,7 @@ export class PostEditor extends React.Component {
 				this.onSaveDraftSuccess( saveResult );
 
 				// Create a revision separately from the autosave
-				// @TODO throttle / debounce this separately?
-				this.props.saveRevision( this.props.siteId, this.props.post );
+				this.debouncedAutosaveFlushToRevision();
 			}
 		} catch ( error ) {
 			if ( ! savingPublishedPost ) {

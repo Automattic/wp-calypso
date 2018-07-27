@@ -775,10 +775,16 @@ export const autosave = () => async ( dispatch, getState ) => {
 	return await dispatch( saveEdited( { recordSaveEvent: false, autosave: true } ) );
 };
 
+/**
+ * Save a revision of the passed-in post. Calls `savePost` which initiates a network call.
+ * @param  {int} siteId		The site ID for use in the `savePost` call
+ * @param  {object} post   post-like object with keys: 'ID', 'content', 'excerpt', 'title'
+ * @returns {Promise} The return value from `savePost`
+ */
 export const saveRevision = ( siteId, post ) =>
 	savePost( siteId, null, {
 		...pick( post, [ 'content', 'excerpt', 'title' ] ),
+		parent: post.ID,
 		status: 'inherit',
 		type: 'revision',
-		parent: post.ID,
 	} );
