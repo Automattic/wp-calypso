@@ -5,3 +5,4 @@ export ButtonGroup from './button-group/docs/example';
 export CheckboxControl from './checkbox-control/docs/example';
 export ClipboardButton from './clipboard-button/docs/example';
 export Dashicon from './dashicon/docs/example';
+export DateTime from './date-time/docs/example';

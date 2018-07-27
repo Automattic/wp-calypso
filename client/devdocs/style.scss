@@ -491,3 +491,7 @@ a.devdocs__doc-edit-link {
 .docs__gutenberg-components-autocomplete {
 	@extend %form-field;
 }
+
+.docs__gutenberg-components-datepicker {
+	display: inline-block;
+}
