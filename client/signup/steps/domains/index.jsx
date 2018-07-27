@@ -376,10 +376,7 @@ class DomainsStep extends React.Component {
 		const { translate } = this.props;
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
 			? translate( 'Use a domain you already own with your new WordPress.com site.' )
-			: translate(
-					"Enter your site's name, or some keywords that describe it - " +
-						"we'll use this to create your new site's address."
-			  );
+			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
 
 	renderContent() {
@@ -430,7 +427,7 @@ class DomainsStep extends React.Component {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
-				fallbackHeaderText={ translate( "Let's give your site an address." ) }
+				fallbackHeaderText={ translate( 'Give your site an address.' ) }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
 					<ReactCSSTransitionGroup
