@@ -6,6 +6,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
+import { keys, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,11 +16,8 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import ReadmeViewer from 'components/readme-viewer';
-import { slugToCamelCase } from 'devdocs/docs-example/util';
-
-/**
- * Docs examples
- */
+import SearchCard from 'components/search-card';
+import { camelCaseToSlug, slugToCamelCase } from 'devdocs/docs-example/util';
 import * as examples from 'gutenberg-components/examples';
 
 export default class extends React.Component {
@@ -27,6 +25,10 @@ export default class extends React.Component {
 
 	backToAll = () => {
 		page( '/devdocs/gutenberg-components/' );
+	};
+
+	onSearch = term => {
+		this.setState( { filter: trim( term || '' ).toLowerCase() } );
 	};
 
 	render() {
@@ -47,14 +49,24 @@ export default class extends React.Component {
 						{ slugToCamelCase( component ) }
 					</HeaderCake>
 				) : (
-					<ReadmeViewer readmeFilePath="/client/devdocs/gutenberg-components/README.md" />
+					<div>
+						<ReadmeViewer readmeFilePath="/client/devdocs/gutenberg-components/README.md" />
+						<SearchCard
+							onSearch={ this.onSearch }
+							initialValue={ filter }
+							placeholder="Search Gutenberg components…"
+							analyticsGroup="Docs"
+						/>
+					</div>
 				) }
 
 				<Collection component={ component } filter={ filter } section="gutenberg-components">
-					<examples.Autocomplete readmeFilePath="autocomplete" />
-					<examples.BaseControl readmeFilePath="base-control" />
-					<examples.Button readmeFilePath="button" />
-					<examples.ButtonGroup readmeFilePath="button-group" />
+					{ keys( examples ).map( exampleName => {
+						const Example = examples[ exampleName ];
+						return (
+							<Example key={ exampleName } readmeFilePath={ camelCaseToSlug( exampleName ) } />
+						);
+					} ) }
 				</Collection>
 			</Main>
 		);
