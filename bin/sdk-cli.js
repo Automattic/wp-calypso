@@ -15,9 +15,6 @@ const buildBlock = argv => {
 	const editorScript = path.resolve( __dirname, '../', argv.editorScript );
 
 	spawnSync( 'node', [ compiler, editorScript, ( argv.outputDir || '' ) ], {
-		env: {
-			SKIP_FLAG_IMAGES: true,
-		},
 		shell: true,
 		stdio: 'inherit',
 	} );
