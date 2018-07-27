@@ -20,7 +20,7 @@ import { slugToCamelCase } from 'devdocs/docs-example/util';
 /**
  * Docs examples
  */
-import { Button } from 'gutenberg-components/examples';
+import { Autocomplete, Button } from 'gutenberg-components/examples';
 
 export default class extends React.Component {
 	state = { filter: '' };
@@ -51,6 +51,7 @@ export default class extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter } section="gutenberg-components">
+					<Autocomplete readmeFilePath="autocomplete" />
 					<Button readmeFilePath="button" />
 				</Collection>
 			</Main>

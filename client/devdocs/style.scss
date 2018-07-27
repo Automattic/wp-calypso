@@ -487,3 +487,7 @@ a.devdocs__doc-edit-link {
 		margin-bottom: 16px;
 	}
 }
+
+.docs__gutenberg-components-autocomplete {
+	@extend %form-field;
+}
