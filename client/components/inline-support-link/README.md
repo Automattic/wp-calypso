@@ -12,7 +12,7 @@ render() {
 	const inlineSupportProps = {
 		text: 'Learn more about Podcasting',
 		supportLink: 'https://en.support.wordpress.com/audio/podcasting/',
-		supportPostId: 'https://example.com/#privacy',
+		supportPostId: 38147,
 	};
 	return (
 		<InlineSupportLink { ...inlineSupportProps } />
