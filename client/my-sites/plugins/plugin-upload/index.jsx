@@ -44,6 +44,8 @@ import {
 } from 'state/automated-transfer/selectors';
 import { successNotice } from 'state/notices/actions';
 import { transferStates } from 'state/automated-transfer/constants';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -53,6 +55,8 @@ class PluginUpload extends React.Component {
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearPluginUpload( siteId );
+
+		this.goToUpsellPageIfRequired( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -82,6 +86,18 @@ class PluginUpload extends React.Component {
 				{ duration: 8000 }
 			);
 		}
+
+		this.goToUpsellPageIfRequired( nextProps );
+	}
+
+	goToUpsellPageIfRequired( props ) {
+		if ( this.shouldRedirectToUpsellPage( props ) ) {
+			page.redirect( `/feature/themes/${ props.siteSlug }` );
+		}
+	}
+
+	shouldRedirectToUpsellPage( props = this.props ) {
+		return props.useUpsellPage && props.showEligibility;
 	}
 
 	back = () => {
@@ -144,6 +160,10 @@ class PluginUpload extends React.Component {
 		const { translate, isJetpackMultisite, upgradeJetpack, siteId, siteSlug } = this.props;
 		const { showEligibility } = this.state;
 
+		if ( this.shouldRedirectToUpsellPage() ) {
+			return false;
+		}
+
 		return (
 			<Main>
 				<PageViewTracker path="/plugins/upload/:site" title="Plugins > Upload" />
@@ -185,8 +205,13 @@ export default connect(
 			isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 		);
 
+		const useUpsellPage =
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages';
+
 		return {
 			siteId,
+			useUpsellPage,
 			siteSlug: getSelectedSiteSlug( state ),
 			isJetpack,
 			inProgress: isPluginUploadInProgress( state, siteId ),
