@@ -92,7 +92,7 @@ class PluginUpload extends React.Component {
 
 	goToUpsellPageIfRequired( props ) {
 		if ( this.shouldRedirectToUpsellPage( props ) ) {
-			page.redirect( `/feature/themes/${ props.siteSlug }` );
+			page.redirect( `/feature/plugins/${ props.siteSlug }` );
 		}
 	}
 
