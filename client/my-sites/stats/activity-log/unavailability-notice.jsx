@@ -50,7 +50,7 @@ export const UnavailabilityNotice = ( {
 					/>
 				);
 			}
-			return 'null';
+			return null;
 		case 'missing_plan':
 			return (
 				<Banner
