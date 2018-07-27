@@ -139,11 +139,11 @@ class SiteImporterInputPane extends React.Component {
 			errorMessage = this.props.translate( 'Please enter a valid URL.' );
 		} else if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
 			errorMessage = this.props.translate(
-				'The URL you entered is for the Wix editor which is only accessible to you. Please enter a public URL of your site using one of the formats described below.'
+				"You've entered the URL for the Wix editor, which only you can access. Please enter your site's public URL. It should look like one of the examples below."
 			);
 		} else if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
 			errorMessage = this.props.translate(
-				'The URL you entered is not complete. Please include the part of URL which comes after wixsite.com. See below for an example.'
+				"You haven't entered the full URL. Please include the part of the URL that comes after wixsite.com. See below for an example."
 			);
 		}
 
