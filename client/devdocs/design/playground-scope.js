@@ -7,6 +7,11 @@ export Gridicon from 'gridicons';
 export SocialLogo from 'social-logos';
 
 /**
+ * Material
+ */
+export { Button } from 'rmwc/Button';
+
+/**
  * Docs examples
  */
 export ActionCard from 'components/action-card';
@@ -17,7 +22,6 @@ export Badge from 'components/badge';
 export Banner from 'components/banner';
 export BulkSelect from 'components/bulk-select';
 export ButtonGroup from 'components/button-group';
-export Button from 'components/button';
 export Card from 'components/card';
 export CardHeading from 'components/card-heading';
 export Checklist from 'blocks/checklist';

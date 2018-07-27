@@ -3,14 +3,13 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import Gridicon from 'gridicons';
+import { Button } from 'rmwc/Button';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
