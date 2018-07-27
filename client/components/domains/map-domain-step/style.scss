@@ -13,7 +13,7 @@
 		min-width: 0;
 		padding-right: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint( '>960px' ) {
 			float: right;
 			margin: 0;
 		}
@@ -37,7 +37,7 @@
 	font-size: 1em;
 	font-weight: 600;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( '>960px' ) {
 		max-width: 75%;
 		float: left;
 		margin-bottom: 20px;
