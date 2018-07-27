@@ -73,7 +73,7 @@ class ThemeShowcase extends React.Component {
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
-		upsellBanner: PropTypes.element,
+		upsellBanner: PropTypes.any,
 		trackATUploadClick: PropTypes.func,
 	};
 
