@@ -134,7 +134,9 @@ export class PostEditor extends React.Component {
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
-		this.debouncedAutosaveFlushToRevision = debounce( this.autosaveFlushToRevision, 30000 );
+		this.debouncedAutosaveFlushToRevision = debounce( this.autosaveFlushToRevision, 10000, {
+			leading: true,
+		} );
 		this.useDefaultSidebarFocus();
 		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
@@ -149,7 +151,6 @@ export class PostEditor extends React.Component {
 		if ( nextState.isSaving && ! this.state.isSaving ) {
 			this.debouncedAutosave.cancel();
 			this.throttledAutosave.cancel();
-			this.debouncedAutosaveFlushToRevision.cancel();
 		}
 
 		if ( nextProps.isDirty ) {
