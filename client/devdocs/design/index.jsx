@@ -67,6 +67,7 @@ import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
 import InfoPopover from 'components/info-popover/docs/example';
+import InlineSupportLink from 'components/inline-support-link/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
 import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
 import JetpackHeaderExample from 'components/jetpack-header/docs/example';
@@ -210,6 +211,7 @@ class DesignAssets extends React.Component {
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
 					<InfoPopover readmeFilePath="info-popover" />
+					<InlineSupportLink readmeFilePath="inline-support-link" />
 					<InputChrono readmeFilePath="input-chrono" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />

@@ -33,6 +33,7 @@ import PodcastingPrivateSiteMessage from './private-site';
 import PodcastingNoPermissionsMessage from './no-permissions';
 import PodcastingNotSupportedMessage from './not-supported';
 import PodcastingPublishNotice from './publish-notice';
+import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
 
 /**
@@ -220,7 +221,10 @@ class PodcastingDetails extends Component {
 						backHref={ writingHref }
 						backText={ translate( 'Writing' ) }
 					>
-						<h1>{ translate( 'Podcasting Settings' ) }</h1>
+						<h1>
+							{ translate( 'Podcasting Settings' ) }
+							<PodcastingSupportLink showText={ false } iconSize={ 16 } />
+						</h1>
 					</HeaderCake>
 					{ ! error && (
 						<Card className="podcasting-details__category-wrapper">
