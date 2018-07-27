@@ -1,10 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import {
@@ -36,9 +31,13 @@ describe( 'actions', () => {
 		setFeatureFlag( 'comments/filters-in-posts', true );
 
 		test( 'should return a comment request action', () => {
-			const action = requestPostComments( { siteId: SITE_ID, postId: POST_ID, status: 'trash' } );
+			const action = requestPostComments( {
+				siteId: SITE_ID,
+				postId: POST_ID,
+				status: 'trash',
+			} );
 
-			expect( action ).to.eql( {
+			expect( action ).toMatchObject( {
 				type: COMMENTS_REQUEST,
 				siteId: SITE_ID,
 				postId: POST_ID,
@@ -52,9 +51,13 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should return a comment request action with a default status of approved', () => {
-			const action = requestPostComments( { siteId: SITE_ID, postId: POST_ID, status: undefined } );
+			const action = requestPostComments( {
+				siteId: SITE_ID,
+				postId: POST_ID,
+				status: undefined,
+			} );
 
-			expect( action ).to.eql( {
+			expect( action ).toMatchObject( {
 				type: COMMENTS_REQUEST,
 				siteId: SITE_ID,
 				postId: POST_ID,
@@ -72,7 +75,7 @@ describe( 'actions', () => {
 		test( 'should return a write comment action', () => {
 			const action = writeComment( 'comment text', SITE_ID, POST_ID );
 
-			expect( action ).to.eql( {
+			expect( action ).toMatchObject( {
 				type: COMMENTS_WRITE,
 				siteId: SITE_ID,
 				postId: POST_ID,
@@ -85,7 +88,7 @@ describe( 'actions', () => {
 		test( 'should return a write comment action', () => {
 			const action = replyComment( 'comment text', SITE_ID, POST_ID, 1 );
 
-			expect( action ).to.eql( {
+			expect( action ).toMatchObject( {
 				type: COMMENTS_REPLY_WRITE,
 				siteId: SITE_ID,
 				postId: POST_ID,
@@ -100,8 +103,8 @@ describe( 'actions', () => {
 		test( 'should dispatch remove for a placeholder when provided', () => {
 			const deleteCommentAction = deleteComment( SITE_ID, POST_ID, 'placeholder-123' );
 
-			expect( deleteCommentAction.type ).to.eql( COMMENTS_DELETE );
-			expect( deleteCommentAction.commentId ).to.equal( 'placeholder-123' );
+			expect( deleteCommentAction.type ).toEqual( COMMENTS_DELETE );
+			expect( deleteCommentAction.commentId ).toEqual( 'placeholder-123' );
 		} );
 	} );
 
@@ -109,7 +112,7 @@ describe( 'actions', () => {
 		test( 'should return a like comment action', () => {
 			const action = likeComment( SITE_ID, POST_ID, 1 );
 
-			expect( action ).to.eql( {
+			expect( action ).toMatchObject( {
 				type: COMMENTS_LIKE,
 				siteId: SITE_ID,
 				postId: POST_ID,
@@ -122,7 +125,7 @@ describe( 'actions', () => {
 		test( 'should return a comment unlike action', () => {
 			const action = unlikeComment( SITE_ID, POST_ID, 1 );
 
-			expect( action ).to.be.eql( {
+			expect( action ).toMatchObject( {
 				type: COMMENTS_UNLIKE,
 				siteId: SITE_ID,
 				postId: POST_ID,
@@ -135,7 +138,7 @@ describe( 'actions', () => {
 		test( 'should return an action to set the active comment reply', () => {
 			const action = setActiveReply( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
-			expect( action ).to.be.eql( {
+			expect( action ).toMatchObject( {
 				type: COMMENTS_SET_ACTIVE_REPLY,
 				payload: {
 					siteId: SITE_ID,

@@ -51,11 +51,7 @@ class PostComments extends React.Component {
 }
 
 export default connect(
-	state => {
-		return {
-			// @todo add selector for most recent comment date
-		};
-	},
+	null,
 	{
 		requestPostComments,
 	}
