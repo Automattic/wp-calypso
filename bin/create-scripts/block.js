@@ -5,6 +5,7 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 
 const __rootDir = path.resolve( __dirname, '../../' );
+const CopyWebpackPlugin = require( path.resolve( __rootDir, 'server/bundler/copy-webpack-plugin' ) );
 const entryPath = path.resolve( __rootDir, process.argv[ 2 ] );
 const sourceDir = path.dirname( entryPath );
 const outputDir = process.argv[ 3 ] ? process.argv[ 3 ] : path.join( sourceDir, 'build' );
@@ -31,6 +32,9 @@ const config = {
 			libraryTarget: 'window',
 			library: `blocks-${ blockName }`,
 		},
+		plugins: [
+			...baseConfig.plugins.filter( plugin => ! ( plugin instanceof CopyWebpackPlugin ) ),
+		]
 	},
 };
 
