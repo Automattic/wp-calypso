@@ -30,6 +30,14 @@ yargs
 		command: 'gutenberg',
 		desc: 'Build a Gutenberg extension',
 		builder: yargs => yargs.options( {
+			'mode': {
+				alias: 'm',
+				description: 'Enable or disable production optimizations.',
+				type: 'string',
+				choises: [ 'production', 'development' ],
+				default: 'production',
+				requiresArg: true,
+			},
 			'editor-script': {
 				description: 'Entry for editor side JavaScript file',
 				type: 'string',

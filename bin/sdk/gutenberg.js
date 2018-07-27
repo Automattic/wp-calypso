@@ -24,7 +24,7 @@ exports.compile = args => {
 		...baseConfig,
 		...{
 			context: __rootDir,
-			mode: 'production',
+			mode: options.mode,
 			entry: {
 				[ `${ name }-editor-script` ]: options.editorScript,
 			},
