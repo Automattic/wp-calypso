@@ -32,7 +32,7 @@ yargs
 		builder: yargs => yargs.options( {
 			'mode': {
 				alias: 'm',
-				description: 'Enable or disable production optimizations.',
+				description: 'Choose the way how assets are optimized.',
 				type: 'string',
 				choices: [ 'production', 'development' ],
 				default: 'production',
