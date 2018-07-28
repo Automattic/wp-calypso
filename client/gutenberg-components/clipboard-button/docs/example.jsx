@@ -18,6 +18,7 @@ export default class extends React.Component {
 	render() {
 		return (
 			<ClipboardButton
+				isPrimary
 				text="WordPress"
 				onCopy={ () => this.setState( { hasCopied: true } ) }
 				onFinishCopy={ () => this.setState( { hasCopied: false } ) }
