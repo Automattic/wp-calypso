@@ -7,3 +7,4 @@ export ClipboardButton from './clipboard-button/docs/example';
 export Dashicon from './dashicon/docs/example';
 export DateTime from './date-time/docs/example';
 export Disabled from './disabled/docs/example';
+export Draggable from './draggable/docs/example';
