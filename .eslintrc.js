@@ -33,6 +33,9 @@ module.exports = {
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 0,
 
+		// Deprecated rule, fails in some valid cases with custom input components
+		'jsx-a11y/label-has-for': 0,
+
 		// i18n-calypso translate triggers false failures
 		'jsx-a11y/anchor-has-content': 0,
 
