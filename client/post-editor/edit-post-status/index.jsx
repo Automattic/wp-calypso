@@ -88,8 +88,6 @@ export class EditPostStatus extends Component {
 		const showPending = post && ! isPublished && ! isScheduled && canUserPublishPosts;
 		const showRevertToDraft = isPublished || isScheduled || ( isPending && ! canUserPublishPosts );
 
-		/* TODO: fix the label a11y and enable the ESLint rule again */
-		/* eslint-disable jsx-a11y/label-has-for */
 		return (
 			<div className="edit-post-status">
 				{ this.renderPostScheduling() }
@@ -135,7 +133,6 @@ export class EditPostStatus extends Component {
 				) }
 			</div>
 		);
-		/* eslint-enable jsx-a11y/label-has-for */
 	}
 
 	renderPostScheduling() {

@@ -53,8 +53,6 @@ export class BulkSelect extends React.Component {
 
 		return (
 			<span className="bulk-select">
-				{ /* The label + input have an implicit relationship since the input is a direct child of the label. */ }
-				{ /* eslint-disable jsx-a11y/label-has-for */ }
 				<label className="bulk-select__container">
 					<input
 						type="checkbox"
@@ -66,7 +64,6 @@ export class BulkSelect extends React.Component {
 					<Count count={ this.props.selectedElements } />
 					{ this.getStateIcon() }
 				</label>
-				{ /* eslint-enable jsx-a11y/label-has-for */ }
 			</span>
 		);
 	}
