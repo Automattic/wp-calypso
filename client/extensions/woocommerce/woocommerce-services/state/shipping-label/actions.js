@@ -591,76 +591,81 @@ export const confirmPackages = ( orderId, siteId ) => ( dispatch, getState ) => 
 	tryGetLabelRates( orderId, siteId, dispatch, getState );
 };
 
-export const setContentsType = ( orderId, siteId, packageId, value ) => ( {
+export const setContentsType = ( orderId, siteId, packageId, contentsType ) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_TYPE,
 	siteId,
 	orderId,
 	packageId,
-	value,
+	contentsType,
 } );
 
-export const setContentsExplanation = ( orderId, siteId, packageId, value ) => ( {
+export const setContentsExplanation = ( orderId, siteId, packageId, contentsExplanation ) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_EXPLANATION,
 	siteId,
 	orderId,
 	packageId,
-	value,
+	contentsExplanation,
 } );
 
-export const setRestrictionType = ( orderId, siteId, packageId, value ) => ( {
+export const setRestrictionType = ( orderId, siteId, packageId, restrictionType ) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE,
 	siteId,
 	orderId,
 	packageId,
-	value,
+	restrictionType,
 } );
 
-export const setRestrictionExplanation = ( orderId, siteId, packageId, value ) => ( {
+export const setRestrictionExplanation = (
+	orderId,
+	siteId,
+	packageId,
+	restrictionExplanation
+) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION,
 	siteId,
 	orderId,
 	packageId,
-	value,
+	restrictionExplanation,
 } );
 
-export const setAbandonOnNonDelivery = ( orderId, siteId, packageId, value ) => ( {
+export const setAbandonOnNonDelivery = ( orderId, siteId, packageId, abandonOnNonDelivery ) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ABANDON_ON_NON_DELIVERY,
 	siteId,
 	orderId,
 	packageId,
-	value,
+	abandonOnNonDelivery,
 } );
 
-export const setITN = ( orderId, siteId, packageId, value ) => ( {
+export const setITN = ( orderId, siteId, packageId, itn ) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ITN,
 	siteId,
 	orderId,
 	packageId,
-	value,
+	itn,
 } );
 
-export const setCustomsItemDescription = ( orderId, siteId, productId, value ) => ( {
+export const setCustomsItemDescription = ( orderId, siteId, productId, description ) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_DESCRIPTION,
 	siteId,
 	orderId,
 	productId,
-	value,
+	description,
 } );
 
-export const setCustomsItemTariffNumber = ( orderId, siteId, productId, value ) => ( {
+export const setCustomsItemTariffNumber = ( orderId, siteId, productId, tariffNumber ) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_TARIFF_NUMBER,
 	siteId,
 	orderId,
 	productId,
-	value,
+	tariffNumber,
 } );
 
-export const setCustomsItemOriginCountry = ( orderId, siteId, productId, value ) => ( {
+export const setCustomsItemOriginCountry = ( orderId, siteId, productId, originCountry ) => ( {
 	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
 	siteId,
 	orderId,
 	productId,
-	value,
+	originCountry,
 } );
 
 const saveCustoms = ( orderId, siteId ) => {
