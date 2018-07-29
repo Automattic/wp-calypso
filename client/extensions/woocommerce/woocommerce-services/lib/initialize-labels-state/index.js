@@ -119,7 +119,6 @@ export default data => {
 					customsItemsData,
 					( { tariffNumber } ) => ! tariffNumber
 				),
-				saved: true,
 			},
 			rates: {
 				values: isEmpty( formData.rates.selected )
