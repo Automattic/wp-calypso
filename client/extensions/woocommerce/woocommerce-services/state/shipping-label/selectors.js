@@ -245,7 +245,10 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 		// EasyPost requires an origin phone number for international shipments.
 		// This validation ensures that EasyPost will accept it, even though the phone may be invalid.
 		if ( ! phone ) {
-			errors.phone = translate( 'Origin phone number is required for international shipments' );
+			errors.phone = translate(
+				'Please enter a phone number for your origin address. ' +
+					"It's required because this shipment requires a customs form."
+			);
 		} else if (
 			10 !==
 			phone
@@ -253,7 +256,10 @@ const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = 
 				.join( '' )
 				.replace( /^1/, '' ).length
 		) {
-			errors.phone = translate( 'Invalid phone number' );
+			errors.phone = translate(
+				'Customs forms require a 10-digit phone number. ' +
+					'Please edit your phone number so it has at most 10 digits.'
+			);
 		}
 	}
 
