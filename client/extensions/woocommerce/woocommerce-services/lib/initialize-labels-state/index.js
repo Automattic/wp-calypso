@@ -54,7 +54,6 @@ export default data => {
 				value,
 				hs_tariff_number,
 				origin_country,
-				parent_product_id,
 			} ) => {
 				const attributesStr = attributes ? ' (' + attributes + ')' : '';
 				const defaultDescription = name.substring( name.indexOf( '-' ) + 1 ).trim() + attributesStr;
@@ -65,7 +64,6 @@ export default data => {
 					value,
 					tariffNumber: hs_tariff_number || '',
 					originCountry: origin_country || formData.origin.country,
-					parentProductId: parent_product_id,
 				};
 			}
 		);
