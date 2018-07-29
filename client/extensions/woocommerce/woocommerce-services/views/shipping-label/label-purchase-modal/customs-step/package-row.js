@@ -148,9 +148,24 @@ PackageRow.propTypes = {
 const mapStateToProps = ( state, { orderId, siteId, packageId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const {
+		contentsType,
+		contentsExplanation,
+		restrictionType,
+		restrictionExplanation,
+		abandonOnNonDelivery,
+		itn,
+		items,
+	} = shippingLabel.form.packages.selected[ packageId ];
 
 	return {
-		...shippingLabel.form.packages.selected[ packageId ],
+		contentsType,
+		contentsExplanation,
+		restrictionType,
+		restrictionExplanation,
+		abandonOnNonDelivery,
+		itn,
+		items,
 		errors: loaded ? getFormErrors( state, orderId, siteId ).customs.packages[ packageId ] : {},
 	};
 };
