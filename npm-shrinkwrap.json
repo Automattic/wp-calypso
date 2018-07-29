@@ -4246,9 +4246,9 @@
       }
     },
     "dompurify": {
-      "version": "1.0.6",
-      "resolved": "https://registry.npmjs.org/dompurify/-/dompurify-1.0.6.tgz",
-      "integrity": "sha512-5AOcPwJuL1jLEqPuzvDv2KyQhOypagOqmiY0vsXMzgPVMeBNFuqQmirwoCK9N8x2yCy9bZWCzbKzfnRAU6rvNA=="
+      "version": "1.0.7",
+      "resolved": "https://registry.npmjs.org/dompurify/-/dompurify-1.0.7.tgz",
+      "integrity": "sha512-1xK0JEda/jvIm3SgqHXKvRCh3AbEKCyBbUAGpNCMVIljBD145cPvBR66JSj3O4SdscFUx5NXsDkJpz6vDT8KLg=="
     },
     "domutils": {
       "version": "1.7.0",
