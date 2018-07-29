@@ -6,7 +6,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
-import { keys, trim } from 'lodash';
+import { trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import Main from 'components/main';
 import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 import { camelCaseToSlug, slugToCamelCase } from 'devdocs/docs-example/util';
-import * as examples from 'gutenberg-components/examples';
+import GutenbergComponentExample from './gutenberg-component-example';
 
 export default class extends React.Component {
 	state = { filter: '' };
@@ -39,6 +39,17 @@ export default class extends React.Component {
 			'is-single': component,
 			'is-list': ! component,
 		} );
+
+		const componentsWithExamples = [
+			'Autocomplete',
+			'Button',
+			'ButtonGroup',
+			'CheckboxControl',
+			'ClipboardButton',
+			'Dashicon',
+			'Disabled',
+			'Draggable',
+		];
 
 		return (
 			<Main className={ className }>
@@ -61,10 +72,13 @@ export default class extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter } section="gutenberg-components">
-					{ keys( examples ).map( exampleName => {
-						const Example = examples[ exampleName ];
+					{ componentsWithExamples.map( componentName => {
 						return (
-							<Example key={ exampleName } readmeFilePath={ camelCaseToSlug( exampleName ) } />
+							<GutenbergComponentExample
+								key={ componentName }
+								asyncName={ componentName }
+								readmeFilePath={ camelCaseToSlug( componentName ) }
+							/>
 						);
 					} ) }
 				</Collection>
