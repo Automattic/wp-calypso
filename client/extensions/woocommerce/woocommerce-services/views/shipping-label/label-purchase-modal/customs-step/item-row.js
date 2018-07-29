@@ -50,13 +50,6 @@ const ItemRow = ( props ) => {
 			placeholder={ defaultDescription }
 			updateValue={ props.setCustomsItemDescription }
 			error={ errors.description } />
-		<Dropdown
-			id={ packageId + '_' + productId + '_originCountry' }
-			className="customs-step__item-country-column"
-			title={ translate( 'Origin country' ) }
-			value={ originCountry }
-			updateValue={ props.setCustomsItemOriginCountry }
-			valuesMap={ countryNames } />
 		<TextField
 			id={ packageId + '_' + productId + '_tariffNumber' }
 			className="customs-step__item-code-column"
@@ -64,6 +57,13 @@ const ItemRow = ( props ) => {
 			value={ tariffNumber }
 			updateValue={ props.setCustomsItemTariffNumber }
 			error={ errors.tariffNumber } />
+		<Dropdown
+			id={ packageId + '_' + productId + '_originCountry' }
+			className="customs-step__item-country-column"
+			title={ translate( 'Origin country' ) }
+			value={ originCountry }
+			updateValue={ props.setCustomsItemOriginCountry }
+			valuesMap={ countryNames } />
 	</div>;
 };
 
