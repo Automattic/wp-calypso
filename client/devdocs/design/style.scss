@@ -89,9 +89,18 @@
 	}
 }
 
-.design__gutenberg-component-example {
-	// Styles the contenteditable div included in the Autocomplete example as an input
-	.components-autocomplete [contenteditable] {
-		@extend %form-field;
-	}
+// Styles the contenteditable div included in the Gutenberg Autocomplete component example as an input
+.design__gutenberg-component-example--autocomplete [contenteditable] {
+	@extend %form-field;
+}
+
+.design__gutenberg-component-example--drop-zone {
+	position: relative;
+	text-align: center;
+	padding: 50px;
+}
+
+.design__gutenberg-component-example--date-time,
+.design__gutenberg-component-example--dropdown {
+	display: inline-block;
 }

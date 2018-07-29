@@ -10,6 +10,7 @@ import { getSettings } from '@wordpress/date';
 import { LiveError, LivePreview, LiveProvider } from 'react-live';
 import request from 'superagent';
 import codeBlocks from 'gfm-code-blocks';
+import classnames from 'classnames';
 
 class Example extends React.Component {
 	state = {
@@ -32,7 +33,7 @@ class Example extends React.Component {
 				format: 'markdown',
 			} )
 			.then( ( { text } ) => {
-				let code = codeBlocks( text )[ 0 ].code;
+				let code = codeBlocks( text ).filter( block => 'jsx' === block.lang )[ 0 ].code;
 
 				// react-live cannot resolve imports in real time, so we get rid of them
 				// (dependencies will be injected via the scope property)
@@ -49,8 +50,13 @@ class Example extends React.Component {
 			withState,
 			getSettings,
 		};
+		const className = classnames(
+			'design__gutenberg-component-example',
+			`design__gutenberg-component-example--${ this.props.readmeFilePath }`
+		);
+
 		return code ? (
-			<LiveProvider code={ code } scope={ scope } className="design__gutenberg-component-example">
+			<LiveProvider code={ code } scope={ scope } className={ className }>
 				<LiveError />
 				<LivePreview />
 			</LiveProvider>
