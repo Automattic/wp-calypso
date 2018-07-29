@@ -6,7 +6,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
-import { trim } from 'lodash';
+import { isArray, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +40,7 @@ export default class extends React.Component {
 			'is-list': ! component,
 		} );
 
-		const componentsWithExamples = [
+		const componentsWithExample = [
 			'Autocomplete',
 			'Button',
 			'ButtonGroup',
@@ -49,6 +49,7 @@ export default class extends React.Component {
 			'Dashicon',
 			'Disabled',
 			'Draggable',
+			[ 'DateTimePicker', { readmeFilePath: 'date-time' } ],
 		];
 
 		return (
@@ -72,12 +73,18 @@ export default class extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter } section="gutenberg-components">
-					{ componentsWithExamples.map( componentName => {
+					{ componentsWithExample.map( componentWithExample => {
+						const componentName = isArray( componentWithExample )
+							? componentWithExample[ 0 ]
+							: componentWithExample;
+						const readmeFilePath = isArray( componentWithExample )
+							? componentWithExample[ 1 ].readmeFilePath
+							: camelCaseToSlug( componentName );
 						return (
 							<GutenbergComponentExample
 								key={ componentName }
 								asyncName={ componentName }
-								readmeFilePath={ camelCaseToSlug( componentName ) }
+								readmeFilePath={ readmeFilePath }
 							/>
 						);
 					} ) }

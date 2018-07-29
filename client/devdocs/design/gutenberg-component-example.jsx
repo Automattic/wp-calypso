@@ -4,8 +4,10 @@
  * External dependencies
  */
 import React from 'react';
-import * as scope from '@wordpress/components';
-import { LiveError, LiveProvider, LivePreview } from 'react-live';
+import * as components from '@wordpress/components';
+import { withState } from '@wordpress/compose';
+import { getSettings } from '@wordpress/date';
+import { LiveError, LivePreview, LiveProvider } from 'react-live';
 import request from 'superagent';
 import codeBlocks from 'gfm-code-blocks';
 
@@ -22,6 +24,7 @@ class Example extends React.Component {
 		const readmeFilePath = `/node_modules/@wordpress/components/src/${
 			this.props.readmeFilePath
 		}/README.md`;
+
 		request
 			.get( '/devdocs/service/content' )
 			.query( {
@@ -41,6 +44,11 @@ class Example extends React.Component {
 
 	render() {
 		const { code } = this.state;
+		const scope = {
+			...components,
+			withState,
+			getSettings,
+		};
 		return code ? (
 			<LiveProvider code={ code } scope={ scope } className="design__gutenberg-component-example">
 				<LiveError />

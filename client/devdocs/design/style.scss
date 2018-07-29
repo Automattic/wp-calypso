@@ -90,11 +90,8 @@
 }
 
 .design__gutenberg-component-example {
+	// Styles the contenteditable div included in the Autocomplete example as an input
 	.components-autocomplete [contenteditable] {
 		@extend %form-field;
 	}
-}
-
-.docs__gutenberg-components-datepicker {
-	display: inline-block;
 }
