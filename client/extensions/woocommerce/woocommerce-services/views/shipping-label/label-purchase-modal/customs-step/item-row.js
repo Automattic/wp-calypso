@@ -22,10 +22,15 @@ import {
 	getAllCountryNames,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
+import ExternalLink from 'components/external-link';
 
 const TariffCodeTitle = localize( ( { translate } ) =>
-	<span>{ translate( 'Tariff Code' ) } (<a href="https://hts.usitc.gov/"
-		target="_blank" rel="noopener noreferrer">{ translate( 'look up' ) }</a>)</span>
+	<span>{ translate( 'Tariff code' ) } (
+		<ExternalLink icon href="https://hts.usitc.gov/" target="_blank">
+			{ translate( 'look up' ) }
+		</ExternalLink>
+		)
+	</span>
 );
 
 const ItemRow = ( props ) => {

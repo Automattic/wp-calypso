@@ -13,7 +13,7 @@
 }
 
 .customs-step__restrictions-row {
-	margin-top: 8px;
+	margin-top: 16px;
 	display: flex;
 	flex-wrap: wrap;
 
@@ -55,10 +55,11 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 
-		.form-legend, .form-label {
+		.form-legend,
+		.form-label {
 			display: none;
 		}
 	}
@@ -69,7 +70,7 @@
 .customs-step__item-code-column {
 	width: 100%;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-left: 24px;
 	}
 }

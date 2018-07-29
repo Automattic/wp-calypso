@@ -27,6 +27,7 @@ import {
 	isLoaded,
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import ExternalLink from 'components/external-link';
 
 const PackageRow = ( props ) => {
 	const {
@@ -100,8 +101,12 @@ const PackageRow = ( props ) => {
 		<TextField
 			id={ packageId + '_itn' }
 			title={
-				<span>{ translate( 'ITN' ) } (<a href="https://pe.usps.com/text/imm/immc5_010.htm"
-					target="_blank" rel="noopener noreferrer">{ translate( 'more info' ) }</a>)</span>
+				<span>{ translate( 'ITN' ) } (
+					<ExternalLink icon href="https://pe.usps.com/text/imm/immc5_010.htm" target="_blank">
+						{ translate( 'more info' ) }
+					</ExternalLink>
+					)
+				</span>
 			}
 			value={ itn || '' }
 			updateValue={ props.setITN }
