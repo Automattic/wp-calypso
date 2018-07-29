@@ -23,6 +23,7 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import ExternalLink from 'components/external-link';
+import InfoTooltip from 'woocommerce/woocommerce-services/components/info-tooltip';
 
 const TariffCodeTitle = localize( ( { translate } ) =>
 	<span>{ translate( 'Tariff code' ) } (
@@ -30,6 +31,15 @@ const TariffCodeTitle = localize( ( { translate } ) =>
 			{ translate( 'look up' ) }
 		</ExternalLink>
 		)
+	</span>
+);
+
+const OriginCountryTitle = localize( ( { translate } ) =>
+	<span>
+		{ translate( 'Origin country' ) }
+		<InfoTooltip>
+			{ translate( 'Country where the product was manufactured or assembled' ) }
+		</InfoTooltip>
 	</span>
 );
 
@@ -65,7 +75,7 @@ const ItemRow = ( props ) => {
 		<Dropdown
 			id={ packageId + '_' + productId + '_originCountry' }
 			className="customs-step__item-country-column"
-			title={ translate( 'Origin country' ) }
+			title={ <OriginCountryTitle /> }
 			value={ originCountry }
 			updateValue={ props.setCustomsItemOriginCountry }
 			valuesMap={ countryNames } />
@@ -114,7 +124,7 @@ export default connect( mapStateToProps, mapDispatchToProps )( localize( ItemRow
 export const ItemRowHeader = localize( ( { translate } ) => (
 	<div className="customs-step__item-rows-header">
 		<span className="customs-step__item-description-column">{ translate( 'Description' ) }</span>
-		<span className="customs-step__item-country-column">{ translate( 'Origin country' ) }</span>
 		<span className="customs-step__item-code-column">{ <TariffCodeTitle /> }</span>
+		<span className="customs-step__item-country-column">{ <OriginCountryTitle /> }</span>
 	</div>
 ) );
