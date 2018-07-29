@@ -73,7 +73,7 @@ export class MediaFolderDropdown extends Component {
 	renderOptions( optionData ) {
 		return optionData.map( folder => {
 			const folderId = '' + folder.ID;
-			const folderChildren = folder.children ? ` (${ folder.children })` : ``;
+			const folderChildren = folder.children ? ` (${ folder.children })` : '';
 
 			const isSelected = folder.ID === this.props.folder ? 'selected' : '';
 
