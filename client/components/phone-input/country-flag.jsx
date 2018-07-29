@@ -19,7 +19,7 @@ export default class extends React.Component {
 	};
 
 	state = {
-		ready: false,
+		ready: true,
 		error: false,
 	};
 
@@ -48,15 +48,12 @@ export default class extends React.Component {
 
 		if ( this.props.countryCode ) {
 			if ( ! this.state.error ) {
-				return (
-					<img
-						onLoad={ this.handleImageLoad }
-						onError={ this.handleImageError }
-						src={ `/calypso/images/flags/${ this.props.countryCode }.svg` }
-						className="phone-input__flag-icon"
-						style={ style }
-					/>
-				);
+				const svg = require( 'svg-inline-loader!' +
+					'../../../node_modules/flag-icon-css/flags/4x3/' +
+					this.props.countryCode +
+					'.svg' );
+				console.log( svg );
+				return <div dangerouslySetInnerHTML={ { __html: svg } } />;
 			}
 			return <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" />;
 		}
