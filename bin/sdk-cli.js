@@ -29,7 +29,6 @@ const getBaseConfig = ( options = {} ) => {
 
 	// these are currently Calypso-specific
 	const omitPlugins = [
-		require( path.resolve( __rootDir, 'server/bundler/copy-webpack-plugin' ) ),
 		webpack.HotModuleReplacementPlugin,
 	];
 

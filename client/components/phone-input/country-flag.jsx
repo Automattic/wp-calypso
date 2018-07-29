@@ -3,70 +3,30 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
 
-/** Internal Dependencies */
-import Spinner from 'components/spinner';
-
-export default class extends React.Component {
+export default class extends PureComponent {
 	static displayName = 'PhoneInputCountryFlag';
 
 	static propTypes = {
 		countryCode: PropTypes.string.isRequired,
 	};
 
-	state = {
-		ready: false,
-		error: false,
-	};
-
-	componentDidUpdate( oldProps ) {
-		if ( this.props.countryCode && this.props.countryCode !== oldProps.countryCode ) {
-			this.setState( { ready: false, error: false } );
-		}
-	}
-
-	renderSpinner = () => {
-		if ( ( ! this.props.countryCode || ! this.state.ready ) && ! this.state.error ) {
-			return <Spinner size={ 16 } className="phone-input__flag-spinner" />;
-		}
-	};
-
-	handleImageLoad = () => {
-		this.setState( { ready: true, error: false } );
-	};
-
-	handleImageError = () => {
-		this.setState( { ready: false, error: true } );
-	};
-
-	renderFlag = () => {
-		const style = this.state.ready ? {} : { visibility: 'hidden' };
-
-		if ( this.props.countryCode ) {
-			if ( ! this.state.error ) {
-				return (
-					<img
-						onLoad={ this.handleImageLoad }
-						onError={ this.handleImageError }
-						src={ `/calypso/images/flags/${ this.props.countryCode }.svg` }
-						className="phone-input__flag-icon"
-						style={ style }
-					/>
-				);
-			}
-			return <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" />;
-		}
-	};
-
 	render() {
+		const { countryCode } = this.props;
+		// don't confusingly split the import statement with its long string
+		// note that webpack will parse this code at compile-time and auto-generate
+		// a context for loading the SVGs. it will infer the file glob for all SVG
+		// files in the given path and copy them to the public directory
+		//
+		// prettier-ignore
+		const flagSvg = require( '../../../node_modules/flag-icon-css/flags/4x3/' + countryCode + '.svg' );
+
 		return (
 			<div className="phone-input__flag-container">
-				{ this.renderSpinner() }
-				{ this.renderFlag() }
+				<img alt="country flag" src={ flagSvg } className="phone-input__flag-icon" />
 				<Gridicon icon="chevron-down" size={ 12 } className="phone-input__flag-selector-icon" />
 			</div>
 		);
