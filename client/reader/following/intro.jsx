@@ -66,11 +66,10 @@ class FollowingIntro extends React.Component {
 					</div>
 					<div className="following__intro-character" />
 
-					<div
+					<button
 						className="following__intro-close"
 						onClick={ dismiss }
 						title={ translate( 'Close' ) }
-						role="button"
 						aria-label={ translate( 'Close' ) }
 					>
 						<Gridicon
@@ -79,7 +78,7 @@ class FollowingIntro extends React.Component {
 							title={ translate( 'Close' ) }
 						/>
 						<span className="following__intro-close-icon-bg" />
-					</div>
+					</button>
 				</div>
 			</header>
 		);
