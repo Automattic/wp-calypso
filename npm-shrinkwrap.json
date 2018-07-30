@@ -4422,6 +4422,13 @@
         "fbjs": "^0.8.15",
         "immutable": "~3.7.4",
         "object-assign": "^4.1.0"
+      },
+      "dependencies": {
+        "immutable": {
+          "version": "3.7.6",
+          "resolved": "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz",
+          "integrity": "sha1-E7TTyxK++hVIKib+Gy665kAHHks="
+        }
       }
     },
     "duplexer": {
@@ -6250,7 +6257,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6615,7 +6623,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6663,6 +6672,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6701,11 +6711,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -7493,9 +7505,9 @@
       }
     },
     "immutable": {
-      "version": "3.7.6",
-      "resolved": "https://registry.npmjs.org/immutable/-/immutable-3.7.6.tgz",
-      "integrity": "sha1-E7TTyxK++hVIKib+Gy665kAHHks="
+      "version": "3.8.2",
+      "resolved": "https://registry.npmjs.org/immutable/-/immutable-3.8.2.tgz",
+      "integrity": "sha1-wkOZUUVbs5kT2vKBN28VMOEErfM="
     },
     "import-cwd": {
       "version": "2.1.0",
