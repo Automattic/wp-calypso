@@ -3,4 +3,5 @@
 /**
  * Internal dependencies
  */
-import 'gutenberg/extensions/editor-notes/index.js';
+import 'gutenberg/extensions/editor-notes';
+import 'gutenberg/extensions/prev-next';
