@@ -319,38 +319,32 @@ class SiteSelector extends Component {
 		);
 	}
 
-	renderRecentSites() {
+	renderRecentSites( sites ) {
 		if ( ! this.shouldRenderRecentSites() ) {
 			return null;
 		}
 
-		const sitesToBeRendered = this.sitesToBeRendered();
-
-		const sites = [];
+		const recentSites = [];
 		for ( const siteId of this.props.recentSites ) {
-			const site = find( sitesToBeRendered, { ID: siteId } );
+			const site = find( sites, { ID: siteId } );
 			if ( site ) {
-				sites.push( site );
+				recentSites.push( site );
 			}
 		}
 
-		if ( isEmpty( sites ) ) {
+		if ( isEmpty( recentSites ) ) {
 			return null;
 		}
 
-		const recentSites = sites.map( this.renderSite, this );
+		const renderedRecentSites = recentSites.map( this.renderSite, this );
 
-		return <div className="site-selector__recent">{ recentSites }</div>;
+		return <div className="site-selector__recent">{ renderedRecentSites }</div>;
 	}
 
-	renderSites() {
-		let sites;
-
+	renderSites( sites ) {
 		if ( ! this.props.hasAllSitesList ) {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
-
-		sites = this.sitesToBeRendered();
 
 		// Filter recentSites
 		if ( this.shouldRenderRecentSites() ) {
@@ -411,6 +405,8 @@ class SiteSelector extends Component {
 
 		this.visibleSites = [];
 
+		const sites = this.sitesToBeRendered();
+
 		return (
 			<div
 				className={ selectorClass }
@@ -428,8 +424,8 @@ class SiteSelector extends Component {
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
-					{ this.renderRecentSites() }
-					{ this.renderSites() }
+					{ this.renderRecentSites( sites ) }
+					{ this.renderSites( sites ) }
 					{ hiddenSitesCount > 0 &&
 						! this.props.sitesFound && (
 							<span className="site-selector__hidden-sites-message">
