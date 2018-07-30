@@ -6,6 +6,7 @@
 const chalk = require( 'chalk' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
+const { isEmpty, negate, pickBy } = require( 'lodash' );
 
 const __rootDir = path.resolve( __dirname, '../../' );
 const CopyWebpackPlugin = require( path.resolve( __rootDir, 'server/bundler/copy-webpack-plugin' ) );
@@ -25,9 +26,10 @@ exports.compile = args => {
 		...{
 			context: __rootDir,
 			mode: options.mode,
-			entry: {
-				[ `${ name }-editor-script` ]: options.editorScript,
-			},
+			entry: pickBy( {
+				[ `${ name }-editor-script.js` ]: options.editorScript,
+				[ `${ name }-view-script.js` ]: options.viewScript,
+			}, negate( isEmpty ) ),
 			externals: {
 				...baseConfig.externals,
 				wp: 'wp',
@@ -37,7 +39,7 @@ exports.compile = args => {
 			},
 			output: {
 				path: options.outputDir,
-				filename: `${ name }-editor.js`,
+				filename: '[name]',
 				libraryTarget: 'window',
 			},
 			plugins: [
