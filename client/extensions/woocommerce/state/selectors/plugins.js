@@ -7,19 +7,19 @@ import { every, find } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
+import {
+	getPlugins,
+	isRequestingForSites,
+	getPluginOnSite,
+} from 'state/plugins/installed/selectors';
 import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import createSelector from 'lib/create-selector';
 
 const getWcsPluginData = createSelector(
 	( state, siteId ) => {
-		const siteIds = [ siteId ];
-		if ( isRequestingForSites( state, siteIds ) ) {
-			return null;
-		}
-
-		return find( getPlugins( state, siteIds, 'active' ), { slug: 'woocommerce-services' } );
+		const pluginData = getPluginOnSite( state, siteId, 'woocommerce-services' );
+		return pluginData && pluginData.sites[ siteId ].active ? pluginData : null;
 	},
 	( state, siteId ) => [ state.plugins.installed.plugins[ siteId ] ]
 );
