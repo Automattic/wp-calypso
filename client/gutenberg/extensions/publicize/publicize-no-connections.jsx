@@ -16,12 +16,17 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import wp from 'wp';
 
 /**
  * Internal dependencies
  */
-const { __, sprintf } = window.wp.i18n;
 import { getAllConnections } from './async-publicize-lib';
+
+/**
+ * Module variables
+ */
+const { __, sprintf } = wp.i18n;
 
 class PublicizeNoConnections extends Component {
 	constructor( props ) {

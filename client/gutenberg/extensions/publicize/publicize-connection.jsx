@@ -16,9 +16,12 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-const {
-	FormToggle,
-} = window.wp.components;
+import wp from 'wp';
+
+/**
+ * Module variables
+ */
+const { FormToggle } = wp.components;
 
 class PublicizeConnection extends Component {
 	/**

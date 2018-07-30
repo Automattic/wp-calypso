@@ -10,11 +10,15 @@
  */
 
 /**
- * Internal dependencies
+ * External Dependencies
+ */
+import wp from 'wp';
+
+/**
+ * Module variables
  */
 const {
 	gutenberg_publicize_setup,
-	wp,
 	ajaxurl,
 	$,
 } = window;

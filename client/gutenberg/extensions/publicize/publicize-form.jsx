@@ -13,15 +13,20 @@
  */
 import { compose } from 'redux';
 import isNil from 'lodash/isNil';
+import wp from 'wp';
 
 /**
  * Internal dependencies
  */
+import PublicizeFormUnwrapped from './publicize-form-unwrapped';
+
+/**
+ * Module variables
+ */
 const {
 	withSelect,
 	withDispatch,
-} = window.wp.data;
-import PublicizeFormUnwrapped from './publicize-form-unwrapped';
+} = wp.data;
 
 const PublicizeForm = compose(
 	withSelect( ( select ) => ( {

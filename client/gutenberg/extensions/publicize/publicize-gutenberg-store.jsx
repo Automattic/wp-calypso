@@ -12,6 +12,9 @@
  */
 import { getStaticPublicizeConnections } from './async-publicize-lib';
 
+/**
+ * Module variables
+ */
 const staticConnectionList = getStaticPublicizeConnections();
 
 const DEFAULT_STATE = {

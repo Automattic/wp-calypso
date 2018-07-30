@@ -12,16 +12,21 @@
  * External dependencies
  */
 import React from 'react';
+import wp from 'wp';
 
 /**
  * Internal dependencies
  */
-const { PluginPrePublishPanel } = window.wp.editPost;
-const { registerPlugin } = window.wp.plugins;
 import PublicizePanel from './publicize-panel';
 import publicizeStore from './publicize-gutenberg-store';
-const { data } = window.wp;
+
+/**
+ * Module variables
+ */
+const { data } = wp;
 const { registerStore } = data;
+const { PluginPrePublishPanel } = wp.editPost;
+const { registerPlugin } = wp.plugins;
 
 const PluginRender = () => (
 	<PluginPrePublishPanel>

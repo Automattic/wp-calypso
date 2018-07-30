@@ -22,23 +22,25 @@
  */
 import React, { Component } from 'react';
 import { compose } from 'redux';
+import wp from 'wp';
 
 /**
  * Internal dependencies
  */
-import {
-	requestPublicizeConnections,
-} from './async-publicize-lib';
+import PublicizeConnectionVerify from './publicize-connection-verify';
+import PublicizeForm from './publicize-form';
 import PublicizeNoConnections from './publicize-no-connections';
+import { requestPublicizeConnections } from './async-publicize-lib';
+
+/**
+ * Module variables
+ */
 const {
 	withSelect,
 	withDispatch,
-} = window.wp.data;
-
-import PublicizeForm from './publicize-form';
-import PublicizeConnectionVerify from './publicize-connection-verify';
-const { __ } = window.wp.i18n;
-const { PanelBody } = window.wp.components;
+} = wp.data;
+const { __ } = wp.i18n;
+const { PanelBody } = wp.components;
 
 class PublicizePanel extends Component {
 	constructor( props ) {

@@ -19,13 +19,18 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import isNil from 'lodash/isNil';
+import wp from 'wp';
 
 /**
  * Internal dependencies
  */
-const { __, _n, sprintf } = window.wp.i18n;
 import PublicizeConnection from './publicize-connection';
 import PublicizeSettingsButton from './publicize-settings-button';
+
+/**
+ * Module variables
+ */
+const { __, _n, sprintf } = wp.i18n;
 
 class PublicizeFormUnwrapped extends Component {
 	constructor( props ) {

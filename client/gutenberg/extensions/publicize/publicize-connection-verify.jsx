@@ -18,12 +18,17 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import wp from 'wp';
 
 /**
  * Internal dependencies
  */
 import { requestTestPublicizeConnections } from './async-publicize-lib';
-const { __ } = window.wp.i18n;
+
+/**
+ * Module variables
+ */
+const { __ } = wp.i18n;
 
 class PublicizeConnectionVerify extends Component {
 	constructor( props ) {

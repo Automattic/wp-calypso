@@ -20,11 +20,12 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import wp from 'wp';
 
 /**
- * Internal dependencies
+ * Module variables
  */
-const { __ } = window.wp.i18n;
+const { __ } = wp.i18n;
 
 class PublicizeSettingsButton extends Component {
 	/**
