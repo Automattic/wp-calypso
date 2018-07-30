@@ -34,4 +34,21 @@ export default {
 
 		return mime;
 	},
+
+	/**
+	 * Given an array of Media items, returns those items that
+	 * are of the type "folder"
+	 *
+	 * @param  {array} media media items
+	 * @return {array}       media items that are folders
+	 */
+	parseFolderMedia: function( media ) {
+		let folders = [];
+
+		if ( media && media.length ) {
+			folders = media.filter( mediaItem => mediaItem.type === 'folder' );
+		}
+
+		return folders;
+	},
 };

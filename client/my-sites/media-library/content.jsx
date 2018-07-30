@@ -62,26 +62,7 @@ class MediaLibraryContent extends React.Component {
 
 	constructor( props ) {
 		super( props );
-
-		this.state = { folders: [] };
 	}
-
-	parseFolders = ( { media } ) => {
-		let folders = false;
-
-		if ( media && media.length ) {
-			folders = media.filter( mediaItem => {
-				return mediaItem.type === 'folder';
-			} );
-		}
-
-		if ( ! folders || ! folders.length ) return;
-
-		// Only update the folders if we've got some new results
-		this.setState( {
-			folders,
-		} );
-	};
 
 	handleFolderChange = val => {
 		// Clear any selected items when changing folder view
@@ -299,7 +280,6 @@ class MediaLibraryContent extends React.Component {
 				search={ this.props.search }
 				source={ this.props.source }
 				folder={ this.props.folder }
-				onGetData={ this.parseFolders }
 			>
 				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
 					<MediaLibraryList
@@ -327,23 +307,31 @@ class MediaLibraryContent extends React.Component {
 
 		if ( this.props.source !== '' ) {
 			return (
-				<MediaLibraryExternalHeader
-					onMediaScaleChange={ this.props.onMediaScaleChange }
-					site={ this.props.site }
-					visible={ ! this.props.isRequesting }
-					canCopy={ this.props.postId === undefined }
+				<MediaListData
+					siteId={ this.props.site.ID }
+					postId={ this.props.postId }
+					filter={ this.props.filter }
+					search={ this.props.search }
 					source={ this.props.source }
 					folder={ this.props.folder }
-					folders={ this.state.folders }
-					onSourceChange={ this.props.onSourceChange }
-					onFolderChange={ this.handleFolderChange }
-					selectedItems={ this.props.selectedItems }
-					sticky={ ! this.props.scrollable }
-					hasAttribution={ 'pexels' === this.props.source }
-					hasRefreshButton={ 'pexels' !== this.props.source }
-					hasDateFilters={ 'google_photos' === this.props.source }
-					hasFolders={ 'google_photos' === this.props.source }
-				/>
+				>
+					<MediaLibraryExternalHeader
+						onMediaScaleChange={ this.props.onMediaScaleChange }
+						site={ this.props.site }
+						visible={ ! this.props.isRequesting }
+						canCopy={ this.props.postId === undefined }
+						source={ this.props.source }
+						folder={ this.props.folder }
+						onSourceChange={ this.props.onSourceChange }
+						onFolderChange={ this.handleFolderChange }
+						selectedItems={ this.props.selectedItems }
+						sticky={ ! this.props.scrollable }
+						hasAttribution={ 'pexels' === this.props.source }
+						hasRefreshButton={ 'pexels' !== this.props.source }
+						hasDateFilters={ 'google_photos' === this.props.source }
+						hasFolders={ 'google_photos' === this.props.source }
+					/>
+				</MediaListData>
 			);
 		}
 

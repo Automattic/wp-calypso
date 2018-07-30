@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { assign, isEqual, noop } from 'lodash';
+import { assign, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -16,14 +16,16 @@ import MediaListStore from 'lib/media/list-store';
 import passToChildren from 'lib/react-pass-to-children';
 import utils from './utils';
 
-function getStateData( siteId, cb = noop ) {
+function getStateData( siteId ) {
+	const media = MediaListStore.getAll( siteId );
+
 	const data = {
-		media: MediaListStore.getAll( siteId ),
+		media,
 		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
 		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId ),
+		folders: utils.parseFolderMedia( media ),
 	};
 
-	cb( data );
 	return data;
 }
 
@@ -37,14 +39,9 @@ export default class extends React.Component {
 		filter: PropTypes.string,
 		search: PropTypes.string,
 		folder: PropTypes.string,
-		onGetData: PropTypes.func,
 	};
 
-	static defaultProps = {
-		onGetData: noop,
-	};
-
-	state = getStateData( this.props.siteId, this.props.onGetData );
+	state = getStateData( this.props.siteId );
 
 	componentWillMount() {
 		MediaActions.setQuery( this.props.siteId, this.getQuery() );
@@ -61,7 +58,7 @@ export default class extends React.Component {
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
 			MediaActions.setQuery( nextProps.siteId, nextQuery );
-			this.setState( getStateData( nextProps.siteId, nextProps.onGetData ) );
+			this.setState( getStateData( nextProps.siteId ) );
 		}
 	}
 
@@ -101,7 +98,7 @@ export default class extends React.Component {
 	};
 
 	updateStateData = () => {
-		this.setState( getStateData( this.props.siteId, this.props.onGetData ) );
+		this.setState( getStateData( this.props.siteId ) );
 	};
 
 	render() {

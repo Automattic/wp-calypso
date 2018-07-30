@@ -40,7 +40,6 @@ class MediaLibraryExternalHeader extends React.Component {
 		hasRefreshButton: PropTypes.bool,
 		hasFolders: PropTypes.bool,
 		folder: PropTypes.string,
-		folders: PropTypes.array,
 	};
 
 	constructor( props ) {
