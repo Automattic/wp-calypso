@@ -108,7 +108,9 @@ class AddCardDetails extends Component {
 				<CreditCardForm
 					apiParams={ { purchaseId: this.props.purchase.id } }
 					createCardToken={ this.createCardToken }
+					purchase={ this.props.purchase }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					siteSlug={ this.props.siteSlug }
 					successCallback={ this.successCallback }
 				/>
 			</Main>
@@ -124,4 +126,7 @@ const mapStateToProps = ( state, { purchaseId } ) => ( {
 	userId: getCurrentUserId( state ),
 } );
 
-export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( AddCardDetails );
+export default connect(
+	mapStateToProps,
+	{ clearPurchases, recordTracksEvent }
+)( AddCardDetails );
