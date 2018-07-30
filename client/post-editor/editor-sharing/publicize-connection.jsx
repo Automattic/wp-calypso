@@ -23,6 +23,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import {
+	getKeyringConnectionById,
+	isKeyringConnectionsFetching,
+} from 'state/sharing/keyring/selectors';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
 
 export class EditorSharingPublicizeConnection extends React.Component {
 	static propTypes = {
@@ -85,6 +90,39 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		}
 	};
 
+	isAdditionalExternalUser( connection ) {
+		const { keyringConnection } = this.props;
+
+		if ( ! keyringConnection ) return false;
+
+		return keyringConnection.external_ID !== connection.external_ID;
+	}
+
+	renderFacebookProfileWarning = () => {
+		const { connection, isKeyringFetching } = this.props;
+		if (
+			! connection ||
+			connection.service !== 'facebook' ||
+			isKeyringFetching ||
+			this.isAdditionalExternalUser( connection )
+		) {
+			return;
+		}
+
+		return (
+			<Notice
+				isCompact
+				className="editor-sharing__broken-publicize-connection"
+				status="is-warning"
+				showDismiss={ false }
+			>
+				{ this.props.translate(
+					'Connections to Facebook profiles will cease to work on August 1st'
+				) }
+			</Notice>
+		);
+	};
+
 	renderBrokenConnection = () => {
 		const { connection } = this.props;
 		if ( ! connection || connection.status !== 'broken' ) {
@@ -113,6 +151,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 
 		return (
 			<div className="editor-sharing__publicize-connection">
+				<QueryKeyringConnections />
 				<label>
 					<FormCheckbox
 						checked={ ! this.isConnectionSkipped() }
@@ -121,6 +160,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 					/>
 					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
 				</label>
+				{ this.renderFacebookProfileWarning() }
 				{ this.renderBrokenConnection() }
 			</div>
 		);
@@ -128,12 +168,21 @@ export class EditorSharingPublicizeConnection extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
+		const isKeyringFetching = isKeyringConnectionsFetching( state );
 
-		return { siteId, postId, post };
+		let keyringConnection = null;
+		if ( ownProps.connection ) {
+			keyringConnection = getKeyringConnectionById(
+				state,
+				ownProps.connection.keyring_connection_ID
+			);
+		}
+
+		return { isKeyringFetching, keyringConnection, siteId, postId, post };
 	},
 	{ updatePostMetadata, deletePostMetadata, recordEditorStat, recordEditorEvent }
 )( localize( EditorSharingPublicizeConnection ) );
