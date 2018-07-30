@@ -99,7 +99,7 @@ export class MediaFolderDropdown extends Component {
 		return (
 			<div className={ rootClassNames }>
 				<FormLabel htmlFor="media-library-folders" className="media-library__folder-dropdown-label">
-					Select Folder
+					{ this.props.translate( 'Select Folder' ) }
 				</FormLabel>
 				<FormSelect
 					id="media-library-folders"
