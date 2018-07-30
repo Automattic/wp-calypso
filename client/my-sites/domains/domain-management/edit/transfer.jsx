@@ -52,16 +52,27 @@ class Transfer extends React.PureComponent {
 				<Notice status={ 'is-info' } showDismiss={ false }>
 					{ translate(
 						'This transfer has been started and is waiting for authorization from your current provider. ' +
-							'It should complete by %(transferFinishDate)s. ' +
-							'If you need to cancel the transfer, please contact them for assistance.',
-						{
-							args: {
-								transferFinishDate: domain.transferEndDateMoment.format( 'LL' ),
-							},
-						}
+							'If you need to cancel the transfer, please contact them for assistance.'
 					) }
 				</Notice>
 			);
+
+			if ( domain.transferEndDateMoment ) {
+				transferNotice = (
+					<Notice status={ 'is-info' } showDismiss={ false }>
+						{ translate(
+							'This transfer has been started and is waiting for authorization from your current provider. ' +
+								'It should complete by %(transferFinishDate)s. ' +
+								'If you need to cancel the transfer, please contact them for assistance.',
+							{
+								args: {
+									transferFinishDate: domain.transferEndDateMoment.format( 'LL' ),
+								},
+							}
+						) }
+					</Notice>
+				);
+			}
 		} else {
 			cancelNavItem = (
 				<VerticalNav>
