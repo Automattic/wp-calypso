@@ -161,7 +161,7 @@ export default class extends React.Component {
 				style={ style }
 				onClick={ this.clickItem }
 				onKeyDown={ this.handleKeyPress }
-				tabIndex="0" // eslint-disable-line jsx-a11y/no-noninteractive-tabindex
+				tabIndex="0"
 				role="button"
 				aria-pressed={ -1 !== this.props.selectedIndex }
 				{ ...props }
