@@ -171,12 +171,6 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	renderCard() {
-		const { onMediaScaleChange, translate } = this.props;
-
-		const folderViewActive = this.folderViewActive();
-
-		const foldersWithPhotos = this.props.folders.filter( folderItem => folderItem.children );
-
 		return (
 			<Card className="media-library__header">
 				{ this.renderPexelsAttribution() }
@@ -189,22 +183,9 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ this.renderCopyButton() }
 
-				{ folderViewActive &&
-					config.isEnabled( 'external-media/google-photos/folder-dropdown' ) && (
-						<MediaFolderDropdown
-							className="media-library__header-item"
-							disabled={ this.state.fetching }
-							onFolderChange={ this.props.onFolderChange }
-							folders={ foldersWithPhotos }
-							folder={ this.props.folder }
-							defaultOption={ {
-								ID: '/',
-								name: translate( 'All Albums' ),
-							} }
-						/>
-					) }
+				{ this.renderFolderDropdown() }
 
-				<MediaLibraryScale onChange={ onMediaScaleChange } />
+				<MediaLibraryScale onChange={ this.props.onMediaScaleChange } />
 			</Card>
 		);
 	}
@@ -219,6 +200,31 @@ class MediaLibraryExternalHeader extends React.Component {
 		const folderViewActive = this.folderViewActive();
 
 		return hasFolders && folderViewActive && folder !== '/' && folder !== 'recent';
+	}
+
+	renderFolderDropdown() {
+		if (
+			! config.isEnabled( 'external-media/google-photos/folder-dropdown' ) ||
+			! this.folderViewActive()
+		) {
+			return null;
+		}
+
+		const foldersWithPhotos = this.props.folders.filter( folderItem => folderItem.children );
+
+		return (
+			<MediaFolderDropdown
+				className="media-library__header-item"
+				disabled={ this.state.fetching }
+				onFolderChange={ this.props.onFolderChange }
+				folders={ foldersWithPhotos }
+				folder={ this.props.folder }
+				defaultOption={ {
+					ID: '/',
+					name: this.props.translate( 'All Albums' ),
+				} }
+			/>
+		);
 	}
 
 	renderRefreshButton() {
