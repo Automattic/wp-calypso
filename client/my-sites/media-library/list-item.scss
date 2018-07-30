@@ -71,6 +71,10 @@
 	box-shadow: 0 0 0 2px $blue-medium, 0 4px 6px $gray-lighten-20;
 }
 
+.media-library__list-item.is-selected:focus .media-library__list-item-figure {
+	box-shadow: 0 0 2px 2px $blue-medium, 0 4px 6px $gray-lighten-20;
+}
+
 .media-library__list-item.is-placeholder .media-library__list-item-figure {
 	background-color: $gray-lighten-20;
 	animation: loading-fade 1.6s ease-in-out infinite;
