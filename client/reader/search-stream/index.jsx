@@ -151,6 +151,7 @@ class SearchStream extends React.Component {
 			] )
 		);
 
+		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
@@ -187,8 +188,12 @@ class SearchStream extends React.Component {
 					{ showFollowByUrl && (
 						<div className="search-stream__url-follow">
 							<FollowButton
-								followLabel={ translate( 'Follow %s', { args: queryWithoutProtocol } ) }
-								followingLabel={ translate( 'Following %s', { args: queryWithoutProtocol } ) }
+								followLabel={ translate( 'Follow %s', {
+									args: queryWithoutProtocol,
+								} ) }
+								followingLabel={ translate( 'Following %s', {
+									args: queryWithoutProtocol,
+								} ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ SEARCH_RESULTS_URL_INPUT }
 							/>
@@ -244,6 +249,7 @@ class SearchStream extends React.Component {
 				) }
 			</div>
 		);
+		/* eslint-enable jsx-a11y/no-autofocus */
 	}
 }
 

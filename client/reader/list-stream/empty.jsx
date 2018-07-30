@@ -30,7 +30,8 @@ class ListEmptyContent extends React.Component {
 	};
 
 	render() {
-		let action = (
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const action = (
 				<a
 					className="empty-content__action button is-primary"
 					onClick={ this.recordAction }
@@ -59,6 +60,7 @@ class ListEmptyContent extends React.Component {
 				illustrationWidth={ 400 }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

@@ -96,8 +96,8 @@ class ConversationsIntro extends React.Component {
 					<div
 						className="conversations__intro-close"
 						onClick={ this.dismiss }
-						title={ translate( 'Close' ) }
 						role="button"
+						title={ translate( 'Close' ) }
 						aria-label={ translate( 'Close' ) }
 					>
 						<Gridicon

@@ -402,6 +402,7 @@ class ReaderStream extends React.Component {
 			}
 			showingStream = false;
 		} else {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			body = (
 				<InfiniteList
 					ref={ c => ( this._list = c ) }
@@ -417,6 +418,7 @@ class ReaderStream extends React.Component {
 				/>
 			);
 			showingStream = true;
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 		const streamType = getStreamType( streamKey );
 		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
