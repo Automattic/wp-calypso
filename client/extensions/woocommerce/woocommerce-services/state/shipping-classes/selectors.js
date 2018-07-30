@@ -43,5 +43,7 @@ export const areShippingClassesLoading = ( state, siteId = getSelectedSiteId( st
  * @return {Array} The list of available shipping classes.
  */
 export const getShippingClassOptions = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return getShippingClassesFromState( state, siteId );
+	const classes = getShippingClassesFromState( state, siteId );
+
+	return isArray( classes ) ? classes : [];
 };
