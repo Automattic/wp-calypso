@@ -14,9 +14,9 @@ const attributes = {
 };
 
 const edit = ( { attributes: { notes }, className, isSelected, setAttributes } ) => (
-	<div style={ { paddingTop: isSelected ? '6px' : '32px' } }>
+	<div className={ isSelected ? 'is-selected' : '' }>
 		{ ! isSelected && (
-			<span style={ { position: 'absolute', top: 0, left: '8px', fontStyle: 'italic' } }>
+			<span className="editor-indicator">
 				<span role="img" aria-label="notebook">
 					📔
 				</span>
