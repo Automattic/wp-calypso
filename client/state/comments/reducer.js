@@ -46,9 +46,7 @@ import {
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
 import trees from './trees/reducer';
-import { getStateKey, getErrorKey, commentHasLink } from './utils';
-
-const getCommentDate = ( { date } ) => new Date( date );
+import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
 
 const isCommentManagementEdit = newProperties =>
 	has( newProperties, 'commentContent' ) &&

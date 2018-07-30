@@ -26,3 +26,5 @@ export const commentHasLink = ( commentContent, apiSuppliedValue ) => {
 		return false;
 	}
 };
+
+export const getCommentDate = ( { date } ) => new Date( date );
