@@ -1,13 +1,13 @@
 /** @format */
 export default {
 	nudgeAPalooza: {
-		datestamp: '20180711',
+		datestamp: '20180726',
 		variations: {
 			sidebarUpsells: 20,
 			themesNudgesUpdates: 20,
 			customPluginAndThemeLandingPages: 20,
 			plansBannerUpsells: 20,
-			control: 40,
+			control: 20,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
