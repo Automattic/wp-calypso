@@ -44,9 +44,10 @@ export class EditorSharingPublicizeConnection extends React.Component {
 	isConnectionSkipped = () => {
 		const { post, connection } = this.props;
 		return (
-			post &&
-			connection &&
-			includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID )
+			( post &&
+				connection &&
+				includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID ) ) ||
+			( connection.service === 'facebook' && ! connection.is_additional_external_user )
 		);
 	};
 
@@ -61,7 +62,11 @@ export class EditorSharingPublicizeConnection extends React.Component {
 
 	isDisabled = () => {
 		const { connection } = this.props;
-		return ! connection || connection.read_only;
+		return (
+			! connection ||
+			connection.read_only ||
+			( connection.service === 'facebook' && ! connection.is_additional_external_user )
+		);
 	};
 
 	onChange = event => {
@@ -113,12 +118,10 @@ export class EditorSharingPublicizeConnection extends React.Component {
 			<Notice
 				isCompact
 				className="editor-sharing__broken-publicize-connection"
-				status="is-warning"
+				status="is-error"
 				showDismiss={ false }
 			>
-				{ this.props.translate(
-					'Connections to Facebook profiles will cease to work on August 1st'
-				) }
+				{ this.props.translate( 'Connections to Facebook profiles ceased to work on August 1st' ) }
 			</Notice>
 		);
 	};
