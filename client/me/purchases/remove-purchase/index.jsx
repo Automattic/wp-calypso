@@ -26,7 +26,14 @@ import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchas
 import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
-import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
+import {
+	getIncludedDomain,
+	getName,
+	hasIncludedDomain,
+	isRemovable,
+	isRefundable,
+	maybeWithinRefundPeriod,
+} from 'lib/purchases';
 import { isDataLoading } from '../utils';
 import {
 	isBusiness,
@@ -35,6 +42,7 @@ import {
 	isJetpackPlan,
 	isPlan,
 } from 'lib/products-values';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -294,6 +302,27 @@ class RemovePurchase extends Component {
 						{ args: { domain: productName } }
 					) }
 				</p>
+				{ ! isRefundable( purchase ) &&
+					maybeWithinRefundPeriod( purchase ) && (
+						<p>
+							<strong>
+								{ translate(
+									"We're not able to refund this purchase automatically. " +
+										"If you're canceling within %(refundPeriodInDays)s days of " +
+										'purchase, {{contactLink}}contact us{{/contactLink}} to ' +
+										'request a refund.',
+									{
+										args: {
+											refundPeriodInDays: purchase.refundPeriodInDays,
+										},
+										components: {
+											contactLink: <a href={ CALYPSO_CONTACT } />,
+										},
+									}
+								) }
+							</strong>
+						</p>
+					) }
 			</Dialog>
 		);
 	}

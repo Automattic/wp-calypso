@@ -9,7 +9,13 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { isRemovable, isCancelable, isPaidWithCredits, subscribedWithinPastWeek } from '../index';
+import {
+	isRemovable,
+	isCancelable,
+	isPaidWithCredits,
+	maybeWithinRefundPeriod,
+	subscribedWithinPastWeek,
+} from '../index';
 
 import {
 	DOMAIN_PURCHASE,
@@ -81,6 +87,82 @@ describe( 'index', () => {
 		} );
 		test( 'should be false when payment not set on purchase', () => {
 			expect( isPaidWithCredits( {} ) ).to.be.false;
+		} );
+	} );
+	describe( '#maybeWithinRefundPeriod', () => {
+		test( 'should be true if less time than the refund period has elapsed since the subscription date', () => {
+			expect(
+				maybeWithinRefundPeriod( {
+					isRefundable: false,
+					refundPeriodInDays: 2,
+					subscribedDate: moment()
+						.subtract( 1, 'days' )
+						.format(),
+				} )
+			).to.be.true;
+		} );
+		test( 'should be true if the same amount of time as the refund period has elapsed since the subscription date', () => {
+			expect(
+				maybeWithinRefundPeriod( {
+					isRefundable: false,
+					refundPeriodInDays: 2,
+					subscribedDate: moment()
+						.subtract( 2, 'days' )
+						.format(),
+				} )
+			).to.be.true;
+		} );
+		test( 'should be true if less than a full day beyond the refund period has elapsed since the subscription date', () => {
+			// Give users the benefit of the doubt, due to timezones, etc.
+			expect(
+				maybeWithinRefundPeriod( {
+					isRefundable: false,
+					refundPeriodInDays: 2,
+					subscribedDate: moment()
+						.subtract( 71, 'hours' )
+						.format(),
+				} )
+			).to.be.true;
+		} );
+		test( 'should be false if one more day than the refund period has elapsed since the subscription date', () => {
+			expect(
+				maybeWithinRefundPeriod( {
+					isRefundable: false,
+					refundPeriodInDays: 2,
+					subscribedDate: moment()
+						.subtract( 3, 'days' )
+						.format(),
+				} )
+			).to.be.false;
+		} );
+		test( 'should be true if the purchase is marked as refundable, regardless of how much time has elapsed since the subscription date', () => {
+			expect(
+				maybeWithinRefundPeriod( {
+					isRefundable: true,
+					refundPeriodInDays: 2,
+					subscribedDate: moment()
+						.subtract( 3, 'days' )
+						.format(),
+				} )
+			).to.be.true;
+		} );
+		test( 'should be false if the refundPeriodInDays property is not set on the purchase', () => {
+			expect(
+				maybeWithinRefundPeriod( {
+					isRefundable: false,
+					subscribedDate: moment()
+						.subtract( 1, 'days' )
+						.format(),
+				} )
+			).to.be.false;
+		} );
+		test( 'should be false if the subscribedDate property is not set on the purchase', () => {
+			expect(
+				maybeWithinRefundPeriod( {
+					isRefundable: false,
+					refundPeriodInDays: 2,
+				} )
+			).to.be.false;
 		} );
 	} );
 	describe( '#subscribedWithinPastWeek', () => {
