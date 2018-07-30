@@ -93,10 +93,9 @@ class ConversationsIntro extends React.Component {
 					</div>
 					<div className="conversations__intro-character" />
 
-					<div
+					<button
 						className="conversations__intro-close"
 						onClick={ this.dismiss }
-						role="button"
 						title={ translate( 'Close' ) }
 						aria-label={ translate( 'Close' ) }
 					>
@@ -105,7 +104,7 @@ class ConversationsIntro extends React.Component {
 							className="conversations__intro-close-icon"
 							title={ translate( 'Close' ) }
 						/>
-					</div>
+					</button>
 				</div>
 			</header>
 		);
