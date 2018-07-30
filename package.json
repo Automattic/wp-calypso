@@ -274,7 +274,7 @@
     "mixedindentlint": "1.2.0",
     "nock": "8.2.2",
     "npm-merge-driver": "2.3.5",
-    "prettier": "github:Automattic/wp-prettier#wp-prettier-1.13.5",
+    "prettier": "github:Automattic/wp-prettier#wp-prettier-1.14.0",
     "pretty-bytes": "5.1.0",
     "react-test-renderer": "16.4.1",
     "readline-sync": "1.4.9",
