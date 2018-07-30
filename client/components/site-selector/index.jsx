@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, find, flow, get, includes, isEmpty, noop, size } from 'lodash';
+import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
 import scrollIntoView from 'dom-scroll-into-view';
 import debugFactory from 'debug';
 
@@ -290,12 +290,7 @@ class SiteSelector extends Component {
 	}
 
 	shouldRenderRecentSites() {
-		return (
-			this.props.showRecentSites &&
-			this.shouldShowGroups() &&
-			! this.props.sitesFound &&
-			size( this.props.recentSites )
-		);
+		return this.props.showRecentSites && this.shouldShowGroups() && ! this.props.sitesFound;
 	}
 
 	renderAllSites() {
