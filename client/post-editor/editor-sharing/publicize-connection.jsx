@@ -85,6 +85,30 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		}
 	};
 
+	renderFacebookProfileWarning = () => {
+		const { connection } = this.props;
+		if (
+			! connection ||
+			connection.service !== 'facebook' ||
+			connection.is_additional_external_user
+		) {
+			return;
+		}
+
+		return (
+			<Notice
+				isCompact
+				className="editor-sharing__broken-publicize-connection"
+				status="is-warning"
+				showDismiss={ false }
+			>
+				{ this.props.translate(
+					'Connections to Facebook profiles will cease to work on August 1st'
+				) }
+			</Notice>
+		);
+	};
+
 	renderBrokenConnection = () => {
 		const { connection } = this.props;
 		if ( ! connection || connection.status !== 'broken' ) {
@@ -121,6 +145,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 					/>
 					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
 				</label>
+				{ this.renderFacebookProfileWarning() }
 				{ this.renderBrokenConnection() }
 			</div>
 		);
