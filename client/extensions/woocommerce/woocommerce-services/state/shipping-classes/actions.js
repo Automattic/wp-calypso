@@ -25,6 +25,11 @@ export const fetchShippingClassesFailure = () => {
 	);
 };
 
+export const fetchShippingClassesIfNotLoaded = siteId => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST,
+	siteId,
+} );
+
 export const fetchShippingClasses = siteId => ( dispatch, getState ) => {
 	if (
 		areShippingClassesLoaded( getState(), siteId ) ||
@@ -33,8 +38,5 @@ export const fetchShippingClasses = siteId => ( dispatch, getState ) => {
 		return;
 	}
 
-	return dispatch( {
-		type: WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST,
-		siteId,
-	} );
+	return dispatch( fetchShippingClassesIfNotLoaded( siteId ) );
 };
