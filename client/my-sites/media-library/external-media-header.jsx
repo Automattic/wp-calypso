@@ -125,7 +125,11 @@ class MediaLibraryExternalHeader extends React.Component {
 	};
 
 	renderCopyButton() {
-		const { selectedItems, translate } = this.props;
+		const { selectedItems, translate, canCopy } = this.props;
+
+		if ( ! canCopy ) {
+			return null;
+		}
 
 		return (
 			<Button
@@ -141,7 +145,12 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	renderPexelsAttribution() {
-		const { translate } = this.props;
+		const { translate, hasAttribution } = this.props;
+
+		if ( ! hasAttribution ) {
+			return null;
+		}
+
 		const attribution = translate( 'Photos provided by {{a}}Pexels{{/a}}', {
 			components: {
 				a: <a href="https://www.pexels.com/" rel="noopener noreferrer" target="_blank" />,
@@ -162,76 +171,23 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	renderCard() {
-		const {
-			onMediaScaleChange,
-			translate,
-			canCopy,
-			hasRefreshButton,
-			hasAttribution,
-			hasFolders,
-			folder,
-		} = this.props;
+		const { onMediaScaleChange } = this.props;
 
-		const folderViewActive = this.state.mediaViewType === 'folders';
+		const folderViewActive = this.folderViewActive();
 
-		const showBackButton = hasFolders && folderViewActive && folder !== '/' && folder !== 'recent';
 		const foldersWithPhotos = this.props.folders.filter( folderItem => folderItem.children );
 
 		return (
 			<Card className="media-library__header">
-				{ hasAttribution && this.renderPexelsAttribution() }
+				{ this.renderPexelsAttribution() }
 
-				{ hasFolders && (
-					<SegmentedControl
-						primary={ true }
-						compact={ true }
-						className="media-library__header-item media-library__header-folder-toggle"
-					>
-						<ControlItem
-							title={ translate( 'Recent photos' ) }
-							selected={ this.state.mediaViewType === 'recent' }
-							onClick={ this.onToggleChange( 'recent' ) }
-						>
-							{ translate( 'Recent' ) }
-						</ControlItem>
+				{ this.renderPhotosViewToggle() }
 
-						<ControlItem
-							title={ translate( 'Album view' ) }
-							selected={ this.state.mediaViewType === 'folders' }
-							onClick={ this.onToggleChange( 'folders' ) }
-						>
-							{ translate( 'Albums' ) }
-						</ControlItem>
-					</SegmentedControl>
-				) }
+				{ this.renderBackButton() }
 
-				{ showBackButton && (
-					<Button
-						className="media-library__header-item media-library__header-btn is-primary"
-						compact
-						disabled={ this.state.fetching }
-						onClick={ this.handleBackClick }
-					>
-						<Gridicon icon="arrow-left" size={ 24 } />
+				{ this.renderRefreshButton() }
 
-						<span>{ translate( 'Back to Albums' ) }</span>
-					</Button>
-				) }
-
-				{ hasRefreshButton && (
-					<Button
-						className="media-library__header-item media-library__header-btn"
-						compact
-						disabled={ this.state.fetching }
-						onClick={ this.handleRefreshClick }
-					>
-						<Gridicon icon="refresh" size={ 24 } />
-
-						<span>{ translate( 'Refresh' ) }</span>
-					</Button>
-				) }
-
-				{ canCopy && this.renderCopyButton() }
+				{ this.renderCopyButton() }
 
 				{ folderViewActive &&
 					config.isEnabled( 'external-media/google-photos/folder-dropdown' ) && (
@@ -250,6 +206,92 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				<MediaLibraryScale onChange={ onMediaScaleChange } />
 			</Card>
+		);
+	}
+
+	folderViewActive() {
+		return this.state.mediaViewType === 'folders';
+	}
+
+	showBackButton() {
+		const { hasFolders, folder } = this.props;
+
+		const folderViewActive = this.folderViewActive();
+
+		return hasFolders && folderViewActive && folder !== '/' && folder !== 'recent';
+	}
+
+	renderRefreshButton() {
+		const { translate, hasRefreshButton } = this.props;
+
+		if ( ! hasRefreshButton ) {
+			return null;
+		}
+
+		return (
+			<Button
+				className="media-library__header-item media-library__header-btn"
+				compact
+				disabled={ this.state.fetching }
+				onClick={ this.handleRefreshClick }
+			>
+				<Gridicon icon="refresh" size={ 24 } />
+
+				<span>{ translate( 'Refresh' ) }</span>
+			</Button>
+		);
+	}
+
+	renderBackButton() {
+		const { translate } = this.props;
+
+		if ( ! this.showBackButton() ) {
+			return null;
+		}
+
+		return (
+			<Button
+				className="media-library__header-item media-library__header-btn is-primary"
+				compact
+				disabled={ this.state.fetching }
+				onClick={ this.handleBackClick }
+			>
+				<Gridicon icon="arrow-left" size={ 24 } />
+
+				<span>{ translate( 'Back to Albums' ) }</span>
+			</Button>
+		);
+	}
+
+	renderPhotosViewToggle() {
+		const { translate, hasFolders } = this.props;
+
+		if ( ! hasFolders ) {
+			return null;
+		}
+
+		return (
+			<SegmentedControl
+				primary={ true }
+				compact={ true }
+				className="media-library__header-item media-library__header-folder-toggle"
+			>
+				<ControlItem
+					title={ translate( 'Recent photos' ) }
+					selected={ this.state.mediaViewType === 'recent' }
+					onClick={ this.onToggleChange( 'recent' ) }
+				>
+					{ translate( 'Recent' ) }
+				</ControlItem>
+
+				<ControlItem
+					title={ translate( 'Album view' ) }
+					selected={ this.state.mediaViewType === 'folders' }
+					onClick={ this.onToggleChange( 'folders' ) }
+				>
+					{ translate( 'Albums' ) }
+				</ControlItem>
+			</SegmentedControl>
 		);
 	}
 
