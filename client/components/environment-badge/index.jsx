@@ -53,7 +53,12 @@ function EnvironmentBadge( { badge, feedbackURL, children } ) {
 			{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 			{ children }
 			<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-			<ExternalLink className="bug-report" href={ feedbackURL } title="Report an issue" target="_blank">
+			<ExternalLink
+				className="bug-report"
+				href={ feedbackURL }
+				title="Report an issue"
+				target="_blank"
+			>
 				<Gridicon icon="bug" size={ 18 } />
 			</ExternalLink>
 			{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }

@@ -185,8 +185,11 @@ const updatePrimaryDomainClick = ( { name, type }, success ) =>
 		} )
 	);
 
-export default connect( null, {
-	setPrimaryDomain,
-	cancelClick,
-	updatePrimaryDomainClick,
-} )( localize( PrimaryDomain ) );
+export default connect(
+	null,
+	{
+		setPrimaryDomain,
+		cancelClick,
+		updatePrimaryDomainClick,
+	}
+)( localize( PrimaryDomain ) );

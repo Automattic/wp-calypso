@@ -18,7 +18,8 @@ class ReadingTime extends React.PureComponent {
 					{ this.props.translate( '~%d min', {
 						args: [ timeInMinutes ],
 						context: 'An approximate time to read something, in minutes',
-					} ) })
+					} ) }
+					)
 				</span>
 			);
 		}

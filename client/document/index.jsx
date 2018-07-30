@@ -73,8 +73,12 @@ class Document extends React.Component {
 				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
 			>
 				<Head title={ head.title } faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-					{ head.metas.map( ( props, index ) => <meta { ...props } key={ index } /> ) }
-					{ head.links.map( ( props, index ) => <link { ...props } key={ index } /> ) }
+					{ head.metas.map( ( props, index ) => (
+						<meta { ...props } key={ index } />
+					) ) }
+					{ head.links.map( ( props, index ) => (
+						<link { ...props } key={ index } />
+					) ) }
 
 					<link
 						rel="stylesheet"
@@ -162,8 +166,12 @@ class Document extends React.Component {
 							} }
 						/>
 					) }
-					{ entrypoint.map( asset => <script key={ asset } src={ asset } /> ) }
-					{ chunkFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
+					{ entrypoint.map( asset => (
+						<script key={ asset } src={ asset } />
+					) ) }
+					{ chunkFiles.map( chunk => (
+						<script key={ chunk } src={ chunk } />
+					) ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">
 						window.AppBoot();
 					</script>

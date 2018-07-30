@@ -57,7 +57,8 @@ const FollowingStream = props => {
 						components: {
 							suggestions: suggestionList,
 						},
-					} ) }&nbsp;
+					} ) }
+				&nbsp;
 			</div>
 		</Stream>
 	);

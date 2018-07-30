@@ -134,8 +134,11 @@ class DomainConnectRecord extends React.Component {
 	}
 }
 
-export default connect( null, {
-	errorNotice,
-	removeNotice,
-	successNotice,
-} )( localize( DomainConnectRecord ) );
+export default connect(
+	null,
+	{
+		errorNotice,
+		removeNotice,
+		successNotice,
+	}
+)( localize( DomainConnectRecord ) );

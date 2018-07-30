@@ -129,7 +129,8 @@ class JetpackInstallStep extends Component {
 				<div className="jetpack-connect__install-step-title">{ step.title }</div>
 				<div className="jetpack-connect__install-step-text">
 					<span>
-						{ preventWidows( step.text ) }&nbsp;
+						{ preventWidows( step.text ) }
+						&nbsp;
 						{ step.action }
 					</span>
 				</div>

@@ -216,7 +216,9 @@ export class SeoPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
-						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
+						{ services.map( service => (
+							<SocialItem { ...{ key: service, service } } />
+						) ) }
 					</VerticalMenu>
 				</div>
 				<div className="seo-preview-pane__preview-area">

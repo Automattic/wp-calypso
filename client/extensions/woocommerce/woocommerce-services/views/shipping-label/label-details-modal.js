@@ -73,7 +73,11 @@ const DetailsDialog = props => {
 
 				<dt>{ translate( 'Items' ) }</dt>
 				<dd>
-					<ul>{ productNames.map( ( productName, i ) => <li key={ i }>{ productName }</li> ) }</ul>
+					<ul>
+						{ productNames.map( ( productName, i ) => (
+							<li key={ i }>{ productName }</li>
+						) ) }
+					</ul>
 				</dd>
 			</dl>
 		</Dialog>

@@ -41,7 +41,8 @@ const AddressSummary = ( { values, originalValues, countriesData, expandStateNam
 				{ getValue( 'address' ) } { getValue( 'address_2' ) }
 			</p>
 			<p>
-				{ getValue( 'city' ) }, { getValue( 'state' ) }&nbsp; { getValue( 'postcode' ) }
+				{ getValue( 'city' ) }, { getValue( 'state' ) }
+				&nbsp; { getValue( 'postcode' ) }
 			</p>
 			<p>{ getValue( 'country' ) }</p>
 		</div>
