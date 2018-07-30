@@ -8,6 +8,14 @@
  * @since  5.9.1
  */
 
+// Since this is a Jetpack originated block in Calypso codebase,
+// we're relaxing className and some accessibility rules.
+/* eslint wpcalypso/jsx-classname-namespace: 0 */
+/* eslint jsx-a11y/anchor-is-valid: 0 */
+/* eslint jsx-a11y/click-events-have-key-events: 0 */
+/* eslint jsx-a11y/no-static-element-interactions: 0 */
+/* eslint jsx-a11y/no-noninteractive-tabindex: 0 */
+
 /**
  * External dependencies
  */

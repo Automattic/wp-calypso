@@ -16,6 +16,7 @@ const {
 	gutenberg_publicize_setup,
 	wp,
 	ajaxurl,
+	$,
 } = window;
 
 /**
