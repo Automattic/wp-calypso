@@ -76,6 +76,9 @@ export const getDecoratedSiteDomains = treeSelect(
 			autoRenewalMoment: domain.autoRenewalDate ? moment( domain.autoRenewalDate ) : null,
 			registrationMoment: domain.registrationDate ? moment( domain.registrationDate ) : null,
 			expirationMoment: domain.expiry ? moment( domain.expiry ) : null,
+			transferEndDateMoment: domain.transferStartDate
+				? moment( domain.transferStartDate ).add( 7, 'days' )
+				: null,
 		} ) );
 	}
 );

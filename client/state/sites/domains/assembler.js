@@ -58,6 +58,7 @@ export const createSiteDomainObject = domain => {
 		transferLockOnWhoisUpdateOptional: Boolean( domain.transfer_lock_on_whois_update_optional ),
 		type: getDomainType( domain ),
 		transferStatus: getTransferStatus( domain ),
+		transferStartDate: ! domain.transfer_start_date ? null : String( domain.transfer_start_date ),
 		whoisUpdateUnmodifiableFields: domain.whois_update_unmodifiable_fields,
 	};
 };
