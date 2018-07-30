@@ -171,7 +171,7 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 
 	renderCard() {
-		const { onMediaScaleChange } = this.props;
+		const { onMediaScaleChange, translate } = this.props;
 
 		const folderViewActive = this.folderViewActive();
 
@@ -199,7 +199,7 @@ class MediaLibraryExternalHeader extends React.Component {
 							folder={ this.props.folder }
 							defaultOption={ {
 								ID: '/',
-								name: 'All Albums',
+								name: translate( 'All Albums' ),
 							} }
 						/>
 					) }
