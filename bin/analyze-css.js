@@ -107,7 +107,7 @@ generateCSS( [ 'style.scss' ], true );
 console.log( '> Autoprefixing CSS' );
 
 glob.sync( '**/*.css', { cwd: TEMP_DIRECTORY } ).forEach( file => {
-	execSync( `npm run --silent autoprefixer -- ${ file }` );
+	execSync( `npm run --silent autoprefixer -- ${ path.resolve( TEMP_DIRECTORY, file ) }` );
 } );
 
 console.log( '> Opening CSS bundle' );
