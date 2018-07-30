@@ -59,7 +59,9 @@ export class Checklist extends Component {
 		return (
 			<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
 				<ChecklistHeader total={ 0 } completed={ 0 } hideCompleted={ false } />
-				{ times( this.props.placeholderCount, index => <ChecklistPlaceholder key={ index } /> ) }
+				{ times( this.props.placeholderCount, index => (
+					<ChecklistPlaceholder key={ index } />
+				) ) }
 			</div>
 		);
 	}

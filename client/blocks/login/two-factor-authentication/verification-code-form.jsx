@@ -123,14 +123,14 @@ class VerificationCodeForm extends Component {
 		if ( twoFactorAuthType === 'backup' ) {
 			helpText = translate(
 				"If you can't access your phone enter one of the 10 backup codes that were provided " +
-				'when you set up two-step authentication to continue.'
+					'when you set up two-step authentication to continue.'
 			);
 			labelText = translate( 'Backup code' );
 			smallPrint = (
 				<div className="two-factor-authentication__small-print">
 					{ translate(
 						'If you lose your device, accidentally remove the authenticator app, or are otherwise ' +
-						'locked out of your account, the only way to get back in to your account is by using a backup code.'
+							'locked out of your account, the only way to get back in to your account is by using a backup code.'
 					) }
 				</div>
 			);

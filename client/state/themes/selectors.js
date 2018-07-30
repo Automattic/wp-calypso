@@ -42,14 +42,17 @@ import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
  * @param  {String}  themeId Theme ID
  * @return {?Object}         Theme object
  */
-export const getTheme = createSelector( ( state, siteId, themeId ) => {
-	const manager = state.themes.queries[ siteId ];
-	if ( ! manager ) {
-		return null;
-	}
+export const getTheme = createSelector(
+	( state, siteId, themeId ) => {
+		const manager = state.themes.queries[ siteId ];
+		if ( ! manager ) {
+			return null;
+		}
 
-	return manager.getItem( themeId );
-}, state => state.themes.queries );
+		return manager.getItem( themeId );
+	},
+	state => state.themes.queries
+);
 
 /**
  * Returns a theme object from what is considered the 'canonical' source, i.e.

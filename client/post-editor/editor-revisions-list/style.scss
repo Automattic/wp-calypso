@@ -43,7 +43,7 @@
 	box-sizing: border-box;
 	color: $gray-text-min;
 	background: $white;
-	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 
 	@include breakpoint( '>1040px' ) {
 		height: 40px;
@@ -57,7 +57,7 @@
 			width: 50%;
 			height: $editor-revisions-list-header-font-size;
 			align-self: center;
-			@include placeholder(23%);
+			@include placeholder( 23% );
 		}
 	}
 }
@@ -66,7 +66,7 @@
 	align-self: center;
 }
 
-@include breakpoint ('>1040px') {
+@include breakpoint( '>1040px' ) {
 	.editor-revisions-list.is-loading {
 		.editor-revisions-list__header::before {
 			align-self: flex-end;
@@ -103,7 +103,7 @@
 	height: 40px;
 	box-sizing: border-box;
 	color: $gray-text-min;
-	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	.button:first-child,
 	.button:last-child {
 		border-radius: 0;
@@ -127,11 +127,11 @@
 	&.button[disabled],
 	&.button.disabled {
 		background: transparent;
-		color: lighten($gray-text-min, 30%);
-		border-color: darken($sidebar-bg-color, 5%);
+		color: lighten( $gray-text-min, 30% );
+		border-color: darken( $sidebar-bg-color, 5% );
 	}
 	.gridicon {
-		transform: rotate(-90deg);
+		transform: rotate( -90deg );
 	}
 
 	@include breakpoint( '>660px' ) {

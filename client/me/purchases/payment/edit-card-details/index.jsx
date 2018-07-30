@@ -133,4 +133,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	userId: getCurrentUserId( state ),
 } );
 
-export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( EditCardDetails );
+export default connect(
+	mapStateToProps,
+	{ clearPurchases, recordTracksEvent }
+)( EditCardDetails );

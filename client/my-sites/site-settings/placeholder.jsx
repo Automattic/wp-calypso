@@ -47,12 +47,15 @@ const Placeholder = ( { translate } ) => {
 			<Card>
 				<div className="site-settings__placeholder-item">Example content here</div>
 				<div className="site-settings__placeholder-item">
-					Example content here<br />
-					Example content here<br />
+					Example content here
+					<br />
+					Example content here
+					<br />
 					Example content here
 				</div>
 				<div className="site-settings__placeholder-item">
-					Example content here<br />
+					Example content here
+					<br />
 					Example content here
 				</div>
 			</Card>

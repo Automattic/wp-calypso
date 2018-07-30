@@ -194,7 +194,9 @@ export class DomainWarnings extends React.PureComponent {
 		} else {
 			offendingList = (
 				<ul>
-					{ wrongMappedDomains.map( domain => <li key={ domain.name }>{ domain.name }</li> ) }
+					{ wrongMappedDomains.map( domain => (
+						<li key={ domain.name }>{ domain.name }</li>
+					) ) }
 				</ul>
 			);
 			if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {

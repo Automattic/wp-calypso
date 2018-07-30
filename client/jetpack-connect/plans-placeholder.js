@@ -48,7 +48,9 @@ const placeholderContent = (
 										<div className="plan-features__actions">
 											<div className="plan-features__actions-buttons">
 												<div className="placeholder-text">
-													Upgrade<br />Your Plan
+													Upgrade
+													<br />
+													Your Plan
 												</div>
 											</div>
 										</div>

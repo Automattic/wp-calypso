@@ -55,11 +55,16 @@ export default class Typography extends React.PureComponent {
 					<pre>
 						<code>
 							.design__typography-sans &#123;
-							{ '\n\t' }font-family: $sans;
-							{ '\n\t' }font-size: 16px;
-							{ '\n\t' }font-weight: 400;
-							{ '\n\t' }color: $gray-dark;
-							{ '\n' }&#125;
+							{ '\n\t' }
+							font-family: $sans;
+							{ '\n\t' }
+							font-size: 16px;
+							{ '\n\t' }
+							font-weight: 400;
+							{ '\n\t' }
+							color: $gray-dark;
+							{ '\n' }
+							&#125;
 						</code>
 					</pre>
 
@@ -89,8 +94,10 @@ export default class Typography extends React.PureComponent {
 					<pre>
 						<code>
 							.design__typography-serif &#123;
-							{ '\n\t' }font-family: $serif;
-							{ '\n' }&#125;
+							{ '\n\t' }
+							font-family: $serif;
+							{ '\n' }
+							&#125;
 						</code>
 					</pre>
 
@@ -113,9 +120,12 @@ export default class Typography extends React.PureComponent {
 					<pre>
 						<code>
 							.design__typography-code &#123;
-							{ '\n\t' }font-family: $code;
-							{ '\n\t' }font-size: 15px;
-							{ '\n' }&#125;
+							{ '\n\t' }
+							font-family: $code;
+							{ '\n\t' }
+							font-size: 15px;
+							{ '\n' }
+							&#125;
 						</code>
 					</pre>
 
