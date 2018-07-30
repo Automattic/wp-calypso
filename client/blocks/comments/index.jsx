@@ -28,17 +28,24 @@ class PostComments extends React.Component {
 	};
 
 	pollForNewComments = () => {
-		if ( ! this.props.post ) {
-			return;
-		}
+		const { siteId, postId } = this.props;
 
-		const { ID: postId, site_ID: siteId } = this.props.post;
 		// Request page of comments
-		// @todo add most recent comment date
-		this.props.requestPostComments( { siteId, postId, isPoll: true } );
+		this.props.requestPostComments( {
+			siteId,
+			postId,
+			isPoll: true,
+			direction: 'after',
+		} );
 	};
 
 	render() {
+		const { siteId, postId } = this.props;
+
+		if ( ! siteId || ! postId ) {
+			return null;
+		}
+
 		return (
 			<Fragment>
 				{ this.props.shouldPollForNewComments && (
@@ -51,7 +58,15 @@ class PostComments extends React.Component {
 }
 
 export default connect(
-	null,
+	( state, ownProps ) => {
+		const siteId = ownProps.post.site_ID;
+		const postId = ownProps.post.ID;
+
+		return {
+			siteId,
+			postId,
+		};
+	},
 	{
 		requestPostComments,
 	}
