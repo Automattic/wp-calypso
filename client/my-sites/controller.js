@@ -245,19 +245,16 @@ function onSelectedSiteAvailable( context ) {
  * @returns {object} A site-picker React element
  */
 function createSitesComponent( context ) {
-	const basePath = sectionify( context.path );
-	const path = context.prevPath ? sectionify( context.prevPath ) : '/stats';
+	const contextPath = sectionify( context.path );
 
 	// This path sets the URL to be visited once a site is selected
-	const sourcePath = basePath === '/sites' ? path : basePath;
+	const basePath = contextPath === '/sites' ? '/stats' : contextPath;
 
-	analytics.pageView.record( basePath, sitesPageTitleForAnalytics );
+	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
 
 	return (
 		<SitesComponent
-			path={ context.path }
-			sourcePath={ sourcePath }
-			user={ user }
+			siteBasePath={ basePath }
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 		/>
 	);
