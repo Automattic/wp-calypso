@@ -121,7 +121,7 @@ class Email extends React.Component {
 			};
 		}
 		Object.assign( emptyContentProps, {
-			illustration: '/calypso/images/illustrations/customDomain.svg',
+			illustration: '/calypso/images/illustrations/custom-domain.svg',
 			action: translate( 'Add a Custom Domain' ),
 			actionURL: '/domains/add/' + this.props.selectedSite.slug,
 		} );
