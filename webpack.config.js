@@ -13,6 +13,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
@@ -147,6 +148,20 @@ const webpackConfig = {
 				},
 			},
 			{
+				test: /\.(sc|sa|c)ss$/,
+				use: [
+					MiniCssExtractPlugin.loader,
+					'css-loader',
+					'postcss-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							includePaths: [ path.join( __dirname, 'client' ) ],
+						},
+					},
+				],
+			},
+			{
 				test: /extensions[\/\\]index/,
 				exclude: path.join( __dirname, 'node_modules' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
@@ -211,6 +226,10 @@ const webpackConfig = {
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
 		] ),
+		new MiniCssExtractPlugin( {
+			filename: '[name].css',
+			chunkFilename: '[id].css',
+		} ),
 		new AssetsWriter( {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
