@@ -3,7 +3,6 @@
 /**
  * Internal dependencies
  */
-
 import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST,
