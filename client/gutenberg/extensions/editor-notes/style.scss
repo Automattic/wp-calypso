@@ -7,11 +7,11 @@
 	.is-selected {
 		padding-top: 6px;
 	}
+}
 
-	.editor-indicator {
-		position: absolute;
-		top: 0;
-		left: 8px;
-		font-style: italic;
-	}
+.editor-notes__editor-indicator {
+	position: absolute;
+	top: 0;
+	left: 8px;
+	font-style: italic;
 }
