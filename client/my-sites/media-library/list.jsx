@@ -217,7 +217,7 @@ export class MediaLibraryList extends React.Component {
 		if ( source === 'google_photos' && media && media.length >= GOOGLE_MAX_RESULTS ) {
 			// Google Photos won't return more than 1000 photos - suggest ways round this to the user
 			const message = translate(
-				'Current restrictions only allow us to display only the first 300 items from your library. Use the search button to access more photos. You can search for dates, locations, and things.'
+				'External restrictions allow us to only display the first 300 items in your library. Use the search button to access more photos. You can search for dates, locations, and things.'
 			);
 
 			return (
