@@ -64,12 +64,9 @@ class MediaLibraryContent extends React.Component {
 		super( props );
 
 		this.state = { folders: [] };
-
-		this.parseFolders = this.parseFolders.bind( this );
-		this.handleFolderChange = this.handleFolderChange.bind( this );
 	}
 
-	parseFolders( { media } ) {
+	parseFolders = ( { media } ) => {
 		let folders = false;
 
 		if ( media && media.length ) {
@@ -84,15 +81,15 @@ class MediaLibraryContent extends React.Component {
 		this.setState( {
 			folders,
 		} );
-	}
+	};
 
-	handleFolderChange( val ) {
+	handleFolderChange = val => {
 		// Clear any selected items when changing folder view
 		if ( this.props.site ) {
 			MediaActions.clearLibrarySelectedItems( this.props.site.ID );
 		}
 		this.props.onFolderChange( val );
-	}
+	};
 
 	renderErrors() {
 		const errorTypes = values( this.props.mediaValidationErrors ).map( head );
