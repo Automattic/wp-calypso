@@ -6258,7 +6258,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6623,7 +6624,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6671,6 +6673,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6709,11 +6712,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -6751,9 +6756,9 @@
       "dev": true
     },
     "fuse.js": {
-      "version": "2.7.4",
-      "resolved": "https://registry.npmjs.org/fuse.js/-/fuse.js-2.7.4.tgz",
-      "integrity": "sha1-luQg/efvARrEnCWKYhMU/ldlNvk="
+      "version": "3.2.1",
+      "resolved": "https://registry.npmjs.org/fuse.js/-/fuse.js-3.2.1.tgz",
+      "integrity": "sha1-YyDLlM5W7JdVyJred1vNuwNY1CU="
     },
     "gauge": {
       "version": "2.7.4",
