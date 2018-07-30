@@ -52,3 +52,19 @@
 		cursor: not-allowed;
 	}
 }
+
+.credit-card-form-fields__cvv-info {
+	.gridicon {
+		margin-bottom: -3px;
+	}
+
+	.popover__inner {
+		align-items: flex-start;
+		display: flex;
+	}
+}
+
+.credit-card-form-fields__cvv-illustration {
+	flex: 0 0 42px;
+	margin-right: 10px;
+}

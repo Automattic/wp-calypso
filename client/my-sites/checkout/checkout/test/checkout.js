@@ -1,5 +1,6 @@
 /**
  * @format
+ * @jest-environment jsdom
  */
 
 /**
@@ -51,6 +52,8 @@ jest.mock( 'lib/cart-values', () => ( {
 	isPaymentMethodEnabled: jest.fn( false ),
 	paymentMethodName: jest.fn( false ),
 } ) );
+//jsdom doesn't properly mock scrollTo
+global.scrollTo = () => {};
 
 describe( 'Checkout', () => {
 	const defaultProps = {
