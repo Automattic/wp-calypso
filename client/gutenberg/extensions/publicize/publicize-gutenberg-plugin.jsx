@@ -16,7 +16,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-const { PluginPrePublishPanel } = window.wp.editPost.__experimental;
+const { PluginPrePublishPanel } = window.wp.editPost;
 const { registerPlugin } = window.wp.plugins;
 import PublicizePanel from './publicize-panel';
 import publicizeStore from './publicize-gutenberg-store';
