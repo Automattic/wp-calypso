@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { isEqual, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,8 +86,9 @@ export class EditorImageSelector extends Component {
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
 	// after creating an item by uploading or selecting from Google library.
-	onImageChange = imageIds => {
-		if ( imageIds !== this.props.imageIds ) {
+	onImageChange = images => {
+		const imageIds = images.map( image => image.ID );
+		if ( ! isEqual( imageIds, this.props.imageIds ) ) {
 			this.props.onImageChange( imageIds );
 		}
 	};

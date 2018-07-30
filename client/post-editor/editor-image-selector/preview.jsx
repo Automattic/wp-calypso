@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { defer } from 'lodash';
+import { defer, isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -70,17 +70,23 @@ export class EditorImageSelectorPreview extends Component {
 	};
 
 	updateImageState = callback => {
-		const images = this.props.itemIds
-			.map( id => {
-				const media = MediaStore.get( this.props.siteId, id );
-				if ( ! media ) {
-					MediaActions.fetch( this.props.siteId, id );
-				}
-				return media;
-			} )
-			.filter( function( e ) {
-				return e;
-			} );
+		if ( isEqual( this.state.images.map( image => image.ID ), this.props.itemIds ) ) {
+			return;
+		}
+
+		const images = uniq(
+			this.props.itemIds
+				.map( id => {
+					const media = MediaStore.get( this.props.siteId, id );
+					if ( ! media ) {
+						MediaActions.fetch( this.props.siteId, id );
+					}
+					return media;
+				} )
+				.filter( function( e ) {
+					return e;
+				} )
+		);
 
 		this.setState( { images }, () => {
 			if ( 'function' === typeof callback ) {
@@ -89,7 +95,7 @@ export class EditorImageSelectorPreview extends Component {
 		} );
 
 		defer( () => {
-			if ( this.props.onImageChange && images ) {
+			if ( this.props.onImageChange && images && images.length ) {
 				this.props.onImageChange( images );
 			}
 		} );
