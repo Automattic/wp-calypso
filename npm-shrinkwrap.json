@@ -1934,24 +1934,6 @@
       "resolved": "https://registry.npmjs.org/async-foreach/-/async-foreach-0.1.3.tgz",
       "integrity": "sha1-NhIfhFwFeBct5Bmpfb6x0W7DRUI="
     },
-    "async-kit": {
-      "version": "2.2.4",
-      "resolved": "https://registry.npmjs.org/async-kit/-/async-kit-2.2.4.tgz",
-      "integrity": "sha512-LuWbpSYdTwrGv5MWhsUY69UaQAc3AYMwf/LwTupotu/ubb/1TjDd03WK1eoMXRK/s3bmi4aUkKY0TmxYQgRrmw==",
-      "dev": true,
-      "requires": {
-        "nextgen-events": "^0.14.5",
-        "tree-kit": "^0.5.27"
-      },
-      "dependencies": {
-        "nextgen-events": {
-          "version": "0.14.6",
-          "resolved": "https://registry.npmjs.org/nextgen-events/-/nextgen-events-0.14.6.tgz",
-          "integrity": "sha512-Ln9d5Midoah7RCxFk8z9tAAcRW/VkB4wZ61Nnw8aqM1/lb/WfPAnlzpLGYRghEjwZdXQNQedTfD/gclYMeI0eQ==",
-          "dev": true
-        }
-      }
-    },
     "async-limiter": {
       "version": "1.0.0",
       "resolved": "https://registry.npmjs.org/async-limiter/-/async-limiter-1.0.0.tgz",
@@ -13674,6 +13656,15 @@
       "resolved": "https://registry.npmjs.org/setprototypeof/-/setprototypeof-1.1.0.tgz",
       "integrity": "sha512-BvE/TwpZX4FXExxOxZyRGQQv651MSwmWKZGqvmPcRIjDqWub67kTKuIMx43cZZrS/cBBzwBcNDWoFxt2XEFIpQ=="
     },
+    "seventh": {
+      "version": "0.7.15",
+      "resolved": "https://registry.npmjs.org/seventh/-/seventh-0.7.15.tgz",
+      "integrity": "sha512-igZySTZ3DWrPBxPXC0J3FvSw4SqY0SQc89IMLtc+Mx/T7rXNZnb6QpvSoKGPIIBvUS7fFF6ktRwFzCt0YQSyzA==",
+      "dev": true,
+      "requires": {
+        "setimmediate": "^1.0.5"
+      }
+    },
     "sha.js": {
       "version": "2.4.11",
       "resolved": "https://registry.npmjs.org/sha.js/-/sha.js-2.4.11.tgz",
@@ -15055,16 +15046,16 @@
       }
     },
     "terminal-kit": {
-      "version": "1.17.12",
-      "resolved": "https://registry.npmjs.org/terminal-kit/-/terminal-kit-1.17.12.tgz",
-      "integrity": "sha512-g8lU5ULNI49kp0v4MG+5sVS7IlEXm0Llq4Z8CEVgwKaEszTlOfFrLEOiQTA7MYEX+KIHYq2b4Y6ntAEDlK5Lmg==",
+      "version": "1.19.2",
+      "resolved": "https://registry.npmjs.org/terminal-kit/-/terminal-kit-1.19.2.tgz",
+      "integrity": "sha512-9rBXBWX6LJLZbTipdGyz14020Bd8UzoKcs2Gp9PfdRmw9nlDSLez7ULpUb9ybmfWnuztvVYl+tA59hEVOyHYiQ==",
       "dev": true,
       "requires": {
         "@cronvel/get-pixels": "^3.3.1",
-        "async-kit": "^2.2.4",
         "ndarray": "^1.0.18",
         "nextgen-events": "^1.1.0",
-        "string-kit": "^0.7.10",
+        "seventh": "^0.7.15",
+        "string-kit": "^0.7.12",
         "tree-kit": "^0.5.27"
       }
     },
