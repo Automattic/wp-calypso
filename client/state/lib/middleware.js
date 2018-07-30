@@ -6,6 +6,8 @@
 
 import { get } from 'lodash';
 import debugFactory from 'debug';
+import notices from 'notices';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,6 +17,7 @@ import {
 	ANALYTICS_SUPER_PROPS_UPDATE,
 	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
+	ROUTE_SET,
 	SELECTED_SITE_SET,
 	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
@@ -34,6 +37,10 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+import {
+	createImmediateLoginMessage,
+	createPathWithoutImmediateLoginInformation,
+} from 'state/magic-login/utils';
 
 const debug = debugFactory( 'calypso:state:middleware' );
 const user = userFactory();
@@ -53,6 +60,38 @@ let desktop;
 if ( desktopEnabled ) {
 	desktop = require( 'lib/desktop' ).default;
 }
+
+let processedImmediateLoginNotification = false;
+
+/**
+ * Notifies user about the fact that they were automatically logged in
+ * via a magic link.
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
+ * @param {function} getState - redux getState function
+ */
+const notifyAboutImmediateLoginLinkEffects = ( dispatch, action, getState ) => {
+	if ( processedImmediateLoginNotification ) {
+		return;
+	}
+	processedImmediateLoginNotification = true;
+
+	if ( ! action.query.logged_via_magic_link ) {
+		return;
+	}
+
+	const { email } = getCurrentUser( getState() );
+
+	// Redirect to a page without immediate login information in the URL
+	page.replace( createPathWithoutImmediateLoginInformation( action.path, action.query ) );
+
+	// Let redux process all dispatches that are currently queued and show the message
+	const delay = typeof setImmediate !== 'undefined' ? setImmediate : setTimeout;
+	delay( () => {
+		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
+	} );
+};
 
 /*
  * Object holding functions that will be called once selected site changes.
@@ -199,6 +238,9 @@ const fireChangeListeners = () => {
 
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {
+		case ROUTE_SET:
+			return notifyAboutImmediateLoginLinkEffects( dispatch, action, getState );
+
 		case ANALYTICS_SUPER_PROPS_UPDATE:
 			return updateSelectedSiteForAnalytics( dispatch, action, getState );
 
