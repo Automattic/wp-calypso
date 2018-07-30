@@ -19,6 +19,7 @@ import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import applicationPasswords from './application-passwords/reducer';
+import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import extensionsModule from 'extensions';
@@ -219,7 +220,7 @@ export function createReduxStore( initialState = {} ) {
 		// then it could mistakenly trigger on those network
 		// responses. Therefore we need to inject the data layer
 		// as early as possible into the middleware chain.
-		require( './data-layer/wpcom-api-middleware.js' ).default,
+		wpcomApiMiddleware,
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default,
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,
