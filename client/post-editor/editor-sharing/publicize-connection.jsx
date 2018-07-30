@@ -47,7 +47,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 			( post &&
 				connection &&
 				includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID ) ) ||
-			( connection.service === 'facebook' && ! connection.is_additional_external_user )
+			( connection.service === 'facebook' && ! this.isAdditionalExternalUser( connection ) )
 		);
 	};
 
@@ -65,7 +65,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		return (
 			! connection ||
 			connection.read_only ||
-			( connection.service === 'facebook' && ! connection.is_additional_external_user )
+			( connection.service === 'facebook' && ! this.isAdditionalExternalUser( connection ) )
 		);
 	};
 
@@ -121,7 +121,21 @@ export class EditorSharingPublicizeConnection extends React.Component {
 				status="is-error"
 				showDismiss={ false }
 			>
-				{ this.props.translate( 'Connections to Facebook profiles ceased to work on August 1st' ) }
+				{ this.props.translate(
+					'Connections to Facebook profiles ceased to work on August 1st. ' +
+						'{{a}}Learn More{{/a}}',
+					{
+						components: {
+							a: (
+								<a
+									href="https://en.support.wordpress.com/publicize/#facebook-pages"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
 			</Notice>
 		);
 	};
