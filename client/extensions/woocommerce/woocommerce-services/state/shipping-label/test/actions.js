@@ -285,7 +285,7 @@ describe( 'Shipping label Actions', () => {
 				signature: 'signature',
 				contents_type: 'merchandise',
 				restriction_type: 'none',
-				abandon_on_non_delivery: false,
+				non_delivery_option: 'return',
 				itn: '',
 				items: [
 					{

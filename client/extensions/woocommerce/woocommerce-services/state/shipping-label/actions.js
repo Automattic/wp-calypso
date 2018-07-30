@@ -101,7 +101,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_TYPE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_EXPLANATION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_COMMENTS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ABANDON_ON_NON_DELIVERY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ITN,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_DESCRIPTION,
@@ -195,13 +195,15 @@ export const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems 
 		'signature',
 	] );
 	if ( customsItems ) {
-		apiPckg.contents_type =
-			'other' !== pckg.contentsType ? pckg.contentsType || 'merchandise' : pckg.contentsExplanation;
-		apiPckg.restriction_type =
-			'other' !== pckg.restrictionType
-				? pckg.restrictionType || 'none'
-				: pckg.restrictionExplanation;
-		apiPckg.abandon_on_non_delivery = Boolean( pckg.abandonOnNonDelivery );
+		apiPckg.contents_type = pckg.contentsType || 'merchandise';
+		if ( 'other' === pckg.contentsType ) {
+			apiPckg.contents_explanation = pckg.contentsExplanation;
+		}
+		apiPckg.restriction_type = pckg.restrictionType || 'none';
+		if ( 'other' === pckg.restrictionType ) {
+			apiPckg.restriction_comments = pckg.restrictionComments;
+		}
+		apiPckg.non_delivery_option = pckg.abandonOnNonDelivery ? 'abandon' : 'return';
 		apiPckg.itn = pckg.itn || '';
 		const getProductValue = productId =>
 			isNil( customsItems[ productId ].value )
@@ -615,17 +617,12 @@ export const setRestrictionType = ( orderId, siteId, packageId, restrictionType 
 	restrictionType,
 } );
 
-export const setRestrictionExplanation = (
-	orderId,
-	siteId,
-	packageId,
-	restrictionExplanation
-) => ( {
-	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION,
+export const setRestrictionExplanation = ( orderId, siteId, packageId, restrictionComments ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_COMMENTS,
 	siteId,
 	orderId,
 	packageId,
-	restrictionExplanation,
+	restrictionComments,
 } );
 
 export const setAbandonOnNonDelivery = ( orderId, siteId, packageId, abandonOnNonDelivery ) => ( {

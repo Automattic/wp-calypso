@@ -78,7 +78,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_TYPE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_EXPLANATION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_COMMENTS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ABANDON_ON_NON_DELIVERY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ITN,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_DESCRIPTION,
@@ -738,7 +738,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE ] = (
 					[ packageId ]: {
 						...state.form.packages.selected[ packageId ],
 						restrictionType,
-						restrictionExplanation: '',
+						restrictionComments: '',
 					},
 				},
 			},
@@ -746,9 +746,9 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE ] = (
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION ] = (
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_COMMENTS ] = (
 	state,
-	{ packageId, restrictionExplanation }
+	{ packageId, restrictionComments }
 ) => {
 	return {
 		...state,
@@ -760,7 +760,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_EXPLANATION ] = (
 					...state.form.packages.selected,
 					[ packageId ]: {
 						...state.form.packages.selected[ packageId ],
-						restrictionExplanation,
+						restrictionComments,
 					},
 				},
 			},
