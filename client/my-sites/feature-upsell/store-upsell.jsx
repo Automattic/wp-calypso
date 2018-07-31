@@ -176,8 +176,8 @@ class StoreUpsellComponent extends Component {
 	handleUpgradeButtonClick = () => {
 		const { trackTracksEvent, selectedSiteSlug } = this.props;
 
-		trackTracksEvent( 'calypso_upsell_landing_page_cta_click', {
-			cta_name: 'store-upsell',
+		trackTracksEvent( 'calypso_banner_cta_click', {
+			cta_name: 'upsell-page-store',
 		} );
 
 		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
@@ -214,9 +214,15 @@ const mapStateToProps = state => {
 				isRequestingActivePromotions( state ) ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-		trackTracksEvent: recordTracksEvent,
 	};
 };
 
-export default connect( mapStateToProps )( localize( StoreUpsellComponent ) );
+const mapDispatchToProps = dispatch => ( {
+	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
+} );
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( StoreUpsellComponent ) );
 /* eslint-enable wpcalypso/jsx-classname-namespace */
