@@ -50,7 +50,7 @@ const importers = [
 	},
 	{
 		type: BLOGGER,
-		isImporterEnabled: isEnabled( 'manage/import/blogger' ),
+		isImporterEnabled: true,
 		component: BloggerImporter,
 	},
 	{
