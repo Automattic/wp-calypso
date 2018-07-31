@@ -1092,6 +1092,24 @@ describe( 'index', () => {
 				}
 			);
 		} );
+		test( 'links to embedded Polldaddy surveys', done => {
+			normalizer(
+				{
+					content:
+						'<div class="embed-polldaddy">' +
+						'<div class="pd-embed" data-settings="{&quot;type&quot;:&quot;iframe&quot;,&quot;auto&quot;:true,&quot;domain&quot;:&quot;bluefuton.polldaddy.com/s/&quot;,&quot;id&quot;:&quot;what-s-your-favourite-bird&quot;}">' +
+						'</div>',
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.detectSurveys ] ) ],
+				function( err, normalized ) {
+					assert.include(
+						normalized.content,
+						'<p><a target="_blank" rel="external noopener noreferrer" href="https://bluefuton.polldaddy.com/s/what-s-your-favourite-bird">Take our survey</a></p>'
+					);
+					done( err );
+				}
+			);
+		} );
 
 		test( 'removes elements by selector', done => {
 			normalizer(

@@ -26,7 +26,7 @@ export default function detectPolls( post, dom ) {
 			return;
 		}
 
-		// some browers don't require this and let us query the dom inside a noscript. some do not. maybe just jsdom.
+		// some browsers don't require this and let us query the dom inside a noscript. some do not. maybe just jsdom.
 		const noscriptDom = domForHtml( noscript.innerHTML );
 
 		const pollLink = noscriptDom.querySelector( 'a[href^="http://polldaddy.com/poll/"]' );

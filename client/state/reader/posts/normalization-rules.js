@@ -15,6 +15,7 @@ import DISPLAY_TYPES from './display-types';
 import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
+import detectSurveys from 'lib/post-normalizer/rule-content-detect-surveys';
 import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
@@ -114,6 +115,7 @@ const fastPostNormalizationRules = flow( [
 		disableAutoPlayOnMedia,
 		detectMedia,
 		detectPolls,
+		detectSurveys,
 		linkJetpackCarousels,
 	] ),
 	createBetterExcerpt,
