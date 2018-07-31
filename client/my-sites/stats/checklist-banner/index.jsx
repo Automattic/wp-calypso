@@ -27,7 +27,6 @@ import { mergeObjectIntoArrayById } from 'my-sites/checklist/util';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { getABTestVariation } from 'lib/abtest';
 
 const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
@@ -109,13 +108,6 @@ export class ChecklistBanner extends Component {
 		}
 
 		if ( this.props.siteDesignType !== 'blog' ) {
-			return false;
-		}
-
-		if (
-			getABTestVariation( 'checklistThankYouForPaidUser' ) !== 'show' &&
-			getABTestVariation( 'checklistThankYouForFreeUser' ) !== 'show'
-		) {
 			return false;
 		}
 

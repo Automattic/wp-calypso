@@ -7,6 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get, some } from 'lodash';
 import page from 'page';
 
 /**
@@ -16,11 +17,11 @@ import DocumentHead from 'components/data/document-head';
 import GoogleAppsDialog from 'components/upgrades/google-apps/google-apps-dialog';
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
-import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
+import { getSiteSlug, getSiteTitle, getSitePlan } from 'state/sites/selectors';
+import { getReceiptById } from 'state/receipts/selectors';
 import { addItem, removeItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
-import { isDotComPlan } from 'lib/products-values';
-import { getABTestVariation } from 'lib/abtest';
+import { isDotComPlan, isBusiness } from 'lib/products-values';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class GsuiteNudge extends React.Component {
@@ -31,14 +32,13 @@ export class GsuiteNudge extends React.Component {
 	};
 
 	handleClickSkip = () => {
-		const { siteSlug, receiptId } = this.props;
+		const { siteSlug, receiptId, hasDotComBusiness } = this.props;
 
-		// DO NOT assign the test here.
-		if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
-			page( `/checklist/${ siteSlug }?d=paid` );
-		} else {
-			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
-		}
+		page(
+			hasDotComBusiness
+				? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
+				: `/checklist/${ siteSlug }`
+		);
 	};
 
 	handleAddGoogleApps = googleAppsCartItem => {
@@ -93,8 +93,18 @@ export class GsuiteNudge extends React.Component {
 }
 
 export default connect( ( state, props ) => {
+	const purchases = get( getReceiptById( state, props.receiptId ), 'data.purchases', [] );
+	const sitePlan = getSitePlan( state, props.selectedSiteId );
+	const hasDotComBusiness =
+		isDotComBusinessPlan( sitePlan ) || some( purchases, isDotComBusinessPlan );
+
 	return {
 		siteSlug: getSiteSlug( state, props.selectedSiteId ),
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
+		hasDotComBusiness,
 	};
 } )( localize( GsuiteNudge ) );
+
+function isDotComBusinessPlan( product ) {
+	return product && isBusiness( product ) && isDotComPlan( product );
+}
