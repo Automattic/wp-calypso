@@ -28,7 +28,7 @@ class UpdateNotice extends React.PureComponent {
 	static defaultProps = { onClick: noop };
 
 	render() {
-		const { count } = this.props;
+		const { count, cappedUnreadCount, translate } = this.props;
 
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
@@ -36,14 +36,14 @@ class UpdateNotice extends React.PureComponent {
 		} );
 
 		return (
-			<div className={ counterClasses } onClick={ this.handleClick }>
+			<button className={ counterClasses } onClick={ this.handleClick }>
 				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
-				{ this.props.translate( '%s new post', '%s new posts', {
-					args: [ this.props.cappedUnreadCount ],
+				{ translate( '%s new post', '%s new posts', {
+					args: [ cappedUnreadCount ],
 					count,
 				} ) }
-			</div>
+			</button>
 		);
 	}
 
