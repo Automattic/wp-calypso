@@ -40,7 +40,7 @@ import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 import {
 	createImmediateLoginMessage,
 	createPathWithoutImmediateLoginInformation,
-} from 'state/magic-login/utils';
+} from 'state/immediate-login/utils';
 
 const debug = debugFactory( 'calypso:state:middleware' );
 const user = userFactory();
@@ -65,7 +65,7 @@ let processedImmediateLoginNotification = false;
 
 /**
  * Notifies user about the fact that they were automatically logged in
- * via a magic link.
+ * via an immediate link.
  *
  * @param {function} dispatch - redux dispatch function
  * @param {object}   action   - the dispatched action
@@ -77,7 +77,7 @@ const notifyAboutImmediateLoginLinkEffects = ( dispatch, action, getState ) => {
 	}
 	processedImmediateLoginNotification = true;
 
-	if ( ! action.query.logged_via_magic_link ) {
+	if ( ! action.query.logged_via_immediate_link ) {
 		return;
 	}
 

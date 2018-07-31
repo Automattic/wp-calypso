@@ -10,7 +10,7 @@
 import { createPathWithoutImmediateLoginInformation, createImmediateLoginMessage } from '../utils';
 import { REASON_MANUAL_RENEWAL } from '../constants';
 
-describe( 'magic-login/utils', () => {
+describe( 'immediate-login/utils', () => {
 	describe( 'createPathWithoutImmediateLoginInformation', () => {
 		test( 'should be possible to call', () => {
 			createPathWithoutImmediateLoginInformation( '', {} );
@@ -49,7 +49,7 @@ describe( 'magic-login/utils', () => {
 		test( 'should remove immediate-login-related query params [1]', () => {
 			expect(
 				createPathWithoutImmediateLoginInformation( '/test/another_segment/', {
-					logged_via_magic_link: 'true',
+					logged_via_immediate_link: 'true',
 				} )
 			).toBe( '/test/another_segment/' );
 		} );
@@ -65,7 +65,7 @@ describe( 'magic-login/utils', () => {
 		test( 'should remove immediate-login-related query params [3]', () => {
 			expect(
 				createPathWithoutImmediateLoginInformation( '/test/another_segment/', {
-					logged_via_magic_link: 'true',
+					logged_via_immediate_link: 'true',
 					login_reason: 'some reason',
 				} )
 			).toBe( '/test/another_segment/' );
@@ -74,7 +74,7 @@ describe( 'magic-login/utils', () => {
 		test( 'should remove immediate-login-related query params [4]', () => {
 			expect(
 				createPathWithoutImmediateLoginInformation( '/test/another_segment/', {
-					logged_via_magic_link: 'true',
+					logged_via_immediate_link: 'true',
 					login_reason: 'some reason',
 					unrelated: 'value1',
 					unrelated2: 'value2',

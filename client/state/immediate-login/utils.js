@@ -8,14 +8,14 @@ import { REASON_MANUAL_RENEWAL } from './constants';
 
 /**
  * Processes a redux ROUTE_SET action and returns a URL that contains no parameters that
- * are related to magic login.
+ * are related to immediate login.
  *
  * @param {string} path  - path
  * @param {object} query - query parameters
  * @return {string}      - the URL without related params
  */
 export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
-	const relatedParamNames = [ 'logged_via_magic_link', 'login_reason' ];
+	const relatedParamNames = [ 'logged_via_immediate_link', 'login_reason' ];
 	const newQuery = Object.keys( query )
 		.filter( k => relatedParamNames.indexOf( k ) === -1 )
 		.map( k => `${ encodeURIComponent( k ) }=${ encodeURIComponent( query[ k ] ) }` );
