@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get } from 'lodash';
+import { get, once } from 'lodash';
 import debugFactory from 'debug';
 import notices from 'notices';
 import page from 'page';
@@ -62,8 +62,6 @@ if ( desktopEnabled ) {
 	desktop = require( 'lib/desktop' ).default;
 }
 
-let processedImmediateLoginNotification = false;
-
 /**
  * Notifies user about the fact that they were automatically logged in
  * via an immediate link.
@@ -72,12 +70,7 @@ let processedImmediateLoginNotification = false;
  * @param {object}   action   - the dispatched action
  * @param {function} getState - redux getState function
  */
-const notifyAboutImmediateLoginLinkEffects = ( dispatch, action, getState ) => {
-	if ( processedImmediateLoginNotification ) {
-		return;
-	}
-	processedImmediateLoginNotification = true;
-
+const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState ) => {
 	if ( ! action.query.logged_via_immediate_link ) {
 		return;
 	}
@@ -104,7 +97,7 @@ const notifyAboutImmediateLoginLinkEffects = ( dispatch, action, getState ) => {
 	delay( () => {
 		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
 	} );
-};
+} );
 
 /*
  * Object holding functions that will be called once selected site changes.
