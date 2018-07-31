@@ -13,6 +13,8 @@ import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import {
 	setCustomsItemDescription,
 	setCustomsItemTariffNumber,
+	setCustomsItemWeight,
+	setCustomsItemValue,
 	setCustomsItemOriginCountry,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
@@ -83,12 +85,14 @@ const ItemRow = ( props ) => {
 			className="customs-step__item-weight-column"
 			title={ translate( 'Weight (per unit)' ) }
 			value={ weight }
+			updateValue={ props.setCustomsItemWeight }
 			error={ errors.weight } />
 		<PriceField
 			id={ packageId + '_' + productId + '_value' }
 			className="customs-step__item-value-column"
 			title={ translate( 'Value (per unit)' ) }
 			value={ value }
+			updateValue={ props.setCustomsItemValue }
 			error={ errors.value } />
 		<Dropdown
 			id={ packageId + '_' + productId + '_originCountry' }
@@ -115,6 +119,8 @@ ItemRow.propTypes = {
 	countryNames: PropTypes.object.isRequired,
 	setCustomsItemDescription: PropTypes.func.isRequired,
 	setCustomsItemTariffNumber: PropTypes.func.isRequired,
+	setCustomsItemWeight: PropTypes.func.isRequired,
+	setCustomsItemValue: PropTypes.func.isRequired,
 	setCustomsItemOriginCountry: PropTypes.func.isRequired,
 };
 
@@ -139,6 +145,8 @@ const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
 const mapDispatchToProps = ( dispatch, { orderId, siteId, productId } ) => ( {
 	setCustomsItemDescription: ( value ) => dispatch( setCustomsItemDescription( orderId, siteId, productId, value ) ),
 	setCustomsItemTariffNumber: ( value ) => dispatch( setCustomsItemTariffNumber( orderId, siteId, productId, value ) ),
+	setCustomsItemWeight: ( value ) => dispatch( setCustomsItemWeight( orderId, siteId, productId, value ) ),
+	setCustomsItemValue: ( value ) => dispatch( setCustomsItemValue( orderId, siteId, productId, value ) ),
 	setCustomsItemOriginCountry: ( value ) => dispatch( setCustomsItemOriginCountry( orderId, siteId, productId, value ) ),
 } );
 

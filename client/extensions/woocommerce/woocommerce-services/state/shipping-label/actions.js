@@ -106,6 +106,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ITN,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_DESCRIPTION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_TARIFF_NUMBER,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_WEIGHT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 } from '../action-types.js';
@@ -655,6 +657,22 @@ export const setCustomsItemTariffNumber = ( orderId, siteId, productId, tariffNu
 	orderId,
 	productId,
 	tariffNumber,
+} );
+
+export const setCustomsItemWeight = ( orderId, siteId, productId, weight ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_WEIGHT,
+	siteId,
+	orderId,
+	productId,
+	weight,
+} );
+
+export const setCustomsItemValue = ( orderId, siteId, productId, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE,
+	siteId,
+	orderId,
+	productId,
+	value,
 } );
 
 export const setCustomsItemOriginCountry = ( orderId, siteId, productId, originCountry ) => ( {

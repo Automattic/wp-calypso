@@ -83,6 +83,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_ITN,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_DESCRIPTION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_TARIFF_NUMBER,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_WEIGHT,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_ORIGIN_COUNTRY,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS,
 } from '../action-types';
@@ -851,6 +853,50 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_TARIFF_NUMBER ] =
 				ignoreTariffNumberValidation: {
 					...state.form.customs.ignoreTariffNumberValidation,
 					[ productId ]: false,
+				},
+			},
+		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_WEIGHT ] = (
+	state,
+	{ productId, weight }
+) => {
+	return {
+		...state,
+		form: {
+			...state.form,
+			customs: {
+				...state.form.customs,
+				items: {
+					...state.form.customs.items,
+					[ productId ]: {
+						...state.form.customs.items[ productId ],
+						weight,
+					},
+				},
+			},
+		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE ] = (
+	state,
+	{ productId, value }
+) => {
+	return {
+		...state,
+		form: {
+			...state.form,
+			customs: {
+				...state.form.customs,
+				items: {
+					...state.form.customs.items,
+					[ productId ]: {
+						...state.form.customs.items[ productId ],
+						value,
+					},
 				},
 			},
 		},
