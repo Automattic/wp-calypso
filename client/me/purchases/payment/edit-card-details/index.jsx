@@ -115,7 +115,9 @@ class EditCardDetails extends Component {
 					apiParams={ { purchaseId: this.props.purchase.id } }
 					createCardToken={ this.createCardToken }
 					initialValues={ this.props.card }
+					purchase={ this.props.purchase }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					siteSlug={ this.props.siteSlug }
 					successCallback={ this.successCallback }
 				/>
 			</Main>
