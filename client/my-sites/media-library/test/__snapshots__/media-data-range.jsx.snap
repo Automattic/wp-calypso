@@ -108,7 +108,6 @@ exports[`MediaDateRange should render 1`] = `
             },
           ]
         }
-        enableOutsideDays={false}
         numberOfMonths={2}
         onSelectDay={[Function]}
         selectedDays={
@@ -117,6 +116,7 @@ exports[`MediaDateRange should render 1`] = `
             "to": 2018-05-31T23:00:00.000Z,
           }
         }
+        showOutsideDays={false}
         toMonth={2018-05-31T23:00:00.000Z}
       />
     </div>

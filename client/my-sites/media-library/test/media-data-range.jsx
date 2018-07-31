@@ -21,10 +21,14 @@ describe( 'MediaDateRange', () => {
 	let fixedEndDate;
 
 	beforeEach( () => {
-		Object.defineProperty( window, 'matchMedia', {
-			value: jest.fn( () => {
-				return { matches: true };
-			} ),
+		window.matchMedia = jest.fn().mockImplementation( query => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
 		} );
 
 		// Note: forces locale to UK date format to make
@@ -181,10 +185,14 @@ describe( 'MediaDateRange', () => {
 	} );
 
 	test( 'should show 1 month calendar view on screens <480px', () => {
-		Object.defineProperty( window, 'matchMedia', {
-			value: jest.fn( () => {
-				return { matches: false };
-			} ),
+		window.matchMedia = jest.fn().mockImplementation( query => {
+			return {
+				matches: false,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
 		} );
 
 		const wrapper = shallow( <MediaDateRange moment={ moment } /> );
