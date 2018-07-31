@@ -24,6 +24,8 @@ import {
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import ExternalLink from 'components/external-link';
 import InfoTooltip from 'woocommerce/woocommerce-services/components/info-tooltip';
+import WeightField from 'woocommerce/woocommerce-services/components/weight-field';
+import PriceField from 'woocommerce/woocommerce-services/components/price-field';
 
 const TariffCodeTitle = localize( ( { translate } ) =>
 	<span>{ translate( 'Tariff code' ) } (
@@ -51,9 +53,12 @@ const ItemRow = ( props ) => {
 		translate,
 		description,
 		defaultDescription,
+		weight,
+		value,
 		tariffNumber,
 		originCountry,
 		countryNames,
+		weightUnit,
 	} = props;
 
 	return <div className="customs-step__item-row">
@@ -72,6 +77,19 @@ const ItemRow = ( props ) => {
 			value={ tariffNumber }
 			updateValue={ props.setCustomsItemTariffNumber }
 			error={ errors.tariffNumber } />
+		<WeightField
+			weightUnit={ weightUnit }
+			id={ packageId + '_' + productId + '_weight' }
+			className="customs-step__item-weight-column"
+			title={ translate( 'Weight (per unit)' ) }
+			value={ weight }
+			error={ errors.weight } />
+		<PriceField
+			id={ packageId + '_' + productId + '_value' }
+			className="customs-step__item-value-column"
+			title={ translate( 'Value (per unit)' ) }
+			value={ value }
+			error={ errors.value } />
 		<Dropdown
 			id={ packageId + '_' + productId + '_originCountry' }
 			className="customs-step__item-country-column"
@@ -90,6 +108,8 @@ ItemRow.propTypes = {
 	description: PropTypes.string.isRequired,
 	defaultDescription: PropTypes.string.isRequired,
 	tariffNumber: PropTypes.string.isRequired,
+	weight: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+	value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 	originCountry: PropTypes.string.isRequired,
 	errors: PropTypes.object,
 	countryNames: PropTypes.object.isRequired,
@@ -101,15 +121,18 @@ ItemRow.propTypes = {
 const mapStateToProps = ( state, { orderId, siteId, productId } ) => {
 	const isShippingLabelLoaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const { description, defaultDescription, tariffNumber, originCountry } = shippingLabel.form.customs.items[ productId ];
+	const { description, defaultDescription, tariffNumber, weight, value, originCountry } = shippingLabel.form.customs.items[ productId ];
 
 	return {
 		description,
 		defaultDescription,
 		tariffNumber,
+		weight,
+		value,
 		originCountry,
 		errors: isShippingLabelLoaded ? getFormErrors( state, orderId, siteId ).customs.items[ productId ] : {},
 		countryNames: getAllCountryNames( state, siteId ),
+		weightUnit: shippingLabel.storeOptions.weight_unit,
 	};
 };
 
@@ -125,6 +148,8 @@ export const ItemRowHeader = localize( ( { translate } ) => (
 	<div className="customs-step__item-rows-header">
 		<span className="customs-step__item-description-column">{ translate( 'Description' ) }</span>
 		<span className="customs-step__item-code-column">{ <TariffCodeTitle /> }</span>
+		<span className="customs-step__item-weight-column">{ translate( 'Weight (per unit)' ) }</span>
+		<span className="customs-step__item-value-column">{ translate( 'Value (per unit)' ) }</span>
 		<span className="customs-step__item-country-column">{ <OriginCountryTitle /> }</span>
 	</div>
 ) );
