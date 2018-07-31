@@ -215,7 +215,7 @@ export class MediaDateRange extends Component {
 		return (
 			<DatePicker
 				className="media-library__date-range-popover-date-picker"
-				enableOutsideDays={ false }
+				showOutsideDays={ false }
 				toMonth={ now }
 				onSelectDay={ this.onSelectDate }
 				selectedDays={ {
@@ -266,8 +266,7 @@ export class MediaDateRange extends Component {
 			>
 				<Gridicon className="media-library__date-range-btn-icon" icon="calendar" />
 				<span className="media-library__date-range-btn-text">
-					{ this.dateToHumanReadable( this.state.startDate ) }
-					-
+					{ this.dateToHumanReadable( this.state.startDate ) }-
 					{ this.dateToHumanReadable( this.state.endDate ) }
 				</span>
 				<Gridicon icon="chevron-down" />
