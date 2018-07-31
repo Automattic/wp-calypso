@@ -876,6 +876,10 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_WEIGHT ] = (
 						weight,
 					},
 				},
+				ignoreWeightValidation: {
+					...state.form.customs.ignoreWeightValidation,
+					[ productId ]: false,
+				},
 			},
 		},
 	};
@@ -897,6 +901,10 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CUSTOMS_ITEM_VALUE ] = (
 						...state.form.customs.items[ productId ],
 						value,
 					},
+				},
+				ignoreValueValidation: {
+					...state.form.customs.ignoreValueValidation,
+					[ productId ]: false,
 				},
 			},
 		},
@@ -933,6 +941,8 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_CUSTOMS ] = state => {
 			customs: {
 				...state.form.customs,
 				ignoreTariffNumberValidation: {},
+				ignoreWeightValidation: {},
+				ignoreValueValidation: {},
 			},
 		},
 	};

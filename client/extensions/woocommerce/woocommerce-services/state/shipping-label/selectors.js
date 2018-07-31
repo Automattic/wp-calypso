@@ -383,6 +383,20 @@ export const getCustomsErrors = (
 			if ( ! itemData.description ) {
 				itemErrors.description = translate( 'This field is required' );
 			}
+			if ( ! customs.ignoreWeightValidation[ productId ] ) {
+				if ( isNil( itemData.weight ) || '' === itemData.weight ) {
+					itemErrors.weight = translate( 'This field is required' );
+				} else if ( ! ( parseFloat( itemData.weight ) > 0 ) ) {
+					itemErrors.weight = translate( 'Weight must be greater than zero' );
+				}
+			}
+			if ( ! customs.ignoreValueValidation[ productId ] ) {
+				if ( isNil( itemData.value ) || '' === itemData.value ) {
+					itemErrors.value = translate( 'This field is required' );
+				} else if ( ! ( parseFloat( itemData.value ) > 0 ) ) {
+					itemErrors.value = translate( 'Declared value must be greater than zero' );
+				}
+			}
 			if (
 				! customs.ignoreTariffNumberValidation[ productId ] &&
 				6 !== itemData.tariffNumber.length
@@ -467,7 +481,7 @@ export const isCustomsFormStepSubmitted = (
 		flatten( map( form.packages.selected, pckg => map( pckg.items, 'product_id' ) ) )
 	);
 	return ! some(
-		usedProductIds.map( productId => form.customs.ignoreTariffNumberValidation[ productId ] )
+		usedProductIds.map( productId => form.customs.ignoreTariffNumberValidation[ productId ] || form.customs.ignoreWeightValidation[ productId ] || form.customs.ignoreValueValidation[ productId ] )
 	);
 };
 
