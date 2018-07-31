@@ -45,6 +45,7 @@ import help from './help/reducer';
 import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
+import immediateLogin from './immediate-login/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
@@ -140,6 +141,7 @@ const reducers = {
 	help,
 	httpData,
 	i18n,
+	immediateLogin,
 	inlineHelpSearchResults,
 	inlineSupportArticle,
 	invites,

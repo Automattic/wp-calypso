@@ -41,6 +41,7 @@ import {
 	createImmediateLoginMessage,
 	createPathWithoutImmediateLoginInformation,
 } from 'state/immediate-login/utils';
+import { saveImmediateLoginInformation } from 'state/immediate-login/actions';
 
 const debug = debugFactory( 'calypso:state:middleware' );
 const user = userFactory();
@@ -86,6 +87,9 @@ const notifyAboutImmediateLoginLinkEffects = ( dispatch, action, getState ) => {
 		return;
 	}
 	const { email } = currentUser;
+
+	// Store login reason for future reference
+	dispatch( saveImmediateLoginInformation( action.query.login_reason ) );
 
 	// Redirect to a page without immediate login information in the URL
 	page.replace( createPathWithoutImmediateLoginInformation( action.path, action.query ) );
