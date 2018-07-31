@@ -81,8 +81,8 @@ class ThemesUpsellComponent extends Component {
 					</React.Fragment>
 				) }
 
-				<PageViewTracker path={ '/feature/plugins/:site' } title="PluginsUpsell" />
-				<DocumentHead title={ 'Plugins' } />
+				<PageViewTracker path={ '/feature/themes/:site' } title="ThemesUpsell" />
+				<DocumentHead title={ 'Themes' } />
 
 				<div className="feature-upsell__card">
 					<h1 className="feature-upsell__card-header is-capital is-main">
