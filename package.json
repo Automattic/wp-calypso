@@ -33,7 +33,7 @@
     "@babel/runtime": "7.0.0-beta.53",
     "@wordpress/blocks": "1.0.0",
     "@wordpress/data": "1.0.1",
-    "autoprefixer": "9.0.1",
+    "autoprefixer": "9.0.2",
     "autosize": "4.0.2",
     "babel-loader": "8.0.0-beta.4",
     "babel-plugin-add-module-exports": "0.2.1",

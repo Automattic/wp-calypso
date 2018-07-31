@@ -1942,15 +1942,15 @@
       "integrity": "sha1-ri1acpR38onWDdf5amMUoi3Wwio="
     },
     "autoprefixer": {
-      "version": "9.0.1",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.0.1.tgz",
-      "integrity": "sha512-ytUcgSKu1mZh8pCJq54BkaK7ijigK+nhqVmu8PYOR00letCkrU71qTfKnzhQgn7by/QJvlJGUAofMt+jyXJTxA==",
+      "version": "9.0.2",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.0.2.tgz",
+      "integrity": "sha512-t5PpCq5nCNzgPEzhty83UHYLmteY9FTL3COBfRjL0y4BTDB0OADbHVzG/S7gzqvITSsAZiaJPduoDEv2n68JNQ==",
       "requires": {
         "browserslist": "^4.0.1",
         "caniuse-lite": "^1.0.30000865",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
-        "postcss": "^7.0.1",
+        "postcss": "^7.0.2",
         "postcss-value-parser": "^3.2.3"
       },
       "dependencies": {
@@ -1963,6 +1963,21 @@
             "electron-to-chromium": "^1.3.52",
             "node-releases": "^1.0.0-alpha.10"
           }
+        },
+        "postcss": {
+          "version": "7.0.2",
+          "resolved": "https://registry.npmjs.org/postcss/-/postcss-7.0.2.tgz",
+          "integrity": "sha512-fmaUY5370keLUTx+CnwRxtGiuFTcNBLQBqr1oE3WZ/euIYmGAo0OAgOhVJ3ByDnVmOR3PK+0V9VebzfjRIUcqw==",
+          "requires": {
+            "chalk": "^2.4.1",
+            "source-map": "^0.6.1",
+            "supports-color": "^5.4.0"
+          }
+        },
+        "source-map": {
+          "version": "0.6.1",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz",
+          "integrity": "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g=="
         }
       }
     },
@@ -6236,7 +6251,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6588,7 +6604,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6635,6 +6652,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6673,11 +6691,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
