@@ -107,9 +107,9 @@ class MeSidebar extends React.Component {
 							compact
 							className="sidebar__me-signout-button"
 							onClick={ this.onSignOut }
-							title={ translate( 'Sign out of WordPress.com' ) }
+							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							{ translate( 'Sign Out' ) }
+							{ translate( 'Log Out' ) }
 						</Button>
 					</div>
 
