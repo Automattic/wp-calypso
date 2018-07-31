@@ -56,6 +56,20 @@
 	height: 0;
 	padding-bottom: 100%;
 	background-color: $gray-lighten-20;
+
+	// Required for inset shadow for selected state
+	&:before {
+		content: '';
+		display: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border: 3px solid #01aadc;
+		pointer-events: none;
+		z-index: 1000;
+	}
 }
 
 .media-library__list-item {
@@ -68,11 +82,16 @@
 }
 
 .media-library__list-item.is-selected .media-library__list-item-figure {
-	box-shadow: 0 0 0 2px $blue-medium, 0 4px 6px $gray-lighten-20;
+	&:before {
+		display: block; // show the inset shadow
+	}
 }
 
-.media-library__list-item.is-selected:focus .media-library__list-item-figure {
-	box-shadow: 0 0 2px 2px $blue-medium, 0 4px 6px $gray-lighten-20;
+.media-library__list-item.is-selected:hover,
+.media-library__list-item.is-selected:focus {
+	.media-library__list-item-figure {
+		box-shadow: 0 0 2px 2px $blue-medium, 0 4px 6px $gray-lighten-20;
+	}
 }
 
 .media-library__list-item.is-placeholder .media-library__list-item-figure {
