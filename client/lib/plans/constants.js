@@ -860,6 +860,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_ALL_FREE_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_FREE_FEATURES,
 		getTitle: () => i18n.translate( 'All free features' ),
+		getDescription: () => i18n.translate( 'Also includes all features offered in the Free plan.' ),
 	},
 
 	[ FEATURE_ALL_PERSONAL_FEATURES_JETPACK ]: {
@@ -883,6 +884,8 @@ export const FEATURES_LIST = {
 	[ FEATURE_ALL_PERSONAL_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
 		getTitle: () => i18n.translate( 'All Personal features' ),
+		getDescription: () =>
+			i18n.translate( 'Also includes all features offered in the Personal plan.' ),
 	},
 
 	[ FEATURE_ALL_PREMIUM_FEATURES_JETPACK ]: {
@@ -906,31 +909,50 @@ export const FEATURES_LIST = {
 	[ FEATURE_ALL_PREMIUM_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
+		getDescription: () =>
+			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
 	},
 
 	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced customization' ),
+		getDescription: () =>
+			i18n.translate(
+				'Customize your selected theme template with extended color schemes, background designs, and complete control over website CSS.'
+			),
 	},
 
 	[ FEATURE_FREE_DOMAIN ]: {
 		getSlug: () => FEATURE_FREE_DOMAIN,
 		getTitle: () => i18n.translate( 'Free custom domain' ),
+		getDescription: () =>
+			i18n.translate(
+				'Get a free custom domain name (example.com) with this plan to use for your website.'
+			),
 	},
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
 		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
+		getDescription: () =>
+			i18n.translate(
+				'Unlimited access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
+			),
 	},
 
 	[ FEATURE_MONETISE ]: {
 		getSlug: () => FEATURE_MONETISE,
 		getTitle: () => i18n.translate( 'Monetize your site with ads' ),
+		getDescription: () =>
+			i18n.translate(
+				'Add advertising to your site through our WordAds program and earn money from impressions.'
+			),
 	},
 
 	[ FEATURE_UPLOAD_THEMES_PLUGINS ]: {
 		getSlug: () => FEATURE_UPLOAD_THEMES_PLUGINS,
 		getTitle: () => i18n.translate( 'Upload themes and plugins' ),
+		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
 	},
 
 	[ FEATURE_GOOGLE_ANALYTICS_SIGNUP ]: {
@@ -941,26 +963,46 @@ export const FEATURES_LIST = {
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP ]: {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		getTitle: () => i18n.translate( 'Email and live chat support' ),
+		getDescription: () =>
+			i18n.translate(
+				'High quality support to help you get your website up and running and working how you want it.'
+			),
 	},
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
 		getTitle: () => i18n.translate( 'Dozens of Free Themes' ),
+		getDescription: () =>
+			i18n.translate(
+				"Access to a wide range of professional theme templates for your website so you can find the exact design you're looking for."
+			),
 	},
 
 	[ FEATURE_WP_SUBDOMAIN_SIGNUP ]: {
 		getSlug: () => FEATURE_WP_SUBDOMAIN_SIGNUP,
 		getTitle: () => i18n.translate( 'WordPress.com subdomain' ),
+		getDescription: () =>
+			i18n.translate(
+				'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
+			),
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE_SIGNUP ]: {
 		getSlug: () => FEATURE_UNLIMITED_STORAGE_SIGNUP,
 		getTitle: () => i18n.translate( 'Unlimited storage' ),
+		getDescription: () =>
+			i18n.translate(
+				"With increased storage space you'll be able to upload more images, videos, audio, and documents to your website."
+			),
 	},
 
 	[ FEATURE_ADVANCED_SEO_TOOLS ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO_TOOLS,
 		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
+		getDescription: () =>
+			i18n.translate(
+				"Adds tools to enhance your site's content for better results on search engines and social media."
+			),
 	},
 
 	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP ]: {
