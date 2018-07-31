@@ -11,6 +11,7 @@ import { compact, get, isDate, startsWith, pickBy, map } from 'lodash';
 import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
+	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
 } from 'state/action-types';
@@ -74,9 +75,11 @@ export const fetchPostComments = action => ( dispatch, getState ) => {
 };
 
 export const addComments = ( action, { comments, found } ) => {
-	const { siteId, postId, direction } = action;
+	const { siteId, postId, direction, isPoll } = action;
+
+	const type = isPoll ? COMMENTS_UPDATES_RECEIVE : COMMENTS_RECEIVE;
 	const receiveAction = {
-		type: COMMENTS_RECEIVE,
+		type,
 		siteId,
 		postId,
 		comments: commentsFromApi( comments ),
