@@ -43,8 +43,8 @@ class ThemesUpsellComponent extends Component {
 	handleUpgradeButtonClick = () => {
 		const { trackTracksEvent, selectedSiteSlug } = this.props;
 
-		trackTracksEvent( 'calypso_upsell_landing_page_cta_click', {
-			cta_name: 'themes-upsell',
+		trackTracksEvent( 'calypso_banner_cta_click', {
+			cta_name: 'upsell-page-themes',
 		} );
 
 		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
@@ -280,8 +280,14 @@ const mapStateToProps = state => {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		price,
 		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-		trackTracksEvent: recordTracksEvent,
 	};
 };
 
-export default connect( mapStateToProps )( localize( ThemesUpsellComponent ) );
+const mapDispatchToProps = dispatch => ( {
+	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
+} );
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ThemesUpsellComponent ) );
