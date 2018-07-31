@@ -214,7 +214,6 @@ const mapStateToProps = state => {
 				isRequestingActivePromotions( state ) ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-		trackTracksEvent: recordTracksEvent,
 	};
 };
 
