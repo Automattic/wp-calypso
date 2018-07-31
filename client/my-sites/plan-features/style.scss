@@ -250,8 +250,7 @@ $plan-features-sidebar-width: 272px;
 	font-style: italic;
 	font-weight: 400;
 	color: $gray-text-min;
-	line-height: 0.6;
-	white-space: nowrap;
+	line-height: normal;
 
 	&.is-placeholder {
 		@include placeholder( 23% );
