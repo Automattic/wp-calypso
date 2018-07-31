@@ -159,6 +159,7 @@
 		"rewind/clone-site": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
+		"settings/import-in-manage-sidebar": true,
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": true,
