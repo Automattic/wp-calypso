@@ -860,7 +860,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_ALL_FREE_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_FREE_FEATURES,
 		getTitle: () => i18n.translate( 'All free features' ),
-		getDescription: () => i18n.translate( 'Also includes all features offered in the free plan.' ),
+		getDescription: () => i18n.translate( 'Also includes all features offered in the Free plan.' ),
 	},
 
 	[ FEATURE_ALL_PERSONAL_FEATURES_JETPACK ]: {
