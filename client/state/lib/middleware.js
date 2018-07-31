@@ -82,14 +82,19 @@ const notifyAboutImmediateLoginLinkEffects = ( dispatch, action, getState ) => {
 		return;
 	}
 
+	// Store login reason for future reference
+	dispatch( saveImmediateLoginInformation( action.query.login_reason ) );
+
+	// Don't do any further processing if we go to a login-related URL
+	if ( action.path.startsWith( '/log-in' ) ) {
+		return;
+	}
+
 	const currentUser = getCurrentUser( getState() );
 	if ( ! currentUser ) {
 		return;
 	}
 	const { email } = currentUser;
-
-	// Store login reason for future reference
-	dispatch( saveImmediateLoginInformation( action.query.login_reason ) );
 
 	// Redirect to a page without immediate login information in the URL
 	page.replace( createPathWithoutImmediateLoginInformation( action.path, action.query ) );
