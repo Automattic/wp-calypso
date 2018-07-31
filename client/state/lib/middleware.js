@@ -81,7 +81,11 @@ const notifyAboutImmediateLoginLinkEffects = ( dispatch, action, getState ) => {
 		return;
 	}
 
-	const { email } = getCurrentUser( getState() );
+	const currentUser = getCurrentUser( getState() );
+	if ( ! currentUser ) {
+		return;
+	}
+	const { email } = currentUser;
 
 	// Redirect to a page without immediate login information in the URL
 	page.replace( createPathWithoutImmediateLoginInformation( action.path, action.query ) );
