@@ -8,94 +8,55 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import QueryLanguageNames from 'components/data/query-language-names';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
-import { getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentNonDefaultLocale } from 'components/translator-invite/utils';
 /**
  * Module variables
  */
-const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 
 export class TranslatorInvite extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
+		localizedLanguageNames: PropTypes.object,
 		path: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
 		locale: '',
+		localizedLanguageNames: {},
 		path: '',
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			locale: this.getLocale(),
-		};
-	}
-
-	isDefaultLocale( languageSlug ) {
-		return startsWith( languageSlug, defaultLanguageSlug );
-	}
-
-	getLocale() {
-		// First try the locale passed as props.
-		let browserLanguage = ! this.isDefaultLocale( this.props.locale ) ? this.props.locale : null;
-
-		// Then the locale in the path, if any.
-		if ( ! browserLanguage && this.props.path ) {
-			browserLanguage = getLocaleFromPath( this.props.path );
-			browserLanguage = ! this.isDefaultLocale( browserLanguage ) ? browserLanguage : null;
-		}
-
-		// Then navigator.languages.
-		if ( ! browserLanguage && typeof navigator === 'object' && 'languages' in navigator ) {
-			for ( const langSlug of navigator.languages ) {
-				const language = getLanguage( langSlug.toLowerCase() );
-				if ( language && ! this.isDefaultLocale( language.langSlug ) ) {
-					browserLanguage = language.langSlug;
-					break;
-				}
-			}
-		}
-
-		if ( browserLanguage ) {
-			return browserLanguage;
-		}
-
-		return null;
-	}
-
 	recordClick = () =>
 		this.props.recordTracksEvent( 'calypso_translator_invitation', {
-			language: this.props.localizedLanguageNames[ this.state.locale ].en,
+			language: this.props.localizedLanguageNames[ this.props.locale ].en,
 		} );
 
 	renderNoticeLabelText() {
-		const { localizedLanguageNames, translate } = this.props;
-		const { locale } = this.state;
+		const { locale, localizedLanguageNames, translate } = this.props;
 
 		if ( localizedLanguageNames && localizedLanguageNames[ locale ] ) {
 			return (
 				<div className="translator-invite__content">
 					<Gridicon className="translator-invite__gridicon" icon="globe" size={ 18 } />
 					{ translate(
-						'Would you like to help us translate WordPress into {{a}}%(language)s{{/a}}?',
+						'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?',
 						{
 							args: { language: localizedLanguageNames[ locale ].localized },
 							comment:
-								'The language variable can be any major spoken language that WordPress supports',
+								'The language variable can be any major spoken language that WordPress.com supports',
 							components: {
 								a: (
 									<a
 										href={ `https://translate.wordpress.com/projects/wpcom/${ locale }/default/` }
+										onClick={ this.recordClick }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -111,10 +72,6 @@ export class TranslatorInvite extends Component {
 	}
 
 	render() {
-		if ( this.state.dismissed ) {
-			return null;
-		}
-
 		return (
 			<div className="translator-invite">
 				{ this.renderNoticeLabelText() }
@@ -125,8 +82,9 @@ export class TranslatorInvite extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state, props ) => ( {
 		localizedLanguageNames: getLocalizedLanguageNames( state ),
+		locale: getCurrentNonDefaultLocale( getCurrentLocaleSlug( state ), props.path ),
 	} ),
 	{ recordTracksEvent }
 )( localize( TranslatorInvite ) );

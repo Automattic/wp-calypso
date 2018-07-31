@@ -203,7 +203,7 @@ export class Login extends React.Component {
 								twoFactorAuthType={ twoFactorAuthType }
 							/>
 						) }
-						{ isLoginView && <TranslatorInvite locale={ locale } path={ path } /> }
+						{ isLoginView && <TranslatorInvite path={ path } /> }
 					</div>
 				</Main>
 
@@ -218,7 +218,7 @@ export default connect(
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
-		isLoginView: ! props.twoFactorAuthType || ! props.socialConnect,
+		isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
