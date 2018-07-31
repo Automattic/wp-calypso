@@ -25,7 +25,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import StickyPanel from 'components/sticky-panel';
 import JetpackColophon from 'components/jetpack-colophon';
 import config from 'config';
-import AdsEarnings from 'my-sites/ads/form-earnings';
+import WordAdsEarnings from './earnings';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -147,7 +147,7 @@ class WordAds extends Component {
 					</StickyPanel>
 */ }
 					<div className="stats__module-list">
-						<AdsEarnings site={ this.props.site } />
+						<WordAdsEarnings site={ this.props.site } />
 					</div>
 				</div>
 				<JetpackColophon />

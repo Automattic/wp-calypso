@@ -19,7 +19,6 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import AdsEarnings from 'my-sites/ads/form-earnings';
 import AdsSettings from 'my-sites/ads/form-settings';
 import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { isBusiness } from 'lib/products-values';
@@ -96,11 +95,6 @@ class AdsMain extends Component {
 		return canAccessWordads( site )
 			? [
 					{
-						title: translate( 'Earnings' ),
-						path: '/ads/earnings' + pathSuffix,
-						id: 'ads-earnings',
-					},
-					{
 						title: translate( 'Settings' ),
 						path: '/ads/settings' + pathSuffix,
 						id: 'ads-settings',
@@ -111,8 +105,6 @@ class AdsMain extends Component {
 
 	getComponent( section ) {
 		switch ( section ) {
-			case 'earnings':
-				return <AdsEarnings site={ this.props.site } />;
 			case 'settings':
 				return <AdsSettings />;
 			default:
@@ -250,7 +242,6 @@ class AdsMain extends Component {
 		}
 
 		const layoutTitles = {
-			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
 		};
 
