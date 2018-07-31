@@ -44,6 +44,7 @@ import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { isPlan } from 'lib/products-values';
 import { isDomainBundledWithPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -110,6 +111,18 @@ class TransferDomainStep extends React.Component {
 		}
 	}
 
+	supportUserNotice() {
+		if ( isSupportUserSession() ) {
+			return (
+				<Notice
+					text={ this.props.translate( 'Only users can submit the actual transfer.' ) }
+					status="is-warning"
+					showDismiss={ false }
+				/>
+			);
+		}
+	}
+
 	getMapDomainUrl() {
 		const { basePath, mapDomainUrl, selectedSite } = this.props;
 		if ( mapDomainUrl ) {
@@ -169,10 +182,13 @@ class TransferDomainStep extends React.Component {
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
 		const domainProductPrice = this.getProductPriceText();
+		// We disallow HEs to submit the transfer
+		const disableButton = ! getTld( searchQuery ) || submitting || isSupportUserSession();
 
 		return (
 			<div>
 				<QueryProducts />
+				{ this.supportUserNotice() }
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
@@ -212,7 +228,7 @@ class TransferDomainStep extends React.Component {
 							autoFocus
 						/>
 						<Button
-							disabled={ ! getTld( searchQuery ) || submitting }
+							disabled={ disableButton }
 							busy={ submitting }
 							className="transfer-domain-step__go button is-primary"
 							onClick={ this.handleFormSubmit }
