@@ -10,6 +10,7 @@ import account from './account';
 import block from './block';
 import connectedApplications from './connected-applications';
 import devices from './devices';
+import dismiss from './dismiss';
 import notification from './notification';
 import settings from './settings';
 import sendVerificationEmail from './send-verification-email';
@@ -23,6 +24,7 @@ export default mergeHandlers(
 	connectedApplications,
 	countries,
 	devices,
+	dismiss,
 	notification,
 	settings,
 	sendVerificationEmail,
