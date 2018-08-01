@@ -14,7 +14,7 @@ import { includes, noop, get } from 'lodash';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
+import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
@@ -84,19 +84,18 @@ class MapDomainStep extends React.Component {
 					product_slug: this.props.products.domain_map.product_slug,
 			  }
 			: { cost: null, product_slug: '' };
+		const { searchQuery } = this.state;
 		const { translate } = this.props;
 
 		return (
 			<div className="map-domain-step">
 				{ this.notice() }
 				<form className="map-domain-step__form card" onSubmit={ this.handleFormSubmit }>
-					<div className="map-domain-step__domain-description">
-						<p>
-							{ translate( "Map this domain to use it as your site's address.", {
-								context: 'Upgrades: Description in domain registration',
-								comment: "Explains how you could use a new domain name for your site's address.",
-							} ) }
-						</p>
+					<div className="map-domain-step__domain-heading">
+						{ translate( "Map this domain to use it as your site's address.", {
+							context: 'Upgrades: Description in domain registration',
+							comment: "Explains how you could use a new domain name for your site's address.",
+						} ) }
 					</div>
 
 					<DomainProductPrice
@@ -122,6 +121,7 @@ class MapDomainStep extends React.Component {
 							autoFocus
 						/>
 						<button
+							disabled={ ! getTld( searchQuery ) }
 							className="map-domain-step__go button is-primary"
 							onClick={ this.recordGoButtonClick }
 						>
