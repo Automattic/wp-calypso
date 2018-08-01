@@ -27,11 +27,12 @@ import { getSectionName } from 'state/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'state/ui/action-log/selectors';
-import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
+import { preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
 import findOngoingTour from './find-ongoing-tour';
+import getToursHistory from './get-tours-history';
 
 const BLACKLISTED_SECTIONS = [
 	'signup',
@@ -39,7 +40,6 @@ const BLACKLISTED_SECTIONS = [
 	'checkout-thank-you', // thank you page
 ];
 
-export const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
 
 const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );
