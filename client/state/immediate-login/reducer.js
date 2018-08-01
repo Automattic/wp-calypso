@@ -14,7 +14,7 @@ const initialState = {
 
 export default createReducer( initialState, {
 	[ IMMEDIATE_LOGIN_SAVE_STATUS ]: ( state, { reason } ) => ( {
-		reason,
 		used: true,
+		reason: reason || null,
 	} ),
 } );
