@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -84,6 +84,18 @@ class AnnualSiteStats extends Component {
 		);
 	}
 
+	formatTableValue( key, value ) {
+		const { numberFormat } = this.props;
+		const singleDecimal = [ 'avg_comments', 'avg_likes' ];
+		if ( includes( singleDecimal, key ) ) {
+			return numberFormat( value, 1 );
+		}
+		if ( 'year' === key ) {
+			return value;
+		}
+		return numberFormat( value );
+	}
+
 	renderTable( data, strings ) {
 		const keys = Object.keys( strings );
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -107,7 +119,7 @@ class AnnualSiteStats extends Component {
 										const Cell = j === 0 ? 'th' : 'td';
 										return (
 											<Cell scope={ j === 0 ? 'row' : null } key={ j }>
-												{ row[ key ] }
+												{ this.formatTableValue( key, row[ key ] ) }
 											</Cell>
 										);
 									} ) }
