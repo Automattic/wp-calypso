@@ -59,6 +59,7 @@
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
+		"manage/import-in-sidebar": true,
 		"manage/import/medium": true,
 		"manage/import/site-importer": true,
 		"manage/media": true,
