@@ -383,8 +383,9 @@ class SiteImporterInputPane extends React.Component {
 								placeholder="https://example.com/"
 							/>
 							<Button
+								primary={ true }
 								disabled={ this.state.loading }
-								isPrimary={ true }
+								busy={ this.state.loading }
 								onClick={ this.validateSite }
 							>
 								{ this.props.translate( 'Continue' ) }
@@ -392,10 +393,10 @@ class SiteImporterInputPane extends React.Component {
 						</div>
 						{ this.state.availableEndpoints.length > 0 && (
 							<FormSelect
-								value={ get( this.state.selectedEndpoint ) }
 								onChange={ this.setEndpoint }
 								disabled={ this.state.loading }
 								className="site-importer__site-importer-endpoint-select"
+								value={ this.state.selectedEndpoint }
 							>
 								<option value="">Production Endpoint</option>
 								{ this.state.availableEndpoints.map( endpoint => (
