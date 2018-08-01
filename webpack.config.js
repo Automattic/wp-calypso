@@ -152,7 +152,6 @@ const webpackConfig = {
 				use: [
 					MiniCssExtractPlugin.loader,
 					'css-loader',
-					'postcss-loader',
 					{
 						loader: 'sass-loader',
 						options: {
