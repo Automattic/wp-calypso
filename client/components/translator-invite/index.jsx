@@ -17,9 +17,6 @@ import getLocalizedLanguageNames from 'state/selectors/get-localized-language-na
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentNonDefaultLocale } from 'components/translator-invite/utils';
-/**
- * Module variables
- */
 
 export class TranslatorInvite extends Component {
 	static propTypes = {

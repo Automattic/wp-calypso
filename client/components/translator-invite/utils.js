@@ -11,6 +11,9 @@ import { startsWith } from 'lodash';
 import config from 'config';
 import { getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
 
+/**
+ * Module variables
+ */
 const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 
 /**
