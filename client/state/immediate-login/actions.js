@@ -7,7 +7,7 @@
 /**
  * Internal dependencies
  */
-import { SAVE_IMMEDIATE_LOGIN_INFORMATION } from './constants';
+import { IMMEDIATE_LOGIN_SAVE_STATUS } from 'state/action-types';
 
 /**
  * Stores immediate link-related information in state so it can be reused later
@@ -17,7 +17,7 @@ import { SAVE_IMMEDIATE_LOGIN_INFORMATION } from './constants';
  */
 export const saveImmediateLoginInformation = reason => dispatch => {
 	dispatch( {
-		type: SAVE_IMMEDIATE_LOGIN_INFORMATION,
+		type: IMMEDIATE_LOGIN_SAVE_STATUS,
 		reason,
 	} );
 };

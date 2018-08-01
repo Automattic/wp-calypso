@@ -5,7 +5,7 @@
  */
 
 import { createReducer } from 'state/utils';
-import { SAVE_IMMEDIATE_LOGIN_INFORMATION } from './constants';
+import { IMMEDIATE_LOGIN_SAVE_STATUS } from 'state/action-types';
 
 const initialState = {
 	used: false,
@@ -13,7 +13,7 @@ const initialState = {
 };
 
 export default createReducer( initialState, {
-	[ SAVE_IMMEDIATE_LOGIN_INFORMATION ]: ( state, { reason } ) => ( {
+	[ IMMEDIATE_LOGIN_SAVE_STATUS ]: ( state, { reason } ) => ( {
 		reason,
 		used: true,
 	} ),
