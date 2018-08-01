@@ -25,6 +25,7 @@ import {
 } from 'lib/url/support';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
 
 class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
@@ -321,9 +322,13 @@ class TransferDomainPrecheck extends React.Component {
 	render() {
 		const { authCodeValid, translate, unlocked } = this.props;
 		const { currentStep } = this.state;
+		// We disallow HEs to submit the transfer
+		const disableButton =
+			false === unlocked || ! authCodeValid || currentStep < 3 || isSupportUserSession();
 
 		return (
 			<div className="transfer-domain-step__precheck">
+				{ this.supportUserNotice() }
 				{ this.getHeader() }
 				{ this.getStatusMessage() }
 				{ this.getEppMessage() }
@@ -341,16 +346,24 @@ class TransferDomainPrecheck extends React.Component {
 							) }
 						</p>
 					</div>
-					<Button
-						disabled={ false === unlocked || ! authCodeValid || currentStep < 3 }
-						onClick={ this.onClick }
-						primary={ true }
-					>
+					<Button disabled={ disableButton } onClick={ this.onClick } primary={ true }>
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>
 			</div>
 		);
+	}
+
+	supportUserNotice() {
+		if ( isSupportUserSession() ) {
+			return (
+				<Notice
+					text={ this.props.translate( 'Only users can submit the actual transfer.' ) }
+					status="is-warning"
+					showDismiss={ false }
+				/>
+			);
+		}
 	}
 }
 
