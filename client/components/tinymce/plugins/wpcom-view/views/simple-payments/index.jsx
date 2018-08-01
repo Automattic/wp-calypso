@@ -19,16 +19,28 @@ import getSimplePayments from 'state/selectors/get-simple-payments';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import formatCurrency from 'lib/format-currency';
 import QuerySimplePayments from 'components/data/query-simple-payments';
+import QuerySitePlans from 'components/data/query-site-plans';
 import QueryMedia from 'components/data/query-media';
-import { hasFeature } from 'state/sites/plans/selectors';
+import { getCurrentPlan, hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const { translate, productId, product, siteId, planHasSimplePaymentsFeature } = this.props;
+		const {
+			translate,
+			productId,
+			product,
+			siteId,
+			sitePlan,
+			planHasSimplePaymentsFeature,
+		} = this.props;
 
 		if ( ! product ) {
 			return <QuerySimplePayments siteId={ siteId } productId={ productId } />;
+		}
+
+		if ( ! sitePlan ) {
+			return <QuerySitePlans siteId={ siteId } />;
 		}
 
 		if ( ! planHasSimplePaymentsFeature ) {
@@ -107,12 +119,14 @@ SimplePaymentsView = connect( ( state, props ) => {
 
 	const { id: productId = null } = shortcodeData;
 	const siteId = getSelectedSiteId( state );
+	const sitePlan = getCurrentPlan( state, siteId );
 	const product = getSimplePayments( state, siteId, productId );
 
 	return {
 		shortcodeData,
 		productId,
 		siteId,
+		sitePlan,
 		product,
 		productImage: getMediaItem( state, siteId, get( product, 'featuredImageId' ) ),
 		planHasSimplePaymentsFeature: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
