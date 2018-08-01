@@ -587,7 +587,7 @@ export class MySitesSidebar extends Component {
 				label={ this.props.translate( 'Settings' ) }
 				selected={
 					itemLinkMatches( '/settings', path ) &&
-					( ! isEnabled( 'settings/import-in-manage-sidebar' ) ||
+					( ! isEnabled( 'manage/import-in-sidebar' ) ||
 						! itemLinkMatches( '/settings/import', path ) )
 				}
 				link={ siteSettingsLink }

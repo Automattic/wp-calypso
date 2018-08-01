@@ -152,7 +152,7 @@ class ManageMenu extends PureComponent {
 			label: translate( 'Import' ),
 			capability: 'manage_options',
 			queryable: ! isJetpack,
-			config: 'settings/import-in-manage-sidebar',
+			config: 'manage/import-in-sidebar',
 			link: '/settings/import', // @TODO make it a top level section & add a redirect
 			paths: [ '/settings/import' ],
 			wpAdminLink: 'import.php',
@@ -333,7 +333,7 @@ class ManageMenu extends PureComponent {
 			menuItems.push( this.getPluginItem() );
 		}
 
-		if ( config.isEnabled( 'settings/import-in-manage-sidebar' ) ) {
+		if ( config.isEnabled( 'manage/import-in-sidebar' ) ) {
 			menuItems.push( this.getImportItem() );
 		}
 
