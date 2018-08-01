@@ -36,7 +36,7 @@ class TagStream extends React.Component {
 
 	_isMounted = false;
 
-	componentWillMount() {
+	componentDidMount() {
 		const self = this;
 		this._isMounted = true;
 		// can't use arrows with asyncRequire
