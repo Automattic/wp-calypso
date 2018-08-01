@@ -5,16 +5,6 @@
   ],
   "statusCheckVerify": true,
   "ignoreDeps": [
-    "@babel/cli",
-    "@babel/core",
-    "@babel/plugin-proposal-export-default-from",
-    "@babel/plugin-syntax-jsx",
-    "@babel/plugin-transform-runtime",
-    "@babel/polyfill",
-    "@babel/preset-env",
-    "@babel/preset-react",
-    "@babel/preset-stage-2",
-    "@babel/runtime",
     "jquery"
   ],
   "labels": [
