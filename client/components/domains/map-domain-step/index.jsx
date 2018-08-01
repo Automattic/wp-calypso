@@ -136,9 +136,7 @@ class MapDomainStep extends React.Component {
 
 					<div className="map-domain-step__domain-text">
 						{ translate(
-							'Domain registration and billing will remain at your current provider,' +
-								" and you'll update your domain's DNS to point it to your WordPress.com site. " +
-								'{{a}}Learn more{{/a}}',
+							"Update your domain's nameservers to point it to your WordPress.com site. Domain registration and billing will remain at your current provider. {{a}}Learn more{{/a}}",
 							{
 								components: {
 									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
