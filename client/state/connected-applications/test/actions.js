@@ -23,11 +23,6 @@ describe( 'actions', () => {
 
 			expect( action ).toEqual( {
 				type: CONNECTED_APPLICATIONS_REQUEST,
-				meta: {
-					dataLayer: {
-						trackRequest: true,
-					},
-				},
 			} );
 		} );
 	} );

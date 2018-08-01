@@ -14,6 +14,7 @@ import concierge from './concierge';
 import domains from './domains';
 import gravatarUpload from './gravatar-upload';
 import i18n from './i18n';
+import jetpackConnectionOwner from './jetpack/connection/owner';
 import jetpackInstall from './jetpack-install';
 import jetpackSettings from './jetpack/settings';
 import localeGuess from './locale-guess';
@@ -21,7 +22,6 @@ import login2fa from './login-2fa';
 import logstash from './logstash';
 import me from './me';
 import meta from './meta';
-import plans from './plans';
 import posts from './posts';
 import privacyPolicy from './privacy-policy';
 import read from './read';
@@ -30,6 +30,7 @@ import themeFilters from './theme-filters';
 import timezones from './timezones';
 import usersAuthOptions from './users/auth-options';
 import videos from './videos';
+import wordads from './wordads';
 
 export const handlers = mergeHandlers(
 	accountRecovery,
@@ -41,6 +42,7 @@ export const handlers = mergeHandlers(
 	domains,
 	gravatarUpload,
 	i18n,
+	jetpackConnectionOwner,
 	jetpackInstall,
 	jetpackSettings,
 	localeGuess,
@@ -48,7 +50,6 @@ export const handlers = mergeHandlers(
 	logstash,
 	me,
 	meta,
-	plans,
 	posts,
 	privacyPolicy,
 	read,
@@ -56,7 +57,8 @@ export const handlers = mergeHandlers(
 	themeFilters,
 	timezones,
 	usersAuthOptions,
-	videos
+	videos,
+	wordads
 );
 
 export default handlers;

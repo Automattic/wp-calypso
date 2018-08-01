@@ -4,13 +4,13 @@
  * Internal dependencies
  */
 import {
-	CONCIERGE_AVAILABLE_TIMES_REQUEST,
-	CONCIERGE_AVAILABLE_TIMES_UPDATE,
 	CONCIERGE_APPOINTMENT_CANCEL,
 	CONCIERGE_APPOINTMENT_CREATE,
 	CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 	CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
 	CONCIERGE_APPOINTMENT_RESCHEDULE,
+	CONCIERGE_INITIAL_REQUEST,
+	CONCIERGE_INITIAL_UPDATE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
@@ -27,14 +27,14 @@ export const updateConciergeAppointmentDetails = ( appointmentId, appointmentDet
 	appointmentDetails,
 } );
 
-export const requestConciergeAvailableTimes = scheduleId => ( {
-	type: CONCIERGE_AVAILABLE_TIMES_REQUEST,
+export const requestConciergeInitial = scheduleId => ( {
+	type: CONCIERGE_INITIAL_REQUEST,
 	scheduleId,
 } );
 
-export const updateConciergeAvailableTimes = availableTimes => ( {
-	type: CONCIERGE_AVAILABLE_TIMES_UPDATE,
-	availableTimes,
+export const updateConciergeInitial = initial => ( {
+	type: CONCIERGE_INITIAL_UPDATE,
+	initial,
 } );
 
 export const updateConciergeSignupForm = signupForm => ( {

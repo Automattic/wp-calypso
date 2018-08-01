@@ -24,12 +24,13 @@ export function reduxGetState() {
 
 /**
  * Dispatch an action against the current redux store
+ * @returns {mixed} Result of the dispatch
  */
 export function reduxDispatch( ...args ) {
 	if ( ! reduxStore ) {
 		return;
 	}
-	reduxStore.dispatch( ...args );
+	return reduxStore.dispatch( ...args );
 }
 
 function markedFluxAction( action ) {

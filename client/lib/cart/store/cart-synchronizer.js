@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import { assign, flowRight, pick } from 'lodash';
+import { assign, flowRight } from 'lodash';
 import i18n from 'i18n-calypso';
 import Dispatcher from 'dispatcher';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
@@ -14,6 +13,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Emitter from 'lib/mixins/emitter';
+import { preprocessCartForServer } from 'lib/cart-values';
 
 /**
  * Internal dependencies
@@ -42,27 +42,6 @@ function castProductIDsToNumbers( cartItems ) {
 	return cartItems.map( function( item ) {
 		return assign( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
 	} );
-}
-
-function preprocessCartForServer( cart ) {
-	let newCart;
-
-	newCart = pick(
-		cart,
-		'products',
-		'coupon',
-		'is_coupon_applied',
-		'currency',
-		'temporary',
-		'extra'
-	);
-
-	const newCartItems = cart.products.map( function( cartItem ) {
-		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
-	} );
-	newCart = assign( {}, newCart, { products: newCartItems } );
-
-	return newCart;
 }
 
 function CartSynchronizer( cartKey, wpcom ) {
@@ -138,7 +117,10 @@ CartSynchronizer.prototype.resume = function() {
 
 CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
 	if ( this._queuedChanges ) {
-		this._queuedChanges = flowRight( changeFunction, this._queuedChanges );
+		this._queuedChanges = flowRight(
+			changeFunction,
+			this._queuedChanges
+		);
 	} else {
 		this._queuedChanges = changeFunction;
 	}
@@ -160,7 +142,7 @@ CartSynchronizer.prototype._processQueuedChanges = function() {
 };
 
 CartSynchronizer.prototype._postToServer = function( callback ) {
-	this._wpcom.cart( this._cartKey, 'POST', preprocessCartForServer( this._latestValue ), function(
+	this._wpcom.setCart( this._cartKey, preprocessCartForServer( this._latestValue ), function(
 		error,
 		newValue
 	) {
@@ -182,7 +164,7 @@ CartSynchronizer.prototype.fetch = function() {
 };
 
 CartSynchronizer.prototype._getFromServer = function( callback ) {
-	this._wpcom.cart( this._cartKey, 'GET', function( error, newValue ) {
+	this._wpcom.getCart( this._cartKey, function( error, newValue ) {
 		if ( error ) {
 			callback( error );
 			return;

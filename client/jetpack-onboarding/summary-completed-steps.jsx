@@ -15,10 +15,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-import {
-	getJetpackOnboardingCompletedSteps,
-	getJetpackOnboardingPendingSteps,
-} from 'state/selectors';
+import getJetpackOnboardingCompletedSteps from 'state/selectors/get-jetpack-onboarding-completed-steps';
+import getJetpackOnboardingPendingSteps from 'state/selectors/get-jetpack-onboarding-pending-steps';
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,

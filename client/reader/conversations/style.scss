@@ -5,11 +5,11 @@
 	display: flex;
 	min-height: 140px;
 
-	@media ( min-width: 661px ) and ( max-width: 773px ) {
+	@media (min-width: 661px) and (max-width: 773px) {
 		background-position: 150px 20px;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		background-position: 120px 20px;
 	}
 
@@ -19,17 +19,19 @@
 	}
 
 	.conversations__intro-character {
-		background: url( '/calypso/images/reader/reader-conversations-characters.svg' ) no-repeat 8px bottom;
+		background: url( '/calypso/images/reader/reader-conversations-characters.svg' ) no-repeat 8px
+			bottom;
 		background-size: 97%;
 		flex: 0 0 245px;
 		min-height: 140px;
+		margin-right: -8px; // prevent right crop of illustration
 
 		// Hides the character when main content column gets too narrow
-		@media ( min-width: 661px ) and ( max-width: 840px ) {
+		@media (min-width: 661px) and (max-width: 840px) {
 			display: none;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 		}
 	}
@@ -46,7 +48,7 @@
 	}
 
 	.conversations__intro-copy-hidden {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			display: none;
 			visibility: hidden;
 		}
@@ -56,8 +58,8 @@
 // Dismiss button
 .conversations__intro .conversations__intro-close {
 	align-items: flex-start;
-	margin-top: 8px;
-	margin-right: 8px;
+	margin-top: -4px;
+	margin-right: 16px;
 	height: 24px;
 	width: 24px;
 

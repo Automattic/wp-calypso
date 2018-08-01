@@ -28,15 +28,15 @@ const woocommerceStripe = {
 export default {
 	installed: {
 		isRequesting: {
-			'site.one': false,
-			'site.two': false,
-			'site.three': false,
-			'site.four': true,
+			1: false,
+			2: false,
+			3: false,
+			4: true,
 		},
 		plugins: {
-			'site.one': [ woocommerce, woocommerceServices, woocommerceStripe ],
-			'site.two': [ woocommerce, woocommerceStripe, { ...woocommerceServices, active: false } ],
-			'site.three': [ woocommerce, woocommerceStripe ],
+			1: [ woocommerce, woocommerceServices, woocommerceStripe ],
+			2: [ woocommerce, woocommerceStripe, { ...woocommerceServices, active: false } ],
+			3: [ woocommerce, woocommerceStripe ],
 		},
 	},
 };

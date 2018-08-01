@@ -9,7 +9,8 @@ import { isEmpty, get } from 'lodash';
  * Internal dependencies
  */
 import { errorNotice } from 'state/notices/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'state/data-layer/handler-registry';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';
 import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activity-log/actions';
@@ -27,10 +28,9 @@ const recentRequests = new Map();
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  */
-const fetchProgress = ( { dispatch }, action ) => {
+const fetchProgress = action => {
 	const { downloadId, siteId } = action;
 	const key = `${ siteId }-${ downloadId }`;
 
@@ -43,15 +43,13 @@ const fetchProgress = ( { dispatch }, action ) => {
 
 	recentRequests.set( key, now );
 
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ action.siteId }/rewind/downloads`,
-			},
-			action
-		)
+	return http(
+		{
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+			path: `/sites/${ action.siteId }/rewind/downloads`,
+		},
+		action
 	);
 };
 
@@ -78,82 +76,70 @@ const fromApi = data => ( {
  * If an error property was found, it will display an error card stating it.
  * Otherwise the backup creation progress will be updated.
  *
- * @param {function} dispatch Method to trigger a state change.
  * @param {number}   siteId   Id of the site for the one we're creating a backup.
  * @param {object}   apiData  Data returned by a successful response.
  */
-export const updateProgress = ( { dispatch }, { siteId }, apiData ) => {
+export const updateProgress = ( { siteId }, apiData ) => {
 	const [ latestDownloadableBackup ] = apiData;
-	if ( ! isEmpty( latestDownloadableBackup ) ) {
-		const data = fromApi( latestDownloadableBackup );
-		dispatch(
-			get( data, [ 'error' ], false )
-				? rewindBackupUpdateError( siteId, data.downloadId, data )
-				: updateRewindBackupProgress( siteId, data.downloadId, data )
-		);
+	if ( isEmpty( latestDownloadableBackup ) ) {
+		return;
 	}
+
+	const data = fromApi( latestDownloadableBackup );
+	return get( data, [ 'error' ], false )
+		? rewindBackupUpdateError( siteId, data.downloadId, data )
+		: updateRewindBackupProgress( siteId, data.downloadId, data );
 };
 
 /**
  * If the backup creation progress request fails, an error notice will be shown.
  *
- * @param   {function} dispatch Method to trigger a state change.
  * @returns {function}          The dispatched action.
  */
-export const announceError = ( { dispatch } ) =>
-	dispatch(
-		errorNotice(
-			translate( "Hmm, we can't update the status of your backup. Please refresh this page." )
-		)
+export const announceError = () =>
+	errorNotice(
+		translate( "Hmm, we can't update the status of your backup. Please refresh this page." )
 	);
 
 /**
  * Mark a specific downloadable backup record as dismissed.
  * This has the effect that subsequent calls to /sites/%site_id%/rewind/downloads won't return the download.
  *
- * @param   {function} dispatch Method to trigger a state change.
  * @param   {object}   action   Changeset to update state.
- * @returns {function}          The dispatched action.
+ * @returns {object}          The dispatched action.
  */
-export const dismissBackup = ( { dispatch }, action ) =>
-	dispatch(
-		http(
-			{
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ action.siteId }/rewind/downloads/${ action.downloadId }`,
-				body: {
-					dismissed: true,
-				},
+export const dismissBackup = action =>
+	http(
+		{
+			method: 'POST',
+			apiNamespace: 'wpcom/v2',
+			path: `/sites/${ action.siteId }/rewind/downloads/${ action.downloadId }`,
+			body: {
+				dismissed: true,
 			},
-			action
-		)
+		},
+		action
 	);
 
 /**
  * On successful dismiss, the card will be removed and we don't need to do anything further.
  * If request succeeded but backup couldn't be dismissed, a notice will be shown.
  *
- * @param {function} dispatch Method to trigger a state change.
  * @param {object}   action   Changeset to update state.
- * @param {data}     data     Description of request result.
+ * @param {object}     data     Description of request result.
  */
-export const backupSilentlyDismissed = ( { dispatch }, action, data ) => {
-	if ( ! data.dismissed ) {
-		dispatch(
-			errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) )
-		);
-	}
-};
+export const backupSilentlyDismissed = ( action, data ) =>
+	! data.dismissed
+		? errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) )
+		: null;
 
 /**
  * If a dismiss request fails, an error notice will be shown.
  *
- * @param {function} dispatch Method to trigger a state change.
  * @returns {function} The dispatched action.
  */
-export const backupDismissFailed = ( { dispatch } ) =>
-	dispatch( errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) ) );
+export const backupDismissFailed = () =>
+	errorNotice( translate( 'Dismissing backup failed. Please reload and try again.' ) );
 
 /**
  * Parse and merge response data for backup dismiss result with defaults.
@@ -166,13 +152,20 @@ const fromBackupDismiss = data => ( {
 	dismissed: data.is_dismissed,
 } );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/rewind/downloads', {
 	[ REWIND_BACKUP_PROGRESS_REQUEST ]: [
-		dispatchRequest( fetchProgress, updateProgress, announceError ),
+		dispatchRequestEx( {
+			fetch: fetchProgress,
+			onSuccess: updateProgress,
+			onError: announceError,
+		} ),
 	],
 	[ REWIND_BACKUP_DISMISS_PROGRESS ]: [
-		dispatchRequest( dismissBackup, backupSilentlyDismissed, backupDismissFailed, {
+		dispatchRequestEx( {
+			fetch: dismissBackup,
+			onSuccess: backupSilentlyDismissed,
+			onError: backupDismissFailed,
 			fromApi: fromBackupDismiss,
 		} ),
 	],
-};
+} );

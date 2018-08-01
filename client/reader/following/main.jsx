@@ -39,13 +39,13 @@ const FollowingStream = props => {
 			] )
 		);
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
 			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
-					autoFocus={ false }
 					delaySearch={ true }
 					delayTimeout={ 500 }
 					placeholder={ props.translate( 'Search billions of WordPress posts…' ) }
@@ -57,10 +57,12 @@ const FollowingStream = props => {
 						components: {
 							suggestions: suggestionList,
 						},
-					} ) }&nbsp;
+					} ) }
+				&nbsp;
 			</div>
 		</Stream>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default SuggestionProvider( localize( FollowingStream ) );

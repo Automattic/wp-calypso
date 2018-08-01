@@ -1,27 +1,10 @@
 .editor-sharing__publicize-message {
-	.editor-sharing__message-heading {
-		@extend .editor-drawer__heading;
-
-		font-size: 14px;
-	}
-
-	.editor-sharing__message-description {
-		@extend .editor-drawer__description;
-		.gridicon {
-			margin: 0 4px -1px 0;
-		}
-	}
-
-	.editor-sharing__message-input {
-		margin: 8px 0;
-	}
-
 	.info-popover {
 		float: right;
 	}
 }
 
-.info-popover__tooltip.publicize-message-counter-info {
+.info-popover__tooltip.editor-sharing__publicize-message-counter-info {
 	.popover__inner {
 		max-width: 210px;
 		text-align: left;

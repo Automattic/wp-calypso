@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { flow, mapKeys, mapValues, snakeCase } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -15,6 +20,15 @@ export const recordTransferDomainButtonClick = ( section, source ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
 		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', { section, source } )
+	);
+
+export const recordUseYourDomainButtonClick = ( section, source ) =>
+	composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
+		recordTracksEvent( 'calypso_domain_search_results_use_my_domain_button_click', {
+			section,
+			source,
+		} )
 	);
 
 export const recordSearchFormSubmit = (
@@ -84,3 +98,46 @@ export const recordDomainAvailabilityReceive = (
 			section,
 		} )
 	);
+
+export function recordShowMoreResults( searchQuery, pageNumber, section ) {
+	return composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Show More Results' ),
+		recordTracksEvent( 'calypso_domain_search_show_more_results', {
+			search_query: searchQuery,
+			page_number: pageNumber,
+			section,
+		} )
+	);
+}
+
+function processFiltersForAnalytics( filters ) {
+	const convertArraysToCSV = input =>
+		mapValues( input, value => ( Array.isArray( value ) ? value.join( ',' ) : value ) );
+	const prepareKeys = input => mapKeys( input, ( value, key ) => `filters_${ snakeCase( key ) }` );
+	const transformation = flow(
+		prepareKeys,
+		convertArraysToCSV
+	);
+	return transformation( filters );
+}
+
+export function recordFiltersReset( filters, keysToReset, section ) {
+	return composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Filters Reset' ),
+		recordTracksEvent( 'calypso_domain_search_filters_reset', {
+			keys_to_reset: keysToReset.join( ',' ),
+			section,
+			...processFiltersForAnalytics( filters ),
+		} )
+	);
+}
+
+export function recordFiltersSubmit( filters, section ) {
+	return composeAnalytics(
+		recordGoogleEvent( 'Domain Search', 'Filters Submit' ),
+		recordTracksEvent( 'calypso_domain_search_filters_submit', {
+			section,
+			...processFiltersForAnalytics( filters ),
+		} )
+	);
+}

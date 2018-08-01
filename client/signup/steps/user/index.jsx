@@ -84,6 +84,12 @@ export class UserStep extends Component {
 		}
 	}
 
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
+		} );
+	}
+
 	setSubHeaderText( props ) {
 		const { flowName, oauth2Client, translate } = props;
 

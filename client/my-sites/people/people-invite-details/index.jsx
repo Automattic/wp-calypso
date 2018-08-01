@@ -30,7 +30,7 @@ import {
 	didInviteDeletionSucceed,
 } from 'state/invites/selectors';
 import { deleteInvite } from 'state/invites/actions';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class PeopleInviteDetails extends React.PureComponent {
@@ -65,8 +65,8 @@ export class PeopleInviteDetails extends React.PureComponent {
 		const { deleting, invite, translate } = this.props;
 		const { isPending } = invite;
 		const revokeMessage = translate(
-			'Revoking an invite will no longer allow this person to join your site. ' +
-				'You can always invite them again if your change your mind.'
+			'Revoking an invite will no longer allow this person to become a member of ' +
+				'your site. You can always invite them again if you change your mind.'
 		);
 		const clearMessage = translate(
 			'If you no longer wish to see this record, you can clear it. ' +

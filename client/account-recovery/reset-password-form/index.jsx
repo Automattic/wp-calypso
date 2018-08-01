@@ -20,12 +20,10 @@ import ResetOptionSet from './reset-option-set';
 import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
 import { setResetMethod, requestReset } from 'state/account-recovery/reset/actions';
 
-import {
-	getAccountRecoveryResetUserData,
-	getAccountRecoveryResetOptions,
-	getAccountRecoveryResetRequestError,
-	isRequestingAccountRecoveryReset,
-} from 'state/selectors';
+import getAccountRecoveryResetOptions from 'state/selectors/get-account-recovery-reset-options';
+import getAccountRecoveryResetRequestError from 'state/selectors/get-account-recovery-reset-request-error';
+import getAccountRecoveryResetUserData from 'state/selectors/get-account-recovery-reset-user-data';
+import isRequestingAccountRecoveryReset from 'state/selectors/is-requesting-account-recovery-reset';
 
 export class ResetPasswordFormComponent extends Component {
 	static propTypes = {

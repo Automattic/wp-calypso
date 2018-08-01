@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, get, overSome } from 'lodash';
+import { flow, overSome } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,12 +16,7 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
-import FormTextarea from 'components/forms/form-textarea';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import PostMetadata from 'lib/post-metadata';
-import TrackInputChanges from 'components/track-input-changes';
-import actions from 'lib/posts/actions';
-import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
@@ -37,12 +32,13 @@ import {
 	isJetpackSite,
 } from 'state/sites/selectors';
 import config from 'config';
-import { areSitePermalinksEditable } from 'state/selectors';
+import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
 import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
 import EditPostStatus from 'post-editor/edit-post-status';
+import EditorExcerpt from 'post-editor/editor-excerpt';
 import { getFirstConflictingPlugin } from 'lib/seo';
 
 /**
@@ -79,22 +75,13 @@ const POST_TYPE_SUPPORTS = {
 class EditorDrawer extends Component {
 	static propTypes = {
 		site: PropTypes.object,
-		savedPost: PropTypes.object,
-		post: PropTypes.object,
 		canJetpackUseTaxonomies: PropTypes.bool,
 		typeObject: PropTypes.object,
-		isNew: PropTypes.bool,
 		type: PropTypes.string,
 		setPostDate: PropTypes.func,
 		onSave: PropTypes.func,
-		isPostPrivate: PropTypes.bool,
 		confirmationSidebarStatus: PropTypes.string,
 	};
-
-	onExcerptChange( event ) {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( { excerpt: event.target.value } );
-	}
 
 	currentPostTypeSupports( feature ) {
 		const { typeObject, type } = this.props;
@@ -110,11 +97,6 @@ class EditorDrawer extends Component {
 
 		// Default to true until post types are known
 		return true;
-	}
-
-	recordExcerptChangeStats() {
-		recordStat( 'excerpt_changed' );
-		recordEvent( 'Changed Excerpt' );
 	}
 
 	// Categories & Tags
@@ -142,26 +124,15 @@ class EditorDrawer extends Component {
 	}
 
 	renderPostFormats() {
-		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
+		if ( ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
 
-		return (
-			<AsyncLoad
-				require="post-editor/editor-post-formats/accordion"
-				className="editor-drawer__accordion"
-			/>
-		);
+		return <AsyncLoad require="post-editor/editor-post-formats/accordion" />;
 	}
 
 	renderSharing() {
-		return (
-			<AsyncLoad
-				require="post-editor/editor-sharing/accordion"
-				site={ this.props.site }
-				post={ this.props.post }
-			/>
-		);
+		return <AsyncLoad require="post-editor/editor-sharing/accordion" />;
 	}
 
 	renderFeaturedImage() {
@@ -179,8 +150,6 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		const excerpt = get( this.props.post, 'excerpt' );
-
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel
@@ -190,16 +159,7 @@ class EditorDrawer extends Component {
 							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
 					) }
 				>
-					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
-						<FormTextarea
-							id="excerpt"
-							name="excerpt"
-							onChange={ this.onExcerptChange }
-							value={ excerpt }
-							placeholder={ translate( 'Write an excerpt…' ) }
-							aria-label={ translate( 'Write an excerpt…' ) }
-						/>
-					</TrackInputChanges>
+					<EditorExcerpt />
 				</EditorDrawerLabel>
 			</AccordionSection>
 		);
@@ -208,7 +168,10 @@ class EditorDrawer extends Component {
 	renderLocation() {
 		const { translate } = this.props;
 
-		if ( ! this.props.site || this.props.isJetpack ) {
+		if (
+			! this.props.site ||
+			( this.props.isJetpack && ! this.props.jetpackVersionSupportsLocation )
+		) {
 			return;
 		}
 
@@ -219,10 +182,7 @@ class EditorDrawer extends Component {
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel labelText={ translate( 'Location' ) } />
-				<AsyncLoad
-					require="post-editor/editor-location"
-					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
-				/>
+				<AsyncLoad require="post-editor/editor-location" />
 			</AccordionSection>
 		);
 	}
@@ -234,7 +194,7 @@ class EditorDrawer extends Component {
 
 		return (
 			<AccordionSection>
-				<AsyncLoad require="post-editor/editor-discussion" isNew={ this.props.isNew } />
+				<AsyncLoad require="post-editor/editor-discussion" />
 			</AccordionSection>
 		);
 	}
@@ -269,12 +229,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return (
-			<AsyncLoad
-				require="post-editor/editor-seo-accordion"
-				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
-			/>
-		);
+		return <AsyncLoad require="post-editor/editor-seo-accordion" />;
 	}
 
 	renderCopyPost() {
@@ -322,24 +277,14 @@ class EditorDrawer extends Component {
 	}
 
 	renderStatus() {
-		// TODO: REDUX - remove this logic and prop for EditPostStatus when date is moved to redux
-		const postDate = get( this.props.post, 'date', null );
-		const postStatus = get( this.props.post, 'status', null );
-		const { translate, type } = this.props;
+		const { translate } = this.props;
 
 		return (
 			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
 				<EditPostStatus
-					savedPost={ this.props.savedPost }
-					postDate={ postDate }
 					onSave={ this.props.onSave }
-					onTrashingPost={ this.props.onTrashingPost }
 					onPrivatePublish={ this.props.onPrivatePublish }
 					setPostDate={ this.props.setPostDate }
-					site={ this.props.site }
-					status={ postStatus }
-					type={ type }
-					isPostPrivate={ this.props.isPostPrivate }
 					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
 				/>
 			</Accordion>
@@ -384,6 +329,7 @@ const enhance = flow(
 			isJetpack: isJetpackSite( state, siteId ),
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+			jetpackVersionSupportsLocation: isJetpackMinimumVersion( state, siteId, '6.3-beta' ),
 			isRequestingPlugins: isRequesting( state, siteId ),
 			type,
 			typeObject: getPostType( state, siteId, type ),

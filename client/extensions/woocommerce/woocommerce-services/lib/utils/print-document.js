@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -12,7 +14,7 @@ let iframe = null;
  * @param {string} url URL to load
  * @returns {Promise} Promise that resolves when the iframe finished loading, rejects on error
  */
-const loadDocumentInFrame = ( url ) => {
+const loadDocumentInFrame = url => {
 	return new Promise( ( resolve, reject ) => {
 		if ( iframe ) {
 			document.body.removeChild( iframe );
@@ -27,7 +29,7 @@ const loadDocumentInFrame = ( url ) => {
 		iframe.onload = () => {
 			resolve();
 		};
-		iframe.onerror = ( error ) => {
+		iframe.onerror = error => {
 			reject( error );
 		};
 
@@ -62,17 +64,18 @@ export default ( { b64Content, mimeType }, fileName ) => {
 	switch ( getPDFSupport() ) {
 		case 'native':
 			// Happy case where everything can happen automatically. Supported in Chrome and Safari
-			return loadDocumentInFrame( blobUrl )
-				.then( () => {
-					iframe.contentWindow.print();
-					URL.revokeObjectURL( blobUrl );
-				} );
+			return loadDocumentInFrame( blobUrl ).then( () => {
+				iframe.contentWindow.print();
+				URL.revokeObjectURL( blobUrl );
+			} );
 
 		case 'addon':
 			// window.open will be blocked by the browser if this code isn't being executed from a direct user interaction
 			const success = window.open( blobUrl );
 			URL.revokeObjectURL( blobUrl );
-			return success ? Promise.resolve() : Promise.reject( new Error( 'Unable to open label PDF in new tab' ) );
+			return success
+				? Promise.resolve()
+				: Promise.reject( new Error( 'Unable to open label PDF in new tab' ) );
 
 		case 'ie':
 			// Internet Explorer / Edge don't allow to load "blob:" URLs into an <iframe> or a new tab. The only solution is to download

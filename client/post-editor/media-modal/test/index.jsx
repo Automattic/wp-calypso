@@ -48,10 +48,6 @@ jest.mock( 'lib/media/actions', () => ( {
 	delete: () => {},
 	setLibrarySelectedItems: () => {},
 } ) );
-jest.mock( 'lib/posts/stats', () => ( {
-	recordEvent: () => {},
-	recordState: () => {},
-} ) );
 jest.mock( 'my-sites/media-library', () => require( 'components/empty-component' ) );
 
 /**
@@ -77,7 +73,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	afterEach( () => {
-		accept.reset();
+		accept.resetHistory();
 	} );
 
 	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
@@ -94,7 +90,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the list view', done => {
-		var media = DUMMY_MEDIA.slice( 0, 1 ),
+		let media = DUMMY_MEDIA.slice( 0, 1 ),
 			tree;
 
 		tree = shallow(
@@ -118,7 +114,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete multiple items from the list view', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
@@ -139,7 +135,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the detail view', done => {
-		var media = DUMMY_MEDIA[ 0 ],
+		let media = DUMMY_MEDIA[ 0 ],
 			tree;
 
 		tree = shallow(
@@ -163,7 +159,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should prompt to delete a single item from the detail view, even when multiple selected', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
@@ -202,7 +198,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should revert to an earlier media item when the last item is deleted from detail view', done => {
-		var tree = shallow(
+		const tree = shallow(
 			<EditorMediaModal
 				site={ DUMMY_SITE }
 				mediaLibrarySelectedItems={ DUMMY_MEDIA }
@@ -316,6 +312,22 @@ describe( 'EditorMediaModal', () => {
 	test( 'should show an insert button if none or one local items are selected', () => {
 		const tree = shallow(
 			<EditorMediaModal site={ DUMMY_SITE } view={ ModalViews.DETAIL } setView={ spy } />
+		).instance();
+
+		const buttons = tree.getModalButtons();
+
+		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+	} );
+
+	test( 'should show an insert button if multiple images are selected when gallery view is disabled', () => {
+		const tree = shallow(
+			<EditorMediaModal
+				site={ DUMMY_SITE }
+				mediaLibrarySelectedItems={ DUMMY_MEDIA }
+				view={ ModalViews.DETAIL }
+				setView={ spy }
+				galleryViewEnabled={ false }
+			/>
 		).instance();
 
 		const buttons = tree.getModalButtons();

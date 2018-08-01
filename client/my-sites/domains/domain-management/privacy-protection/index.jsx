@@ -29,7 +29,7 @@ import { type as domainTypes } from 'lib/domains/constants';
 
 class PrivacyProtection extends Component {
 	static propTypes = {
-		domains: PropTypes.object.isRequired,
+		domains: PropTypes.array.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		translate: PropTypes.func.isRequired,

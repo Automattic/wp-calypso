@@ -15,7 +15,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import SignupActions from 'lib/signup/actions';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 import SetupFooter from 'my-sites/site-settings/jetpack-credentials/credentials-setup-flow/setup-footer';
 
 class RewindFormCreds extends Component {
@@ -103,11 +103,14 @@ class RewindFormCreds extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
-	const rewindState = getRewindState( state, siteId );
-	return {
-		siteId,
-		rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
-	};
-}, null )( localize( RewindFormCreds ) );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
+		const rewindState = getRewindState( state, siteId );
+		return {
+			siteId,
+			rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
+		};
+	},
+	null
+)( localize( RewindFormCreds ) );

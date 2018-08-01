@@ -13,7 +13,9 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
-import { getJetpackSettings, getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
+import getJetpackSettings from 'state/selectors/get-jetpack-settings';
+import getSiteUrl from 'state/selectors/get-site-url';
+import getUnconnectedSiteUrl from 'state/selectors/get-unconnected-site-url';
 import {
 	filterSettingsByActiveModules,
 	normalizeSettings,
@@ -140,7 +142,12 @@ export const handleSaveFailure = (
 };
 
 export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: errorMessage } ) => {
-	const { settings, siteId, type, meta: { dataLayer } } = action;
+	const {
+		settings,
+		siteId,
+		type,
+		meta: { dataLayer },
+	} = action;
 	const { retryCount = 0 } = dataLayer;
 
 	// If we got a timeout on WooCommerce installation, try again (up to 3 times),

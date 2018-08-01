@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import GoogleLoginButton from 'components/social-buttons/google';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ class SocialSignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		showFirst: PropTypes.bool,
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
@@ -48,10 +50,17 @@ class SocialSignupForm extends Component {
 		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
 
 		return (
-			<Card className="signup-form__social">
+			<Card
+				className={ classNames(
+					'signup-form__social',
+					this.props.showFirst && 'signup-form__social-top'
+				) }
+			>
 				<p>
 					{ preventWidows(
-						this.props.translate( 'Or connect your existing profile to get started faster.' )
+						this.props.showFirst
+							? this.props.translate( 'Connect your existing profile to get started.' )
+							: this.props.translate( 'Or connect your existing profile to get started faster.' )
 					) }
 				</p>
 

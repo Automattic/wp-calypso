@@ -25,9 +25,13 @@
 	@import 'app/settings/shipping/style';
 	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';
+	@import 'app/store-stats/store-stats-orders-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
 	@import 'app/store-stats/store-stats-referrer-widget/style';
+	@import 'app/store-stats/store-stats-referrer-widget-base/style';
+	@import 'app/store-stats/store-stats-referrer-conv-widget/style';
 	@import 'app/store-stats/referrers/style';
+	@import 'app/store-stats/referrers/chart/style';
 	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
 
@@ -71,7 +75,7 @@
 	}
 
 	.woocommerce__placeholder {
-		padding-top: 0;
+		padding-top: 32px;
 
 		@include breakpoint( "<660px" ) {
 			padding-top: 16px;

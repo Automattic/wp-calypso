@@ -3,11 +3,12 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import page from 'page';
+import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import page from 'page';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,16 +16,22 @@ import React, { Component } from 'react';
 import Button from 'components/button';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
+import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
+import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
 
 class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		recordTracksEventWithLocationCounts: PropTypes.func.isRequired,
+		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -32,16 +39,32 @@ class GoogleMyBusinessNewAccount extends Component {
 		page.back( `/google-my-business/select-business-type/${ this.props.siteSlug }` );
 	};
 
-	trackCreateMyListingClick = () => {
+	trackUseAnotherGoogleAccountClick = () => {
 		this.props.recordTracksEvent(
-			'calypso_google_my_business_new_account_create_my_listing_button_click'
+			'calypso_google_my_business_new_account_use_another_google_account_button_click'
 		);
 	};
 
-	trackNoThanksClick = () => {
+	trackCreateListingClick = () => {
 		this.props.recordTracksEvent(
-			'calypso_google_my_business_new_account_no_thanks_button_click'
+			'calypso_google_my_business_new_account_create_listing_button_click'
 		);
+	};
+
+	handleConnect = keyringConnection => {
+		const { siteId } = this.props;
+
+		this.props.connectGoogleMyBusinessAccount( siteId, keyringConnection.ID ).then( () => {
+			this.props.recordTracksEventWithLocationCounts(
+				'calypso_google_my_business_new_account_connect'
+			);
+			page.redirect( `/google-my-business/${ this.props.siteSlug }` );
+		} );
+	};
+
+	handleNoThanksClick = () => {
+		this.props.recordTracksEvent( 'calypso_google_my_business_new_account_no_thanks_button_click' );
+		this.props.dismissNudge();
 	};
 
 	render() {
@@ -49,10 +72,7 @@ class GoogleMyBusinessNewAccount extends Component {
 
 		return (
 			<Main className="gmb-new-account" wideLayout>
-				<PageViewTracker
-					path="/google-my-business/new/:site"
-					title="Google My Business > New"
-				/>
+				<PageViewTracker path="/google-my-business/new/:site" title="Google My Business > New" />
 
 				<DocumentHead title={ translate( 'Google My Business' ) } />
 
@@ -75,23 +95,30 @@ class GoogleMyBusinessNewAccount extends Component {
 						<p>
 							{ translate(
 								'Google My Business lists your local business on Google Search and Google Maps. ' +
-									'It works for businesses that have a physical location or serve a local area'
+									'It works for businesses that have a physical location, or serve a local area.'
 							) }
 						</p>
 
 						<div className="gmb-new-account__actions">
 							<Button
-								href={ `/google-my-business/select-location/${ siteSlug }` }
-								onClick={ this.trackCreateMyListingClick }
+								href={ 'https://business.google.com/create' }
+								target="_blank"
+								onClick={ this.trackCreateListingClick }
 								primary
 							>
-								{ translate( 'Create Your Listing' ) }
+								{ translate( 'Create Listing' ) } <Gridicon icon="external" />
 							</Button>
 
-							<Button
-								href={ `/stats/${ siteSlug }` }
-								onClick={ this.trackNoThanksClick }
+							<KeyringConnectButton
+								serviceId="google_my_business"
+								forceReconnect={ true }
+								onClick={ this.trackUseAnotherGoogleAccountClick }
+								onConnect={ this.handleConnect }
 							>
+								{ translate( 'Use another Google Account' ) }
+							</KeyringConnectButton>
+
+							<Button href={ `/stats/${ siteSlug }` } onClick={ this.handleNoThanksClick }>
 								{ translate( 'No thanks' ) }
 							</Button>
 						</div>
@@ -104,9 +131,16 @@ class GoogleMyBusinessNewAccount extends Component {
 
 export default connect(
 	state => ( {
+		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
-		recordTracksEvent,
+		connectGoogleMyBusinessAccount,
+		dismissNudge,
+		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+			enhanceWithLocationCounts,
+			enhanceWithSiteType,
+		] ),
 	}
 )( localize( GoogleMyBusinessNewAccount ) );

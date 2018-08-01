@@ -1,14 +1,9 @@
 /** @format */
 /**
- * External dependencies
- */
-import { isString, tap } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST } from 'state/action-types';
 import {
@@ -17,60 +12,44 @@ import {
 	updatePasswordResetUserData,
 } from 'state/account-recovery/reset/actions';
 
-export const fromApi = data => [
+/*
+ * Uses `substring()` to force string values. Anything
+ * other than a string will throw, thus invalidating the parse
+ */
+export const fromApi = ( { primary_email, primary_sms, secondary_email, secondary_sms } ) => [
 	{
-		email: data.primary_email,
-		sms: data.primary_sms,
+		email: primary_email.substring( 0 ),
+		sms: primary_sms.substring( 0 ),
 		name: 'primary',
 	},
 	{
-		email: data.secondary_email,
-		sms: data.secondary_sms,
+		email: secondary_email.substring( 0 ),
+		sms: secondary_sms.substring( 0 ),
 		name: 'secondary',
 	},
 ];
 
-export const validate = ( { primary_email, primary_sms, secondary_email, secondary_sms } ) => {
-	if ( ! [ primary_email, primary_sms, secondary_email, secondary_sms ].every( isString ) ) {
-		throw Error( 'Unexpected response format from /account-recovery/lookup' );
-	}
-};
-
-export const requestResetOptions = ( { dispatch }, action ) => {
-	const { userData } = action;
-
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path: '/account-recovery/lookup',
-				apiNamespace: 'wpcom/v2',
-				query: userData,
-				retryPolicy: noRetry(),
-			},
-			action
-		)
+export const fetch = action =>
+	http(
+		{
+			method: 'GET',
+			path: '/account-recovery/lookup',
+			apiNamespace: 'wpcom/v2',
+			query: action.userData,
+			retryPolicy: noRetry(),
+		},
+		action
 	);
-};
 
-export const requestResetOptionsError = ( { dispatch }, action, error ) => {
-	dispatch( fetchResetOptionsError( error ) );
-};
+export const onError = ( action, error ) => fetchResetOptionsError( error );
 
-export const requestResetOptionsSuccess = ( store, action, data ) => {
-	const { dispatch } = store;
-	const { userData } = action;
-
-	try {
-		dispatch( fetchResetOptionsSuccess( fromApi( tap( data, validate ) ) ) );
-		dispatch( updatePasswordResetUserData( userData ) );
-	} catch ( error ) {
-		requestResetOptionsError( store, action, error );
-	}
-};
+export const onSuccess = ( action, data ) => [
+	fetchResetOptionsSuccess( data ),
+	updatePasswordResetUserData( action.userData ),
+];
 
 export default {
 	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [
-		dispatchRequest( requestResetOptions, requestResetOptionsSuccess, requestResetOptionsError ),
+		dispatchRequestEx( { fetch, onSuccess, onError, fromApi } ),
 	],
 };

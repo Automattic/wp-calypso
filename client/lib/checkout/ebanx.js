@@ -33,7 +33,7 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' )
  */
 export function shouldRenderAdditionalEbanxFields( countryCode = '' ) {
 	return (
-		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
+		isEbanxCreditCardProcessingEnabledForCountry( countryCode ) &&
 		! isEmpty( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ].fields )
 	);
 }

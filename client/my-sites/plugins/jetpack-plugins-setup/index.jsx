@@ -38,7 +38,7 @@ import { getSiteFileModDisableReason } from 'lib/site/utils';
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getJetpackSiteRemoteManagementUrl, isRequestingSites } from 'state/sites/selectors';
-import { hasInitializedSites } from 'state/selectors';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
@@ -192,7 +192,7 @@ class PlansSetup extends React.Component {
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }
 				title={ this.props.translate(
-					'Oh no! You need to select a jetpack site to be able to setup your plan'
+					'Oh no! You need to select a Jetpack site to be able to setup your plan'
 				) }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
 			/>
@@ -532,7 +532,7 @@ class PlansSetup extends React.Component {
 				<Card className="jetpack-plugins-setup__need-manage">
 					<p>
 						{ translate(
-							'{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.', // eslint-disable-line max-len
+							'{{strong}}Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.{{/strong}} This will allow WordPress.com to communicate with your site and auto-configure the features unlocked with your new plan. Or you can opt out.',
 							{
 								args: { plan: site.plan.product_name_short },
 								components: { strong: <strong /> },

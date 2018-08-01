@@ -7,15 +7,20 @@
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
 import { get } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
+import EnvironmentBadge, {
+	TestHelper,
+	Branch,
+	DevDocsLink,
+	PreferencesHelper,
+} from '../components/environment-badge';
 import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
+import { jsonStringifyForHtml } from '../../server/sanitize';
 
 class Document extends React.Component {
 	render() {
@@ -68,8 +73,12 @@ class Document extends React.Component {
 				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
 			>
 				<Head title={ head.title } faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-					{ head.metas.map( ( props, index ) => <meta { ...props } key={ index } /> ) }
-					{ head.links.map( ( props, index ) => <link { ...props } key={ index } /> ) }
+					{ head.metas.map( ( props, index ) => (
+						<meta { ...props } key={ index } />
+					) ) }
+					{ head.links.map( ( props, index ) => (
+						<link { ...props } key={ index } />
+					) ) }
 
 					<link
 						rel="stylesheet"
@@ -124,32 +133,14 @@ class Document extends React.Component {
 						</div>
 					) }
 					{ badge && (
-						<div className="environment-badge">
-							{ preferencesHelper && <div className="environment is-prefs" /> }
-							{ abTestHelper && <div className="environment is-tests" /> }
-							{ branchName &&
-								branchName !== 'master' && (
-									<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
-										{ branchName }
-									</span>
-								) }
-							{ devDocs && (
-								<span className="environment is-docs">
-									<a href={ devDocsURL } title="DevDocs">
-										docs
-									</a>
-								</span>
+						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
+							{ preferencesHelper && <PreferencesHelper /> }
+							{ abTestHelper && <TestHelper /> }
+							{ branchName && (
+								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
-							<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-							<a
-								className="bug-report"
-								href={ feedbackURL }
-								title="Report an issue"
-								target="_blank"
-							>
-								<Gridicon icon="bug" size={ 18 } />
-							</a>
-						</div>
+							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
+						</EnvironmentBadge>
 					) }
 
 					<script
@@ -175,8 +166,12 @@ class Document extends React.Component {
 							} }
 						/>
 					) }
-					{ entrypoint.map( asset => <script key={ asset } src={ asset } /> ) }
-					{ chunkFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
+					{ entrypoint.map( asset => (
+						<script key={ asset } src={ asset } />
+					) ) }
+					{ chunkFiles.map( chunk => (
+						<script key={ chunk } src={ chunk } />
+					) ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">
 						window.AppBoot();
 					</script>

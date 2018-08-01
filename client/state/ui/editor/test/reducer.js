@@ -15,11 +15,16 @@ describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'postId',
+			'loadingError',
+			'isLoading',
+			'isAutosaving',
+			'autosavePreviewUrl',
 			'lastDraft',
 			'contactForm',
 			'imageEditor',
 			'videoEditor',
 			'saveBlockers',
+			'rawContent',
 		] );
 	} );
 

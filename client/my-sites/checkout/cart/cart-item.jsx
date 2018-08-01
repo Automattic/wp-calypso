@@ -21,12 +21,14 @@ import {
 	isBiennially,
 	isPlan,
 	isBundled,
+	isDomainProduct,
 } from 'lib/products-values';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import { removeItem } from 'lib/upgrades/actions';
 import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
+import { getCurrencyObject } from 'lib/format-currency';
 
 const getIncludedDomain = cartItems.getIncludedDomain;
 
@@ -76,12 +78,15 @@ export class CartItem extends React.Component {
 		}
 
 		const { months, monthlyPrice } = this.calcMonthlyBillingDetails();
+		const price = getCurrencyObject( monthlyPrice, currency );
 
 		return translate( '(%(monthlyPrice)s %(currency)s x %(months)d months)', {
 			args: {
 				months,
 				currency,
-				monthlyPrice: monthlyPrice.toFixed( currency === 'JPY' ? 0 : 2 ),
+				monthlyPrice: `${ price.integer }${
+					monthlyPrice - price.integer > 0 ? price.fraction : ''
+				}`,
 			},
 		} );
 	}
@@ -181,7 +186,9 @@ export class CartItem extends React.Component {
 		return (
 			<li className="cart-item">
 				<div className="primary-details">
-					<span className="product-name">{ name || translate( 'Loading…' ) }</span>
+					<span className="product-name" data-e2e-product-slug={ cartItem.product_slug }>
+						{ name || translate( 'Loading…' ) }
+					</span>
 					<span className="product-domain">{ this.getProductInfo() }</span>
 				</div>
 
@@ -197,6 +204,10 @@ export class CartItem extends React.Component {
 
 	getSubscriptionLength() {
 		const { cartItem, translate } = this.props;
+		if ( this.isDomainProductDiscountedTo0() ) {
+			return false;
+		}
+
 		const hasBillPeriod = cartItem.bill_period && parseInt( cartItem.bill_period ) !== -1;
 		if ( ! hasBillPeriod ) {
 			return false;
@@ -207,10 +218,15 @@ export class CartItem extends React.Component {
 		} else if ( isYearly( cartItem ) ) {
 			return translate( 'annual subscription' );
 		} else if ( isBiennially( cartItem ) ) {
-			return translate( 'biennial subscription' );
+			return translate( 'two year subscription' );
 		}
 
 		return false;
+	}
+
+	isDomainProductDiscountedTo0() {
+		const { cartItem } = this.props;
+		return isDomainProduct( cartItem ) && isBundled( cartItem ) && cartItem.cost === 0;
 	}
 
 	getProductName() {
@@ -257,12 +273,16 @@ export class CartItem extends React.Component {
 	}
 
 	removeButton() {
-		const { cart, cartItem } = this.props;
+		const { cart, cartItem, translate } = this.props;
 
 		if ( canRemoveFromCart( cart, cartItem ) ) {
 			return (
-				<button className="cart__remove-item" onClick={ this.removeFromCart }>
-					<Gridicon icon="cross-small" />
+				<button
+					className="cart__remove-item"
+					onClick={ this.removeFromCart }
+					aria-label={ translate( 'Remove item' ) }
+				>
+					<Gridicon icon="trash" size={ 18 } />
 				</button>
 			);
 		}

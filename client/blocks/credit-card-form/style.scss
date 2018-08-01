@@ -41,7 +41,7 @@
 		color: $gray-text-min;
 	}
 
-	button {
+	button:first-of-type {
 		margin-left: auto;
 	}
 
@@ -56,4 +56,9 @@
 			width: 100%;
 		}
 	}
+}
+
+.credit-card-form__heading {
+	font-size: 18px;
+	padding: 0 0 16px 0;
 }

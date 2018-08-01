@@ -23,10 +23,9 @@ export default {
 				<Plans
 					context={ context }
 					intervalType={ context.params.intervalType }
-					destinationType={ context.params.destinationType }
 					selectedFeature={ context.query.feature }
 					selectedPlan={ context.query.plan }
-					withSaleInfo={ 'sale' in context.query }
+					withDiscount={ context.query.discount }
 				/>
 			</CheckoutData>
 		);

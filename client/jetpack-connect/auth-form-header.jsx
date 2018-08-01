@@ -20,6 +20,7 @@ import { authQueryPropTypes } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 
 export class AuthFormHeader extends Component {
 	static propTypes = {
@@ -31,9 +32,9 @@ export class AuthFormHeader extends Component {
 	};
 
 	getState() {
-		const { user, authorize } = this.props;
+		const { user, authorize, partnerSlug } = this.props;
 
-		if ( this.getPartnerSlug() ) {
+		if ( partnerSlug ) {
 			return 'partner';
 		}
 
@@ -48,60 +49,30 @@ export class AuthFormHeader extends Component {
 		return 'logged-in';
 	}
 
-	getPartnerSlug() {
-		const { partnerId } = this.props.authQuery;
+	getHeaderText() {
+		const { translate, partnerSlug } = this.props;
 
-		switch ( partnerId ) {
-			case 51945:
-			case 51946:
-				return 'dreamhost';
-			case 49615:
-			case 49640:
-				return 'pressable';
-			case 51652: // Clients used for testing.
-				return 'dreamhost';
-			default:
-				return '';
-		}
-	}
-
-	getHeaderImage() {
-		const partnerSlug = this.getPartnerSlug();
-
-		let image = false;
+		let host = '';
 		switch ( partnerSlug ) {
 			case 'dreamhost':
-				image = '/calypso/images/jetpack/dreamhost-jetpack-logo-group.png';
+				host = 'Dreamhost';
 				break;
 			case 'pressable':
-				image = '/calypso/images/jetpack/pressable-jetpack-logo-group.png';
+				host = 'Pressable';
+				break;
+			case 'milesweb':
+				host = 'Milesweb';
+				break;
+			case 'bluehost':
+				host = 'Bluehost';
 				break;
 		}
 
-		if ( ! image ) {
-			return null;
-		}
-
-		return (
-			<div className="jetpack-connect__auth-form-header-image">
-				<img width={ 128 } height={ 42.5 } src={ image } />
-			</div>
-		);
-	}
-
-	getHeaderText() {
-		const { translate } = this.props;
-		const partnerSlug = this.getPartnerSlug();
-
-		if ( partnerSlug ) {
-			switch ( partnerSlug ) {
-				case 'dreamhost':
-					return translate( 'In partnership with Dreamhost' );
-				case 'pressable':
-					return translate( 'In partnership with Pressable' );
-				default:
-					return translate( 'Completing set up' );
-			}
+		if ( host ) {
+			return translate( 'Jetpack, in partnership with %(host)s', {
+				args: { host },
+				comment: '%(host)s is the company name of a hosting partner. Ex. - Pressable',
+			} );
 		}
 
 		switch ( this.getState() ) {
@@ -163,7 +134,6 @@ export class AuthFormHeader extends Component {
 	render() {
 		return (
 			<div>
-				{ this.getHeaderImage() }
 				<FormattedHeader
 					headerText={ this.getHeaderText() }
 					subHeaderText={ this.getSubHeaderText() }
@@ -178,5 +148,6 @@ export default connect( state => {
 	return {
 		authorize: getAuthorizationData( state ),
 		user: getCurrentUser( state ),
+		partnerSlug: getPartnerSlugFromQuery( state ),
 	};
 } )( localize( AuthFormHeader ) );

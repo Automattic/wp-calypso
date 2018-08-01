@@ -21,13 +21,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Main from 'components/main';
-import QueryConciergeAvailableTimes from 'components/data/query-concierge-available-times';
+import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import QueryUserSettings from 'components/data/query-user-settings';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { planMatches } from 'lib/plans';
 import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
-import { getConciergeAvailableTimes, getUserSettings } from 'state/selectors';
+import getConciergeAvailableTimes from 'state/selectors/get-concierge-available-times';
+import getUserSettings from 'state/selectors/get-user-settings';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 import { getSite } from 'state/sites/selectors';
 import Upsell from './shared/upsell';
@@ -83,7 +84,7 @@ export class ConciergeMain extends Component {
 			<Main>
 				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
 				<QueryUserSettings />
-				<QueryConciergeAvailableTimes scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
+				<QueryConciergeInitial scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />
 				<QuerySites />
 				{ site && <QuerySitePlans siteId={ site.ID } /> }
 				{ this.getDisplayComponent() }

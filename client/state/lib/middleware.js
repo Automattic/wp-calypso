@@ -4,8 +4,10 @@
  * External dependencies
  */
 
-import { get } from 'lodash';
+import { get, once } from 'lodash';
 import debugFactory from 'debug';
+import notices from 'notices';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,6 +17,7 @@ import {
 	ANALYTICS_SUPER_PROPS_UPDATE,
 	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
+	ROUTE_SET,
 	SELECTED_SITE_SET,
 	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
@@ -26,16 +29,19 @@ import {
 import analytics from 'lib/analytics';
 import cartStore from 'lib/cart/store';
 import userFactory from 'lib/user';
-import {
-	isNotificationsOpen,
-	hasSitePendingAutomatedTransfer,
-	isFetchingAutomatedTransferStatus,
-} from 'state/selectors';
+import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
+import isFetchingAutomatedTransferStatus from 'state/selectors/is-fetching-automated-transfer-status';
+import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+import {
+	createImmediateLoginMessage,
+	createPathWithoutImmediateLoginInformation,
+} from 'state/immediate-login/utils';
+import { saveImmediateLoginInformation } from 'state/immediate-login/actions';
 
 const debug = debugFactory( 'calypso:state:middleware' );
 const user = userFactory();
@@ -55,6 +61,43 @@ let desktop;
 if ( desktopEnabled ) {
 	desktop = require( 'lib/desktop' ).default;
 }
+
+/**
+ * Notifies user about the fact that they were automatically logged in
+ * via an immediate link.
+ *
+ * @param {function} dispatch - redux dispatch function
+ * @param {object}   action   - the dispatched action
+ * @param {function} getState - redux getState function
+ */
+const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState ) => {
+	if ( ! action.query.logged_via_immediate_link ) {
+		return;
+	}
+
+	// Store login reason for future reference
+	dispatch( saveImmediateLoginInformation( action.query.login_reason ) );
+
+	// Don't do any further processing if we go to a login-related URL
+	if ( action.path.startsWith( '/log-in' ) ) {
+		return;
+	}
+
+	const currentUser = getCurrentUser( getState() );
+	if ( ! currentUser ) {
+		return;
+	}
+	const { email } = currentUser;
+
+	// Redirect to a page without immediate login information in the URL
+	page.replace( createPathWithoutImmediateLoginInformation( action.path, action.query ) );
+
+	// Let redux process all dispatches that are currently queued and show the message
+	const delay = typeof setImmediate !== 'undefined' ? setImmediate : setTimeout;
+	delay( () => {
+		notices.success( createImmediateLoginMessage( action.query.login_reason, email ) );
+	} );
+} );
 
 /*
  * Object holding functions that will be called once selected site changes.
@@ -201,6 +244,9 @@ const fireChangeListeners = () => {
 
 const handler = ( dispatch, action, getState ) => {
 	switch ( action.type ) {
+		case ROUTE_SET:
+			return notifyAboutImmediateLoginLinkEffects( dispatch, action, getState );
+
 		case ANALYTICS_SUPER_PROPS_UPDATE:
 			return updateSelectedSiteForAnalytics( dispatch, action, getState );
 

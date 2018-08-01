@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getUnconnectedSiteUrl } from 'state/selectors';
+import getUnconnectedSiteUrl from 'state/selectors/get-unconnected-site-url';
 
 describe( '#getUnconnectedSiteUrl()', () => {
 	const credentials = {

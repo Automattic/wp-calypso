@@ -11,7 +11,8 @@ import { partition, sortBy } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 import { getSite } from 'state/sites/selectors';
-import { getPrimarySiteId, getSitesItems } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import getSitesItems from 'state/selectors/get-sites-items';
 
 const sortByNameAndUrl = list => sortBy( list, [ 'name', 'URL' ] );
 

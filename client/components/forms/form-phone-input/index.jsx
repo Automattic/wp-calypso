@@ -16,7 +16,7 @@ import classnames from 'classnames';
 import FormLabel from 'components/forms/form-label';
 import FormTelInput from 'components/forms/form-tel-input';
 import FormFieldset from 'components/forms/form-fieldset';
-import CountrySelect from 'components/forms/form-country-select';
+import FormCountrySelect from 'components/forms/form-country-select';
 import phoneValidation from 'lib/phone-validation';
 
 const CLEAN_REGEX = /^0|[\s.\-()]+/g;
@@ -25,7 +25,7 @@ export class FormPhoneInput extends React.Component {
 	static propTypes = {
 		initialCountryCode: PropTypes.string,
 		initialPhoneNumber: PropTypes.string,
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		isDisabled: PropTypes.bool,
 		countrySelectProps: PropTypes.object,
 		phoneInputProps: PropTypes.object,
@@ -63,7 +63,7 @@ export class FormPhoneInput extends React.Component {
 							context: 'The country code for the phone for the user.',
 						} ) }
 					</FormLabel>
-					<CountrySelect
+					<FormCountrySelect
 						{ ...this.props.countrySelectProps }
 						countriesList={ this.props.countriesList }
 						disabled={ this.props.isDisabled }
@@ -89,8 +89,8 @@ export class FormPhoneInput extends React.Component {
 	}
 
 	getCountryData() {
-		// TODO: move this to country-list or CountrySelect
-		return find( this.props.countriesList.get(), {
+		// TODO: move this to country-list or FormCountrySelect
+		return find( this.props.countriesList, {
 			code: this.state.countryCode,
 		} );
 	}
@@ -117,13 +117,14 @@ export class FormPhoneInput extends React.Component {
 			return;
 		}
 
-		const countries = this.props.countriesList.get();
-		if ( ! countries.length ) {
+		const { countriesList } = this.props;
+
+		if ( ! countriesList.length ) {
 			return;
 		}
 
 		this.setState( {
-			countryCode: countries[ 0 ].code,
+			countryCode: countriesList[ 0 ].code,
 		} );
 	}
 

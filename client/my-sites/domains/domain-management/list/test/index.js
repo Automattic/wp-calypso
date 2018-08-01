@@ -40,10 +40,11 @@ describe( 'index', () => {
 	} );
 
 	const defaultProps = deepFreeze( {
-		domains: {
-			hasLoadedFromServer: true,
-			list: [ { name: 'domain0.com', isPrimary: false }, { name: 'example.com', isPrimary: true } ],
-		},
+		domains: [
+			{ name: 'domain0.com', isPrimary: false },
+			{ name: 'example.com', isPrimary: true },
+		],
+		isRequestingSiteDomains: true,
 		cart: {},
 		context: {
 			path: '',
@@ -146,7 +147,7 @@ describe( 'index', () => {
 					);
 				} );
 				test( 'should not call setPrimaryDomain with on trying to set the already primary domain', () => {
-					component.handleUpdatePrimaryDomain( 1, defaultProps.domains.list[ 1 ] );
+					component.handleUpdatePrimaryDomain( 1, defaultProps.domains[ 1 ] );
 					setPrimaryDomainResolve();
 					assert( ! component.state.settingPrimaryDomain );
 					assert( ! component.state.changePrimaryDomainModeEnabled );
@@ -154,11 +155,11 @@ describe( 'index', () => {
 				} );
 
 				test( 'should call setPrimaryDomain with a domain name', done => {
-					component.handleUpdatePrimaryDomain( 0, defaultProps.domains.list[ 0 ] );
+					component.handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
 					assert( component.state.settingPrimaryDomain );
 					assert( component.state.primaryDomainIndex === 0 );
 					assert(
-						setPrimaryDomainStub.calledWith( defaultProps.domains.list[ 0 ].name ),
+						setPrimaryDomainStub.calledWith( defaultProps.domains[ 0 ].name ),
 						'#setPrimaryDomain should be called with the domain name'
 					);
 					setPrimaryDomainResolve();
@@ -171,14 +172,14 @@ describe( 'index', () => {
 						assert.equal( component.state.notice.type, PRIMARY_DOMAIN_CHANGE_SUCCESS );
 						assert.equal(
 							component.state.notice.previousDomainName,
-							defaultProps.domains.list[ 1 ].name
+							defaultProps.domains[ 1 ].name
 						);
 						done();
 					}, 0 );
 				} );
 
 				test( 'should handle errors and revert the optimistic updates', done => {
-					component.handleUpdatePrimaryDomain( 0, defaultProps.domains.list[ 0 ] );
+					component.handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
 					setPrimaryDomainReject();
 					setTimeout( () => {
 						assert( ! component.state.settingPrimaryDomain );
@@ -194,10 +195,8 @@ describe( 'index', () => {
 		describe( 'when less than 2 domains', () => {
 			beforeEach( () => {
 				const oneDomain = deepFreeze( {
-					domains: {
-						hasLoadedFromServer: true,
-						list: [ { name: 'example.com', isPrimary: true } ],
-					},
+					domains: [ { name: 'example.com', isPrimary: true } ],
+					isRequestingSiteDomains: true,
 				} );
 				const propsWithOneDomain = deepFreeze( Object.assign( {}, defaultProps, oneDomain ) );
 				component = renderWithProps( propsWithOneDomain );

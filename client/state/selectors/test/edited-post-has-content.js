@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { editedPostHasContent } from 'state/selectors';
+import editedPostHasContent from 'state/selectors/edited-post-has-content';
 import { isEmptyContent } from '../edited-post-has-content';
 import PostQueryManager from 'lib/query-manager/post';
 
@@ -19,6 +19,11 @@ describe( 'editedPostHasContent()', () => {
 				posts: {
 					queries: {},
 					edits: {},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
 				},
 			},
 			2916284,
@@ -45,6 +50,11 @@ describe( 'editedPostHasContent()', () => {
 						} ),
 					},
 					edits: {},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
 				},
 			},
 			2916284,
@@ -73,6 +83,11 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
 			},
 			2916284,
 			841
@@ -100,6 +115,11 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {},
 				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
 			},
 			2916284,
 			841
@@ -126,6 +146,11 @@ describe( 'editedPostHasContent()', () => {
 						} ),
 					},
 					edits: {},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
 				},
 			},
 			2916284,
@@ -156,12 +181,19 @@ describe( 'editedPostHasContent()', () => {
 					},
 					edits: {
 						2916284: {
-							841: {
-								title: '',
-								content: '',
-								excerpt: '',
-							},
+							841: [
+								{
+									title: '',
+									content: '',
+									excerpt: '',
+								},
+							],
 						},
+					},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
 					},
 				},
 			},
@@ -179,10 +211,13 @@ describe( 'editedPostHasContent()', () => {
 					queries: {},
 					edits: {
 						2916284: {
-							841: {
-								title: 'chicken',
-							},
+							841: [ { title: 'chicken' } ],
 						},
+					},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
 					},
 				},
 			},
@@ -200,10 +235,13 @@ describe( 'editedPostHasContent()', () => {
 					queries: {},
 					edits: {
 						2916284: {
-							841: {
-								content: 'ribs',
-							},
+							841: [ { content: 'ribs' } ],
 						},
+					},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
 					},
 				},
 			},
@@ -221,9 +259,47 @@ describe( 'editedPostHasContent()', () => {
 					queries: {},
 					edits: {
 						2916284: {
-							841: {
-								excerpt: 'chicken ribs',
+							841: [ { excerpt: 'chicken ribs' } ],
+						},
+					},
+				},
+				ui: {
+					editor: {
+						rawContent: {},
+					},
+				},
+			},
+			2916284,
+			841
+		);
+
+		expect( hasContent ).to.be.true;
+	} );
+
+	test( 'should return true if there is empty content and non-empty raw content', () => {
+		const hasContent = editedPostHasContent(
+			{
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									type: 'post',
+									content: '',
+								},
 							},
+						} ),
+					},
+					edits: {},
+				},
+				ui: {
+					editor: {
+						rawContent: {
+							initial: '',
+							current: 'ribs',
 						},
 					},
 				},

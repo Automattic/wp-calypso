@@ -16,7 +16,7 @@ import HappychatButton from 'components/happychat/button';
 import Gridicon from 'gridicons';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteUrl } from 'state/selectors';
+import getSiteUrl from 'state/selectors/get-site-url';
 import {
 	dismissRewindRestoreProgress,
 	dismissRewindBackupProgress,
@@ -50,6 +50,7 @@ class SuccessBanner extends PureComponent {
 		backupUrl: PropTypes.string,
 		downloadCount: PropTypes.number,
 		downloadId: PropTypes.number,
+		context: PropTypes.string,
 
 		// connect
 		dismissRestoreProgress: PropTypes.func.isRequired,
@@ -79,6 +80,7 @@ class SuccessBanner extends PureComponent {
 			timestamp,
 			translate,
 			backupUrl,
+			context,
 			trackHappyChatBackup,
 			trackHappyChatRestore,
 		} = this.props;
@@ -90,18 +92,24 @@ class SuccessBanner extends PureComponent {
 					track: (
 						<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
 					),
-					taskFinished: translate( 'We successfully created a backup of your site to %s!', {
-						args: date,
-					} ),
+					taskFinished: translate(
+						'We successfully created a backup of your site as of %(date)s!',
+						{
+							args: { date },
+						}
+					),
 					actionButton: (
 						<Button href={ backupUrl } onClick={ this.trackDownload } primary>
 							{ translate( 'Download' ) }
 						</Button>
 					),
 					trackHappyChat: trackHappyChatBackup,
-				}
+			  }
 			: {
-					title: translate( 'Your site has been successfully restored' ),
+					title:
+						'alternate' === context
+							? translate( 'Your site has been successfully cloned' )
+							: translate( 'Your site has been successfully rewound' ),
 					icon: 'history',
 					track: (
 						<TrackComponentView
@@ -109,16 +117,21 @@ class SuccessBanner extends PureComponent {
 							eventProperties={ { restore_to: timestamp } }
 						/>
 					),
-					taskFinished: translate( 'We successfully restored your site back to %s!', {
-						args: date,
-					} ),
+					taskFinished:
+						'alternate' === context
+							? translate( 'We successfully cloned your site to the state as of %(date)s!', {
+									args: { date },
+							  } )
+							: translate( 'We successfully rewound your site back to %(date)s!', {
+									args: { date },
+							  } ),
 					actionButton: (
 						<Button href={ siteUrl } primary>
 							{ translate( 'View site' ) }
 						</Button>
 					),
 					trackHappyChat: trackHappyChatRestore,
-				};
+			  };
 		return (
 			<ActivityLogBanner
 				isDismissable

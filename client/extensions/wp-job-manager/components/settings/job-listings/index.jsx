@@ -304,4 +304,8 @@ const createReduxForm = reduxForm( {
 	form,
 } );
 
-export default flowRight( connectComponent, localize, createReduxForm )( JobListings );
+export default flowRight(
+	connectComponent,
+	localize,
+	createReduxForm
+)( JobListings );

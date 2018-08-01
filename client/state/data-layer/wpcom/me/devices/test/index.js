@@ -1,72 +1,51 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import { requestUserDevices, handleSuccess, handleError } from '../';
 import { NOTICE_CREATE, USER_DEVICES_ADD } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-describe( 'wpcom-api', () => {
-	describe( 'user devices', () => {
-		describe( '#requestUserDevices', () => {
-			test( 'should dispatch HTTP request to the users devices endpoint', () => {
-				const dispatch = spy();
+describe( 'requestUserDevices()', () => {
+	test( 'should return an action for an HTTP request to the users devices endpoint', () => {
+		const action = requestUserDevices();
 
-				requestUserDevices( { dispatch } );
+		expect( action ).toEqual(
+			http( {
+				apiVersion: '1.1',
+				method: 'GET',
+				path: '/notifications/devices',
+			} )
+		);
+	} );
+} );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
-					http( {
-						apiVersion: '1.1',
-						method: 'GET',
-						path: '/notifications/devices',
-					} )
-				);
-			} );
+describe( 'handleSuccess()', () => {
+	test( 'should return an action to add user devices', () => {
+		const devices = {
+			1: { id: 1, name: 'Mobile Phone' },
+			2: { id: 2, name: 'Tablet' },
+		};
+
+		const action = handleSuccess( null, devices );
+
+		expect( action ).toEqual( {
+			type: USER_DEVICES_ADD,
+			devices,
 		} );
+	} );
+} );
 
-		describe( '#handleSuccess', () => {
-			test( 'should dispatch user devices updates', () => {
-				const devices = [
-					{ device_id: 1, device_name: 'Mobile Phone' },
-					{ device_id: 2, device_name: 'Tablet' },
-				];
-				const dispatch = spy();
+describe( 'handleError()', () => {
+	test( 'should return an action for an error notice', () => {
+		const action = handleError();
 
-				handleSuccess( { dispatch }, null, devices );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( {
-					type: USER_DEVICES_ADD,
-					devices: {
-						1: { id: 1, name: 'Mobile Phone' },
-						2: { id: 2, name: 'Tablet' },
-					},
-				} );
-			} );
-		} );
-
-		describe( '#handleError', () => {
-			test( 'should dispatch error notice', () => {
-				const dispatch = spy();
-
-				handleError( { dispatch } );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-					},
-				} );
-			} );
+		expect( action ).toMatchObject( {
+			type: NOTICE_CREATE,
+			notice: {
+				status: 'is-error',
+			},
 		} );
 	} );
 } );

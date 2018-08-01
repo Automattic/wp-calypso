@@ -59,7 +59,13 @@
 }
 
 .design__component-playground-code {
+	max-height: 100px;
+	overflow: hidden;
 	position: relative;
+
+	&.show-code {
+		max-height: none;
+	}
 }
 
 .design__component-playground-clipboard {
@@ -67,6 +73,11 @@
 	position: absolute;
 		right: 10px;
 		top: 10px;
+}
+
+.design__component-playground-show-code {
+	margin-top: 1em;
+	text-align: center;
 }
 
 .design__playground-examples {

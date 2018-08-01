@@ -8,6 +8,7 @@ import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { parse as parseQs, stringify as stringifyQs } from 'qs';
 
 /**
  * Internal dependencies
@@ -33,39 +34,38 @@ import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
+import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
-import { isGoogleMyBusinessStatsNudgeVisible as isGoogleMyBusinessStatsNudgeVisibleSelector } from 'state/selectors';
+import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
+
+function updateQueryString( query = {} ) {
+	return {
+		...parseQs( window.location.search.substring( 1 ) ),
+		...query,
+	};
+}
 
 class StatsSite extends Component {
+	static defaultProps = {
+		chartTab: 'views',
+	};
+
 	constructor( props ) {
 		super( props );
-		this.state = {
-			chartTab: this.props.chartTab,
-			tabSwitched: false,
-		};
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! this.state.tabSwitched && this.state.chartTab !== nextProps.chartTab ) {
-			this.setState( {
-				tabSwitched: true,
-				chartTab: nextProps.chartTab,
-			} );
-		}
 	}
 
 	barClick = bar => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		page.redirect( this.props.path + '?startDate=' + bar.data.period );
+		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
+		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 
 	switchChart = tab => {
-		if ( ! tab.loading && tab.attr !== this.state.chartTab ) {
+		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
-			this.setState( {
-				chartTab: tab.attr,
-				tabSwitched: true,
-			} );
+			const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
+			page.show( `${ window.location.pathname }?${ updatedQs }` );
 		}
 	};
 
@@ -102,7 +102,7 @@ class StatsSite extends Component {
 		let podcastList;
 
 		const query = {
-			period: period,
+			period,
 			date: endOf.format( 'YYYY-MM-DD' ),
 		};
 
@@ -134,6 +134,8 @@ class StatsSite extends Component {
 
 		return (
 			<Main wideLayout={ true }>
+				<QueryKeyringConnections />
+				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
 				<DocumentHead title={ translate( 'Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
@@ -150,8 +152,12 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
-					{ isGoogleMyBusinessStatsNudgeVisible && (
-						<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } />
+					{ siteId && (
+						<GoogleMyBusinessStatsNudge
+							siteSlug={ slug }
+							siteId={ siteId }
+							visible={ isGoogleMyBusinessStatsNudgeVisible }
+						/>
 					) }
 					<ChartTabs
 						barClick={ this.barClick }
@@ -159,7 +165,7 @@ class StatsSite extends Component {
 						charts={ charts }
 						queryDate={ queryDate }
 						period={ this.props.period }
-						chartTab={ this.state.chartTab }
+						chartTab={ this.props.chartTab }
 					/>
 					<StickyPanel className="stats__sticky-navigation">
 						<StatsPeriodNavigation

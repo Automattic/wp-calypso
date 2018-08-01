@@ -16,7 +16,7 @@ import { sectionify } from 'lib/route';
 import Main from 'components/main';
 import { addItem } from 'lib/upgrades/actions';
 import productsFactory from 'lib/products-list';
-import { getSites } from 'state/selectors';
+import getSites from 'state/selectors/get-sites';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import CartData from 'components/data/cart';
@@ -25,12 +25,14 @@ import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
+import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import GoogleApps from 'components/upgrades/google-apps';
 import {
 	domainManagementTransferIn,
 	domainManagementTransferInPrecheck,
 	domainMapping,
 	domainTransferIn,
+	domainUseYourDomain,
 } from 'my-sites/domains/paths';
 import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -71,7 +73,7 @@ const domainSearch = ( context, next ) => {
 	}
 
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
 			<CartData>
@@ -100,7 +102,7 @@ const siteRedirect = ( context, next ) => {
 
 const mapDomain = ( context, next ) => {
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker path={ domainMapping( ':site' ) } title="Domain Search > Domain Mapping" />
 			<DocumentHead title={ translate( 'Map a Domain' ) } />
 			<CartData>
@@ -113,7 +115,7 @@ const mapDomain = ( context, next ) => {
 
 const transferDomain = ( context, next ) => {
 	context.primary = (
-		<Main>
+		<Main wideLayout>
 			<PageViewTracker
 				path={ domainTransferIn( ':site' ) }
 				title="Domain Search > Domain Transfer"
@@ -123,6 +125,34 @@ const transferDomain = ( context, next ) => {
 				<TransferDomain
 					basePath={ sectionify( context.path ) }
 					initialQuery={ context.query.initialQuery }
+				/>
+			</CartData>
+		</Main>
+	);
+	next();
+};
+
+const useYourDomain = ( context, next ) => {
+	const handleGoBack = () => {
+		let path = `/domains/add/${ context.params.site }`;
+		if ( context.query.initialQuery ) {
+			path += `?suggestion=${ context.query.initialQuery }`;
+		}
+
+		page( path );
+	};
+	context.primary = (
+		<Main>
+			<PageViewTracker
+				path={ domainUseYourDomain( ':site' ) }
+				title="Domain Search > Use Your Own Domain"
+			/>
+			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
+			<CartData>
+				<UseYourDomainStep
+					basePath={ sectionify( context.path ) }
+					initialQuery={ context.query.initialQuery }
+					goBack={ handleGoBack }
 				/>
 			</CartData>
 		</Main>
@@ -268,4 +298,5 @@ export default {
 	redirectToDomainSearchSuggestion,
 	transferDomain,
 	transferDomainPrecheck,
+	useYourDomain,
 };

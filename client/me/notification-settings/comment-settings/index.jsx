@@ -100,6 +100,7 @@ class NotificationCommentsSettings extends Component {
 	}
 }
 
-export default connect( null, { errorNotice, successNotice } )(
-	localize( NotificationCommentsSettings )
-);
+export default connect(
+	null,
+	{ errorNotice, successNotice }
+)( localize( NotificationCommentsSettings ) );

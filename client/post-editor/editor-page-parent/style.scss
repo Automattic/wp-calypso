@@ -1,3 +1,5 @@
+/** @format */
+
 .editor-page-parent .post-selector {
 	margin: 8px 0 0 0;
 }
@@ -18,14 +20,19 @@
 	text-transform: uppercase;
 }
 
-.editor-page-parent__top-level-label {
+.editor-page-parent__top-level-label,
+.editor-page-parent__top-level-description,
+.editor-page-parent__parent-tree-selector .form-legend {
 	color: $gray-darken-10;
 	font-size: 13px;
-	line-height: 1.7;
 }
 
-.editor-page-parent__top-level {
-	align-content: center;
-	display: flex;
-	justify-content: space-between;
+.editor-page-parent__top-level-description {
+	display: block;
+	font-weight: normal;
+	margin-left: 36px;
+}
+
+.editor-page-parent__parent-tree-selector {
+	margin-top: 12px;
 }

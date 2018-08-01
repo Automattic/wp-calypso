@@ -3,19 +3,18 @@
 /**
  * Internal dependencies
  */
-
-import page from 'page';
+import * as helpController from './controller';
 import config from 'config';
-import meController from 'me/controller';
-import helpController from './controller';
+import page from 'page';
 import { makeLayout, render as clientRender } from 'controller';
+import { sidebar } from 'me/controller';
 
 export default function() {
 	if ( config.isEnabled( 'help' ) ) {
 		page(
 			'/help',
 			helpController.loggedOut,
-			meController.sidebar,
+			sidebar,
 			helpController.help,
 			makeLayout,
 			clientRender
@@ -23,7 +22,7 @@ export default function() {
 		page(
 			'/help/contact',
 			helpController.loggedOut,
-			meController.sidebar,
+			sidebar,
 			helpController.contact,
 			makeLayout,
 			clientRender
@@ -34,7 +33,7 @@ export default function() {
 		page(
 			'/help/courses',
 			helpController.loggedOut,
-			meController.sidebar,
+			sidebar,
 			helpController.courses,
 			makeLayout,
 			clientRender

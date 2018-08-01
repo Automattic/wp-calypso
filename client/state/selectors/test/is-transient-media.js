@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isTransientMedia } from 'state/selectors';
+import isTransientMedia from 'state/selectors/is-transient-media';
 import MediaQueryManager from 'lib/query-manager/media';
 
 describe( 'isTransientMedia()', () => {

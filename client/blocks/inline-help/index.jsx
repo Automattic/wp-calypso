@@ -19,6 +19,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
+import Dialog from 'components/dialog';
+import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
@@ -106,10 +108,41 @@ class InlineHelp extends Component {
 		this.inlineHelpToggle = node;
 	};
 
+	// @TODO: Instead of prop drilling this should be done via redux
+	setDialogState = ( { showDialog, videoLink = null, dialogType } ) =>
+		this.setState( {
+			showDialog,
+			videoLink,
+			dialogType,
+		} );
+
+	closeDialog = () => this.setState( { showDialog: false } );
+
+	getDialogButtons() {
+		const { translate } = this.props;
+		const { dialogType } = this.state;
+
+		if ( dialogType === 'video' ) {
+			return [
+				<Button onClick={ this.closeDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
+			];
+		}
+
+		return [];
+	}
+
 	render() {
 		const { translate } = this.props;
-		const { showInlineHelp } = this.state;
+		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = { 'inline-help__button': true, 'is-active': showInlineHelp };
+
+		/* @TODO: This class is not valid and this tricks the linter
+		 		  fix this class and fix the linter to catch similar instances.
+		 */
+		const iframeClasses = classNames( 'inline-help__richresult__dialog__video' );
+		const dialogClasses = classNames( 'inline-help__richresult__dialog', dialogType );
+		const dialogButtons = this.getDialogButtons();
+
 		return (
 			<div className="inline-help">
 				<Button
@@ -122,10 +155,37 @@ class InlineHelp extends Component {
 					ref={ this.inlineHelpToggleRef }
 				>
 					<Gridicon icon="help-outline" size={ 36 } />
-					{ showInlineHelp && (
-						<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
-					) }
 				</Button>
+				{ showInlineHelp && (
+					<InlineHelpPopover
+						context={ this.inlineHelpToggle }
+						onClose={ this.closeInlineHelp }
+						setDialogState={ this.setDialogState }
+					/>
+				) }
+				{ showDialog && (
+					<Dialog
+						additionalClassNames={ dialogClasses }
+						isVisible
+						buttons={ dialogButtons }
+						onCancel={ this.closeDialog }
+						onClose={ this.closeDialog }
+					>
+						{ dialogType === 'video' && (
+							<div className={ iframeClasses }>
+								<ResizableIframe
+									src={ videoLink + '?rel=0&amp;showinfo=0&amp;autoplay=1' }
+									frameBorder="0"
+									seamless
+									allowFullScreen
+									autoPlay
+									width="640"
+									height="360"
+								/>
+							</div>
+						) }
+					</Dialog>
+				) }
 				{ this.props.isHappychatButtonVisible &&
 					config.isEnabled( 'happychat' ) && (
 						<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />

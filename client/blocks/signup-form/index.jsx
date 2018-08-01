@@ -41,6 +41,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import { createSocialUserFailed } from 'state/login/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSectionName } from 'state/ui/selectors';
+import { abtest } from 'lib/abtest';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -331,9 +332,13 @@ class SignupForm extends Component {
 		} );
 	};
 
+	isJetpack() {
+		return 'jetpack-connect' === this.props.sectionName;
+	}
+
 	getLoginLink() {
 		return login( {
-			isJetpack: 'jetpack-connect' === this.props.sectionName,
+			isJetpack: this.isJetpack(),
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
@@ -348,7 +353,8 @@ class SignupForm extends Component {
 			return (
 				<span>
 					<p>
-						{ notice.message }&nbsp;
+						{ notice.message }
+						&nbsp;
 						{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
 							components: {
 								a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,
@@ -396,7 +402,8 @@ class SignupForm extends Component {
 				return (
 					<span>
 						<p>
-							{ message }&nbsp;
+							{ message }
+							&nbsp;
 							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
 								components: {
 									a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,
@@ -597,16 +604,40 @@ class SignupForm extends Component {
 		);
 	}
 
+	isJetpackSocialABTest() {
+		return this.isJetpack() && abtest( 'jetpackSignupGoogleTop' ) === 'top';
+	}
+
 	render() {
 		if ( this.getUserExistsError( this.props ) ) {
 			return null;
 		}
 
 		return (
-			<div className={ classNames( 'signup-form', this.props.className ) }>
+			<div
+				className={ classNames(
+					'signup-form',
+					this.props.className,
+					this.isJetpackSocialABTest() && 'signup-form__social-top'
+				) }
+			>
 				{ this.getNotice() }
 
+				{ this.isJetpackSocialABTest() &&
+					this.props.isSocialSignupEnabled && (
+						<SocialSignupForm
+							showFirst={ true }
+							handleResponse={ this.props.handleSocialResponse }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+						/>
+					) }
+
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
+					{ this.isJetpackSocialABTest() &&
+						this.props.isSocialSignupEnabled && (
+							<p>{ this.props.translate( 'Or create a new account with your email address.' ) }</p>
+						) }
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
 					) }
@@ -616,13 +647,14 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.isSocialSignupEnabled && (
-					<SocialSignupForm
-						handleResponse={ this.props.handleSocialResponse }
-						socialService={ this.props.socialService }
-						socialServiceResponse={ this.props.socialServiceResponse }
-					/>
-				) }
+				{ ! this.isJetpackSocialABTest() &&
+					this.props.isSocialSignupEnabled && (
+						<SocialSignupForm
+							handleResponse={ this.props.handleSocialResponse }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+						/>
+					) }
 
 				{ this.props.footerLink || this.footerLink() }
 			</div>

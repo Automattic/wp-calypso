@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -33,16 +32,34 @@ import Timezone from 'components/timezone';
 import SiteIconSetting from './site-icon-setting';
 import Banner from 'components/banner';
 import { isBusiness } from 'lib/products-values';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import { FEATURE_NO_BRANDING, TYPE_BUSINESS } from 'lib/plans/constants';
+import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
+import scrollTo from 'lib/scroll-to';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
 		this._showWarning( this.props.site );
+	}
+
+	componentDidMount() {
+		// Wait for page.js to update the URL, then see if we are linking
+		// directly to a section of this page.
+		setTimeout( () => {
+			if ( ! window || ! window.location ) {
+				// This code breaks everything in the tests (they hang with no
+				// error message).
+				return;
+			}
+			const hash = window.location.hash;
+			const el = hash && document.getElementById( hash.substring( 1 ) );
+			if ( hash && el ) {
+				const y = el.offsetTop - document.getElementById( 'header' ).offsetHeight - 15;
+				scrollTo( { y } );
+			}
+		} );
 	}
 
 	onTimezoneSelect = timezone => {
@@ -98,6 +115,24 @@ export class SiteSettingsFormGeneral extends Component {
 				</div>
 				<SiteIconSetting />
 			</div>
+		);
+	}
+
+	WordPressVersion() {
+		const { translate, selectedSite } = this.props;
+
+		return (
+			<FormFieldset>
+				<FormLabel htmlFor="wpversion">{ translate( 'WordPress Version' ) }</FormLabel>
+				<FormInput
+					name="wpversion"
+					id="wpversion"
+					data-tip-target="site-title-input"
+					type="text"
+					value={ get( selectedSite, 'options.software_version' ) }
+					disabled
+				/>
+			</FormFieldset>
 		);
 	}
 
@@ -238,7 +273,8 @@ export class SiteSettingsFormGeneral extends Component {
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 				/>
 				<FormSettingExplanation>
-					{ translate( "The site's primary language." ) }&nbsp;
+					{ translate( "The site's primary language." ) }
+					&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
@@ -473,10 +509,11 @@ export class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
+						{ siteIsJetpack && this.WordPressVersion() }
 					</form>
 				</Card>
 
-				<SectionHeader label={ translate( 'Privacy' ) }>
+				<SectionHeader label={ translate( 'Privacy' ) } id="site-privacy-settings">
 					<Button
 						compact={ true }
 						onClick={ handleSubmitForm }
@@ -516,7 +553,7 @@ export class SiteSettingsFormGeneral extends Component {
 							! isBusiness( site.plan ) && (
 								<Banner
 									feature={ FEATURE_NO_BRANDING }
-									plan={ findFirstSimilarPlanKey( site.plan, { type: TYPE_BUSINESS } ) }
+									plan={ PLAN_BUSINESS }
 									title={ translate(
 										'Remove the footer credit entirely with WordPress.com Business'
 									) }
@@ -554,12 +591,14 @@ const connectComponent = connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
+		const selectedSite = getSelectedSite( state );
 
 		return {
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsLanguageSelection:
 				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.9-alpha' ),
+			selectedSite,
 		};
 	},
 	null,
@@ -603,6 +642,7 @@ const getFormSettings = settings => {
 	return formSettings;
 };
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	SiteSettingsFormGeneral
-);
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormGeneral );

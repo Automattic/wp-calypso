@@ -42,9 +42,11 @@ import { isBusiness, isEnterprise } from 'lib/products-values';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';
+import isAutomatedTransferActive from 'state/selectors/is-automated-transfer-active';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { isATEnabled } from 'lib/automated-transfer';
+import { abtest } from 'lib/abtest';
 
 export class PluginMeta extends Component {
 	static OUT_OF_DATE_YEARS = 2;
@@ -231,14 +233,22 @@ export class PluginMeta extends Component {
 			'advanced-database-cleaner',
 			'advanced-reset-wp',
 			'advanced-wp-reset',
+			'armember-membership',
+			'autoptimize',
 			'better-wp-security',
+			'cf7-pipedrive-integration',
 			'duplicator',
+			'extended-wp-reset',
+			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
 			'reset-wp',
+			'wd-youtube',
 			'wordpress-database-reset',
 			'wordpress-reset',
+			'wp-automatic',
 			'wp-clone-by-wp-academy',
+			'wp-file-manager',
 			'wp-prefix-changer',
 			'wp-reset',
 			'wpmu-database-reset',
@@ -253,6 +263,7 @@ export class PluginMeta extends Component {
 
 			// caching
 			'comet-cache',
+			'hyper-cache',
 			'quick-cache',
 			'w3-total-cache',
 			'wp-cache',
@@ -262,12 +273,23 @@ export class PluginMeta extends Component {
 
 			// sql heavy
 			'another-wordpress-classifieds-plugin',
+			'leads',
 			'native-ads-adnow',
+			'ol_scrapes',
 			'page-visit-counter',
 			'post-views-counter',
 			'tokenad',
+			'top-10',
+			'wordpress-popular-posts',
+			'wp-cerber',
+			'wp-inject',
 			'wp-postviews',
+			'wp-rss-aggregator',
+			'wp-rss-feed-to-post',
+			'wp-rss-wordai',
 			'wp-statistics',
+			'wp-ulike',
+			'WPRobot5',
 
 			// security
 			'wordfence',
@@ -284,7 +306,11 @@ export class PluginMeta extends Component {
 			'automatic-video-posts',
 			'bwp-minify',
 			'nginx-helper',
+			'patron-button-and-widgets-by-codebard',
+			'porn-embed',
 			'video-importer',
+			'woozone',
+			'wp-cleanfix',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
@@ -320,13 +346,9 @@ export class PluginMeta extends Component {
 	}
 
 	maybeDisplayUnsupportedNotice() {
-		const { selectedSite, automatedTransferSite } = this.props;
+		const { selectedSite } = this.props;
 
-		if (
-			selectedSite &&
-			this.isUnsupportedPluginForAT() &&
-			( ! selectedSite.jetpack || automatedTransferSite )
-		) {
+		if ( selectedSite && this.isUnsupportedPluginForAT() ) {
 			return (
 				<Notice
 					text={ this.props.translate(
@@ -412,13 +434,13 @@ export class PluginMeta extends Component {
 									newPluginVersion: this.props.plugin.version,
 								},
 							}
-						)
+					  )
 					: i18n.translate( 'Version %(newPluginVersion)s is available for %(siteName)s', {
 							args: {
 								siteName: newVersions[ 0 ].title,
 								newPluginVersion: this.props.plugin.version,
 							},
-						} );
+					  } );
 			const noticeActionMessage =
 				newVersions.length > 1 ? i18n.translate( 'Update all' ) : i18n.translate( 'Update' );
 			return (
@@ -530,6 +552,43 @@ export class PluginMeta extends Component {
 		);
 	};
 
+	renderUpsell() {
+		const { slug, translate } = this.props;
+		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
+			type: TYPE_BUSINESS,
+		} );
+		const title = translate( 'Upgrade to the Business plan to install plugins.' );
+		const href = '/feature/plugins/' + slug;
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		if (
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
+		) {
+			return (
+				<div className="plugin-meta__upgrade_nudge">
+					<Banner
+						event="calypso_plugin_detail_page_upgrade_nudge_upsell"
+						href={ href }
+						plan={ plan }
+						title={ title }
+					/>
+				</div>
+			);
+		}
+		return (
+			<div className="plugin-meta__upgrade_nudge">
+				<Banner
+					feature={ FEATURE_UPLOAD_PLUGINS }
+					event="calypso_plugin_detail_page_upgrade_nudge"
+					plan={ plan }
+					title={ title }
+				/>
+			</div>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
 	render() {
 		const cardClasses = classNames( 'plugin-meta__information', {
 			'has-button': this.hasOrgInstallButton(),
@@ -559,7 +618,7 @@ export class PluginMeta extends Component {
 							{ this.renderName() }
 							<div className="plugin-meta__meta">{ this.renderAuthorUrl() }</div>
 						</div>
-						{ this.renderActions() }
+						{ ! this.props.calypsoify && this.renderActions() }
 					</div>
 				</Card>
 
@@ -583,6 +642,7 @@ export class PluginMeta extends Component {
 								this.props.selectedSite && this.props.selectedSite.options.software_version
 							}
 							hasUpdate={ this.getAvailableNewVersions().length > 0 }
+							calypsoify={ this.props.calypsoify }
 						/>
 					) }
 
@@ -602,18 +662,8 @@ export class PluginMeta extends Component {
 					this.props.selectedSite.plan &&
 					! get( this.props.selectedSite, 'jetpack' ) &&
 					! this.hasBusinessPlan() &&
-					! this.isWpcomPreinstalled() && (
-						<div className="plugin-meta__upgrade_nudge">
-							<Banner
-								feature={ FEATURE_UPLOAD_PLUGINS }
-								event={ 'calypso_plugin_detail_page_upgrade_nudge' }
-								plan={ findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
-									type: TYPE_BUSINESS,
-								} ) }
-								title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
-							/>
-						</div>
-					) }
+					! this.isWpcomPreinstalled() &&
+					( this.maybeDisplayUnsupportedNotice() || this.renderUpsell() ) }
 
 				{ this.getVersionWarning() }
 				{ this.getUpdateWarning() }

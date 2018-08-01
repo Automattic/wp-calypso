@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import controller from 'me/controller';
+import { sidebar } from 'me/controller';
 import Happychat from './main';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import { makeLayout, render as clientRender } from 'controller';
@@ -29,6 +29,6 @@ const renderChat = ( context, next ) => {
 
 export default () => {
 	if ( config.isEnabled( 'happychat' ) ) {
-		page( '/me/chat', controller.sidebar, renderChat, makeLayout, clientRender );
+		page( '/me/chat', sidebar, renderChat, makeLayout, clientRender );
 	}
 };

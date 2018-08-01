@@ -15,17 +15,17 @@ import Gridicon from 'gridicons';
 import { RelatedPostCard } from 'blocks/reader-related-card';
 import { recordAction, recordTrackForPost } from 'reader/stats';
 import Button from 'components/button';
-import { dismissPost } from 'lib/feed-stream-store/actions';
+import { dismissPost } from 'state/reader/site-dismissals/actions';
+import { keyForPost } from 'reader/post-key';
 import QueryReaderPost from 'components/data/query-reader-post';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
 
-function dismissRecommendation( uiIndex, storeId, post ) {
+function dismissPostAnalytics( uiIndex, storeId, post ) {
 	recordTrackForPost( 'calypso_reader_recommended_post_dismissed', post, {
 		recommendation_source: 'in-stream',
 		ui_position: uiIndex,
 	} );
 	recordAction( 'in_stream_rec_dismiss' );
-	dismissPost( storeId, post );
 }
 
 function handleSiteClick( uiIndex, post ) {
@@ -51,9 +51,10 @@ export class RecommendedPosts extends React.PureComponent {
 		recommendations: PropTypes.array,
 	};
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	/* eslint-disable wpcalypso/jsx-classname-namespace, wpcalypso/jsx-gridicon-size */
 	render() {
 		const { posts, recommendations } = this.props;
+
 		return (
 			<div className="reader-stream__recommended-posts">
 				<QueryReaderPost postKey={ recommendations[ 0 ] } />
@@ -75,7 +76,13 @@ export class RecommendedPosts extends React.PureComponent {
 									<Button
 										borderless
 										title={ this.props.translate( 'Dismiss this recommendation' ) }
-										onClick={ partial( dismissRecommendation, uiIndex, this.props.storeId, post ) }
+										onClick={ () => {
+											dismissPostAnalytics( uiIndex, this.props.streamKey, post );
+											this.props.dismissPost( {
+												streamKey: this.props.streamKey,
+												postKey: keyForPost( post ),
+											} );
+										} }
 									>
 										<Gridicon icon="cross" size={ 14 } />
 									</Button>
@@ -92,9 +99,13 @@ export class RecommendedPosts extends React.PureComponent {
 				</ul>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace, wpcalypso/jsx-gridicon-size */
 	}
 }
 
-export default connect( ( state, ownProps ) => ( {
-	posts: getPostsByKeys( state, ownProps.recommendations ),
-} ) )( localize( RecommendedPosts ) );
+export default connect(
+	( state, ownProps ) => ( {
+		posts: getPostsByKeys( state, ownProps.recommendations ),
+	} ),
+	{ dismissPost }
+)( localize( RecommendedPosts ) );

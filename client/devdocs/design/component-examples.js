@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -12,13 +13,15 @@ export ButtonGroups from 'components/button-group/docs/example';
 export Buttons from 'components/button/docs/example';
 export Cards from 'components/card/docs/example';
 export CardHeading from 'components/card-heading/docs/example';
-export Checklist from 'components/checklist/docs/example';
+export Chart from 'components/chart/docs/example';
+export Checklist from 'blocks/checklist/docs/example';
 export ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 export ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 export Collection from 'devdocs/design/search-collection';
 export Count from 'components/count/docs/example';
 export CountedTextareas from 'components/forms/counted-textarea/docs/example';
 export DatePicker from 'components/date-picker/docs/example';
+export DiffViewerExample from 'components/diff-viewer/docs/example';
 export DropZones from 'components/drop-zone/docs/example';
 export EllipsisMenu from 'components/ellipsis-menu/docs/example';
 export EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
@@ -41,9 +44,12 @@ export ImagePreloader from 'components/image-preloader/docs/example';
 export InfoPopover from 'components/info-popover/docs/example';
 export InputChrono from 'components/input-chrono/docs/example';
 export JetpackColophonExample from 'components/jetpack-colophon/docs/example';
+export JetpackHeaderExample from 'components/jetpack-header/docs/example';
 export JetpackLogoExample from 'components/jetpack-logo/docs/example';
 export LanguagePicker from 'components/language-picker/docs/example';
+export LineChart from 'components/line-chart/docs/example';
 export ListEnd from 'components/list-end/docs/example';
+export MarkedLinesExample from 'components/marked-lines/docs/example';
 export Notices from 'components/notice/docs/example';
 export PaginationExample from 'components/pagination/docs/example';
 export PaymentLogo from 'components/payment-logo/docs/example';
@@ -74,7 +80,9 @@ export TimeSince from 'components/time-since/docs/example';
 export Timezone from 'components/timezone/docs/example';
 export TokenFields from 'components/token-field/docs/example';
 export Tooltip from 'components/tooltip/docs/example';
+export UserItem from 'components/user/docs/example';
 export Version from 'components/version/docs/example';
 export VerticalMenu from 'components/vertical-menu/docs/example';
 export VerticalNav from 'components/vertical-nav/docs/example';
 export Wizard from 'components/wizard/docs/example';
+export WizardProgressBar from 'components/wizard-progress-bar/docs/example';

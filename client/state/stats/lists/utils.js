@@ -189,8 +189,14 @@ export function getChartLabels( unit, date, localizedDate ) {
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
 		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
 		const formats = {
-			day: 'MMM D',
-			week: 'MMM D',
+			day: translate( 'MMM D', {
+				context: 'momentjs format string (day)',
+				comment: 'This specifies a day for the stats x-axis label.',
+			} ),
+			week: translate( 'MMM D', {
+				context: 'momentjs format string (week)',
+				comment: 'This specifies a week for the stats x-axis label.',
+			} ),
 			month: 'MMM',
 			year: 'YYYY',
 		};
@@ -308,8 +314,9 @@ export function parseStoreStatsReferrers( payload ) {
 	return payload.data.map( record => {
 		const parsedDate = parseUnitPeriods( payload.unit, record.date ).locale( 'en' );
 		const parsedLocalizedDate = parseUnitPeriods( payload.unit, record.date );
+		const period = parsedLocalizedDate.format( 'YYYY-MM-DD' );
 		return {
-			date: record.date,
+			date: period,
 			data: record.data.map( referrer => {
 				const obj = {};
 				referrer.forEach( ( value, i ) => {

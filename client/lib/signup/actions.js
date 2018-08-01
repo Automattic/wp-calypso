@@ -13,10 +13,6 @@ import Dispatcher from 'dispatcher';
 import analytics from 'lib/analytics';
 
 const SignupActions = {
-	fetchCachedSignup() {
-		Dispatcher.handleViewAction( { type: 'FETCH_CACHED_SIGNUP' } );
-	},
-
 	saveSignupStep( step ) {
 		// there are some conditions in which a step could be saved/processed in the same event loop
 		// so we should defer the action
@@ -71,6 +67,13 @@ const SignupActions = {
 		Dispatcher.handleViewAction( {
 			type: 'PROVIDE_SIGNUP_DEPENDENCIES',
 			providedDependencies,
+		} );
+	},
+
+	changeSignupFlow( flowName ) {
+		Dispatcher.handleViewAction( {
+			type: 'CHANGE_SIGNUP_FLOW',
+			flowName,
 		} );
 	},
 };

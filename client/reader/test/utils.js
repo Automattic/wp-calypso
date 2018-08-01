@@ -14,15 +14,9 @@ import page from 'page';
  */
 import { showSelectedPost } from '../utils';
 
-jest.mock( 'lib/feed-stream-store/actions', () => ( {
-	selectItem: jest.fn(),
-} ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => ( {
 	show: require( 'sinon' ).spy(),
-} ) );
-jest.mock( 'reader/controller-helper', () => ( {
-	setLastStoreId: jest.fn(),
 } ) );
 jest.mock( 'lib/redux-bridge', () => ( {
 	reduxGetState: function() {
@@ -32,7 +26,7 @@ jest.mock( 'lib/redux-bridge', () => ( {
 
 describe( 'reader utils', () => {
 	beforeEach( () => {
-		page.show.reset();
+		page.show.resetHistory();
 	} );
 
 	describe( '#showSelectedPost', () => {

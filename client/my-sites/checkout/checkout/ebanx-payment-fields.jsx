@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, isEmpty, includes, get } from 'lodash';
 
@@ -17,15 +18,17 @@ import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from 'lib/checkout/constants';
 export class EbanxPaymentFields extends Component {
 	static propTypes = {
 		countryCode: PropTypes.string.isRequired,
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		getErrorMessage: PropTypes.func.isRequired,
 		getFieldValue: PropTypes.func.isRequired,
 		handleFieldChange: PropTypes.func.isRequired,
 		fieldClassName: PropTypes.string,
+		disableFields: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		fieldClassName: '',
+		disableFields: false,
 	};
 
 	constructor( props ) {
@@ -34,6 +37,18 @@ export class EbanxPaymentFields extends Component {
 			userSelectedPhoneCountryCode: '',
 			fields: get( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ props.countryCode ], 'fields', null ),
 		};
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.countryCode !== this.props.countryCode ) {
+			this.setFieldsState( this.props.countryCode );
+		}
+	}
+
+	setFieldsState( countryCode ) {
+		this.setState( {
+			fields: get( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ], 'fields', null ),
+		} );
 	}
 
 	createField = ( fieldName, componentClass, props ) => {
@@ -48,9 +63,10 @@ export class EbanxPaymentFields extends Component {
 				name: fieldName,
 				onBlur: this.onFieldChange,
 				onChange: this.onFieldChange,
-				value: this.props.getFieldValue( fieldName ),
+				value: this.props.getFieldValue( fieldName ) || '',
 				autoComplete: 'off',
 				labelClass: 'checkout__form-label',
+				disabled: this.props.disableFields,
 			},
 			props
 		);
@@ -61,12 +77,8 @@ export class EbanxPaymentFields extends Component {
 	};
 
 	handlePhoneFieldChange = ( { value, countryCode } ) => {
-		this.setState(
-			{
-				userSelectedPhoneCountryCode: countryCode,
-			},
-			() => this.props.handleFieldChange( 'phone-number', value )
-		);
+		this.props.handleFieldChange( 'phone-number', value );
+		this.setState( { userSelectedPhoneCountryCode: countryCode } );
 	};
 
 	onFieldChange = event => this.props.handleFieldChange( event.target.name, event.target.value );
@@ -74,24 +86,22 @@ export class EbanxPaymentFields extends Component {
 	render() {
 		const { translate, countriesList, countryCode } = this.props;
 		const { userSelectedPhoneCountryCode } = this.state;
-		const countryData = find( countriesList.get(), { code: countryCode } );
+		const countryData = find( countriesList, { code: countryCode } );
 		const countryName = countryData && countryData.name ? countryData.name : '';
+		const containerClassName = classNames(
+			'checkout__ebanx-payment-fields',
+			`checkout__ebanx-${ countryCode.toLowerCase() }`
+		);
 
-		let ebanxMessage = '';
-		if ( countryName ) {
-			ebanxMessage = translate(
-				'The following fields are also required for payments in %(countryName)s',
-				{
-					args: {
-						countryName,
-					},
-				}
-			);
-		}
 		return (
-			<div className="checkout__ebanx-payment-fields">
+			<div className={ containerClassName }>
 				<span key="ebanx-required-fields" className="checkout__form-info-text">
-					{ ebanxMessage }
+					{ countryName &&
+						translate( 'The following fields are also required for payments in %(countryName)s', {
+							args: {
+								countryName,
+							},
+						} ) }
 				</span>
 
 				{ this.createField( 'document', Input, {
@@ -136,7 +146,7 @@ export class EbanxPaymentFields extends Component {
 
 				<div className="checkout__form-state-field">
 					{ this.createField( 'state', StateSelect, {
-						countryCode: countryCode,
+						countryCode,
 						label: translate( 'State' ),
 					} ) }
 				</div>

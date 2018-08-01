@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getRawSite } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 import { getSiteSettings } from 'state/site-settings/selectors';
 
 /**

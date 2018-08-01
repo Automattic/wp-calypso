@@ -1,3 +1,5 @@
+/** @format */
+
 /* eslint-disable wpcalypso/jsx-gridicon-size */
 /**
  * External dependencies
@@ -8,12 +10,12 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { omit } from 'lodash';
 
-const Checkbox = ( props ) => {
+const Checkbox = props => {
 	const { className, disabled, checked, partialChecked } = props;
 	const otherProps = omit( props, [ 'className', 'partialChecked' ] );
 
 	return (
-		<span className={ classNames( className, 'form-checkbox', { 'is-disabled': disabled } ) } >
+		<span className={ classNames( className, 'form-checkbox', { 'is-disabled': disabled } ) }>
 			<input { ...otherProps } type="checkbox" />
 			{ checked && <Gridicon icon="checkmark" size={ 14 } /> }
 			{ ! checked && partialChecked && <Gridicon icon="minus-small" size={ 16 } /> }

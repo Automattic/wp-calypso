@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { map, toPairs, pick, flowRight } from 'lodash';
@@ -13,25 +12,50 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
+import { decodeEntities } from 'lib/formatting';
+import scrollTo from 'lib/scroll-to';
 import Button from 'components/button';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
-import { decodeEntities } from 'lib/formatting';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
-import QueryTerms from 'components/data/query-terms';
+import Notice from 'components/notice';
 import TermTreeSelector from 'blocks/term-tree-selector';
-import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
+import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
+import PodcastFeedUrl from './feed-url';
+import PodcastingPrivateSiteMessage from './private-site';
+import PodcastingNoPermissionsMessage from './no-permissions';
+import PodcastingNotSupportedMessage from './not-supported';
+import PodcastingPublishNotice from './publish-notice';
+import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
+
+/**
+ * Selectors, actions, and query components
+ */
+import QueryTerms from 'components/data/query-terms';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import isPrivateSite from 'state/selectors/is-private-site';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'state/sites/selectors';
 import { isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
+import { isSavingSiteSettings } from 'state/site-settings/selectors';
 
 class PodcastingDetails extends Component {
+	constructor() {
+		super();
+		this.state = {
+			isCoverImageUploading: false,
+		};
+	}
+
 	renderExplicitContent() {
 		const {
 			fields,
@@ -67,25 +91,40 @@ class PodcastingDetails extends Component {
 			isRequestingCategories,
 			translate,
 		} = this.props;
+		const { isCoverImageUploading } = this.state;
+
+		const saveButtonDisabled =
+			isRequestingSettings || isSavingSettings || isRequestingCategories || isCoverImageUploading;
+		let saveButtonText;
+		if ( isCoverImageUploading ) {
+			saveButtonText = translate( 'Image uploading…' );
+		} else if ( isSavingSettings ) {
+			saveButtonText = translate( 'Saving…' );
+		} else {
+			saveButtonText = translate( 'Save Settings' );
+		}
+
 		return (
 			<Button
 				compact={ true }
 				onClick={ handleSubmitForm }
 				primary={ true }
 				type="submit"
-				disabled={ isRequestingSettings || isSavingSettings || isRequestingCategories }
+				disabled={ saveButtonDisabled }
+				busy={ isSavingSettings }
 			>
-				{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+				{ saveButtonText }
 			</Button>
 		);
 	}
 
-	renderTextField( { FormComponent = FormInput, key, label } ) {
+	renderTextField( { FormComponent = FormInput, key, label, explanation } ) {
 		const { fields, isRequestingSettings, onChangeField, isPodcastingEnabled } = this.props;
 
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor={ key }>{ label }</FormLabel>
+				{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
 				<FormComponent
 					id={ key }
 					name={ key }
@@ -110,7 +149,7 @@ class PodcastingDetails extends Component {
 			>
 				<option value="0">None</option>
 				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
-					// The keys for podcasting in iTunes use &amp;
+					// The keys for podcasting in Apple Podcasts use &amp;
 					const topicKey = topic.replace( '&', '&amp;' );
 					return [
 						<option key={ topicKey } value={ topicKey }>
@@ -138,7 +177,7 @@ class PodcastingDetails extends Component {
 				<FormLabel htmlFor="podcasting_category_1">{ translate( 'Podcast Topics' ) }</FormLabel>
 				<FormSettingExplanation>
 					{ translate(
-						'Choose how your podcast should be categorized within iTunes and other podcasting services.'
+						'Choose how your podcast should be categorized within Apple Podcasts and other podcasting services.'
 					) }
 				</FormSettingExplanation>
 				{ this.renderTopicSelector( 'podcasting_category_1' ) }
@@ -153,19 +192,22 @@ class PodcastingDetails extends Component {
 			handleSubmitForm,
 			siteSlug,
 			siteId,
-			podcastingCategoryId,
 			translate,
 			isPodcastingEnabled,
+			isSavingSettings,
 		} = this.props;
+		const { isCoverImageUploading } = this.state;
+
 		if ( ! siteId ) {
 			return null;
 		}
 
-		const classes = classNames( 'podcasting-details__wrapper', {
-			'is-disabled': ! isPodcastingEnabled,
-		} );
-
+		const error = this.renderSettingsError();
 		const writingHref = `/settings/writing/${ siteSlug }`;
+
+		const classes = classNames( 'podcasting-details__wrapper', {
+			'is-disabled': ! error && ! isPodcastingEnabled,
+		} );
 
 		return (
 			<div
@@ -175,87 +217,216 @@ class PodcastingDetails extends Component {
 				<DocumentHead title={ translate( 'Podcasting Settings' ) } />
 				<form id="site-settings" onSubmit={ handleSubmitForm }>
 					<HeaderCake
-						actionButton={ this.renderSaveButton() }
+						actionButton={ error ? null : this.renderSaveButton() }
 						backHref={ writingHref }
 						backText={ translate( 'Writing' ) }
 					>
-						<h1>{ translate( 'Podcasting Settings' ) }</h1>
+						<h1>
+							{ translate( 'Podcasting Settings' ) }
+							<PodcastingSupportLink showText={ false } iconSize={ 16 } />
+						</h1>
 					</HeaderCake>
-					<Card className={ classes }>
-						<FormFieldset className="podcasting-details__category-selector">
-							<QueryTerms siteId={ siteId } taxonomy="category" />
-							<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
-							<FormSettingExplanation>
+					{ ! error && (
+						<Card className="podcasting-details__category-wrapper">
+							{ this.renderCategorySetting() }
+						</Card>
+					) }
+					<Card className={ classes }>{ error || this.renderSettings() }</Card>
+					{ isPodcastingEnabled && (
+						<div className="podcasting-details__disable-podcasting">
+							<Button
+								onClick={ this.onCategoryCleared }
+								scary
+								busy={ isSavingSettings }
+								disabled={ isCoverImageUploading }
+							>
+								{ translate( 'Disable Podcast' ) }
+							</Button>
+							<p>
 								{ translate(
-									'Posts published in this category will be included in your podcast feed.'
+									'Disable to stop publishing your podcast feed. You can always set it up again.'
 								) }
-							</FormSettingExplanation>
-							<TermTreeSelector
-								taxonomy="category"
-								selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
-								onChange={ this.onCategorySelected }
-								addTerm={ true }
-								onAddTermSuccess={ this.onCategorySelected }
-								height={ 200 }
-							/>
-							{ isPodcastingEnabled && (
-								<Button onClick={ this.onCategoryCleared } scary>
-									{ translate( 'Disable Podcast' ) }
-								</Button>
-							) }
-						</FormFieldset>
-						<div className="podcasting-details__basic-settings">
-							{ this.renderTextField( {
-								key: 'podcasting_title',
-								label: translate( 'Title' ),
-							} ) }
-							{ this.renderTextField( {
-								key: 'podcasting_subtitle',
-								label: translate( 'Subtitle' ),
-							} ) }
+							</p>
 						</div>
-						{ this.renderTopics() }
-						{ this.renderExplicitContent() }
-						{ this.renderTextField( {
-							key: 'podcasting_talent_name',
-							label: translate( 'Hosts/Artist/Producer' ),
-						} ) }
-						{ this.renderTextField( {
-							FormComponent: FormTextarea,
-							key: 'podcasting_summary',
-							label: translate( 'Summary' ),
-						} ) }
-						{ this.renderTextField( {
-							key: 'podcasting_copyright',
-							label: translate( 'Copyright' ),
-						} ) }
-						{ this.renderTextField( {
-							key: 'podcasting_keywords',
-							label: translate( 'Keywords' ),
-						} ) }
-					</Card>
+					) }
 				</form>
 			</div>
 		);
 	}
 
+	renderCategorySetting() {
+		const {
+			siteId,
+			isPodcastingEnabled,
+			podcastingCategoryId,
+			isCategoryChanging,
+			translate,
+			newPostUrl,
+		} = this.props;
+
+		return (
+			<Fragment>
+				<QueryTerms siteId={ siteId } taxonomy="category" />
+				<FormFieldset>
+					{ isPodcastingEnabled && (
+						<div className="podcasting-details__publish-wrapper">
+							<PodcastingPublishNotice podcastingCategoryId={ podcastingCategoryId } />
+							<Button className="podcasting-details__publish-button" href={ newPostUrl }>
+								{ translate( 'Create Episode' ) }
+							</Button>
+						</div>
+					) }
+					<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
+					<FormSettingExplanation>
+						{ translate(
+							'Posts published in this category will be included in your podcast feed.'
+						) }
+					</FormSettingExplanation>
+					<TermTreeSelector
+						taxonomy="category"
+						selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
+						podcastingCategoryId={ podcastingCategoryId }
+						onChange={ this.onCategorySelected }
+						addTerm={ true }
+						onAddTermSuccess={ this.onCategorySelected }
+						height={ 200 }
+					/>
+					{ isCategoryChanging && (
+						<Notice
+							isCompact
+							status="is-info"
+							text={ translate(
+								"If you change categories, you'll need to resubmit your feed to Apple Podcasts and any other podcasting services."
+							) }
+						/>
+					) }
+				</FormFieldset>
+				<PodcastFeedUrl categoryId={ podcastingCategoryId } />
+			</Fragment>
+		);
+	}
+
+	renderSettings() {
+		const { translate, fields, isPodcastingEnabled } = this.props;
+
+		return (
+			<Fragment>
+				<PodcastCoverImageSetting
+					coverImageId={ parseInt( fields.podcasting_image_id, 10 ) || 0 }
+					coverImageUrl={ fields.podcasting_image }
+					onRemove={ this.onCoverImageRemoved }
+					onSelect={ this.onCoverImageSelected }
+					onUploadStateChange={ this.onCoverImageUploadStateChanged }
+					isDisabled={ ! isPodcastingEnabled }
+				/>
+				<div className="podcasting-details__title-subtitle-wrapper">
+					{ this.renderTextField( {
+						key: 'podcasting_title',
+						label: translate( 'Title' ),
+					} ) }
+					{ this.renderTextField( {
+						key: 'podcasting_subtitle',
+						label: translate( 'Subtitle' ),
+					} ) }
+				</div>
+				{ this.renderTopics() }
+				{ this.renderExplicitContent() }
+				{ this.renderTextField( {
+					key: 'podcasting_talent_name',
+					label: translate( 'Hosts/Artist/Producer' ),
+				} ) }
+				{ this.renderTextField( {
+					FormComponent: FormTextarea,
+					key: 'podcasting_summary',
+					label: translate( 'Summary' ),
+				} ) }
+				{ this.renderTextField( {
+					key: 'podcasting_email',
+					label: translate( 'Email Address' ),
+					explanation: translate(
+						'This email address will be displayed in the feed and is required for some services such as Google Play.'
+					),
+				} ) }
+				{ this.renderTextField( {
+					key: 'podcasting_copyright',
+					label: translate( 'Copyright' ),
+				} ) }
+				{ this.renderTextField( {
+					key: 'podcasting_keywords',
+					label: translate( 'Keywords' ),
+				} ) }
+			</Fragment>
+		);
+	}
+
+	renderSettingsError() {
+		// If there is a reason that we can't display the podcasting settings
+		// screen, it will be rendered here.
+		const { isPrivate, isUnsupportedSite, userCanManagePodcasting } = this.props;
+
+		if ( isPrivate ) {
+			return <PodcastingPrivateSiteMessage />;
+		}
+
+		if ( ! userCanManagePodcasting ) {
+			return <PodcastingNoPermissionsMessage />;
+		}
+
+		if ( isUnsupportedSite ) {
+			return <PodcastingNotSupportedMessage />;
+		}
+
+		return null;
+	}
+
 	onCategorySelected = category => {
-		this.setPodcastingCategoryId( category.ID );
+		const { settings, fields, isPodcastingEnabled } = this.props;
+
+		const fieldsToUpdate = { podcasting_category_id: String( category.ID ) };
+
+		if ( ! isPodcastingEnabled ) {
+			// If we are newly enabling podcasting, and no podcast title is set,
+			// use the site title.
+			if ( ! fields.podcasting_title ) {
+				fieldsToUpdate.podcasting_title = settings.blogname;
+			}
+			// If we are newly enabling podcasting, and no podcast subtitle is set,
+			// use the site description.
+			if ( ! fields.podcasting_subtitle ) {
+				fieldsToUpdate.podcasting_subtitle = settings.blogdescription;
+			}
+		}
+
+		this.props.updateFields( fieldsToUpdate );
 	};
 
 	onCategoryCleared = () => {
-		this.setPodcastingCategoryId( 0 );
+		const { updateFields, submitForm } = this.props;
+
+		updateFields( { podcasting_category_id: '0' }, () => {
+			submitForm();
+			scrollTo( { y: 0 } );
+		} );
 	};
 
-	setPodcastingCategoryId = newCategoryId => {
-		const { onChangeField } = this.props;
+	onCoverImageRemoved = () => {
+		this.props.updateFields( {
+			podcasting_image_id: '0',
+			podcasting_image: '',
+		} );
+	};
 
-		// Always send and save category IDs as strings because this is what
-		// the settings form wrapper expects (otherwise the settings form will
-		// be marked dirty again immediately after saving).
-		const event = { target: { value: String( newCategoryId ) } };
+	onCoverImageSelected = ( coverId, coverUrl ) => {
+		this.props.updateFields( {
+			podcasting_image_id: String( coverId ),
+			podcasting_image: coverUrl,
+		} );
+	};
 
-		onChangeField( 'podcasting_category_id' )( event );
+	onCoverImageUploadStateChanged = isUploading => {
+		this.setState( {
+			isCoverImageUploading: isUploading,
+		} );
 	};
 }
 
@@ -273,6 +444,8 @@ const getFormSettings = settings => {
 		'podcasting_category_1',
 		'podcasting_category_2',
 		'podcasting_category_3',
+		'podcasting_email',
+		'podcasting_image_id',
 	] );
 };
 
@@ -287,15 +460,36 @@ const connectComponent = connect( ( state, ownProps ) => {
 		Number( ownProps.fields.podcasting_category_id );
 	const isPodcastingEnabled = podcastingCategoryId > 0;
 
+	const isSavingSettings = isSavingSiteSettings( state, siteId );
+	const isCategoryChanging =
+		! isSavingSettings &&
+		! ownProps.isRequestingSettings &&
+		ownProps.settings &&
+		Number( ownProps.settings.podcasting_category_id ) > 0 &&
+		podcastingCategoryId !== Number( ownProps.settings.podcasting_category_id );
+
+	const isJetpack = isJetpackSite( state, siteId );
+	const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+
+	const siteSlug = getSelectedSiteSlug( state );
+	const newPostUrl = `/post/${ siteSlug }`;
+
 	return {
 		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		podcastingCategoryId,
+		siteSlug,
+		isPrivate: isPrivateSite( state, siteId ),
 		isPodcastingEnabled,
+		podcastingCategoryId,
+		isCategoryChanging,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
+		userCanManagePodcasting: canCurrentUser( state, siteId, 'manage_options' ),
+		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
+		isSavingSettings,
+		newPostUrl,
 	};
 } );
 
-export default flowRight( wrapSettingsForm( getFormSettings ), connectComponent )(
-	localize( PodcastingDetails )
-);
+export default flowRight(
+	wrapSettingsForm( getFormSettings ),
+	connectComponent
+)( localize( PodcastingDetails ) );

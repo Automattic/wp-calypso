@@ -40,7 +40,7 @@ const calculateProgress = progress => {
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {
 		// return a weight of 80% attachment, 20% other objects
 		return (
-			80 * attachment.completed / attachment.total +
+			( 80 * attachment.completed ) / attachment.total +
 			0.2 * calculateProgress( omit( progress, [ 'attachment' ] ) )
 		);
 	}
@@ -50,7 +50,7 @@ const calculateProgress = progress => {
 		.filter( ( { total } ) => total > 0 ) // skip ones with no objects to import
 		.map( ( { completed, total } ) => completed / total ); // compute the individual percentages
 
-	return 100 * percentages.reduce( sum, 0 ) / percentages.length;
+	return ( 100 * percentages.reduce( sum, 0 ) ) / percentages.length;
 };
 
 const resourcesRemaining = progress =>
@@ -105,6 +105,7 @@ class ImportingPane extends React.PureComponent {
 			ID: PropTypes.number.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
+		sourceType: PropTypes.string.isRequired,
 	};
 
 	getErrorMessage = ( { description } ) => {
@@ -123,7 +124,10 @@ class ImportingPane extends React.PureComponent {
 	};
 
 	getSuccessText = () => {
-		const { site: { slug }, progress: { page, post } } = this.props.importerStatus,
+		const {
+				site: { slug },
+				progress: { page, post },
+			} = this.props.importerStatus,
 			pageLink = <a href={ '/pages/' + slug } />,
 			pageText = translate( 'Pages', { context: 'noun' } ),
 			postLink = <a href={ '/posts/' + slug } />,
@@ -134,7 +138,7 @@ class ImportingPane extends React.PureComponent {
 
 		if ( pageCount && postCount ) {
 			return this.props.translate(
-				'All done! Check out {{a}}Posts{{/a}} or ' +
+				'All done! Check out {{a}}Posts{{/a}} and ' +
 					'{{b}}Pages{{/b}} to see your imported content.',
 				{
 					components: {
@@ -198,6 +202,7 @@ class ImportingPane extends React.PureComponent {
 			importerStatus: { importerId, errorData = {}, customData },
 			mapAuthorFor,
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
+			sourceType,
 		} = this.props;
 
 		const progressClasses = classNames( 'importer__import-progress', {
@@ -230,7 +235,7 @@ class ImportingPane extends React.PureComponent {
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ mapAuthorFor( importerId ) }
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
-						{ ...{ siteId } }
+						{ ...{ siteId, sourceType } }
 						sourceAuthors={ customData.sourceAuthors }
 						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
 						targetTitle={ siteName }

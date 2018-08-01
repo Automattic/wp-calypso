@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { isRequestingAccountRecoveryReset } from 'state/selectors';
+import isRequestingAccountRecoveryReset from 'state/selectors/is-requesting-account-recovery-reset';
 
 describe( 'isRequestingAccountRecoveryReset()', () => {
 	test( 'should return the requesting status flag under the request-reset state tree.', () => {

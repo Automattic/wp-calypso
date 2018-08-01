@@ -182,7 +182,8 @@
 
 	.editor-html-toolbar__insert-content-dropdown-item {
 		cursor: pointer;
-		height: 24px;
+		display: block;
+		height: 42px;
 		padding: 9px 16px;
 
 		.gridicon {

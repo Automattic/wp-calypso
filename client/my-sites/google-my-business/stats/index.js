@@ -7,33 +7,34 @@ import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
-import FakeData from './fake-data';
-import Notice from 'components/notice';
+import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
-import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import GoogleMyBusinessStatsChart from 'my-sites/google-my-business/stats/chart';
-import GoogleMyBusinessStatsTip from 'my-sites/google-my-business/stats/tip';
 import Main from 'components/main';
+import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SectionHeader from 'components/section-header';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessStats extends Component {
 	static propTypes = {
-		locationData: GoogleMyBusinessLocationType.isRequired,
+		locationData: PropTypes.object,
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
-		siteSlug: PropTypes.string.isRequired,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -65,8 +66,136 @@ class GoogleMyBusinessStats extends Component {
 		} );
 	};
 
+	renderViewsTooltipForDatanum = ( datanum, interval ) => {
+		const { value: viewCount, date } = datanum;
+		if ( interval === 'quarter' ) {
+			return this.props.translate(
+				'%(value)d view on the week of %(monday)s',
+				'%(value)d views on the week of %(monday)s',
+				{
+					count: viewCount,
+					args: {
+						value: viewCount,
+						monday: moment( date ).format( 'LL' ),
+					},
+				}
+			);
+		}
+
+		return this.props.translate( '%(value)d view on %(day)s', '%(value)d views on %(day)s', {
+			count: viewCount,
+			args: {
+				value: viewCount,
+				day: moment( date ).format( 'LL' ),
+			},
+		} );
+	};
+
+	renderActionsTooltipForDatanum = ( datanum, interval ) => {
+		const { value: actionCount, date } = datanum;
+		if ( interval === 'quarter' ) {
+			return this.props.translate(
+				'%(value)d action on the week of %(monday)s',
+				'%(value)d actions on the week of %(monday)s',
+				{
+					count: actionCount,
+					args: {
+						value: actionCount,
+						monday: moment( date ).format( 'LL' ),
+					},
+				}
+			);
+		}
+
+		return this.props.translate( '%(value)d action on %(day)s', '%(value)d actions on %(day)s', {
+			count: actionCount,
+			args: {
+				value: actionCount,
+				day: moment( date ).format( 'LL' ),
+			},
+		} );
+	};
+
+	renderStats() {
+		const { siteId, translate } = this.props;
+
+		if ( ! siteId ) {
+			return null;
+		}
+
+		return (
+			<div className="gmb-stats__metrics">
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsChart
+						title={ translate( 'How customers search for your business' ) }
+						statType="queries"
+						chartTitle={ this.searchChartTitleFunc }
+						chartType="pie"
+						dataSeriesInfo={ {
+							QUERIES_DIRECT: {
+								name: translate( 'Direct' ),
+								description: translate(
+									'Customers who find your listing searching for you business name or address'
+								),
+							},
+							QUERIES_INDIRECT: {
+								name: translate( 'Discovery' ),
+								description: translate(
+									'Customers who find your listing searching for a category, product, or service'
+								),
+							},
+						} }
+					/>
+				</div>
+
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsChart
+						title={ translate( 'Where your customers view your business on Google' ) }
+						description={ translate(
+							'The Google services that customers use to find your business'
+						) }
+						statType="views"
+						chartTitle={ this.viewChartTitleFunc }
+						dataSeriesInfo={ {
+							VIEWS_MAPS: {
+								name: translate( 'Listings On Maps' ),
+							},
+							VIEWS_SEARCH: {
+								name: translate( 'Listings On Search' ),
+							},
+						} }
+						renderTooltipForDatanum={ this.renderViewsTooltipForDatanum }
+					/>
+				</div>
+
+				<div className="gmb-stats__metric">
+					<GoogleMyBusinessStatsChart
+						title={ translate( 'Customer Actions' ) }
+						description={ translate(
+							'The most common actions that customers take on your listing'
+						) }
+						statType="actions"
+						chartTitle={ this.actionChartTitleFunc }
+						dataSeriesInfo={ {
+							ACTIONS_WEBSITE: {
+								name: translate( 'Visit Your Website' ),
+							},
+							ACTIONS_DRIVING_DIRECTIONS: {
+								name: translate( 'Request Directions' ),
+							},
+							ACTIONS_PHONE: {
+								name: translate( 'Call You' ),
+							},
+						} }
+						renderTooltipForDatanum={ this.renderActionsTooltipForDatanum }
+					/>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
-		const { locationData, siteId, siteSlug, translate } = this.props;
+		const { isLocationVerified, locationData, siteId, siteSlug, translate } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -81,12 +210,29 @@ class GoogleMyBusinessStats extends Component {
 
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
-				{ /* remove this notice once we stop using fake data */ }
-				<Notice
-					status="is-error"
-					showDismiss={ false }
-					text="All data on this page is a placeholder used for development only!"
-				/>
+				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
+				<QueryKeyringConnections forceRefresh />
+
+				{ ! isLocationVerified && (
+					<Notice
+						status="is-error"
+						text={ translate(
+							'Your location has not been verified. ' +
+								'Statistics are not available until you have {{a}}verified your location{{/a}} with Google.',
+							{
+								components: {
+									a: (
+										<a
+											href="https://support.google.com/business/answer/7107242"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					/>
+				) }
 
 				<GoogleMyBusinessLocation location={ locationData }>
 					<Button
@@ -98,119 +244,26 @@ class GoogleMyBusinessStats extends Component {
 					</Button>
 				</GoogleMyBusinessLocation>
 
-				<div className="gmb-stats__metrics">
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsChart
-							title={ translate( 'How customers search for your business' ) }
-							statType="queries"
-							chartTitle={ this.searchChartTitleFunc }
-							dataSeriesInfo={ {
-								QUERIES_DIRECT: {
-									name: translate( 'Direct' ),
-									description: translate(
-										'Customers who find your listing searching for you business name or address'
-									),
-								},
-								QUERIES_INDIRECT: {
-									name: translate( 'Discovery' ),
-									description: translate(
-										'Customers who find your listing searching for a category, product, or service'
-									),
-								},
-							} }
-						/>
-						<SectionHeader label={ translate( 'How customers search for your business' ) } />
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsTip
-							buttonHref="https://business.google.com/"
-							buttonText={ translate( 'Post Photos' ) }
-							eventName="'calypso_google_my_business_stats_post_photos_button_click'"
-							illustration="reviews"
-							text={ translate(
-								'Listings with recent photos typically drive more view to their business websites.'
-							) }
-						/>
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsChart
-							title={ translate( 'Where your customers view your business on Google' ) }
-							description={ translate(
-								'The Google services that customers use to find your business'
-							) }
-							statType="views"
-							chartTitle={ this.viewChartTitleFunc }
-							dataSeriesInfo={ {
-								VIEWS_MAPS: {
-									name: translate( 'Listings On Maps' ),
-								},
-								VIEWS_SEARCH: {
-									name: translate( 'Listings On Search' ),
-								},
-							} }
-						/>
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsChart
-							title={ translate( 'Customer Actions' ) }
-							description={ translate(
-								'The most common actions that customers take on your listing'
-							) }
-							statType="actions"
-							chartTitle={ this.actionChartTitleFunc }
-							dataSeriesInfo={ {
-								ACTIONS_WEBSITE: {
-									name: translate( 'Visit Your Website' ),
-								},
-								ACTIONS_DRIVING_DIRECTIONS: {
-									name: translate( 'Request Directions' ),
-								},
-								ACTIONS_PHONE: {
-									name: translate( 'Call You' ),
-								},
-							} }
-						/>
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsTip
-							buttonHref="https://business.google.com/"
-							buttonText={ translate( 'Complete Your Listing' ) }
-							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
-							illustration="complete-listing"
-							text={ translate(
-								'Complete business listings get on average 7x more clicks than empty listings.'
-							) }
-						/>
-					</div>
-
-					<div className="gmb-stats__metric">
-						<GoogleMyBusinessStatsTip
-							buttonHref="https://business.google.com/"
-							buttonText={ translate( 'Complete Your Listing' ) }
-							eventName="'calypso_google_my_business_stats_complete_your_listing_button_click'"
-							illustration="compare"
-							text={ translate(
-								'Customers compare business listings on Google to make decisions. Make your listing count.'
-							) }
-						/>
-					</div>
-				</div>
+				{ this.renderStats() }
 			</Main>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		locationData: FakeData.locationData,
-		siteId: getSelectedSiteId( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const locationData = getGoogleMyBusinessConnectedLocation( state, siteId );
+		const isLocationVerified = get( locationData, 'meta.state.isVerified', false );
+
+		return {
+			isLocationVerified,
+			locationData,
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+		};
+	},
 	{
-		recordTracksEvent,
+		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 	}
 )( localize( GoogleMyBusinessStats ) );

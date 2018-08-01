@@ -9,12 +9,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import {
-	getThemeFilterTerm,
-	isValidThemeFilterTerm,
-	getThemeFilterStringFromTerm,
-	getThemeFilterTermFromString,
-} from 'state/selectors';
+import getThemeFilterStringFromTerm from 'state/selectors/get-theme-filter-string-from-term';
+
+import getThemeFilterTerm from 'state/selectors/get-theme-filter-term';
+import getThemeFilterTermFromString from 'state/selectors/get-theme-filter-term-from-string';
+import isValidThemeFilterTerm from 'state/selectors/is-valid-theme-filter-term';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {

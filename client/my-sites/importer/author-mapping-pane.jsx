@@ -32,6 +32,7 @@ class ImporterMappingPane extends React.PureComponent {
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,
 		targetTitle: PropTypes.string.isRequired,
+		sourceType: PropTypes.string,
 	};
 
 	getFetchOptions = ( options = {} ) => {
@@ -46,7 +47,7 @@ class ImporterMappingPane extends React.PureComponent {
 		);
 	};
 
-	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle ) => {
+	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle, sourceType ) => {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
 			return this.props.translate(
 				'We found one author on your %(sourceType)s site. ' +
@@ -55,7 +56,7 @@ class ImporterMappingPane extends React.PureComponent {
 					'Click Start Import to proceed.',
 				{
 					args: {
-						sourceType: 'WordPress',
+						sourceType: sourceType,
 						destinationSiteTitle: targetTitle,
 					},
 					components: {
@@ -71,7 +72,7 @@ class ImporterMappingPane extends React.PureComponent {
 					'Click Start Import to proceed.',
 				{
 					args: {
-						sourceType: 'WordPress',
+						sourceType: sourceType,
 						destinationSiteTitle: targetTitle,
 					},
 					components: {
@@ -128,13 +129,15 @@ class ImporterMappingPane extends React.PureComponent {
 			onMap,
 			onStartImport,
 			siteId,
+			sourceType,
 		} = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
 		const targetUserCount = this.getUserCount();
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
 			targetUserCount,
-			targetTitle
+			targetTitle,
+			sourceType
 		);
 
 		return (

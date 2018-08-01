@@ -47,7 +47,7 @@ describe( 'index', () => {
 			NetworkConnectionApp.emitConnected();
 
 			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( changeSpy ).to.have.been.neverCalled;
+			expect( changeSpy ).to.have.not.been.called;
 		} );
 
 		test( 'has to change state to disconnected when disconnected event sent', () => {

@@ -25,6 +25,15 @@
 	opacity: 0;
 }
 
+.info-popover.about__info-popover {
+	margin-left: 5px;
+
+	.gridicon {
+		color: $gray;
+		margin-bottom: -3px;
+	}
+}
+
 .about__checkboxes {
 	border: 1px solid $gray-lighten-20;
 	border-radius: 3px;
@@ -86,6 +95,13 @@
 .about__submit-wrapper {
 	text-align: center;
 	margin-bottom: 20px;
+	padding: 0 15px;
+}
+
+.about__submit-wrapper .button {
+	@include breakpoint( '<480px' ) {
+		width: 100%;
+	}
 }
 
 .about__last-fieldset {

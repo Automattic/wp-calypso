@@ -11,14 +11,14 @@
 		&-enter {
 			height: 0;
 			opacity: 0.01;
-			transform: translateZ(0) scale(0.8);
+			transform: translateZ( 0 ) scale( 0.8 );
 		}
 
 		&-appear-active,
 		&-enter-active {
 			height: auto;
 			opacity: 1;
-			transform: translateZ(0) scale(1);
+			transform: translateZ( 0 ) scale( 1 );
 			transition-property: height, opacity, transform;
 			transition-duration: 400ms;
 		}
@@ -30,7 +30,8 @@
 		}
 
 		.is-empty {
-			.payment-box-section, .checkout__payment-box-section {
+			.payment-box-section,
+			.checkout__payment-box-section {
 				border: 1px solid $gray-lighten-30;
 				margin: 5px 0;
 				display: flex;
@@ -55,7 +56,6 @@
 				::after {
 					content: '';
 				}
-
 			}
 
 			.payment-box__header {
@@ -104,7 +104,7 @@
 				height: 50px;
 				width: 100%;
 
-				@include breakpoint ( '>480px' ) {
+				@include breakpoint( '>480px' ) {
 					width: 80px;
 					height: 40px;
 				}
@@ -114,7 +114,7 @@
 				margin-top: 55px;
 
 				@include breakpoint( '>480px' ) {
-						margin-top: 20px;
+					margin-top: 20px;
 				}
 			}
 
@@ -171,7 +171,8 @@
 		}
 	}
 
-	button[type=submit].button-pay, button[type=submit].checkout__button-pay {
+	button[type='submit'].button-pay,
+	button[type='submit'].checkout__button-pay {
 		@include breakpoint( '<660px' ) {
 			width: 100%;
 
@@ -187,7 +188,7 @@
 	}
 
 	// Turn off number spinners
-	input[type=number] {
+	input[type='number'] {
 		-moz-appearance: textfield;
 
 		&::-webkit-outer-spin-button,
@@ -200,7 +201,8 @@
 	// Floating labels
 	// -----------------------------------
 
-	.checkout-field, .checkout__checkout-field {
+	.checkout-field,
+	.checkout__checkout-field {
 		margin-top: 15px;
 		position: relative;
 
@@ -254,11 +256,11 @@
 		}
 	}
 
-	.cart-coupon {
+	.cart__coupon {
 		cursor: pointer;
 		display: none;
 		font-size: 14px;
-		margin: 5px 0 0;
+		margin: 0;
 		padding: 10px 0;
 
 		// On larger screens, users can use the coupon functionality present on the sidebar
@@ -273,7 +275,8 @@
 		}
 	}
 
-	.payment-box-actions, .checkout__payment-box-actions {
+	.payment-box-actions,
+	.checkout__payment-box-actions {
 		margin: 20px -30px 0 -30px;
 		padding: 20px 30px 0;
 		@include clear-fix;
@@ -282,7 +285,7 @@
 	.credit-card-payment-box {
 		.payment-box-sections {
 			background-color: $white;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
 				box-shadow: none;
@@ -318,7 +321,6 @@
 		.payment-box-section.selected:not( .no-stored-cards ) {
 			.payment-box-section-inner {
 				border-left: 3px solid $alert-green;
-				padding-top: 15px;
 			}
 			.checkout__new-card-fields {
 				background-color: #fafdf6;
@@ -348,6 +350,7 @@
 		.payment-box-section.selected .checkout__new-card-fields {
 			max-height: 100%;
 			margin-bottom: 0;
+			padding-top: 15px;
 		}
 
 		.checkout__new-card-toggle {
@@ -389,7 +392,7 @@
 		// Parent overflow is hidden, so 80px here is an arbitrary number
 		// to make sure this element will cover entire width of the parent.
 		// If it's wider, it's okay too.
-		width: calc(100% + 80px * 2);
+		width: calc( 100% + 80px * 2 );
 		left: -80px;
 		margin-top: 1.7em;
 		margin-bottom: 1.7em;
@@ -405,9 +408,10 @@
 
 	.paypal-payment-box,
 	.credits-payment-box {
-		.payment-box-section, .checkout__payment-box-section {
+		.payment-box-section,
+		.checkout__payment-box-section {
 			background-color: $white;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
 			@include breakpoint( '>660px' ) {
 				border: 1px solid $gray-lighten-30;
@@ -417,7 +421,8 @@
 	}
 
 	.paypal-payment-box {
-		.payment-box-section, .checkout__payment-box-section {
+		.payment-box-section,
+		.checkout__payment-box-section {
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-between;
@@ -603,7 +608,8 @@
 // If there's no sidebar, we don't show the cart on the checkout page.
 
 @include breakpoint( '>660px' ) {
-	.pay-button, .checkout__pay-button {
+	.pay-button,
+	.checkout__pay-button {
 		float: left;
 	}
 }
@@ -619,10 +625,15 @@
 	padding-bottom: 5px;
 
 	img {
-		margin-left:8px;
+		margin-left: 8px;
 	}
 
-	&.ideal, &.giropay, &.bancontact, &.p24, &.alipay, &.eps {
+	&.ideal,
+	&.giropay,
+	&.bancontact,
+	&.p24,
+	&.alipay,
+	&.eps {
 		margin-left: 1em;
 	}
 
@@ -645,21 +656,34 @@
 	}
 }
 
-@include breakpoint( '>660px' ) {
-	.payment-box__payment-buttons {
+.payment-box__payment-buttons {
+	@include breakpoint( '>660px' ) {
 		display: flex;
-		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.pay-button {
+		margin-right: 10px;
+
+		@include breakpoint( '<960px' ) {
+			flex: 1 0 50%;
+		}
+	}
+
+	.pay-button__button {
+		@include breakpoint( '<960px' ) {
+			width: 100%;
+		}
 	}
 }
 
 .checkout__secure-payment {
-	margin-top: 10px;
 	color: $gray-lighten-10;
+	flex-grow: 1;
+	margin-top: 10px;
 
 	@include breakpoint( '>660px' ) {
-		margin-left: 10px;
-		margin-top: 0;
-		display: inline-block;
+		flex: 1 0 40%;
 	}
 }
 
@@ -673,22 +697,31 @@
 	}
 }
 
-.checkout__payment-chat-button-icon {
-	color: $blue-wordpress;
-	margin-right: 5px;
-}
+.checkout__payment-chat-button.is-borderless {
+	color: $blue-medium;
+	text-align: left;
 
-.checkout__payment-chat-button {
 	@include breakpoint( '<660px' ) {
-		width: 100%;
 		text-align: center;
+		margin-top: 5px;
+		width: 100%;
 	}
 
 	@include breakpoint( '>960px' ) {
-		display: flex;
-		flex-grow: 1;
-		align-items: center;
-		justify-content: right;
+		justify-content: flex-end;
+	}
+
+	&:hover {
+		color: $blue-light;
+	}
+
+	&:focus {
+		color: $blue-wordpress;
+	}
+
+	.gridicon {
+		margin-right: 4px;
+		top: 9px;
 	}
 }
 
@@ -830,20 +863,20 @@
 	}
 
 	.checkout__giropay {
-	  width: 80px;
-      margin: -10px 0;
+		width: 80px;
+		margin: -10px 0;
 	}
 
 	.checkout__bancontact {
-	  width: 150px;
-	  margin: -10px 0;
+		width: 150px;
+		margin: -10px 0;
 	}
 
-  	.checkout__ideal {
-    	width: 26px;
-    	margin-bottom: 2px;
-    	margin-right: 4px;
-  	}
+	.checkout__ideal {
+		width: 26px;
+		margin-bottom: 2px;
+		margin-right: 4px;
+	}
 
 	.checkout__p24 {
 		width: 80px;
@@ -859,8 +892,23 @@
 		margin: -10px 0;
 	}
 
+	.checkout__institution,
 	.checkout__credit-card {
 		margin-right: 5px;
+	}
+
+	.checkout__brazil-tef {
+		width: 100px;
+		margin-right: 4px;
+	}
+
+	.checkout__emergent-paywall {
+		margin-top: 3px;
+	}
+
+	.checkout__paytm {
+		width: 50px;
+		margin: -20px 0;
 	}
 
 	.select-dropdown__item-text {
@@ -882,6 +930,29 @@
 	}
 }
 
+// Emergent Paywall
+// -----------------------------------
+.checkout__emergent-paywall-form {
+	height: 0;
+	width: 0;
+}
+.checkout__emergent-paywall-loading-content {
+	min-height: 300px;
+}
+
+.checkout__emergent-paywall-iframe {
+	width: 100%;
+}
+
+.checkout__emergent-paywall-frame-container {
+	height: 0;
+	overflow: hidden;
+	&.iframe-loaded {
+		height: auto;
+		overflow: visible;
+	}
+}
+
 // Ebanx checkout fields
 // -----------------------------------
 .checkout__ebanx-payment-fields {
@@ -895,6 +966,10 @@
 		flex-grow: 1;
 		flex-shrink: 0;
 		margin-left: 15px;
+		margin-top: 15px;
+		&.state {
+			margin-top: 0;
+		}
 	}
 	.checkout__form-state-field {
 		margin-left: 0;
@@ -906,11 +981,11 @@
 		}
 
 		.street-number {
-			flex-basis: calc( 33% - 15px);
+			flex-basis: calc( 33% - 15px );
 		}
 
 		.address-1 {
-			flex-basis: calc( 66% - 15px);
+			flex-basis: calc( 66% - 15px );
 		}
 
 		.document,
@@ -922,11 +997,14 @@
 	}
 	.form__hidden-input a {
 		display: block;
-		font-size:  12px;
+		font-size: 12px;
 		margin-left: 15px;
 	}
 	select {
 		width: 100%;
+	}
+	&.checkout__ebanx-mx .checkout__form-state-field {
+		display: none;
 	}
 }
 

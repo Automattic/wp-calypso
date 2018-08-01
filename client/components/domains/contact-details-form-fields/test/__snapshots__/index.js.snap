@@ -89,13 +89,20 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       <FormPhoneMediaInput
         additionalClasses="contact-details-form-fields__field"
         countriesList={
-          DomainRegistrationCountriesList {
-            "initialized": false,
-            "key": "DomainRegistrationCountriesList",
-          }
+          Array [
+            Object {
+              "code": "AU",
+              "name": "Australia",
+            },
+            Object {
+              "code": "BR",
+              "name": "Brazil",
+            },
+          ]
         }
         countryCode="US"
         disabled={false}
+        enableStickyCountry={false}
         errorMessage=""
         eventFormName="Domain contact details form"
         isError={false}
@@ -113,10 +120,16 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       <CountrySelect
         additionalClasses="contact-details-form-fields__field"
         countriesList={
-          DomainRegistrationCountriesList {
-            "initialized": false,
-            "key": "DomainRegistrationCountriesList",
-          }
+          Array [
+            Object {
+              "code": "AU",
+              "name": "Australia",
+            },
+            Object {
+              "code": "BR",
+              "name": "Brazil",
+            },
+          ]
         }
         disabled={false}
         errorMessage=""
@@ -154,5 +167,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       Submit
     </FormButton>
   </DomainManagementFormFooter>
+  <Connect(QueryCountries) />
 </FormFieldset>
 `;

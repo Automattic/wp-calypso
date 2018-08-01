@@ -27,6 +27,7 @@ export default class extends React.Component {
 			'form-input-validation': true,
 			'is-warning': this.props.isWarning,
 			'is-error': this.props.isError,
+			'is-hidden': this.props.isHidden,
 		} );
 
 		const icon = this.props.isError || this.props.isWarning ? 'notice-outline' : 'checkmark';

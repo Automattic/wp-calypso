@@ -11,7 +11,7 @@ import { compact, find, flow, includes, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { areAllSitesSingleUser } from 'state/selectors';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
 import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
@@ -180,7 +180,9 @@ export class PostTypeFilter extends Component {
 						selectedText={ selectedItem.children }
 						selectedCount={ selectedItem.count }
 					>
-						{ navItems.map( props => <NavItem { ...props } /> ) }
+						{ navItems.map( props => (
+							<NavItem { ...props } />
+						) ) }
 					</NavTabs>
 					{ ! authorToggleHidden && (
 						<AuthorSegmented author={ query.author } siteId={ siteId } statusSlug={ statusSlug } />

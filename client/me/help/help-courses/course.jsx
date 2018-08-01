@@ -16,7 +16,7 @@ import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
 import CourseVideo from './course-video';
 import analytics from 'lib/analytics';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 
 class Course extends Component {

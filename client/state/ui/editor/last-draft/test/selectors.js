@@ -53,9 +53,7 @@ describe( 'selectors', () => {
 					},
 					edits: {
 						2916284: {
-							841: {
-								type: 'post',
-							},
+							841: [ { type: 'post' } ],
 						},
 					},
 				},

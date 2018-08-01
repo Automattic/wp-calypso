@@ -17,12 +17,12 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormTextInput from 'components/forms/form-text-input';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive, isActivatingJetpackModule } from 'state/selectors';
+import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 
 class CustomContentTypes extends Component {
 	componentDidUpdate() {
@@ -59,54 +59,52 @@ class CustomContentTypes extends Component {
 		return isRequestingSettings || isSavingSettings;
 	}
 
-	renderPostsPerPageField( fieldName, postTypeLabel ) {
-		const { fields, onChangeField, translate } = this.props;
-		const numberFieldName = fieldName === 'post' ? 'posts_per_page' : fieldName + '_posts_per_page';
-		const isDisabled = this.isFormPending() || ( ! fields[ fieldName ] && fieldName !== 'post' );
-
-		return (
-			<div className="custom-content-types__indented-form-field indented-form-field">
-				{ translate( 'Display {{field /}} %s per page', {
-					args: postTypeLabel.toLowerCase(),
-					components: {
-						field: (
-							<FormTextInput
-								name={ numberFieldName }
-								type="number"
-								step="1"
-								min="0"
-								id={ numberFieldName }
-								value={
-									'undefined' === typeof fields[ numberFieldName ] ? 10 : fields[ numberFieldName ]
-								}
-								onChange={ onChangeField( numberFieldName ) }
-								disabled={ isDisabled }
-							/>
-						),
-					},
-				} ) }
-			</div>
-		);
-	}
-
 	renderContentTypeSettings( name, label, description ) {
-		const { activatingCustomContentTypesModule, fields, handleAutosavingToggle } = this.props;
+		const {
+			activatingCustomContentTypesModule,
+			fields,
+			handleAutosavingToggle,
+			onChangeField,
+			translate,
+		} = this.props;
+		const numberFieldIdentifier = name === 'post' ? 'posts_per_page' : name + '_posts_per_page';
+		const isDisabled = this.isFormPending() || ( ! fields[ name ] && name !== 'post' );
 		return (
 			<div className="custom-content-types__module-settings">
-				{ name !== 'post' ? (
+				{ name !== 'post' && (
 					<CompactFormToggle
 						checked={ !! fields[ name ] }
 						disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 						onChange={ handleAutosavingToggle( name ) }
-					>
-						{ label }
-					</CompactFormToggle>
-				) : (
-					<div className="custom-content-types__label">{ label }</div>
+					/>
 				) }
-
-				{ this.renderPostsPerPageField( name, label ) }
-
+				<div id={ numberFieldIdentifier } className="custom-content-types__label">
+					{ label }
+				</div>
+				<div className="custom-content-types__indented-form-field indented-form-field">
+					{ translate( 'Display {{field /}} per page', {
+						comment:
+							'The field value is a number that refers to site content type, e.g., blog post, testimonial or portfolio project',
+						components: {
+							field: (
+								<FormTextInput
+									name={ numberFieldIdentifier }
+									type="number"
+									step="1"
+									min="0"
+									aria-labelledby={ numberFieldIdentifier }
+									value={
+										'undefined' === typeof fields[ numberFieldIdentifier ]
+											? 10
+											: fields[ numberFieldIdentifier ]
+									}
+									onChange={ onChangeField( numberFieldIdentifier ) }
+									disabled={ isDisabled }
+								/>
+							),
+						},
+					} ) }
+				</div>
 				<FormSettingExplanation isIndented>{ description }</FormSettingExplanation>
 			</div>
 		);
@@ -161,57 +159,33 @@ class CustomContentTypes extends Component {
 		return (
 			<Card className="custom-content-types site-settings">
 				<FormFieldset>
-					<div className="custom-content-types__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate( 'Showcases your portfolio or displays testimonials on your site.' ) +
-								' ' }
-							<ExternalLink
-								href="https://support.wordpress.com/custom-post-types/"
-								icon={ false }
-								target="_blank"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate( 'Showcases your portfolio or displays testimonials on your site.' ) }
+						link="https://support.wordpress.com/custom-post-types/"
+						privacyLink={ false }
+					/>
 					{ this.renderBlogPostSettings() }
 				</FormFieldset>
 
 				<FormFieldset>
-					<div className="custom-content-types__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate(
-								'Adds the Testimonial custom post type, allowing you to collect, organize, ' +
-									'and display testimonials on your site.'
-							) }{' '}
-							<ExternalLink
-								target="_blank"
-								icon={ false }
-								href="https://jetpack.com/support/custom-content-types/"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate(
+							'Adds the Testimonial custom post type, allowing you to collect, organize, ' +
+								'and display testimonials on your site.'
+						) }
+						link="https://jetpack.com/support/custom-content-types/"
+					/>
 					{ this.renderTestimonialSettings() }
 				</FormFieldset>
 
 				<FormFieldset>
-					<div className="custom-content-types__info-link-container site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate(
-								'Adds the Portfolio custom post type, allowing you to ' +
-									'manage and showcase projects on your site.'
-							) }{' '}
-							<ExternalLink
-								target="_blank"
-								icon={ false }
-								href="https://jetpack.com/support/custom-content-types/"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate(
+							'Adds the Portfolio custom post type, allowing you to ' +
+								'manage and showcase projects on your site.'
+						) }
+						link="https://jetpack.com/support/custom-content-types/"
+					/>
 					{ this.renderPortfolioSettings() }
 				</FormFieldset>
 			</Card>

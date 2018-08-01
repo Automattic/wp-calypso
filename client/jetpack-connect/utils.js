@@ -28,16 +28,10 @@ export function authQueryTransformer( queryObject ) {
 		// Optional
 		// TODO: verify
 		authApproved: !! queryObject.auth_approved,
-
-		// TODO: disabled to mitigate https://github.com/Automattic/jetpack/issues/8783
-		// remove when fixed
-		// alreadyAuthorized: !! queryObject.already_authorized,
-		alreadyAuthorized: false,
-
+		alreadyAuthorized: !! queryObject.already_authorized,
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
-		partnerId: parseInt( queryObject.partner_id, 10 ) || null,
 		redirectAfterAuth: queryObject.redirect_after_auth || null,
 		siteIcon: queryObject.site_icon || null,
 		siteUrl: queryObject.site_url || null,
@@ -54,7 +48,6 @@ export const authQueryPropTypes = PropTypes.shape( {
 	homeUrl: PropTypes.string.isRequired,
 	jpVersion: PropTypes.string,
 	nonce: PropTypes.string.isRequired,
-	partnerId: PropTypes.number,
 	redirectAfterAuth: PropTypes.string,
 	redirectUri: PropTypes.string.isRequired,
 	scope: PropTypes.string.isRequired,

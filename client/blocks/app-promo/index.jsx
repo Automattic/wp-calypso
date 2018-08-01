@@ -138,4 +138,7 @@ AppPromo.defaultProps = {
 	getPromoLink,
 };
 
-export default connect( null, { recordTracksEvent } )( localize( AppPromo ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( AppPromo ) );

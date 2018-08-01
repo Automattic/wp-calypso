@@ -22,18 +22,6 @@ export const setApp = ( transactionType, app ) => ( {
 } );
 
 /**
- * Sets the date filter value on the given transactionType table to all transactions sorted by newest
- * @param {String} transactionType - transaction type: 'past' or 'upcoming'
- * @returns {Object} action
- */
-export const setNewest = transactionType => ( {
-	type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
-	transactionType,
-	month: null,
-	operator: null,
-} );
-
-/**
  * Sets the date filter value on the given transactionType table to show the transactions relative
  * to the given month
  * @param {String} transactionType - transaction type: 'past' or 'upcoming'

@@ -69,7 +69,8 @@ import {
 	normalizeWporgTheme,
 } from './utils';
 import { getSiteTitle, isJetpackSite } from 'state/sites/selectors';
-import { isSiteAutomatedTransfer, prependThemeFilterKeys } from 'state/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 

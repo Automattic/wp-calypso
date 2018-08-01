@@ -1,8 +1,11 @@
 /** @format */
+
 /**
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { entries } from 'lodash';
 
 /**
@@ -22,8 +25,8 @@ import FormLegend from 'components/forms/form-legend';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormPhoneInput from 'components/forms/form-phone-input';
 import FormRadio from 'components/forms/form-radio';
-import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
 import FormRadiosBarExample from 'components/forms/form-radios-bar/docs/example';
+import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -34,8 +37,9 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormToggle from 'components/forms/form-toggle';
+import getCountries from 'state/selectors/get-countries';
 import PhoneInput from 'components/phone-input';
-import { forSms as countriesList } from 'lib/countries-list';
+import QuerySmsCountries from 'components/data/query-countries/sms';
 import { CURRENCIES } from 'lib/format-currency/currencies';
 
 const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
@@ -45,7 +49,9 @@ const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) =
 } ) );
 
 class FormFields extends React.PureComponent {
-	static displayName = 'FormFields'; // Needed for devdocs/design
+	static propTypes = {
+		countriesList: PropTypes.array.isRequired,
+	};
 
 	state = {
 		checkedRadio: 'first',
@@ -77,6 +83,7 @@ class FormFields extends React.PureComponent {
 
 	handleCurrencyChange = event => {
 		const { value: currency } = event.currentTarget;
+
 		this.setState( state => ( {
 			currencyInput: { ...state.currencyInput, currency },
 		} ) );
@@ -84,6 +91,7 @@ class FormFields extends React.PureComponent {
 
 	handlePriceChange = event => {
 		const { value } = event.currentTarget;
+
 		this.setState( state => ( {
 			currencyInput: { ...state.currencyInput, value },
 		} ) );
@@ -228,10 +236,11 @@ class FormFields extends React.PureComponent {
 
 					<FormFieldset>
 						<FormLabel htmlFor="country_code">Form Country Select</FormLabel>
+						<QuerySmsCountries />
 						<FormCountrySelect
 							name="country_code"
 							id="country_code"
-							countriesList={ countriesList }
+							countriesList={ this.props.countriesList }
 						/>
 					</FormFieldset>
 
@@ -321,7 +330,7 @@ class FormFields extends React.PureComponent {
 						<FormPhoneInput
 							initialCountryCode="US"
 							initialPhoneNumber="8772733049"
-							countriesList={ countriesList }
+							countriesList={ this.props.countriesList }
 						/>
 					</FormFieldset>
 
@@ -330,7 +339,7 @@ class FormFields extends React.PureComponent {
 						<PhoneInput
 							countryCode={ this.state.phoneInput.countryCode }
 							value={ this.state.phoneInput.value }
-							countriesList={ countriesList }
+							countriesList={ this.props.countriesList }
 							onChange={ this.handlePhoneInputChange }
 						/>
 					</FormFieldset>
@@ -438,4 +447,10 @@ class FormFields extends React.PureComponent {
 	}
 }
 
-export default FormFields;
+const ConnectedFormFields = connect( state => ( {
+	countriesList: getCountries( state, 'sms' ),
+} ) )( FormFields );
+
+ConnectedFormFields.displayName = 'FormFields';
+
+export default ConnectedFormFields;

@@ -48,7 +48,7 @@ export default class extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		var nextQuery = this.getQuery( nextProps );
+		const nextQuery = this.getQuery( nextProps );
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
 			MediaActions.setQuery( nextProps.siteId, nextQuery );

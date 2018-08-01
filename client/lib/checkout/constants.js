@@ -6,7 +6,7 @@
 
 /**
  * Object contains countries for which Ebanx payment processing is possible
- * PAYMENT_PROCESSOR_EBANX_COUNTRIES[ {countryCode} ].fields - defines form field names we can display for extra payment information
+ * PAYMENT_PROCESSOR_EBANX_COUNTRIES[ {countryCode} ].fields - defines form field names we MUST display for extra payment information
  */
 export const PAYMENT_PROCESSOR_EBANX_COUNTRIES = {
 	BR: {
@@ -22,6 +22,6 @@ export const PAYMENT_PROCESSOR_EBANX_COUNTRIES = {
 		],
 	},
 	MX: {
-		fields: [],
+		fields: [ 'phone-number', 'postal-code' ],
 	},
 };

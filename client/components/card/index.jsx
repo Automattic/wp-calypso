@@ -3,17 +3,29 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { assign, omit } from 'lodash';
-import classnames from 'classnames';
+import React, { PureComponent } from 'react';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
-class Card extends Component {
+const getClassName = ( { className, compact, highlight, href, onClick } ) =>
+	classNames(
+		'card',
+		className,
+		{
+			'is-card-link': !! href,
+			'is-clickable': !! onClick,
+			'is-compact': compact,
+			'is-highlight': highlight,
+		},
+		highlight ? 'is-' + highlight : false
+	);
+
+class Card extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
 		href: PropTypes.string,
-		tagName: PropTypes.string,
+		tagName: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ).isRequired,
 		target: PropTypes.string,
 		compact: PropTypes.bool,
 		highlight: PropTypes.oneOf( [ false, 'error', 'info', 'success', 'warning' ] ),
@@ -25,38 +37,17 @@ class Card extends Component {
 	};
 
 	render() {
-		const { children, compact, highlight, href, onClick, tagName, target } = this.props;
+		const { children, compact, highlight, tagName: TagName, href, target, ...props } = this.props;
 
-		const highlightClass = highlight ? 'is-' + highlight : false;
-
-		const className = classnames(
-			'card',
-			this.props.className,
-			{
-				'is-card-link': !! href,
-				'is-clickable': !! onClick,
-				'is-compact': compact,
-				'is-highlight': highlightClass,
-			},
-			highlightClass
-		);
-
-		const omitProps = [ 'compact', 'highlight', 'tagName' ];
-
-		let linkIndicator;
-		if ( href ) {
-			linkIndicator = (
+		return href ? (
+			<a { ...props } href={ href } target={ target } className={ getClassName( this.props ) }>
 				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
-			);
-		} else {
-			omitProps.push( 'href', 'target' );
-		}
-
-		return React.createElement(
-			href ? 'a' : tagName,
-			assign( omit( this.props, omitProps ), { className } ),
-			linkIndicator,
-			children
+				{ children }
+			</a>
+		) : (
+			<TagName { ...props } className={ getClassName( this.props ) }>
+				{ children }
+			</TagName>
 		);
 	}
 }

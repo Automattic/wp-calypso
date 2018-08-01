@@ -11,12 +11,12 @@ import { localize } from 'i18n-calypso';
 /***
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import { isAncestor } from 'blocks/comments/utils';
+import GravatarCaterpillar from 'components/gravatar-caterpillar';
 
 const MAX_GRAVATARS_TO_DISPLAY = 10;
 const NUMBER_TO_EXPAND = 10;
@@ -81,55 +81,34 @@ class ConversationCaterpillarComponent extends React.Component {
 			? numberUnfetchedComments + size( allExpandableComments )
 			: size( allExpandableComments );
 
-		// Only display authors with a gravatar, and only display each author once
-		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'email' );
-		const displayedAuthors = takeRight(
-			filter( uniqueAuthors, 'avatar_URL' ),
-			MAX_GRAVATARS_TO_DISPLAY
-		);
+		// Only display each author once
+		const uniqueAuthors = uniqBy( map( expandableComments, 'author' ), 'avatar_URL' );
 		const uniqueAuthorsCount = size( uniqueAuthors );
-		const displayedAuthorsCount = size( displayedAuthors );
-		const lastAuthorName = get( last( displayedAuthors ), 'name' );
-		const gravatarSmallScreenThreshold = MAX_GRAVATARS_TO_DISPLAY / 2;
+		const lastAuthorName = get( last( uniqueAuthors ), 'name' );
 
 		return (
 			<div className="conversation-caterpillar">
-				<div className="conversation-caterpillar__gravatars" onClick={ this.handleTickle }>
-					{ map( displayedAuthors, ( author, index ) => {
-						let gravClasses = 'conversation-caterpillar__gravatar';
-						// If we have more than 5 gravs,
-						// add a additional class so we can hide some on small screens
-						if (
-							displayedAuthorsCount > gravatarSmallScreenThreshold &&
-							index < displayedAuthorsCount - gravatarSmallScreenThreshold
-						) {
-							gravClasses += ' is-hidden-on-small-screens';
-						}
-
-						return (
-							<Gravatar
-								className={ gravClasses }
-								key={ author.email }
-								user={ author }
-								size={ 32 }
-								aria-hidden="true"
-							/>
-						);
-					} ) }
-				</div>
+				<GravatarCaterpillar
+					users={ uniqueAuthors }
+					onClick={ this.handleTickle }
+					maxGravatarsToDisplay={ MAX_GRAVATARS_TO_DISPLAY }
+				/>
 				<button
 					className="conversation-caterpillar__count"
 					onClick={ this.handleTickle }
-					title={ translate(
-						'View %(count)s comment for this post',
-						'View %(count)s comments for this post',
-						{
-							count: +commentCount,
-							args: {
-								count: commentCount,
-							},
-						}
-					) }
+					title={
+						commentCount > 0 &&
+						translate(
+							'View %(count)s comment for this post',
+							'View %(count)s comments for this post',
+							{
+								count: +commentCount,
+								args: {
+									count: commentCount,
+								},
+							}
+						)
+					}
 				>
 					{ commentCount > 1 &&
 						uniqueAuthorsCount > 1 &&

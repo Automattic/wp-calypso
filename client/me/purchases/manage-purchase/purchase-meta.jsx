@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -30,28 +30,22 @@ import {
 import { isMonthly } from 'lib/plans/constants';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
 import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
-import {
-	canEditPaymentDetails,
-	isDataLoading,
-	getEditCardDetailsPath,
-	getPurchase,
-	getSelectedSite,
-} from '../utils';
+import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
-		selectedPurchase: PropTypes.object,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		purchase: PropTypes.object,
+		site: PropTypes.object,
+		siteSlug: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -61,8 +55,7 @@ class PurchaseMeta extends Component {
 	};
 
 	renderPrice() {
-		const { translate } = this.props;
-		const purchase = getPurchase( this.props );
+		const { purchase, translate } = this.props;
 		const { amount, currencyCode, currencySymbol, productSlug } = purchase;
 		const period =
 			productSlug && isMonthly( productSlug ) ? translate( 'month' ) : translate( 'year' );
@@ -100,8 +93,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOnLabel() {
-		const purchase = getPurchase( this.props );
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( isExpiring( purchase ) || creditCardExpiresBeforeSubscription( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
@@ -147,14 +139,10 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOn() {
-		const purchase = getPurchase( this.props );
-		const { translate, moment } = this.props;
+		const { moment, purchase, siteSlug, translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			const attachedPlanUrl = managePurchase(
-				this.props.selectedSite.slug,
-				purchase.attachedToPurchaseId
-			);
+			const attachedPlanUrl = managePurchase( siteSlug, purchase.attachedToPurchaseId );
 
 			return (
 				<span>
@@ -181,15 +169,18 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentInfo() {
-		const purchase = getPurchase( this.props );
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			return <span className="manage-purchase__detail">{ translate( 'Included with plan' ) }</span>;
+			return translate( 'Included with plan' );
 		}
 
 		if ( typeof purchase.payment.type !== 'undefined' ) {
 			let paymentInfo = null;
+
+			if ( purchase.payment.type === 'credits' ) {
+				return translate( 'Credits' );
+			}
 
 			if ( isPaidWithCreditCard( purchase ) ) {
 				paymentInfo = purchase.payment.creditCard.number;
@@ -202,19 +193,18 @@ class PurchaseMeta extends Component {
 			}
 
 			return (
-				<span className="manage-purchase__detail">
+				<Fragment>
 					<PaymentLogo type={ paymentLogoType( purchase ) } />
 					{ paymentInfo }
-				</span>
+				</Fragment>
 			);
 		}
 
-		return <span className="manage-purchase__detail">{ translate( 'None' ) }</span>;
+		return translate( 'None' );
 	}
 
 	renderPaymentDetails() {
-		const purchase = getPurchase( this.props );
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return null;
@@ -223,7 +213,7 @@ class PurchaseMeta extends Component {
 		const paymentDetails = (
 			<span>
 				<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-				{ this.renderPaymentInfo() }
+				<span className="manage-purchase__detail">{ this.renderPaymentInfo() }</span>
 			</span>
 		);
 
@@ -231,25 +221,22 @@ class PurchaseMeta extends Component {
 			! canEditPaymentDetails( purchase ) ||
 			! isPaidWithCreditCard( purchase ) ||
 			! cardProcessorSupportsUpdates( purchase ) ||
-			! getSelectedSite( this.props )
+			! this.props.site
 		) {
 			return <li>{ paymentDetails }</li>;
 		}
 
 		return (
 			<li>
-				<a href={ getEditCardDetailsPath( this.props.selectedSite, purchase ) }>
-					{ paymentDetails }
-				</a>
+				<a href={ getEditCardDetailsPath( this.props.siteSlug, purchase ) }>{ paymentDetails }</a>
 			</li>
 		);
 	}
 
 	renderContactSupportToRenewMessage() {
-		const purchase = getPurchase( this.props );
-		const { translate } = this.props;
+		const { purchase, translate } = this.props;
 
-		if ( getSelectedSite( this.props ) ) {
+		if ( this.props.site ) {
 			return null;
 		}
 
@@ -262,7 +249,7 @@ class PurchaseMeta extends Component {
 					{
 						args: {
 							purchaseName: getName( purchase ),
-							siteSlug: this.props.selectedPurchase.domain,
+							siteSlug: this.props.purchase.domain,
 						},
 						components: {
 							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
@@ -290,7 +277,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const purchase = getPurchase( this.props );
+		const { purchase } = this.props;
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
 		}
@@ -324,7 +311,7 @@ class PurchaseMeta extends Component {
 		}
 
 		return (
-			<div>
+			<Fragment>
 				<ul className="manage-purchase__meta">
 					{ this.renderOwner() }
 					<li>
@@ -335,19 +322,19 @@ class PurchaseMeta extends Component {
 					{ this.renderPaymentDetails() }
 				</ul>
 				{ this.renderContactSupportToRenewMessage() }
-			</div>
+			</Fragment>
 		);
 	}
 }
 
-export default connect( ( state, props ) => {
-	const purchase = getByPurchaseId( state, props.purchaseId );
+export default connect( ( state, { purchaseId } ) => {
+	const purchase = getByPurchaseId( state, purchaseId );
 
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: purchase,
-		selectedSite: getSelectedSiteSelector( state ),
+		purchase,
+		site: purchase ? getSite( state, purchase.siteId ) : null,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 	};
 } )( localize( PurchaseMeta ) );

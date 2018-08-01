@@ -38,22 +38,38 @@ The rest of the attributes handle different configuration settings: `group` is u
 `index.js` will be assumed to be the entry point to your extension. That file should export a function that sets up routing for your plugin extension:
 
 ```js
-export default function() {
-	page( '/hello-world', siteSelection, navigation, renderHelloWorld );
+/**
+ * External dependencies
+ */
+import page from 'page';
+
+/**
+ * Internal dependencies
+ */
+import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection } from 'my-sites/controller';
+import { helloWorld } from './controller';
+
+export default () => {
+	page(
+		'/hello-world',
+		siteSelection,
+		navigation,
+		helloWorld,
+		makeLayout,
+		clientRender
+	);
 }
 ```
 
 At the moment we use a simple routing interface with `page.js`. There are a few useful middleware functions you can leverage from the My Sites controller module, like `siteSelection`, `navigation`, or `sites`. It’s important to note Calypso is designed to be multi-site from the start. Our URLs in general look like `/:section/:filter/:site`, with the site usually being the last piece of the URL. If you remove the site fragment you get what we call the "all-sites URL". How a section handles the all-sites URL is up to itself. Some areas, like Stats, Posts, Pages, Plugins, will show resources from across all your sites. Other sections, like Settings for example, would display a site picker if you try to access them without a site in the URL bar. That is what `sitesController.sites` does: it forces the user to pick a site to access a section.
 
-`renderHelloWorld` in this case is the one you need to create and is responsible for rendering your section:
+`helloWorld` in this case is the one you need to create and is responsible for rendering your section:
 
 ```js
-const renderHelloWorld = ( context ) => {
-	renderWithReduxStore( (
-		<Main>
-			<HelloWorld />
-		</Main>
-	), document.getElementById( 'primary' ), context.store );
+export const helloWorld = ( context, next ) => {
+	context.primary = <HelloWorld />;
+	next();
 };
 ```
 

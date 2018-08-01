@@ -3,12 +3,30 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, find } from 'lodash';
 
-const getGoogleMyBusinessLocationId = ( state, siteId ) => {
-	return get( state, `googleMyBusiness.${ siteId }.location.id`, null );
-};
+import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 
 export default function isGoogleMyBusinessLocationConnected( state, siteId ) {
-	return getGoogleMyBusinessLocationId( state, siteId ) !== null;
+	const siteKeyrings = get( state, `siteKeyrings.items.${ siteId }`, [] );
+	const googleMyBusinessSiteKeyring = find(
+		siteKeyrings,
+		keyring => keyring.service === 'google_my_business'
+	);
+
+	if ( ! googleMyBusinessSiteKeyring ) {
+		return false;
+	}
+
+	const keyringConnections = getKeyringConnectionsByName( state, 'google_my_business' ).filter(
+		keyringConnection => {
+			return keyringConnection.ID === googleMyBusinessSiteKeyring.keyring_id;
+		}
+	);
+
+	if ( keyringConnections.length === 0 ) {
+		return false;
+	}
+
+	return !! googleMyBusinessSiteKeyring.external_user_id;
 }

@@ -18,7 +18,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import PendingGappsTosNotice from './pending-gapps-tos-notice';
 import { purchasesRoot } from 'me/purchases/paths';
-import { type as domainTypes, transferStatus } from 'lib/domains/constants';
+import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
 import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
 import {
 	ALL_ABOUT_DOMAINS,
@@ -34,6 +34,7 @@ import {
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementTransferIn,
+	domainManagementManageConsent,
 } from 'my-sites/domains/paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
@@ -74,6 +75,7 @@ export class DomainWarnings extends React.PureComponent {
 			'newDomains',
 			'transferStatus',
 			'newTransfersWrongNS',
+			'pendingConsent',
 		],
 	};
 
@@ -115,6 +117,7 @@ export class DomainWarnings extends React.PureComponent {
 			this.pendingTransfer,
 			this.transferStatus,
 			this.newTransfersWrongNS,
+			this.pendingConsent,
 		];
 		const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
 
@@ -191,7 +194,9 @@ export class DomainWarnings extends React.PureComponent {
 		} else {
 			offendingList = (
 				<ul>
-					{ wrongMappedDomains.map( domain => <li key={ domain.name }>{ domain.name }</li> ) }
+					{ wrongMappedDomains.map( domain => (
+						<li key={ domain.name }>{ domain.name }</li>
+					) ) }
 				</ul>
 			);
 			if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {
@@ -894,13 +899,7 @@ export class DomainWarnings extends React.PureComponent {
 					args: { domain: domainInTransfer.name },
 				};
 
-				if ( domainInTransfer.manualWhois ) {
-					message = translate(
-						"We'll send an email to confirm the transfer of {{strong}}%(domain)s{{/strong}} " +
-							'as soon as we get the correct address. {{a}}More Info{{/a}}',
-						translateParams
-					);
-				} else if ( domainInTransfer.adminEmail ) {
+				if ( domainInTransfer.adminEmail ) {
 					translateParams.args.email = domainInTransfer.adminEmail;
 					message = translate(
 						'We sent an email to {{strong}}%(email)s{{/strong}} to confirm the transfer of ' +
@@ -929,9 +928,35 @@ export class DomainWarnings extends React.PureComponent {
 								/>
 							),
 						},
-						args: { domain: domainInTransfer.name },
+						args: {
+							domain: domainInTransfer.name,
+						},
 					}
 				);
+
+				if ( domainInTransfer.transferEndDateMoment ) {
+					message = translate(
+						'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. ' +
+							'It should complete by %(transferFinishDate)s. We are waiting ' +
+							'for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
+						{
+							components: {
+								strong: <strong />,
+								a: (
+									<a
+										href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+							args: {
+								domain: domainInTransfer.name,
+								transferFinishDate: domainInTransfer.transferEndDateMoment.format( 'LL' ),
+							},
+						}
+					);
+				}
 				break;
 			case transferStatus.PENDING_START:
 				compactMessage = translate( 'Domain transfer waiting' );
@@ -987,6 +1012,71 @@ export class DomainWarnings extends React.PureComponent {
 		);
 	};
 
+	pendingConsent = () => {
+		const pendingConsentDomains = this.getDomains().filter(
+			domain =>
+				domain.type === domainTypes.REGISTERED &&
+				gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus
+		);
+
+		if ( 0 === pendingConsentDomains.length ) {
+			return null;
+		}
+
+		const { isCompact, translate, selectedSite } = this.props;
+		let noticeText;
+
+		if ( pendingConsentDomains.length === 1 ) {
+			const currentDomain = pendingConsentDomains[ 0 ].name;
+			const translateOptions = {
+				components: {
+					strong: <strong />,
+					a: (
+						<a
+							href={ domainManagementManageConsent( selectedSite.slug, currentDomain ) }
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+				args: {
+					domain: currentDomain,
+				},
+			};
+
+			if ( isCompact ) {
+				noticeText = translate(
+					'The domain {{strong}}%(domain)s{{/strong}} requires explicit user consent to complete the registration.',
+					translateOptions
+				);
+			} else {
+				noticeText = translate(
+					'The domain {{strong}}%(domain)s{{/strong}} is still pending registration. Please check the domain owner email since explicit consent is required for the registration to complete or go to the {{a}}Consent Management{{/a}} page for more details.',
+					translateOptions
+				);
+			}
+		} else if ( isCompact ) {
+			noticeText = translate(
+				'Some domains require explicit user consent to complete the registration.'
+			);
+		} else {
+			noticeText = translate(
+				'Some domains are still pending registration. Please check the domain owner email to give explicit consent before the registration can be completed.'
+			);
+		}
+
+		return (
+			<Notice
+				isCompact={ isCompact }
+				status="is-error"
+				showDismiss={ false }
+				className="domain-warnings__notice"
+				key="pending-consent"
+			>
+				{ noticeText }
+			</Notice>
+		);
+	};
+
 	componentWillMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
@@ -1005,4 +1095,7 @@ export class DomainWarnings extends React.PureComponent {
 const mapStateToProps = null;
 const mapDispatchToProps = { recordTracksEvent };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( DomainWarnings ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( DomainWarnings ) );

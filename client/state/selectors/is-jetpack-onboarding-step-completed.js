@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getJetpackOnboardingSettings } from 'state/selectors';
+import getJetpackOnboardingSettings from 'state/selectors/get-jetpack-onboarding-settings';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants';
 
 /**

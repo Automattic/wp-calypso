@@ -10,26 +10,21 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { map, pick, reduce, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import actions from 'lib/posts/actions';
+import { recordPlaceholdersTiming } from 'lib/perfmon';
+import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
-import User from 'lib/user';
-import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
-import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
-import { editPost } from 'state/posts/actions';
-import wpcom from 'lib/wp';
-import Dispatcher from 'dispatcher';
-import { getFeaturedImageId } from 'lib/posts/utils';
-
-const user = User();
+import { getEditorNewPostPath } from 'state/ui/editor/selectors';
+import { getEditURL } from 'state/posts/utils';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -57,17 +52,21 @@ function renderEditor( context, props ) {
 }
 
 function maybeRedirect( context ) {
+	const postType = determinePostType( context );
+	const postId = getPostID( context );
+
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
 
-	let path = getEditorPath( state, siteId, postId, 'post', context.query );
-	if ( path !== context.pathname ) {
-		if ( context.querystring ) {
-			path += `?${ context.querystring }`;
+	if ( postId === null ) {
+		let path = getEditorNewPostPath( state, siteId, postType );
+		if ( path !== context.pathname ) {
+			if ( context.querystring ) {
+				path += `?${ context.querystring }`;
+			}
+			page.redirect( path );
+			return true;
 		}
-		page.redirect( path );
-		return true;
 	}
 
 	return false;
@@ -110,87 +109,6 @@ function getPressThisContent( query ) {
 	return pieces.join( '\n\n' );
 }
 
-// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-// Until the full migration, the Copy Post functionality needs to dispatch both Flux and Redux actions:
-// - (Flux) startEditingNew: to set the editor content;
-// - (Redux) editPost: to set every other attribute (in particular, to update the Category Selector, terms can only be set via Redux);
-// - (Flux) edit: to reliably show the updated post attributes before (auto)saving.
-function startEditingPostCopy( site, postToCopyId, context ) {
-	wpcom
-		.site( site.ID )
-		.post( postToCopyId )
-		.get( { context: 'edit' } )
-		.then( postToCopy => {
-			const postAttributes = pick(
-				postToCopy,
-				'canonical_image',
-				'content',
-				'excerpt',
-				'featured_image',
-				'format',
-				'post_thumbnail',
-				'terms',
-				'title',
-				'type'
-			);
-			postAttributes.tags = map( postToCopy.tags, 'name' );
-			postAttributes.title = decodeEntities( postAttributes.title );
-			postAttributes.featured_image = getFeaturedImageId( postToCopy );
-
-			/**
-			 * A post attributes whitelist for Redux's `editPost()` action.
-			 *
-			 * This is needed because blindly passing all post attributes to `editPost()`
-			 * caused some of them (notably the featured image) to revert to their original value
-			 * when modified right after the copy.
-			 *
-			 * @see https://github.com/Automattic/wp-calypso/pull/13933
-			 */
-			const reduxPostAttributes = pick( postAttributes, [
-				'featured_image',
-				'format',
-				'terms',
-				'title',
-			] );
-
-			actions.startEditingNew( site, {
-				content: postToCopy.content,
-				title: postToCopy.title,
-				type: postToCopy.type,
-			} );
-			context.store.dispatch( editPost( site.ID, null, reduxPostAttributes ) );
-			actions.edit( postAttributes );
-
-			/**
-			 * A post metadata whitelist for Flux's `updateMetadata()` action.
-			 *
-			 * This is needed because blindly passing all post metadata to `updateMetadata()`
-			 * causes unforeseeable issues, such as Publicize not triggering on the copied post.
-			 *
-			 * @see https://github.com/Automattic/wp-calypso/issues/14840
-			 */
-			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude' ];
-
-			// Convert the metadata array into a metadata object, needed because `updateMetadata()` expects an object.
-			const metadata = reduce(
-				postToCopy.metadata,
-				( newMetadata, { key, value } ) => {
-					newMetadata[ key ] = value;
-					return newMetadata;
-				},
-				{}
-			);
-
-			actions.updateMetadata( pick( metadata, metadataWhitelist ) );
-		} )
-		.catch( error => {
-			Dispatcher.handleServerAction( {
-				type: 'SET_POST_LOADING_ERROR',
-				error: error,
-			} );
-		} );
-}
-
 const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
 	const isPost = 'post' === postType;
 	const isPage = 'page' === postType;
@@ -220,14 +138,12 @@ const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
 export default {
 	post: function( context, next ) {
 		const postType = determinePostType( context );
-		const postID = getPostID( context );
+		const postId = getPostID( context );
 		const postToCopyId = context.query.copy;
 
-		function startEditing( siteId ) {
-			const site = getSite( context.store.getState(), siteId );
-			const isCopy = context.query.copy ? true : false;
-			context.store.dispatch( startEditingPost( siteId, isCopy ? null : postID, postType ) );
+		recordPlaceholdersTiming();
 
+		function startEditing( siteId ) {
 			if ( maybeRedirect( context ) ) {
 				return;
 			}
@@ -236,25 +152,34 @@ export default {
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
 			if ( postToCopyId ) {
-				startEditingPostCopy( site, postToCopyId, context );
-			} else if ( postID ) {
-				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingExisting( site, postID );
+				context.store.dispatch( startEditingPostCopy( siteId, postToCopyId ) );
+			} else if ( postId ) {
+				const contextPath = context.path;
+				context.store.dispatch( startEditingExistingPost( siteId, postId ) ).then( editedPost => {
+					if ( contextPath !== page.current ) {
+						// browser navigated elsewhere while the load was in progress
+						return;
+					}
+
+					if ( editedPost && editedPost.type && editedPost.type !== postType ) {
+						// incorrect post type in URL
+						page.redirect( getEditURL( editedPost, getSite( context.store.getState(), siteId ) ) );
+					}
+				} );
 			} else {
-				const postOptions = { type: postType };
+				const post = { type: postType };
 
 				// handle press-this params if applicable
 				if ( context.query.url ) {
 					const pressThisContent = getPressThisContent( context.query );
-					Object.assign( postOptions, {
-						postFormat: 'quote',
+					Object.assign( post, {
+						format: 'quote',
 						title: context.query.title,
 						content: pressThisContent,
 					} );
 				}
 
-				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingNew( site, postOptions );
+				context.store.dispatch( startEditingNewPost( siteId, post ) );
 			}
 		}
 
@@ -288,7 +213,7 @@ export default {
 
 		const [ analyticsPath, analyticsTitle ] = getAnalyticsPathAndTitle(
 			postType,
-			postID,
+			postId,
 			postToCopyId
 		);
 		renderEditor( context, { analyticsPath, analyticsTitle } );
@@ -315,13 +240,13 @@ export default {
 			return next();
 		}
 
-		const currentUser = user.get();
+		const { primarySiteSlug } = getCurrentUser( context.store.getState() );
 
-		if ( ! currentUser.primarySiteSlug ) {
+		if ( ! primarySiteSlug ) {
 			return next();
 		}
 
-		const redirectPath = addSiteFragment( context.pathname, currentUser.primarySiteSlug );
+		const redirectPath = addSiteFragment( context.pathname, primarySiteSlug );
 		const queryString = stringify( context.query );
 		const redirectWithParams = [ redirectPath, queryString ].join( '?' );
 

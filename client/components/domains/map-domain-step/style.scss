@@ -6,23 +6,22 @@
 		margin-bottom: 9px;
 	}
 
-	p {
-		color: $gray-dark;
-		font-size: 13px;
-		font-weight: 600;
-		margin-bottom: 0;
-		opacity: 0.7;
-	}
-
 	.domain-product-price {
 		float: left;
-		margin-bottom: 20px;
+		line-height: inherit;
+		margin: 10px 0;
 		min-width: 0;
+		padding-right: 0;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			float: right;
-			margin-bottom: 0;
+			margin: 0;
 		}
+	}
+
+	.domain-product-price__is-with-plans-only {
+		color: $gray-darken-20;
+		line-height: 25px;
 	}
 
 	.notice {
@@ -34,8 +33,11 @@
 	}
 }
 
-.map-domain-step__domain-description {
-	@include breakpoint( ">960px" ) {
+.map-domain-step__domain-heading {
+	font-size: 1em;
+	font-weight: 600;
+
+	@include breakpoint( '>960px' ) {
 		max-width: 75%;
 		float: left;
 		margin-bottom: 20px;
@@ -47,9 +49,13 @@
 	flex-flow: column;
 	width: 100%;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		flex-flow: row;
 	}
+}
+
+.map-domain-step__add-domain .form-text-input-with-affixes__prefix {
+	flex: inherit;
 }
 
 input.map-domain-step__external-domain {
@@ -61,7 +67,7 @@ input.map-domain-step__external-domain {
 	flex-grow: 1;
 	margin: 10px 0 0 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		min-width: 80px;
 		flex-grow: 0;
 		margin: 0 0 0 10px;

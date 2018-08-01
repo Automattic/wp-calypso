@@ -42,7 +42,7 @@ class PostImage extends React.PureComponent {
 	};
 
 	render() {
-		var imageURL = this._getImageURL(),
+		let imageURL = this._getImageURL(),
 			containerClasses,
 			containerStyles;
 
@@ -69,7 +69,7 @@ class PostImage extends React.PureComponent {
 	}
 
 	_getImageURL = () => {
-		var postImages = this.props.postImages;
+		const postImages = this.props.postImages;
 
 		if ( postImages.featured_image !== '' ) {
 			return postImages.featured_image;

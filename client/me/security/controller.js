@@ -17,59 +17,55 @@ import PasswordComponent from 'me/security/main';
 import accountPasswordData from 'lib/account-password-data';
 import SocialLoginComponent from 'me/social-login';
 import ConnectedAppsComponent from 'me/connected-applications';
-import connectedAppsData from 'lib/connected-applications-data';
 import AccountRecoveryComponent from 'me/security-account-recovery';
 
-export default {
-	password( context, next ) {
-		if ( context.query && context.query.updated === 'password' ) {
-			notices.success( i18n.translate( 'Your password was saved successfully.' ), {
-				displayOnNextPage: true,
-			} );
-
-			page.replace( window.location.pathname );
-		}
-
-		context.primary = React.createElement( PasswordComponent, {
-			userSettings: userSettings,
-			path: context.path,
-			accountPasswordData: accountPasswordData,
+export function password( context, next ) {
+	if ( context.query && context.query.updated === 'password' ) {
+		notices.success( i18n.translate( 'Your password was saved successfully.' ), {
+			displayOnNextPage: true,
 		} );
-		next();
-	},
 
-	twoStep( context, next ) {
-		const TwoStepComponent = require( 'me/two-step' ).default;
+		page.replace( window.location.pathname );
+	}
 
-		context.primary = React.createElement( TwoStepComponent, {
-			userSettings: userSettings,
-			path: context.path,
-		} );
-		next();
-	},
+	context.primary = React.createElement( PasswordComponent, {
+		userSettings: userSettings,
+		path: context.path,
+		accountPasswordData: accountPasswordData,
+	} );
+	next();
+}
 
-	connectedApplications( context, next ) {
-		context.primary = React.createElement( ConnectedAppsComponent, {
-			userSettings: userSettings,
-			path: context.path,
-			connectedAppsData: connectedAppsData,
-		} );
-		next();
-	},
+export function twoStep( context, next ) {
+	const TwoStepComponent = require( 'me/two-step' ).default;
 
-	accountRecovery( context, next ) {
-		context.primary = React.createElement( AccountRecoveryComponent, {
-			userSettings: userSettings,
-			path: context.path,
-		} );
-		next();
-	},
+	context.primary = React.createElement( TwoStepComponent, {
+		userSettings: userSettings,
+		path: context.path,
+	} );
+	next();
+}
 
-	socialLogin( context, next ) {
-		context.primary = React.createElement( SocialLoginComponent, {
-			userSettings: userSettings,
-			path: context.path,
-		} );
-		next();
-	},
-};
+export function connectedApplications( context, next ) {
+	context.primary = React.createElement( ConnectedAppsComponent, {
+		userSettings: userSettings,
+		path: context.path,
+	} );
+	next();
+}
+
+export function accountRecovery( context, next ) {
+	context.primary = React.createElement( AccountRecoveryComponent, {
+		userSettings: userSettings,
+		path: context.path,
+	} );
+	next();
+}
+
+export function socialLogin( context, next ) {
+	context.primary = React.createElement( SocialLoginComponent, {
+		userSettings: userSettings,
+		path: context.path,
+	} );
+	next();
+}

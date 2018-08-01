@@ -29,7 +29,7 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
@@ -338,4 +338,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsList
 		),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentActions ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CommentActions ) );

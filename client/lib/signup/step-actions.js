@@ -24,7 +24,7 @@ import { isDomainTransfer } from 'lib/products-values';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
-import { getSiteId } from 'state/selectors';
+import getSiteId from 'state/selectors/get-site-id';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
@@ -379,7 +379,7 @@ export function createAccount(
 							// url of the WordPress.com authorize page for this OAuth2 client
 							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
 							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-						}
+					  }
 					: null
 			),
 			( error, response ) => {

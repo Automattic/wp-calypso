@@ -77,7 +77,7 @@ class ConversationsIntro extends React.Component {
 												a: <a href="http://wp.me/p5PDj3-44u" />,
 											},
 										}
-									)
+								  )
 								: translate(
 										'{{strong}}Welcome to Conversations.{{/strong}} You can read ' +
 											'and reply to all your conversations in one place. ' +
@@ -88,16 +88,15 @@ class ConversationsIntro extends React.Component {
 												strong: <strong />,
 											},
 										}
-									) }
+								  ) }
 						</span>
 					</div>
 					<div className="conversations__intro-character" />
 
-					<div
+					<button
 						className="conversations__intro-close"
 						onClick={ this.dismiss }
 						title={ translate( 'Close' ) }
-						role="button"
 						aria-label={ translate( 'Close' ) }
 					>
 						<Gridicon
@@ -105,7 +104,7 @@ class ConversationsIntro extends React.Component {
 							className="conversations__intro-close-icon"
 							title={ translate( 'Close' ) }
 						/>
-					</div>
+					</button>
 				</div>
 			</header>
 		);

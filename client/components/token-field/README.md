@@ -51,6 +51,7 @@ The `value` property is handled in a manner similar to controlled form component
 - `disabled` - When true, tokens are not able to be added or removed.
 - `placeholder` - If passed, the `TokenField` input will show a placeholder string if no value tokens are present.
 - `id` - the ID of the token input, should be unique.
+- `isExpanded` - If true, the `TokenField` input will always keep the suggestion list expanded.
 
 ### Example
 

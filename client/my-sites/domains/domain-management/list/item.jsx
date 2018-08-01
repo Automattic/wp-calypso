@@ -17,7 +17,7 @@ import CompactCard from 'components/card/compact';
 import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
 import Notice from 'components/notice';
-import { type as domainTypes } from 'lib/domains/constants';
+import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
 
 class ListItem extends React.PureComponent {
@@ -57,6 +57,7 @@ class ListItem extends React.PureComponent {
 					<span className="domain-management-list-item__type">{ this.getDomainTypeText() }</span>
 					{ this.props.domain.type !== 'WPCOM' &&
 						this.showDomainExpirationWarning( this.props.domain ) }
+					{ this.showGdprConsentPending( this.props.domain ) }
 					<DomainPrimaryFlag domain={ this.props.domain } />
 					<DomainTransferFlag domain={ this.props.domain } />
 				</span>
@@ -145,6 +146,20 @@ class ListItem extends React.PureComponent {
 						context:
 							'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 					} ) }
+				</Notice>
+			);
+		}
+	}
+
+	showGdprConsentPending( domain ) {
+		const { translate } = this.props;
+		if (
+			domain.gdprConsentStatus &&
+			gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus
+		) {
+			return (
+				<Notice isCompact status="is-error" icon="spam">
+					{ translate( 'Action Required' ) }
 				</Notice>
 			);
 		}

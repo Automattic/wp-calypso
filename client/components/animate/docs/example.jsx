@@ -14,6 +14,7 @@ function AnimateExample( props ) {
 	return props.exampleCode;
 }
 
+Animate.displayName = 'Animate';
 AnimateExample.displayName = 'Animate';
 
 AnimateExample.defaultProps = {

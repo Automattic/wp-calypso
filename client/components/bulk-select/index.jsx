@@ -1,23 +1,23 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Count from 'components/count';
 
-export default class extends React.Component {
+export class BulkSelect extends React.Component {
 	static displayName = 'BulkSelect';
 
 	static propTypes = {
+		id: PropTypes.string,
 		totalElements: PropTypes.number.isRequired,
 		selectedElements: PropTypes.number.isRequired,
 		onToggle: PropTypes.func.isRequired,
@@ -43,20 +43,33 @@ export default class extends React.Component {
 	};
 
 	render() {
+		const { translate, ariaLabel = translate( 'Select All' ) } = this.props;
 		const isChecked = this.hasAllElementsSelected();
 		const inputClasses = classNames( 'bulk-select__box', {
 			// We need to add this CSS class to be able to test if the input if checked,
 			// since Enzyme still doesn't support :checked pseudoselector.
 			'is-checked': isChecked,
 		} );
+
 		return (
-			<span className="bulk-select" onClick={ this.handleToggleAll }>
-				<span className="bulk-select__container">
-					<input type="checkbox" className={ inputClasses } checked={ isChecked } readOnly />
+			<span className="bulk-select">
+				{ /* The label + input have an implicit relationship since the input is a direct child of the label. */ }
+				{ /* eslint-disable jsx-a11y/label-has-for */ }
+				<label className="bulk-select__container">
+					<input
+						type="checkbox"
+						className={ inputClasses }
+						checked={ isChecked }
+						onChange={ this.handleToggleAll }
+						aria-label={ ariaLabel }
+					/>
 					<Count count={ this.props.selectedElements } />
 					{ this.getStateIcon() }
-				</span>
+				</label>
+				{ /* eslint-enable jsx-a11y/label-has-for */ }
 			</span>
 		);
 	}
 }
+
+export default localize( BulkSelect );

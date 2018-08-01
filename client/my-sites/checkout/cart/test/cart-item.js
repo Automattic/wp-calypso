@@ -13,8 +13,16 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import { CartItem } from '../cart-item';
-import { isPlan, isMonthly, isYearly, isBiennially } from 'lib/products-values';
+import {
+	isPlan,
+	isMonthly,
+	isYearly,
+	isBiennially,
+	isBundled,
+	isDomainProduct,
+} from 'lib/products-values';
 import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
@@ -33,7 +41,14 @@ const mockPlansModule = () => {
 };
 mockPlansModule();
 
-jest.mock( 'lib/format-currency', () => jest.fn() );
+jest.mock( 'config', () => {
+	const fn = () => {};
+	fn.isEnabled = jest.fn( () => null );
+	return fn;
+} );
+jest.mock( 'lib/format-currency', () => ( {
+	getCurrencyObject: price => ( { integer: price } ),
+} ) );
 jest.mock( 'lib/mixins/analytics', () => ( {} ) );
 jest.mock( 'lib/products-values', () => ( {
 	isPlan: jest.fn( () => null ),
@@ -42,6 +57,7 @@ jest.mock( 'lib/products-values', () => ( {
 	isYearly: jest.fn( () => null ),
 	isBiennially: jest.fn( () => null ),
 	isBundled: jest.fn( () => null ),
+	isDomainProduct: jest.fn( () => null ),
 	isCredits: jest.fn( () => null ),
 	isGoogleApps: jest.fn( () => null ),
 } ) );
@@ -94,7 +110,7 @@ describe( 'cart-item', () => {
 			expect( myTranslate ).toHaveBeenCalledTimes( 1 );
 			expect( myTranslate.mock.calls[ 0 ][ 1 ] ).toEqual( {
 				args: {
-					monthlyPrice: '133.00',
+					monthlyPrice: '133',
 					currency: 'AUD',
 					months: 17,
 				},
@@ -238,6 +254,31 @@ describe( 'cart-item', () => {
 		} );
 	} );
 
+	describe( 'getSubscriptionLength() - bundled domains', () => {
+		beforeAll( () => {
+			isMonthly.mockImplementation( () => false );
+			isYearly.mockImplementation( () => true );
+			isBiennially.mockImplementation( () => false );
+		} );
+
+		const instance = new CartItem( { ...props, cartItem: { cost: 0, bill_period: 1 } } );
+
+		test( 'Returns false for bundled domains', () => {
+			isEnabled.mockImplementation( () => true );
+			isDomainProduct.mockImplementation( () => true );
+			isBundled.mockImplementation( () => true );
+			expect( instance.getSubscriptionLength() ).toEqual( false );
+		} );
+
+		test( 'Returns "annual subscription" for non-bundled domains', () => {
+			isEnabled.mockImplementation( () => true );
+			isDomainProduct.mockImplementation( () => true );
+			isBundled.mockImplementation( () => false );
+
+			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
+		} );
+	} );
+
 	describe( 'getSubscriptionLength()', () => {
 		test( 'Returns false values for cart item with invalid bill_period (0)', () => {
 			const instance = new CartItem( { ...props, cartItem: { bill_period: 0 } } );
@@ -279,12 +320,12 @@ describe( 'cart-item', () => {
 			expect( instance.getSubscriptionLength() ).toEqual( 'annual subscription' );
 		} );
 
-		test( 'Returns "biennial subscription" for biennial plan', () => {
+		test( 'Returns "two year subscription" for biennial plan', () => {
 			const instance = new CartItem( props );
 			isMonthly.mockImplementation( () => false );
 			isYearly.mockImplementation( () => false );
 			isBiennially.mockImplementation( () => true );
-			expect( instance.getSubscriptionLength() ).toEqual( 'biennial subscription' );
+			expect( instance.getSubscriptionLength() ).toEqual( 'two year subscription' );
 		} );
 
 		test( 'Returns false for unknown type of plan', () => {

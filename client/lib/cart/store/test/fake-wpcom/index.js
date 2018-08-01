@@ -14,28 +14,29 @@ function FakeWPCOM() {
 	this._requests = [];
 }
 
-FakeWPCOM.prototype.cart = function() {
-	var arrayArguments = toArray( arguments ),
-		method = arrayArguments[ 1 ];
+FakeWPCOM.prototype.getCart = function() {
+	const arrayArguments = toArray( arguments );
 
-	if ( method === 'POST' ) {
-		this._requests.push( {
-			isResolved: false,
-			method: method,
-			cart: arrayArguments[ 2 ],
-			callback: arrayArguments[ 3 ],
-		} );
-	} else {
-		this._requests.push( {
-			isResolved: false,
-			method: method,
-			callback: arrayArguments[ 2 ],
-		} );
-	}
+	this._requests.push( {
+		isResolved: false,
+		method: 'GET',
+		callback: arrayArguments[ 1 ],
+	} );
+};
+
+FakeWPCOM.prototype.setCart = function() {
+	const arrayArguments = toArray( arguments );
+
+	this._requests.push( {
+		isResolved: false,
+		method: 'POST',
+		cart: arrayArguments[ 1 ],
+		callback: arrayArguments[ 2 ],
+	} );
 };
 
 FakeWPCOM.prototype.resolveRequest = function( index, responseData ) {
-	var request = this._requests[ index ];
+	const request = this._requests[ index ];
 
 	if ( request.isResolved ) {
 		throw new Error( 'Request was already resolved' );

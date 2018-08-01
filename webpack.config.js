@@ -8,14 +8,17 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
+const CopyWebpackPlugin = require( './server/bundler/copy-webpack-plugin' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -29,8 +32,12 @@ const config = require( './server/config' );
 const calypsoEnv = config( 'env_id' );
 const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
-const shouldMinify = process.env.MINIFY_JS === 'true' || bundleEnv === 'production';
+const shouldMinify =
+	process.env.MINIFY_JS === 'true' ||
+	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 const shouldEmitStats = process.env.EMIT_STATS === 'true';
+const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
+const codeSplit = config.isEnabled( 'code-splitting' );
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -61,6 +68,8 @@ function getAliasesForExtensions() {
 const babelLoader = {
 	loader: 'babel-loader',
 	options: {
+		configFile: path.resolve( __dirname, 'babel.config.js' ),
+		babelrc: false,
 		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 		cacheIdentifier,
 	},
@@ -75,20 +84,20 @@ const webpackConfig = {
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].[chunkhash].opt.js', // prefer the chunkhash, which depends on the chunk, not the entire build
-		chunkFilename: '[name].[chunkhash].opt.js', // ditto
+		filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
+		chunkFilename: '[name].[chunkhash].min.js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	optimization: {
 		splitChunks: {
-			chunks: 'all',
+			chunks: codeSplit ? 'all' : 'async',
 			name: isDevelopment || shouldEmitStats,
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
-		runtimeChunk: { name: 'manifest' },
-		namedModules: true,
-		namedChunks: isDevelopment,
+		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
+		moduleIds: 'named',
+		chunkIds: isDevelopment ? 'named' : 'natural',
 		minimize: shouldMinify,
 		minimizer: [
 			new UglifyJsPlugin( {
@@ -104,6 +113,9 @@ const webpackConfig = {
 						 */
 						collapse_vars: false,
 					},
+					mangle: {
+						safari10: true,
+					},
 					ecma: 5,
 				},
 			} ),
@@ -117,13 +129,15 @@ const webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
-				use: _.compact( [
+				use: [
 					{
 						loader: 'thread-loader',
-						options: { workers: 3 },
+						options: {
+							workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ),
+						},
 					},
 					babelLoader,
-				] ),
+				],
 			},
 			{
 				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
@@ -132,6 +146,19 @@ const webpackConfig = {
 					babelrc: false,
 					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
 				},
+			},
+			{
+				test: /\.(sc|sa|c)ss$/,
+				use: [
+					MiniCssExtractPlugin.loader,
+					'css-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							includePaths: [ path.join( __dirname, 'client' ) ],
+						},
+					},
+				],
 			},
 			{
 				test: /extensions[\/\\]index/,
@@ -180,12 +207,14 @@ const webpackConfig = {
 				'gridicons/example': 'gridicons/dist/example',
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example',
+				debug: path.resolve( __dirname, 'node_modules/debug' ),
 			},
 			getAliasesForExtensions()
 		),
 	},
 	node: false,
 	plugins: _.compact( [
+		! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
@@ -196,10 +225,18 @@ const webpackConfig = {
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
 		] ),
+		new MiniCssExtractPlugin(),
 		new AssetsWriter( {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
 		} ),
+		shouldCheckForCycles &&
+			new CircularDependencyPlugin( {
+				exclude: /node_modules/,
+				failOnError: false,
+				allowAsyncCycles: false,
+				cwd: process.cwd(),
+			} ),
 		shouldEmitStats &&
 			new StatsWriter( {
 				filename: 'stats.json',
@@ -221,6 +258,7 @@ const webpackConfig = {
 if ( calypsoEnv === 'desktop' ) {
 	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
+	webpackConfig.output.chunkFilename = '[name].js';
 } else {
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254
@@ -240,27 +278,6 @@ if ( isDevelopment ) {
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
-if ( shouldMinify ) {
-	webpackConfig.plugins.push(
-		new UglifyJsPlugin( {
-			cache: 'docker' !== process.env.CONTAINER,
-			parallel: true,
-			sourceMap: Boolean( process.env.SOURCEMAP ),
-			uglifyOptions: {
-				compress: {
-					/**
-					 * Produces inconsistent results
-					 * Enable when the following is resolved:
-					 * https://github.com/mishoo/UglifyJS2/issues/3010
-					 */
-					collapse_vars: false,
-				},
-				ecma: 5,
-			},
-		} )
 	);
 }
 

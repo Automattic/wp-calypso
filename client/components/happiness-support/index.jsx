@@ -35,6 +35,8 @@ export class HappinessSupport extends Component {
 	};
 
 	static defaultProps = {
+		isJetpack: false,
+		isJetpackFreePlan: false,
 		showLiveChatButton: false,
 	};
 
@@ -58,13 +60,13 @@ export class HappinessSupport extends Component {
 		};
 		return isJetpackFreePlan
 			? translate(
-					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.', // eslint-disable-line max-len
+					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.',
 					{ components }
-				)
+			  )
 			: translate(
-					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.', // eslint-disable-line max-len
+					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.',
 					{ components }
-				);
+			  );
 	}
 
 	getSupportButtons() {
@@ -121,7 +123,7 @@ export class HappinessSupport extends Component {
 	renderIllustration() {
 		return (
 			<div className="happiness-support__illustration">
-				<img src="/calypso/images/illustrations/happiness-support.svg" />
+				<img alt="" src="/calypso/images/illustrations/jetpack-support.svg" />
 			</div>
 		);
 	}
@@ -140,7 +142,7 @@ export class HappinessSupport extends Component {
 				rel="noopener noreferrer"
 				className="happiness-support__support-button"
 			>
-				{ this.props.translate( 'Search our support site' ) }
+				{ this.props.translate( 'Support documentation' ) }
 			</Button>
 		);
 	}

@@ -168,4 +168,7 @@ const mapState = state => {
 	};
 };
 
-export default connect( mapState, { setLayoutFocus } )( localize( PreviewMain ) );
+export default connect(
+	mapState,
+	{ setLayoutFocus }
+)( localize( PreviewMain ) );

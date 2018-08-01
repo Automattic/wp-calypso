@@ -13,8 +13,9 @@ const debug = debugFactory( 'calypso:media' );
  */
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
+import { reduxGetState } from 'lib/redux-bridge';
+import { getEditorPostId } from 'state/ui/editor/selectors';
 import { createTransientMedia } from './utils';
-import PostEditStore from 'lib/posts/post-edit-store';
 import MediaStore from './store';
 import MediaListStore from './list-store';
 import MediaValidationStore from './validation-store';
@@ -110,11 +111,11 @@ const getFileUploader = () => ( file, siteId ) => {
 	const isUrl = 'string' === typeof file;
 
 	// Assign parent ID if currently editing post
-	const post = PostEditStore.get();
+	const postId = getEditorPostId( reduxGetState() );
 	const title = file.title;
-	if ( post && post.ID ) {
+	if ( postId ) {
 		file = {
-			parent_id: post.ID,
+			parent_id: postId,
 			[ isUrl ? 'url' : 'file' ]: file,
 		};
 	} else if ( file.fileContents ) {

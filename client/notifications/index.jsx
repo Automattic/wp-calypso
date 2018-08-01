@@ -29,7 +29,8 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
-import { getCurrentLocaleSlug, getCurrentLocaleVariant } from 'state/selectors';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 
 /**
  * Returns whether or not the browser session

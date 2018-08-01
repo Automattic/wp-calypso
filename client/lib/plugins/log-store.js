@@ -14,13 +14,13 @@ const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 import Dispatcher from 'dispatcher';
 import emitter from 'lib/mixins/emitter';
 
-var _errors = [],
+let _errors = [],
 	_inProgress = [],
 	_completed = [],
 	LogStore;
 
 function addLog( status, action, site, plugin, error ) {
-	var log = {
+	const log = {
 		status: status,
 		action: action,
 		site: site,
@@ -62,7 +62,7 @@ function clearLog( status ) {
 }
 
 function removeSingleLog( log ) {
-	var index;
+	let index;
 	debug( 'removing log:', log );
 	switch ( log.status ) {
 		case 'error':
@@ -99,9 +99,9 @@ LogStore = {
 	},
 
 	isInProgressAction: function( siteId, pluginSlug, action ) {
-		var dones = arguments.length;
+		const dones = arguments.length;
 		return _inProgress.some( function( log ) {
-			var done = 0;
+			let done = 0;
 			if ( action && isArray( action ) ) {
 				if ( indexOf( action, log.action ) !== -1 ) {
 					done++;
@@ -128,7 +128,7 @@ LogStore = {
 };
 
 LogStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	debug( 'register event Type', action.type, payload );
 	switch ( action.type ) {

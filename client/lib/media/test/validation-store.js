@@ -26,7 +26,7 @@ describe( 'MediaValidationStore', () => {
 		MediaValidationErrors = require( '../constants' ).ValidationErrors;
 
 		// Sinon
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		sandbox.spy( Dispatcher, 'register' );
 
 		// Load store
@@ -94,7 +94,7 @@ describe( 'MediaValidationStore', () => {
 	}
 
 	describe( '#validateItem()', () => {
-		var validateItem;
+		let validateItem;
 
 		beforeAll( function() {
 			validateItem = MediaValidationStore.validateItem;
@@ -144,7 +144,7 @@ describe( 'MediaValidationStore', () => {
 	} );
 
 	describe( '#clearValidationErrors()', () => {
-		var clearValidationErrors;
+		let clearValidationErrors;
 
 		beforeAll( function() {
 			clearValidationErrors = MediaValidationStore.clearValidationErrors;
@@ -170,7 +170,7 @@ describe( 'MediaValidationStore', () => {
 	} );
 
 	describe( '#clearValidationErrorsByType', () => {
-		var clearValidationErrorsByType;
+		let clearValidationErrorsByType;
 
 		beforeAll( function() {
 			clearValidationErrorsByType = MediaValidationStore.clearValidationErrorsByType;
@@ -196,13 +196,13 @@ describe( 'MediaValidationStore', () => {
 
 	describe( '#getAllErrors()', () => {
 		test( 'should return an empty object when no errors exist', () => {
-			var errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
+			const errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
 
 			expect( errors ).to.eql( {} );
 		} );
 
 		test( 'should return an object of errors', () => {
-			var errors;
+			let errors;
 
 			dispatchCreateMediaItem();
 			errors = MediaValidationStore.getAllErrors( DUMMY_SITE_ID );
@@ -215,14 +215,14 @@ describe( 'MediaValidationStore', () => {
 
 	describe( '#getErrors()', () => {
 		test( 'should return an empty array when no errors exist', () => {
-			var errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+			const errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( errors ).to.be.an.instanceof( Array );
 			expect( errors ).to.be.empty;
 		} );
 
 		test( 'should return an array of errors', () => {
-			var errors;
+			let errors;
 
 			dispatchCreateMediaItem();
 			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
@@ -249,7 +249,7 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should detect a 404 error from received item', () => {
-			var errors;
+			let errors;
 
 			dispatchReceiveMediaItem( {
 				error: {
@@ -269,7 +269,7 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should detect a not enough space error from received item', () => {
-			var errors;
+			let errors;
 
 			dispatchReceiveMediaItem( {
 				error: {
@@ -289,7 +289,7 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should detect an exceeds plan storage limit error from received item', () => {
-			var errors;
+			let errors;
 
 			dispatchReceiveMediaItem( {
 				error: {
@@ -309,7 +309,7 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should detect general server error from received item', () => {
-			var errors;
+			let errors;
 
 			dispatchReceiveMediaItem( {
 				error: new Error(),
@@ -320,7 +320,7 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should set errors into the action object explicitly', () => {
-			var action = {
+			const action = {
 				type: 'CREATE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 				data: DUMMY_MEDIA_OBJECT,
@@ -335,7 +335,7 @@ describe( 'MediaValidationStore', () => {
 		} );
 
 		test( 'should preserve existing errors when detecting a new one', () => {
-			var action = {
+			const action = {
 				type: 'CREATE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 

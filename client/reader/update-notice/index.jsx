@@ -16,35 +16,34 @@ import Gridicon from 'gridicons';
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
 import { getCommentById } from 'state/comments/selectors';
+import getStream from 'state/selectors/get-reader-stream';
 
 class UpdateNotice extends React.PureComponent {
 	static propTypes = {
-		count: PropTypes.number.isRequired,
+		streamKey: PropTypes.string,
 		onClick: PropTypes.func,
-		pendingPostKeys: PropTypes.array,
-		// connected props
 		cappedUnreadCount: PropTypes.string,
 	};
 
 	static defaultProps = { onClick: noop };
 
 	render() {
-		const { count } = this.props;
+		const { count, cappedUnreadCount, translate } = this.props;
 
 		const counterClasses = classnames( {
 			'reader-update-notice': true,
-			'is-active': this.props.count > 0,
+			'is-active': count > 0,
 		} );
 
 		return (
-			<div className={ counterClasses } onClick={ this.handleClick }>
+			<button className={ counterClasses } onClick={ this.handleClick }>
 				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
-				{ this.props.translate( '%s new post', '%s new posts', {
-					args: [ this.props.cappedUnreadCount ],
+				{ translate( '%s new post', '%s new posts', {
+					args: [ cappedUnreadCount ],
 					count,
 				} ) }
-			</div>
+			</button>
 		);
 	}
 
@@ -68,11 +67,13 @@ const countNewComments = ( state, postKeys ) => {
 };
 
 const mapStateToProps = ( state, ownProps ) => {
+	const stream = getStream( state, ownProps.streamKey );
+	const pendingItems = stream.pendingItems.items;
+	const updateCount = stream.pendingItems.items.length;
+
 	// ugly hack for convos
-	const isConversations = !! get( ownProps.pendingPostKeys, [ 0, 'comments' ] );
-	const count = isConversations
-		? countNewComments( state, ownProps.pendingPostKeys )
-		: ownProps.count;
+	const isConversations = !! get( pendingItems, [ 0, 'comments' ] );
+	const count = isConversations ? countNewComments( state, pendingItems ) : updateCount;
 
 	return {
 		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),

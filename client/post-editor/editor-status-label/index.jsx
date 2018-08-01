@@ -7,28 +7,22 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import * as postUtils from 'lib/posts/utils';
+import * as postUtils from 'state/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
+import { getSitePost } from 'state/posts/selectors';
 
-class StatusLabel extends React.PureComponent {
-	static displayName = 'StatusLabel';
-
+class EditorStatusLabel extends React.Component {
 	static propTypes = {
-		onClick: PropTypes.func,
 		post: PropTypes.object,
-		advancedStatus: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		onClick: null,
-		post: null,
-		advancedStatus: false,
 	};
 
 	state = {
@@ -53,113 +47,81 @@ class StatusLabel extends React.PureComponent {
 	}
 
 	render() {
-		let statusClass = 'editor-status-label';
-
-		if ( ! this.props.post ) {
-			return <EditorStatusLabelPlaceholder className={ statusClass } />;
+		if ( ! this.props.post && ! this.props.isNew ) {
+			return <EditorStatusLabelPlaceholder className="editor-status-label" />;
 		}
 
-		statusClass = classNames( statusClass, 'is-' + this.props.post.status );
-
-		if ( ! this.props.onClick ) {
-			return (
-				<span className={ classNames( statusClass, 'is-plain' ) }>{ this.renderLabel() }</span>
-			);
-		}
-
-		return (
-			<button
-				className={ statusClass }
-				onClick={ this.props.onClick }
-				ref="statusLabel"
-				aria-label={ this.props.translate( 'Show advanced status details' ) }
-				aria-pressed={ !! this.props.advancedStatus }
-				role="alert"
-				aria-live="polite"
-			>
-				<Gridicon icon="cog" size={ 18 } />
-				{ this.renderLabel() }
-			</button>
+		const className = classNames(
+			'editor-status-label',
+			'is-plain',
+			'is-' + get( this.props.post, 'status', 'draft' )
 		);
+
+		return <span className={ className }>{ this.renderLabel() }</span>;
 	}
 
-	renderLabel = () => {
-		var post = this.props.post,
-			editedTime = this.props.moment( postUtils.getEditedTime( post ) ),
-			label;
+	renderLabel() {
+		const { isNew, post, translate, moment } = this.props;
 
-		if ( ! post.modified ) {
-			return this.props.translate( 'New Draft' );
+		if ( isNew ) {
+			return translate( 'New Draft' );
 		}
+
+		let editedTime = moment( postUtils.getEditedTime( post ) );
 
 		// prevent JP sites from showing a draft as saved in the future
 		if ( 'draft' === post.status && editedTime.isAfter( this.state.currentTime ) ) {
-			editedTime = this.props.moment( this.state.currentTime );
+			editedTime = moment( this.state.currentTime );
 		}
 
 		const timeFromNow = editedTime.from( this.state.currentTime );
 
 		switch ( post.status ) {
 			case 'publish':
-				label = this.props.translate( '{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
+				return translate( '{{strong}}Published{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
 				} );
-				break;
 			case 'private':
-				label = this.props.translate(
-					'{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s',
-					{
-						args: { relativeTimeFromNow: timeFromNow },
-						components: {
-							strong: <strong />,
-						},
-					}
-				);
-				break;
+				return translate( '{{strong}}Published Privately{{/strong}} %(relativeTimeFromNow)s', {
+					args: { relativeTimeFromNow: timeFromNow },
+					components: {
+						strong: <strong />,
+					},
+				} );
 			case 'draft':
-				label = this.props.translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
+				return translate( '{{strong}}Saved{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
 				} );
-				break;
 			case 'pending':
-				label = this.props.translate(
-					'{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s',
-					{
-						args: { relativeTimeFromNow: timeFromNow },
-						components: {
-							strong: <strong />,
-						},
-					}
-				);
-				break;
-			case 'future':
-				label = this.props.translate( '{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
+				return translate( '{{strong}}Pending Review{{/strong}} %(relativeTimeFromNow)s', {
 					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
 				} );
-				break;
-			case 'trash':
-				label = this.props.translate( '{{strong}}Trashed{{/strong}}', {
+			case 'future':
+				return translate( '{{strong}}Scheduled{{/strong}} %(relativeTimeFromNow)s', {
+					args: { relativeTimeFromNow: timeFromNow },
 					components: {
 						strong: <strong />,
 					},
 				} );
-				break;
-			default:
-				label = '';
-				break;
+			case 'trash':
+				return translate( '{{strong}}Trashed{{/strong}}', {
+					components: {
+						strong: <strong />,
+					},
+				} );
 		}
 
-		return label;
-	};
+		return '';
+	}
 
 	updateCurrentTime = () => {
 		this.setState( {
@@ -168,4 +130,11 @@ class StatusLabel extends React.PureComponent {
 	};
 }
 
-export default localize( StatusLabel );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+	const post = getSitePost( state, siteId, postId );
+	const isNew = isEditorNewPost( state );
+
+	return { isNew, post };
+} )( localize( EditorStatusLabel ) );

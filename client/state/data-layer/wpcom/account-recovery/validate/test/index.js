@@ -1,19 +1,8 @@
 /** @format */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
 /**
  * Internal dependencies
  */
-import {
-	handleValidateRequest,
-	handleValidateRequestSuccess,
-	handleValidateRequestFailure,
-} from '../';
+import { fetch, onSuccess, onError } from '../';
 import {
 	validateRequestSuccess,
 	validateRequestError,
@@ -24,7 +13,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 describe( 'handleValidateRequest()', () => {
 	describe( 'success', () => {
 		test( 'should dispatch SUCCESS action on success', () => {
-			const dispatch = spy();
 			const action = {
 				type: 'DUMMY_ACTION',
 				userData: { user: 'foo' },
@@ -33,10 +21,7 @@ describe( 'handleValidateRequest()', () => {
 			};
 			const { userData, method, key } = action;
 
-			handleValidateRequest( { dispatch }, action );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
+			expect( fetch( action ) ).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -54,7 +39,6 @@ describe( 'handleValidateRequest()', () => {
 		} );
 
 		test( 'should dispatch SET_VALIDATION_KEY action on success', () => {
-			const dispatch = spy();
 			const action = {
 				type: 'DUMMY_ACTION',
 				userData: { user: 'foo' },
@@ -62,19 +46,14 @@ describe( 'handleValidateRequest()', () => {
 				key: 'a-super-secret-key',
 			};
 
-			handleValidateRequestSuccess( { dispatch }, action );
-
-			expect( dispatch ).to.have.been.calledWith( validateRequestSuccess() );
-			expect( dispatch ).to.have.been.calledWith( setValidationKey( action.key ) );
+			expect( onSuccess( action ) ).toEqual(
+				expect.arrayContaining( [ validateRequestSuccess(), setValidationKey( action.key ) ] )
+			);
 		} );
 
 		test( 'should dispatch ERROR action on failure', () => {
-			const dispatch = spy();
 			const error = 'something bad happened';
-			handleValidateRequestFailure( { dispatch }, {}, error );
-
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith( validateRequestError( error ) );
+			expect( onError( {}, error ) ).toEqual( validateRequestError( error ) );
 		} );
 	} );
 } );

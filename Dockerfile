@@ -1,4 +1,5 @@
-FROM       node:8.11.1-stretch
+FROM node:10.6.0-stretch
+
 LABEL maintainer="Automattic"
 
 RUN echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list.d/backports.list && \
@@ -31,10 +32,7 @@ RUN        bash /tmp/env-config.sh
 # change. This layer should allow for final build times
 # to be limited only by the Calypso build speed.
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
-RUN        true \
-           && npm install --production \
-           && rm -rf /root/.npm \
-           && true
+RUN        npm ci --only=production
 
 # Build a "source" layer
 #

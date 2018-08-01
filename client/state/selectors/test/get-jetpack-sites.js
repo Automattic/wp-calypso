@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getJetpackSites } from 'state/selectors';
+import getJetpackSites from 'state/selectors/get-jetpack-sites';
 import { userState } from './fixtures/user-state';
 
 describe( 'getJetpackSites()', () => {

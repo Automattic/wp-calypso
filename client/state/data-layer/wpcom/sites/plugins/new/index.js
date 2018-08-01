@@ -16,19 +16,18 @@ import {
 	pluginUploadError,
 	updatePluginUploadProgress,
 } from 'state/plugins/upload/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSite } from 'state/sites/selectors';
 import Dispatcher from 'dispatcher';
 
-export const uploadPlugin = ( { dispatch }, action ) => {
+export const uploadPlugin = action => {
 	const { siteId, file } = action;
 
-	dispatch( recordTracksEvent( 'calypso_plugin_upload' ) );
-
-	dispatch(
+	return [
+		recordTracksEvent( 'calypso_plugin_upload' ),
 		http(
 			{
 				method: 'POST',
@@ -37,11 +36,11 @@ export const uploadPlugin = ( { dispatch }, action ) => {
 				formData: [ [ 'zip[]', file ] ],
 			},
 			action
-		)
-	);
+		),
+	];
 };
 
-const showErrorNotice = ( dispatch, error ) => {
+const showErrorNotice = error => {
 	const knownErrors = {
 		exists: translate( 'This plugin is already installed on your site.' ),
 		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),
@@ -52,23 +51,21 @@ const showErrorNotice = ( dispatch, error ) => {
 	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
 
 	if ( knownError ) {
-		dispatch( errorNotice( knownError ) );
-		return;
+		return errorNotice( knownError );
 	}
+
 	if ( error.error ) {
-		dispatch(
-			errorNotice(
-				translate( 'Upload problem: %(error)s.', {
-					args: { error: error.error },
-				} )
-			)
+		return errorNotice(
+			translate( 'Upload problem: %(error)s.', {
+				args: { error: error.error },
+			} )
 		);
-		return;
 	}
-	dispatch( errorNotice( translate( 'Problem installing the plugin.' ) ) );
+
+	return errorNotice( translate( 'Problem installing the plugin.' ) );
 };
 
-export const uploadComplete = ( { dispatch, getState }, { siteId }, data ) => {
+export const uploadComplete = ( { siteId }, data ) => ( dispatch, getState ) => {
 	const { slug: pluginId } = data;
 	const state = getState();
 	const site = getSite( state, siteId );
@@ -94,26 +91,27 @@ export const uploadComplete = ( { dispatch, getState }, { siteId }, data ) => {
 	} );
 };
 
-export const receiveError = ( { dispatch }, { siteId }, error ) => {
-	dispatch(
-		recordTracksEvent( 'calypso_plugin_upload_error', {
-			error_code: error.error,
-			error_message: error.message,
-		} )
-	);
+export const receiveError = ( { siteId }, error ) => [
+	recordTracksEvent( 'calypso_plugin_upload_error', {
+		error_code: error.error,
+		error_message: error.message,
+	} ),
+	showErrorNotice( error ),
+	pluginUploadError( siteId, error ),
+];
 
-	showErrorNotice( dispatch, error );
-	dispatch( pluginUploadError( siteId, error ) );
-};
+export const updateUploadProgress = ( { siteId }, { loaded, total } ) => {
+	const progress = total ? ( loaded / total ) * 100 : total;
 
-export const updateUploadProgress = ( { dispatch }, { siteId }, { loaded, total } ) => {
-	const progress = total ? loaded / total * 100 : total;
-	dispatch( updatePluginUploadProgress( siteId, progress ) );
+	return updatePluginUploadProgress( siteId, progress );
 };
 
 export default {
 	[ PLUGIN_UPLOAD ]: [
-		dispatchRequest( uploadPlugin, uploadComplete, receiveError, {
+		dispatchRequestEx( {
+			fetch: uploadPlugin,
+			onSuccess: uploadComplete,
+			onError: receiveError,
 			onProgress: updateUploadProgress,
 		} ),
 	],

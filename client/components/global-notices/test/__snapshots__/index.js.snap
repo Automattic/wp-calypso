@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<GlobalNotices /> should render notices with the expected structure 1`] = `
+<div
+  className="global-notices"
+  id="overlay-notices"
+>
+  <Localized(Notice)
+    key="notice-testing-notice"
+    onDismissClick={[Function]}
+    showDismiss={true}
+    status="is-success"
+    text="A test notice"
+  />
+</div>
+`;

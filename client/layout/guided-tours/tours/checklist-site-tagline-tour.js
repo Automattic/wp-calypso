@@ -79,7 +79,7 @@ export const ChecklistSiteTaglineTour = makeTour(
 							'Your tagline has been saved! Let’s move on and see what’s next on our checklist.'
 						) }
 					</p>
-					<SiteLink isButton href={ '/checklist/:site' }>
+					<SiteLink isButton href="/checklist/:site">
 						{ translate( 'Return to the checklist' ) }
 					</SiteLink>
 				</Fragment>

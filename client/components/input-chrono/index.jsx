@@ -65,7 +65,7 @@ class InputChrono extends React.Component {
 	};
 
 	setDateText = event => {
-		var date = chrono.parseDate( event.target.value );
+		const date = chrono.parseDate( event.target.value );
 
 		if ( date ) {
 			this.setState( { value: this.props.moment( date ).calendar() } );

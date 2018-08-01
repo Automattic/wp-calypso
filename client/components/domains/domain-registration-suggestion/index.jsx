@@ -15,9 +15,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import DomainSuggestion from 'components/domains/domain-suggestion';
-import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
@@ -25,8 +23,6 @@ import {
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
-	isNewTld,
-	isTestTld,
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
 } from 'components/domains/domain-registration-suggestion/utility';
@@ -85,64 +81,6 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( this.props.suggestion );
 	};
 
-	getDomainFlags() {
-		// TODO: Remove this entire function and isNewTld/isTestTld from utility.js
-		if ( config.isEnabled( 'domains/kracken-ui' ) ) {
-			return null;
-		}
-		const { suggestion, translate } = this.props;
-		const domain = suggestion.domain_name;
-		const domainFlags = [];
-
-		if ( domain ) {
-			// Grab everything from the first dot, so 'example.co.uk' will
-			// match '.co.uk' but not '.uk'
-			// This won't work if we add subdomains.
-			const tld = domain.substring( domain.indexOf( '.' ) );
-
-			if ( isNewTld( tld ) ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-new` }
-						content={ translate( 'New' ) }
-						status="success"
-					/>
-				);
-			}
-
-			if ( isTestTld( tld ) ) {
-				domainFlags.push(
-					<DomainSuggestionFlag
-						key={ `${ domain }-testing` }
-						content={ 'Testing only' }
-						status="warning"
-					/>
-				);
-			}
-		}
-
-		if ( suggestion.isRecommended ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-recommended` }
-					content={ translate( 'Recommended' ) }
-					status="success"
-				/>
-			);
-		}
-
-		if ( suggestion.isBestAlternative ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-best-alternative` }
-					content={ translate( 'Best Alternative' ) }
-				/>
-			);
-		}
-
-		return domainFlags;
-	}
-
 	getButtonProps() {
 		const {
 			cart,
@@ -155,23 +93,20 @@ class DomainRegistrationSuggestion extends React.Component {
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
 
-		let buttonClasses, buttonContent;
+		let buttonContent;
 
 		if ( isAdded ) {
-			buttonClasses = 'added';
 			buttonContent = <Gridicon icon="checkmark" />;
 		} else {
-			buttonClasses = 'add is-primary';
 			buttonContent =
 				! isSignupStep &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 					? translate( 'Upgrade', {
 							context: 'Domain mapping suggestion button with plan upgrade',
-						} )
+					  } )
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 		return {
-			buttonClasses,
 			buttonContent,
 		};
 	}
@@ -182,17 +117,18 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderDomain() {
-		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
-		return (
-			<h3 className="domain-registration-suggestion__title">
-				{ domain }
-				{ ! isFeatured ? this.getDomainFlags() : null }
-			</h3>
-		);
+		const {
+			suggestion: { domain_name: domain },
+		} = this.props;
+		return <h3 className="domain-registration-suggestion__title">{ domain }</h3>;
 	}
 
 	renderProgressBar() {
-		const { suggestion: { isRecommended, isBestAlternative }, translate, isFeatured } = this.props;
+		const {
+			suggestion: { isRecommended, isBestAlternative, relevance: matchScore },
+			translate,
+			isFeatured,
+		} = this.props;
 
 		if ( ! isFeatured ) {
 			return null;
@@ -204,7 +140,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
-				value: 90,
+				value: matchScore * 100 || 90,
 			};
 		}
 
@@ -212,7 +148,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			title = translate( 'Best Alternative' );
 			progressBarProps = {
 				title,
-				value: 80,
+				value: matchScore * 100 || 80,
 			};
 		}
 
@@ -227,7 +163,10 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		const { suggestion: { domain_name: domain }, isFeatured } = this.props;
+		const {
+			suggestion: { domain_name: domain },
+			isFeatured,
+		} = this.props;
 
 		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.match_reasons ) ) {
 			return null;
@@ -274,4 +213,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( DomainRegistrationSuggestion ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( localize( DomainRegistrationSuggestion ) );

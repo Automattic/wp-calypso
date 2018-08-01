@@ -1,72 +1,11 @@
-.stats-tabs {
+.store-stats-chart__top {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
 
-	.stats-tab a::after {
-		content: none;
+	.store-stats-chart__title {
+		height: 10px;
+		padding: 12px 19px 10px 20px;
 	}
-
-	@include breakpoint( '>480px' ) {
-		flex-direction: row;
-	}
-}
-
-.stats-tab {
-	float: none;
-
-	@include breakpoint( '>480px' ) {
-		width: 33.3%;
-	}
-
-	a {
-		align-items: center;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		box-sizing: border-box;
-		padding: 10px 5px;
-		width: 100%;
-		height: 100%;
-
-		.value {
-			display: none;
-			float: none;
-		}
-
-		.store-stats-chart__value.value {
-			display: inline-block;
-			font-size: 20px;
-			font-weight: 300;
-			margin-top: 4px;
-		}
-
-		.delta {
-			margin-top: 8px;
-			width: initial;
-		}
-
-		.delta__icon {
-			width: 16px;
-			height: 16px;
-		}
-
-		@include breakpoint( '>480px' ) {
-			.delta__icon {
-				width: initial;
-				height: initial;
-			}
-		}
-	}
-}
-
-.chart__legend-label.is-selectable {
-	cursor: initial;
-
-	&:hover {
-		color: inherit;
-	}
-}
-
-.chart__legend-checkbox {
-	display: none;
 }

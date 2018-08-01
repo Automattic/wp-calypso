@@ -15,7 +15,7 @@ import { noop } from 'lodash';
  */
 import ControlItem from 'components/segmented-control/item';
 import InfoPopover from 'components/info-popover';
-import { getSiteSetting } from 'state/selectors';
+import getSiteSetting from 'state/selectors/get-site-setting';
 import SegmentedControl from 'components/segmented-control';
 import { isMobile } from 'lib/viewport';
 

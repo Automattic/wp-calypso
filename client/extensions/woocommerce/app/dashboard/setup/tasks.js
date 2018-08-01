@@ -20,7 +20,7 @@ import {
 	getTriedCustomizerDuringInitialSetup,
 	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
-import Checklist from 'components/checklist';
+import Checklist from 'blocks/checklist';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
@@ -89,7 +89,7 @@ class SetupTasks extends Component {
 				completedTitle: translate( 'You have added a product' ),
 				completedButtonText: translate( 'View products' ),
 				description: translate( 'Start by adding the first product to your\u00a0store.' ),
-				duration: translate( '3 mins' ),
+				duration: translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ),
 				url: getLink( '/store/product/:site', site ),
 				completed: hasProducts,
 			},
@@ -101,7 +101,7 @@ class SetupTasks extends Component {
 				completedTitle: translate( 'Shipping is set up' ),
 				completedButtonText: translate( 'View shipping' ),
 				description: translate( "We've set up shipping based on your store location." ),
-				duration: translate( '2 mins' ),
+				duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
 				url: getLink( '/store/settings/shipping/:site', site ),
 				completed: shippingIsSetUp,
 			},
@@ -113,7 +113,7 @@ class SetupTasks extends Component {
 				completedTitle: translate( 'Payments are set up' ),
 				completedButtonText: translate( 'Review payments' ),
 				description: translate( 'Choose how you would like your customers to pay you.' ),
-				duration: translate( '2 mins' ),
+				duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
 				url: getLink( '/store/settings/payments/:site', site ),
 				completed: paymentsAreSetUp,
 			},
@@ -125,7 +125,7 @@ class SetupTasks extends Component {
 				completedTitle: translate( 'Taxes are setup' ),
 				completedButtonText: translate( 'Review taxes' ),
 				description: translate( "We've set up automatic tax calculations for you." ),
-				duration: translate( '2 mins' ),
+				duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
 				url: getLink( '/store/settings/taxes/:site', site ),
 				completed: taxesAreSetUp,
 			},
@@ -139,7 +139,7 @@ class SetupTasks extends Component {
 				description: translate(
 					'View your store and make any final tweaks before opening for business.'
 				),
-				duration: translate( '4 mins' ),
+				duration: translate( '%d minute', '%d minutes', { count: 4, args: [ 4 ] } ),
 				url: customizerUrl,
 				completed: triedCustomizer,
 			},
@@ -157,7 +157,7 @@ class SetupTasks extends Component {
 			this.props.setTriedCustomizerDuringInitialSetup( this.props.site.ID, true );
 			window.open( task.url );
 		} else {
-			page.redirect( task.url );
+			page.show( task.url );
 		}
 	};
 
@@ -200,4 +200,7 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTasks ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( SetupTasks ) );

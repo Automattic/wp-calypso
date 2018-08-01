@@ -20,7 +20,7 @@ import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
 import CommentTree from './comment-tree';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { preventWidows } from 'lib/formatting';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { updatePlugin } from 'state/plugins/installed/actions';
@@ -169,4 +169,7 @@ const mapDispatchToProps = {
 	infoNotice,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentsManagement ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( CommentsManagement ) );

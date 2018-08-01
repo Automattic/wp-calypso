@@ -20,11 +20,9 @@ import Sso from './sso';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
 import SpamFilteringSettings from './spam-filtering-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import { isATEnabled } from 'lib/automated-transfer';
@@ -164,6 +162,8 @@ const getFormSettings = partialRight( pick, [
 	'wordpress_api_key',
 ] );
 
-export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
-	SiteSettingsFormSecurity
-);
+export default flowRight(
+	connectComponent,
+	localize,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormSecurity );

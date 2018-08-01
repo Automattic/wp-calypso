@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';

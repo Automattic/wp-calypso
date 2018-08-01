@@ -55,7 +55,8 @@ const AmpJetpack = ( {
 				</p>
 			</CompactCard>
 
-			{ ! requestingPlugins && <CompactCard href={ linkUrl }>{ linkText }</CompactCard> }
+			{ ! requestingPlugins &&
+				customizerAmpPanelUrl && <CompactCard href={ linkUrl }>{ linkText }</CompactCard> }
 		</div>
 	);
 };
@@ -63,13 +64,15 @@ const AmpJetpack = ( {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const customizerUrl = getCustomizerUrl( state, siteId );
-	const customizerAmpPanelUrl = addQueryArgs(
-		{
-			'autofocus[panel]': 'amp_panel',
-			customize_amp: 1,
-		},
-		customizerUrl
-	);
+	const customizerAmpPanelUrl = !! customizerUrl
+		? addQueryArgs(
+				{
+					'autofocus[panel]': 'amp_panel',
+					customize_amp: 1,
+				},
+				customizerUrl
+		  )
+		: null;
 
 	return {
 		siteId,

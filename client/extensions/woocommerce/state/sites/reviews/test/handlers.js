@@ -22,8 +22,7 @@ import {
 	announceDeleteFailure,
 } from '../handlers.js';
 import reviews from './fixtures/reviews';
-import { NOTICE_CREATE } from 'state/action-types';
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { NOTICE_CREATE, WPCOM_HTTP_REQUEST } from 'state/action-types';
 import {
 	WOOCOMMERCE_REVIEWS_RECEIVE,
 	WOOCOMMERCE_REVIEWS_REQUEST,

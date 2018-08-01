@@ -12,14 +12,15 @@ class StoredCard extends React.Component {
 	static displayName = 'StoredCard';
 
 	render() {
-		var card = this.props.card,
+		let card = this.props.card,
 			expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' ),
 			cardClasses = 'stored-card ' + card.card_type.toLowerCase();
 
 		return (
 			<div className={ cardClasses }>
 				<span className="stored-card__number">
-					{ card.card_type } ****{ card.card }
+					{ card.card_type } ****
+					{ card.card }
 				</span>
 				<span className="stored-card__name">{ card.name }</span>
 				<span className="stored-card__expiration-date">

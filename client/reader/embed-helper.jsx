@@ -1,13 +1,17 @@
 /** @format */
+/**
+ * External dependencies
+ */
 import percentageFactory from 'percentage-regex';
 
 const percentageRegex = percentageFactory( { exact: true } );
 const isPercentage = val => percentageRegex.test( val );
 
-var embedsConfig = {
+const embedsConfig = {
 	default: {
 		sizingFunction: function defaultEmbedSizingFunction( embed, availableWidth ) {
-			let { aspectRatio, width, height } = embed;
+			const { aspectRatio } = embed;
+			let { width, height } = embed;
 
 			if ( ! isNaN( aspectRatio ) ) {
 				// width and height were numbers, so grab the aspect ratio
@@ -32,7 +36,7 @@ var embedsConfig = {
 	},
 	spotify: {
 		sizingFunction: function spotifyEmbedSizingFunction( embed, availableWidth ) {
-			var height;
+			let height;
 
 			// Spotify can handle maximum height of : width + 80, if our resulted height
 			// from aspectRatio calculation will be larger, we'll use availableWidth + 80
@@ -51,8 +55,8 @@ var embedsConfig = {
 	},
 	soundcloud: {
 		sizingFunction: function soundcloudEmbedSizingFunction( embed, availableWidth ) {
-			var aspectRatio = embed.aspectRatio || 1,
-				height = '100%';
+			const aspectRatio = embed.aspectRatio || 1;
+			let height = '100%';
 
 			if ( embed.iframe.indexOf( 'visual=true' ) > -1 ) {
 				height = Math.floor( availableWidth / aspectRatio ) + 'px';
@@ -68,14 +72,14 @@ var embedsConfig = {
 };
 
 function extractUrlFromIframe( iframeHtml ) {
-	var urlRegex = new RegExp( 'src="([^"]+)"' ),
+	const urlRegex = new RegExp( 'src="([^"]+)"' ),
 		res = urlRegex.exec( iframeHtml );
 
 	return res.length > 1 ? res[ 1 ] : null;
 }
 
 function resolveEmbedConfig( embed ) {
-	var embedType, url;
+	let embedType;
 
 	// if there's type, easiest way just to use it
 	if ( embedsConfig.hasOwnProperty( embed.type ) ) {
@@ -83,7 +87,7 @@ function resolveEmbedConfig( embed ) {
 	}
 
 	// if no type, check everyone by their url regex
-	url = extractUrlFromIframe( embed.iframe );
+	const url = extractUrlFromIframe( embed.iframe );
 
 	if ( url ) {
 		for ( embedType in embedsConfig ) {
@@ -100,7 +104,7 @@ function resolveEmbedConfig( embed ) {
 
 const exported = {
 	getEmbedSizingFunction: function getEmbedSizingFunction( embed ) {
-		var embedConfig = resolveEmbedConfig( embed );
+		const embedConfig = resolveEmbedConfig( embed );
 
 		return embedConfig.sizingFunction.bind( embedConfig, embed );
 	},

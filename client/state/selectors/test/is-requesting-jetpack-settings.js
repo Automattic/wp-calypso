@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
-import { isRequestingJetpackSettings } from 'state/selectors';
+import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
 import { requestJetpackSettings } from 'state/jetpack/settings/actions';
 
 describe( 'isRequestingJetpackSettings()', () => {

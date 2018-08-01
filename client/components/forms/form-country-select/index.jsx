@@ -3,64 +3,69 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
-import createReactClass from 'create-react-class';
 import classnames from 'classnames';
-import observe from 'lib/mixins/data-observe';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { isEmpty, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 
-export default localize(
-	createReactClass( {
-		displayName: 'FormCountrySelect',
+/* eslint-disable jsx-a11y/no-onchange */
+export class FormCountrySelect extends Component {
+	static propTypes = {
+		countriesList: PropTypes.array.isRequired,
+		className: PropTypes.string,
+		disabled: PropTypes.bool,
+		onChange: PropTypes.func,
+		translate: PropTypes.func.isRequired,
+	};
 
-		mixins: [ observe( 'countriesList' ) ],
+	getOptions() {
+		const { countriesList, translate } = this.props;
 
-		getOptions( countriesList ) {
-			if ( isEmpty( countriesList ) ) {
-				return [
-					{
-						key: '',
-						label: this.props.translate( 'Loading…' ),
-						disabled: true,
-					},
-				];
-			}
-			return countriesList.map( ( { code, name }, idx ) => ( {
-				key: idx,
-				label: name,
-				code,
-				disabled: ! code,
-			} ) );
-		},
+		if ( isEmpty( countriesList ) ) {
+			return [
+				{
+					key: '',
+					label: translate( 'Loading…' ),
+				},
+			];
+		}
 
-		render() {
-			const countriesList = this.props.countriesList.get(),
-				options = this.getOptions( countriesList );
+		return countriesList.map( ( { code, name }, idx ) => ( {
+			key: idx,
+			label: name,
+			code,
+			disabled: ! code,
+		} ) );
+	}
 
-			return (
-				<select
-					{ ...omit( this.props, [
-						'className',
-						'countriesList',
-						'translate',
-						'moment',
-						'numberFormat',
-					] ) }
-					className={ classnames( this.props.className, 'form-country-select' ) }
-					onChange={ this.props.onChange }
-					disabled={ this.props.disabled }
-				>
-					{ options.map( function( option ) {
-						return (
-							<option key={ option.key } value={ option.code } disabled={ option.disabled }>
-								{ option.label }
-							</option>
-						);
-					} ) }
-				</select>
-			);
-		},
-	} )
-);
+	render() {
+		const options = this.getOptions();
+
+		return (
+			<select
+				{ ...omit( this.props, [
+					'className',
+					'countriesList',
+					'translate',
+					'moment',
+					'numberFormat',
+				] ) }
+				className={ classnames( this.props.className, 'form-country-select' ) }
+				onChange={ this.props.onChange }
+				disabled={ this.props.disabled }
+			>
+				{ options.map( function( option ) {
+					return (
+						<option key={ option.key } value={ option.code } disabled={ option.disabled }>
+							{ option.label }
+						</option>
+					);
+				} ) }
+			</select>
+		);
+	}
+}
+/* eslint-enable jsx-a11y/no-onchange */
+
+export default localize( FormCountrySelect );

@@ -16,14 +16,14 @@ import Gridicon from 'gridicons';
  */
 import FormRadio from 'components/forms/form-radio';
 import QueryPostFormats from 'components/data/query-post-formats';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import AccordionSection from 'components/accordion/section';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { getSiteDefaultPostFormat } from 'state/selectors';
+import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
 import { editPost } from 'state/posts/actions';
 
 const ICONS = {
@@ -75,8 +75,8 @@ class EditorPostFormats extends React.Component {
 		const format = event.target.value;
 
 		this.props.editPost( this.props.siteId, this.props.postId, { format } );
-		recordStat( 'post_format_changed' );
-		recordEvent( 'Changed Post Format', format );
+		this.props.recordEditorStat( 'post_format_changed' );
+		this.props.recordEditorEvent( 'Changed Post Format', format );
 	};
 
 	renderPostFormats() {
@@ -126,5 +126,5 @@ export default connect(
 
 		return { siteId, postId, postFormats, formatValue };
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent }
 )( localize( EditorPostFormats ) );

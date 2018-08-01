@@ -24,7 +24,7 @@ import {
 	isTheme,
 } from 'lib/products-values';
 
-const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
+const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 	let props = {},
 		url,
 		text;
@@ -33,22 +33,22 @@ const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
 		return <span />;
 	}
 
-	if ( isPlan( selectedPurchase ) ) {
+	if ( isPlan( purchase ) ) {
 		url = '/plans/compare/' + selectedSite.slug;
 		text = i18n.translate( 'View Plan Features' );
 	}
 
-	if ( isDomainProduct( selectedPurchase ) || isSiteRedirect( selectedPurchase ) ) {
-		url = domainManagementEdit( selectedSite.slug, selectedPurchase.meta );
+	if ( isDomainProduct( purchase ) || isSiteRedirect( purchase ) ) {
+		url = domainManagementEdit( selectedSite.slug, purchase.meta );
 		text = i18n.translate( 'Domain Settings' );
 	}
 
-	if ( isGoogleApps( selectedPurchase ) ) {
-		url = googleAppsSettingsUrl( selectedPurchase.meta );
+	if ( isGoogleApps( purchase ) ) {
+		url = googleAppsSettingsUrl( purchase.meta );
 		text = i18n.translate( 'G Suite Settings' );
 	}
 
-	if ( isTheme( selectedPurchase ) ) {
+	if ( isTheme( purchase ) ) {
 		url = productUrl;
 		text = i18n.translate( 'Theme Details' );
 
@@ -69,15 +69,15 @@ const ProductLink = ( { selectedPurchase, selectedSite, productUrl } ) => {
 };
 
 ProductLink.propTypes = {
-	selectedPurchase: PropTypes.object.isRequired,
+	purchase: PropTypes.object.isRequired,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 };
 
-export default connect( ( state, { selectedPurchase } ) => {
-	if ( isTheme( selectedPurchase ) ) {
+export default connect( ( state, { purchase } ) => {
+	if ( isTheme( purchase ) ) {
 		return {
 			// No <QueryTheme /> component needed, since getThemeDetailsUrl() only needs the themeId which we pass here.
-			productUrl: getThemeDetailsUrl( state, selectedPurchase.meta, selectedPurchase.siteId ),
+			productUrl: getThemeDetailsUrl( state, purchase.meta, purchase.siteId ),
 		};
 	}
 	return {};

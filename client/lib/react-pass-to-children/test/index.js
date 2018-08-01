@@ -16,7 +16,7 @@ import passToChildren from '../';
 /**
  * Module variables
  */
-var DUMMY_PROPS = { data: [ 1, 2, 3 ] },
+let DUMMY_PROPS = { data: [ 1, 2, 3 ] },
 	PassThrough;
 
 PassThrough = class extends React.Component {
@@ -26,14 +26,14 @@ PassThrough = class extends React.Component {
 };
 
 describe( 'index', () => {
-	var renderer;
+	let renderer;
 
 	beforeEach( () => {
 		renderer = new ShallowRenderer();
 	} );
 
 	test( 'should accept a single child and pass along props', () => {
-		var result;
+		let result;
 
 		renderer.render(
 			<PassThrough>
@@ -47,7 +47,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should accept multiple children and wrap them in a div', () => {
-		var result;
+		let result;
 
 		renderer.render(
 			<PassThrough>
@@ -63,7 +63,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should accept multiple children and pass along props to each', done => {
-		var result;
+		let result;
 
 		renderer.render(
 			<PassThrough>
@@ -84,7 +84,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should accept multiple children, including nulls', () => {
-		var result;
+		let result;
 
 		renderer.render(
 			<PassThrough>
@@ -99,7 +99,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should preserve props passed to the children', () => {
-		var result;
+		let result;
 
 		renderer.render(
 			<PassThrough>
@@ -117,7 +117,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should preserve props passed to the instance itself', () => {
-		var result;
+		let result;
 
 		renderer.render(
 			<PassThrough data-preserve>

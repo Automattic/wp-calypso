@@ -17,22 +17,19 @@ import Card from 'components/card';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SectionHeader from 'components/section-header';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import {
-	getSiteMonitorSettings,
-	isActivatingJetpackModule,
-	isDeactivatingJetpackModule,
-	isFetchingJetpackModules,
-	isJetpackModuleActive,
-	isRequestingSiteMonitorSettings,
-	isUpdatingSiteMonitorSettings,
-} from 'state/selectors';
+import getSiteMonitorSettings from 'state/selectors/get-site-monitor-settings';
+import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
+import isFetchingJetpackModules from 'state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
+import isUpdatingSiteMonitorSettings from 'state/selectors/is-updating-site-monitor-settings';
 
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};
@@ -139,18 +136,10 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<SectionHeader label={ translate( 'Downtime Monitoring' ) } />
 
 				<Card className="jetpack-monitor-settings">
-					<div className="site-settings__info-link-container">
-						<InfoPopover position="left">
-							{ translate( "Notifies you when there's an issue with your site." ) }{' '}
-							<ExternalLink
-								href="https://jetpack.com/support/monitor/"
-								icon={ false }
-								target="_blank"
-							>
-								{ translate( 'Learn more' ) }
-							</ExternalLink>
-						</InfoPopover>
-					</div>
+					<SupportInfo
+						text={ translate( "Notifies you when there's an issue with your site." ) }
+						link="https://jetpack.com/support/monitor/"
+					/>
 
 					<JetpackModuleToggle
 						siteId={ siteId }

@@ -130,8 +130,9 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 		const defaultValues = startsWith( method.methodType, 'wc_services' )
 			? getDefaultSettingsValues(
 					getShippingMethodSchema( state, method.methodType, siteId ).formSchema
-				)
+			  )
 			: {};
+
 		return merge( {}, defaultValues, method, { enabled: false !== enabled } );
 	} );
 	return sortShippingZoneMethods( state, siteId, allMethods );

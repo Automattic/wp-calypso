@@ -28,10 +28,17 @@ export function getSiteFragment( path ) {
 	// There are 2 URL positions where we should look for the site fragment:
 	// last (most sections) and second-to-last (post ID is last in editor)
 
-	// Though, in some`/me/purchases` paths, it could also be in third position,
-	// right after the `/me/purchases/` part.
+	// Avoid confusing the receipt ID for the site ID in domain-only checkouts.
+	if ( 0 === basePath.indexOf( '/checkout/thank-you/no-site/' ) ) {
+		return false;
+	}
+
+	// In some paths, the site fragment could also be in third position.
 	// e.g. /me/purchases/example.wordpress.com/foo/bar
-	if ( 0 === basePath.indexOf( '/me/purchases/' ) ) {
+	if (
+		0 === basePath.indexOf( '/me/purchases/' ) ||
+		0 === basePath.indexOf( '/checkout/thank-you/' )
+	) {
 		const piece = pieces[ 3 ]; // 0 is the empty string before the first `/`
 		if ( piece && -1 !== piece.indexOf( '.' ) ) {
 			return piece;
@@ -76,29 +83,6 @@ export function addSiteFragment( path, site ) {
 	}
 
 	return pieces.join( '/' );
-}
-
-export function sectionifyWithRoutes( path, routes ) {
-	const routeParams = {};
-	if ( ! routes || ! Array.isArray( routes ) ) {
-		return {
-			routePath: sectionify( path, routes ),
-			routeParams,
-		};
-	}
-
-	let routePath = path.split( '?' )[ 0 ];
-	for ( const route of routes ) {
-		if ( route.match( routePath, routeParams ) ) {
-			routePath = route.path;
-			break;
-		}
-	}
-
-	return {
-		routePath: untrailingslashit( routePath ),
-		routeParams,
-	};
 }
 
 export function sectionify( path, siteFragment ) {

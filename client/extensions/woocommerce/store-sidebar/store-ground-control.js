@@ -26,9 +26,9 @@ const StoreGroundControl = ( { site, translate } ) => {
 				className="store-sidebar__ground-control-back"
 				disabled={ isPlaceholder }
 				href={ backLink }
-				aria-label={ translate( 'Go back' ) }
+				aria-label={ translate( 'Close Store' ) }
 			>
-				<Gridicon icon="chevron-left" />
+				<Gridicon icon="cross" />
 			</Button>
 			<div className="store-sidebar__ground-control-site">
 				<Site site={ site } indicator={ false } homeLink externalLink />

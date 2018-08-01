@@ -24,7 +24,7 @@ import { getYearlyPlanByMonthly, planMatches } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
@@ -58,10 +58,7 @@ export class PlanFeaturesHeader extends Component {
 					<PlanIcon plan={ planType } />
 				</div>
 				<div className="plan-features__header-text">
-					<h4 className="plan-features__header-title">
-						{ title }
-						{ this.getCreditLabel() }
-					</h4>
+					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
@@ -96,36 +93,6 @@ export class PlanFeaturesHeader extends Component {
 		);
 	}
 
-	getCreditLabel() {
-		const {
-			available,
-			discountPrice,
-			isSiteJetpack,
-			rawPrice,
-			relatedMonthlyPlan,
-			showModifiedPricingDisplay,
-		} = this.props;
-
-		if ( ! showModifiedPricingDisplay || ! available || this.isPlanCurrent() ) {
-			return null;
-		}
-
-		if ( ! discountPrice && ! relatedMonthlyPlan ) {
-			return null;
-		}
-
-		if ( relatedMonthlyPlan && relatedMonthlyPlan.raw_price * 12 === rawPrice ) {
-			return null;
-		}
-
-		// Note: Don't make this translatable because it's only visible to English-language users
-		return (
-			<span className="plan-features__header-credit-label">
-				{ isSiteJetpack ? 'Discount' : 'Credit available' }
-			</span>
-		);
-	}
-
 	getDiscountTooltipMessage() {
 		const { currencyCode, currentSitePlan, translate, rawPrice } = this.props;
 
@@ -136,18 +103,19 @@ export class PlanFeaturesHeader extends Component {
 		const price = formatCurrency( rawPrice, currencyCode );
 
 		return translate(
-			"We'll deduct the cost of your current plan from the full price (%(price)s) for the next 12 months.",
+			"You'll receive a discount from the full price of %(price)s because you already have a plan.",
 			{ args: { price } }
 		);
 	}
 
 	getBillingTimeframe() {
 		const {
+			currentSitePlan,
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
 			isSiteAT,
-			isSiteJetpack,
+			isJetpack,
 			hideMonthly,
 			isInSignup,
 		} = this.props;
@@ -166,9 +134,11 @@ export class PlanFeaturesHeader extends Component {
 			);
 		}
 
+		const isUserCurrentlyOnAFreePlan =
+			currentSitePlan && planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } );
 		if (
 			isSiteAT ||
-			! isSiteJetpack ||
+			! isJetpack ||
 			planMatches( this.props.planType, { type: TYPE_FREE } ) ||
 			hideMonthly
 		) {
@@ -176,6 +146,7 @@ export class PlanFeaturesHeader extends Component {
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
 					{ isDiscounted &&
+						! isUserCurrentlyOnAFreePlan &&
 						! isPlaceholder && (
 							<InfoPopover
 								className="plan-features__header-tip-info"
@@ -207,16 +178,15 @@ export class PlanFeaturesHeader extends Component {
 			discountPrice,
 			isInSignup,
 			isPlaceholder,
-			isSiteJetpack,
+			isJetpack,
 			rawPrice,
 			relatedMonthlyPlan,
-			showModifiedPricingDisplay,
 		} = this.props;
 
 		if ( isPlaceholder && ! isInSignup ) {
 			const classes = classNames( 'is-placeholder', {
-				'plan-features__price': ! isSiteJetpack,
-				'plan-features__price-jetpack': isSiteJetpack,
+				'plan-features__price': ! isJetpack,
+				'plan-features__price-jetpack': isJetpack,
 			} );
 
 			return <div className={ classes } />;
@@ -228,9 +198,7 @@ export class PlanFeaturesHeader extends Component {
 				<span className="plan-features__header-price-group">
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={
-							showModifiedPricingDisplay && this.isPlanCurrent() ? rawPrice : originalPrice
-						}
+						rawPrice={ originalPrice }
 						isInSignup={ isInSignup }
 						original
 					/>
@@ -272,14 +240,15 @@ export class PlanFeaturesHeader extends Component {
 		const {
 			basePlansPath,
 			currencyCode,
-			isSiteJetpack,
+			isJetpack,
+			isSiteAT,
 			isYearly,
 			rawPrice,
 			relatedMonthlyPlan,
 			relatedYearlyPlan,
 			siteSlug,
 		} = this.props;
-		if ( isSiteJetpack ) {
+		if ( isJetpack && ! isSiteAT ) {
 			const [ discountPrice, originalPrice ] = isYearly
 				? [ relatedMonthlyPlan.raw_price * 12, rawPrice ]
 				: [ rawPrice * 12, get( relatedYearlyPlan, 'raw_price' ) ];
@@ -303,53 +272,54 @@ export class PlanFeaturesHeader extends Component {
 }
 
 PlanFeaturesHeader.propTypes = {
-	available: PropTypes.bool,
+	bestValue: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
+	currencyCode: PropTypes.string,
 	current: PropTypes.bool,
+	discountPrice: PropTypes.number,
+	isInJetpackConnect: PropTypes.bool,
+	isInSignup: PropTypes.bool,
+	isJetpack: PropTypes.bool,
+	isPlaceholder: PropTypes.bool,
+	newPlan: PropTypes.bool,
 	onClick: PropTypes.func,
 	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 	popular: PropTypes.bool,
-	newPlan: PropTypes.bool,
-	bestValue: PropTypes.bool,
 	rawPrice: PropTypes.number,
-	discountPrice: PropTypes.number,
-	currencyCode: PropTypes.string,
-	title: PropTypes.string.isRequired,
-	isPlaceholder: PropTypes.bool,
-	translate: PropTypes.func,
-	siteSlug: PropTypes.string,
-	isInJetpackConnect: PropTypes.bool,
 	relatedMonthlyPlan: PropTypes.object,
+	siteSlug: PropTypes.string,
+	title: PropTypes.string.isRequired,
+	translate: PropTypes.func,
 
 	// Connected props
 	currentSitePlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
-	isSiteJetpack: PropTypes.bool,
 	relatedYearlyPlan: PropTypes.object,
 };
 
 PlanFeaturesHeader.defaultProps = {
+	basePlansPath: null,
+	bestValue: false,
 	current: false,
+	currentSitePlan: {},
+	isInSignup: false,
+	isJetpack: false,
+	isPlaceholder: false,
+	isSiteAT: false,
+	newPlan: false,
 	onClick: noop,
 	popular: false,
-	newPlan: false,
-	bestValue: false,
-	isPlaceholder: false,
 	siteSlug: '',
-	basePlansPath: null,
-	currentSitePlan: {},
-	isSiteAT: false,
-	isSiteJetpack: false,
 };
 
 export default connect( ( state, { isInSignup, planType, relatedMonthlyPlan } ) => {
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	const isYearly = !! relatedMonthlyPlan;
+
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
-		isSiteJetpack: isJetpackSite( state, selectedSiteId ),
 		isYearly,
 		relatedYearlyPlan: isYearly ? null : getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
 		siteSlug: getSiteSlug( state, selectedSiteId ),

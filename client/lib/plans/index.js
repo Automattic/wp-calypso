@@ -5,7 +5,7 @@
  */
 import moment from 'moment';
 import { format as urlFormat, parse as urlParse } from 'url';
-import { difference, find, get, includes, invoke, pick, values } from 'lodash';
+import { difference, get, includes, invoke, pick, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import {
 	FEATURES_LIST,
 	PLANS_LIST,
 	PLAN_FREE,
-	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
@@ -64,26 +63,6 @@ export function getFeatureByKey( feature ) {
 
 export function getFeatureTitle( feature ) {
 	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
-}
-
-export function canUpgradeToPlan( planKey, site ) {
-	// Which "free plan" should we use to test
-	const freePlan =
-		get( site, 'jetpack', false ) && ! get( site, [ 'options', 'is_automated_transfer' ], false )
-			? PLAN_JETPACK_FREE
-			: PLAN_FREE;
-	const plan = get( site, [ 'plan', 'expired' ], false )
-		? freePlan
-		: get( site, [ 'plan', 'product_slug' ], freePlan );
-	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
-}
-
-export function getUpgradePlanSlugFromPath( path, site ) {
-	return find(
-		Object.keys( PLANS_LIST ),
-		planKey =>
-			( planKey === path || getPlanPath( planKey ) === path ) && canUpgradeToPlan( planKey, site )
-	);
 }
 
 export function getPlanPath( plan ) {

@@ -19,7 +19,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormToggle from 'components/forms/form-toggle';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -87,12 +87,14 @@ class TermFormDialog extends Component {
 	};
 
 	onTopLevelChange = () => {
+		// Only validate the form when **enabling** the top level toggle.
+		const performValidation = ! this.state.isTopLevel ? this.isValid : noop;
 		this.setState(
-			{
-				isTopLevel: ! this.state.isTopLevel,
+			( { isTopLevel } ) => ( {
+				isTopLevel: ! isTopLevel,
 				selectedParent: [],
-			},
-			this.isValid
+			} ),
+			performValidation
 		);
 	};
 
@@ -225,6 +227,7 @@ class TermFormDialog extends Component {
 		if ( matchingTerm ) {
 			errors.name = this.props.translate( 'Name already exists', {
 				context: 'Terms: Add term error message - duplicate term name exists',
+				comment: 'Term here refers to a hierarchical taxonomy, e.g. "Category"',
 				textOnly: true,
 			} );
 		}
@@ -233,6 +236,7 @@ class TermFormDialog extends Component {
 		if ( this.props.isHierarchical && ! this.state.isTopLevel && ! values.parent ) {
 			errors.parent = this.props.translate( 'Parent item required when "Top level" is unchecked', {
 				context: 'Terms: Add term error message',
+				comment: 'Term here refers to a hierarchical taxonomy, e.g. "Category"',
 				textOnly: true,
 			} );
 		}
@@ -248,7 +252,7 @@ class TermFormDialog extends Component {
 
 	renderParentSelector() {
 		const { labels, siteId, taxonomy, translate, terms } = this.props;
-		const { searchTerm, selectedParent } = this.state;
+		const { isTopLevel, searchTerm, selectedParent } = this.state;
 		const query = {};
 		if ( searchTerm && searchTerm.length ) {
 			query.search = searchTerm;
@@ -264,28 +268,48 @@ class TermFormDialog extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ labels.parent_item }</FormLegend>
 				<FormLabel>
-					<FormCheckbox
-						ref="topLevel"
-						checked={ this.state.isTopLevel }
-						onChange={ this.onTopLevelChange }
-					/>
+					<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange } />
 					<span>
-						{ translate( 'Top level', { context: 'Terms: New term being created is top level' } ) }
+						{ translate( 'Top level %(term)s', {
+							args: { term: labels.singular_name },
+							context: 'Terms: New term being created is top level',
+							comment:
+								'term is the singular_name label of a hierarchical taxonomy, e.g. "Category"',
+						} ) }
 					</span>
+					{ isTopLevel && (
+						<span className="term-form-dialog__top-level-description">
+							{ translate( 'Disable to select a %(parentTerm)s', {
+								args: { parentTerm: labels.parent_item },
+								comment:
+									'parentTerm is the parent_item label of a hierarchical taxonomy, e.g. "Parent Category"',
+							} ) }
+						</span>
+					) }
 				</FormLabel>
-				<TermTreeSelectorTerms
-					siteId={ siteId }
-					taxonomy={ taxonomy }
-					isError={ isError }
-					onSearch={ this.onSearch }
-					onChange={ this.onParentChange }
-					query={ query }
-					selected={ selectedParent }
-					hideTermAndChildren={ hideTermAndChildren }
-				/>
-				{ isError && <FormInputValidation isError text={ this.state.errors.parent } /> }
+				{ ! isTopLevel && (
+					<div className="term-form-dialog__parent-tree-selector">
+						<FormLegend>
+							{ translate( 'Choose a %(parentTerm)s', {
+								args: { parentTerm: labels.parent_item },
+								comment:
+									'parentTerm is the parent_item label of a hierarchical taxonomy, e.g. "Parent Category"',
+							} ) }
+						</FormLegend>
+						<TermTreeSelectorTerms
+							siteId={ siteId }
+							taxonomy={ taxonomy }
+							isError={ isError }
+							onSearch={ this.onSearch }
+							onChange={ this.onParentChange }
+							query={ query }
+							selected={ selectedParent }
+							hideTermAndChildren={ hideTermAndChildren }
+						/>
+						{ isError && <FormInputValidation isError text={ this.state.errors.parent } /> }
+					</div>
+				) }
 			</FormFieldset>
 		);
 	}
@@ -342,7 +366,10 @@ class TermFormDialog extends Component {
 				{ showDescriptionInput && (
 					<FormFieldset>
 						<FormLegend>
-							{ translate( 'Description', { context: 'Terms: Term description label' } ) }
+							{ translate( 'Description', {
+								context: 'Terms: Term description label',
+								comment: 'Term here refers to a hierarchical taxonomy, e.g. "Category"',
+							} ) }
 						</FormLegend>
 						<FormTextarea
 							ref="termDescription"

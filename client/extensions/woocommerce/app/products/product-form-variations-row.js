@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -34,6 +32,7 @@ class ProductFormVariationsRow extends Component {
 		editProductVariation: PropTypes.func.isRequired,
 		onUploadStart: PropTypes.func.isRequired,
 		onUploadFinish: PropTypes.func.isRequired,
+		storeIsManagingStock: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -125,6 +124,7 @@ class ProductFormVariationsRow extends Component {
 
 	renderImage = () => {
 		const { src, placeholder, isUploading } = this.state;
+		const { translate } = this.props;
 
 		let image = null;
 		if ( src && ! isUploading ) {
@@ -132,14 +132,15 @@ class ProductFormVariationsRow extends Component {
 				<figure>
 					<ImagePreloader
 						src={ src }
-						placeholder={ ( placeholder && <img src={ placeholder } /> ) || <span /> }
+						alt={ translate( 'Variation thumbnail' ) }
+						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
 					/>
 				</figure>
 			);
 		} else if ( isUploading ) {
 			image = (
 				<figure>
-					<img src={ placeholder || <span /> } />
+					<img src={ placeholder || '' } alt="" />
 					<Spinner />
 				</figure>
 			);
@@ -154,6 +155,7 @@ class ProductFormVariationsRow extends Component {
 			<Button
 				compact
 				onClick={ this.removeImage }
+				aria-label={ translate( 'Remove image' ) }
 				className="products__product-form-variation-image-remove"
 			>
 				<Gridicon
@@ -182,7 +184,9 @@ class ProductFormVariationsRow extends Component {
 	};
 
 	render() {
-		const { variation, translate } = this.props;
+		const { variation, translate, storeIsManagingStock } = this.props;
+		const stockDisabled = 'no' === storeIsManagingStock ? true : false;
+
 		return (
 			<tr className="products__product-form-variation-row">
 				<td className="products__product-id">
@@ -205,6 +209,7 @@ class ProductFormVariationsRow extends Component {
 							type="number"
 							onChange={ this.setStockQuantity }
 							placeholder={ translate( 'Quantity' ) }
+							disabled={ stockDisabled }
 						/>
 					</div>
 				</td>

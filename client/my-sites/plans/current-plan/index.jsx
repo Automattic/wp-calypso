@@ -5,6 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -33,6 +34,9 @@ import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import ChecklistShow from 'my-sites/checklist/checklist-show';
+import { isEnabled } from 'config';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -54,21 +58,20 @@ class CurrentPlan extends Component {
 		return ! selectedSite || isRequestingPlans;
 	}
 
-	getHeaderWording( plan ) {
+	getHeaderWording( planConstObj ) {
 		const { translate } = this.props;
 
-		const planConstObj = getPlan( plan ),
-			title = translate( 'Your site is on a %(planName)s plan', {
-				args: {
-					planName: planConstObj.getTitle(),
-				},
-			} );
+		const title = translate( 'Your site is on a %(planName)s plan', {
+			args: {
+				planName: planConstObj.getTitle(),
+			},
+		} );
 
 		const tagLine = planConstObj.getTagline
 			? planConstObj.getTagline()
 			: translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
-				);
+			  );
 
 		return {
 			title: title,
@@ -83,17 +86,23 @@ class CurrentPlan extends Component {
 			domains,
 			context,
 			currentPlan,
-			isExpiring,
-			shouldShowDomainWarnings,
 			hasDomainsLoaded,
-			translate,
 			isAutomatedTransfer,
+			isExpiring,
+			isJetpack,
+			shouldShowDomainWarnings,
+			translate,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
 
-		const { title, tagLine } = this.getHeaderWording( currentPlanSlug );
+		const planConstObj = getPlan( currentPlanSlug ),
+			planFeaturesHeader = translate( '%(planName)s plan features', {
+				args: { planName: planConstObj.getTitle() },
+			} );
+
+		const { title, tagLine } = this.getHeaderWording( planConstObj );
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
@@ -136,6 +145,21 @@ class CurrentPlan extends Component {
 						isAutomatedTransfer={ isAutomatedTransfer }
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
+					{ isEnabled( 'jetpack/checklist' ) &&
+						isJetpack &&
+						! isAutomatedTransfer && (
+							<Fragment>
+								<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+								<ChecklistShow />
+							</Fragment>
+						) }
+					<div
+						className={ classNames( 'current-plan__header-text current-plan__text', {
+							'is-placeholder': { isLoading },
+						} ) }
+					>
+						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+					</div>
 					<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
 				</Fragment>
 
@@ -150,7 +174,7 @@ export default connect( ( state, ownProps ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
 
-	const isWpcom = ! isJetpackSite( state, selectedSiteId );
+	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 	return {
@@ -161,8 +185,9 @@ export default connect( ( state, ownProps ) => {
 		context: ownProps.context,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
-		shouldShowDomainWarnings: isWpcom || isAutomatedTransfer,
+		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
+		isJetpack,
 	};
 } )( localize( CurrentPlan ) );

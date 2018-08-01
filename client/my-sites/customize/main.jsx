@@ -25,7 +25,7 @@ import Actions from 'my-sites/customize/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { themeActivated } from 'state/themes/actions';
 import { getCustomizerFocus } from './panels';
-import { getMenusUrl } from 'state/selectors';
+import getMenusUrl from 'state/selectors/get-menus-url';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import wpcom from 'lib/wp';
@@ -127,6 +127,15 @@ class Customize extends React.Component {
 
 		debug( 'returning to previous page', path );
 		page.back( path );
+	};
+
+	navigateTo = destination => {
+		if ( ! startsWith( destination, '/checkout' ) ) {
+			return;
+		}
+
+		debug( 'navigating to', destination );
+		page( destination );
 	};
 
 	waitForLoading = () => {
@@ -256,6 +265,14 @@ class Customize extends React.Component {
 				case 'purchased':
 					const themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
 					Actions.purchase( themeSlug, site );
+					break;
+				case 'navigateTo':
+					const destination = message.destination;
+					if ( ! destination ) {
+						debug( 'missing destination' );
+						return;
+					}
+					this.navigateTo( destination );
 					break;
 			}
 		}

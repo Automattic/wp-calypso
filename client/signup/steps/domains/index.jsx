@@ -8,12 +8,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith, get } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
+import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import SignupActions from 'lib/signup/actions';
@@ -27,12 +30,14 @@ import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
+	recordAddDomainButtonClickInUseYourDomain,
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
+import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 
 const productsList = productsListFactory();
 
@@ -69,6 +74,16 @@ class DomainsStep extends React.Component {
 
 	getTransferDomainUrl = () => {
 		return getStepUrl( this.props.flowName, this.props.stepName, 'transfer', this.props.locale );
+	};
+
+	getUseYourDomainUrl = () => {
+		const url = getStepUrl(
+			this.props.flowName,
+			this.props.stepName,
+			'use-your-domain',
+			this.props.locale
+		);
+		return url;
 	};
 
 	componentDidMount() {
@@ -134,7 +149,7 @@ class DomainsStep extends React.Component {
 				? cartItems.domainRegistration( {
 						domain: suggestion.domain_name,
 						productSlug: suggestion.product_slug,
-					} )
+				  } )
 				: undefined;
 
 		this.props.submitDomainStepSelection( suggestion, 'signup' );
@@ -189,8 +204,14 @@ class DomainsStep extends React.Component {
 		this.props.goToNextStep();
 	};
 
-	handleAddTransfer = domain => {
-		const domainItem = cartItems.domainTransfer( { domain, extra: { signup: true } } );
+	handleAddTransfer = ( domain, authCode ) => {
+		const domainItem = cartItems.domainTransfer( {
+			domain,
+			extra: {
+				auth_code: authCode,
+				signup: true,
+			},
+		} );
 		const isPurchasingItem = true;
 
 		this.props.recordAddDomainButtonClickInTransferDomain( domain, 'signup' );
@@ -239,12 +260,26 @@ class DomainsStep extends React.Component {
 		return this.props.designType;
 	};
 
+	shouldIncludeDotBlogSubdomain() {
+		const { flowName, siteGoals } = this.props;
+		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
+
+		return (
+			// 'subdomain' flow coming from .blog landing pages
+			flowName === 'subdomain' ||
+			// User picked only 'share' on the `about` step
+			( abtest( 'includeDotBlogSubdomain' ) === 'yes' &&
+				siteGoalsArray.length === 1 &&
+				siteGoalsArray.indexOf( 'share' ) !== -1 )
+		);
+	}
+
 	domainForm = () => {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
 
 		return (
 			<RegisterDomainStep
+				key="domainForm"
 				path={ this.props.path }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
@@ -252,13 +287,14 @@ class DomainsStep extends React.Component {
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
+				useYourDomainUrl={ this.getUseYourDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerUnavailableOption={ ! this.props.isDomainOnly }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
-				includeDotBlogSubdomain={ includeDotBlogSubdomain }
+				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
@@ -274,7 +310,7 @@ class DomainsStep extends React.Component {
 				this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
 		return (
-			<div className="domains__step-section-wrapper">
+			<div className="domains__step-section-wrapper" key="mappingForm">
 				<MapDomainStep
 					initialState={ initialState }
 					path={ this.props.path }
@@ -299,13 +335,14 @@ class DomainsStep extends React.Component {
 			this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
 		return (
-			<div className="domains__step-section-wrapper">
+			<div className="domains__step-section-wrapper" key="transferForm">
 				<TransferDomainStep
 					analyticsSection="signup"
 					basePath={ this.props.path }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					isSignupStep
+					mapDomainUrl={ this.getMapDomainUrl() }
 					onRegisterDomain={ this.handleAddDomain }
 					onTransferDomain={ this.handleAddTransfer }
 					onSave={ this.onTransferSave }
@@ -315,16 +352,38 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	render() {
-		let content;
-		const { translate } = this.props;
-		const backUrl = this.props.stepSectionName
-			? getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
-			: undefined;
-		let fallbackSubHeaderText = translate(
-			"Enter your site's name, or some key words that describe it - " +
-				"we'll use this to create your new site's address."
+	useYourDomainForm = () => {
+		const initialQuery =
+			this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
+
+		return (
+			<div className="domains__step-section-wrapper" key="useYourDomainForm">
+				<UseYourDomainStep
+					analyticsSection="signup"
+					basePath={ this.props.path }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					initialQuery={ initialQuery }
+					isSignupStep
+					mapDomainUrl={ this.getMapDomainUrl() }
+					transferDomainUrl={ this.getTransferDomainUrl() }
+					products={ productsList.get() }
+				/>
+			</div>
 		);
+	};
+
+	getSubHeaderText() {
+		const { translate } = this.props;
+		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
+			? translate( 'Use a domain you already own with your new WordPress.com site.' )
+			: translate(
+					"Enter your site's name, or some keywords that describe it - " +
+						"we'll use this to create your new site's address."
+			  );
+	}
+
+	renderContent() {
+		let content;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
@@ -332,9 +391,10 @@ class DomainsStep extends React.Component {
 
 		if ( 'transfer' === this.props.stepSectionName ) {
 			content = this.transferForm();
-			fallbackSubHeaderText = translate(
-				'Use a domain you already own with your new WordPress.com site.'
-			);
+		}
+
+		if ( 'use-your-domain' === this.props.stepSectionName ) {
+			content = this.useYourDomainForm();
 		}
 
 		if ( ! this.props.stepSectionName ) {
@@ -352,6 +412,17 @@ class DomainsStep extends React.Component {
 			);
 		}
 
+		return content;
+	}
+
+	render() {
+		const { translate } = this.props;
+		const backUrl = this.props.stepSectionName
+			? getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
+			: undefined;
+
+		const fallbackSubHeaderText = this.getSubHeaderText();
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -359,10 +430,18 @@ class DomainsStep extends React.Component {
 				backUrl={ backUrl }
 				positionInFlow={ this.props.positionInFlow }
 				signupProgress={ this.props.signupProgress }
-				subHeaderText={ translate( "First up, let's find a domain." ) }
 				fallbackHeaderText={ translate( "Let's give your site an address." ) }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				stepContent={ content }
+				stepContent={
+					<ReactCSSTransitionGroup
+						component="div"
+						transitionEnterTimeout={ 200 }
+						transitionLeave={ false }
+						transitionName="domains__step-content"
+					>
+						{ this.renderContent() }
+					</ReactCSSTransitionGroup>
+				}
 			/>
 		);
 	}
@@ -402,17 +481,19 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 
 export default connect(
 	state => ( {
+		designType: getDesignType( state ),
 		// no user = DOMAINS_WITH_PLANS_ONLY
 		domainsWithPlansOnly: getCurrentUser( state )
 			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
 			: true,
+		siteGoals: getSiteGoals( state ),
 		surveyVertical: getSurveyVertical( state ),
-		designType: getDesignType( state ),
 	} ),
 	{
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
 		recordAddDomainButtonClickInTransferDomain,
+		recordAddDomainButtonClickInUseYourDomain,
 		submitDomainStepSelection,
 		setDesignType,
 	}

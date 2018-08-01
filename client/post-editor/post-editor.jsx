@@ -16,9 +16,8 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import actions from 'lib/posts/actions';
+import { autosave, saveEdited } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
-import PostEditStore from 'lib/posts/post-edit-store';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import FeaturedImage from 'post-editor/editor-featured-image';
 import EditorTitle from 'post-editor/editor-title';
@@ -29,25 +28,38 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import * as utils from 'lib/posts/utils';
+import * as utils from 'state/posts/utils';
 import EditorPreview from './editor-preview';
-import { recordStat, recordEvent } from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import analytics from 'lib/analytics';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
-import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+import {
+	saveConfirmationSidebarPreference,
+	editorEditRawContent,
+	editorResetRawContent,
+} from 'state/ui/editor/actions';
 import { closeEditorSidebar, openEditorSidebar } from 'state/ui/editor/sidebar/actions';
 import {
 	getEditorPostId,
-	getEditorPath,
 	isConfirmationSidebarEnabled,
+	isEditorNewPost,
+	isEditorAutosaving,
+	isEditorLoading,
 	isEditorSaveBlocked,
+	getEditorPostPreviewUrl,
+	getEditorLoadingError,
 } from 'state/ui/editor/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { editPost, receivePost, savePostSuccess } from 'state/posts/actions';
-import { getEditedPostValue, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
+import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+import { editPost } from 'state/posts/actions';
+import {
+	getSitePost,
+	getEditedPost,
+	getEditedPostValue,
+	isEditedPostDirty,
+} from 'state/posts/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { hasBrokenSiteUserConnection, editedPostHasContent } from 'state/selectors';
+import editedPostHasContent from 'state/selectors/edited-post-has-content';
+import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
 import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
 import EditorDocumentHead from 'post-editor/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
@@ -62,7 +74,7 @@ import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
 import Site from 'blocks/site';
-import StatusLabel from 'post-editor/editor-status-label';
+import EditorStatusLabel from 'post-editor/editor-status-label';
 import EditorGroundControl from 'post-editor/editor-ground-control';
 import { isWithinBreakpoint } from 'lib/viewport';
 import { isSitePreviewable } from 'state/sites/selectors';
@@ -80,7 +92,6 @@ export class PostEditor extends React.Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
-		editPath: PropTypes.string,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -97,7 +108,7 @@ export class PostEditor extends React.Component {
 
 	getDefaultState() {
 		return {
-			...this.getPostEditState(),
+			mode: this.props.editorModePreference || 'tinymce',
 			confirmationSidebar: 'closed',
 			confirmationSidebarPreference: true,
 			isSaving: false,
@@ -106,38 +117,19 @@ export class PostEditor extends React.Component {
 			selectedText: null,
 			showVerifyEmailDialog: false,
 			showAutosaveDialog: true,
-			isLoadingRevision: false,
 			isTitleFocused: false,
 			showPreview: false,
 			isPostPublishPreview: false,
-			previewAction: null,
-		};
-	}
-
-	getPostEditState() {
-		return {
-			savedPost: PostEditStore.getSavedPost(),
-			loadingError: PostEditStore.getLoadingError(),
-			isDirty: PostEditStore.isDirty(),
-			hasContent: PostEditStore.hasContent(),
-			previewUrl: PostEditStore.getPreviewUrl(),
-			post: PostEditStore.get(),
-			isNew: PostEditStore.isNew(),
-			isAutosaving: PostEditStore.isAutosaving(),
-			isLoading: PostEditStore.isLoading(),
 		};
 	}
 
 	componentWillMount() {
-		PostEditStore.on( 'change', this.onEditedPostChange );
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
 		this.throttledAutosave = throttle( this.autosave, 20000 );
 		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
-		this.onPreviewClick = this.onPreview.bind( this, 'preview' );
-		this.onViewClick = this.onPreview.bind( this, 'view' );
 		this.useDefaultSidebarFocus();
 		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
@@ -147,19 +139,14 @@ export class PostEditor extends React.Component {
 	}
 
 	componentWillUpdate( nextProps, nextState ) {
-		const { isNew, savedPost, isSaving } = nextState;
-		if ( ! isNew && savedPost && savedPost !== this.state.savedPost ) {
-			nextProps.receivePost( savedPost );
-		}
-
 		// Cancel pending changes or autosave when user initiates a save. These
 		// will have been reflected in the save payload.
-		if ( isSaving && ! this.state.isSaving ) {
+		if ( nextState.isSaving && ! this.state.isSaving ) {
 			this.debouncedAutosave.cancel();
 			this.throttledAutosave.cancel();
 		}
 
-		if ( nextState.isDirty || nextProps.dirty ) {
+		if ( nextProps.isDirty ) {
 			this.props.markChanged();
 		} else {
 			this.props.markSaved();
@@ -167,18 +154,18 @@ export class PostEditor extends React.Component {
 	}
 
 	componentDidMount() {
-		// if content is passed in, e.g., through url param
-		if ( this.state.post && this.state.post.content ) {
-			this.editor.setEditorContent( this.state.post.content, { initial: true } );
+		// if post and content is already available on mount, e.g., "Press This" or a post copy
+		if ( this.props.post && this.props.post.content ) {
+			this.editor.setEditorContent( this.props.post.content, { initial: true } );
+		}
+
+		// record the initial value of the editor mode preference
+		if ( this.props.editorModePreference ) {
+			analytics.mc.bumpStat( 'calypso_default_editor_mode', this.props.editorModePreference );
 		}
 	}
 
 	componentWillUnmount() {
-		PostEditStore.removeListener( 'change', this.onEditedPostChange );
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.stopEditing();
-
 		this.debouncedAutosave.cancel();
 		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
@@ -189,17 +176,12 @@ export class PostEditor extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		const { siteId, postId } = this.props;
-		if ( nextProps.siteId === siteId && nextProps.postId !== postId ) {
-			// make sure the history entry has the post ID in it, but don't dispatch
-			page.replace( nextProps.editPath, null, false, false );
-		}
 
-		if (
-			nextProps.siteId !== siteId ||
-			( nextProps.siteId === siteId && nextProps.postId !== postId )
-		) {
+		if ( nextProps.siteId !== siteId || nextProps.postId !== postId ) {
 			this.useDefaultSidebarFocus( nextProps );
 		}
+
+		this.onEditedPostChange( nextProps );
 	}
 
 	storeEditor = ref => {
@@ -230,11 +212,11 @@ export class PostEditor extends React.Component {
 		switch ( confirmationSidebar ) {
 			case 'closed':
 				this.props.setLayoutFocus( editorSidebarPreference );
-				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
+				this.props.recordTracksEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
 				break;
 			case 'open':
 				this.props.setLayoutFocus( 'editor-confirmation-sidebar' );
-				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
+				this.props.recordTracksEvent( 'calypso_editor_confirmation_sidebar_open' );
 				break;
 		}
 	};
@@ -268,23 +250,17 @@ export class PostEditor extends React.Component {
 	};
 
 	render() {
-		const site = this.props.selectedSite || undefined;
-		const mode = this.getEditorMode();
-		const isInvalidURL = this.state.loadingError;
-		const siteURL = site ? site.URL + '/' : null;
+		const site = this.props.selectedSite;
+		const mode = this.state.mode;
+		const isInvalidURL = this.props.loadingError;
 
-		let isPage;
-		let isTrashed;
-		let hasAutosave;
+		const isTrashed = get( this.props.post, 'status' ) === 'trash';
+		const hasAutosave = get( this.props.post, 'meta.data.autosave' );
 
-		if ( this.state.post ) {
-			isPage = utils.isPage( this.state.post );
-			isTrashed = this.state.post.status === 'trash';
-			hasAutosave = get( this.state.post.meta, [ 'data', 'autosave' ] );
-		}
 		const classes = classNames( 'post-editor', {
 			'is-loading': ! this.state.isEditorInitialized,
 		} );
+
 		return (
 			<div className={ classes }>
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsTitle } />
@@ -293,8 +269,6 @@ export class PostEditor extends React.Component {
 					handlePreferenceChange={ this.handleConfirmationSidebarPreferenceChange }
 					onPrivatePublish={ this.onPublish }
 					onPublish={ this.onPublish }
-					post={ this.state.post }
-					savedPost={ this.state.savedPost }
 					setPostDate={ this.setPostDate }
 					setStatus={ this.setConfirmationSidebar }
 					status={ this.state.confirmationSidebar }
@@ -306,20 +280,17 @@ export class PostEditor extends React.Component {
 				<div className="post-editor__inner">
 					<EditorGroundControl
 						setPostDate={ this.setPostDate }
-						hasContent={ this.state.hasContent }
+						hasContent={ this.props.hasContent }
 						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
-						isDirty={ this.state.isDirty || this.props.dirty }
+						isDirty={ this.props.isDirty }
 						isSaveBlocked={ this.isSaveBlocked() }
 						isPublishing={ this.state.isPublishing }
 						isSaving={ this.state.isSaving }
-						loadRevision={ this.loadRevision }
-						onPreview={ this.onPreviewClick }
+						onPreview={ this.onPreview }
 						onPublish={ this.onPublish }
 						onSave={ this.onSave }
 						onSaveDraft={ this.props.onSaveDraft }
-						post={ this.state.post }
-						savedPost={ this.state.savedPost }
 						site={ site }
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
@@ -328,13 +299,7 @@ export class PostEditor extends React.Component {
 					/>
 					<div className="post-editor__content">
 						<div className="post-editor__content-editor">
-							<EditorActionBar
-								isNew={ this.state.isNew }
-								onPrivatePublish={ this.onPublish }
-								savedPost={ this.state.savedPost }
-								site={ site }
-								isPostPrivate={ utils.isPrivate( this.state.post ) }
-							/>
+							<EditorActionBar />
 							<div className="post-editor__site">
 								<Site
 									compact
@@ -343,34 +308,23 @@ export class PostEditor extends React.Component {
 									homeLink={ true }
 									externalLink={ true }
 								/>
-								{ ( this.state.isDirty || this.props.dirty ) && (
+								{ this.props.isDirty ? (
 									<QuickSaveButtons
 										isSaving={ this.state.isSaving }
 										isSaveBlocked={ this.isSaveBlocked() }
-										isDirty={ this.state.isDirty || this.props.dirty }
-										hasContent={ this.state.hasContent }
-										loadRevision={ this.loadRevision }
-										post={ this.state.post }
+										isDirty={ this.props.isDirty }
+										hasContent={ this.props.hasContent }
 										onSave={ this.onSave }
 									/>
-								) }
-								{ ! ( this.state.isDirty || this.props.dirty ) && (
-									<StatusLabel post={ this.state.savedPost } />
+								) : (
+									<EditorStatusLabel />
 								) }
 							</div>
 							<div className="post-editor__inner-content">
 								<FeaturedImage maxWidth={ 1462 } hasDropZone />
 								<div className="post-editor__header">
 									<EditorTitle onChange={ this.onEditorTitleChange } tabIndex={ 1 } />
-									{ this.state.post && isPage && site ? (
-										<EditorPageSlug
-											path={
-												this.state.post.URL && this.state.post.URL !== siteURL
-													? utils.getPagePath( this.state.post )
-													: siteURL
-											}
-										/>
-									) : null }
+									<EditorPageSlug />
 									<SegmentedControl className="post-editor__switch-mode" compact={ true }>
 										<SegmentedControlItem
 											selected={ mode === 'tinymce' }
@@ -393,7 +347,7 @@ export class PostEditor extends React.Component {
 									ref={ this.storeEditor }
 									mode={ mode }
 									tabIndex={ 2 }
-									isNew={ this.state.isNew }
+									isNew={ this.props.isNew }
 									onSetContent={ this.debouncedSaveRawContent }
 									onInit={ this.onEditorInitialized }
 									onChange={ this.onEditorContentChange }
@@ -408,15 +362,11 @@ export class PostEditor extends React.Component {
 						</div>
 					</div>
 					<EditorSidebar
-						savedPost={ this.state.savedPost }
-						post={ this.state.post }
-						isNew={ this.state.isNew }
 						onPublish={ this.onPublish }
 						onTrashingPost={ this.onTrashingPost }
 						site={ site }
 						setPostDate={ this.setPostDate }
 						onSave={ this.onSave }
-						isPostPrivate={ utils.isPrivate( this.state.post ) }
 						confirmationSidebarStatus={ this.state.confirmationSidebar }
 					/>
 					{ this.props.isSitePreviewable ? (
@@ -424,31 +374,24 @@ export class PostEditor extends React.Component {
 							showPreview={ this.state.showPreview }
 							onClose={ this.onPreviewClose }
 							onEdit={ this.onPreviewEdit }
-							isSaving={ this.state.isSaving || this.state.isAutosaving }
-							isLoading={ this.state.isLoading }
+							isSaving={ this.state.isSaving || this.props.isAutosaving }
+							isLoading={ this.props.isLoading }
 							isFullScreen={ this.state.isPostPublishPreview }
-							previewUrl={ this.getPreviewUrl() }
+							previewUrl={ this.props.previewUrl }
 							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
-							editUrl={ this.props.editPath }
-							revision={ get( this.state, 'post.revisions.length', 0 ) }
+							revision={ get( this.props.post, 'revisions.length', 0 ) }
 						/>
 					) : null }
-					<EditorNotice
-						{ ...this.state.notice }
-						onDismissClick={ this.hideNotice }
-						onViewClick={ this.onPreview }
-					/>
+					<EditorNotice { ...this.state.notice } onDismissClick={ this.hideNotice } />
 				</div>
 				{ isTrashed ? (
-					<RestorePostDialog onClose={ this.onClose } onRestore={ this.onSaveTrashed } />
+					<RestorePostDialog onClose={ this.onClose } onRestore={ this.restoreTrashed } />
 				) : null }
 				{ this.state.showVerifyEmailDialog ? (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) : null }
-				{ isInvalidURL ? (
-					<InvalidURLDialog post={ this.state.post } onClose={ this.onClose } />
-				) : null }
+				{ isInvalidURL && <InvalidURLDialog onClose={ this.onClose } /> }
 				{ hasAutosave && this.state.showAutosaveDialog ? (
 					<RestorePostDialog
 						onRestore={ this.restoreAutosave }
@@ -460,22 +403,24 @@ export class PostEditor extends React.Component {
 		);
 	}
 
+	restoreTrashed = () => {
+		this.onSave( 'draft' );
+	};
+
 	restoreAutosave = () => {
 		this.setState( { showAutosaveDialog: false } );
-		this.restoreRevision( get( this.state, 'post.meta.data.autosave' ) );
+		this.restoreRevision( get( this.props.post, 'meta.data.autosave' ) );
 	};
 
 	restoreRevision = revision => {
-		this.setState( { isLoadingRevision: true } );
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( {
-			content: revision.content,
+		this.props.editPost( this.props.siteId, this.props.postId, {
 			excerpt: revision.excerpt,
 			title: revision.title,
+			content: revision.content,
 		} );
-		this.props.editPost( this.props.siteId, this.props.postId, {
-			title: revision.title,
-		} );
+		if ( this.editor ) {
+			this.editor.setEditorContent( revision.content, { initial: true } );
+		}
 	};
 
 	closeAutosaveDialog = () => {
@@ -486,46 +431,19 @@ export class PostEditor extends React.Component {
 		this.setState( { showVerifyEmailDialog: false } );
 	};
 
-	onEditedPostChange = () => {
-		var didLoad = this.state.isLoading && ! PostEditStore.isLoading(),
-			loadingError = PostEditStore.getLoadingError(),
-			postEditState,
-			post,
-			site;
+	onEditedPostChange = nextProps => {
+		if ( nextProps.loadingError ) {
+			return;
+		}
 
-		if ( loadingError ) {
-			this.setState( { loadingError } );
-		} else if ( ( PostEditStore.isNew() && ! this.state.isNew ) || PostEditStore.isLoading() ) {
+		if ( ( nextProps.isNew && ! this.props.isNew ) || nextProps.isLoading ) {
 			// is new or loading
 			this.setState(
 				this.getDefaultState(),
 				() => this.editor && this.editor.setEditorContent( '' )
 			);
-		} else if ( this.state.isNew && this.state.hasContent && ! this.state.isDirty ) {
-			// Is a copy of an existing post.
-			// When copying a post, the created draft is new and the editor is not yet dirty, but it already has content.
-			// Once the content is set, the editor becomes dirty and the following setState won't trigger anymore.
-			this.setState(
-				this.getDefaultState(),
-				() => this.editor && this.editor.setEditorContent( this.state.post.content )
-			);
-		} else {
-			postEditState = this.getPostEditState();
-			post = postEditState.post;
-			site = this.props.selectedSite;
-			if ( didLoad && site && ( this.props.type === 'page' ) !== utils.isPage( post ) ) {
-				// incorrect post type in URL
-				page.redirect( utils.getEditURL( post, site ) );
-			}
-			this.setState( postEditState, function() {
-				if ( this.editor && ( didLoad || this.state.isLoadingRevision ) ) {
-					this.editor.setEditorContent( this.state.post.content, { initial: true } );
-				}
-
-				if ( this.state.isLoadingRevision ) {
-					this.setState( { isLoadingRevision: false } );
-				}
-			} );
+		} else if ( this.editor && this.props.isLoading && ! nextProps.isLoading ) {
+			this.editor.setEditorContent( nextProps.post.content, { initial: true } );
 		}
 	};
 
@@ -575,52 +493,57 @@ export class PostEditor extends React.Component {
 	};
 
 	saveRawContent = () => {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.editRawContent( this.editor.getContent( { format: 'raw' } ) );
+		this.props.editorEditRawContent( this.editor.getContent( { format: 'raw' } ) );
 
 		// If debounced save raw content was pending, consider it flushed
 		this.debouncedSaveRawContent.cancel();
 	};
 
-	autosave = () => {
-		var callback;
+	// Sync content from the TinyMCE editor to the Redux state. Because it's expensive to serialize
+	// the content when TinyMCE is the active mode, we don't sync on every keystroke, but only
+	// immediately before save/publish and after switching editor mode.
+	syncEditorContent( options ) {
+		const resetRawContent = get( options, 'resetRawContent', false );
+		const content = get( options, 'content', this.editor.getContent() );
+
+		if ( resetRawContent ) {
+			this.props.editorResetRawContent();
+		}
+		this.saveRawContent();
+		if ( content !== get( this.props.post, 'content', null ) ) {
+			this.props.editPost( this.props.siteId, this.props.postId, { content } );
+		}
+	}
+
+	autosave = async () => {
+		// If debounced / throttled autosave was pending, consider it flushed
+		this.throttledAutosave.cancel();
+		this.debouncedAutosave.cancel();
 
 		if ( this.state.isSaving === true || this.isSaveBlocked() ) {
 			return;
 		}
 
-		this.saveRawContent();
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		const edits = {
-			...this.props.edits,
-			content: this.editor.getContent(),
-		};
-		actions.edit( edits );
+		this.syncEditorContent();
 
-		// Make sure that after TinyMCE processing that the post is still dirty
-		if ( ! PostEditStore.isDirty() || ! PostEditStore.hasContent() || ! this.state.post ) {
-			return;
-		}
+		// The post is either already published or the current modifications are going to publish it
+		const savingPublishedPost =
+			utils.isPublished( this.props.savedPost ) || utils.isPublished( this.props.post );
 
-		if ( utils.isPublished( this.state.savedPost ) || utils.isPublished( this.state.post ) ) {
-			callback = function() {};
-		} else {
+		if ( ! savingPublishedPost ) {
 			this.setState( { isSaving: true } );
-			callback = function( error ) {
-				if ( error && 'NO_CHANGE' !== error.message ) {
-					this.onSaveDraftFailure( error );
-				} else {
-					this.onSaveDraftSuccess();
-				}
-			}.bind( this );
 		}
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.autosave( this.props.selectedSite, callback );
-
-		// If debounced / throttled autosave was pending, consider it flushed
-		this.throttledAutosave.cancel();
-		this.debouncedAutosave.cancel();
+		try {
+			const saveResult = await this.props.autosave();
+			if ( ! savingPublishedPost ) {
+				this.onSaveDraftSuccess( saveResult );
+			}
+		} catch ( error ) {
+			if ( ! savingPublishedPost ) {
+				this.onSaveDraftFailure( error );
+			}
+		}
 	};
 
 	onClose = () => {
@@ -668,85 +591,64 @@ export class PostEditor extends React.Component {
 	onTrashingPost = () => {
 		const { type } = this.props;
 
-		recordStat( type + '_trashed' );
-		recordEvent( 'page' === type ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
+		this.props.recordEditorStat( type + '_trashed' );
+		this.props.recordEditorEvent(
+			'page' === type ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button'
+		);
 		this.props.markSaved();
 
 		page( this.getAllPostsUrl( 'trashed' ) );
 	};
 
-	onSaveTrashed = ( status, callback ) => {
-		this.onSave( status, callback );
-	};
-
-	onSave = ( status, callback ) => {
-		const edits = { ...this.props.edits };
-		if ( status ) {
-			edits.status = status;
-		}
-
+	onSave = status => {
+		// Refuse to save if the current edits would mean that an unpublished post gets published.
+		// That's an exclusive resposibility of the `onPublish` method.
 		if (
-			! utils.isPublished( this.state.savedPost ) &&
-			( ( ! status && utils.isPublished( this.state.post ) ) || utils.isPublished( edits ) )
+			! utils.isPublished( this.props.savedPost ) &&
+			utils.isPublished( this.props.post, status )
 		) {
 			return;
 		}
 
-		// Flush any pending raw content saves
-		this.saveRawContent();
-
-		edits.content = this.editor.getContent();
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.saveEdited(
-			this.props.selectedSite,
-			edits,
-			{ isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled },
-			function( error ) {
-				if ( error && 'NO_CHANGE' !== error.message ) {
-					this.onSaveDraftFailure( error );
-				} else {
-					this.onSaveDraftSuccess();
-				}
-
-				if ( 'function' === typeof callback ) {
-					callback( error );
-				}
-			}.bind( this )
-		);
-
 		this.setState( { isSaving: true } );
-	};
 
-	getPreviewUrl = () => {
-		const { post, previewAction, previewUrl } = this.state;
-
-		if ( previewAction === 'view' && post ) {
-			return post.URL;
+		if ( status ) {
+			this.props.editPost( this.props.siteId, this.props.postId, { status } );
 		}
 
-		return previewUrl;
+		// Flush any pending raw content saves
+		this.syncEditorContent();
+
+		this.props.saveEdited().then( this.onSaveDraftSuccess, this.onSaveDraftFailure );
 	};
 
-	getExternalUrl = () => {
-		const { post } = this.state;
+	getExternalUrl() {
+		const { post } = this.props;
 
 		if ( post ) {
 			return post.URL;
 		}
 
-		return this.getPreviewUrl();
-	};
+		return this.props.previewUrl;
+	}
 
-	onPreview = ( action, event ) => {
-		var status = 'draft',
-			previewPost;
+	recordPreviewButtonClick() {
+		const isPage = this.props.type === 'page';
+		this.props.recordTracksEvent(
+			isPage
+				? 'calypso_editor_page_preview_button_click'
+				: 'calypso_editor_post_preview_button_click'
+		);
+		this.props.recordGoogleEvent(
+			'Editor',
+			isPage ? 'Clicked Preview Page Button' : 'Clicked Preview Post Button',
+			isPage ? 'Editor Preview Page Button Clicked' : 'Editor Preview Post Button Clicked',
+			isPage ? 'editorPageButtonClicked' : 'editorPostButtonClicked'
+		);
+	}
 
-		if ( this.state.previewAction !== action ) {
-			this.setState( {
-				previewAction: action,
-			} );
-		}
+	onPreview = async event => {
+		this.recordPreviewButtonClick();
 
 		if ( this.props.isSitePreviewable && ! event.metaKey && ! event.ctrlKey ) {
 			return this.iframePreview();
@@ -756,42 +658,25 @@ export class PostEditor extends React.Component {
 			this._previewWindow = window.open( 'about:blank', 'WordPress.com Post Preview' );
 		}
 
-		if ( this.state.savedPost && this.state.savedPost.status ) {
-			status = this.state.savedPost.status;
+		if ( this.props.isDirty ) {
+			await this.autosave();
 		}
 
-		previewPost = function() {
-			if ( this._previewWindow ) {
-				this._previewWindow.location = this.getPreviewUrl();
-				this._previewWindow.focus();
-			} else {
-				this._previewWindow = window.open( this.getPreviewUrl(), 'WordPress.com Post Preview' );
-			}
-		}.bind( this );
-
-		if ( status === 'publish' ) {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.edit( { content: this.editor.getContent() } );
-			actions.autosave( this.props.selectedSite, previewPost );
+		const { previewUrl } = this.props;
+		if ( this._previewWindow ) {
+			this._previewWindow.location = previewUrl;
+			this._previewWindow.focus();
 		} else {
-			this.onSave( null, previewPost );
+			this._previewWindow = window.open( previewUrl, 'WordPress.com Post Preview' );
 		}
 	};
 
-	iframePreview = () => {
-		if ( this.state.isDirty || this.props.dirty ) {
+	iframePreview = async () => {
+		if ( this.props.isDirty ) {
 			this.autosave();
-			// to avoid a weird UX we clear the iframe when (auto)saving
-			// so we need to delay opening it a bit to avoid flickering
-			setTimeout(
-				function() {
-					this.setState( { showPreview: true } );
-				}.bind( this ),
-				150
-			);
-		} else {
-			this.setState( { showPreview: true } );
 		}
+
+		this.setState( { showPreview: true } );
 	};
 
 	onPreviewClose = () => {
@@ -801,7 +686,6 @@ export class PostEditor extends React.Component {
 			this.setState( {
 				showPreview: false,
 				isPostPublishPreview: false,
-				previewAction: null,
 			} );
 		}
 	};
@@ -821,7 +705,6 @@ export class PostEditor extends React.Component {
 		this.setState( {
 			showPreview: false,
 			isPostPublishPreview: false,
-			previewAction: null,
 		} );
 
 		return false;
@@ -831,84 +714,56 @@ export class PostEditor extends React.Component {
 		this.onSaveFailure( error, 'saveFailure' );
 	};
 
-	onSaveDraftSuccess = () => {
-		const { post } = this.state;
-
-		if ( utils.isPublished( post ) ) {
-			this.onSaveSuccess( 'updated' );
-		} else {
-			this.onSaveSuccess();
-		}
+	onSaveDraftSuccess = saveResult => {
+		this.onSaveSuccess( saveResult, 'save' );
 	};
 
+	// determine if publish is private, future or normal
+	getPublishStatus() {
+		if ( utils.isPrivate( this.props.post ) ) {
+			return 'private';
+		}
+
+		if ( utils.isFutureDated( this.props.post ) ) {
+			return 'future';
+		}
+
+		return 'publish';
+	}
+
 	onPublish = ( isConfirmed = false ) => {
-		const edits = {
-			...this.props.edits,
-			status: 'publish',
-		};
+		if ( this.props.isConfirmationSidebarEnabled ) {
+			if ( isConfirmed === false ) {
+				this.setConfirmationSidebar( { status: 'open' } );
+				return;
+			}
 
-		if ( this.props.isConfirmationSidebarEnabled && false === isConfirmed ) {
-			this.setConfirmationSidebar( { status: 'open' } );
-			return;
+			if ( this.state.confirmationSidebar === 'open' ) {
+				this.setConfirmationSidebar( { status: 'publishing' } );
+			}
 		}
-
-		if ( this.props.isConfirmationSidebarEnabled && 'open' === this.state.confirmationSidebar ) {
-			this.setConfirmationSidebar( { status: 'publishing' } );
-		}
-
-		// determine if this is a private publish
-		if ( utils.isPrivate( this.state.post ) ) {
-			edits.status = 'private';
-		} else if ( utils.isFutureDated( this.state.post ) ) {
-			edits.status = 'future';
-		}
-
-		// Flush any pending raw content saves
-		this.saveRawContent();
-
-		// Update content on demand to avoid unnecessary lag and because it is expensive
-		// to serialize when TinyMCE is the active mode
-		edits.content = this.editor.getContent();
-
-		actions.saveEdited(
-			this.props.selectedSite,
-			edits,
-			{ isConfirmationSidebarEnabled: this.props.isConfirmationSidebarEnabled },
-			function( error ) {
-				if ( error && 'NO_CHANGE' !== error.message ) {
-					this.onPublishFailure( error );
-				} else {
-					this.onPublishSuccess();
-				}
-			}.bind( this )
-		);
 
 		this.setState( {
 			isSaving: true,
 			isPublishing: true,
 		} );
+
+		const status = this.getPublishStatus();
+		this.props.editPost( this.props.siteId, this.props.postId, { status } );
+		this.syncEditorContent();
+
+		this.props.saveEdited().then( this.onPublishSuccess, this.onPublishFailure );
 	};
 
 	onPublishFailure = error => {
-		this.onSaveFailure( error, 'publishFailure' );
-
 		if ( this.props.isConfirmationSidebarEnabled ) {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_failure' } );
 		}
+
+		this.onSaveFailure( error, 'publishFailure' );
 	};
 
-	onPublishSuccess = () => {
-		const { savedPost } = this.state;
-
-		let message;
-		if ( utils.isPrivate( savedPost ) ) {
-			message = 'publishedPrivately';
-		} else if ( utils.isFutureDated( savedPost ) ) {
-			message = 'scheduled';
-		} else {
-			message = 'published';
-		}
-
+	onPublishSuccess = saveResult => {
 		if ( ! this.state.confirmationSidebarPreference ) {
 			this.props.saveConfirmationSidebarPreference( this.props.siteId, false );
 		}
@@ -917,7 +772,7 @@ export class PostEditor extends React.Component {
 			this.setConfirmationSidebar( { status: 'closed', context: 'publish_success' } );
 		}
 
-		this.onSaveSuccess( message );
+		this.onSaveSuccess( saveResult, 'publish' );
 	};
 
 	onSaveFailure = ( error, message ) => {
@@ -934,75 +789,35 @@ export class PostEditor extends React.Component {
 
 	setPostDate = date => {
 		const { siteId, postId } = this.props;
-		const dateValue = date ? date.format() : null;
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( { date: dateValue } );
+		const dateValue = date ? date.format() : false;
 
 		this.props.editPost( siteId, postId, { date: dateValue } );
 
-		analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
+		this.props.recordTracksEvent( 'calypso_editor_publish_date_change', {
 			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
 		} );
-
-		this.checkForDateChange( dateValue );
 	};
 
-	checkForDateChange = date => {
-		const { savedPost } = this.state;
+	onSaveSuccess = ( saveResult, type ) => {
+		let message = null;
 
-		if ( ! savedPost ) {
-			return;
-		}
+		if ( saveResult ) {
+			const { receivedPost } = saveResult;
 
-		const currentDate = this.props.moment( date );
-		const modifiedDate = this.props.moment( savedPost.date );
-		const dateChange = ! (
-			currentDate.get( 'date' ) === modifiedDate.get( 'date' ) &&
-			currentDate.get( 'month' ) === modifiedDate.get( 'month' ) &&
-			currentDate.get( 'year' ) === modifiedDate.get( 'year' )
-		);
-		const diff = !! currentDate.diff( modifiedDate ) && !! dateChange;
-
-		if ( savedPost.type === 'post' && utils.isPublished( savedPost ) && diff ) {
-			this.warnPublishDateChange();
-		} else {
-			this.warnPublishDateChange( { clearWarning: true } );
-		}
-	};
-
-	// when a post that is published, modifies its date, this updates the post url
-	// we should warn users of this case
-	warnPublishDateChange = ( { clearWarning = false } = {} ) => {
-		if ( clearWarning ) {
-			if ( get( this.state, 'notice.message' ) === 'warnPublishDateChange' ) {
-				this.hideNotice();
+			if ( type === 'save' ) {
+				if ( utils.isPublished( receivedPost ) ) {
+					message = 'updated';
+				}
+			} else if ( type === 'publish' ) {
+				if ( utils.isPrivate( receivedPost ) ) {
+					message = 'publishedPrivately';
+				} else if ( utils.isFutureDated( receivedPost ) ) {
+					message = 'scheduled';
+				} else {
+					message = 'published';
+				}
 			}
-			return;
 		}
-		this.setState( {
-			notice: {
-				status: 'is-warning',
-				message: 'warnPublishDateChange',
-			},
-		} );
-	};
-
-	onSaveSuccess = message => {
-		const post = PostEditStore.get();
-		const isNotPrivateOrIsConfirmed =
-			'private' !== post.status || 'closed' !== this.state.confirmationSidebar;
-
-		if ( 'draft' === post.status ) {
-			this.props.setEditorLastDraft( post.site_ID, post.ID );
-		} else {
-			this.props.resetEditorLastDraft();
-		}
-
-		// Remove this when the editor is completely reduxified ( When using Redux actions for all post saving requests )
-		this.props.savePostSuccess( post.site_ID, this.props.postId, post, {} );
-
-		// Receive updated post into state
-		this.props.receivePost( post );
 
 		const nextState = {
 			isSaving: false,
@@ -1017,7 +832,7 @@ export class PostEditor extends React.Component {
 
 			window.scrollTo( 0, 0 );
 
-			if ( this.props.isSitePreviewable && isNotPrivateOrIsConfirmed && 'published' === message ) {
+			if ( this.props.isSitePreviewable && message === 'published' ) {
 				this.setState( { isPostPublishPreview: true } );
 				this.iframePreview();
 			}
@@ -1026,19 +841,12 @@ export class PostEditor extends React.Component {
 		}
 
 		this.setState( nextState );
-	};
 
-	getEditorMode = () => {
-		var editorMode = 'tinymce';
-		if ( this.props.editorModePreference ) {
-			editorMode = this.props.editorModePreference;
-
-			if ( ! this.recordedDefaultEditorMode ) {
-				analytics.mc.bumpStat( 'calypso_default_editor_mode', editorMode );
-				this.recordedDefaultEditorMode = true;
-			}
+		// make sure the history entry has the post ID in it, but don't dispatch
+		if ( saveResult && saveResult.idAssigned ) {
+			const editUrl = utils.getEditURL( saveResult.receivedPost, this.props.selectedSite );
+			page.replace( editUrl, null, false, false );
 		}
-		return editorMode;
 	};
 
 	getContainingTagInfo = ( content, cursorPosition ) => {
@@ -1278,6 +1086,8 @@ export class PostEditor extends React.Component {
 		if ( mode === 'html' ) {
 			const selectionRange = this.findBookmarkedPosition( this.editor._editor );
 
+			// `this.findBookmarkedPosition` inserted some markup into the TinyMCE content.
+			// Reset it back to the original.
 			this.editor.setEditorContent( content );
 
 			if ( this.state.selectedText ) {
@@ -1293,25 +1103,12 @@ export class PostEditor extends React.Component {
 		}
 
 		this.props.setEditorModePreference( mode );
-
-		// Defer actions until next available tick to avoid
-		// dispatching inside a dispatch which can happen if for example the
-		// title field is focused when toggling the editor.
-		this._switchEditorTimeout = setTimeout(
-			function() {
-				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.edit( { content: content } );
-				actions.resetRawContent();
-
-				if ( mode === 'html' ) {
-					// Set raw content directly to avoid race conditions
-					actions.editRawContent( content );
-				} else {
-					this.saveRawContent();
-				}
-			}.bind( this ),
-			0
-		);
+		this.setState( { mode }, () => {
+			this.syncEditorContent( {
+				resetRawContent: true,
+				content,
+			} );
+		} );
 	};
 }
 
@@ -1323,39 +1120,46 @@ const enhance = flow(
 			const siteId = getSelectedSiteId( state );
 			const postId = getEditorPostId( state );
 			const userId = getCurrentUserId( state );
-			const type = getEditedPostValue( state, siteId, postId, 'type' );
 
 			return {
 				siteId,
 				postId,
-				type,
+				savedPost: getSitePost( state, siteId, postId ),
+				post: getEditedPost( state, siteId, postId ),
+				type: getEditedPostValue( state, siteId, postId, 'type' ),
 				selectedSite: getSelectedSite( state ),
 				editorModePreference: getPreference( state, 'editor-mode' ),
 				editorSidebarPreference: getPreference( state, 'editor-sidebar' ) || 'open',
-				editPath: getEditorPath( state, siteId, postId ),
-				edits: getPostEdits( state, siteId, postId ),
-				dirty: isEditedPostDirty( state, siteId, postId ),
+				isNew: isEditorNewPost( state ),
+				isDirty: isEditedPostDirty( state, siteId, postId ),
 				hasContent: editedPostHasContent( state, siteId, postId ),
 				layoutFocus: getCurrentLayoutFocus( state ),
 				hasBrokenPublicizeConnection: hasBrokenSiteUserConnection( state, siteId, userId ),
 				isSitePreviewable: isSitePreviewable( state, siteId ),
 				isConfirmationSidebarEnabled: isConfirmationSidebarEnabled( state, siteId ),
 				isSaveBlocked: isEditorSaveBlocked( state ),
+				previewUrl: getEditorPostPreviewUrl( state ),
+				isAutosaving: isEditorAutosaving( state ),
+				isLoading: isEditorLoading( state ),
+				loadingError: getEditorLoadingError( state ),
 			};
 		},
 		{
-			setEditorLastDraft,
-			resetEditorLastDraft,
-			receivePost,
+			autosave,
+			saveEdited,
 			editPost,
-			savePostSuccess,
 			setEditorModePreference: partial( savePreference, 'editor-mode' ),
 			setLayoutFocus,
 			setNextLayoutFocus,
 			saveConfirmationSidebarPreference,
 			recordTracksEvent,
+			recordGoogleEvent,
+			recordEditorStat,
+			recordEditorEvent,
 			closeEditorSidebar,
 			openEditorSidebar,
+			editorEditRawContent,
+			editorResetRawContent,
 		}
 	)
 );

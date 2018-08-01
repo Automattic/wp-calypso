@@ -46,7 +46,9 @@ export class DateTimeFormat extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { fields: { date_format: dateFormat, time_format: timeFormat } } = nextProps;
+		const {
+			fields: { date_format: dateFormat, time_format: timeFormat },
+		} = nextProps;
 
 		if ( ! this.state.isLoadingSettings || '' === dateFormat || '' === timeFormat ) {
 			return;

@@ -17,7 +17,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
-import { getReaderConversationFollowStatus } from 'state/selectors';
+import getReaderConversationFollowStatus from 'state/selectors/get-reader-conversation-follow-status';
 
 export function requestConversationFollow( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {

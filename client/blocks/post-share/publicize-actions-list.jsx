@@ -13,7 +13,9 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getPostShareScheduledActions, getPostSharePublishedActions } from 'state/selectors';
+import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';
+
+import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
 import QuerySharePostActions from 'components/data/query-share-post-actions/index.jsx';
 import SocialLogo from 'social-logos';
 import EllipsisMenu from 'components/ellipsis-menu';

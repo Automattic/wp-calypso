@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { pick } from 'lodash';
+import { endsWith, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,10 @@ import DomainRegistrationSuggestion from 'components/domains/domain-registration
 export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		fetchAlgo: PropTypes.string,
+		isSignupStep: PropTypes.bool,
 		primarySuggestion: PropTypes.object,
+		railcarSeed: PropTypes.string,
 		secondarySuggestion: PropTypes.object,
 		showPlaceholders: PropTypes.bool,
 	};
@@ -40,7 +43,9 @@ export class FeaturedDomainSuggestions extends Component {
 		const { domain_name: primaryDomainName = '' } = primarySuggestion;
 		const { domain_name: secondaryDomainName = '' } = secondarySuggestion;
 		const longestDomainName =
-			primaryDomainName.length >= secondaryDomainName ? primaryDomainName : secondaryDomainName;
+			primaryDomainName.length >= secondaryDomainName.length
+				? primaryDomainName
+				: secondaryDomainName;
 		return longestDomainName.length;
 	}
 
@@ -66,13 +71,18 @@ export class FeaturedDomainSuggestions extends Component {
 			return `${ classNamePrefix }-10em`;
 		}
 
-		return 'featured-domain-suggestions--title-cases-overflow';
+		return 'featured-domain-suggestions--title-causes-overflow';
 	}
 
 	getClassNames() {
 		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
+			'featured-domain-suggestions__is-domain-management': ! this.props.isSignupStep,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
 		} );
+	}
+
+	getFetchAlgorithm( suggestion ) {
+		return endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo;
 	}
 
 	hasMatchReasons() {
@@ -97,6 +107,9 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ primarySuggestion }
 						isFeatured
+						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-0` }
+						uiPosition={ 0 }
+						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						{ ...childProps }
 					/>
 				) }
@@ -104,6 +117,9 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ secondarySuggestion }
 						isFeatured
+						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-1` }
+						uiPosition={ 1 }
+						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
 					/>
 				) }

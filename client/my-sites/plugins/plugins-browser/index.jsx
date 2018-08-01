@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DocumentHead from 'components/data/document-head';
 import Search from 'components/search';
@@ -27,11 +28,9 @@ import PluginsActions from 'lib/plugins/wporg-data/actions';
 import urlSearch from 'lib/url-search';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import {
-	canCurrentUser,
-	getSelectedOrAllSitesJetpackCanManage,
-	hasJetpackSites,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getSitePlan,
@@ -48,6 +47,7 @@ import { findFirstSimilarPlanKey } from 'lib/plans';
 import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module variables
@@ -499,14 +499,33 @@ export class PluginsBrowser extends Component {
 			return null;
 		}
 
+		const { siteSlug, translate } = this.props;
+		const plan = findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
+			type: TYPE_BUSINESS,
+		} );
+		const title = translate( 'Upgrade to the Business plan to install plugins.' );
+
+		if (
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
+		) {
+			const href = '/feature/plugins/' + siteSlug;
+			return (
+				<Banner
+					event="calypso_plugins_browser_upgrade_nudge_upsell"
+					href={ href }
+					plan={ plan }
+					title={ title }
+				/>
+			);
+		}
+
 		return (
 			<Banner
 				feature={ FEATURE_UPLOAD_PLUGINS }
-				event={ 'calypso_plugins_browser_upgrade_nudge' }
-				plan={ findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
-					type: TYPE_BUSINESS,
-				} ) }
-				title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
+				event="calypso_plugins_browser_upgrade_nudge"
+				plan={ plan }
+				title={ title }
 			/>
 		);
 	}

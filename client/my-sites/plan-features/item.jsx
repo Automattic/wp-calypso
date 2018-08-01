@@ -21,7 +21,7 @@ export default function PlanFeaturesItem( { children, description, hideInfoPopov
 			{ hideInfoPopover ? null : (
 				<InfoPopover
 					className="plan-features__item-tip-info"
-					position={ isMobile() ? 'top' : 'right' }
+					position={ isMobile() ? 'left' : 'right' }
 				>
 					{ description }
 				</InfoPopover>

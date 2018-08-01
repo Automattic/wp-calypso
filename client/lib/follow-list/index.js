@@ -27,7 +27,7 @@ function FollowList() {
  * Adds a new follower object to the data store
  */
 FollowList.prototype.add = function( object ) {
-	var site = this.siteExists( object.site_id );
+	let site = this.siteExists( object.site_id );
 	if ( ! site ) {
 		site = new FollowListSite( object );
 		this.data.push( site );

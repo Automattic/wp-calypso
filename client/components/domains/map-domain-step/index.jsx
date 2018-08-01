@@ -14,13 +14,14 @@ import { includes, noop, get } from 'lodash';
  * Internal dependencies
  */
 import { cartItems } from 'lib/cart-values';
-import { getFixedDomainSearch, checkDomainAvailability } from 'lib/domains';
+import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
@@ -81,21 +82,20 @@ class MapDomainStep extends React.Component {
 			? {
 					cost: this.props.products.domain_map.cost_display,
 					product_slug: this.props.products.domain_map.product_slug,
-				}
+			  }
 			: { cost: null, product_slug: '' };
+		const { searchQuery } = this.state;
 		const { translate } = this.props;
 
 		return (
 			<div className="map-domain-step">
 				{ this.notice() }
 				<form className="map-domain-step__form card" onSubmit={ this.handleFormSubmit }>
-					<div className="map-domain-step__domain-description">
-						<p>
-							{ translate( "Map this domain to use it as your site's address.", {
-								context: 'Upgrades: Description in domain registration',
-								comment: "Explains how you could use a new domain name for your site's address.",
-							} ) }
-						</p>
+					<div className="map-domain-step__domain-heading">
+						{ translate( "Map this domain to use it as your site's address.", {
+							context: 'Upgrades: Description in domain registration',
+							comment: "Explains how you could use a new domain name for your site's address.",
+						} ) }
 					</div>
 
 					<DomainProductPrice
@@ -109,17 +109,19 @@ class MapDomainStep extends React.Component {
 					/>
 
 					<div className="map-domain-step__add-domain" role="group">
-						<input
+						<FormTextInputWithAffixes
+							prefix="http://"
 							className="map-domain-step__external-domain"
 							type="text"
 							value={ this.state.searchQuery }
-							placeholder={ translate( 'Enter a domain' ) }
+							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onClick={ this.recordInputFocus }
 							autoFocus
 						/>
 						<button
+							disabled={ ! getTld( searchQuery ) }
 							className="map-domain-step__go button is-primary"
 							onClick={ this.recordGoButtonClick }
 						>
@@ -213,7 +215,11 @@ class MapDomainStep extends React.Component {
 					site = get( this.props, 'selectedSite.slug', null );
 				}
 
-				const { message, severity } = getAvailabilityNotice( domain, status, site );
+				const maintenanceEndTime = get( result, 'maintenance_end_time', null );
+				const { message, severity } = getAvailabilityNotice( domain, status, {
+					site,
+					maintenanceEndTime,
+				} );
 				this.setState( { notice: message, noticeSeverity: severity } );
 			}
 		);

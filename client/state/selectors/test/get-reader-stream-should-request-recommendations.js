@@ -7,10 +7,9 @@ import _ from 'lodash';
 /**
  * Internal Dependencies
  */
-import {
-	getReaderStreamShouldRequestRecommendations as shouldRequestRecs,
-	getReaderFollows,
-} from 'state/selectors';
+import getReaderFollows from 'state/selectors/get-reader-follows';
+
+import shouldRequestRecs from 'state/selectors/get-reader-stream-should-request-recommendations';
 import { getDistanceBetweenRecs } from 'reader/stream/utils';
 
 jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );

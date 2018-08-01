@@ -1,0 +1,40 @@
+.clone-point__wrapper {
+	position: relative;
+
+	&:before,
+	&:after {
+		content: '';
+		position: absolute;
+		left: 33px;
+		width: 2px;
+
+		@include breakpoint( '<480px' ) {
+			left: 25px;
+		}
+	}
+
+	&:before {
+		top: 0;
+		height: 100%;
+		z-index: -2;
+		background: $gray-lighten-20;
+	}
+
+	&:after {
+		bottom: 0;
+		height: 16px;
+		z-index: -1;
+		background: blue;
+		background: linear-gradient(transparentize($gray-light, 1), $gray-light);
+	}
+}
+
+.clone-point__current .tile-grid__image img {
+	width: 65%;
+	margin: 15% auto;
+}
+
+.clone-point__previous .tile-grid__image img {
+	width: 56%;
+	margin: 12% auto;
+}

@@ -3,20 +3,17 @@
 /**
  * Internal dependencies
  */
-
 import { bypassDataLayer } from './utils';
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { getHandlers, registerHandlers } from 'state/data-layer/handler-registry';
 import wpcomHttpHandlers from './wpcom-http';
+import httpData from './http-data';
 import httpHandlers from 'state/http';
-import thirdPartyHandlers from './third-party';
 import wpcomHandlers from './wpcom';
 
-const mergedHandlers = mergeHandlers(
-	httpHandlers,
-	wpcomHttpHandlers,
-	thirdPartyHandlers,
-	wpcomHandlers
-);
+registerHandlers( 'httpData', httpData );
+registerHandlers( 'httpHandlers', httpHandlers );
+registerHandlers( 'wpcomHttpHandlers', wpcomHttpHandlers );
+registerHandlers( 'wpcomHandlers', wpcomHandlers );
 
 const shouldNext = action => {
 	const meta = action.meta;
@@ -58,10 +55,10 @@ const shouldNext = action => {
  * The optimizations reduce function-calling and object
  * property lookup where possible.
  *
- * @param {Object<String,Function[]>} handlers map of action types to handlers
+ * @param {Function} handlersFor returns list of handlers for given action type
  * @returns {Function} middleware handler
  */
-export const middleware = handlers => store => next => {
+export const middleware = handlersFor => store => next => {
 	/**
 	 * Middleware handler
 	 *
@@ -70,7 +67,7 @@ export const middleware = handlers => store => next => {
 	 * @returns {undefined} please do not use
 	 */
 	return action => {
-		const handlerChain = handlers[ action.type ];
+		const handlerChain = handlersFor( action.type );
 
 		// if no handler is defined for the action type
 		// then pass it along the chain untouched
@@ -98,4 +95,4 @@ export const middleware = handlers => store => next => {
 	};
 };
 
-export default middleware( mergedHandlers );
+export default middleware( getHandlers );

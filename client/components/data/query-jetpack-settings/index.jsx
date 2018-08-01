@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackSettings } from 'state/selectors';
+import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
 import { requestJetpackSettings } from 'state/jetpack/settings/actions';
 
 class QueryJetpackSettings extends Component {

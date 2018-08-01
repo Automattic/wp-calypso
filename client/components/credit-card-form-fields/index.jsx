@@ -17,18 +17,19 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 import PaymentCountrySelect from 'components/payment-country-select';
 import EbanxPaymentFields from 'my-sites/checkout/checkout/ebanx-payment-fields';
 import { Input } from 'my-sites/domains/components/form';
-import { maskField, unmaskField } from 'lib/credit-card-details';
-import { getCreditCardType } from 'lib/checkout';
+import InfoPopover from 'components/info-popover';
+import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalEbanxFields } from 'lib/checkout/ebanx';
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
 		card: PropTypes.object.isRequired,
-		countriesList: PropTypes.object.isRequired,
+		countriesList: PropTypes.array.isRequired,
 		eventFormName: PropTypes.string,
 		onFieldChange: PropTypes.func,
 		getErrorMessage: PropTypes.func,
 		autoFocus: PropTypes.bool,
+		isNewTransaction: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -36,6 +37,7 @@ export class CreditCardFormFields extends React.Component {
 		onFieldChange: noop,
 		getErrorMessage: noop,
 		autoFocus: true,
+		isNewTransaction: false,
 	};
 
 	createField = ( fieldName, componentClass, props ) => {
@@ -90,8 +92,45 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
+	getCvvPopover = () => {
+		const { translate, card } = this.props;
+		const brand = getCreditCardType( card.number );
+
+		let popoverText = translate(
+			'This is the 3-digit number printed on the signature panel on the back of your card.'
+		);
+		let popoverImage = '/calypso/images/upgrades/cc-cvv-back.svg';
+
+		if ( brand === 'amex' ) {
+			popoverText = translate(
+				'This is the 4-digit number printed above the account number ' +
+					'on the front of your card.'
+			);
+			popoverImage = '/calypso/images/upgrades/cc-cvv-front.svg';
+		}
+
+		return (
+			<InfoPopover position="top" className="credit-card-form-fields__cvv-info">
+				<img
+					className="credit-card-form-fields__cvv-illustration"
+					src={ popoverImage }
+					width="42"
+					height="30"
+					alt={ translate( 'Credit card CVV illustration' ) }
+				/>
+				{ popoverText }
+			</InfoPopover>
+		);
+	};
+
 	shouldRenderEbanxFields() {
-		return shouldRenderAdditionalEbanxFields( this.getFieldValue( 'country' ) );
+		// The add/update card endpoints do not process Ebanx payment details
+		// so we only show Ebanx fields at checkout,
+		// i.e., when there is a current transaction.
+		return (
+			this.props.isNewTransaction &&
+			shouldRenderAdditionalEbanxFields( this.getFieldValue( 'country' ) )
+		);
 	}
 
 	render() {
@@ -121,21 +160,26 @@ export class CreditCardFormFields extends React.Component {
 				<div className={ creditCardFormFieldsExtrasClassNames }>
 					{ this.createField( 'expiration-date', Input, {
 						inputMode: 'numeric',
-						label: translate( 'MM/YY', {
-							context: 'Expiry label on credit card form',
+						label: translate( 'Expiry: MM/YY', {
+							comment: 'Expiry label on credit card form',
 						} ),
 					} ) }
 
 					{ this.createField( 'cvv', Input, {
 						inputMode: 'numeric',
-						label: translate( 'CVV', {
+						placeholder: translate( 'CVV', {
 							context: '3 digit security number on credit card form',
+						} ),
+						label: translate( 'CVV {{infoPopover/}}', {
+							components: {
+								infoPopover: this.getCvvPopover(),
+							},
 						} ),
 					} ) }
 
 					{ this.createField( 'country', PaymentCountrySelect, {
 						label: translate( 'Country' ),
-						countriesList: countriesList,
+						countriesList,
 						onChange: noop,
 						onCountrySelected: this.updateFieldValues,
 					} ) }

@@ -151,6 +151,7 @@ const RegisteredDomain = createReactClass( {
 					'expiringDomainsCannotManage',
 					'pendingTransfer',
 					'newTransfersWrongNS',
+					'pendingConsent',
 				] }
 			/>
 		);

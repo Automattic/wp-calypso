@@ -53,7 +53,6 @@
 .purchase-detail__content {
 	padding: 32px;
 	display: flex;
-	align-items: center;
 
 	@include breakpoint( "<660px" ) {
 		flex-wrap: wrap;
@@ -65,7 +64,6 @@
 	flex-shrink: 0;
 
 	@include breakpoint( ">660px" ) {
-		order: 2;
 		width: 178px;
 	}
 }
@@ -79,7 +77,6 @@
 
 	@include breakpoint( "<660px" ) {
 		display: block;
-		margin: 0 auto;
 	}
 }
 
@@ -87,7 +84,7 @@
 	background: $gray-darken-20;
 	border-radius: 50%;
 	color: $white;
-	margin: 0 auto 10px;
+	margin-bottom: 10px;
 	padding: 16px;
 	width: 100%;
 	flex-shrink: 0;

@@ -20,17 +20,17 @@
 	max-width: 700px;
 	margin: 0 auto;
 
-	& > .mce-container-body {
+	& .mce-container.mce-top-part > .mce-container-body {
 		&:after {
 			margin-top: 1px;
 			transition: width 0.2s;
 
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				@include long-content-fade();
 				height: 44px;
 			}
 
-			@include breakpoint( "660px-960px" ) {
+			@include breakpoint( '660px-960px' ) {
 				@include long-content-fade();
 				right: 1px;
 				height: 36px;
@@ -42,22 +42,31 @@
 		}
 	}
 
-	&.is-pinned > .mce-container-body {
+	&.is-pinned .mce-container.mce-top-part > .mce-container-body {
 		& > .mce-toolbar-grp,
 		&:after {
 			position: fixed;
-				top: 47px;
+			top: 47px;
+		}
+
+		& > .mce-toolbar-grp {
 			border-top-width: 0;
 			border-left-width: 0;
 			border-right-width: 0;
 
 			.focus-sidebar & {
-				width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
-				@include breakpoint( "660px-960px" ) {
-					width: calc( 100% - ( #{ $sidebar-width-min + 1 } ) );
+				width: calc( 100% - ( #{$sidebar-width-max + 1} ) );
+				@include breakpoint( '660px-960px' ) {
+					width: calc( 100% - ( #{$sidebar-width-min + 1} ) );
 				}
 				margin: 0;
 			}
+		}
+
+		&:after {
+			// align the content-fade to the right edge. As the pinned toolbar doesn't have
+			// a right border, indenting the fade by 1px is not needed.
+			right: 0;
 		}
 
 		& > .mce-toolbar-grp > .mce-container-body > .mce-container {
@@ -79,13 +88,13 @@
 		overflow-x: auto;
 		margin: 0 auto;
 
-		@media screen and ( max-width: 700px ) {
+		@media screen and (max-width: 700px) {
 			border-left-width: 0;
 			border-right-width: 0;
 		}
 
 		.focus-sidebar & {
-			@media screen and ( max-width: ( 700px + $sidebar-width-min ) ) {
+			@media screen and (max-width: ( 700px + $sidebar-width-min )) {
 				border-left-width: 0;
 				border-right-width: 0;
 			}
@@ -112,7 +121,7 @@
 		border-right: 1px solid $gray-lighten-30;
 		height: 36px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			border-right-color: $white;
 			border-left-color: $white;
 			padding: 2px 0;
@@ -142,8 +151,8 @@
 .mce-toolbar .mce-btn-group .mce-btn.mce-toolbar-segment-end:not( :last-child )::after {
 	content: '';
 	position: absolute;
-		top: -6px;
-		bottom: -6px;
+	top: -6px;
+	bottom: -6px;
 	width: 1px;
 	background-color: $gray-lighten-20;
 }
@@ -168,7 +177,10 @@
 	}
 }
 
-.mce-toolbar .mce-btn-group .mce-btn.mce-toolbar-segment-end:not( .mce-hidden ) + .mce-btn.mce-toolbar-segment-start {
+.mce-toolbar
+	.mce-btn-group
+	.mce-btn.mce-toolbar-segment-end:not( .mce-hidden )
+	+ .mce-btn.mce-toolbar-segment-start {
 	margin-left: 2px;
 
 	&::before {
@@ -239,7 +251,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-wpcom-icon-button.mce-media button {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 13px;
 	}
 }
@@ -274,7 +286,7 @@
 #mce-modal-block,
 #mce-modal-block.mce-fade {
 	opacity: 0.7;
-	filter: alpha(opacity=70);
+	filter: alpha( opacity=70 );
 	transition: none;
 }
 
@@ -339,15 +351,15 @@
 .mce-checkbox i.mce-i-checkbox {
 	border: 1px solid #ddd;
 	border-radius: 0;
-	box-shadow: inset 0 1px 2px rgba(0,0,0,0.07);
-	transition: .05s all ease-in-out;
+	box-shadow: inset 0 1px 2px rgba( 0, 0, 0, 0.07 );
+	transition: 0.05s all ease-in-out;
 }
 
 .mce-textbox:focus,
 .mce-textbox.mce-focus,
 .mce-checkbox:focus i.mce-i-checkbox {
 	border-color: #5b9dd9;
-	box-shadow: 0 0 2px rgba(30,140,190,0.8);
+	box-shadow: 0 0 2px rgba( 30, 140, 190, 0.8 );
 }
 
 /* TinyMCE menus */
@@ -408,23 +420,22 @@ div.mce-toolbar-grp {
 	background: #f5f5f5;
 	padding: 0;
 	position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
+	top: 0;
+	left: 0;
+	right: 0;
 }
 
 div.mce-inline-toolbar-grp {
 	background-color: $white;
 	border: 1px solid $gray-lighten-20;
 	border-radius: 4px;
-	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
-		0 0 56px rgba( 0, 0, 0, 0.075 );
+	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 	box-sizing: border-box;
 	margin-bottom: 8px;
 	position: absolute;
-		top: auto;
-		left: auto;
-		right: auto;
+	top: auto;
+	left: auto;
+	right: auto;
 	user-select: none;
 	z-index: z-index( 'root', 'div.mce-inline-toolbar-grp' ); /* Same as the other TinyMCE "panels" */
 	max-width: 98%;
@@ -532,7 +543,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 }
 
 .mce-tinymce .mce-stack-layout-item.mce-last {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		border-top: 1px solid $gray-lighten-30;
 	}
 }
@@ -545,7 +556,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 	display: inline-block;
 	overflow: hidden;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		display: block;
 	}
 }
@@ -597,7 +608,7 @@ div.mce-path {
 	border-radius: 0;
 	filter: none;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin: 0;
 	}
 }
@@ -672,7 +683,7 @@ div.mce-path {
 
 .mce-toolbar .mce-btn-group > div {
 	white-space: nowrap;
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-right: 32px;
 		white-space: normal;
 	}
@@ -715,7 +726,7 @@ div.mce-path {
 	min-width: 110px;
 	text-align: left;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 5px;
 	}
 }
@@ -738,7 +749,7 @@ div.mce-path {
 	border-left-color: $gray-lighten-30;
 	border-right-color: $gray-lighten-30;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		border-right-color: $white;
 		border-left-color: $white;
 	}
@@ -751,14 +762,14 @@ div.mce-path {
 .mce-panel .mce-btn i.mce-caret {
 	top: 5px;
 	right: 18px;
-	margin: 2px 0 0 -13px #{"/*rtl:ignore*/"};
+	margin: 2px 0 0 -13px #{'/*rtl:ignore*/'};
 	border: none;
 	color: $gray;
 
 	// Displaying the icon by using an svg file is a temporary solution to remove Noticons.
 	&::before {
 		display: block;
-		content: url("/calypso/images/tinymce-icons/gridicons-chevron-down.svg");
+		content: url( '/calypso/images/tinymce-icons/gridicons-chevron-down.svg' );
 		width: 14px;
 		height: 14px;
 		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
@@ -783,7 +794,7 @@ div.mce-path {
 	margin-top: -3px;
 }
 
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	.mce-panel .mce-btn.mce-listbox i.mce-caret {
 		top: 6px;
 	}
@@ -797,7 +808,7 @@ div.mce-path {
 	border-right-color: transparent;
 }
 
-.mce-toolbar .mce-splitbtn .mce-open.mce-active{
+.mce-toolbar .mce-splitbtn .mce-open.mce-active {
 	box-shadow: none;
 }
 
@@ -905,9 +916,7 @@ div.mce-menu .mce-menu-item-sep,
 }
 
 .mce-window .mce-btn:focus {
-	box-shadow:
-		0 0 0 1px #5b9dd9,
-		0 0 2px 1px rgba( 30, 140, 190, 0.8 );
+	box-shadow: 0 0 0 1px #5b9dd9, 0 0 2px 1px rgba( 30, 140, 190, 0.8 );
 }
 
 .mce-window .mce-btn:active {
@@ -944,9 +953,7 @@ div.mce-menu .mce-menu-item-sep,
 
 .mce-window .mce-btn.mce-primary:focus {
 	border-color: #0e3950;
-	box-shadow:
-		inset 0 1px 0 rgba( 120, 200, 230, 0.6 ),
-		0 0 0 1px #5b9dd9,
+	box-shadow: inset 0 1px 0 rgba( 120, 200, 230, 0.6 ), 0 0 0 1px #5b9dd9,
 		0 0 2px 1px rgba( 30, 140, 190, 0.8 );
 }
 
@@ -984,7 +991,7 @@ div.mce-menu .mce-menu-item-sep,
 }
 
 .mce-btn-small .mce-ico {
-	font-family: "tinymce-small", Arial, sans-serif;
+	font-family: 'tinymce-small', Arial, sans-serif;
 }
 
 .mce-toolbar .mce-ico {
@@ -1275,7 +1282,7 @@ i.mce-i-wp_code:before {
 	background: #ebebeb;
 	color: #777;
 	cursor: pointer;
-	font: 13px/19px "Open Sans", Helvetica, Arial, sans-serif;
+	font: 13px/19px 'Open Sans', Helvetica, Arial, sans-serif;
 	height: 20px;
 	margin: 5px 0 0 5px;
 	padding: 3px 8px 4px;
@@ -1283,9 +1290,7 @@ i.mce-i-wp_code:before {
 }
 
 .wp-switch-editor:focus {
-	box-shadow:
-		0 0 0 1px #5b9dd9,
-		0 0 2px 1px rgba(30, 140, 190, .8);
+	box-shadow: 0 0 0 1px #5b9dd9, 0 0 2px 1px rgba( 30, 140, 190, 0.8 );
 	outline: none;
 	color: #23282d;
 }
@@ -1306,7 +1311,7 @@ i.mce-i-wp_code:before {
 }
 
 .tmce-active .quicktags-toolbar {
-	 display: none;
+	display: none;
 }
 
 .tmce-active .switch-tmce,
@@ -1388,19 +1393,19 @@ i.mce-i-wp_code:before {
 	margin: 2px;
 }
 
-.quicktags-toolbar input[value="link"] {
+.quicktags-toolbar input[value='link'] {
 	text-decoration: underline;
 }
 
-.quicktags-toolbar input[value="del"] {
+.quicktags-toolbar input[value='del'] {
 	text-decoration: line-through;
 }
 
-.quicktags-toolbar input[value="i"] {
+.quicktags-toolbar input[value='i'] {
 	font-style: italic;
 }
 
-.quicktags-toolbar input[value="b"] {
+.quicktags-toolbar input[value='b'] {
 	font-weight: bold;
 }
 
@@ -1423,14 +1428,14 @@ i.mce-i-wp_code:before {
 
 .mce-tinymce .mce-btn-group .mce-btn.mce-last {
 	position: absolute;
-		right: 0;
+	right: 0;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		position: relative;
 		right: inherit;
 	}
 }
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	.mce-toolbar .mce-btn button,
 	.qt-dfw {
 		padding: 6px;
@@ -1465,7 +1470,7 @@ i.mce-i-wp_code:before {
 	}
 }
 
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	.wp-core-ui .quicktags-toolbar input.button.button-small {
 		/* .button-small is normaly 11px, but a bit too small for these buttons. */
 		font-size: 12px;
@@ -1739,7 +1744,7 @@ i.mce-i-wp_code:before {
 .wp-fullscreen-active #fullscreen-topbar {
 	transition-duration: 0.8s;
 	opacity: 0;
-	filter: alpha(opacity=0);
+	filter: alpha( opacity=0 );
 }
 
 .wp-fullscreen-active #wp-fullscreen-statusbar {
@@ -1749,7 +1754,7 @@ i.mce-i-wp_code:before {
 .wp-fullscreen-active.wp-dfw-show-ui #fullscreen-topbar {
 	transition-duration: 0.4s;
 	opacity: 1;
-	filter: alpha(opacity=100);
+	filter: alpha( opacity=100 );
 }
 
 .wp-fullscreen-active.wp-dfw-show-ui #wp-fullscreen-statusbar {
@@ -1809,7 +1814,7 @@ i.mce-i-wp_code:before {
 	max-width: 700px;
 }
 
-.wp-fullscreen-active.wp-dfw-touch  .wp-fullscreen-title,
+.wp-fullscreen-active.wp-dfw-touch .wp-fullscreen-title,
 .wp-fullscreen-active.wp-dfw-touch .wp-editor-container {
 	border-color: #ccc;
 }
@@ -1818,7 +1823,7 @@ i.mce-i-wp_code:before {
 	height: 30px;
 }
 
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	#wp-fullscreen-close,
 	#wp-fullscreen-central-toolbar,
 	#wp-fullscreen-mode-bar,
@@ -1858,7 +1863,7 @@ i.mce-i-wp_code:before {
 	}
 }
 
-@media screen and ( max-width: 480px ) {
+@media screen and (max-width: 480px) {
 	#wp_fs_help {
 		display: none;
 	}
@@ -1900,7 +1905,7 @@ div.wp-link-preview {
 	overflow: hidden;
 	text-overflow: ellipsis;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 14px;
 		margin-bottom: 14px;
 		max-width: 70%;
@@ -1912,7 +1917,7 @@ div.wp-link-preview a {
 	color: $blue-wordpress;
 	text-decoration: underline;
 	transition-property: border, background, color;
-	transition-duration: .05s;
+	transition-duration: 0.05s;
 	transition-timing-function: ease-in-out;
 	cursor: pointer;
 
@@ -1940,15 +1945,13 @@ div.wp-link-preview a {
 	left: 6px;
 }
 
-html:lang(he-il) .rtl .wp-switch-editor,
-html:lang(he-il) .rtl .quicktags-toolbar input  {
+html:lang( he-il ) .rtl .wp-switch-editor,
+html:lang( he-il ) .rtl .quicktags-toolbar input {
 	font-family: Arial, sans-serif;
 }
 
 /* HiDPI */
-@media print,
-(-webkit-min-device-pixel-ratio: 1.25),
-(min-resolution: 120dpi) {
+@media print, (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
 	.wp-media-buttons .add_media span.wp-media-buttons-icon,
 	#wp-fullscreen-buttons #wp_fs_image span.mce_image {
 		background: none;

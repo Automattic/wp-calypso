@@ -24,7 +24,8 @@ import debugFactory from 'debug';
  */
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
 import { getSectionName } from 'state/ui/selectors';
-import { getInitialQueryArguments, getCurrentQueryArguments } from 'state/selectors';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
@@ -38,7 +39,7 @@ const BLACKLISTED_SECTIONS = [
 	'checkout-thank-you', // thank you page
 ];
 
-const getToursHistory = state => getPreference( state, 'guided-tours-history' );
+export const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
 
 const mappable = x => ( ! Array.isArray( x ) ? [ x ] : x );

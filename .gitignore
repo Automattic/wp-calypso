@@ -34,6 +34,7 @@ test-results*.xml
 /public/style*.css.map
 /public/editor*.css
 /public/directly*.css
+/public/emergent-paywall*.css
 /public/sections/*
 /public/sections-rtl/*
 /public/images/flags/*.svg
@@ -51,6 +52,9 @@ cover.html
 .test.log
 
 cached-requests.json
+
 *.br
 *.gz
 
+# Gutenberg extensions
+/client/gutenberg/extensions/**/build

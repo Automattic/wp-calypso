@@ -10,7 +10,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUserSettings } from 'state/selectors';
+import getUserSettings from 'state/selectors/get-user-settings';
 import {
 	USER_SETTINGS_REQUEST,
 	USER_SETTINGS_SAVE,

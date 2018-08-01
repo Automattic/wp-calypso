@@ -76,7 +76,6 @@ export class AddImageDialog extends Component {
 
 		return (
 			<Dialog
-				autoFocus={ false }
 				isVisible={ shouldDisplay }
 				buttons={ buttons }
 				onClose={ this.onCloseDialog }
@@ -84,15 +83,31 @@ export class AddImageDialog extends Component {
 			>
 				<FormFieldset>
 					<FormLabel htmlFor="image_url">{ translate( 'URL' ) }</FormLabel>
-					<FormTextInput name="image_url" onChange={ this.setImageUrl } value={ imageUrl } />
+					<FormTextInput
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+						id="image_url"
+						name="image_url"
+						onChange={ this.setImageUrl }
+						value={ imageUrl }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="image_title">{ translate( 'Title' ) }</FormLabel>
-					<FormTextInput name="image_title" onChange={ this.setImageTitle } value={ imageTitle } />
+					<FormTextInput
+						id="image_title"
+						name="image_title"
+						onChange={ this.setImageTitle }
+						value={ imageTitle }
+					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="image_alt">{ translate( 'Alt Text' ) }</FormLabel>
-					<FormTextInput name="image_alt" onChange={ this.setImageAlt } value={ imageAlt } />
+					<FormTextInput
+						id="image_alt"
+						name="image_alt"
+						onChange={ this.setImageAlt }
+						alue={ imageAlt }
+					/>
 				</FormFieldset>
 			</Dialog>
 		);

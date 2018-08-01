@@ -3,16 +3,19 @@
 /**
  * External dependencies
  */
+import React from 'react';
+import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import React from 'react';
-import { noop, every, has, defer, get } from 'lodash';
+import { noop, every, has, defer, get, trim } from 'lodash';
+import url from 'url';
 
 /**
  * Internal dependencies
  */
 import wpLib from 'lib/wp';
+
 const wpcom = wpLib.undocumented();
 
 import { toApi, fromApi } from 'lib/importer/common';
@@ -28,6 +31,15 @@ import TextInput from 'components/forms/form-text-input';
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { connectDispatcher } from '../dispatcher-converter';
 
+import { loadmShotsPreview } from './site-preview-actions';
+
+import { recordTracksEvent } from 'state/analytics/actions';
+
+const NO_ERROR_STATE = {
+	error: false,
+	errorMessage: '',
+	errorType: null,
+};
 class SiteImporterInputPane extends React.Component {
 	static displayName = 'SiteImporterSitePreview';
 
@@ -39,6 +51,7 @@ class SiteImporterInputPane extends React.Component {
 		} ),
 		onStartImport: PropTypes.func,
 		disabled: PropTypes.bool,
+		site: PropTypes.object,
 	};
 
 	static defaultProps = { description: null, onStartImport: noop };
@@ -48,6 +61,7 @@ class SiteImporterInputPane extends React.Component {
 		importStage: 'idle',
 		error: false,
 		errorMessage: '',
+		errorType: null,
 		siteURLInput: '',
 	};
 
@@ -77,6 +91,11 @@ class SiteImporterInputPane extends React.Component {
 				}, nextProps );
 			} else {
 				defer( props => startMappingAuthors( props.importerStatus.importerId ), nextProps );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+				} );
 			}
 
 			// Do not continue execution of the function as the rest should be executed on the next update.
@@ -92,31 +111,75 @@ class SiteImporterInputPane extends React.Component {
 				defer( props => {
 					startImporting( props.importerStatus );
 				}, nextProps );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_map_authors_single', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+				} );
 			}
 		}
-	};
-
-	resetErrors = () => {
-		this.setState( {
-			error: false,
-			errorMessage: '',
-		} );
 	};
 
 	setUrl = event => {
 		this.setState( { siteURLInput: event.target.value } );
 	};
 
-	validateSite = () => {
-		const siteURL = this.state.siteURLInput;
+	validateOnEnter = event => {
+		event.key === 'Enter' && this.validateSite();
+	};
 
-		this.setState( { loading: true }, this.resetErrors );
+	validateSite = () => {
+		const siteURL = trim( this.state.siteURLInput );
+		const { hostname, pathname } = url.parse(
+			siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
+		);
+
+		let errorMessage;
+		if ( ! siteURL ) {
+			errorMessage = this.props.translate( 'Please enter a valid URL.' );
+		} else if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
+			errorMessage = this.props.translate(
+				"You've entered the URL for the Wix editor, which only you can access. Please enter your site's public URL. It should look like one of the examples below."
+			);
+		} else if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
+			errorMessage = this.props.translate(
+				"You haven't entered the full URL. Please include the part of the URL that comes after wixsite.com. See below for an example."
+			);
+		}
+
+		if ( errorMessage ) {
+			this.setState( {
+				loading: false,
+				error: true,
+				errorMessage,
+				errorType: 'validationError',
+			} );
+			return;
+		}
+
+		// normalized URL
+		const urlForImport = hostname + pathname;
+
+		this.setState( {
+			loading: true,
+			...NO_ERROR_STATE,
+		} );
+
+		this.props.recordTracksEvent( 'calypso_site_importer_validate_site', {
+			blog_id: this.props.site.ID,
+			site_url: urlForImport,
+		} );
+
+		loadmShotsPreview( {
+			url: urlForImport,
+			maxRetries: 1,
+		} ).catch( noop ); // We don't care about the error, this is just a preload
 
 		wpcom.wpcom.req
 			.get( {
 				path: `/sites/${
 					this.props.site.ID
-				}/site-importer/is-site-importable?site_url=${ siteURL }`,
+				}/site-importer/is-site-importable?site_url=${ urlForImport }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( resp => {
@@ -128,9 +191,24 @@ class SiteImporterInputPane extends React.Component {
 						unsupported: resp.unsupported_content,
 						favicon: resp.favicon,
 						engine: resp.engine,
+						url: resp.url,
 					},
 					loading: false,
-					importSiteURL: siteURL,
+					importSiteURL: resp.site_url,
+				} );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_done', {
+					blog_id: this.props.site.ID,
+					site_url: resp.site_url,
+					supported_content: resp.supported_content
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					unsupported_content: resp.unsupported_content
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					site_engine: resp.engine,
 				} );
 			} )
 			.catch( err => {
@@ -139,11 +217,33 @@ class SiteImporterInputPane extends React.Component {
 					error: true,
 					errorMessage: `${ err.message }`,
 				} );
+
+				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
+					blog_id: this.props.site.ID,
+					site_url: urlForImport,
+				} );
 			} );
 	};
 
 	importSite = () => {
-		this.setState( { loading: true }, this.resetErrors );
+		this.setState( {
+			loading: true,
+			...NO_ERROR_STATE,
+		} );
+
+		this.props.recordTracksEvent( 'calypso_site_importer_start_import', {
+			blog_id: this.props.site.ID,
+			site_url: this.state.importSiteURL,
+			supported_content: this.state.importData.supported
+				.slice( 0 )
+				.sort()
+				.join( ', ' ),
+			unsupported_content: this.state.importData.unsupported
+				.slice( 0 )
+				.sort()
+				.join( ', ' ),
+			site_engine: this.state.importData.engine,
+		} );
 
 		wpcom.wpcom.req
 			.post( {
@@ -157,6 +257,20 @@ class SiteImporterInputPane extends React.Component {
 			.then( resp => {
 				this.setState( { loading: false } );
 
+				this.props.recordTracksEvent( 'calypso_site_importer_start_import_done', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+					supported_content: this.state.importData.supported
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					unsupported_content: this.state.importData.unsupported
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					site_engine: this.state.importData.engine,
+				} );
+
 				const data = fromApi( resp );
 				const action = finishUpload( this.props.importerStatus.importerId )( data );
 				defer( () => {
@@ -164,6 +278,20 @@ class SiteImporterInputPane extends React.Component {
 				} );
 			} )
 			.catch( err => {
+				this.props.recordTracksEvent( 'calypso_site_importer_start_import_fail', {
+					blog_id: this.props.site.ID,
+					site_url: this.state.importSiteURL,
+					supported_content: this.state.importData.supported
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					unsupported_content: this.state.importData.unsupported
+						.slice( 0 )
+						.sort()
+						.join( ', ' ),
+					site_engine: this.state.importData.engine,
+				} );
+
 				this.setState( {
 					loading: false,
 					error: true,
@@ -173,13 +301,17 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	resetImport = () => {
-		this.setState(
-			{
-				loading: false,
-				importStage: 'idle',
-			},
-			this.resetErrors
-		);
+		this.props.recordTracksEvent( 'calypso_site_importer_reset_import', {
+			blog_id: this.props.site.ID,
+			site_url: this.state.importSiteURL || this.state.siteURLInput,
+			previous_stage: this.state.importStage,
+		} );
+
+		this.setState( {
+			loading: false,
+			importStage: 'idle',
+			...NO_ERROR_STATE,
+		} );
 	};
 
 	render() {
@@ -192,7 +324,9 @@ class SiteImporterInputPane extends React.Component {
 							<TextInput
 								disabled={ this.state.loading }
 								onChange={ this.setUrl }
+								onKeyPress={ this.validateOnEnter }
 								value={ this.state.siteURLInput }
+								placeholder="https://example.com/"
 							/>
 							<Button
 								disabled={ this.state.loading }
@@ -210,23 +344,37 @@ class SiteImporterInputPane extends React.Component {
 							siteURL={ this.state.importSiteURL }
 							importData={ this.state.importData }
 							isLoading={ this.state.loading }
+							resetImport={ this.resetImport }
+							startImport={ this.importSite }
+							site={ this.props.site }
 						/>
-						<div className="site-importer__site-importer-confirm-site-pane-container">
-							<Button disabled={ this.state.loading } onClick={ this.importSite }>
-								{ this.props.translate( 'Yes! Start import' ) }
-							</Button>
-							<Button
-								disabled={ this.state.loading }
-								isPrimary={ false }
-								onClick={ this.resetImport }
-							>
-								{ this.props.translate( 'No' ) }
-							</Button>
-						</div>
 					</div>
 				) }
 				{ this.state.error && (
-					<ErrorPane type="importError" description={ this.state.errorMessage } />
+					<ErrorPane
+						type={ this.state.errorType || 'importError' }
+						description={ this.state.errorMessage }
+						retryImport={ this.validateSite }
+					/>
+				) }
+				{ this.state.importStage === 'idle' && (
+					<div>
+						<p>
+							{ this.props.translate( 'Please use one of following formats for the site URL:' ) }
+						</p>
+						<ul>
+							<li>
+								<span className="site-importer__site-importer-example-domain">example.com</span> -{' '}
+								{ this.props.translate( 'a paid custom domain' ) }
+							</li>
+							<li>
+								<span className="site-importer__site-importer-example-domain">
+									example-account.wixsite.com/my-site
+								</span>{' '}
+								- { this.props.translate( 'a free domain that comes with every site' ) }
+							</li>
+						</ul>
+					</div>
 				) }
 			</div>
 		);
@@ -240,4 +388,7 @@ const mapDispatchToProps = dispatch => ( {
 		} ),
 } );
 
-export default connectDispatcher( null, mapDispatchToProps )( localize( SiteImporterInputPane ) );
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( connectDispatcher( null, mapDispatchToProps )( localize( SiteImporterInputPane ) ) );

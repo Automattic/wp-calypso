@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { getRawSite } from 'state/sites/selectors';
+import getRawSite from 'state/selectors/get-raw-site';
 
 const EMTPY_OPTIONS = Object.freeze( {} );
 

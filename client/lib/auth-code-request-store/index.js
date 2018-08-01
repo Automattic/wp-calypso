@@ -21,7 +21,7 @@ const initialState = {
 // If the error was a needs_2fa from the API that means we successfully asked for an SMS
 function handleSMSResponse( payload ) {
 	const { data, error } = payload;
-	var errorMessage = null;
+	let errorMessage = null;
 
 	// if it's 2fa error then we actually successfully requested an sms code
 	if ( data && data.body && data.body.error === 'needs_2fa' ) {

@@ -77,6 +77,14 @@ export function removeItem( item, domainsWithPlansOnly ) {
 	} );
 }
 
+export function replaceItem( oldItem, newItem ) {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.CART_ITEM_REPLACE,
+		oldItem,
+		newItem,
+	} );
+}
+
 export function addDomainToCart( domainSuggestion ) {
 	addItem(
 		cartItems.domainRegistration( {
@@ -106,5 +114,11 @@ export function applyCoupon( coupon ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.CART_COUPON_APPLY,
 		coupon,
+	} );
+}
+
+export function removeCoupon() {
+	Dispatcher.handleViewAction( {
+		type: ActionTypes.CART_COUPON_REMOVE,
 	} );
 }

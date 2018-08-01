@@ -17,10 +17,10 @@ import { action as ActionTypes } from './constants';
 /**
  * Module variables
  */
-var initialState = [];
+const initialState = [];
 
-var HelpSearchStore = createReducerStore( function( state, payload ) {
-	var action = payload.action,
+const HelpSearchStore = createReducerStore( function( state, payload ) {
+	let action = payload.action,
 		newState;
 	debug( 'register event Type', action.type, payload );
 

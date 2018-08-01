@@ -22,12 +22,14 @@ import photon from 'photon';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
 import ThemePreview from 'my-sites/themes/theme-preview';
+import Banner from 'components/banner';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -56,6 +58,7 @@ import {
 	getThemeForumUrl,
 } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
+import { abtest } from 'lib/abtest';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
@@ -63,6 +66,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
+import { hasFeature } from 'state/sites/plans/selectors';
 
 class ThemeSheet extends React.Component {
 	static displayName = 'ThemeSheet';
@@ -213,14 +218,28 @@ class ThemeSheet extends React.Component {
 		return preview.action( this.props.id );
 	};
 
-	renderPreviewButton( demo_uri ) {
+	shouldRenderPreviewButton() {
+		return this.isThemeAvailable() && ! this.isThemeCurrentOne();
+	}
+
+	isThemeCurrentOne() {
+		return this.props.isActive;
+	}
+
+	isThemeAvailable() {
+		const { demo_uri, retired } = this.props;
+		return demo_uri && ! retired;
+	}
+
+	renderPreviewButton( demo_uri = this.props.demo_uri, props = {} ) {
 		return (
 			<a
-				className="theme__sheet-preview-link"
+				className={ 'theme__sheet-preview-link' }
 				onClick={ this.previewAction }
 				data-tip-target="theme-sheet-preview"
 				href={ demo_uri }
 				rel="noopener noreferrer"
+				{ ...props }
 			>
 				<span className="theme__sheet-preview-link-text">
 					{ i18n.translate( 'Open Live Demo', {
@@ -232,7 +251,7 @@ class ThemeSheet extends React.Component {
 	}
 
 	renderScreenshot() {
-		const { demo_uri, retired, isActive, isWpcomTheme, name: themeName } = this.props;
+		const { isWpcomTheme, name: themeName } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
@@ -248,10 +267,10 @@ class ThemeSheet extends React.Component {
 			/>
 		);
 
-		if ( demo_uri && ! retired ) {
+		if ( this.isThemeAvailable() ) {
 			return (
 				<div className="theme__sheet-screenshot is-active" onClick={ this.previewAction }>
-					{ isActive ? null : this.renderPreviewButton( demo_uri ) }
+					{ this.shouldRenderPreviewButton() ? this.renderPreviewButton() : null }
 					{ img }
 				</div>
 			);
@@ -281,6 +300,18 @@ class ThemeSheet extends React.Component {
 						{ filterStrings[ section ] }
 					</NavItem>
 				) ) }
+				{ this.shouldRenderPreviewButton() ? (
+					<NavItem
+						key="theme-preview"
+						path={ this.props.demo_uri }
+						onClick={ this.previewAction }
+						className={ 'is-' + 'theme-preview' }
+					>
+						{ i18n.translate( 'Open Live Demo', {
+							context: 'Individual theme live preview button',
+						} ) }
+					</NavItem>
+				) : null }
 			</NavTabs>
 		);
 
@@ -548,7 +579,7 @@ class ThemeSheet extends React.Component {
 
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
-		const { id, siteId, retired } = this.props;
+		const { id, siteId, retired, isPremium, hasUnlimitedPremiumThemes } = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
@@ -587,10 +618,38 @@ class ThemeSheet extends React.Component {
 			} );
 		}
 
+		let pageUpsellBanner, previewUpsellBanner;
+		const hasUpsellBanner =
+			isPremium &&
+			! hasUnlimitedPremiumThemes &&
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'themesNudgesUpdates';
+		if ( hasUpsellBanner ) {
+			// This is just for US-english audience and is not translated, remember to add translate() calls before
+			// removing a/b test check and enabling it for everyone
+			pageUpsellBanner = (
+				<Banner
+					plan={ PLAN_PREMIUM }
+					className="is-particular-theme-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
+					title={ 'Access this theme for FREE with a Premium or Business plan!' }
+					description={
+						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+					}
+					event="themes_plan_particular_free_with_plan"
+					callToAction={ 'View plans' }
+					forceHref={ true }
+				/>
+			);
+			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
+				className: 'is-theme-preview-banner',
+			} );
+		}
+		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
+
 		const links = [ { rel: 'canonical', href: canonicalUrl } ];
 
 		return (
-			<Main className="theme__sheet">
+			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				{ siteId && (
@@ -602,6 +661,7 @@ class ThemeSheet extends React.Component {
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source={ 'details' } />
+				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
 					backHref={ this.props.backPath }
@@ -616,7 +676,7 @@ class ThemeSheet extends React.Component {
 					</div>
 					<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
 				</div>
-				<ThemePreview />
+				<ThemePreview belowToolbar={ previewUpsellBanner } />
 			</Main>
 		);
 	};
@@ -705,6 +765,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
+			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
 		};

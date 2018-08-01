@@ -1,7 +1,7 @@
 .inline-help {
 	position: fixed;
 		right: 24px;
-		bottom: 36px;
+		bottom: 24px;
 
 	z-index: z-index( 'root', '.floating-help' );
 
@@ -141,7 +141,7 @@
 }
 
 .inline-help__search {
-	.is-help-active & {
+	.is-secondary-view-active & {
 		display: none;
 	}
 
@@ -186,25 +186,75 @@
 	}
 }
 
-.inline-help__contact {
+.inline-help__secondary-view {
 	display: none;
 
-	overflow-y: auto;
+	box-sizing: border-box;
 	max-height: 70vh;
+	min-height: 206px;
+	overflow-y: auto;
+	padding: 16px;
 
-	.is-help-active & {
+	.is-secondary-view-active & {
 		display: block;
 	}
 
-	.help-contact-form {
-		button {
-			width: 100%;
-		}
+	.button {
+		width: 100%;
+		text-align: center;
 	}
+}
+
+.inline-help__view-heading {
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 5px;
+}
+
+.inline-help__richresult {
+	text-align: left;
+
+	.inline-help__richresult__title {
+		display: block;
+		font-size: 14px;
+		font-weight: 600;
+		margin-bottom: 5px;
+	}
+}
+
+.inline-help__richresult__dialog.dialog.card {
+	width: 80vw;
+	max-width: 850px;
+}
+
+.inline-help__richresult__dialog__video {
+	position: relative;
+	padding-bottom: 56.25%;
+	padding-top: 30px;
+	height: 0;
+	overflow: hidden;
+
+	iframe,
+	object,
+	embed {
+		position: absolute;
+			top: 0;
+			left: 0;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.inline-help__forum-view {
+	text-align: left;
+}
+
+.inline-help__contact {
 
 	.help-contact__form {
 		margin: 0;
-		padding: 16px;
+		padding: 0;
 		box-shadow: none;
 		text-align: left;
 		border-radius: 4px 4px 0 0;
@@ -286,7 +336,7 @@
 		display: none;
 	}
 
-	.is-help-active & {
+	.is-secondary-view-active & {
 		.inline-help__more-button,
 		.inline-help__contact-button {
 			display: none;
@@ -303,6 +353,10 @@
 	text-align: left;
 	margin: 0;
 	padding: 8px 0;
+
+	.help-contact-form & {
+		padding: 0;
+	}
 }
 
 .inline-help__results-item {
@@ -336,18 +390,31 @@
 
 		a {
 			color: $white;
+			&:hover {
+				background: none;
+			}
+		}
+	}
+
+	.help-contact-form & {
+		a {
+			padding-left: 0;
+
+			&:hover {
+				background: none;
+			}
 		}
 	}
 }
 
 .inline-help__empty-results {
-	padding: 16px 0 0 0;
+	padding: 16px 0 0;
 	margin: 0;
 	font-size: 14px;
 	color: $gray;
 	font-style: italic;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 16px;
 	}
 }

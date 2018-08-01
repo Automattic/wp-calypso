@@ -16,12 +16,10 @@ import Card from 'components/card';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import ErrorMessage from 'account-recovery/components/account-recovery-error-message';
-import {
-	getAccountRecoveryResetUserData,
-	getAccountRecoveryResetSelectedMethod,
-	getAccountRecoveryValidationError,
-	isValidatingAccountRecoveryKey,
-} from 'state/selectors';
+import getAccountRecoveryResetSelectedMethod from 'state/selectors/get-account-recovery-reset-selected-method';
+import getAccountRecoveryResetUserData from 'state/selectors/get-account-recovery-reset-user-data';
+import getAccountRecoveryValidationError from 'state/selectors/get-account-recovery-validation-error';
+import isValidatingAccountRecoveryKey from 'state/selectors/is-validating-account-recovery-key';
 
 import {
 	setValidationKey,
@@ -59,8 +57,11 @@ class ResetPasswordSmsForm extends Component {
 				<p>
 					{ translate(
 						'Please enter the code you were sent by SMS. ' +
-							'It will look something like {{code}}63423423{{/code}}. You may need to wait a few moments before it arrives.',
-						{ components: { code: <code /> } }
+							'It will look something like {{code}}%(code)s{{/code}}. You may need to wait a few moments before it arrives.',
+						{
+							args: { code: '6342 3423' },
+							components: { code: <code /> },
+						}
 					) }
 				</p>
 				<form onSubmit={ this.submitValidationKey }>
@@ -69,7 +70,6 @@ class ResetPasswordSmsForm extends Component {
 						disabled={ isValidating }
 						value={ this.state.candidateKey }
 						onChange={ this.updateValidationKey }
-						autoFocus
 					/>
 					{ error && <ErrorMessage error={ error } /> }
 					<FormButton

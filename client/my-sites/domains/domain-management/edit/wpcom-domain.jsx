@@ -19,8 +19,8 @@ import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestSiteRename } from 'state/site-rename/actions';
-import SiteRenamer from 'blocks/simple-site-rename-form';
+import { requestSiteAddressChange } from 'state/site-address-change/actions';
+import SiteAddressChanger from 'blocks/site-address-changer';
 import { type as domainTypes } from 'lib/domains/constants';
 
 const WpcomDomain = createReactClass( {
@@ -42,7 +42,7 @@ const WpcomDomain = createReactClass( {
 		}
 
 		if ( get( domain, 'type' ) === domainTypes.WPCOM ) {
-			return <SiteRenamer currentDomain={ domain } />;
+			return <SiteAddressChanger currentDomain={ domain } />;
 		}
 
 		return (
@@ -93,6 +93,6 @@ export default flow(
 		state => ( {
 			siteId: getSelectedSiteId( state ),
 		} ),
-		dispatch => bindActionCreators( { requestSiteRename }, dispatch )
+		dispatch => bindActionCreators( { requestSiteAddressChange }, dispatch )
 	)
 )( WpcomDomain );

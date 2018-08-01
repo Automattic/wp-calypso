@@ -167,7 +167,24 @@ class SharingServiceDescription extends Component {
 	render() {
 		let description;
 
-		if ( 'reconnect' === this.props.status ) {
+		// Temporary message: the `must-disconnect` status for Facebook connection is likely due to Facebook API changes
+		if ( 'facebook' === this.props.service.ID && 'must-disconnect' === this.props.status ) {
+			description = this.props.translate(
+				'As of August 1, 2018, Facebook no longer allows direct sharing of posts to Facebook Profiles. ' +
+					'Connections to Facebook Pages remain unchanged. {{a}}Learn more{{/a}}',
+				{
+					components: {
+						a: (
+							<a
+								href="https://en.support.wordpress.com/publicize/#facebook-pages"
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
+			);
+		} else if ( 'reconnect' === this.props.status || 'must-disconnect' === this.props.status ) {
 			description = this.props.translate( 'There is an issue connecting to %(service)s.', {
 				args: { service: this.props.service.label },
 				context: 'Sharing: Publicize',

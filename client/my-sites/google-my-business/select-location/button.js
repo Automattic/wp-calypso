@@ -7,44 +7,67 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import GoogleMyBusinessLocation from 'my-sites/google-my-business/location';
-import GoogleMyBusinessLocationType from 'my-sites/google-my-business/location/location-type';
 import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
+import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
+import { withEnhancers } from 'state/utils';
 
 class GoogleMyBusinessSelectLocationButton extends Component {
 	static propTypes = {
 		connectGoogleMyBusinessLocation: PropTypes.func.isRequired,
-		location: GoogleMyBusinessLocationType.isRequired,
-		recordTracksEvent: PropTypes.func.isRequired,
+		location: PropTypes.object.isRequired,
+		recordTracksEventWithLocationCounts: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
-		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		onSelected: PropTypes.func,
+	};
+
+	static defaultProps = {
+		onSelected: noop,
 	};
 
 	connectLocation = () => {
-		this.props.connectGoogleMyBusinessLocation( this.props.siteId, this.props.location.id );
+		const { location, onSelected, siteId } = this.props;
 
-		this.props.recordTracksEvent(
+		this.props.recordTracksEventWithLocationCounts(
 			'calypso_google_my_business_select_location_connect_location_button_click'
 		);
+
+		this.props
+			.connectGoogleMyBusinessLocation( siteId, location.keyringConnectionId, location.ID )
+			.then( () => {
+				onSelected( location );
+			} );
 	};
 
 	render() {
-		const { location, siteSlug, translate } = this.props;
+		const { location, translate } = this.props;
+
+		if ( location.isConnected ) {
+			return (
+				<div className="gmb-select-location__status">
+					<Gridicon
+						className="gmb-select-location__connected-icon"
+						icon="checkmark-circle"
+						size={ 18 }
+					/>{' '}
+					{ translate( 'Connected' ) }
+				</div>
+			);
+		}
 
 		return (
-			<GoogleMyBusinessLocation isCompact location={ location }>
-				<Button href={ `/google-my-business/stats/${ siteSlug }` } onClick={ this.connectLocation }>
-					{ translate( 'Connect Location' ) }
-				</Button>
-			</GoogleMyBusinessLocation>
+			<Button onClick={ this.connectLocation } primary>
+				{ translate( 'Connect Location' ) }
+			</Button>
 		);
 	}
 }
@@ -52,10 +75,12 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 export default connect(
 	state => ( {
 		siteId: getSelectedSiteId( state ),
-		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
 		connectGoogleMyBusinessLocation,
-		recordTracksEvent,
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
+			enhanceWithLocationCounts,
+			enhanceWithSiteType,
+		] ),
 	}
 )( localize( GoogleMyBusinessSelectLocationButton ) );

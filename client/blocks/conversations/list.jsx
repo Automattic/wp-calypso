@@ -10,7 +10,7 @@ import { map, zipObject, fill, size, filter, get, compact, partition, min, noop 
 /***
  * Internal dependencies
  */
-import { getActiveReplyCommentId } from 'state/selectors';
+import getActiveReplyCommentId from 'state/selectors/get-active-reply-comment-id';
 import PostComment from 'blocks/comments/post-comment';
 import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
 import {

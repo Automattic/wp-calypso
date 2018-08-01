@@ -31,20 +31,21 @@ import FormFooter from 'my-sites/domains/domain-management/components/form-foote
 import FormButton from 'components/forms/form-button';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { countries } from 'components/phone-input/data';
-import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
 import analytics from 'lib/analytics';
 import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 import { toIcannFormat } from 'components/phone-input/phone-number';
 import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
-import GAppsFieldset from 'components/domains/contact-details-form-fields/custom-form-fieldsets/g-apps-fieldset';
 import RegionAddressFieldsets from 'components/domains/contact-details-form-fields/custom-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
+import getCountries from 'state/selectors/get-countries';
+import QueryDomainCountries from 'components/data/query-countries/domains';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from 'components/domains/contact-details-form-fields/custom-form-fieldsets/constants';
+import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
 
 const CONTACT_DETAILS_FORM_FIELDS = [
 	'firstName',
@@ -70,6 +71,7 @@ export class ContactDetailsFormFields extends Component {
 				...CONTACT_DETAILS_FORM_FIELDS.map( field => ( { [ field ]: PropTypes.string } ) )
 			)
 		).isRequired,
+		countriesList: PropTypes.array.isRequired,
 		needsFax: PropTypes.bool,
 		getIsFieldDisabled: PropTypes.func,
 		onContactDetailsChange: PropTypes.func,
@@ -120,10 +122,14 @@ export class ContactDetailsFormFields extends Component {
 		this.shouldAutoFocusAddressField = false;
 	}
 
+	// `formState` forces multiple updates to `this.state`
+	// This is an attempt limit the redraws to only what we need.
 	shouldComponentUpdate( nextProps, nextState ) {
 		return (
+			nextState.phoneCountryCode !== this.state.phoneCountryCode ||
 			! isEqual( nextState.form, this.state.form ) ||
 			! isEqual( nextProps.labelTexts, this.props.labelTexts ) ||
+			! isEqual( nextProps.countriesList, this.props.countriesList ) ||
 			! isEqual( nextProps.hasCountryStates, this.props.hasCountryStates ) ||
 			( nextProps.needsFax !== this.props.needsFax ||
 				nextProps.disableSubmitButton !== this.props.disableSubmitButton ||
@@ -374,8 +380,9 @@ export class ContactDetailsFormFields extends Component {
 				{ this.createField( 'phone', FormPhoneMediaInput, {
 					label: translate( 'Phone' ),
 					onChange: this.handlePhoneChange,
-					countriesList,
+					countriesList: this.props.countriesList,
 					countryCode: this.state.phoneCountryCode,
+					enableStickyCountry: false,
 				} ) }
 
 				{ needsFax &&
@@ -388,7 +395,7 @@ export class ContactDetailsFormFields extends Component {
 					CountrySelect,
 					{
 						label: translate( 'Country' ),
-						countriesList,
+						countriesList: this.props.countriesList,
 					},
 					true
 				) }
@@ -401,6 +408,24 @@ export class ContactDetailsFormFields extends Component {
 						shouldAutoFocusAddressField={ this.shouldAutoFocusAddressField }
 					/>
 				) }
+			</div>
+		);
+	}
+
+	renderGAppsFieldset() {
+		const countryCode = this.getCountryCode();
+		return (
+			<div className="contact-details-form-fields__g-apps g-apps-fieldset">
+				<CountrySelect
+					label={ this.props.translate( 'Country' ) }
+					countriesList={ this.props.countriesList }
+					{ ...this.getFieldProps( 'country-code', true ) }
+				/>
+
+				<Input
+					label={ getPostCodeLabelText( countryCode ) }
+					{ ...this.getFieldProps( 'postal-code', true ) }
+				/>
 			</div>
 		);
 	}
@@ -419,11 +444,9 @@ export class ContactDetailsFormFields extends Component {
 					label: translate( 'Last Name' ),
 				} ) }
 
-				{ this.props.needsOnlyGoogleAppsDetails ? (
-					<GAppsFieldset countryCode={ countryCode } getFieldProps={ this.getFieldProps } />
-				) : (
-					this.renderContactDetailsFields()
-				) }
+				{ this.props.needsOnlyGoogleAppsDetails
+					? this.renderGAppsFieldset()
+					: this.renderContactDetailsFields() }
 
 				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 
@@ -446,6 +469,7 @@ export class ContactDetailsFormFields extends Component {
 						</FormButton>
 					) }
 				</FormFooter>
+				<QueryDomainCountries />
 			</FormFieldset>
 		);
 	}
@@ -461,6 +485,7 @@ export default connect( ( state, props ) => {
 			: false;
 	return {
 		countryCode,
+		countriesList: getCountries( state, 'domains' ),
 		hasCountryStates,
 	};
 } )( localize( ContactDetailsFormFields ) );

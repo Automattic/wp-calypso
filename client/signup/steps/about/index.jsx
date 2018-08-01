@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey } from 'lodash';
+import { invoke, noop, findKey, escapeRegExp } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -26,16 +26,16 @@ import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
-import userFactory from 'lib/user';
-const user = userFactory();
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
+import { isUserLoggedIn } from 'state/current-user/selectors';
 
 //Form components
 import Card from 'components/card';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
+import InfoPopover from 'components/info-popover';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -47,6 +47,7 @@ import Suggestions from 'components/suggestions';
 class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
+		this._isMounted = false;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
@@ -56,7 +57,8 @@ class AboutStep extends Component {
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
+		this._isMounted = true;
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle', 'siteGoals', 'siteTopic' ],
 			validatorFunction: noop,
@@ -74,12 +76,15 @@ class AboutStep extends Component {
 				},
 			},
 		} );
-
 		this.setFormState( this.formStateController.getInitialState() );
 	}
 
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
 	setFormState = state => {
-		this.setState( { form: state } );
+		this._isMounted && this.setState( { form: state } );
 	};
 
 	setPressableStore = ref => {
@@ -94,14 +99,13 @@ class AboutStep extends Component {
 		this.setState( { query: '' } );
 	};
 
-	handleSuggestionChangeEvent = event => {
-		this.setState( { query: event.target.value } );
-		this.setState( { siteTopicValue: event.target.value } );
+	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
+		this.setState( { query: value } );
+		this.setState( { siteTopicValue: value } );
 
-		this.formStateController.handleFieldChange( {
-			name: event.target.name,
-			value: event.target.value,
-		} );
+		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
+
+		this.formStateController.handleFieldChange( { name, value } );
 	};
 
 	handleSuggestionKeyDown = event => {
@@ -168,8 +172,19 @@ class AboutStep extends Component {
 	};
 
 	getSuggestions() {
+		const query = this.state.query && escapeRegExp( this.state.query ).toLowerCase();
+		const regex = new RegExp( query, 'i' );
+
+		// Prioritize suggestions starting with query input first
+		const sortFunction = ( a, b ) =>
+			abtest( 'aboutSuggestionMatches' ) === 'enhancedSort'
+				? a.localeCompare( b ) -
+				  2 * ( b.toLowerCase().indexOf( query ) - a.toLowerCase().indexOf( query ) )
+				: a.localeCompare( b );
+
 		return Object.values( hints )
-			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
+			.filter( hint => query && hint.match( regex ) )
+			.sort( sortFunction )
 			.map( hint => ( { label: hint } ) );
 	}
 
@@ -241,12 +256,13 @@ class AboutStep extends Component {
 
 	handleSubmit = event => {
 		event.preventDefault();
-		const { goToNextStep, stepName, translate } = this.props;
+		const { goToNextStep, stepName, flowName, previousFlowName, translate } = this.props;
 
 		//Defaults
 		let themeRepo = 'pub/radcliffe-2',
 			designType = 'blog',
-			siteTitleValue = 'Site Title';
+			siteTitleValue = 'Site Title',
+			nextFlowName = flowName;
 
 		//Inputs
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
@@ -271,6 +287,9 @@ class AboutStep extends Component {
 			findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
 		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
+		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
+			value: eventAttributes.site_topic,
+		} );
 
 		this.props.setSurvey( {
 			vertical: englishSiteTopicInput,
@@ -296,7 +315,7 @@ class AboutStep extends Component {
 		} );
 
 		//User Experience
-		if ( ! user.get() && userExperienceInput !== '' ) {
+		if ( ! this.props.isLoggedIn && userExperienceInput !== '' ) {
 			this.props.setUserExperience( userExperienceInput );
 			eventAttributes.user_experience = userExperienceInput;
 		}
@@ -304,7 +323,12 @@ class AboutStep extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
 
 		//Store
-		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
+		if ( designType === DESIGN_TYPE_STORE ) {
+			nextFlowName =
+				siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
+					? previousFlowName
+					: 'store-nux';
+		}
 
 		//Pressable
 		if (
@@ -409,9 +433,9 @@ class AboutStep extends Component {
 	}
 
 	renderExperienceOptions() {
-		const { translate } = this.props;
+		const { translate, isLoggedIn } = this.props;
 
-		if ( user.get() ) {
+		if ( isLoggedIn ) {
 			return null;
 		}
 
@@ -517,6 +541,12 @@ class AboutStep extends Component {
 							<FormFieldset>
 								<FormLabel htmlFor="siteTitle">
 									{ translate( 'What would you like to name your site?' ) }
+									<InfoPopover className="about__info-popover" position="top">
+										{ translate(
+											"We'll use this as your site title. " +
+												"Don't worry, you can change this later."
+										) }
+									</InfoPopover>
 								</FormLabel>
 								<FormTextInput
 									id="siteTitle"
@@ -530,6 +560,9 @@ class AboutStep extends Component {
 							<FormFieldset>
 								<FormLabel htmlFor="siteTopic">
 									{ translate( 'What will your site be about?' ) }
+									<InfoPopover className="about__info-popover" position="top">
+										{ translate( "We'll use this to personalize your site and experience." ) }
+									</InfoPopover>
 								</FormLabel>
 								<FormTextInput
 									id="siteTopic"
@@ -577,7 +610,7 @@ class AboutStep extends Component {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Let’s create a site' ) }
+				headerText={ translate( 'Let’s create a site.' ) }
 				subHeaderText={ translate(
 					'Please answer these questions so we can help you make the site you need.'
 				) }
@@ -594,6 +627,7 @@ export default connect(
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		setSiteTitle,

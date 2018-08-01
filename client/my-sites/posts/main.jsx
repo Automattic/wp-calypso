@@ -133,6 +133,9 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, {
-	warningNotice,
-} )( localize( PostsMain ) );
+export default connect(
+	mapStateToProps,
+	{
+		warningNotice,
+	}
+)( localize( PostsMain ) );

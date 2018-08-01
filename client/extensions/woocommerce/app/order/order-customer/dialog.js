@@ -34,7 +34,8 @@ import FormLegend from 'components/forms/form-legend';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import FormTextInput from 'components/forms/form-text-input';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
-import { forPayments as countriesList } from 'lib/countries-list';
+import getCountries from 'state/selectors/get-countries';
+import QueryPaymentCountries from 'components/data/query-countries/payments';
 
 const defaultAddress = {
 	street: '',
@@ -75,6 +76,7 @@ class CustomerAddressDialog extends Component {
 				),
 			} )
 		),
+		countriesList: PropTypes.array.isRequired,
 		isBilling: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		siteId: PropTypes.number,
@@ -220,11 +222,12 @@ class CustomerAddressDialog extends Component {
 		return (
 			<div className="order-customer__billing-fields">
 				<FormFieldset>
+					<QueryPaymentCountries />
 					<FormPhoneMediaInput
 						label={ translate( 'Phone Number' ) }
 						onChange={ this.onPhoneChange }
 						countryCode={ this.state.phoneCountry }
-						countriesList={ countriesList }
+						countriesList={ this.props.countriesList }
 						value={ get( address, 'phone', '' ) }
 					/>
 				</FormFieldset>
@@ -321,6 +324,7 @@ export default connect(
 			areLocationsLoaded: locationsLoaded,
 			areSettingsLoaded,
 			countries,
+			countriesList: getCountries( state, 'payments' ),
 			defaultCountry: address.country,
 			defaultState: address.state,
 		};

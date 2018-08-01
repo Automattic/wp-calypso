@@ -9,7 +9,6 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import { sectionify } from 'lib/route';
-import userSettings from 'lib/user-settings';
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
 
@@ -36,7 +35,6 @@ const exported = {
 				showMoreResults={ Boolean( showMoreResults ) }
 				subsSortOrder={ subsSortOrder }
 				context={ context }
-				userSettings={ userSettings }
 			/>
 		);
 		next();

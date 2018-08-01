@@ -13,11 +13,11 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import ActionPanel from 'my-sites/site-settings/action-panel';
-import ActionPanelTitle from 'my-sites/site-settings/action-panel/title';
-import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
-import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
-import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
+import ActionPanel from 'components/action-panel';
+import ActionPanelTitle from 'components/action-panel/title';
+import ActionPanelBody from 'components/action-panel/body';
+import ActionPanelFigure from 'components/action-panel/figure';
+import ActionPanelFooter from 'components/action-panel/footer';
 import Button from 'components/button';
 import { EMPTY_SITE } from 'lib/url/support';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -57,14 +57,14 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 				</ActionPanelBody>
 				<ActionPanelFooter>
 					<Button
-						className="settings-action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace,max-len
+						className="action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
 						href={ EMPTY_SITE }
 					>
 						{ translate( 'Follow the Steps' ) }
 						<Gridicon icon="external" size={ 48 } />
 					</Button>
 					<Button
-						className="settings-action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace
+						className="action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace
 						href="/help/contact"
 					>
 						{ translate( 'Contact Support' ) }

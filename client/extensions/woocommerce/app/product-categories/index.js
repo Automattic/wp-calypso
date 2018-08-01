@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -25,7 +27,6 @@ import Search from 'components/search';
 import { withAnalytics } from 'state/analytics/actions';
 
 class ProductCategories extends Component {
-
 	state = {
 		requestedPages: [ 1 ],
 		requestedSearchPages: [],
@@ -45,7 +46,7 @@ class ProductCategories extends Component {
 
 	componentWillReceiveProps( newProps ) {
 		const { siteId } = this.props;
-		const newSiteId = ( newProps.siteId ) || null;
+		const newSiteId = newProps.siteId || null;
 		if ( siteId !== newSiteId ) {
 			this.props.fetchProductCategories( newSiteId, { page: 1 } );
 		}
@@ -55,8 +56,12 @@ class ProductCategories extends Component {
 		const { site } = this.props;
 		const { searchQuery } = this.state;
 
-		const requestedPages = searchQuery && searchQuery.length && this.state.requestedSearchPages || this.state.requestedPages;
-		const stateName = searchQuery && searchQuery.length && 'requestedSearchPages' || 'requestedPages';
+		let stateName = 'requestedPages';
+		if ( searchQuery && searchQuery.length ) {
+			// We're viewing search results, and should use the search value
+			stateName = 'requestedSearchPages';
+		}
+		const requestedPages = this.state[ stateName ];
 
 		pages.forEach( page => {
 			if ( ! includes( requestedPages, page ) ) {
@@ -91,13 +96,15 @@ class ProductCategories extends Component {
 
 		return (
 			<Main className={ classes } wideLayout>
-				<ActionHeader breadcrumbs={ [
-					<a href={ getLink( '/store/products/:site/', site ) }>{ productsLabel }</a>,
-					<span>{ categoriesLabel }</span>,
-				] }>
-				<Button primary href={ getLink( '/store/products/category/:site/', site ) }>
-					{ translate( 'Add category' ) }
-				</Button>
+				<ActionHeader
+					breadcrumbs={ [
+						<a href={ getLink( '/store/products/:site/', site ) }>{ productsLabel }</a>,
+						<span>{ categoriesLabel }</span>,
+					] }
+				>
+					<Button primary href={ getLink( '/store/products/category/:site/', site ) }>
+						{ translate( 'Add category' ) }
+					</Button>
 				</ActionHeader>
 				<SectionNav selectedText={ categoriesLabel }>
 					<NavTabs label={ translate( 'Products' ) } selectedText={ categoriesLabel }>
@@ -114,14 +121,10 @@ class ProductCategories extends Component {
 						placeholder={ translate( 'Search categories…' ) }
 					/>
 				</SectionNav>
-				<ProductCategoriesList
-					searchQuery={ searchQuery }
-					requestPages={ this.requestPages }
-				/>
+				<ProductCategoriesList searchQuery={ searchQuery } requestPages={ this.requestPages } />
 			</Main>
 		);
 	}
-
 }
 
 function mapStateToProps( state ) {
@@ -134,11 +137,15 @@ function mapStateToProps( state ) {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	searchProductCategories: ( siteId, query ) => withAnalytics(
-		recordTrack( 'calypso_woocommerce_product_category_search', query ),
-		fetchProductCategories( siteId, query )( dispatch ),
-	),
+	searchProductCategories: ( siteId, query ) =>
+		withAnalytics(
+			recordTrack( 'calypso_woocommerce_product_category_search', query ),
+			fetchProductCategories( siteId, query )( dispatch )
+		),
 	fetchProductCategories: ( ...args ) => fetchProductCategories( ...args )( dispatch ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ProductCategories ) );

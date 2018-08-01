@@ -17,7 +17,7 @@ import classNames from 'classnames';
 /**
  * Globals
  */
-var noop = () => {};
+const noop = () => {};
 
 class PostScheduleHeader extends React.Component {
 	static displayName = 'PostScheduleHeader';
@@ -38,17 +38,17 @@ class PostScheduleHeader extends React.Component {
 	};
 
 	setToCurrentMonth = () => {
-		var month = this.props.moment().month();
+		const month = this.props.moment().month();
 		this.props.onDateChange( this.props.date.month( month ) );
 	};
 
 	setToCurrentYear = () => {
-		var year = this.props.moment().year();
+		const year = this.props.moment().year();
 		this.props.onDateChange( this.props.date.year( year ) );
 	};
 
 	setYear = modifier => {
-		var date = this.props.moment( this.props.date );
+		const date = this.props.moment( this.props.date );
 		date.year( date.year() + modifier );
 
 		if ( 0 > date.year() || date.year() > 9999 ) {

@@ -12,7 +12,7 @@ import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import formState from '../';
 
 function checkNthState( n, callback ) {
-	var count = 0;
+	let count = 0;
 
 	return function( state ) {
 		if ( count === n ) {
@@ -24,18 +24,18 @@ function checkNthState( n, callback ) {
 }
 
 function testController( options ) {
-	var fieldNames, defaults;
+	let fieldNames, defaults;
 
 	fieldNames = options.fieldNames;
 
 	defaults = {
 		loadFunction: function( onComplete ) {
-			var fieldValues = zipObject( fieldNames, fieldNames.map( constant( 'loaded' ) ) );
+			const fieldValues = zipObject( fieldNames, fieldNames.map( constant( 'loaded' ) ) );
 			onComplete( null, fieldValues );
 		},
 
 		validatorFunction: function( fieldValues, onComplete ) {
-			var fieldErrors = mapValues( fieldValues, constant( [] ) );
+			const fieldErrors = mapValues( fieldValues, constant( [] ) );
 			onComplete( null, fieldErrors );
 		},
 
@@ -51,7 +51,7 @@ describe( 'index', () => {
 	describe( '#Controller', () => {
 		describe( '#getInitialState', () => {
 			test( 'returns disabled fields', () => {
-				var controller = testController( { fieldNames: [ 'firstName' ] } ),
+				let controller = testController( { fieldNames: [ 'firstName' ] } ),
 					state = controller.getInitialState();
 
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), true );
@@ -59,7 +59,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'enables the fields on the first event', done => {
-			var onNewState;
+			let onNewState;
 
 			onNewState = checkNthState( 0, function( state ) {
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), false );
@@ -74,7 +74,7 @@ describe( 'index', () => {
 
 		describe( '#handleFieldChange', () => {
 			test( 'updates the field value', done => {
-				var onNewState, controller;
+				let onNewState, controller;
 
 				onNewState = checkNthState( 1, function( state ) {
 					assert.strictEqual( formState.getFieldValue( state, 'firstName' ), 'foo' );
@@ -93,7 +93,7 @@ describe( 'index', () => {
 			} );
 
 			test( 'validates the new value', done => {
-				var validatorFunction, onNewState, controller;
+				let validatorFunction, onNewState, controller;
 
 				validatorFunction = function( fieldValues, onComplete ) {
 					onComplete( null, { firstName: [ 'invalid' ] } );
@@ -118,7 +118,7 @@ describe( 'index', () => {
 
 			describe( 'when there are multiple changes at once', () => {
 				test( 'only shows errors for the latest values', done => {
-					var validatorFunction, onNewState, controller;
+					let validatorFunction, onNewState, controller;
 
 					validatorFunction = function( fieldValues, onComplete ) {
 						onComplete( null, {

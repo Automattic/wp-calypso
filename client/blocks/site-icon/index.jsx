@@ -18,7 +18,9 @@ import Image from 'components/image';
 import Spinner from 'components/spinner';
 import QuerySites from 'components/data/query-sites';
 import { getSite } from 'state/sites/selectors';
-import { getSiteIconUrl, getSiteIconId, isTransientMedia } from 'state/selectors';
+import getSiteIconId from 'state/selectors/get-site-icon-id';
+import getSiteIconUrl from 'state/selectors/get-site-icon-url';
+import isTransientMedia from 'state/selectors/is-transient-media';
 import resizeImageUrl from 'lib/resize-image-url';
 
 function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {

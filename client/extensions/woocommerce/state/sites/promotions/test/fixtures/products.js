@@ -1,3 +1,4 @@
+/** @format */
 
 export const product1 = {
 	id: 1,
@@ -6,9 +7,7 @@ export const product1 = {
 	sale_price: '18',
 	date_on_sale_from_gmt: '2017-10-06T10:30:45',
 	date_on_sale_to_gmt: '2017-11-07T12:00:25',
-	categories: [
-		{ id: 22, name: 'products' },
-	],
+	categories: [ { id: 22, name: 'products' } ],
 };
 
 export const product2 = {
@@ -18,8 +17,5 @@ export const product2 = {
 	sale_price: '28',
 	date_on_sale_from_gmt: '2017-10-09T10:30:45',
 	date_on_sale_to_gmt: '2017-11-09T12:00:25',
-	categories: [
-		{ id: 23, name: 'other' },
-	],
+	categories: [ { id: 23, name: 'other' } ],
 };
-

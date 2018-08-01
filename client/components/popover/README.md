@@ -30,6 +30,17 @@ className will be always added to the instance.
 The `context` property must be set to a DOMElement or React ref to the element
 the popover should be attached to (point to).
 
+#### `customPosition { object }`
+
+Provide a custom position to render the popover at. The parent component takes all
+responsibility for moving the popover on resize and scroll.
+
+Example:
+
+`{ left: 100, top: 20, positionClass: 'bottom' }`
+
+You can specify `positionClass` to control which way the popover arrow points.
+
 #### `id { string } - optional`
 
 Use this optional property to set a Popover identifier among all of the Popover
@@ -88,6 +99,15 @@ is called.
 
 This function will be executed when the popover is shown.
 
+### Usage notes
+
+#### Within modals / dialogs
+
+When using a popover within a modal applying the class `is-dialog-visible` to the `Popover` component will cause it to gain the correct `z-index` to allow it to display correctly within the modal.
+
+```jsx
+<Popover className="is-dialog-visible" />
+```
 
 PopoverMenu
 ===========

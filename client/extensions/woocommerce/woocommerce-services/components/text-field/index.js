@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -13,7 +15,16 @@ import FormTextInput from 'components/forms/form-text-input';
 import FieldError from '../field-error';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-const TextField = ( { id, title, description, value, placeholder, updateValue, error, className } ) => {
+const TextField = ( {
+	id,
+	title,
+	description,
+	value,
+	placeholder,
+	updateValue,
+	error,
+	className,
+} ) => {
 	const handleChangeEvent = event => updateValue( event.target.value );
 
 	return (
@@ -39,10 +50,7 @@ TextField.propTypes = {
 	description: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	updateValue: PropTypes.func,
-	error: PropTypes.oneOfType( [
-		PropTypes.string,
-		PropTypes.bool,
-	] ),
+	error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	className: PropTypes.string,
 };
 

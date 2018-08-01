@@ -1,11 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import {
@@ -21,12 +15,8 @@ describe( 'wpcom-api', () => {
 		describe( '#fetchCountriesDomains', () => {
 			test( 'should dispatch HTTP request to plans endpoint', () => {
 				const action = { type: 'DUMMY' };
-				const dispatch = spy();
 
-				fetchCountriesDomains( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( fetchCountriesDomains( action ) ).toEqual(
 					http(
 						{
 							apiVersion: '1.1',
@@ -42,13 +32,9 @@ describe( 'wpcom-api', () => {
 		describe( '#updateCountriesDomains', () => {
 			test( 'should dispatch updated action', () => {
 				const action = { type: 'DUMMY' };
-				const dispatch = spy();
 				const data = [ 'BG', 'US', 'UK' ];
 
-				updateCountriesDomains( { dispatch }, action, data );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( {
+				expect( updateCountriesDomains( action, data ) ).toEqual( {
 					type: COUNTRIES_DOMAINS_UPDATED,
 					countries: data,
 				} );
@@ -57,18 +43,15 @@ describe( 'wpcom-api', () => {
 
 		describe( '#showCountriesDomainsLoadingError', () => {
 			test( 'should dispatch error notice', () => {
-				const dispatch = spy();
-
-				showCountriesDomainsLoadingError( { dispatch } );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-						text: "We couldn't load the countries list.",
-					},
-				} );
+				expect( showCountriesDomainsLoadingError() ).toEqual(
+					expect.objectContaining( {
+						type: NOTICE_CREATE,
+						notice: expect.objectContaining( {
+							status: 'is-error',
+							text: "We couldn't load the countries list.",
+						} ),
+					} )
+				);
 			} );
 		} );
 	} );

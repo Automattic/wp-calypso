@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 import { includes, find, isEmpty } from 'lodash';
 
@@ -27,7 +28,7 @@ import { localize } from 'i18n-calypso';
 import notices from 'notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
@@ -55,6 +56,8 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -62,6 +65,7 @@ class Upload extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		selectedSite: PropTypes.object,
+		useUpsellPage: PropTypes.bool,
 		inProgress: PropTypes.bool,
 		complete: PropTypes.bool,
 		failed: PropTypes.bool,
@@ -83,6 +87,7 @@ class Upload extends React.Component {
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
+		this.goToUpsellPageIfRequired( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -94,6 +99,18 @@ class Upload extends React.Component {
 		if ( nextProps.showEligibility !== this.props.showEligibility ) {
 			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
+
+		this.goToUpsellPageIfRequired( nextProps );
+	}
+
+	goToUpsellPageIfRequired( props ) {
+		if ( this.shouldRedirectToUpsellPage( props ) ) {
+			page.redirect( `/feature/themes/${ props.siteSlug }` );
+		}
+	}
+
+	shouldRedirectToUpsellPage( props = this.props ) {
+		return props.useUpsellPage && props.showEligibility;
 	}
 
 	onProceedClick = () => {
@@ -252,6 +269,10 @@ class Upload extends React.Component {
 			return this.renderNotAvailableForMultisite();
 		}
 
+		if ( this.shouldRedirectToUpsellPage() ) {
+			return false;
+		}
+
 		return (
 			<Main>
 				<QueryEligibility siteId={ siteId } />
@@ -296,8 +317,15 @@ export default connect(
 		const hasEligibilityMessages = ! (
 			isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 		);
+
+		const useUpsellPage =
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages';
+
 		return {
 			siteId,
+			useUpsellPage,
+			siteSlug: getSelectedSiteSlug( state ),
 			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			selectedSite: site,
 			isJetpack,

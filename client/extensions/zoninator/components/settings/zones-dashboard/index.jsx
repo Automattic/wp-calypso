@@ -39,7 +39,9 @@ const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) => (
 		{ isRequesting &&
 			zones.length === 0 &&
 			times( placeholderCount, i => <ZonePlaceholder key={ i } /> ) }
-		{ zones.map( zone => <ZoneItem key={ zone.slug } zone={ zone } /> ) }
+		{ zones.map( zone => (
+			<ZoneItem key={ zone.slug } zone={ zone } />
+		) ) }
 	</div>
 );
 
@@ -58,4 +60,7 @@ const connectComponent = connect( state => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( ZonesDashboard );
+export default flowRight(
+	connectComponent,
+	localize
+)( ZonesDashboard );

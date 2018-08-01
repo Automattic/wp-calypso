@@ -5,14 +5,9 @@
  */
 import React from 'react';
 
-export default ( props ) => {
+export default props => {
 	return (
-		/* eslint-disable max-len */
-		<svg
-			version="1.1"
-			viewBox="0 0 512 512"
-			{ ...props }
-		>
+		<svg version="1.1" viewBox="0 0 512 512" { ...props }>
 			<path
 				fill="#518EF8"
 				d="M481.241,201.453v248.419c0,16.544-13.392,29.948-29.948,29.948H60.694

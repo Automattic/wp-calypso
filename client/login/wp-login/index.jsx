@@ -23,7 +23,11 @@ import PrivateSite from './private-site';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
+import {
+	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteType,
+} from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 
 export class Login extends React.Component {
 	static propTypes = {
@@ -125,7 +129,10 @@ export class Login extends React.Component {
 						</a>
 					</div>
 				) : (
-					<img src="/calypso/images/jetpack/powered-by-jetpack.svg" alt="Powered by Jetpack" />
+					<img
+						src="/calypso/images/jetpack/powered-by-jetpack.svg?v=20180619"
+						alt="Powered by Jetpack"
+					/>
 				) }
 			</div>
 		);
@@ -164,7 +171,7 @@ export class Login extends React.Component {
 
 	render() {
 		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
-		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/login', locale );
+		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/log-in', locale );
 
 		return (
 			<div>
@@ -203,6 +210,6 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
-		recordPageView,
+		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 	}
 )( localize( Login ) );

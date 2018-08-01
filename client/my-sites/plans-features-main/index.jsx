@@ -33,7 +33,7 @@ import { isEnabled } from 'config';
 import { plansLink, findPlansKeys, getPlan } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import PlanFooter from 'blocks/plan-footer';
+import PaymentMethods from 'blocks/payment-methods';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -48,8 +48,8 @@ export class PlansFeaturesMain extends Component {
 		 *
 		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
-		const siteId = get( this.props, [ 'site', 'ID' ] );
-		const nextSiteId = get( nextProps, [ 'site', 'ID' ] );
+		const { siteId } = this.props;
+		const { siteId: nextSiteId } = nextProps;
 		if ( siteId !== nextSiteId && nextSiteId ) {
 			this.props.selectHappychatSiteId( nextSiteId );
 		}
@@ -65,8 +65,8 @@ export class PlansFeaturesMain extends Component {
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
-			withSaleInfo,
-			site,
+			withDiscount,
+			siteId,
 		} = this.props;
 
 		return (
@@ -84,8 +84,8 @@ export class PlansFeaturesMain extends Component {
 					plans={ this.getPlansForPlanFeatures() }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
-					withSaleInfo={ withSaleInfo }
-					site={ site }
+					withDiscount={ withDiscount }
+					siteId={ siteId }
 				/>
 			</div>
 		);
@@ -170,7 +170,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { site, displayJetpackPlans, isInSignup } = this.props;
+		const { displayJetpackPlans, isInSignup, siteId } = this.props;
 		let faqs = null;
 
 		if ( ! isInSignup ) {
@@ -183,11 +183,10 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
-				<QuerySitePlans siteId={ get( site, 'ID' ) } />
+				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
-				<PlanFooter isInSignup={ isInSignup } isJetpack={ displayJetpackPlans } />
+				<PaymentMethods />
 				{ faqs }
-				<div className="plans-features-main__bottom" />
 			</div>
 		);
 	}
@@ -205,7 +204,7 @@ PlansFeaturesMain.propTypes = {
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	showFAQ: PropTypes.bool,
-	site: PropTypes.object,
+	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 };
 
@@ -215,13 +214,14 @@ PlansFeaturesMain.defaultProps = {
 	intervalType: 'yearly',
 	isChatAvailable: false,
 	showFAQ: true,
-	site: {},
+	siteId: null,
 	siteSlug: '',
 };
 
 export default connect(
 	( state, { site } ) => ( {
 		isChatAvailable: isHappychatAvailable( state ),
+		siteId: get( site, [ 'ID' ] ),
 		siteSlug: getSiteSlug( state, get( site, [ 'ID' ] ) ),
 	} ),
 	{ selectHappychatSiteId }

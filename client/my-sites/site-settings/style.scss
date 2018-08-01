@@ -415,9 +415,9 @@
 		padding: 24px;
 	}
 
-	.composing__module-settings .site-settings__info-link-container,
-	.protect__module-settings .site-settings__info-link-container,
-	.spam-filtering__settings .site-settings__info-link-container {
+	.composing__module-settings .support-info,
+	.protect__module-settings .support-info,
+	.spam-filtering__settings .support-info {
 		margin-right: -36px;
 		height: 0;
 	}
@@ -436,11 +436,7 @@
 	margin: 16px 36px 0;
 }
 
-.site-settings__info-link-container {
-	float: right;
-}
-
-.form-legend + .site-settings__info-link-container {
+.form-legend + .support-info {
 	margin-top: -21px;
 }
 

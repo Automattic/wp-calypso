@@ -1,5 +1,5 @@
 /** @format */
-var trailingSlashRe = /\/$/;
+const trailingSlashRe = /\/$/;
 
 export default function unTrailingSlashIt( path ) {
 	if ( path === '/' ) {

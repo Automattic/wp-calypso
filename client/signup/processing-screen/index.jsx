@@ -20,14 +20,14 @@ import Notice from 'components/notice';
 import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
-import { abtest } from 'lib/abtest';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export class SignupProcessingScreen extends Component {
 	static propTypes = {
 		hasCartItems: PropTypes.bool.isRequired,
 		loginHandler: PropTypes.func,
 		steps: PropTypes.array.isRequired,
-		user: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		user: PropTypes.object,
 		signupProgress: PropTypes.array,
 		flowSteps: PropTypes.array,
 		useOAuth2Layout: PropTypes.bool.isRequired,
@@ -146,14 +146,14 @@ export class SignupProcessingScreen extends Component {
 							components: { strong: <strong /> },
 							args: { domain },
 						}
-					)
+				  )
 				: this.props.translate(
 						'{{strong}}Awesome!{{/strong}} Give us one minute and we’ll move right along.',
 						{
 							components: { strong: <strong /> },
 							args: { domain },
 						}
-					);
+				  );
 		}
 
 		return loginHandler
@@ -162,13 +162,13 @@ export class SignupProcessingScreen extends Component {
 					{
 						components: { strong: <strong /> },
 					}
-				)
+			  )
 			: this.props.translate(
 					'{{strong}}Awesome!{{/strong}} Give us one minute and we’ll move right along.',
 					{
 						components: { strong: <strong /> },
 					}
-				);
+			  );
 	}
 
 	handleClick( ctaName, redirectTo = '' ) {
@@ -201,7 +201,7 @@ export class SignupProcessingScreen extends Component {
 	renderUpgradeNudge() {
 		const { translate } = this.props;
 
-		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="signup-pricessing__upgrade-nudge">
 				<p className="signup-pricessing__title-subdomain">{ translate( 'Your subdomain' ) }</p>
@@ -243,7 +243,7 @@ export class SignupProcessingScreen extends Component {
 				</Button>
 			</div>
 		);
-		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 	}
 
 	renderUpgradeScreen() {
@@ -252,7 +252,7 @@ export class SignupProcessingScreen extends Component {
 			? translate( 'Congratulations! Your site is live.' )
 			: translate( 'Congratulations! Your website is almost ready.' );
 
-		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }
@@ -281,11 +281,11 @@ export class SignupProcessingScreen extends Component {
 				<div className="signup-processing-screen__loader">{ translate( 'Loading…' ) }</div>
 			</div>
 		);
-		/* eslint-enable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	showChecklistAfterLogin = () => {
-		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }?d=free` } );
+		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
 	};
 
 	shouldShowChecklist() {
@@ -311,12 +311,7 @@ export class SignupProcessingScreen extends Component {
 			);
 		}
 
-		let clickHandler;
-		if ( this.shouldShowChecklist() && 'show' === abtest( 'checklistThankYouForFreeUser' ) ) {
-			clickHandler = this.showChecklistAfterLogin;
-		} else {
-			clickHandler = loginHandler;
-		}
+		const clickHandler = this.shouldShowChecklist() ? this.showChecklistAfterLogin : loginHandler;
 
 		return (
 			<Button primary className="email-confirmation__button" onClick={ clickHandler }>
@@ -331,13 +326,12 @@ export class SignupProcessingScreen extends Component {
 			! this.props.useOAuth2Layout &&
 			this.props.flowSteps.indexOf( 'domains' ) !== -1 &&
 			this.props.flowSteps.indexOf( 'plans' ) !== -1 &&
-			! this.shouldShowChecklist() &&
-			'show' !== abtest( 'checklistThankYouForFreeUser' )
+			! this.shouldShowChecklist()
 		) {
 			return this.renderUpgradeScreen();
 		}
 
-		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
 				{ this.renderFloaties() }
@@ -363,10 +357,11 @@ export class SignupProcessingScreen extends Component {
 				</div>
 			</div>
 		);
-		/* eslint-enable max-len, wpcalypso/jsx-classname-namespace */
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
 export default connect( state => ( {
 	useOAuth2Layout: showOAuth2Layout( state ),
+	user: getCurrentUser( state ),
 } ) )( localize( SignupProcessingScreen ) );

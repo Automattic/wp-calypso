@@ -10,7 +10,7 @@ import { sortBy } from 'lodash';
  */
 import { getSite } from 'state/sites/selectors';
 import createSelector from 'lib/create-selector';
-import { getSitesItems } from 'state/selectors';
+import getSitesItems from 'state/selectors/get-sites-items';
 
 /**
  * Get the newest site of the current user

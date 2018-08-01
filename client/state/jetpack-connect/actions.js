@@ -40,7 +40,6 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
@@ -352,7 +351,7 @@ export function authorize( queryObject ) {
 				} );
 				return wpcom
 					.undocumented()
-					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version );
+					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version, from );
 			} )
 			.then( data => {
 				debug( 'Jetpack authorize complete. Updating sites list.', data );
@@ -380,10 +379,7 @@ export function authorize( queryObject ) {
 					} )
 				);
 				debug( 'Site updated', data );
-				dispatch( {
-					type: SITE_RECEIVE,
-					site: data,
-				} );
+				dispatch( receiveSite( data ) );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 				} );

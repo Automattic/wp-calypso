@@ -140,6 +140,7 @@ const EmailForwardingItem = createReactClass( {
 	},
 } );
 
-export default connect( null, dispatch => bindActionCreators( { successNotice }, dispatch ) )(
-	localize( EmailForwardingItem )
-);
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( localize( EmailForwardingItem ) );

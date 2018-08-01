@@ -13,9 +13,8 @@ import { invoke } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import HappinessSupport from 'components/happiness-support';
 import PlanIcon from 'components/plans/plan-icon';
-import { PLANS_LIST, TYPE_FREE, TYPE_BUSINESS, GROUP_JETPACK } from 'lib/plans/constants';
+import { PLANS_LIST, TYPE_FREE, GROUP_JETPACK } from 'lib/plans/constants';
 import { planMatches } from 'lib/plans';
 import { managePurchase } from 'me/purchases/paths';
 
@@ -29,12 +28,6 @@ export class CurrentPlanHeader extends Component {
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
 		translate: PropTypes.func,
-		isAutomatedTransfer: PropTypes.bool,
-	};
-
-	isEligibleForLiveChat = () => {
-		const { currentPlanSlug: planSlug } = this.props;
-		return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_JETPACK } );
 	};
 
 	renderPurchaseInfo() {
@@ -56,10 +49,10 @@ export class CurrentPlanHeader extends Component {
 						{ hasAutoRenew && currentPlan.autoRenewDateMoment
 							? translate( 'Set to auto-renew on %s.', {
 									args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ),
-								} )
+							  } )
 							: translate( 'Expires on %s.', {
 									args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
-								} ) }
+							  } ) }
 					</span>
 					{ currentPlan.userIsOwner && (
 						<Button compact href={ managePurchase( selectedSite.slug, currentPlan.id ) }>
@@ -75,7 +68,6 @@ export class CurrentPlanHeader extends Component {
 		const {
 			currentPlanSlug,
 			includePlansLink,
-			isAutomatedTransfer,
 			isPlaceholder,
 			title,
 			tagLine,
@@ -85,8 +77,8 @@ export class CurrentPlanHeader extends Component {
 
 		return (
 			<div className="current-plan__header">
-				<div className="current-plan__header-item">
-					<div className="current-plan__header-item-content">
+				<div className="current-plan__header-content">
+					<div className="current-plan__header-content-main">
 						<div className="current-plan__header-icon">
 							{ currentPlanSlug && <PlanIcon plan={ currentPlanSlug } /> }
 						</div>
@@ -107,28 +99,15 @@ export class CurrentPlanHeader extends Component {
 								{ tagLine }
 							</h2>
 						</div>
-						{ this.renderPurchaseInfo() }
-						{ includePlansLink && (
-							<Button
-								className="current-plan__compare-plans"
-								href={ '/plans/' + selectedSite.slug }
-							>
+					</div>
+					{ this.renderPurchaseInfo() }
+					{ includePlansLink && (
+						<div className="current-plan__compare-plans">
+							<Button href={ '/plans/' + selectedSite.slug }>
 								{ translate( 'Compare Plans' ) }
 							</Button>
-						) }
-					</div>
-				</div>
-
-				<div className="current-plan__header-item">
-					<div className="current-plan__header-item-content">
-						<HappinessSupport
-							isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-							isJetpackFreePlan={ this.isJetpackFreePlan() }
-							isPlaceholder={ isPlaceholder }
-							showLiveChatButton={ this.isEligibleForLiveChat() }
-							liveChatButtonEventName="calypso_plans_current_plan_chat_initiated"
-						/>
-					</div>
+						</div>
+					) }
 				</div>
 			</div>
 		);

@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getOrderTransactionError } from 'state/selectors';
+import getOrderTransactionError from 'state/selectors/get-order-transaction-error';
 
 describe( 'getOrderTransactionError()', () => {
 	const orderId = 123;

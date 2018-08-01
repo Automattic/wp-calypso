@@ -12,7 +12,7 @@ const debug = debugFactory( 'calypso:wpcom-undocumented:site' );
  * A list of endpoints with the same structure
  * [  wpcom-undocumented.functionName, siteAPiSubPath, apiVersion ]
  */
-var resources = [
+const resources = [
 	[ 'statsEvents', 'posts/' ],
 	[ 'statsInsights', 'stats/insights', '1.1' ],
 	[ 'statsPodcastDownloads', 'stats/podcast-downloads', '1.1' ],
@@ -23,14 +23,14 @@ var resources = [
 	[ 'getOption', 'option/' ],
 ];
 
-var list = function( resourceOptions ) {
+const list = function( resourceOptions ) {
 	return function( query, fn ) {
-		var path,
+		let path,
 			subpath = resourceOptions.subpath;
 
 		// Handle replacement of '/:var' in the subpath with value from query
 		subpath = subpath.replace( /\/:([^\/]+)/g, function( match, property ) {
-			var replacement;
+			let replacement;
 			if ( 'undefined' !== typeof query[ property ] ) {
 				replacement = query[ property ];
 				delete query[ property ];
@@ -49,15 +49,14 @@ var list = function( resourceOptions ) {
 
 		if ( 'post' === resourceOptions.method ) {
 			return this.wpcom.req.post( path, {}, query, fn );
-		} else {
-			return this.wpcom.req[ resourceOptions.method ]( path, query, fn );
 		}
+		return this.wpcom.req[ resourceOptions.method ]( path, query, fn );
 	};
 };
 
 // Walk for each resource and create related method
 resources.forEach( function( resource ) {
-	var name = resource[ 0 ],
+	let name = resource[ 0 ],
 		resourceOptions = {
 			subpath: resource[ 1 ],
 			apiVersion: resource[ 2 ] || '1',
@@ -105,7 +104,7 @@ UndocumentedSite.prototype.postAutosave = function( postId, attributes, callback
 };
 
 UndocumentedSite.prototype.embeds = function( attributes, callback ) {
-	var url = '/sites/' + this._id + '/embeds';
+	let url = '/sites/' + this._id + '/embeds';
 	if ( attributes && attributes.embed_url ) {
 		url += '/render';
 	}
@@ -204,7 +203,7 @@ UndocumentedSite.prototype.setOption = function( query, callback ) {
 };
 
 UndocumentedSite.prototype.postCounts = function( options, callback ) {
-	let query = Object.assign(
+	const query = Object.assign(
 		{
 			type: 'post',
 			apiNamespace: 'wpcom/v2',

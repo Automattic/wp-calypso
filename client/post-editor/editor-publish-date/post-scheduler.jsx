@@ -12,7 +12,7 @@ import { get } from 'lodash';
  */
 import PostSchedule from 'components/post-schedule';
 import QueryPosts from 'components/data/query-posts';
-import * as postUtils from 'lib/posts/utils';
+import * as postUtils from 'state/posts/utils';
 import { timezone } from 'lib/site/utils';
 import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
 

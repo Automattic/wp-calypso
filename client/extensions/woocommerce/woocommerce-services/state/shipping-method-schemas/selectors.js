@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -10,7 +12,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const getShippingMethodSchemas = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingMethodSchemas' ], {} );
+	return get(
+		state,
+		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingMethodSchemas' ],
+		{}
+	);
 };
 
 /**
@@ -19,7 +25,11 @@ const getShippingMethodSchemas = ( state, siteId = getSelectedSiteId( state ) ) 
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the schema for the given shipping method has been successfully loaded from the server
  */
-export const isShippingMethodSchemaLoaded = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
+export const isShippingMethodSchemaLoaded = (
+	state,
+	methodId,
+	siteId = getSelectedSiteId( state )
+) => {
 	return isObject( getShippingMethodSchemas( state, siteId )[ methodId ] );
 };
 
@@ -30,7 +40,9 @@ export const isShippingMethodSchemaLoaded = ( state, methodId, siteId = getSelec
  * @return {Object|null} The shipping method schema object, or "null" if the schema hasn't been retrieved yet
  */
 export const getShippingMethodSchema = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
-	return isShippingMethodSchemaLoaded( state, methodId, siteId ) ? getShippingMethodSchemas( state, siteId )[ methodId ] : null;
+	return isShippingMethodSchemaLoaded( state, methodId, siteId )
+		? getShippingMethodSchemas( state, siteId )[ methodId ]
+		: null;
 };
 
 /**
@@ -39,6 +51,10 @@ export const getShippingMethodSchema = ( state, methodId, siteId = getSelectedSi
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping method schema is currently being retrieved from the server
  */
-export const isShippingMethodSchemaLoading = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
+export const isShippingMethodSchemaLoading = (
+	state,
+	methodId,
+	siteId = getSelectedSiteId( state )
+) => {
 	return LOADING === getShippingMethodSchemas( state, siteId )[ methodId ];
 };

@@ -27,10 +27,10 @@ function getModuleVersion( id ) {
  */
 module.exports = JSON.stringify( {
 	'babel-loader': getModuleVersion( 'babel-loader' ),
-	'babel-core': getModuleVersion( 'babel-core' ),
+	'babel-core': getModuleVersion( '@babel/core' ),
 	'babel-plugin-transform-wpcalypso-async': getModuleVersion(
 		'../babel-plugin-transform-wpcalypso-async'
 	),
-	babelrc: fs.readFileSync( path.resolve( __dirname, '../../../../.babelrc.js' ), 'utf8' ),
+	babelrc: fs.readFileSync( path.resolve( __dirname, '../../../../babel.config.js' ), 'utf8' ),
 	env: process.env.BABEL_ENV || process.env.NODE_ENV,
 } );

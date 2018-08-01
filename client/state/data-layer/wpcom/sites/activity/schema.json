@@ -13,7 +13,6 @@
 		"summary": { "type": "string" },
 		"totalItems": { "type": "integer" },
 		"totalPages": { "type": "integer" },
-		"oldestItemTs": { "type": "integer" },
 		"type": { "type": "string" },
 		"current": {
 			"type": "object",

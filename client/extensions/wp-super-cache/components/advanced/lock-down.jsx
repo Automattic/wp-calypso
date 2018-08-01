@@ -86,11 +86,11 @@ const LockDown = ( {
 									? translate(
 											'WordPress is locked down. Super Cache static files will not be deleted ' +
 												'when new comments are made.'
-										)
+									  )
 									: translate(
 											'WordPress is not locked down. New comments will refresh Super Cache ' +
 												'static files as normal.'
-										)
+									  )
 							}
 						/>
 					</div>

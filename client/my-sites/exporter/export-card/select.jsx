@@ -102,4 +102,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Select ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( Select ) );

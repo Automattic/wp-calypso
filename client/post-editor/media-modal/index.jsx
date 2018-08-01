@@ -29,7 +29,7 @@ import {
  */
 import MediaLibrary from 'my-sites/media-library';
 import analytics from 'lib/analytics';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
 import * as MediaUtils from 'lib/media/utils';
@@ -69,6 +69,7 @@ export class EditorMediaModal extends Component {
 		visible: PropTypes.bool,
 		mediaLibrarySelectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onClose: PropTypes.func,
+		isBackdropVisible: PropTypes.bool,
 		isParentReady: PropTypes.func,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -77,25 +78,34 @@ export class EditorMediaModal extends Component {
 		defaultFilter: PropTypes.string,
 		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
 		view: PropTypes.oneOf( values( ModalViews ) ),
+		galleryViewEnabled: PropTypes.bool,
 		setView: PropTypes.func,
 		resetView: PropTypes.func,
 		postId: PropTypes.number,
 		disableLargeImageSources: PropTypes.bool,
+		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
+		onImageEditorDoneHook: PropTypes.func,
+		onRestoreMediaHook: PropTypes.func,
 	};
 
 	static defaultProps = {
 		visible: false,
 		mediaLibrarySelectedItems: Object.freeze( [] ),
 		onClose: noop,
+		isBackdropVisible: true,
 		isParentReady: () => true,
 		labels: Object.freeze( {} ),
 		setView: noop,
 		resetView: noop,
 		translate: identity,
 		view: ModalViews.LIST,
+		galleryViewEnabled: true,
 		imageEditorProps: {},
 		deleteMedia: () => {},
 		disableLargeImageSources: false,
+		disabledDataSources: [],
+		onImageEditorDoneHook: noop,
+		onRestoreMediaHook: noop,
 	};
 
 	constructor( props ) {
@@ -133,7 +143,6 @@ export class EditorMediaModal extends Component {
 		if ( ! isEmpty( mediaLibrarySelectedItems ) && ( view === ModalViews.LIST || single ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, [] );
 		}
-
 	}
 
 	componentWillUnmount() {
@@ -223,7 +232,7 @@ export class EditorMediaModal extends Component {
 						type: ModalViews.GALLERY === view ? 'gallery' : 'media',
 						items: mediaLibrarySelectedItems,
 						settings: this.state.gallerySettings,
-					}
+				  }
 				: undefined;
 			this.props.onClose( value );
 		}
@@ -292,8 +301,8 @@ export class EditorMediaModal extends Component {
 	};
 
 	onAddMedia = () => {
-		recordStat( 'media_explorer_upload' );
-		recordEvent( 'Upload Media' );
+		this.props.recordEditorStat( 'media_explorer_upload' );
+		this.props.recordEditorEvent( 'Upload Media' );
 	};
 
 	onAddAndEditImage = () => {
@@ -308,6 +317,8 @@ export class EditorMediaModal extends Component {
 		}
 
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+
+		this.props.onRestoreMediaHook();
 	};
 
 	onImageEditorDone = ( error, blob, imageEditorProps ) => {
@@ -339,6 +350,8 @@ export class EditorMediaModal extends Component {
 		resetAllImageEditorState();
 
 		this.props.setView( ModalViews.DETAIL );
+
+		this.props.onImageEditorDoneHook();
 	};
 
 	handleUpdatePoster = ( { ID, posterUrl } ) => {
@@ -462,6 +475,7 @@ export class EditorMediaModal extends Component {
 		}
 
 		const selectedItems = this.props.mediaLibrarySelectedItems;
+		const galleryViewEnabled = this.props.galleryViewEnabled;
 		const isDisabled = areMediaActionsDisabled(
 			this.props.view,
 			selectedItems,
@@ -496,6 +510,7 @@ export class EditorMediaModal extends Component {
 		} else if (
 			ModalViews.GALLERY !== this.props.view &&
 			selectedItems.length > 1 &&
+			galleryViewEnabled &&
 			! some( selectedItems, item => MediaUtils.getMimePrefix( item ) !== 'image' )
 		) {
 			buttons.push( {
@@ -609,6 +624,7 @@ export class EditorMediaModal extends Component {
 						mediaLibrarySelectedItems={ this.props.mediaLibrarySelectedItems }
 						postId={ this.props.postId }
 						disableLargeImageSources={ this.props.disableLargeImageSources }
+						disabledDataSources={ this.props.disabledDataSources }
 						scrollable
 					/>
 				);
@@ -625,6 +641,7 @@ export class EditorMediaModal extends Component {
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
+				isBackdropVisible={ this.props.isBackdropVisible }
 				shouldCloseOnOverlayClick={ this.shouldClose() }
 				shouldCloseOnEsc={ false }
 			>
@@ -652,5 +669,7 @@ export default connect(
 			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
 			partial( setEditorMediaModalView, ModalViews.DETAIL )
 		),
+		recordEditorEvent,
+		recordEditorStat,
 	}
 )( localize( EditorMediaModal ) );

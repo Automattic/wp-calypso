@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -17,22 +19,12 @@ import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getSite } from 'state/sites/selectors';
 
-const SettingsForm = ( props ) => {
-	const renderGroup = ( index ) => {
-		return (
-			<SettingsGroup
-				{ ...props }
-				group={ props.layout[ index ] }
-				key={ index }
-			/>
-		);
+const SettingsForm = props => {
+	const renderGroup = index => {
+		return <SettingsGroup { ...props } group={ props.layout[ index ] } key={ index } />;
 	};
 
-	return (
-		<div>
-			{ props.layout.map( ( group, idx ) => renderGroup( idx ) ) }
-		</div>
-	);
+	return <div>{ props.layout.map( ( group, idx ) => renderGroup( idx ) ) }</div>;
 };
 
 SettingsForm.propTypes = {
@@ -41,7 +33,11 @@ SettingsForm.propTypes = {
 };
 
 function mapStateToProps( state, props ) {
-	const { storeOptions, formSchema, formLayout } = getShippingMethodSchema( state, props.method.methodType, props.siteId );
+	const { storeOptions, formSchema, formLayout } = getShippingMethodSchema(
+		state,
+		props.method.methodType,
+		props.siteId
+	);
 	return {
 		formData: getCurrentlyOpenShippingZoneMethod( state, props.siteId ),
 		errors: getFormErrors( state, props.siteId ),
@@ -56,7 +52,10 @@ function mapDispatchToProps( dispatch, ownProps ) {
 	return {
 		noticeActions: bindActionCreators( { successNotice, errorNotice }, dispatch ),
 		formValueActions: {
-			updateField: ( path, value ) => dispatch( FormValueActions.updateField( ownProps.siteId, ownProps.method.id, path, value ) ),
+			updateField: ( path, value ) =>
+				dispatch(
+					FormValueActions.updateField( ownProps.siteId, ownProps.method.id, path, value )
+				),
 		},
 	};
 }

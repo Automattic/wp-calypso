@@ -199,7 +199,7 @@ describe( 'selectors', () => {
 
 	describe( '#getAPIShippingZones', () => {
 		test( 'should return null when woocommerce state is not available.', () => {
-			expect( getAPIShippingZones( preInitializedState, 123 ) ).to.be.falsey;
+			expect( getAPIShippingZones( preInitializedState, 123 ) ).to.be.undefined;
 		} );
 
 		test( 'should return the shipping zones list if they finished loading.', () => {
@@ -211,7 +211,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return null when zones are loaded only for a different site.', () => {
-			expect( getAPIShippingZones( loadedEmptyState, 456 ) ).to.be.falsey;
+			expect( getAPIShippingZones( loadedEmptyState, 456 ) ).to.be.undefined;
 		} );
 
 		test( 'should get the siteId from the UI tree if not provided.', () => {

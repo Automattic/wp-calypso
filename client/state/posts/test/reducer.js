@@ -261,7 +261,9 @@ describe( 'reducer', () => {
 						site_ID: 2916284,
 						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 						title: 'Hello World',
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				],
 			} );
@@ -274,6 +276,7 @@ describe( 'reducer', () => {
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 					title: 'Hello World',
+					meta: {},
 				},
 			] );
 		} );
@@ -801,14 +804,13 @@ describe( 'reducer', () => {
 			const state = edits( deepFreeze( {} ), {
 				type: POST_EDIT,
 				siteId: 2916284,
+				postId: null,
 				post: { title: 'Ribs & Chicken' },
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
-					'': {
-						title: 'Ribs & Chicken',
-					},
+					'': [ { title: 'Ribs & Chicken' } ],
 				},
 			} );
 		} );
@@ -823,9 +825,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						title: 'Hello World',
-					},
+					841: [ { title: 'Hello World' } ],
 				},
 			} );
 		} );
@@ -834,9 +834,7 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						'': {
-							title: 'Ribs & Chicken',
-						},
+						'': [ { title: 'Ribs & Chicken' } ],
 					},
 				} ),
 				{
@@ -849,12 +847,8 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'': {
-						title: 'Ribs & Chicken',
-					},
-					841: {
-						title: 'Hello World',
-					},
+					'': [ { title: 'Ribs & Chicken' } ],
+					841: [ { title: 'Hello World' } ],
 				},
 			} );
 		} );
@@ -863,9 +857,7 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						'': {
-							title: 'Ribs & Chicken',
-						},
+						'': [ { title: 'Ribs & Chicken' } ],
 					},
 				} ),
 				{
@@ -878,14 +870,10 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'': {
-						title: 'Ribs & Chicken',
-					},
+					'': [ { title: 'Ribs & Chicken' } ],
 				},
 				77203074: {
-					841: {
-						title: 'Hello World',
-					},
+					841: [ { title: 'Hello World' } ],
 				},
 			} );
 		} );
@@ -894,9 +882,7 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						'': {
-							title: 'Ribs & Chicken',
-						},
+						'': [ { title: 'Ribs & Chicken' } ],
 					},
 				} ),
 				{
@@ -908,10 +894,12 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'': {
-						title: 'Ribs & Chicken',
-						content: 'Delicious.',
-					},
+					'': [
+						{
+							title: 'Ribs & Chicken',
+							content: 'Delicious.',
+						},
+					],
 				},
 			} );
 		} );
@@ -920,12 +908,14 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						'': {
-							title: 'Ribs & Chicken',
-							discussion: {
-								comments_open: false,
+						'': [
+							{
+								title: 'Ribs & Chicken',
+								discussion: {
+									comments_open: false,
+								},
 							},
-						},
+						],
 					},
 				} ),
 				{
@@ -941,28 +931,40 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					'': {
-						title: 'Ribs & Chicken',
-						discussion: {
-							comments_open: false,
-							pings_open: false,
+					'': [
+						{
+							title: 'Ribs & Chicken',
+							discussion: {
+								comments_open: false,
+								pings_open: false,
+							},
 						},
-					},
+					],
 				},
 			} );
+		} );
+
+		test( 'should do nothing when received post has no active edits', () => {
+			const state = {
+				2916284: {
+					841: [ { title: 'Unrelated' } ],
+				},
+			};
+
+			const newState = edits( state, {
+				type: POSTS_RECEIVE,
+				posts: [ { ID: 842, site_ID: 2916284, type: 'post' } ],
+			} );
+
+			expect( newState ).to.equal( state );
 		} );
 
 		test( 'should eliminate redundant data on posts received', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						841: {
-							title: 'Hello World',
-							type: 'post',
-						},
-						'': {
-							title: 'Unrelated',
-						},
+						841: [ { title: 'Hello World', type: 'post' } ],
+						'': [ { title: 'Unrelated' } ],
 					},
 				} ),
 				{
@@ -973,12 +975,8 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						title: 'Hello World',
-					},
-					'': {
-						title: 'Unrelated',
-					},
+					841: [ { title: 'Hello World' } ],
+					'': [ { title: 'Unrelated' } ],
 				},
 			} );
 		} );
@@ -987,22 +985,22 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						841: {
-							title: 'Hello World',
-							type: 'post',
-							terms: {
-								post_tag: [ 'chicken', 'ribs' ],
-								category: [
-									{
-										ID: 1,
-										name: 'uncategorized',
-									},
-								],
+						841: [
+							{
+								title: 'Hello World',
+								type: 'post',
+								terms: {
+									post_tag: [ 'chicken', 'ribs' ],
+									category: [
+										{
+											ID: 1,
+											name: 'uncategorized',
+										},
+									],
+								},
 							},
-						},
-						'': {
-							title: 'Unrelated',
-						},
+						],
+						'': [ { title: 'Unrelated' } ],
 					},
 				} ),
 				{
@@ -1038,12 +1036,8 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						title: 'Hello World',
-					},
-					'': {
-						title: 'Unrelated',
-					},
+					841: [ { title: 'Hello World' } ],
+					'': [ { title: 'Unrelated' } ],
 				},
 			} );
 		} );
@@ -1052,22 +1046,22 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						841: {
-							title: 'Hello World',
-							type: 'post',
-							terms: {
-								post_tag: [ 'ribs' ],
-								category: [
-									{
-										ID: 1,
-										name: 'uncategorized',
-									},
-								],
+						841: [
+							{
+								title: 'Hello World',
+								type: 'post',
+								terms: {
+									post_tag: [ 'ribs' ],
+									category: [
+										{
+											ID: 1,
+											name: 'uncategorized',
+										},
+									],
+								},
 							},
-						},
-						'': {
-							title: 'Unrelated',
-						},
+						],
+						'': [ { title: 'Unrelated' } ],
 					},
 				} ),
 				{
@@ -1099,20 +1093,20 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						terms: {
-							post_tag: [ 'ribs' ],
-							category: [
-								{
-									ID: 1,
-									name: 'uncategorized',
-								},
-							],
+					841: [
+						{
+							terms: {
+								post_tag: [ 'ribs' ],
+								category: [
+									{
+										ID: 1,
+										name: 'uncategorized',
+									},
+								],
+							},
 						},
-					},
-					'': {
-						title: 'Unrelated',
-					},
+					],
+					'': [ { title: 'Unrelated' } ],
 				},
 			} );
 		} );
@@ -1121,14 +1115,16 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						841: {
-							title: 'Hello World',
-							type: 'post',
-							discussion: {
-								comment_status: 'open',
-								ping_status: 'open',
+						841: [
+							{
+								title: 'Hello World',
+								type: 'post',
+								discussion: {
+									comment_status: 'open',
+									ping_status: 'open',
+								},
 							},
-						},
+						],
 					},
 				} ),
 				{
@@ -1152,9 +1148,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						title: 'Hello World',
-					},
+					841: [ { title: 'Hello World' } ],
 				},
 			} );
 		} );
@@ -1163,14 +1157,16 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						841: {
-							title: 'Hello World',
-							type: 'post',
-							discussion: {
-								comment_status: 'closed',
-								ping_status: 'open',
+						841: [
+							{
+								title: 'Hello World',
+								type: 'post',
+								discussion: {
+									comment_status: 'closed',
+									ping_status: 'open',
+								},
 							},
-						},
+						],
 					},
 				} ),
 				{
@@ -1194,13 +1190,15 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						title: 'Hello World',
-						discussion: {
-							comment_status: 'closed',
-							ping_status: 'open',
+					841: [
+						{
+							title: 'Hello World',
+							discussion: {
+								comment_status: 'closed',
+								ping_status: 'open',
+							},
 						},
-					},
+					],
 				},
 			} );
 		} );
@@ -1209,14 +1207,16 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						841: {
-							title: 'Hello World',
-							type: 'post',
-							author: {
-								ID: 123,
-								name: 'Robert Trujillo',
+						841: [
+							{
+								title: 'Hello World',
+								type: 'post',
+								author: {
+									ID: 123,
+									name: 'Robert Trujillo',
+								},
 							},
-						},
+						],
 					},
 				} ),
 				{
@@ -1238,9 +1238,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						title: 'Hello World',
-					},
+					841: [ { title: 'Hello World' } ],
 				},
 			} );
 		} );
@@ -1249,9 +1247,11 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						841: {
-							featured_image: 123,
-						},
+						841: [
+							{
+								featured_image: 123,
+							},
+						],
 					},
 				} ),
 				{
@@ -1272,9 +1272,159 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {},
+					841: null,
 				},
 			} );
+		} );
+
+		test( 'should remove metadata edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: [
+							{
+								metadata: [
+									{ key: 'tobeupdated', value: 'newvalue', operation: 'update' },
+									{ key: 'tobedeleted', operation: 'delete' },
+									{
+										key: 'notyetupdated',
+										value: 'newvalue',
+										operation: 'update',
+									},
+									{ key: 'notyetdeleted', operation: 'delete' },
+								],
+							},
+						],
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							metadata: [
+								{ key: 'tobeupdated', value: 'newvalue' },
+								{ key: 'notyetupdated', value: 'oldvalue' },
+								{ key: 'notyetdeleted', value: 'value' },
+							],
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: [
+						{
+							metadata: [
+								{ key: 'notyetupdated', value: 'newvalue', operation: 'update' },
+								{ key: 'notyetdeleted', operation: 'delete' },
+							],
+						},
+					],
+				},
+			} );
+		} );
+
+		test( 'should remove date edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: [ { date: '2018-05-01T10:36:41+02:00' } ],
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							date: '2018-05-01T08:36:41+00:00',
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: null,
+				},
+			} );
+		} );
+
+		test( 'should consider date not edited after resetting draft date', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						842: [
+							{
+								title: 'I like turtles',
+								date: false,
+							},
+						],
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 842,
+							site_ID: 2916284,
+							title: 'I like turtles!',
+							date: '2018-06-14T16:47:21+00:00',
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					842: [ { title: 'I like turtles' } ],
+				},
+			} );
+		} );
+
+		test( 'should remove status edits after they are saved', () => {
+			const emptyEditsState = {
+				2916284: {
+					841: null,
+				},
+			};
+
+			const editsStateWithStatus = status =>
+				deepFreeze( {
+					2916284: {
+						841: [ { status } ],
+					},
+				} );
+
+			const receivePostActionWithStatus = status => ( {
+				type: POSTS_RECEIVE,
+				posts: [
+					{
+						ID: 841,
+						site_ID: 2916284,
+						type: 'post',
+						status,
+					},
+				],
+			} );
+
+			expect(
+				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'future' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'publish' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'future' ), receivePostActionWithStatus( 'publish' ) )
+			).to.eql( emptyEditsState );
+			expect(
+				edits( editsStateWithStatus( 'draft' ), receivePostActionWithStatus( 'draft' ) )
+			).to.eql( emptyEditsState );
 		} );
 
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
@@ -1292,12 +1442,8 @@ describe( 'reducer', () => {
 			const state = edits(
 				deepFreeze( {
 					2916284: {
-						'': {
-							title: 'Ribs & Chicken',
-						},
-						842: {
-							title: 'I like turtles',
-						},
+						'': [ { title: 'Ribs & Chicken' } ],
+						842: [ { title: 'I like turtles' } ],
 					},
 				} ),
 				{
@@ -1313,12 +1459,8 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						title: 'Ribs & Chicken',
-					},
-					842: {
-						title: 'I like turtles',
-					},
+					841: [ { title: 'Ribs & Chicken' } ],
+					842: [ { title: 'I like turtles' } ],
 				},
 			} );
 		} );
@@ -1384,9 +1526,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					841: {
-						type: 'jetpack-testimonial',
-					},
+					841: null,
 					'': {
 						title: 'Ribs & Chicken',
 					},
@@ -1416,7 +1556,9 @@ describe( 'reducer', () => {
 						site_ID: 2916284,
 						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 						title: 'Hello World',
-						meta: {},
+						meta: {
+							links: {},
+						},
 					},
 				],
 			} );
@@ -1427,6 +1569,7 @@ describe( 'reducer', () => {
 					site_ID: 2916284,
 					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 					title: 'Hello World',
+					meta: {},
 				},
 			] );
 		} );

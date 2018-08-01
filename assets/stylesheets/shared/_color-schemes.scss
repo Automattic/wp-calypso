@@ -1,96 +1,96 @@
 //default color scheme
 :root {
-	--masterbar-color: $white;
-	--masterbar-background: $blue-wordpress;
-	--masterbar-border-color: darken( $blue-wordpress, 4% );
-	--masterbar-item-hover-background: lighten( $blue-wordpress, 5% );
-	--masterbar-item-active-background: darken( $blue-wordpress, 17% );
-	--masterbar-item-new-color: $blue-wordpress;
-	--masterbar-item-new-editor-background: darken( $blue-wordpress, 17% );
-	--masterbar-item-new-editor-hover-background: darken( $blue-wordpress, 13% );
-	--masterbar-toggle-drafts-editor-background: darken( $blue-wordpress, 12% );
-	--masterbar-toggle-drafts-editor-border-color: darken( $blue-wordpress, 5% );
-	--masterbar-toggle-drafts-editor-hover-background: darken( $blue-wordpress, 17% );
+	--masterbar-color: #{$white};
+	--masterbar-background: #{$blue-wordpress};
+	--masterbar-border-color: #{darken( $blue-wordpress, 4% )};
+	--masterbar-item-hover-background: #{lighten( $blue-wordpress, 5% )};
+	--masterbar-item-active-background: #{darken( $blue-wordpress, 17% )};
+	--masterbar-item-new-color: #{$blue-wordpress};
+	--masterbar-item-new-editor-background: #{darken( $blue-wordpress, 17% )};
+	--masterbar-item-new-editor-hover-background: #{darken( $blue-wordpress, 13% )};
+	--masterbar-toggle-drafts-editor-background: #{darken( $blue-wordpress, 12% )};
+	--masterbar-toggle-drafts-editor-border-color: #{darken( $blue-wordpress, 5% )};
+	--masterbar-toggle-drafts-editor-hover-background: #{darken( $blue-wordpress, 17% )};
 
-	--sidebar-color: $gray-dark;
-	--sidebar-background: $gray-lighten-30;
-	--sidebar-gridicon-fill: $gray-darken-30;
-	--sidebar-heading-color: $gray-darken-10;
-	--sidebar-footer-button-color: $gray-darken-10;
-	--sidebar-menu-link-secondary-text-color: $gray-darken-20;
-	--sidebar-menu-a-first-child-after-background: hex-to-rgb( $gray-lighten-30 );
-	--sidebar-menu-selected-background-color: $gray-text-min;
-	--sidebar-menu-selected-a-color: $white;
-	--sidebar-menu-selected-a-first-child-after-background: hex-to-rgb( $gray-text-min );
+	--sidebar-color: #{$gray-dark};
+	--sidebar-background: #{$gray-lighten-30};
+	--sidebar-gridicon-fill: #{$gray-darken-30};
+	--sidebar-heading-color: #{$gray-darken-10};
+	--sidebar-footer-button-color: #{$gray-darken-10};
+	--sidebar-menu-link-secondary-text-color: #{$gray-darken-20};
+	--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $gray-lighten-30 )};
+	--sidebar-menu-selected-background-color: #{$gray-text-min};
+	--sidebar-menu-selected-a-color: #{$white};
+	--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-text-min )};
 
-	--button-is-borderless-color: $gray-text-min;
-	--count-border-color: $gray;
-	--count-color: $gray-text-min;
-	--current-site-switch-sites-background: $gray-lighten-30;
-	--profile-gravatar-user-secondary-info-color: $gray-darken-20;
+	--button-is-borderless-color: #{$gray-text-min};
+	--count-border-color: #{$gray};
+	--count-color: #{$gray-text-min};
+	--current-site-switch-sites-background: #{$gray-lighten-30};
+	--profile-gravatar-user-secondary-info-color: #{$gray-darken-20};
 }
 
 //additional color schemes
 .color-scheme {
 	&.is-light {
-		--masterbar-color: $gray-text;
-		--masterbar-background: $gray-lighten-20;
-		--masterbar-border-color: $gray-lighten-10;
-		--masterbar-item-hover-background: $gray-lighten-30;
-		--masterbar-item-active-background: $gray-lighten-10;
-		--masterbar-item-new-color: $gray-text;
-		--masterbar-item-new-editor-background: $gray-darken-20;
-		--masterbar-item-new-editor-hover-background: $gray-darken-10;
-		--masterbar-toggle-drafts-editor-background: $gray-darken-10;
-		--masterbar-toggle-drafts-editor-border-color: $gray-lighten-20;
-		--masterbar-toggle-drafts-editor-hover-background: $gray-darken-10;
+		--masterbar-color: #{$gray-text};
+		--masterbar-background: #{$gray-lighten-20};
+		--masterbar-border-color: #{$gray-lighten-10};
+		--masterbar-item-hover-background: #{$gray-lighten-30};
+		--masterbar-item-active-background: #{$gray-lighten-10};
+		--masterbar-item-new-color: #{$gray-text};
+		--masterbar-item-new-editor-background: #{$gray-darken-20};
+		--masterbar-item-new-editor-hover-background: #{$gray-darken-10};
+		--masterbar-toggle-drafts-editor-background: #{$gray-darken-10};
+		--masterbar-toggle-drafts-editor-border-color: #{$gray-lighten-20};
+		--masterbar-toggle-drafts-editor-hover-background: #{$gray-darken-10};
 
-		--sidebar-color: $gray-dark;
-		--sidebar-background: $white;
-		--sidebar-gridicon-fill: $gray-dark;
-		--sidebar-heading-color: lighten( $gray-dark, 10% );
-		--sidebar-footer-button-color: $gray-dark;
-		--sidebar-menu-link-secondary-text-color: $gray-dark;
-		--sidebar-menu-a-first-child-after-background: hex-to-rgb( $white );
-		--sidebar-menu-selected-background-color: $gray-lighten-20;
-		--sidebar-menu-selected-a-color: $gray-dark;
-		--sidebar-menu-selected-a-first-child-after-background: hex-to-rgb( $gray-lighten-20 );
+		--sidebar-color: #{$gray-dark};
+		--sidebar-background: #{$white};
+		--sidebar-gridicon-fill: #{$gray-dark};
+		--sidebar-heading-color: #{lighten( $gray-dark, 10% )};
+		--sidebar-footer-button-color: #{$gray-dark};
+		--sidebar-menu-link-secondary-text-color: #{$gray-dark};
+		--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $white )};
+		--sidebar-menu-selected-background-color: #{$gray-lighten-20};
+		--sidebar-menu-selected-a-color: #{$gray-dark};
+		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-lighten-20 )};
 
-		--button-is-borderless-color: $gray-dark;
-		--count-border-color: $gray-dark;
-		--count-color: $gray-dark;
-		--current-site-switch-sites-background: $white;
-		--profile-gravatar-user-secondary-info-color: $gray-dark;
+		--button-is-borderless-color: #{$gray-dark};
+		--count-border-color: #{$gray-dark};
+		--count-color: #{$gray-dark};
+		--current-site-switch-sites-background: #{$white};
+		--profile-gravatar-user-secondary-info-color: #{$gray-dark};
 	}
 
 	&.is-dark {
-		--masterbar-color: $white;
-		--masterbar-background: $gray-dark;
-		--masterbar-border-color: $white;
-		--masterbar-item-hover-background: $gray-darken-10;
-		--masterbar-item-active-background: $gray-text-min;
-		--masterbar-item-new-color: $gray-dark;
-		--masterbar-item-new-editor-background: $gray-text-min;
-		--masterbar-item-new-editor-hover-background: lighten( $gray-text-min, 5% );
-		--masterbar-toggle-drafts-editor-background: $gray-darken-10;
-		--masterbar-toggle-drafts-editor-border-color: $gray-dark;
-		--masterbar-toggle-drafts-editor-hover-background: lighten( $gray-text-min, 5% );
+		--masterbar-color: #{$white};
+		--masterbar-background: #{$gray-dark};
+		--masterbar-border-color: #{$white};
+		--masterbar-item-hover-background: #{$gray-darken-10};
+		--masterbar-item-active-background: #{$gray-text-min};
+		--masterbar-item-new-color: #{$gray-dark};
+		--masterbar-item-new-editor-background: #{$gray-text-min};
+		--masterbar-item-new-editor-hover-background: #{lighten( $gray-text-min, 5% )};
+		--masterbar-toggle-drafts-editor-background: #{$gray-darken-10};
+		--masterbar-toggle-drafts-editor-border-color: #{$gray-dark};
+		--masterbar-toggle-drafts-editor-hover-background: #{lighten( $gray-text-min, 5% )};
 
-		--sidebar-color: $white;
-		--sidebar-background: $gray-darken-30;
-		--sidebar-gridicon-fill: $white;
-		--sidebar-heading-color: $white;
-		--sidebar-footer-button-color: $white;
-		--sidebar-menu-link-secondary-text-color: $white;
-		--sidebar-menu-a-first-child-after-background: hex-to-rgb( $gray-darken-30 );
-		--sidebar-menu-selected-background-color: $gray-dark;
-		--sidebar-menu-selected-a-color: $white;
-		--sidebar-menu-selected-a-first-child-after-background: hex-to-rgb( $gray-dark );
+		--sidebar-color: #{$white};
+		--sidebar-background: #{$gray-darken-30};
+		--sidebar-gridicon-fill: #{$white};
+		--sidebar-heading-color: #{$white};
+		--sidebar-footer-button-color: #{$white};
+		--sidebar-menu-link-secondary-text-color: #{$white};
+		--sidebar-menu-a-first-child-after-background: #{hex-to-rgb( $gray-darken-30 )};
+		--sidebar-menu-selected-background-color: #{$gray-dark};
+		--sidebar-menu-selected-a-color: #{$white};
+		--sidebar-menu-selected-a-first-child-after-background: #{hex-to-rgb( $gray-dark )};
 
-		--button-is-borderless-color: $white;
-		--count-border-color: $white;
-		--count-color: $white;
-		--current-site-switch-sites-background: $gray-darken-30;
-		--profile-gravatar-user-secondary-info-color: $white;
+		--button-is-borderless-color: #{$white};
+		--count-border-color: #{$white};
+		--count-color: #{$white};
+		--current-site-switch-sites-background: #{$gray-darken-30};
+		--profile-gravatar-user-secondary-info-color: #{$white};
 	}
 }

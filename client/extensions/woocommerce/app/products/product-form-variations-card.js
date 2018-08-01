@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import FoldableCard from 'components/foldable-card';
 import ProductVariationTypesForm from './product-variation-types-form';
 import ProductFormVariationsTable from './product-form-variations-table';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormToggle from 'components/forms/form-toggle';
 
 class ProductFormVariationsCard extends Component {
@@ -23,6 +24,9 @@ class ProductFormVariationsCard extends Component {
 	};
 
 	static propTypes = {
+		site: PropTypes.shape( {
+			URL: PropTypes.string,
+		} ),
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			type: PropTypes.string,
@@ -35,6 +39,7 @@ class ProductFormVariationsCard extends Component {
 		editProductVariation: PropTypes.func.isRequired,
 		onUploadStart: PropTypes.func.isRequired,
 		onUploadFinish: PropTypes.func.isRequired,
+		storeIsManagingStock: PropTypes.string,
 	};
 
 	simpleFields = [
@@ -111,7 +116,7 @@ class ProductFormVariationsCard extends Component {
 	}
 
 	render() {
-		const { siteId, product, variations, translate } = this.props;
+		const { site, siteId, product, variations, translate, storeIsManagingStock } = this.props;
 		const { editProductAttribute, editProductVariation } = this.props;
 		const type = product.type || 'simple';
 		const variationToggleDescription = translate(
@@ -122,6 +127,9 @@ class ProductFormVariationsCard extends Component {
 				},
 			}
 		);
+
+		const inventorySettingsUrl =
+			site.URL + '/wp-admin/admin.php?page=wc-settings&tab=products&section=inventory';
 
 		return (
 			<FoldableCard
@@ -148,7 +156,23 @@ class ProductFormVariationsCard extends Component {
 							editProductVariation={ editProductVariation }
 							onUploadStart={ this.props.onUploadStart }
 							onUploadFinish={ this.props.onUploadFinish }
+							storeIsManagingStock={ storeIsManagingStock }
 						/>
+						{ variations &&
+							variations.length &&
+							'no' === storeIsManagingStock && (
+								<FormSettingExplanation>
+									{ translate(
+										'Inventory management has been disabled for this store. ' +
+											'You can enable it under your {{managementLink}}inventory settings{{/managementLink}}.',
+										{
+											components: {
+												managementLink: <a href={ inventorySettingsUrl } target="_blank" />,
+											},
+										}
+									) }
+								</FormSettingExplanation>
+							) }
 					</div>
 				) }
 			</FoldableCard>

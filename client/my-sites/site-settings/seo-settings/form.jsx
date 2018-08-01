@@ -35,7 +35,9 @@ import {
 	getSiteSettingsSaveError,
 } from 'state/site-settings/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackModuleActive, isHiddenSite, isPrivateSite } from 'state/selectors';
+import isHiddenSite from 'state/selectors/is-hidden-site';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'state/selectors/is-private-site';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
@@ -327,10 +329,10 @@ export class SeoForm extends React.Component {
 								isSitePrivate
 									? translate(
 											"SEO settings aren't recognized by search engines while your site is Private."
-										)
+									  )
 									: translate(
 											"SEO settings aren't recognized by search engines while your site is Hidden."
-										)
+									  )
 							}
 						>
 							<NoticeAction href={ generalTabUrl }>

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import wp from 'lib/wp';
+import wpcom from 'lib/wp';
 import {
 	PREFERENCES_SET,
 	PREFERENCES_RECEIVE,
@@ -16,8 +16,6 @@ import {
 	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './constants';
-
-const wpcom = wp.undocumented();
 
 /**
  * Returns an action object signalling the remote preferences have been
@@ -42,6 +40,7 @@ export function fetchPreferences() {
 		dispatch( { type: PREFERENCES_FETCH } );
 
 		return wpcom
+			.undocumented()
 			.me()
 			.preferences()
 			.get()
@@ -93,6 +92,7 @@ export const savePreference = ( key, value ) => dispatch => {
 	};
 
 	return wpcom
+		.undocumented()
 		.me()
 		.preferences()
 		.update( payload )

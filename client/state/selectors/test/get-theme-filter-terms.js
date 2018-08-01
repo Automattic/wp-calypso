@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getThemeFilterTerms } from 'state/selectors';
+import getThemeFilterTerms from 'state/selectors/get-theme-filter-terms';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTerms()', () => {

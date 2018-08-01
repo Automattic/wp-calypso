@@ -30,10 +30,6 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				123: {
-					location: {
-						id: null,
-					},
-					statInterval: {},
 					stats: {
 						actions: {
 							month: {
@@ -41,6 +37,7 @@ describe( 'reducer', () => {
 							},
 						},
 					},
+					statsError: {},
 				},
 			} );
 		} );
@@ -48,10 +45,6 @@ describe( 'reducer', () => {
 		test( 'should reset data on request to server', () => {
 			const state = {
 				123: {
-					location: {
-						id: null,
-					},
-					statInterval: {},
 					stats: {
 						actions: {
 							month: {
@@ -62,13 +55,15 @@ describe( 'reducer', () => {
 				},
 			};
 
-			expect( googleMyBusinessReducer( state, {
-				type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
-				siteId: 123,
-				interval: 'month',
-				statType: 'actions',
-				aggregation: 'total',
-			} ) ).to.be.empty;
+			expect(
+				googleMyBusinessReducer( state, {
+					type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
+					siteId: 123,
+					interval: 'month',
+					statType: 'actions',
+					aggregation: 'total',
+				} )
+			).to.be.empty;
 		} );
 
 		test( 'should reset data only for specific site', () => {
@@ -87,13 +82,15 @@ describe( 'reducer', () => {
 				1234: siteData,
 			};
 
-			expect( googleMyBusinessReducer( state, {
-				type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
-				siteId: 123,
-				interval: 'month',
-				statType: 'actions',
-				aggregation: 'total',
-			} ) ).to.eql( {
+			expect(
+				googleMyBusinessReducer( state, {
+					type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
+					siteId: 123,
+					interval: 'month',
+					statType: 'actions',
+					aggregation: 'total',
+				} )
+			).to.eql( {
 				1234: {
 					stats: {
 						actions: {
@@ -120,18 +117,16 @@ describe( 'reducer', () => {
 				},
 			};
 
-			expect( googleMyBusinessReducer( state, {
-				type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
-				siteId: 123,
-				interval: 'month',
-				statType: 'actions',
-				aggregation: 'total',
-			} ) ).to.eql( {
+			expect(
+				googleMyBusinessReducer( state, {
+					type: GOOGLE_MY_BUSINESS_STATS_REQUEST,
+					siteId: 123,
+					interval: 'month',
+					statType: 'actions',
+					aggregation: 'total',
+				} )
+			).to.eql( {
 				123: {
-					location: {
-						id: null,
-					},
-					statInterval: {},
 					stats: {
 						actions: {
 							month: {
@@ -139,6 +134,7 @@ describe( 'reducer', () => {
 							},
 						},
 					},
+					statsError: {},
 				},
 			} );
 		} );

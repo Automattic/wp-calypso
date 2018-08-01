@@ -21,14 +21,12 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
-import {
-	getPostSharePublishedActions,
-	getPostShareScheduledActions,
-	getScheduledPublicizeShareActionTime,
-	isPublicizeEnabled,
-	isSchedulingPublicizeShareAction,
-	isSchedulingPublicizeShareActionError,
-} from 'state/selectors';
+import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';
+import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
+import getScheduledPublicizeShareActionTime from 'state/selectors/get-scheduled-publicize-share-action-time';
+import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
+import isSchedulingPublicizeShareAction from 'state/selectors/is-scheduling-publicize-share-action';
+import isSchedulingPublicizeShareActionError from 'state/selectors/is-scheduling-publicize-share-action-error';
 import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 
@@ -315,7 +313,7 @@ class PostShare extends Component {
 						className="post-share__schedule-button"
 						disabled={ this.isDisabled() }
 						disabledDays={ [ { before: new Date() } ] }
-						enableOutsideDays={ false }
+						showOutsideDays={ false }
 						title={ translate( 'Set date and time' ) }
 						selectedDay={ this.state.scheduledDate }
 						tabIndex={ 3 }

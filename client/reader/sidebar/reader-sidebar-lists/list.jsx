@@ -41,6 +41,7 @@ export class ReaderSidebarListsList extends React.Component {
 	}
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const { translate, lists } = this.props;
 		if ( ! lists || lists.length === 0 ) {
 			return (
@@ -51,6 +52,7 @@ export class ReaderSidebarListsList extends React.Component {
 		}
 
 		return <div>{ this.renderItems() }</div>;
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

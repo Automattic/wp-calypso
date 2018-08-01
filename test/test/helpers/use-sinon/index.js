@@ -57,13 +57,13 @@ export function useSandbox( config, sandboxCallback = noop ) {
 	}
 
 	beforeAll( () => {
-		sandbox = sinon.sandbox.create( config );
+		sandbox = sinon.createSandbox( config );
 		sandboxCallback( sandbox );
 	} );
 
 	beforeEach( () => {
 		if ( sandbox ) {
-			sandbox.reset();
+			sandbox.resetHistory();
 		}
 	} );
 

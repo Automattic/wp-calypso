@@ -49,7 +49,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should be false when review replies are loading.', () => {
-			expect( getReviewReplies( loadingState, 555, 123 ) ).to.be.empty;
+			expect( getReviewReplies( loadingState, 555, 123 ) ).to.be.false;
 		} );
 
 		test( 'should be the list of replies if they are loaded.', () => {
@@ -74,7 +74,7 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should be false when review replies are loading.', () => {
-			expect( getReviewReply( loadingState, 555, 556, 123 ) ).to.be.empty;
+			expect( getReviewReply( loadingState, 555, 556, 123 ) ).to.be.false;
 		} );
 
 		test( 'should return reply content if replies are loaded.', () => {

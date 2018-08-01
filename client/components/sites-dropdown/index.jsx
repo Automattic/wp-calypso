@@ -17,7 +17,7 @@ import Gridicon from 'gridicons';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import SiteSelector from 'components/site-selector';
-import { getPrimarySiteId } from 'state/selectors';
+import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 export class SitesDropdown extends PureComponent {

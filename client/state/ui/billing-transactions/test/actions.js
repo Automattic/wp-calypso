@@ -8,7 +8,7 @@ import {
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'state/action-types';
-import { setApp, setDate, setNewest, setPage, setQuery } from '../actions';
+import { setApp, setDate, setPage, setQuery } from '../actions';
 
 describe( 'transaction filter actions', () => {
 	describe( '#setApp()', () => {
@@ -18,18 +18,6 @@ describe( 'transaction filter actions', () => {
 				type: BILLING_TRANSACTIONS_FILTER_SET_APP,
 				transactionType: 'past',
 				app: 'Test app',
-			} );
-		} );
-	} );
-
-	describe( '#setNewest()', () => {
-		test( 'should return an action object with month and operator set to null', () => {
-			const action = setNewest( 'past' );
-			expect( action ).toEqual( {
-				type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
-				transactionType: 'past',
-				month: null,
-				operator: null,
 			} );
 		} );
 	} );

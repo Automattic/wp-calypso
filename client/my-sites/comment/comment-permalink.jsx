@@ -14,7 +14,7 @@ import { get, isUndefined } from 'lodash';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
-import { getSiteComment } from 'state/selectors';
+import getSiteComment from 'state/selectors/get-site-comment';
 
 const CommentPermalink = ( { isLoading, permaLink, translate } ) =>
 	! isLoading && (

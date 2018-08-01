@@ -17,7 +17,7 @@ import Notice from 'components/notice';
 import QueryRewindState from 'components/data/query-rewind-state';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 import { getSiteSlug } from 'state/sites/selectors';
 
 class JetpackCredentials extends Component {

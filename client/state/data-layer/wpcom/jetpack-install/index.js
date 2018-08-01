@@ -42,14 +42,19 @@ export const handleSuccess = ( { url } ) => {
 };
 
 export const handleError = ( action, error ) => {
-	const { url, user, password, meta: { dataLayer } } = action;
+	const {
+		url,
+		user,
+		password,
+		meta: { dataLayer },
+	} = action;
 	const { retryCount = 0 } = dataLayer;
 
 	const logToTracks = withAnalytics(
 		recordTracksEvent( 'calypso_jpc_remoteinstall_api_fail', {
 			url,
 			error: error.error,
-			message: error.message,
+			error_message: error.message,
 			status: error.status,
 		} )
 	);

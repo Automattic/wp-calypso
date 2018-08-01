@@ -22,3 +22,17 @@ localStorage.setItem('debug', 'calypso:perfmon')
 ```
 
 and then reloading the browser.
+
+Note that while the timer is started and stopped on every navigation, the
+observer is only enabled on pages where it's explicitly initiated (such as
+the post editor). In all other pages, the timer won't stop when the placeholders
+are removed.
+
+To enable monitoring for a page, import and run `recordPlaceholdersTiming` as
+part of its load:
+
+```js
+import { recordPlaceholdersTiming } from 'lib/perfmon';
+
+recordPlaceholdersTiming();
+```

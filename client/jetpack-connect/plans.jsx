@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -34,12 +35,10 @@ import { JPC_PATH_PLANS } from './constants';
 import { mc } from 'lib/analytics';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
-import {
-	canCurrentUser,
-	hasInitializedSites,
-	isRtl,
-	isSiteAutomatedTransfer,
-} from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import isRtl from 'state/selectors/is-rtl';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
 const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
@@ -74,24 +73,23 @@ class Plans extends Component {
 
 	maybeRedirect() {
 		if ( this.props.isAutomatedTransfer ) {
-			externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			return externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 		if ( this.props.selectedPlan ) {
-			this.selectPlan( this.props.selectedPlan );
+			return this.selectPlan( this.props.selectedPlan );
 		}
 		if ( this.props.hasPlan || this.props.notJetpack ) {
-			this.redirect( CALYPSO_PLANS_PAGE );
+			return this.redirect( CALYPSO_PLANS_PAGE );
 		}
 		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
 			// Invalid site
-			this.redirect( JPC_PATH_PLANS );
+			return this.redirect( JPC_PATH_PLANS );
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.calypsoStartedConnection ) {
-				this.redirectToCalypso();
-			} else {
-				this.redirectToWpAdmin();
+				return this.redirectToCalypso();
 			}
+			return this.redirectToWpAdmin();
 		}
 	}
 
@@ -111,10 +109,6 @@ class Plans extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_skip_button_click' );
 
 		this.selectFreeJetpackPlan();
-	};
-
-	handleHelpButtonClick = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
 	redirectToWpAdmin() {
@@ -211,6 +205,7 @@ class Plans extends Component {
 
 		return (
 			<Fragment>
+				<DocumentHead title={ translate( 'Plans' ) } />
 				<QueryPlans />
 				{ selectedSite && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				<PlansGrid
@@ -228,7 +223,7 @@ class Plans extends Component {
 							label={ helpButtonLabel }
 							eventName="calypso_jpc_plans_chat_initiated"
 						>
-							<HelpButton onClick={ this.handleHelpButtonClick } label={ helpButtonLabel } />
+							<HelpButton label={ helpButtonLabel } />
 						</JetpackConnectHappychatButton>
 					</LoggedOutFormLinks>
 				</PlansGrid>

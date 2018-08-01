@@ -95,7 +95,7 @@ class StepWrapper extends Component {
 
 	render() {
 		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
-		const classes = classNames( 'step-wrapper', {
+		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
 

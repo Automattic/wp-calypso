@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { hasBrokenSiteUserConnection } from 'state/selectors';
+import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
 
 describe( 'hasBrokenSiteUserConnection()', () => {
 	test( 'should return false if no connections for site', () => {

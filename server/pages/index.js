@@ -10,7 +10,17 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, flatten, forEach, intersection, snakeCase } from 'lodash';
+import {
+	endsWith,
+	get,
+	includes,
+	pick,
+	flatten,
+	forEach,
+	intersection,
+	snakeCase,
+	split,
+} from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -30,6 +40,7 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
+import { getLanguage } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -173,15 +184,16 @@ function getAcceptedLanguagesFromHeader( header ) {
 
 function getDefaultContext( request ) {
 	let initialServerState = {};
+	let sectionCss;
+	let lang = config( 'i18n_default_locale_slug' );
 	const bodyClasses = [];
 	// We don't compare context.query against a whitelist here. Whitelists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
 	// called before route-specific middleware, so it's up to the cache *writes* in server
 	// render to make sure that Redux state and markup are only cached for whitelisted query args.
-	const cacheKey = getNormalizedPath( request.pathname, request.query );
+	const cacheKey = getNormalizedPath( request.path, request.query );
 	const geoLocation = ( request.headers[ 'x-geoip-country-code' ] || '' ).toLowerCase();
 	const isDebug = calypsoEnv === 'development' || request.query.debug !== undefined;
-	let sectionCss;
 
 	if ( cacheKey ) {
 		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
@@ -204,6 +216,12 @@ function getDefaultContext( request ) {
 		sectionCss = request.context.sectionCss;
 	}
 
+	// We assign request.context.lang in the handleLocaleSubdomains()
+	// middleware function if we detect a language slug in subdomain
+	if ( request.context && request.context.lang ) {
+		lang = request.context.lang;
+	}
+
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -214,7 +232,7 @@ function getDefaultContext( request ) {
 		isRTL: config( 'rtl' ),
 		isDebug,
 		badge: false,
-		lang: config( 'i18n_default_locale_slug' ),
+		lang,
 		entrypoint: getAssets().entrypoints.build.assets.filter(
 			asset => ! asset.startsWith( 'manifest' )
 		),
@@ -474,6 +492,44 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
+/**
+ * Sets language properties to context if
+ * a WordPress.com language slug is detected in the hostname
+ *
+ * @param {Object} req Express request object
+ * @param {Object} res Express response object
+ * @param {Function} next a callback to call when done
+ * @returns {Function|Undefined} res.redirect if not logged in
+ */
+function handleLocaleSubdomains( req, res, next ) {
+	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
+		? split( req.hostname, '.' )[ 0 ]
+		: null;
+
+	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
+		// Retrieve the language object for the RTL information.
+		const language = getLanguage( langSlug );
+
+		// Switch locales only in a logged-out state.
+		if ( language && ! req.cookies.wordpress_logged_in ) {
+			req.context = {
+				...req.context,
+				lang: language.langSlug,
+				isRTL: !! language.rtl,
+			};
+		} else {
+			// Strip the langSlug and redirect using hostname
+			// so that the user's locale preferences take priority.
+			const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+			const port = process.env.PORT || config( 'port' ) || '';
+			const hostname = req.hostname.substr( langSlug.length + 1 );
+			const redirectUrl = `${ protocol }://${ hostname }:${ port }${ req.path }`;
+			return res.redirect( redirectUrl );
+		}
+	}
+	next();
+}
+
 module.exports = function() {
 	const app = express();
 
@@ -481,6 +537,7 @@ module.exports = function() {
 
 	app.use( logSectionResponseTime );
 	app.use( cookieParser() );
+	app.use( handleLocaleSubdomains );
 
 	// redirect homepage if the Reader is disabled
 	app.get( '/', function( request, response, next ) {
@@ -583,6 +640,8 @@ module.exports = function() {
 
 					if ( config.isEnabled( 'code-splitting' ) ) {
 						req.context.chunkFiles = getFilesForChunk( section.name );
+					} else {
+						req.context.chunkFiles = [];
 					}
 
 					if ( section.secondary && req.context ) {
@@ -662,6 +721,7 @@ module.exports = function() {
 					authorized: true,
 					supportUser: req.query.support_user,
 					supportToken: req.query._support_token,
+					supportPath: req.query.support_path,
 				} )
 			);
 		}
@@ -699,6 +759,7 @@ module.exports = function() {
 					authorized: true,
 					supportUser: req.query.support_user,
 					supportToken: req.query._support_token,
+					supportPath: req.query.support_path,
 				} )
 			);
 		} );

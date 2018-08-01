@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -24,23 +26,27 @@ const fields = [
 ];
 
 const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
-	const onTimezoneSelect = ( value ) => {
-		const e = { target: {
-			name: 'store_timezone',
-			value,
-		} };
+	const onTimezoneSelect = value => {
+		const e = {
+			target: {
+				name: 'store_timezone',
+				value,
+			},
+		};
 		onChange( e );
 	};
 
-	const selectLanguage = ( e ) => {
-		const event = { target: {
-			name: 'store_locale',
-			value: e.target.value,
-		} };
+	const selectLanguage = e => {
+		const event = {
+			target: {
+				name: 'store_locale',
+				value: e.target.value,
+			},
+		};
 		onChange( event );
 	};
 
-	const isError = ( name ) => {
+	const isError = name => {
 		if ( name === 'store_phone' ) {
 			return validateFields && ! ( storeData.name && storeData[ name ].length >= 6 );
 		}
@@ -58,24 +64,21 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 			<SettingsPaymentsLocationCurrency />
 			{ fields.map( ( item, index ) => {
 				const error = isError( item.name );
-				const errorMsg = item.name === 'store_phone'
-					? translate( 'number needs at least 6 digits' )
-					: translate( 'field is required' );
+				const errorMsg =
+					item.name === 'store_phone'
+						? translate( 'number needs at least 6 digits' )
+						: translate( 'field is required' );
 				return (
 					<FormFieldset key={ index }>
 						<div>
-							<FormLabel>
-								{ item.label }
-							</FormLabel>
+							<FormLabel>{ item.label }</FormLabel>
 							<FormTextInput
 								name={ item.name }
 								isError={ error }
 								onChange={ onChange }
 								value={ storeData[ item.name ] || '' }
 							/>
-							{ error && <FormInputValidation
-								isError
-								text={ errorMsg } /> }
+							{ error && <FormInputValidation isError text={ errorMsg } /> }
 						</div>
 					</FormFieldset>
 				);
@@ -92,12 +95,8 @@ const StoreInfo = ( { storeData = {}, onChange, validateFields } ) => {
 				</FormLabel>
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel>
-					{ translate( 'Store Timezone' ) }
-				</FormLabel>
-				<TimeZone
-					selectedZone={ storeData.store_timezone }
-					onSelect={ onTimezoneSelect } />
+				<FormLabel>{ translate( 'Store Timezone' ) }</FormLabel>
+				<TimeZone selectedZone={ storeData.store_timezone } onSelect={ onTimezoneSelect } />
 			</FormFieldset>
 		</div>
 	);

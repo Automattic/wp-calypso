@@ -1,11 +1,11 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
 import { createReducer, combineReducers } from 'state/utils';
 import { domainTransferSchema } from './schema';
-import {
-	DOMAIN_TRANSFER_UPDATE,
-} from 'state/action-types';
+import { DOMAIN_TRANSFER_UPDATE } from 'state/action-types';
 
 /**
  * Returns the updated state after an action has been dispatched. The

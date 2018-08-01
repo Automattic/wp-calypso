@@ -162,6 +162,14 @@ const devdocs = {
 		context.primary = React.createElement( DevWelcome, {} );
 		next();
 	},
+
+	// Gutenberg Blocks
+	gutenbergBlocks: function( context, next ) {
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/gutenberg-blocks" />
+		);
+		next();
+	},
 };
 
 export default devdocs;

@@ -73,10 +73,18 @@ export function receivePage( store, action, apiResponse ) {
 
 	const { page, number } = apiResponse;
 	const follows = subscriptionsFromApi( apiResponse );
+	let totalCount = null;
+
+	// Only trust the total count if we're on the first page of results,
+	// or on subsequent pages where we have more than one follow returned
+	if ( page === 1 || number > 0 ) {
+		totalCount = apiResponse.total_subscriptions;
+	}
+
 	store.dispatch(
 		receiveFollowsAction( {
 			follows,
-			totalCount: apiResponse.total_subscriptions,
+			totalCount,
 		} )
 	);
 
@@ -89,6 +97,7 @@ export function receivePage( store, action, apiResponse ) {
 		store.dispatch( requestPageAction( page + 1 ) );
 		return;
 	}
+
 	// all done syncing
 	store.dispatch( syncComplete( Array.from( seenSubscriptions ) ) );
 

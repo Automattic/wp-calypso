@@ -14,6 +14,7 @@ import React, { Component } from 'react';
 import { clearOrderEdits } from 'woocommerce/state/ui/orders/actions';
 import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
+import { fetchRefunds } from 'woocommerce/state/sites/orders/refunds/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	isCurrentlyEditingOrder,
@@ -36,22 +37,24 @@ class Order extends Component {
 		if ( siteId ) {
 			this.props.fetchOrder( siteId, orderId );
 			this.props.fetchNotes( siteId, orderId );
+			this.props.fetchRefunds( siteId, orderId );
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
-		const { orderId: oldOrderId, siteId: oldSiteId } = this.props;
-		const { orderId: newOrderId, siteId: newSiteId } = newProps;
+	componentDidUpdate( prevProps ) {
+		const { orderId: oldOrderId, siteId: oldSiteId } = prevProps;
+		const { orderId: newOrderId, siteId: newSiteId } = this.props;
 		if ( newOrderId !== oldOrderId || newSiteId !== oldSiteId ) {
 			// New order or site should clear any pending edits
 			this.props.clearOrderEdits( oldSiteId );
 			// And fetch the new order's info
 			this.props.fetchOrder( newSiteId, newOrderId );
 			this.props.fetchNotes( newSiteId, newOrderId );
+			this.props.fetchRefunds( newSiteId, newOrderId );
 			return;
 		}
 
-		if ( this.props.isEditing && ! newProps.isEditing ) {
+		if ( prevProps.isEditing && ! this.props.isEditing ) {
 			// Leaving edit state should re-fetch notes
 			this.props.fetchNotes( newSiteId, newOrderId );
 		}
@@ -88,7 +91,7 @@ export default connect(
 	( state, props ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
-		const orderId = parseInt( props.params.order );
+		const orderId = parseInt( props.params.order_id );
 		const isEditing = isCurrentlyEditingOrder( state );
 		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, orderId );
 		const hasOrder = ! isEmpty( order );
@@ -102,5 +105,6 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { clearOrderEdits, fetchNotes, fetchOrder }, dispatch )
+	dispatch =>
+		bindActionCreators( { clearOrderEdits, fetchNotes, fetchOrder, fetchRefunds }, dispatch )
 )( localize( Order ) );

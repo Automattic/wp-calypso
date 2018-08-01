@@ -10,6 +10,7 @@ import { some, trim } from 'lodash';
  * Internal dependencies
  */
 import { getEditedPost } from 'state/posts/selectors';
+import { getEditorRawContent } from 'state/ui/editor/selectors';
 
 const REGEXP_EMPTY_CONTENT = /^<p>(<br[^>]*>|&nbsp;|\s)*<\/p>$/;
 const CONTENT_LENGTH_ASSUME_SET = 50;
@@ -37,15 +38,20 @@ export function isEmptyContent( content ) {
  */
 export default function editedPostHasContent( state, siteId, postId ) {
 	const editedPost = getEditedPost( state, siteId, postId );
-	return (
-		!! editedPost &&
-		( some(
-			[ 'title', 'excerpt' ],
-			field => editedPost[ field ] && !! trim( editedPost[ field ] )
-		) ||
-			// We don't yet have the notion of post's raw content in the Redux state so we rely on post content attribute here
-			// when we do, we'll want it to reflect the Flux implementation's emptiness check
-			// where raw content is preferred to the content property if available
-			! isEmptyContent( editedPost.content ) )
-	);
+
+	if ( ! editedPost ) {
+		return false;
+	}
+
+	if ( some( [ 'title', 'excerpt' ], field => trim( editedPost[ field ] ) ) ) {
+		return true;
+	}
+
+	const rawContent = getEditorRawContent( state );
+	if ( rawContent ) {
+		// Raw content contains the most up-to-date post content
+		return ! isEmptyContent( rawContent );
+	}
+
+	return ! isEmptyContent( editedPost.content );
 }

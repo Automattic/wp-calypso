@@ -12,6 +12,7 @@ import { omit, trim } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -50,9 +51,9 @@ const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) =
 	};
 
 	return (
-		<a href="#" className="packages__setting-explanation" onClick={ onClick }>
+		<Button className="packages__setting-explanation" onClick={ onClick } borderless>
 			{ translate( 'Add exterior dimensions' ) }
-		</a>
+		</Button>
 	);
 };
 

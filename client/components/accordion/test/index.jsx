@@ -18,7 +18,7 @@ describe( 'Accordion', () => {
 		AccordionStatus = require( '../status' );
 	} );
 
-	test( 'should render as expected with a title and content', () => {
+	test( 'should render as expected with a title but no content when initially closed', () => {
 		const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
 		expect( wrapper.hasClass( 'accordion' ) ).toBe( true );
@@ -29,7 +29,7 @@ describe( 'Accordion', () => {
 		expect( wrapper.find( '.accordion__title' ).text() ).toBe( 'Section' );
 		expect( wrapper.find( '.accordion__subtitle' ) ).toHaveLength( 0 );
 		expect( wrapper.find( '.accordion__icon' ) ).toHaveLength( 0 );
-		expect( wrapper.find( '.accordion__content' ).text() ).toBe( 'Content' );
+		expect( wrapper.find( '.accordion__content' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should accept an icon prop to be rendered', () => {
@@ -113,6 +113,15 @@ describe( 'Accordion', () => {
 			expect( toggleSpy ).toHaveBeenCalledTimes( 1 );
 			expect( toggleSpy ).toHaveBeenCalledWith( false );
 			expect( wrapper.state( 'isExpanded' ) ).toBe( false );
+		} );
+
+		test( 'should render content when initially open', () => {
+			const wrapper = shallow(
+				<Accordion initialExpanded={ true } title="Section">
+					Content
+				</Accordion>
+			);
+			expect( wrapper.find( '.accordion__content' ).text() ).toBe( 'Content' );
 		} );
 	} );
 } );

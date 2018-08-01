@@ -3,12 +3,12 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { flowRight, isEqual, keys, omit, pick, isNaN } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -22,12 +22,10 @@ import {
 	getSiteSettingsSaveError,
 	getSiteSettings,
 } from 'state/site-settings/selectors';
-import {
-	isRequestingJetpackSettings,
-	isUpdatingJetpackSettings,
-	isJetpackSettingsSaveFailure,
-	getJetpackSettings,
-} from 'state/selectors';
+import getJetpackSettings from 'state/selectors/get-jetpack-settings';
+import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
+import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
+import isUpdatingJetpackSettings from 'state/selectors/is-updating-jetpack-settings';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import { saveJetpackSettings } from 'state/jetpack/settings/actions';
@@ -40,6 +38,8 @@ import {
 } from 'state/sites/selectors';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+
+const debug = debugFactory( 'calypso:site-settings' );
 
 const wrapSettingsForm = getFormSettings => SettingsForm => {
 	class WrappedSettingsForm extends Component {
@@ -157,14 +157,17 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				jetpackSettingsUISupported,
 			} = this.props;
 			this.props.removeNotice( 'site-settings-save' );
+			debug( 'submitForm', { fields, settingsFields } );
 
 			// Support site settings for older Jetpacks as needed
 			const siteFields = pick( fields, settingsFields.site );
 			const apiVersion = siteIsJetpack ? jetpackSiteSettingsAPIVersion : '1.4';
-			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
+
 			if ( jetpackSettingsUISupported ) {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
 			}
+
+			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
 		};
 
 		handleRadio = event => {
@@ -207,12 +210,15 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		};
 
 		onChangeField = field => event => {
+			const value = event.target.value;
+			debug( 'onChangeField', { field, value } );
 			this.props.updateFields( {
-				[ field ]: event.target.value,
+				[ field ]: value,
 			} );
 		};
 
 		setFieldValue = ( field, value, autosave = false ) => {
+			debug( 'setFieldValue', { field, value } );
 			this.props.updateFields(
 				{
 					[ field ]: value,
@@ -247,6 +253,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				setFieldValue: this.setFieldValue,
 				submitForm: this.submitForm,
 				uniqueEventTracker: this.uniqueEventTracker,
+				updateFields: this.props.updateFields,
 			};
 
 			return (
@@ -265,7 +272,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		( state, { fields } ) => {
 			const siteId = getSelectedSiteId( state );
 			let isSavingSettings = isSavingSiteSettings( state, siteId );
-			let isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
+			const isSaveRequestSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
 			let settings = getSiteSettings( state, siteId );
 			let isRequestingSettings = isRequestingSiteSettings( state, siteId ) && ! settings;
 			let isJetpackSaveRequestSuccessful;
@@ -346,7 +353,12 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 	);
 
-	return flowRight( trackForm, protectForm, connectComponent, localize )( WrappedSettingsForm );
+	return flowRight(
+		trackForm,
+		protectForm,
+		connectComponent,
+		localize
+	)( WrappedSettingsForm );
 };
 
 export default wrapSettingsForm;

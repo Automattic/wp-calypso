@@ -4,10 +4,9 @@
  * External dependencies
  */
 
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -22,23 +21,21 @@ import FormTextInput from 'components/forms/form-text-input';
 import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import { hasTouch } from 'lib/touch-detect';
-import postActions from 'lib/posts/actions';
-import { recordEvent, recordStat } from 'lib/posts/stats';
-import { tracks } from 'lib/analytics';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
+import { recordTracksEvent } from 'state/analytics/actions';
 import accept from 'lib/accept';
 import { editPost } from 'state/posts/actions';
+import { getEditedPost, getSitePost } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
+import isPrivateSiteSelector from 'state/selectors/is-private-site';
 
 class EditorVisibility extends React.Component {
-	static defaultProps = {
-		isPrivateSite: false,
-	};
-
 	static propTypes = {
 		context: PropTypes.string,
 		onPrivatePublish: PropTypes.func,
 		isPrivateSite: PropTypes.bool,
+		hasPost: PropTypes.bool,
 		type: PropTypes.string,
 		status: PropTypes.string,
 		password: PropTypes.string,
@@ -51,8 +48,6 @@ class EditorVisibility extends React.Component {
 	state = {
 		passwordIsValid: true,
 	};
-
-	showingAcceptDialog = false;
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.password === nextProps.password ) {
@@ -83,79 +78,55 @@ class EditorVisibility extends React.Component {
 		return 'public';
 	};
 
-	isPasswordValid = () => {
-		if ( 'password' !== this.getVisibility() ) {
-			return true;
-		}
-
-		const password = ReactDom.findDOMNode( this.refs.postPassword ).value.trim();
-
-		return password.length;
-	};
-
-	updatePostStatus = () => {
-		const defaultVisibility = 'draft' === this.props.status ? 'draft' : 'publish';
-		const postEdits = { status: defaultVisibility };
-
-		postActions.edit( postEdits );
-	};
-
 	recordStats = newVisibility => {
 		if ( this.getVisibility() !== newVisibility ) {
-			recordStat( 'visibility-set-' + newVisibility );
-			recordEvent( 'Changed visibility', newVisibility );
-			tracks.recordEvent( 'calypso_editor_visibility_set', {
+			this.props.recordEditorStat( 'visibility-set-' + newVisibility );
+			this.props.recordEditorEvent( 'Changed visibility', newVisibility );
+			this.props.recordTracksEvent( 'calypso_editor_visibility_set', {
 				context: this.props.context,
 				visibility: newVisibility,
 			} );
 		}
 	};
 
-	updateVisibility = newVisibility => {
-		const { siteId, postId } = this.props;
-		let reduxPostEdits;
+	updateVisibility( newVisibility ) {
+		const { siteId, postId, status } = this.props;
+
+		// This is necessary for cases when the post is changed from private
+		// to another visibility since private has its own post status.
+		const newStatus = status === 'draft' ? 'draft' : 'publish';
+
+		const postEdits = { status: newStatus };
 
 		switch ( newVisibility ) {
 			case 'public':
-				reduxPostEdits = { password: '' };
+				postEdits.password = '';
 				break;
 
 			case 'password':
-				reduxPostEdits = {
-					password: this.props.savedPassword || ' ',
-					// Password protected posts cannot be sticky
-					sticky: false,
-				};
+				postEdits.password = this.props.savedPassword || ' ';
+				// Password protected posts cannot be sticky
+				postEdits.sticky = false;
 				this.setState( { passwordIsValid: true } );
 				break;
 		}
 
+		this.props.editPost( siteId, postId, postEdits );
 		this.recordStats( newVisibility );
+	}
 
-		// This is necessary for cases when the post is changed from private to another visibility
-		// since private has its own post status.
-		this.updatePostStatus();
-
-		if ( reduxPostEdits ) {
-			this.props.editPost( siteId, postId, reduxPostEdits );
-		}
-	};
-
-	setPostToPrivate = () => {
+	setPostToPrivate() {
 		const { siteId, postId } = this.props;
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( {
-			status: 'private',
-		} );
 
 		// Private posts cannot be sticky
 		this.props.editPost( siteId, postId, {
+			status: 'private',
 			password: '',
 			sticky: false,
 		} );
 
 		this.recordStats( 'private' );
-	};
+	}
 
 	onPrivatePublish = () => {
 		this.setPostToPrivate();
@@ -167,8 +138,6 @@ class EditorVisibility extends React.Component {
 			this.setPostToPrivate();
 			return;
 		}
-
-		this.showingAcceptDialog = true;
 
 		let message;
 
@@ -187,7 +156,6 @@ class EditorVisibility extends React.Component {
 		accept(
 			message,
 			accepted => {
-				this.showingAcceptDialog = false;
 				if ( accepted ) {
 					this.onPrivatePublish();
 				}
@@ -208,11 +176,10 @@ class EditorVisibility extends React.Component {
 			newPassword = ' ';
 		}
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		this.props.editPost( siteId, postId, { password: newPassword } );
 	};
 
-	renderPasswordInput = () => {
+	renderPasswordInput() {
 		const value = this.props.password ? this.props.password.trim() : null;
 		const isError = ! this.state.passwordIsValid;
 		const errorMessage = this.props.translate( 'Password is empty.', {
@@ -223,12 +190,10 @@ class EditorVisibility extends React.Component {
 			<div>
 				<FormTextInput
 					autoFocus
-					onKeyUp={ this.onKey }
 					onChange={ this.onPasswordChange }
 					onBlur={ this.onPasswordChange }
 					value={ value }
 					isError={ isError }
-					ref="postPassword"
 					placeholder={ this.props.translate( 'Create password', {
 						context: 'Editor: Create password for post',
 					} ) }
@@ -237,7 +202,7 @@ class EditorVisibility extends React.Component {
 				{ isError ? <FormInputValidation isError={ true } text={ errorMessage } /> : null }
 			</div>
 		);
-	};
+	}
 
 	renderPrivacyDropdown = visibility => {
 		const publicLabelPublicSite = this.props.translate( 'Public', {
@@ -306,6 +271,11 @@ class EditorVisibility extends React.Component {
 	};
 
 	render() {
+		// don't render anything until the edited post is loaded
+		if ( ! this.props.hasPost ) {
+			return null;
+		}
+
 		const visibility = this.getVisibility();
 		const classes = classNames( 'editor-visibility', {
 			'is-touch': hasTouch(),
@@ -319,11 +289,20 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
+		const currentPost = getSitePost( state, siteId, postId );
+		const post = getEditedPost( state, siteId, postId );
 
 		return {
 			siteId,
 			postId,
+			hasPost: !! post,
+			type: get( post, 'type', null ),
+			status: get( post, 'status', 'draft' ),
+			password: get( post, 'password', null ),
+			savedStatus: get( currentPost, 'status', null ),
+			savedPassword: get( currentPost, 'password', null ),
+			isPrivateSite: isPrivateSiteSelector( state, siteId ),
 		};
 	},
-	{ editPost }
+	{ editPost, recordEditorStat, recordEditorEvent, recordTracksEvent }
 )( localize( EditorVisibility ) );

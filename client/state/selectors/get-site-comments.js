@@ -16,7 +16,7 @@ function filterCommentsByStatus( comments, status ) {
 		? filter(
 				comments,
 				comment => 'approved' === comment.status || 'unapproved' === comment.status
-			)
+		  )
 		: filter( comments, comment => status === comment.status );
 }
 

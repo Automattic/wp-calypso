@@ -17,15 +17,13 @@ import SectionHeader from 'components/section-header';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import InfoPopover from 'components/info-popover';
+import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getJetpackModule,
-	isActivatingJetpackModule,
-	isJetpackModuleActive,
-} from 'state/selectors';
+import getJetpackModule from 'state/selectors/get-jetpack-module';
+import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'state/sites/selectors';
 
 class Sitemaps extends Component {
@@ -56,20 +54,17 @@ class Sitemaps extends Component {
 		);
 	}
 
-	renderInfoLink( url ) {
+	renderInfoLink( link, privacyLink ) {
 		const { translate } = this.props;
 
 		return (
-			<div className="sitemaps__info-link-container site-settings__info-link-container">
-				<InfoPopover position="left">
-					{ translate(
-						'Automatically generates the files required for search engines to index your site.'
-					) }{' '}
-					<ExternalLink href={ url } icon={ false } target="_blank">
-						{ translate( 'Learn more' ) }
-					</ExternalLink>
-				</InfoPopover>
-			</div>
+			<SupportInfo
+				text={ translate(
+					'Automatically generates the files required for search engines to index your site.'
+				) }
+				link={ link }
+				privacyLink={ privacyLink }
+			/>
 		);
 	}
 
@@ -109,7 +104,7 @@ class Sitemaps extends Component {
 
 		return (
 			<div>
-				{ this.renderInfoLink( 'https://support.wordpress.com/sitemaps/' ) }
+				{ this.renderInfoLink( 'https://support.wordpress.com/sitemaps/', false ) }
 
 				{ this.isSitePublic() ? (
 					<div>
@@ -175,7 +170,7 @@ class Sitemaps extends Component {
 
 		return (
 			<FormFieldset>
-				{ this.renderInfoLink( 'https://jetpack.com/support/sitemaps' ) }
+				{ this.renderInfoLink( 'https://jetpack.com/support/sitemaps/' ) }
 
 				<JetpackModuleToggle
 					siteId={ siteId }

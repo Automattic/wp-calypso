@@ -22,14 +22,13 @@ import { recordAction, recordTrack } from 'reader/stats';
 import SiteResults from './site-results';
 import PostResults from './post-results';
 import ReaderMain from 'components/reader-main';
-import { addQueryArgs } from 'lib/url';
+import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
 import withDimensions from 'lib/with-dimensions';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
-import { resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
-import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
+import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
 import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
 import FollowButton from 'reader/follow-button';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
@@ -53,26 +52,17 @@ const SpacerDiv = withDimensions( ( { width, height } ) => (
 class SearchStream extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
+		streamKey: PropTypes.string,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.query !== this.props.query ) {
-			this.updateState( nextProps );
+		const title = this.getTitle( nextProps );
+		if ( title !== this.state.title ) {
+			this.setState( { title } );
 		}
 	}
 
-	updateState = ( props = this.props ) => {
-		const newState = {
-			title: this.getTitle( props ),
-		};
-		if ( newState.title !== this.state.title ) {
-			this.setState( newState || props.translate( 'Search' ) );
-		}
-	};
-
-	getTitle = ( props = this.props ) => {
-		return props.query;
-	};
+	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
 
 	state = {
 		selected: SEARCH_TYPES.POSTS,
@@ -120,7 +110,7 @@ class SearchStream extends React.Component {
 
 	render() {
 		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
-		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
+		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
 		const queryWithoutProtocol = withoutHttp( query );
@@ -161,6 +151,7 @@ class SearchStream extends React.Component {
 			] )
 		);
 
+		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
@@ -197,8 +188,12 @@ class SearchStream extends React.Component {
 					{ showFollowByUrl && (
 						<div className="search-stream__url-follow">
 							<FollowButton
-								followLabel={ translate( 'Follow %s', { args: queryWithoutProtocol } ) }
-								followingLabel={ translate( 'Following %s', { args: queryWithoutProtocol } ) }
+								followLabel={ translate( 'Follow %s', {
+									args: queryWithoutProtocol,
+								} ) }
+								followingLabel={ translate( 'Following %s', {
+									args: queryWithoutProtocol,
+								} ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ SEARCH_RESULTS_URL_INPUT }
 							/>
@@ -254,6 +249,7 @@ class SearchStream extends React.Component {
 				) }
 			</div>
 		);
+		/* eslint-enable jsx-a11y/no-autofocus */
 	}
 }
 

@@ -10,7 +10,7 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import getPastBillingTransactions from './get-past-billing-transactions';
+import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 
 /**
  * Utility function to retrieve a transaction from individualTransactions state subtree

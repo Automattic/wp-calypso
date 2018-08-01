@@ -6,11 +6,12 @@
 	}
 
 	.custom-content-types__label {
+		display: inline-block;
+		font-weight: 600;
 		margin-bottom: 5px;
 	}
-}
 
-.custom-content-types__label,
-.custom-content-types__module-settings .form-toggle__label-content {
-	font-weight: 600;
+	.form-toggle__wrapper {
+		display: inline-block;
+	}
 }

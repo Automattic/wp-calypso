@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 
-function supportUserFn( { user, token, authorized } ) {
+function supportUserFn( { user, token, path, authorized } ) {
 	const url = window.location.toString();
 
 	if ( url.indexOf( '?' ) > 0 ) {
@@ -22,10 +22,14 @@ function supportUserFn( { user, token, authorized } ) {
 		window.sessionStorage.setItem( 'boot_support_user', window.JSON.stringify( { user, token } ) );
 	}
 
-	window.location.replace( '/' );
+	// Only redirect to same-domain
+	const redirectUrl = new URL( url );
+	redirectUrl.pathname = path ? decodeURIComponent( path ) : '/';
+	redirectUrl.search = '';
+	window.location.replace( redirectUrl.href );
 }
 
-function SupportUser( { supportUser, supportToken, authorized = false } ) {
+function SupportUser( { supportUser, supportToken, supportPath, authorized = false } ) {
 	return (
 		<html lang="en">
 			<body>
@@ -38,6 +42,7 @@ function SupportUser( { supportUser, supportToken, authorized = false } ) {
 						supportUserFn( {
 							user: ${ supportUser && `"${ encodeURIComponent( supportUser ) }"` },
 							token: ${ supportToken && `"${ encodeURIComponent( supportToken ) }"` },
+							path: ${ supportPath && `"${ encodeURIComponent( supportPath ) }"` },
 							authorized: ${ authorized }
 						} );
 						`,

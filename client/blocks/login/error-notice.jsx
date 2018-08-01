@@ -7,6 +7,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -78,9 +80,30 @@ class ErrorNotice extends Component {
 			return null;
 		}
 
+		let message = error.message;
+
+		// Account closed error from the API contains HTML, so set a custom message for that case
+		if ( error.code === 'deleted_user' ) {
+			message = this.props.translate(
+				'This account has been closed. ' +
+					'If you believe your account was closed in error, please {{a}}contact us{{/a}}.',
+				{
+					components: {
+						a: (
+							<a
+								href={ config( 'login_url' ) + '?action=recovery' }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
+			);
+		}
+
 		return (
 			<Notice status={ 'is-error' } showDismiss={ false }>
-				{ error.message }
+				{ message }
 			</Notice>
 		);
 	}
@@ -91,4 +114,4 @@ export default connect( state => ( {
 	requestAccountError: getRequestSocialAccountError( state ),
 	requestError: getRequestError( state ),
 	twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
-} ) )( ErrorNotice );
+} ) )( localize( ErrorNotice ) );

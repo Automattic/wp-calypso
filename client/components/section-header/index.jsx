@@ -23,9 +23,11 @@ export default class SectionHeader extends PureComponent {
 		const hasCount = 'number' === typeof this.props.count;
 		const isEmpty = ! ( this.props.label || hasCount || this.props.children );
 		const classes = classNames( this.props.className, 'section-header', { 'is-empty': isEmpty } );
+		const { id } = this.props;
+		const otherProps = { id };
 
 		return (
-			<CompactCard className={ classes } href={ this.props.href }>
+			<CompactCard className={ classes } href={ this.props.href } { ...otherProps }>
 				<div className="section-header__label">
 					<span className="section-header__label-text">{ this.props.label }</span>
 					{ hasCount && <Count count={ this.props.count } /> }

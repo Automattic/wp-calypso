@@ -13,7 +13,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import Button from 'components/button';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
-import { getRewindState } from 'state/selectors';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 const SetupTos = ( { autoConfigure, canAutoconfigure, reset, translate, goToNextStep } ) => (
 	<CompactCard className="credentials-setup-flow__tos" highlight="info">
@@ -25,12 +25,12 @@ const SetupTos = ( { autoConfigure, canAutoconfigure, reset, translate, goToNext
 							'current host which are necessary to perform site backups and ' +
 							'restores. Do you want to give WordPress.com access to your ' +
 							"host's server?"
-					)
+				  )
 				: translate(
 						'By adding credentials, you are providing us with access to your server ' +
 							'to perform automatic actions (such as backing up or restoring your site) ' +
 							'or to manually access your site in case of an emergency.'
-					) }
+				  ) }
 		</div>
 		<div className="credentials-setup-flow__tos-buttons">
 			<Button borderless={ true } onClick={ reset }>
@@ -57,4 +57,7 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	autoConfigure: () => dispatch( autoConfigCredentials( siteId ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupTos ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( SetupTos ) );

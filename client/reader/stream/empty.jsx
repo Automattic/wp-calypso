@@ -23,6 +23,7 @@ class FollowingEmptyContent extends React.Component {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
 				<a
 					className="empty-content__action button is-primary"
@@ -34,7 +35,6 @@ class FollowingEmptyContent extends React.Component {
 			),
 			secondaryAction = null;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<EmptyContent
 				className="stream__empty"

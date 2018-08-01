@@ -2,8 +2,8 @@
 /**
  * External Dependencies
  */
-import moment from 'moment';
 import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal Dependencies
@@ -11,33 +11,6 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import { recordTrack } from 'reader/stats';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { fetchNextPage } from 'lib/feed-stream-store/actions';
-import feedStreamFactory from 'lib/feed-stream-store';
-
-let storeId;
-export function setLastStoreId( id ) {
-	storeId = id;
-}
-
-export function getLastStore() {
-	if ( storeId ) {
-		return feedStreamFactory( storeId );
-	}
-	return null;
-}
-
-export function ensureStoreLoading( store, context ) {
-	if ( store.getPage() === 1 ) {
-		if ( context && context.query && context.query.at ) {
-			const startDate = moment( context.query.at );
-			if ( startDate.isValid() ) {
-				store.startDate = startDate.toISOString();
-			}
-		}
-		fetchNextPage( store.id );
-	}
-	return store;
-}
 
 export function trackPageLoad( path, title, readerView ) {
 	analytics.pageView.record( path, title );
@@ -45,6 +18,15 @@ export function trackPageLoad( path, title, readerView ) {
 		'reader_views',
 		readerView === 'full_post' ? readerView : readerView + '_load'
 	);
+}
+
+export function getStartDate( context ) {
+	if ( context.query && context.query.at ) {
+		const startDate = moment( context.query.at );
+		return startDate.isValid() ? startDate.toISOString() : null;
+	}
+
+	return null;
 }
 
 export function trackScrollPage( path, title, category, readerView, pageNum ) {
@@ -70,7 +52,8 @@ export function trackUpdatesLoaded( key ) {
 }
 
 export function setPageTitle( context, title ) {
-	context.store.dispatch( setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// @todo Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) ) );
 }
 
 export function userHasHistory( context ) {

@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants';
-import { isJetpackOnboardingStepCompleted } from 'state/selectors';
+import isJetpackOnboardingStepCompleted from 'state/selectors/is-jetpack-onboarding-step-completed';
 
 describe( 'isJetpackOnboardingStepCompleted()', () => {
 	test( 'should return false for a null site ID', () => {

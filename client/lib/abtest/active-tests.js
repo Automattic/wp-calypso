@@ -1,14 +1,16 @@
 /** @format */
 export default {
-	multiyearSubscriptions: {
-		datestamp: '20180417',
+	nudgeAPalooza: {
+		datestamp: '20180726',
 		variations: {
-			show: 10,
-			hide: 90,
+			sidebarUpsells: 20,
+			themesNudgesUpdates: 20,
+			customPluginAndThemeLandingPages: 20,
+			plansBannerUpsells: 20,
+			control: 20,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'control',
 		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 	springSale30PercentOff: {
 		datestamp: '20180413',
@@ -65,46 +67,40 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	checklistThankYouForFreeUser: {
-		datestamp: '20171204',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	checklistThankYouForPaidUser: {
-		datestamp: '20171204',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	upgradePricingDisplayV3: {
-		datestamp: '20180402',
+	jetpackSignupGoogleTop: {
+		datestamp: '20180427',
 		variations: {
 			original: 50,
-			modified: 50,
+			top: 50,
 		},
 		defaultVariation: 'original',
 	},
-	mobilePlansTablesOnSignup: {
-		datestamp: '20180330',
+	domainSuggestionKrakenV323: {
+		datestamp: '20180726',
 		variations: {
-			original: 50,
-			vertical: 50,
+			domainsbot: 0,
+			group_1: 22700,
+			group_3: 22700,
+			group_4: 22700,
+			group_6: 10000,
+			group_7: 10000,
+			group_8: 22700,
 		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
+		defaultVariation: 'domainsbot',
 	},
-	showMoneyBackGuarantee: {
-		datestamp: '20180409',
+	aboutSuggestionMatches: {
+		datestamp: '20180704',
 		variations: {
-			no: 1,
-			yes: 1,
+			control: 50,
+			enhancedSort: 50,
+		},
+		defaultVariation: 'control',
+	},
+	includeDotBlogSubdomain: {
+		datestamp: '20180723',
+		variations: {
+			yes: 50,
+			no: 50,
 		},
 		defaultVariation: 'no',
 	},

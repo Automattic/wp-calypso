@@ -153,11 +153,11 @@ export class JetpackSignup extends Component {
 							'The email address "%(email)s" is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.',
 							{ args: { email: error.data.email } }
-						)
+					  )
 					: translate(
 							'The email address is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.'
-						);
+					  );
 
 			warningNotice( text, {
 				button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,
@@ -167,10 +167,6 @@ export class JetpackSignup extends Component {
 		errorNotice(
 			translate( 'There was a problem creating your account. Please contact support.' )
 		);
-	};
-
-	handleClickHelp = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
 	renderLoginUser() {
@@ -200,7 +196,7 @@ export class JetpackSignup extends Component {
 				<LoggedOutFormLinkItem href={ this.getLoginRoute() }>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
-				<HelpButton onClick={ this.handleClickHelp } />
+				<HelpButton />
 			</LoggedOutFormLinks>
 		);
 	}
@@ -233,10 +229,13 @@ export class JetpackSignup extends Component {
 		);
 	}
 }
-export default connect( null, {
-	createAccount: createAccountAction,
-	createSocialAccount: createSocialAccountAction,
-	errorNotice: errorNoticeAction,
-	warningNotice: warningNoticeAction,
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( JetpackSignup ) );
+export default connect(
+	null,
+	{
+		createAccount: createAccountAction,
+		createSocialAccount: createSocialAccountAction,
+		errorNotice: errorNoticeAction,
+		warningNotice: warningNoticeAction,
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( JetpackSignup ) );

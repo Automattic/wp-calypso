@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
-import { isUpdatingJetpackSettings } from 'state/selectors';
+import isUpdatingJetpackSettings from 'state/selectors/is-updating-jetpack-settings';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
 import { saveJetpackSettings } from 'state/jetpack/settings/actions';
 

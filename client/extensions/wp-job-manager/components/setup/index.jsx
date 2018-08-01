@@ -99,4 +99,7 @@ const mapStateToProps = state => ( {
 
 const mapDispatchToProps = { saveSetupStatus };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupWizard ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( SetupWizard ) );

@@ -50,14 +50,20 @@ export default class Accordion extends Component {
 		this.props.onToggle( isExpanded );
 	};
 
+	_mountChildren = false;
+
 	render() {
 		const { className, icon, title, subtitle, status, children, e2eTitle } = this.props;
+		const isExpanded = this.state.isExpanded || this.props.forceExpand;
 		const classes = classNames( 'accordion', className, {
-			'is-expanded': this.state.isExpanded || this.props.forceExpand,
+			'is-expanded': isExpanded,
 			'has-icon': !! icon,
 			'has-subtitle': !! subtitle,
 			'has-status': !! status,
 		} );
+
+		// Keep children off the render tree until it's first expanded.
+		this._mountChildren = this._mountChildren || isExpanded;
 
 		return (
 			<div
@@ -76,9 +82,11 @@ export default class Accordion extends Component {
 					</button>
 					{ status && <AccordionStatus { ...status } /> }
 				</header>
-				<div className="accordion__content">
-					<div className="accordion__content-wrap">{ children }</div>
-				</div>
+				{ this._mountChildren && (
+					<div className="accordion__content">
+						<div className="accordion__content-wrap">{ children }</div>
+					</div>
+				) }
 			</div>
 		);
 	}

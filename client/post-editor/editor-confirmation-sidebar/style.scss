@@ -33,18 +33,18 @@
 	@extend .sidebar;
 	width: $sidebar-width-max;
 	background: $sidebar-bg-color;
-	border-left: 1px solid darken($sidebar-bg-color, 5%);
+	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
 	box-sizing: border-box;
 	position: fixed;
 	top: 0;
 	left: auto;
 	right: -$sidebar-width-max;
-	z-index: z-index('root', '.editor-confirmation-sidebar__sidebar');
-	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+	z-index: z-index( 'root', '.editor-confirmation-sidebar__sidebar' );
+	transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
 
 	&.is-active {
-		transform: translateX(-$sidebar-width-max);
+		transform: translateX( -$sidebar-width-max );
 	}
 
 	@include breakpoint( '>960px' ) {
@@ -52,7 +52,7 @@
 		right: -$sidebar-width-max;
 
 		&.is-active {
-			transform: translateX(-$sidebar-width-max);
+			transform: translateX( -$sidebar-width-max );
 		}
 	}
 
@@ -86,7 +86,7 @@
 	padding: 0 24px;
 	box-sizing: border-box;
 	background: $white;
-	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 }
 
 .editor-confirmation-sidebar__close {
@@ -95,7 +95,7 @@
 
 .editor-confirmation-sidebar__action .button {
 	background: $alert-green;
-	border-color: darken($alert-green, 20%);
+	border-color: darken( $alert-green, 20% );
 	color: $white;
 
 	padding: 7px 24px;
@@ -104,12 +104,12 @@
 
 	&:hover,
 	&:focus {
-		border-color: darken($alert-green, 40%);
+		border-color: darken( $alert-green, 40% );
 	}
 	&[disabled],
 	&:disabled {
-		background: lighten($alert-green, 20%);
-		border-color: tint($alert-green, 30%);
+		background: lighten( $alert-green, 20% );
+		border-color: tint( $alert-green, 30% );
 	}
 }
 
@@ -119,7 +119,7 @@
 
 .editor-confirmation-sidebar__sidebar .editor-confirmation-sidebar__display-preference {
 	@extend .sidebar__footer;
-	background-color: lighten($gray, 25%);
+	background-color: lighten( $gray, 25% );
 	padding: 4px 10px;
 
 	@include breakpoint( '<660px' ) {

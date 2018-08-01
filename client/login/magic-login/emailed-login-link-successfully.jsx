@@ -17,8 +17,12 @@ import { login } from 'lib/paths';
 import Card from 'components/card';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { getCurrentLocaleSlug } from 'state/selectors';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import {
+	recordPageViewWithClientId as recordPageView,
+	enhanceWithSiteType,
+} from 'state/analytics/actions';
+import { withEnhancers } from 'state/utils';
 import Gridicon from 'gridicons';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
@@ -48,7 +52,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 						args: {
 							emailAddress,
 						},
-					} )
+				  } )
 				: translate( 'We just emailed you a link.' ),
 			' ',
 			translate( 'Please check your inbox and click the link to log in.' ),
@@ -92,7 +96,10 @@ const mapState = state => ( {
 
 const mapDispatch = {
 	hideMagicLoginRequestForm,
-	recordPageView,
+	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
 };
 
-export default connect( mapState, mapDispatch )( localize( EmailedLoginLinkSuccessfully ) );
+export default connect(
+	mapState,
+	mapDispatch
+)( localize( EmailedLoginLinkSuccessfully ) );

@@ -34,7 +34,7 @@ export default class extends React.Component {
 				? {
 						title: i18n.translate( 'Social Login' ),
 						path: '/me/security/social-login',
-					}
+				  }
 				: null,
 			{
 				title: i18n.translate( 'Two-Step Authentication' ),
@@ -43,7 +43,7 @@ export default class extends React.Component {
 			{
 				title: config.isEnabled( 'signup/social-management' )
 					? // This was shortened from 'Connected Applications' due to space constraints.
-						i18n.translate( 'Connected Apps' )
+					  i18n.translate( 'Connected Apps' )
 					: i18n.translate( 'Connected Applications' ),
 				path: '/me/security/connected-applications',
 			},
@@ -57,12 +57,12 @@ export default class extends React.Component {
 	};
 
 	getFilteredPath = () => {
-		var paramIndex = this.props.path.indexOf( '?' );
+		const paramIndex = this.props.path.indexOf( '?' );
 		return paramIndex < 0 ? this.props.path : this.props.path.substring( 0, paramIndex );
 	};
 
 	getSelectedText = () => {
-		var text = '',
+		let text = '',
 			filteredPath = this.getFilteredPath(),
 			found = find( this.getNavtabs(), { path: filteredPath } );
 

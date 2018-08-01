@@ -16,7 +16,10 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	isAuthorEqual,
+	isDateEqual,
 	isDiscussionEqual,
+	areAllMetadataEditsApplied,
+	applyPostEdits,
 	mergePostEdits,
 	normalizePostForEditing,
 	normalizePostForDisplay,
@@ -25,7 +28,7 @@ import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import { addQueryArgs } from 'lib/route';
-import { getFeaturedImageId } from 'lib/posts/utils';
+import { getFeaturedImageId } from 'state/posts/utils';
 
 /**
  * Returns the PostsQueryManager from the state tree for a given site ID (or
@@ -85,18 +88,21 @@ export const getNormalizedPost = createSelector(
  * @param  {Number} siteId Site ID
  * @return {Array}         Site posts
  */
-export const getSitePosts = createSelector( ( state, siteId ) => {
-	if ( ! siteId ) {
-		return null;
-	}
+export const getSitePosts = createSelector(
+	( state, siteId ) => {
+		if ( ! siteId ) {
+			return null;
+		}
 
-	const manager = state.posts.queries[ siteId ];
-	if ( ! manager ) {
-		return [];
-	}
+		const manager = state.posts.queries[ siteId ];
+		if ( ! manager ) {
+			return [];
+		}
 
-	return manager.getItems();
-}, state => state.posts.queries );
+		return manager.getItems();
+	},
+	state => state.posts.queries
+);
 
 /**
  * Returns a post object by site ID, post ID pair.
@@ -106,18 +112,21 @@ export const getSitePosts = createSelector( ( state, siteId ) => {
  * @param  {String}  postId Post ID
  * @return {?Object}        Post object
  */
-export const getSitePost = createSelector( ( state, siteId, postId ) => {
-	if ( ! siteId ) {
-		return null;
-	}
+export const getSitePost = createSelector(
+	( state, siteId, postId ) => {
+		if ( ! siteId ) {
+			return null;
+		}
 
-	const manager = state.posts.queries[ siteId ];
-	if ( ! manager ) {
-		return null;
-	}
+		const manager = state.posts.queries[ siteId ];
+		if ( ! manager ) {
+			return null;
+		}
 
-	return manager.getItem( postId );
-}, state => state.posts.queries );
+		return manager.getItem( postId );
+	},
+	state => state.posts.queries
+);
 
 /**
  * Returns an array of normalized posts for the posts query, or null if no
@@ -316,6 +325,26 @@ export function isRequestingSitePost( state, siteId, postId ) {
 }
 
 /**
+ * Returns an object of edited post attributes for the site ID post ID pairing.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} postId Post ID
+ * @return {Object}        Post revisions
+ */
+export const getPostEdits = createSelector(
+	( state, siteId, postId ) => {
+		const postEditsLog = get( state.posts.edits, [ siteId, postId || '' ] );
+		if ( ! postEditsLog ) {
+			return null;
+		}
+
+		return normalizePostForEditing( mergePostEdits( ...postEditsLog ) );
+	},
+	state => [ state.posts.edits ]
+);
+
+/**
  * Returns a post object by site ID post ID pairing, with editor revisions.
  *
  * @param  {Object} state  Global state tree
@@ -331,23 +360,10 @@ export const getEditedPost = createSelector(
 			return post;
 		}
 
-		return mergePostEdits( post, edits );
+		return applyPostEdits( post, edits );
 	},
-	state => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits ]
 );
-
-/**
- * Returns an object of edited post attributes for the site ID post ID pairing.
- *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} postId Post ID
- * @return {Object}        Post revisions
- */
-export function getPostEdits( state, siteId, postId ) {
-	const { edits } = state.posts;
-	return normalizePostForEditing( get( edits, [ siteId, postId || '' ], null ) );
-}
 
 /**
  * Returns the assigned value for the edited post by field key.
@@ -363,27 +379,27 @@ export function getEditedPostValue( state, siteId, postId, field ) {
 }
 
 /**
- * Returns true if the edited post visibility is private.
+ * Returns true if the edited post is password protected.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether edited post visibility is private
+ * @return {Boolean}        Result of the check
  */
-export function isEditedPostPrivate( state, siteId, postId ) {
+export function isEditedPostPasswordProtected( state, siteId, postId ) {
 	const password = getEditedPostValue( state, siteId, postId, 'password' );
 	return !! ( password && password.length > 0 );
 }
 
 /**
- * Returns true if a valid password is set for the edited post with private visibility.
+ * Returns true if the edited post is password protected and has a valid password set
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
  * @param  {Number}  postId Post ID
- * @return {Boolean}        Whether password for the edited post with private visibility is valid
+ * @return {Boolean}        Result of the check
  */
-export function isPrivateEditedPostPasswordValid( state, siteId, postId ) {
+export function isEditedPostPasswordProtectedWithValidPassword( state, siteId, postId ) {
 	const password = getEditedPostValue( state, siteId, postId, 'password' );
 	return !! ( password && password.trim().length > 0 );
 }
@@ -402,7 +418,7 @@ export const isEditedPostDirty = createSelector(
 		const post = getSitePost( state, siteId, postId );
 		const edits = getPostEdits( state, siteId, postId );
 
-		return some( edits, ( value, key ) => {
+		const editsDirty = some( edits, ( value, key ) => {
 			if ( key === 'type' ) {
 				return false;
 			}
@@ -413,13 +429,16 @@ export const isEditedPostDirty = createSelector(
 						return ! isAuthorEqual( value, post.author );
 					}
 					case 'date': {
-						return ! moment( value ).isSame( post.date );
+						return ! isDateEqual( value, post.date );
 					}
 					case 'discussion': {
 						return ! isDiscussionEqual( value, post.discussion );
 					}
 					case 'featured_image': {
 						return value !== getFeaturedImageId( post );
+					}
+					case 'metadata': {
+						return ! areAllMetadataEditsApplied( value, post.metadata );
 					}
 					case 'parent': {
 						return get( post, 'parent.ID', 0 ) !== value;
@@ -432,8 +451,12 @@ export const isEditedPostDirty = createSelector(
 				! DEFAULT_NEW_POST_VALUES.hasOwnProperty( key ) || value !== DEFAULT_NEW_POST_VALUES[ key ]
 			);
 		} );
+
+		const { initial, current } = state.ui.editor.rawContent;
+		const rawContentDirty = initial !== current;
+		return editsDirty || rawContentDirty;
 	},
-	state => [ state.posts.items, state.posts.edits ]
+	state => [ state.posts.queries, state.posts.edits, state.ui.editor.rawContent ]
 );
 
 /**
@@ -445,18 +468,21 @@ export const isEditedPostDirty = createSelector(
  * @param  {Number}  postId Post ID
  * @return {Boolean}        Whether post is published
  */
-export const isPostPublished = createSelector( ( state, siteId, postId ) => {
-	const post = getSitePost( state, siteId, postId );
+export const isPostPublished = createSelector(
+	( state, siteId, postId ) => {
+		const post = getSitePost( state, siteId, postId );
 
-	if ( ! post ) {
-		return null;
-	}
+		if ( ! post ) {
+			return null;
+		}
 
-	return (
-		includes( [ 'publish', 'private' ], post.status ) ||
-		( post.status === 'future' && moment( post.date ).isBefore( moment() ) )
-	);
-}, state => state.posts.queries );
+		return (
+			includes( [ 'publish', 'private' ], post.status ) ||
+			( post.status === 'future' && moment( post.date ).isBefore( moment() ) )
+		);
+	},
+	state => state.posts.queries
+);
 
 /**
  * Returns the slug, or suggested_slug, for the edited post

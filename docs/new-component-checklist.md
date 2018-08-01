@@ -38,3 +38,40 @@ Do all behaviors function as expected? For responsive tabs, are menus (for overf
 ## Browser Support
 
 Has the component visual quality and accuracy been assessed across Safari, Chrome, Firefox, IE, and other browsers across relevant devices? Please adhere to our [browser support requirements](../README.md#browser-support).
+
+## Documentation
+
+Please use the [documentation template](component-readme-template.md) for documenting the new component.
+
+## Example
+
+Making an example component for each component is a very good idea.
+
+The file of the example component should reside into a `/docs` folder in the same folder where the component is defined and its name should be `example.jsx`. For instance for the `<Popover />` component:
+
+```
+// component definition
+- client/component/popover/index.jsx
+
+// example component
+- client/component/popover/docs/example.jsx
+```
+
+By convention the name of example component should ends with the `Example` word so for in the Popover case the name should be `PopoverExample`. To show the correct name on `/devdocs/design`, define the `displayName` for the example component:
+
+```es6
+class PopoverExample extends PureComponent {
+	static displayName = 'PopoverExample';
+	// ...
+}
+```
+
+## Playground
+
+Components will appear in the [Playground](/devdocs/playground) if they have the following requirements satisfied:
+- An example Component in /components/component-name/docs/example.jsx
+- An exampleCode property on the example Component
+- An `export ComponentName from components/component-name` statement in `playground-scope.js`
+- An `export ComponentName from components/component-name/docs/example.jsx` statement in `component-examples.jsx`
+
+Components which satisfy these requirements will also have a playground appear in [Devdocs Design](/devdocs/design).

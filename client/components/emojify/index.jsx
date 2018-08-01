@@ -11,11 +11,13 @@ import twemoji from 'twemoji';
 export default class Emojify extends PureComponent {
 	static propTypes = {
 		imgClassName: PropTypes.string,
+		tagName: PropTypes.string,
 		twemojiUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
 		imgClassName: 'emojify__emoji',
+		tagName: 'div',
 	};
 
 	constructor( props ) {
@@ -57,14 +59,20 @@ export default class Emojify extends PureComponent {
 	render() {
 		// We want other props to content everything but children, className, imgClassName, and twemojiUrl.
 		// We can't delete imgClassName and twemojiUrl despite they not being used here.
-		const { children, className, imgClassName, twemojiUrl, ...other } = this.props; // eslint-disable-line no-unused-vars
-
+		const {
+			children,
+			className,
+			imgClassName,
+			tagName: WrapperTagName,
+			twemojiUrl,
+			...other
+		} = this.props; // eslint-disable-line no-unused-vars
 		const classes = classNames( className, 'emojify' );
 
 		return (
-			<div className={ classes } ref={ this.setRef } { ...other }>
+			<WrapperTagName className={ classes } ref={ this.setRef } { ...other }>
 				{ children }
-			</div>
+			</WrapperTagName>
 		);
 	}
 }

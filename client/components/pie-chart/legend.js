@@ -3,54 +3,65 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { sortBy, sumBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DataType from './data/type';
-import LegendItem from './legend-item';
-import { sortDataAndAssignSections, isDataEqual } from './data';
+import DataType from './data-type';
+import LegendItem from 'components/legend-item';
+
+const NUM_COLOR_SECTIONS = 3;
+
+function transformData( data ) {
+	return sortBy( data, datum => datum.value )
+		.reverse()
+		.map( ( datum, index ) => ( {
+			...datum,
+			sectionNum: index % NUM_COLOR_SECTIONS,
+		} ) );
+}
 
 class PieChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		data: null,
+		dataTotal: 0,
+	};
 
-		this.state = this.processData( props.data );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! isDataEqual( this.props.data, nextProps.data ) ) {
-			this.setState( this.processData( nextProps.data ) );
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.data !== prevState.data ) {
+			return {
+				data: nextProps.data,
+				dataTotal: sumBy( nextProps.data, datum => datum.value ),
+				transformedData: transformData( nextProps.data ),
+			};
 		}
-	}
 
-	processData( data ) {
-		const sortedData = sortDataAndAssignSections( data );
-
-		return {
-			data: sortedData,
-			dataTotal: sortedData.reduce( ( total, datum ) => total + datum.value, 0 ),
-		};
+		return null;
 	}
 
 	render() {
-		const { data, dataTotal } = this.state;
+		const { transformedData, dataTotal } = this.state;
+
 		return (
-			<div className={ 'pie-chart__legend' }>
-				{ data.map( ( datum, index ) => {
+			<div className="pie-chart__legend">
+				{ transformedData.map( datum => {
+					const percent =
+						dataTotal > 0 ? Math.round( ( datum.value / dataTotal ) * 100 ).toString() : '0';
+
 					return (
 						<LegendItem
-							key={ index.toString() }
+							key={ datum.name }
 							name={ datum.name }
-							value={ datum.value }
-							sectionNumber={ datum.sectionNum }
-							percent={ Math.round( datum.value / dataTotal * 100 ).toString() }
+							value={ datum.value.toString() }
+							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum }` }
+							percent={ percent }
 							description={ datum.description }
 						/>
 					);

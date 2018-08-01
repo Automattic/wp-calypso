@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUnconnectedSite } from 'state/selectors';
+import getUnconnectedSite from 'state/selectors/get-unconnected-site';
 
 /**
  * Returns the URL of a particular Jetpack onboarding site.

@@ -13,15 +13,19 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CreditCardForm from '../';
+import { CreditCardForm } from '../';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
 } ) );
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'Credit Card Form', () => {
 	const defaultProps = {
 		translate: identity,
+		countriesList: [],
 		createCardToken: noop,
 		recordFormSubmitEvent: noop,
 		successCallback: noop,

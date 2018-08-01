@@ -16,13 +16,13 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import Site from 'blocks/site';
-import { isPage, isPublished } from 'lib/posts/utils';
-import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
+import EditorPublishButton from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
-import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { canCurrentUser, isVipSite } from 'state/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
 
@@ -36,15 +36,12 @@ export class EditorGroundControl extends React.Component {
 		isPublishing: PropTypes.bool,
 		isSaving: PropTypes.bool,
 		isSidebarOpened: PropTypes.bool,
-		loadRevision: PropTypes.func.isRequired,
 		moment: PropTypes.func,
 		onPreview: PropTypes.func,
 		onPublish: PropTypes.func,
 		onSave: PropTypes.func,
 		onSaveDraft: PropTypes.func,
 		onMoreInfoAboutEmailVerify: PropTypes.func,
-		post: PropTypes.object,
-		savedPost: PropTypes.object,
 		setPostDate: PropTypes.func,
 		site: PropTypes.object,
 		toggleSidebar: PropTypes.func,
@@ -61,8 +58,6 @@ export class EditorGroundControl extends React.Component {
 		moment,
 		onPublish: noop,
 		onSaveDraft: noop,
-		post: null,
-		savedPost: null,
 		site: {},
 		translate: identity,
 		setPostDate: noop,
@@ -73,13 +68,9 @@ export class EditorGroundControl extends React.Component {
 	}
 
 	getVerificationNoticeLabel() {
-		const { translate } = this.props;
-		const primaryButtonState = getPublishButtonStatus(
-			this.props.post,
-			this.props.savedPost,
-			this.props.canUserPublishPosts
-		);
-		switch ( primaryButtonState ) {
+		const { translate, publishButtonStatus } = this.props;
+
+		switch ( publishButtonStatus ) {
 			case 'update':
 				return translate( 'To update, check your email and confirm your address.' );
 			case 'schedule':
@@ -93,12 +84,6 @@ export class EditorGroundControl extends React.Component {
 		}
 	}
 
-	shouldShowStatusLabel() {
-		const { isSaving, post } = this.props;
-
-		return isSaving || ( post && post.ID && ! isPublished( post ) );
-	}
-
 	isPreviewEnabled() {
 		return (
 			this.props.hasContent &&
@@ -110,7 +95,6 @@ export class EditorGroundControl extends React.Component {
 	onPreviewButtonClick = event => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
-			this.props.recordPreviewButtonClick( this.props.post );
 		}
 	};
 
@@ -138,21 +122,15 @@ export class EditorGroundControl extends React.Component {
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
-						site={ this.props.site }
-						post={ this.props.post }
-						savedPost={ this.props.savedPost }
 						onSave={ this.props.onSave }
 						onPublish={ this.props.onPublish }
 						tabIndex={ 5 }
 						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
+						isSaving={ this.props.isSaving }
 						isPublishing={ this.props.isPublishing }
 						isSaveBlocked={ this.props.isSaveBlocked }
 						hasContent={ this.props.hasContent }
 						needsVerification={ this.props.userNeedsVerification }
-						busy={
-							this.props.isPublishing ||
-							( isPublished( this.props.savedPost ) && this.props.isSaving )
-						}
 					/>
 				</div>
 			</div>
@@ -179,8 +157,6 @@ export class EditorGroundControl extends React.Component {
 			isSaveBlocked,
 			isDirty,
 			hasContent,
-			loadRevision,
-			post,
 			onSave,
 			translate,
 			userNeedsVerification,
@@ -225,8 +201,6 @@ export class EditorGroundControl extends React.Component {
 					isSaveBlocked={ isSaveBlocked }
 					isDirty={ isDirty }
 					hasContent={ hasContent }
-					loadRevision={ loadRevision }
-					post={ post }
 					onSave={ onSave }
 				/>
 				{ this.renderGroundControlActionButtons() }
@@ -239,7 +213,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const siteId = get( ownProps, 'site.ID', null );
 
 	return {
-		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
+		publishButtonStatus: getEditorPublishButtonStatus( state ),
 		routeHistory: getRouteHistory( state ),
 		// do not allow publish for unverified e-mails, but allow if the site is VIP
 		userNeedsVerification: ! isCurrentUserEmailVerified( state ) && ! isVipSite( state, siteId ),
@@ -247,20 +221,11 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 
 const mapDispatchToProps = {
-	recordPreviewButtonClick: post => {
-		const postIsPage = isPage( post );
-		return composeAnalytics(
-			recordTracksEvent( `calypso_editor_${ postIsPage ? 'page' : 'post' }_preview_button_click` ),
-			recordGoogleEvent(
-				'Editor',
-				`Clicked Preview ${ postIsPage ? 'Page' : 'Post' } Button`,
-				`Editor Preview ${ postIsPage ? 'Page' : 'Post' } Button Clicked`,
-				`editor${ postIsPage ? 'Page' : 'Post' }ButtonClicked`
-			)
-		);
-	},
 	recordSiteButtonClick: () => recordTracksEvent( 'calypso_editor_site_button_click' ),
 	recordCloseButtonClick: () => recordTracksEvent( 'calypso_editor_close_button_click' ),
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorGroundControl ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( EditorGroundControl ) );

@@ -25,7 +25,7 @@
 		}
 	}
 
-	&:nth-child(2n + 1) {
+	&:nth-child( 2n + 1 ) {
 		width: 50%;
 
 		@include breakpoint( '>960px' ) {
@@ -33,7 +33,7 @@
 		}
 	}
 
-	&:nth-child(2n + 0) {
+	&:nth-child( 2n + 0 ) {
 		width: 50%;
 
 		@include breakpoint( '>960px' ) {

@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { find, get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -24,7 +25,8 @@ import Gridicon from 'gridicons';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getRewindState, getJetpackCredentialsUpdateStatus } from 'state/selectors';
+import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
+import getRewindState from 'state/selectors/get-rewind-state';
 
 export class RewindCredentialsForm extends Component {
 	static propTypes = {
@@ -34,6 +36,17 @@ export class RewindCredentialsForm extends Component {
 		allowDelete: PropTypes.bool,
 		onCancel: PropTypes.func,
 		onComplete: PropTypes.func,
+		siteUrl: PropTypes.string,
+		labels: PropTypes.object,
+	};
+
+	static defaultProps = {
+		labels: {},
+		requirePath: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		requirePath: false,
 	};
 
 	state = {
@@ -52,6 +65,7 @@ export class RewindCredentialsForm extends Component {
 			port: false,
 			user: false,
 			pass: false,
+			path: false,
 		},
 	};
 
@@ -72,10 +86,11 @@ export class RewindCredentialsForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const { role, siteId, translate, updateCredentials } = this.props;
+		const { requirePath, role, siteId, siteUrl, translate, updateCredentials } = this.props;
 
 		const payload = {
 			role,
+			site_url: siteUrl,
 			...this.state.form,
 		};
 
@@ -96,7 +111,8 @@ export class RewindCredentialsForm extends Component {
 			isNaN( payload.port ) && { port: translate( 'Port number must be numeric.' ) },
 			userError && { user: userError },
 			! payload.pass &&
-				! payload.kpri && { pass: translate( 'Please enter your server password.' ) }
+				! payload.kpri && { pass: translate( 'Please enter your server password.' ) },
+			! payload.path && requirePath && { path: translate( 'Please enter a server path.' ) }
 		);
 
 		return isEmpty( errors )
@@ -130,8 +146,7 @@ export class RewindCredentialsForm extends Component {
 	}
 
 	render() {
-		const { formIsSubmitting, onCancel, siteId, translate } = this.props;
-
+		const { formIsSubmitting, labels, onCancel, requirePath, siteId, translate } = this.props;
 		const { showAdvancedSettings, formErrors } = this.state;
 
 		return (
@@ -153,7 +168,9 @@ export class RewindCredentialsForm extends Component {
 
 				<div className="rewind-credentials-form__row">
 					<FormFieldset className="rewind-credentials-form__server-address">
-						<FormLabel htmlFor="host-address">{ translate( 'Server Address' ) }</FormLabel>
+						<FormLabel htmlFor="host-address">
+							{ labels.host || translate( 'Server Address' ) }
+						</FormLabel>
 						<FormTextInput
 							name="host"
 							id="host-address"
@@ -167,7 +184,9 @@ export class RewindCredentialsForm extends Component {
 					</FormFieldset>
 
 					<FormFieldset className="rewind-credentials-form__port-number">
-						<FormLabel htmlFor="server-port">{ translate( 'Port Number' ) }</FormLabel>
+						<FormLabel htmlFor="server-port">
+							{ labels.port || translate( 'Port Number' ) }
+						</FormLabel>
 						<FormTextInput
 							name="port"
 							id="server-port"
@@ -183,7 +202,9 @@ export class RewindCredentialsForm extends Component {
 
 				<div className="rewind-credentials-form__row rewind-credentials-form__user-pass">
 					<FormFieldset className="rewind-credentials-form__username">
-						<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
+						<FormLabel htmlFor="server-username">
+							{ labels.user || translate( 'Server username' ) }
+						</FormLabel>
 						<FormTextInput
 							name="user"
 							id="server-username"
@@ -197,7 +218,9 @@ export class RewindCredentialsForm extends Component {
 					</FormFieldset>
 
 					<FormFieldset className="rewind-credentials-form__password">
-						<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
+						<FormLabel htmlFor="server-password">
+							{ labels.pass || translate( 'Server password' ) }
+						</FormLabel>
 						<FormPasswordInput
 							name="pass"
 							id="server-password"
@@ -212,20 +235,26 @@ export class RewindCredentialsForm extends Component {
 				</div>
 
 				<FormFieldset>
-					<Button
-						disabled={ formIsSubmitting }
-						onClick={ this.toggleAdvancedSettings }
-						borderless={ true }
-						primary={ true }
-						className="rewind-credentials-form__advanced-button"
-					>
-						{ translate( 'Advanced settings' ) }
-					</Button>
-					{ showAdvancedSettings && (
-						<div className="rewind-credentials-form__advanced-settings">
+					{ ! requirePath && (
+						<Button
+							disabled={ formIsSubmitting }
+							onClick={ this.toggleAdvancedSettings }
+							borderless={ true }
+							primary={ true }
+							className="rewind-credentials-form__advanced-button"
+						>
+							{ translate( 'Advanced settings' ) }
+						</Button>
+					) }
+					{ ( showAdvancedSettings || requirePath ) && (
+						<div
+							className={ classNames( {
+								'rewind-credentials-form__advanced-settings': ! requirePath,
+							} ) }
+						>
 							<FormFieldset className="rewind-credentials-form__path">
 								<FormLabel htmlFor="wordpress-path">
-									{ translate( 'WordPress installation path' ) }
+									{ labels.path || translate( 'WordPress installation path' ) }
 								</FormLabel>
 								<FormTextInput
 									name="path"
@@ -236,10 +265,15 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									isError={ !! formErrors.path }
 								/>
+								{ formErrors.path && (
+									<FormInputValidation isError={ true } text={ formErrors.path } />
+								) }
 							</FormFieldset>
 
 							<FormFieldset className="rewind-credentials-form__kpri">
-								<FormLabel htmlFor="private-key">{ translate( 'Private Key' ) }</FormLabel>
+								<FormLabel htmlFor="private-key">
+									{ labels.kpri || translate( 'Private Key' ) }
+								</FormLabel>
 								<FormTextArea
 									name="kpri"
 									id="private-key"
@@ -258,7 +292,7 @@ export class RewindCredentialsForm extends Component {
 
 				<FormFieldset>
 					<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
-						{ translate( 'Save' ) }
+						{ labels.save || translate( 'Save' ) }
 					</Button>
 					{ this.props.allowCancel && (
 						<Button
@@ -266,7 +300,7 @@ export class RewindCredentialsForm extends Component {
 							onClick={ onCancel }
 							className="rewind-credentials-form__cancel-button"
 						>
-							{ translate( 'Cancel' ) }
+							{ labels.cancel || translate( 'Cancel' ) }
 						</Button>
 					) }
 					{ this.props.allowDelete && (
@@ -277,7 +311,7 @@ export class RewindCredentialsForm extends Component {
 							className="rewind-credentials-form__delete-button"
 						>
 							<Gridicon icon="trash" size={ 18 } />
-							{ translate( 'Delete' ) }
+							{ labels.delete || translate( 'Delete' ) }
 						</Button>
 					) }
 				</FormFieldset>
@@ -292,6 +326,7 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 	rewindState: getRewindState( state, siteId ),
 } );
 
-export default connect( mapStateToProps, { deleteCredentials, updateCredentials } )(
-	localize( RewindCredentialsForm )
-);
+export default connect(
+	mapStateToProps,
+	{ deleteCredentials, updateCredentials }
+)( localize( RewindCredentialsForm ) );

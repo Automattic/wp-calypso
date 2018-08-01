@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, map } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,16 +24,7 @@ export const DEFAULT_GRIDICON = 'info-outline';
  * @return {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
-	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
-
-	return Object.assign(
-		{
-			items: map( orderedItems, processItem ),
-			oldestItemTs: get( apiResponse, [ 'oldestItemTs' ], Infinity ),
-			totalItems: get( apiResponse, [ 'totalItems' ], orderedItems.length ),
-		},
-		apiResponse.nextAfter && { nextAfter: apiResponse.nextAfter }
-	);
+	return get( apiResponse, [ 'current', 'orderedItems' ], [] ).map( processItem );
 }
 
 /**
@@ -49,28 +40,6 @@ export function processItem( item ) {
 		case 'rewind__backup_error':
 			if ( '2' === get( item.object, 'error_code', '' ) ) {
 				activityMeta.errorCode = 'bad_credentials';
-			}
-			break;
-
-		case 'plugin__update_available':
-			const pluginSlug = get( item, 'items.0.object_slug', '' );
-			if ( pluginSlug ) {
-				// Directory and main file: hello-dolly/hello
-				activityMeta.pluginId = pluginSlug.replace( /\.php$/, '' );
-				// Directory: hello-dolly
-				activityMeta.pluginSlug = activityMeta.pluginId.split( '/' )[ 0 ];
-			}
-			const pluginsToUpdate = get( item, 'items', [] );
-			if ( pluginsToUpdate ) {
-				activityMeta.pluginsToUpdate = map( pluginsToUpdate, plugin => {
-					const pluginId = plugin.object_slug.replace( /\.php$/, '' );
-					return {
-						// Directory and main file: hello-dolly/hello
-						pluginId,
-						// Directory: hello-dolly
-						pluginSlug: pluginId.split( '/' )[ 0 ],
-					};
-				} );
 			}
 			break;
 	}

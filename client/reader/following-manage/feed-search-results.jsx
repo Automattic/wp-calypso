@@ -111,6 +111,7 @@ class FollowingManageSearchFeedsResults extends React.Component {
 	}
 }
 
-export default connect( null, { requestFeedSearch } )(
-	localize( FollowingManageSearchFeedsResults )
-);
+export default connect(
+	null,
+	{ requestFeedSearch }
+)( localize( FollowingManageSearchFeedsResults ) );

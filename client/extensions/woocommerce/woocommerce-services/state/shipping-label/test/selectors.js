@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -72,27 +74,33 @@ describe( '#getRatesErrors', () => {
 	const firstBoxRatesWithError = {
 		box_1: {
 			rates: [],
-			errors: [ {
-				code: 'ERROR 1',
-				message: 'There was an error!',
-			} ],
+			errors: [
+				{
+					code: 'ERROR 1',
+					message: 'There was an error!',
+				},
+			],
 		},
 	};
 	const firstBoxRatesWithUserMessageError = {
 		box_1: {
 			rates: [],
-			errors: [ {
-				code: 'ERROR 1',
-				userMessage: 'This is a friendly error message!',
-			} ],
+			errors: [
+				{
+					code: 'ERROR 1',
+					userMessage: 'This is a friendly error message!',
+				},
+			],
 		},
 	};
 	const firstBoxRatesWithErrorButNoErrorMessage = {
 		box_1: {
 			rates: [],
-			errors: [ {
-				code: 'ERROR 1',
-			} ],
+			errors: [
+				{
+					code: 'ERROR 1',
+				},
+			],
 		},
 	};
 	const firstBoxRatesWithMultipleErrors = {
@@ -176,10 +184,7 @@ describe( '#getRatesErrors', () => {
 
 			it( 'should return array with each server error', () => {
 				expect( resultWithMultipleErrors.server ).to.eql( {
-					box_1: [
-						'Error 1',
-						'Error 2',
-					],
+					box_1: [ 'Error 1', 'Error 2' ],
 				} );
 			} );
 		} );
@@ -236,10 +241,7 @@ describe( '#getRatesErrors', () => {
 					box_1: '',
 					box_2: Object.assign( {}, secondBoxSelectedValues ),
 				},
-				available: Object.assign( {},
-					firstBoxRatesWithError,
-					secondBoxRatesWithNoServerErrors
-				),
+				available: Object.assign( {}, firstBoxRatesWithError, secondBoxRatesWithNoServerErrors ),
 			};
 			const result = getRatesErrors( rates );
 
@@ -264,10 +266,7 @@ describe( '#getRatesErrors', () => {
 					box_1: '',
 					box_2: '',
 				},
-				available: Object.assign( {},
-					firstBoxRatesWithError,
-					secondBoxRatesWithNoServerErrors
-				),
+				available: Object.assign( {}, firstBoxRatesWithError, secondBoxRatesWithNoServerErrors ),
 			};
 			const result = getRatesErrors( rates );
 
@@ -291,21 +290,19 @@ describe( '#getRatesErrors', () => {
 describe( 'Shipping label selectors', () => {
 	const siteId = 1;
 	const orderId = 1;
-	const getFullState = ( labelsState ) => (
-		{
-			extensions: {
-				woocommerce: {
-					woocommerceServices: {
-						[ siteId ]: {
-							shippingLabel: {
-								[ orderId ]: labelsState,
-							},
+	const getFullState = labelsState => ( {
+		extensions: {
+			woocommerce: {
+				woocommerceServices: {
+					[ siteId ]: {
+						shippingLabel: {
+							[ orderId ]: labelsState,
 						},
 					},
 				},
 			},
-		}
-	);
+		},
+	} );
 
 	it( 'getCountriesData - returns null if labels not loaded', () => {
 		const state = getFullState( { loaded: false } );
@@ -319,7 +316,10 @@ describe( 'Shipping label selectors', () => {
 			storeOptions: {
 				countriesData: {
 					US: {
-						CA: 'California',
+						name: 'US of A',
+						states: {
+							CA: 'California',
+						},
 					},
 				},
 			},
@@ -327,7 +327,10 @@ describe( 'Shipping label selectors', () => {
 		const result = getCountriesData( state, orderId, siteId );
 		expect( result ).to.eql( {
 			US: {
-				CA: 'California',
+				name: 'US of A',
+				states: {
+					CA: 'California',
+				},
 			},
 		} );
 	} );
@@ -375,15 +378,17 @@ describe( 'Shipping label selectors', () => {
 					},
 					available: {
 						default_box: {
-							rates: [ {
-								carrier_id: 'usps',
-								is_selected: false,
-								rate: 6.61,
-								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
-								retail_rate: 7.8,
-								service_id: 'Priority',
-								title: 'USPS - Priority Mail',
-							} ],
+							rates: [
+								{
+									carrier_id: 'usps',
+									is_selected: false,
+									rate: 6.61,
+									rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
+									retail_rate: 7.8,
+									service_id: 'Priority',
+									title: 'USPS - Priority Mail',
+								},
+							],
 						},
 					},
 				},
@@ -402,15 +407,17 @@ describe( 'Shipping label selectors', () => {
 					},
 					available: {
 						default_box: {
-							rates: [ {
-								carrier_id: 'usps',
-								is_selected: false,
-								rate: 6.61,
-								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
-								retail_rate: 7.8,
-								service_id: 'Priority',
-								title: 'USPS - Priority Mail',
-							} ],
+							rates: [
+								{
+									carrier_id: 'usps',
+									is_selected: false,
+									rate: 6.61,
+									rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
+									retail_rate: 7.8,
+									service_id: 'Priority',
+									title: 'USPS - Priority Mail',
+								},
+							],
 						},
 					},
 				},
@@ -432,26 +439,30 @@ describe( 'Shipping label selectors', () => {
 					},
 					available: {
 						box1: {
-							rates: [ {
-								carrier_id: 'usps',
-								is_selected: false,
-								rate: 6.61,
-								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
-								retail_rate: 7.8,
-								service_id: 'Priority',
-								title: 'USPS - Priority Mail',
-							} ],
+							rates: [
+								{
+									carrier_id: 'usps',
+									is_selected: false,
+									rate: 6.61,
+									rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
+									retail_rate: 7.8,
+									service_id: 'Priority',
+									title: 'USPS - Priority Mail',
+								},
+							],
 						},
 						box2: {
-							rates: [ {
-								carrier_id: 'usps',
-								is_selected: false,
-								rate: 21.18,
-								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfb',
-								retail_rate: 23.85,
-								service_id: 'Express',
-								title: 'USPS - Express Mail',
-							} ],
+							rates: [
+								{
+									carrier_id: 'usps',
+									is_selected: false,
+									rate: 21.18,
+									rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfb',
+									retail_rate: 23.85,
+									service_id: 'Express',
+									title: 'USPS - Express Mail',
+								},
+							],
 						},
 					},
 				},
@@ -473,26 +484,30 @@ describe( 'Shipping label selectors', () => {
 					},
 					available: {
 						box1: {
-							rates: [ {
-								carrier_id: 'usps',
-								is_selected: false,
-								rate: 6.61,
-								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
-								retail_rate: 7.8,
-								service_id: 'Priority',
-								title: 'USPS - Priority Mail',
-							} ],
+							rates: [
+								{
+									carrier_id: 'usps',
+									is_selected: false,
+									rate: 6.61,
+									rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfa',
+									retail_rate: 7.8,
+									service_id: 'Priority',
+									title: 'USPS - Priority Mail',
+								},
+							],
 						},
 						box2: {
-							rates: [ {
-								carrier_id: 'usps',
-								is_selected: false,
-								rate: 21.18,
-								rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfb',
-								retail_rate: 23.85,
-								service_id: 'Express',
-								title: 'USPS - Express Mail',
-							} ],
+							rates: [
+								{
+									carrier_id: 'usps',
+									is_selected: false,
+									rate: 21.18,
+									rate_id: 'rate_f2afdd2045d84b8394a47730cf264bfb',
+									retail_rate: 23.85,
+									service_id: 'Express',
+									title: 'USPS - Express Mail',
+								},
+							],
 						},
 					},
 				},

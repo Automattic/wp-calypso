@@ -7,13 +7,30 @@
 /**
  * Internal dependencies
  */
-import { isJetpackPlan, isMonthly, isYearly, isBiennially } from '..';
+import {
+	isJetpackPlan,
+	isMonthly,
+	isYearly,
+	isBiennially,
+	isPersonal,
+	isPremium,
+	isBusiness,
+} from '..';
 import {
 	JETPACK_PLANS,
-	PLAN_BUSINESS,
 	PLAN_FREE,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 
 /**
@@ -37,6 +54,48 @@ describe( 'isJetpackPlan', () => {
 		nonJetpackPlans
 			.map( makeProductFromSlug )
 			.forEach( product => expect( isJetpackPlan( product ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'isPersonal', () => {
+	test( 'should return true for personal products', () => {
+		[ PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isPersonal( product ) ).toBe( true ) );
+	} );
+
+	test( 'should return false for non-personal products', () => {
+		[ PLAN_BUSINESS, PLAN_JETPACK_PREMIUM ]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isPersonal( product ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'isPremium', () => {
+	test( 'should return true for premium products', () => {
+		[ PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isPremium( product ) ).toBe( true ) );
+	} );
+
+	test( 'should return false for non-premium products', () => {
+		[ PLAN_BUSINESS, PLAN_JETPACK_PERSONAL ]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isPremium( product ) ).toBe( false ) );
+	} );
+} );
+
+describe( 'isBusiness', () => {
+	test( 'should return true for business products', () => {
+		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isBusiness( product ) ).toBe( true ) );
+	} );
+
+	test( 'should return false for non-business products', () => {
+		[ PLAN_PREMIUM, PLAN_JETPACK_PERSONAL ]
+			.map( makeProductFromSlug )
+			.forEach( product => expect( isBusiness( product ) ).toBe( false ) );
 	} );
 } );
 

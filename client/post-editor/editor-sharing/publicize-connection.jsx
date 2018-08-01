@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import Gridicon from 'gridicons';
 
@@ -15,10 +16,18 @@ import Gridicon from 'gridicons';
  */
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
-import PostActions from 'lib/posts/actions';
-import * as PostStats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import {
+	getKeyringConnectionById,
+	isKeyringConnectionsFetching,
+} from 'state/sharing/keyring/selectors';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
 
 export class EditorSharingPublicizeConnection extends React.Component {
 	static propTypes = {
@@ -62,16 +71,56 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		}
 
 		if ( event.target.checked ) {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			PostActions.deleteMetadata( '_wpas_skip_' + connection.keyring_connection_ID );
-			PostStats.recordStat( 'sharing_enabled_' + connection.service );
-			PostStats.recordEvent( 'Publicize Service', connection.service, 'enabled' );
+			this.props.deletePostMetadata(
+				this.props.siteId,
+				this.props.postId,
+				'_wpas_skip_' + connection.keyring_connection_ID
+			);
+			this.props.recordEditorStat( 'sharing_enabled_' + connection.service );
+			this.props.recordEditorEvent( 'Publicize Service', connection.service, 'enabled' );
 		} else {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			PostActions.updateMetadata( '_wpas_skip_' + connection.keyring_connection_ID, 1 );
-			PostStats.recordStat( 'sharing_disabled_' + connection.service );
-			PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
+			this.props.updatePostMetadata(
+				this.props.siteId,
+				this.props.postId,
+				'_wpas_skip_' + connection.keyring_connection_ID,
+				1
+			);
+			this.props.recordEditorStat( 'sharing_disabled_' + connection.service );
+			this.props.recordEditorEvent( 'Publicize Service', connection.service, 'disabled' );
 		}
+	};
+
+	isAdditionalExternalUser( connection ) {
+		const { keyringConnection } = this.props;
+
+		if ( ! keyringConnection ) return false;
+
+		return keyringConnection.external_ID !== connection.external_ID;
+	}
+
+	renderFacebookProfileWarning = () => {
+		const { connection, isKeyringFetching } = this.props;
+		if (
+			! connection ||
+			connection.service !== 'facebook' ||
+			isKeyringFetching ||
+			this.isAdditionalExternalUser( connection )
+		) {
+			return;
+		}
+
+		return (
+			<Notice
+				isCompact
+				className="editor-sharing__broken-publicize-connection"
+				status="is-warning"
+				showDismiss={ false }
+			>
+				{ this.props.translate(
+					'Connections to Facebook profiles will cease to work on August 1st'
+				) }
+			</Notice>
+		);
 	};
 
 	renderBrokenConnection = () => {
@@ -102,6 +151,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 
 		return (
 			<div className="editor-sharing__publicize-connection">
+				<QueryKeyringConnections />
 				<label>
 					<FormCheckbox
 						checked={ ! this.isConnectionSkipped() }
@@ -110,10 +160,29 @@ export class EditorSharingPublicizeConnection extends React.Component {
 					/>
 					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
 				</label>
+				{ this.renderFacebookProfileWarning() }
 				{ this.renderBrokenConnection() }
 			</div>
 		);
 	}
 }
 
-export default localize( EditorSharingPublicizeConnection );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+		const isKeyringFetching = isKeyringConnectionsFetching( state );
+
+		let keyringConnection = null;
+		if ( ownProps.connection ) {
+			keyringConnection = getKeyringConnectionById(
+				state,
+				ownProps.connection.keyring_connection_ID
+			);
+		}
+
+		return { isKeyringFetching, keyringConnection, siteId, postId, post };
+	},
+	{ updatePostMetadata, deletePostMetadata, recordEditorStat, recordEditorEvent }
+)( localize( EditorSharingPublicizeConnection ) );

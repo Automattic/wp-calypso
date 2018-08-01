@@ -35,19 +35,42 @@ import createSelector from 'lib/create-selector';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import versionCompare from 'lib/version-compare';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
-import { getSiteComputedAttributes } from './utils';
-import { isSiteUpgradeable, getSiteOptions, getSitesItems } from 'state/selectors';
+import getSiteOptions from 'state/selectors/get-site-options';
+import getSitesItems from 'state/selectors/get-sites-items';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import getRawSite from 'state/selectors/get-raw-site';
+import canCurrentUser from 'state/selectors/can-current-user';
+import { transferStates } from '../automated-transfer/constants';
+import isSiteAutomatedTransfer from '../selectors/is-site-automated-transfer';
+import hasSitePendingAutomatedTransfer from '../selectors/has-site-pending-automated-transfer';
+import { getAutomatedTransferStatus } from '../automated-transfer/selectors';
+import { getSelectedSiteId } from '../ui/selectors';
+import { FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
+import { hasFeature } from 'state/sites/plans/selectors';
+import { isCurrentUserCurrentPlanOwner } from './plans/selectors';
 
 /**
- * Returns a raw site object by its ID.
+ * Returns the slug for a site, or null if the site is unknown.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
- * @return {?Object}        Site object
+ * @return {?String}        Site slug
  */
-export const getRawSite = ( state, siteId ) => {
-	return getSitesItems( state )[ siteId ] || null;
-};
+export const getSiteSlug = createSelector(
+	( state, siteId ) => {
+		const site = getRawSite( state, siteId );
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+		}
+
+		return urlToSlug( site.URL );
+	},
+	[ getSitesItems ]
+);
 
 /**
  * Returns a site object by its slug.
@@ -227,29 +250,6 @@ export function isJetpackMinimumVersion( state, siteId, version ) {
 }
 
 /**
- * Returns the slug for a site, or null if the site is unknown.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?String}        Site slug
- */
-export const getSiteSlug = createSelector(
-	( state, siteId ) => {
-		const site = getRawSite( state, siteId );
-		if ( ! site ) {
-			return null;
-		}
-
-		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-		}
-
-		return urlToSlug( site.URL );
-	},
-	[ getSitesItems ]
-);
-
-/**
  * Returns the domain for a site, or null if the site is unknown.
  *
  * @param  {Object}  state  Global state tree
@@ -341,6 +341,81 @@ export function isSitePreviewable( state, siteId ) {
 }
 
 /**
+ * Returns true if current user can purchase upgrades for this site
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canCurrentUserUpgradeSite( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	if ( ! canUserManageOptions ) {
+		return false;
+	}
+
+	const isPaid = isCurrentPlanPaid( state, siteId );
+	return ! isPaid || isCurrentUserCurrentPlanOwner( state, siteId );
+}
+
+/**
+ * Returns true if current user can see and use Store option in menu
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canCurrentUserUseStore( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const isSiteAT = !! isSiteAutomatedTransfer( state, siteId );
+
+	const hasSitePendingAT = hasSitePendingAutomatedTransfer( state, siteId );
+	const transferStatus = getAutomatedTransferStatus( state, siteId );
+	const siteHasBackgroundTransfer = hasSitePendingAT && transferStatus !== transferStates.ERROR;
+
+	return (
+		( canUserManageOptions && isSiteAT ) ||
+		( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
+	);
+}
+
+/**
+ * Returns true if current user can see and use WordAds option in menu
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canCurrentUserUseAds( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const site = getSite( state, siteId );
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	return site && site.options.wordads && canUserManageOptions;
+}
+
+/**
+ * Returns true if current user can see and use WordAds option in menu
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is previewable
+ */
+export function canAdsBeEnabledOnCurrentSite( state, siteId = null ) {
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+	const site = getSite( state, siteId );
+	return site && hasFeature( state, siteId, FEATURE_WORDADS_INSTANT );
+}
+
+/**
  * Returns a site option for a site
  *
  * @param  {Object}  state  Global state tree
@@ -397,7 +472,10 @@ export const getSeoTitleFormatsForSite = compose(
  * @param  {Number} siteId Selected site
  * @return {Object} Formats by type e.g. { frontPage: { type: 'siteName' } }
  */
-export const getSeoTitleFormats = compose( getSeoTitleFormatsForSite, getRawSite );
+export const getSeoTitleFormats = compose(
+	getSeoTitleFormatsForSite,
+	getRawSite
+);
 
 export const buildSeoTitle = ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
 	const processPiece = ( piece = {}, data ) =>
@@ -1141,4 +1219,41 @@ export function hasAllSitesList( state ) {
  */
 export function getUpdatesBySiteId( state, siteId ) {
 	return get( getRawSite( state, siteId ), 'updates', null );
+}
+
+/**
+ * Returns computed properties of the site object.
+ *
+ * @param    {Object}      state    Global state tree
+ * @param    {Number}      siteId   Site ID
+ * @returns  {?Object}              Site computed properties or null
+ */
+export function getSiteComputedAttributes( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	const computedAttributes = {
+		domain: getSiteDomain( state, siteId ),
+		hasConflict: isSiteConflicting( state, siteId ),
+		is_customizable: !! canCurrentUser( state, siteId, 'edit_theme_options' ),
+		is_previewable: !! isSitePreviewable( state, siteId ),
+		options: getSiteOptions( state, siteId ),
+		slug: getSiteSlug( state, siteId ),
+		title: getSiteTitle( state, siteId ),
+	};
+
+	// If a WordPress.com site has a mapped domain create a `wpcom_url`
+	// attribute to allow site selection with either domain.
+	if ( getSiteOption( state, siteId, 'is_mapped_domain' ) && ! isJetpackSite( state, siteId ) ) {
+		computedAttributes.wpcom_url = withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+	}
+
+	// we only need to use the unmapped URL for conflicting sites
+	if ( computedAttributes.hasConflict ) {
+		computedAttributes.URL = getSiteOption( state, siteId, 'unmapped_url' );
+	}
+
+	return computedAttributes;
 }

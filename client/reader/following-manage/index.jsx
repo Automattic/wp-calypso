@@ -17,15 +17,14 @@ import CompactCard from 'components/card/compact';
 import DocumentHead from 'components/data/document-head';
 import SearchInput from 'components/search';
 import ReaderMain from 'components/reader-main';
-import {
-	getReaderFeedsForQuery,
-	getReaderFeedsCountForQuery,
-	getReaderRecommendedSites,
-	getReaderRecommendedSitesPagingOffset,
-	getBlockedSites,
-	getReaderAliasedFollowFeedUrl,
-	getReaderFollowsCount,
-} from 'state/selectors';
+import getBlockedSites from 'state/selectors/get-blocked-sites';
+import getDismissedSites from 'state/selectors/get-dismissed-sites';
+import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-follow-feed-url';
+import getReaderFeedsCountForQuery from 'state/selectors/get-reader-feeds-count-for-query';
+import getReaderFeedsForQuery from 'state/selectors/get-reader-feeds-for-query';
+import getReaderFollowsCount from 'state/selectors/get-reader-follows-count';
+import getReaderRecommendedSites from 'state/selectors/get-reader-recommended-sites';
+import getReaderRecommendedSitesPagingOffset from 'state/selectors/get-reader-recommended-sites-paging-offset';
 import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
 import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
 import RecommendedSites from 'blocks/reader-recommended-sites';
@@ -135,9 +134,14 @@ class FollowingManage extends Component {
 	}
 
 	shouldRequestMoreRecs = () => {
-		const { recommendedSites, blockedSites } = this.props;
+		const { recommendedSites, blockedSites, dismissedSites } = this.props;
 
-		return reject( recommendedSites, site => includes( blockedSites, site.blogId ) ).length <= 4;
+		return (
+			reject(
+				recommendedSites,
+				site => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
+			).length <= 4
+		);
 	};
 
 	handleShowMoreClicked = () => {
@@ -179,6 +183,7 @@ class FollowingManage extends Component {
 			recommendedSites,
 			recommendedSitesPagingOffset,
 			blockedSites,
+			dismissedSites,
 			followsCount,
 			readerAliasedFollowFeedUrl,
 		} = this.props;
@@ -188,10 +193,13 @@ class FollowingManage extends Component {
 		const sitesQueryWithoutProtocol = withoutHttp( sitesQuery );
 		const showFollowByUrl = this.shouldShowFollowByUrl();
 		const isFollowByUrlWithNoSearchResults = showFollowByUrl && searchResultsCount === 0;
-		const filteredRecommendedSites = reject( recommendedSites, site =>
-			includes( blockedSites, site.blogId )
+
+		const filteredRecommendedSites = reject(
+			recommendedSites,
+			site => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
 		);
 
+		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<ReaderMain className="following-manage">
 				<DocumentHead title={ 'Manage Following' } />
@@ -228,8 +236,12 @@ class FollowingManage extends Component {
 					{ showFollowByUrl && (
 						<div className="following-manage__url-follow">
 							<FollowButton
-								followLabel={ translate( 'Follow %s', { args: sitesQueryWithoutProtocol } ) }
-								followingLabel={ translate( 'Following %s', { args: sitesQueryWithoutProtocol } ) }
+								followLabel={ translate( 'Follow %s', {
+									args: sitesQueryWithoutProtocol,
+								} ) }
+								followingLabel={ translate( 'Following %s', {
+									args: sitesQueryWithoutProtocol,
+								} ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
 							/>
@@ -264,6 +276,7 @@ class FollowingManage extends Component {
 				{ ! hasFollows && <FollowingManageEmptyContent /> }
 			</ReaderMain>
 		);
+		/* eslint-enable jsx-a11y/no-autofocus */
 	}
 }
 
@@ -281,6 +294,7 @@ export default connect( ( state, { sitesQuery } ) => ( {
 	recommendedSites: getReaderRecommendedSites( state, recommendationsSeed ),
 	recommendedSitesPagingOffset: getReaderRecommendedSitesPagingOffset( state, recommendationsSeed ),
 	blockedSites: getBlockedSites( state ),
+	dismissedSites: getDismissedSites( state ),
 	readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
 	followsCount: getReaderFollowsCount( state ),
 } ) )( localize( FollowingManage ) );

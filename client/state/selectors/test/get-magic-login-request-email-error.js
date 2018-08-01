@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getMagicLoginRequestEmailError } from 'state/selectors';
+import getMagicLoginRequestEmailError from 'state/selectors/get-magic-login-request-email-error';
 
 describe( 'getMagicLoginRequestEmailError()', () => {
 	test( 'should return null if there is no information yet', () => {

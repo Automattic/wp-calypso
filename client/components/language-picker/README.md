@@ -11,7 +11,7 @@ React component used to display a Language Picker.
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import LanguagePicker from 'components/language-picker';
-import { getUserSetting } from 'state/selectors';
+import getUserSetting from 'state/selectors/get-user-setting';
 import { saveUserSettings } from 'state/user-settings/actions';
 
 const languages = [

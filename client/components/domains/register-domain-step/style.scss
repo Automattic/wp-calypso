@@ -1,19 +1,21 @@
 /** @format */
 
 .register-domain-step__search {
-	padding-bottom: 20px;
+	padding-bottom: 12px;
+
+	.card.is-compact {
+		padding: 0;
+		display: flex;
+		align-items: center;
+	}
 
 	.search {
 		margin-bottom: 0;
 
 		&.is-refocused {
 			animation: shake 0.5s both;
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20);
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
 		}
-	}
-
-	@include breakpoint( '>660px' ) {
-		padding-bottom: 30px;
 	}
 
 	&.disabled {
@@ -27,46 +29,43 @@
 	}
 }
 
-.register-domain-step.is-kracken-ui {
-	.register-domain-step__search {
-		padding-bottom: 10px;
-	}
-	.register-domain-step__filter {
-		padding-bottom: 20px;
-	}
+.register-domain-step > .notice.register-domain-step__notice {
+	margin-bottom: 12px;
 }
 
 @keyframes shake {
 	0%,
 	100% {
-		transform: translate3d(0, 0, 0);
+		transform: translate3d( 0, 0, 0 );
 	}
 
 	10%,
 	60% {
-		transform: translate3d(-5px, 0, 0);
+		transform: translate3d( -5px, 0, 0 );
 	}
 
 	30% {
-		transform: translate3d(5px, 0, 0);
+		transform: translate3d( 5px, 0, 0 );
 	}
 }
 
+.register-domain-step__filter-reset-notice,
 .register-domain-step__next-page {
 	color: $blue-medium;
 	font-weight: 500;
 	width: 100%;
 	position: relative;
+	margin-bottom: 0;
 
 	border: 0;
 	border-radius: 0;
 
 	// from components/card/style.scss
-	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 
 	// from components/domains/domain-suggestion/style
 	// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-	transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+	transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
 
 	&:hover {
 		color: $blue-medium;
@@ -74,7 +73,9 @@
 		// from components/domains/domain-suggestion/style
 		box-shadow: 0 0 0 1px $gray;
 	}
+}
 
+.register-domain-step__next-page {
 	.spinner {
 		margin-left: 0.5em;
 
@@ -101,7 +102,7 @@
 		position: absolute;
 		left: 50%;
 		top: 50%;
-		transform: translate(-50%, -50%);
+		transform: translate( -50%, -50% );
 		opacity: 0;
 	}
 
@@ -113,5 +114,11 @@
 		.register-domain-step__next-page-content {
 			opacity: 0.3;
 		}
+	}
+}
+
+.register-domain-step {
+	.button.is-active {
+		background: $gray-lighten-30;
 	}
 }

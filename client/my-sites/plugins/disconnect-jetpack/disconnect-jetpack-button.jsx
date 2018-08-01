@@ -99,7 +99,10 @@ DisconnectJetpackButton.defaultProps = {
 	linkDisplay: true,
 };
 
-export default connect( null, {
-	recordGoogleEvent: recordGoogleEventAction,
-	recordTracksEvent: recordTracksEventAction,
-} )( localize( DisconnectJetpackButton ) );
+export default connect(
+	null,
+	{
+		recordGoogleEvent: recordGoogleEventAction,
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( DisconnectJetpackButton ) );

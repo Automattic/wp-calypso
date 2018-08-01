@@ -8,7 +8,7 @@ Feature Example is a component used to render an mocked example of any feature. 
 ```jsx
 
 import React from 'react';
-import ExternalLink from 'components/feature-example';
+import FeatureExample from 'components/feature-example';
 import EmptyContent from 'components/empty-content';
 
 class MyComponent extends React.Component {

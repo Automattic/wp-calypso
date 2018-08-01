@@ -105,6 +105,22 @@ export default function() {
 	);
 
 	page(
+		paths.domainManagementManageConsent( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementManageConsent,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementDomainConnectMapping( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementDomainConnectMapping,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		paths.domainManagementDns( ':site', ':domain' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementDns,
@@ -295,6 +311,17 @@ export default function() {
 			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.transferDomain,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			paths.domainUseYourDomain( ':site' ),
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/add' ),
+			domainsController.jetpackNoDomainsWarning,
+			domainsController.useYourDomain,
 			makeLayout,
 			clientRender
 		);

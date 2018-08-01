@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
-import { isRegeneratingJetpackPostByEmail } from 'state/selectors';
+import isRegeneratingJetpackPostByEmail from 'state/selectors/is-regenerating-jetpack-post-by-email';
 import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
 
 describe( 'isRegeneratingJetpackPostByEmail()', () => {

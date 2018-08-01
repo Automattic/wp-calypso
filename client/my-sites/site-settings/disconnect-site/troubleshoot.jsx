@@ -16,10 +16,11 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import { addQueryArgs } from 'lib/route';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { getSiteUrl, isSiteOnFreePlan } from 'state/selectors';
+import getSiteUrl from 'state/selectors/get-site-url';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, trackSupportClick, translate } ) => (
+const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, translate } ) => (
 	<LoggedOutFormLinks>
 		<LoggedOutFormLinkItem
 			href={ addQueryArgs( { url: siteUrl }, 'https://jetpack.com/support/debug/' ) }
@@ -28,19 +29,13 @@ const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, trackSupportClick
 			<Gridicon size={ 18 } icon="offline" /> { translate( 'Diagnose a connection problem' ) }
 		</LoggedOutFormLinkItem>
 		{ isFreePlan ? (
-			<HelpButton
-				label={ translate( 'Get help from our Happiness Engineers' ) }
-				onClick={ trackSupportClick }
-			/>
+			<HelpButton label={ translate( 'Get help from our Happiness Engineers' ) } />
 		) : (
 			<JetpackConnectHappychatButton
 				label={ translate( 'Get help from our Happiness Engineers' ) }
 				eventName="calypso_jetpack_disconnect_chat_initiated"
 			>
-				<HelpButton
-					label={ translate( 'Get help from our Happiness Engineers' ) }
-					onClick={ trackSupportClick }
-				/>
+				<HelpButton label={ translate( 'Get help from our Happiness Engineers' ) } />
 			</JetpackConnectHappychatButton>
 		) }
 	</LoggedOutFormLinks>
@@ -56,8 +51,5 @@ export default connect(
 	},
 	{
 		trackDebugClick: withAnalytics( recordTracksEvent( 'calypso_jetpack_disconnect_debug_click' ) ),
-		trackSupportClick: withAnalytics(
-			recordTracksEvent( 'calypso_jetpack_disconnect_support_click' )
-		),
 	}
 )( localize( Troubleshoot ) );

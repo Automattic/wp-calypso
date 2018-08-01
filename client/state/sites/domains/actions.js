@@ -128,7 +128,7 @@ export function fetchSiteDomains( siteId ) {
 						? error.message
 						: translate(
 								'There was a problem fetching site domains. Please try again later or contact support.'
-							);
+						  );
 
 				dispatch( domainsRequestFailureAction( siteId, message ) );
 			} );

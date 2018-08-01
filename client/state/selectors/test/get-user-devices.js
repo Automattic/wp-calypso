@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getUserDevices } from 'state/selectors';
+import getUserDevices from 'state/selectors/get-user-devices';
 
 describe( '#getUserDevices()', () => {
 	test( 'should return an empty array if there are no devices', () => {

@@ -66,9 +66,7 @@ describe( 'Ebanx payment processing methods', () => {
 		} );
 		test( 'should return true for ebanx country that requires additional fields', () => {
 			expect( shouldRenderAdditionalEbanxFields( 'BR' ) ).toEqual( true );
-		} );
-		test( 'should return false for ebanx country that does not requires additional fields', () => {
-			expect( shouldRenderAdditionalEbanxFields( 'MX' ) ).toEqual( false );
+			expect( shouldRenderAdditionalEbanxFields( 'MX' ) ).toEqual( true );
 		} );
 	} );
 } );

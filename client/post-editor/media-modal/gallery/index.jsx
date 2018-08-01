@@ -100,7 +100,7 @@ class EditorMediaModalGallery extends React.Component {
 			return;
 		}
 
-		let defaultSettings = assign( {}, GalleryDefaultAttrs, { items } );
+		const defaultSettings = assign( {}, GalleryDefaultAttrs, { items } );
 
 		if ( site && ( ! site.jetpack || isModuleActive( site, 'tiled-gallery' ) ) ) {
 			defaultSettings.type = 'rectangular';
@@ -157,6 +157,9 @@ class EditorMediaModalGallery extends React.Component {
 	}
 }
 
-export default connect( null, {
-	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
-} )( localize( EditorMediaModalGallery ) );
+export default connect(
+	null,
+	{
+		onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	}
+)( localize( EditorMediaModalGallery ) );

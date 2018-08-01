@@ -1,15 +1,8 @@
 /** @format */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
 /**
  * Internal dependencies
  */
-import { requestReset, handleError, handleSuccess } from '../';
+import { fetch, onError, onSuccess } from '../';
 import { setResetMethod } from 'state/account-recovery/reset/actions';
 import {
 	ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
@@ -20,7 +13,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 describe( 'account-recovery/request-reset', () => {
 	describe( '#requestReset', () => {
 		test( 'should dispatch HTTP request to account recovery request reset endpoint', () => {
-			const dispatchSpy = spy();
 			const dummyAction = {
 				userData: {
 					user: 'foo',
@@ -28,19 +20,15 @@ describe( 'account-recovery/request-reset', () => {
 				method: 'primary_email',
 			};
 
-			requestReset( { dispatch: dispatchSpy }, dummyAction );
-
-			const { userData, method } = dummyAction;
-			expect( dispatchSpy ).to.have.been.calledOnce;
-			expect( dispatchSpy ).to.have.been.calledWith(
+			expect( fetch( dummyAction ) ).toEqual(
 				http(
 					{
 						method: 'POST',
 						apiNamespace: 'wpcom/v2',
 						path: '/account-recovery/request-reset',
 						body: {
-							...userData,
-							method,
+							...dummyAction.userData,
+							method: dummyAction.method,
 						},
 					},
 					dummyAction
@@ -51,14 +39,10 @@ describe( 'account-recovery/request-reset', () => {
 
 	describe( '#handleError', () => {
 		test( 'should dispatch failure action with error message', () => {
-			const dispatchSpy = spy();
 			const message = 'This is an error message.';
 			const rawError = Error( message );
 
-			handleError( { dispatch: dispatchSpy }, null, rawError );
-
-			expect( dispatchSpy ).to.have.been.calledOnce;
-			expect( dispatchSpy ).to.have.been.calledWith( {
+			expect( onError( null, rawError ) ).toEqual( {
 				type: ACCOUNT_RECOVERY_RESET_REQUEST_ERROR,
 				error: message,
 			} );
@@ -67,22 +51,19 @@ describe( 'account-recovery/request-reset', () => {
 
 	describe( '#handleSuccess', () => {
 		test( 'should dispatch success action and set reset method action', () => {
-			const dispatchSpy = spy();
 			const dummyAction = {
 				userData: {
 					user: 'foo',
 				},
 				method: 'primary_email',
 			};
-			const { method } = dummyAction;
 
-			handleSuccess( { dispatch: dispatchSpy }, dummyAction );
-
-			expect( dispatchSpy ).to.have.been.calledTwice;
-			expect( dispatchSpy ).to.have.been.calledWith( {
-				type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS,
-			} );
-			expect( dispatchSpy ).to.have.been.calledWith( setResetMethod( method ) );
+			expect( onSuccess( dummyAction ) ).toEqual(
+				expect.arrayContaining( [
+					{ type: ACCOUNT_RECOVERY_RESET_REQUEST_SUCCESS },
+					setResetMethod( dummyAction.method ),
+				] )
+			);
 		} );
 	} );
 } );

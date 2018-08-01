@@ -4,6 +4,8 @@
  * @format
  */
 
+/* eslint-disable import/no-nodejs-modules */
+
 /**
  * External dependencies
  */
@@ -11,6 +13,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
+const os = require( 'os' );
 
 /**
  * Internal dependencies
@@ -37,8 +40,7 @@ function getExternals() {
 
 	// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 	// with modules that are incompatible with webpack bundling.
-	fs
-		.readdirSync( 'node_modules' )
+	fs.readdirSync( 'node_modules' )
 		.filter( function( module ) {
 			return [ '.bin' ].indexOf( module ) === -1;
 		} )
@@ -105,7 +107,7 @@ const webpackConfig = {
 				use: [
 					{
 						loader: 'thread-loader',
-						options: { workers: 3 },
+						options: { workers: Math.max( 2, Math.floor( os.cpus().length / 2 ) ) },
 					},
 					babelLoader,
 				],
