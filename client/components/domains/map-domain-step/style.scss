@@ -6,21 +6,22 @@
 		margin-bottom: 9px;
 	}
 
-	p {
-		font-size: 1em;
-		font-weight: 600;
-		margin-bottom: 0;
-	}
-
 	.domain-product-price {
 		float: left;
-		margin-bottom: 20px;
+		line-height: inherit;
+		margin: 10px 0;
 		min-width: 0;
+		padding-right: 0;
 
 		@include breakpoint( '>960px' ) {
 			float: right;
-			margin-bottom: 0;
+			margin: 0;
 		}
+	}
+
+	.domain-product-price__is-with-plans-only {
+		color: $gray-darken-20;
+		line-height: 25px;
 	}
 
 	.notice {
@@ -32,7 +33,10 @@
 	}
 }
 
-.map-domain-step__domain-description {
+.map-domain-step__domain-heading {
+	font-size: 1em;
+	font-weight: 600;
+
 	@include breakpoint( '>960px' ) {
 		max-width: 75%;
 		float: left;
