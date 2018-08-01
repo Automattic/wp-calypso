@@ -21,6 +21,7 @@ import DomainRegistrationSuggestion from 'components/domains/domain-registration
 import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import {
 	recordAddDomainButtonClickInMapDomain,
@@ -132,6 +133,19 @@ class MapDomainStep extends React.Component {
 					</div>
 
 					{ this.domainRegistrationUpsell() }
+
+					<div className="map-domain-step__domain-text">
+						{ translate(
+							'Domain registration and billing will remain at your current provider,' +
+								" and you'll update your domain's DNS to point it to your WordPress.com site. " +
+								'{{a}}Learn more{{/a}}',
+							{
+								components: {
+									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+								},
+							}
+						) }
+					</div>
 				</form>
 			</div>
 		);
