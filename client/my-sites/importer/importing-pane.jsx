@@ -105,6 +105,7 @@ class ImportingPane extends React.PureComponent {
 			ID: PropTypes.number.isRequired,
 			single_user_site: PropTypes.bool.isRequired,
 		} ).isRequired,
+		sourceType: PropTypes.string.isRequired,
 	};
 
 	getErrorMessage = ( { description } ) => {
@@ -201,6 +202,7 @@ class ImportingPane extends React.PureComponent {
 			importerStatus: { importerId, errorData = {}, customData },
 			mapAuthorFor,
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
+			sourceType,
 		} = this.props;
 
 		const progressClasses = classNames( 'importer__import-progress', {
@@ -233,7 +235,7 @@ class ImportingPane extends React.PureComponent {
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ mapAuthorFor( importerId ) }
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
-						{ ...{ siteId } }
+						{ ...{ siteId, sourceType } }
 						sourceAuthors={ customData.sourceAuthors }
 						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
 						targetTitle={ siteName }

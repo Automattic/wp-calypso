@@ -169,13 +169,6 @@ UndocumentedMe.prototype.backupCodes = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.dismissSite = function( site, callback ) {
-	const args = {
-		path: '/me/dismiss/sites/' + encodeURIComponent( site ) + '/new',
-	};
-	return this.wpcom.req.post( args, callback );
-};
-
 UndocumentedMe.prototype.sendVerificationEmail = function( callback ) {
 	debug( '/me/send-verification-email' );
 

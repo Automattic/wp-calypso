@@ -9,6 +9,9 @@
     "function-name-case": "lower",
     "function-url-quotes": "always",
     "function-whitespace-after": "always",
+    "function-parentheses-space-inside": "always",
+
+    "media-feature-parentheses-space-inside": "always",
 
     "number-leading-zero": "always",
     "number-no-trailing-zeros": true,

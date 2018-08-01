@@ -7,7 +7,6 @@
  */
 const chalk = require( 'chalk' );
 const path = require( 'path' );
-const spawnSync = require( 'child_process' ).spawnSync;
 const yargs = require( 'yargs' );
 
 /**
@@ -39,9 +38,16 @@ yargs
 				requiresArg: true,
 			},
 			'editor-script': {
-				description: 'Entry for editor side JavaScript file',
+				description: 'Entry for editor-side JavaScript file',
 				type: 'string',
 				required: true,
+				coerce: value => path.resolve( __dirname, '../', value ),
+				requiresArg: true,
+			},
+			'view-script': {
+				description: 'Entry for rendered-page-side JavaScript file',
+				type: 'string',
+				required: false,
 				coerce: value => path.resolve( __dirname, '../', value ),
 				requiresArg: true,
 			},

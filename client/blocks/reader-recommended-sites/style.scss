@@ -1,6 +1,5 @@
 .reader-recommended-sites {
-
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 }
@@ -14,7 +13,7 @@
 	position: relative;
 	text-transform: uppercase;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin: 13px 0 17px;
 	}
 
@@ -30,7 +29,7 @@
 	margin: 0 0 20px;
 	padding: 0;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -42,7 +41,7 @@
 	list-style-type: none;
 	width: 100%;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		align-items: flex-end;
 		flex-direction: column;
 		margin-top: -40px;
@@ -55,7 +54,7 @@
 	.reader-recommended-sites__recommended-site-dismiss {
 		width: 30px;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			display: flex;
 			justify-content: flex-end;
 		}
@@ -77,28 +76,25 @@
 	.reader-subscription-list-item {
 		margin: 0;
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			padding: 0 0 20px;
 		}
 
 		.follow-button .follow-button__label {
-
-			@include breakpoint( "<960px" ) {
+			@include breakpoint( '<960px' ) {
 				display: none;
 			}
 		}
 	}
 
 	&:first-child {
-
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-right: 20px;
 		}
 	}
 
 	&:last-child {
-
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-left: 20px;
 		}
 	}
@@ -122,15 +118,15 @@
 		word-break: break-all;
 		width: 100%;
 
-		&:not(.is-placeholder) {
-
+		&:not( .is-placeholder ) {
 			&::after {
 				@include long-content-fade( $size: 35px );
 			}
 		}
 	}
 
-	.reader-subscription-list-item.reader-subscription-list-item__placeholder .reader-subscription-list-item__site-url.is-placeholder {
+	.reader-subscription-list-item.reader-subscription-list-item__placeholder
+		.reader-subscription-list-item__site-url.is-placeholder {
 		margin-top: 2px;
 	}
 }

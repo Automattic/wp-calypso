@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 import { RelatedPostCard } from 'blocks/reader-related-card';
 import { recordAction, recordTrackForPost } from 'reader/stats';
 import Button from 'components/button';
-import { dismissPost } from 'state/reader/streams/actions';
+import { dismissPost } from 'state/reader/site-dismissals/actions';
 import { keyForPost } from 'reader/post-key';
 import QueryReaderPost from 'components/data/query-reader-post';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
