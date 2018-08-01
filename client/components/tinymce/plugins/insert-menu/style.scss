@@ -1,6 +1,7 @@
+/** @format */
+
 .post-editor,
 .mce-inline-toolbar-grp {
-
 	.mce-toolbar .mce-btn-group .mce-btn.mce-insert-menu {
 		height: 36px;
 		margin: 0;
@@ -59,7 +60,6 @@
 
 	&:hover,
 	&:focus {
-
 		.wpcom-insert-menu__menu-label {
 			color: $blue-medium;
 		}

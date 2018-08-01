@@ -1,6 +1,8 @@
 /**
  * Post Image
  * - representative image displayed at the top of the post card located on post list pages (posts).
+ *
+ * @format
  */
 
 .post-image {
@@ -22,7 +24,7 @@
 	&.is-placeholder {
 		height: 144px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			height: 232px;
 		}
 	}

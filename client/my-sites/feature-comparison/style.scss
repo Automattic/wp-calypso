@@ -1,5 +1,7 @@
+/** @format */
+
 .feature-comparison {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 		justify-content: center;
 	}
@@ -8,7 +10,7 @@
 .feature-comparison .plan-compare-card {
 	margin: 16px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: auto;
 	}
 }

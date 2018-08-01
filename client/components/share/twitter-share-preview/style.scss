@@ -1,8 +1,10 @@
+/** @format */
+
 .twitter-share-preview {
 	background-color: $white;
 	border: 1px solid #e6ecf0;
 	color: #14171a;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	line-height: 1.375;
 	margin: 0 auto;
@@ -31,7 +33,7 @@
 	margin-right: 5px;
 
 	&:hover {
-		color: #0084B4;
+		color: #0084b4;
 		text-decoration: underline;
 	}
 }
@@ -49,7 +51,7 @@
 
 .twitter-share-preview__message a,
 .twitter-share-preview__article-url {
-	color: #0084B4;
+	color: #0084b4;
 }
 
 .twitter-share-preview__article-url-line {
@@ -61,7 +63,7 @@
 }
 
 .twitter-share-preview__image {
-	border: 1px solid rgba(0,0,0,0.1);
+	border: 1px solid rgba( 0, 0, 0, 0.1 );
 	border-radius: 5px;
 	display: block;
 }

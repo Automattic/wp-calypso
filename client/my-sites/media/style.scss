@@ -1,8 +1,10 @@
+/** @format */
+
 .main.media {
 	max-width: 100%;
 
 	.media-library__list {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			padding: 0;
 		}
 	}
@@ -35,6 +37,5 @@
 	padding: 6px 12px;
 	background-color: $white;
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 }

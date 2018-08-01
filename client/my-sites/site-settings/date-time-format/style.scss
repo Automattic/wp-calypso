@@ -1,7 +1,9 @@
+/** @format */
+
 .date-time-format,
 .date-time-format.is-expanded {
 	margin-top: -10px;
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-top: -16px;
 
 		.foldable-card__content {

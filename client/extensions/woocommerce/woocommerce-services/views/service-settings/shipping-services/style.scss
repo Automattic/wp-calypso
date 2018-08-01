@@ -1,3 +1,5 @@
+/** @format */
+
 .shipping-services {
 	margin-bottom: 24px;
 
@@ -106,7 +108,7 @@
 	}
 
 	&.wcc-error {
-		input[type=text],
+		input[type='text'],
 		.gridicon {
 			color: red;
 		}

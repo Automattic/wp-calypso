@@ -1,3 +1,5 @@
+/** @format */
+
 .plugin-install-button__install {
 	position: absolute;
 	top: 0;
@@ -6,13 +8,13 @@
 	align-items: center;
 
 	&.embed {
-			color: $gray;
-			height: 100%;
-			position: initial;
-			margin: 18px 16px 0 0;
-		}
+		color: $gray;
+		height: 100%;
+		position: initial;
+		margin: 18px 16px 0 0;
+	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin: 0;
 		position: relative;
 
@@ -46,7 +48,7 @@
 .plugin-install-button__warning {
 	margin-right: 8px;
 	font-size: 11px;
-	color:  $gray;
+	color: $gray;
 	text-transform: uppercase;
 	white-space: nowrap;
 }

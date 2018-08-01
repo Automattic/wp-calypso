@@ -1,3 +1,5 @@
+/** @format */
+
 @mixin banner-color( $color ) {
 	border-left-color: $color;
 	.banner__icon {
@@ -175,7 +177,7 @@
 .banner__action {
 	align-self: center;
 	font-size: 12px;
-	margin: 8px 0 0 0;
+	margin: 8px 0 0;
 	text-align: left;
 	width: 100%;
 

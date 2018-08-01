@@ -1,8 +1,10 @@
+/** @format */
+
 // Reader Sidebar
 .is-group-reader .sidebar {
 	overflow-x: hidden;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		z-index: z-index( 'root', '.reader-mobile-sidebar' );
 	}
 
@@ -10,7 +12,6 @@
 		margin-bottom: 8px;
 
 		.selected {
-
 			.menu-link-icon,
 			.sidebar__menu-action .gridicon,
 			.sidebar-dynamic-menu-action-icon {
@@ -22,8 +23,7 @@
 			}
 
 			.gridicon {
-
-				@include breakpoint( "<660px" ) {
+				@include breakpoint( '<660px' ) {
 					fill: $blue-medium;
 				}
 			}
@@ -31,8 +31,7 @@
 			li > a,
 			li > a:visited,
 			:not( .sidebar__button ) {
-
-				@include breakpoint( "<660px" ) {
+				@include breakpoint( '<660px' ) {
 					color: $blue-medium;
 				}
 			}
@@ -45,7 +44,8 @@
 				fill: $gray-darken-20;
 			}
 
-			.sidebar__menu-item-label, .menu-link-text {
+			.sidebar__menu-item-label,
+			.menu-link-text {
 				color: $gray-dark;
 			}
 
@@ -61,8 +61,7 @@
 	}
 
 	.is-togglable {
-
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			margin-top: 0;
 		}
 
@@ -76,9 +75,9 @@
 
 			.gridicon {
 				position: relative;
-					top: 2px;
+				top: 2px;
 				height: 18px; // Smaller than recommended for gridicon, but works here
-				transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+				transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			}
 
 			.count {
@@ -105,18 +104,15 @@
 
 		.sidebar__menu-item {
 			opacity: 0;
-			transition: transform 0.15s cubic-bezier(0.230, 1.000, 0.320, 1.000),
-				opacity 0.15s ease-in-out;
+			transition: transform 0.15s cubic-bezier( 0.23, 1, 0.32, 1 ), opacity 0.15s ease-in-out;
 			transition-delay: 0.05s;
 			transform: translateY( -100px );
 		}
 
 		&.is-toggle-open {
-
 			.sidebar__heading {
 				background-color: $gray-light;
-				box-shadow: 0 1px 0 lighten( $gray, 20 ),
-					0 -1px 0 lighten( $gray, 20 );
+				box-shadow: 0 1px 0 lighten( $gray, 20 ), 0 -1px 0 lighten( $gray, 20 );
 
 				.gridicon {
 					transform: rotate( 180deg );
@@ -148,26 +144,24 @@
 					font-size: 11px;
 					padding: 6px 7px;
 					position: absolute;
-						top: 2px;
-						right: 8px;
+					top: 2px;
+					right: 8px;
 					text-transform: none;
 				}
 			}
 
 			.sidebar__menu-list .sidebar__menu-item,
 			.sidebar__menu-list .sidebar-dynamic-menu__tag {
-
 				li {
-
 					&:first-child {
-						@include breakpoint( "<660px" ) {
+						@include breakpoint( '<660px' ) {
 							margin-top: -5px;
 						}
 					}
 
 					&:last-child {
-						@include breakpoint( "<660px" ) {
-							border-bottom: 1px solid rgba( 200, 215, 225, .5 );
+						@include breakpoint( '<660px' ) {
+							border-bottom: 1px solid rgba( 200, 215, 225, 0.5 );
 						}
 					}
 				}
@@ -181,8 +175,7 @@
 		}
 
 		.selected .sidebar__menu-item-label {
-
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				color: $blue-medium;
 			}
 		}
@@ -199,11 +192,10 @@
 	}
 
 	.sidebar__menu-item {
-
 		a.sidebar__button {
 			margin-top: 10px;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				margin-top: 5px;
 			}
 		}
@@ -218,7 +210,6 @@
 		}
 
 		.sidebar__menu-item-tagname {
-
 			&::after {
 				@include long-content-fade( $color: $gray-lighten-30, $size: 20px );
 				right: 60px;
@@ -226,7 +217,6 @@
 		}
 
 		.sidebar__menu-item-tagname {
-
 			&::after {
 				right: 20px;
 			}
@@ -238,15 +228,15 @@
 		border-radius: 3px;
 		padding: 6px 7px;
 		position: absolute;
-			right: 8px;
-			top: 7px;
+		right: 8px;
+		top: 7px;
 		text-transform: none;
 
 		// Disabled by default
 		opacity: 0;
 		transform: translateX( -20px );
 		pointer-events: none;
-		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		transition: all 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		transition-delay: 0.05s;
 	}
 
@@ -255,9 +245,9 @@
 		pointer-events: none;
 		padding: 0;
 		position: absolute;
-			top: -1px;
-			left: -1px;
-			right: -1px;
+		top: -1px;
+		left: -1px;
+		right: -1px;
 		transition: all 0.15s ease-in;
 
 		input {
@@ -268,9 +258,9 @@
 		.gridicon {
 			cursor: pointer;
 			position: absolute;
-				left: auto;
-				right: 0;
-				top: 0;
+			left: auto;
+			right: 0;
+			top: 0;
 			padding: 8px 0 8px 13px;
 		}
 	}
@@ -278,22 +268,22 @@
 	.selected .sidebar__menu-action .gridicon {
 		fill: $white !important;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			fill: $gray !important;
 		}
 	}
 
 	.sidebar__menu-action {
 		position: absolute;
-			top: 3px;
-			right: 8px;
+		top: 3px;
+		right: 8px;
 		line-height: 15px;
 		padding: 3px 4px 2px;
 
 		.gridicon {
 			position: relative;
-				top: -2px;
-				left: auto;
+			top: -2px;
+			left: auto;
 			fill: $gray !important; // this needs to be more specific
 			margin-right: 0;
 		}

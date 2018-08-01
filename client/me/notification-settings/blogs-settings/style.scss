@@ -1,3 +1,5 @@
+/** @format */
+
 %notification-settings-blog-settings-flexbox {
 	display: flex;
 	flex: 0 0 auto;
@@ -22,7 +24,7 @@
 	display: flex;
 	color: $gray;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		cursor: pointer;
 	}
 
@@ -41,7 +43,7 @@
 	display: none;
 	color: $gray-lighten-30;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 	}
 }

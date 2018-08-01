@@ -1,8 +1,11 @@
+/** @format */
+
 // README.md Viewer
 .readme-viewer__wrapper {
 	break-inside: avoid;
 
-	p, li {
+	p,
+	li {
 		font-size: 1.5rem;
 	}
 
@@ -14,7 +17,8 @@
 		border-collapse: collapse;
 		border-spacing: 0;
 
-		th, td {
+		th,
+		td {
 			border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
 			text-align: left;
 		}
@@ -31,7 +35,12 @@
 		}
 	}
 
-	h1, h2, h3, h4, h5, h6 {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
 		display: block;
 		margin-bottom: 0.5em;
 		margin-left: 0;

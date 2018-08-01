@@ -1,3 +1,5 @@
+/** @format */
+
 .edit-gravatar__image-container {
 	cursor: pointer;
 	display: inline-block;
@@ -6,8 +8,8 @@
 	&.is-uploading::before {
 		content: '';
 		position: absolute;
-			top: 0;
-			left: 0;
+		top: 0;
+		left: 0;
 		background-color: rgba( $gray-dark, 0.5 );
 		border-radius: 50%;
 		height: 150px;
@@ -23,21 +25,21 @@
 
 .edit-gravatar__spinner {
 	position: absolute;
-		top: 50%;
-		left: 50%;
-	transform: translate(-50%, -50%);
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
 }
 
 .edit-gravatar-modal.dialog.card {
 	max-width: none;
 	padding: 0;
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		top: 5%;
 		bottom: 5%;
 		left: 5%;
@@ -45,7 +47,7 @@
 		width: 90%;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		left: 12.5%;
 		right: 12.5%;
 		width: 75%;
@@ -58,8 +60,8 @@
 
 .edit-gravatar__label-container {
 	position: absolute;
-		left: 0;
-		top: 0;
+	left: 0;
+	top: 0;
 	width: 150px;
 	height: 150px;
 	border-radius: 50%;
@@ -96,7 +98,8 @@
 	vertical-align: middle;
 }
 
-.edit-gravatar__pop-over .external-link .gridicons-external { // specificity used to override margin
+.edit-gravatar__pop-over .external-link .gridicons-external {
+	// specificity used to override margin
 	margin-left: 1px;
 }
 

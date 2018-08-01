@@ -1,3 +1,5 @@
+/** @format */
+
 .conversation-caterpillar {
 	display: flex;
 }
@@ -30,7 +32,7 @@
 		z-index: 1;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding: 0;
 		text-align: left;
 	}

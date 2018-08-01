@@ -1,3 +1,5 @@
+/** @format */
+
 .section-export {
 	padding-bottom: 100px;
 }
@@ -44,7 +46,7 @@
 }
 
 .export-card__advanced-settings-row {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 		flex-wrap: wrap;
 	}
@@ -53,7 +55,7 @@
 .export-card__option-fieldset {
 	margin-top: 10px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-top: inherit;
 		flex: 1;
 	}
@@ -159,7 +161,7 @@
 	font-size: 16px;
 	text-align: center;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding-left: 128px;
 		text-align: left;
 	}
@@ -174,7 +176,7 @@
 	background-color: $gray-darken-20;
 	color: $gray-light;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		position: absolute;
 		margin-left: -96px;
 		margin-top: 16px;

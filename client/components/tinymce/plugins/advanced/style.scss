@@ -1,3 +1,5 @@
+/** @format */
+
 .mce-toolbar .mce-advanced button {
 	transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 }
@@ -14,7 +16,7 @@
 .mce-toolbar .mce-advanced.mce-btn button {
 	display: none;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		display: block;
 	}
 }
@@ -22,6 +24,6 @@
 .mce-toolbar .mce-btn-group .mce-advanced.mce-btn.mce-last {
 	background-color: $transparent;
 	position: absolute;
-		top: 0;
-		right: 8px;
+	top: 0;
+	right: 8px;
 }

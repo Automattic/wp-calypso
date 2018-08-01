@@ -1,3 +1,5 @@
+/** @format */
+
 // Chart
 // Life is a statistical anomaly
 
@@ -15,15 +17,15 @@
 
 .chart .chart__y-axis-markers {
 	position: absolute;
-		top: 8px; // 1
-		left: 0;
-		right: 0;
+	top: 8px; // 1
+	left: 0;
+	right: 0;
 	height: 200px;
 }
 
 .chart .chart__y-axis-marker {
 	position: absolute;
-		top: 0;
+	top: 0;
 	width: 100%;
 	height: 1px;
 	border-top: 1px solid $gray-lighten-30;
@@ -34,10 +36,10 @@
 .chart__bar-marker {
 	z-index: z-index( 'root', '.chart__bar-marker' );
 	position: absolute;
-		top: 0;
+	top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid rgba( $gray-lighten-30, .1 );
+	border-top: 1px solid rgba( $gray-lighten-30, 0.1 );
 }
 
 .chart__bar-marker,
@@ -67,8 +69,8 @@
 
 .chart__y-axis-label {
 	position: absolute;
-		top: 0;
-		right: 20px; // 1
+	top: 0;
+	right: 20px; // 1
 	text-align: right;
 }
 
@@ -103,13 +105,13 @@
 	content: '';
 	display: block;
 	position: absolute;
-		top: -4px;
-		left: 50%;
-	margin-left: -.5px;
+	top: -4px;
+	left: 50%;
+	margin-left: -0.5px;
 	width: 1px;
 	height: 5px;
 	background: $gray-light;
-	background-image: linear-gradient(to bottom, $gray-light 0%, $gray-lighten-20 100%);
+	background-image: linear-gradient( to bottom, $gray-light 0%, $gray-lighten-20 100% );
 }
 
 // Bar wrapper
@@ -138,19 +140,18 @@
 	-ms-flex-shrink: 1;
 	flex-shrink: 1;
 
-
 	&.is-weekend {
-		background-color: rgba( $gray-lighten-30, .5 );
+		background-color: rgba( $gray-lighten-30, 0.5 );
 	}
 
 	&:hover {
 		cursor: pointer;
-		background-color: rgba( $gray-lighten-30, .3 );
+		background-color: rgba( $gray-lighten-30, 0.3 );
 	}
 
 	&.is-selected {
 		cursor: default;
-		background-color: rgba( $orange-jazzy, .1 );
+		background-color: rgba( $orange-jazzy, 0.1 );
 	}
 }
 
@@ -164,10 +165,10 @@
 	display: inline-block;
 	background-color: $blue-wordpress;
 	position: absolute;
-		top: 0; // 2
-		right: 16%; // 1
-		bottom: 0; // 1
-		left: 16%; // 1
+	top: 0; // 2
+	right: 16%; // 1
+	bottom: 0; // 1
+	left: 16%; // 1
 	z-index: z-index( 'root', '.chart__bar-section' );
 
 	.chart__bar:hover &.is-bar {
@@ -184,16 +185,20 @@
 	}
 
 	&.is-ghost::after {
-		content: "";
+		content: '';
 		display: block;
 		position: absolute;
-			top: 160px;
-			bottom: 0;
-			left: 0;
+		top: 160px;
+		bottom: 0;
+		left: 0;
 		z-index: z-index( 'root', '.chart__bar-section.is-ghost::after' );
 		width: 100%;
 		height: 40px;
-		background-image: linear-gradient(to bottom, $transparent, rgba( $gray-lighten-30, .5 ) ); // TODO: needs to use default color for gradient
+		background-image: linear-gradient(
+			to bottom,
+			$transparent,
+			rgba( $gray-lighten-30, 0.5 )
+		); // TODO: needs to use default color for gradient
 
 		.chart__bar:hover & {
 			display: none;
@@ -204,9 +209,9 @@
 .chart__bar-section-inner {
 	background: darken( $blue-dark, 5% );
 	position: absolute;
-		right: 23.33%;
-		bottom: 0;
-		left: 23.33%;
+	right: 23.33%;
+	bottom: 0;
+	left: 23.33%;
 
 	.chart__bar.is-selected & {
 		background-color: $orange-fire;
@@ -232,10 +237,9 @@
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		width: 100%;
 	}
-
 }
 
 // Chart legend option (list item)
@@ -245,7 +249,7 @@
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include breakpoint( "<480px") {
+	@include breakpoint( '<480px' ) {
 		width: 50%;
 		display: inline-block;
 	}
@@ -267,7 +271,7 @@
 		}
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: block;
 	}
 }
@@ -286,7 +290,7 @@
 	margin: 3px 5px 3px 8px; // 1
 }
 
-@include breakpoint( "<480px" ) {
+@include breakpoint( '<480px' ) {
 	.chart__legend-option:first-child .chart__legend-color {
 		margin-left: 2px; // 2
 	}
@@ -312,10 +316,10 @@
 	display: flex;
 	justify-content: center;
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	z-index: z-index( 'root', '.chart__empty' );
 }
 
@@ -398,7 +402,6 @@
 }
 
 .chart__tooltip .module-content-list-item {
-
 	&.is-date-label {
 		font-size: 11px;
 		margin-bottom: 2px;
@@ -409,7 +412,6 @@
 	}
 
 	&.is-published-item {
-
 		height: 19px;
 
 		.label {
@@ -427,7 +429,12 @@
 			&::before {
 				content: '';
 				position: relative;
-				background-image: linear-gradient(to right, rgba(61, 89, 109, 0) 0%, rgba(61, 89, 109, 0.5), rgba(61, 89, 109, 1));
+				background-image: linear-gradient(
+					to right,
+					rgba( 61, 89, 109, 0 ) 0%,
+					rgba( 61, 89, 109, 0.5 ),
+					rgba( 61, 89, 109, 1 )
+				);
 				left: -30px;
 				width: 30px;
 				height: 24px;

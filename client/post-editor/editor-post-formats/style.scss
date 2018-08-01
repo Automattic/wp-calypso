@@ -1,3 +1,5 @@
+/** @format */
+
 .editor-post-formats {
 	list-style: none;
 	margin: -4px 0;
@@ -17,8 +19,8 @@
 
 .editor-post-formats__format-icon {
 	position: absolute;
-		top: 50%;
-		left: 0;
+	top: 50%;
+	left: 0;
 	transform: translateY( -50% );
 	line-height: 1;
 	fill: $gray-darken-20;

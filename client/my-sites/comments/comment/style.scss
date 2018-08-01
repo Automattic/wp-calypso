@@ -252,7 +252,7 @@
 	overflow: hidden;
 	position: relative;
 
-	&:after {
+	&::after {
 		background: linear-gradient( to right, rgba( $white, 0 ), rgba( $white, 1 ) 50% );
 		content: '';
 		height: 20px;
@@ -262,7 +262,7 @@
 		width: 30%;
 	}
 }
-.comment.is-pending .comment__content-preview:after {
+.comment.is-pending .comment__content-preview::after {
 	background: linear-gradient(
 		to right,
 		rgba( mix( $alert-yellow, $white, 8.5% ), 0 ),
@@ -277,7 +277,7 @@
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
 
-		&:after {
+		&::after {
 			background: transparent;
 		}
 	}
@@ -382,7 +382,7 @@
 
 .comment__reply {
 	display: none;
-	padding: 0 16px 16px 16px;
+	padding: 0 16px 16px;
 	position: relative;
 }
 
@@ -448,7 +448,7 @@
 
 	.form-textarea {
 		height: 184px; // 8 lines
-		margin: 0 0 20px 0;
+		margin: 0 0 20px;
 		resize: vertical;
 		transition: none;
 		width: 100%;
@@ -495,11 +495,11 @@
 .comment__edit-wrapper {
 	display: flex;
 	flex-wrap: wrap;
-	padding: 16px 8px 0 8px;
+	padding: 16px 8px 0;
 }
 
 .comment__edit-buttons {
-	padding: 0 8px 16px 8px;
+	padding: 0 8px 16px;
 	width: 100%;
 }
 
@@ -532,7 +532,7 @@
 
 .comment-html-editor__toolbar .button {
 	border-right: 1px solid lighten( $gray, 30% );
-	border-radius: 0px;
+	border-radius: 0;
 	color: darken( $gray, 20% );
 	margin-bottom: 8px;
 	min-width: 30px;
@@ -707,7 +707,7 @@
 
 .card.comment {
 	&.is-at-max-depth {
-		margin-bottom: 0px;
+		margin-bottom: 0;
 		box-shadow: 0 -1px transparentize( $gray-lighten-20, 0.5 );
 	}
 }

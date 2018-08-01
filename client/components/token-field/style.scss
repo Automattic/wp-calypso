@@ -1,3 +1,5 @@
+/** @format */
+
 .token-field {
 	@extend %form-field;
 
@@ -9,7 +11,7 @@
 	border: 1px solid $gray-lighten-20;
 	color: $gray-dark;
 	cursor: text;
-	transition: all .15s ease-in-out;
+	transition: all 0.15s ease-in-out;
 
 	&:hover {
 		border-color: $gray-lighten-10;
@@ -34,7 +36,7 @@
 }
 
 // Token input
-input[type="text"].token-field__input {
+input[type='text'].token-field__input {
 	display: inline-block;
 	width: auto;
 	max-width: 100%;
@@ -132,7 +134,7 @@ input[type="text"].token-field__input {
 	display: inline-block;
 	line-height: 24px;
 	background: $gray-darken-20;
-	transition: all .2s cubic-bezier( .4, 1, .4, 1 );
+	transition: all 0.2s cubic-bezier( 0.4, 1, 0.4, 1 );
 }
 
 .token-field__token-text {
@@ -159,7 +161,7 @@ input[type="text"].token-field__input {
 	background: $white;
 	max-height: 0;
 	overflow-y: scroll;
-	transition: all .15s ease-in-out;
+	transition: all 0.15s ease-in-out;
 	list-style: none;
 	margin: 0;
 

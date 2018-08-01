@@ -1,3 +1,5 @@
+/** @format */
+
 .reader-popover.popover .popover__inner {
 	background-color: $gray-light;
 	border-color: $gray-lighten-20;
@@ -6,50 +8,47 @@
 // Popover arrows
 .reader-popover.popover.is-top .popover__arrow,
 .reader-popover.popover.is-top-left .popover__arrow {
-
 	&::before {
 		border: 10px solid $gray-light;
 		border-bottom: none;
 		border-left-color: transparent;
 		border-right-color: transparent;
 		border-top-style: solid;
-		content: " ";
+		content: ' ';
 		margin-left: -10px;
 		position: absolute;
-			bottom: 2px;
-			left: 50%;
+		bottom: 2px;
+		left: 50%;
 	}
 }
 
 .reader-popover.popover.is-bottom .popover__arrow,
 .reader-popover.popover.is-bottom-left .popover__arrow,
 .reader-popover.popover.is-bottom-right .popover__arrow {
-
 	&::before {
 		border: 10px solid $gray-light;
 		border-bottom-style: solid;
 		border-left-color: transparent;
 		border-right-color: transparent;
 		border-top: none;
-		content: " ";
+		content: ' ';
 		position: absolute;
-			left: 50%;
-			top: 2px;
+		left: 50%;
+		top: 2px;
 	}
 }
 
 .reader-popover.popover.is-left .popover__arrow,
 .reader-popover.popover.is-left-top .popover__arrow {
-
-	&::before{
+	&::before {
 		border: 10px solid $gray-light;
 		border-bottom-color: transparent;
 		border-right: none;
 		border-top-color: transparent;
-		content: " ";
+		content: ' ';
 		margin-top: -10px;
 		position: absolute;
-			top: 50%;
+		top: 50%;
 	}
 }
 

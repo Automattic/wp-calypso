@@ -1,7 +1,9 @@
+/** @format */
+
 .credit-card-number-input {
 	input {
 		background-image: url( '/calypso/images/upgrades/cc-placeholder.svg' );
-		background-position: calc(100% - 10px) center;
+		background-position: calc( 100% - 10px ) center;
 		background-repeat: no-repeat;
 		background-size: 32px auto;
 		padding-right: 50px;
@@ -11,7 +13,7 @@
 
 	@each $brand in $cc-brands {
 		.#{$brand} input {
-			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
+			background-image: url( '/calypso/images/upgrades/cc-#{$brand}.svg' );
 		}
 	}
 }

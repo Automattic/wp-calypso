@@ -1,3 +1,5 @@
+/** @format */
+
 // View : theme successfully uploaded
 .theme-upload__theme-sheet {
 	font-size: 14px;
@@ -15,7 +17,7 @@
 	border: 1px solid $gray-lighten-30;
 	margin-left: 24px;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		float: none;
 		margin-left: 0;
 		margin-bottom: 24px;

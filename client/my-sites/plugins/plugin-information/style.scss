@@ -1,3 +1,5 @@
+/** @format */
+
 .plugin-information {
 	display: flex;
 	flex-wrap: wrap;
@@ -18,7 +20,7 @@
 	@include clear-fix;
 }
 
-.plugin-information__version-shell .version{
+.plugin-information__version-shell .version {
 	float: left;
 	margin: 0 16px 8px 0;
 }
@@ -58,7 +60,6 @@
 }
 
 .plugin-information__version-info.is-singlesite {
-
 	.plugin-information__last-updated,
 	.plugin-information__versions,
 	.version {
@@ -116,7 +117,6 @@
 }
 
 .plugin-information.is-placeholder {
-
 	.plugin-information__wrapper {
 		@include placeholder();
 		@include breakpoint( '>480px' ) {
@@ -136,7 +136,7 @@
 	.plugin-information__version-limit,
 	.plugin-information__last-updated {
 		width: 99%;
-		margin-top:8px;
+		margin-top: 8px;
 	}
 
 	.rating {

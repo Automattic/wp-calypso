@@ -1,3 +1,5 @@
+/** @format */
+
 .site-or-domain__choices {
 	display: flex;
 	flex-flow: row wrap;
@@ -12,7 +14,8 @@
 	transition: box-shadow 100ms ease-in-out;
 	cursor: pointer;
 
-	a, svg {
+	a,
+	svg {
 		display: block;
 		width: 100%;
 	}
@@ -55,7 +58,7 @@
 	color: $gray-dark;
 }
 
-@include breakpoint( ">480px" ) {
+@include breakpoint( '>480px' ) {
 	.site-or-domain__choice-button {
 		margin-bottom: 1.5em;
 	}
@@ -71,7 +74,7 @@
 	}
 }
 
-@include breakpoint( "<480px" ) {
+@include breakpoint( '<480px' ) {
 	.site-or-domain__choice-text {
 		display: flex;
 		flex-direction: column-reverse;
@@ -79,5 +82,5 @@
 }
 
 .site-or-domain__is-placeholder {
-	@include placeholder(23%);
+	@include placeholder( 23% );
 }

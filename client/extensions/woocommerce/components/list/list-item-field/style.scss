@@ -1,10 +1,12 @@
+/** @format */
+
 .list-item-field {
 	display: flex;
 	box-sizing: border-box;
 	flex-direction: column;
 	padding: 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 16px 24px;
 	}
 }

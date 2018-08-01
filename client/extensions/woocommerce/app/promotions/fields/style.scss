@@ -1,6 +1,8 @@
+/** @format */
+
 .fields__fieldset {
 	.form-label {
-		input[type=checkbox] {
+		input[type='checkbox'] {
 			margin-right: 8px;
 		}
 	}
@@ -46,7 +48,7 @@
 		padding-left: 16px;
 		padding-right: 16px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-left: -24px;
 			margin-right: -24px;
 			padding-left: 24px;
@@ -134,7 +136,6 @@
 					transform: translate( -50%, -50% );
 				}
 			}
-
 		}
 	}
 

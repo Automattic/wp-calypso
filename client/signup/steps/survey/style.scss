@@ -1,3 +1,5 @@
+/** @format */
+
 .survey-step__section-wrapper {
 	margin: 0 auto 2em;
 	max-width: 500px;
@@ -29,7 +31,7 @@
 
 	// This limits the blur filter to Safari, as other browsers can't handle the
 	// awesomeness of transitioning blurs.
-	@supports (overflow:-webkit-marquee) and (justify-content:inherit) {
+	@supports ( overflow: -webkit-marquee ) and ( justify-content: inherit ) {
 		filter: blur( 3px );
 
 		&.active {
@@ -41,9 +43,9 @@
 // Sub Verticals List
 .survey-step__sub-verticals {
 	position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
+	top: 0;
+	left: 0;
+	right: 0;
 	min-height: 500px;
 	padding: 0;
 	margin-bottom: 24px;
@@ -63,7 +65,6 @@
 		margin-top: 0;
 	}
 }
-
 
 // Verticals List Item
 .survey-step__vertical {
@@ -109,7 +110,7 @@
 .survey__vertical-label {
 	margin: 10px;
 	font-weight: 400;
-	color: $gray-darken-30
+	color: $gray-darken-30;
 }
 
 .survey__vertical-chevron {
@@ -122,7 +123,7 @@
 	position: relative;
 }
 
-@include breakpoint( ">480px" ) {
+@include breakpoint( '>480px' ) {
 	.survey__other {
 		margin: 0 auto 2em;
 		max-width: 500px;
@@ -156,13 +157,13 @@ input.survey__other-write-in {
 		transform: none;
 	}
 	70% {
-		transform: translate(5px, 0);
+		transform: translate( 5px, 0 );
 	}
 	80% {
 		transform: none;
 	}
 	90% {
-		transform: translate(5px, 0);
+		transform: translate( 5px, 0 );
 	}
 	100% {
 		transform: none;

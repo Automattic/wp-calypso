@@ -1,3 +1,5 @@
+/** @format */
+
 //Playground
 .react-live {
 	.prism-code {
@@ -13,7 +15,7 @@
 
 .design__playground {
 	margin: -24px;
-	@include breakpoint( '>960px') {
+	@include breakpoint( '>960px' ) {
 		margin: -32px;
 	}
 }
@@ -27,25 +29,25 @@
 	box-sizing: border-box;
 	color: $alert-red;
 	position: sticky;
-		top: 0;
+	top: 0;
 }
 
 .react-live-error,
 .design__preview {
 	padding: 24px;
-	@include breakpoint( '>960px') {
+	@include breakpoint( '>960px' ) {
 		padding: 32px;
 	}
 }
 
 .design__preview {
 	position: relative;
-	@include breakpoint( '>960px') {
+	@include breakpoint( '>960px' ) {
 		position: static;
 	}
 }
 
-@include breakpoint( '>960px') {
+@include breakpoint( '>960px' ) {
 	.design__playground {
 		display: flex;
 		height: calc( 100vh - 47px );
@@ -71,8 +73,8 @@
 .design__component-playground-clipboard {
 	padding: 0;
 	position: absolute;
-		right: 10px;
-		top: 10px;
+	right: 10px;
+	top: 10px;
 }
 
 .design__component-playground-show-code {

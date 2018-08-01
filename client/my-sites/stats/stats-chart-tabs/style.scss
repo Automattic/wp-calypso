@@ -1,3 +1,5 @@
+/** @format */
+
 // Module Tabs
 // (currently only used for the bar chart module at the top)
 
@@ -19,7 +21,7 @@ ul.module-tabs {
 			border-top: none;
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			border-top: none;
 			border-left: 1px solid $gray-light;
 			float: left;
@@ -35,7 +37,7 @@ ul.module-tabs {
 			}
 		}
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			width: auto;
 			float: none;
 			text-align: left;
@@ -53,7 +55,7 @@ ul.module-tabs {
 			display: block;
 			background: $white;
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				line-height: 24px;
 				padding-top: 10px;
 				-webkit-touch-callout: none;
@@ -66,7 +68,7 @@ ul.module-tabs {
 			line-height: inherit;
 			text-transform: uppercase;
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				font-size: 14px;
 				line-height: 24px;
 				float: left;
@@ -78,7 +80,7 @@ ul.module-tabs {
 			margin-right: 4px;
 			margin-top: -2px;
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				width: 24px;
 				height: 24px;
 				margin-left: 24px;
@@ -92,9 +94,9 @@ ul.module-tabs {
 			display: block;
 			line-height: 24px;
 			color: $blue-wordpress;
-			transition: font-size .3s 0 ease-out;
+			transition: font-size 0.3s 0 ease-out;
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				clear: none;
 				float: right;
 				font-size: 16px;
@@ -103,7 +105,7 @@ ul.module-tabs {
 			}
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			// Hover state
 			a:hover,
 			a:hover .value,
@@ -113,7 +115,7 @@ ul.module-tabs {
 			}
 
 			a:hover {
-				background: rgba(255,255,255,.5);
+				background: rgba( 255, 255, 255, 0.5 );
 			}
 		}
 
@@ -128,7 +130,7 @@ ul.module-tabs {
 		}
 
 		a:focus {
-			background: rgba(255,255,255,.5);
+			background: rgba( 255, 255, 255, 0.5 );
 		}
 
 		// Selected state

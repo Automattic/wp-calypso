@@ -1,19 +1,21 @@
+/** @format */
+
 .back-button {
 	margin: 0;
 	position: fixed;
-		top: 47px;
-		left: 0;
-	z-index: z-index( '.masterbar', '.reader-back'	);
+	top: 47px;
+	left: 0;
+	z-index: z-index( '.masterbar', '.reader-back' );
 
 	.button.is-compact.is-borderless {
 		padding: 20px 8px 16px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			padding: 18px 40px 18px 20px;
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		top: 0;
 		left: 0;
 		right: 0;
@@ -24,7 +26,7 @@
 }
 
 .back-button__label {
-	@include breakpoint( "<660px") {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }

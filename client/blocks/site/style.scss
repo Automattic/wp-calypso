@@ -1,5 +1,7 @@
 /**
  * Site
+ *
+ * @format
  */
 
 .site {
@@ -35,7 +37,6 @@
 				color: transparent;
 			}
 		}
-
 	}
 
 	&.is-compact {
@@ -59,7 +60,6 @@
 		.site__home .gridicon {
 			margin-top: 0;
 		}
-
 	}
 }
 
@@ -131,10 +131,10 @@
 	overflow: initial;
 	opacity: 0;
 	transition: opacity 0.2s;
-	transform: translate3d(0, 0, 0);
+	transform: translate3d( 0, 0, 0 );
 	position: absolute;
-		left: 16px;
-		top: 17px;
+	left: 16px;
+	top: 17px;
 
 	.gridicon {
 		margin-top: 5px;
@@ -150,7 +150,7 @@
 		color: $white;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }

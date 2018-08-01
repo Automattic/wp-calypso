@@ -1,3 +1,5 @@
+/** @format */
+
 .jetpack-colophon {
 	margin-top: 40px;
 	text-align: center;
@@ -10,7 +12,7 @@
 	.jetpack-logo__icon-circle {
 		fill: currentColor;
 	}
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-bottom: 24px;
 	}
 }

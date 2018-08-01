@@ -1,5 +1,6 @@
-.promotions__list {
+/** @format */
 
+.promotions__list {
 	.empty-content.has-title-only {
 		margin-top: 42px;
 	}
@@ -33,7 +34,6 @@
 			height: 44px;
 			margin-top: 16px;
 		}
-
 	}
 
 	.is-requesting td div {
@@ -82,7 +82,7 @@
 		}
 	}
 
-	.table-row:not(.is-header) {
+	.table-row:not( .is-header ) {
 		cursor: pointer;
 	}
 
@@ -94,8 +94,8 @@
 		color: $blue-wordpress;
 	}
 
-	.search, .search .search__open-icon {
+	.search,
+	.search .search__open-icon {
 		z-index: initial;
 	}
-
 }

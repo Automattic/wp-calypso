@@ -1,7 +1,15 @@
+/** @format */
+
 @keyframes notice-loading-pulse {
-	0% { opacity: 0; }
-	50% { opacity: .5; }
-	100% { opacity: 0; }
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 .notice {
@@ -10,7 +18,7 @@
 	width: 100%;
 	margin-bottom: 24px;
 	box-sizing: border-box;
-	animation: appear .3s ease-in-out;
+	animation: appear 0.3s ease-in-out;
 	background: $gray-dark;
 	color: $white;
 	border-radius: 3px;
@@ -86,7 +94,7 @@
 	.gridicon {
 		margin-top: 10px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-top: 12px;
 		}
 	}
@@ -97,7 +105,7 @@
 	font-size: 12px;
 	flex-grow: 1;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 14px;
 	}
 }
@@ -151,7 +159,7 @@
 		height: 18px;
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 11px;
 		padding-bottom: 0;
 
@@ -183,9 +191,9 @@ a.notice__action {
 	display: flex;
 	align-items: center;
 
-	@include breakpoint( ">480px" ) {
-			flex-shrink: 1;
-			flex-grow: 0;
+	@include breakpoint( '>480px' ) {
+		flex-shrink: 1;
+		flex-grow: 0;
 		align-items: center;
 		border-radius: 0;
 		font-size: 14px;
@@ -217,8 +225,8 @@ a.notice__action {
 // Compact notices
 .notice.is-compact {
 	display: inline-flex;
-		flex-wrap: nowrap;
-		flex-direction: row;
+	flex-wrap: nowrap;
+	flex-direction: row;
 	width: auto;
 	border-radius: 3px;
 	min-height: 20px;

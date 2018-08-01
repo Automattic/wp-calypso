@@ -1,3 +1,5 @@
+/** @format */
+
 .upload-image {
 	display: inline-block;
 }
@@ -11,7 +13,7 @@
 	bottom: 0;
 	left: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		top: 5%;
 		bottom: 5%;
 		left: 5%;
@@ -19,7 +21,7 @@
 		width: 90%;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		left: 12.5%;
 		right: 12.5%;
 		width: 75%;
@@ -61,13 +63,15 @@
 	width: 200px;
 	height: 200px;
 
-	&.is-uploaded, &.is-uploading {
+	&.is-uploaded,
+	&.is-uploading {
 		border: 1px solid $gray-lighten-10;
 		background-color: $gray-lighten-30;
 	}
 }
 
-.upload-image__uploading-container, .upload-image__uploading-done-container {
+.upload-image__uploading-container,
+.upload-image__uploading-done-container {
 	height: 100%;
 	text-align: center;
 }
@@ -78,11 +82,11 @@
 
 .button.is-compact.upload-image__uploaded-image-remove {
 	position: absolute;
-		top: 0;
-		right: 0;
+	top: 0;
+	right: 0;
 	width: 24px;
 	height: 24px;
-	transform: translate(50%, -50%);
+	transform: translate( 50%, -50% );
 	border: 1px solid $gray-lighten-10;
 	border-radius: 50%;
 	background-color: $gray-light;
@@ -95,9 +99,9 @@
 
 .button.is-compact .gridicon.upload-image__uploaded-image-remove-icon {
 	position: absolute;
-		top: 50%;
-		left: 50%;
-	transform: translate(-50%, -50%);
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
 	width: 20px;
 	height: 20px;
 	margin: 0;
@@ -108,10 +112,11 @@
 	}
 }
 
-.upload-image__uploading-image, .upload-image__uploaded-image-wrapper {
+.upload-image__uploading-image,
+.upload-image__uploaded-image-wrapper {
 	position: relative;
 	top: 50%;
-	transform: perspective(1px) translateY(-50%);
+	transform: perspective( 1px ) translateY( -50% );
 	line-height: 0;
 }
 
@@ -119,7 +124,8 @@
 	display: inline-block;
 }
 
-.upload-image__uploading-image, .upload-image__uploaded-image {
+.upload-image__uploading-image,
+.upload-image__uploaded-image {
 	max-width: 200px;
 	max-height: 200px;
 }
@@ -127,14 +133,14 @@
 .button.is-compact.upload-image__uploaded-image-edit-button {
 	opacity: 0.9;
 	position: absolute;
-		bottom: 8px;
-		right: 8px;
+	bottom: 8px;
+	right: 8px;
 	color: $white;
 	opacity: 0.9;
 	line-height: 0;
 	padding: 4px;
 	border: none;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba( 0, 0, 0, 0.2 );
 	border-radius: 50%;
 
 	&:hover {

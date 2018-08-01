@@ -1,3 +1,5 @@
+/** @format */
+
 // If making changes in this file, please also open a PR in
 // the https://github.com/Automattic/notifications-panel repo,
 // which uses this same code for its spinner.
@@ -14,10 +16,11 @@
 	align-items: center;
 }
 
-.spinner__outer, .spinner__inner {
+.spinner__outer,
+.spinner__inner {
 	margin: auto;
 	box-sizing: border-box;
-  border: 0.1em solid transparent;
+	border: 0.1em solid transparent;
 	border-radius: 50%;
 	animation: 3s linear infinite;
 	animation-name: rotate-spinner;
@@ -29,8 +32,8 @@
 
 .spinner__inner {
 	width: 100%;
-  height: 100%;
+	height: 100%;
 	border-top-color: $blue-medium;
-  border-right-color: $blue-medium;
-  opacity: 0.4;
+	border-right-color: $blue-medium;
+	opacity: 0.4;
 }

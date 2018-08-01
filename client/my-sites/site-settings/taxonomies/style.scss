@@ -1,3 +1,5 @@
+/** @format */
+
 .taxonomies__card-title {
 	font-size: 16px;
 	line-height: 24px;
@@ -17,7 +19,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 
-	&:after {
+	&::after {
 		@include long-content-fade( $size: 40% );
 	}
 

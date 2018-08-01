@@ -1,3 +1,5 @@
+/** @format */
+
 .editor-slug.editor-more-options__slug-field {
 	margin: 0;
 }
@@ -6,7 +8,7 @@
 	display: none;
 }
 
-.editor-slug.editor-more-options__slug-field input[type="text"].form-text-input {
+.editor-slug.editor-more-options__slug-field input[type='text'].form-text-input {
 	@extend %form-field;
 	font-size: 13px;
 }
@@ -20,7 +22,7 @@
 	margin-bottom: 16px;
 }
 
-@include breakpoint( "<660px" ) {
+@include breakpoint( '<660px' ) {
 	.editor-more-options__copy-post-select-dialog {
 		width: 90%;
 	}

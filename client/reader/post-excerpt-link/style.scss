@@ -1,3 +1,5 @@
+/** @format */
+
 .post-excerpt-link {
 	background: $gray-light;
 	color: darken( $gray, 20 );
@@ -5,14 +7,14 @@
 	margin: 20px 0 8px;
 	position: relative;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding-left: 16px;
 	}
 
 	.gridicon {
 		position: absolute;
-			right: 16px;
-			top: 10px;
+		right: 16px;
+		top: 10px;
 		padding: 8px;
 		cursor: pointer;
 		fill: lighten( $gray, 10 );
@@ -20,7 +22,7 @@
 		height: 20px;
 		transition: all 0.15s ease-in-out;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			right: 8px;
 		}
 

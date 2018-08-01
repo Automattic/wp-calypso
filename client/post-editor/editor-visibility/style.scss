@@ -1,3 +1,5 @@
+/** @format */
+
 .editor-visibility {
 	display: flex;
 	font-size: 13px;
@@ -19,7 +21,7 @@
 	.select-dropdown__header {
 		max-width: ( $sidebar-width-max - $accordion-padding * 2 );
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			max-width: 100%;
 			min-width: ( $sidebar-width-max - $accordion-padding * 2 );
 		}
@@ -80,7 +82,7 @@
 	}
 }
 
-.editor-visibility__dialog{
+.editor-visibility__dialog {
 	text-align: left;
 	width: 180px;
 	padding: 20px;

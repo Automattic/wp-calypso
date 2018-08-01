@@ -1,8 +1,10 @@
+/** @format */
+
 .remove-button {
 	position: absolute;
-		top: 0;
-		/*rtl:ignore*/
-		right: 0;
+	top: 0;
+	/*rtl:ignore*/
+	right: 0;
 	width: 28px;
 	height: 28px;
 	transform: translate( 25%, -25% ); /*rtl:ignore*/
@@ -14,8 +16,8 @@
 
 .remove-button .remove-button__icon.gridicon {
 	position: absolute;
-		top: 50%;
-		left: 50%;
+	top: 50%;
+	left: 50%;
 	transform: translate( -50%, -50% );
 	width: 24px;
 	height: 24px;

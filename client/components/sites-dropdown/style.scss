@@ -1,3 +1,5 @@
+/** @format */
+
 .sites-dropdown {
 	&.is-open {
 		height: 69px;
@@ -12,7 +14,7 @@
 		flex-grow: 0;
 		flex-shrink: 0;
 		margin-right: 16px;
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
 	}
 }
 
@@ -28,7 +30,7 @@
 	transition: all 0.2s ease-in;
 	z-index: 1;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 	}
 
@@ -80,9 +82,9 @@
 
 .sites-dropdown .site-selector .search {
 	position: absolute;
-		top: 67px;
-		left: 0;
-		right: 0;
+	top: 67px;
+	left: 0;
+	right: 0;
 }
 
 .sites-dropdown .site-selector .search input {

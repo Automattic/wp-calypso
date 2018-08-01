@@ -1,3 +1,5 @@
+/** @format */
+
 .card.activity-log-tasklist {
 	padding-bottom: 4px;
 	font-size: 14px;
@@ -21,7 +23,7 @@
 
 .card.activity-log-tasklist__task {
 	align-items: center;
-	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, .5 );
+	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, 0.5 );
 	display: flex;
 	justify-content: flex-end;
 	padding: 16px 0;

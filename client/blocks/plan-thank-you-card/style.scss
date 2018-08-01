@@ -1,5 +1,7 @@
+/** @format */
+
 @mixin plan-thank-you-card-color( $color ) {
-	.thank-you-card{
+	.thank-you-card {
 		background-color: darken( $color, 10 );
 	}
 

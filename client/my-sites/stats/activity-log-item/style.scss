@@ -57,7 +57,7 @@
 	z-index: 1;
 
 	@include breakpoint( '<480px' ) {
-		margin: -2px 8px 0 0px;
+		margin: -2px 8px 0 0;
 	}
 
 	.is-loading & {
@@ -116,7 +116,7 @@
 	.is-loading & {
 		width: 48px;
 		height: 48px;
-		margin-top: 0px;
+		margin-top: 0;
 		padding: 0;
 		background-color: $gray-lighten-20;
 

@@ -1,5 +1,7 @@
 /**
  * Delete Site Options
+ *
+ * @format
  */
 
 .site-tools__section-title {
@@ -30,7 +32,7 @@
 		display: none;
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		&.is-compact {
 			padding: 24px;
 		}
@@ -47,7 +49,6 @@
 .site-tools__link:visited {
 	color: inherit;
 }
-
 
 .site-tools__option-marker {
 	flex: 0 0 auto;

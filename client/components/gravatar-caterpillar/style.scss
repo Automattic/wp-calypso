@@ -1,3 +1,5 @@
+/** @format */
+
 .gravatar-caterpillar {
 	display: flex;
 	flex-shrink: 0;
@@ -18,8 +20,8 @@
 	&.is-hidden-on-small-screens {
 		display: none;
 
-		@include breakpoint( ">660px" ) {
-   			display: inline;
-   		}
+		@include breakpoint( '>660px' ) {
+			display: inline;
+		}
 	}
 }

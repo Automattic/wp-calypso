@@ -1,3 +1,5 @@
+/** @format */
+
 $feature-upsell-break-at: '1040px';
 
 @mixin feature-upsell-card {
@@ -428,7 +430,7 @@ $feature-upsell-break-at: '1040px';
 	line-height: 1.2;
 	color: $gray-darken-20;
 
-	&:before {
+	&::before {
 		position: absolute;
 		top: 0;
 		left: 0;

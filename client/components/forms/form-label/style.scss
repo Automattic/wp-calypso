@@ -1,3 +1,5 @@
+/** @format */
+
 .form-label {
 	display: block;
 	font-size: 14px;
@@ -17,7 +19,7 @@
 	}
 }
 
-.form-label input[type="checkbox"] + span,
-.form-label input[type="radio"] + span {
+.form-label input[type='checkbox'] + span,
+.form-label input[type='radio'] + span {
 	font-weight: normal;
 }

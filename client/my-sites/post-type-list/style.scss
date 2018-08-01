@@ -1,3 +1,5 @@
+/** @format */
+
 .post-type-list__bulk-edit-bar {
 	display: flex;
 	align-items: center;
@@ -19,8 +21,8 @@
 		height: 100%;
 		margin: 0;
 		position: absolute;
-			top: 0;
-			right: 0;
+		top: 0;
+		right: 0;
 		line-height: 1;
 
 		.gridicon {

@@ -1,3 +1,5 @@
+/** @format */
+
 .help-search {
 	margin-bottom: 16px;
 
@@ -10,7 +12,7 @@
 
 .help-search .no-results {
 	margin-left: 35px;
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-left: 25px;
 	}
 }

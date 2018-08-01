@@ -1,3 +1,5 @@
+/** @format */
+
 $follow-button-gray-disabled: $gray-lighten-20;
 
 .follow-button,
@@ -33,7 +35,6 @@ button.follow-button {
 	}
 
 	&.is-following {
-
 		.gridicons-reader-following {
 			display: inline-block;
 			fill: $alert-green;
@@ -100,12 +101,12 @@ button.follow-button {
 }
 
 .follow-button__label {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
 
 // Override .button style
-.button.follow-button .gridicon:not(:last-child) {
+.button.follow-button .gridicon:not( :last-child ) {
 	margin-right: 0;
 }

@@ -1,6 +1,7 @@
+/** @format */
+
 .purchase-item.card {
 	&.is-expired {
-
 		.purchase-item__plan-icon,
 		.purchase-item__title,
 		.purchase-item__purchase-type {
@@ -86,11 +87,11 @@
 	position: relative;
 	white-space: nowrap;
 
-	&:after:not( .is-placeholder ) {
+	&::after:not( .is-placeholder ) {
 		@include long-content-fade();
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 18px;
 		max-width: none;
 	}

@@ -1,3 +1,5 @@
+/** @format */
+
 .sub-masterbar-nav__dropdown,
 .sub-masterbar-nav__navbar {
 	display: flex;
@@ -5,13 +7,13 @@
 	padding: 56px 20px 28px;
 	background-color: $masterbar-color;
 
-	&:not(.is-collapsed) .sub-masterbar-nav__select {
+	&:not( .is-collapsed ) .sub-masterbar-nav__select {
 		background-color: $blue-dark;
 		border-top-left-radius: 5px;
 		border-top-right-radius: 5px;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		flex-direction: row;
 		padding: 56px 20px 0 30px;
 
@@ -24,17 +26,16 @@
 }
 
 .sub-masterbar-nav__dropdown {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 }
 
 .sub-masterbar-nav__navbar {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
-
 
 .sub-masterbar-nav__wrapper {
 	flex: 1;
@@ -50,10 +51,10 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		position: absolute;
-			top: 0;
-			left: 0;
+		top: 0;
+		left: 0;
 		z-index: 30;
 		width: 100%;
 		background-color: $blue-dark;
@@ -66,7 +67,7 @@
 		}
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
@@ -88,13 +89,13 @@
 	transition: all 200ms ease-in;
 
 	&:hover,
- 	&:focus {
+	&:focus {
 		background: lighten( $masterbar-color, 5% );
 		color: $white;
 		outline: 0;
 		transition: all 200ms ease-out;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			transform: translate3d( 0, -2px, 0 );
 		}
 	}
@@ -104,12 +105,12 @@
 	}
 
 	&.is-selected {
-			background-color: $blue-dark;
-			color: $white;
-			border-radius: 5px;
+		background-color: $blue-dark;
+		color: $white;
+		border-radius: 5px;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding: 0 15px;
 
 		.sub-masterbar-nav__items &.is-selected {
@@ -117,7 +118,7 @@
 		}
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
@@ -133,7 +134,7 @@
 .sub-masterbar-nav__icon {
 	display: inline-block;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0 10px 0 0;
 	}
 }
@@ -143,7 +144,7 @@
 }
 
 .sub-masterbar-nav__switch {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 		flex-direction: column;
 		align-content: center;
@@ -171,11 +172,11 @@
 
 .sub-masterbar-nav__select-icon {
 	position: absolute;
-		top: 10px;
-		right: 15px;
+	top: 10px;
+	right: 15px;
 	color: $gray-lighten-30;
 	cursor: pointer;
-	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	transition: all 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 	.sub-masterbar-nav__dropdown:not( .is-collapsed ) & {
 		transform: rotate( 180deg );

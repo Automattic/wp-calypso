@@ -1,3 +1,5 @@
+/** @format */
+
 .post-action-counts {
 	display: inline-block;
 	list-style: none;
@@ -9,20 +11,19 @@
 
 	&::after {
 		margin: 0 4px;
-		content: "•";
+		content: '•';
 	}
 
 	&:last-child {
 		&::after {
-			content: "";
+			content: '';
 		}
 	}
 }
 
 .post-action-counts li a,
 .post-action-counts li a:active,
-.post-action-counts li a:visited
- {
+.post-action-counts li a:visited {
 	color: $gray-text-min;
 
 	&:hover {

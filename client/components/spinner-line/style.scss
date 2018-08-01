@@ -1,6 +1,12 @@
+/** @format */
+
 @keyframes spinner-line__animation {
-	0% { background-position: 0 0; }
-	100% { background-position: 600px 0; }
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 600px 0;
+	}
 }
 
 hr.spinner-line {

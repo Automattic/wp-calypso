@@ -1,4 +1,6 @@
-.store-stats-referrer-conv-widget.card  {
+/** @format */
+
+.store-stats-referrer-conv-widget.card {
 	padding: 0;
 
 	.table {
@@ -9,7 +11,7 @@
 		.table-row.is-selected:hover {
 			// color: $white;
 			box-shadow: inset 4px 0 0 $orange-jazzy;
-			background-color: rgba( $orange-jazzy, .1 );		
+			background-color: rgba( $orange-jazzy, 0.1 );
 		}
 		.store-stats-referrer-conv-widget__referrer {
 			text-align: left;
@@ -26,6 +28,5 @@
 			text-align: center;
 			width: 10%;
 		}
-
 	}
 }

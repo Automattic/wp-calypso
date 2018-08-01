@@ -1,7 +1,8 @@
+/** @format */
+
 .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
-
 
 	&.is-wide-layout {
 		max-width: 1040px;
@@ -30,13 +31,13 @@
 
 .signup__step-enter.signup__step-enter-active {
 	opacity: 1;
-	transition: .2s ease-in-out;
-	transition-delay: .2s;
+	transition: 0.2s ease-in-out;
+	transition-delay: 0.2s;
 
 	.is-animated-content {
 		transform: translate3d( 0, 0, 0 );
-		transition: .2s ease-in-out;
-		transition-delay: .2s;
+		transition: 0.2s ease-in-out;
+		transition-delay: 0.2s;
 	}
 }
 
@@ -50,11 +51,11 @@
 
 .signup__step-leave.signup__step-leave-active {
 	opacity: 0.01;
-	transition: .2s ease-in-out;
+	transition: 0.2s ease-in-out;
 
 	.is-animated-content {
 		transform: translate3d( 0, 32px, 0 ) scale( 0.9 );
-		transition: .2s ease-in-out;
+		transition: 0.2s ease-in-out;
 	}
 }
 

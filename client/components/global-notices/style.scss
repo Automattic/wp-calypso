@@ -1,30 +1,32 @@
+/** @format */
+
 .global-notices {
 	text-align: right;
 	pointer-events: none;
 
 	z-index: z-index( 'root', '.global-notices' );
 	position: fixed;
-		top: auto;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: auto;
+	right: 0;
+	bottom: 0;
+	left: 0;
 
-	@include breakpoint( ">660px" ) {
-			top: 47px + 16px;
-			right: 16px;
-			bottom: auto;
-			left: auto;
+	@include breakpoint( '>660px' ) {
+		top: 47px + 16px;
+		right: 16px;
+		bottom: auto;
+		left: auto;
 		max-width: calc( 100% - 32px );
 	}
 
-	@include breakpoint( ">960px" ) {
-			top: 47px + 24px;
-			right: 24px;
+	@include breakpoint( '>960px' ) {
+		top: 47px + 24px;
+		right: 24px;
 		max-width: calc( 100% - 48px );
 	}
 
-	@include breakpoint( ">1040px" ) {
-			right: 32px;
+	@include breakpoint( '>1040px' ) {
+		right: 32px;
 		max-width: calc( 100% - 64px );
 	}
 }
@@ -35,14 +37,13 @@
 	text-align: left;
 	pointer-events: auto;
 	border-radius: 0;
-	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.2 ),
-		0 0 56px rgba( 0, 0, 0, 0.15 );
+	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.2 ), 0 0 56px rgba( 0, 0, 0, 0.15 );
 
 	.notice__icon-wrapper {
 		border-radius: 0;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 		overflow: hidden;
 		margin-bottom: 24px;
@@ -55,8 +56,7 @@
 }
 
 .global-notices .notice a.notice__action {
-
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 14px;
 		padding: 13px 16px;
 	}
@@ -65,7 +65,7 @@
 .global-notices .notice__dismiss {
 	flex-shrink: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 13px 16px 0;
 	}
 }

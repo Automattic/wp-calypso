@@ -1,3 +1,5 @@
+/** @format */
+
 // The Emergent Paywall loads in an iframe, so we can't adjust its internal styles
 // with the primary Calypso stylesheet. This file is bundled as a separate CSS file to be
 // linked from inside the iframe.
@@ -65,10 +67,12 @@ textarea {
 	}
 
 	// Seen in the 2nd step, displays the payment method type
-	.header2, .method-header {
+	.header2,
+	.method-header {
 		margin: 0 0 20px;
 
-		strong, span {
+		strong,
+		span {
 			font-size: 24px !important;
 			font-weight: 300;
 		}
@@ -92,7 +96,7 @@ textarea {
 			margin: 10px;
 
 			.btn-tile {
-				text-align:center;
+				text-align: center;
 				cursor: pointer;
 				margin: 10px 0;
 
@@ -121,9 +125,7 @@ textarea {
 				transition: all 150ms ease-in-out;
 				border-color: $gray-darken-20;
 			}
-
 		}
-
 
 		@include breakpoint( '<480px' ) {
 			height: auto;
@@ -147,12 +149,12 @@ textarea {
 				}
 			}
 		}
-
 	}
 
-	.checkbox, div[ng-show='updateAddressCheckbox'] {
+	.checkbox,
+	div[ng-show='updateAddressCheckbox'] {
 		clear: both;
-		text-align:left;
+		text-align: left;
 		font-size: 14px;
 
 		input {
@@ -162,7 +164,6 @@ textarea {
 	}
 
 	.content {
-
 		form {
 			margin-bottom: 15px;
 
@@ -205,11 +206,11 @@ textarea {
 				top: -25px;
 
 				// Hide a couple of empty fields on the card form so that the CVV can be next to the expiration
-				~ div[simple-replace='{FIELD:\'expirationMonth\'}'] {
+				~ div[simple-replace="{FIELD:'expirationMonth'}"] {
 					display: none;
 				}
 
-				~ div[simple-replace='{FIELD:\'expirationYear\'}'] {
+				~ div[simple-replace="{FIELD:'expirationYear'}"] {
 					display: none;
 				}
 			}
@@ -220,7 +221,9 @@ textarea {
 				margin-bottom: -5px;
 			}
 
-			div[simple-template='link-security-code'], div[simple-template='link-billToCity-and-billToPostalCode'], div[simple-template='link-province'] {
+			div[simple-template='link-security-code'],
+			div[simple-template='link-billToCity-and-billToPostalCode'],
+			div[simple-template='link-province'] {
 				display: inline-flex;
 			}
 
@@ -239,12 +242,10 @@ textarea {
 					}
 				}
 
-
-
 				&.select-inline {
 					select {
 						display: inline-block;
-						min-width:100px;
+						min-width: 100px;
 					}
 				}
 
@@ -274,7 +275,7 @@ textarea {
 
 					&[name='billToCity'] {
 						width: 300px;
-						margin-right:20px;
+						margin-right: 20px;
 					}
 
 					&[name='pin'] {
@@ -293,12 +294,11 @@ textarea {
 					margin: 0;
 					padding: 4px 0;
 				}
-
 			}
 
 			// Bottom block of text displayed when there are errors
 			.alert-warning {
-				margin-top:30px;
+				margin-top: 30px;
 
 				ul {
 					list-style: disc;
@@ -306,19 +306,17 @@ textarea {
 					padding: 10px;
 					margin-left: 20px;
 				}
-
 			}
 
 			// Separator after the form fields
 			.row-apart {
-				height:20px;
+				height: 20px;
 			}
-
 		}
 
 		// Back link
 		a.btn-block {
-			float:right;
+			float: right;
 			color: $blue-wordpress;
 			cursor: pointer;
 			margin-top: 16px;
@@ -329,7 +327,8 @@ textarea {
 		}
 
 		// Buy/continue/resend OTP button
-		button.btn-block, div[simple-template='link-password'] a.text-capitalize {
+		button.btn-block,
+		div[simple-template='link-password'] a.text-capitalize {
 			text-transform: capitalize;
 			background: $white;
 			border-color: $gray-lighten-20;
@@ -384,9 +383,7 @@ textarea {
 				display: none;
 			}
 		}
-
 	}
-
 
 	.content-alerts .alert {
 		border: 1px solid lighten( $gray, 25% );
@@ -442,8 +439,11 @@ div[ng-show='busyIndicator'] {
 	align-items: center;
 }
 
-.busy-indicator, .less-busy-indicator, .less-busy-indicator::after, .busy-indicator::after {
-	display:block;
+.busy-indicator,
+.less-busy-indicator,
+.less-busy-indicator::after,
+.busy-indicator::after {
+	display: block;
 	margin: auto;
 	box-sizing: border-box;
 	border: 0.1em solid transparent;
@@ -452,13 +452,15 @@ div[ng-show='busyIndicator'] {
 	animation-name: rotate-spinner;
 }
 
-.busy-indicator, .less-busy-indicator {
+.busy-indicator,
+.less-busy-indicator {
 	border-top-color: $blue-medium;
 	width: 35px;
 	height: 35px;
 }
 
-.busy-indicator::after, .less-busy-indicator::after {
+.busy-indicator::after,
+.less-busy-indicator::after {
 	content: '';
 	width: 100%;
 	height: 100%;
@@ -473,7 +475,6 @@ div[ng-show='busyIndicator'] {
  * Version: 0.19.8 - 2017-04-18T05:43:43.881Z
  * License: MIT
  */
-
 
 .ui-select-container {
 	position: relative;
@@ -493,7 +494,7 @@ div[ng-show='busyIndicator'] {
 }
 
 .ui-select-offscreen {
-	clip: rect(0 0 0 0) !important;
+	clip: rect( 0 0 0 0 ) !important;
 	width: 1px !important;
 	height: 1px !important;
 	border: 0 !important;
@@ -505,7 +506,6 @@ div[ng-show='busyIndicator'] {
 	left: 0 !important;
 	top: 0 !important;
 }
-
 
 .ui-select-choices-row:hover {
 	background-color: $gray-light;
@@ -548,7 +548,7 @@ div[ng-show='busyIndicator'] {
 	min-height: 0;
 	padding: 0;
 	margin: 0;
-	border:0;
+	border: 0;
 }
 
 .ui-select-bootstrap > .ui-select-match > .btn {
@@ -645,7 +645,8 @@ body > .ui-select-bootstrap.open {
 	white-space: nowrap;
 }
 
-.ui-select-bootstrap .ui-select-choices-row > span:hover, .ui-select-bootstrap .ui-select-choices-row > span:focus {
+.ui-select-bootstrap .ui-select-choices-row > span:hover,
+.ui-select-bootstrap .ui-select-choices-row > span:focus {
 	text-decoration: none;
 	color: #262626;
 	background-color: #f5f5f5;
@@ -678,7 +679,7 @@ body > .ui-select-bootstrap.open {
 
 /* Handle up direction Bootstrap */
 .ui-select-container[theme='bootstrap'].direction-up .ui-select-dropdown {
-	box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.25);
+	box-shadow: 0 -4px 8px rgba( 0, 0, 0, 0.25 );
 }
 
 .ui-select-bootstrap {
@@ -712,22 +713,22 @@ body > .ui-select-bootstrap.open {
 
 @-webkit-keyframes ui-select-spin {
 	0% {
-		-webkit-transform: rotate(0deg);
-		transform: rotate(0deg);
+		-webkit-transform: rotate( 0deg );
+		transform: rotate( 0deg );
 	}
 	100% {
-		-webkit-transform: rotate(359deg);
-		transform: rotate(359deg);
+		-webkit-transform: rotate( 359deg );
+		transform: rotate( 359deg );
 	}
 }
 @keyframes ui-select-spin {
 	0% {
-		-webkit-transform: rotate(0deg);
-		transform: rotate(0deg);
+		-webkit-transform: rotate( 0deg );
+		transform: rotate( 0deg );
 	}
 	100% {
-		-webkit-transform: rotate(359deg);
-		transform: rotate(359deg);
+		-webkit-transform: rotate( 359deg );
+		transform: rotate( 359deg );
 	}
 }
 

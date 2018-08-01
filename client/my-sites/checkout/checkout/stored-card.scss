@@ -1,8 +1,10 @@
+/** @format */
+
 // Credit Card Payment Box
 // -----------------------------------
 
 .stored-card {
-	background-image: url('/calypso/images/upgrades/cc-visa-disabled.svg');
+	background-image: url( '/calypso/images/upgrades/cc-visa-disabled.svg' );
 	background-position: 18px center;
 	background-repeat: no-repeat;
 	background-size: 60px auto;
@@ -33,14 +35,14 @@ $cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa
 
 @each $brand in $cc-brands {
 	.stored-card.#{$brand} {
-		background-image: url('/calypso/images/upgrades/cc-#{$brand}-disabled.svg');
+		background-image: url( '/calypso/images/upgrades/cc-#{$brand}-disabled.svg' );
 	}
 }
 
 .selected > .payment-box-section-inner {
 	@each $brand in $cc-brands {
 		.stored-card.#{$brand} {
-			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
+			background-image: url( '/calypso/images/upgrades/cc-#{$brand}.svg' );
 		}
 	}
 }

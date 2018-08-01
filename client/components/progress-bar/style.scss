@@ -1,3 +1,5 @@
+/** @format */
+
 @mixin plan-progress-bar-color( $color ) {
 	.progress-bar {
 		background-color: darken( $color, 30% );
@@ -70,8 +72,11 @@
 }
 
 @keyframes progress-bar-animation {
-	0%   { background-position: 100px 0; }
-	100% {  }
+	0% {
+		background-position: 100px 0;
+	}
+	100% {
+	}
 }
 
 /* Percentage bar */
@@ -79,7 +84,7 @@
 	border-radius: 0;
 	height: 8px;
 	width: 150px;
-	.progress-bar__progress{
+	.progress-bar__progress {
 		border-radius: 0;
 	}
 }

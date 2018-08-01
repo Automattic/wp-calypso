@@ -1,3 +1,5 @@
+/** @format */
+
 .registrant-extra-info__form-title {
 	font-size: 16px;
 	font-weight: bold;
@@ -11,7 +13,7 @@
 
 // Turn off number spinners
 .registrant-extra-info__form {
-	input[type=number] {
+	input[type='number'] {
 		-moz-appearance: textfield;
 
 		&::-webkit-inner-spin-button,
@@ -50,7 +52,6 @@
 		width: 28px;
 	}
 }
-
 
 .registrant-extra-info__dob-column {
 	display: flex;

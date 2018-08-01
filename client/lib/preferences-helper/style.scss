@@ -1,10 +1,12 @@
+/** @format */
+
 .preferences-helper__current-preferences {
 	display: none;
 }
 
 .preferences-helper__list {
 	margin: 5px 0 8px 20px;
-	
+
 	li {
 		font-weight: normal;
 		text-transform: initial;
@@ -36,7 +38,7 @@
 	overflow-y: scroll;
 	position: absolute;
 	bottom: 100%;
-	right: 0px;
+	right: 0;
 	margin: 0;
 	font-size: 11px;
 }

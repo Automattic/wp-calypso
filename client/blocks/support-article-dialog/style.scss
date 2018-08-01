@@ -1,3 +1,5 @@
+/** @format */
+
 @import 'content';
 
 .support-article-dialog.dialog.card {
@@ -11,12 +13,12 @@
 		margin: 12px 0 0;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		font-size: 15px;
 		line-height: 24px;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: auto;
 	}
 }
@@ -52,17 +54,17 @@
 	margin: 56px 0 0;
 	max-width: 750px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		font-size: 36px;
 		line-height: 46px;
 	}
 
-	@include breakpoint( "480px-960px" ) {
+	@include breakpoint( '480px-960px' ) {
 		font-size: 32px;
 		line-height: 40px;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 8px;
 	}
 
@@ -94,7 +96,7 @@
 	iframe {
 		height: 100%;
 		position: absolute;
-			top: 0;
+		top: 0;
 		width: 100%;
 	}
 }

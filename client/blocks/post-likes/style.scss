@@ -1,3 +1,5 @@
+/** @format */
+
 $post-like-padding: 3px;
 $post-like-width: 24px + $post-like-padding * 2;
 $post-likes-per-popover-row: 12;
@@ -29,7 +31,7 @@ $post-likes-per-popover-row: 12;
 			&:last-child {
 				border-bottom-width: 0;
 			}
-			
+
 			.gravatar {
 				position: absolute;
 			}
