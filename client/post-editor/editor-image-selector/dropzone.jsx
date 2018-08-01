@@ -63,7 +63,7 @@ class ImageSelectorDropZone extends Component {
 					} );
 				}
 			}
-			this.props.onDroppedImage( media.ID );
+			this.props.onDroppedImage( media );
 		};
 
 		MediaStore.on( 'change', handleImageSelectorUpload );

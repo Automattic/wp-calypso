@@ -93,7 +93,6 @@ export class EditorImageSelectorPreview extends Component {
 				callback();
 			}
 		} );
-
 		defer( () => {
 			if ( this.props.onImageChange && images && images.length ) {
 				this.props.onImageChange( images );
@@ -135,7 +134,7 @@ export class EditorImageSelectorPreview extends Component {
 		const id = image.ID || image.transientId;
 
 		const removeImage = () => {
-			this.props.onRemoveImage( id );
+			this.props.onRemoveImage( image );
 		};
 
 		const classes = classNames( 'editor-image-selector__item', {

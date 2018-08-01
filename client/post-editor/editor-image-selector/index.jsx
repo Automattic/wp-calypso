@@ -20,7 +20,6 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import MediaActions from 'lib/media/actions';
 import MediaModal from 'post-editor/media-modal';
 import MediaStore from 'lib/media/store';
-import QueryMedia from 'components/data/query-media';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -72,16 +71,18 @@ export class EditorImageSelector extends Component {
 	};
 
 	setImage = value => {
+		if ( value ) {
+			this.props.onImageSelected( value );
+		}
 		this.hideMediaModal();
-		this.props.onImageSelected( value );
 	};
 
-	removeImage = id => {
-		this.props.onRemoveImage( id );
+	removeImage = image => {
+		this.props.onRemoveImage( image );
 	};
 
-	addImage = id => {
-		this.props.onAddImage( id );
+	addImage = image => {
+		this.props.onAddImage( image );
 	};
 
 	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
@@ -89,7 +90,7 @@ export class EditorImageSelector extends Component {
 	onImageChange = images => {
 		const imageIds = images.map( image => image.ID );
 		if ( ! isEqual( imageIds, this.props.imageIds ) ) {
-			this.props.onImageChange( imageIds );
+			this.props.onImageChange( images );
 		}
 	};
 
@@ -98,16 +99,19 @@ export class EditorImageSelector extends Component {
 			return;
 		}
 
+		const { multiple, selecting, siteId, translate } = this.props;
+		const { isSelecting } = this.state;
+
 		return (
-			<MediaLibrarySelectedData siteId={ this.props.siteId }>
+			<MediaLibrarySelectedData siteId={ siteId }>
 				<MediaModal
-					visible={ this.props.selecting || this.state.isSelecting }
+					visible={ selecting || isSelecting }
 					onClose={ this.setImage }
-					siteId={ this.props.siteId }
-					labels={ { confirm: this.props.translate( 'Set Images' ) } }
+					siteId={ siteId }
+					labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
 					enabledFilters={ [ 'images' ] }
 					galleryViewEnabled={ false }
-					{ ...! this.props.multiple && { single: true } }
+					{ ...! multiple && { single: true } }
 				/>
 			</MediaLibrarySelectedData>
 		);
@@ -115,10 +119,6 @@ export class EditorImageSelector extends Component {
 
 	renderSelectedImages() {
 		const { siteId, imageIds, maxWidth, multiple, showEditIcon } = this.props;
-
-		if ( ! imageIds ) {
-			return;
-		}
 
 		return (
 			<EditorImageSelectorPreview
@@ -136,7 +136,7 @@ export class EditorImageSelector extends Component {
 	}
 
 	render() {
-		const { siteId, imageIds } = this.props;
+		const { imageIds } = this.props;
 		const classes = classnames( 'editor-image-selector', {
 			'is-assigned': !! imageIds,
 			'has-active-drop-zone': this.props.hasDropZone && this.props.isDropZoneVisible,
@@ -144,7 +144,6 @@ export class EditorImageSelector extends Component {
 
 		return (
 			<div className={ classes }>
-				{ imageIds && <QueryMedia siteId={ siteId } mediaId={ imageIds[ 0 ] } /> }
 				{ this.renderMediaModal() }
 				<div className="editor-image-selector__inner-content">{ this.renderSelectedImages() }</div>
 
