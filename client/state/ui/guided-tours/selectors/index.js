@@ -70,17 +70,16 @@ const getToursFromFeaturesReached = createSelector(
 					return newTours ? [ ...allTours, ...newTours ] : allTours;
 				}, [] )
 		),
-	getActionLog
+	[ getActionLog ]
 );
 
 /*
  * Returns the names of the tours that the user has previously seen, both
  * recently and in the past.
  */
-const getToursSeen = createSelector(
-	state => uniq( map( getToursHistory( state ), 'tourName' ) ),
-	getToursHistory
-);
+const getToursSeen = createSelector( state => uniq( map( getToursHistory( state ), 'tourName' ) ), [
+	getToursHistory,
+] );
 
 /*
  * Returns the name and timestamp of the tour requested via the URL's query
@@ -157,14 +156,17 @@ const findTriggeredTour = state => {
 
 const isSectionBlacklisted = state => includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
 
-export const hasTourJustBeenVisible = createSelector( ( state, now = Date.now() ) => {
-	const last = findLast( getActionLog( state ), {
-		type: GUIDED_TOUR_UPDATE,
-		shouldShow: false,
-	} );
-	// threshold is one minute
-	return last && now - last.timestamp < 60000;
-}, getActionLog );
+export const hasTourJustBeenVisible = createSelector(
+	( state, now = Date.now() ) => {
+		const last = findLast( getActionLog( state ), {
+			type: GUIDED_TOUR_UPDATE,
+			shouldShow: false,
+		} );
+		// threshold is one minute
+		return last && now - last.timestamp < 60000;
+	},
+	[ getActionLog ]
+);
 
 const isConflictingWithOtherHelp = state =>
 	hasTourJustBeenVisible( state ) || shouldViewBeVisible( state );
