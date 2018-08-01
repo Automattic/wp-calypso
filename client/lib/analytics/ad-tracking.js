@@ -123,44 +123,46 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
  * Globals
  */
 
-// Facebook
-if ( isFacebookEnabled && ! window.fbq ) {
-	setUpFacebookGlobal();
-}
+if ( typeof window !== 'undefined' ) {
+	// Facebook
+	if ( isFacebookEnabled && ! window.fbq ) {
+		setUpFacebookGlobal();
+	}
 
-// Bing
-if ( isBingEnabled && ! window.uetq ) {
-	window.uetq = [];
-}
+	// Bing
+	if ( isBingEnabled && ! window.uetq ) {
+		window.uetq = [];
+	}
 
-// Criteo
-if ( isCriteoEnabled && ! window.criteo_q ) {
-	window.criteo_q = [];
-}
+	// Criteo
+	if ( isCriteoEnabled && ! window.criteo_q ) {
+		window.criteo_q = [];
+	}
 
-// Quantcast
-if ( isQuantcastEnabled && ! window._qevents ) {
-	window._qevents = [];
-}
+	// Quantcast
+	if ( isQuantcastEnabled && ! window._qevents ) {
+		window._qevents = [];
+	}
 
-// Twitter
-if ( isTwitterEnabled && ! window.twq ) {
-	setUpTwitterGlobal();
-}
+	// Twitter
+	if ( isTwitterEnabled && ! window.twq ) {
+		setUpTwitterGlobal();
+	}
 
-// Linkedin
-if ( isLinkedinEnabled && ! window._linkedin_data_partner_id ) {
-	window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
-}
+	// Linkedin
+	if ( isLinkedinEnabled && ! window._linkedin_data_partner_id ) {
+		window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
+	}
 
-// Quora
-if ( isQuoraEnabled && ! window.qp ) {
-	setupQuoraGlobal();
-}
+	// Quora
+	if ( isQuoraEnabled && ! window.qp ) {
+		setupQuoraGlobal();
+	}
 
-// Outbrain
-if ( isOutbrainEnabled ) {
-	setupOutbrainGlobal();
+	// Outbrain
+	if ( isOutbrainEnabled ) {
+		setupOutbrainGlobal();
+	}
 }
 
 /**
