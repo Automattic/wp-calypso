@@ -15,6 +15,9 @@ import { MappedDomain } from '../mapped-domain.jsx';
 
 jest.mock( 'lib/analytics', () => {} );
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'mapped-domain', () => {
 	let props;
 

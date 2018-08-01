@@ -5,6 +5,9 @@
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import { createReduxStore, reducer } from 'state';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'persistence', () => {
 	test( 'initial state should serialize and deserialize without errors or warnings', () => {
 		const consoleErrorSpy = jest

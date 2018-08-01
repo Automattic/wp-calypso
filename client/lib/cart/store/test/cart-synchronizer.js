@@ -11,6 +11,9 @@ import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 const TEST_CART_KEY = 91234567890;
 
 const poller = {

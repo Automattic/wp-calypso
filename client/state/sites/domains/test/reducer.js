@@ -38,6 +38,9 @@ import {
 import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 const itemsReducer = withSchemaValidation( items.schema, items );
 
 describe( 'reducer', () => {

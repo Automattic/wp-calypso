@@ -11,6 +11,9 @@ import moment from 'moment';
  */
 import { createPurchasesArray } from '../assembler';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'assembler', () => {
 	test( 'should be a function', () => {
 		expect( createPurchasesArray ).to.be.an( 'function' );

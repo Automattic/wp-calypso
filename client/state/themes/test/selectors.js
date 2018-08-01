@@ -46,6 +46,9 @@ import {
 import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
 import ThemeQueryManager from 'lib/query-manager/theme';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 const twentyfifteen = {
 	id: 'twentyfifteen',
 	name: 'Twenty Fifteen',

@@ -57,6 +57,9 @@ import {
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'actions', () => {
 	const spy = sinon.spy();
 

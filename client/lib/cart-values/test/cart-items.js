@@ -17,6 +17,9 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 const cartItems = require( '../cart-items' );
 const { getTermDuration, getPlan } = require( 'lib/plans' );
 const {

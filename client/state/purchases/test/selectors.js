@@ -14,6 +14,9 @@ import {
 	isUserPaid,
 } from '../selectors';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'selectors', () => {
 	describe( 'getPurchases', () => {
 		test( 'should return different purchases when the purchase data changes', () => {
