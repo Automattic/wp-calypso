@@ -14,7 +14,6 @@ const CopyWebpackPlugin = require( path.resolve(
 	'server/bundler/copy-webpack-plugin'
 ) );
 const getBaseConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
-const baseConfig = getBaseConfig();
 
 exports.compile = args => {
 	const options = {
@@ -23,6 +22,7 @@ exports.compile = args => {
 	};
 
 	const name = path.basename( path.dirname( options.editorScript ).replace( /\/$/, '' ) );
+	const baseConfig = getBaseConfig( { extensionName: name } );
 
 	const config = {
 		...baseConfig,
