@@ -42,7 +42,7 @@ function checkAuthCode( domainName, authCode, onComplete ) {
 
 	wpcom.undocumented().checkAuthCode( domainName, authCode, function( serverError, result ) {
 		if ( serverError ) {
-			onComplete( serverError.error );
+			onComplete( { error: serverError.error, message: serverError.message } );
 			return;
 		}
 
