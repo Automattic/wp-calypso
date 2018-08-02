@@ -695,7 +695,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_CONTENTS_TYPE ] = (
 					[ packageId ]: {
 						...state.form.packages.selected[ packageId ],
 						contentsType,
-						contentsExplanation: '',
 					},
 				},
 			},
@@ -740,7 +739,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RESTRICTION_TYPE ] = (
 					[ packageId ]: {
 						...state.form.packages.selected[ packageId ],
 						restrictionType,
-						restrictionComments: '',
 					},
 				},
 			},
