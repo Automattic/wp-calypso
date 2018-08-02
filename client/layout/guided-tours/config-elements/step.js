@@ -24,7 +24,7 @@ import {
 	query,
 	targetForSlug,
 } from '../positioning';
-import contextTypes from '../context-types';
+import { contextTypes } from '../context-types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
