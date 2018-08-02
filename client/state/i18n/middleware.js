@@ -12,7 +12,7 @@ function updateMoment( action ) {
 	if ( action && action.type === LOCALE_SET && action.localeSlug !== 'en' ) {
 		// load moment and update the locale
 		import( 'moment' ).then( moment => {
-			import( /* webpackInclude: /\.js$/ */
+			import( /* webpackChunkName: "moment-locale-" */ /* webpackInclude: /\.js$/ */
 			`moment/locale/${ action.localeSlug }` ).then( () => {
 				moment.locale( action.localeSlug );
 			} );

@@ -88,13 +88,13 @@ const webpackConfig = {
 	optimization: {
 		splitChunks: {
 			chunks: codeSplit ? 'all' : 'async',
-			name: isDevelopment || shouldEmitStats,
+			name: true,
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
 		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 		moduleIds: 'named',
-		chunkIds: isDevelopment ? 'named' : 'natural',
+		chunkIds: 'named',
 		minimize: shouldMinify,
 		minimizer: [
 			new UglifyJsPlugin( {
