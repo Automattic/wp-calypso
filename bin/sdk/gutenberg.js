@@ -13,7 +13,8 @@ const CopyWebpackPlugin = require( path.resolve(
 	__rootDir,
 	'server/bundler/copy-webpack-plugin'
 ) );
-const baseConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
+const getBaseConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
+const baseConfig = getBaseConfig();
 
 exports.compile = args => {
 	const options = {
