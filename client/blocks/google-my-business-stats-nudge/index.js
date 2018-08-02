@@ -14,7 +14,6 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import config from 'config';
 import isGoogleMyBusinessStatsNudgeDismissed from 'state/selectors/is-google-my-business-stats-nudge-dismissed';
 import QueryPreferences from 'components/data/query-preferences';
 import SectionHeader from 'components/section-header';
@@ -67,7 +66,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 	}
 
 	render() {
-		if ( ! config.isEnabled( 'google-my-business' ) || ! this.isVisible() ) {
+		if ( ! this.isVisible() ) {
 			return null;
 		}
 
