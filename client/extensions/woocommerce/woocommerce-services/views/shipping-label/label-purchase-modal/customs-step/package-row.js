@@ -10,7 +10,8 @@ import { map, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import ItemRow, { ItemRowHeader } from './item-row';
+import ItemRow from './item-row';
+import ItemRowHeader from './item-row-header';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
@@ -113,7 +114,7 @@ const PackageRow = ( props ) => {
 			error={ errors.itn } />
 
 		<div className="customs-step__item-rows">
-			<ItemRowHeader />
+			<ItemRowHeader siteId={ siteId } orderId={ orderId } />
 			{ uniq( map( items, 'product_id' ) ).map( productId => (
 				<ItemRow
 					key={ productId }

@@ -119,6 +119,15 @@ export default data => {
 					customsItemsData,
 					( { tariffNumber } ) => ! tariffNumber
 				),
+				// Same for all the empty weight and value fields
+				ignoreWeightValidation: mapValues(
+					customsItemsData,
+					( { weight } ) => ! weight || ! parseFloat( weight )
+				),
+				ignoreValueValidation: mapValues(
+					customsItemsData,
+					( { value } ) => ! value || ! parseFloat( value )
+				),
 			},
 			rates: {
 				values: isEmpty( formData.rates.selected )

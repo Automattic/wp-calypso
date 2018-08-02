@@ -13,6 +13,7 @@ import {
 	isEmpty,
 	isEqual,
 	isFinite,
+	isNil,
 	map,
 	mapValues,
 	omit,
@@ -29,7 +30,6 @@ import { translate } from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import { getOrder } from 'woocommerce/state/sites/orders/selectors';
 import {
 	areSettingsLoaded,
 	areSettingsErrored,
@@ -180,26 +180,6 @@ export const isCustomsFormRequired = createSelector(
 		);
 	},
 	( state, orderId, siteId = getSelectedSiteId( state ) ) => [ getForm( state, orderId, siteId ) ]
-);
-
-export const getProductValueFromOrder = createSelector(
-	( state, productId, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const order = getOrder( state, orderId, siteId );
-		if ( ! order ) {
-			return 0;
-		}
-		for ( let i = 0; i < order.line_items.length; i++ ) {
-			const item = order.line_items[ i ];
-			const id = item.variation_id || item.product_id;
-			if ( id === productId ) {
-				return round( item.total / item.quantity, 2 );
-			}
-		}
-		return 0;
-	},
-	( state, productId, orderId, siteId = getSelectedSiteId( state ) ) => [
-		getOrder( state, orderId, siteId ),
-	]
 );
 
 const getAddressErrors = ( addressData, appState, siteId, shouldValidatePhone = false ) => {
@@ -383,6 +363,20 @@ export const getCustomsErrors = (
 			if ( ! itemData.description ) {
 				itemErrors.description = translate( 'This field is required' );
 			}
+			if ( ! customs.ignoreWeightValidation[ productId ] ) {
+				if ( isNil( itemData.weight ) || '' === itemData.weight ) {
+					itemErrors.weight = translate( 'This field is required' );
+				} else if ( ! ( parseFloat( itemData.weight ) > 0 ) ) {
+					itemErrors.weight = translate( 'Weight must be greater than zero' );
+				}
+			}
+			if ( ! customs.ignoreValueValidation[ productId ] ) {
+				if ( isNil( itemData.value ) || '' === itemData.value ) {
+					itemErrors.value = translate( 'This field is required' );
+				} else if ( ! ( parseFloat( itemData.value ) > 0 ) ) {
+					itemErrors.value = translate( 'Declared value must be greater than zero' );
+				}
+			}
 			if (
 				! customs.ignoreTariffNumberValidation[ productId ] &&
 				6 !== itemData.tariffNumber.length
@@ -467,7 +461,12 @@ export const isCustomsFormStepSubmitted = (
 		flatten( map( form.packages.selected, pckg => map( pckg.items, 'product_id' ) ) )
 	);
 	return ! some(
-		usedProductIds.map( productId => form.customs.ignoreTariffNumberValidation[ productId ] )
+		usedProductIds.map(
+			productId =>
+				form.customs.ignoreTariffNumberValidation[ productId ] ||
+				form.customs.ignoreWeightValidation[ productId ] ||
+				form.customs.ignoreValueValidation[ productId ]
+		)
 	);
 };
 
