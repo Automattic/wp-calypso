@@ -31,6 +31,7 @@
     "@babel/preset-env": "7.0.0-beta.55",
     "@babel/preset-react": "7.0.0-beta.55",
     "@babel/runtime": "7.0.0-beta.55",
+    "@wordpress/api-fetch": "1.1.0",
     "@wordpress/blocks": "1.0.0",
     "@wordpress/data": "1.0.1",
     "autoprefixer": "9.0.2",
