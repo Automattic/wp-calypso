@@ -262,8 +262,7 @@ if ( calypsoEnv === 'desktop' ) {
 } else {
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254
-	// uncomment the next line once @wordpress/api-fetch doesn't require jQuery
-	// webpackConfig.externals.push( 'jquery' );
+	webpackConfig.externals.push( 'jquery' );
 }
 
 if ( isDevelopment ) {
