@@ -26,83 +26,76 @@ import { FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 
 class SimplePaymentsView extends Component {
 	render() {
-		const {
-			translate,
-			productId,
-			product,
-			siteId,
-			sitePlan,
-			planHasSimplePaymentsFeature,
-		} = this.props;
+		const { productId, product, siteId } = this.props;
 
-		if ( ! product ) {
-			return <QuerySimplePayments siteId={ siteId } productId={ productId } />;
-		}
+		return (
+			<div className="wpview-content wpview-type-simple-payments">
+				<QuerySimplePayments siteId={ siteId } productId={ productId } />
+				<QuerySitePlans siteId={ siteId } />
+				{ product && <QueryMedia siteId={ siteId } mediaId={ product.featuredImageId } /> }
+				{ this.renderContent() }
+			</div>
+		);
+	}
 
-		if ( ! sitePlan ) {
-			return <QuerySitePlans siteId={ siteId } />;
+	renderContent() {
+		const { translate, product, productImage, planHasSimplePaymentsFeature, sitePlan } = this.props;
+
+		if ( ! product || ! sitePlan ) {
+			return;
 		}
 
 		if ( ! planHasSimplePaymentsFeature ) {
 			return (
-				<div className="wpview-content wpview-type-simple-payments">
-					<div className="wpview-type-simple-payments__unsupported">
-						<div className="wpview-type-simple-payments__unsupported-icon">
-							<Gridicon icon="cross" />
-						</div>
-						<p className="wpview-type-simple-payments__unsupported-message">
-							{ translate( "Your plan doesn't include Simple Payments." ) }
-						</p>
+				<div className="wpview-type-simple-payments__unsupported">
+					<div className="wpview-type-simple-payments__unsupported-icon">
+						<Gridicon icon="cross" />
 					</div>
+					<p className="wpview-type-simple-payments__unsupported-message">
+						{ translate( "Your plan doesn't include Simple Payments." ) }
+					</p>
 				</div>
 			);
 		}
 
-		const { productImage } = this.props;
-		const {
-			title,
-			description,
-			price,
-			currency,
-			multiple,
-			featuredImageId: productImageId,
-		} = product;
+		const { title, description, price, currency, multiple } = product;
 
 		return (
-			<div className="wpview-content wpview-type-simple-payments">
-				{ productImageId && <QueryMedia siteId={ siteId } mediaId={ productImageId } /> }
-				<div className="wpview-type-simple-payments__wrapper">
-					{ productImage && (
-						<div className="wpview-type-simple-payments__image-part">
-							<figure className="wpview-type-simple-payments__image-figure">
-								<img className="wpview-type-simple-payments__image" src={ productImage.URL } />
-							</figure>
-						</div>
-					) }
-					<div className="wpview-type-simple-payments__text-part">
-						<div className="wpview-type-simple-payments__title">{ title }</div>
-						<div className="wpview-type-simple-payments__description">{ description }</div>
-						<div className="wpview-type-simple-payments__price-part">
-							{ formatCurrency( price, currency ) }
-						</div>
-						<div className="wpview-type-simple-payments__pay-part">
-							{ multiple && (
-								<div className="wpview-type-simple-payments__pay-quantity">
-									<input
-										className="wpview-type-simple-payments__pay-quantity-input"
-										type="text"
-										value="1"
-										readOnly
-									/>
-								</div>
-							) }
-							<div className="wpview-type-simple-payments__pay-paypal-button-wrapper">
-								<div className="wpview-type-simple-payments__pay-paypal-button-content">
-									<span className="wpview-type-simple-payments__pay-paypal-button-text">
-										{ translate( 'Pay with' ) }
-									</span>
-									<span className="wpview-type-simple-payments_paypal-logo" />
-								</div>
+			<div className="wpview-type-simple-payments__wrapper">
+				{ productImage && (
+					<div className="wpview-type-simple-payments__image-part">
+						<figure className="wpview-type-simple-payments__image-figure">
+							<img
+								className="wpview-type-simple-payments__image"
+								src={ productImage.URL }
+								alt={ description }
+							/>
+						</figure>
+					</div>
+				) }
+				<div className="wpview-type-simple-payments__text-part">
+					<div className="wpview-type-simple-payments__title">{ title }</div>
+					<div className="wpview-type-simple-payments__description">{ description }</div>
+					<div className="wpview-type-simple-payments__price-part">
+						{ formatCurrency( price, currency ) }
+					</div>
+					<div className="wpview-type-simple-payments__pay-part">
+						{ multiple && (
+							<div className="wpview-type-simple-payments__pay-quantity">
+								<input
+									className="wpview-type-simple-payments__pay-quantity-input"
+									type="text"
+									value="1"
+									readOnly
+								/>
+							</div>
+						) }
+						<div className="wpview-type-simple-payments__pay-paypal-button-wrapper">
+							<div className="wpview-type-simple-payments__pay-paypal-button-content">
+								<span className="wpview-type-simple-payments__pay-paypal-button-text">
+									{ translate( 'Pay with' ) }
+								</span>
+								<span className="wpview-type-simple-payments_paypal-logo" />
 							</div>
 						</div>
 					</div>
