@@ -152,13 +152,14 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
-					{ siteId && (
-						<GoogleMyBusinessStatsNudge
-							siteSlug={ slug }
-							siteId={ siteId }
-							visible={ isGoogleMyBusinessStatsNudgeVisible }
-						/>
-					) }
+					{ config.isEnabled( 'google-my-business' ) &&
+						siteId && (
+							<GoogleMyBusinessStatsNudge
+								siteSlug={ slug }
+								siteId={ siteId }
+								visible={ isGoogleMyBusinessStatsNudgeVisible }
+							/>
+						) }
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
