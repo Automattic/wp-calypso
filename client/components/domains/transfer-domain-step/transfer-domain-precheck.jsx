@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,11 +91,17 @@ class TransferDomainPrecheck extends React.Component {
 	};
 
 	refreshStatus = () => {
-		this.props.refreshStatus( this.statusRefreshed );
+		this.props.refreshStatus( this.statusRefreshed ).then( result => {
+			const isUnlocked = get( result, 'inboundTransferStatus.unlocked' );
+			this.props.recordUnlockedCheckButtonClick( this.props.domain, isUnlocked );
+		} );
 	};
 
 	checkAuthCode = () => {
-		this.props.checkAuthCode( this.props.domain, this.state.authCode );
+		this.props.checkAuthCode( this.props.domain, this.state.authCode ).then( result => {
+			const authCodeValid = get( result, 'authCodeValid' );
+			this.props.recordAuthCodeCheckButtonClick( this.props.domain, authCodeValid );
+		} );
 	};
 
 	getSection( heading, message, buttonText, step, stepStatus, onButtonClick ) {
@@ -357,6 +364,20 @@ class TransferDomainPrecheck extends React.Component {
 const recordNextStep = ( domain_name, show_step ) =>
 	recordTracksEvent( 'calypso_transfer_domain_precheck_step_change', { domain_name, show_step } );
 
+const recordUnlockedCheckButtonClick = ( domain_name, is_unlocked ) => {
+	recordTracksEvent( 'calypso_transfer_domain_precheck_unlocked_check_click', {
+		domain_name,
+		is_unlocked,
+	} );
+};
+
+const recordAuthCodeCheckButtonClick = ( domain_name, auth_code_is_valid ) => {
+	recordTracksEvent( 'calypso_transfer_domain_precheck_auth_code_check_click', {
+		domain_name,
+		auth_code_is_valid,
+	} );
+};
+
 const recordContinueButtonClick = ( domain_name, losing_registrar, losing_registrar_iana_id ) =>
 	recordTracksEvent( 'calypso_transfer_domain_precheck_continue_click', {
 		domain_name,
@@ -368,6 +389,8 @@ export default connect(
 	null,
 	{
 		recordNextStep,
+		recordUnlockedCheckButtonClick,
+		recordAuthCodeCheckButtonClick,
 		recordContinueButtonClick,
 	}
 )( localize( TransferDomainPrecheck ) );
