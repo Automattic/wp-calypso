@@ -55,7 +55,7 @@ export class GsuiteNudge extends React.Component {
 		addItem( googleAppsCartItem );
 
 		if ( receiptId && inDiscountABTest ) {
-			applyCoupon( 'GSUITE42' );
+			applyCoupon( 'GSUITE50' );
 		}
 		page( `/checkout/${ siteSlug }` );
 	};
