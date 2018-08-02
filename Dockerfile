@@ -1,5 +1,10 @@
-FROM node:10.6.0
+FROM node:10.6.0-stretch
+
 LABEL maintainer="Automattic"
+
+RUN echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list.d/backports.list && \
+	apt-get update && \
+	apt-get install -t stretch-backports zopfli brotli
 
 WORKDIR    /calypso
 
@@ -53,7 +58,8 @@ RUN        touch node_modules
 ARG        commit_sha="(unknown)"
 ENV        COMMIT_SHA $commit_sha
 
-RUN        CALYPSO_ENV=production npm run build
+RUN        CALYPSO_ENV=production npm run build && \
+           find public \( -name "*.js" -o -name "*.css" \) -print -exec brotli -f -Z {} \; -exec zopfli {} \;
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js

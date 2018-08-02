@@ -53,5 +53,8 @@ cover.html
 
 cached-requests.json
 
+*.br
+*.gz
+
 # Gutenberg extensions
 /client/gutenberg/extensions/**/build
