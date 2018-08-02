@@ -24,28 +24,9 @@ import {
 	getAllCountryNames,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import ExternalLink from 'components/external-link';
-import InfoTooltip from 'woocommerce/woocommerce-services/components/info-tooltip';
 import WeightField from 'woocommerce/woocommerce-services/components/weight-field';
 import PriceField from 'woocommerce/woocommerce-services/components/price-field';
-
-const TariffCodeTitle = localize( ( { translate } ) =>
-	<span>{ translate( 'Tariff code' ) } (
-		<ExternalLink icon href="https://hts.usitc.gov/" target="_blank">
-			{ translate( 'look up' ) }
-		</ExternalLink>
-		)
-	</span>
-);
-
-const OriginCountryTitle = localize( ( { translate } ) =>
-	<span>
-		{ translate( 'Origin country' ) }
-		<InfoTooltip>
-			{ translate( 'Country where the product was manufactured or assembled' ) }
-		</InfoTooltip>
-	</span>
-);
+import { TariffCodeTitle, OriginCountryTitle } from './item-row-header';
 
 const ItemRow = ( props ) => {
 	const {
@@ -151,13 +132,3 @@ const mapDispatchToProps = ( dispatch, { orderId, siteId, productId } ) => ( {
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ItemRow ) );
-
-export const ItemRowHeader = localize( ( { translate } ) => (
-	<div className="customs-step__item-rows-header">
-		<span className="customs-step__item-description-column">{ translate( 'Description' ) }</span>
-		<span className="customs-step__item-code-column">{ <TariffCodeTitle /> }</span>
-		<span className="customs-step__item-weight-column">{ translate( 'Weight (per unit)' ) }</span>
-		<span className="customs-step__item-value-column">{ translate( 'Value (per unit)' ) }</span>
-		<span className="customs-step__item-country-column">{ <OriginCountryTitle /> }</span>
-	</div>
-) );
