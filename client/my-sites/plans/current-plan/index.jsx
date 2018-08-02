@@ -109,7 +109,7 @@ class CurrentPlan extends Component {
 		return (
 			<Main className="current-plan" wideLayout>
 				<SidebarNavigation />
-				<DocumentHead title={ translate( 'Plans' ) } />
+				<DocumentHead title={ translate( 'My Plan' ) } />
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }

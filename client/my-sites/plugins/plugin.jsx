@@ -40,7 +40,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { getToursHistory } from 'state/ui/guided-tours/selectors';
+import getToursHistory from 'state/ui/guided-tours/selectors/get-tours-history';
 
 const SinglePlugin = createReactClass( {
 	displayName: 'SinglePlugin',

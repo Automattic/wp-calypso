@@ -207,11 +207,11 @@ class SiteSettingsImport extends Component {
 		} = site;
 		const title = siteTitle.length ? siteTitle : slug;
 		const description = translate(
-			"Import another site's content into " +
-				'{{strong}}%(title)s{{/strong}}. Once you start an ' +
-				'import, come back here to check on the progress. ' +
-				'Check out our {{a}}import guide{{/a}} ' +
-				'if you need more help.',
+			'Import content from another site into ' +
+				'{{strong}}%(title)s{{/strong}}. Learn more about ' +
+				'the import process in our {{a}}support documentation{{/a}}. ' +
+				'Once you start importing, you can visit ' +
+				'this page to check on the progress.',
 			{
 				args: { title },
 				components: {
