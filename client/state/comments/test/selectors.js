@@ -7,6 +7,7 @@ import {
 	getPostNewestCommentDate,
 	getCommentLike,
 	getPostCommentsTree,
+	getPostCommentsCountAtDate,
 } from '../selectors';
 
 const state = {
@@ -26,7 +27,7 @@ const state = {
 				{
 					ID: 1,
 					parent: false,
-					date: '2016-01-31T10:07:18-08:00',
+					date: '2016-01-29T10:07:18-08:00',
 					i_like: true,
 					like_count: 5,
 					status: 'unapproved',
@@ -163,6 +164,36 @@ describe( 'selectors', () => {
 
 		test( 'should reverse children', () => {
 			expect( getPostCommentsTree( stateWithDeeperChildren, 1, 1, 'all' ) ).toMatchSnapshot();
+		} );
+	} );
+
+	describe( '#getPostCommentsCountAtDate()', () => {
+		test( 'should return 0 if date is invalid', () => {
+			const res = getPostCommentsCountAtDate( state, 1, 1, null );
+
+			expect( res ).toBe( 0 );
+		} );
+
+		test( 'should return 0 if post comment does not exist', () => {
+			const res = getPostCommentsCountAtDate(
+				state,
+				1,
+				123,
+				new Date( '2015-01-29T10:07:18-08:00' )
+			);
+
+			expect( res ).toBe( 0 );
+		} );
+
+		test( 'should return the count if the post and date are valid', () => {
+			const res = getPostCommentsCountAtDate(
+				state,
+				1,
+				1,
+				new Date( '2016-01-29T10:07:18-08:00' )
+			);
+
+			expect( res ).toBe( 2 );
 		} );
 	} );
 } );
