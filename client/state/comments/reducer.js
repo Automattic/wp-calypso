@@ -3,6 +3,7 @@
  * External dependencies
  */
 import {
+	filter,
 	isUndefined,
 	orderBy,
 	has,
@@ -193,6 +194,16 @@ export function pendingItems( state = {}, action ) {
 			return {
 				...state,
 				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
+			};
+
+		case COMMENTS_RECEIVE:
+			const receivedCommentIds = map( action.comments, 'ID' );
+			return {
+				...state,
+				[ stateKey ]: filter(
+					state[ stateKey ],
+					_comment => ! includes( receivedCommentIds, _comment.ID )
+				),
 			};
 	}
 

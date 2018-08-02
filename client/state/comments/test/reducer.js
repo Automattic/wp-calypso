@@ -231,6 +231,21 @@ describe( 'reducer', () => {
 
 			expect( response[ '1-1' ] ).toHaveLength( 6 );
 		} );
+
+		test( 'should remove pending comments when they are received in items', () => {
+			const state = deepFreeze( {
+				'1-1': [ { ID: 1 }, { ID: 2 }, { ID: 3 } ],
+			} );
+
+			const response = pendingItems( state, {
+				type: COMMENTS_RECEIVE,
+				siteId: 1,
+				postId: 1,
+				comments: [ { ID: 1 }, { ID: 2 } ],
+			} );
+
+			expect( response[ '1-1' ] ).toEqual( [ { ID: 3 } ] );
+		} );
 	} );
 
 	describe( '#fetchStatus', () => {
