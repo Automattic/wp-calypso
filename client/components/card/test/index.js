@@ -41,18 +41,17 @@ describe( 'Card', () => {
 		expect( card.is( '.is-card-link' ) ).toBe( true );
 		expect( card ).toMatchSnapshot();
 	} );
-	// check that it can be rendered as a clickable fake link button
-	test( 'should render as a clickable fake link button', () => {
+	// check that it can be rendered as a clickable button displaying as a link
+	test( 'should render as a clickable button which looks like link', () => {
 		const card = shallow(
-			<Card fakeLink onClick="test">
-				This is a fake link
+			<Card tagName="button" displaysAsLink onClick="test">
+				This is a button which looks like a link
 			</Card>
 		);
 		expect( card.is( 'a' ) ).toBe( false );
 		expect( card.is( 'button' ) ).toBe( true );
 		expect( card.is( '.is-card-link' ) ).toBe( true );
 		expect( card.is( '.is-clickable' ) ).toBe( true );
-		expect( card.is( '.is-fake-link' ) ).toBe( true );
 		expect( card ).toMatchSnapshot();
 	} );
 } );

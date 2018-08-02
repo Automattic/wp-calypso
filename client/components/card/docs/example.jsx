@@ -33,7 +33,8 @@ class Cards extends React.Component {
 					I am a externally linked Card
 				</Card>
 				<Card
-					fakeLink
+					tagName="button"
+					displaysAsLink
 					onClick={ function () {
 						alert( 'Thank you for clicking me!' );
 					} }

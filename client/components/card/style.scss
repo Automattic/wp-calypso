@@ -26,24 +26,23 @@
 
 	&.is-card-link {
 		padding-right: 48px;
+		&:not( a ) {
+			color: $blue-wordpress;
+			font-size: 100%;
+			line-height: 1.5;
+			text-align: left;
+			width: 100%;
+
+			&:active,
+			&:focus,
+			&:hover {
+				color: $link-highlight;
+			}
+		}
 	}
 
 	&.is-clickable {
 		cursor: pointer;
-	}
-
-	&.is-fake-link {
-		color: $blue-wordpress;
-		font-size: 100%;
-		line-height: 1.5;
-		text-align: left;
-		width: 100%;
-
-		&:active,
-		&:focus,
-		&:hover {
-			color: $link-highlight;
-		}
 	}
 
 	&.is-highlight {
@@ -84,14 +83,14 @@
 }
 
 a.card:hover,
-.is-fake-link.card:hover {
+.is-card-link.card:hover {
 	.card__link-indicator {
 		color: $gray-text;
 	}
 }
 
 a.card:focus,
-.is-fake-link.card:focus {
+.is-card-link.card:focus {
 	outline: 0;
 
 	.card__link-indicator {
