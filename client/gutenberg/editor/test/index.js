@@ -21,6 +21,8 @@ import {
 
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 
+import { parse } from '@wordpress/block-serialization-spec-parser';
+
 import apiFetch from '@wordpress/api-fetch';
 
 describe( 'Gutenberg @wordress/data package', () => {
@@ -148,6 +150,24 @@ describe( 'Gutenberg @wordress/blocks package', () => {
 			expect( block.innerBlocks[ 0 ].name ).toBe( 'core/test-block' );
 			expect( typeof block.clientId ).toBe( 'string' );
 		} );
+	} );
+} );
+
+describe( 'block-serialization-spec-parser', () => {
+	// Try test from https://github.com/WordPress/gutenberg/blob/54990c0f77294e6603cc4e0aa957c0679c1bf242/packages/block-serialization-spec-parser/test/index.js
+	test( 'parse() works properly', () => {
+		const result = parse( '<!-- wp:core/more --><!--more--><!-- /wp:core/more -->' );
+
+		expect( result ).toMatchInlineSnapshot( `
+Array [
+  Object {
+    "attrs": null,
+    "blockName": "core/more",
+    "innerBlocks": Array [],
+    "innerHTML": "<!--more-->",
+  },
+]
+` );
 	} );
 } );
 
