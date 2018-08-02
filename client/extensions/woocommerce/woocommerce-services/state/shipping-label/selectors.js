@@ -50,7 +50,7 @@ import {
 	areLocationsErrored,
 	getCountryName,
 	_getSelectorDependants,
-	getAllCountries,
+	getAllCountryNames,
 	getStates,
 	hasStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
@@ -539,21 +539,6 @@ export const canPurchase = createSelector(
 		getForm( state, orderId, siteId ),
 		getFirstErroneousStep( state, orderId, siteId ),
 	]
-);
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Map with the pairs { countryCode: countryName } of all the countries in the world
- */
-export const getAllCountryNames = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const countries = getAllCountries( state, siteId );
-		const names = {};
-		countries.forEach( ( { code, name } ) => ( names[ code ] = name ) );
-		return names;
-	},
-	_getSelectorDependants( 0 )
 );
 
 /**
