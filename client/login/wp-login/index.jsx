@@ -16,6 +16,7 @@ import { startCase } from 'lodash';
 import DocumentHead from 'components/data/document-head';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import LocaleSuggestions from 'components/locale-suggestions';
+import TranslatorInvite from 'components/translator-invite';
 import LoginBlock from 'blocks/login';
 import LoginLinks from './login-links';
 import Main from 'components/main';
@@ -33,6 +34,7 @@ export class Login extends React.Component {
 	static propTypes = {
 		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
+		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
@@ -46,7 +48,7 @@ export class Login extends React.Component {
 		twoFactorAuthType: PropTypes.string,
 	};
 
-	static defaultProps = { isJetpack: false };
+	static defaultProps = { isJetpack: false, isLoginView: true };
 
 	componentDidMount() {
 		this.recordPageView( this.props );
@@ -81,10 +83,10 @@ export class Login extends React.Component {
 		this.props.recordPageView( url, title );
 	}
 
-	renderLocaleSuggestions() {
-		const { locale, path, twoFactorAuthType, socialConnect } = this.props;
+	renderI18nSuggestions() {
+		const { locale, path, isLoginView } = this.props;
 
-		if ( twoFactorAuthType || socialConnect ) {
+		if ( ! isLoginView ) {
 			return null;
 		}
 
@@ -170,13 +172,20 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
+		const {
+			isLoginView,
+			locale,
+			path,
+			privateSite,
+			socialConnect,
+			translate,
+			twoFactorAuthType,
+		} = this.props;
 		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/log-in', locale );
-
 		return (
 			<div>
 				<Main className="wp-login__main">
-					{ this.renderLocaleSuggestions() }
+					{ this.renderI18nSuggestions() }
 
 					<DocumentHead
 						title={ translate( 'Log In' ) }
@@ -194,6 +203,7 @@ export class Login extends React.Component {
 								twoFactorAuthType={ twoFactorAuthType }
 							/>
 						) }
+						{ isLoginView && <TranslatorInvite path={ path } /> }
 					</div>
 				</Main>
 
@@ -204,10 +214,11 @@ export class Login extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state, props ) => ( {
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		locale: getCurrentLocaleSlug( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
+		isLoginView: ! props.twoFactorAuthType && ! props.socialConnect,
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
