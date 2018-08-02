@@ -33,6 +33,7 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
+	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_WRITE_ERROR,
@@ -158,6 +159,40 @@ export function items( state = {}, action ) {
 						placeholderErrorType: errorType,
 					} )
 				),
+			};
+	}
+
+	return state;
+}
+
+/***
+ * Comments pending items reducer, stores new comments per siteId and postId
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
+ */
+export function pendingItems( state = {}, action ) {
+	const { type, siteId, postId } = action;
+
+	// cannot construct stateKey without both
+	if ( ! siteId || ! postId ) {
+		return state;
+	}
+
+	const stateKey = getStateKey( siteId, postId );
+
+	switch ( type ) {
+		case COMMENTS_UPDATES_RECEIVE:
+			const { skipSort } = action;
+			const comments = map( action.comments, _comment => ( {
+				..._comment,
+				contiguous: ! action.commentById,
+				has_link: commentHasLink( _comment.content, _comment.has_link ),
+			} ) );
+			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
+			return {
+				...state,
+				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
 			};
 	}
 
