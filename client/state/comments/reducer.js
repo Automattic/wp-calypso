@@ -504,6 +504,7 @@ export const counts = createReducer(
 export default combineReducers( {
 	counts,
 	items,
+	pendingItems,
 	fetchStatus,
 	errors,
 	expansions,
