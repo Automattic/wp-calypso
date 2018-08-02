@@ -184,7 +184,6 @@ export function pendingItems( state = {}, action ) {
 
 	switch ( type ) {
 		case COMMENTS_UPDATES_RECEIVE:
-			const { skipSort } = action;
 			const comments = map( action.comments, _comment => ( {
 				..._comment,
 				contiguous: ! action.commentById,
@@ -193,7 +192,7 @@ export function pendingItems( state = {}, action ) {
 			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
 			return {
 				...state,
-				[ stateKey ]: ! skipSort ? orderBy( allComments, getCommentDate, [ 'desc' ] ) : allComments,
+				[ stateKey ]: orderBy( allComments, getCommentDate, [ 'desc' ] ),
 			};
 
 		case COMMENTS_RECEIVE:
