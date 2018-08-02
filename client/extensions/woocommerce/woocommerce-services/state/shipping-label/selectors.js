@@ -43,6 +43,7 @@ import {
 	ACCEPTED_USPS_ORIGIN_COUNTRIES,
 	US_MILITARY_STATES,
 	DOMESTIC_US_TERRITORIES,
+	USPS_ITN_REQUIRED_DESTINATIONS,
 } from './constants';
 import {
 	areLocationsLoaded,
@@ -345,7 +346,7 @@ export const getCustomsErrors = (
 							args: { code: classesAbove2500usd.values().next().value }, // Just pick the first code
 						}
 					);
-				} else if ( includes( [ 'IR', 'SY', 'KP', 'CU', 'SD' ], destinationCountryCode ) ) {
+				} else if ( includes( USPS_ITN_REQUIRED_DESTINATIONS, destinationCountryCode ) ) {
 					errors.itn = translate(
 						'International Transaction Number is required for shipments to %(country)s',
 						{
