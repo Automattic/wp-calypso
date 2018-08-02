@@ -248,15 +248,15 @@ const redirectIfNoSite = redirectTo => {
 	};
 };
 
-const redirectToAddMappingIfVipSite = () => {
+const redirectToUseYourDomainIfVipSite = () => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
 		const domain = context.params.domain ? `/${ context.params.domain }` : '';
-		const query = stringify( { initialQuery: context.params.suggestion } );
+		const query = stringify( { initialQuery: get( context, 'params.suggestion', '' ) } );
 
 		if ( selectedSite && selectedSite.is_vip ) {
-			return page.redirect( `/domains/add/mapping${ domain }?${ query }` );
+			return page.redirect( `/domains/add/use-your-domain${ domain }?${ query }` );
 		}
 
 		next();
@@ -293,9 +293,9 @@ export default {
 	siteRedirect,
 	mapDomain,
 	googleAppsWithRegistration,
-	redirectIfNoSite,
-	redirectToAddMappingIfVipSite,
 	redirectToDomainSearchSuggestion,
+	redirectIfNoSite,
+	redirectToUseYourDomainIfVipSite,
 	transferDomain,
 	transferDomainPrecheck,
 	useYourDomain,
