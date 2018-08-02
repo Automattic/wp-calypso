@@ -98,6 +98,14 @@ const devdocs = {
 		next();
 	},
 
+	// Data components
+	data: function( context, next ) {
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./data" />
+		);
+		next();
+	},
+
 	// App Blocks
 	blocks: function( context, next ) {
 		context.primary = (
