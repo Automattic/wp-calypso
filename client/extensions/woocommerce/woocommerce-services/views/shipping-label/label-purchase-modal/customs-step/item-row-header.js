@@ -16,7 +16,7 @@ import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shippin
 export const TariffCodeTitle = localize( ( { translate } ) =>
 	<span>{ translate( 'Tariff code' ) } (
 		<ExternalLink icon href="https://hts.usitc.gov/" target="_blank">
-			{ translate( 'look up' ) }
+			{ translate( 'look up', { comment: 'To search for' } ) }
 		</ExternalLink>
 		)
 	</span>
