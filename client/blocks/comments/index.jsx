@@ -24,7 +24,7 @@ class PostComments extends React.Component {
 	};
 
 	static defaultProps = {
-		shouldPollForNewComments: true,
+		shouldPollForNewComments: false,
 	};
 
 	pollForNewComments = () => {
@@ -40,7 +40,7 @@ class PostComments extends React.Component {
 	};
 
 	render() {
-		const { siteId, postId } = this.props;
+		const { siteId, postId, shouldPollForNewComments } = this.props;
 
 		if ( ! siteId || ! postId ) {
 			return null;
@@ -48,7 +48,7 @@ class PostComments extends React.Component {
 
 		return (
 			<Fragment>
-				{ this.props.shouldPollForNewComments && (
+				{ shouldPollForNewComments && (
 					<Interval onTick={ this.pollForNewComments } period={ EVERY_MINUTE } />
 				) }
 				<PostCommentsList { ...this.props } />
