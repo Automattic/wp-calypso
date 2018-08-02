@@ -49,7 +49,6 @@ import {
 	areLocationsLoaded,
 	areLocationsErrored,
 	getCountryName,
-	_getSelectorDependants,
 	getAllCountryNames,
 	getStates,
 	hasStates,
@@ -553,7 +552,7 @@ export const getOriginCountryNames = createSelector(
 			? pick( allNames, ACCEPTED_USPS_ORIGIN_COUNTRIES )
 			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
-	_getSelectorDependants( 0 )
+	[ getAllCountryNames, isWcsInternationalLabelsEnabled ]
 );
 
 /**
@@ -568,7 +567,7 @@ export const getDestinationCountryNames = createSelector(
 			? allNames
 			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
-	_getSelectorDependants( 0 )
+	[ getAllCountryNames, isWcsInternationalLabelsEnabled ]
 );
 
 /**
@@ -594,7 +593,7 @@ export const getStateNames = createSelector(
 		}
 		return names;
 	},
-	_getSelectorDependants( 1 )
+	[ getStates, isWcsInternationalLabelsEnabled ]
 );
 
 export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {

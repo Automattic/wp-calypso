@@ -55,7 +55,7 @@ export const areLocationsErrored = ( state, siteId = getSelectedSiteId( state ) 
  * @param {number} numArgs Number of arguments the selector takes, excluding the Redux state tree and the site ID
  * @return {function} Function, as expected by the "createSelector" library
  */
-export const _getSelectorDependants = numArgs => ( state, ...args ) => {
+const _getSelectorDependants = numArgs => ( state, ...args ) => {
 	// First argument is always "state", last argument is always "siteId"
 	const siteId = args[ numArgs ];
 	const loaded = areLocationsLoaded( state, siteId );
