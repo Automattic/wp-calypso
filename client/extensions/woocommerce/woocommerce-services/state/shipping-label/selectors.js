@@ -49,8 +49,7 @@ import {
 	areLocationsLoaded,
 	areLocationsErrored,
 	getCountryName,
-	_getSelectorDependants,
-	getAllCountries,
+	getAllCountryNames,
 	getStates,
 	hasStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
@@ -544,21 +543,6 @@ export const canPurchase = createSelector(
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object} Map with the pairs { countryCode: countryName } of all the countries in the world
- */
-export const getAllCountryNames = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
-		const countries = getAllCountries( state, siteId );
-		const names = {};
-		countries.forEach( ( { code, name } ) => ( names[ code ] = name ) );
-		return names;
-	},
-	_getSelectorDependants( 0 )
-);
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object} Map with the pairs { countryCode: countryName } of countries that are available as origin to print shipping labels
  */
 export const getOriginCountryNames = createSelector(
@@ -568,7 +552,7 @@ export const getOriginCountryNames = createSelector(
 			? pick( allNames, ACCEPTED_USPS_ORIGIN_COUNTRIES )
 			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
-	_getSelectorDependants( 0 )
+	[ getAllCountryNames, isWcsInternationalLabelsEnabled ]
 );
 
 /**
@@ -583,7 +567,7 @@ export const getDestinationCountryNames = createSelector(
 			? allNames
 			: pick( allNames, DOMESTIC_US_TERRITORIES );
 	},
-	_getSelectorDependants( 0 )
+	[ getAllCountryNames, isWcsInternationalLabelsEnabled ]
 );
 
 /**
@@ -609,7 +593,7 @@ export const getStateNames = createSelector(
 		}
 		return names;
 	},
-	_getSelectorDependants( 1 )
+	[ getStates, isWcsInternationalLabelsEnabled ]
 );
 
 export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {

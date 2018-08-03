@@ -55,7 +55,7 @@ export const areLocationsErrored = ( state, siteId = getSelectedSiteId( state ) 
  * @param {number} numArgs Number of arguments the selector takes, excluding the Redux state tree and the site ID
  * @return {function} Function, as expected by the "createSelector" library
  */
-export const _getSelectorDependants = numArgs => ( state, ...args ) => {
+const _getSelectorDependants = numArgs => ( state, ...args ) => {
 	// First argument is always "state", last argument is always "siteId"
 	const siteId = args[ numArgs ];
 	const loaded = areLocationsLoaded( state, siteId );
@@ -209,3 +209,18 @@ export const getStateName = createSelector(
 export const hasStates = ( state, countryCode, siteId = getSelectedSiteId( state ) ) => {
 	return ! isEmpty( getStates( state, countryCode, siteId ) );
 };
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} Map with the pairs { countryCode: countryName } of all the countries in the world
+ */
+export const getAllCountryNames = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const countries = getAllCountries( state, siteId );
+		const names = {};
+		countries.forEach( ( { code, name } ) => ( names[ code ] = name ) );
+		return names;
+	},
+	_getSelectorDependants( 0 )
+);
