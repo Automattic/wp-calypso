@@ -32,6 +32,15 @@ class Cards extends React.Component {
 				<Card href="#cards" target="_blank" rel="noopener noreferrer">
 					I am a externally linked Card
 				</Card>
+				<Card
+					tagName="button"
+					displayAsLink
+					onClick={ function () {
+						alert( 'Thank you for clicking me!' );
+					} }
+				>
+					I am a clickable button that looks like a link
+				</Card>
 				<Card highlight="info">I am a Card, highlighted as info</Card>
 				<Card highlight="success">I am a Card, highlighted as success</Card>
 				<Card highlight="error">I am a Card, highlighted as error</Card>
