@@ -27,6 +27,7 @@ export class Wrapper extends React.Component {
 	};
 
 	componentDidMount() {
+		this.redirected = false;
 		this.goToUpsellPageIfRequired();
 	}
 
@@ -37,7 +38,10 @@ export class Wrapper extends React.Component {
 	goToUpsellPageIfRequired() {
 		const props = this.props;
 		if ( this.shouldRedirectToUpsellPage() ) {
-			page.redirect( `${ props.upsellPageURL }/${ props.siteSlug }` );
+			if ( ! this.redirected ) {
+				page.redirect( `${ props.upsellPageURL }/${ props.siteSlug }` );
+				this.redirected = true;
+			}
 		}
 	}
 
