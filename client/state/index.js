@@ -234,6 +234,7 @@ export function createReduxStore( initialState = {} ) {
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		navigationMiddleware,
 		isBrowser && require( './comments/middleware.js' ).default,
+		isBrowser && require( './i18n/middleware.js' ).default,
 	].filter( Boolean );
 
 	const enhancers = [

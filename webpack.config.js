@@ -91,13 +91,13 @@ const webpackConfig = {
 	optimization: {
 		splitChunks: {
 			chunks: codeSplit ? 'all' : 'async',
-			name: isDevelopment || shouldEmitStats,
+			name: true,
 			maxAsyncRequests: 20,
 			maxInitialRequests: 5,
 		},
 		runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 		moduleIds: 'named',
-		chunkIds: isDevelopment ? 'named' : 'natural',
+		chunkIds: 'named',
 		minimize: shouldMinify,
 		minimizer: [
 			new UglifyJsPlugin( {
@@ -222,6 +222,7 @@ const webpackConfig = {
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( /^props$/ ),
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
 		] ),
