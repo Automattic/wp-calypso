@@ -10,7 +10,7 @@ import nock from 'nock';
 /**
  * Internal dependencies
  */
-import { openPrintingFlow } from '../actions';
+import { openPrintingFlow, convertToApiPackage } from '../actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PRINTING_FLOW,
@@ -243,5 +243,62 @@ describe( 'Shipping label Actions', () => {
 		} );
 
 		nock.cleanAll();
+	} );
+
+	describe( '#convertToApiPackage', () => {
+		it( 'totals value correctly (by quantity)', () => {
+			const pckg = {
+				id: 'id',
+				box_id: 'box_id',
+				service_id: 'service_id',
+				length: 5,
+				width: 6,
+				height: 7,
+				weight: 8,
+				signature: 'signature',
+				items: [
+					{
+						product_id: 123,
+						quantity: 2,
+					},
+				],
+			};
+
+			const customsItems = {
+				123: {
+					weight: 4,
+					value: 3,
+					description: 'Product',
+					tariffNumber: '098',
+					originCountry: 'US',
+				},
+			};
+
+			expect( convertToApiPackage( pckg, null, null, null, customsItems ) ).to.deep.equal( {
+				id: 'id',
+				box_id: 'box_id',
+				service_id: 'service_id',
+				length: 5,
+				width: 6,
+				height: 7,
+				weight: 8,
+				signature: 'signature',
+				contents_type: 'merchandise',
+				restriction_type: 'none',
+				non_delivery_option: 'return',
+				itn: '',
+				items: [
+					{
+						product_id: 123,
+						description: 'Product',
+						quantity: 2,
+						value: 6,
+						weight: 8,
+						hs_tariff_number: '098',
+						origin_country: 'US',
+					},
+				],
+			} );
+		} );
 	} );
 } );

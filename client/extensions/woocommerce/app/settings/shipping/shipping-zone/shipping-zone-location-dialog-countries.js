@@ -18,7 +18,6 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import LocationFlag from 'woocommerce/components/location-flag';
-import { decodeEntities } from 'lib/formatting';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import {
 	toggleContinentSelected,
@@ -78,7 +77,7 @@ const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, a
 						/>
 					) }
 					{ isCountry ? <LocationFlag code={ code } /> : null }
-					<span>{ decodeEntities( name ) }</span>
+					<span>{ name }</span>
 					{ disabled && <small>{ translate( '(An existing zone covers this location)' ) }</small> }
 				</label>
 			</li>

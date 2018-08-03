@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,17 +14,16 @@ import { bindActionCreators } from 'redux';
  */
 import { fetchShippingMethods } from 'woocommerce/state/sites/shipping-methods/actions';
 import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
-import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { areLocationsLoaded } from 'woocommerce/state/sites/data/locations/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryLocations from 'woocommerce/components/query-locations';
 
 class QueryShippingZones extends Component {
 	fetch( siteId ) {
 		this.props.actions.fetchShippingZones( siteId );
 		this.props.actions.fetchShippingMethods( siteId );
-		this.props.actions.fetchLocations( siteId );
 	}
 
 	componentWillMount() {
@@ -43,7 +42,7 @@ class QueryShippingZones extends Component {
 	}
 
 	render() {
-		return null;
+		return <QueryLocations siteId={ this.props.siteId } />;
 	}
 }
 
@@ -67,7 +66,6 @@ export default connect(
 		actions: bindActionCreators(
 			{
 				fetchShippingZones,
-				fetchLocations,
 				fetchShippingMethods,
 			},
 			dispatch
