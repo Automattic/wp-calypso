@@ -7,6 +7,7 @@ import React from 'react';
 import * as components from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 import { getSettings } from '@wordpress/date';
+import { Fragment } from '@wordpress/element';
 import { LiveError, LivePreview, LiveProvider } from 'react-live';
 import request from 'superagent';
 import codeBlocks from 'gfm-code-blocks';
@@ -33,11 +34,19 @@ class Example extends React.Component {
 				format: 'markdown',
 			} )
 			.then( ( { text } ) => {
-				let code = codeBlocks( text ).filter( block => 'jsx' === block.lang )[ 0 ].code;
+				let code = codeBlocks( text ).find( block => 'jsx' === block.lang ).code;
 
 				// react-live cannot resolve imports in real time, so we get rid of them
-				// (dependencies will be injected via the scope property)
+				// (dependencies will be injected via the scope property).
 				code = code.replace( /^.*import.*$/gm, '' );
+
+				// All the examples are defining a functional component called My<ComponentName> we
+				// can render.
+				code = `
+					${ code }
+					
+					render( <My${ this.props.component } /> );
+				`;
 
 				this.setState( { code } );
 			} );
@@ -49,6 +58,7 @@ class Example extends React.Component {
 			...components,
 			withState,
 			getSettings,
+			Fragment,
 		};
 		const className = classnames(
 			'design__gutenberg-component-example',
@@ -56,7 +66,7 @@ class Example extends React.Component {
 		);
 
 		return code ? (
-			<LiveProvider code={ code } scope={ scope } className={ className }>
+			<LiveProvider code={ code } scope={ scope } className={ className } noInline={ true }>
 				<LiveError />
 				<LivePreview />
 			</LiveProvider>

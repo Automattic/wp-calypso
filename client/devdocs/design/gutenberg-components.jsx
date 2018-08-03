@@ -42,6 +42,7 @@ export default class extends React.Component {
 
 		const componentsWithExample = [
 			'Autocomplete',
+			'BaseControl',
 			'Button',
 			'ButtonGroup',
 			'CheckboxControl',
@@ -66,6 +67,7 @@ export default class extends React.Component {
 			'MenuGroup',
 			'MenuItem',
 			'MenuItemsChoice',
+			'Modal',
 		];
 
 		return (
@@ -100,6 +102,7 @@ export default class extends React.Component {
 							<GutenbergComponentExample
 								key={ componentName }
 								asyncName={ componentName }
+								component={ componentName }
 								readmeFilePath={ readmeFilePath }
 							/>
 						);
