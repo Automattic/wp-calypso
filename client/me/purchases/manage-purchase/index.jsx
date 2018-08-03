@@ -165,7 +165,7 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<CompactCard tagName="button" displaysAsLink onClick={ this.handleRenew }>
+			<CompactCard tagName="button" displayAsLink onClick={ this.handleRenew }>
 				{ translate( 'Renew Now' ) }
 			</CompactCard>
 		);

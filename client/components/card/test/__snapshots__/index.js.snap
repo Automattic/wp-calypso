@@ -26,7 +26,7 @@ exports[`Card should have custom class of \`test__ace\` 1`] = `
 />
 `;
 
-exports[`Card should render as a clickable button which looks like link 1`] = `
+exports[`Card should render as a clickable button which looks like a link 1`] = `
 <button
   className="card is-card-link is-clickable"
   onClick="test"

@@ -8,12 +8,12 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
-const getClassName = ( { className, compact, displaysAsLink, highlight, href, onClick } ) =>
+const getClassName = ( { className, compact, displayAsLink, highlight, href, onClick } ) =>
 	classNames(
 		'card',
 		className,
 		{
-			'is-card-link': displaysAsLink || !! href,
+			'is-card-link': displayAsLink || !! href,
 			'is-clickable': !! onClick,
 			'is-compact': compact,
 			'is-highlight': highlight,
@@ -24,7 +24,7 @@ const getClassName = ( { className, compact, displaysAsLink, highlight, href, on
 class Card extends PureComponent {
 	static propTypes = {
 		className: PropTypes.string,
-		displaysAsLink: PropTypes.bool,
+		displayAsLink: PropTypes.bool,
 		href: PropTypes.string,
 		tagName: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ).isRequired,
 		target: PropTypes.string,
@@ -41,7 +41,7 @@ class Card extends PureComponent {
 		const {
 			children,
 			compact,
-			displaysAsLink,
+			displayAsLink,
 			highlight,
 			tagName: TagName,
 			href,
@@ -56,7 +56,7 @@ class Card extends PureComponent {
 			</a>
 		) : (
 			<TagName { ...props } className={ getClassName( this.props ) }>
-				{ displaysAsLink && (
+				{ displayAsLink && (
 					<Gridicon
 						className="card__link-indicator"
 						icon={ target ? 'external' : 'chevron-right' }

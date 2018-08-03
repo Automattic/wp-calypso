@@ -42,9 +42,9 @@ describe( 'Card', () => {
 		expect( card ).toMatchSnapshot();
 	} );
 	// check that it can be rendered as a clickable button displaying as a link
-	test( 'should render as a clickable button which looks like link', () => {
+	test( 'should render as a clickable button which looks like a link', () => {
 		const card = shallow(
-			<Card tagName="button" displaysAsLink onClick="test">
+			<Card tagName="button" displayAsLink onClick="test">
 				This is a button which looks like a link
 			</Card>
 		);

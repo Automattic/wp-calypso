@@ -34,7 +34,7 @@ class Cards extends React.Component {
 				</Card>
 				<Card
 					tagName="button"
-					displaysAsLink
+					displayAsLink
 					onClick={ function () {
 						alert( 'Thank you for clicking me!' );
 					} }
