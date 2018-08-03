@@ -52,20 +52,20 @@ export const areShippingZoneLocationsLoading = (
  * in WP-Admin (which doesn't have as many restrictions), then it could be that he configured the zones in a way
  * that can't be reliably represented in Calypso, and as such the UI must forbid him to add new zones or edit
  * existing zones locations.
- * @param {Object} reduxState Whole Redux state tree
+ * @param {Object} appState Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping zones have valid locations to be edited in Calypso
  */
 export const areShippingZonesLocationsValid = (
-	reduxState,
-	siteId = getSelectedSiteId( reduxState )
+	appState,
+	siteId = getSelectedSiteId( appState )
 ) => {
 	const continentsSet = new Set();
 	const countriesSet = new Set();
 	const statesSet = new Set();
-	const allLocations = getRawShippingZoneLocations( reduxState, siteId );
+	const allLocations = getRawShippingZoneLocations( appState, siteId );
 	for ( const zoneId of Object.keys( allLocations ) ) {
-		if ( ! areShippingZoneLocationsLoaded( reduxState, zoneId, siteId ) ) {
+		if ( ! areShippingZoneLocationsLoaded( appState, zoneId, siteId ) ) {
 			continue;
 		}
 		// The "Locations not covered by your other zones" zone is always valid, it doesn't have any locations

@@ -56,7 +56,7 @@ const Dropdown = ( {
 Dropdown.propTypes = {
 	id: PropTypes.string.isRequired,
 	valuesMap: PropTypes.object.isRequired,
-	title: PropTypes.string,
+	title: PropTypes.node,
 	description: PropTypes.string,
 	value: PropTypes.string.isRequired,
 	updateValue: PropTypes.func.isRequired,

@@ -13,6 +13,7 @@ import { bindActionCreators } from 'redux';
  */
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
 import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
+import QueryLocations from 'woocommerce/components/query-locations';
 import {
 	fetchLabelsData,
 	fetchLabelsStatus,
@@ -49,6 +50,7 @@ class QueryLabels extends Component {
 			<div>
 				<QueryLabelSettings siteId={ siteId } />
 				<QueryPackages siteId={ siteId } />
+				<QueryLocations siteId={ siteId } />
 			</div>
 		);
 	}

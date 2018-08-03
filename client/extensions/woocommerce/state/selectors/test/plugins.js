@@ -52,8 +52,8 @@ describe( 'plugins', () => {
 			configStub.restore();
 		} );
 
-		it( 'should be null if the plugin list is being requested', () => {
-			expect( isWcsEnabled( state, 4 ) ).to.be.null;
+		it( 'should be false if the plugin list is being requested', () => {
+			expect( isWcsEnabled( state, 4 ) ).to.be.false;
 		} );
 
 		it( 'should be false if the plugin is not installed', () => {

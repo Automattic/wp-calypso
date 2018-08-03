@@ -19,7 +19,6 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import { decodeEntities } from 'lib/formatting';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import FormLabel from 'components/forms/form-label';
@@ -67,7 +66,7 @@ class FormStateSelectFromApi extends Component {
 	renderOption = option => {
 		return (
 			<option key={ option.code } value={ option.code }>
-				{ decodeEntities( option.name ) }
+				{ option.name }
 			</option>
 		);
 	};

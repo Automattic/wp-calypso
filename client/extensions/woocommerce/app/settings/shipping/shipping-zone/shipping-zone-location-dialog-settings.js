@@ -18,7 +18,6 @@ import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
-import { decodeEntities } from 'lib/formatting';
 import {
 	getShippingZoneLocationsWithEdits,
 	canLocationsBeFiltered,
@@ -138,7 +137,7 @@ const ShippingZoneLocationDialogSettings = ( {
 						checked={ selected }
 						disabled={ disabled }
 					/>
-					{ decodeEntities( name ) }
+					{ name }
 				</label>
 			</li>
 		);

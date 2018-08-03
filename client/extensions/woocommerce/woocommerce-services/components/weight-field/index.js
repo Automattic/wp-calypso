@@ -11,47 +11,49 @@ import PropTypes from 'prop-types';
  */
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FieldError from '../field-error';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-const TextField = ( {
+const WeightField = ( {
 	id,
 	title,
-	description,
 	value,
 	placeholder,
 	updateValue,
 	error,
 	className,
+	weightUnit,
 } ) => {
 	const handleChangeEvent = event => updateValue( event.target.value );
 
 	return (
 		<FormFieldset className={ className }>
 			<FormLabel htmlFor={ id }>{ title }</FormLabel>
-			<FormTextInput
+			<FormTextInputWithAffixes
+				noWrap
+				suffix={ weightUnit }
 				id={ id }
 				name={ id }
-				placeholder={ placeholder }
+				type="number"
+				placeholder={ placeholder || '0.0' }
 				value={ value }
 				onChange={ handleChangeEvent }
 				isError={ Boolean( error ) }
 			/>
 			{ error && typeof error === 'string' && <FieldError text={ error } /> }
-			{ ! error && description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
 		</FormFieldset>
 	);
 };
 
-TextField.propTypes = {
+WeightField.propTypes = {
+	weightUnit: PropTypes.string.isRequired,
 	id: PropTypes.string.isRequired,
 	title: PropTypes.node,
-	description: PropTypes.string,
-	value: PropTypes.string.isRequired,
+	value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+	placeholder: PropTypes.string,
 	updateValue: PropTypes.func,
 	error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 	className: PropTypes.string,
 };
 
-export default TextField;
+export default WeightField;
