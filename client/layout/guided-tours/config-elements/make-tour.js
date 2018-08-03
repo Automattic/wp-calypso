@@ -12,7 +12,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { tourBranching } from '../config-parsing';
+import { tourBranching } from '../tour-branching';
 import contextTypes from '../context-types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
