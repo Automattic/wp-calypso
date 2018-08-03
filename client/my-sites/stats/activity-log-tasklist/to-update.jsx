@@ -11,7 +11,6 @@ import { get, unionBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPluginsWithUpdates } from 'state/plugins/installed/selectors';
 import { requestSiteAlerts } from 'state/data-getters';
 
 const emptyList = [];
@@ -58,7 +57,7 @@ export default WrappedComponent => {
 	return connect( ( state, { siteId } ) => {
 		const alertsData = requestSiteAlerts( siteId );
 		return {
-			plugins: getPluginsWithUpdates( state, [ siteId ] ),
+			plugins: get( alertsData, 'data.updates.plugins', emptyList ),
 			themes: get( alertsData, 'data.updates.themes', emptyList ),
 			core: get( alertsData, 'data.updates.core', emptyList ),
 		};

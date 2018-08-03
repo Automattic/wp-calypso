@@ -33,7 +33,6 @@ import RewindAlerts from './rewind-alerts';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins/';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
@@ -502,7 +501,6 @@ class ActivityLog extends Component {
 				<PageViewTracker path="/stats/activity/:site" title="Stats > Activity" />
 				<DocumentHead title={ translate( 'Stats' ) } />
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
-				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
 					: this.getActivityLog() }
