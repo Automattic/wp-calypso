@@ -53,7 +53,7 @@ class ImporterHeader extends React.PureComponent {
 		const {
 				importerStatus: { importerId, importerState, type },
 				site: { ID: siteId },
-				startImport,
+				startImportFn,
 			} = this.props,
 			tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
@@ -65,7 +65,7 @@ class ImporterHeader extends React.PureComponent {
 				importer_id: tracksType,
 			} );
 		} else if ( includes( startStates, importerState ) ) {
-			startImport( siteId, type );
+			startImportFn( siteId, type );
 
 			this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 				blog_id: siteId,
@@ -152,7 +152,7 @@ class ImporterHeader extends React.PureComponent {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	startImport: flowRight(
+	startImportFn: flowRight(
 		dispatch,
 		startImport
 	),
