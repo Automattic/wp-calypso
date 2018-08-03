@@ -6,6 +6,9 @@
 import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { flow } from 'lodash';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'index', () => {
 	const TEST_BLOG_ID = 1;
 	let cartItems,

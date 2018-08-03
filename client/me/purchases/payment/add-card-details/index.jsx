@@ -108,7 +108,9 @@ class AddCardDetails extends Component {
 				<CreditCardForm
 					apiParams={ { purchaseId: this.props.purchase.id } }
 					createCardToken={ this.createCardToken }
+					purchase={ this.props.purchase }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					siteSlug={ this.props.siteSlug }
 					successCallback={ this.successCallback }
 				/>
 			</Main>

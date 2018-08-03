@@ -6,7 +6,7 @@ jest.mock( 'lib/abtest', () => ( {
 
 jest.mock( 'lib/analytics/index', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/user', () => ( {} ) );
+jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'components/main', () => 'MainComponent' );
 jest.mock( 'components/popover', () => 'Popover' );
 

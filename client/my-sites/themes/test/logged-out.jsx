@@ -22,6 +22,9 @@ jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => require( 'components/empty-component' ) );
 jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'logged-out', () => {
 	describe( 'when calling renderToString()', () => {
 		const themes = [

@@ -15,11 +15,13 @@ import Gridicon from 'gridicons';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import config from 'config';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import notices from 'notices';
 import { validatePaymentDetails } from 'lib/checkout';
+import { handleRenewNowClick, isRenewable } from 'lib/purchases';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
@@ -36,8 +38,10 @@ export class CreditCardForm extends Component {
 		createCardToken: PropTypes.func.isRequired,
 		countriesList: PropTypes.array.isRequired,
 		initialValues: PropTypes.object,
+		purchase: PropTypes.object,
 		recordFormSubmitEvent: PropTypes.func.isRequired,
 		saveStoredCard: PropTypes.func,
+		siteSlug: PropTypes.string,
 		successCallback: PropTypes.func.isRequired,
 		showUsedForExistingPurchasesInfo: PropTypes.bool,
 		autoFocus: PropTypes.bool,
@@ -140,7 +144,15 @@ export class CreditCardForm extends Component {
 	};
 
 	saveCreditCard() {
-		const { createCardToken, saveStoredCard, translate, successCallback, apiParams } = this.props;
+		const {
+			createCardToken,
+			saveStoredCard,
+			translate,
+			successCallback,
+			apiParams,
+			purchase,
+			siteSlug,
+		} = this.props;
 		const cardDetails = this.getCardDetails();
 
 		createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
@@ -192,9 +204,29 @@ export class CreditCardForm extends Component {
 						return;
 					}
 
-					notices.success( response.success, {
-						persistent: true,
-					} );
+					if (
+						purchase &&
+						siteSlug &&
+						isRenewable( purchase ) &&
+						config.isEnabled( 'upgrades/checkout' )
+					) {
+						const noticeMessage = translate(
+							'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
+						);
+						const noticeOptions = {
+							button: translate( 'Renew Now' ),
+							onClick: function( event, closeFunction ) {
+								handleRenewNowClick( purchase, siteSlug );
+								closeFunction();
+							},
+							persistent: true,
+						};
+						notices.info( noticeMessage, noticeOptions );
+					} else {
+						notices.success( response.success, {
+							persistent: true,
+						} );
+					}
 
 					successCallback();
 				} );

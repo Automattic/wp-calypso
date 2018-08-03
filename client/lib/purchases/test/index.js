@@ -31,6 +31,9 @@ import {
 	PLAN_PURCHASE_WITH_PAYPAL,
 } from './data';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'index', () => {
 	describe( '#isRemovable', () => {
 		test( 'should not be removable when domain registration purchase is not expired', () => {
