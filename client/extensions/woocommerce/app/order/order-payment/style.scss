@@ -1,10 +1,12 @@
+/** @format */
+
 &.order-payment__dialog {
 	display: flex;
 	flex-direction: column;
 	padding: 0;
 	flex-grow: 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 640px;
 	}
 
@@ -51,7 +53,7 @@
 		margin-bottom: 16px;
 		width: 100%;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 40%;
 			margin-bottom: 0;
 		}
@@ -64,7 +66,7 @@
 	.order-payment__details {
 		margin-bottom: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 55%;
 		}
 	}

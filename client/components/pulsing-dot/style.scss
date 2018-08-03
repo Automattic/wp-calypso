@@ -1,9 +1,11 @@
+/** @format */
+
 .pulsing-dot {
 	background: $gray-light;
 	transform: translate3d( 0, 0, 0 );
 	position: absolute;
-		top: 45%;
-		left: 50%;
+	top: 45%;
+	left: 50%;
 	margin-left: -20px 0 0 -20px;
 	display: block;
 	width: 6px;

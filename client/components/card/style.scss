@@ -1,16 +1,17 @@
+/** @format */
+
 .card {
 	display: block;
 	position: relative;
-	margin: 0 auto 10px auto;
+	margin: 0 auto 10px;
 	padding: 16px;
 	box-sizing: border-box;
 	background: $white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 
 	@include clear-fix;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-bottom: 16px;
 		padding: 24px;
 	}
@@ -19,7 +20,7 @@
 	&.is-compact {
 		margin-bottom: 1px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-bottom: 1px;
 			padding: 16px 24px;
 		}
@@ -54,7 +55,6 @@
 	}
 }
 
-
 // Clickable Card
 .card__link-indicator {
 	color: $gray-text-min;
@@ -64,12 +64,11 @@
 	top: 0;
 	right: 16px;
 
-	html[dir="rtl"] & {
+	html[dir='rtl'] & {
 		&.gridicons-chevron-right {
 			transform: scaleX( -1 );
 		}
 	}
-
 }
 
 a.card:hover {

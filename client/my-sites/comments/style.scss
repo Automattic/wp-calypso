@@ -1,7 +1,7 @@
 /** @format */
 .comment-navigation {
 	@include breakpoint( '<480px' ) {
-		.section-nav__mobile-header:after {
+		.section-nav__mobile-header::after {
 			padding-left: 8px;
 		}
 		.section-nav__mobile-header-text {

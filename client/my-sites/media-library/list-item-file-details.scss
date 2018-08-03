@@ -1,5 +1,7 @@
+/** @format */
+
 .media-library__list-item-file-details {
-	left: auto #{"/*rtl:ignore*/"};
+	left: auto #{'/*rtl:ignore*/'};
 	transform: translateY( -50% );
 	width: 100%;
 	text-align: center;
@@ -12,14 +14,14 @@
 	height: 0;
 	margin: 0 auto;
 	padding-bottom: 25%;
-	line-height: .5;
+	line-height: 0.5;
 	color: $gray-darken-10;
 }
 
 .media-library__list-item-icon .gridicon {
 	position: absolute;
-		top: 0;
-		left: 0;
+	top: 0;
+	left: 0;
 	display: block;
 	width: 100%;
 	height: auto;

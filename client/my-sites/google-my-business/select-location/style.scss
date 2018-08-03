@@ -1,10 +1,12 @@
+/** @format */
 
 .gmb-select-location__help {
 	margin-top: 16px;
 }
 
 .gmb-location {
-	.button, .gmb-select-location__status {
+	.button,
+	.gmb-select-location__status {
 		align-self: stretch;
 
 		@include breakpoint( '<480px' ) {

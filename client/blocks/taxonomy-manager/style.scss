@@ -1,12 +1,12 @@
+/** @format */
+
 .taxonomy-manager {
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 }
 
 .taxonomy-manager__header {
 	display: flex;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	background: $white;
 }
 
@@ -119,5 +119,5 @@
 
 .taxonomy-manager .virtual-list__list-row.is-empty {
 	padding: 16px 24px;
-	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
+	box-shadow: 0 0 0 1px rgba( 200, 215, 225, 0.5 ), 0 1px 2px #e9eff3;
 }

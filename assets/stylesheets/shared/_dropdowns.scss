@@ -1,12 +1,15 @@
 /**
  * Dropdown menu for extra site options
+ *
+ * @format
  */
+
 .dropdown-menu {
 	background-color: $white;
-	box-shadow: 0 1px 4px rgba($gray-dark, 0.2);
+	box-shadow: 0 1px 4px rgba( $gray-dark, 0.2 );
 	position: absolute;
-		right: 0;
-		top: 130%;
+	right: 0;
+	top: 130%;
 	z-index: z-index( 'root', '.dropdown-menu' );
 	display: none;
 	float: left;
@@ -15,8 +18,8 @@
 
 	.pointer {
 		position: absolute;
-			right: 8px;
-			top: -7px;
+		right: 8px;
+		top: -7px;
 		width: 12px;
 		height: 10px;
 		float: left;
@@ -25,8 +28,8 @@
 		.pointer-outer,
 		.pointer-inner {
 			position: absolute;
-				top: 0;
-				left: 0;
+			top: 0;
+			left: 0;
 			display: inline-block;
 			margin-left: -1px;
 		}
@@ -34,7 +37,7 @@
 		.pointer-outer {
 			left: 0;
 			top: 0;
-			border-bottom: 7px solid rgba(0,0,0,0.06);
+			border-bottom: 7px solid rgba( 0, 0, 0, 0.06 );
 			border-left: 7px solid transparent;
 			border-right: 7px solid transparent;
 		}

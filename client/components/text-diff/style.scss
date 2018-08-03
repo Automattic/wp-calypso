@@ -1,10 +1,12 @@
+/** @format */
+
 .text-diff__additions {
-	background: lighten($blue-wordpress, 58%);
+	background: lighten( $blue-wordpress, 58% );
 	border-bottom: 2px solid $blue-wordpress;
 }
 
 .text-diff__deletions {
-	background: lighten($alert-red, 38%);
+	background: lighten( $alert-red, 38% );
 	border-bottom: 2px solid $alert-red;
 	text-decoration: line-through;
 }

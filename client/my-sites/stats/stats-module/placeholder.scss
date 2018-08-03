@@ -1,3 +1,5 @@
+/** @format */
+
 .stats-module__placeholder {
 	display: block;
 	padding: 0 24px;
@@ -26,7 +28,8 @@
 // Module Placeholder
 
 @keyframes delay-fade-in {
-	0%, 66% {
+	0%,
+	66% {
 		opacity: 0;
 	}
 
@@ -36,7 +39,6 @@
 }
 
 .stats-module.is-loading {
-
 	// Hide elements
 	.module-header .site-icon,
 	.module-header .toggle-info,

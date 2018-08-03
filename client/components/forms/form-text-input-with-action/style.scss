@@ -1,3 +1,5 @@
+/** @format */
+
 .form-text-input-with-action {
 	@extend %form-field;
 	display: flex;
@@ -64,13 +66,13 @@
 	text-transform: none;
 }
 
-input[type="text"].form-text-input-with-action__input {
+input[type='text'].form-text-input-with-action__input {
 	flex: 1 1 0;
 	border: none;
 	min-width: 0;
 }
 
-input[type="text"].form-text-input-with-action__input:focus {
+input[type='text'].form-text-input-with-action__input:focus {
 	border: none;
 	box-shadow: none;
 }

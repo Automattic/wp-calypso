@@ -1,3 +1,5 @@
+/** @format */
+
 .active-tests {
 	display: none;
 }
@@ -10,7 +12,7 @@
 
 .environment-badge .environment.is-tests .test-helper__choice-indicator {
 	margin-top: -2px;
-	transform: scale(0.8);
+	transform: scale( 0.8 );
 }
 
 .test-helper__test-header {
@@ -35,4 +37,3 @@
 	list-style-type: none;
 	padding-left: 0;
 }
-

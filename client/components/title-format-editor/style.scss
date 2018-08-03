@@ -1,3 +1,5 @@
+/** @format */
+
 .seo-settings__page-title-header {
 	display: flex;
 	justify-content: center;
@@ -5,13 +7,12 @@
 }
 
 .seo-settings__page-title-header-image {
-	margin: 0 10px 10px 10px;
+	margin: 0 10px 10px;
 }
 
 .seo-settings__page-title-header-text {
 	flex-basis: 330px;
-	margin: 0 10px 10px 10px;
-
+	margin: 0 10px 10px;
 }
 
 .title-format-editor {
@@ -23,7 +24,8 @@
 			background-color: $gray-light;
 		}
 
-		.title-format-editor__token, .title-format-editor__button {
+		.title-format-editor__token,
+		.title-format-editor__button {
 			pointer-events: none;
 		}
 
@@ -53,14 +55,14 @@
 	background-color: $white;
 	color: $gray-darken-30;
 	border: 1px solid $gray-lighten-20;
-	padding: 3px 8px 3px 8px;
+	padding: 3px 8px;
 	margin-left: 10px;
 	margin-top: 3px;
 	font-size: 12px;
 	font-weight: 600;
 	cursor: pointer;
 
-	&:before {
+	&::before {
 		content: '+';
 		margin-right: 4px;
 		font-weight: 600;

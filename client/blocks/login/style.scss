@@ -1,5 +1,6 @@
-.login {
+/** @format */
 
+.login {
 	&.is-jetpack {
 		.button.is-primary {
 			background-color: $green-jetpack;
@@ -81,7 +82,8 @@
 	margin-top: 20px;
 
 	&.disabled {
-		a, a:hover {
+		a,
+		a:hover {
 			pointer-events: none;
 			color: $gray;
 		}
@@ -119,7 +121,8 @@
 }
 
 .wp-login__links {
-	a, button {
+	a,
+	button {
 		font-size: 14px;
 
 		&:hover {
@@ -136,7 +139,7 @@
 	position: relative;
 	white-space: nowrap;
 	&::after {
-		@include long-content-fade($color: $gray-light);
+		@include long-content-fade( $color: $gray-light );
 	}
 }
 

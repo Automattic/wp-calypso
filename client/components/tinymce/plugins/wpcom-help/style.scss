@@ -1,6 +1,8 @@
+/** @format */
+
 .wpcom-help__dialog {
 	&.dialog.card {
-		@include breakpoint('>660px') {
+		@include breakpoint( '>660px' ) {
 			flex: 1 0 100%;
 			max-width: 700px;
 		}

@@ -1,3 +1,5 @@
+/** @format */
+
 // dialog
 .dialog.card.privacy-policy-banner__dialog {
 	max-width: 700px;
@@ -8,7 +10,7 @@
 		list-style-position: inside;
 		margin: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			list-style-position: outside;
 			margin: 0 3em 1.5em;
 		}
@@ -22,8 +24,7 @@
 	padding: 0 24px;
 	background-color: #fbfcfd;
 	height: 80px;
-	box-shadow: 0 1px 0 0 $gray-lighten-20,
-		0 1px 0 lighten( $gray, 40% );
+	box-shadow: 0 1px 0 0 $gray-lighten-20, 0 1px 0 lighten( $gray, 40% );
 }
 
 .dialog__content .privacy-policy-banner__dialog-header-text h1 {
@@ -31,7 +32,7 @@
 }
 
 .privacy-policy-banner__dialog-header-image {
-	width: (149 / 482) * 100%;
+	width: ( 149 / 482 ) * 100%;
 	margin-right: 20px;
 }
 

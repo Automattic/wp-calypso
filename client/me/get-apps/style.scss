@@ -1,3 +1,5 @@
+/** @format */
+
 .get-apps {
 	display: flex;
 	flex-direction: column;
@@ -11,7 +13,7 @@
 	font-size: 15px;
 	margin-bottom: 4px;
 
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		font-size: 18px;
 	}
 }
@@ -20,7 +22,7 @@
 .get-apps__mobile {
 	margin-bottom: 0;
 
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -31,7 +33,7 @@
 	font-size: 13px;
 	margin-bottom: 4px;
 
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		font-size: 15px;
 	}
 }
@@ -40,21 +42,20 @@
 .get-apps__description:last-child {
 	margin-bottom: 12px;
 
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		margin-bottom: 0;
 	}
 }
 
 .get-apps__mobile {
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		order: 2;
 	}
 }
 
 .get-apps__illustration {
 	background-color: $white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	box-sizing: border-box;
 	color: $blue-dark;
 	max-width: 980px;
@@ -62,7 +63,7 @@
 	padding: 16px;
 	text-align: center;
 
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		padding: 24px;
 	}
 }
@@ -72,7 +73,7 @@
 	font-weight: 600;
 	padding: 0 24px;
 
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		font-size: 24px;
 	}
 }
@@ -82,13 +83,13 @@
 	margin-bottom: 0;
 	padding: 0 24px;
 
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		font-size: 14px;
 	}
 }
 
 .get-apps__card-text {
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		flex: 1;
 	}
 }
@@ -100,7 +101,7 @@
 }
 
 .get-apps__desktop-button {
-	@include breakpoint('>480px') {
+	@include breakpoint( '>480px' ) {
 		margin-left: 24px;
 	}
 }

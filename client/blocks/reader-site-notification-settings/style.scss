@@ -1,3 +1,5 @@
+/** @format */
+
 .reader-site-notification-settings__button {
 	color: $gray;
 
@@ -9,7 +11,7 @@
 .reader-site-notification-settings__button-label {
 	font-size: 14px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }
@@ -18,16 +20,15 @@
 	fill: $gray-lighten-10;
 	height: 18px;
 	position: relative;
-		top: 4px;
-		left: -4px;
+	top: 4px;
+	left: -4px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		left: -1px;
 	}
 }
 
 .reader-popover__wrapper {
-
 	.segmented-control {
 		background: inherit;
 		padding: 0 12px 17px 16px;
@@ -37,9 +38,9 @@
 		background: $white;
 	}
 
-	.reader-site-notification-settings__popout-toggle:nth-child(2),
-	.reader-site-notification-settings__popout-toggle:nth-child(3),
-	.reader-site-notification-settings__popout-toggle:nth-child(4) {
+	.reader-site-notification-settings__popout-toggle:nth-child( 2 ),
+	.reader-site-notification-settings__popout-toggle:nth-child( 3 ),
+	.reader-site-notification-settings__popout-toggle:nth-child( 4 ) {
 		display: flex;
 		justify-content: space-between;
 	}
@@ -59,8 +60,8 @@
 	.gridicon {
 		fill: $gray;
 		position: relative;
-			left: 3px;
-			top: 2px;
+		left: 3px;
+		top: 2px;
 	}
 }
 

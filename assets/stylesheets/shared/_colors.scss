@@ -1,65 +1,66 @@
+/** @format */
+
 // Primary Accent (Blues)
-$blue-wordpress:         #0087be;
-$blue-light:             #78dcfa;
-$blue-medium:            #00aadc;
-$blue-dark:              #005082;
+$blue-wordpress: #0087be;
+$blue-light: #78dcfa;
+$blue-medium: #00aadc;
+$blue-dark: #005082;
 
 // Jetpack Green
-$green-jetpack:          #00be28;
+$green-jetpack: #00be28;
 
 // Grays
-$gray:                   #87a6bc;
-$gray-light:             lighten( $gray, 33% ); //#f3f6f8
-$gray-dark:              darken( $gray, 38% ); //#2e4453
+$gray: #87a6bc;
+$gray-light: lighten( $gray, 33% ); //#f3f6f8
+$gray-dark: darken( $gray, 38% ); //#2e4453
 
 // $gray-text: ideal for standard, non placeholder text
 // $gray-text-min: minimum contrast needed for WCAG 2.0 AA on white background
-$gray-text:              $gray-dark;
-$gray-text-min:          darken( $gray, 18% ); //#537994
+$gray-text: $gray-dark;
+$gray-text-min: darken( $gray, 18% ); //#537994
 
 // Shades of gray
 $gray-lighten-10: lighten( $gray, 10% ); // #a8bece
 $gray-lighten-20: lighten( $gray, 20% ); // #c8d7e1
 $gray-lighten-30: lighten( $gray, 30% ); // #e9eff3
-$gray-darken-10:  darken( $gray, 10% );  // #668eaa
-$gray-darken-20:  darken( $gray, 20% );  // #4f748e
-$gray-darken-30:  darken( $gray, 30% );  // #3d596d
+$gray-darken-10: darken( $gray, 10% ); // #668eaa
+$gray-darken-20: darken( $gray, 20% ); // #4f748e
+$gray-darken-30: darken( $gray, 30% ); // #3d596d
 //
 // See wordpress.com/design-handbook/colors/ for more info.
 
 // Secondary Accent (Oranges)
-$orange-jazzy:           #f0821e;
-$orange-fire:            #d54e21;
+$orange-jazzy: #f0821e;
+$orange-fire: #d54e21;
 
 // Alerts
-$alert-yellow:           #f0b849;
-$alert-red:              #d94f4f;
-$alert-green:            #4ab866;
-$alert-purple:           #855DA6;
+$alert-yellow: #f0b849;
+$alert-red: #d94f4f;
+$alert-green: #4ab866;
+$alert-purple: #855da6;
 
 // Link hovers
-$link-highlight:         tint($blue-medium, 20%);
+$link-highlight: tint( $blue-medium, 20% );
 
 // Essentials
-$white:                  rgba(255,255,255,1);
-$transparent:            rgba(255,255,255,0);
+$white: rgba( 255, 255, 255, 1 );
+$transparent: rgba( 255, 255, 255, 0 );
 
 // Uncommon
 $border-ultra-light-gray: #e8f0f5;
 // $green-text-min: minimum contrast needed for WCAG 2.0 AA on white background
-$green-text-min:          darken( $alert-green, 14% ); // #358649
-$podcasting-purple:       #9b4dd5;
+$green-text-min: darken( $alert-green, 14% ); // #358649
+$podcasting-purple: #9b4dd5;
 
 // Layout
-$masterbar-color:          $blue-wordpress;
-$sidebar-bg-color:         $gray-lighten-30;
-$sidebar-text-color:       $gray-dark;
-$sidebar-selected-color:   $gray-text-min;
-
+$masterbar-color: $blue-wordpress;
+$sidebar-bg-color: $gray-lighten-30;
+$sidebar-text-color: $gray-dark;
+$sidebar-selected-color: $gray-text-min;
 
 //Social media colors
 $color-facebook: #39579a;
-$color-twitter: #55ACEE;
+$color-twitter: #55acee;
 $color-gplus: #df4a32;
 $color-tumblr: #35465c;
 $color-linkedin: #0976b4;
@@ -72,6 +73,6 @@ $color-pinterest: #cc2127;
 $color-pocket: #ee4256;
 $color-email: #f8f8f8;
 $color-print: #f8f8f8;
-$color-skype: #00AFF0;
+$color-skype: #00aff0;
 $color-telegram: #0088cc;
 $color-whatsapp: #43d854;
