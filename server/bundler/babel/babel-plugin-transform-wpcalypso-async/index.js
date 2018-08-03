@@ -109,20 +109,43 @@ module.exports = ( { types: t } ) => {
 					const chunkName = 'async-load-' + kebabCase( argument.value );
 
 					// Transform to asynchronous require.ensure
-					path.replaceWith(
-						t.callExpression(
-							t.memberExpression( t.identifier( 'require' ), t.identifier( 'ensure' ) ),
-							[
-								argument,
-								t.functionExpression(
-									null,
-									[ t.identifier( 'require' ) ],
-									t.blockStatement( [ t.expressionStatement( requireCall ) ] )
-								),
-								t.stringLiteral( chunkName ),
-							]
-						)
+					const argumentWithMagicComments = t.addComment(
+						argument,
+						'leading',
+						`webpackChunkName: "${ chunkName }", webpackPrefetch: true`,
+						false
 					);
+					const importCall = t.callExpression( t.identifier( 'import' ), [
+						argumentWithMagicComments,
+					] );
+
+					let statement;
+					if ( callback ) {
+						statement = t.callExpression(
+							t.memberExpression( importCall, t.identifier( 'then' ) ),
+							[
+								t.functionExpression(
+									t.identifier( 'load' ),
+									[ t.identifier( 'mod' ) ],
+									t.blockStatement( [
+										t.expressionStatement(
+											t.callExpression( callback, [
+												t.conditionalExpression(
+													t.memberExpression( t.identifier( 'mod' ), t.identifier( '__esModule' ) ),
+													t.memberExpression( t.identifier( 'mod' ), t.identifier( 'default' ) ),
+													t.identifier( 'mod' )
+												),
+											] )
+										),
+									] )
+								),
+							]
+						);
+					} else {
+						statement = importCall;
+					}
+
+					path.replaceWith( statement );
 				} else {
 					// Transform to synchronous require
 					path.replaceWith( requireCall );
