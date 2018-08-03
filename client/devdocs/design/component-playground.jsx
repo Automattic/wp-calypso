@@ -15,7 +15,6 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import ClipboardButton from 'components/forms/clipboard-button';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
-import * as playgroundScope from 'devdocs/design/playground-scope';
 
 class ComponentPlayground extends Component {
 	static propTypes = {
@@ -42,10 +41,16 @@ class ComponentPlayground extends Component {
 			'design__component-playground-code': true,
 			'show-code': toggleCode ? this.state.showCode : true,
 		} );
+		const { section } = this.props;
+		const scope =
+			'gutenberg-components' === section
+				? require( '@wordpress/components' )
+				: require( 'devdocs/design/playground-scope' );
+
 		return (
 			<LiveProvider
 				code={ this.props.code }
-				scope={ playgroundScope }
+				scope={ scope }
 				mountStylesheet={ false }
 				className="design__component-playground"
 			>
