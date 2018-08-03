@@ -12,8 +12,10 @@ import StoreUpsellComponent from './store-upsell';
 import ThemesUpsellComponent from './themes-upsell';
 import WordAdsUpsellComponent from './ads-upsell';
 import FeaturesComponent from './features';
+import upsellRedirect from './upsell-redirect';
 
 export {
+	upsellRedirect,
 	FeaturesComponent,
 	PluginsUpsellComponent,
 	StoreUpsellComponent,
