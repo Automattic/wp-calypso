@@ -19,9 +19,10 @@ import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle, getSitePlan } from 'state/sites/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
-import { addItem, removeItem } from 'lib/upgrades/actions';
+import { addItem, removeItem, applyCoupon } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import { isDotComPlan, isBusiness } from 'lib/products-values';
+import { abtest } from 'lib/abtest';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 export class GsuiteNudge extends React.Component {
@@ -42,7 +43,7 @@ export class GsuiteNudge extends React.Component {
 	};
 
 	handleAddGoogleApps = googleAppsCartItem => {
-		const { siteSlug, receiptId } = this.props;
+		const { siteSlug, receiptId, inDiscountABTest } = this.props;
 
 		googleAppsCartItem.extra = {
 			...googleAppsCartItem.extra,
@@ -52,6 +53,10 @@ export class GsuiteNudge extends React.Component {
 		this.removePlanFromCart();
 
 		addItem( googleAppsCartItem );
+
+		if ( receiptId && inDiscountABTest ) {
+			applyCoupon( 'GSUITE50' );
+		}
 		page( `/checkout/${ siteSlug }` );
 	};
 
@@ -86,6 +91,7 @@ export class GsuiteNudge extends React.Component {
 					domain={ this.props.domain }
 					onClickSkip={ this.handleClickSkip }
 					onAddGoogleApps={ this.handleAddGoogleApps }
+					showDiscount={ this.props.inDiscountABTest }
 				/>
 			</Main>
 		);
@@ -102,6 +108,7 @@ export default connect( ( state, props ) => {
 		siteSlug: getSiteSlug( state, props.selectedSiteId ),
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
 		hasDotComBusiness,
+		inDiscountABTest: 'discount' === abtest( 'gSuiteDiscount' ),
 	};
 } )( localize( GsuiteNudge ) );
 
