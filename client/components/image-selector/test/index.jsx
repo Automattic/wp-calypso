@@ -15,7 +15,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { EditorImageSelector } from '../';
+import { ImageSelector } from '../';
 
 jest.mock( 'event', () => {}, { virtual: true } );
 jest.mock( 'lib/media/store', () => ( {
@@ -40,42 +40,42 @@ jest.mock( 'state/ui/selectors', () => ( {
 	getSelectedSite: () => {},
 } ) );
 
-describe( 'EditorImageSelector', () => {
+describe( 'ImageSelector', () => {
 	describe( 'rendering', () => {
 		test( 'should show the add image uploader label when no images are passed', () => {
-			const wrapper = mount( <EditorImageSelector imageIds={ [] } /> );
+			const wrapper = mount( <ImageSelector imageIds={ [] } /> );
 
 			expect(
-				wrapper.find( '.editor-image-selector__uploader-label' ).contains( 'Add image' )
+				wrapper.find( '.image-selector__uploader-label' ).contains( 'Add image' )
 			).to.equal( true );
 		} );
 
 		test( 'should show an uploader when image exists and set to allow multiple images', () => {
-			const wrapper = mount( <EditorImageSelector imageIds={ [ 100 ] } multiple /> );
+			const wrapper = mount( <ImageSelector imageIds={ [ 100 ] } multiple /> );
 
 			expect(
-				wrapper.find( '.editor-image-selector__uploader-wrapper' ).hostNodes()
+				wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes()
 			).to.have.lengthOf( 1 );
 		} );
 
 		test( 'should not show an uploader when an image exists and multiple images not allowed', () => {
-			const wrapper = mount( <EditorImageSelector imageIds={ [ 100 ] } /> );
+			const wrapper = mount( <ImageSelector imageIds={ [ 100 ] } /> );
 
 			expect(
-				wrapper.find( '.editor-image-selector__uploader-wrapper' ).hostNodes()
+				wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes()
 			).to.have.lengthOf( 0 );
 		} );
 
 		test( 'should show image when valid ID is passed', () => {
-			const wrapper = mount( <EditorImageSelector imageIds={ [ 100 ] } /> );
+			const wrapper = mount( <ImageSelector imageIds={ [ 100 ] } /> );
 
-			expect( wrapper.find( '.editor-image-selector__item' ).hostNodes() ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.image-selector__item' ).hostNodes() ).to.have.lengthOf( 1 );
 		} );
 
 		test( 'should not show image when invalid ID is passed', () => {
-			const wrapper = mount( <EditorImageSelector imageIds={ [ 50 ] } /> );
+			const wrapper = mount( <ImageSelector imageIds={ [ 50 ] } /> );
 
-			expect( wrapper.find( '.editor-image-selector__item' ).hostNodes() ).to.have.lengthOf( 0 );
+			expect( wrapper.find( '.image-selector__item' ).hostNodes() ).to.have.lengthOf( 0 );
 		} );
 	} );
 
@@ -87,10 +87,10 @@ describe( 'EditorImageSelector', () => {
 		};
 
 		test( 'should set state to selecting when uploader is clicked', () => {
-			const wrapper = mount( <EditorImageSelector imageIds={ [] } /> );
+			const wrapper = mount( <ImageSelector imageIds={ [] } /> );
 
 			wrapper
-				.find( '.editor-image-selector__uploader-wrapper' )
+				.find( '.image-selector__uploader-wrapper' )
 				.hostNodes()
 				.simulate( 'click' );
 			expect( wrapper ).to.have.state( 'isSelecting' ).to.be.true;
@@ -99,11 +99,11 @@ describe( 'EditorImageSelector', () => {
 		test( 'should pass back image for removal when remove button is clicked', () => {
 			const mockOnRemoveImage = sinon.spy();
 			const wrapper = mount(
-				<EditorImageSelector imageIds={ [ 100 ] } onRemoveImage={ mockOnRemoveImage } />
+				<ImageSelector imageIds={ [ 100 ] } onRemoveImage={ mockOnRemoveImage } />
 			);
 
 			wrapper
-				.find( '.editor-image-selector__remove' )
+				.find( '.image-selector__remove' )
 				.hostNodes()
 				.simulate( 'click' );
 			expect( mockOnRemoveImage ).to.have.been.calledWith(
@@ -115,7 +115,7 @@ describe( 'EditorImageSelector', () => {
 			const mockOnAddImage = sinon.spy();
 			const wrapper = mount(
 				<Provider store={ store }>
-					<EditorImageSelector hasDropZone onAddImage={ mockOnAddImage } />
+					<ImageSelector hasDropZone onAddImage={ mockOnAddImage } />
 				</Provider>
 			);
 
@@ -131,7 +131,7 @@ describe( 'EditorImageSelector', () => {
 			const mockOnImageSelected = sinon.spy();
 			const wrapper = mount(
 				<Provider store={ store }>
-					<EditorImageSelector
+					<ImageSelector
 						imageIds={ [] }
 						onImageSelected={ mockOnImageSelected }
 						siteId={ require( './fixtures' ).DUMMY_SITE_ID }
@@ -148,7 +148,7 @@ describe( 'EditorImageSelector', () => {
 				type: 'media',
 				items: [ require( './fixtures' ).DUMMY_MEDIA[ 100 ] ],
 			} );
-			expect( wrapper.find( 'EditorImageSelector' ).instance().state.isSelecting ).to.be.false;
+			expect( wrapper.find( 'ImageSelector' ).instance().state.isSelecting ).to.be.false;
 		} );
 	} );
 } );

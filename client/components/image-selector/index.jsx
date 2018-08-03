@@ -13,7 +13,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import EditorImageSelectorPreview from './preview';
+import ImageSelectorPreview from './preview';
 import ImageSelectorDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
@@ -23,12 +23,13 @@ import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-export class EditorImageSelector extends Component {
+export class ImageSelector extends Component {
 	static propTypes = {
 		hasDropZone: PropTypes.bool,
 		imageIds: PropTypes.array,
 		isDropZoneVisible: PropTypes.bool,
 		maxWidth: PropTypes.number,
+		onAddImage: PropTypes.func,
 		onImageChange: PropTypes.func,
 		onImageSelected: PropTypes.func,
 		onRemoveImage: PropTypes.func,
@@ -43,6 +44,7 @@ export class EditorImageSelector extends Component {
 		imageIds: [],
 		isDropZoneVisible: false,
 		maxWidth: 450,
+		onAddImage: noop,
 		onImageSelected: noop,
 		onImageChange: noop,
 		onRemoveImage: noop,
@@ -119,7 +121,7 @@ export class EditorImageSelector extends Component {
 		const { siteId, imageIds, maxWidth, multiple, showEditIcon } = this.props;
 
 		return (
-			<EditorImageSelectorPreview
+			<ImageSelectorPreview
 				siteId={ siteId }
 				itemIds={ imageIds }
 				maxWidth={ maxWidth }
@@ -135,7 +137,7 @@ export class EditorImageSelector extends Component {
 
 	render() {
 		const { imageIds } = this.props;
-		const classes = classnames( 'editor-image-selector', {
+		const classes = classnames( 'image-selector', {
 			'is-assigned': !! imageIds,
 			'has-active-drop-zone': this.props.hasDropZone && this.props.isDropZoneVisible,
 		} );
@@ -143,9 +145,14 @@ export class EditorImageSelector extends Component {
 		return (
 			<div className={ classes }>
 				{ this.renderMediaModal() }
-				<div className="editor-image-selector__inner-content">{ this.renderSelectedImages() }</div>
-
-				{ this.props.hasDropZone && <ImageSelectorDropZone onDroppedImage={ this.addImage } /> }
+				<div className="image-selector__inner-content">{ this.renderSelectedImages() }</div>
+				{ this.props.hasDropZone && (
+					<ImageSelectorDropZone
+						onDroppedImage={ this.addImage }
+						site={ this.props.site }
+						siteId={ this.props.siteId }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -158,4 +165,4 @@ export default connect( state => {
 		siteId,
 		isDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
 	};
-} )( localize( EditorImageSelector ) );
+} )( localize( ImageSelector ) );

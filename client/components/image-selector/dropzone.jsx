@@ -78,7 +78,7 @@ class ImageSelectorDropZone extends Component {
 	render() {
 		return (
 			<DropZone
-				className="editor-image-selector__dropzone"
+				className="image-selector__dropzone"
 				dropZoneName="imageSelector"
 				icon={ <ImageSelectorDropZoneIcon /> }
 				textLabel={ this.props.translate( 'Add Image' ) }

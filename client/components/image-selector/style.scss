@@ -1,4 +1,4 @@
-.editor-image-selector {
+.image-selector {
 	position: relative;
 }
 
@@ -21,7 +21,7 @@
 	margin-bottom: 16px;
 }
 
-.editor-image-selector__item {
+.image-selector__item {
 	position: relative;
 	display: inline-block;
 	margin: 0;
@@ -39,7 +39,7 @@
 	}
 }
 
-.editor-image-selector__images-thumbs {
+.image-selector__images-thumbs {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -50,11 +50,11 @@
 	}
 }
 
-.button.is-borderless.editor-image-selector__image {
+.button.is-borderless.image-selector__image {
 	padding: 0;
 }
 
-.editor-image-selector__images-thumbs .editor-image-selector__item {
+.image-selector__images-thumbs .image-selector__item {
 	position: relative;
 	display: inline-block;
 	margin-bottom: 16px;
@@ -94,7 +94,7 @@
 	}
 }
 
-.button.is-borderless.is-compact .editor-image-selector__edit-icon {
+.button.is-borderless.is-compact .image-selector__edit-icon {
 	position: absolute;
 	top: auto;
 	bottom: 8px;
@@ -106,11 +106,11 @@
 	border-radius: 50%;
 }
 
-.button .editor-image-selector__edit:hover .editor-image-selector__edit-icon {
+.button .image-selector__edit:hover .image-selector__edit-icon {
 	opacity: 1;
 }
 
-.editor-image-selector__remove.button.is-compact {
+.image-selector__remove.button.is-compact {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -127,7 +127,7 @@
 	}
 }
 
-.editor-image-selector__remove .editor-image-selector__remove-icon.gridicon {
+.image-selector__remove .image-selector__remove-icon.gridicon {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -142,7 +142,7 @@
 	}
 }
 
-.button.is-borderless.editor-image-selector__uploader-wrapper {
+.button.is-borderless.image-selector__uploader-wrapper {
 	background: $gray-light;
 	height: 250px;
 	width: 100%;
@@ -155,7 +155,7 @@
 		height: 338px;
 	}
 
-	.editor-image-selector__uploader-picker {
+	.image-selector__uploader-picker {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -184,8 +184,8 @@
 	}
 }
 
-.button.is-borderless.editor-image-selector__uploader-wrapper
-	.editor-image-selector__uploader-label {
+.button.is-borderless.image-selector__uploader-wrapper
+	.image-selector__uploader-label {
 	width: 100%;
 	height: 100%;
 	display: flex;
@@ -199,7 +199,7 @@
 	}
 }
 
-.button.is-borderless.editor-image-selector__uploader-wrapper.compact {
+.button.is-borderless.image-selector__uploader-wrapper.compact {
 	position: relative;
 	margin-bottom: 16px;
 	margin-left: 8px;
@@ -227,7 +227,7 @@
 		}
 	}
 
-	.editor-image-selector__uploader-picker {
+	.image-selector__uploader-picker {
 		display: block;
 		text-align: center;
 		cursor: pointer;

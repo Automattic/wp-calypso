@@ -21,7 +21,7 @@ import MediaStore from 'lib/media/store';
 import Spinner from 'components/spinner';
 import { url } from 'lib/media/utils';
 
-export class EditorImageSelectorPreview extends Component {
+export class ImageSelectorPreview extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		itemIds: PropTypes.array,
@@ -140,31 +140,31 @@ export class EditorImageSelectorPreview extends Component {
 			onRemoveImage( image );
 		};
 
-		const classes = classNames( 'editor-image-selector__item', {
+		const classes = classNames( 'image-selector__item', {
 			preview: null === src,
 		} );
 
 		return (
 			<div className={ classes } key={ id }>
 				<Button
-					className="editor-image-selector__image"
+					className="image-selector__image"
 					onClick={ onImageClick }
 					borderless
 					compact
-					data-tip-target="editor-image-selector-image"
+					data-tip-target="image-selector-image"
 				>
 					{ src ? this.renderUploaded( image ) : this.renderPlaceholder( image ) }
 					{ showEditIcon && (
-						<Gridicon icon="pencil" className="editor-image-selector__edit-icon" />
+						<Gridicon icon="pencil" className="image-selector__edit-icon" />
 					) }
 				</Button>
 				<Button
 					onClick={ removeImage }
 					compact
 					aria-label={ translate( 'Remove image' ) }
-					className="editor-image-selector__remove"
+					className="image-selector__remove"
 				>
-					<Gridicon icon="cross-small" size={ 24 } className="editor-image-selector__remove-icon" />
+					<Gridicon icon="cross-small" size={ 24 } className="image-selector__remove-icon" />
 				</Button>
 			</div>
 		);
@@ -173,7 +173,7 @@ export class EditorImageSelectorPreview extends Component {
 	renderUploadPlaceholder() {
 		const { onImageClick, translate, compact, multiple } = this.props;
 
-		const classes = classNames( 'editor-image-selector__uploader-wrapper', {
+		const classes = classNames( 'image-selector__uploader-wrapper', {
 			compact,
 		} );
 
@@ -186,10 +186,10 @@ export class EditorImageSelectorPreview extends Component {
 				onClick={ onImageClick }
 				borderless
 				compact
-				data-tip-target="editor-image-selector-image"
+				data-tip-target="image-selector-image"
 			>
-				<div className="editor-image-selector__uploader-picker">
-					<div className="editor-image-selector__uploader-label">
+				<div className="image-selector__uploader-picker">
+					<div className="image-selector__uploader-label">
 						<div>
 							<Gridicon icon="add-image" size={ iconSize } />
 							<p>{ ! compact && addString }</p>
@@ -205,13 +205,13 @@ export class EditorImageSelectorPreview extends Component {
 		const featuredImage = ( images && images.shift() ) || null;
 
 		return (
-			<div className="editor-image-selector__images-wrapper">
-				<div className="editor-image-selector__images">
-					<div className="editor-image-selector__images-featured">
+			<div className="image-selector__images-wrapper">
+				<div className="image-selector__images">
+					<div className="image-selector__images-featured">
 						{ featuredImage && this.renderImage( featuredImage ) }
 						{ ! featuredImage && this.renderUploadPlaceholder() }
 					</div>
-					<div className="editor-image-selector__images-thumbs">
+					<div className="image-selector__images-thumbs">
 						{ images && images.map( image => this.renderImage( image ) ) }
 						{ featuredImage && this.props.multiple && this.renderUploadPlaceholder() }
 					</div>
@@ -221,4 +221,4 @@ export class EditorImageSelectorPreview extends Component {
 	}
 }
 
-export default localize( EditorImageSelectorPreview );
+export default localize( ImageSelectorPreview );
