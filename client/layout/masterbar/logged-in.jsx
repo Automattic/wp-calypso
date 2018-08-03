@@ -35,6 +35,7 @@ class MasterbarLoggedIn extends React.Component {
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
+		compact: PropTypes.bool,
 	};
 
 	clickMySites = () => {
@@ -76,27 +77,39 @@ class MasterbarLoggedIn extends React.Component {
 		return 'my-sites';
 	};
 
-	render() {
+	renderMySites() {
 		const { domainOnlySite, siteSlug, translate } = this.props,
 			mySitesUrl = domainOnlySite
 				? domainManagementList( siteSlug )
 				: getStatsPathForTab( 'day', siteSlug );
 
 		return (
+			<Item
+				url={ mySitesUrl }
+				tipTarget="my-sites"
+				icon={ this.wordpressIcon() }
+				onClick={ this.clickMySites }
+				isActive={ this.isActive( 'sites' ) }
+				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
+				preloadSection={ this.preloadMySites }
+			>
+				{ this.props.user.get().site_count > 1
+					? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
+					: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+			</Item>
+		);
+	}
+
+	render() {
+		const { domainOnlySite, translate, compact } = this.props;
+
+		if ( compact === true ) {
+			return <Masterbar>{ this.renderMySites() }</Masterbar>;
+		}
+
+		return (
 			<Masterbar>
-				<Item
-					url={ mySitesUrl }
-					tipTarget="my-sites"
-					icon={ this.wordpressIcon() }
-					onClick={ this.clickMySites }
-					isActive={ this.isActive( 'sites' ) }
-					tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
-					preloadSection={ this.preloadMySites }
-				>
-					{ this.props.user.get().site_count > 1
-						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-						: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-				</Item>
+				{ this.renderMySites() }
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"

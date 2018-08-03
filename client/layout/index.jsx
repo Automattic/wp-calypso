@@ -16,7 +16,6 @@ import classnames from 'classnames';
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-import MasterbarCheckout from 'layout/masterbar/checkout';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
@@ -82,22 +81,12 @@ const Layout = createReactClass( {
 			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
 		}
 
-		// miminmal checkout, less distraction
-		if ( this.props.section.name === 'checkout' ) {
-			return (
-				<MasterbarCheckout
-					user={ this.props.user }
-					section={ this.props.section.group }
-					sites={ this.props.sites }
-				/>
-			);
-		}
-
 		return (
 			<MasterbarLoggedIn
 				user={ this.props.user }
 				section={ this.props.section.group }
 				sites={ this.props.sites }
+				compact={ this.props.section.name === 'checkout' }
 			/>
 		);
 	},
