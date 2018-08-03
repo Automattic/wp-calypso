@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { partial } from 'lodash';
+import { get, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import { nock, useNock } from 'test/helpers/use-nock';
 
 const testSiteId = 'en.blog.wordpress.com';
 const fetchTestState = partial( fetchState, testSiteId );
-const hydratedState = () => store.get().getIn( [ 'api', 'isHydrated' ] );
+const hydratedState = () => get( store.get(), [ 'api', 'isHydrated' ] );
 const resetStore = () => Dispatcher.handleViewAction( { type: IMPORTS_STORE_RESET } );
 
 const queuePayload = payload =>
