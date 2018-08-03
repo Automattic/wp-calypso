@@ -148,7 +148,7 @@
     "redux-form": "7.4.2",
     "redux-thunk": "2.3.0",
     "rtlcss": "2.4.0",
-    "sass-loader": "7.0.3",
+    "sass-loader": "7.1.0",
     "social-logos": "2.0.0",
     "socket.io-client": "2.1.1",
     "source-map": "0.1.39",
