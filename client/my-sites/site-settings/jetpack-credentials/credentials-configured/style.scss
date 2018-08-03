@@ -23,12 +23,12 @@
 
 .credentials-configured__info-protocol {
 	font-weight: bold;
-	font-size: 1.5rem;
+	font-size: rem( 15px );
 }
 
 .credentials-configured__info-description {
 	color: $gray;
-	font-size: 1.3rem;
+	font-size: rem( 13px );
 }
 
 .credentials-configured__revoke-actions {
@@ -37,11 +37,11 @@
 
 .credentials-configured__revoke-icon {
 	color: $alert-red;
-	margin-right: .5rem;
+	margin-right: rem( 5px );
 }
 
 .credentials-configured__revoke-button.is-borderless {
-	margin-right: 2rem;
+	margin-right: rem( 20px );
 	position: relative;
 	top: -5px;
 
