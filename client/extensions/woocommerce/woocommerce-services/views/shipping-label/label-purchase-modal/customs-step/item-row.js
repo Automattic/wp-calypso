@@ -21,8 +21,8 @@ import {
 	getShippingLabel,
 	isLoaded,
 	getFormErrors,
-	getAllCountryNames,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import { getAllCountryNames } from 'woocommerce/state/sites/data/locations/selectors';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import WeightField from 'woocommerce/woocommerce-services/components/weight-field';
 import PriceField from 'woocommerce/woocommerce-services/components/price-field';
