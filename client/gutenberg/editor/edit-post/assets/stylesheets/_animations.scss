@@ -1,0 +1,46 @@
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@mixin animate_fade {
+	animation: animate_fade 0.1s ease-out;
+	animation-fill-mode: forwards;
+}
+
+@mixin move_background {
+	background-size: 28px 28px;
+	animation: move_background .5s linear infinite;
+}
+
+@mixin loading_fade {
+	animation: loading_fade 1.6s ease-in-out infinite;
+}
+
+@mixin slide_in_right {
+	transform: translateX(+100%);
+	animation: slide_in_right 0.1s forwards;
+}
+
+@mixin fade_in( $speed: 0.2s ) {
+	animation: fade-in $speed ease-out;
+	animation-fill-mode: forwards;
+}
+
+@keyframes editor_region_focus {
+	from {
+		box-shadow: inset 0 0 0 0 $blue-medium-400;
+	}
+	to {
+		box-shadow: inset 0 0 0 4px $blue-medium-400;
+	}
+}
+
+@mixin region_focus( $speed: 0.2s ) {
+	animation: editor_region_focus $speed ease-out;
+	animation-fill-mode: forwards;
+}

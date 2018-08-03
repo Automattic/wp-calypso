@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Editor from './editor.js';
+import Editor from './edit-post/editor.js';
 
 const editorSettings = {};
 const overridePost = {};

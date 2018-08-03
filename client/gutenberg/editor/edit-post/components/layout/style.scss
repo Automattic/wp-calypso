@@ -1,0 +1,143 @@
+.edit-post-layout,
+.edit-post-layout__content {
+	height: 100%;
+}
+
+.edit-post-layout {
+	position: relative;
+
+	.components-notice-list {
+		position: sticky;
+		top: $header-height;
+		right: 0;
+		color: $dark-gray-900;
+
+		@include break-small {
+			position: fixed;
+			top: inherit;
+		}
+
+		.notice {
+			margin: 0 0 5px;
+			padding: 6px 12px;
+			min-height: $panel-header-height;
+
+			.notice-dismiss {
+				margin: 5px;
+			}
+		}
+	}
+
+	// on mobile, toolbars behave differently
+	@include break-small {
+		padding-top: $header-height;
+	}
+
+	&.has-fixed-toolbar {
+		.edit-post-layout__content {
+			padding-top: $block-controls-height;
+		}
+
+		// on mobile, toolbars behave differently
+		@include break-small {
+			padding-top: $header-height + $block-toolbar-height;
+
+			.edit-post-layout__content {
+				padding-top: 0;
+			}
+		}
+
+		@include break-large {
+			padding-top: $header-height;
+		}
+	}
+}
+
+@include editor-left('.components-notice-list');
+@include editor-right('.components-notice-list');
+
+.edit-post-layout__metaboxes:not(:empty) {
+	border-top: 1px solid $light-gray-500;
+	margin-top: 10px;
+	padding: 10px 0 10px;
+	clear: both;
+
+	.edit-post-meta-boxes-area {
+		margin: auto 20px;
+	}
+}
+
+.edit-post-layout__content {
+	position: relative;
+	display: flex;
+	min-height: 100%;
+	flex-direction: column;
+
+	// Pad the scroll box so content on the bottom can be scrolled up.
+	padding-bottom: 50vh;
+	@include break-small {
+		padding-bottom: 0;
+	}
+
+	// On mobile the main content area has to scroll otherwise you can invoke
+	// the overscroll bounce on the non-scrolling container, causing
+	// (ノಠ益ಠ)ノ彡┻━┻
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+
+	.edit-post-visual-editor {
+		flex-basis: 100%;
+	}
+
+	.edit-post-layout__metaboxes {
+		flex-shrink: 0;
+	}
+}
+
+.edit-post-layout .editor-post-publish-panel {
+	position: fixed;
+	z-index: z-index( '.edit-post-layout .edit-post-post-publish-panel' );
+	top: $admin-bar-height-big;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	overflow: auto;
+
+	@include break-medium() {
+		top: $admin-bar-height;
+		left: auto;
+		width: $sidebar-width;
+		border-left: 1px solid $light-gray-500;
+		@include slide_in_right;
+	}
+}
+
+.edit-post-layout .editor-post-publish-panel__header-publish-button {
+	margin-right: 52px; // This number is approximative to keep the publish button at the same position when opening the panel
+}
+
+.edit-post-toggle-publish-panel {
+	display: block;
+	position: relative;
+	float: right;
+	top: -9999em;
+	z-index: z-index( '.edit-post-toggle-publish-panel' );
+	padding: 20px 0 0 0;
+	width: $sidebar-width;
+	&:focus-within {
+		top: 0;
+	}
+
+	.edit-post-toggle-publish-panel__button {
+		float: right;
+		width: auto;
+		height: auto;
+		font-size: 14px;
+		font-weight: 600;
+		padding: 15px 23px 14px;
+		line-height: normal;
+		text-decoration: none;
+		outline: none;
+		background: #f1f1f1;
+	}
+}

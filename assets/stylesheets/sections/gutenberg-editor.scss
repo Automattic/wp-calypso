@@ -8,3 +8,29 @@
 @import '../shared/typography';
 
 @import 'gutenberg/editor/style';
+
+@import 'gutenberg/editor/edit-post/assets/stylesheets/colors';
+@import 'gutenberg/editor/edit-post/assets/stylesheets/variables';
+@import 'gutenberg/editor/edit-post/assets/stylesheets/mixins';
+@import 'gutenberg/editor/edit-post/assets/stylesheets/breakpoints';
+@import 'gutenberg/editor/edit-post/assets/stylesheets/animations';
+@import 'gutenberg/editor/edit-post/assets/stylesheets/z-index';
+@import 'gutenberg/editor/edit-post/assets/stylesheets/main';
+
+@import 'gutenberg/editor/edit-post/components/meta-boxes/meta-boxes-area/style';
+@import 'gutenberg/editor/edit-post/components/visual-editor/style';
+@import 'gutenberg/editor/edit-post/components/header/pinned-plugins/style';
+@import 'gutenberg/editor/edit-post/components/layout/style';
+@import 'gutenberg/editor/edit-post/components/sidebar/post-schedule/style';
+@import 'gutenberg/editor/edit-post/components/sidebar/post-visibility/style';
+@import 'gutenberg/editor/edit-post/components/header/header-toolbar/style';
+@import 'gutenberg/editor/edit-post/components/header/more-menu/style';
+@import 'gutenberg/editor/edit-post/components/text-editor/style';
+@import 'gutenberg/editor/edit-post/components/sidebar/sidebar-header/style';
+@import 'gutenberg/editor/edit-post/components/sidebar/block-sidebar/style';
+@import 'gutenberg/editor/edit-post/components/header/style';
+@import 'gutenberg/editor/edit-post/components/sidebar/settings-header/style';
+@import 'gutenberg/editor/edit-post/components/sidebar/last-revision/style';
+@import 'gutenberg/editor/edit-post/components/sidebar/style';
+
+@import '../../../node_modules/@wordpress/editor/build-style/style';

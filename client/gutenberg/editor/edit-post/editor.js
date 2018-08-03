@@ -1,12 +1,7 @@
-/** @format */
-/**
- * External dependencies
- */
-import React from 'react';
-
 /**
  * WordPress dependencies
  */
+import { withSelect } from '@wordpress/data';
 import { EditorProvider, ErrorBoundary } from '@wordpress/editor';
 import { StrictMode } from '@wordpress/element';
 
@@ -27,11 +22,7 @@ function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...pr
 
 	return (
 		<StrictMode>
-			<EditorProvider
-				settings={ editorSettings }
-				post={ { ...post, ...overridePost } }
-				{ ...props }
-			>
+			<EditorProvider settings={ editorSettings } post={ { ...post, ...overridePost } } { ...props }>
 				<ErrorBoundary onError={ onError }>
 					<Layout />
 				</ErrorBoundary>
@@ -40,4 +31,7 @@ function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...pr
 	);
 }
 
-export default Editor;
+export default withSelect( ( select, { postId, postType } ) => ( {
+	hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
+	post: select( 'core' ).getEntityRecord( 'postType', postType, postId ),
+} ) )( Editor );
