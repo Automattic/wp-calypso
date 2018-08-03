@@ -59,6 +59,7 @@ import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
 import notices from './notices/reducer';
+import { unseenCount as notifications } from './notifications';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
 import orderTransactions from './order-transactions/reducer';
@@ -153,6 +154,7 @@ const reducers = {
 	login,
 	media,
 	notices,
+	notifications,
 	npsSurvey,
 	oauth2Clients,
 	orderTransactions,
