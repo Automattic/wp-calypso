@@ -51,31 +51,32 @@ class ImporterHeader extends React.PureComponent {
 
 	controlButtonClicked = () => {
 		const {
-			importerStatus: { importerId, importerState, type },
-			site: { ID: siteId },
-			startImport,
-		} = this.props;
+				importerStatus: { importerId, importerState, type },
+				site: { ID: siteId },
+				startImport,
+			} = this.props,
+			tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
 		if ( includes( [ ...cancelStates, ...stopStates ], importerState ) ) {
 			cancelImport( siteId, importerId );
 
-			this.props.recordTracksEvent( 'calypso_importer_main_cancel_import', {
+			this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
 				blog_id: siteId,
-				importer_id: type,
+				importer_id: tracksType,
 			} );
 		} else if ( includes( startStates, importerState ) ) {
 			startImport( siteId, type );
 
-			this.props.recordTracksEvent( 'calypso_importer_main_start_import', {
+			this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 				blog_id: siteId,
-				importer_id: type,
+				importer_id: tracksType,
 			} );
 		} else if ( includes( doneStates, importerState ) ) {
 			resetImport( siteId, importerId );
 
-			this.props.recordTracksEvent( 'calypso_importer_main_done_import', {
+			this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 				blog_id: siteId,
-				importer_id: type,
+				importer_id: tracksType,
 			} );
 		}
 	};

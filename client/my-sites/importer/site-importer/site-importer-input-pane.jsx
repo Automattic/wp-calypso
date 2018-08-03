@@ -165,7 +165,7 @@ class SiteImporterInputPane extends React.Component {
 			...NO_ERROR_STATE,
 		} );
 
-		this.props.recordTracksEvent( 'calypso_site_importer_validate_site', {
+		this.props.recordTracksEvent( 'calypso_site_importer_validate_site_start', {
 			blog_id: this.props.site.ID,
 			site_url: urlForImport,
 		} );
@@ -197,7 +197,7 @@ class SiteImporterInputPane extends React.Component {
 					importSiteURL: resp.site_url,
 				} );
 
-				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_done', {
+				this.props.recordTracksEvent( 'calypso_site_importer_validate_site_success', {
 					blog_id: this.props.site.ID,
 					site_url: resp.site_url,
 					supported_content: resp.supported_content
@@ -231,7 +231,7 @@ class SiteImporterInputPane extends React.Component {
 			...NO_ERROR_STATE,
 		} );
 
-		this.props.recordTracksEvent( 'calypso_site_importer_start_import', {
+		this.props.recordTracksEvent( 'calypso_site_importer_start_import_request', {
 			blog_id: this.props.site.ID,
 			site_url: this.state.importSiteURL,
 			supported_content: this.state.importData.supported
@@ -257,7 +257,7 @@ class SiteImporterInputPane extends React.Component {
 			.then( resp => {
 				this.setState( { loading: false } );
 
-				this.props.recordTracksEvent( 'calypso_site_importer_start_import_done', {
+				this.props.recordTracksEvent( 'calypso_site_importer_start_import_success', {
 					blog_id: this.props.site.ID,
 					site_url: this.state.importSiteURL,
 					supported_content: this.state.importData.supported
