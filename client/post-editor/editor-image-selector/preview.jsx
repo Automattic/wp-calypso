@@ -56,32 +56,29 @@ export class EditorImageSelectorPreview extends Component {
 		// We may not necessarily need to trigger a network request if we
 		// already have the data for the media item, so first update the state
 		this.updateImageState( () => {
-			if ( this.state.images ) {
+			const { itemIds, siteId } = this.props;
+			if ( isEqual( this.state.images.map( image => image.ID ), itemIds ) ) {
 				return;
 			}
 
 			defer( () => {
-				this.props.itemIds.map( id => {
+				itemIds.map( id => {
 					id = parseInt( id, 10 );
-					MediaActions.fetch( this.props.siteId, id );
+					const media = MediaStore.get( siteId, id );
+					if ( ! media ) {
+						MediaActions.fetch( siteId, id );
+					}
 				} );
 			} );
 		} );
 	};
 
 	updateImageState = callback => {
-		if ( isEqual( this.state.images.map( image => image.ID ), this.props.itemIds ) ) {
-			return;
-		}
-
+		const { itemIds, onImageChange, siteId } = this.props;
 		const images = uniq(
-			this.props.itemIds
+			itemIds
 				.map( id => {
-					const media = MediaStore.get( this.props.siteId, id );
-					if ( ! media ) {
-						MediaActions.fetch( this.props.siteId, id );
-					}
-					return media;
+					return MediaStore.get( siteId, id );
 				} )
 				.filter( function( e ) {
 					return e;
@@ -94,8 +91,14 @@ export class EditorImageSelectorPreview extends Component {
 			}
 		} );
 		defer( () => {
-			if ( this.props.onImageChange && images && images.length ) {
-				this.props.onImageChange( images );
+			const imageIds = images.map( image => image.ID );
+			if (
+				onImageChange &&
+				images &&
+				images.length === itemIds.length &&
+				! isEqual( imageIds, itemIds )
+			) {
+				onImageChange( images );
 			}
 		} );
 	};
