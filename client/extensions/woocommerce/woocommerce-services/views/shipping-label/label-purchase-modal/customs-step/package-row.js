@@ -15,6 +15,7 @@ import ItemRowHeader from './item-row-header';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
+import FormLabel from 'components/forms/form-label';
 import {
 	setContentsType,
 	setContentsExplanation,
@@ -48,13 +49,13 @@ const PackageRow = ( props ) => {
 	const abandonHandler = () => props.setAbandonOnNonDelivery( ! abandonOnNonDelivery );
 
 	return <div className="customs-step__package">
-		<label htmlFor={ packageId + '_abandonOnNonDelivery' }>
+		<FormLabel htmlFor={ packageId + '_abandonOnNonDelivery' } className="customs-step__abandon-on-non-delivery">
 			<Checkbox
 				id={ packageId + '_abandonOnNonDelivery' }
 				checked={ ! abandonOnNonDelivery }
 				onChange={ abandonHandler } />
 			<span>{ translate( 'Return to sender if package is unable to be delivered' ) }</span>
-		</label>
+		</FormLabel>
 
 		<div className="customs-step__restrictions-row">
 			<div className="customs-step__contents-type">
