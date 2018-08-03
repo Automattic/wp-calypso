@@ -51,10 +51,7 @@ import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_UPLOAD_THEMES_AFTER_AT,
-} from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -332,5 +329,5 @@ export default compose(
 		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
 	),
 	localize,
-	upsellRedirect( FEATURE_UPLOAD_THEMES_AFTER_AT, '/feature/themes' )
+	upsellRedirect( FEATURE_UPLOAD_THEMES, '/feature/themes' )
 )( UploadWithOptions );

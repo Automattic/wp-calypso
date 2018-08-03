@@ -28,7 +28,7 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
 import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { FEATURE_UPLOAD_PLUGINS_AFTER_AT } from 'lib/plans/constants';
+import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import getPluginUploadError from 'state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'state/selectors/get-uploaded-plugin-id';
@@ -213,5 +213,5 @@ export default compose(
 		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
 	),
 	localize,
-	upsellRedirect( FEATURE_UPLOAD_PLUGINS_AFTER_AT, '/feature/plugins' )
+	upsellRedirect( FEATURE_UPLOAD_PLUGINS, '/feature/plugins' )
 )( PluginUpload );
