@@ -150,7 +150,7 @@ export default class Step extends Component {
 
 	wait( props, context ) {
 		if ( isFunction( props.wait ) ) {
-			const ret = props.wait( props, context );
+			const ret = props.wait( { reduxStore: context.store } );
 			if ( isFunction( get( ret, 'then' ) ) ) {
 				return ret;
 			}
