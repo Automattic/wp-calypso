@@ -7,7 +7,7 @@ const webpackMiddleware = require( 'webpack-dev-middleware' );
 const webpack = require( 'webpack' );
 const chalk = require( 'chalk' );
 const hotMiddleware = require( 'webpack-hot-middleware' );
-const webpackConfig = require( 'webpack.config' );
+const getWebpackConfig = require( 'webpack.config' );
 
 const config = require( 'config' );
 
@@ -15,7 +15,7 @@ const port = process.env.PORT || config( 'port' );
 const shouldProfile = process.env.PROFILE === 'true';
 
 function middleware( app ) {
-	const compiler = webpack( webpackConfig );
+	const compiler = webpack( getWebpackConfig() );
 	const callbacks = [];
 	let built = false;
 	let beforeFirstCompile = true;
