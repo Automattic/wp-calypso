@@ -104,13 +104,8 @@ const getTourFromQuery = createSelector(
  * Returns true if `tour` has been seen in the current Calypso session, false
  * otherwise.
  */
-const hasJustSeenTour = createSelector(
-	( state, { tour: tourName, _timestamp } ) =>
-		getToursHistory( state ).some(
-			entry => entry.tourName === tourName && entry.timestamp > _timestamp
-		),
-	[ getInitialQueryArguments, getToursHistory ]
-);
+const hasJustSeenTour = ( state, { tour, _timestamp } ) =>
+	getToursHistory( state ).some( entry => entry.tourName === tour && entry.timestamp > _timestamp );
 
 /*
  * Returns the name of the tour requested via URL query arguments if it hasn't

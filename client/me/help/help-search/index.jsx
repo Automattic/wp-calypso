@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -17,14 +18,14 @@ import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getForumUrl } from 'lib/i18n-utils';
 
-class HelpSearch extends React.PureComponent {
+export class HelpSearch extends React.PureComponent {
 	static displayName = 'HelpSearch';
 
 	state = {
-		helpLinks: [],
+		helpLinks: {},
 		searchQuery: '',
 	};
 
@@ -36,22 +37,21 @@ class HelpSearch extends React.PureComponent {
 		HelpSearchStore.removeListener( 'change', this.refreshHelpLinks );
 	}
 
-	refreshHelpLinks = () => {
-		this.setState( { helpLinks: HelpSearchStore.getHelpLinks() } );
-	};
+	refreshHelpLinks = () => this.setState( { helpLinks: HelpSearchStore.getHelpLinks() } );
 
 	onSearch = searchQuery => {
-		this.setState( { helpLinks: [], searchQuery: searchQuery } );
-		analytics.tracks.recordEvent( 'calypso_help_search', { query: searchQuery } );
-		HelpSearchActions.fetch( searchQuery );
+		this.setState( { helpLinks: {}, searchQuery: searchQuery } );
+		this.props.fetchSearchResults( searchQuery );
 	};
 
 	displaySearchResults = () => {
-		if ( isEmpty( this.state.searchQuery ) ) {
+		const { searchQuery, helpLinks } = this.state;
+
+		if ( isEmpty( searchQuery ) ) {
 			return null;
 		}
 
-		if ( isEmpty( this.state.helpLinks ) ) {
+		if ( isEmpty( helpLinks ) ) {
 			return (
 				<div className="help-results__placeholder">
 					<HelpResults
@@ -73,15 +73,16 @@ class HelpSearch extends React.PureComponent {
 		}
 
 		if (
-			isEmpty( this.state.helpLinks.wordpress_support_links ) &&
-			isEmpty( this.state.helpLinks.wordpress_forum_links ) &&
-			isEmpty( this.state.helpLinks.jetpack_support_links )
+			isEmpty( helpLinks.wordpress_support_links ) &&
+			isEmpty( helpLinks.wordpress_forum_links ) &&
+			isEmpty( helpLinks.wordpress_forum_links_localized ) &&
+			isEmpty( helpLinks.jetpack_support_links )
 		) {
 			return (
 				<CompactCard className="help-search__no-results">
 					<NoResults
 						text={ this.props.translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', {
-							args: { searchQuery: this.state.searchQuery },
+							args: { searchQuery },
 							components: { em: <em /> },
 						} ) }
 					/>
@@ -89,25 +90,29 @@ class HelpSearch extends React.PureComponent {
 			);
 		}
 
+		const forumBaseUrl = helpLinks.wordpress_forum_links_localized
+			? getForumUrl()
+			: getForumUrl( 'en' );
+
 		return (
 			<div>
 				<HelpResults
 					header={ this.props.translate( 'WordPress.com Documentation' ) }
-					helpLinks={ this.state.helpLinks.wordpress_support_links }
+					helpLinks={ helpLinks.wordpress_support_links }
 					footer={ this.props.translate( 'See more from WordPress.com Documentation…' ) }
 					iconTypeDescription="book"
-					searchLink={ 'https://en.support.wordpress.com?s=' + this.state.searchQuery }
+					searchLink={ 'https://en.support.wordpress.com?s=' + searchQuery }
 				/>
 				<HelpResults
 					header={ this.props.translate( 'Community Answers' ) }
-					helpLinks={ this.state.helpLinks.wordpress_forum_links }
+					helpLinks={ helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links }
 					footer={ this.props.translate( 'See more from Community Forum…' ) }
 					iconTypeDescription="comment"
-					searchLink={ getForumUrl() + '/search/' + this.state.searchQuery }
+					searchLink={ `${ forumBaseUrl }/search/${ searchQuery }` }
 				/>
 				<HelpResults
 					header={ this.props.translate( 'Jetpack Documentation' ) }
-					helpLinks={ this.state.helpLinks.jetpack_support_links }
+					helpLinks={ helpLinks.jetpack_support_links }
 					footer={ this.props.translate( 'See more from Jetpack Documentation…' ) }
 					iconTypeDescription="jetpack"
 					searchLink="https://jetpack.me/support/"
@@ -132,4 +137,12 @@ class HelpSearch extends React.PureComponent {
 	}
 }
 
-export default localize( HelpSearch );
+export default connect(
+	null,
+	dispatch => ( {
+		fetchSearchResults: searchQuery => {
+			dispatch( recordTracksEvent( 'calypso_help_search', { query: searchQuery } ) );
+			HelpSearchActions.fetch( searchQuery );
+		},
+	} )
+)( localize( HelpSearch ) );

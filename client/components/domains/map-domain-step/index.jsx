@@ -45,6 +45,7 @@ class MapDomainStep extends React.Component {
 
 	static defaultProps = {
 		onSave: noop,
+		initialQuery: '',
 	};
 
 	state = this.getDefaultState();
