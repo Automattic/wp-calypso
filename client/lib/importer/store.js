@@ -45,93 +45,62 @@ const initialState = Object.freeze( {
 
 const getImporterItemById = ( state, id ) => get( state, [ 'importers', id ], {} );
 
-// Why is this here, could it not be part of the main switch?
-const adjustImporterLock = ( state, { action } ) => {
-	switch ( action.type ) {
-		case IMPORTS_IMPORT_LOCK:
-			state = {
-				...state,
-				importerLocks: {
-					...state.importerLocks,
-					[ action.importerId ]: true,
-				},
-			};
-
-		case IMPORTS_IMPORT_UNLOCK:
-			state = {
-				...state,
-				importerLocks: {
-					...state.importerLocks,
-					[ action.importerId ]: false,
-				},
-			};
-	}
-
-	return state;
-};
-
 const ImporterStore = createReducerStore( function( state, payload ) {
 	const { action } = payload;
-	let newState = { ...state };
 
 	switch ( action.type ) {
 		case IMPORTS_STORE_RESET:
 			// this is here to enable
 			// unit-testing the store
-			newState = initialState;
-			break;
+			return initialState;
 
 		case IMPORTS_FETCH:
-			newState = {
-				...newState,
+			return {
+				...state,
 				api: {
-					...newState.api,
+					...state.api,
 					isFetching: true,
 				},
 			};
-			break;
 
 		case IMPORTS_FETCH_FAILED:
-			newState = {
-				...newState,
+			return {
+				...state,
 				api: {
-					...newState.api,
+					...state.api,
 					isFetching: false,
-					retryCount: get( newState, 'api.retryCount', 0 ) + 1,
+					retryCount: get( state, 'api.retryCount', 0 ) + 1,
 				},
 			};
-			break;
 
 		case IMPORTS_FETCH_COMPLETED:
-			newState = {
-				...newState,
+			return {
+				...state,
 				api: {
-					...newState.api,
+					...state.api,
 					isFetching: false,
 					isHydrated: true,
 					retryCount: 0,
 				},
 			};
-			break;
 
 		case IMPORTS_IMPORT_CANCEL:
 		case IMPORTS_IMPORT_RESET:
-			newState = {
-				...newState,
+			return {
+				...state,
 				importers: {
-					...omit( newState.importers, action.importerId ),
+					...omit( state.importers, action.importerId ),
 				},
 			};
-			break;
 
 		case IMPORTS_UPLOAD_FAILED: {
 			const { importerId } = action;
-			const importerItem = getImporterItemById( newState, importerId );
+			const importerItem = getImporterItemById( state, importerId );
 
-			newState = {
-				...newState,
+			return {
+				...state,
 				importers: {
-					...newState.importers,
+					...state.importers,
 					[ importerId ]: {
 						...importerItem,
 						importerState: appStates.UPLOAD_FAILURE,
@@ -142,42 +111,39 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					},
 				},
 			};
-			break;
 		}
 		case IMPORTS_UPLOAD_COMPLETED:
-			newState = {
-				...newState,
+			return {
+				...state,
 				importers: {
-					...omit( newState.importers, action.importerId ),
+					...omit( state.importers, action.importerId ),
 					[ action.importerStatus.importerId ]: action.importerStatus,
 				},
 			};
-			break;
 
 		case IMPORTS_AUTHORS_START_MAPPING: {
 			const { importerId } = action;
-			const importerItem = getImporterItemById( newState, importerId );
+			const importerItem = getImporterItemById( state, importerId );
 
-			newState = {
-				...newState,
+			return {
+				...state,
 				importers: {
-					...newState.importers,
+					...state.importers,
 					[ importerId ]: {
 						...importerItem,
 						importerState: appStates.MAP_AUTHORS,
 					},
 				},
 			};
-			break;
 		}
 		case IMPORTS_AUTHORS_SET_MAPPING: {
 			const { importerId, sourceAuthor, targetAuthor } = action;
-			const importerItem = getImporterItemById( newState, importerId );
+			const importerItem = getImporterItemById( state, importerId );
 
-			newState = {
-				...newState,
+			return {
+				...state,
 				importers: {
-					...newState.importers,
+					...state.importers,
 					[ importerId ]: {
 						...importerItem,
 						customData: {
@@ -198,19 +164,18 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					},
 				},
 			};
-			break;
 		}
-		case IMPORTS_IMPORT_RECEIVE:
-			newState = {
-				...newState,
+		case IMPORTS_IMPORT_RECEIVE: {
+			let newState = {
+				...state,
 				api: {
-					...newState.api,
+					...state.api,
 					isHydrated: true,
 				},
 			};
 
 			if ( get( newState, [ 'importerLocks', action.importerStatus.importerId ], false ) ) {
-				break;
+				return newState;
 			}
 
 			// remove by id if the incoming instance is defunt
@@ -226,7 +191,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 
 			// We filter through all importer instances and remove any that are defunt or cancelled
 			// Do we really need the above 'delete if defunt' action then? Whats it's value?
-			newState = {
+			return {
 				...newState,
 				importers: {
 					...filter(
@@ -239,29 +204,26 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					),
 				},
 			};
-
-			break;
-
+		}
 		case IMPORTS_UPLOAD_SET_PROGRESS:
-			newState = {
-				...newState,
+			return {
+				...state,
 				importers: {
-					...newState.importers,
+					...state.importers,
 					[ action.importerId ]: {
-						...getImporterItemById( newState, action.importerId ),
+						...getImporterItemById( state, action.importerId ),
 						percentComplete:
 							( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100,
 					},
 				},
 			};
-			break;
 
 		case IMPORTS_IMPORT_START:
-			newState = {
-				...newState,
-				count: get( newState, 'count', 0 ) + 1,
+			return {
+				...state,
+				count: get( state, 'count', 0 ) + 1,
 				importers: {
-					...newState.importers,
+					...state.importers,
 					[ action.importerId ]: {
 						importerId: action.importerId,
 						type: action.importerType,
@@ -270,39 +232,52 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					},
 				},
 			};
-			break;
 
 		case IMPORTS_START_IMPORTING:
-			newState = {
-				...newState,
+			return {
+				...state,
 				importers: {
-					...newState.importers,
+					...state.importers,
 					[ action.importerId ]: {
-						...getImporterItemById( newState, action.importerId ),
+						...getImporterItemById( state, action.importerId ),
 						importerState: appStates.IMPORTING,
 					},
 				},
 			};
-			break;
 
 		case IMPORTS_UPLOAD_START:
-			newState = {
-				...newState,
+			return {
+				...state,
 				importers: {
-					...newState.importers,
+					...state.importers,
 					[ action.importerId ]: {
-						...getImporterItemById( newState, action.importerId ),
+						...getImporterItemById( state, action.importerId ),
 						importerState: appStates.UPLOADING,
 						filename: action.filename,
 					},
 				},
 			};
-			break;
+
+		case IMPORTS_IMPORT_LOCK:
+			return {
+				...state,
+				importerLocks: {
+					...state.importerLocks,
+					[ action.importerId ]: true,
+				},
+			};
+
+		case IMPORTS_IMPORT_UNLOCK:
+			return {
+				...state,
+				importerLocks: {
+					...state.importerLocks,
+					[ action.importerId ]: false,
+				},
+			};
 	}
 
-	newState = adjustImporterLock( newState, payload );
-
-	return newState;
+	return state;
 }, initialState );
 
 export function getState() {
