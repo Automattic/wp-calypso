@@ -86,6 +86,8 @@ export const SimplePaymentsEmailTour = makeTour(
 			onTargetDisappear={ handleTargetDisappear }
 			when={ sectionHasSidebar }
 			keepRepositioning
+			scrollContainer=".sidebar__region"
+			shouldScrollTo
 		>
 			{ ( { translate } ) => (
 				<Fragment>
