@@ -166,7 +166,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			};
 		}
 		case IMPORTS_IMPORT_RECEIVE: {
-			let newState = {
+			const newState = {
 				...state,
 				api: {
 					...state.api,
@@ -178,19 +178,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				return newState;
 			}
 
-			// remove by id if the incoming instance is defunt
-			// as mentioned later, this would be taken care of by the filtering function anyway
-			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
-				newState = {
-					...newState,
-					importers: {
-						...omit( newState.importers, action.importerStatus.importerId ),
-					},
-				};
-			}
-
-			// We filter through all importer instances and remove any that are defunt or cancelled
-			// Do we really need the above 'delete if defunt' action then? Whats it's value?
 			return {
 				...newState,
 				importers: {
