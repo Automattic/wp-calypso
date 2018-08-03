@@ -49,7 +49,9 @@ export default class InfiniteList extends React.Component {
 	_isMounted = false;
 	smartSetState = smartSetState;
 
-	componentWillMount() {
+	constructor( ...args ) {
+		super( ...args );
+
 		const url = page.current;
 		let newState, scrollTop;
 
@@ -66,11 +68,9 @@ export default class InfiniteList extends React.Component {
 		this.scrollHelper = new ScrollHelper( this.boundsForRef );
 		this.scrollHelper.props = this.props;
 		if ( this._contextLoaded() ) {
-			this._scrollContainer = this.props.context || window;
+			this._scrollContainer = this.scrollHelper.props.context || window;
 			this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
 		}
-
-		this.isScrolling = false;
 
 		if ( newState ) {
 			debug( 'infinite-list positions loaded from store' );
@@ -85,7 +85,7 @@ export default class InfiniteList extends React.Component {
 			};
 		}
 		debug( 'infinite list mounting', newState );
-		this.setState( newState );
+		this.state = newState;
 	}
 
 	componentDidMount() {
@@ -107,27 +107,9 @@ export default class InfiniteList extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps( newProps ) {
-		this.scrollHelper.props = newProps;
-
-		// New item may have arrived, should we change the rendered range?
-		if ( ! this.isScrolling ) {
-			this.cancelAnimationFrame();
-			this.updateScroll( {
-				triggeredByScroll: false,
-			} );
-		}
-
-		// if the context changes, remove our scroll listener
-		if ( newProps.context === this.props.context ) {
-			return;
-		}
-		if ( this._contextLoaded() ) {
-			this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
+		this.scrollHelper.props = this.props;
+
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
@@ -135,6 +117,7 @@ export default class InfiniteList extends React.Component {
 		if ( this.props.context !== prevProps.context ) {
 			// remove old listener
 			if ( this._scrollContainer ) {
+				this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 				this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
 			}
 
@@ -341,6 +324,8 @@ export default class InfiniteList extends React.Component {
 	}
 
 	render() {
+		this.scrollHelper.props = this.props;
+
 		const propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
 			spacerClassName = 'infinite-list__spacer';
 		let i,
