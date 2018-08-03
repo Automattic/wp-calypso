@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Wrapper } from '../upsell-redirect';
+import { UpsellRedirectWrapper } from '../upsell-redirect';
 
 /**
  * Module variables
@@ -26,7 +26,7 @@ describe( 'upsellRedirect', () => {
 	};
 	describe( 'Wrapper - unit tests', () => {
 		test( 'shouldRedirectToUpsellPage() should return true if and only if plan is already available', () => {
-			const test = props => new Wrapper( props ).shouldRedirectToUpsellPage();
+			const test = props => new UpsellRedirectWrapper( props ).shouldRedirectToUpsellPage();
 			expect( test( { shouldRedirectToUpsellPage: true, loadingPlan: true } ) ).toBe( false );
 			expect( test( { shouldRedirectToUpsellPage: false, loadingPlan: true } ) ).toBe( false );
 			expect( test( { shouldRedirectToUpsellPage: false, loadingPlan: false } ) ).toBe( false );
@@ -37,7 +37,7 @@ describe( 'upsellRedirect', () => {
 	describe( 'Wrapper - enzyme tests', () => {
 		test( 'Renders nothing when current plan is still being loaded', () => {
 			const rendered = shallow(
-				<Wrapper
+				<UpsellRedirectWrapper
 					{ ...defaultProps }
 					ComponentClass={ 'div' }
 					loadingPlan={ true }
@@ -49,7 +49,7 @@ describe( 'upsellRedirect', () => {
 
 		test( 'Renders nothing when current plan is already loaded and redirect is required', () => {
 			const rendered = shallow(
-				<Wrapper
+				<UpsellRedirectWrapper
 					{ ...defaultProps }
 					ComponentClass={ 'div' }
 					loadingPlan={ false }
@@ -61,7 +61,7 @@ describe( 'upsellRedirect', () => {
 
 		test( 'Renders ComponentClass when current plan is already loaded and redirect is not required', () => {
 			const rendered = shallow(
-				<Wrapper
+				<UpsellRedirectWrapper
 					{ ...defaultProps }
 					ComponentClass={ 'div' }
 					loadingPlan={ false }

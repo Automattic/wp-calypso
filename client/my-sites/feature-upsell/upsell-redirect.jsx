@@ -17,7 +17,7 @@ import { getCurrentPlan, hasFeature } from 'state/sites/plans/selectors';
 import { abtest } from 'lib/abtest';
 import config from 'config';
 
-export class Wrapper extends React.Component {
+export class UpsellRedirectWrapper extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		ComponentClass: PropTypes.any.isRequired,
@@ -84,7 +84,7 @@ export const createMapStateToProps = (
 export const upsellRedirect = ( requiredFeature, upsellPageURL ) => {
 	return ComponentClass => {
 		const mapStateToProps = createMapStateToProps( ComponentClass, requiredFeature, upsellPageURL );
-		return connect( mapStateToProps )( Wrapper );
+		return connect( mapStateToProps )( UpsellRedirectWrapper );
 	};
 };
 
