@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { head, uniqueId } from 'lodash';
@@ -22,6 +22,15 @@ import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 class ImageSelectorDropZone extends Component {
+	static propTypes = {
+		deleteMedia: PropTypes.func,
+		onDroppedImage: PropTypes.func,
+		receiveMedia: PropTypes.func,
+		site: PropTypes.object,
+		siteId: PropTypes.number,
+		translate: PropTypes.func,
+	};
+
 	onFilesDrop = files => {
 		/**
 		 * Filter files for `image` media prefix and return the first image.
