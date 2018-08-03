@@ -28,18 +28,19 @@ export class EditorImageSelector extends Component {
 		hasDropZone: PropTypes.bool,
 		imageIds: PropTypes.array,
 		isDropZoneVisible: PropTypes.bool,
-		showEditIcon: PropTypes.bool,
 		maxWidth: PropTypes.number,
-		selecting: PropTypes.bool,
-		translate: PropTypes.func,
 		onImageChange: PropTypes.func,
 		onImageSelected: PropTypes.func,
 		onRemoveImage: PropTypes.func,
+		selecting: PropTypes.bool,
+		showEditIcon: PropTypes.bool,
+		siteId: PropTypes.number,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
-		imageIds: [],
 		hasDropZone: false,
+		imageIds: [],
 		isDropZoneVisible: false,
 		maxWidth: 450,
 		onImageSelected: noop,
