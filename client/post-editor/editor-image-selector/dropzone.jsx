@@ -20,7 +20,6 @@ import ImageSelectorDropZoneIcon from './dropzone-icon';
 
 import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 class ImageSelectorDropZone extends Component {
 	onFilesDrop = files => {
@@ -54,14 +53,6 @@ class ImageSelectorDropZone extends Component {
 			 */
 			if ( ! isUploadInProgress ) {
 				MediaStore.off( 'change', handleImageSelectorUpload );
-
-				// Successful image upload.
-				if ( media ) {
-					this.props.recordTracksEvent( 'calypso_editor_image_selector_upload', {
-						source: 'dropzone',
-						type: 'dragdrop',
-					} );
-				}
 			}
 			this.props.onDroppedImage( media );
 		};
@@ -96,6 +87,5 @@ export default connect(
 	{
 		deleteMedia,
 		receiveMedia,
-		recordTracksEvent,
 	}
 )( localize( ImageSelectorDropZone ) );
