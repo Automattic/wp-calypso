@@ -279,6 +279,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
+			new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 			new MiniCssExtractPluginWithRTL( {
 				filename: cssFilename,
 				rtlEnabled: true,
