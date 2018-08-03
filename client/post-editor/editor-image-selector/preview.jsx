@@ -133,11 +133,11 @@ export class EditorImageSelectorPreview extends Component {
 
 	renderImage = image => {
 		const src = this.src( image );
-		const { showEditIcon, translate } = this.props;
+		const { onImageClick, onRemoveImage, showEditIcon, translate } = this.props;
 		const id = image.ID || image.transientId;
 
 		const removeImage = () => {
-			this.props.onRemoveImage( image );
+			onRemoveImage( image );
 		};
 
 		const classes = classNames( 'editor-image-selector__item', {
@@ -148,7 +148,7 @@ export class EditorImageSelectorPreview extends Component {
 			<div className={ classes } key={ id }>
 				<Button
 					className="editor-image-selector__image"
-					onClick={ this.props.onImageClick }
+					onClick={ onImageClick }
 					borderless
 					compact
 					data-tip-target="editor-image-selector-image"
@@ -171,7 +171,7 @@ export class EditorImageSelectorPreview extends Component {
 	};
 
 	renderUploadPlaceholder() {
-		const { translate, compact, multiple } = this.props;
+		const { onImageClick, translate, compact, multiple } = this.props;
 
 		const classes = classNames( 'editor-image-selector__uploader-wrapper', {
 			compact,
@@ -183,7 +183,7 @@ export class EditorImageSelectorPreview extends Component {
 		return (
 			<Button
 				className={ classes }
-				onClick={ this.props.onImageClick }
+				onClick={ onImageClick }
 				borderless
 				compact
 				data-tip-target="editor-image-selector-image"
