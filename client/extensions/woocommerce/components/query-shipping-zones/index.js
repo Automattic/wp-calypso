@@ -14,11 +14,11 @@ import { bindActionCreators } from 'redux';
  */
 import { fetchShippingMethods } from 'woocommerce/state/sites/shipping-methods/actions';
 import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
-import { fetchShippingClasses } from 'woocommerce/woocommerce-services/state/shipping-classes/actions';
+import { fetchShippingClasses } from 'woocommerce/state/shipping-classes/actions';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { areLocationsLoaded } from 'woocommerce/state/sites/data/locations/selectors';
-import { areShippingClassesLoaded } from 'woocommerce/woocommerce-services/state/shipping-classes/selectors';
+import { areShippingClassesLoaded } from 'woocommerce/state/shipping-classes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryLocations from 'woocommerce/components/query-locations';
 

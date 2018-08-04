@@ -18,7 +18,7 @@ import getFormErrors from 'woocommerce/woocommerce-services/state/service-settin
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getShippingClassOptions } from 'woocommerce/woocommerce-services/state/shipping-classes/selectors';
+import { getShippingClassOptions } from 'woocommerce/state/shipping-classes/selectors';
 
 const SettingsForm = props => {
 	const renderGroup = index => {

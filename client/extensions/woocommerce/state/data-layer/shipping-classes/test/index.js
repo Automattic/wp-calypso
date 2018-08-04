@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { fetchShippingClassesIfNotLoaded } from 'woocommerce/woocommerce-services/state/shipping-classes/actions';
+import { fetchShippingClassesIfNotLoaded } from 'woocommerce/state/shipping-classes/actions';
 import { fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
