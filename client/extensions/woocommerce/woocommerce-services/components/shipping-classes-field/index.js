@@ -12,11 +12,11 @@ import { map, forEach } from 'lodash';
  */
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormToggleInput from 'components/token-field';
+import TokenField from 'components/token-field';
 import FieldError from '../field-error';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
-export default class TokenField extends React.Component {
+export default class ShippingClassesField extends React.Component {
 	static propTypes = {
 		id: PropTypes.string.isRequired,
 		title: PropTypes.string,
@@ -34,7 +34,7 @@ export default class TokenField extends React.Component {
 		return (
 			<FormFieldset className={ className }>
 				<FormLabel htmlFor={ id }>{ title }</FormLabel>
-				<FormToggleInput
+				<TokenField
 					id={ id }
 					name={ id }
 					placeholder={ placeholder }

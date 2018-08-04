@@ -14,7 +14,7 @@ import NumberField from 'woocommerce/woocommerce-services/components/number-fiel
 import Text from 'woocommerce/woocommerce-services/components/text';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import RadioButtons from 'woocommerce/woocommerce-services/components/radio-buttons';
-import TokenField from 'woocommerce/woocommerce-services/components/token-field';
+import ShippingClassesField from 'woocommerce/woocommerce-services/components/shipping-classes-field';
 import getPackagingManagerLink from 'woocommerce/woocommerce-services/lib/utils/get-packaging-manager-link';
 import ShippingServiceGroups from '../shipping-services';
 import FormLegend from 'components/forms/form-legend';
@@ -108,7 +108,7 @@ const SettingsItem = ( {
 			}
 
 			return (
-				<TokenField
+				<ShippingClassesField
 					id={ id }
 					title={ fieldSchema.title }
 					description={ fieldSchema.description }
