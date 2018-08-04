@@ -259,6 +259,7 @@ function getDefaultContext( request ) {
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
+		context.branchName = getCurrentBranchName();
 	}
 
 	if ( calypsoEnv === 'horizon' ) {
