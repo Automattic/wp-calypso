@@ -62,13 +62,17 @@ const Head = ( { title = 'WordPress.com', faviconURL, children, cdn, branchName 
 			) ) }
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
+			<link
+				rel="test"
+				href={ '/calypso/manifest.json?branch=' + encodeURIComponent( branchName || 'unknown' ) }
+			/>
 
-			{ ! branchName || branchName === 'master' ? (
+			{ ! branchName || 'master' === branchName ? (
 				<link rel="manifest" href="/calypso/manifest.json" />
 			) : (
 				<link
 					rel="manifest"
-					href={ '/calypso/manifest.json?branch=' + encodeURIComponent( branchName ) }
+					href={ '/calypso/manifest.json?branch=' + encodeURIComponent( branchName || 'unknown' ) }
 				/>
 			) }
 
