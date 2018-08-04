@@ -72,7 +72,12 @@ class Document extends React.Component {
 				dir={ isRTL ? 'rtl' : 'ltr' }
 				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
 			>
-				<Head title={ head.title } faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
+				<Head
+					title={ head.title }
+					faviconURL={ faviconURL }
+					cdn={ '//s1.wp.com' }
+					branchName={ branchName }
+				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }
