@@ -63,7 +63,7 @@ const Head = ( { title = 'WordPress.com', faviconURL, children, cdn, branchName 
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 
-			{ branchName === 'master' ? (
+			{ ! branchName || branchName === 'master' ? (
 				<link rel="manifest" href="/calypso/manifest.json" />
 			) : (
 				<link
