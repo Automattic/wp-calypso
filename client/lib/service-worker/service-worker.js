@@ -100,3 +100,12 @@ self.addEventListener( 'message', function( event ) {
 			break;
 	}
 } );
+
+/* eslint-disable */
+self.addEventListener( 'fetch', function( event ) {
+	console.warn( 'fetch', event );
+	// event.respondWith(
+	//   // magic goes here
+	// );
+} );
+/* eslint-enable */
