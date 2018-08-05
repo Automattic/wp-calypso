@@ -11,11 +11,10 @@ import { expect } from 'chai';
 import {
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
-} from '../../action-types';
+} from './../../../action-types';
 import {
 	fetchShippingClassesSuccess,
 	fetchShippingClassesFailure,
-	fetchShippingClassesIfNotLoaded,
 	fetchShippingClasses,
 } from '../actions';
 import initialShippingClasses from './data/initial-state';
@@ -26,7 +25,7 @@ const dispatchFn = action => action;
 const getState = ( shippingClasses = initialShippingClasses ) => () => ( {
 	extensions: {
 		woocommerce: {
-			woocommerceServices: {
+			sites: {
 				[ siteId ]: {
 					shippingClasses,
 				},
@@ -58,17 +57,6 @@ describe( 'Shipping classes state actions', () => {
 		expect( result ).to.be.an( 'object' );
 		expect( result.type ).to.equal( 'NOTICE_CREATE' );
 		expect( result.notice ).to.be.an( 'object' );
-	} );
-
-	/**
-	 * fetchShippingClassesIfNotLoaded
-	 */
-
-	test( '#fetchShippingClassesIfNotLoaded', () => {
-		expect( fetchShippingClassesIfNotLoaded( siteId ) ).to.eql( {
-			type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
-			siteId,
-		} );
 	} );
 
 	/**

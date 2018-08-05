@@ -22,7 +22,7 @@ const getState = ( shippingClasses = initialShippingClasses ) => {
 	return {
 		extensions: {
 			woocommerce: {
-				woocommerceServices: {
+				sites: {
 					[ siteId ]: {
 						shippingClasses,
 					},

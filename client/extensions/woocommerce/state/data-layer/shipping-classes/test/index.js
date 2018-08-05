@@ -7,14 +7,30 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { fetchShippingClassesIfNotLoaded } from 'woocommerce/state/sites/shipping-classes/actions';
+import { fetchShippingClasses } from 'woocommerce/state/sites/shipping-classes/actions';
 import { fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
+
+const siteId = 123;
+
+const dispatchFn = action => action;
+
+const getState = () => ( {
+	extensions: {
+		woocommerce: {
+			sites: {
+				[ siteId ]: {
+					shippingClasses: false,
+				},
+			},
+		},
+	},
+} );
 
 describe( 'handlers', () => {
 	describe( '#fetch', () => {
 		test( 'should dispatch a get action for the shipping classes', () => {
-			const action = fetchShippingClassesIfNotLoaded( 123 );
+			const action = fetchShippingClasses( siteId )( dispatchFn, getState );
 			const result = fetch( action );
 
 			expect( result ).to.eql(

@@ -10,11 +10,25 @@ import { cloneDeep } from 'lodash';
  * Internal dependencies
  */
 import { LOADING } from 'woocommerce/state/constants';
-import { fetchShippingClassesSuccess, fetchShippingClassesIfNotLoaded } from '../actions';
+import { fetchShippingClassesSuccess, fetchShippingClasses } from '../actions';
 import reducer from '../reducers';
 import initialState from './data/initial-state';
 
 const siteId = 123;
+
+const dispatchFn = action => action;
+
+const getState = () => ( {
+	extensions: {
+		woocommerce: {
+			sites: {
+				[ siteId ]: {
+					shippingClasses: false,
+				},
+			},
+		},
+	},
+} );
 
 describe( 'Shipping classes form reducer', () => {
 	const expectedEndState = cloneDeep( initialState );
@@ -26,7 +40,7 @@ describe( 'Shipping classes form reducer', () => {
 	} );
 
 	test( 'WOOCOMMERCE_SHIPPING_CLASSES_REQUEST enters loading state', () => {
-		const action = fetchShippingClassesIfNotLoaded( siteId );
+		const action = fetchShippingClasses( siteId )( dispatchFn, getState );
 		const state = reducer( false, action );
 
 		expect( state ).to.equal( LOADING );
