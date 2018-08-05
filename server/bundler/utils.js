@@ -28,9 +28,7 @@ function hashFile( path ) {
 
 function getUrl( filename, hash ) {
 	return (
-		URL_BASE_PATH +
-		'/' +
-		filename +
+		( filename[ 0 ] === '/' ? filename : URL_BASE_PATH + '/' + filename ) +
 		'?' +
 		qs.stringify( {
 			v: hash,

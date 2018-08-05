@@ -277,6 +277,12 @@ const sections = [
 		secondary: true,
 		css: 'feature-upsell',
 	},
+	{
+		name: 'offline',
+		paths: [ '/offline' ],
+		module: 'offline',
+		enableLoggedOut: true,
+	},
 ];
 
 sections.push( {

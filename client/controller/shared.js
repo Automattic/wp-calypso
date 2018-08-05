@@ -17,6 +17,7 @@ import { setSection as setSectionAction } from 'state/ui/actions';
 import { getSection } from 'state/ui/selectors';
 import { setLocale } from 'state/ui/language/actions';
 import isRTL from 'state/selectors/is-rtl';
+import Offline from 'components/offline';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
@@ -24,14 +25,24 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
-			context.layout = (
-				<LayoutComponent
-					store={ store }
-					primary={ primary }
-					secondary={ secondary }
-					redirectUri={ context.originalUrl }
-				/>
-			);
+			if ( window.navigator.onLine === false && process.env.NODE_ENV !== 'development' ) {
+				context.layout = (
+					<LayoutComponent
+						store={ store }
+						primary={ <Offline /> }
+						redirectUri={ context.originalUrl }
+					/>
+				);
+			} else {
+				context.layout = (
+					<LayoutComponent
+						store={ store }
+						primary={ primary }
+						secondary={ secondary }
+						redirectUri={ context.originalUrl }
+					/>
+				);
+			}
 		}
 		next();
 	};

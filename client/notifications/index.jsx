@@ -146,7 +146,6 @@ export class Notifications extends Component {
 					push_notification_note_id: event.data.notification.note_id,
 					push_notification_type: event.data.notification.type,
 				} );
-
 				return;
 		}
 	};
