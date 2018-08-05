@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map, forEach } from 'lodash';
+import { uniqBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,11 +38,10 @@ export default class ShippingClassesField extends React.Component {
 					id={ id }
 					name={ id }
 					placeholder={ placeholder }
-					value={ value.map( selected => selected + '' ) }
-					suggestions={ map( options, option => option.id + '' ) }
+					value={ value.map( this.getSlugFromId.bind( this ) ) }
+					suggestions={ options.map( option => option.slug ) }
 					isError={ Boolean( error ) }
 					onChange={ this.onChange.bind( this ) }
-					saveTransform={ this.saveTransform.bind( this ) }
 					displayTransform={ this.transformForDisplay.bind( this ) }
 				/>
 				{ error && typeof error === 'string' && <FieldError text={ error } /> }
@@ -52,32 +51,43 @@ export default class ShippingClassesField extends React.Component {
 		);
 	}
 
-	saveTransform( token ) {
-		const { options } = this.props;
-
-		let result = '';
-		const numericToken = parseInt( token );
-
-		forEach( options, option => {
-			if (
-				( !! numericToken && option.id === numericToken ) ||
-				option.name.toLowerCase() === token.toLowerCase().trim()
-			) {
-				result = option.id + '';
-			}
+	getSlugFromId( id ) {
+		const found = this.props.options.find( option => {
+			return option.id === id;
 		} );
 
-		return result;
+		return found ? found.slug : null;
+	}
+
+	getIdFromSlugOrName( slug ) {
+		// Try a percise slug match first (if an item was clicked or Enter was pressed)
+		let found = this.props.options.find( option => {
+			return option.slug === slug;
+		} );
+
+		// If there are no precise matches, try guessing
+		if ( ! found && slug.trim().length ) {
+			found = this.props.options.find( option => {
+				return 0 === option.name.toLowerCase().indexOf( slug.trim().toLowerCase() );
+			} );
+		}
+
+		return found ? found.id : null;
 	}
 
 	transformForDisplay( token ) {
-		const { options } = this.props;
-		const option = options.find( item => item.id === parseInt( token ) );
+		const option = this.props.options.find( item => item.slug === token );
+
 		return option ? option.name : token;
 	}
 
 	onChange( strings ) {
 		const { updateValue } = this.props;
-		updateValue( strings.map( selected => parseInt( selected ) ) );
+
+		const updatedValue = uniqBy(
+			strings.map( this.getIdFromSlugOrName.bind( this ) ).filter( item => null !== item )
+		);
+
+		updateValue( updatedValue );
 	}
 }
