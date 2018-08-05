@@ -1,5 +1,4 @@
 {
-	"moduleFileExtensions": ["js", "json", "jsx", "node"],
 	"moduleNameMapper": {
 		"^config$": "<rootDir>/server/config/index.js"
 	},

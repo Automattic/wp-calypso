@@ -40,7 +40,7 @@ describe( 'GutenbergComponents', () => {
 	} );
 
 	test( 'should render a single component when a component is given', () => {
-		const wrapper = shallow( <GutenbergComponents component="button" /> );
+		const wrapper = shallow( <GutenbergComponents component="foo" /> );
 		const headerCake = wrapper.find( HeaderCake );
 		const readmeViewer = wrapper.find( ReadmeViewer );
 		expect( wrapper.hasClass( 'is-single' ) ).toBe( true );
@@ -49,7 +49,7 @@ describe( 'GutenbergComponents', () => {
 	} );
 
 	test( 'should go back when clicking in HeaderCake', () => {
-		const wrapper = shallow( <GutenbergComponents component="button" /> );
+		const wrapper = shallow( <GutenbergComponents component="foo" /> );
 		const headerCake = wrapper.find( HeaderCake );
 		headerCake.simulate( 'click' );
 		expect( page ).toBeCalledWith( '/devdocs/gutenberg-components/' );
