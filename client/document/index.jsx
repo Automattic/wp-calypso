@@ -199,6 +199,17 @@ class Document extends React.Component {
 						 `,
 						} }
 					/>
+					<script
+						nonce={ inlineScriptNonce }
+						type="text/javascript"
+						dangerouslySetInnerHTML={ {
+							__html: `
+							if ( 'serviceWorker' in navigator ) {
+								navigator.serviceWorker.register( '/service-worker.js' );
+							}
+						 `,
+						} }
+					/>
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>
