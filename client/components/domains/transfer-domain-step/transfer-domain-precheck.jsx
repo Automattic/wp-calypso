@@ -97,6 +97,17 @@ class TransferDomainPrecheck extends React.Component {
 		} );
 	};
 
+	checkLockedStatus = () => {
+		const { unlocked } = this.props;
+
+		if ( false === unlocked ) {
+			this.refreshStatus();
+		} else {
+			this.props.recordUnlockedCheckButtonClick( this.props.domain, unlocked );
+			this.showNextStep();
+		}
+	};
+
 	checkAuthCode = () => {
 		this.props.checkAuthCode( this.props.domain, this.state.authCode ).then( result => {
 			const authCodeValid = get( result, 'authCodeValid' );
@@ -239,8 +250,7 @@ class TransferDomainPrecheck extends React.Component {
 			</div>
 		);
 
-		const onButtonClick =
-			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
+		const onButtonClick = this.checkLockedStatus;
 
 		return this.getSection( heading, message, buttonText, step, lockStatus, onButtonClick );
 	}
@@ -364,11 +374,16 @@ class TransferDomainPrecheck extends React.Component {
 const recordNextStep = ( domain_name, show_step ) =>
 	recordTracksEvent( 'calypso_transfer_domain_precheck_step_change', { domain_name, show_step } );
 
-const recordUnlockedCheckButtonClick = ( domain_name, is_unlocked ) =>
-	recordTracksEvent( 'calypso_transfer_domain_precheck_unlocked_check_click', {
+const recordUnlockedCheckButtonClick = ( domain_name, is_unlocked ) => {
+	if ( null === is_unlocked ) {
+		is_unlocked = 'unavailable';
+	}
+
+	return recordTracksEvent( 'calypso_transfer_domain_precheck_unlocked_check_click', {
 		domain_name,
 		is_unlocked,
 	} );
+};
 
 const recordAuthCodeCheckButtonClick = ( domain_name, auth_code_is_valid ) =>
 	recordTracksEvent( 'calypso_transfer_domain_precheck_auth_code_check_click', {
