@@ -3,7 +3,8 @@
  * External dependencies
  */
 
-const express = require( 'express' );
+const express = require( 'express' ),
+	querystring = require( 'querystring' );
 
 /**
  * Internal dependencies
@@ -16,11 +17,17 @@ const express = require( 'express' );
  * - dynamic injection of branchName to start_url (to pass LH PWA test on calypso.live)
  * - other stuff I'm sure
  */
-const buildManifest = () => {
+const buildManifest = ( { branchName } ) => {
+	const startUrlOptions = { source: 'pwa' };
+
+	if ( branchName && 'master' !== branchName ) {
+		startUrlOptions.branch = branchName;
+	}
+
 	return {
 		name: 'WordPress.com',
 		short_name: 'WordPress.com',
-		start_url: '/?source=pwa',
+		start_url: '/' + querystring.stringify( startUrlOptions ),
 		display: 'standalone',
 		gcm_sender_id: '87234302238',
 		background_color: '#0078be',
@@ -59,7 +66,7 @@ module.exports = function() {
 	const app = express();
 
 	app.get( '/manifest.json', function( request, response ) {
-		response.json( buildManifest() );
+		response.json( buildManifest( { branchName: request.query.branch } ) );
 	} );
 
 	return app;

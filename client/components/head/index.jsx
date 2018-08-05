@@ -84,7 +84,7 @@ Head.propTypes = {
 	faviconURL: PropTypes.string.isRequired,
 	children: PropTypes.node,
 	cdn: PropTypes.string.isRequired,
-	branchName: PropTypes.string.isRequired,
+	branchName: PropTypes.string,
 };
 
 export default Head;
