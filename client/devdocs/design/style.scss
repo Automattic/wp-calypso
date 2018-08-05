@@ -93,14 +93,3 @@
 .design__gutenberg-component-example--autocomplete [contenteditable] {
 	@extend %form-field;
 }
-
-.design__gutenberg-component-example--drop-zone {
-	position: relative;
-	text-align: center;
-	padding: 50px;
-}
-
-.design__gutenberg-component-example--date-time,
-.design__gutenberg-component-example--dropdown {
-	display: inline-block;
-}

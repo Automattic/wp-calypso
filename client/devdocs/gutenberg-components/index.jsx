@@ -6,7 +6,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
-import { isArray, trim } from 'lodash';
+import { get, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,20 @@ import Main from 'components/main';
 import ReadmeViewer from 'components/readme-viewer';
 import SearchCard from 'components/search-card';
 import { camelCaseToSlug, slugToCamelCase } from 'devdocs/docs-example/util';
-import GutenbergComponentExample from './gutenberg-component-example';
+import GutenbergComponentExample from './example';
+import examples from './examples.json';
+
+const getExampleData = ( example ) => {
+	const componentName = get( example, 'component' );
+	const readmeFilePath = get( example, 'readmeFilePath', camelCaseToSlug( componentName ) );
+	const render = get( example, 'render', `My${ componentName }` );
+
+	return {
+		componentName,
+		readmeFilePath,
+		render,
+	};
+};
 
 export default class extends React.Component {
 	state = { filter: '' };
@@ -39,36 +52,6 @@ export default class extends React.Component {
 			'is-single': component,
 			'is-list': ! component,
 		} );
-
-		const componentsWithExample = [
-			'Autocomplete',
-			'BaseControl',
-			'Button',
-			'ButtonGroup',
-			'CheckboxControl',
-			'ClipboardButton',
-			'ColorIndicator',
-			'ColorPalette',
-			'Dashicon',
-			'Disabled',
-			'Draggable',
-			[ 'DateTimePicker', { readmeFilePath: 'date-time' } ],
-			'DropZone',
-			'Dropdown',
-			'DropdownMenu',
-			'ExternalLink',
-			'FocusableIframe',
-			'FontSizePicker',
-			'FormFileUpload',
-			'FormToggle',
-			'FormTokenField',
-			'IconButton',
-			'KeyboardShortcuts',
-			'MenuGroup',
-			'MenuItem',
-			'MenuItemsChoice',
-			'Modal',
-		];
 
 		return (
 			<Main className={ className }>
@@ -91,19 +74,19 @@ export default class extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter } section="gutenberg-components">
-					{ componentsWithExample.map( componentWithExample => {
-						const componentName = isArray( componentWithExample )
-							? componentWithExample[ 0 ]
-							: componentWithExample;
-						const readmeFilePath = isArray( componentWithExample )
-							? componentWithExample[ 1 ].readmeFilePath
-							: camelCaseToSlug( componentName );
+					{ examples.map( example => {
+						const {
+							componentName,
+							readmeFilePath,
+							render,
+						} = getExampleData( example );
 						return (
 							<GutenbergComponentExample
 								key={ componentName }
 								asyncName={ componentName }
 								component={ componentName }
 								readmeFilePath={ readmeFilePath }
+								render={ render }
 							/>
 						);
 					} ) }

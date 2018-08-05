@@ -7,11 +7,13 @@ import React from 'react';
 import * as components from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 import { getSettings } from '@wordpress/date';
-import { Fragment } from '@wordpress/element';
+import { addFilter } from '@wordpress/hooks';
 import { LiveError, LivePreview, LiveProvider } from 'react-live';
 import request from 'superagent';
 import codeBlocks from 'gfm-code-blocks';
 import classnames from 'classnames';
+import { kebabCase } from 'lodash';
+import PropTypes from 'prop-types';
 
 class Example extends React.Component {
 	state = {
@@ -44,8 +46,7 @@ class Example extends React.Component {
 				// can render.
 				code = `
 					${ code }
-					
-					render( <My${ this.props.component } /> );
+					render( <${ this.props.render } /> );
 				`;
 
 				this.setState( { code } );
@@ -58,11 +59,12 @@ class Example extends React.Component {
 			...components,
 			withState,
 			getSettings,
-			Fragment,
+			PropTypes,
+			addFilter,
 		};
 		const className = classnames(
 			'design__gutenberg-component-example',
-			`design__gutenberg-component-example--${ this.props.readmeFilePath }`
+			`design__gutenberg-component-example--${ kebabCase( this.props.component ) }`
 		);
 
 		return code ? (
