@@ -100,3 +100,35 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
+
+/**
+ * Check the validity of username
+ *
+ * @param {string} username username to validate.
+ *
+ * @return {*} Stored data container for request.
+ */
+export const checkUsernameValidity = username => {
+	const id = `username-validity-${ username }`;
+	return requestHttpData(
+		id,
+		http( {
+			method: 'GET',
+			path: `/me/username/validate/${ username }`,
+			apiVersion: '1.1',
+		} ),
+		{
+			freshness: 60 * 1000,
+			fromApi: () => ( { success, allowed_actions } ) => [
+				[
+					id,
+					{
+						isValid: success,
+						allowedActions: allowed_actions,
+						validatedUsername: username,
+					},
+				],
+			],
+		}
+	);
+};
