@@ -9,13 +9,13 @@ const express = require( 'express' ),
 /**
  * Internal dependencies
  */
-// const config = require( 'config' );
 
 /**
  * TODO:
  * - l10n
  * - dynamic injection of branchName to start_url (to pass LH PWA test on calypso.live)
  * - other stuff I'm sure
+ * @returns {object} An express app that returns /manifest.json
  */
 const buildManifest = ( { branchName } ) => {
 	const startUrlOptions = { source: 'pwa' };
@@ -27,7 +27,7 @@ const buildManifest = ( { branchName } ) => {
 	return {
 		name: 'WordPress.com',
 		short_name: 'WordPress.com',
-		start_url: '/' + querystring.stringify( startUrlOptions ),
+		start_url: '/?' + querystring.stringify( startUrlOptions ),
 		display: 'standalone',
 		gcm_sender_id: '87234302238',
 		background_color: '#0078be',
