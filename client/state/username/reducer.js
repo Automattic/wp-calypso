@@ -8,12 +8,15 @@ import {
 	USERNAME_VALIDATION_FAILURE,
 	USERNAME_VALIDATION_SUCCESS,
 } from 'state/action-types';
-import { USERNAME_DEFAULT } from './constants';
 
-export default function( state, action = {} ) {
+export const DEFAULT_STATE = {
+	validation: false,
+};
+
+export default function( state = DEFAULT_STATE, action = {} ) {
 	switch ( action.type ) {
 		case USERNAME_CLEAR_VALIDATION:
-			return USERNAME_DEFAULT;
+			return DEFAULT_STATE;
 		case USERNAME_VALIDATION_FAILURE:
 			return {
 				validation: {
@@ -30,6 +33,6 @@ export default function( state, action = {} ) {
 				},
 			};
 		default:
-			return state || USERNAME_DEFAULT;
+			return state || DEFAULT_STATE;
 	}
 }

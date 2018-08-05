@@ -3,25 +3,24 @@
 /**
  * Internal dependencies
  */
-import reducer from '../reducer';
+import reducer, { DEFAULT_STATE } from '../reducer';
 import {
 	USERNAME_CLEAR_VALIDATION,
 	USERNAME_VALIDATION_FAILURE,
 	USERNAME_VALIDATION_SUCCESS,
 } from 'state/action-types';
-import { USERNAME_DEFAULT } from 'state/username/constants';
 
 describe( 'reducer', () => {
 	test( 'should return default state if no other actions are triggered yet', () => {
 		const usernameState = reducer( null );
-		expect( usernameState ).toEqual( USERNAME_DEFAULT );
+		expect( usernameState ).toEqual( DEFAULT_STATE );
 	} );
 
 	describe( USERNAME_CLEAR_VALIDATION, () => {
 		test( 'reset username validation data to default state', () => {
 			const previousState = {};
 			const usernameState = reducer( previousState, { type: USERNAME_CLEAR_VALIDATION } );
-			expect( usernameState ).toEqual( USERNAME_DEFAULT );
+			expect( usernameState ).toEqual( DEFAULT_STATE );
 		} );
 	} );
 
