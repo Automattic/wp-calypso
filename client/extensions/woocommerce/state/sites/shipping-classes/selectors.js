@@ -14,7 +14,7 @@ import { LOADING } from 'woocommerce/state/constants';
 const getShippingClassesFromState = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
 		state,
-		[ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingClasses' ],
+		[ 'extensions', 'woocommerce', 'sites', siteId, 'shippingClasses' ],
 		false
 	);
 };

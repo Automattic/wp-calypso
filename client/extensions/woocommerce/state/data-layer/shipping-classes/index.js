@@ -8,8 +8,8 @@ import request from 'woocommerce/state/sites/http-request';
 import {
 	fetchShippingClassesFailure,
 	fetchShippingClassesSuccess,
-} from 'woocommerce/state/shipping-classes/actions';
-import { WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST } from 'woocommerce/woocommerce-services/state/action-types';
+} from 'woocommerce/state/sites/shipping-classes/actions';
+import { WOOCOMMERCE_SHIPPING_CLASSES_REQUEST } from 'woocommerce/state/action-types';
 import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
 export const fetch = action => {
@@ -26,7 +26,7 @@ const onSuccess = ( { siteId }, { data } ) => dispatch => {
 };
 
 export default {
-	[ WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST ]: [
+	[ WOOCOMMERCE_SHIPPING_CLASSES_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch,
 			onSuccess,

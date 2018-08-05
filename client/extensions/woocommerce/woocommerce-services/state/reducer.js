@@ -14,7 +14,6 @@ import packages from './packages/reducer';
 import shippingLabel from './shipping-label/reducer';
 import shippingMethodSchemas from './shipping-method-schemas/reducer';
 import shippingZoneMethodSettings from './shipping-zone-method-settings/reducer';
-import shippingClasses from './shipping-classes/reducers';
 
 export default keyedReducer(
 	'siteId',
@@ -24,6 +23,5 @@ export default keyedReducer(
 		shippingLabel,
 		shippingMethodSchemas,
 		shippingZoneMethodSettings,
-		shippingClasses,
 	} )
 );

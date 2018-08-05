@@ -25,14 +25,14 @@ describe( 'Shipping classes form reducer', () => {
 		expect( initialState ).to.eql( expectedEndState );
 	} );
 
-	test( 'WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST enters loading state', () => {
+	test( 'WOOCOMMERCE_SHIPPING_CLASSES_REQUEST enters loading state', () => {
 		const action = fetchShippingClassesIfNotLoaded( siteId );
 		const state = reducer( false, action );
 
 		expect( state ).to.equal( LOADING );
 	} );
 
-	test( 'WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST_SUCCESS saves data', () => {
+	test( 'WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS saves data', () => {
 		const action = fetchShippingClassesSuccess( siteId, initialState );
 		const state = reducer( false, action );
 

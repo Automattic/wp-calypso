@@ -9,8 +9,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST,
-	WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST_SUCCESS,
+	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
+	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
 } from '../../action-types';
 import {
 	fetchShippingClassesSuccess,
@@ -42,7 +42,7 @@ describe( 'Shipping classes state actions', () => {
 
 	test( '#fetchShippingClassesSuccess', () => {
 		expect( fetchShippingClassesSuccess( siteId, initialShippingClasses ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST_SUCCESS,
+			type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
 			siteId,
 			data: initialShippingClasses,
 		} );
@@ -66,7 +66,7 @@ describe( 'Shipping classes state actions', () => {
 
 	test( '#fetchShippingClassesIfNotLoaded', () => {
 		expect( fetchShippingClassesIfNotLoaded( siteId ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST,
+			type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 			siteId,
 		} );
 	} );
@@ -77,7 +77,7 @@ describe( 'Shipping classes state actions', () => {
 
 	test( '#fetchShippingClasses', () => {
 		expect( fetchShippingClasses( siteId )( dispatchFn, getState( false ) ) ).to.eql( {
-			type: WOOCOMMERCE_SERVICES_SHIPPING_CLASSES_REQUEST,
+			type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 			siteId,
 		} );
 	} );
