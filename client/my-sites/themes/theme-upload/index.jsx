@@ -333,13 +333,12 @@ const composeArgs = [
 	localize,
 ];
 
-if (
-	config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-	abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
-) {
+if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
 	composeArgs.push(
 		redirectIf(
-			( state, siteId ) => ! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
+			( state, siteId ) =>
+				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
+				! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			'/feature/themes'
 		)
 	);
