@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import ActivityLogItem from '../activity-log-item';
 import FeatureExample from 'components/feature-example';
 import FormattedHeader from 'components/formatted-header';
-import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import UpgradePanel from '../activity-log-action-panels/upgrade-panel';
 
 class ActivityLogExample extends Component {
 	render() {
@@ -76,7 +76,7 @@ class ActivityLogExample extends Component {
 						/>
 					) ) }
 				</FeatureExample>
-				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+				{ siteIsOnFreePlan && <UpgradePanel siteId={ siteId } /> }
 			</div>
 		);
 	}

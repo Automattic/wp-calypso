@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionPanel from 'components/action-panel';
+import ActionPanel from 'components/action-panel/index';
 import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelFooter from 'components/action-panel/footer';
-import { addQueryArgs } from 'lib/url';
-import Button from 'components/button';
+import { addQueryArgs } from 'lib/url/index';
+import Button from 'components/button/index';
 import { isJetpackSite } from 'state/sites/selectors';
 import {
 	FEATURE_JETPACK_ESSENTIAL,
@@ -25,7 +25,7 @@ import {
 } from 'lib/plans/constants';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
-class UpgradeBanner extends Component {
+class UpgradePanel extends Component {
 	getDescription() {
 		const { translate, isJetpack } = this.props;
 		return isJetpack
@@ -38,8 +38,8 @@ class UpgradeBanner extends Component {
 			: translate(
 					'Under your current free plan, you can only view the last 20 events on your site. ' +
 						'Unlock your full site activity for the past 30 days by upgrading to the personal plan.' +
-						"You'll also get access to SEO tools improve your site's rankings, " +
-						'automated social media sharing, and spam filtering.'
+						'You’ll also get access to a custom domain name, removal of WordPress.com ads, ' +
+						'increased storage space to 6GB, and email & live chat support.'
 			  );
 	}
 	getHref() {
@@ -87,4 +87,4 @@ export default connect( ( state, { siteId } ) => ( {
 	isJetpack: isJetpackSite( state, siteId ),
 	siteId: siteId,
 	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( UpgradeBanner ) );
+} ) )( localize( UpgradePanel ) );

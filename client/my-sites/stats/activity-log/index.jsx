@@ -22,7 +22,7 @@ import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
-import UpgradeBanner from '../activity-log-banner/upgrade-banner';
+import UpgradePanel from '../activity-log-action-panels/upgrade-panel';
 import { isFreePlan } from 'lib/plans';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -451,7 +451,7 @@ class ActivityLog extends Component {
 								</Fragment>
 							) ) }
 						</section>
-						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+						{ siteIsOnFreePlan && <UpgradePanel siteId={ siteId } /> }
 						<Pagination
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
