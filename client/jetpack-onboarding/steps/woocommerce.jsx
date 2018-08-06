@@ -41,7 +41,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 		const isCompleted = get( stepsCompleted, STEPS.WOOCOMMERCE ) === true;
 
 		return (
-			<div className="steps__main">
+			<div className="steps__main" data-e2e-type="woocommerce">
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<div className="steps__button-group">
