@@ -34,14 +34,13 @@ function isFeaturedImageSet() {
 	return !! query( '.editor-featured-image.is-assigned' ).length;
 }
 
-function openSidebar( props, context ) {
-	const store = context.store;
-	if ( store && getCurrentLayoutFocus( store.getState() ) !== 'sidebar' ) {
-		store.dispatch( setLayoutFocus( 'sidebar' ) );
+function openSidebar( { reduxStore } ) {
+	if ( getCurrentLayoutFocus( reduxStore.getState() ) !== 'sidebar' ) {
+		reduxStore.dispatch( setLayoutFocus( 'sidebar' ) );
 	}
 
 	return new Promise( function( resolve, reject ) {
-		getCurrentLayoutFocus( store.getState() ) === 'sidebar' ? delay( resolve, 200 ) : reject();
+		getCurrentLayoutFocus( reduxStore.getState() ) === 'sidebar' ? delay( resolve, 200 ) : reject();
 	} );
 }
 
