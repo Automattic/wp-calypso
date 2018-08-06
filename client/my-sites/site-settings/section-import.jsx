@@ -22,7 +22,7 @@ import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
-import { fetchState } from 'lib/importer/actions';
+import { fetchState } from 'state/imports/actions';
 import { appStates, WORDPRESS, MEDIUM, BLOGGER, SITE_IMPORTER } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -186,7 +186,7 @@ class SiteSettingsImport extends Component {
 
 	updateFromAPI = () => {
 		const siteID = get( this, 'props.site.ID' );
-		siteID && fetchState( siteID );
+		siteID && this.props.fetchState( siteID );
 	};
 
 	updateState = () => {
@@ -255,7 +255,10 @@ class SiteSettingsImport extends Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( SiteSettingsImport ) );
+export default connect(
+	state => ( {
+		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{ fetchState }
+)( localize( SiteSettingsImport ) );
