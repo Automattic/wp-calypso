@@ -11,7 +11,6 @@ import {
 	TYPE_PREMIUM,
 } from 'lib/plans/constants';
 import { translate } from 'i18n-calypso';
-// import { translate } from this.props;
 
 /**
  * No translate() used on some of these since we're launching those promotions just for the EN audience
