@@ -3,14 +3,16 @@
 /**
  * External dependencies
  */
-import { drop, join, split, startsWith } from 'lodash';
+import { drop, isEmpty, join, find, split, startsWith, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { type as domainTypes, transferStatus, gdprConsentStatus } from './constants';
+import { cartItems } from 'lib/cart-values';
+import { isDomainRegistration } from 'lib/products-values';
 
-export function getDomainType( domainFromApi ) {
+function getDomainType( domainFromApi ) {
 	if ( domainFromApi.type === 'redirect' ) {
 		return domainTypes.SITE_REDIRECT;
 	}
@@ -30,7 +32,7 @@ export function getDomainType( domainFromApi ) {
 	return domainTypes.MAPPED;
 }
 
-export function getTransferStatus( domainFromApi ) {
+function getTransferStatus( domainFromApi ) {
 	if ( domainFromApi.transfer_status === 'pending_owner' ) {
 		return transferStatus.PENDING_OWNER;
 	}
@@ -54,7 +56,7 @@ export function getTransferStatus( domainFromApi ) {
 	return null;
 }
 
-export function getGdprConsentStatus( domainFromApi ) {
+function getGdprConsentStatus( domainFromApi ) {
 	switch ( domainFromApi.gdpr_consent_status ) {
 		case 'NONE':
 			return gdprConsentStatus.NONE;
@@ -75,11 +77,38 @@ export function getGdprConsentStatus( domainFromApi ) {
 	}
 }
 
-export function isDomainConnectAuthorizePath( path ) {
+/**
+ * Depending on the current step in checkout, the user's domain can be found in
+ * either the cart or the receipt.
+ *
+ * @param {?Object} receipt - The receipt for the transaction
+ * @param {?Object} cart - The cart for the transaction
+ *
+ * @return {?String} the name of the first domain for the transaction.
+ */
+function getDomainNameFromReceiptOrCart( receipt, cart ) {
+	let domainRegistration;
+
+	if ( receipt && ! isEmpty( receipt.purchases ) ) {
+		domainRegistration = find( values( receipt.purchases ), isDomainRegistration );
+	}
+
+	if ( cartItems.hasDomainRegistration( cart ) ) {
+		domainRegistration = cartItems.getDomainRegistrations( cart )[ 0 ];
+	}
+
+	if ( domainRegistration ) {
+		return domainRegistration.meta;
+	}
+
+	return null;
+}
+
+function isDomainConnectAuthorizePath( path ) {
 	return startsWith( path, '/domain-connect/authorize/' );
 }
 
-export function parseDomainAgainstTldList( domainFragment, tldList ) {
+function parseDomainAgainstTldList( domainFragment, tldList ) {
 	if ( ! domainFragment ) {
 		return '';
 	}
@@ -93,3 +122,12 @@ export function parseDomainAgainstTldList( domainFragment, tldList ) {
 
 	return parseDomainAgainstTldList( suffix, tldList );
 }
+
+export {
+	getDomainNameFromReceiptOrCart,
+	getDomainType,
+	getGdprConsentStatus,
+	getTransferStatus,
+	isDomainConnectAuthorizePath,
+	parseDomainAgainstTldList,
+};
