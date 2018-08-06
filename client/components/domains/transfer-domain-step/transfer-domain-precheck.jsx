@@ -123,7 +123,7 @@ class TransferDomainPrecheck extends React.Component {
 							<div>
 								<div className="transfer-domain-step__section-message">{ message }</div>
 								<div className="transfer-domain-step__section-action">
-									<Button compact onClick={ onButtonClick } busy={ loading }>
+									<Button compact onClick={ onButtonClick } busy={ loading } disabled={ loading }>
 										{ buttonText }
 									</Button>
 									{ stepStatus }

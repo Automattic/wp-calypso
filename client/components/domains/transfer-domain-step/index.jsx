@@ -561,6 +561,10 @@ class TransferDomainStep extends React.Component {
 				this.setState( { submittingAuthCodeCheck: false } );
 
 				if ( ! isEmpty( error ) ) {
+					const message = get( error, 'message' );
+					if ( message ) {
+						this.props.errorNotice( message );
+					}
 					resolve();
 					return;
 				}
