@@ -257,6 +257,7 @@ export class SignupProcessingScreen extends Component {
 
 				<div className="signup-processing__content">
 					<img
+						alt=""
 						src="/calypso/images/signup/confetti.svg"
 						className="signup-process-screen__confetti"
 					/>
