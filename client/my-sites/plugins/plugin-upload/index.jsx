@@ -8,8 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
-import { compose } from 'redux';
+import { isEmpty, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -210,7 +209,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const composeArgs = [
+const flowRightArgs = [
 	connect(
 		mapStateToProps,
 		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
@@ -219,7 +218,7 @@ const composeArgs = [
 ];
 
 if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
-	composeArgs.push(
+	flowRightArgs.push(
 		redirectIf(
 			( state, siteId ) =>
 				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
@@ -229,4 +228,4 @@ if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
 	);
 }
 
-export default compose( ...composeArgs )( PluginUpload );
+export default flowRight( ...flowRightArgs )( PluginUpload );

@@ -7,8 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find, isEmpty } from 'lodash';
-import { compose } from 'redux';
+import { includes, find, isEmpty, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -325,7 +324,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const composeArgs = [
+const flowRightArgs = [
 	connect(
 		mapStateToProps,
 		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
@@ -334,7 +333,7 @@ const composeArgs = [
 ];
 
 if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
-	composeArgs.push(
+	flowRightArgs.push(
 		redirectIf(
 			( state, siteId ) =>
 				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
@@ -344,4 +343,4 @@ if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
 	);
 }
 
-export default compose( ...composeArgs )( UploadWithOptions );
+export default flowRight( ...flowRightArgs )( UploadWithOptions );

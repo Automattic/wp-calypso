@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { compose } from 'redux';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -299,7 +299,7 @@ const mapDispatchToProps = dispatch => ( {
 	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
 } );
 
-export default compose(
+export default flowRight(
 	connect(
 		mapStateToProps,
 		mapDispatchToProps
