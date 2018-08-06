@@ -11,7 +11,7 @@ import wp from 'wp';
 const { __ } = wp.i18n;
 const { Fragment } = wp.element;
 const { InspectorControls } = wp.editor;
-const { PanelBody, RangeControl } = wp.components;
+const { PanelBody, RangeControl, TextControl } = wp.components;
 const { registerBlockType } = wp.blocks;
 
 /**
@@ -27,6 +27,10 @@ registerBlockType( 'jetpack/related-posts', {
 	category: 'layout',
 
 	attributes: {
+		headline: {
+			type: 'string',
+			default: __( 'Related' ),
+		},
 		postsToShow: {
 			type: 'number',
 			default: 3,
@@ -34,12 +38,17 @@ registerBlockType( 'jetpack/related-posts', {
 	},
 
 	edit: ( { attributes, setAttributes } ) => {
-		const { postsToShow } = attributes;
+		const { headline, postsToShow } = attributes;
 
 		return (
 			<Fragment>
 				<InspectorControls>
 					<PanelBody title={ __( 'Related Posts Settings' ) }>
+						<TextControl
+							label={ __( 'Headline' ) }
+							value={ headline }
+							onChange={ value => setAttributes( { headline: value } ) }
+						/>
 						<RangeControl
 							label={ __( 'Number of posts' ) }
 							value={ postsToShow }
