@@ -15,6 +15,11 @@ const CopyWebpackPlugin = require( path.resolve(
 ) );
 const getBaseConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
 
+const omitPlugins = [
+	CopyWebpackPlugin,
+	webpack.HotModuleReplacementPlugin,
+];
+
 const outputHandler = ( error, stats ) => {
 	if ( error ) {
 		console.error( error );
@@ -67,7 +72,7 @@ exports.compile = args => {
 				libraryTarget: 'window',
 			},
 			plugins: [
-				...baseConfig.plugins.filter( plugin => ! ( plugin instanceof CopyWebpackPlugin ) ),
+				...baseConfig.plugins.filter( plugin => omitPlugins.indexOf( plugin.constructor ) < 0 ),
 			],
 		},
 	};
