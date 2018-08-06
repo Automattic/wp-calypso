@@ -24,6 +24,7 @@ import userFactory from 'lib/user';
  * Re-export
  */
 export { setSection, setUpLocale } from './shared.js';
+export { redirectLoggedIn } from './lib/redirect-logged-in';
 
 const user = userFactory();
 
@@ -55,17 +56,6 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
  */
 export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, render );
-}
-
-export function redirectLoggedIn( context, next ) {
-	const currentUser = getCurrentUser( context.store.getState() );
-
-	if ( currentUser ) {
-		page.redirect( '/' );
-		return;
-	}
-
-	next();
 }
 
 export function redirectLoggedOut( context, next ) {

@@ -8,6 +8,7 @@ import { parse } from 'qs';
 import React from 'react';
 import { includes } from 'lodash';
 import { parse as parseUrl } from 'url';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,9 +17,14 @@ import config from 'config';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
+import LayoutLogin from 'layout/login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getLanguageSlugs } from 'lib/i18n-utils';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { makeLayoutMiddleware } from 'controller/shared';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 const enhanceContextWithLogin = context => {
 	const {
@@ -157,3 +163,16 @@ export function redirectJetpack( context, next ) {
 	}
 	next();
 }
+
+export const ReduxWrappedLoginLayout = ( { store, primary, secondary, redirectUri } ) => (
+	<ReduxProvider store={ store }>
+		<LayoutLogin
+			primary={ primary }
+			secondary={ secondary }
+			redirectUri={ redirectUri }
+			user={ getCurrentUser( store.getState() ) ? user : null }
+		/>
+	</ReduxProvider>
+);
+
+export const makeLoginLayout = makeLayoutMiddleware( ReduxWrappedLoginLayout );

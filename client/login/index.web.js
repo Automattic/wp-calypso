@@ -11,9 +11,11 @@ import {
 	magicLoginUse,
 	redirectJetpack,
 	redirectDefaultLocale,
+	makeLoginLayout,
 } from './controller';
 import { setShouldServerSideRenderLogin } from './ssr';
-import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
+import { redirectLoggedIn } from 'controller/lib/redirect-logged-in';
+import { setUpLocale } from 'controller/shared';
 
 export default router => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {
@@ -22,12 +24,10 @@ export default router => {
 			setUpLocale,
 			redirectLoggedIn,
 			magicLoginUse,
-			makeLayout
+			makeLoginLayout
 		);
-
-		router( `/log-in/link/${ lang }`, setUpLocale, redirectLoggedIn, magicLogin, makeLayout );
+		router( `/log-in/link/${ lang }`, setUpLocale, redirectLoggedIn, magicLogin, makeLoginLayout );
 	}
-
 	if ( config.isEnabled( 'login/wp-login' ) ) {
 		router(
 			[
@@ -42,7 +42,7 @@ export default router => {
 			setUpLocale,
 			login,
 			setShouldServerSideRenderLogin,
-			makeLayout
+			makeLoginLayout
 		);
 	}
 };

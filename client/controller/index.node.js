@@ -32,6 +32,7 @@ const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri }
  * `context.primary` and `context.secondary` to populate it.
  */
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
+export const makeLoginLayout = makeLayoutMiddleware( ReduxWrappedLoggedOutLayout );
 
 export function redirectLoggedIn( { isLoggedIn, res }, next ) {
 	// TODO: Make it work also for development env
