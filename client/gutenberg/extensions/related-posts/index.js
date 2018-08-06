@@ -31,18 +31,22 @@ registerBlockType( 'jetpack/related-posts', {
 			type: 'string',
 			default: __( 'Related' ),
 		},
-		postsToShow: {
-			type: 'number',
-			default: 3,
+		displayDate: {
+			type: 'boolean',
+			default: true,
 		},
 		displayThumbnails: {
 			type: 'boolean',
 			default: false,
 		},
+		postsToShow: {
+			type: 'number',
+			default: 3,
+		},
 	},
 
 	edit: ( { attributes, setAttributes } ) => {
-		const { displayThumbnails, headline, postsToShow } = attributes;
+		const { displayDate, displayThumbnails, headline, postsToShow } = attributes;
 
 		return (
 			<Fragment>
@@ -52,6 +56,11 @@ registerBlockType( 'jetpack/related-posts', {
 							label={ __( 'Headline' ) }
 							value={ headline }
 							onChange={ value => setAttributes( { headline: value } ) }
+						/>
+						<ToggleControl
+							label={ __( 'Display date' ) }
+							checked={ displayDate }
+							onChange={ value => setAttributes( { displayDate: value } ) }
 						/>
 						<ToggleControl
 							label={ __( 'Display thumbnails' ) }
