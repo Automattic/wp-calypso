@@ -33,12 +33,10 @@ export class SignupProcessingScreen extends Component {
 		useOAuth2Layout: PropTypes.bool.isRequired,
 	};
 
-	componentWillMount() {
-		this.setState( {
-			siteSlug: '',
-			hasPaidSubscription: false,
-		} );
-	}
+	state = {
+		siteSlug: '',
+		hasPaidSubscription: false,
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		const dependencies = nextProps.signupDependencies;
