@@ -16,6 +16,7 @@ import CredsPermissionComponent from 'signup/steps/creds-permission';
 import DesignTypeComponent from 'signup/steps/design-type';
 import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
 import DomainsStepComponent from 'signup/steps/domains';
+import ImportURLStepComponent from 'signup/steps/import-url';
 import PlansStepComponent from 'signup/steps/plans';
 import SiteComponent from 'signup/steps/site';
 import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
@@ -50,6 +51,7 @@ export default {
 	'domains-store': DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
+	'import-from-url': ImportURLStepComponent,
 	plans: PlansStepComponent,
 	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
