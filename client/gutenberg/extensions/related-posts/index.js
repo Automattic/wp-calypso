@@ -11,7 +11,7 @@ import wp from 'wp';
 const { __ } = wp.i18n;
 const { Fragment } = wp.element;
 const { InspectorControls } = wp.editor;
-const { PanelBody, RangeControl, TextControl } = wp.components;
+const { PanelBody, RangeControl, TextControl, ToggleControl } = wp.components;
 const { registerBlockType } = wp.blocks;
 
 /**
@@ -35,10 +35,14 @@ registerBlockType( 'jetpack/related-posts', {
 			type: 'number',
 			default: 3,
 		},
+		displayThumbnails: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 
 	edit: ( { attributes, setAttributes } ) => {
-		const { headline, postsToShow } = attributes;
+		const { displayThumbnails, headline, postsToShow } = attributes;
 
 		return (
 			<Fragment>
@@ -48,6 +52,11 @@ registerBlockType( 'jetpack/related-posts', {
 							label={ __( 'Headline' ) }
 							value={ headline }
 							onChange={ value => setAttributes( { headline: value } ) }
+						/>
+						<ToggleControl
+							label={ __( 'Display thumbnails' ) }
+							checked={ displayThumbnails }
+							onChange={ value => setAttributes( { displayThumbnails: value } ) }
 						/>
 						<RangeControl
 							label={ __( 'Number of posts' ) }
