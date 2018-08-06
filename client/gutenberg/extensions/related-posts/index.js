@@ -10,8 +10,8 @@ import wp from 'wp';
  */
 const { __ } = wp.i18n;
 const { Fragment } = wp.element;
-const { InspectorControls } = wp.editor;
-const { PanelBody, RangeControl, TextControl, ToggleControl } = wp.components;
+const { BlockControls, InspectorControls } = wp.editor;
+const { PanelBody, RangeControl, TextControl, ToggleControl, Toolbar } = wp.components;
 const { registerBlockType } = wp.blocks;
 
 /**
@@ -27,6 +27,10 @@ registerBlockType( 'jetpack/related-posts', {
 	category: 'layout',
 
 	attributes: {
+		postLayout: {
+			type: 'string',
+			default: 'grid',
+		},
 		headline: {
 			type: 'string',
 			default: __( 'Related' ),
@@ -50,7 +54,29 @@ registerBlockType( 'jetpack/related-posts', {
 	},
 
 	edit: ( { attributes, setAttributes } ) => {
-		const { displayContext, displayDate, displayThumbnails, headline, postsToShow } = attributes;
+		const {
+			displayContext,
+			displayDate,
+			displayThumbnails,
+			headline,
+			postLayout,
+			postsToShow,
+		} = attributes;
+
+		const layoutControls = [
+			{
+				icon: 'grid-view',
+				title: __( 'Grid View' ),
+				onClick: () => setAttributes( { postLayout: 'grid' } ),
+				isActive: postLayout === 'grid',
+			},
+			{
+				icon: 'list-view',
+				title: __( 'List View' ),
+				onClick: () => setAttributes( { postLayout: 'list' } ),
+				isActive: postLayout === 'list',
+			},
+		];
 
 		return (
 			<Fragment>
@@ -85,6 +111,10 @@ registerBlockType( 'jetpack/related-posts', {
 						/>
 					</PanelBody>
 				</InspectorControls>
+
+				<BlockControls>
+					<Toolbar controls={ layoutControls } />
+				</BlockControls>
 
 				<div>List of posts here</div>
 			</Fragment>
