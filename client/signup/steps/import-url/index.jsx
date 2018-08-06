@@ -5,29 +5,57 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-//import { get } from 'lodash';
+import { debounce } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 import StepWrapper from 'signup/step-wrapper';
-//import SignupActions from 'lib/signup/actions';
+import SignupActions from 'lib/signup/actions';
+import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
+//import FormInputValidation from 'components/forms/form-input-validation';
+
+const debug = debugFactory( 'calypso:signup-step-import-url' );
 
 class ImportURLStepComponent extends Component {
+	handleAction = importUrl => {
+		event.preventDefault();
+		debug( { importUrl } );
+
+		SignupActions.submitSignupStep( {
+			stepName: this.props.stepName,
+			providedDependencies: {
+				importUrl,
+			},
+		} );
+
+		this.props.goToNextStep();
+	};
+
+	handleChange = enteredValue => {
+		debug( { enteredValue } );
+	};
+
+	debouncedHandleChange = debounce( this.handleChange, 200 );
+
 	renderContent = () => {
 		return (
 			<div className="import-url__wrapper">
-				Order of Merlin first class until the very end A History of Magic by Bathilda Bagshot
-				Spinners End Magical Theory by Adalbert Waffling The Adventures of Marten Miggs the Mad
-				Muggle Break with a Banshee Uagadou School of Magic in the Mountains of the Moon in Uganda
-				Ron Weasley is our King, scars can come in handy Encyclopdia of Toadstools Uagadou School of
-				Magic in the Mountains of the Moon in Uganda Hannah Abbott Weasleys Wizard Wheezes. Defeats
-				the Dark Lord Grindelwald in 1945 You Know Who MadEye Moody Break with a Banshee Magical Me
-				Agilbert Fontaine Voyages with Vampires Madam Primpernelles Beautifying Potions St Mungos
-				Hospital for Magical Maladies and Injuries. Nosebleed Nougat Ilvermorny Quaffles Bludgers
-				and broomsticks Sherbet lemons Cockroach Clusters hot cocoa raspberry jam Acid Pops Shell
-				Cottage Time is making fools of us again One Thousand Magical Herbs and Fungi by Phyllida
-				Spore.
+				<FormTextInputWithAction
+					placeholder="Enter the URL of your existing site"
+					action="Continue"
+					onAction={ this.handleAction }
+					label={ this.props.translate( 'URL' ) }
+					onChange={ this.debouncedHandleChange }
+					// disabled={ this.state.formDisabled }
+				/>
+				{ /* <FormInputValidation text="..." /> */ }
+				<ButtonGroup>
+					<Button>Skip</Button>
+				</ButtonGroup>
 			</div>
 		);
 	};
