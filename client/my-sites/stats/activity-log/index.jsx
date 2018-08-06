@@ -23,6 +23,7 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import UpgradePanel from '../activity-log-action-panels/upgrade-panel';
+import IntroPanel from '../activity-log-action-panels/intro-panel';
 import { isFreePlan } from 'lib/plans';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
@@ -390,6 +391,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
+				{ siteIsOnFreePlan && <IntroPanel siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
@@ -399,7 +401,7 @@ class ActivityLog extends Component {
 							icon="history"
 							href={
 								rewindState.canAutoconfigure
-									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
+									? `/start/re	wind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
 									: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
 							}
 							title={ translate( 'Add site credentials' ) }

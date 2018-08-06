@@ -58,7 +58,7 @@ class UpgradePanel extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
-			<div className="activity-log-banner__upgrade">
+			<div className="activity-log-action-panels__upgrade">
 				<ActionPanel>
 					<ActionPanelBody>
 						<ActionPanelFigure inlineBodyText={ true }>
@@ -75,7 +75,9 @@ class UpgradePanel extends Component {
 						<p>{ this.getDescription() }</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						<Button href={ this.getHref() }>{ translate( 'More details' ) }</Button>
+						<Button primary href={ this.getHref() }>
+							{ translate( 'More details' ) }
+						</Button>
 					</ActionPanelFooter>
 				</ActionPanel>
 			</div>
