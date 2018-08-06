@@ -115,7 +115,6 @@ export class ImageSelectorPreview extends Component {
 		return (
 			<figure>
 				<img src={ placeholder || '' } alt="" />
-				<Spinner />
 			</figure>
 		);
 	};
@@ -141,6 +140,7 @@ export class ImageSelectorPreview extends Component {
 		};
 
 		const classes = classNames( 'image-selector__item', {
+			'is-transient': image.transient || ! src,
 			preview: null === src,
 		} );
 
@@ -153,10 +153,9 @@ export class ImageSelectorPreview extends Component {
 					compact
 					data-tip-target="image-selector-image"
 				>
+					<Spinner />
 					{ src ? this.renderUploaded( image ) : this.renderPlaceholder( image ) }
-					{ showEditIcon && (
-						<Gridicon icon="pencil" className="image-selector__edit-icon" />
-					) }
+					{ showEditIcon && <Gridicon icon="pencil" className="image-selector__edit-icon" /> }
 				</Button>
 				<Button
 					onClick={ removeImage }
