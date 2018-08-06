@@ -53,19 +53,9 @@
 	{ "component": "Tooltip" },
 	{ "component": "TreeSelect" },
 	{
-		"component": "withAPIData",
-		"readmeFilePath": "higher-order/with-api-data",
-		"render": "MyComponentWithAPIData"
-	},
-	{
 		"component": "withConstrainedTabbing",
 		"readmeFilePath": "higher-order/with-constrained-tabbing",
 		"render": "MyComponentWithConstrainedTabbing"
-	},
-	{
-		"component": "withContext",
-		"readmeFilePath": "higher-order/with-context",
-		"render": "MyComponentWithContext"
 	},
 	{
 		"component": "withFallbackStyles",
