@@ -54,12 +54,12 @@
 
 // Y-axis labels
 // 1: matches Y-axis padding
-
+$y-axis-padding: 0 20px 0 10px;
 .chart__y-axis {
 	position: relative;
 	float: right;
 	height: 200px;
-	padding: 0 20px 0 10px;
+	padding: $y-axis-padding;
 	font-size: 11px;
 	color: $gray-darken-10;
 	margin-bottom: 30px;
@@ -108,8 +108,17 @@
 	margin-left: -.5px;
 	width: 1px;
 	height: 5px;
-	background: $gray-light;
-	background-image: linear-gradient(to bottom, $gray-light 0%, $gray-lighten-20 100%);
+	background: $gray-darken-30;
+}
+
+.chart__x-axis-width-spacer {
+	color: $transparent;
+	padding: $y-axis-padding;
+	right: 0;
+
+	&::before {
+		display: none;
+	}
 }
 
 // Bar wrapper
