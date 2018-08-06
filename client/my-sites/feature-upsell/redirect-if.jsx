@@ -30,12 +30,9 @@ export class UpsellRedirectWrapper extends React.Component {
 		this.goToUpsellPageIfRequired();
 	}
 
-	getSnapshotBeforeUpdate() {
+	componentDidUpdate() {
 		this.goToUpsellPageIfRequired();
-		return null;
 	}
-
-	componentDidUpdate() {}
 
 	goToUpsellPageIfRequired() {
 		const props = this.props;
