@@ -224,3 +224,13 @@
 	font-size: smaller;
 	padding: 20px 0;
 }
+
+.activity-log-banner__upgrade {
+	.banner {
+		border-left: none;
+
+		.banner__icon-plan {
+			display: none;
+		}
+	}
+}

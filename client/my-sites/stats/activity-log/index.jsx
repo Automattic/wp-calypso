@@ -304,13 +304,13 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate } = this.props;
+		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan } = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( logLoadingState === 'success' ) {
 			return isFilterEmpty ? (
-				<ActivityLogExample siteId={ siteId } />
+				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 			) : (
 				<EmptyContent title={ translate( 'No matching events found.' ) } />
 			);
@@ -318,19 +318,21 @@ class ActivityLog extends Component {
 
 		// The network request is still ongoing
 		return (
-			<section className="activity-log__wrapper">
-				<div className="activity-log__time-period is-loading">
-					<span />
-				</div>
-				{ [ 1, 2, 3 ].map( i => (
-					<div key={ i } className="activity-log-item is-loading">
-						<div className="activity-log-item__type">
-							<div className="activity-log-item__activity-icon" />
-						</div>
-						<div className="card foldable-card activity-log-item__card" />
+			<div>
+				<section className="activity-log__wrapper">
+					<div className="activity-log__time-period is-loading">
+						<span />
 					</div>
-				) ) }
-			</section>
+					{ [ 1, 2, 3 ].map( i => (
+						<div key={ i } className="activity-log-item is-loading">
+							<div className="activity-log-item__type">
+								<div className="activity-log-item__activity-icon" />
+							</div>
+							<div className="card foldable-card activity-log-item__card" />
+						</div>
+					) ) }
+				</section>
+			</div>
 		);
 	}
 
@@ -388,7 +390,6 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
@@ -450,13 +451,7 @@ class ActivityLog extends Component {
 								</Fragment>
 							) ) }
 						</section>
-						{ siteIsOnFreePlan && (
-							<p className="activity-log__limit-notice">
-								{ translate(
-									"Since you're on a free plan, you'll see limited events in your activity."
-								) }
-							</p>
-						) }
+						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
