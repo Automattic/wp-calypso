@@ -212,7 +212,7 @@ export default function() {
 			'/domains/add',
 			siteSelection,
 			domainsController.domainsAddHeader,
-			domainsController.redirectToAddMappingIfVipSite(),
+			domainsController.redirectToUseYourDomainIfVipSite(),
 			domainsController.jetpackNoDomainsWarning,
 			sites,
 			makeLayout,
@@ -254,7 +254,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToAddMappingIfVipSite(),
+			domainsController.redirectToUseYourDomainIfVipSite(),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.domainSearch,
 			makeLayout,
@@ -266,7 +266,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToAddMappingIfVipSite(),
+			domainsController.redirectToUseYourDomainIfVipSite(),
 			domainsController.jetpackNoDomainsWarning,
 			domainsController.redirectToDomainSearchSuggestion
 		);
