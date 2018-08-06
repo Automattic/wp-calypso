@@ -1,3 +1,8 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import wp from 'wp';
 const { __ } = wp.i18n;
 const { Component } = wp.element;
 const { registerBlockType } = wp.blocks;

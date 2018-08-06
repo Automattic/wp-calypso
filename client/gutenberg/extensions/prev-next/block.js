@@ -1,8 +1,16 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import wp from 'wp';
 const { __ } = wp.i18n;
 const { TextControl } = wp.components;
 const { registerBlockType } = wp.blocks;
 
-require( './style.scss' );
+/**
+ * Internal dependencies
+ */
+import './style.scss';
 
 const blockAttributes = {
 	prev: {

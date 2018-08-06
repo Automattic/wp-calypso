@@ -1,14 +1,23 @@
-import './style.scss';
-import './editor.scss';
-
+/** @format */
+/**
+ * External dependencies
+ */
 import classnames from 'classnames';
-import { ItemEditor } from './item'
+import wp from 'wp';
 
 const { Button, Dashicon } = wp.components;
 const { __ } = wp.i18n;
 const { Component } = wp.element;
 const { registerBlockType } = wp.blocks;
 const { RichText } = wp.editor;
+
+/**
+ * Internal dependencies
+ */
+import { ItemEditor } from './item';
+
+import './style.scss';
+import './editor.scss';
 
 const blockAttributes = {
 	list: {

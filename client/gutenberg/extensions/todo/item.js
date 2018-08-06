@@ -1,3 +1,8 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import wp from 'wp';
 const { Component } = wp.element;
 const { Button, Dashicon } = wp.components;
 const { RichText } = wp.editor;

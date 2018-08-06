@@ -1,9 +1,17 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import wp from 'wp';
 const { __ } = wp.i18n;
 const { Component } = wp.element;
 const { registerBlockType } = wp.blocks;
 const { RichText } = wp.editor;
 const { Dropdown } = wp.components;
 
+/**
+ * Internal dependencies
+ */
 import './style.scss';
 import './editor.scss';
 
