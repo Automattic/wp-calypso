@@ -64,7 +64,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		const headerText = translate( 'Welcome to WordPress!' );
 
 		return (
-			<div className="steps__main">
+			<div className="steps__main" data-e2e-type="site-title">
 				<FormattedHeader headerText={ headerText } />
 
 				<Card className="steps__form">
