@@ -57,6 +57,7 @@ import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
 import redirectIf from 'my-sites/feature-upsell/redirect-if';
+import config from 'config';
 import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
@@ -324,16 +325,24 @@ const mapStateToProps = state => {
 	};
 };
 
-export default compose(
+const composeArgs = [
 	connect(
 		mapStateToProps,
 		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
 	),
 	localize,
-	redirectIf(
-		( state, siteId ) =>
-			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
-			! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
-		'/feature/themes'
-	)
-)( UploadWithOptions );
+];
+
+if (
+	config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+	abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
+) {
+	composeArgs.push(
+		redirectIf(
+			( state, siteId ) => ! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
+			'/feature/themes'
+		)
+	);
+}
+
+export default compose( ...composeArgs )( UploadWithOptions );

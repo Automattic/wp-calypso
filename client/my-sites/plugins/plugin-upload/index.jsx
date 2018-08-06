@@ -49,6 +49,7 @@ import { transferStates } from 'state/automated-transfer/constants';
 import { abtest } from 'lib/abtest';
 import { hasFeature } from 'state/sites/plans/selectors';
 import redirectIf from 'my-sites/feature-upsell/redirect-if';
+import config from 'config';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -209,16 +210,24 @@ const mapStateToProps = state => {
 	};
 };
 
-export default compose(
+const composeArgs = [
 	connect(
 		mapStateToProps,
 		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
 	),
 	localize,
-	redirectIf(
-		( state, siteId ) =>
-			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
-			! hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ),
-		'/feature/plugins'
-	)
-)( PluginUpload );
+];
+
+if (
+	config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+	abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
+) {
+	composeArgs.push(
+		redirectIf(
+			( state, siteId ) => ! hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ),
+			'/feature/plugins'
+		)
+	);
+}
+
+export default compose( ...composeArgs )( PluginUpload );
