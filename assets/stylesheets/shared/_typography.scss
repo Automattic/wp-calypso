@@ -18,6 +18,21 @@ $sans-rtl: Tahoma, $sans;
 }
 
 
+// ======================================================================
+// Rem function
+//
+// Convert px to rem in a readable fashion.
+//
+// Example: font-size: rem( 21px );
+// ======================================================================
+
+$root-font-size: 16px;
+
+@function rem( $pixels, $context: $root-font-size ) {
+	@return $pixels / $context * 1rem;
+}
+
+
 // NOTE:
 // If there are exceptions to these stacks,
 // please mark them with a //typography-exception comment
