@@ -25,6 +25,7 @@ import FollowButton from 'reader/follow-button';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import PostBlocked from 'blocks/reader-post-card/blocked';
+import createSelector from 'lib/create-selector';
 
 class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {
@@ -50,18 +51,18 @@ class ReaderCombinedCardComponent extends React.Component {
 		this.recordRenderTrack();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.postKey.feedId !== nextProps.postKey.feedId ||
-			this.props.postKey.blogId !== nextProps.postKey.blogId ||
-			size( this.props.posts ) !== size( nextProps.posts )
+			this.props.postKey.feedId !== prevProps.postKey.feedId ||
+			this.props.postKey.blogId !== prevProps.postKey.blogId ||
+			size( this.props.posts ) !== size( prevProps.posts )
 		) {
-			this.recordRenderTrack( nextProps );
+			this.recordRenderTrack();
 		}
 	}
 
-	recordRenderTrack = ( props = this.props ) => {
-		const { postKey, posts } = props;
+	recordRenderTrack = () => {
+		const { postKey, posts } = this.props;
 
 		recordTrack( 'calypso_reader_combined_card_render', {
 			blog_id: postKey.blogId,
@@ -168,18 +169,24 @@ export function combinedCardPostKeyToKeys( postKey ) {
 		return [];
 	}
 
-	const feedId = postKey.feedId;
-	const blogId = postKey.blogId;
+	const { feedId, blogId } = postKey;
+
 	return postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
 }
 
 export const ReaderCombinedCard = localize( ReaderCombinedCardComponent );
 
-export default connect( ( state, ownProps ) => {
-	const postKeys = combinedCardPostKeyToKeys( ownProps.postKey );
+const getPostData = createSelector(
+	( state, postKey ) => {
+		const postKeys = combinedCardPostKeyToKeys( postKey );
+		return {
+			posts: getPostsByKeys( state, postKeys ),
+			postKeys,
+		};
+	},
+	state => [ state.posts ]
+);
 
-	return {
-		posts: getPostsByKeys( state, postKeys ),
-		postKeys,
-	};
-} )( ReaderCombinedCard );
+export default connect( ( state, { siteId } ) => getPostData( state, siteId ) )(
+	ReaderCombinedCard
+);
