@@ -34,7 +34,14 @@ RUN        npm ci --only=production
 ARG        commit_sha="(unknown)"
 ENV        COMMIT_SHA $commit_sha
 
-RUN        CALYPSO_ENV=production npm run build
+RUN        true                                 && \
+           CALYPSO_ENV=production npm run build && \
+           rm -r               \
+               /calypso/assets \
+               /calypso/bin    \
+               /calypso/client \
+                                                && \
+           true
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js
