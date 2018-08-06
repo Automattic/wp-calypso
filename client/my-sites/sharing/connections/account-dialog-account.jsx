@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import Image from 'components/image';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -29,7 +30,7 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 					/>
 				) }
 				{ account.picture ? (
-					<img
+					<Image
 						src={ account.picture }
 						alt={ account.name }
 						className="account-dialog-account__picture"
