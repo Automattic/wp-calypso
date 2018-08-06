@@ -26,7 +26,7 @@ import { getPostsByKeys } from 'state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import PostBlocked from 'blocks/reader-post-card/blocked';
 
-class ReaderCombinedCardComponent extends React.PureComponent {
+class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {
 		posts: PropTypes.array.isRequired,
 		site: PropTypes.object,
