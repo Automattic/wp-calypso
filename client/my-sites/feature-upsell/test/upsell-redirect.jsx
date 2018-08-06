@@ -12,13 +12,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { UpsellRedirectWrapper } from '../upsell-redirect';
+import { UpsellRedirectWrapper } from '../redirect-if';
 
 /**
  * Module variables
  */
 
-describe( 'upsellRedirect', () => {
+describe( 'redirectIf', () => {
 	const defaultProps = {
 		siteId: 1,
 		upsellPageURL: '/',

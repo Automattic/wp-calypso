@@ -56,7 +56,8 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
-import { upsellRedirect } from 'my-sites/feature-upsell/main';
+import redirectIf from 'my-sites/feature-upsell/redirect-if';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -329,5 +330,10 @@ export default compose(
 		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
 	),
 	localize,
-	upsellRedirect( FEATURE_UPLOAD_THEMES, '/feature/themes' )
+	redirectIf(
+		( state, siteId ) =>
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
+			! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
+		'/feature/themes'
+	)
 )( UploadWithOptions );

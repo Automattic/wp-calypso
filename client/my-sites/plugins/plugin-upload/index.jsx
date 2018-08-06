@@ -22,7 +22,6 @@ import UploadDropZone from 'blocks/upload-drop-zone';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import EmptyContent from 'components/empty-content';
-import { upsellRedirect } from 'my-sites/feature-upsell/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
@@ -47,6 +46,9 @@ import {
 } from 'state/automated-transfer/selectors';
 import { successNotice } from 'state/notices/actions';
 import { transferStates } from 'state/automated-transfer/constants';
+import { abtest } from 'lib/abtest';
+import { hasFeature } from 'state/sites/plans/selectors';
+import redirectIf from 'my-sites/feature-upsell/redirect-if';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -213,5 +215,10 @@ export default compose(
 		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
 	),
 	localize,
-	upsellRedirect( FEATURE_UPLOAD_PLUGINS, '/feature/plugins' )
+	redirectIf(
+		( state, siteId ) =>
+			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
+			! hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ),
+		'/feature/plugins'
+	)
 )( PluginUpload );

@@ -13,8 +13,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentPlan, hasFeature } from 'state/sites/plans/selectors';
-import { abtest } from 'lib/abtest';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import config from 'config';
 
 export class UpsellRedirectWrapper extends React.Component {
@@ -33,13 +33,18 @@ export class UpsellRedirectWrapper extends React.Component {
 
 	getSnapshotBeforeUpdate() {
 		this.goToUpsellPageIfRequired();
+		return null;
 	}
+
+	componentDidUpdate() {}
 
 	goToUpsellPageIfRequired() {
 		const props = this.props;
 		if ( this.shouldRedirectToUpsellPage() ) {
 			if ( ! this.redirected ) {
-				page.redirect( `${ props.upsellPageURL }/${ props.siteSlug }` );
+				setTimeout( () => {
+					page.redirect( `${ props.upsellPageURL }/${ props.siteSlug }` );
+				} );
 				this.redirected = true;
 			}
 		}
@@ -62,18 +67,22 @@ export class UpsellRedirectWrapper extends React.Component {
 
 export const createMapStateToProps = (
 	ComponentClass,
-	requiredFeature,
+	shouldRedirectCallback,
 	upsellPageURL
 ) => state => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSiteSlug( state, siteId );
 	const currentPlan = getCurrentPlan( state, siteId );
-	const shouldRedirectToUpsellPage =
+	const shouldRedirectToUpsellPage = !! (
 		config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-		abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
-		! hasFeature( state, siteId, requiredFeature );
+		currentPlan &&
+		siteSlug &&
+		shouldRedirectCallback( state, siteId )
+	);
 
 	return {
 		siteId,
+		siteSlug,
 		ComponentClass,
 		upsellPageURL,
 		shouldRedirectToUpsellPage,
@@ -81,11 +90,11 @@ export const createMapStateToProps = (
 	};
 };
 
-export const upsellRedirect = ( requiredFeature, upsellPageURL ) => {
+export const redirectIf = ( requiredFeature, upsellPageURL ) => {
 	return ComponentClass => {
 		const mapStateToProps = createMapStateToProps( ComponentClass, requiredFeature, upsellPageURL );
 		return connect( mapStateToProps )( UpsellRedirectWrapper );
 	};
 };
 
-export default upsellRedirect;
+export default redirectIf;

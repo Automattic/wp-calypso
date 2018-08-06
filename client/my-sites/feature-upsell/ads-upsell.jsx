@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { compose } from 'redux';
 
 /**
  * Internal dependencies
@@ -20,7 +21,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getPlanPath, isFreePlan } from 'lib/plans';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 import page from 'page';
-import { getSiteSlug } from 'state/sites/selectors';
+import {
+	getSiteSlug,
+	canAdsBeEnabledOnCurrentSite,
+	canCurrentUserUseAds,
+} from 'state/sites/selectors';
 import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import DocumentHead from 'components/data/document-head';
 import QueryPlans from 'components/data/query-plans';
@@ -31,7 +36,8 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
-import { getUpsellPlanPrice } from './utils';
+import { getUpsellPlanPrice, canUpgradeSiteOrRedirect } from './utils';
+import redirectIf from './redirect-if';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -293,8 +299,15 @@ const mapDispatchToProps = dispatch => ( {
 	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( WordAdsUpsellComponent ) );
+export default compose(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	),
+	localize,
+	canUpgradeSiteOrRedirect,
+	redirectIf( state => canCurrentUserUseAds( state ), '/ads/earnings' ),
+	redirectIf( state => canAdsBeEnabledOnCurrentSite( state ), '/ads/settings' )
+)( WordAdsUpsellComponent );
+
 /* eslint-enable wpcalypso/jsx-classname-namespace */

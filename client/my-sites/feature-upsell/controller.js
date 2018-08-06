@@ -17,12 +17,6 @@ import {
 	WordAdsUpsellComponent,
 } from './main';
 import { getSiteFragment } from 'lib/route';
-import {
-	canCurrentUserUseStore,
-	canCurrentUserUseAds,
-	canAdsBeEnabledOnCurrentSite,
-	canCurrentUserUpgradeSite,
-} from 'state/sites/selectors';
 
 const featurePageController = ( url, callback ) => {
 	return function( context, next ) {
@@ -30,12 +24,6 @@ const featurePageController = ( url, callback ) => {
 		const siteFragment = getSiteFragment( context.path );
 		if ( ! siteFragment ) {
 			return page.redirect( url );
-		}
-
-		// Access control, users without rights to upgrade should not see these pages
-		const state = context.store.getState();
-		if ( ! canCurrentUserUpgradeSite( state ) ) {
-			return page.redirect( '/stats/' + siteFragment );
 		}
 
 		return callback( context, next, siteFragment );
@@ -48,11 +36,7 @@ export default {
 		next();
 	} ),
 
-	storeUpsell: featurePageController( '/feature/store', function( context, next, siteFragment ) {
-		if ( canCurrentUserUseStore( context.store.getState() ) ) {
-			return page.redirect( '/store/' + siteFragment );
-		}
-
+	storeUpsell: featurePageController( '/feature/store', function( context, next ) {
 		context.primary = React.createElement( StoreUpsellComponent );
 		next();
 	} ),
@@ -67,17 +51,7 @@ export default {
 		next();
 	} ),
 
-	wordAdsUpsell: featurePageController( '/feature/ads', function( context, next, siteFragment ) {
-		const state = context.store.getState();
-		if ( canCurrentUserUseAds( state ) ) {
-			return page.redirect( '/ads/earnings/' + siteFragment );
-		}
-
-		if ( canAdsBeEnabledOnCurrentSite( state ) ) {
-			return page.redirect( '/ads/settings/' + siteFragment );
-		}
-
-		// Render
+	wordAdsUpsell: featurePageController( '/feature/ads', function( context, next ) {
 		context.primary = React.createElement( WordAdsUpsellComponent );
 		next();
 	} ),
