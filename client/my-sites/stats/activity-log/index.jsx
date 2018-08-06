@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import config from 'config';
@@ -438,7 +439,11 @@ class ActivityLog extends Component {
 							prevLabel={ translate( 'Newer' ) }
 							total={ logs.length }
 						/>
-						<section className="activity-log__wrapper">
+						<section
+							className={ classNames( 'activity-log__wrapper', {
+								'is-shadowed': siteIsOnFreePlan,
+							} ) }
+						>
 							{ theseLogs.map( log => (
 								<Fragment key={ log.activityId }>
 									{ timePeriod( log ) }
