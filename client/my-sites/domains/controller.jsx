@@ -3,7 +3,6 @@
  * External dependencies
  */
 import page from 'page';
-import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import { get, includes, map, noop } from 'lodash';
@@ -252,11 +251,11 @@ const redirectToUseYourDomainIfVipSite = () => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
-		const domain = context.params.domain ? `/${ context.params.domain }` : '';
-		const query = stringify( { initialQuery: get( context, 'params.suggestion', '' ) } );
 
 		if ( selectedSite && selectedSite.is_vip ) {
-			return page.redirect( `/domains/add/use-your-domain${ domain }?${ query }` );
+			return page.redirect(
+				domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
+			);
 		}
 
 		next();
