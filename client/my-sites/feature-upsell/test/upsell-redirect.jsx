@@ -22,15 +22,15 @@ describe( 'redirectIf', () => {
 	const defaultProps = {
 		siteId: 1,
 		upsellPageURL: '/',
-		shouldRedirectToUpsellPage: false,
+		shouldRedirect: false,
 	};
 	describe( 'Wrapper - unit tests', () => {
-		test( 'shouldRedirectToUpsellPage() should return true if and only if plan is already available', () => {
-			const test = props => new UpsellRedirectWrapper( props ).shouldRedirectToUpsellPage();
-			expect( test( { shouldRedirectToUpsellPage: true, loadingPlan: true } ) ).toBe( false );
-			expect( test( { shouldRedirectToUpsellPage: false, loadingPlan: true } ) ).toBe( false );
-			expect( test( { shouldRedirectToUpsellPage: false, loadingPlan: false } ) ).toBe( false );
-			expect( test( { shouldRedirectToUpsellPage: true, loadingPlan: false } ) ).toBe( true );
+		test( 'shouldRedirect() should return true if and only if plan is already available', () => {
+			const test = props => new UpsellRedirectWrapper( props ).shouldRedirect();
+			expect( test( { shouldRedirect: true, loadingPlan: true } ) ).toBe( false );
+			expect( test( { shouldRedirect: false, loadingPlan: true } ) ).toBe( false );
+			expect( test( { shouldRedirect: false, loadingPlan: false } ) ).toBe( false );
+			expect( test( { shouldRedirect: true, loadingPlan: false } ) ).toBe( true );
 		} );
 	} );
 
@@ -41,7 +41,7 @@ describe( 'redirectIf', () => {
 					{ ...defaultProps }
 					ComponentClass={ 'div' }
 					loadingPlan={ true }
-					shouldRedirectToUpsellPage={ true }
+					shouldRedirect={ true }
 				/>
 			);
 			expect( rendered.find( 'div' ).length ).toBe( 0 );
@@ -53,7 +53,7 @@ describe( 'redirectIf', () => {
 					{ ...defaultProps }
 					ComponentClass={ 'div' }
 					loadingPlan={ false }
-					shouldRedirectToUpsellPage={ true }
+					shouldRedirect={ true }
 				/>
 			);
 			expect( rendered.find( 'div' ).length ).toBe( 0 );
@@ -65,7 +65,7 @@ describe( 'redirectIf', () => {
 					{ ...defaultProps }
 					ComponentClass={ 'div' }
 					loadingPlan={ false }
-					shouldRedirectToUpsellPage={ false }
+					shouldRedirect={ false }
 				/>
 			);
 			expect( rendered.find( 'div' ).length ).toBe( 1 );
