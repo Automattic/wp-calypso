@@ -1,25 +1,23 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight, includes, noop } from 'lodash';
+import { flow, includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { startMappingAuthors, startUpload } from 'lib/importer/actions';
+import { startMappingAuthors, startUpload } from 'state/imports/actions';
 import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
-import { connectDispatcher } from './dispatcher-converter';
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -39,6 +37,10 @@ class UploadingPane extends React.PureComponent {
 		window.clearInterval( this.randomizeTimer );
 	}
 
+	startMappingAuthors = () => {
+		this.props.startMappingAuthors( this.props.importerStatus.importerId );
+	};
+
 	getMessage = () => {
 		const { importerState, percentComplete = 0, filename } = this.props.importerStatus;
 
@@ -47,20 +49,17 @@ class UploadingPane extends React.PureComponent {
 			case appStates.UPLOAD_FAILURE:
 				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
 
-			case appStates.UPLOADING:
-				let uploadPercent = percentComplete,
-					progressClasses = classNames( 'importer__upload-progress', {
-						'is-complete': uploadPercent > 95,
-					} ),
-					uploaderPrompt;
-
-				if ( uploadPercent < 99 ) {
-					uploaderPrompt = this.props.translate( 'Uploading %(filename)s\u2026', {
-						args: { filename },
-					} );
-				} else {
-					uploaderPrompt = this.props.translate( 'Processing uploaded file\u2026' );
-				}
+			case appStates.UPLOADING: {
+				const uploadPercent = percentComplete;
+				const progressClasses = classNames( 'importer__upload-progress', {
+					'is-complete': uploadPercent > 95,
+				} );
+				const uploaderPrompt =
+					uploadPercent < 99
+						? this.props.translate( 'Uploading %(filename)s\u2026', {
+								args: { filename },
+						  } )
+						: this.props.translate( 'Processing uploaded file\u2026' );
 
 				return (
 					<div>
@@ -68,15 +67,12 @@ class UploadingPane extends React.PureComponent {
 						<ProgressBar className={ progressClasses } value={ uploadPercent } total={ 100 } />
 					</div>
 				);
-
+			}
 			case appStates.UPLOAD_SUCCESS:
 				return (
 					<div>
 						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>
-						<Button
-							className="importer__start"
-							onClick={ () => startMappingAuthors( this.props.importerStatus.importerId ) }
-						>
+						<Button className="importer__start" onClick={ this.startMappingAuthors }>
 							{ this.props.translate( 'Continue' ) }
 						</Button>
 					</div>
@@ -132,37 +128,38 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	render() {
+		const isReadyForImport = this.isReadyForImport();
+
 		return (
 			<div>
 				<p>{ this.props.description }</p>
 				<div
 					className="importer__uploading-pane"
-					onClick={ this.isReadyForImport() ? this.openFileSelector : null }
+					onClick={ isReadyForImport ? this.openFileSelector : null }
 				>
 					<div className="importer__upload-content">
 						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
 						{ this.getMessage() }
 					</div>
-					{ this.isReadyForImport() ? (
+					{ isReadyForImport && (
 						<input
 							ref="fileSelector"
 							type="file"
 							name="exportFile"
 							onChange={ this.initiateFromForm }
 						/>
-					) : null }
-					<DropZone onFilesDrop={ this.isReadyForImport() ? this.initiateFromDrop : noop } />
+					) }
+					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
 			</div>
 		);
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	startUpload: flowRight(
-		dispatch,
-		startUpload
+export default flow(
+	connect(
+		null,
+		{ startMappingAuthors, startUpload }
 	),
-} );
-
-export default connectDispatcher( null, mapDispatchToProps )( localize( UploadingPane ) );
+	localize
+)( UploadingPane );
