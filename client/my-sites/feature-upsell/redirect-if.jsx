@@ -22,7 +22,7 @@ export class UpsellRedirectWrapper extends React.Component {
 		siteId: PropTypes.number.isRequired,
 		ComponentClass: PropTypes.any.isRequired,
 		upsellPageURL: PropTypes.string.isRequired,
-		shouldRedirectToUpsellPage: PropTypes.bool.isRequired,
+		shouldRedirect: PropTypes.bool.isRequired,
 		loadingPlan: PropTypes.bool.isRequired,
 	};
 
@@ -40,7 +40,7 @@ export class UpsellRedirectWrapper extends React.Component {
 
 	goToUpsellPageIfRequired() {
 		const props = this.props;
-		if ( this.shouldRedirectToUpsellPage() ) {
+		if ( this.shouldRedirect() ) {
 			if ( ! this.redirected ) {
 				setTimeout( () => {
 					page.redirect( `${ props.upsellPageURL }/${ props.siteSlug }` );
@@ -50,14 +50,14 @@ export class UpsellRedirectWrapper extends React.Component {
 		}
 	}
 
-	shouldRedirectToUpsellPage() {
+	shouldRedirect() {
 		const props = this.props;
-		return props.shouldRedirectToUpsellPage && ! props.loadingPlan;
+		return props.shouldRedirect && ! props.loadingPlan;
 	}
 
 	render() {
-		const { ComponentClass, loadingPlan, shouldRedirectToUpsellPage, ...props } = this.props;
-		if ( loadingPlan || this.shouldRedirectToUpsellPage() ) {
+		const { ComponentClass, loadingPlan, shouldRedirect, ...props } = this.props;
+		if ( loadingPlan || this.shouldRedirect() ) {
 			return false;
 		}
 
@@ -73,7 +73,7 @@ export const createMapStateToProps = (
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const currentPlan = getCurrentPlan( state, siteId );
-	const shouldRedirectToUpsellPage = !! (
+	const shouldRedirect = !! (
 		config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 		currentPlan &&
 		siteSlug &&
@@ -85,7 +85,7 @@ export const createMapStateToProps = (
 		siteSlug,
 		ComponentClass,
 		upsellPageURL,
-		shouldRedirectToUpsellPage,
+		shouldRedirect,
 		loadingPlan: ! currentPlan,
 	};
 };
