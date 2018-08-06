@@ -26,12 +26,11 @@ const blockAttributes = {
 		selector: 'ul',
 		default: [],
 	},
-}
+};
 
 const itemLineRegex = /^([ ]{0,3})([xo#*-])(\s+)(.*)/;
 
 const edit = class extends Component {
-
 	constructor() {
 		super( ...arguments );
 		this.addNewItem = this.addNewItem.bind( this );
@@ -40,25 +39,26 @@ const edit = class extends Component {
 		this.insertNewItemAfter = this.insertNewItemAfter.bind( this );
 
 		// set the initial items in the state based on the markup that was saved
-		const list = this.props.attributes.list.filter( ( item ) => typeof item !== 'string' || item.trim() !== '' )
-		const items = list.map(
-			( item ) => {
-				const itemEntry = {};
-				const children = item.props.children;
-				const levelSpan = children[0];
-				const statusSpan = children[1]
-				const valueSpan = children[2];
-				itemEntry.level = undefined !== levelSpan.props.children ? levelSpan.props.children.length : 0;
-				itemEntry.done = 'x' === statusSpan.props.children;
-				// children if it came from html, value if it came from a migration
-				itemEntry.value = valueSpan.props.children || valueSpan.props.value;
-				return itemEntry;
-			}
+		const list = this.props.attributes.list.filter(
+			item => typeof item !== 'string' || item.trim() !== ''
 		);
+		const items = list.map( item => {
+			const itemEntry = {};
+			const children = item.props.children;
+			const levelSpan = children[ 0 ];
+			const statusSpan = children[ 1 ];
+			const valueSpan = children[ 2 ];
+			itemEntry.level =
+				undefined !== levelSpan.props.children ? levelSpan.props.children.length : 0;
+			itemEntry.done = 'x' === statusSpan.props.children;
+			// children if it came from html, value if it came from a migration
+			itemEntry.value = valueSpan.props.children || valueSpan.props.value;
+			return itemEntry;
+		} );
 		this.state = {
 			items: items,
 			newItemAt: undefined,
-		}
+		};
 	}
 
 	componentWillMount() {
@@ -129,11 +129,9 @@ const edit = class extends Component {
 
 	deleteItem( index ) {
 		const { items } = this.state;
-		const newItems = items.filter(
-			( item, itemIndex ) => {
-				return index !== itemIndex;
-			}
-		);
+		const newItems = items.filter( ( item, itemIndex ) => {
+			return index !== itemIndex;
+		} );
 		this.setState( { items: newItems, newItemAt: undefined } );
 		this.props.setAttributes( { list: this.renderElements( newItems ) } );
 	}
@@ -143,14 +141,16 @@ const edit = class extends Component {
 	}
 
 	renderElements( items ) {
-		const x = items.map(
-			( item ) => {
-				const done = item.done ? 'x' : 'o';
-				return (
-						<li><span>{ ''.repeat( item.level ) }</span><span>{ done }</span><RichText.Content tagName="span" value={ item.value } /></li>
-				)
-			}
-		);
+		const x = items.map( item => {
+			const done = item.done ? 'x' : 'o';
+			return (
+				<li>
+					<span>{ ''.repeat( item.level ) }</span>
+					<span>{ done }</span>
+					<RichText.Content tagName="span" value={ item.value } />
+				</li>
+			);
+		} );
 		return x;
 	}
 
@@ -159,9 +159,7 @@ const edit = class extends Component {
 		return (
 			<div className="wp-editor-a8c-todo">
 				<ul className="wp-editor-a8c-todo-list">
-				{ items.map(
-					( item, itemIndex ) => {
-
+					{ items.map( ( item, itemIndex ) => {
 						const moveUp = () => {
 							this.moveUp( itemIndex );
 						};
@@ -176,20 +174,21 @@ const edit = class extends Component {
 						};
 						const onDelete = () => {
 							this.deleteItem( itemIndex );
-						}
-						const onChange = ( updatedItem ) => {
+						};
+						const onChange = updatedItem => {
 							this.updateItem( updatedItem, itemIndex );
-						}
+						};
 						const onSplit = () => {
 							this.insertNewItemAfter( itemIndex );
-						}
+						};
 						const classNames = classnames( 'todolist-item', {
 							'item-done': item.done,
-							'item-todo': !item.done
+							'item-todo': ! item.done,
 						} );
 
 						// if we've inserted an item at this index, and it does not have a value, request autofocus
-						const autoFocusThisItem = itemIndex === newItemAt && ( ! item.value || 0 === item.value.length );
+						const autoFocusThisItem =
+							itemIndex === newItemAt && ( ! item.value || 0 === item.value.length );
 
 						return (
 							<ItemEditor
@@ -207,11 +206,12 @@ const edit = class extends Component {
 								autoFocus={ autoFocusThisItem }
 							/>
 						);
-					}
-				) }
+					} ) }
 				</ul>
 				<div class="add-new-todo-item-form">
-					<Button onClick={ this.addNewItem } ><Dashicon icon="plus" /> Add new item</Button>
+					<Button onClick={ this.addNewItem }>
+						<Dashicon icon="plus" /> Add new item
+					</Button>
 				</div>
 			</div>
 		);
@@ -241,35 +241,35 @@ const deprecated = [
 				if ( ! lineMatch ) {
 					continue;
 				}
-				const done = lineMatch[2] === 'x';
-				const item = lineMatch[4];
-				const level = lineMatch[1].length;
+				const done = lineMatch[ 2 ] === 'x';
+				const item = lineMatch[ 4 ];
+				const level = lineMatch[ 1 ].length;
 				items.push( { item, done, level } );
 			}
 
-			const list = items.map(
-				( item ) => {
-					const done = item.done ? 'x' : 'o';
-					return (
-							<li><span>{ ''.repeat( item.level ) }</span><span>{ done }</span><RichText.Content tagName="span" value={ item.item } /></li>
-					)
-				}
-			);
+			const list = items.map( item => {
+				const done = item.done ? 'x' : 'o';
+				return (
+					<li>
+						<span>{ ''.repeat( item.level ) }</span>
+						<span>{ done }</span>
+						<RichText.Content tagName="span" value={ item.item } />
+					</li>
+				);
+			} );
 			return { list };
-		}
-	}
+		},
+	},
 ];
 
 const save = class extends Component {
 	render() {
-		const list = this.props.attributes.list.filter( ( item ) => typeof item !== 'string' || item.trim() !== '' );
-		return (
-			<ul>
-				{ list }
-			</ul>
+		const list = this.props.attributes.list.filter(
+			item => typeof item !== 'string' || item.trim() !== ''
 		);
+		return <ul>{ list }</ul>;
 	}
-}
+};
 
 registerBlockType( 'a8c/todo', {
 	title: __( 'Task List' ),

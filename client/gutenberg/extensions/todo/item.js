@@ -47,16 +47,28 @@ export const ItemEditor = class extends Component {
 	}
 
 	render() {
-		const { item, moveUp, moveDown, moveLeft, moveRight, canMoveUp, canMoveDown, classNames, onChange, autoFocus, onDelete } = this.props;
+		const {
+			item,
+			moveUp,
+			moveDown,
+			moveLeft,
+			moveRight,
+			canMoveUp,
+			canMoveDown,
+			classNames,
+			onChange,
+			autoFocus,
+			onDelete,
+		} = this.props;
 		const { done, value } = item;
 		return (
 			<li className={ classNames }>
-				<span className="item-status" onClick={ this.toggleDone } >
+				<span className="item-status" onClick={ this.toggleDone }>
 					{ done && <Dashicon icon="yes" /> }
 				</span>
-				{/* { 0 < item.level && <Button onClick={ moveLeft }>&lt;</Button> }
+				{ /* { 0 < item.level && <Button onClick={ moveLeft }>&lt;</Button> }
 				{ 2 > item.level && <Button onClick={ moveRight }>&gt;</Button> }
-				{ '-'.repeat( item.level ) }  */}
+				{ '-'.repeat( item.level ) }  */ }
 				<span className="item-title">
 					<RichText
 						tagName="div"
@@ -68,16 +80,16 @@ export const ItemEditor = class extends Component {
 					/>
 				</span>
 				<span className="move-buttons">
-					{ canMoveUp &&
+					{ canMoveUp && (
 						<Button onClick={ moveUp }>
 							<Dashicon icon="arrow-up-alt2" />
 						</Button>
-					}
-					{ canMoveDown &&
+					) }
+					{ canMoveDown && (
 						<Button onClick={ moveDown }>
 							<Dashicon icon="arrow-down-alt2" />
 						</Button>
-					}
+					) }
 					<Button onClick={ onDelete }>
 						<Dashicon icon="no" />
 					</Button>

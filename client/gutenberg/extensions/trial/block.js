@@ -70,9 +70,11 @@ class Trial extends Component {
 				key={ 1 }
 				placeholder={ __( `Add ${ attribute }…` ) }
 				value={ attributes[ attribute ] }
-				onChange={ ( value ) => setAttributes( { [ attribute ]: value } ) }
-			/> ) :
-			attributes[ attribute ];
+				onChange={ value => setAttributes( { [ attribute ]: value } ) }
+			/>
+		) : (
+			attributes[ attribute ]
+		);
 	}
 
 	statusChooser() {
@@ -83,15 +85,24 @@ class Trial extends Component {
 				contentClassName={ `${ className }-status-popover` }
 				renderToggle={ ( { onToggle } ) => this.statusBadge( status, onToggle ) }
 				renderContent={ () => this.allStatusBadges() }
-			/> ) : this.statusBadge( status, () => {} );
+			/>
+		) : (
+			this.statusBadge( status, () => {} )
+		);
 	}
 
 	statusBadge( status, onClick ) {
 		const { edit } = this.props;
 		const clickOnEnter = e => 'Enter' === e.key && onClick();
-		const optional = edit ? { tabIndex: "0" } : {};
+		const optional = edit ? { tabIndex: '0' } : {};
 		return (
-			<span key={ status.key } className={ `status-badge status-${ status.key }` } onClick={ onClick } onKeyUp={ clickOnEnter } { ...optional }>
+			<span
+				key={ status.key }
+				className={ `status-badge status-${ status.key }` }
+				onClick={ onClick }
+				onKeyUp={ clickOnEnter }
+				{ ...optional }
+			>
 				{ status.text.replace( / /g, '\xa0' ) }
 			</span>
 		);
@@ -110,14 +121,10 @@ registerBlockType( 'a8c/trials-list-item', {
 	title: __( 'Trial Project (single item)' ),
 	icon: 'universal-access',
 	category: 'common',
-	keywords: [
-		__( 'hiring' ),
-		__( 'devex' ),
-		__( 'trial' ),
-	],
+	keywords: [ __( 'hiring' ), __( 'devex' ), __( 'trial' ) ],
 	attributes: blockAttributes,
 	parent: [ 'a8c/trials-list' ],
 
-	edit: ( props ) => ( <Trial edit={ true } { ...props } /> ),
-	save: ( props ) => ( <Trial edit={ false } { ...props } /> ),
+	edit: props => <Trial edit={ true } { ...props } />,
+	save: props => <Trial edit={ false } { ...props } />,
 } );
