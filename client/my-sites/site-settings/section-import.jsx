@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, get } from 'lodash';
+import { filter, flow, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -175,13 +175,15 @@ class SiteSettingsImport extends Component {
 
 		const importsForSite = filterImportsForSite( site.ID, imports )
 			// Add in the 'site' and 'siteTitle' properties to the import objects.
-			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
+			.map( item => ( {
+				...item,
+				site,
+				siteTitle,
+			} ) );
 
-		if ( 0 === importsForSite.length ) {
-			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
-		}
-
-		return this.renderActiveImporters( importsForSite );
+		return isEmpty( importsForSite )
+			? this.renderIdleImporters( site, siteTitle, appStates.INACTIVE )
+			: this.renderActiveImporters( importsForSite );
 	}
 
 	updateFromAPI = () => {
@@ -255,10 +257,13 @@ class SiteSettingsImport extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		site: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
-	{ fetchState }
-)( localize( SiteSettingsImport ) );
+export default flow(
+	connect(
+		state => ( {
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+		} ),
+		{ fetchState }
+	),
+	localize
+)( SiteSettingsImport );
