@@ -39,6 +39,10 @@ registerBlockType( 'jetpack/related-posts', {
 			type: 'boolean',
 			default: false,
 		},
+		displayContext: {
+			type: 'boolean',
+			default: true,
+		},
 		postsToShow: {
 			type: 'number',
 			default: 3,
@@ -46,7 +50,7 @@ registerBlockType( 'jetpack/related-posts', {
 	},
 
 	edit: ( { attributes, setAttributes } ) => {
-		const { displayDate, displayThumbnails, headline, postsToShow } = attributes;
+		const { displayContext, displayDate, displayThumbnails, headline, postsToShow } = attributes;
 
 		return (
 			<Fragment>
@@ -66,6 +70,11 @@ registerBlockType( 'jetpack/related-posts', {
 							label={ __( 'Display thumbnails' ) }
 							checked={ displayThumbnails }
 							onChange={ value => setAttributes( { displayThumbnails: value } ) }
+						/>
+						<ToggleControl
+							label={ __( 'Display context (category or tag)' ) }
+							checked={ displayContext }
+							onChange={ value => setAttributes( { displayContext: value } ) }
 						/>
 						<RangeControl
 							label={ __( 'Number of posts' ) }
