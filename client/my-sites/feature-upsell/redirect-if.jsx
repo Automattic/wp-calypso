@@ -90,9 +90,13 @@ export const createMapStateToProps = (
 	};
 };
 
-export const redirectIf = ( requiredFeature, upsellPageURL ) => {
+export const redirectIf = ( shouldRedirectCallback, upsellPageURL ) => {
 	return ComponentClass => {
-		const mapStateToProps = createMapStateToProps( ComponentClass, requiredFeature, upsellPageURL );
+		const mapStateToProps = createMapStateToProps(
+			ComponentClass,
+			shouldRedirectCallback,
+			upsellPageURL
+		);
 		return connect( mapStateToProps )( UpsellRedirectWrapper );
 	};
 };
