@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { startsWith } from 'lodash';
+import { find, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -82,21 +82,26 @@ export const posToCss = ( { x, y } ) => ( {
 	left: x ? x + 'px' : undefined,
 } );
 
+function hasNonEmptyClientRect( el ) {
+	const rect = el.getBoundingClientRect();
+	return ! ( rect.x === 0 && rect.y === 0 && rect.width === 0 && rect.height === 0 );
+}
+
+// discern between tip targets and regular CSS by grepping for CSS-only characters
+const CSS_SELECTOR_REGEX = /[.# ]/;
+const isCssSelector = targetSlug => CSS_SELECTOR_REGEX.test( targetSlug );
+
 export function targetForSlug( targetSlug ) {
 	if ( ! targetSlug ) {
 		return null;
 	}
-	if (
-		targetSlug.indexOf( '.' ) !== -1 ||
-		targetSlug.indexOf( '#' ) !== -1 ||
-		targetSlug.indexOf( ' ' ) !== -1
-	) {
-		// a sort of hacky way to discern tip targets and regular css for now
-		// (e.g. misses #ids, ...)
-		// TODO(lsinger): fix this
-		return query( targetSlug )[ 0 ];
-	}
-	return query( '[data-tip-target="' + targetSlug + '"]' )[ 0 ];
+
+	const cssSelector = isCssSelector( targetSlug )
+		? targetSlug
+		: `[data-tip-target="${ targetSlug }"]`;
+
+	const targetEls = query( cssSelector );
+	return find( targetEls, hasNonEmptyClientRect ) || null;
 }
 
 export function getValidatedArrowPosition( { targetSlug, arrow, stepPos } ) {
@@ -136,7 +141,7 @@ export function getStepPosition( {
 	scrollContainer = null,
 } ) {
 	const target = targetForSlug( targetSlug );
-	const scrollDiff = shouldScrollTo ? scrollIntoView( target, scrollContainer ) : 0;
+	const scrollDiff = target && shouldScrollTo ? scrollIntoView( target, scrollContainer ) : 0;
 	const rect =
 		target && target.getBoundingClientRect
 			? target.getBoundingClientRect()
