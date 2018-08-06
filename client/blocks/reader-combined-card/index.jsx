@@ -187,6 +187,6 @@ const getPostData = createSelector(
 	state => [ state.posts ]
 );
 
-export default connect( ( state, { siteId } ) => getPostData( state, siteId ) )(
+export default connect( ( state, { postKey } ) => getPostData( state, postKey ) )(
 	ReaderCombinedCard
 );
