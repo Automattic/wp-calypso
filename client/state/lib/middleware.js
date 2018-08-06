@@ -71,26 +71,33 @@ if ( desktopEnabled ) {
  * @param {function} getState - redux getState function
  */
 const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState ) => {
-	if ( ! action.query.logged_via_immediate_link ) {
+	if ( ! action.query.immediate_login_attempt ) {
 		return;
 	}
 
-	// Store login reason for future reference
-	dispatch( saveImmediateLoginInformation( action.query.login_reason ) );
+	// Store immediate login information for future reference.
+	dispatch(
+		saveImmediateLoginInformation(
+			action.query.immediate_login_success,
+			action.query.login_reason,
+			action.query.login_email,
+			action.query.login_locale
+		)
+	);
 
-	// Don't do any further processing if we go to a login-related URL
-	if ( action.path.startsWith( '/log-in' ) ) {
+	// Redirect to a page without immediate login information in the URL
+	page.replace( createPathWithoutImmediateLoginInformation( action.path, action.query ) );
+
+	// Only show the message if the user is currently logged in and if the URL
+	// suggests that they were just logged in via an immediate login request.
+	if ( ! action.query.immediate_login_success ) {
 		return;
 	}
-
 	const currentUser = getCurrentUser( getState() );
 	if ( ! currentUser ) {
 		return;
 	}
 	const { email } = currentUser;
-
-	// Redirect to a page without immediate login information in the URL
-	page.replace( createPathWithoutImmediateLoginInformation( action.path, action.query ) );
 
 	// Let redux process all dispatches that are currently queued and show the message
 	const delay = typeof setImmediate !== 'undefined' ? setImmediate : setTimeout;

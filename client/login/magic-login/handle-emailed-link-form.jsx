@@ -34,6 +34,10 @@ import {
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
 } from 'state/login/selectors';
+import {
+	wasImmediateLoginAttempted,
+	wasAutoRenewalFailureImmediateLoginAttempted,
+} from 'state/immediate-login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
@@ -52,6 +56,8 @@ class HandleEmailedLinkForm extends React.Component {
 		isAuthenticated: PropTypes.bool,
 		isExpired: PropTypes.bool,
 		isFetching: PropTypes.bool,
+		isImmediateLoginAttempt: PropTypes.bool,
+		isAutoRenewalFailureImmediateLoginAttempt: PropTypes.bool,
 		redirectToOriginal: PropTypes.string,
 		redirectToSanitized: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
@@ -149,13 +155,22 @@ class HandleEmailedLinkForm extends React.Component {
 
 		const action = (
 			<Button primary disabled={ this.state.hasSubmitted } onClick={ this.handleSubmit }>
-				{ translate( 'Finish Login' ) }
+				{ this.props.isImmediateLoginAttempt
+					? translate( 'Confirm Login' )
+					: translate( 'Finish Login' ) }
 			</Button>
 		);
-		const title =
-			this.props.clientId === config( 'wpcom_signup_id' )
-				? translate( 'Continue to WordPress.com' )
-				: translate( 'Continue to WordPress.com on your WordPress app' );
+
+		let title;
+		if ( this.props.isAutoRenewalFailureImmediateLoginAttempt ) {
+			title = translate( 'Continue to WordPress.com to renew your subscription' );
+		} else {
+			title =
+				this.props.clientId === config( 'wpcom_signup_id' )
+					? translate( 'Continue to WordPress.com' )
+					: translate( 'Continue to WordPress.com on your WordPress app' );
+		}
+
 		const line = [
 			translate( 'Logging in as %(emailAddress)s', {
 				args: {
@@ -204,6 +219,10 @@ const mapState = state => {
 		isAuthenticated: getMagicLoginRequestedAuthSuccessfully( state ),
 		isExpired: getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE,
 		isFetching: isFetchingMagicLoginAuth( state ),
+		isImmediateLoginAttempt: wasImmediateLoginAttempted( state ),
+		isAutoRenewalFailureImmediateLoginAttempt: wasAutoRenewalFailureImmediateLoginAttempted(
+			state
+		),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	};
