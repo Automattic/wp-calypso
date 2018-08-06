@@ -15,7 +15,6 @@ import page from 'page';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import config from 'config';
 
 export class UpsellRedirectWrapper extends React.Component {
 	static propTypes = {
@@ -73,12 +72,7 @@ export const createMapStateToProps = (
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
 	const currentPlan = getCurrentPlan( state, siteId );
-	const shouldRedirect = !! (
-		config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-		currentPlan &&
-		siteSlug &&
-		shouldRedirectCallback( state, siteId )
-	);
+	const shouldRedirect = !! ( currentPlan && siteSlug && shouldRedirectCallback( state, siteId ) );
 
 	return {
 		siteId,
