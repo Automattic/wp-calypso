@@ -25,6 +25,7 @@ import FollowButton from 'reader/follow-button';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import PostBlocked from 'blocks/reader-post-card/blocked';
+import createSelector from 'lib/create-selector';
 
 class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {
@@ -163,45 +164,29 @@ class ReaderCombinedCardComponent extends React.Component {
 	}
 }
 
-export function combinedCardPostKeyToKeys( postKey, memoized = null ) {
+export function combinedCardPostKeyToKeys( postKey ) {
 	if ( ! postKey || ! postKey.postIds ) {
 		return [];
 	}
 
-	const feedId = postKey.feedId;
-	const blogId = postKey.blogId;
+	const { feedId, blogId } = postKey;
 
-	if ( memoized && memoized.lastPostIds === postKey.postIds ) {
-		return memoized.lastPostKeys;
-	}
-
-	const keys = postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
-
-	if ( memoized ) {
-		memoized.lastPostIds = postKey.postIds;
-		memoized.lastPostKeys = keys;
-	}
-
-	return keys;
+	return postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
 }
 
 export const ReaderCombinedCard = localize( ReaderCombinedCardComponent );
 
-// React-redux's `connect` allows for a mapStateToProps that returns a function,
-// rather than an object, binding it to a particular component instance.
-// This allows for memoization, which we strategically use here to maintain
-// references and avoid re-rendering large sections of the component tree.
-function mapStateToProps( st, ownProps ) {
-	const memoized = {};
-
-	return state => {
-		const postKeys = combinedCardPostKeyToKeys( ownProps.postKey, memoized );
-
+const getPostData = createSelector(
+	( state, postKey ) => {
+		const postKeys = combinedCardPostKeyToKeys( postKey );
 		return {
 			posts: getPostsByKeys( state, postKeys ),
 			postKeys,
 		};
-	};
-}
+	},
+	state => [ state.posts ]
+);
 
-export default connect( mapStateToProps )( ReaderCombinedCard );
+export default connect( ( state, { siteId } ) => getPostData( state, siteId ) )(
+	ReaderCombinedCard
+);
