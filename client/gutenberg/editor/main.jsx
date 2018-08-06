@@ -13,6 +13,7 @@ import {
 /**
  * Internal dependencies
  */
+import './edit-post';
 import Editor from './edit-post/editor.js';
 import * as paragraph from './core-blocks/paragraph';
 import * as heading from './core-blocks/heading';
@@ -24,6 +25,7 @@ const post = {
 	content: {},
 };
 
+// Mock registerCoreBlocks until core-blocks package is published
 const registerCoreBlocks = () => {
 	[ paragraph, heading ].forEach( ( { name, settings } ) => {
 		registerBlockType( name, settings );
@@ -34,7 +36,6 @@ const registerCoreBlocks = () => {
 	setUnknownTypeHandlerName( paragraph.name );
 };
 
-// Mock this call until core-blocks package is published
 registerCoreBlocks();
 
 class GutenbergEditor extends Component {

@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import { registerCoreBlocks } from '@wordpress/core-blocks';
 import { render, unmountComponentAtNode } from '@wordpress/element';
 import { dispatch, setupPersistence } from '@wordpress/data';
 import deprecated from '@wordpress/deprecated';
@@ -9,7 +8,6 @@ import deprecated from '@wordpress/deprecated';
 /**
  * Internal dependencies
  */
-import './assets/stylesheets/main.scss';
 import './hooks';
 import store from './store';
 import { initializeMetaBoxState } from './store/actions';
@@ -66,8 +64,6 @@ export function initializeEditor( id, postType, postId, settings, overridePost )
 		plugin: 'Gutenberg',
 		hint: 'If paragraphs using this classes are opened in the editor new classes are automatically applied the post just needs to be saved. This is a global warning, shown regardless of whether the classes are used in the current post.',
 	} );
-
-	registerCoreBlocks();
 
 	dispatch( 'core/nux' ).triggerGuide( [
 		'core/editor.inserter',
