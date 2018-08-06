@@ -6,9 +6,9 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import page from 'page';
 import { connect } from 'react-redux';
 import { includes, find, isEmpty } from 'lodash';
+import { compose } from 'redux';
 
 /**
  * Internal dependencies
@@ -51,13 +51,12 @@ import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
-import config from 'config';
-import { abtest } from 'lib/abtest';
+import { upsellRedirect } from 'my-sites/feature-upsell/main';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -87,7 +86,6 @@ class Upload extends React.Component {
 	componentDidMount() {
 		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
-		this.goToUpsellPageIfRequired( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -99,18 +97,6 @@ class Upload extends React.Component {
 		if ( nextProps.showEligibility !== this.props.showEligibility ) {
 			this.setState( { showEligibility: nextProps.showEligibility } );
 		}
-
-		this.goToUpsellPageIfRequired( nextProps );
-	}
-
-	goToUpsellPageIfRequired( props ) {
-		if ( this.shouldRedirectToUpsellPage( props ) ) {
-			page.redirect( `/feature/themes/${ props.siteSlug }` );
-		}
-	}
-
-	shouldRedirectToUpsellPage( props = this.props ) {
-		return props.useUpsellPage && props.showEligibility;
 	}
 
 	onProceedClick = () => {
@@ -269,10 +255,6 @@ class Upload extends React.Component {
 			return this.renderNotAvailableForMultisite();
 		}
 
-		if ( this.shouldRedirectToUpsellPage() ) {
-			return false;
-		}
-
 		return (
 			<Main>
 				<QueryEligibility siteId={ siteId } />
@@ -304,47 +286,48 @@ const UploadWithOptions = props => {
 	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
 };
 
-export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
-		const themeId = getUploadedThemeId( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
-		// Use this selector to take advantage of eligibility card placeholders
-		// before data has loaded.
-		const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-		const hasEligibilityMessages = ! (
-			isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
-		);
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const themeId = getUploadedThemeId( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
+	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
+	// Use this selector to take advantage of eligibility card placeholders
+	// before data has loaded.
+	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+	const hasEligibilityMessages = ! (
+		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
+	);
 
-		const useUpsellPage =
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages';
+	return {
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+		isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+		selectedSite: site,
+		isJetpack,
+		inProgress: isUploadInProgress( state, siteId ),
+		complete: isUploadComplete( state, siteId ),
+		failed: hasUploadFailed( state, siteId ),
+		themeId,
+		isMultisite: isJetpackSiteMultiSite( state, siteId ),
+		uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
+		error: getUploadError( state, siteId ),
+		progressTotal: getUploadProgressTotal( state, siteId ),
+		progressLoaded: getUploadProgressLoaded( state, siteId ),
+		installing: isInstallInProgress( state, siteId ),
+		upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
+		backPath: getBackPath( state ),
+		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+	};
+};
 
-		return {
-			siteId,
-			useUpsellPage,
-			siteSlug: getSelectedSiteSlug( state ),
-			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-			selectedSite: site,
-			isJetpack,
-			inProgress: isUploadInProgress( state, siteId ),
-			complete: isUploadComplete( state, siteId ),
-			failed: hasUploadFailed( state, siteId ),
-			themeId,
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
-			error: getUploadError( state, siteId ),
-			progressTotal: getUploadProgressTotal( state, siteId ),
-			progressLoaded: getUploadProgressLoaded( state, siteId ),
-			installing: isInstallInProgress( state, siteId ),
-			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
-			backPath: getBackPath( state ),
-			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
-			siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		};
-	},
-	{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
-)( localize( UploadWithOptions ) );
+export default compose(
+	connect(
+		mapStateToProps,
+		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
+	),
+	localize,
+	upsellRedirect( FEATURE_UPLOAD_THEMES, '/feature/themes' )
+)( UploadWithOptions );
