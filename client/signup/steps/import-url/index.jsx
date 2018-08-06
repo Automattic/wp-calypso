@@ -25,11 +25,9 @@ class ImportURLStepComponent extends Component {
 		event.preventDefault();
 		debug( { importUrl } );
 
-		SignupActions.submitSignupStep( {
-			stepName: this.props.stepName,
-			providedDependencies: {
-				importUrl,
-			},
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
+			importUrl,
+			themeSlugWithRepo: 'pub/radcliffe-2',
 		} );
 
 		this.props.goToNextStep();
