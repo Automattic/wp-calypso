@@ -136,7 +136,7 @@ const edit = class extends Component {
 		this.props.setAttributes( { list: this.renderElements( newItems ) } );
 	}
 
-	updateItem( item, index ) {
+	updateItem() {
 		this.props.setAttributes( { list: this.renderElements( this.state.items ) } );
 	}
 
@@ -226,7 +226,7 @@ const deprecated = [
 			},
 		},
 
-		save: function( props ) {
+		save: function() {
 			return [];
 		},
 

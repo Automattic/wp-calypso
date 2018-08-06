@@ -47,19 +47,7 @@ export const ItemEditor = class extends Component {
 	}
 
 	render() {
-		const {
-			item,
-			moveUp,
-			moveDown,
-			moveLeft,
-			moveRight,
-			canMoveUp,
-			canMoveDown,
-			classNames,
-			onChange,
-			autoFocus,
-			onDelete,
-		} = this.props;
+		const { item, moveUp, moveDown, canMoveUp, canMoveDown, classNames, onDelete } = this.props;
 		const { done, value } = item;
 		return (
 			<li className={ classNames }>
