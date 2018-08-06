@@ -1,20 +1,19 @@
 /** @format */
-
 /**
  * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, translate, localize } from 'i18n-calypso';
-import { has, omit } from 'lodash';
+import { defer, flow, has, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { mapAuthor, startImporting } from 'lib/importer/actions';
+import { mapAuthor, startImporting } from 'state/imports/actions';
 import { appStates } from 'state/imports/constants';
-import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
 import MappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
@@ -197,10 +196,17 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
+	onMap = ( source, target ) => {
+		const { importerId } = this.props.importerStatus;
+		// TODO: Remove defer once flux store is not in use.
+		defer( () => this.props.mapAuthor( importerId, source, target ) );
+	};
+
+	onStartImport = () => this.props.startImporting( this.props.importerStatus );
+
 	render() {
 		const {
-			importerStatus: { importerId, errorData = {}, customData },
-			mapAuthorFor,
+			importerStatus: { errorData = {}, customData },
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 			sourceType,
 		} = this.props;
@@ -233,8 +239,8 @@ class ImportingPane extends React.PureComponent {
 				{ this.isMapping() && (
 					<MappingPane
 						hasSingleAuthor={ hasSingleAuthor }
-						onMap={ mapAuthorFor( importerId ) }
-						onStartImport={ () => startImporting( this.props.importerStatus ) }
+						onMap={ this.onMap }
+						onStartImport={ this.onStartImport }
 						{ ...{ siteId, sourceType } }
 						sourceAuthors={ customData.sourceAuthors }
 						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
@@ -259,11 +265,13 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	mapAuthorFor: importerId => ( source, target ) =>
-		setTimeout( () => {
-			dispatch( mapAuthor( importerId, source, target ) );
-		}, 0 ),
-} );
-
-export default connectDispatcher( null, mapDispatchToProps )( localize( ImportingPane ) );
+export default flow(
+	connect(
+		null,
+		{
+			mapAuthor,
+			startImporting,
+		}
+	),
+	localize
+)( ImportingPane );
