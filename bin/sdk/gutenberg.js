@@ -54,8 +54,8 @@ exports.compile = args => {
 			mode: options.mode,
 			entry: omitBy(
 				{
-					[ `${ name }-editor.js` ]: options.editorScript,
-					[ `${ name }-view.js` ]: options.viewScript,
+					[ options.outputEditorFile || `${ name }-editor.js` ]: options.editorScript,
+					[ options.outputViewFile || `${ name }-view.js` ]: options.viewScript,
 				},
 				isEmpty
 			),
