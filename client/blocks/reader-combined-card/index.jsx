@@ -56,12 +56,12 @@ class ReaderCombinedCardComponent extends React.Component {
 			this.props.postKey.blogId !== prevProps.postKey.blogId ||
 			size( this.props.posts ) !== size( prevProps.posts )
 		) {
-			this.recordRenderTrack( this.props );
+			this.recordRenderTrack();
 		}
 	}
 
-	recordRenderTrack = ( props = this.props ) => {
-		const { postKey, posts } = props;
+	recordRenderTrack = () => {
+		const { postKey, posts } = this.props;
 
 		recordTrack( 'calypso_reader_combined_card_render', {
 			blog_id: postKey.blogId,
