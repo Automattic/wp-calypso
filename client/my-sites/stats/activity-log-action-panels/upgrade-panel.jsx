@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import ActionPanelBody from 'components/action-panel/body';
 import ActionPanelFigure from 'components/action-panel/figure';
 import ActionPanelFooter from 'components/action-panel/footer';
 import { addQueryArgs } from 'lib/url/index';
+import analytics from 'lib/analytics';
 import Button from 'components/button/index';
 import { isJetpackSite } from 'state/sites/selectors';
 import {
@@ -42,7 +44,7 @@ class UpgradePanel extends Component {
 						'increased storage space to 6GB, and email & live chat support.'
 			  );
 	}
-	getHref() {
+	getPlansPage() {
 		const { isJetpack, siteSlug } = this.props;
 		const baseUrl = `/plans/${ siteSlug }`;
 		const feature = isJetpack ? FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY : FEATURE_JETPACK_ESSENTIAL;
@@ -55,6 +57,13 @@ class UpgradePanel extends Component {
 			baseUrl
 		);
 	}
+
+	handleClick = event => {
+		event.preventDefault();
+		analytics.tracks.recordEvent( 'calypso_activity_log_upgrade_click' );
+		page( this.getPlansPage() );
+	};
+
 	render() {
 		const { translate } = this.props;
 		return (
@@ -75,7 +84,7 @@ class UpgradePanel extends Component {
 						<p>{ this.getDescription() }</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						<Button primary href={ this.getHref() }>
+						<Button primary onClick={ this.handleClick }>
 							{ translate( 'More details' ) }
 						</Button>
 					</ActionPanelFooter>
