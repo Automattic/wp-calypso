@@ -340,7 +340,7 @@ export function generateSteps( {
 
 		'import-from-url': {
 			stepName: 'import-from-url',
-			providesDependencies: [ 'importUrl' ],
+			providesDependencies: [ 'importUrl', 'themeSlugWithRepo' ],
 		},
 	};
 }
