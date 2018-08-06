@@ -29,5 +29,5 @@ export const getUpsellPlanPrice = ( state, upsellPlanSlug, selectedSiteId ) => {
  * @param {React.Component} Component - Component to wrap in redirectIf
  * @return {function} Wrapped Component
  */
-export const canUpgradeSiteOrRedirect = Component =>
+export const redirectUnlessCanUpgradeSite = Component =>
 	redirectIf( state => ! canCurrentUserUpgradeSite( state ), '/stats' )( Component );

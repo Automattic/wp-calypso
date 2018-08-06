@@ -28,7 +28,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import { getCurrencyObject } from 'lib/format-currency';
-import { getUpsellPlanPrice, canUpgradeSiteOrRedirect } from './utils';
+import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
 import { hasFeature } from 'state/sites/plans/selectors';
 import redirectIf from './redirect-if';
 
@@ -297,6 +297,6 @@ export default compose(
 		mapDispatchToProps
 	),
 	localize,
-	canUpgradeSiteOrRedirect,
+	redirectUnlessCanUpgradeSite,
 	redirectIf( ( state, siteId ) => hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ), '/themes' )
 )( ThemesUpsellComponent );

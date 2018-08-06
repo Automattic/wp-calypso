@@ -33,7 +33,7 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
-import { getUpsellPlanPrice, canUpgradeSiteOrRedirect } from './utils';
+import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
 import redirectIf from './redirect-if';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -229,7 +229,7 @@ export default compose(
 		mapDispatchToProps
 	),
 	localize,
-	canUpgradeSiteOrRedirect,
+	redirectUnlessCanUpgradeSite,
 	redirectIf(
 		( state, siteId ) =>
 			canCurrentUserUseStore( state ) || hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ),
