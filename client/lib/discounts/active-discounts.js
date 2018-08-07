@@ -10,9 +10,10 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 } from 'lib/plans/constants';
+import { translate } from 'i18n-calypso';
 
 /**
- * No translate() used in this file since we're launching those promotions just for the EN audience
+ * No translate() used on some of these since we're launching those promotions just for the EN audience
  */
 export default [
 	{
@@ -53,5 +54,23 @@ export default [
 		plansPageNoticeTextTitle: 'Get a free domain name by upgrading to any plan listed below!',
 		plansPageNoticeText:
 			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice.',
+	},
+	{
+		name: 'august20',
+		startsAt: new Date( 2018, 7, 6, 0, 0, 0 ),
+		endsAt: new Date( 2018, 7, 11, 0, 0, 0 ),
+		nudgeText: translate( '20% Off All Plans' ),
+		ctaText: translate( 'UPGRADE' ),
+		plansPageNoticeText: translate(
+			'Enter coupon code “AUGUST20” during checkout to claim your 20% discount.'
+		),
+		targetPlans: [
+			{ type: TYPE_FREE, group: GROUP_WPCOM },
+			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
+			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
+			{ type: TYPE_FREE, group: GROUP_JETPACK },
+			{ type: TYPE_PERSONAL, group: GROUP_JETPACK },
+			{ type: TYPE_PREMIUM, group: GROUP_JETPACK },
+		],
 	},
 ];
