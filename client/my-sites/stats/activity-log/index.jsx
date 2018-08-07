@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import config from 'config';
@@ -392,7 +391,6 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ siteIsOnFreePlan && <IntroPanel siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
@@ -439,11 +437,9 @@ class ActivityLog extends Component {
 							prevLabel={ translate( 'Newer' ) }
 							total={ logs.length }
 						/>
-						<section
-							className={ classNames( 'activity-log__wrapper', {
-								'is-shadowed': siteIsOnFreePlan,
-							} ) }
-						>
+						{ siteIsOnFreePlan && <IntroPanel siteId={ siteId } /> }
+						<section className="activity-log__logs">
+							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
 							{ theseLogs.map( log => (
 								<Fragment key={ log.activityId }>
 									{ timePeriod( log ) }
