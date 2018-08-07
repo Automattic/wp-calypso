@@ -24,6 +24,11 @@ const {
 const { registerBlockType } = wp.blocks;
 
 /**
+ * Internal dependencies
+ */
+import './editor.scss';
+
+/**
  * Module variables
  */
 const MAX_POSTS_TO_SHOW = 3;
