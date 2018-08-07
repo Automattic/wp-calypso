@@ -148,40 +148,41 @@ registerBlockType( 'jetpack/related-posts', {
 						/>
 					</PanelBody>
 				</InspectorControls>
-
 				<BlockControls>
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
-				<div className="related-posts__preview">
-					{ headline.length && <h3 className="related-posts__preview-headline">{ headline }</h3> }
+				<div className="related-posts">
+					<div className="related-posts__preview">
+						{ headline.length && <h3 className="related-posts__preview-headline">{ headline }</h3> }
 
-					<div
-						className={ classNames( 'related-posts__preview-items', {
-							'is-grid': postLayout === 'grid',
-							[ `columns-${ postsToShow }` ]: postLayout === 'grid',
-						} ) }
-					>
-						{ displayPosts.map( ( post, i ) => (
-							<div class="related-posts__preview-post" key={ i }>
-								{ displayThumbnails && (
-									<Button className="related-posts__preview-post-link" isLink>
-										<Dashicon icon={ post.icon } />
-									</Button>
-								) }
-								<h4 className="related-posts__preview-post-title">
-									<Button className="related-posts__preview-post-link" isLink>
-										{ post.title }
-									</Button>
-								</h4>
-								{ displayDate && (
-									<span className="related-posts__preview-post-date">{ post.date }</span>
-								) }
-								{ displayContext && (
-									<p className="related-posts__preview-post-context">{ post.context }</p>
-								) }
-							</div>
-						) ) }
+						<div
+							className={ classNames( 'related-posts__preview-items', {
+								'is-grid': postLayout === 'grid',
+								[ `columns-${ postsToShow }` ]: postLayout === 'grid',
+							} ) }
+						>
+							{ displayPosts.map( ( post, i ) => (
+								<div class="related-posts__preview-post" key={ i }>
+									{ displayThumbnails && (
+										<Button className="related-posts__preview-post-link" isLink>
+											<Dashicon icon={ post.icon } />
+										</Button>
+									) }
+									<h4 className="related-posts__preview-post-title">
+										<Button className="related-posts__preview-post-link" isLink>
+											{ post.title }
+										</Button>
+									</h4>
+									{ displayDate && (
+										<span className="related-posts__preview-post-date">{ post.date }</span>
+									) }
+									{ displayContext && (
+										<p className="related-posts__preview-post-context">{ post.context }</p>
+									) }
+								</div>
+							) ) }
+						</div>
 					</div>
 				</div>
 			</Fragment>
