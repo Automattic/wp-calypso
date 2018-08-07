@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import wp from 'wp';
 
 /**
@@ -11,13 +12,41 @@ import wp from 'wp';
 const { __ } = wp.i18n;
 const { Fragment } = wp.element;
 const { BlockControls, InspectorControls } = wp.editor;
-const { PanelBody, RangeControl, TextControl, ToggleControl, Toolbar } = wp.components;
+const {
+	Button,
+	Dashicon,
+	PanelBody,
+	RangeControl,
+	TextControl,
+	ToggleControl,
+	Toolbar,
+} = wp.components;
 const { registerBlockType } = wp.blocks;
 
 /**
  * Module variables
  */
 const MAX_POSTS_TO_SHOW = 3;
+const examplePosts = [
+	{
+		title: 'Big iPhone/iPad Update Now Available',
+		icon: 'tablet',
+		date: 'August 3, 2018',
+		context: 'In "Mobile"',
+	},
+	{
+		title: 'The WordPress for Android App Gets a Big Facelift',
+		icon: 'smartphone',
+		date: 'August 2, 2018',
+		context: 'In "Mobile"',
+	},
+	{
+		title: 'Upgrade Focus: VideoPress For Weddings',
+		icon: 'video-alt2',
+		date: 'August 5, 2018',
+		context: 'In "Upgrade"',
+	},
+];
 
 registerBlockType( 'jetpack/related-posts', {
 	title: 'Related Posts',
@@ -78,6 +107,9 @@ registerBlockType( 'jetpack/related-posts', {
 			},
 		];
 
+		const displayPosts =
+			examplePosts.length > postsToShow ? examplePosts.slice( 0, postsToShow ) : examplePosts;
+
 		return (
 			<Fragment>
 				<InspectorControls>
@@ -116,7 +148,37 @@ registerBlockType( 'jetpack/related-posts', {
 					<Toolbar controls={ layoutControls } />
 				</BlockControls>
 
-				<div>List of posts here</div>
+				<div className="related-posts__preview">
+					{ headline.length && <h3 className="related-posts__preview-headline">{ headline }</h3> }
+
+					<div
+						className={ classNames( 'related-posts__preview-items', {
+							'is-grid': postLayout === 'grid',
+							[ `columns-${ postsToShow }` ]: postLayout === 'grid',
+						} ) }
+					>
+						{ displayPosts.map( ( post, i ) => (
+							<div class="related-posts__preview-post" key={ i }>
+								{ displayThumbnails && (
+									<Button className="related-posts__preview-post-link" isLink>
+										<Dashicon icon={ post.icon } />
+									</Button>
+								) }
+								<h4 className="related-posts__preview-post-title">
+									<Button className="related-posts__preview-post-link" isLink>
+										{ post.title }
+									</Button>
+								</h4>
+								{ displayDate && (
+									<span className="related-posts__preview-post-date">{ post.date }</span>
+								) }
+								{ displayContext && (
+									<p className="related-posts__preview-post-context">{ post.context }</p>
+								) }
+							</div>
+						) ) }
+					</div>
+				</div>
 			</Fragment>
 		);
 	},
