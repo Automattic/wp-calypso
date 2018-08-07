@@ -13,6 +13,7 @@ const webpack = require( 'webpack' );
  * Internal dependencies
  */
 const gutenberg = require( './sdk/gutenberg.js' );
+const notifications = require( './sdk/notifications.js' );
 
 // Script name is used in help instructions;
 // pick between `npm run calypso-sdk` and `npx calypso-sdk`.
@@ -115,6 +116,28 @@ yargs
 				},
 			} ),
 		handler: argv => build( gutenberg, argv ),
+	} )
+	.command( {
+		command: 'notifications',
+		desc: 'Build the standalone notifications client',
+		builder: yargs => yargs.options( {
+			'mode': {
+				alias: 'm',
+				description: 'Choose the way how assets are optimized.',
+				type: 'string',
+				choices: [ 'production', 'development' ],
+				default: 'production',
+				requiresArg: true,
+			},
+			'output-dir': {
+				alias: 'o',
+				description: 'Output directory for the built assets. Intermediate directories are created as required.',
+				type: 'string',
+				coerce: path.resolve,
+				requiresArg: true,
+			}
+		} ),
+		handler: argv => notifications.compile( argv )
 	} )
 	.demandCommand( 1, chalk.red( 'You must provide a valid command!' ) )
 	.alias( 'help', 'h' )

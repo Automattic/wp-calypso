@@ -1,0 +1,24 @@
+%container {
+  &:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+}
+
+%ellipsy {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+%ellipsy-box {
+  @extend %ellipsy;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+%calypso-border {
+  border-bottom: 1px solid lighten($gray, 30);
+}
