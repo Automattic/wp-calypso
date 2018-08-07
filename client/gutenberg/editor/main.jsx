@@ -13,7 +13,6 @@ import {
 /**
  * Internal dependencies
  */
-import './edit-post';
 import Editor from './edit-post/editor.js';
 import * as paragraph from './core-blocks/paragraph';
 import * as heading from './core-blocks/heading';

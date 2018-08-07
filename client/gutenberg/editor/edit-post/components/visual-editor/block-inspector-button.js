@@ -1,6 +1,11 @@
 /**
  * External dependencies
  */
+import React from 'react';
+
+/**
+ * External dependencies
+ */
 import { flow, noop } from 'lodash';
 
 /**

@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import React from 'react';
+
+/**
  * WordPress dependencies
  */
 import { withSelect } from '@wordpress/data';
@@ -9,6 +14,7 @@ import { StrictMode } from '@wordpress/element';
  * Internal dependencies
  */
 import Layout from './components/layout';
+import './store';
 
 function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
 	if ( ! post ) {
@@ -33,5 +39,5 @@ function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...pr
 
 export default withSelect( ( select, { postId, postType } ) => ( {
 	hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
-	post: select( 'core' ).getEntityRecord( 'postType', postType, postId ),
+	post:  select( 'core' ).getEntityRecord( 'postType', postType, postId ),
 } ) )( Editor );
