@@ -7,7 +7,7 @@
 // stylesheet order does not matter.
 // ==========================================================================
 
-@import 'layout/style';
+@import '../../client/layout/style.scss';
 
 @import 'account-recovery/components/account-recovery-error-message/style';
 @import 'account-recovery/forgot-username-form/style';
