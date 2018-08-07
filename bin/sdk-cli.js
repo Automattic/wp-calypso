@@ -58,6 +58,11 @@ yargs
 				coerce: path.resolve,
 				requiresArg: true,
 			},
+			'watch': {
+				alias: 'w',
+				description: 'Whether to watch for changes and automatically rebuild.',
+				type: 'boolean',
+			},
 		} ),
 		handler: argv => gutenberg.compile( argv )
 	} )

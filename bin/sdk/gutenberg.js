@@ -15,6 +15,29 @@ const CopyWebpackPlugin = require( path.resolve(
 ) );
 const getBaseConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
 
+const omitPlugins = [
+	CopyWebpackPlugin,
+	webpack.HotModuleReplacementPlugin,
+];
+
+const outputHandler = ( error, stats ) => {
+	if ( error ) {
+		console.error( error );
+		console.log( chalk.red( 'Failed to build Gutenberg extension' ) );
+		process.exit( 1 );
+	}
+
+	console.log( stats.toString() );
+
+	if ( stats.hasErrors() ) {
+		console.log( chalk.red( 'Finished building Gutenberg extension but with errors.' ) );
+	} else if ( stats.hasWarnings() ) {
+		console.log( chalk.yellow( 'Successfully built Gutenberg extension but with warnings.' ) );
+	} else {
+		console.log( chalk.green( 'Successfully built Gutenberg extension' ) );
+	}
+};
+
 exports.compile = args => {
 	const options = {
 		outputDir: path.join( path.dirname( args.editorScript ), 'build' ),
@@ -49,28 +72,16 @@ exports.compile = args => {
 				libraryTarget: 'window',
 			},
 			plugins: [
-				...baseConfig.plugins.filter( plugin => ! ( plugin instanceof CopyWebpackPlugin ) ),
+				...baseConfig.plugins.filter( plugin => omitPlugins.indexOf( plugin.constructor ) < 0 ),
 			],
 		},
 	};
 
 	const compiler = webpack( config );
 
-	compiler.run( ( error, stats ) => {
-		if ( error ) {
-			console.error( error );
-			console.log( chalk.red( 'Failed to build Gutenberg extension' ) );
-			process.exit( 1 );
-		}
-
-		console.log( stats.toString() );
-
-		if ( stats.hasErrors() ) {
-			console.log( chalk.red( 'Finished building Gutenberg extension but with errors.' ) );
-		} else if ( stats.hasWarnings() ) {
-			console.log( chalk.yellow( 'Successfully built Gutenberg extension but with warnings.' ) );
-		} else {
-			console.log( chalk.green( 'Successfully built Gutenberg extension' ) );
-		}
-	} );
+	if ( options.watch ) {
+		compiler.watch( {}, outputHandler );
+	} else {
+		compiler.run( outputHandler );
+	}
 };
