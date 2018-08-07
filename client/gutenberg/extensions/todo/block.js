@@ -16,7 +16,6 @@ const { RichText } = wp.editor;
  */
 import { ItemEditor } from './item';
 
-import './style.scss';
 import './editor.scss';
 
 const blockAttributes = {
