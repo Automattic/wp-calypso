@@ -21,6 +21,8 @@ class InfiniteScrollWithIntersectionObserver extends React.Component {
 
 	observedElement = React.createRef();
 
+	hasScrolledPastBottom = false;
+
 	componentDidMount() {
 		if ( this.observedElement.current ) {
 			this.observer = new IntersectionObserver( this.handleIntersection, {
@@ -35,13 +37,36 @@ class InfiniteScrollWithIntersectionObserver extends React.Component {
 		if ( this.observer ) {
 			this.observer.disconnect();
 		}
+		clearTimeout( this.deferredPageFetch );
+	}
+
+	getNextPage() {
+		this.props.nextPageMethod( { triggeredByScroll: this.hasScrolledPastBottom } );
+	}
+
+	componentDidUpdate() {
+		if ( ! this.deferredPageFetch && ! this.hasScrolledPastBottom ) {
+			// We still need more pages, so schedule a page fetch.
+			this.deferredPageFetch = defer( () => {
+				if ( ! this.hasScrolledPastBottom ) {
+					this.getNextPage();
+				}
+				this.deferredPageFetch = null;
+			} );
+		}
 	}
 
 	handleIntersection = entries => {
-		if ( entries && entries[ 0 ] && entries[ 0 ].isIntersecting ) {
-			const { boundingClientRect, rootBounds } = entries[ 0 ];
-			const triggeredByScroll = boundingClientRect.bottom >= rootBounds.bottom;
-			this.props.nextPageMethod( { triggeredByScroll } );
+		if ( ! entries || ! entries[ 0 ] ) {
+			return;
+		}
+
+		if ( entries[ 0 ].isIntersecting ) {
+			this.getNextPage();
+		} else {
+			// The observed element is no longer in view, so future changes must
+			// be caused by scrolling.
+			this.hasScrolledPastBottom = true;
 		}
 	};
 
