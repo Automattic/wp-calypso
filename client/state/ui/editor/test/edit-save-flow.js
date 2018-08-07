@@ -253,6 +253,7 @@ test( 'create new post and save, verify that edited post is always valid', async
 			type: 'post',
 			status: 'draft',
 			title: 'Title',
+			content: '',
 		} )
 		.reply( 200, {
 			global_ID: GLOBAL_ID,

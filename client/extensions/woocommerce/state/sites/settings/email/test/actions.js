@@ -217,14 +217,14 @@ describe( 'actions', () => {
 
 		const update = [
 			{
+				group_id: 'email',
 				id: 'woocommerce_email_from_name',
 				value: 'frtd',
-				group_id: 'email',
 			},
 			{
-				id: 'woocommerce_email_from_address',
-				value: 'test@test.com',
 				group_id: 'email',
+				id: 'woocommerce_email_from_address',
+				value: 'bartosz.budzanowski@automattic.com',
 			},
 		];
 
@@ -233,8 +233,13 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/settings_batch&_via_calypso&_method=post', json: true } )
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+					path: '/wc/v3/settings/batch&_via_calypso&_method=post',
+					body: JSON.stringify( {
+						update,
+					} ),
+					json: true,
+				} )
 				.reply( 200, { data } );
 		} );
 

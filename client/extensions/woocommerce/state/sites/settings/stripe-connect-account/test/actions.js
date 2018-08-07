@@ -65,12 +65,21 @@ describe( 'actions', () => {
 
 	describe( '#createAccount()', () => {
 		const siteId = '123';
+		const email = 'foo@bar.com';
+		const country = 'US';
+		const connectedUserID = 'acct_14qyt6Alijdnw0EA';
 
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v1/connect/stripe/account&_via_calypso&_method=post', json: true } )
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+					path: '/wc/v1/connect/stripe/account&_via_calypso&_method=post',
+					body: JSON.stringify( {
+						email,
+						country,
+					} ),
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						success: true,
@@ -82,12 +91,14 @@ describe( 'actions', () => {
 		test( 'should dispatch an action', () => {
 			const getState = () => ( {} );
 			const dispatch = spy();
-			createAccount( siteId, 'foo@bar.com', 'US' )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
-				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
-				country: 'US',
-				email: 'foo@bar.com',
-				siteId,
+			const response = createAccount( siteId, 'foo@bar.com', 'US' )( dispatch, getState );
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWith( {
+					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
+					country,
+					email,
+					siteId,
+				} );
 			} );
 		} );
 
@@ -100,8 +111,8 @@ describe( 'actions', () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
 					siteId,
-					connectedUserID: 'acct_14qyt6Alijdnw0EA',
-					email: 'foo@bar.com',
+					connectedUserID,
+					email,
 				} );
 			} );
 		} );
@@ -168,9 +179,9 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( {
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
 					path: '/wc/v1/connect/stripe/account/deauthorize&_via_calypso&_method=post',
+					body: JSON.stringify( {} ),
 					json: true,
 				} )
 				.reply( 200, {
@@ -211,8 +222,13 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v1/connect/stripe/oauth/init&_via_calypso&_method=post', json: true } )
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+					path: '/wc/v1/connect/stripe/oauth/init&_via_calypso&_method=post',
+					body: JSON.stringify( {
+						returnUrl: 'https://return.url.com/',
+					} ),
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						success: true,
@@ -256,10 +272,6 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( {
-					path: '/wc/v1/connect/stripe/oauth/connect&_via_calypso&_method=post',
-					json: true,
-				} )
 				.reply( 200, {
 					data: {
 						success: true,
