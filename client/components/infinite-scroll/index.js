@@ -10,40 +10,28 @@ import afterLayoutFlush from 'lib/after-layout-flush';
 
 const SCROLL_CHECK_RATE_IN_MS = 400;
 
-export default class InfiniteScroll extends React.Component {
-	static propTypes = {
-		nextPageMethod: PropTypes.func.isRequired,
-	};
+const hasIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window;
+
+const propTypeDefinition = {
+	nextPageMethod: PropTypes.func.isRequired,
+};
+
+class InfiniteScrollWithIntersectionObserver extends React.Component {
+	static propTypes = propTypeDefinition;
 
 	observedElement = React.createRef();
 
 	componentDidMount() {
-		this.hasIntersectionObserver = 'IntersectionObserver' in window;
-
-		if ( this.hasIntersectionObserver && this.observedElement.current ) {
+		if ( this.observedElement.current ) {
 			this.observer = new IntersectionObserver( this.handleIntersection, {
 				rootMargin: '100%',
 				threshold: 1.0,
 			} );
 			this.observer.observe( this.observedElement.current );
-		} else {
-			window.addEventListener( 'scroll', this.checkScrollPositionHandler );
-			this.deferredTimer = defer( () => this.checkScrollPositionHandler( false ) );
-		}
-	}
-
-	componentDidUpdate() {
-		if ( ! this.hasIntersectionObserver && ! this.deferredTimer ) {
-			this.deferredTimer = defer( () => this.checkScrollPositionHandler( false ) );
 		}
 	}
 
 	componentWillUnmount() {
-		// Clean up scroll codepath.
-		window.removeEventListener( 'scroll', this.checkScrollPositionHandler );
-		this.clearTimers();
-
-		// Clean up IntersectionObserver codepath.
 		if ( this.observer ) {
 			this.observer.disconnect();
 		}
@@ -57,6 +45,30 @@ export default class InfiniteScroll extends React.Component {
 		}
 	};
 
+	render() {
+		return <div ref={ this.observedElement } />;
+	}
+}
+
+class InfiniteScrollWithScrollEvent extends React.Component {
+	static propTypes = propTypeDefinition;
+
+	componentDidMount() {
+		window.addEventListener( 'scroll', this.checkScrollPositionHandler );
+		this.deferredTimer = defer( () => this.checkScrollPositionHandler( false ) );
+	}
+
+	componentDidUpdate() {
+		if ( ! this.deferredTimer ) {
+			this.deferredTimer = defer( () => this.checkScrollPositionHandler( false ) );
+		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'scroll', this.checkScrollPositionHandler );
+		this.clearTimers();
+	}
+
 	clearTimers() {
 		window.clearTimeout( this.deferredTimer );
 		this.deferredTimer = null;
@@ -68,27 +80,31 @@ export default class InfiniteScroll extends React.Component {
 	);
 
 	checkScrollPosition( triggeredByScroll ) {
-		if ( ! this.hasIntersectionObserver ) {
-			this.clearTimers();
+		this.clearTimers();
 
-			const scrollPosition = window.pageYOffset;
-			const documentHeight = document.body.scrollHeight;
-			const viewportHeight = window.innerHeight;
-			const scrollOffset = 2 * viewportHeight;
+		const scrollPosition = window.pageYOffset;
+		const documentHeight = document.body.scrollHeight;
+		const viewportHeight = window.innerHeight;
+		const scrollOffset = 2 * viewportHeight;
 
-			if ( scrollPosition >= documentHeight - viewportHeight - scrollOffset ) {
-				// Consider all page fetches once user starts scrolling as triggered by scroll
-				// Same condition check is in components/infinite-list/scroll-helper loadNextPage
-				if ( scrollPosition > viewportHeight ) {
-					triggeredByScroll = true;
-				}
-
-				this.props.nextPageMethod( { triggeredByScroll } );
+		if ( scrollPosition >= documentHeight - viewportHeight - scrollOffset ) {
+			// Consider all page fetches once user starts scrolling as triggered by scroll
+			// Same condition check is in components/infinite-list/scroll-helper loadNextPage
+			if ( scrollPosition > viewportHeight ) {
+				triggeredByScroll = true;
 			}
+
+			this.props.nextPageMethod( { triggeredByScroll } );
 		}
 	}
 
 	render() {
-		return <div ref={ this.observedElement } />;
+		// Should match render output for the IntersectionObserver version,
+		// since server-side rendering will always use this version.
+		return <div />;
 	}
 }
+
+export default ( hasIntersectionObserver
+	? InfiniteScrollWithIntersectionObserver
+	: InfiniteScrollWithScrollEvent );
