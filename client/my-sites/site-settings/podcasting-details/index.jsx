@@ -231,7 +231,7 @@ class PodcastingDetails extends Component {
 						plan="personal-bundle"
 						title={ translate( 'Upload Audio with WordPress.com Personal' ) }
 						message={ translate( 'Embed podcast episodes directly from your media library.' ) }
-						feature="6gb-storage"
+						feature="audio-upload"
 						event="podcdasting_details_upload_audio"
 					/>
 					{ ! error && (
