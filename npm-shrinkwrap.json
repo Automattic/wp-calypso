@@ -15271,9 +15271,9 @@
       "optional": true
     },
     "twemoji": {
-      "version": "11.0.0",
-      "resolved": "https://registry.npmjs.org/twemoji/-/twemoji-11.0.0.tgz",
-      "integrity": "sha1-fuxX0Sv9H//o1efwXaC2QipgeQ8="
+      "version": "11.0.1",
+      "resolved": "https://registry.npmjs.org/twemoji/-/twemoji-11.0.1.tgz",
+      "integrity": "sha512-Z0bRyZ1yO7cqa69oRhLZWmaLM0e9eeTugUXbnNQY3XPgRHJcSF8PKfp/dx3vHWtz9Y6o8fi3Ryjfpq4vBCeXjA=="
     },
     "type-check": {
       "version": "0.3.2",
