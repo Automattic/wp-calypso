@@ -5,6 +5,8 @@
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { RichText } from '@wordpress/editor';
+import Card from 'components/card';
+import Ribbon from 'components/ribbon';
 
 import './style.scss';
 
@@ -14,22 +16,16 @@ const attributes = {
 	},
 };
 
-const edit = ( { attributes: { notes }, className, isSelected, setAttributes } ) => (
-	<div className={ isSelected ? 'is-selected' : '' }>
-		{ ! isSelected && (
-			<span className="editor-notes__editor-indicator">
-				<span role="img" aria-label="notebook">
-					📔
-				</span>
-				Editor's Notes: hidden from rendered page
-			</span>
-		) }
-		<RichText
-			tagName="p"
-			className={ className }
-			value={ notes }
-			onChange={ newNotes => setAttributes( { notes: newNotes } ) }
-		/>
+const edit = ( { attributes: { notes }, className, setAttributes } ) => (
+	<div className={ className }>
+		<Card highlight="error">
+			<Ribbon>Hidden</Ribbon>
+			<RichText
+				tagName="p"
+				value={ notes }
+				onChange={ newNotes => setAttributes( { notes: newNotes } ) }
+			/>
+		</Card>
 	</div>
 );
 
