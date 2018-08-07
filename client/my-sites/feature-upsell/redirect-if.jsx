@@ -13,16 +13,15 @@ import page from 'page';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentPlan, hasFeature } from 'state/sites/plans/selectors';
-import { abtest } from 'lib/abtest';
-import config from 'config';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 export class UpsellRedirectWrapper extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		ComponentClass: PropTypes.any.isRequired,
 		upsellPageURL: PropTypes.string.isRequired,
-		shouldRedirectToUpsellPage: PropTypes.bool.isRequired,
+		shouldRedirect: PropTypes.bool.isRequired,
 		loadingPlan: PropTypes.bool.isRequired,
 	};
 
@@ -31,28 +30,30 @@ export class UpsellRedirectWrapper extends React.Component {
 		this.goToUpsellPageIfRequired();
 	}
 
-	getSnapshotBeforeUpdate() {
+	componentDidUpdate() {
 		this.goToUpsellPageIfRequired();
 	}
 
 	goToUpsellPageIfRequired() {
 		const props = this.props;
-		if ( this.shouldRedirectToUpsellPage() ) {
+		if ( this.shouldRedirect() ) {
 			if ( ! this.redirected ) {
-				page.redirect( `${ props.upsellPageURL }/${ props.siteSlug }` );
+				setTimeout( () => {
+					page.redirect( `${ props.upsellPageURL }/${ props.siteSlug }` );
+				} );
 				this.redirected = true;
 			}
 		}
 	}
 
-	shouldRedirectToUpsellPage() {
+	shouldRedirect() {
 		const props = this.props;
-		return props.shouldRedirectToUpsellPage && ! props.loadingPlan;
+		return props.shouldRedirect && ! props.loadingPlan;
 	}
 
 	render() {
-		const { ComponentClass, loadingPlan, shouldRedirectToUpsellPage, ...props } = this.props;
-		if ( loadingPlan || this.shouldRedirectToUpsellPage() ) {
+		const { ComponentClass, loadingPlan, shouldRedirect, ...props } = this.props;
+		if ( loadingPlan || this.shouldRedirect() ) {
 			return false;
 		}
 
@@ -62,30 +63,33 @@ export class UpsellRedirectWrapper extends React.Component {
 
 export const createMapStateToProps = (
 	ComponentClass,
-	requiredFeature,
+	shouldRedirectCallback,
 	upsellPageURL
 ) => state => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSiteSlug( state, siteId );
 	const currentPlan = getCurrentPlan( state, siteId );
-	const shouldRedirectToUpsellPage =
-		config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-		abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
-		! hasFeature( state, siteId, requiredFeature );
+	const shouldRedirect = !! ( currentPlan && siteSlug && shouldRedirectCallback( state, siteId ) );
 
 	return {
 		siteId,
+		siteSlug,
 		ComponentClass,
 		upsellPageURL,
-		shouldRedirectToUpsellPage,
+		shouldRedirect,
 		loadingPlan: ! currentPlan,
 	};
 };
 
-export const upsellRedirect = ( requiredFeature, upsellPageURL ) => {
+export const redirectIf = ( shouldRedirectCallback, upsellPageURL ) => {
 	return ComponentClass => {
-		const mapStateToProps = createMapStateToProps( ComponentClass, requiredFeature, upsellPageURL );
+		const mapStateToProps = createMapStateToProps(
+			ComponentClass,
+			shouldRedirectCallback,
+			upsellPageURL
+		);
 		return connect( mapStateToProps )( UpsellRedirectWrapper );
 	};
 };
 
-export default upsellRedirect;
+export default redirectIf;

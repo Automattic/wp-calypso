@@ -21,6 +21,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { addItem } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM, FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -37,11 +38,12 @@ class CartPlanAdTheme extends Component {
 	};
 
 	shouldDisplayAd = () => {
-		const { cart, hasUnlimitedPremiumThemes, selectedSite } = this.props;
+		const { cart, hasUnlimitedPremiumThemes, selectedSite, isJetpack } = this.props;
 		const items = cartItems.getAll( cart );
 		const hasOnlyAPremiumTheme = items.length === 1 && items[ 0 ].product_slug === 'premium_theme';
 
 		return (
+			! isJetpack &&
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 			! hasUnlimitedPremiumThemes &&
 			cart.hasLoadedFromServer &&
@@ -90,6 +92,7 @@ const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
+		isJetpack: isJetpackSite( state, selectedSiteId ),
 		hasUnlimitedPremiumThemes: hasFeature(
 			state,
 			selectedSiteId,

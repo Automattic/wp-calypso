@@ -7,8 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find, isEmpty } from 'lodash';
-import { compose } from 'redux';
+import { includes, find, isEmpty, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,7 +55,9 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
-import { upsellRedirect } from 'my-sites/feature-upsell/main';
+import redirectIf from 'my-sites/feature-upsell/redirect-if';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -323,11 +324,24 @@ const mapStateToProps = state => {
 	};
 };
 
-export default compose(
+const flowRightArgs = [
 	connect(
 		mapStateToProps,
 		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
 	),
 	localize,
-	upsellRedirect( FEATURE_UPLOAD_THEMES, '/feature/themes' )
-)( UploadWithOptions );
+];
+
+if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
+	flowRightArgs.push(
+		redirectIf(
+			( state, siteId ) =>
+				! isJetpackSite( state, siteId ) &&
+				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
+				! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
+			'/feature/themes'
+		)
+	);
+}
+
+export default flowRight( ...flowRightArgs )( UploadWithOptions );

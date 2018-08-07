@@ -8,8 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
-import { compose } from 'redux';
+import { isEmpty, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +21,6 @@ import UploadDropZone from 'blocks/upload-drop-zone';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
 import EmptyContent from 'components/empty-content';
-import { upsellRedirect } from 'my-sites/feature-upsell/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
@@ -47,6 +45,10 @@ import {
 } from 'state/automated-transfer/selectors';
 import { successNotice } from 'state/notices/actions';
 import { transferStates } from 'state/automated-transfer/constants';
+import { abtest } from 'lib/abtest';
+import { hasFeature } from 'state/sites/plans/selectors';
+import redirectIf from 'my-sites/feature-upsell/redirect-if';
+import config from 'config';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -207,11 +209,24 @@ const mapStateToProps = state => {
 	};
 };
 
-export default compose(
+const flowRightArgs = [
 	connect(
 		mapStateToProps,
 		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
 	),
 	localize,
-	upsellRedirect( FEATURE_UPLOAD_PLUGINS, '/feature/plugins' )
-)( PluginUpload );
+];
+
+if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
+	flowRightArgs.push(
+		redirectIf(
+			( state, siteId ) =>
+				! isJetpackSite( state, siteId ) &&
+				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
+				! hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ),
+			'/feature/plugins'
+		)
+	);
+}
+
+export default flowRight( ...flowRightArgs )( PluginUpload );

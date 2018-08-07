@@ -20,15 +20,23 @@ import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
 const ConnectedSingleSiteWpcom = connectOptions( props => {
-	const { hasUnlimitedPremiumThemes, requestingSitePlans, siteId, siteSlug, translate } = props;
+	const {
+		hasUnlimitedPremiumThemes,
+		requestingSitePlans,
+		siteId,
+		siteSlug,
+		translate,
+		isJetpack,
+	} = props;
 
 	const displayUpsellBanner = ! requestingSitePlans && ! hasUnlimitedPremiumThemes;
 	const bannerLocationBelowSearch =
+		! isJetpack &&
 		config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 		abtest( 'nudgeAPalooza' ) === 'themesNudgesUpdates';
 
@@ -84,6 +92,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 } );
 
 export default connect( ( state, { siteId } ) => ( {
+	isJetpack: isJetpackSite( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 	requestingSitePlans: isRequestingSitePlans( state, siteId ),

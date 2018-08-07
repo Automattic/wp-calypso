@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,14 +21,16 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import page from 'page';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Feature from 'my-sites/feature-upsell/feature';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import { getCurrencyObject } from 'lib/format-currency';
-import { getUpsellPlanPrice } from './utils';
+import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
+import { hasFeature } from 'state/sites/plans/selectors';
+import redirectIf from './redirect-if';
 
 /*
  * This is just for english audience and is not translated on purpose, remember to add
@@ -287,7 +290,12 @@ const mapDispatchToProps = dispatch => ( {
 	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( PluginsUpsellComponent ) );
+export default flowRight(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	),
+	localize,
+	redirectUnlessCanUpgradeSite,
+	redirectIf( ( state, siteId ) => hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ), '/plugins' )
+)( PluginsUpsellComponent );

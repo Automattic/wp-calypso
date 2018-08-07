@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,10 +19,10 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Feature from 'my-sites/feature-upsell/feature';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getPlanPath, isFreePlan } from 'lib/plans';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import page from 'page';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { getSiteSlug, canCurrentUserUseStore } from 'state/sites/selectors';
+import { getCurrentPlan, isRequestingSitePlans, hasFeature } from 'state/sites/plans/selectors';
 import DocumentHead from 'components/data/document-head';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -32,7 +33,8 @@ import { isRequestingPlans } from 'state/plans/selectors';
 import { getCurrencyObject } from 'lib/format-currency';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isRequestingActivePromotions } from 'state/active-promotions/selectors';
-import { getUpsellPlanPrice } from './utils';
+import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
+import redirectIf from './redirect-if';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -221,8 +223,18 @@ const mapDispatchToProps = dispatch => ( {
 	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
 } );
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( StoreUpsellComponent ) );
+export default flowRight(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	),
+	localize,
+	redirectUnlessCanUpgradeSite,
+	redirectIf(
+		( state, siteId ) =>
+			canCurrentUserUseStore( state ) || hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ),
+		'/store'
+	)
+)( StoreUpsellComponent );
+
 /* eslint-enable wpcalypso/jsx-classname-namespace */
