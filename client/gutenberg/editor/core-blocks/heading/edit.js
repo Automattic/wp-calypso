@@ -12,11 +12,6 @@ import { PanelBody, Toolbar } from '@wordpress/components';
 import { createBlock } from '@wordpress/blocks';
 import { RichText, BlockControls, InspectorControls, AlignmentToolbar } from '@wordpress/editor';
 
-/**
- * Internal dependencies
- */
-import './editor.scss';
-
 export default function HeadingEdit( {
 	                                     attributes,
 	                                     setAttributes,

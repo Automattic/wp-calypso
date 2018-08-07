@@ -30,11 +30,6 @@ import {
 import { createBlock } from '@wordpress/blocks';
 import { compose } from '@wordpress/compose';
 
-/**
- * Internal dependencies
- */
-import './style.scss';
-
 const { getComputedStyle } = window;
 
 const name = 'core/paragraph';

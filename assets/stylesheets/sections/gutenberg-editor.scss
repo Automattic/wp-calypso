@@ -21,4 +21,7 @@
 @import 'gutenberg/editor/edit-post/components/layout/style';
 @import 'gutenberg/editor/edit-post/components/text-editor/style';
 
+@import 'gutenberg/editor/core-blocks/heading/editor';
+@import 'gutenberg/editor/core-blocks/paragraph/style';
+
 @import '../../../node_modules/@wordpress/editor/build-style/style';

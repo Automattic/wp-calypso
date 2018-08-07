@@ -24,7 +24,6 @@ import {
 /**
  * Internal dependencies
  */
-import './style.scss';
 import edit from './edit';
 
 const supports = {
