@@ -8,7 +8,7 @@
 	height: 75px;
 	text-align: right;
 }
-.ribbon .ribbon__title {
+.title {
 	font-size: 10px;
 	font-weight: normal;
 	color: $white;
@@ -24,7 +24,7 @@
 	right: -21px;
 	text-transform: uppercase;
 }
-.ribbon .ribbon__title::before {
+.title::before {
 	content: "";
 	position: absolute;
 	left: 0px;
@@ -35,7 +35,7 @@
 	border-bottom: 3px solid transparent;
 	border-top: 3px solid $blue-dark;
 }
-.ribbon .ribbon__title::after {
+.title::after {
 	content: "";
 	position: absolute;
 	right: 0;
@@ -47,15 +47,15 @@
 	border-top: 3px solid $blue-dark;
 }
 
-.ribbon.is-green {
-	.ribbon__title {
+.isGreen {
+	.title {
 		background-color: $alert-green
 	}
-	.ribbon__title::before {
+	.title::before {
 		border-left-color: darken( $alert-green, 20% );
 		border-top-color: darken( $alert-green, 20% );
 	}
-	.ribbon__title::after {
+	.title::after {
 		border-right-color: darken( $alert-green, 20% );
 		border-top-color: darken( $alert-green, 20% );
 	}

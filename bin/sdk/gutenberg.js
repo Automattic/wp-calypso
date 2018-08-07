@@ -10,6 +10,7 @@ exports.config = ( {
 } ) => {
 	const baseConfig = getBaseConfig( {
 		cssFilename: '[name].css',
+		cssModules: true,
 		externalizeWordPressPackages: true,
 	} );
 	const name = path.basename( path.dirname( editorScript ).replace( /\/$/, '' ) );
