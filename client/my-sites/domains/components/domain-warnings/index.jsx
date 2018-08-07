@@ -915,8 +915,7 @@ export class DomainWarnings extends React.PureComponent {
 				break;
 			case transferStatus.PENDING_REGISTRY:
 				message = translate(
-					'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. ' +
-						'It should complete by %(transferFinishDate)s. We are waiting ' +
+					'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. We are waiting ' +
 						'for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 					{
 						components: {
@@ -931,10 +930,33 @@ export class DomainWarnings extends React.PureComponent {
 						},
 						args: {
 							domain: domainInTransfer.name,
-							transferFinishDate: domainInTransfer.transferEndDateMoment.format( 'LL' ),
 						},
 					}
 				);
+
+				if ( domainInTransfer.transferEndDateMoment ) {
+					message = translate(
+						'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. ' +
+							'It should complete by %(transferFinishDate)s. We are waiting ' +
+							'for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
+						{
+							components: {
+								strong: <strong />,
+								a: (
+									<a
+										href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+							args: {
+								domain: domainInTransfer.name,
+								transferFinishDate: domainInTransfer.transferEndDateMoment.format( 'LL' ),
+							},
+						}
+					);
+				}
 				break;
 			case transferStatus.PENDING_START:
 				compactMessage = translate( 'Domain transfer waiting' );
