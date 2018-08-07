@@ -48,7 +48,7 @@ class PendingAppointment extends Component {
 						} ) }
 					</p>
 
-					<Site siteId={ site.ID } />
+					<Site siteId={ site.id } />
 
 					<p>{ translate( "Here's what you told us:" ) }</p>
 
