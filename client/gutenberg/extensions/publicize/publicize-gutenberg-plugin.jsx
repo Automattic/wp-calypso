@@ -1,7 +1,7 @@
 /**
  * Top-level Publicize plugin for Gutenberg editor.
  *
- * Hooks into Gutenberg's PluginPrePublishPanel
+ * Hooks into Gutenberg's PluginSidebarMoreMenuItem
  * to display Jetpack's Publicize UI in the pre-
  * publish flow.
  *
@@ -25,13 +25,32 @@ import publicizeStore from './publicize-gutenberg-store';
  */
 const { data } = wp;
 const { registerStore } = data;
-const { PluginPrePublishPanel } = wp.editPost;
+const {
+	PluginPrePublishPanel,
+	PluginSidebar,
+	PluginSidebarMoreMenuItem,
+} = wp.editPost;
 const { registerPlugin } = wp.plugins;
+const { __ } = wp.i18n;
+const { Fragment } = wp.element;
 
 const PluginRender = () => (
-	<PluginPrePublishPanel>
-		<PublicizePanel />
-	</PluginPrePublishPanel>
+	<Fragment>
+		<PluginSidebarMoreMenuItem
+			target="jetpack"
+		>
+			{ __( 'Jetpack' ) }
+		</PluginSidebarMoreMenuItem>
+		<PluginSidebar
+			name="jetpack"
+			title={ __( 'Jetpack' ) }
+		>
+			<PublicizePanel />
+		</PluginSidebar>
+		<PluginPrePublishPanel>
+			<PublicizePanel />
+		</PluginPrePublishPanel>
+	</Fragment>
 );
 
 registerPlugin( 'jetpack-publicize', {
