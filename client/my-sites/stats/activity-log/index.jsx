@@ -304,13 +304,13 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate } = this.props;
+		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan } = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( logLoadingState === 'success' ) {
 			return isFilterEmpty ? (
-				<ActivityLogExample siteId={ siteId } />
+				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 			) : (
 				<EmptyContent title={ translate( 'No matching events found.' ) } />
 			);
@@ -388,7 +388,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
@@ -450,6 +450,7 @@ class ActivityLog extends Component {
 								</Fragment>
 							) ) }
 						</section>
+						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
