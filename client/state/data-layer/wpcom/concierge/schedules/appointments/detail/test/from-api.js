@@ -23,7 +23,7 @@ describe( 'fromApi()', () => {
 			endTimestamp: 2000,
 			scheduleId: 3,
 			siteInfo: {
-				id: '12345',
+				ID: '12345',
 				siteUrl: 'https://wordpress.com',
 				blogName: 'WordPress',
 			},
@@ -50,7 +50,7 @@ describe( 'fromApi()', () => {
 			endTimestamp: 2000,
 			scheduleId: 3,
 			siteInfo: {
-				id: '12345',
+				ID: '12345',
 				siteUrl: 'https://wordpress.com',
 				blogName: 'WordPress',
 			},

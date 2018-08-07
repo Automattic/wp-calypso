@@ -17,7 +17,7 @@ export const transform = ( {
 	endTimestamp: end_timestamp * 1000,
 	scheduleId: schedule_id,
 	siteInfo: {
-		id: site_info.ID,
+		ID: site_info.ID,
 		siteUrl: site_info.siteurl,
 		blogName: site_info.blogname,
 	},
