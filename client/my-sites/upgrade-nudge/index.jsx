@@ -17,8 +17,9 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { getValidFeatureKeys } from 'lib/plans';
+import { getPlans, getValidFeatureKeys } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -34,6 +35,7 @@ class UpgradeNudge extends React.Component {
 		href: PropTypes.string,
 		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
+		plan: PropTypes.oneOf( [ false, ...Object.keys( getPlans() ) ] ),
 		feature: PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
 		shouldDisplay: PropTypes.func,
 		site: PropTypes.object,
@@ -46,7 +48,8 @@ class UpgradeNudge extends React.Component {
 		icon: 'star',
 		event: null,
 		jetpack: false,
-		feature: false,
+		plan: null,
+		feature: null,
 		compact: false,
 		shouldDisplay: null,
 		site: null,
@@ -103,6 +106,7 @@ class UpgradeNudge extends React.Component {
 			compact,
 			event,
 			feature,
+			plan,
 			icon,
 			message,
 			site,
@@ -117,11 +121,7 @@ class UpgradeNudge extends React.Component {
 		}
 
 		if ( ! href && site ) {
-			if ( feature ) {
-				href = `/plans/${ site.slug }?feature=${ feature }`;
-			} else {
-				href = `/plans/${ site.slug }`;
-			}
+			href = addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
 		}
 
 		if ( compact ) {
