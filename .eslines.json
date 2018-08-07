@@ -6,7 +6,7 @@
   "processors": {
     "downgrade-unmodified-lines": {
       "remote": "origin/master",
-      "rulesNotToDowngrade": [ "no-unused-vars" ]
+      "rulesNotToDowngrade": [ "no-unused-vars", "no-undef" ]
     },
     "filter-when-format": {
       "rulesToIgnore": [ "indent" ]
