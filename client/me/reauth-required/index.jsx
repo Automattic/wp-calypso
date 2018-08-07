@@ -200,7 +200,7 @@ const ReauthRequired = createReactClass( {
 						className="reauth-required__sign-out"
 						onClick={ this.getClickHandler( 'Reauth Required Log Out Link', userUtilities.logout ) }
 					>
-						{ this.props.translate( 'Not you? Sign Out' ) }
+						{ this.props.translate( 'Not you? Log out' ) }
 					</a>
 				</p>
 
