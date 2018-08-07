@@ -1,7 +1,7 @@
 /** @format */
 export default {
 	nudgeAPalooza: {
-		datestamp: '20180726',
+		datestamp: '20180806',
 		variations: {
 			sidebarUpsells: 20,
 			themesNudgesUpdates: 20,
