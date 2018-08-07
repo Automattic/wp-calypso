@@ -37,6 +37,7 @@ ENV        COMMIT_SHA $commit_sha
 RUN        true                                 && \
            CALYPSO_ENV=production npm run build && \
            rm -r                                   \
+               ~/.npm                              \
                /calypso/assets                     \
                /calypso/bin                        \
                /calypso/client                     \
