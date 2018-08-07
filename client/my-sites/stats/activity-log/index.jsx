@@ -37,7 +37,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins/';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
-import UnavailabilityNotice from './unavailability-notice';
+import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { adjustMoment, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
@@ -391,9 +391,7 @@ class ActivityLog extends Component {
 				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
-					'unavailable' === rewindState.state && (
-						<UnavailabilityNotice siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
-					) }
+					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state &&
 					! siteIsOnFreePlan && (
 						<Banner
