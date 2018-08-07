@@ -85,6 +85,7 @@ const Layout = createReactClass( {
 				user={ this.props.user }
 				section={ this.props.section.group }
 				sites={ this.props.sites }
+				compact={ this.props.section.name === 'checkout' }
 			/>
 		);
 	},
