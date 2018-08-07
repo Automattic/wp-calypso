@@ -27,7 +27,8 @@ class IntroPanel extends Component {
 		return isJetpack
 			? translate(
 					"Stay informed of all your site's activity ranging from plugin and theme updates " +
-						'to user logins and settings modifications.'
+						'to user logins and settings modifications. {{a}}Learn more{{/a}}',
+					{ components: { a: <a href="https://jetpack.com/support/activity-log/" /> } }
 			  )
 			: translate(
 					"Stay informed of all your site's activity ranging from published or updated posts and pages " +

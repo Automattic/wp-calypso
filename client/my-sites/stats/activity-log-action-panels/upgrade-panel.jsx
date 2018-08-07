@@ -35,7 +35,8 @@ class UpgradePanel extends Component {
 					'Under your current free plan, you can only view the last 20 events on your site. ' +
 						'Unlock your full site activity for the past 30 days by upgrading to the personal plan.' +
 						"You'll also get access to daily automated backups, automated site restores, " +
-						'site migration tools, spam filtering, and priority support.'
+						'site migration tools, spam filtering, and priority support. {{a}}Learn more.{{/a}}',
+					{ components: { a: <a href="https://jetpack.com/support/activity-log/" /> } }
 			  )
 			: translate(
 					'Under your current free plan, you can only view the last 20 events on your site. ' +
