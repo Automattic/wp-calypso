@@ -16,6 +16,7 @@ import moment from 'moment';
  * Internal dependencies
  */
 import wpLib from 'lib/wp';
+import config from 'config';
 
 const wpcom = wpLib.undocumented();
 
@@ -70,7 +71,9 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	componentWillMount = () => {
-		this.fetchEndpoints();
+		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
+			this.fetchEndpoints();
+		}
 	};
 
 	// TODO This can be improved if we move to Redux.
