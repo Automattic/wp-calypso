@@ -10,12 +10,30 @@ describe( 'fromApi()', () => {
 	test( 'should validate and transform the data successfully.', () => {
 		const validResponse = {
 			available_times: [ 1483264800, 1483266600, 1483268400 ],
-			next_appointment: { begin_timestamp: 1, end_timestamp: 2, schedule_id: 3 },
+			next_appointment: {
+				begin_timestamp: 1,
+				end_timestamp: 2,
+				schedule_id: 3,
+				site_info: {
+					ID: '12345',
+					siteurl: 'https://wordpress.com',
+					blogname: 'WordPress',
+				},
+			},
 		};
 
 		const expectedResult = {
 			availableTimes: [ 1483264800000, 1483266600000, 1483268400000 ],
-			nextAppointment: { beginTimestamp: 1000, endTimestamp: 2000, scheduleId: 3 },
+			nextAppointment: {
+				beginTimestamp: 1000,
+				endTimestamp: 2000,
+				scheduleId: 3,
+				siteInfo: {
+					id: '12345',
+					siteUrl: 'https://wordpress.com',
+					blogName: 'WordPress',
+				},
+			},
 		};
 
 		expect( fromApi( validResponse ) ).toEqual( expectedResult );

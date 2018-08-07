@@ -4,6 +4,14 @@
 		"begin_timestamp": { "type": "number" },
 		"end_timestamp": { "type": "number" },
 		"id": { "type": "number" },
+		"site_info": {
+			"type": "object",
+			"properties": {
+				"ID": { "type": "string" },
+				"siteurl": { "type": "string" },
+				"blogname": { "type": "string" }
+			}
+		},
 		"meta": {
 			"type": "object",
 			"properties": {

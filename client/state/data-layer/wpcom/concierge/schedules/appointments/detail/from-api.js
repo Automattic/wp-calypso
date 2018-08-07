@@ -6,10 +6,21 @@
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import responseSchema from './schema';
 
-export const transform = ( { begin_timestamp, end_timestamp, schedule_id, ...rest } ) => ( {
+export const transform = ( {
+	begin_timestamp,
+	end_timestamp,
+	schedule_id,
+	site_info,
+	...rest
+} ) => ( {
 	beginTimestamp: begin_timestamp * 1000,
 	endTimestamp: end_timestamp * 1000,
 	scheduleId: schedule_id,
+	siteInfo: {
+		id: site_info.ID,
+		siteUrl: site_info.siteurl,
+		blogName: site_info.blogname,
+	},
 	...rest,
 } );
 
