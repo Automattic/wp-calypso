@@ -1,7 +1,7 @@
 /**
  * Top-level Publicize plugin for Gutenberg editor.
  *
- * Hooks into Gutenberg's PluginSidebarMoreMenuItem
+ * Hooks into Gutenberg's PluginPrePublishPanel and PluginSidebar
  * to display Jetpack's Publicize UI in the pre-
  * publish flow.
  *
