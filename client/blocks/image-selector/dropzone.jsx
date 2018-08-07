@@ -83,16 +83,28 @@ class ImageSelectorDropZone extends Component {
 				icon={ <ImageSelectorDropZoneIcon /> }
 				textLabel={ this.props.translate( 'Add Image' ) }
 				onFilesDrop={ this.onFilesDrop }
+				site={ this.props.site }
+				siteId={ this.props.siteId }
 			/>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		siteId: getSelectedSiteId( state ),
-		site: getSelectedSite( state ),
-	} ),
+	( state, ownProps ) => {
+		const { site, siteId } = ownProps;
+		const props = {
+			siteId: getSelectedSiteId( state ),
+			site: getSelectedSite( state ),
+		};
+		if ( site ) {
+			props.site = site;
+		}
+		if ( siteId ) {
+			props.siteId = siteId;
+		}
+		return props;
+	},
 	{
 		deleteMedia,
 		receiveMedia,

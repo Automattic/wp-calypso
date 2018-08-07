@@ -21,7 +21,7 @@ import MediaActions from 'lib/media/actions';
 import MediaModal from 'post-editor/media-modal';
 import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 export class ImageSelector extends Component {
 	static propTypes = {
@@ -35,6 +35,7 @@ export class ImageSelector extends Component {
 		onRemoveImage: PropTypes.func,
 		selecting: PropTypes.bool,
 		showEditIcon: PropTypes.bool,
+		site: PropTypes.object,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
@@ -138,7 +139,7 @@ export class ImageSelector extends Component {
 	render() {
 		const { imageIds } = this.props;
 		const classes = classnames( 'image-selector', {
-			'is-assigned': !! imageIds,
+			'is-assigned': !! imageIds && imageIds.length,
 			'has-active-drop-zone': this.props.hasDropZone && this.props.isDropZoneVisible,
 		} );
 
@@ -146,13 +147,13 @@ export class ImageSelector extends Component {
 			<div className={ classes }>
 				{ this.renderMediaModal() }
 				<div className="image-selector__inner-content">{ this.renderSelectedImages() }</div>
-				{ this.props.hasDropZone && (
+				{ this.props.hasDropZone &&
 					<ImageSelectorDropZone
 						onDroppedImage={ this.addImage }
 						site={ this.props.site }
 						siteId={ this.props.siteId }
 					/>
-				) }
+				}
 			</div>
 		);
 	}
@@ -160,8 +161,10 @@ export class ImageSelector extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
 
 	return {
+		site,
 		siteId,
 		isDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
 	};

@@ -10,7 +10,7 @@ Pass an array of image IDs that will be shown in the preview and preselected in 
 Changes to the selection of images will be passed back in various props for setting images, dropping images, and removing images.  See the example.jsx file for a more complete example.
 
 ```jsx
-import ImageSelector from 'components/image-selector';
+import ImageSelector from 'blocks/image-selector';
 
 export default function MyFeaturedImages() {
 	return (
@@ -23,7 +23,7 @@ This component needs both its own styles imported as well as the Media Modal sty
 
 ```scss
 @import 'assets/stylesheets/sections/media';
-@import 'client/components/image-selector/style';
+@import 'blocks/image-selector/style';
 ```
 
 ### Props

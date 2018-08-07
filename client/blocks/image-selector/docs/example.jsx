@@ -4,19 +4,23 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import ImageSelector from 'components/image-selector';
+import { ImageSelector } from 'blocks/image-selector';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSite } from 'state/sites/selectors';
+import { translate } from 'i18n-calypso';
 
-export default class ImageSelectorExample extends Component {
-
+class ImageSelectorExample extends Component {
 	constructor( props ) {
 		super( props );
 		const imageIds = [];
 		this.state = {
-			imageIds
+			imageIds,
 		};
 	}
 
@@ -51,18 +55,35 @@ export default class ImageSelectorExample extends Component {
 		const imageIds = this.state.imageIds;
 
 		return (
-			<div className="my-featured-image">
+			<div className="image-selector-example">
                 <ImageSelector
+					site={ this.props.site }
+					siteId={ this.props.siteId }
                     imageIds={ imageIds }
                     onImageSelected={ this.setImage }
                     onImageChange={ this.changeImages }
                     onRemoveImage={ this.removeImage }
                     onAddImage={ this.addImage }
                     multiple={ true }
-                    showEditIcon={ true }
+					showEditIcon={ true }
+					translate={ translate }
                     hasDropZone
                 />
 			</div>
 		);
 	}
 }
+
+const ConnectedImageSelectorExample = connect( state => {
+	const siteId = get( getCurrentUser( state ), 'primary_blog', null );
+	const site = getSite( state, siteId );
+
+	return {
+		site,
+		siteId,
+	};
+} )( ImageSelectorExample );
+
+ConnectedImageSelectorExample.displayName = 'ImageSelector';
+
+export default ConnectedImageSelectorExample;
