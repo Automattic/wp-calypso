@@ -80,32 +80,40 @@ class InfiniteScrollWithScrollEvent extends React.Component {
 
 	componentDidMount() {
 		window.addEventListener( 'scroll', this.checkScrollPositionHandler );
-		this.deferredTimer = defer( () => this.checkScrollPositionHandler( false ) );
+		this.checkScrollPositionHandler( false );
 	}
 
 	componentDidUpdate() {
-		if ( ! this.deferredTimer ) {
-			this.deferredTimer = defer( () => this.checkScrollPositionHandler( false ) );
-		}
+		this.checkScrollPositionHandler( false );
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.checkScrollPositionHandler );
-		this.clearTimers();
+		this.clearPending();
 	}
 
-	clearTimers() {
-		window.clearTimeout( this.deferredTimer );
-		this.deferredTimer = null;
-	}
+	checkScrollAfterLayout = () => {
+		this.pendingLayoutFlush = afterLayoutFlush( triggeredByScroll =>
+			this.checkScrollPosition( triggeredByScroll )
+		);
 
-	checkScrollPositionHandler = throttle(
-		afterLayoutFlush( triggeredByScroll => this.checkScrollPosition( triggeredByScroll ) ),
-		SCROLL_CHECK_RATE_IN_MS
-	);
+		this.pendingLayoutFlush();
+	};
+
+	checkScrollPositionHandler = throttle( this.checkScrollAfterLayout, SCROLL_CHECK_RATE_IN_MS );
+
+	clearPending() {
+		if ( this.checkScrollPositionHandler ) {
+			this.checkScrollPositionHandler.cancel();
+		}
+
+		if ( this.pendingLayoutFlush ) {
+			this.pendingLayoutFlush.cancel();
+		}
+	}
 
 	checkScrollPosition( triggeredByScroll ) {
-		this.clearTimers();
+		this.clearPending();
 
 		const scrollPosition = window.pageYOffset;
 		const documentHeight = document.body.scrollHeight;
