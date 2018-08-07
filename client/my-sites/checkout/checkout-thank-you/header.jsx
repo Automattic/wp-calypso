@@ -28,7 +28,6 @@ import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { recordStartTransferClickInThankYou } from 'state/domains/actions';
-import { CHANGE_NAME_SERVERS } from 'lib/url/support';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -181,18 +180,14 @@ class CheckoutThankYouHeader extends PureComponent {
 			}
 
 			return translate(
-				'Your domain {{strong}}%(domain)s{{/strong}} was added to your site. ' +
-					'To make your newly transferred domain work with WordPress.com, you need to ' +
-					'{{updateNameserversLink}}update the nameservers{{/updateNameserversLink}}.',
+				'Your domain {{strong}}%(domain)s{{/strong}} was added to your site, but ' +
+					'but the transfer process can take up to 5 days to complete.',
 				{
 					args: {
 						domain: primaryPurchase.meta,
 					},
 					components: {
 						strong: <strong />,
-						updateNameserversLink: (
-							<a href={ CHANGE_NAME_SERVERS } target="_blank" rel="noopener noreferrer" />
-						),
 					},
 				}
 			);
