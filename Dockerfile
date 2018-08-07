@@ -36,10 +36,11 @@ ENV        COMMIT_SHA $commit_sha
 
 RUN        true                                 && \
            CALYPSO_ENV=production npm run build && \
-           rm -r               \
-               /calypso/assets \
-               /calypso/bin    \
-               /calypso/client \
+           rm -r                                   \
+               /calypso/assets                     \
+               /calypso/bin                        \
+               /calypso/client                     \
+               /calypso/build/.babel-server-cache  \
                                                 && \
            true
 
