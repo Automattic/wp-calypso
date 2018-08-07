@@ -19,6 +19,7 @@ import wp from 'wp';
  */
 import PublicizePanel from './publicize-panel';
 import publicizeStore from './publicize-gutenberg-store';
+import JetpackLogo from 'components/jetpack-logo';
 
 /**
  * Module variables
@@ -38,12 +39,14 @@ const PluginRender = () => (
 	<Fragment>
 		<PluginSidebarMoreMenuItem
 			target="jetpack"
+			icon={ <JetpackLogo size={ 24 } /> }
 		>
 			{ __( 'Jetpack' ) }
 		</PluginSidebarMoreMenuItem>
 		<PluginSidebar
 			name="jetpack"
 			title={ __( 'Jetpack' ) }
+			icon={ <JetpackLogo size={ 24 } /> }
 		>
 			<PublicizePanel />
 		</PluginSidebar>
