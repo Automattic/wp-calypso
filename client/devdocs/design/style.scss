@@ -88,8 +88,3 @@
 		text-align: left;
 	}
 }
-
-// Styles the contenteditable div included in the Gutenberg Autocomplete component example as an input
-.design__gutenberg-component-example--autocomplete [contenteditable] {
-	@extend %form-field;
-}

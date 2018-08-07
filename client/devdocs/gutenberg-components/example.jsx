@@ -63,8 +63,8 @@ class Example extends React.Component {
 			addFilter,
 		};
 		const className = classnames(
-			'design__gutenberg-component-example',
-			`design__gutenberg-component-example--${ kebabCase( this.props.component ) }`
+			'devdocs__gutenberg-components__example',
+			`devdocs__gutenberg-components__example--${ kebabCase( this.props.component ) }`
 		);
 
 		return code ? (
