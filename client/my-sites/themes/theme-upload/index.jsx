@@ -336,6 +336,7 @@ if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
 	flowRightArgs.push(
 		redirectIf(
 			( state, siteId ) =>
+				! isJetpackSite( state, siteId ) &&
 				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
 				! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			'/feature/themes'
