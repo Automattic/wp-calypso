@@ -11,29 +11,56 @@ import { localize } from 'i18n-calypso';
  */
 import { isJetpackSite } from 'state/sites/selectors';
 import Banner from 'components/banner';
-import { PLAN_PERSONAL, FEATURE_JETPACK_ESSENTIAL } from 'lib/plans/constants';
+import {
+	FEATURE_JETPACK_ESSENTIAL,
+	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_PERSONAL,
+} from 'lib/plans/constants';
 
 class UpgradeBanner extends Component {
 	render() {
 		const { translate, isJetpack } = this.props;
-		if ( isJetpack ) {
-			return null;
-		}
-		return (
+		return isJetpack ? (
 			<div className="activity-log-banner__upgrade">
 				<Banner
-					callToAction={ translate( 'More Details' ) }
-					dismissPreferenceName="activity-upgrade-banner-simple"
+					callToAction={ translate( 'Learn more' ) }
+					dismissPreferenceName="activity-upgrade-banner-jetpack"
+					event="activity_log_upgrade_click_wpcom"
+					feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
+					plan={ PLAN_JETPACK_PERSONAL_MONTHLY }
+					title={ translate( "Upgrade to a Personal plan to access your site's full activity" ) }
+					description={ translate(
+						'Under your current free plan, you can only view the last 20 events on your site. ' +
+							'Upgrade to the Personal plan to unlock:'
+					) }
+					list={ [
+						translate( "Your site's full activity for the past 30 days" ),
+						translate( 'Daily automated backups and spam filtering' ),
+						translate( 'Daily automated site restores and site migration tools' ),
+						translate( 'Priority email & live chat support' ),
+					] }
+				/>
+			</div>
+		) : (
+			<div className="activity-log-banner__upgrade">
+				<Banner
+					callToAction={ translate( 'Learn more' ) }
+					dismissPreferenceName="activity-upgrade-banner-wpcom"
 					event="activity_log_upgrade_click_wpcom"
 					feature={ FEATURE_JETPACK_ESSENTIAL }
 					plan={ PLAN_PERSONAL }
-					title={ translate(
-						'Upgrade your site today to unlock many powerful features, including:'
-					) }
+					title={ translate( "Upgrade to a Personal plan to access your site's full activity" ) }
 					description={ translate(
-						'Improve your SEO, protect your site from spammers, ' +
-							'and keep a closer eye on your site with expanded activity logs.'
+						'Under your current free plan, you can only view the last 20 events on your site. ' +
+							'Upgrade to the Personal plan to unlock:'
 					) }
+					list={ [
+						translate( "Your site's full activity for the past 30 days" ),
+						translate( 'Daily automated backups and spam filtering' ),
+						translate( 'Daily automated site restores and site migration tools' ),
+						translate( 'Priority email & live chat support' ),
+					] }
 				/>
 			</div>
 		);
