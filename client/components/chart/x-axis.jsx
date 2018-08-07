@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { PureComponent } from 'react';
+import { numberFormat } from 'i18n-calypso';
 import { throttle } from 'lodash';
 
 /**
@@ -13,13 +13,16 @@ import { throttle } from 'lodash';
  */
 import Label from './label';
 
-export default class extends React.Component {
+export default class ModuleChartXAxis extends PureComponent {
 	static displayName = 'ModuleChartXAxis';
 
 	static propTypes = {
 		labelWidth: PropTypes.number.isRequired,
 		data: PropTypes.array.isRequired,
 	};
+
+	axisRef = React.createRef();
+	axisSpacerRef = React.createRef();
 
 	state = {
 		divisor: 1,
@@ -28,49 +31,31 @@ export default class extends React.Component {
 
 	// Add listener for window resize
 	componentDidMount() {
-		this.resizeThrottled = throttle( this.resize, 400 );
-		window.addEventListener( 'resize', this.resizeThrottled );
+		this.resize = throttle( this.resize, 400 );
+		window.addEventListener( 'resize', this.resize );
 		this.resize();
 	}
 
 	// Remove listener
 	componentWillUnmount() {
-		if ( this.resizeThrottled.cancel ) {
-			this.resizeThrottled.cancel();
+		if ( this.resize.cancel ) {
+			this.resize.cancel();
 		}
-		window.removeEventListener( 'resize', this.resizeThrottled );
+		window.removeEventListener( 'resize', this.resize );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		this.resize( nextProps );
+	componentDidUpdate() {
+		this.resize();
 	}
 
-	resize = nextProps => {
-		let props = this.props;
-		if ( nextProps && ! ( nextProps instanceof Event ) ) {
-			props = nextProps;
-		}
-
-		const node = this.refs.axis;
-
-		/**
-		 * Overflow needs to be hidden to calculate the desired width,
-		 * but visible to display each labels' overflow :/
-		 */
-
-		node.style.overflow = 'hidden';
-		const width = node.clientWidth;
-		node.style.overflow = 'visible';
-
-		const dataCount = props.data.length || 1;
+	resize = () => {
+		const width = this.axisRef.current.clientWidth - this.axisSpacerRef.current.clientWidth;
+		const dataCount = this.props.data.length || 1;
 		const spacing = width / dataCount;
-		const labelWidth = props.labelWidth;
+		const labelWidth = this.props.labelWidth;
 		const divisor = Math.ceil( labelWidth / spacing );
 
-		this.setState( {
-			divisor: divisor,
-			spacing: spacing,
-		} );
+		this.setState( { divisor, spacing } );
 	};
 
 	render() {
@@ -91,8 +76,11 @@ export default class extends React.Component {
 		}, this );
 
 		return (
-			<div ref="axis" className="chart__x-axis">
+			<div ref={ this.axisRef } className="chart__x-axis">
 				{ labels }
+				<div ref={ this.axisSpacerRef } className="chart__x-axis-label chart__x-axis-width-spacer">
+					{ numberFormat( 100000 ) }
+				</div>
 			</div>
 		);
 	}
