@@ -9,6 +9,7 @@ import { assign } from 'lodash';
  */
 import {
 	CART_COUPON_APPLY,
+	CART_COUPON_REMOVE,
 	CART_DISABLE,
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
@@ -131,6 +132,6 @@ export function applyCoupon( coupon ) {
 
 export function removeCoupon() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CART_COUPON_REMOVE,
+		type: CART_COUPON_REMOVE,
 	} );
 }
