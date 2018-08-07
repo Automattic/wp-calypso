@@ -33,12 +33,10 @@ export class SignupProcessingScreen extends Component {
 		useOAuth2Layout: PropTypes.bool.isRequired,
 	};
 
-	componentWillMount() {
-		this.setState( {
-			siteSlug: '',
-			hasPaidSubscription: false,
-		} );
-	}
+	state = {
+		siteSlug: '',
+		hasPaidSubscription: false,
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		const dependencies = nextProps.signupDependencies;
@@ -259,6 +257,7 @@ export class SignupProcessingScreen extends Component {
 
 				<div className="signup-processing__content">
 					<img
+						alt=""
 						src="/calypso/images/signup/confetti.svg"
 						className="signup-process-screen__confetti"
 					/>
