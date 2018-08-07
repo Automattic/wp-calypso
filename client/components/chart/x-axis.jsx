@@ -21,11 +21,8 @@ export default class ModuleChartXAxis extends PureComponent {
 		data: PropTypes.array.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.axisRef = React.createRef();
-		this.axisSpacerRef = React.createRef();
-	}
+	axisRef = React.createRef();
+	axisSpacerRef = React.createRef();
 
 	state = {
 		divisor: 1,
