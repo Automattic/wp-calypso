@@ -26,7 +26,7 @@ const { registerBlockType } = wp.blocks;
 /**
  * Internal dependencies
  */
-import './editor.scss';
+import './style.scss';
 
 /**
  * Module variables
@@ -166,7 +166,7 @@ registerBlockType( 'jetpack/related-posts', {
 								<div class="related-posts__preview-post" key={ i }>
 									{ displayThumbnails && (
 										<Button className="related-posts__preview-post-link" isLink>
-											<Dashicon icon={ post.icon } />
+											<Dashicon icon={ post.icon } size="128" />
 										</Button>
 									) }
 									<h4 className="related-posts__preview-post-title">
