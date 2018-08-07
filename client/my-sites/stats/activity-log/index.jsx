@@ -450,13 +450,6 @@ class ActivityLog extends Component {
 								</Fragment>
 							) ) }
 						</section>
-						{ siteIsOnFreePlan && (
-							<p className="activity-log__limit-notice">
-								{ translate(
-									"Since you're on a free plan, you'll see limited events in your activity."
-								) }
-							</p>
-						) }
 						<Pagination
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
