@@ -97,3 +97,14 @@
 .activity-log-banner__success-happychat {
 	margin-left: 16px;
 }
+
+.activity-log__fader {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: linear-gradient( to bottom, rgba( 243, 246, 248, 0.1 ), #f3f6f8 );
+	z-index: 179;
+	height: 40%;
+	pointer-events: none;
+}

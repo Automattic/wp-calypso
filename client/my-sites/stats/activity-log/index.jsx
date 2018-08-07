@@ -436,6 +436,7 @@ class ActivityLog extends Component {
 							total={ logs.length }
 						/>
 						<section className="activity-log__wrapper">
+							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
 							{ theseLogs.map( log => (
 								<Fragment key={ log.activityId }>
 									{ timePeriod( log ) }
