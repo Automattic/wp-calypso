@@ -1,17 +1,6 @@
-.wp-block-a8c-editor-notes {
-	border: 2px solid gray;
-	position: relative;
-	padding: 32px 6px 6px;
-	background-color: #c0e7ff;
+@import 'assets/stylesheets/style.scss';
 
-	.is-selected {
-		padding-top: 6px;
-	}
-}
-
-.editor-notes__editor-indicator {
-	position: absolute;
-	top: 0;
-	left: 8px;
-	font-style: italic;
+.wp-block-a8c-editor-notes__box {
+	background-color: lighten( $alert-red, 40% );
+	border-color: $alert-red;
 }
