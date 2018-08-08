@@ -4,19 +4,14 @@
 /* eslint wpcalypso/jsx-classname-namespace: 0 */
 
 /**
- * External Dependencies
+ * WordPress dependencies
  */
-import wp from 'wp';
+import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import TiledGalleryItem from './tiled-gallery-item.js';
-
-/**
- * WordPress dependencies
- */
-const { Component } = wp.element;
 
 // hard coded for now - ideally we'd inject $content_width
 // not sure how critical this is, likely necessary to work nicely with themes

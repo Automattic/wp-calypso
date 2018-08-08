@@ -6,14 +6,13 @@
 /**
  * External Dependencies
  */
-import wp from 'wp';
-import get from 'lodash/get';
+import { get } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-const { withSelect } = wp.data;
-const { Component } = wp.element;
+import { Component } from '@wordpress/element';
+import { withSelect } from '@wordpress/data';
 
 class TiledGalleryImage extends Component {
 
