@@ -194,7 +194,7 @@ export class ChecklistBanner extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const taskStatuses = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
+	const taskStatuses = getSiteChecklist( state, siteId );
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteDesignType = get( getSite( state, siteId ), [ 'options', 'design_type' ] );
 

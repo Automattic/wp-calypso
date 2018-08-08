@@ -89,7 +89,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+		taskStatuses: getSiteChecklist( state, siteId ),
 	};
 };
 
