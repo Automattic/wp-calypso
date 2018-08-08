@@ -319,7 +319,6 @@ class ActivityLogTasklist extends Component {
 		const { translate } = this.props;
 		const numberOfUpdates = itemsToUpdate.length;
 		const queued = this.state.queued;
-
 		return (
 			<Card className="activity-log-tasklist" highlight="warning">
 				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
@@ -380,6 +379,7 @@ class ActivityLogTasklist extends Component {
 							updateType={ updateType }
 							linked={ 'core' !== item.type }
 							goToPage={ this.goToPage }
+							siteSlug={ this.props.siteSlug }
 							enqueue={ this.enqueue }
 							dismiss={ this.dismiss }
 							disable={ isItemEnqueued( item.slug, queued ) }
