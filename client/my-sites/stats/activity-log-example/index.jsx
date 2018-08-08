@@ -12,10 +12,11 @@ import { localize } from 'i18n-calypso';
 import ActivityLogItem from '../activity-log-item';
 import FeatureExample from 'components/feature-example';
 import FormattedHeader from 'components/formatted-header';
+import UpgradePanel from '../activity-log-action-panels/upgrade-panel';
 
 class ActivityLogExample extends Component {
 	render() {
-		const { translate, siteId } = this.props;
+		const { translate, siteId, siteIsOnFreePlan } = this.props;
 
 		const exampleContents = [
 			{
@@ -75,6 +76,7 @@ class ActivityLogExample extends Component {
 						/>
 					) ) }
 				</FeatureExample>
+				{ siteIsOnFreePlan && <UpgradePanel siteId={ siteId } /> }
 			</div>
 		);
 	}
