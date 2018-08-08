@@ -5649,6 +5649,15 @@
         "object-assign": "^4.0.1"
       }
     },
+    "file-loader": {
+      "version": "1.1.11",
+      "resolved": "https://registry.npmjs.org/file-loader/-/file-loader-1.1.11.tgz",
+      "integrity": "sha512-TGR4HU7HUsGg6GCOPJnFk06RhWgEWFLAGWiT6rcD+GRC2keU3s9RGJ+b3Z6/U73jwwNb2gKLJ7YCrp+jvU4ALg==",
+      "requires": {
+        "loader-utils": "^1.0.2",
+        "schema-utils": "^0.4.5"
+      }
+    },
     "filename-regex": {
       "version": "2.0.1",
       "resolved": "https://registry.npmjs.org/filename-regex/-/filename-regex-2.0.1.tgz",
@@ -14876,42 +14885,20 @@
         "has-flag": "^3.0.0"
       }
     },
-    "svg-inline-loader": {
-      "version": "0.8.0",
-      "resolved": "https://registry.npmjs.org/svg-inline-loader/-/svg-inline-loader-0.8.0.tgz",
-      "integrity": "sha512-rynplY2eXFrdNomL1FvyTFQlP+dx0WqbzHglmNtA9M4IHRC3no2aPAl3ny9lUpJzFzFMZfWRK5YIclNU+FRePA==",
-      "dev": true,
-      "requires": {
-        "loader-utils": "^0.2.11",
-        "object-assign": "^4.0.1",
-        "simple-html-tokenizer": "^0.1.1"
-      },
-      "dependencies": {
-        "loader-utils": {
-          "version": "0.2.17",
-          "resolved": "https://registry.npmjs.org/loader-utils/-/loader-utils-0.2.17.tgz",
-          "integrity": "sha1-+G5jdNQyBabmxg6RlvF8Apm/s0g=",
-          "dev": true,
-          "requires": {
-            "big.js": "^3.1.3",
-            "emojis-list": "^2.0.0",
-            "json5": "^0.5.0",
-            "object-assign": "^4.0.1"
-          }
-        },
-        "simple-html-tokenizer": {
-          "version": "0.1.1",
-          "resolved": "https://registry.npmjs.org/simple-html-tokenizer/-/simple-html-tokenizer-0.1.1.tgz",
-          "integrity": "sha1-BcLuxXn//+FFoDCsJs/qYbmA+r4=",
-          "dev": true
-        }
-      }
-    },
     "svg-tags": {
       "version": "1.0.0",
       "resolved": "https://registry.npmjs.org/svg-tags/-/svg-tags-1.0.0.tgz",
       "integrity": "sha1-WPcc7jvVGbWdSyqEO2x95krAR2Q=",
       "dev": true
+    },
+    "svg-url-loader": {
+      "version": "2.3.2",
+      "resolved": "https://registry.npmjs.org/svg-url-loader/-/svg-url-loader-2.3.2.tgz",
+      "integrity": "sha1-3YaybBn+O5FPBOoQ7zlZTq3gRGQ=",
+      "requires": {
+        "file-loader": "1.1.11",
+        "loader-utils": "1.1.0"
+      }
     },
     "symbol-observable": {
       "version": "1.2.0",

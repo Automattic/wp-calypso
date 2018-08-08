@@ -21,34 +21,44 @@ export default class extends Component {
 		flagSvg: null,
 	};
 
-	static getDerivedStateFromProps( { countryCode }, state ) {
-		if ( ! countryCode ) {
-			return { flagSvg: null };
-		}
-
-		if ( countryCode !== state.countryCode ) {
-			const flagSvg = require( 'svg-inline-loader!../../../node_modules/flag-icon-css/flags/4x3/' +
-				countryCode +
-				'.svg' );
-			return { flagSvg };
-		}
+	componentDidMount() {
+		this.updateFlag( null, this.props.countryCode );
 	}
 
+	componentDidUpdate( prevProps ) {
+		this.updateFlag( prevProps.countryCode, this.props.countryCode );
+	}
+
+	updateFlag = ( prevCode, nextCode ) => {
+		if ( prevCode !== nextCode ) {
+			// don't confusingly split this import statement with its long string
+			// prettier-ignore
+			import(
+				/* webpackChunkName: "svg-flag-[request]" */
+				'svg-url-loader?noquotes!../../../node_modules/flag-icon-css/flags/4x3/' + nextCode + '.svg'
+			).then(
+				( { default: flagSvg } ) => this.setState( { flagSvg } ),
+				() => this.setState( { flagSvg: false } ),
+			);
+
+			// called synchronously before the dynamic import loads
+			this.setState( { flagSvg: null } );
+		}
+	};
+
 	render() {
-		const showSpinner = this.props.countryCode && ! this.state.flagSvg; // flag is specified but not here
-		const showGeneric = ! this.props.countryCode; // flag isn't specified
-		const hasFlag = this.props.countryCode && this.state.flagSvg; // loaded SVG
+		const { countryCode } = this.props;
+		const { flagSvg } = this.state;
+
+		const showSpinner = countryCode && null === flagSvg; // flag is specified but not here
+		const showGeneric = ! countryCode || false === flagSvg; // flag isn't specified or failed to load
+		const hasSvg = countryCode && flagSvg; // loaded SVG as data-uri
 
 		return (
 			<div className="phone-input__flag-container">
 				{ showSpinner && <Spinner size={ 16 } className="phone-input__flag-spinner" /> }
 				{ showGeneric && <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" /> }
-				{ hasFlag && (
-					<div
-						className="phone-input__flag-icon"
-						dangerouslySetInnerHTML={ { __html: this.state.flagSvg } }
-					/>
-				) }
+				{ hasSvg && <img alt="country flag" src={ flagSvg } className="phone-input__flag-icon" /> }
 				<Gridicon icon="chevron-down" size={ 12 } className="phone-input__flag-selector-icon" />
 			</div>
 		);
