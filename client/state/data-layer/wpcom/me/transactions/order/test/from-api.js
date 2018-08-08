@@ -52,7 +52,7 @@ describe( 'wpcom-api', () => {
 				fromApi( invalidResponse );
 			};
 
-			expect( invalidateCall ).toThrowError( SchemaError );
+			expect( invalidateCall ).toThrow( new SchemaError().message );
 		} );
 	} );
 

@@ -155,10 +155,7 @@ export default connect(
 		connectGoogleMyBusinessLocation,
 		connectGoogleMyBusinessAccount,
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
-		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
-			enhanceWithLocationCounts,
-			enhanceWithSiteType,
-		] ),
+		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [enhanceWithLocationCounts, enhanceWithSiteType] ),
 		requestKeyringConnections,
 	}
 )( localize( GoogleMyBusinessSelectLocation ) );

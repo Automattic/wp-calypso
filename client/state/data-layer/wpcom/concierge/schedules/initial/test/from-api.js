@@ -42,7 +42,7 @@ describe( 'fromApi()', () => {
 			fromApi( invalidFieldTypes );
 		};
 
-		expect( invalidateCall ).toThrowError( SchemaError );
+		expect( invalidateCall ).toThrow( new SchemaError().message );
 	} );
 
 	test( 'should invalidate missing begin_timestamp.', () => {
@@ -56,7 +56,7 @@ describe( 'fromApi()', () => {
 			fromApi( invalidResponse );
 		};
 
-		expect( invalidateMissingBeginTimestamp ).toThrowError( SchemaError );
+		expect( invalidateMissingBeginTimestamp ).toThrow( new SchemaError().message );
 	} );
 
 	test( 'should invalidate missing end_timestamp.', () => {
@@ -72,6 +72,6 @@ describe( 'fromApi()', () => {
 			fromApi( invalidResponse );
 		};
 
-		expect( invalidateMissingEndTimestamp ).toThrowError( SchemaError );
+		expect( invalidateMissingEndTimestamp ).toThrow( new SchemaError().message );
 	} );
 } );

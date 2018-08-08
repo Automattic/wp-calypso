@@ -12,7 +12,7 @@ describe( 'makeJsonSchemaParser', () => {
 
 	test( 'should throw SchemaError on if data does not validate', () => {
 		const parser = makeJsonSchemaParser( { type: 'null' } );
-		expect( () => parser( 0 ) ).toThrow( SchemaError );
+		expect( () => parser( 0 ) ).toThrow( new SchemaError().message );
 	} );
 
 	test( 'should throw TransformerError if error occurs during transformation', () => {
@@ -20,7 +20,9 @@ describe( 'makeJsonSchemaParser', () => {
 			throw Error( 'Testing error during transform' );
 		};
 		const parser = makeJsonSchemaParser( {}, transformer );
-		expect( () => parser( 0 ) ).toThrow( TransformerError );
+		expect( () => parser( 0 ) ).toThrow(
+			new TransformerError( { message: 'Testing error during transform' } ).message
+		);
 	} );
 
 	test( 'should return input unchanged if valid and no transformer supplied', () => {

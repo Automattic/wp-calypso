@@ -96,6 +96,11 @@ jobs:
             find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
           when: always
 
+      - run:
+          name: Store coverage file
+          command: |
+             cp coverage/coverage-final.json $CIRCLE_ARTIFACTS/coverage-final.json
+
       - store_test_results:
           path: /tmp/test_results
       - store_artifacts:
