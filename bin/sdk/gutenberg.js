@@ -54,8 +54,8 @@ exports.compile = args => {
 			mode: options.mode,
 			entry: omitBy(
 				{
-					[ options.outputEditorFile || `${ name }-editor.js` ]: options.editorScript,
-					[ options.outputViewFile || `${ name }-view.js` ]: options.viewScript,
+					[ options.outputEditorFile || `${ name }-editor` ]: options.editorScript,
+					[ options.outputViewFile || `${ name }-view` ]: options.viewScript,
 				},
 				isEmpty
 			),
@@ -68,7 +68,7 @@ exports.compile = args => {
 			},
 			output: {
 				path: options.outputDir,
-				filename: '[name]',
+				filename: '[name].js',
 				libraryTarget: 'window',
 			},
 			plugins: [
