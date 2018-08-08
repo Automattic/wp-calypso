@@ -63,8 +63,14 @@ class StatsNavigation extends Component {
 								const navItem = navItems[ item ];
 								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+								const className = 'stats-navigation__' + item;
 								return (
-									<NavItem key={ item } path={ itemPath } selected={ selectedItem === item }>
+									<NavItem
+										className={ className }
+										key={ item }
+										path={ itemPath }
+										selected={ selectedItem === item }
+									>
 										{ navItem.label }
 									</NavItem>
 								);
