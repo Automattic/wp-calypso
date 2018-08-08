@@ -184,7 +184,7 @@ const getPlanPersonalDetails = () => ( {
 				},
 			}
 		),
-	getFeatures: () => [
+	getDisplayFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_JETPACK_ESSENTIAL,
@@ -193,6 +193,16 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_BASIC_DESIGN,
 		FEATURE_6GB_STORAGE,
 		FEATURE_NO_ADS,
+	],
+	getFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_JETPACK_ESSENTIAL,
+		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+		FEATURE_FREE_THEMES,
+		FEATURE_BASIC_DESIGN,
+		FEATURE_6GB_STORAGE,
+		FEATURE_NO_ADS,
+		FEATURE_AUDIO_UPLOADS,
 	],
 	getSignupFeatures: () => [
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
@@ -232,7 +242,7 @@ const getPlanPremiumDetails = () => ( {
 				},
 			}
 		),
-	getFeatures: () =>
+	getDisplayFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
@@ -246,6 +256,21 @@ const getPlanPremiumDetails = () => ( {
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+		] ),
+	getFeatures: () =>
+		compact( [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_13GB_STORAGE,
+			FEATURE_NO_ADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_AUDIO_UPLOADS,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -312,7 +337,7 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	getFeatures: () =>
+	getDisplayFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
@@ -332,6 +357,27 @@ const getPlanBusinessDetails = () => ( {
 			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING,
+		] ),
+	getFeatures: () =>
+		compact( [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_UNLIMITED_STORAGE,
+			FEATURE_NO_ADS,
+			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_BUSINESS_ONBOARDING,
+			FEATURE_ADVANCED_SEO,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_NO_BRANDING,
+			FEATURE_AUDIO_UPLOADS,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_UNLIMITED_STORAGE,

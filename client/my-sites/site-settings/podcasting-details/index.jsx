@@ -232,7 +232,7 @@ class PodcastingDetails extends Component {
 						title={ translate( 'Upload Audio with WordPress.com Personal' ) }
 						message={ translate( 'Embed podcast episodes directly from your media library.' ) }
 						feature="audio-upload"
-						event="podcdasting_details_upload_audio"
+						event="podcasting_details_upload_audio"
 					/>
 					{ ! error && (
 						<Card className="podcasting-details__category-wrapper">
