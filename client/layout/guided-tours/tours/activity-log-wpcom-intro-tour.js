@@ -31,7 +31,7 @@ export const ActivityLogWpcomIntroTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							"Keep tabs on all your site's activity -- new posts, pages, and comments, " +
+							"Keep tabs on all your site's activity — new posts, pages, and comments, " +
 								'setting modifications, and more.'
 						) }
 					</p>
