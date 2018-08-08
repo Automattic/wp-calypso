@@ -4,7 +4,7 @@
  */
 import { combineReducers, keyedReducer } from 'state/utils';
 import { SITE_CHECKLIST_RECEIVE, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
-import { items as itemSchemas } from './schema';
+import schema from './schema';
 
 const taskUpdate = keyedReducer( 'taskId', () => true );
 
@@ -18,7 +18,7 @@ const items = keyedReducer( 'siteId', ( state = {}, action ) => {
 	}
 	return state;
 } );
-items.schema = itemSchemas;
+items.schema = schema;
 
 export default combineReducers( {
 	items,

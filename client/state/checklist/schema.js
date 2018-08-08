@@ -1,5 +1,5 @@
 /** @format */
-export const items = {
+export default {
 	type: 'object',
 	additionalProperties: false,
 	patternProperties: {
