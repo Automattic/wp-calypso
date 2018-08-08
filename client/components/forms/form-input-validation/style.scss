@@ -1,3 +1,5 @@
+/** @format */
+
 .form-input-validation {
 	color: $alert-green;
 	position: relative;
@@ -5,17 +7,17 @@
 	border-radius: 1px;
 	box-sizing: border-box;
 	font-size: 14px;
-	animation: appear .3s ease-in-out;
+	animation: appear 0.3s ease-in-out;
 
 	&.is-error {
 		color: $alert-red;
 	}
 
-	&.is-warning{
+	&.is-warning {
 		color: $alert-yellow;
 	}
 
-	&.is-hidden{
+	&.is-hidden {
 		animation: none;
 		visibility: hidden;
 	}

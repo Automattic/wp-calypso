@@ -1,3 +1,5 @@
+/** @format */
+
 $date-picker_caption_height: 50px;
 $date-picker_nav_button_size: 20px;
 
@@ -169,13 +171,13 @@ $date-picker_nav_button_size: 20px;
 	display: table-row;
 }
 
-
 // - days cell -
 // modifiers - clean inherit styles from daypicker component
 .date-picker .DayPicker-Day,
 .date-picker .DayPicker-Day.DayPicker-Day--selected,
 .date-picker .DayPicker-Day.DayPicker-Day--today,
-.date-picker .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+.date-picker
+	.DayPicker-Day--selected:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
 	background-color: transparent;
 }
 
@@ -197,7 +199,7 @@ $date-picker_nav_button_size: 20px;
 
 // base styles of the cell child element
 .DayPicker-Day .date-picker__day {
-	content: " ";
+	content: ' ';
 	display: block;
 	height: 24px;
 	width: 24px;
@@ -227,13 +229,14 @@ $date-picker_nav_button_size: 20px;
 }
 
 // `disabled` day
-.DayPicker-Day--disabled:not(.DayPicker-Day--outside) .date-picker__day {
+.DayPicker-Day--disabled:not( .DayPicker-Day--outside ) .date-picker__day {
 	color: $gray-lighten-20;
 	cursor: default;
 }
 
 // `is-selected` day (not today -> adds animation)
-.DayPicker-Day.DayPicker-Day--is-selected:not(.DayPicker-Day--today):not(.DayPicker-Day--events) .date-picker__day {
+.DayPicker-Day.DayPicker-Day--is-selected:not( .DayPicker-Day--today ):not( .DayPicker-Day--events )
+	.date-picker__day {
 	color: $white;
 	animation: isSelectedDay 125ms ease-out;
 	background-color: $blue-medium;
@@ -252,23 +255,24 @@ $date-picker_nav_button_size: 20px;
 }
 
 // `event` day
-.DayPicker-Day--events:not(.DayPicker-Day--is-selected) .date-picker__day {
+.DayPicker-Day--events:not( .DayPicker-Day--is-selected ) .date-picker__day {
 	border-color: $gray;
 }
 
-.DayPicker-Day--events.DayPicker-Day--disabled:not(.DayPicker-Day--is-selected) .date-picker__day {
+.DayPicker-Day--events.DayPicker-Day--disabled:not( .DayPicker-Day--is-selected )
+	.date-picker__day {
 	border-color: $gray-lighten-20;
 }
 
 @keyframes isSelectedDay {
-  0% {
-    transform: scale( 0 );
-	opacity: 0;
-  }
-  100% {
-    transform: scale( 1 );
-	opacity: 1;
-  }
+	0% {
+		transform: scale( 0 );
+		opacity: 0;
+	}
+	100% {
+		transform: scale( 1 );
+		opacity: 1;
+	}
 }
 
 .DayPicker--ar {

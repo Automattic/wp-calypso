@@ -1,5 +1,7 @@
 /**
  * Section Nav
+ *
+ * @format
  */
 
 // -------- Main Component --------
@@ -10,33 +12,31 @@
 	margin: 0 0 17px 0;
 	background: $white;
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		&.is-open {
-			box-shadow: 0 0 0 1px $gray,
-				0 2px 4px lighten( $gray, 20 );
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
 		}
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		&.has-pinned-items {
 			padding-right: 60px;
 		}
 	}
 
-	@include breakpoint( "480px-660px" ) {
+	@include breakpoint( '480px-660px' ) {
 		&.has-pinned-items {
 			padding-right: 50px;
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-bottom: 9px;
 	}
 }
@@ -73,7 +73,7 @@
 		}
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: none;
 	}
 }
@@ -104,15 +104,15 @@
 	box-sizing: border-box;
 	width: 100%;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.section-nav.is-open & {
 			padding-bottom: 15px;
 			border-top: solid 1px $gray-lighten-20;
-			background: linear-gradient(to bottom, $gray-light 0%, $white 4px);
+			background: linear-gradient( to bottom, $gray-light 0%, $white 4px );
 		}
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		align-items: center;
 
@@ -134,7 +134,7 @@
 		border-top: none;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 
 		.section-nav.is-open & {
@@ -142,7 +142,7 @@
 		}
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-top: 0;
 		padding-top: 0;
 		border-top: none;
@@ -176,7 +176,7 @@
 	text-transform: uppercase;
 	line-height: 12px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.has-siblings & {
 			display: block;
 		}
@@ -197,7 +197,7 @@
 // -------- Nav Tabs --------
 // which contain items
 .section-nav-tabs {
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		width: 0;
 		flex: 1 0 auto;
 
@@ -215,7 +215,7 @@
 	margin: 0;
 	list-style: none;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		width: 100%;
 		overflow: hidden;
@@ -228,7 +228,7 @@
 
 // -------- Nav Tabs - individual tab --------
 .section-nav-tab {
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		width: auto;
 		flex: none;
 		border-bottom: 2px solid transparent;
@@ -274,7 +274,7 @@
 		color: $white;
 		background-color: $blue-medium;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			.count {
 				color: $white;
 				border-color: $white;
@@ -309,7 +309,7 @@
 		}
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px 16px;
@@ -343,7 +343,7 @@
 	width: 0;
 	color: inherit;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: inline;
 		flex: none;
 		width: auto;
@@ -379,7 +379,6 @@
 
 // -------- Nav Segmented Control --------
 .section-nav__segmented {
-
 	.segmented-control {
 		margin: 0 15px;
 	}
@@ -394,7 +393,7 @@
 	.search {
 		overflow: hidden;
 	}
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		.search.is-expanded-to-container {
 			height: 46px;
 		}

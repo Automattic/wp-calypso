@@ -1,3 +1,5 @@
+/** @format */
+
 .masterbar__oauth-client {
 	background-color: $blue-wordpress;
 
@@ -37,7 +39,7 @@
 }
 
 .masterbar__oauth-client-wpcc-sign-in {
-	background-color: rgba(255, 255, 255, 0.15);
+	background-color: rgba( 255, 255, 255, 0.15 );
 	border-radius: 3px;
 	color: #fff;
 	display: block;
@@ -48,19 +50,19 @@
 	top: 4px;
 
 	&:hover {
-		background: rgba(255, 255, 255, 0.2);
+		background: rgba( 255, 255, 255, 0.2 );
 	}
 
 	&:after {
 		clear: both;
-		content: " ";
+		content: ' ';
 		display: block;
 		height: 0;
 		visibility: hidden;
 	}
 }
 .masterbar__oauth-client-wpcom {
-	color: rgba(255, 255, 255, 0.8);
+	color: rgba( 255, 255, 255, 0.8 );
 	cursor: pointer;
 	float: left;
 	line-height: 32px;
@@ -71,9 +73,8 @@
 	}
 
 	&:visited {
-		color: rgba(255, 255, 255, 0.8);
+		color: rgba( 255, 255, 255, 0.8 );
 	}
-
 
 	.gridicon {
 		margin-bottom: 5px;
@@ -152,7 +153,7 @@
 		}
 
 		&:disabled {
-			background-color: #DDDDDD;
+			background-color: #dddddd;
 		}
 	}
 
@@ -187,9 +188,10 @@
 		transition: all ease-in-out 0.2s;
 		width: 100%;
 
-		&:focus, &.is-error:hover {
+		&:focus,
+		&.is-error:hover {
 			border: 1px solid #e6e6e6;
-			box-shadow: 0 0 5px 0 rgba(113, 176, 47, 0.8);
+			box-shadow: 0 0 5px 0 rgba( 113, 176, 47, 0.8 );
 			outline: 0;
 		}
 	}

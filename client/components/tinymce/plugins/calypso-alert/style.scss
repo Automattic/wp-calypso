@@ -1,5 +1,7 @@
+/** @format */
+
 .editor-alert-modal.dialog.card {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		max-width: 500px;
 	}
 }

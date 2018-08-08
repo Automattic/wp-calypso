@@ -1,3 +1,5 @@
+/** @format */
+
 .sidebar-banner {
 	font-size: 12px;
 
@@ -6,11 +8,11 @@
 		color: $white;
 		display: flex;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			padding: 0 24px;
 		}
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			margin-right: 5px;
 		}
 

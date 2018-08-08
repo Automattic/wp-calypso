@@ -1,28 +1,30 @@
+/** @format */
+
 .suggestions__wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  z-index: 10;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	z-index: 10;
 }
 
 .suggestions__item {
-  display: flex;
-  padding: 10px 10px;
-  background: $white;
-  border: 1px solid darken( $gray-light, 10% );
-  border-top: 0px;
-  font-size: 15px;
-  white-space: pre-wrap;
-  cursor: pointer;
+	display: flex;
+	padding: 10px 10px;
+	background: $white;
+	border: 1px solid darken( $gray-light, 10% );
+	border-top: 0px;
+	font-size: 15px;
+	white-space: pre-wrap;
+	cursor: pointer;
 
-  &.has-highlight {
-    background-color: $blue-medium;
-    color: $white;
-  }
+	&.has-highlight {
+		background-color: $blue-medium;
+		color: $white;
+	}
 }
 
 .suggestions__label {
-  &.is-emphasized {
-    font-weight: bold;
-  }
+	&.is-emphasized {
+		font-weight: bold;
+	}
 }

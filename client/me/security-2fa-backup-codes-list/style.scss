@@ -1,3 +1,5 @@
+/** @format */
+
 .security-2fa-backup-codes-list {
 	@include clear-fix;
 }
@@ -9,13 +11,13 @@
 	position: relative;
 	top: 8px;
 
-	.form-label{
+	.form-label {
 		font-weight: normal;
 		margin-left: 8px;
 		display: inline-block;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-bottom: 24px;
 	}
 }
@@ -43,7 +45,7 @@ button.security-2fa-backups-codes-list__generate-button {
 	list-style-type: none;
 	padding: 20px;
 	margin-left: 0;
-	overflow:hidden;
+	overflow: hidden;
 }
 
 .security-2fa-backup-codes-list__codes li {

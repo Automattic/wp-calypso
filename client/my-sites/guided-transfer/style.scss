@@ -1,3 +1,5 @@
+/** @format */
+
 .guided-transfer__main {
 	.guided-transfer__header-nav {
 		margin: 0 0 17px 0;
@@ -27,7 +29,7 @@
 		margin-bottom: 10px;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		.host-credentials-page__account-username-fieldset,
 		.host-credentials-page__account-password-fieldset,
 		.host-credentials-page__account-email-fieldset {
@@ -37,7 +39,7 @@
 			margin-bottom: 0px;
 		}
 
-		.host-credentials-page__account-username-fieldset, {
+		.host-credentials-page__account-username-fieldset {
 			padding-right: 10px;
 		}
 
@@ -46,7 +48,7 @@
 			margin-right: 5px;
 		}
 
-		.guided-transfer__host-button:nth-child(even) {
+		.guided-transfer__host-button:nth-child( even ) {
 			margin-left: 5px;
 			margin-right: 0px;
 		}

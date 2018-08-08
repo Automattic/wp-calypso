@@ -1,3 +1,5 @@
+/** @format */
+
 .clone-point__wrapper {
 	position: relative;
 
@@ -25,7 +27,7 @@
 		height: 16px;
 		z-index: -1;
 		background: blue;
-		background: linear-gradient(transparentize($gray-light, 1), $gray-light);
+		background: linear-gradient( transparentize( $gray-light, 1 ), $gray-light );
 	}
 }
 

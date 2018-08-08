@@ -1,7 +1,9 @@
+/** @format */
+
 .inline-help {
 	position: fixed;
-		right: 24px;
-		bottom: 24px;
+	right: 24px;
+	bottom: 24px;
 
 	z-index: z-index( 'root', '.floating-help' );
 
@@ -27,7 +29,7 @@
 
 		&.is-active {
 			background: $blue-medium;
-			border-color: darken( $blue-medium, 5 )
+			border-color: darken( $blue-medium, 5 );
 		}
 	}
 
@@ -39,8 +41,8 @@
 
 .button.is-borderless.inline-help__button {
 	position: absolute;
-		right: 0px;
-		bottom: 0px;
+	right: 0px;
+	bottom: 0px;
 	line-height: 0;
 	padding: 1px;
 	border-radius: 100%;
@@ -61,14 +63,14 @@
 		}
 	}
 
-	&:hover:not(.is-active) {
-		animation: wiggle .8s .5s ease-in-out infinite;
+	&:hover:not( .is-active ) {
+		animation: wiggle 0.8s 0.5s ease-in-out infinite;
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
 	}
 
 	&.is-active {
 		background: $blue-medium;
-		border-color: darken( $blue-medium, 5 )
+		border-color: darken( $blue-medium, 5 );
 	}
 }
 
@@ -88,12 +90,12 @@
 }
 
 .inline-help__popover.popover {
-	@include breakpoint( "<660px" ) {
-			top: 0 !important;
-			right: 0 !important;
-			bottom: 0 !important;
-			left: 0 !important;
-			position: fixed;
+	@include breakpoint( '<660px' ) {
+		top: 0 !important;
+		right: 0 !important;
+		bottom: 0 !important;
+		left: 0 !important;
+		position: fixed;
 		background: rgba( $gray-light, 0.8 );
 
 		.popover__arrow {
@@ -112,25 +114,26 @@
 	p {
 		font-size: 12px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			font-size: 14px;
 		}
 	}
 
-	a, button {
+	a,
+	button {
 		font-size: 12px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			font-size: 14px;
 		}
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 320px;
 
 		position: fixed;
-			top: auto !important;
-			bottom: 76px !important;
+		top: auto !important;
+		bottom: 76px !important;
 	}
 
 	&.is-top .popover__arrow:before,
@@ -154,12 +157,10 @@
 			height: auto;
 
 			&.is-open.has-focus {
-				box-shadow: 0 0 0 1px $blue-wordpress,
-					0 0 0 6px $blue-light;
+				box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 6px $blue-light;
 
-				@include breakpoint( ">660px" ) {
-					box-shadow: 0 0 0 1px $blue-wordpress,
-						0 0 0 4px $blue-light;
+				@include breakpoint( '>660px' ) {
+					box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
 				}
 			}
 
@@ -168,7 +169,7 @@
 				padding: 12px 0;
 				color: $gray-text;
 
-				@include breakpoint( ">660px" ) {
+				@include breakpoint( '>660px' ) {
 					font-size: 15px;
 					padding: 16px 0;
 				}
@@ -239,8 +240,8 @@
 	object,
 	embed {
 		position: absolute;
-			top: 0;
-			left: 0;
+		top: 0;
+		left: 0;
 		width: 100%;
 		height: 100%;
 	}
@@ -251,7 +252,6 @@
 }
 
 .inline-help__contact {
-
 	.help-contact__form {
 		margin: 0;
 		padding: 0;
@@ -307,15 +307,15 @@
 		.gridicon.inline-help__gridicon-left {
 			margin: 0;
 			position: absolute;
-				top: 11px;
-				left: 13px;
+			top: 11px;
+			left: 13px;
 		}
 
 		.gridicon.inline-help__gridicon-right {
 			margin: 0;
 			position: absolute;
-				top: 11px;
-				right: 13px;
+			top: 11px;
+			right: 13px;
 		}
 
 		&:hover {
@@ -363,7 +363,7 @@
 	margin: 0;
 	font-size: 14px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 18px;
 		line-height: 1.3;
 	}
@@ -431,7 +431,8 @@
 	border-radius: 16px;
 	background-color: lighten( $gray, 28 );
 	color: transparent;
-	animation: inline-help__results-placeholder-loading 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 )
+		infinite;
 	animation-delay: 0s;
 
 	&:nth-child( 1 ) {

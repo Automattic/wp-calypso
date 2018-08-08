@@ -1,6 +1,8 @@
 /**
+ * @format
  * @component Search
  */
+
 .search {
 	display: flex;
 	flex: 1 1 auto;
@@ -44,7 +46,7 @@
 	.search__close-icon {
 		color: $gray-darken-30;
 		opacity: 0;
-		transition: opacity .2s ease-in;
+		transition: opacity 0.2s ease-in;
 	}
 
 	&.is-open.has-focus {
@@ -87,13 +89,13 @@
 		display: flex;
 	}
 
-	.search__input[type="search"] {
+	.search__input[type='search'] {
 		flex: 1 1 auto;
 		display: flex;
 	}
 }
 
-.search__input[type="search"] {
+.search__input[type='search'] {
 	flex: 1 1 auto;
 	display: none;
 	z-index: z-index( '.search', '.search__input' );
@@ -149,13 +151,23 @@
 		font-size: 16px;
 		border-radius: inherit;
 		&::before {
-			@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 2 );
+			@include long-content-fade(
+				$size: 32px,
+				$color: $white,
+				$z-index: z-index( '.search', '.search__input' ) + 2
+			);
 			border-radius: inherit;
 		}
 
-		&.ltr { /*rtl:ignore*/
+		&.ltr {
+			/*rtl:ignore*/
 			&::before {
-				@include long-content-fade( $direction: right, $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 2 );
+				@include long-content-fade(
+					$direction: right,
+					$size: 32px,
+					$color: $white,
+					$z-index: z-index( '.search', '.search__input' ) + 2
+				);
 				border-radius: inherit;
 			}
 		}
@@ -205,5 +217,5 @@
 }
 
 .animating.search-opening .search input {
-		opacity: 1;
+	opacity: 1;
 }

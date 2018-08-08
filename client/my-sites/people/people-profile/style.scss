@@ -1,3 +1,5 @@
+/** @format */
+
 .people-profile {
 	position: relative;
 	@include clear-fix;
@@ -57,7 +59,7 @@
 	}
 
 	&:before {
-		@include long-content-fade( $color : $white );
+		@include long-content-fade( $color: $white );
 	}
 }
 
@@ -110,7 +112,6 @@
 		border: none;
 		color: $white;
 	}
-
 
 	&.role-editor {
 		background: $blue-dark;

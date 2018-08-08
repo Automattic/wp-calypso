@@ -1,3 +1,5 @@
+/** @format */
+
 .subscription-text {
 	color: $gray;
 	font-size: 14px;
@@ -7,7 +9,7 @@
 	margin: 0 0 0 10px;
 	white-space: nowrap;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: block;
 		text-align: center;
 	}

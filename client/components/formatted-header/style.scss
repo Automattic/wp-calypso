@@ -1,8 +1,10 @@
+/** @format */
+
 .formatted-header {
 	margin: 16px 0 24px 0;
 	text-align: center;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 35px;
 
 		&.is-without-subhead {
@@ -15,7 +17,7 @@
 	font-size: 24px;
 	margin: 0 0 5px 0;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		line-height: 1.2em;
 		padding: 0 10px;
 	}
@@ -25,7 +27,7 @@
 	color: darken( $gray, 20 );
 	font-size: 14px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin: 0;
 		padding: 0 20px;
 	}

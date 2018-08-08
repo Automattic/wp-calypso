@@ -1,3 +1,5 @@
+/** @format */
+
 .plan-price {
 	margin: 0;
 	font-size: 28px;
@@ -11,7 +13,7 @@
 		height: 21px;
 	}
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		font-size: 24px;
 	}
 }
@@ -33,13 +35,13 @@
 
 .plan-price.is-original:before {
 	position: absolute;
-	content: "";
+	content: '';
 	left: 0;
 	top: 50%;
 	right: 0;
 	border-top: 2px solid $orange-fire;
 	transform: rotate( -16deg );
-	opacity: .9;
+	opacity: 0.9;
 }
 
 .plan-price__currency-symbol,

@@ -1,5 +1,7 @@
 /**
  * TODO: Variation modal width
+ *
+ * @format
  */
 
 .products__form {
@@ -9,11 +11,11 @@
 		width: 720px;
 		margin-bottom: 8px;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			width: 100%;
 		}
 
-		@include breakpoint( "660px-960px" ) {
+		@include breakpoint( '660px-960px' ) {
 			width: 620px;
 		}
 
@@ -39,7 +41,7 @@
 	margin-bottom: 16px;
 
 	.foldable-card__header {
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			padding: 24px;
 		}
 	}
@@ -76,7 +78,7 @@
 .products__product-form-details-wrapper {
 	display: flex;
 	flex-direction: column;
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 	}
 }
@@ -93,7 +95,7 @@
 		margin-right: 8px;
 		margin-left: 8px;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-left: 0;
 			margin-right: 16px;
 		}
@@ -148,14 +150,14 @@
 		justify-content: center;
 		width: 100%;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			justify-content: flex-start;
 		}
 
 		.products__product-form-images-item.thumb {
 			&:nth-child( 3n ) {
-				@include breakpoint( ">960px" ) {
-						margin-right: 0;
+				@include breakpoint( '>960px' ) {
+					margin-right: 0;
 				}
 			}
 		}
@@ -166,7 +168,7 @@
 		height: 70px;
 		overflow: hidden;
 
-		@include breakpoint( ">1040px" ) {
+		@include breakpoint( '>1040px' ) {
 			width: 100px;
 			height: 100px;
 		}
@@ -177,7 +179,7 @@
 			top: 50%;
 			height: 100%;
 			width: auto;
-			transform: translate( -50%,-50% );
+			transform: translate( -50%, -50% );
 		}
 	}
 
@@ -218,12 +220,12 @@
 	width: 100%;
 	margin-bottom: 16px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 0;
 		width: 250px;
 	}
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		width: 339px;
 	}
 }
@@ -233,12 +235,12 @@
 }
 
 .products__product-form-details-basic {
-	flex: 2
+	flex: 2;
 }
 
 .products__product-form-images-wrapper,
 .products__product-form-details-basic {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-right: 24px;
 	}
 
@@ -277,15 +279,14 @@
 		}
 	}
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		display: flex;
 
-		>.form-fieldset {
+		> .form-fieldset {
 			width: 339px;
 			margin-right: 24px;
 			margin-bottom: 0;
 		}
-
 	}
 }
 
@@ -314,7 +315,7 @@
 	.form-click-to-edit-input__wrapper {
 		min-height: 35px;
 		display: inline-block;
-		transform: translateY(5px);
+		transform: translateY( 5px );
 
 		&.editing {
 			transform: none;
@@ -347,7 +348,6 @@
 }
 
 .products__variation-types-form-group {
-
 	.products__variation-types-form-fieldset,
 	.products__variation-types-form-labels {
 		display: flex;
@@ -407,7 +407,8 @@
 		margin-left: -1px;
 	}
 
-	th, td {
+	th,
+	td {
 		padding: 8px;
 		vertical-align: middle;
 
@@ -451,16 +452,21 @@
 	overflow: hidden;
 
 	&:after {
-		content: "";
+		content: '';
 		display: block;
 		width: 24px;
 		height: 100%;
 		position: absolute;
 		right: -12px;
 		top: 0;
-		background: radial-gradient( ellipse at center, rgba( $gray-dark,.125 ) 0%, rgba( $white,0 ) 75%, rgba( $white,0 ) 90% );
+		background: radial-gradient(
+			ellipse at center,
+			rgba( $gray-dark, 0.125 ) 0%,
+			rgba( $white, 0 ) 75%,
+			rgba( $white, 0 ) 90%
+		);
 
-		@include breakpoint( ">1280px" ) {
+		@include breakpoint( '>1280px' ) {
 			display: none;
 		}
 	}
@@ -530,7 +536,7 @@
 		color: $gray-lighten-10;
 	}
 
-	&:not(.uploader) {
+	&:not( .uploader ) {
 		border: 1px solid $gray-lighten-30;
 	}
 
@@ -545,7 +551,7 @@
 			top: 50%;
 			height: 100%;
 			width: auto;
-			transform: translate( -50%,-50% );
+			transform: translate( -50%, -50% );
 		}
 	}
 
@@ -592,7 +598,7 @@
 }
 
 .products__product-form-sku {
-		color: $gray-text-min;
+	color: $gray-text-min;
 }
 
 .products__variation-settings-link {
@@ -670,7 +676,7 @@
 	border-top: 0;
 	margin-top: -10px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-top: -16px;
 	}
 
@@ -681,19 +687,19 @@
 	.foldable-card__header {
 		padding: 16px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			padding: 24px;
 		}
 
 		.foldable-card__expand {
-			@include breakpoint( ">480px" ) {
+			@include breakpoint( '>480px' ) {
 				width: 63px;
 			}
 		}
 	}
 
 	.foldable-card__content {
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			padding: 24px;
 		}
 	}
@@ -719,16 +725,16 @@
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-top: 1em;
 		flex-direction: row;
 	}
 }
 
 .products__additional-details-form-group {
-		width: 100%;
-		padding: 16px 0;
-	@include breakpoint( ">960px" ) {
+	width: 100%;
+	padding: 16px 0;
+	@include breakpoint( '>960px' ) {
 		width: 60%;
 		margin-right: 1.5em;
 		padding: 0;
@@ -741,7 +747,7 @@
 	border: 1px solid $gray-lighten-30;
 	padding: 16px 0 0 0;
 	margin-bottom: 8px;
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-bottom: 16px;
 	}
 
@@ -754,7 +760,7 @@
 		.button {
 			padding: 4px 6px 7px;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				padding-left: 12px;
 				padding-right: 12px;
 			}
@@ -764,7 +770,7 @@
 
 .products__additional-details-preview-container {
 	width: 100%;
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		width: 30%;
 	}
 }
@@ -847,7 +853,7 @@
 	}
 
 	.products__product-manage-stock .form-text-input {
-			width: 110px;
+		width: 110px;
 	}
 }
 
@@ -862,7 +868,7 @@
 		width: 342px;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: row;
 
 		.form-fieldset.products__product-dimensions-input {
@@ -878,7 +884,7 @@
 			flex-grow: 0;
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			.form-text-input {
 				min-width: 60px;
 			}
@@ -900,7 +906,7 @@
 	.card {
 		margin-top: -10px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			margin-top: -16px;
 		}
 	}
@@ -912,7 +918,7 @@
 	.products__product-manage-stock {
 		margin-bottom: 12px;
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			margin-bottom: 0;
 		}
 	}
@@ -961,7 +967,7 @@
 			}
 		}
 
-		@include breakpoint( ">960px" ) {
+		@include breakpoint( '>960px' ) {
 			flex-direction: row;
 
 			.products__product-manage-stock-wrapper {

@@ -1,3 +1,5 @@
+/** @format */
+
 .tile-grid {
 	margin: 0 auto;
 	display: flex;
@@ -18,12 +20,12 @@
 	border-bottom: 0;
 	margin: 0 10px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		box-shadow: none; //inherited from .card, remove for mobile only
 		width: 100%;
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 0;
 		margin-bottom: 20px;
 		width: 230px;
@@ -52,7 +54,7 @@
 		border-top-right-radius: 6px;
 		border-top-left-radius: 6px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			border-radius: 0;
 		}
 	}
@@ -63,7 +65,7 @@
 		border-bottom-right-radius: 6px;
 		border-bottom-left-radius: 6px;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			border-radius: 0;
 			border: 0;
 		}
@@ -72,7 +74,7 @@
 	&.is-card-link {
 		padding-right: 0;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			padding-right: 40px;
 		}
 	}
@@ -81,7 +83,8 @@
 		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 3px $blue-light;
 	}
 
-	a, svg {
+	a,
+	svg {
 		display: block;
 		width: 100%; // Safari fix
 	}
@@ -89,7 +92,7 @@
 	.card__link-indicator {
 		display: none;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			display: block;
 			width: 8px; //Match the size of the cta copy
 			height: 8px; //Match the size of the cta copy
@@ -99,7 +102,7 @@
 			margin-top: -6px;
 			border-top: 2px solid $gray-lighten-20;
 			border-right: 2px solid $gray-lighten-20;
-			transform: rotate(45deg);
+			transform: rotate( 45deg );
 			color: $white;
 		}
 	}
@@ -108,7 +111,7 @@
 .tile-grid__image {
 	display: none;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		display: block;
 	}
 
@@ -119,10 +122,10 @@
 	}
 }
 
-@include breakpoint( ">480px" ) {
+@include breakpoint( '>480px' ) {
 	.tile-grid__item-copy {
 		padding: 15px;
-		border-top: 1px solid transparentize( $gray-lighten-20, .5 );
+		border-top: 1px solid transparentize( $gray-lighten-20, 0.5 );
 	}
 }
 
@@ -138,7 +141,7 @@
 	font-size: 13px;
 	line-height: 1.5;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-top: 10px;
 
 		&:first-child {
@@ -150,7 +153,7 @@
 .button.tile-grid__cta {
 	color: $blue-wordpress;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		background: none;
 		text-align: left;
 		font-size: 16px;

@@ -1,3 +1,5 @@
+/** @format */
+
 .plugin-list-header.section-header.card {
 	padding-right: 8px;
 
@@ -18,7 +20,7 @@
 
 	&.is-placeholder {
 		.section-header__label span {
-			@include placeholder(23%);
+			@include placeholder( 23% );
 		}
 	}
 
@@ -50,7 +52,7 @@
 	color: $gray-darken-30;
 	cursor: pointer;
 	display: flex;
-		align-items: center;
+	align-items: center;
 
 	&:focus {
 		border-color: $blue-medium;
@@ -72,7 +74,7 @@
 
 .plugin-list-header__mode-buttons {
 	display: flex;
-		justify-content: flex-end;
+	justify-content: flex-end;
 	flex-grow: 1;
 	text-align: right;
 }

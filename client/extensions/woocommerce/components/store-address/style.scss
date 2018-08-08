@@ -1,5 +1,7 @@
+/** @format */
+
 &.store-location__edit-dialog {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 660px;
 	}
 }

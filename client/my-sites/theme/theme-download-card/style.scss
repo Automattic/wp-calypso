@@ -1,11 +1,12 @@
-.theme-download-card {
+/** @format */
 
+.theme-download-card {
 	text-align: center;
 
 	.gridicon {
 		display: inline-block;
 		margin: -0.5em 0 -1.1em;
-		fill: #C8D7E1;
+		fill: #c8d7e1;
 	}
 
 	.button {
@@ -19,11 +20,9 @@
 			text-decoration: underline;
 		}
 	}
-
 }
 
-@include breakpoint( ">1040px" ) {
-
+@include breakpoint( '>1040px' ) {
 	.theme-download-card {
 		text-align: inherit;
 
@@ -46,5 +45,4 @@
 			margin: 0 122px 0 71px;
 		}
 	}
-
 }

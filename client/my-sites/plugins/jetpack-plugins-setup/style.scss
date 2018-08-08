@@ -1,3 +1,5 @@
+/** @format */
+
 .jetpack-plugins-setup {
 	margin: 0 auto;
 	max-width: 700px;
@@ -21,7 +23,7 @@
 
 .jetpack-plugins-setup__header {
 	@include heading;
-	margin-bottom: .75em;
+	margin-bottom: 0.75em;
 	text-align: center;
 	color: $gray-dark;
 }

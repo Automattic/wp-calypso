@@ -1,3 +1,5 @@
+/** @format */
+
 .label-settings__credit-card-description {
 	margin-bottom: 4px;
 	color: $gray-text-min;
@@ -76,14 +78,19 @@
 		content: none;
 	}
 
-	.gridicon, span, p, a, button {
+	.gridicon,
+	span,
+	p,
+	a,
+	button {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: lighten( $gray, 25% );
 		color: transparent;
 		cursor: default;
 	}
 
-	p, span {
+	p,
+	span {
 		display: block;
 		width: 100px;
 		height: 14px;

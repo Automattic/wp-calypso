@@ -1,3 +1,5 @@
+/** @format */
+
 .vertical-menu {
 	display: flex;
 	flex-direction: column;
@@ -34,7 +36,7 @@
 		border-bottom: 1px solid $gray-lighten-20;
 	}
 
-	&:not(.is-selected):hover {
+	&:not( .is-selected ):hover {
 		color: $blue-medium;
 
 		.social-logo {

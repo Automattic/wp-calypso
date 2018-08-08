@@ -1,3 +1,5 @@
+/** @format */
+
 .editor-status-label {
 	color: $gray;
 	cursor: pointer;
@@ -12,7 +14,7 @@
 		display: inline-block;
 		fill: $gray-lighten-10;
 		position: absolute;
-			left: 14px;
+		left: 14px;
 	}
 
 	strong {

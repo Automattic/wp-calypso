@@ -1,3 +1,5 @@
+/** @format */
+
 .order-fulfillment {
 	display: flex;
 	flex-wrap: wrap;
@@ -17,7 +19,7 @@
 	display: flex;
 	align-items: center;
 	margin-top: 16px;
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		margin-top: 0;
 	}
 }

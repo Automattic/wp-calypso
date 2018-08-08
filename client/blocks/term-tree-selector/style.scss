@@ -1,3 +1,5 @@
+/** @format */
+
 @import 'search';
 
 .term-tree-selector {
@@ -31,8 +33,8 @@
 	-webkit-appearance: none;
 }
 
-input[type=radio].term-tree-selector__input,
-input[type=checkbox].term-tree-selector__input {
+input[type='radio'].term-tree-selector__input,
+input[type='checkbox'].term-tree-selector__input {
 	margin-top: 4px;
 
 	& + label {
@@ -47,7 +49,7 @@ input[type=checkbox].term-tree-selector__input {
 	}
 }
 
-input[type=checkbox].term-tree-selector__input {
+input[type='checkbox'].term-tree-selector__input {
 	margin-right: 8px;
 }
 
@@ -125,4 +127,3 @@ input[type=checkbox].term-tree-selector__input {
 		padding: 8px 0;
 	}
 }
-

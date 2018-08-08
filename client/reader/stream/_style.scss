@@ -1,3 +1,5 @@
+/** @format */
+
 // Reader-specific tweaks to components
 
 // Overrides default 720px width
@@ -11,7 +13,7 @@
 	margin-bottom: 0;
 	padding: 6px 0 30px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 
@@ -21,8 +23,7 @@
 }
 
 .following {
-
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		-webkit-perspective: none;
 		perspective: none;
 	}
@@ -43,19 +44,18 @@
 	&.is-selected,
 	&.is-x-post.is-selected,
 	&.tag-afk.is-selected {
-
 		&::before {
 			background: $blue-wordpress;
-			content: "";
+			content: '';
 			position: absolute;
-				bottom: 0;
-				left: -8px;
-				top: 0;
+			bottom: 0;
+			left: -8px;
+			top: 0;
 			width: 2px;
 		}
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		padding: 16px 24px 24px;
 		margin-bottom: 24px;
 	}
@@ -70,10 +70,10 @@
 
 	.follow-button {
 		position: absolute;
-			top: -3px;
-			right: 0;
+		top: -3px;
+		right: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
 		}
 	}
@@ -114,15 +114,14 @@
 			position: relative;
 			font-size: 14px;
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				font-size: 13px;
 			}
 		}
 	}
 
 	&.is-headerless {
-
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			padding-top: 25px;
 		}
 
@@ -136,7 +135,6 @@
 	}
 
 	.post-excerpt-only {
-
 		p {
 			margin-bottom: 1em;
 		}
@@ -192,8 +190,8 @@
 			font-size: 16px;
 			margin: 0;
 			position: absolute;
-				top: 14px;
-				left: 66px;
+			top: 14px;
+			left: 66px;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -204,8 +202,8 @@
 			margin: 0;
 			font-size: 13px;
 			position: absolute;
-				top: 34px;
-				left: 44px;
+			top: 34px;
+			left: 44px;
 		}
 
 		.follow-button {
@@ -213,13 +211,12 @@
 		}
 
 		&.is-headerless {
-
 			padding: 16px 24px 54px;
 
 			.reader__post-title,
 			.reader-post-byline {
 				position: absolute;
-					left: 25px;
+				left: 25px;
 			}
 		}
 	}
@@ -227,13 +224,12 @@
 
 // X-Posts
 .is-reader-page {
-
 	.reader__card.card.is-x-post {
 		border-bottom: 1px solid $gray-lighten-20;
 		margin: 0 15px;
 		padding: 20px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin: 0;
 			padding: 20px 42px;
 		}
@@ -273,14 +269,14 @@
 	overflow: hidden;
 	width: calc( 100% + 32px );
 	position: relative;
-		top: 0;
-		left: -16px;
+	top: 0;
+	left: -16px;
 	margin-bottom: 16px;
 	border-bottom: 1px solid lighten( $gray, 20 );
 	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
 	background: rgba( lighten( $gray, 30 ), 0.3 );
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		left: -24px;
 		width: calc( 100% + 48px );
 		margin-bottom: 24px;
@@ -305,7 +301,6 @@
 		display: block;
 	}
 }
-
 
 // Handling the different types of Reader cards
 .reader__card {
@@ -340,13 +335,13 @@
 
 		// Inline Reblog Tweaks
 		p.reblog-from {
-			@include breakpoint( ">480px" ) {
+			@include breakpoint( '>480px' ) {
 				margin-left: -24px;
 				margin-right: -24px;
 				padding-left: 24px;
 				padding-right: 24px;
 			}
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				margin-left: -16px;
 				margin-right: -16px;
 				padding-left: 16px;
@@ -388,8 +383,8 @@
 		padding: 4px;
 		border-radius: 100%;
 		position: absolute;
-			top: 0;
-			left: 0;
+		top: 0;
+		left: 0;
 	}
 }
 
@@ -415,7 +410,7 @@
 	border-bottom: 1px solid $gray-lighten-20;
 	padding-bottom: 12px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin: 0 15px;
 	}
 }
@@ -433,8 +428,8 @@
 		fill: $gray-lighten-10;
 		margin-right: -2px;
 		position: relative;
-			left: -2px;
-			top: 2px;
+		left: -2px;
+		top: 2px;
 	}
 }
 
@@ -444,7 +439,7 @@
 	margin: 0;
 	padding: 0;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		flex-direction: column;
 	}
 }
@@ -455,7 +450,7 @@
 	list-style-type: none;
 	width: 100%;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		flex-direction: column;
 		margin-top: -40px;
 		width: 50%;
@@ -464,7 +459,7 @@
 	.reader-stream__recommended-post-dismiss {
 		height: 30px;
 
-		@include breakpoint( "<960px" ) {
+		@include breakpoint( '<960px' ) {
 			margin-right: 15px;
 		}
 
@@ -489,7 +484,6 @@
 		}
 
 		&.has-thumbnail {
-
 			.reader-related-card__meta {
 				margin-bottom: 17px;
 			}
@@ -502,7 +496,7 @@
 				margin-top: 0;
 				max-height: 108px;
 
-				@include breakpoint( "<480px" ) {
+				@include breakpoint( '<480px' ) {
 					max-height: 125px;
 				}
 			}
@@ -512,7 +506,7 @@
 	&:first-child {
 		margin-right: 10px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-right: 15px;
 		}
 	}
@@ -520,15 +514,14 @@
 	&:last-child {
 		margin-left: 10px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-left: 15px;
 		}
 	}
 
 	&:first-child,
 	&:last-child {
-
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			margin: 0 0 20px 0;
 		}
 	}
@@ -545,7 +538,7 @@
 		margin-top: -2px;
 		max-height: 208px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			max-height: 207px;
 		}
 

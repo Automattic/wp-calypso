@@ -1,3 +1,5 @@
+/** @format */
+
 .reader-full-post__story-content {
 	@extend %content-font;
 	margin: 0;
@@ -319,14 +321,14 @@
 		width: 175px;
 		position: relative;
 
-		@media (min-width: 1400px) {
+		@media ( min-width: 1400px ) {
 			position: absolute;
 			left: inherit;
 			right: -( 175px + 32px );
 			margin-left: 0;
 		}
 
-		@media (max-width: 1400px) {
+		@media ( max-width: 1400px ) {
 			background: lighten( $gray, 30 );
 			margin: 0 0 24px 0;
 			padding: 16px;

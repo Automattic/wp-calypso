@@ -1,11 +1,14 @@
 /**
  * Sidebar Navigation Header in Sections
+ *
+ * @format
  */
+
 .current-section {
 	position: relative;
 	margin: 0 0 8px 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: none;
 	}
 

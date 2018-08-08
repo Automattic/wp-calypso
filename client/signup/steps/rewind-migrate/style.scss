@@ -1,10 +1,13 @@
+/** @format */
+
 .flow-progress-indicator__rewind-setup,
 .flow-progress-indicator__rewind-auto-config,
 .flow-progress-indicator__rewind-switch {
 	display: none;
 }
 
-.rewind-switch__card, .rewind-auto-config__card {
+.rewind-switch__card,
+.rewind-auto-config__card {
 	text-align: center;
 	margin: 1px auto;
 	max-width: 670px;

@@ -1,4 +1,9 @@
-/* Gridicon Floaties */
+/**
+ * /* Gridicon Floaties
+ *
+ * @format
+ */
+
 @keyframes floating {
 	0% {
 		opacity: 0;
@@ -15,7 +20,8 @@
 }
 
 @keyframes focus {
-	0%, 100% {
+	0%,
+	100% {
 		opacity: 0.1;
 		filter: blur( 1px );
 	}
@@ -28,28 +34,28 @@
 .signup-processing-screen__floaties {
 	pointer-events: none;
 	position: fixed;
-		top: 40px;
-		right: 0;
-		bottom: 0;
+	top: 40px;
+	right: 0;
+	bottom: 0;
 	max-height: calc( 100vw - 30px );
 	opacity: 0.1;
 	animation: focus 5s infinite ease-in-out;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		left: 0;
 	}
 
-	@include breakpoint( "<660px" ) {
-		transform: scale(0.8);
+	@include breakpoint( '<660px' ) {
+		transform: scale( 0.8 );
 		left: 130px;
 		top: -120px;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		transform: scale( 1.2 );
 	}
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		transform: scale( 1.5 );
 	}
 
@@ -64,13 +70,13 @@
 	}
 	.gridicons-add {
 		top: 0px;
-		left: calc( 50% - 320px);
+		left: calc( 50% - 320px );
 		height: 150px;
 		width: 150px;
 	}
 	.gridicons-aside {
 		top: 150px;
-		left: calc( 50% + 310px);
+		left: calc( 50% + 310px );
 		height: 70px;
 		width: 70px;
 		animation-delay: 6s;
@@ -79,14 +85,14 @@
 		height: 60px;
 		width: 60px;
 		top: 70px;
-		left: calc(50% + 220px);
+		left: calc( 50% + 220px );
 		animation-delay: 7s;
 	}
 	.gridicons-audio {
 		height: 80px;
 		width: 80px;
 		top: 170px;
-		left: calc(50% - 220px );
+		left: calc( 50% - 220px );
 		transform: rotate( -30deg );
 		animation-delay: 6s;
 	}
@@ -94,19 +100,19 @@
 		height: 120px;
 		width: 120px;
 		top: 10px;
-		left: calc( 50% + 290px);
+		left: calc( 50% + 290px );
 		animation-delay: 10s;
 	}
 	.gridicons-book {
 		top: 340px;
-		left: calc(50% - 300px);
+		left: calc( 50% - 300px );
 		height: 100px;
 		width: 100px;
 		animation-delay: 1s;
 	}
 	.gridicons-camera {
 		top: 300px;
-		left: calc(50% + 200px );
+		left: calc( 50% + 200px );
 		height: 160px;
 		width: 160px;
 		transform: rotate( -10deg );
@@ -123,28 +129,28 @@
 		height: 100px;
 		width: 100px;
 		top: 220px;
-		left: calc(50% - 330px );
+		left: calc( 50% - 330px );
 		animation-delay: 3s;
 	}
 	.gridicons-pencil {
 		height: 220px;
 		width: 220px;
 		top: -110px;
-		left: calc(50% + 110px );
+		left: calc( 50% + 110px );
 		animation-delay: 1s;
 	}
 	.gridicons-phone {
 		height: 80px;
 		width: 80px;
 		top: 130px;
-		left: calc(50% - 390px);
+		left: calc( 50% - 390px );
 		animation-delay: 6s;
 	}
 	.gridicons-reader {
 		height: 130px;
 		width: 130px;
 		top: 360px;
-		left: calc(50% - 170px );
+		left: calc( 50% - 170px );
 		transform: rotate( 12deg );
 		animation-delay: 8s;
 	}
@@ -152,55 +158,55 @@
 		height: 90px;
 		width: 90px;
 		top: 380px;
-		left: calc(50% + 60px);
+		left: calc( 50% + 60px );
 	}
 	.gridicons-video {
 		top: 245px;
-		left: calc(50% - 160px);
+		left: calc( 50% - 160px );
 		animation-delay: 3s;
 	}
 	.gridicons-align-image-right {
 		top: 280px;
-		left: calc(50% + 90px);
+		left: calc( 50% + 90px );
 		animation-delay: 7s;
 	}
 	.gridicons-bookmark {
 		top: 460px;
 		height: 110px;
 		width: 110px;
-		left: calc(50% - 440px);
+		left: calc( 50% - 440px );
 		animation-delay: 5s;
 	}
 	.gridicons-briefcase {
 		top: 320px;
 		height: 80px;
 		width: 80px;
-		left: calc(50% - 450px);
+		left: calc( 50% - 450px );
 		animation-delay: 1s;
 	}
 	.gridicons-calendar {
 		top: 460px;
-		left: calc(50% + 300px);
+		left: calc( 50% + 300px );
 		height: 80px;
 		width: 80px;
 		animation-delay: 2s;
 	}
 	.gridicons-clipboard {
 		top: 240px;
-		left: calc(50% + 290px);
+		left: calc( 50% + 290px );
 		height: 50px;
 		animation-delay: 6s;
 	}
 	.gridicons-cloud-upload {
 		top: 180px;
-		left: calc(50% - 280px);
+		left: calc( 50% - 280px );
 		height: 40px;
 		width: 40px;
 		animation-delay: 5s;
 	}
 	.gridicons-cog {
 		top: 110px;
-		left: calc(50% + 160px);
+		left: calc( 50% + 160px );
 		height: 40px;
 		width: 40px;
 		animation-delay: 1s;
@@ -209,46 +215,46 @@
 		top: 240px;
 		height: 40px;
 		width: 40px;
-		left: calc(50% - 400px);
+		left: calc( 50% - 400px );
 		animation-delay: 1s;
 	}
 	.gridicons-help {
 		top: 460px;
-		left: calc(50% + 160px );
+		left: calc( 50% + 160px );
 		height: 90px;
 		width: 90px;
 		animation-delay: 1s;
 	}
 	.gridicons-link {
 		top: 60px;
-		left: calc(50% - 160px);
+		left: calc( 50% - 160px );
 		height: 50px;
 		width: 50px;
-		transform: rotate(-45deg);
+		transform: rotate( -45deg );
 		animation-delay: 5s;
 	}
 	.gridicons-lock {
 		top: 60px;
-		left: calc(50% - 400px);
+		left: calc( 50% - 400px );
 		height: 50px;
 		width: 50px;
 		animation-delay: 6s;
 	}
 	.gridicons-pages {
 		top: 70px;
-		left: calc(50% + 70px);
+		left: calc( 50% + 70px );
 		height: 50px;
 		width: 50px;
 		animation-delay: 8s;
 	}
 	.gridicons-share {
 		top: 280px;
-		left: calc(50% + 360px);
+		left: calc( 50% + 360px );
 		animation-delay: 2s;
 	}
 	.gridicons-stats {
 		top: 470px;
-		left: calc(50% - 270px);
+		left: calc( 50% - 270px );
 		height: 80px;
 		width: 80px;
 		animation-delay: 9s;
@@ -274,7 +280,7 @@
 	fill: lighten( $gray, 20 );
 	background: rgba( $gray-light, 0.8 );
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 48px;
 	}
 }
@@ -287,7 +293,8 @@
 
 /* Continue Button */
 @keyframes pulse {
-	0%, 100% {
+	0%,
+	100% {
 		opacity: 1;
 	}
 	60% {
@@ -303,9 +310,7 @@
 
 .email-confirmation__button:disabled {
 	animation: pulse 1s infinite linear;
-
 }
-
 
 // Not entirely sure what this stuff is all about... -shaun
 
@@ -322,7 +327,8 @@
 	@include hide-content-accessibly;
 }
 
-.signup-processing-screen__loader, .signup-processing-screen__loader:after {
+.signup-processing-screen__loader,
+.signup-processing-screen__loader:after {
 	border-radius: 50%;
 	height: 10em;
 	width: 10em;
@@ -359,7 +365,7 @@
 	margin: 3px;
 	text-align: left;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		text-align: inherit;
 	}
 }
@@ -371,7 +377,7 @@
 	padding: 10px;
 	text-align: left;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		border-radius: 0;
 	}
 }
@@ -398,7 +404,7 @@
 }
 .signup-pricessing__bubble {
 	position: relative;
-	background: #c2f4ff url('/calypso/images/signup/seo-guy.svg') no-repeat 28px 50%;
+	background: #c2f4ff url( '/calypso/images/signup/seo-guy.svg' ) no-repeat 28px 50%;
 	background-size: 121px auto;
 	border-radius: 28px;
 	color: $gray-dark;
@@ -414,7 +420,7 @@
 		margin: 0;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		background-size: 90px auto;
 
 		p {

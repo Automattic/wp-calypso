@@ -1,3 +1,5 @@
+/** @format */
+
 .people-list-item.card.is-compact {
 	border-bottom: 1px solid $gray-light;
 	box-shadow: none;
@@ -12,7 +14,7 @@
 		padding-bottom: 24px;
 	}
 
-	&:nth-of-type(1) {
+	&:nth-of-type( 1 ) {
 		margin-top: -16px;
 
 		@include breakpoint( '>480px' ) {
@@ -34,13 +36,14 @@
 	}
 }
 
-.people-list-item__checkbox[type=checkbox] {
+.people-list-item__checkbox[type='checkbox'] {
 	margin-top: 0;
 	position: absolute;
 	top: 48px;
 	left: 2px;
 
-	&:after { // Making tap area larger
+	&:after {
+		// Making tap area larger
 		content: '';
 		position: absolute;
 		top: -20px;

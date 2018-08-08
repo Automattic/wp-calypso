@@ -1,3 +1,5 @@
+/** @format */
+
 .happiness-support.is-placeholder {
 	.happiness-support__heading,
 	.happiness-support__text {
@@ -41,7 +43,7 @@
 	margin-left: 30px;
 	text-align: center;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 68px;
 	}
 }
@@ -54,18 +56,18 @@
 .happiness-support__buttons {
 	clear: both;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 6px;
 		text-align: center;
 	}
 
 	.button {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			margin-top: 10px;
 			width: 80%;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-top: 10px;
 
 			&:first-of-type {

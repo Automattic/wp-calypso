@@ -1,3 +1,5 @@
+/** @format */
+
 .clone-cloning {
 	max-width: 352px;
 	margin: 0 auto;
@@ -27,11 +29,11 @@
 		$animation-time: 1s;
 		animation: cloneDot $animation-time steps( 3, end ) infinite;
 
-		&:nth-child(2) {
+		&:nth-child( 2 ) {
 			animation-delay: $animation-time / 3;
 		}
 
-		&:nth-child(3) {
+		&:nth-child( 3 ) {
 			animation-delay: $animation-time / 3 * 2;
 		}
 	}

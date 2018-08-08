@@ -1,3 +1,5 @@
+/** @format */
+
 .conversation-follow-button,
 button.conversation-follow-button {
 	border: 0;
@@ -31,7 +33,6 @@ button.conversation-follow-button {
 	}
 
 	&.is-following {
-
 		.gridicons-reader-following-conversation {
 			display: inline-block;
 			fill: $alert-green;
@@ -69,7 +70,7 @@ button.conversation-follow-button {
 }
 
 .conversation-follow-button__label {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: none;
 	}
 }

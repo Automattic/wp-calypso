@@ -1,3 +1,5 @@
+/** @format */
+
 .cancel-purchase__card {
 	h2 {
 		color: $gray-dark;
@@ -20,7 +22,7 @@
 	margin: 0;
 	padding: 0 0 10px 0;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		width: 55%;
 	}
 
@@ -74,7 +76,7 @@
 	justify-content: space-between;
 
 	&:after {
-		display:none;
+		display: none;
 	}
 }
 
@@ -86,7 +88,7 @@
 }
 
 .cancel-purchase__button {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 100%;
 	}
 }

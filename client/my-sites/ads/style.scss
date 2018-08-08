@@ -1,4 +1,7 @@
-.earnings_breakdown, .earnings_history {
+/** @format */
+
+.earnings_breakdown,
+.earnings_history {
 	.module-content {
 		display: block;
 	}
@@ -32,7 +35,7 @@
 	text-align: center;
 	border-left: 1px solid $gray-lighten-30;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		width: auto;
 		float: none;
 		padding: 10px 24px;
@@ -53,7 +56,7 @@
 	line-height: 1.6;
 	text-transform: uppercase;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		font-size: 14px;
 		line-height: 1.8;
 	}
@@ -64,7 +67,7 @@
 	display: block;
 	font-size: 25px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		width: auto;
 		float: right;
 		font-size: 16px;
@@ -80,7 +83,7 @@
 
 	&.is-showing-info {
 		ul.module-header-actions .toggle-info::after,
-		.module-content-text-info{
+		.module-content-text-info {
 			display: inline-block;
 		}
 	}
@@ -119,13 +122,14 @@
 	line-height: 40px;
 	text-align: center;
 
-	@include breakpoint( "<480px" ) {
-		&:first-child, &:last-child{
+	@include breakpoint( '<480px' ) {
+		&:first-child,
+		&:last-child {
 			font-size: 12px;
 		}
 	}
 }
-@include breakpoint( "<480px" ) {
+@include breakpoint( '<480px' ) {
 	.ads__settings-state {
 		max-width: 75%;
 	}
@@ -143,7 +147,8 @@
 	margin: 0;
 }
 
-.ads__activate-header-toggle, .ads__activate-header-title {
+.ads__activate-header-toggle,
+.ads__activate-header-title {
 	margin: auto 0 auto 0;
 }
 .ads__activate-wrapper {

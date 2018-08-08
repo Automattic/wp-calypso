@@ -1,3 +1,5 @@
+/** @format */
+
 .preview-upgrade-nudge {
 	display: flex;
 	flex-direction: column;
@@ -10,15 +12,14 @@
 	.preview-upgrade-nudge__features {
 		padding: 0 24px 16px;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: flex;
 		}
-
 
 		.feature-example {
 			margin: 0 0 16px 0;
 
-			@include breakpoint( ">660px" ) {
+			@include breakpoint( '>660px' ) {
 				width: 50%;
 				margin: 0 16px 0 0;
 			}
@@ -26,8 +27,7 @@
 	}
 
 	.preview-upgrade-nudge__features-details {
-
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 50%;
 		}
 	}
@@ -57,6 +57,6 @@
 	}
 
 	.feature-example__gradient {
-		background: linear-gradient( to bottom, rgba(243, 246, 248, 0), rgba( 243, 246, 248, 1) );
+		background: linear-gradient( to bottom, rgba( 243, 246, 248, 0 ), rgba( 243, 246, 248, 1 ) );
 	}
 }

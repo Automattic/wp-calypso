@@ -1,125 +1,127 @@
+/** @format */
+
 .subscription-length-picker {
-  &__header {
-    margin-bottom: 10px;
-    flex-basis: 100%;
-    font-size: 16px;
-  }
+	&__header {
+		margin-bottom: 10px;
+		flex-basis: 100%;
+		font-size: 16px;
+	}
 
-  &__options {
-    display: flex;
-    align-items: flex-start;
-    flex-flow: row wrap;
-    justify-content: space-between;
-  }
+	&__options {
+		display: flex;
+		align-items: flex-start;
+		flex-flow: row wrap;
+		justify-content: space-between;
+	}
 
-  &__option-container {
-    flex-basis: calc(50% - 10px);
+	&__option-container {
+		flex-basis: calc( 50% - 10px );
 
-    @include breakpoint('<960px') {
-      flex-basis: calc(100%);
-      &:not(:first-child) {
-        margin-top: 20px;
-      }
-    }
-  }
+		@include breakpoint( '<960px' ) {
+			flex-basis: calc( 100% );
+			&:not( :first-child ) {
+				margin-top: 20px;
+			}
+		}
+	}
 }
 
 .subscription-length-picker__option {
-  $padding-size: 18px;
+	$padding-size: 18px;
 
-  display: flex;
-  width: 100%;
-  cursor: pointer;
+	display: flex;
+	width: 100%;
+	cursor: pointer;
 
-  padding: $padding-size;
-  border-radius: 5px;
+	padding: $padding-size;
+	border-radius: 5px;
 
-  background: $white;
+	background: $white;
 
-  .subscription-length-picker__option-radio-wrapper {
-    width: 21px;
-    margin-right: 12px;
-  }
+	.subscription-length-picker__option-radio-wrapper {
+		width: 21px;
+		margin-right: 12px;
+	}
 
-  .subscription-length-picker__option-radio {
-    width: 21px;
-    height: 21px;
+	.subscription-length-picker__option-radio {
+		width: 21px;
+		height: 21px;
 
-    &:checked:before {
-      width: 13px;
-      height: 13px;
-    }
-  }
+		&:checked:before {
+			width: 13px;
+			height: 13px;
+		}
+	}
 
-  .subscription-length-picker__option-content {
-    flex-grow: 1;
-  }
-  .subscription-length-picker__option-header,
-  .subscription-length-picker__option-description {
-    width: 100%;
-  }
+	.subscription-length-picker__option-content {
+		flex-grow: 1;
+	}
+	.subscription-length-picker__option-header,
+	.subscription-length-picker__option-description {
+		width: 100%;
+	}
 
-  .subscription-length-picker__option-term,
-  .subscription-length-picker__option-price,
-  .subscription-length-picker__option-discount,
-  .subscription-length-picker__option-side-note,
-  .subscription-length-picker__option-old-price,
-  .subscription-length-picker__option-credit-info,
-  .subscription-length-picker__option-description {
-    display: inline-block;
-    vertical-align: middle;
-  }
+	.subscription-length-picker__option-term,
+	.subscription-length-picker__option-price,
+	.subscription-length-picker__option-discount,
+	.subscription-length-picker__option-side-note,
+	.subscription-length-picker__option-old-price,
+	.subscription-length-picker__option-credit-info,
+	.subscription-length-picker__option-description {
+		display: inline-block;
+		vertical-align: middle;
+	}
 
-  .subscription-length-picker__option-header {
-    line-height: 24px;
-  }
+	.subscription-length-picker__option-header {
+		line-height: 24px;
+	}
 
-  .subscription-length-picker__option-term {
-    display: inline-block;
-    font-size: 24px;
-    line-height: 24px;
-  }
+	.subscription-length-picker__option-term {
+		display: inline-block;
+		font-size: 24px;
+		line-height: 24px;
+	}
 
-  .subscription-length-picker__option-discount {
-    margin-left: 10px;
-  }
+	.subscription-length-picker__option-discount {
+		margin-left: 10px;
+	}
 
-  .subscription-length-picker__option-description {
-    font-size: 16px;
-  }
+	.subscription-length-picker__option-description {
+		font-size: 16px;
+	}
 
-  .subscription-length-picker__option-credit-info {
-    float: right;
-    color: $gray;
-  }
+	.subscription-length-picker__option-credit-info {
+		float: right;
+		color: $gray;
+	}
 
-  .subscription-length-picker__option-old-price {
-    position: relative;
-    display: inline-block;
-    color: $gray-darken-10;
-    margin-right: 5px;
-    text-decoration: line-through;
-  }
+	.subscription-length-picker__option-old-price {
+		position: relative;
+		display: inline-block;
+		color: $gray-darken-10;
+		margin-right: 5px;
+		text-decoration: line-through;
+	}
 
-  .subscription-length-picker__option-price {
-    display: inline-block;
-    color: $gray-dark;
-  }
+	.subscription-length-picker__option-price {
+		display: inline-block;
+		color: $gray-dark;
+	}
 
-  .subscription-length-picker__option-side-note {
-    color: $gray-text-min;
-    margin-left: 5px;
-  }
+	.subscription-length-picker__option-side-note {
+		color: $gray-text-min;
+		margin-left: 5px;
+	}
 
-  &:not( .is-active ) {
-    border: 1px solid $gray;
-    padding: $padding-size + 2px;
-  }
+	&:not( .is-active ) {
+		border: 1px solid $gray;
+		padding: $padding-size + 2px;
+	}
 
-  &.is-active {
-    border: 3px solid $alert-green;
-    .subscription-length-picker__option-credit-info {
-      color: $alert-green;
-    }
-  }
+	&.is-active {
+		border: 3px solid $alert-green;
+		.subscription-length-picker__option-credit-info {
+			color: $alert-green;
+		}
+	}
 }

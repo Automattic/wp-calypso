@@ -1,3 +1,5 @@
+/** @format */
+
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
@@ -10,7 +12,7 @@ $plan-features-sidebar-width: 272px;
 
 .is-section-plans .plan-features__mobile {
 	display: block;
-	@media (min-width: $plan-features-sidebar-width + 480px) {
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
 		display: none;
 	}
 }
@@ -78,7 +80,7 @@ $plan-features-sidebar-width: 272px;
 
 .is-section-plans .plan-features__table {
 	display: none;
-	@media (min-width: $plan-features-sidebar-width + 480px) {
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
 		display: table;
 	}
 }

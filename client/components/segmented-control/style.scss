@@ -1,5 +1,7 @@
 /**
  * Segmented Control
+ *
+ * @format
  */
 
 .segmented-control {
@@ -84,17 +86,14 @@
 }
 
 //Primary variation
-.segmented-control.is-primary { 
-
+.segmented-control.is-primary {
 	.segmented-control__item {
-
 		&.is-selected {
-
 			.segmented-control__link {
-		  		border-color: $blue-medium;
-		 		background-color: $blue-medium;
-		 		color: $white;
-		  }
+				border-color: $blue-medium;
+				background-color: $blue-medium;
+				color: $white;
+			}
 
 			+ .segmented-control__item .segmented-control__link {
 				border-left-color: $blue-medium;

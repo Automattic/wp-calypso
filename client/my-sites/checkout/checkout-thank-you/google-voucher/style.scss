@@ -1,9 +1,11 @@
+/** @format */
+
 .google-voucher-code {
 	margin-top: 12px;
 	padding-bottom: 12px;
 	border-bottom: solid 1px $gray-light;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 	}
 }
 
@@ -17,10 +19,10 @@
 	max-width: 100%;
 }
 
-.button.google-voucher-code__setup-google-adwords:not(.is-compact) {
+.button.google-voucher-code__setup-google-adwords:not( .is-compact ) {
 	margin-top: 16px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		text-align: center;
 	}
 }
@@ -35,7 +37,7 @@
 		list-style-position: inside;
 		margin: 0;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			list-style-position: outside;
 			margin: 0 3em 1.5em;
 		}
@@ -49,12 +51,11 @@
 	padding: 20px 24px 24px;
 	background-color: #fbfcfd;
 	height: 116px;
-	box-shadow: 0 1px 0 0 $gray-lighten-20,
-		0 1px 0 lighten( $gray, 40% );
+	box-shadow: 0 1px 0 0 $gray-lighten-20, 0 1px 0 lighten( $gray, 40% );
 }
 
 .google-voucher-dialog__header__image {
-	width: (149 / 482) * 100%;
+	width: ( 149 / 482 ) * 100%;
 	margin-right: 20px;
 }
 
@@ -91,7 +92,7 @@ li.google-voucher__terms-and-conditions {
 	margin-top: 16px;
 	display: block;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		max-width: none;
 	}
 }

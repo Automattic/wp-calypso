@@ -1,3 +1,5 @@
+/** @format */
+
 .editor-html-toolbar {
 	height: 39px;
 	position: relative;
@@ -26,7 +28,7 @@
 				border-left-width: 0;
 				border-right-width: 0;
 			}
-  		}
+		}
 	}
 
 	&.is-pinned .editor-html-toolbar__wrapper {
@@ -41,22 +43,22 @@
 
 		.focus-sidebar &,
 		.has-chat & {
-			width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+			width: calc( 100% - ( #{$sidebar-width-max + 1} ) );
 		}
 
 		.focus-sidebar.has-chat & {
-			width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
+			width: calc( 100% - ( #{( $sidebar-width-max * 2 ) + 1} ) );
 			left: 0;
 		}
 
-		@include breakpoint( "660px-960px" ) {
+		@include breakpoint( '660px-960px' ) {
 			.focus-sidebar &,
 			.has-chat & {
-				width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+				width: calc( 100% - ( #{$sidebar-width-max + 1} ) );
 			}
 
 			.focus-sidebar.has-chat & {
-				width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
+				width: calc( 100% - ( #{( $sidebar-width-max * 2 ) + 1} ) );
 			}
 		}
 	}
@@ -154,7 +156,7 @@
 			font-weight: 400;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			padding: 6px 12px 8px 12px;
 			.gridicon {
 				margin-right: 0;
@@ -199,7 +201,8 @@
 		}
 
 		&:hover {
-			.gridicon, span {
+			.gridicon,
+			span {
 				color: $blue-medium;
 			}
 		}
@@ -246,7 +249,7 @@
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		width: 90%;
 
 		.dialog__content {

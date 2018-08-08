@@ -1,5 +1,6 @@
-.stats-widget {
+/** @format */
 
+.stats-widget {
 	.select-dropdown {
 		display: inline-flex;
 		flex-direction: row;
@@ -14,7 +15,8 @@
 		padding: 0;
 	}
 
-	.dashboard-widget__title, .stats-widget__footer {
+	.dashboard-widget__title,
+	.stats-widget__footer {
 		padding: 16px;
 		@include breakpoint( '>480px' ) {
 			padding: 24px;
@@ -55,7 +57,9 @@
 		margin-top: -8px;
 	}
 
-	.stats-widget__box-label, .table-heading .table-item__cell-title, .table.is-compact-table .table-heading {
+	.stats-widget__box-label,
+	.table-heading .table-item__cell-title,
+	.table.is-compact-table .table-heading {
 		font-size: 16px;
 		font-weight: 600;
 		white-space: nowrap;
@@ -70,7 +74,8 @@
 		color: $gray-darken-20;
 	}
 
-	.table.is-compact-table .table-heading:nth-child(3), .table.is-compact-table .table-item:nth-child(3) {
+	.table.is-compact-table .table-heading:nth-child( 3 ),
+	.table.is-compact-table .table-item:nth-child( 3 ) {
 		padding-left: 32px;
 
 		@include breakpoint( '<960px' ) {
@@ -122,8 +127,8 @@
 			}
 		}
 
-
-		.stats-widget__box-data, .stats-widget__box-sparkline {
+		.stats-widget__box-data,
+		.stats-widget__box-sparkline {
 			width: 50%;
 		}
 
@@ -138,7 +143,8 @@
 			margin-left: 4px;
 		}
 
-		.store-stats-module, .stats-widget__more {
+		.store-stats-module,
+		.stats-widget__more {
 			margin-left: -16px;
 		}
 
@@ -175,5 +181,4 @@
 		font-size: 14px;
 		margin-top: -14px;
 	}
-
 }

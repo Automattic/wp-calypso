@@ -1,3 +1,5 @@
+/** @format */
+
 // Module Tabs
 // (currently only used for the bar chart module at the top)
 
@@ -55,7 +57,7 @@
 
 			.gridicon {
 				float: left;
-				margin: 2px 20px 0 20px; 
+				margin: 2px 20px 0 20px;
 			}
 
 			.value {
@@ -63,7 +65,7 @@
 				display: block;
 				line-height: 24px;
 				text-align: center;
-				transition: font-size .3s 0 ease-out;
+				transition: font-size 0.3s 0 ease-out;
 
 				clear: none;
 				float: right;
@@ -71,7 +73,7 @@
 			}
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			border-top: none;
 			border-left: 1px solid $gray-light;
 			float: left;
@@ -93,7 +95,7 @@
 			min-height: 35px;
 			padding-top: 10px;
 
-			@include breakpoint( ">480px" ) {
+			@include breakpoint( '>480px' ) {
 				@include mobile-link-element;
 				padding: 5px 0 10px;
 				@include clear-fix;
@@ -106,7 +108,7 @@
 			text-transform: uppercase;
 			letter-spacing: 0.1em;
 
-			@include breakpoint( ">480px" ) {
+			@include breakpoint( '>480px' ) {
 				font-size: 11px;
 				line-height: inherit;
 				float: none;
@@ -117,7 +119,7 @@
 			float: left;
 			margin: 3px 8px 0 20px;
 
-			@include breakpoint( ">480px" ) {
+			@include breakpoint( '>480px' ) {
 				float: none;
 				vertical-align: middle;
 				margin: -2px 4px 0 0;
@@ -131,9 +133,9 @@
 			float: none;
 			line-height: 24px;
 			text-align: center;
-			transition: font-size .3s 0 ease-out;
+			transition: font-size 0.3s 0 ease-out;
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( '<480px' ) {
 				clear: none;
 				float: right;
 				font-size: 16px;
@@ -141,7 +143,7 @@
 			}
 		}
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			// Hover state
 			a:hover,
 			a:hover .value,
@@ -167,7 +169,7 @@
 		}
 
 		a:focus {
-			background: rgba(255,255,255,.5);
+			background: rgba( 255, 255, 255, 0.5 );
 		}
 
 		// Selected state

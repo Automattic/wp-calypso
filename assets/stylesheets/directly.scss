@@ -1,3 +1,5 @@
+/** @format */
+
 // Directly's Real Time Messaging (RTM) widget is an on-demand customer support tool.
 // Read more about the RTM widget and how it's used in Calypso in the `lib/directly` README.
 //
@@ -86,12 +88,12 @@ textarea {
 }
 
 // Form inputs
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="tel"],
-input[type="number"],
-input[type="url"],
+input[type='text'],
+input[type='password'],
+input[type='email'],
+input[type='tel'],
+input[type='number'],
+input[type='url'],
 textarea {
 	@extend %form-field;
 	-webkit-font-smoothing: subpixel-antialiased;
@@ -99,7 +101,6 @@ textarea {
 	&::-webkit-input-placeholder {
 		color: $gray;
 	}
-
 }
 textarea {
 	vertical-align: inherit;
@@ -107,20 +108,19 @@ textarea {
 
 .minimized-view,
 .maximized-view {
-	background: #F2F6F8;
+	background: #f2f6f8;
 }
 .minimized-view {
 	background: $white;
-	box-shadow: 0 1px 10px rgba(46,68,83,.1);
+	box-shadow: 0 1px 10px rgba( 46, 68, 83, 0.1 );
 	border: 1px solid lighten( $gray, 25% );
 }
 .maximized-view.is-ask-view {
 	top: 0;
 }
 .message-list-transition-wrapper {
-	background: #F2F6F8;
+	background: #f2f6f8;
 }
-
 
 /* HEADER */
 
@@ -168,7 +168,6 @@ textarea {
 	}
 }
 
-
 /* CHAT LIST (opens with the hamburguer button on header) */
 
 .chat-list-view-container {
@@ -211,7 +210,6 @@ textarea {
 	}
 }
 
-
 /* ASK QUESTION (opens from chat list) */
 
 .ask-question-form-container {
@@ -241,7 +239,6 @@ textarea {
 	}
 }
 
-
 /* THREAD */
 
 .thread-view-container {
@@ -264,9 +261,9 @@ textarea {
 		&:after {
 			// Triangle for the corner
 			position: absolute;
-				top: 0;
-				right: -10px;
-			content: "";
+			top: 0;
+			right: -10px;
+			content: '';
 			display: block;
 			width: 0;
 			height: 0;
@@ -286,9 +283,9 @@ textarea {
 		&:after {
 			// Triangle for the corner
 			position: absolute;
-				top: 0;
-				left: -10px;
-			content: "";
+			top: 0;
+			left: -10px;
+			content: '';
 			display: block;
 			width: 0;
 			height: 0;
@@ -331,7 +328,7 @@ textarea {
 	// Green border for success messages
 	&.success {
 		border-color: $alert-green;
-		background: #DCEEE5;
+		background: #dceee5;
 	}
 
 	// Green background for highlighted success messages

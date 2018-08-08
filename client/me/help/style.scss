@@ -1,3 +1,5 @@
+/** @format */
+
 .help__support-links {
 	&.is-placeholder {
 		@include placeholder();
@@ -27,7 +29,7 @@
 .help__support-link-contact .help__support-link-section {
 	flex-grow: 1;
 }
-	
+
 .help__support-link-contact .gridicon {
 	display: none;
 }
@@ -44,7 +46,7 @@
 .help__support-link-title {
 	font-size: 16px;
 	color: $blue-wordpress;
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 21px;
 	}
 }

@@ -1,7 +1,9 @@
+/** @format */
+
 .security-2fa-progress__container {
 	margin: 0 -16px 16px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 -24px 24px;
 	}
 
@@ -11,7 +13,7 @@
 
 		&:before {
 			background-color: $gray-lighten-20;
-			content: " ";
+			content: ' ';
 			display: block;
 			height: 1px;
 			position: absolute;
@@ -25,10 +27,9 @@
 			text-align: center;
 
 			&.is-highlighted {
-
 				&:before {
 					background-color: $blue-wordpress;
-					content: " ";
+					content: ' ';
 					display: block;
 					height: 2px;
 					position: absolute;
@@ -49,10 +50,9 @@
 			}
 
 			&.is-completed {
-
 				&:before {
 					background-color: $blue-wordpress;
-					content: " ";
+					content: ' ';
 					display: block;
 					height: 2px;
 					position: absolute;

@@ -1,3 +1,5 @@
+/** @format */
+
 .validation-fieldset {
 	margin-bottom: 0;
 	position: relative;
@@ -14,7 +16,7 @@
 .validation-fieldset + .logged-out-form__footer {
 	margin-top: 0;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin-top: 20px;
 	}
 }

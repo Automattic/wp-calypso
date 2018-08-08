@@ -1,6 +1,7 @@
+/** @format */
+
 .reader-post-options-menu,
 .reader-post-options-menu .ellipsis-menu {
-
 	.button.is-borderless {
 		color: $gray;
 
@@ -30,7 +31,6 @@
 }
 
 .reader-post-options-menu__popover {
-
 	.popover__menu {
 		min-width: 212px;
 	}
@@ -67,8 +67,7 @@
 
 		.follow-button__label,
 		.conversation-follow-button__label {
-
-			@include breakpoint( "<660px" ) {
+			@include breakpoint( '<660px' ) {
 				display: inline-block;
 			}
 		}

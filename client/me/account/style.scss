@@ -1,10 +1,12 @@
+/** @format */
+
 .account .notice {
 	margin: 5px 0 0 0;
 }
 
 .account__username-form-toggle-enter {
 	opacity: 0.01;
-	transition: opacity .5s ease-in;
+	transition: opacity 0.5s ease-in;
 }
 
 .account__username-form-toggle-enter-active {
@@ -13,7 +15,7 @@
 
 .account__username-form-toggle-leave {
 	opacity: 1;
-	transition: opacity .01s ease-in;
+	transition: opacity 0.01s ease-in;
 }
 
 .account__username-form-toggle-leave-active {

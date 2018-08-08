@@ -1,8 +1,10 @@
+/** @format */
+
 // Multisite
 .foldable-card.card {
 	@include clear-fix;
 	position: relative;
-	transition: margin .15s linear;
+	transition: margin 0.15s linear;
 	padding: 0;
 
 	&.is-expanded {
@@ -24,7 +26,7 @@
 		cursor: pointer;
 	}
 
-	&.has-border{
+	&.has-border {
 		.foldable-card__summary,
 		.foldable-card__summary-expanded {
 			margin-right: 48px;
@@ -111,7 +113,7 @@ button.foldable-card__action {
 		width: 100%;
 		vertical-align: middle;
 
-		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
 	}
 
 	.gridicon:hover {
@@ -149,7 +151,7 @@ button.foldable-card__action {
 	transition: opacity 0.2s linear;
 	display: inline-block;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		display: none;
 	}
 }

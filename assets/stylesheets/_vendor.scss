@@ -1,3 +1,5 @@
+/** @format */
+
 // External Dependencies
 @import '../../node_modules/react-virtualized/styles';
 @import '../../node_modules/draft-js/dist/Draft';
@@ -7,15 +9,15 @@
 	fill: currentColor;
 
 	&.needs-offset g {
-		transform: translate( 1px, 1px );	/* translates to .5px because it's in a child element */
+		transform: translate( 1px, 1px ); /* translates to .5px because it's in a child element */
 	}
 
 	&.needs-offset-x g {
-		transform: translate( 1px, 0 );		/* only nudges horizontally */
+		transform: translate( 1px, 0 ); /* only nudges horizontally */
 	}
 
 	&.needs-offset-y g {
-		transform: translate( 0, 1px );		/* only nudges vertically */
+		transform: translate( 0, 1px ); /* only nudges vertically */
 	}
 }
 

@@ -1,3 +1,5 @@
+/** @format */
+
 .activity-log-confirm-dialog.dialog.card {
 	text-align: center;
 	max-width: 400px;
@@ -7,8 +9,7 @@
 	.activity-log-item__card {
 		padding-bottom: 8px;
 		border-radius: 4px;
-		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 2px 5px $gray-lighten-20;
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 2px 5px $gray-lighten-20;
 	}
 	.activity-log-item__activity-icon {
 		background: $blue-medium;
@@ -24,8 +25,8 @@
 		font-weight: 300;
 		height: 2em;
 		line-height: 32px;
-		margin-top: .5em;
-		margin-bottom: .5em;
+		margin-top: 0.5em;
+		margin-bottom: 0.5em;
 	}
 }
 
@@ -46,9 +47,9 @@
 	width: 100%;
 	margin-bottom: 24px;
 	box-sizing: border-box;
-	animation: appear .3s ease-in-out;
+	animation: appear 0.3s ease-in-out;
 
-	@include breakpoint(">480px") {
+	@include breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 
@@ -63,7 +64,7 @@
 		width: 18px;
 		height: 18px;
 
-		@include breakpoint(">480px") {
+		@include breakpoint( '>480px' ) {
 			position: relative;
 			width: 24px;
 			height: 24px;
@@ -80,7 +81,7 @@
 	padding-left: 24px;
 	font-size: 12px;
 
-	@include breakpoint(">480px") {
+	@include breakpoint( '>480px' ) {
 		padding-left: 8px;
 		font-size: 14px;
 	}
@@ -110,7 +111,7 @@
 	border-top: #eee 1px solid;
 	display: block;
 
-	@include breakpoint(">480px") {
+	@include breakpoint( '>480px' ) {
 		display: flex;
 		justify-content: space-between;
 		flex-direction: row-reverse;
@@ -119,7 +120,7 @@
 	button {
 		margin: 0 0 8px 8px;
 
-		@include breakpoint("<480px") {
+		@include breakpoint( '<480px' ) {
 			margin: 0 8px 0 0;
 		}
 	}
@@ -127,7 +128,7 @@
 
 .activity-log-confirm-dialog__primary-actions {
 	text-align: right;
-	@include breakpoint("<480px") {
+	@include breakpoint( '<480px' ) {
 		margin-bottom: 8px;
 		text-align: left;
 	}
@@ -138,7 +139,7 @@
 	padding: 7px 8px 0 0;
 	display: inline-block;
 
-	@include breakpoint("<480px") {
+	@include breakpoint( '<480px' ) {
 		margin-bottom: 4px;
 		font-size: 12px;
 	}
@@ -150,7 +151,7 @@
 		height: 18px;
 		margin-right: 6px;
 
-		@include breakpoint(">480px") {
+		@include breakpoint( '>480px' ) {
 			top: 0;
 			width: 24px;
 			height: 24px;

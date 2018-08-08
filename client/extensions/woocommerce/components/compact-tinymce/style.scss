@@ -1,3 +1,5 @@
+/** @format */
+
 .compact-tinymce {
 	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox:hover {
 		border-left-color: transparent;
@@ -28,7 +30,7 @@
 		border-right: 1px solid $gray-lighten-20;
 		height: 36px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			height: 44px;
 		}
 	}
@@ -40,11 +42,11 @@
 	.mce-container.mce-tinymce {
 		& > .mce-container-body {
 			&:after {
-				@include breakpoint( "<660px" ) {
+				@include breakpoint( '<660px' ) {
 					@include long-content-fade( $size: 0px );
 				}
 
-				@include breakpoint( "660px-960px" ) {
+				@include breakpoint( '660px-960px' ) {
 					@include long-content-fade( $size: 0px );
 				}
 			}

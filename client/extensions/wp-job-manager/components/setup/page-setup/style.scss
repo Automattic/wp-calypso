@@ -1,3 +1,5 @@
+/** @format */
+
 .wp-job-manager__setup .page-setup__page {
 	display: inline;
 }
@@ -21,7 +23,7 @@
 	font-size: 13px;
 	text-align: center;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		float: left;
 		line-height: 38px;
 	}
@@ -30,12 +32,12 @@
 .wp-job-manager__setup .page-setup__create-pages {
 	margin-top: 10px;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-bottom: 18px;
 		width: 100%;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		float: right;
 		margin: 0;
 	}

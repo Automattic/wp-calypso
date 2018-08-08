@@ -1,3 +1,5 @@
+/** @format */
+
 .post-schedule {
 	position: relative;
 
@@ -98,7 +100,7 @@ hr.post-schedule__hr {
 	margin: 0 -16px;
 }
 
-input[type="text"].post-schedule__clock-time {
+input[type='text'].post-schedule__clock-time {
 	height: 28px;
 	display: inline-block;
 	border: 1px solid $gray-lighten-30;
