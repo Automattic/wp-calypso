@@ -113,39 +113,41 @@ class TiledGalleryLayoutSquare extends Component {
 		const linkTo = this.props.linkTo;
 
 		return (
-			<div className="tiled-gallery tiled-gallery-unresized" data-original-width={ CONTENT_WIDTH }>
-				{ rows.map( ( row, index ) => {
-					const styleAttr = {
-						width: row.width + 'px',
-						height: row.height + 'px',
-					};
-					const setMyAttributes = ( attrs ) => this.setImageAttributes( index, attrs );
+			<div className="tiled-gallery">
+				<div className="tiled-gallery-square tiled-gallery-unresized" data-original-width={ CONTENT_WIDTH }>
+					{ rows.map( ( row, index ) => {
+						const styleAttr = {
+							width: row.width + 'px',
+							height: row.height + 'px',
+						};
+						const setMyAttributes = ( attrs ) => this.setImageAttributes( index, attrs );
 
-					return (
-						<div
-							key={ index }
-							className="tiled-gallery-row gallery-row"
-							style={ styleAttr }
-							data-original-width={ row.width }
-							data-original-height={ row.height }
-							>
-							{ row.images.map( ( image ) => (
-								<TiledGallerySquareGroup
-									key={ image.id }
-									group_size={ row.group_size }
-									id={ image.id }
-									url={ image.url }
-									link={ image.link }
-									width={ image.width }
-									height={ image.height }
-									caption={ image.caption }
-									linkTo={ linkTo }
-									setAttributes={ setMyAttributes }
-								/>
-							) ) }
-						</div>
-					);
-				} ) }
+						return (
+							<div
+								key={ index }
+								className="tiled-gallery-row gallery-row"
+								style={ styleAttr }
+								data-original-width={ row.width }
+								data-original-height={ row.height }
+								>
+								{ row.images.map( ( image ) => (
+									<TiledGallerySquareGroup
+										key={ image.id }
+										group_size={ row.group_size }
+										id={ image.id }
+										url={ image.url }
+										link={ image.link }
+										width={ image.width }
+										height={ image.height }
+										caption={ image.caption }
+										linkTo={ linkTo }
+										setAttributes={ setMyAttributes }
+									/>
+								) ) }
+							</div>
+						);
+					} ) }
+				</div>
 			</div>
 		);
 	}

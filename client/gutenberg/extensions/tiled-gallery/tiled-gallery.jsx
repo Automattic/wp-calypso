@@ -4,6 +4,8 @@
 import { __ } from '@wordpress/i18n';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 
+import './tiled-gallery.scss';
+
 /**
  * Internal dependencies
  */
