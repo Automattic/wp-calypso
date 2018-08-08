@@ -16,7 +16,7 @@ export default function( params, callback ) {
 	return xhr( params, function( error, response, headers ) {
 		if ( error && error.name === 'InvalidTokenError' ) {
 			debug( 'Invalid token error detected, authorisation probably revoked - logging out' );
-			require( 'lib/user/utils' ).logout();
+			require( 'lib/user/utils' ).default.logout();
 		}
 
 		callback( error, response, headers );

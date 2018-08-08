@@ -1,5 +1,5 @@
 /**
- * Detect error looking in the reponse data object.
+ * Detect error looking in the response data object.
  *
  *
  * @format
@@ -39,8 +39,6 @@ export function requestHandler( handler ) {
 
 export function injectHandler( wpcom ) {
 	const request = wpcom.request.bind( wpcom );
-
-	return Object.assign( wpcom, {
-		request: requestHandler( request ),
-	} );
+	wpcom.request = requestHandler( request );
+	return wpcom;
 }
