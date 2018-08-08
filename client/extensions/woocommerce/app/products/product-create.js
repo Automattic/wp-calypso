@@ -99,18 +99,6 @@ class ProductCreate extends React.Component {
 		}
 	}
 
-	onUploadStart = () => {
-		this.setState( prevState => ( {
-			isUploading: [ ...prevState.isUploading, [ true ] ],
-		} ) );
-	};
-
-	onUploadFinish = () => {
-		this.setState( prevState => ( {
-			isUploading: prevState.isUploading.slice( 1 ),
-		} ) );
-	};
-
 	onSave = () => {
 		const { site, product, finishedInitialSetup, translate } = this.props;
 
@@ -218,8 +206,6 @@ class ProductCreate extends React.Component {
 					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
-					onUploadStart={ this.onUploadStart }
-					onUploadFinish={ this.onUploadFinish }
 				/>
 			</Main>
 		);

@@ -39,8 +39,6 @@ class ProductForm extends Component {
 		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
-		onUploadStart: PropTypes.func.isRequired,
-		onUploadFinish: PropTypes.func.isRequired,
 		storeIsManagingStock: PropTypes.string,
 	};
 
@@ -79,13 +77,7 @@ class ProductForm extends Component {
 		return (
 			<div className={ classNames( 'products__form', this.props.className ) }>
 				<QuerySettingsProducts siteId={ siteId } />
-				<ProductFormDetailsCard
-					siteId={ siteId }
-					product={ product }
-					editProduct={ editProduct }
-					onUploadStart={ this.props.onUploadStart }
-					onUploadFinish={ this.props.onUploadFinish }
-				/>
+				<ProductFormDetailsCard siteId={ siteId } product={ product } editProduct={ editProduct } />
 				<ProductFormAdditionalDetailsCard
 					siteId={ siteId }
 					product={ product }
@@ -108,8 +100,6 @@ class ProductForm extends Component {
 					editProductCategory={ editProductCategory }
 					editProductAttribute={ editProductAttribute }
 					editProductVariation={ editProductVariation }
-					onUploadStart={ this.props.onUploadStart }
-					onUploadFinish={ this.props.onUploadFinish }
 					storeIsManagingStock={ storeIsManagingStock }
 				/>
 

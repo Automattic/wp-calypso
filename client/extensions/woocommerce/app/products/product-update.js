@@ -112,18 +112,6 @@ class ProductUpdate extends React.Component {
 		}
 	}
 
-	onUploadStart = () => {
-		this.setState( prevState => ( {
-			isUploading: [ ...prevState.isUploading, [ true ] ],
-		} ) );
-	};
-
-	onUploadFinish = () => {
-		this.setState( prevState => ( {
-			isUploading: prevState.isUploading.slice( 1 ),
-		} ) );
-	};
-
 	// TODO: In v1, this deletes a product, as we don't have trash management.
 	// Once we have trashing management, we can introduce 'trash' instead.
 	onTrash = () => {
@@ -224,8 +212,6 @@ class ProductUpdate extends React.Component {
 					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
-					onUploadStart={ this.onUploadStart }
-					onUploadFinish={ this.onUploadFinish }
 				/>
 			</Main>
 		);

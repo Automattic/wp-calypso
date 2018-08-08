@@ -37,8 +37,6 @@ class ProductFormVariationsCard extends Component {
 		editProduct: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
-		onUploadStart: PropTypes.func.isRequired,
-		onUploadFinish: PropTypes.func.isRequired,
 		storeIsManagingStock: PropTypes.string,
 	};
 
@@ -154,8 +152,6 @@ class ProductFormVariationsCard extends Component {
 							product={ product }
 							variations={ variations }
 							editProductVariation={ editProductVariation }
-							onUploadStart={ this.props.onUploadStart }
-							onUploadFinish={ this.props.onUploadFinish }
 							storeIsManagingStock={ storeIsManagingStock }
 						/>
 						{ variations &&

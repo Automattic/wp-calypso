@@ -4,10 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { head } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,10 +14,8 @@ import Button from 'components/button';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormTextInput from 'components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
-import ImagePreloader from 'components/image-preloader';
+import ImageSelector from 'blocks/image-selector';
 import PriceInput from 'woocommerce/components/price-input';
-import ProductImageUploader from 'woocommerce/components/product-image-uploader';
-import Spinner from 'components/spinner';
 
 class ProductFormVariationsRow extends Component {
 	static propTypes = {
@@ -30,24 +25,8 @@ class ProductFormVariationsRow extends Component {
 		manageStock: PropTypes.bool,
 		onShowDialog: PropTypes.func,
 		editProductVariation: PropTypes.func.isRequired,
-		onUploadStart: PropTypes.func.isRequired,
-		onUploadFinish: PropTypes.func.isRequired,
 		storeIsManagingStock: PropTypes.string,
 	};
-
-	constructor( props ) {
-		super( props );
-		const { variation } = props;
-		const image = ( variation && variation.image ) || {};
-
-		this.state = {
-			id: image.id || null,
-			src: image.src || null,
-			placeholder: null,
-			transientId: null,
-			isUploading: false,
-		};
-	}
 
 	// TODO: Consildate the following set/toggle functions with a helper (along with the form-details functions).
 	setPrice = e => {
@@ -78,107 +57,47 @@ class ProductFormVariationsRow extends Component {
 		onShowDialog( variation.id );
 	};
 
-	onSelect = files => {
-		const file = head( files );
-		this.setState( {
-			placeholder: file.preview,
-			transientId: file.ID,
-			isUploading: true,
-		} );
-		this.props.onUploadStart();
-	};
+	setImage = media => {
+		if ( ! media || ! media.items.length ) {
+			return;
+		}
 
-	onUpload = file => {
 		const { siteId, editProductVariation, product, variation } = this.props;
 		const image = {
-			src: file.URL,
-			id: file.ID,
+			id: media.items[ 0 ].ID,
 		};
-		this.setState( {
-			...image,
-			transientId: null,
-			isUploading: false,
-		} );
+
 		editProductVariation( siteId, product, variation, { image } );
 	};
 
-	onError = () => {
-		this.setState( {
-			placeholder: null,
-			transientId: null,
-			isUploading: false,
-		} );
+	changeImages = newImages => {
+		const { siteId, editProductVariation, product, variation } = this.props;
+		const image = {
+			id: newImages[ 0 ].ID,
+		};
+		editProductVariation( siteId, product, variation, { image } );
 	};
 
 	removeImage = () => {
 		const { siteId, editProductVariation, product, variation } = this.props;
-		this.setState( {
-			placeholder: null,
-			transientId: null,
-			isUploading: false,
-			src: null,
-			id: null,
-		} );
 		editProductVariation( siteId, product, variation, { image: {} } );
 	};
 
 	renderImage = () => {
-		const { src, placeholder, isUploading } = this.state;
-		const { translate } = this.props;
-
-		let image = null;
-		if ( src && ! isUploading ) {
-			image = (
-				<figure>
-					<ImagePreloader
-						src={ src }
-						alt={ translate( 'Variation thumbnail' ) }
-						placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
-					/>
-				</figure>
-			);
-		} else if ( isUploading ) {
-			image = (
-				<figure>
-					<img src={ placeholder || '' } alt="" />
-					<Spinner />
-				</figure>
-			);
-		}
-
-		const classes = classNames( 'products__product-form-variation-image', {
-			preview: null === src,
-			uploader: ! image,
-		} );
-
-		const removeButton = image && (
-			<Button
-				compact
-				onClick={ this.removeImage }
-				aria-label={ translate( 'Remove image' ) }
-				className="products__product-form-variation-image-remove"
-			>
-				<Gridicon
-					icon="cross"
-					size={ 24 }
-					className="products__product-form-variation-image-remove-icon"
-				/>
-			</Button>
-		);
+		const { variation } = this.props;
+		const imageIds = variation.image ? [ variation.image.id ] : [];
 
 		return (
-			<div className={ classes }>
-				<ProductImageUploader
+			<div className="products__product-form-variation-image">
+				<ImageSelector
 					compact
 					multiple={ false }
-					onSelect={ this.onSelect }
-					onUpload={ this.onUpload }
-					onError={ this.onError }
-					onFinish={ this.props.onUploadFinish }
-				>
-					{ image }
-				</ProductImageUploader>
-				{ removeButton }
+					imageIds={ imageIds }
+					onImageSelected={ this.setImage }
+					onImageChange={ this.changeImages }
+					onRemoveImage={ this.removeImage }
+					onAddImage={ this.addImage }
+				/>
 			</div>
 		);
 	};

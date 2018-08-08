@@ -17,8 +17,9 @@ import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
 import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
-import ProductFormImages from './product-form-images';
+import ImageSelector from 'blocks/image-selector';
 import ProductReviewsWidget from 'woocommerce/components/product-reviews-widget';
 
 export default class ProductFormDetailsCard extends Component {
@@ -30,8 +31,6 @@ export default class ProductFormDetailsCard extends Component {
 			name: PropTypes.string,
 		} ),
 		editProduct: PropTypes.func.isRequired,
-		onUploadStart: PropTypes.func,
-		onUploadFinish: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -77,19 +76,35 @@ export default class ProductFormDetailsCard extends Component {
 		editProduct( siteId, product, { description } );
 	}
 
-	onImageUpload = image => {
+	setImage = media => {
+		if ( ! media || ! media.items.length ) {
+			return;
+		}
+		const { siteId, product, editProduct } = this.props;
+		const images = media.items.map( item => ( { id: item.ID } ) );
+		editProduct( siteId, product, { images } );
+	};
+
+	changeImages = newImages => {
+		const { siteId, product, editProduct } = this.props;
+		const images = newImages.map( image => ( { id: image.ID } ) );
+		editProduct( siteId, product, { images } );
+	};
+
+	removeImage = image => {
+		const { siteId, product, editProduct } = this.props;
+		const images =
+			( product.images && [ ...product.images ].filter( i => i.id !== image.ID ) ) || [];
+		editProduct( siteId, product, { images } );
+	};
+
+	addImage = image => {
 		const { siteId, product, editProduct } = this.props;
 		const images = ( product.images && [ ...product.images ] ) || [];
 		images.push( {
 			id: image.ID,
 			src: image.URL,
 		} );
-		editProduct( siteId, product, { images } );
-	};
-
-	onImageRemove = id => {
-		const { siteId, product, editProduct } = this.props;
-		const images = ( product.images && [ ...product.images ].filter( i => i.id !== id ) ) || [];
 		editProduct( siteId, product, { images } );
 	};
 
@@ -120,19 +135,27 @@ export default class ProductFormDetailsCard extends Component {
 			productReviewsWidget = <ProductReviewsWidget product={ product } />;
 		}
 
-		const images = product.images || [];
+		const imageIds = product.images ? product.images.map( image => image.id ) : [];
 		const __ = i18n.translate;
 
 		return (
 			<Card className="products__product-form-details">
 				<div className="products__product-form-details-wrapper">
-					<ProductFormImages
-						images={ images }
-						onUpload={ this.onImageUpload }
-						onRemove={ this.onImageRemove }
-						onUploadStart={ this.props.onUploadStart }
-						onUploadFinish={ this.props.onUploadFinish }
-					/>
+					<div className="products__product-form-images-wrapper">
+						<ImageSelector
+							compact={ imageIds && imageIds.length > 0 }
+							imageIds={ imageIds }
+							multiple
+							onImageSelected={ this.setImage }
+							onImageChange={ this.changeImages }
+							onRemoveImage={ this.removeImage }
+							onAddImage={ this.addImage }
+							showEditIcon
+						/>
+						<FormSettingExplanation>
+							{ __( 'For best results, upload photos larger than 1000x1000px.' ) }
+						</FormSettingExplanation>
+					</div>
 					<div className="products__product-form-details-basic">
 						<FormFieldSet className="products__product-form-details-basic-name">
 							<FormLabel htmlFor="name">{ __( 'Product name' ) }</FormLabel>
