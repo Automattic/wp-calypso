@@ -24,33 +24,35 @@ class Example extends React.Component {
 		this.getCode();
 	}
 
-	getCode() {
+	async getReadme() {
 		const readmeFilePath = `/node_modules/@wordpress/components/src/${
 			this.props.readmeFilePath
 		}/README.md`;
 
-		request
-			.get( '/devdocs/service/content' )
-			.query( {
-				path: readmeFilePath,
-				format: 'markdown',
-			} )
-			.then( ( { text } ) => {
-				let code = codeBlocks( text ).find( block => 'jsx' === block.lang ).code;
+		const { text } = await request.get( '/devdocs/service/content' ).query( {
+			path: readmeFilePath,
+			format: 'markdown',
+		} );
+		return text;
+	}
 
-				// react-live cannot resolve imports in real time, so we get rid of them
-				// (dependencies will be injected via the scope property).
-				code = code.replace( /^.*import.*$/gm, '' );
+	async getCode() {
+		const readme = await this.getReadme();
 
-				// All the examples are defining a functional component called My<ComponentName> we
-				// can render.
-				code = `
-					${ code }
-					render( <${ this.props.render } /> );
-				`;
+		let code = codeBlocks( readme ).find( block => 'jsx' === block.lang ).code;
 
-				this.setState( { code } );
-			} );
+		// react-live cannot resolve imports in real time, so we get rid of them
+		// (dependencies will be injected via the scope property).
+		code = code.replace( /^.*import.*$/gm, '' );
+
+		// All the examples are defining a functional component called My<ComponentName> we
+		// can render.
+		code = `
+			${ code }
+			render( <${ this.props.render } /> );
+		`;
+
+		this.setState( { code } );
 	}
 
 	render() {
