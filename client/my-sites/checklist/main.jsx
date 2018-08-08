@@ -146,21 +146,9 @@ class ChecklistMain extends PureComponent {
 		);
 	}
 
-	renderChecklist() {
-		const { displayMode, siteId, tasks } = this.props;
-		const completed = tasks && ! find( tasks, { completed: false } );
-
-		return (
-			<Fragment>
-				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ this.renderHeader( completed, displayMode ) }
-				<ChecklistShow />
-			</Fragment>
-		);
-	}
-
 	render() {
-		const { checklistAvailable, displayMode, translate } = this.props;
+		const { checklistAvailable, displayMode, siteId, tasks, translate } = this.props;
+		const completed = tasks && ! find( tasks, { completed: false } );
 
 		let translatedTitle = translate( 'Site Checklist' );
 		let title = 'Site Checklist';
@@ -177,7 +165,11 @@ class ChecklistMain extends PureComponent {
 				<SidebarNavigation />
 				<DocumentHead title={ translatedTitle } />
 				{ checklistAvailable ? (
-					this.renderChecklist()
+					<Fragment>
+						{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+						{ this.renderHeader( completed, displayMode ) }
+						<ChecklistShow />
+					</Fragment>
 				) : (
 					<EmptyContent title={ translate( 'Checklist not available for this site' ) } />
 				) }
