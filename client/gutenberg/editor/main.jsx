@@ -9,6 +9,7 @@ import {
 	setDefaultBlockName,
 	setUnknownTypeHandlerName,
 } from '@wordpress/blocks';
+import '@wordpress/core-data';
 
 /**
  * Internal dependencies
