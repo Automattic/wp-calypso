@@ -37,7 +37,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins/';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
-import UnavailabilityNotice from './unavailability-notice';
+import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { adjustMoment, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
@@ -304,13 +304,13 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate } = this.props;
+		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan } = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( logLoadingState === 'success' ) {
 			return isFilterEmpty ? (
-				<ActivityLogExample siteId={ siteId } />
+				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 			) : (
 				<EmptyContent title={ translate( 'No matching events found.' ) } />
 			);
@@ -388,12 +388,10 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
+
 				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
-					'unavailable' === rewindState.state && (
-						<UnavailabilityNotice siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
-					) }
+					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state &&
 					! siteIsOnFreePlan && (
 						<Banner
@@ -438,6 +436,7 @@ class ActivityLog extends Component {
 							total={ logs.length }
 						/>
 						<section className="activity-log__wrapper">
+							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
 							{ theseLogs.map( log => (
 								<Fragment key={ log.activityId }>
 									{ timePeriod( log ) }
@@ -452,13 +451,7 @@ class ActivityLog extends Component {
 								</Fragment>
 							) ) }
 						</section>
-						{ siteIsOnFreePlan && (
-							<p className="activity-log__limit-notice">
-								{ translate(
-									"Since you're on a free plan, you'll see limited events in your activity."
-								) }
-							</p>
-						) }
+						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
