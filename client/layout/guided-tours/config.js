@@ -5,6 +5,8 @@
  */
 
 import { combineTours } from 'layout/guided-tours/config-elements';
+import { ActivityLogJetpackIntroTour } from 'layout/guided-tours/tours/activity-log-jetpack-intro-tour';
+import { ActivityLogWpcomIntroTour } from 'layout/guided-tours/tours/activity-log-wpcom-intro-tour';
 import { MainTour } from 'layout/guided-tours/tours/main-tour';
 import { TutorialSitePreviewTour } from 'layout/guided-tours/tours/tutorial-site-preview-tour';
 import { GDocsIntegrationTour } from 'layout/guided-tours/tours/gdocs-integration-tour';
@@ -27,6 +29,8 @@ import { SimplePaymentsEmailTour } from 'layout/guided-tours/tours/simple-paymen
 import { PluginsBasicTour } from 'layout/guided-tours/tours/plugins-basic-tour';
 
 export default combineTours( {
+	activityLogJetpackIntroTour: ActivityLogJetpackIntroTour,
+	activityLogWpcomIntroTour: ActivityLogWpcomIntroTour,
 	checklistAboutPage: ChecklistAboutPageTour,
 	checklistContactPage: ChecklistContactPageTour,
 	checklistDomainRegister: ChecklistDomainRegisterTour,

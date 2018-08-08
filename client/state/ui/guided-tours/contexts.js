@@ -18,7 +18,7 @@ import { getSectionName, getSelectedSite, getSelectedSiteId } from 'state/ui/sel
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
-import { hasDefaultSiteTitle, isCurrentPlanPaid } from 'state/sites/selectors';
+import { hasDefaultSiteTitle, isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 
 const { getAll: getAllMedia } = MediaStore;
 
@@ -196,6 +196,17 @@ export const isSelectedSitePlanPaid = state => {
 };
 
 /**
+ * Returns true if the selected site has a free plan.
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if selected site is on a free plan, false otherwise.
+ */
+export const isSelectedSitePlanFree = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? ! isCurrentPlanPaid( state, siteId ) : false;
+};
+
+/**
  * Returns true if user has just pasted something from Google Docs.
  *
  * @param {Object} state Global state tree
@@ -216,4 +227,28 @@ export const hasUserPastedFromGoogleDocs = state => {
 export const canUserEditSettingsOfSelectedSite = state => {
 	const siteId = getSelectedSiteId( state );
 	return siteId ? canCurrentUser( state, siteId, 'manage_options' ) : false;
+};
+
+/**
+ * Returns true if the current site is a jetpack site.
+ * Used in activity log tours.
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True if site is Jetpack, false otherwise.
+ */
+export const isSelectedSiteJetpack = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? isJetpackSite( state, siteId ) : false;
+};
+
+/**
+ * Returns true if the current site is not a jetpack site.
+ * Used in activity log tours.
+ *
+ * @param {Object} state Global state tree
+ * @return {Boolean} True is not Jetpack, false otherwise.
+ */
+export const isSelectedSiteNotJetpack = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? ! isJetpackSite( state, siteId ) : false;
 };
