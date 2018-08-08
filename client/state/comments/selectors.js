@@ -3,6 +3,7 @@
  * External dependencies
  */
 import {
+	isDate,
 	filter,
 	find,
 	findLast,
@@ -69,6 +70,38 @@ export const getCommentErrors = state => {
  */
 export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
 	get( state.comments.totalCommentsCount, `${ siteId }-${ postId }` );
+
+/***
+ * Get total number of comments in state at a given date and time
+ *
+ * @param {Object} state redux state
+ * @param {Number} siteId site identification
+ * @param {Number} postId site identification
+ * @param {Date} date Date to count comments for
+ * @return {Number} total comments count in state
+ */
+export const getPostCommentsCountAtDate = ( state, siteId, postId, date ) => {
+	// Check the provided date
+	if ( ! isDate( date ) ) {
+		return 0;
+	}
+
+	const stateKey = getStateKey( siteId, postId );
+	const postComments = get( state.comments.items, stateKey );
+
+	if ( ! postComments ) {
+		return 0;
+	}
+
+	// Count post comments with the specified date
+	const dateTimestamp = date.getTime() / 1000;
+	const postCommentsAtDate = filter( postComments, postComment => {
+		return Date.parse( postComment.date ) / 1000 === dateTimestamp;
+	} );
+
+	return size( postCommentsAtDate );
+};
+
 /***
  * Get most recent comment date for a given post
  * @param {Object} state redux state

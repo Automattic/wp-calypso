@@ -3,6 +3,7 @@
  * External dependencies
  */
 import {
+	filter,
 	isUndefined,
 	orderBy,
 	has,
@@ -33,6 +34,7 @@ import {
 	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
+	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_UNLIKE,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_WRITE_ERROR,
@@ -46,9 +48,7 @@ import {
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
 import trees from './trees/reducer';
-import { getStateKey, getErrorKey, commentHasLink } from './utils';
-
-const getCommentDate = ( { date } ) => new Date( date );
+import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
 
 const isCommentManagementEdit = newProperties =>
 	has( newProperties, 'commentContent' ) &&
@@ -159,6 +159,49 @@ export function items( state = {}, action ) {
 						placeholderError: error,
 						placeholderErrorType: errorType,
 					} )
+				),
+			};
+	}
+
+	return state;
+}
+
+/***
+ * Comments pending items reducer, stores new comments per siteId and postId
+ * @param {Object} state redux state
+ * @param {Object} action redux action
+ * @returns {Object} new redux state
+ */
+export function pendingItems( state = {}, action ) {
+	const { type, siteId, postId } = action;
+
+	// cannot construct stateKey without both
+	if ( ! siteId || ! postId ) {
+		return state;
+	}
+
+	const stateKey = getStateKey( siteId, postId );
+
+	switch ( type ) {
+		case COMMENTS_UPDATES_RECEIVE:
+			const comments = map( action.comments, _comment => ( {
+				..._comment,
+				contiguous: ! action.commentById,
+				has_link: commentHasLink( _comment.content, _comment.has_link ),
+			} ) );
+			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
+			return {
+				...state,
+				[ stateKey ]: orderBy( allComments, getCommentDate, [ 'desc' ] ),
+			};
+
+		case COMMENTS_RECEIVE:
+			const receivedCommentIds = map( action.comments, 'ID' );
+			return {
+				...state,
+				[ stateKey ]: filter(
+					state[ stateKey ],
+					_comment => ! includes( receivedCommentIds, _comment.ID )
 				),
 			};
 	}
@@ -471,6 +514,7 @@ export const counts = createReducer(
 export default combineReducers( {
 	counts,
 	items,
+	pendingItems,
 	fetchStatus,
 	errors,
 	expansions,

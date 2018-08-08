@@ -11,7 +11,7 @@ Object {
       "author": Object {
         "ID": 1,
       },
-      "date": "2016-01-31T10:07:18-08:00",
+      "date": "2016-01-29T10:07:18-08:00",
       "i_like": true,
       "like_count": 5,
       "parent": false,
@@ -69,7 +69,7 @@ Object {
       "author": Object {
         "ID": 1,
       },
-      "date": "2016-01-31T10:07:18-08:00",
+      "date": "2016-01-29T10:07:18-08:00",
       "i_like": true,
       "like_count": 5,
       "parent": false,

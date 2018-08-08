@@ -66,17 +66,18 @@ export const receiveCommentsError = ( { siteId, commentId } ) => ( {
 } );
 
 /***
- * Creates a thunk that requests comments for a given post
+ * Creates an action that requests comments for a given post
  * @param {Number} siteId site identifier
  * @param {Number} postId post identifier
  * @param {String} status status filter. Defaults to approved posts
- * @returns {Function} thunk that requests comments for a given post
+ * @returns {Function} action that requests comments for a given post
  */
 export function requestPostComments( {
 	siteId,
 	postId,
 	status = 'approved',
 	direction = 'before',
+	isPoll = false,
 } ) {
 	if ( ! isEnabled( 'comments/filters-in-posts' ) ) {
 		status = 'approved';
@@ -87,6 +88,7 @@ export function requestPostComments( {
 		siteId,
 		postId,
 		direction,
+		isPoll,
 		query: {
 			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
