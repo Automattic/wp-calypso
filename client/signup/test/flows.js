@@ -15,6 +15,7 @@ import sinon from 'sinon';
 import mockedFlows from './fixtures/flows';
 import abtest from 'lib/abtest';
 import flows from 'signup/config/flows';
+import userFactory from 'lib/user';
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => {},
@@ -27,7 +28,7 @@ describe( 'Signup Flows Configuration', () => {
 		let user;
 
 		beforeAll( () => {
-			user = require( 'lib/user' )();
+			user = userFactory();
 
 			sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
 			sinon.stub( flows, 'getABTestFilteredFlow' ).callsFake( ( flowName, flow ) => {
@@ -44,7 +45,7 @@ describe( 'Signup Flows Configuration', () => {
 			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'user', 'site' ] );
 		} );
 
-		test( 'should remove the user step from the flow when the user is not logged in', () => {
+		test( 'should remove the user step from the flow when the user is logged in', () => {
 			user.setLoggedIn( true );
 			assert.deepEqual( flows.getFlow( 'main' ).steps, [ 'site' ] );
 			user.setLoggedIn( false );
