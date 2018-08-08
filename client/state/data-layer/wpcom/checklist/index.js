@@ -1,12 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-import { noop } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { SITE_CHECKLIST_REQUEST, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
@@ -33,7 +27,6 @@ const receiveChecklistSuccess = ( action, checklist ) =>
 const dispatchChecklistRequest = dispatchRequestEx( {
 	fetch: fetchChecklist,
 	onSuccess: receiveChecklistSuccess,
-	onError: noop,
 } );
 
 const updateChecklistTask = action =>
@@ -53,7 +46,6 @@ const updateChecklistTask = action =>
 const dispatchChecklistTaskUpdate = dispatchRequestEx( {
 	fetch: updateChecklistTask,
 	onSuccess: receiveChecklistSuccess,
-	onError: noop,
 } );
 
 export default {
