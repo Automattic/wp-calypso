@@ -59,12 +59,12 @@ yargs
 				requiresArg: true,
 			},
 			'output-editor-file': {
-				description: 'Name of the built editor script output file.',
+				description: 'Name of the built editor script output file (without the file extension).',
 				type: 'string',
 				requiresArg: true,
 			},
 			'output-view-file': {
-				description: 'Name of the built view script output file.',
+				description: 'Name of the built view script output file (without the file extension).',
 				type: 'string',
 				requiresArg: true,
 			},
