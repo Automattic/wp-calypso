@@ -58,10 +58,6 @@ describe( 'MediaLibraryList item selection', () => {
 
 	beforeEach( () => {
 		MediaActions.setLibrarySelectedItems( DUMMY_SITE_ID, [] );
-
-		if ( wrapper ) {
-			wrapper.unmount();
-		}
 	} );
 
 	describe( 'multiple selection', () => {
@@ -77,6 +73,10 @@ describe( 'MediaLibraryList item selection', () => {
 				</MediaLibrarySelectedData>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
+		} );
+
+		afterEach( () => {
+			wrapper.unmount();
 		} );
 
 		test( 'allows selecting single items', () => {
@@ -161,6 +161,10 @@ describe( 'MediaLibraryList item selection', () => {
 				</MediaLibrarySelectedData>
 			);
 			mediaList = wrapper.find( MediaList ).instance();
+		} );
+
+		afterEach( () => {
+			wrapper.unmount();
 		} );
 
 		test( 'allows selecting a single item', () => {
