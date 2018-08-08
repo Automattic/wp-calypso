@@ -25,8 +25,8 @@ export const ActivityLogJetpackIntroTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							"Stay informed of all your site's activity ranging from plugin and theme updates " +
-								'to user logins and settings modifications. {{a}}Learn more{{/a}}',
+							"Keep tabs on all your site's activity -- plugin and theme updates, user logins, " +
+								'setting modifications, and more. {{a}}Learn more{{/a}}',
 							{ components: { a: <a href="https://jetpack.com/support/activity-log/" /> } }
 						) }
 					</p>

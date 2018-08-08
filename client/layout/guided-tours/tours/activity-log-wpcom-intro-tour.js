@@ -25,8 +25,8 @@ export const ActivityLogWpcomIntroTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							"Stay informed of all your site's activity ranging from published or updated posts " +
-								'to published comments and settings modifications.'
+							"Keep tabs on all your site's activity -- new posts, pages, and comments, " +
+								'setting modifications, and more.'
 						) }
 					</p>
 					<ButtonRow>
