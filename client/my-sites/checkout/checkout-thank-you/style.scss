@@ -69,7 +69,7 @@
 	font-size: 24px;
 	font-weight: 300;
 	line-height: 32px;
-	margin: 48px 48px 24px 48px;
+	margin: 48px 48px 24px;
 
 	@include breakpoint( '>660px' ) {
 		box-shadow: none;
@@ -143,7 +143,7 @@
 .checkout-thank-you__header-heading {
 	font-size: 24px;
 	font-weight: 400;
-	margin: 24px 0 8px 0;
+	margin: 24px 0 8px;
 }
 
 .checkout-thank-you__header-text {

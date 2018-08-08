@@ -15,7 +15,7 @@
 			}
 		}
 
-		&:after {
+		&::after {
 			content: ' ';
 			display: block;
 			position: absolute;
@@ -129,7 +129,7 @@
 		}
 	}
 
-	.form-checkbox:checked:before {
+	.form-checkbox:checked::before {
 		margin-top: 0;
 	}
 

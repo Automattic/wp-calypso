@@ -58,7 +58,7 @@
 		font-size: 21px;
 	}
 
-	&:before {
+	&::before {
 		@include long-content-fade( $color: $white );
 	}
 }
@@ -93,7 +93,7 @@
 	display: inline-block;
 	font-size: 11px;
 	margin-left: 8px;
-	padding: 2px 6px 2px 6px;
+	padding: 2px 6px;
 	white-space: pre;
 
 	&:first-child {

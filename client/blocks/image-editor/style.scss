@@ -92,7 +92,7 @@
 	border: 2px solid $white;
 	background: darken( $gray, 52% );
 
-	&:before {
+	&::before {
 		border-radius: 100%;
 		content: ' ';
 		display: block;

@@ -3,8 +3,8 @@
 .clone-point__wrapper {
 	position: relative;
 
-	&:before,
-	&:after {
+	&::before,
+	&::after {
 		content: '';
 		position: absolute;
 		left: 33px;
@@ -15,14 +15,14 @@
 		}
 	}
 
-	&:before {
+	&::before {
 		top: 0;
 		height: 100%;
 		z-index: -2;
 		background: $gray-lighten-20;
 	}
 
-	&:after {
+	&::after {
 		bottom: 0;
 		height: 16px;
 		z-index: -1;

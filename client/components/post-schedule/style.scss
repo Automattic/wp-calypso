@@ -21,7 +21,7 @@
 	width: 47%;
 	margin: 0 27%;
 
-	&:first-letter {
+	&::first-letter {
 		text-transform: uppercase;
 	}
 

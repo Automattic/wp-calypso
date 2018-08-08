@@ -128,7 +128,7 @@
 
 .billing-history__transaction-links {
 	font-size: 12px;
-	margin: 4px 0 0 0;
+	margin: 4px 0 0;
 
 	a {
 		padding-right: 8px;
@@ -174,7 +174,7 @@
 		color: $gray;
 		font-size: 13px;
 		font-style: italic;
-		padding: 5px 0 0 0;
+		padding: 5px 0 0;
 
 		@include breakpoint( '>480px' ) {
 			position: absolute;
@@ -192,7 +192,7 @@
 	background: $gray-light;
 	list-style: none;
 	padding: 20px 40px;
-	margin: 20px 0 0 0;
+	margin: 20px 0 0;
 	overflow: auto;
 
 	@include breakpoint( '<480px' ) {
@@ -202,7 +202,7 @@
 	li {
 		color: $gray-dark;
 		font-size: 13px;
-		margin: 0 0 15px 0;
+		margin: 0 0 15px;
 		padding: 0;
 
 		&:last-child {

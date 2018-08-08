@@ -55,7 +55,7 @@
 	&.is-long {
 		position: relative;
 
-		&:after {
+		&::after {
 			@include long-content-fade();
 		}
 	}
@@ -75,7 +75,7 @@
 	font-size: 28px;
 	line-height: 1.416;
 	color: $gray-dark;
-	margin: 24px 0 8px 0;
+	margin: 24px 0 8px;
 	max-width: 750px;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
@@ -140,7 +140,7 @@
 	.reblogger-note-content {
 		blockquote {
 			padding: 0;
-			margin: 0 0 24px 0;
+			margin: 0 0 24px;
 			border: none;
 			background: none;
 			color: inherit;
@@ -150,7 +150,7 @@
 	p.reblog-from {
 		position: relative;
 		margin: 0 -32px 0 -32px;
-		padding: 16px 32px 8px 32px;
+		padding: 16px 32px 8px;
 		font-family: $sans;
 		font-size: 15px;
 		font-weight: bold;
@@ -245,7 +245,7 @@
 .tiled-gallery {
 	clear: both;
 	overflow: hidden;
-	margin: 0 auto 20px auto;
+	margin: 0 auto 20px;
 	max-width: 100%;
 }
 .tiled-gallery img {
@@ -318,7 +318,7 @@
  * the jump is a little more obvious than galleries in content. */
 .widget-gallery .tiled-gallery-unresized {
 	visibility: hidden;
-	height: 0px;
+	height: 0;
 	overflow: hidden;
 }
 

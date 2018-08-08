@@ -19,7 +19,7 @@
 	box-sizing: border-box;
 	box-shadow: 0 0 2px rgba( 0, 0, 0, 0.15 ), 0 3px 8px rgba( 0, 0, 0, 0.1 );
 
-	&:after {
+	&::after {
 		border: 6px solid transparent;
 		border-bottom-color: $white;
 		content: ' ';

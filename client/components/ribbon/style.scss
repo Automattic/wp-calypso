@@ -29,7 +29,7 @@
 .ribbon .ribbon__title::before {
 	content: '';
 	position: absolute;
-	left: 0px;
+	left: 0;
 	top: 100%;
 	z-index: z-index( '.ribbon', '.ribbon__title::before' );
 	border-left: 3px solid $blue-dark;

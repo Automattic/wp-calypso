@@ -1,11 +1,11 @@
 /** @format */
 
 .help-happiness-engineers {
-	margin: 12px 0px 64px 0px;
+	margin: 12px 0 64px;
 	padding: 0 24px;
 
 	@include breakpoint( '>660px' ) {
-		margin: 24px 0px 64px 0px;
+		margin: 24px 0 64px;
 	}
 }
 
@@ -16,11 +16,11 @@
 }
 
 .help-happiness-engineers__description {
-	margin: -16px 0px 12px 0px;
+	margin: -16px 0 12px 0;
 	font: 14px/21px $sans;
 	color: $gray-darken-10;
 	@include breakpoint( '>660px' ) {
-		margin: -16px 0px 20px 0px;
+		margin: -16px 0 20px 0;
 	}
 }
 

@@ -139,11 +139,11 @@ $current-theme-border: 1px solid transparentize( $gray-lighten-20, 0.25 );
 	white-space: nowrap;
 	max-width: 95%;
 
-	&:after {
+	&::after {
 		@include long-content-fade( $size: 10% );
 	}
 
-	.current-theme__button:not( .disabled ):hover &:after {
+	.current-theme__button:not( .disabled ):hover &::after {
 		@include long-content-fade( $size: 10%, $color: $gray-light );
 	}
 }

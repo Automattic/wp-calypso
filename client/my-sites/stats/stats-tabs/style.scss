@@ -11,7 +11,7 @@
 	margin: 0;
 
 	&.is-borderless {
-		border-top: 0px;
+		border-top: 0;
 	}
 
 	.stats-tab {
@@ -45,7 +45,7 @@
 				display: block;
 				min-height: 35px;
 				padding-top: 10px;
-				padding-bottom: 0px;
+				padding-bottom: 0;
 			}
 
 			.label {
@@ -57,7 +57,7 @@
 
 			.gridicon {
 				float: left;
-				margin: 2px 20px 0 20px;
+				margin: 2px 20px 0;
 			}
 
 			.value {

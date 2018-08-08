@@ -13,7 +13,7 @@
 .keyed-suggestions__category {
 	background-color: $gray-light;
 	border: 1px solid darken( $gray-light, 10% );
-	border-top: 0px;
+	border-top: 0;
 	padding: 4px 8px;
 	font-size: 13px;
 
@@ -36,10 +36,10 @@
 
 .keyed-suggestions__value {
 	display: flex;
-	padding: 10px 10px;
+	padding: 10px;
 	background: $white;
 	border: 1px solid darken( $gray-light, 10% );
-	border-top: 0px;
+	border-top: 0;
 	font-size: 15px;
 	cursor: pointer;
 
@@ -82,7 +82,7 @@
 	height: 19px; /* font-size + 2*padding */
 	overflow: hidden;
 
-	&:before {
+	&::before {
 		@include long-content-fade( $color: $white );
 
 		.has-highlight & {

@@ -4,7 +4,7 @@ $theme-info-height: 54px;
 
 .theme {
 	padding: 0;
-	margin: 0 10px 20px 10px;
+	margin: 0 10px 20px;
 	width: 230px; // Fixed width gives desired wrapping...
 	flex-grow: 1; // ...grow allows expansion to fill space after wrap.
 	transition: all 100ms ease-in-out;
@@ -19,7 +19,7 @@ $theme-info-height: 54px;
 		.theme__info-title {
 			color: $white;
 
-			&:before {
+			&::before {
 				@include long-content-fade( $color: $blue-medium );
 			}
 		}
@@ -75,7 +75,7 @@ $theme-info-height: 54px;
 	overflow: hidden;
 	white-space: nowrap;
 
-	&:before {
+	&::before {
 		@include long-content-fade( $color: $white );
 	}
 }

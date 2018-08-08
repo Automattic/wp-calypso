@@ -21,7 +21,7 @@
 
 .packages-step__list {
 	width: auto;
-	padding: 0 0 24px 0;
+	padding: 0 0 24px;
 	flex-shrink: 0;
 
 	@include breakpoint( '>960px' ) {

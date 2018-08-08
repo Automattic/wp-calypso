@@ -15,8 +15,8 @@
 		color: #c8d7e1;
 		max-width: 80%;
 
-		&:before,
-		&:after {
+		&::before,
+		&::after {
 			content: '';
 			position: absolute;
 			top: 50%;
@@ -25,7 +25,7 @@
 			background-color: #c8d7e1;
 		}
 
-		&:before {
+		&::before {
 			right: 100%;
 			margin-right: 5px;
 		}

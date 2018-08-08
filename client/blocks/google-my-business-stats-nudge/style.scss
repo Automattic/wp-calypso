@@ -14,11 +14,11 @@
 	display: flex;
 	flex-direction: row;
 	// standard padding
-	padding: 11px 24px 11px 24px;
+	padding: 11px 24px;
 	@include breakpoint( '>960px' ) {
 		max-height: 300px;
 		// allow image to go right to the edge of the card
-		padding-bottom: 0px;
+		padding-bottom: 0;
 	}
 }
 

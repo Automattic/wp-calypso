@@ -272,7 +272,7 @@ ul.module-header-actions {
 	box-sizing: border-box;
 	color: $gray-dark;
 	font-size: 13px;
-	padding: 16px 16px 0 16px;
+	padding: 16px 16px 0;
 	min-height: 1em;
 	width: 100%;
 	text-align: center;
@@ -367,7 +367,7 @@ ul.module-header-actions {
 			@extend %mobile-link-element;
 			display: block;
 			position: relative;
-			padding: 6px 0 6px 0;
+			padding: 6px 0;
 
 			@include breakpoint( '<480px' ) {
 				padding-top: 12px;
@@ -549,7 +549,7 @@ ul.module-header-actions {
 
 .stats-module__all-time-nav {
 	.stats-section-title {
-		margin: 0 16px 16px 16px;
+		margin: 0 16px 16px;
 	}
 }
 

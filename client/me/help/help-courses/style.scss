@@ -52,7 +52,7 @@
 	@extend %content-font;
 	font-size: 15px;
 	line-height: 22px;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 16px;
@@ -69,7 +69,7 @@
 .help-courses__course-schedule-item-date {
 	font-size: 13px;
 	display: inline-block;
-	margin: 0px 10px 0px 0px;
+	margin: 0 10px 0 0;
 	white-space: normal;
 
 	@include breakpoint( '>480px' ) {
@@ -110,7 +110,7 @@
 .help-courses__course-video-embed {
 	/*Maintain a 16:9 aspect ratio*/
 	position: relative;
-	&:before {
+	&::before {
 		display: block;
 		content: '';
 		width: 100%;

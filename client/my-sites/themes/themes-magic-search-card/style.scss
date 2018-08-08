@@ -62,7 +62,7 @@
 	.segmented-control {
 		flex: 0 0 auto;
 		min-width: 0;
-		padding: 11px 14px 11px;
+		padding: 11px 14px;
 
 		.segmented-control__item,
 		.segmented-control__link,
@@ -73,7 +73,7 @@
 
 	.more {
 		flex: 0 1 auto;
-		padding: 8px 14px 8px;
+		padding: 8px 14px;
 	}
 }
 
@@ -88,7 +88,7 @@
 
 	/* These are styling */
 
-	&:before {
+	&::before {
 		content: '';
 		position: absolute;
 		width: 100%;
@@ -154,7 +154,7 @@
 .themes-magic-search-card__welcome-header {
 	background-color: $gray-light;
 	border-bottom: 1px solid darken( $gray-light, 10% );
-	border-top: 0px;
+	border-top: 0;
 	padding: 4px 8px;
 	font-size: 13px;
 

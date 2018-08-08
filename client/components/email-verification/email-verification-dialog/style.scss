@@ -13,7 +13,7 @@
 .email-verification-dialog__confirmation-dialog-heading {
 	font-size: 22px;
 	line-height: 1.2;
-	margin: 0 0 4px 0;
+	margin: 0 0 4px;
 }
 
 .email-verification-dialog__confirmation-dialog-heading.is-variable-height {
@@ -24,7 +24,7 @@
 .email-verification-dialog__confirmation-dialog-explanation,
 .email-verification-dialog__confirmation-dialog-reasoning {
 	color: darken( $gray, 30 );
-	margin: 0 0 8px 0;
+	margin: 0 0 8px;
 }
 
 .email-verification-dialog__confirmation-dialog-email {

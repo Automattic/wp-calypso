@@ -51,7 +51,7 @@
 
 			@include breakpoint( '<480px' ) {
 				height: 100px;
-				margin: 0 0 15px 0;
+				margin: 0 0 15px;
 				max-width: 100%;
 			}
 		}
@@ -343,7 +343,7 @@
 		content: ', ';
 	}
 
-	&:last-child:after {
+	&:last-child::after {
 		display: none;
 	}
 }

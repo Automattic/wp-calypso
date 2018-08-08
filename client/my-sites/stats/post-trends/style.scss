@@ -47,7 +47,7 @@
 .post-trends__scroll-left,
 .post-trends__scroll-right {
 	position: absolute;
-	top: 0px;
+	top: 0;
 	width: 30px;
 	height: 130px;
 	background: linear-gradient( to right, $white, rgba( $white, 0.92 ), $transparent );
@@ -94,11 +94,11 @@
 
 /*rtl:begin:ignore*/
 .post-trends__scroll-left {
-	left: 0px;
+	left: 0;
 }
 
 .post-trends__scroll-right {
-	right: 0px;
+	right: 0;
 }
 /*rtl:end:ignore*/
 

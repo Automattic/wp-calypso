@@ -6,7 +6,7 @@
 	padding-top: 16px;
 	padding-right: 348px;
 	max-width: 600px;
-	margin: 0 auto 60px auto;
+	margin: 0 auto 60px;
 
 	p {
 		color: $gray-darken-20;
@@ -36,7 +36,7 @@
 	right: 0;
 	width: 300px;
 
-	&:before {
+	&::before {
 		display: block;
 		content: '';
 		position: absolute;
@@ -51,7 +51,7 @@
 		);
 	}
 
-	&:after {
+	&::after {
 		display: block;
 		content: '';
 		position: absolute;

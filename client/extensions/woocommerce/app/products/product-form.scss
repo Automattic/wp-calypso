@@ -451,7 +451,7 @@
 	position: relative;
 	overflow: hidden;
 
-	&:after {
+	&::after {
 		content: '';
 		display: block;
 		width: 24px;
@@ -492,7 +492,7 @@
 
 .products__product-form-variation-image {
 	margin-bottom: 0;
-	margin-right: 0px;
+	margin-right: 0;
 	flex-shrink: 0;
 	position: relative;
 
@@ -653,7 +653,7 @@
 
 		.compact-tinymce {
 			padding: 16px;
-			padding-left: 0px;
+			padding-left: 0;
 			max-width: 700px;
 		}
 	}
@@ -745,7 +745,7 @@
 	background: $gray-light;
 	padding: 8px;
 	border: 1px solid $gray-lighten-30;
-	padding: 16px 0 0 0;
+	padding: 16px 0 0;
 	margin-bottom: 8px;
 	@include breakpoint( '>960px' ) {
 		margin-bottom: 16px;
@@ -789,7 +789,7 @@
 
 .products__additional-details-preview {
 	border: 1px solid $gray-lighten-20;
-	padding: 16px 16px 4px 16px;
+	padding: 16px 16px 4px;
 	margin-top: 4px;
 	font-size: 13px;
 	color: $gray-darken-10;

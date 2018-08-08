@@ -67,7 +67,7 @@
 	overflow: hidden;
 	position: relative;
 
-	&:after {
+	&::after {
 		@include long-content-fade( $size: 15% );
 	}
 }

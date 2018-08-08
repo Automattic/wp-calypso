@@ -127,7 +127,7 @@
 
 			@include breakpoint( '<480px' ) {
 				margin-bottom: 16px;
-				padding: 0 0 16px 0;
+				padding: 0 0 16px;
 			}
 		}
 
@@ -373,7 +373,7 @@
 	height: 16px;
 	width: 150%;
 	position: absolute;
-	left: 0px;
+	left: 0;
 	top: 16px;
 }
 
@@ -546,7 +546,7 @@
 	border: 1px solid #ccc;
 	border-radius: 2px;
 	background-color: $white;
-	box-shadow: 0px 5px 20px rgba( 0, 0, 0, 0.2 );
+	box-shadow: 0 5px 20px rgba( 0, 0, 0, 0.2 );
 }
 
 .sharing-buttons-preview-buttons__more-inner .sharing-buttons-preview-button,
@@ -638,10 +638,10 @@
 
 .sharing-buttons-preview__reblog,
 .sharing-buttons-preview__like {
-	padding: 1px 8px 0px 5px;
+	padding: 1px 8px 0 5px;
 	line-height: 25px;
 
-	&:before {
+	&::before {
 		display: none;
 	}
 
@@ -856,7 +856,7 @@
 	border: 1px solid #ccc;
 	box-shadow: 0 1px 0 rgba( 0, 0, 0, 0.08 );
 	line-height: 23px;
-	padding: 1px 8px 0px 5px;
+	padding: 1px 8px 0 5px;
 
 	&.style-icon {
 		border-radius: 50%;

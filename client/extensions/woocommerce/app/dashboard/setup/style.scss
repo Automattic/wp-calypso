@@ -34,12 +34,12 @@
 	padding: 16px;
 
 	@include breakpoint( '>960px' ) {
-		padding: 32px 32px 16px 32px;
+		padding: 32px 32px 16px;
 	}
 }
 
 .setup__location .setup__footer {
-	padding: 16px 32px 0 32px;
+	padding: 16px 32px 0;
 }
 
 .setup__footer {
@@ -47,13 +47,13 @@
 	border-top: none;
 	display: flex;
 	justify-content: center;
-	padding: 24px 24px 0 24px;
+	padding: 24px 24px 0;
 	margin-left: -24px;
 	margin-right: -24px;
 
 	@include breakpoint( '>960px' ) {
 		margin-left: -32px;
 		margin-right: -32px;
-		padding: 32px 32px 0 32px;
+		padding: 32px 32px 0;
 	}
 }

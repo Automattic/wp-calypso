@@ -46,7 +46,7 @@
 			&:hover {
 				background: $gray-light;
 
-				.table-item__cell-title:after {
+				.table-item__cell-title::after {
 					background-image: linear-gradient(
 						to right,
 						rgba( 255, 255, 255, 0 ) 0%,
@@ -106,7 +106,7 @@
 			position: relative;
 			overflow: hidden;
 
-			&:after {
+			&::after {
 				content: '';
 				display: block;
 				width: 24px;
@@ -123,7 +123,7 @@
 			}
 
 			@include breakpoint( '>660px' ) {
-				&:after {
+				&::after {
 					display: none;
 				}
 			}

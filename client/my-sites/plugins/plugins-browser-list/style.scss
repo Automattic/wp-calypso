@@ -6,7 +6,7 @@
 	box-shadow: 0 1px 2px $gray-lighten-30;
 
 	.feature-example & {
-		margin: 0 0;
+		margin: 0;
 	}
 }
 
@@ -19,7 +19,7 @@
 .button.plugins-browser-list__select-all,
 .plugins-browser-list__title {
 	display: inline-block;
-	padding: 5px 0px;
+	padding: 5px 0;
 	color: $gray-dark;
 	font-size: 12px;
 	line-height: 1.5;

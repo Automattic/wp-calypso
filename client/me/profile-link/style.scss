@@ -59,7 +59,7 @@
 	width: 100%;
 	text-decoration: none;
 
-	&:after {
+	&::after {
 		@include long-content-fade( $size: 45% );
 	}
 }

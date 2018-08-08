@@ -161,7 +161,7 @@
 		@include breakpoint( '<660px' ) {
 			width: 60%;
 			order: 4;
-			padding-top: 0px;
+			padding-top: 0;
 		}
 	}
 
@@ -214,7 +214,7 @@
 .payments__method-edit-header {
 	font-size: 18px;
 	justify-content: space-between;
-	padding: 0 0 16px 0;
+	padding: 0 0 16px;
 }
 
 .payments__method-edit-fields {

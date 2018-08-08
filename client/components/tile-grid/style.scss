@@ -44,7 +44,7 @@
 			color: $blue-dark;
 		}
 
-		.tile-grid__item-link:after {
+		.tile-grid__item-link::after {
 			border-top-color: $blue-dark;
 			border-right-color: $blue-dark;
 		}

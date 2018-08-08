@@ -69,7 +69,7 @@
 		animation: floating 10s infinite ease-in-out;
 	}
 	.gridicons-add {
-		top: 0px;
+		top: 0;
 		left: calc( 50% - 320px );
 		height: 150px;
 		width: 150px;
@@ -274,7 +274,7 @@
 	height: 120px;
 	width: 120px;
 	display: block;
-	margin: 10px auto 40px auto;
+	margin: 10px auto 40px;
 	border-radius: 100%;
 	box-shadow: 0 0 10px 10px $gray-light;
 	fill: lighten( $gray, 20 );
@@ -305,7 +305,7 @@
 .email-confirmation__button {
 	display: block;
 	padding: 10px 24px;
-	margin: 24px auto 48px auto;
+	margin: 24px auto 48px;
 }
 
 .email-confirmation__button:disabled {
@@ -328,7 +328,7 @@
 }
 
 .signup-processing-screen__loader,
-.signup-processing-screen__loader:after {
+.signup-processing-screen__loader::after {
 	border-radius: 50%;
 	height: 10em;
 	width: 10em;
@@ -396,7 +396,7 @@
 	width: 100%;
 	overflow: auto;
 }
-.signup-pricessing__address-field.is-placeholder:after {
+.signup-pricessing__address-field.is-placeholder::after {
 	content: 'placeholder.wordpress.com';
 	color: transparent;
 	background-color: $gray-lighten-30;

@@ -87,7 +87,7 @@
 	position: relative;
 	white-space: nowrap;
 
-	&:after:not( .is-placeholder ) {
+	&::after:not( .is-placeholder ) {
 		@include long-content-fade();
 	}
 

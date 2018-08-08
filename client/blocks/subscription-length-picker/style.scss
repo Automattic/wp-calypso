@@ -47,7 +47,7 @@
 		width: 21px;
 		height: 21px;
 
-		&:checked:before {
+		&:checked::before {
 			width: 13px;
 			height: 13px;
 		}

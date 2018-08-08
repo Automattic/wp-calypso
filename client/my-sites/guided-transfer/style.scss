@@ -2,7 +2,7 @@
 
 .guided-transfer__main {
 	.guided-transfer__header-nav {
-		margin: 0 0 17px 0;
+		margin: 0 0 17px;
 	}
 
 	.host-credentials-page__account-username-fieldset,
@@ -36,7 +36,7 @@
 			width: 50%;
 
 			/* Override the default margin bottom provided for FormFieldset */
-			margin-bottom: 0px;
+			margin-bottom: 0;
 		}
 
 		.host-credentials-page__account-username-fieldset {
@@ -50,7 +50,7 @@
 
 		.guided-transfer__host-button:nth-child( even ) {
 			margin-left: 5px;
-			margin-right: 0px;
+			margin-right: 0;
 		}
 	}
 }

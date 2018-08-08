@@ -8,7 +8,7 @@
 		flex-direction: column;
 	}
 
-	&:after {
+	&::after {
 		display: none; // Disables clearfix that messes up with Flexbox alignment
 	}
 

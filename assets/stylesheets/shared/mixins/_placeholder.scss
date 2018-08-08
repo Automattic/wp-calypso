@@ -10,7 +10,7 @@
 	background-color: lighten( $gray, $lighten-percentage );
 	color: transparent;
 
-	&:after {
+	&::after {
 		content: '\00a0';
 	}
 }
@@ -20,7 +20,7 @@
 	background-color: darken( $gray, $darken-percentage );
 	color: transparent;
 
-	&:after {
+	&::after {
 		content: '\00a0';
 	}
 }

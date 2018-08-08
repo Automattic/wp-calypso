@@ -65,8 +65,8 @@
 
 	.components__is-placeholder {
 		@include placeholder();
-		padding: 0px;
-		margin: 0px 0px 4px 0px;
+		padding: 0;
+		margin: 0 0 4px;
 		pointer-events: none;
 		background: $white;
 		animation: loading-fade 1.6s ease-in-out infinite;

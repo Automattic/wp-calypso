@@ -307,7 +307,7 @@
 		.site-importer__site-preview-image {
 			border: 1px solid #c6d7e2;
 
-			&:after {
+			&::after {
 				content: '';
 				position: absolute;
 				top: 0;

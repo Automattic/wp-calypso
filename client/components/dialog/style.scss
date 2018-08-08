@@ -103,7 +103,7 @@
 		flex-direction: column-reverse;
 	}
 
-	&:before {
+	&::before {
 		content: '';
 		display: block;
 		position: absolute;

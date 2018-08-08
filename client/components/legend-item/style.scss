@@ -44,7 +44,7 @@
 .legend-item__placeholder-detail {
 	@include placeholder();
 
-	&:after {
+	&::after {
 		content: '';
 	}
 	border: 2px solid $white;

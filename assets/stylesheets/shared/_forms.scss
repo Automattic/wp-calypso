@@ -162,7 +162,7 @@ input[type='radio'] + span {
 input[type='checkbox'] {
 	border-radius: 2px;
 
-	&:checked:before {
+	&:checked::before {
 		content: url( '/calypso/images/checkbox-icons/checkmark.svg' );
 		width: 12px;
 		height: 12px;
@@ -171,7 +171,7 @@ input[type='checkbox'] {
 		speak: none;
 	}
 
-	&:disabled:checked:before {
+	&:disabled:checked::before {
 		color: $gray-lighten-10;
 	}
 }
@@ -181,7 +181,7 @@ input[type='radio'] {
 	margin-right: 4px;
 	line-height: 10px;
 
-	&:checked:before {
+	&:checked::before {
 		float: left;
 		display: inline-block;
 		content: '\2022';
@@ -195,7 +195,7 @@ input[type='radio'] {
 		animation: grow 0.2s ease-in-out;
 	}
 
-	&:disabled:checked:before {
+	&:disabled:checked::before {
 		background: $gray-lighten-30;
 	}
 }

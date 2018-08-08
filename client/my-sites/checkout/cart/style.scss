@@ -141,7 +141,7 @@
 			display: block;
 			border-top: 1px solid $gray-lighten-30;
 			margin: 15px -15px 0 -15px;
-			padding: 15px 15px 0 15px;
+			padding: 15px 15px 0;
 
 			input[type='text'] {
 				font-size: 12px;
@@ -177,7 +177,7 @@
 	border: 1px solid $gray-lighten-30;
 	border-radius: 4px;
 	font-size: 12px;
-	margin: 15px 15px 0px 15px;
+	margin: 15px 15px 0;
 	padding: 10px;
 
 	@include breakpoint( '<660px' ) {
@@ -299,7 +299,7 @@ div.popover-cart__popover {
 
 	.cart-buttons {
 		border-radius: 0 0 4px 4px;
-		padding: 0 15px 15px 15px;
+		padding: 0 15px 15px;
 	}
 
 	.cart-empty + .cart-buttons {
@@ -343,7 +343,7 @@ div.popover-cart__popover {
 
 	.cart-buttons {
 		border-radius: 0 0 4px 4px;
-		padding: 0 15px 15px 15px;
+		padding: 0 15px 15px;
 	}
 
 	.cart-empty + .cart-buttons {

@@ -42,7 +42,7 @@
 		margin: 0 0 0 15px;
 
 		&.is-primary {
-			margin: 0 0 15px 0;
+			margin: 0 0 15px;
 
 			@include breakpoint( '>480px' ) {
 				margin: 0;
@@ -227,7 +227,7 @@ input[type='radio'].domain-management-list-item__radio {
 			font-size: 11px;
 			font-weight: 600;
 			line-height: 1;
-			margin: 16px 0 0 0;
+			margin: 16px 0 0;
 			padding: 8px 0;
 			text-transform: uppercase;
 			text-align: center;
@@ -419,7 +419,7 @@ input[type='radio'].domain-management-list-item__radio {
 			@include placeholder( 23% );
 
 			display: block;
-			margin: 0.8em 0 0.8em 0;
+			margin: 0.8em 0;
 			height: 1em;
 
 			&:last-child {
@@ -458,7 +458,7 @@ input[type='radio'].domain-management-list-item__radio {
 
 ul.email-forwarding__list {
 	list-style: none;
-	margin: 15px 0 0 0;
+	margin: 15px 0 0;
 	padding: 0;
 
 	li {
@@ -581,7 +581,7 @@ ul.email-forwarding__list {
 	.button {
 		cursor: pointer;
 		display: block;
-		margin: 20px 0 5px 0;
+		margin: 20px 0 5px;
 		text-align: center;
 		width: 100%;
 
@@ -638,7 +638,7 @@ ul.email-forwarding__list {
 		font-size: 16px;
 		font-weight: 400;
 		line-height: 120%;
-		margin: 0 0 10px 0;
+		margin: 0 0 10px;
 	}
 
 	p {
@@ -782,7 +782,7 @@ ul.email-forwarding__list {
 ul.domain-connect__dns-list,
 .dns__domain-connect-record {
 	list-style: none;
-	margin: 15px 0 0 0;
+	margin: 15px 0 0;
 	padding: 0;
 
 	li,

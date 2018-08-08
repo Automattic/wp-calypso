@@ -20,13 +20,15 @@ $breakpoints: 480px, 660px, 800px, 960px, 1040px, 1280px, 1400px; // Think very 
 					@media ( max-width: $breakpoint ) {
 						@content;
 					}
-				} @else {
+				}
+ @else {
 					@if $size == $and-larger {
 						$approved-value: 2;
 						@media ( min-width: $breakpoint + 1 ) {
 							@content;
 						}
-					} @else {
+					}
+ @else {
 						@each $breakpoint-end in $breakpoints {
 							$range: $breakpoint + '-' + $breakpoint-end;
 							@if $size == $range {
@@ -45,15 +47,16 @@ $breakpoints: 480px, 660px, 800px, 960px, 1040px, 1280px, 1400px; // Think very 
 					$sizes: $sizes + ' ' + $breakpoint;
 				}
 				// TODO - change this to use @error, when it is supported by node-sass
-				@warn "ERROR in breakpoint( #{ $size } ): You can only use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]";
+				@warn 'ERROR in breakpoint( #{ $size } ): You can only use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]';
 			}
-		} @else {
+		}
+ @else {
 			$sizes: '';
 			@each $breakpoint in $breakpoints {
 				$sizes: $sizes + ' ' + $breakpoint;
 			}
 			// TODO - change this to use @error, when it is supported by node-sass
-			@warn "ERROR in breakpoint( #{ $size } ): Please wrap the breakpoint $size in parenthesis. You can use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]";
+			@warn 'ERROR in breakpoint( #{ $size } ): Please wrap the breakpoint $size in parenthesis. You can use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]';
 		}
 	}
 }

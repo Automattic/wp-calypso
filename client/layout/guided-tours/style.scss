@@ -164,7 +164,7 @@ a.config-elements__text-link,
 }
 
 // arrow if we have a target
-.guided-tours__step-pointing:before {
+.guided-tours__step-pointing::before {
 	position: absolute;
 	border: darken( $gray, 52% );
 	content: ' ';
@@ -175,77 +175,77 @@ a.config-elements__text-link,
 }
 
 // the different arrow directions
-.guided-tours__step-pointing.guided-tours__step-pointing-none:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-none::before {
 	display: none;
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-top-left:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-top-left::before {
 	top: -5.5px;
 	left: 12px;
 	transform: rotate( 45deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-top-center:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-top-center::before {
 	top: -5.5px;
 	left: 49%;
 	transform: rotate( 45deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-top-right:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-top-right::before {
 	top: -5.5px;
 	right: 12px;
 	transform: rotate( 45deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-right-top:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-right-top::before {
 	top: 15px;
 	right: -5.5px;
 	transform: rotate( 135deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-right-middle:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-right-middle::before {
 	top: 42%;
 	right: -5.5px;
 	transform: rotate( 135deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-right-bottom:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-right-bottom::before {
 	bottom: 12px;
 	right: -5.5px;
 	transform: rotate( 135deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-bottom-right:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-bottom-right::before {
 	bottom: -5.5px;
 	right: 12px;
 	transform: rotate( 225deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-bottom-center:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-bottom-center::before {
 	bottom: -5.5px;
 	left: 49%;
 	transform: rotate( 225deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-bottom-left:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-bottom-left::before {
 	bottom: -5.5px;
 	left: 12px;
 	transform: rotate( 225deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-left-bottom:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-left-bottom::before {
 	bottom: 12px;
 	left: -5.5px;
 	transform: rotate( -45deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-left-middle:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-left-middle::before {
 	top: 42%;
 	left: -5.5px;
 	transform: rotate( -45deg );
 }
 
-.guided-tours__step-pointing.guided-tours__step-pointing-left-top:before {
+.guided-tours__step-pointing.guided-tours__step-pointing-left-top::before {
 	top: 12px;
 	left: -5.5px;
 	transform: rotate( -45deg );

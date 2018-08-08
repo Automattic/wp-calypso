@@ -53,7 +53,7 @@
 		background: rgba( 255, 255, 255, 0.2 );
 	}
 
-	&:after {
+	&::after {
 		clear: both;
 		content: ' ';
 		display: block;

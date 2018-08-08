@@ -71,7 +71,7 @@
 .mailchimp__getting-started-list {
 	color: $gray-text-min;
 	list-style: none;
-	margin: 0 0 16px 0;
+	margin: 0 0 16px;
 	font-size: 14px;
 
 	li {
@@ -204,8 +204,8 @@
 }
 
 .mailchimp__dashboard {
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 }
 
 .mailchimp__dashboard-first-section {
@@ -333,7 +333,7 @@
 
 .mailchimp__account-info-name {
 	margin-bottom: 4px;
-	margin: 8px 16px 0 16px;
+	margin: 8px 16px 0;
 	font-weight: 600;
 
 	@include breakpoint( '>480px' ) {

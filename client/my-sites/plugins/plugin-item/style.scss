@@ -55,7 +55,7 @@
 	top: 50%;
 	margin-top: -8px;
 
-	&:after {
+	&::after {
 		// Making tap area larger
 		content: '';
 		position: absolute;

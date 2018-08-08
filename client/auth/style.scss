@@ -45,13 +45,13 @@
 
 	.notice {
 		width: calc( 100% - 20px );
-		margin: 20px auto 0 auto;
+		margin: 20px auto 0;
 	}
 
 	.notice.is-info {
 		color: $gray-light;
 		padding: 0;
-		margin: 20px auto 0 auto;
+		margin: 20px auto 0;
 	}
 
 	.notice.is-info .notice__text {
@@ -148,7 +148,7 @@
 // should be a new component
 .wordpress-logo {
 	fill: $white;
-	margin: 0 auto 20px auto;
+	margin: 0 auto 20px;
 }
 
 .auth__help,
@@ -219,7 +219,7 @@
 		margin-bottom: 1.5em;
 	}
 
-	ol li:before {
+	ol li::before {
 		margin-right: 2em;
 		content: counter( item );
 		background: $white;

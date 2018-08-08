@@ -389,7 +389,7 @@
 }
 
 .reader__post-header {
-	margin: 0 0 16px 0;
+	margin: 0 0 16px;
 	padding: 0;
 	position: relative;
 	line-height: 16px;
@@ -522,7 +522,7 @@
 	&:first-child,
 	&:last-child {
 		@include breakpoint( '<480px' ) {
-			margin: 0 0 20px 0;
+			margin: 0 0 20px;
 		}
 	}
 

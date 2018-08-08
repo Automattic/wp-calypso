@@ -1,7 +1,7 @@
 /** @format */
 
 .notification-settings-push-notification-settings__instruction {
-	margin: 24px 0 0 0;
+	margin: 24px 0 0;
 }
 
 .notification-settings-push-notification-settings__instruction-dialog {
@@ -51,7 +51,7 @@
 	padding: 0 24px;
 
 	p {
-		margin: 16px 0 0 0;
+		margin: 16px 0 0;
 	}
 
 	@include breakpoint( '<660px' ) {

@@ -41,8 +41,8 @@
 
 .button.is-borderless.inline-help__button {
 	position: absolute;
-	right: 0px;
-	bottom: 0px;
+	right: 0;
+	bottom: 0;
 	line-height: 0;
 	padding: 1px;
 	border-radius: 100%;
@@ -136,9 +136,9 @@
 		bottom: 76px !important;
 	}
 
-	&.is-top .popover__arrow:before,
-	&.is-top-left .popover__arrow:before,
-	&.is-top-right .popover__arrow:before {
+	&.is-top .popover__arrow::before,
+	&.is-top-left .popover__arrow::before,
+	&.is-top-right .popover__arrow::before {
 		border-top: 10px solid $gray-light;
 	}
 }
@@ -447,7 +447,7 @@
 		animation-delay: -3.8s;
 	}
 
-	&:after {
+	&::after {
 		content: '\00a0';
 	}
 }

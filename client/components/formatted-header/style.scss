@@ -1,7 +1,7 @@
 /** @format */
 
 .formatted-header {
-	margin: 16px 0 24px 0;
+	margin: 16px 0 24px;
 	text-align: center;
 
 	@include breakpoint( '>960px' ) {
@@ -15,7 +15,7 @@
 
 .formatted-header__title {
 	font-size: 24px;
-	margin: 0 0 5px 0;
+	margin: 0 0 5px;
 
 	@include breakpoint( '<480px' ) {
 		line-height: 1.2em;

@@ -27,7 +27,7 @@
 	}
 
 	&.is-long {
-		&:after {
+		&::after {
 			content: '';
 			text-align: right;
 			position: absolute;

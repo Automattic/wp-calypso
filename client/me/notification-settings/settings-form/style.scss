@@ -27,7 +27,7 @@
 
 .notification-settings-form-label-list {
 	list-style: none;
-	margin: 15px 10px 0 10px;
+	margin: 15px 10px 0;
 }
 
 .notification-settings-form-label-list__item {
@@ -98,7 +98,7 @@
 		width: 32px;
 		height: 16px;
 
-		&:after {
+		&::after {
 			width: 12px;
 			height: 12px;
 		}
@@ -108,14 +108,14 @@
 .notification-settings-form-actions {
 	display: block;
 	border-top: solid 1px $gray-light;
-	padding: 15px 0 15px 0;
+	padding: 15px 0;
 	text-align: right;
 
 	.form-fieldset {
 		margin-bottom: 10px;
 
 		@include breakpoint( '>480px' ) {
-			margin: 10px 0 0 0;
+			margin: 10px 0 0;
 			float: left;
 		}
 	}
@@ -130,7 +130,7 @@
 
 	@include breakpoint( '>480px' ) {
 		height: 55px;
-		padding: 15px 0 0 0;
+		padding: 15px 0 0;
 	}
 }
 

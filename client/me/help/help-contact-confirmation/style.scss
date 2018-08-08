@@ -14,10 +14,10 @@
 	}
 
 	.form-section-heading {
-		margin: 13px 0px 7px 0px;
+		margin: 13px 0 7px;
 
 		@include breakpoint( '<660px' ) {
-			margin: 7px 0px 3px 0px;
+			margin: 7px 0 3px;
 			font-size: 24px;
 			line-height: 32px;
 		}
@@ -60,5 +60,5 @@
 	color: $gray;
 	max-width: 340px;
 	display: inline-block;
-	margin-bottom: 0px;
+	margin-bottom: 0;
 }

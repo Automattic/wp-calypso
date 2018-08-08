@@ -168,7 +168,7 @@
 		.table-row {
 			&:hover {
 				background: inherit;
-				.table-item__cell-title:after {
+				.table-item__cell-title::after {
 					background: none;
 				}
 			}

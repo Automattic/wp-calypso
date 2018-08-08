@@ -42,7 +42,7 @@
 	top: 48px;
 	left: 2px;
 
-	&:after {
+	&::after {
 		// Making tap area larger
 		content: '';
 		position: absolute;
@@ -78,7 +78,7 @@
 }
 
 .people-list-item .card__link-indicator {
-	right: 0px;
+	right: 0;
 	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
 }
 

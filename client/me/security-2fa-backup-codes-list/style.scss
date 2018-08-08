@@ -61,14 +61,14 @@ button.security-2fa-backups-codes-list__generate-button {
 		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 
-		&:before {
+		&::before {
 			content: ' ';
 			display: inline-block;
 			width: 5em;
 		}
 	}
 
-	&:before {
+	&::before {
 		color: $gray-lighten-20;
 		display: inline-block;
 		font-weight: normal;
@@ -77,43 +77,43 @@ button.security-2fa-backups-codes-list__generate-button {
 		width: 25px;
 	}
 
-	&:first-child:before {
+	&:first-child::before {
 		content: '1.';
 	}
 
-	&:nth-of-type( 2 ):before {
+	&:nth-of-type( 2 )::before {
 		content: '6.';
 	}
 
-	&:nth-of-type( 3 ):before {
+	&:nth-of-type( 3 )::before {
 		content: '2.';
 	}
 
-	&:nth-of-type( 4 ):before {
+	&:nth-of-type( 4 )::before {
 		content: '7.';
 	}
 
-	&:nth-of-type( 5 ):before {
+	&:nth-of-type( 5 )::before {
 		content: '3.';
 	}
 
-	&:nth-of-type( 6 ):before {
+	&:nth-of-type( 6 )::before {
 		content: '8.';
 	}
 
-	&:nth-of-type( 7 ):before {
+	&:nth-of-type( 7 )::before {
 		content: '4.';
 	}
 
-	&:nth-of-type( 8 ):before {
+	&:nth-of-type( 8 )::before {
 		content: '9.';
 	}
 
-	&:nth-of-type( 9 ):before {
+	&:nth-of-type( 9 )::before {
 		content: '5.';
 	}
 
-	&:nth-of-type( 10 ):before {
+	&:nth-of-type( 10 )::before {
 		content: '10.';
 	}
 }
@@ -126,7 +126,7 @@ button.security-2fa-backups-codes-list__generate-button {
 		margin-right: 8px;
 		vertical-align: middle;
 
-		&:before {
+		&::before {
 			position: relative;
 			top: 1px;
 		}

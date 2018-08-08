@@ -11,7 +11,7 @@
 		display: flex;
 		position: relative;
 
-		&:before {
+		&::before {
 			background-color: $gray-lighten-20;
 			content: ' ';
 			display: block;
@@ -27,7 +27,7 @@
 			text-align: center;
 
 			&.is-highlighted {
-				&:before {
+				&::before {
 					background-color: $blue-wordpress;
 					content: ' ';
 					display: block;
@@ -50,7 +50,7 @@
 			}
 
 			&.is-completed {
-				&:before {
+				&::before {
 					background-color: $blue-wordpress;
 					content: ' ';
 					display: block;
@@ -80,7 +80,7 @@
 				position: relative;
 				padding: 12px;
 
-				&:before {
+				&::before {
 					font-size: 32px;
 					position: relative;
 					top: 8px;

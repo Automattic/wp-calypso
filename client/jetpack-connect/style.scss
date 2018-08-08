@@ -14,9 +14,9 @@
 
 	.signup-form__social-top {
 		.logged-out-form__links {
-			margin-top: 0px;
+			margin-top: 0;
 			@include breakpoint( '>480px' ) {
-				margin-top: 0px;
+				margin-top: 0;
 			}
 		}
 	}
@@ -148,7 +148,7 @@
 
 	.gravatar {
 		display: block;
-		margin: 0 auto 8px auto;
+		margin: 0 auto 8px;
 	}
 
 	.button {
@@ -186,7 +186,7 @@
 	}
 
 	@include breakpoint( '>660px' ) {
-		margin: 0 8px 16px 8px;
+		margin: 0 8px 16px;
 	}
 
 	&.jetpack-connect__creds-form {
@@ -202,7 +202,7 @@
 .jetpack-connect__install-step-text {
 	color: $gray;
 	font-size: 12px;
-	margin: 8px 0 16px 0;
+	margin: 8px 0 16px;
 	flex-grow: 2;
 }
 
@@ -311,7 +311,7 @@
 
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
-		padding: 10px 10px 12px 10px;
+		padding: 10px 10px 12px;
 		background-color: $white;
 	}
 
@@ -331,7 +331,7 @@
 .example-components__connect-jetpack.is-legacy {
 	.example-components__content-wp-admin-connect-banner {
 		margin: 10px;
-		padding: 12px 10px 16px 10px;
+		padding: 12px 10px 16px;
 		text-align: right;
 		background-color: #81a844;
 		border-left: 0;
@@ -436,7 +436,7 @@
 
 .jetpack-connect__tos-link {
 	font-size: 11px;
-	margin: 0 0 16px 0;
+	margin: 0 0 16px;
 	text-align: center;
 }
 
@@ -592,7 +592,7 @@
 		min-height: 400px;
 	}
 
-	.plan-features--signup .plan-price.is-original:before {
+	.plan-features--signup .plan-price.is-original::before {
 		border-top: 0;
 	}
 

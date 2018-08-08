@@ -22,7 +22,7 @@
 .first-view {
 	box-sizing: border-box;
 	margin: calc( 47px + 10vh ) 0 0 0;
-	padding: 32px 32px 32px 32px;
+	padding: 32px;
 	pointer-events: none;
 	position: fixed;
 	bottom: 0;
@@ -116,7 +116,7 @@
 	h1 {
 		font-size: 18px;
 		font-weight: 600;
-		margin: 0 0 12px 0;
+		margin: 0 0 12px;
 		line-height: 1.4;
 
 		@include breakpoint( '<480px' ) {
@@ -126,7 +126,7 @@
 
 	p {
 		font-size: 15px;
-		margin: 0 0 20px 0;
+		margin: 0 0 20px;
 		line-height: 1.5;
 	}
 

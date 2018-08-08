@@ -1,7 +1,7 @@
 /** @format */
 
-.connected-application-icon.plugin-icon.is-placeholder:before,
-.connected-application-icon.plugin-icon[style*='undefined']:before {
+.connected-application-icon.plugin-icon.is-placeholder::before,
+.connected-application-icon.plugin-icon[style*='undefined']::before {
 	content: '';
 }
 
@@ -9,10 +9,10 @@
 	// !important necessary here since plugin-icon uses !important as well
 	height: 40px !important;
 	width: 40px !important;
-	margin-left: 0px;
+	margin-left: 0;
 	margin-right: 12px;
 
 	@include breakpoint( '>480px' ) {
-		margin-left: 0px;
+		margin-left: 0;
 	}
 }

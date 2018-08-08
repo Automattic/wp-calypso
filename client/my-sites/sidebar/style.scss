@@ -21,8 +21,8 @@
 	}
 }
 
-.sidebar__menu li.stats a:after,
-.notouch .sidebar__menu li.stats:hover:not( .selected ) a:first-child:after {
+.sidebar__menu li.stats a::after,
+.notouch .sidebar__menu li.stats:hover:not( .selected ) a:first-child::after {
 	background: none;
 }
 

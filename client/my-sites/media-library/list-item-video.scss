@@ -9,7 +9,7 @@
 	background-position: center;
 }
 
-.media-library__list-item-video:before {
+.media-library__list-item-video::before {
 	position: absolute;
 	display: block;
 	top: 0;

@@ -15,7 +15,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	background-color: $white;
 
 	& .notice {
-		margin: 0 0 16px 0;
+		margin: 0 0 16px;
 		border-radius: 0;
 	}
 }
@@ -262,7 +262,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	margin-left: 8px;
 
 	.post-share__share-button {
-		margin-left: 0px;
+		margin-left: 0;
 	}
 }
 

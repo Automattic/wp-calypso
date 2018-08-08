@@ -33,7 +33,7 @@
 	margin-right: 8px;
 }
 
-.plan-price.is-original:before {
+.plan-price.is-original::before {
 	position: absolute;
 	content: '';
 	left: 0;

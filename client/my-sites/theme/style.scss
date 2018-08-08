@@ -58,7 +58,7 @@
 
 	@include breakpoint( '<960px' ) {
 		&.card {
-			margin: 0 0 1px 0;
+			margin: 0 0 1px;
 		}
 	}
 }
@@ -109,7 +109,7 @@
 	margin-top: -156px;
 	width: 98%;
 	z-index: 1;
-	box-shadow: 0 0 0 1px $transparent, 0px 2px 8px 0px transparentize( $gray-dark, 0.5 );
+	box-shadow: 0 0 0 1px $transparent, 0 2px 8px 0 transparentize( $gray-dark, 0.5 );
 	background-color: transparentize( white, 0.5 );
 	transition: all 200ms ease-in-out;
 
@@ -126,7 +126,7 @@
 		overflow: hidden;
 		box-shadow: none;
 
-		&:before {
+		&::before {
 			content: '';
 			display: block;
 			position: absolute;
@@ -145,7 +145,7 @@
 	@include breakpoint( '>960px' ) {
 		&.is-active:hover {
 			cursor: pointer;
-			box-shadow: 0 0 0 1px $gray, 0px 2px 10px 0px transparentize( $gray-dark, 0.5 );
+			box-shadow: 0 0 0 1px $gray, 0 2px 10px 0 transparentize( $gray-dark, 0.5 );
 		}
 	}
 }
@@ -182,7 +182,7 @@
 
 		.theme__sheet-preview-link-text {
 			margin: 0 auto;
-			padding: 2px 8px 3px 8px;
+			padding: 2px 8px 3px;
 			background-color: $gray-light;
 			color: $gray-text-min;
 			font-size: 11px;
@@ -250,16 +250,16 @@
 		font-weight: 400;
 
 		margin: -20px -20px 20px;
-		padding: 15px 20px 15px;
+		padding: 15px 20px;
 		border-bottom: 1px solid #dce5eb;
 
 		&:nth-child( n + 2 ) {
 			// Everything except the first
 			border-top: 1px solid #dce5eb;
 			margin: 20px -20px 20px;
-			padding: 15px 20px 15px;
+			padding: 15px 20px;
 
-			&:before {
+			&::before {
 				// The "fake" Card separation
 				content: '';
 				display: block;
@@ -374,7 +374,7 @@
 		border-radius: 3px;
 		transition: all 100ms ease-in;
 
-		&:after {
+		&::after {
 			content: '';
 			pointer-events: none;
 			position: absolute;
@@ -394,7 +394,7 @@
 			color: $white;
 			background-color: $blue-dark;
 
-			&:after {
+			&::after {
 				transform: scale( 1.07, 1.16 );
 			}
 		}
@@ -503,7 +503,7 @@
 
 	width: 50%;
 
-	margin: 0 0 10px 0;
+	margin: 0 0 10px;
 	background-color: #34444d;
 
 	@include breakpoint( '<960px' ) {
