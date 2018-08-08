@@ -1,36 +1,24 @@
-/**
- * External dependencies
- *
- * @format
- */
-
-import { assign } from 'lodash';
-
+/** @format */
 /**
  * Internal dependencies
  */
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'state/utils';
 import { SITE_CHECKLIST_RECEIVE, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
 import { items as itemSchemas } from './schema';
 
-export const items = createReducer(
-	{},
-	{
-		[ SITE_CHECKLIST_RECEIVE ]: ( state, { siteId, checklist } ) => ( {
-			...state,
-			[ siteId ]: checklist,
-		} ),
-		[ SITE_CHECKLIST_TASK_UPDATE ]: ( state, { siteId, taskId } ) => {
-			const siteState = state[ siteId ];
-			const tasks = assign( {}, siteState.tasks, { [ taskId ]: true } );
-			return {
-				...state,
-				[ siteId ]: assign( {}, siteState, { tasks } ),
-			};
-		},
-	},
-	itemSchemas
-);
+const taskUpdate = keyedReducer( 'taskId', () => true );
+
+const items = keyedReducer( 'siteId', ( state = {}, action ) => {
+	switch ( action.type ) {
+		case SITE_CHECKLIST_RECEIVE:
+			return action.checklist;
+
+		case SITE_CHECKLIST_TASK_UPDATE:
+			return taskUpdate( state, action );
+	}
+	return state;
+} );
+items.schema = itemSchemas;
 
 export default combineReducers( {
 	items,
