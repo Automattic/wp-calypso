@@ -51,6 +51,7 @@ export default class extends React.Component {
 		window.removeEventListener( 'resize', this.throttleOnResize );
 		window.cancelAnimationFrame( this.rafHandle );
 		window.clearTimeout( this.deferredTimer );
+		this.updateIsSticky.cancel();
 	}
 
 	onWindowScroll = () => {
