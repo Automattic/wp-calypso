@@ -5,13 +5,12 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
-
 /** Internal Dependencies */
 import Spinner from 'components/spinner';
 
-export default class extends React.Component {
+export default class extends Component {
 	static displayName = 'PhoneInputCountryFlag';
 
 	static propTypes = {
@@ -19,51 +18,37 @@ export default class extends React.Component {
 	};
 
 	state = {
-		ready: true,
-		error: false,
+		flagSvg: null,
 	};
 
-	componentDidUpdate( oldProps ) {
-		if ( this.props.countryCode && this.props.countryCode !== oldProps.countryCode ) {
-			this.setState( { ready: false, error: false } );
+	static getDerivedStateFromProps( { countryCode }, state ) {
+		if ( ! countryCode ) {
+			return { flagSvg: null };
+		}
+
+		if ( countryCode !== state.countryCode ) {
+			const flagSvg = require( 'svg-inline-loader!../../../node_modules/flag-icon-css/flags/4x3/' +
+				countryCode +
+				'.svg' );
+			return { flagSvg };
 		}
 	}
 
-	renderSpinner = () => {
-		if ( ( ! this.props.countryCode || ! this.state.ready ) && ! this.state.error ) {
-			return <Spinner size={ 16 } className="phone-input__flag-spinner" />;
-		}
-	};
-
-	handleImageLoad = () => {
-		this.setState( { ready: true, error: false } );
-	};
-
-	handleImageError = () => {
-		this.setState( { ready: false, error: true } );
-	};
-
-	renderFlag = () => {
-		const style = this.state.ready ? {} : { visibility: 'hidden' };
-
-		if ( this.props.countryCode ) {
-			if ( ! this.state.error ) {
-				const svg = require( 'svg-inline-loader!' +
-					'../../../node_modules/flag-icon-css/flags/4x3/' +
-					this.props.countryCode +
-					'.svg' );
-				console.log( svg );
-				return <div dangerouslySetInnerHTML={ { __html: svg } } />;
-			}
-			return <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" />;
-		}
-	};
-
 	render() {
+		const showSpinner = this.props.countryCode && ! this.state.flagSvg; // flag is specified but not here
+		const showGeneric = ! this.props.countryCode; // flag isn't specified
+		const hasFlag = this.props.countryCode && this.state.flagSvg; // loaded SVG
+
 		return (
 			<div className="phone-input__flag-container">
-				{ this.renderSpinner() }
-				{ this.renderFlag() }
+				{ showSpinner && <Spinner size={ 16 } className="phone-input__flag-spinner" /> }
+				{ showGeneric && <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" /> }
+				{ hasFlag && (
+					<div
+						className="phone-input__flag-icon"
+						dangerouslySetInnerHTML={ { __html: this.state.flagSvg } }
+					/>
+				) }
 				<Gridicon icon="chevron-down" size={ 12 } className="phone-input__flag-selector-icon" />
 			</div>
 		);
