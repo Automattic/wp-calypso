@@ -1424,6 +1424,7 @@
       "resolved": "https://registry.npmjs.org/align-text/-/align-text-0.1.4.tgz",
       "integrity": "sha1-DNkKVhCT810KmSVsIrcGlDP60Rc=",
       "dev": true,
+      "optional": true,
       "requires": {
         "kind-of": "^3.0.2",
         "longest": "^1.0.1",
@@ -1435,6 +1436,7 @@
           "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
           "integrity": "sha1-MeohpzS6ubuw8yRm2JOupR5KPGQ=",
           "dev": true,
+          "optional": true,
           "requires": {
             "is-buffer": "^1.1.5"
           }
@@ -4489,16 +4491,17 @@
       }
     },
     "enzyme-adapter-react-16": {
-      "version": "1.1.1",
-      "resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.1.1.tgz",
-      "integrity": "sha512-kC8pAtU2Jk3OJ0EG8Y2813dg9Ol0TXi7UNxHzHiWs30Jo/hj7alc//G1YpKUsPP1oKl9X+Lkx+WlGJpPYA+nvw==",
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.2.0.tgz",
+      "integrity": "sha512-UgBra+xZFVFbU5Tw7Inw0bPrNJhM2ru4vCoO7preX6sOicXuDbOH927QJx4pk6m6vatd8jnPXTF6/GCjzytJTg==",
       "dev": true,
       "requires": {
-        "enzyme-adapter-utils": "^1.3.0",
-        "lodash": "^4.17.4",
-        "object.assign": "^4.0.4",
+        "enzyme-adapter-utils": "^1.5.0",
+        "function.prototype.name": "^1.1.0",
+        "object.assign": "^4.1.0",
         "object.values": "^1.0.4",
-        "prop-types": "^15.6.0",
+        "prop-types": "^15.6.2",
+        "react-is": "^16.4.2",
         "react-reconciler": "^0.7.0",
         "react-test-renderer": "^16.0.0-0"
       }
@@ -5943,11 +5946,13 @@
         },
         "balanced-match": {
           "version": "1.0.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "brace-expansion": {
           "version": "1.1.11",
           "bundled": true,
+          "optional": true,
           "requires": {
             "balanced-match": "^1.0.0",
             "concat-map": "0.0.1"
@@ -5960,15 +5965,18 @@
         },
         "code-point-at": {
           "version": "1.1.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "concat-map": {
           "version": "0.0.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "console-control-strings": {
           "version": "1.1.0",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "core-util-is": {
           "version": "1.0.2",
@@ -6071,7 +6079,8 @@
         },
         "inherits": {
           "version": "2.0.3",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "ini": {
           "version": "1.3.5",
@@ -6081,6 +6090,7 @@
         "is-fullwidth-code-point": {
           "version": "1.0.0",
           "bundled": true,
+          "optional": true,
           "requires": {
             "number-is-nan": "^1.0.0"
           }
@@ -6093,17 +6103,20 @@
         "minimatch": {
           "version": "3.0.4",
           "bundled": true,
+          "optional": true,
           "requires": {
             "brace-expansion": "^1.1.7"
           }
         },
         "minimist": {
           "version": "0.0.8",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "minipass": {
           "version": "2.2.4",
           "bundled": true,
+          "optional": true,
           "requires": {
             "safe-buffer": "^5.1.1",
             "yallist": "^3.0.0"
@@ -6120,6 +6133,7 @@
         "mkdirp": {
           "version": "0.5.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "minimist": "0.0.8"
           }
@@ -6192,7 +6206,8 @@
         },
         "number-is-nan": {
           "version": "1.0.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "object-assign": {
           "version": "4.1.1",
@@ -6202,6 +6217,7 @@
         "once": {
           "version": "1.4.0",
           "bundled": true,
+          "optional": true,
           "requires": {
             "wrappy": "1"
           }
@@ -6307,6 +6323,7 @@
         "string-width": {
           "version": "1.0.2",
           "bundled": true,
+          "optional": true,
           "requires": {
             "code-point-at": "^1.0.0",
             "is-fullwidth-code-point": "^1.0.0",
@@ -9383,7 +9400,8 @@
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/longest/-/longest-1.0.1.tgz",
       "integrity": "sha1-MKCy2jj3N3DoKUoNIuZiXtd9AJc=",
-      "dev": true
+      "dev": true,
+      "optional": true
     },
     "longest-streak": {
       "version": "2.0.2",
@@ -9935,29 +9953,29 @@
       "resolved": "https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.7.tgz",
       "integrity": "sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s="
     },
-    "namespace-css": {
-      "version": "git+https://github.com/jeffling/namespace-css.git#10b40d25a09e04c24a424b906613afb93f080d8e",
-      "from": "git+https://github.com/jeffling/namespace-css.git",
-      "requires": {
-        "css-parse": "~2.0.0",
-        "css-stringify": "~2.0.0",
-        "minimist": "1.1.0",
-        "traverse": "~0.6.6"
-      },
-      "dependencies": {
-        "minimist": {
-          "version": "1.1.0",
-          "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.1.0.tgz",
-          "integrity": "sha1-zfIl6ImPhAolje1E/JF3Z3Cv3JM="
-        }
-      }
-    },
     "namespace-css-loader": {
       "version": "0.0.3",
       "resolved": "https://registry.npmjs.org/namespace-css-loader/-/namespace-css-loader-0.0.3.tgz",
       "integrity": "sha1-Pgqsuc4tIIw65t+qYKgriL4nDlE=",
       "requires": {
         "namespace-css": "git+https://github.com/jeffling/namespace-css.git#10b40d25a09e04c24a424b906613afb93f080d8e"
+      },
+      "dependencies": {
+        "minimist": {
+          "version": "1.1.0",
+          "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.1.0.tgz",
+          "integrity": "sha1-zfIl6ImPhAolje1E/JF3Z3Cv3JM="
+        },
+        "namespace-css": {
+          "version": "git+https://github.com/jeffling/namespace-css.git#10b40d25a09e04c24a424b906613afb93f080d8e",
+          "from": "git+https://github.com/jeffling/namespace-css.git#10b40d25a09e04c24a424b906613afb93f080d8e",
+          "requires": {
+            "css-parse": "~2.0.0",
+            "css-stringify": "~2.0.0",
+            "minimist": "1.1.0",
+            "traverse": "~0.6.6"
+          }
+        }
       }
     },
     "nan": {
