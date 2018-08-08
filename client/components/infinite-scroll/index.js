@@ -82,41 +82,20 @@ class InfiniteScrollWithScrollEvent extends React.Component {
 
 	componentDidMount() {
 		window.addEventListener( 'scroll', this.checkScrollPositionHandler );
-		this.checkScrollPositionHandler( false );
+		this.throttledCheckScrollPosition( false );
 	}
 
 	componentDidUpdate() {
-		this.checkScrollPositionHandler( false );
+		this.throttledCheckScrollPosition( false );
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.checkScrollPositionHandler );
-		this.clearPending();
+		this.throttledCheckScrollPosition.cancel();
+		this.pendingLayoutFlush.cancel();
 	}
 
-	checkScrollAfterLayout = () => {
-		this.pendingLayoutFlush = afterLayoutFlush( triggeredByScroll =>
-			this.checkScrollPosition( triggeredByScroll )
-		);
-
-		this.pendingLayoutFlush();
-	};
-
-	checkScrollPositionHandler = throttle( this.checkScrollAfterLayout, SCROLL_CHECK_RATE_IN_MS );
-
-	clearPending() {
-		if ( this.checkScrollPositionHandler ) {
-			this.checkScrollPositionHandler.cancel();
-		}
-
-		if ( this.pendingLayoutFlush ) {
-			this.pendingLayoutFlush.cancel();
-		}
-	}
-
-	checkScrollPosition( triggeredByScroll ) {
-		this.clearPending();
-
+	checkScrollPosition = triggeredByScroll => {
 		const scrollPosition = window.pageYOffset;
 		const documentHeight = document.body.scrollHeight;
 		const viewportHeight = window.innerHeight;
@@ -131,7 +110,11 @@ class InfiniteScrollWithScrollEvent extends React.Component {
 
 			this.props.nextPageMethod( { triggeredByScroll } );
 		}
-	}
+	};
+
+	pendingLayoutFlush = afterLayoutFlush( this.checkScrollPosition );
+	throttledCheckScrollPosition = throttle( this.pendingLayoutFlush, SCROLL_CHECK_RATE_IN_MS );
+	checkScrollPositionHandler = () => this.throttledCheckScrollPosition( true );
 
 	render() {
 		// Should match render output for the IntersectionObserver version,
