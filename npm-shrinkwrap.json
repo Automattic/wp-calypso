@@ -3397,36 +3397,6 @@
       "resolved": "https://registry.npmjs.org/copy-descriptor/-/copy-descriptor-0.1.1.tgz",
       "integrity": "sha1-Z29us8OZl8LuGsOpJP1hJHSPV40="
     },
-    "copy-webpack-plugin": {
-      "version": "4.5.2",
-      "resolved": "https://registry.npmjs.org/copy-webpack-plugin/-/copy-webpack-plugin-4.5.2.tgz",
-      "integrity": "sha512-zmC33E8FFSq3AbflTvqvPvBo621H36Afsxlui91d+QyZxPIuXghfnTsa1CuqiAaCPgJoSUWfTFbKJnadZpKEbQ==",
-      "requires": {
-        "cacache": "^10.0.4",
-        "find-cache-dir": "^1.0.0",
-        "globby": "^7.1.1",
-        "is-glob": "^4.0.0",
-        "loader-utils": "^1.1.0",
-        "minimatch": "^3.0.4",
-        "p-limit": "^1.0.0",
-        "serialize-javascript": "^1.4.0"
-      },
-      "dependencies": {
-        "globby": {
-          "version": "7.1.1",
-          "resolved": "https://registry.npmjs.org/globby/-/globby-7.1.1.tgz",
-          "integrity": "sha1-+yzP+UAfhgCUXfral0QMypcrhoA=",
-          "requires": {
-            "array-union": "^1.0.1",
-            "dir-glob": "^2.0.0",
-            "glob": "^7.1.2",
-            "ignore": "^3.3.5",
-            "pify": "^3.0.0",
-            "slash": "^1.0.0"
-          }
-        }
-      }
-    },
     "core-js": {
       "version": "2.5.7",
       "resolved": "https://registry.npmjs.org/core-js/-/core-js-2.5.7.tgz",

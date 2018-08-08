@@ -9,14 +9,9 @@ const webpack = require( 'webpack' );
 const { isEmpty, omitBy } = require( 'lodash' );
 
 const __rootDir = path.resolve( __dirname, '../../' );
-const CopyWebpackPlugin = require( path.resolve(
-	__rootDir,
-	'server/bundler/copy-webpack-plugin'
-) );
 const getBaseConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
 
 const omitPlugins = [
-	CopyWebpackPlugin,
 	webpack.HotModuleReplacementPlugin,
 ];
 
