@@ -18,6 +18,7 @@ const propTypeDefinition = {
 
 class InfiniteScrollWithIntersectionObserver extends React.Component {
 	static propTypes = propTypeDefinition;
+	static displayName = 'InfiniteScroll';
 
 	observedElement = React.createRef();
 
@@ -77,6 +78,7 @@ class InfiniteScrollWithIntersectionObserver extends React.Component {
 
 class InfiniteScrollWithScrollEvent extends React.Component {
 	static propTypes = propTypeDefinition;
+	static displayName = 'InfiniteScroll';
 
 	componentDidMount() {
 		window.addEventListener( 'scroll', this.checkScrollPositionHandler );
