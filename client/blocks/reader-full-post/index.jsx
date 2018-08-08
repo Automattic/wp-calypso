@@ -64,6 +64,7 @@ import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
 import getNextItem from 'state/selectors/get-reader-stream-next-item';
 import getPreviousItem from 'state/selectors/get-reader-stream-prev-item';
+import getReaderSiteIdFromHostname from 'state/selectors/get-reader-site-id-from-hostname';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -479,7 +480,15 @@ export class FullPostView extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const { feedId, blogId, postId } = ownProps;
-		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
+
+		let blogIdForPostKey = blogId;
+
+		// Do we have a non-numeric blogId? Might be a hostname - look it up
+		if ( isNaN( blogId ) ) {
+			blogIdForPostKey = getReaderSiteIdFromHostname( state, blogId );
+		}
+
+		const postKey = pickBy( { feedId: +feedId, blogId: blogIdForPostKey, postId: +postId } );
 		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
 
 		const { site_ID: siteId, is_external: isExternal } = post;
