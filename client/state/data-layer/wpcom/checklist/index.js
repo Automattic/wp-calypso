@@ -14,7 +14,7 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'state/checklist/actions';
 
-export const fetchChecklist = action =>
+const fetchChecklist = action =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/checklist`,
@@ -27,7 +27,7 @@ export const fetchChecklist = action =>
 		action
 	);
 
-export const receiveChecklistSuccess = ( action, checklist ) =>
+const receiveChecklistSuccess = ( action, checklist ) =>
 	receiveSiteChecklist( action.siteId, checklist );
 
 const dispatchChecklistRequest = dispatchRequestEx( {
@@ -36,7 +36,7 @@ const dispatchChecklistRequest = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export const updateChecklistTask = action =>
+const updateChecklistTask = action =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/checklist`,
