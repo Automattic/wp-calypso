@@ -25,6 +25,7 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 export class ImageSelector extends Component {
 	static propTypes = {
+		compact: PropTypes.bool,
 		hasDropZone: PropTypes.bool,
 		imageIds: PropTypes.array,
 		isDropZoneVisible: PropTypes.bool,
@@ -41,6 +42,7 @@ export class ImageSelector extends Component {
 	};
 
 	static defaultProps = {
+		compact: false,
 		hasDropZone: false,
 		imageIds: [],
 		isDropZoneVisible: false,
@@ -119,7 +121,7 @@ export class ImageSelector extends Component {
 	}
 
 	renderSelectedImages() {
-		const { siteId, imageIds, maxWidth, multiple, showEditIcon } = this.props;
+		const { compact, siteId, imageIds, maxWidth, multiple, showEditIcon } = this.props;
 
 		return (
 			<ImageSelectorPreview
@@ -130,7 +132,7 @@ export class ImageSelector extends Component {
 				onImageClick={ this.showMediaModal }
 				onRemoveImage={ this.removeImage }
 				multiple={ multiple }
-				compact={ imageIds && imageIds.length > 0 }
+				compact={ compact }
 				showEditIcon={ showEditIcon }
 			/>
 		);
@@ -147,13 +149,13 @@ export class ImageSelector extends Component {
 			<div className={ classes }>
 				{ this.renderMediaModal() }
 				<div className="image-selector__inner-content">{ this.renderSelectedImages() }</div>
-				{ this.props.hasDropZone &&
+				{ this.props.hasDropZone && (
 					<ImageSelectorDropZone
 						onDroppedImage={ this.addImage }
 						site={ this.props.site }
 						siteId={ this.props.siteId }
 					/>
-				}
+				) }
 			</div>
 		);
 	}

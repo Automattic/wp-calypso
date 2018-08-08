@@ -59,6 +59,7 @@ class ImageSelectorExample extends Component {
                 <ImageSelector
 					site={ this.props.site }
 					siteId={ this.props.siteId }
+					compact={ imageIds && imageIds.length > 0 }
                     imageIds={ imageIds }
                     onImageSelected={ this.setImage }
                     onImageChange={ this.changeImages }

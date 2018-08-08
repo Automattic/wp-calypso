@@ -32,10 +32,11 @@ Props are displayed as a table with Name, Type, Default, and Description as head
 
 Name | Type | Default | Description
 --- | --- | --- | ---
+`compact` | `bool` | `0` | Determines whether or not the upload picker is compact or full size
 `hasDropZone` | `bool` | `0` | Enables dropzone for drag-and-drop images
 `imageIds` | `array` | `[]` | An array of image IDs to be shown in the preview and selected in the Media Modal
 `maxWidth` | `number` | `450` | Maximum width to be used for a preview image
-`addImage` | `func` | `noop` | Passes a single transient image object after an image is dropped on the DropZone
+`onAddImage` | `func` | `noop` | Passes a single transient image object after an image is dropped on the DropZone
 `onImageChange` | `func` | `noop` | Passes the entire array of currently selected image objects when transitioning from a transient to permanent image
 `onImageSelected`* | `func` | `noop` | Passes an array of selected image objects when set from the Media Modal
 `onRemoveImage` | `func` | `noop` | Passes a single image object after clicking the remove button on an image
