@@ -121,11 +121,7 @@ export class ChecklistBanner extends Component {
 
 	renderShareButtons() {
 		return (
-			<ChecklistShowShare
-				className="checklist-banner__actions"
-				siteSlug={ this.props.siteSlug }
-				recordTracksEvent={ this.props.track }
-			/>
+			<ChecklistShowShare className="checklist-banner__actions" siteSlug={ this.props.siteSlug } />
 		);
 	}
 
