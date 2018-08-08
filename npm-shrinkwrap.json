@@ -14025,12 +14025,9 @@
       "integrity": "sha512-I2UmuJSRr/T8jisiROLU3A3ltr+swpniSmNPI4Ml3ZCX6tVnDsuZzK7F2hl5jTqbZBWCEKlj5HRQiPExXLgE8A=="
     },
     "source-map": {
-      "version": "0.1.39",
-      "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.1.39.tgz",
-      "integrity": "sha1-ZK0ynEdhq5Vv99ARxrIFrrZqLUo=",
-      "requires": {
-        "amdefine": ">=0.0.4"
-      }
+      "version": "0.7.3",
+      "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.7.3.tgz",
+      "integrity": "sha512-CkCj6giN3S+n9qrYiBTX5gystlENnRW5jZeNLHpe6aue+SrHcG5VYwujhW9s4dY31mEGsxBDrHR6oI69fTXsaQ=="
     },
     "source-map-resolve": {
       "version": "0.5.2",
