@@ -3,20 +3,17 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { noop } from 'lodash';
-import {
-	registerBlockType,
-	setDefaultBlockName,
-	setUnknownTypeHandlerName,
-} from '@wordpress/blocks';
+import { connect } from 'react-redux';
+import { isEmpty, noop } from 'lodash';
 import '@wordpress/core-data';
 
 /**
  * Internal dependencies
  */
 import Editor from './edit-post/editor.js';
-import * as paragraph from './core-blocks/paragraph';
-import * as heading from './core-blocks/heading';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { overrideAPIPaths, registerCoreBlocks } from './utils';
 
 const editorSettings = {};
 const overridePost = {};
@@ -25,21 +22,18 @@ const post = {
 	content: {},
 };
 
-// Mock registerCoreBlocks until core-blocks package is published
-const registerCoreBlocks = () => {
-	[ paragraph, heading ].forEach( ( { name, settings } ) => {
-		registerBlockType( name, settings );
-	} );
-
-	setDefaultBlockName( paragraph.name );
-
-	setUnknownTypeHandlerName( paragraph.name );
-};
-
-registerCoreBlocks();
-
 class GutenbergEditor extends Component {
+	componentDidMount() {
+		registerCoreBlocks();
+	}
+
 	render() {
+		if ( isEmpty( this.props.siteSlug ) ) {
+			return null;
+		}
+
+		overrideAPIPaths( this.props.siteSlug );
+
 		return (
 			<Editor
 				settings={ editorSettings }
@@ -52,4 +46,12 @@ class GutenbergEditor extends Component {
 	}
 }
 
-export default GutenbergEditor;
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+};
+
+export default connect( mapStateToProps )( GutenbergEditor );
