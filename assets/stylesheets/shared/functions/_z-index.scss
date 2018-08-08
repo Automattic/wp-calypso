@@ -266,8 +266,9 @@ $z-layers: (
 		'.thank-you-card__main-icon': 2,
 		'.thank-you-card__header-detail': 2,
 	),
-	// The following may be inserted into different areas.
-	// The parent stacking context may be root, or something else depending on where it is inserted.
+	// The following may be inserted into different areas
+	// The parent stacking context may be root, 
+	// or something else depending on where it is inserted
 	'icon-parent':
 		(
 			'.sidebar__menu .gridicon.gridicons-external': 1,
