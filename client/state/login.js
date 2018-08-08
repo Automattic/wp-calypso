@@ -19,7 +19,7 @@ import { reducer as form } from 'redux-form';
  */
 import { combineReducers } from 'state/utils';
 import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
-import noticesMiddleware from './notices/middleware';
+import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 import login from './login/reducer';
 import ui from './ui/reducer';
 import notices from './notices/reducer';
@@ -49,8 +49,7 @@ export function createReduxStore( initialState = {} ) {
 		// then it could mistakenly trigger on those network
 		// responses. Therefore we need to inject the data layer
 		// as early as possible into the middleware chain.
-		require( './data-layer/wpcom-api-middleware.js' ).default,
-		noticesMiddleware,
+		wpcomApiMiddleware,
 	].filter( Boolean );
 
 	const enhancers = [ httpDataEnhancer, applyMiddleware( ...middlewares ) ].filter( Boolean );
