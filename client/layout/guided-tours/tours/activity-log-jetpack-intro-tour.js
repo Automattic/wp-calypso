@@ -20,7 +20,13 @@ export const ActivityLogJetpackIntroTour = makeTour(
 		path="/stats/activity/"
 		when={ and( isSelectedSiteJetpack, isSelectedSitePlanFree ) }
 	>
-		<Step name="init" arrow="top-left" target=".stats-navigation__activity" placement="below">
+		<Step
+			name="init"
+			arrow="top-left"
+			target=".stats-navigation__activity"
+			placement="below"
+			scrollContainer=".section-nav__mobile-header"
+		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>

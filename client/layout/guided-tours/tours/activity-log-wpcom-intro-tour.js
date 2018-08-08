@@ -20,7 +20,13 @@ export const ActivityLogWpcomIntroTour = makeTour(
 		path="/stats/activity/"
 		when={ and( isSelectedSiteNotJetpack, isSelectedSitePlanFree ) }
 	>
-		<Step name="init" arrow="top-left" target=".stats-navigation__activity" placement="below">
+		<Step
+			name="init"
+			arrow="top-left"
+			target=".stats-navigation__activity"
+			placement="below"
+			scrollContainer=".section-nav__mobile-header"
+		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
