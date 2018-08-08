@@ -22,7 +22,7 @@ const fromApi = makeJsonSchemaParser(
 						additionalProperties: false,
 						required: [ 'completed' ],
 						properties: {
-							completed: { type: 'boolean' },
+							completed: { type: [ 'boolean', 'null' ] },
 							url: { type: 'string' },
 						},
 					},
