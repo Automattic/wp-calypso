@@ -39,6 +39,7 @@ class OnboardingChecklist extends PureComponent {
 
 	render() {
 		const { siteId, checklistTasks } = this.props;
+		const TaskComponent = this.props.taskComponentType || ConnectedItem;
 
 		const completedCount = reduce(
 			checklistTasks,
@@ -50,7 +51,7 @@ class OnboardingChecklist extends PureComponent {
 
 		return (
 			<Checklist completedCount={ completedCount }>
-				<ConnectedItem
+				<TaskComponent
 					siteId={ siteId }
 					taskId="site_created"
 					title="Create your site"
@@ -58,7 +59,7 @@ class OnboardingChecklist extends PureComponent {
 					completedTitle="You created your site"
 					completed
 				/>
-				<ConnectedItem
+				<TaskComponent
 					siteId={ siteId }
 					taskId="domain_selected"
 					title="Pick a website address"
@@ -67,7 +68,7 @@ class OnboardingChecklist extends PureComponent {
 					completed
 					image="/calypso/images/stats/tasks/domains.svg"
 				/>
-				<ConnectedItem
+				<TaskComponent
 					siteId={ siteId }
 					taskId="blogname_set"
 					title="Give your site a name"
@@ -79,7 +80,7 @@ class OnboardingChecklist extends PureComponent {
 					image="/calypso/images/stats/tasks/personalize-your-site.svg"
 					tourId="checklistSiteTitle"
 				/>
-				<ConnectedItem
+				<TaskComponent
 					siteId={ siteId }
 					taskId="site_icon_set"
 					title="Upload a site icon"
@@ -91,7 +92,7 @@ class OnboardingChecklist extends PureComponent {
 					image="/calypso/images/stats/tasks/upload-icon.svg"
 					tourId="checklistSiteIcon"
 				/>
-				<ConnectedItem
+				<TaskComponent
 					siteId={ siteId }
 					taskId="blogdescription_set"
 					title="Create a tagline"
@@ -103,7 +104,7 @@ class OnboardingChecklist extends PureComponent {
 					image="/calypso/images/stats/tasks/create-tagline.svg"
 					tourId="checklistSiteTagline"
 				/>
-				<ConnectedItem
+				<TaskComponent
 					siteId={ siteId }
 					taskId="avatar_uploaded"
 					title="Upload your profile picture"
@@ -115,7 +116,7 @@ class OnboardingChecklist extends PureComponent {
 					image="/calypso/images/stats/tasks/upload-profile-picture.svg"
 					tourId="checklistUserAvatar"
 				/>
-				<ConnectedItem
+				<TaskComponent
 					siteId={ siteId }
 					taskId="contact_page_updated"
 					title="Personalize your Contact page"
@@ -127,7 +128,7 @@ class OnboardingChecklist extends PureComponent {
 					tourUrl="/post/$siteSlug/2"
 					tourId="checklistContactPage"
 				/>
-				<ConnectedItem
+				<TaskComponent
 					siteId={ siteId }
 					taskId="post_published"
 					title="Publish your first blog post"
