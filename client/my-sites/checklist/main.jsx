@@ -76,28 +76,6 @@ class ChecklistMain extends PureComponent {
 		}
 	}
 
-	getSubHeaderText( displayMode ) {
-		const { translate } = this.props;
-
-		if ( displayMode === 'gsuite' ) {
-			return translate(
-				'We emailed %(email)s with instructions to complete your G Suite setup. ' +
-					'In the mean time, let’s get your new site ready for you to share. ' +
-					'We’ve prepared a list of things that will help you get there quickly.',
-				{
-					args: {
-						email: this.props.user.email,
-					},
-				}
-			);
-		}
-
-		return translate(
-			"Now that your site has been created, it's time to get it ready for you to share. " +
-				"We've prepared a list of things that will help you get there quickly."
-		);
-	}
-
 	renderHeader( completed, displayMode ) {
 		const { translate, isNewlyCreatedSite } = this.props;
 
@@ -136,7 +114,23 @@ class ChecklistMain extends PureComponent {
 								? translate( 'Your site has been created!' )
 								: translate( 'Thank you for your purchase!' )
 						}
-						subHeaderText={ this.getSubHeaderText( displayMode ) }
+						subHeaderText={
+							'gsuite' === displayMode
+								? translate(
+										'We emailed %(email)s with instructions to complete your G Suite setup. ' +
+											'In the mean time, let’s get your new site ready for you to share. ' +
+											'We’ve prepared a list of things that will help you get there quickly.',
+										{
+											args: {
+												email: this.props.user.email,
+											},
+										}
+								  )
+								: translate(
+										"Now that your site has been created, it's time to get it ready for you to share. " +
+											"We've prepared a list of things that will help you get there quickly."
+								  )
+						}
 					/>
 				</Fragment>
 			);
