@@ -313,6 +313,15 @@
 	color: $alert-red;
 }
 
+.activity-log-item__activity-media {
+	margin-right: 16px;
+}
+
+.activity-log-item__activity-media.has-gridicon {
+	background-color: $gray-lighten-20;
+	color: $white;
+}
+
 @keyframes fade-out-success {
 	0% {
 		opacity: 1;

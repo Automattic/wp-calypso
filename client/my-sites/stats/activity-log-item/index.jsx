@@ -71,7 +71,7 @@ class ActivityLogItem extends Component {
 					<ActivityMedia
 						icon={ ! activityMedia.available && activityMedia.gridicon }
 						name={ activityMedia.available && activityMedia.name }
-						screenshot={ activityMedia.available && activityMedia.url }
+						thumbnail={ activityMedia.available && activityMedia.url }
 					/>
 				) }
 				<div className="activity-log-item__description">
