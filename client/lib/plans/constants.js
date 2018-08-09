@@ -630,6 +630,7 @@ export const PLANS_LIST = {
 				FEATURE_ADVANCED_SEO,
 				FEATURE_GOOGLE_ANALYTICS,
 			] ),
+		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_PREMIUM_MONTHLY ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
