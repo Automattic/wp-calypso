@@ -65,7 +65,7 @@ class ActivityLogTaskUpdate extends Component {
 					<div>
 						<span className="activity-log-tasklist__update-text">
 							{ linked ? (
-								<a className={ { borderless: true } } href={ url } onClick={ this.handleNameClick }>
+								<a href={ url } onClick={ this.handleNameClick }>
 									{ name }
 								</a>
 							) : (
