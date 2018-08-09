@@ -10,10 +10,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ImageSelector } from 'blocks/image-selector';
+import ImageSelector from 'blocks/image-selector';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSite } from 'state/sites/selectors';
-import { translate } from 'i18n-calypso';
 
 class ImageSelectorExample extends Component {
 	constructor( props ) {
@@ -29,7 +28,7 @@ class ImageSelectorExample extends Component {
 			return;
 		}
 		const itemIds = media.items.map( item => item.ID );
-        this.setState( { imageIds: itemIds } );
+		this.setState( { imageIds: itemIds } );
 	}
 
 	changeImages = ( images ) => {
@@ -53,23 +52,23 @@ class ImageSelectorExample extends Component {
 
 	render() {
 		const imageIds = this.state.imageIds;
+		const { site, siteId } = this.props;
 
 		return (
 			<div className="image-selector-example">
-                <ImageSelector
-					site={ this.props.site }
-					siteId={ this.props.siteId }
+				<ImageSelector
+					site={ site }
+					siteId={ siteId }
 					compact={ imageIds && imageIds.length > 0 }
-                    imageIds={ imageIds }
-                    onImageSelected={ this.setImage }
-                    onImageChange={ this.changeImages }
-                    onRemoveImage={ this.removeImage }
-                    onAddImage={ this.addImage }
-                    multiple={ true }
+					imageIds={ imageIds }
+					onImageSelected={ this.setImage }
+					onImageChange={ this.changeImages }
+					onRemoveImage={ this.removeImage }
+					onAddImage={ this.addImage }
+					multiple={ true }
 					showEditIcon={ true }
-					translate={ translate }
-                    hasDropZone
-                />
+					hasDropZone
+				/>
 			</div>
 		);
 	}

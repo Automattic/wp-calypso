@@ -161,13 +161,19 @@ export class ImageSelector extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-	const site = getSelectedSite( state );
-
-	return {
-		site,
-		siteId,
+export default connect( ( state, ownProps ) => {
+	const { site, siteId } = ownProps;
+	const props = {
+		siteId: getSelectedSiteId( state ),
+		site: getSelectedSite( state ),
 		isDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
 	};
+
+	if ( site ) {
+		props.site = site;
+	}
+	if ( siteId ) {
+		props.siteId = siteId;
+	}
+	return props;
 } )( localize( ImageSelector ) );
