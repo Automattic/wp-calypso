@@ -228,17 +228,19 @@ class PodcastingDetails extends Component {
 							<PodcastingSupportLink showText={ false } iconSize={ 16 } />
 						</h1>
 					</HeaderCake>
-					<UpgradeNudge
-						plan={ PLAN_PERSONAL }
-						title={ translate( 'Upload Audio with WordPress.com Personal' ) }
-						message={ translate( 'Embed podcast episodes directly from your media library.' ) }
-						feature={ FEATURE_AUDIO_UPLOADS }
-						event="podcasting_details_upload_audio"
-					/>
 					{ ! error && (
-						<Card className="podcasting-details__category-wrapper">
-							{ this.renderCategorySetting() }
-						</Card>
+						<Fragment>
+							<UpgradeNudge
+								plan={ PLAN_PERSONAL }
+								title={ translate( 'Upload Audio with WordPress.com Personal' ) }
+								message={ translate( 'Embed podcast episodes directly from your media library.' ) }
+								feature={ FEATURE_AUDIO_UPLOADS }
+								event="podcasting_details_upload_audio"
+							/>
+							<Card className="podcasting-details__category-wrapper">
+								{ this.renderCategorySetting() }
+							</Card>
+						</Fragment>
 					) }
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
 					{ isPodcastingEnabled && (
