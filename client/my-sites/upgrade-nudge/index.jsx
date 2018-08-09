@@ -22,7 +22,7 @@ import { getValidFeatureKeys } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { canCurrentUser } from 'state/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class UpgradeNudge extends React.Component {
