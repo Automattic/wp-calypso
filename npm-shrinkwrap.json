@@ -1433,13 +1433,11 @@
       }
     },
     "@wordpress/element": {
-      "version": "1.0.2",
-      "resolved": "https://registry.npmjs.org/@wordpress/element/-/element-1.0.2.tgz",
-      "integrity": "sha512-M/FQ9FsRBcwGiTudXMtAy9/ODoxRiu/haFHZupspADK9ElfO/lnN8pyg2L/S8GEH2Jtf0uztPT7Bga9IW3lbbw==",
+      "version": "1.0.3",
+      "resolved": "https://registry.npmjs.org/@wordpress/element/-/element-1.0.3.tgz",
+      "integrity": "sha512-S/mJ94A6uqk7idxDI0WAPEA6ezHK4G3SeUgKTKuA7Wp9u03Tjg9iTvEj8GPA6XXZqBpO/qFi2MtXKBLuIzSPCQ==",
       "requires": {
-        "@babel/runtime": "^7.0.0-beta.52",
-        "@wordpress/deprecated": "^1.0.2",
-        "@wordpress/is-shallow-equal": "^1.1.2",
+        "@babel/runtime-corejs2": "7.0.0-beta.56",
         "lodash": "^4.17.10",
         "react": "^16.4.1",
         "react-dom": "^16.4.1"

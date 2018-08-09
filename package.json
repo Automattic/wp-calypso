@@ -37,7 +37,7 @@
     "@wordpress/components": "1.1.1",
     "@wordpress/data": "1.2.0",
     "@wordpress/editor": "1.0.1",
-    "@wordpress/element": "1.0.2",
+    "@wordpress/element": "1.0.3",
     "@wordpress/i18n": "1.2.2",
     "autoprefixer": "9.1.0",
     "autosize": "4.0.2",
