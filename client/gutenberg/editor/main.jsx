@@ -16,10 +16,15 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { overrideAPIPaths, registerCoreBlocks } from './utils';
 
 const editorSettings = {};
-const overridePost = {};
+
 const post = {
 	type: 'post',
-	content: {},
+	content: 'test content',
+};
+
+const overridePost = {
+	type: 'post',
+	content: 'test content',
 };
 
 class GutenbergEditor extends Component {

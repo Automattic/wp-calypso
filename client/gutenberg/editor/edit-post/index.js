@@ -2,20 +2,16 @@
  * WordPress dependencies
  */
 import { render, unmountComponentAtNode } from '@wordpress/element';
-import { dispatch, setupPersistence } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import deprecated from '@wordpress/deprecated';
 
 /**
  * Internal dependencies
  */
+import './hooks';
 import store from './store';
 import { initializeMetaBoxState } from './store/actions';
 import Editor from './editor';
-
-/**
- * Module Constants
- */
-const STORAGE_KEY = `WP_EDIT_POST_DATA_${ window.userSettings.uid }`;
 
 /**
  * Reinitializes the editor after the user chooses to reboot the editor after
@@ -82,4 +78,10 @@ export function initializeEditor( id, postType, postId, settings, overridePost )
 		},
 	};
 }
-setupPersistence( STORAGE_KEY );
+
+export { default as PluginBlockSettingsMenuItem } from './components/block-settings-menu/plugin-block-settings-menu-item';
+export { default as PluginPostPublishPanel } from './components/sidebar/plugin-post-publish-panel';
+export { default as PluginPostStatusInfo } from './components/sidebar/plugin-post-status-info';
+export { default as PluginPrePublishPanel } from './components/sidebar/plugin-pre-publish-panel';
+export { default as PluginSidebar } from './components/sidebar/plugin-sidebar';
+export { default as PluginSidebarMoreMenuItem } from './components/header/plugin-sidebar-more-menu-item';

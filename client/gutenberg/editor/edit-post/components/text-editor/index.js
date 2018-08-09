@@ -8,10 +8,6 @@ import React from 'react';
  */
 import { PostTextEditor, PostTitle } from '@wordpress/editor';
 
-/**
- * Internal dependencies
- */
-
 function TextEditor() {
 	return (
 		<div className="edit-post-text-editor">

@@ -59,8 +59,8 @@
 		// Use specific selector to not affect nested block toolbars.
 		&[data-align="wide"] > .editor-block-contextual-toolbar,
 		&[data-align="full"] > .editor-block-contextual-toolbar {
-			width: calc( 100% + #{ ( $parent-block-padding * 4 ) + $border-width + $border-width } ); // Matches the negative margins applied to parent blocks.
-			height: 0px; // This collapses the container to an invisible element without margin.
+			width: calc(100% + #{ ($parent-block-padding * 4) + $border-width + $border-width }); // Matches the negative margins applied to parent blocks.
+			height: 0; // This collapses the container to an invisible element without margin.
 			text-align: center;
 
 			.editor-block-toolbar {
@@ -72,7 +72,7 @@
 
 		// The centering math changes when a fullwide image doesn't have block padding.
 		&[data-align="full"] > .editor-block-contextual-toolbar {
-			width: calc( 100% + #{ ( $parent-block-padding * 2 ) + ( $block-padding * 2 ) } ); // Matches the negative margins applied to non-parent blocks, except for borders which are gone in fullwide.
+			width: calc(100% + #{ ($parent-block-padding * 2) + ($block-padding * 2) }); // Matches the negative margins applied to non-parent blocks, except for borders which are gone in fullwide.
 
 			.editor-block-toolbar {
 				max-width: $content-width - $border-width - $border-width;
@@ -118,10 +118,10 @@
 
 // This is a focus style shown for blocks that need an indicator even when in an isEditing state
 // like for example an image block that receives arrowkey focus.
-.edit-post-visual-editor .editor-block-list__block:not( .is-selected ) {
+.edit-post-visual-editor .editor-block-list__block:not(.is-selected) {
 	.editor-block-list__block-edit {
 		box-shadow: 0 0 0 0 $white, 0 0 0 0 $dark-gray-900;
-		transition: .1s box-shadow .05s;
+		transition: 0.1s box-shadow 0.05s;
 	}
 
 	&:focus .editor-block-list__block-edit {

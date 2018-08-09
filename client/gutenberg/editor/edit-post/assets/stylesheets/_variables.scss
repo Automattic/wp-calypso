@@ -3,7 +3,7 @@
  */
 
 // Fonts & basics
-$default-font: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+$default-font: -apple-system, BlinkMacSystemFont,"Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,"Helvetica Neue", sans-serif;
 $default-font-size: 13px;
 $default-line-height: 1.4;
 $editor-font: "Noto Serif", serif;
@@ -27,10 +27,10 @@ $admin-sidebar-width-collapsed: 36px;
 $empty-paragraph-height: $text-editor-font-size * 4;
 
 // Visuals
-$shadow-popover: 0 3px 30px rgba( $dark-gray-900, .1 );
-$shadow-toolbar: 0 2px 10px rgba( $dark-gray-900, .1 ), 0 0 2px rgba( $dark-gray-900, .1 );
-$shadow-below-only: 0 5px 10px rgba( $dark-gray-900, .05 ), 0 2px 2px rgba( $dark-gray-900, .05 );
-$shadow-modal: 0 3px 30px rgba( $dark-gray-900, .2 );
+$shadow-popover: 0 3px 30px rgba($dark-gray-900, 0.1);
+$shadow-toolbar: 0 2px 10px rgba($dark-gray-900, 0.1), 0 0 2px rgba($dark-gray-900, 0.1);
+$shadow-below-only: 0 5px 10px rgba($dark-gray-900, 0.05), 0 2px 2px rgba($dark-gray-900, 0.05);
+$shadow-modal: 0 3px 30px rgba($dark-gray-900, 0.2);
 
 // Editor Widths
 $sidebar-width: 280px;
@@ -57,5 +57,5 @@ $block-parent-side-ui-clearance: $parent-block-padding - $block-padding; // spac
 $block-container-side-padding: $block-side-ui-width + $block-padding + 2 * $block-side-ui-clearance;
 
 // Buttons & UI Widgets
-$button-style__radius-roundrect: 4px;
-$button-style__radius-round: 50%;
+$radius-round-rectangle: 4px;
+$radius-round: 50%;

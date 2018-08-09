@@ -1,10 +1,7 @@
 /**
  * WordPress Dependencies
  */
-import {
-	registerStore,
-	restrictPersistence,
-} from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -13,11 +10,12 @@ import reducer from './reducer';
 import applyMiddlewares from './middlewares';
 import * as actions from './actions';
 import * as selectors from './selectors';
+
 const store = registerStore( 'core/edit-post', {
-	reducer: restrictPersistence( reducer, 'preferences' ),
+	reducer,
 	actions,
 	selectors,
-	persist: true,
+	persist: [ 'preferences' ],
 } );
 
 applyMiddlewares( store );

@@ -14,7 +14,7 @@
 
 @mixin move_background {
 	background-size: 28px 28px;
-	animation: move_background .5s linear infinite;
+	animation: move_background 0.5s linear infinite;
 }
 
 @mixin loading_fade {
@@ -26,7 +26,7 @@
 	animation: slide_in_right 0.1s forwards;
 }
 
-@mixin fade_in( $speed: 0.2s ) {
+@mixin fade_in($speed: 0.2s) {
 	animation: fade-in $speed ease-out;
 	animation-fill-mode: forwards;
 }
@@ -40,7 +40,7 @@
 	}
 }
 
-@mixin region_focus( $speed: 0.2s ) {
+@mixin region_focus($speed: 0.2s) {
 	animation: editor_region_focus $speed ease-out;
 	animation-fill-mode: forwards;
 }

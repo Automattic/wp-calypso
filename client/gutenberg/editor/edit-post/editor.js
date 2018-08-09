@@ -18,6 +18,7 @@ import './store';
 
 function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
 	if ( ! post ) {
+		console.log( 'bail post' );
 		return null;
 	}
 
@@ -37,7 +38,7 @@ function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...pr
 	);
 }
 
-export default withSelect( ( select, { postId, postType } ) => ( {
+
+export default withSelect( ( select ) => ( {
 	hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
-	post:  select( 'core' ).getEntityRecord( 'postType', postType, postId ),
 } ) )( Editor );

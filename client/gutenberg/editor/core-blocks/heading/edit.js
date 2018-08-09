@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { range } from 'lodash';
 
 /**

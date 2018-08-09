@@ -3,37 +3,37 @@
  */
 
 @mixin break-huge() {
-	@media ( min-width: #{ ( $break-huge ) } ) {
+	@media (min-width: #{ ($break-huge) }) {
 		@content;
 	}
 }
 
 @mixin break-wide() {
-	@media ( min-width: #{ ( $break-wide ) } ) {
+	@media (min-width: #{ ($break-wide) }) {
 		@content;
 	}
 }
 
 @mixin break-large() {
-	@media ( min-width: #{ ( $break-large ) } ) {
+	@media (min-width: #{ ($break-large) }) {
 		@content;
 	}
 }
 
 @mixin break-medium() {
-	@media ( min-width: #{ ( $break-medium ) } ) {
+	@media (min-width: #{ ($break-medium) }) {
 		@content;
 	}
 }
 
 @mixin break-small() {
-	@media ( min-width: #{ ( $break-small ) } ) {
+	@media (min-width: #{ ($break-small) }) {
 		@content;
 	}
 }
 
 @mixin break-mobile() {
-	@media ( min-width: #{ ( $break-mobile ) } ) {
+	@media (min-width: #{ ($break-mobile) }) {
 		@content;
 	}
 }
@@ -46,8 +46,8 @@
  * than the space allows.
  */
 
-@mixin long-content-fade( $direction: right, $size: 20%, $color: #fff, $edge: 0px, $z-index: false) {
-	content: '';
+@mixin long-content-fade($direction: right, $size: 20%, $color: #fff, $edge: 0, $z-index: false) {
+	content: "";
 	display: block;
 	position: absolute;
 	-webkit-touch-callout: none;
@@ -62,8 +62,8 @@
 		z-index: $z-index;
 	}
 
-	@if $direction == 'bottom' {
-		background: linear-gradient( to top, rgba( $color, 0 ), $color 90% );
+	@if $direction == "bottom" {
+		background: linear-gradient(to top, rgba($color, 0), $color 90%);
 		left: $edge;
 		right: $edge;
 		top: $edge;
@@ -71,8 +71,8 @@
 		width: auto;
 	}
 
-	@if $direction == 'top' {
-		background: linear-gradient( to bottom, rgba( $color, 0 ), $color 90% );
+	@if $direction == "top" {
+		background: linear-gradient(to bottom, rgba($color, 0), $color 90%);
 		top: calc(100% - $size);
 		left: $edge;
 		right: $edge;
@@ -80,8 +80,8 @@
 		width: auto;
 	}
 
-	@if $direction == 'left' {
-		background: linear-gradient( to left, rgba( $color, 0 ), $color 90% );
+	@if $direction == "left" {
+		background: linear-gradient(to left, rgba($color, 0), $color 90%);
 		top: $edge;
 		left: $edge;
 		bottom: $edge;
@@ -90,8 +90,8 @@
 		height: auto;
 	}
 
-	@if $direction == 'right' {
-		background: linear-gradient( to right, rgba( $color, 0 ), $color 90% );
+	@if $direction == "right" {
+		background: linear-gradient(to right, rgba($color, 0), $color 90%);
 		top: $edge;
 		bottom: $edge;
 		right: $edge;
@@ -105,7 +105,7 @@
  * Button states and focus styles
  */
 
-// Buttons with rounded corners
+// Buttons with rounded corners.
 @mixin button-style__disabled {
 	opacity: 0.6;
 	cursor: default;
@@ -114,7 +114,7 @@
 @mixin button-style__hover {
 	background-color: $white;
 	color: $dark-gray-900;
-	box-shadow: inset 0 0 0 1px $light-gray-500, inset 0 0 0 2px $white, 0 1px 1px rgba( $dark-gray-900, .2 );
+	box-shadow: inset 0 0 0 1px $light-gray-500, inset 0 0 0 2px $white, 0 1px 1px rgba($dark-gray-900, 0.2);
 }
 
 @mixin button-style__active() {
@@ -129,21 +129,21 @@
 	color: $dark-gray-900;
 	box-shadow: inset 0 0 0 1px $dark-gray-300, inset 0 0 0 2px $white;
 
-	// Windows High Contrast mode will show this outline, but not the box-shadow
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
 	outline: 2px solid transparent;
 	outline-offset: -2px;
 }
 
-// Switch
+// Switch.
 @mixin switch-style__focus-active() {
 	box-shadow: 0 0 0 2px $white, 0 0 0 3px $dark-gray-300;
 
-	// Windows High Contrast mode will show this outline, but not the box-shadow
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
 	outline: 2px solid transparent;
 	outline-offset: 2px;
 }
 
-// Formatting Buttons
+// Formatting Buttons.
 @mixin formatting-button-style__hover {
 	color: $dark-gray-500;
 	box-shadow: inset 0 0 0 1px $dark-gray-500, inset 0 0 0 2px $white;
@@ -159,25 +159,30 @@
 @mixin formatting-button-style__focus() {
 	box-shadow: inset 0 0 0 1px $dark-gray-500, inset 0 0 0 2px $white;
 
-	// Windows High Contrast mode will show this outline, but not the box-shadow
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
 	outline: 2px solid transparent;
 	outline-offset: -2px;
 }
 
-// Tabs, Inputs, Square buttons
+// Tabs, Inputs, Square buttons.
 @mixin input-style__neutral() {
-	outline-offset: -1px;
 	box-shadow: 0 0 0 transparent;
-	transition: box-shadow .05s linear;
+	transition: box-shadow 0.1s linear;
+	border-radius: $radius-round-rectangle;
+	border: $border-width solid $dark-gray-150;
 }
 
 @mixin input-style__focus() {
 	color: $dark-gray-900;
-	outline: 1px solid $blue-medium-600;
-	box-shadow: 0 0 0 2px $blue-medium-200;
+	border-color: $blue-medium-500;
+	box-shadow: 0 0 0 1px $blue-medium-500;
+
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
+	outline: 2px solid transparent;
+	outline-offset: -2px;
 }
 
-// Square buttons
+// Square buttons.
 @mixin square-style__neutral() {
 	outline-offset: -1px;
 }
@@ -188,7 +193,7 @@
 	box-shadow: none;
 }
 
-// Menu items
+// Menu items.
 @mixin menu-style__neutral() {
 	border: none;
 	box-shadow: none;
@@ -202,20 +207,20 @@
 	outline: 1px dotted $dark-gray-500;
 }
 
-// Blocks in the Inserter
+// Blocks in the Library.
 @mixin block-style__disabled {
 	opacity: 0.6;
 	cursor: default;
 }
 
 @mixin block-style__hover {
-	box-shadow: inset 0 0 0 1px rgba( $dark-gray-900, .2 ), 0 1px 3px rgba( $dark-gray-900, .4 );
+	box-shadow: inset 0 0 0 1px rgba($dark-gray-900, 0.2), 0 1px 3px rgba($dark-gray-900, 0.4);
 }
 
 @mixin block-style__focus-active() {
 	box-shadow: inset 0 0 0 1px $dark-gray-300;
 
-	// Windows High Contrast mode will show this outline, but not the box-shadow
+	// Windows High Contrast mode will show this outline, but not the box-shadow.
 	outline: 2px solid transparent;
 	outline-offset: -2px;
 }
@@ -223,16 +228,17 @@
 /**
  * Applies editor left position to the selector passed as argument
  */
-@mixin editor-left( $selector ) {
-	#{$selector} {	/* Set left position when auto-fold is not on the body element. */
+
+@mixin editor-left($selector) {
+	#{$selector} { /* Set left position when auto-fold is not on the body element. */
 		left: 0;
-		
+
 		@include break-medium() {
 			left: $admin-sidebar-width;
 		}
 	}
 
-	.auto-fold #{$selector} {		/* Auto fold is when on smaller breakpoints, nav menu auto colllapses */
+	.auto-fold #{$selector} { /* Auto fold is when on smaller breakpoints, nav menu auto colllapses. */
 		@include break-medium() {
 			left: $admin-sidebar-width-collapsed;
 		}
@@ -242,7 +248,7 @@
 		}
 	}
 
-	/* Sidebar manually collapsed */
+	/* Sidebar manually collapsed. */
 	.folded #{$selector} {
 		left: 0;
 
@@ -251,15 +257,15 @@
 		}
 	}
 
-	/* Mobile menu opened */
-	@media ( max-width: #{ ( $break-medium ) } ) {
+	/* Mobile menu opened. */
+	@media (max-width: #{ ($break-medium) }) {
 		.auto-fold .wp-responsive-open #{$selector} {
 			left: $admin-sidebar-width-big;
 		}
 	}
 
-	/* In small screens with resposive menu expanded there is small white space */
-	@media ( max-width: #{ ( $break-small ) } ) {
+	/* In small screens with resposive menu expanded there is small white space. */
+	@media (max-width: #{ ($break-small) }) {
 		.auto-fold .wp-responsive-open #{$selector} {
 			margin-left: -18px;
 		}
@@ -269,7 +275,8 @@
 /**
  * Applies editor right position to the selector passed as argument
  */
- @mixin editor-right( $selector ) {
+
+@mixin editor-right($selector) {
 	#{ $selector } {
 		right: 0;
 	}
