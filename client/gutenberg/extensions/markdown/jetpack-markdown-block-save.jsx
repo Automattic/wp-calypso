@@ -1,7 +1,4 @@
-/**
- * External dependencies
- */
-import React from 'react';
+/** @format */
 
 /**
  * Internal dependencies
@@ -9,10 +6,7 @@ import React from 'react';
 import MarkdownPreview from './components/markdown-renderer';
 
 function JetpackMarkdownBlockSave( { attributes, className } ) {
-	return <MarkdownPreview
-		className={ `${ className }-renderer` }
-		source={ attributes.source }
-	/>;
+	return <MarkdownPreview className={ `${ className }-renderer` } source={ attributes.source } />;
 }
 
 export default JetpackMarkdownBlockSave;

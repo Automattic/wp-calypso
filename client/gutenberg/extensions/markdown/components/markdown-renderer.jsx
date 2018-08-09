@@ -1,16 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react';
+import { RawHTML } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import markdownConverter from '../utils/markdown-converter';
-
-const {
-	RawHTML
-} = window.wp.element;
 
 const MarkdownRenderer = function( props ) {
 	const { className, source } = props;
