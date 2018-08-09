@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { rawShortcut, displayShortcut } from '@wordpress/keycodes';
 

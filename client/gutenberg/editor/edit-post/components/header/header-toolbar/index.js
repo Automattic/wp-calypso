@@ -23,6 +23,7 @@ import {
 	NavigableToolbar,
 } from '@wordpress/editor';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 function HeaderToolbar( { hasFixedToolbar, isLargeViewport } ) {
 	return (
 		<NavigableToolbar
@@ -41,6 +42,7 @@ function HeaderToolbar( { hasFixedToolbar, isLargeViewport } ) {
 		</NavigableToolbar>
 	);
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default compose( [
 	withSelect( ( select ) => ( {

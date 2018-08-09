@@ -1,14 +1,9 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { addFilter } from '@wordpress/hooks';
 
-/**
- * Internal dependencies
- */
-import MediaUpload from './media-upload';
-
-const replaceMediaUpload = () => MediaUpload;
+const replaceMediaUpload = () => null;
 
 addFilter(
 	'editor.MediaUpload',

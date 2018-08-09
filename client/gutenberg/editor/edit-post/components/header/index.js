@@ -35,6 +35,7 @@ function Header( {
 } ) {
 	const toggleGeneralSidebar = isEditorSidebarOpened ? closeGeneralSidebar : openGeneralSidebar;
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
 			role="region"
@@ -74,6 +75,7 @@ function Header( {
 			) }
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default compose(

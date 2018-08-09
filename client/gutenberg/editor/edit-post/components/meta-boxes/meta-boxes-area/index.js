@@ -62,6 +62,7 @@ class MetaBoxesArea extends Component {
 			}
 		);
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className={ classes }>
 				{ isSaving && <Spinner /> }
@@ -69,6 +70,7 @@ class MetaBoxesArea extends Component {
 				<div className="edit-post-meta-boxes-area__clear" />
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

@@ -18,6 +18,7 @@ import Sidebar from '../';
 
 const SIDEBAR_NAME = 'edit-post/block';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const BlockSidebar = () => (
 	<Sidebar
 		name={ SIDEBAR_NAME }
@@ -31,5 +32,6 @@ const BlockSidebar = () => (
 		</Panel>
 	</Sidebar>
 );
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default BlockSidebar;

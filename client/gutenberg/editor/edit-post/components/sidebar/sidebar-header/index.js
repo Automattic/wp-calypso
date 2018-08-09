@@ -14,6 +14,7 @@ import { IconButton } from '@wordpress/components';
 import { withDispatch, withSelect } from '@wordpress/data';
 
 const SidebarHeader = ( { children, className, closeLabel, closeSidebar, title } ) => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Fragment>
 			<div className="components-panel__header edit-post-sidebar-header__small">
@@ -36,6 +37,7 @@ const SidebarHeader = ( { children, className, closeLabel, closeSidebar, title }
 			</div>
 		</Fragment>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default compose(

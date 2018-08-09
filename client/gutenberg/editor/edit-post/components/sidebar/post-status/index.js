@@ -30,6 +30,7 @@ import PluginPostStatusInfo from '../plugin-post-status-info';
 const PANEL_NAME = 'post-status';
 
 function PostStatus( { isOpened, onTogglePanel } ) {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<PanelBody className="edit-post-post-status" title={ __( 'Status & Visibility' ) } opened={ isOpened } onToggle={ onTogglePanel }>
 			<PluginPostStatusInfo.Slot>
@@ -48,6 +49,7 @@ function PostStatus( { isOpened, onTogglePanel } ) {
 			</PluginPostStatusInfo.Slot>
 		</PanelBody>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default compose( [

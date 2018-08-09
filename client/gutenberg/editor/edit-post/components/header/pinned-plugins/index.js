@@ -11,6 +11,7 @@ import { createSlotFill } from '@wordpress/components';
 
 const { Fill: PinnedPlugins, Slot } = createSlotFill( 'PinnedPlugins' );
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 PinnedPlugins.Slot = ( props ) => (
 	<Slot { ...props }>
 		{ ( fills ) => ! isEmpty( fills ) && (
@@ -20,5 +21,6 @@ PinnedPlugins.Slot = ( props ) => (
 		) }
 	</Slot>
 );
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default PinnedPlugins;

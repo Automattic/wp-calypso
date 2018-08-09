@@ -35,6 +35,7 @@ export function BlockInspectorButton( {
 
 	const label = areAdvancedSettingsOpened ? __( 'Hide Block Settings' ) : __( 'Show Block Settings' );
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<IconButton
 			className="editor-block-settings-menu__control"
@@ -46,6 +47,7 @@ export function BlockInspectorButton( {
 			{ ! small && label }
 		</IconButton>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default compose(

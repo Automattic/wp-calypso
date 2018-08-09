@@ -31,6 +31,7 @@ const isEverySelectedBlockAllowed = ( selected, allowed ) => difference( selecte
 const shouldRenderItem = ( selectedBlockNames, allowedBlockNames ) => ! Array.isArray( allowedBlockNames ) ||
 	isEverySelectedBlockAllowed( selectedBlockNames, allowedBlockNames );
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const PluginBlockSettingsMenuItem = ( { allowedBlocks, icon, label, onClick, small, role } ) => (
 	<PluginBlockSettingsMenuGroup>
 		{ ( { selectedBlocks, onClose } ) => {
@@ -49,5 +50,6 @@ const PluginBlockSettingsMenuItem = ( { allowedBlocks, icon, label, onClick, sma
 		} }
 	</PluginBlockSettingsMenuGroup>
 );
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default PluginBlockSettingsMenuItem;

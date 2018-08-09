@@ -11,6 +11,7 @@ import { PanelRow, Dropdown, Button } from '@wordpress/components';
 import { PostSchedule as PostScheduleForm, PostScheduleLabel, PostScheduleCheck } from '@wordpress/editor';
 
 export function PostSchedule() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<PostScheduleCheck>
 			<PanelRow className="edit-post-post-schedule">
@@ -34,6 +35,7 @@ export function PostSchedule() {
 			</PanelRow>
 		</PostScheduleCheck>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default PostSchedule;

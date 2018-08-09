@@ -11,6 +11,7 @@ import { PanelRow, Dropdown, Button } from '@wordpress/components';
 import { PostVisibility as PostVisibilityForm, PostVisibilityLabel, PostVisibilityCheck } from '@wordpress/editor';
 
 export function PostVisibility() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<PostVisibilityCheck render={ ( { canEdit } ) => (
 			<PanelRow className="edit-post-post-visibility">
@@ -37,6 +38,7 @@ export function PostVisibility() {
 			</PanelRow>
 		) } />
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default PostVisibility;

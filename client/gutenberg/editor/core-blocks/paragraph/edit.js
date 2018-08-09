@@ -147,6 +147,7 @@ class ParagraphBlock extends Component {
 			placeholder,
 		} = attributes;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Fragment>
 				<BlockControls>
@@ -227,6 +228,7 @@ class ParagraphBlock extends Component {
 				/>
 			</Fragment>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

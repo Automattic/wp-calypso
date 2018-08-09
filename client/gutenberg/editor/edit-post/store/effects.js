@@ -45,10 +45,7 @@ const effects = {
 		} );
 
 		// Initialize metaboxes state
-		const dataPerLocation = reduce( action.metaBoxes, ( memo, isActive, location ) => {
-			if ( isActive ) {
-				memo[ location ] = jQuery( getMetaBoxContainer( location ) ).serialize();
-			}
+		const dataPerLocation = reduce( action.metaBoxes, ( memo ) => {
 			return memo;
 		}, {} );
 		store.dispatch( setMetaBoxSavedData( dataPerLocation ) );
@@ -74,10 +71,7 @@ const effects = {
 	},
 	REQUEST_META_BOX_UPDATES( action, store ) {
 		const state = store.getState();
-		const dataPerLocation = reduce( getMetaBoxes( state ), ( memo, metabox, location ) => {
-			if ( metabox.isActive ) {
-				memo[ location ] = jQuery( getMetaBoxContainer( location ) ).serialize();
-			}
+		const dataPerLocation = reduce( getMetaBoxes( state ), ( memo ) => {
 			return memo;
 		}, {} );
 		store.dispatch( setMetaBoxSavedData( dataPerLocation ) );

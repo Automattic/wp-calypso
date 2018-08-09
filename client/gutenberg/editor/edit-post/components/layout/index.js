@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { some } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -35,7 +34,6 @@ import TextEditor from '../text-editor';
 import VisualEditor from '../visual-editor';
 import EditorModeKeyboardShortcuts from '../keyboard-shortcuts';
 import MetaBoxes from '../meta-boxes';
-import { getMetaBoxContainer } from '../../utils/meta-boxes';
 import Sidebar from '../sidebar';
 import PluginPostPublishPanel from '../sidebar/plugin-post-publish-panel';
 import PluginPrePublishPanel from '../sidebar/plugin-pre-publish-panel';
@@ -48,7 +46,6 @@ function Layout( {
 	hasFixedToolbar,
 	closePublishSidebar,
 	togglePublishSidebar,
-	metaBoxes,
 	hasActiveMetaboxes,
 	isSaving,
 	isMobileViewport,
@@ -66,16 +63,12 @@ function Layout( {
 		'aria-label': __( 'Editor publish' ),
 		tabIndex: -1,
 	};
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className={ className }>
 			<DocumentTitle />
 			<BrowserURL />
-			<UnsavedChangesWarning forceIsDirty={ () => {
-				return some( metaBoxes, ( metaBox, location ) => {
-					return metaBox.isActive &&
-						jQuery( getMetaBoxContainer( location ) ).serialize() !== metaBox.data;
-				} );
-			} } />
+			<UnsavedChangesWarning/>
 			<AutosaveMonitor />
 			<Header />
 			<div
@@ -131,6 +124,7 @@ function Layout( {
 			<PluginArea />
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default compose(

@@ -24,6 +24,7 @@ import {
 import BlockInspectorButton from './block-inspector-button';
 
 function VisualEditor() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<BlockSelectionClearer className="edit-post-visual-editor">
 			<EditorGlobalKeyboardShortcuts />
@@ -40,6 +41,7 @@ function VisualEditor() {
 			</_BlockSettingsMenuFirstItem>
 		</BlockSelectionClearer>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default VisualEditor;

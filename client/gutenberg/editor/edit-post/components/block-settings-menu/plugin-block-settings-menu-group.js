@@ -15,6 +15,7 @@ const { Fill: PluginBlockSettingsMenuGroup, Slot } = createSlotFill( 'PluginBloc
 
 const PluginBlockSettingsMenuGroupSlot = ( { fillProps, selectedBlocks } ) => {
 	selectedBlocks = map( selectedBlocks, ( block ) => block.name );
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Slot fillProps={ { ...fillProps, selectedBlocks } } >
 			{ ( fills ) => ! isEmpty( fills ) && (
@@ -25,6 +26,7 @@ const PluginBlockSettingsMenuGroupSlot = ( { fillProps, selectedBlocks } ) => {
 			) }
 		</Slot>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 PluginBlockSettingsMenuGroup.Slot = withSelect( ( select, { fillProps: { clientIds } } ) => ( {

@@ -19,6 +19,7 @@ const SettingsHeader = ( { count, openDocumentSettings, openBlockSettings, sideb
 	// Do not display "0 Blocks".
 	count = count === 0 ? 1 : count;
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<SidebarHeader
 			className="edit-post-sidebar__panel-tabs"
@@ -40,6 +41,7 @@ const SettingsHeader = ( { count, openDocumentSettings, openBlockSettings, sideb
 			</button>
 		</SidebarHeader>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default compose(

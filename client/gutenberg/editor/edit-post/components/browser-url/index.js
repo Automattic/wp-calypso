@@ -1,5 +1,5 @@
 /**
- * WordPress dependencies
+ * External dependencies
  */
 import { Component } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';

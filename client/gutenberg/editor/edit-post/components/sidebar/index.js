@@ -18,6 +18,7 @@ const { Fill, Slot } = createSlotFill( 'Sidebar' );
  * @return {Object} The rendered sidebar.
  */
 const Sidebar = ( { children, label } ) => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Fill>
 			<div
@@ -30,6 +31,7 @@ const Sidebar = ( { children, label } ) => {
 			</div>
 		</Fill>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 const WrappedSidebar = compose(

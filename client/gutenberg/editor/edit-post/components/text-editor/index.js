@@ -9,6 +9,7 @@ import React from 'react';
 import { PostTextEditor, PostTitle } from '@wordpress/editor';
 
 function TextEditor() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className="edit-post-text-editor">
 			<div className="edit-post-text-editor__body">
@@ -17,6 +18,7 @@ function TextEditor() {
 			</div>
 		</div>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
 export default TextEditor;

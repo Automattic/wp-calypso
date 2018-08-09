@@ -17,6 +17,7 @@ import FixedToolbarToggle from '../fixed-toolbar-toggle';
 import PluginMoreMenuGroup from '../plugins-more-menu-group';
 import TipsToggle from '../tips-toggle';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 const MoreMenu = () => (
 	<Dropdown
 		className="edit-post-more-menu"
@@ -48,5 +49,6 @@ const MoreMenu = () => (
 		) }
 	/>
 );
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default MoreMenu;

@@ -18,7 +18,6 @@ import './store';
 
 function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
 	if ( ! post ) {
-		console.log( 'bail post' );
 		return null;
 	}
 
