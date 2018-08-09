@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
-import Button from 'components/button';
 import Card from 'components/card';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
@@ -43,8 +42,19 @@ class ActivityLogTaskUpdate extends Component {
 	handleNameClick = () => this.props.goToPage( this.props.slug, this.props.type );
 
 	render() {
-		const { translate, name, version, type, updateType, disable, linked } = this.props;
-
+		const {
+			translate,
+			name,
+			version,
+			type,
+			updateType,
+			disable,
+			linked,
+			slug,
+			siteSlug,
+		} = this.props;
+		const url =
+			'plugin' === type ? `/plugins/${ slug }/${ siteSlug }` : `/theme/${ slug }/${ siteSlug }`;
 		return (
 			<Card className="activity-log-tasklist__task" compact>
 				<ActivityIcon
@@ -55,9 +65,9 @@ class ActivityLogTaskUpdate extends Component {
 					<div>
 						<span className="activity-log-tasklist__update-text">
 							{ linked ? (
-								<Button borderless onClick={ this.handleNameClick }>
+								<a href={ url } onClick={ this.handleNameClick }>
 									{ name }
-								</Button>
+								</a>
 							) : (
 								// Add button classes so unlinked names look the same.
 								<span className="activity-log-tasklist__unlinked button is-borderless">
