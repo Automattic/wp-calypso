@@ -18,7 +18,7 @@ export default function afterLayoutFlush( func ) {
 	let rafHandle = undefined;
 	let timeoutHandle = undefined;
 
-	const scheduleRAF = rafFunc => () => {
+	const scheduleRAF = rafFunc => ( ...args ) => {
 		// if a RAF is already scheduled and not yet executed, don't schedule another one
 		if ( rafHandle !== undefined ) {
 			return;
@@ -27,11 +27,11 @@ export default function afterLayoutFlush( func ) {
 		rafHandle = requestAnimationFrame( () => {
 			// clear the handle to signal that the scheduled RAF has been executed
 			rafHandle = undefined;
-			rafFunc();
+			rafFunc( ...args );
 		} );
 	};
 
-	const scheduleTimeout = timeoutFunc => () => {
+	const scheduleTimeout = timeoutFunc => ( ...args ) => {
 		// If a timeout is already scheduled and not yet executed, don't schedule another one.
 		// Multiple `requestAnimationFrame` handlers can be scheduled and executed before the
 		// browser decides to finally execute the timeout handler.
@@ -42,7 +42,7 @@ export default function afterLayoutFlush( func ) {
 		timeoutHandle = setTimeout( () => {
 			// clear the handle to signal that the timeout handler has been executed
 			timeoutHandle = undefined;
-			timeoutFunc();
+			timeoutFunc( ...args );
 		}, 0 );
 	};
 

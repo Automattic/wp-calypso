@@ -363,11 +363,11 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ showBlogPostsPage && (
 					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				) }
 				{ rows }
+				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ this.props.lastPage && pages.length ? <ListEnd /> : null }
 			</div>
 		);

@@ -563,13 +563,13 @@ export class PluginsBrowser extends Component {
 		return (
 			<MainComponent wideLayout>
 				{ this.renderPageViewTracker() }
-				<InfiniteScroll nextPageMethod={ this.fetchNextPagePlugins } />
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
 				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
+				<InfiniteScroll nextPageMethod={ this.fetchNextPagePlugins } />
 			</MainComponent>
 		);
 	}
