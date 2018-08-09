@@ -178,13 +178,10 @@ class ChecklistMain extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => {
+export default connect( state => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
-	const siteHasFreePlan = isSiteOnFreePlan( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
-	const isNewlyCreatedSite = isNewSite( state, siteId );
 
 	/**
 	 * Included to fix regression.
@@ -199,10 +196,10 @@ const mapStateToProps = state => {
 		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
 		isAtomic,
 		isJetpack,
-		isNewlyCreatedSite,
+		isNewlyCreatedSite: isNewSite( state, siteId ),
+		siteHasFreePlan: isSiteOnFreePlan( state, siteId ),
 		siteId,
-		siteSlug,
-		siteHasFreePlan,
+		siteSlug: getSiteSlug( state, siteId ),
 		user: getCurrentUser( state ),
 
 		/**
@@ -212,6 +209,4 @@ const mapStateToProps = state => {
 		 */
 		tasks: tasksFromServer ? mergeObjectIntoArrayById( tasks, tasksFromServer ) : null,
 	};
-};
-
-export default connect( mapStateToProps )( localize( ChecklistMain ) );
+} )( localize( ChecklistMain ) );
