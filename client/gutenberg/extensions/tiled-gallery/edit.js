@@ -6,8 +6,28 @@
 /**
  * External Dependencies
  */
-import wp from 'wp';
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
+import {
+	BlockControls,
+	InspectorControls,
+	MediaPlaceholder,
+	MediaUpload,
+	mediaUpload,
+} from '@wordpress/editor';
+import {
+	DropZone,
+	IconButton,
+	PanelBody,
+	RangeControl,
+	SelectControl,
+	Toolbar,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -15,26 +35,8 @@ import pick from 'lodash/pick';
 import JetpackGalleryBlockSave from './save.js';
 
 /**
- * WordPress dependencies
+ * Module variables
  */
-const { Component } = wp.element;
-const { __ } = wp.i18n;
-const { mediaUpload } = wp.utils;
-const {
-	IconButton,
-	DropZone,
-	Toolbar,
-	PanelBody,
-	RangeControl,
-	SelectControl,
-} = wp.components;
-const {
-	MediaUpload,
-	MediaPlaceholder,
-	InspectorControls,
-	BlockControls,
-} = wp.editor;
-
 const MAX_COLUMNS = 8;
 const linkOptions = [
 	{ value: 'attachment', label: __( 'Attachment Page' ) },

@@ -20,6 +20,33 @@ const omitPlugins = [
 	webpack.HotModuleReplacementPlugin,
 ];
 
+const wordpressPackages = [
+	'api-fetch',
+	'block-serialization-spec-parser',
+	'blocks',
+	'components',
+	'data',
+	'editor',
+	'element',
+	'i18n',
+];
+
+const getWordPressExternals = () =>
+	wordpressPackages.reduce( ( externals, package ) => {
+		externals[ `@wordpress/${ package }` ] = {
+			window: [
+				'wp',
+				// this is not as aggressive as `_.camelCase` in converting to
+				// uppercase, where Lodash will convert letters following numbers
+				package.replace(
+					/-([a-z])/g,
+					( match, letter ) => letter.toUpperCase()
+				)
+			]
+		};
+		return externals;
+	}, {} );
+
 const outputHandler = ( error, stats ) => {
 	if ( error ) {
 		console.error( error );
@@ -61,6 +88,8 @@ exports.compile = args => {
 			),
 			externals: {
 				...baseConfig.externals,
+				...getWordPressExternals(),
+				lodash: 'lodash',
 				wp: 'wp',
 			},
 			optimization: {

@@ -1226,6 +1226,18 @@
         "lodash": "^4.17.10"
       }
     },
+    "@wordpress/core-data": {
+      "version": "1.0.3",
+      "resolved": "https://registry.npmjs.org/@wordpress/core-data/-/core-data-1.0.3.tgz",
+      "integrity": "sha512-HsxBR88Jky1m4phQzGAuOwPNsJlKbntZQpgjVgl3xsyfbCEyeQ6klYSuFrTQvC0oORfL1JIbZq71Y/mubYfoww==",
+      "requires": {
+        "@babel/runtime": "^7.0.0-beta.52",
+        "@wordpress/api-fetch": "^1.1.0",
+        "@wordpress/data": "^1.1.0",
+        "lodash": "^4.17.10",
+        "rememo": "^3.0.0"
+      }
+    },
     "@wordpress/data": {
       "version": "1.1.0",
       "resolved": "https://registry.npmjs.org/@wordpress/data/-/data-1.1.0.tgz",
@@ -1250,6 +1262,26 @@
             "lodash-es": "^4.2.1",
             "loose-envify": "^1.1.0",
             "symbol-observable": "^1.0.3"
+          }
+        }
+      }
+    },
+    "@wordpress/date": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/@wordpress/date/-/date-1.0.2.tgz",
+      "integrity": "sha512-lmlJ3R5P7780Ju4rV7v1W8DSRMsr6eXHBzWgyq2Lf/eXvKugvwfQ2m6wigTscqw6Wgsi2wBAQnpM8b9V555yTQ==",
+      "requires": {
+        "@babel/runtime": "^7.0.0-beta.52",
+        "moment": "^2.22.1",
+        "moment-timezone": "^0.5.16"
+      },
+      "dependencies": {
+        "moment-timezone": {
+          "version": "0.5.21",
+          "resolved": "https://registry.npmjs.org/moment-timezone/-/moment-timezone-0.5.21.tgz",
+          "integrity": "sha512-j96bAh4otsgj3lKydm3K7kdtA3iKf2m6MY2iSYCzCm5a1zmHo1g+aK3068dDEeocLZQIS9kU8bsdQHLqEvgW0A==",
+          "requires": {
+            "moment": ">= 2.9.0"
           }
         }
       }
@@ -1280,6 +1312,49 @@
         "@babel/runtime": "^7.0.0-beta.52"
       }
     },
+    "@wordpress/editor": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/@wordpress/editor/-/editor-1.0.1.tgz",
+      "integrity": "sha512-dvYtFU6ymaSdH9gISApq5jKUAgr+vZrPLzIGFeozeo0y69aTb3FvgRsEbNoX528SLZAqTqyByH1s0XuucFdz7g==",
+      "requires": {
+        "@babel/runtime": "^7.0.0-beta.52",
+        "@wordpress/a11y": "^1.1.2",
+        "@wordpress/api-fetch": "^1.1.0",
+        "@wordpress/blob": "^1.0.2",
+        "@wordpress/blocks": "^1.0.2",
+        "@wordpress/components": "^1.1.1",
+        "@wordpress/compose": "^1.0.2",
+        "@wordpress/core-data": "^1.0.3",
+        "@wordpress/data": "^1.1.0",
+        "@wordpress/date": "^1.0.2",
+        "@wordpress/deprecated": "^1.0.2",
+        "@wordpress/dom": "^1.0.2",
+        "@wordpress/element": "^1.0.2",
+        "@wordpress/hooks": "^1.3.2",
+        "@wordpress/html-entities": "^1.0.2",
+        "@wordpress/i18n": "^1.2.2",
+        "@wordpress/is-shallow-equal": "^1.1.2",
+        "@wordpress/keycodes": "^1.0.2",
+        "@wordpress/nux": "^1.0.2",
+        "@wordpress/url": "^1.2.2",
+        "@wordpress/viewport": "^1.0.2",
+        "@wordpress/wordcount": "^1.1.2",
+        "classnames": "^2.2.5",
+        "dom-react": "^2.2.1",
+        "dom-scroll-into-view": "^1.2.1",
+        "element-closest": "^2.0.2",
+        "lodash": "^4.17.10",
+        "memize": "^1.0.5",
+        "react-autosize-textarea": "^3.0.2",
+        "redux-multi": "^0.1.12",
+        "redux-optimist": "^1.0.0",
+        "refx": "^3.0.0",
+        "rememo": "^3.0.0",
+        "tinycolor2": "^1.4.1",
+        "tinymce": "^4.7.2",
+        "uuid": "^3.1.0"
+      }
+    },
     "@wordpress/element": {
       "version": "1.0.2",
       "resolved": "https://registry.npmjs.org/@wordpress/element/-/element-1.0.2.tgz",
@@ -1297,6 +1372,14 @@
       "version": "1.3.2",
       "resolved": "https://registry.npmjs.org/@wordpress/hooks/-/hooks-1.3.2.tgz",
       "integrity": "sha512-/SfKDS4yvFSdXWqT9eWB/uHbU9w7/tb1amP0mg/44f0A+g8AzbGFpSkVMGYxtmkdsm00BkQjigfiaQeIiV132w==",
+      "requires": {
+        "@babel/runtime": "^7.0.0-beta.52"
+      }
+    },
+    "@wordpress/html-entities": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/@wordpress/html-entities/-/html-entities-1.0.2.tgz",
+      "integrity": "sha512-gRSlIE/iE0/5xxweddo4b/JqXTgsI27aWaNsy1dFsd8hdiludfD6IZ0biI7cWkabuUpoAABeBtboa1GIJVoO9A==",
       "requires": {
         "@babel/runtime": "^7.0.0-beta.52"
       }
@@ -1330,6 +1413,21 @@
         "lodash": "^4.17.10"
       }
     },
+    "@wordpress/nux": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/@wordpress/nux/-/nux-1.0.2.tgz",
+      "integrity": "sha512-VRra8qQPW5CaI/oylHRxhq8dGVa3J9vgdpt6AgkgE9qgrVuGXdOhyMHL2QHsDhVTk6DhEfUjNjuxkl46mFWRBw==",
+      "requires": {
+        "@babel/runtime": "^7.0.0-beta.52",
+        "@wordpress/components": "^1.1.1",
+        "@wordpress/compose": "^1.0.2",
+        "@wordpress/data": "^1.1.0",
+        "@wordpress/element": "^1.0.2",
+        "@wordpress/i18n": "^1.2.2",
+        "lodash": "^4.17.10",
+        "rememo": "^3.0.0"
+      }
+    },
     "@wordpress/shortcode": {
       "version": "1.0.2",
       "resolved": "https://registry.npmjs.org/@wordpress/shortcode/-/shortcode-1.0.2.tgz",
@@ -1346,6 +1444,27 @@
       "requires": {
         "@babel/runtime": "^7.0.0-beta.52",
         "qs": "^6.5.2s"
+      }
+    },
+    "@wordpress/viewport": {
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/@wordpress/viewport/-/viewport-1.0.2.tgz",
+      "integrity": "sha512-kbAwu8Zu58Ou6EjDuz7bg+r66jOc4nKFoiCcPMOjrdp8+KjxxpeOxvweBZSSD3fKbJpCtSWflNKrvpxHH3sr5A==",
+      "requires": {
+        "@babel/runtime": "^7.0.0-beta.52",
+        "@wordpress/compose": "^1.0.2",
+        "@wordpress/data": "^1.1.0",
+        "@wordpress/element": "^1.0.2",
+        "lodash": "^4.17.10"
+      }
+    },
+    "@wordpress/wordcount": {
+      "version": "1.1.2",
+      "resolved": "https://registry.npmjs.org/@wordpress/wordcount/-/wordcount-1.1.2.tgz",
+      "integrity": "sha512-JO5RN9rNeGUCRIoBe+LMdLa5tp5Dv4X+e4ssarMO6yCrIhe503q4VEHFO/iVSwIe+5UkHAkKIsFhcdw0p6uxUA==",
+      "requires": {
+        "@babel/runtime": "^7.0.0-beta.52",
+        "lodash": "^4.17.10"
       }
     },
     "abab": {
@@ -1424,7 +1543,6 @@
       "resolved": "https://registry.npmjs.org/align-text/-/align-text-0.1.4.tgz",
       "integrity": "sha1-DNkKVhCT810KmSVsIrcGlDP60Rc=",
       "dev": true,
-      "optional": true,
       "requires": {
         "kind-of": "^3.0.2",
         "longest": "^1.0.1",
@@ -1436,7 +1554,6 @@
           "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
           "integrity": "sha1-MeohpzS6ubuw8yRm2JOupR5KPGQ=",
           "dev": true,
-          "optional": true,
           "requires": {
             "is-buffer": "^1.1.5"
           }
@@ -3302,6 +3419,11 @@
         "arity-n": "^1.0.4"
       }
     },
+    "computed-style": {
+      "version": "0.1.4",
+      "resolved": "https://registry.npmjs.org/computed-style/-/computed-style-0.1.4.tgz",
+      "integrity": "sha1-fzRP2FhLLkJb7cpKGvwOMAuwXXQ="
+    },
     "concat-map": {
       "version": "0.0.1",
       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
@@ -4190,6 +4312,11 @@
         "component-props": "1.1.1",
         "component-xor": "0.0.4"
       }
+    },
+    "dom-react": {
+      "version": "2.2.1",
+      "resolved": "https://registry.npmjs.org/dom-react/-/dom-react-2.2.1.tgz",
+      "integrity": "sha512-kqvoG+Q5oiJMQzQi245ZVA/X2Py2lBCebGcQzQeR51jOJqVghWBodKoJcitX8VRV+e6ku+9hRS+Bev/zmlSPsg=="
     },
     "dom-scroll-into-view": {
       "version": "1.2.1",
@@ -5946,13 +6073,11 @@
         },
         "balanced-match": {
           "version": "1.0.0",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "brace-expansion": {
           "version": "1.1.11",
           "bundled": true,
-          "optional": true,
           "requires": {
             "balanced-match": "^1.0.0",
             "concat-map": "0.0.1"
@@ -5965,18 +6090,15 @@
         },
         "code-point-at": {
           "version": "1.1.0",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "concat-map": {
           "version": "0.0.1",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "console-control-strings": {
           "version": "1.1.0",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "core-util-is": {
           "version": "1.0.2",
@@ -6079,8 +6201,7 @@
         },
         "inherits": {
           "version": "2.0.3",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "ini": {
           "version": "1.3.5",
@@ -6090,7 +6211,6 @@
         "is-fullwidth-code-point": {
           "version": "1.0.0",
           "bundled": true,
-          "optional": true,
           "requires": {
             "number-is-nan": "^1.0.0"
           }
@@ -6103,20 +6223,17 @@
         "minimatch": {
           "version": "3.0.4",
           "bundled": true,
-          "optional": true,
           "requires": {
             "brace-expansion": "^1.1.7"
           }
         },
         "minimist": {
           "version": "0.0.8",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "minipass": {
           "version": "2.2.4",
           "bundled": true,
-          "optional": true,
           "requires": {
             "safe-buffer": "^5.1.1",
             "yallist": "^3.0.0"
@@ -6133,7 +6250,6 @@
         "mkdirp": {
           "version": "0.5.1",
           "bundled": true,
-          "optional": true,
           "requires": {
             "minimist": "0.0.8"
           }
@@ -6206,8 +6322,7 @@
         },
         "number-is-nan": {
           "version": "1.0.1",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "object-assign": {
           "version": "4.1.1",
@@ -6217,7 +6332,6 @@
         "once": {
           "version": "1.4.0",
           "bundled": true,
-          "optional": true,
           "requires": {
             "wrappy": "1"
           }
@@ -6323,7 +6437,6 @@
         "string-width": {
           "version": "1.0.2",
           "bundled": true,
-          "optional": true,
           "requires": {
             "code-point-at": "^1.0.0",
             "is-fullwidth-code-point": "^1.0.0",
@@ -9221,6 +9334,14 @@
         "immediate": "~3.0.5"
       }
     },
+    "line-height": {
+      "version": "0.3.1",
+      "resolved": "https://registry.npmjs.org/line-height/-/line-height-0.3.1.tgz",
+      "integrity": "sha1-SxIF7d4YKHKl76PI9iCzGHqcVMk=",
+      "requires": {
+        "computed-style": "~0.1.3"
+      }
+    },
     "lines-and-columns": {
       "version": "1.1.6",
       "resolved": "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.1.6.tgz",
@@ -9400,8 +9521,7 @@
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/longest/-/longest-1.0.1.tgz",
       "integrity": "sha1-MKCy2jj3N3DoKUoNIuZiXtd9AJc=",
-      "dev": true,
-      "optional": true
+      "dev": true
     },
     "longest-streak": {
       "version": "2.0.2",
@@ -12481,6 +12601,16 @@
         "object-assign": "^4.1.0"
       }
     },
+    "react-autosize-textarea": {
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/react-autosize-textarea/-/react-autosize-textarea-3.0.3.tgz",
+      "integrity": "sha512-iOSZK7RUuJ+iEwkJ9rqYciqtjQgrG1CCRFL6h8Bk61kODnRyEq4tS74IgXpI1t4S6jBBZVm+6ugaU+tWTlVxXg==",
+      "requires": {
+        "autosize": "^4.0.0",
+        "line-height": "^0.3.1",
+        "prop-types": "^15.5.6"
+      }
+    },
     "react-click-outside": {
       "version": "3.0.1",
       "resolved": "https://registry.npmjs.org/react-click-outside/-/react-click-outside-3.0.1.tgz",
@@ -12866,10 +12996,25 @@
         }
       }
     },
+    "redux-multi": {
+      "version": "0.1.12",
+      "resolved": "https://registry.npmjs.org/redux-multi/-/redux-multi-0.1.12.tgz",
+      "integrity": "sha1-KOH+XklnLLxb2KB/Cyrq8O+DVcI="
+    },
+    "redux-optimist": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/redux-optimist/-/redux-optimist-1.0.0.tgz",
+      "integrity": "sha512-AG1v8o6UZcGXTEH2jVcWG6KD+gEix+Cj9JXAAzln9MPkauSVd98H7N7EOOyT/v4c9N1mJB4sm1zfspGlLDkUEw=="
+    },
     "redux-thunk": {
       "version": "2.3.0",
       "resolved": "https://registry.npmjs.org/redux-thunk/-/redux-thunk-2.3.0.tgz",
       "integrity": "sha512-km6dclyFnmcvxhAcrQV2AkZmPQjzPDjgVlQtR0EQjxZPyJ0BnMf3in1ryuR8A2qU0HldVRfxYXbFSKlI3N7Slw=="
+    },
+    "refx": {
+      "version": "3.1.1",
+      "resolved": "https://registry.npmjs.org/refx/-/refx-3.1.1.tgz",
+      "integrity": "sha512-lwN27W5iYyagpCxxYDYDl0IIiKh0Vgi3wvafqfthbzTfBgLOYAstcftp+G2X612xVaB8rhn5wDxd4er4KEeb8A=="
     },
     "regenerate": {
       "version": "1.4.0",

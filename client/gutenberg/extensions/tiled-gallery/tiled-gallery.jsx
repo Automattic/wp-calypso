@@ -1,18 +1,14 @@
 /**
- * External dependencies
+ * WordPress dependencies
  */
-import wp from 'wp';
+import { __ } from '@wordpress/i18n';
+import { createBlock, registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
 import JetpackGalleryBlockEditor from './edit.js';
 import JetpackGalleryBlockSave from './save.js';
-
-/**
- * WordPress dependencies
- */
-const { __ } = wp.i18n;
 
 const JetpackGalleryBlockType = 'jetpack/gallery';
 
@@ -82,7 +78,7 @@ const settings = {
 				type: 'block',
 				blocks: [ 'core/gallery' ],
 				transform: function( content ) {
-					return wp.blocks.createBlock( JetpackGalleryBlockType, content );
+					return createBlock( JetpackGalleryBlockType, content );
 				},
 			},
 		],
@@ -91,7 +87,7 @@ const settings = {
 				type: 'block',
 				blocks: [ 'core/gallery' ],
 				transform: function( content ) {
-					return wp.blocks.createBlock( 'core/gallery', content );
+					return createBlock( 'core/gallery', content );
 				},
 			},
 		],
@@ -101,7 +97,7 @@ const settings = {
 	save: JetpackGalleryBlockSave
 };
 
-wp.blocks.registerBlockType(
+registerBlockType(
 	JetpackGalleryBlockType,
 	settings
 );
