@@ -32,7 +32,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 		const siteType = get( settings, 'siteType' );
 
 		return (
-			<div className="steps__main">
+			<div className="steps__main" data-e2e-type="site-type">
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<TileGrid>

@@ -208,7 +208,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		const { getForwardUrl, hasBusinessAddress, siteId, translate } = this.props;
 
 		return (
-			<div className="steps__main">
+			<div className="steps__main" data-e2e-type="business-address">
 				<QuerySites siteId={ siteId } />
 
 				<JetpackLogo full size={ 45 } />
