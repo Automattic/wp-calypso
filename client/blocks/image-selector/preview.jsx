@@ -203,8 +203,12 @@ export class ImageSelectorPreview extends Component {
 		const images = [ ...this.state.images ];
 		const featuredImage = ( images && images.shift() ) || null;
 
+		const classes = classNames( 'image-selector__images-wrapper', this.props.className, {
+			'is-assigned-featured': featuredImage,
+		} );
+
 		return (
-			<div className="image-selector__images-wrapper">
+			<div className={ classes }>
 				<div className="image-selector__images">
 					<div className="image-selector__images-featured">
 						{ featuredImage && this.renderImage( featuredImage ) }

@@ -25,6 +25,7 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 
 export class ImageSelector extends Component {
 	static propTypes = {
+		className: PropTypes.string,
 		compact: PropTypes.bool,
 		hasDropZone: PropTypes.bool,
 		imageIds: PropTypes.array,
@@ -34,6 +35,7 @@ export class ImageSelector extends Component {
 		onImageChange: PropTypes.func,
 		onImageSelected: PropTypes.func,
 		onRemoveImage: PropTypes.func,
+		previewClassName: PropTypes.string,
 		selecting: PropTypes.bool,
 		showEditIcon: PropTypes.bool,
 		site: PropTypes.object,
@@ -121,26 +123,42 @@ export class ImageSelector extends Component {
 	}
 
 	renderSelectedImages() {
-		const { compact, siteId, imageIds, maxWidth, multiple, showEditIcon } = this.props;
+		const {
+			compact,
+			previewClassName,
+			siteId,
+			imageIds,
+			maxWidth,
+			multiple,
+			showEditIcon,
+		} = this.props;
 
 		return (
 			<ImageSelectorPreview
-				siteId={ siteId }
+				className={ previewClassName }
+				compact={ compact }
 				itemIds={ imageIds }
 				maxWidth={ maxWidth }
+				multiple={ multiple }
 				onImageChange={ this.onImageChange }
 				onImageClick={ this.showMediaModal }
 				onRemoveImage={ this.removeImage }
-				multiple={ multiple }
-				compact={ compact }
 				showEditIcon={ showEditIcon }
+				siteId={ siteId }
 			/>
 		);
 	}
 
 	render() {
-		const { hasDropZone, imageIds, isImageSelectorDropZoneVisible, site, siteId } = this.props;
-		const classes = classnames( 'image-selector', {
+		const {
+			className,
+			hasDropZone,
+			imageIds,
+			isImageSelectorDropZoneVisible,
+			site,
+			siteId,
+		} = this.props;
+		const classes = classnames( 'image-selector', className, {
 			'is-assigned': !! imageIds && imageIds.length,
 			'has-active-drop-zone': hasDropZone && isImageSelectorDropZoneVisible,
 		} );
