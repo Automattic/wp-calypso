@@ -40,7 +40,7 @@
     "@wordpress/compose": "1.0.4",
     "@wordpress/core-data": "1.1.1",
     "@wordpress/data": "1.2.1",
-    "@wordpress/date": "1.0.2",
+    "@wordpress/date": "1.0.3",
     "@wordpress/deprecated": "1.0.3",
     "@wordpress/editor": "2.0.1",
     "@wordpress/element": "1.0.4",
