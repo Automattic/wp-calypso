@@ -208,6 +208,9 @@ describe( 'Gutenberg @wordress/api-fetch package', () => {
 							message: 'Bad Request',
 						} );
 					},
+					clone() {
+						return this;
+					},
 				} )
 			);
 
