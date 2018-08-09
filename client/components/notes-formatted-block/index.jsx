@@ -5,7 +5,7 @@
 import React from 'react';
 import { startsWith } from 'lodash';
 
-export const FormattedBlock = ( { content = {} } ) => {
+export const FormattedBlock = ( { content = {}, onClick = null } ) => {
 	const {
 		siteId,
 		children,
@@ -15,6 +15,7 @@ export const FormattedBlock = ( { content = {} } ) => {
 		postId,
 		text = null,
 		type,
+		section,
 		siteSlug,
 		pluginSlug,
 		themeSlug,
@@ -30,7 +31,7 @@ export const FormattedBlock = ( { content = {} } ) => {
 	}
 
 	const descent = children.map( ( child, key ) => (
-		<FormattedBlock key={ key } content={ child } />
+		<FormattedBlock key={ key } content={ child } onClick={ onClick } />
 	) );
 
 	switch ( type ) {
@@ -39,7 +40,15 @@ export const FormattedBlock = ( { content = {} } ) => {
 			const url = startsWith( content.url, 'https://wordpress.com/' )
 				? content.url.substr( 21 )
 				: content.url;
-			return <a href={ url }>{ descent }</a>;
+			return (
+				<a
+					href={ url }
+					onClick={ onClick }
+					data-section={ onClick && section ? section : undefined }
+				>
+					{ descent }
+				</a>
+			);
 
 		case 'b':
 			return <strong>{ descent }</strong>;
@@ -69,7 +78,15 @@ export const FormattedBlock = ( { content = {} } ) => {
 			);
 
 		case 'plugin':
-			return <a href={ `/plugins/${ pluginSlug }/${ siteSlug }` }>{ descent }</a>;
+			return (
+				<a
+					href={ `/plugins/${ pluginSlug }/${ siteSlug }` }
+					onClick={ onClick }
+					data-section="plugins"
+				>
+					{ descent }
+				</a>
+			);
 
 		case 'post':
 			return isTrashed ? (
@@ -89,11 +106,25 @@ export const FormattedBlock = ( { content = {} } ) => {
 			}
 
 			if ( /wordpress\.com/.test( themeUri ) ) {
-				return <a href={ `/theme/${ themeSlug }/${ siteSlug }` }>{ descent }</a>;
+				return (
+					<a
+						href={ `/theme/${ themeSlug }/${ siteSlug }` }
+						onClick={ onClick }
+						data-section={ onClick ? 'themes' : undefined }
+					>
+						{ descent }
+					</a>
+				);
 			}
 
 			return (
-				<a href={ themeUri } target="_blank" rel="noopener noreferrer">
+				<a
+					href={ themeUri }
+					target="_blank"
+					rel="noopener noreferrer"
+					onClick={ onClick }
+					data-section={ onClick ? 'themes-external' : undefined }
+				>
 					{ descent }
 				</a>
 			);
