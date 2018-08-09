@@ -5,7 +5,7 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { noop, some, startsWith, uniq } from 'lodash';
+import { get, noop, some, startsWith, uniq } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -388,7 +388,21 @@ export function siteSelection( context, next ) {
 			calypsoify &&
 			/^\/plugins/.test( basePath )
 		) {
-			const pluginLink = getSiteAdminUrl( state, siteId ) + 'plugin-install.php?calypsoify=1';
+			const plugin = get( context, 'params.plugin' );
+			let pluginString = '';
+			if ( plugin ) {
+				pluginString = [
+					'tab=search',
+					`s=${ plugin }`,
+					'type=term',
+					'modal-mode=true',
+					`plugin=${ plugin }`,
+				].join( '&' );
+			}
+
+			const pluginIstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+			const pluginLink = getSiteAdminUrl( state, siteId ) + pluginIstallURL;
+
 			return window.location.replace( pluginLink );
 		}
 
