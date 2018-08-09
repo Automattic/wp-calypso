@@ -369,7 +369,7 @@ export function plansLink( url, siteSlug, intervalType ) {
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
 	const filteredPlanConstantObj = { ...getPlan( planName ) };
-	const filteredPlanFeaturesConstantList = getPlan( planName ).getDisplayFeatures( abtest );
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getDefaultPlanListFeatures( abtest );
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests

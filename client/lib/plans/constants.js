@@ -6,7 +6,7 @@
 
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { compact, includes } from 'lodash';
+import { compact, includes, uniq } from 'lodash';
 
 /**
  * Internal dependencies
@@ -184,7 +184,17 @@ const getPlanPersonalDetails = () => ( {
 				},
 			}
 		),
-	getDisplayFeatures: () => [
+	// All plan features, used for checking plan abilities
+	getFeatures: () =>
+		uniq( [
+			...getPlanPersonalDetails().getDefaultPlanListFeatures(),
+			...getPlanPersonalDetails().getSignupFeatures(),
+			...getPlanPersonalDetails().getBlogSignupFeatures(),
+			...getPlanPersonalDetails().getPortfolioSignupFeatures(),
+			FEATURE_AUDIO_UPLOADS,
+			FEATURE_VIDEO_UPLOADS,
+		] ),
+	getDefaultPlanListFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_JETPACK_ESSENTIAL,
@@ -194,10 +204,6 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_6GB_STORAGE,
 		FEATURE_NO_ADS,
 	],
-	getFeatures: () =>
-		getPlanPersonalDetails()
-			.getDisplayFeatures()
-			.concat( [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ] ),
 	getSignupFeatures: () => [
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		FEATURE_FREE_DOMAIN,
@@ -236,7 +242,18 @@ const getPlanPremiumDetails = () => ( {
 				},
 			}
 		),
-	getDisplayFeatures: () =>
+	// All plan features, used for checking plan abilities
+	getFeatures: () =>
+		uniq( [
+			...getPlanPremiumDetails().getDefaultPlanListFeatures(),
+			...getPlanPremiumDetails().getPromotedFeatures(),
+			...getPlanPremiumDetails().getSignupFeatures(),
+			...getPlanPremiumDetails().getBlogSignupFeatures(),
+			...getPlanPremiumDetails().getPortfolioSignupFeatures(),
+			FEATURE_AUDIO_UPLOADS,
+			FEATURE_VIDEO_UPLOADS,
+		] ),
+	getDefaultPlanListFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
@@ -251,10 +268,6 @@ const getPlanPremiumDetails = () => ( {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
 		] ),
-	getFeatures: () =>
-		getPlanPremiumDetails()
-			.getDisplayFeatures()
-			.concat( [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ] ),
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
@@ -320,7 +333,18 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	getDisplayFeatures: () =>
+	// All plan features, used for checking plan abilities
+	getFeatures: () =>
+		uniq( [
+			...getPlanBusinessDetails().getDefaultPlanListFeatures(),
+			...getPlanBusinessDetails().getPromotedFeatures(),
+			...getPlanBusinessDetails().getSignupFeatures(),
+			...getPlanBusinessDetails().getBlogSignupFeatures(),
+			...getPlanBusinessDetails().getPortfolioSignupFeatures(),
+			FEATURE_AUDIO_UPLOADS,
+			FEATURE_VIDEO_UPLOADS,
+		] ),
+	getDefaultPlanListFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
@@ -341,10 +365,6 @@ const getPlanBusinessDetails = () => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING,
 		] ),
-	getFeatures: () =>
-		getPlanBusinessDetails()
-			.getDisplayFeatures()
-			.concat( [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ] ),
 	getPromotedFeatures: () => [
 		FEATURE_UNLIMITED_STORAGE,
 		FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -390,7 +410,15 @@ export const PLANS_LIST = {
 				'Get a free website and be on your way to publishing your ' +
 					'first post in less than five minutes.'
 			),
-		getDisplayFeatures: () => [
+		// All plan features, used for checking plan abilities
+		getFeatures: () =>
+			uniq( [
+				...PLANS_LIST[ PLAN_FREE ].getDefaultPlanListFeatures(),
+				...PLANS_LIST[ PLAN_FREE ].getSignupFeatures(),
+				...PLANS_LIST[ PLAN_FREE ].getBlogSignupFeatures(),
+				...PLANS_LIST[ PLAN_FREE ].getPortfolioSignupFeatures(),
+			] ),
+		getDefaultPlanListFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
@@ -399,7 +427,6 @@ export const PLANS_LIST = {
 			FEATURE_BASIC_DESIGN,
 			FEATURE_3GB_STORAGE,
 		],
-		getFeatures: () => PLANS_LIST[ PLAN_FREE ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () => [
 			FEATURE_COMMUNITY_SUPPORT,
 			FEATURE_WP_SUBDOMAIN_SIGNUP,
@@ -511,14 +538,19 @@ export const PLANS_LIST = {
 				'The features most needed by WordPress sites' +
 					' — perfectly packaged and optimized for everyone.'
 			),
-		getDisplayFeatures: () => [
+		// All plan features, used for checking plan abilities
+		getFeatures: () =>
+			uniq( [
+				...PLANS_LIST[ PLAN_JETPACK_FREE ].getDefaultPlanListFeatures(),
+				...PLANS_LIST[ PLAN_JETPACK_FREE ].getSignupFeatures(),
+			] ),
+		getDefaultPlanListFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
 			FEATURE_TRAFFIC_TOOLS,
 			FEATURE_MANAGE,
 		],
-		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_FREE ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () => [
 			FEATURE_FREE_WORDPRESS_THEMES,
 			FEATURE_SITE_STATS,
@@ -559,7 +591,13 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
-		getDisplayFeatures: () =>
+		// All plan features, used for checking plan abilities
+		getFeatures: () =>
+			uniq( [
+				...PLANS_LIST[ PLAN_JETPACK_PREMIUM ].getDefaultPlanListFeatures(),
+				...PLANS_LIST[ PLAN_JETPACK_PREMIUM ].getSignupFeatures(),
+			] ),
+		getDefaultPlanListFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -577,7 +615,6 @@ export const PLANS_LIST = {
 				FEATURE_ADVANCED_SEO,
 				FEATURE_GOOGLE_ANALYTICS,
 			] ),
-		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_PREMIUM ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
@@ -612,7 +649,13 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
-		getDisplayFeatures: () =>
+		// All plan features, used for checking plan abilities
+		getFeatures: () =>
+			uniq( [
+				...PLANS_LIST[ PLAN_JETPACK_PREMIUM_MONTHLY ].getDefaultPlanListFeatures(),
+				...PLANS_LIST[ PLAN_JETPACK_PREMIUM_MONTHLY ].getSignupFeatures(),
+			] ),
+		getDefaultPlanListFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -630,7 +673,6 @@ export const PLANS_LIST = {
 				FEATURE_ADVANCED_SEO,
 				FEATURE_GOOGLE_ANALYTICS,
 			] ),
-		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_PREMIUM_MONTHLY ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
@@ -664,7 +706,13 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your data is being securely backed up and you have access to priority support.'
 			),
-		getDisplayFeatures: () => [
+		// All plan features, used for checking plan abilities
+		getFeatures: () =>
+			uniq( [
+				...PLANS_LIST[ PLAN_JETPACK_PERSONAL ].getDefaultPlanListFeatures(),
+				...PLANS_LIST[ PLAN_JETPACK_PERSONAL ].getSignupFeatures(),
+			] ),
+		getDefaultPlanListFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -674,7 +722,6 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 		],
-		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_PERSONAL ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
@@ -704,7 +751,13 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your data is being securely backed up and you have access to priority support.'
 			),
-		getDisplayFeatures: () => [
+		// All plan features, used for checking plan abilities
+		getFeatures: () =>
+			uniq( [
+				...PLANS_LIST[ PLAN_JETPACK_PERSONAL_MONTHLY ].getDefaultPlanListFeatures(),
+				...PLANS_LIST[ PLAN_JETPACK_PERSONAL_MONTHLY ].getSignupFeatures(),
+			] ),
+		getDefaultPlanListFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -714,8 +767,6 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 		],
-		getFeatures: () =>
-			PLANS_LIST[ PLAN_JETPACK_PERSONAL_MONTHLY ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
@@ -756,7 +807,13 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
-		getDisplayFeatures: () =>
+		// All plan features, used for checking plan abilities
+		getFeatures: () =>
+			uniq( [
+				...PLANS_LIST[ PLAN_JETPACK_BUSINESS ].getDefaultPlanListFeatures(),
+				...PLANS_LIST[ PLAN_JETPACK_BUSINESS ].getSignupFeatures(),
+			] ),
+		getDefaultPlanListFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -777,7 +834,6 @@ export const PLANS_LIST = {
 				FEATURE_GOOGLE_ANALYTICS,
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 			] ),
-		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_BUSINESS ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -819,7 +875,13 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
-		getDisplayFeatures: () =>
+		// All plan features, used for checking plan abilities
+		getFeatures: () =>
+			uniq( [
+				...PLANS_LIST[ PLAN_JETPACK_BUSINESS_MONTHLY ].getDefaultPlanListFeatures(),
+				...PLANS_LIST[ PLAN_JETPACK_BUSINESS_MONTHLY ].getSignupFeatures(),
+			] ),
+		getDefaultPlanListFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -839,8 +901,6 @@ export const PLANS_LIST = {
 				FEATURE_GOOGLE_ANALYTICS,
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 			] ),
-		getFeatures: () =>
-			PLANS_LIST[ PLAN_JETPACK_BUSINESS_MONTHLY ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
