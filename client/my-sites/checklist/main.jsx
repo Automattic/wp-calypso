@@ -28,6 +28,16 @@ import { isJetpackSite, isNewSite, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 
+/**
+ * Included to fix regression.
+ * https://github.com/Automattic/wp-calypso/issues/26572
+ * @TODO clean up module separation.
+ */
+import getSiteChecklist from 'state/selectors/get-site-checklist';
+import { mergeObjectIntoArrayById } from './util';
+import { tasks as jetpackTasks } from './jetpack-checklist';
+import { tasks as wpcomTasks } from './onboardingChecklist';
+
 class ChecklistMain extends PureComponent {
 	componentDidMount() {
 		this.maybeRedirectJetpack();
@@ -195,6 +205,16 @@ const mapStateToProps = state => {
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isNewlyCreatedSite = isNewSite( state, siteId );
+
+	/**
+	 * Included to fix regression.
+	 * https://github.com/Automattic/wp-calypso/issues/26572
+	 * @TODO clean up module separation.
+	 */
+	const siteChecklist = getSiteChecklist( state, siteId );
+	const tasks = isJetpack ? jetpackTasks : wpcomTasks;
+	const tasksFromServer = siteChecklist && siteChecklist.tasks;
+
 	return {
 		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
 		isAtomic,
@@ -204,6 +224,13 @@ const mapStateToProps = state => {
 		siteSlug,
 		siteHasFreePlan,
 		user: getCurrentUser( state ),
+
+		/**
+		 * Included to fix regression.
+		 * https://github.com/Automattic/wp-calypso/issues/26572
+		 * @TODO clean up module separation.
+		 */
+		tasks: tasksFromServer ? mergeObjectIntoArrayById( tasks, tasksFromServer ) : null,
 	};
 };
 
