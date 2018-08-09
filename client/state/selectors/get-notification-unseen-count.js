@@ -1,1 +1,1 @@
-export default state => state.notifications;
+export default state => state.notificationsUnseenCount;
