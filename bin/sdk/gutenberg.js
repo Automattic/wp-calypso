@@ -61,7 +61,6 @@ exports.compile = args => {
 			),
 			externals: {
 				...baseConfig.externals,
-				wp: 'wp',
 				'@wordpress/api-fetch': '@wordpress/api-fetch',
 				'@wordpress/block-serialization-spec-parser': '@wordpress/block-serialization-spec-parser',
 				'@wordpress/blocks': '@wordpress/blocks',
@@ -70,6 +69,8 @@ exports.compile = args => {
 				'@wordpress/editor': '@wordpress/editor',
 				'@wordpress/element': '@wordpress/element',
 				'@wordpress/i18n': '@wordpress/i18n',
+				lodash: 'lodash',
+				wp: 'wp',
 			},
 			optimization: {
 				splitChunks: false,
