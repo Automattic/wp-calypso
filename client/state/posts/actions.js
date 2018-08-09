@@ -777,15 +777,21 @@ export const autosave = () => async ( dispatch, getState ) => {
 };
 
 /**
- * Save a revision of the passed-in post. Calls `savePost` which initiates a network call.
+ * Save a revision of the passed-in post. Calls `wpcom.post.add` which initiates a network call.
  * @param  {int} siteId		The site ID for use in the `savePost` call
  * @param  {object} post   post-like object with keys: 'ID', 'content', 'excerpt', 'title'
- * @returns {Promise} The return value from `savePost`
+ * @returns {Promise} The return value of `wpcom.post.add`
  */
-export const saveRevision = ( siteId, post ) =>
-	savePost( siteId, null, {
+export const saveRevision = ( siteId, post ) => {
+	const normalized = normalizePostForApi( {
 		...pick( post, POST_REVISION_FIELDS ),
 		parent: post.ID,
 		status: 'inherit',
 		type: 'revision',
 	} );
+
+	return wpcom
+		.site( siteId )
+		.post()
+		.add( { apiVersion: '1.2' }, normalized );
+};

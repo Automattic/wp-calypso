@@ -124,7 +124,7 @@ export class PostEditor extends React.Component {
 	}
 
 	autosaveFlushToRevision = () => {
-		this.props.saveRevision( this.props.siteId, this.props.post );
+		saveRevision( this.props.siteId, this.props.post );
 	};
 
 	componentWillMount() {
@@ -1166,7 +1166,6 @@ const enhance = flow(
 		{
 			autosave,
 			saveEdited,
-			saveRevision,
 			editPost,
 			setEditorModePreference: partial( savePreference, 'editor-mode' ),
 			setLayoutFocus,
