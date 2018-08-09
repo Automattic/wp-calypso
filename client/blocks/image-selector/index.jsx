@@ -139,22 +139,18 @@ export class ImageSelector extends Component {
 	}
 
 	render() {
-		const { imageIds } = this.props;
+		const { hasDropZone, imageIds, isImageSelectorDropZoneVisible, site, siteId } = this.props;
 		const classes = classnames( 'image-selector', {
 			'is-assigned': !! imageIds && imageIds.length,
-			'has-active-drop-zone': this.props.hasDropZone && this.props.isDropZoneVisible,
+			'has-active-drop-zone': hasDropZone && isImageSelectorDropZoneVisible,
 		} );
 
 		return (
 			<div className={ classes }>
 				{ this.renderMediaModal() }
 				<div className="image-selector__inner-content">{ this.renderSelectedImages() }</div>
-				{ this.props.hasDropZone && (
-					<ImageSelectorDropZone
-						onDroppedImage={ this.addImage }
-						site={ this.props.site }
-						siteId={ this.props.siteId }
-					/>
+				{ hasDropZone && (
+					<ImageSelectorDropZone onDroppedImage={ this.addImage } site={ site } siteId={ siteId } />
 				) }
 			</div>
 		);
@@ -166,7 +162,7 @@ export default connect( ( state, ownProps ) => {
 	const props = {
 		siteId: getSelectedSiteId( state ),
 		site: getSelectedSite( state ),
-		isDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
+		isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
 	};
 
 	if ( site ) {
