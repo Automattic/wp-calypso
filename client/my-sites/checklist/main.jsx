@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import ChecklistShow from './checklist-show';
 import ChecklistShowShare from './share';
-import config from 'config';
+import { isEnabled } from 'config';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import FormattedHeader from 'components/formatted-header';
@@ -62,7 +62,7 @@ class ChecklistMain extends PureComponent {
 			 * Only send Jetpack users to plans if a checklist will be presented. Otherwise,
 			 * let the "Not available" view render.
 			 */
-			config.isEnabled( 'jetpack/checklist' ) &&
+			isEnabled( 'jetpack/checklist' ) &&
 			this.props.siteSlug &&
 			false === this.props.isAtomic &&
 			this.props.isJetpack &&
@@ -193,7 +193,7 @@ export default connect( state => {
 	const tasksFromServer = siteChecklist && siteChecklist.tasks;
 
 	return {
-		checklistAvailable: ! isAtomic && ( config.isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
+		checklistAvailable: ! isAtomic && ( isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
 		isAtomic,
 		isJetpack,
 		isNewlyCreatedSite: isNewSite( state, siteId ),
