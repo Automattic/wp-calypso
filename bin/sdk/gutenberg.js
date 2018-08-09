@@ -20,6 +20,31 @@ const omitPlugins = [
 	webpack.HotModuleReplacementPlugin,
 ];
 
+const wordpressPackages = [
+	'api-fetch',
+	'block-serialization-spec-parser',
+	'blocks',
+	'components',
+	'data',
+	'editor',
+	'element',
+	'i18n',
+];
+
+const getWordPressExternals = () =>
+	wordpressPackages.reduce( ( externals, package ) => {
+		externals[ `@wordpress/${ package }` ] = {
+			window: [
+				'wp',
+				package.replace(
+					/-([a-z])/g,
+					( match, letter ) => letter.toUpperCase()
+				)
+			]
+		};
+		return externals;
+	}, {} );
+
 const outputHandler = ( error, stats ) => {
 	if ( error ) {
 		console.error( error );
@@ -61,14 +86,7 @@ exports.compile = args => {
 			),
 			externals: {
 				...baseConfig.externals,
-				'@wordpress/api-fetch': { window: [ 'wp', 'apiFetch' ] },
-				'@wordpress/block-serialization-spec-parser': { window: [ 'wp', 'blockSerializationSpecParser' ] },
-				'@wordpress/blocks': { window: [ 'wp', 'blocks' ] },
-				'@wordpress/components': { window: [ 'wp', 'components' ] },
-				'@wordpress/data': { window: [ 'wp', 'data' ] },
-				'@wordpress/editor': { window: [ 'wp', 'editor' ] },
-				'@wordpress/element': { window: [ 'wp', 'element' ] },
-				'@wordpress/i18n': { window: [ 'wp', 'i18n' ] },
+				...getWordPressExternals(),
 				lodash: 'lodash',
 				wp: 'wp',
 			},
