@@ -194,16 +194,10 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_6GB_STORAGE,
 		FEATURE_NO_ADS,
 	],
-	getFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_JETPACK_ESSENTIAL,
-		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-		FEATURE_FREE_THEMES,
-		FEATURE_BASIC_DESIGN,
-		FEATURE_6GB_STORAGE,
-		FEATURE_NO_ADS,
-		FEATURE_AUDIO_UPLOADS,
-	],
+	getFeatures: () =>
+		getPlanPersonalDetails()
+			.getDisplayFeatures()
+			.concat( [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ] ),
 	getSignupFeatures: () => [
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		FEATURE_FREE_DOMAIN,
@@ -258,20 +252,9 @@ const getPlanPremiumDetails = () => ( {
 			FEATURE_VIDEO_UPLOADS,
 		] ),
 	getFeatures: () =>
-		compact( [
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_ADVANCED_DESIGN,
-			FEATURE_13GB_STORAGE,
-			FEATURE_NO_ADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			FEATURE_SIMPLE_PAYMENTS,
-			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
-			FEATURE_AUDIO_UPLOADS,
-		] ),
+		getPlanPremiumDetails()
+			.getDisplayFeatures()
+			.concat( [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ] ),
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
@@ -359,26 +342,9 @@ const getPlanBusinessDetails = () => ( {
 			FEATURE_NO_BRANDING,
 		] ),
 	getFeatures: () =>
-		compact( [
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_ADVANCED_DESIGN,
-			FEATURE_UNLIMITED_STORAGE,
-			FEATURE_NO_ADS,
-			isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
-			FEATURE_SIMPLE_PAYMENTS,
-			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
-			FEATURE_BUSINESS_ONBOARDING,
-			FEATURE_ADVANCED_SEO,
-			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
-			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_THEMES,
-			FEATURE_GOOGLE_ANALYTICS,
-			FEATURE_NO_BRANDING,
-			FEATURE_AUDIO_UPLOADS,
-		] ),
+		getPlanBusinessDetails()
+			.getDisplayFeatures()
+			.concat( [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ] ),
 	getPromotedFeatures: () => [
 		FEATURE_UNLIMITED_STORAGE,
 		FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -424,7 +390,7 @@ export const PLANS_LIST = {
 				'Get a free website and be on your way to publishing your ' +
 					'first post in less than five minutes.'
 			),
-		getFeatures: () => [
+		getDisplayFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
@@ -433,6 +399,7 @@ export const PLANS_LIST = {
 			FEATURE_BASIC_DESIGN,
 			FEATURE_3GB_STORAGE,
 		],
+		getFeatures: () => PLANS_LIST[ PLAN_FREE ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () => [
 			FEATURE_COMMUNITY_SUPPORT,
 			FEATURE_WP_SUBDOMAIN_SIGNUP,
@@ -544,13 +511,14 @@ export const PLANS_LIST = {
 				'The features most needed by WordPress sites' +
 					' — perfectly packaged and optimized for everyone.'
 			),
-		getFeatures: () => [
+		getDisplayFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
 			FEATURE_TRAFFIC_TOOLS,
 			FEATURE_MANAGE,
 		],
+		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_FREE ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () => [
 			FEATURE_FREE_WORDPRESS_THEMES,
 			FEATURE_SITE_STATS,
@@ -591,7 +559,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
-		getFeatures: () =>
+		getDisplayFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -609,6 +577,7 @@ export const PLANS_LIST = {
 				FEATURE_ADVANCED_SEO,
 				FEATURE_GOOGLE_ANALYTICS,
 			] ),
+		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_PREMIUM ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
@@ -643,7 +612,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
-		getFeatures: () =>
+		getDisplayFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -694,7 +663,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your data is being securely backed up and you have access to priority support.'
 			),
-		getFeatures: () => [
+		getDisplayFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -704,6 +673,7 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 		],
+		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_PERSONAL ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
@@ -733,7 +703,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your data is being securely backed up and you have access to priority support.'
 			),
-		getFeatures: () => [
+		getDisplayFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -743,6 +713,8 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_PREMIUM_SUPPORT,
 		],
+		getFeatures: () =>
+			PLANS_LIST[ PLAN_JETPACK_PERSONAL_MONTHLY ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
@@ -783,7 +755,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
-		getFeatures: () =>
+		getDisplayFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -804,6 +776,7 @@ export const PLANS_LIST = {
 				FEATURE_GOOGLE_ANALYTICS,
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 			] ),
+		getFeatures: () => PLANS_LIST[ PLAN_JETPACK_BUSINESS ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -845,7 +818,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
-		getFeatures: () =>
+		getDisplayFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -865,6 +838,8 @@ export const PLANS_LIST = {
 				FEATURE_GOOGLE_ANALYTICS,
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 			] ),
+		getFeatures: () =>
+			PLANS_LIST[ PLAN_JETPACK_BUSINESS_MONTHLY ].getDisplayFeatures().concat( [] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_UNLIMITED_PREMIUM_THEMES,

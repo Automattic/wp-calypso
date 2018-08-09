@@ -12,6 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { decodeEntities } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
@@ -228,10 +229,10 @@ class PodcastingDetails extends Component {
 						</h1>
 					</HeaderCake>
 					<UpgradeNudge
-						plan="personal-bundle"
+						plan={ PLAN_PERSONAL }
 						title={ translate( 'Upload Audio with WordPress.com Personal' ) }
 						message={ translate( 'Embed podcast episodes directly from your media library.' ) }
-						feature="audio-upload"
+						feature={ FEATURE_AUDIO_UPLOADS }
 						event="podcasting_details_upload_audio"
 					/>
 					{ ! error && (
