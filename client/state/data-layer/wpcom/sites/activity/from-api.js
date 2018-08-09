@@ -64,6 +64,7 @@ export function processItem( item ) {
 			activityTitle: item.summary,
 			activityTs: Date.parse( published ),
 			activityDescription: parseBlock( item.content ),
+			activityMedia: get( item, 'image' ),
 			activityMeta,
 		},
 		item.rewind_id && { rewindId: item.rewind_id },
