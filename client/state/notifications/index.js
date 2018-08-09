@@ -5,7 +5,7 @@
  */
 import { NOTIFICATIONS_UNSEEN_COUNT_SET } from 'state/action-types';
 
-export const unseenCount = ( state = 0, action ) =>
+export const unseenCount = ( state = null, action ) =>
 	NOTIFICATIONS_UNSEEN_COUNT_SET === action.type ? action.unseenCount : state;
 
 export const setUnseenCount = count => ( {
