@@ -36,6 +36,8 @@ const getWordPressExternals = () =>
 		externals[ `@wordpress/${ package }` ] = {
 			window: [
 				'wp',
+				// this is not as aggressive as `_.camelCase` in converting to
+				// uppercase, where Lodash will convert letters following numbers
 				package.replace(
 					/-([a-z])/g,
 					( match, letter ) => letter.toUpperCase()
