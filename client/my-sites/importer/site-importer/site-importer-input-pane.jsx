@@ -8,13 +8,15 @@ import { connect } from 'react-redux';
 import Dispatcher from 'dispatcher';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop, every, has, defer, get, trim } from 'lodash';
+import { noop, every, has, defer, get, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import wpLib from 'lib/wp';
+import config from 'config';
 
 const wpcom = wpLib.undocumented();
 
@@ -27,6 +29,7 @@ import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import ErrorPane from '../error-pane';
 import TextInput from 'components/forms/form-text-input';
+import FormSelect from 'components/forms/form-select';
 
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { connectDispatcher } from '../dispatcher-converter';
@@ -63,6 +66,14 @@ class SiteImporterInputPane extends React.Component {
 		errorMessage: '',
 		errorType: null,
 		siteURLInput: '',
+		selectedEndpoint: '',
+		availableEndpoints: [],
+	};
+
+	componentWillMount = () => {
+		if ( config.isEnabled( 'manage/import/site-importer-endpoints' ) ) {
+			this.fetchEndpoints();
+		}
 	};
 
 	// TODO This can be improved if we move to Redux.
@@ -120,6 +131,46 @@ class SiteImporterInputPane extends React.Component {
 		}
 	};
 
+	fetchEndpoints = () => {
+		wpcom.wpcom.req
+			.get( {
+				path: `/sites/${ this.props.site.ID }/site-importer/list-endpoints`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( resp => {
+				const twoWeeksAgo = moment().subtract( 2, 'weeks' );
+				const endpoints = resp.reduce( ( validEndpoints, endpoint ) => {
+					const lastModified = moment( new Date( endpoint.lastModified ) );
+					if ( lastModified.isBefore( twoWeeksAgo ) ) {
+						return validEndpoints;
+					}
+
+					return [
+						...validEndpoints,
+						{
+							name: endpoint.name,
+							title: endpoint.name.replace( /^[a-zA-Z0-9]+-/i, '' ),
+							lastModifiedTitle: lastModified.fromNow(),
+							lastModifiedTimestamp: lastModified.unix(),
+						},
+					];
+				}, [] );
+				this.setState( {
+					availableEndpoints: reverse( sortBy( endpoints, 'lastModifiedTimestamp' ) ).slice(
+						0,
+						20
+					),
+				} );
+			} )
+			.catch( err => {
+				return err;
+			} );
+	};
+
+	setEndpoint = e => {
+		this.setState( { selectedEndpoint: e.target.value } );
+	};
+
 	setUrl = event => {
 		this.setState( { siteURLInput: event.target.value } );
 	};
@@ -175,11 +226,14 @@ class SiteImporterInputPane extends React.Component {
 			maxRetries: 1,
 		} ).catch( noop ); // We don't care about the error, this is just a preload
 
+		const endpointParam =
+			this.state.selectedEndpoint && `&force_endpoint=${ this.state.selectedEndpoint }`;
+
 		wpcom.wpcom.req
 			.get( {
 				path: `/sites/${
 					this.props.site.ID
-				}/site-importer/is-site-importable?site_url=${ urlForImport }`,
+				}/site-importer/is-site-importable?site_url=${ urlForImport }${ endpointParam }`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( resp => {
@@ -245,9 +299,12 @@ class SiteImporterInputPane extends React.Component {
 			site_engine: this.state.importData.engine,
 		} );
 
+		const endpointParam =
+			this.state.selectedEndpoint && `?force_endpoint=${ this.state.selectedEndpoint }`;
+
 		wpcom.wpcom.req
 			.post( {
-				path: `/sites/${ this.props.site.ID }/site-importer/import-site`,
+				path: `/sites/${ this.props.site.ID }/site-importer/import-site${ endpointParam }`,
 				apiNamespace: 'wpcom/v2',
 				formData: [
 					[ 'import_status', JSON.stringify( toApi( this.props.importerStatus ) ) ],
@@ -329,13 +386,29 @@ class SiteImporterInputPane extends React.Component {
 								placeholder="https://example.com/"
 							/>
 							<Button
+								primary={ true }
 								disabled={ this.state.loading }
-								isPrimary={ true }
+								busy={ this.state.loading }
 								onClick={ this.validateSite }
 							>
 								{ this.props.translate( 'Continue' ) }
 							</Button>
 						</div>
+						{ this.state.availableEndpoints.length > 0 && (
+							<FormSelect
+								onChange={ this.setEndpoint }
+								disabled={ this.state.loading }
+								className="site-importer__site-importer-endpoint-select"
+								value={ this.state.selectedEndpoint }
+							>
+								<option value="">Production Endpoint</option>
+								{ this.state.availableEndpoints.map( endpoint => (
+									<option key={ endpoint.name } value={ endpoint.name }>
+										{ endpoint.title } ({ endpoint.lastModifiedTitle })
+									</option>
+								) ) }
+							</FormSelect>
+						) }
 					</div>
 				) }
 				{ this.state.importStage === 'importable' && (
