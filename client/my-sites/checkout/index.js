@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import checkoutController, { checkout } from './controller';
+import checkoutController, { checkout, sitelessCheckout } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
@@ -73,7 +73,7 @@ export default function() {
 		'/checkout/no-site',
 		redirectLoggedOut,
 		noSite,
-		checkoutController.sitelessCheckout,
+		sitelessCheckout,
 		makeLayout,
 		clientRender
 	);

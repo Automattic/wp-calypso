@@ -54,25 +54,25 @@ export function checkout( context, next ) {
 	next();
 }
 
+export function sitelessCheckout( context, next ) {
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+
+	context.primary = (
+		<CheckoutData>
+			<Checkout reduxStore={ context.store } />
+		</CheckoutData>
+	);
+
+	context.secondary = (
+		<CartData>
+			<SecondaryCart />
+		</CartData>
+	);
+	next();
+}
+
 export default {
-	sitelessCheckout: function sitelessCheckout( context, next ) {
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
-
-		context.primary = (
-			<CheckoutData>
-				<Checkout reduxStore={ context.store } />
-			</CheckoutData>
-		);
-
-		context.secondary = (
-			<CartData>
-				<SecondaryCart />
-			</CartData>
-		);
-		next();
-	},
-
 	checkoutPending: function checkoutPending( context, next ) {
 		const orderId = Number( context.params.orderId );
 		const siteSlug = context.params.site;
