@@ -46,7 +46,7 @@
     "@wordpress/i18n": "1.2.2",
     "@wordpress/keycodes": "1.0.2",
     "@wordpress/nux": "1.0.2",
-    "@wordpress/plugins": "1.0.2",
+    "@wordpress/plugins": "1.0.3",
     "@wordpress/url": "1.2.2",
     "@wordpress/viewport": "1.0.2",
     "autoprefixer": "9.1.0",
