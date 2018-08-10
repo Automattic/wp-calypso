@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-wpcalypso",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Custom ESLint rules for the WordPress.com Calypso project",
   "repository": {
     "type": "git",
