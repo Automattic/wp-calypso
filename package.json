@@ -48,7 +48,7 @@
     "@wordpress/nux": "1.0.2",
     "@wordpress/plugins": "1.0.2",
     "@wordpress/url": "1.2.2",
-    "@wordpress/viewport": "1.0.2",
+    "@wordpress/viewport": "1.0.3",
     "autoprefixer": "9.1.0",
     "autosize": "4.0.2",
     "babel-loader": "8.0.0-beta.4",
