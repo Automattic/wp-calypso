@@ -40,6 +40,11 @@ export default class ShippingClassesField extends React.Component {
 	render() {
 		const { id, title, description, value, placeholder, error, className, options } = this.props;
 
+		// If there are no shipping classes, no input for them is needed.
+		if ( false === options || 0 === options.length ) {
+			return null;
+		}
+
 		return (
 			<FormFieldset className={ className }>
 				<FormLabel htmlFor={ id }>{ title }</FormLabel>

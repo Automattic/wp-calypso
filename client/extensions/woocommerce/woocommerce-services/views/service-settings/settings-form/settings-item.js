@@ -102,11 +102,6 @@ const SettingsItem = ( {
 			);
 
 		case 'shipping_classes':
-			// If there are no shipping classes, no input for them is needed.
-			if ( false === shippingClasses || 0 === shippingClasses.length ) {
-				return null;
-			}
-
 			return (
 				<ShippingClassesField
 					id={ id }
