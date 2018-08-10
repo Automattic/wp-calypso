@@ -20,9 +20,11 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import { __ } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
 import { compose } from 'redux';
-import wp from 'wp';
+import { PanelBody } from '@wordpress/components';
+import { withSelect, withDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -31,16 +33,6 @@ import PublicizeConnectionVerify from './publicize-connection-verify';
 import PublicizeForm from './publicize-form';
 import PublicizeNoConnections from './publicize-no-connections';
 import { requestPublicizeConnections } from './async-publicize-lib';
-
-/**
- * Module variables
- */
-const {
-	withSelect,
-	withDispatch,
-} = wp.data;
-const { __ } = wp.i18n;
-const { PanelBody } = wp.components;
 
 class PublicizePanel extends Component {
 	constructor( props ) {

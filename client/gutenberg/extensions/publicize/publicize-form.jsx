@@ -12,21 +12,13 @@
  * External dependencies
  */
 import { compose } from 'redux';
-import isNil from 'lodash/isNil';
-import wp from 'wp';
+import { isNil } from 'lodash';
+import { withSelect, withDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import PublicizeFormUnwrapped from './publicize-form-unwrapped';
-
-/**
- * Module variables
- */
-const {
-	withSelect,
-	withDispatch,
-} = wp.data;
 
 const PublicizeForm = compose(
 	withSelect( ( select ) => ( {
