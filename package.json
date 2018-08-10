@@ -34,7 +34,7 @@
     "@wordpress/a11y": "1.1.2",
     "@wordpress/api-fetch": "1.1.1",
     "@wordpress/block-serialization-spec-parser": "1.0.1",
-    "@wordpress/blocks": "1.0.2",
+    "@wordpress/blocks": "2.0.0",
     "@wordpress/components": "1.1.1",
     "@wordpress/compose": "1.0.2",
     "@wordpress/core-data": "1.0.3",
