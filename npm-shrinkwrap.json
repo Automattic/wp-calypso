@@ -5211,9 +5211,9 @@
       }
     },
     "eslint-plugin-jest": {
-      "version": "21.18.0",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-21.18.0.tgz",
-      "integrity": "sha512-fhuJuehoMtuEQ3Klgx0629hDmbs0M0g4tSZ65Wq2NqpLWCK5UC7hQnGS1Wh4+Vc/9P4ss4HxqZ1XK7honqUZNg==",
+      "version": "21.20.2",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-21.20.2.tgz",
+      "integrity": "sha512-YdW41qVZUTnqGMO6ffr/gaZFR//qrG0HTq39aliBCCOCAX1Z+bZyN0QoHD/wJzjqG+sOZIpUMhdw4bjAPJP8hQ==",
       "dev": true
     },
     "eslint-plugin-jsx-a11y": {
