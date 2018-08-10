@@ -18,7 +18,13 @@ export default function afterLayoutFlush( func ) {
 	let rafHandle = undefined;
 	let timeoutHandle = undefined;
 
+	const hasRAF = typeof requestAnimationFrame === 'function';
+
+	let savedArgs;
+
 	const scheduleRAF = rafFunc => ( ...args ) => {
+		savedArgs = args;
+
 		// if a RAF is already scheduled and not yet executed, don't schedule another one
 		if ( rafHandle !== undefined ) {
 			return;
@@ -27,11 +33,15 @@ export default function afterLayoutFlush( func ) {
 		rafHandle = requestAnimationFrame( () => {
 			// clear the handle to signal that the scheduled RAF has been executed
 			rafHandle = undefined;
-			rafFunc( ...args );
+			rafFunc();
 		} );
 	};
 
 	const scheduleTimeout = timeoutFunc => ( ...args ) => {
+		if ( ! hasRAF ) {
+			savedArgs = args;
+		}
+
 		// If a timeout is already scheduled and not yet executed, don't schedule another one.
 		// Multiple `requestAnimationFrame` handlers can be scheduled and executed before the
 		// browser decides to finally execute the timeout handler.
@@ -42,18 +52,20 @@ export default function afterLayoutFlush( func ) {
 		timeoutHandle = setTimeout( () => {
 			// clear the handle to signal that the timeout handler has been executed
 			timeoutHandle = undefined;
-			timeoutFunc( ...args );
+			timeoutFunc( savedArgs );
 		}, 0 );
 	};
 
 	// if RAF is not supported (in Node.js test environment), the wrapped function
 	// will only set a timeout.
 	let wrappedFunc = scheduleTimeout( func );
-	if ( typeof requestAnimationFrame === 'function' ) {
+	if ( hasRAF ) {
 		wrappedFunc = scheduleRAF( wrappedFunc );
 	}
 
 	wrappedFunc.cancel = () => {
+		savedArgs = undefined;
+
 		if ( rafHandle !== undefined ) {
 			cancelAnimationFrame( rafHandle );
 			rafHandle = undefined;
