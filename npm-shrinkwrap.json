@@ -1400,11 +1400,11 @@
       }
     },
     "@wordpress/deprecated": {
-      "version": "1.0.2",
-      "resolved": "https://registry.npmjs.org/@wordpress/deprecated/-/deprecated-1.0.2.tgz",
-      "integrity": "sha512-92d39QEPQn4kaUskKFQsF81AYH2UzJqZdhYw5ryH3/qT75tfYjWyR1hN5YewSTDv9PTvJOZmM+8kW0PZVYg4Sw==",
+      "version": "1.0.3",
+      "resolved": "https://registry.npmjs.org/@wordpress/deprecated/-/deprecated-1.0.3.tgz",
+      "integrity": "sha512-7XO1NssUXor1jSB1rQjsXyGzfgk+lJ1oer8pMkjtTuCwIXZZAvThyISrNzmzoKJM2q/ZtosaNxIei1gkm4eI6w==",
       "requires": {
-        "@babel/runtime": "^7.0.0-beta.52"
+        "@babel/runtime-corejs2": "7.0.0-beta.56"
       }
     },
     "@wordpress/dom": {
