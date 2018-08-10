@@ -272,7 +272,7 @@
     "chai": "4.1.2",
     "chai-enzyme": "1.0.0-beta.1",
     "check-node-version": "3.2.0",
-    "enzyme": "3.4.0",
+    "enzyme": "3.4.1",
     "enzyme-adapter-react-16": "1.2.0",
     "enzyme-to-json": "3.3.4",
     "eslines": "1.1.0",
