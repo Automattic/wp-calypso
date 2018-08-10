@@ -36,7 +36,7 @@
     "@wordpress/block-serialization-spec-parser": "1.0.1",
     "@wordpress/blocks": "2.0.0",
     "@wordpress/components": "1.1.1",
-    "@wordpress/compose": "1.0.2",
+    "@wordpress/compose": "1.0.3",
     "@wordpress/core-data": "1.0.3",
     "@wordpress/data": "1.2.0",
     "@wordpress/deprecated": "1.0.2",
