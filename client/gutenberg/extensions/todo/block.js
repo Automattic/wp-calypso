@@ -1,15 +1,14 @@
 /** @format */
+
 /**
  * External dependencies
  */
 import classnames from 'classnames';
-import wp from 'wp';
-
-const { Button, Dashicon } = wp.components;
-const { __ } = wp.i18n;
-const { Component } = wp.element;
-const { registerBlockType } = wp.blocks;
-const { RichText } = wp.editor;
+import { __ } from '@wordpress/i18n';
+import { Button, Dashicon } from '@wordpress/components';
+import { Component } from '@wordpress/element';
+import { registerBlockType } from '@wordpress/blocks';
+import { RichText } from '@wordpress/editor';
 
 /**
  * Internal dependencies
