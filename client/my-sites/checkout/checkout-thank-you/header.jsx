@@ -181,7 +181,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 			return translate(
 				'Your domain {{strong}}%(domain)s{{/strong}} was added to your site, but ' +
-					'but the transfer process can take up to 5 days to complete.',
+					'the transfer process can take up to 5 days to complete.',
 				{
 					args: {
 						domain: primaryPurchase.meta,
