@@ -1,11 +1,11 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import wp from 'wp';
-const { Component } = wp.element;
-const { Button, Dashicon } = wp.components;
-const { RichText } = wp.editor;
+import { Button, Dashicon } from '@wordpress/components';
+import { Component } from '@wordpress/element';
+import { RichText } from '@wordpress/editor';
 
 export const ItemEditor = class extends Component {
 	constructor() {
