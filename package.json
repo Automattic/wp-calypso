@@ -105,7 +105,7 @@
     "immutable": "3.7.6",
     "imports-loader": "0.8.0",
     "inherits": "2.0.3",
-    "is-my-json-valid": "2.17.2",
+    "is-my-json-valid": "2.18.0",
     "jquery": "1.12.3",
     "json-stable-stringify": "1.0.1",
     "jsx-to-string": "1.4.0",

@@ -7773,9 +7773,9 @@
       "integrity": "sha512-gmh/eWXROncUzRnIa1Ubrt5b8ep/MGSnfAUI3aRp+sqTCs1tv1Isl8d8F6JmkN3dXKc3ehZMrtiPN9eL03NuaQ=="
     },
     "is-my-json-valid": {
-      "version": "2.17.2",
-      "resolved": "https://registry.npmjs.org/is-my-json-valid/-/is-my-json-valid-2.17.2.tgz",
-      "integrity": "sha512-IBhBslgngMQN8DDSppmgDv7RNrlFotuuDsKcrCP3+HbFaVivIBU7u9oiiErw8sH4ynx3+gOGQ3q2otkgiSi6kg==",
+      "version": "2.18.0",
+      "resolved": "https://registry.npmjs.org/is-my-json-valid/-/is-my-json-valid-2.18.0.tgz",
+      "integrity": "sha512-DWT87JHCSdCPCxbqBpS6Z2ajAt+MvrJq8I4xrpQljCvzODO5/fiquBp20a3sN6yCJvFbCRyYvJOHjpzkPTKJyA==",
       "requires": {
         "generate-function": "^2.0.0",
         "generate-object-property": "^1.1.0",
