@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEmpty, noop } from 'lodash';
-import '@wordpress/core-data';
+import '@wordpress/core-data'; // Initializes core data store
 
 /**
  * Internal dependencies
@@ -18,11 +18,6 @@ import { overrideAPIPaths, registerCoreBlocks } from './utils';
 const editorSettings = {};
 
 const post = {
-	type: 'post',
-	content: 'test content',
-};
-
-const overridePost = {
 	type: 'post',
 	content: 'test content',
 };
@@ -40,13 +35,7 @@ class GutenbergEditor extends Component {
 		overrideAPIPaths( this.props.siteSlug );
 
 		return (
-			<Editor
-				settings={ editorSettings }
-				hasFixedToolbar={ true }
-				post={ post }
-				overridePost={ overridePost }
-				onError={ noop }
-			/>
+			<Editor settings={ editorSettings } hasFixedToolbar={ true } post={ post } onError={ noop } />
 		);
 	}
 }

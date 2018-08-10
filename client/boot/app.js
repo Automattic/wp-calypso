@@ -45,7 +45,3 @@ window.AppBoot = () => {
 		user.once( 'change', () => boot( user ) );
 	}
 };
-
-// Gutenberg expects some global values
-// TODO: find a way to remove this later
-window.userSettings = { uid: 'gutenberg-test' };
