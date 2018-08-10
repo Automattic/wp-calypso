@@ -28,6 +28,15 @@ export default class ShippingClassesField extends React.Component {
 		options: PropTypes.array,
 	};
 
+	constructor() {
+		super( ...arguments );
+
+		this.getNameFromId = this.getNameFromId.bind( this );
+		this.onChange = this.onChange.bind( this );
+		this.transformForDisplay = this.transformForDisplay.bind( this );
+		this.getIdFromName = this.getIdFromName.bind( this );
+	}
+
 	render() {
 		const { id, title, description, value, placeholder, error, className, options } = this.props;
 
@@ -38,11 +47,11 @@ export default class ShippingClassesField extends React.Component {
 					id={ id }
 					name={ id }
 					placeholder={ placeholder }
-					value={ map( value, this.getNameFromId.bind( this ) ) }
+					value={ map( value, this.getNameFromId ) }
 					suggestions={ uniqBy( map( options, option => option.name ) ) }
 					isError={ Boolean( error ) }
-					onChange={ this.onChange.bind( this ) }
-					displayTransform={ this.transformForDisplay.bind( this ) }
+					onChange={ this.onChange }
+					displayTransform={ this.transformForDisplay }
 				/>
 				{ error && typeof error === 'string' && <FieldError text={ error } /> }
 				{ ! error &&
@@ -77,7 +86,7 @@ export default class ShippingClassesField extends React.Component {
 		const { updateValue } = this.props;
 
 		const updatedValue = uniqBy(
-			strings.map( this.getIdFromName.bind( this ) ).filter( item => null !== item )
+			strings.map( this.getIdFromName ).filter( item => null !== item )
 		);
 
 		updateValue( updatedValue );
