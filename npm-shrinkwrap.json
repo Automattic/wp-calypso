@@ -1509,11 +1509,11 @@
       }
     },
     "@wordpress/hooks": {
-      "version": "1.3.2",
-      "resolved": "https://registry.npmjs.org/@wordpress/hooks/-/hooks-1.3.2.tgz",
-      "integrity": "sha512-/SfKDS4yvFSdXWqT9eWB/uHbU9w7/tb1amP0mg/44f0A+g8AzbGFpSkVMGYxtmkdsm00BkQjigfiaQeIiV132w==",
+      "version": "1.3.3",
+      "resolved": "https://registry.npmjs.org/@wordpress/hooks/-/hooks-1.3.3.tgz",
+      "integrity": "sha512-k7JRx5I9ZcC0oYN1H3TtmZ4HJEn9CGb73ta4EXfqHb/BH4GKg/HxLxWBl2UZiA0SBpK9PGbg4lalHE43PoeeWw==",
       "requires": {
-        "@babel/runtime": "^7.0.0-beta.52"
+        "@babel/runtime-corejs2": "7.0.0-beta.56"
       }
     },
     "@wordpress/html-entities": {
