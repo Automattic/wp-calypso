@@ -52,7 +52,7 @@ describe( 'Shipping classes state actions', () => {
 	 */
 
 	test( '#fetchShippingClassesFailure', () => {
-		const result = fetchShippingClassesFailure( siteId );
+		const result = fetchShippingClassesFailure( { siteId }, '', dispatchFn );
 
 		expect( result ).to.be.an( 'object' );
 		expect( result.type ).to.equal( 'NOTICE_CREATE' );

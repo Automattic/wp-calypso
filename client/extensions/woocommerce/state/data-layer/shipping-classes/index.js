@@ -18,7 +18,7 @@ export const fetch = action => {
 };
 
 const onError = ( action, error ) => dispatch => {
-	dispatch( fetchShippingClassesFailure( action, error ) );
+	dispatch( fetchShippingClassesFailure( action, error, dispatch ) );
 };
 
 const onSuccess = ( { siteId }, { data } ) => dispatch => {
