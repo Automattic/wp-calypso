@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import checkoutController, { checkout, sitelessCheckout } from './controller';
+import checkoutController, { checkout, checkoutPending, sitelessCheckout } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
@@ -19,7 +19,7 @@ export default function() {
 		'/checkout/thank-you/no-site/pending/:orderId',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.checkoutPending,
+		checkoutPending,
 		makeLayout,
 		clientRender
 	);
@@ -37,7 +37,7 @@ export default function() {
 		'/checkout/thank-you/:site/pending/:orderId',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.checkoutPending,
+		checkoutPending,
 		makeLayout,
 		clientRender
 	);

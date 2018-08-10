@@ -72,18 +72,18 @@ export function sitelessCheckout( context, next ) {
 	next();
 }
 
+export function checkoutPending( context, next ) {
+	const orderId = Number( context.params.orderId );
+	const siteSlug = context.params.site;
+
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+
+	context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
+
+	next();
+}
+
 export default {
-	checkoutPending: function checkoutPending( context, next ) {
-		const orderId = Number( context.params.orderId );
-		const siteSlug = context.params.site;
-
-		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
-
-		context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
-
-		next();
-	},
-
 	checkoutThankYou: function checkoutThankYou( context, next ) {
 		const receiptId = Number( context.params.receiptId );
 		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
