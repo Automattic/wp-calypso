@@ -86,7 +86,23 @@
 	}
 }
 
+.checklist__tasks {
+	display: flex;
+	flex-direction: column;
+}
+
 .checklist__task {
+	width: 100%;
+	order: 100;
+
+	.hide-completed &.is-completed {
+		display: none;
+	}
+
+	&.is-completed {
+		order: 0;
+	}
+
 	&.card {
 		display: flex;
 		flex-direction: row;

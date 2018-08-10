@@ -26,7 +26,6 @@ import AllSites from 'blocks/all-sites/docs/example';
 import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import CalendarButton from 'blocks/calendar-button/docs/example';
 import CalendarPopover from 'blocks/calendar-popover/docs/example';
-import Checklist from 'blocks/checklist/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
@@ -135,7 +134,6 @@ export default class AppComponents extends React.Component {
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
 					<CommentButtons readmeFilePath="comment-button" />
-					<Checklist readmeFilePath="checklist" />
 					<DisconnectJetpackDialog />
 					<CreditCardForm readmeFilePath="credit-card-form" />
 					<FollowButton readmeFilePath="follow-button" />
