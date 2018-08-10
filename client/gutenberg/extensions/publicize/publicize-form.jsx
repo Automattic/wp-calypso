@@ -11,7 +11,7 @@
 /**
  * External dependencies
  */
-import { compose } from 'redux';
+import { compose } from '@wordpress/compose';
 import { isNil } from 'lodash';
 import { withSelect, withDispatch } from '@wordpress/data';
 
@@ -20,7 +20,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
  */
 import PublicizeFormUnwrapped from './publicize-form-unwrapped';
 
-const PublicizeForm = compose(
+const PublicizeForm = compose( [
 	withSelect( ( select ) => ( {
 		activeConnections: ( isNil( select( 'core/editor' ).getEditedPostAttribute( 'publicize' ) ) )
 			? [] : select( 'core/editor' ).getEditedPostAttribute( 'publicize' ).connections,
@@ -108,6 +108,6 @@ const PublicizeForm = compose(
 			} );
 		}
 	} ) ),
-)( PublicizeFormUnwrapped );
+] )( PublicizeFormUnwrapped );
 
 export default PublicizeForm;

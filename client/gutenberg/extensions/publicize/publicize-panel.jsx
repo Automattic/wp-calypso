@@ -22,7 +22,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
-import { compose } from 'redux';
+import { compose } from '@wordpress/compose';
 import { PanelBody } from '@wordpress/components';
 import { withSelect, withDispatch } from '@wordpress/data';
 
@@ -69,7 +69,7 @@ class PublicizePanel extends Component {
 	}
 }
 
-export default PublicizePanel = compose(
+export default PublicizePanel = compose( [
 	withSelect( ( select ) => ( {
 		connections: select( 'a8c/publicize' ).getConnections(),
 		isLoading: select( 'a8c/publicize' ).getIsLoading(),
@@ -96,4 +96,4 @@ export default PublicizePanel = compose(
 			);
 		},
 	} ) ),
-)( PublicizePanel );
+] )( PublicizePanel );
