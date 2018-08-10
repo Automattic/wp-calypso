@@ -96,8 +96,8 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
-	includeDotBlogSubdomain: {
-		datestamp: '20180723',
+	includeDotBlogSubdomainV2: {
+		datestamp: '20180813',
 		variations: {
 			yes: 50,
 			no: 50,
