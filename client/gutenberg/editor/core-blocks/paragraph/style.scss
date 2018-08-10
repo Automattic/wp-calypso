@@ -1,0 +1,35 @@
+p {
+	&.is-small-text {
+		font-size: 14px;
+	}
+
+	&.is-regular-text {
+		font-size: 16px;
+	}
+
+	&.is-large-text {
+		font-size: 36px;
+	}
+
+	&.is-larger-text {
+		font-size: 48px;
+	}
+
+	// Don't show the drop cap when editing the paragraph's content. It causes a
+	// number of bugs in combination with `contenteditable` fields. The caret
+	// cannot be set around it, caret position calculation fails in Chrome, and
+	// typing at the end of the paragraph doesn't work.
+	&.has-drop-cap:not( :focus ):first-letter {
+		float: left;
+		font-size: 8.4em;
+		line-height: 0.68;
+		font-weight: 100;
+		margin: .05em .1em 0 0;
+		text-transform: uppercase;
+		font-style: normal;
+	}
+}
+
+p.has-background {
+	padding: 20px 30px;
+}
