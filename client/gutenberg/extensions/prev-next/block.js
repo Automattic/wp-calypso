@@ -1,11 +1,12 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import wp from 'wp';
-const { __ } = wp.i18n;
-const { TextControl } = wp.components;
-const { registerBlockType } = wp.blocks;
+import { __ } from '@wordpress/i18n';
+import { Fragment } from '@wordpress/element';
+import { registerBlockType } from '@wordpress/blocks';
+import { TextControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -34,7 +35,7 @@ const save = ( { attributes: { prev, next }, className, isEditor } ) =>
 			{ next ? <a href={ next }>Next →</a> : <span> </span> }
 		</div>
 	) : (
-		<React.Fragment />
+		<Fragment />
 	);
 
 registerBlockType( 'a8c/prev-next', {
@@ -46,7 +47,7 @@ registerBlockType( 'a8c/prev-next', {
 	attributes: blockAttributes,
 	edit: ( { attributes, className, isSelected, setAttributes } ) =>
 		isSelected ? (
-			<React.Fragment>
+			<Fragment>
 				<TextControl
 					label={ __( 'Previous Post' ) }
 					value={ attributes.prev }
@@ -57,7 +58,7 @@ registerBlockType( 'a8c/prev-next', {
 					value={ attributes.next }
 					onChange={ next => setAttributes( { next } ) }
 				/>
-			</React.Fragment>
+			</Fragment>
 		) : attributes.prev || attributes.next ? (
 			save( { attributes, className, isEditor: true } )
 		) : (
