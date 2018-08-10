@@ -57,7 +57,7 @@ import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
-import { isNewSite } from 'state/sites/selectors';
+import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canAddGoogleApps } from 'lib/domains';
@@ -69,6 +69,7 @@ import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { isEnabled } from 'config';
 
 export class Checkout extends React.Component {
 	static propTypes = {
@@ -355,6 +356,10 @@ export class Checkout extends React.Component {
 					}/${ receiptId }`;
 				}
 			}
+		}
+
+		if ( this.props.isJetpack && isEnabled( 'jetpack/checklist' ) ) {
+			return `/plans/my-plan/${ selectedSiteSlug }?do-setup`;
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
@@ -667,6 +672,7 @@ export default connect(
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
+			isJetpack: isJetpackSite( state, selectedSiteId ),
 		};
 	},
 	{
