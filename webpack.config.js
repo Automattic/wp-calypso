@@ -116,7 +116,15 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 					parallel: true,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
 					terserOptions: {
-						ecma: 5,
+						/**
+						 * Minification shorthand setting version for {parse,compress,output}.ecma
+						 *
+						 * Parse currently defaults to 8 (latest), compress and output to 5.
+						 *
+						 * Set to 8 to allow latest es for minification.
+						 * Let babel handle conversion for browser compatibility.
+						 */
+						ecma: 8,
 						safari10: true,
 					},
 				} ),
