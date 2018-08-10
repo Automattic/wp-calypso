@@ -125,7 +125,6 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 						 * Let babel handle conversion for browser compatibility.
 						 */
 						ecma: 8,
-						safari10: true,
 					},
 				} ),
 			],
