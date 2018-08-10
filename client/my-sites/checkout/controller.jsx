@@ -21,40 +21,40 @@ import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 
+export function checkout( context, next ) {
+	const { feature, plan, product } = context.params;
+
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( 'thank-you' === product ) {
+		return;
+	}
+
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+
+	context.primary = (
+		<CheckoutData>
+			<Checkout
+				product={ product }
+				purchaseId={ context.params.purchaseId }
+				selectedFeature={ feature }
+				couponCode={ context.query.code }
+				plan={ plan }
+			/>
+		</CheckoutData>
+	);
+
+	context.secondary = (
+		<CartData>
+			<SecondaryCart selectedSite={ selectedSite } />
+		</CartData>
+	);
+	next();
+}
+
 export default {
-	checkout: function checkout( context, next ) {
-		const { feature, plan, product } = context.params;
-
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
-
-		if ( 'thank-you' === product ) {
-			return;
-		}
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
-
-		context.primary = (
-			<CheckoutData>
-				<Checkout
-					product={ product }
-					purchaseId={ context.params.purchaseId }
-					selectedFeature={ feature }
-					couponCode={ context.query.code }
-					plan={ plan }
-				/>
-			</CheckoutData>
-		);
-
-		context.secondary = (
-			<CartData>
-				<SecondaryCart selectedSite={ selectedSite } />
-			</CartData>
-		);
-		next();
-	},
-
 	sitelessCheckout: function sitelessCheckout( context, next ) {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );

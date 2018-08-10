@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import checkoutController from './controller';
+import checkoutController, { checkout } from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
@@ -82,7 +82,7 @@ export default function() {
 		'/checkout/features/:feature/:domain/:plan_name?',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.checkout,
+		checkout,
 		makeLayout,
 		clientRender
 	);
@@ -91,7 +91,7 @@ export default function() {
 		'/checkout/:domain/:product?',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.checkout,
+		checkout,
 		makeLayout,
 		clientRender
 	);
@@ -100,7 +100,7 @@ export default function() {
 		'/checkout/:product/renew/:purchaseId/:domain',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.checkout,
+		checkout,
 		makeLayout,
 		clientRender
 	);
