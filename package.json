@@ -284,7 +284,7 @@
     "eslint-plugin-jest": "21.20.2",
     "eslint-plugin-jsx-a11y": "6.1.1",
     "eslint-plugin-react": "7.10.0",
-    "eslint-plugin-wpcalypso": "4.0.1",
+    "eslint-plugin-wpcalypso": "4.0.2",
     "fs-extra": "7.0.0",
     "glob": "7.1.2",
     "husky": "0.14.3",
