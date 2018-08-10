@@ -14993,9 +14993,9 @@
       "dev": true
     },
     "store": {
-      "version": "1.3.20",
-      "resolved": "https://registry.npmjs.org/store/-/store-1.3.20.tgz",
-      "integrity": "sha1-E+p+P7LWwjmGgmXWhrHYTpnFvj4="
+      "version": "2.0.12",
+      "resolved": "https://registry.npmjs.org/store/-/store-2.0.12.tgz",
+      "integrity": "sha1-jFNOKguDH3K3X8XxEZhXxE711ZM="
     },
     "stream-browserify": {
       "version": "2.0.1",
