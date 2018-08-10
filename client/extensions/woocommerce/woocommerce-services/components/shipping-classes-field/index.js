@@ -59,18 +59,10 @@ export default class ShippingClassesField extends React.Component {
 		return found ? found.name : null;
 	}
 
-	getIdFromSlugOrName( slug ) {
-		// Try a percise slug match first (if an item was clicked or Enter was pressed)
-		let found = this.props.options.find( option => {
-			return option.slug === slug;
+	getIdFromName( name ) {
+		const found = this.props.options.find( option => {
+			return option.name.toLowerCase() === name.toLowerCase();
 		} );
-
-		// If there are no precise matches, try guessing
-		if ( ! found && slug.trim().length ) {
-			found = this.props.options.find( option => {
-				return 0 === option.name.toLowerCase().indexOf( slug.trim().toLowerCase() );
-			} );
-		}
 
 		return found ? found.id : null;
 	}
@@ -85,7 +77,7 @@ export default class ShippingClassesField extends React.Component {
 		const { updateValue } = this.props;
 
 		const updatedValue = uniqBy(
-			strings.map( this.getIdFromSlugOrName.bind( this ) ).filter( item => null !== item )
+			strings.map( this.getIdFromName.bind( this ) ).filter( item => null !== item )
 		);
 
 		updateValue( updatedValue );
