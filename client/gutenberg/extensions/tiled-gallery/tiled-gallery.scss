@@ -3,7 +3,7 @@
 	margin: 0 0 20px;
 	overflow: hidden;
 }
-img {
+.tiled-gallery-image {
 	margin: 2px !important; /* Ensure that this value isn't overridden by themes that give content images blanket margins */
 }
 .gallery-group {
@@ -30,8 +30,8 @@ img {
 	figure {
 		margin: 0;
 	}
-	img,
-	img:hover { /* Needs to reset some properties for theme compatibility */
+	.tiled-gallery-image,
+	.tiled-gallery-image:hover { /* Needs to reset some properties for theme compatibility */
 		background: none;
 		border: none;
 		box-shadow: none;
