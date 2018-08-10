@@ -1,34 +1,26 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
+import { __ } from '@wordpress/i18n';
+import { BlockControls, PlainText } from '@wordpress/editor';
+import { ButtonGroup } from '@wordpress/components';
+import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import MarkdownRenderer from './components/markdown-renderer';
 
-const { __ } = window.wp.i18n;
-
-const {
-	ButtonGroup
-} = window.wp.components;
-
-const {
-	BlockControls,
-	PlainText
-} = window.wp.editor;
-
-const {
-	Component
-} = window.wp.element;
-
+/**
+ * Module variables
+ */
 const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
 
 class JetpackMarkdownBlockEditor extends Component {
-
 	constructor() {
 		super( ...arguments );
 
@@ -38,7 +30,7 @@ class JetpackMarkdownBlockEditor extends Component {
 		this.isEmpty = this.isEmpty.bind( this );
 
 		this.state = {
-			activePanel: PANEL_EDITOR
+			activePanel: PANEL_EDITOR,
 		};
 	}
 
@@ -76,18 +68,17 @@ class JetpackMarkdownBlockEditor extends Component {
 
 			switch ( this.state.activePanel ) {
 				case PANEL_EDITOR:
-					return <PlainText
-						className={ `${ className }__editor` }
-						onChange={ this.updateSource }
-						aria-label={ __( 'Markdown' ) }
-						value={ attributes.source }
-					/>;
+					return (
+						<PlainText
+							className={ `${ className }__editor` }
+							onChange={ this.updateSource }
+							aria-label={ __( 'Markdown' ) }
+							value={ attributes.source }
+						/>
+					);
 
 				case PANEL_PREVIEW:
-					return <MarkdownRenderer
-						className={ `${ className }__preview` }
-						source={ source }
-					/>;
+					return <MarkdownRenderer className={ `${ className }__preview` } source={ source } />;
 			}
 		};
 
@@ -96,13 +87,13 @@ class JetpackMarkdownBlockEditor extends Component {
 			return classNames( {
 				'components-tab-button': true,
 				'is-active': this.state.activePanel === panelName,
-				[ `${ className }__${ panelName }-button` ]: true
+				[ `${ className }__${ panelName }-button` ]: true,
 			} );
 		};
 
 		return (
 			<div>
-				<BlockControls >
+				<BlockControls>
 					<ButtonGroup>
 						<button
 							className={ classesForPanel.call( this, 'editor' ) }
@@ -118,10 +109,10 @@ class JetpackMarkdownBlockEditor extends Component {
 						</button>
 					</ButtonGroup>
 				</BlockControls>
-				{ ( editorOrPreviewPanel.call( this ) ) }
+				{ editorOrPreviewPanel.call( this ) }
 			</div>
 		);
 	}
-
 }
+
 export default JetpackMarkdownBlockEditor;
