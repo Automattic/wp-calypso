@@ -2,12 +2,11 @@
 /**
  * External dependencies
  */
-import wp from 'wp';
-const { __ } = wp.i18n;
-const { Component } = wp.element;
-const { registerBlockType } = wp.blocks;
-const { RichText } = wp.editor;
-const { Dropdown } = wp.components;
+import { __ } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
+import { Dropdown } from '@wordpress/components';
+import { registerBlockType } from '@wordpress/blocks';
+import { RichText } from '@wordpress/editor';
 
 /**
  * Internal dependencies
