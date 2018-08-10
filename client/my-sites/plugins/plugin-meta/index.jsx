@@ -248,6 +248,7 @@ export class PluginMeta extends Component {
 			'wordpress-reset',
 			'wp-automatic',
 			'wp-clone-by-wp-academy',
+			'wp-dbmanager',
 			'wp-file-manager',
 			'wp-prefix-changer',
 			'wp-reset',
@@ -287,6 +288,7 @@ export class PluginMeta extends Component {
 			'wp-rss-aggregator',
 			'wp-rss-feed-to-post',
 			'wp-rss-wordai',
+			'wp-slimstat',
 			'wp-statistics',
 			'wp-ulike',
 			'WPRobot5',
@@ -305,12 +307,14 @@ export class PluginMeta extends Component {
 			// misc
 			'automatic-video-posts',
 			'bwp-minify',
+			'cryptocurrency-pricing-list',
 			'nginx-helper',
-			'patron-button-and-widgets-by-codebard',
 			'porn-embed',
+			'robo-gallery',
 			'video-importer',
 			'woozone',
 			'wp-cleanfix',
+			'wpematico',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
