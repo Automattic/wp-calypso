@@ -1330,15 +1330,28 @@
       }
     },
     "@wordpress/core-data": {
-      "version": "1.0.3",
-      "resolved": "https://registry.npmjs.org/@wordpress/core-data/-/core-data-1.0.3.tgz",
-      "integrity": "sha512-HsxBR88Jky1m4phQzGAuOwPNsJlKbntZQpgjVgl3xsyfbCEyeQ6klYSuFrTQvC0oORfL1JIbZq71Y/mubYfoww==",
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/@wordpress/core-data/-/core-data-1.1.0.tgz",
+      "integrity": "sha512-5kcXcLVFzTcHz8dDFNGWTzNNBUx3BJmeZxWbmBBgMY4L7JpquHXWGl7tnScA2+WGoBUmd2f8GjuOkFuoh+LWrA==",
       "requires": {
-        "@babel/runtime": "^7.0.0-beta.52",
-        "@wordpress/api-fetch": "^1.1.0",
-        "@wordpress/data": "^1.1.0",
+        "@babel/runtime-corejs2": "7.0.0-beta.56",
+        "@wordpress/api-fetch": "^1.1.1",
+        "@wordpress/data": "^1.2.0",
+        "@wordpress/url": "^1.2.3",
+        "equivalent-key-map": "^0.2.1",
         "lodash": "^4.17.10",
         "rememo": "^3.0.0"
+      },
+      "dependencies": {
+        "@wordpress/url": {
+          "version": "1.2.3",
+          "resolved": "https://registry.npmjs.org/@wordpress/url/-/url-1.2.3.tgz",
+          "integrity": "sha512-QzRrgU6p6qYoW/ZJ0rsSPK1Ql/Tw+UjuBrtu79D6M0+I72Senxcpq0Rw2cWWm+HjqwgW2dbPqnUXmNrdpax1bg==",
+          "requires": {
+            "@babel/runtime-corejs2": "7.0.0-beta.56",
+            "qs": "^6.5.2s"
+          }
+        }
       }
     },
     "@wordpress/data": {
