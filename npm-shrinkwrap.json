@@ -1545,11 +1545,11 @@
       }
     },
     "@wordpress/keycodes": {
-      "version": "1.0.2",
-      "resolved": "https://registry.npmjs.org/@wordpress/keycodes/-/keycodes-1.0.2.tgz",
-      "integrity": "sha512-q9hLfwr51bysi6EQ/HrEarqI4P2sI2r/PKUN4RsWuU8xShRPVbvdqCyRqAa3rBSo1KLTKBhYUOrvKzch1rYNHg==",
+      "version": "1.0.3",
+      "resolved": "https://registry.npmjs.org/@wordpress/keycodes/-/keycodes-1.0.3.tgz",
+      "integrity": "sha512-Nx1g1GgDed7Oi7okvSyoVWtVlxfFiLymQpX2jblhoL6fM7S9H/ftW3ReFOe1mxJ1E7ZK//MK7QhGoGvvpowiQg==",
       "requires": {
-        "@babel/runtime": "^7.0.0-beta.52",
+        "@babel/runtime-corejs2": "7.0.0-beta.56",
         "lodash": "^4.17.10"
       }
     },
