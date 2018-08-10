@@ -1,3 +1,3 @@
 /** @format */
 
-export const REASON_MANUAL_RENEWAL = 'manual_renewal';
+export const REASON_AUTO_RENEWAL_FAILURE = 'bd_renewal-failure';

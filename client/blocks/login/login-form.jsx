@@ -24,6 +24,7 @@ import Card from 'components/card';
 import { fetchMagicLoginRequestEmail } from 'state/login/magic-login/actions';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormTextInput from 'components/forms/form-text-input';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
@@ -438,7 +439,9 @@ export default connect(
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
-			userEmail: getInitialQueryArguments( state ).email_address,
+			userEmail:
+				getInitialQueryArguments( state ).email_address ||
+				getCurrentQueryArguments( state ).email_address,
 		};
 	},
 	{
