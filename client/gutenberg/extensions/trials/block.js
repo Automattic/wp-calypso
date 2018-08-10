@@ -2,11 +2,10 @@
 /**
  * External dependencies
  */
-import wp from 'wp';
-const { __ } = wp.i18n;
-const { Component } = wp.element;
-const { registerBlockType } = wp.blocks;
-const { RichText, InnerBlocks } = wp.editor;
+import { __ } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
+import { registerBlockType } from '@wordpress/blocks';
+import { RichText, InnerBlocks } from '@wordpress/editor';
 
 const blockAttributes = {
 	heading: {
