@@ -6150,7 +6150,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6515,7 +6516,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6563,6 +6565,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6601,11 +6604,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -10335,9 +10340,9 @@
       }
     },
     "nock": {
-      "version": "9.4.4",
-      "resolved": "https://registry.npmjs.org/nock/-/nock-9.4.4.tgz",
-      "integrity": "sha512-HrF96ecwONEv7tW8bk79kwc9mshxWAw8WfEPv5LStc0X25bsoWgescTtmevFSetu3gdjOypnUtniubYSz+5DNA==",
+      "version": "9.6.0",
+      "resolved": "https://registry.npmjs.org/nock/-/nock-9.6.0.tgz",
+      "integrity": "sha512-8IjLHE77TskN/hT7C5fy4ZsvtAaGY/4Ptn1uwTxZ8EQjcm/gZPn5fahKcRVATSkA7vC/hwUixPFwgbpWyOFEkA==",
       "dev": true,
       "requires": {
         "chai": "^4.1.2",
