@@ -1,9 +1,10 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import wp from 'wp';
-const { RichText } = wp.editor;
+import { registerBlockType } from '@wordpress/blocks';
+import { RichText } from '@wordpress/editor';
 
 import './style.scss';
 
@@ -34,7 +35,7 @@ const edit = ( { attributes: { notes }, className, isSelected, setAttributes } )
 
 const save = () => null;
 
-wp.blocks.registerBlockType( 'a8c/editor-notes', {
+registerBlockType( 'a8c/editor-notes', {
 	title: "Editor's Notes",
 	icon: 'welcome-write-blog',
 	category: 'common',
