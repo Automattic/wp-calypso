@@ -45,7 +45,7 @@
     "@wordpress/hooks": "1.3.2",
     "@wordpress/i18n": "1.2.3",
     "@wordpress/keycodes": "1.0.2",
-    "@wordpress/nux": "1.0.2",
+    "@wordpress/nux": "1.1.0",
     "@wordpress/plugins": "1.0.2",
     "@wordpress/url": "1.2.2",
     "@wordpress/viewport": "1.0.2",
