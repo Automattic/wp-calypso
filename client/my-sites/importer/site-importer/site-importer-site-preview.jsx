@@ -57,7 +57,7 @@ class SiteImporterSitePreview extends React.Component {
 					sitePreviewFailed: false,
 				} );
 
-				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_done', {
+				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_success', {
 					blog_id: this.props.site.ID,
 					site_url: this.state.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
@@ -70,7 +70,7 @@ class SiteImporterSitePreview extends React.Component {
 					sitePreviewFailed: true,
 				} );
 
-				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_failed', {
+				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_fail', {
 					blog_id: this.props.site.ID,
 					site_url: this.state.siteURL,
 					time_taken_ms: Date.now() - this.state.previewStartTime,
