@@ -1,3 +1,8 @@
+#### v4.0.2 (2018-08-10)
+
+- General: Updated Mocha from 3.0.2 to 5.2.x
+- General: Refreshed package-lock.json
+
 #### v4.0.1 (2017-10-13)
 
 - Fix: i18n-ellipsis: Running the fixer for this rule no longer incorrectly removes quotes
