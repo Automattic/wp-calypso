@@ -271,7 +271,7 @@ class DomainsStep extends React.Component {
 			( siteGoalsArray.length === 1 &&
 				siteGoalsArray.indexOf( 'share' ) !== -1 &&
 				// abtest() assignment should come last
-				abtest( 'includeDotBlogSubdomain' ) === 'yes' )
+				abtest( 'includeDotBlogSubdomainV2' ) === 'yes' )
 		);
 	}
 
