@@ -83,32 +83,32 @@ export function checkoutPending( context, next ) {
 	next();
 }
 
+export function checkoutThankYou( context, next ) {
+	const receiptId = Number( context.params.receiptId );
+	const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
+
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
+
+	context.primary = (
+		<CheckoutThankYouComponent
+			receiptId={ receiptId }
+			gsuiteReceiptId={ gsuiteReceiptId }
+			domainOnlySiteFlow={ isEmpty( context.params.site ) }
+			selectedFeature={ context.params.feature }
+			selectedSite={ selectedSite }
+		/>
+	);
+
+	next();
+}
+
 export default {
-	checkoutThankYou: function checkoutThankYou( context, next ) {
-		const receiptId = Number( context.params.receiptId );
-		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
-
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
-
-		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
-
-		context.primary = (
-			<CheckoutThankYouComponent
-				receiptId={ receiptId }
-				gsuiteReceiptId={ gsuiteReceiptId }
-				domainOnlySiteFlow={ isEmpty( context.params.site ) }
-				selectedFeature={ context.params.feature }
-				selectedSite={ selectedSite }
-			/>
-		);
-
-		next();
-	},
-
 	gsuiteNudge: function gsuiteNudge( context, next ) {
 		const { domain, site, receiptId } = context.params;
 		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );

@@ -7,7 +7,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import checkoutController, { checkout, checkoutPending, sitelessCheckout } from './controller';
+import checkoutController, {
+	checkout,
+	checkoutPending,
+	checkoutThankYou,
+	sitelessCheckout,
+} from './controller';
 import SiftScience from 'lib/siftscience';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 import { noSite, siteSelection } from 'my-sites/controller';
@@ -28,7 +33,7 @@ export default function() {
 		'/checkout/thank-you/no-site/:receiptId?',
 		redirectLoggedOut,
 		noSite,
-		checkoutController.checkoutThankYou,
+		checkoutThankYou,
 		makeLayout,
 		clientRender
 	);
@@ -46,7 +51,7 @@ export default function() {
 		'/checkout/thank-you/:site/:receiptId?',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.checkoutThankYou,
+		checkoutThankYou,
 		makeLayout,
 		clientRender
 	);
@@ -55,7 +60,7 @@ export default function() {
 		'/checkout/thank-you/:site/:receiptId/with-gsuite/:gsuiteReceiptId',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.checkoutThankYou,
+		checkoutThankYou,
 		makeLayout,
 		clientRender
 	);
@@ -64,7 +69,7 @@ export default function() {
 		'/checkout/thank-you/features/:feature/:site/:receiptId?',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.checkoutThankYou,
+		checkoutThankYou,
 		makeLayout,
 		clientRender
 	);
