@@ -39,6 +39,7 @@ class TiledGalleryImage extends Component {
 				<meta itemProp="width" content={ width } />
 				<meta itemProp="height" content={ height } />
 				<img
+					className="tiled-gallery-image"
 					src={ url } alt={ alt } data-id={ id } data-link={ link }
 					width={ width }
 					height={ height }
