@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Plans should render placeholder when shouldShowPlaceholder is true 1`] = `
-<React.Fragment>
+<Fragment>
   <Connect(QueryPlans) />
   <PlansPlaceholder />
-</React.Fragment>
+</Fragment>
 `;
 
 exports[`Plans should render plans 1`] = `
-<React.Fragment>
+<Fragment>
   <Connect(DocumentHead)
     title="Plans"
   />
@@ -168,5 +168,5 @@ exports[`Plans should render plans 1`] = `
       </Connect(Localized(JetpackConnectHappychatButton))>
     </LoggedOutFormLinks>
   </Localized(JetpackPlansGrid)>
-</React.Fragment>
+</Fragment>
 `;
