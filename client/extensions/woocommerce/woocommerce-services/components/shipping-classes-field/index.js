@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { uniqBy } from 'lodash';
+import { uniqBy, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,8 +38,8 @@ export default class ShippingClassesField extends React.Component {
 					id={ id }
 					name={ id }
 					placeholder={ placeholder }
-					value={ value.map( this.getSlugFromId.bind( this ) ) }
-					suggestions={ options.map( option => option.slug ) }
+					value={ map( value, this.getNameFromId.bind( this ) ) }
+					suggestions={ uniqBy( map( options, option => option.name ) ) }
 					isError={ Boolean( error ) }
 					onChange={ this.onChange.bind( this ) }
 					displayTransform={ this.transformForDisplay.bind( this ) }
@@ -51,12 +51,12 @@ export default class ShippingClassesField extends React.Component {
 		);
 	}
 
-	getSlugFromId( id ) {
+	getNameFromId( id ) {
 		const found = this.props.options.find( option => {
 			return option.id === id;
 		} );
 
-		return found ? found.slug : null;
+		return found ? found.name : null;
 	}
 
 	getIdFromSlugOrName( slug ) {
