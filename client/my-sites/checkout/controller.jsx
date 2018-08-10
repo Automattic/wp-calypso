@@ -132,5 +132,3 @@ export function gsuiteNudge( context, next ) {
 
 	next();
 }
-
-export default {};

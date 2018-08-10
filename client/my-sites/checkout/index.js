@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import checkoutController, {
+import {
 	checkout,
 	checkoutPending,
 	checkoutThankYou,
