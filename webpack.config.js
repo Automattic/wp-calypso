@@ -210,7 +210,12 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 				},
 				{
 					test: /\.(svg)$/,
-					use: 'file-loader',
+					use: [
+						{
+							loader: 'file-loader',
+							options: { name: '[name].[ext]', outputPath: 'images/' },
+						},
+					],
 				},
 				{
 					include: require.resolve( 'tinymce/tinymce' ),
