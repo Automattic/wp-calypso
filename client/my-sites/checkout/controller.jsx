@@ -108,29 +108,29 @@ export function checkoutThankYou( context, next ) {
 	next();
 }
 
-export default {
-	gsuiteNudge: function gsuiteNudge( context, next ) {
-		const { domain, site, receiptId } = context.params;
-		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
+export function gsuiteNudge( context, next ) {
+	const { domain, site, receiptId } = context.params;
+	context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
 
-		const state = context.store.getState();
-		const selectedSite =
-			getSelectedSite( state ) || getSiteBySlug( state, site ) || getSiteBySlug( state, domain );
+	const state = context.store.getState();
+	const selectedSite =
+		getSelectedSite( state ) || getSiteBySlug( state, site ) || getSiteBySlug( state, domain );
 
-		if ( ! selectedSite ) {
-			return null;
-		}
+	if ( ! selectedSite ) {
+		return null;
+	}
 
-		context.primary = (
-			<CartData>
-				<GsuiteNudge
-					domain={ domain }
-					receiptId={ Number( receiptId ) }
-					selectedSiteId={ selectedSite.ID }
-				/>
-			</CartData>
-		);
+	context.primary = (
+		<CartData>
+			<GsuiteNudge
+				domain={ domain }
+				receiptId={ Number( receiptId ) }
+				selectedSiteId={ selectedSite.ID }
+			/>
+		</CartData>
+	);
 
-		next();
-	},
-};
+	next();
+}
+
+export default {};

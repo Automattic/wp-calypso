@@ -11,6 +11,7 @@ import checkoutController, {
 	checkout,
 	checkoutPending,
 	checkoutThankYou,
+	gsuiteNudge,
 	sitelessCheckout,
 } from './controller';
 import SiftScience from 'lib/siftscience';
@@ -114,7 +115,7 @@ export default function() {
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',
 		redirectLoggedOut,
 		siteSelection,
-		checkoutController.gsuiteNudge,
+		gsuiteNudge,
 		makeLayout,
 		clientRender
 	);
