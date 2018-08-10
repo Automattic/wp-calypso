@@ -47,7 +47,6 @@ yargs
 			'view-script': {
 				description: 'Entry for rendered-page-side JavaScript file',
 				type: 'string',
-				required: false,
 				coerce: value => path.resolve( __dirname, '../', value ),
 				requiresArg: true,
 			},
