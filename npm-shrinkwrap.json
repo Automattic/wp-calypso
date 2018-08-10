@@ -6209,7 +6209,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6574,7 +6575,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6622,6 +6624,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6660,11 +6663,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -10648,9 +10653,9 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "2.2.2",
-      "resolved": "https://registry.npmjs.org/notifications-panel/-/notifications-panel-2.2.2.tgz",
-      "integrity": "sha512-sJ3Zs0PpRt/srgERcklQ6G8UXo2MGRLtKvcSf2Bqi0IpRsNbU8dw7nAoezI+rO3p/W7gQEjOU77ot6YsIcycNw==",
+      "version": "2.2.3",
+      "resolved": "https://registry.npmjs.org/notifications-panel/-/notifications-panel-2.2.3.tgz",
+      "integrity": "sha512-SJEX9ppviN6dBUuwOPSqRyVHW950bkvQCIGTE/nz+2HvOuHYv7QVMdlJj4ezMxbQpLCF0ERTFz1kfsyNNjkkvA==",
       "requires": {
         "ajv": "^6.5.1"
       }
