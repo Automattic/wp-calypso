@@ -1,15 +1,14 @@
 {
-  "extends": [
-	"config:base",
-	"default:pinDigestsDisabled"
-  ],
-  "statusCheckVerify": true,
-  "ignoreDeps": [
-    "jquery"
-  ],
-  "labels": [
-	"Framework",
-	"[Type] Task",
-	"[Status] Needs Review"
-  ]
+	"extends": [ "config:base", "default:pinDigestsDisabled" ],
+	"statusCheckVerify": true,
+	"ignoreDeps": [ "jquery" ],
+	"labels": [ "Framework", "[Type] Task", "[Status] Needs Review" ],
+	"packageRules": [
+		{
+			"packagePatterns": "^@wordpress/",
+			"groupName": "WordPress",
+			"groupSlug": "wordpress",
+			"description": "WordPress monorepo"
+		}
+	]
 }
