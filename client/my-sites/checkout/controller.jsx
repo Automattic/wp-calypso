@@ -22,7 +22,7 @@ import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 
 export default {
-	checkout: function( context, next ) {
+	checkout: function checkout( context, next ) {
 		const { feature, plan, product } = context.params;
 
 		const state = context.store.getState();
@@ -55,7 +55,7 @@ export default {
 		next();
 	},
 
-	sitelessCheckout: function( context, next ) {
+	sitelessCheckout: function sitelessCheckout( context, next ) {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
@@ -73,7 +73,7 @@ export default {
 		next();
 	},
 
-	checkoutPending: function( context, next ) {
+	checkoutPending: function checkoutPending( context, next ) {
 		const orderId = Number( context.params.orderId );
 		const siteSlug = context.params.site;
 
@@ -84,7 +84,7 @@ export default {
 		next();
 	},
 
-	checkoutThankYou: function( context, next ) {
+	checkoutThankYou: function checkoutThankYou( context, next ) {
 		const receiptId = Number( context.params.receiptId );
 		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
@@ -109,7 +109,7 @@ export default {
 		next();
 	},
 
-	gsuiteNudge( context, next ) {
+	gsuiteNudge: function gsuiteNudge( context, next ) {
 		const { domain, site, receiptId } = context.params;
 		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
 
