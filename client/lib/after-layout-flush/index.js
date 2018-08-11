@@ -20,10 +20,11 @@ export default function afterLayoutFlush( func ) {
 
 	const hasRAF = typeof requestAnimationFrame === 'function';
 
-	let savedArgs;
+	let lastThis, lastArgs;
 
 	const scheduleRAF = rafFunc => ( ...args ) => {
-		savedArgs = args;
+		lastThis = this;
+		lastArgs = args;
 
 		// if a RAF is already scheduled and not yet executed, don't schedule another one
 		if ( rafHandle !== undefined ) {
@@ -39,7 +40,8 @@ export default function afterLayoutFlush( func ) {
 
 	const scheduleTimeout = timeoutFunc => ( ...args ) => {
 		if ( ! hasRAF ) {
-			savedArgs = args;
+			lastThis = this;
+			lastArgs = args;
 		}
 
 		// If a timeout is already scheduled and not yet executed, don't schedule another one.
@@ -50,9 +52,15 @@ export default function afterLayoutFlush( func ) {
 		}
 
 		timeoutHandle = setTimeout( () => {
+			const callArgs = lastArgs;
+			const callThis = lastThis;
+
+			lastArgs = undefined;
+			lastThis = undefined;
+
 			// clear the handle to signal that the timeout handler has been executed
 			timeoutHandle = undefined;
-			timeoutFunc( savedArgs );
+			timeoutFunc.apply( callThis, callArgs );
 		}, 0 );
 	};
 
@@ -64,7 +72,8 @@ export default function afterLayoutFlush( func ) {
 	}
 
 	wrappedFunc.cancel = () => {
-		savedArgs = undefined;
+		lastThis = undefined;
+		lastArgs = undefined;
 
 		if ( rafHandle !== undefined ) {
 			cancelAnimationFrame( rafHandle );
