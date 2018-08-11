@@ -38,11 +38,14 @@ export default class extends React.Component {
 		blockWidth: 0,
 	};
 
+	calculateOffset() {
+		// Offset to account for Master Bar by finding body visual top
+		// relative the current scroll position
+		return document.getElementById( 'header' ).getBoundingClientRect().height;
+	}
+
 	componentDidMount() {
 		this.deferredTimer = defer( () => {
-			// Determine and cache vertical threshold from rendered element's
-			// offset relative the document
-			this.threshold = ReactDom.findDOMNode( this ).offsetTop;
 			this.updateIsSticky();
 		} );
 		this.throttleOnResize = throttle( this.onWindowResize, 200 );
@@ -54,13 +57,12 @@ export default class extends React.Component {
 	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
 		window.removeEventListener( 'resize', this.throttleOnResize );
-		window.cancelAnimationFrame( this.rafHandle );
 		window.clearTimeout( this.deferredTimer );
 		this.updateIsSticky.cancel();
 	}
 
 	onWindowScroll = () => {
-		this.rafHandle = window.requestAnimationFrame( this.updateIsSticky );
+		this.updateIsSticky();
 	};
 
 	onWindowResize = () => {
@@ -71,7 +73,10 @@ export default class extends React.Component {
 	};
 
 	updateIsSticky = afterLayoutFlush( () => {
-		const isSticky = window.pageYOffset > this.threshold;
+		// Determine vertical threshold from rendered element's offset relative the document
+		const threshold = ReactDom.findDOMNode( this ).getBoundingClientRect().top;
+
+		const isSticky = threshold < this.calculateOffset();
 
 		if (
 			( this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ) ||
@@ -90,15 +95,9 @@ export default class extends React.Component {
 	} );
 
 	getBlockStyle = () => {
-		let offset;
-
 		if ( this.state.isSticky ) {
-			// Offset to account for Master Bar by finding body visual top
-			// relative the current scroll position
-			offset = document.getElementById( 'header' ).getBoundingClientRect().height;
-
 			return {
-				top: offset,
+				top: this.calculateOffset(),
 				width: this.state.blockWidth,
 			};
 		}
