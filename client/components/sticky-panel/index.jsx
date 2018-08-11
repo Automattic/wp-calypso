@@ -21,7 +21,11 @@ import { isMobile } from 'lib/viewport';
  */
 import './style.scss';
 
-export default class extends React.Component {
+const RESIZE_RATE_IN_MS = 200;
+
+const hasIntersectionObserver = typeof window !== 'undefined' && 'IntersectionObserver' in window;
+
+class StickyPanelBase extends React.Component {
 	static displayName = 'StickyPanel';
 
 	static propTypes = {
@@ -32,52 +36,32 @@ export default class extends React.Component {
 		minLimit: false,
 	};
 
-	state = {
-		isSticky: false,
-		spacerHeight: 0,
-		blockWidth: 0,
-	};
-
 	calculateOffset() {
-		// Offset to account for Master Bar by finding body visual top
-		// relative the current scroll position
+		// Offset to account for Master Bar
 		return document.getElementById( 'header' ).getBoundingClientRect().height;
 	}
 
-	componentDidMount() {
-		this.deferredTimer = defer( () => {
-			this.updateIsSticky();
-		} );
-		this.throttleOnResize = throttle( this.onWindowResize, 200 );
-
-		window.addEventListener( 'scroll', this.onWindowScroll );
-		window.addEventListener( 'resize', this.throttleOnResize );
+	getBlockStyle() {
+		if ( this.state.isSticky ) {
+			return {
+				top: this.calculateOffset(),
+				width: this.state.blockWidth,
+			};
+		}
 	}
 
-	componentWillUnmount() {
-		window.removeEventListener( 'scroll', this.onWindowScroll );
-		window.removeEventListener( 'resize', this.throttleOnResize );
-		window.clearTimeout( this.deferredTimer );
-		this.updateIsSticky.cancel();
+	getDimensions( isSticky ) {
+		return {
+			spacerHeight: isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
+			blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
+		};
 	}
 
-	onWindowScroll = () => {
-		this.updateIsSticky();
-	};
+	onWindowResize() {
+		this.setState( prevState => this.getDimensions( prevState.isSticky ) );
+	}
 
-	onWindowResize = () => {
-		this.setState( {
-			spacerHeight: this.state.isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
-			blockWidth: this.state.isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
-		} );
-	};
-
-	updateIsSticky = afterLayoutFlush( () => {
-		// Determine vertical threshold from rendered element's offset relative the document
-		const threshold = ReactDom.findDOMNode( this ).getBoundingClientRect().top;
-
-		const isSticky = threshold < this.calculateOffset();
-
+	updateStickyState( isSticky ) {
 		if (
 			( this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ) ||
 			isMobile()
@@ -87,21 +71,11 @@ export default class extends React.Component {
 
 		if ( isSticky !== this.state.isSticky ) {
 			this.setState( {
-				isSticky: isSticky,
-				spacerHeight: isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
-				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
+				isSticky,
+				...this.getDimensions( isSticky ),
 			} );
 		}
-	} );
-
-	getBlockStyle = () => {
-		if ( this.state.isSticky ) {
-			return {
-				top: this.calculateOffset(),
-				width: this.state.blockWidth,
-			};
-		}
-	};
+	}
 
 	render() {
 		const classes = classNames( 'sticky-panel', this.props.className, {
@@ -118,3 +92,80 @@ export default class extends React.Component {
 		);
 	}
 }
+
+class StickyPanelWithIntersectionObserver extends StickyPanelBase {
+	throttleOnResize = throttle( this.onWindowResize.bind( this ), RESIZE_RATE_IN_MS );
+
+	state = {
+		isSticky: false,
+		spacerHeight: 0,
+		blockWidth: 0,
+	};
+
+	onIntersection = afterLayoutFlush( entries => {
+		if ( ! entries || ! entries[ 0 ] ) {
+			return;
+		}
+		const { intersectionRatio, rootBounds, boundingClientRect } = entries[ 0 ];
+		const isSticky = intersectionRatio < 1 && rootBounds.bottom > boundingClientRect.bottom;
+		this.updateStickyState( isSticky );
+	} );
+
+	componentDidMount() {
+		window.addEventListener( 'resize', this.throttleOnResize );
+
+		this.deferredMount = defer( () => {
+			this.observer = new IntersectionObserver( this.onIntersection, {
+				threshold: [ 0, 1 ],
+				rootMargin: `-${ this.calculateOffset() }px 0px 0px 0px`,
+			} );
+			this.observer.observe( ReactDom.findDOMNode( this ) );
+		} );
+	}
+
+	componentWillUnmount() {
+		if ( this.observer ) {
+			this.observer.disconnect();
+		}
+		this.onIntersection.cancel();
+		clearTimeout( this.deferredMount );
+		window.removeEventListener( 'resize', this.throttleOnResize );
+	}
+}
+
+class StickyPanelWithScrollEvent extends StickyPanelBase {
+	throttleOnResize = throttle( this.onWindowResize.bind( this ), RESIZE_RATE_IN_MS );
+
+	state = {
+		isSticky: false,
+		spacerHeight: 0,
+		blockWidth: 0,
+	};
+
+	componentDidMount() {
+		this.deferredTimer = defer( () => {
+			this.onWindowScroll();
+		} );
+
+		window.addEventListener( 'scroll', this.onWindowScroll );
+		window.addEventListener( 'resize', this.throttleOnResize );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'scroll', this.onWindowScroll );
+		window.removeEventListener( 'resize', this.throttleOnResize );
+		window.clearTimeout( this.deferredTimer );
+		this.handleScroll.cancel();
+	}
+
+	onWindowScroll = afterLayoutFlush( () => {
+		// Determine vertical threshold from rendered element's offset relative the document
+		const threshold = ReactDom.findDOMNode( this ).getBoundingClientRect().top;
+		const isSticky = threshold < this.calculateOffset();
+		this.updateStickyState( isSticky );
+	} );
+}
+
+export default ( hasIntersectionObserver
+	? StickyPanelWithIntersectionObserver
+	: StickyPanelWithScrollEvent );
