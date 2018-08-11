@@ -69,9 +69,11 @@ class ActivityLogItem extends Component {
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
 				{ activityMedia && (
 					<ActivityMedia
+						className="is-desktop"
 						icon={ ! activityMedia.available && activityMedia.gridicon }
 						name={ activityMedia.available && activityMedia.name }
-						thumbnail={ activityMedia.available && activityMedia.url }
+						thumbnail={ activityMedia.available && activityMedia.thumbnail_url }
+						fullImage={ false }
 					/>
 				) }
 				<div className="activity-log-item__description">
@@ -80,6 +82,15 @@ class ActivityLogItem extends Component {
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
+				{ activityMedia && (
+					<ActivityMedia
+						className="is-mobile"
+						icon={ false }
+						name={ activityMedia.available && activityMedia.name }
+						thumbnail={ false }
+						fullImage={ activityMedia.available && activityMedia.medium_url }
+					/>
+				) }
 			</div>
 		);
 	}

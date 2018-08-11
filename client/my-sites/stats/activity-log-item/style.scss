@@ -315,11 +315,47 @@
 
 .activity-log-item__activity-media {
 	margin-right: 16px;
+	color: $white;
 }
 
-.activity-log-item__activity-media.has-gridicon {
+.activity-log-item__activity-media .gridicon {
 	background-color: $gray-lighten-20;
-	color: $white;
+}
+.activity-log-item__activity-media .thumbnail {
+	width: auto;
+	height: auto;
+	max-width: 48px;
+	max-height: 48px;
+}
+
+.activity-log-item__activity-media .full-width {
+	width: 100%;
+	margin-top: 16px;
+}
+
+.activity-log-item__activity-media {
+	&.is-mobile {
+		float: right;
+		margin-right: -50px;
+		display: block;
+		width: 100%;
+		height: auto;
+		min-width: 0;
+	}
+
+	&.is-desktop {
+		display: none;
+	}
+
+	@include breakpoint( '>960px' ) {
+		&.is-mobile {
+			display: none;
+		}
+
+		&.is-desktop {
+			display: inline-block;
+		}
+	}
 }
 
 @keyframes fade-out-success {
