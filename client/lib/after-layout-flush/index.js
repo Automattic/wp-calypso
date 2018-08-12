@@ -22,46 +22,50 @@ export default function afterLayoutFlush( func ) {
 
 	let lastThis, lastArgs;
 
-	const scheduleRAF = rafFunc => ( ...args ) => {
-		lastThis = this;
-		lastArgs = args;
-
-		// if a RAF is already scheduled and not yet executed, don't schedule another one
-		if ( rafHandle !== undefined ) {
-			return;
-		}
-
-		rafHandle = requestAnimationFrame( () => {
-			// clear the handle to signal that the scheduled RAF has been executed
-			rafHandle = undefined;
-			rafFunc();
-		} );
-	};
-
-	const scheduleTimeout = timeoutFunc => ( ...args ) => {
-		if ( ! hasRAF ) {
+	const scheduleRAF = function( rafFunc ) {
+		return function( ...args ) {
 			lastThis = this;
 			lastArgs = args;
-		}
 
-		// If a timeout is already scheduled and not yet executed, don't schedule another one.
-		// Multiple `requestAnimationFrame` handlers can be scheduled and executed before the
-		// browser decides to finally execute the timeout handler.
-		if ( timeoutHandle !== undefined ) {
-			return;
-		}
+			// if a RAF is already scheduled and not yet executed, don't schedule another one
+			if ( rafHandle !== undefined ) {
+				return;
+			}
 
-		timeoutHandle = setTimeout( () => {
-			const callArgs = lastArgs;
-			const callThis = lastThis;
+			rafHandle = requestAnimationFrame( () => {
+				// clear the handle to signal that the scheduled RAF has been executed
+				rafHandle = undefined;
+				rafFunc();
+			} );
+		};
+	};
 
-			lastArgs = undefined;
-			lastThis = undefined;
+	const scheduleTimeout = function( timeoutFunc ) {
+		return function( ...args ) {
+			if ( ! hasRAF ) {
+				lastThis = this;
+				lastArgs = args;
+			}
 
-			// clear the handle to signal that the timeout handler has been executed
-			timeoutHandle = undefined;
-			timeoutFunc.apply( callThis, callArgs );
-		}, 0 );
+			// If a timeout is already scheduled and not yet executed, don't schedule another one.
+			// Multiple `requestAnimationFrame` handlers can be scheduled and executed before the
+			// browser decides to finally execute the timeout handler.
+			if ( timeoutHandle !== undefined ) {
+				return;
+			}
+
+			timeoutHandle = setTimeout( () => {
+				const callArgs = lastArgs;
+				const callThis = lastThis;
+
+				lastArgs = undefined;
+				lastThis = undefined;
+
+				// clear the handle to signal that the timeout handler has been executed
+				timeoutHandle = undefined;
+				timeoutFunc.apply( callThis, callArgs );
+			}, 0 );
+		};
 	};
 
 	// if RAF is not supported (in Node.js test environment), the wrapped function
