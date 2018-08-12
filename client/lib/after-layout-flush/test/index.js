@@ -27,9 +27,13 @@ function cancelAnimationFrameFake( func ) {
 	pendingRafCallbacks = pendingRafCallbacks.filter( item => item !== func );
 }
 
+function clearAnimationFrameCallbacks() {
+	pendingRafCallbacks = [];
+}
+
 function runAnimationFrame() {
 	pendingRafCallbacks.forEach( callback => callback() );
-	pendingRafCallbacks = [];
+	clearAnimationFrameCallbacks();
 }
 
 // Helper class used to test whether `this` is preserved.
@@ -53,6 +57,10 @@ describe( 'afterLayoutFlush', () => {
 		beforeAll( () => {
 			sinon.stub( window, 'requestAnimationFrame' ).callsFake( requestAnimationFrameFake );
 			sinon.stub( window, 'cancelAnimationFrame' ).callsFake( cancelAnimationFrameFake );
+		} );
+
+		beforeEach( () => {
+			clearAnimationFrameCallbacks();
 		} );
 
 		test( 'should execute after a rAF followed by a timeout', () => {
@@ -116,6 +124,20 @@ describe( 'afterLayoutFlush', () => {
 			expect( callback ).toHaveBeenCalledWith( 'foo', 'bar' );
 		} );
 
+		test( 'should preserve the last arguments passed to wrapped function', () => {
+			const callback = jest.fn();
+			const wrappedFunction = afterLayoutFlush( callback );
+
+			wrappedFunction( 1, 1 );
+			runAnimationFrame();
+			wrappedFunction( 2, 2 );
+			jest.runAllTimers();
+			wrappedFunction( 3, 3 );
+
+			expect( callback ).toHaveBeenCalledTimes( 1 );
+			expect( callback ).toHaveBeenCalledWith( 2, 2 );
+		} );
+
 		test( 'should preserve `this` passed to wrapped function', () => {
 			setupPreserveThisTest();
 			const ptt = new PreserveThisTest();
@@ -177,6 +199,19 @@ describe( 'afterLayoutFlush', () => {
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
 			expect( callback ).toHaveBeenCalledWith( 'foo', 'bar' );
+		} );
+
+		test( 'should preserve the last arguments passed to wrapped function', () => {
+			const callback = jest.fn();
+			const wrappedFunction = afterLayoutFlush( callback );
+
+			wrappedFunction( 1, 1 );
+			wrappedFunction( 2, 2 );
+			jest.runAllTimers();
+			wrappedFunction( 3, 3 );
+
+			expect( callback ).toHaveBeenCalledTimes( 1 );
+			expect( callback ).toHaveBeenCalledWith( 2, 2 );
 		} );
 
 		test( 'should preserve `this` passed to wrapped function', () => {
