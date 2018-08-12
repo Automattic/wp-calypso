@@ -1,3 +1,7 @@
+@import '../../../assets/stylesheets/shared/_colors.scss';
+@import '../../../assets/stylesheets/shared/mixins/_breakpoints.scss';
+@import '../../../assets/stylesheets/shared/mixins/_clear-fix.scss';
+
 .card {
 	display: block;
 	position: relative;

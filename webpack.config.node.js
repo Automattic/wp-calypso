@@ -133,6 +133,22 @@ const webpackConfig = {
 					},
 				],
 			},
+			{
+				test: /\.(sc|sa|c)ss$/,
+				use: _.compact( [
+					'css-loader',
+					// extensionName && {
+					// 	loader: 'namespace-css-loader',
+					// 	options: `.${ extensionName }`, // Just the namespace class
+					// },
+					{
+						loader: 'sass-loader',
+						options: {
+							includePaths: [ path.join( __dirname, 'client' ) ],
+						},
+					},
+				] ),
+			},
 		],
 	},
 	resolve: {
