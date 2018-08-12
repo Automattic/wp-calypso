@@ -6,7 +6,8 @@
 import React from 'react';
 import classnames from 'classnames';
 import { registerCoreBlocks } from '@wordpress/block-library';
-import { getBlockType, getSaveElement } from '@wordpress/blocks';
+import { getBlockType, getSaveElement, getBlockDefaultClassName } from '@wordpress/blocks';
+import { addFilter } from '@wordpress/hooks';
 import page from 'page';
 import { trim } from 'lodash';
 
@@ -23,11 +24,15 @@ import Collection from 'devdocs/design/search-collection';
 
 registerCoreBlocks();
 
-const button = getSaveElement( getBlockType( 'core/button' ), {
-	text: 'Click here',
-	backgroundColor: 'vivid-cyan-blue',
-	url: 'https://wordpress.com',
-} );
+const GutenbergBlock = ( { name, attributes } ) => {
+	addFilter(
+		'blocks.getSaveContent.extraProps',
+		'devdocs/gutenberg-block/render',
+		getBlockDefaultClassName
+	);
+
+	return getSaveElement( getBlockType( name ), attributes );
+};
 
 export default class GutenbergBlocks extends React.Component {
 	state = { filter: '' };
@@ -70,7 +75,15 @@ export default class GutenbergBlocks extends React.Component {
 				) }
 
 				<Collection component={ block } filter={ filter } section="gutenberg-blocks">
-					{ button }
+					<GutenbergBlock
+						asyncName="button"
+						name="core/button"
+						attributes={ {
+							text: 'Click here',
+							backgroundColor: 'vivid-cyan-blue',
+							url: 'https://wordpress.com',
+						} }
+					/>
 				</Collection>
 			</Main>
 		);
