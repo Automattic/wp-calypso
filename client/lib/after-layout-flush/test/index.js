@@ -15,14 +15,19 @@ import afterLayoutFlush from '../';
 
 jest.useFakeTimers();
 
-// Simple mock for controlling requestAnimationFrame.
+// Simple mocks for controlling requestAnimationFrame and cancelAnimationFrame.
 let pendingRafCallbacks = [];
 
-function raf( func ) {
+function requestAnimationFrameFake( func ) {
 	pendingRafCallbacks.push( func );
+	return func;
 }
 
-function runRaf() {
+function cancelAnimationFrameFake( func ) {
+	pendingRafCallbacks = pendingRafCallbacks.filter( item => item !== func );
+}
+
+function runAnimationFrame() {
 	pendingRafCallbacks.forEach( callback => callback() );
 	pendingRafCallbacks = [];
 }
@@ -46,7 +51,8 @@ function setupPreserveThisTest() {
 describe( 'afterLayoutFlush', () => {
 	describe( 'in browsers that support requestAnimationFrame', () => {
 		beforeAll( () => {
-			sinon.stub( window, 'requestAnimationFrame' ).callsFake( raf );
+			sinon.stub( window, 'requestAnimationFrame' ).callsFake( requestAnimationFrameFake );
+			sinon.stub( window, 'cancelAnimationFrame' ).callsFake( cancelAnimationFrameFake );
 		} );
 
 		test( 'should execute after a rAF followed by a timeout', () => {
@@ -55,11 +61,47 @@ describe( 'afterLayoutFlush', () => {
 			wrappedFunction();
 			expect( callback ).not.toBeCalled();
 
-			runRaf();
+			runAnimationFrame();
 			expect( callback ).not.toBeCalled();
 
 			jest.runAllTimers();
 			expect( callback ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'should cancel execution if `cancel` is called before the rAF', () => {
+			const callback = jest.fn();
+			const wrappedFunction = afterLayoutFlush( callback );
+			wrappedFunction();
+
+			wrappedFunction.cancel();
+			runAnimationFrame();
+			jest.runAllTimers();
+
+			expect( callback ).not.toBeCalled();
+		} );
+
+		test( 'should cancel execution if `cancel` is called before the timeout', () => {
+			const callback = jest.fn();
+			const wrappedFunction = afterLayoutFlush( callback );
+			wrappedFunction();
+
+			runAnimationFrame();
+			wrappedFunction.cancel();
+			jest.runAllTimers();
+
+			expect( callback ).not.toBeCalled();
+		} );
+
+		test( 'should not throw if `cancel` is called after execution', () => {
+			const callback = jest.fn();
+			const wrappedFunction = afterLayoutFlush( callback );
+			wrappedFunction();
+
+			runAnimationFrame();
+			jest.runAllTimers();
+
+			expect( callback ).toBeCalled();
+			expect( () => wrappedFunction.cancel() ).not.toThrow();
 		} );
 
 		test( 'should preserve arguments passed to wrapped function', () => {
@@ -67,7 +109,7 @@ describe( 'afterLayoutFlush', () => {
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction( 'foo', 'bar' );
 
-			runRaf();
+			runAnimationFrame();
 			jest.runAllTimers();
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -79,7 +121,7 @@ describe( 'afterLayoutFlush', () => {
 			const ptt = new PreserveThisTest();
 			ptt.wrappedFunction();
 
-			runRaf();
+			runAnimationFrame();
 			jest.runAllTimers();
 
 			expect( ptt.callback ).toHaveBeenCalledTimes( 1 );
@@ -102,6 +144,28 @@ describe( 'afterLayoutFlush', () => {
 
 			jest.runAllTimers();
 			expect( callback ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'should cancel execution if `cancel` is called before the timeout', () => {
+			const callback = jest.fn();
+			const wrappedFunction = afterLayoutFlush( callback );
+			wrappedFunction();
+
+			wrappedFunction.cancel();
+			jest.runAllTimers();
+
+			expect( callback ).not.toBeCalled();
+		} );
+
+		test( 'should not throw if `cancel` is called after execution', () => {
+			const callback = jest.fn();
+			const wrappedFunction = afterLayoutFlush( callback );
+			wrappedFunction();
+
+			jest.runAllTimers();
+
+			expect( callback ).toBeCalled();
+			expect( () => wrappedFunction.cancel() ).not.toThrow();
 		} );
 
 		test( 'should preserve arguments passed to wrapped function', () => {
