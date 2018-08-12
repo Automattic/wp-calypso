@@ -10,6 +10,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
+import afterLayoutFlush from 'lib/after-layout-flush';
 
 /**
  * Internal dependencies
@@ -99,9 +100,7 @@ export default class InfiniteList extends React.Component {
 			this._overrideHistoryScroll();
 		}
 		debug( 'setting scrollTop:', this.state.scrollTop );
-		this.updateScroll( {
-			triggeredByScroll: false,
-		} );
+		this.forcedScrollUpdate();
 		if ( this._contextLoaded() ) {
 			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
 		}
@@ -134,9 +133,7 @@ export default class InfiniteList extends React.Component {
 		// we may have guessed item heights wrong - now we have real heights
 		if ( ! this.isScrolling ) {
 			this.cancelAnimationFrame();
-			this.updateScroll( {
-				triggeredByScroll: false,
-			} );
+			this.forcedScrollUpdate();
 		}
 	}
 
@@ -166,6 +163,7 @@ export default class InfiniteList extends React.Component {
 		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		this.cancelAnimationFrame();
+		this.forcedScrollUpdate.cancel();
 		this._isMounted = false;
 	}
 
@@ -176,6 +174,12 @@ export default class InfiniteList extends React.Component {
 		}
 		this.lastScrollTop = -1;
 	}
+
+	forcedScrollUpdate = afterLayoutFlush( () =>
+		this.updateScroll( {
+			triggeredByScroll: false,
+		} )
+	);
 
 	onScroll = () => {
 		if ( this.isScrolling ) {
