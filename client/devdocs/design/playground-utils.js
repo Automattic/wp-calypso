@@ -14,8 +14,21 @@ export const getExampleCodeFromComponent = ExampleComponent => {
 		return ExampleComponent.props.exampleCode;
 	}
 
-	return jsxToString( ExampleComponent.props.exampleCode, { useFunctionCode: true } ).replace(
-		/Localized\((\w+)\)/g,
-		'$1'
-	);
+	const keyValueOverride = {};
+	Object.keys( ExampleComponent.props ).forEach( prop => {
+		const propValue = ExampleComponent.props[ prop ];
+		switch ( typeof propValue ) {
+			case 'string':
+				keyValueOverride[ prop ] = `"${ propValue }"`;
+				break;
+			case 'object':
+				keyValueOverride[ prop ] = JSON.stringify( propValue );
+				break;
+		}
+	} );
+
+	return jsxToString( ExampleComponent.props.exampleCode, {
+		useFunctionCode: true,
+		keyValueOverride,
+	} ).replace( /Localized\((\w+)\)/g, '$1' );
 };

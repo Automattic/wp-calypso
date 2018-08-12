@@ -82,7 +82,7 @@ export default function() {
 
 		if ( config.isEnabled( 'devdocs/gutenberg-blocks' ) ) {
 			page(
-				'/devdocs/gutenberg-blocks/:block?',
+				'/devdocs/gutenberg-blocks/:block*',
 				controller.sidebar,
 				controller.gutenbergBlocks,
 				makeLayout,

@@ -6,8 +6,6 @@
 import React from 'react';
 import classnames from 'classnames';
 import { registerCoreBlocks } from '@wordpress/block-library';
-import { getBlockType, getSaveElement, getBlockDefaultClassName } from '@wordpress/blocks';
-import { addFilter } from '@wordpress/hooks';
 import page from 'page';
 import { trim } from 'lodash';
 
@@ -21,18 +19,9 @@ import { slugToCamelCase } from '../docs-example/util';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 import Collection from 'devdocs/design/search-collection';
+import GutenbergBlockExample from './example';
 
 registerCoreBlocks();
-
-const GutenbergBlock = ( { name, attributes } ) => {
-	addFilter(
-		'blocks.getSaveContent.extraProps',
-		'devdocs/gutenberg-block/render',
-		getBlockDefaultClassName
-	);
-
-	return getSaveElement( getBlockType( name ), attributes );
-};
 
 export default class GutenbergBlocks extends React.Component {
 	state = { filter: '' };
@@ -75,8 +64,8 @@ export default class GutenbergBlocks extends React.Component {
 				) }
 
 				<Collection component={ block } filter={ filter } section="gutenberg-blocks">
-					<GutenbergBlock
-						asyncName="button"
+					<GutenbergBlockExample
+						asyncName="core/button"
 						name="core/button"
 						attributes={ {
 							text: 'Click here',
