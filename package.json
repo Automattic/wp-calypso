@@ -35,6 +35,7 @@
     "@wordpress/api-fetch": "1.1.1",
     "@wordpress/block-library": "1.0.0",
     "@wordpress/block-serialization-spec-parser": "1.0.1",
+    "@wordpress/block-library": "2.0.0",
     "@wordpress/blocks": "2.0.0",
     "@wordpress/components": "2.0.0",
     "@wordpress/compose": "1.0.3",
