@@ -14,7 +14,7 @@ import ChecklistHeader from 'components/checklist/header';
 import TaskPlaceholder from 'components/checklist/task-placeholder';
 
 export default class Checklist extends PureComponent {
-	static propTyps = {
+	static propTypes = {
 		completedCount: PropTypes.number,
 		inferCompletedCount: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
