@@ -6,7 +6,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,10 +29,8 @@ class ChecklistShow extends PureComponent {
 		this.props.loadTrackingTool( 'HotJar' );
 	}
 
-	handleAction = id => () => {
-		const { isJetpack, requestTour, siteSlug, track } = this.props;
-		const tasks = isJetpack ? jetpackTasks : wpcomTasks;
-		const task = find( tasks, { id } );
+	handleAction = task => () => {
+		const { requestTour, siteSlug, track } = this.props;
 
 		launchTask( {
 			task,
@@ -43,14 +41,12 @@ class ChecklistShow extends PureComponent {
 		} );
 	};
 
-	handleToggle = id => () => {
-		const { isJetpack, notify, siteId, update } = this.props;
-		const tasks = isJetpack ? jetpackTasks : wpcomTasks;
-		const task = find( tasks, { id } );
+	handleToggle = task => () => {
+		const { notify, siteId, update } = this.props;
 
 		if ( task && ! task.completed ) {
 			notify( 'is-success', 'You completed a task!' );
-			update( siteId, id );
+			update( siteId, task.id );
 		}
 	};
 
@@ -72,8 +68,8 @@ class ChecklistShow extends PureComponent {
 							description={ task.description }
 							duration={ task.duration }
 							key={ task.id }
-							onClick={ this.handleAction( task.id ) }
-							onDismiss={ this.handleToggle( task.id ) }
+							onClick={ this.handleAction( task ) }
+							onDismiss={ this.handleToggle( task ) }
 							title={ task.title }
 						/>
 					) ) }
