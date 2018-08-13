@@ -16,7 +16,7 @@ import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
 import ScreenReaderText from 'components/screen-reader-text';
 
-export class Task extends PureComponent {
+class Task extends PureComponent {
 	static propTypes = {
 		completed: PropTypes.bool,
 		onClick: PropTypes.func,
