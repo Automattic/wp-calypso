@@ -32,6 +32,7 @@ import { getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
+import { getSiteAdminPluginInstallUrl } from 'lib/plugins/utils';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
@@ -388,22 +389,12 @@ export function siteSelection( context, next ) {
 			calypsoify &&
 			/^\/plugins/.test( basePath )
 		) {
-			const plugin = get( context, 'params.plugin' );
-			let pluginString = '';
-			if ( plugin ) {
-				pluginString = [
-					'tab=search',
-					`s=${ plugin }`,
-					'type=term',
-					'modal-mode=true',
-					`plugin=${ plugin }`,
-				].join( '&' );
-			}
+			const pluginUrl = getSiteAdminPluginInstallUrl(
+				getSiteAdminUrl( state, siteId ),
+				get( context, 'params.plugin' )
+			);
 
-			const pluginIstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
-			const pluginLink = getSiteAdminUrl( state, siteId ) + pluginIstallURL;
-
-			return window.location.replace( pluginLink );
+			return window.location.replace( pluginUrl );
 		}
 
 		dispatch( setSelectedSiteId( siteId ) );
