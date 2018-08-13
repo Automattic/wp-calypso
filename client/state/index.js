@@ -99,6 +99,10 @@ import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
 import wordads from './wordads/reducer';
 import config from 'config';
+import { registerHandlers } from './data-layer/handler-registry';
+import wpcomHandlers from './data-layer/wpcom';
+
+registerHandlers( 'wpcom', wpcomHandlers );
 
 /**
  * Module variables

@@ -24,6 +24,10 @@ import login from './login/reducer';
 import ui from './ui/reducer';
 import notices from './notices/reducer';
 import documentHead from './document-head/reducer';
+import { registerHandlers } from './data-layer/handler-registry';
+import wpcomLoginHandlers from './data-layer/wpcom/login';
+
+registerHandlers( 'wpcom', wpcomLoginHandlers );
 
 const reducers = {
 	form,
