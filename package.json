@@ -39,7 +39,7 @@
     "@wordpress/components": "2.0.0",
     "@wordpress/compose": "1.0.3",
     "@wordpress/core-data": "1.1.0",
-    "@wordpress/data": "1.2.0",
+    "@wordpress/data": "1.2.1",
     "@wordpress/deprecated": "1.0.3",
     "@wordpress/editor": "2.0.0",
     "@wordpress/element": "1.0.3",
