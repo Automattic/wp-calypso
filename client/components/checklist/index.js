@@ -56,10 +56,10 @@ export default class Checklist extends PureComponent {
 				} ) }
 			>
 				<ChecklistHeader
-					total={ Children.count( children ) }
 					completed={ count }
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
+					total={ Children.count( children ) }
 				/>
 				<div className="checklist__tasks">{ children }</div>
 			</div>
