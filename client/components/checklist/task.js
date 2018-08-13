@@ -18,15 +18,15 @@ import ScreenReaderText from 'components/screen-reader-text';
 
 class Task extends PureComponent {
 	static propTypes = {
-		completed: PropTypes.bool,
-		onClick: PropTypes.func,
-		onDismiss: PropTypes.func,
-
 		buttonPrimary: PropTypes.bool,
+		buttonText: PropTypes.node,
+		completed: PropTypes.bool,
 		completedButtonText: PropTypes.node,
 		completedTitle: PropTypes.node,
 		description: PropTypes.node,
 		duration: PropTypes.string,
+		onClick: PropTypes.func,
+		onDismiss: PropTypes.func,
 		title: PropTypes.node.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
