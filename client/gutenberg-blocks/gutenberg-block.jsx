@@ -3,17 +3,9 @@
 /**
  * External dependencies
  */
-import { getBlockType, getSaveElement, getBlockDefaultClassName } from '@wordpress/blocks';
-import { addFilter } from '@wordpress/hooks';
+import { getBlockType, getSaveElement } from '@wordpress/blocks';
 
-const GutenbergBlock = ( { name, attributes } ) => {
-	addFilter(
-		'blocks.getSaveContent.extraProps',
-		'devdocs/gutenberg-block/render',
-		getBlockDefaultClassName
-	);
-
-	return getSaveElement( getBlockType( name ), attributes );
-};
+const GutenbergBlock = ( { name, attributes } ) =>
+	getSaveElement( getBlockType( name ), attributes );
 
 export default GutenbergBlock;
