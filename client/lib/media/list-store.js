@@ -89,8 +89,10 @@ MediaListStore.ensureActiveQueryForSiteId = function( siteId ) {
 
 function clearSite( siteId ) {
 	delete MediaListStore._media[ siteId ];
-	delete MediaListStore._activeQueries[ siteId ].nextPageHandle;
-	MediaListStore._activeQueries[ siteId ].isFetchingNextPage = false;
+	if ( !! MediaListStore._activeQueries[ siteId ] ) {
+		delete MediaListStore._activeQueries[ siteId ].nextPageHandle;
+		MediaListStore._activeQueries[ siteId ].isFetchingNextPage = false;
+	}
 }
 
 function updateActiveQuery( siteId, query ) {
