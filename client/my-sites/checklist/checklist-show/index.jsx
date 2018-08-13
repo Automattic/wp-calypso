@@ -6,7 +6,7 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get, reduce } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -56,17 +56,10 @@ class ChecklistShow extends PureComponent {
 		const { isJetpack, siteId, taskStatuses } = this.props;
 		const tasks = isJetpack ? jetpackTasks : wpcomTasks;
 
-		const completed = reduce(
-			tasks,
-			( count, { id, completed: taskComplete } ) =>
-				taskComplete || get( taskStatuses, [ id, 'completed' ], false ) ? count + 1 : count,
-			0
-		);
-
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				<Checklist completedCount={ completed } isPlaceholder={ ! taskStatuses }>
+				<Checklist isPlaceholder={ ! taskStatuses }>
 					{ tasks.map( task => (
 						<Task
 							buttonPrimary={ task.buttonPrimary }

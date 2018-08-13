@@ -11,16 +11,6 @@ If your checklist tasks use checklist state from Redux, you can use `Task` from 
 
 Render as a placeholder.
 
-### `inferCompletedCount { bool } - default: false`
-
-If `Task` children will have a provided `complete` prop, the `Checklist` will count the completed
-tasks. This will not work when using connected tasks (see `blocks/checklist/task`).
-
-### `completedCount { number }`
-
-If you cannot use `inferCompletedCount` (you're using connected `Task`s), provide the completion
-count here.
-
 ## `Task` props
 
 ### `completed { bool }`

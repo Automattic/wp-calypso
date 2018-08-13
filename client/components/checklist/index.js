@@ -15,8 +15,6 @@ import TaskPlaceholder from 'components/checklist/task-placeholder';
 
 export default class Checklist extends PureComponent {
 	static propTypes = {
-		completedCount: PropTypes.number,
-		inferCompletedCount: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 	};
 
@@ -43,14 +41,12 @@ export default class Checklist extends PureComponent {
 			return this.renderPlaceholder();
 		}
 
-		const { children, completedCount, inferCompletedCount } = this.props;
+		const { children } = this.props;
 
-		const count = inferCompletedCount
-			? Children.map( children, child => child.props.completed ).reduce(
-					( acc, completed ) => ( true === completed ? acc + 1 : acc ),
-					0
-			  )
-			: completedCount;
+		const count = Children.map( children, child => child.props.completed ).reduce(
+			( acc, completed ) => ( true === completed ? acc + 1 : acc ),
+			0
+		);
 
 		return (
 			<div
