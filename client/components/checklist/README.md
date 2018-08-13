@@ -27,6 +27,10 @@ Handle dismissal (or un-dismissal) click.
 
 Display the action button as primary.
 
+### `buttonText { node } - default: "Do it!"`
+
+Text to display in action button.
+
 ### `completedButtonText { node }`
 
 Button text on complete.
