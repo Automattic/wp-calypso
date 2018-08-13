@@ -5314,11 +5314,12 @@
       }
     },
     "eslint-plugin-react": {
-      "version": "7.10.0",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.10.0.tgz",
-      "integrity": "sha512-18rzWn4AtbSUxFKKM7aCVcj5LXOhOKdwBino3KKWy4psxfPW0YtIbE8WNRDUdyHFL50BeLb6qFd4vpvNYyp7hw==",
+      "version": "7.11.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.11.0.tgz",
+      "integrity": "sha512-SJOh2p3Mr1nbp/Nd5odTuSn2rvaMvO5DaOpuAGc9Sc+Gcxqkyffb1mqQGIKB9tWQJlvrfsrzWnMJexZJ7YRDUw==",
       "dev": true,
       "requires": {
+        "array-includes": "^3.0.3",
         "doctrine": "^2.1.0",
         "has": "^1.0.3",
         "jsx-ast-utils": "^2.0.1",
