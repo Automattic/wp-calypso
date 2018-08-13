@@ -17,7 +17,7 @@ A good example for this case is navigation. Sometimes the option that is selecte
 ```jsx
 import React from 'react';
 import SegmentedControl from 'components/segmented-control';
-import ControlItem from 'components/segmented-control/item';
+import SegmentedControlItem from 'components/segmented-control/item';
 
 export default class extends React.Component {
 	// ...
@@ -25,40 +25,40 @@ export default class extends React.Component {
 	render() {
 		return (
 			<SegmentedControl>
-				<ControlItem
+				<SegmentedControlItem
 					selected={ this.state.selected === 'all' }
 					onClick={ this.handleFilterClick( 'all' ) }
 				>
 					All
-				</ControlItem>
+				</SegmentedControlItem>
 
-				<ControlItem
+				<SegmentedControlItem
 					selected={ this.state.selected === 'unread' }
 					onClick={ this.handleFilterClick( 'unread' ) }
 				>
 					Unread
-				</ControlItem>
+				</SegmentedControlItem>
 
-				<ControlItem
+				<SegmentedControlItem
 					selected={ this.state.selected === 'comments' }
 					onClick={ this.handleFilterClick( 'comments' ) }
 				>
 					Comments
-				</ControlItem>
+				</SegmentedControlItem>
 
-				<ControlItem
+				<SegmentedControlItem
 					selected={ this.state.selected === 'follows' }
 					onClick={ this.handleFilterClick( 'follows' ) }
 				>
 					Follows
-				</ControlItem>
+				</SegmentedControlItem>
 
-				<ControlItem
+				<SegmentedControlItem
 					selected={ this.state.selected === 'likes' }
 					onClick={ this.handleFilterClick( 'likes' ) }
 				>
 					Likes
-				</ControlItem>
+				</SegmentedControlItem>
 			</SegmentedControl>
 		);
 	},
@@ -91,12 +91,12 @@ The key here is that it's up to the parent component to explicitly define things
 
 ##### Control Item
 
-| Name         | Type     | Default | Description                                    |
-| ------------ | -------- | ------- | ---------------------------------------------- |
-| `selected`\* | `bool`   | `false` | Determines the selected item                   |
-| `path`       | `string` | `null`  | URL to navigate to when item is clicked        |
-| `title`      | `string` | `null`  | Title to show when hovering over item          |
-| `onClick`    |          | `null`  | Callback applied when `ControlItem` is clicked |
+| Name         | Type     | Default | Description                                             |
+| ------------ | -------- | ------- | ------------------------------------------------------- |
+| `selected`\* | `bool`   | `false` | Determines the selected item                            |
+| `path`       | `string` | `null`  | URL to navigate to when item is clicked                 |
+| `title`      | `string` | `null`  | Title to show when hovering over item                   |
+| `onClick`    |          | `null`  | Callback applied when `SegmentedControlItem` is clicked |
 
 ### Options array
 

@@ -10,11 +10,9 @@ import React from 'react';
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
+import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import ControlItem from 'components/segmented-control/item';
 
-/**
- * Segmented Control Demo
- */
 class SegmentedControlDemo extends React.PureComponent {
 	static displayName = 'SegmentedControl';
 
@@ -47,7 +45,7 @@ class SegmentedControlDemo extends React.PureComponent {
 				</a>
 
 				<h3>Items passed as options prop</h3>
-				<SegmentedControl
+				<SimplifiedSegmentedControl
 					options={ this.props.options }
 					onSelect={ this.selectSegment }
 					style={ controlDemoStyles }
