@@ -221,3 +221,19 @@ export function normalizePluginsList( pluginsList ) {
 export function filterNotices( logs, site, pluginSlug ) {
 	return filter( logs, filterNoticesBy.bind( this, site, pluginSlug ) );
 }
+
+export function getSiteAdminPluginInstallUrl( siteAdminUrl, slug ) {
+	const pluginInstallUrl = `${ siteAdminUrl }/plugin-install.php?calypsoify=1`;
+	if ( ! slug ) {
+		return pluginInstallUrl;
+	}
+
+	return [
+		`${ pluginInstallUrl }&`,
+		'tab=search',
+		`s=${ slug }`,
+		'type=term',
+		'modal-mode=true',
+		`plugin=${ slug }`,
+	].join( '&' );
+}
