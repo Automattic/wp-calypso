@@ -10,6 +10,11 @@
 // Editor package styles
 @import '../../../node_modules/@wordpress/editor/build-style/style';
 
+// Block library
+@import '../../../node_modules/@wordpress/block-library/build-style/style';
+@import '../../../node_modules/@wordpress/block-library/build-style/editor';
+@import '../../../node_modules/@wordpress/block-library/build-style/theme';
+
 // Calypso specific Gutenberg editor styles
 @import 'gutenberg/editor/style';
 
