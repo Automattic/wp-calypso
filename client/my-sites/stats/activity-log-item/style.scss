@@ -321,14 +321,14 @@
 .activity-log-item__activity-media .gridicon {
 	background-color: $gray-lighten-20;
 }
-.activity-log-item__activity-media .thumbnail {
+.activity-log-item__activity-media .is-thumbnail {
 	width: auto;
 	height: auto;
 	max-width: 48px;
 	max-height: 48px;
 }
 
-.activity-log-item__activity-media .full-width {
+.activity-log-item__activity-media .is-full-width {
 	width: 100%;
 	margin-top: 16px;
 }

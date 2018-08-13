@@ -23,13 +23,14 @@ export default class ActivityMedia extends PureComponent {
 			icon && `has-gridicon`,
 			className
 		);
-
+		/* eslint-disable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 		return (
 			<div className={ classes }>
 				{ icon && <Gridicon icon={ icon } size={ 48 } /> }
-				{ thumbnail && <img src={ thumbnail } alt={ name } className="thumbnail" /> }
-				{ fullImage && <img src={ fullImage } alt={ name } className="full-width" /> }
+				{ thumbnail && <img src={ thumbnail } alt={ name } className="is-thumbnail" /> }
+				{ fullImage && <img src={ fullImage } alt={ name } className="is-full-width" /> }
 			</div>
 		);
+		/* eslint-enable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
 	}
 }
