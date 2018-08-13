@@ -23,39 +23,39 @@ class ImageSelectorExample extends Component {
 		};
 	}
 
-	setImage = ( media ) => {
+	setImage = media => {
 		if ( ! media || ! media.items.length ) {
 			return;
 		}
 		const itemIds = media.items.map( item => item.ID );
 		this.setState( { imageIds: itemIds } );
-	}
+	};
 
-	changeImages = ( images ) => {
+	changeImages = images => {
 		const imageIds = images.map( image => image.ID );
 		this.setState( { imageIds: imageIds } );
-	}
+	};
 
-	removeImage = ( image ) => {
+	removeImage = image => {
 		const itemIds = [ ...this.state.imageIds ];
 		itemIds.splice( itemIds.indexOf( image.ID ), 1 );
 		this.setState( { imageIds: itemIds } );
-	}
+	};
 
-	addImage = ( image ) => {
+	addImage = image => {
 		if ( this.state.imageIds.indexOf( image.ID ) === -1 ) {
 			this.setState( {
-				imageIds: [...this.state.imageIds, image.ID ]
+				imageIds: [ ...this.state.imageIds, image.ID ],
 			} );
 		}
-	}
+	};
 
 	render() {
 		const imageIds = this.state.imageIds;
 		const { site, siteId } = this.props;
 
 		return (
-			<div className="image-selector-example">
+			<div className="docs__design-image-selector">
 				<ImageSelector
 					site={ site }
 					siteId={ siteId }
