@@ -3,8 +3,6 @@ Checklist
 
 `Checklist` and `Task` are components used to render checklists.
 
-If your checklist tasks use checklist state from Redux, you can use `Task` from `blocks/checklist/tasks` to pull state by the `id` prop.
-
 ## `Checklist` props
 
 ### `isPlaceholder { bool } - default: false`
