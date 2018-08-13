@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEmpty, noop } from 'lodash';
 import '@wordpress/core-data'; // Initializes core data store
+import { registerCoreBlocks } from '@wordpress/block-library';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import '@wordpress/core-data'; // Initializes core data store
 import Editor from './edit-post/editor.js';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { overrideAPIPaths, registerCoreBlocks } from './utils';
+import { overrideAPIPaths } from './utils';
 
 const editorSettings = {};
 
