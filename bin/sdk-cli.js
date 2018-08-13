@@ -72,6 +72,10 @@ yargs
 				description: 'Whether to watch for changes and automatically rebuild.',
 				type: 'boolean',
 			},
+			'namespace': {
+				description: 'Wheater CSS be namespaced.',
+				type: 'boolean',
+			},
 		} ),
 		handler: argv => gutenberg.compile( argv )
 	} )
