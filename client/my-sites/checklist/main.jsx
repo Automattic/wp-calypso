@@ -50,7 +50,7 @@ class ChecklistMain extends PureComponent {
 	maybeRedirectJetpack( prevProps = {} ) {
 		if (
 			/**
-			 * Only send Jetpack send users to plans if a checklist will be presented. Otherwise,
+			 * Only send Jetpack users to plans if a checklist will be presented. Otherwise,
 			 * let the "Not available" view render.
 			 */
 			config.isEnabled( 'jetpack/checklist' ) &&
