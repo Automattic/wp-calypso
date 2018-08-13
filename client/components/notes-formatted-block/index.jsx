@@ -4,7 +4,12 @@
  */
 import React from 'react';
 
-export const FormattedBlock = ( { content = {} } ) => {
+/**
+ * Internal Dependencies
+ */
+import { getSiteAdminPluginInstallUrl } from 'lib/plugins/utils';
+
+export const FormattedBlock = ( { content = {}, siteAdminUrl } ) => {
 	const {
 		siteId,
 		children,
@@ -65,7 +70,7 @@ export const FormattedBlock = ( { content = {} } ) => {
 			);
 
 		case 'plugin':
-			return <a href={ `/plugins/${ pluginSlug }/${ siteSlug }` }>{ descent }</a>;
+			return <a href={ getSiteAdminPluginInstallUrl( siteAdminUrl, pluginSlug ) }>{ descent }</a>;
 
 		case 'post':
 			return isTrashed ? (

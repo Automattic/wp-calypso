@@ -37,7 +37,8 @@ import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { adjustMoment } from '../activity-log/utils';
-import { getSite } from 'state/sites/selectors';
+import { getSite, getSiteAdminUrl } from 'state/sites/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
@@ -83,6 +84,8 @@ class ActivityLogItem extends Component {
 			activity: { activityName, activityDescription, activityMeta },
 			translate,
 			rewindIsActive,
+			isAtomicSite,
+			siteAdminUrl,
 		} = this.props;
 
 		// If backup failed due to invalid credentials but Rewind is now active means it was fixed.
@@ -99,7 +102,14 @@ class ActivityLogItem extends Component {
 		/* There is no great way to generate a more valid React key here
 		 * but the index is probably sufficient because these sub-items
 		 * shouldn't be changing. */
-		return activityDescription.map( ( part, i ) => <FormattedBlock key={ i } content={ part } /> );
+		return activityDescription.map( ( part, i ) => (
+			<FormattedBlock
+				key={ i }
+				content={ part }
+				isAtomicSite={ isAtomicSite }
+				siteAdminUrl={ siteAdminUrl }
+			/>
+		) );
 	}
 
 	renderItemAction() {
@@ -321,6 +331,8 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
 		canAutoconfigure: rewindState.canAutoconfigure,
 		site,
+		isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
 };
 
