@@ -4,15 +4,14 @@
 import { __ } from '@wordpress/i18n';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 
-import './tiled-gallery.scss';
-
 /**
  * Internal dependencies
  */
+import './tiled-gallery.scss';
 import JetpackGalleryBlockEditor from './edit.js';
 import JetpackGalleryBlockSave from './save.js';
 
-const JetpackGalleryBlockType = 'jetpack/gallery';
+const JetpackGalleryBlockType = 'a8c/tiled-gallery';
 
 const settings = {
 	title: __( 'Tiled Gallery' ),
