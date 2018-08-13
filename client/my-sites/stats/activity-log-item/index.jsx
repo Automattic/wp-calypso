@@ -64,13 +64,16 @@ class ActivityLogItem extends Component {
 			actorType,
 			activityMedia,
 		} = this.props.activity;
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
 				{ activityMedia && (
 					<ActivityMedia
-						className="is-desktop"
+						className={ classNames( {
+							'activity-log-item__activity-media': true,
+							'is-desktop': true,
+							'has-gridicon': ! activityMedia.available,
+						} ) }
 						icon={ ! activityMedia.available && activityMedia.gridicon }
 						name={ activityMedia.available && activityMedia.name }
 						thumbnail={ activityMedia.available && activityMedia.thumbnail_url }
@@ -85,7 +88,7 @@ class ActivityLogItem extends Component {
 				</div>
 				{ activityMedia && (
 					<ActivityMedia
-						className="is-mobile"
+						className="activity-log-item__activity-media is-mobile"
 						icon={ false }
 						name={ activityMedia.available && activityMedia.name }
 						thumbnail={ false }
@@ -94,7 +97,6 @@ class ActivityLogItem extends Component {
 				) }
 			</div>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	/**

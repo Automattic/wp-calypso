@@ -4,7 +4,6 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
 export default class ActivityMedia extends PureComponent {
@@ -18,14 +17,9 @@ export default class ActivityMedia extends PureComponent {
 
 	render() {
 		const { icon, thumbnail, fullImage, name, className } = this.props;
-		const classes = classNames(
-			'activity-log-item__activity-media',
-			icon && `has-gridicon`,
-			className
-		);
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className={ classes }>
+			<div className={ className }>
 				{ icon && <Gridicon icon={ icon } size={ 48 } /> }
 				{ thumbnail && <img src={ thumbnail } alt={ name } className="is-thumbnail" /> }
 				{ fullImage && <img src={ fullImage } alt={ name } className="is-full-width" /> }
