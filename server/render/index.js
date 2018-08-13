@@ -189,20 +189,6 @@ export function serverRender( req, res ) {
 	res.send( renderJsx( 'index', context ) );
 }
 
-export function serverRenderError( err, req, res, next ) {
-	if ( err ) {
-		if ( process.env.NODE_ENV !== 'production' ) {
-			console.error( err );
-		}
-		req.error = err;
-		res.status( err.status || 500 );
-		res.send( renderJsx( '500', req.context ) );
-		return;
-	}
-
-	next();
-}
-
 /**
  * The fallback middleware which ensures we have value for context.serverSideRender (the most common value). This is
  * executed early in the chain, but the section-specific middlewares may decide to override the value based on their

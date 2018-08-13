@@ -32,7 +32,7 @@ import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
-import { serverRender, serverRenderError, renderJsx } from 'render';
+import { serverRender, renderJsx } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
@@ -496,6 +496,21 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
+function renderServerError( err, req, res, next ) {
+	if ( err ) {
+		if ( process.env.NODE_ENV !== 'production' ) {
+			console.error( err );
+		}
+		req.error = err;
+		res.status( err.status || 500 );
+		const ctx = getDefaultContext( req );
+		res.send( renderJsx( '500', ctx ) );
+		return;
+	}
+
+	next();
+}
+
 /**
  * Sets language properties to context if
  * a WordPress.com language slug is detected in the hostname
@@ -773,7 +788,7 @@ module.exports = function() {
 	app.use( render404 );
 
 	// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
-	app.use( serverRenderError );
+	app.use( renderServerError );
 
 	return app;
 };
