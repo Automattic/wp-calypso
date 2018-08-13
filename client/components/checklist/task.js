@@ -47,8 +47,6 @@ class Task extends PureComponent {
 		const { buttonText = translate( 'Do it!' ) } = this.props;
 		const hasActionlink = completed && completedButtonText;
 
-		const ToggleContainer = onDismiss ? Focusable : 'div';
-
 		return (
 			<CompactCard
 				className={ classNames( 'checklist__task', {
@@ -79,28 +77,25 @@ class Task extends PureComponent {
 						</small>
 					) }
 				</div>
-				<ToggleContainer
-					className="checklist__task-icon"
-					onClick={ onDismiss }
-					aria-pressed={
-						/* eslint-disable-next-line no-nested-ternary */
-						onDismiss ? ( completed ? 'true' : 'false' ) : undefined
-					}
-				>
-					<ScreenReaderText>
-						{ /* eslint-disable no-nested-ternary */
-						onDismiss
-							? completed
-								? translate( 'Mark as uncompleted' )
-								: translate( 'Mark as completed' )
-							: completed
-								? translate( 'Complete' )
-								: translate( 'Not complete' )
-						/* eslint-enable no-nested-ternary */
-						 }
-					</ScreenReaderText>
-					<Gridicon icon="checkmark" size={ 18 } />
-				</ToggleContainer>
+				{ onDismiss ? (
+					<Focusable
+						className="checklist__task-icon"
+						onClick={ onDismiss }
+						aria-pressed={ completed ? 'true' : 'false' }
+					>
+						<ScreenReaderText>
+							{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
+						</ScreenReaderText>
+						<Gridicon icon="checkmark" size={ 18 } />
+					</Focusable>
+				) : (
+					<div className="checklist__task-icon">
+						<ScreenReaderText>
+							{ completed ? translate( 'Complete' ) : translate( 'Not complete' ) }
+						</ScreenReaderText>
+						<Gridicon icon="checkmark" size={ 18 } />
+					</div>
+				) }
 			</CompactCard>
 		);
 	}
