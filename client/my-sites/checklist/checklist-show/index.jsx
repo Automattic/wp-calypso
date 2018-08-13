@@ -30,7 +30,8 @@ class ChecklistShow extends PureComponent {
 	}
 
 	handleAction = id => () => {
-		const { requestTour, siteSlug, tasks, track } = this.props;
+		const { isJetpack, requestTour, siteSlug, track } = this.props;
+		const tasks = isJetpack ? jetpackTasks : wpcomTasks;
 		const task = find( tasks, { id } );
 
 		launchTask( {
@@ -43,7 +44,8 @@ class ChecklistShow extends PureComponent {
 	};
 
 	handleToggle = id => () => {
-		const { notify, siteId, tasks, update } = this.props;
+		const { isJetpack, notify, siteId, update } = this.props;
+		const tasks = isJetpack ? jetpackTasks : wpcomTasks;
 		const task = find( tasks, { id } );
 
 		if ( task && ! task.completed ) {
