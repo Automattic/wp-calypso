@@ -281,7 +281,7 @@
     "eslint-config-wpcalypso": "4.0.0",
     "eslint-eslines": "1.0.0",
     "eslint-plugin-import": "2.13.0",
-    "eslint-plugin-jest": "21.20.2",
+    "eslint-plugin-jest": "21.21.0",
     "eslint-plugin-jsx-a11y": "6.1.1",
     "eslint-plugin-react": "7.10.0",
     "eslint-plugin-wpcalypso": "4.0.1",
