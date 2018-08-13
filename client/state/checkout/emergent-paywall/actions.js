@@ -8,8 +8,8 @@ import { EMERGENT_PAYWALL_RECEIVE, EMERGENT_PAYWALL_REQUEST } from 'state/action
 
 /**
  * Returns an action object to signal the request of the emergent paywall iframe configuration.
- * @param {object} cart Current cart object. See: client/lib/cart/store/index.
- * @param {string} countryCode User's country code
+ * @param {Object} cart Current cart object. See: client/lib/cart/store/index.
+ * @param {String} countryCode User's country code
  * @returns {Object} action object
  */
 export const requestEmergentPaywallConfiguration = ( cart, countryCode ) => ( {
