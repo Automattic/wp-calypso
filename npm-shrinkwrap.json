@@ -5326,9 +5326,9 @@
       }
     },
     "eslint-plugin-wpcalypso": {
-      "version": "4.0.1",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-wpcalypso/-/eslint-plugin-wpcalypso-4.0.1.tgz",
-      "integrity": "sha512-fU5NSc0XGdel/tlEIUoESOdqphBWQN2FfSgXXNHpXKX7ftTcqXacqgzXU8OVziyhXz6s2RUzK0+JSJaNxhZ+Mw==",
+      "version": "4.0.2",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-wpcalypso/-/eslint-plugin-wpcalypso-4.0.2.tgz",
+      "integrity": "sha512-XqsgUlz4kiPppuZBjMMUtcPRsLduxfRBrrBpGGipxQpwCYp1+yPBOwjk17WrR/BeHEw/RJ9+Xrt+F8vrRv2qBw==",
       "dev": true,
       "requires": {
         "requireindex": "^1.1.0"
