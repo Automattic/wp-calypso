@@ -64,10 +64,10 @@ class ActivityLogItem extends Component {
 			actorType,
 			activityMedia,
 		} = this.props.activity;
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				{ activityMedia && (
 					<ActivityMedia
 						className="is-desktop"
@@ -77,14 +77,12 @@ class ActivityLogItem extends Component {
 						fullImage={ false }
 					/>
 				) }
-				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
 						{ this.getActivityDescription() }
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				{ activityMedia && (
 					<ActivityMedia
 						className="is-mobile"
@@ -93,10 +91,10 @@ class ActivityLogItem extends Component {
 						thumbnail={ false }
 						fullImage={ activityMedia.available && activityMedia.medium_url }
 					/>
-					/* eslint-enable wpcalypso/jsx-classname-namespace */
 				) }
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	/**
