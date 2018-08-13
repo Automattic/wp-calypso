@@ -76,10 +76,9 @@ class ChecklistShow extends PureComponent {
 							completedTitle={ task.completedTitle }
 							description={ task.description }
 							duration={ task.duration }
-							id={ task.id }
 							key={ task.id }
-							onAction={ this.handleAction( task.id ) }
-							onToggle={ this.handleToggle( task.id ) }
+							onClick={ this.handleAction( task.id ) }
+							onDismiss={ this.handleToggle( task.id ) }
 							title={ task.title }
 						/>
 					) ) }
