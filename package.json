@@ -278,7 +278,7 @@
     "enzyme-to-json": "3.3.4",
     "eslines": "1.1.0",
     "eslint": "4.19.1",
-    "eslint-config-prettier": "2.9.0",
+    "eslint-config-prettier": "3.0.1",
     "eslint-config-wpcalypso": "4.0.0",
     "eslint-eslines": "1.0.0",
     "eslint-plugin-import": "2.14.0",
