@@ -1,3 +1,5 @@
+/** @format */
+
 // Stats Geochart
 // What're you doing? Zebras can't drive, only penguins and people can drive!
 
@@ -15,7 +17,7 @@
 	.stats-module.is-loading &,
 	.stats-module.has-no-data & {
 		.stats-geochart {
-			display:none;
+			display: none;
 		}
 	}
 }

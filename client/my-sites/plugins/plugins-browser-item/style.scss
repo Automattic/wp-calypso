@@ -1,3 +1,5 @@
+/** @format */
+
 .plugins-browser-item {
 	border-left: 1px solid $gray-lighten-30;
 	box-sizing: border-box;
@@ -18,7 +20,7 @@
 		display: block;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		width: 33.33%;
 
 		&:nth-child( 3n + 1 ) {
@@ -30,7 +32,7 @@
 		}
 	}
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		width: 100%;
 
 		&:nth-child( n + 2 ) {
@@ -97,12 +99,12 @@
 	display: flex;
 	align-items: center;
 	position: absolute;
-		bottom: 16px;
-		right: 16px;
+	bottom: 16px;
+	right: 16px;
 	color: $alert-green;
 	font-size: 12px;
 	font-weight: 500;
-	animation: appear .15s ease-in;
+	animation: appear 0.15s ease-in;
 
 	.gridicon {
 		margin-right: 3px;
@@ -111,6 +113,6 @@
 
 .button.plugins-browser-item__upgrade-button {
 	position: absolute;
-		bottom: 16px;
-		right: 16px;
+	bottom: 16px;
+	right: 16px;
 }

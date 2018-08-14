@@ -1,3 +1,5 @@
+/** @format */
+
 .wizard-progress-bar {
 	align-items: center;
 	display: flex;
@@ -9,7 +11,7 @@
 		right: 0;
 	}
 
-	:not( :first-child) {
+	:not( :first-child ) {
 		margin-left: 15px;
 	}
 

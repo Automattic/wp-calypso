@@ -1,10 +1,12 @@
+/** @format */
+
 .plugin-site-jetpack {
 	padding: 8px;
 	margin: 0;
 
 	.site-icon {
 		display: inline-block;
-		margin-right: 8px
+		margin-right: 8px;
 	}
 
 	&.is-compact .foldable-card__header {
@@ -23,8 +25,8 @@
 
 	.plugin-site__activate-manage {
 		position: absolute;
-			right: 0;
-			top: 0;
+		right: 0;
+		top: 0;
 		margin: 8px;
 		height: 32px;
 		display: flex;
@@ -51,14 +53,14 @@
 }
 
 .plugin-site-jetpack .plugin-action__disabled-info.info-popover .gridicons-info-outline {
-	    transform: translate(2px, -2px);
+	transform: translate( 2px, -2px );
 }
 
 .plugin-site-jetpack__embed-action {
 	height: 32px;
 	position: absolute;
-		top: 8px;
-		right: 8px;
+	top: 8px;
+	right: 8px;
 	display: flex;
 	align-items: center;
 }

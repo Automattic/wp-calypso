@@ -2,6 +2,8 @@
  * Mobile fullscreen mode
  * Includes code to make the Me > Chat section nice on larger breakoints as well,
  * even though we'll be hiding that for the time being.
+ *
+ * @format
  */
 
 .happychat__page {
@@ -18,26 +20,20 @@
 	bottom: 0;
 }
 
-@include breakpoint( ">1040px" ) {
-
+@include breakpoint( '>1040px' ) {
 	.happychat__page .happychat__timeline-message {
 		max-width: 80%;
 	}
-
 }
 
-@include breakpoint( "<960px" ) {
-
+@include breakpoint( '<960px' ) {
 	.happychat__page {
 		left: 229px;
 	}
-
 }
 
-@include breakpoint( "<660px" ) {
-
+@include breakpoint( '<660px' ) {
 	.happychat__page {
-			left: 0;
+		left: 0;
 	}
-
 }

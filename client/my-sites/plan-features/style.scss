@@ -1,3 +1,5 @@
+/** @format */
+
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
@@ -10,7 +12,7 @@ $plan-features-sidebar-width: 272px;
 
 .is-section-plans .plan-features__mobile {
 	display: block;
-	@media (min-width: $plan-features-sidebar-width + 480px) {
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
 		display: none;
 	}
 }
@@ -78,7 +80,7 @@ $plan-features-sidebar-width: 272px;
 
 .is-section-plans .plan-features__table {
 	display: none;
-	@media (min-width: $plan-features-sidebar-width + 480px) {
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
 		display: table;
 	}
 }
@@ -184,7 +186,7 @@ $plan-features-sidebar-width: 272px;
 	background-color: $white;
 
 	@include breakpoint( '<960px' ) {
-		padding: 12px 12px 0 12px;
+		padding: 12px 12px 0;
 	}
 
 	&.is-personal-plan {
@@ -226,7 +228,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-text {
 	flex: 1;
-	padding: 6px 0 0 0;
+	padding: 6px 0 0;
 }
 
 .plan-features__header-title {
@@ -331,14 +333,14 @@ $plan-features-sidebar-width: 272px;
 .plan-features__summary,
 .plan-features__description {
 	margin: 0;
-	padding: 24px 24px 0 24px;
+	padding: 24px 24px 0;
 
 	@include breakpoint( '<1040px' ) {
-		padding: 12px 12px 0 12px;
+		padding: 12px 12px 0;
 	}
 
 	@include breakpoint( '<660px' ) {
-		padding: 20px 20px 0 20px;
+		padding: 20px 20px 0;
 	}
 }
 
@@ -386,14 +388,14 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__actions {
-	padding: 0 24px 24px 24px;
+	padding: 0 24px 24px;
 
 	@include breakpoint( '<1040px' ) {
-		padding: 0 12px 12px 12px;
+		padding: 0 12px 12px;
 	}
 
 	@include breakpoint( '<660px' ) {
-		padding: 0 20px 20px 20px;
+		padding: 0 20px 20px;
 		border-bottom: solid 1px $gray-light;
 	}
 }
@@ -556,7 +558,7 @@ $plan-features-sidebar-width: 272px;
 		margin-top: 8px;
 	}
 
-	.plan-price.is-original:before {
+	.plan-price.is-original::before {
 		border-color: $alert-green;
 	}
 

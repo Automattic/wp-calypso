@@ -1,6 +1,8 @@
-@import "publicize-message";
-@import "publicize-options";
-@import "publicize-services";
+/** @format */
+
+@import 'publicize-message';
+@import 'publicize-options';
+@import 'publicize-services';
 
 .editor-fieldset.editor-sharing__sharing-like-options {
 	margin-top: 0;
@@ -15,7 +17,8 @@
 	text-align: left;
 	text-transform: uppercase;
 
-	&.is-standalone { // 'Sharing' section is hidden
+	&.is-standalone {
+		// 'Sharing' section is hidden
 		border-top: none;
 		margin-top: -16px;
 	}
@@ -27,7 +30,7 @@
 	user-select: none;
 }
 
-input[type="text"].editor-sharing__shortlink-field {
+input[type='text'].editor-sharing__shortlink-field {
 	background: $gray-lighten-30;
 	color: $gray-dark;
 	flex-grow: 1;

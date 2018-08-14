@@ -1,5 +1,6 @@
-.connected-application-item__header {
+/** @format */
 
+.connected-application-item__header {
 	display: flex;
 
 	h3 {
@@ -23,7 +24,7 @@
 		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 
-		&:before {
+		&::before {
 			content: ' ';
 		}
 	}

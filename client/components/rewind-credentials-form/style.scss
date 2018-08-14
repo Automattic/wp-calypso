@@ -1,3 +1,5 @@
+/** @format */
+
 .rewind-credentials-form {
 	.form-fieldset {
 		width: 100%;
@@ -13,7 +15,7 @@
 	}
 }
 
-@include breakpoint( ">960px" ) {
+@include breakpoint( '>960px' ) {
 	.rewind-credentials-form__server-address,
 	.rewind-credentials-form__username,
 	.rewind-credentials-form__password {

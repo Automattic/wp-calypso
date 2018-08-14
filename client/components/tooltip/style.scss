@@ -1,3 +1,5 @@
+/** @format */
+
 .tooltip.popover {
 	.popover__arrow {
 		border-width: 6px;
@@ -119,7 +121,7 @@
 	}
 
 	.popover__inner {
-		border: 0px;
+		border: 0;
 		box-shadow: none;
 		border-radius: 2px;
 		color: $white;

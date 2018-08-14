@@ -1,3 +1,5 @@
+/** @format */
+
 .offline-status {
 	background: $blue-dark;
 	color: $white;
@@ -6,8 +8,8 @@
 	height: 20px;
 	padding: 6px 16px;
 	position: fixed;
-		left: 50%;
-		top: 8px;
+	left: 50%;
+	top: 8px;
 	transform: translateX( -50% );
 	z-index: z-index( 'root', '.offline-status' );
 

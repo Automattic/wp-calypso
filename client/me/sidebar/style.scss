@@ -1,5 +1,7 @@
+/** @format */
+
 .sidebar__me-signout {
-	flex-shrink: 0;	// these are required for the flexed sidebar to not implode in Safari
+	flex-shrink: 0; // these are required for the flexed sidebar to not implode in Safari
 	display: flex;
 	justify-content: center;
 	margin: 0 0 16px;

@@ -1,23 +1,25 @@
+/** @format */
+
 .editor-title {
 	position: relative;
 
 	&.is-loading::before {
 		content: '';
 		position: absolute;
-			top: 6px;
-			right: 14px;
-			bottom: 12px;
-			left: 10px;
+		top: 6px;
+		right: 14px;
+		bottom: 12px;
+		left: 10px;
 		animation: pulse-light 0.8s ease-in-out infinite;
 		background: $gray-lighten-20;
 	}
 
 	.focus-sidebar & {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			margin-left: 52px;
 		}
 
-		@include breakpoint( ">1040px" ) {
+		@include breakpoint( '>1040px' ) {
 			margin-left: 0;
 		}
 	}
@@ -25,11 +27,11 @@
 
 .editor-title .editor-permalink {
 	position: absolute;
-		left: -26px;
-		top: 18px;
+	left: -26px;
+	top: 18px;
 	display: none;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: block;
 	}
 }
@@ -50,7 +52,7 @@
 		box-shadow: none;
 	}
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		font-size: 32px;
 	}
 }

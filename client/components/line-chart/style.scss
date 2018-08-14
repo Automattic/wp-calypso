@@ -1,3 +1,5 @@
+/** @format */
+
 .line-chart__base {
 	cursor: pointer;
 }
@@ -24,7 +26,8 @@
 	stroke-width: 5px;
 }
 
-.line-chart__line-not-selected, .line-chart__area-not-selected {
+.line-chart__line-not-selected,
+.line-chart__area-not-selected {
 	opacity: 0.5;
 }
 
@@ -145,7 +148,7 @@
 	fill: $blue-dark;
 }
 
- .line-chart__legend-sample-1-fill {
+.line-chart__legend-sample-1-fill {
 	fill: $blue-medium;
 }
 

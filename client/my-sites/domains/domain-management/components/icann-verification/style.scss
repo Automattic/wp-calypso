@@ -1,3 +1,5 @@
+/** @format */
+
 .icann-verification__card {
 	.button {
 		margin-bottom: 15px;
@@ -27,7 +29,7 @@
 }
 
 .icann-verification__sent-to {
-	color: 	$gray-darken-20;
+	color: $gray-darken-20;
 	font-size: 14px;
 }
 
@@ -53,7 +55,7 @@
 			margin-right: 0;
 		}
 		&.is-busy:disabled {
-			color: 	$gray-darken-20;
+			color: $gray-darken-20;
 		}
 	}
 
@@ -96,7 +98,6 @@
 		bottom: 0;
 	}
 }
-
 
 @keyframes fadeOut {
 	0% {
