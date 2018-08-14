@@ -14,16 +14,16 @@ import { newPost } from 'lib/paths';
 import userFactory from 'lib/user';
 const user = userFactory();
 import { ipcRenderer as ipc } from 'electron'; // From Electron
-import store from 'store';
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import location from 'lib/route/page-notifier';
 import { getStatsPathForTab } from 'lib/route';
+import { getReduxStore, reduxGetState } from 'lib/redux-bridge';
+import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
 
 /**
  * Module variables
  */
-const widgetDomain = 'https://widgets.wp.com';
 
 const Desktop = {
 	/**
@@ -42,10 +42,8 @@ const Desktop = {
 		ipc.on( 'cookie-auth-complete', this.onCookieAuthComplete.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 
-		window.addEventListener( 'message', this.receiveMessage.bind( this ) );
-
 		// Send some events immediatley - this sets the app state
-		this.sendNotificationCount( store.get( 'wpnotes_unseen_count' ) );
+		this.notificationStatus();
 		this.sendUserLoginStatus();
 
 		location( function( context ) {
@@ -59,22 +57,22 @@ const Desktop = {
 		this.selectedSite = site;
 	},
 
-	receiveMessage: function( event ) {
-		let data;
+	notificationStatus: async function() {
+		let previousHasUnseen = hasUnseenNotifications( reduxGetState() );
 
-		if ( event.origin !== widgetDomain ) {
-			return;
-		}
+		// Send initial status to main process
+		ipc.send( 'unread-notices-count', previousHasUnseen );
 
-		data = JSON.parse( event.data );
+		const store = await getReduxStore();
+		store.subscribe( () => {
+			const hasUnseen = hasUnseenNotifications( reduxGetState() );
 
-		if ( data.type === 'notesIframeMessage' ) {
-			if ( data.action === 'render' ) {
-				this.sendNotificationCount( data.num_new );
-			} else if ( data.action === 'renderAllSeen' ) {
-				this.sendNotificationCount( 0 );
+			if ( hasUnseen !== previousHasUnseen ) {
+				ipc.send( 'unread-notices-count', hasUnseen );
+
+				previousHasUnseen = hasUnseen;
 			}
-		}
+		} );
 	},
 
 	sendUserLoginStatus: function() {
@@ -88,12 +86,6 @@ const Desktop = {
 
 		ipc.send( 'user-login-status', status );
 		ipc.send( 'user-auth', user, oAuthToken.getToken() );
-	},
-
-	sendNotificationCount: function( count ) {
-		debug( 'Sending notification count ' + store.get( 'wpnotes_unseen_count' ) );
-
-		ipc.send( 'unread-notices-count', count );
 	},
 
 	getNotificationLinkElement: function() {
