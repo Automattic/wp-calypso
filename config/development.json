@@ -68,6 +68,7 @@
 		"help": true,
 		"help/courses": true,
 		"i18n/community-translator": false,
+		"import/standalone-section": true,
 		"jetpack/api-cache": true,
 		"jetpack/checklist": true,
 		"jetpack/connect-redirect-pressable-credential-approval": true,

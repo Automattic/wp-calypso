@@ -465,4 +465,13 @@ sections.push( {
 	secondary: true,
 } );
 
+sections.push( {
+	name: 'import',
+	paths: [ '/import' ],
+	module: 'my-sites/import-new',
+	group: 'sites',
+	secondary: true,
+	enableLoggedOut: true,
+} );
+
 module.exports = sections;
