@@ -116,8 +116,8 @@ export const CURRENCIES = {
 	},
 	BRL: {
 		symbol: 'R$',
-		grouping: ',',
-		decimal: '.',
+		grouping: '.',
+		decimal: ',',
 		precision: 2,
 	},
 	BSD: {
