@@ -31,6 +31,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
+import { setUnseenCount } from 'state/notifications';
 
 /**
  * Returns whether or not the browser session
@@ -164,7 +165,12 @@ export class Notifications extends Component {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
 
 		const customMiddleware = {
-			APP_RENDER_NOTES: [ ( store, { newNoteCount } ) => this.props.setIndicator( newNoteCount ) ],
+			APP_RENDER_NOTES: [
+				( store, { newNoteCount } ) => {
+					this.props.setIndicator( newNoteCount );
+					this.props.setUnseenCount( newNoteCount );
+				},
+			],
 			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
 			OPEN_POST: [
 				( store, { siteId, postId, href } ) => {
@@ -251,5 +257,8 @@ export default connect(
 	state => ( {
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
 	} ),
-	{ recordTracksEvent }
+	{
+		recordTracksEvent,
+		setUnseenCount,
+	}
 )( Notifications );
