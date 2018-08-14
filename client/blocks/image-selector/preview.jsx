@@ -9,13 +9,13 @@ import React, { Component } from 'react';
 import { defer, isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import ImagePreloader from 'components/image-preloader';
-import { localize } from 'i18n-calypso';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import Spinner from 'components/spinner';
