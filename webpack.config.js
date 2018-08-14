@@ -76,13 +76,37 @@ const babelLoader = {
 };
 
 /**
+ * Converts @wordpress require into window reference
+ *
+ * Note this isn't the same as camelCase becuase of the
+ * way that numbers don't trigger the capitalized next letter
+ *
+ * @example
+ * wordpressRequire( '@wordpress/api-fetch' ) = 'wp.apiFetch'
+ * wordpressRequire( '@wordpress/i18n' ) = 'wp.i18n'
+ *
+ * @param {string} request import name
+ * @return {string} global variable reference for import
+ */
+const wordpressRequire = request => {
+	const [ , /* @wordpress */ name ] = request.split( '/' );
+
+	return `wp.${ name.replace( /-([a-z])/, ( match, letter ) => letter.toUpperCase() ) }`;
+};
+
+const wordpressExternals = ( context, request, callback ) =>
+	/^@wordpress\//.test( request )
+		? callback( null, `window ${ wordpressRequire( request ) }` )
+		: callback();
+
+/**
  * Return a webpack config object
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
  * @return {object}                     webpack config
  */
-function getWebpackConfig() {
+function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
@@ -260,7 +284,7 @@ function getWebpackConfig() {
 					},
 				} ),
 		] ),
-		externals: [ 'electron' ],
+		externals: [ ...[ externalizeWordPressPackages ? wordpressExternals : [] ], 'electron' ],
 	};
 
 	if ( calypsoEnv === 'desktop' ) {
