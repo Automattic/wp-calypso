@@ -38,7 +38,7 @@ export default class ChecklistExample extends PureComponent {
 				<Button onClick={ this.togglePlaceholder }>
 					{ this.state.showPlaceholder ? 'Hide Placeholder' : 'Show Placeholder' }
 				</Button>
-				<Checklist isPlaceholder={ this.state.showPlaceholder } inferCompletedCount>
+				<Checklist isPlaceholder={ this.state.showPlaceholder }>
 					<Task
 						onClick={ this.getClickHandler( 'reticulateSplines' ) }
 						onDismiss={ this.getToggleHandler( 'reticulateSplines' ) }

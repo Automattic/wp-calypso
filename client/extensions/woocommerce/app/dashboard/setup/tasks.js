@@ -94,10 +94,7 @@ class SetupTasks extends Component {
 		return (
 			<div className="setup__checklist">
 				<QuerySettingsGeneral siteId={ this.props.site.ID } />
-				<Checklist
-					isPlaceholder={ this.props.loading || ! this.props.productsLoaded }
-					inferCompletedCount
-				>
+				<Checklist isPlaceholder={ this.props.loading || ! this.props.productsLoaded }>
 					<Task
 						onClick={ this.getClickHandler(
 							'add-product',

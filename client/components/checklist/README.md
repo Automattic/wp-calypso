@@ -56,7 +56,7 @@ Task title
 ## Usage
 
 ```jsx
-<Checklist inferCompletedCount>
+<Checklist>
 	<Task
 		onClick={ handleSplineClick }
 		onDismiss={ handleSplineDismiss }
