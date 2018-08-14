@@ -1,0 +1,10 @@
+[
+	{
+		"name": "core/button",
+		"attributes": {
+			"text": "Click here",
+			"backgroundColor": "vivid-cyan-blue",
+			"url": "https://wordpress.com"
+		}
+	}
+]

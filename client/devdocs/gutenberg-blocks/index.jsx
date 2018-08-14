@@ -20,6 +20,7 @@ import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 import Collection from 'devdocs/design/search-collection';
 import GutenbergBlockExample from './example';
+import examples from './examples.json';
 
 registerCoreBlocks();
 
@@ -64,15 +65,13 @@ export default class GutenbergBlocks extends React.Component {
 				) }
 
 				<Collection component={ block } filter={ filter } section="gutenberg-blocks">
-					<GutenbergBlockExample
-						asyncName="core/button"
-						name="core/button"
-						attributes={ {
-							text: 'Click here',
-							backgroundColor: 'vivid-cyan-blue',
-							url: 'https://wordpress.com',
-						} }
-					/>
+					{ examples.map( example => (
+						<GutenbergBlockExample
+							asyncName={ example.name }
+							name={ example.name }
+							attributes={ example.attributes }
+						/>
+					) ) }
 				</Collection>
 			</Main>
 		);

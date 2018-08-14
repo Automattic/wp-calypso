@@ -21,7 +21,7 @@ You can use the `GutenbergBlock` component as an abstraction on how to render Gu
 Calypso.
 
 ```jsx 
-import GutenbergBlock from 'gutenberg-blocks';
+import { GutenbergBlock } from 'gutenberg-blocks';
 
 const MyGutenbergBlock = () => (
 	<GutenbergBlock
