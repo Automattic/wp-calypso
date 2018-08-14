@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, filter, includes, map, omit } from 'lodash';
+import { get, includes, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -148,18 +148,16 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 						...importerItem,
 						customData: {
 							...importerItem.customData,
-							sourceAuthors: {
-								...map(
-									get( importerItem, 'customData.sourceAuthors' ),
-									author =>
-										sourceAuthor.id === author.id
-											? {
-													...author,
-													mappedTo: targetAuthor,
-											  }
-											: author
-								),
-							},
+							sourceAuthors: map(
+								get( importerItem, 'customData.sourceAuthors' ),
+								author =>
+									sourceAuthor.id === author.id
+										? {
+												...author,
+												mappedTo: targetAuthor,
+										  }
+										: author
+							),
 						},
 					},
 				},
@@ -173,23 +171,26 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 					isHydrated: true,
 				},
 			};
+			const importerId = get( action, 'importerStatus.importerId' );
 
-			if ( get( newState, [ 'importerLocks', action.importerStatus.importerId ], false ) ) {
+			if ( get( newState, [ 'importerLocks', importerId ] ) ) {
 				return newState;
 			}
 
+			const activeImporters = omitBy(
+				{
+					// filter the original set of importers...
+					...newState.importers,
+					// ...and the importer being received.
+					[ importerId ]: action.importerStatus,
+				},
+				importer =>
+					includes( [ appStates.CANCEL_PENDING, appStates.DEFUNCT ], importer.importerState )
+			);
+
 			return {
 				...newState,
-				importers: {
-					...filter(
-						{
-							...newState.importers,
-							[ action.importerStatus.importerId ]: action.importerStatus,
-						},
-						importer =>
-							includes( [ appStates.CANCEL_PENDING, appStates.DEFUNCT ], importer.importerState )
-					),
-				},
+				importers: activeImporters,
 			};
 		}
 		case IMPORTS_UPLOAD_SET_PROGRESS:
