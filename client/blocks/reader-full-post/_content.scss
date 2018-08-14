@@ -45,7 +45,7 @@
 		}
 	}
 
-	blockquote {
+	blockquote, aside {
 		padding: 0 24px 0 32px;
 		margin: 16px 0 32px;
 		border-left: 3px solid $gray-lighten-30;
@@ -62,7 +62,7 @@
 	img {
 		max-width: 100%;
 		height: auto;
-		display: inline;
+		display: block;
 		margin: auto;
 
 		&.emoji,
@@ -73,7 +73,7 @@
 		}
 	}
 
-	audio {
+	audio, video {
 		display: block;
 		width: 100%;
 		margin: 24px auto;
