@@ -5,8 +5,8 @@
 import page from 'page';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { find, some } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -148,7 +148,7 @@ class ChecklistMain extends PureComponent {
 
 	render() {
 		const { checklistAvailable, displayMode, siteId, tasks, translate } = this.props;
-		const completed = tasks && ! find( tasks, { completed: false } );
+		const completed = tasks && ! some( tasks, { completed: false } );
 
 		let translatedTitle = translate( 'Site Checklist' );
 		let title = 'Site Checklist';
