@@ -29,7 +29,7 @@ class ChecklistShow extends PureComponent {
 		this.props.loadTrackingTool( 'HotJar' );
 	}
 
-	handleAction = task => () => {
+	handleTaskStart = task => () => {
 		const { requestTour, siteSlug, track } = this.props;
 
 		launchTask( {
@@ -68,7 +68,7 @@ class ChecklistShow extends PureComponent {
 							description={ task.description }
 							duration={ task.duration }
 							key={ task.id }
-							onClick={ this.handleAction( task ) }
+							onClick={ this.handleTaskStart( task ) }
 							onDismiss={ this.handleTaskDismiss( task ) }
 							title={ task.title }
 						/>
