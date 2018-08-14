@@ -5,7 +5,6 @@
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:desktop' );
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -16,10 +15,11 @@ const user = userFactory();
 import { ipcRenderer as ipc } from 'electron'; // From Electron
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
-import location from 'lib/route/page-notifier';
 import { getStatsPathForTab } from 'lib/route';
 import { getReduxStore, reduxGetState } from 'lib/redux-bridge';
 import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
+import isNotificationsOpen from 'state/selectors/is-notifications-open';
+import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
 
 /**
  * Module variables
@@ -29,7 +29,7 @@ const Desktop = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 */
-	init: function() {
+	init: async function() {
 		debug( 'Registering IPC listeners' );
 
 		// Register IPC listeners
@@ -39,19 +39,28 @@ const Desktop = {
 		ipc.on( 'new-post', this.onNewPost.bind( this ) );
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
-		ipc.on( 'cookie-auth-complete', this.onCookieAuthComplete.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
+
+		this.store = await getReduxStore();
 
 		// Send some events immediatley - this sets the app state
 		this.notificationStatus();
 		this.sendUserLoginStatus();
-
-		location( function( context ) {
-			ipc.send( 'render', context );
-		} );
 	},
 
 	selectedSite: null,
+
+	navigate: function( to ) {
+		if ( isNotificationsOpen( reduxGetState() ) ) {
+			this.toggleNotificationsPanel();
+		}
+
+		this.store.dispatch( navigate( to ) );
+	},
+
+	toggleNotificationsPanel: function() {
+		this.store.dispatch( toggleNotificationsPanel() );
+	},
 
 	setSelectedSite: function( site ) {
 		this.selectedSite = site;
@@ -63,8 +72,7 @@ const Desktop = {
 		// Send initial status to main process
 		ipc.send( 'unread-notices-count', previousHasUnseen );
 
-		const store = await getReduxStore();
-		store.subscribe( () => {
+		this.store.subscribe( () => {
 			const hasUnseen = hasUnseenNotifications( reduxGetState() );
 
 			if ( hasUnseen !== previousHasUnseen ) {
@@ -88,30 +96,10 @@ const Desktop = {
 		ipc.send( 'user-auth', user, oAuthToken.getToken() );
 	},
 
-	getNotificationLinkElement: function() {
-		return document.querySelector( '.masterbar__item-notifications' );
-	},
-
-	clearNotificationBar: function() {
-		// TODO: find a better way. seems to be react component state based
-		const notificationsLink = this.getNotificationLinkElement();
-		if (
-			notificationsLink &&
-			notificationsLink.className &&
-			notificationsLink.className.indexOf( 'is-active' ) !== -1
-		) {
-			notificationsLink.click();
-		}
-	},
-
 	onToggleNotifications: function() {
-		// TODO: find a better way of doing this - masterbar seems to use state to toggle this
 		debug( 'Toggle notifications' );
 
-		const notificationsLink = this.getNotificationLinkElement();
-		if ( notificationsLink ) {
-			notificationsLink.click();
-		}
+		this.toggleNotificationsPanel();
 	},
 
 	onSignout: function() {
@@ -125,43 +113,31 @@ const Desktop = {
 		const site = this.selectedSite;
 		const siteSlug = site ? site.slug : null;
 
-		this.clearNotificationBar();
-		page( getStatsPathForTab( 'day', siteSlug ) );
+		this.navigate( getStatsPathForTab( 'day', siteSlug ) );
 	},
 
 	onShowReader: function() {
 		debug( 'Showing reader' );
 
-		this.clearNotificationBar();
-		page( '/' );
+		this.navigate( '/' );
 	},
 
 	onShowProfile: function() {
 		debug( 'Showing my profile' );
 
-		this.clearNotificationBar();
-		page( '/me' );
+		this.navigate( '/me' );
 	},
 
 	onNewPost: function() {
 		debug( 'New post' );
 
-		this.clearNotificationBar();
-		page( newPost( this.selectedSite ) );
-	},
-
-	// now that our browser session has a valid wordpress.com cookie, let's force
-	// reload the notifications iframe so wpcom-proxy-request API calls work
-	onCookieAuthComplete: function() {
-		const iframe = document.querySelector( '#wpnt-notes-iframe2' );
-		iframe.src = iframe.src;
+		this.navigate( newPost( this.selectedSite ) );
 	},
 
 	onShowHelp: function() {
 		debug( 'Showing help' );
 
-		this.clearNotificationBar();
-		page( '/help' );
+		this.navigate( '/help' );
 	},
 
 	print: function( title, html ) {
