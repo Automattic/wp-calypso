@@ -133,35 +133,33 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				<Fragment>
-					<CurrentPlanHeader
-						selectedSite={ selectedSite }
-						isPlaceholder={ isLoading }
-						title={ title }
-						tagLine={ tagLine }
-						currentPlanSlug={ currentPlanSlug }
-						currentPlan={ currentPlan }
-						isExpiring={ isExpiring }
-						isAutomatedTransfer={ isAutomatedTransfer }
-						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
-					/>
-					{ isEnabled( 'jetpack/checklist' ) &&
-						isJetpack &&
-						! isAutomatedTransfer && (
-							<Fragment>
-								<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-								<ChecklistShow />
-							</Fragment>
-						) }
-					<div
-						className={ classNames( 'current-plan__header-text current-plan__text', {
-							'is-placeholder': { isLoading },
-						} ) }
-					>
-						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-					</div>
-					<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
-				</Fragment>
+				<CurrentPlanHeader
+					selectedSite={ selectedSite }
+					isPlaceholder={ isLoading }
+					title={ title }
+					tagLine={ tagLine }
+					currentPlanSlug={ currentPlanSlug }
+					currentPlan={ currentPlan }
+					isExpiring={ isExpiring }
+					isAutomatedTransfer={ isAutomatedTransfer }
+					includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
+				/>
+				{ isEnabled( 'jetpack/checklist' ) &&
+					isJetpack &&
+					! isAutomatedTransfer && (
+						<Fragment>
+							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+							<ChecklistShow />
+						</Fragment>
+					) }
+				<div
+					className={ classNames( 'current-plan__header-text current-plan__text', {
+						'is-placeholder': { isLoading },
+					} ) }
+				>
+					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+				</div>
+				<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
