@@ -41,7 +41,7 @@ class ChecklistShow extends PureComponent {
 		} );
 	};
 
-	handleToggle = task => () => {
+	handleTaskDismiss = task => () => {
 		const { notify, siteId, update } = this.props;
 
 		if ( task && ! task.completed ) {
@@ -69,7 +69,7 @@ class ChecklistShow extends PureComponent {
 							duration={ task.duration }
 							key={ task.id }
 							onClick={ this.handleAction( task ) }
-							onDismiss={ this.handleToggle( task ) }
+							onDismiss={ this.handleTaskDismiss( task ) }
 							title={ task.title }
 						/>
 					) ) }
