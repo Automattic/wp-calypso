@@ -40,11 +40,11 @@ class Task extends PureComponent {
 			description,
 			duration,
 			onClick,
-			onDismiss,
 			title,
 			translate,
 		} = this.props;
 		const { buttonText = translate( 'Do it!' ) } = this.props;
+		const onDismiss = ! completed ? this.props.onDismiss : undefined;
 		const hasActionlink = completed && completedButtonText;
 
 		return (

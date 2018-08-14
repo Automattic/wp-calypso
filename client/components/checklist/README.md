@@ -21,7 +21,7 @@ Handle the action button click.
 
 ### `onDismiss { func }`
 
-Handle dismissal (or un-dismissal) click.
+Handle dismissal (or un-dismissal) click. Ignored for completed tasks.
 
 ### `buttonPrimary { bool }`
 
