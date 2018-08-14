@@ -367,7 +367,7 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isJetpack && isEnabled( 'jetpack/checklist' ) ) {
-			return `/plans/my-plan/${ selectedSiteSlug }`;
+			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
