@@ -185,6 +185,7 @@
 	}
 
 	.gravatar,
+	.social-logo,
 	.jetpack-logo {
 		float: left;
 		width: 40px;
@@ -202,6 +203,12 @@
 			height: 24px;
 			margin-right: 8px;
 		}
+	}
+
+	.social-logo {
+		fill: #fff;
+		background: #585c60;
+		border-radius: 50%;
 	}
 
 	.jetpack-logo__icon-circle {
