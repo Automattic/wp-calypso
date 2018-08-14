@@ -36,6 +36,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import PlanSetupHeader from './plan-setup-header';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -133,14 +134,19 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				<CurrentPlanHeader
-					isPlaceholder={ isLoading }
-					title={ title }
-					tagLine={ tagLine }
-					currentPlan={ currentPlan }
-					isExpiring={ isExpiring }
-					siteSlug={ selectedSite ? selectedSite.slug : null }
-				/>
+				{ this.props.showThankYou ? (
+					<PlanSetupHeader />
+				) : (
+					<CurrentPlanHeader
+						isPlaceholder={ isLoading }
+						title={ title }
+						tagLine={ tagLine }
+						currentPlan={ currentPlan }
+						isExpiring={ isExpiring }
+						siteSlug={ selectedSite ? selectedSite.slug : null }
+					/>
+				) }
+
 				{ isEnabled( 'jetpack/checklist' ) &&
 					isJetpack &&
 					! isAutomatedTransfer && (
