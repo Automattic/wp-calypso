@@ -76,8 +76,9 @@ class ChecklistMain extends PureComponent {
 		}
 	}
 
-	renderHeader( completed, displayMode ) {
-		const { translate, isNewlyCreatedSite } = this.props;
+	renderHeader() {
+		const { displayMode, isNewlyCreatedSite, tasks, translate } = this.props;
+		const completed = tasks && ! some( tasks, { completed: false } );
 
 		if ( completed ) {
 			return (
@@ -147,8 +148,7 @@ class ChecklistMain extends PureComponent {
 	}
 
 	render() {
-		const { checklistAvailable, displayMode, siteId, tasks, translate } = this.props;
-		const completed = tasks && ! some( tasks, { completed: false } );
+		const { checklistAvailable, displayMode, siteId, translate } = this.props;
 
 		let translatedTitle = translate( 'Site Checklist' );
 		let title = 'Site Checklist';
@@ -167,7 +167,7 @@ class ChecklistMain extends PureComponent {
 				{ checklistAvailable ? (
 					<Fragment>
 						{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-						{ this.renderHeader( completed, displayMode ) }
+						{ this.renderHeader() }
 						<ChecklistShow />
 					</Fragment>
 				) : (
