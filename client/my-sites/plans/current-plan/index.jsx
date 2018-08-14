@@ -37,14 +37,13 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ChecklistShow from 'my-sites/checklist/checklist-show';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import getCurrentRoute from 'state/selectors/get-current-route';
 
 class CurrentPlan extends Component {
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
 		selectedSite: PropTypes.object,
 		isRequestingSitePlans: PropTypes.bool,
-		path: PropTypes.string,
+		path: PropTypes.string.isRequired,
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
@@ -189,6 +188,5 @@ export default connect( state => {
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		isJetpack,
-		path: getCurrentRoute( state ),
 	};
 } )( localize( CurrentPlan ) );
