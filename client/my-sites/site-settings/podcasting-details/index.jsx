@@ -16,6 +16,7 @@ import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { decodeEntities } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
+import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import Button from 'components/button';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
@@ -197,6 +198,7 @@ class PodcastingDetails extends Component {
 			translate,
 			isPodcastingEnabled,
 			isSavingSettings,
+			plansDataLoaded,
 		} = this.props;
 		const { isCoverImageUploading } = this.state;
 
@@ -228,8 +230,8 @@ class PodcastingDetails extends Component {
 							<PodcastingSupportLink showText={ false } iconSize={ 16 } />
 						</h1>
 					</HeaderCake>
-					{ ! error && (
-						<Fragment>
+					{ ! error &&
+						plansDataLoaded && (
 							<UpgradeNudge
 								plan={ PLAN_PERSONAL }
 								title={ translate( 'Upload Audio with WordPress.com Personal' ) }
@@ -237,10 +239,11 @@ class PodcastingDetails extends Component {
 								feature={ FEATURE_AUDIO_UPLOADS }
 								event="podcasting_details_upload_audio"
 							/>
-							<Card className="podcasting-details__category-wrapper">
-								{ this.renderCategorySetting() }
-							</Card>
-						</Fragment>
+						) }
+					{ ! error && (
+						<Card className="podcasting-details__category-wrapper">
+							{ this.renderCategorySetting() }
+						</Card>
 					) }
 					<Card className={ classes }>{ error || this.renderSettings() }</Card>
 					{ isPodcastingEnabled && (
@@ -497,6 +500,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 		isSavingSettings,
 		newPostUrl,
+		plansDataLoaded: ! isRequestingSitePlans( state, siteId ),
 	};
 } );
 
