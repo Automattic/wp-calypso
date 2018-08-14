@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
  */
 import Gravatar from 'components/gravatar';
 import JetpackLogo from 'components/jetpack-logo';
+import SocialLogo from 'social-logos';
 
 /**
  * Module constants
@@ -32,6 +33,15 @@ const HAPPINESS_ACTOR = (
 	</div>
 );
 
+const WORDPRESS_ACTOR = (
+	<div className="activity-log-item__actor">
+		<SocialLogo icon="wordpress" size={ 40 } />
+		<div className="activity-log-item__actor-info">
+			<div className="activity-log-item__actor-name">WordPress</div>
+		</div>
+	</div>
+);
+
 export default class ActivityActor extends PureComponent {
 	static propTypes = {
 		actor: PropTypes.shape( {
@@ -44,7 +54,9 @@ export default class ActivityActor extends PureComponent {
 
 	render() {
 		const { actorAvatarUrl, actorName, actorRole, actorType } = this.props;
-
+		if ( actorName === 'WordPress' && actorType === 'Application' ) {
+			return WORDPRESS_ACTOR;
+		}
 		if ( actorName === 'Jetpack' && actorType === 'Application' ) {
 			return JETPACK_ACTOR;
 		}
