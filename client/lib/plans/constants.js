@@ -185,7 +185,7 @@ const getPlanPersonalDetails = () => ( {
 			}
 		),
 	// All plan features, used for checking plan abilities
-	getFeatures: () =>
+	getAllFeatures: () =>
 		uniq( [
 			...getPlanPersonalDetails().getDefaultPlanListFeatures(),
 			...getPlanPersonalDetails().getSignupFeatures(),
@@ -243,7 +243,7 @@ const getPlanPremiumDetails = () => ( {
 			}
 		),
 	// All plan features, used for checking plan abilities
-	getFeatures: () =>
+	getAllFeatures: () =>
 		uniq( [
 			...getPlanPremiumDetails().getDefaultPlanListFeatures(),
 			...getPlanPremiumDetails().getPromotedFeatures(),
@@ -334,7 +334,7 @@ const getPlanBusinessDetails = () => ( {
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
 	// All plan features, used for checking plan abilities
-	getFeatures: () =>
+	getAllFeatures: () =>
 		uniq( [
 			...getPlanBusinessDetails().getDefaultPlanListFeatures(),
 			...getPlanBusinessDetails().getPromotedFeatures(),
@@ -411,7 +411,7 @@ export const PLANS_LIST = {
 					'first post in less than five minutes.'
 			),
 		// All plan features, used for checking plan abilities
-		getFeatures: () =>
+		getAllFeatures: () =>
 			uniq( [
 				...PLANS_LIST[ PLAN_FREE ].getDefaultPlanListFeatures(),
 				...PLANS_LIST[ PLAN_FREE ].getSignupFeatures(),
@@ -539,7 +539,7 @@ export const PLANS_LIST = {
 					' — perfectly packaged and optimized for everyone.'
 			),
 		// All plan features, used for checking plan abilities
-		getFeatures: () =>
+		getAllFeatures: () =>
 			uniq( [
 				...PLANS_LIST[ PLAN_JETPACK_FREE ].getDefaultPlanListFeatures(),
 				...PLANS_LIST[ PLAN_JETPACK_FREE ].getSignupFeatures(),
@@ -592,7 +592,7 @@ export const PLANS_LIST = {
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
 		// All plan features, used for checking plan abilities
-		getFeatures: () =>
+		getAllFeatures: () =>
 			uniq( [
 				...PLANS_LIST[ PLAN_JETPACK_PREMIUM ].getDefaultPlanListFeatures(),
 				...PLANS_LIST[ PLAN_JETPACK_PREMIUM ].getSignupFeatures(),
@@ -650,7 +650,7 @@ export const PLANS_LIST = {
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
 		// All plan features, used for checking plan abilities
-		getFeatures: () =>
+		getAllFeatures: () =>
 			uniq( [
 				...PLANS_LIST[ PLAN_JETPACK_PREMIUM_MONTHLY ].getDefaultPlanListFeatures(),
 				...PLANS_LIST[ PLAN_JETPACK_PREMIUM_MONTHLY ].getSignupFeatures(),
@@ -707,7 +707,7 @@ export const PLANS_LIST = {
 				'Your data is being securely backed up and you have access to priority support.'
 			),
 		// All plan features, used for checking plan abilities
-		getFeatures: () =>
+		getAllFeatures: () =>
 			uniq( [
 				...PLANS_LIST[ PLAN_JETPACK_PERSONAL ].getDefaultPlanListFeatures(),
 				...PLANS_LIST[ PLAN_JETPACK_PERSONAL ].getSignupFeatures(),
@@ -752,7 +752,7 @@ export const PLANS_LIST = {
 				'Your data is being securely backed up and you have access to priority support.'
 			),
 		// All plan features, used for checking plan abilities
-		getFeatures: () =>
+		getAllFeatures: () =>
 			uniq( [
 				...PLANS_LIST[ PLAN_JETPACK_PERSONAL_MONTHLY ].getDefaultPlanListFeatures(),
 				...PLANS_LIST[ PLAN_JETPACK_PERSONAL_MONTHLY ].getSignupFeatures(),
@@ -808,7 +808,7 @@ export const PLANS_LIST = {
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
 		// All plan features, used for checking plan abilities
-		getFeatures: () =>
+		getAllFeatures: () =>
 			uniq( [
 				...PLANS_LIST[ PLAN_JETPACK_BUSINESS ].getDefaultPlanListFeatures(),
 				...PLANS_LIST[ PLAN_JETPACK_BUSINESS ].getSignupFeatures(),
@@ -876,7 +876,7 @@ export const PLANS_LIST = {
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
 		// All plan features, used for checking plan abilities
-		getFeatures: () =>
+		getAllFeatures: () =>
 			uniq( [
 				...PLANS_LIST[ PLAN_JETPACK_BUSINESS_MONTHLY ].getDefaultPlanListFeatures(),
 				...PLANS_LIST[ PLAN_JETPACK_BUSINESS_MONTHLY ].getSignupFeatures(),

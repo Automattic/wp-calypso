@@ -70,7 +70,7 @@ export function getPlanPath( plan ) {
 }
 
 export function planHasFeature( plan, feature ) {
-	return includes( get( getPlan( plan ), 'getFeatures', () => [] )(), feature );
+	return includes( get( getPlan( plan ), 'getAllFeatures', () => [] )(), feature );
 }
 
 export function getCurrentTrialPeriodInDays( plan ) {
@@ -383,7 +383,7 @@ export function applyTestFiltersToPlansList( planName, abtest ) {
 	updatePlanDescriptions();
 	updatePlanFeatures();
 
-	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantList;
+	filteredPlanConstantObj.getDefaultPlanListFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
 }

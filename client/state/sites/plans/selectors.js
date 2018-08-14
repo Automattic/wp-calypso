@@ -203,7 +203,7 @@ export function getSitePlanSlug( state, siteId ) {
 
 // Duplicated from lib/plans. Proper solution in https://github.com/Automattic/wp-calypso/pull/9635
 function planHasFeature( plan, feature ) {
-	return includes( get( PLANS_LIST[ plan ], 'getFeatures', () => [] )(), feature );
+	return includes( get( PLANS_LIST[ plan ], 'getAllFeatures', () => [] )(), feature );
 }
 
 /**
