@@ -14,7 +14,7 @@ export Buttons from 'components/button/docs/example';
 export Cards from 'components/card/docs/example';
 export CardHeading from 'components/card-heading/docs/example';
 export Chart from 'components/chart/docs/example';
-export Checklist from 'blocks/checklist/docs/example';
+export Checklist from 'components/checklist/docs/example';
 export ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 export ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 export Collection from 'devdocs/design/search-collection';

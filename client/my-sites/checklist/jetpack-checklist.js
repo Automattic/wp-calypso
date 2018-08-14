@@ -8,14 +8,14 @@ export const tasks = [
 	{
 		id: 'jetpack_brute_force',
 		title: translate( "We've automatically protected you from brute force login attacks." ),
-		completed: true,
 		description: '', // Required prop, item is always complete
+		completed: true,
 	},
 	{
 		id: 'jetpack_spam_filtering',
 		title: translate( "We've automatically turned on spam filtering." ),
-		completed: true,
 		description: '', // Required prop, item is always complete
+		completed: true,
 	},
 	{
 		id: 'jetpack_backups',
@@ -23,11 +23,10 @@ export const tasks = [
 		description: translate(
 			"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
 		),
-		completed: true,
 		completedTitle: translate( 'You turned on backups and scanning.' ),
 		completedButtonText: translate( 'Change' ),
 		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
-		url: '/stats/activity/$siteSlug',
+		tourUrl: '/stats/activity/$siteSlug',
 	},
 	{
 		id: 'jetpack_monitor',
@@ -38,8 +37,8 @@ export const tasks = [
 		completedTitle: translate( 'You turned on Jetpack Monitor.' ),
 		completedButtonText: translate( 'Change' ),
 		duration: translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ),
-		tour: 'jetpackMonitoring',
-		url: '/settings/security/$siteSlug',
+		tourSlug: 'jetpackMonitoring',
+		tourUrl: '/settings/security/$siteSlug',
 	},
 	{
 		id: 'jetpack_plugin_updates',
@@ -50,8 +49,8 @@ export const tasks = [
 		completedTitle: translate( 'You turned on automatic plugin updates.' ),
 		completedButtonText: translate( 'Change' ),
 		duration: translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ),
-		tour: 'jetpackPluginUpdates',
-		url: '/plugins/manage/$siteSlug',
+		tourSlug: 'jetpackPluginUpdates',
+		tourUrl: '/plugins/manage/$siteSlug',
 	},
 	{
 		id: 'jetpack_sign_in',
@@ -62,7 +61,7 @@ export const tasks = [
 		completedTitle: translate( 'You completed your sign in preferences.' ),
 		completedButtonText: translate( 'Change' ),
 		duration: translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ),
-		tour: 'jetpackSignIn',
-		url: '/settings/security/$siteSlug',
+		tourSlug: 'jetpackSignIn',
+		tourUrl: '/settings/security/$siteSlug',
 	},
 ];

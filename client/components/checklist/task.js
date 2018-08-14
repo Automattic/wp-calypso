@@ -1,68 +1,56 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Focusable from 'components/focusable';
 import ScreenReaderText from 'components/screen-reader-text';
 
-export class ChecklistTask extends PureComponent {
+export class Task extends PureComponent {
 	static propTypes = {
-		id: PropTypes.string.isRequired,
-		title: PropTypes.string.isRequired,
-		buttonText: PropTypes.string,
-		buttonPrimary: PropTypes.bool,
-		completedTitle: PropTypes.string,
-		completedButtonText: PropTypes.string,
-		description: PropTypes.string.isRequired,
-		duration: PropTypes.string,
 		completed: PropTypes.bool,
-		onAction: PropTypes.func,
-		onToggle: PropTypes.func,
-	};
+		onClick: PropTypes.func,
+		onDismiss: PropTypes.func,
 
-	static defaultProps = {
-		onClick: noop,
-	};
-
-	handleClick = () => {
-		this.props.onAction( this.props.id );
-	};
-
-	handleToggle = () => {
-		this.props.onToggle( this.props.id );
+		buttonPrimary: PropTypes.bool,
+		completedButtonText: PropTypes.node,
+		completedTitle: PropTypes.node,
+		description: PropTypes.node,
+		duration: PropTypes.string,
+		title: PropTypes.node.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
 		const {
 			buttonPrimary,
 			completed,
-			completedTitle,
 			completedButtonText,
+			completedTitle,
 			description,
 			duration,
+			onClick,
+			onDismiss,
 			title,
 			translate,
 		} = this.props;
 		const { buttonText = translate( 'Do it!' ) } = this.props;
 		const hasActionlink = completed && completedButtonText;
 
+		const ToggleContainer = onDismiss ? Focusable : 'div';
+
 		return (
-			<Card
-				compact
+			<CompactCard
 				className={ classNames( 'checklist__task', {
 					'is-completed': completed,
 					'has-actionlink': hasActionlink,
@@ -70,7 +58,7 @@ export class ChecklistTask extends PureComponent {
 			>
 				<div className="checklist__task-primary">
 					<h3 className="checklist__task-title">
-						<Button borderless className="checklist__task-title-link" onClick={ this.handleClick }>
+						<Button borderless className="checklist__task-title-link" onClick={ onClick }>
 							{ ( completed && completedTitle ) || title }
 						</Button>
 					</h3>
@@ -82,11 +70,7 @@ export class ChecklistTask extends PureComponent {
 					) }
 				</div>
 				<div className="checklist__task-secondary">
-					<Button
-						className="checklist__task-action"
-						onClick={ this.handleClick }
-						primary={ buttonPrimary }
-					>
+					<Button className="checklist__task-action" onClick={ onClick } primary={ buttonPrimary }>
 						{ hasActionlink ? completedButtonText : buttonText }
 					</Button>
 					{ duration && (
@@ -95,19 +79,31 @@ export class ChecklistTask extends PureComponent {
 						</small>
 					) }
 				</div>
-				<Focusable
+				<ToggleContainer
 					className="checklist__task-icon"
-					onClick={ this.handleToggle }
-					aria-pressed={ completed ? 'true' : 'false' }
+					onClick={ onDismiss }
+					aria-pressed={
+						/* eslint-disable-next-line no-nested-ternary */
+						onDismiss ? ( completed ? 'true' : 'false' ) : undefined
+					}
 				>
 					<ScreenReaderText>
-						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
+						{ /* eslint-disable no-nested-ternary */
+						onDismiss
+							? completed
+								? translate( 'Mark as uncompleted' )
+								: translate( 'Mark as completed' )
+							: completed
+								? translate( 'Complete' )
+								: translate( 'Not complete' )
+						/* eslint-enable no-nested-ternary */
+						 }
 					</ScreenReaderText>
-					{ <Gridicon icon="checkmark" size={ 18 } /> }
-				</Focusable>
-			</Card>
+					<Gridicon icon="checkmark" size={ 18 } />
+				</ToggleContainer>
+			</CompactCard>
 		);
 	}
 }
 
-export default localize( ChecklistTask );
+export default localize( Task );
