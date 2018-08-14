@@ -86,7 +86,7 @@ const mapStateToProps = state => {
 		isJetpack: isJetpackSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ], null ),
+		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 	};
 };
 
