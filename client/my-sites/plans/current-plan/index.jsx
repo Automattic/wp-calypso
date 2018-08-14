@@ -49,6 +49,7 @@ class CurrentPlan extends Component {
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
 		isAutomatedTransfer: PropTypes.bool,
+		showThankYou: PropTypes.bool,
 	};
 
 	isLoading() {

@@ -31,6 +31,11 @@ export function currentPlan( context, next ) {
 		return null;
 	}
 
-	context.primary = <CurrentPlan path={ context.path } />;
+	context.primary = (
+		<CurrentPlan
+			path={ context.path }
+			showThankYou={ context.query.hasOwnProperty( 'thank-you' ) }
+		/>
+	);
 	next();
 }
