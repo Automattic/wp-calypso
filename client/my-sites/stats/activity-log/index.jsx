@@ -62,6 +62,7 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
+import { isMobile } from 'lib/viewport';
 
 const PAGE_SIZE = 20;
 
@@ -426,6 +427,7 @@ class ActivityLog extends Component {
 				) : (
 					<div>
 						<Pagination
+							compact={ isMobile() }
 							className="activity-log__pagination"
 							key="activity-list-pagination-top"
 							nextLabel={ translate( 'Older' ) }
@@ -453,6 +455,7 @@ class ActivityLog extends Component {
 						</section>
 						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
+							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
 							nextLabel={ translate( 'Older' ) }
