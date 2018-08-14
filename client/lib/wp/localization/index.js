@@ -5,6 +5,7 @@
  */
 
 import { parse, stringify } from 'qs';
+import { getLocaleSlug } from 'lib/i18n-utils';
 
 /**
  * Internal dependencies
@@ -89,7 +90,9 @@ export function injectLocalization( wpcom ) {
 export function bindState( store ) {
 	function setLocaleFromState() {
 		setLocale(
-			getCurrentUserLocaleVariant( store.getState() ) || getCurrentUserLocale( store.getState() )
+			getCurrentUserLocaleVariant( store.getState() ) ||
+				getCurrentUserLocale( store.getState() ) ||
+				getLocaleSlug()
 		);
 	}
 
