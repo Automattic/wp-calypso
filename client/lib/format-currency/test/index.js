@@ -59,7 +59,7 @@ describe( 'formatCurrency', () => {
 		} );
 		test( 'BRL', () => {
 			const money = formatCurrency( 9800900.32, 'BRL' );
-			expect( money ).to.equal( 'R$9,800,900.32' );
+			expect( money ).to.equal( 'R$9.800.900,32' );
 		} );
 	} );
 
@@ -153,8 +153,8 @@ describe( 'formatCurrency', () => {
 				const money = getCurrencyObject( 9800900.32, 'BRL' );
 				expect( money ).to.eql( {
 					symbol: 'R$',
-					integer: '9,800,900',
-					fraction: '.32',
+					integer: '9.800.900',
+					fraction: ',32',
 					sign: '',
 				} );
 			} );
