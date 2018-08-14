@@ -67,6 +67,7 @@ export default class GutenbergBlocks extends React.Component {
 				<Collection component={ block } filter={ filter } section="gutenberg-blocks">
 					{ examples.map( example => (
 						<GutenbergBlockExample
+							key={ example.name }
 							asyncName={ example.name }
 							name={ example.name }
 							attributes={ example.attributes }

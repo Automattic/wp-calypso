@@ -4,7 +4,8 @@
 		"attributes": {
 			"text": "Click here",
 			"backgroundColor": "vivid-cyan-blue",
-			"url": "https://wordpress.com"
+			"url": "https://wordpress.com",
+			"title": "Visit WordPress.com"
 		}
 	}
 ]
