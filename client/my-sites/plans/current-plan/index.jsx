@@ -37,13 +37,14 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ChecklistShow from 'my-sites/checklist/checklist-show';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 class CurrentPlan extends Component {
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
 		selectedSite: PropTypes.object,
 		isRequestingSitePlans: PropTypes.bool,
-		context: PropTypes.object,
+		path: PropTypes.string,
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
@@ -84,12 +85,12 @@ class CurrentPlan extends Component {
 			selectedSite,
 			selectedSiteId,
 			domains,
-			context,
 			currentPlan,
 			hasDomainsLoaded,
 			isAutomatedTransfer,
 			isExpiring,
 			isJetpack,
+			path,
 			shouldShowDomainWarnings,
 			translate,
 		} = this.props;
@@ -114,7 +115,7 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<PlansNavigation path={ context.path } selectedSite={ selectedSite } />
+				<PlansNavigation path={ path } selectedSite={ selectedSite } />
 
 				{ showDomainWarnings && (
 					<DomainWarnings
@@ -169,7 +170,7 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect( state => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
@@ -182,12 +183,12 @@ export default connect( ( state, ownProps ) => {
 		selectedSiteId,
 		domains,
 		isAutomatedTransfer,
-		context: ownProps.context,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		isJetpack,
+		path: getCurrentRoute( state ),
 	};
 } )( localize( CurrentPlan ) );
