@@ -34,6 +34,7 @@ export class ImageSelectorPreview extends Component {
 
 	state = {
 		images: [],
+		transientImages: {},
 	};
 
 	componentDidMount() {
@@ -51,6 +52,17 @@ export class ImageSelectorPreview extends Component {
 	componentWillUnmount() {
 		MediaStore.off( 'change', this.updateImageState );
 	}
+
+	setTransientImages = () => {
+		const newTransientImages = {};
+		this.state.images.forEach( image => {
+			if ( image.transient ) {
+				const media = MediaStore.get( this.props.siteId, image.ID );
+				newTransientImages[ media.ID ] = image.URL;
+			}
+		} );
+		this.setState( { transientImages: { ...this.state.transientImages, ...newTransientImages } } );
+	};
 
 	fetchImages = () => {
 		// We may not necessarily need to trigger a network request if we
@@ -75,6 +87,7 @@ export class ImageSelectorPreview extends Component {
 
 	updateImageState = callback => {
 		const { itemIds, onImageChange, siteId } = this.props;
+		this.setTransientImages();
 		const images = uniq(
 			itemIds
 				.map( id => {
@@ -110,22 +123,18 @@ export class ImageSelectorPreview extends Component {
 		} );
 	};
 
-	renderPlaceholder = image => {
-		const { placeholder } = image;
-		return (
-			<figure>
-				<img src={ placeholder || '' } alt="" />
-			</figure>
-		);
+	renderPlaceholder = ID => {
+		let placeholder = <Spinner />;
+		if ( this.state.transientImages[ ID ] ) {
+			placeholder = <img src={ this.state.transientImages[ ID ] } alt="placeholder" />;
+		}
+		return placeholder;
 	};
 
-	renderUploaded = ( { URL, placeholder } ) => {
+	renderUploaded = ( { URL, ID } ) => {
 		return (
 			<figure>
-				<ImagePreloader
-					src={ URL }
-					placeholder={ placeholder ? <img src={ placeholder } alt="" /> : <span /> }
-				/>
+				<ImagePreloader src={ URL } placeholder={ this.renderPlaceholder( ID ) } />
 			</figure>
 		);
 	};
@@ -154,7 +163,7 @@ export class ImageSelectorPreview extends Component {
 					data-tip-target="image-selector-image"
 				>
 					<Spinner />
-					{ src ? this.renderUploaded( image ) : this.renderPlaceholder( image ) }
+					{ src ? this.renderUploaded( image ) : <span /> }
 					{ showEditIcon && <Gridicon icon="pencil" className="image-selector__edit-icon" /> }
 				</Button>
 				<Button
