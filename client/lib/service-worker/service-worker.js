@@ -103,9 +103,6 @@ self.addEventListener( 'message', function( event ) {
 
 /* eslint-disable */
 self.addEventListener( 'fetch', function( event ) {
-	// console.warn( 'fetch', event );
-	// event.respondWith(
-	//   // magic goes here
-	// );
+	// this listener is required for "Add to Home Screen" support
 } );
 /* eslint-enable */
