@@ -20,6 +20,7 @@ import ImageSelectorDropZoneIcon from './dropzone-icon';
 
 import { receiveMedia, deleteMedia } from 'state/media/actions';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 
 class ImageSelectorDropZone extends Component {
 	static propTypes = {
@@ -83,8 +84,6 @@ class ImageSelectorDropZone extends Component {
 				icon={ <ImageSelectorDropZoneIcon /> }
 				textLabel={ this.props.translate( 'Add Image' ) }
 				onFilesDrop={ this.onFilesDrop }
-				site={ this.props.site }
-				siteId={ this.props.siteId }
 			/>
 		);
 	}
@@ -92,16 +91,14 @@ class ImageSelectorDropZone extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const { site, siteId } = ownProps;
+		const { siteId } = ownProps;
 		const props = {
 			siteId: getSelectedSiteId( state ),
 			site: getSelectedSite( state ),
 		};
-		if ( site ) {
-			props.site = site;
-		}
 		if ( siteId ) {
 			props.siteId = siteId;
+			props.site = getSite( state, siteId );
 		}
 		return props;
 	},

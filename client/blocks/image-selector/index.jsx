@@ -21,7 +21,7 @@ import MediaActions from 'lib/media/actions';
 import MediaModal from 'post-editor/media-modal';
 import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class ImageSelector extends Component {
 	static propTypes = {
@@ -38,7 +38,6 @@ export class ImageSelector extends Component {
 		previewClassName: PropTypes.string,
 		selecting: PropTypes.bool,
 		showEditIcon: PropTypes.bool,
-		site: PropTypes.object,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
@@ -150,14 +149,7 @@ export class ImageSelector extends Component {
 	}
 
 	render() {
-		const {
-			className,
-			hasDropZone,
-			imageIds,
-			isImageSelectorDropZoneVisible,
-			site,
-			siteId,
-		} = this.props;
+		const { className, hasDropZone, imageIds, isImageSelectorDropZoneVisible, siteId } = this.props;
 		const classes = classnames( 'image-selector', className, {
 			'is-assigned': !! imageIds && imageIds.length,
 			'has-active-drop-zone': hasDropZone && isImageSelectorDropZoneVisible,
@@ -168,7 +160,7 @@ export class ImageSelector extends Component {
 				{ this.renderMediaModal() }
 				<div className="image-selector__inner-content">{ this.renderSelectedImages() }</div>
 				{ hasDropZone && (
-					<ImageSelectorDropZone onDroppedImage={ this.addImage } site={ site } siteId={ siteId } />
+					<ImageSelectorDropZone onDroppedImage={ this.addImage } siteId={ siteId } />
 				) }
 			</div>
 		);
@@ -176,16 +168,12 @@ export class ImageSelector extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const { site, siteId } = ownProps;
+	const { siteId } = ownProps;
 	const props = {
 		siteId: getSelectedSiteId( state ),
-		site: getSelectedSite( state ),
 		isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
 	};
 
-	if ( site ) {
-		props.site = site;
-	}
 	if ( siteId ) {
 		props.siteId = siteId;
 	}

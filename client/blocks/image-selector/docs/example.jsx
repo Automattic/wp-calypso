@@ -12,7 +12,6 @@ import { get } from 'lodash';
  */
 import ImageSelector from 'blocks/image-selector';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSite } from 'state/sites/selectors';
 
 class ImageSelectorExample extends Component {
 	constructor( props ) {
@@ -52,12 +51,11 @@ class ImageSelectorExample extends Component {
 
 	render() {
 		const imageIds = this.state.imageIds;
-		const { site, siteId } = this.props;
+		const { siteId } = this.props;
 
 		return (
 			<div className="docs__design-image-selector">
 				<ImageSelector
-					site={ site }
 					siteId={ siteId }
 					compact={ imageIds && imageIds.length > 0 }
 					imageIds={ imageIds }
@@ -76,10 +74,8 @@ class ImageSelectorExample extends Component {
 
 const ConnectedImageSelectorExample = connect( state => {
 	const siteId = get( getCurrentUser( state ), 'primary_blog', null );
-	const site = getSite( state, siteId );
 
 	return {
-		site,
 		siteId,
 	};
 } )( ImageSelectorExample );
