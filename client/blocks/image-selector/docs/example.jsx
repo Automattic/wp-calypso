@@ -65,7 +65,7 @@ class ImageSelectorExample extends Component {
 					onImageChange={ this.changeImages }
 					onRemoveImage={ this.removeImage }
 					onAddImage={ this.addImage }
-					multiple={ true }
+					multiple
 					showEditIcon={ true }
 					hasDropZone
 				/>
