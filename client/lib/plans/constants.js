@@ -210,7 +210,7 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_ALL_FREE_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -272,7 +272,7 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -362,7 +362,7 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
-	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ],
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
