@@ -12,10 +12,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPostStats from 'components/data/query-post-stats';
 import PostLikesPopover from 'blocks/post-likes/popover';
 import { getNormalizedPost } from 'state/posts/selectors';
-import { getPostStat } from 'state/stats/posts/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -120,11 +118,8 @@ class PostActionCounts extends PureComponent {
 	}
 
 	render() {
-		const { postId, siteId } = this.props;
-
 		return (
 			<ul className="post-action-counts">
-				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } fields={ [ 'views' ] } /> }
 				{ this.renderLikeCount() }
 				{ this.renderCommentCount() }
 			</ul>
@@ -160,7 +155,6 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			type: get( post, 'type', 'unknown' ),
-			viewCount: getPostStat( state, siteId, postId, 'views' ),
 			isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
 		};
 	},
