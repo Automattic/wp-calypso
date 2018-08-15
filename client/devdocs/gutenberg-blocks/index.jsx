@@ -20,7 +20,7 @@ import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 import Collection from 'devdocs/design/search-collection';
 import GutenbergBlockExample from './example';
-import examples from './examples.json';
+import examples from './examples';
 
 registerCoreBlocks();
 
