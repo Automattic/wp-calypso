@@ -73,7 +73,7 @@ yargs
 				type: 'boolean',
 			},
 			'namespace': {
-				description: 'Wheater CSS be namespaced.',
+				description: 'Whether CSS should be namespaced.',
 				type: 'boolean',
 			},
 		} ),
