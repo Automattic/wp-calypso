@@ -106,7 +106,7 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
- * @param {object}  env additional                   config options
+ * @param {object}  env                              additional config options
  * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
  * @param {object}  argv                             given by webpack?
  *
