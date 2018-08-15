@@ -32,7 +32,7 @@ export default {
 			return null;
 		}
 
-		context.primary = <CurrentPlan context={ context } />;
+		context.primary = <CurrentPlan path={ context.path } />;
 		next();
 	},
 };

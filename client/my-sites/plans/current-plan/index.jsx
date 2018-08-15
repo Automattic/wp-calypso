@@ -43,7 +43,7 @@ class CurrentPlan extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSite: PropTypes.object,
 		isRequestingSitePlans: PropTypes.bool,
-		context: PropTypes.object,
+		path: PropTypes.string.isRequired,
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
@@ -84,12 +84,12 @@ class CurrentPlan extends Component {
 			selectedSite,
 			selectedSiteId,
 			domains,
-			context,
 			currentPlan,
 			hasDomainsLoaded,
 			isAutomatedTransfer,
 			isExpiring,
 			isJetpack,
+			path,
 			shouldShowDomainWarnings,
 			translate,
 		} = this.props;
@@ -114,7 +114,7 @@ class CurrentPlan extends Component {
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				<PlansNavigation path={ context.path } selectedSite={ selectedSite } />
+				<PlansNavigation path={ path } selectedSite={ selectedSite } />
 
 				{ showDomainWarnings && (
 					<DomainWarnings
@@ -167,7 +167,7 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+export default connect( state => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
@@ -180,7 +180,6 @@ export default connect( ( state, ownProps ) => {
 		selectedSiteId,
 		domains,
 		isAutomatedTransfer,
-		context: ownProps.context,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
