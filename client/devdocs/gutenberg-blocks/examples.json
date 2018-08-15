@@ -77,5 +77,26 @@
 			"showDownloadButton": true,
 			"downloadButtonText": "Download"
 		}
+	},
+	{
+		"name": "core/gallery",
+		"attributes": {
+			"images": [
+				{
+					"url": "https://cldup.com/n0g6ME5VKC.jpg",
+					"caption": "Image 1"
+				},
+				{
+					"url": "https://cldup.com/ZjESfxPI3R.jpg",
+					"caption": "Image 2"
+				},
+				{
+					"url": "https://cldup.com/EKNF8xD2UM.jpg",
+					"caption": "Image 3"
+				}
+			],
+			"columns": 2,
+			"imageCrop": true
+		}
 	}
 ]
