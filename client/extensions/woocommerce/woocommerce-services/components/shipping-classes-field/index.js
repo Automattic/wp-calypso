@@ -13,7 +13,6 @@ import { uniqBy, map } from 'lodash';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import TokenField from 'components/token-field';
-import FieldError from '../field-error';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 export default class ShippingClassesField extends React.Component {
@@ -23,13 +22,11 @@ export default class ShippingClassesField extends React.Component {
 		description: PropTypes.string,
 		value: PropTypes.array.isRequired,
 		updateValue: PropTypes.func,
-		error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		className: PropTypes.string,
 		options: PropTypes.array,
 	};
 
 	render() {
-		const { id, title, description, value, placeholder, error, className, options } = this.props;
+		const { id, title, description, value, placeholder, options } = this.props;
 
 		// If there are no shipping classes, no input for them is needed.
 		if ( false === options || 0 === options.length ) {
@@ -37,7 +34,7 @@ export default class ShippingClassesField extends React.Component {
 		}
 
 		return (
-			<FormFieldset className={ className }>
+			<FormFieldset>
 				<FormLabel htmlFor={ id }>{ title }</FormLabel>
 				<TokenField
 					id={ id }
@@ -45,13 +42,10 @@ export default class ShippingClassesField extends React.Component {
 					placeholder={ placeholder }
 					value={ map( value, this.getNameFromId ) }
 					suggestions={ uniqBy( map( options, option => option.name ) ) }
-					isError={ Boolean( error ) }
 					onChange={ this.onChange }
 					displayTransform={ this.transformForDisplay }
 				/>
-				{ error && typeof error === 'string' && <FieldError text={ error } /> }
-				{ ! error &&
-					description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
+				{ description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
 			</FormFieldset>
 		);
 	}
