@@ -135,4 +135,26 @@ export default [
 			values: [ <li>Item 1</li>, <li>Item 2</li> ],
 		},
 	},
+	{
+		name: 'core/paragraph',
+		attributes: {
+			align: 'center',
+			content: 'This is a paragraph',
+			dropCap: false,
+		},
+	},
+	{
+		name: 'core/preformatted',
+		attributes: {
+			content: 'Text with\nspacings\n\tand tabs',
+		},
+	},
+	{
+		name: 'core/pullquote',
+		attributes: {
+			value: [ { children: 'Code is poetry' } ],
+			citation: [ 'The WordPress community' ],
+			align: 'center',
+		},
+	},
 ];
