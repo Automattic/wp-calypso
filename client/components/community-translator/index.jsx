@@ -31,65 +31,36 @@ class CommunityTranslator extends Component {
 		this.setLanguage();
 
 		// wrap translations from i18n
-		i18n.registerTranslateHook( ( translation, options ) =>
-			this.wrapTranslation( options.original, translation, options )
-		);
+		i18n.registerTranslateHook( this.wrapTranslation );
 
 		// callback when translated component changes.
 		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 		i18n.registerComponentUpdateHook( () => {} );
-		i18n.on( 'change', this.refresh );
-		user.on( 'change', this.refresh );
-		userSettings.on( 'change', this.refresh );
+		i18n.on( 'change', this.setLanguage );
+		user.on( 'change', this.setLanguage );
+		userSettings.on( 'change', this.setLanguage );
 	}
 
 	componentWillUnmount() {
-		i18n.off( 'change', this.refresh );
-		user.removeListener( 'change', this.refresh );
-		userSettings.removeListener( 'change', this.refresh );
+		i18n.off( 'change', this.setLanguage );
+		user.off( 'change', this.setLanguage );
+		userSettings.off( 'change', this.setLanguage );
 	}
 
-	setLanguage() {
+	setLanguage = () => {
 		this.languageJson = i18n.getLocale() || { '': {} };
 		const { localeSlug, localeVariant } = this.languageJson[ '' ];
 		this.localeCode = localeVariant || localeSlug;
 		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
-	}
-
-	refresh = () => {
-		if ( this.initialized ) {
-			return;
-		}
-
-		if ( ! userSettings.getSettings() ) {
-			debug( 'initialization failed because userSettings are not ready' );
-			return;
-		}
-
-		if ( ! isCommunityTranslatorEnabled() ) {
-			debug( 'not initializing, not enabled' );
-			return;
-		}
-
-		this.setLanguage();
-
-		if ( ! this.localeCode || ! this.languageJson ) {
-			debug( 'trying to initialize translator without loaded language' );
-			return;
-		}
-
-		debug( 'Successfully initialized' );
-		this.initialized = true;
 	};
 
 	/**
 	 * Wraps translation in a DOM object and attaches `toString()` method in case in can't be rendered
-	 * @param { String } originalFromPage - original string
 	 * @param { String } displayedTranslationFromPage - translated string
 	 * @param  { Object } optionsFromPage - i18n.translate options
 	 * @returns {Object} DOM object
 	 */
-	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
+	wrapTranslation = ( displayedTranslationFromPage, optionsFromPage ) => {
 		if ( ! isCommunityTranslatorEnabled() ) {
 			return displayedTranslationFromPage;
 		}
@@ -97,6 +68,8 @@ class CommunityTranslator extends Component {
 		if ( 'object' !== typeof optionsFromPage ) {
 			optionsFromPage = {};
 		}
+
+		const originalFromPage = optionsFromPage.original;
 
 		if ( 'string' !== typeof originalFromPage ) {
 			debug( 'unknown original format' );
@@ -150,7 +123,7 @@ class CommunityTranslator extends Component {
 		Object.freeze( translatableElement );
 
 		return translatableElement;
-	}
+	};
 
 	render() {
 		return null;
