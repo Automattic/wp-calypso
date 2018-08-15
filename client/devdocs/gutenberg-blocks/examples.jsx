@@ -199,4 +199,41 @@ export default [
 			hasFixedLayout: true,
 		},
 	},
+	{
+		name: 'core/text-columns',
+		attributes: {
+			content: [ { children: 'Column 1' }, { children: 'Column 2' } ],
+			columns: 2,
+			width: 'center',
+		},
+	},
+	{
+		name: 'core/verse',
+		attributes: {
+			content:
+				'An old silent pond...\n' +
+				'A frog jumps into the pond,\n' +
+				'splash! Silence again.\n' +
+				'\n' +
+				'Autumn moonlight—\n' +
+				'a worm digs silently\n' +
+				'into the chestnut.\n' +
+				'\n' +
+				'In the twilight rain\n' +
+				'these brilliant-hued hibiscus —\n' +
+				'A lovely sunset.',
+			textAlign: 'center',
+		},
+	},
+	{
+		name: 'core/video',
+		attributes: {
+			autoplay: false,
+			caption: '',
+			controls: true,
+			loop: false,
+			muted: false,
+			src: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.ogv',
+		},
+	},
 ];
