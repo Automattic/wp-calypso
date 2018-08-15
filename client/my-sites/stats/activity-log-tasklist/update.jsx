@@ -22,7 +22,6 @@ class ActivityLogTaskUpdate extends Component {
 		slug: PropTypes.string,
 		version: PropTypes.string,
 		type: PropTypes.string,
-		updateType: PropTypes.string,
 
 		linked: PropTypes.bool,
 		goToPage: PropTypes.func,
@@ -42,17 +41,15 @@ class ActivityLogTaskUpdate extends Component {
 	handleNameClick = () => this.props.goToPage( this.props.slug, this.props.type );
 
 	render() {
-		const {
-			translate,
-			name,
-			version,
-			type,
-			updateType,
-			disable,
-			linked,
-			slug,
-			siteSlug,
-		} = this.props;
+		const { translate, name, version, type, disable, linked, slug, siteSlug } = this.props;
+
+		let updateType = translate( 'Plugin update available' );
+		if ( 'theme' === type ) {
+			updateType = translate( 'Theme update available' );
+		} else if ( 'core' === type ) {
+			updateType = translate( 'Core update available' );
+		}
+
 		const url =
 			'plugin' === type ? `/plugins/${ slug }/${ siteSlug }` : `/theme/${ slug }/${ siteSlug }`;
 		return (
