@@ -47,7 +47,7 @@ const build = ( target, argv ) => {
 	const compiler = webpack( config );
 
 	// watch takes an additional argument, adjust accordingly
-	const runner = argv.watch ? f => compiler.watch( {}, f ) : f => compiler.run( f );
+	const runner = f => argv.watch ? compiler.watch( {}, f ) : compiler.run( f );
 
 	runner( ( error, stats ) => {
 		if ( error ) {

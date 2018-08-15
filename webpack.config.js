@@ -78,7 +78,7 @@ const babelLoader = {
 /**
  * Converts @wordpress require into window reference
  *
- * Note this isn't the same as camelCase becuase of the
+ * Note this isn't the same as camel case because of the
  * way that numbers don't trigger the capitalized next letter
  *
  * @example
@@ -89,14 +89,16 @@ const babelLoader = {
  * @return {string} global variable reference for import
  */
 const wordpressRequire = request => {
-	const [ , /* @wordpress */ name ] = request.split( '/' );
+	// @wordpress/components -> [ @wordpress, components ]
+	const [ , name ] = request.split( '/' );
 
-	return `wp.${ name.replace( /-([a-z])/, ( match, letter ) => letter.toUpperCase() ) }`;
+	// components -> wp.components
+	return `wp.${ name.replace( /-([a-z])/g, ( match, letter ) => letter.toUpperCase() ) }`;
 };
 
 const wordpressExternals = ( context, request, callback ) =>
 	/^@wordpress\//.test( request )
-		? callback( null, `window ${ wordpressRequire( request ) }` )
+		? callback( null, `root ${ wordpressRequire( request ) }` )
 		: callback();
 
 /**
@@ -104,8 +106,13 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
- * @return {object}                     webpack config
+ * @param {object}  env additional                   config options
+ * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
+ * @param {object}  argv                             given by webpack?
+ *
+ * @return {object}                                  webpack config
  */
+// eslint-disable-next-line no-unused-vars
 function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
@@ -284,7 +291,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					},
 				} ),
 		] ),
-		externals: [ ...[ externalizeWordPressPackages ? wordpressExternals : [] ], 'electron' ],
+		externals: _.compact( [ externalizeWordPressPackages && wordpressExternals, 'electron' ] ),
 	};
 
 	if ( calypsoEnv === 'desktop' ) {
