@@ -2,7 +2,7 @@
  * Publicize store for connection data
  *
  * Implements reducer, actions, and selector
- * for 'jetpack/publicize' store.
+ * for 'a8c/publicize' store.
  *
  * @since  5.9.1
  */

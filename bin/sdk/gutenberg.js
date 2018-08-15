@@ -72,7 +72,7 @@ exports.compile = args => {
 	};
 
 	const name = path.basename( path.dirname( options.editorScript ).replace( /\/$/, '' ) );
-	const baseConfig = getBaseConfig( { extensionName: name } );
+	const baseConfig = getBaseConfig();
 
 	const config = {
 		...baseConfig,

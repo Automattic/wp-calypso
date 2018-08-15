@@ -6,7 +6,7 @@
 import MarkdownPreview from './components/markdown-renderer';
 
 function JetpackMarkdownBlockSave( { attributes, className } ) {
-	return <MarkdownPreview className={ `${ className }-renderer` } source={ attributes.source } />;
+	return <MarkdownPreview className={ className } source={ attributes.source } />;
 }
 
 export default JetpackMarkdownBlockSave;

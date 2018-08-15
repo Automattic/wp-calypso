@@ -110,10 +110,10 @@ class TiledGalleryLayoutSquare extends Component {
 
 	render() {
 		const rows = this.computeItems();
-		const linkTo = this.props.linkTo;
+		const { linkTo, className } = this.props;
 
 		return (
-			<div className="tiled-gallery">
+			<div className={ className }>
 				<div className="tiled-gallery-square tiled-gallery-unresized" data-original-width={ CONTENT_WIDTH }>
 					{ rows.map( ( row, index ) => {
 						const styleAttr = {
