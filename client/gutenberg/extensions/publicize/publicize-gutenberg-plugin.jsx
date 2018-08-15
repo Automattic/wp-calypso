@@ -56,8 +56,8 @@ const PluginRender = () => (
 	</Fragment>
 );
 
-registerPlugin( 'jetpack-publicize', {
+registerPlugin( 'a8c/publicize', {
 	render: PluginRender
 } );
 
-registerStore( 'jetpack/publicize', publicizeStore );
+registerStore( 'a8c/publicize', publicizeStore );

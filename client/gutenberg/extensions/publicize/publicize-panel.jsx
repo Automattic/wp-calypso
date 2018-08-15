@@ -79,13 +79,13 @@ class PublicizePanel extends Component {
 
 export default PublicizePanel = compose(
 	withSelect( ( select ) => ( {
-		connections: select( 'jetpack/publicize' ).getConnections(),
-		isLoading: select( 'jetpack/publicize' ).getIsLoading(),
+		connections: select( 'a8c/publicize' ).getConnections(),
+		isLoading: select( 'a8c/publicize' ).getIsLoading(),
 		postId: select( 'core/editor' ).getCurrentPost().id,
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {
-		getConnectionsDone: dispatch( 'jetpack/publicize' ).getConnectionsDone,
-		getConnectionsFail: dispatch( 'jetpack/publicize' ).getConnectionsFail,
+		getConnectionsDone: dispatch( 'a8c/publicize' ).getConnectionsDone,
+		getConnectionsFail: dispatch( 'a8c/publicize' ).getConnectionsFail,
 		/**
 		 * Starts request for current list of connections.
 		 *
@@ -96,8 +96,8 @@ export default PublicizePanel = compose(
 			const {
 				getConnectionsDone,
 				getConnectionsFail,
-			} = dispatch( 'jetpack/publicize' );
-			dispatch( 'jetpack/publicize' ).getConnectionsStart();
+			} = dispatch( 'a8c/publicize' );
+			dispatch( 'a8c/publicize' ).getConnectionsStart();
 			requestPublicizeConnections( postId ).then(
 				( result ) => getConnectionsDone( result ),
 				() => getConnectionsFail(),
