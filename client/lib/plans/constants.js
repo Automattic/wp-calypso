@@ -6,7 +6,7 @@
 
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { compact, includes, uniq } from 'lodash';
+import { compact, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -184,17 +184,7 @@ const getPlanPersonalDetails = () => ( {
 				},
 			}
 		),
-	// All plan features, used for checking plan abilities
-	getAllFeatures: () =>
-		uniq( [
-			...getPlanPersonalDetails().getDefaultPlanListFeatures(),
-			...getPlanPersonalDetails().getSignupFeatures(),
-			...getPlanPersonalDetails().getBlogSignupFeatures(),
-			...getPlanPersonalDetails().getPortfolioSignupFeatures(),
-			FEATURE_AUDIO_UPLOADS,
-			FEATURE_VIDEO_UPLOADS,
-		] ),
-	getDefaultPlanListFeatures: () => [
+	getPlanListFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_JETPACK_ESSENTIAL,
@@ -219,6 +209,8 @@ const getPlanPersonalDetails = () => ( {
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		FEATURE_ALL_FREE_FEATURES,
 	],
+	// Features not displayed but used for checking plan abilities
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ],
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -242,18 +234,7 @@ const getPlanPremiumDetails = () => ( {
 				},
 			}
 		),
-	// All plan features, used for checking plan abilities
-	getAllFeatures: () =>
-		uniq( [
-			...getPlanPremiumDetails().getDefaultPlanListFeatures(),
-			...getPlanPremiumDetails().getPromotedFeatures(),
-			...getPlanPremiumDetails().getSignupFeatures(),
-			...getPlanPremiumDetails().getBlogSignupFeatures(),
-			...getPlanPremiumDetails().getPortfolioSignupFeatures(),
-			FEATURE_AUDIO_UPLOADS,
-			FEATURE_VIDEO_UPLOADS,
-		] ),
-	getDefaultPlanListFeatures: () =>
+	getPlanListFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
@@ -290,6 +271,8 @@ const getPlanPremiumDetails = () => ( {
 		FEATURE_PREMIUM_THEMES,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
+	// Features not displayed but used for checking plan abilities
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ],
 } );
 
 const getPlanBusinessDetails = () => ( {
@@ -333,18 +316,7 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	// All plan features, used for checking plan abilities
-	getAllFeatures: () =>
-		uniq( [
-			...getPlanBusinessDetails().getDefaultPlanListFeatures(),
-			...getPlanBusinessDetails().getPromotedFeatures(),
-			...getPlanBusinessDetails().getSignupFeatures(),
-			...getPlanBusinessDetails().getBlogSignupFeatures(),
-			...getPlanBusinessDetails().getPortfolioSignupFeatures(),
-			FEATURE_AUDIO_UPLOADS,
-			FEATURE_VIDEO_UPLOADS,
-		] ),
-	getDefaultPlanListFeatures: () =>
+	getPlanListFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
@@ -389,6 +361,8 @@ const getPlanBusinessDetails = () => ( {
 		FEATURE_UNLIMITED_STORAGE_SIGNUP,
 		FEATURE_ALL_PREMIUM_FEATURES,
 	],
+	// Features not displayed but used for checking plan abilities
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_VIDEO_UPLOADS ],
 } );
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
@@ -410,15 +384,7 @@ export const PLANS_LIST = {
 				'Get a free website and be on your way to publishing your ' +
 					'first post in less than five minutes.'
 			),
-		// All plan features, used for checking plan abilities
-		getAllFeatures: () =>
-			uniq( [
-				...PLANS_LIST[ PLAN_FREE ].getDefaultPlanListFeatures(),
-				...PLANS_LIST[ PLAN_FREE ].getSignupFeatures(),
-				...PLANS_LIST[ PLAN_FREE ].getBlogSignupFeatures(),
-				...PLANS_LIST[ PLAN_FREE ].getPortfolioSignupFeatures(),
-			] ),
-		getDefaultPlanListFeatures: () => [
+		getPlanListFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
@@ -538,13 +504,7 @@ export const PLANS_LIST = {
 				'The features most needed by WordPress sites' +
 					' — perfectly packaged and optimized for everyone.'
 			),
-		// All plan features, used for checking plan abilities
-		getAllFeatures: () =>
-			uniq( [
-				...PLANS_LIST[ PLAN_JETPACK_FREE ].getDefaultPlanListFeatures(),
-				...PLANS_LIST[ PLAN_JETPACK_FREE ].getSignupFeatures(),
-			] ),
-		getDefaultPlanListFeatures: () => [
+		getPlanListFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
@@ -591,13 +551,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
-		// All plan features, used for checking plan abilities
-		getAllFeatures: () =>
-			uniq( [
-				...PLANS_LIST[ PLAN_JETPACK_PREMIUM ].getDefaultPlanListFeatures(),
-				...PLANS_LIST[ PLAN_JETPACK_PREMIUM ].getSignupFeatures(),
-			] ),
-		getDefaultPlanListFeatures: () =>
+		getPlanListFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -649,13 +603,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
-		// All plan features, used for checking plan abilities
-		getAllFeatures: () =>
-			uniq( [
-				...PLANS_LIST[ PLAN_JETPACK_PREMIUM_MONTHLY ].getDefaultPlanListFeatures(),
-				...PLANS_LIST[ PLAN_JETPACK_PREMIUM_MONTHLY ].getSignupFeatures(),
-			] ),
-		getDefaultPlanListFeatures: () =>
+		getPlanListFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -706,13 +654,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your data is being securely backed up and you have access to priority support.'
 			),
-		// All plan features, used for checking plan abilities
-		getAllFeatures: () =>
-			uniq( [
-				...PLANS_LIST[ PLAN_JETPACK_PERSONAL ].getDefaultPlanListFeatures(),
-				...PLANS_LIST[ PLAN_JETPACK_PERSONAL ].getSignupFeatures(),
-			] ),
-		getDefaultPlanListFeatures: () => [
+		getPlanListFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -751,13 +693,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your data is being securely backed up and you have access to priority support.'
 			),
-		// All plan features, used for checking plan abilities
-		getAllFeatures: () =>
-			uniq( [
-				...PLANS_LIST[ PLAN_JETPACK_PERSONAL_MONTHLY ].getDefaultPlanListFeatures(),
-				...PLANS_LIST[ PLAN_JETPACK_PERSONAL_MONTHLY ].getSignupFeatures(),
-			] ),
-		getDefaultPlanListFeatures: () => [
+		getPlanListFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -807,13 +743,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
-		// All plan features, used for checking plan abilities
-		getAllFeatures: () =>
-			uniq( [
-				...PLANS_LIST[ PLAN_JETPACK_BUSINESS ].getDefaultPlanListFeatures(),
-				...PLANS_LIST[ PLAN_JETPACK_BUSINESS ].getSignupFeatures(),
-			] ),
-		getDefaultPlanListFeatures: () =>
+		getPlanListFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -875,13 +805,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
-		// All plan features, used for checking plan abilities
-		getAllFeatures: () =>
-			uniq( [
-				...PLANS_LIST[ PLAN_JETPACK_BUSINESS_MONTHLY ].getDefaultPlanListFeatures(),
-				...PLANS_LIST[ PLAN_JETPACK_BUSINESS_MONTHLY ].getSignupFeatures(),
-			] ),
-		getDefaultPlanListFeatures: () =>
+		getPlanListFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
