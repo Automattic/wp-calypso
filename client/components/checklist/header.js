@@ -1,20 +1,18 @@
+/** @format */
 /**
  * External dependencies
- *
- * @format
  */
-
-import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
-import ScreenReaderText from 'components/screen-reader-text';
 import ProgressBar from 'components/progress-bar';
+import ScreenReaderText from 'components/screen-reader-text';
 
 export class ChecklistHeader extends PureComponent {
 	static propTypes = {
@@ -40,6 +38,7 @@ export class ChecklistHeader extends PureComponent {
 					<ProgressBar compact total={ total } value={ completed } />
 				</div>
 				<div className="checklist__header-secondary">
+					{ /* eslint-disable-next-line jsx-a11y/label-has-for */ }
 					<label htmlFor="checklist__header-action" className="checklist__header-summary">
 						{ buttonText }
 					</label>
