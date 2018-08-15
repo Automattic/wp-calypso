@@ -80,12 +80,9 @@ const babelLoader = {
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
- * @param  {object}  env                environment options
- * @param  {string}  env.extensionName  set by bin/sdk/gutenberg.js when building Gutenberg extensions
- * @param  {object}  argv               options map
  * @return {object}                     webpack config
  */
-function getWebpackConfig( { extensionName = '' } = {}, argv ) {
+function getWebpackConfig() {
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
@@ -163,10 +160,6 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 					use: _.compact( [
 						MiniCssExtractPlugin.loader,
 						'css-loader',
-						extensionName && {
-							loader: 'namespace-css-loader',
-							options: `.${ extensionName }`, // Just the namespace class
-						},
 						{
 							loader: 'sass-loader',
 							options: {

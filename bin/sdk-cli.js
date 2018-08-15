@@ -72,10 +72,6 @@ yargs
 				description: 'Whether to watch for changes and automatically rebuild.',
 				type: 'boolean',
 			},
-			'namespace': {
-				description: 'Whether CSS should be namespaced.',
-				type: 'boolean',
-			},
 		} ),
 		handler: argv => gutenberg.compile( argv )
 	} )
