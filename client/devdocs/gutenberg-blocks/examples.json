@@ -55,5 +55,27 @@
 				]
 			}
 		]
+	},
+	{
+		"name": "core/cover-image",
+		"attributes": {
+			"url": "https://cldup.com/Fz-ASbo2s3.jpg",
+			"title": "My title",
+			"hasParallax": false,
+			"dimRatio": 50,
+			"align": "center",
+			"contentAlign": "center"
+		}
+	},
+	{
+		"name": "core/file",
+		"attributes": {
+			"href": "https://automattic.files.wordpress.com/2018/05/wordpressdotcom_wbadge-blk1.pdf",
+			"fileName": "WordPress.com Logo",
+			"textLinkHref": "https://automattic.files.wordpress.com/2018/05/wordpressdotcom_wbadge-blk1.pdf",
+			"textLinkTarget": "_blank",
+			"showDownloadButton": true,
+			"downloadButtonText": "Download"
+		}
 	}
 ]
