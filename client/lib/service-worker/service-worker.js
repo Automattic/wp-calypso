@@ -104,5 +104,30 @@ self.addEventListener( 'message', function( event ) {
 /* eslint-disable */
 self.addEventListener( 'fetch', function( event ) {
 	// this listener is required for "Add to Home Screen" support
+	const request = event.request;
+	event.respondWith(
+		fetch( request )
+			.then( function( response ) {
+				return response;
+			} )
+			.catch( function( error ) {
+				const rootRegexp = /https?:\/\/(?:.*\.)*(?:.+\..+?)(?:\:\d*)?\/(?:\?.*)?/;
+				if (
+					! navigator.onLine &&
+					'navigate' === request.mode &&
+					request.url.match( rootRegexp )
+				) {
+					const offlineResponse = `<html><body><h1>WordPress.com is Offline</h1><p><a href="${
+						request.url
+					}">Try Again</a></p></body></html>`;
+
+					return new Response( offlineResponse, {
+						headers: { 'Content-Type': 'text/html' },
+					} );
+				}
+
+				return error;
+			} )
+	);
 } );
 /* eslint-enable */
