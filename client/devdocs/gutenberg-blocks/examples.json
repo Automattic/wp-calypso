@@ -98,5 +98,13 @@
 			"columns": 2,
 			"imageCrop": true
 		}
+	},
+	{
+		"name": "core/heading",
+		"attributes": {
+			"align": "center",
+			"level": 2,
+			"content": "My heading"
+		}
 	}
 ]
