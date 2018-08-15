@@ -42,12 +42,9 @@
 
 .activity-log-tasklist__update-text {
 	font-weight: 500;
-
-	.button.is-borderless {
-		vertical-align: middle;
-		line-height: 1;
-		color: $gray-dark;
-	}
+	line-height: 21px;
+	padding-bottom:7px;
+	display: inline-block;
 }
 
 .activity-log-tasklist__update-version {
@@ -84,7 +81,7 @@
 	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, .5 );
 	padding: 16px 0;
 	color: $gray-text-min;
-	
+
 	a {
 		text-decoration: underline;
 	}
