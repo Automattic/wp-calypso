@@ -184,7 +184,7 @@ const getPlanPersonalDetails = () => ( {
 				},
 			}
 		),
-	getPlanListFeatures: () => [
+	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_JETPACK_ESSENTIAL,
@@ -234,7 +234,7 @@ const getPlanPremiumDetails = () => ( {
 				},
 			}
 		),
-	getPlanListFeatures: () =>
+	getPlanCompareFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
@@ -316,7 +316,7 @@ const getPlanBusinessDetails = () => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	getPlanListFeatures: () =>
+	getPlanCompareFeatures: () =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
@@ -384,7 +384,7 @@ export const PLANS_LIST = {
 				'Get a free website and be on your way to publishing your ' +
 					'first post in less than five minutes.'
 			),
-		getPlanListFeatures: () => [
+		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_JETPACK_ESSENTIAL,
@@ -504,7 +504,7 @@ export const PLANS_LIST = {
 				'The features most needed by WordPress sites' +
 					' — perfectly packaged and optimized for everyone.'
 			),
-		getPlanListFeatures: () => [
+		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
@@ -551,7 +551,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
-		getPlanListFeatures: () =>
+		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -603,7 +603,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your site is being secured and you have access to marketing tools and priority support.'
 			),
-		getPlanListFeatures: () =>
+		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -654,7 +654,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your data is being securely backed up and you have access to priority support.'
 			),
-		getPlanListFeatures: () => [
+		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -693,7 +693,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'Your data is being securely backed up and you have access to priority support.'
 			),
-		getPlanListFeatures: () => [
+		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -743,7 +743,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
-		getPlanListFeatures: () =>
+		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
@@ -805,7 +805,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'You have full access to premium themes, marketing tools, and priority support.'
 			),
-		getPlanListFeatures: () =>
+		getPlanCompareFeatures: () =>
 			compact( [
 				// pay attention to ordering, shared features should align on /plan page
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,

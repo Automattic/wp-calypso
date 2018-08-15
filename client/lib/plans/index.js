@@ -83,7 +83,7 @@ export function planHasFeature( plan, feature ) {
 
 	// Collect features from all plan methods (may have duplicates)
 	const allFeatures = [
-		'getPlanListFeatures',
+		'getPlanCompareFeatures',
 		'getPromotedFeatures',
 		'getSignupFeatures',
 		'getBlogSignupFeatures',
@@ -396,7 +396,7 @@ export function plansLink( url, siteSlug, intervalType ) {
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
 	const filteredPlanConstantObj = { ...getPlan( planName ) };
-	const filteredPlanFeaturesConstantList = getPlan( planName ).getPlanListFeatures( abtest );
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getPlanCompareFeatures( abtest );
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
@@ -410,7 +410,7 @@ export function applyTestFiltersToPlansList( planName, abtest ) {
 	updatePlanDescriptions();
 	updatePlanFeatures();
 
-	filteredPlanConstantObj.getPlanListFeatures = () => filteredPlanFeaturesConstantList;
+	filteredPlanConstantObj.getPlanCompareFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
 }
