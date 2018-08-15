@@ -8,6 +8,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	FEATURE_ALL_PERSONAL_FEATURES,
+	FEATURE_AUDIO_UPLOADS,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_VIDEO_UPLOADS,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 	PLAN_BUSINESS,
@@ -53,6 +57,7 @@ import {
 	findPlansKeys,
 	getMonthlyPlanByYearly,
 	getYearlyPlanByMonthly,
+	planHasFeature,
 } from '../index';
 
 describe( 'isFreePlan', () => {
@@ -728,5 +733,23 @@ describe( 'planMatches - business', () => {
 		expect( planMatches( PLAN_JETPACK_BUSINESS_MONTHLY, { term: TERM_ANNUALLY } ) ).to.equal(
 			false
 		);
+	} );
+} );
+
+describe( 'planHasFeature', () => {
+	test( 'should return true when a plan has a plan compare feature', () => {
+		expect( planHasFeature( PLAN_PERSONAL, FEATURE_CUSTOM_DOMAIN ) ).to.be.true;
+	} );
+
+	test( 'should return true when a plan has a sign-up specific feature', () => {
+		expect( planHasFeature( PLAN_PREMIUM, FEATURE_ALL_PERSONAL_FEATURES ) ).to.be.true;
+	} );
+
+	test( 'should return true when a plan has a hidden feature', () => {
+		expect( planHasFeature( PLAN_BUSINESS, FEATURE_AUDIO_UPLOADS ) ).to.be.true;
+	} );
+
+	test( 'should return false when a plan does not have a feature', () => {
+		expect( planHasFeature( PLAN_PERSONAL, FEATURE_VIDEO_UPLOADS ) ).to.be.false;
 	} );
 } );
