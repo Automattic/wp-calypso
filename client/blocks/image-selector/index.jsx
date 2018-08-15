@@ -28,13 +28,13 @@ export class ImageSelector extends Component {
 		className: PropTypes.string,
 		compact: PropTypes.bool,
 		hasDropZone: PropTypes.bool,
-		imageIds: PropTypes.array,
+		imageIds: PropTypes.array.isRequired,
 		isDropZoneVisible: PropTypes.bool,
 		maxWidth: PropTypes.number,
 		onAddImage: PropTypes.func,
-		onImageChange: PropTypes.func,
-		onImageSelected: PropTypes.func,
-		onRemoveImage: PropTypes.func,
+		onImageChange: PropTypes.func.isRequired,
+		onImageSelected: PropTypes.func.isRequired,
+		onRemoveImage: PropTypes.func.isRequired,
 		previewClassName: PropTypes.string,
 		selecting: PropTypes.bool,
 		showEditIcon: PropTypes.bool,
@@ -45,13 +45,9 @@ export class ImageSelector extends Component {
 	static defaultProps = {
 		compact: false,
 		hasDropZone: false,
-		imageIds: [],
 		isDropZoneVisible: false,
 		maxWidth: 450,
 		onAddImage: noop,
-		onImageSelected: noop,
-		onImageChange: noop,
-		onRemoveImage: noop,
 	};
 
 	state = {
