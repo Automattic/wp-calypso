@@ -43,7 +43,7 @@ const getBaseConfig = ( options = {} ) => {
 };
 
 const build = ( target, argv ) => {
-	const config = target.config( { argv, getBaseConfig, __rootDir } );
+	const config = target.config( { argv, getBaseConfig } );
 	const compiler = webpack( config );
 
 	// watch takes an additional argument, adjust accordingly

@@ -116,6 +116,7 @@ const wordpressExternals = ( context, request, callback ) =>
 function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
+		context: __dirname,
 		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
 		profile: shouldEmitStats,
 		mode: isDevelopment ? 'development' : 'production',

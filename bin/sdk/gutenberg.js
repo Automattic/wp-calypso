@@ -7,7 +7,6 @@ const path = require( 'path' );
 exports.config = ( {
 	argv: { editorScript, viewScript, outputDir, outputEditorFile, outputViewFile },
 	getBaseConfig,
-	__rootDir,
 } ) => {
 	const baseConfig = getBaseConfig( { externalizeWordPressPackages: true } );
 	const name = path.basename( path.dirname( editorScript ).replace( /\/$/, '' ) );
@@ -15,7 +14,6 @@ exports.config = ( {
 	return {
 		...baseConfig,
 		...{
-			context: __rootDir,
 			entry: {
 				...( editorScript ? { [ outputEditorFile || `${ name }-editor` ]: editorScript } : {} ),
 				...( viewScript ? { [ outputViewFile || `${ name }-view` ]: viewScript } : {} ),
