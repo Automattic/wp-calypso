@@ -18,33 +18,39 @@ const express = require( 'express' ),
  * @returns {object} An express app that returns /manifest.json
  */
 const buildManifest = ( { branchName } ) => {
-	const startUrlOptions = { source: 'pwa' };
+	// These options exist to make sure that manifest-linked URLs load correctly even if
+	// cookies haven't been set yet in the calypso.live environment.
+	// If we find a way to make calypso.live set its cookies before the manifest is loaded,
+	// then this can be safely removed.
+	const environmentUrlOptions = { source: 'pwa' };
 
 	if ( branchName && 'master' !== branchName ) {
-		startUrlOptions.branch = branchName;
+		environmentUrlOptions.branch = branchName;
 	}
+
+	const environmentUrlSuffix = '?' + querystring.stringify( environmentUrlOptions );
 
 	return {
 		name: 'WordPress.com',
 		short_name: 'WordPress.com',
-		start_url: '/?' + querystring.stringify( startUrlOptions ),
+		start_url: '/' + environmentUrlSuffix,
 		display: 'standalone',
 		gcm_sender_id: '87234302238',
 		background_color: '#0078be',
 		theme_color: '#0078be',
 		icons: [
 			{
-				src: '/calypso/images/manifest/icon-144x144.png',
+				src: '/calypso/images/manifest/icon-144x144.png' + environmentUrlSuffix,
 				sizes: '144x144',
 				type: 'image/png',
 			},
 			{
-				src: '/calypso/images/manifest/icon-192x192.png',
+				src: '/calypso/images/manifest/icon-192x192.png' + environmentUrlSuffix,
 				sizes: '192x192',
 				type: 'image/png',
 			},
 			{
-				src: '/calypso/images/manifest/icon-512x512.png',
+				src: '/calypso/images/manifest/icon-512x512.png' + environmentUrlSuffix,
 				sizes: '512x512',
 				type: 'image/png',
 			},
