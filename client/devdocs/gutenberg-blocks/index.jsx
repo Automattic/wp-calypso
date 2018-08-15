@@ -71,6 +71,7 @@ export default class GutenbergBlocks extends React.Component {
 							asyncName={ example.name }
 							name={ example.name }
 							attributes={ example.attributes }
+							inner={ example.inner }
 						/>
 					) ) }
 				</Collection>

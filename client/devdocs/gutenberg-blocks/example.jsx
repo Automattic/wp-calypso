@@ -3,21 +3,31 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import { GutenbergBlock } from 'gutenberg-blocks';
 
-class GutenbergBlockExample extends PureComponent {
-	static defaultProps = {
-		exampleCode: <GutenbergBlock name="name" attributes="attributes" />,
-	};
+const renderExample = ( { name, attributes, inner, level } ) => {
+	const innerExamples = inner
+		? inner.map( ( innerExample, index ) => {
+				return renderExample( {
+					...innerExample,
+					level: `${ level || 0 }_${ index }`,
+				} );
+		  } )
+		: null;
 
-	render() {
-		return <GutenbergBlock name={ this.props.name } attributes={ this.props.attributes } />;
-	}
-}
+	return (
+		<GutenbergBlock key={ level || '0' } name={ name } attributes={ attributes }>
+			{ innerExamples }
+		</GutenbergBlock>
+	);
+};
+
+const GutenbergBlockExample = ( { name, attributes, inner } ) =>
+	renderExample( { name, attributes, inner } );
 
 export default GutenbergBlockExample;

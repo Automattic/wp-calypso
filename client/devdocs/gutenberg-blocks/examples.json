@@ -1,5 +1,15 @@
 [
 	{
+		"name": "core/audio",
+		"attributes": {
+			"autoplay": false,
+			"caption": "Cartoon Birds",
+			"loop": false,
+			"preload": "none",
+			"src": "http://soundbible.com/mp3/cartoon-birds-2_daniel-simion.mp3"
+		}
+	},
+	{
 		"name": "core/button",
 		"attributes": {
 			"text": "Click here",
@@ -7,5 +17,43 @@
 			"url": "https://wordpress.com",
 			"title": "Visit WordPress.com"
 		}
+	},
+	{
+		"name": "core/code",
+		"attributes": {
+			"content": "<div>\n\t<p>My paragraph</p>\n</div>"
+		}
+	},
+	{
+		"name": "core/columns",
+		"attributes": {
+			"columns": 2
+		},
+		"inner": [
+			{
+				"name": "core/column",
+				"attributes": {},
+				"inner": [
+					{
+						"name": "core/paragraph",
+						"attributes": {
+							"content": "Column 1"
+						}
+					}
+				]
+			},
+			{
+				"name": "core/column",
+				"attributes": {},
+				"inner": [
+					{
+						"name": "core/paragraph",
+						"attributes": {
+							"content": "Column 2"
+						}
+					}
+				]
+			}
+		]
 	}
 ]
