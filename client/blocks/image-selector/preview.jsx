@@ -134,7 +134,11 @@ export class ImageSelectorPreview extends Component {
 	renderUploaded = ( { URL, ID } ) => {
 		return (
 			<figure>
-				<ImagePreloader src={ URL } placeholder={ this.renderPlaceholder( ID ) } />
+				<ImagePreloader
+					src={ URL }
+					placeholder={ this.renderPlaceholder( ID ) }
+					draggable="false"
+				/>
 			</figure>
 		);
 	};
