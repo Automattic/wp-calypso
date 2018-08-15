@@ -66,7 +66,7 @@ const Desktop = {
 		this.selectedSite = site;
 	},
 
-	notificationStatus: async function() {
+	notificationStatus: function() {
 		let previousHasUnseen = hasUnseenNotifications( reduxGetState() );
 
 		// Send initial status to main process
