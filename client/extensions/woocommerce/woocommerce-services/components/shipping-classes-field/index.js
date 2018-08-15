@@ -28,15 +28,6 @@ export default class ShippingClassesField extends React.Component {
 		options: PropTypes.array,
 	};
 
-	constructor() {
-		super( ...arguments );
-
-		this.getNameFromId = this.getNameFromId.bind( this );
-		this.onChange = this.onChange.bind( this );
-		this.transformForDisplay = this.transformForDisplay.bind( this );
-		this.getIdFromName = this.getIdFromName.bind( this );
-	}
-
 	render() {
 		const { id, title, description, value, placeholder, error, className, options } = this.props;
 
@@ -65,29 +56,29 @@ export default class ShippingClassesField extends React.Component {
 		);
 	}
 
-	getNameFromId( id ) {
+	getNameFromId = id => {
 		const found = this.props.options.find( option => {
 			return option.id === id;
 		} );
 
 		return found ? found.name : null;
-	}
+	};
 
-	getIdFromName( name ) {
+	getIdFromName = name => {
 		const found = this.props.options.find( option => {
 			return option.name.toLowerCase() === name.toLowerCase();
 		} );
 
 		return found ? found.id : null;
-	}
+	};
 
-	transformForDisplay( token ) {
+	transformForDisplay = token => {
 		const option = this.props.options.find( item => item.slug === token );
 
 		return option ? option.name : token;
-	}
+	};
 
-	onChange( strings ) {
+	onChange = strings => {
 		const { updateValue } = this.props;
 
 		const updatedValue = uniqBy(
@@ -95,5 +86,5 @@ export default class ShippingClassesField extends React.Component {
 		);
 
 		updateValue( updatedValue );
-	}
+	};
 }
