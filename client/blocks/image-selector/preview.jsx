@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { defer, isEqual, uniq } from 'lodash';
+import { isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
@@ -73,14 +73,12 @@ export class ImageSelectorPreview extends Component {
 				return;
 			}
 
-			defer( () => {
-				itemIds.map( id => {
-					id = parseInt( id, 10 );
-					const media = MediaStore.get( siteId, id );
-					if ( ! media ) {
-						MediaActions.fetch( siteId, id );
-					}
-				} );
+			itemIds.map( id => {
+				id = parseInt( id, 10 );
+				const media = MediaStore.get( siteId, id );
+				if ( ! media ) {
+					MediaActions.fetch( siteId, id );
+				}
 			} );
 		} );
 	};
@@ -103,17 +101,16 @@ export class ImageSelectorPreview extends Component {
 				callback();
 			}
 		} );
-		defer( () => {
-			const imageIds = images.map( image => image.ID );
-			if (
-				onImageChange &&
-				images &&
-				images.length === itemIds.length &&
-				! isEqual( imageIds, itemIds )
-			) {
-				onImageChange( images );
-			}
-		} );
+
+		const imageIds = images.map( image => image.ID );
+		if (
+			onImageChange &&
+			images &&
+			images.length === itemIds.length &&
+			! isEqual( imageIds, itemIds )
+		) {
+			onImageChange( images );
+		}
 	};
 
 	src = image => {
