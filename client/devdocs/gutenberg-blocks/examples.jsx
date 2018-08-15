@@ -154,7 +154,49 @@ export default [
 		attributes: {
 			value: [ { children: 'Code is poetry' } ],
 			citation: [ 'The WordPress community' ],
+		},
+	},
+	{
+		name: 'core/quote',
+		attributes: {
+			value: [ { children: 'Code is poetry' } ],
+			citation: [ 'The WordPress community' ],
+			align: 'left',
+		},
+	},
+	{
+		name: 'core/separator',
+		attributes: {},
+	},
+	{
+		name: 'core/spacer',
+		attributes: {
+			height: 150,
+		},
+	},
+	{
+		name: 'core/subhead',
+		attributes: {
 			align: 'center',
+			content: 'My subhead',
+		},
+	},
+	{
+		name: 'core/table',
+		attributes: {
+			content: (
+				<tbody>
+					<tr>
+						<td>Row 1 - Column 1</td>
+						<td>Row 1 - Column 2</td>
+					</tr>
+					<tr>
+						<td>Row 2 - Column 1</td>
+						<td>Row 2 - Column 2</td>
+					</tr>
+				</tbody>
+			),
+			hasFixedLayout: true,
 		},
 	},
 ];
