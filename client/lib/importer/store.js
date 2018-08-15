@@ -88,9 +88,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case IMPORTS_IMPORT_RESET:
 			return {
 				...state,
-				importers: {
-					...omit( state.importers, action.importerId ),
-				},
+				importers: omit( state.importers, action.importerId ),
 			};
 
 		case IMPORTS_UPLOAD_FAILED: {
