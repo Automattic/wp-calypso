@@ -186,7 +186,7 @@ export class ImageSelectorPreview extends Component {
 			compact,
 		} );
 
-		const addString = multiple ? translate( 'Add images' ) : translate( 'Add image' );
+		const addString = multiple ? translate( 'Add Images' ) : translate( 'Add Image' );
 		const iconSize = compact ? 24 : 36;
 
 		return (

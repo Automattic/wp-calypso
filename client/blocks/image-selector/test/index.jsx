@@ -53,7 +53,7 @@ describe( 'ImageSelector', () => {
 		test( 'should show the add image uploader label when no images are passed', () => {
 			const wrapper = mount( <ImageSelector { ...testProps } imageIds={ [] } /> );
 
-			expect( wrapper.find( '.image-selector__uploader-label' ).contains( 'Add image' ) ).to.equal(
+			expect( wrapper.find( '.image-selector__uploader-label' ).contains( 'Add Image' ) ).to.equal(
 				true
 			);
 		} );
