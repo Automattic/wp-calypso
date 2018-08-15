@@ -16,7 +16,7 @@ import { ipcRenderer as ipc } from 'electron'; // From Electron
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
-import { getReduxStore, reduxGetState } from 'lib/redux-bridge';
+import { getReduxStore } from 'lib/redux-bridge';
 import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
@@ -51,7 +51,7 @@ const Desktop = {
 	selectedSite: null,
 
 	navigate: function( to ) {
-		if ( isNotificationsOpen( reduxGetState() ) ) {
+		if ( isNotificationsOpen( this.store.getState() ) ) {
 			this.toggleNotificationsPanel();
 		}
 
@@ -67,13 +67,13 @@ const Desktop = {
 	},
 
 	notificationStatus: function() {
-		let previousHasUnseen = hasUnseenNotifications( reduxGetState() );
+		let previousHasUnseen = hasUnseenNotifications( this.store.getState() );
 
 		// Send initial status to main process
 		ipc.send( 'unread-notices-count', previousHasUnseen );
 
 		this.store.subscribe( () => {
-			const hasUnseen = hasUnseenNotifications( reduxGetState() );
+			const hasUnseen = hasUnseenNotifications( this.store.getState() );
 
 			if ( hasUnseen !== previousHasUnseen ) {
 				ipc.send( 'unread-notices-count', hasUnseen );
