@@ -76,15 +76,47 @@ const babelLoader = {
 };
 
 /**
+ * Converts @wordpress require into window reference
+ *
+ * Note this isn't the same as camel case because of the
+ * way that numbers don't trigger the capitalized next letter
+ *
+ * @example
+ * wordpressRequire( '@wordpress/api-fetch' ) = 'wp.apiFetch'
+ * wordpressRequire( '@wordpress/i18n' ) = 'wp.i18n'
+ *
+ * @param {string} request import name
+ * @return {string} global variable reference for import
+ */
+const wordpressRequire = request => {
+	// @wordpress/components -> [ @wordpress, components ]
+	const [ , name ] = request.split( '/' );
+
+	// components -> wp.components
+	return `wp.${ name.replace( /-([a-z])/g, ( match, letter ) => letter.toUpperCase() ) }`;
+};
+
+const wordpressExternals = ( context, request, callback ) =>
+	/^@wordpress\//.test( request )
+		? callback( null, `root ${ wordpressRequire( request ) }` )
+		: callback();
+
+/**
  * Return a webpack config object
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
- * @return {object}                     webpack config
+ * @param {object}  env                              additional config options
+ * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
+ * @param {object}  argv                             given by webpack?
+ *
+ * @return {object}                                  webpack config
  */
-function getWebpackConfig() {
+// eslint-disable-next-line no-unused-vars
+function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
+		context: __dirname,
 		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
 		profile: shouldEmitStats,
 		mode: isDevelopment ? 'development' : 'production',
@@ -260,7 +292,7 @@ function getWebpackConfig() {
 					},
 				} ),
 		] ),
-		externals: [ 'electron' ],
+		externals: _.compact( [ externalizeWordPressPackages && wordpressExternals, 'electron' ] ),
 	};
 
 	if ( calypsoEnv === 'desktop' ) {
