@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -20,7 +19,7 @@ import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { getSite, getSiteSlug } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { launchTask, tasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -195,7 +194,7 @@ export class ChecklistBanner extends Component {
 const mapStateToProps = ( state, { siteId } ) => {
 	const taskStatuses = getSiteChecklist( state, siteId );
 	const siteSlug = getSiteSlug( state, siteId );
-	const siteDesignType = get( getSite( state, siteId ), [ 'options', 'design_type' ] );
+	const siteDesignType = getSiteOption( state, siteId, [ 'design_type' ] );
 
 	return {
 		siteDesignType,
