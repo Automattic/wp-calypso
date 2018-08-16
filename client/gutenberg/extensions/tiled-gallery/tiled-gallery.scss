@@ -61,4 +61,9 @@
 	.tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
 		font-size: 11px;
 	}
+
+	.example::placeholder { /* This is used to demonstrate autoprefixing  */
+		transition: all 0.1s;
+		background: linear-gradient(to bottom, white, black);
+	}
 }
