@@ -140,13 +140,11 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = {
-	loadTrackingTool,
-	recordTracksEvent,
-	requestGuidedTour,
-};
-
 export default connect(
 	mapStateToProps,
-	mapDispatchToProps
+	{
+		loadTrackingTool,
+		recordTracksEvent,
+		requestGuidedTour,
+	}
 )( localize( JetpackChecklist ) );
