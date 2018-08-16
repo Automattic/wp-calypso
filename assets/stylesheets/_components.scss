@@ -158,7 +158,7 @@
 @import 'components/forms/form-text-input-with-affixes/style';
 @import 'components/forms/form-toggle/style';
 @import 'components/forms/range/style';
-@import 'components/forms/sortable-list/index';
+@import 'components/forms/sortable-list/style';
 @import 'components/gauge/style';
 @import 'components/global-notices/style';
 @import 'components/gravatar/style';
@@ -279,7 +279,7 @@
 @import 'components/happychat/agent-w/style';
 @import 'layout/community-translator/style';
 @import 'layout/masterbar/style';
-@import 'layout/masterbar/oauth-client';
+@import 'layout/masterbar/oauth-client.scss';
 @import 'layout/nps-survey-notice/style';
 @import 'layout/offline-status/style';
 @import 'layout/sidebar/style';
@@ -328,8 +328,8 @@
 @import 'me/purchases/cancel-purchase/style';
 @import 'me/purchases/components/loading-placeholder/style';
 @import 'me/purchases/confirm-cancel-domain/style';
-@import 'me/purchases/credit-cards/credit-card-delete';
-@import 'me/purchases/credit-cards/credit-cards';
+@import 'me/purchases/credit-cards/credit-card-delete.scss';
+@import 'me/purchases/credit-cards/credit-cards.scss';
 @import 'me/purchases/purchase-item/style';
 @import 'me/purchases/purchases-site/style';
 @import 'me/purchases/manage-purchase/style';
@@ -367,7 +367,7 @@
 @import 'my-sites/invites/invite-header/style';
 @import 'my-sites/invites/invite-accept-logged-in/style';
 @import 'my-sites/invites/invite-accept/style';
-@import 'my-sites/media-library/upload-button';
+@import 'my-sites/media-library/upload-button.scss';
 @import 'my-sites/no-results/style';
 @import 'my-sites/pages/style';
 @import 'my-sites/pages/blog-posts-page/style';
@@ -422,9 +422,9 @@
 @import 'my-sites/plugins/plugins-browser-list/style';
 @import 'my-sites/plugins/plugins-browser/style';
 @import 'my-sites/sharing/style';
-@import 'my-sites/sharing/connections/account-dialog';
-@import 'my-sites/sharing/connections/account-dialog-account';
-@import 'my-sites/sharing/connections/services-group';
+@import 'my-sites/sharing/connections/account-dialog.scss';
+@import 'my-sites/sharing/connections/account-dialog-account.scss';
+@import 'my-sites/sharing/connections/services-group.scss';
 @import 'my-sites/sidebar/style';
 @import 'my-sites/sidebar-navigation/style';
 @import 'my-sites/site-indicator/style';
@@ -472,9 +472,9 @@
 @import 'my-sites/themes/themes-banner/style';
 @import 'my-sites/upgrade-nudge/style';
 @import 'my-sites/checkout/cart/style';
-@import 'my-sites/checkout/checkout/stored-card';
+@import 'my-sites/checkout/checkout/stored-card.scss';
 @import 'my-sites/checkout/checkout/style';
-@import 'my-sites/checkout/checkout/subscription-text';
+@import 'my-sites/checkout/checkout/subscription-text.scss';
 @import 'my-sites/checkout/checkout-thank-you/style';
 @import 'my-sites/checkout/checkout-thank-you/google-voucher/style';
 @import 'my-sites/checkout/gsuite-nudge/style';
