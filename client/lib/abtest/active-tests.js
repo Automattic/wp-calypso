@@ -88,14 +88,6 @@ export default {
 		},
 		defaultVariation: 'domainsbot',
 	},
-	aboutSuggestionMatches: {
-		datestamp: '20180704',
-		variations: {
-			control: 50,
-			enhancedSort: 50,
-		},
-		defaultVariation: 'control',
-	},
 	includeDotBlogSubdomainV2: {
 		datestamp: '20180813',
 		variations: {
