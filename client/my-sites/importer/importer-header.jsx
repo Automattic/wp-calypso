@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { flowRight, includes } from 'lodash';
-import SocialLogo from 'social-logos';
 import { connect } from 'react-redux';
 
 /**
@@ -18,8 +17,8 @@ import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
 import { connectDispatcher } from './dispatcher-converter';
-import SiteImporterLogo from './site-importer/logo';
 import { recordTracksEvent } from 'state/analytics/actions';
+import ImporterLogo from 'my-sites/importer/importer-logo';
 
 /**
  * Module variables
@@ -101,23 +100,6 @@ class ImporterHeader extends React.PureComponent {
 		}
 	};
 
-	getLogo = icon => {
-		if ( includes( [ 'wordpress', 'medium', 'blogger-alt' ], icon ) ) {
-			return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
-		}
-
-		if ( includes( [ 'site-importer' ], icon ) ) {
-			return <SiteImporterLogo />;
-		}
-		return (
-			<svg
-				className="importer__service-icon"
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 24 24"
-			/>
-		);
-	};
-
 	render() {
 		const {
 			importerStatus: { importerState },
@@ -132,7 +114,7 @@ class ImporterHeader extends React.PureComponent {
 
 		return (
 			<header className="importer-service">
-				{ this.getLogo( icon ) }
+				<ImporterLogo icon={ icon } />
 				<Button
 					className="importer__master-control"
 					disabled={ ! canCancel }
