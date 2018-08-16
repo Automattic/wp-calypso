@@ -42,6 +42,7 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'state/action-types';
+import { POST_REVISION_FIELDS } from 'state/posts/constants';
 import { getSitePost, getEditedPost, getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import { recordSaveEvent } from 'state/posts/stats';
 import {
@@ -773,4 +774,24 @@ export const autosave = () => async ( dispatch, getState ) => {
 	}
 
 	return await dispatch( saveEdited( { recordSaveEvent: false, autosave: true } ) );
+};
+
+/**
+ * Save a revision of the passed-in post. Calls `wpcom.post.add` which initiates a network call.
+ * @param  {int} siteId		The site ID for use in the `savePost` call
+ * @param  {object} post   post-like object with keys: 'ID', 'content', 'excerpt', 'title'
+ * @returns {Promise} The return value of `wpcom.post.add`
+ */
+export const saveRevision = ( siteId, post ) => {
+	const normalized = normalizePostForApi( {
+		...pick( post, POST_REVISION_FIELDS ),
+		parent: post.ID,
+		status: 'inherit',
+		type: 'revision',
+	} );
+
+	return wpcom
+		.site( siteId )
+		.post()
+		.add( { apiVersion: '1.2' }, normalized );
 };

@@ -6,7 +6,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { debounce, flow, get, partial, throttle } from 'lodash';
+import { debounce, flow, get, isEqual, partial, pick, throttle } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -16,7 +16,8 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { autosave, saveEdited } from 'state/posts/actions';
+import { POST_REVISION_FIELDS } from 'state/posts/constants';
+import { autosave, editPost, saveEdited, saveRevision } from 'state/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import FeaturedImage from 'post-editor/editor-featured-image';
@@ -50,7 +51,6 @@ import {
 	getEditorLoadingError,
 } from 'state/ui/editor/selectors';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { editPost } from 'state/posts/actions';
 import {
 	getSitePost,
 	getEditedPost,
@@ -123,6 +123,10 @@ export class PostEditor extends React.Component {
 		};
 	}
 
+	autosaveFlushToRevision = () => {
+		saveRevision( this.props.siteId, this.props.post );
+	};
+
 	componentWillMount() {
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
 		this.throttledAutosave = throttle( this.autosave, 20000 );
@@ -130,6 +134,9 @@ export class PostEditor extends React.Component {
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 		this.debouncedCopySelectedText = debounce( this.copySelectedText, 200 );
+		this.debouncedAutosaveFlushToRevision = debounce( this.autosaveFlushToRevision, 10000, {
+			leading: true,
+		} );
 		this.useDefaultSidebarFocus();
 		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
 
@@ -170,6 +177,8 @@ export class PostEditor extends React.Component {
 		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this.debouncedCopySelectedText.cancel();
+		this.debouncedAutosaveFlushToRevision.cancel();
+		this.autosaveFlushToRevision();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
 	}
@@ -255,7 +264,14 @@ export class PostEditor extends React.Component {
 		const isInvalidURL = this.props.loadingError;
 
 		const isTrashed = get( this.props.post, 'status' ) === 'trash';
-		const hasAutosave = get( this.props.post, 'meta.data.autosave' );
+		const autosaveMetaData = get( this.props.post, 'meta.data.autosave' );
+		const hasDifferingAutosave =
+			autosaveMetaData &&
+			! this.state.isSaving &&
+			! isEqual(
+				pick( autosaveMetaData, POST_REVISION_FIELDS ),
+				pick( this.props.post, POST_REVISION_FIELDS )
+			);
 
 		const classes = classNames( 'post-editor', {
 			'is-loading': ! this.state.isEditorInitialized,
@@ -392,7 +408,7 @@ export class PostEditor extends React.Component {
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) : null }
 				{ isInvalidURL && <InvalidURLDialog onClose={ this.onClose } /> }
-				{ hasAutosave && this.state.showAutosaveDialog ? (
+				{ hasDifferingAutosave && this.state.showAutosaveDialog ? (
 					<RestorePostDialog
 						onRestore={ this.restoreAutosave }
 						onClose={ this.closeAutosaveDialog }
@@ -538,6 +554,9 @@ export class PostEditor extends React.Component {
 			const saveResult = await this.props.autosave();
 			if ( ! savingPublishedPost ) {
 				this.onSaveDraftSuccess( saveResult );
+
+				// Create a revision separately from the autosave
+				this.debouncedAutosaveFlushToRevision();
 			}
 		} catch ( error ) {
 			if ( ! savingPublishedPost ) {
