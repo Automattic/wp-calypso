@@ -21,8 +21,8 @@ import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { getTaskUrls, launchTask, tasks } from 'my-sites/checklist/onboardingChecklist';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
+import { getTaskUrls, launchTask, getTasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -76,7 +76,7 @@ export class ChecklistBanner extends Component {
 
 	getTask() {
 		const task = find(
-			tasks,
+			this.props.tasks,
 			( { id, completed } ) => ! completed && ! get( this.props.taskStatuses, [ id, 'completed' ] )
 		);
 		return (
@@ -101,7 +101,7 @@ export class ChecklistBanner extends Component {
 			return false;
 		}
 
-		if ( this.props.siteDesignType !== 'blog' ) {
+		if ( this.props.siteDesignType === 'store' ) {
 			return false;
 		}
 
@@ -133,7 +133,7 @@ export class ChecklistBanner extends Component {
 	}
 
 	render() {
-		const { siteId, taskStatuses, translate } = this.props;
+		const { siteId, taskStatuses, translate, tasks } = this.props;
 		const total = tasks.length;
 		const completed = reduce(
 			tasks,
@@ -205,15 +205,16 @@ export class ChecklistBanner extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const taskStatuses = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
 	const siteSlug = getSiteSlug( state, siteId );
-	const siteDesignType = get( getSite( state, siteId ), [ 'options', 'design_type' ] );
+	const taskStatuses = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
+	const siteDesignType = getSiteOption( state, siteId, 'design_type' );
 
 	return {
 		siteDesignType,
 		siteSlug,
 		taskStatuses,
 		taskUrls: getTaskUrls( getSitePosts( state, siteId ) ),
+		tasks: getTasks( state, siteId ),
 	};
 };
 

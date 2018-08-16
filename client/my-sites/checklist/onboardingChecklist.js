@@ -6,6 +6,7 @@ import page from 'page';
 import { isDesktop } from 'lib/viewport';
 import { translate } from 'i18n-calypso';
 import { find } from 'lodash';
+import { getSiteOption } from 'state/sites/selectors';
 
 export const tasks = [
 	{
@@ -109,6 +110,18 @@ export const tasks = [
 		tour: 'checklistDomainRegister',
 	},
 ];
+
+export function getTasks( state, siteId ) {
+	const designType = getSiteOption( state, siteId, 'design_type' );
+
+	if ( designType === 'blog' ) {
+		return tasks;
+	}
+
+	return tasks.filter( task => {
+		return task.id !== 'avatar_uploaded' && task.id !== 'post_published';
+	} );
+}
 
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
