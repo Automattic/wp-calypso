@@ -17,6 +17,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { FEATURE_NO_ADS } from 'lib/plans/constants';
 import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlans, getValidFeatureKeys } from 'lib/plans';
@@ -25,7 +26,7 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
-class UpgradeNudge extends React.Component {
+export class UpgradeNudge extends React.Component {
 	static propTypes = {
 		onClick: PropTypes.func,
 		className: PropTypes.string,
@@ -89,7 +90,7 @@ class UpgradeNudge extends React.Component {
 			return false;
 		}
 
-		if ( feature === 'no-adverts' && site.options.wordads ) {
+		if ( feature === FEATURE_NO_ADS && site.options.wordads ) {
 			return false;
 		}
 
