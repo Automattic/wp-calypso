@@ -37,6 +37,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import JetpackSetupRunner from 'my-sites/plans/current-plan/jetpack-setup-runner/index';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -86,6 +87,7 @@ class CurrentPlan extends Component {
 			selectedSiteId,
 			domains,
 			currentPlan,
+			doPlanSetup,
 			hasDomainsLoaded,
 			isAutomatedTransfer,
 			isExpiring,
@@ -114,6 +116,7 @@ class CurrentPlan extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				{ doPlanSetup && <JetpackSetupRunner /> }
 
 				<PlansNavigation path={ path } selectedSite={ selectedSite } />
 
