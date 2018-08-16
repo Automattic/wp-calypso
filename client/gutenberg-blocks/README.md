@@ -23,7 +23,7 @@ Calypso.
 ```jsx 
 import { GutenbergBlock } from 'gutenberg-blocks';
 
-const MyGutenbergBlock = () => (
+const MyButton = () => (
 	<GutenbergBlock
 		name="core/button"
 		attributes={ {
@@ -38,13 +38,18 @@ const MyGutenbergBlock = () => (
 The previous example is equivalent to:
 
 ```jsx 
-import { getBlockType, getSaveElement } from '@wordpress/blocks';
+import { createBlock, serialize } from '@wordpress/blocks';
+import { RawHTML } from '@wordpress/element';
 
-const MyGutenbergBlock = () => getSaveElement( getBlockType( 'core/button' ), {
-	text: 'Click here',
-	backgroundColor: 'vivid-cyan-blue',
-	url: 'https://wordpress.com',
-} );
+const MyButton = ( ) => {
+	const block = createBlock( 'core/button', {
+		text: 'Click here',
+		backgroundColor: 'vivid-cyan-blue',
+		url: 'https://wordpress.com',
+	}, [] );
+	
+	return <RawHTML>{ serialize( block ) }</RawHTML>;
+};
 ```
 
 Some of these blocks can be seen in action in our 

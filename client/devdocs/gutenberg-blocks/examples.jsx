@@ -152,16 +152,25 @@ export default [
 	{
 		name: 'core/pullquote',
 		attributes: {
-			value: [ { children: 'Code is poetry' } ],
+			value: [
+				{
+					children: <p>Code is poetry</p>,
+				},
+			],
 			citation: [ 'The WordPress community' ],
 		},
 	},
 	{
 		name: 'core/quote',
 		attributes: {
-			value: [ { children: 'Code is poetry' } ],
+			value: [
+				{
+					children: <p>Code is poetry</p>,
+				},
+			],
 			citation: [ 'The WordPress community' ],
 			align: 'left',
+			className: 'is-style-large',
 		},
 	},
 	{

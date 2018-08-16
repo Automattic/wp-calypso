@@ -3,7 +3,9 @@
 /**
  * External dependencies
  */
-import { createBlock, getBlockType, getSaveElement } from '@wordpress/blocks';
+import React from 'react';
+import { createBlock, serialize } from '@wordpress/blocks';
+import { RawHTML } from '@wordpress/element';
 
 const createBlockWithInnerBlocks = ( name, attributes, children ) => {
 	const innerBlocks = children
@@ -20,7 +22,7 @@ const createBlockWithInnerBlocks = ( name, attributes, children ) => {
 
 const GutenbergBlock = ( { name, attributes, children } ) => {
 	const block = createBlockWithInnerBlocks( name, attributes, children );
-	return getSaveElement( getBlockType( block.name ), block.attributes, block.innerBlocks );
+	return <RawHTML>{ serialize( block ) }</RawHTML>;
 };
 
 export default GutenbergBlock;
