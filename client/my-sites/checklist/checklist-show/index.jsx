@@ -50,7 +50,7 @@ class ChecklistShow extends PureComponent {
 	handleTaskDismiss = task => () => {
 		const { notify, siteId, update } = this.props;
 
-		if ( task && ! task.completed ) {
+		if ( task ) {
 			notify( 'is-success', 'You completed a task!' );
 			update( siteId, task.id );
 		}
