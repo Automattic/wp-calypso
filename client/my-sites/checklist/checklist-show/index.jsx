@@ -19,17 +19,13 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getTaskUrls, launchTask, tasks } from '../onboardingChecklist';
-import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import QueryPosts from 'components/data/query-posts';
 import { getSitePosts } from 'state/posts/selectors';
 
 class ChecklistShow extends PureComponent {
-	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
-	}
-
 	isComplete( taskId ) {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
@@ -104,7 +100,6 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-	loadTrackingTool,
 	track: recordTracksEvent,
 	notify: createNotice,
 	requestTour: requestGuidedTour,
