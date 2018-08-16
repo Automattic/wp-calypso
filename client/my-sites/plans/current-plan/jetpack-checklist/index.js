@@ -6,19 +6,19 @@
 import page from 'page';
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { isDesktop } from 'lib/viewport';
 import Checklist from 'components/checklist';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSiteSlug } from 'state/sites/selectors';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
+import { isDesktop } from 'lib/viewport';
 import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
@@ -38,8 +38,8 @@ class JetpackChecklist extends PureComponent {
 
 		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'jetpack',
-			step_name: taskId,
 			location: 'JetpackChecklist',
+			step_name: taskId,
 		} );
 
 		if ( tourId && ! this.isComplete( taskId ) && isDesktop() ) {
@@ -59,70 +59,70 @@ class JetpackChecklist extends PureComponent {
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<Checklist isPlaceholder={ ! taskStatuses }>
 					<Task
+						completed
 						title={ translate(
 							"We've automatically protected you from brute force login attacks."
 						) }
-						completed
 					/>
-					<Task title={ translate( "We've automatically turned on spam filtering." ) } completed />
+					<Task completed title={ translate( "We've automatically turned on spam filtering." ) } />
 					<Task
-						title={ translate( 'Backups & Scanning' ) }
+						completed
+						completedButtonText={ translate( 'Change' ) }
+						completedTitle={ translate( 'You turned on backups and scanning.' ) }
 						description={ translate(
 							"Connect your site's server to Jetpack to perform backups, rewinds, and security scans."
 						) }
-						completed
-						completedTitle={ translate( 'You turned on backups and scanning.' ) }
-						completedButtonText={ translate( 'Change' ) }
 						duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_backups',
 							url: `/stats/activity/${ siteSlug }`,
 						} ) }
+						title={ translate( 'Backups & Scanning' ) }
 					/>
 					<Task
 						completed={ this.isComplete( 'jetpack_monitor' ) }
-						title={ translate( 'Jetpack Monitor' ) }
+						completedButtonText={ translate( 'Change' ) }
+						completedTitle={ translate( 'You turned on Jetpack Monitor.' ) }
 						description={ translate(
 							"Monitor your site's uptime and alert you the moment downtime is detected with instant notifications."
 						) }
-						completedTitle={ translate( 'You turned on Jetpack Monitor.' ) }
-						completedButtonText={ translate( 'Change' ) }
 						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_monitor',
 							tourId: 'jetpackMonitoring',
 							url: `/settings/security/${ siteSlug }`,
 						} ) }
+						title={ translate( 'Jetpack Monitor' ) }
 					/>
 					<Task
 						completed={ this.isComplete( 'jetpack_plugin_updates' ) }
-						title={ translate( 'Automatic Plugin Updates' ) }
+						completedButtonText={ translate( 'Change' ) }
+						completedTitle={ translate( 'You turned on automatic plugin updates.' ) }
 						description={ translate(
 							'Choose which WordPress plugins you want to keep automatically updated.'
 						) }
-						completedTitle={ translate( 'You turned on automatic plugin updates.' ) }
-						completedButtonText={ translate( 'Change' ) }
 						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_plugin_updates',
 							tourId: 'jetpackPluginUpdates',
 							url: `/plugins/manage/${ siteSlug }`,
 						} ) }
+						title={ translate( 'Automatic Plugin Updates' ) }
 					/>
 					<Task
 						completed={ this.isComplete( 'jetpack_sign_in' ) }
-						title={ translate( 'WordPress.com sign in' ) }
+						completedButtonText={ translate( 'Change' ) }
+						completedTitle={ translate( 'You completed your sign in preferences.' ) }
 						description={ translate(
 							'Manage your log in preferences and two-factor authentication settings.'
 						) }
-						completedTitle={ translate( 'You completed your sign in preferences.' ) }
-						completedButtonText={ translate( 'Change' ) }
 						duration={ translate( '%d minute', '%d minutes', { count: 3, args: [ 3 ] } ) }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_sign_in',
 							tourId: 'jetpackSignIn',
 							url: `/settings/security/${ siteSlug }`,
 						} ) }
+						title={ translate( 'WordPress.com sign in' ) }
 					/>
 				</Checklist>
 			</Fragment>
