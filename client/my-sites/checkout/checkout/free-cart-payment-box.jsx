@@ -31,13 +31,17 @@ class FreeCartPaymentBox extends React.Component {
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-section">
 						<div className="checkout__payment-box-section-content">
-							<h6>
+							<span className="checkout__free-domain-credit-illustration">
+								<img src="/calypso/images/illustrations/custom-domain.svg" />
+							</span>
+
+							<h6 className="checkout__free-domain-credit-title">
 								{ cart.has_bundle_credit
 									? this.props.translate( 'You have a free domain credit!' )
 									: this.props.translate( "Woohoo! You don't owe us anything!" ) }
 							</h6>
 
-							<span>
+							<span className="checkout__free-domain-credit">
 								{ cart.has_bundle_credit
 									? this.props.translate(
 											'You get one free domain with your subscription to %(productName)s. Time to celebrate!',
