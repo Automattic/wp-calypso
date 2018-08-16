@@ -49,7 +49,7 @@ class CurrentPlan extends Component {
 		isExpiring: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
-		isAutomatedTransfer: PropTypes.bool,
+		showJetpackChecklist: PropTypes.bool,
 		showThankYou: PropTypes.bool,
 	};
 
@@ -87,11 +87,10 @@ class CurrentPlan extends Component {
 			domains,
 			currentPlan,
 			hasDomainsLoaded,
-			isAutomatedTransfer,
 			isExpiring,
-			isJetpack,
 			path,
 			shouldShowDomainWarnings,
+			showJetpackChecklist,
 			translate,
 		} = this.props;
 
@@ -147,14 +146,13 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				{ isEnabled( 'jetpack/checklist' ) &&
-					isJetpack &&
-					! isAutomatedTransfer && (
-						<Fragment>
-							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-							<JetpackChecklist />
-						</Fragment>
-					) }
+				{ showJetpackChecklist && (
+					<Fragment>
+						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+						<JetpackChecklist />
+					</Fragment>
+				) }
+
 				<div
 					className={ classNames( 'current-plan__header-text current-plan__text', {
 						'is-placeholder': { isLoading },
@@ -182,12 +180,12 @@ export default connect( state => {
 		selectedSite,
 		selectedSiteId,
 		domains,
-		isAutomatedTransfer,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-		isJetpack,
+		showJetpackChecklist:
+			false === isAutomatedTransfer && isJetpack && isEnabled( 'jetpack/checklist' ),
 	};
 } )( localize( CurrentPlan ) );
