@@ -28,7 +28,6 @@
 
 	.activity-log-item__activity-icon {
 		margin-right: 16px;
-		padding: 8px;
 	}
 }
 
@@ -41,11 +40,12 @@
 }
 
 .activity-log-tasklist__update-text {
-	font-weight: 500;
-	line-height: 21px;
-	padding-bottom:7px;
-	display: inline-block;
+	margin-bottom: 8px;
+	a, span {
+		font-weight: 500;
+	}
 }
+.activity-log-tasklist__update-text
 
 .activity-log-tasklist__update-version {
 	color: $gray-text-min;

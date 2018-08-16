@@ -59,19 +59,15 @@ class ActivityLogTaskUpdate extends Component {
 					activityStatus="warning"
 				/>
 				<span className="activity-log-tasklist__update-item">
-					<div>
-						<span className="activity-log-tasklist__update-text">
-							{ linked ? (
-								<a href={ url } onClick={ this.handleNameClick }>
-									{ name }
-								</a>
-							) : (
-								// Add button classes so unlinked names look the same.
-								<span className="activity-log-tasklist__unlinked button is-borderless">
-									{ name }
-								</span>
-							) }
-						</span>
+					<div className="activity-log-tasklist__update-text">
+						{ linked ? (
+							<a href={ url } onClick={ this.handleNameClick }>
+								{ name }
+							</a>
+						) : (
+							// Add button classes so unlinked names look the same.
+							<span className="activity-log-tasklist__unlinked button is-borderless">{ name }</span>
+						) }
 						<span className="activity-log-tasklist__update-bullet">&bull;</span>
 						<span className="activity-log-tasklist__update-version">{ version }</span>
 					</div>
