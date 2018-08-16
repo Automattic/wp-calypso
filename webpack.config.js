@@ -282,7 +282,11 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					},
 				} ),
 		] ),
-		externals: _.compact( [ externalizeWordPressPackages && wordpressExternals, 'electron' ] ),
+		externals: _.compact( [
+			externalizeWordPressPackages && wordpressExternals,
+			externalizeWordPressPackages && 'wp',
+			'electron',
+		] ),
 	};
 
 	if ( calypsoEnv === 'desktop' ) {
