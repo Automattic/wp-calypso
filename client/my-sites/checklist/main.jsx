@@ -34,7 +34,6 @@ import { isEnabled } from 'config';
  */
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { mergeObjectIntoArrayById } from './util';
-import { tasks as jetpackTasks } from './jetpack-checklist';
 import { tasks as wpcomTasks } from './onboardingChecklist';
 
 class ChecklistMain extends PureComponent {
@@ -189,7 +188,6 @@ export default connect( state => {
 	 * @TODO clean up module separation.
 	 */
 	const siteChecklist = getSiteChecklist( state, siteId );
-	const tasks = isJetpack ? jetpackTasks : wpcomTasks;
 	const tasksFromServer = siteChecklist && siteChecklist.tasks;
 
 	return {
@@ -207,6 +205,6 @@ export default connect( state => {
 		 * https://github.com/Automattic/wp-calypso/issues/26572
 		 * @TODO clean up module separation.
 		 */
-		tasks: tasksFromServer ? mergeObjectIntoArrayById( tasks, tasksFromServer ) : null,
+		tasks: tasksFromServer ? mergeObjectIntoArrayById( wpcomTasks, tasksFromServer ) : null,
 	};
 } )( localize( ChecklistMain ) );

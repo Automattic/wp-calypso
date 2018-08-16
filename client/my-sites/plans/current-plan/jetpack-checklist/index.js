@@ -20,7 +20,6 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
-import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
 class JetpackChecklist extends PureComponent {
@@ -144,7 +143,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
 	loadTrackingTool,
 	recordTracksEvent,
-	createNotice,
 	requestGuidedTour,
 };
 
