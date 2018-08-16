@@ -76,14 +76,14 @@ export default {
 		defaultVariation: 'original',
 	},
 	domainSuggestionKrakenV323: {
-		datestamp: '20180726',
+		datestamp: '20180815',
 		variations: {
 			domainsbot: 0,
 			group_1: 22700,
 			group_3: 22700,
 			group_4: 22700,
-			group_6: 10000,
-			group_7: 10000,
+			group_6: 0,
+			group_7: 0,
 			group_8: 22700,
 		},
 		defaultVariation: 'domainsbot',
