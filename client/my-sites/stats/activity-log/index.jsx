@@ -60,6 +60,7 @@ import getRestoreProgress from 'state/selectors/get-restore-progress';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import isVipSite from 'state/selectors/is-vip-site';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { isMobile } from 'lib/viewport';
@@ -521,7 +522,9 @@ export default connect(
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 		const filter = getActivityLogFilter( state, siteId );
 		const logs = siteId && requestActivityLogs( siteId, filter );
-		const siteIsOnFreePlan = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
+		const siteIsOnFreePlan =
+			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
+			! isVipSite( state, siteId );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
