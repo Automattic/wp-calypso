@@ -16,7 +16,7 @@ const AssetsWriter = require( './server/bundler/assets-writer' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
 
@@ -140,23 +140,13 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			chunkIds: isDevelopment ? 'named' : 'natural',
 			minimize: shouldMinify,
 			minimizer: [
-				new UglifyJsPlugin( {
+				new TerserPlugin( {
 					cache: 'docker' !== process.env.CONTAINER,
 					parallel: true,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
-					uglifyOptions: {
-						compress: {
-							/**
-							 * Produces inconsistent results
-							 * Enable when the following is resolved:
-							 * https://github.com/mishoo/UglifyJS2/issues/3010
-							 */
-							collapse_vars: false,
-						},
-						mangle: {
-							safari10: true,
-						},
+					terserOptions: {
 						ecma: 5,
+						safari10: true,
 					},
 				} ),
 			],
