@@ -29,11 +29,17 @@ class ChecklistShow extends PureComponent {
 		this.props.loadTrackingTool( 'HotJar' );
 	}
 
+	isComplete( taskId ) {
+		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
+	}
+
 	handleTaskStart = task => () => {
 		const { requestTour, siteSlug, track } = this.props;
-
 		launchTask( {
-			task,
+			task: {
+				...task,
+				completed: task.completed || this.isComplete( task.id ),
+			},
 			location: 'checklist_show',
 			requestTour,
 			siteSlug,
@@ -44,7 +50,7 @@ class ChecklistShow extends PureComponent {
 	handleTaskDismiss = task => () => {
 		const { notify, siteId, update } = this.props;
 
-		if ( task && ! task.completed ) {
+		if ( task ) {
 			notify( 'is-success', 'You completed a task!' );
 			update( siteId, task.id );
 		}
@@ -62,7 +68,7 @@ class ChecklistShow extends PureComponent {
 						<Task
 							buttonPrimary={ task.buttonPrimary }
 							buttonText={ task.buttonText }
-							completed={ task.completed || get( taskStatuses, [ task.id, 'completed' ], false ) }
+							completed={ task.completed || this.isComplete( task.id ) }
 							completedButtonText={ task.completedButtonText }
 							completedTitle={ task.completedTitle }
 							description={ task.description }
