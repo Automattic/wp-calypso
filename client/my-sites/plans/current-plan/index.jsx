@@ -50,8 +50,8 @@ class CurrentPlan extends Component {
 		isExpiring: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
-		isAutomatedTransfer: PropTypes.bool,
 		doPlanSetup: PropTypes.bool,
+		showJetpackChecklist: PropTypes.bool,
 	};
 
 	isLoading() {
@@ -88,11 +88,10 @@ class CurrentPlan extends Component {
 			domains,
 			currentPlan,
 			hasDomainsLoaded,
-			isAutomatedTransfer,
 			isExpiring,
-			isJetpack,
 			path,
 			shouldShowDomainWarnings,
+			showJetpackChecklist,
 			translate,
 		} = this.props;
 
@@ -135,10 +134,7 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				{ this.props.doPlanSetup &&
-				isEnabled( 'jetpack/checklist' ) &&
-				isJetpack &&
-				! isAutomatedTransfer ? (
+				{ this.props.doPlanSetup && showJetpackChecklist ? (
 					<PlanSetupHeader />
 				) : (
 					<CurrentPlanHeader
@@ -152,14 +148,12 @@ class CurrentPlan extends Component {
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
 				) }
-				{ isEnabled( 'jetpack/checklist' ) &&
-					isJetpack &&
-					! isAutomatedTransfer && (
-						<Fragment>
-							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-							<JetpackChecklist />
-						</Fragment>
-					) }
+				{ showJetpackChecklist && (
+					<Fragment>
+						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+						<JetpackChecklist />
+					</Fragment>
+				) }
 				<div
 					className={ classNames( 'current-plan__header-text current-plan__text', {
 						'is-placeholder': { isLoading },
@@ -187,12 +181,12 @@ export default connect( state => {
 		selectedSite,
 		selectedSiteId,
 		domains,
-		isAutomatedTransfer,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-		isJetpack,
+		showJetpackChecklist:
+			false === isAutomatedTransfer && isJetpack && isEnabled( 'jetpack/checklist' ),
 	};
 } )( localize( CurrentPlan ) );
