@@ -14,6 +14,7 @@ exports.config = ( {
 	return {
 		...baseConfig,
 		...{
+			devtool: 'source-map',
 			entry: {
 				...( editorScript ? { [ outputEditorFile || `${ name }-editor` ]: editorScript } : {} ),
 				...( viewScript ? { [ outputViewFile || `${ name }-view` ]: viewScript } : {} ),
