@@ -192,6 +192,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					use: _.compact( [
 						MiniCssExtractPlugin.loader,
 						'css-loader',
+						'postcss-loader',
 						{
 							loader: 'sass-loader',
 							options: {
