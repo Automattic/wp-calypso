@@ -120,7 +120,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
 		profile: shouldEmitStats,
 		mode: isDevelopment ? 'development' : 'production',
-		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ), // in production builds you can specify a source-map via env var
+		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
 			path: path.join( __dirname, 'public' ),
 			publicPath: '/calypso/',
