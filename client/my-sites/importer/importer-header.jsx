@@ -1,13 +1,11 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { flowRight, includes } from 'lodash';
+import { flow, includes } from 'lodash';
 import SocialLogo from 'social-logos';
 import { connect } from 'react-redux';
 
@@ -16,8 +14,7 @@ import { connect } from 'react-redux';
  */
 import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
-import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
-import { connectDispatcher } from './dispatcher-converter';
+import { cancelImport, resetImport, startImport } from 'state/imports/actions';
 import SiteImporterLogo from './site-importer/logo';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -51,28 +48,27 @@ class ImporterHeader extends React.PureComponent {
 
 	controlButtonClicked = () => {
 		const {
-				importerStatus: { importerId, importerState, type },
-				site: { ID: siteId },
-				startImportFn,
-			} = this.props,
-			tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
+			importerStatus: { importerId, importerState, type },
+			site: { ID: siteId },
+		} = this.props;
+		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
 		if ( includes( [ ...cancelStates, ...stopStates ], importerState ) ) {
-			cancelImport( siteId, importerId );
+			this.props.cancelImport( siteId, importerId );
 
 			this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
 				blog_id: siteId,
 				importer_id: tracksType,
 			} );
 		} else if ( includes( startStates, importerState ) ) {
-			startImportFn( siteId, type );
+			this.props.startImport( siteId, type );
 
 			this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 				blog_id: siteId,
 				importer_id: tracksType,
 			} );
 		} else if ( includes( doneStates, importerState ) ) {
-			resetImport( siteId, importerId );
+			this.props.resetImport( siteId, importerId );
 
 			this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 				blog_id: siteId,
@@ -151,14 +147,15 @@ class ImporterHeader extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	startImportFn: flowRight(
-		dispatch,
-		startImport
+export default flow(
+	connect(
+		null,
+		{
+			recordTracksEvent,
+			cancelImport,
+			resetImport,
+			startImport,
+		}
 	),
-} );
-
-export default connect(
-	null,
-	{ recordTracksEvent }
-)( connectDispatcher( null, mapDispatchToProps )( localize( ImporterHeader ) ) );
+	localize
+)( ImporterHeader );
