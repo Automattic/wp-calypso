@@ -82,7 +82,7 @@ QuerySiteStats.propTypes = {
 
 QuerySiteStats.defaultProps = {
 	query: {},
-	heartbeat: 3 * 60 * 1000, // 3 minutes
+	heartbeat: 30 * 60 * 1000, // 30 minutes
 };
 
 export default connect(
