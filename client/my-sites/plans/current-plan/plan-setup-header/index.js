@@ -2,22 +2,28 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import JetpackSetupRunner from 'my-sites/plans/current-plan/jetpack-setup-runner/index';
 import ProgressBar from 'components/progress-bar';
 
-export class PlanSetupHeader extends Component {
+export class PlanSetupHeader extends PureComponent {
 	static propTypes = {};
+
+	state = {
+		autoInstallStatus: {},
+	};
 
 	render() {
 		const { translate } = this.props;
 		return (
 			<Card className="plan-setup-header">
+				<JetpackSetupRunner />
 				<img
 					className="plan-setup-header__illustration"
 					alt=""
