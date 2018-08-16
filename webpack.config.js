@@ -78,8 +78,6 @@ const babelLoader = {
 /**
  * Converts @wordpress require into window reference
  *
- * Also, allows us to externalize the 'wp' global variable
- *
  * Note this isn't the same as camel case because of the
  * way that numbers don't trigger the capitalized next letter
  *
@@ -91,10 +89,6 @@ const babelLoader = {
  * @return {string} global variable reference for import
  */
 const wordpressRequire = request => {
-	if ( request === 'wp' ) {
-		return request;
-	}
-
 	// @wordpress/components -> [ @wordpress, components ]
 	const [ , name ] = request.split( '/' );
 
@@ -103,7 +97,7 @@ const wordpressRequire = request => {
 };
 
 const wordpressExternals = ( context, request, callback ) =>
-	/(^@wordpress\/)|(^wp$)/.test( request )
+	/^@wordpress\//.test( request )
 		? callback( null, `root ${ wordpressRequire( request ) }` )
 		: callback();
 
@@ -288,7 +282,11 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					},
 				} ),
 		] ),
-		externals: _.compact( [ externalizeWordPressPackages && wordpressExternals, 'electron' ] ),
+		externals: _.compact( [
+			externalizeWordPressPackages && wordpressExternals,
+			externalizeWordPressPackages && 'wp',
+			'electron',
+		] ),
 	};
 
 	if ( calypsoEnv === 'desktop' ) {
