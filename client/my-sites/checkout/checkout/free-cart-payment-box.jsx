@@ -32,7 +32,7 @@ class FreeCartPaymentBox extends React.Component {
 					<div className="payment-box-section">
 						<div className="checkout__payment-box-section-content">
 							<span className="checkout__free-domain-credit-illustration">
-								<img src="/calypso/images/illustrations/custom-domain.svg" />
+								<img src="/calypso/images/illustrations/custom-domain.svg" alt="" />
 							</span>
 
 							<h6 className="checkout__free-domain-credit-title">
