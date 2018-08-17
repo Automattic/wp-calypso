@@ -37,8 +37,7 @@ test-results*.xml
 /public/emergent-paywall*.css
 /public/sections/*
 /public/sections-rtl/*
-/public/images/flags/*.svg
-/public/images/flags/*.png
+/public/images/*.svg
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
