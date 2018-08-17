@@ -144,6 +144,7 @@
     "photon": "2.0.1",
     "postcss-cli": "6.0.0",
     "postcss-custom-properties": "7.0.0",
+    "postcss-loader": "3.0.0",
     "prismjs": "1.15.0",
     "prop-types": "15.6.2",
     "qrcode.react": "0.8.0",

@@ -183,6 +183,12 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 						MiniCssExtractPlugin.loader,
 						'css-loader',
 						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: [ require( 'autoprefixer' ) ],
+							},
+						},
+						{
 							loader: 'sass-loader',
 							options: {
 								includePaths: [ path.join( __dirname, 'client' ) ],
