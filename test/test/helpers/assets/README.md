@@ -13,13 +13,14 @@ const MyFlag = ( {  countryCode } ) => (
 
 ```
 
-This helper can be used to transform all those imports to a module that returns a
-`test-file-stub` string:
+This helper can be used to transform all those imports to a module that returns
+the asset file's basename as a string:
 
 ```json
 {
-	"moduleNameMapper": {
-		"\\.svg$": "<rootDir>/test/test/helpers/assets/index.js"
-	}
+	"transform": {
+		"^.+\\.jsx?$": "babel-jest",
+		"\\.svg$": "<rootDir>/test/test/helpers/assets/transform.js"
+	},
 }
 ```
