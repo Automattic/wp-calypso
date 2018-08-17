@@ -7,10 +7,12 @@ const path = require( 'path' );
 exports.config = ( {
 	argv: { editorScript, viewScript, outputDir, outputEditorFile, outputViewFile },
 	getBaseConfig,
+	__rootDir
 } ) => {
 	const baseConfig = getBaseConfig( {
 		externalizeWordPressPackages: true,
-		namespaceSDK: 'calypso',
+		stylesNamespacing: 'calypso',
+		stylesNamespacingExclude: path.join( __rootDir, 'client', 'gutenberg' ),
 	} );
 	const name = path.basename( path.dirname( editorScript ).replace( /\/$/, '' ) );
 

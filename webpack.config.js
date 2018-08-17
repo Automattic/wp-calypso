@@ -74,11 +74,24 @@ const babelLoader = {
 	},
 };
 
+const preSassLoaders = [
+	MiniCssExtractPlugin.loader,
+	'css-loader',
+	{
+		loader: 'postcss-loader',
+		options: {
+			plugins: _.compact( [
+				require( 'autoprefixer' ),
+				! isDevelopment && require( 'cssnano' ),
+			] ),
+		},
+	},
+];
+
 const sassLoader = {
 	loader: 'sass-loader',
 	options: {
 		includePaths: [ path.join( __dirname, 'client' ) ],
-		data: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/utils' ) }';`,
 	},
 };
 
@@ -113,11 +126,20 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
- * @param  {object}  env                environment options
- * @param  {string}  env.namespaceSDK   set by bin/sdk/gutenberg.js when building Gutenberg extensions
- * @return {object}                     webpack config
+ * `env` params are typically set by files in `bin/sdk/*`
+ *
+ * @param {object}  env                               environment options
+ * @param {boolean} env.externalizeWordPressPackages  whether to bundle or extern the `@wordpress/` packages
+ * @param {string}  env.stylesNamespacing             prefix styles with CSS class or ID
+ * @param {string}  env.stylesNamespacingExclude      paths to exlude from namespacing when `stylesNamespacing` is defined
+ *
+ * @return {object}                                    webpack config
  */
-function getWebpackConfig( { namespaceSDK = '' } = {} ) {
+function getWebpackConfig( {
+	stylesNamespacingExclude = '',
+	externalizeWordPressPackages = false,
+	stylesNamespacing = '',
+} = {} ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
@@ -159,7 +181,7 @@ function getWebpackConfig( { namespaceSDK = '' } = {} ) {
 			// avoids this warning:
 			// https://github.com/localForage/localForage/issues/577
 			noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
-			rules: [
+			rules: _.compact( [
 				{
 					test: /\.jsx?$/,
 					exclude: /node_modules[\/\\](?!notifications-panel)/,
@@ -183,30 +205,20 @@ function getWebpackConfig( { namespaceSDK = '' } = {} ) {
 				},
 				{
 					test: /\.(sc|sa|c)ss$/,
-					include: path.join( __dirname, 'client/gutenberg' ),
-					use: _.compact( [ MiniCssExtractPlugin.loader, 'css-loader', sassLoader ] ),
-				},
-				{
-					test: /\.(sc|sa|c)ss$/,
-					exclude: path.join( __dirname, 'client/gutenberg' ),
+					exclude: stylesNamespacingExclude,
 					use: _.compact( [
-						MiniCssExtractPlugin.loader,
-						'css-loader',
-						{
-							loader: 'postcss-loader',
-							options: {
-								plugins: _.compact( [
-									require( 'autoprefixer' ),
-									! isDevelopment && require( 'cssnano' ),
-								] ),
-							},
-						},
-						namespaceSDK && {
+						...preSassLoaders,
+						stylesNamespacing && {
 							loader: 'namespace-css-loader',
-							options: `.${ namespaceSDK }`,
+							options: `.${ stylesNamespacing }`,
 						},
 						sassLoader,
 					] ),
+				},
+				stylesNamespacingExclude && {
+					test: /\.(sc|sa|c)ss$/,
+					include: stylesNamespacingExclude,
+					use: [ ...preSassLoaders, sassLoader ],
 				},
 				{
 					test: /extensions[\/\\]index/,
@@ -254,7 +266,7 @@ function getWebpackConfig( { namespaceSDK = '' } = {} ) {
 						},
 					],
 				},
-			],
+			] ),
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx' ],
