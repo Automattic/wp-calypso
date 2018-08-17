@@ -66,7 +66,7 @@ class ActivityLogTaskUpdate extends Component {
 							</a>
 						) : (
 							// Add button classes so unlinked names look the same.
-							<span className="activity-log-tasklist__unlinked button is-borderless">{ name }</span>
+							<span className="activity-log-tasklist__unlinked">{ name }</span>
 						) }
 						<span className="activity-log-tasklist__update-bullet">&bull;</span>
 						<span className="activity-log-tasklist__update-version">{ version }</span>
