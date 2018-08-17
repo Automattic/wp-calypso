@@ -58,7 +58,7 @@
 	}
 }
 
-.importer__service-info {
+.importer-header__service-info {
 	margin-bottom: 1.5em;
 
 	@include breakpoint( '>480px' ) {
@@ -66,7 +66,7 @@
 	}
 }
 
-.importer__service-title {
+.importer-header__service-title {
 	font-size: 21px;
 	font-weight: 300;
 	color: $gray;
@@ -76,7 +76,7 @@
 	}
 }
 
-.importer__master-control {
+.importer-header__action-button {
 	margin-top: 9px;
 	clear: none;
 }
