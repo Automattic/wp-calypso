@@ -7,17 +7,13 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { flowRight, includes } from 'lodash';
+import { includes } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
-import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
-import { connectDispatcher } from 'my-sites/importer/dispatcher-converter';
-import SiteImporterLogo from 'my-sites/importer/site-importer/logo';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ImporterLogo from 'my-sites/importer/importer-logo';
 
@@ -76,42 +72,31 @@ class ImporterHeader extends React.PureComponent {
 
 		if ( includes( cancelStates, importerState ) ) {
 			return CloseButton;
-
 		} else if ( includes( stopStates, importerState ) ) {
 			return StopButton;
-
 		} else if ( includes( startStates, importerState ) ) {
 			return StartButton;
-
 		} else if ( includes( doneStates, importerState ) ) {
 			return DoneButton;
-
 		}
 
 		return null;
 	}
 
 	render() {
-		const {
-			importerStatus,
-			icon,
-			isEnabled,
-			title,
-			description,
-		} = this.props;
-		const { importerState } = importerStatus;
+		const { importerStatus, icon, isEnabled, title, description } = this.props;
 		const ButtonComponent = this.getButtonComponent();
 
 		return (
-			<header className="importer-service">
+			<header className="importer-header">
 				<ImporterLogo icon={ icon } />
 				<ButtonComponent
 					importerStatus={ importerStatus }
 					isEnabled={ isEnabled }
 					site={ this.props.site }
 				/>
-				<div className="importer__service-info">
-					<h1 className="importer__service-title">{ title }</h1>
+				<div className="importer-header__service-info">
+					<h1 className="importer-header__service-title">{ title }</h1>
 					<p>{ description }</p>
 				</div>
 			</header>
