@@ -6,11 +6,11 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { numberFormat } from 'i18n-calypso';
-import { throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import afterLayoutFlush from 'lib/after-layout-flush';
 import Label from './label';
 
 export default class ModuleChartXAxis extends PureComponent {
@@ -31,7 +31,7 @@ export default class ModuleChartXAxis extends PureComponent {
 
 	// Add listener for window resize
 	componentDidMount() {
-		this.resize = throttle( this.resize, 400 );
+		this.resize = afterLayoutFlush( this.resize );
 		window.addEventListener( 'resize', this.resize );
 		this.resize();
 	}
