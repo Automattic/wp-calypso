@@ -22,10 +22,12 @@ import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { launchTask, tasks } from 'my-sites/checklist/onboardingChecklist';
+import { getTaskUrls, launchTask, tasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import QueryPosts from 'components/data/query-posts';
+import { getSitePosts } from 'state/posts/selectors';
 
 const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
@@ -44,11 +46,14 @@ export class ChecklistBanner extends Component {
 	};
 
 	handleClick = () => {
-		const { requestTour, track, siteSlug } = this.props;
+		const { requestTour, track, siteSlug, taskUrls } = this.props;
 		const task = this.getTask();
 
 		launchTask( {
-			task,
+			task: {
+				...task,
+				url: taskUrls[ task.id ] || task.url,
+			},
 			location: 'checklist_banner',
 			requestTour,
 			siteSlug,
@@ -146,6 +151,12 @@ export class ChecklistBanner extends Component {
 		return (
 			<Card className="checklist-banner">
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ siteId && (
+					<QueryPosts
+						siteId={ siteId }
+						query={ { type: 'any', number: 10, order_by: 'ID', order: 'ASC' } }
+					/>
+				) }
 				<div className="checklist-banner__gauge">
 					<span className="checklist-banner__gauge-additional-text">{ translate( 'setup' ) }</span>
 					<Gauge
@@ -202,6 +213,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 		siteDesignType,
 		siteSlug,
 		taskStatuses,
+		taskUrls: getTaskUrls( getSitePosts( state, siteId ) ),
 	};
 };
 

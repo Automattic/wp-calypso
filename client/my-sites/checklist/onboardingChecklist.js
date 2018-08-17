@@ -5,6 +5,7 @@
 import page from 'page';
 import { isDesktop } from 'lib/viewport';
 import { translate } from 'i18n-calypso';
+import { find } from 'lodash';
 
 export const tasks = [
 	{
@@ -138,4 +139,25 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
+}
+
+export function getTaskUrls( posts ) {
+	const urls = {};
+	const firstPost = find( posts, { type: 'post' } );
+	const contactPage = find( posts, post => {
+		return (
+			post.type === 'page' &&
+			find( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } )
+		);
+	} );
+
+	if ( firstPost ) {
+		urls.post_published = '/post/$siteSlug/' + firstPost.ID;
+	}
+
+	if ( contactPage ) {
+		urls.contact_page_updated = '/post/$siteSlug/' + contactPage.ID;
+	}
+
+	return urls;
 }

@@ -18,10 +18,12 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { launchTask, tasks } from '../onboardingChecklist';
+import { getTaskUrls, launchTask, tasks } from '../onboardingChecklist';
 import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import QueryPosts from 'components/data/query-posts';
+import { getSitePosts } from 'state/posts/selectors';
 
 class ChecklistShow extends PureComponent {
 	componentDidMount() {
@@ -33,11 +35,12 @@ class ChecklistShow extends PureComponent {
 	}
 
 	handleTaskStart = task => () => {
-		const { requestTour, siteSlug, track } = this.props;
+		const { requestTour, siteSlug, track, taskUrls } = this.props;
 		launchTask( {
 			task: {
 				...task,
 				completed: task.completed || this.isComplete( task.id ),
+				url: taskUrls[ task.id ] || task.url,
 			},
 			location: 'checklist_show',
 			requestTour,
@@ -61,6 +64,12 @@ class ChecklistShow extends PureComponent {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ siteId && (
+					<QueryPosts
+						siteId={ siteId }
+						query={ { type: 'any', number: 10, order_by: 'ID', order: 'ASC' } }
+					/>
+				) }
 				<Checklist isPlaceholder={ ! taskStatuses }>
 					{ tasks.map( task => (
 						<Task
@@ -90,6 +99,7 @@ const mapStateToProps = state => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+		taskUrls: getTaskUrls( getSitePosts( state, siteId ) ),
 	};
 };
 
