@@ -16,21 +16,16 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import classnames from 'classnames';
-import isNil from 'lodash/isNil';
-import wp from 'wp';
+import { __, _n, sprintf } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
+import { isNil } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import PublicizeConnection from './publicize-connection';
 import PublicizeSettingsButton from './publicize-settings-button';
-
-/**
- * Module variables
- */
-const { __, _n, sprintf } = wp.i18n;
 
 class PublicizeFormUnwrapped extends Component {
 	constructor( props ) {

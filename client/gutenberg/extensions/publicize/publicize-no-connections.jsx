@@ -15,18 +15,13 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import wp from 'wp';
+import { __, sprintf } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { getAllConnections } from './async-publicize-lib';
-
-/**
- * Module variables
- */
-const { __, sprintf } = wp.i18n;
 
 class PublicizeNoConnections extends Component {
 	constructor( props ) {

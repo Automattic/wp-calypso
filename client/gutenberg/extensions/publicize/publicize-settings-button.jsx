@@ -19,13 +19,8 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import wp from 'wp';
-
-/**
- * Module variables
- */
-const { __ } = wp.i18n;
+import { __ } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
 
 class PublicizeSettingsButton extends Component {
 	/**
@@ -71,4 +66,3 @@ class PublicizeSettingsButton extends Component {
 }
 
 export default PublicizeSettingsButton;
-

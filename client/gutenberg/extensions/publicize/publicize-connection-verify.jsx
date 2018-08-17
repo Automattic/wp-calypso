@@ -17,18 +17,13 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import wp from 'wp';
+import { __ } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import { requestTestPublicizeConnections } from './async-publicize-lib';
-
-/**
- * Module variables
- */
-const { __ } = wp.i18n;
 
 class PublicizeConnectionVerify extends Component {
 	constructor( props ) {
@@ -128,4 +123,3 @@ class PublicizeConnectionVerify extends Component {
 }
 
 export default PublicizeConnectionVerify;
-
