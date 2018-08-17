@@ -7,7 +7,7 @@ const path = require( 'path' );
 exports.config = ( {
 	argv: { editorScript, viewScript, outputDir, outputEditorFile, outputViewFile },
 	getBaseConfig,
-	__rootDir
+	__rootDir,
 } ) => {
 	const baseConfig = getBaseConfig( {
 		externalizeWordPressPackages: true,
