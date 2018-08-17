@@ -120,6 +120,18 @@ const webpackConfig = {
 					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
 				},
 			},
+			{
+				test: /\.(sc|sa|c)ss$/,
+				use: _.compact( [
+					'css-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							includePaths: [ path.join( __dirname, 'client' ) ],
+						},
+					},
+				] ),
+			},
 		],
 	},
 	resolve: {

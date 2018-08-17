@@ -1,3 +1,7 @@
+/** @format */
+
+@import '../../../assets/stylesheets/shared/_colors.scss';
+
 .ribbon {
 	position: absolute;
 	right: -5px;
@@ -25,7 +29,7 @@
 	text-transform: uppercase;
 }
 .ribbon .ribbon__title::before {
-	content: "";
+	content: '';
 	position: absolute;
 	left: 0px;
 	top: 100%;
@@ -36,7 +40,7 @@
 	border-top: 3px solid $blue-dark;
 }
 .ribbon .ribbon__title::after {
-	content: "";
+	content: '';
 	position: absolute;
 	right: 0;
 	top: 100%;
@@ -49,7 +53,7 @@
 
 .ribbon.is-green {
 	.ribbon__title {
-		background-color: $alert-green
+		background-color: $alert-green;
 	}
 	.ribbon__title::before {
 		border-left-color: darken( $alert-green, 20% );
