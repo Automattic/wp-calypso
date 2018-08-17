@@ -21,6 +21,7 @@ describe( 'UpgradeNudge', () => {
 				},
 				jetpack: false,
 			},
+			canManageSite: true,
 		};
 		return merge( {}, defaultProps, overrideProps );
 	};
@@ -50,6 +51,13 @@ describe( 'UpgradeNudge', () => {
 				},
 			} );
 			delete props.feature;
+			const wrapper = shallow( <UpgradeNudge { ...props } /> );
+
+			expect( wrapper.instance().shouldDisplay() ).toBe( false );
+		} );
+
+		test( "should not display when user can't manage site", () => {
+			const props = createProps( { canManageSite: false } );
 			const wrapper = shallow( <UpgradeNudge { ...props } /> );
 
 			expect( wrapper.instance().shouldDisplay() ).toBe( false );
