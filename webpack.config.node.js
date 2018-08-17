@@ -141,7 +141,6 @@ const webpackConfig = {
 						loader: 'sass-loader',
 						options: {
 							includePaths: [ path.join( __dirname, 'client' ) ],
-							data: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/utils' ) }';`,
 						},
 					},
 				] ),
