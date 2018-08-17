@@ -95,6 +95,9 @@ const sassLoader = {
 	},
 };
 
+// When styles-namespacing is enabled, these are the files we want to namespace
+const stylesNamespacingDirectories = [ path.join( __dirname, 'client', 'components' ) ];
+
 /**
  * Converts @wordpress require into window reference
  *
@@ -130,16 +133,11 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @param {object}  env                               environment options
  * @param {boolean} env.externalizeWordPressPackages  whether to bundle or extern the `@wordpress/` packages
- * @param {string}  env.stylesNamespacing             prefix styles with CSS class or ID
- * @param {string}  env.stylesNamespacingExclude      paths to exlude from namespacing when `stylesNamespacing` is defined
+ * @param {string}  env.stylesNamespacing             prefix Calypso component styles with CSS class or ID
  *
  * @return {object}                                    webpack config
  */
-function getWebpackConfig( {
-	stylesNamespacingExclude = '',
-	externalizeWordPressPackages = false,
-	stylesNamespacing = '',
-} = {} ) {
+function getWebpackConfig( { externalizeWordPressPackages = false, stylesNamespacing = '' } = {} ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
@@ -205,20 +203,21 @@ function getWebpackConfig( {
 				},
 				{
 					test: /\.(sc|sa|c)ss$/,
-					use: _.compact( [
+					use: [ ...preSassLoaders, sassLoader ],
+					// When styles-namespacing is enabled, these files are handled by separate loader below
+					...( stylesNamespacing ? { exclude: stylesNamespacingDirectories } : {} ),
+				},
+				stylesNamespacing && {
+					test: /\.(sc|sa|c)ss$/,
+					include: stylesNamespacingDirectories,
+					use: [
 						...preSassLoaders,
-						stylesNamespacing && {
+						{
 							loader: 'namespace-css-loader',
 							options: `.${ stylesNamespacing }`,
 						},
 						sassLoader,
-					] ),
-					...( stylesNamespacingExclude ? { exclude: stylesNamespacingExclude } : {} ),
-				},
-				stylesNamespacingExclude && {
-					test: /\.(sc|sa|c)ss$/,
-					include: stylesNamespacingExclude,
-					use: [ ...preSassLoaders, sassLoader ],
+					],
 				},
 				{
 					test: /extensions[\/\\]index/,

@@ -12,7 +12,6 @@ exports.config = ( {
 	const baseConfig = getBaseConfig( {
 		externalizeWordPressPackages: true,
 		stylesNamespacing: 'calypso',
-		stylesNamespacingExclude: path.join( __rootDir, 'client', 'gutenberg' ),
 	} );
 	const name = path.basename( path.dirname( editorScript ).replace( /\/$/, '' ) );
 
