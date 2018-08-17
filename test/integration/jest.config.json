@@ -1,4 +1,7 @@
 {
+	"moduleNameMapper":{
+		"\\.(sc|sa|c)ss$": "<rootDir>/test/test/helpers/styles/index.js"
+	},
 	"modulePaths": [
 		"<rootDir>/test/",
 		"<rootDir>/server/",
