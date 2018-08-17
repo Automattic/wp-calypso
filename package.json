@@ -229,7 +229,7 @@
     "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public",
     "clean:build": "npm run -s rm -- build && npm run -s rm -- server/bundler .json && npm run -s rm -- .babel-cache",
     "clean:devdocs": "npm run -s rm -- server/devdocs/search-index.js && npm run -s rm -- server/devdocs/proptypes-index.json && npm run -s rm -- server/devdocs/components-usage-stats.json",
-    "clean:public": "npm run -s rm -- public .css .css.map .js .js.map && npm run -s rm -- public/sections .css .css.map && npm run -s rm -- public/sections-rtl .css .css.map",
+    "clean:public": "npm run -s rm -- public .css .css.map .js .js.map && npm run -s rm -- public/images .svg && npm run -s rm -- public/sections .css .css.map && npm run -s rm -- public/sections-rtl .css .css.map",
     "distclean": "npm run -s clean && npm run -s rm -- node_modules",
     "docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
     "eslint-branch": "node bin/eslint-branch.js",
