@@ -158,7 +158,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			rules: [
 				{
 					test: /\.jsx?$/,
-					exclude: /node_modules[\/\\](?!notifications-panel)/,
+					exclude: /node_modules\//,
 					use: [
 						{
 							loader: 'thread-loader',
