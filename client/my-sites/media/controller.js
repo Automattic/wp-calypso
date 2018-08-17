@@ -11,6 +11,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import MediaComponent from 'my-sites/media/main';
+import SingleMediaComponent from 'my-sites/media/single';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSiteFragment } from 'lib/route';
 
@@ -28,6 +29,16 @@ export default {
 		context.primary = React.createElement( MediaComponent, {
 			filter: context.params.filter,
 			search: context.query.s,
+		} );
+		next();
+	},
+	singleMedia: function( context, next ) {
+		if ( ! getSiteFragment( context.path ) ) {
+			return page.redirect( '/media' );
+		}
+		// Render
+		context.primary = React.createElement( SingleMediaComponent, {
+			attachment: context.params.attachment,
 		} );
 		next();
 	},
