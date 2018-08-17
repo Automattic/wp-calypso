@@ -12,9 +12,11 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { decodeEntities } from 'lib/formatting';
 import scrollTo from 'lib/scroll-to';
+import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import Button from 'components/button';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
@@ -26,7 +28,6 @@ import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
 import Notice from 'components/notice';
-import TermTreeSelector from 'blocks/term-tree-selector';
 import PodcastCoverImageSetting from 'my-sites/site-settings/podcast-cover-image-setting';
 import PodcastFeedUrl from './feed-url';
 import PodcastingPrivateSiteMessage from './private-site';
@@ -35,6 +36,8 @@ import PodcastingNotSupportedMessage from './not-supported';
 import PodcastingPublishNotice from './publish-notice';
 import PodcastingSupportLink from './support-link';
 import podcastingTopics from './topics';
+import TermTreeSelector from 'blocks/term-tree-selector';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 /**
  * Selectors, actions, and query components
@@ -195,6 +198,7 @@ class PodcastingDetails extends Component {
 			translate,
 			isPodcastingEnabled,
 			isSavingSettings,
+			plansDataLoaded,
 		} = this.props;
 		const { isCoverImageUploading } = this.state;
 
@@ -226,6 +230,16 @@ class PodcastingDetails extends Component {
 							<PodcastingSupportLink showText={ false } iconSize={ 16 } />
 						</h1>
 					</HeaderCake>
+					{ ! error &&
+						plansDataLoaded && (
+							<UpgradeNudge
+								plan={ PLAN_PERSONAL }
+								title={ translate( 'Upload Audio with WordPress.com Personal' ) }
+								message={ translate( 'Embed podcast episodes directly from your media library.' ) }
+								feature={ FEATURE_AUDIO_UPLOADS }
+								event="podcasting_details_upload_audio"
+							/>
+						) }
 					{ ! error && (
 						<Card className="podcasting-details__category-wrapper">
 							{ this.renderCategorySetting() }
@@ -486,6 +500,7 @@ const connectComponent = connect( ( state, ownProps ) => {
 		isUnsupportedSite: isJetpack && ! isAutomatedTransfer,
 		isSavingSettings,
 		newPostUrl,
+		plansDataLoaded: ! isRequestingSitePlans( state, siteId ),
 	};
 } );
 

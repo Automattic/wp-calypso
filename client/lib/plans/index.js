@@ -69,8 +69,35 @@ export function getPlanPath( plan ) {
 	return get( getPlan( plan ), 'getPathSlug', () => undefined )();
 }
 
+/**
+ * Determines if a plan has a specific feature.
+ *
+ * Collects features for a plan by calling all possible feature methods for the plan.
+ *
+ * @param   {Object|String} plan    Plan object or plan name.
+ * @param   {String}        feature Feature name.
+ * @returns {Boolean}               Whether the specified plan has the specified feature.
+ */
 export function planHasFeature( plan, feature ) {
-	return includes( get( getPlan( plan ), 'getFeatures', () => [] )(), feature );
+	const planConstantObj = getPlan( plan );
+
+	// Collect features from all plan methods (may have duplicates)
+	const allFeatures = [
+		'getPlanCompareFeatures',
+		'getPromotedFeatures',
+		'getSignupFeatures',
+		'getBlogSignupFeatures',
+		'getPortfolioSignupFeatures',
+		'getHiddenFeatures',
+	].reduce(
+		( featuresArray, featureMethodName ) => [
+			...get( planConstantObj, featureMethodName, () => [] )(),
+			...featuresArray,
+		],
+		[]
+	);
+
+	return includes( allFeatures, feature );
 }
 
 export function getCurrentTrialPeriodInDays( plan ) {
@@ -369,7 +396,7 @@ export function plansLink( url, siteSlug, intervalType ) {
 
 export function applyTestFiltersToPlansList( planName, abtest ) {
 	const filteredPlanConstantObj = { ...getPlan( planName ) };
-	const filteredPlanFeaturesConstantList = getPlan( planName ).getFeatures( abtest );
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getPlanCompareFeatures( abtest );
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
@@ -383,7 +410,7 @@ export function applyTestFiltersToPlansList( planName, abtest ) {
 	updatePlanDescriptions();
 	updatePlanFeatures();
 
-	filteredPlanConstantObj.getFeatures = () => filteredPlanFeaturesConstantList;
+	filteredPlanConstantObj.getPlanCompareFeatures = () => filteredPlanFeaturesConstantList;
 
 	return filteredPlanConstantObj;
 }

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, get, includes } from 'lodash';
+import { find, get } from 'lodash';
 import debugFactory from 'debug';
 import moment from 'moment';
 
@@ -15,8 +15,7 @@ import { initialSiteState } from './reducer';
 import { getSite } from 'state/sites/selectors';
 import { createSitePlanObject } from './assembler';
 import createSelector from 'lib/create-selector';
-import { calculateMonthlyPriceForPlan } from 'lib/plans';
-import { PLANS_LIST } from 'lib/plans/constants';
+import { calculateMonthlyPriceForPlan, planHasFeature } from 'lib/plans';
 
 /**
  * Module dependencies
@@ -199,11 +198,6 @@ export function isCurrentUserCurrentPlanOwner( state, siteId ) {
  */
 export function getSitePlanSlug( state, siteId ) {
 	return get( getCurrentPlan( state, siteId ), 'productSlug', null );
-}
-
-// Duplicated from lib/plans. Proper solution in https://github.com/Automattic/wp-calypso/pull/9635
-function planHasFeature( plan, feature ) {
-	return includes( get( PLANS_LIST[ plan ], 'getFeatures', () => [] )(), feature );
 }
 
 /**

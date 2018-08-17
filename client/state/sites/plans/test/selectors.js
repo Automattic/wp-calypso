@@ -25,8 +25,10 @@ import {
 	hasFeature,
 } from '../selectors';
 import {
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
+	FEATURE_AUDIO_UPLOADS,
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_BUSINESS_ONBOARDING,
 } from 'lib/plans/constants';
@@ -810,6 +812,29 @@ describe( 'selectors', () => {
 					},
 					2916284,
 					FEATURE_UNLIMITED_PREMIUM_THEMES
+				)
+			).to.be.true;
+		} );
+
+		test( "should return true if the site's current plan includes a hidden feature", () => {
+			expect(
+				hasFeature(
+					{
+						sites: {
+							plans: {
+								2916284: {
+									data: [
+										{
+											currentPlan: true,
+											productSlug: PLAN_PERSONAL,
+										},
+									],
+								},
+							},
+						},
+					},
+					2916284,
+					FEATURE_AUDIO_UPLOADS
 				)
 			).to.be.true;
 		} );
