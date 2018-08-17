@@ -27,7 +27,6 @@ export class ImageSelector extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		compact: PropTypes.bool,
-		hasDropZone: PropTypes.bool,
 		imageIds: PropTypes.array.isRequired,
 		isDropZoneVisible: PropTypes.bool,
 		maxWidth: PropTypes.number,
@@ -44,7 +43,6 @@ export class ImageSelector extends Component {
 
 	static defaultProps = {
 		compact: false,
-		hasDropZone: false,
 		isDropZoneVisible: false,
 		maxWidth: 450,
 		onAddImage: noop,
@@ -145,19 +143,17 @@ export class ImageSelector extends Component {
 	}
 
 	render() {
-		const { className, hasDropZone, imageIds, isImageSelectorDropZoneVisible, siteId } = this.props;
+		const { className, imageIds, isImageSelectorDropZoneVisible, siteId } = this.props;
 		const classes = classnames( 'image-selector', className, {
 			'is-assigned': !! imageIds && imageIds.length,
-			'has-active-drop-zone': hasDropZone && isImageSelectorDropZoneVisible,
+			'has-active-drop-zone': isImageSelectorDropZoneVisible,
 		} );
 
 		return (
 			<div className={ classes }>
 				{ this.renderMediaModal() }
 				<div className="image-selector__inner-content">{ this.renderSelectedImages() }</div>
-				{ hasDropZone && (
-					<ImageSelectorDropZone onDroppedImage={ this.addImage } siteId={ siteId } />
-				) }
+				<ImageSelectorDropZone onDroppedImage={ this.addImage } siteId={ siteId } />
 			</div>
 		);
 	}

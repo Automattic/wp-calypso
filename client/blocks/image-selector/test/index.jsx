@@ -48,10 +48,19 @@ describe( 'ImageSelector', () => {
 		onRemoveImage: noop,
 		imageIds: [],
 	};
+	const store = {
+		getState: () => {},
+		subscribe: () => {},
+		dispatch: () => {},
+	};
 
 	describe( 'rendering', () => {
 		test( 'should show the add image uploader label when no images are passed', () => {
-			const wrapper = mount( <ImageSelector { ...testProps } imageIds={ [] } /> );
+			const wrapper = mount(
+				<Provider store={ store }>
+					<ImageSelector { ...testProps } imageIds={ [] } />
+				</Provider>
+			);
 
 			expect( wrapper.find( '.image-selector__uploader-label' ).contains( 'Add Image' ) ).to.equal(
 				true
@@ -59,7 +68,11 @@ describe( 'ImageSelector', () => {
 		} );
 
 		test( 'should show an uploader when image exists and set to allow multiple images', () => {
-			const wrapper = mount( <ImageSelector { ...testProps } imageIds={ [ 100 ] } multiple /> );
+			const wrapper = mount(
+				<Provider store={ store }>
+					<ImageSelector { ...testProps } imageIds={ [ 100 ] } multiple />
+				</Provider>
+			);
 
 			expect( wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes() ).to.have.lengthOf(
 				1
@@ -67,7 +80,11 @@ describe( 'ImageSelector', () => {
 		} );
 
 		test( 'should not show an uploader when an image exists and multiple images not allowed', () => {
-			const wrapper = mount( <ImageSelector { ...testProps } imageIds={ [ 100 ] } /> );
+			const wrapper = mount(
+				<Provider store={ store }>
+					<ImageSelector { ...testProps } imageIds={ [ 100 ] } />
+				</Provider>
+			);
 
 			expect( wrapper.find( '.image-selector__uploader-wrapper' ).hostNodes() ).to.have.lengthOf(
 				0
@@ -75,39 +92,51 @@ describe( 'ImageSelector', () => {
 		} );
 
 		test( 'should show image when valid ID is passed', () => {
-			const wrapper = mount( <ImageSelector { ...testProps } imageIds={ [ 100 ] } /> );
+			const wrapper = mount(
+				<Provider store={ store }>
+					<ImageSelector { ...testProps } imageIds={ [ 100 ] } />
+				</Provider>
+			);
 
 			expect( wrapper.find( '.image-selector__item' ).hostNodes() ).to.have.lengthOf( 1 );
 		} );
 
 		test( 'should not show image when invalid ID is passed', () => {
-			const wrapper = mount( <ImageSelector { ...testProps } imageIds={ [ 50 ] } /> );
+			const wrapper = mount(
+				<Provider store={ store }>
+					<ImageSelector { ...testProps } imageIds={ [ 50 ] } />
+				</Provider>
+			);
 
 			expect( wrapper.find( '.image-selector__item' ).hostNodes() ).to.have.lengthOf( 0 );
 		} );
 	} );
 
 	describe( 'events', () => {
-		const store = {
-			getState: () => {},
-			subscribe: () => {},
-			dispatch: () => {},
-		};
-
 		test( 'should set state to selecting when uploader is clicked', () => {
-			const wrapper = mount( <ImageSelector { ...testProps } imageIds={ [] } /> );
+			const wrapper = mount(
+				<Provider store={ store }>
+					<ImageSelector { ...testProps } imageIds={ [] } />
+				</Provider>
+			);
 
 			wrapper
 				.find( '.image-selector__uploader-wrapper' )
 				.hostNodes()
 				.simulate( 'click' );
-			expect( wrapper ).to.have.state( 'isSelecting' ).to.be.true;
+			expect( wrapper.find( 'ImageSelector' ).instance().state.isSelecting ).to.be.true;
 		} );
 
 		test( 'should pass back image for removal when remove button is clicked', () => {
 			const mockOnRemoveImage = sinon.spy();
 			const wrapper = mount(
-				<ImageSelector { ...testProps } imageIds={ [ 100 ] } onRemoveImage={ mockOnRemoveImage } />
+				<Provider store={ store }>
+					<ImageSelector
+						{ ...testProps }
+						imageIds={ [ 100 ] }
+						onRemoveImage={ mockOnRemoveImage }
+					/>
+				</Provider>
 			);
 
 			wrapper
@@ -123,7 +152,7 @@ describe( 'ImageSelector', () => {
 			const mockOnAddImage = sinon.spy();
 			const wrapper = mount(
 				<Provider store={ store }>
-					<ImageSelector { ...testProps } hasDropZone onAddImage={ mockOnAddImage } />
+					<ImageSelector { ...testProps } onAddImage={ mockOnAddImage } />
 				</Provider>
 			);
 

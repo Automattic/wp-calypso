@@ -36,7 +36,6 @@ Name | Type | Default | Description
 --- | --- | --- | ---
 `className` | `string` | `` | String used for the class of outer ImageSelector wrapper
 `compact` | `bool` | `0` | Determines whether or not the upload picker is compact or full size
-`hasDropZone` | `bool` | `0` | Enables dropzone for drag-and-drop images
 `imageIds`* | `array` | `[]` | An array of image IDs to be shown in the preview and selected in the Media Modal
 `maxWidth` | `number` | `450` | Maximum width to be used for a preview image
 `onAddImage` | `func` | `noop` | Passes a single transient image object after an image is dropped on the DropZone

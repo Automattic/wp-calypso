@@ -65,7 +65,6 @@ class ImageSelectorExample extends Component {
 					onAddImage={ this.addImage }
 					multiple
 					showEditIcon={ true }
-					hasDropZone
 				/>
 			</div>
 		);
