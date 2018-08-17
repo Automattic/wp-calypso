@@ -41,6 +41,11 @@ import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import getToursHistory from 'state/ui/guided-tours/selectors/get-tours-history';
+import hasNavigated from 'state/selectors/has-navigated';
+
+function goBack() {
+	window.history.back();
+}
 
 const SinglePlugin = createReactClass( {
 	displayName: 'SinglePlugin',
@@ -131,10 +136,12 @@ const SinglePlugin = createReactClass( {
 	},
 
 	backHref() {
-		if ( this.props.prevPath ) {
+		const { navigated, prevPath, siteUrl } = this.props;
+		const shouldUseHistoryBack = window.history.length > 1 && navigated;
+		if ( prevPath ) {
 			return this.getPreviousListUrl();
 		}
-		return '/plugins/manage/' + ( this.props.siteUrl || '' );
+		return ! shouldUseHistoryBack ? '/plugins/manage/' + ( siteUrl || '' ) : null;
 	},
 
 	displayHeader( calypsoify ) {
@@ -143,11 +150,14 @@ const SinglePlugin = createReactClass( {
 		}
 
 		const recordEvent = this.recordEvent.bind( this, 'Clicked Header Plugin Back Arrow' );
+		const { navigated } = this.props;
+		const shouldUseHistoryBack = window.history.length > 1 && navigated;
 		return (
 			<HeaderCake
 				isCompact={ true }
 				backHref={ this.backHref() }
 				onBackArrowClick={ recordEvent }
+				onClick={ shouldUseHistoryBack ? goBack : undefined }
 			/>
 		);
 	},
@@ -431,6 +441,7 @@ export default connect(
 				: canCurrentUserManagePlugins( state ),
 			sites: getSelectedOrAllSitesWithPlugins( state ),
 			toursHistory: getToursHistory( state ),
+			navigated: hasNavigated( state ),
 		};
 	},
 	{
