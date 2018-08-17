@@ -135,9 +135,8 @@ const SinglePlugin = createReactClass( {
 		);
 	},
 
-	backHref() {
-		const { navigated, prevPath, siteUrl } = this.props;
-		const shouldUseHistoryBack = window.history.length > 1 && navigated;
+	backHref( shouldUseHistoryBack ) {
+		const { prevPath, siteUrl } = this.props;
 		if ( prevPath ) {
 			return this.getPreviousListUrl();
 		}
@@ -155,7 +154,7 @@ const SinglePlugin = createReactClass( {
 		return (
 			<HeaderCake
 				isCompact={ true }
-				backHref={ this.backHref() }
+				backHref={ this.backHref( shouldUseHistoryBack ) }
 				onBackArrowClick={ recordEvent }
 				onClick={ shouldUseHistoryBack ? goBack : undefined }
 			/>
