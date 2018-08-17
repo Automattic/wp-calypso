@@ -10,7 +10,6 @@ import Gridicon from 'gridicons';
 
 /** Internal Dependencies */
 import Spinner from 'components/spinner';
-import { flagUrl } from 'lib/flags';
 
 export default class extends React.Component {
 	static displayName = 'PhoneInputCountryFlag';
@@ -50,12 +49,13 @@ export default class extends React.Component {
 
 		if ( countryCode ) {
 			if ( ! this.state.error ) {
+				const flagSvg = require( `../../../node_modules/flag-icon-css/flags/4x3/${ countryCode }.svg` );
 				return (
 					<img
 						alt=""
 						onLoad={ this.handleImageLoad }
 						onError={ this.handleImageError }
-						src={ flagUrl( countryCode ) }
+						src={ flagSvg }
 						className="phone-input__flag-icon"
 						style={ style }
 					/>
