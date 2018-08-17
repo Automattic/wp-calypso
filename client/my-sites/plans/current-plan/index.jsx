@@ -34,7 +34,7 @@ import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import ChecklistShow from 'my-sites/checklist/checklist-show';
+import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 
@@ -149,7 +149,7 @@ class CurrentPlan extends Component {
 					! isAutomatedTransfer && (
 						<Fragment>
 							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-							<ChecklistShow />
+							<JetpackChecklist />
 						</Fragment>
 					) }
 				<div
