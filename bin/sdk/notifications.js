@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -22,7 +21,7 @@ exports.config = ( { argv: { outputDir }, getBaseConfig, __rootDir } ) => {
 				filename: 'build.min.js',
 			},
 			plugins: [
-				...baseConfig,
+				...baseConfig.plugins,
 				new HtmlWebpackPlugin( {
 					filename: path.join( outputDir, 'root.html' ),
 					gitDescribe: spawnSync( 'git', [ 'describe', '--always', '--dirty', '--long' ], {
