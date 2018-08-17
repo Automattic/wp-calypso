@@ -135,7 +135,7 @@ const webpackConfig = {
 			},
 			{
 				test: /\.(sc|sa|c)ss$/,
-				use: _.compact( [
+				use: [
 					'css-loader',
 					{
 						loader: 'sass-loader',
@@ -143,7 +143,7 @@ const webpackConfig = {
 							includePaths: [ path.join( __dirname, 'client' ) ],
 						},
 					},
-				] ),
+				],
 			},
 		],
 	},
