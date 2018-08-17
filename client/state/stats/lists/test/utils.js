@@ -706,7 +706,7 @@ describe( 'utils', () => {
 						countryCode: 'US',
 						value: 1,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'test-file-stub',
 					},
 				] );
 			} );
@@ -750,7 +750,7 @@ describe( 'utils', () => {
 						countryCode: 'US',
 						value: 10,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'test-file-stub',
 					},
 				] );
 			} );
@@ -793,7 +793,7 @@ describe( 'utils', () => {
 						countryCode: 'US',
 						value: 100,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'test-file-stub',
 					},
 				] );
 			} );
@@ -837,7 +837,7 @@ describe( 'utils', () => {
 						countryCode: 'US',
 						value: 100,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'test-file-stub',
 					},
 				] );
 			} );
@@ -880,7 +880,7 @@ describe( 'utils', () => {
 						countryCode: 'US',
 						value: 100,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'test-file-stub',
 					},
 				] );
 			} );
@@ -928,7 +928,7 @@ describe( 'utils', () => {
 						countryCode: 'US',
 						value: 100,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'test-file-stub',
 					},
 				] );
 			} );
