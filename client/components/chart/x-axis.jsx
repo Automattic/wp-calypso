@@ -19,6 +19,7 @@ export default class ModuleChartXAxis extends PureComponent {
 	static propTypes = {
 		labelWidth: PropTypes.number.isRequired,
 		data: PropTypes.array.isRequired,
+		isRtl: PropTypes.bool,
 	};
 
 	axisRef = React.createRef();
@@ -68,7 +69,13 @@ export default class ModuleChartXAxis extends PureComponent {
 
 			if ( rightIndex % this.state.divisor === 0 ) {
 				label = (
-					<Label key={ index } label={ item.label } width={ this.props.labelWidth } x={ x } />
+					<Label
+						isRtl={ this.props.isRtl }
+						key={ index }
+						label={ item.label }
+						width={ this.props.labelWidth }
+						x={ x }
+					/>
 				);
 			}
 
