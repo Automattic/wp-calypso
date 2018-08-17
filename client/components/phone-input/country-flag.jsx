@@ -49,7 +49,7 @@ export default class extends React.Component {
 
 		if ( countryCode ) {
 			if ( ! this.state.error ) {
-				const flagSvg = require( `../../../node_modules/flag-icon-css/flags/4x3/${ countryCode }.svg` );
+				const flagSvg = require( `flag-icon-css/flags/4x3/${ countryCode }.svg` );
 				return (
 					<img
 						alt=""
