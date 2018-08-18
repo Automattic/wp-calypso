@@ -9910,9 +9910,9 @@
       }
     },
     "lunr": {
-      "version": "2.3.1",
-      "resolved": "https://registry.npmjs.org/lunr/-/lunr-2.3.1.tgz",
-      "integrity": "sha1-ETYWorYC3cEJMqe/ik5uV+v+zfI="
+      "version": "2.3.2",
+      "resolved": "https://registry.npmjs.org/lunr/-/lunr-2.3.2.tgz",
+      "integrity": "sha512-3wO9shK+cBcJ260ibDtw3JGY+xE0so0y90Dt5YY4e+VmhZO8z8l4cwdau09Fiud0nZHdSgNsIKFHUy3MbXm00A=="
     },
     "magic-string": {
       "version": "0.22.5",

@@ -126,7 +126,7 @@
     "localforage": "1.7.2",
     "lodash": "4.17.10",
     "lru": "3.1.0",
-    "lunr": "2.3.1",
+    "lunr": "2.3.2",
     "markdown-loader": "3.0.0",
     "marked": "0.4.0",
     "mini-css-extract-plugin": "0.4.1",
