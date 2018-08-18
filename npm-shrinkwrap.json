@@ -4837,9 +4837,9 @@
       }
     },
     "enzyme": {
-      "version": "3.4.1",
-      "resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.4.1.tgz",
-      "integrity": "sha512-XBZbyUy36WipNSBVZKIR1sg9iF6zXfkfDEzwTc10T9zhB61UPnMo+c3WE17T/jyhfmPJOz6X073NXXsR7G/1rA==",
+      "version": "3.4.4",
+      "resolved": "https://registry.npmjs.org/enzyme/-/enzyme-3.4.4.tgz",
+      "integrity": "sha512-/xkHs9vLDmmZbyvhu0zgBHqK+aAZHyTTXvclLjATqo4SlnpReZ7JqEyrjADAhy2Kha0gKmKq4759E/+VjIExMg==",
       "dev": true,
       "requires": {
         "array.prototype.flat": "^1.2.1",
