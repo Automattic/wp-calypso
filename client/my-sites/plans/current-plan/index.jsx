@@ -135,7 +135,7 @@ class CurrentPlan extends Component {
 				) }
 
 				{ this.props.doPlanSetup && showJetpackChecklist ? (
-					<PlanSetupHeader />
+					<PlanSetupHeader site={ selectedSite } />
 				) : (
 					<CurrentPlanHeader
 						selectedSite={ selectedSite }
