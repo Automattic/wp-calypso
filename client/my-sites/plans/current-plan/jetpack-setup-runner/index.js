@@ -282,6 +282,9 @@ class PluginInstaller extends Component {
 	};
 
 	updateEngine = () => {
+		debug( 'Engine state: %o', this.state.engineState );
+		debug( 'State: %o', this.state );
+		debug( 'Props: %o', this.props );
 		switch ( this.state.engineState ) {
 			case 'INITIALIZING':
 				this.doInitialization();
