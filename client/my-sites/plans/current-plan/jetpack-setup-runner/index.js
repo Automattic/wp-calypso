@@ -1,480 +1,500 @@
 /** @format */
-
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
-import page from 'page';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { difference, filter, map, reduce, some } from 'lodash';
+import { find } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
-import analytics from 'lib/analytics';
-import { getSiteFileModDisableReason } from 'lib/site/utils';
-
-// Redux actions & selectors
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getSite,
-	getSiteAdminUrl,
-	isJetpackSiteMainNetworkSite,
-	isJetpackSiteMultiSite,
-	isRequestingSites,
-	getJetpackSiteRemoteManagementUrl,
-} from 'state/sites/selectors';
-import { getPlugin } from 'state/plugins/wporg/selectors';
+import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
+import Button from 'components/button';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
-import { requestSites } from 'state/sites/actions';
-import { installPlugin } from 'state/plugins/premium/actions';
-import {
-	getPluginsForSite,
-	getActivePlugin,
-	getNextPlugin,
-	isFinished,
-	isInstalling,
-	isRequesting,
-	hasRequested,
-} from 'state/plugins/premium/selectors';
-// Store for existing plugins
-import PluginsStore from 'lib/plugins/store';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import {
-	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-	FEATURE_BACKUP_ARCHIVE_30,
-	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_AUTOMATED_RESTORES,
-	FEATURE_BACKUP_ARCHIVE_UNLIMITED,
-	FEATURE_EASY_SITE_MIGRATION,
-	FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
-	FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-	FEATURE_SPAM_AKISMET_PLUS,
-	getPlanClass,
-} from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
+import { getPlugin } from 'state/plugins/wporg/selectors';
+import { getPlugins, getStatusForSite } from 'state/plugins/installed/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import ProgressBar from 'components/progress-bar';
+import SetupHeader from './setup/header';
+import SetupNotices from './setup/notices';
+import { transferStates } from 'state/automated-transfer/constants';
+import { recordTrack } from 'woocommerce/lib/analytics';
 
-const vpFeatures = {
-	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: true,
-	[ FEATURE_BACKUP_ARCHIVE_30 ]: true,
-	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: true,
-	[ FEATURE_AUTOMATED_RESTORES ]: true,
-	[ FEATURE_BACKUP_ARCHIVE_UNLIMITED ]: true,
-	[ FEATURE_EASY_SITE_MIGRATION ]: true,
-	[ FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND ]: true,
-	[ FEATURE_ONE_CLICK_THREAT_RESOLUTION ]: true,
-};
+// Time in seconds to complete various steps.
+const TIME_TO_TRANSFER_ACTIVE = 5;
+const TIME_TO_TRANSFER_UPLOADING = 5;
+const TIME_TO_TRANSFER_BACKFILLING = 25;
+const TIME_TO_TRANSFER_COMPLETE = 6;
+const TIME_TO_PLUGIN_INSTALLATION = 15;
 
-const akismetFeatures = {
-	[ FEATURE_SPAM_AKISMET_PLUS ]: true,
-};
+const transferStatusesToTimes = {};
 
-export class JetpackPlanSetupRunner extends Component {
-	state = {
-		completedJetpackFeatures: {},
-		installInitiatedPlugins: new Set(),
+transferStatusesToTimes[ transferStates.PENDING ] = TIME_TO_TRANSFER_ACTIVE;
+
+// ACTIVE and PENDING have the same time because it's a way to show some progress even
+// if nothing happened yet (good for UX).
+transferStatusesToTimes[ transferStates.ACTIVE ] =
+	transferStatusesToTimes[ transferStates.PENDING ];
+
+transferStatusesToTimes[ transferStates.UPLOADING ] =
+	TIME_TO_TRANSFER_UPLOADING + transferStatusesToTimes[ transferStates.ACTIVE ];
+
+transferStatusesToTimes[ transferStates.BACKFILLING ] =
+	TIME_TO_TRANSFER_BACKFILLING + transferStatusesToTimes[ transferStates.UPLOADING ];
+
+transferStatusesToTimes[ transferStates.COMPLETE ] =
+	TIME_TO_TRANSFER_COMPLETE + transferStatusesToTimes[ transferStates.BACKFILLING ];
+
+class RequiredPluginsInstallView extends Component {
+	static propTypes = {
+		fixMode: PropTypes.bool,
+		site: PropTypes.shape( {
+			ID: PropTypes.number.isRequired,
+		} ),
+		skipConfirmation: PropTypes.bool,
 	};
 
-	trackConfigFinished( eventName, options = null ) {
-		if ( ! this.sentTracks ) {
-			analytics.tracks.recordEvent( eventName, options );
-		}
-		this.sentTracks = true;
-	}
-
-	// plugins for Jetpack sites require additional data from the wporg-data store
-	addWporgDataToPlugins( plugins ) {
-		return plugins.map( plugin => {
-			const pluginData = getPlugin( this.props.wporg, plugin.slug );
-			if ( ! pluginData ) {
-				this.props.fetchPluginData( plugin.slug );
-			}
-			return Object.assign( {}, plugin, pluginData );
-		} );
-	}
-
-	allPluginsHaveWporgData() {
-		const plugins = this.addWporgDataToPlugins( this.props.plugins );
-		return plugins.length === filter( plugins, { wporg: true } ).length;
+	constructor( props ) {
+		super( props );
+		const { automatedTransferStatus } = this.props;
+		this.state = {
+			engineState: props.skipConfirmation ? 'INITIALIZING' : 'CONFIRMING',
+			toActivate: [],
+			toInstall: [],
+			workingOn: '',
+			progress: automatedTransferStatus ? transferStatusesToTimes[ automatedTransferStatus ] : 0,
+			totalSeconds: this.getTotalSeconds(),
+		};
+		this.updateTimer = false;
 	}
 
 	componentDidMount() {
-		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
-		this.props.requestSites();
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_start' );
+		const { hasPendingAT } = this.props;
 
-		page.exit( '/checkout/thank-you/*', ( context, next ) => {
-			const confirmText = this.warnIfNotFinished( {} );
-			if ( ! confirmText ) {
-				return next();
-			}
-			if ( window.confirm( confirmText ) ) {
-				// eslint-disable-line no-aler
-				next();
-			} else {
-				// save off the current path just in case context changes after this call
-				const currentPath = context.canonicalPath;
-				setTimeout( function() {
-					page.replace( currentPath, null, false, false );
-				}, 0 );
-			}
-		} );
+		this.createUpdateTimer();
+
+		if ( hasPendingAT ) {
+			this.startSetup();
+		}
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'beforeunload', this.warnIfNotFinished );
+		this.destroyUpdateTimer();
 	}
 
-	componentDidUpdate() {
-		const { nextPlugin, planFeatures, plugins, selectedSite: site } = this.props;
-		const { completedJetpackFeatures } = this.state;
+	componentWillReceiveProps( nextProps ) {
+		const { automatedTransferStatus: currentATStatus, siteId, hasPendingAT } = this.props;
+		const { automatedTransferStatus: nextATStatus } = nextProps;
 
-		if (
-			! site ||
-			! site.jetpack ||
-			! site.canManage ||
-			! this.allPluginsHaveWporgData() ||
-			this.props.isInstalling
-		) {
-			return;
-		}
-
-		if (
-			planFeatures &&
-			! site.canUpdateFiles &&
-			! Object.keys( completedJetpackFeatures ).length
-		) {
-			this.activateJetpackFeatures();
-		}
-
-		if ( site.canUpdateFiles && nextPlugin ) {
-			this.startNextPlugin( nextPlugin );
-		} else if (
-			site.canUpdateFiles &&
-			plugins &&
-			! some( plugins, plugin => 'done' !== plugin.status ) &&
-			! Object.keys( completedJetpackFeatures ).length
-		) {
-			this.activateJetpackFeatures();
-		} else if (
-			site.canUpdateFiles &&
-			! nextPlugin &&
-			! Object.keys( completedJetpackFeatures ).length
-		) {
-			this.activateJetpackFeatures();
-		}
-	}
-
-	warnIfNotFinished( event ) {
-		const site = this.props && this.props.selectedSite;
-		if (
-			! site ||
-			! site.jetpack ||
-			! site.canUpdateFiles ||
-			! site.canManage ||
-			this.props.isFinished
-		) {
-			return;
-		}
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_user_interrupt' );
-		const beforeUnloadText = this.props.translate( "We haven't finished installing your plugins." );
-		( event || window.event ).returnValue = beforeUnloadText;
-		return beforeUnloadText;
-	}
-
-	startNextPlugin( plugin ) {
-		const { slug } = plugin;
-
-		// We're already installing.
-		if ( this.props.isInstalling || this.state.installInitiatedPlugins.has( slug ) ) {
-			return;
-		}
-
-		const install = this.props.installPlugin;
-		const site = this.props.selectedSite;
-
-		// Merge wporg info into the plugin object
-		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, slug ) );
-
-		const getPluginFromStore = function() {
-			const sitePlugin = PluginsStore.getSitePlugin( site, slug );
-			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
-				// if the Plugins are still being fetched, we wait. We are not using flux
-				// store events because it would be more messy to handle the one-time-only
-				// callback with bound parameters than to do it this way.
-				return setTimeout( getPluginFromStore, 500 );
-			}
-			// Merge any site-specific info into the plugin object, setting a default plugin ID if needed
-			plugin = Object.assign( { id: slug }, plugin, sitePlugin );
-			install( plugin, site );
-		};
-
-		// Redux state is not updated with installing plugins quickly enough.
-		// Track installing plugins locally to avoid redundant install requests.
-		this.setState(
-			( { installInitiatedPlugins } ) => ( {
-				installInitiatedPlugins: installInitiatedPlugins.add( slug ),
-			} ),
-			getPluginFromStore
-		);
-	}
-
-	isErrored() {
-		const { selectedSite, plugins } = this.props;
-		return (
-			( selectedSite && ! selectedSite.canUpdateFiles ) ||
-			some(
-				plugins,
-				plugin => plugin.hasOwnProperty( 'error' ) && plugin.error && plugin.status !== 'done'
-			)
-		);
-	}
-
-	guessErrorReason() {
-		const { isSiteMainNetworkSite, isSiteMultiSite, selectedSite, translate } = this.props;
-		if ( ! this.isErrored() ) {
-			return null;
-		}
-
-		const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
-		let reason;
-		if ( reasons && reasons.length > 0 ) {
-			reason = translate( "We can't modify files on your site." );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
-		} else if ( selectedSite.hasMinimumJetpackVersion === false ) {
-			reason = translate(
-				'We are unable to set up your plan because your site has an older version of Jetpack. ' +
-					'Please upgrade Jetpack.'
-			);
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
-				jetpack_version: selectedSite.options.jetpack_version,
+		if ( hasPendingAT && nextATStatus ) {
+			this.setState( {
+				progress: transferStatusesToTimes[ nextATStatus ],
 			} );
-		} else if ( isSiteMultiSite && ! isSiteMainNetworkSite ) {
-			reason = translate(
-				'Your site is part of a multi-site network, but is not the main network site.'
-			);
+		}
 
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
-		} else if ( selectedSite.options.is_multi_network ) {
-			reason = translate( 'Your site is part of a multi-network.' );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multinetwork' );
-		} else {
-			const erroredPlugins = reduce(
-				this.props.plugins,
-				( erroredList, plugin ) => {
-					if ( 'error' === plugin.status ) {
-						erroredList.push( plugin.slug );
-					}
-					return erroredList;
-				},
-				[]
-			);
+		const { BACKFILLING, COMPLETE } = transferStates;
 
-			if ( 1 === erroredPlugins.length && -1 < erroredPlugins.indexOf( 'akismet' ) ) {
-				reason = translate( "We can't automatically configure the Akismet plugin." );
-			} else if ( 1 === erroredPlugins.length && -1 < erroredPlugins.indexOf( 'vaultpress' ) ) {
-				reason = translate( "We can't automatically configure the VaultPress plugin." );
-			} else {
-				reason = translate(
-					"We can't automatically configure the Akismet and VaultPress plugins."
-				);
+		if ( BACKFILLING === currentATStatus && COMPLETE === nextATStatus ) {
+			this.setState( {
+				engineState: 'INITIALIZING',
+				workingOn: '',
+			} );
+
+			this.props.fetchPlugins( [ siteId ] );
+		}
+	}
+
+	createUpdateTimer = () => {
+		if ( this.updateTimer ) {
+			return;
+		}
+
+		// Proceed at rate of approximately 60 fps
+		this.updateTimer = window.setInterval( () => {
+			this.updateEngine();
+		}, 17 );
+	};
+
+	destroyUpdateTimer = () => {
+		if ( this.updateTimer ) {
+			window.clearInterval( this.updateTimer );
+			this.updateTimer = false;
+		}
+	};
+
+	doInitialization = () => {
+		const { fixMode, site, sitePlugins, wporg } = this.props;
+		const { workingOn } = this.state;
+
+		if ( ! site ) {
+			return;
+		}
+
+		let waitingForPluginListFromSite = false;
+		if ( ! sitePlugins ) {
+			waitingForPluginListFromSite = true;
+		} else if ( ! Array.isArray( sitePlugins ) ) {
+			waitingForPluginListFromSite = true;
+		} else if ( 0 === sitePlugins.length ) {
+			waitingForPluginListFromSite = true;
+		}
+
+		if ( waitingForPluginListFromSite ) {
+			if ( workingOn === 'WAITING_FOR_PLUGIN_LIST_FROM_SITE' ) {
+				return;
 			}
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error' );
-		}
-		return reason;
-	}
 
-	renderErrorNotice() {
-		const { translate } = this.props;
-		if ( ! this.isErrored() ) {
-			return null;
+			this.setState( {
+				workingOn: 'WAITING_FOR_PLUGIN_LIST_FROM_SITE',
+			} );
+			return;
 		}
 
-		return (
-			<Notice
-				showDismiss={ false }
-				status="is-error"
-				text={ translate( 'We had trouble setting up your plan.' ) }
-			/>
-		);
-	}
+		// Iterate over the required plugins, fetching plugin
+		// data from wordpress.org for each into state
+		const requiredPlugins = fixMode ? getRequiredPluginsForCalypso() : getPluginsForStoreSetup();
+		let pluginDataLoaded = true;
+		for ( const requiredPluginSlug of requiredPlugins ) {
+			const pluginData = getPlugin( wporg, requiredPluginSlug );
+			// pluginData will be null until the action has had
+			// a chance to try and fetch data for the plugin slug
+			// given. Note that non-wp-org plugins
+			// will be accepted too, but with
+			// { fetched: false, wporg: false }
+			// as their response
+			if ( ! pluginData ) {
+				this.props.fetchPluginData( requiredPluginSlug );
+				pluginDataLoaded = false;
+			}
+		}
+		if ( ! pluginDataLoaded ) {
+			if ( workingOn === 'LOAD_PLUGIN_DATA' ) {
+				return;
+			}
 
-	renderManageNotice() {
-		const { translate, selectedSite, remoteManagementUrl } = this.props;
-
-		if ( ! selectedSite || selectedSite.canManage ) {
-			return null;
+			this.setState( {
+				workingOn: 'LOAD_PLUGIN_DATA',
+			} );
+			return;
 		}
 
-		const manageUrl = remoteManagementUrl + '&section=plugins-setup';
-
-		return (
-			<Notice
-				showDismiss={ false }
-				status="is-warning"
-				text={ translate(
-					'Jetpack Manage must be enabled for us to auto-configure your %(plan)s plan.',
-					{
-						args: { plan: selectedSite.plan.product_name_short },
-					}
-				) }
-			>
-				<NoticeAction href={ manageUrl }>{ translate( 'Turn On Manage' ) }</NoticeAction>
-			</Notice>
-		);
-	}
-
-	activateJetpackFeatures() {
-		const { planFeatures } = this.props;
-		if ( ! planFeatures ) {
-			return false;
+		const toInstall = [];
+		const toActivate = [];
+		let pluginInstallationTotalSteps = 0;
+		for ( const requiredPluginSlug of requiredPlugins ) {
+			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
+			if ( ! pluginFound ) {
+				toInstall.push( requiredPluginSlug );
+				toActivate.push( requiredPluginSlug );
+				pluginInstallationTotalSteps++;
+			} else if ( ! pluginFound.active ) {
+				toActivate.push( requiredPluginSlug );
+				pluginInstallationTotalSteps++;
+			}
 		}
 
-		const jetpackFeatures = difference(
-			planFeatures,
-			Object.keys( vpFeatures ),
-			Object.keys( akismetFeatures )
-		);
+		if ( toInstall.length ) {
+			this.setState( {
+				engineState: 'INSTALLING',
+				toActivate,
+				toInstall,
+				workingOn: '',
+				pluginInstallationTotalSteps,
+			} );
+			return;
+		}
 
-		const completedJetpackFeatures = reduce(
-			jetpackFeatures,
-			( completed, feature ) => {
-				completed[ feature ] = true;
-				return completed;
-			},
-			{}
-		);
+		if ( toActivate.length ) {
+			this.setState( {
+				engineState: 'ACTIVATING',
+				toActivate,
+				workingOn: '',
+				pluginInstallationTotalSteps,
+			} );
+			return;
+		}
 
 		this.setState( {
-			completedJetpackFeatures,
+			engineState: 'DONESUCCESS',
 		} );
-	}
+	};
 
-	getFeaturesWithStatus() {
-		const { planFeatures, selectedSite } = this.props;
-		const { completedJetpackFeatures } = this.state;
-		if ( ! planFeatures ) {
-			return [];
-		}
+	doInstallation = () => {
+		const { pluginsStatus, site, sitePlugins, wporg } = this.props;
 
-		const plugins =
-			selectedSite && ! selectedSite.canUpdateFiles
-				? [
-						{ slug: 'vaultpress', status: 'wait', error: true },
-						{ slug: 'akismet', status: 'wait', error: true },
-				  ]
-				: this.props.plugins;
+		// If we are working on nothing presently, get the next thing to install and install it
+		if ( 0 === this.state.workingOn.length ) {
+			const toInstall = this.state.toInstall;
 
-		const pluginsStatus = reduce(
-			plugins,
-			( completed, plugin ) => {
-				if ( 'done' === plugin.status ) {
-					completed[ plugin.slug ] = 'done';
-				} else if ( plugin.hasOwnProperty( 'error' ) && plugin.error ) {
-					completed[ plugin.slug ] = 'error';
-				} else {
-					completed[ plugin.slug ] = 'wait';
-				}
-				return completed;
-			},
-			{}
-		);
-
-		return map( planFeatures, feature => {
-			let status = 'wait';
-
-			if ( vpFeatures.hasOwnProperty( feature ) && pluginsStatus.hasOwnProperty( 'vaultpress' ) ) {
-				status = pluginsStatus.vaultpress;
-			} else if (
-				akismetFeatures.hasOwnProperty( feature ) &&
-				pluginsStatus.hasOwnProperty( 'akismet' )
-			) {
-				status = pluginsStatus.akismet;
-			} else if ( completedJetpackFeatures.hasOwnProperty( feature ) ) {
-				status = 'done';
+			// Nothing left to install? Advance to activation step
+			if ( 0 === toInstall.length ) {
+				this.setState( {
+					engineState: 'ACTIVATING',
+				} );
+				return;
 			}
 
-			return {
-				slug: feature,
-				status,
-			};
-		} );
-	}
+			const workingOn = toInstall.shift();
+			const thisPlugin = getPlugin( wporg, workingOn );
+			// Set a default ID if needed.
+			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
+			this.props.installPlugin( site.ID, thisPlugin );
 
-	getProgress() {
-		const features = this.getFeaturesWithStatus();
-		if ( ! features.length ) {
-			return 0;
+			this.setState( {
+				toInstall,
+				workingOn,
+			} );
+			return;
 		}
 
-		const completed = reduce(
-			features,
-			( total, feature ) =>
-				feature && feature.status && 'done' === feature.status ? total + 1 : total,
+		// Otherwise, if we are working on something presently, see if it has appeared in state yet
+		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
+		if ( pluginFound ) {
+			this.setState( {
+				workingOn: '',
+				progress: this.state.progress + this.getPluginInstallationTime(),
+			} );
+		}
 
-			0
+		// Or, it's in the error state
+		const pluginStatus = pluginsStatus[ this.state.workingOn ];
+		if ( pluginStatus && 'error' === pluginStatus.status ) {
+			this.setState( {
+				engineState: 'DONEFAILURE',
+			} );
+		}
+	};
+
+	doActivation = () => {
+		const { site, sitePlugins } = this.props;
+
+		// If we are working on nothing presently, get the next thing to activate and activate it
+		if ( 0 === this.state.workingOn.length ) {
+			const toActivate = this.state.toActivate;
+
+			// Nothing left to activate? Advance to done success
+			if ( 0 === toActivate.length ) {
+				this.setState( {
+					engineState: 'DONESUCCESS',
+				} );
+				return;
+			}
+
+			const workingOn = toActivate.shift();
+
+			// It is best to use sitePlugins to get the right id since the
+			// plugin id isn't always slug/slug unless the main plugin PHP
+			// file is the same name as the plugin folder
+			const pluginToActivate = find( sitePlugins, { slug: workingOn } );
+			// Already active? Skip it
+			if ( pluginToActivate.active ) {
+				this.setState( {
+					toActivate,
+					workingOn: '',
+				} );
+				return;
+			}
+
+			// Otherwise, activate!
+			this.props.activatePlugin( site.ID, pluginToActivate );
+
+			this.setState( {
+				toActivate,
+				workingOn,
+			} );
+			return;
+		}
+
+		// See if activation has appeared in state yet
+		const pluginFound = find( sitePlugins, { slug: this.state.workingOn } );
+		if ( pluginFound && pluginFound.active ) {
+			this.setState( {
+				workingOn: '',
+				progress: this.state.progress + this.getPluginInstallationTime(),
+			} );
+		}
+	};
+
+	doneSuccess = () => {
+		const { site } = this.props;
+
+		this.setState( {
+			engineState: 'IDLE',
+		} );
+	};
+
+	updateEngine = () => {
+		switch ( this.state.engineState ) {
+			case 'INITIALIZING':
+				this.doInitialization();
+				break;
+			case 'INSTALLING':
+				this.doInstallation();
+				break;
+			case 'ACTIVATING':
+				this.doActivation();
+				break;
+			case 'DONESUCCESS':
+				this.doneSuccess();
+				break;
+		}
+	};
+
+	getPluginInstallationTime = () => {
+		const { pluginInstallationTotalSteps } = this.state;
+
+		if ( pluginInstallationTotalSteps ) {
+			return TIME_TO_PLUGIN_INSTALLATION / pluginInstallationTotalSteps;
+		}
+
+		// If there's some error, return 3 seconds for a single plugin installation time.
+		return 3;
+	};
+
+	startSetup = () => {
+		const { hasPendingAT } = this.props;
+
+		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
+			action: 'initial-setup',
+		} );
+
+		if ( ! hasPendingAT ) {
+			this.setState( {
+				engineState: 'INITIALIZING',
+			} );
+		}
+	};
+
+	renderConfirmScreen = () => {
+		const { translate } = this.props;
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<SetupNotices />
+				<div className="card dashboard__setup-confirm">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
+						imageWidth={ 160 }
+						title={ translate( 'Have something to sell?' ) }
+						subtitle={ translate(
+							'You can sell your products right on your site and ship them to customers in a snap!'
+						) }
+					>
+						<Button onClick={ this.startSetup } primary>
+							{ translate( 'Set up my store!' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
 		);
+	};
 
-		return Math.ceil( ( completed / features.length ) * 100 );
+	getTotalSeconds = () => {
+		const { hasPendingAT } = this.props;
+
+		if ( hasPendingAT ) {
+			return transferStatusesToTimes[ transferStates.COMPLETE ] + TIME_TO_PLUGIN_INSTALLATION;
+		}
+
+		return TIME_TO_PLUGIN_INSTALLATION;
+	};
+
+	renderContactSupport() {
+		const { translate, wporg } = this.props;
+		const { workingOn } = this.state;
+		const plugin = getPlugin( wporg, workingOn );
+
+		const subtitle = [
+			<p key="line-1">
+				{ translate(
+					"Your store is missing some required plugins. We can't fix this automatically " +
+						'due to a problem with the {{b}}%(pluginName)s{{/b}} plugin.',
+					{
+						args: { pluginName: plugin.name || workingOn },
+						components: { b: <strong /> },
+					}
+				) }
+			</p>,
+			<p key="line-2">
+				{ translate( "Please contact support and we'll get your store back up and running!" ) }
+			</p>,
+		];
+
+		return (
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<div className="card dashboard__plugins-install-view">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
+						imageWidth={ 160 }
+						title={ translate( "We can't update your store" ) }
+						subtitle={ subtitle }
+					>
+						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+							{ this.props.translate( 'Get in touch' ) }
+						</Button>
+					</SetupHeader>
+				</div>
+			</div>
+		);
 	}
 
 	render() {
-		const { site } = this.props;
-		if ( ! site || ! site.ID ) {
-			return null;
+		const { hasPendingAT, fixMode, translate } = this.props;
+		const { engineState, progress, totalSeconds } = this.state;
+
+		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
+			return this.renderConfirmScreen();
 		}
+
+		if ( 'DONEFAILURE' === engineState ) {
+			return this.renderContactSupport();
+		}
+
+		const title = fixMode ? translate( 'Updating your store' ) : translate( 'Building your store' );
+
 		return (
-			<React.Fragment>
-				{ site.canUpdateFiles && <QueryPluginKeys siteId={ site.ID } /> }
-				<pre>{ JSON.stringify( this.getFeaturesWithStatus(), undefined, 2 ) }</pre>
-			</React.Fragment>
+			<div className="dashboard__setup-wrapper setup__wrapper">
+				<SetupNotices />
+				<div className="card dashboard__plugins-install-view">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
+						imageWidth={ 160 }
+						title={ title }
+						subtitle={ translate( "Give us a minute and we'll move right along." ) }
+					>
+						<ProgressBar value={ progress } total={ totalSeconds } isPulsing />
+					</SetupHeader>
+				</div>
+			</div>
 		);
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const site = getSelectedSite( state );
-		const siteId = getSelectedSiteId( state );
-		const whitelist = ownProps.whitelist || false;
-		let plan = getCurrentPlan( state, siteId );
-		let planSlug;
-		const planClass = plan && plan.productSlug ? getPlanClass( plan.productSlug ) : '';
-		if ( plan ) {
-			planSlug = plan.productSlug;
-			plan = getPlan( plan.productSlug );
-		}
-		const planFeatures = plan && plan.getFeatures ? plan.getFeatures() : false;
+function mapStateToProps( state ) {
+	const site = getSelectedSite( state );
+	const siteId = site.ID;
 
-		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
-		return {
-			site,
-			wporg: state.plugins.wporg.items,
-			isSiteMultiSite: isJetpackSiteMultiSite( state, siteId ),
-			isSiteMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
-			isRequesting: isRequesting( state, siteId ),
-			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId, whitelist ),
-			isFinished: isFinished( state, siteId, whitelist ),
-			plugins: getPluginsForSite( state, siteId, whitelist ),
-			activePlugin: getActivePlugin( state, siteId, whitelist ),
-			nextPlugin: getNextPlugin( state, siteId, whitelist ),
-			selectedSite: getSite( state, siteId ),
-			isRequestingSites: isRequestingSites( state ),
-			siteId,
-			jetpackAdminPageUrl: getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack#/plans' ),
-			remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
-			planFeatures,
-			planClass,
-			planSlug,
-		};
-	},
+	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
+	const pluginsStatus = getStatusForSite( state, siteId );
+
+	return {
+		site,
+		siteId,
+		sitePlugins,
+		pluginsStatus,
+		wporg: state.plugins.wporg.items,
+	};
+}
+
+export default connect(
+	mapStateToProps,
 	{
+		activatePlugin,
 		fetchPluginData,
 		installPlugin,
-		requestSites,
+		fetchPlugins,
 	}
-)( JetpackPlanSetupRunner );
+)( localize( RequiredPluginsInstallView ) );
