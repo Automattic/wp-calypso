@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 
@@ -14,9 +13,7 @@ import JetpackSetupRunner from 'my-sites/plans/current-plan/jetpack-setup-runner
 import ProgressBar from 'components/progress-bar';
 
 export class PlanSetupHeader extends PureComponent {
-	static propTypes = {
-		site: PropTypes.object,
-	};
+	static propTypes = {};
 
 	state = {
 		autoInstallStatus: {},
@@ -26,12 +23,7 @@ export class PlanSetupHeader extends PureComponent {
 		const { translate } = this.props;
 		return (
 			<Card className="plan-setup-header">
-				{ this.props.site && (
-					<JetpackSetupRunner
-						key={ /* force remount on site change */ this.props.site.ID }
-						site={ this.props.site }
-					/>
-				) }
+				<JetpackSetupRunner />
 				<img
 					className="plan-setup-header__illustration"
 					alt=""
