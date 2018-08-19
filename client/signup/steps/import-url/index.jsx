@@ -17,6 +17,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 //import FormInputValidation from 'components/forms/form-input-validation';
+import { fetchIsSiteImportable } from 'lib/importer/actions';
 
 const debug = debugFactory( 'calypso:signup-step-import-url' );
 
@@ -34,7 +35,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	handleChange = enteredValue => {
-		debug( { enteredValue } );
+		this.props.fetchIsSiteImportable( enteredValue );
 	};
 
 	debouncedHandleChange = debounce( this.handleChange, 200 );
@@ -79,5 +80,5 @@ class ImportURLStepComponent extends Component {
 
 export default connect(
 	null,
-	null
+	{ fetchIsSiteImportable }
 )( localize( ImportURLStepComponent ) );
