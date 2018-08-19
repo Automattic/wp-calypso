@@ -16,6 +16,7 @@ import settings from './settings';
 import sendVerificationEmail from './send-verification-email';
 import countries from './transactions/supported-countries';
 import order from './transactions/order';
+import createTransaction from './transactions';
 import twoStep from './two-step';
 
 export default mergeHandlers(
@@ -29,5 +30,6 @@ export default mergeHandlers(
 	settings,
 	sendVerificationEmail,
 	twoStep,
-	order
+	order,
+	createTransaction
 );
