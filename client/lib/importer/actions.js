@@ -125,6 +125,12 @@ export function fetchState( siteId ) {
 		.catch( apiFailure );
 }
 
+export const fetchIsSiteImportable = site_url => dispatch =>
+	wpcom
+		.isSiteImportable( site_url )
+		.then( response => dispatch( { type: 'IMPORT_IS_SITE_IMPORTABLE_RECEIVE', ...response } ) )
+		.catch( error => dispatch( { type: 'IMPORT_IS_SITE_IMPORTABLE_RECEIVE', ...error } ) );
+
 export const finishUpload = importerId => importerStatus => ( {
 	type: IMPORTS_UPLOAD_COMPLETED,
 	importerId,

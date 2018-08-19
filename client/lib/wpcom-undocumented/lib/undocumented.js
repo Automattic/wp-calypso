@@ -2030,6 +2030,15 @@ Undocumented.prototype.googleAppsFilterBySiteId = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/google-apps' }, fn );
 };
 
+Undocumented.prototype.isSiteImportable = function( site_url ) {
+	debug( `/wpcom/v2/site-importer-global/is-site-importable?${ site_url }` );
+
+	return this.wpcom.req.get(
+		{ path: '/site-importer-global/is-site-importable', apiNamespace: 'wpcom/v2' },
+		{ site_url }
+	);
+};
+
 Undocumented.prototype.fetchImporterState = function( siteId ) {
 	debug( `/sites/${ siteId }/importer/` );
 
