@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -15,7 +14,11 @@ import getPluginKey from 'state/selectors/get-plugin-key';
 import PluginsStore from 'lib/plugins/store';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 
+/* eslint-disable no-unused-vars,no-shadow */
+
 const debug = debugFactory( 'calypso:jetpack:plan-setup-runner' );
+
+const slug = 'vaultpress';
 
 class JetpackPlanSetupRunner extends Component {
 	static propTypes = {
@@ -24,24 +27,33 @@ class JetpackPlanSetupRunner extends Component {
 		vaultpressKey: PropTypes.string,
 	};
 
+	static pluginSetupSlugs = [ /*'akismet',*/ 'vaultpress' ];
+
+	// static pluginSlugObjectBuilder( reducer, initialObject = {} ) {
+	// 	return JetpackPlanSetupRunner.pluginSetupSlugs.reduce( reducer, initialObject );
+	// }
+
 	state = {};
 
 	componentDidMount() {
 		PluginsStore.on( 'change', this.updateState );
-		PluginsStore.fetchSitePlugins();
+
+		// Kick off fetching
+		PluginsStore.getSitePlugins( this.props.site );
 	}
 
 	componentWillUnmount() {
 		PluginsStore.off( 'change', this.updateState );
 	}
 
-	updateState = () => {
-		const s = {
-			akismet: PluginsStore.getSitePlugin( this.props.site, 'akismet' ),
-			vaultpress: PluginsStore.getSitePlugin( this.props.site, 'vaultpress' ),
+	updateState = this.setSate( this.nextState );
+
+	nextState = ( prevState = {} ) => {
+		return {
+			[ slug ]: ( slug => {
+				return PluginsStore.getSitePlugin( this.props.site, slug );
+			} )( slug ),
 		};
-		debug( 'Plugins: %o', s );
-		this.setState( s );
 	};
 
 	render() {
@@ -57,6 +69,9 @@ class JetpackPlanSetupRunner extends Component {
 }
 
 export default connect( ( state, { site } ) => ( {
-	akismetKey: getPluginKey( state, site.ID, 'akismet' ),
-	vaultpressKey: getPluginKey( state, site.ID, 'vaultpress' ),
+	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+	keys: JetpackPlanSetupRunner.pluginSlugObjectBuilder( ( acc, slug ) => ( {
+		...acc,
+		[ slug ]: getPluginKey( state, site.ID, slug ),
+	} ) ),
 } ) )( JetpackPlanSetupRunner );
