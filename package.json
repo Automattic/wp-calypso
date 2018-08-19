@@ -50,7 +50,7 @@
     "@wordpress/plugins": "1.0.3",
     "@wordpress/url": "1.2.3",
     "@wordpress/viewport": "1.0.3",
-    "autoprefixer": "9.1.1",
+    "autoprefixer": "9.1.2",
     "autosize": "4.0.2",
     "babel-loader": "8.0.0-beta.4",
     "babel-plugin-add-module-exports": "0.2.1",
