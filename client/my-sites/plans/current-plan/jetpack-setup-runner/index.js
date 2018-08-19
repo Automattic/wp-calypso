@@ -2,8 +2,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import debugFactory from 'debug';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,99 +13,47 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
-import Button from 'components/button';
-import { CALYPSO_CONTACT } from 'lib/url/support';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins, getStatusForSite } from 'state/plugins/installed/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import ProgressBar from 'components/progress-bar';
-import SetupHeader from './setup/header';
-import SetupNotices from './setup/notices';
-import { transferStates } from 'state/automated-transfer/constants';
-import { recordTrack } from 'woocommerce/lib/analytics';
+
+const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-unused-vars
 
 // Time in seconds to complete various steps.
-const TIME_TO_TRANSFER_ACTIVE = 5;
-const TIME_TO_TRANSFER_UPLOADING = 5;
-const TIME_TO_TRANSFER_BACKFILLING = 25;
-const TIME_TO_TRANSFER_COMPLETE = 6;
 const TIME_TO_PLUGIN_INSTALLATION = 15;
 
-const transferStatusesToTimes = {};
-
-transferStatusesToTimes[ transferStates.PENDING ] = TIME_TO_TRANSFER_ACTIVE;
-
-// ACTIVE and PENDING have the same time because it's a way to show some progress even
-// if nothing happened yet (good for UX).
-transferStatusesToTimes[ transferStates.ACTIVE ] =
-	transferStatusesToTimes[ transferStates.PENDING ];
-
-transferStatusesToTimes[ transferStates.UPLOADING ] =
-	TIME_TO_TRANSFER_UPLOADING + transferStatusesToTimes[ transferStates.ACTIVE ];
-
-transferStatusesToTimes[ transferStates.BACKFILLING ] =
-	TIME_TO_TRANSFER_BACKFILLING + transferStatusesToTimes[ transferStates.UPLOADING ];
-
-transferStatusesToTimes[ transferStates.COMPLETE ] =
-	TIME_TO_TRANSFER_COMPLETE + transferStatusesToTimes[ transferStates.BACKFILLING ];
-
-class RequiredPluginsInstallView extends Component {
+class PluginInstaller extends Component {
 	static propTypes = {
-		fixMode: PropTypes.bool,
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
-		skipConfirmation: PropTypes.bool,
 	};
 
-	constructor( props ) {
-		super( props );
-		const { automatedTransferStatus } = this.props;
-		this.state = {
-			engineState: props.skipConfirmation ? 'INITIALIZING' : 'CONFIRMING',
-			toActivate: [],
-			toInstall: [],
-			workingOn: '',
-			progress: automatedTransferStatus ? transferStatusesToTimes[ automatedTransferStatus ] : 0,
-			totalSeconds: this.getTotalSeconds(),
-		};
-		this.updateTimer = false;
-	}
+	state = {
+		engineState: 'INITIALIZING',
+		toActivate: [],
+		toInstall: [],
+		workingOn: '',
+		progress: 5 /* @TODO fix */,
+		totalTasks: 20 /* @TODO fix */,
+	};
+
+	updateTimer = null;
 
 	componentDidMount() {
-		const { hasPendingAT } = this.props;
-
+		const { siteId } = this.props;
+		this.props.fetchPlugins( [ siteId ] );
 		this.createUpdateTimer();
-
-		if ( hasPendingAT ) {
-			this.startSetup();
-		}
 	}
 
 	componentWillUnmount() {
 		this.destroyUpdateTimer();
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		const { automatedTransferStatus: currentATStatus, siteId, hasPendingAT } = this.props;
-		const { automatedTransferStatus: nextATStatus } = nextProps;
-
-		if ( hasPendingAT && nextATStatus ) {
-			this.setState( {
-				progress: transferStatusesToTimes[ nextATStatus ],
-			} );
-		}
-
-		const { BACKFILLING, COMPLETE } = transferStates;
-
-		if ( BACKFILLING === currentATStatus && COMPLETE === nextATStatus ) {
-			this.setState( {
-				engineState: 'INITIALIZING',
-				workingOn: '',
-			} );
-
-			this.props.fetchPlugins( [ siteId ] );
+	componentDidReceiveProps( prevProps ) {
+		if ( prevProps.siteId !== this.props.siteId ) {
+			this.props.fetchPlugins( [ this.props.siteId ] );
 		}
 	}
 
@@ -122,12 +71,12 @@ class RequiredPluginsInstallView extends Component {
 	destroyUpdateTimer = () => {
 		if ( this.updateTimer ) {
 			window.clearInterval( this.updateTimer );
-			this.updateTimer = false;
+			this.updateTimer = null;
 		}
 	};
 
 	doInitialization = () => {
-		const { fixMode, site, sitePlugins, wporg } = this.props;
+		const { site, sitePlugins, wporg } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -156,7 +105,8 @@ class RequiredPluginsInstallView extends Component {
 
 		// Iterate over the required plugins, fetching plugin
 		// data from wordpress.org for each into state
-		const requiredPlugins = fixMode ? getRequiredPluginsForCalypso() : getPluginsForStoreSetup();
+		const requiredPlugins = [ 'akismet', 'vaultpress' ];
+
 		let pluginDataLoaded = true;
 		for ( const requiredPluginSlug of requiredPlugins ) {
 			const pluginData = getPlugin( wporg, requiredPluginSlug );
@@ -171,6 +121,7 @@ class RequiredPluginsInstallView extends Component {
 				pluginDataLoaded = false;
 			}
 		}
+
 		if ( ! pluginDataLoaded ) {
 			if ( workingOn === 'LOAD_PLUGIN_DATA' ) {
 				return;
@@ -319,12 +270,15 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	doneSuccess = () => {
-		const { site } = this.props;
+	doneFailure = () => {
+		this.destroyUpdateTimer();
+	};
 
+	doneSuccess = () => {
 		this.setState( {
 			engineState: 'IDLE',
 		} );
+		this.destroyUpdateTimer();
 	};
 
 	updateEngine = () => {
@@ -341,6 +295,9 @@ class RequiredPluginsInstallView extends Component {
 			case 'DONESUCCESS':
 				this.doneSuccess();
 				break;
+			case 'DONEFAILURE':
+				this.doneFailure();
+				break;
 		}
 	};
 
@@ -355,120 +312,19 @@ class RequiredPluginsInstallView extends Component {
 		return 3;
 	};
 
-	startSetup = () => {
-		const { hasPendingAT } = this.props;
-
-		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
-			action: 'initial-setup',
-		} );
-
-		if ( ! hasPendingAT ) {
-			this.setState( {
-				engineState: 'INITIALIZING',
-			} );
-		}
-	};
-
-	renderConfirmScreen = () => {
-		const { translate } = this.props;
-		return (
-			<div className="dashboard__setup-wrapper setup__wrapper">
-				<SetupNotices />
-				<div className="card dashboard__setup-confirm">
-					<SetupHeader
-						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
-						imageWidth={ 160 }
-						title={ translate( 'Have something to sell?' ) }
-						subtitle={ translate(
-							'You can sell your products right on your site and ship them to customers in a snap!'
-						) }
-					>
-						<Button onClick={ this.startSetup } primary>
-							{ translate( 'Set up my store!' ) }
-						</Button>
-					</SetupHeader>
-				</div>
-			</div>
-		);
-	};
-
-	getTotalSeconds = () => {
-		const { hasPendingAT } = this.props;
-
-		if ( hasPendingAT ) {
-			return transferStatusesToTimes[ transferStates.COMPLETE ] + TIME_TO_PLUGIN_INSTALLATION;
-		}
-
-		return TIME_TO_PLUGIN_INSTALLATION;
-	};
-
-	renderContactSupport() {
-		const { translate, wporg } = this.props;
-		const { workingOn } = this.state;
-		const plugin = getPlugin( wporg, workingOn );
-
-		const subtitle = [
-			<p key="line-1">
-				{ translate(
-					"Your store is missing some required plugins. We can't fix this automatically " +
-						'due to a problem with the {{b}}%(pluginName)s{{/b}} plugin.',
-					{
-						args: { pluginName: plugin.name || workingOn },
-						components: { b: <strong /> },
-					}
-				) }
-			</p>,
-			<p key="line-2">
-				{ translate( "Please contact support and we'll get your store back up and running!" ) }
-			</p>,
-		];
-
-		return (
-			<div className="dashboard__setup-wrapper setup__wrapper">
-				<div className="card dashboard__plugins-install-view">
-					<SetupHeader
-						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
-						imageWidth={ 160 }
-						title={ translate( "We can't update your store" ) }
-						subtitle={ subtitle }
-					>
-						<Button primary href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
-							{ this.props.translate( 'Get in touch' ) }
-						</Button>
-					</SetupHeader>
-				</div>
-			</div>
-		);
-	}
-
 	render() {
-		const { hasPendingAT, fixMode, translate } = this.props;
-		const { engineState, progress, totalSeconds } = this.state;
-
-		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
-			return this.renderConfirmScreen();
-		}
-
-		if ( 'DONEFAILURE' === engineState ) {
-			return this.renderContactSupport();
-		}
-
-		const title = fixMode ? translate( 'Updating your store' ) : translate( 'Building your store' );
+		const { engineState } = this.state;
 
 		return (
-			<div className="dashboard__setup-wrapper setup__wrapper">
-				<SetupNotices />
-				<div className="card dashboard__plugins-install-view">
-					<SetupHeader
-						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
-						imageWidth={ 160 }
-						title={ title }
-						subtitle={ translate( "Give us a minute and we'll move right along." ) }
-					>
-						<ProgressBar value={ progress } total={ totalSeconds } isPulsing />
-					</SetupHeader>
-				</div>
-			</div>
+			<>
+				<pre>
+					<code>{ engineState }</code>
+				</pre>
+				<pre>
+					State: { JSON.stringify( this.props, undefined, 2 ) }
+					Props: { JSON.stringify( this.state, undefined, 2 ) }
+				</pre>
+			</>
 		);
 	}
 }
@@ -497,4 +353,4 @@ export default connect(
 		installPlugin,
 		fetchPlugins,
 	}
-)( localize( RequiredPluginsInstallView ) );
+)( localize( PluginInstaller ) );
