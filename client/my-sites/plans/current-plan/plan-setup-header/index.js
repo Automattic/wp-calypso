@@ -23,7 +23,7 @@ export class PlanSetupHeader extends PureComponent {
 		const { translate } = this.props;
 		return (
 			<Card className="plan-setup-header">
-				<JetpackSetupRunner />
+				<JetpackSetupRunner plugins={ [ 'akismet', 'vaultpress' ] } />
 				<img
 					className="plan-setup-header__illustration"
 					alt=""
