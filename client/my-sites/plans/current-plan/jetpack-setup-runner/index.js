@@ -20,14 +20,12 @@ import { getSelectedSite } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-unused-vars
 
-// Time in seconds to complete various steps.
-const TIME_TO_PLUGIN_INSTALLATION = 15;
-
 class PluginInstaller extends Component {
 	static propTypes = {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		requiredPlugins: PropTypes.arrayOf( PropTypes.string ).isRequired,
 	};
 
 	state = {
@@ -35,8 +33,6 @@ class PluginInstaller extends Component {
 		toActivate: [],
 		toInstall: [],
 		workingOn: '',
-		progress: 5 /* @TODO fix */,
-		totalTasks: 20 /* @TODO fix */,
 	};
 
 	updateTimer = null;
@@ -76,7 +72,7 @@ class PluginInstaller extends Component {
 	};
 
 	doInitialization = () => {
-		const { site, sitePlugins, wporg } = this.props;
+		const { requiredPlugins, site, sitePlugins, wporg } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -105,8 +101,6 @@ class PluginInstaller extends Component {
 
 		// Iterate over the required plugins, fetching plugin
 		// data from wordpress.org for each into state
-		const requiredPlugins = [ 'akismet', 'vaultpress' ];
-
 		let pluginDataLoaded = true;
 		for ( const requiredPluginSlug of requiredPlugins ) {
 			const pluginData = getPlugin( wporg, requiredPluginSlug );
@@ -140,6 +134,7 @@ class PluginInstaller extends Component {
 			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
 			if ( ! pluginFound ) {
 				toInstall.push( requiredPluginSlug );
+				pluginInstallationTotalSteps++;
 				toActivate.push( requiredPluginSlug );
 				pluginInstallationTotalSteps++;
 			} else if ( ! pluginFound.active ) {
@@ -207,7 +202,6 @@ class PluginInstaller extends Component {
 		if ( pluginFound ) {
 			this.setState( {
 				workingOn: '',
-				progress: this.state.progress + this.getPluginInstallationTime(),
 			} );
 		}
 
@@ -265,7 +259,6 @@ class PluginInstaller extends Component {
 		if ( pluginFound && pluginFound.active ) {
 			this.setState( {
 				workingOn: '',
-				progress: this.state.progress + this.getPluginInstallationTime(),
 			} );
 		}
 	};
@@ -302,17 +295,6 @@ class PluginInstaller extends Component {
 				this.doneFailure();
 				break;
 		}
-	};
-
-	getPluginInstallationTime = () => {
-		const { pluginInstallationTotalSteps } = this.state;
-
-		if ( pluginInstallationTotalSteps ) {
-			return TIME_TO_PLUGIN_INSTALLATION / pluginInstallationTotalSteps;
-		}
-
-		// If there's some error, return 3 seconds for a single plugin installation time.
-		return 3;
 	};
 
 	render() {
