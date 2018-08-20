@@ -93,6 +93,8 @@ class CurrentPlan extends Component {
 			translate,
 		} = this.props;
 
+		// I have just observed an error on this line in production:
+		// TypeError: Cannot read property 'plan' of null
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
 
