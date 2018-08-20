@@ -170,7 +170,7 @@
     "social-logos": "2.0.0",
     "socket.io-client": "2.1.1",
     "source-map": "0.7.3",
-    "source-map-support": "0.5.8",
+    "source-map-support": "0.5.9",
     "store": "1.3.20",
     "striptags": "2.2.1",
     "superagent": "3.8.3",
