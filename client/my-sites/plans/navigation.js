@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Dispatcher from 'dispatcher';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -20,12 +21,17 @@ import { isMobile } from 'lib/viewport';
 import { CART_POPUP_CLOSE, CART_POPUP_OPEN } from 'lib/upgrades/action-types';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import { isATEnabled } from 'lib/automated-transfer';
+import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
+import { getSelectedSite } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
+		isJetpack: PropTypes.bool,
 		path: PropTypes.string.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+		shouldShowMyPlan: PropTypes.bool,
+		site: PropTypes.object,
 	};
 
 	state = {
@@ -73,13 +79,11 @@ class PlansNavigation extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const site = this.props.selectedSite;
+		const { isJetpack, site, shouldShowMyPlan, translate } = this.props;
 		const path = sectionify( this.props.path );
-		const hasPlan = site && site.plan && site.plan.product_slug !== 'free_plan';
 		const sectionTitle = this.getSectionTitle( path );
 		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
-		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! site.jetpack );
+		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
 
 		return (
 			<SectionNav
@@ -88,39 +92,43 @@ class PlansNavigation extends React.Component {
 				onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 			>
 				<NavTabs label="Section" selectedText={ sectionTitle }>
-					{ hasPlan && (
-						<NavItem
-							path={ `/plans/my-plan/${ site.slug }` }
-							key="myPlan"
-							selected={ path === '/plans/my-plan' }
-						>
-							{ translate( 'My Plan' ) }
-						</NavItem>
-					) }
-					<NavItem
-						path={ `/plans/${ site.slug }` }
-						key="plans"
-						selected={ path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly' }
-					>
-						{ translate( 'Plans' ) }
-					</NavItem>
-					{ canManageDomain && (
-						<NavItem
-							path={ `/domains/manage/${ site.slug }` }
-							key="domains"
-							selected={ path === '/domains/manage' || path === '/domains/add' }
-						>
-							{ translate( 'Domains' ) }
-						</NavItem>
-					) }
-					{ canManageDomain && (
-						<NavItem
-							path={ `/domains/manage/email/${ site.slug }` }
-							key="googleApps"
-							selected={ path === '/domains/manage/email' }
-						>
-							{ translate( 'Email' ) }
-						</NavItem>
+					{ site && (
+						<>
+							{ shouldShowMyPlan && (
+								<NavItem
+									path={ `/plans/my-plan/${ site.slug }` }
+									key="myPlan"
+									selected={ path === '/plans/my-plan' }
+								>
+									{ translate( 'My Plan' ) }
+								</NavItem>
+							) }
+							<NavItem
+								path={ `/plans/${ site.slug }` }
+								key="plans"
+								selected={ path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly' }
+							>
+								{ translate( 'Plans' ) }
+							</NavItem>
+							{ canManageDomain && (
+								<NavItem
+									path={ `/domains/manage/${ site.slug }` }
+									key="domains"
+									selected={ path === '/domains/manage' || path === '/domains/add' }
+								>
+									{ translate( 'Domains' ) }
+								</NavItem>
+							) }
+							{ canManageDomain && (
+								<NavItem
+									path={ `/domains/manage/email/${ site.slug }` }
+									key="googleApps"
+									selected={ path === '/domains/manage/email' }
+								>
+									{ translate( 'Email' ) }
+								</NavItem>
+							) }
+						</>
 					) }
 				</NavTabs>
 				{ this.cartToggleButton() }
@@ -145,14 +153,14 @@ class PlansNavigation extends React.Component {
 	};
 
 	cartToggleButton() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart ) {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart || ! this.props.site ) {
 			return null;
 		}
 
 		return (
 			<PopoverCart
 				cart={ this.props.cart }
-				selectedSite={ this.props.selectedSite }
+				selectedSite={ this.props.site }
 				onToggle={ this.toggleCartVisibility }
 				pinned={ isMobile() }
 				visible={ this.state.cartVisible }
@@ -164,4 +172,14 @@ class PlansNavigation extends React.Component {
 	}
 }
 
-export default localize( PlansNavigation );
+export default connect( state => {
+	const site = getSelectedSite( state );
+	const siteId = site ? site.ID : null;
+	const isJetpack = isJetpackSite( state, siteId );
+	const isOnFreePlan = isSiteOnFreePlan( state, siteId );
+	return {
+		isJetpack,
+		shouldShowMyPlan: ! isOnFreePlan || isJetpack,
+		site,
+	};
+} )( localize( PlansNavigation ) );
