@@ -16,14 +16,23 @@ export class PlanSetupHeader extends PureComponent {
 	static propTypes = {};
 
 	state = {
-		autoInstallStatus: {},
+		progress: [ 0, 0 ],
+	};
+
+	updateProgress = progress => {
+		this.setState( { progress } );
 	};
 
 	render() {
 		const { translate } = this.props;
+		const { progress } = this.state;
+		const [ done, total ] = progress;
 		return (
 			<Card className="plan-setup-header">
-				<JetpackSetupRunner plugins={ [ 'akismet', 'vaultpress' ] } />
+				<JetpackSetupRunner
+					notifyProgress={ this.updateProgress }
+					requiredPlugins={ [ 'akismet', 'vaultpress' ] }
+				/>
 				<img
 					className="plan-setup-header__illustration"
 					alt=""
@@ -52,7 +61,7 @@ export class PlanSetupHeader extends PureComponent {
 						'We’ve taken the liberty of starting the first two items, since they’re key to your site’s safety: we’re configuring spam filtering and backups for you now. Once that’s done, we can work through the rest of the checklist.'
 					) }
 				</p>
-				<ProgressBar isPlusing total={ 100 } value={ 10 } />
+				<ProgressBar isPlusing total={ total } value={ done } />
 				<div>
 					<a href={ /* @TODO (sirreal) fix this */ document.location.pathname }>
 						{ translate( 'Skip setup. I’ll do this later.' ) }

@@ -4,7 +4,7 @@
  */
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -26,6 +26,7 @@ class PluginInstaller extends Component {
 			ID: PropTypes.number.isRequired,
 		} ),
 		requiredPlugins: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		notifyProgress: PropTypes.func,
 	};
 
 	state = {
@@ -33,6 +34,7 @@ class PluginInstaller extends Component {
 		toActivate: [],
 		toInstall: [],
 		workingOn: '',
+		pendingSteps: 0,
 	};
 
 	updateTimer = null;
@@ -129,43 +131,29 @@ class PluginInstaller extends Component {
 
 		const toInstall = [];
 		const toActivate = [];
-		let pluginInstallationTotalSteps = 0;
 		for ( const requiredPluginSlug of requiredPlugins ) {
 			const pluginFound = find( sitePlugins, { slug: requiredPluginSlug } );
 			if ( ! pluginFound ) {
 				toInstall.push( requiredPluginSlug );
-				pluginInstallationTotalSteps++;
 				toActivate.push( requiredPluginSlug );
-				pluginInstallationTotalSteps++;
 			} else if ( ! pluginFound.active ) {
 				toActivate.push( requiredPluginSlug );
-				pluginInstallationTotalSteps++;
 			}
 		}
 
+		let engineState = 'DONESUCCESS';
 		if ( toInstall.length ) {
-			this.setState( {
-				engineState: 'INSTALLING',
-				toActivate,
-				toInstall,
-				workingOn: '',
-				pluginInstallationTotalSteps,
-			} );
-			return;
-		}
-
-		if ( toActivate.length ) {
-			this.setState( {
-				engineState: 'ACTIVATING',
-				toActivate,
-				workingOn: '',
-				pluginInstallationTotalSteps,
-			} );
-			return;
+			engineState = 'INSTALLING';
+		} else if ( toActivate.length ) {
+			engineState = 'ACTIVATING';
 		}
 
 		this.setState( {
-			engineState: 'DONESUCCESS',
+			engineState,
+			pendingSteps: toActivate.length + toInstall.length,
+			toActivate,
+			toInstall,
+			workingOn: '',
 		} );
 	};
 
@@ -278,6 +266,12 @@ class PluginInstaller extends Component {
 		debug( 'Engine state: %o', this.state.engineState );
 		debug( 'State: %o', this.state );
 		debug( 'Props: %o', this.props );
+
+		if ( 'function' === typeof this.props.notifyProgress ) {
+			const totalSteps = this.props.requiredPlugins.length * 2;
+			this.props.notifyProgress( [ totalSteps - this.state.pendingSteps, totalSteps ] );
+		}
+
 		switch ( this.state.engineState ) {
 			case 'INITIALIZING':
 				this.doInitialization();
@@ -298,19 +292,7 @@ class PluginInstaller extends Component {
 	};
 
 	render() {
-		const { engineState } = this.state;
-
-		return (
-			<>
-				<pre>
-					<code>{ engineState }</code>
-				</pre>
-				<pre>
-					State: { JSON.stringify( this.props, undefined, 2 ) }
-					Props: { JSON.stringify( this.state, undefined, 2 ) }
-				</pre>
-			</>
-		);
+		return null;
 	}
 }
 
