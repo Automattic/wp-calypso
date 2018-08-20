@@ -116,7 +116,7 @@ class CurrentPlan extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				{ doPlanSetup && <JetpackSetupRunner plugins={ [ 'akismet', 'vaultpress' ] } /> }
+				{ doPlanSetup && <JetpackSetupRunner requiredPlugins={ [ 'akismet', 'vaultpress' ] } /> }
 
 				<PlansNavigation path={ path } selectedSite={ selectedSite } />
 
