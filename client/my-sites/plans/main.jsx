@@ -96,11 +96,7 @@ class Plans extends React.Component {
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
-						<PlansNavigation
-							path={ this.props.context.path }
-							cart={ this.props.cart }
-							selectedSite={ selectedSite }
-						/>
+						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 						<PlansFeaturesMain
 							displayJetpackPlans={ displayJetpackPlans }
 							hideFreePlan={ true }

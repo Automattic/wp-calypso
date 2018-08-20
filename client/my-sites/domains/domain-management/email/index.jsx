@@ -66,13 +66,7 @@ class Email extends React.Component {
 				</Header>
 			);
 		}
-		return (
-			<PlansNavigation
-				path={ this.props.context.path }
-				cart={ this.props.cart }
-				selectedSite={ this.props.selectedSite }
-			/>
-		);
+		return <PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />;
 	}
 
 	content() {

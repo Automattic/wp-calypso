@@ -154,11 +154,7 @@ export class List extends React.Component {
 			<Main wideLayout={ isPlanFeaturesEnabled() }>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
-				<PlansNavigation
-					path={ this.props.context.path }
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite }
-				/>
+				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 				{ this.domainWarnings() }
 
 				{ this.domainCreditsInfoNotice() }

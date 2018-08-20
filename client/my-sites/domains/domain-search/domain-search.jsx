@@ -148,11 +148,7 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<PlansNavigation
-							path={ this.props.context.path }
-							cart={ this.props.cart }
-							selectedSite={ selectedSite }
-						/>
+						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 
 						<EmailVerificationGate
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
