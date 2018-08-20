@@ -182,6 +182,21 @@ function getAcceptedLanguagesFromHeader( header ) {
 		.filter( lang => lang );
 }
 
+const faviconUrlMap = {
+	stage: '/calypso/images/favicons/favicon-staging.ico',
+	horizon: '/calypso/images/favicons/favicon-horizon.ico',
+	development: '/calypso/images/favicons/favicon-development.ico',
+	wpcalypso: '/calypso/images/favicons/favicon-wpcalypso.ico',
+};
+
+function getFaviconUrl( env ) {
+	if ( env !== 'production' ) {
+		return faviconUrlMap[ env ];
+	}
+
+	return '//s1.wp.com/i/favicon.ico';
+}
+
 function getDefaultContext( request ) {
 	let initialServerState = {};
 	let sectionCss;
@@ -237,7 +252,7 @@ function getDefaultContext( request ) {
 			asset => ! asset.startsWith( 'manifest' )
 		),
 		manifest: getAssets().manifests.manifest,
-		faviconURL: '//s1.wp.com/i/favicon.ico',
+		faviconURL: getFaviconUrl( calypsoEnv ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
@@ -258,7 +273,6 @@ function getDefaultContext( request ) {
 		context.badge = calypsoEnv;
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 		// this is for calypso.live, so that branchName can be available while rendering the page
 		if ( request.query.branch ) {
 			context.branchName = request.query.branch;
@@ -268,20 +282,17 @@ function getDefaultContext( request ) {
 	if ( calypsoEnv === 'horizon' ) {
 		context.badge = 'feedback';
 		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
-		context.faviconURL = '/calypso/images/favicons/favicon-horizon.ico';
 	}
 
 	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
 	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
@@ -496,19 +507,17 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
-function renderServerError( err, req, res, next ) {
-	if ( err ) {
-		if ( process.env.NODE_ENV !== 'production' ) {
-			console.error( err );
-		}
-		req.error = err;
-		res.status( err.status || 500 );
-		const ctx = getDefaultContext( req );
-		res.send( renderJsx( '500', ctx ) );
-		return;
+function renderServerError( err, req, res ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		console.error( err );
 	}
 
-	next();
+	res.status( err.status || 500 );
+	const ctx = {
+		urls: generateStaticUrls(),
+		faviconURL: getFaviconUrl( calypsoEnv ),
+	};
+	res.send( renderJsx( '500', ctx ) );
 }
 
 /**
