@@ -492,7 +492,12 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
-function renderServerError( err, req, res ) {
+/* eslint-disable no-unused-vars */
+/* We don't use `next` but need to add it for express.js to
+   recognize this function as an error handler, hence the
+   eslint-disable. */
+function renderServerError( err, req, res, next ) {
+	/* eslint-enable no-unused-vars */
 	if ( process.env.NODE_ENV !== 'production' ) {
 		console.error( err );
 	}
