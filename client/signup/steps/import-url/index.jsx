@@ -69,7 +69,7 @@ class ImportURLStepComponent extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ translate( 'Where can we find your old site?' ) }
 				subHeaderText={ translate(
-					"Enter your site's URL, sometimes called a domain name or site address.s"
+					"Enter your site's URL, sometimes called a domain name or site address."
 				) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
