@@ -1,6 +1,7 @@
 {
 	"env": "production",
 	"env_id": "horizon",
+	"favicon_url": "/calypso/images/favicons/favicon-horizon.ico",
 	"client_slug": "browser",
 	"hostname": "horizon.wordpress.com",
 	"i18n_default_locale_slug": "en",

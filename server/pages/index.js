@@ -182,21 +182,6 @@ function getAcceptedLanguagesFromHeader( header ) {
 		.filter( lang => lang );
 }
 
-const faviconUrlMap = {
-	stage: '/calypso/images/favicons/favicon-staging.ico',
-	horizon: '/calypso/images/favicons/favicon-horizon.ico',
-	development: '/calypso/images/favicons/favicon-development.ico',
-	wpcalypso: '/calypso/images/favicons/favicon-wpcalypso.ico',
-};
-
-function getFaviconUrl( env ) {
-	if ( env !== 'production' ) {
-		return faviconUrlMap[ env ];
-	}
-
-	return '//s1.wp.com/i/favicon.ico';
-}
-
 function getDefaultContext( request ) {
 	let initialServerState = {};
 	let sectionCss;
@@ -252,7 +237,7 @@ function getDefaultContext( request ) {
 			asset => ! asset.startsWith( 'manifest' )
 		),
 		manifest: getAssets().manifests.manifest,
-		faviconURL: getFaviconUrl( calypsoEnv ),
+		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
@@ -515,7 +500,7 @@ function renderServerError( err, req, res ) {
 	res.status( err.status || 500 );
 	const ctx = {
 		urls: generateStaticUrls(),
-		faviconURL: getFaviconUrl( calypsoEnv ),
+		faviconURL: config( 'favicon_url' ),
 	};
 	res.send( renderJsx( '500', ctx ) );
 }
