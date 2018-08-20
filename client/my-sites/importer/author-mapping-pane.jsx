@@ -142,9 +142,8 @@ class AuthorMappingPane extends React.PureComponent {
 
 		return (
 			<div className="importer__mapping-pane">
-				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) }>
-					<div className="importer__mapping-description">{ mappingDescription }</div>
-				</SiteUsersFetcher>
+				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) } />
+				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
 					<span className="importer__mapping-target-title">{ targetTitle }</span>

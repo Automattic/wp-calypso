@@ -63,8 +63,10 @@ export default class extends React.Component {
 
 	render() {
 		const childrenProps = Object.assign( omit( this.props, 'children' ), this.state );
-		// Clone the child element along and pass along state (containing data from the store)
-		return React.cloneElement( this.props.children, childrenProps );
+
+		// If child elements are passed, clone them and
+		// pass along state (containing data from the store)
+		return this.props.children ? React.cloneElement( this.props.children, childrenProps ) : null;
 	}
 
 	_updateSiteUsers = fetchOptions => {
