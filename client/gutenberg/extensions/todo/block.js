@@ -1,5 +1,7 @@
 /** @format */
 
+/* eslint wpcalypso/jsx-classname-namespace: 0 */
+
 /**
  * External dependencies
  */
@@ -154,9 +156,10 @@ const edit = class extends Component {
 
 	render() {
 		const { items, newItemAt } = this.state;
+		const { className } = this.props;
 		return (
-			<div className="wp-editor-a8c-todo">
-				<ul className="wp-editor-a8c-todo-list">
+			<div className={ className }>
+				<ul className={ `${ className }-list` }>
 					{ items.map( ( item, itemIndex ) => {
 						const moveUp = () => {
 							this.moveUp( itemIndex );
@@ -206,7 +209,7 @@ const edit = class extends Component {
 						);
 					} ) }
 				</ul>
-				<div class="add-new-todo-item-form">
+				<div className="add-new-todo-item-form">
 					<Button onClick={ this.addNewItem }>
 						<Dashicon icon="plus" /> Add new item
 					</Button>
