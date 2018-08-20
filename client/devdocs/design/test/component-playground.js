@@ -16,6 +16,7 @@ import { LiveProvider } from 'react-live';
 import ComponentPlayground from '../component-playground';
 
 jest.mock( 'devdocs/design/playground-scope', () => 'PlaygroundScope' );
+jest.mock( 'gutenberg-blocks', () => 'GutenbergBlocks' );
 jest.mock( '@wordpress/components', () => 'GutenbergComponents' );
 
 describe( 'ComponentPlayground', () => {
@@ -38,4 +39,12 @@ describe( 'ComponentPlayground', () => {
 			expect( liveProvider.props().scope ).toBe( 'GutenbergComponents' );
 		}
 	);
+
+	test( 'LiveProvider should use the Gutenberg blocks scope when section is Gutenberg blocks', () => {
+		const wrapper = shallow(
+			<ComponentPlayground section="gutenberg-blocks" code="foo" name="foo" url="foo" />
+		);
+		const liveProvider = wrapper.find( LiveProvider );
+		expect( liveProvider.props().scope ).toBe( 'GutenbergBlocks' );
+	} );
 } );
