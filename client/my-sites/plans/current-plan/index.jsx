@@ -97,6 +97,7 @@ class CurrentPlan extends Component {
 		const currentPlanSlug = get( selectedSite, [ 'plan', 'product_slug' ] );
 		const isLoading = this.isLoading();
 
+		// Now we have problems on property access on undefined…
 		const planConstObj = getPlan( currentPlanSlug );
 		const planFeaturesHeader = translate( '%(planName)s plan features', {
 			args: { planName: planConstObj.getTitle() },
