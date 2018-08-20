@@ -2,17 +2,15 @@
 	"moduleNameMapper": {
 		"^config$": "<rootDir>/server/config/index.js"
 	},
-	"modulePaths": [
-		"<rootDir>/test/",
-		"<rootDir>/client/",
-		"<rootDir>/client/extensions/"
-	],
+	"transform": {
+		"^.+\\.jsx?$": "babel-jest",
+		"\\.svg$": "<rootDir>/test/test/helpers/assets/transform.js"
+	},
+	"modulePaths": [ "<rootDir>/test/", "<rootDir>/client/", "<rootDir>/client/extensions/" ],
 	"rootDir": "./../../",
-	"roots": [
-		"<rootDir>/client/"
-	],
+	"roots": [ "<rootDir>/client/" ],
 	"testEnvironment": "node",
-	"transformIgnorePatterns": ["node_modules[\\/\\\\](?!redux-form)"],
+	"transformIgnorePatterns": [ "node_modules[\\/\\\\](?!flag-icon-css|redux-form)" ],
 	"testMatch": [ "<rootDir>/client/**/test/*.js?(x)" ],
 	"testURL": "https://example.com",
 	"setupTestFrameworkScriptFile": "<rootDir>/test/client/setup-test-framework.js",
