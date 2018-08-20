@@ -166,6 +166,7 @@ class CurrentPlan extends Component {
 }
 
 export default connect( state => {
+	/* eslint-disable-next-line no-unused-vars */
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
@@ -174,7 +175,8 @@ export default connect( state => {
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 	return {
-		selectedSite,
+		/* @TODO clean up, this is to force error-producing conditions */
+		selectedSite: null,
 		selectedSiteId,
 		domains,
 		isAutomatedTransfer,
