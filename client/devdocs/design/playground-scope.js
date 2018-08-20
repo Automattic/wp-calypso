@@ -28,6 +28,7 @@ export Collection from 'devdocs/design/search-collection';
 export CompactCard from 'components/card/compact';
 export Count from 'components/count';
 export CountedTextarea from 'components/forms/counted-textarea';
+export CreditCard from 'components/credit-card';
 export DatePicker from 'components/date-picker';
 export DiffViewer from 'components/diff-viewer';
 export DropZones from 'components/drop-zone';

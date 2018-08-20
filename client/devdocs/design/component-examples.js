@@ -20,6 +20,7 @@ export ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 export Collection from 'devdocs/design/search-collection';
 export Count from 'components/count/docs/example';
 export CountedTextareas from 'components/forms/counted-textarea/docs/example';
+export CreditCard from 'components/credit-card/docs/example';
 export DatePicker from 'components/date-picker/docs/example';
 export DiffViewerExample from 'components/diff-viewer/docs/example';
 export DropZones from 'components/drop-zone/docs/example';
