@@ -100,3 +100,9 @@ self.addEventListener( 'message', function( event ) {
 			break;
 	}
 } );
+
+/* eslint-disable */
+self.addEventListener( 'fetch', function( event ) {
+	// this listener is required for "Add to Home Screen" support
+} );
+/* eslint-enable */

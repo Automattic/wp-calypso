@@ -131,7 +131,7 @@ exports[`Head should render custom title 1`] = `
     rel="profile"
   />
   <link
-    href="/calypso/manifest.json"
+    href="/manifest.json"
     rel="manifest"
   />
   <link
@@ -272,7 +272,7 @@ exports[`Head should render default title 1`] = `
     rel="profile"
   />
   <link
-    href="/calypso/manifest.json"
+    href="/manifest.json"
     rel="manifest"
   />
   <link
