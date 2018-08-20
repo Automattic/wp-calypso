@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -21,7 +21,23 @@ import { fetchIsSiteImportable } from 'lib/importer/actions';
 
 const debug = debugFactory( 'calypso:signup-step-import-url' );
 
+const normalizeUrlForImportSource = url => {
+	// @TODO sanitize? Prepend https:// ..?
+	return url;
+};
+
 class ImportURLStepComponent extends Component {
+	state = { formDisabled: true, url: null };
+
+	componentDidMount() {
+		const { queryObject } = this.props;
+		const urlFromQueryArg = normalizeUrlForImportSource( get( queryObject, 'url' ) );
+
+		if ( urlFromQueryArg ) {
+			this.debouncedHandleChange( urlFromQueryArg );
+		}
+	}
+
 	handleAction = importUrl => {
 		event.preventDefault();
 		debug( { importUrl } );
@@ -35,10 +51,53 @@ class ImportURLStepComponent extends Component {
 	};
 
 	handleChange = enteredValue => {
-		this.props.fetchIsSiteImportable( enteredValue );
+		this.setState( {
+			url: normalizeUrlForImportSource( enteredValue ),
+		} );
 	};
 
-	debouncedHandleChange = debounce( this.handleChange, 200 );
+	clearFormDisabled = () => this.setState( { formDisabled: false } );
+
+	handleIsSiteImportableResponse = ( { engine, error, favicon, site_title, site_url } ) => {
+		if ( error ) {
+			debug( 'Import not supported for site', { error } );
+			this.clearFormDisabled();
+			return;
+		}
+
+		switch ( engine ) {
+			default:
+				debug( 'Import not supported for engine:', { engine } );
+				break;
+			case 'wix':
+				debug( 'Import supported for site:', { engine, favicon, site_title, site_url } );
+				break;
+		}
+
+		this.clearFormDisabled();
+	};
+
+	fetchIsSiteImportable = () => {
+		// @TODO redux..
+		if ( ! this.state.url ) {
+			this.clearFormDisabled();
+			return;
+		}
+
+		this.setState( { formDisabled: true } );
+
+		this.props.fetchIsSiteImportable( this.state.url ).then( this.handleIsSiteImportableResponse );
+	};
+
+	componentDidUpdate( prevProps, prevState ) {
+		if ( this.state.url === prevState.url ) {
+			return;
+		}
+
+		this.fetchIsSiteImportable();
+	}
+
+	debouncedHandleChange = debounce( this.handleChange, 1200 );
 
 	renderContent = () => {
 		return (
@@ -49,7 +108,7 @@ class ImportURLStepComponent extends Component {
 					onAction={ this.handleAction }
 					label={ this.props.translate( 'URL' ) }
 					onChange={ this.debouncedHandleChange }
-					// disabled={ this.state.formDisabled }
+					disabled={ this.state.formDisabled }
 				/>
 				{ /* <FormInputValidation text="..." /> */ }
 				<ButtonGroup>
