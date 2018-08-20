@@ -24,6 +24,7 @@ export class CurrentPlanHeader extends Component {
 		tagLine: PropTypes.string,
 		isPlaceholder: PropTypes.bool,
 		currentPlan: PropTypes.object,
+		currentPlanSlug: PropTypes.oneOf( Object.keys( PLANS_LIST ) ),
 		isExpiring: PropTypes.bool,
 		translate: PropTypes.func,
 	};

@@ -51,7 +51,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 export class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
-		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
+		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ),
 		isPlaceholder: PropTypes.bool,
 	};
 
