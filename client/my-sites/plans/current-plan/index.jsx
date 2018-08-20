@@ -7,6 +7,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -93,9 +94,7 @@ class CurrentPlan extends Component {
 			translate,
 		} = this.props;
 
-		// I have just observed an error on this line in production:
-		// TypeError: Cannot read property 'plan' of null
-		const currentPlanSlug = selectedSite.plan.product_slug;
+		const currentPlanSlug = get( selectedSite, [ 'plan', 'product_slug' ] );
 		const isLoading = this.isLoading();
 
 		const planConstObj = getPlan( currentPlanSlug );
