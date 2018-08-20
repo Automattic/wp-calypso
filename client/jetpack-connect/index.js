@@ -86,7 +86,8 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/store/:interval(yearly|monthly)?',
+		'/jetpack/connect/store/:interval(yearly|monthly)?/:locale?',
+		controller.setLoggedOutLocale,
 		controller.plansLanding,
 		makeLayout,
 		clientRender

@@ -27,6 +27,7 @@ import versionCompare from 'lib/version-compare';
 import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
+import switchLocale from 'lib/i18n-utils/switch-locale';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
@@ -291,5 +292,21 @@ export function plansSelection( context, next ) {
 			/>
 		</CheckoutData>
 	);
+	next();
+}
+
+/**
+ * Checks for a locale fragment at the end of context.path
+ * and switches to that locale if the user is logged out.
+ *
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function setLoggedOutLocale( context, next ) {
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( ! isLoggedIn ) {
+		const locale = getLocaleFromPath( context.path );
+		switchLocale( locale );
+	}
 	next();
 }
