@@ -235,7 +235,8 @@ class ImportingPane extends React.PureComponent {
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ mapAuthorFor( importerId ) }
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
-						{ ...{ siteId, sourceType } }
+						siteId={ siteId }
+						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }
 						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
 						targetTitle={ siteName }
