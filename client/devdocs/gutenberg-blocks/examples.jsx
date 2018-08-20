@@ -28,7 +28,7 @@ export default [
 	{
 		name: 'core/code',
 		attributes: {
-			content: '<div>\n\t<p>My paragraph</p>\n</div>',
+			content: 'export default function MyButton() {\n\treturn <Button>Click Me!</Button>;\n}',
 		},
 	},
 	{
@@ -154,7 +154,7 @@ export default [
 		attributes: {
 			value: [
 				{
-					children: <p>Code is poetry</p>,
+					children: '<p>Code is poetry</p>',
 				},
 			],
 			citation: [ 'The WordPress community' ],
@@ -165,7 +165,7 @@ export default [
 		attributes: {
 			value: [
 				{
-					children: <p>Code is poetry</p>,
+					children: '<p>Code is poetry</p>',
 				},
 			],
 			citation: [ 'The WordPress community' ],
@@ -193,18 +193,7 @@ export default [
 	{
 		name: 'core/table',
 		attributes: {
-			content: (
-				<tbody>
-					<tr>
-						<td>Row 1 - Column 1</td>
-						<td>Row 1 - Column 2</td>
-					</tr>
-					<tr>
-						<td>Row 2 - Column 1</td>
-						<td>Row 2 - Column 2</td>
-					</tr>
-				</tbody>
-			),
+			content: '<tbody><tr><td>Cell 1</td><td>Cell 2</td></tr></tbody>',
 			hasFixedLayout: true,
 		},
 	},

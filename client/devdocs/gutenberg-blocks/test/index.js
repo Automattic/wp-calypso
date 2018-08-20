@@ -18,7 +18,7 @@ import GutenbergBlocks from '../';
 import HeaderCake from 'components/header-cake';
 import ReadmeViewer from 'components/readme-viewer';
 import Collection from 'devdocs/design/search-collection';
-import GutenbergBlockExample from '../example';
+import { GutenbergBlockExample } from '../example';
 import examplesList from '../examples';
 
 jest.mock( 'page' );

@@ -9,13 +9,13 @@ import { RawHTML } from '@wordpress/element';
 
 const createBlockWithInnerBlocks = ( name, attributes, children ) => {
 	const innerBlocks = children
-		? children.map( innerBlock => {
-				return createBlockWithInnerBlocks(
+		? React.Children.map( children, innerBlock =>
+				createBlockWithInnerBlocks(
 					innerBlock.props.name,
 					innerBlock.props.attributes,
 					innerBlock.props.children
-				);
-		  } )
+				)
+		  )
 		: [];
 	return createBlock( name, attributes, innerBlocks );
 };

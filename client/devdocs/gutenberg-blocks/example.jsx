@@ -10,10 +10,10 @@ import React from 'react';
  */
 import { GutenbergBlock } from 'gutenberg-blocks';
 
-const renderExample = ( { name, attributes, inner, level } ) => {
+const generateExample = ( { name, attributes, inner, level } ) => {
 	const innerExamples = inner
 		? inner.map( ( innerExample, index ) => {
-				return renderExample( {
+				return generateExample( {
 					...innerExample,
 					level: `${ level || 0 }_${ index }`,
 				} );
@@ -21,13 +21,13 @@ const renderExample = ( { name, attributes, inner, level } ) => {
 		: null;
 
 	return (
-		<GutenbergBlock key={ level || '0' } name={ name } attributes={ attributes }>
+		<GutenbergBlock key={ level } name={ name } attributes={ attributes }>
 			{ innerExamples }
 		</GutenbergBlock>
 	);
 };
 
 const GutenbergBlockExample = ( { name, attributes, inner } ) =>
-	renderExample( { name, attributes, inner } );
+	generateExample( { name, attributes, inner } );
 
-export default GutenbergBlockExample;
+export { generateExample, GutenbergBlockExample };

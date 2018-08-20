@@ -19,7 +19,7 @@ import { slugToCamelCase } from '../docs-example/util';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 import Collection from 'devdocs/design/search-collection';
-import GutenbergBlockExample from './example';
+import { GutenbergBlockExample, generateExample } from './example';
 import examples from './examples';
 
 registerCoreBlocks();
@@ -65,15 +65,19 @@ export default class GutenbergBlocks extends React.Component {
 				) }
 
 				<Collection component={ block } filter={ filter } section="gutenberg-blocks">
-					{ examples.map( example => (
-						<GutenbergBlockExample
-							key={ example.name }
-							asyncName={ example.name }
-							name={ example.name }
-							attributes={ example.attributes }
-							inner={ example.inner }
-						/>
-					) ) }
+					{ examples.map( example => {
+						const exampleCode = generateExample( example );
+						return (
+							<GutenbergBlockExample
+								key={ example.name }
+								asyncName={ example.name }
+								name={ example.name }
+								attributes={ example.attributes }
+								inner={ example.inner }
+								exampleCode={ exampleCode }
+							/>
+						);
+					} ) }
 				</Collection>
 			</Main>
 		);
