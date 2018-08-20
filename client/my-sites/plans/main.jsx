@@ -20,7 +20,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import UpgradesNavigation from 'my-sites/domains/navigation';
+import PlansNavigation from 'my-sites/plans/navigation';
 import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'state/sites/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
@@ -96,7 +96,7 @@ class Plans extends React.Component {
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
-						<UpgradesNavigation
+						<PlansNavigation
 							path={ this.props.context.path }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite }

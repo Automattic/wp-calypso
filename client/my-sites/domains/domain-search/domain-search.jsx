@@ -17,7 +17,7 @@ import EmptyContent from 'components/empty-content';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
-import UpgradesNavigation from 'my-sites/domains/navigation';
+import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
 import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
 import cartItems from 'lib/cart-values/cart-items';
@@ -148,7 +148,7 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<UpgradesNavigation
+						<PlansNavigation
 							path={ this.props.context.path }
 							cart={ this.props.cart }
 							selectedSite={ selectedSite }

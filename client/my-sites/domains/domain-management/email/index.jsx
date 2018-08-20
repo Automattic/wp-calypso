@@ -20,7 +20,7 @@ import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import UpgradesNavigation from 'my-sites/domains/navigation';
+import PlansNavigation from 'my-sites/plans/navigation';
 import EmptyContent from 'components/empty-content';
 import {
 	domainManagementEdit,
@@ -67,7 +67,7 @@ class Email extends React.Component {
 			);
 		}
 		return (
-			<UpgradesNavigation
+			<PlansNavigation
 				path={ this.props.context.path }
 				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }

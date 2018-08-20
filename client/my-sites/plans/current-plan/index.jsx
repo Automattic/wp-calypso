@@ -23,7 +23,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import PlansNavigation from 'my-sites/domains/navigation';
+import PlansNavigation from 'my-sites/plans/navigation';
 import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
 import CurrentPlanHeader from './header';
 import QuerySites from 'components/data/query-sites';
