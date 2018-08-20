@@ -2151,12 +2151,12 @@
       "integrity": "sha1-ri1acpR38onWDdf5amMUoi3Wwio="
     },
     "autoprefixer": {
-      "version": "9.1.1",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.1.1.tgz",
-      "integrity": "sha512-Q/2zhVEglXXCBNCOFfnihQcQystPYJt4GrIopeWhPjFxRPXya8eOstB89AafW0nWhSscByp+rSXp9EE5X4zgXQ==",
+      "version": "9.1.2",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.1.2.tgz",
+      "integrity": "sha512-deo8jkqEIQALuN4OMbVPmtH8BUTRUW2PtINom/ZZBX6MvDUPcFaxTVB2USkWyeLlfd9garISbhjGN5WDHgRH2w==",
       "requires": {
         "browserslist": "^4.0.2",
-        "caniuse-lite": "^1.0.30000876",
+        "caniuse-lite": "^1.0.30000877",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
         "postcss": "^7.0.2",
