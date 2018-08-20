@@ -95,13 +95,13 @@ class CurrentPlan extends Component {
 
 		// I have just observed an error on this line in production:
 		// TypeError: Cannot read property 'plan' of null
-		const currentPlanSlug = selectedSite.plan.product_slug,
-			isLoading = this.isLoading();
+		const currentPlanSlug = selectedSite.plan.product_slug;
+		const isLoading = this.isLoading();
 
-		const planConstObj = getPlan( currentPlanSlug ),
-			planFeaturesHeader = translate( '%(planName)s plan features', {
-				args: { planName: planConstObj.getTitle() },
-			} );
+		const planConstObj = getPlan( currentPlanSlug );
+		const planFeaturesHeader = translate( '%(planName)s plan features', {
+			args: { planName: planConstObj.getTitle() },
+		} );
 
 		const { title, tagLine } = this.getHeaderWording( planConstObj );
 
