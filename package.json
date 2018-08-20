@@ -174,7 +174,7 @@
     "store": "1.3.20",
     "striptags": "2.2.1",
     "superagent": "3.8.3",
-    "terser-webpack-plugin": "1.0.1",
+    "terser-webpack-plugin": "1.0.2",
     "textarea-caret": "3.1.0",
     "thread-loader": "1.2.0",
     "tinymce": "4.8.1",
