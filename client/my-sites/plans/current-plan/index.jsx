@@ -58,27 +58,6 @@ class CurrentPlan extends Component {
 		return ! selectedSite || isRequestingPlans;
 	}
 
-	getHeaderWording( planConstObj ) {
-		const { translate } = this.props;
-
-		const title = translate( 'Your site is on a %(planName)s plan', {
-			args: {
-				planName: planConstObj.getTitle(),
-			},
-		} );
-
-		const tagLine = planConstObj.getTagline
-			? planConstObj.getTagline()
-			: translate(
-					'Unlock the full potential of your site with all the features included in your plan.'
-			  );
-
-		return {
-			title: title,
-			tagLine: tagLine,
-		};
-	}
-
 	render() {
 		const {
 			selectedSite,
@@ -97,13 +76,27 @@ class CurrentPlan extends Component {
 		const currentPlanSlug = get( selectedSite, [ 'plan', 'product_slug' ] );
 		const isLoading = this.isLoading();
 
-		// Now we have problems on property access on undefined…
+		// This may return `undefined`. Be careful!
 		const planConstObj = getPlan( currentPlanSlug );
-		const planFeaturesHeader = translate( '%(planName)s plan features', {
-			args: { planName: planConstObj.getTitle() },
-		} );
 
-		const { title, tagLine } = this.getHeaderWording( planConstObj );
+		let title = '';
+		let planFeaturesHeader = '';
+		if ( planConstObj && 'function' === typeof planConstObj.getTitle ) {
+			planFeaturesHeader = translate( '%(planName)s plan features', {
+				args: { planName: planConstObj.getTitle() },
+			} );
+
+			title = translate( 'Your site is on a %(planName)s plan', {
+				args: { planName: planConstObj.getTitle() },
+			} );
+		}
+
+		let tagLine = translate(
+			'Unlock the full potential of your site with all the features included in your plan.'
+		);
+		if ( planConstObj && 'function' === typeof planConstObj.getTagline ) {
+			tagLine = planConstObj.getTagline();
+		}
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
