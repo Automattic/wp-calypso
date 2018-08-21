@@ -16,6 +16,7 @@ import {
 	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
 	SITE_DELETE_SUCCESS,
+	SITE_OPTION_FETCH,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -146,6 +147,21 @@ export function requestSite( siteFragment ) {
 					error,
 				} );
 			} );
+	};
+}
+
+/**
+ * Action creator to request a site option
+ *
+ * @param  {number} siteId     Site ID
+ * @param  {string} optionName Name of option to request
+ * @return {Object}            Action object
+ */
+export function requestSiteOption( siteId, optionName ) {
+	return {
+		type: SITE_OPTION_FETCH,
+		optionName,
+		siteId,
 	};
 }
 
