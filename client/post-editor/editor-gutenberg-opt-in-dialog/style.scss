@@ -1,0 +1,35 @@
+/** @format */
+
+.editor-gutenberg-opt-in-dialog {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+	padding: 0;
+}
+
+.editor-gutenberg-opt-in-dialog__left {
+	background-color: $gray-light;
+	background: url( '/calypso/images/illustrations/gutenberg.svg' );
+	background-size: cover;
+	background-repeat: no-repeat;
+	width: 33%;
+}
+
+.editor-gutenberg-opt-in-dialog__right {
+	width: 60%;
+	padding-left: 10px;
+	box-shadow: -10px 0 30px 30px rgba( $gray-dark, 0.2 );
+}
+
+.editor-gutenberg-opt-in-dialog__close {
+	float: right;
+
+	width: 48px;
+	height: 49px;
+	cursor: pointer;
+	color: $gray;
+
+	&:hover {
+		color: $gray-dark;
+	}
+}

@@ -65,6 +65,7 @@
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
 		"gutenberg": true,
+		"gutenberg/opt-in": true,
 		"help": true,
 		"help/courses": true,
 		"i18n/community-translator": false,

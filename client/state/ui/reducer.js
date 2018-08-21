@@ -19,6 +19,7 @@ import dropZone from './drop-zone/reducer';
 import editor from './editor/reducer';
 import googleMyBusiness from './google-my-business/reducer';
 import guidedTour from './guided-tours/reducer';
+import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
 import mediaModal from './media-modal/reducer';
@@ -105,6 +106,7 @@ const reducer = combineReducers( {
 	editor,
 	googleMyBusiness,
 	guidedTour,
+	gutenbergOptInDialog,
 	hasSidebar,
 	isLoading,
 	isNotificationsOpen,
