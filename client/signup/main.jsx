@@ -288,8 +288,20 @@ class Signup extends React.Component {
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
-		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
-		recordSignupCompletion();
+		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewSite = !! ( dependencies && dependencies.siteSlug );
+		const hasCartItems = !! (
+			dependencies &&
+			( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+		);
+
+		analytics.tracks.recordEvent( 'calypso_signup_complete', {
+			flow: this.props.flowName,
+			is_new_user: isNewUser,
+			is_new_site: isNewSite,
+			has_cart_items: hasCartItems,
+		} );
+		recordSignupCompletion( { isNewUser, isNewSite, hasCartItems } );
 
 		if (
 			dependencies.cartItem ||
