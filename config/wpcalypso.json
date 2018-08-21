@@ -46,6 +46,7 @@
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
 		"gutenberg": true,
+		"gutenberg/opt-in": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,

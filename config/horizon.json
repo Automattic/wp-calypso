@@ -39,6 +39,7 @@
 		"google-my-business": false,
 		"google-analytics": true,
 		"gutenberg": true,
+		"gutenberg/opt-in": true,
 		"happychat": false,
 		"help": true,
 		"help/courses": true,
