@@ -14,8 +14,7 @@ import { invoke } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import PlanIcon from 'components/plans/plan-icon';
-import { TYPE_FREE, GROUP_JETPACK } from 'lib/plans/constants';
-import { planMatches } from 'lib/plans';
+import { isFreeJetpackPlan } from 'lib/products-values';
 import { managePurchase } from 'me/purchases/paths';
 
 export class CurrentPlanHeader extends Component {
@@ -32,7 +31,7 @@ export class CurrentPlanHeader extends Component {
 	renderPurchaseInfo() {
 		const { currentPlan, selectedSite, isExpiring, translate } = this.props;
 
-		if ( ! currentPlan || this.isJetpackFreePlan() ) {
+		if ( ! currentPlan || isFreeJetpackPlan( currentPlan ) ) {
 			return null;
 		}
 
@@ -67,15 +66,7 @@ export class CurrentPlanHeader extends Component {
 	}
 
 	render() {
-		const {
-			currentPlan,
-			includePlansLink,
-			isPlaceholder,
-			title,
-			tagLine,
-			translate,
-			selectedSite,
-		} = this.props;
+		const { currentPlan, isPlaceholder, selectedSite, tagLine, title, translate } = this.props;
 
 		const currentPlanSlug = currentPlan && currentPlan.productSlug;
 
@@ -105,20 +96,19 @@ export class CurrentPlanHeader extends Component {
 						</div>
 					</div>
 					{ this.renderPurchaseInfo() }
-					{ includePlansLink && (
-						<div className="current-plan__compare-plans">
-							<Button href={ '/plans/' + selectedSite.slug }>
-								{ translate( 'Compare Plans' ) }
-							</Button>
-						</div>
-					) }
+					{ currentPlan &&
+						isFreeJetpackPlan( currentPlan ) &&
+						selectedSite &&
+						selectedSite.slug && (
+							<div className="current-plan__compare-plans">
+								<Button href={ '/plans/' + selectedSite.slug }>
+									{ translate( 'Compare Plans' ) }
+								</Button>
+							</div>
+						) }
 				</div>
 			</div>
 		);
-	}
-
-	isJetpackFreePlan() {
-		return planMatches( this.props.currentPlanSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
 	}
 }
 
