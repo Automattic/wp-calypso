@@ -16,6 +16,14 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { overrideAPIPaths } from './utils';
 
+// Gutenberg package styles
+import '@wordpress/editor/build-style/style.css';
+import '@wordpress/components/build-style/style.css';
+import '@wordpress/nux/build-style/style.css';
+import '@wordpress/block-library/build-style/style.css';
+import '@wordpress/block-library/build-style/editor.css';
+import '@wordpress/block-library/build-style/theme.css';
+
 const editorSettings = {};
 
 const post = {
