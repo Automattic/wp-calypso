@@ -339,7 +339,7 @@ export class Checkout extends React.Component {
 
 			// The onboarding checklist currently supports the blog type only.
 			if ( hasGoogleAppsInCart && domainReceiptId && 'blog' === siteDesignType ) {
-				analytics.tracks.recordEvent( 'calypso_checklist_assign', { site: selectedSite } );
+				analytics.tracks.recordEvent( 'calypso_checklist_assign', { site: selectedSiteSlug } );
 				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
 			}
 
@@ -355,7 +355,7 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
-			analytics.tracks.recordEvent( 'calypso_checklist_assign', { site: selectedSite } );
+			analytics.tracks.recordEvent( 'calypso_checklist_assign', { site: selectedSiteSlug } );
 			return `/checklist/${ selectedSiteSlug }`;
 		}
 
