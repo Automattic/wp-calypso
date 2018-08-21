@@ -48,7 +48,7 @@ const isItemUpdating = updatables =>
  */
 const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
 
-const MAX_UPDATED_TO_SHOW = 1;
+const MAX_UPDATED_TO_SHOW = 3;
 
 class ActivityLogTasklist extends Component {
 	static propTypes = {
