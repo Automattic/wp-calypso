@@ -104,8 +104,8 @@ export default {
 		},
 		defaultVariation: 'no',
 	},
-	gSuiteDiscount: {
-		datestamp: '20180803',
+	gSuiteDiscountV2: {
+		datestamp: '20180822',
 		variations: {
 			control: 50,
 			discount: 50,
