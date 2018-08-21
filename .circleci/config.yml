@@ -86,6 +86,11 @@ jobs:
               npm run test-client:ci $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
 
       - run:
+          name: Store coverage file
+          command: |
+             cp -r coverage $CIRCLE_ARTIFACTS/
+
+      - run:
           name: Run Server Tests
           command: |
               npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
