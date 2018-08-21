@@ -18,6 +18,7 @@ const prism = require( 'prismjs' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
+const OptimizeCSSAssetsPlugin = require( 'optimize-css-assets-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -267,6 +268,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
 			new MiniCssExtractPlugin(),
+			! isDevelopment && new OptimizeCSSAssetsPlugin(),
 			new AssetsWriter( {
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),
