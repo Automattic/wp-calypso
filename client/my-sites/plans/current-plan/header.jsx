@@ -36,7 +36,7 @@ export class CurrentPlanHeader extends Component {
 			return null;
 		}
 
-		const hasAutoRenew = currentPlan.autoRenew;
+		const hasAutoRenew = !! currentPlan.autoRenew;
 		const classes = classNames( 'current-plan__header-purchase-info', {
 			'is-expiring': isExpiring,
 		} );
@@ -53,11 +53,14 @@ export class CurrentPlanHeader extends Component {
 									args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
 							  } ) }
 					</span>
-					{ currentPlan.userIsOwner && (
-						<Button compact href={ managePurchase( selectedSite.slug, currentPlan.id ) }>
-							{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
-						</Button>
-					) }
+					{ currentPlan.userIsOwner &&
+						currentPlan.id &&
+						selectedSite &&
+						selectedSite.slug && (
+							<Button compact href={ managePurchase( selectedSite.slug, currentPlan.id ) }>
+								{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
+							</Button>
+						) }
 				</div>
 			</Card>
 		);
