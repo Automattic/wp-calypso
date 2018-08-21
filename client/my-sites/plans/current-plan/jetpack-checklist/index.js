@@ -19,14 +19,10 @@ import Task from 'components/checklist/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
-import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
 class JetpackChecklist extends PureComponent {
-	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
-	}
-
 	isComplete( taskId ) {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
@@ -141,7 +137,6 @@ export default connect(
 		};
 	},
 	{
-		loadTrackingTool,
 		recordTracksEvent,
 		requestGuidedTour,
 	}

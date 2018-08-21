@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -30,7 +29,6 @@ import { arePaymentsSetup } from 'woocommerce/state/ui/payments/methods/selector
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
-import { loadTrackingTool } from 'state/analytics/actions';
 
 class SetupTasks extends Component {
 	static propTypes = {
@@ -50,8 +48,6 @@ class SetupTasks extends Component {
 				this.props.fetchProducts( site.ID, { page: 1 } );
 			}
 		}
-
-		this.props.loadTrackingTool( 'HotJar' );
 	};
 
 	componentWillReceiveProps = newProps => {
@@ -193,7 +189,6 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchPaymentMethods,
 			fetchProducts,
-			loadTrackingTool,
 			setTriedCustomizerDuringInitialSetup,
 		},
 		dispatch
