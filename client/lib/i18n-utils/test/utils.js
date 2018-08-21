@@ -17,6 +17,7 @@ import {
 	canBeTranslated,
 	getSupportSiteLocale,
 	getForumUrl,
+	getPathParts,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -300,6 +301,27 @@ describe( 'utils', () => {
 		test( 'should return `en` for if neither current i18n locale slug nor passed argument is available in config', () => {
 			getLocaleSlug.mockImplementationOnce( () => 'bonnie' );
 			expect( getForumUrl( 'clyde' ) ).toEqual( '//en.forums.wordpress.com' );
+		} );
+	} );
+
+	describe( '#getPathParts', () => {
+		test( 'should split path', () => {
+			expect( getPathParts( '/show/me/the/money' ) ).toEqual( [
+				'',
+				'show',
+				'me',
+				'the',
+				'money',
+			] );
+		} );
+		test( 'should split path and remove trailing slash', () => {
+			expect( getPathParts( '/show/me/the/money/' ) ).toEqual( [
+				'',
+				'show',
+				'me',
+				'the',
+				'money',
+			] );
 		} );
 	} );
 } );
