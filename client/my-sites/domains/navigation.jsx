@@ -33,7 +33,7 @@ class PlansNavigation extends React.Component {
 		cartShowKeepSearching: false,
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.dispatchToken = Dispatcher.register(
 			function( payload ) {
 				if ( payload.action.type === CART_POPUP_OPEN ) {
