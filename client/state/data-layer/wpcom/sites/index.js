@@ -11,6 +11,7 @@ import commentsTree from './comments-tree';
 import jitm from './jitm';
 import media from './media';
 import memberships from './memberships';
+import option from './option';
 import planTransfer from './plan-transfer';
 import plugins from './plugins';
 import posts from './posts';
@@ -30,6 +31,7 @@ export default mergeHandlers(
 	isEnabled( 'jitms' ) ? jitm : null,
 	isEnabled( 'memberships' ) ? memberships : null,
 	media,
+	option,
 	planTransfer,
 	plugins,
 	posts,
