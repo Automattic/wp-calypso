@@ -24,6 +24,7 @@ import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
+import { tasks } from 'my-sites/checklist/onboardingChecklist';
 
 /**
  * Module variables
@@ -88,6 +89,14 @@ class InlineHelp extends Component {
 		}
 	};
 
+	checklistActive = () => {
+		const totalTasks = tasks.length;
+
+		if ( totalTasks ) {
+			return true;
+		}
+	};
+
 	showInlineHelp = () => {
 		debug( 'showing inline help.' );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
@@ -134,7 +143,11 @@ class InlineHelp extends Component {
 	render() {
 		const { translate } = this.props;
 		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
-		const inlineHelpButtonClasses = { 'inline-help__button': true, 'is-active': showInlineHelp };
+		const inlineHelpButtonClasses = {
+			'inline-help__button': true,
+			'is-active': showInlineHelp,
+			'has-notification': this.checklistActive(),
+		};
 
 		/* @TODO: This class is not valid and this tricks the linter
 		 		  fix this class and fix the linter to catch similar instances.
