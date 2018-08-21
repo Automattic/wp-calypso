@@ -13,3 +13,19 @@
 .editor {
 	background: none;
 }
+
+// OVERRIDES
+
+.layout__content {
+	padding-top: 0 !important;
+	padding-left: 0 !important;
+}
+.edit-post-header {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	left: 0 !important;
+	top: 0 !important;
+}
+.edit-post-sidebar {
+	top: 57px !important;
+}
