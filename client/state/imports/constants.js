@@ -19,3 +19,4 @@ export const WORDPRESS = 'importer-type-wordpress';
 export const MEDIUM = 'importer-type-medium';
 export const BLOGGER = 'importer-type-blogger';
 export const SITE_IMPORTER = 'importer-type-site-importer';
+export const SQUARESPACE = 'importer-type-squarespace';
