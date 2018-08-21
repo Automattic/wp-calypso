@@ -10,11 +10,11 @@ import { expect } from 'chai';
  */
 import { createTransaction, createSuccess, createError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { TRANSACTION_CREATE, TRANSACTION_CREATE_SUCCESS, TRANSACTION_CREATE_FAILURE } from 'state/action-types';
+import { TRANSACTION_CREATE_REQUEST, TRANSACTION_CREATE_SUCCESS, TRANSACTION_CREATE_FAILURE } from 'state/action-types';
 
 describe( 'data-layer/me/transactions', () => {
 	describe( '#createTransaction', () => {
-		const action = { type: TRANSACTION_CREATE };
+		const action = { type: TRANSACTION_CREATE_REQUEST };
 
 		test( 'should create HTTP request to /me/transactions endpoint', () => {
 			expect( createTransaction( action ) ).to.deep.equal(
