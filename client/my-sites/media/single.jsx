@@ -18,9 +18,10 @@ import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 
-class SingleMediaComponent extends Component {
+class SingleMedia extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.object,
+		attachment: PropTypes.number,
 	};
 
 	state = {
@@ -116,4 +117,4 @@ const mapStateToProps = state => ( {
 	selectedSite: getSelectedSite( state ),
 } );
 
-export default connect( mapStateToProps )( localize( SingleMediaComponent ) );
+export default connect( mapStateToProps )( localize( SingleMedia ) );

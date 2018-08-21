@@ -37,9 +37,7 @@ export default {
 			return page.redirect( '/media' );
 		}
 		// Render
-		context.primary = React.createElement( SingleMediaComponent, {
-			attachment: context.params.attachment,
-		} );
+		context.primary = <SingleMediaComponent attachment={ parseInt( context.params.attachment ) } />;
 		next();
 	},
 };
