@@ -17,8 +17,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 //import FormInputValidation from 'components/forms/form-input-validation';
-import { fetchIsSiteImportable } from 'lib/importer/actions';
-import { setNuxUrlInputValue } from 'state/importer-nux/actions';
+import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 
 const debug = debugFactory( 'calypso:signup-step-import-url' );
