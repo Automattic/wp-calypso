@@ -21,20 +21,22 @@ import { fetchIsSiteImportable } from 'lib/importer/actions';
 
 const debug = debugFactory( 'calypso:signup-step-import-url' );
 
+const DEBOUNCE_CHECK_INTERVAL = 1200;
+
 const normalizeUrlForImportSource = url => {
 	// @TODO sanitize? Prepend https:// ..?
 	return url;
 };
 
 class ImportURLStepComponent extends Component {
-	state = { formDisabled: true, url: null };
+	state = { formDisabled: false, url: '' };
 
 	componentDidMount() {
 		const { queryObject } = this.props;
 		const urlFromQueryArg = normalizeUrlForImportSource( get( queryObject, 'url' ) );
 
 		if ( urlFromQueryArg ) {
-			this.debouncedHandleChange( urlFromQueryArg );
+			this.fetchIsSiteImportable( urlFromQueryArg );
 		}
 	}
 
@@ -50,10 +52,8 @@ class ImportURLStepComponent extends Component {
 		this.props.goToNextStep();
 	};
 
-	handleChange = enteredValue => {
-		this.setState( {
-			url: normalizeUrlForImportSource( enteredValue ),
-		} );
+	handleInputChange = value => {
+		this.setState( { url: value }, () => this.debouncedFetchIsSiteImportable( this.state.url ) );
 	};
 
 	clearFormDisabled = () => this.setState( { formDisabled: false } );
@@ -86,18 +86,12 @@ class ImportURLStepComponent extends Component {
 
 		this.setState( { formDisabled: true } );
 
-		this.props.fetchIsSiteImportable( this.state.url ).then( this.handleIsSiteImportableResponse );
+		const normalizedUrl = normalizeUrlForImportSource( this.state.url );
+
+		this.props.fetchIsSiteImportable( normalizedUrl ).then( this.handleIsSiteImportableResponse );
 	};
 
-	componentDidUpdate( prevProps, prevState ) {
-		if ( this.state.url === prevState.url ) {
-			return;
-		}
-
-		this.fetchIsSiteImportable();
-	}
-
-	debouncedHandleChange = debounce( this.handleChange, 1200 );
+	debouncedFetchIsSiteImportable = debounce( this.fetchIsSiteImportable, DEBOUNCE_CHECK_INTERVAL );
 
 	renderContent = () => {
 		return (
@@ -107,8 +101,9 @@ class ImportURLStepComponent extends Component {
 					action="Continue"
 					onAction={ this.handleAction }
 					label={ this.props.translate( 'URL' ) }
-					onChange={ this.debouncedHandleChange }
+					onChange={ this.handleInputChange }
 					disabled={ this.state.formDisabled }
+					value={ this.state.url }
 				/>
 				{ /* <FormInputValidation text="..." /> */ }
 				<ButtonGroup>
