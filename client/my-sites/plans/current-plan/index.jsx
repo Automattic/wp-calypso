@@ -138,7 +138,6 @@ class CurrentPlan extends Component {
 					isPlaceholder={ isLoading }
 					title={ title }
 					tagLine={ tagLine }
-					currentPlanSlug={ currentPlanSlug }
 					currentPlan={ currentPlan }
 					isExpiring={ isExpiring }
 					includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }

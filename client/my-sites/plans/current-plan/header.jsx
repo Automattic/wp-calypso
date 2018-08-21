@@ -14,7 +14,7 @@ import { invoke } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import PlanIcon from 'components/plans/plan-icon';
-import { PLANS_LIST, TYPE_FREE, GROUP_JETPACK } from 'lib/plans/constants';
+import { TYPE_FREE, GROUP_JETPACK } from 'lib/plans/constants';
 import { planMatches } from 'lib/plans';
 import { managePurchase } from 'me/purchases/paths';
 
@@ -24,7 +24,6 @@ export class CurrentPlanHeader extends Component {
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
 		isPlaceholder: PropTypes.bool,
-		currentPlanSlug: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
 		translate: PropTypes.func,
@@ -66,7 +65,7 @@ export class CurrentPlanHeader extends Component {
 
 	render() {
 		const {
-			currentPlanSlug,
+			currentPlan,
 			includePlansLink,
 			isPlaceholder,
 			title,
@@ -74,6 +73,8 @@ export class CurrentPlanHeader extends Component {
 			translate,
 			selectedSite,
 		} = this.props;
+
+		const currentPlanSlug = currentPlan && currentPlan.productSlug;
 
 		return (
 			<div className="current-plan__header">
