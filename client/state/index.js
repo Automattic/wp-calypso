@@ -248,3 +248,18 @@ export function createReduxStore( initialState = {} ) {
 
 	return compose( ...enhancers )( createStore )( reducer, initialState );
 }
+
+export const createAsyncReducer = asyncReducers =>
+	combineReducers( {
+		...reducers,
+		...asyncReducers,
+	} );
+
+export const requireReducer = ( store, name, asyncReducer ) => {
+	if ( ! store.asyncReducers ) {
+		store.asyncReducers = {};
+	}
+
+	store.asyncReducers[ name ] = asyncReducer;
+	store.replaceReducer( createAsyncReducer( store.asyncReducers ) );
+};
