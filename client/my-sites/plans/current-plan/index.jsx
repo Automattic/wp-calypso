@@ -141,7 +141,6 @@ class CurrentPlan extends Component {
 					currentPlanSlug={ currentPlanSlug }
 					currentPlan={ currentPlan }
 					isExpiring={ isExpiring }
-					isAutomatedTransfer={ isAutomatedTransfer }
 					includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 				/>
 				{ isEnabled( 'jetpack/checklist' ) &&
