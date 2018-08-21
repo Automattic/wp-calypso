@@ -94,6 +94,10 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		facebookJetpackInit: '919484458159593',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
+		googleFreeSignupConversionId: '1067250390',
+		googleFreeSignupConversionLabel: 'zKK-CKPG7ocBENbl8_wD',
+		googleFreeSignupConversionIdJetpack: '1067250390',
+		googleFreeSignupConversionLabelJetpack: 'Gp0hCMKP74cBENbl8_wD',
 		criteo: '31321',
 		quantcast: 'p-3Ma3jHaQMB_bS',
 		yahooProjectId: '10000',
@@ -767,7 +771,7 @@ export function recordFreeSignup( slug ) {
 	debug( 'recordFreeSignup: ga ecommerce plugin load' );
 	window.ga( 'require', 'ecommerce' );
 
-	// Record free signup.
+	// Record free signups.
 	try {
 		recordFreeSignupInCriteo( id, slug );
 		recordFreeSignupInFloodlight( id, slug );
@@ -1154,7 +1158,7 @@ function recordFreeSignupInFacebook( id, slug ) {
 
 	const currentUser = user.get();
 	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
-	const isJetpackSlug = /^jp-|-jp$|-jp-|jetpack/.test( slug );
+	const isJetpackSlug = /^jp-|-jp$|-jp-|jetpack/i.test( slug );
 
 	const data = {
 		order_id: id,
@@ -1742,13 +1746,15 @@ function recordFreeSignupInAdwords( id, slug ) {
 
 	const currentUser = user.get();
 	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
-	const isJetpackSlug = /^jp-|-jp$|-jp-|jetpack/.test( slug );
+	const isJetpackSlug = /^jp-|-jp$|-jp-|jetpack/i.test( slug );
 
 	const data = {
-		google_conversion_id: isJetpackSlug ? ADWORDS_CONVERSION_ID_JETPACK : ADWORDS_CONVERSION_ID,
+		google_conversion_id: isJetpackSlug
+			? TRACKING_IDS.googleFreeSignupConversionIdJetpack
+			: TRACKING_IDS.googleFreeSignupConversionId,
 		google_conversion_label: isJetpackSlug
-			? TRACKING_IDS.googleConversionLabelJetpack
-			: TRACKING_IDS.googleConversionLabel,
+			? TRACKING_IDS.googleFreeSignupConversionLabelJetpack
+			: TRACKING_IDS.googleFreeSignupConversionLabel,
 		google_conversion_currency: 'USD',
 		google_conversion_value: 0,
 		google_custom_params: {
