@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
+import { noop, get, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -25,6 +25,12 @@ import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inli
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
+
+import ProgressBar from 'components/progress-bar';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
+import { tasks } from 'my-sites/checklist/onboardingChecklist';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -49,6 +55,11 @@ class InlineHelpPopover extends Component {
 	moreHelpClicked = () => {
 		this.props.onClose();
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
+	};
+
+	checklistClicked = () => {
+		this.props.onClose();
+		this.props.recordTracksEvent( 'calypso_inlinehelp_checklist_click' );
 	};
 
 	setSecondaryViewKey = secondaryViewKey => {
@@ -96,6 +107,52 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
+	renderChecklistProgress = () => {
+		const { taskStatuses, siteSuffix, translate } = this.props;
+
+		const totalTasks = tasks.length;
+		const numComplete = reduce(
+			tasks,
+			( count, { id, completed: taskComplete } ) =>
+				taskComplete || get( taskStatuses, [ id, 'completed' ] ) ? count + 1 : count,
+			0
+		);
+
+		if ( ! totalTasks ) {
+			return false;
+		}
+
+		if ( numComplete === totalTasks ) {
+			// @TODO show something else?
+			return false;
+		}
+		const checklistLink = '/checklist' + siteSuffix;
+
+		return (
+			<div className="inline-help__checklist">
+				<Button
+					onClick={ this.checklistClicked }
+					href={ checklistLink }
+					className="inline-help__checklist-button"
+					borderless
+				>
+					<span className="inline-help__checklist-label">
+						<Gridicon icon="list-checkmark" className="inline-help__gridicon-list-checkmark" />
+						{ translate( 'Continue Site Setup' ) }
+					</span>
+
+					<span className="inline-help__checklist-count">
+						{ numComplete }/{ totalTasks }
+					</span>
+
+					<div className="inline-help__progress-bar-margin">
+						<ProgressBar color="#4ab866" total={ totalTasks } value={ numComplete } />
+					</div>
+				</Button>
+			</div>
+		);
+	};
+
 	render() {
 		const { translate } = this.props;
 		const { showSecondaryView } = this.state;
@@ -122,6 +179,7 @@ class InlineHelpPopover extends Component {
 				</div>
 
 				{ this.renderSecondaryView() }
+				{ this.renderChecklistProgress() }
 
 				<div className="inline-help__footer">
 					<Button
@@ -158,12 +216,23 @@ class InlineHelpPopover extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
+function mapStateToProps( state ) {
+	const siteId = getSelectedSiteId( state );
+	const site = getSite( state, siteId );
+
+	return {
 		searchQuery: getSearchQuery( state ),
 		selectedSite: getHelpSelectedSite( state ),
+		siteId,
+		site,
+		siteSuffix: site ? '/' + site.slug : '',
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-	} ),
+		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+	};
+}
+
+export default connect(
+	mapStateToProps,
 	{
 		recordTracksEvent,
 		selectResult,
