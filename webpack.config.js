@@ -184,7 +184,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 						{
 							loader: 'postcss-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ) ],
+								plugins: [ require( 'autoprefixer' ), require( 'cssnano' ) ],
 							},
 						},
 						{
