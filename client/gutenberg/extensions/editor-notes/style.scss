@@ -12,6 +12,7 @@
 .editor-notes__editor-indicator {
 	position: absolute;
 	top: 0;
-	left: 8px;
+	right: auto #{"/*rtl:8px*/"};
+	left: 8px #{"/*rtl:auto*/"};
 	font-style: italic;
 }
