@@ -39,18 +39,14 @@ class Example extends React.Component {
 	async getCode() {
 		const readme = await this.getReadme();
 
+		// Example to render is the first jsx code block that appears in the readme
 		let code = codeBlocks( readme ).find( block => 'jsx' === block.lang ).code;
 
 		// react-live cannot resolve imports in real time, so we get rid of them
 		// (dependencies will be injected via the scope property).
 		code = code.replace( /^.*import.*$/gm, '' );
 
-		// All the examples are defining a functional component called My<ComponentName> we
-		// can render.
-		code = `
-			${ code }
-			render( <${ this.props.render } /> );
-		`;
+		code = `${ code } render( <${ this.props.render } /> );`;
 
 		this.setState( { code } );
 	}
