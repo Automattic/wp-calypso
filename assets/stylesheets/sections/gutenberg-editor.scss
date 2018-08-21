@@ -7,6 +7,20 @@
 @import '../shared/mixins/placeholder';
 @import '../shared/typography';
 
+// Editor package styles
+@import '../../../node_modules/@wordpress/editor/build-style/style';
+
+// Block library
+@import '../../../node_modules/@wordpress/block-library/build-style/style';
+@import '../../../node_modules/@wordpress/block-library/build-style/editor';
+@import '../../../node_modules/@wordpress/block-library/build-style/theme';
+
+// Components
+@import '../../../node_modules/@wordpress/components/build-style/style';
+
+// NUX
+@import '../../../node_modules/@wordpress/nux/build-style/style';
+
 // Calypso specific Gutenberg editor styles
 @import 'gutenberg/editor/style';
 
