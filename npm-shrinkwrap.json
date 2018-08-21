@@ -15222,13 +15222,13 @@
       }
     },
     "terser-webpack-plugin": {
-      "version": "1.0.1",
-      "resolved": "https://registry.npmjs.org/terser-webpack-plugin/-/terser-webpack-plugin-1.0.1.tgz",
-      "integrity": "sha512-TALB9oZeC5/DheHwVVydwak/xRqiSaqcg9vT01MRP6FICpBsKvRdXob+hIW+MR01fuNwI7kHsJhQgJQ4v02g2g==",
+      "version": "1.0.2",
+      "resolved": "https://registry.npmjs.org/terser-webpack-plugin/-/terser-webpack-plugin-1.0.2.tgz",
+      "integrity": "sha512-gJyt10fRIVj4dwOylFltjrjtcQzvGGlTF4afmiXJ8X5iul5l5lDDym353KOisKjXh2oRBdwQyv+9hkc0Ar+d9g==",
       "requires": {
-        "@webpack-contrib/schema-utils": "^1.0.0-beta.0",
         "cacache": "^11.0.2",
         "find-cache-dir": "^2.0.0",
+        "schema-utils": "^1.0.0",
         "serialize-javascript": "^1.4.0",
         "source-map": "^0.6.1",
         "terser": "^3.8.1",
@@ -15290,6 +15290,16 @@
           "integrity": "sha512-/E57AYkoeQ25qkxMj5PBOVgF8Kiu/h7cYS30Z5+R7WaiCCBfLq58ZI/dSeaEKb9WVJV5n/03QwrN3IeWIFllvw==",
           "requires": {
             "find-up": "^3.0.0"
+          }
+        },
+        "schema-utils": {
+          "version": "1.0.0",
+          "resolved": "https://registry.npmjs.org/schema-utils/-/schema-utils-1.0.0.tgz",
+          "integrity": "sha512-i27Mic4KovM/lnGsy8whRCHhc7VicJajAjTrYg11K9zfZXnYIt4k5F+kZkwjnrhKzLic/HLU4j11mjsz2G/75g==",
+          "requires": {
+            "ajv": "^6.1.0",
+            "ajv-errors": "^1.0.0",
+            "ajv-keywords": "^3.1.0"
           }
         },
         "source-map": {
