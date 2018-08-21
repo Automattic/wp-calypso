@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { debounce, get } from 'lodash';
+import { debounce, flow, get } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -18,6 +18,8 @@ import SignupActions from 'lib/signup/actions';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 //import FormInputValidation from 'components/forms/form-input-validation';
 import { fetchIsSiteImportable } from 'lib/importer/actions';
+import { setNuxUrlInputValue } from 'state/importer-nux/actions';
+import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 
 const debug = debugFactory( 'calypso:signup-step-import-url' );
 
@@ -29,7 +31,7 @@ const normalizeUrlForImportSource = url => {
 };
 
 class ImportURLStepComponent extends Component {
-	state = { formDisabled: false, url: '' };
+	state = { formDisabled: false };
 
 	componentDidMount() {
 		const { queryObject } = this.props;
@@ -53,7 +55,8 @@ class ImportURLStepComponent extends Component {
 	};
 
 	handleInputChange = value => {
-		this.setState( { url: value }, () => this.debouncedFetchIsSiteImportable( this.state.url ) );
+		this.props.setNuxUrlInputValue( value );
+		this.debouncedFetchIsSiteImportable( value );
 	};
 
 	clearFormDisabled = () => this.setState( { formDisabled: false } );
@@ -78,15 +81,14 @@ class ImportURLStepComponent extends Component {
 	};
 
 	fetchIsSiteImportable = () => {
-		// @TODO redux..
-		if ( ! this.state.url ) {
+		if ( ! this.props.urlInputValue ) {
 			this.clearFormDisabled();
 			return;
 		}
 
 		this.setState( { formDisabled: true } );
 
-		const normalizedUrl = normalizeUrlForImportSource( this.state.url );
+		const normalizedUrl = normalizeUrlForImportSource( this.props.urlInputValue );
 
 		this.props.fetchIsSiteImportable( normalizedUrl ).then( this.handleIsSiteImportableResponse );
 	};
@@ -94,16 +96,18 @@ class ImportURLStepComponent extends Component {
 	debouncedFetchIsSiteImportable = debounce( this.fetchIsSiteImportable, DEBOUNCE_CHECK_INTERVAL );
 
 	renderContent = () => {
+		const { urlInputValue, translate } = this.props;
+
 		return (
 			<div className="import-url__wrapper">
 				<FormTextInputWithAction
 					placeholder="Enter the URL of your existing site"
 					action="Continue"
 					onAction={ this.handleAction }
-					label={ this.props.translate( 'URL' ) }
+					label={ translate( 'URL' ) }
 					onChange={ this.handleInputChange }
 					disabled={ this.state.formDisabled }
-					value={ this.state.url }
+					value={ urlInputValue }
 				/>
 				{ /* <FormInputValidation text="..." /> */ }
 				<ButtonGroup>
@@ -132,7 +136,15 @@ class ImportURLStepComponent extends Component {
 	}
 }
 
-export default connect(
-	null,
-	{ fetchIsSiteImportable }
-)( localize( ImportURLStepComponent ) );
+export default flow(
+	connect(
+		state => ( {
+			urlInputValue: getNuxUrlInputValue( state ),
+		} ),
+		{
+			fetchIsSiteImportable,
+			setNuxUrlInputValue,
+		}
+	),
+	localize
+)( ImportURLStepComponent );
