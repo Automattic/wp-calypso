@@ -40,7 +40,7 @@ export default class ShippingClassesField extends React.Component {
 					id={ id }
 					name={ id }
 					placeholder={ placeholder }
-					value={ map( value, this.getNameFromId ) }
+					value={ this.prepareValueForTokenField( value ) }
 					suggestions={ uniqBy( map( options, option => option.name ) ) }
 					onChange={ this.onChange }
 					displayTransform={ this.transformForDisplay }
@@ -49,6 +49,10 @@ export default class ShippingClassesField extends React.Component {
 			</FormFieldset>
 		);
 	}
+
+	prepareValueForTokenField = value => {
+		return map( value, this.getNameFromId ).filter( selected => null !== selected );
+	};
 
 	getNameFromId = id => {
 		const found = this.props.options.find( option => {

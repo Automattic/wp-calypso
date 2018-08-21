@@ -1,10 +1,16 @@
 /** @format */
 
 /**
+ * External dependencies.
+ */
+import { translate } from 'i18n-calypso';
+import impureLodash from 'lib/impure-lodash';
+const { uniqueId } = impureLodash;
+
+/**
  * Internal dependencies
  */
 
-import { translate } from 'i18n-calypso';
 import { errorNotice, removeNotice } from 'state/notices/actions';
 import {
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
@@ -22,13 +28,9 @@ export const fetchShippingClassesSuccess = ( siteId, data ) => {
 
 export const fetchShippingClassesFailure = ( action, error, dispatch ) => {
 	const { siteId } = action;
-	let noticeAction = null;
+	const noticeId = uniqueId();
 
 	const onRetryClick = e => {
-		const {
-			notice: { noticeId },
-		} = noticeAction;
-
 		e.preventDefault();
 
 		dispatch( {
@@ -39,12 +41,11 @@ export const fetchShippingClassesFailure = ( action, error, dispatch ) => {
 		dispatch( removeNotice( noticeId ) );
 	};
 
-	noticeAction = errorNotice( translate( 'Could not retrieve the shipping classes.' ), {
+	return errorNotice( translate( 'Could not retrieve the shipping classes.' ), {
+		id: noticeId,
 		button: translate( 'Try again' ),
 		onClick: onRetryClick,
 	} );
-
-	return noticeAction;
 };
 
 export const fetchShippingClasses = siteId => ( dispatch, getState ) => {
