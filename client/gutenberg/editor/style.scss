@@ -16,16 +16,29 @@
 
 // OVERRIDES
 
-.layout__content {
-	padding-top: 0 !important;
-	padding-left: 0 !important;
-}
-.edit-post-header {
-	padding-top: 0 !important;
-	padding-bottom: 0 !important;
-	left: 0 !important;
-	top: 0 !important;
-}
-.edit-post-sidebar {
-	top: 57px !important;
+.is-section-gutenberg-editor {
+	.layout__content {
+		padding-left: 32px;
+		padding-top: 0;
+
+		@include breakpoint( '<960px' ) {
+			padding-left: 24px;
+		}
+		@include breakpoint( '<660px' ) {
+			padding-left: 0px;
+		}
+	}
+
+	.edit-post-header {
+		padding-top: 0;
+		padding-bottom: 0;
+		left: 0;
+		top: 0;
+	}
+
+	@media (min-width: 600px) {
+		.edit-post-sidebar {
+			top: 57px;
+		}
+	}
 }
