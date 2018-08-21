@@ -76,3 +76,47 @@
 		display: block;
 	}
 }
+
+.edit-post-header-toolbar__back.is-borderless {
+	border-right: 1px solid lighten( $gray, 25% );
+	border-radius: 0;
+	color: $blue-wordpress;
+	height: 100%;
+	min-width: 80px;
+	padding: 6px 16px;
+	&:hover {
+		color: $blue-medium;
+	}
+	@include breakpoint( '>960px' ) {
+		padding: 6px 32px;
+	}
+	@include breakpoint( '<660px' ) {
+		border: none;
+	}
+}
+
+.edit-post-header-toolbar .site {
+	.site__content {
+		padding-right: 0;
+	}
+	.site__info {
+		width: auto;
+	}
+	.site__title::after {
+		width: 0;
+	}
+	@include breakpoint( '<660px' ) {
+		display: none;
+	}
+}
+
+.edit-post-header-toolbar {
+	.masterbar__drafts {
+		border-right: 1px solid lighten( $gray, 25% );
+		height: 100%;
+		margin-right: 10px;
+	}
+	.masterbar__toggle-drafts.button.is-borderless {
+		margin: 10px 8px;
+	}
+}
