@@ -15,7 +15,6 @@ const AssetsWriter = require( './server/bundler/assets-writer' );
 const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
-const prism = require( 'prismjs' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
@@ -233,22 +232,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				{
 					test: /node_modules[\/\\]tinymce/,
 					use: 'imports-loader?this=>window',
-				},
-				{
-					test: /README\.md$/,
-					use: [
-						{ loader: 'html-loader' },
-						{
-							loader: 'markdown-loader',
-							options: {
-								sanitize: true,
-								highlight: function( code, language ) {
-									const syntax = prism.languages[ language ];
-									return syntax ? prism.highlight( code, syntax ) : code;
-								},
-							},
-						},
-					],
 				},
 			],
 		},
