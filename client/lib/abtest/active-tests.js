@@ -75,16 +75,16 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSuggestionKrakenV323: {
-		datestamp: '20180815',
+	domainSuggestionKrakenV324: {
+		datestamp: '20180820',
 		variations: {
 			domainsbot: 0,
-			group_1: 22700,
-			group_3: 22700,
-			group_4: 22700,
-			group_6: 0,
-			group_7: 0,
-			group_8: 22700,
+			group_1: 21,
+			group_3: 21,
+			group_4: 21,
+			group_6: 8, // dot with re-ordering
+			group_7: 8, // dot
+			group_8: 21,
 		},
 		defaultVariation: 'domainsbot',
 	},
