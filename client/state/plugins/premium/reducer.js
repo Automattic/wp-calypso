@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import { mapValues } from 'lodash';
+import { mapValues, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,7 +75,7 @@ export function plugins( state = {}, action ) {
 					if ( item.error !== null ) {
 						return Object.assign( {}, item, { error: item.error.toString() } );
 					}
-					return item;
+					return omit( item, 'key' );
 				} )
 			);
 		default:
