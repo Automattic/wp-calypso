@@ -16,6 +16,7 @@ const state = {
 	actionHistory: [],
 	shouldRecordActions: true,
 	historySize: 100,
+	watchPredicate: null,
 };
 
 export const queryToPredicate = query => {
@@ -38,6 +39,8 @@ const actionLog = {
 	setSize: size => ( state.historySize = size ),
 	start: () => ( state.shouldRecordActions = true ),
 	stop: () => ( state.shouldRecordActions = false ),
+	unwatch: () => ( state.watchPredicate = null ),
+	watch: query => ( state.watchPredicate = query ? queryToPredicate( query ) : null ),
 };
 
 Object.defineProperty( actionLog, 'history', {
@@ -77,6 +80,16 @@ export const actionLogger = next => ( ...args ) => {
 		if ( state.shouldRecordActions ) {
 			recordAction( action );
 		}
+
+		/* eslint-disable no-console */
+		if (
+			'function' === typeof state.watchPredicate &&
+			'function' === typeof console.log &&
+			state.watchPredicate( action )
+		) {
+			console.log( 'Watched action observed:\n%o', action );
+		}
+		/* eslint-enable no-console */
 
 		return store.dispatch( action );
 	};
