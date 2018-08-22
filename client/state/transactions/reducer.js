@@ -7,7 +7,7 @@ import { combineReducers, createReducer } from 'state/utils';
 import { TRANSACTION_CREATE_REQUEST, TRANSACTION_CREATE_SUCCESS, TRANSACTION_CREATE_FAILURE } from 'state/action-types';
 
 // Gets set and reset on success / failure
-export const isFetching = createReducer(
+export const fetching = createReducer(
 	false, // Default fetching
 	{
 		[ TRANSACTION_CREATE_REQUEST ]: () => true,
@@ -37,7 +37,7 @@ export const error = createReducer(
 );
 
 export default combineReducers( {
-	isFetching,
+	fetching,
 	response,
 	error,
 } );
