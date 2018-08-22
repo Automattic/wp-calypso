@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity } from 'lodash';
+import { identity, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -25,6 +25,7 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import { tasks } from 'my-sites/checklist/onboardingChecklist';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -91,8 +92,10 @@ class InlineHelp extends Component {
 
 	checklistActive = () => {
 		const totalTasks = tasks.length;
+		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
+		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
 
-		if ( totalTasks ) {
+		if ( totalTasks && ! isAtomicSite && ! isJetpackSite ) {
 			return true;
 		}
 	};
@@ -212,6 +215,7 @@ export default connect(
 	state => ( {
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
+		selectedSite: getSelectedSite( state ),
 	} ),
 	{
 		recordTracksEvent,
