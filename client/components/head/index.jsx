@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 
-const Head = ( { title = 'WordPress.com', faviconURL, children, cdn, branchName } ) => {
+const Head = ( { title = 'WordPress.com', faviconURL, children, cdn } ) => {
 	return (
 		<head>
 			<title>{ title }</title>
@@ -62,12 +62,7 @@ const Head = ( { title = 'WordPress.com', faviconURL, children, cdn, branchName 
 			) ) }
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
-
-			{ ! branchName || 'master' === branchName ? (
-				<link rel="manifest" href="/manifest.json" />
-			) : (
-				<link rel="manifest" href={ '/manifest.json?branch=' + encodeURIComponent( branchName ) } />
-			) }
+			<link rel="manifest" href="/calypso/manifest.json" />
 
 			<link
 				rel="stylesheet"
@@ -84,7 +79,6 @@ Head.propTypes = {
 	faviconURL: PropTypes.string.isRequired,
 	children: PropTypes.node,
 	cdn: PropTypes.string.isRequired,
-	branchName: PropTypes.string,
 };
 
 export default Head;
