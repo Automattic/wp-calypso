@@ -7675,6 +7675,11 @@
       "resolved": "https://registry.npmjs.org/ignore/-/ignore-3.3.10.tgz",
       "integrity": "sha512-Pgs951kaMm5GXP7MOvxERINe3gsaVjUWFm+UZPSq9xYriQAksyhg0csnS0KXSNRD5NmNdapXEpjxG49+AKh/ug=="
     },
+    "ignore-loader": {
+      "version": "0.1.2",
+      "resolved": "https://registry.npmjs.org/ignore-loader/-/ignore-loader-0.1.2.tgz",
+      "integrity": "sha1-2B8kA3bQuk8Nd4lyw60lh0EXpGM="
+    },
     "immediate": {
       "version": "3.0.6",
       "resolved": "https://registry.npmjs.org/immediate/-/immediate-3.0.6.tgz",
