@@ -57,8 +57,8 @@ export default [
 	},
 	{
 		name: 'august20',
-		startsAt: new Date( 2018, 7, 6, 0, 0, 0 ),
-		endsAt: new Date( 2018, 7, 11, 0, 0, 0 ),
+		startsAt: new Date( 2018, 7, 22, 0, 0, 0 ),
+		endsAt: new Date( 2018, 7, 25, 0, 0, 0 ),
 		nudgeText: translate( '20% Off All Plans' ),
 		ctaText: translate( 'UPGRADE' ),
 		plansPageNoticeText: translate(
