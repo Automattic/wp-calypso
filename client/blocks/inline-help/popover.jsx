@@ -25,7 +25,6 @@ import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inli
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
-
 import ProgressBar from 'components/progress-bar';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { tasks } from 'my-sites/checklist/onboardingChecklist';
@@ -109,6 +108,8 @@ class InlineHelpPopover extends Component {
 
 	renderChecklistProgress = () => {
 		const { taskStatuses, siteSuffix, translate } = this.props;
+		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
+		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
 
 		const totalTasks = tasks.length;
 		const numComplete = reduce(
@@ -118,7 +119,8 @@ class InlineHelpPopover extends Component {
 			0
 		);
 
-		if ( ! totalTasks ) {
+		//Do not show checklist if no tasks left, or site is Atomic or Jetpack
+		if ( ! totalTasks || isAtomicSite || isJetpackSite ) {
 			return false;
 		}
 
