@@ -11,8 +11,7 @@ const path = require( 'path' ),
 	cookieParser = require( 'cookie-parser' ),
 	userAgent = require( 'express-useragent' ),
 	morgan = require( 'morgan' ),
-	pages = require( 'pages' ),
-	manifest = require( 'manifest' );
+	pages = require( 'pages' );
 
 const analytics = require( '../lib/analytics' ).default;
 
@@ -77,9 +76,6 @@ function setup() {
 			path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' )
 		)
 	);
-
-	// manifest is part of PWA spec, and needs to be dynamic so we can inject l10n, branchName and other context
-	app.use( manifest() );
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function( request, response ) {
