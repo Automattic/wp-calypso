@@ -284,6 +284,10 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showChecklistAfterLogin = () => {
+		analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+			site: this.state.siteSlug,
+			plan: 'free',
+		} );
 		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
 	};
 
