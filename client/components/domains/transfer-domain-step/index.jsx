@@ -229,7 +229,7 @@ class TransferDomainStep extends React.Component {
 						{ translate(
 							'Transfer your domain away from your current provider to WordPress.com so you can update settings, ' +
 								"renew your domain, and more \u2013 right in your dashboard. We'll renew it for another year " +
-								'when the transfer is successful. {{a}}Learn more{{/a}}',
+								'when the transfer is successful. {{a}}Learn more about domain transfers.{{/a}}',
 							{
 								components: {
 									a: (
