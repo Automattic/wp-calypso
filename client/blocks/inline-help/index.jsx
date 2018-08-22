@@ -4,12 +4,13 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, get } from 'lodash';
+import { identity, get, startsWith } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import Gridicon from 'gridicons';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -91,11 +92,19 @@ class InlineHelp extends Component {
 	};
 
 	checklistActive = () => {
+		const { showInlineHelp } = this.state;
 		const totalTasks = tasks.length;
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
+		const isChecklistPage = startsWith( page.current, '/checklist/' );
 
-		if ( totalTasks && ! isAtomicSite && ! isJetpackSite ) {
+		if (
+			totalTasks &&
+			! isAtomicSite &&
+			! isJetpackSite &&
+			! showInlineHelp &&
+			! isChecklistPage
+		) {
 			return true;
 		}
 	};

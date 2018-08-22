@@ -4,11 +4,12 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, get, reduce } from 'lodash';
+import { noop, get, reduce, startsWith } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -110,6 +111,7 @@ class InlineHelpPopover extends Component {
 		const { taskStatuses, siteSuffix, translate } = this.props;
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
+		const isChecklistPage = startsWith( page.current, '/checklist/' );
 
 		const totalTasks = tasks.length;
 		const numComplete = reduce(
@@ -119,8 +121,8 @@ class InlineHelpPopover extends Component {
 			0
 		);
 
-		//Do not show checklist if no tasks left, or site is Atomic or Jetpack
-		if ( ! totalTasks || isAtomicSite || isJetpackSite ) {
+		//Do not show checklist if no tasks, or site is Atomic or Jetpack, or we're already on the Checklist page
+		if ( ! totalTasks || isAtomicSite || isJetpackSite || isChecklistPage ) {
 			return false;
 		}
 
