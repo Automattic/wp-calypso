@@ -3,13 +3,19 @@
 /**
  * Internal dependencies
  */
-import { fetching, response, error } from '../reducer';
+import { fetching, response, error, create } from '../reducer';
 import { createTransaction, setCreateTransactionResponse, setCreateTransactionError } from '../actions';
 
 describe( 'state/order-transactions/reducer', () => {
 	const createAction = createTransaction( { cart: [ 'products' ] } );
 	const responseAction = setCreateTransactionResponse( createAction, { arbitrary: 'response' } );
 	const errorAction = setCreateTransactionError( createAction, Error('Error!') );
+
+	describe( 'create()', () => {
+		test( 'should combine reducers {...}', () => {
+			expect( create( undefined, { type: 'UKNOWN' } ) ).toEqual( { fetching: false, response: null, error: null } )
+		});
+	});
 
 	describe( 'fetching()', () => {
 		test ( 'should default to false', () => {

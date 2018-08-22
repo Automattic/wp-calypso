@@ -36,8 +36,5 @@ export const error = createReducer(
 	}
 );
 
-export default combineReducers( {
-	fetching,
-	response,
-	error,
-} );
+export const create = combineReducers( { fetching, response, error } );
+export default combineReducers( { create } );
