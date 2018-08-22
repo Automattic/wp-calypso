@@ -48,7 +48,7 @@ const isItemUpdating = updatables =>
  */
 const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
 
-const MaxUpdatedToShow = 3;
+const MAX_UPDATED_TO_SHOW = 3;
 
 class ActivityLogTasklist extends Component {
 	static propTypes = {
@@ -344,7 +344,7 @@ class ActivityLogTasklist extends Component {
 
 	showFooterToExpandAll( numberOfUpdates ) {
 		const { translate } = this.props;
-		const updatesHidden = numberOfUpdates - MaxUpdatedToShow;
+		const updatesHidden = numberOfUpdates - MAX_UPDATED_TO_SHOW;
 		return (
 			<div className="activity-log-tasklist__footer">
 				<span>
@@ -353,7 +353,7 @@ class ActivityLogTasklist extends Component {
 						args: { updates: updatesHidden },
 					} ) }
 				</span>
-				<a onClick={ this.showAllUpdates } href="?expandedView" borderless>
+				<a onClick={ this.showAllUpdates } href="?expandedView">
 					{ translate( 'Show All' ) }
 				</a>
 			</div>
@@ -374,7 +374,7 @@ class ActivityLogTasklist extends Component {
 		const { translate } = this.props;
 		const numberOfUpdates = itemsToUpdate.length;
 		const queued = this.state.queued;
-		const showExpandedView = this.state.expandedView || numberOfUpdates <= MaxUpdatedToShow;
+		const showExpandedView = this.state.expandedView || numberOfUpdates <= MAX_UPDATED_TO_SHOW;
 		return (
 			<Card className="activity-log-tasklist" highlight="warning">
 				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
@@ -417,11 +417,7 @@ class ActivityLogTasklist extends Component {
 				</div>
 				{ showExpandedView && this.showAllItemsToUpdate( itemsToUpdate ) }
 				{ ! showExpandedView &&
-					this.showAllItemsToUpdate( [
-						itemsToUpdate[ 0 ],
-						itemsToUpdate[ 1 ],
-						itemsToUpdate[ 2 ],
-					] ) }
+					this.showAllItemsToUpdate( itemsToUpdate.slice( 0, MAX_UPDATED_TO_SHOW ) ) }
 				{ ! showExpandedView && this.showFooterToExpandAll( numberOfUpdates ) }
 			</Card>
 		);
