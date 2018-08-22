@@ -34,13 +34,13 @@ export const queryToPredicate = query => {
 };
 
 const actionLog = {
-	clear: () => ( state.actionHistory = [] ),
+	clear: () => void ( state.actionHistory = [] ),
 	filter: query => state.actionHistory.filter( queryToPredicate( query ) ),
-	setSize: size => ( state.historySize = size ),
-	start: () => ( state.shouldRecordActions = true ),
-	stop: () => ( state.shouldRecordActions = false ),
-	unwatch: () => ( state.watchPredicate = null ),
-	watch: query => ( state.watchPredicate = query ? queryToPredicate( query ) : null ),
+	setSize: size => void ( state.historySize = size ),
+	start: () => void ( state.shouldRecordActions = true ),
+	stop: () => void ( state.shouldRecordActions = false ),
+	unwatch: () => void ( state.watchPredicate = null ),
+	watch: query => void ( state.watchPredicate = query ? queryToPredicate( query ) : null ),
 };
 
 Object.defineProperty( actionLog, 'history', {
