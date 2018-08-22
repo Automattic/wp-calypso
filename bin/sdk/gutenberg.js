@@ -11,7 +11,7 @@ exports.config = ( {
 } ) => {
 	const baseConfig = getBaseConfig( {
 		externalizeWordPressPackages: true,
-		stylesNamespacing: 'calypso',
+		styleNamespace: 'calypso',
 	} );
 	const name = path.basename( path.dirname( editorScript ).replace( /\/$/, '' ) );
 

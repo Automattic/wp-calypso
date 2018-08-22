@@ -80,10 +80,7 @@ const preSassLoaders = [
 	{
 		loader: 'postcss-loader',
 		options: {
-			plugins: _.compact( [
-				require( 'autoprefixer' ),
-				! isDevelopment && require( 'cssnano' ),
-			] ),
+			plugins: _.compact( [ require( 'autoprefixer' ), ! isDevelopment && require( 'cssnano' ) ] ),
 		},
 	},
 ];
@@ -96,7 +93,7 @@ const sassLoader = {
 };
 
 // When styles-namespacing is enabled, these are the files we want to namespace
-const stylesNamespacingDirectories = [ path.join( __dirname, 'client', 'components' ) ];
+const styleNamespaceDirectories = [ path.join( __dirname, 'client', 'components' ) ];
 
 /**
  * Converts @wordpress require into window reference
@@ -133,11 +130,11 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @param {object}  env                               environment options
  * @param {boolean} env.externalizeWordPressPackages  whether to bundle or extern the `@wordpress/` packages
- * @param {string}  env.stylesNamespacing             prefix Calypso component styles with CSS class or ID
+ * @param {string}  env.styleNamespace             prefix Calypso component styles with CSS class or ID
  *
  * @return {object}                                    webpack config
  */
-function getWebpackConfig( { externalizeWordPressPackages = false, stylesNamespacing = '' } = {} ) {
+function getWebpackConfig( { externalizeWordPressPackages = false, styleNamespace = '' } = {} ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
@@ -205,16 +202,16 @@ function getWebpackConfig( { externalizeWordPressPackages = false, stylesNamespa
 					test: /\.(sc|sa|c)ss$/,
 					use: [ ...preSassLoaders, sassLoader ],
 					// When styles-namespacing is enabled, these files are handled by separate loader below
-					...( stylesNamespacing ? { exclude: stylesNamespacingDirectories } : {} ),
+					...( styleNamespace ? { exclude: styleNamespaceDirectories } : {} ),
 				},
-				stylesNamespacing && {
+				styleNamespace && {
 					test: /\.(sc|sa|c)ss$/,
-					include: stylesNamespacingDirectories,
+					include: styleNamespaceDirectories,
 					use: [
 						...preSassLoaders,
 						{
 							loader: 'namespace-css-loader',
-							options: `.${ stylesNamespacing }`,
+							options: `.${ styleNamespace }`,
 						},
 						sassLoader,
 					],
