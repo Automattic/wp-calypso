@@ -54,6 +54,10 @@ class CurrentPlan extends Component {
 		doPlanSetup: PropTypes.bool,
 	};
 
+	updateProgress = progress => {
+		this.setState( { progress } );
+	};
+
 	isLoading() {
 		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
 
@@ -116,7 +120,7 @@ class CurrentPlan extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				{ doPlanSetup && <JetpackSetupRunner requiredPlugins={ [ 'akismet', 'vaultpress' ] } /> }
+				{ doPlanSetup && <JetpackSetupRunner notifyProgress={ this.updateProgress } /> }
 
 				<PlansNavigation path={ path } selectedSite={ selectedSite } />
 
