@@ -29,10 +29,19 @@ export default function() {
 		);
 
 		page(
-			'/media/:domain/:attachment',
+			'/media/:domain/:mediaId/',
 			siteSelection,
 			navigation,
 			mediaController.singleMedia,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/media/edit/:domain/:mediaId/',
+			siteSelection,
+			navigation,
+			mediaController.editSingleMedia,
 			makeLayout,
 			clientRender
 		);

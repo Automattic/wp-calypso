@@ -32,12 +32,26 @@ export default {
 		} );
 		next();
 	},
+
 	singleMedia: function( context, next ) {
 		if ( ! getSiteFragment( context.path ) ) {
 			return page.redirect( '/media' );
 		}
 		// Render
-		context.primary = <SingleMediaComponent attachment={ parseInt( context.params.attachment ) } />;
+		context.primary = (
+			<SingleMediaComponent mediaId={ parseInt( context.params.mediaId ) } view="single" />
+		);
+		next();
+	},
+
+	editSingleMedia: function( context, next ) {
+		if ( ! getSiteFragment( context.path ) ) {
+			return page.redirect( '/media' );
+		}
+		// Render
+		context.primary = (
+			<SingleMediaComponent mediaId={ parseInt( context.params.mediaId ) } view="edit" />
+		);
 		next();
 	},
 };
