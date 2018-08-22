@@ -40,15 +40,20 @@
 	}
 
 	.domain-product-price__free-text {
-		color: $gray-darken-20;
+		color: $gray-darken-30;
 		display: block;
 		font-size: 14px;
-		margin-left: 14px;
 		font-weight: 400;
+
+		@include breakpoint( '>660px' ) {
+			margin-left: 14px;
+		}
 	}
 
 	&.is-free-domain {
 		font-size: 13px;
+		line-height: 1.7;
+		margin-top: 6px;
 
 		small {
 			font-size: 100%;
@@ -58,6 +63,12 @@
 		.domain-product-price__price {
 			opacity: 0.6;
 			text-decoration: line-through;
+		}
+
+		@include breakpoint( '>660px' ) {
+			font-size: 16px;
+			line-height: 1.5;
+			margin-top: 0;
 		}
 	}
 
