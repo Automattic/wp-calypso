@@ -25,6 +25,7 @@ import {
 	SITE_DELETE_SUCCESS,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
+	SITE_OPTION_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -194,6 +195,17 @@ export function items( state = null, action ) {
 				};
 			}
 
+			return state;
+		}
+
+		case SITE_OPTION_RECEIVE: {
+			const { siteId, optionName, optionValue } = action;
+			if ( state[ siteId ] && get( state[ siteId ], [ 'options', optionName ] ) !== optionValue ) {
+				return {
+					...state,
+					[ siteId ]: merge( {}, state[ siteId ], { options: { [ optionName ]: optionValue } } ),
+				};
+			}
 			return state;
 		}
 

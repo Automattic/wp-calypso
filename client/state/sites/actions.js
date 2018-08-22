@@ -16,6 +16,8 @@ import {
 	SITE_DELETE_FAILURE,
 	SITE_DELETE_RECEIVE,
 	SITE_DELETE_SUCCESS,
+	SITE_OPTION_FETCH,
+	SITE_OPTION_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -146,6 +148,38 @@ export function requestSite( siteFragment ) {
 					error,
 				} );
 			} );
+	};
+}
+
+/**
+ * Action creator to request a site option
+ *
+ * @param  {number} siteId     Site ID
+ * @param  {string} optionName Name of option to request
+ * @return {Object}            Action object
+ */
+export function requestSiteOption( siteId, optionName ) {
+	return {
+		type: SITE_OPTION_FETCH,
+		optionName,
+		siteId,
+	};
+}
+
+/**
+ * Action creator to receive a site option
+ *
+ * @param  {number} siteId      Site ID or slug
+ * @param  {string} optionName  Name of requested option
+ * @param  {*}      optionValue Value of requested option
+ * @return {Object}             Action object
+ */
+export function receiveSiteOption( siteId, optionName, optionValue ) {
+	return {
+		type: SITE_OPTION_RECEIVE,
+		optionName,
+		optionValue,
+		siteId,
 	};
 }
 

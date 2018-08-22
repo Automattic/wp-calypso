@@ -3,9 +3,6 @@
 /**
  * Internal dependencies
  */
-
-import { mergeHandlers } from 'state/action-watchers/utils';
-import config from 'config';
 import automatedTransfer from './automated-transfer';
 import blogStickers from './blog-stickers';
 import commentCounts from './comment-counts';
@@ -14,13 +11,16 @@ import commentsTree from './comments-tree';
 import jitm from './jitm';
 import media from './media';
 import memberships from './memberships';
+import option from './option';
 import planTransfer from './plan-transfer';
 import plugins from './plugins';
-import postTypes from './post-types';
 import posts from './posts';
+import postTypes from './post-types';
 import simplePayments from './simple-payments';
-import users from './users';
 import statsGoogleMyBusiness from './stats/google-my-business';
+import users from './users';
+import { isEnabled } from 'config';
+import { mergeHandlers } from 'state/action-watchers/utils';
 
 export default mergeHandlers(
 	automatedTransfer,
@@ -28,14 +28,15 @@ export default mergeHandlers(
 	commentCounts,
 	comments,
 	commentsTree,
-	config.isEnabled( 'jitms' ) ? jitm : null,
+	isEnabled( 'jitms' ) ? jitm : null,
+	isEnabled( 'memberships' ) ? memberships : null,
 	media,
-	config.isEnabled( 'memberships' ) ? memberships : null,
+	option,
 	planTransfer,
 	plugins,
-	postTypes,
 	posts,
+	postTypes,
 	simplePayments,
-	users,
-	statsGoogleMyBusiness
+	statsGoogleMyBusiness,
+	users
 );
