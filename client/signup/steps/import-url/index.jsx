@@ -34,8 +34,6 @@ const normalizeUrlForImportSource = url => {
 };
 
 class ImportURLStepComponent extends Component {
-	state = { formDisabled: false };
-
 	componentDidMount() {
 		const { queryObject } = this.props;
 		const urlFromQueryArg = normalizeUrlForImportSource( get( queryObject, 'url' ) );
@@ -62,18 +60,8 @@ class ImportURLStepComponent extends Component {
 		this.debouncedFetchIsSiteImportable( normalizeUrlForImportSource( value ) );
 	};
 
-	clearFormDisabled = () => this.setState( { formDisabled: false } );
-
 	fetchIsSiteImportable = () => {
-		if ( ! this.props.urlInputValue ) {
-			this.clearFormDisabled();
-			return;
-		}
-
-		this.setState( { formDisabled: true } );
-
 		const normalizedUrl = normalizeUrlForImportSource( this.props.urlInputValue );
-
 		this.props.fetchIsSiteImportable( normalizedUrl );
 	};
 
