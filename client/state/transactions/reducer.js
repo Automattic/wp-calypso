@@ -16,40 +16,28 @@ export const isFetching = createReducer(
 	}
 );
 
-// Gets set and stays set
-export const request = createReducer(
-	null, // Default request
-	{
-		[ TRANSACTION_CREATE_REQUEST ]: ( state, action ) => action.request,
-		[ TRANSACTION_CREATE_SUCCESS ]: ( state, action ) => state, // kept as original action.request
-		[ TRANSACTION_CREATE_FAILURE ]: ( state, action ) => state,
-	}
-);
-
 // Gets set on response
 export const response = createReducer(
 	null, // Default response
 	{
 		[ TRANSACTION_CREATE_REQUEST ]: () => null,
 		[ TRANSACTION_CREATE_SUCCESS ]: ( state, action ) => action.response,
-		[ TRANSACTION_CREATE_FAILURE ]: ( state, action ) => state, // allows both success and failure
+		[ TRANSACTION_CREATE_FAILURE ]: ( state ) => state, // allows both success and failure
 	}
 );
-
 
 // Gets set on error
 export const error = createReducer(
 	null, // Default error
 	{
 		[ TRANSACTION_CREATE_REQUEST ]: () => null,
-		[ TRANSACTION_CREATE_SUCCESS ]: ( state, action ) => state, // allows both success and failure
+		[ TRANSACTION_CREATE_SUCCESS ]: ( state ) => state, // allows both success and failure
 		[ TRANSACTION_CREATE_FAILURE ]: ( state, action ) => action.error,
 	}
 );
 
 export default combineReducers( {
 	isFetching,
-	request,
 	response,
 	error,
 } );

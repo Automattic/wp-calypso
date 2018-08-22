@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { isFetching, request, response, error } from '../reducer';
+import { isFetching, response, error } from '../reducer';
 import { createTransaction, setCreateTransactionResponse, setCreateTransactionError } from '../actions';
 
 describe( 'state/order-transactions/reducer', () => {
@@ -26,21 +26,6 @@ describe( 'state/order-transactions/reducer', () => {
 
 		test( 'should reset fetching on error', () => {
 			expect( isFetching( true, errorAction ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'request()', () => {
-		test ( 'should default to null', () => {
-			expect( request( undefined, { type: 'UNKNOWN' } ) ).toBe( null );
-		} );
-
-		test( 'should set the request', () => {
-			expect( request( undefined, createAction ) ).toBe( createAction.request );
-		} );
-
-		test( 'should not clear the request on response / error', () => {
-			expect( request( createAction.request, responseAction ) ).toEqual( createAction.request );
-			expect( request( createAction.request, errorAction ) ).toEqual( createAction.request );
 		} );
 	} );
 
