@@ -36,6 +36,7 @@ const shouldMinify =
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 const shouldEmitStats = process.env.EMIT_STATS === 'true';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
+const shouldRTL = process.env.RTL === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 
 /**
@@ -178,13 +179,16 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 				},
 				{
 					test: /\.(sc|sa|c)ss$/,
-					use: _.compact( [
+					use: [
 						MiniCssExtractPlugin.loader,
 						'css-loader',
 						{
 							loader: 'postcss-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ) ],
+								plugins: _.compact( [
+									require( 'autoprefixer' ),
+									shouldRTL && require( 'rtlcss' ),
+								] ),
 							},
 						},
 						{
@@ -193,7 +197,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 								includePaths: [ path.join( __dirname, 'client' ) ],
 							},
 						},
-					] ),
+					],
 				},
 				{
 					test: /extensions[\/\\]index/,
