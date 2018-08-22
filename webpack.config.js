@@ -178,13 +178,16 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 				},
 				{
 					test: /\.(sc|sa|c)ss$/,
-					use: _.compact( [
+					use: [
 						MiniCssExtractPlugin.loader,
 						'css-loader',
 						{
 							loader: 'postcss-loader',
 							options: {
-								plugins: [ require( 'autoprefixer' ) ],
+								plugins: _.compact( [
+									require( 'autoprefixer' ),
+									! isDevelopment && require( 'cssnano' ),
+								] ),
 							},
 						},
 						{
@@ -193,7 +196,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 								includePaths: [ path.join( __dirname, 'client' ) ],
 							},
 						},
-					] ),
+					],
 				},
 				{
 					test: /extensions[\/\\]index/,
