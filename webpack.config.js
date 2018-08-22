@@ -112,7 +112,11 @@ const wordpressExternals = ( context, request, callback ) =>
  * @return {object}                                  webpack config
  */
 // eslint-disable-next-line no-unused-vars
-function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
+function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {}, argv ) {
+	cssFilename =
+		cssFilename ||
+		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
@@ -194,6 +198,10 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 							loader: 'sass-loader',
 							options: {
 								includePaths: [ path.join( __dirname, 'client' ) ],
+								data: `@import '${ path.join(
+									__dirname,
+									'assets/stylesheets/shared/_utils.scss'
+								) }';`,
 							},
 						},
 					],
@@ -269,7 +277,10 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
-			new MiniCssExtractPlugin(),
+			new MiniCssExtractPlugin( {
+				filename: cssFilename,
+				chunkFilename: cssFilename,
+			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),
