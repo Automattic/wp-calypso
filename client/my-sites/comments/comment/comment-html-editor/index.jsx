@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { delay, each, get, map, reduce, reject } from 'lodash';
+import { delay, each, map, reduce, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ import { delay, each, get, map, reduce, reject } from 'lodash';
 import AddImageDialog from 'my-sites/comments/comment/comment-html-editor/add-image-dialog';
 import AddLinkDialog from 'my-sites/comments/comment/comment-html-editor/add-link-dialog';
 import Button from 'components/button';
+import userAgent from 'lib/user-agent';
 
 export class CommentHtmlEditor extends Component {
 	static propTypes = {
@@ -93,14 +94,11 @@ export class CommentHtmlEditor extends Component {
 	};
 
 	insertContent = ( content, adjustCursorPosition = 0 ) => {
-		const userAgent = get( window, 'navigator.userAgent', '' );
+		const { isFirefox, isIE } = userAgent;
 
 		// In Firefox, IE, and Edge, `document.execCommand( 'insertText' )` doesn't work.
 		// @see https://bugzilla.mozilla.org/show_bug.cgi?id=1220696
-		if (
-			/(?:firefox|fxios)/i.test( userAgent ) ||
-			/(?:edge|msie |trident.+?; rv:)/i.test( userAgent )
-		) {
+		if ( isFirefox || isIE ) {
 			const { selectionEnd, value } = this.textarea;
 			const { before, after } = this.splitSelectedContent();
 			const newContent = before + content + after;

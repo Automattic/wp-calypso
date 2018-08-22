@@ -36,6 +36,7 @@ import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SpeedUpYourSite from './speed-up-site-settings';
+import userAgent from 'lib/user-agent';
 
 class SiteSettingsFormWriting extends Component {
 	renderSectionHeader( title, showButton = true ) {
@@ -54,10 +55,6 @@ class SiteSettingsFormWriting extends Component {
 				) }
 			</SectionHeader>
 		);
-	}
-
-	isMobile() {
-		return /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent );
 	}
 
 	render() {
@@ -82,6 +79,7 @@ class SiteSettingsFormWriting extends Component {
 			translate,
 			updateFields,
 			jetpackVersionSupportsLazyImages,
+			isMobile,
 		} = this.props;
 
 		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
@@ -195,7 +193,7 @@ class SiteSettingsFormWriting extends Component {
 					) }
 
 				{ config.isEnabled( 'press-this' ) &&
-					! this.isMobile() &&
+					! isMobile &&
 					! ( siteIsJetpack || jetpackSettingsUISupported ) && (
 						<div>
 							{ this.renderSectionHeader(
@@ -231,6 +229,7 @@ const connectComponent = connect(
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
 				! siteIsAutomatedTransfer,
 			isPodcastingSupported,
+			isMobile: userAgent.isMobile,
 		};
 	},
 	{ requestPostTypes },
