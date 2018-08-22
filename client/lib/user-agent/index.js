@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-
-import { UserAgent } from 'express-useragent';
 import { get } from 'lodash';
 
 /*
@@ -23,6 +21,6 @@ import { get } from 'lodash';
 	For a full list of values see: https://github.com/biggora/express-useragent/blob/master/lib/express-useragent.js#L191
 
  */
-export default ( typeof window !== 'undefined' && !! get( window, 'navigator.userAgent', null )
-	? new UserAgent().parse( window.navigator.userAgent )
+export default ( typeof window !== 'undefined' && !! get( window, 'app.userAgent', null )
+	? window.app.userAgent
 	: {} );
