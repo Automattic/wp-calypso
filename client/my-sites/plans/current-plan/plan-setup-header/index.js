@@ -29,10 +29,7 @@ export class PlanSetupHeader extends PureComponent {
 		const [ done, total ] = progress;
 		return (
 			<Card className="plan-setup-header">
-				<JetpackSetupRunner
-					notifyProgress={ this.updateProgress }
-					requiredPlugins={ [ 'akismet', 'vaultpress' ] }
-				/>
+				<JetpackSetupRunner notifyProgress={ this.updateProgress } />
 				<img
 					className="plan-setup-header__illustration"
 					alt=""
