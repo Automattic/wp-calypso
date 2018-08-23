@@ -12,7 +12,8 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const MiniCssExtractPlugin = require( 'mini-css-extract-plugin-with-rtl' );
+const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
@@ -188,10 +189,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						{
 							loader: 'postcss-loader',
 							options: {
-								plugins: _.compact( [
-									require( 'autoprefixer' ),
-									! isDevelopment && require( 'cssnano' ),
-								] ),
+								plugins: [ require( 'autoprefixer' ) ],
 							},
 						},
 						{
@@ -279,7 +277,10 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			new webpack.IgnorePlugin( /^props$/ ),
 			new MiniCssExtractPlugin( {
 				filename: cssFilename,
-				chunkFilename: cssFilename,
+				rtlEnabled: true,
+			} ),
+			new WebpackRTLPlugin( {
+				minify: ! isDevelopment,
 			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
