@@ -7,6 +7,7 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
+import calypsoComponent from 'lib/sdk';
 
 import './style.scss';
 
@@ -70,4 +71,4 @@ class Card extends PureComponent {
 	}
 }
 
-export default Card;
+export default calypsoComponent( Card );

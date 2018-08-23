@@ -17,7 +17,7 @@ const attributes = {
 };
 
 const edit = ( { attributes: { notes }, className, setAttributes } ) => (
-	<Card highlight="error" className={ `${ className } ${ className }__box calypso` }>
+	<Card highlight="error" className={ `${ className } ${ className }__box` }>
 		<Ribbon>Hidden</Ribbon>
 		<RichText
 			tagName="p"

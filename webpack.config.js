@@ -284,6 +284,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false, styleNamespac
 				'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 				PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 				global: 'window',
+				...( styleNamespace ? { STYLE_NAMESPACE: JSON.stringify( styleNamespace ) } : {} ),
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
