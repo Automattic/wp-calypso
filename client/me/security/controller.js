@@ -18,6 +18,7 @@ import accountPasswordData from 'lib/account-password-data';
 import SocialLoginComponent from 'me/social-login';
 import ConnectedAppsComponent from 'me/connected-applications';
 import AccountRecoveryComponent from 'me/security-account-recovery';
+import AsyncLoad from 'components/async-load';
 import { requireReducer } from 'state';
 
 export function password( context, next ) {
@@ -48,14 +49,16 @@ export function twoStep( context, next ) {
 }
 
 export function connectedApplications( context, next ) {
-	asyncRequire( 'state/connected-applications/reducer', reducer => {
-		requireReducer( context.store, 'connectedApplications', reducer );
-	} );
+	context.primary = (
+		<>
+			<AsyncLoad
+				require="state/connected-applications/reducer"
+				callback={ reducer => requireReducer( context.store, 'connectedApplications', reducer ) }
+			/>
+			<ConnectedAppsComponent userSettings={ userSettings } path={ context.path } />
+		</>
+	);
 
-	context.primary = React.createElement( ConnectedAppsComponent, {
-		userSettings: userSettings,
-		path: context.path,
-	} );
 	next();
 }
 
