@@ -218,7 +218,7 @@ export class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		return <EditorMediaModalDetailFields site={ site } item={ item } />;
+		return item && <EditorMediaModalDetailFields site={ site } item={ item } />;
 	}
 
 	renderPreviousItemButton() {

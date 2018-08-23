@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import page from 'page';
 import { connect } from 'react-redux';
 
 /**
@@ -29,17 +30,27 @@ class SingleMedia extends Component {
 	};
 
 	onBack = () => {
-
-	}
+		page( '/media/' + this.props.selectedSite.slug );
+		return;
+	};
 
 	render() {
 		return (
 			<div className="main main-column media" role="main">
 				<SidebarNavigation />
-				{ this.props.selectedSite && this.props.selectedSite.ID && <QueryMedia siteId={ this.props.selectedSite.ID } mediaId={ this.props.attachmentID } /> }
+				{ this.props.selectedSite &&
+					this.props.selectedSite.ID && (
+						<QueryMedia siteId={ this.props.selectedSite.ID } mediaId={ this.props.attachmentID } />
+					) }
 				<PageViewTracker path="/media/:site/:attachment" title="Media > Attachment" />
 				<DocumentHead title="HOWDY" />
-				<MediaDetails site={ this.props.selectedSite } items={ [ this.props.media ] } selected={ 0 } view={ this.props.view } onBack={ this.onBack } />
+				<MediaDetails
+					site={ this.props.selectedSite }
+					items={ [ this.props.media ] }
+					selected={ 0 }
+					view={ this.props.view }
+					onBack={ this.onBack }
+				/>
 			</div>
 		);
 	}
@@ -48,9 +59,12 @@ class SingleMedia extends Component {
 const mapStateToProps = ( state, { mediaId } ) => {
 	const selectedSite = getSelectedSite( state );
 	return {
-			selectedSite,
-			media: mediaId && selectedSite && selectedSite.ID ? getMediaItem( state, selectedSite.ID, mediaId ) : null,
-		}
+		selectedSite,
+		media:
+			mediaId && selectedSite && selectedSite.ID
+				? getMediaItem( state, selectedSite.ID, mediaId )
+				: null,
+	};
 };
 
 export default connect( mapStateToProps )( SingleMedia );
