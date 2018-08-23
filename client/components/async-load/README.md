@@ -15,6 +15,8 @@ Depending on the environment configuration, this will be transformed automatical
 
 See [`babel-plugin-transform-wpcalypso-async` documentation](https://github.com/Automattic/babel-plugin-transform-wpcalypso-async) for more information.
 
+Optionally, if you're loading a module that should not be rendered, you can use the `callback` method to define what to do when the module is loaded.
+
 ## Props
 
 The following props can be passed to the AsyncLoad component:
@@ -23,3 +25,4 @@ The following props can be passed to the AsyncLoad component:
 | ------------- | ----------------- | -------- | ------- |
 | `require`     | String (Function) | yes      | In general usage, this should be passed as a string of the module to be imported. During build, the string prop is [transformed to a function](https://github.com/Automattic/wp-calypso/tree/master/server/bundler/babel/babel-plugin-transform-wpcalypso-async) which is called to require the specified module. |
 | `placeholder` | PropTypes.node    | no       | A placeholder to be shown while the module is being asynchronously required. If omitted, a default placeholder will be shown. If `null` is provided, then no placeholder is shown. |
+| `callback`    | PropTypes.func    | no       | A callback function to be invoked when the module is loaded. Used for asynchronously loaded modules that are not intended be rendered.

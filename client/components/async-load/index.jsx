@@ -12,6 +12,7 @@ export default class AsyncLoad extends Component {
 	static propTypes = {
 		placeholder: PropTypes.node,
 		require: PropTypes.func.isRequired,
+		callback: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -56,6 +57,11 @@ export default class AsyncLoad extends Component {
 	}
 
 	render() {
+		if ( this.props.callback && this.state.component ) {
+			this.props.callback( this.state.component );
+			return null;
+		}
+
 		if ( this.state.component ) {
 			const props = omit( this.props, [ 'placeholder', 'require' ] );
 
