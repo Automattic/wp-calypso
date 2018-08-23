@@ -28,14 +28,22 @@ const calypsoRegistryPlugin = calypsoStore => registry => {
 		namespaces[ reducerKey ] = {};
 
 		if ( options.selectors ) {
-			registerSelectors( reducerKey, options.selectors );
+			registerCalypsoSelectors( reducerKey, options.selectors );
+		}
+		if ( options.actions ) {
+			registerCalypsoActions( reducerKey, options.actions );
 		}
 	}
 
-	function registerSelectors( reducerKey, newSelectors ) {
+	function registerCalypsoSelectors( reducerKey, newSelectors ) {
 		const createStateSelector = selector => ( ...args ) =>
 			selector( calypsoStore.getState(), ...args );
 		namespaces[ reducerKey ].selectors = mapValues( newSelectors, createStateSelector );
+	}
+
+	function registerCalypsoActions( reducerKey, newActions ) {
+		const createBoundAction = action => ( ...args ) => calypsoStore.dispatch( action( ...args ) );
+		namespaces[ reducerKey ].actions = mapValues( newActions, createBoundAction );
 	}
 
 	function registerStore( reducerKey, options ) {
@@ -65,7 +73,16 @@ const calypsoRegistryPlugin = calypsoStore => registry => {
 		return registry.select( reducerKey );
 	}
 
+	function dispatch( reducerKey ) {
+		const namespace = namespaces[ reducerKey ];
+		if ( namespace ) {
+			return namespace.actions;
+		}
+		return registry.dispatch( reducerKey );
+	}
+
 	return {
+		dispatch,
 		registerStore,
 		select,
 		subscribe,

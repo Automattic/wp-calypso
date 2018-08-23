@@ -9,7 +9,7 @@ import { use, RegistryProvider } from '@wordpress/data';
  * Internal dependencies
  */
 import calypsoRegistryPlugin from './calypso-registry-plugin';
-import calypsoWpDataStore from './calypso-wp-data-store';
+import calypsoWPDataStore from './calypso-wp-data-store';
 
 class CalypsoWPDataProvider extends Component {
 	constructor() {
@@ -19,7 +19,7 @@ class CalypsoWPDataProvider extends Component {
 
 	updateRegistry( calypsoStore ) {
 		this.registry = use( calypsoRegistryPlugin( calypsoStore ) );
-		this.registry.registerStore( 'calypso', calypsoWpDataStore );
+		this.registry.registerStore( 'calypso', calypsoWPDataStore );
 	}
 
 	componentDidMount() {
