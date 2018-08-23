@@ -16,7 +16,6 @@ import Button from 'components/forms/form-button';
 import MiniSitePreview from 'components/mini-site-preview';
 import ErrorPane from 'my-sites/importer/error-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 import ImportableContent from 'my-sites/importer/site-importer/site-importer-importable-content';
 
 class SiteImporterSitePreview extends React.Component {
@@ -30,56 +29,25 @@ class SiteImporterSitePreview extends React.Component {
 	};
 
 	state = {
-		previewRetries: 0,
 		siteURL: this.props.siteURL,
-		sitePreviewImage: '',
-		sitePreviewFailed: false,
-		loadingPreviewImage: true,
 	};
 
-	componentDidMount() {
-		// TODO: We might want to move this state handling to redux.
-		this.loadSitePreview();
-	}
+	trackSitePreviewSuccess = ( { time_taken_ms } ) =>
+		this.props.recordTracksEvent( 'calypso_site_importer_site_preview_success', {
+			blog_id: this.props.site.ID,
+			site_url: this.state.siteURL,
+			time_taken_ms,
+		} );
 
-	loadSitePreview = () => {
-		this.setState( { loadingPreviewImage: true, previewStartTime: Date.now() } );
-
-		loadmShotsPreview( {
-			url: this.state.siteURL,
-			maxRetries: 30,
-			retryTimeout: 1000,
-		} )
-			.then( imageBlob => {
-				this.setState( {
-					loadingPreviewImage: false,
-					sitePreviewImage: imageBlob,
-					sitePreviewFailed: false,
-				} );
-
-				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_success', {
-					blog_id: this.props.site.ID,
-					site_url: this.state.siteURL,
-					time_taken_ms: Date.now() - this.state.previewStartTime,
-				} );
-			} )
-			.catch( () => {
-				this.setState( {
-					loadingPreviewImage: false,
-					sitePreviewImage: '',
-					sitePreviewFailed: true,
-				} );
-
-				this.props.recordTracksEvent( 'calypso_site_importer_site_preview_fail', {
-					blog_id: this.props.site.ID,
-					site_url: this.state.siteURL,
-					time_taken_ms: Date.now() - this.state.previewStartTime,
-				} );
-			} );
-	};
+	trackSitePreviewFailure = ( { time_taken_ms } ) =>
+		this.props.recordTracksEvent( 'calypso_site_importer_site_preview_fail', {
+			blog_id: this.props.site.ID,
+			site_url: this.state.siteURL,
+			time_taken_ms,
+		} );
 
 	render = () => {
-		const isLoading = this.props.isLoading || this.state.loadingPreviewImage;
+		const { isLoading } = this.props;
 		const isError = this.state.sitePreviewFailed;
 
 		const containerClass = classNames( 'site-importer__site-preview-overlay-container', {
@@ -103,7 +71,11 @@ class SiteImporterSitePreview extends React.Component {
 						</div>
 						<div className={ containerClass }>
 							<div className="site-importer__site-preview-column-container">
-								<MiniSitePreview imageSrc={ this.state.sitePreviewImage } />
+								<MiniSitePreview
+									siteURL={ this.state.siteURL }
+									onFetchSuccess={ this.trackSitePreviewSuccess }
+									onFetchError={ this.trackSitePreviewFailure }
+								/>
 								<ImportableContent importData={ this.props.importData } />
 							</div>
 						</div>
