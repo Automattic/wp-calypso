@@ -209,9 +209,11 @@ module.exports = function() {
 		response.json( listDocs( files.split( ',' ) ) );
 	} );
 
-	// return the HTML content of a document (assumes that the document is in markdown format)
+	// return the content of a document in the given format (assumes that the document is in
+	// markdown format)
 	app.get( '/devdocs/service/content', ( request, response ) => {
 		let path = request.query.path;
+		const format = request.query.format || 'html';
 
 		if ( ! path ) {
 			response
@@ -237,7 +239,7 @@ module.exports = function() {
 
 		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
 
-		response.send( marked( fileContents ) );
+		response.send( 'html' === format ? marked( fileContents ) : fileContents );
 	} );
 
 	// return json for the components usage stats
