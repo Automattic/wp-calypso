@@ -94,6 +94,10 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		facebookJetpackInit: '919484458159593',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
+		googleFreeSignupConversionId: '1067250390',
+		googleFreeSignupConversionLabel: 'zKK-CKPG7ocBENbl8_wD',
+		googleFreeSignupConversionIdJetpack: '937115306',
+		googleFreeSignupConversionLabelJetpack: 'J8Z5CNTi14cBEKr97L4D',
 		criteo: '31321',
 		quantcast: 'p-3Ma3jHaQMB_bS',
 		yahooProjectId: '10000',
@@ -745,6 +749,51 @@ export function recordOrder( cart, orderId ) {
 }
 
 /**
+ * Tracks a free signup conversion.
+ *
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+export function recordFreeSignup( slug ) {
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordFreeSignup: tracking not allowed' );
+		return;
+	}
+
+	if ( ! hasStartedFetchingScripts ) {
+		return loadTrackingScripts( recordFreeSignup.bind( null, slug ) );
+	}
+
+	// 35-byte free signup tracking ID.
+	const id = 'fs_' + uuid().replace( /-/g, '' );
+
+	// Load the ecommerce plugin.
+	debug( 'recordFreeSignup: ga ecommerce plugin load' );
+	window.ga( 'require', 'ecommerce' );
+
+	// Record free signups.
+	try {
+		recordFreeSignupInCriteo( id, slug );
+		recordFreeSignupInFloodlight( id, slug );
+		recordFreeSignupInFacebook( id, slug );
+		recordFreeSignupInNanigans( id, slug );
+		recordFreeSignupInTwitter( id, slug );
+		recordFreeSignupInYandex( id, slug );
+		recordFreeSignupInBing( id, slug );
+		recordFreeSignupInQuantcast( id, slug );
+		recordFreeSignupInYahoo( id, slug );
+		recordFreeSignupInGoogleAnalytics( id, slug );
+		recordFreeSignupInAdwords( id, slug );
+	} catch ( err ) {
+		debug( 'Unable to track free signup', err );
+	}
+
+	// Submit to Google Analytics.
+	debug( 'recordFreeSignup: ga ecommerce send' );
+	window.ga( 'ecommerce:send' );
+}
+
+/**
  * Recorders an individual product purchase conversion
  *
  * @param {Object} product - the product
@@ -929,6 +978,33 @@ function recordOrderInFloodlight( cart, orderId ) {
 }
 
 /**
+ * Records a free signup in Floodlight.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInFloodlight( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+		debug( 'recordFreeSignupInFloodlight: tracking not allowed' );
+		return;
+	}
+
+	const data = {
+		type: 'wpsal0',
+		cat: 'wpsale',
+		ord: id,
+		u2: slug,
+		u3: 'USD',
+		qty: 1,
+		cost: 0,
+	};
+
+	debug( 'recordFreeSignupInFloodlight:', { data } );
+	recordParamsInFloodlight( data );
+}
+
+/**
  * Records an order in Nanigans. If nanigans is not already loaded and configured, it configures it now (delayed load
  * until the moment when we actually need this pixel).
  *
@@ -972,6 +1048,40 @@ function recordOrderInNanigans( cart, orderId ) {
 
 	debug( 'Nanigans push:', eventStruct );
 	window.NaN_api.push( eventStruct ); // NaN api is either an array that supports push, either the real Nanigans API
+}
+
+/**
+ * Records a free signup in Nanigans.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInNanigans( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isNanigansEnabled ) {
+		debug( 'recordFreeSignupInNanigans: tracking not allowed' );
+		return;
+	}
+
+	if ( ! isNanigansConfigured ) {
+		setupNanigansGlobal();
+		loadScript( NANIGANS_SCRIPT_URL );
+	}
+
+	const data = [
+		'purchase', // Event type.
+		'main', // Event name.
+		[ 0 ], // Prices.`
+		{
+			unique: id,
+			sku: [ slug ],
+			currency: 'USD',
+			qty: [ 1 ],
+		},
+	];
+
+	debug( 'recordFreeSignupInNanigans:', { data } );
+	window.NaN_api.push( data );
 }
 
 /**
@@ -1031,6 +1141,171 @@ function recordOrderInFacebook( cart, orderId ) {
 			fbParams
 		);
 	}
+}
+
+/**
+ * Records a free signup in Facebook.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInFacebook( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
+		debug( 'recordFreeSignupInFacebook: tracking not allowed' );
+		return;
+	}
+
+	const currentUser = user.get();
+	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
+	const isJetpackSlug = /^jp-|-jp$|-jp-|jetpack/i.test( slug );
+
+	const data = {
+		order_id: id,
+		user_id: userId,
+		product_slug: slug,
+		currency: 'USD',
+		value: 0,
+	};
+
+	debug( 'recordFreeSignupInFacebook: ', { data } );
+	window.fbq(
+		'trackSingle',
+		isJetpackSlug ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
+		'CompleteRegistration',
+		data
+	);
+}
+
+/**
+ * Records a free signup in Twitter.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInTwitter( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isTwitterEnabled ) {
+		debug( 'recordFreeSignupInTwitter: tracking not allowed' );
+		return;
+	}
+
+	const data = {
+		order_id: id,
+		content_ids: [ slug ],
+		content_type: 'product',
+		content_name: slug,
+		currency: 'USD',
+		num_items: 1,
+		value: 0,
+	};
+
+	debug( 'recordFreeSignupInTwitter: ', { data } );
+	window.twq( 'track', 'Purchase', data );
+}
+
+/**
+ * Records a free signup in Yandex.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInYandex( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isYandexEnabled ) {
+		debug( 'recordFreeSignupInYandex: tracking not allowed' );
+		return;
+	}
+
+	const data = {
+		order_id: id,
+		product_slug: slug,
+		currency: 'USD',
+		order_price: 0,
+	};
+
+	debug( 'recordFreeSignupInYandex: ', { data } );
+	window.yaCounter45268389.reachGoal( 'ProductPurchase', data );
+}
+
+/**
+ * Records a free signup in Bing.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInBing( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isBingEnabled ) {
+		return;
+	}
+
+	const data = {
+		ec: 'purchase',
+		el: slug,
+		gv: 0,
+	};
+
+	debug( 'recordFreeSignupInBing: ', { data } );
+	window.uetq.push( data );
+}
+
+/**
+ * Records a free signup in Quantcast.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInQuantcast( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isQuantcastEnabled ) {
+		return;
+	}
+
+	const data = {
+		// All values must be strings.
+		orderid: id,
+		event: 'refresh',
+		qacct: TRACKING_IDS.quantcast,
+		labels: '_fp.event.Purchase Confirmation,_fp.pcat.' + slug,
+		revenue: '0',
+	};
+
+	debug( 'recordFreeSignupInQuantcast: ', { data } );
+	window._qevents.push( data );
+}
+
+/**
+ * Records a free signup in Yahoo.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInYahoo( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isYahooEnabled ) {
+		return;
+	}
+
+	const data = [
+		// All values must be strings.
+		{
+			projectId: TRACKING_IDS.yahooProjectId,
+			properties: {
+				pixelId: TRACKING_IDS.yahooPixelId,
+				qstrings: {
+					et: 'custom',
+					ec: 'wordpress.com',
+					ea: 'purchase',
+					el: slug,
+					gv: '0',
+				},
+			},
+		},
+	];
+
+	debug( 'recordFreeSignupInYahoo: ', { data } );
+	YAHOO.ywa.I13N.fireBeacon( data );
 }
 
 /**
@@ -1267,6 +1542,35 @@ function recordOrderInCriteo( cart, orderId ) {
 }
 
 /**
+ * Records a free signup in Criteo.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInCriteo( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+		debug( 'recordFreeSignupInCriteo: tracking not allowed' );
+		return;
+	}
+
+	const data = {
+		id: id,
+		currency: 'USD',
+		item: [
+			{
+				id: slug,
+				quantity: 1,
+				price: 0,
+			},
+		],
+	};
+
+	debug( 'recordFreeSignupInCriteo:', { data } );
+	recordInCriteo( 'trackTransaction', data );
+}
+
+/**
  * Records that a user viewed the checkout page
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -1394,6 +1698,78 @@ function recordOrderInGoogleAnalytics( cart, orderId ) {
 }
 
 /**
+ * Records a free signup in Google Analytics.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInGoogleAnalytics( id, slug ) {
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordFreeSignupInGoogleAnalytics: tracking not allowed' );
+		return;
+	}
+
+	const trans = {
+		id: id,
+		affiliation: 'WordPress.com',
+		currency: 'USD',
+		revenue: 0,
+	};
+
+	const item = {
+		id: id,
+		sku: slug,
+		name: slug,
+		currency: 'USD',
+		quantity: 1,
+		price: 0,
+	};
+
+	debug( 'recordFreeSignupInGoogleAnalytics:', { trans, item } );
+	window.ga( 'ecommerce:addTransaction', trans );
+	window.ga( 'ecommerce:addItem', item );
+}
+
+/**
+ * Records a free signup in AdWords.
+ *
+ * @param {String} id - Signup ID.
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+function recordFreeSignupInAdwords( id, slug ) {
+	if ( ! isAdTrackingAllowed() || ! isAdwordsEnabled || ! window.google_trackConversion ) {
+		debug( 'recordFreeSignupInAdwords: tracking not allowed' );
+		return;
+	}
+
+	const currentUser = user.get();
+	const userId = currentUser ? hashPii( currentUser.ID ) : 0;
+	const isJetpackSlug = /^jp-|-jp$|-jp-|jetpack/i.test( slug );
+
+	const data = {
+		google_conversion_id: isJetpackSlug
+			? TRACKING_IDS.googleFreeSignupConversionIdJetpack
+			: TRACKING_IDS.googleFreeSignupConversionId,
+		google_conversion_label: isJetpackSlug
+			? TRACKING_IDS.googleFreeSignupConversionLabelJetpack
+			: TRACKING_IDS.googleFreeSignupConversionLabel,
+		google_conversion_currency: 'USD',
+		google_conversion_value: 0,
+		google_custom_params: {
+			user_id: userId,
+			order_id: id,
+			product_slug: slug,
+		},
+		google_remarketing_only: false,
+	};
+
+	debug( 'recordFreeSignupInAdwords:', { data } );
+	window.google_trackConversion( data );
+}
+
+/**
  * Returns the URL for Quantcast's Purchase Confirmation Tag
  *
  * @see https://www.quantcast.com/help/guides/using-the-quantcast-asynchronous-tag/
@@ -1494,10 +1870,16 @@ export function recordSignupStart() {
 /**
  * Record that a user completed sign up
  *
+ * @param {object} details Signup details.
+ *
  * @returns {void}
  */
-export function recordSignupCompletion() {
+export function recordSignupCompletion( { isNewUser, isNewSite, hasCartItems } ) {
 	recordSignupCompletionInFloodlight();
+
+	if ( isNewUser && isNewSite && ! hasCartItems ) {
+		recordFreeSignup( 'free-plan' );
+	}
 }
 
 export function retarget( context, next ) {
