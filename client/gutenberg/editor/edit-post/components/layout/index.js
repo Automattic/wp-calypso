@@ -33,7 +33,6 @@ import Header from '../header';
 import TextEditor from '../text-editor';
 import VisualEditor from '../visual-editor';
 import EditorModeKeyboardShortcuts from '../keyboard-shortcuts';
-import MetaBoxes from '../meta-boxes';
 import Sidebar from '../sidebar';
 import PluginPostPublishPanel from '../sidebar/plugin-post-publish-panel';
 import PluginPrePublishPanel from '../sidebar/plugin-pre-publish-panel';
@@ -46,8 +45,6 @@ function Layout( {
 	hasFixedToolbar,
 	closePublishSidebar,
 	togglePublishSidebar,
-	hasActiveMetaboxes,
-	isSaving,
 	isMobileViewport,
 } ) {
 	const sidebarIsOpened = editorSidebarOpened || pluginSidebarOpened || publishSidebarOpened;
@@ -83,19 +80,11 @@ function Layout( {
 				<EditorModeKeyboardShortcuts />
 				{ mode === 'text' && <TextEditor /> }
 				{ mode === 'visual' && <VisualEditor /> }
-				<div className="edit-post-layout__metaboxes">
-					<MetaBoxes location="normal" />
-				</div>
-				<div className="edit-post-layout__metaboxes">
-					<MetaBoxes location="advanced" />
-				</div>
 			</div>
 			{ publishSidebarOpened ? (
 				<PostPublishPanel
 					{ ...publishLandmarkProps }
 					onClose={ closePublishSidebar }
-					forceIsDirty={ hasActiveMetaboxes }
-					forceIsSaving={ isSaving }
 					PrePublishExtension={ PluginPrePublishPanel.Slot }
 					PostPublishExtension={ PluginPostPublishPanel.Slot }
 				/>
@@ -134,9 +123,6 @@ export default compose(
 		pluginSidebarOpened: select( 'core/edit-post' ).isPluginSidebarOpened(),
 		publishSidebarOpened: select( 'core/edit-post' ).isPublishSidebarOpened(),
 		hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
-		metaBoxes: select( 'core/edit-post' ).getMetaBoxes(),
-		hasActiveMetaboxes: select( 'core/edit-post' ).hasMetaBoxes(),
-		isSaving: select( 'core/edit-post' ).isSavingMetaBoxes(),
 	} ) ),
 	withDispatch( ( dispatch ) => {
 		const { closePublishSidebar, togglePublishSidebar } = dispatch( 'core/edit-post' );

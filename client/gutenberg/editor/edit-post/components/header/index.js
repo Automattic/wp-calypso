@@ -30,8 +30,6 @@ function Header( {
 	closeGeneralSidebar,
 	isPublishSidebarOpened,
 	togglePublishSidebar,
-	hasActiveMetaboxes,
-	isSaving,
 } ) {
 	const toggleGeneralSidebar = isEditorSidebarOpened ? closeGeneralSidebar : openGeneralSidebar;
 
@@ -47,16 +45,11 @@ function Header( {
 			<HeaderToolbar />
 			{ ! isPublishSidebarOpened && (
 				<div className="edit-post-header__settings">
-					<PostSavedState
-						forceIsDirty={ hasActiveMetaboxes }
-						forceIsSaving={ isSaving }
-					/>
+					<PostSavedState	/>
 					<PostPreviewButton />
 					<PostPublishPanelToggle
 						isOpen={ isPublishSidebarOpened }
 						onToggle={ togglePublishSidebar }
-						forceIsDirty={ hasActiveMetaboxes }
-						forceIsSaving={ isSaving }
 					/>
 					<IconButton
 						icon="admin-generic"
@@ -82,8 +75,6 @@ export default compose(
 	withSelect( ( select ) => ( {
 		isEditorSidebarOpened: select( 'core/edit-post' ).isEditorSidebarOpened(),
 		isPublishSidebarOpened: select( 'core/edit-post' ).isPublishSidebarOpened(),
-		hasActiveMetaboxes: select( 'core/edit-post' ).hasMetaBoxes(),
-		isSaving: select( 'core/edit-post' ).isSavingMetaBoxes(),
 		hasBlockSelection: !! select( 'core/editor' ).getBlockSelectionStart(),
 	} ) ),
 	withDispatch( ( dispatch, { hasBlockSelection } ) => {
