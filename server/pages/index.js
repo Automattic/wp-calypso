@@ -41,7 +41,6 @@ import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
 import { getLanguage } from 'lib/i18n-utils';
-import useragent from 'express-useragent';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -222,7 +221,6 @@ function getDefaultContext( request ) {
 	if ( request.context && request.context.lang ) {
 		lang = request.context.lang;
 	}
-
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -246,7 +244,7 @@ function getDefaultContext( request ) {
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
 		sectionCss,
-		userAgent: useragent.parse( request.headers[ 'user-agent' ] ),
+		userAgent: request.useragent,
 	} );
 
 	context.app = {
