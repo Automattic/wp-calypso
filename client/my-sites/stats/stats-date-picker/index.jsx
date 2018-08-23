@@ -188,7 +188,7 @@ class StatsDatePicker extends Component {
 											position="bottom"
 											context={ this.statusIndicator }
 										>
-											{ translate( 'Auto-refreshing every 3 minutes' ) }
+											{ translate( 'Auto-refreshing every 30 minutes' ) }
 										</Tooltip>
 									</span>
 								</div>
