@@ -3,8 +3,13 @@
 /**
  * External dependencies
  */
+import { includes } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { REASON_AUTO_RENEWAL_FAILURE } from './constants';
+
+/**
+ * Internal dependencies
+ */
+import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
 /**
  * Processes a redux ROUTE_SET action and returns a URL that contains no parameters that
@@ -36,13 +41,15 @@ export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
  * @return {string}              - Message to show to user
  */
 export const createImmediateLoginMessage = ( loginReason, email ) => {
-	switch ( loginReason ) {
-		case REASON_AUTO_RENEWAL_FAILURE:
-			return translate( 'We logged you in as %(email)s so you can renew your subscription.', {
+	if ( includes( REASONS_FOR_MANUAL_RENEWAL, loginReason ) ) {
+		return translate(
+			'We logged you in as %(email)s so you can update your payment details and renew your subscription.',
+			{
 				args: { email },
-			} );
-
-		default:
-			return translate( 'We logged you in as %(email)s.', { args: { email } } );
+			}
+		);
 	}
+
+	// Default message.
+	return translate( 'We logged you in as %(email)s.', { args: { email } } );
 };

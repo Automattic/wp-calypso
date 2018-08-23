@@ -26,6 +26,7 @@ import {
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'state/login/selectors';
+import { wasManualRenewalImmediateLoginAttempted } from 'state/immediate-login/selectors';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
@@ -46,6 +47,7 @@ class Login extends Component {
 		disableAutoFocus: PropTypes.bool,
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
+		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
@@ -137,6 +139,7 @@ class Login extends Component {
 	renderHeader() {
 		const {
 			isJetpack,
+			isManualRenewalImmediateLoginAttempt,
 			linkingSocialService,
 			oauth2Client,
 			privateSite,
@@ -148,6 +151,12 @@ class Login extends Component {
 		let headerText = translate( 'Log in to your account.' );
 		let preHeader = null;
 		let postHeader = null;
+
+		if ( isManualRenewalImmediateLoginAttempt ) {
+			headerText = translate(
+				'Log in to update your payment details and renew your subscription.'
+			);
+		}
 
 		if ( twoStepNonce ) {
 			headerText = translate( 'Two-Step Authentication' );
@@ -299,6 +308,7 @@ export default connect(
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		isLinking: getSocialAccountIsLinking( state ),
+		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
 	} ),
