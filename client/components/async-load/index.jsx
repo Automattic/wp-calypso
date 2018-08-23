@@ -61,7 +61,7 @@ export default class AsyncLoad extends Component {
 	}
 
 	render() {
-		if ( this.props.callback && this.state.component ) {
+		if ( this.props.callback ) {
 			return null;
 		}
 
