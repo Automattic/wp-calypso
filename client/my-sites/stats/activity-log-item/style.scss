@@ -185,6 +185,7 @@
 	}
 
 	.gravatar,
+	.social-logo,
 	.jetpack-logo {
 		float: left;
 		width: 40px;
@@ -202,6 +203,12 @@
 			height: 24px;
 			margin-right: 8px;
 		}
+	}
+
+	.social-logo {
+		fill: $white;
+		background: $color-wordpressOrg;
+		border-radius: 50%;
 	}
 
 	.jetpack-logo__icon-circle {
@@ -311,6 +318,51 @@
 
 .activity-log-item__quick-action-error {
 	color: $alert-red;
+}
+
+.activity-log-item__activity-media {
+	margin-right: 16px;
+	color: $white;
+}
+
+.activity-log-item__activity-media .gridicon {
+	background-color: $gray-lighten-20;
+}
+.activity-log-item__activity-media .is-thumbnail {
+	width: auto;
+	height: auto;
+	max-width: 48px;
+	max-height: 48px;
+}
+
+.activity-log-item__activity-media .is-full-width {
+	width: 100%;
+	margin-top: 16px;
+}
+
+.activity-log-item__activity-media {
+	&.is-mobile {
+		float: right;
+		margin-right: -50px;
+		display: block;
+		width: 100%;
+		height: auto;
+		min-width: 0;
+	}
+
+	&.is-desktop {
+		display: none;
+	}
+
+	@include breakpoint( '>960px' ) {
+		&.is-mobile {
+			display: none;
+		}
+
+		&.is-desktop {
+			display: inline-block;
+		}
+	}
 }
 
 @keyframes fade-out-success {

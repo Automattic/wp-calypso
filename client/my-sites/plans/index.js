@@ -7,10 +7,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
 import plansController from './controller';
-import currentPlanController from './current-plan/controller';
+import { currentPlan } from './current-plan/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
 
 export default function() {
 	page( '/plans', siteSelection, sites, makeLayout, clientRender );
@@ -47,23 +47,8 @@ export default function() {
 		clientRender
 	);
 	page( '/plans/features/:feature/:domain', plansController.features, makeLayout, clientRender );
-	page(
-		'/plans/my-plan',
-		siteSelection,
-		sites,
-		navigation,
-		currentPlanController.currentPlan,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/plans/my-plan/:site',
-		siteSelection,
-		navigation,
-		currentPlanController.currentPlan,
-		makeLayout,
-		clientRender
-	);
+	page( '/plans/my-plan', siteSelection, sites, navigation, currentPlan, makeLayout, clientRender );
+	page( '/plans/my-plan/:site', siteSelection, navigation, currentPlan, makeLayout, clientRender );
 	page(
 		'/plans/select/:plan/:domain',
 		siteSelection,

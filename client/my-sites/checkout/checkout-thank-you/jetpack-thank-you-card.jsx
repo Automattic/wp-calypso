@@ -644,7 +644,8 @@ export default connect(
 			planSlug = plan.productSlug;
 			plan = getPlan( plan.productSlug );
 		}
-		const planFeatures = plan && plan.getFeatures ? plan.getFeatures() : false;
+		const planFeatures =
+			plan && plan.getPlanCompareFeatures ? plan.getPlanCompareFeatures() : false;
 
 		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
 		return {

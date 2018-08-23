@@ -20,9 +20,11 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { compose } from 'redux';
-import wp from 'wp';
+import { __ } from '@wordpress/i18n';
+import { Component } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
+import { PanelBody } from '@wordpress/components';
+import { withSelect, withDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -31,16 +33,6 @@ import PublicizeConnectionVerify from './publicize-connection-verify';
 import PublicizeForm from './publicize-form';
 import PublicizeNoConnections from './publicize-no-connections';
 import { requestPublicizeConnections } from './async-publicize-lib';
-
-/**
- * Module variables
- */
-const {
-	withSelect,
-	withDispatch,
-} = wp.data;
-const { __ } = wp.i18n;
-const { PanelBody } = wp.components;
 
 class PublicizePanel extends Component {
 	constructor( props ) {
@@ -77,15 +69,15 @@ class PublicizePanel extends Component {
 	}
 }
 
-export default PublicizePanel = compose(
+export default PublicizePanel = compose( [
 	withSelect( ( select ) => ( {
-		connections: select( 'jetpack/publicize' ).getConnections(),
-		isLoading: select( 'jetpack/publicize' ).getIsLoading(),
+		connections: select( 'a8c/publicize' ).getConnections(),
+		isLoading: select( 'a8c/publicize' ).getIsLoading(),
 		postId: select( 'core/editor' ).getCurrentPost().id,
 	} ) ),
 	withDispatch( ( dispatch, ownProps ) => ( {
-		getConnectionsDone: dispatch( 'jetpack/publicize' ).getConnectionsDone,
-		getConnectionsFail: dispatch( 'jetpack/publicize' ).getConnectionsFail,
+		getConnectionsDone: dispatch( 'a8c/publicize' ).getConnectionsDone,
+		getConnectionsFail: dispatch( 'a8c/publicize' ).getConnectionsFail,
 		/**
 		 * Starts request for current list of connections.
 		 *
@@ -96,12 +88,12 @@ export default PublicizePanel = compose(
 			const {
 				getConnectionsDone,
 				getConnectionsFail,
-			} = dispatch( 'jetpack/publicize' );
-			dispatch( 'jetpack/publicize' ).getConnectionsStart();
+			} = dispatch( 'a8c/publicize' );
+			dispatch( 'a8c/publicize' ).getConnectionsStart();
 			requestPublicizeConnections( postId ).then(
 				( result ) => getConnectionsDone( result ),
 				() => getConnectionsFail(),
 			);
 		},
 	} ) ),
-)( PublicizePanel );
+] )( PublicizePanel );

@@ -9,10 +9,11 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import './markdown-editor.scss';
 import JetpackMarkdownBlockEditor from './jetpack-markdown-block-editor';
 import JetpackMarkdownBlockSave from './jetpack-markdown-block-save';
 
-registerBlockType( 'jetpack/markdown-block', {
+registerBlockType( 'a8c/markdown', {
 	title: __( 'Markdown' ),
 
 	description: [

@@ -22,8 +22,16 @@ import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
+import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import { fetchState } from 'lib/importer/actions';
-import { appStates, WORDPRESS, MEDIUM, BLOGGER, SITE_IMPORTER } from 'state/imports/constants';
+import {
+	appStates,
+	WORDPRESS,
+	MEDIUM,
+	BLOGGER,
+	SITE_IMPORTER,
+	SQUARESPACE,
+} from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
@@ -57,6 +65,11 @@ const importers = [
 		type: SITE_IMPORTER,
 		isImporterEnabled: isEnabled( 'manage/import/site-importer' ),
 		component: SiteImporter,
+	},
+	{
+		type: SQUARESPACE,
+		isImporterEnabled: isEnabled( 'manage/import/squarespace' ),
+		component: SquarespaceImporter,
 	},
 ];
 

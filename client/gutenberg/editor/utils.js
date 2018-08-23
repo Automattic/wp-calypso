@@ -2,19 +2,12 @@
 /**
  * External dependencies
  */
-import {
-	registerBlockType,
-	setDefaultBlockName,
-	setUnknownTypeHandlerName,
-} from '@wordpress/blocks';
 import apiFetch from '@wordpress/api-fetch';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import * as paragraph from './core-blocks/paragraph';
-import * as heading from './core-blocks/heading';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
@@ -35,15 +28,4 @@ export const overrideAPIPaths = siteSlug => {
 
 		return next( { ...options, path: wpcomPath } );
 	} );
-};
-
-// Provide a copy of this function until the core-blocks package is published
-export const registerCoreBlocks = () => {
-	[ paragraph, heading ].forEach( ( { name, settings } ) => {
-		registerBlockType( name, settings );
-	} );
-
-	setDefaultBlockName( paragraph.name );
-
-	setUnknownTypeHandlerName( paragraph.name );
 };

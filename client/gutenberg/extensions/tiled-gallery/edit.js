@@ -185,8 +185,9 @@ class JetpackGalleryBlockEditor extends Component {
 		const imageTiles = (
 			<JetpackGalleryBlockSave
 				attributes={ {
-					images: images,
-					columns: columns,
+					className,
+					images,
+					columns,
 					linkTo: 'none',
 				} }
 			/>

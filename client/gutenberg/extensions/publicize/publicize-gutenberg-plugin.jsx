@@ -11,8 +11,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import wp from 'wp';
+import { __ } from '@wordpress/i18n';
+import { Fragment } from '@wordpress/element';
+import { registerPlugin } from '@wordpress/plugins';
+import { registerStore } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -24,16 +27,11 @@ import JetpackLogo from 'components/jetpack-logo';
 /**
  * Module variables
  */
-const { data } = wp;
-const { registerStore } = data;
 const {
 	PluginPrePublishPanel,
 	PluginSidebar,
 	PluginSidebarMoreMenuItem,
 } = wp.editPost;
-const { registerPlugin } = wp.plugins;
-const { __ } = wp.i18n;
-const { Fragment } = wp.element;
 
 const PluginRender = () => (
 	<Fragment>
@@ -56,8 +54,8 @@ const PluginRender = () => (
 	</Fragment>
 );
 
-registerPlugin( 'jetpack-publicize', {
+registerPlugin( 'a8c-publicize', {
 	render: PluginRender
 } );
 
-registerStore( 'jetpack/publicize', publicizeStore );
+registerStore( 'a8c/publicize', publicizeStore );

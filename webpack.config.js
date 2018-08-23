@@ -8,7 +8,6 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const CopyWebpackPlugin = require( './server/bundler/copy-webpack-plugin' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
@@ -16,7 +15,7 @@ const AssetsWriter = require( './server/bundler/assets-writer' );
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
 
@@ -76,22 +75,51 @@ const babelLoader = {
 };
 
 /**
+ * Converts @wordpress require into window reference
+ *
+ * Note this isn't the same as camel case because of the
+ * way that numbers don't trigger the capitalized next letter
+ *
+ * @example
+ * wordpressRequire( '@wordpress/api-fetch' ) = 'wp.apiFetch'
+ * wordpressRequire( '@wordpress/i18n' ) = 'wp.i18n'
+ *
+ * @param {string} request import name
+ * @return {string} global variable reference for import
+ */
+const wordpressRequire = request => {
+	// @wordpress/components -> [ @wordpress, components ]
+	const [ , name ] = request.split( '/' );
+
+	// components -> wp.components
+	return `wp.${ name.replace( /-([a-z])/g, ( match, letter ) => letter.toUpperCase() ) }`;
+};
+
+const wordpressExternals = ( context, request, callback ) =>
+	/^@wordpress\//.test( request )
+		? callback( null, `root ${ wordpressRequire( request ) }` )
+		: callback();
+
+/**
  * Return a webpack config object
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
- * @param  {object}  env                environment options
- * @param  {string}  env.extensionName  set by bin/sdk/gutenberg.js when building Gutenberg extensions
- * @param  {object}  argv               options map
- * @return {object}                     webpack config
+ * @param {object}  env                              additional config options
+ * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
+ * @param {object}  argv                             given by webpack?
+ *
+ * @return {object}                                  webpack config
  */
-function getWebpackConfig( { extensionName = '' } = {}, argv ) {
+// eslint-disable-next-line no-unused-vars
+function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
+		context: __dirname,
 		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
 		profile: shouldEmitStats,
 		mode: isDevelopment ? 'development' : 'production',
-		devtool: isDevelopment ? '#eval' : process.env.SOURCEMAP || false, // in production builds you can specify a source-map via env var
+		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
 			path: path.join( __dirname, 'public' ),
 			publicPath: '/calypso/',
@@ -111,23 +139,13 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 			chunkIds: isDevelopment ? 'named' : 'natural',
 			minimize: shouldMinify,
 			minimizer: [
-				new UglifyJsPlugin( {
+				new TerserPlugin( {
 					cache: 'docker' !== process.env.CONTAINER,
 					parallel: true,
 					sourceMap: Boolean( process.env.SOURCEMAP ),
-					uglifyOptions: {
-						compress: {
-							/**
-							 * Produces inconsistent results
-							 * Enable when the following is resolved:
-							 * https://github.com/mishoo/UglifyJS2/issues/3010
-							 */
-							collapse_vars: false,
-						},
-						mangle: {
-							safari10: true,
-						},
+					terserOptions: {
 						ecma: 5,
+						safari10: true,
 					},
 				} ),
 			],
@@ -160,12 +178,17 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 				},
 				{
 					test: /\.(sc|sa|c)ss$/,
-					use: _.compact( [
+					use: [
 						MiniCssExtractPlugin.loader,
 						'css-loader',
-						extensionName && {
-							loader: 'namespace-css-loader',
-							options: `.${ extensionName }`, // Just the namespace class
+						{
+							loader: 'postcss-loader',
+							options: {
+								plugins: _.compact( [
+									require( 'autoprefixer' ),
+									! isDevelopment && require( 'cssnano' ),
+								] ),
+							},
 						},
 						{
 							loader: 'sass-loader',
@@ -173,7 +196,7 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 								includePaths: [ path.join( __dirname, 'client' ) ],
 							},
 						},
-					] ),
+					],
 				},
 				{
 					test: /extensions[\/\\]index/,
@@ -187,6 +210,15 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 				{
 					test: /\.html$/,
 					loader: 'html-loader',
+				},
+				{
+					test: /\.(svg)$/,
+					use: [
+						{
+							loader: 'file-loader',
+							options: { name: '[name].[ext]', outputPath: 'images/' },
+						},
+					],
 				},
 				{
 					include: require.resolve( 'tinymce/tinymce' ),
@@ -237,9 +269,6 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
-			new CopyWebpackPlugin( [
-				{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
-			] ),
 			new MiniCssExtractPlugin(),
 			new AssetsWriter( {
 				filename: 'assets.json',
@@ -267,7 +296,11 @@ function getWebpackConfig( { extensionName = '' } = {}, argv ) {
 					},
 				} ),
 		] ),
-		externals: [ 'electron' ],
+		externals: _.compact( [
+			externalizeWordPressPackages && wordpressExternals,
+			externalizeWordPressPackages && 'wp',
+			'electron',
+		] ),
 	};
 
 	if ( calypsoEnv === 'desktop' ) {

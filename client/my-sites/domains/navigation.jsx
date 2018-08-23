@@ -33,19 +33,17 @@ class PlansNavigation extends React.Component {
 		cartShowKeepSearching: false,
 	};
 
-	componentWillMount() {
-		this.dispatchToken = Dispatcher.register(
-			function( payload ) {
-				if ( payload.action.type === CART_POPUP_OPEN ) {
-					this.setState( {
-						cartVisible: true,
-						cartShowKeepSearching: payload.action.options.showKeepSearching,
-					} );
-				} else if ( payload.action.type === CART_POPUP_CLOSE ) {
-					this.setState( { cartVisible: false } );
-				}
-			}.bind( this )
-		);
+	componentDidMount() {
+		this.dispatchToken = Dispatcher.register( payload => {
+			if ( payload.action.type === CART_POPUP_OPEN ) {
+				this.setState( {
+					cartVisible: true,
+					cartShowKeepSearching: payload.action.options.showKeepSearching,
+				} );
+			} else if ( payload.action.type === CART_POPUP_CLOSE ) {
+				this.setState( { cartVisible: false } );
+			}
+		} );
 	}
 
 	componentWillUnmount() {

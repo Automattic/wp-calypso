@@ -21,6 +21,7 @@ import DomainRegistrationSuggestion from 'components/domains/domain-registration
 import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import {
 	recordAddDomainButtonClickInMapDomain,
@@ -133,6 +134,33 @@ class MapDomainStep extends React.Component {
 					</div>
 
 					{ this.domainRegistrationUpsell() }
+
+					<div className="map-domain-step__domain-text">
+						{ translate(
+							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider (they'll remind you when it's time.) {{a}}Learn more about adding a domain{{/a}}.",
+							{
+								components: {
+									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+								},
+							}
+						) }
+					</div>
+					<div className="map-domain-step__domain-text">
+						{ translate(
+							"You can transfer your domain's registration to WordPress.com and renew your domain and site from the same place. {{a}}Learn more about domain transfers{{/a}}.",
+							{
+								components: {
+									a: (
+										<a
+											href={ INCOMING_DOMAIN_TRANSFER }
+											rel="noopener noreferrer"
+											target="_blank"
+										/>
+									),
+								},
+							}
+						) }
+					</div>
 				</form>
 			</div>
 		);

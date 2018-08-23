@@ -89,8 +89,12 @@ MediaListStore.ensureActiveQueryForSiteId = function( siteId ) {
 
 function clearSite( siteId ) {
 	delete MediaListStore._media[ siteId ];
-	delete MediaListStore._activeQueries[ siteId ].nextPageHandle;
-	MediaListStore._activeQueries[ siteId ].isFetchingNextPage = false;
+	// Immutable equivalent to `delete MediaListStore._activeQueries[ siteId ].nextPageHandle`.
+	const { nextPageHandle, ...activeQueries } = MediaListStore._activeQueries[ siteId ] || {};
+	MediaListStore._activeQueries[ siteId ] = {
+		...activeQueries,
+		isFetchingNextPage: false,
+	};
 }
 
 function updateActiveQuery( siteId, query ) {

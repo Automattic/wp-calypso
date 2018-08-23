@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**
  * External dependencies
  */
@@ -47,6 +48,8 @@ const isItemUpdating = updatables =>
  */
 const isItemEnqueued = ( updateSlug, updateQueue ) => !! find( updateQueue, { slug: updateSlug } );
 
+const MAX_UPDATED_TO_SHOW = 3;
+
 class ActivityLogTasklist extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -85,6 +88,7 @@ class ActivityLogTasklist extends Component {
 	state = {
 		dismissed: [],
 		queued: [],
+		expandedView: false,
 	};
 
 	/**
@@ -202,6 +206,16 @@ class ActivityLogTasklist extends Component {
 			this.continueQueue
 		);
 	};
+	/**
+	 * Expand the list of updates to show all of them
+	 *
+	 * @param {object} event Synthetic event
+	 */
+	showAllUpdates = event => {
+		recordTracksEvent( 'calypso_activitylog_tasklist_expand_view' );
+		this.setState( { expandedView: true } );
+		event.preventDefault();
+	};
 
 	/**
 	 * Starts the update process for a specified plugin/theme. Displays an informational notice.
@@ -305,6 +319,47 @@ class ActivityLogTasklist extends Component {
 		} );
 	}
 
+	showAllItemsToUpdate( itemsToUpdate ) {
+		// Show if plugin update didn't start, is still running or errored,
+		// but hide plugin if it was updated successfully.
+		return itemsToUpdate.map( item => {
+			return (
+				<ActivityLogTaskUpdate
+					key={ item.slug }
+					toUpdate={ item }
+					name={ item.name }
+					slug={ item.slug }
+					version={ item.version }
+					type={ item.type }
+					linked={ 'core' !== item.type }
+					goToPage={ this.goToPage }
+					siteSlug={ this.props.siteSlug }
+					enqueue={ this.enqueue }
+					dismiss={ this.dismiss }
+					disable={ isItemEnqueued( item.slug, this.state.queued ) }
+				/>
+			);
+		} );
+	}
+
+	showFooterToExpandAll( numberOfUpdates ) {
+		const { translate } = this.props;
+		const updatesHidden = numberOfUpdates - MAX_UPDATED_TO_SHOW;
+		return (
+			<div className="activity-log-tasklist__footer">
+				<span>
+					{ translate( 'One more update available', ' %(updates)s more updates available', {
+						count: updatesHidden,
+						args: { updates: updatesHidden },
+					} ) }
+				</span>
+				<a onClick={ this.showAllUpdates } href="?expandedView">
+					{ translate( 'Show All' ) }
+				</a>
+			</div>
+		);
+	}
+
 	render() {
 		const itemsToUpdate = union(
 			this.props.coreWithUpdate,
@@ -319,6 +374,7 @@ class ActivityLogTasklist extends Component {
 		const { translate } = this.props;
 		const numberOfUpdates = itemsToUpdate.length;
 		const queued = this.state.queued;
+		const showExpandedView = this.state.expandedView || numberOfUpdates <= MAX_UPDATED_TO_SHOW;
 		return (
 			<Card className="activity-log-tasklist" highlight="warning">
 				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
@@ -359,33 +415,10 @@ class ActivityLogTasklist extends Component {
 						</SplitButton>
 					) }
 				</div>
-				{ // Show if plugin update didn't start, is still running or errored,
-				// but hide plugin if it was updated successfully.
-				itemsToUpdate.map( item => {
-					let updateType = translate( 'Plugin update available' );
-					if ( 'theme' === item.type ) {
-						updateType = translate( 'Theme update available' );
-					} else if ( 'core' === item.type ) {
-						updateType = translate( 'Core update available' );
-					}
-					return (
-						<ActivityLogTaskUpdate
-							key={ item.slug }
-							toUpdate={ item }
-							name={ item.name }
-							slug={ item.slug }
-							version={ item.version }
-							type={ item.type }
-							updateType={ updateType }
-							linked={ 'core' !== item.type }
-							goToPage={ this.goToPage }
-							siteSlug={ this.props.siteSlug }
-							enqueue={ this.enqueue }
-							dismiss={ this.dismiss }
-							disable={ isItemEnqueued( item.slug, queued ) }
-						/>
-					);
-				} ) }
+				{ showExpandedView && this.showAllItemsToUpdate( itemsToUpdate ) }
+				{ ! showExpandedView &&
+					this.showAllItemsToUpdate( itemsToUpdate.slice( 0, MAX_UPDATED_TO_SHOW ) ) }
+				{ ! showExpandedView && this.showFooterToExpandAll( numberOfUpdates ) }
 			</Card>
 		);
 	}

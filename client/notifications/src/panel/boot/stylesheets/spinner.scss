@@ -1,0 +1,35 @@
+.wpnc__main {
+  .wpnc__spinner {
+    display: flex;
+    align-items: center;
+    position: relative;
+    top: 50%;
+  }
+
+  @keyframes rotate-spinner {
+    100% {
+      transform: rotate( 360deg );
+    }
+  }
+
+  .wpnc__spinner__outer, .wpnc__spinner__inner {
+    margin: auto;
+    box-sizing: border-box;
+    border: 0.1em solid transparent;
+    border-radius: 50%;
+    animation: 3s linear infinite;
+    animation-name: rotate-spinner;
+  }
+
+  .wpnc__spinner__outer {
+    border-top-color: $blue-medium;
+  }
+
+  .wpnc__spinner__inner {
+    width: 100%;
+    height: 100%;
+    border-top-color: $blue-medium;
+    border-right-color: $blue-medium;
+    opacity: 0.4;
+  }
+}

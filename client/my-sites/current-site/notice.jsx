@@ -138,7 +138,7 @@ class SiteNotice extends React.Component {
 
 		return (
 			<SidebarBanner
-				ctaName="free-to-paid-sidebar"
+				ctaName="active-discount-sidebar"
 				ctaText={ ctaText || 'Upgrade' }
 				href={ `/plans/${ site.slug }?discount=${ name }` }
 				icon="info-outline"

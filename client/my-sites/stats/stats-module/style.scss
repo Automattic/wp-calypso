@@ -1,6 +1,6 @@
 // child components
-@import 'placeholder';
-@import 'expand';
+@import './placeholder.scss';
+@import './expand.scss';
 
 .stats-module {
 	.upgrade-nudge.card {

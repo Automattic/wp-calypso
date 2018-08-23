@@ -5,7 +5,6 @@
  */
 
 import { find } from 'lodash';
-import { fromJS } from 'immutable';
 
 /**
  * Internal dependencies
@@ -73,8 +72,8 @@ export function fromApi( state ) {
 		importerId,
 		importerState: apiToAppState( importStatus ),
 		type: `importer-type-${ type }`,
-		progress: fromJS( progress ),
-		customData: fromJS( generateSourceAuthorIds( customData ) ),
+		progress,
+		customData: generateSourceAuthorIds( customData ),
 		site: { ID: siteId },
 	};
 }

@@ -215,7 +215,7 @@ export default connect(
 		const siteId = get( selectedSite, 'ID', null );
 		const googleAppsUsers = selectedDomainName
 			? getByDomain( state, selectedDomainName )
-			: getBySite( state, selectedSite.ID );
+			: getBySite( state, siteId );
 
 		return {
 			currentUser: getCurrentUser( state ),

@@ -1,9 +1,9 @@
-@import 'content';
-@import 'list-item';
-@import 'list-item-file-details';
-@import 'list-item-video';
-@import 'upload-button';
-@import 'upload-url';
+@import './content.scss';
+@import './list-item.scss';
+@import './list-item-file-details.scss';
+@import './list-item-video.scss';
+@import './upload-button.scss';
+@import './upload-url.scss';
 
 .media-library__header.card {
 	padding-top: 12px;

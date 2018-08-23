@@ -193,7 +193,7 @@ describe( 'premium reducer', () => {
 			expect( state ).to.eql( { 'one.site': siteWithError } );
 		} );
 
-		test( 'should serialize non-error state using identity function', () => {
+		test( 'should serialize non-error state omitting the key', () => {
 			const originalState = deepFreeze( {
 				'one.site': [
 					{
@@ -207,7 +207,17 @@ describe( 'premium reducer', () => {
 			} );
 
 			const nextState = plugins( originalState, { type: SERIALIZE } );
-			expect( nextState ).eql( originalState );
+			expect( nextState ).to.deep.eql( {
+				'one.site': [
+					{
+						slug: 'vaultpress',
+						name: 'VaultPress',
+						/* key is ommited: (key: 'vp-api-key',) */
+						status: 'done',
+						error: null,
+					},
+				],
+			} );
 		} );
 
 		test( 'should serialize just the error for errored plugins', () => {

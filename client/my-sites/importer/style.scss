@@ -50,6 +50,9 @@
 	&.site-importer {
 		background-color: #faad4d;
 	}
+	&.squarespace {
+		background-color: #222;
+	}
 
 	@include breakpoint( '>960px' ) {
 		width: 56px;
@@ -58,7 +61,7 @@
 	}
 }
 
-.importer__service-info {
+.importer-header__service-info {
 	margin-bottom: 1.5em;
 
 	@include breakpoint( '>480px' ) {
@@ -66,7 +69,7 @@
 	}
 }
 
-.importer__service-title {
+.importer-header__service-title {
 	font-size: 21px;
 	font-weight: 300;
 	color: $gray;
@@ -76,7 +79,7 @@
 	}
 }
 
-.importer__master-control {
+.importer-header__action-button {
 	margin-top: 9px;
 	clear: none;
 }
@@ -280,62 +283,9 @@
 
 		padding-left: 30px;
 	}
-
-	.site-importer__site-preview-container {
-		max-width: 60%;
-
-		.site-importer__site-preview-browser-chrome {
-			flex-grow: 0;
-			flex-shrink: 0;
-
-			border-top-left-radius: 10px;
-			border-top-right-radius: 10px;
-
-			background-color: #c6d7e2;
-			color: #9daeb8;
-			height: 35px;
-
-			padding-left: 12px;
-
-			font-size: 14px;
-			letter-spacing: 2px;
-
-			/* Used to center the dots vertically */
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-		}
-
-		.site-importer__site-preview-image {
-			border: 1px solid #c6d7e2;
-
-			&:after {
-				content: '';
-				position: absolute;
-				top: 0;
-				bottom: 0;
-				left: 0;
-				right: 0;
-				background: linear-gradient(
-					to bottom,
-					rgba( 255, 255, 255, 0 ),
-					rgba( 255, 255, 255, 0 ) 50%,
-					rgba( 255, 255, 255, 1 )
-				);
-			}
-		}
-
-		.site-importer__site-preview-favicon {
-			vertical-align: middle;
-		}
-	}
 }
 
 .site-importer__site-preview-overlay-container.isLoading {
-	.site-importer__site-preview-container {
-		visibility: hidden;
-	}
-
 	.site-importer__site-preview-loading-overlay {
 		position: absolute;
 		top: 0;

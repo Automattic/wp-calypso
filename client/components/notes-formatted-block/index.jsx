@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { startsWith } from 'lodash';
 
 export const FormattedBlock = ( { content = {} } ) => {
 	const {
@@ -35,7 +36,10 @@ export const FormattedBlock = ( { content = {} } ) => {
 	switch ( type ) {
 		case 'a':
 		case 'link':
-			return <a href={ content.url }>{ descent }</a>;
+			const url = startsWith( content.url, 'https://wordpress.com/' )
+				? content.url.substr( 21 )
+				: content.url;
+			return <a href={ url }>{ descent }</a>;
 
 		case 'b':
 			return <strong>{ descent }</strong>;

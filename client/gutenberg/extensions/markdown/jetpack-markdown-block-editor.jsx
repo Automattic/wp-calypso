@@ -92,7 +92,7 @@ class JetpackMarkdownBlockEditor extends Component {
 		};
 
 		return (
-			<div>
+			<div className={ className }>
 				<BlockControls>
 					<ButtonGroup>
 						<button

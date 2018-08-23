@@ -108,7 +108,7 @@ export default connect( ( state, props ) => {
 		siteSlug: getSiteSlug( state, props.selectedSiteId ),
 		siteTitle: getSiteTitle( state, props.selectedSiteId ),
 		hasDotComBusiness,
-		inDiscountABTest: 'discount' === abtest( 'gSuiteDiscount' ),
+		inDiscountABTest: 'discount' === abtest( 'gSuiteDiscountV2' ),
 	};
 } )( localize( GsuiteNudge ) );
 

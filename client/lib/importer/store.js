@@ -1,11 +1,8 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import Immutable from 'immutable';
-import { partial } from 'lodash';
+import { get, includes, map, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,7 +32,7 @@ import { createReducerStore } from 'lib/store';
 /**
  * Module variables
  */
-const initialState = Immutable.fromJS( {
+const initialState = Object.freeze( {
 	count: 0,
 	importers: {},
 	importerLocks: {},
@@ -46,168 +43,231 @@ const initialState = Immutable.fromJS( {
 	},
 } );
 
-const equals = ( a, b ) => a === b;
-const increment = a => a + 1;
-
-const removableStates = [ appStates.CANCEL_PENDING, appStates.DEFUNCT ];
-const shouldRemove = importer =>
-	removableStates.some( partial( equals, importer.get( 'importerState' ) ) );
-
-const adjustImporterLock = ( state, { action } ) => {
-	switch ( action.type ) {
-		case IMPORTS_IMPORT_LOCK:
-			return state.setIn( [ 'importerLocks', action.importerId ], true );
-
-		case IMPORTS_IMPORT_UNLOCK:
-			return state.setIn( [ 'importerLocks', action.importerId ], false );
-
-		default:
-			return state;
-	}
-};
+const getImporterItemById = ( state, id ) => get( state, [ 'importers', id ], {} );
 
 const ImporterStore = createReducerStore( function( state, payload ) {
-	let { action } = payload,
-		newState;
+	const { action } = payload;
 
 	switch ( action.type ) {
 		case IMPORTS_STORE_RESET:
 			// this is here to enable
 			// unit-testing the store
-			newState = initialState;
-			break;
+			return initialState;
 
 		case IMPORTS_FETCH:
-			newState = state.setIn( [ 'api', 'isFetching' ], true );
-			break;
+			return {
+				...state,
+				api: {
+					...state.api,
+					isFetching: true,
+				},
+			};
 
 		case IMPORTS_FETCH_FAILED:
-			newState = state
-				.setIn( [ 'api', 'isFetching' ], false )
-				.updateIn( [ 'api', 'retryCount' ], increment );
-			break;
+			return {
+				...state,
+				api: {
+					...state.api,
+					isFetching: false,
+					retryCount: get( state, 'api.retryCount', 0 ) + 1,
+				},
+			};
 
 		case IMPORTS_FETCH_COMPLETED:
-			newState = state
-				.setIn( [ 'api', 'isFetching' ], false )
-				.setIn( [ 'api', 'isHydrated' ], true )
-				.setIn( [ 'api', 'retryCount' ], 0 );
-			break;
+			return {
+				...state,
+				api: {
+					...state.api,
+					isFetching: false,
+					isHydrated: true,
+					retryCount: 0,
+				},
+			};
 
 		case IMPORTS_IMPORT_CANCEL:
 		case IMPORTS_IMPORT_RESET:
-			// Remove the specified importer from the list of current importers
-			newState = state.update( 'importers', importers => {
-				return importers.filterNot(
-					importer => importer.get( 'importerId' ) === action.importerId
-				);
-			} );
-			break;
+			return {
+				...state,
+				importers: omit( state.importers, action.importerId ),
+			};
 
-		case IMPORTS_UPLOAD_FAILED:
-			newState = state
-				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOAD_FAILURE )
-				.setIn( [ 'importers', action.importerId, 'errorData' ], {
-					type: 'uploadError',
-					description: action.error,
-				} );
-			break;
+		case IMPORTS_UPLOAD_FAILED: {
+			const { importerId } = action;
+			const importerItem = getImporterItemById( state, importerId );
 
+			return {
+				...state,
+				importers: {
+					...state.importers,
+					[ importerId ]: {
+						...importerItem,
+						importerState: appStates.UPLOAD_FAILURE,
+						errorData: {
+							type: 'uploadError',
+							description: action.error,
+						},
+					},
+				},
+			};
+		}
 		case IMPORTS_UPLOAD_COMPLETED:
-			newState = state
-				.deleteIn( [ 'importers' ], action.importerId )
-				.setIn(
-					[ 'importers', action.importerStatus.importerId ],
-					Immutable.fromJS( action.importerStatus )
-				);
-			break;
+			return {
+				...state,
+				importers: {
+					...omit( state.importers, action.importerId ),
+					[ action.importerStatus.importerId ]: action.importerStatus,
+				},
+			};
 
-		case IMPORTS_AUTHORS_START_MAPPING:
-			newState = state.setIn(
-				[ 'importers', action.importerId, 'importerState' ],
-				appStates.MAP_AUTHORS
-			);
-			break;
+		case IMPORTS_AUTHORS_START_MAPPING: {
+			const { importerId } = action;
+			const importerItem = getImporterItemById( state, importerId );
 
-		case IMPORTS_AUTHORS_SET_MAPPING:
-			newState = state.updateIn(
-				[ 'importers', action.importerId, 'customData', 'sourceAuthors' ],
-				authors =>
-					authors.map( author => {
-						if ( action.sourceAuthor.id !== author.get( 'id' ) ) {
-							return author;
-						}
+			return {
+				...state,
+				importers: {
+					...state.importers,
+					[ importerId ]: {
+						...importerItem,
+						importerState: appStates.MAP_AUTHORS,
+					},
+				},
+			};
+		}
+		case IMPORTS_AUTHORS_SET_MAPPING: {
+			const { importerId, sourceAuthor, targetAuthor } = action;
+			const importerItem = getImporterItemById( state, importerId );
 
-						return author.set( 'mappedTo', action.targetAuthor );
-					} )
-			);
-			break;
+			return {
+				...state,
+				importers: {
+					...state.importers,
+					[ importerId ]: {
+						...importerItem,
+						customData: {
+							...importerItem.customData,
+							sourceAuthors: map(
+								get( importerItem, 'customData.sourceAuthors' ),
+								author =>
+									sourceAuthor.id === author.id
+										? {
+												...author,
+												mappedTo: targetAuthor,
+										  }
+										: author
+							),
+						},
+					},
+				},
+			};
+		}
+		case IMPORTS_IMPORT_RECEIVE: {
+			const newState = {
+				...state,
+				api: {
+					...state.api,
+					isHydrated: true,
+				},
+			};
+			const importerId = get( action, 'importerStatus.importerId' );
 
-		case IMPORTS_IMPORT_RECEIVE:
-			newState = state.setIn( [ 'api', 'isHydrated' ], true );
-
-			if ( newState.getIn( [ 'importerLocks', action.importerStatus.importerId ], false ) ) {
-				break;
+			if ( get( newState, [ 'importerLocks', importerId ] ) ) {
+				return newState;
 			}
 
-			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
-				newState = newState.deleteIn( [ 'importers', action.importerStatus.importerId ] );
-				break;
-			}
+			const activeImporters = omitBy(
+				{
+					// filter the original set of importers...
+					...newState.importers,
+					// ...and the importer being received.
+					[ importerId ]: action.importerStatus,
+				},
+				importer =>
+					includes( [ appStates.CANCEL_PENDING, appStates.DEFUNCT ], importer.importerState )
+			);
 
-			newState = newState
-				.setIn(
-					[ 'importers', action.importerStatus.importerId ],
-					Immutable.fromJS( action.importerStatus )
-				)
-				.update( 'importers', importers => importers.filterNot( shouldRemove ) );
-			break;
-
+			return {
+				...newState,
+				importers: activeImporters,
+			};
+		}
 		case IMPORTS_UPLOAD_SET_PROGRESS:
-			newState = state.setIn(
-				[ 'importers', action.importerId, 'percentComplete' ],
-				( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100
-			);
-			break;
+			return {
+				...state,
+				importers: {
+					...state.importers,
+					[ action.importerId ]: {
+						...getImporterItemById( state, action.importerId ),
+						percentComplete:
+							( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100,
+					},
+				},
+			};
 
 		case IMPORTS_IMPORT_START:
-			const newImporter = Immutable.fromJS( {
-				importerId: action.importerId,
-				type: action.importerType,
-				importerState: appStates.READY_FOR_UPLOAD,
-				site: { ID: action.siteId },
-			} );
-
-			newState = state
-				.update( 'count', count => count + 1 )
-				.setIn( [ 'importers', action.importerId ], newImporter );
-			break;
+			return {
+				...state,
+				count: get( state, 'count', 0 ) + 1,
+				importers: {
+					...state.importers,
+					[ action.importerId ]: {
+						importerId: action.importerId,
+						type: action.importerType,
+						importerState: appStates.READY_FOR_UPLOAD,
+						site: { ID: action.siteId },
+					},
+				},
+			};
 
 		case IMPORTS_START_IMPORTING:
-			newState = state.setIn(
-				[ 'importers', action.importerId, 'importerState' ],
-				appStates.IMPORTING
-			);
-			break;
+			return {
+				...state,
+				importers: {
+					...state.importers,
+					[ action.importerId ]: {
+						...getImporterItemById( state, action.importerId ),
+						importerState: appStates.IMPORTING,
+					},
+				},
+			};
 
 		case IMPORTS_UPLOAD_START:
-			newState = state
-				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOADING )
-				.setIn( [ 'importers', action.importerId, 'filename' ], action.filename );
-			break;
+			return {
+				...state,
+				importers: {
+					...state.importers,
+					[ action.importerId ]: {
+						...getImporterItemById( state, action.importerId ),
+						importerState: appStates.UPLOADING,
+						filename: action.filename,
+					},
+				},
+			};
 
-		default:
-			newState = state;
-			break;
+		case IMPORTS_IMPORT_LOCK:
+			return {
+				...state,
+				importerLocks: {
+					...state.importerLocks,
+					[ action.importerId ]: true,
+				},
+			};
+
+		case IMPORTS_IMPORT_UNLOCK:
+			return {
+				...state,
+				importerLocks: {
+					...state.importerLocks,
+					[ action.importerId ]: false,
+				},
+			};
 	}
 
-	newState = adjustImporterLock( newState, payload );
-
-	return newState;
+	return state;
 }, initialState );
 
 export function getState() {
-	return ImporterStore.get().toJS();
+	return ImporterStore.get();
 }
 
 export default ImporterStore;

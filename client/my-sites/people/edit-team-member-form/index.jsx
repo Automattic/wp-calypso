@@ -27,6 +27,7 @@ import PeopleLogStore from 'lib/people/log-store';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'state/sites/selectors';
 import EditUserForm from './edit-user-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 
 export class EditTeamMemberForm extends Component {
 	constructor( props ) {
@@ -128,16 +129,12 @@ export class EditTeamMemberForm extends Component {
 
 	goBack = () => {
 		this.props.recordGoogleEvent( 'People', 'Clicked Back Button on User Edit' );
+		if ( this.props.previousRoute ) {
+			page.back( this.props.previousRoute );
+			return;
+		}
 		if ( this.props.siteSlug ) {
-			const teamBack = '/people/team/' + this.props.siteSlug,
-				readersBack = '/people/readers/' + this.props.siteSlug;
-			if ( this.props.prevPath === teamBack ) {
-				page.back( teamBack );
-			} else if ( this.props.prevPath === readersBack ) {
-				page.back( readersBack );
-			} else {
-				page( teamBack );
-			}
+			page( '/people/team/' + this.props.siteSlug );
 			return;
 		}
 		page( '/people/team' );
@@ -187,6 +184,7 @@ export default connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			previousRoute: getPreviousRoute( state ),
 		};
 	},
 	{ recordGoogleEvent }
