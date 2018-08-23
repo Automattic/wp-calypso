@@ -52,6 +52,7 @@ class InlineHelp extends Component {
 
 	state = {
 		showInlineHelp: false,
+		showChecklistNotification: false,
 	};
 
 	componentDidMount() {
@@ -84,28 +85,28 @@ class InlineHelp extends Component {
 
 	toggleInlineHelp = () => {
 		const { showInlineHelp } = this.state;
+
 		if ( showInlineHelp ) {
 			this.closeInlineHelp();
+			this.showChecklistNotification();
 		} else {
 			this.showInlineHelp();
+			this.hideChecklistNotification();
 		}
 	};
 
-	checklistActive = () => {
-		const { showInlineHelp } = this.state;
+	hideChecklistNotification = () => {
+		this.setState( { showChecklistNotification: false } );
+	};
+
+	showChecklistNotification = () => {
 		const totalTasks = tasks.length;
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
 		const isChecklistPage = startsWith( page.current, '/checklist/' );
 
-		if (
-			totalTasks &&
-			! isAtomicSite &&
-			! isJetpackSite &&
-			! showInlineHelp &&
-			! isChecklistPage
-		) {
-			return true;
+		if ( totalTasks && ! isAtomicSite && ! isJetpackSite && ! isChecklistPage ) {
+			this.setState( { showChecklistNotification: true } );
 		}
 	};
 
@@ -154,11 +155,17 @@ class InlineHelp extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
+		const {
+			showInlineHelp,
+			showChecklistNotification,
+			showDialog,
+			videoLink,
+			dialogType,
+		} = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': showInlineHelp,
-			'has-notification': this.checklistActive(),
+			'has-notification': showChecklistNotification,
 		};
 
 		/* @TODO: This class is not valid and this tricks the linter
