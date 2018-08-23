@@ -204,6 +204,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false, styleNamespac
 					// When styles-namespacing is enabled, these files are handled by separate loader below
 					...( styleNamespace ? { exclude: styleNamespaceDirectories } : {} ),
 				},
+				// Prepend namespace to CSS styles
 				styleNamespace && {
 					test: /\.(sc|sa|c)ss$/,
 					include: styleNamespaceDirectories,
@@ -211,10 +212,33 @@ function getWebpackConfig( { externalizeWordPressPackages = false, styleNamespac
 						...preSassLoaders,
 						{
 							loader: 'namespace-css-loader',
-							options: `.${ styleNamespace }`,
+							options: `[data-${ styleNamespace }]`,
 						},
 						sassLoader,
 					],
+				},
+				// Inject namespace to JSX tags
+				styleNamespace && {
+					test: /\.jsx?$/,
+					include: styleNamespaceDirectories,
+					loader: 'babel-loader',
+					options: {
+						...babelLoader.options,
+						plugins: [
+							[
+								path.join(
+									__dirname,
+									'server',
+									'bundler',
+									'babel',
+									'babel-plugin-transform-add-namespace'
+								),
+								{
+									namespace: `data-${ styleNamespace }`,
+								}
+							]
+						],
+					},
 				},
 				{
 					test: /extensions[\/\\]index/,
