@@ -44,6 +44,10 @@ export default class AsyncLoad extends Component {
 		if ( this.props.require !== prevProps.require ) {
 			this.require();
 		}
+
+		if ( this.props.callback && this.state.component ) {
+			this.props.callback( this.state.component );
+		}
 	}
 
 	require() {
@@ -58,7 +62,6 @@ export default class AsyncLoad extends Component {
 
 	render() {
 		if ( this.props.callback && this.state.component ) {
-			this.props.callback( this.state.component );
 			return null;
 		}
 
