@@ -6,13 +6,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
 import getColorSchemesData from './constants';
 import FormRadiosBar from 'components/forms/form-radios-bar';
 
@@ -54,11 +54,15 @@ const saveColorSchemePreference = ( preference, temporarySelection ) =>
 		? setPreference( 'colorScheme', preference )
 		: savePreference( 'colorScheme', preference );
 
+const ColorSchemePickerWithData = withSelect( select => {
+	const { getPreference } = select( 'calypso' );
+	return {
+		colorSchemePreference: getPreference( 'colorScheme' ),
+	};
+} )( ColorSchemePicker );
+
+// TODO: Remove this connect altogether after adding `withDispatch` for the actions.
 export default connect(
-	state => {
-		return {
-			colorSchemePreference: getPreference( state, 'colorScheme' ),
-		};
-	},
+	() => ( {} ),
 	{ saveColorSchemePreference }
-)( ColorSchemePicker );
+)( ColorSchemePickerWithData );

@@ -8,6 +8,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { CalypsoWPDataProvider } from 'state/wp-data';
 
 export default class RootChild extends React.Component {
 	static contextTypes = {
@@ -46,7 +47,13 @@ export default class RootChild extends React.Component {
 		// Context is lost when creating a new render hierarchy, so ensure that
 		// we preserve the context that we care about
 		if ( this.context.store ) {
-			content = <ReduxProvider store={ this.context.store }>{ content }</ReduxProvider>;
+			content = (
+				<ReduxProvider store={ this.context.store }>
+					<CalypsoWPDataProvider calypsoStore={ this.context.store }>
+						{ content }
+					</CalypsoWPDataProvider>
+				</ReduxProvider>
+			);
 		}
 
 		ReactDom.render( content, this.container );
