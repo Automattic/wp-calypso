@@ -54,6 +54,7 @@ export function connectedApplications( context, next ) {
 			<AsyncLoad
 				require="state/connected-applications/reducer"
 				callback={ reducer => requireReducer( context.store, 'connectedApplications', reducer ) }
+				placeholder={ null }
 			/>
 			<ConnectedAppsComponent userSettings={ userSettings } path={ context.path } />
 		</>
