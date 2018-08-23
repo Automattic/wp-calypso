@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,5 +86,5 @@ export const getImmediateLoginLocale = state => {
  *                  login attempt was made from a manual renewal email
  */
 export const wasManualRenewalImmediateLoginAttempted = state => {
-	return REASONS_FOR_MANUAL_RENEWAL.indexOf( getImmediateLoginReason( state ) ) !== -1;
+	return includes( REASONS_FOR_MANUAL_RENEWAL, getImmediateLoginReason( state ) );
 };

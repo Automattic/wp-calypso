@@ -3,7 +3,12 @@
 /**
  * External dependencies
  */
+import { includes } from 'lodash';
 import { translate } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
+ */
 import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
 /**
@@ -36,7 +41,7 @@ export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
  * @return {string}              - Message to show to user
  */
 export const createImmediateLoginMessage = ( loginReason, email ) => {
-	if ( REASONS_FOR_MANUAL_RENEWAL.indexOf( loginReason ) !== -1 ) {
+	if ( includes( REASONS_FOR_MANUAL_RENEWAL, loginReason ) ) {
 		return translate(
 			'We logged you in as %(email)s so you can update your payment details and renew your subscription.',
 			{
