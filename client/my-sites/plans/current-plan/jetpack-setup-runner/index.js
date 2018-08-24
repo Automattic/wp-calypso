@@ -14,6 +14,7 @@ import { get } from 'lodash';
 import DoPluginSetup, { ENGINE_STATE_DONE_SUCCESS } from './do-plugin-setup';
 import getPluginKey from 'state/selectors/get-plugin-key';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
+import versionCompare from 'lib/version-compare';
 import wpcom from 'lib/wp';
 import { getPluginOnSite } from 'state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -90,7 +91,42 @@ class JetpackSetupRunner extends PureComponent {
 	}
 
 	provisionVaultpressKey() {
-		debug( 'Provision VP (not implemented)' );
+		if ( this.props.vaultpressVersion && this.props.keyVaultpress ) {
+			this.setState(
+				{
+					vaultpressKeyProvisioning: KEY_PROVISION_STATE_IN_PROGRESS,
+				},
+				async () => {
+					// VP 1.8.4+ expects a different format for this option.
+					const option_value = versionCompare( this.props.vaultpressVersion, '1.8.3', '>' )
+						? JSON.stringify( {
+								action: 'register',
+								key: this.props.keyVaultpress,
+						  } )
+						: this.props.keyVaultpress;
+					try {
+						const result = await wpcom
+							.undocumented()
+							.site( this.props.siteId )
+							.setOption( {
+								option_name: 'vaultpress_auto_register',
+								option_value,
+								site_option: false,
+								is_array: false,
+							} );
+						this.setState( {
+							vaultpressKeyProvisioning: KEY_PROVISION_STATE_DONE,
+						} );
+						debug( 'VaultPress provision success: %o', result );
+					} catch ( err ) {
+						this.setState( {
+							vaultpressKeyProvisioning: KEY_PROVISION_STATE_FAIL,
+						} );
+						debug( 'VaultPress provision error: %o', err );
+					}
+				}
+			);
+		}
 	}
 
 	/**
