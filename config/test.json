@@ -17,6 +17,8 @@
 	"google_analytics_key": "UA-10673494-15",
 	"google_adwords_conversion_id": 1067250390,
 	"google_adwords_conversion_id_jetpack": 937115306,
+	"google_adwords_signup_conversion_id": 1067250390,
+	"google_adwords_signup_conversion_id_jetpack": 937115306,
 	"hotjar_enabled": true,
 	"signup_url": "/start",
 	"login_url": "https://wordpress.com/wp-login.php",
