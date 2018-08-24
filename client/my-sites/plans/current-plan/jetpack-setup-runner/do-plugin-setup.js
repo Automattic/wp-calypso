@@ -257,16 +257,8 @@ class PluginInstaller extends Component {
 		}
 	};
 
-	doneFailure = () => {
-		this.destroyUpdateTimer();
-	};
-
-	doneSuccess = () => {
-		this.setState( {
-			engineState: 'IDLE',
-		} );
-		this.destroyUpdateTimer();
-	};
+	doneFailure = this.destroyUpdateTimer;
+	doneSuccess = this.destroyUpdateTimer;
 
 	updateEngine = () => {
 		debug( 'Engine state: %o', this.state.engineState );
