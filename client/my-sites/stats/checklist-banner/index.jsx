@@ -21,7 +21,7 @@ import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getTaskUrls, launchTask, getTasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
