@@ -19,10 +19,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 		pluginSlug,
 		themeSlug,
 		themeUri,
-		intent,
-		section,
 	} = content;
-	const { activity } = meta;
+	const { activity, intent, section } = meta;
 
 	if ( 'string' === typeof content ) {
 		return content;
@@ -80,8 +78,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 					href={ `/people/edit/${ siteId }/${ name }` }
 					onClick={ onClick }
 					data-activity={ activity }
-					data-section={ section }
-					data-intent={ intent }
+					data-section="users"
+					data-intent="edit"
 				>
 					<strong>{ descent }</strong>
 				</a>
@@ -93,8 +91,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 					href={ `/plugins/${ pluginSlug }/${ siteSlug }` }
 					onClick={ onClick }
 					data-activity={ activity }
-					data-section={ section }
-					data-intent={ intent }
+					data-section="plugins"
+					data-intent="view"
 				>
 					{ descent }
 				</a>
@@ -123,8 +121,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 						href={ `/theme/${ themeSlug }/${ siteSlug }` }
 						onClick={ onClick }
 						data-activity={ activity }
-						data-section={ section }
-						data-intent={ intent }
+						data-section="themes"
+						data-intent="view"
 					>
 						{ descent }
 					</a>
@@ -138,8 +136,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 					rel="noopener noreferrer"
 					onClick={ onClick }
 					data-activity={ activity }
-					data-section={ section }
-					data-intent={ intent }
+					data-section="themes"
+					data-intent="view"
 				>
 					{ descent }
 				</a>
