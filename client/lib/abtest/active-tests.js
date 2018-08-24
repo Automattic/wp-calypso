@@ -1,7 +1,7 @@
 /** @format */
 export default {
 	themesNudgesUpdates: {
-		datestamp: '20180827',
+		datestamp: '20180824',
 		variations: {
 			test: 50,
 			control: 50,
