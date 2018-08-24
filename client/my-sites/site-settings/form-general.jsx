@@ -37,29 +37,10 @@ import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { preventWidows } from 'lib/formatting';
-import scrollTo from 'lib/scroll-to';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentWillMount() {
 		this._showWarning( this.props.site );
-	}
-
-	componentDidMount() {
-		// Wait for page.js to update the URL, then see if we are linking
-		// directly to a section of this page.
-		setTimeout( () => {
-			if ( ! window || ! window.location ) {
-				// This code breaks everything in the tests (they hang with no
-				// error message).
-				return;
-			}
-			const hash = window.location.hash;
-			const el = hash && document.getElementById( hash.substring( 1 ) );
-			if ( hash && el ) {
-				const y = el.offsetTop - document.getElementById( 'header' ).offsetHeight - 15;
-				scrollTo( { y } );
-			}
-		} );
 	}
 
 	onTimezoneSelect = timezone => {

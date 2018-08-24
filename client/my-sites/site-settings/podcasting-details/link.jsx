@@ -32,7 +32,7 @@ class PodcastingLink extends Component {
 
 		return (
 			<div className={ classes }>
-				<SectionHeader label={ translate( 'Podcasting' ) } />
+				<SectionHeader label={ translate( 'Podcasting' ) } id="site-podcasting-settings" />
 				<Card className="podcasting-details__link-card">{ this.renderCardBody() }</Card>
 			</div>
 		);

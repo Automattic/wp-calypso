@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import page from 'page';
 import { parse } from 'qs';
@@ -26,6 +25,7 @@ import { getSections } from 'sections-helper';
 import { checkFormHandler } from 'lib/protect-form';
 import notices from 'notices';
 import authController from 'auth/controller';
+import scrollTo from 'lib/scroll-to';
 
 const debug = debugFactory( 'calypso' );
 
@@ -153,6 +153,24 @@ const unsavedFormsMiddleware = () => {
 	page.exit( '*', checkFormHandler );
 };
 
+const navigateByHash = () => {
+	// Note: must come after setupContextMiddleware which sets
+	// context.hashstring
+	page( '*', ( context, next ) => {
+		if ( context.hashstring && document ) {
+			const el = document.getElementById( context.hashstring );
+			debug( 'navigateByHash', context.hashstring, { el } );
+			const header = document.getElementById( 'header' );
+			if ( el && header ) {
+				const y = el.offsetTop - header.offsetHeight - 15;
+				scrollTo( { y } );
+				debug( 'navigateByHash', context.hashstring, { el, y } );
+			}
+		}
+		next();
+	} );
+};
+
 export const locales = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso locales.' );
 
@@ -221,4 +239,5 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	setRouteMiddleware();
 	clearNoticesMiddleware();
 	unsavedFormsMiddleware();
+	navigateByHash();
 };
