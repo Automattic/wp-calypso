@@ -10,12 +10,18 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import DoPluginSetup from './do-plugin-setup';
+import DoPluginSetup, { ENGINE_STATE_DONE_SUCCESS } from './do-plugin-setup';
 import getPluginKey from 'state/selectors/get-plugin-key';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
+import wpcom from 'lib/wp';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-unused-vars
+const debug = debugFactory( 'calypso:plugin-setup' );
+
+const KEY_PROVISION_STATE_DONE = 'KPS_DONE';
+const KEY_PROVISION_STATE_FAIL = 'KPS_FAIL';
+const KEY_PROVISION_STATE_IDLE = 'KPS_IDLE';
+const KEY_PROVISION_STATE_IN_PROGRESS = 'KPS_IN_PROGRESS';
 
 class JetpackSetupRunner extends PureComponent {
 	static propTypes = {
@@ -24,6 +30,66 @@ class JetpackSetupRunner extends PureComponent {
 		} ),
 		notifyProgress: PropTypes.func,
 	};
+
+	state = {
+		akismetKeyProvisioning: KEY_PROVISION_STATE_IDLE,
+		vaultpressKeyProvisioning: KEY_PROVISION_STATE_IDLE,
+	};
+
+	componentDidUpdate( _, prevState ) {
+		debug( 'Last state:\n%o\n\nThis state:\n%o', prevState, this.state );
+		if ( ENGINE_STATE_DONE_SUCCESS === this.state.engineState ) {
+			// Provision Akismet if it's idle
+			if ( KEY_PROVISION_STATE_IDLE === this.state.akismetKeyProvisioning ) {
+				this.provisionAkismetKey();
+			}
+
+			// Provision Vaultpress if Akismet is finished and it's idle
+			if (
+				KEY_PROVISION_STATE_IDLE === this.state.vaultpressKeyProvisioning &&
+				( KEY_PROVISION_STATE_DONE === this.state.akismetKeyProvisioning ||
+					KEY_PROVISION_STATE_FAIL === this.state.akismetKeyProvisioning )
+			) {
+				this.provisionVaultpressKey();
+			}
+		}
+	}
+
+	provisionAkismetKey() {
+		if ( this.props.keyAkismet ) {
+			this.setState(
+				{
+					akismetKeyProvisioning: KEY_PROVISION_STATE_IN_PROGRESS,
+				},
+				async () => {
+					try {
+						const result = await wpcom
+							.undocumented()
+							.site( this.props.siteId )
+							.setOption( {
+								option_name: 'wordpress_api_key',
+								option_value: this.props.keyAkismet,
+								site_option: false,
+								is_array: false,
+							} );
+						this.setState( {
+							akismetKeyProvisioning: KEY_PROVISION_STATE_DONE,
+						} );
+						debug( 'Akismet provision success: %o', result );
+					} catch ( err ) {
+						this.setState( {
+							akismetKeyProvisioning: KEY_PROVISION_STATE_FAIL,
+						} );
+						debug( 'Akismet provision error: %o', err );
+					}
+				}
+			);
+		}
+	}
+
+	provisionVaultpressKey() {
+		debug( 'Provision VP (not implemented)' );
+	}
 
 	/**
 	 * Handle progress updates and notify parent of progress
