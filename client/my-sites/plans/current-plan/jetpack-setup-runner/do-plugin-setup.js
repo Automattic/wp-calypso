@@ -61,7 +61,7 @@ class PluginInstaller extends Component {
 		}
 	}
 
-	createUpdateTimer = () => {
+	createUpdateTimer() {
 		if ( this.updateTimer ) {
 			return;
 		}
@@ -70,14 +70,14 @@ class PluginInstaller extends Component {
 		this.updateTimer = window.setInterval( () => {
 			this.updateEngine();
 		}, 17 );
-	};
+	}
 
-	destroyUpdateTimer = () => {
+	destroyUpdateTimer() {
 		if ( this.updateTimer ) {
 			window.clearInterval( this.updateTimer );
 			this.updateTimer = null;
 		}
-	};
+	}
 
 	doInitialization = () => {
 		const { requiredPlugins, site, sitePlugins, wporg } = this.props;
