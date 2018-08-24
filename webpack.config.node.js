@@ -133,6 +133,18 @@ const webpackConfig = {
 					},
 				],
 			},
+			{
+				test: /\.(sc|sa|c)ss$/,
+				use: [
+					'css-loader',
+					{
+						loader: 'sass-loader',
+						options: {
+							includePaths: [ path.join( __dirname, 'client' ) ],
+						},
+					},
+				],
+			},
 		],
 	},
 	resolve: {

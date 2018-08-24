@@ -74,6 +74,27 @@ const babelLoader = {
 	},
 };
 
+const preSassLoaders = [
+	MiniCssExtractPlugin.loader,
+	'css-loader',
+	{
+		loader: 'postcss-loader',
+		options: {
+			plugins: _.compact( [ require( 'autoprefixer' ), ! isDevelopment && require( 'cssnano' ) ] ),
+		},
+	},
+];
+
+const sassLoader = {
+	loader: 'sass-loader',
+	options: {
+		includePaths: [ path.join( __dirname, 'client' ) ],
+	},
+};
+
+// When styles-namespacing is enabled, these are the files we want to namespace
+const styleNamespaceDirectories = [ path.join( __dirname, 'client', 'components' ) ];
+
 /**
  * Converts @wordpress require into window reference
  *
@@ -105,14 +126,15 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
- * @param {object}  env                              additional config options
- * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
- * @param {object}  argv                             given by webpack?
+ * `env` params are typically set by files in `bin/sdk/*`
  *
- * @return {object}                                  webpack config
+ * @param {object}  env                               environment options
+ * @param {boolean} env.externalizeWordPressPackages  whether to bundle or extern the `@wordpress/` packages
+ * @param {string}  env.styleNamespace             prefix Calypso component styles with CSS class or ID
+ *
+ * @return {object}                                    webpack config
  */
-// eslint-disable-next-line no-unused-vars
-function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
+function getWebpackConfig( { externalizeWordPressPackages = false, styleNamespace = '' } = {} ) {
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
@@ -154,7 +176,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			// avoids this warning:
 			// https://github.com/localForage/localForage/issues/577
 			noParse: /[\/\\]node_modules[\/\\]localforage[\/\\]dist[\/\\]localforage\.js$/,
-			rules: [
+			rules: _.compact( [
 				{
 					test: /\.jsx?$/,
 					exclude: /node_modules[\/\\](?!notifications-panel)/,
@@ -178,24 +200,20 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 				},
 				{
 					test: /\.(sc|sa|c)ss$/,
+					use: [ ...preSassLoaders, sassLoader ],
+					// When styles-namespacing is enabled, these files are handled by separate loader below
+					...( styleNamespace ? { exclude: styleNamespaceDirectories } : {} ),
+				},
+				styleNamespace && {
+					test: /\.(sc|sa|c)ss$/,
+					include: styleNamespaceDirectories,
 					use: [
-						MiniCssExtractPlugin.loader,
-						'css-loader',
+						...preSassLoaders,
 						{
-							loader: 'postcss-loader',
-							options: {
-								plugins: _.compact( [
-									require( 'autoprefixer' ),
-									! isDevelopment && require( 'cssnano' ),
-								] ),
-							},
+							loader: 'namespace-css-loader',
+							options: `.${ styleNamespace }`,
 						},
-						{
-							loader: 'sass-loader',
-							options: {
-								includePaths: [ path.join( __dirname, 'client' ) ],
-							},
-						},
+						sassLoader,
 					],
 				},
 				{
@@ -244,7 +262,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 						},
 					],
 				},
-			],
+			] ),
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx' ],
