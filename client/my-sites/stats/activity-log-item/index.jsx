@@ -58,10 +58,10 @@ class ActivityLogItem extends Component {
 
 	trackContentLinkClick = ( {
 		target: {
-			dataset: { activity },
+			dataset: { activity, section, intent },
 		},
 	} ) => {
-		const params = { activity };
+		const params = { activity, section, intent };
 		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', params );
 	};
 

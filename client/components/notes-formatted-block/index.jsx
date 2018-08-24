@@ -19,6 +19,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 		pluginSlug,
 		themeSlug,
 		themeUri,
+		intent,
+		section,
 	} = content;
 	const { activity } = meta;
 
@@ -31,7 +33,7 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 	}
 
 	const descent = children.map( ( child, key ) => (
-		<FormattedBlock key={ key } content={ child } onClick={ onClick } />
+		<FormattedBlock key={ key } content={ child } onClick={ onClick } meta={ meta } />
 	) );
 
 	switch ( type ) {
@@ -41,7 +43,13 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 				? content.url.substr( 21 )
 				: content.url;
 			return (
-				<a href={ url } onClick={ onClick } data-activity={ activity }>
+				<a
+					href={ url }
+					onClick={ onClick }
+					data-activity={ activity }
+					data-section={ section }
+					data-intent={ intent }
+				>
 					{ descent }
 				</a>
 			);
@@ -68,7 +76,13 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 
 		case 'person':
 			return (
-				<a href={ `/people/edit/${ siteId }/${ name }` } data-activity={ activity }>
+				<a
+					href={ `/people/edit/${ siteId }/${ name }` }
+					onClick={ onClick }
+					data-activity={ activity }
+					data-section={ section }
+					data-intent={ intent }
+				>
 					<strong>{ descent }</strong>
 				</a>
 			);
@@ -79,6 +93,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 					href={ `/plugins/${ pluginSlug }/${ siteSlug }` }
 					onClick={ onClick }
 					data-activity={ activity }
+					data-section={ section }
+					data-intent={ intent }
 				>
 					{ descent }
 				</a>
@@ -107,6 +123,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 						href={ `/theme/${ themeSlug }/${ siteSlug }` }
 						onClick={ onClick }
 						data-activity={ activity }
+						data-section={ section }
+						data-intent={ intent }
 					>
 						{ descent }
 					</a>
@@ -120,6 +138,8 @@ export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) =>
 					rel="noopener noreferrer"
 					onClick={ onClick }
 					data-activity={ activity }
+					data-section={ section }
+					data-intent={ intent }
 				>
 					{ descent }
 				</a>
