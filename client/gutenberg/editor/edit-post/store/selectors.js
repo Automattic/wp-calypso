@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import createSelector from 'rememo';
-import { get, includes, some } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Returns the current editing mode.
@@ -121,53 +120,4 @@ export function isPluginItemPinned( state, pluginName ) {
 	const pinnedPluginItems = getPreference( state, 'pinnedPluginItems', {} );
 
 	return get( pinnedPluginItems, [ pluginName ], true );
-}
-
-/**
- * Returns the state of legacy meta boxes.
- *
- * @param   {Object} state Global application state.
- * @return {Object}       State of meta boxes.
- */
-export function getMetaBoxes( state ) {
-	return state.metaBoxes;
-}
-
-/**
- * Returns the state of legacy meta boxes.
- *
- * @param {Object} state    Global application state.
- * @param {string} location Location of the meta box.
- *
- * @return {Object} State of meta box at specified location.
- */
-export function getMetaBox( state, location ) {
-	return getMetaBoxes( state )[ location ];
-}
-
-/**
- * Returns true if the post is using Meta Boxes
- *
- * @param  {Object} state Global application state
- * @return {boolean}      Whether there are metaboxes or not.
- */
-export const hasMetaBoxes = createSelector(
-	( state ) => {
-		return some( getMetaBoxes( state ), ( metaBox ) => {
-			return metaBox.isActive;
-		} );
-	},
-	( state ) => [
-		state.metaBoxes,
-	],
-);
-
-/**
- * Returns true if the the Meta Boxes are being saved.
- *
- * @param   {Object}  state Global application state.
- * @return {boolean}       Whether the metaboxes are being saved.
- */
-export function isSavingMetaBoxes( state ) {
-	return state.isSavingMetaBoxes;
 }
