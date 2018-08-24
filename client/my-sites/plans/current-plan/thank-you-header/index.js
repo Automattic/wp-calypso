@@ -52,7 +52,7 @@ export class PlanSetupHeader extends Component {
 				{ /* can be 0 */ isFinite( this.props.progressComplete ) &&
 					/* shouldn't be 0 */ this.props.progressTotal && (
 						<ProgressBar
-							isPlusing
+							isPulsing
 							total={ this.props.progressTotal }
 							value={ this.props.progressComplete }
 						/>
