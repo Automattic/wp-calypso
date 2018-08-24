@@ -20,6 +20,8 @@ import { getSelectedSite } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-unused-vars
 
+export const ENGINE_STATE_ACTIVATE = 'ES_ACTIVATE';
+
 class PluginInstaller extends Component {
 	static propTypes = {
 		site: PropTypes.shape( {
@@ -145,7 +147,7 @@ class PluginInstaller extends Component {
 		if ( toInstall.length ) {
 			engineState = 'INSTALLING';
 		} else if ( toActivate.length ) {
-			engineState = 'ACTIVATING';
+			engineState = ENGINE_STATE_ACTIVATE;
 		}
 
 		this.setState( {
@@ -167,7 +169,7 @@ class PluginInstaller extends Component {
 			// Nothing left to install? Advance to activation step
 			if ( 0 === toInstall.length ) {
 				this.setState( {
-					engineState: 'ACTIVATING',
+					engineState: ENGINE_STATE_ACTIVATE,
 				} );
 				return;
 			}
@@ -282,7 +284,7 @@ class PluginInstaller extends Component {
 			case 'INSTALLING':
 				this.doInstallation();
 				break;
-			case 'ACTIVATING':
+			case ENGINE_STATE_ACTIVATE:
 				this.doActivation();
 				break;
 			case 'DONESUCCESS':
