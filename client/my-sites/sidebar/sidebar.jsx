@@ -200,6 +200,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		if (
+			false && // This test is temporarily disabled until we conclude a few other ones about Oct 7th
 			! isJetpack &&
 			isEnabled( 'upsell/nudge-a-palooza' ) &&
 			canUserUpgradeSite &&
@@ -433,6 +434,7 @@ export class MySitesSidebar extends Component {
 
 		if ( ! canUserUseStore ) {
 			if (
+				false && // This test is temporarily disabled until we conclude a few other ones about Oct 7th
 				! isJetpack &&
 				isEnabled( 'upsell/nudge-a-palooza' ) &&
 				canUserUpgradeSite &&
