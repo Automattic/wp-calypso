@@ -37,6 +37,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import PlanSetupHeader from './plan-setup-header';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -49,7 +50,8 @@ class CurrentPlan extends Component {
 		isExpiring: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
-		isAutomatedTransfer: PropTypes.bool,
+		doPlanSetup: PropTypes.bool,
+		showJetpackChecklist: PropTypes.bool,
 	};
 
 	isLoading() {
@@ -86,11 +88,10 @@ class CurrentPlan extends Component {
 			domains,
 			currentPlan,
 			hasDomainsLoaded,
-			isAutomatedTransfer,
 			isExpiring,
-			isJetpack,
 			path,
 			shouldShowDomainWarnings,
+			showJetpackChecklist,
 			translate,
 		} = this.props;
 
@@ -133,25 +134,26 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				<CurrentPlanHeader
-					selectedSite={ selectedSite }
-					isPlaceholder={ isLoading }
-					title={ title }
-					tagLine={ tagLine }
-					currentPlanSlug={ currentPlanSlug }
-					currentPlan={ currentPlan }
-					isExpiring={ isExpiring }
-					isAutomatedTransfer={ isAutomatedTransfer }
-					includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
-				/>
-				{ isEnabled( 'jetpack/checklist' ) &&
-					isJetpack &&
-					! isAutomatedTransfer && (
-						<Fragment>
-							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-							<JetpackChecklist />
-						</Fragment>
-					) }
+				{ this.props.doPlanSetup && showJetpackChecklist ? (
+					<PlanSetupHeader />
+				) : (
+					<CurrentPlanHeader
+						selectedSite={ selectedSite }
+						isPlaceholder={ isLoading }
+						title={ title }
+						tagLine={ tagLine }
+						currentPlanSlug={ currentPlanSlug }
+						currentPlan={ currentPlan }
+						isExpiring={ isExpiring }
+						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
+					/>
+				) }
+				{ showJetpackChecklist && (
+					<Fragment>
+						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+						<JetpackChecklist />
+					</Fragment>
+				) }
 				<div
 					className={ classNames( 'current-plan__header-text current-plan__text', {
 						'is-placeholder': { isLoading },
@@ -179,12 +181,12 @@ export default connect( state => {
 		selectedSite,
 		selectedSiteId,
 		domains,
-		isAutomatedTransfer,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-		isJetpack,
+		showJetpackChecklist:
+			false === isAutomatedTransfer && isJetpack && isEnabled( 'jetpack/checklist' ),
 	};
 } )( localize( CurrentPlan ) );
