@@ -55,9 +55,10 @@ class PluginInstaller extends Component {
 		this.destroyUpdateTimer();
 	}
 
-	componentDidReceiveProps( prevProps ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( prevProps.siteId !== this.props.siteId ) {
 			this.props.fetchPlugins( [ this.props.siteId ] );
+			this.doInitialization();
 		}
 	}
 
