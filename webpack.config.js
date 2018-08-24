@@ -12,7 +12,8 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
+const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
@@ -112,7 +113,11 @@ const wordpressExternals = ( context, request, callback ) =>
  * @return {object}                                  webpack config
  */
 // eslint-disable-next-line no-unused-vars
-function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
+function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {}, argv ) {
+	cssFilename =
+		cssFilename ||
+		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
@@ -179,21 +184,22 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 				{
 					test: /\.(sc|sa|c)ss$/,
 					use: [
-						MiniCssExtractPlugin.loader,
+						MiniCssExtractPluginWithRTL.loader,
 						'css-loader',
 						{
 							loader: 'postcss-loader',
 							options: {
-								plugins: _.compact( [
-									require( 'autoprefixer' ),
-									! isDevelopment && require( 'cssnano' ),
-								] ),
+								plugins: [ require( 'autoprefixer' ) ],
 							},
 						},
 						{
 							loader: 'sass-loader',
 							options: {
 								includePaths: [ path.join( __dirname, 'client' ) ],
+								data: `@import '${ path.join(
+									__dirname,
+									'assets/stylesheets/shared/_utils.scss'
+								) }';`,
 							},
 						},
 					],
@@ -269,7 +275,13 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
-			new MiniCssExtractPlugin(),
+			new MiniCssExtractPluginWithRTL( {
+				filename: cssFilename,
+				rtlEnabled: true,
+			} ),
+			new WebpackRTLPlugin( {
+				minify: ! isDevelopment,
+			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),

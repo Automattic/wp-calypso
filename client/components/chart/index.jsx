@@ -5,15 +5,18 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop, throttle } from 'lodash';
+import { noop } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import BarContainer from './bar-container';
+import afterLayoutFlush from 'lib/after-layout-flush';
 import { hasTouch } from 'lib/touch-detect';
 import Tooltip from 'components/tooltip';
 import Notice from 'components/notice';
+import isRtlSelector from 'state/selectors/is-rtl';
+import BarContainer from './bar-container';
 
 class Chart extends React.Component {
 	state = {
@@ -33,6 +36,7 @@ class Chart extends React.Component {
 		barClick: PropTypes.func,
 		translate: PropTypes.func,
 		numberFormat: PropTypes.func,
+		isRtl: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -42,7 +46,7 @@ class Chart extends React.Component {
 	};
 
 	componentDidMount() {
-		this.resize = throttle( this.resize, 400 );
+		this.resize = afterLayoutFlush( this.resize );
 		window.addEventListener( 'resize', this.resize );
 
 		const { data, loading } = this.props;
@@ -162,6 +166,7 @@ class Chart extends React.Component {
 					isTouch={ hasTouch() }
 					chartWidth={ width }
 					setTooltip={ this.setTooltip }
+					isRtl={ this.props.isRtl }
 				/>
 				{ isTooltipVisible && (
 					<Tooltip
@@ -179,4 +184,6 @@ class Chart extends React.Component {
 	}
 }
 
-export default localize( Chart );
+export default connect( state => ( {
+	isRtl: isRtlSelector( state ),
+} ) )( localize( Chart ) );

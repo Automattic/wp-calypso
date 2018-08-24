@@ -100,79 +100,8 @@ export function publishSidebarActive( state = false, action ) {
 	return state;
 }
 
-const locations = [
-	'normal',
-	'side',
-	'advanced',
-];
-
-const defaultMetaBoxState = locations.reduce( ( result, key ) => {
-	result[ key ] = {
-		isActive: false,
-	};
-
-	return result;
-}, {} );
-
-/**
- * Reducer keeping track of the meta boxes isSaving state.
- * A "true" value means the meta boxes saving request is in-flight.
- *
- *
- * @param {boolean}  state   Previous state.
- * @param {Object}   action  Action Object.
- * @return {Object}         Updated state.
- */
-export function isSavingMetaBoxes( state = false, action ) {
-	switch ( action.type ) {
-		case 'REQUEST_META_BOX_UPDATES':
-			return true;
-		case 'META_BOX_UPDATES_SUCCESS':
-			return false;
-		default:
-			return state;
-	}
-}
-
-/**
- * Reducer keeping track of the state of each meta box location.
- * This includes:
- *  - isActive: Whether the location is active or not.
- *  - data: The last saved form data for this location.
- *    This is used to check whether the form is dirty
- *    before leaving the page.
- *
- * @param {boolean}  state   Previous state.
- * @param {Object}   action  Action Object.
- * @return {Object}         Updated state.
- */
-export function metaBoxes( state = defaultMetaBoxState, action ) {
-	switch ( action.type ) {
-		case 'INITIALIZE_META_BOX_STATE':
-			return locations.reduce( ( newState, location ) => {
-				newState[ location ] = {
-					...state[ location ],
-					isActive: action.metaBoxes[ location ],
-				};
-				return newState;
-			}, { ...state } );
-		case 'META_BOX_SET_SAVED_DATA':
-			return locations.reduce( ( newState, location ) => {
-				newState[ location ] = {
-					...state[ location ],
-					data: action.dataPerLocation[ location ],
-				};
-				return newState;
-			}, { ...state } );
-		default:
-			return state;
-	}
-}
-
 export default combineReducers( {
 	preferences,
 	panel,
 	publishSidebarActive,
-	metaBoxes,
-	isSavingMetaBoxes,
 } );

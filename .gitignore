@@ -30,11 +30,8 @@ test-results*.xml
 
 /public/*.js
 /public/*.js.map
-/public/style*.css
-/public/style*.css.map
-/public/editor*.css
-/public/directly*.css
-/public/emergent-paywall*.css
+/public/*.css
+/public/*.css.map
 /public/sections/*
 /public/sections-rtl/*
 /public/images/*.svg
