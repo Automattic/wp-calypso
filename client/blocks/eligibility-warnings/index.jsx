@@ -67,10 +67,10 @@ export const EligibilityWarnings = ( {
 
 		if ( 'plugins' === context ) {
 			feature = FEATURE_UPLOAD_PLUGINS;
-			event = 'calypso-plugin-eligibility-upgrade-nudge-upsell';
+			event = 'calypso-plugin-eligibility-upgrade-nudge';
 		} else {
 			feature = FEATURE_UPLOAD_THEMES;
-			event = 'calypso-theme-eligibility-upgrade-nudge-upsell';
+			event = 'calypso-theme-eligibility-upgrade-nudge';
 		}
 		businessUpsellBanner = (
 			<Banner
