@@ -136,6 +136,7 @@
     "mkdirp": "0.5.1",
     "moment": "2.22.2",
     "morgan": "1.9.0",
+    "namespace-css-loader": "0.0.3",
     "node-sass": "4.9.3",
     "notifications-panel": "2.2.3",
     "npm-run-all": "4.1.3",
