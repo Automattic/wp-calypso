@@ -1,5 +1,14 @@
 /** @format */
 export default {
+	themesNudgesUpdates: {
+		datestamp: '20180827',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	nudgeAPalooza: {
 		datestamp: '20180806',
 		variations: {
