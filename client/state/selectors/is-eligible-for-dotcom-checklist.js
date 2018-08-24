@@ -26,7 +26,6 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 	const siteOptions = getSiteOptions( state, siteId );
 	const designType = get( siteOptions, 'design_type' );
 	const createdAt = get( siteOptions, 'created_at' );
-	const initialized = get( siteOptions, 'onboarding_checklist_initialized' );
 	const sitePlan = getCurrentPlan( state, siteId );
 
 	if ( ! config.isEnabled( 'onboarding-checklist' ) ) {
@@ -42,5 +41,5 @@ export default function isEligibleForDotcomChecklist( state, siteId ) {
 		return false;
 	}
 
-	return initialized && 'store' !== designType && sitePlan && ! isBusiness( sitePlan );
+	return 'store' !== designType && sitePlan && ! isBusiness( sitePlan );
 }

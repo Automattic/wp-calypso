@@ -41,7 +41,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'woocommerce_is_active',
 	'jetpack_version',
 	'main_network_site',
-	'onboarding_checklist_initialized',
 	'permalink_structure',
 	'page_on_front',
 	'page_for_posts',
