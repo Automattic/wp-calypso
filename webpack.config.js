@@ -12,7 +12,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin-with-rtl' );
+const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
 const prism = require( 'prismjs' );
@@ -184,7 +184,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				{
 					test: /\.(sc|sa|c)ss$/,
 					use: [
-						MiniCssExtractPlugin.loader,
+						MiniCssExtractPluginWithRTL.loader,
 						'css-loader',
 						{
 							loader: 'postcss-loader',
@@ -275,7 +275,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
-			new MiniCssExtractPlugin( {
+			new MiniCssExtractPluginWithRTL( {
 				filename: cssFilename,
 				rtlEnabled: true,
 			} ),
