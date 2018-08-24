@@ -22,6 +22,7 @@ const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-
 
 export const ENGINE_STATE_ACTIVATE = 'ES_ACTIVATE';
 export const ENGINE_STATE_DONE_FAIL = 'ES_DONE_FAIL';
+export const ENGINE_STATE_DONE_SUCCESS = 'ES_DONE_SUCCESS';
 
 class PluginInstaller extends Component {
 	static propTypes = {
@@ -144,7 +145,7 @@ class PluginInstaller extends Component {
 			}
 		}
 
-		let engineState = 'DONESUCCESS';
+		let engineState = ENGINE_STATE_DONE_SUCCESS;
 		if ( toInstall.length ) {
 			engineState = 'INSTALLING';
 		} else if ( toActivate.length ) {
@@ -215,7 +216,7 @@ class PluginInstaller extends Component {
 			// Nothing left to activate? Advance to done success
 			if ( 0 === toActivate.length ) {
 				this.setState( {
-					engineState: 'DONESUCCESS',
+					engineState: ENGINE_STATE_DONE_SUCCESS,
 				} );
 				return;
 			}
@@ -288,7 +289,7 @@ class PluginInstaller extends Component {
 			case ENGINE_STATE_ACTIVATE:
 				this.doActivation();
 				break;
-			case 'DONESUCCESS':
+			case ENGINE_STATE_DONE_SUCCESS:
 				this.doneSuccess();
 				break;
 			case ENGINE_STATE_DONE_FAIL:
