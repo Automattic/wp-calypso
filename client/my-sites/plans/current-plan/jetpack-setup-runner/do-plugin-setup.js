@@ -24,6 +24,7 @@ export const ENGINE_STATE_ACTIVATE = 'ES_ACTIVATE';
 export const ENGINE_STATE_DONE_FAIL = 'ES_DONE_FAIL';
 export const ENGINE_STATE_DONE_SUCCESS = 'ES_DONE_SUCCESS';
 export const ENGINE_STATE_INITIALIZE = 'ES_INIT';
+export const ENGINE_STATE_INSTALL = 'ES_INSTALL';
 
 class PluginInstaller extends Component {
 	static propTypes = {
@@ -148,7 +149,7 @@ class PluginInstaller extends Component {
 
 		let engineState = ENGINE_STATE_DONE_SUCCESS;
 		if ( toInstall.length ) {
-			engineState = 'INSTALLING';
+			engineState = ENGINE_STATE_INSTALL;
 		} else if ( toActivate.length ) {
 			engineState = ENGINE_STATE_ACTIVATE;
 		}
@@ -284,7 +285,7 @@ class PluginInstaller extends Component {
 			case ENGINE_STATE_INITIALIZE:
 				this.doInitialization();
 				break;
-			case 'INSTALLING':
+			case ENGINE_STATE_INSTALL:
 				this.doInstallation();
 				break;
 			case ENGINE_STATE_ACTIVATE:
