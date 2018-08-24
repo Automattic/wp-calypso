@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import DoPluginSetup from './do-plugin-setup';
+import QueryPluginKeys from 'components/data/query-plugin-keys';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-unused-vars
@@ -42,8 +43,10 @@ class JetpackSetupRunner extends PureComponent {
 	};
 
 	render() {
+		const { siteId } = this.props;
 		return (
 			<>
+				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
 				<DoPluginSetup
 					notifyProgress={ this.handleUpdateProgress }
 					requiredPlugins={ [ 'akismet', 'vaultpress' ] }
