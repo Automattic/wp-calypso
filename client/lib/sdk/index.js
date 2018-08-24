@@ -3,18 +3,16 @@
 /**
  * External dependencies
  */
-import { findDOMNode } from 'react-dom';
+import React from 'react';
 
 const calypsoComponent = WrappedComponent => {
-	return class extends WrappedComponent {
-		componentDidMount() {
-			if ( super.componentDidMount ) {
-				super.componentDidMount();
-			}
-			if ( STYLE_NAMESPACE ) {
-				const node = findDOMNode( this );
-				node.classList.add( STYLE_NAMESPACE );
-			}
+	return class calypsoComponentHOC extends React.Component {
+		render() {
+			return (
+				<div className={ STYLE_NAMESPACE }>
+					<WrappedComponent { ...this.props } />
+				</div>
+			);
 		}
 	};
 };
