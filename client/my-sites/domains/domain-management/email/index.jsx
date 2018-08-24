@@ -49,13 +49,13 @@ class Email extends React.Component {
 			<Main className="domain-management-email" wideLayout={ isPlanFeaturesEnabled() }>
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
-				{ this.headerOrUpgradesNavigation() }
+				{ this.headerOrPlansNavigation() }
 				{ this.content() }
 			</Main>
 		);
 	}
 
-	headerOrUpgradesNavigation() {
+	headerOrPlansNavigation() {
 		if ( this.props.selectedDomainName ) {
 			return (
 				<Header
