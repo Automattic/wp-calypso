@@ -134,7 +134,10 @@ class CurrentPlan extends Component {
 				) }
 
 				{ this.props.showThankYou ? (
-					<PlanSetupHeader />
+					<PlanSetupHeader
+						progressComplete={ /* @TODO (sirreal) hook up progress reporting */ 10 }
+						progressTotal={ 100 }
+					/>
 				) : (
 					<CurrentPlanHeader
 						isPlaceholder={ isLoading }

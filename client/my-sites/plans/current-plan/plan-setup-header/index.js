@@ -2,7 +2,9 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { isFinite } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,7 +14,10 @@ import Card from 'components/card';
 import ProgressBar from 'components/progress-bar';
 
 export class PlanSetupHeader extends Component {
-	static propTypes = {};
+	static propTypes = {
+		progressComplete: PropTypes.number,
+		progressTotal: PropTypes.number,
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -46,7 +51,14 @@ export class PlanSetupHeader extends Component {
 						'We’ve taken the liberty of starting the first two items, since they’re key to your site’s safety: we’re configuring spam filtering and backups for you now. Once that’s done, we can work through the rest of the checklist.'
 					) }
 				</p>
-				<ProgressBar isPlusing total={ 100 } value={ 10 } />
+				{ /* can be 0 */ isFinite( this.props.progressComplete ) &&
+					/* shouldn't be 0 */ this.props.progressTotal && (
+						<ProgressBar
+							isPlusing
+							total={ this.props.progressTotal }
+							value={ this.props.progressComplete }
+						/>
+					) }
 				<div>
 					<a href={ /* @TODO (sirreal) fix this */ document.location.pathname }>
 						{ translate( 'Skip setup. I’ll do this later.' ) }
