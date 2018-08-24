@@ -35,7 +35,7 @@ export default function isEligibleForCheckoutToChecklist( state, siteId, cart ) 
 	}
 
 	return (
-		'blog' === designType &&
+		'store' !== designType &&
 		isNewSite( state, siteId ) &&
 		cartItems.hasPlan( cart ) &&
 		! some( cartItems.getAll( cart ), isDotcomBusinessPlan )
