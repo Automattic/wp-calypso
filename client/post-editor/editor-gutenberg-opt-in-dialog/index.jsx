@@ -38,33 +38,32 @@ class EditorGutenbergOptInDialog extends Component {
 		];
 		return (
 			<Dialog
+				additionalClassNames="editor-gutenberg-opt-in-dialog"
 				isVisible={ isDialogVisible }
 				buttons={ buttons }
-				className="editor-gutenberg-opt-in-dialog"
 				onClose={ this.onCloseDialog }
 			>
-				<div className="editor-gutenberg-opt-in-dialog__left" />
-				<div className="editor-gutenberg-opt-in-dialog__right">
-					<header>
-						<button
-							onClick={ this.onCloseDialog }
-							className="editor-gutenberg-opt-in-dialog__close"
-						>
-							<Gridicon icon="cross" />
-						</button>
-					</header>
-					<h1>{ translate( 'Try out the new building blocks of the web' ) }</h1>
-					<p>
-						{ translate(
-							'A new publishing experience is coming to WordPress. The new editor lets you pick from a growing collection of blocks to build your ideal layout.'
-						) }
-					</p>
-					<p>
-						{ translate(
-							'Be one of the first to try the new editor and help us make it the best publishing experience on the web.'
-						) }
-					</p>
-				</div>
+				<div className="editor-gutenberg-opt-in-dialog__illustration" />
+
+				<header>
+					<button onClick={ this.onCloseDialog } className="editor-gutenberg-opt-in-dialog__close">
+						<Gridicon icon="cross" />
+					</button>
+				</header>
+
+				<h1>{ translate( 'Check out the new building blocks of the web' ) }</h1>
+
+				<p className="editor-gutenberg-opt-in-dialog__subhead">
+					{ translate(
+						'A new publishing experience is coming to WordPress. The new editor lets you pick from a growing collection of blocks to build your ideal layout.'
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'Be one of the first to try the new editor and help us make it the best publishing experience on the web.'
+					) }
+				</p>
 			</Dialog>
 		);
 	}
