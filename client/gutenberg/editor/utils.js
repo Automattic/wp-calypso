@@ -12,7 +12,7 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:gutenberg' );
 
-export const overrideAPIPaths = siteSlug => {
+export const applyMiddlewares = siteSlug => {
 	//make authenticated calls using the WordPress.com REST Proxy
 	//bypassing the apiFetch call that uses window.fetch
 	//first middleware in, last out
