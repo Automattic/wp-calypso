@@ -56,8 +56,13 @@ class ActivityLogItem extends Component {
 
 	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
 
-	trackContentLinkClick = ( { target: { dataset } } ) => {
-		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', dataset );
+	trackContentLinkClick = ( {
+		target: {
+			dataset: { activity },
+		},
+	} ) => {
+		const params = { activity };
+		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', params );
 	};
 
 	renderHeader() {
@@ -134,7 +139,12 @@ class ActivityLogItem extends Component {
 		 * but the index is probably sufficient because these sub-items
 		 * shouldn't be changing. */
 		return activityDescription.map( ( part, i ) => (
-			<FormattedBlock key={ i } content={ part } onClick={ this.trackContentLinkClick } />
+			<FormattedBlock
+				key={ i }
+				content={ part }
+				onClick={ this.trackContentLinkClick }
+				meta={ { activity: activityName } }
+			/>
 		) );
 	}
 

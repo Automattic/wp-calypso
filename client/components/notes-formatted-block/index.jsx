@@ -5,7 +5,7 @@
 import React from 'react';
 import { startsWith } from 'lodash';
 
-export const FormattedBlock = ( { content = {}, onClick = null } ) => {
+export const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) => {
 	const {
 		siteId,
 		children,
@@ -15,12 +15,12 @@ export const FormattedBlock = ( { content = {}, onClick = null } ) => {
 		postId,
 		text = null,
 		type,
-		section,
 		siteSlug,
 		pluginSlug,
 		themeSlug,
 		themeUri,
 	} = content;
+	const { activity } = meta;
 
 	if ( 'string' === typeof content ) {
 		return content;
@@ -41,11 +41,7 @@ export const FormattedBlock = ( { content = {}, onClick = null } ) => {
 				? content.url.substr( 21 )
 				: content.url;
 			return (
-				<a
-					href={ url }
-					onClick={ onClick }
-					data-section={ onClick && section ? section : undefined }
-				>
+				<a href={ url } onClick={ onClick } data-activity={ activity }>
 					{ descent }
 				</a>
 			);
@@ -72,7 +68,7 @@ export const FormattedBlock = ( { content = {}, onClick = null } ) => {
 
 		case 'person':
 			return (
-				<a href={ `/people/edit/${ siteId }/${ name }` }>
+				<a href={ `/people/edit/${ siteId }/${ name }` } data-activity={ activity }>
 					<strong>{ descent }</strong>
 				</a>
 			);
@@ -82,7 +78,7 @@ export const FormattedBlock = ( { content = {}, onClick = null } ) => {
 				<a
 					href={ `/plugins/${ pluginSlug }/${ siteSlug }` }
 					onClick={ onClick }
-					data-section="plugins"
+					data-activity={ activity }
 				>
 					{ descent }
 				</a>
@@ -110,7 +106,7 @@ export const FormattedBlock = ( { content = {}, onClick = null } ) => {
 					<a
 						href={ `/theme/${ themeSlug }/${ siteSlug }` }
 						onClick={ onClick }
-						data-section={ onClick ? 'themes' : undefined }
+						data-activity={ activity }
 					>
 						{ descent }
 					</a>
@@ -123,7 +119,7 @@ export const FormattedBlock = ( { content = {}, onClick = null } ) => {
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ onClick }
-					data-section={ onClick ? 'themes-external' : undefined }
+					data-activity={ activity }
 				>
 					{ descent }
 				</a>
