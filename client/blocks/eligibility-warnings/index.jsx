@@ -63,21 +63,17 @@ export const EligibilityWarnings = ( {
 		const title = translate( 'Business plan required' );
 		const plan = PLAN_BUSINESS;
 		let feature = null;
-		let href = null;
 		let event = null;
 
 		if ( 'plugins' === context ) {
 			feature = FEATURE_UPLOAD_PLUGINS;
-			href = '/feature/plugins/' + siteSlug;
 			event = 'calypso-plugin-eligibility-upgrade-nudge-upsell';
 		} else {
 			feature = FEATURE_UPLOAD_THEMES;
-			href = '/feature/themes/' + siteSlug;
 			event = 'calypso-theme-eligibility-upgrade-nudge-upsell';
 		}
 		businessUpsellBanner = (
 			<Banner
-				href={ href }
 				description={ description }
 				feature={ feature }
 				event={ event }

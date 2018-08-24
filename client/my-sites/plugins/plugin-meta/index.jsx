@@ -558,13 +558,13 @@ export class PluginMeta extends Component {
 	};
 
 	handleUpgradeNudgeClick = () => {
-		const { siteSlug } = this.props;
-		let href = `/plans/${ siteSlug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
+		const { slug } = this.props;
+		let href = `/plans/${ slug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
 		if (
 			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 			abtest( 'pluginsUpsellLandingPage' ) === 'test'
 		) {
-			href = '/feature/plugins/' + siteSlug;
+			href = '/feature/plugins/' + slug;
 		}
 		page.redirect( href );
 	};
