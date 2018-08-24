@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import DoPluginSetup from './do-plugin-setup';
+import getPluginKey from 'state/selectors/get-plugin-key';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -56,4 +57,11 @@ class JetpackSetupRunner extends PureComponent {
 	}
 }
 
-export default connect( state => ( { siteId: getSelectedSiteId( state ) } ) )( JetpackSetupRunner );
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		keyAkismet: getPluginKey( state, siteId, 'akismet' ),
+		keyVaultpress: getPluginKey( state, siteId, 'vaultpress' ),
+		siteId,
+	};
+} )( JetpackSetupRunner );
