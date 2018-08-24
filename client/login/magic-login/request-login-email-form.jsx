@@ -22,6 +22,8 @@ import getMagicLoginRequestEmailError from 'state/selectors/get-magic-login-requ
 import isFetchingMagicLoginEmail from 'state/selectors/is-fetching-magic-login-email';
 import { getRedirectToOriginal } from 'state/login/selectors';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import FormButton from 'components/forms/form-button';
@@ -41,10 +43,15 @@ class RequestLoginEmailForm extends React.Component {
 		redirectTo: PropTypes.string,
 		requestError: PropTypes.string,
 		showCheckYourEmail: PropTypes.bool,
+		userEmail: PropTypes.string,
 
 		// mapped to dispatch
 		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
 		hideMagicLoginRequestNotice: PropTypes.func.isRequired,
+	};
+
+	state = {
+		usernameOrEmail: this.props.userEmail || '',
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -162,6 +169,7 @@ class RequestLoginEmailForm extends React.Component {
 							autoCapitalize="off"
 							autoFocus="true"
 							disabled={ isFetching || emailRequested }
+							value={ usernameOrEmail }
 							name="usernameOrEmail"
 							type="text"
 							ref={ this.saveUsernameOrEmailRef }
@@ -188,6 +196,9 @@ const mapState = state => {
 		requestError: getMagicLoginRequestEmailError( state ),
 		showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 		emailRequested: getMagicLoginRequestedEmailSuccessfully( state ),
+		userEmail:
+			getInitialQueryArguments( state ).email_address ||
+			getCurrentQueryArguments( state ).email_address,
 	};
 };
 
