@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { invoke } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -64,10 +65,11 @@ export class MiniSitePreviewWrapper extends Component {
 
 	render() {
 		const { sitePreviewImage, loadingPreviewImage } = this.state;
+		const { className } = this.props;
 
 		// TODO: Handle error cases
 		return (
-			<div className="mini-site-preview">
+			<div className={ classnames( 'mini-site-preview', className ) }>
 				<div className="mini-site-preview__browser-chrome">
 					<span>● ● ●</span>
 				</div>

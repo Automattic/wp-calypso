@@ -72,6 +72,7 @@ class SiteImporterSitePreview extends React.Component {
 						<div className={ containerClass }>
 							<div className="site-importer__site-preview-column-container">
 								<MiniSitePreview
+									className="site-importer__site-preview"
 									siteURL={ this.state.siteURL }
 									onFetchSuccess={ this.trackSitePreviewSuccess }
 									onFetchError={ this.trackSitePreviewFailure }
