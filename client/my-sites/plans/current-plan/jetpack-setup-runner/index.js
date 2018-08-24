@@ -35,6 +35,7 @@ class JetpackSetupRunner extends PureComponent {
 	 * Adjust progress accordingly.
 	 */
 	handleUpdateProgress = stateUpdate => {
+		this.setState( stateUpdate );
 		if ( 'function' === typeof this.props.notifyProgress ) {
 			this.props.notifyProgress( {
 				...stateUpdate,
