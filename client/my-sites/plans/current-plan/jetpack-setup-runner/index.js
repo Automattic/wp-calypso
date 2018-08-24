@@ -22,7 +22,6 @@ class JetpackSetupRunner extends PureComponent {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
-		requiredPlugins: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		notifyProgress: PropTypes.func,
 	};
 
