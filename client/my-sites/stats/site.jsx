@@ -38,6 +38,7 @@ import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import isGoogleMyBusinessStatsNudgeVisibleSelector from 'state/selectors/is-google-my-business-stats-nudge-visible';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 function updateQueryString( query = {} ) {
 	return {
@@ -151,7 +152,8 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
+					{ config.isEnabled( 'onboarding-checklist' ) &&
+						this.props.showChecklistBanner && <ChecklistBanner siteId={ siteId } /> }
 					{ config.isEnabled( 'google-my-business' ) &&
 						siteId && (
 							<GoogleMyBusinessStatsNudge
@@ -251,6 +253,7 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+
 		return {
 			isJetpack,
 			hasPodcasts:
@@ -264,6 +267,7 @@ export default connect(
 				siteId
 			),
 			siteId,
+			showChecklistBanner: ! isAtomicSite( state, siteId ) && ! isJetpack,
 			slug: getSelectedSiteSlug( state ),
 		};
 	},
