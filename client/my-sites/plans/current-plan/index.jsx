@@ -36,7 +36,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import PlanSetupHeader from './plan-setup-header';
+import ThankYouHeader from './thank-you-header';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -134,7 +134,7 @@ class CurrentPlan extends Component {
 				) }
 
 				{ this.props.showThankYou ? (
-					<PlanSetupHeader
+					<ThankYouHeader
 						progressComplete={ /* @TODO (sirreal) hook up progress reporting */ 10 }
 						progressTotal={ 100 }
 					/>
