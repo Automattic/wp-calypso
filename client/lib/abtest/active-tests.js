@@ -1,7 +1,7 @@
 /** @format */
 export default {
 	pluginsUpsellLandingPage: {
-		datestamp: '20180824',
+		datestamp: '20180827',
 		variations: {
 			test: 50,
 			control: 50,
@@ -10,7 +10,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	themesUpsellLandingPage: {
-		datestamp: '20180824',
+		datestamp: '20180827',
 		variations: {
 			test: 50,
 			control: 50,
