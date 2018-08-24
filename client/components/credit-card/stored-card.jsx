@@ -9,6 +9,27 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
+export const getCreditCardSummary = ( translate, type, digits ) => {
+	const supportedTypes = {
+		amex: translate( 'American Express' ),
+		diners: translate( 'Diners Club' ),
+		discover: translate( 'Discover' ),
+		jcb: translate( 'JCB' ),
+		mastercard: translate( 'Mastercard' ),
+		unionpay: translate( 'UnionPay' ),
+		visa: translate( 'VISA' ),
+	};
+
+	const displayType = supportedTypes[ type && type.toLowerCase() ] || type;
+	if ( ! digits ) {
+		return displayType;
+	}
+
+	return translate( '%(displayType)s ****%(digits)s', {
+		args: { displayType, digits },
+	} );
+};
+
 class StoredCard extends React.Component {
 	static propTypes = {
 		lastDigits: PropTypes.string.isRequired,
@@ -18,7 +39,7 @@ class StoredCard extends React.Component {
 	};
 
 	render() {
-		const { lastDigits, cardType, name, expiry } = this.props;
+		const { lastDigits, cardType, name, expiry, translate } = this.props;
 
 		// The use of `MM/YY` should not be localized as it is an ISO standard across credit card forms: https://en.wikipedia.org/wiki/ISO/IEC_7813
 		const expirationDate = this.props.moment( expiry ).format( 'MM/YY' );
@@ -37,11 +58,11 @@ class StoredCard extends React.Component {
 		return (
 			<div className={ cardClasses }>
 				<span className="credit-card__stored-card-number">
-					{ cardType } ****{ lastDigits }
+					{ getCreditCardSummary( translate, cardType, lastDigits ) }
 				</span>
 				<span className="credit-card__stored-card-name">{ name }</span>
 				<span className="credit-card__stored-card-expiration-date">
-					{ this.props.translate( 'Expires %(date)s', {
+					{ translate( 'Expires %(date)s', {
 						args: { date: expirationDate },
 						context: 'date is of the form MM/YY',
 					} ) }
