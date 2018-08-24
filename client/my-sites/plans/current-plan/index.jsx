@@ -123,7 +123,12 @@ class CurrentPlan extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				{ doPlanSetup && <JetpackSetupRunner notifyProgress={ this.updatePlanSetupProgress } /> }
+				{ doPlanSetup && (
+					<JetpackSetupRunner
+						key={ /* Force remount on site change */ selectedSiteId }
+						notifyProgress={ this.updatePlanSetupProgress }
+					/>
+				) }
 
 				<PlansNavigation path={ path } selectedSite={ selectedSite } />
 

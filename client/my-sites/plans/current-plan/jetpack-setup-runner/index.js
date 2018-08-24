@@ -49,6 +49,7 @@ class JetpackSetupRunner extends PureComponent {
 			<>
 				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
 				<DoPluginSetup
+					key={ /* Force remount on site change */ siteId }
 					notifyProgress={ this.handleUpdateProgress }
 					requiredPlugins={ [ 'akismet', 'vaultpress' ] }
 				/>
