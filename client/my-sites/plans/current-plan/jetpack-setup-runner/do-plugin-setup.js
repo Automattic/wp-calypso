@@ -23,6 +23,7 @@ const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-
 export const ENGINE_STATE_ACTIVATE = 'ES_ACTIVATE';
 export const ENGINE_STATE_DONE_FAIL = 'ES_DONE_FAIL';
 export const ENGINE_STATE_DONE_SUCCESS = 'ES_DONE_SUCCESS';
+export const ENGINE_STATE_INITIALIZE = 'ES_INIT';
 
 class PluginInstaller extends Component {
 	static propTypes = {
@@ -34,7 +35,7 @@ class PluginInstaller extends Component {
 	};
 
 	state = {
-		engineState: 'INITIALIZING',
+		engineState: ENGINE_STATE_INITIALIZE,
 		toActivate: [],
 		toInstall: [],
 		workingOn: '',
@@ -280,7 +281,7 @@ class PluginInstaller extends Component {
 		}
 
 		switch ( this.state.engineState ) {
-			case 'INITIALIZING':
+			case ENGINE_STATE_INITIALIZE:
 				this.doInitialization();
 				break;
 			case 'INSTALLING':
