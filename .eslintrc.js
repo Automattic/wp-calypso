@@ -22,6 +22,8 @@ module.exports = {
 		asyncRequire: true,
 		// this is the name of the project from the build config. Injected at boot in a script tag.
 		PROJECT_NAME: true,
+		// Namespace used to conditionally wrap Calypso components when build using SDK.
+		STYLE_NAMESPACE: true,
 		// this is the SHA of the current commit. Injected at boot in a script tag.
 		COMMIT_SHA: true,
 	},

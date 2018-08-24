@@ -1,6 +1,7 @@
 {
 	"moduleNameMapper": {
-		"^config$": "<rootDir>/server/config/index.js"
+		"^config$": "<rootDir>/server/config/index.js",
+		"\\.(sc|sa|c)ss$": "<rootDir>/test/test/helpers/styles/index.js"
 	},
 	"transform": {
 		"^.+\\.jsx?$": "babel-jest",
