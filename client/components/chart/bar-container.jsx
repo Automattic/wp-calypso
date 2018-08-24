@@ -22,6 +22,7 @@ export default class extends React.Component {
 		yAxisMax: PropTypes.number,
 		width: PropTypes.number,
 		barClick: PropTypes.func,
+		isRtl: PropTypes.bool,
 	};
 
 	buildBars = max => {
@@ -38,6 +39,7 @@ export default class extends React.Component {
 					count={ this.props.data.length }
 					chartWidth={ this.props.chartWidth }
 					setTooltip={ this.props.setTooltip }
+					isRtl={ this.props.isRtl }
 				/>
 			);
 		}, this );
@@ -47,7 +49,7 @@ export default class extends React.Component {
 		return (
 			<div>
 				<div className="chart__bars">{ this.buildBars( this.props.yAxisMax ) }</div>
-				<XAxis data={ this.props.data } labelWidth={ 42 } />
+				<XAxis data={ this.props.data } labelWidth={ 42 } isRtl={ this.props.isRtl } />
 			</div>
 		);
 	}
