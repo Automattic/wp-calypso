@@ -22,8 +22,8 @@ import { CART_POPUP_CLOSE, CART_POPUP_OPEN } from 'lib/upgrades/action-types';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import { isATEnabled } from 'lib/automated-transfer';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite, isJetpackSite } from 'state/sites/selectors';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
@@ -171,8 +171,8 @@ class PlansNavigation extends React.Component {
 }
 
 export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = site ? site.ID : null;
+	const siteId = getSelectedSiteId( state );
+	const site = getSite( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isOnFreePlan = isSiteOnFreePlan( state, siteId );
 	return {
