@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { find } from 'lodash';
+import { find, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -59,6 +59,27 @@ class PluginInstaller extends Component {
 		if ( prevProps.siteId !== this.props.siteId ) {
 			this.props.fetchPlugins( [ this.props.siteId ] );
 			this.doInitialization();
+		}
+
+		/**
+		 * Push relevant state changes up to consumers
+		 */
+		if ( 'function' === typeof this.props.notifyProgress ) {
+			// Update if relevant bit of state has changed
+			if (
+				some(
+					[ 'pendingSteps', 'engineState', 'total', 'workingOn' ],
+					key => prevState[ key ] !== this.state[ key ]
+				)
+			) {
+				const totalSteps = this.props.requiredPlugins.length * 2;
+				this.props.notifyProgress( {
+					complete: totalSteps - this.state.pendingSteps,
+					engineState: this.state.engineState,
+					total: totalSteps,
+					workingOn: this.state.workingOn,
+				} );
+			}
 		}
 	}
 
@@ -262,20 +283,6 @@ class PluginInstaller extends Component {
 	doneSuccess = this.destroyUpdateTimer;
 
 	updateEngine = () => {
-		debug( 'Engine state: %o', this.state.engineState );
-		debug( 'State: %o', this.state );
-		debug( 'Props: %o', this.props );
-
-		if ( 'function' === typeof this.props.notifyProgress ) {
-			const totalSteps = this.props.requiredPlugins.length * 2;
-			this.props.notifyProgress( {
-				complete: totalSteps - this.state.pendingSteps,
-				engineState: this.state.engineState,
-				total: totalSteps,
-				workingOn: this.state.workingOn,
-			} );
-		}
-
 		switch ( this.state.engineState ) {
 			case ENGINE_STATE_INITIALIZE:
 				this.doInitialization();
