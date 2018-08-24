@@ -334,7 +334,7 @@
 .inline-help__checklist-count {
 	padding: 12px 20px 10px 0;
 
-	&:before {
+	&.checklist-count-notification:before {
 		display: inline-block;
 		background-color: $orange-jazzy;
 		content: "";

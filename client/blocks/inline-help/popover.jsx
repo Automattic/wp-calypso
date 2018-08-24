@@ -45,6 +45,7 @@ class InlineHelpPopover extends Component {
 	state = {
 		showSecondaryView: false,
 		activeSecondaryView: '',
+		showChecklistNotification: true,
 	};
 
 	openResultView = event => {
@@ -58,7 +59,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	checklistClicked = () => {
-		this.props.onClose();
+		this.setState( { showChecklistNotification: false } );
 		this.props.recordTracksEvent( 'calypso_inlinehelp_checklist_click' );
 	};
 
@@ -112,6 +113,10 @@ class InlineHelpPopover extends Component {
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
 		const isChecklistPage = startsWith( page.current, '/checklist/' );
+		const inlineHelpButtonClasses = {
+			'checklist-count-notification': this.state.showChecklistNotification,
+			'inline-help__checklist-count': true,
+		};
 
 		const totalTasks = tasks.length;
 		const numComplete = reduce(
@@ -145,7 +150,7 @@ class InlineHelpPopover extends Component {
 						{ translate( 'Continue Site Setup' ) }
 					</span>
 
-					<span className="inline-help__checklist-count">
+					<span className={ classNames( inlineHelpButtonClasses ) }>
 						{ numComplete }/{ totalTasks }
 					</span>
 
