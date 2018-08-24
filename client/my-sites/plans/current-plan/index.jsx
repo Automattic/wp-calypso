@@ -54,8 +54,11 @@ class CurrentPlan extends Component {
 		doPlanSetup: PropTypes.bool,
 	};
 
-	updateProgress = progress => {
-		this.setState( { progress } );
+	updatePlanSetupProgress = ( { completed, total } ) => {
+		this.setState( {
+			completedSetupTasks: completed,
+			totalSetupTasks: total,
+		} );
 	};
 
 	isLoading() {
@@ -120,7 +123,7 @@ class CurrentPlan extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				{ doPlanSetup && <JetpackSetupRunner notifyProgress={ this.updateProgress } /> }
+				{ doPlanSetup && <JetpackSetupRunner notifyProgress={ this.updatePlanSetupProgress } /> }
 
 				<PlansNavigation path={ path } selectedSite={ selectedSite } />
 

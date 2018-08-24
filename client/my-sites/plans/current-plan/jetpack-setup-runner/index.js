@@ -32,9 +32,12 @@ class JetpackSetupRunner extends PureComponent {
 	 *
 	 * Adjust progress accordingly.
 	 */
-	handleUpdateProgress = ( [ progress, totalSteps ] ) => {
+	handleUpdateProgress = stateUpdate => {
 		if ( 'function' === typeof this.props.notifyProgress ) {
-			this.notifyProgress( [ progress, totalSteps + 2 ] );
+			this.props.notifyProgress( {
+				...stateUpdate,
+				total: stateUpdate.total + 2, // Add two tasks for key provisioning
+			} );
 		}
 	};
 
@@ -42,7 +45,7 @@ class JetpackSetupRunner extends PureComponent {
 		return (
 			<>
 				<DoPluginSetup
-					notifyProgress={ this.updateProgress }
+					notifyProgress={ this.handleUpdateProgress }
 					requiredPlugins={ [ 'akismet', 'vaultpress' ] }
 				/>
 			</>
