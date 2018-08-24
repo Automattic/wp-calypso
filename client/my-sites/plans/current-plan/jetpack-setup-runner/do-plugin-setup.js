@@ -269,7 +269,9 @@ class PluginInstaller extends Component {
 			const totalSteps = this.props.requiredPlugins.length * 2;
 			this.props.notifyProgress( {
 				complete: totalSteps - this.state.pendingSteps,
+				engineState: this.state.engineState,
 				total: totalSteps,
+				workingOn: this.state.workingOn,
 			} );
 		}
 
