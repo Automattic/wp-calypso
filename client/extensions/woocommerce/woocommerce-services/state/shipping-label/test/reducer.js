@@ -432,7 +432,7 @@ describe( 'Label purchase form reducer', () => {
 		expect( state[ orderId ].form.packages.selected.weight_0_custom1.weight ).to.eql( 1.63 );
 	} );
 
-	it( 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE updates package signature option', () => {
+	it( 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE updates package signature option and clear rates', () => {
 		const action = {
 			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE,
 			siteId,
@@ -444,5 +444,10 @@ describe( 'Label purchase form reducer', () => {
 
 		expect( state[ orderId ].form.packages.selected.weight_0_custom1.signature ).to.eql( 'yes' );
 		expect( state[ orderId ].form.packages.saved ).to.be.false;
+		expect( state[ orderId ].form.rates.available ).to.be.an( 'object' ).that.is.empty;
+		expect( state[ orderId ].form.rates.values ).to.deep.eql( {
+			weight_0_custom1: '',
+			weight_1_custom1: '',
+		} );
 	} );
 } );
