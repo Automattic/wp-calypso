@@ -21,6 +21,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-unused-vars
 
 export const ENGINE_STATE_ACTIVATE = 'ES_ACTIVATE';
+export const ENGINE_STATE_DONE_FAIL = 'ES_DONE_FAIL';
 
 class PluginInstaller extends Component {
 	static propTypes = {
@@ -199,7 +200,7 @@ class PluginInstaller extends Component {
 		const pluginStatus = pluginsStatus[ this.state.workingOn ];
 		if ( pluginStatus && 'error' === pluginStatus.status ) {
 			this.setState( {
-				engineState: 'DONEFAILURE',
+				engineState: ENGINE_STATE_DONE_FAIL,
 			} );
 		}
 	};
@@ -290,7 +291,7 @@ class PluginInstaller extends Component {
 			case 'DONESUCCESS':
 				this.doneSuccess();
 				break;
-			case 'DONEFAILURE':
+			case ENGINE_STATE_DONE_FAIL:
 				this.doneFailure();
 				break;
 		}
