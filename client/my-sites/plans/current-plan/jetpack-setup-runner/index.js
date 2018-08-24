@@ -6,6 +6,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import DoPluginSetup, { ENGINE_STATE_DONE_SUCCESS } from './do-plugin-setup';
 import getPluginKey from 'state/selectors/get-plugin-key';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import wpcom from 'lib/wp';
+import { getPluginOnSite } from 'state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:plugin-setup' );
@@ -126,9 +128,11 @@ class JetpackSetupRunner extends PureComponent {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
+
 	return {
 		keyAkismet: getPluginKey( state, siteId, 'akismet' ),
 		keyVaultpress: getPluginKey( state, siteId, 'vaultpress' ),
+		vaultpressVersion: get( getPluginOnSite( state, siteId, 'vaultpress' ), [ 'version' ] ),
 		siteId,
 	};
 } )( JetpackSetupRunner );
