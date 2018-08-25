@@ -39,8 +39,8 @@ class JetpackSetupRunner extends PureComponent {
 		vaultpressKeyProvisioning: KEY_PROVISION_STATE_IDLE,
 	};
 
-	componentDidUpdate( _, prevState ) {
-		debug( 'Last state:\n%o\n\nThis state:\n%o', prevState, this.state );
+	componentDidUpdate() {
+		// Wait until the install/activate engine completes
 		if ( ENGINE_STATE_DONE_SUCCESS === this.state.engineState ) {
 			// Provision Akismet if it's idle
 			if ( KEY_PROVISION_STATE_IDLE === this.state.akismetKeyProvisioning ) {
