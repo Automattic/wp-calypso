@@ -8,7 +8,8 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteOption, isNewSite } from 'state/sites/selectors';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { getSiteOption, isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { cartItems } from 'lib/cart-values';
 import { isBusiness, isJetpackPlan } from 'lib/products-values';
 import config from 'config';
@@ -35,6 +36,8 @@ export default function isEligibleForCheckoutToChecklist( state, siteId, cart ) 
 	}
 
 	return (
+		! isJetpackSite( state, siteId ) &&
+		! isAtomicSite( state, siteId ) &&
 		'store' !== designType &&
 		isNewSite( state, siteId ) &&
 		cartItems.hasPlan( cart ) &&
