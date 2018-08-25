@@ -40,7 +40,6 @@ class PluginInstaller extends Component {
 		toActivate: [],
 		toInstall: [],
 		workingOn: '',
-		pendingSteps: 0,
 	};
 
 	updateTimer = null;
@@ -66,17 +65,22 @@ class PluginInstaller extends Component {
 		 */
 		if ( 'function' === typeof this.props.notifyProgress ) {
 			// Update if relevant bit of state has changed
+			const prevPending = prevState.toActivate.length + prevState.toInstall.length;
+			const thisPending = this.state.toActivate.length + this.state.toInstall.length;
+
 			if (
+				prevPending !== thisPending ||
 				some(
-					[ 'pendingSteps', 'engineState', 'total', 'workingOn' ],
+					[ 'engineState', 'total', 'workingOn' ],
 					key => prevState[ key ] !== this.state[ key ]
 				)
 			) {
-				const totalSteps = this.props.requiredPlugins.length * 2;
+				// Each plugin requires 2 steps
+				const total = this.props.requiredPlugins.length * 2;
 				this.props.notifyProgress( {
-					complete: totalSteps - this.state.pendingSteps,
+					complete: total - thisPending,
 					engineState: this.state.engineState,
-					total: totalSteps,
+					total,
 					workingOn: this.state.workingOn,
 				} );
 			}
@@ -178,7 +182,6 @@ class PluginInstaller extends Component {
 
 		this.setState( {
 			engineState,
-			pendingSteps: toActivate.length + toInstall.length,
 			toActivate,
 			toInstall,
 			workingOn: '',
