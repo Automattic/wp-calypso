@@ -415,6 +415,29 @@ textarea {
 			.logo {
 				display: none;
 			}
+
+			// Hide external billing support link.
+			a:last-child {
+				visibility:hidden;
+
+				// Hack to hide last '|' separator
+				&::before {
+					visibility: visible;
+					display: inline-block;
+					margin-left: -8px;
+					width: 8px;
+					height: 12px;
+					content: ' ';
+					background: #fff;
+					margin-bottom: -2px;
+				}
+			}
+
+			// Adjust alignment of first link
+			a:first-of-type {
+				margin-left: 30px
+			}
+
 		}
 	}
 
