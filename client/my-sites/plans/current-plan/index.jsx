@@ -133,12 +133,12 @@ class CurrentPlan extends Component {
 				) }
 
 				<CurrentPlanHeader
-					selectedSite={ selectedSite }
 					isPlaceholder={ isLoading }
 					title={ title }
 					tagLine={ tagLine }
 					currentPlan={ currentPlan }
 					isExpiring={ isExpiring }
+					siteSlug={ selectedSite ? selectedSite.slug : null }
 				/>
 				{ isEnabled( 'jetpack/checklist' ) &&
 					isJetpack &&

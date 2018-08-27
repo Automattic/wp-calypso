@@ -19,7 +19,7 @@ import { managePurchase } from 'me/purchases/paths';
 
 export class CurrentPlanHeader extends Component {
 	static propTypes = {
-		selectedSite: PropTypes.object,
+		siteSlug: PropTypes.string,
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
 		isPlaceholder: PropTypes.bool,
@@ -29,7 +29,7 @@ export class CurrentPlanHeader extends Component {
 	};
 
 	renderPurchaseInfo() {
-		const { currentPlan, selectedSite, isExpiring, translate } = this.props;
+		const { currentPlan, siteSlug, isExpiring, translate } = this.props;
 
 		if ( ! currentPlan || isFreeJetpackPlan( currentPlan ) ) {
 			return null;
@@ -54,9 +54,8 @@ export class CurrentPlanHeader extends Component {
 					</span>
 					{ currentPlan.userIsOwner &&
 						currentPlan.id &&
-						selectedSite &&
-						selectedSite.slug && (
-							<Button compact href={ managePurchase( selectedSite.slug, currentPlan.id ) }>
+						siteSlug && (
+							<Button compact href={ managePurchase( siteSlug, currentPlan.id ) }>
 								{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
 							</Button>
 						) }
@@ -66,7 +65,7 @@ export class CurrentPlanHeader extends Component {
 	}
 
 	render() {
-		const { currentPlan, isPlaceholder, selectedSite, tagLine, title, translate } = this.props;
+		const { currentPlan, isPlaceholder, siteSlug, tagLine, title, translate } = this.props;
 
 		const currentPlanSlug = currentPlan && currentPlan.productSlug;
 
@@ -98,12 +97,9 @@ export class CurrentPlanHeader extends Component {
 					{ this.renderPurchaseInfo() }
 					{ currentPlan &&
 						isFreeJetpackPlan( currentPlan ) &&
-						selectedSite &&
-						selectedSite.slug && (
+						siteSlug && (
 							<div className="current-plan__compare-plans">
-								<Button href={ '/plans/' + selectedSite.slug }>
-									{ translate( 'Compare Plans' ) }
-								</Button>
+								<Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
 							</div>
 						) }
 				</div>
