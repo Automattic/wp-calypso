@@ -39,7 +39,7 @@ class ImportURLStepComponent extends Component {
 		const urlFromQueryArg = normalizeUrlForImportSource( get( queryObject, 'url' ) );
 
 		if ( urlFromQueryArg ) {
-			this.fetchIsSiteImportable( urlFromQueryArg );
+			this.handleInputChange( urlFromQueryArg );
 		}
 	}
 
