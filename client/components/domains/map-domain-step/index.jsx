@@ -141,13 +141,7 @@ class MapDomainStep extends React.Component {
 								'{{a}}Learn more{{/a}}',
 							{
 								components: {
-									a: (
-										<a
-											href={ MAP_EXISTING_DOMAIN }
-											rel="noopener noreferrer"
-											target="_blank"
-										/>
-									),
+									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
 								},
 							}
 						) }
@@ -165,11 +159,6 @@ class MapDomainStep extends React.Component {
 
 		return (
 			<div className="domain-search-results__domain-availability is-mapping-suggestion">
-				<Notice status="is-success" showDismiss={ false }>
-					{ this.props.translate( '%(domain)s is available!', {
-						args: { domain: suggestion.domain_name },
-					} ) }
-				</Notice>
 				<DomainRegistrationSuggestion
 					suggestion={ suggestion }
 					selectedSite={ this.props.selectedSite }
