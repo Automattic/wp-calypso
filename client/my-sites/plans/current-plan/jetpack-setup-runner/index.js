@@ -28,10 +28,8 @@ const KEY_PROVISION_STATE_IN_PROGRESS = 'KPS_IN_PROGRESS';
 
 class JetpackSetupRunner extends PureComponent {
 	static propTypes = {
-		site: PropTypes.shape( {
-			ID: PropTypes.number.isRequired,
-		} ),
 		notifyProgress: PropTypes.func,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	state = {
