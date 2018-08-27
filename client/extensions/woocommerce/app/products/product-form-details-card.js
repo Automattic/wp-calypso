@@ -21,6 +21,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import ImageSelector from 'blocks/image-selector';
 import ProductReviewsWidget from 'woocommerce/components/product-reviews-widget';
+import { mapImageIds } from './utils';
 
 export default class ProductFormDetailsCard extends Component {
 	static propTypes = {
@@ -81,13 +82,13 @@ export default class ProductFormDetailsCard extends Component {
 			return;
 		}
 		const { siteId, product, editProduct } = this.props;
-		const images = media.items.map( item => ( { id: item.ID } ) );
+		const images = mapImageIds( media.items );
 		editProduct( siteId, product, { images } );
 	};
 
 	changeImages = newImages => {
 		const { siteId, product, editProduct } = this.props;
-		const images = newImages.map( image => ( { id: image.ID } ) );
+		const images = mapImageIds( newImages );
 		editProduct( siteId, product, { images } );
 	};
 
