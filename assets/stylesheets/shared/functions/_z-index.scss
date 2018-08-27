@@ -183,6 +183,7 @@ $z-layers: (
 		'.webpack-build-monitor': 99999999,
 		'.image-selector__item.is-transient::after': 1,
 		'.image-selector__item .spinner': 2,
+		'.image-selector__remove.button.is-compact': 3,
 	),
 	'.ribbon': (
 		'.ribbon__title::before': -1,

@@ -148,6 +148,7 @@
 	border-radius: 50%;
 	background-color: $gray-light;
 	cursor: pointer;
+	z-index: z-index( 'root', '.image-selector__remove.button.is-compact' );
 
 	&:hover {
 		background: $gray-lighten-30;
