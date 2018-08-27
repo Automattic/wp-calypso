@@ -167,7 +167,6 @@ class InlineHelpPopover extends Component {
 					borderless
 				>
 					<span className="inline-help__checklist-label">
-						<Gridicon icon="list-checkmark" className="inline-help__gridicon-list-checkmark" />
 						{ translate( 'Continue Site Setup' ) }
 					</span>
 
@@ -176,7 +175,7 @@ class InlineHelpPopover extends Component {
 					</span>
 
 					<div className="inline-help__progress-bar-margin">
-						<ProgressBar color="#4ab866" total={ totalTasks } value={ numComplete } />
+						<ProgressBar color="#4ab866" total={ totalTasks } value={ numComplete } compact />
 					</div>
 				</Button>
 			</div>
