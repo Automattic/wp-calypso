@@ -26,7 +26,7 @@ class UpgradeBanner extends Component {
 				{ isJetpack ? (
 					<Banner
 						callToAction={ translate( 'Learn more' ) }
-						event="activity_log_upgrade_click_wpcom"
+						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
 						plan={ PLAN_JETPACK_PERSONAL_MONTHLY }
 						title={ translate( "Upgrade to a plan to access your site's complete log" ) }
