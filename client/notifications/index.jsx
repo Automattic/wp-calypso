@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import analytics from 'lib/analytics';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
-import NotificationsPanel, { refreshNotes } from './src/src/Notifications';
+import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 import { setUnseenCount } from 'state/notifications';
