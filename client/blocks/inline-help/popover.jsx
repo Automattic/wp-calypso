@@ -119,8 +119,6 @@ class InlineHelpPopover extends Component {
 			'inline-help__checklist-count': true,
 		};
 
-		console.log( this.state );
-
 		const disallowedSections = [
 			'discover',
 			'reader',
