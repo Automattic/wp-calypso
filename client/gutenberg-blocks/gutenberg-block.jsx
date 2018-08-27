@@ -25,4 +25,6 @@ const GutenbergBlock = ( { name, attributes, children } ) => {
 	return <RawHTML>{ serialize( block ) }</RawHTML>;
 };
 
+GutenbergBlock.displayName = 'GutenbergBlock';
+
 export default GutenbergBlock;
