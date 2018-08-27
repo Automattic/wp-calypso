@@ -32,97 +32,88 @@ class JetpackSetupRunner extends PureComponent {
 	};
 
 	state = {
-		akismetKeyProvisioning: KEY_PROVISION_STATE_IDLE,
-		vaultpressKeyProvisioning: KEY_PROVISION_STATE_IDLE,
+		keyProvisioning: {
+			/** These should be keyed on plugin slugs */
+			akismet: KEY_PROVISION_STATE_IDLE,
+			vaultpress: KEY_PROVISION_STATE_IDLE,
+		},
 	};
 
 	componentDidUpdate() {
+		const { engineState } = this.state;
 		// Wait until the install/activate engine completes
-		if ( ENGINE_STATE_DONE_SUCCESS === this.state.engineState ) {
-			// Provision Akismet if it's idle
-			if ( KEY_PROVISION_STATE_IDLE === this.state.akismetKeyProvisioning ) {
+		if ( ENGINE_STATE_DONE_SUCCESS === engineState ) {
+			const { akismet: akismetState, vaultpress: vaultpressState } = this.state.keyProvisioning;
+
+			// Try to provision Akismet if it's idle
+			if ( KEY_PROVISION_STATE_IDLE === akismetState ) {
 				this.provisionAkismetKey();
 			}
 
-			// Provision Vaultpress if Akismet is finished and it's idle
+			// Try to provision Vaultpress it's idle and Akismet has completed (success or fail)
 			if (
-				KEY_PROVISION_STATE_IDLE === this.state.vaultpressKeyProvisioning &&
-				( KEY_PROVISION_STATE_DONE === this.state.akismetKeyProvisioning ||
-					KEY_PROVISION_STATE_FAIL === this.state.akismetKeyProvisioning )
+				KEY_PROVISION_STATE_IDLE === vaultpressState &&
+				( KEY_PROVISION_STATE_DONE === akismetState || KEY_PROVISION_STATE_FAIL === akismetState )
 			) {
 				this.provisionVaultpressKey();
 			}
 		}
 	}
 
+	async provisionKey( pluginSlug, optionName, optionValue ) {
+		this.setState(
+			( { keyProvisioning } ) => ( {
+				keyProvisioning: {
+					...keyProvisioning,
+					[ pluginSlug ]: KEY_PROVISION_STATE_IN_PROGRESS,
+				},
+			} ),
+			async () => {
+				try {
+					const result = await wpcom
+						.undocumented()
+						.site( this.props.siteId )
+						.setOption( {
+							option_name: optionName,
+							option_value: optionValue,
+							site_option: false,
+							is_array: false,
+						} );
+					this.setState( ( { keyProvisioning } ) => ( {
+						keyProvisioning: {
+							...keyProvisioning,
+							[ pluginSlug ]: KEY_PROVISION_STATE_DONE,
+						},
+					} ) );
+					debug( 'Provision "%s" success: %o', pluginSlug, result );
+				} catch ( err ) {
+					this.setState( ( { keyProvisioning } ) => ( {
+						keyProvisioning: {
+							...keyProvisioning,
+							[ pluginSlug ]: KEY_PROVISION_STATE_FAIL,
+						},
+					} ) );
+					debug( 'Provision "%s" error: %o', pluginSlug, err );
+				}
+			}
+		);
+	}
+
 	provisionAkismetKey() {
 		if ( this.props.keyAkismet ) {
-			this.setState(
-				{
-					akismetKeyProvisioning: KEY_PROVISION_STATE_IN_PROGRESS,
-				},
-				async () => {
-					try {
-						const result = await wpcom
-							.undocumented()
-							.site( this.props.siteId )
-							.setOption( {
-								option_name: 'wordpress_api_key',
-								option_value: this.props.keyAkismet,
-								site_option: false,
-								is_array: false,
-							} );
-						this.setState( {
-							akismetKeyProvisioning: KEY_PROVISION_STATE_DONE,
-						} );
-						debug( 'Akismet provision success: %o', result );
-					} catch ( err ) {
-						this.setState( {
-							akismetKeyProvisioning: KEY_PROVISION_STATE_FAIL,
-						} );
-						debug( 'Akismet provision error: %o', err );
-					}
-				}
-			);
+			this.provisionKey( 'akismet', 'wordpress_api_key', this.props.keyAkismet );
 		}
 	}
 
 	provisionVaultpressKey() {
 		if ( this.props.vaultpressVersion && this.props.keyVaultpress ) {
-			this.setState(
-				{
-					vaultpressKeyProvisioning: KEY_PROVISION_STATE_IN_PROGRESS,
-				},
-				async () => {
-					// VP 1.8.4+ expects a different format for this option.
-					const option_value = versionCompare( this.props.vaultpressVersion, '1.8.3', '>' )
-						? JSON.stringify( {
-								action: 'register',
-								key: this.props.keyVaultpress,
-						  } )
-						: this.props.keyVaultpress;
-					try {
-						const result = await wpcom
-							.undocumented()
-							.site( this.props.siteId )
-							.setOption( {
-								option_name: 'vaultpress_auto_register',
-								option_value,
-								site_option: false,
-								is_array: false,
-							} );
-						this.setState( {
-							vaultpressKeyProvisioning: KEY_PROVISION_STATE_DONE,
-						} );
-						debug( 'VaultPress provision success: %o', result );
-					} catch ( err ) {
-						this.setState( {
-							vaultpressKeyProvisioning: KEY_PROVISION_STATE_FAIL,
-						} );
-						debug( 'VaultPress provision error: %o', err );
-					}
-				}
-			);
+			const key = versionCompare( this.props.vaultpressVersion, '1.8.3', '>' )
+				? JSON.stringify( {
+						action: 'register',
+						key: this.props.keyVaultpress,
+				  } )
+				: this.props.keyVaultpress;
+			this.provisionKey( 'vaultpress', 'vaultpress_auto_register', key );
 		}
 	}
 
