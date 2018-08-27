@@ -35,10 +35,9 @@ class RemoteBlock extends React.Component {
 	}
 
 	componentDidMount() {
-		console.warn( 'mounted remote block', upgradeElement, document.getElementById( 'upgrade-me' ) );
-
 		// let's add a mutation observer for debugging
 		var targetNode = this.remoteBlockRef.current; //document.getElementById('upgrade-me');
+		console.warn( 'mounted remote block', upgradeElement, targetNode );
 		var config = { attributes: true, childList: true, subtree: true };
 		// Callback function to execute when mutations are observed
 		var callback = function( mutationsList ) {
@@ -60,10 +59,7 @@ class RemoteBlock extends React.Component {
 
 		// kick off webworker
 		// upgradeElement( document.getElementById('upgrade-me'), '/webworker/remote-gutenberg.js' );
-		upgradeElement(
-			this.remoteBlockRef.current,
-			'http://remote.localhost:3000/webworker/worker.mjs'
-		);
+		upgradeElement( targetNode, 'http://remote.localhost:3000/webworker/js/worker.mjs' );
 		console.warn( 'upgraded element' );
 	}
 
@@ -74,7 +70,7 @@ class RemoteBlock extends React.Component {
 			<div>
 				<h1>Container</h1>
 				<div
-					src="http://remote.localhost:3000/webworker/remote-gutenberg-block.js"
+					src="http://remote.localhost:3000/webworker/js/remote-gutenberg-block.js"
 					ref={ this.remoteBlockRef }
 				>
 					This is the block

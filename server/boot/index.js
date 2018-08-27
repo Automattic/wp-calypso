@@ -75,7 +75,7 @@ function setup() {
 	app.use(
 		'/webworker',
 		cors(),
-		express.static( path.resolve( __dirname, '..', '..', 'webworker', 'build', 'js' ) )
+		express.static( path.resolve( __dirname, '..', '..', 'webworker', 'build' ) )
 	);
 
 	// service-worker needs to be served from root to avoid scope issues

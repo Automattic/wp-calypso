@@ -10,7 +10,8 @@ const webpackConfig = {
 	// The key is used as the name of the script.
 	entry: {
 		'remote-gutenberg': path.join( __dirname, './src/js/remote-gutenberg' ),
-		'remote-gutenberg-block': path.join( __dirname, './src/js/remote-gutenberg-block' )
+		'remote-gutenberg-block': path.join( __dirname, './src/js/remote-gutenberg-block' ),
+		'test-workerdom': path.join( __dirname, './src/js/test-workerdom' ),
 	},
 	output: {
 		path: path.join( __dirname, './build/js' ),
