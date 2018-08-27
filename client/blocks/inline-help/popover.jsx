@@ -4,12 +4,11 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, get, reduce, startsWith } from 'lodash';
+import { noop, get, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import page from 'page';
 
 /**
  * Internal Dependencies
@@ -29,13 +28,14 @@ import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 import ProgressBar from 'components/progress-bar';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { tasks } from 'my-sites/checklist/onboardingChecklist';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
+		sectionName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -60,6 +60,7 @@ class InlineHelpPopover extends Component {
 
 	checklistClicked = () => {
 		this.setState( { showChecklistNotification: false } );
+		this.props.onClose();
 		this.props.recordTracksEvent( 'calypso_inlinehelp_checklist_click' );
 	};
 
@@ -109,14 +110,26 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderChecklistProgress = () => {
-		const { taskStatuses, siteSuffix, translate } = this.props;
+		const { taskStatuses, siteSuffix, translate, sectionName } = this.props;
+
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
-		const isChecklistPage = startsWith( page.current, '/checklist/' );
 		const inlineHelpButtonClasses = {
 			'checklist-count-notification': this.state.showChecklistNotification,
 			'inline-help__checklist-count': true,
 		};
+
+		console.log( this.state );
+
+		const disallowedSections = [
+			'discover',
+			'reader',
+			'reader-activities',
+			'reader-list',
+			'reader-recommendations',
+			'reader-tags',
+			'checklist',
+		];
 
 		const totalTasks = tasks.length;
 		const numComplete = reduce(
@@ -126,8 +139,18 @@ class InlineHelpPopover extends Component {
 			0
 		);
 
-		//Do not show checklist if no tasks, or site is Atomic or Jetpack, or we're already on the Checklist page
-		if ( ! totalTasks || isAtomicSite || isJetpackSite || isChecklistPage ) {
+		//We have no tasks
+		if ( ! totalTasks ) {
+			return false;
+		}
+
+		//This is an Atomic or Jetpack site
+		if ( isAtomicSite || isJetpackSite ) {
+			return false;
+		}
+
+		//We're in the Reader area or the Checklist
+		if ( disallowedSections.indexOf( sectionName ) > -1 ) {
 			return false;
 		}
 
@@ -237,6 +260,7 @@ function mapStateToProps( state ) {
 		siteSuffix: site ? '/' + site.slug : '',
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+		sectionName: getSectionName( state ),
 	};
 }
 

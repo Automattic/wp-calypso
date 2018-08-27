@@ -4,13 +4,12 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, get, startsWith } from 'lodash';
+import { identity, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import Gridicon from 'gridicons';
-import page from 'page';
 
 /**
  * Internal Dependencies
@@ -26,7 +25,7 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import { tasks } from 'my-sites/checklist/onboardingChecklist';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSectionName } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -44,6 +43,7 @@ const InlineHelpPopover = props => (
 class InlineHelp extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+		sectionName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -88,10 +88,8 @@ class InlineHelp extends Component {
 
 		if ( showInlineHelp ) {
 			this.closeInlineHelp();
-			this.showChecklistNotification();
 		} else {
 			this.showInlineHelp();
-			this.hideChecklistNotification();
 		}
 	};
 
@@ -100,12 +98,27 @@ class InlineHelp extends Component {
 	};
 
 	showChecklistNotification = () => {
+		const { sectionName } = this.props;
 		const totalTasks = tasks.length;
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
-		const isChecklistPage = startsWith( page.current, '/checklist/' );
 
-		if ( totalTasks && ! isAtomicSite && ! isJetpackSite && ! isChecklistPage ) {
+		const disallowedSections = [
+			'discover',
+			'reader',
+			'reader-activities',
+			'reader-list',
+			'reader-recommendations',
+			'reader-tags',
+			'checklist',
+		];
+
+		if (
+			totalTasks &&
+			! isAtomicSite &&
+			! isJetpackSite &&
+			! disallowedSections.indexOf( sectionName ) > -1
+		) {
 			this.setState( { showChecklistNotification: true } );
 		}
 	};
@@ -232,6 +245,7 @@ export default connect(
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		selectedSite: getSelectedSite( state ),
+		sectionName: getSectionName( state ),
 	} ),
 	{
 		recordTracksEvent,
