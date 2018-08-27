@@ -51,6 +51,7 @@ class CurrentPlan extends Component {
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
 		isAutomatedTransfer: PropTypes.bool,
+		doJetpackPlanSetup: PropTypes.bool,
 		doPlanSetup: PropTypes.bool,
 	};
 
@@ -91,7 +92,7 @@ class CurrentPlan extends Component {
 			selectedSiteId,
 			domains,
 			currentPlan,
-			doPlanSetup,
+			doJetpackPlanSetup,
 			hasDomainsLoaded,
 			isAutomatedTransfer,
 			isExpiring,
@@ -120,7 +121,7 @@ class CurrentPlan extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				{ doPlanSetup && (
+				{ doJetpackPlanSetup && (
 					<JetpackSetupRunner
 						key={ /* Force remount on site change */ selectedSiteId }
 						notifyProgress={ this.updatePlanSetupProgress }
@@ -180,7 +181,7 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state, { doPlanSetup } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
@@ -199,5 +200,6 @@ export default connect( state => {
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		isJetpack,
+		doJetpackPlanSetup: !! ( doPlanSetup && isJetpack && ! isAutomatedTransfer ),
 	};
 } )( localize( CurrentPlan ) );
