@@ -74,7 +74,7 @@ class RemoteBlock extends React.Component {
 			<div>
 				<h1>Container</h1>
 				<div
-					src="http://calypso.localhost:3000/webworker/remote-gutenberg-block.js"
+					src="http://remote.localhost:3000/webworker/remote-gutenberg-block.js"
 					ref={ this.remoteBlockRef }
 				>
 					This is the block
