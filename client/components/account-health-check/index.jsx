@@ -16,9 +16,9 @@ import getApplicationPasswords from 'state/selectors/get-application-passwords';
 import getConnectedApplications from 'state/selectors/get-connected-applications';
 import debugFactory from 'debug';
 
-const debug = debugFactory( 'calypso:account-periodic-health-check' );
+const debug = debugFactory( 'calypso:account-health-check' );
 
-const AccountPeriodicHealthCheck = () => {
+const AccountHealthCheck = () => {
 	debug( this.props );
 	return 'ohai';
 };
@@ -34,4 +34,4 @@ export default connect( state => {
 		displayName: currentUser.display_name,
 		email: currentUser.email,
 	};
-} )( AccountPeriodicHealthCheck );
+} )( AccountHealthCheck );
