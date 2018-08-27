@@ -56,8 +56,12 @@ class CurrentPlan extends Component {
 		doPlanSetup: PropTypes.bool,
 	};
 
+	state = {
+		planSetup: {},
+	};
+
 	updatePlanSetupProgress = stateUpdate => {
-		this.setState( stateUpdate );
+		this.setState( { planSetup: stateUpdate } );
 	};
 
 	isLoading() {
