@@ -72,17 +72,17 @@
 		border-color: darken( $blue-medium, 5 )
 	}
 
-	&.has-notification:before {
+	&.has-notification::before {
 		display: block;
 		background-color: $orange-jazzy;
-		border: 2px solid #fff;
+		border: 2px solid $white;
 		content: "";
 		border-radius: 50%;
 		width: 10px;
 		height: 10px;
 		position: absolute;
-		top: -2px;
-		left: -3px;
+			top: -2px;
+			left: -3px;
 		z-index: 2;
 	}
 }
@@ -310,13 +310,18 @@
 	border-top: 1px solid $gray-lighten-20;
 }
 
-.inline-help__checklist .inline-help__checklist-button {
+.inline-help__checklist .button.is-borderless.inline-help__checklist-button {
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
 	font-weight: bold;
 	width: 100%;
 	padding: 0;
+
+	&:hover,
+	&:focus {
+		color: $blue-medium;
+	}
 }
 
 .inline-help__checklist-label {
@@ -327,14 +332,14 @@
 .inline-help__checklist-button.button .gridicon.inline-help__gridicon-list-checkmark {
 	margin: 0;
 	position: absolute;
-	top: 11px;
-	left: 13px;
+		top: 11px;
+		left: 13px;
 }
 
 .inline-help__checklist-count {
 	padding: 12px 20px 10px 0;
 
-	&.checklist-count-notification:before {
+	&.checklist-count-notification::before {
 		display: inline-block;
 		background-color: $orange-jazzy;
 		content: "";
