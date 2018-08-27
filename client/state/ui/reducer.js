@@ -12,6 +12,7 @@ import {
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
+import accountHealthCheck from './account-health-check/reducer';
 import actionLog from './action-log/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import comments from './comments/reducer';
@@ -98,6 +99,7 @@ export const masterbarVisibility = ( state = true, { type, isVisible } ) =>
 	type === MASTERBAR_TOGGLE_VISIBILITY ? isVisible : state;
 
 const reducer = combineReducers( {
+	accountHealthCheck,
 	actionLog,
 	billingTransactions,
 	comments,
