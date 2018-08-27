@@ -120,22 +120,37 @@ class JetpackSetupRunner extends PureComponent {
 	/**
 	 * Handle progress updates and notify parent of progress
 	 *
-	 * In addition to install and activation, handled by DoPluginSetup, this component will
-	 * provision plugin keys provided by a plan.
+	 * The plugin installer reports progress. Intercept and modify that progress to account for key provisioning.
 	 *
-	 * Adjust progress accordingly.
-	 *
-	 * @param {Object} stateUpdate       Updated state object
-	 * @param {number} stateUpdate.total Total number of tasks in state
+	 * @param {Object} stateUpdate          Updated state object
+	 * @param {number} stateUpdate.complete Number of completed tasks
+	 * @param {number} stateUpdate.total    Total number of tasks
 	 */
 	handleUpdateProgress = stateUpdate => {
-		this.setState( stateUpdate );
-		if ( 'function' === typeof this.props.notifyProgress ) {
-			this.props.notifyProgress( {
-				...stateUpdate,
-				total: stateUpdate.total + 2, // Add two tasks for key provisioning
-			} );
-		}
+		this.setState( stateUpdate, () => {
+			if ( 'function' === typeof this.props.notifyProgress ) {
+				// Two tasks are added to the total for provisioning the two plugins
+				const total = stateUpdate.total + 2;
+
+				// Add completed provisioning tasks depending on state.
+				const { akismet: akismetState, vaultpress: vaultpressState } = this.state.keyProvisioning;
+				const complete =
+					stateUpdate.complete +
+					( KEY_PROVISION_STATE_DONE === akismetState || KEY_PROVISION_STATE_FAIL === akismetState
+						? 1
+						: 0 ) +
+					( KEY_PROVISION_STATE_DONE === vaultpressState ||
+					KEY_PROVISION_STATE_FAIL === vaultpressState
+						? 1
+						: 0 );
+
+				this.props.notifyProgress( {
+					...stateUpdate,
+					complete,
+					total,
+				} );
+			}
+		} );
 	};
 
 	render() {
