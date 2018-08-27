@@ -5,8 +5,9 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
+import { Provider as ReduxProvider } from 'react-redux';
+import { RegistryProvider } from '@wordpress/data';
 
 /**
  * Internal Dependencies
@@ -27,13 +28,15 @@ export { setSection, setUpLocale } from './shared.js';
 
 const user = userFactory();
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
+export const ReduxWrappedLayout = ( { primary, redirectUri, secondary, store, wpRegistry } ) => (
 	<ReduxProvider store={ store }>
-		{ getCurrentUser( store.getState() ) ? (
-			<Layout primary={ primary } secondary={ secondary } user={ user } />
-		) : (
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		) }
+		<RegistryProvider value={ wpRegistry }>
+			{ getCurrentUser( store.getState() ) ? (
+				<Layout primary={ primary } secondary={ secondary } user={ user } />
+			) : (
+				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			) }
+		</RegistryProvider>
 	</ReduxProvider>
 );
 

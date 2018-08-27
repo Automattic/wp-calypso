@@ -20,16 +20,17 @@ import isRTL from 'state/selectors/is-rtl';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, primary, secondary } = context;
+		const { primary, secondary, store, wpRegistry } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
 			context.layout = (
 				<LayoutComponent
-					store={ store }
 					primary={ primary }
-					secondary={ secondary }
 					redirectUri={ context.originalUrl }
+					secondary={ secondary }
+					store={ store }
+					wpRegistry={ wpRegistry }
 				/>
 			);
 		}

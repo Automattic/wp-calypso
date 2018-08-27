@@ -3,10 +3,10 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import page from 'page';
 import { parse } from 'qs';
+import { createRegistry } from '@wordpress/data';
 import { some, startsWith } from 'lodash';
 import url from 'url';
 
@@ -26,6 +26,7 @@ import { getSections } from 'sections-helper';
 import { checkFormHandler } from 'lib/protect-form';
 import notices from 'notices';
 import authController from 'auth/controller';
+import dataStore from 'state/store';
 
 const debug = debugFactory( 'calypso' );
 
@@ -81,6 +82,13 @@ const setupContextMiddleware = reduxStore => {
 		if ( ! context.store ) {
 			context.store = reduxStore;
 		}
+		next();
+	} );
+};
+
+export const setupWordPressDataStore = () => {
+	page( '*', ( context, next ) => {
+		context.wpRegistry = createRegistry( dataStore );
 		next();
 	} );
 };
@@ -215,6 +223,7 @@ export const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
+	setupWordPressDataStore();
 	oauthTokenMiddleware();
 	loadSectionsMiddleware();
 	loggedOutMiddleware( currentUser );
