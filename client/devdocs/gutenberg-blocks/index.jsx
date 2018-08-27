@@ -24,6 +24,66 @@ import examples from './examples';
 
 registerCoreBlocks();
 
+/**
+ * Remote block experiment!
+ */
+import { upgradeElement } from '@ampproject/worker-dom/dist/index.mjs'; // TODO: use safe version?
+class RemoteBlock extends React.Component {
+	constructor( props ) {
+		super( props );
+		this.remoteBlockRef = React.createRef();
+	}
+
+	componentDidMount() {
+		console.warn( 'mounted remote block', upgradeElement, document.getElementById( 'upgrade-me' ) );
+
+		// let's add a mutation observer for debugging
+		var targetNode = this.remoteBlockRef.current; //document.getElementById('upgrade-me');
+		var config = { attributes: true, childList: true, subtree: true };
+		// Callback function to execute when mutations are observed
+		var callback = function( mutationsList ) {
+			for ( var mutation of mutationsList ) {
+				if ( mutation.type == 'childList' ) {
+					console.log( 'A child node has been added or removed.' );
+				} else if ( mutation.type == 'attributes' ) {
+					console.log( 'The ' + mutation.attributeName + ' attribute was modified.' );
+				}
+			}
+		};
+
+		// Create an observer instance linked to the callback function
+		var observer = new MutationObserver( callback );
+
+		// Start observing the target node for configured mutations
+		observer.observe( targetNode, config );
+		console.warn( 'added mutation observer' );
+
+		// kick off webworker
+		// upgradeElement( document.getElementById('upgrade-me'), '/webworker/remote-gutenberg.js' );
+		upgradeElement(
+			this.remoteBlockRef.current,
+			'http://remote.localhost:3000/webworker/worker.mjs'
+		);
+		console.warn( 'upgraded element' );
+	}
+
+	render() {
+		//http://goldsounds.ngrok.io/wp-content/plugins/portenblock/build/js/sample-block.js
+		console.warn( 'rendering' );
+		return (
+			<div>
+				<h1>Container</h1>
+				<div
+					src="http://calypso.localhost:3000/webworker/remote-gutenberg-block.js"
+					ref={ this.remoteBlockRef }
+				>
+					This is the block
+				</div>
+			</div>
+		);
+	}
+}
+
 export default class GutenbergBlocks extends React.Component {
 	state = { filter: '' };
 
@@ -47,6 +107,8 @@ export default class GutenbergBlocks extends React.Component {
 		return (
 			<Main className={ className }>
 				<DocumentHead title="Gutenberg Blocks" />
+
+				<RemoteBlock />
 
 				{ block ? (
 					<HeaderCake onClick={ this.backToAll } backText="All Blocks">

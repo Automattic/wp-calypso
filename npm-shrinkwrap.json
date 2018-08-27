@@ -4,6 +4,15 @@
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
+    "@ampproject/worker-dom": {
+      "version": "0.1.0",
+      "resolved": "https://registry.npmjs.org/@ampproject/worker-dom/-/worker-dom-0.1.0.tgz",
+      "integrity": "sha512-LD8FN2vjcJ2w6hZRse3tHGglI6Oor53tmdh4WBTp80QODRYsqMd/vZVSDUyzSyGSmy7Uc/z1RqrasK98cK0k8w==",
+      "dev": true,
+      "requires": {
+        "dompurify": "1.0.7"
+      }
+    },
     "@babel/code-frame": {
       "version": "7.0.0-beta.55",
       "resolved": "https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.0.0-beta.55.tgz",
@@ -3814,6 +3823,15 @@
       "version": "1.0.2",
       "resolved": "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz",
       "integrity": "sha1-tf1UIgqivFq1eqtxQMlAdUUDwac="
+    },
+    "cors": {
+      "version": "2.8.4",
+      "resolved": "https://registry.npmjs.org/cors/-/cors-2.8.4.tgz",
+      "integrity": "sha1-K9OB8usgECAQXNUOpZ2mMJBpRoY=",
+      "requires": {
+        "object-assign": "^4",
+        "vary": "^1"
+      }
     },
     "cosmiconfig": {
       "version": "4.0.0",

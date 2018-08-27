@@ -11,7 +11,8 @@ const path = require( 'path' ),
 	cookieParser = require( 'cookie-parser' ),
 	userAgent = require( 'express-useragent' ),
 	morgan = require( 'morgan' ),
-	pages = require( 'pages' );
+	pages = require( 'pages' ),
+	cors = require( 'cors' );
 
 const analytics = require( '../lib/analytics' ).default;
 
@@ -68,6 +69,14 @@ function setup() {
 
 	// attach the static file server to serve the `public` dir
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
+
+	// attach the gutenberg webworker JS files
+	// use CORS so we can serve from otherdomain.localhost:3000 in development
+	app.use(
+		'/webworker',
+		cors(),
+		express.static( path.resolve( __dirname, '..', '..', 'webworker', 'build', 'js' ) )
+	);
 
 	// service-worker needs to be served from root to avoid scope issues
 	app.use(

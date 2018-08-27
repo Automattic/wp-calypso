@@ -1,0 +1,30 @@
+{
+  "name": "wp-calypso-webworker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Walmsley <dan.walmsley@automattic.com> (http://goldsounds.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "@ampproject/worker-dom": "github:ampproject/worker-dom",
+    "autoprefixer-loader": "^3.2.0",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^1.0.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "html-loader": "^0.5.5",
+    "json-loader": "^0.5.7",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.22.1",
+    "url-loader": "^1.1.1",
+    "webpack": "^4.17.1",
+    "webpack-command": "^0.4.1"
+  }
+}

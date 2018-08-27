@@ -73,6 +73,7 @@
     "cookie": "0.3.1",
     "cookie-parser": "1.4.3",
     "core-js": "2.5.7",
+    "cors": "2.8.4",
     "cpf_cnpj": "0.2.0",
     "create-react-class": "15.6.3",
     "creditcards": "3.0.1",
@@ -272,6 +273,7 @@
     "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\""
   },
   "devDependencies": {
+    "@ampproject/worker-dom": "0.1.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "8.2.6",
     "babel-jest": "23.4.2",
