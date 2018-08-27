@@ -17,19 +17,21 @@ export const applyAPIMiddlewares = siteSlug => {
 	//bypassing the apiFetch call that uses window.fetch
 	//first middleware in, last out
 	apiFetch.use( options => {
-		return wpcomProxyRequest(
-			{
-				...options,
-				apiNamespace: 'wp/v2',
-			},
-			( error, body ) => {
-				if ( error ) {
-					return Promise.reject( error );
-				}
+		return new Promise( ( resolve, reject ) => {
+			wpcomProxyRequest(
+				{
+					...options,
+					apiNamespace: 'wp/v2',
+				},
+				( error, body ) => {
+					if ( error ) {
+						return reject( error );
+					}
 
-				return Promise.resolve( body );
-			}
-		);
+					return resolve( body );
+				}
+			);
+		} );
 	} );
 
 	const rootURL = 'https://public-api.wordpress.com/';
