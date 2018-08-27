@@ -147,14 +147,17 @@ class JetpackSetupRunner extends PureComponent {
 	render() {
 		const { siteId } = this.props;
 		return (
-			<>
-				{ siteId && <QueryPluginKeys siteId={ siteId } /> }
-				<DoPluginSetup
-					key={ /* Force remount on site change */ siteId }
-					notifyProgress={ this.handleUpdateProgress }
-					requiredPlugins={ [ 'akismet', 'vaultpress' ] }
-				/>
-			</>
+			siteId && (
+				<>
+					<QueryPluginKeys siteId={ siteId } />
+					<DoPluginSetup
+						key={ /* Force remount on site change */ siteId }
+						notifyProgress={ this.handleUpdateProgress }
+						requiredPlugins={ [ 'akismet', 'vaultpress' ] }
+						siteId={ siteId }
+					/>
+				</>
+			)
 		);
 	}
 }

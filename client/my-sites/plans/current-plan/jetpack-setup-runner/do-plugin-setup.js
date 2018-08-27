@@ -15,7 +15,6 @@ import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/insta
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins, getStatusForSite } from 'state/plugins/installed/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 
 export const ENGINE_STATE_ACTIVATE = 'ES_ACTIVATE';
 export const ENGINE_STATE_DONE_FAIL = 'ES_DONE_FAIL';
@@ -25,11 +24,9 @@ export const ENGINE_STATE_INSTALL = 'ES_INSTALL';
 
 class PluginInstaller extends Component {
 	static propTypes = {
-		site: PropTypes.shape( {
-			ID: PropTypes.number.isRequired,
-		} ),
-		requiredPlugins: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		notifyProgress: PropTypes.func,
+		requiredPlugins: PropTypes.arrayOf( PropTypes.string ).isRequired,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	state = {
@@ -103,10 +100,10 @@ class PluginInstaller extends Component {
 	}
 
 	doInitialization = () => {
-		const { requiredPlugins, site, sitePlugins, wporg } = this.props;
+		const { requiredPlugins, siteId, sitePlugins, wporg } = this.props;
 		const { workingOn } = this.state;
 
-		if ( ! site ) {
+		if ( ! siteId ) {
 			return;
 		}
 
@@ -186,7 +183,7 @@ class PluginInstaller extends Component {
 	};
 
 	doInstallation = () => {
-		const { pluginsStatus, site, sitePlugins, wporg } = this.props;
+		const { pluginsStatus, siteId, sitePlugins, wporg } = this.props;
 
 		// If we are working on nothing presently, get the next thing to install and install it
 		if ( 0 === this.state.workingOn.length ) {
@@ -204,7 +201,7 @@ class PluginInstaller extends Component {
 			const thisPlugin = getPlugin( wporg, workingOn );
 			// Set a default ID if needed.
 			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
-			this.props.installPlugin( site.ID, thisPlugin );
+			this.props.installPlugin( siteId, thisPlugin );
 
 			this.setState( {
 				toInstall,
@@ -231,7 +228,7 @@ class PluginInstaller extends Component {
 	};
 
 	doActivation = () => {
-		const { site, sitePlugins } = this.props;
+		const { siteId, sitePlugins } = this.props;
 
 		// If we are working on nothing presently, get the next thing to activate and activate it
 		if ( 0 === this.state.workingOn.length ) {
@@ -261,7 +258,7 @@ class PluginInstaller extends Component {
 			}
 
 			// Otherwise, activate!
-			this.props.activatePlugin( site.ID, pluginToActivate );
+			this.props.activatePlugin( siteId, pluginToActivate );
 
 			this.setState( {
 				toActivate,
@@ -307,15 +304,11 @@ class PluginInstaller extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
-	const site = getSelectedSite( state );
-	const siteId = site.ID;
-
-	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
+function mapStateToProps( state, { siteId } ) {
+	const sitePlugins = siteId ? getPlugins( state, [ siteId ] ) : [];
 	const pluginsStatus = getStatusForSite( state, siteId );
 
 	return {
-		site,
 		siteId,
 		sitePlugins,
 		pluginsStatus,
