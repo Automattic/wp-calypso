@@ -18,7 +18,7 @@ import versionCompare from 'lib/version-compare';
 import wpcom from 'lib/wp';
 import { getPluginOnSite } from 'state/plugins/installed/selectors';
 
-const debug = debugFactory( 'calypso:plugin-setup' );
+const debug = debugFactory( 'calypso:jetpack-setup-runner' );
 
 const KEY_PROVISION_STATE_DONE = 'KPS_DONE';
 const KEY_PROVISION_STATE_FAIL = 'KPS_FAIL';
