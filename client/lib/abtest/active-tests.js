@@ -75,8 +75,8 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSuggestionKrakenV324: {
-		datestamp: '20180820',
+	domainSuggestionKrakenV325: {
+		datestamp: '20180828',
 		variations: {
 			domainsbot: 0,
 			group_1: 21,
