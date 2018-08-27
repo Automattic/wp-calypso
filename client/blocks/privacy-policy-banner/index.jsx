@@ -11,7 +11,7 @@ import { get, identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import { requestHttpData } from 'state/data-layer/http-data';
+import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
@@ -24,21 +24,27 @@ const AUTOMATTIC_ENTITY = 'automattic';
 const PRIVACY_POLICY_PREFERENCE = 'privacy_policy';
 const PRIVACY_POLICY_REQUEST_ID = 'privacy-policy';
 
-const privacyPolicyFetchAction = http( {
-	method: 'GET',
-	path: '/privacy-policy',
-	apiNamespace: 'wpcom/v2',
-} );
-
-// extract the "automattic" policy from the list of entities and ignore the other ones
-const privacyPolicyFromApi = () => data => [
-	[ PRIVACY_POLICY_REQUEST_ID, get( data, [ 'entities', AUTOMATTIC_ENTITY ], null ) ],
-];
-
-const requestPrivacyPolicy = () =>
-	requestHttpData( PRIVACY_POLICY_REQUEST_ID, privacyPolicyFetchAction, {
-		fromApi: privacyPolicyFromApi,
-	} );
+const privacyPolicyQuery = {
+	fetch() {
+		requestHttpData(
+			PRIVACY_POLICY_REQUEST_ID,
+			http( {
+				method: 'GET',
+				path: '/privacy-policy',
+				apiNamespace: 'wpcom/v2',
+			} ),
+			{
+				fromApi: () => data => [
+					// extract the "automattic" policy from the list of entities and ignore the other ones
+					[ PRIVACY_POLICY_REQUEST_ID, get( data, [ 'entities', AUTOMATTIC_ENTITY ], null ) ],
+				],
+			}
+		);
+	},
+	current() {
+		return getHttpData( PRIVACY_POLICY_REQUEST_ID );
+	},
+};
 
 class PrivacyPolicyBanner extends Component {
 	static propTypes = {
@@ -85,6 +91,10 @@ class PrivacyPolicyBanner extends Component {
 				date: moment.utc( date ).format( 'LL' ),
 			},
 		} );
+	}
+
+	componentDidMount() {
+		privacyPolicyQuery.fetch();
 	}
 
 	render() {
@@ -148,13 +158,10 @@ class PrivacyPolicyBanner extends Component {
 }
 
 const mapStateToProps = state => {
-	const privacyPolicyPreferenceValue = getPreference( state, PRIVACY_POLICY_PREFERENCE );
-	const privacyPolicy = requestPrivacyPolicy().data;
-
 	return {
 		fetchingPreferences: isFetchingPreferences( state ),
-		privacyPolicyPreferenceValue,
-		privacyPolicy,
+		privacyPolicyPreferenceValue: getPreference( state, PRIVACY_POLICY_PREFERENCE ),
+		privacyPolicy: privacyPolicyQuery.current().data,
 		userRegisterDate: getCurrentUserRegisterDate( state ),
 	};
 };
