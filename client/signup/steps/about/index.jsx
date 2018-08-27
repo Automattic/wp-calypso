@@ -173,7 +173,7 @@ class AboutStep extends Component {
 			return [];
 		}
 
-		const query = this.state.query.toLocaleLowerCase();
+		const query = this.state.query.trim().toLocaleLowerCase();
 		return Object.values( hints )
 			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
 			.sort( ( a, b ) => a.localeCompare( b ) )
