@@ -395,7 +395,7 @@ export function canCurrentUserUseAds( state, siteId = null ) {
 		siteId = getSelectedSiteId( state );
 	}
 	const site = getSite( state, siteId );
-	return site && canAccessWordads( site );
+	return site && !! canAccessWordads( site );
 }
 
 /**
