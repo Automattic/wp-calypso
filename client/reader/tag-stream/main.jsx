@@ -60,18 +60,15 @@ class TagStream extends React.Component {
 		this._isMounted = false;
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.encodedTagSlug !== this.props.encodedTagSlug ) {
-			this.checkForTwemoji( nextProps );
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( ! prevState.twemoji || ! nextProps.decodedTagSlug ) {
+			return null;
 		}
-	}
 
-	checkForTwemoji = () => {
-		const title = this.getTitle();
-		this.setState( {
-			isEmojiTitle: title && this.state.twemoji && this.state.twemoji.test( title ),
-		} );
-	};
+		return {
+			isEmojiTitle: prevState.twemoji.test( nextProps.decodedTagSlug ),
+		};
+	}
 
 	isSubscribed = () => {
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );

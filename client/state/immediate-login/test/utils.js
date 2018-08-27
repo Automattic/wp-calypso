@@ -3,12 +3,13 @@
 /**
  * External dependencies
  */
+import { first, last } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createPathWithoutImmediateLoginInformation, createImmediateLoginMessage } from '../utils';
-import { REASON_AUTO_RENEWAL_FAILURE } from '../constants';
+import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
 
 describe( 'immediate-login/utils', () => {
 	describe( 'createPathWithoutImmediateLoginInformation', () => {
@@ -119,16 +120,9 @@ describe( 'immediate-login/utils', () => {
 
 		const messages = [
 			createImmediateLoginMessage( '', 'test@wordpress.com' ),
-			createImmediateLoginMessage( REASON_AUTO_RENEWAL_FAILURE, 'test@wordpress.com' ),
+			createImmediateLoginMessage( first( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
+			createImmediateLoginMessage( last( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
 		];
-		test( 'should return a different message per reason', () => {
-			let previous = messages[ messages.length - 1 ];
-			for ( const m of messages ) {
-				expect( typeof m ).toBe( 'string' );
-				expect( m ).not.toBe( previous );
-				previous = m;
-			}
-		} );
 		test( 'should put an email in every message', () => {
 			for ( const m of messages ) {
 				expect( m.indexOf( 'test@wordpress.com' ) ).not.toBe( -1 );

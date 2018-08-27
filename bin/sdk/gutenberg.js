@@ -8,7 +8,10 @@ exports.config = ( {
 	argv: { editorScript, viewScript, outputDir, outputEditorFile, outputViewFile },
 	getBaseConfig,
 } ) => {
-	const baseConfig = getBaseConfig( { externalizeWordPressPackages: true } );
+	const baseConfig = getBaseConfig( {
+		cssFilename: '[name].css',
+		externalizeWordPressPackages: true,
+	} );
 	const name = path.basename( path.dirname( editorScript ).replace( /\/$/, '' ) );
 
 	return {

@@ -14,8 +14,6 @@ import deprecated from '@wordpress/deprecated';
  * Internal dependencies
  */
 import './hooks';
-import store from './store';
-import { initializeMetaBoxState } from './store/actions';
 import Editor from './editor';
 
 /**
@@ -41,9 +39,6 @@ export function reinitializeEditor( postType, postId, target, settings, override
 
 /**
  * Initializes and returns an instance of Editor.
- *
- * The return value of this function is not necessary if we change where we
- * call initializeEditor(). This is due to metaBox timing.
  *
  * @param {string}  id            Unique identifier for editor instance.
  * @param {Object}  postType      Post type of the post to edit.
@@ -76,12 +71,6 @@ export function initializeEditor( id, postType, postId, settings, overridePost )
 		<Editor settings={ settings } onError={ reboot } postId={ postId } postType={ postType } overridePost={ overridePost } />,
 		target
 	);
-
-	return {
-		initializeMetaBoxes( metaBoxes ) {
-			store.dispatch( initializeMetaBoxState( metaBoxes ) );
-		},
-	};
 }
 
 export { default as PluginBlockSettingsMenuItem } from './components/block-settings-menu/plugin-block-settings-menu-item';

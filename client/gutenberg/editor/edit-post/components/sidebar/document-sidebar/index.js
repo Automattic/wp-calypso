@@ -19,7 +19,6 @@ import FeaturedImage from '../featured-image';
 import DiscussionPanel from '../discussion-panel';
 import LastRevision from '../last-revision';
 import PageAttributes from '../page-attributes';
-import MetaBoxes from '../../meta-boxes';
 import SettingsHeader from '../settings-header';
 import Sidebar from '../';
 
@@ -39,7 +38,6 @@ const DocumentSidebar = () => (
 			<PostExcerpt />
 			<DiscussionPanel />
 			<PageAttributes />
-			<MetaBoxes location="side" />
 		</Panel>
 	</Sidebar>
 );

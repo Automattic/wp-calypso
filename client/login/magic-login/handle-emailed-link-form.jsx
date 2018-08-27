@@ -36,7 +36,7 @@ import {
 } from 'state/login/selectors';
 import {
 	wasImmediateLoginAttempted,
-	wasAutoRenewalFailureImmediateLoginAttempted,
+	wasManualRenewalImmediateLoginAttempted,
 } from 'state/immediate-login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
@@ -57,7 +57,7 @@ class HandleEmailedLinkForm extends React.Component {
 		isExpired: PropTypes.bool,
 		isFetching: PropTypes.bool,
 		isImmediateLoginAttempt: PropTypes.bool,
-		isAutoRenewalFailureImmediateLoginAttempt: PropTypes.bool,
+		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		redirectToOriginal: PropTypes.string,
 		redirectToSanitized: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
@@ -162,8 +162,10 @@ class HandleEmailedLinkForm extends React.Component {
 		);
 
 		let title;
-		if ( this.props.isAutoRenewalFailureImmediateLoginAttempt ) {
-			title = translate( 'Continue to WordPress.com to renew your subscription' );
+		if ( this.props.isManualRenewalImmediateLoginAttempt ) {
+			title = translate(
+				'Continue to WordPress.com to update your payment details and renew your subscription'
+			);
 		} else {
 			title =
 				this.props.clientId === config( 'wpcom_signup_id' )
@@ -220,9 +222,7 @@ const mapState = state => {
 		isExpired: getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE,
 		isFetching: isFetchingMagicLoginAuth( state ),
 		isImmediateLoginAttempt: wasImmediateLoginAttempted( state ),
-		isAutoRenewalFailureImmediateLoginAttempt: wasAutoRenewalFailureImmediateLoginAttempted(
-			state
-		),
+		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 	};

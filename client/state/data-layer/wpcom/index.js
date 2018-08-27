@@ -23,7 +23,6 @@ import logstash from './logstash';
 import me from './me';
 import meta from './meta';
 import posts from './posts';
-import privacyPolicy from './privacy-policy';
 import read from './read';
 import sites from './sites';
 import themeFilters from './theme-filters';
@@ -51,7 +50,6 @@ export const handlers = mergeHandlers(
 	me,
 	meta,
 	posts,
-	privacyPolicy,
 	read,
 	sites,
 	themeFilters,

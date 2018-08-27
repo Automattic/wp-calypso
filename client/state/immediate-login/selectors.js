@@ -3,12 +3,12 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { REASON_AUTO_RENEWAL_FAILURE } from './constants';
+import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
 /**
  * Retrieves information about whether an immediate login attempt was made for
@@ -77,13 +77,14 @@ export const getImmediateLoginLocale = state => {
 
 /**
  * Retrieves information about whether an immediate login attempt was made from
- * a link in an auto-renewal failure email (according to query parameters
- * provided in the client request) for the current instance of Calypso.
+ * a link in an email that requested the user to manually renew a subscription
+ * (according to query parameters provided in the client request) for the
+ * current instance of Calypso.
  *
  * @param {Object} state - Global state tree
  * @return {bool} - Whether the client request indicates that an immediate
- *                  login attempt was made from an auto-renewal failure email
+ *                  login attempt was made from a manual renewal email
  */
-export const wasAutoRenewalFailureImmediateLoginAttempted = state => {
-	return REASON_AUTO_RENEWAL_FAILURE === getImmediateLoginReason( state );
+export const wasManualRenewalImmediateLoginAttempted = state => {
+	return includes( REASONS_FOR_MANUAL_RENEWAL, getImmediateLoginReason( state ) );
 };

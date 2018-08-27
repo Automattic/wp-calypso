@@ -3,19 +3,20 @@
 /**
  * External dependencies
  */
+import { first, last } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
 	wasImmediateLoginAttempted,
-	wasAutoRenewalFailureImmediateLoginAttempted,
+	wasManualRenewalImmediateLoginAttempted,
 	wasImmediateLoginSuccessfulAccordingToClient,
 	getImmediateLoginReason,
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from '../selectors';
-import { REASON_AUTO_RENEWAL_FAILURE } from '../constants';
+import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
 
 describe( 'immediate-login/selectors', () => {
 	describe( 'wasImmediateLoginAttempted', () => {
@@ -33,14 +34,14 @@ describe( 'immediate-login/selectors', () => {
 			expect( wasImmediateLoginAttempted( { immediateLogin: { attempt: true } } ) ).toEqual( true );
 		} );
 	} );
-	describe( 'wasAutoRenewalFailureImmediateLoginAttempted', () => {
+	describe( 'wasManualRenewalImmediateLoginAttempted', () => {
 		test( 'should return correct value from state [1]', () => {
-			expect( wasAutoRenewalFailureImmediateLoginAttempted( {} ) ).toEqual( false );
+			expect( wasManualRenewalImmediateLoginAttempted( {} ) ).toEqual( false );
 		} );
 
 		test( 'should return correct value from state [2]', () => {
 			expect(
-				wasAutoRenewalFailureImmediateLoginAttempted( {
+				wasManualRenewalImmediateLoginAttempted( {
 					immediateLogin: { reason: 'test reason' },
 				} )
 			).toEqual( false );
@@ -48,8 +49,16 @@ describe( 'immediate-login/selectors', () => {
 
 		test( 'should return correct value from state [3]', () => {
 			expect(
-				wasAutoRenewalFailureImmediateLoginAttempted( {
-					immediateLogin: { reason: REASON_AUTO_RENEWAL_FAILURE },
+				wasManualRenewalImmediateLoginAttempted( {
+					immediateLogin: { reason: first( REASONS_FOR_MANUAL_RENEWAL ) },
+				} )
+			).toEqual( true );
+		} );
+
+		test( 'should return correct value from state [4]', () => {
+			expect(
+				wasManualRenewalImmediateLoginAttempted( {
+					immediateLogin: { reason: last( REASONS_FOR_MANUAL_RENEWAL ) },
 				} )
 			).toEqual( true );
 		} );

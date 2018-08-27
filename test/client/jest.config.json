@@ -4,7 +4,7 @@
 	},
 	"transform": {
 		"^.+\\.jsx?$": "babel-jest",
-		"\\.svg$": "<rootDir>/test/test/helpers/assets/transform.js"
+		"\\.(svg|(sc|sa|c)ss)$": "<rootDir>/test/test/helpers/assets/transform.js"
 	},
 	"modulePaths": [ "<rootDir>/test/", "<rootDir>/client/", "<rootDir>/client/extensions/" ],
 	"rootDir": "./../../",

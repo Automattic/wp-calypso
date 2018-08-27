@@ -93,8 +93,12 @@ class ReaderStream extends React.Component {
 		forcePlaceholders: false,
 	};
 
-	componentDidUpdate( { selectedPostKey } ) {
-		const { recsStreamKey, recsStream } = this.props;
+	componentDidUpdate( { selectedPostKey, streamKey } ) {
+		if ( streamKey !== this.props.streamKey ) {
+			this.props.resetCardExpansions();
+			this.props.viewStream( { streamKey } );
+			this.fetchNextPage( {} );
+		}
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
@@ -102,8 +106,8 @@ class ReaderStream extends React.Component {
 
 		if ( this.props.shouldRequestRecs ) {
 			this.props.requestPage( {
-				streamKey: recsStreamKey,
-				pageHandle: recsStream.pageHandle,
+				streamKey: this.props.recsStreamKey,
+				pageHandle: this.props.recsStream.pageHandle,
 			} );
 		}
 	}
@@ -162,15 +166,6 @@ class ReaderStream extends React.Component {
 		window.removeEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in history ) {
 			history.scrollRestoration = 'auto';
-		}
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		const { streamKey } = nextProps;
-		if ( streamKey !== this.props.streamKey ) {
-			this.props.resetCardExpansions();
-			this.props.viewStream( { streamKey } );
-			this.fetchNextPage( {}, nextProps );
 		}
 	}
 
