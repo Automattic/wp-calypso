@@ -176,7 +176,6 @@ class AboutStep extends Component {
 		const query = this.state.query.trim().toLocaleLowerCase();
 		return Object.values( hints )
 			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
-			.sort( ( a, b ) => a.localeCompare( b ) )
 			.map( hint => ( { label: hint } ) );
 	}
 
