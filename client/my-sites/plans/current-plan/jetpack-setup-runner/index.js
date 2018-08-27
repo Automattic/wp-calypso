@@ -124,6 +124,9 @@ class JetpackSetupRunner extends PureComponent {
 	 * provision plugin keys provided by a plan.
 	 *
 	 * Adjust progress accordingly.
+	 *
+	 * @param {Object} stateUpdate       Updated state object
+	 * @param {number} stateUpdate.total Total number of tasks in state
 	 */
 	handleUpdateProgress = stateUpdate => {
 		this.setState( stateUpdate );
