@@ -360,16 +360,16 @@ export class Checkout extends React.Component {
 			}
 		}
 
-		if ( this.props.isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ) ) {
-			return `/plans/my-plan/${ selectedSiteSlug }?do-setup`;
-		}
-
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
 			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
 				site: selectedSiteSlug,
 				plan: 'paid',
 			} );
 			return `/checklist/${ selectedSiteSlug }`;
+		}
+
+		if ( this.props.isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ) ) {
+			return `/plans/my-plan/${ selectedSiteSlug }?do-setup`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
