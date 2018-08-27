@@ -269,6 +269,7 @@
 		"whybundled": "whybundled stats.json"
 	},
 	"devDependencies": {
+		"@ampproject/worker-dom": "0.13.0",
 		"@automattic/babel-plugin-i18n-calypso": "file:./packages/babel-plugin-i18n-calypso",
 		"@automattic/babel-plugin-transform-wpcalypso-async": "file:./packages/babel-plugin-transform-wpcalypso-async",
 		"@automattic/calypso-build": "file:./packages/calypso-build",
@@ -293,6 +294,7 @@
 		"check-node-version": "3.3.0",
 		"color-studio": "1.0.5",
 		"concurrently": "4.1.1",
+		"copy-webpack-plugin": "5.0.4",
 		"enzyme": "3.10.0",
 		"enzyme-adapter-react-16": "1.14.0",
 		"enzyme-to-json": "3.3.5",

@@ -23,6 +23,7 @@ const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { cssNameFromFilename } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
+const CopyPlugin = require('copy-webpack-plugin');
 
 /**
  * Internal dependencies
@@ -308,6 +309,10 @@ const webpackConfig = {
 			),
 		} ),
 		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		new CopyPlugin([
+			{ from: path.resolve( __dirname, 'node_modules/@ampproject/worker-dom/dist/worker/worker.mjs' ), to: path.resolve( __dirname, 'public/workerdom/worker.mjs' ) },
+			{ from: path.resolve( __dirname, 'node_modules/@ampproject/worker-dom/dist/worker/worker.mjs.map' ), to: path.resolve( __dirname, 'public/workerdom/worker.mjs.map' ) },
+		]),
 	] ),
 	externals: [ 'electron' ],
 };

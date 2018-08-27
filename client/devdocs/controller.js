@@ -133,6 +133,13 @@ const devdocs = {
 		next();
 	},
 
+	remote: function( context, next ) {
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/remote" />
+		);
+		next();
+	},
+
 	formStateExamples: function( context, next ) {
 		context.primary = React.createElement( FormStateExamplesComponent, {
 			component: context.params.component,

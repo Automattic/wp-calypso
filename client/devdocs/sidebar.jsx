@@ -105,6 +105,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="globe"
+							label="Remote Components"
+							link="/devdocs/remote"
+							selected={ this.isItemSelected( '/devdocs/remote', false ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="code"
 							label="Playground"
 							link="/devdocs/playground"

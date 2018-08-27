@@ -69,6 +69,13 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
+		page(
+			'/devdocs/remote',
+			controller.sidebar,
+			controller.remote,
+			makeLayout,
+			clientRender
+		);
 		page( '/devdocs/start', controller.pleaseLogIn, makeLayout, clientRender );
 		page( '/devdocs/welcome', controller.sidebar, controller.welcome, makeLayout, clientRender );
 		page( '/devdocs/:path*', controller.sidebar, controller.singleDoc, makeLayout, clientRender );

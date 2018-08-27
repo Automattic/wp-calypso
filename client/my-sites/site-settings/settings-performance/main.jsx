@@ -27,22 +27,84 @@ import SpeedUpYourSite from 'my-sites/site-settings/speed-up-site-settings';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import RemoteBlock from 'components/remote-block';
+
+// TODO DEBUG
+const useRemoteUI = true;
 
 class SiteSettingsPerformance extends Component {
-	render() {
+	renderRemoteUI() {
+		return <RemoteBlock siteURL={this.props.site.URL} componentSlug={'performance'}/>;
+	}
+
+	renderLocalUI() {
 		const {
 			fields,
 			handleAutosavingToggle,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
-			site,
 			siteId,
 			siteIsJetpack,
 			submitForm,
 			translate,
 			trackEvent,
 			updateFields,
+		} = this.props;
+
+		return <React.Fragment>
+			{ siteIsJetpack && (
+				<Fragment>
+					<QueryJetpackModules siteId={ siteId } />
+
+					<SettingsSectionHeader title={ translate( 'Performance & speed' ) } />
+
+					<SpeedUpYourSite
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						submitForm={ submitForm }
+						updateFields={ updateFields }
+					/>
+
+					<SettingsSectionHeader title={ translate( 'Media' ) } />
+
+					<MediaSettingsPerformance
+						siteId={ siteId }
+						handleAutosavingToggle={ handleAutosavingToggle }
+						onChangeField={ onChangeField }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields }
+					/>
+				</Fragment>
+			) }
+
+			<Search
+				handleAutosavingToggle={ handleAutosavingToggle }
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
+
+			{ siteIsJetpack ? (
+				<AmpJetpack />
+			) : (
+				<AmpWpcom
+					submitForm={ submitForm }
+					trackEvent={ trackEvent }
+					updateFields={ updateFields }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			) }
+		</React.Fragment>;
+	}
+
+	render() {
+		const {
+			site,
+			translate,
 		} = this.props;
 
 		return (
@@ -52,51 +114,7 @@ class SiteSettingsPerformance extends Component {
 				<SidebarNavigation />
 				<SiteSettingsNavigation site={ site } section="performance" />
 
-				{ siteIsJetpack && (
-					<Fragment>
-						<QueryJetpackModules siteId={ siteId } />
-
-						<SettingsSectionHeader title={ translate( 'Performance & speed' ) } />
-
-						<SpeedUpYourSite
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							submitForm={ submitForm }
-							updateFields={ updateFields }
-						/>
-
-						<SettingsSectionHeader title={ translate( 'Media' ) } />
-
-						<MediaSettingsPerformance
-							siteId={ siteId }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							onChangeField={ onChangeField }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</Fragment>
-				) }
-
-				<Search
-					handleAutosavingToggle={ handleAutosavingToggle }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-
-				{ siteIsJetpack ? (
-					<AmpJetpack />
-				) : (
-					<AmpWpcom
-						submitForm={ submitForm }
-						trackEvent={ trackEvent }
-						updateFields={ updateFields }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
-					/>
-				) }
+				{ useRemoteUI ? this.renderRemoteUI() : renderLocalUI() }
 			</Main>
 		);
 	}
