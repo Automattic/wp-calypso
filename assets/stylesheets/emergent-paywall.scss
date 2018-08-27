@@ -64,6 +64,15 @@ textarea {
 		display: none;
 	}
 
+	a, a:visited {
+		color: $blue-wordpress;
+		text-decoration: none;
+	}
+
+	a:hover, a:focus, a:active {
+		color: $link-highlight;
+	}
+
 	// Seen in the 2nd step, displays the payment method type
 	.header2, .method-header {
 		margin: 0 0 20px;
@@ -418,24 +427,14 @@ textarea {
 
 			// Hide external billing support link.
 			a:last-child {
-				visibility:hidden;
-
-				// Hack to hide last '|' separator
-				&::before {
-					visibility: visible;
-					display: inline-block;
-					margin-left: -8px;
-					width: 8px;
-					height: 12px;
-					content: ' ';
-					background: #fff;
-					margin-bottom: -2px;
-				}
+				display: none;
 			}
 
-			// Adjust alignment of first link
-			a:first-of-type {
-				margin-left: 30px
+			a:nth-of-type(2)::after{
+				position: relative;
+				right: -4px;
+				background: #fff;
+				content: ' ';
 			}
 
 		}
