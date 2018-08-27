@@ -155,7 +155,8 @@ const Layout = createReactClass( {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
-				<InlineHelp />
+				{ /* TODO: Update InlineHelp to make sense in a Jetpack context */
+				'jetpack-connect' !== this.props.section.name && <InlineHelp /> }
 				<SupportArticleDialog />
 				<AppBanner />
 				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
