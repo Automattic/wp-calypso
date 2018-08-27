@@ -39,8 +39,7 @@ import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message'
 import RegionAddressFieldsets from 'components/domains/contact-details-form-fields/custom-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
 import { CALYPSO_CONTACT } from 'lib/url/support';
-import getCountries from 'state/selectors/get-countries';
-import QueryDomainCountries from 'components/data/query-countries/domains';
+import { requestDomainsCountries } from 'state/data-getters';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -469,7 +468,6 @@ export class ContactDetailsFormFields extends Component {
 						</FormButton>
 					) }
 				</FormFooter>
-				<QueryDomainCountries />
 			</FormFieldset>
 		);
 	}
@@ -485,7 +483,7 @@ export default connect( ( state, props ) => {
 			: false;
 	return {
 		countryCode,
-		countriesList: getCountries( state, 'domains' ),
+		countriesList: requestDomainsCountries().data,
 		hasCountryStates,
 	};
 } )( localize( ContactDetailsFormFields ) );

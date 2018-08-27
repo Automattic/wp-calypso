@@ -37,10 +37,9 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormToggle from 'components/forms/form-toggle';
-import getCountries from 'state/selectors/get-countries';
 import PhoneInput from 'components/phone-input';
-import QuerySmsCountries from 'components/data/query-countries/sms';
 import { CURRENCIES } from 'lib/format-currency/currencies';
+import { requestSmsCountries } from 'state/data-getters';
 
 const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
@@ -447,8 +446,8 @@ class FormFields extends React.PureComponent {
 	}
 }
 
-const ConnectedFormFields = connect( state => ( {
-	countriesList: getCountries( state, 'sms' ),
+const ConnectedFormFields = connect( () => ( {
+	countriesList: requestSmsCountries().data,
 } ) )( FormFields );
 
 ConnectedFormFields.displayName = 'FormFields';

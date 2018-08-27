@@ -30,8 +30,7 @@ import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
-import getCountries from 'state/selectors/get-countries';
-import QueryPaymentCountries from 'components/data/query-countries/payments';
+import { requestPaymentsCountries } from 'state/data-getters';
 
 /**
  * Module variables
@@ -227,7 +226,6 @@ const SecurePaymentForm = createReactClass( {
 				currentPaymentMethod="credit-card"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
-				<QueryPaymentCountries />
 				<CreditCardPaymentBox
 					cards={ this.props.cards }
 					transaction={ this.props.transaction }
@@ -254,7 +252,6 @@ const SecurePaymentForm = createReactClass( {
 				currentPaymentMethod="paypal"
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
-				<QueryPaymentCountries />
 				<PayPalPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
@@ -278,7 +275,6 @@ const SecurePaymentForm = createReactClass( {
 				currentPaymentMethod={ paymentType }
 				onSelectPaymentMethod={ this.selectPaymentBox }
 			>
-				<QueryPaymentCountries />
 				<RedirectPaymentBox
 					cart={ this.props.cart }
 					transaction={ this.props.transaction }
@@ -412,7 +408,7 @@ const SecurePaymentForm = createReactClass( {
 export default connect(
 	state => {
 		return {
-			countriesList: getCountries( state, 'payments' ),
+			countriesList: requestPaymentsCountries().data,
 			presaleChatAvailable: isPresalesChatAvailable( state ),
 		};
 	},

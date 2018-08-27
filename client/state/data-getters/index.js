@@ -31,6 +31,48 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 	);
 };
 
+export const requestDomainsCountries = () =>
+	requestHttpData(
+		'country-list-domains',
+		http(
+			{
+				apiVersion: '1.1',
+				method: 'GET',
+				path: '/domains/supported-countries/',
+			},
+			{}
+		),
+		{ fromApi: () => countries => [ [ 'country-list-domains', countries ] ] }
+	);
+
+export const requestPaymentsCountries = () =>
+	requestHttpData(
+		'country-list-payments',
+		http(
+			{
+				apiVersion: '1.1',
+				method: 'GET',
+				path: '/me/transactions/supported-countries/',
+			},
+			{}
+		),
+		{ fromApi: () => countries => [ [ 'country-list-payments', countries ] ] }
+	);
+
+export const requestSmsCountries = () =>
+	requestHttpData(
+		'country-list-sms',
+		http(
+			{
+				apiVersion: '1.1',
+				method: 'GET',
+				path: '/meta/sms-country-codes/',
+			},
+			{}
+		),
+		{ fromApi: () => countries => [ [ 'country-list-sms', countries ] ] }
+	);
+
 export const requestGeoLocation = () =>
 	requestHttpData(
 		'geo',

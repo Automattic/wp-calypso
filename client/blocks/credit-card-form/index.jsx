@@ -25,8 +25,7 @@ import { handleRenewNowClick, isRenewable } from 'lib/purchases';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
-import getCountries from 'state/selectors/get-countries';
-import QueryPaymentCountries from 'components/data/query-countries/payments';
+import { requestPaymentsCountries } from 'state/data-getters';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -275,7 +274,6 @@ export class CreditCardForm extends Component {
 			<form onSubmit={ this.onSubmit } ref={ this.storeForm }>
 				<Card className="credit-card-form__content">
 					{ heading && <div className="credit-card-form__heading">{ heading }</div> }
-					<QueryPaymentCountries />
 					<CreditCardFormFields
 						card={ this.getCardDetails() }
 						countriesList={ this.props.countriesList }
@@ -354,6 +352,6 @@ export class CreditCardForm extends Component {
 	}
 }
 
-export default connect( state => ( {
-	countriesList: getCountries( state, 'payments' ),
+export default connect( () => ( {
+	countriesList: requestPaymentsCountries().data,
 } ) )( localize( CreditCardForm ) );

@@ -16,8 +16,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormPhoneInput from 'components/forms/form-phone-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Buttons from './buttons';
-import getCountries from 'state/selectors/get-countries';
-import QuerySmsCountries from 'components/data/query-countries/sms';
+import { requestSmsCountries } from 'state/data-getters';
 
 class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	static displayName = 'SecurityAccountRecoveryRecoveryPhoneEdit';
@@ -45,7 +44,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 		return (
 			<div>
 				<FormFieldset>
-					<QuerySmsCountries />
 					<FormPhoneInput
 						countriesList={ this.props.countriesList }
 						initialCountryCode={ havePhone ? this.props.storedPhone.countryCode : null }
@@ -133,6 +131,6 @@ class SecurityAccountRecoveryRecoveryPhoneEdit extends React.Component {
 	};
 }
 
-export default connect( state => ( {
-	countriesList: getCountries( state, 'sms' ),
+export default connect( () => ( {
+	countriesList: requestSmsCountries().data,
 } ) )( localize( SecurityAccountRecoveryRecoveryPhoneEdit ) );

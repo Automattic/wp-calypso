@@ -33,7 +33,6 @@ import componentsUsageStats from './components-usage-stats/reducer';
 import concierge from './concierge/reducer';
 import connectedApplications from './connected-applications/reducer';
 import consoleDispatcher from './console-dispatch';
-import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
@@ -126,7 +125,6 @@ const reducers = {
 	componentsUsageStats,
 	concierge,
 	connectedApplications,
-	countries,
 	countryStates,
 	currentUser,
 	dataRequests,

@@ -23,8 +23,7 @@ import Security2faProgress from 'me/security-2fa-progress';
 import analytics from 'lib/analytics';
 import observe from 'lib/mixins/data-observe';
 import { protectForm } from 'lib/protect-form';
-import getCountries from 'state/selectors/get-countries';
-import QuerySmsCountries from 'components/data/query-countries/sms';
+import { requestSmsCountries } from 'state/data-getters';
 
 const debug = debugFactory( 'calypso:me:security:2fa-sms-settings' );
 
@@ -256,7 +255,7 @@ const Security2faSMSSettings = createReactClass( {
 export default flowRight(
 	protectForm,
 	localize,
-	connect( state => ( {
-		countriesList: getCountries( state, 'sms' ),
+	connect( () => ( {
+		countriesList: requestSmsCountries().data,
 	} ) )
 )( Security2faSMSSettings );

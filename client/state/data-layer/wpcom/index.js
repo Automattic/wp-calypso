@@ -21,7 +21,6 @@ import localeGuess from './locale-guess';
 import login2fa from './login-2fa';
 import logstash from './logstash';
 import me from './me';
-import meta from './meta';
 import posts from './posts';
 import read from './read';
 import sites from './sites';
@@ -48,7 +47,6 @@ export const handlers = mergeHandlers(
 	login2fa,
 	logstash,
 	me,
-	meta,
 	posts,
 	read,
 	sites,
