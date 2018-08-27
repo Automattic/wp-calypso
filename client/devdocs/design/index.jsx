@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import { trim } from 'lodash';
-import Gridicons from 'gridicons/example';
+// import Gridicons from 'gridicons/example';
 
 /**
  * Internal dependencies
@@ -210,7 +210,7 @@ class DesignAssets extends React.Component {
 					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
-					<Gridicons />
+					{ /* <Gridicons /> */ }
 					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
