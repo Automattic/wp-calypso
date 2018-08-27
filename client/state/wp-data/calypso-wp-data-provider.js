@@ -12,18 +12,14 @@ import calypsoRegistryPlugin from './calypso-registry-plugin';
 import calypsoWPDataStore from './calypso-wp-data-store';
 
 class CalypsoWPDataProvider extends Component {
-	constructor() {
+	constructor( props ) {
 		super( ...arguments );
-		this.registry = undefined;
+		this.updateRegistry( props.calypsoStore );
 	}
 
 	updateRegistry( calypsoStore ) {
 		this.registry = use( calypsoRegistryPlugin( calypsoStore ) );
 		this.registry.registerStore( 'calypso', calypsoWPDataStore );
-	}
-
-	componentDidMount() {
-		this.updateRegistry( this.props.calypsoStore );
 	}
 
 	componentDidUpdate( prevProps ) {
