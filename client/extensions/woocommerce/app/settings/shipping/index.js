@@ -20,6 +20,7 @@ import { ProtectFormGuard } from 'lib/protect-form';
 import ShippingHeader from './shipping-header';
 import ShippingOrigin from './shipping-origin';
 import ShippingZoneList from './shipping-zone-list';
+import ShippingClassesList from './shipping-classes-list';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
@@ -48,6 +49,7 @@ class Shipping extends Component {
 		return (
 			<Main className={ classNames( 'shipping', className ) } wideLayout>
 				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } toSave={ toSave } />
+				<ShippingClassesList />
 				<ShippingOrigin onChange={ this.onChangeUnits } />
 				<ShippingZoneList />
 				{ wcsEnabled && <LabelSettings onChange={ this.onChangeShipping } /> }

@@ -12,11 +12,21 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 const getShippingClassesFromState = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get(
-		state,
-		[ 'extensions', 'woocommerce', 'sites', siteId, 'shippingClasses' ],
-		false
-	);
+	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'shippingClasses' ], false );
+};
+
+export const getShippingClassFromState = (
+	state,
+	classId,
+	siteId = getSelectedSiteId( state )
+) => {
+	const classes = getShippingClassesFromState( state, siteId );
+
+	if ( isArray( classes ) ) {
+		return classes.find( existing => existing.id === classId );
+	}
+
+	return null;
 };
 
 /**
@@ -46,4 +56,14 @@ export const getShippingClassOptions = ( state, siteId = getSelectedSiteId( stat
 	const classes = getShippingClassesFromState( state, siteId );
 
 	return isArray( classes ) ? classes : [];
+};
+
+export const isShippingClassBeingDeleted = (
+	state,
+	classId,
+	siteId = getSelectedSiteId( state )
+) => {
+	const shippingClass = getShippingClassFromState( state, classId, siteId );
+
+	return shippingClass && shippingClass.deleting;
 };

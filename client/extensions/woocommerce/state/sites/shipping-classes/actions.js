@@ -9,6 +9,7 @@ import { errorNotice, removeNotice } from 'state/notices/actions';
 import {
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
+	WOOCOMMERCE_SHIPPING_CLASS_DELETE,
 } from 'woocommerce/state/action-types';
 import { areShippingClassesLoaded, areShippingClassesLoading } from './selectors';
 
@@ -59,4 +60,12 @@ export const fetchShippingClasses = siteId => ( dispatch, getState ) => {
 		type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 		siteId,
 	} );
+};
+
+export const deleteShippingClass = ( siteId, classId ) => {
+	return {
+		type: WOOCOMMERCE_SHIPPING_CLASS_DELETE,
+		siteId,
+		classId,
+	};
 };
