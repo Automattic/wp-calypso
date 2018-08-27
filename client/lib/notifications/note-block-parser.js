@@ -102,34 +102,45 @@ const commentNode = ( { id: commentId, post_id: postId, site_id: siteId } ) => (
 	siteId,
 } );
 
-const linkNode = ( { url } ) => ( { type: 'link', url } );
+const linkNode = ( { url, intent, section } ) => ( { type: 'link', url, intent, section } );
 
 const postNode = ( { id: postId, site_id: siteId } ) => ( { type: 'post', postId, siteId } );
 
-const siteNode = ( { id: siteId } ) => ( { type: 'site', siteId } );
+const siteNode = ( { id: siteId, intent, section } ) => ( {
+	type: 'site',
+	siteId,
+	intent,
+	section,
+} );
 
 const typedNode = ( { type } ) => ( { type } );
 
-const userNode = ( { id: userId, name, site_id: siteId } ) => ( {
+const userNode = ( { id: userId, name, site_id: siteId, intent, section } ) => ( {
 	type: 'person',
 	name,
 	siteId,
 	userId,
+	intent,
+	section,
 } );
 
-const pluginNode = ( { site_slug, slug, version } ) => ( {
+const pluginNode = ( { site_slug, slug, version, intent, section } ) => ( {
 	type: 'plugin',
 	siteSlug: site_slug,
 	pluginSlug: slug,
 	version,
+	intent,
+	section,
 } );
 
-const themeNode = ( { site_slug, slug, version, uri } ) => ( {
+const themeNode = ( { site_slug, slug, version, uri, intent, section } ) => ( {
 	type: 'theme',
 	siteSlug: site_slug,
 	themeSlug: slug,
 	themeUri: uri,
 	version,
+	intent,
+	section,
 } );
 
 const inferNode = range => {

@@ -16,6 +16,7 @@ import ActivityActor from './activity-actor';
 import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
 import Button from 'components/button';
@@ -54,6 +55,15 @@ class ActivityLogItem extends Component {
 	confirmBackup = () => this.props.confirmBackup( this.props.activity.rewindId );
 
 	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
+
+	trackContentLinkClick = ( {
+		target: {
+			dataset: { activity, section, intent },
+		},
+	} ) => {
+		const params = { activity, section, intent };
+		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', params );
+	};
 
 	renderHeader() {
 		const {
@@ -128,7 +138,17 @@ class ActivityLogItem extends Component {
 		/* There is no great way to generate a more valid React key here
 		 * but the index is probably sufficient because these sub-items
 		 * shouldn't be changing. */
-		return activityDescription.map( ( part, i ) => <FormattedBlock key={ i } content={ part } /> );
+		return activityDescription.map( ( part, i ) => {
+			const { intent, section } = part;
+			return (
+				<FormattedBlock
+					key={ i }
+					content={ part }
+					onClick={ this.trackContentLinkClick }
+					meta={ { activity: activityName, intent, section } }
+				/>
+			);
+		} );
 	}
 
 	renderItemAction() {
