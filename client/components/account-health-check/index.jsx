@@ -18,8 +18,8 @@ import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:account-health-check' );
 
-const AccountHealthCheck = () => {
-	debug( this.props );
+const AccountHealthCheck = props => {
+	debug( props );
 	return 'ohai';
 };
 

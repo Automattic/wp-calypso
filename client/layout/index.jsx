@@ -14,6 +14,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import AsyncLoad from 'components/async-load';
+import AccountHealthCheck from 'components/account-health-check';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 /* eslint-disable no-restricted-imports */
@@ -159,6 +160,7 @@ const Layout = createReactClass( {
 				<SupportArticleDialog />
 				<AppBanner />
 				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
+				{ config.isEnabled( 'account-health-check' ) && <AccountHealthCheck /> }
 			</div>
 		);
 	},
