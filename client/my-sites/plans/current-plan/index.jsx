@@ -126,6 +126,7 @@ class CurrentPlan extends Component {
 					<JetpackSetupRunner
 						key={ /* Force remount on site change */ selectedSiteId }
 						notifyProgress={ this.updatePlanSetupProgress }
+						siteId={ selectedSiteId }
 					/>
 				) }
 

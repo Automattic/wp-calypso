@@ -17,7 +17,6 @@ import QueryPluginKeys from 'components/data/query-plugin-keys';
 import versionCompare from 'lib/version-compare';
 import wpcom from 'lib/wp';
 import { getPluginOnSite } from 'state/plugins/installed/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 const debug = debugFactory( 'calypso:plugin-setup' );
 
@@ -160,13 +159,9 @@ class JetpackSetupRunner extends PureComponent {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		keyAkismet: getPluginKey( state, siteId, 'akismet' ),
-		keyVaultpress: getPluginKey( state, siteId, 'vaultpress' ),
-		vaultpressVersion: get( getPluginOnSite( state, siteId, 'vaultpress' ), [ 'version' ] ),
-		siteId,
-	};
-} )( JetpackSetupRunner );
+export default connect( ( state, { siteId } ) => ( {
+	keyAkismet: getPluginKey( state, siteId, 'akismet' ),
+	keyVaultpress: getPluginKey( state, siteId, 'vaultpress' ),
+	vaultpressVersion: get( getPluginOnSite( state, siteId, 'vaultpress' ), [ 'version' ] ),
+	siteId,
+} ) )( JetpackSetupRunner );
