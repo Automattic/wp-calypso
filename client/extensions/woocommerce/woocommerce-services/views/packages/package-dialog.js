@@ -21,7 +21,7 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import FormButton from 'components/forms/form-button';
 import inputFilters from './input-filters';
 import PredefinedPackages from './predefined-packages';
-import SegmentedControl from 'components/segmented-control';
+import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getPredefinedPackagesChangesSummary } from '../../state/packages/selectors';
 
 const AddPackageDialog = props => {
@@ -135,7 +135,7 @@ const AddPackageDialog = props => {
 		>
 			<FormSectionHeading>{ heading }</FormSectionHeading>
 			{ showSegmentedControl && (
-				<SegmentedControl
+				<SimplifiedSegmentedControl
 					primary
 					className="packages__mode-select"
 					initialSelected={ mode }
