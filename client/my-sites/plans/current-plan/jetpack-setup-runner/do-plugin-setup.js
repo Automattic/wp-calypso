@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,8 +16,6 @@ import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins, getStatusForSite } from 'state/plugins/installed/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-
-const debug = debugFactory( 'calypso:plugin-setup' ); // eslint-disable-line no-unused-vars
 
 export const ENGINE_STATE_ACTIVATE = 'ES_ACTIVATE';
 export const ENGINE_STATE_DONE_FAIL = 'ES_DONE_FAIL';
