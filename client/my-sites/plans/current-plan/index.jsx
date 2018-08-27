@@ -38,6 +38,7 @@ import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import JetpackSetupRunner from 'my-sites/plans/current-plan/jetpack-setup-runner/index';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -200,6 +201,11 @@ export default connect( ( state, { doPlanSetup } ) => {
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		isJetpack,
-		doJetpackPlanSetup: !! ( doPlanSetup && isJetpack && ! isAutomatedTransfer ),
+		doJetpackPlanSetup: !! (
+			doPlanSetup &&
+			isJetpack &&
+			! isAutomatedTransfer &&
+			isSiteOnPaidPlan( state, selectedSiteId )
+		),
 	};
 } )( localize( CurrentPlan ) );
