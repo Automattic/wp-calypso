@@ -100,7 +100,6 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
-		"signup/domain-first-flow": true,
 		"signup/social": true,
 		"support-user": true,
 		"ui/first-view": false,
