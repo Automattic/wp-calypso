@@ -60,9 +60,7 @@ class CurrentPlan extends Component {
 		planSetup: {},
 	};
 
-	updatePlanSetupProgress = stateUpdate => {
-		this.setState( { planSetup: stateUpdate } );
-	};
+	updatePlanSetupProgress = stateUpdate => void this.setState( { planSetup: stateUpdate } );
 
 	isLoading() {
 		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
