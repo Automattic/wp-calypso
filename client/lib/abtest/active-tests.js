@@ -1,5 +1,14 @@
 /** @format */
 export default {
+	themesNudgesUpdates: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	pluginsUpsellLandingPage: {
 		datestamp: '20180824',
 		variations: {

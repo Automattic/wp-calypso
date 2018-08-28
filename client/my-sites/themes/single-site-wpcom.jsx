@@ -38,7 +38,7 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 	const bannerLocationBelowSearch =
 		! isJetpack &&
 		config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-		abtest( 'nudgeAPalooza' ) === 'themesNudgesUpdates';
+		abtest( 'themesNudgesUpdates' ) === 'test';
 
 	const upsellUrl = `/plans/${ siteSlug }`;
 	let upsellBanner = null;
