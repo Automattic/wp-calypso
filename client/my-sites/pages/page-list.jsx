@@ -289,6 +289,10 @@ class Pages extends Component {
 		);
 	}
 
+	renderListEnd() {
+		return this.props.lastPage && ! this.props.loading ? <ListEnd /> : null;
+	}
+
 	renderPagesList( { pages } ) {
 		const { site, lastPage, query } = this.props;
 
@@ -327,6 +331,7 @@ class Pages extends Component {
 			<div id="pages" className="pages__page-list">
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				{ rows }
+				{ this.renderListEnd() }
 			</div>
 		);
 	}
@@ -368,7 +373,7 @@ class Pages extends Component {
 				) }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
-				{ this.props.lastPage && pages.length ? <ListEnd /> : null }
+				{ this.renderListEnd() }
 			</div>
 		);
 	}

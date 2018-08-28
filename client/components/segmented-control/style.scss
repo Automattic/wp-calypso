@@ -1,5 +1,7 @@
 /**
  * Segmented Control
+ *
+ * @format
  */
 
 .segmented-control {
@@ -14,25 +16,19 @@
 	flex: 1 1 auto;
 	cursor: pointer;
 
-	&:first-of-type {
-		.segmented-control__link {
-			border-top-left-radius: 4px;
-			border-bottom-left-radius: 4px;
-		}
+	&:first-of-type .segmented-control__link {
+		border-top-left-radius: 4px;
+		border-bottom-left-radius: 4px;
 	}
 
-	&:last-of-type {
-		.segmented-control__link {
-			border-right: solid 1px $gray-lighten-20;
-			border-top-right-radius: 4px;
-			border-bottom-right-radius: 4px;
-		}
+	&:last-of-type .segmented-control__link {
+		border-right: solid 1px $gray-lighten-20;
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
 	}
 
-	&.is-selected {
-		+ .segmented-control__item .segmented-control__link {
-			border-left-color: $gray-dark;
-		}
+	&.is-selected + .segmented-control__item .segmented-control__link {
+		border-left-color: $gray-dark;
 	}
 }
 
@@ -45,15 +41,13 @@
 	line-height: 18px;
 	color: $gray-text-min;
 	text-align: center;
+	transition: color 0.1s linear, background-color 0.1s linear;
 
 	&:focus {
 		color: $gray-dark;
 		outline: none;
+		background-color: $gray-light;
 	}
-}
-
-.keyboard-navigation .segmented-control__link:focus .segmented-control__text {
-	outline: dotted 1px $gray-dark;
 }
 
 .segmented-control__item.is-selected .segmented-control__link {
@@ -61,10 +55,9 @@
 	color: $gray-dark;
 }
 
-.notouch .segmented-control__link {
-	&:hover {
-		color: $gray-dark;
-	}
+.notouch .segmented-control__link:hover {
+	color: $gray-dark;
+	background-color: $gray-light;
 }
 
 .segmented-control__text {
@@ -84,21 +77,35 @@
 }
 
 //Primary variation
-.segmented-control.is-primary { 
-
+.segmented-control.is-primary {
 	.segmented-control__item {
-
 		&.is-selected {
-
 			.segmented-control__link {
-		  		border-color: $blue-medium;
-		 		background-color: $blue-medium;
-		 		color: $white;
-		  }
+				border-color: $blue-medium;
+				background-color: $blue-medium;
+				color: $white;
+
+				&:focus {
+					background-color: lighten( $blue-medium, 2.5% );
+				}
+			}
 
 			+ .segmented-control__item .segmented-control__link {
 				border-left-color: $blue-medium;
 			}
 		}
+	}
+
+	.segmented-control__link:focus {
+		background-color: lighten( $blue-light, 22.5% );
+	}
+}
+
+.notouch .segmented-control.is-primary {
+	.segmented-control__link:hover {
+		background-color: lighten( $blue-light, 22.5% );
+	}
+	.segmented-control__item.is-selected .segmented-control__link:hover {
+		background-color: lighten( $blue-medium, 2.5% );
 	}
 }

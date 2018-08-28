@@ -9,6 +9,7 @@ import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual } from 'lodash';
+import { isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Internal dependencies
@@ -347,6 +348,7 @@ class ActivityLog extends Component {
 			siteIsOnFreePlan,
 			slug,
 			translate,
+			isJetpack,
 		} = this.props;
 
 		const disableRestore =
@@ -391,7 +393,9 @@ class ActivityLog extends Component {
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 
-				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
+				{ config.isEnabled( 'rewind-alerts' ) &&
+					siteId &&
+					isJetpack && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state &&
@@ -420,7 +424,7 @@ class ActivityLog extends Component {
 						) }
 					/>
 				) }
-				{ siteId && <ActivityLogTasklist siteId={ siteId } /> }
+				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
 				{ isEmpty( logs ) ? (
@@ -525,6 +529,7 @@ export default connect(
 		const siteIsOnFreePlan =
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
@@ -533,6 +538,7 @@ export default connect(
 				'active' === rewindState.state &&
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			filter,
+			isJetpack,
 			logs: ( siteId && logs.data ) || emptyList,
 			logLoadingState: logs && logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),

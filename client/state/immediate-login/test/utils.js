@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { first } from 'lodash';
+import { first, last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -121,15 +121,8 @@ describe( 'immediate-login/utils', () => {
 		const messages = [
 			createImmediateLoginMessage( '', 'test@wordpress.com' ),
 			createImmediateLoginMessage( first( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
+			createImmediateLoginMessage( last( REASONS_FOR_MANUAL_RENEWAL ), 'test@wordpress.com' ),
 		];
-		test( 'should return a different message per reason', () => {
-			let previous = messages[ messages.length - 1 ];
-			for ( const m of messages ) {
-				expect( typeof m ).toBe( 'string' );
-				expect( m ).not.toBe( previous );
-				previous = m;
-			}
-		} );
 		test( 'should put an email in every message', () => {
 			for ( const m of messages ) {
 				expect( m.indexOf( 'test@wordpress.com' ) ).not.toBe( -1 );

@@ -133,6 +133,10 @@ const webpackConfig = {
 					},
 				],
 			},
+			{
+				test: /\.(sc|sa|c)ss$/,
+				loader: 'ignore-loader',
+			},
 		],
 	},
 	resolve: {

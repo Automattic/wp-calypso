@@ -3,13 +3,7 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
-import { REASONS_FOR_MANUAL_RENEWAL } from './constants';
 
 /**
  * Processes a redux ROUTE_SET action and returns a URL that contains no parameters that
@@ -41,15 +35,10 @@ export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
  * @return {string}              - Message to show to user
  */
 export const createImmediateLoginMessage = ( loginReason, email ) => {
-	if ( includes( REASONS_FOR_MANUAL_RENEWAL, loginReason ) ) {
-		return translate(
-			'We logged you in as %(email)s so you can update your payment details and renew your subscription.',
-			{
-				args: { email },
-			}
-		);
-	}
-
-	// Default message.
-	return translate( 'We logged you in as %(email)s.', { args: { email } } );
+	// It's possible to vary the message based on login reason, but currently
+	// the default message is used in all cases. (Since the user reached this
+	// page via one click from an email, the expectation is that it's the
+	// responsibility of the email and the page to make clear to the user why
+	// they're actually here, not this message.)
+	return translate( "You're logged in as %(email)s.", { args: { email } } );
 };
