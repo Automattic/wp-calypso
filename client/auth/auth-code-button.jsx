@@ -96,7 +96,9 @@ export class AuthCodeButton extends React.Component {
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
 			/* eslint-disable jsx-a11y/no-static-element-interactions */
 			message = (
-				<a onClick={ this.requestSMSCode }>{ translate( 'Send code via text message.' ) }</a>
+				<a href="#" onClick={ this.requestSMSCode }>
+					{ translate( 'Send code via text message.' ) }
+				</a>
 			);
 			/* eslint-enable jsx-a11y/anchor-is-valid */
 			/* eslint-enable jsx-a11y/click-events-have-key-events */
