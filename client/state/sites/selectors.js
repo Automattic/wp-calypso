@@ -45,9 +45,8 @@ import isSiteAutomatedTransfer from '../selectors/is-site-automated-transfer';
 import hasSitePendingAutomatedTransfer from '../selectors/has-site-pending-automated-transfer';
 import { getAutomatedTransferStatus } from '../automated-transfer/selectors';
 import { getSelectedSiteId } from '../ui/selectors';
-import { FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
 import { isCurrentUserCurrentPlanOwner } from './plans/selectors';
+import { canAccessWordads } from 'lib/ads/utils';
 
 /**
  * Returns the slug for a site, or null if the site is unknown.
@@ -396,23 +395,7 @@ export function canCurrentUserUseAds( state, siteId = null ) {
 		siteId = getSelectedSiteId( state );
 	}
 	const site = getSite( state, siteId );
-	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	return site && site.options.wordads && canUserManageOptions;
-}
-
-/**
- * Returns true if current user can see and use WordAds option in menu
- *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is previewable
- */
-export function canAdsBeEnabledOnCurrentSite( state, siteId = null ) {
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
-	}
-	const site = getSite( state, siteId );
-	return site && hasFeature( state, siteId, FEATURE_WORDADS_INSTANT );
+	return site && !! canAccessWordads( site );
 }
 
 /**
