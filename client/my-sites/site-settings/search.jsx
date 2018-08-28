@@ -24,6 +24,7 @@ import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import untrailingslashit from 'lib/route/untrailingslashit';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isBusiness, isEnterprise, isVipPlan, isJetpackBusiness } from 'lib/products-values';
@@ -70,16 +71,17 @@ class Search extends Component {
 		);
 	}
 
-	renderSettingsContent( activatingSearch, searchActive ) {
+	renderSettingsContent( updatingSettings, searchActive ) {
 		const { translate } = this.props;
 
 		return (
 			<div className="search__module-settings site-settings__child-settings">
-				{ activatingSearch && (
-					<FormSettingExplanation>{ translate( 'Activating search…' ) }</FormSettingExplanation>
+				{ updatingSettings && (
+					<FormSettingExplanation>{ translate( 'Updating settings…' ) }</FormSettingExplanation>
 				) }
-
-				{ searchActive && <div>{ this.renderSearchExplanation() }</div> }
+				{ searchActive && ! updatingSettings ? (
+					<div>{ this.renderSearchExplanation() }</div>
+				) : null }
 			</div>
 		);
 	}
@@ -95,7 +97,7 @@ class Search extends Component {
 
 		return (
 			<FormFieldset>
-				{ this.renderInfoLink( 'https://support.wordpress.com/search/' ) }
+				{ this.renderInfoLink( 'https://support.wordpress.com/jetpack-search/' ) }
 
 				<CompactFormToggle
 					checked={ !! fields.jetpack_search_enabled }
@@ -159,13 +161,6 @@ class Search extends Component {
 			widgetURL = untrailingslashit( widgetURL ) + '/widgets.php';
 		}
 
-		let renderedSettings = null;
-		if ( siteIsJetpack ) {
-			renderedSettings = this.renderJetpackSettings();
-		} else {
-			renderedSettings = this.renderWPComSettings();
-		}
-
 		return (
 			<div>
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
@@ -173,7 +168,7 @@ class Search extends Component {
 				<SectionHeader label={ translate( 'Jetpack Search' ) } />
 
 				<CompactCard className="search__card site-settings__traffic-settings">
-					{ renderedSettings }
+					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWPComSettings() }
 				</CompactCard>
 				{ ( searchModuleActive || fields.jetpack_search_enabled ) && (
 					<CompactCard href={ widgetURL }>{ translate( 'Add Search Widget' ) }</CompactCard>
@@ -191,7 +186,9 @@ export default connect( state => {
 
 	return {
 		siteId,
-		activatingSearchModule: !! isActivatingJetpackModule( state, siteId, 'search' ),
+		activatingSearchModule:
+			!! isActivatingJetpackModule( state, siteId, 'search' ) ||
+			!! isDeactivatingJetpackModule( state, siteId, 'search' ),
 		isSearchEligible: isSearchEligible,
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
