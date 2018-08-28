@@ -19,6 +19,7 @@ import QueryUserSettings from 'components/data/query-user-settings';
 import { isMobile } from 'lib/viewport';
 import config from 'config';
 import getUserSetting from 'state/selectors/get-user-setting';
+import userAgent from 'lib/user-agent';
 
 export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } ) => {
 	return (
@@ -48,7 +49,7 @@ export const shouldRenderAppPromo = ( options = {} ) => {
 		isUserLocaleEnglish = 'en' === options.currentUserLocale,
 		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
 		isUserDesktopAppUser = haveUserSettingsLoaded || options.isDesktopAppUser,
-		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent ),
+		isUserOnChromeOs = userAgent.isChromeOS,
 	} = options;
 
 	return (

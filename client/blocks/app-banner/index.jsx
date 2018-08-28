@@ -43,8 +43,8 @@ import {
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
 import versionCompare from 'lib/version-compare';
+import userAgent from 'lib/user-agent';
 
-const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
 
 export class AppBanner extends Component {
@@ -84,24 +84,9 @@ export class AppBanner extends Component {
 	};
 
 	isVisible() {
-		const { dismissedUntil, currentSection } = this.props;
+		const { dismissedUntil, currentSection, isMobile } = this.props;
 
-		return this.isMobile() && ! isDismissed( dismissedUntil, currentSection );
-	}
-
-	isiOS() {
-		return IOS_REGEX.test( this.props.userAgent );
-	}
-
-	isAndroid() {
-		const match = ANDROID_REGEX.exec( this.props.userAgent );
-		const version = get( match, '1', '0' );
-		//intents are only supported on Android 4.4+
-		return versionCompare( version, '4.4', '>=' );
-	}
-
-	isMobile() {
-		return this.isiOS() || this.isAndroid();
+		return isMobile && ! isDismissed( dismissedUntil, currentSection );
 	}
 
 	dismiss = event => {
@@ -116,9 +101,9 @@ export class AppBanner extends Component {
 	};
 
 	getDeepLink() {
-		const { currentRoute, currentSection } = this.props;
+		const { currentRoute, currentSection, isAndroid, isiOS } = this.props;
 
-		if ( this.isAndroid() ) {
+		if ( isAndroid ) {
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case EDITOR:
@@ -132,7 +117,7 @@ export class AppBanner extends Component {
 			}
 		}
 
-		if ( this.isiOS() ) {
+		if ( isiOS ) {
 			return getiOSDeepLink( currentRoute, currentSection );
 		}
 
@@ -229,6 +214,9 @@ const mapStateToProps = state => {
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
 	const currentRoute = getCurrentRoute( state );
+	const { isiPad, isiPod, isiPhone, source } = userAgent;
+	const isiOS = isiPad || isiPod || isiPhone;
+	const isAndroid = versionCompare( get( ANDROID_REGEX.exec( source ), '1', '0' ), '4.4', '>=' );
 
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
@@ -236,6 +224,10 @@ const mapStateToProps = state => {
 		currentRoute,
 		fetchingPreferences: isFetchingPreferences( state ),
 		siteId: getSelectedSiteId( state ),
+		isiOS,
+		//intents are only supported on Android 4.4+
+		isAndroid,
+		isMobile: isiOS || isAndroid,
 	};
 };
 

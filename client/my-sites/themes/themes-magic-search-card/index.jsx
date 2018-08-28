@@ -25,6 +25,7 @@ import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 import getThemeFilters from 'state/selectors/get-theme-filters';
 import getThemeFilterToTermTable from 'state/selectors/get-theme-filter-to-term-table';
+import userAgent from 'lib/user-agent';
 
 //We want those taxonomies if they are used to be presented in this order
 const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', 'style' ];
@@ -188,7 +189,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	searchTokens = input => {
 		//We are not able to scroll overlay on Edge so just create empty div
-		if ( typeof window !== 'undefined' && /(Edge)/.test( window.navigator.userAgent ) ) {
+		if ( userAgent.isEdge ) {
 			return <div />;
 		}
 

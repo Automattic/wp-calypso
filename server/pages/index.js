@@ -221,7 +221,6 @@ function getDefaultContext( request ) {
 	if ( request.context && request.context.lang ) {
 		lang = request.context.lang;
 	}
-
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -245,6 +244,7 @@ function getDefaultContext( request ) {
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
 		sectionCss,
+		userAgent: request.useragent,
 	} );
 
 	context.app = {
@@ -252,6 +252,7 @@ function getDefaultContext( request ) {
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isDebug: context.env === 'development' || context.isDebug,
 		staticUrls: staticFilesUrls,
+		userAgent: context.userAgent,
 	};
 
 	if ( calypsoEnv === 'wpcalypso' ) {

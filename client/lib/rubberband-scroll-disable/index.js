@@ -1,5 +1,10 @@
 /** @format */
 
+/**
+ * Internal dependencies
+ */
+import userAgent from 'lib/user-agent';
+
 function preventScrollBounceOSX( body, event ) {
 	if (
 		( event.deltaY < 0 && body.scrollTop === 0 ) ||
@@ -10,12 +15,7 @@ function preventScrollBounceOSX( body, event ) {
 }
 
 export default function( body ) {
-	if (
-		window &&
-		window.navigator &&
-		window.navigator.userAgent &&
-		window.navigator.userAgent.indexOf( 'Macintosh' ) !== -1
-	) {
+	if ( userAgent.platform === 'Apple Mac' ) {
 		body.addEventListener( 'mousewheel', preventScrollBounceOSX.bind( window, body ) );
 	}
 }
