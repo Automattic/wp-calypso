@@ -4,7 +4,7 @@
  */
 import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
 import { createReducer, combineReducers } from 'state/utils';
-import twoFactorAuthentication from './two-factor-auth';
+import twoFactorAuthentication from './two-factor-auth/reducer';
 
 export const isClosed = createReducer( false, {
 	[ ACCOUNT_CLOSE_SUCCESS ]: () => {
