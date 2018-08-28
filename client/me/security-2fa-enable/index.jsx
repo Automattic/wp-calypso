@@ -270,9 +270,9 @@ class Security2faEnable extends React.Component {
 				<p>
 					{ this.props.translate(
 						'Not sure what this screen means? You may need to download ' +
-						'{{authyLink}}Authy{{/authyLink}} or ' +
-						'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
-						'for your phone.',
+							'{{authyLink}}Authy{{/authyLink}} or ' +
+							'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
+							'for your phone.',
 						{
 							components: {
 								authyLink: (
@@ -345,7 +345,7 @@ class Security2faEnable extends React.Component {
 					<FormSettingExplanation>
 						{ this.props.translate(
 							'A code has been sent to your device via SMS. ' +
-							'You may request another code after one minute.'
+								'You may request another code after one minute.'
 						) }
 					</FormSettingExplanation>
 				) : null }

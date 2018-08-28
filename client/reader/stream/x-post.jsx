@@ -23,6 +23,7 @@ import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import Emojify from 'components/emojify';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
@@ -212,6 +213,7 @@ class CrossPost extends PureComponent {
 		);
 	}
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default connect( ( state, ownProps ) => {
 	const { feedId, blogId } = ownProps.postKey;

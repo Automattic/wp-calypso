@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { every, filter, identity, isEqual, find, replace, some, isFunction } from 'lodash';
+import { identity, isEqual, find, replace, some, isFunction } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -340,7 +340,7 @@ export class SharingService extends Component {
 		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
-		} else if ( ! this.areAllConnectionsStillAvailable() ) {
+		} else if ( some( this.getConnections(), { status: 'invalid' } ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
 		} else {
@@ -349,18 +349,6 @@ export class SharingService extends Component {
 		}
 
 		return status;
-	}
-
-	areAllConnectionsStillAvailable() {
-		// Ignore connected connections I do not own as those won't be available
-		const connectedConnections = filter(
-			this.getConnections(),
-			connection => connection.status === 'ok' && connection.user_ID === this.props.userId
-		);
-		const availableExternalAccounts = this.props.availableExternalAccounts || [];
-		return every( connectedConnections, connection =>
-			some( availableExternalAccounts, { ID: connection.external_ID } )
-		);
 	}
 
 	/**

@@ -108,11 +108,17 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
-				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/plugins' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/plugins',
+					body: JSON.stringify( {} ),
+					json: true,
+				} )
 				.reply( 200, apiResponse )
-				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/plugins' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/plugins',
+					body: JSON.stringify( {} ),
+					json: true,
+				} )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.',

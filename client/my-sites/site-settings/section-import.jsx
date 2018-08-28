@@ -22,8 +22,16 @@ import WordPressImporter from 'my-sites/importer/importer-wordpress';
 import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
+import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import { fetchState } from 'lib/importer/actions';
-import { appStates, WORDPRESS, MEDIUM, BLOGGER, SITE_IMPORTER } from 'state/imports/constants';
+import {
+	appStates,
+	WORDPRESS,
+	MEDIUM,
+	BLOGGER,
+	SITE_IMPORTER,
+	SQUARESPACE,
+} from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
@@ -50,13 +58,18 @@ const importers = [
 	},
 	{
 		type: BLOGGER,
-		isImporterEnabled: isEnabled( 'manage/import/blogger' ),
+		isImporterEnabled: true,
 		component: BloggerImporter,
 	},
 	{
 		type: SITE_IMPORTER,
 		isImporterEnabled: isEnabled( 'manage/import/site-importer' ),
 		component: SiteImporter,
+	},
+	{
+		type: SQUARESPACE,
+		isImporterEnabled: isEnabled( 'manage/import/squarespace' ),
+		component: SquarespaceImporter,
 	},
 ];
 
@@ -207,11 +220,11 @@ class SiteSettingsImport extends Component {
 		} = site;
 		const title = siteTitle.length ? siteTitle : slug;
 		const description = translate(
-			"Import another site's content into " +
-				'{{strong}}%(title)s{{/strong}}. Once you start an ' +
-				'import, come back here to check on the progress. ' +
-				'Check out our {{a}}import guide{{/a}} ' +
-				'if you need more help.',
+			'Import content from another site into ' +
+				'{{strong}}%(title)s{{/strong}}. Learn more about ' +
+				'the import process in our {{a}}support documentation{{/a}}. ' +
+				'Once you start importing, you can visit ' +
+				'this page to check on the progress.',
 			{
 				args: { title },
 				components: {

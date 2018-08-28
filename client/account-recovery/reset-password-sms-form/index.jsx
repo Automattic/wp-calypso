@@ -57,9 +57,9 @@ class ResetPasswordSmsForm extends Component {
 				<p>
 					{ translate(
 						'Please enter the code you were sent by SMS. ' +
-						'It will look something like {{code}}%(code)s{{/code}}. You may need to wait a few moments before it arrives.',
+							'It will look something like {{code}}%(code)s{{/code}}. You may need to wait a few moments before it arrives.',
 						{
-							args: { code: '6342 3423' },
+							args: { code: '63423423' },
 							components: { code: <code /> },
 						}
 					) }

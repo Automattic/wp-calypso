@@ -119,7 +119,8 @@ class DomainConnectAuthorizeRecords extends Component {
 							"To set up this service, we're going to make some changes to the " +
 								'the DNS records for your domain.'
 						) }
-					</span>&nbsp;
+					</span>
+					&nbsp;
 					<a onClick={ this.toggleRecordsVisible }>{ showRecordsLinkText }</a>
 				</p>
 				{ this.renderDnsTemplateRecords() }

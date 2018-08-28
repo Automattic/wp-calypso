@@ -15,7 +15,6 @@ import classNames from 'classnames';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { deleteDns, addDns } from 'lib/upgrades/actions';
 import Toggle from 'components/forms/form-toggle';
-import { DOMAIN_CONNECT } from 'lib/url/support';
 import { domainConnect } from 'lib/domains/constants';
 import { getNormalizedData } from 'lib/domains/dns';
 
@@ -126,7 +125,6 @@ class DomainConnectRecord extends React.Component {
 							'Enabling this special DNS record allows you to automatically configure ' +
 								'some third party services. '
 						) }
-						<a href={ DOMAIN_CONNECT }>{ translate( 'Learn more.' ) }</a>
 					</em>
 				</div>
 			</div>
@@ -134,8 +132,11 @@ class DomainConnectRecord extends React.Component {
 	}
 }
 
-export default connect( null, {
-	errorNotice,
-	removeNotice,
-	successNotice,
-} )( localize( DomainConnectRecord ) );
+export default connect(
+	null,
+	{
+		errorNotice,
+		removeNotice,
+		successNotice,
+	}
+)( localize( DomainConnectRecord ) );

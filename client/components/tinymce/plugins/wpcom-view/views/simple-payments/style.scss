@@ -3,7 +3,7 @@
 	flex-direction: column;
 	padding: 10px;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -12,8 +12,8 @@
 	flex: 0 0 30%;
 	margin-bottom: 24px;
 
-	@include breakpoint( ">480px" ) {
-		margin-bottom: 0
+	@include breakpoint( '>480px' ) {
+		margin-bottom: 0;
 	}
 }
 
@@ -22,7 +22,7 @@
 	background-color: $gray-lighten-30;
 	margin: 0;
 	min-width: 70px;
-	padding-top: calc(100% - 2px);
+	padding-top: calc( 100% - 2px );
 	position: relative;
 }
 
@@ -34,7 +34,7 @@
 	max-width: 100%;
 	position: absolute;
 	top: 50%;
-	transform: translate(-50%, -50%);
+	transform: translate( -50%, -50% );
 	width: auto;
 }
 
@@ -42,12 +42,14 @@
 	flex-basis: 100%;
 }
 
-.mce-content-body .wpview-type-simple-payments__text-part > div:not(.wpview-type-simple-payments__pay-part) {
+.mce-content-body
+	.wpview-type-simple-payments__text-part
+	> div:not( .wpview-type-simple-payments__pay-part ) {
 	line-height: 1.7;
 }
 
 .wpview-type-simple-payments__image-part + .wpview-type-simple-payments__text-part {
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		flex-basis: 70%;
 		padding-left: 24px;
 	}
@@ -105,7 +107,8 @@
 	position: absolute;
 	right: -1px;
 	width: 144px;
-	background: rgba(0, 0, 0, 0) linear-gradient(rgb(245, 245, 245), rgb(204, 204, 204)) repeat scroll 0px 100% /  auto padding-box border-box;
+	background: rgba( 0, 0, 0, 0 ) linear-gradient( rgb( 245, 245, 245 ), rgb( 204, 204, 204 ) )
+		repeat scroll 0px 100% / auto padding-box border-box;
 	border-radius: 4px 4px 4px 4px;
 	padding: 1px;
 }
@@ -115,15 +118,15 @@
 	height: 12px;
 	position: relative;
 	text-align: left;
-	text-shadow: rgb(204, 204, 204) 0px -1px;
+	text-shadow: rgb( 204, 204, 204 ) 0px -1px;
 	top: 50%;
 	width: 43px;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 10px;
 	font-style: normal;
 	font-weight: 500;
 	line-height: normal;
-	transform: translateY(-50%);
+	transform: translateY( -50% );
 	vertical-align: top;
 }
 
@@ -133,6 +136,29 @@
 	position: relative;
 	vertical-align: top;
 	width: 53px;
-	background-image: url('/calypso/images/simple-payments/paypal-logo.svg');
+	background-image: url( '/calypso/images/simple-payments/paypal-logo.svg' );
 	background-size: 53px 17px;
+}
+
+.wpview-type-simple-payments__unsupported {
+	align-items: center;
+	background-color: $white;
+	border: 2px solid $white;
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px $gray-lighten-20, 0 1px 2px $gray-lighten-30;
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+	padding: 1em;
+	.wpview-type-simple-payments__unsupported-icon {
+		flex-shrink: 1;
+		flex-grow: 0;
+		fill: $alert-red;
+		line-height: 0;
+		margin-right: 1em;
+	}
+	.wpview-type-simple-payments__unsupported-message {
+		flex-grow: 1;
+		line-height: 1.7;
+	}
 }

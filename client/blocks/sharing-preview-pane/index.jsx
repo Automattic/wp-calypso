@@ -159,7 +159,9 @@ class SharingPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview } initialItemIndex={ initialMenuItemIndex }>
-						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
+						{ services.map( service => (
+							<SocialItem { ...{ key: service, service } } />
+						) ) }
 					</VerticalMenu>
 				</div>
 				<div className="sharing-preview-pane__preview-area">

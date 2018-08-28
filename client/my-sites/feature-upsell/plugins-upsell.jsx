@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,14 +21,16 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import page from 'page';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Feature from 'my-sites/feature-upsell/feature';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import RefundAsterisk from 'my-sites/feature-upsell/refund-asterisk';
 import { getCurrencyObject } from 'lib/format-currency';
-import { getUpsellPlanPrice } from './utils';
+import { getUpsellPlanPrice, redirectUnlessCanUpgradeSite } from './utils';
+import { hasFeature } from 'state/sites/plans/selectors';
+import redirectIf from './redirect-if';
 
 /*
  * This is just for english audience and is not translated on purpose, remember to add
@@ -43,8 +46,8 @@ class PluginsUpsellComponent extends Component {
 	handleUpgradeButtonClick = () => {
 		const { trackTracksEvent, selectedSiteSlug } = this.props;
 
-		trackTracksEvent( 'calypso_upsell_landing_page_cta_click', {
-			cta_name: 'plugins-upsell',
+		trackTracksEvent( 'calypso_banner_cta_click', {
+			cta_name: 'upsell-page-plugins',
 		} );
 
 		page( `/checkout/${ selectedSiteSlug }/${ getPlanPath( PLAN_BUSINESS ) || '' }` );
@@ -280,8 +283,19 @@ const mapStateToProps = state => {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		price,
 		selectedSiteSlug: getSiteSlug( state, selectedSiteId ),
-		trackTracksEvent: recordTracksEvent,
 	};
 };
 
-export default connect( mapStateToProps )( localize( PluginsUpsellComponent ) );
+const mapDispatchToProps = dispatch => ( {
+	trackTracksEvent: ( name, props ) => dispatch( recordTracksEvent( name, props ) ),
+} );
+
+export default flowRight(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	),
+	localize,
+	redirectUnlessCanUpgradeSite,
+	redirectIf( ( state, siteId ) => hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ), '/plugins' )
+)( PluginsUpsellComponent );

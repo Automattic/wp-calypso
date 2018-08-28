@@ -1,10 +1,11 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import wp from 'wp';
+import { registerBlockType } from '@wordpress/blocks';
 
-wp.blocks.registerBlockType( 'calypsoberg/hello-dolly', {
+registerBlockType( 'calypsoberg/hello-dolly', {
 	title: 'Hello Dolly',
 	icon: 'format-audio',
 	category: 'layout',

@@ -128,7 +128,8 @@ export const HoldList = ( { holds, isPlaceholder, siteSlug, translate } ) => {
 							<div className="eligibility-warnings__message">
 								<span className="eligibility-warnings__message-title">
 									{ holdMessages[ hold ].title }
-								</span>:&nbsp;
+								</span>
+								:&nbsp;
 								<span className="eligibility-warnings__message-description">
 									{ holdMessages[ hold ].description }
 								</span>

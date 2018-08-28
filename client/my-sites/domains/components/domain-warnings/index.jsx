@@ -194,7 +194,9 @@ export class DomainWarnings extends React.PureComponent {
 		} else {
 			offendingList = (
 				<ul>
-					{ wrongMappedDomains.map( domain => <li key={ domain.name }>{ domain.name }</li> ) }
+					{ wrongMappedDomains.map( domain => (
+						<li key={ domain.name }>{ domain.name }</li>
+					) ) }
 				</ul>
 			);
 			if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {
@@ -926,9 +928,35 @@ export class DomainWarnings extends React.PureComponent {
 								/>
 							),
 						},
-						args: { domain: domainInTransfer.name },
+						args: {
+							domain: domainInTransfer.name,
+						},
 					}
 				);
+
+				if ( domainInTransfer.transferEndDateMoment ) {
+					message = translate(
+						'The transfer of {{strong}}%(domain)s{{/strong}} is in progress. ' +
+							'It should complete by %(transferFinishDate)s. We are waiting ' +
+							'for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
+						{
+							components: {
+								strong: <strong />,
+								a: (
+									<a
+										href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+							args: {
+								domain: domainInTransfer.name,
+								transferFinishDate: domainInTransfer.transferEndDateMoment.format( 'LL' ),
+							},
+						}
+					);
+				}
 				break;
 			case transferStatus.PENDING_START:
 				compactMessage = translate( 'Domain transfer waiting' );

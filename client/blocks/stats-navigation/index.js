@@ -15,6 +15,7 @@ import NavTabs from 'components/section-nav/tabs';
 import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
 import isGoogleMyBusinessLocationConnectedSelector from 'state/selectors/is-google-my-business-location-connected';
+import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteStore from 'state/selectors/is-site-store';
 import { navItems, intervals as intervalConstants } from './constants';
 import config from 'config';
@@ -30,9 +31,12 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = item => {
-		const { isGoogleMyBusinessLocationConnected, isStore, siteId } = this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, siteId, canViewActivityLog } = this.props;
 
 		switch ( item ) {
+			case 'activity':
+				return canViewActivityLog;
+
 			case 'store':
 				return isStore;
 
@@ -63,8 +67,14 @@ class StatsNavigation extends Component {
 								const navItem = navItems[ item ];
 								const intervalPath = navItem.showIntervals ? `/${ interval || 'day' }` : '';
 								const itemPath = `${ navItem.path }${ intervalPath }${ slugPath }`;
+								const className = 'stats-navigation__' + item;
 								return (
-									<NavItem key={ item } path={ itemPath } selected={ selectedItem === item }>
+									<NavItem
+										className={ className }
+										key={ item }
+										path={ itemPath }
+										selected={ selectedItem === item }
+									>
 										{ navItem.label }
 									</NavItem>
 								);
@@ -87,6 +97,7 @@ export default connect( ( state, { siteId } ) => {
 			state,
 			siteId
 		),
+		canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 		isStore: isSiteStore( state, siteId ),
 		siteId,
 	};

@@ -8,6 +8,7 @@ import url from 'url';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -94,25 +95,33 @@ class SiteNotice extends React.Component {
 		);
 	}
 
+	handleFreeToPaidPlanNoticeClick = e => {
+		e.preventDefault();
+
+		const { site } = this.props;
+		let href = '/plans/' + site.slug;
+		if (
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'plansBannerUpsells' ) === 'test'
+		) {
+			href = href + '/?discount=free_domain';
+		}
+		page.redirect( href );
+	};
+
 	freeToPaidPlanNotice() {
 		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
 			return null;
 		}
 
-		const { site, translate } = this.props;
-		let href = '/plans/' + site.slug;
-		if (
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'plansBannerUpsells'
-		) {
-			href = href + '/?discount=free_domain';
-		}
+		const { translate } = this.props;
 
 		return (
 			<SidebarBanner
 				ctaName="free-to-paid-sidebar"
 				ctaText={ translate( 'Upgrade' ) }
-				href={ href }
+				onClick={ this.handleFreeToPaidPlanNoticeClick }
+				href={ '/plans' }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
 			/>
@@ -138,7 +147,7 @@ class SiteNotice extends React.Component {
 
 		return (
 			<SidebarBanner
-				ctaName="free-to-paid-sidebar"
+				ctaName="active-discount-sidebar"
 				ctaText={ ctaText || 'Upgrade' }
 				href={ `/plans/${ site.slug }?discount=${ name }` }
 				icon="info-outline"

@@ -593,7 +593,9 @@ export default connect(
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
-				let planFeatures = getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) );
+				let planFeatures = getPlanFeaturesObject(
+					planConstantObj.getPlanCompareFeatures( abtest )
+				);
 
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;

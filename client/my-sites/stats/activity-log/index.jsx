@@ -9,6 +9,7 @@ import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual } from 'lodash';
+import { isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Internal dependencies
@@ -37,7 +38,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins/';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
-import UnavailabilityNotice from './unavailability-notice';
+import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { adjustMoment, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
@@ -60,8 +61,10 @@ import getRestoreProgress from 'state/selectors/get-restore-progress';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import isVipSite from 'state/selectors/is-vip-site';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
+import { isMobile } from 'lib/viewport';
 
 const PAGE_SIZE = 20;
 
@@ -304,13 +307,13 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate } = this.props;
+		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan } = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( logLoadingState === 'success' ) {
 			return isFilterEmpty ? (
-				<ActivityLogExample siteId={ siteId } />
+				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 			) : (
 				<EmptyContent title={ translate( 'No matching events found.' ) } />
 			);
@@ -345,6 +348,7 @@ class ActivityLog extends Component {
 			siteIsOnFreePlan,
 			slug,
 			translate,
+			isJetpack,
 		} = this.props;
 
 		const disableRestore =
@@ -388,12 +392,12 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
-				{ config.isEnabled( 'rewind-alerts' ) && siteId && <RewindAlerts siteId={ siteId } /> }
+
+				{ config.isEnabled( 'rewind-alerts' ) &&
+					siteId &&
+					isJetpack && <RewindAlerts siteId={ siteId } /> }
 				{ siteId &&
-					'unavailable' === rewindState.state && (
-						<UnavailabilityNotice siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
-					) }
+					'unavailable' === rewindState.state && <RewindUnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state &&
 					! siteIsOnFreePlan && (
 						<Banner
@@ -420,7 +424,7 @@ class ActivityLog extends Component {
 						) }
 					/>
 				) }
-				{ siteId && <ActivityLogTasklist siteId={ siteId } /> }
+				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
 				{ isEmpty( logs ) ? (
@@ -428,6 +432,7 @@ class ActivityLog extends Component {
 				) : (
 					<div>
 						<Pagination
+							compact={ isMobile() }
 							className="activity-log__pagination"
 							key="activity-list-pagination-top"
 							nextLabel={ translate( 'Older' ) }
@@ -438,6 +443,7 @@ class ActivityLog extends Component {
 							total={ logs.length }
 						/>
 						<section className="activity-log__wrapper">
+							{ siteIsOnFreePlan && <div className="activity-log__fader" /> }
 							{ theseLogs.map( log => (
 								<Fragment key={ log.activityId }>
 									{ timePeriod( log ) }
@@ -452,14 +458,9 @@ class ActivityLog extends Component {
 								</Fragment>
 							) ) }
 						</section>
-						{ siteIsOnFreePlan && (
-							<p className="activity-log__limit-notice">
-								{ translate(
-									"Since you're on a free plan, you'll see limited events in your activity."
-								) }
-							</p>
-						) }
+						{ siteIsOnFreePlan && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
+							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
 							key="activity-list-pagination-bottom"
 							nextLabel={ translate( 'Older' ) }
@@ -525,7 +526,10 @@ export default connect(
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 		const filter = getActivityLogFilter( state, siteId );
 		const logs = siteId && requestActivityLogs( siteId, filter );
-		const siteIsOnFreePlan = isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) );
+		const siteIsOnFreePlan =
+			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
+			! isVipSite( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
@@ -534,6 +538,7 @@ export default connect(
 				'active' === rewindState.state &&
 				! ( 'queued' === restoreStatus || 'running' === restoreStatus ),
 			filter,
+			isJetpack,
 			logs: ( siteId && logs.data ) || emptyList,
 			logLoadingState: logs && logs.state,
 			requestedRestore: find( logs, { activityId: requestedRestoreId } ),

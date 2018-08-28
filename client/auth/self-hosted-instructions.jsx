@@ -32,7 +32,8 @@ const SelfHostedInstructions = ( { onClickClose, translate } ) => (
 				<br />
 				<a href="http://jetpack.me/install/">
 					{ translate( 'Please follow these instructions to install Jetpack' ) }
-				</a>.
+				</a>
+				.
 			</li>
 			<li>{ translate( 'Connect Jetpack to WordPress.com.' ) }</li>
 			<li>

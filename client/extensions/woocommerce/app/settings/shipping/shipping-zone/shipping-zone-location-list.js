@@ -21,7 +21,6 @@ import ListHeader from 'woocommerce/components/list/list-header';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 import LocationFlag from 'woocommerce/components/location-flag';
 import ShippingZoneLocationDialog from './shipping-zone-location-dialog';
-import { decodeEntities } from 'lib/formatting';
 import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { getCurrentlyEditingShippingZoneLocationsList } from 'woocommerce/state/ui/shipping/zones/locations/selectors';
 import { openEditLocations } from 'woocommerce/state/ui/shipping/zones/locations/actions';
@@ -103,7 +102,7 @@ const ShippingZoneLocationList = ( {
 			<ListItem key={ index } className="shipping-zone__location">
 				<ListItemField className="shipping-zone__location-title">
 					{ getLocationFlag( location ) }
-					{ decodeEntities( location.name ) }
+					{ location.name }
 				</ListItemField>
 				<ListItemField className="shipping-zone__location-summary">
 					{ getLocationDescription( location ) }

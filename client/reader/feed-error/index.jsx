@@ -32,6 +32,7 @@ class FeedError extends React.Component {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
 				<a
 					className="empty-content__action button is-primary"
@@ -66,6 +67,7 @@ class FeedError extends React.Component {
 				/>
 			</ReaderMain>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

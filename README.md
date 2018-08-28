@@ -14,7 +14,7 @@ You can read more about Calypso at [developer.wordpress.com/calypso](https://dev
 
 You can try out the user-side of Calypso on [WordPress.com](https://wordpress.com/) (a lot of the logged-in area is Calypso; if in doubt, view source), you can poke around the code here on GitHub, or you can install it and run it locally. The latter is the most fun.
 
-1.	Make sure you have `git`, `node`, and `npm` installed.
+1.	Make sure you have [`git`](https://git-scm.com/), [`node`](https://nodejs.org/), and [`npm`](https://www.npmjs.com/get-npm) installed.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
 4.	Execute `npm start` from the root directory of the repository.

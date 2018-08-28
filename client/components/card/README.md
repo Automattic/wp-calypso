@@ -33,6 +33,7 @@ Name | Type | Default | Description
 `className` | `string` | null | Adds CSS classes.
 `href` | `string` | null | URL of the card. Adds a right chevron icon.
 `tagName` | `string` | null | Allows you to control the tag name of the card wrapper (only if `href` is not specified).
+`displayAsLink` | `bool` | false | Used for cards without a `href` that need to display as a link. Primarily intended for use when `tagName` is "button" and when an `onClick` attribute is set. The corresponding button will render with the same visual appearance as a link (including the right chevron icon).
 `target` | `string` | null | If used with `href`, this specifies where the link opens. Changes the icon to `external`.
 `compact` | `bool` | false | Decreases the size of the card.
 `highlight` | `string` | `false` | Displays a colored highlight. Can be `false` (no highlight, default), `info`, `success`, `error`, or `warning`.

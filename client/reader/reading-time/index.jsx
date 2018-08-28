@@ -7,10 +7,9 @@ import { localize } from 'i18n-calypso';
 
 class ReadingTime extends React.PureComponent {
 	render() {
-		let words = this.props.words || 0,
-			timeInMinutes = Math.round( this.props.readingTime / 60 ),
-			approxTime = null,
-			readingTime;
+		const words = this.props.words || 0;
+		const timeInMinutes = Math.round( this.props.readingTime / 60 );
+		let approxTime = null;
 
 		if ( timeInMinutes > 1 ) {
 			approxTime = (
@@ -19,12 +18,13 @@ class ReadingTime extends React.PureComponent {
 					{ this.props.translate( '~%d min', {
 						args: [ timeInMinutes ],
 						context: 'An approximate time to read something, in minutes',
-					} ) })
+					} ) }
+					)
 				</span>
 			);
 		}
 
-		readingTime = this.props.translate( '%d word {{Time/}}', '%d words {{Time/}}', {
+		const readingTime = this.props.translate( '%d word {{Time/}}', '%d words {{Time/}}', {
 			count: words,
 			args: [ words ],
 			components: { Time: approxTime },

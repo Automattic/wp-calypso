@@ -218,7 +218,8 @@ class Site extends React.Component {
 					return (
 						<span>
 							<p>
-								{ message }&nbsp;
+								{ message }
+								&nbsp;
 								{ this.props.translate(
 									'Is this your username? {{a}}Log in now to claim this site address{{/a}}.',
 									{

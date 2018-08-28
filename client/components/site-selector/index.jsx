@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, flow, get, includes, keyBy, noop, size } from 'lodash';
+import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
 import scrollIntoView from 'dom-scroll-into-view';
 import debugFactory from 'debug';
 
@@ -269,22 +269,13 @@ class SiteSelector extends Component {
 
 	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
 
-	renderSites() {
+	sitesToBeRendered() {
 		let sites;
-
-		if ( ! this.props.hasAllSitesList ) {
-			return <SitePlaceholder key="site-placeholder" />;
-		}
 
 		if ( this.props.sitesFound ) {
 			sites = this.props.sitesFound;
 		} else {
 			sites = this.props.visibleSites;
-
-			const { showRecentSites, recentSites } = this.props;
-			if ( showRecentSites && this.shouldShowGroups() && size( recentSites ) ) {
-				sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
-			}
 		}
 
 		if ( this.props.filter ) {
@@ -293,6 +284,67 @@ class SiteSelector extends Component {
 
 		if ( this.props.hideSelected && this.props.selected ) {
 			sites = sites.filter( site => site.slug !== this.props.selected );
+		}
+
+		return sites;
+	}
+
+	shouldRenderRecentSites() {
+		return this.props.showRecentSites && this.shouldShowGroups() && ! this.props.sitesFound;
+	}
+
+	renderAllSites() {
+		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
+			return null;
+		}
+
+		this.visibleSites.push( ALL_SITES );
+
+		const isHighlighted = this.isHighlighted( ALL_SITES );
+
+		return (
+			<AllSites
+				key="selector-all-sites"
+				sites={ this.props.sites }
+				onSelect={ this.onAllSitesSelect }
+				onMouseEnter={ this.onAllSitesHover }
+				isHighlighted={ isHighlighted }
+				isSelected={ this.isSelected( ALL_SITES ) }
+			/>
+		);
+	}
+
+	renderRecentSites( sites ) {
+		if ( ! this.shouldRenderRecentSites() ) {
+			return null;
+		}
+
+		const recentSites = [];
+		for ( const siteId of this.props.recentSites ) {
+			const site = find( sites, { ID: siteId } );
+			if ( site ) {
+				recentSites.push( site );
+			}
+		}
+
+		if ( isEmpty( recentSites ) ) {
+			return null;
+		}
+
+		const renderedRecentSites = recentSites.map( this.renderSite, this );
+
+		return <div className="site-selector__recent">{ renderedRecentSites }</div>;
+	}
+
+	renderSites( sites ) {
+		if ( ! this.props.hasAllSitesList ) {
+			return <SitePlaceholder key="site-placeholder" />;
+		}
+
+		// Filter recentSites
+		if ( this.shouldRenderRecentSites() ) {
+			const recentSites = this.props.recentSites;
+			sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
 		}
 
 		// Render sites
@@ -307,25 +359,6 @@ class SiteSelector extends Component {
 		}
 
 		return siteElements;
-	}
-
-	renderAllSites() {
-		if ( this.props.showAllSites && ! this.props.sitesFound && this.props.allSitesPath ) {
-			this.visibleSites.push( ALL_SITES );
-
-			const isHighlighted = this.isHighlighted( ALL_SITES );
-
-			return (
-				<AllSites
-					key="selector-all-sites"
-					sites={ this.props.sites }
-					onSelect={ this.onAllSitesSelect }
-					onMouseEnter={ this.onAllSitesHover }
-					isHighlighted={ isHighlighted }
-					isSelected={ this.isSelected( ALL_SITES ) }
-				/>
-			);
-		}
 	}
 
 	renderSite( site ) {
@@ -350,28 +383,6 @@ class SiteSelector extends Component {
 		);
 	}
 
-	renderRecentSites() {
-		const sitesById = keyBy( this.props.sites, 'ID' );
-		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
-
-		if (
-			! sites ||
-			this.props.sitesFound ||
-			! this.shouldShowGroups() ||
-			this.props.visibleSiteCount <= 11
-		) {
-			return null;
-		}
-
-		const recentSites = sites.map( this.renderSite, this );
-
-		if ( ! recentSites ) {
-			return null;
-		}
-
-		return <div className="site-selector__recent">{ recentSites }</div>;
-	}
-
 	render() {
 		// Render an empty div.site-selector element as a placeholder. It's useful for lazy
 		// rendering of the selector in sidebar while keeping the on-appear animation work.
@@ -388,6 +399,8 @@ class SiteSelector extends Component {
 		} );
 
 		this.visibleSites = [];
+
+		const sites = this.sitesToBeRendered();
 
 		return (
 			<div
@@ -406,8 +419,8 @@ class SiteSelector extends Component {
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
-					{ this.renderRecentSites() }
-					{ this.renderSites() }
+					{ this.renderRecentSites( sites ) }
+					{ this.renderSites( sites ) }
 					{ hiddenSitesCount > 0 &&
 						! this.props.sitesFound && (
 							<span className="site-selector__hidden-sites-message">

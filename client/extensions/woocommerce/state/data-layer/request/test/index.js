@@ -146,8 +146,14 @@ describe( 'handlers', () => {
 
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=post', json: true } )
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=post',
+					body: JSON.stringify( {
+						name: 'post request',
+						placeholder: true,
+					} ),
+					json: true,
+				} )
 				.reply( 200, { data: postResponse } );
 		} );
 
@@ -207,8 +213,14 @@ describe( 'handlers', () => {
 
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=put', json: true } )
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=put',
+					body: JSON.stringify( {
+						name: 'put request',
+						placeholder: true,
+					} ),
+					json: true,
+				} )
 				.reply( 200, { data: putResponse } );
 		} );
 
@@ -268,8 +280,10 @@ describe( 'handlers', () => {
 
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=delete', json: true } )
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/', {
+					path: '/wc/v3/placeholder_endpoint&_via_calypso&_method=delete',
+					json: true,
+				} )
 				.reply( 200, { data: deleteResponse } );
 		} );
 

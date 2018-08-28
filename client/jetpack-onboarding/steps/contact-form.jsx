@@ -95,7 +95,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		const { getForwardUrl, hasContactForm, siteId, translate } = this.props;
 
 		return (
-			<div className="steps__main">
+			<div className="steps__main" data-e2e-type="contact-form">
 				<QuerySites siteId={ siteId } />
 
 				<JetpackLogo full size={ 45 } />

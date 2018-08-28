@@ -89,19 +89,16 @@ class SiteIndicator extends Component {
 
 	updatesAvailable() {
 		const { site, siteUpdates, translate } = this.props;
-		if ( siteUpdates.wordpress && siteUpdates.wp_update_version ) {
+		const activityLogPath = '/stats/activity/' + site.slug;
+
+		if ( siteUpdates.wordpress === siteUpdates.total && site.canUpdateFiles ) {
 			return (
 				<span>
 					{ translate(
 						'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}',
 						{
 							components: {
-								link: (
-									<WPAdminLink
-										onClick={ this.handleCoreUpdate }
-										href={ site.options.admin_url + 'update-core.php' }
-									/>
-								),
+								link: <a href={ activityLogPath } onClick={ this.handleCoreUpdate } />,
 							},
 							args: {
 								version: siteUpdates.wp_update_version,
@@ -128,6 +125,35 @@ class SiteIndicator extends Component {
 			);
 		}
 
+		if ( siteUpdates.themes === siteUpdates.total && site.canUpdateFiles ) {
+			return (
+				<span>
+					<a onClick={ this.handleThemesUpdate } href={ activityLogPath }>
+						{ translate(
+							'There is a theme update available.',
+							'There are theme updates available.',
+							{
+								count: siteUpdates.total,
+							}
+						) }
+					</a>
+				</span>
+			);
+		}
+		// Everything else expect for translations since they are not supported
+		if (
+			siteUpdates.themes + siteUpdates.plugins + siteUpdates.wordpress === siteUpdates.total &&
+			site.canUpdateFiles
+		) {
+			return (
+				<span>
+					<a onClick={ this.handleMultipleUpdate } href={ activityLogPath }>
+						{ translate( 'There are updates available.' ) }
+					</a>
+				</span>
+			);
+		}
+
 		return (
 			<span>
 				<WPAdminLink
@@ -142,22 +168,37 @@ class SiteIndicator extends Component {
 		);
 	}
 
-	handlePluginsUpdate = () => {
-		const { siteUpdates } = this.props;
+	recordEvent( event, total ) {
 		window.scrollTo( 0, 0 );
 		this.setState( { expand: false } );
-		this.props.recordGoogleEvent(
-			'Site-Indicator',
+		this.props.recordGoogleEvent( 'Site-Indicator', event, 'Total Updates', total );
+	}
+
+	handlePluginsUpdate = () => {
+		const { siteUpdates } = this.props;
+		this.recordEvent(
 			'Clicked updates available link to plugins updates',
-			'Total Updates',
+			siteUpdates && siteUpdates.total
+		);
+	};
+
+	handleThemesUpdate = () => {
+		const { siteUpdates } = this.props;
+		this.recordEvent(
+			'Clicked updates available link to theme updates',
 			siteUpdates && siteUpdates.total
 		);
 	};
 
 	handleCoreUpdate = () => {
-		this.props.recordGoogleEvent(
-			'Site-Indicator',
-			'Triggered Update WordPress Core Version From Calypso'
+		this.recordEvent( 'Clicked updates available link to WordPress updates', 1 );
+	};
+
+	handleMultipleUpdate = () => {
+		const { siteUpdates } = this.props;
+		this.recordEvent(
+			'Clicked updates available link for multiple updates',
+			siteUpdates && siteUpdates.total
 		);
 	};
 

@@ -18,6 +18,11 @@ const htmlToReactParser = new Parser();
 class ReadmeViewer extends Component {
 	static propTypes = {
 		readmeFilePath: PropTypes.string,
+		showEditLink: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showEditLink: true,
 	};
 
 	state = {
@@ -37,7 +42,7 @@ class ReadmeViewer extends Component {
 	}
 
 	render() {
-		const { readmeFilePath } = this.props;
+		const { readmeFilePath, showEditLink } = this.props;
 		const editLink = (
 			<a
 				className="readme-viewer__doc-edit-link devdocs__doc-edit-link"
@@ -49,7 +54,7 @@ class ReadmeViewer extends Component {
 
 		return this.props.readmeFilePath ? (
 			<div className="readme-viewer__wrapper devdocs__doc-content">
-				{ this.state.readme && editLink }
+				{ this.state.readme && showEditLink && editLink }
 				{ this.state.readme || (
 					<div className="readme-viewer__not-available">No documentation available.</div>
 				) }

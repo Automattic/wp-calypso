@@ -119,6 +119,7 @@ import makeEmbedsSafe from './rule-content-make-embeds-safe';
 import detectMedia from './rule-content-detect-media';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from './rule-content-disable-autoplay';
 import detectPolls from './rule-content-detect-polls';
+import detectSurveys from './rule-content-detect-surveys';
 import makeContentLinksSafe from './rule-content-make-links-safe';
 
 normalizePost.content = {
@@ -131,6 +132,7 @@ normalizePost.content = {
 	disableAutoPlayOnMedia,
 	disableAutoPlayOnEmbeds,
 	detectPolls,
+	detectSurveys,
 };
 
 export default normalizePost;

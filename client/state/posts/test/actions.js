@@ -89,7 +89,6 @@ describe( 'actions', () => {
 				postId: 841,
 				savedPost: savedPost,
 				post: attributes,
-				saveMarker: null,
 			} );
 		} );
 	} );
@@ -333,7 +332,6 @@ describe( 'actions', () => {
 						ID: 13640,
 						title: 'Hello World',
 					} ),
-					saveMarker: null,
 				} );
 			} );
 		} );
@@ -376,7 +374,6 @@ describe( 'actions', () => {
 						ID: 13640,
 						title: 'Updated',
 					} ),
-					saveMarker: null,
 				} );
 			} );
 		} );

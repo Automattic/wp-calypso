@@ -32,7 +32,6 @@ const config = {
 		[ '@babel/plugin-proposal-class-properties', { loose: true } ],
 		[ '@babel/plugin-transform-classes', { loose: false } ],
 		[ '@babel/plugin-transform-template-literals', { loose: true } ],
-		! isCalypso && 'add-module-exports',
 		isCalypso && [
 			path.join(
 				__dirname,
@@ -58,7 +57,8 @@ const config = {
 	] ),
 	env: {
 		test: {
-			plugins: [ './server/bundler/babel/babel-lodash-es' ],
+			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
+			plugins: [ 'add-module-exports', './server/bundler/babel/babel-lodash-es' ],
 		},
 	},
 };

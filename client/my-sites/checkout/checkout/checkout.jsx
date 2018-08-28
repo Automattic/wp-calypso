@@ -12,7 +12,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { abtest, getABTestVariation } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
@@ -296,7 +295,14 @@ export class Checkout extends React.Component {
 
 	getCheckoutCompleteRedirectPath = () => {
 		let renewalItem;
-		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
+		const {
+			cart,
+			selectedSite,
+			selectedSiteSlug,
+			transaction: {
+				step: { data: receipt },
+			},
+		} = this.props;
 		const domainReceiptId = get(
 			cartItems.getGoogleApps( cart ),
 			'[0].extra.receipt_for_domain',
@@ -327,44 +333,42 @@ export class Checkout extends React.Component {
 			return '/checkout/thank-you/features';
 		}
 
-		if ( domainReceiptId && receiptId ) {
-			// DO NOT assign the test here.
-			if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
+		if ( this.props.isNewlyCreatedSite && receipt && isEmpty( receipt.failed_purchases ) ) {
+			const siteDesignType = get( selectedSite, 'options.design_type' );
+			const hasGoogleAppsInCart = cartItems.hasGoogleApps( cart );
+
+			// The onboarding checklist currently supports the blog type only.
+			if ( hasGoogleAppsInCart && domainReceiptId && 'store' !== siteDesignType ) {
+				analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+					site: selectedSiteSlug,
+					plan: 'paid',
+				} );
 				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
 			}
-			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
-		}
 
-		// NOTE: This test assignment should precede the G Suite
-		if ( this.props.isEligibleForCheckoutToChecklist ) {
-			abtest( 'checklistThankYouForPaidUser' );
-		}
+			if ( ! hasGoogleAppsInCart && cartItems.hasDomainRegistration( cart ) ) {
+				const domainsForGSuite = this.getEligibleDomainFromCart();
 
-		if (
-			this.props.isNewlyCreatedSite &&
-			! cartItems.hasGoogleApps( cart ) &&
-			cartItems.hasDomainRegistration( cart ) &&
-			receipt &&
-			isEmpty( receipt.failed_purchases )
-		) {
-			const domainsForGSuite = this.getEligibleDomainFromCart();
-
-			if ( domainsForGSuite.length ) {
-				return `/checkout/${ selectedSiteSlug }/with-gsuite/${
-					domainsForGSuite[ 0 ].meta
-				}/${ receiptId }`;
+				if ( domainsForGSuite.length ) {
+					return `/checkout/${ selectedSiteSlug }/with-gsuite/${
+						domainsForGSuite[ 0 ].meta
+					}/${ receiptId }`;
+				}
 			}
 		}
 
-		// DO NOT assign the test here.
-		if ( receipt && 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
-			return `/checklist/${ selectedSiteSlug }?d=paid`;
+		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
+			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+				site: selectedSiteSlug,
+				plan: 'paid',
+			} );
+			return `/checklist/${ selectedSiteSlug }`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${
 					this.props.selectedFeature
-				}/${ selectedSiteSlug }/${ receiptId }`
+			  }/${ selectedSiteSlug }/${ receiptId }`
 			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	};
 
@@ -380,7 +384,9 @@ export class Checkout extends React.Component {
 			isDomainOnly,
 			reduxStore,
 			selectedSiteId,
-			transaction: { step: { data: receipt } },
+			transaction: {
+				step: { data: receipt },
+			},
 			translate,
 		} = this.props;
 		const redirectPath = this.getCheckoutCompleteRedirectPath();

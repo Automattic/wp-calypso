@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
 import { RelatedPostCard } from 'blocks/reader-related-card';
 import { recordAction, recordTrackForPost } from 'reader/stats';
 import Button from 'components/button';
-import { dismissPost } from 'state/reader/streams/actions';
+import { dismissPost } from 'state/reader/site-dismissals/actions';
 import { keyForPost } from 'reader/post-key';
 import QueryReaderPost from 'components/data/query-reader-post';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
@@ -51,9 +51,10 @@ export class RecommendedPosts extends React.PureComponent {
 		recommendations: PropTypes.array,
 	};
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	/* eslint-disable wpcalypso/jsx-classname-namespace, wpcalypso/jsx-gridicon-size */
 	render() {
 		const { posts, recommendations } = this.props;
+
 		return (
 			<div className="reader-stream__recommended-posts">
 				<QueryReaderPost postKey={ recommendations[ 0 ] } />
@@ -98,6 +99,7 @@ export class RecommendedPosts extends React.PureComponent {
 				</ul>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace, wpcalypso/jsx-gridicon-size */
 	}
 }
 

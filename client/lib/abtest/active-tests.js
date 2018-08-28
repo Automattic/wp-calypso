@@ -1,13 +1,49 @@
 /** @format */
 export default {
+	plansBannerUpsells: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	themesNudgesUpdates: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	pluginsUpsellLandingPage: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	themesUpsellLandingPage: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	nudgeAPalooza: {
-		datestamp: '20180711',
+		datestamp: '20180806',
 		variations: {
 			sidebarUpsells: 20,
 			themesNudgesUpdates: 20,
 			customPluginAndThemeLandingPages: 20,
 			plansBannerUpsells: 20,
-			control: 40,
+			control: 20,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -67,24 +103,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	checklistThankYouForFreeUser: {
-		datestamp: '20171204',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	checklistThankYouForPaidUser: {
-		datestamp: '20171204',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
 	jetpackSignupGoogleTop: {
 		datestamp: '20180427',
 		variations: {
@@ -93,16 +111,16 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSuggestionKrakenV322: {
-		datestamp: '20180709',
+	domainSuggestionKrakenV325: {
+		datestamp: '20180828',
 		variations: {
 			domainsbot: 0,
-			group_1: 27200,
-			group_3: 27200,
-			group_4: 27200,
-			group_6: 1000,
-			group_7: 1000,
-			group_8: 27200,
+			group_1: 21,
+			group_3: 21,
+			group_4: 21,
+			group_6: 8, // dot with re-ordering
+			group_7: 8, // dot
+			group_8: 21,
 		},
 		defaultVariation: 'domainsbot',
 	},
@@ -114,12 +132,20 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
-	includeDotBlogSubdomain: {
-		datestamp: '20180723',
+	includeDotBlogSubdomainV2: {
+		datestamp: '20180813',
 		variations: {
 			yes: 50,
 			no: 50,
 		},
 		defaultVariation: 'no',
+	},
+	gSuiteDiscountV2: {
+		datestamp: '20180822',
+		variations: {
+			control: 50,
+			discount: 50,
+		},
+		defaultVariation: 'control',
 	},
 };

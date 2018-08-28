@@ -50,18 +50,18 @@ class ReaderCombinedCardComponent extends React.Component {
 		this.recordRenderTrack();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.postKey.feedId !== nextProps.postKey.feedId ||
-			this.props.postKey.blogId !== nextProps.postKey.blogId ||
-			size( this.props.posts ) !== size( nextProps.posts )
+			this.props.postKey.feedId !== prevProps.postKey.feedId ||
+			this.props.postKey.blogId !== prevProps.postKey.blogId ||
+			size( this.props.posts ) !== size( prevProps.posts )
 		) {
-			this.recordRenderTrack( nextProps );
+			this.recordRenderTrack();
 		}
 	}
 
-	recordRenderTrack = ( props = this.props ) => {
-		const { postKey, posts } = props;
+	recordRenderTrack = () => {
+		const { postKey, posts } = this.props;
 
 		recordTrack( 'calypso_reader_combined_card_render', {
 			blog_id: postKey.blogId,
@@ -163,23 +163,45 @@ class ReaderCombinedCardComponent extends React.Component {
 	}
 }
 
-export function combinedCardPostKeyToKeys( postKey ) {
+export function combinedCardPostKeyToKeys( postKey, memoized = null ) {
 	if ( ! postKey || ! postKey.postIds ) {
 		return [];
 	}
 
 	const feedId = postKey.feedId;
 	const blogId = postKey.blogId;
-	return postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
+
+	if ( memoized && memoized.lastPostIds === postKey.postIds ) {
+		return memoized.lastPostKeys;
+	}
+
+	const keys = postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
+
+	if ( memoized ) {
+		memoized.lastPostIds = postKey.postIds;
+		memoized.lastPostKeys = keys;
+	}
+
+	return keys;
 }
 
 export const ReaderCombinedCard = localize( ReaderCombinedCardComponent );
 
-export default connect( ( state, ownProps ) => {
-	const postKeys = combinedCardPostKeyToKeys( ownProps.postKey );
+// React-redux's `connect` allows for a mapStateToProps that returns a function,
+// rather than an object, binding it to a particular component instance.
+// This allows for memoization, which we strategically use here to maintain
+// references and avoid re-rendering large sections of the component tree.
+function mapStateToProps( st, ownProps ) {
+	const memoized = {};
 
-	return {
-		posts: getPostsByKeys( state, postKeys ),
-		postKeys,
+	return state => {
+		const postKeys = combinedCardPostKeyToKeys( ownProps.postKey, memoized );
+
+		return {
+			posts: getPostsByKeys( state, postKeys ),
+			postKeys,
+		};
 	};
-} )( ReaderCombinedCard );
+}
+
+export default connect( mapStateToProps )( ReaderCombinedCard );

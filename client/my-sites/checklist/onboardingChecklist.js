@@ -5,6 +5,8 @@
 import page from 'page';
 import { isDesktop } from 'lib/viewport';
 import { translate } from 'i18n-calypso';
+import { find } from 'lodash';
+import { getSiteOption } from 'state/sites/selectors';
 
 export const tasks = [
 	{
@@ -94,7 +96,32 @@ export const tasks = [
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
 	},
+	{
+		id: 'custom_domain_registered',
+		title: translate( 'Register a custom domain' ),
+		description: translate(
+			'Memorable domain names make it easy for people to remember your address — and search engines love ’em.'
+		),
+		duration: translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ),
+		completedTitle: translate( 'You registered a custom domain' ),
+		completedButtonText: translate( 'Change' ),
+		url: '/domains/add/$siteSlug',
+		image: '/calypso/images/stats/tasks/custom-domain.svg',
+		tour: 'checklistDomainRegister',
+	},
 ];
+
+export function getTasks( state, siteId ) {
+	const designType = getSiteOption( state, siteId, 'design_type' );
+
+	if ( designType === 'blog' ) {
+		return tasks;
+	}
+
+	return tasks.filter( task => {
+		return task.id !== 'avatar_uploaded' && task.id !== 'post_published';
+	} );
+}
 
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
@@ -125,4 +152,25 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
+}
+
+export function getTaskUrls( posts ) {
+	const urls = {};
+	const firstPost = find( posts, { type: 'post' } );
+	const contactPage = find( posts, post => {
+		return (
+			post.type === 'page' &&
+			find( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } )
+		);
+	} );
+
+	if ( firstPost ) {
+		urls.post_published = '/post/$siteSlug/' + firstPost.ID;
+	}
+
+	if ( contactPage ) {
+		urls.contact_page_updated = '/post/$siteSlug/' + contactPage.ID;
+	}
+
+	return urls;
 }

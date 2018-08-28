@@ -6,31 +6,38 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Checklist from 'blocks/checklist';
-import { tasks as jetpackTasks } from '../jetpack-checklist';
+import Checklist from 'components/checklist';
+import Task from 'components/checklist/task';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { isJetpackSite, getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { launchTask, tasks as wpcomTasks } from '../onboardingChecklist';
-import { mergeObjectIntoArrayById } from '../util';
+import { getTaskUrls, launchTask, getTasks } from '../onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import QueryPosts from 'components/data/query-posts';
+import { getSitePosts } from 'state/posts/selectors';
 
 class ChecklistShow extends PureComponent {
-	handleAction = id => {
-		const { requestTour, siteSlug, tasks, track } = this.props;
-		const task = find( tasks, { id } );
+	isComplete( taskId ) {
+		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
+	}
 
+	handleTaskStart = task => () => {
+		const { requestTour, siteSlug, track, taskUrls } = this.props;
 		launchTask( {
-			task,
+			task: {
+				...task,
+				completed: task.completed || this.isComplete( task.id ),
+				url: taskUrls[ task.id ] || task.url,
+			},
 			location: 'checklist_show',
 			requestTour,
 			siteSlug,
@@ -38,28 +45,44 @@ class ChecklistShow extends PureComponent {
 		} );
 	};
 
-	handleToggle = id => {
-		const { notify, siteId, tasks, update } = this.props;
-		const task = find( tasks, { id } );
+	handleTaskDismiss = task => () => {
+		const { notify, siteId, update } = this.props;
 
-		if ( task && ! task.completed ) {
+		if ( task ) {
 			notify( 'is-success', 'You completed a task!' );
-			update( siteId, id );
+			update( siteId, task.id );
 		}
 	};
 
 	render() {
-		const { siteId, tasks } = this.props;
+		const { siteId, taskStatuses, tasks } = this.props;
 
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				<Checklist
-					isLoading={ ! tasks }
-					tasks={ tasks }
-					onAction={ this.handleAction }
-					onToggle={ this.handleToggle }
-				/>
+				{ siteId && (
+					<QueryPosts
+						siteId={ siteId }
+						query={ { type: 'any', number: 10, order_by: 'ID', order: 'ASC' } }
+					/>
+				) }
+				<Checklist isPlaceholder={ ! taskStatuses }>
+					{ tasks.map( task => (
+						<Task
+							buttonPrimary={ task.buttonPrimary }
+							buttonText={ task.buttonText }
+							completed={ task.completed || this.isComplete( task.id ) }
+							completedButtonText={ task.completedButtonText }
+							completedTitle={ task.completedTitle }
+							description={ task.description }
+							duration={ task.duration }
+							key={ task.id }
+							onClick={ this.handleTaskStart( task ) }
+							onDismiss={ this.handleTaskDismiss( task ) }
+							title={ task.title }
+						/>
+					) ) }
+				</Checklist>
 			</Fragment>
 		);
 	}
@@ -67,16 +90,13 @@ class ChecklistShow extends PureComponent {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
-	const siteChecklist = getSiteChecklist( state, siteId );
-	const isJetpack = isJetpackSite( state, siteId );
-	const tasks = isJetpack ? jetpackTasks : wpcomTasks;
-	const tasksFromServer = get( siteChecklist, [ 'tasks' ] );
 
 	return {
 		siteId,
-		siteSlug,
-		tasks: tasksFromServer ? mergeObjectIntoArrayById( tasks, tasksFromServer ) : null,
+		siteSlug: getSiteSlug( state, siteId ),
+		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+		taskUrls: getTaskUrls( getSitePosts( state, siteId ) ),
+		tasks: getTasks( state, siteId ),
 	};
 };
 

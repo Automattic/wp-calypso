@@ -9,7 +9,12 @@ import {
 	commentsFromApi,
 	handleDeleteSuccess,
 } from '../';
-import { COMMENTS_RECEIVE, COMMENTS_COUNT_RECEIVE, NOTICE_CREATE } from 'state/action-types';
+import {
+	COMMENTS_RECEIVE,
+	COMMENTS_UPDATES_RECEIVE,
+	COMMENTS_COUNT_RECEIVE,
+	NOTICE_CREATE,
+} from 'state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
@@ -145,6 +150,27 @@ describe( 'wpcom-api', () => {
 					siteId: 2916284,
 					postId: 1010,
 					totalCommentsCount: 2,
+				} );
+			} );
+
+			test( 'should dispatch a comments updates receive action if isPoll is true', () => {
+				const action = {
+					siteId: 2916284,
+					postId: 1010,
+					direction: 'after',
+					isPoll: true,
+				};
+				const data = {
+					comments: [ {}, {} ],
+					found: 2,
+				};
+
+				expect( addComments( action, data ) ).toContainEqual( {
+					type: COMMENTS_UPDATES_RECEIVE,
+					siteId: 2916284,
+					postId: 1010,
+					comments: [ {}, {} ],
+					direction: 'after',
 				} );
 			} );
 		} );

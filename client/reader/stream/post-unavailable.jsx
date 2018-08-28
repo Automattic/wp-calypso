@@ -12,7 +12,7 @@ import config from 'config';
 import Card from 'components/card';
 
 class PostUnavailable extends React.PureComponent {
-	componentWillMount() {
+	componentDidMount() {
 		this.errors = {
 			unauthorized: this.props.translate(
 				'This is a post on a private site that you’re following, but not currently a member of.' +
@@ -32,13 +32,14 @@ class PostUnavailable extends React.PureComponent {
 			return null;
 		}
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Card tagName="article" className="reader__card is-error">
 				<div className="reader__post-header">
 					<h1 className="reader__post-title">
-						<a className="reader__post-title-link" target="_blank" rel="noopener noreferrer">
+						<div className="reader__post-title-link">
 							<span className="reader__placeholder-text">Oops!</span>
-						</a>
+						</div>
 					</h1>
 				</div>
 
@@ -50,6 +51,7 @@ class PostUnavailable extends React.PureComponent {
 				</div>
 			</Card>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

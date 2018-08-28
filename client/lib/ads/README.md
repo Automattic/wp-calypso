@@ -24,14 +24,7 @@ The Data that is stored in a site's WordAds settings store looks like this:
 	}, etc
 }
 ```
-#### TOS
-The Data that is stored in a site's WordAds TOS store looks like this:
-```
-{
-	// site.ID
-	123456 : 'signed', etc.
-}
-```
+
 #### Public Methods
 
 **WordadsSettingsStore.getById( site.ID )**
@@ -58,19 +51,6 @@ Returns object with settings data and some flags:
 }
 ```
 
----
-
-**WordadsTosStore.getById( site.ID )**
-Returns object with tos data and some flags:
-```
-{
-	tos: 'signed',
-	isLoading: true | false,
-	error: { API error object } | null
-	notice: _notice
-}
-```
-
 ### Actions
 Actions get triggered by views and stores.
 
@@ -79,10 +59,6 @@ Actions get triggered by views and stores.
 **WordadsActions.fetchSettings( site );**
 
 **WordadsActions.updateSettings( site, settings );**
-
-**WordadsActions.fetchTos( site );**
-
-**WordadsActions.signTos( site );**
 
 ### Example Component Code
 

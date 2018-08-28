@@ -23,6 +23,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
+import {
+	getKeyringConnectionById,
+	isKeyringConnectionsFetching,
+} from 'state/sharing/keyring/selectors';
+import QueryKeyringConnections from 'components/data/query-keyring-connections';
 
 export class EditorSharingPublicizeConnection extends React.Component {
 	static propTypes = {
@@ -39,9 +44,10 @@ export class EditorSharingPublicizeConnection extends React.Component {
 	isConnectionSkipped = () => {
 		const { post, connection } = this.props;
 		return (
-			post &&
-			connection &&
-			includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID )
+			( post &&
+				connection &&
+				includes( PostMetadata.publicizeSkipped( post ), connection.keyring_connection_ID ) ) ||
+			( connection.service === 'facebook' && ! this.isAdditionalExternalUser( connection ) )
 		);
 	};
 
@@ -56,7 +62,11 @@ export class EditorSharingPublicizeConnection extends React.Component {
 
 	isDisabled = () => {
 		const { connection } = this.props;
-		return ! connection || connection.read_only;
+		return (
+			! connection ||
+			connection.read_only ||
+			( connection.service === 'facebook' && ! this.isAdditionalExternalUser( connection ) )
+		);
 	};
 
 	onChange = event => {
@@ -83,6 +93,51 @@ export class EditorSharingPublicizeConnection extends React.Component {
 			this.props.recordEditorStat( 'sharing_disabled_' + connection.service );
 			this.props.recordEditorEvent( 'Publicize Service', connection.service, 'disabled' );
 		}
+	};
+
+	isAdditionalExternalUser( connection ) {
+		const { keyringConnection } = this.props;
+
+		if ( ! keyringConnection ) return false;
+
+		return keyringConnection.external_ID !== connection.external_ID;
+	}
+
+	renderFacebookProfileWarning = () => {
+		const { connection, isKeyringFetching } = this.props;
+		if (
+			! connection ||
+			connection.service !== 'facebook' ||
+			isKeyringFetching ||
+			this.isAdditionalExternalUser( connection )
+		) {
+			return;
+		}
+
+		return (
+			<Notice
+				isCompact
+				className="editor-sharing__broken-publicize-connection"
+				status="is-error"
+				showDismiss={ false }
+			>
+				{ this.props.translate(
+					'Connections to Facebook profiles ceased to work on August 1st. ' +
+						'{{a}}Learn More{{/a}}',
+					{
+						components: {
+							a: (
+								<a
+									href="https://en.support.wordpress.com/publicize/#facebook-pages"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				) }
+			</Notice>
+		);
 	};
 
 	renderBrokenConnection = () => {
@@ -113,6 +168,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 
 		return (
 			<div className="editor-sharing__publicize-connection">
+				<QueryKeyringConnections />
 				<label>
 					<FormCheckbox
 						checked={ ! this.isConnectionSkipped() }
@@ -121,6 +177,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 					/>
 					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
 				</label>
+				{ this.renderFacebookProfileWarning() }
 				{ this.renderBrokenConnection() }
 			</div>
 		);
@@ -128,12 +185,21 @@ export class EditorSharingPublicizeConnection extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );
+		const isKeyringFetching = isKeyringConnectionsFetching( state );
 
-		return { siteId, postId, post };
+		let keyringConnection = null;
+		if ( ownProps.connection ) {
+			keyringConnection = getKeyringConnectionById(
+				state,
+				ownProps.connection.keyring_connection_ID
+			);
+		}
+
+		return { isKeyringFetching, keyringConnection, siteId, postId, post };
 	},
 	{ updatePostMetadata, deletePostMetadata, recordEditorStat, recordEditorEvent }
 )( localize( EditorSharingPublicizeConnection ) );

@@ -107,6 +107,15 @@ export default class DevdocsSidebar extends React.PureComponent {
 						{ isEnabled( 'devdocs/gutenberg-blocks' ) && (
 							<SidebarItem
 								className="devdocs__navigation-item"
+								icon="layout"
+								label="Gutenberg Components"
+								link="/devdocs/gutenberg-components"
+								selected={ this.isItemSelected( '/devdocs/gutenberg-components', false ) }
+							/>
+						) }
+						{ isEnabled( 'devdocs/gutenberg-blocks' ) && (
+							<SidebarItem
+								className="devdocs__navigation-item"
 								icon="grid"
 								label="Gutenberg Blocks"
 								link="/devdocs/gutenberg-blocks"

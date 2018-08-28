@@ -1,8 +1,8 @@
 /** @format */
-/**
- * Internal Dependencies
- */
 
+/**
+ * Internal dependencies
+ */
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
@@ -11,12 +11,10 @@ import {
 	READER_STREAMS_SELECT_FIRST_ITEM,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
-	READER_STREAMS_DISMISS_POST,
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
 import getStream from 'state/selectors/get-reader-stream';
 import { getStreamType } from 'reader/utils';
-import wpcom from 'lib/wp';
 
 /**
  * Fetch posts into a stream
@@ -105,15 +103,3 @@ export function fillGap( { streamKey, gap } ) {
 		gap,
 	} );
 }
-
-export const dismissPost = ( { streamKey, postKey } ) => {
-	wpcom
-		.undocumented()
-		.me()
-		.dismissSite( postKey.blogId );
-
-	return {
-		type: READER_STREAMS_DISMISS_POST,
-		payload: { streamKey, postKey },
-	};
-};

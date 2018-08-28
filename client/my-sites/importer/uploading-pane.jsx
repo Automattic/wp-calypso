@@ -113,7 +113,22 @@ class UploadingPane extends React.PureComponent {
 	startUpload = file => {
 		const { startUpload } = this.props;
 
-		startUpload( this.props.importerStatus, file );
+		if ( window.chrome && window.chrome.webstore ) {
+			/**
+			 * This is a workaround for a Chrome issue that prevents file uploads from `calypso.localhost` through
+			 * the proxy iframe we use.
+			 *
+			 * It shouldn't add any side effects to the way the uploads work in Chrome and the workaround should be
+			 * removed once the issues listed below get fixed.
+			 *
+			 * @see https://bugs.chromium.org/p/chromium/issues/detail?id=866805
+			 * @see https://bugs.chromium.org/p/chromium/issues/detail?id=631877
+			 */
+			const newFile = new File( [ file.slice( 0, file.size ) ], file.name, { type: file.type } );
+			startUpload( this.props.importerStatus, newFile );
+		} else {
+			startUpload( this.props.importerStatus, file );
+		}
 	};
 
 	render() {

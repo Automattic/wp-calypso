@@ -19,6 +19,7 @@ import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import applicationPasswords from './application-passwords/reducer';
+import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import extensionsModule from 'extensions';
@@ -44,6 +45,7 @@ import help from './help/reducer';
 import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
+import immediateLogin from './immediate-login/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
@@ -57,6 +59,7 @@ import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
 import notices from './notices/reducer';
+import { unseenCount as notificationsUnseenCount } from './notifications';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
 import orderTransactions from './order-transactions/reducer';
@@ -67,7 +70,6 @@ import postFormats from './post-formats/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
-import privacyPolicy from './privacy-policy/reducer';
 import productsList from './products-list/reducer';
 import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
@@ -139,6 +141,7 @@ const reducers = {
 	help,
 	httpData,
 	i18n,
+	immediateLogin,
 	inlineHelpSearchResults,
 	inlineSupportArticle,
 	invites,
@@ -150,6 +153,7 @@ const reducers = {
 	login,
 	media,
 	notices,
+	notificationsUnseenCount,
 	npsSurvey,
 	oauth2Clients,
 	orderTransactions,
@@ -160,7 +164,6 @@ const reducers = {
 	posts,
 	postTypes,
 	preferences,
-	privacyPolicy,
 	productsList,
 	purchases,
 	pushNotifications,
@@ -219,7 +222,7 @@ export function createReduxStore( initialState = {} ) {
 		// then it could mistakenly trigger on those network
 		// responses. Therefore we need to inject the data layer
 		// as early as possible into the middleware chain.
-		require( './data-layer/wpcom-api-middleware.js' ).default,
+		wpcomApiMiddleware,
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default,
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,

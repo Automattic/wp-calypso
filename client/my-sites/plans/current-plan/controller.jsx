@@ -14,25 +14,23 @@ import CurrentPlan from './';
 import { isFreePlan } from 'lib/products-values';
 import { getSelectedSite } from 'state/ui/selectors';
 
-export default {
-	currentPlan( context, next ) {
-		const state = context.store.getState();
+export function currentPlan( context, next ) {
+	const state = context.store.getState();
 
-		const selectedSite = getSelectedSite( state );
+	const selectedSite = getSelectedSite( state );
 
-		if ( ! selectedSite ) {
-			page.redirect( '/plans/' );
+	if ( ! selectedSite ) {
+		page.redirect( '/plans/' );
 
-			return null;
-		}
+		return null;
+	}
 
-		if ( isFreePlan( selectedSite.plan ) ) {
-			page.redirect( `/plans/${ selectedSite.slug }` );
+	if ( isFreePlan( selectedSite.plan ) ) {
+		page.redirect( `/plans/${ selectedSite.slug }` );
 
-			return null;
-		}
+		return null;
+	}
 
-		context.primary = <CurrentPlan context={ context } />;
-		next();
-	},
-};
+	context.primary = <CurrentPlan path={ context.path } />;
+	next();
+}

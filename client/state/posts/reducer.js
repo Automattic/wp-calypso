@@ -418,12 +418,9 @@ export function edits( state = {}, action ) {
 					// Receive a new version of a post object, in most cases returned in the POST
 					// response after a successful save. Removes the edits that have been applied
 					// and leaves only the ones that are not noops.
-					const postEditsLog = get( memoState, [ post.site_ID, post.ID ] ) || [];
+					let postEditsLog = get( memoState, [ post.site_ID, post.ID ] );
 
-					// merge the array of edits into one object
-					const postEdits = mergePostEdits( ...postEditsLog );
-
-					if ( ! postEdits ) {
+					if ( ! postEditsLog ) {
 						return memoState;
 					}
 
@@ -431,43 +428,60 @@ export function edits( state = {}, action ) {
 						memoState = merge( {}, state );
 					}
 
-					// remove the edits that try to set an attribute to a value it already has.
-					// For most attributes, it's a simple `isEqual` deep comparison, but a few
-					// properties are more complicated than that.
-					const unappliedPostEdits = omitBy( postEdits, ( value, key ) => {
-						switch ( key ) {
-							case 'author':
-								return isAuthorEqual( value, post[ key ] );
-							case 'date':
-								return isDateEqual( value, post[ key ] );
-							case 'discussion':
-								return isDiscussionEqual( value, post[ key ] );
-							case 'featured_image':
-								return value === getFeaturedImageId( post );
-							case 'metadata':
-								// omit from unappliedPostEdits, metadata edits will be merged
-								return true;
-							case 'status':
-								return isStatusEqual( value, post[ key ] );
-							case 'terms':
-								return isTermsEqual( value, post[ key ] );
-						}
-						return isEqual( post[ key ], value );
-					} );
-
-					// remove edits that are already applied in the incoming metadata values and
-					// leave only the unapplied ones.
-					if ( postEdits.metadata ) {
-						const unappliedMetadataEdits = getUnappliedMetadataEdits(
-							postEdits.metadata,
-							post.metadata
-						);
-						if ( unappliedMetadataEdits.length > 0 ) {
-							unappliedPostEdits.metadata = unappliedMetadataEdits;
+					// if the action has a save marker, remove the edits before that marker
+					if ( action.saveMarker ) {
+						const markerIndex = postEditsLog.indexOf( action.saveMarker );
+						if ( markerIndex !== -1 ) {
+							postEditsLog = postEditsLog.slice( markerIndex + 1 );
 						}
 					}
 
-					const newEditsLog = isEmpty( unappliedPostEdits ) ? null : [ unappliedPostEdits ];
+					// merge the array of remaining edits into one object
+					const postEdits = mergePostEdits( ...postEditsLog );
+					let newEditsLog = null;
+
+					if ( postEdits ) {
+						// remove the edits that try to set an attribute to a value it already has.
+						// For most attributes, it's a simple `isEqual` deep comparison, but a few
+						// properties are more complicated than that.
+						const unappliedPostEdits = omitBy( postEdits, ( value, key ) => {
+							switch ( key ) {
+								case 'author':
+									return isAuthorEqual( value, post[ key ] );
+								case 'date':
+									return isDateEqual( value, post[ key ] );
+								case 'discussion':
+									return isDiscussionEqual( value, post[ key ] );
+								case 'featured_image':
+									return value === getFeaturedImageId( post );
+								case 'metadata':
+									// omit from unappliedPostEdits, metadata edits will be merged
+									return true;
+								case 'status':
+									return isStatusEqual( value, post[ key ] );
+								case 'terms':
+									return isTermsEqual( value, post[ key ] );
+							}
+							return isEqual( post[ key ], value );
+						} );
+
+						// remove edits that are already applied in the incoming metadata values and
+						// leave only the unapplied ones.
+						if ( postEdits.metadata ) {
+							const unappliedMetadataEdits = getUnappliedMetadataEdits(
+								postEdits.metadata,
+								post.metadata
+							);
+							if ( unappliedMetadataEdits.length > 0 ) {
+								unappliedPostEdits.metadata = unappliedMetadataEdits;
+							}
+						}
+
+						if ( ! isEmpty( unappliedPostEdits ) ) {
+							newEditsLog = [ unappliedPostEdits ];
+						}
+					}
+
 					return set( memoState, [ post.site_ID, post.ID ], newEditsLog );
 				},
 				state
@@ -533,26 +547,6 @@ export function edits( state = {}, action ) {
 		case POST_SAVE_SUCCESS: {
 			const siteId = action.siteId;
 			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
-
-			if ( ! postEditsLog ) {
-				break;
-			}
-
-			// if the save action has a marker, remove the edits before that marker
-			if ( action.saveMarker ) {
-				const markerIndex = postEditsLog.indexOf( action.saveMarker );
-				if ( markerIndex !== -1 ) {
-					const newEditsLog = postEditsLog.slice( markerIndex + 1 );
-					state = {
-						...state,
-						[ siteId ]: {
-							...state[ siteId ],
-							[ postId ]: newEditsLog,
-						},
-					};
-				}
-			}
 
 			// if new post (edited with a transient postId of '') has been just saved and assigned
 			// a real numeric ID, rewrite the state key with the new postId.

@@ -3,23 +3,21 @@
 /**
  * External dependencies
  */
-import { assert, expect } from 'chai';
 import { moment } from 'i18n-calypso';
-
 /**
  * Internal dependencies
  */
 import {
+	buildExportArray,
+	getChartLabels,
 	getPeriodFormat,
 	getSerializedStatsQuery,
+	isAutoRefreshAllowedForQuery,
 	normalizers,
 	parseOrderDeltas,
 	parseOrdersChartData,
-	rangeOfPeriod,
-	buildExportArray,
-	isAutoRefreshAllowedForQuery,
 	parseStoreStatsReferrers,
-	getChartLabels,
+	rangeOfPeriod,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -80,37 +78,29 @@ describe( 'utils', () => {
 		];
 
 		test( 'should return empty array if payload is null', () => {
-			const actualDeltas = parseOrderDeltas( null );
-			assert.isArray( actualDeltas );
-			assert.isTrue( actualDeltas.length === 0 );
+			expect( parseOrderDeltas( null ) ).toEqual( [] );
 		} );
 
 		test( 'should return empty array if payload.deltas has no keys', () => {
-			const actualDeltas = parseOrderDeltas( {
-				date: '2017',
-				deltas: {},
-				delta_fields: [ 'period' ],
-			} );
-			assert.isArray( actualDeltas );
-			assert.isTrue( actualDeltas.length === 0 );
+			expect(
+				parseOrderDeltas( {
+					date: '2017',
+					deltas: {},
+					delta_fields: [ 'period' ],
+				} )
+			).toEqual( [] );
 		} );
 
 		test( 'should return empty array if payload.deltas or delta_fields are missing', () => {
-			const actualDeltas = parseOrderDeltas( { date: '2017' } );
-			assert.isArray( actualDeltas );
-			assert.isTrue( actualDeltas.length === 0 );
+			expect( parseOrderDeltas( { date: '2017' } ) ).toEqual( [] );
 		} );
 
 		test( 'should return a well formed array of delta objects', () => {
-			const actualDeltas = parseOrderDeltas( orderPayload );
-			assert.isArray( actualDeltas );
-			assert.isObject( actualDeltas[ 0 ] );
-			assert.isObject( actualDeltas[ 0 ].orders );
+			expect( parseOrderDeltas( orderPayload ) ).toHaveProperty( '0.orders' );
 		} );
 
 		test( 'should return an array of delta objects as expected', () => {
-			const actualDeltas = parseOrderDeltas( orderPayload );
-			assert.deepEqual( actualDeltas, expectedDeltas );
+			expect( parseOrderDeltas( orderPayload ) ).toEqual( expectedDeltas );
 		} );
 	} );
 	describe( 'parseOrdersChartData', () => {
@@ -132,112 +122,100 @@ describe( 'utils', () => {
 		];
 
 		test( 'should return empty array if payload.data is missing', () => {
-			const actualOrders = parseOrdersChartData( { date: '2017' } );
-			assert.isArray( actualOrders );
-			assert.isTrue( actualOrders.length === 0 );
+			expect( parseOrdersChartData( { date: '2017' } ) ).toEqual( [] );
 		} );
 
-		test( 'should return a well formed array of objects', () => {
+		test( 'should return a well-formed array of objects', () => {
 			const actualOrders = parseOrdersChartData( orderPayload );
-			assert.isArray( actualOrders );
-			assert.isObject( actualOrders[ 0 ] );
+			expect( actualOrders ).toBeInstanceOf( Array );
+			actualOrders.forEach( item => expect( typeof item ).toBe( 'object' ) );
 		} );
 
 		test( 'should return an array of objects as expected', () => {
-			const actualOrders = parseOrdersChartData( orderPayload );
-			assert.deepEqual( actualOrders, expectedOrders );
+			expect( parseOrdersChartData( orderPayload ) ).toEqual( expectedOrders );
 		} );
 	} );
+
 	describe( 'getPeriodFormat', () => {
 		test( 'should return correctly day format for long formats', () => {
-			const response = getPeriodFormat( 'day', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( getPeriodFormat( 'day', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly week format for long formats', () => {
-			const response = getPeriodFormat( 'week', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( getPeriodFormat( 'week', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly month format for long formats', () => {
-			const response = getPeriodFormat( 'month', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( getPeriodFormat( 'month', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly year format for long formats', () => {
-			const response = getPeriodFormat( 'year', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( getPeriodFormat( 'year', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly day format for short (new) formats', () => {
-			const response = getPeriodFormat( 'day', '2017-07-07' );
-			assert.strictEqual( response, 'YYYY-MM-DD' );
+			expect( getPeriodFormat( 'day', '2017-07-07' ) ).toBe( 'YYYY-MM-DD' );
 		} );
 
 		test( 'should return correctly week format for short (new) formats', () => {
-			const response = getPeriodFormat( 'week', '2017-W27' );
-			assert.strictEqual( response, 'YYYY-[W]WW' );
+			expect( getPeriodFormat( 'week', '2017-W27' ) ).toBe( 'YYYY-[W]WW' );
 		} );
 
 		test( 'should return correctly month format for short (new) formats', () => {
-			const response = getPeriodFormat( 'month', '2017-07' );
-			assert.strictEqual( response, 'YYYY-MM' );
+			expect( getPeriodFormat( 'month', '2017-07' ) ).toBe( 'YYYY-MM' );
 		} );
 
 		test( 'should return correctly year format for short (new) formats', () => {
-			const response = getPeriodFormat( 'year', '2017' );
-			assert.strictEqual( response, 'YYYY' );
+			expect( getPeriodFormat( 'year', '2017' ) ).toBe( 'YYYY' );
 		} );
 	} );
 
 	describe( 'buildExportArray()', () => {
 		test( 'should an empty array if data not supplied', () => {
-			const data = buildExportArray( {} );
-
-			expect( data ).to.eql( [] );
+			expect( buildExportArray( {} ) ).toEqual( [] );
 		} );
 
 		test( 'should parse simple object to csv', () => {
-			const data = buildExportArray( {
-				label: 'Chicken',
-				value: 10,
-			} );
-
-			expect( data ).to.eql( [ [ '"Chicken"', 10 ] ] );
+			expect(
+				buildExportArray( {
+					label: 'Chicken',
+					value: 10,
+				} )
+			).toEqual( [ [ '"Chicken"', 10 ] ] );
 		} );
 
 		test( 'should escape simple object to csv', () => {
-			const data = buildExportArray( {
-				label: 'Chicken and "Ribs"',
-				value: 10,
-			} );
-
-			expect( data ).to.eql( [ [ '"Chicken and ""Ribs""', 10 ] ] );
+			expect(
+				buildExportArray( {
+					label: 'Chicken and "Ribs"',
+					value: 10,
+				} )
+			).toEqual( [ [ '"Chicken and ""Ribs""', 10 ] ] );
 		} );
 
 		test( 'should recurse child data', () => {
-			const data = buildExportArray( {
-				label: 'BBQ',
-				value: 10,
-				children: [
-					{
-						label: 'Chicken',
-						value: 5,
-					},
-					{
-						label: 'Ribs',
-						value: 2,
-						children: [
-							{
-								label: 'Babyback',
-								value: 1,
-							},
-						],
-					},
-				],
-			} );
-
-			expect( data ).to.eql( [
+			expect(
+				buildExportArray( {
+					label: 'BBQ',
+					value: 10,
+					children: [
+						{
+							label: 'Chicken',
+							value: 5,
+						},
+						{
+							label: 'Ribs',
+							value: 2,
+							children: [
+								{
+									label: 'Babyback',
+									value: 1,
+								},
+							],
+						},
+					],
+				} )
+			).toEqual( [
 				[ '"BBQ"', 10 ],
 				[ '"BBQ > Chicken"', 5 ],
 				[ '"BBQ > Ribs"', 2 ],
@@ -248,36 +226,28 @@ describe( 'utils', () => {
 
 	describe( 'rangeOfPeriod()', () => {
 		test( 'should return a period object for day', () => {
-			const period = rangeOfPeriod( 'day', '2016-06-01' );
-
-			expect( period ).to.eql( {
+			expect( rangeOfPeriod( 'day', '2016-06-01' ) ).toEqual( {
 				startOf: '2016-06-01',
 				endOf: '2016-06-01',
 			} );
 		} );
 
 		test( 'should return a period object for week', () => {
-			const period = rangeOfPeriod( 'week', '2016-06-01' );
-
-			expect( period ).to.eql( {
+			expect( rangeOfPeriod( 'week', '2016-06-01' ) ).toEqual( {
 				startOf: '2016-05-30',
 				endOf: '2016-06-05',
 			} );
 		} );
 
 		test( 'should return a period object for month', () => {
-			const period = rangeOfPeriod( 'month', '2016-06-05' );
-
-			expect( period ).to.eql( {
+			expect( rangeOfPeriod( 'month', '2016-06-05' ) ).toEqual( {
 				startOf: '2016-06-01',
 				endOf: '2016-06-30',
 			} );
 		} );
 
 		test( 'should return a period object for year', () => {
-			const period = rangeOfPeriod( 'year', '2016-06-05' );
-
-			expect( period ).to.eql( {
+			expect( rangeOfPeriod( 'year', '2016-06-05' ) ).toEqual( {
 				startOf: '2016-01-01',
 				endOf: '2016-12-31',
 			} );
@@ -286,90 +256,84 @@ describe( 'utils', () => {
 
 	describe( 'getSerializedStatsQuery()', () => {
 		test( 'should return a JSON string of a query', () => {
-			const serializedQuery = getSerializedStatsQuery( {
-				startDate: '2016-06-01',
-				endDate: '2016-07-01',
-			} );
-
-			expect( serializedQuery ).to.equal( '[["endDate","2016-07-01"],["startDate","2016-06-01"]]' );
+			expect(
+				getSerializedStatsQuery( {
+					startDate: '2016-06-01',
+					endDate: '2016-07-01',
+				} )
+			).toBe( '[["endDate","2016-07-01"],["startDate","2016-06-01"]]' );
 		} );
 
 		test( 'should return the same JSON string of a query regardless of query object order', () => {
-			const serializedQuery = getSerializedStatsQuery( {
-				startDate: '2016-06-01',
-				endDate: '2016-07-01',
-			} );
-
-			const serializedQueryTwo = getSerializedStatsQuery( {
-				endDate: '2016-07-01',
-				startDate: '2016-06-01',
-			} );
-
-			expect( serializedQuery ).to.eql( serializedQueryTwo );
+			expect(
+				getSerializedStatsQuery( {
+					startDate: '2016-06-01',
+					endDate: '2016-07-01',
+				} )
+			).toEqual(
+				getSerializedStatsQuery( {
+					endDate: '2016-07-01',
+					startDate: '2016-06-01',
+				} )
+			);
 		} );
 	} );
 
 	describe( 'isAutoRefreshAllowedForQuery()', () => {
 		test( 'should return true if not query specified', () => {
-			const isAllowed = isAutoRefreshAllowedForQuery();
-			expect( isAllowed ).to.be.true;
+			expect( isAutoRefreshAllowedForQuery() ).toBe( true );
 		} );
 
 		test( 'should return true for empty queries', () => {
-			const isAllowed = isAutoRefreshAllowedForQuery( {} );
-			expect( isAllowed ).to.be.true;
+			expect( isAutoRefreshAllowedForQuery( {} ) ).toBe( true );
 		} );
 
 		test( 'should return true for queries without date', () => {
-			const isAllowed = isAutoRefreshAllowedForQuery( { quantity: 3 } );
-			expect( isAllowed ).to.be.true;
+			expect( isAutoRefreshAllowedForQuery( { quantity: 3 } ) ).toBe( true );
 		} );
 
 		test( 'should return true for queries without period', () => {
-			const isAllowed = isAutoRefreshAllowedForQuery( { date: '2016-06-01' } );
-			expect( isAllowed ).to.be.true;
+			expect( isAutoRefreshAllowedForQuery( { date: '2016-06-01' } ) ).toBe( true );
 		} );
 
 		test( "should return false for a period that doesn't include today", () => {
-			const isAllowed = isAutoRefreshAllowedForQuery( { period: 'week', date: '2016-06-01' } );
-			expect( isAllowed ).to.be.false;
+			expect( isAutoRefreshAllowedForQuery( { period: 'week', date: '2016-06-01' } ) ).toBe(
+				false
+			);
 		} );
 
 		test( 'should return true for a period that includes today', () => {
-			const isAllowed = isAutoRefreshAllowedForQuery( {
-				period: 'day',
-				date: moment().format( 'YYYY-MM-DD' ),
-			} );
-			expect( isAllowed ).to.be.true;
+			expect(
+				isAutoRefreshAllowedForQuery( {
+					period: 'day',
+					date: moment().format( 'YYYY-MM-DD' ),
+				} )
+			).toBe( true );
 		} );
 	} );
 
 	describe( 'normalizers', () => {
 		describe( 'stats()', () => {
 			test( 'should return null if no data is passed', () => {
-				const parsedData = normalizers.stats();
-
-				expect( parsedData ).to.be.null;
+				expect( normalizers.stats() ).toBeNull();
 			} );
 
 			test( 'should return null if data object is missing stats attribute', () => {
-				const parsedData = normalizers.stats( { foo: false } );
-
-				expect( parsedData ).to.be.null;
+				expect( normalizers.stats( { foo: false } ) ).toBeNull();
 			} );
 
 			test( 'should return parsed camelCased stats object', () => {
-				const parsedData = normalizers.stats( {
-					stats: {
-						posts: 2,
-						views: 300,
-						visitors: 400,
-						views_best_day: '2010-09-29',
-						views_best_day_total: 100,
-					},
-				} );
-
-				expect( parsedData ).to.eql( {
+				expect(
+					normalizers.stats( {
+						stats: {
+							posts: 2,
+							views: 300,
+							visitors: 400,
+							views_best_day: '2010-09-29',
+							views_best_day_total: 100,
+						},
+					} )
+				).toEqual( {
 					posts: 2,
 					views: 300,
 					visitors: 400,
@@ -381,30 +345,29 @@ describe( 'utils', () => {
 
 		describe( 'statsFollowers()', () => {
 			test( 'should return null if no data is provided', () => {
-				const parsedData = normalizers.statsFollowers();
-				expect( parsedData ).to.be.null;
+				expect( normalizers.statsFollowers() ).toBeNull();
 			} );
 
 			test( 'should properly parse followers response', () => {
-				const parsedData = normalizers.statsFollowers( {
-					page: 1,
-					pages: 1,
-					total: 1,
-					total_email: 5,
-					total_wpcom: 120,
-					subscribers: [
-						{
-							avatar: null,
-							label: 'wapuu@wordpress.org',
-							ID: 11111111,
-							url: null,
-							follow_data: null,
-							date_subscribed: '2015-04-07T18:53:05+00:00',
-						},
-					],
-				} );
-
-				expect( parsedData ).to.eql( {
+				expect(
+					normalizers.statsFollowers( {
+						page: 1,
+						pages: 1,
+						total: 1,
+						total_email: 5,
+						total_wpcom: 120,
+						subscribers: [
+							{
+								avatar: null,
+								label: 'wapuu@wordpress.org',
+								ID: 11111111,
+								url: null,
+								follow_data: null,
+								date_subscribed: '2015-04-07T18:53:05+00:00',
+							},
+						],
+					} )
+				).toEqual( {
 					total_email: 5,
 					total_wpcom: 120,
 					subscribers: [
@@ -431,30 +394,29 @@ describe( 'utils', () => {
 
 		describe( 'statsCommentFollowers()', () => {
 			test( 'should return null if no data is provided', () => {
-				const parsedData = normalizers.statsCommentFollowers();
-				expect( parsedData ).to.be.null;
+				expect( normalizers.statsCommentFollowers() ).toBeNull();
 			} );
 
 			test( 'should properly parse followers response', () => {
-				const parsedData = normalizers.statsCommentFollowers( {
-					page: 1,
-					pages: 1,
-					total: 1,
-					posts: [
-						{
-							id: 0,
-							followers: 20,
-						},
-						{
-							id: 1111,
-							title: 'My title',
-							followers: 10,
-							url: 'https://en.blog.wordpress.com/chicken',
-						},
-					],
-				} );
-
-				expect( parsedData ).to.eql( {
+				expect(
+					normalizers.statsCommentFollowers( {
+						page: 1,
+						pages: 1,
+						total: 1,
+						posts: [
+							{
+								id: 0,
+								followers: 20,
+							},
+							{
+								id: 1111,
+								title: 'My title',
+								followers: 10,
+								url: 'https://en.blog.wordpress.com/chicken',
+							},
+						],
+					} )
+				).toEqual( {
 					page: 1,
 					pages: 1,
 					total: 1,
@@ -476,33 +438,32 @@ describe( 'utils', () => {
 
 		describe( 'statsComments()', () => {
 			test( 'should return null if no data is provided', () => {
-				const parsedData = normalizers.statsComments();
-				expect( parsedData ).to.be.null;
+				expect( normalizers.statsComments() ).toBeNull();
 			} );
 
 			test( 'should properly parse comments stats response', () => {
-				const parsedData = normalizers.statsComments( {
-					authors: [
-						{
-							name: 'John',
-							comments: 12,
-							link: '?user_id=1662656',
-							gravatar:
-								'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
-							follow_data: null,
-						},
-					],
-					posts: [
-						{
-							id: 1111,
-							name: 'My title',
-							comments: 10,
-							link: 'https://en.blog.wordpress.com/chicken',
-						},
-					],
-				} );
-
-				expect( parsedData ).to.eql( {
+				expect(
+					normalizers.statsComments( {
+						authors: [
+							{
+								name: 'John',
+								comments: 12,
+								link: '?user_id=1662656',
+								gravatar:
+									'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+								follow_data: null,
+							},
+						],
+						posts: [
+							{
+								id: 1111,
+								name: 'My title',
+								comments: 10,
+								link: 'https://en.blog.wordpress.com/chicken',
+							},
+						],
+					} )
+				).toEqual( {
 					posts: [
 						{
 							actions: [
@@ -538,54 +499,48 @@ describe( 'utils', () => {
 
 		describe( 'statsTopPosts()', () => {
 			test( 'should return an empty array if data is null', () => {
-				const parsedData = normalizers.statsTopPosts();
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsTopPosts() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.period is null', () => {
-				const parsedData = normalizers.statsTopPosts( {}, { date: '2016-12-25' } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsTopPosts( {}, { date: '2016-12-25' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.date is null', () => {
-				const parsedData = normalizers.statsTopPosts( {}, { period: 'day' } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsTopPosts( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
 			test( 'should properly parse day period response', () => {
-				const parsedData = normalizers.statsTopPosts(
-					{
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								postviews: [
-									{
-										id: 0,
-										href: 'http://en.blog.wordpress.com',
-										date: null,
-										title: 'Home Page / Archives',
-										type: 'homepage',
-										views: 3939,
-									},
-								],
-								total_views: 0,
+				expect(
+					normalizers.statsTopPosts(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									postviews: [
+										{
+											id: 0,
+											href: 'http://en.blog.wordpress.com',
+											date: null,
+											title: 'Home Page / Archives',
+											type: 'homepage',
+											views: 3939,
+										},
+									],
+									total_views: 0,
+								},
 							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-					},
-					10,
-					{
-						slug: 'en.blog.wordpress.com',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
 					{
 						label: 'Home Page / Archives',
 						value: 3939,
@@ -604,36 +559,36 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should properly add published className for posts published in period', () => {
-				const parsedData = normalizers.statsTopPosts(
-					{
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								postviews: [
-									{
-										id: 777,
-										href: 'http://en.blog.wordpress.com/2017/01/12/wordpress-com-lightroom/',
-										date: '2017-01-12 15:55:34',
-										title: 'New WordPress.com for Lightroom Makes Publishing Your Photos Easy',
-										type: 'post',
-										views: 774,
-									},
-								],
-								total_views: 0,
+				expect(
+					normalizers.statsTopPosts(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									postviews: [
+										{
+											id: 777,
+											href: 'http://en.blog.wordpress.com/2017/01/12/wordpress-com-lightroom/',
+											date: '2017-01-12 15:55:34',
+											title: 'New WordPress.com for Lightroom Makes Publishing Your Photos Easy',
+											type: 'post',
+											views: 774,
+										},
+									],
+									total_views: 0,
+								},
 							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-					},
-					10,
-					{
-						slug: 'en.blog.wordpress.com',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
 					{
 						label: 'New WordPress.com for Lightroom Makes Publishing Your Photos Easy',
 						value: 774,
@@ -652,35 +607,35 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should properly parse summarized response', () => {
-				const parsedData = normalizers.statsTopPosts(
-					{
-						date: '2017-01-12',
-						summary: {
-							postviews: [
-								{
-									id: 0,
-									href: 'http://en.blog.wordpress.com',
-									date: null,
-									title: 'Home Page / Archives',
-									type: 'homepage',
-									views: 3939,
-								},
-							],
-							total_views: 0,
+				expect(
+					normalizers.statsTopPosts(
+						{
+							date: '2017-01-12',
+							summary: {
+								postviews: [
+									{
+										id: 0,
+										href: 'http://en.blog.wordpress.com',
+										date: null,
+										title: 'Home Page / Archives',
+										type: 'homepage',
+										views: 3939,
+									},
+								],
+								total_views: 0,
+							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-						summarize: 1,
-					},
-					10,
-					{
-						slug: 'en.blog.wordpress.com',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+							summarize: 1,
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
 					{
 						label: 'Home Page / Archives',
 						value: 3939,
@@ -701,285 +656,279 @@ describe( 'utils', () => {
 
 		describe( 'statsCountryViews()', () => {
 			test( 'should return null if data is null', () => {
-				const parsedData = normalizers.statsCountryViews();
-
-				expect( parsedData ).to.be.null;
+				expect( normalizers.statsCountryViews() ).toBeNull();
 			} );
 
 			test( 'should return null if query.period is null', () => {
-				const parsedData = normalizers.statsCountryViews( {}, { date: '2016-12-25' } );
-
-				expect( parsedData ).to.be.null;
+				expect( normalizers.statsCountryViews( {}, { date: '2016-12-25' } ) ).toBeNull();
 			} );
 
 			test( 'should return null if query.date is null', () => {
-				const parsedData = normalizers.statsCountryViews( {}, { period: 'day' } );
-
-				expect( parsedData ).to.be.null;
+				expect( normalizers.statsCountryViews( {}, { period: 'day' } ) ).toBeNull();
 			} );
 
 			test( 'should properly parse day period response', () => {
-				const parsedData = normalizers.statsCountryViews(
-					{
-						date: '2015-12-25',
-						days: {
-							'2015-12-25': {
-								views: [
-									{
-										country_code: 'US',
-										views: 1,
-									},
-								],
-								other_views: 0,
-								total_views: 1,
+				expect(
+					normalizers.statsCountryViews(
+						{
+							date: '2015-12-25',
+							days: {
+								'2015-12-25': {
+									views: [
+										{
+											country_code: 'US',
+											views: 1,
+										},
+									],
+									other_views: 0,
+									total_views: 1,
+								},
+							},
+							'country-info': {
+								US: {
+									flag_icon:
+										'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+									flat_flag_icon:
+										'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+									country_full: 'United States',
+									map_region: '021',
+								},
 							},
 						},
-						'country-info': {
-							US: {
-								flag_icon:
-									'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
-								flat_flag_icon:
-									'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
-								country_full: 'United States',
-								map_region: '021',
-							},
-						},
-					},
-					{
-						period: 'day',
-						date: '2015-12-25',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2015-12-25',
+						}
+					)
+				).toEqual( [
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 1,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'us.svg',
 					},
 				] );
 			} );
 
 			test( 'should properly parse week period response', () => {
-				const parsedData = normalizers.statsCountryViews(
-					{
-						date: '2015-12-25',
-						days: {
-							'2015-12-21': {
-								views: [
-									{
-										country_code: 'US',
-										views: 10,
-									},
-								],
-								other_views: 0,
-								total_views: 10,
+				expect(
+					normalizers.statsCountryViews(
+						{
+							date: '2015-12-25',
+							days: {
+								'2015-12-21': {
+									views: [
+										{
+											country_code: 'US',
+											views: 10,
+										},
+									],
+									other_views: 0,
+									total_views: 10,
+								},
+							},
+							'country-info': {
+								US: {
+									flag_icon:
+										'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+									flat_flag_icon:
+										'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+									country_full: 'United States',
+									map_region: '021',
+								},
 							},
 						},
-						'country-info': {
-							US: {
-								flag_icon:
-									'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
-								flat_flag_icon:
-									'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
-								country_full: 'United States',
-								map_region: '021',
-							},
-						},
-					},
-					{
-						period: 'week',
-						date: '2015-12-25',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'week',
+							date: '2015-12-25',
+						}
+					)
+				).toEqual( [
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 10,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'us.svg',
 					},
 				] );
 			} );
 
 			test( 'should properly parse summarized response', () => {
-				const parsedData = normalizers.statsCountryViews(
-					{
-						date: '2015-12-25',
-						summary: {
-							views: [
-								{
-									country_code: 'US',
-									views: 100,
+				expect(
+					normalizers.statsCountryViews(
+						{
+							date: '2015-12-25',
+							summary: {
+								views: [
+									{
+										country_code: 'US',
+										views: 100,
+									},
+								],
+								other_views: 0,
+								total_views: 100,
+							},
+							'country-info': {
+								US: {
+									flag_icon:
+										'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+									flat_flag_icon:
+										'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+									country_full: 'United States',
+									map_region: '021',
 								},
-							],
-							other_views: 0,
-							total_views: 100,
-						},
-						'country-info': {
-							US: {
-								flag_icon:
-									'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
-								flat_flag_icon:
-									'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
-								country_full: 'United States',
-								map_region: '021',
 							},
 						},
-					},
-					{
-						period: 'day',
-						summarize: 1,
-						date: '2015-12-25',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							summarize: 1,
+							date: '2015-12-25',
+						}
+					)
+				).toEqual( [
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 100,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'us.svg',
 					},
 				] );
 			} );
 
 			test( 'should properly parse month period response', () => {
-				const parsedData = normalizers.statsCountryViews(
-					{
-						date: '2015-12-25',
-						days: {
-							'2015-12-01': {
-								views: [
-									{
-										country_code: 'US',
-										views: 100,
-									},
-								],
-								other_views: 0,
-								total_views: 100,
+				expect(
+					normalizers.statsCountryViews(
+						{
+							date: '2015-12-25',
+							days: {
+								'2015-12-01': {
+									views: [
+										{
+											country_code: 'US',
+											views: 100,
+										},
+									],
+									other_views: 0,
+									total_views: 100,
+								},
+							},
+							'country-info': {
+								US: {
+									flag_icon:
+										'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+									flat_flag_icon:
+										'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+									country_full: 'United States',
+									map_region: '021',
+								},
 							},
 						},
-						'country-info': {
-							US: {
-								flag_icon:
-									'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
-								flat_flag_icon:
-									'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
-								country_full: 'United States',
-								map_region: '021',
-							},
-						},
-					},
-					{
-						period: 'month',
-						date: '2015-12-25',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'month',
+							date: '2015-12-25',
+						}
+					)
+				).toEqual( [
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 100,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'us.svg',
 					},
 				] );
 			} );
 
 			test( 'should sanitize ’ from country names', () => {
-				const parsedData = normalizers.statsCountryViews(
-					{
-						date: '2015-12-25',
-						days: {
-							'2015-12-01': {
-								views: [
-									{
-										country_code: 'US',
-										views: 100,
-									},
-								],
-								other_views: 0,
-								total_views: 100,
+				expect(
+					normalizers.statsCountryViews(
+						{
+							date: '2015-12-25',
+							days: {
+								'2015-12-01': {
+									views: [
+										{
+											country_code: 'US',
+											views: 100,
+										},
+									],
+									other_views: 0,
+									total_views: 100,
+								},
+							},
+							'country-info': {
+								US: {
+									flag_icon:
+										'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+									flat_flag_icon: 'https://s-ssl.wordpress.com/i/stats/square-grey.png',
+									country_full: 'US’A',
+									map_region: '021',
+								},
 							},
 						},
-						'country-info': {
-							US: {
-								flag_icon:
-									'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
-								flat_flag_icon: 'https://s-ssl.wordpress.com/i/stats/square-grey.png',
-								country_full: 'US’A',
-								map_region: '021',
-							},
-						},
-					},
-					{
-						period: 'month',
-						date: '2015-12-25',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'month',
+							date: '2015-12-25',
+						}
+					)
+				).toEqual( [
 					{
 						label: "US'A",
 						countryCode: 'US',
 						value: 100,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'us.svg',
 					},
 				] );
 			} );
 
 			test( 'should ignore country_codes with no country-info', () => {
-				const parsedData = normalizers.statsCountryViews(
-					{
-						date: '2015-12-25',
-						days: {
-							'2015-12-01': {
-								views: [
-									{
-										country_code: 'US',
-										views: 100,
-									},
-									{
-										country_code: 'DERP',
-										views: 100,
-									},
-								],
-								other_views: 0,
-								total_views: 100,
+				expect(
+					normalizers.statsCountryViews(
+						{
+							date: '2015-12-25',
+							days: {
+								'2015-12-01': {
+									views: [
+										{
+											country_code: 'US',
+											views: 100,
+										},
+										{
+											country_code: 'DERP',
+											views: 100,
+										},
+									],
+									other_views: 0,
+									total_views: 100,
+								},
+							},
+							'country-info': {
+								US: {
+									flag_icon:
+										'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
+									flat_flag_icon:
+										'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
+									country_full: 'United States',
+									map_region: '021',
+								},
 							},
 						},
-						'country-info': {
-							US: {
-								flag_icon:
-									'https://secure.gravatar.com/blavatar/5a83891a81b057fed56930a6aaaf7b3c?s=48',
-								flat_flag_icon:
-									'https://secure.gravatar.com/blavatar/9f4faa5ad0c723474f7a6d810172447c?s=48',
-								country_full: 'United States',
-								map_region: '021',
-							},
-						},
-					},
-					{
-						period: 'month',
-						date: '2015-12-25',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'month',
+							date: '2015-12-25',
+						}
+					)
+				).toEqual( [
 					{
 						label: 'United States',
 						countryCode: 'US',
 						value: 100,
 						region: '021',
-						backgroundImage: '/calypso/images/flags/us.svg',
+						backgroundImage: 'us.svg',
 					},
 				] );
 			} );
@@ -987,28 +936,24 @@ describe( 'utils', () => {
 
 		describe( 'statsInsights()', () => {
 			test( 'should return an empty object if no data is passed', () => {
-				const stats = normalizers.statsInsights();
-
-				expect( stats ).to.eql( {} );
+				expect( normalizers.statsInsights() ).toEqual( {} );
 			} );
 
 			test( 'should return null if data.highest_day_of_week is not numeric', () => {
-				const stats = normalizers.statsInsights( { highest_day_of_week: false } );
-
-				expect( stats ).to.eql( {} );
+				expect( normalizers.statsInsights( { highest_day_of_week: false } ) ).toEqual( {} );
 			} );
 
 			test( 'should return properly formatted data if matching data exists', () => {
-				const stats = normalizers.statsInsights( {
-					highest_hour: 11,
-					highest_day_percent: 10,
-					highest_day_of_week: 6,
-					highest_hour_percent: 5,
-					hourly_views: [],
-					years: [],
-				} );
-
-				expect( stats ).to.eql( {
+				expect(
+					normalizers.statsInsights( {
+						highest_hour: 11,
+						highest_day_percent: 10,
+						highest_day_of_week: 6,
+						highest_hour_percent: 5,
+						hourly_views: [],
+						years: [],
+					} )
+				).toEqual( {
 					day: 'Sunday',
 					hour: '11:00 AM',
 					hourPercent: 5,
@@ -1021,32 +966,28 @@ describe( 'utils', () => {
 
 		describe( 'statsPublicize()', () => {
 			test( 'should return an empty array if not data is passed', () => {
-				const parsedData = normalizers.statsPublicize();
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsPublicize() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if not data has no services attribute', () => {
-				const parsedData = normalizers.statsPublicize( { bad: [] } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsPublicize( { bad: [] } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an a properly parsed services array', () => {
-				const parsedData = normalizers.statsPublicize( {
-					services: [
-						{
-							service: 'twitter',
-							followers: 528,
-						},
-						{
-							service: 'facebook',
-							followers: 282,
-						},
-					],
-				} );
-
-				expect( parsedData ).to.eql( [
+				expect(
+					normalizers.statsPublicize( {
+						services: [
+							{
+								service: 'twitter',
+								followers: 528,
+							},
+							{
+								service: 'facebook',
+								followers: 282,
+							},
+						],
+					} )
+				).toEqual( [
 					{
 						label: 'Twitter',
 						icon: 'https://secure.gravatar.com/blavatar/7905d1c4e12c54933a44d19fcd5f9356?s=48',
@@ -1063,52 +1004,46 @@ describe( 'utils', () => {
 
 		describe( 'statsVideoPlays()', () => {
 			test( 'should return an empty array if not data is passed', () => {
-				const parsedData = normalizers.statsVideoPlays();
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsVideoPlays() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.period is null', () => {
-				const parsedData = normalizers.statsVideoPlays( {}, { date: '2016-12-25' } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsVideoPlays( {}, { date: '2016-12-25' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.date is null', () => {
-				const parsedData = normalizers.statsVideoPlays( {}, { period: 'day' } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsVideoPlays( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
 			test( 'should properly parse day period response', () => {
-				const parsedData = normalizers.statsVideoPlays(
-					{
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								plays: [
-									{
-										plays: 32,
-										post_id: 111111111,
-										title: 'Press This!',
-										url:
-											'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
-									},
-								],
+				expect(
+					normalizers.statsVideoPlays(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									plays: [
+										{
+											plays: 32,
+											post_id: 111111111,
+											title: 'Press This!',
+											url:
+												'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+										},
+									],
+								},
 							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-					},
-					10,
-					{
-						slug: 'en.blog.wordpress.com',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
 					{
 						actions: [
 							{
@@ -1127,22 +1062,20 @@ describe( 'utils', () => {
 
 		describe( 'statsVideo()', () => {
 			test( 'should return null if not data is passed', () => {
-				const parsedData = normalizers.statsVideo();
-
-				expect( parsedData ).to.eql( null );
+				expect( normalizers.statsVideo() ).toBeNull();
 			} );
 
 			test( 'should return an a properly parsed data array', () => {
-				const parsedData = normalizers.statsVideo( {
-					data: [ [ '2016-11-12', 1 ], [ '2016-11-13', 0 ] ],
-					pages: [
-						'https://vip.wordpress.com/category/themes/',
-						'http://freewordpressthemes.ru/p2-theme-for-the-blog-inspired-twitter.html',
-						'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
-					],
-				} );
-
-				expect( parsedData ).to.eql( {
+				expect(
+					normalizers.statsVideo( {
+						data: [ [ '2016-11-12', 1 ], [ '2016-11-13', 0 ] ],
+						pages: [
+							'https://vip.wordpress.com/category/themes/',
+							'http://freewordpressthemes.ru/p2-theme-for-the-blog-inspired-twitter.html',
+							'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
+						],
+					} )
+				).toEqual( {
 					data: [
 						{
 							period: '2016-11-13',
@@ -1171,65 +1104,59 @@ describe( 'utils', () => {
 
 		describe( 'statsTopAuthors()', () => {
 			test( 'should return an empty array if not data is passed', () => {
-				const parsedData = normalizers.statsTopAuthors();
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsTopAuthors() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.period is null', () => {
-				const parsedData = normalizers.statsTopAuthors( {}, { date: '2016-12-25' } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsTopAuthors( {}, { date: '2016-12-25' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.date is null', () => {
-				const parsedData = normalizers.statsTopAuthors( {}, { period: 'day' } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsTopAuthors( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an a properly parsed data array', () => {
-				const parsedData = normalizers.statsTopAuthors(
-					{
-						date: '2017-01-17',
-						days: {
-							'2017-01-17': {
-								authors: [
-									{
-										name: 'Timmy Crawford',
-										avatar:
-											'https://0.gravatar.com/avatar/9929daa7594d5afa910a777ccb9e88e4?s=64&size=G',
-										posts: [
-											{
-												id: 30,
-												title: 'Chicken',
-												url: 'http://en.blog.wordpress.com/chicken',
-												views: 6,
-											},
-											{
-												id: 32,
-												title: 'Ribs',
-												url: 'http://en.blog.wordpress.com/ribs',
-												views: 10,
-											},
-										],
-									},
-								],
+				expect(
+					normalizers.statsTopAuthors(
+						{
+							date: '2017-01-17',
+							days: {
+								'2017-01-17': {
+									authors: [
+										{
+											name: 'Timmy Crawford',
+											avatar:
+												'https://0.gravatar.com/avatar/9929daa7594d5afa910a777ccb9e88e4?s=64&size=G',
+											posts: [
+												{
+													id: 30,
+													title: 'Chicken',
+													url: 'http://en.blog.wordpress.com/chicken',
+													views: 6,
+												},
+												{
+													id: 32,
+													title: 'Ribs',
+													url: 'http://en.blog.wordpress.com/ribs',
+													views: 10,
+												},
+											],
+										},
+									],
+								},
 							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-17',
-						domain: 'en.blog.wordpress.com',
-					},
-					10,
-					{
-						slug: 'en.blog.wordpress.com',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-17',
+							domain: 'en.blog.wordpress.com',
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
 					{
 						children: [
 							{
@@ -1269,49 +1196,46 @@ describe( 'utils', () => {
 
 		describe( 'statsTags()', () => {
 			test( 'should return an empty array if not data is passed', () => {
-				const parsedData = normalizers.statsTags();
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsTags() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if not data has no tags attribute', () => {
-				const parsedData = normalizers.statsTags( { bad: [] } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsTags( { bad: [] } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an a properly parsed data array', () => {
-				const parsedData = normalizers.statsTags( {
-					date: '2014-10-01',
-					tags: [
-						{
-							tags: [
-								{
-									type: 'category',
-									name: 'Uncategorized',
-									link: 'http://example.wordpress.com/category/uncategorized/',
-								},
-							],
-							views: 2381,
-						},
-						{
-							tags: [
-								{
-									type: 'tag',
-									name: 'supertag-chicken',
-									link: 'http://example.wordpress.com/tag/supertag-chicken/',
-								},
-								{
-									type: 'tag',
-									name: 'supertag-ribs',
-									link: 'http://example.wordpress.com/tag/supertag-ribs/',
-								},
-							],
-							views: 740,
-						},
-					],
-				} );
-
-				expect( parsedData ).to.eql( [
+				expect(
+					normalizers.statsTags( {
+						date: '2014-10-01',
+						tags: [
+							{
+								tags: [
+									{
+										type: 'category',
+										name: 'Uncategorized',
+										link: 'http://example.wordpress.com/category/uncategorized/',
+									},
+								],
+								views: 2381,
+							},
+							{
+								tags: [
+									{
+										type: 'tag',
+										name: 'supertag-chicken',
+										link: 'http://example.wordpress.com/tag/supertag-chicken/',
+									},
+									{
+										type: 'tag',
+										name: 'supertag-ribs',
+										link: 'http://example.wordpress.com/tag/supertag-ribs/',
+									},
+								],
+								views: 740,
+							},
+						],
+					} )
+				).toEqual( [
 					{
 						children: undefined,
 						label: [
@@ -1362,60 +1286,57 @@ describe( 'utils', () => {
 
 		describe( 'statsClicks()', () => {
 			test( 'should return an empty array if not data is passed', () => {
-				const parsedData = normalizers.statsClicks();
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsClicks() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.period is null', () => {
-				const parsedData = normalizers.statsClicks( {}, { date: '2016-12-25' } );
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsClicks( {}, { date: '2016-12-25' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.date is null', () => {
-				const parsedData = normalizers.statsClicks( {}, { period: 'day' } );
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsClicks( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an a properly parsed data array', () => {
-				const parsedData = normalizers.statsClicks(
-					{
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								clicks: [
-									{
-										icon:
-											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'en.support.wordpress.com',
-										url: null,
-										views: 45,
-										children: [
-											{
-												name: 'en.support.wordpress.com',
-												url: 'https://en.support.wordpress.com/',
-												views: 5,
-											},
-										],
-									},
-									{
-										children: null,
-										icon:
-											'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
-										name: 'en.forums.wordpress.com',
-										url: 'https://en.forums.wordpress.com/',
-										views: 6,
-									},
-								],
+				expect(
+					normalizers.statsClicks(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									clicks: [
+										{
+											icon:
+												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+											name: 'en.support.wordpress.com',
+											url: null,
+											views: 45,
+											children: [
+												{
+													name: 'en.support.wordpress.com',
+													url: 'https://en.support.wordpress.com/',
+													views: 5,
+												},
+											],
+										},
+										{
+											children: null,
+											icon:
+												'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+											name: 'en.forums.wordpress.com',
+											url: 'https://en.forums.wordpress.com/',
+											views: 6,
+										},
+									],
+								},
 							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+						}
+					)
+				).toEqual( [
 					{
 						children: [
 							{
@@ -1444,44 +1365,44 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should return an a properly parsed summary data array', () => {
-				const parsedData = normalizers.statsClicks(
-					{
-						date: '2017-01-12',
-						summary: {
-							clicks: [
-								{
-									icon:
-										'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-									name: 'en.support.wordpress.com',
-									url: null,
-									views: 50,
-									children: [
-										{
-											name: 'en.support.wordpress.com',
-											url: 'https://en.support.wordpress.com/',
-											views: 50,
-										},
-									],
-								},
-								{
-									children: null,
-									icon:
-										'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
-									name: 'en.forums.wordpress.com',
-									url: 'https://en.forums.wordpress.com/',
-									views: 10,
-								},
-							],
+				expect(
+					normalizers.statsClicks(
+						{
+							date: '2017-01-12',
+							summary: {
+								clicks: [
+									{
+										icon:
+											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+										name: 'en.support.wordpress.com',
+										url: null,
+										views: 50,
+										children: [
+											{
+												name: 'en.support.wordpress.com',
+												url: 'https://en.support.wordpress.com/',
+												views: 50,
+											},
+										],
+									},
+									{
+										children: null,
+										icon:
+											'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+										name: 'en.forums.wordpress.com',
+										url: 'https://en.forums.wordpress.com/',
+										views: 10,
+									},
+								],
+							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-						summarize: 1,
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+							summarize: 1,
+						}
+					)
+				).toEqual( [
 					{
 						children: [
 							{
@@ -1512,61 +1433,58 @@ describe( 'utils', () => {
 
 		describe( 'statsReferrers()', () => {
 			test( 'should return an empty array if not data is passed', () => {
-				const parsedData = normalizers.statsReferrers();
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsReferrers() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.period is null', () => {
-				const parsedData = normalizers.statsReferrers( {}, { date: '2016-12-25' } );
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsReferrers( {}, { date: '2016-12-25' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.date is null', () => {
-				const parsedData = normalizers.statsReferrers( {}, { period: 'day' } );
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsReferrers( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an a properly parsed summary data array', () => {
-				const parsedData = normalizers.statsReferrers(
-					{
-						date: '2017-01-12',
-						summary: {
-							groups: [
-								{
-									group: 'WordPress.com Reader',
-									name: 'WordPress.com Reader',
-									url: 'https://wordpress.com',
-									icon:
-										'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
-									results: {
-										views: 500,
+				expect(
+					normalizers.statsReferrers(
+						{
+							date: '2017-01-12',
+							summary: {
+								groups: [
+									{
+										group: 'WordPress.com Reader',
+										name: 'WordPress.com Reader',
+										url: 'https://wordpress.com',
+										icon:
+											'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+										results: {
+											views: 500,
+										},
+										total: 500,
 									},
-									total: 500,
-								},
-								{
-									group: 'en.support.wordpress.com',
-									icon:
-										'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-									name: 'en.support.wordpress.com',
-									results: [
-										{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 200 },
-										{ name: 'start', url: 'https://en.support.wordpress.com/start/', views: 100 },
-									],
-									total: 300,
-								},
-							],
+									{
+										group: 'en.support.wordpress.com',
+										icon:
+											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+										name: 'en.support.wordpress.com',
+										results: [
+											{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 200 },
+											{ name: 'start', url: 'https://en.support.wordpress.com/start/', views: 100 },
+										],
+										total: 300,
+									},
+								],
+							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-						domain: 'en.blog.wordpress.com',
-						summarize: 1,
-					},
-					100
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+							domain: 'en.blog.wordpress.com',
+							summarize: 1,
+						},
+						100
+					)
+				).toEqual( [
 					{
 						actionMenu: 0,
 						actions: [],
@@ -1614,47 +1532,51 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should return an a properly parsed data array', () => {
-				const parsedData = normalizers.statsReferrers(
-					{
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								groups: [
-									{
-										group: 'WordPress.com Reader',
-										name: 'WordPress.com Reader',
-										url: 'https://wordpress.com',
-										icon:
-											'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
-										results: {
-											views: 407,
+				expect(
+					normalizers.statsReferrers(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									groups: [
+										{
+											group: 'WordPress.com Reader',
+											name: 'WordPress.com Reader',
+											url: 'https://wordpress.com',
+											icon:
+												'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+											results: {
+												views: 407,
+											},
+											total: 407,
 										},
-										total: 407,
-									},
-									{
-										group: 'en.support.wordpress.com',
-										icon:
-											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'en.support.wordpress.com',
-										results: [
-											{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 42 },
-											{ name: 'start', url: 'https://en.support.wordpress.com/start/', views: 10 },
-										],
-										total: 207,
-									},
-								],
+										{
+											group: 'en.support.wordpress.com',
+											icon:
+												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+											name: 'en.support.wordpress.com',
+											results: [
+												{ name: 'homepage', url: 'https://en.support.wordpress.com/', views: 42 },
+												{
+													name: 'start',
+													url: 'https://en.support.wordpress.com/start/',
+													views: 10,
+												},
+											],
+											total: 207,
+										},
+									],
+								},
 							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-						domain: 'en.blog.wordpress.com',
-					},
-					100
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+							domain: 'en.blog.wordpress.com',
+						},
+						100
+					)
+				).toEqual( [
 					{
 						actionMenu: 0,
 						actions: [],
@@ -1704,47 +1626,44 @@ describe( 'utils', () => {
 
 		describe( 'statsSearchTerms()', () => {
 			test( 'should return an empty array if not data is passed', () => {
-				const parsedData = normalizers.statsSearchTerms();
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsSearchTerms() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.period is null', () => {
-				const parsedData = normalizers.statsSearchTerms( {}, { date: '2016-12-25' } );
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsSearchTerms( {}, { date: '2016-12-25' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.date is null', () => {
-				const parsedData = normalizers.statsSearchTerms( {}, { period: 'day' } );
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsSearchTerms( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an a properly parsed data array', () => {
-				const parsedData = normalizers.statsSearchTerms(
-					{
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								encrypted_search_terms: 221,
-								search_terms: [
-									{
-										term: 'chicken',
-										views: 3,
-									},
-									{
-										term: 'ribs',
-										views: 10,
-									},
-								],
+				expect(
+					normalizers.statsSearchTerms(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									encrypted_search_terms: 221,
+									search_terms: [
+										{
+											term: 'chicken',
+											views: 3,
+										},
+										{
+											term: 'ribs',
+											views: 10,
+										},
+									],
+								},
 							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+						}
+					)
+				).toEqual( [
 					{
 						className: 'user-selectable',
 						label: 'chicken',
@@ -1765,32 +1684,32 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should return an a properly parsed summarized data array', () => {
-				const parsedData = normalizers.statsSearchTerms(
-					{
-						date: '2017-01-12',
-						summary: {
-							encrypted_search_terms: 400,
-							search_terms: [
-								{
-									term: 'chicken',
-									views: 200,
-								},
-								{
-									term: 'ribs',
-									views: 100,
-								},
-							],
+				expect(
+					normalizers.statsSearchTerms(
+						{
+							date: '2017-01-12',
+							summary: {
+								encrypted_search_terms: 400,
+								search_terms: [
+									{
+										term: 'chicken',
+										views: 200,
+									},
+									{
+										term: 'ribs',
+										views: 100,
+									},
+								],
+							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-						summarize: 1,
-						num: 90,
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+							summarize: 1,
+							num: 90,
+						}
+					)
+				).toEqual( [
 					{
 						className: 'user-selectable',
 						label: 'chicken',
@@ -1813,24 +1732,21 @@ describe( 'utils', () => {
 
 		describe( 'statsVisits()', () => {
 			test( 'should return an empty array if not data is passed', () => {
-				const parsedData = normalizers.statsVisits();
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsVisits() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if the payload no data attribute', () => {
-				const parsedData = normalizers.statsVisits( { bad: [] } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsVisits( { bad: [] } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an a properly parsed data array', () => {
-				const parsedData = normalizers.statsVisits( {
-					fields: [ 'period', 'views', 'visitors' ],
-					data: [ [ '2016-12-22', 0, 0 ], [ '2016-12-23', 10, 6 ] ],
-					unit: 'week',
-				} );
-
-				expect( parsedData ).to.eql( [
+				expect(
+					normalizers.statsVisits( {
+						fields: [ 'period', 'views', 'visitors' ],
+						data: [ [ '2016-12-22', 0, 0 ], [ '2016-12-23', 10, 6 ] ],
+						unit: 'week',
+					} )
+				).toEqual( [
 					{
 						classNames: [],
 						comments: null,
@@ -1857,13 +1773,13 @@ describe( 'utils', () => {
 			} );
 
 			test( 'should parse the weekends properly', () => {
-				const parsedData = normalizers.statsVisits( {
-					fields: [ 'period', 'views', 'visitors' ],
-					data: [ [ '2016W11W07', 0, 0 ], [ '2016W10W31', 10, 6 ] ],
-					unit: 'day',
-				} );
-
-				expect( parsedData ).to.eql( [
+				expect(
+					normalizers.statsVisits( {
+						fields: [ 'period', 'views', 'visitors' ],
+						data: [ [ '2016W11W07', 0, 0 ], [ '2016W10W31', 10, 6 ] ],
+						unit: 'day',
+					} )
+				).toEqual( [
 					{
 						classNames: [],
 						comments: null,
@@ -1892,51 +1808,45 @@ describe( 'utils', () => {
 
 		describe( 'statsPodcastDownloads()', () => {
 			test( 'should return an empty array if data is null', () => {
-				const parsedData = normalizers.statsPodcastDownloads();
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsPodcastDownloads() ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.period is null', () => {
-				const parsedData = normalizers.statsPodcastDownloads( {}, { date: '2016-12-25' } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsPodcastDownloads( {}, { date: '2016-12-25' } ) ).toEqual( [] );
 			} );
 
 			test( 'should return an empty array if query.date is null', () => {
-				const parsedData = normalizers.statsPodcastDownloads( {}, { period: 'day' } );
-
-				expect( parsedData ).to.eql( [] );
+				expect( normalizers.statsPodcastDownloads( {}, { period: 'day' } ) ).toEqual( [] );
 			} );
 
 			test( 'should properly parse day period response', () => {
-				const parsedData = normalizers.statsPodcastDownloads(
-					{
-						date: '2017-01-12',
-						days: {
-							'2017-01-12': {
-								downloads: [
-									{
-										url: 'http://en.blog.wordpress.com/awesome',
-										post_id: 10,
-										title: 'My awesome podcast',
-										downloads: 3939,
-									},
-								],
+				expect(
+					normalizers.statsPodcastDownloads(
+						{
+							date: '2017-01-12',
+							days: {
+								'2017-01-12': {
+									downloads: [
+										{
+											url: 'http://en.blog.wordpress.com/awesome',
+											post_id: 10,
+											title: 'My awesome podcast',
+											downloads: 3939,
+										},
+									],
+								},
 							},
 						},
-					},
-					{
-						period: 'day',
-						date: '2017-01-12',
-					},
-					10,
-					{
-						slug: 'en.blog.wordpress.com',
-					}
-				);
-
-				expect( parsedData ).to.eql( [
+						{
+							period: 'day',
+							date: '2017-01-12',
+						},
+						10,
+						{
+							slug: 'en.blog.wordpress.com',
+						}
+					)
+				).toEqual( [
 					{
 						actions: [
 							{
@@ -1966,91 +1876,93 @@ describe( 'utils', () => {
 				const noData = parseStoreStatsReferrers( {} );
 				const dataNotArray = parseStoreStatsReferrers( { data: {} } );
 
-				expect( Array.isArray( noPayload ) ).to.eql( true );
-				expect( noPayload.length ).to.eql( 0 );
-				expect( Array.isArray( noData ) ).to.eql( true );
-				expect( noData.length ).to.eql( 0 );
-				expect( Array.isArray( dataNotArray ) ).to.eql( true );
-				expect( dataNotArray.length ).to.eql( 0 );
+				expect( noPayload ).toEqual( [] );
+				expect( noData ).toEqual( [] );
+				expect( dataNotArray ).toEqual( [] );
 			} );
 
 			test( 'should an array of objects with all fields', () => {
 				const parsedData = parseStoreStatsReferrers( validData );
 
-				expect( parsedData.length ).to.eql( validData.data.length );
+				expect( parsedData ).toHaveLength( validData.data.length );
 
 				const { fields } = validData;
 				const firstRecord = parsedData[ 0 ];
 
 				// Make sure all fields are present
 				firstRecord.data.forEach( d => {
-					expect( d[ fields[ 0 ] ] ).to.not.be.undefined;
-					expect( d[ fields[ 1 ] ] ).to.not.be.undefined;
+					expect( d[ fields[ 0 ] ] ).toBeDefined();
+					expect( d[ fields[ 1 ] ] ).toBeDefined();
 				} );
 
 				// Make sure values are correctly lined up
 				firstRecord.data.forEach( ( d, idx ) => {
-					expect( d.color ).to.eql( validData.data[ 0 ].data[ idx ][ 0 ] );
-					expect( d.age ).to.eql( validData.data[ 0 ].data[ idx ][ 1 ] );
+					expect( d.color ).toBe( validData.data[ 0 ].data[ idx ][ 0 ] );
+					expect( d.age ).toBe( validData.data[ 0 ].data[ idx ][ 1 ] );
 				} );
 
-				expect( firstRecord.date ).to.eql( '2018-04-10' );
+				expect( firstRecord ).toHaveProperty( 'date', '2018-04-10' );
 			} );
 		} );
 	} );
 
 	describe( 'getChartLabels', () => {
 		test( 'should return empty object on missing unit parameter', () => {
-			const label = getChartLabels( undefined, moment(), moment() );
-			expect( label ).to.deep.equal( {} );
+			expect( getChartLabels( undefined, moment(), moment() ) ).toEqual( {} );
 		} );
 
 		test( 'should return empty object on missing date parameter', () => {
-			const label = getChartLabels( 'day', undefined, moment() );
-			expect( label ).to.deep.equal( {} );
+			expect( getChartLabels( 'day', undefined, moment() ) ).toEqual( {} );
 		} );
 
 		test( 'should return empty object on missing localizedDate parameter', () => {
-			const label = getChartLabels( 'day', moment(), undefined );
-			expect( label ).to.deep.equal( {} );
+			expect( getChartLabels( 'day', moment(), undefined ) ).toEqual( {} );
 		} );
 
 		test( 'should return a correct property label', () => {
 			const label = getChartLabels( 'day', moment(), moment() );
-			expect( Object.keys( label )[ 0 ] ).to.equal( 'labelDay' );
+			expect( Object.keys( label )[ 0 ] ).toBe( 'labelDay' );
 		} );
 
 		test( 'should return an "is-weekend" className for a weekend date', () => {
 			const sunday = moment( '2018-04-08' );
-			const label = getChartLabels( 'day', sunday, sunday );
-			expect( label.classNames[ 0 ] ).to.equal( 'is-weekend' );
+			expect( getChartLabels( 'day', sunday, sunday ) ).toHaveProperty(
+				'classNames.0',
+				'is-weekend'
+			);
 		} );
 
 		test( 'should not return an "is-weekend" className a weekday', () => {
 			const monday = moment( '2018-04-09' );
-			const label = getChartLabels( 'day', monday, monday );
-			expect( label.classNames ).to.be.an( 'array' ).that.is.empty;
+			expect( getChartLabels( 'day', monday, monday ) ).toHaveProperty( 'classNames', [] );
 		} );
 
 		test( 'should return a correctly formatted date', () => {
 			const april9 = moment( '2018-04-09' );
-			const day = getChartLabels( 'day', april9, april9.locale( 'en' ) );
-			expect( day.labelDay ).to.equal( 'Apr 9' );
-
-			const week = getChartLabels( 'week', april9, april9.locale( 'en' ) );
-			expect( week.labelWeek ).to.equal( 'Apr 9' );
-
-			const month = getChartLabels( 'month', april9, april9.locale( 'en' ) );
-			expect( month.labelMonth ).to.equal( 'Apr' );
-
-			const year = getChartLabels( 'year', april9, april9.locale( 'en' ) );
-			expect( year.labelYear ).to.equal( '2018' );
+			expect( getChartLabels( 'day', april9, april9.locale( 'en' ) ) ).toHaveProperty(
+				'labelDay',
+				'Apr 9'
+			);
+			expect( getChartLabels( 'week', april9, april9.locale( 'en' ) ) ).toHaveProperty(
+				'labelWeek',
+				'Apr 9'
+			);
+			expect( getChartLabels( 'month', april9, april9.locale( 'en' ) ) ).toHaveProperty(
+				'labelMonth',
+				'Apr'
+			);
+			expect( getChartLabels( 'year', april9, april9.locale( 'en' ) ) ).toHaveProperty(
+				'labelYear',
+				'2018'
+			);
 		} );
 
 		test( 'should return a correctly formatted localized date', () => {
 			const april9 = moment( '2018-04-09' );
-			const label = getChartLabels( 'day', april9, april9.locale( 'fr' ) );
-			expect( label.labelDay ).to.equal( 'avr. 9' );
+			expect( getChartLabels( 'day', april9, april9.locale( 'fr' ) ) ).toHaveProperty(
+				'labelDay',
+				'avr. 9'
+			);
 		} );
 	} );
 } );

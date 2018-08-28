@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { countBy, find, get, noop } from 'lodash';
+import { find, get, noop, reduce } from 'lodash';
 import Gridicon from 'gridicons';
 import store from 'store';
 
@@ -21,35 +21,25 @@ import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { launchTask, tasks as onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
-import { mergeObjectIntoArrayById } from 'my-sites/checklist/util';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getTaskUrls, launchTask, getTasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
-import { getABTestVariation } from 'lib/abtest';
+import QueryPosts from 'components/data/query-posts';
+import { getSitePosts } from 'state/posts/selectors';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
-		task: PropTypes.shape( {
-			id: PropTypes.string,
-			title: PropTypes.string,
-			description: PropTypes.string,
-			image: PropTypes.string,
-		} ),
-		completed: PropTypes.number,
-		total: PropTypes.number,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
-		task: null,
 		onClick: noop,
-		completed: 0,
-		total: 1,
 	};
 
 	state = {
@@ -57,10 +47,14 @@ export class ChecklistBanner extends Component {
 	};
 
 	handleClick = () => {
-		const { requestTour, task, track, siteSlug } = this.props;
+		const { requestTour, track, siteSlug, taskUrls } = this.props;
+		const task = this.getTask();
 
 		launchTask( {
-			task,
+			task: {
+				...task,
+				url: taskUrls[ task.id ] || task.url,
+			},
 			location: 'checklist_banner',
 			requestTour,
 			siteSlug,
@@ -81,41 +75,34 @@ export class ChecklistBanner extends Component {
 		} );
 	};
 
-	getNextTask() {
-		const { completed, siteSlug, total, translate } = this.props;
-
-		if ( completed === total ) {
-			return {
+	getTask() {
+		const task = find(
+			this.props.tasks,
+			( { id, completed } ) => ! completed && ! get( this.props.taskStatuses, [ id, 'completed' ] )
+		);
+		return (
+			task || {
 				id: 'ready-to-share',
-				title: translate( 'Your site is ready to share' ),
-				description: translate(
+				title: this.props.translate( 'Your site is ready to share' ),
+				description: this.props.translate(
 					'We did it! You have completed {{a}}all the tasks{{/a}} on our checklist.',
 					{
 						components: {
-							a: <a href={ `/checklist/${ siteSlug }` } />,
+							a: <a href={ `/checklist/${ this.props.siteSlug }` } />,
 						},
 					}
 				),
 				image: '/calypso/images/stats/tasks/ready-to-share.svg',
-			};
-		}
-
-		return this.props.task;
+			}
+		);
 	}
 
 	canShow() {
+		if ( ! this.props.isEligibleForDotcomChecklist ) {
+			return false;
+		}
+
 		if ( this.state.closed ) {
-			return false;
-		}
-
-		if ( this.props.siteDesignType !== 'blog' ) {
-			return false;
-		}
-
-		if (
-			getABTestVariation( 'checklistThankYouForPaidUser' ) !== 'show' &&
-			getABTestVariation( 'checklistThankYouForFreeUser' ) !== 'show'
-		) {
 			return false;
 		}
 
@@ -129,11 +116,7 @@ export class ChecklistBanner extends Component {
 
 	renderShareButtons() {
 		return (
-			<ChecklistShowShare
-				className="checklist-banner__actions"
-				siteSlug={ this.props.siteSlug }
-				recordTracksEvent={ this.props.track }
-			/>
+			<ChecklistShowShare className="checklist-banner__actions" siteSlug={ this.props.siteSlug } />
 		);
 	}
 
@@ -151,8 +134,15 @@ export class ChecklistBanner extends Component {
 	}
 
 	render() {
-		const { completed, total, translate, siteId } = this.props;
-		const task = this.getNextTask();
+		const { siteId, taskStatuses, translate, tasks } = this.props;
+		const total = tasks.length;
+		const completed = reduce(
+			tasks,
+			( count, { id, completed: taskComplete } ) =>
+				taskComplete || get( taskStatuses, [ id, 'completed' ] ) ? count + 1 : count,
+			0
+		);
+		const task = this.getTask();
 		const percentage = Math.round( ( completed / total ) * 100 ) || 0;
 
 		if ( ! this.canShow() ) {
@@ -162,6 +152,12 @@ export class ChecklistBanner extends Component {
 		return (
 			<Card className="checklist-banner">
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ siteId && (
+					<QueryPosts
+						siteId={ siteId }
+						query={ { type: 'any', number: 10, order_by: 'ID', order: 'ASC' } }
+					/>
+				) }
 				<div className="checklist-banner__gauge">
 					<span className="checklist-banner__gauge-additional-text">{ translate( 'setup' ) }</span>
 					<Gauge
@@ -210,21 +206,15 @@ export class ChecklistBanner extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const tasksFromServer = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
-	const tasks = tasksFromServer
-		? mergeObjectIntoArrayById( onboardingTasks, tasksFromServer )
-		: null;
-	const task = find( tasks, { completed: false } );
-	const { true: completed } = countBy( tasks, 'completed' );
 	const siteSlug = getSiteSlug( state, siteId );
-	const siteDesignType = get( getSite( state, siteId ), 'options.design_type' );
+	const taskStatuses = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
 
 	return {
-		task,
-		completed,
-		total: tasks && tasks.length,
 		siteSlug,
-		siteDesignType,
+		taskStatuses,
+		taskUrls: getTaskUrls( getSitePosts( state, siteId ) ),
+		tasks: getTasks( state, siteId ),
+		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
 };
 

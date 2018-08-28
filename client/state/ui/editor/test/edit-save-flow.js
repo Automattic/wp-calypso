@@ -20,9 +20,10 @@ import siteSettings from 'state/site-settings/reducer';
 import { selectedSiteId } from 'state/ui/reducer';
 import editor from 'state/ui/editor/reducer';
 import { setSelectedSiteId } from 'state/ui/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { editPost, saveEdited } from 'state/posts/actions';
 import { startEditingNewPost } from 'state/ui/editor/actions';
-import { getEditedPostValue, isEditedPostDirty } from 'state/posts/selectors';
+import { getEditedPost, getEditedPostValue, isEditedPostDirty } from 'state/posts/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 
 const SITE_ID = 123;
@@ -224,4 +225,45 @@ test( 'create post, save, type while saving, verify that edits are not lost', as
 
 	// check that post is still dirty
 	expect( isEditedPostDirty( store.getState(), SITE_ID, savedPostId ) ).toBe( true );
+} );
+
+test( 'create new post and save, verify that edited post is always valid', async () => {
+	const store = createEditorStore();
+
+	// select site and start editing new post
+	store.dispatch( setSelectedSiteId( SITE_ID ) );
+	store.dispatch( startEditingNewPost( SITE_ID ) );
+
+	// verify that the edited post is always non-null
+	store.subscribe( () => {
+		const state = store.getState();
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+		expect( post ).not.toBeNull();
+	} );
+
+	// edit title and content
+	const draftPostId = getEditorPostId( store.getState() );
+	store.dispatch( editPost( SITE_ID, draftPostId, { title: 'Title' } ) );
+
+	// mock the server response on save
+	nock( 'https://public-api.wordpress.com' )
+		.post( `/rest/v1.2/sites/${ SITE_ID }/posts/new?context=edit`, {
+			type: 'post',
+			status: 'draft',
+			title: 'Title',
+			content: '',
+		} )
+		.reply( 200, {
+			global_ID: GLOBAL_ID,
+			site_ID: SITE_ID,
+			ID: POST_ID,
+			type: 'post',
+			status: 'draft',
+			title: 'Title',
+		} );
+
+	// trigger save
+	await store.dispatch( saveEdited() );
 } );

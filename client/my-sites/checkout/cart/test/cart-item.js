@@ -46,7 +46,9 @@ jest.mock( 'config', () => {
 	fn.isEnabled = jest.fn( () => null );
 	return fn;
 } );
-jest.mock( 'lib/format-currency', () => jest.fn() );
+jest.mock( 'lib/format-currency', () => ( {
+	getCurrencyObject: price => ( { integer: price } ),
+} ) );
 jest.mock( 'lib/mixins/analytics', () => ( {} ) );
 jest.mock( 'lib/products-values', () => ( {
 	isPlan: jest.fn( () => null ),
@@ -108,7 +110,7 @@ describe( 'cart-item', () => {
 			expect( myTranslate ).toHaveBeenCalledTimes( 1 );
 			expect( myTranslate.mock.calls[ 0 ][ 1 ] ).toEqual( {
 				args: {
-					monthlyPrice: '133.00',
+					monthlyPrice: '133',
 					currency: 'AUD',
 					months: 17,
 				},

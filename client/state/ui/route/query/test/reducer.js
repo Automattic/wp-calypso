@@ -22,6 +22,7 @@ describe( 'reducer', () => {
 		expect( state.initial.lang ).to.equal( 'fr' );
 		expect( state.current.retry ).to.equal( 1 );
 		expect( state.current.lang ).to.equal( 'fr' );
+		expect( state.previous ).to.equal( false );
 	} );
 
 	it( 'should only update current query the second time a ROUTE_SET action is triggered', () => {
@@ -39,5 +40,7 @@ describe( 'reducer', () => {
 		expect( state.initial.lang ).to.equal( 'fr' );
 		expect( state.current.retry ).to.equal( 2 );
 		expect( state.current.lang ).to.equal( undefined );
+		expect( state.previous.retry ).to.equal( 1 );
+		expect( state.previous.lang ).to.equal( 'fr' );
 	} );
 } );

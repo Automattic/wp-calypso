@@ -45,13 +45,20 @@
 		}
 	}
 
-	blockquote {
+	blockquote{
 		padding: 0 24px 0 32px;
 		margin: 16px 0 32px;
 		border-left: 3px solid $gray-lighten-30;
 		color: $gray-darken-20;
 		font-weight: normal;
 		background: transparent;
+	}
+
+	aside {
+		margin: 0;
+		border: none;
+		background: none;
+		font-size: 13px;
 	}
 
 	hr {
@@ -62,7 +69,7 @@
 	img {
 		max-width: 100%;
 		height: auto;
-		display: inline;
+		display: block;
 		margin: auto;
 
 		&.emoji,
@@ -73,7 +80,7 @@
 		}
 	}
 
-	audio {
+	audio, video {
 		display: block;
 		width: 100%;
 		margin: 24px auto;

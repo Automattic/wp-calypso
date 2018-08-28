@@ -205,7 +205,8 @@ class SelectIpsTag extends Component {
 					) }
 				</p>
 				<p>
-					<strong>{ selectedRegistrar.tag }</strong>&nbsp;&nbsp;
+					<strong>{ selectedRegistrar.tag }</strong>
+					&nbsp;&nbsp;
 					{ selectedRegistrar.registrarName ? '(' + selectedRegistrar.registrarName + ')' : '' }
 				</p>
 				<p>

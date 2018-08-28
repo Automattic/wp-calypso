@@ -66,7 +66,7 @@ class BlogSettings extends Component {
 			'scheduled_publicize',
 		];
 
-		if ( site.options.is_wpcom_store ) {
+		if ( site.options.woocommerce_is_active ) {
 			settingKeys.push( 'store_order' );
 		}
 

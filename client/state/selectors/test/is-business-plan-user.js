@@ -11,6 +11,9 @@ import deepFreeze from 'deep-freeze';
 import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
 import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'lib/plans/constants';
 
+// Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
+jest.mock( 'lib/user', () => () => {} );
+
 describe( 'isBusinessPlanUser()', () => {
 	test( 'should return true if any purchase is a business plan.', () => {
 		const state = deepFreeze( {

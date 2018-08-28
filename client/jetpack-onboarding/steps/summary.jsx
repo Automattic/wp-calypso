@@ -36,7 +36,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 		);
 
 		return (
-			<div className="steps__main">
+			<div className="steps__main" data-e2e-type="summary">
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card>

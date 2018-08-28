@@ -90,7 +90,8 @@ const googleTermsAndConditions = ( { translate } ) => (
 					rel="noopener noreferrer"
 				>
 					http://www.google.com/adwords/coupons/terms.html
-				</ExternalLink>.
+				</ExternalLink>
+				.
 			</li>
 		</ol>
 	</div>

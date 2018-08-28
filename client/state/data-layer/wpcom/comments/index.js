@@ -11,6 +11,7 @@ import { compact, get, isDate, startsWith, pickBy, map } from 'lodash';
 import {
 	COMMENTS_REQUEST,
 	COMMENTS_RECEIVE,
+	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
 } from 'state/action-types';
@@ -19,7 +20,11 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { requestCommentsList } from 'state/comments/actions';
-import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
+import {
+	getPostOldestCommentDate,
+	getPostNewestCommentDate,
+	getPostCommentsCountAtDate,
+} from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
 import { decodeEntities } from 'lib/formatting';
 
@@ -40,9 +45,14 @@ export const commentsFromApi = comments =>
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/posts/%24post_ID/replies/
 export const fetchPostComments = action => ( dispatch, getState ) => {
-	const { siteId, postId, query, direction } = action;
-	const oldestDate = getPostOldestCommentDate( getState(), siteId, postId );
-	const newestDate = getPostNewestCommentDate( getState(), siteId, postId );
+	const { siteId, postId, query, direction, isPoll } = action;
+	const state = getState();
+	const oldestDate = getPostOldestCommentDate( state, siteId, postId );
+	const newestDate = getPostNewestCommentDate( state, siteId, postId );
+
+	// If we're polling for new comments, we query using after= which returns all comments *on or after* the provided date.
+	// To offset by the right number, we count the number of comments we already know about on the same second.
+	const offset = isPoll ? getPostCommentsCountAtDate( state, siteId, postId, newestDate ) : 0;
 
 	const before =
 		direction === 'before' &&
@@ -66,6 +76,7 @@ export const fetchPostComments = action => ( dispatch, getState ) => {
 					...query,
 					after,
 					before,
+					offset,
 				} ),
 			},
 			action
@@ -74,9 +85,11 @@ export const fetchPostComments = action => ( dispatch, getState ) => {
 };
 
 export const addComments = ( action, { comments, found } ) => {
-	const { siteId, postId, direction } = action;
+	const { siteId, postId, direction, isPoll } = action;
+
+	const type = isPoll ? COMMENTS_UPDATES_RECEIVE : COMMENTS_RECEIVE;
 	const receiveAction = {
-		type: COMMENTS_RECEIVE,
+		type,
 		siteId,
 		postId,
 		comments: commentsFromApi( comments ),

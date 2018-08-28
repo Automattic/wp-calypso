@@ -94,6 +94,10 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		facebookJetpackInit: '919484458159593',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
+		googleFreeSignupConversionId: '1067250390',
+		googleFreeSignupConversionLabel: 'zKK-CKPG7ocBENbl8_wD',
+		googleFreeSignupConversionIdJetpack: '937115306',
+		googleFreeSignupConversionLabelJetpack: 'J8Z5CNTi14cBEKr97L4D',
 		criteo: '31321',
 		quantcast: 'p-3Ma3jHaQMB_bS',
 		yahooProjectId: '10000',
@@ -123,44 +127,46 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
  * Globals
  */
 
-// Facebook
-if ( isFacebookEnabled && ! window.fbq ) {
-	setUpFacebookGlobal();
-}
+if ( typeof window !== 'undefined' ) {
+	// Facebook
+	if ( isFacebookEnabled && ! window.fbq ) {
+		setUpFacebookGlobal();
+	}
 
-// Bing
-if ( isBingEnabled && ! window.uetq ) {
-	window.uetq = [];
-}
+	// Bing
+	if ( isBingEnabled && ! window.uetq ) {
+		window.uetq = [];
+	}
 
-// Criteo
-if ( isCriteoEnabled && ! window.criteo_q ) {
-	window.criteo_q = [];
-}
+	// Criteo
+	if ( isCriteoEnabled && ! window.criteo_q ) {
+		window.criteo_q = [];
+	}
 
-// Quantcast
-if ( isQuantcastEnabled && ! window._qevents ) {
-	window._qevents = [];
-}
+	// Quantcast
+	if ( isQuantcastEnabled && ! window._qevents ) {
+		window._qevents = [];
+	}
 
-// Twitter
-if ( isTwitterEnabled && ! window.twq ) {
-	setUpTwitterGlobal();
-}
+	// Twitter
+	if ( isTwitterEnabled && ! window.twq ) {
+		setUpTwitterGlobal();
+	}
 
-// Linkedin
-if ( isLinkedinEnabled && ! window._linkedin_data_partner_id ) {
-	window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
-}
+	// Linkedin
+	if ( isLinkedinEnabled && ! window._linkedin_data_partner_id ) {
+		window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
+	}
 
-// Quora
-if ( isQuoraEnabled && ! window.qp ) {
-	setupQuoraGlobal();
-}
+	// Quora
+	if ( isQuoraEnabled && ! window.qp ) {
+		setupQuoraGlobal();
+	}
 
-// Outbrain
-if ( isOutbrainEnabled ) {
-	setupOutbrainGlobal();
+	// Outbrain
+	if ( isOutbrainEnabled ) {
+		setupOutbrainGlobal();
+	}
 }
 
 /**
@@ -676,6 +682,47 @@ export function recordViewCheckout( cart ) {
 }
 
 /**
+ * Tracks a free signup conversion by generating a
+ * synthetic cart and then treating it like any other order.
+ *
+ * @param {String} slug - Signup slug.
+ * @returns {void}
+ */
+export function recordFreeSignup( slug ) {
+	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordFreeSignup: skipping as ad tracking is disallowed' );
+		return;
+	}
+
+	if ( ! hasStartedFetchingScripts ) {
+		return loadTrackingScripts( recordFreeSignup.bind( null, slug ) );
+	}
+
+	// Synthesize a cart object for free signup tracking.
+	const syntheticCart = {
+		is_free_signup: true,
+		currency: 'USD',
+		total_cost: 0,
+		products: [
+			{
+				is_free_signup: true,
+				product_id: slug,
+				product_slug: slug,
+				product_name: slug,
+				currency: 'USD',
+				volume: 1,
+				cost: 0,
+			},
+		],
+	};
+
+	// 35-byte free signup tracking ID.
+	const syntheticOrderId = 'fs_' + uuid().replace( /-/g, '' );
+
+	recordOrder( syntheticCart, syntheticOrderId );
+}
+
+/**
  * Tracks a purchase conversion
  *
  * @param {Object} cart - cart as `CartValue` object
@@ -719,25 +766,25 @@ export function recordOrder( cart, orderId ) {
 	// 3. Fire a single tracking event without any details about what was purchased
 
 	// Experian / One 2 One Media
-	if ( isExperianEnabled ) {
+	if ( isExperianEnabled && ! cart.is_free_signup ) {
 		new Image().src = EXPERIAN_CONVERSION_PIXEL_URL;
 	}
 
 	// Yahoo Gemini
-	if ( isGeminiEnabled ) {
+	if ( isGeminiEnabled && ! cart.is_free_signup ) {
 		new Image().src =
 			YAHOO_GEMINI_CONVERSION_PIXEL_URL + ( usdTotalCost !== null ? '&gv=' + usdTotalCost : '' );
 	}
 
-	if ( isAolEnabled ) {
+	if ( isAolEnabled && ! cart.is_free_signup ) {
 		new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 	}
 
-	if ( isPandoraEnabled ) {
+	if ( isPandoraEnabled && ! cart.is_free_signup ) {
 		new Image().src = PANDORA_CONVERSION_PIXEL_URL;
 	}
 
-	if ( isQuoraEnabled ) {
+	if ( isQuoraEnabled && ! cart.is_free_signup ) {
 		window.qp( 'track', 'Generic' );
 	}
 }
@@ -785,13 +832,27 @@ function recordProduct( product, orderId ) {
 		// Google AdWords
 		if ( isAdwordsEnabled ) {
 			if ( window.google_trackConversion ) {
+				let googleConversionId, googleConversionLabel;
+
+				if ( product.is_free_signup ) {
+					if ( isJetpackPlan ) {
+						googleConversionId = TRACKING_IDS.googleFreeSignupConversionIdJetpack;
+						googleConversionLabel = TRACKING_IDS.googleFreeSignupConversionLabelJetpack;
+					} else {
+						googleConversionId = TRACKING_IDS.googleFreeSignupConversionId;
+						googleConversionLabel = TRACKING_IDS.googleFreeSignupConversionLabel;
+					}
+				} else if ( isJetpackPlan ) {
+					googleConversionId = ADWORDS_CONVERSION_ID_JETPACK;
+					googleConversionLabel = TRACKING_IDS.googleConversionLabelJetpack;
+				} else {
+					googleConversionId = ADWORDS_CONVERSION_ID;
+					googleConversionLabel = TRACKING_IDS.googleConversionLabel;
+				}
+
 				window.google_trackConversion( {
-					google_conversion_id: isJetpackPlan
-						? ADWORDS_CONVERSION_ID_JETPACK
-						: ADWORDS_CONVERSION_ID,
-					google_conversion_label: isJetpackPlan
-						? TRACKING_IDS.googleConversionLabelJetpack
-						: TRACKING_IDS.googleConversionLabel,
+					google_conversion_id: googleConversionId,
+					google_conversion_label: googleConversionLabel,
 					google_conversion_value: product.cost,
 					google_conversion_currency: product.currency,
 					google_custom_params: {
@@ -806,7 +867,7 @@ function recordProduct( product, orderId ) {
 
 		// Facebook (disabled for now as we are not sure this works as intended).
 		// The entire order is already reported to Facebook, so not absolutely necessary.
-		/* if ( isFacebookEnabled ) {
+		/* if ( isFacebookEnabled && ! product.is_free_signup ) {
 			window.fbq(
 				'trackSingle',
 				isJetpackPlan ? TRACKING_IDS.facebookJetpackInit : TRACKING_IDS.facebookInit,
@@ -822,7 +883,7 @@ function recordProduct( product, orderId ) {
 		} */
 
 		// Twitter
-		if ( isTwitterEnabled ) {
+		if ( isTwitterEnabled && ! product.is_free_signup ) {
 			window.twq( 'track', 'Purchase', {
 				value: product.cost.toString(),
 				currency: product.currency,
@@ -835,7 +896,7 @@ function recordProduct( product, orderId ) {
 		}
 
 		// Yandex Goal
-		if ( isYandexEnabled ) {
+		if ( isYandexEnabled && ! product.is_free_signup ) {
 			window.yaCounter45268389.reachGoal( 'ProductPurchase', {
 				order_id: orderId,
 				product_slug: product.product_slug,
@@ -848,7 +909,7 @@ function recordProduct( product, orderId ) {
 			const costUSD = costToUSD( product.cost, product.currency );
 
 			// Bing
-			if ( isBingEnabled ) {
+			if ( isBingEnabled && ! product.is_free_signup ) {
 				const bingParams = {
 					ec: 'purchase',
 					gv: costUSD,
@@ -861,7 +922,7 @@ function recordProduct( product, orderId ) {
 			}
 
 			// Quantcast
-			if ( isQuantcastEnabled ) {
+			if ( isQuantcastEnabled && ! product.is_free_signup ) {
 				// Note that all properties have to be strings or they won't get tracked
 				window._qevents.push( {
 					qacct: TRACKING_IDS.quantcast,
@@ -873,7 +934,7 @@ function recordProduct( product, orderId ) {
 			}
 
 			// Yahoo
-			if ( isYahooEnabled ) {
+			if ( isYahooEnabled && ! product.is_free_signup ) {
 				// Like the Quantcast tracking above, the price has to be passed as a string
 				// See: https://developer.yahoo.com/gemini/guide/dottags/installing-tags/
 				/*global YAHOO*/
@@ -911,6 +972,10 @@ function recordOrderInFloodlight( cart, orderId ) {
 		return;
 	}
 
+	if ( cart.is_free_signup ) {
+		return;
+	}
+
 	debug( 'recordOrderInFloodlight: Record purchase' );
 
 	const params = {
@@ -936,6 +1001,10 @@ function recordOrderInFloodlight( cart, orderId ) {
  */
 function recordOrderInNanigans( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() || ! isNanigansEnabled ) {
+		return;
+	}
+
+	if ( cart.is_free_signup ) {
 		return;
 	}
 
@@ -981,6 +1050,10 @@ function recordOrderInNanigans( cart, orderId ) {
  */
 function recordOrderInFacebook( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() || ! isFacebookEnabled ) {
+		return;
+	}
+
+	if ( cart.is_free_signup ) {
 		return;
 	}
 
@@ -1257,6 +1330,10 @@ function recordOrderInCriteo( cart, orderId ) {
 		return;
 	}
 
+	if ( cart.is_free_signup ) {
+		return;
+	}
+
 	recordInCriteo( 'trackTransaction', {
 		id: orderId,
 		currency: cart.currency,
@@ -1272,6 +1349,10 @@ function recordOrderInCriteo( cart, orderId ) {
  */
 function recordViewCheckoutInCriteo( cart ) {
 	if ( ! isAdTrackingAllowed() || ! isCriteoEnabled ) {
+		return;
+	}
+
+	if ( cart.is_free_signup ) {
 		return;
 	}
 
@@ -1492,10 +1573,16 @@ export function recordSignupStart() {
 /**
  * Record that a user completed sign up
  *
+ * @param {object} details Signup details.
+ *
  * @returns {void}
  */
-export function recordSignupCompletion() {
+export function recordSignupCompletion( { isNewUserOnFreePlan } ) {
 	recordSignupCompletionInFloodlight();
+
+	if ( isNewUserOnFreePlan ) {
+		recordFreeSignup( 'free-plan' );
+	}
 }
 
 export function retarget( context, next ) {

@@ -624,6 +624,7 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 		if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
+			this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
 			return;
 		}
 
@@ -859,7 +860,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.isSignupStep ) {
-			searchVendor = abtest( 'domainSuggestionKrakenV322' );
+			searchVendor = abtest( 'domainSuggestionKrakenV325' );
 		}
 
 		enqueueSearchStatReport( { query: searchQuery, section: this.props.analyticsSection } );

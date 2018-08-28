@@ -4,11 +4,12 @@
  * External dependencies
  */
 
-import { throttle } from 'lodash';
+import { throttle, defer } from 'lodash';
 import PropTypes from 'prop-types';
 import ReactDom from 'react-dom';
 import React from 'react';
 import classNames from 'classnames';
+import afterLayoutFlush from 'lib/after-layout-flush';
 
 /**
  * Internal dependencies
@@ -33,20 +34,24 @@ export default class extends React.Component {
 	};
 
 	componentDidMount() {
-		// Determine and cache vertical threshold from rendered element's
-		// offset relative the document
-		this.threshold = ReactDom.findDOMNode( this ).offsetTop;
+		this.deferredTimer = defer( () => {
+			// Determine and cache vertical threshold from rendered element's
+			// offset relative the document
+			this.threshold = ReactDom.findDOMNode( this ).offsetTop;
+			this.updateIsSticky();
+		} );
 		this.throttleOnResize = throttle( this.onWindowResize, 200 );
 
 		window.addEventListener( 'scroll', this.onWindowScroll );
 		window.addEventListener( 'resize', this.throttleOnResize );
-		this.updateIsSticky();
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
 		window.removeEventListener( 'resize', this.throttleOnResize );
 		window.cancelAnimationFrame( this.rafHandle );
+		window.clearTimeout( this.deferredTimer );
+		this.updateIsSticky.cancel();
 	}
 
 	onWindowScroll = () => {
@@ -60,7 +65,7 @@ export default class extends React.Component {
 		} );
 	};
 
-	updateIsSticky = () => {
+	updateIsSticky = afterLayoutFlush( () => {
 		const isSticky = window.pageYOffset > this.threshold;
 
 		if (
@@ -77,7 +82,7 @@ export default class extends React.Component {
 				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0,
 			} );
 		}
-	};
+	} );
 
 	getBlockStyle = () => {
 		let offset;

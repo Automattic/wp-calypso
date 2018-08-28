@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import Page from 'page';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,10 +17,14 @@ import Notice from 'components/notice';
 
 class SiteSettingsImporterError extends React.PureComponent {
 	static displayName = 'SiteSettingsImporterError';
+	static defaultProps = {
+		retryImport: noop,
+	};
 
 	static propTypes = {
 		description: PropTypes.string.isRequired,
 		type: PropTypes.string.isRequired,
+		retryImport: PropTypes.func,
 	};
 
 	contactSupport = event => {
@@ -73,6 +78,12 @@ class SiteSettingsImporterError extends React.PureComponent {
 			case 'importError':
 				actionMessage = this.getImportError();
 				break;
+
+			case 'validationError':
+				actionMessage = this.props.description
+					? this.props.description
+					: this.props.translate( 'Data you entered are not valid' );
+				break;
 		}
 
 		return actionMessage;
@@ -81,6 +92,7 @@ class SiteSettingsImporterError extends React.PureComponent {
 	retryImport = event => {
 		event.preventDefault();
 		event.stopPropagation();
+		this.props.retryImport();
 	};
 
 	render() {

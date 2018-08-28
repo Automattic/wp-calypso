@@ -47,6 +47,7 @@ import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import DocumentHead from 'components/data/document-head';
 
 export class List extends React.Component {
 	static defaultProps = {
@@ -137,6 +138,7 @@ export class List extends React.Component {
 		if ( this.props.isDomainOnly ) {
 			return (
 				<Main>
+					<DocumentHead title={ this.props.translate( 'Settings' ) } />
 					<SidebarNavigation />
 					<DomainOnly
 						hasNotice={ this.isFreshDomainOnlyRegistration() }
@@ -150,6 +152,7 @@ export class List extends React.Component {
 
 		return (
 			<Main wideLayout={ isPlanFeaturesEnabled() }>
+				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
 				<UpgradesNavigation
 					path={ this.props.context.path }

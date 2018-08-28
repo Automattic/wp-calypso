@@ -1,0 +1,75 @@
+div.wpnc__user {
+  @extend %container;
+
+  text-align: left;
+
+  img {
+    height: $icon-size-detail;
+    width: $icon-size-detail;
+    float: left;
+    margin: $user-margin-adjustment $padding-medium 0 0;
+    border-radius: $icon-size-detail/2;
+  }
+
+  p {
+    font-size: 0.85em;
+    margin: 0;
+  }
+
+  padding: ($padding-large - $user-margin-adjustment) $padding-medium $padding-small;
+
+  .follow-link {
+    margin-top: -0.1em;
+    color: $gray-text-min;
+  }
+
+  .follow-link .gridicon {
+    fill: $gray;
+    vertical-align: middle;
+    margin-right: 0.2em;
+  }
+
+  .wpnc__user__bulleted .wpnc__user__bullet::before {
+    content: "\0020\2022\0020";
+  }
+
+  .wpnc__user__meta {
+    font-weight: 400;
+    color: $gray-text-min;
+  }
+}
+
+.wpnc__comment div.wpnc__user .wpnc__user__meta {
+  a {
+    color: $gray-text-min;
+
+    &:hover {
+      color: $blue-wordpress;
+    }
+  }
+}
+
+.wpnc__single-view div.wpnc__user {
+  @extend %calypso-border;
+}
+
+.wpnc__comment .wpnc__body div.wpnc__user .follow-link,
+.automattcher .wpnc__body div.wpnc__user .follow-link {
+  display: none;
+}
+
+.wpnc__follow .wpnc__body div.wpnc__user,
+.wpnc__like .wpnc__body div.wpnc__user,
+.wpnc__comment_like .wpnc__body div.wpnc__user,
+.wpnc__reblog .wpnc__body div.wpnc__user {
+  line-height: 1.3em;
+}
+
+.wpnc__follow .wpnc__body div.wpnc__user img,
+.wpnc__like .wpnc__body div.wpnc__user img,
+.wpnc__comment_like .wpnc__body div.wpnc__user img,
+.wpnc__reblog .wpnc__body div.wpnc__user img {
+  height: $icon-size;
+  width: $icon-size;
+  border-radius: $icon-size/2;
+}

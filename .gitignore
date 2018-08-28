@@ -30,15 +30,11 @@ test-results*.xml
 
 /public/*.js
 /public/*.js.map
-/public/style*.css
-/public/style*.css.map
-/public/editor*.css
-/public/directly*.css
-/public/emergent-paywall*.css
+/public/*.css
+/public/*.css.map
 /public/sections/*
 /public/sections-rtl/*
-/public/images/flags/*.svg
-/public/images/flags/*.png
+/public/images/*.svg
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json

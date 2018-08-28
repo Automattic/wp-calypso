@@ -26,6 +26,20 @@ exports[`Card should have custom class of \`test__ace\` 1`] = `
 />
 `;
 
+exports[`Card should render as a clickable button which looks like a link 1`] = `
+<button
+  className="card is-card-link is-clickable"
+  onClick="test"
+>
+  <t
+    className="card__link-indicator"
+    icon="chevron-right"
+    size={24}
+  />
+  This is a button which looks like a link
+</button>
+`;
+
 exports[`Card should render children 1`] = `
 <div
   className="card"

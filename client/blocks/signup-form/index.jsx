@@ -353,7 +353,8 @@ class SignupForm extends Component {
 			return (
 				<span>
 					<p>
-						{ notice.message }&nbsp;
+						{ notice.message }
+						&nbsp;
 						{ this.props.translate( '{{a}}Log in now{{/a}} to finish signing up.', {
 							components: {
 								a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,
@@ -401,7 +402,8 @@ class SignupForm extends Component {
 				return (
 					<span>
 						<p>
-							{ message }&nbsp;
+							{ message }
+							&nbsp;
 							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
 								components: {
 									a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,

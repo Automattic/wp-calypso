@@ -19,7 +19,8 @@ class StoredCard extends React.Component {
 		return (
 			<div className={ cardClasses }>
 				<span className="stored-card__number">
-					{ card.card_type } ****{ card.card }
+					{ card.card_type } ****
+					{ card.card }
 				</span>
 				<span className="stored-card__name">{ card.name }</span>
 				<span className="stored-card__expiration-date">

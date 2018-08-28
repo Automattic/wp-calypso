@@ -59,14 +59,8 @@ class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Thank you!' );
 		}
 
-		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
-			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
-				return preventWidows( translate( 'Almost done!' ) );
-			}
-
-			return preventWidows(
-				translate( 'Check your email! There are important next steps waiting in your inbox.' )
-			);
+		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
+			return preventWidows( translate( 'Almost done!' ) );
 		}
 
 		return translate( 'Congratulations on your purchase!' );
@@ -186,12 +180,15 @@ class CheckoutThankYouHeader extends PureComponent {
 			}
 
 			return translate(
-				'We sent an email with an important link. Please open the email and click the link to confirm ' +
-					'that you want to transfer {{strong}}%(domainName)s{{/strong}} to WordPress.com. ' +
-					"The transfer can't complete until you do!",
+				'Your domain {{strong}}%(domain)s{{/strong}} was added to your site, but ' +
+					'the transfer process can take up to 5 days to complete.',
 				{
-					args: { domainName: primaryPurchase.meta },
-					components: { strong: <strong /> },
+					args: {
+						domain: primaryPurchase.meta,
+					},
+					components: {
+						strong: <strong />,
+					},
 				}
 			);
 		}

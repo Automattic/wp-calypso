@@ -39,11 +39,13 @@ import Buttons from 'components/button/docs/example';
 import CardHeading from 'components/card-heading/docs/example';
 import Cards from 'components/card/docs/example';
 import Chart from 'components/chart/docs/example';
+import Checklist from 'components/checklist/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import Collection from 'devdocs/design/search-collection';
 import Count from 'components/count/docs/example';
 import CountedTextareas from 'components/forms/counted-textarea/docs/example';
+import CreditCard from 'components/credit-card/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import DiffViewerExample from 'components/diff-viewer/docs/example';
 import DropZones from 'components/drop-zone/docs/example';
@@ -67,6 +69,7 @@ import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
 import InfoPopover from 'components/info-popover/docs/example';
+import InlineSupportLink from 'components/inline-support-link/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
 import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
 import JetpackHeaderExample from 'components/jetpack-header/docs/example';
@@ -182,10 +185,12 @@ class DesignAssets extends React.Component {
 					<Cards readmeFilePath="card" />
 					<CardHeading readmeFilePath="card-heading" />
 					<Chart readmeFilePath="chart" />
+					<Checklist readmeFilePath="checklist" />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
 					<Count readmeFilePath="count" />
 					<CountedTextareas readmeFilePath="forms/counted-textarea" />
+					<CreditCard readmeFilePath="credit-card" />
 					<DatePicker readmeFilePath="date-picker" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
@@ -210,6 +215,7 @@ class DesignAssets extends React.Component {
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
 					<InfoPopover readmeFilePath="info-popover" />
+					<InlineSupportLink readmeFilePath="inline-support-link" />
 					<InputChrono readmeFilePath="input-chrono" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />

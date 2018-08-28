@@ -10,6 +10,7 @@ import {
 	DIRECTLY_INITIALIZATION_SUCCESS,
 	DIRECTLY_INITIALIZATION_ERROR,
 } from 'state/action-types';
+import 'state/data-layer/third-party/directly';
 
 export function askQuestion( questionText, name, email ) {
 	return { type: DIRECTLY_ASK_QUESTION, questionText, name, email };

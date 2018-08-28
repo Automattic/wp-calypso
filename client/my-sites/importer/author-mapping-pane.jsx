@@ -16,8 +16,8 @@ import AuthorMapping from './author-mapping-item';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
 
-class ImporterMappingPane extends React.PureComponent {
-	static displayName = 'ImporterMappingPane';
+class AuthorMappingPane extends React.PureComponent {
+	static displayName = 'AuthorMappingPane';
 
 	static propTypes = {
 		hasSingleAuthor: PropTypes.bool.isRequired,
@@ -32,6 +32,7 @@ class ImporterMappingPane extends React.PureComponent {
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,
 		targetTitle: PropTypes.string.isRequired,
+		sourceType: PropTypes.string,
 	};
 
 	getFetchOptions = ( options = {} ) => {
@@ -46,7 +47,7 @@ class ImporterMappingPane extends React.PureComponent {
 		);
 	};
 
-	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle ) => {
+	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle, sourceType ) => {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
 			return this.props.translate(
 				'We found one author on your %(sourceType)s site. ' +
@@ -55,7 +56,7 @@ class ImporterMappingPane extends React.PureComponent {
 					'Click Start Import to proceed.',
 				{
 					args: {
-						sourceType: 'WordPress',
+						sourceType: sourceType,
 						destinationSiteTitle: targetTitle,
 					},
 					components: {
@@ -71,7 +72,7 @@ class ImporterMappingPane extends React.PureComponent {
 					'Click Start Import to proceed.',
 				{
 					args: {
-						sourceType: 'WordPress',
+						sourceType: sourceType,
 						destinationSiteTitle: targetTitle,
 					},
 					components: {
@@ -128,20 +129,21 @@ class ImporterMappingPane extends React.PureComponent {
 			onMap,
 			onStartImport,
 			siteId,
+			sourceType,
 		} = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
 		const targetUserCount = this.getUserCount();
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
 			targetUserCount,
-			targetTitle
+			targetTitle,
+			sourceType
 		);
 
 		return (
 			<div className="importer__mapping-pane">
-				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) }>
-					<div className="importer__mapping-description">{ mappingDescription }</div>
-				</SiteUsersFetcher>
+				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) } />
+				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
 					<span className="importer__mapping-target-title">{ targetTitle }</span>
@@ -165,4 +167,4 @@ class ImporterMappingPane extends React.PureComponent {
 	}
 }
 
-export default localize( ImporterMappingPane );
+export default localize( AuthorMappingPane );

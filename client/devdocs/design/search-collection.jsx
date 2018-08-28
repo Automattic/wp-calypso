@@ -36,6 +36,19 @@ const shouldShowInstance = ( example, filter, component ) => {
 	return ! filter || searchPattern.toLowerCase().indexOf( filter ) > -1;
 };
 
+const shouldShowEditLink = section => section !== 'gutenberg-components';
+
+const getReadmeFilePath = ( section, example ) => {
+	switch ( section ) {
+		case 'design':
+			return `/client/components/${ example.props.readmeFilePath }/README.md`;
+		case 'gutenberg-components':
+			return `/node_modules/@wordpress/components/src/${ example.props.readmeFilePath }/README.md`;
+		default:
+			return `/client/${ section }/${ example.props.readmeFilePath }/README.md`;
+	}
+};
+
 const Collection = ( {
 	children,
 	component,
@@ -52,13 +65,11 @@ const Collection = ( {
 		}
 
 		const exampleName = getComponentName( example );
-		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
-		const readmeFilePath =
-			'/client/' +
-			( section === 'blocks' ? 'blocks' : 'components' ) +
-			'/' +
-			example.props.readmeFilePath +
-			'/README.md';
+		const exampleLink = `/devdocs/${ section }/${ encodeURIComponent(
+			camelCaseToSlug( exampleName )
+		) }`;
+		const readmeFilePath = getReadmeFilePath( section, example );
+		const showEditLink = shouldShowEditLink( section );
 
 		showCounter++;
 
@@ -80,8 +91,11 @@ const Collection = ( {
 						unique={ !! component }
 						url={ exampleLink }
 						component={ component }
+						section={ section }
 					/>
-					{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
+					{ component && (
+						<ReadmeViewer readmeFilePath={ readmeFilePath } showEditLink={ showEditLink } />
+					) }
 				</div>
 			);
 		}
@@ -91,7 +105,9 @@ const Collection = ( {
 				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
 					{ example }
 				</DocsExampleWrapper>
-				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
+				{ component && (
+					<ReadmeViewer readmeFilePath={ readmeFilePath } showEditLink={ showEditLink } />
+				) }
 			</div>
 		);
 	} );

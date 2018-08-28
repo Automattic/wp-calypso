@@ -89,6 +89,7 @@ export class CartCoupon extends React.Component {
 			<form onSubmit={ this.applyCoupon } className={ 'cart__form' }>
 				<input
 					type="text"
+					data-e2e-type="coupon-code"
 					disabled={ this.isSubmitting }
 					placeholder={ this.props.translate( 'Enter Coupon Code', { textOnly: true } ) }
 					onChange={ this.handleCouponInputChange }
@@ -97,6 +98,7 @@ export class CartCoupon extends React.Component {
 				/>
 				<Button
 					type="submit"
+					data-e2e-type="apply-coupon"
 					disabled={ isEmpty( trim( this.state.couponInputValue ) ) }
 					busy={ this.isSubmitting }
 				>

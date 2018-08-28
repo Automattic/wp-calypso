@@ -18,11 +18,11 @@ import analytics from 'lib/analytics';
 import { applyTestFiltersToPlansList } from 'lib/plans';
 import Button from 'components/button';
 import Card from 'components/card';
-import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
 import config from 'config';
 import {
 	getName,
+	handleRenewNowClick,
 	hasPrivacyProtection,
 	isCancelable,
 	isExpired,
@@ -70,7 +70,6 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import { cancelPurchase, cancelPrivacyProtection, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
-import { addItems } from 'lib/upgrades/actions';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -123,34 +122,7 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		const { purchase } = this.props;
-		const renewItem = cartItems.getRenewalItemFromProduct( purchase, {
-			domain: purchase.meta,
-		} );
-		const renewItems = [ renewItem ];
-
-		// Track the renew now submit
-		analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
-			product_slug: purchase.productSlug,
-		} );
-
-		if ( hasPrivacyProtection( purchase ) ) {
-			const privacyItem = cartItems.getRenewalItemFromCartItem(
-				cartItems.domainPrivacyProtection( {
-					domain: purchase.meta,
-				} ),
-				{
-					id: purchase.id,
-					domain: purchase.domain,
-				}
-			);
-
-			renewItems.push( privacyItem );
-		}
-
-		addItems( renewItems );
-
-		page( '/checkout/' + this.props.siteSlug );
+		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
 	};
 
 	renderRenewButton() {
@@ -160,6 +132,8 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
+		// This is hidden for expired and expiring subscriptions because they
+		// will get a PurchaseNotice will a renewal call-to-action instead.
 		if (
 			! isRenewable( purchase ) ||
 			isExpired( purchase ) ||
@@ -173,6 +147,27 @@ class ManagePurchase extends Component {
 			<Button className="manage-purchase__renew-button" onClick={ this.handleRenew } compact>
 				{ translate( 'Renew Now' ) }
 			</Button>
+		);
+	}
+
+	renderRenewNowNavItem() {
+		const { purchase, translate } = this.props;
+
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
+		// Unlike renderRenewButton(), this shows the link even for expired or
+		// expiring subscriptions (as long as they are renewable), which keeps
+		// the nav items consistent.
+		if ( ! isRenewable( purchase ) || ! this.props.site ) {
+			return null;
+		}
+
+		return (
+			<CompactCard tagName="button" displayAsLink onClick={ this.handleRenew }>
+				{ translate( 'Renew Now' ) }
+			</CompactCard>
 		);
 	}
 
@@ -400,6 +395,7 @@ class ManagePurchase extends Component {
 					{ this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
+				{ this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
 				{ this.renderCancelPrivacyProtection() }

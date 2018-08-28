@@ -21,116 +21,114 @@ import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 
-export default {
-	checkout: function( context, next ) {
-		const { feature, plan, product } = context.params;
+export function checkout( context, next ) {
+	const { feature, plan, product } = context.params;
 
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
 
-		if ( 'thank-you' === product ) {
-			return;
-		}
+	if ( 'thank-you' === product ) {
+		return;
+	}
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-		context.primary = (
-			<CheckoutData>
-				<Checkout
-					product={ product }
-					purchaseId={ context.params.purchaseId }
-					selectedFeature={ feature }
-					couponCode={ context.query.code }
-					plan={ plan }
-				/>
-			</CheckoutData>
-		);
-
-		context.secondary = (
-			<CartData>
-				<SecondaryCart selectedSite={ selectedSite } />
-			</CartData>
-		);
-		next();
-	},
-
-	sitelessCheckout: function( context, next ) {
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
-
-		context.primary = (
-			<CheckoutData>
-				<Checkout reduxStore={ context.store } />
-			</CheckoutData>
-		);
-
-		context.secondary = (
-			<CartData>
-				<SecondaryCart />
-			</CartData>
-		);
-		next();
-	},
-
-	checkoutPending: function( context, next ) {
-		const orderId = Number( context.params.orderId );
-		const siteSlug = context.params.site;
-
-		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
-
-		context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
-
-		next();
-	},
-
-	checkoutThankYou: function( context, next ) {
-		const receiptId = Number( context.params.receiptId );
-		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
-
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
-
-		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
-
-		context.primary = (
-			<CheckoutThankYouComponent
-				receiptId={ receiptId }
-				gsuiteReceiptId={ gsuiteReceiptId }
-				domainOnlySiteFlow={ isEmpty( context.params.site ) }
-				selectedFeature={ context.params.feature }
-				selectedSite={ selectedSite }
+	context.primary = (
+		<CheckoutData>
+			<Checkout
+				product={ product }
+				purchaseId={ context.params.purchaseId }
+				selectedFeature={ feature }
+				couponCode={ context.query.code }
+				plan={ plan }
 			/>
-		);
+		</CheckoutData>
+	);
 
-		next();
-	},
+	context.secondary = (
+		<CartData>
+			<SecondaryCart selectedSite={ selectedSite } />
+		</CartData>
+	);
+	next();
+}
 
-	gsuiteNudge( context, next ) {
-		const { domain, site, receiptId } = context.params;
-		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
+export function sitelessCheckout( context, next ) {
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-		const state = context.store.getState();
-		const selectedSite =
-			getSelectedSite( state ) || getSiteBySlug( state, site ) || getSiteBySlug( state, domain );
+	context.primary = (
+		<CheckoutData>
+			<Checkout reduxStore={ context.store } />
+		</CheckoutData>
+	);
 
-		if ( ! selectedSite ) {
-			return null;
-		}
+	context.secondary = (
+		<CartData>
+			<SecondaryCart />
+		</CartData>
+	);
+	next();
+}
 
-		context.primary = (
-			<CartData>
-				<GsuiteNudge
-					domain={ domain }
-					receiptId={ Number( receiptId ) }
-					selectedSiteId={ selectedSite.ID }
-				/>
-			</CartData>
-		);
+export function checkoutPending( context, next ) {
+	const orderId = Number( context.params.orderId );
+	const siteSlug = context.params.site;
 
-		next();
-	},
-};
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+
+	context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
+
+	next();
+}
+
+export function checkoutThankYou( context, next ) {
+	const receiptId = Number( context.params.receiptId );
+	const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
+
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
+
+	context.primary = (
+		<CheckoutThankYouComponent
+			receiptId={ receiptId }
+			gsuiteReceiptId={ gsuiteReceiptId }
+			domainOnlySiteFlow={ isEmpty( context.params.site ) }
+			selectedFeature={ context.params.feature }
+			selectedSite={ selectedSite }
+		/>
+	);
+
+	next();
+}
+
+export function gsuiteNudge( context, next ) {
+	const { domain, site, receiptId } = context.params;
+	context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
+
+	const state = context.store.getState();
+	const selectedSite =
+		getSelectedSite( state ) || getSiteBySlug( state, site ) || getSiteBySlug( state, domain );
+
+	if ( ! selectedSite ) {
+		return null;
+	}
+
+	context.primary = (
+		<CartData>
+			<GsuiteNudge
+				domain={ domain }
+				receiptId={ Number( receiptId ) }
+				selectedSiteId={ selectedSite.ID }
+			/>
+		</CartData>
+	);
+
+	next();
+}

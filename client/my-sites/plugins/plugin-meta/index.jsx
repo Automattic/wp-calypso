@@ -10,6 +10,7 @@ import i18n from 'i18n-calypso';
 import { get, includes, some } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize, moment } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -248,6 +249,7 @@ export class PluginMeta extends Component {
 			'wordpress-reset',
 			'wp-automatic',
 			'wp-clone-by-wp-academy',
+			'wp-dbmanager',
 			'wp-file-manager',
 			'wp-prefix-changer',
 			'wp-reset',
@@ -287,6 +289,7 @@ export class PluginMeta extends Component {
 			'wp-rss-aggregator',
 			'wp-rss-feed-to-post',
 			'wp-rss-wordai',
+			'wp-slimstat',
 			'wp-statistics',
 			'wp-ulike',
 			'WPRobot5',
@@ -305,12 +308,14 @@ export class PluginMeta extends Component {
 			// misc
 			'automatic-video-posts',
 			'bwp-minify',
+			'cryptocurrency-pricing-list',
 			'nginx-helper',
-			'patron-button-and-widgets-by-codebard',
 			'porn-embed',
+			'robo-gallery',
 			'video-importer',
 			'woozone',
 			'wp-cleanfix',
+			'wpematico',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
@@ -552,35 +557,32 @@ export class PluginMeta extends Component {
 		);
 	};
 
+	handleUpgradeNudgeClick = () => {
+		const { slug } = this.props;
+		let href = `/plans/${ slug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
+		if (
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'pluginsUpsellLandingPage' ) === 'test'
+		) {
+			href = '/feature/plugins/' + slug;
+		}
+		page.redirect( href );
+	};
+
 	renderUpsell() {
-		const { slug, translate } = this.props;
+		const { translate } = this.props;
 		const plan = findFirstSimilarPlanKey( this.props.selectedSite.plan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
 		const title = translate( 'Upgrade to the Business plan to install plugins.' );
-		const href = '/feature/plugins/' + slug;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		if (
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
-		) {
-			return (
-				<div className="plugin-meta__upgrade_nudge">
-					<Banner
-						event="calypso_plugin_detail_page_upgrade_nudge_upsell"
-						href={ href }
-						plan={ plan }
-						title={ title }
-					/>
-				</div>
-			);
-		}
 		return (
 			<div className="plugin-meta__upgrade_nudge">
 				<Banner
-					feature={ FEATURE_UPLOAD_PLUGINS }
 					event="calypso_plugin_detail_page_upgrade_nudge"
+					disableHref={ true }
+					onClick={ this.handleUpgradeNudgeClick }
 					plan={ plan }
 					title={ title }
 				/>

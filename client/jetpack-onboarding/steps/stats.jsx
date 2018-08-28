@@ -107,7 +107,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 		const { activatedStats, getForwardUrl, siteId } = this.props;
 
 		return (
-			<div className="steps__main">
+			<div className="steps__main" data-e2e-type="stats">
 				<QuerySites siteId={ siteId } />
 
 				<JetpackLogo full size={ 45 } />

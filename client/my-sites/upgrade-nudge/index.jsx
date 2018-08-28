@@ -17,14 +17,17 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { FEATURE_NO_ADS } from 'lib/plans/constants';
+import { addQueryArgs } from 'lib/url';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { getValidFeatureKeys } from 'lib/plans';
+import { getPlans, getValidFeatureKeys } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import canCurrentUser from 'state/selectors/can-current-user';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
-class UpgradeNudge extends React.Component {
+export class UpgradeNudge extends React.Component {
 	static propTypes = {
 		onClick: PropTypes.func,
 		className: PropTypes.string,
@@ -34,7 +37,8 @@ class UpgradeNudge extends React.Component {
 		href: PropTypes.string,
 		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
-		feature: PropTypes.oneOf( [ false, ...getValidFeatureKeys() ] ),
+		plan: PropTypes.oneOf( [ null, ...Object.keys( getPlans() ) ] ),
+		feature: PropTypes.oneOf( [ null, ...getValidFeatureKeys() ] ),
 		shouldDisplay: PropTypes.func,
 		site: PropTypes.object,
 		translate: PropTypes.func,
@@ -46,7 +50,8 @@ class UpgradeNudge extends React.Component {
 		icon: 'star',
 		event: null,
 		jetpack: false,
-		feature: false,
+		plan: null,
+		feature: null,
 		compact: false,
 		shouldDisplay: null,
 		site: null,
@@ -68,10 +73,14 @@ class UpgradeNudge extends React.Component {
 	};
 
 	shouldDisplay() {
-		const { feature, jetpack, planHasFeature, shouldDisplay, site } = this.props;
+		const { feature, jetpack, planHasFeature, shouldDisplay, site, canManageSite } = this.props;
 
 		if ( shouldDisplay ) {
 			return shouldDisplay();
+		}
+
+		if ( ! canManageSite ) {
+			return false;
 		}
 
 		if ( ! site || typeof site !== 'object' || typeof site.jetpack !== 'boolean' ) {
@@ -86,7 +95,7 @@ class UpgradeNudge extends React.Component {
 			return false;
 		}
 
-		if ( feature === 'no-adverts' && site.options.wordads ) {
+		if ( feature === FEATURE_NO_ADS && site.options.wordads ) {
 			return false;
 		}
 
@@ -102,6 +111,7 @@ class UpgradeNudge extends React.Component {
 			className,
 			compact,
 			event,
+			plan,
 			feature,
 			icon,
 			message,
@@ -117,11 +127,7 @@ class UpgradeNudge extends React.Component {
 		}
 
 		if ( ! href && site ) {
-			if ( feature ) {
-				href = `/plans/${ site.slug }?feature=${ feature }`;
-			} else {
-				href = `/plans/${ site.slug }`;
-			}
+			href = addQueryArgs( { feature, plan }, `/plans/${ site.slug }` );
 		}
 
 		if ( compact ) {
@@ -166,9 +172,12 @@ class UpgradeNudge extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
+
 		return {
-			site: getSelectedSite( state ),
+			site,
 			planHasFeature: hasFeature( state, siteId, ownProps.feature ),
+			canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		};
 	},
 	{ recordTracksEvent }

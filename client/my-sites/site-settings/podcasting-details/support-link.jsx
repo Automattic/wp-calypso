@@ -4,29 +4,27 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import InlineSupportLink from 'components/inline-support-link';
 import { getSupportSiteLocale } from 'lib/i18n-utils';
 
-function PodcastingSupportLink( { translate } ) {
+function PodcastingSupportLink( { showText, iconSize } ) {
 	const supportLink =
 		'https://' + getSupportSiteLocale() + '.support.wordpress.com/audio/podcasting/';
+	const supportPostId = 38147;
 
 	return (
-		<ExternalLink
-			href={ supportLink }
-			target="_blank"
-			icon
-			iconSize={ 14 }
+		<InlineSupportLink
 			className="podcasting-details__support-link"
-		>
-			{ translate( 'Learn more' ) }
-		</ExternalLink>
+			supportPostId={ supportPostId }
+			supportLink={ supportLink }
+			showText={ showText }
+			iconSize={ iconSize }
+		/>
 	);
 }
 
-export default localize( PodcastingSupportLink );
+export default PodcastingSupportLink;

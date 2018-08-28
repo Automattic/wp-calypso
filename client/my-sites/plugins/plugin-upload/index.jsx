@@ -8,7 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
+import { isEmpty, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ import QueryEligibility from 'components/data/query-atat-eligibility';
 import { uploadPlugin, clearPluginUpload } from 'state/plugins/upload/actions';
 import { initiateAutomatedTransferWithPluginZip } from 'state/automated-transfer/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import getPluginUploadError from 'state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'state/selectors/get-uploaded-plugin-id';
@@ -44,6 +45,10 @@ import {
 } from 'state/automated-transfer/selectors';
 import { successNotice } from 'state/notices/actions';
 import { transferStates } from 'state/automated-transfer/constants';
+import { abtest } from 'lib/abtest';
+import { hasFeature } from 'state/sites/plans/selectors';
+import redirectIf from 'my-sites/feature-upsell/redirect-if';
+import config from 'config';
 
 class PluginUpload extends React.Component {
 	state = {
@@ -170,39 +175,58 @@ class PluginUpload extends React.Component {
 	}
 }
 
-export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const error = getPluginUploadError( state, siteId );
-		const progress = getPluginUploadProgress( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
-		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
-		// Use this selector to take advantage of eligibility card placeholders
-		// before data has loaded.
-		const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-		const hasEligibilityMessages = ! (
-			isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
-		);
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	const error = getPluginUploadError( state, siteId );
+	const progress = getPluginUploadProgress( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
+	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
+	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
+	// Use this selector to take advantage of eligibility card placeholders
+	// before data has loaded.
+	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+	const hasEligibilityMessages = ! (
+		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
+	);
 
-		return {
-			siteId,
-			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack,
-			inProgress: isPluginUploadInProgress( state, siteId ),
-			complete: isPluginUploadComplete( state, siteId ),
-			failed: !! error,
-			pluginId: getUploadedPluginId( state, siteId ),
-			error,
-			progress,
-			installing: progress === 100,
-			upgradeJetpack:
-				isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
-			isJetpackMultisite,
-			siteAdminUrl: getSiteAdminUrl( state, siteId ),
-			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
-			automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
-		};
-	},
-	{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
-)( localize( PluginUpload ) );
+	return {
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+		isJetpack,
+		inProgress: isPluginUploadInProgress( state, siteId ),
+		complete: isPluginUploadComplete( state, siteId ),
+		failed: !! error,
+		pluginId: getUploadedPluginId( state, siteId ),
+		error,
+		progress,
+		installing: progress === 100,
+		upgradeJetpack:
+			isJetpack && ! isJetpackMultisite && ! isJetpackMinimumVersion( state, siteId, '5.1' ),
+		isJetpackMultisite,
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+	};
+};
+
+const flowRightArgs = [
+	connect(
+		mapStateToProps,
+		{ uploadPlugin, clearPluginUpload, initiateAutomatedTransferWithPluginZip, successNotice }
+	),
+	localize,
+];
+
+if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
+	flowRightArgs.push(
+		redirectIf(
+			( state, siteId ) =>
+				! isJetpackSite( state, siteId ) &&
+				! hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ) &&
+				abtest( 'pluginsUpsellLandingPage' ) === 'test',
+			'/feature/plugins'
+		)
+	);
+}
+
+export default flowRight( ...flowRightArgs )( PluginUpload );

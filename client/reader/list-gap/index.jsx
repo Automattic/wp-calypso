@@ -41,13 +41,19 @@ class Gap extends React.Component {
 		} );
 		const { translate } = this.props;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className={ classes } onClick={ this.handleClick }>
-				<button type="button" className="button reader-list-gap__button">
+			<div className={ classes }>
+				<button
+					type="button"
+					className="button reader-list-gap__button"
+					onClick={ this.handleClick }
+				>
 					{ translate( 'Load More Posts' ) }
 				</button>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

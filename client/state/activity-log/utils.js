@@ -8,8 +8,8 @@ export const filterStateToApiQuery = filter =>
 		filter.before && { before: filter.before },
 		filter.by && { by: filter.by },
 		filter.dateRange && { date_range: filter.dateRange },
-		filter.group && filter.group.includes && { group: filter.group.includes },
-		filter.group && filter.group.excludes && { not_group: filter.group.excludes },
+		filter.group && { group: filter.group },
+		filter.notGroup && { not_group: filter.notGroup },
 		filter.name && { name: filter.name },
 		{ number: 1000 }
 	);
@@ -22,41 +22,22 @@ export const filterStateToQuery = filter =>
 		filter.before && { before: filter.before },
 		filter.by && { by: filter.by },
 		filter.dateRange && { date_range: filter.dateRange },
-		filter.group && filter.group.includes && { group: filter.group.includes.join( ',' ) },
-		filter.group && filter.group.excludes && { not_group: filter.group.excludes( ',' ) },
+		filter.group && { group: filter.group.join( ',' ) },
+		filter.notGroup && { not_group: filter.notGroup.join( ',' ) },
 		filter.name && { name: filter.name.join( ',' ) },
 		filter.page > 1 && { page: filter.page }
 	);
 
-export const queryToFilterState = query => {
-	const hasGroup = query.group || query.not_group;
-	const {
-		action,
-		after,
-		before,
-		by,
-		date_range: dateRange,
-		group,
-		name,
-		not_group: notGroup,
-		page,
-	} = query;
-	// helper to fold in new properties conditionally
-	const p = ( ...o ) => Object.assign( {}, ...o );
-
-	return p(
-		action && { action: decodeURI( action ).split( ',' ) },
-		after && { after },
-		before && { before },
-		by && { by }, // and a sweet one at that
-		dateRange && { dateRange },
-		name && { name: decodeURI( name ).split( ',' ) },
-		hasGroup && {
-			group: p(
-				group && { includes: decodeURI( group ).split( ',' ) },
-				notGroup && { excludes: decodeURI( notGroup ).split( ',' ) }
-			),
-		},
-		page && page > 0 && { page }
+export const queryToFilterState = query =>
+	Object.assign(
+		{},
+		query.action && { action: decodeURI( query.action ).split( ',' ) },
+		query.after && { after: query.after },
+		query.before && { before: query.before },
+		query.by && { by: query.by },
+		query.date_range && { dateRange: query.date_range },
+		query.name && { name: decodeURI( query.name ).split( ',' ) },
+		query.group && { group: decodeURI( query.group ).split( ',' ) },
+		query.not_group && { notGroup: decodeURI( query.not_group ).split( ',' ) },
+		query.page && query.page > 0 && { page: query.page }
 	);
-};

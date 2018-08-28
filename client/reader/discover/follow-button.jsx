@@ -39,6 +39,7 @@ class DiscoverFollowButton extends React.Component {
 			},
 		} );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FollowButton
 				className="is-discover"
@@ -50,6 +51,7 @@ class DiscoverFollowButton extends React.Component {
 				followSource={ DISCOVER_POST }
 			/>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

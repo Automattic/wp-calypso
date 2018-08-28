@@ -20,7 +20,7 @@ export class Suggestion extends Component {
 		railcar: PropTypes.object,
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		const { railcar } = this.props;
 		analytics.tracks.recordEvent( 'calypso_traintracks_render', railcar );
 	}

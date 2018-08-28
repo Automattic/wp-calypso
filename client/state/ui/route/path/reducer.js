@@ -7,26 +7,25 @@
 /**
  * Internal dependencies
  */
-import { createReducer, combineReducers } from 'state/utils';
 import { ROUTE_SET } from 'state/action-types';
 
-const initial = createReducer(
-	'',
-	{
-		[ ROUTE_SET ]: ( state, { path } ) => ( state === '' ? path : state ),
-	},
-	{ type: 'string' }
-);
+const initialState = {
+	initial: '',
+	current: '',
+	previous: '',
+};
 
-const current = createReducer(
-	'',
-	{
-		[ ROUTE_SET ]: ( state, { path } ) => path,
-	},
-	{ type: 'string' }
-);
+export const pathReducer = ( state = initialState, action ) => {
+	const { path, type } = action;
+	switch ( type ) {
+		case ROUTE_SET:
+			return {
+				initial: state.initial === '' ? path : state.initial,
+				current: path,
+				previous: state.current === '' ? '' : state.current,
+			};
+	}
+	return state;
+};
 
-export default combineReducers( {
-	initial,
-	current,
-} );
+export default pathReducer;

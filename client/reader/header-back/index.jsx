@@ -1,5 +1,13 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
 import React from 'react';
+
+/**
+ * Internal dependencies
+ */
 import HeaderCake from 'components/header-cake';
 
 function goBack() {

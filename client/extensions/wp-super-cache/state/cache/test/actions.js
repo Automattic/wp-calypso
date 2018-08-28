@@ -44,11 +44,17 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
-				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/cache/test' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/cache/test',
+					body: JSON.stringify( {} ),
+					json: true,
+				} )
 				.reply( 200, results )
-				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/cache/test' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/cache/test',
+					body: JSON.stringify( {} ),
+					json: true,
+				} )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.',
@@ -88,11 +94,16 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
-				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/cache' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/cache',
+					body: JSON.stringify( { all: false, expired: true } ),
+					json: true,
+				} )
 				.reply( 200, { wp_delete_cache: true } )
-				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/cache' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/cache',
+					json: true,
+				} )
 				.reply( 403 );
 		} );
 
@@ -129,11 +140,13 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
-				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/preload' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/preload',
+					body: JSON.stringify( { enable: true } ),
+					json: true,
+				} )
 				.reply( 200, { enabled: true } )
 				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/preload' } )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.',
@@ -173,11 +186,15 @@ describe( 'actions', () => {
 		useNock( nock => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
-				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/preload' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/preload',
+					body: JSON.stringify( { enable: false } ),
+					json: true,
+				} )
 				.reply( 200, { enabled: false } )
-				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/` )
-				.query( { path: '/wp-super-cache/v1/preload' } )
+				.post( `/rest/v1.1/jetpack-blogs/${ failedSiteId }/rest-api/`, {
+					path: '/wp-super-cache/v1/preload',
+				} )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.',

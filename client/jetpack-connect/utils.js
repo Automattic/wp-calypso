@@ -60,7 +60,11 @@ export const authQueryPropTypes = PropTypes.shape( {
 } );
 
 export function addCalypsoEnvQueryArg( url ) {
-	return addQueryArgs( { calypso_env: config( 'env_id' ) }, url );
+	let calypsoEnv = config( 'env_id' );
+	if ( window && window.COMMIT_SHA && window.location.host === 'calypso.live' ) {
+		calypsoEnv = `live-${ COMMIT_SHA }`;
+	}
+	return addQueryArgs( { calypso_env: calypsoEnv }, url );
 }
 
 /**

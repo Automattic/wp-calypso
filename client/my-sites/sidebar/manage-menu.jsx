@@ -144,6 +144,23 @@ class ManageMenu extends PureComponent {
 		};
 	}
 
+	getImportItem = () => {
+		const { isJetpack, translate } = this.props;
+
+		return {
+			name: 'import',
+			label: translate( 'Import' ),
+			capability: 'manage_options',
+			queryable: ! isJetpack,
+			config: 'manage/import-in-sidebar',
+			link: '/settings/import', // @TODO make it a top level section & add a redirect
+			paths: [ '/settings/import' ],
+			wpAdminLink: 'import.php',
+			showOnAllMySites: false,
+			forceInternalLink: ! isJetpack,
+		};
+	};
+
 	onNavigate = postType => () => {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
@@ -196,6 +213,9 @@ class ManageMenu extends PureComponent {
 				break;
 			case 'page':
 				icon = 'pages';
+				break;
+			case 'import':
+				icon = 'cloud-upload';
 				break;
 			case 'jetpack-portfolio':
 				icon = 'folder';
@@ -311,6 +331,10 @@ class ManageMenu extends PureComponent {
 
 		if ( config.isEnabled( 'calypsoify/plugins' ) ) {
 			menuItems.push( this.getPluginItem() );
+		}
+
+		if ( config.isEnabled( 'manage/import-in-sidebar' ) ) {
+			menuItems.push( this.getImportItem() );
 		}
 
 		return (

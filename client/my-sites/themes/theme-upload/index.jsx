@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, find, isEmpty } from 'lodash';
+import { includes, find, isEmpty, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ import { localize } from 'i18n-calypso';
 import notices from 'notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
@@ -50,11 +50,14 @@ import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
+import redirectIf from 'my-sites/feature-upsell/redirect-if';
+import config from 'config';
+import { abtest } from 'lib/abtest';
 
 const debug = debugFactory( 'calypso:themes:theme-upload' );
 
@@ -62,6 +65,7 @@ class Upload extends React.Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		selectedSite: PropTypes.object,
+		useUpsellPage: PropTypes.bool,
 		inProgress: PropTypes.bool,
 		complete: PropTypes.bool,
 		failed: PropTypes.bool,
@@ -283,40 +287,61 @@ const UploadWithOptions = props => {
 	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
 };
 
-export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
-		const themeId = getUploadedThemeId( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
-		// Use this selector to take advantage of eligibility card placeholders
-		// before data has loaded.
-		const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-		const hasEligibilityMessages = ! (
-			isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
-		);
-		return {
-			siteId,
-			isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-			selectedSite: site,
-			isJetpack,
-			inProgress: isUploadInProgress( state, siteId ),
-			complete: isUploadComplete( state, siteId ),
-			failed: hasUploadFailed( state, siteId ),
-			themeId,
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
-			error: getUploadError( state, siteId ),
-			progressTotal: getUploadProgressTotal( state, siteId ),
-			progressLoaded: getUploadProgressLoaded( state, siteId ),
-			installing: isInstallInProgress( state, siteId ),
-			upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
-			backPath: getBackPath( state ),
-			showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
-			siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		};
-	},
-	{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
-)( localize( UploadWithOptions ) );
+const mapStateToProps = state => {
+	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const themeId = getUploadedThemeId( state, siteId );
+	const isJetpack = isJetpackSite( state, siteId );
+	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
+	// Use this selector to take advantage of eligibility card placeholders
+	// before data has loaded.
+	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
+	const hasEligibilityMessages = ! (
+		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
+	);
+
+	return {
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+		isBusiness: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+		selectedSite: site,
+		isJetpack,
+		inProgress: isUploadInProgress( state, siteId ),
+		complete: isUploadComplete( state, siteId ),
+		failed: hasUploadFailed( state, siteId ),
+		themeId,
+		isMultisite: isJetpackSiteMultiSite( state, siteId ),
+		uploadedTheme: getCanonicalTheme( state, siteId, themeId ),
+		error: getUploadError( state, siteId ),
+		progressTotal: getUploadProgressTotal( state, siteId ),
+		progressLoaded: getUploadProgressLoaded( state, siteId ),
+		installing: isInstallInProgress( state, siteId ),
+		upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
+		backPath: getBackPath( state ),
+		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+	};
+};
+
+const flowRightArgs = [
+	connect(
+		mapStateToProps,
+		{ uploadTheme, clearThemeUpload, initiateThemeTransfer }
+	),
+	localize,
+];
+
+if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
+	flowRightArgs.push(
+		redirectIf(
+			( state, siteId ) =>
+				! isJetpackSite( state, siteId ) &&
+				! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) &&
+				abtest( 'themesUpsellLandingPage' ) === 'test',
+			'/feature/themes'
+		)
+	);
+}
+
+export default flowRight( ...flowRightArgs )( UploadWithOptions );

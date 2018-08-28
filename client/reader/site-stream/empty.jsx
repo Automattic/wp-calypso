@@ -27,6 +27,7 @@ const SiteEmptyContent = ( { translate } ) => {
 
 	let action;
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	if ( isDiscoverEnabled() ) {
 		action = (
 			<a
@@ -48,6 +49,7 @@ const SiteEmptyContent = ( { translate } ) => {
 			{ translate( 'Find Sites to Follow' ) }
 		</a>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	return (
 		<EmptyContent

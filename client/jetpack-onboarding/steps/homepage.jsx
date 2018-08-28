@@ -33,7 +33,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 		const homepageFormat = get( settings, 'homepageFormat' );
 
 		return (
-			<div className="steps__main">
+			<div className="steps__main" data-e2e-type="homepage">
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<TileGrid>

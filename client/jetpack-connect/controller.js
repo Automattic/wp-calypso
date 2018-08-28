@@ -5,7 +5,7 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import { get, isEmpty, some } from 'lodash';
+import { get, isEmpty, some, dropRight } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -26,7 +26,8 @@ import PlansLanding from './plans-landing';
 import versionCompare from 'lib/version-compare';
 import { addQueryArgs, externalRedirect, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
+import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
+import switchLocale from 'lib/i18n-utils/switch-locale';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
@@ -291,5 +292,31 @@ export function plansSelection( context, next ) {
 			/>
 		</CheckoutData>
 	);
+	next();
+}
+
+/**
+ * Checks for a locale fragment at the end of context.path
+ * and switches to that locale if the user is logged out.
+ * If the user is logged in we remove the fragment and defer to the user's settings.
+ *
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ * @returns {Undefined} next()
+ */
+export function setLoggedOutLocale( context, next ) {
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	const locale = getLocaleFromPath( context.path );
+
+	if ( ! locale ) {
+		return next();
+	}
+
+	if ( isLoggedIn ) {
+		page.redirect( dropRight( getPathParts( context.path ) ).join( '/' ) );
+	} else {
+		switchLocale( locale );
+	}
+
 	next();
 }

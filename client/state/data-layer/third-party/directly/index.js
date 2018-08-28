@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-
+import { registerHandlers } from 'state/data-layer/handler-registry';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { DIRECTLY_ASK_QUESTION, DIRECTLY_INITIALIZATION_START } from 'state/action-types';
 import { initializationCompleted, initializationFailed } from 'state/help/directly/actions';
@@ -40,7 +40,7 @@ export function initialize( { dispatch } ) {
 		);
 }
 
-export default {
+registerHandlers( 'state/data-layer/third-party/directly', {
 	[ DIRECTLY_ASK_QUESTION ]: [ askQuestion ],
 	[ DIRECTLY_INITIALIZATION_START ]: [ initialize ],
-};
+} );

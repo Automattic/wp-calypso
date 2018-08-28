@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, startsWith, pickBy } from 'lodash';
+import config from 'config';
 
 /**
  * Internal Dependencies
@@ -453,6 +454,7 @@ export class FullPostView extends React.Component {
 										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 										showConversationFollowButton={ true }
 										followSource={ READER_FULL_POST }
+										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
 									/>
 								) }
 							</div>

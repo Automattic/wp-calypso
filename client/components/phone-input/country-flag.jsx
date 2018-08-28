@@ -45,14 +45,17 @@ export default class extends React.Component {
 
 	renderFlag = () => {
 		const style = this.state.ready ? {} : { visibility: 'hidden' };
+		const { countryCode } = this.props;
 
-		if ( this.props.countryCode ) {
+		if ( countryCode ) {
 			if ( ! this.state.error ) {
+				const flagSvg = require( `flag-icon-css/flags/4x3/${ countryCode }.svg` );
 				return (
 					<img
+						alt=""
 						onLoad={ this.handleImageLoad }
 						onError={ this.handleImageError }
-						src={ `/calypso/images/flags/${ this.props.countryCode }.svg` }
+						src={ flagSvg }
 						className="phone-input__flag-icon"
 						style={ style }
 					/>

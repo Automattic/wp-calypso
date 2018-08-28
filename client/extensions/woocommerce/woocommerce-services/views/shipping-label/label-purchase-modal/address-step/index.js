@@ -22,21 +22,20 @@ import {
 	isLoaded,
 	getFormErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
+import { getCountryName, getStateName } from 'woocommerce/state/sites/data/locations/selectors';
 
 const renderSummary = (
-	{
-		values,
-		isNormalized,
-		normalizationInProgress,
-		normalized,
-		selectNormalized,
-		storeOptions,
-		errors,
-		translate,
-		expandStateName = false,
-	},
-	showCountry
+	addressData,
+	appState,
+	siteId,
+	errors,
+	translate,
+	showCountry,
+	expandStateName = false
 ) => {
+	const { isNormalized, normalizationInProgress, normalized } = addressData;
+
 	if ( normalizationInProgress ) {
 		return translate( 'Validating address…' );
 	}
@@ -46,17 +45,16 @@ const renderSummary = (
 	if ( ! isNormalized ) {
 		return translate( "You've edited the address, please revalidate it for accurate rates" );
 	}
-	const { countriesData } = storeOptions;
-	const { city, postcode, state, country } = normalized && selectNormalized ? normalized : values;
+	const { city, postcode, state, country } = getAddressValues( addressData );
 	// Summary format: "city, state  postcode [, country]"
 	let str = city + ', ';
 	if ( state ) {
-		const statesMap = ( expandStateName && ( countriesData[ country ] || {} ).states ) || {};
-		str += ( statesMap[ state ] || state ) + '\xa0 '; // append two spaces: non-breaking and normal
+		const stateStr = expandStateName ? getStateName( appState, country, state, siteId ) : state;
+		str += stateStr + '\xa0 '; // append two spaces: non-breaking and normal
 	}
 	str += 'US' === country ? postcode.split( '-' )[ 0 ] : postcode;
 	if ( showCountry ) {
-		str += ', ' + ( countriesData[ country ] ? countriesData[ country ].name : country );
+		str += ', ' + getCountryName( appState, country, siteId );
 	}
 	return str;
 };
@@ -82,15 +80,11 @@ const getNormalizationStatus = ( {
 
 const AddressStep = props => {
 	const toggleStepHandler = () => props.toggleStep( props.orderId, props.siteId, props.type );
-	const { form, storeOptions, errors, showCountryInSummary, translate } = props;
 
 	return (
 		<StepContainer
 			title={ props.title }
-			summary={ renderSummary(
-				{ ...form, storeOptions, errors, translate },
-				showCountryInSummary
-			) }
+			summary={ props.summary }
 			expanded={ props.expanded }
 			toggleStep={ toggleStepHandler }
 			{ ...props.normalizationStatus }
@@ -103,35 +97,30 @@ const AddressStep = props => {
 AddressStep.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
-	form: PropTypes.shape( {
-		values: PropTypes.object.isRequired,
-		isNormalized: PropTypes.bool.isRequired,
-		normalized: PropTypes.object,
-		normalizationInProgress: PropTypes.bool.isRequired,
-	} ).isRequired,
-	storeOptions: PropTypes.object.isRequired,
-	errors: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
+	type: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	summary: PropTypes.string.isRequired,
+	expanded: PropTypes.bool,
+	normalizationStatus: PropTypes.object.isRequired,
 	toggleStep: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, { orderId, siteId, type } ) => {
+const mapStateToProps = ( state, { orderId, siteId, type, translate } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const storeOptions = loaded ? shippingLabel.storeOptions : {};
 
 	const form = shippingLabel.form[ type ];
 	const errors = loaded && getFormErrors( state, orderId, siteId )[ type ];
 
-	const showCountryInSummary =
+	const shouldShowCountryInSummary =
 		type === 'destination' && shippingLabel.form.origin.values.country !== form.values.country;
 
 	return {
 		errors,
 		form,
-		storeOptions,
-		showCountryInSummary,
 		expanded: form.expanded,
 		normalizationStatus: getNormalizationStatus( { ...form, errors } ),
+		summary: renderSummary( form, state, siteId, errors, translate, shouldShowCountryInSummary ),
 	};
 };
 
@@ -139,7 +128,9 @@ const mapDispatchToProps = dispatch => {
 	return bindActionCreators( { toggleStep }, dispatch );
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AddressStep ) );
+export default localize(
+	connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( AddressStep )
+);

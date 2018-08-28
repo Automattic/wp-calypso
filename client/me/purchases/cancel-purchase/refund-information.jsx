@@ -12,7 +12,13 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'lib/purchases';
+import {
+	getName,
+	isRefundable,
+	isSubscription,
+	isOneTimePurchase,
+	maybeWithinRefundPeriod,
+} from 'lib/purchases';
 import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
 import { getIncludedDomainPurchase } from 'state/purchases/selectors';
 import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'lib/url/support';
@@ -316,14 +322,23 @@ const CancelPurchaseRefundInformation = ( {
 
 			{ showSupportLink && (
 				<strong className="cancel-purchase__support-information">
-					{ i18n.translate(
-						'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-						{
-							components: {
-								contactLink: <a href={ CALYPSO_CONTACT } />,
-							},
-						}
-					) }
+					{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
+						? i18n.translate(
+								'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+								{
+									components: {
+										contactLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+						  )
+						: i18n.translate(
+								'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+								{
+									components: {
+										contactLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+						  ) }
 				</strong>
 			) }
 		</div>

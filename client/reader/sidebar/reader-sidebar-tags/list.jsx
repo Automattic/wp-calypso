@@ -41,6 +41,7 @@ export class ReaderSidebarTagsList extends Component {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const { tags, translate } = this.props;
 		if ( ! tags || tags.length === 0 ) {
 			return (
@@ -51,6 +52,7 @@ export class ReaderSidebarTagsList extends Component {
 		}
 
 		return <div>{ this.renderItems() }</div>;
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

@@ -5,7 +5,7 @@
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { noop, some, startsWith, uniq } from 'lodash';
+import { get, noop, some, startsWith, uniq } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -245,19 +245,16 @@ function onSelectedSiteAvailable( context ) {
  * @returns {object} A site-picker React element
  */
 function createSitesComponent( context ) {
-	const basePath = sectionify( context.path );
-	const path = context.prevPath ? sectionify( context.prevPath ) : '/stats';
+	const contextPath = sectionify( context.path );
 
 	// This path sets the URL to be visited once a site is selected
-	const sourcePath = basePath === '/sites' ? path : basePath;
+	const basePath = contextPath === '/sites' ? '/stats' : contextPath;
 
-	analytics.pageView.record( basePath, sitesPageTitleForAnalytics );
+	analytics.pageView.record( contextPath, sitesPageTitleForAnalytics );
 
 	return (
 		<SitesComponent
-			path={ context.path }
-			sourcePath={ sourcePath }
-			user={ user }
+			siteBasePath={ basePath }
 			getSiteSelectionHeaderText={ context.getSiteSelectionHeaderText }
 		/>
 	);
@@ -391,7 +388,21 @@ export function siteSelection( context, next ) {
 			calypsoify &&
 			/^\/plugins/.test( basePath )
 		) {
-			const pluginLink = getSiteAdminUrl( state, siteId ) + 'plugin-install.php?calypsoify=1';
+			const plugin = get( context, 'params.plugin' );
+			let pluginString = '';
+			if ( plugin ) {
+				pluginString = [
+					'tab=search',
+					`s=${ plugin }`,
+					'type=term',
+					'modal-mode=true',
+					`plugin=${ plugin }`,
+				].join( '&' );
+			}
+
+			const pluginIstallURL = 'plugin-install.php?calypsoify=1' + `&${ pluginString }`;
+			const pluginLink = getSiteAdminUrl( state, siteId ) + pluginIstallURL;
+
 			return window.location.replace( pluginLink );
 		}
 

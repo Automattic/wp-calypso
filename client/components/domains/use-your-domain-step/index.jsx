@@ -259,7 +259,6 @@ class UseYourDomainStep extends React.Component {
 			),
 			translate( 'Manage your domain and site from your WordPress.com dashboard' ),
 			translate( 'Extends registration by one year' ),
-			translate( 'Can take several days to complete the transfer' ),
 			this.getTransferPriceText(),
 		];
 		const buttonText = translate( 'Transfer to WordPress.com' );

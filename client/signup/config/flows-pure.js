@@ -73,20 +73,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2017-09-01',
 		},
 
-		portfolio: {
-			steps: [ 'portfolio-themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Signup flow starting with portfolio themes',
-			lastModified: '2017-09-01',
-		},
-
-		store: {
-			steps: [ 'about', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Signup flow for creating an online store',
-			lastModified: '2018-01-24',
-		},
-
 		'rebrand-cities': {
 			steps: [ 'rebrand-cities-welcome', 'user' ],
 			destination: function( dependencies ) {
@@ -125,20 +111,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: getSiteDestination,
 			description: 'The current best performing flow in AB tests',
 			lastModified: '2018-01-24',
-		},
-
-		surveystep: {
-			steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'The current best performing flow in AB tests',
-			lastModified: '2016-05-23',
-		},
-
-		'test-site': {
-			steps: process.env.NODE_ENV === 'development' ? [ 'site', 'user' ] : [ 'user' ],
-			destination: '/',
-			description: 'This flow is used to test the site step.',
-			lastModified: '2015-09-22',
 		},
 
 		'delta-discover': {
@@ -180,25 +152,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: '/devdocs/welcome',
 			description: 'Signup flow for developers in developer environment',
 			lastModified: '2015-11-23',
-		},
-
-		pressable: {
-			steps: [ 'design-type-with-store', 'themes', 'domains', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'Signup flow for testing the pressable-store step',
-			lastModified: '2016-06-27',
-		},
-
-		jetpack: {
-			steps: [ 'jetpack-user' ],
-			destination: '/',
-		},
-
-		'get-dot-blog': {
-			steps: [ 'get-dot-blog-themes', 'get-dot-blog-plans' ],
-			destination: getSiteDestination,
-			description: 'Used by `get.blog` users that connect their site to WordPress.com',
-			lastModified: '2016-11-14',
 		},
 
 		'pressable-nux': {
@@ -318,14 +271,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		};
 	}
 
-	if ( process.env.NODE_ENV === 'development' ) {
-		flows[ 'test-plans' ] = {
-			steps: [ 'site', 'plans', 'user' ],
-			destination: getSiteDestination,
-			description: 'This flow is used to test plans choice in signup',
-			lastModified: '2016-06-30',
-		};
-	}
 	return flows;
 }
 

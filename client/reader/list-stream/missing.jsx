@@ -33,6 +33,7 @@ class ListMissing extends React.Component {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
 				<a
 					className="empty-content__action button is-primary"
@@ -65,6 +66,7 @@ class ListMissing extends React.Component {
 				/>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

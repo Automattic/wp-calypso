@@ -35,20 +35,22 @@ export class ExpandableSidebarAddForm extends Component {
 		isAdding: false,
 	};
 
+	menuAddInput = React.createRef();
+
 	toggleAdd = () => {
 		if ( ! this.state.isAdding ) {
-			this.refs.menuAddInput.focus();
+			this.menuAddInput.current.focus();
 			this.props.onAddClick();
 		}
 		this.setState( { isAdding: ! this.state.isAdding } );
 	};
 
 	handleAddKeyDown = event => {
-		const inputValue = this.refs.menuAddInput.value;
+		const inputValue = this.menuAddInput.current.value;
 		if ( event.keyCode === 13 && inputValue.length > 0 ) {
 			event.preventDefault();
 			this.props.onAddSubmit( inputValue );
-			this.refs.menuAddInput.value = '';
+			this.menuAddInput.current.value = '';
 			this.toggleAdd();
 		}
 	};
@@ -71,7 +73,7 @@ export class ExpandableSidebarAddForm extends Component {
 						className="sidebar__menu-add-input"
 						type="text"
 						placeholder={ addPlaceholder }
-						ref="menuAddInput"
+						ref={ this.menuAddInput }
 						onKeyDown={ this.handleAddKeyDown }
 					/>
 					<Gridicon icon="cross-small" onClick={ this.toggleAdd } />

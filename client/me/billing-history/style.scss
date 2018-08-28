@@ -46,7 +46,7 @@
 	outline: 0;
 
 	&:focus,
-	&:active	{
+	&:active {
 		width: 150px;
 	}
 }
@@ -140,7 +140,7 @@
 	position: relative;
 	overflow: auto;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 10px 20px;
 	}
 
@@ -149,7 +149,7 @@
 		min-height: 65px;
 		float: left;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			left: 20px;
 		}
 	}
@@ -159,7 +159,7 @@
 		float: left;
 		padding: 10px 20px;
 
-		@include breakpoint( "<480px" ) {
+		@include breakpoint( '<480px' ) {
 			padding-top: 0;
 		}
 
@@ -174,12 +174,16 @@
 		font-style: italic;
 		padding: 5px 0 0 0;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			position: absolute;
-				top: 10px;
-				right: 40px;
+			top: 10px;
+			right: 40px;
 		}
 	}
+}
+
+.billing-history__billing-details div[contenteditable] {
+	min-height: 1.2em;
 }
 
 .billing-history__receipt-details {
@@ -189,13 +193,13 @@
 	margin: 20px 0 0 0;
 	overflow: auto;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 20px;
 	}
 
 	li {
 		color: $gray-dark;
-			font-size: 13px;
+		font-size: 13px;
 		margin: 0 0 15px 0;
 		padding: 0;
 
@@ -226,7 +230,7 @@
 .billing-history__receipt {
 	padding: 30px 40px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		padding: 30px 20px;
 	}
 
@@ -313,7 +317,7 @@
 	.button {
 		margin: 16px 0;
 
-		@include breakpoint( ">480px" ) {
+		@include breakpoint( '>480px' ) {
 			float: right;
 			margin: 0 1%;
 		}

@@ -9,6 +9,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import shallowEqual from 'react-pure-render/shallowEqual';
 
+import { defer } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -17,33 +19,34 @@ import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class QuerySiteStats extends Component {
-	componentWillMount() {
-		this.request( this.props );
+	componentDidMount() {
+		this.deferredTimer = defer( () => this.request() );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.siteId === nextProps.siteId &&
-			this.props.statType === nextProps.statType &&
-			shallowEqual( this.props.query, nextProps.query )
+			this.props.siteId === prevProps.siteId &&
+			this.props.statType === prevProps.statType &&
+			shallowEqual( this.props.query, prevProps.query )
 		) {
 			return;
 		}
 
-		this.request( nextProps );
+		this.request();
 	}
 
 	componentWillUnmount() {
 		this.clearInterval();
+		clearTimeout( this.deferredTimer );
 	}
 
-	request( props ) {
-		const { requesting, siteId, statType, query, heartbeat } = props;
+	request() {
+		const { requesting, siteId, statType, query, heartbeat } = this.props;
 		if ( requesting ) {
 			return;
 		}
 
-		props.requestSiteStats( siteId, statType, query );
+		this.props.requestSiteStats( siteId, statType, query );
 		this.clearInterval();
 		if ( heartbeat && isAutoRefreshAllowedForQuery( query ) ) {
 			this.interval = setInterval( this.heartbeatRequest, heartbeat );
@@ -79,7 +82,7 @@ QuerySiteStats.propTypes = {
 
 QuerySiteStats.defaultProps = {
 	query: {},
-	heartbeat: 3 * 60 * 1000, // 3 minutes
+	heartbeat: 30 * 60 * 1000, // 30 minutes
 };
 
 export default connect(

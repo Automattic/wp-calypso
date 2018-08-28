@@ -43,8 +43,7 @@ export default connect( ( state, ownProps ) => {
 
 	const siteId = getSelectedSiteId( state );
 
-	const podcastingCategory =
-		categoryId && getTerm( state, siteId, 'category', categoryId );
+	const podcastingCategory = categoryId && getTerm( state, siteId, 'category', categoryId );
 
 	let feedUrl = podcastingCategory && podcastingCategory.feed_url;
 

@@ -14,10 +14,8 @@ import CredsConfirmComponent from 'signup/steps/creds-confirm';
 import CredsCompleteComponent from 'signup/steps/creds-complete';
 import CredsPermissionComponent from 'signup/steps/creds-permission';
 import DesignTypeComponent from 'signup/steps/design-type';
-import DesignTypeWithStoreComponent from 'signup/steps/design-type-with-store';
 import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
 import DomainsStepComponent from 'signup/steps/domains';
-import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
 import PlansStepComponent from 'signup/steps/plans';
 import SiteComponent from 'signup/steps/site';
 import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
@@ -47,15 +45,11 @@ export default {
 	'creds-complete': CredsCompleteComponent,
 	'creds-permission': CredsPermissionComponent,
 	'design-type': DesignTypeComponent,
-	'design-type-with-store': DesignTypeWithStoreComponent,
 	'design-type-with-store-nux': DesignTypeWithAtomicStoreComponent,
 	domains: DomainsStepComponent,
 	'domains-store': DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
-	'jetpack-user': UserSignupComponent,
-	'get-dot-blog-plans': GetDotBlogPlansStepComponent,
-	'get-dot-blog-themes': ThemeSelectionComponent,
 	plans: PlansStepComponent,
 	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
@@ -77,7 +71,6 @@ export default {
 	themes: ThemeSelectionComponent,
 	'website-themes': ThemeSelectionComponent,
 	'blog-themes': ThemeSelectionComponent,
-	'portfolio-themes': ThemeSelectionComponent,
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
 	'oauth2-user': UserSignupComponent,

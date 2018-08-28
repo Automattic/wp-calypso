@@ -33,7 +33,8 @@ export const WarningList = ( { translate, warnings } ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
 					<Gridicon icon="cross-small" size={ 24 } />
 					<div className="eligibility-warnings__message">
-						<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
+						<span className="eligibility-warnings__message-title">{ name }</span>
+						:&nbsp;
 						<span className="eligibility-warnings__message-description">{ description }</span>
 					</div>
 					<div className="eligibility-warnings__action">

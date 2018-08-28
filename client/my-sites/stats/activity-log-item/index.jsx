@@ -13,8 +13,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityActor from './activity-actor';
+import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
 import Button from 'components/button';
@@ -54,18 +56,55 @@ class ActivityLogItem extends Component {
 
 	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
 
-	renderHeader() {
-		const { activityTitle, actorAvatarUrl, actorName, actorRole, actorType } = this.props.activity;
+	trackContentLinkClick = ( {
+		target: {
+			dataset: { activity, section, intent },
+		},
+	} ) => {
+		const params = { activity, section, intent };
+		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', params );
+	};
 
+	renderHeader() {
+		const {
+			activityTitle,
+			actorAvatarUrl,
+			actorName,
+			actorRole,
+			actorType,
+			activityMedia,
+		} = this.props.activity;
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
+				{ activityMedia && (
+					<ActivityMedia
+						className={ classNames( {
+							'activity-log-item__activity-media': true,
+							'is-desktop': true,
+							'has-gridicon': ! activityMedia.available,
+						} ) }
+						icon={ ! activityMedia.available && activityMedia.gridicon }
+						name={ activityMedia.available && activityMedia.name }
+						thumbnail={ activityMedia.available && activityMedia.thumbnail_url }
+						fullImage={ false }
+					/>
+				) }
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
 						{ this.getActivityDescription() }
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
+				{ activityMedia && (
+					<ActivityMedia
+						className="activity-log-item__activity-media is-mobile"
+						icon={ false }
+						name={ activityMedia.available && activityMedia.name }
+						thumbnail={ false }
+						fullImage={ activityMedia.available && activityMedia.medium_url }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -99,7 +138,17 @@ class ActivityLogItem extends Component {
 		/* There is no great way to generate a more valid React key here
 		 * but the index is probably sufficient because these sub-items
 		 * shouldn't be changing. */
-		return activityDescription.map( ( part, i ) => <FormattedBlock key={ i } content={ part } /> );
+		return activityDescription.map( ( part, i ) => {
+			const { intent, section } = part;
+			return (
+				<FormattedBlock
+					key={ i }
+					content={ part }
+					onClick={ this.trackContentLinkClick }
+					meta={ { activity: activityName, intent, section } }
+				/>
+			);
+		} );
 	}
 
 	renderItemAction() {

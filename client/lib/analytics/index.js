@@ -54,13 +54,15 @@ const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip
 const EVENT_NAME_EXCEPTIONS = [ 'a8c_cookie_banner_ok' ];
 
 // Load tracking scripts
-window._tkq = window._tkq || [];
-window.ga =
-	window.ga ||
-	function() {
-		( window.ga.q = window.ga.q || [] ).push( arguments );
-	};
-window.ga.l = +new Date();
+if ( typeof window !== 'undefined' ) {
+	window._tkq = window._tkq || [];
+	window.ga =
+		window.ga ||
+		function() {
+			( window.ga.q = window.ga.q || [] ).push( arguments );
+		};
+	window.ga.l = +new Date();
+}
 
 function getUrlParameter( name ) {
 	name = name.replace( /[\[]/, '\\[' ).replace( /[\]]/, '\\]' );
@@ -116,11 +118,13 @@ function checkForBlockedTracks() {
 	);
 }
 
-loadScript( '//stats.wp.com/w.js?56', function( error ) {
-	if ( error ) {
-		_loadTracksError = true;
-	}
-} ); // W_JS_VER
+if ( typeof document !== 'undefined' ) {
+	loadScript( '//stats.wp.com/w.js?56', function( error ) {
+		if ( error ) {
+			_loadTracksError = true;
+		}
+	} ); // W_JS_VER
+}
 
 // Google Analytics
 // Note that doNotTrack() and isPiiUrl() can change at any time so they shouldn't be stored in a variable.
@@ -588,7 +592,7 @@ const analytics = {
  * Moreover, analytics gets loaded with the page load, while the tracking is lazy-loaded
  * during actions.
  */
-if ( isGoogleAnalyticsAllowed() ) {
+if ( typeof document !== 'undefined' && isGoogleAnalyticsAllowed() ) {
 	try {
 		loadScript( 'https://www.google-analytics.com/analytics.js' );
 	} catch ( error ) {

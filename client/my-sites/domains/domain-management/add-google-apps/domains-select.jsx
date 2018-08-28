@@ -32,7 +32,12 @@ class DomainsSelect extends React.Component {
 			} );
 		} else {
 			disabled = true;
-			options = <option>{ this.props.translate( 'Loading' ) }...</option>;
+			options = (
+				<option>
+					{ this.props.translate( 'Loading' ) }
+					...
+				</option>
+			);
 		}
 
 		return (

@@ -1,0 +1,18 @@
+$icon-size: 48px;
+$icon-size-detail: 32px;
+$font-size: 14px;
+$line-height: 21px;
+$capital-font-size: 12px;
+
+// Padding
+$padding-small: 11px;
+$padding-medium: 14px;
+$padding-large: 16px;
+$user-margin-adjustment: 4px;
+
+// title bar and time group header heights
+// used as constants in client/templates/list-header.jsx
+$title-bar-height: 38px;
+$header-height: 34px;
+$filter-height: 38px;
+$title-offset: 38px;

@@ -5,15 +5,17 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import ShareButton from 'components/share-button';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const services = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
 
-export default class ChecklistShowShare extends PureComponent {
+class ChecklistShowShare extends PureComponent {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
 		recordTracksEvent: PropTypes.func,
@@ -57,3 +59,7 @@ export default class ChecklistShowShare extends PureComponent {
 		);
 	}
 }
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( ChecklistShowShare );

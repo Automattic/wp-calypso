@@ -20,7 +20,7 @@ import config from 'config';
  */
 const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
 
-function getPathParts( path ) {
+export function getPathParts( path ) {
 	// Remove trailing slash then split. If there is a trailing slash,
 	// then the end of the array could contain an empty string.
 	return path.replace( /\/$/, '' ).split( '/' );
@@ -165,10 +165,10 @@ export function getSupportSiteLocale() {
  *
  * Checks for a valid bb forum against a list `forum_locales` defined in config/_shared.json.
  *
+ * @param {string} localeSlug Forum subdomain locale. Default is getLocaleSlug().
  * @returns {string} //{locale}.forums.wordpress.com
  */
-export function getForumUrl() {
-	const localeSlug = getLocaleSlug();
+export function getForumUrl( localeSlug = getLocaleSlug() ) {
 	if ( config( 'forum_locales' ).indexOf( localeSlug ) > -1 ) {
 		return `//${ localeSlug }.forums.wordpress.com`;
 	}

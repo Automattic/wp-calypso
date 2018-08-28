@@ -41,11 +41,9 @@ const select = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
 		<select>
-			{ []
-				.concat( field.options.split( ',' ) )
-				.map( ( option, optionIndex ) => (
-					<option key={ 'contact-form-select-option-' + optionIndex }>{ option }</option>
-				) ) }
+			{ [].concat( field.options.split( ',' ) ).map( ( option, optionIndex ) => (
+				<option key={ 'contact-form-select-option-' + optionIndex }>{ option }</option>
+			) ) }
 		</select>
 	</PreviewFieldset>
 );

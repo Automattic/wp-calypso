@@ -115,7 +115,9 @@ class EditCardDetails extends Component {
 					apiParams={ { purchaseId: this.props.purchase.id } }
 					createCardToken={ this.createCardToken }
 					initialValues={ this.props.card }
+					purchase={ this.props.purchase }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					siteSlug={ this.props.siteSlug }
 					successCallback={ this.successCallback }
 				/>
 			</Main>
@@ -133,4 +135,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	userId: getCurrentUserId( state ),
 } );
 
-export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( EditCardDetails );
+export default connect(
+	mapStateToProps,
+	{ clearPurchases, recordTracksEvent }
+)( EditCardDetails );

@@ -229,7 +229,7 @@ class TransferDomainStep extends React.Component {
 						{ translate(
 							'Transfer your domain away from your current provider to WordPress.com so you can update settings, ' +
 								"renew your domain, and more \u2013 right in your dashboard. We'll renew it for another year " +
-								'when the transfer is successful. {{a}}Learn more{{/a}}',
+								'when the transfer is successful. {{a}}Learn more about domain transfers.{{/a}}',
 							{
 								components: {
 									a: (
@@ -528,21 +528,21 @@ class TransferDomainStep extends React.Component {
 						return;
 					}
 
-					this.setState( {
-						inboundTransferStatus: {
-							creationDate: result.creation_date,
-							email: result.admin_email,
-							loading: false,
-							losingRegistrar: result.registrar,
-							losingRegistrarIanaId: result.registrar_iana_id,
-							privacy: result.privacy,
-							termMaximumInYears: result.term_maximum_in_years,
-							transferEligibleDate: result.transfer_eligible_date,
-							transferRestrictionStatus: result.transfer_restriction_status,
-							unlocked: result.unlocked,
-						},
-					} );
-					resolve();
+					const inboundTransferStatus = {
+						creationDate: result.creation_date,
+						email: result.admin_email,
+						loading: false,
+						losingRegistrar: result.registrar,
+						losingRegistrarIanaId: result.registrar_iana_id,
+						privacy: result.privacy,
+						termMaximumInYears: result.term_maximum_in_years,
+						transferEligibleDate: result.transfer_eligible_date,
+						transferRestrictionStatus: result.transfer_restriction_status,
+						unlocked: result.unlocked,
+					};
+
+					this.setState( { inboundTransferStatus } );
+					resolve( { inboundTransferStatus } );
 				}
 			);
 		} );
@@ -556,14 +556,18 @@ class TransferDomainStep extends React.Component {
 				this.setState( { submittingAuthCodeCheck: false } );
 
 				if ( ! isEmpty( error ) ) {
+					const message = get( error, 'message' );
+					if ( message ) {
+						this.props.errorNotice( message );
+					}
 					resolve();
 					return;
 				}
 
-				this.setState( {
-					authCodeValid: result.success,
-				} );
-				resolve();
+				const authCodeValid = result.success;
+
+				this.setState( { authCodeValid } );
+				resolve( { authCodeValid } );
 			} );
 		} );
 	};
