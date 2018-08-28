@@ -89,7 +89,7 @@ class SiteIndicator extends Component {
 
 	updatesAvailable() {
 		const { site, siteUpdates, translate } = this.props;
-		const activityLogPath = '/stats/activity/' + site.slug;
+		const activityLogPath = '/activity/' + site.slug;
 
 		if ( siteUpdates.wordpress === siteUpdates.total && site.canUpdateFiles ) {
 			return (

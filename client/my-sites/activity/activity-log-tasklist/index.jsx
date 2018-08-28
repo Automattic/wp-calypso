@@ -244,7 +244,7 @@ class ActivityLogTasklist extends Component {
 	};
 
 	componentDidMount() {
-		const path = `/stats/activity/${ this.props.siteSlug }`;
+		const path = `/activity/${ this.props.siteSlug }`;
 		page.exit( path, ( context, next ) => {
 			if (
 				! this.state.queued.length ||
@@ -253,7 +253,7 @@ class ActivityLogTasklist extends Component {
 				return next();
 			}
 			setTimeout(
-				() => page.replace( `/stats/activity/${ this.props.siteSlug }`, null, false, false ),
+				() => page.replace( `/activity/${ this.props.siteSlug }`, null, false, false ),
 				0
 			);
 		} );

@@ -146,6 +146,25 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	activity() {
+		const { siteId, canUserViewActivity, path, translate, siteSuffix } = this.props;
+		if ( siteId && ! canUserViewActivity ) {
+			return null;
+		}
+
+		const activityLink = '/activity' + siteSuffix;
+		return (
+			<SidebarItem
+				tipTarget="activity"
+				label={ translate( 'Activity' ) }
+				selected={ itemLinkMatches( [ '/activity' ], path ) }
+				link={ activityLink }
+				onNavigate={ this.trackStatsClick }
+				icon="history"
+			/>
+		);
+	}
+
 	preview() {
 		const { isPreviewable, path, site, siteId, translate } = this.props;
 
@@ -652,6 +671,7 @@ export class MySitesSidebar extends Component {
 					<ul>
 						{ this.preview() }
 						{ this.stats() }
+						{ this.activity() }
 						{ this.plan() }
 						{ this.store() }
 					</ul>
@@ -723,6 +743,7 @@ function mapStateToProps( state ) {
 		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
+		canUserViewActivity: canCurrentUser( state, siteId, 'view_stats' ),
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),

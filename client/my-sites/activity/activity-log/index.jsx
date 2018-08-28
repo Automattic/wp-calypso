@@ -9,16 +9,15 @@ import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, includes, isEmpty, isEqual } from 'lodash';
-import { isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Internal dependencies
  */
-import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
-import ActivityLogExample from '../activity-log-example';
-import ActivityLogItem from '../activity-log-item';
-import ActivityLogSwitch from '../activity-log-switch';
-import ActivityLogTasklist from '../activity-log-tasklist';
+import ActivityLogBanner from '../activity-log-banner';
+import ActivityLogExample from '../activity-log-example/index';
+import ActivityLogItem from '../activity-log-item/index';
+import ActivityLogSwitch from '../activity-log-switch/index';
+import ActivityLogTasklist from '../activity-log-tasklist/index';
 import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
@@ -34,15 +33,14 @@ import RewindAlerts from './rewind-alerts';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins/';
+import QueryJetpackPlugins from 'my-sites/activity/activity-log/index';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StatsNavigation from 'blocks/stats-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
 import { adjustMoment, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
+import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	getRewindRestoreProgress,
@@ -391,7 +389,6 @@ class ActivityLog extends Component {
 					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
-				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 
 				{ config.isEnabled( 'rewind-alerts' ) &&
 					siteId &&
@@ -500,8 +497,8 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
-				<PageViewTracker path="/stats/activity/:site" title="Stats > Activity" />
-				<DocumentHead title={ translate( 'Stats' ) } />
+				<PageViewTracker path="/activity/:site" title="Activity" />
+				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
