@@ -748,7 +748,7 @@ function mapStateToProps( state ) {
 		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
-		canUserViewActivity: canCurrentUser( state, siteId, 'view_stats' ),
+		canUserViewActivity: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),
