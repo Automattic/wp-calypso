@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, reduce, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +32,9 @@ class JetpackSetupRunner extends PureComponent {
 	};
 
 	state = {
+		installerState: null,
+		installerComplete: 0,
+		installerTotal: 0,
 		keyProvisioning: {
 			/** These should be keyed on plugin slugs */
 			akismet: KEY_PROVISION_STATE_IDLE,
@@ -39,10 +42,18 @@ class JetpackSetupRunner extends PureComponent {
 		},
 	};
 
-	componentDidUpdate() {
-		const { engineState } = this.state;
+	componentDidUpdate( prevProps, prevState ) {
+		this.maybeProvisionNextKey();
+		this.maybeReportProgress( prevState );
+	}
+
+	/**
+	 * React to state updates that should initiate and proceed through key provisioning
+	 */
+	maybeProvisionNextKey() {
+		const { installerState } = this.state;
 		// Wait until the install/activate engine completes
-		if ( ENGINE_STATE_DONE_SUCCESS === engineState ) {
+		if ( ENGINE_STATE_DONE_SUCCESS === installerState ) {
 			const { akismet: akismetState, vaultpress: vaultpressState } = this.state.keyProvisioning;
 
 			// Try to provision Akismet if it's idle
@@ -57,6 +68,42 @@ class JetpackSetupRunner extends PureComponent {
 			) {
 				this.provisionVaultpressKey();
 			}
+		}
+	}
+
+	/**
+	 * Recalculate and report progress
+	 *
+	 * State changes drive this Component's flow. Recalculate and report progress on relevant state
+	 * changes.
+	 *
+	 * @param {Object} prevState Previous Component state
+	 */
+	maybeReportProgress( prevState ) {
+		if (
+			'function' === typeof this.props.notifyProgress &&
+			some(
+				[ 'installerComplete', 'installerTotal', 'keyProvisioning' ],
+				key => prevState[ key ] !== this.state[ key ]
+			)
+		) {
+			// Add tasks to the total for provisioning of keys
+			const total = this.state.installerTotal + Object.keys( this.state.keyProvisioning ).length;
+
+			// Add completed provisioning tasks depending on state
+			const complete = reduce(
+				this.state.keyProvisioning,
+				( acc, provisioningState ) =>
+					[ KEY_PROVISION_STATE_DONE, KEY_PROVISION_STATE_FAIL ].includes( provisioningState )
+						? acc + 1
+						: acc,
+				this.state.installerComplete
+			);
+
+			this.props.notifyProgress( {
+				complete,
+				total,
+			} );
 		}
 	}
 
@@ -118,38 +165,20 @@ class JetpackSetupRunner extends PureComponent {
 	}
 
 	/**
-	 * Handle progress updates and notify parent of progress
+	 * Handle plugin progress updates and adjusting for additional tasks
 	 *
 	 * The plugin installer reports progress. Intercept and modify that progress to account for key provisioning.
 	 *
-	 * @param {Object} stateUpdate          Updated state object
-	 * @param {number} stateUpdate.complete Number of completed tasks
-	 * @param {number} stateUpdate.total    Total number of tasks
+	 * @param {Object} stateUpdate             Updated state object
+	 * @param {number} stateUpdate.complete    Number of completed tasks
+	 * @param {number} stateUpdate.engineState Description of installer state
+	 * @param {number} stateUpdate.total       Total number of tasks
 	 */
 	handleUpdateProgress = stateUpdate => {
-		this.setState( stateUpdate, () => {
-			if ( 'function' === typeof this.props.notifyProgress ) {
-				// Two tasks are added to the total for provisioning the two plugins
-				const total = stateUpdate.total + 2;
-
-				// Add completed provisioning tasks depending on state.
-				const { akismet: akismetState, vaultpress: vaultpressState } = this.state.keyProvisioning;
-				const complete =
-					stateUpdate.complete +
-					( KEY_PROVISION_STATE_DONE === akismetState || KEY_PROVISION_STATE_FAIL === akismetState
-						? 1
-						: 0 ) +
-					( KEY_PROVISION_STATE_DONE === vaultpressState ||
-					KEY_PROVISION_STATE_FAIL === vaultpressState
-						? 1
-						: 0 );
-
-				this.props.notifyProgress( {
-					...stateUpdate,
-					complete,
-					total,
-				} );
-			}
+		this.setState( {
+			installerComplete: stateUpdate.complete,
+			installerState: stateUpdate.engineState,
+			installerTotal: stateUpdate.total,
 		} );
 	};
 
