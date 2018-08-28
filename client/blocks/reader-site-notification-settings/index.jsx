@@ -136,7 +136,7 @@ class ReaderSiteNotificationSettings extends Component {
 					<Gridicon icon="cog" size={ 24 } ref={ this.saveIconRef } />
 					<span
 						className="reader-site-notification-settings__button-label"
-						title={ translate( 'Email settings' ) }
+						title={ translate( 'Notification settings' ) }
 					>
 						{ translate( 'Settings' ) }
 					</span>
