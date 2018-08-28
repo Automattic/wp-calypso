@@ -17,8 +17,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 
 class WpcomColorScheme extends Component {
-	async updateColorScheme( colorScheme ) {
-		await apiFetch( {
+	updateColorScheme( colorScheme ) {
+		apiFetch( {
 			path: '/me/settings',
 			method: 'POST',
 			body: {
