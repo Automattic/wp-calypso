@@ -17,6 +17,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { overrideAPIPaths } from './utils';
 
+/**
+ * Custom blocks
+ */
+import 'gutenberg/extensions/wpcom-color-scheme';
+
 const editorSettings = {};
 
 const post = {
