@@ -28,8 +28,6 @@ import Card from 'components/card';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
 import WarningList from './warning-list';
-import config from 'config';
-import { abtest } from 'lib/abtest';
 
 export const EligibilityWarnings = ( {
 	backUrl,
@@ -63,33 +61,18 @@ export const EligibilityWarnings = ( {
 		);
 		const title = translate( 'Business plan required' );
 		const plan = PLAN_BUSINESS;
-		const useUpsellPage =
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages';
 		let feature = null;
-		let href = null;
 		let event = null;
 
 		if ( 'plugins' === context ) {
 			feature = FEATURE_UPLOAD_PLUGINS;
-			if ( useUpsellPage ) {
-				href = '/feature/plugins/' + siteSlug;
-				event = 'calypso-plugin-eligibility-upgrade-nudge-upsell';
-			} else {
-				event = 'calypso-plugin-eligibility-upgrade-nudge';
-			}
+			event = 'calypso-plugin-eligibility-upgrade-nudge';
 		} else {
 			feature = FEATURE_UPLOAD_THEMES;
-			if ( useUpsellPage ) {
-				href = '/feature/themes/' + siteSlug;
-				event = 'calypso-theme-eligibility-upgrade-nudge-upsell';
-			} else {
-				event = 'calypso-theme-eligibility-upgrade-nudge';
-			}
+			event = 'calypso-theme-eligibility-upgrade-nudge';
 		}
 		businessUpsellBanner = (
 			<Banner
-				href={ href }
 				description={ description }
 				feature={ feature }
 				event={ event }
