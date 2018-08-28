@@ -13,7 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { targetForSlug } from '../positioning';
-import contextTypes from '../context-types';
+import { contextTypes } from '../context-types';
 
 export default class Continue extends Component {
 	static displayName = 'Continue';

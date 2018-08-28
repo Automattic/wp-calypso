@@ -16,6 +16,7 @@ import page from 'page';
 import MainComponent from 'components/main';
 import HeaderCake from 'components/header-cake';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -48,6 +49,7 @@ class PluginEligibility extends Component {
 
 		return (
 			<MainComponent>
+				<PageViewTracker path="/plugins/:plugin/eligibility/:site" title="Plugins > Eligibility" />
 				<HeaderCake isCompact={ true } onClick={ this.goBack }>
 					{ translate( 'Install plugin' ) }
 				</HeaderCake>

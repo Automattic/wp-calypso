@@ -9,6 +9,33 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	themesNudgesUpdates: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	pluginsUpsellLandingPage: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	themesUpsellLandingPage: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	nudgeAPalooza: {
 		datestamp: '20180806',
 		variations: {
@@ -84,8 +111,8 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSuggestionKrakenV324: {
-		datestamp: '20180820',
+	domainSuggestionKrakenV325: {
+		datestamp: '20180828',
 		variations: {
 			domainsbot: 0,
 			group_1: 21,

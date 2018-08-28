@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Search from 'components/search';
-import SegmentedControl from 'components/segmented-control';
+import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import KeyedSuggestions from 'components/keyed-suggestions';
 import StickyPanel from 'components/sticky-panel';
 import config from 'config';
@@ -327,7 +327,7 @@ class ThemesMagicSearchCard extends React.Component {
 						) }
 						{ isPremiumThemesEnabled &&
 							showTierThemesControl && (
-								<SegmentedControl
+								<SimplifiedSegmentedControl
 									initialSelected={ this.props.tier }
 									options={ tiers }
 									onSelect={ this.props.select }

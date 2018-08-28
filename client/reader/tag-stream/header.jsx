@@ -37,19 +37,20 @@ class TagStreamHeader extends React.Component {
 		tagImages: [],
 	};
 
-	pickTagImage = ( props = this.props ) => {
-		return sample( props.tagImages );
-	};
-
 	state = {
 		tagImages: this.props.tagImages,
-		chosenTagImage: this.pickTagImage(),
+		chosenTagImage: sample( this.props.tagImages ),
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.tagImages !== this.props.tagImages ) {
-			this.setState( { chosenTagImage: this.pickTagImage( nextProps ) } );
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.tagImages === prevState.tagImages ) {
+			return null;
 		}
+
+		return {
+			tagImages: nextProps.tagImages,
+			chosenTagImage: sample( nextProps.tagImages ),
+		};
 	}
 
 	render() {

@@ -6,11 +6,11 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { numberFormat } from 'i18n-calypso';
-import { throttle } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import afterLayoutFlush from 'lib/after-layout-flush';
 import Label from './label';
 
 export default class ModuleChartXAxis extends PureComponent {
@@ -19,6 +19,7 @@ export default class ModuleChartXAxis extends PureComponent {
 	static propTypes = {
 		labelWidth: PropTypes.number.isRequired,
 		data: PropTypes.array.isRequired,
+		isRtl: PropTypes.bool,
 	};
 
 	axisRef = React.createRef();
@@ -31,7 +32,7 @@ export default class ModuleChartXAxis extends PureComponent {
 
 	// Add listener for window resize
 	componentDidMount() {
-		this.resize = throttle( this.resize, 400 );
+		this.resize = afterLayoutFlush( this.resize );
 		window.addEventListener( 'resize', this.resize );
 		this.resize();
 	}
@@ -68,7 +69,13 @@ export default class ModuleChartXAxis extends PureComponent {
 
 			if ( rightIndex % this.state.divisor === 0 ) {
 				label = (
-					<Label key={ index } label={ item.label } width={ this.props.labelWidth } x={ x } />
+					<Label
+						isRtl={ this.props.isRtl }
+						key={ index }
+						label={ item.label }
+						width={ this.props.labelWidth }
+						x={ x }
+					/>
 				);
 			}
 

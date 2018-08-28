@@ -51,7 +51,7 @@ class CartPlanAdTheme extends Component {
 			hasOnlyAPremiumTheme &&
 			selectedSite &&
 			selectedSite.plan &&
-			abtest( 'nudgeAPalooza' ) === 'themesNudgesUpdates'
+			abtest( 'themesNudgesUpdates' ) === 'test'
 		);
 	};
 

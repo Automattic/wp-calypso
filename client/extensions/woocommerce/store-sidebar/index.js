@@ -34,6 +34,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarItem from 'layout/sidebar/item';
@@ -124,6 +125,10 @@ class StoreSidebar extends Component {
 			selected,
 		} );
 
+		const recordAddClick = () => {
+			recordTrack( 'calypso_woocommerce_sidebar_add_product_click' );
+		};
+
 		return (
 			<SidebarItem
 				className={ classes }
@@ -131,7 +136,7 @@ class StoreSidebar extends Component {
 				label={ translate( 'Products' ) }
 				link={ link }
 			>
-				<SidebarButton disabled={ ! site } href={ addLink }>
+				<SidebarButton disabled={ ! site } href={ addLink } onClick={ recordAddClick }>
 					{ translate( 'Add' ) }
 				</SidebarButton>
 			</SidebarItem>
@@ -194,6 +199,10 @@ class StoreSidebar extends Component {
 			selected,
 		} );
 
+		const recordPromotionClick = () => {
+			recordTrack( 'calypso_woocommerce_sidebar_add_promotion_click' );
+		};
+
 		return (
 			<SidebarItem
 				className={ classes }
@@ -201,7 +210,7 @@ class StoreSidebar extends Component {
 				label={ translate( 'Promotions' ) }
 				link={ link }
 			>
-				<SidebarButton disabled={ ! site } href={ addLink }>
+				<SidebarButton disabled={ ! site } href={ addLink } onClick={ recordPromotionClick }>
 					{ translate( 'Add' ) }
 				</SidebarButton>
 			</SidebarItem>

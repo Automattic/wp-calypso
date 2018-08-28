@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import contextTypes from '../context-types';
+import { contextTypes } from '../context-types';
 
 export default class ConditionalBlock extends React.PureComponent {
 	static propTypes = {

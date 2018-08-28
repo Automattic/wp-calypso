@@ -74,6 +74,7 @@ class ThemeShowcase extends React.Component {
 		getScreenshotOption: PropTypes.func,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
+		trackUploadClick: PropTypes.func,
 		trackATUploadClick: PropTypes.func,
 	};
 
@@ -142,6 +143,7 @@ class ThemeShowcase extends React.Component {
 
 	onUploadClick = () => {
 		trackClick( 'upload theme' );
+		this.props.trackUploadClick();
 		if ( this.props.atEnabled ) {
 			this.props.trackATUploadClick();
 		}
@@ -307,6 +309,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
 } );
 
 const mapDispatchToProps = {
+	trackUploadClick: () => recordTracksEvent( 'calypso_click_theme_upload' ),
 	trackATUploadClick: () => recordTracksEvent( 'calypso_automated_transfer_click_theme_upload' ),
 };
 export default connect(

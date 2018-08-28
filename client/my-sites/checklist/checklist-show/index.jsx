@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getTaskUrls, launchTask, tasks } from '../onboardingChecklist';
+import { getTaskUrls, launchTask, getTasks } from '../onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -55,7 +55,7 @@ class ChecklistShow extends PureComponent {
 	};
 
 	render() {
-		const { siteId, taskStatuses } = this.props;
+		const { siteId, taskStatuses, tasks } = this.props;
 
 		return (
 			<Fragment>
@@ -96,6 +96,7 @@ const mapStateToProps = state => {
 		siteSlug: getSiteSlug( state, siteId ),
 		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		taskUrls: getTaskUrls( getSitePosts( state, siteId ) ),
+		tasks: getTasks( state, siteId ),
 	};
 };
 

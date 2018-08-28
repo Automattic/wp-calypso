@@ -11,7 +11,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import contextTypes from '../context-types';
+import { contextTypes } from '../context-types';
 
 export default class Tour extends Component {
 	static propTypes = {
