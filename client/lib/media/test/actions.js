@@ -75,6 +75,7 @@ describe( 'MediaActions', () => {
 		sandbox.stub( stubs, 'mediaDelete' ).callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
 		MediaActions._fetching = {};
 		window.FileList = function() {};
+		window.FileList.prototype[ Symbol.iterator ] = Array.prototype[ Symbol.iterator ];
 		window.URL = { createObjectURL: sandbox.stub() };
 		mockReduxPostId = null;
 	} );
