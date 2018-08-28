@@ -1720,6 +1720,11 @@
       "resolved": "https://registry.npmjs.org/amdefine/-/amdefine-1.0.1.tgz",
       "integrity": "sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU="
     },
+    "ansi-colors": {
+      "version": "3.0.5",
+      "resolved": "https://registry.npmjs.org/ansi-colors/-/ansi-colors-3.0.5.tgz",
+      "integrity": "sha512-VVjWpkfaphxUBFarydrQ3n26zX5nIK7hcbT3/ielrvwDDyBBjuh2vuSw1P9zkPq0cfqvdw7lkYHnu+OLSfIBsg=="
+    },
     "ansi-escapes": {
       "version": "3.1.0",
       "resolved": "https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-3.1.0.tgz",
@@ -18309,23 +18314,32 @@
       }
     },
     "webpack-dev-middleware": {
-      "version": "3.1.3",
-      "resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.1.3.tgz",
-      "integrity": "sha512-I6Mmy/QjWU/kXwCSFGaiOoL5YEQIVmbb0o45xMoCyQAg/mClqZVTcsX327sPfekDyJWpCxb+04whNyLOIxpJdQ==",
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.2.0.tgz",
+      "integrity": "sha512-YJLMF/96TpKXaEQwaLEo+Z4NDK8aV133ROF6xp9pe3gQoS7sxfpXh4Rv9eC+8vCvWfmDjRQaMSlRPbO+9G6jgA==",
       "requires": {
         "loud-rejection": "^1.6.0",
         "memory-fs": "~0.4.1",
-        "mime": "^2.1.0",
+        "mime": "^2.3.1",
         "path-is-absolute": "^1.0.0",
         "range-parser": "^1.0.3",
         "url-join": "^4.0.0",
-        "webpack-log": "^1.0.1"
+        "webpack-log": "^2.0.0"
       },
       "dependencies": {
         "mime": {
           "version": "2.3.1",
           "resolved": "https://registry.npmjs.org/mime/-/mime-2.3.1.tgz",
           "integrity": "sha512-OEUllcVoydBHGN1z84yfQDimn58pZNNNXgZlHXSboxMlFvgI6MXSWpWKpFRra7H1HxpVhHTkrghfRW49k6yjeg=="
+        },
+        "webpack-log": {
+          "version": "2.0.0",
+          "resolved": "https://registry.npmjs.org/webpack-log/-/webpack-log-2.0.0.tgz",
+          "integrity": "sha512-cX8G2vR/85UYG59FgkoMamwHUIkSSlV3bBMRsbxVXVUk2j6NleCKjQ/WE9eYg9WY4w25O9w8wKP4rzNZFmUcUg==",
+          "requires": {
+            "ansi-colors": "^3.0.0",
+            "uuid": "^3.3.2"
+          }
         }
       }
     },
