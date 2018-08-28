@@ -4,13 +4,14 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { replace } from 'lodash';
+import { get, replace } from 'lodash';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
 /**
  * Internal Dependencies
  */
+import { TWO_FACTOR_AUTHENTICATION_SUBSYSTEM_CHANGE } from 'state/action-types';
 import analytics from 'lib/analytics';
 import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
@@ -39,6 +40,18 @@ function TwoStepAuthorization() {
 			event_action: eventAction,
 		} );
 	};
+
+	this.on( 'change', () => {
+		const { data, initialized } = this;
+		const action = {
+			type: TWO_FACTOR_AUTHENTICATION_SUBSYSTEM_CHANGE,
+			initialized,
+			enabled: get( data, 'two_step_enabled', false ),
+			reauthorizationRequired: get( data, 'two_step_reauthorization_required', false ),
+		};
+
+		reduxDispatch( action );
+	} );
 
 	this.fetch();
 }
