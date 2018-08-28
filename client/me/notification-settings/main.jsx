@@ -44,12 +44,18 @@ class NotificationSettings extends Component {
 
 		if ( state.error ) {
 			this.props.errorNotice(
-				this.props.translate( 'There was a problem saving your changes. Please, try again.' )
+				this.props.translate( 'There was a problem saving your changes. Please, try again.' ),
+				{
+					id: 'notif-settings-save',
+				}
 			);
 		}
 
 		if ( state.status === 'success' ) {
-			this.props.successNotice( this.props.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( this.props.translate( 'Settings saved successfully!' ), {
+				id: 'notif-settings-save',
+				duration: 4000,
+			} );
 		}
 
 		this.setState( state );
