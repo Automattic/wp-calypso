@@ -64,6 +64,15 @@ textarea {
 		display: none;
 	}
 
+	a, a:visited {
+		color: $blue-wordpress;
+		text-decoration: none;
+	}
+
+	a:hover, a:focus, a:active {
+		color: $link-highlight;
+	}
+
 	// Seen in the 2nd step, displays the payment method type
 	.header2, .method-header {
 		margin: 0 0 20px;
@@ -415,6 +424,19 @@ textarea {
 			.logo {
 				display: none;
 			}
+
+			// Hide external billing support link.
+			a:last-child {
+				display: none;
+			}
+
+			a:nth-of-type(2)::after{
+				position: relative;
+				right: -4px;
+				background: #fff;
+				content: ' ';
+			}
+
 		}
 	}
 

@@ -110,30 +110,6 @@ describe( 'MySitesSidebar', () => {
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.html() ).toEqual( null );
 		} );
-
-		test( 'Should return upsell item if user who can upgrade can not use store on this site (nudge-a-palooza enabled)', () => {
-			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: false,
-				canUserUpgradeSite: true,
-				...defaultProps,
-			} );
-			const Store = () => Sidebar.store();
-
-			const wrapper = shallow( <Store /> );
-			expect( wrapper.props().link ).toEqual( '/feature/store/mysite.com' );
-		} );
-
-		test( 'Should return upsell if non-managing user can not use store on this site (nudge-a-palooza enabled)', () => {
-			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: false,
-				canUserUpgradeSite: true,
-				...defaultProps,
-			} );
-			const Store = () => Sidebar.store();
-
-			const wrapper = shallow( <Store /> );
-			expect( wrapper.props().link ).toEqual( '/feature/store/mysite.com' );
-		} );
 	} );
 
 	describe( 'MySitesSidebar.ads()', () => {
@@ -181,18 +157,6 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <Ads /> );
 			expect( wrapper.html() ).toEqual( null );
-		} );
-
-		test( "Should return upsell menu item if user can't use ads on this site but can upgrade site", () => {
-			const Sidebar = new MySitesSidebar( {
-				canUserUseAds: false,
-				canUserUpgradeSite: true,
-				...defaultProps,
-			} );
-			const Ads = () => Sidebar.ads();
-
-			const wrapper = shallow( <Ads /> );
-			expect( wrapper.props().link ).toEqual( '/feature/ads/mysite.com' );
 		} );
 
 		test( "Should return null if user can't use ads on this site upgrade site", () => {

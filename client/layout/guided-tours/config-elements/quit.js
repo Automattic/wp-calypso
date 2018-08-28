@@ -13,7 +13,7 @@ import { translate } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { targetForSlug } from '../positioning';
-import contextTypes from '../context-types';
+import { contextTypes } from '../context-types';
 
 export default class Quit extends Component {
 	static displayName = 'Quit';

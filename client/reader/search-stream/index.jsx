@@ -55,18 +55,10 @@ class SearchStream extends React.Component {
 		streamKey: PropTypes.string,
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		const title = this.getTitle( nextProps );
-		if ( title !== this.state.title ) {
-			this.setState( { title } );
-		}
-	}
-
 	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
 
 	state = {
 		selected: SEARCH_TYPES.POSTS,
-		title: this.getTitle(),
 	};
 
 	updateQuery = newValue => {
@@ -121,7 +113,7 @@ class SearchStream extends React.Component {
 		}
 
 		const documentTitle = translate( '%s ‹ Reader', {
-			args: this.state.title,
+			args: this.getTitle(),
 		} );
 
 		const TEXT_RELEVANCE_SORT = translate( 'Relevance', {

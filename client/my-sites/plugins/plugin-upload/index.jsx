@@ -222,8 +222,8 @@ if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
 		redirectIf(
 			( state, siteId ) =>
 				! isJetpackSite( state, siteId ) &&
-				abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages' &&
-				! hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ),
+				! hasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS ) &&
+				abtest( 'pluginsUpsellLandingPage' ) === 'test',
 			'/feature/plugins'
 		)
 	);

@@ -21,13 +21,14 @@ import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getTaskUrls, launchTask, getTasks } from 'my-sites/checklist/onboardingChecklist';
 import ChecklistShowShare from 'my-sites/checklist/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import QueryPosts from 'components/data/query-posts';
 import { getSitePosts } from 'state/posts/selectors';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
@@ -97,11 +98,11 @@ export class ChecklistBanner extends Component {
 	}
 
 	canShow() {
-		if ( this.state.closed ) {
+		if ( ! this.props.isEligibleForDotcomChecklist ) {
 			return false;
 		}
 
-		if ( this.props.siteDesignType === 'store' ) {
+		if ( this.state.closed ) {
 			return false;
 		}
 
@@ -207,14 +208,13 @@ export class ChecklistBanner extends Component {
 const mapStateToProps = ( state, { siteId } ) => {
 	const siteSlug = getSiteSlug( state, siteId );
 	const taskStatuses = get( getSiteChecklist( state, siteId ), [ 'tasks' ] );
-	const siteDesignType = getSiteOption( state, siteId, 'design_type' );
 
 	return {
-		siteDesignType,
 		siteSlug,
 		taskStatuses,
 		taskUrls: getTaskUrls( getSitePosts( state, siteId ) ),
 		tasks: getTasks( state, siteId ),
+		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
 };
 

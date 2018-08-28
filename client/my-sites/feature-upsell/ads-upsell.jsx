@@ -21,11 +21,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getPlanPath, isFreePlan } from 'lib/plans';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 import page from 'page';
-import {
-	getSiteSlug,
-	canAdsBeEnabledOnCurrentSite,
-	canCurrentUserUseAds,
-} from 'state/sites/selectors';
+import { getSiteSlug, canCurrentUserUseAds } from 'state/sites/selectors';
 import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import DocumentHead from 'components/data/document-head';
 import QueryPlans from 'components/data/query-plans';
@@ -306,8 +302,7 @@ export default flowRight(
 	),
 	localize,
 	redirectUnlessCanUpgradeSite,
-	redirectIf( state => canCurrentUserUseAds( state ), '/ads/earnings' ),
-	redirectIf( state => canAdsBeEnabledOnCurrentSite( state ), '/ads/settings' )
+	redirectIf( state => canCurrentUserUseAds( state ), '/ads/settings' )
 )( WordAdsUpsellComponent );
 
 /* eslint-enable wpcalypso/jsx-classname-namespace */

@@ -4011,7 +4011,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'canCurrentUserUseAds()', () => {
-		const createState = ( manage_options, wordads ) => ( {
+		const createState = ( manage_options, wordads, product_slug, activate_wordads = false ) => ( {
 			ui: {
 				selectedSiteId: 1,
 			},
@@ -4019,14 +4019,22 @@ describe( 'selectors', () => {
 				capabilities: {
 					1: {
 						manage_options,
+						activate_wordads: false,
 					},
 				},
 			},
 			sites: {
 				items: {
 					1: {
+						plan: {
+							product_slug,
+						},
 						options: {
 							wordads,
+						},
+						capabilities: {
+							manage_options,
+							activate_wordads,
 						},
 					},
 				},
@@ -4034,19 +4042,29 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if site has WordAds user can manage it', () => {
-			expect( canCurrentUserUseAds( createState( true, true ) ) ).toBe( true );
+			expect( canCurrentUserUseAds( createState( true, true, 'free_plan' ) ) ).toBe( true );
+		} );
+
+		test( 'should return true if site does not have WordAds, but is premium and user can activate them', () => {
+			expect( canCurrentUserUseAds( createState( true, false, 'value_bundle', true ) ) ).toBe(
+				true
+			);
+		} );
+
+		test( 'should return false if site does not have WordAds, is free, but user can activate them', () => {
+			expect( canCurrentUserUseAds( createState( true, false, 'free_plan', true ) ) ).toBe( false );
 		} );
 
 		test( "should return false if site doesn't have WordAds and user can manage it", () => {
-			expect( canCurrentUserUseAds( createState( true, false ) ) ).toBe( false );
+			expect( canCurrentUserUseAds( createState( true, false, 'free_plan' ) ) ).toBe( false );
 		} );
 
 		test( 'should return false if site has WordAds user can not manage it', () => {
-			expect( canCurrentUserUseAds( createState( false, true ) ) ).toBe( false );
+			expect( canCurrentUserUseAds( createState( false, true, 'free_plan' ) ) ).toBe( false );
 		} );
 
-		test( 'should return false if site doesn\t have WordAds and user can not manage it', () => {
-			expect( canCurrentUserUseAds( createState( false, false ) ) ).toBe( false );
+		test( "should return false if site doesn't have WordAds and user can not manage it", () => {
+			expect( canCurrentUserUseAds( createState( false, false, 'free_plan' ) ) ).toBe( false );
 		} );
 	} );
 } );
