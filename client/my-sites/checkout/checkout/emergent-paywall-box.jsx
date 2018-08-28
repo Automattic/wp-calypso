@@ -245,6 +245,11 @@ export class EmergentPaywallBox extends Component {
 							ref={ this.iframeRef }
 							className="checkout__emergent-paywall-iframe"
 						/>
+						<div className="checkout__emergent-paywall-support-link">
+							<a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer">
+								{ translate( 'Contact Support' ) }
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
