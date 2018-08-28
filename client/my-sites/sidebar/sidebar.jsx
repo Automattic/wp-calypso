@@ -146,6 +146,11 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackActivityClick = () => {
+		this.trackMenuItemClick( 'activity' );
+		this.onNavigate();
+	};
+
 	activity() {
 		const { siteId, canUserViewActivity, path, translate, siteSuffix } = this.props;
 		if ( siteId && ! canUserViewActivity ) {
@@ -159,7 +164,7 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Activity' ) }
 				selected={ itemLinkMatches( [ '/activity' ], path ) }
 				link={ activityLink }
-				onNavigate={ this.trackStatsClick }
+				onNavigate={ this.trackActivityClick }
 				icon="history"
 			/>
 		);
