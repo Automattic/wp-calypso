@@ -27,7 +27,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import HoldList from './hold-list';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import WarningList from './warning-list';
 import config from 'config';
 import { abtest } from 'lib/abtest';
@@ -102,7 +101,6 @@ export const EligibilityWarnings = ( {
 
 	return (
 		<div className={ classes }>
-			<PageViewTracker path="plugins/:plugin/eligibility/:site" title="Plugins > Eligibility" />
 			<QueryEligibility siteId={ siteId } />
 			<TrackComponentView
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
