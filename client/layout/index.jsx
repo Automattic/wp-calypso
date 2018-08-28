@@ -9,6 +9,8 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { compose } from '@wordpress/compose';
+import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -43,7 +45,6 @@ import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import GdprBanner from 'blocks/gdpr-banner';
-import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
@@ -164,17 +165,24 @@ const Layout = createReactClass( {
 	},
 } );
 
-export default connect( state => {
-	const { isLoading, section } = state.ui;
-	return {
-		masterbarIsHidden: ! masterbarIsVisible( state ),
-		isLoading,
-		isSupportUser: state.support.isSupportUser,
-		section,
-		hasSidebar: hasSidebar( state ),
-		isOffline: isOffline( state ),
-		currentLayoutFocus: getCurrentLayoutFocus( state ),
-		chatIsOpen: isHappychatOpen( state ),
-		colorSchemePreference: getPreference( state, 'colorScheme' ),
-	};
-} )( Layout );
+export default compose( [
+	connect( state => {
+		const { isLoading, section } = state.ui;
+		return {
+			masterbarIsHidden: ! masterbarIsVisible( state ),
+			isLoading,
+			isSupportUser: state.support.isSupportUser,
+			section,
+			hasSidebar: hasSidebar( state ),
+			isOffline: isOffline( state ),
+			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			chatIsOpen: isHappychatOpen( state ),
+		};
+	} ),
+	withSelect( select => {
+		const { getPreference } = select( 'preferences' );
+		return {
+			colorSchemePreference: getPreference( 'colorScheme' ),
+		};
+	} ),
+] )( Layout );
