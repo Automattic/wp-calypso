@@ -3,8 +3,6 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
-import React from 'react';
-import ReactDom from 'react-dom';
 import store from 'store';
 import page from 'page';
 import debugFactory from 'debug';
@@ -31,21 +29,8 @@ import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-foc
 import Logger from 'lib/catch-js-errors';
 import setupMySitesRoute from 'my-sites';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import * as controller from 'controller';
 
 const debug = debugFactory( 'calypso' );
-
-function renderLayout( reduxStore ) {
-	const Layout = controller.ReduxWrappedLayout;
-
-	const layoutElement = React.createElement( Layout, {
-		store: reduxStore,
-	} );
-
-	ReactDom.render( layoutElement, document.getElementById( 'wpcom' ) );
-
-	debug( 'Main layout rendered.' );
-}
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing WordPress.com configure Redux store.' );
@@ -74,38 +59,32 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		analytics.setSuperProps( superProps );
 	}
 
-	// Render Layout only for non-isomorphic sections.
-	// Isomorphic sections will take care of rendering their Layout last themselves.
-	if ( ! document.getElementById( 'primary' ) ) {
-		renderLayout( reduxStore );
-
-		if ( config.isEnabled( 'catch-js-errors' ) ) {
-			const errorLogger = new Logger();
-			//Save errorLogger to a singleton for use in arbitrary logging.
-			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
-			//Save data to JS error logger
-			errorLogger.saveDiagnosticData( {
-				user_id: currentUser.get().ID,
-				calypso_env: config( 'env_id' ),
-			} );
-			errorLogger.saveDiagnosticReducer( function() {
-				const state = reduxStore.getState();
-				return {
-					blog_id: getSelectedSiteId( state ),
-					calypso_section: getSectionName( state ),
-				};
-			} );
-			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
-			analytics.on( 'record-event', ( eventName, eventProperties ) =>
-				errorLogger.saveExtraData( { lastTracksEvent: eventProperties } )
+	if ( config.isEnabled( 'catch-js-errors' ) && ! document.getElementById( 'primary' ) ) {
+		const errorLogger = new Logger();
+		//Save errorLogger to a singleton for use in arbitrary logging.
+		require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
+		//Save data to JS error logger
+		errorLogger.saveDiagnosticData( {
+			user_id: currentUser.get().ID,
+			calypso_env: config( 'env_id' ),
+		} );
+		errorLogger.saveDiagnosticReducer( function() {
+			const state = reduxStore.getState();
+			return {
+				blog_id: getSelectedSiteId( state ),
+				calypso_section: getSectionName( state ),
+			};
+		} );
+		errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
+		analytics.on( 'record-event', ( eventName, eventProperties ) =>
+			errorLogger.saveExtraData( { lastTracksEvent: eventProperties } )
+		);
+		page( '*', function( context, next ) {
+			errorLogger.saveNewPath(
+				context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
 			);
-			page( '*', function( context, next ) {
-				errorLogger.saveNewPath(
-					context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
-				);
-				next();
-			} );
-		}
+			next();
+		} );
 	}
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
