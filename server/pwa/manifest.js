@@ -1,10 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
-
-const express = require( 'express' ),
-	querystring = require( 'querystring' );
+import querystring from 'querystring';
 
 /**
  * Internal dependencies
@@ -13,8 +12,6 @@ const express = require( 'express' ),
 /**
  * TODO:
  * - l10n
- * - dynamic injection of branchName to start_url (to pass LH PWA test on calypso.live)
- * - other stuff I'm sure
  * @returns {object} An express app that returns /manifest.json
  */
 const buildManifest = ( { branchName } ) => {
@@ -68,12 +65,6 @@ const buildManifest = ( { branchName } ) => {
 	};
 };
 
-module.exports = function() {
-	const app = express();
-
-	app.get( '/manifest.json', function( request, response ) {
-		response.json( buildManifest( { branchName: request.query.branch } ) );
-	} );
-
-	return app;
+export default ( request, response ) => {
+	response.json( buildManifest( { branchName: request.query.branch } ) );
 };
