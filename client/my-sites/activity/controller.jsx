@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
+import page from 'page';
 import { isEqual } from 'lodash';
 
 /**
@@ -35,4 +36,15 @@ export function activity( context, next ) {
 	context.primary = <ActivityLog siteId={ siteId } context={ context } startDate={ startDate } />;
 
 	next();
+}
+
+// Add redirect
+export function redirect( context ) {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	if ( siteId ) {
+		page.redirect( '/activity/' + siteId );
+		return;
+	}
+	page.redirect( '/activity/' );
 }
