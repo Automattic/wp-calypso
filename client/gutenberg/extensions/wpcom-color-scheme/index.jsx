@@ -12,28 +12,59 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import ColorSchemePicker from 'blocks/color-scheme-picker';
+import getColorSchemesData from 'blocks/color-scheme-picker/constants';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormRadiosBar from 'components/forms/form-radios-bar';
+import 'blocks/color-scheme-picker/style.scss';
 
 class WpcomColorScheme extends Component {
-	updateColorScheme( colorScheme ) {
+	state = {
+		colorSchemePreference: null,
+	};
+
+	componentDidMount() {
 		apiFetch( {
-			path: '/me/settings',
-			method: 'POST',
-			body: {
-				calypso_preferences: {
-					colorScheme,
-				},
-			},
+			path: '/me/settings?http_envelope=1',
+		} ).then( response => {
+			this.setState( {
+				colorSchemePreference: response.calypso_preferences.colorScheme,
+			} );
 		} );
 	}
 
+	updateColorScheme = event => {
+		this.setState( {
+			colorSchemePreference: event.target.value,
+		} );
+
+		apiFetch( {
+			path: '/me/settings?http_envelope=1',
+			method: 'POST',
+			body: {
+				calypso_preferences: {
+					colorScheme: event.target.value,
+				},
+			},
+		} );
+	};
+
 	render() {
+		if ( ! this.state.colorSchemePreference ) {
+			return null;
+		}
+
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor="color_scheme">{ __( 'Admin Color Scheme' ) }</FormLabel>
-				<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
+				<div className="wpcom-color-scheme__main color-scheme-picker">
+					<FormRadiosBar
+						isThumbnail
+						checked={ this.state.colorSchemePreference }
+						onChange={ this.updateColorScheme }
+						items={ getColorSchemesData( __ ) }
+					/>
+				</div>
 			</FormFieldset>
 		);
 	}
