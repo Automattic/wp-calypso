@@ -22,12 +22,10 @@ export class AuthCodeButton extends React.Component {
 
 	state = initialState;
 
-	componentDidMount() {
-		this.mounted = true;
-	}
-
 	componentWillUnmount() {
-		this.mounted = false;
+		if ( this.request ) {
+			this.request.abort();
+		}
 		clearTimeout( this.timeout );
 	}
 
@@ -39,23 +37,23 @@ export class AuthCodeButton extends React.Component {
 		this.setState( initialState );
 	};
 
-	requestSMSCode = () => {
+	requestSMSCode = async () => {
 		this.setState( { status: 'requesting' } );
 
-		return request
+		this.request = request
 			.post( '/sms' )
-			.send( { username: this.props.username, password: this.props.password } )
-			.then(
-				response => this.handleSMSResponse( null, response ),
-				error => this.handleSMSResponse( error, error.response )
-			);
+			.send( { username: this.props.username, password: this.props.password } );
+
+		try {
+			this.handleSMSResponse( null, await this.request );
+		} catch ( error ) {
+			this.handleSMSResponse( error, error.response );
+		} finally {
+			this.request = null;
+		}
 	};
 
 	handleSMSResponse( error, response ) {
-		if ( ! this.mounted ) {
-			return;
-		}
-
 		this.timeout = setTimeout( this.resetSMSCode, 1000 * 30 );
 
 		// if it's 2fa error then we actually successfully requested an sms code
