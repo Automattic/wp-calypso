@@ -15,7 +15,7 @@ import ActivityLog from 'my-sites/activity/activity-log';
 import { setFilter } from 'state/activity-log/actions';
 import { queryToFilterState } from 'state/activity-log/utils';
 
-export const activity = ( context, next ) => {
+export function activity( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
@@ -32,14 +32,7 @@ export const activity = ( context, next ) => {
 		} );
 	}
 
-	context.primary = (
-		<ActivityLog
-			path={ context.path }
-			siteId={ siteId }
-			context={ context }
-			startDate={ startDate }
-		/>
-	);
+	context.primary = <ActivityLog siteId={ siteId } context={ context } startDate={ startDate } />;
 
 	next();
-};
+}

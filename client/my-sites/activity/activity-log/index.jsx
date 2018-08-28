@@ -14,10 +14,10 @@ import { find, get, includes, isEmpty, isEqual } from 'lodash';
  * Internal dependencies
  */
 import ActivityLogBanner from '../activity-log-banner';
-import ActivityLogExample from '../activity-log-example/index';
-import ActivityLogItem from '../activity-log-item/index';
-import ActivityLogSwitch from '../activity-log-switch/index';
-import ActivityLogTasklist from '../activity-log-tasklist/index';
+import ActivityLogExample from '../activity-log-example';
+import ActivityLogItem from '../activity-log-item';
+import ActivityLogSwitch from '../activity-log-switch';
+import ActivityLogTasklist from '../activity-log-tasklist';
 import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
@@ -33,7 +33,7 @@ import RewindAlerts from './rewind-alerts';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import QueryJetpackPlugins from 'my-sites/activity/activity-log/index';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
