@@ -338,7 +338,7 @@ export default function() {
 		);
 	}
 
-	page( '/domains', siteSelection, sites, makeLayout, clientRender );
+	page( '/domains', () => page.redirect( '/start/domain-first' ) );
 
 	page(
 		'/domains/:site',
