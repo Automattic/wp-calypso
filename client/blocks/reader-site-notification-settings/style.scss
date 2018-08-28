@@ -27,7 +27,6 @@
 }
 
 .reader-popover__wrapper {
-
 	.segmented-control {
 		background: inherit;
 		padding: 0 12px 17px 16px;
@@ -45,7 +44,8 @@
 	}
 }
 
-.reader-site-notification-settings__popout-toggle {
+.reader-site-notification-settings__popout-toggle,
+.reader-site-notification-settings__popout-instructions {
 	border-top: 1px solid $gray-lighten-20;
 	color: $gray-dark;
 	font-size: 14px;
@@ -68,9 +68,18 @@
 	margin-left: 45px;
 }
 
-.reader-site-notification-settings__popout-hint {
+.reader-site-notification-settings__popout-hint,
+.reader-site-notification-settings__popout-instructions-hint {
 	color: $gray;
 	font-size: 12px;
 	margin-bottom: 0;
+}
+
+.reader-site-notification-settings__popout-hint {
 	width: 220px;
+}
+
+.reader-site-notification-settings__popout-instructions-hint {
+	margin-top: 4px;
+	width: 250px;
 }

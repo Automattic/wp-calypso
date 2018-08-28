@@ -27,6 +27,8 @@ import {
 	unsubscribeToNewPostNotifications,
 } from 'state/reader/follows/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import QueryUserSettings from 'components/data/query-user-settings';
+import getUserSetting from 'state/selectors/get-user-setting';
 
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
@@ -116,6 +118,7 @@ class ReaderSiteNotificationSettings extends Component {
 			sendNewCommentsByEmail,
 			sendNewPostsByEmail,
 			sendNewPostsByNotification,
+			isEmailBlocked,
 		} = this.props;
 
 		if ( ! this.props.siteId ) {
@@ -124,6 +127,7 @@ class ReaderSiteNotificationSettings extends Component {
 
 		return (
 			<div className="reader-site-notification-settings">
+				<QueryUserSettings />
 				<button
 					className="reader-site-notification-settings__button"
 					onClick={ this.togglePopoverVisibility }
@@ -158,40 +162,63 @@ class ReaderSiteNotificationSettings extends Component {
 							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
 					</div>
-
-					<div className="reader-site-notification-settings__popout-toggle">
+					<div
+						className={
+							isEmailBlocked
+								? 'reader-site-notification-settings__popout-instructions'
+								: 'reader-site-notification-settings__popout-toggle'
+						}
+					>
 						{ translate( 'Email me new posts' ) }
-						<FormToggle onChange={ this.toggleNewPostEmail } checked={ sendNewPostsByEmail } />
+						{ ! isEmailBlocked && (
+							<FormToggle onChange={ this.toggleNewPostEmail } checked={ sendNewPostsByEmail } />
+						) }
+						{ isEmailBlocked && (
+							<p className="reader-site-notification-settings__popout-instructions-hint">
+								{ translate(
+									'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to re-enable email delivery.',
+									{
+										components: {
+											a: <a href="/me/notifications/subscriptions" />,
+										},
+									}
+								) }
+							</p>
+						) }
 					</div>
-					{ sendNewPostsByEmail && (
-						<SegmentedControl>
-							<ControlItem
-								selected={ this.state.selected === 'instantly' }
-								onClick={ this.setSelected( 'instantly' ) }
-							>
-								{ translate( 'Instantly' ) }
-							</ControlItem>
-							<ControlItem
-								selected={ this.state.selected === 'daily' }
-								onClick={ this.setSelected( 'daily' ) }
-							>
-								{ translate( 'Daily' ) }
-							</ControlItem>
-							<ControlItem
-								selected={ this.state.selected === 'weekly' }
-								onClick={ this.setSelected( 'weekly' ) }
-							>
-								{ translate( 'Weekly' ) }
-							</ControlItem>
-						</SegmentedControl>
+
+					{ ! isEmailBlocked &&
+						sendNewPostsByEmail && (
+							<SegmentedControl>
+								<ControlItem
+									selected={ this.state.selected === 'instantly' }
+									onClick={ this.setSelected( 'instantly' ) }
+								>
+									{ translate( 'Instantly' ) }
+								</ControlItem>
+								<ControlItem
+									selected={ this.state.selected === 'daily' }
+									onClick={ this.setSelected( 'daily' ) }
+								>
+									{ translate( 'Daily' ) }
+								</ControlItem>
+								<ControlItem
+									selected={ this.state.selected === 'weekly' }
+									onClick={ this.setSelected( 'weekly' ) }
+								>
+									{ translate( 'Weekly' ) }
+								</ControlItem>
+							</SegmentedControl>
+						) }
+					{ ! isEmailBlocked && (
+						<div className="reader-site-notification-settings__popout-toggle">
+							{ translate( 'Email me new comments' ) }
+							<FormToggle
+								onChange={ this.toggleNewCommentEmail }
+								checked={ sendNewCommentsByEmail }
+							/>
+						</div>
 					) }
-					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'Email me new comments' ) }
-						<FormToggle
-							onChange={ this.toggleNewCommentEmail }
-							checked={ sendNewCommentsByEmail }
-						/>
-					</div>
 				</ReaderPopover>
 			</div>
 		);
@@ -215,6 +242,7 @@ const mapStateToProps = ( state, ownProps ) => {
 			[ 'delivery_methods', 'notification', 'send_posts' ],
 			false
 		),
+		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 	};
 };
 
