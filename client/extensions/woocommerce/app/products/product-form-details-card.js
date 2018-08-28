@@ -5,9 +5,10 @@
  */
 
 import React, { Component } from 'react';
-import i18n from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { trim, isNumber } from 'lodash';
+import { isNumber, noop, trim } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,8 +23,9 @@ import FormTextInput from 'components/forms/form-text-input';
 import ImageSelector from 'blocks/image-selector';
 import ProductReviewsWidget from 'woocommerce/components/product-reviews-widget';
 import { mapImageIds } from './utils';
+import { actionListStepNext, actionListClear } from 'woocommerce/state/action-list/actions';
 
-export default class ProductFormDetailsCard extends Component {
+export class ProductFormDetailsCard extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
@@ -82,14 +84,21 @@ export default class ProductFormDetailsCard extends Component {
 			return;
 		}
 		const { siteId, product, editProduct } = this.props;
-		const images = mapImageIds( media.items );
+		const images = media.items.map( item => ( { id: item.ID } ) );
+		const transientImages = media.items.filter( image => image.transient );
+
+		if ( transientImages.length ) {
+			this.disableProductSaving();
+		}
+
 		editProduct( siteId, product, { images } );
 	};
 
 	changeImages = newImages => {
-		const { siteId, product, editProduct } = this.props;
+		const { clearActionList, siteId, product, editProduct } = this.props;
 		const images = mapImageIds( newImages );
 		editProduct( siteId, product, { images } );
+		clearActionList();
 	};
 
 	removeImage = image => {
@@ -99,9 +108,23 @@ export default class ProductFormDetailsCard extends Component {
 		editProduct( siteId, product, { images } );
 	};
 
+	disableProductSaving = () => {
+		const actionList = {
+			nextSteps: [
+				{ description: this.props.translate( 'Uploading product image' ), onStep: () => noop },
+			],
+		};
+		this.props.addActionList( actionList );
+	};
+
 	addImage = image => {
 		const { siteId, product, editProduct } = this.props;
 		const images = ( product.images && [ ...product.images ] ) || [];
+
+		if ( image.transient ) {
+			this.disableProductSaving();
+		}
+
 		images.push( {
 			id: image.ID,
 			src: image.URL,
@@ -128,7 +151,7 @@ export default class ProductFormDetailsCard extends Component {
 	};
 
 	render() {
-		const { product } = this.props;
+		const { product, translate } = this.props;
 
 		let productReviewsWidget = null;
 
@@ -137,14 +160,13 @@ export default class ProductFormDetailsCard extends Component {
 		}
 
 		const imageIds = product.images ? product.images.map( image => image.id ) : [];
-		const __ = i18n.translate;
 
 		return (
 			<Card className="products__product-form-details">
 				<div className="products__product-form-details-wrapper">
 					<div className="products__product-form-images-wrapper">
 						<ImageSelector
-							compact={ imageIds && imageIds.length > 0 }
+							compact={ imageIds.length > 0 }
 							imageIds={ imageIds }
 							multiple
 							onImageSelected={ this.setImage }
@@ -154,28 +176,28 @@ export default class ProductFormDetailsCard extends Component {
 							showEditIcon
 						/>
 						<FormSettingExplanation>
-							{ __( 'For best results, upload photos larger than 1000x1000px.' ) }
+							{ translate( 'For best results, upload photos larger than 1000x1000px.' ) }
 						</FormSettingExplanation>
 					</div>
 					<div className="products__product-form-details-basic">
 						<FormFieldSet className="products__product-form-details-basic-name">
-							<FormLabel htmlFor="name">{ __( 'Product name' ) }</FormLabel>
+							<FormLabel htmlFor="name">{ translate( 'Product name' ) }</FormLabel>
 							<FormTextInput id="name" value={ product.name || '' } onChange={ this.setName } />
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-sku">
-							<FormLabel htmlFor="sku">{ __( 'SKU:' ) }</FormLabel>
+							<FormLabel htmlFor="sku">{ translate( 'SKU:' ) }</FormLabel>
 							<FormClickToEditInput
 								id="sku"
 								value={ product.sku || '' }
 								placeholder="-"
-								updateAriaLabel={ __( 'Update SKU' ) }
-								editAriaLabel={ __( 'Edit SKU' ) }
+								updateAriaLabel={ translate( 'Update SKU' ) }
+								editAriaLabel={ translate( 'Edit SKU' ) }
 								onChange={ this.setSku }
 								disabled={ product.name || product.sku ? false : true }
 							/>
 						</FormFieldSet>
 						<FormFieldSet className="products__product-form-details-basic-description">
-							<FormLabel htmlFor="description">{ __( 'Description' ) }</FormLabel>
+							<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
 							{ this.renderTinyMCE() }
 						</FormFieldSet>
 						{ productReviewsWidget }
@@ -185,3 +207,15 @@ export default class ProductFormDetailsCard extends Component {
 		);
 	}
 }
+
+const mapDispatchToProps = dispatch => {
+	return {
+		addActionList: actionList => dispatch( actionListStepNext( actionList ) ),
+		clearActionList: () => dispatch( actionListClear() ),
+	};
+};
+
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( ProductFormDetailsCard ) );
