@@ -44,6 +44,13 @@ class AccountHealthCheck extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.twoStepIsInitialized ) {
+			// There can be only one
+			return;
+		}
+
+		if ( this.props.twoStepIsReauthorizationRequired ) {
+			// @TODO do something meaningful when reauthorization is required
+			debug( 'twoStepAuthorization reauth required' );
 			return;
 		}
 
@@ -73,11 +80,9 @@ class AccountHealthCheck extends Component {
 		}
 
 		if ( twoStepIsReauthorizationRequired ) {
-			debug( 'twoStepAuthorization reauth required' );
+			// Prevent "An error occurred while fetching your account recovery settings." message
 			return null;
 		}
-
-		debug( 'rendering with props', { props: this.props } );
 
 		return (
 			<Fragment>
