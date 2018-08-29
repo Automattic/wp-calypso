@@ -45,7 +45,7 @@ class Search extends Component {
 		fields: PropTypes.object,
 	};
 
-	renderInfoLink( link, privacyLink ) {
+	renderInfoLink( link ) {
 		const { translate } = this.props;
 
 		return (
@@ -54,7 +54,7 @@ class Search extends Component {
 					'Replaces the default WordPress search with a faster, filterable search experience.'
 				) }
 				link={ link }
-				privacyLink={ privacyLink }
+				privacyLink={ false }
 			/>
 		);
 	}
