@@ -1567,13 +1567,13 @@
       }
     },
     "@wordpress/plugins": {
-      "version": "1.0.3",
-      "resolved": "https://registry.npmjs.org/@wordpress/plugins/-/plugins-1.0.3.tgz",
-      "integrity": "sha512-9ilHN9O4numohIa2+wtZXJdIQbNjiWhEL8ZqmpeoJDcN5ACoO3egJ3M1LN8Nb/OL33/FNyDe2w/RN2cplq7Kug==",
+      "version": "1.0.4",
+      "resolved": "https://registry.npmjs.org/@wordpress/plugins/-/plugins-1.0.4.tgz",
+      "integrity": "sha512-T27sPi1U8yeeg7BPykkfEOY9JFFzlmpnz1iSsz+w19iMiuQACI3m0Lq6MCzX8Ic6pqRsGXnodLfJAhMJ37j/8g==",
       "requires": {
         "@babel/runtime-corejs2": "7.0.0-beta.56",
-        "@wordpress/compose": "^1.0.3",
-        "@wordpress/element": "^1.0.3",
+        "@wordpress/compose": "^1.0.4",
+        "@wordpress/element": "^1.0.4",
         "@wordpress/hooks": "^1.3.3",
         "lodash": "^4.17.10"
       }
@@ -6514,7 +6514,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6879,7 +6880,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6927,6 +6929,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6965,11 +6968,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
