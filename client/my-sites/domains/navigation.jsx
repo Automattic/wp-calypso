@@ -57,6 +57,7 @@ class PlansNavigation extends React.Component {
 
 			case '/plans':
 			case '/plans/monthly':
+			case '/plans/yearly':
 				return 'Plans';
 
 			case '/domains/manage':
