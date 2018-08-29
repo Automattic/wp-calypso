@@ -174,6 +174,7 @@ export class PlanFeaturesHeader extends Component {
 
 	getPlanFeaturesPrices() {
 		const {
+			available,
 			currencyCode,
 			discountPrice,
 			isInSignup,
@@ -193,6 +194,15 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		if ( discountPrice ) {
+			if ( ! available ) {
+				return (
+					<PlanPrice
+						currencyCode={ discountPrice }
+						rawPrice={ rawPrice }
+						isInSignup={ isInSignup }
+					/>
+				);
+			}
 			const originalPrice = relatedMonthlyPlan ? relatedMonthlyPlan.raw_price * 12 : rawPrice;
 			return (
 				<span className="plan-features__header-price-group">
@@ -253,6 +263,7 @@ export class PlanFeaturesHeader extends Component {
 }
 
 PlanFeaturesHeader.propTypes = {
+	available: PropTypes.bool,
 	bestValue: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
 	currencyCode: PropTypes.string,
@@ -279,6 +290,7 @@ PlanFeaturesHeader.propTypes = {
 };
 
 PlanFeaturesHeader.defaultProps = {
+	available: true,
 	basePlansPath: null,
 	bestValue: false,
 	current: false,
