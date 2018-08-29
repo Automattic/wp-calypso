@@ -18,7 +18,6 @@ import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
-import HappychatButton from 'components/happychat/button';
 import Dialog from 'components/dialog';
 import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
@@ -186,10 +185,6 @@ class InlineHelp extends Component {
 						) }
 					</Dialog>
 				) }
-				{ this.props.isHappychatButtonVisible &&
-					config.isEnabled( 'happychat' ) && (
-						<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
-					) }
 			</div>
 		);
 	}
