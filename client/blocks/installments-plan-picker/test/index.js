@@ -31,7 +31,7 @@ describe( 'InstallmentsPlanPicker basic tests', () => {
 
 	test( 'should have subscription-length-picker class', () => {
 		const picker = shallow( <InstallmentsPlanPicker plans={ [] } translate={ translate } /> );
-		expect( picker.find( '.installments-plan-picker' ).length ).toBe( 1 );
+		expect( picker.find( '.installments-plan-picker' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should mark appropriate InstallmentsPlanPicker as checked', () => {

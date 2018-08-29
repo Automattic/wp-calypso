@@ -10,6 +10,7 @@ import { assign } from 'lodash';
 import {
 	CART_COUPON_APPLY,
 	CART_COUPON_REMOVE,
+	CART_INSTALLMENTS_APPLY,
 	CART_DISABLE,
 	CART_ITEM_REMOVE,
 	CART_ITEM_REPLACE,
@@ -130,7 +131,6 @@ export function applyCoupon( coupon ) {
 	} );
 }
 
-
 export function removeCoupon() {
 	Dispatcher.handleViewAction( {
 		type: CART_COUPON_REMOVE,
@@ -138,8 +138,8 @@ export function removeCoupon() {
 }
 
 export function applyInstallments( installments ) {
-	Dispatcher.handleViewAction({
-		type: ActionTypes.CART_INSTALLMENTS_APPLY,
+	Dispatcher.handleViewAction( {
+		type: CART_INSTALLMENTS_APPLY,
 		installments,
 	} );
 }
