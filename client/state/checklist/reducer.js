@@ -10,8 +10,12 @@ import { assign } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
-import { SITE_CHECKLIST_RECEIVE, SITE_CHECKLIST_TASK_UPDATE } from 'state/action-types';
-import { items as itemSchemas } from './schema';
+import {
+	SITE_CHECKLIST_RECEIVE,
+	SITE_CHECKLIST_TASK_UPDATE,
+	SITE_CHECKLIST_NOTIFICATION,
+} from 'state/action-types';
+import { items as itemSchemas, checklistNotificationSchema } from './schema';
 
 export const items = createReducer(
 	{},
@@ -32,6 +36,15 @@ export const items = createReducer(
 	itemSchemas
 );
 
+export const showChecklistNotification = createReducer(
+	false,
+	{
+		[ SITE_CHECKLIST_NOTIFICATION ]: ( state, action ) => action.bool,
+	},
+	checklistNotificationSchema
+);
+
 export default combineReducers( {
 	items,
+	showChecklistNotification,
 } );

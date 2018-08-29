@@ -7,6 +7,7 @@ import {
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_REQUEST,
 	SITE_CHECKLIST_TASK_UPDATE,
+	SITE_CHECKLIST_NOTIFICATION,
 } from 'state/action-types';
 
 /**
@@ -47,3 +48,26 @@ export const requestSiteChecklistTaskUpdate = ( siteId, taskId ) => ( {
 	siteId,
 	taskId,
 } );
+
+/**
+ * Returns true if site checklist notification is currently showing.
+ *
+ * @param {Object} state Global state tree
+ * @return {bool} True if currently showing checklist notification
+ */
+export function getChecklistStatus( state ) {
+	return state.checklist.showChecklistNotification;
+}
+
+/**
+ * Action creator function: SITE_CHECKLIST_NOTIFICATION
+ *
+ * @param {Boolean} bool checklist notification
+ * @return {Object} action object
+ */
+export function setChecklistStatus( bool ) {
+	return {
+		type: SITE_CHECKLIST_NOTIFICATION,
+		bool,
+	};
+}

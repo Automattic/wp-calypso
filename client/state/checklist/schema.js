@@ -9,3 +9,7 @@ export const items = {
 		},
 	},
 };
+
+export const checklistNotificationSchema = {
+	type: 'boolean',
+};
