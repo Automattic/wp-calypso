@@ -23,6 +23,22 @@ import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
 class Document extends React.Component {
+	embedLocaleScript() {
+		const { lang, i18nLocaleScriptRevisions = {}, i18nLocaleScript } = this.props;
+
+		if ( ! i18nLocaleScript ) {
+			return null;
+		}
+
+		const langRevision = i18nLocaleScriptRevisions[ lang ];
+
+		return langRevision ? (
+			<script src={ i18nLocaleScript + `?${ langRevision }` } />
+		) : (
+			<script src={ i18nLocaleScript } />
+		);
+	}
+
 	render() {
 		const {
 			app,
@@ -30,7 +46,6 @@ class Document extends React.Component {
 			commitSha,
 			faviconURL,
 			head,
-			i18nLocaleScript,
 			initialReduxState,
 			isRTL,
 			entrypoint,
@@ -151,7 +166,7 @@ class Document extends React.Component {
 						} }
 					/>
 
-					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
+					{ this.embedLocaleScript() }
 					{ /*
 						* inline manifest in production, but reference by url for development.
 						* this lets us have the performance benefit in prod, without breaking HMR in dev

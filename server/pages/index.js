@@ -254,6 +254,11 @@ function getDefaultContext( request ) {
 		staticUrls: staticFilesUrls,
 	};
 
+	context.i18nLocaleScriptRevisions = {
+		'zh-tw': 12345,
+		jp: 54321,
+	};
+
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
 		context.devDocs = true;
