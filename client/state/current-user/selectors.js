@@ -129,6 +129,14 @@ export function getCurrentUserCurrencyCode( state ) {
 export const getCurrentUserDate = createCurrentUserSelector( 'date' );
 
 /**
+ * Returns the display name for the current user.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        Display name for user
+ */
+export const getCurrentUserDisplayName = createCurrentUserSelector( 'display_name' );
+
+/**
  *  Returns the primary email of the current user.
  *
  *  @param {Object} state Global state tree
