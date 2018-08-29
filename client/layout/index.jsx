@@ -21,11 +21,11 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
-import TranslatorLauncher from 'layout/community-translator/launcher';
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
 import OfflineStatus from 'layout/offline-status';
 import QueryPreferences from 'components/data/query-preferences';
+import FloatingActions from 'layout/floating-actions';
 
 /**
  * Internal dependencies
@@ -34,7 +34,6 @@ import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
-import InlineHelp from 'blocks/inline-help';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
@@ -48,7 +47,6 @@ import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
-import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
 
 /* eslint-disable react/no-deprecated */
@@ -98,22 +96,26 @@ const Layout = createReactClass( {
 	},
 
 	render: function() {
+		const { currentRoute } = this.props;
 		const sectionClass = classnames(
-				'layout',
-				'color-scheme',
-				`is-${ this.props.colorSchemePreference }`,
-				`is-group-${ this.props.section.group }`,
-				`is-section-${ this.props.section.name }`,
-				`focus-${ this.props.currentLayoutFocus }`,
-				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'has-chat': this.props.chatIsOpen },
-				{ 'has-no-masterbar': this.props.masterbarIsHidden }
-			),
-			loadingClass = classnames( {
-				layout__loader: true,
-				'is-active': this.props.isLoading,
-			} );
+			'layout',
+			'color-scheme',
+			`is-${ this.props.colorSchemePreference }`,
+			`is-group-${ this.props.section.group }`,
+			`is-section-${ this.props.section.name }`,
+			`focus-${ this.props.currentLayoutFocus }`,
+			{ 'is-support-user': this.props.isSupportUser },
+			{ 'has-no-sidebar': ! this.props.hasSidebar },
+			{ 'has-chat': this.props.chatIsOpen },
+			{ 'has-no-masterbar': this.props.masterbarIsHidden }
+		);
+		const loadingClass = classnames( {
+			layout__loader: true,
+			'is-active': this.props.isLoading,
+		} );
+		const shouldShowInlineHelp =
+			( 'jetpack-connect' !== this.props.section.name || currentRoute === '/jetpack/new' ) &&
+			currentRoute !== '/log-in/jetpack';
 
 		return (
 			<div className={ sectionClass }>
@@ -145,22 +147,15 @@ const Layout = createReactClass( {
 						{ this.props.primary }
 					</div>
 				</div>
-				{ config.isEnabled( 'i18n/community-translator' ) ? (
-					isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
-				) : (
-					<TranslatorLauncher />
-				) }
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ ( 'jetpack-connect' !== this.props.section.name ||
-					this.props.currentRoute === '/jetpack/new' ) &&
-					this.props.currentRoute !== '/log-in/jetpack' && <InlineHelp /> }
 				<SupportArticleDialog />
 				<AppBanner />
+				<FloatingActions showInlineHelp={ shouldShowInlineHelp } />
 				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
 			</div>
 		);
