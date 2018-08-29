@@ -192,32 +192,13 @@ export class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( relatedMonthlyPlan ) {
-			const originalPrice = relatedMonthlyPlan.raw_price * 12;
+		if ( discountPrice ) {
+			const originalPrice = relatedMonthlyPlan ? relatedMonthlyPlan.raw_price * 12 : rawPrice;
 			return (
 				<span className="plan-features__header-price-group">
 					<PlanPrice
 						currencyCode={ currencyCode }
 						rawPrice={ originalPrice }
-						isInSignup={ isInSignup }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ rawPrice }
-						isInSignup={ isInSignup }
-						discounted
-					/>
-				</span>
-			);
-		}
-
-		if ( discountPrice ) {
-			return (
-				<span className="plan-features__header-price-group">
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ rawPrice }
 						isInSignup={ isInSignup }
 						original
 					/>
