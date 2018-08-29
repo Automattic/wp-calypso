@@ -26,6 +26,7 @@ import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happ
 import AsyncLoad from 'components/async-load';
 import { tasks } from 'my-sites/checklist/onboardingChecklist';
 import { getSelectedSite, getSectionName } from 'state/ui/selectors';
+import { getChecklistStatus } from 'state/checklist/actions';
 
 /**
  * Module variables
@@ -44,6 +45,7 @@ class InlineHelp extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		sectionName: PropTypes.string,
+		showChecklistNotification: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -52,10 +54,11 @@ class InlineHelp extends Component {
 
 	state = {
 		showInlineHelp: false,
-		showChecklistNotification: false,
+		shouldShowChecklist: false,
 	};
 
 	componentDidMount() {
+		this.shouldShowChecklist();
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
@@ -93,11 +96,7 @@ class InlineHelp extends Component {
 		}
 	};
 
-	hideChecklistNotification = () => {
-		this.setState( { showChecklistNotification: false } );
-	};
-
-	showChecklistNotification = () => {
+	shouldShowChecklist = () => {
 		const { sectionName } = this.props;
 		const totalTasks = tasks.length;
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
@@ -119,7 +118,7 @@ class InlineHelp extends Component {
 			! isJetpackSite &&
 			! disallowedSections.indexOf( sectionName ) > -1
 		) {
-			this.setState( { showChecklistNotification: true } );
+			this.setState( { shouldShowChecklist: true } );
 		}
 	};
 
@@ -167,18 +166,13 @@ class InlineHelp extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const {
-			showInlineHelp,
-			showChecklistNotification,
-			showDialog,
-			videoLink,
-			dialogType,
-		} = this.state;
+		const { translate, showChecklistNotification } = this.props;
+		const { shouldShowChecklist } = this.state;
+		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': showInlineHelp,
-			'has-notification': showChecklistNotification,
+			'has-notification': shouldShowChecklist && showChecklistNotification,
 		};
 
 		/* @TODO: This class is not valid and this tricks the linter
@@ -246,6 +240,7 @@ export default connect(
 		isHappychatOpen: isHappychatOpen( state ),
 		selectedSite: getSelectedSite( state ),
 		sectionName: getSectionName( state ),
+		showChecklistNotification: getChecklistStatus( state ),
 	} ),
 	{
 		recordTracksEvent,
