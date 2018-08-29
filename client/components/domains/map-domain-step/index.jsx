@@ -22,7 +22,6 @@ import DomainProductPrice from 'components/domains/domain-product-price';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
-
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import {
 	recordAddDomainButtonClickInMapDomain,
