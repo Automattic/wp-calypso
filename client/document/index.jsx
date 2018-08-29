@@ -24,13 +24,13 @@ import { jsonStringifyForHtml } from '../../server/sanitize';
 
 class Document extends React.Component {
 	embedLocaleScript() {
-		const { lang, i18nLocaleScriptRevisions = {}, i18nLocaleScript } = this.props;
+		const { lang, langRevisions = {}, i18nLocaleScript } = this.props;
 
 		if ( ! i18nLocaleScript ) {
 			return null;
 		}
 
-		const langRevision = i18nLocaleScriptRevisions[ lang ];
+		const langRevision = langRevisions[ lang ];
 
 		return langRevision ? (
 			<script src={ i18nLocaleScript + `?${ langRevision }` } />
@@ -51,6 +51,7 @@ class Document extends React.Component {
 			entrypoint,
 			manifest,
 			lang,
+			langRevisions,
 			renderedLayout,
 			user,
 			urls,
@@ -79,7 +80,8 @@ class Document extends React.Component {
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
 				: '' ) +
-			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };` : '' );
+			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };` : '' ) +
+			( langRevisions ? `var langRevisions = ${ jsonStringifyForHtml( langRevisions ) };` : '' );
 
 		return (
 			<html

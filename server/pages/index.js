@@ -29,6 +29,7 @@ import bodyParser from 'body-parser';
 import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
+import i18nBootstrap from 'i18n-bootstrap';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
@@ -254,10 +255,7 @@ function getDefaultContext( request ) {
 		staticUrls: staticFilesUrls,
 	};
 
-	context.i18nLocaleScriptRevisions = {
-		'zh-tw': 12345,
-		jp: 54321,
-	};
+	context.langRevisions = i18nBootstrap.langRevisions;
 
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
