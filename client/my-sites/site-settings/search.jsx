@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { overSome, get } from 'lodash';
+import { overSome } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,11 +22,10 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import untrailingslashit from 'lib/route/untrailingslashit';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getCustomizerUrl } from 'state/sites/selectors';
 import { isBusiness, isEnterprise, isVipPlan, isJetpackBusiness } from 'lib/products-values';
 
 const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise );
@@ -143,22 +142,17 @@ class Search extends Component {
 	render() {
 		const {
 			siteId,
-			site,
 			siteIsJetpack,
 			isSearchEligible,
 			searchModuleActive,
 			fields,
 			translate,
+			customizerUrl,
 		} = this.props;
 
 		// for now, don't even show upgrade nudge
 		if ( ! fields.jetpack_search_supported && ! isSearchEligible ) {
 			return null;
-		}
-
-		let widgetURL = get( site, 'options.admin_url', '' );
-		if ( widgetURL ) {
-			widgetURL = untrailingslashit( widgetURL ) + '/widgets.php';
 		}
 
 		return (
@@ -171,7 +165,9 @@ class Search extends Component {
 					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWPComSettings() }
 				</CompactCard>
 				{ ( searchModuleActive || fields.jetpack_search_enabled ) && (
-					<CompactCard href={ widgetURL }>{ translate( 'Add Search Widget' ) }</CompactCard>
+					<CompactCard href={ customizerUrl } target={ siteIsJetpack ? 'external' : null }>
+						{ translate( 'Add Search Widget' ) }
+					</CompactCard>
 				) }
 			</div>
 		);
@@ -194,5 +190,6 @@ export default connect( state => {
 		siteSlug: getSelectedSiteSlug( state ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		searchModuleActive: !! isJetpackModuleActive( state, siteId, 'search' ),
+		customizerUrl: getCustomizerUrl( state, siteId ),
 	};
 } )( localize( Search ) );
