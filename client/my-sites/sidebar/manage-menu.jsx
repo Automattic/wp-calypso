@@ -103,7 +103,6 @@ class ManageMenu extends PureComponent {
 				label: translate( 'Media' ),
 				capability: 'upload_files',
 				queryable: true,
-				config: 'manage/media',
 				link: '/media',
 				buttonLink: '/media/' + siteSlug,
 				wpAdminLink: 'upload.php',
@@ -185,7 +184,7 @@ class ManageMenu extends PureComponent {
 
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
-		const isEnabled = config.isEnabled( menuItem.config );
+		const isEnabled = ! menuItem.config || config.isEnabled( menuItem.config );
 		if ( ! siteId && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
 			return null;
 		}

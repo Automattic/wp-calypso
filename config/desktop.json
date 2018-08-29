@@ -57,7 +57,6 @@
 		"manage/import/squarespace": false,
 		"manage/import/medium": true,
 		"manage/import/site-importer": true,
-		"manage/media": true,
 		"manage/option_sync_non_public_post_stati": false,
 		"manage/pages": true,
 		"manage/plan-features": false,
