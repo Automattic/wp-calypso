@@ -100,7 +100,7 @@ class PlansNavigation extends React.Component {
 					<NavItem
 						path={ `/plans/${ site.slug }` }
 						key="plans"
-						selected={ path === '/plans' || path === '/plans/monthly' }
+						selected={ path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly' }
 					>
 						{ translate( 'Plans' ) }
 					</NavItem>
