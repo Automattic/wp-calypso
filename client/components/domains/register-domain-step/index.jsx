@@ -695,6 +695,9 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
+			recommendation_context: get( this.props, 'selectedSite.name', '' )
+				.replace( ' ', ',' )
+				.toLocaleLowerCase(),
 			...this.getActiveFiltersForAPI(),
 		};
 
@@ -861,6 +864,8 @@ class RegisterDomainStep extends React.Component {
 
 		if ( this.props.isSignupStep ) {
 			searchVendor = abtest( 'domainSuggestionKrakenV325' );
+		} else {
+			searchVendor = abtest( 'domainManagementSuggestion' );
 		}
 
 		enqueueSearchStatReport( { query: searchQuery, section: this.props.analyticsSection } );
