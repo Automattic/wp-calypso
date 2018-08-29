@@ -9,6 +9,16 @@
 
 @import 'layout/style';
 
+@import 'account-recovery/components/account-recovery-error-message/style';
+@import 'account-recovery/forgot-username-form/style';
+@import 'account-recovery/lost-password-form/style';
+@import 'account-recovery/reset-password-form/style';
+@import 'account-recovery/reset-password-sms-form/style';
+@import 'account-recovery/reset-password-email-form/style';
+@import 'account-recovery/reset-password-confirm-form/style';
+@import 'account-recovery/reset-password/transaction-id-form/style';
+@import 'account-recovery/reset-code-validation/style';
+@import 'account-recovery/style';
 @import 'auth/style';
 @import 'blocks/comment-button/style';
 @import 'blocks/comments/style';
@@ -207,6 +217,7 @@
 @import 'jetpack-connect/style';
 @import 'jetpack-connect/jetpack-new-site/style';
 @import 'jetpack-onboarding/style';
+@import 'layout/floating-actions/style';
 @import 'layout/guided-tours/style';
 @import 'components/happychat/style';
 @import 'components/happychat/agent-w/style';

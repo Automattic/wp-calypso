@@ -1,17 +1,25 @@
 .community-translator {
-	position: fixed;
-	bottom: 66px;
-	right: 24px;
+	position: absolute;
 	border-radius: 27px;
 	background: $blue-wordpress;
 	cursor: pointer;
 	padding: 4px;
 	font-size: 13px;
 	z-index: z-index( 'root', '.community-translator' );
+	right: 0;
+	margin: 8px;
 
 	&.is-active {
 		background: $orange-jazzy;
 	}
+}
+
+.community-translator__container {
+	position: relative;
+	height: 48px;
+    width: 100%;
+    display: block;
+    overflow-x: visible;
 }
 
 .community-translator__button {
