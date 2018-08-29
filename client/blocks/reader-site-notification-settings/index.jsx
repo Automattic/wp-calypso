@@ -176,7 +176,7 @@ class ReaderSiteNotificationSettings extends Component {
 						{ isEmailBlocked && (
 							<p className="reader-site-notification-settings__popout-instructions-hint">
 								{ translate(
-									'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to re-enable email delivery.',
+									'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
 									{
 										components: {
 											a: <a href="/me/notifications/subscriptions" />,
