@@ -105,6 +105,42 @@
 	}
 }
 
+.button.happychat__button {
+	z-index: z-index( 'root', '.floating-help' );
+	margin: 8px;
+
+	line-height: 0;
+	padding: 2px;
+	border-radius: 100%;
+	background: $blue-wordpress;
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+	border: 1px solid darken( $blue-wordpress, 5 );
+
+	.gridicon {
+		fill: $white;
+		margin: 2px;
+		top: 0 !important;
+		height: 24px;
+		width: 24px;
+	}
+
+	// We have to over-ride .button.is-borderless styles here.
+	&.button.is-borderless {
+		padding-left: 2px;
+		padding-right: 2px;
+	}
+
+	&.is-active {
+		background: $blue-medium;
+		border-color: darken( $blue-medium, 5 );
+	}
+
+	&.has-unread {
+		background-color: $orange-jazzy;
+		border-color: $orange-jazzy;
+	}
+}
+
 // experiment: style scrollbars
 .happychat, .happychat__page {
 

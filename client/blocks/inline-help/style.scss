@@ -4,37 +4,6 @@
 		bottom: 24px;
 
 	z-index: z-index( 'root', '.floating-help' );
-
-	.button.inline-help__happychat-button {
-		position: absolute;
-		bottom: 60px;
-		right: 5px;
-
-		line-height: 0;
-		padding: 1px;
-		border-radius: 100%;
-		background: $blue-wordpress;
-		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-		border: 1px solid darken( $blue-wordpress, 5 );
-
-		.gridicon {
-			fill: $white;
-			margin: 2px;
-			top: 0;
-			height: 24px;
-			width: 24px;
-		}
-
-		&.is-active {
-			background: $blue-medium;
-			border-color: darken( $blue-medium, 5 )
-		}
-	}
-
-	.button.inline-help__happychat-button.has-unread {
-		background-color: $orange-jazzy;
-		border-color: $orange-jazzy;
-	}
 }
 
 .button.is-borderless.inline-help__button {
