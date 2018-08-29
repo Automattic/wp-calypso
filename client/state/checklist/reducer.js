@@ -14,8 +14,13 @@ import {
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_TASK_UPDATE,
 	SITE_CHECKLIST_NOTIFICATION,
+	SITE_CHECKLIST_NEXT_TASK,
 } from 'state/action-types';
-import { items as itemSchemas, checklistNotificationSchema } from './schema';
+import {
+	items as itemSchemas,
+	checklistNotificationSchema,
+	nextChecklistTaskSchema,
+} from './schema';
 
 export const items = createReducer(
 	{},
@@ -44,7 +49,16 @@ export const showChecklistNotification = createReducer(
 	checklistNotificationSchema
 );
 
+export const nextChecklistTask = createReducer(
+	'',
+	{
+		[ SITE_CHECKLIST_NEXT_TASK ]: ( state, action ) => action.taskId,
+	},
+	nextChecklistTaskSchema
+);
+
 export default combineReducers( {
 	items,
 	showChecklistNotification,
+	nextChecklistTask,
 } );

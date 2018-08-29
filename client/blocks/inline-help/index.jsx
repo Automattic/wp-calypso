@@ -101,7 +101,6 @@ class InlineHelp extends Component {
 		const totalTasks = tasks.length;
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
-
 		const disallowedSections = [
 			'discover',
 			'reader',
@@ -116,7 +115,7 @@ class InlineHelp extends Component {
 			totalTasks &&
 			! isAtomicSite &&
 			! isJetpackSite &&
-			! disallowedSections.indexOf( sectionName ) > -1
+			! ( disallowedSections.indexOf( sectionName ) > -1 )
 		) {
 			this.setState( { shouldShowChecklist: true } );
 		}
@@ -167,8 +166,7 @@ class InlineHelp extends Component {
 
 	render() {
 		const { translate, showChecklistNotification } = this.props;
-		const { shouldShowChecklist } = this.state;
-		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
+		const { showInlineHelp, showDialog, videoLink, dialogType, shouldShowChecklist } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': showInlineHelp,

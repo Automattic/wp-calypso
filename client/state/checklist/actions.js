@@ -8,6 +8,7 @@ import {
 	SITE_CHECKLIST_REQUEST,
 	SITE_CHECKLIST_TASK_UPDATE,
 	SITE_CHECKLIST_NOTIFICATION,
+	SITE_CHECKLIST_NEXT_TASK,
 } from 'state/action-types';
 
 /**
@@ -62,12 +63,35 @@ export function getChecklistStatus( state ) {
 /**
  * Action creator function: SITE_CHECKLIST_NOTIFICATION
  *
- * @param {Boolean} bool checklist notification
+ * @param {Boolean} bool Checklist notification
  * @return {Object} action object
  */
 export function setChecklistStatus( bool ) {
 	return {
 		type: SITE_CHECKLIST_NOTIFICATION,
 		bool,
+	};
+}
+
+/**
+ * Returns next checklist task.
+ *
+ * @param {Object} state Global state tree
+ * @return {bool} True if currently showing checklist notification
+ */
+export function getChecklistTask( state ) {
+	return state.checklist.nextChecklistTask;
+}
+
+/**
+ * Action creator function: SITE_CHECKLIST_NEXT_TASK
+ *
+ * @param {String} taskId Next checklist task ID
+ * @return {Object} action object
+ */
+export function setChecklistTask( taskId ) {
+	return {
+		type: SITE_CHECKLIST_NEXT_TASK,
+		taskId,
 	};
 }

@@ -13,3 +13,7 @@ export const items = {
 export const checklistNotificationSchema = {
 	type: 'boolean',
 };
+
+export const nextChecklistTaskSchema = {
+	type: 'string',
+};
