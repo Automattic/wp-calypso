@@ -4,7 +4,6 @@
  * Internal dependencies
  */
 import fromApi from '../from-api';
-import { SchemaError } from 'lib/make-json-schema-parser';
 
 describe( 'fromApi()', () => {
 	test( 'should validate and transform the data successfully.', () => {
@@ -42,7 +41,7 @@ describe( 'fromApi()', () => {
 			fromApi( invalidFieldTypes );
 		};
 
-		expect( invalidateCall ).toThrowError( SchemaError );
+		expect( invalidateCall ).toThrow( Error, 'Failed to validate with JSON schema' );
 	} );
 
 	test( 'should invalidate missing begin_timestamp.', () => {
@@ -56,7 +55,10 @@ describe( 'fromApi()', () => {
 			fromApi( invalidResponse );
 		};
 
-		expect( invalidateMissingBeginTimestamp ).toThrowError( SchemaError );
+		expect( invalidateMissingBeginTimestamp ).toThrow(
+			Error,
+			'Failed to validate with JSON schema'
+		);
 	} );
 
 	test( 'should invalidate missing end_timestamp.', () => {
@@ -72,6 +74,6 @@ describe( 'fromApi()', () => {
 			fromApi( invalidResponse );
 		};
 
-		expect( invalidateMissingEndTimestamp ).toThrowError( SchemaError );
+		expect( invalidateMissingEndTimestamp ).toThrow( Error, 'Failed to validate with JSON schema' );
 	} );
 } );
