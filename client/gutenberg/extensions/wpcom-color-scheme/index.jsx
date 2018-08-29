@@ -38,14 +38,28 @@ class WpcomColorScheme extends Component {
 			colorSchemePreference: event.target.value,
 		} );
 
+		const data = {
+			calypso_preferences: {
+				colorScheme: event.target.value,
+			},
+		};
+		// This currently requires different treatment for Calypso and wp-admin
+		const requestBody =
+			typeof window.wp !== 'undefined'
+				? {
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify( data ),
+				  }
+				: {
+						body: data,
+				  };
+
 		apiFetch( {
 			path: '/me/settings?http_envelope=1',
 			method: 'POST',
-			body: {
-				calypso_preferences: {
-					colorScheme: event.target.value,
-				},
-			},
+			...requestBody,
 		} );
 	};
 
