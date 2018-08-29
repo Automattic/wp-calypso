@@ -51,6 +51,7 @@ import { canDisplayCommunityTranslator } from 'components/community-translator/u
 import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
+import switchLocale from 'lib/i18n-utils/switch-locale';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -115,16 +116,12 @@ const Account = createReactClass( {
 	},
 
 	updateLanguage( event ) {
-		const { value } = event.target;
-		this.updateUserSetting( 'language', value );
-		const redirect =
-			value !== this.getUserOriginalSetting( 'language' ) ||
-			value !== this.getUserOriginalSetting( 'locale_variant' )
-				? '/me/account'
-				: false;
-		// store any selected locale variant so we can test it against those with no GP translation sets
-		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
-		this.setState( { redirect, localeVariantSelected } );
+		const { value: newLanguage } = event.target;
+		const localeVariantSelected = isLocaleVariant( newLanguage ) ? newLanguage : '';
+
+		this.updateUserSetting( 'language', newLanguage );
+
+		this.setState( { localeVariantSelected } );
 	},
 
 	updateColorScheme( colorScheme ) {
@@ -288,13 +285,17 @@ const Account = createReactClass( {
 		}
 
 		if ( has( unsavedSettings, 'language' ) ) {
+			const newLanguage = this.getUserSetting( 'language' );
+
 			this.props.recordTracksEvent( 'calypso_user_language_switch', {
-				new_language: this.getUserSetting( 'language' ),
+				new_language: newLanguage,
 				previous_language:
 					this.getUserOriginalSetting( 'locale_variant' ) ||
 					this.getUserOriginalSetting( 'language' ),
 				country_code: this.props.countryCode,
 			} );
+
+			switchLocale( newLanguage );
 		}
 	},
 
