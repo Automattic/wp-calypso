@@ -33,7 +33,7 @@ class Document extends React.Component {
 		const langRevision = langRevisions[ lang ];
 
 		return langRevision ? (
-			<script src={ i18nLocaleScript + `?${ langRevision }` } />
+			<script src={ i18nLocaleScript + `?v=${ langRevision }` } />
 		) : (
 			<script src={ i18nLocaleScript } />
 		);

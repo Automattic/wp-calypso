@@ -20,7 +20,7 @@ function languageFileUrl( localeSlug ) {
 	const revision = getLangRevision( localeSlug );
 	const fileUrl = `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
 
-	return revision ? fileUrl + `?${ revision }` : fileUrl;
+	return revision ? fileUrl + `?v=${ revision }` : fileUrl;
 }
 
 function setLocaleInDOM( localeSlug, isRTL ) {
