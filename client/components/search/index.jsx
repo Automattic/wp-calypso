@@ -60,6 +60,7 @@ class Search extends Component {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
+		minLength: PropTypes.number,
 		hideClose: PropTypes.bool,
 		compact: PropTypes.bool,
 		hideOpenIcon: PropTypes.bool,
@@ -365,6 +366,7 @@ class Search extends Component {
 						autoCapitalize="none"
 						dir={ this.props.dir }
 						maxLength={ this.props.maxLength }
+						minLength={ this.props.minLength }
 						{ ...autocorrect }
 					/>
 					{ this.props.overlayStyling && this.renderStylingDiv() }
