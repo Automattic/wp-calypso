@@ -4,8 +4,7 @@
  * External dependencies
  */
 
-import { UserAgent } from 'express-useragent';
-import { get } from 'lodash';
+import UserAgent from 'express-useragent';
 
 /*
 	# Clientside usage:
@@ -25,6 +24,4 @@ import { get } from 'lodash';
 	Note: we also import this lib server-side in server/boot/index.js
  */
 
-export default ( typeof window !== 'undefined' && !! get( window, 'navigator.userAgent', null )
-	? new UserAgent().parse( window.navigator.userAgent )
-	: {} );
+export default UserAgent.parse( navigator.userAgent );
