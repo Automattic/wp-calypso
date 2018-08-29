@@ -167,6 +167,5 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       Submit
     </FormButton>
   </DomainManagementFormFooter>
-  <Connect(QueryCountries) />
 </FormFieldset>
 `;
