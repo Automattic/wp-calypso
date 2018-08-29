@@ -1,5 +1,7 @@
 /** @format */
 
+const reactVersion = require( './package.json' ).dependencies.react;
+
 module.exports = {
 	root: true,
 	extends: [
@@ -26,6 +28,11 @@ module.exports = {
 		COMMIT_SHA: true,
 	},
 	plugins: [ 'jest', 'jsx-a11y', 'import' ],
+	settings: {
+		react: {
+			version: reactVersion
+		}
+	},
 	rules: {
 		// REST API objects include underscores
 		camelcase: 0,
