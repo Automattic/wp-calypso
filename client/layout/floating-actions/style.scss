@@ -1,0 +1,21 @@
+.floating-actions {
+	position: fixed;
+	padding: 10px;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: row-reverse;
+	align-items: flex-end;
+}
+
+.floating-actions__vertical-bar {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: flex-end;
+}
+
+.floating-actions__item {
+	height: 48px;
+	width: 48px;
+	margin: 10px;
+}
