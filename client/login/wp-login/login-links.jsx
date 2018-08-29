@@ -62,7 +62,16 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_magic_login_request_click' );
 		this.props.resetMagicLoginRequestForm();
 
-		page( login( { isNative: true, locale: this.props.locale, twoFactorAuthType: 'link' } ) );
+		const loginParameters = {
+			isNative: true,
+			locale: this.props.locale,
+			twoFactorAuthType: 'link',
+		};
+		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
+		if ( emailAddress ) {
+			loginParameters.emailAddress = emailAddress;
+		}
+		page( login( loginParameters ) );
 	};
 
 	recordResetPasswordLinkClick = () => {
@@ -154,9 +163,19 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
+		// The email address from the URL (if present) is added to the login
+		// parameters in this.handleMagicLoginLinkClick(). But it's left out
+		// here deliberately, to ensure that if someone copies this link to
+		// paste somewhere else, their email address isn't included in it.
+		const loginParameters = {
+			isNative: true,
+			locale: this.props.locale,
+			twoFactorAuthType: 'link',
+		};
+
 		return (
 			<a
-				href={ login( { isNative: true, locale: this.props.locale, twoFactorAuthType: 'link' } ) }
+				href={ login( loginParameters ) }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
 				onClick={ this.handleMagicLoginLinkClick }
