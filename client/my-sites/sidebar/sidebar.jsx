@@ -153,7 +153,12 @@ export class MySitesSidebar extends Component {
 
 	activity() {
 		const { siteId, canUserViewActivity, path, translate, siteSuffix } = this.props;
-		if ( siteId && ! canUserViewActivity ) {
+
+		if ( ! siteId ) {
+			return null;
+		}
+
+		if ( ! canUserViewActivity ) {
 			return null;
 		}
 
