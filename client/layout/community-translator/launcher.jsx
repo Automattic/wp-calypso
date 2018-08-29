@@ -29,7 +29,7 @@ class TranslatorLauncher extends React.PureComponent {
 		infoDialogVisible: false,
 		firstActivation: true,
 		isActive: translator.isActivated(),
-		isEnabled: translator.isEnabled(),
+		isEnabled: true,
 	};
 
 	componentDidMount() {
@@ -100,7 +100,7 @@ class TranslatorLauncher extends React.PureComponent {
 		const infoDialogButtons = [ { action: 'cancel', label: this.props.translate( 'Ok' ) } ];
 
 		return (
-			<div>
+			<div className="community-translator__container">
 				<Dialog
 					isVisible={ this.state.infoDialogVisible }
 					buttons={ infoDialogButtons }
