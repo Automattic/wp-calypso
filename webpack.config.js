@@ -286,6 +286,10 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),
 			} ),
+			new webpack.NormalModuleReplacementPlugin(
+				/@wordpress[\/\\]components[\/\\]build-module[\/\\]button[\/\\]index\.js/,
+				'../../../../../client/components/button/index.jsx'
+			),
 			shouldCheckForCycles &&
 				new CircularDependencyPlugin( {
 					exclude: /node_modules/,
