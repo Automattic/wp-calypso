@@ -50,13 +50,13 @@ class ColorSchemePicker extends PureComponent {
 
 export default compose( [
 	withSelect( select => {
-		const { getPreference } = select( 'calypso' );
+		const { getPreference } = select( 'calypso/preferences' );
 		return {
 			colorSchemePreference: getPreference( 'colorScheme' ),
 		};
 	} ),
 	withDispatch( dispatch => {
-		const { setPreference, savePreference } = dispatch( 'calypso' );
+		const { setPreference, savePreference } = dispatch( 'calypso/preferences' );
 
 		return {
 			saveColorSchemePreference( preference, temporarySelection ) {
