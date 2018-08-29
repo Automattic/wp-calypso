@@ -4148,9 +4148,9 @@
       "integrity": "sha1-yBSQPkViM3GgR3tAEJqq++6t27Q="
     },
     "cssnano": {
-      "version": "4.0.5",
-      "resolved": "https://registry.npmjs.org/cssnano/-/cssnano-4.0.5.tgz",
-      "integrity": "sha512-P2O0sz/YAAzqZVsSWOrbliPCr0c6abwVNQmFZ48AgejN/GbzwEf6IVFGQAj0UKHC+crv60wUAPQocAnDmeWlkg==",
+      "version": "4.1.0",
+      "resolved": "https://registry.npmjs.org/cssnano/-/cssnano-4.1.0.tgz",
+      "integrity": "sha512-7x24b/ghbrQv2QRgqMR12H3ZZ38xYCKJSXfg21YCtnIE177/NyvMkeiuQdWauIgMjySaTZ+cd5PN2qvfbsGeSw==",
       "requires": {
         "cosmiconfig": "^5.0.0",
         "cssnano-preset-default": "^4.0.0",
@@ -6514,7 +6514,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6879,7 +6880,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6927,6 +6929,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6965,11 +6968,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },

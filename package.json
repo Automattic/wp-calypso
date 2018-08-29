@@ -78,7 +78,7 @@
     "creditcards": "3.0.1",
     "cross-env": "5.2.0",
     "css-loader": "1.0.0",
-    "cssnano": "4.0.5",
+    "cssnano": "4.1.0",
     "d3-array": "1.2.1",
     "d3-axis": "1.0.8",
     "d3-scale": "2.1.0",
