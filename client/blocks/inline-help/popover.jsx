@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, get, reduce } from 'lodash';
+import { noop, get, reduce, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -30,7 +30,12 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { tasks } from 'my-sites/checklist/onboardingChecklist';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getChecklistStatus, setChecklistStatus } from 'state/checklist/actions';
+import {
+	getChecklistStatus,
+	setChecklistStatus,
+	getChecklistTask,
+	setChecklistTask,
+} from 'state/checklist/actions';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -38,7 +43,9 @@ class InlineHelpPopover extends Component {
 		setDialogState: PropTypes.func.isRequired,
 		sectionName: PropTypes.string,
 		showChecklistNotification: PropTypes.bool,
+		nextChecklistTask: PropTypes.string,
 		setChecklistStatus: PropTypes.func,
+		setChecklistTask: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -53,6 +60,7 @@ class InlineHelpPopover extends Component {
 
 	componentDidMount() {
 		this.shouldShowChecklist();
+		this.shouldShowChecklistNotification();
 	}
 
 	openResultView = event => {
@@ -66,7 +74,13 @@ class InlineHelpPopover extends Component {
 	};
 
 	checklistClicked = () => {
+		const task = this.getTask();
+
+		if ( task ) {
+			this.props.setChecklistTask( task.id );
+		}
 		this.props.setChecklistStatus( false );
+
 		this.props.onClose();
 		this.props.recordTracksEvent( 'calypso_inlinehelp_checklist_click' );
 	};
@@ -116,6 +130,14 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
+	getTask = () => {
+		const task = find(
+			tasks,
+			( { id, completed } ) => ! completed && ! get( this.props.taskStatuses, [ id, 'completed' ] )
+		);
+		return task;
+	};
+
 	shouldShowChecklist = () => {
 		const { sectionName } = this.props;
 		const totalTasks = tasks.length;
@@ -138,6 +160,15 @@ class InlineHelpPopover extends Component {
 			! ( disallowedSections.indexOf( sectionName ) > -1 )
 		) {
 			this.setState( { shouldShowChecklist: true } );
+		}
+	};
+
+	shouldShowChecklistNotification = () => {
+		const { nextChecklistTask } = this.props;
+		const task = this.getTask();
+
+		if ( task && nextChecklistTask !== task.id ) {
+			this.props.setChecklistStatus( true );
 		}
 	};
 
@@ -268,6 +299,7 @@ function mapStateToProps( state ) {
 		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		sectionName: getSectionName( state ),
 		showChecklistNotification: getChecklistStatus( state ),
+		nextChecklistTask: getChecklistTask( state ),
 	};
 }
 
@@ -278,5 +310,6 @@ export default connect(
 		selectResult,
 		resetContactForm: resetInlineHelpContactForm,
 		setChecklistStatus,
+		setChecklistTask,
 	}
 )( localize( InlineHelpPopover ) );
