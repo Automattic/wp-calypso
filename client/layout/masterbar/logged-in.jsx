@@ -20,6 +20,8 @@ import config from 'config';
 import { preload } from 'sections-helper';
 import ResumeEditing from 'my-sites/resume-editing';
 import { getCurrentUserSiteCount } from 'state/current-user/selectors';
+import { isSupportUserSession } from 'lib/user/support-user-interop';
+import QuickLanguageSwitcher from './quick-language-switcher';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
@@ -124,6 +126,9 @@ class MasterbarLoggedIn extends React.Component {
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
+				{ ( isSupportUserSession() || config.isEnabled( 'quick-language-switcher' ) ) && (
+					<QuickLanguageSwitcher />
+				) }
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				{ ! domainOnlySite && (
 					<Publish
