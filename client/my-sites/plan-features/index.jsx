@@ -200,7 +200,7 @@ class PlanFeatures extends Component {
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
-						available={ available }
+						availableForPurchase={ available }
 						current={ current }
 						currencyCode={ currencyCode }
 						isJetpack={ isJetpack }
@@ -304,7 +304,7 @@ class PlanFeatures extends Component {
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
-						available={ available }
+						availableForPurchase={ available }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
 						current={ current }

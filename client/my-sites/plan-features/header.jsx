@@ -174,12 +174,11 @@ export class PlanFeaturesHeader extends Component {
 
 	getPlanFeaturesPrices() {
 		const {
-			available,
-			currencyCode,
-			discountPrice,
+			availableForPurchase,
 			isInSignup,
 			isPlaceholder,
 			isJetpack,
+			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
 		} = this.props;
@@ -193,28 +192,35 @@ export class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( discountPrice ) {
-			if ( ! available ) {
-				return (
-					<PlanPrice
-						currencyCode={ discountPrice }
-						rawPrice={ rawPrice }
-						isInSignup={ isInSignup }
-					/>
+		if ( availableForPurchase ) {
+			if ( relatedMonthlyPlan ) {
+				return this.renderPriceGroup(
+					relatedMonthlyPlan.raw_price * 12,
+					discountPrice || rawPrice
 				);
+			} else if ( discountPrice ) {
+				return this.renderPriceGroup( rawPrice, discountPrice );
 			}
-			const originalPrice = relatedMonthlyPlan ? relatedMonthlyPlan.raw_price * 12 : rawPrice;
+		}
+
+		return this.renderPriceGroup( rawPrice );
+	}
+
+	renderPriceGroup( fullPrice, discountedPrice = null ) {
+		const { currencyCode, isInSignup } = this.props;
+
+		if ( fullPrice && discountedPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ originalPrice }
+						rawPrice={ fullPrice }
 						isInSignup={ isInSignup }
 						original
 					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ discountPrice }
+						rawPrice={ discountedPrice }
 						isInSignup={ isInSignup }
 						discounted
 					/>
@@ -223,7 +229,7 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		return (
-			<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } isInSignup={ isInSignup } />
+			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } isInSignup={ isInSignup } />
 		);
 	}
 
@@ -263,7 +269,7 @@ export class PlanFeaturesHeader extends Component {
 }
 
 PlanFeaturesHeader.propTypes = {
-	available: PropTypes.bool,
+	availableForPurchase: PropTypes.bool,
 	bestValue: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
 	currencyCode: PropTypes.string,
@@ -290,7 +296,7 @@ PlanFeaturesHeader.propTypes = {
 };
 
 PlanFeaturesHeader.defaultProps = {
-	available: true,
+	availableForPurchase: true,
 	basePlansPath: null,
 	bestValue: false,
 	current: false,
