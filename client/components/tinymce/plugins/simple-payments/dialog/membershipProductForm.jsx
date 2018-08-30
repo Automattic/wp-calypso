@@ -237,6 +237,7 @@ class ProductForm extends Component {
 				>
 					<option value="1 month">{ translate( '1 Month' ) }</option>
 					<option value="1 year">{ translate( '1 Year' ) }</option>
+					<option value="one-time">{ translate( 'Lifetime - one-time purchase' ) }</option>
 				</ReduxFormFieldset>
 			</div>
 		);
