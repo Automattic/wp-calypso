@@ -4328,9 +4328,9 @@
       "integrity": "sha512-CyINJQ0SOUHojDdFDH4JEM0552vCR1utGyLHegJHyYH0JyCpSeTPxi4OBqHMA2jJZq4NH782LtaJWBImqI/HBw=="
     },
     "d3-axis": {
-      "version": "1.0.8",
-      "resolved": "https://registry.npmjs.org/d3-axis/-/d3-axis-1.0.8.tgz",
-      "integrity": "sha1-MacFoLU15ldZ3hQXOjGTMTfxjvo="
+      "version": "1.0.12",
+      "resolved": "https://registry.npmjs.org/d3-axis/-/d3-axis-1.0.12.tgz",
+      "integrity": "sha512-ejINPfPSNdGFKEOAtnBtdkpr24c4d4jsei6Lg98mxf424ivoDP2956/5HDpIAtmHo85lqT4pruy+zEgvRUBqaQ=="
     },
     "d3-collection": {
       "version": "1.0.7",
