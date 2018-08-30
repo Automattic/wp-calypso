@@ -14,17 +14,24 @@
 
 	&.reader-post-actions__visit {
 		flex: 1;
-
-		.reader-visit-link {
-			align-items: center;
-			box-sizing: border-box;
-			display: inline-flex;
-			padding: 4px 4px 4px 0;
-			position: relative;
-		}
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 	}
 
 	&:last-child {
 		margin-right: 0;
 	}
+}
+
+.reader-post-actions__post-likes-caterpillar {
+	margin-top: 4px;
+}
+
+.reader-post-actions__item-text {
+	color: $gray;
+	padding-left: 8px;
+	padding-right: 4px;
+	font-size: 12px;
+	margin-top: 8px;
 }
