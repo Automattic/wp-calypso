@@ -126,7 +126,9 @@ class MasterbarLoggedIn extends React.Component {
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
-				{ isSupportUserSession() && <QuickLanguageSwitcher /> }
+				{ ( isSupportUserSession() || config.isEnabled( 'quick-language-switcher' ) ) && (
+					<QuickLanguageSwitcher />
+				) }
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				{ ! domainOnlySite && (
 					<Publish
