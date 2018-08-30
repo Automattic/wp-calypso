@@ -26,20 +26,12 @@ import { getDomainProductSlug } from 'lib/domains';
 
 class SiteOrDomain extends Component {
 	getDomainName() {
-		const {
-			initialContext: { query },
-			step,
-			signupDependencies,
-		} = this.props;
+		const { signupDependencies } = this.props;
 		let domain;
 		let isValidDomain = false;
 
 		if ( signupDependencies && signupDependencies.domainItem ) {
 			domain = signupDependencies.domainItem.meta;
-		} else if ( query && query.new ) {
-			domain = query.new;
-		} else if ( step && step.domainItem ) {
-			domain = step.domainItem.meta;
 		}
 
 		if ( domain ) {
@@ -172,8 +164,8 @@ class SiteOrDomain extends Component {
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
+					fallbackHeaderText={ headerText }
+					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
 				/>
 			);

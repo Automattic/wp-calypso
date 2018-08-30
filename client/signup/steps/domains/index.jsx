@@ -3,7 +3,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith, get } from 'lodash';
@@ -38,6 +37,7 @@ import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getDomainProductSlug } from 'lib/domains';
 
 const productsList = productsListFactory();
 
@@ -64,9 +64,40 @@ class DomainsStep extends React.Component {
 
 	state = { products: productsList.get() };
 
-	showDomainSearch = () => {
-		page( getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
-	};
+	constructor( props ) {
+		super( props );
+
+		this.skipRender = false;
+
+		const domain = get( props, 'queryObject.new', false );
+		if (
+			this.isDomainsFirstFlow() &&
+			domain &&
+			! get( props, 'signupDependencies.domainItem', false )
+		) {
+			this.skipRender = true;
+			const productSlug = getDomainProductSlug( domain );
+			const domainItem = cartItems.domainRegistration( { productSlug, domain } );
+
+			SignupActions.submitSignupStep(
+				Object.assign(
+					{
+						processingMessage: props.translate( 'Adding your domain' ),
+						stepName: props.stepName,
+						domainItem,
+						siteUrl: domain,
+						isPurchasingItem: true,
+						stepSectionName: props.stepSectionName,
+					},
+					this.getThemeArgs()
+				),
+				[],
+				{ domainItem }
+			);
+
+			props.goToNextStep();
+		}
+	}
 
 	getMapDomainUrl = () => {
 		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
@@ -77,13 +108,12 @@ class DomainsStep extends React.Component {
 	};
 
 	getUseYourDomainUrl = () => {
-		const url = getStepUrl(
+		return getStepUrl(
 			this.props.flowName,
 			this.props.stepName,
 			'use-your-domain',
 			this.props.locale
 		);
-		return url;
 	};
 
 	componentDidMount() {
@@ -421,6 +451,10 @@ class DomainsStep extends React.Component {
 	}
 
 	render() {
+		if ( this.skipRender ) {
+			return null;
+		}
+
 		const { translate } = this.props;
 		let backUrl = undefined;
 
