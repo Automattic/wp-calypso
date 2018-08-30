@@ -16,6 +16,7 @@ import HappychatButton from 'components/happychat/button';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import AsyncLoad from 'components/async-load';
 import TranslatorLauncher from 'layout/community-translator/launcher';
+import EnvironmentBadge from 'blocks/environment-badge';
 
 
 const FloatingActions = ( { isHappychatButtonVisible, showInlineHelp = true } ) => (
@@ -23,14 +24,15 @@ const FloatingActions = ( { isHappychatButtonVisible, showInlineHelp = true } ) 
 		<div className="floating-actions__vertical-bar">
 			{ showInlineHelp && <InlineHelp /> }
 			{ config.isEnabled( 'i18n/community-translator' ) ? (
-				isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
+				isCommunityTranslatorEnabled() ||
+				( false && <AsyncLoad require="components/community-translator" /> )
 			) : (
 				<TranslatorLauncher />
 			) }
 			{ isHappychatButtonVisible &&
 				config.isEnabled( 'happychat' ) && <HappychatButton allowMobileRedirect /> }
 		</div>
-		{ /* TODO: Move environment badge here */ }
+		<EnvironmentBadge />
 	</div>
 );
 
