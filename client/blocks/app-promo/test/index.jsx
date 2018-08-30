@@ -39,7 +39,6 @@ describe( 'AppPromo', () => {
 
 			expect( wrapper ).to.have.descendants( '.app-promo' );
 			expect( wrapper ).to.have.descendants( '.app-promo__dismiss' );
-			expect( wrapper ).to.have.descendants( '.app-promo__screen-reader-text' );
 			expect( wrapper ).to.have.descendants( '.app-promo__icon' );
 		} );
 
