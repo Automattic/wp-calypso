@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get } from 'lodash';
+import { defer, endsWith, get, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
@@ -16,7 +16,6 @@ import { abtest } from 'lib/abtest';
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
-import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import SignupActions from 'lib/signup/actions';
 import { getStepUrl } from 'signup/utils';
@@ -38,8 +37,8 @@ import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getDomainProductSlug } from 'lib/domains';
-
-const productsList = productsListFactory();
+import QueryProductsList from 'components/data/query-products-list';
+import { getAvailableProductsList } from 'state/products-list/selectors';
 
 class DomainsStep extends React.Component {
 	static propTypes = {
@@ -61,8 +60,6 @@ class DomainsStep extends React.Component {
 	static contextTypes = {
 		store: PropTypes.object,
 	};
-
-	state = { products: productsList.get() };
 
 	constructor( props ) {
 		super( props );
@@ -114,18 +111,6 @@ class DomainsStep extends React.Component {
 			'use-your-domain',
 			this.props.locale
 		);
-	};
-
-	componentDidMount() {
-		productsList.on( 'change', this.refreshState );
-	}
-
-	componentWillUnmount() {
-		productsList.off( 'change', this.refreshState );
-	}
-
-	refreshState = () => {
-		this.setState( { products: productsList.get() } );
 	};
 
 	handleAddDomain = suggestion => {
@@ -314,7 +299,7 @@ class DomainsStep extends React.Component {
 				path={ this.props.path }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
-				products={ this.state.products }
+				products={ this.props.productList }
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
@@ -351,7 +336,7 @@ class DomainsStep extends React.Component {
 					onRegisterDomain={ this.handleAddDomain }
 					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					products={ productsList.get() }
+					products={ this.props.productList }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					analyticsSection="signup"
@@ -380,7 +365,7 @@ class DomainsStep extends React.Component {
 					onRegisterDomain={ this.handleAddDomain }
 					onTransferDomain={ this.handleAddTransfer }
 					onSave={ this.onTransferSave }
-					products={ productsList.get() }
+					products={ this.props.productList }
 				/>
 			</div>
 		);
@@ -400,7 +385,7 @@ class DomainsStep extends React.Component {
 					isSignupStep
 					mapDomainUrl={ this.getMapDomainUrl() }
 					transferDomainUrl={ this.getTransferDomainUrl() }
-					products={ productsList.get() }
+					products={ this.props.productList }
 				/>
 			</div>
 		);
@@ -487,6 +472,7 @@ class DomainsStep extends React.Component {
 						transitionLeave={ false }
 						transitionName="domains__step-content"
 					>
+						{ ! this.props.productsLoaded && <QueryProductsList /> }
 						{ this.renderContent() }
 					</ReactCSSTransitionGroup>
 				}
@@ -528,15 +514,22 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	state => ( {
-		designType: getDesignType( state ),
-		// no user = DOMAINS_WITH_PLANS_ONLY
-		domainsWithPlansOnly: getCurrentUser( state )
-			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-			: true,
-		siteGoals: getSiteGoals( state ),
-		surveyVertical: getSurveyVertical( state ),
-	} ),
+	state => {
+		const productsList = getAvailableProductsList( state );
+		const productsLoaded = ! isEmpty( productsList );
+
+		return {
+			designType: getDesignType( state ),
+			// no user = DOMAINS_WITH_PLANS_ONLY
+			domainsWithPlansOnly: getCurrentUser( state )
+				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+				: true,
+			productsList,
+			productsLoaded,
+			siteGoals: getSiteGoals( state ),
+			surveyVertical: getSurveyVertical( state ),
+		};
+	},
 	{
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
