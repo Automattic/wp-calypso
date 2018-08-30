@@ -50,6 +50,12 @@
 		}
 	}
 
+	.no-price .domain-product-price__free-text {
+		@include breakpoint( '>660px' ) {
+			margin-left: 0;
+		}
+	}
+
 	&.is-free-domain {
 		font-size: 13px;
 		line-height: 1.7;
