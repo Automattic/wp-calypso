@@ -19,29 +19,22 @@ class QuickLanguageSwitcher extends React.Component {
 		isShowingModal: false,
 	};
 
-	toggleLanguagesModal = () => {
-		this.setState( state => ( {
-			isShowingModal: ! state.isShowingModal,
-		} ) );
-	};
+	toggleLanguagesModal = () => this.setState( { isShowingModal: ! this.state.isShowingModal } );
 
 	onClick = event => {
 		this.toggleLanguagesModal();
 		event.preventDefault();
-		return;
 	};
 
-	onSelected = languageSlug => {
-		switchLocale( languageSlug );
-	};
+	onSelected = languageSlug => switchLocale( languageSlug );
 
 	render() {
 		const selectedLanguageSlug = getLocaleSlug();
 
 		return (
-			<div className="masterbar__item quick-language-switcher">
+			<div className="masterbar__item masterbar__quick-language-switcher">
 				<MasterbarItem icon="globe" onClick={ this.onClick }>
-					{ getLocaleSlug() }
+					{ selectedLanguageSlug }
 				</MasterbarItem>
 
 				<LanguagePickerModal

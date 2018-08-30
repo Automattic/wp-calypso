@@ -490,6 +490,10 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__quick-language-switcher a {
+	cursor: pointer;
+}
+
 // Editor Transition
 .masterbar {
 	opacity: 1;
