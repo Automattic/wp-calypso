@@ -8,7 +8,6 @@ import { getLocaleSlug } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-
 import MasterbarItem from './item';
 import LanguagePickerModal from 'components/language-picker/modal';
 import switchLocale from 'lib/i18n-utils/switch-locale';
