@@ -153,30 +153,55 @@ self.addEventListener( 'fetch', function( event ) {
 	}
 } );
 
-// periodically check that assets are up to date
 function cacheAssets() {
 	if ( ! navigator.onLine || ! self.registration.active ) {
 		return Promise.resolve();
 	}
 
-	// Do not cache assets if bandwidth is less than 10Mb/s
-	const downlink = self.navigator.connection.downlink || 1;
-	if ( downlink < 10 ) {
-		return cacheUrls( OFFLINE_CALYPSO_URLS, true );
+	return canBootOffline()
+		.then( function() {
+			return getAssetsHashFromCache().then( function( previousHash ) {
+				return getAssets().then( function( response ) {
+					if ( previousHash !== response.hash ) {
+						return clearCache().then( function() {
+							return Promise.all( [
+								cacheUrls( response.assets ),
+								cacheUrls( OFFLINE_CALYPSO_URLS, true ),
+							] );
+						} );
+					}
+				} );
+			} );
+		} )
+		.catch( function() {
+			return cacheUrls( OFFLINE_CALYPSO_URLS, true );
+		} );
+}
+
+function canBootOffline() {
+	let downlink = 1;
+
+	if ( 'connection' in navigator && 'downlink' in navigator.connection ) {
+		downlink = self.navigator.connection.downlink;
 	}
 
-	return getAssetsHashFromCache().then( previousHash => {
-		return getAssets().then( function( response ) {
-			if ( previousHash !== response.hash ) {
-				return clearCache().then( function() {
-					return Promise.all( [
-						cacheUrls( response.assets ),
-						cacheUrls( OFFLINE_CALYPSO_URLS, true ),
-					] );
-				} );
+	// Do not cache assets if bandwidth is less than 10Mb/s
+	if ( downlink < 10 ) {
+		return Promise.reject();
+	}
+
+	if ( 'storage' in navigator && 'estimate' in navigator.storage ) {
+		return navigator.storage.estimate().then( function( storageEstimate ) {
+			// Do not cache assets if browser has less than 150 MB available for the app
+			// Note that private browsing quota may be too limited for calypso to be cached entirely,
+			// especially in development
+			if ( storageEstimate.quota < 150 * 1000000 ) {
+				return Promise.reject();
 			}
 		} );
-	} );
+	}
+
+	return Promise.reject();
 }
 
 /* eslint-disable */
