@@ -15,6 +15,7 @@ import HappychatButton from 'components/happychat/button';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import AsyncLoad from 'components/async-load';
 import TranslatorLauncher from 'layout/community-translator/launcher';
+import EnvironmentBadge from 'blocks/environment-badge';
 
 const FloatingActions = ( { isHappychatButtonVisible } ) => (
 	<div className="floating-actions">
@@ -28,7 +29,7 @@ const FloatingActions = ( { isHappychatButtonVisible } ) => (
 			{ isHappychatButtonVisible &&
 				config.isEnabled( 'happychat' ) && <HappychatButton allowMobileRedirect /> }
 		</div>
-		{ /* TODO: Move environment badge here */ }
+		<EnvironmentBadge />
 	</div>
 );
 
