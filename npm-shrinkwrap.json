@@ -10383,19 +10383,12 @@
       }
     },
     "markdown-loader": {
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/markdown-loader/-/markdown-loader-3.0.0.tgz",
-      "integrity": "sha512-ENNCYU7iINBYpCDeYFlaxKhxmjrsWzw/duhFoj7+VVoHBdla78Pqo6r5/txNH6m1lduMsjrq13EddBdGM+gSVg==",
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/markdown-loader/-/markdown-loader-4.0.0.tgz",
+      "integrity": "sha512-9BCm8iyLF4AVYtjtybOTg8cTcpWYKsDGWWhsc7XaJlXQiddo3ztbZxLPJ28pmCxFI1BlMkT1wDVav1chPjTpdA==",
       "requires": {
         "loader-utils": "^1.1.0",
-        "marked": "^0.4.0"
-      },
-      "dependencies": {
-        "marked": {
-          "version": "0.4.0",
-          "resolved": "https://registry.npmjs.org/marked/-/marked-0.4.0.tgz",
-          "integrity": "sha512-tMsdNBgOsrUophCAFQl0XPe6Zqk/uy9gnue+jIIKhykO51hxyu6uNx7zBPy0+y/WKYVZZMspV9YeXLNdKk+iYw=="
-        }
+        "marked": "^0.5.0"
       }
     },
     "markdown-table": {
