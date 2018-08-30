@@ -18,6 +18,7 @@ import Suggestion from 'reader/search-stream/suggestion';
 import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
 import config from 'config';
+import { getSearchPlaceholderText } from 'reader/search/utils';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -38,6 +39,7 @@ const FollowingStream = props => {
 				', ',
 			] )
 		);
+	const placeholderText = getSearchPlaceholderText();
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -48,7 +50,7 @@ const FollowingStream = props => {
 					onSearch={ handleSearch }
 					delaySearch={ true }
 					delayTimeout={ 500 }
-					placeholder={ props.translate( 'Search billions of WordPress posts…' ) }
+					placeholder={ placeholderText }
 				/>
 			</CompactCard>
 			<div className="search-stream__blank-suggestions">

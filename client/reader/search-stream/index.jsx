@@ -32,6 +32,7 @@ import getReaderAliasedFollowFeedUrl from 'state/selectors/get-reader-aliased-fo
 import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
 import FollowButton from 'reader/follow-button';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import { getSearchPlaceholderText } from 'reader/search/utils';
 
 const WIDE_DISPLAY_CUTOFF = 660;
 
@@ -109,7 +110,7 @@ class SearchStream extends React.Component {
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
-			searchPlaceholderText = translate( 'Search billions of WordPress posts…' );
+			searchPlaceholderText = getSearchPlaceholderText();
 		}
 
 		const documentTitle = translate( '%s ‹ Reader', {
