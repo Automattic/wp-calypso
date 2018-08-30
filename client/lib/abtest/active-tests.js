@@ -36,18 +36,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	nudgeAPalooza: {
-		datestamp: '20180806',
-		variations: {
-			sidebarUpsells: 20,
-			themesNudgesUpdates: 20,
-			customPluginAndThemeLandingPages: 20,
-			plansBannerUpsells: 20,
-			control: 20,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	springSale30PercentOff: {
 		datestamp: '20180413',
 		variations: {

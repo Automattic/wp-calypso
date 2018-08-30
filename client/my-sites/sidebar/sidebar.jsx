@@ -14,7 +14,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
@@ -629,13 +628,6 @@ export class MySitesSidebar extends Component {
 					</ul>
 				</SidebarMenu>
 			);
-		}
-
-		// For the duration of nudgeAPalooza test we need to allocate all users who visit calypso.
-		// Having it here is an easy solution that makes it possible to avoid touching redux store
-		// middleware structure
-		if ( isEnabled( 'upsell/nudge-a-palooza' ) ) {
-			abtest( 'nudgeAPalooza' );
 		}
 
 		const manage = !! this.manage(),
