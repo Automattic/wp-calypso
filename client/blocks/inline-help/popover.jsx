@@ -30,6 +30,7 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import { tasks } from 'my-sites/checklist/onboardingChecklist';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
 import {
 	getChecklistStatus,
 	setChecklistStatus,
@@ -46,6 +47,7 @@ class InlineHelpPopover extends Component {
 		nextChecklistTask: PropTypes.string,
 		setChecklistStatus: PropTypes.func,
 		setChecklistTask: PropTypes.func,
+		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -173,7 +175,7 @@ class InlineHelpPopover extends Component {
 	};
 
 	renderChecklistProgress = () => {
-		const { taskStatuses, siteSuffix, translate, showChecklistNotification } = this.props;
+		const { taskStatuses, siteSuffix, translate, showChecklistNotification, siteId } = this.props;
 		const { shouldShowChecklist } = this.state;
 		const inlineHelpButtonClasses = {
 			'checklist-count-notification': showChecklistNotification,
@@ -200,6 +202,7 @@ class InlineHelpPopover extends Component {
 
 		return (
 			<div className="inline-help__checklist">
+				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<Button
 					onClick={ this.checklistClicked }
 					href={ checklistLink }
