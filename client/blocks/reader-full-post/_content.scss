@@ -69,7 +69,7 @@
 	img {
 		max-width: 100%;
 		height: auto;
-		display: block;
+		display: inline;
 		margin: auto;
 
 		&.emoji,
@@ -376,6 +376,13 @@
 .reader-full-post.feed-10080096 {
 	.align--bleed {
 		display: none;
+	}
+}
+
+// Image display on Atavist posts
+.feed-84614284 {
+	img {
+		display: block;
 	}
 }
 
