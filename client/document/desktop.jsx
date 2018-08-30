@@ -3,15 +3,12 @@
  *
  * @format
  */
-
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
@@ -31,13 +28,8 @@ class Desktop extends React.Component {
 			isFluidWidth,
 			env,
 			isDebug,
-			badge,
-			abTestHelper,
 			branchName,
 			commitChecksum,
-			devDocs,
-			devDocsURL,
-			feedbackURL,
 		} = this.props;
 		return (
 			<html
@@ -72,34 +64,6 @@ class Desktop extends React.Component {
 							</div>
 						</div>
 					</div>
-					{ badge && (
-						<div className="environment-badge">
-							{ abTestHelper && <div className="environment is-tests" /> }
-							{ branchName &&
-								branchName !== 'master' && (
-									<span className="environment branch-name" title={ 'Commit ' + commitChecksum }>
-										{ branchName }
-									</span>
-								) }
-							{ devDocs && (
-								<span className="environment is-docs">
-									<a href={ devDocsURL } title="DevDocs">
-										docs
-									</a>
-								</span>
-							) }
-							<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-							<ExternalLink
-								className="bug-report"
-								href={ feedbackURL }
-								target="_blank"
-								title="Report an issue"
-							>
-								<Gridicon icon="bug" size={ 18 } />
-							</ExternalLink>
-						</div>
-					) }
-
 					{ app && (
 						<script
 							type="text/javascript"
@@ -113,6 +77,20 @@ class Desktop extends React.Component {
 							type="text/javascript"
 							dangerouslySetInnerHTML={ {
 								__html: `var configData = ${ jsonStringifyForHtml( clientData ) };`,
+							} }
+						/>
+					) }
+					{ env === 'development' && (
+						<script
+							type="text/javascript"
+							dangerouslySetInnerHTML={ {
+								__html:
+									( branchName
+										? `var branchName = ${ jsonStringifyForHtml( branchName ) };`
+										: '' ) +
+									( commitChecksum
+										? `var commitChecksum = ${ jsonStringifyForHtml( commitChecksum ) };`
+										: '' ),
 							} }
 						/>
 					) }
