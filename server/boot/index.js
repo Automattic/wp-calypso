@@ -11,7 +11,8 @@ const path = require( 'path' ),
 	cookieParser = require( 'cookie-parser' ),
 	userAgent = require( 'express-useragent' ),
 	morgan = require( 'morgan' ),
-	pages = require( 'pages' );
+	pages = require( 'pages' ),
+	pwa = require( 'pwa' ).default;
 
 const analytics = require( '../lib/analytics' ).default;
 
@@ -66,16 +67,10 @@ function setup() {
 		app.use( morgan( 'combined' ) );
 	}
 
+	app.use( pwa() );
+
 	// attach the static file server to serve the `public` dir
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
-
-	// service-worker needs to be served from root to avoid scope issues
-	app.use(
-		'/service-worker.js',
-		express.static(
-			path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' )
-		)
-	);
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function( request, response ) {
