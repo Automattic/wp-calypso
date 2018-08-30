@@ -291,10 +291,12 @@ class DomainsStep extends React.Component {
 				useYourDomainUrl={ this.getUseYourDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerUnavailableOption={ ! this.props.isDomainOnly }
+				offerUnavailableOption={ ! this.props.isDomainOnly && ! this.isDomainsFirstFlow() }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
+				includeWordPressDotCom={
+					! this.props.isDomainOnly && ! this.isDomainForAtomicSite() && ! this.isDomainsFirstFlow()
+				}
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
@@ -381,6 +383,10 @@ class DomainsStep extends React.Component {
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
 
+	isDomainsFirstFlow() {
+		return 'domain-first' === this.props.flowName;
+	}
+
 	renderContent() {
 		let content;
 
@@ -396,7 +402,7 @@ class DomainsStep extends React.Component {
 			content = this.useYourDomainForm();
 		}
 
-		if ( ! this.props.stepSectionName ) {
+		if ( ! this.props.stepSectionName || this.isDomainsFirstFlow() ) {
 			content = this.domainForm();
 		}
 
