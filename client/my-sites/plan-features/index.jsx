@@ -664,7 +664,6 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
-		const showPlanCreditsApplied = ! isInSignup && abtest( 'showPlanCreditsApplied' ) === 'test';
 
 		const planProperties = compact(
 			map( plans, plan => {
@@ -764,16 +763,14 @@ export default connect(
 			} )
 		);
 
-		const planCredits = calculatePlanCredits( state, siteId, planProperties );
-
 		return {
 			canPurchase,
 			isJetpack,
-			planCredits,
 			planProperties,
 			selectedSiteSlug,
 			siteType,
-			showPlanCreditsApplied,
+			planCredits: calculatePlanCredits( state, siteId, planProperties ),
+			showPlanCreditsApplied: ! isInSignup && abtest( 'showPlanCreditsApplied' ) === 'test',
 		};
 	},
 	{
