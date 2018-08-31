@@ -33,7 +33,7 @@ describe( 'isTransientMedia()', () => {
 					queries: {
 						2916284: new MediaQueryManager( {
 							items: {
-								42: { ID: 42, title: 'flowers' },
+								42: { ID: 42, title: 'flowers', URL: 'https://testing.com/flowers.jpg' },
 							},
 						} ),
 					},
@@ -53,7 +53,12 @@ describe( 'isTransientMedia()', () => {
 					queries: {
 						2916284: new MediaQueryManager( {
 							items: {
-								42: { ID: 42, title: 'flowers', transient: true },
+								42: {
+									ID: 42,
+									title: 'flowers',
+									URL: 'https://testing.com/flowers.jpg',
+									transient: true,
+								},
 							},
 						} ),
 					},
