@@ -401,7 +401,9 @@ export const getRatesErrors = ( { values: selectedRates, available: allRates } )
 		if ( selectedRates[ boxId ] ) {
 			return null;
 		} else if ( isEmpty( rate.rates ) ) {
-			return translate( 'No rates available, please try using a different box.' );
+			return translate(
+				'No rates available, please double check dimensions and weight or try using different packaging.'
+			);
 		}
 		return translate( 'Please choose a rate' );
 	} );
