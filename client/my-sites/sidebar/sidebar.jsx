@@ -390,25 +390,30 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		const { translate, site, siteSuffix, canUserUseStore } = this.props;
+		const { translate, site, canUserUseStore } = this.props;
 
 		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
 
 		if ( ! canUserUseStore ) {
-			return null;
+			//return null;
 		}
 
 		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
+
+		const calypsoifyLink = `${
+			site.URL
+		}/wp-admin/edit.php?post_type=shop_order&calypsoify=1&calypsowoo=1`;
 		return (
 			<SidebarItem
-				label={ translate( 'Store' ) }
-				link={ '/store' + siteSuffix }
+				label={ translate( 'WooCommerce' ) }
+				link={ calypsoifyLink }
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
+				forceInternalLink
 			>
 				<div className="sidebar__chevron-right">
 					<Gridicon icon="chevron-right" />
