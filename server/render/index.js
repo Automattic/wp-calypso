@@ -136,7 +136,10 @@ export function serverRender( req, res ) {
 
 	if ( ! isDefaultLocale( context.lang ) ) {
 		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
-		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + langFileName + '.js';
+		const langRevision = context.langRevisions[ langFileName ];
+
+		context.i18nLocaleScript =
+			'//widgets.wp.com/languages/calypso/' + langFileName + '.js' + `?v=${ langRevision }`;
 	}
 
 	if ( shouldServerSideRender( context ) ) {

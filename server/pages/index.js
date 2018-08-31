@@ -42,6 +42,7 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
+import { getLangRevisions } from 'i18n-bootstrap';
 import { getLanguage } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
@@ -345,7 +346,19 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		debug( 'Issuing API call to fetch user object' );
 
-		user( req.cookies.wordpress_logged_in, geoCountry )
+		const langPromise = getLangRevisions()
+			.then( langRevisions => {
+				req.context.langRevisions = langRevisions;
+
+				return langRevisions;
+			} )
+			.catch( error => {
+				console.error( 'Failed to fetch the language revision files.', error );
+
+				return error;
+			} );
+
+		const userPromise = user( req.cookies.wordpress_logged_in, geoCountry )
 			.then( data => {
 				const end = new Date().getTime() - start;
 
@@ -388,8 +401,6 @@ function setUpLoggedInRoute( req, res, next ) {
 						return;
 					}
 				}
-
-				next();
 			} )
 			.catch( error => {
 				if ( error.error === 'authorization_required' ) {
@@ -410,12 +421,20 @@ function setUpLoggedInRoute( req, res, next ) {
 					}
 
 					console.error( 'API Error: ' + errorMessage );
-
-					next( error );
 				}
 
-				return;
+				return error;
 			} );
+
+		Promise.all( [ langPromise, userPromise ] ).then( results => {
+			const rejectedWithErrors = results.filter( r => null != r && r.error );
+
+			if ( 0 !== rejectedWithErrors.length ) {
+				return next( rejectedWithErrors );
+			}
+
+			next();
+		} );
 	} else {
 		next();
 	}
