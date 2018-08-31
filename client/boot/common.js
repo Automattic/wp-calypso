@@ -15,6 +15,7 @@ import url from 'url';
  */
 import accessibleFocus from 'lib/accessible-focus';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
+import { setLangRevisions } from 'lib/i18n-utils';
 import config from 'config';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { hasTouch } from 'lib/touch-detect';
@@ -155,6 +156,10 @@ const unsavedFormsMiddleware = () => {
 
 export const locales = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso locales.' );
+
+	if ( window.langRevisions ) {
+		setLangRevisions( window.langRevisions );
+	}
 
 	if ( window.i18nLocaleStrings ) {
 		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
