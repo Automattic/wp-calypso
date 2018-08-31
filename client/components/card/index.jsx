@@ -8,6 +8,8 @@ import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import PropTypes from 'prop-types';
 
+import './style.scss';
+
 const getClassName = ( { className, compact, displayAsLink, highlight, href, onClick } ) =>
 	classNames(
 		'card',
