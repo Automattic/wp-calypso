@@ -248,16 +248,11 @@ export class PlanFeaturesHeader extends Component {
 		if (
 			! showPlanCreditsApplied ||
 			! availableForPurchase ||
-			planMatches( planType, { type: TYPE_FREE } )
+			planMatches( planType, { type: TYPE_FREE } ) ||
+			planType === currentSitePlan.productSlug ||
+			! discountPrice ||
+			discountPrice >= rawPrice
 		) {
-			return null;
-		}
-
-		if ( planType === currentSitePlan.productSlug ) {
-			return null;
-		}
-
-		if ( ! discountPrice || discountPrice >= rawPrice ) {
 			return null;
 		}
 
