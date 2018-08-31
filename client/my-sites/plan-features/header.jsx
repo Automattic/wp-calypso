@@ -261,7 +261,6 @@ export class PlanFeaturesHeader extends Component {
 			return null;
 		}
 
-		// Note: Don't make this translatable because it's only visible to English-language users
 		return (
 			<span className="plan-features__header-credit-label">{ translate( 'Credit applied' ) }</span>
 		);
