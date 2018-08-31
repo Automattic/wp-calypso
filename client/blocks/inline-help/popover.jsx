@@ -56,14 +56,8 @@ class InlineHelpPopover extends Component {
 
 	state = {
 		showSecondaryView: false,
-		shouldShowChecklist: false,
 		activeSecondaryView: '',
 	};
-
-	componentDidMount() {
-		this.shouldShowChecklist();
-		this.shouldShowChecklistNotification();
-	}
 
 	openResultView = event => {
 		event.preventDefault();
@@ -142,7 +136,6 @@ class InlineHelpPopover extends Component {
 
 	shouldShowChecklist = () => {
 		const { sectionName } = this.props;
-		const totalTasks = tasks.length;
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
 		const disallowedSections = [
@@ -156,27 +149,16 @@ class InlineHelpPopover extends Component {
 		];
 
 		if (
-			totalTasks &&
 			! isAtomicSite &&
 			! isJetpackSite &&
 			! ( disallowedSections.indexOf( sectionName ) > -1 )
 		) {
-			this.setState( { shouldShowChecklist: true } );
-		}
-	};
-
-	shouldShowChecklistNotification = () => {
-		const { nextChecklistTask } = this.props;
-		const task = this.getTask();
-
-		if ( task && nextChecklistTask !== task.id ) {
-			this.props.setChecklistStatus( true );
+			return true;
 		}
 	};
 
 	renderChecklistProgress = () => {
 		const { taskStatuses, siteSuffix, translate, showChecklistNotification, siteId } = this.props;
-		const { shouldShowChecklist } = this.state;
 		const inlineHelpButtonClasses = {
 			'checklist-count-notification': showChecklistNotification,
 			'inline-help__checklist-count': true,
@@ -189,7 +171,7 @@ class InlineHelpPopover extends Component {
 			0
 		);
 
-		if ( ! shouldShowChecklist ) {
+		if ( ! this.shouldShowChecklist() ) {
 			return false;
 		}
 
