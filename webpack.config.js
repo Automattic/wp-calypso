@@ -107,13 +107,17 @@ const wordpressExternals = ( context, request, callback ) =>
  * @see {@link https://webpack.js.org/configuration/configuration-types/#exporting-a-function}
  *
  * @param {object}  env                              additional config options
+ * @param {string}  env.cssModules                   whether to use CSS modules
  * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
- * @param {object}  argv                             given by webpack?
+ * @param {object}  argv                             Describes the options passed to webpack
  *
  * @return {object}                                  webpack config
  */
-// eslint-disable-next-line no-unused-vars
-function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {}, argv ) {
+function getWebpackConfig(
+	{ cssFilename, cssModules = false, externalizeWordPressPackages = false } = {},
+	// eslint-disable-next-line no-unused-vars
+	argv
+) {
 	cssFilename =
 		cssFilename ||
 		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
@@ -185,7 +189,15 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					test: /\.(sc|sa|c)ss$/,
 					use: [
 						MiniCssExtractPluginWithRTL.loader,
-						'css-loader',
+						{
+							loader: 'css-loader',
+							options: {
+								modules: cssModules,
+								localIdentName: isDevelopment
+									? '[name]__[local]___[hash:base64:5]'
+									: '[hash:base64:5]',
+							},
+						},
 						{
 							loader: 'postcss-loader',
 							options: {
