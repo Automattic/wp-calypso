@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, get } from 'lodash';
+import { identity, get, reduce, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -25,8 +25,10 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 import { tasks } from 'my-sites/checklist/onboardingChecklist';
-import { getSelectedSite, getSectionName } from 'state/ui/selectors';
-import { getChecklistStatus } from 'state/checklist/actions';
+import { getSelectedSite, getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
+import { getChecklistStatus, setChecklistStatus, getChecklistTask } from 'state/checklist/actions';
+import getSiteChecklist from 'state/selectors/get-site-checklist';
 
 /**
  * Module variables
@@ -46,6 +48,9 @@ class InlineHelp extends Component {
 		translate: PropTypes.func,
 		sectionName: PropTypes.string,
 		showChecklistNotification: PropTypes.bool,
+		setChecklistStatus: PropTypes.func,
+		nextChecklistTask: PropTypes.string,
+		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -58,10 +63,10 @@ class InlineHelp extends Component {
 	};
 
 	componentDidMount() {
-		this.shouldShowChecklist();
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
+		this.shouldShowChecklistNotification();
 	}
 
 	componentWillUnmount() {
@@ -96,9 +101,16 @@ class InlineHelp extends Component {
 		}
 	};
 
+	getTask = () => {
+		const task = find(
+			tasks,
+			( { id, completed } ) => ! completed && ! get( this.props.taskStatuses, [ id, 'completed' ] )
+		);
+		return task;
+	};
+
 	shouldShowChecklist = () => {
 		const { sectionName } = this.props;
-		const totalTasks = tasks.length;
 		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
 		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
 		const disallowedSections = [
@@ -112,12 +124,32 @@ class InlineHelp extends Component {
 		];
 
 		if (
-			totalTasks &&
 			! isAtomicSite &&
 			! isJetpackSite &&
 			! ( disallowedSections.indexOf( sectionName ) > -1 )
 		) {
-			this.setState( { shouldShowChecklist: true } );
+			return true;
+		}
+	};
+
+	shouldShowChecklistNotification = () => {
+		const { taskStatuses, nextChecklistTask } = this.props;
+		const task = this.getTask();
+		const totalTasks = tasks.length;
+		const numComplete = reduce(
+			tasks,
+			( count, { id, completed: taskComplete } ) =>
+				taskComplete || get( taskStatuses, [ id, 'completed' ] ) ? count + 1 : count,
+			0
+		);
+
+		if (
+			totalTasks &&
+			numComplete !== totalTasks &&
+			task &&
+			( nextChecklistTask === '' || nextChecklistTask !== task.id )
+		) {
+			this.props.setChecklistStatus( true );
 		}
 	};
 
@@ -165,12 +197,13 @@ class InlineHelp extends Component {
 	}
 
 	render() {
-		const { translate, showChecklistNotification } = this.props;
-		const { showInlineHelp, showDialog, videoLink, dialogType, shouldShowChecklist } = this.state;
+		const { translate, showChecklistNotification, siteId } = this.props;
+
+		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': showInlineHelp,
-			'has-notification': shouldShowChecklist && showChecklistNotification,
+			'has-notification': this.shouldShowChecklist() && showChecklistNotification,
 		};
 
 		/* @TODO: This class is not valid and this tricks the linter
@@ -182,6 +215,7 @@ class InlineHelp extends Component {
 
 		return (
 			<div className="inline-help">
+				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<Button
 					className={ classNames( inlineHelpButtonClasses ) }
 					onClick={ this.handleHelpButtonClicked }
@@ -232,15 +266,25 @@ class InlineHelp extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
+function mapStateToProps( state ) {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		siteId,
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 		selectedSite: getSelectedSite( state ),
 		sectionName: getSectionName( state ),
 		showChecklistNotification: getChecklistStatus( state ),
-	} ),
+		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+		nextChecklistTask: getChecklistTask( state ),
+	};
+}
+
+export default connect(
+	mapStateToProps,
 	{
 		recordTracksEvent,
+		setChecklistStatus,
 	}
 )( localize( InlineHelp ) );
