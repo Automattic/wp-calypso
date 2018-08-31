@@ -461,3 +461,51 @@ describe( 'PlanFeaturesHeader.render()', () => {
 		} );
 	} );
 } );
+
+describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
+	const baseProps = {
+		showPlanCreditsApplied: true,
+		availableForPurchase: true,
+		planType: PLAN_PREMIUM,
+		currentSitePlan: { productSlug: PLAN_PERSONAL },
+		rawPrice: 100,
+		discountPrice: 80,
+		translate: identity,
+	};
+
+	test( 'Should display credit label for discounted higher-tier plans that are available for purchase', () => {
+		const instance = new PlanFeaturesHeader( { ...baseProps } );
+		const wrapper = shallow( <span>{ instance.renderCreditLabel() }</span> );
+		expect( wrapper.find( '.plan-features__header-credit-label' ).length ).toBe( 1 );
+	} );
+
+	test( 'Should not display credit label when plan is not available for purchase', () => {
+		const instance = new PlanFeaturesHeader( { ...baseProps, availableForPurchase: false } );
+		expect( instance.renderCreditLabel() ).toBe( null );
+	} );
+
+	test( 'Should not display credit label when showPlanCreditsApplied is false', () => {
+		const instance = new PlanFeaturesHeader( { ...baseProps, showPlanCreditsApplied: false } );
+		expect( instance.renderCreditLabel() ).toBe( null );
+	} );
+
+	test( 'Should not display credit label when rendered plan is the same as current plan', () => {
+		const instance = new PlanFeaturesHeader( { ...baseProps, planType: PLAN_PERSONAL } );
+		expect( instance.renderCreditLabel() ).toBe( null );
+	} );
+
+	test( 'Should not display credit label when there is no discount price', () => {
+		const instance = new PlanFeaturesHeader( { ...baseProps, discountPrice: 0 } );
+		expect( instance.renderCreditLabel() ).toBe( null );
+	} );
+
+	test( 'Should not display credit label when discount price is equal to rawPrice', () => {
+		const instance = new PlanFeaturesHeader( { ...baseProps, discountPrice: 100 } );
+		expect( instance.renderCreditLabel() ).toBe( null );
+	} );
+
+	test( 'Should not display credit label when discount price is higher than rawPrice', () => {
+		const instance = new PlanFeaturesHeader( { ...baseProps, discountPrice: 101 } );
+		expect( instance.renderCreditLabel() ).toBe( null );
+	} );
+} );

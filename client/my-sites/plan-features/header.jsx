@@ -224,12 +224,46 @@ export class PlanFeaturesHeader extends Component {
 						isInSignup={ isInSignup }
 						discounted
 					/>
+					{ this.renderCreditLabel() }
 				</span>
 			);
 		}
 
 		return (
 			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } isInSignup={ isInSignup } />
+		);
+	}
+
+	renderCreditLabel() {
+		const {
+			availableForPurchase,
+			currentSitePlan,
+			discountPrice,
+			planType,
+			rawPrice,
+			showPlanCreditsApplied,
+			translate,
+		} = this.props;
+
+		if (
+			! showPlanCreditsApplied ||
+			! availableForPurchase ||
+			planMatches( planType, { type: TYPE_FREE } )
+		) {
+			return null;
+		}
+
+		if ( planType === currentSitePlan.productSlug ) {
+			return null;
+		}
+
+		if ( ! discountPrice || discountPrice >= rawPrice ) {
+			return null;
+		}
+
+		// Note: Don't make this translatable because it's only visible to English-language users
+		return (
+			<span className="plan-features__header-credit-label">{ translate( 'Credit applied' ) }</span>
 		);
 	}
 
@@ -285,6 +319,7 @@ PlanFeaturesHeader.propTypes = {
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
 	relatedMonthlyPlan: PropTypes.object,
+	showPlanCreditsApplied: PropTypes.bool,
 	siteSlug: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
@@ -308,6 +343,7 @@ PlanFeaturesHeader.defaultProps = {
 	newPlan: false,
 	onClick: noop,
 	popular: false,
+	showPlanCreditsApplied: false,
 	siteSlug: '',
 };
 

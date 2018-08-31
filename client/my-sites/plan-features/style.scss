@@ -242,6 +242,20 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-price-group {
 	display: flex;
 	flex-flow: row wrap;
+	align-items: center;
+}
+
+.plan-features__header-credit-label {
+	font-size: 11px;
+	line-height: 20px;
+	height: 20px;
+	border-radius: 10px;
+	color: #fff;
+	background: $alert-green;
+	font-weight: normal;
+	vertical-align: middle;
+	padding: 0 8px;
+	margin-left: 8px;
 }
 
 .plan-features__header-timeframe {
