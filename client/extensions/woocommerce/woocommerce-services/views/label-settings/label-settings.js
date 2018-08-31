@@ -201,10 +201,14 @@ class ShippingLabels extends Component {
 
 			let summary;
 
-			if ( selectedPaymentMethod ) {
-				const { card_type: selectedType, card_digits: selectedDigits } = find( paymentMethods, {
+			const method =
+				selectedPaymentMethod &&
+				find( paymentMethods, {
 					payment_method_id: selectedPaymentMethod,
 				} );
+
+			if ( method ) {
+				const { card_type: selectedType, card_digits: selectedDigits } = method;
 
 				summary = translate(
 					"We'll charge the credit card on your " +

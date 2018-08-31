@@ -4,30 +4,52 @@
  * External dependencies
  */
 
+import { isEmpty } from 'lodash';
+import impureLodash from 'lib/impure-lodash';
+const { uniqueId } = impureLodash;
+
 /**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_CLASS_ADD,
-	WOOCOMMERCE_SHIPPING_CLASS_DELETE,
+	WOOCOMMERCE_SHIPPING_CLASS_REMOVE,
 	WOOCOMMERCE_SHIPPING_CLASS_EDIT,
-	WOOCOMMERCE_SHIPPING_CLASS_UPDATE,
 	WOOCOMMERCE_SHIPPING_CLASS_CLOSE,
-	WOOCOMMERCE_SHIPPING_CLASS_DELETED,
-	WOOCOMMERCE_SHIPPING_CLASS_UPDATED,
 	WOOCOMMERCE_SHIPPING_CLASS_CHANGE,
-	WOOCOMMERCE_SHIPPING_CLASS_CREATE,
+	WOOCOMMERCE_SHIPPING_CLASS_SAVE,
+	WOOCOMMERCE_SHIPPING_CLASS_UPDATED,
 	WOOCOMMERCE_SHIPPING_CLASS_CREATED,
+	WOOCOMMERCE_SHIPPING_CLASS_DELETED,
 } from 'woocommerce/state/action-types';
 
 export const initialState = {
 	editing: false,
-	classId: null,
+	editingClass: null,
 	changes: {},
-	saving: [],
-	creating: [],
-	deleting: [],
+	created: [],
+	deleted: [],
+	updates: [],
+};
+
+const updateShippingClass = state => {
+	const { updates, editingClass: id, changes } = state;
+
+	if ( isEmpty( changes ) ) {
+		return {
+			...state,
+			editing: false,
+			editingClass: null,
+		};
+	}
+
+	return {
+		...state,
+		editing: false,
+		changes: {},
+		updates: [ ...updates, { id, ...changes } ],
+	};
 };
 
 const reducer = {};
@@ -36,7 +58,7 @@ reducer[ WOOCOMMERCE_SHIPPING_CLASS_ADD ] = state => {
 	return {
 		...state,
 		editing: true,
-		classId: null,
+		editingClass: null,
 		changes: {},
 	};
 };
@@ -44,7 +66,7 @@ reducer[ WOOCOMMERCE_SHIPPING_CLASS_ADD ] = state => {
 reducer[ WOOCOMMERCE_SHIPPING_CLASS_EDIT ] = ( state, { classId } ) => {
 	return {
 		...state,
-		classId,
+		editingClass: classId,
 		editing: true,
 		changes: {},
 	};
@@ -54,7 +76,7 @@ reducer[ WOOCOMMERCE_SHIPPING_CLASS_CLOSE ] = state => {
 	return {
 		...state,
 		editing: false,
-		classId: null,
+		editingClass: null,
 		changes: {},
 	};
 };
@@ -69,69 +91,53 @@ reducer[ WOOCOMMERCE_SHIPPING_CLASS_CHANGE ] = ( state, { field, value } ) => {
 	};
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_CLASS_DELETE ] = state => {
-	return {
+reducer[ WOOCOMMERCE_SHIPPING_CLASS_SAVE ] = state => {
+	const { editingClass: id } = state;
+
+	// If the class already exists in some form, just use the standard reducer
+	if ( id ) {
+		return updateShippingClass( state );
+	}
+
+	const temporaryId = 'temp-' + uniqueId();
+
+	return updateShippingClass( {
 		...state,
-		editing: false,
-		classId: null,
-		changes: {},
-	};
+		created: [ ...state.created, temporaryId ],
+		editingClass: temporaryId,
+	} );
 };
 
-reducer[ WOOCOMMERCE_SHIPPING_CLASS_UPDATE ] = ( state, { id } ) => {
+reducer[ WOOCOMMERCE_SHIPPING_CLASS_REMOVE ] = ( state, { classId } ) => {
 	return {
 		...state,
+		deleted: [ ...state.deleted, classId ],
 		editing: false,
-		classId: null,
 		changes: {},
-		saving: [ ...state.saving, id ],
 	};
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_CLASS_UPDATED ] = ( state, { data: { id } } ) => {
 	return {
 		...state,
-		saving: state.saving.filter( item => item !== id ),
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_CLASS_CREATE ] = ( state, { temporaryId, data } ) => {
-	return {
-		...state,
-		editing: false,
-		changes: {},
-		saving: [ ...state.saving, temporaryId ],
-		creating: [
-			...state.creating,
-			{
-				...data,
-				id: temporaryId,
-			},
-		],
+		updates: state.updates.filter( changeset => changeset.id !== id ),
 	};
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_CLASS_CREATED ] = ( state, { temporaryId } ) => {
 	return {
 		...state,
-		saving: state.saving.filter( item => item !== temporaryId ),
-		creating: state.creating.filter( item => item.id !== temporaryId ),
-	};
-};
-
-reducer[ WOOCOMMERCE_SHIPPING_CLASS_DELETE ] = ( state, { classId } ) => {
-	return {
-		...state,
-		deleting: [ ...state.deleting, classId ],
-		editing: false,
-		changes: {},
+		updates: state.updates.filter( changeset => temporaryId !== changeset.id ),
+		created: state.created.filter( classId => temporaryId !== classId ),
 	};
 };
 
 reducer[ WOOCOMMERCE_SHIPPING_CLASS_DELETED ] = ( state, { classId } ) => {
 	return {
 		...state,
-		deleting: state.deleting.filter( item => item !== classId ),
+		deleted: state.deleted.filter( id => id !== classId ),
+		created: state.created.filter( id => id !== classId ),
+		updates: state.updates.filter( changeset => changeset.id !== classId ),
 	};
 };
 

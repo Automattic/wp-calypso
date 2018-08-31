@@ -41,6 +41,7 @@ ShippingHeader.propTypes = {
 	toSave: PropTypes.shape( {
 		units: PropTypes.bool,
 		shipping: PropTypes.bool,
+		classes: PropTypes.bool,
 	} ),
 };
 

@@ -3,144 +3,130 @@
 /**
  * External dependencies
  */
-import { get, merge } from 'lodash';
+import { get, map, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getShippingClassOptions,
-	getShippingClassFromState,
-} from 'woocommerce/state/sites/shipping-classes/selectors';
+import { getShippingClassOptions } from 'woocommerce/state/sites/shipping-classes/selectors';
 
-// const getShippingClassesEdits = ( state, siteId ) => get(
-// 	state,
-// 	[ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'classes', 'editing' ],
-// 	[]
-// );
-//
-// const getShippingClassChanges = ( state, classId, siteId ) => {
-// 	const changes = get(
-// 		state,
-// 		[ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'classes', 'changes' ],
-// 		{}
-// 	);
-//
-// 	return changes[ classId ] || {};
-// };
-//
-// const getShippingClassesSaves = ( state, siteId ) => get(
-// 	state,
-// 	[ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'classes', 'saving' ],
-// 	[]
-// );
-//
-// export const getUiShippingClasses = ( state, siteId = getSelectedSiteId( state ) ) => {
-// 	const standard = getShippingClassOptions( state, siteId );
-//
-// 	const adding = get(
-// 		state,
-// 		[ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'classes', 'adding' ],
-// 		[]
-// 	);
-//
-// 	return [ ...standard, ...adding ];
-// }
-//
-// export const isShippingClassBeingEdited = ( state, classId, siteId = getSelectedSiteId( state ) ) => {
-// 	const edits = getShippingClassesEdits( state, siteId );
-//
-// 	return -1 !== edits.indexOf( classId );
-// }
-//
-// export const isShippingClassBeingSaved = ( state, classId, siteId = getSelectedSiteId( state ) ) => {
-// 	const saves = getShippingClassesSaves( state, siteId );
-//
-// 	return -1 !== saves.indexOf( classId );
-// }
-//
-// export const getShippingClassWithChanges = ( state, classId, siteId = getSelectedSiteId( state ) ) => {
-// 	const shippingClass = getShippingClassFromState( state, classId, siteId ) || {};
-// 	const changes = getShippingClassChanges( state, classId, siteId );
-// 	return merge( {}, shippingClass, changes );
-// }
-//
-// export const getShippingClassField = ( state, classId, field, siteId = getSelectedSiteId( state ) ) => {
-// 	const data = getShippingClassWithChanges( state, classId, siteId );
-//
-// 	return data[ field ];
-// }
+/**
+ * A shortcut that extracts the the shipping classes UI state from the whole state.
+ *
+ * @param  {Object} state   The current Redux state.
+ * @param  {number} siteId  Site ID.
+ * @return {Object}         The local state.
+ */
+export const getUiShippingClassesState = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'classes' ], {} );
+};
 
-const getLocalState = ( state, siteId ) =>
-	get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'classes' ], {} );
-
+/**
+ * Loads the list of shipping classes for the UI, which includes:
+ * 1. All saved shipping classes
+ * 2. All newly created shipping classes
+ * 3. All applied updates
+ * 4. But not deleted classes
+ *
+ * This selector loads the interim state of data, as it is manipulated before being saved.
+ *
+ * @param  {Object} state   The current Redux state.
+ * @param  {number} siteId  Site ID.
+ * @return {Array}          All shipping classes.
+ */
 export const getUiShippingClasses = ( state, siteId = getSelectedSiteId( state ) ) => {
-	const standard = getShippingClassOptions( state, siteId );
+	const localState = getUiShippingClassesState( state, siteId );
 
-	const adding = get(
-		state,
-		[ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'classes', 'creating' ],
-		[]
-	);
+	const deleted = get( localState, 'deleted', [] );
+	const updates = get( localState, 'updates', [] );
+	const created = get( localState, 'created', [] );
 
-	return [ ...standard, ...adding ];
+	// Merge the existing classes and add the basics of newly added ones
+	const merged = [
+		...getShippingClassOptions( state, siteId ),
+
+		// Start with a simple ID, updates will be applied later
+		...map( created, id => ( { id, isNew: true } ) ),
+	];
+
+	// Apply all updates consequentially
+	const withUpdates = merged.map( shippingClass => {
+		updates.forEach( item => {
+			if ( item.id === shippingClass.id ) {
+				shippingClass = {
+					...shippingClass,
+					...item,
+				};
+			}
+		} );
+
+		return shippingClass;
+	} );
+
+	const withoutDeleted = withUpdates.filter( shippingClass => {
+		return -1 === deleted.indexOf( shippingClass.id );
+	} );
+
+	return withoutDeleted;
 };
 
+/**
+ * Prepares all of the data for the shipping class that is being edited, if any.
+ *
+ * @param  {Object} state  The current Redux state.
+ * @param  {number} siteId Site ID.
+ * @return {Array}         A list of all used properties.
+ */
 export const getCurrentlyOpenShippingClass = ( state, siteId ) => {
-	const localState = getLocalState( state, siteId );
+	const { editing, editingClass, changes } = getUiShippingClassesState( state, siteId );
 
-	if ( ! localState.editing ) {
+	if ( ! editing ) {
 		return null;
 	}
 
-	const existingData = localState.classId
-		? getShippingClassFromState( state, localState.classId, siteId )
-		: {
-				name: '',
-				slug: '',
-				description: '',
-		  };
-
-	return merge( {}, existingData, localState.changes );
-};
-
-export const isCurrentlyOpenShippingClassNew = ( state, siteId ) => {
-	const localState = getLocalState( state, siteId );
-
-	return null === localState.classId;
-};
-
-export const getCurrentlyOpenShippingClassSavingArgs = ( state, siteId ) => {
-	const localState = getLocalState( state, siteId );
-	const { classId, changes } = localState;
-
-	if ( null === classId ) {
-		return {
-			isNew: true,
-			data: changes,
-		};
-	}
-
-	if ( 0 === Object.keys( changes ).length ) {
-		return null;
-	}
+	const existingClasses = getUiShippingClasses( state, siteId );
+	const existingData = find( existingClasses, { id: editingClass } ) || {};
 
 	return {
-		isNew: false,
-		id: classId,
-		changes: changes,
+		name: '',
+		slug: '',
+		description: '',
+		...existingData,
+		...changes,
 	};
 };
 
-export const isShippingClassBeingSaved = ( state, classId, siteId ) => {
-	const localState = getLocalState( state, siteId );
-
-	return localState.saving && -1 !== localState.saving.indexOf( classId );
+/**
+ * Checks whether the class that is currently being edited is new.
+ *
+ * @param  {Object} state   The current Redux state.
+ * @param  {number} siteId  Site ID.
+ * @return {boolean}        A flag that indicates whether the class exists or not.
+ */
+export const isCurrentlyOpenShippingClassNew = ( state, siteId ) => {
+	return null === getUiShippingClassesState( state, siteId ).editingClass;
 };
 
-export const isShippingClassBeingDeleted = ( state, classId, siteId ) => {
-	const localState = getLocalState( state, siteId );
+/**
+ * Generates a list of all values, associated with a specific property of a shipping class.
+ *
+ * @param  {Object} state   The current Redux state.
+ * @param  {string} prop    The name of the property to retrieve.
+ * @param  {number} classId The ID of the edited class, used to ignore its value.
+ * @param  {number} siteId  Site ID.
+ * @return {Array}          A list of all used properties.
+ */
+export const getUsedShippingClassProps = ( state, prop, classId, siteId ) => {
+	const props = [];
 
-	return localState.deleting && -1 !== localState.deleting.indexOf( classId );
+	getUiShippingClasses( state, siteId ).forEach( shippingClass => {
+		if ( classId && shippingClass.id === classId ) {
+			return;
+		}
+
+		props.push( shippingClass[ prop ] );
+	} );
+
+	return props;
 };

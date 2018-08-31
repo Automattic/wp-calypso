@@ -13,60 +13,45 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	isShippingClassBeingSaved,
-	isShippingClassBeingDeleted,
-} from 'woocommerce/state/ui/shipping/classes/selectors';
+
 import { editShippingClass } from 'woocommerce/state/ui/shipping/classes/actions';
 import Button from 'components/button';
 
-const ShippingClassEntry = ( {
-	name,
-	slug,
-	description,
-	loaded,
-	saving,
-	deleting,
-	translate,
-	edit,
-} ) => {
+const ShippingClassEntry = ( { name, slug, description, loaded, translate, edit, isNew } ) => {
 	const cssClasses = [ 'shipping__classes-row' ];
 
-	if ( saving || deleting ) {
-		cssClasses.push( 'shipping__classes-row-loading' );
-	} else if ( ! loaded ) {
+	if ( ! loaded ) {
 		cssClasses.push( 'is-placeholder' );
 	}
 
+	// Indicates that the displayed value is not final
 	const placeholderOrText = text => {
+		if ( ! isNew ) {
+			return text;
+		}
+
 		return text && text.length ? (
 			text
 		) : (
-			<span className="shipping__zones-row-placeholder">&nbsp;</span>
+			<span className="shipping__classes-placeholder">&nbsp;</span>
 		);
 	};
 
 	return (
 		<div className={ cssClasses.join( ' ' ) }>
-			<div className="shipping__classes-row-icon">
+			<div className="shipping__classes-cell shipping__classes-icon">
 				<Gridicon icon="tag" size={ 24 } />
 			</div>
-			<div className="shipping__classes-row-class">
-				<p className="shipping__zones-row-location-name">
-					{ saving ? placeholderOrText( name ) : name }
-				</p>
+			<div className="shipping__classes-cell shipping__classes-name">
+				<p>{ name }</p>
 			</div>
-			<div className="shipping__classes-row-slug">
-				<p className="shipping__zones-row-location-name">
-					{ saving ? placeholderOrText( slug ) : slug }
-				</p>
+			<div className="shipping__classes-cell shipping__classes-slug">
+				<p>{ placeholderOrText( slug ) }</p>
 			</div>
-			<div className="shipping__classes-row-description">
-				<p className="shipping__zones-row-method-description">
-					{ saving ? placeholderOrText( description ) : description }
-				</p>
+			<div className="shipping__classes-cell shipping__classes-description">
+				<p>{ description }</p>
 			</div>
-			<div className="shipping__classes-row-actions">
+			<div className="shipping__classes-cell shipping__classes-actions">
 				<Button compact onClick={ edit } key="edit">
 					{ translate( 'Edit' ) }
 				</Button>
@@ -80,13 +65,11 @@ ShippingClassEntry.propTypes = {
 	name: PropTypes.string,
 	slug: PropTypes.string,
 	description: PropTypes.string,
+	isNew: PropTypes.bool,
 };
 
 export default connect(
-	( state, { id, siteId } ) => ( {
-		saving: isShippingClassBeingSaved( state, id, siteId ),
-		deleting: isShippingClassBeingDeleted( state, id, siteId ),
-	} ),
+	null,
 	( dispatch, { siteId, id } ) => ( {
 		edit: () => dispatch( editShippingClass( siteId, id ) ),
 	} )

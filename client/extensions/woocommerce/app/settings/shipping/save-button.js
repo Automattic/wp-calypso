@@ -22,6 +22,7 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
+import { createShippingClassesSaveActionList } from 'woocommerce/state/ui/shipping/classes/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import { saveWeightAndDimensionsUnits } from 'woocommerce/state/sites/settings/products/actions';
@@ -33,6 +34,7 @@ class ShippingSettingsSaveButton extends Component {
 		toSave: PropTypes.shape( {
 			units: PropTypes.bool,
 			shipping: PropTypes.bool,
+			classes: PropTypes.bool,
 		} ),
 	};
 
@@ -96,6 +98,26 @@ class ShippingSettingsSaveButton extends Component {
 		);
 	};
 
+	saveShippingClasses = () => {
+		const { translate, site } = this.props;
+
+		const successAction = dispatch => {
+			this.props.onSaveSuccess( 'classes' );
+
+			dispatch(
+				successNotice( translate( 'Shipping classes saved' ), {
+					duration: 4000,
+				} )
+			);
+		};
+
+		const failureAction = errorNotice(
+			translate( 'There was a problem saving shipping classes. Please try again.' )
+		);
+
+		this.props.createShippingClassesSaveActionList( site.ID, successAction, failureAction );
+	};
+
 	save = () => {
 		const { toSave } = this.props;
 
@@ -105,6 +127,10 @@ class ShippingSettingsSaveButton extends Component {
 
 		if ( toSave.units ) {
 			this.saveUnits();
+		}
+
+		if ( toSave.classes ) {
+			this.saveShippingClasses();
 		}
 	};
 
@@ -156,6 +182,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			createWcsShippingSaveActionList,
 			saveWeightAndDimensionsUnits,
+			createShippingClassesSaveActionList,
 		},
 		dispatch
 	);

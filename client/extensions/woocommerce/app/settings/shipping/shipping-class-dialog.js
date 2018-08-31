@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { errorNotice } from 'state/notices/actions';
 import Dialog from 'components/dialog';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -21,15 +22,14 @@ import FormTextInput from 'components/forms/form-text-input';
 import {
 	getCurrentlyOpenShippingClass,
 	isCurrentlyOpenShippingClassNew,
-	getCurrentlyOpenShippingClassSavingArgs,
+	getUsedShippingClassProps,
 } from 'woocommerce/state/ui/shipping/classes/selectors';
 import {
 	closeShippingClass,
-	updateShippingClassField,
+	updateShippingClassSetting,
 	saveCurrentlyOpenShippingClass,
+	removeShippingClass,
 } from 'woocommerce/state/ui/shipping/classes/actions';
-
-import { deleteShippingClass } from 'woocommerce/state/sites/shipping-classes/actions';
 
 class ShippingClassDialog extends Component {
 	render() {
@@ -79,7 +79,9 @@ class ShippingClassDialog extends Component {
 		return (
 			<Dialog { ...dialogProps }>
 				<div className="shipping__class-dialog-header">
-					{ isNew ? translate( 'Add shipping class' ) : translate( 'Edit shipping class' ) }
+					<h3 className="shipping__class-dialog-heading">
+						{ isNew ? translate( 'Add shipping class' ) : translate( 'Edit shipping class' ) }
+					</h3>
 				</div>
 
 				<FormFieldSet>
@@ -106,9 +108,9 @@ class ShippingClassDialog extends Component {
 	}
 
 	onChange = ( { target: { name, value } } ) => {
-		const { siteId, updateField } = this.props;
+		const { siteId, updateFieldValue } = this.props;
 
-		updateField( siteId, name, value );
+		updateFieldValue( siteId, name, value );
 	};
 
 	onCancel = () => {
@@ -128,13 +130,33 @@ class ShippingClassDialog extends Component {
 	};
 
 	onSave = () => {
-		const { savingArgs, siteId, save } = this.props;
+		const {
+			occupiedNames,
+			occupiedSlugs,
+			siteId,
+			translate,
+			data: { name, slug },
+			save,
+		} = this.props;
 
-		if ( savingArgs ) {
-			save( siteId, savingArgs );
-		} else {
-			this.onCancel();
+		// Check if the name is free
+		if ( -1 !== occupiedNames.indexOf( name ) ) {
+			return this.props.errorNotice(
+				translate( 'The name "%(name)s" is already occupied.', {
+					args: { name },
+				} )
+			);
 		}
+
+		if ( -1 !== occupiedSlugs.indexOf( slug ) ) {
+			return this.props.errorNotice(
+				translate( 'The slug "%(slug)s" is already occupied.', {
+					args: { slug },
+				} )
+			);
+		}
+
+		save( siteId );
 	};
 }
 
@@ -151,16 +173,18 @@ export default connect(
 			siteId,
 			data,
 			isNew: isCurrentlyOpenShippingClassNew( state, siteId ),
-			savingArgs: getCurrentlyOpenShippingClassSavingArgs( state, siteId ),
+			occupiedNames: getUsedShippingClassProps( state, 'name', data.id, siteId ),
+			occupiedSlugs: getUsedShippingClassProps( state, 'slug', data.id, siteId ),
 		};
 	},
 	dispatch =>
 		bindActionCreators(
 			{
 				close: closeShippingClass,
-				updateField: updateShippingClassField,
-				deleteClass: deleteShippingClass,
+				updateFieldValue: updateShippingClassSetting,
+				deleteClass: removeShippingClass,
 				save: saveCurrentlyOpenShippingClass,
+				errorNotice,
 			},
 			dispatch
 		)

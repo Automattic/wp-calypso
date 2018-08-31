@@ -7,7 +7,6 @@ import { createReducer } from 'state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
-	WOOCOMMERCE_SHIPPING_CLASS_DELETE,
 	WOOCOMMERCE_SHIPPING_CLASS_DELETED,
 	WOOCOMMERCE_SHIPPING_CLASS_UPDATED,
 	WOOCOMMERCE_SHIPPING_CLASS_CREATED,
@@ -22,12 +21,6 @@ reducers[ WOOCOMMERCE_SHIPPING_CLASSES_REQUEST ] = () => {
 
 reducers[ WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS ] = ( state, { data } ) => {
 	return data;
-};
-
-reducers[ WOOCOMMERCE_SHIPPING_CLASS_DELETE ] = ( state, { classId } ) => {
-	return state.map( shippingClass => {
-		return shippingClass.id === classId ? { ...shippingClass, deleting: true } : shippingClass;
-	} );
 };
 
 reducers[ WOOCOMMERCE_SHIPPING_CLASS_UPDATED ] = ( state, { data } ) => {
