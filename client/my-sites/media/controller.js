@@ -24,10 +24,12 @@ export default {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Media', { textOnly: true } ) ) );
 
+		const mediaId = context.params.mediaId ? parseInt( context.params.mediaId ) : null;
 		// Render
 		context.primary = React.createElement( MediaComponent, {
 			filter: context.params.filter,
 			search: context.query.s,
+			mediaId,
 		} );
 		next();
 	},
