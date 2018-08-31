@@ -11,7 +11,6 @@ import { get, isEmpty, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
@@ -43,7 +42,6 @@ export const ShippingRates = ( {
 } ) => {
 	const packageNames = getPackageDescriptions( selectedPackages, allPackages, true );
 	const hasSinglePackage = 1 === Object.keys( selectedPackages ).length;
-	const hasMultiplePackages = 1 < Object.keys( selectedPackages ).length;
 
 	const getTitle = ( pckg, pckgId ) => {
 		if ( hasSinglePackage ) {
@@ -56,8 +54,6 @@ export const ShippingRates = ( {
 		const selectedRate = selectedRates[ pckgId ] || '';
 		const packageRates = get( availableRates, [ pckgId, 'rates' ], [] );
 		const valuesMap = { '': translate( 'Select one…' ) };
-		const serverErrors = errors.server && errors.server[ pckgId ];
-		const formError = errors.form && errors.form[ pckgId ];
 
 		packageRates.forEach( rateObject => {
 			valuesMap[ rateObject.service_id ] =
@@ -67,25 +63,15 @@ export const ShippingRates = ( {
 		const onRateUpdate = value => updateRate( pckgId, value );
 		return (
 			<div key={ pckgId } className="rates-step__package-container">
-				{ serverErrors &&
-					isEmpty( packageRates ) &&
-					hasMultiplePackages && (
-						<p className="rates-step__package-heading">{ packageNames[ pckgId ] }</p>
-					) }
-				{ ! isEmpty( packageRates ) && (
-					<Dropdown
-						id={ id + '_' + pckgId }
-						valuesMap={ valuesMap }
-						title={ getTitle( pckg, pckgId ) }
-						value={ selectedRate }
-						updateValue={ onRateUpdate }
-						error={ formError }
-					/>
-				) }
-				{ serverErrors &&
-					serverErrors.map( ( serverError, index ) => {
-						return <FieldError type="server-error" key={ index } text={ serverError } />;
-					} ) }
+				<Dropdown
+					id={ id + '_' + pckgId }
+					valuesMap={ valuesMap }
+					title={ getTitle( pckg, pckgId ) }
+					value={ selectedRate }
+					updateValue={ onRateUpdate }
+					disabled={ isEmpty( packageRates ) }
+					error={ errors[ pckgId ] }
+				/>
 			</div>
 		);
 	};

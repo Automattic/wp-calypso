@@ -388,23 +388,23 @@ export const getCustomsErrors = (
 	};
 };
 
-export const getRatesErrors = ( { values: selectedRates, available: allRates } ) => {
-	return {
-		server: mapValues( allRates, rate => {
-			if ( ! rate.errors ) {
-				return;
-			}
-
-			return rate.errors.map(
-				error =>
-					error.userMessage ||
-					error.message ||
-					translate( "We couldn't get a rate for this package, please try again." )
+export const getRatesErrors = ( { values: selectedRates, available: allRates } ) =>
+	mapValues( allRates, ( rate, boxId ) => {
+		if ( ! isEmpty( rate.errors ) ) {
+			return (
+				rate.errors[ 0 ].userMessage ||
+				rate.errors[ 0 ].message ||
+				translate( "We couldn't get a rate for this package, please try again." )
 			);
-		} ),
-		form: mapValues( selectedRates, rate => ( rate ? null : translate( 'Please choose a rate' ) ) ),
-	};
-};
+		}
+
+		if ( selectedRates[ boxId ] ) {
+			return null;
+		} else if ( isEmpty( rate.rates ) ) {
+			return translate( 'No rates available, please try using a different box.' );
+		}
+		return translate( 'Please choose a rate' );
+	} );
 
 const getSidebarErrors = paperSize => {
 	const errors = {};
