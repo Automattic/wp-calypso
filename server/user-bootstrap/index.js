@@ -50,30 +50,33 @@ module.exports = function( authCookieValue, geoCountry, callback ) {
 		req.set( 'User-Agent', 'WordPress.com Calypso' );
 	}
 
-	// start the request
-	req.end( function( err, res ) {
-		let error, key;
+	return new Promise( ( resolve, reject ) => {
+		// start the request
+		req.end( function( err, res ) {
+			let error, key;
 
-		if ( err && ! res ) {
-			return callback( err );
-		}
-
-		const body = res.body;
-		const statusCode = res.status;
-
-		debug( '%o -> %o status code', url, statusCode );
-
-		if ( err ) {
-			error = new Error();
-			error.statusCode = statusCode;
-			for ( key in body ) {
-				error[ key ] = body[ key ];
+			if ( err && ! res ) {
+				return reject( err );
 			}
 
-			return callback( error );
-		}
+			const body = res.body;
+			const statusCode = res.status;
 
-		const user = filterUserObject( body );
-		callback( null, user );
+			debug( '%o -> %o status code', url, statusCode );
+
+			if ( err ) {
+				error = new Error();
+				error.statusCode = statusCode;
+				for ( key in body ) {
+					error[ key ] = body[ key ];
+				}
+
+				return reject( error );
+			}
+
+			const user = filterUserObject( body );
+
+			resolve( user );
+		} );
 	} );
 };

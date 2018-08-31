@@ -318,13 +318,60 @@ function setUpLoggedInRoute( req, res, next ) {
 			res.redirect( redirectUrl );
 			return;
 		}
+
 		start = new Date().getTime();
 
 		debug( 'Issuing API call to fetch user object' );
-		user( req.cookies.wordpress_logged_in, geoCountry, function( error, data ) {
-			let searchParam, errorMessage;
 
-			if ( error ) {
+		user( req.cookies.wordpress_logged_in, geoCountry )
+			.then( data => {
+				let searchParam;
+
+				const end = new Date().getTime() - start;
+
+				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
+				req.context.user = data;
+
+				// Setting user in the state is safe as long as we don't cache it
+				setCurrentUserOnReduxStore( data, req.context.store );
+
+				if ( data.localeSlug ) {
+					req.context.lang = data.localeSlug;
+					req.context.store.dispatch( {
+						type: LOCALE_SET,
+						localeSlug: data.localeSlug,
+						localeVariant: data.localeVariant,
+					} );
+				}
+
+				if ( req.path === '/' && req.query ) {
+					searchParam = req.query.s || req.query.q;
+					if ( searchParam ) {
+						res.redirect(
+							'https://' +
+								req.context.lang +
+								'.search.wordpress.com/?q=' +
+								encodeURIComponent( searchParam )
+						);
+						return;
+					}
+
+					if ( req.query.newuseremail ) {
+						debug( 'Detected legacy email verification action. Redirecting...' );
+						res.redirect( 'https://wordpress.com/verify-email/?' + stringify( req.query ) );
+						return;
+					}
+
+					if ( req.query.action === 'wpcom-invite-users' ) {
+						debug( 'Detected legacy invite acceptance action. Redirecting...' );
+						res.redirect( 'https://wordpress.com/accept-invite/?' + stringify( req.query ) );
+						return;
+					}
+				}
+
+				next();
+			} )
+			.catch( error => {
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
 					res.clearCookie( 'wordpress_logged_in', {
@@ -334,6 +381,8 @@ function setUpLoggedInRoute( req, res, next ) {
 					} );
 					res.redirect( redirectUrl );
 				} else {
+					let errorMessage;
+
 					if ( error.error ) {
 						errorMessage = error.error + ' ' + error.message;
 					} else {
@@ -346,52 +395,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				}
 
 				return;
-			}
-
-			const end = new Date().getTime() - start;
-
-			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
-			req.context.user = data;
-
-			// Setting user in the state is safe as long as we don't cache it
-			setCurrentUserOnReduxStore( data, req.context.store );
-
-			if ( data.localeSlug ) {
-				req.context.lang = data.localeSlug;
-				req.context.store.dispatch( {
-					type: LOCALE_SET,
-					localeSlug: data.localeSlug,
-					localeVariant: data.localeVariant,
-				} );
-			}
-
-			if ( req.path === '/' && req.query ) {
-				searchParam = req.query.s || req.query.q;
-				if ( searchParam ) {
-					res.redirect(
-						'https://' +
-							req.context.lang +
-							'.search.wordpress.com/?q=' +
-							encodeURIComponent( searchParam )
-					);
-					return;
-				}
-
-				if ( req.query.newuseremail ) {
-					debug( 'Detected legacy email verification action. Redirecting...' );
-					res.redirect( 'https://wordpress.com/verify-email/?' + stringify( req.query ) );
-					return;
-				}
-
-				if ( req.query.action === 'wpcom-invite-users' ) {
-					debug( 'Detected legacy invite acceptance action. Redirecting...' );
-					res.redirect( 'https://wordpress.com/accept-invite/?' + stringify( req.query ) );
-					return;
-				}
-			}
-
-			next();
-		} );
+			} );
 	} else {
 		next();
 	}
