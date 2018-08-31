@@ -17,7 +17,7 @@ import {
 	ACCOUNT_RECOVERY_RESET_SET_METHOD,
 	ACCOUNT_RECOVERY_RESET_SET_VALIDATION_KEY,
 } from 'state/action-types';
-import 'state/data-layer/wpcom/account-recovery/lookup';
+import 'state/data-layer/wpcom/account-recovery';
 
 export const fetchResetOptionsSuccess = items => ( {
 	type: ACCOUNT_RECOVERY_RESET_OPTIONS_RECEIVE,

@@ -11,7 +11,6 @@ import {
 	fetchResetOptionsError,
 	updatePasswordResetUserData,
 } from 'state/account-recovery/reset/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
 
 /*
  * Uses `substring()` to force string values. Anything
@@ -49,8 +48,8 @@ export const onSuccess = ( action, data ) => [
 	updatePasswordResetUserData( action.userData ),
 ];
 
-registerHandlers( 'state/data-layer/wpcom/account-recovery/lookup', {
+export default {
 	[ ACCOUNT_RECOVERY_RESET_OPTIONS_REQUEST ]: [
 		dispatchRequestEx( { fetch, onSuccess, onError, fromApi } ),
 	],
-} );
+};

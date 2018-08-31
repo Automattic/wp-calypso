@@ -5,7 +5,6 @@
  */
 
 import { mergeHandlers } from 'state/action-watchers/utils';
-import accountRecovery from './account-recovery';
 import activePromotions from './active-promotions';
 import activityLog from './activity-log';
 import checklist from './checklist';
@@ -32,7 +31,6 @@ import videos from './videos';
 import wordads from './wordads';
 
 export const handlers = mergeHandlers(
-	accountRecovery,
 	activePromotions,
 	activityLog,
 	checklist,
