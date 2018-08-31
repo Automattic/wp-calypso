@@ -4,8 +4,6 @@
  * External dependencies.
  */
 import { translate } from 'i18n-calypso';
-import impureLodash from 'lib/impure-lodash';
-const { uniqueId } = impureLodash;
 
 /**
  * Internal dependencies
@@ -28,7 +26,7 @@ export const fetchShippingClassesSuccess = ( siteId, data ) => {
 
 export const fetchShippingClassesFailure = ( action, error, dispatch ) => {
 	const { siteId } = action;
-	const noticeId = uniqueId();
+	const noticeId = 'query-shipping-classes-retry';
 
 	const onRetryClick = e => {
 		e.preventDefault();
