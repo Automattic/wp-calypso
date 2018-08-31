@@ -436,7 +436,17 @@ function setUpLoggedInRoute( req, res, next ) {
 			next();
 		} );
 	} else {
-		next();
+		getLangRevisions()
+			.then( langRevisions => {
+				req.context.langRevisions = langRevisions;
+
+				next();
+			} )
+			.catch( error => {
+				console.error( 'Failed to fetch the language revision files.', error );
+
+				next( error );
+			} );
 	}
 }
 
