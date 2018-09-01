@@ -244,7 +244,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					'react-virtualized': 'react-virtualized/dist/commonjs',
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
-					store$: 'lib/legacy-store',
+					store: 'store/dist/store.modern',
 				},
 				getAliasesForExtensions()
 			),
