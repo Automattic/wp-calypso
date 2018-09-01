@@ -28,6 +28,24 @@ export default function() {
 			clientRender
 		);
 
+		page(
+			'/media/:domain/:mediaId/',
+			siteSelection,
+			navigation,
+			mediaController.singleMedia,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/media/edit/:domain/:mediaId/',
+			siteSelection,
+			navigation,
+			mediaController.editSingleMedia,
+			makeLayout,
+			clientRender
+		);
+
 		page( '/media/*', ( { path } ) => {
 			const siteFragment = getSiteFragment( path );
 

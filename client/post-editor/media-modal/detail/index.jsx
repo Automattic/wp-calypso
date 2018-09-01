@@ -29,6 +29,7 @@ class EditorMediaModalDetailBase extends React.Component {
 		onReturnToList: PropTypes.func,
 		onEdit: PropTypes.func,
 		onRestore: PropTypes.func,
+		backText: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -71,13 +72,13 @@ class EditorMediaModalDetailBase extends React.Component {
 
 		const item = items[ selectedIndex ];
 		const mimePrefix = getMimePrefix( item );
+		const backText = this.props.backText
+			? this.props.backText
+			: this.props.translate( 'Media Library' );
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake
-					onClick={ onReturnToList }
-					backText={ this.props.translate( 'Media Library' ) }
-				/>
+				<HeaderCake onClick={ onReturnToList } backText={ backText } />
 				<DetailItem
 					site={ site }
 					item={ item }

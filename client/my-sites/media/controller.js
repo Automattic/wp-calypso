@@ -11,6 +11,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import MediaComponent from 'my-sites/media/main';
+import SingleMediaComponent from 'my-sites/media/single';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { getSiteFragment } from 'lib/route';
 
@@ -29,6 +30,28 @@ export default {
 			filter: context.params.filter,
 			search: context.query.s,
 		} );
+		next();
+	},
+
+	singleMedia: function( context, next ) {
+		if ( ! getSiteFragment( context.path ) ) {
+			return page.redirect( '/media' );
+		}
+		// Render
+		context.primary = (
+			<SingleMediaComponent mediaId={ parseInt( context.params.mediaId ) } view="single" />
+		);
+		next();
+	},
+
+	editSingleMedia: function( context, next ) {
+		if ( ! getSiteFragment( context.path ) ) {
+			return page.redirect( '/media' );
+		}
+		// Render
+		context.primary = (
+			<SingleMediaComponent mediaId={ parseInt( context.params.mediaId ) } view="edit" />
+		);
 		next();
 	},
 };
