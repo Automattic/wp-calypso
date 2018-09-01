@@ -280,7 +280,7 @@
     "enzyme-adapter-react-16": "1.2.0",
     "enzyme-to-json": "3.3.4",
     "eslines": "1.1.0",
-    "eslint": "4.19.1",
+    "eslint": "5.5.0",
     "eslint-config-prettier": "3.0.1",
     "eslint-config-wpcalypso": "4.0.0",
     "eslint-eslines": "1.0.0",
