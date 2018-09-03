@@ -57,13 +57,3 @@ export const getShippingClassOptions = ( state, siteId = getSelectedSiteId( stat
 
 	return isArray( classes ) ? classes : [];
 };
-
-export const isShippingClassBeingDeleted = (
-	state,
-	classId,
-	siteId = getSelectedSiteId( state )
-) => {
-	const shippingClass = getShippingClassFromState( state, classId, siteId );
-
-	return shippingClass && shippingClass.deleting;
-};

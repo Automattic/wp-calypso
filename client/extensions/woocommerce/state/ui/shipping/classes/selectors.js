@@ -110,6 +110,7 @@ export const isCurrentlyOpenShippingClassNew = ( state, siteId ) => {
 
 /**
  * Generates a list of all values, associated with a specific property of a shipping class.
+ * Used to determine whether a name or a slug is free before a class can be saved.
  *
  * @param  {Object} state   The current Redux state.
  * @param  {string} prop    The name of the property to retrieve.
