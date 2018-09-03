@@ -42,15 +42,10 @@ export class InstallmentsPlanPicker extends React.Component {
 		const installments = parseInt( event.target.value );
 
 		this.setState( {
-			userChangedInstallments: true,
 			installmentsInputValue: installments,
 		} );
 
 		this.props.onChange( installments );
-
-		this.setState( {
-			userChangedInstallments: false,
-		} );
 	};
 
 	render() {
