@@ -11,4 +11,11 @@ import deleteCredentials from './delete-credentials';
 import rewind from './rewind';
 import updateCredentials from './update-credentials';
 
-export default mergeHandlers( activate, deactivate, deleteCredentials, rewind, updateCredentials );
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers(
+	'state/data-layer/wpcom/activity-log/index.js',
+	mergeHandlers( activate, deactivate, deleteCredentials, rewind, updateCredentials )
+);
+
+export default {};

@@ -17,6 +17,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import { SECTION_SET, SELECTED_SITE_SET, JITM_DISMISS } from 'state/action-types';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Poor man's process manager
  * @type {{
@@ -193,16 +195,20 @@ export const receiveJITM = ( { dispatch, getState }, { siteId, site_id, messageP
 export const failedJITM = ( { dispatch }, { siteId, site_id, messagePath } ) =>
 	dispatch( clearJITM( siteId || site_id, messagePath ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	[ SECTION_SET ]: [
 		dispatchRequest( handleRouteChange, receiveJITM, failedJITM, {
 			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
 		} ),
 	],
+
 	[ SELECTED_SITE_SET ]: [
 		dispatchRequest( handleSiteSelection, receiveJITM, failedJITM, {
 			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
 		} ),
 	],
+
 	[ JITM_DISMISS ]: [ dispatchRequest( doDismissJITM, noop, noop, {} ) ],
-};
+} );
+
+export default {};

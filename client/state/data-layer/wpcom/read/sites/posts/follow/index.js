@@ -19,6 +19,8 @@ import { updateConversationFollowStatus } from 'state/reader/conversations/actio
 import { bypassDataLayer } from 'state/data-layer/utils';
 import getReaderConversationFollowStatus from 'state/selectors/get-reader-conversation-follow-status';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestConversationFollow( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {
 		meta: {
@@ -77,7 +79,7 @@ export function receiveConversationFollowError(
 	);
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/sites/posts/follow/index.js', {
 	[ READER_CONVERSATION_FOLLOW ]: [
 		dispatchRequest(
 			requestConversationFollow,
@@ -85,4 +87,6 @@ export default {
 			receiveConversationFollowError
 		),
 	],
-};
+} );
+
+export default {};

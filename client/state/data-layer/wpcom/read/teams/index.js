@@ -7,6 +7,8 @@ import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const handleTeamsRequest = action =>
 	http(
 		{
@@ -28,7 +30,7 @@ export const teamRequestFailure = error => ( {
 	error: true,
 } );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/teams/index.js', {
 	[ READER_TEAMS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: handleTeamsRequest,
@@ -36,4 +38,6 @@ export default {
 			onError: teamRequestFailure,
 		} ),
 	],
-};
+} );
+
+export default {};

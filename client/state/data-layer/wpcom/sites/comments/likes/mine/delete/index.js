@@ -15,6 +15,8 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const unlikeComment = ( { dispatch }, action ) => {
 	dispatch(
 		http(
@@ -51,8 +53,10 @@ export const handleUnlikeFailure = ( { dispatch }, { siteId, postId, commentId }
 	dispatch( errorNotice( translate( 'Could not unlike this comment' ) ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/comments/likes/mine/delete/index.js', {
 	[ COMMENTS_UNLIKE ]: [
 		dispatchRequest( unlikeComment, updateCommentLikes, handleUnlikeFailure ),
 	],
-};
+} );
+
+export default {};

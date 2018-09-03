@@ -16,6 +16,8 @@ import { follow, unfollow, recordFollowError } from 'state/reader/follows/action
 import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestFollow( { dispatch }, action ) {
 	const {
 		payload: { feedUrl },
@@ -62,6 +64,8 @@ export function followError( { dispatch }, action, response ) {
 	dispatch( bypassDataLayer( unfollow( action.payload.feedUrl ) ) );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/following/mine/new/index.js', {
 	[ READER_FOLLOW ]: [ dispatchRequest( requestFollow, receiveFollow, followError ) ],
-};
+} );
+
+export default {};

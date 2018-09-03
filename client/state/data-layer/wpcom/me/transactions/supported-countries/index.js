@@ -12,6 +12,8 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { COUNTRIES_PAYMENTS_FETCH, COUNTRIES_PAYMENTS_UPDATED } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches a request to fetch all available WordPress.com countries
  *
@@ -54,7 +56,7 @@ export const updateCountriesTransactions = ( { dispatch }, action, countries ) =
 export const showCountriesTransactionsLoadingError = ( { dispatch } ) =>
 	dispatch( errorNotice( translate( "We couldn't load the countries list." ) ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/transactions/supported-countries/index.js', {
 	[ COUNTRIES_PAYMENTS_FETCH ]: [
 		dispatchRequest(
 			fetchCountriesTransactions,
@@ -62,4 +64,6 @@ export default {
 			showCountriesTransactionsLoadingError
 		),
 	],
-};
+} );
+
+export default {};

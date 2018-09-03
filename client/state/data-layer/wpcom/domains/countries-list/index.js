@@ -12,6 +12,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { COUNTRIES_DOMAINS_FETCH, COUNTRIES_DOMAINS_UPDATED } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches a request to fetch all available WordPress.com countries
  *
@@ -50,7 +52,7 @@ export const updateCountriesDomains = ( action, countries ) => ( {
 export const showCountriesDomainsLoadingError = () =>
 	errorNotice( translate( "We couldn't load the countries list." ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/domains/countries-list/index.js', {
 	[ COUNTRIES_DOMAINS_FETCH ]: [
 		dispatchRequestEx( {
 			fetch: fetchCountriesDomains,
@@ -58,4 +60,6 @@ export default {
 			onError: showCountriesDomainsLoadingError,
 		} ),
 	],
-};
+} );
+
+export default {};

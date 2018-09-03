@@ -11,6 +11,8 @@ import {
 	deleteUserProfileLinkSuccess,
 } from 'state/profile-links/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches a request to delete a profile link for the current user
  *
@@ -45,7 +47,7 @@ export const handleDeleteSuccess = ( { linkSlug } ) => deleteUserProfileLinkSucc
 export const handleDeleteError = ( { linkSlug }, error ) =>
 	deleteUserProfileLinkError( linkSlug, error );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/delete/index.js', {
 	[ USER_PROFILE_LINKS_DELETE ]: [
 		dispatchRequestEx( {
 			fetch: deleteUserProfileLink,
@@ -53,4 +55,6 @@ export default {
 			onError: handleDeleteError,
 		} ),
 	],
-};
+} );
+
+export default {};

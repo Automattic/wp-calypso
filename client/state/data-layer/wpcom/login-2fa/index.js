@@ -27,6 +27,8 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 import { receivedTwoFactorPushNotificationApproved } from 'state/login/actions.js';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Module constants
  */
@@ -101,7 +103,7 @@ const makePushNotificationRequest = dispatchRequest(
 	receivedTwoFactorPushNotificationError
 );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/login-2fa/index.js', {
 	[ TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START ]: [
 		( store, action ) => {
 			// We need to store to update for `getTwoFactorPushPollInProgress` selector
@@ -109,4 +111,6 @@ export default {
 			return makePushNotificationRequest( store, action );
 		},
 	],
-};
+} );
+
+export default {};

@@ -13,6 +13,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestUnfollow( action ) {
 	return http( {
 		path: `/read/tags/${ action.payload.slug }/mine/delete`,
@@ -56,7 +58,7 @@ export function receiveError( action, error ) {
 	return errorNotice( errorText );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/tags/mine/delete/index.js', {
 	[ READER_UNFOLLOW_TAG_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestUnfollow,
@@ -65,4 +67,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

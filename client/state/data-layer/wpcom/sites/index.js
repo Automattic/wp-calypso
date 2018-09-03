@@ -22,20 +22,27 @@ import simplePayments from './simple-payments';
 import users from './users';
 import statsGoogleMyBusiness from './stats/google-my-business';
 
-export default mergeHandlers(
-	automatedTransfer,
-	blogStickers,
-	commentCounts,
-	comments,
-	commentsTree,
-	config.isEnabled( 'jitms' ) ? jitm : null,
-	media,
-	config.isEnabled( 'memberships' ) ? memberships : null,
-	planTransfer,
-	plugins,
-	postTypes,
-	posts,
-	simplePayments,
-	users,
-	statsGoogleMyBusiness
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers(
+	'state/data-layer/wpcom/sites/index.js',
+	mergeHandlers(
+		automatedTransfer,
+		blogStickers,
+		commentCounts,
+		comments,
+		commentsTree,
+		config.isEnabled( 'jitms' ) ? jitm : null,
+		media,
+		config.isEnabled( 'memberships' ) ? memberships : null,
+		planTransfer,
+		plugins,
+		postTypes,
+		posts,
+		simplePayments,
+		users,
+		statsGoogleMyBusiness
+	)
 );
+
+export default {};

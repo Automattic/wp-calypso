@@ -14,6 +14,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches a request to delete an application password for the current user
  *
@@ -52,7 +54,7 @@ export const handleRemoveError = () =>
 		}
 	);
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/delete/index.js', {
 	[ APPLICATION_PASSWORD_DELETE ]: [
 		dispatchRequestEx( {
 			fetch: removeApplicationPassword,
@@ -60,4 +62,6 @@ export default {
 			onError: handleRemoveError,
 		} ),
 	],
-};
+} );
+
+export default {};

@@ -15,6 +15,8 @@ import { errorNotice } from 'state/notices/actions';
 import { CONCIERGE_INITIAL_REQUEST } from 'state/action-types';
 import fromApi from './from-api';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetchConciergeInitial = action =>
 	http(
 		{
@@ -33,7 +35,7 @@ export const conciergeInitialFetchError = () =>
 
 export const showConciergeInitialFetchError = () => conciergeInitialFetchError();
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/concierge/schedules/initial/index.js', {
 	[ CONCIERGE_INITIAL_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: fetchConciergeInitial,
@@ -42,4 +44,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

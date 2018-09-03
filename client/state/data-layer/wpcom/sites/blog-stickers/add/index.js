@@ -17,6 +17,8 @@ import { removeBlogSticker } from 'state/sites/blog-stickers/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const requestBlogStickerAdd = action =>
 	http(
 		{
@@ -54,7 +56,7 @@ export function fromApi( response ) {
 	return response;
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/blog-stickers/add/index.js', {
 	[ SITES_BLOG_STICKER_ADD ]: [
 		dispatchRequestEx( {
 			fetch: requestBlogStickerAdd,
@@ -63,4 +65,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

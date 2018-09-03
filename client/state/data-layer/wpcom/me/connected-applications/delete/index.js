@@ -14,6 +14,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches a request to delete a connected application for the current user
  *
@@ -58,7 +60,7 @@ export const handleRemoveError = () =>
 		id: 'connected-app-notice-error',
 	} );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/connected-applications/delete/index.js', {
 	[ CONNECTED_APPLICATION_DELETE ]: [
 		dispatchRequestEx( {
 			fetch: removeConnectedApplication,
@@ -66,4 +68,6 @@ export default {
 			onError: handleRemoveError,
 		} ),
 	],
-};
+} );
+
+export default {};

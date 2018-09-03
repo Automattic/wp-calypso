@@ -17,6 +17,8 @@ import {
 } from 'state/action-types';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const request = action =>
 	http(
 		{
@@ -54,7 +56,7 @@ export const success = ( { siteId }, { rewind_state } ) => {
 	}
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/activity-log/delete-credentials/index.js', {
 	[ JETPACK_CREDENTIALS_DELETE ]: [
 		dispatchRequestEx( {
 			fetch: request,
@@ -62,4 +64,6 @@ export default {
 			onError: noop,
 		} ),
 	],
-};
+} );
+
+export default {};

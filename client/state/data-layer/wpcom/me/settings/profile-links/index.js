@@ -16,6 +16,8 @@ import { receiveUserProfileLinks } from 'state/profile-links/actions';
 import newHandler from './new';
 import deleteHandler from './delete';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches a request to fetch profile links of the current user
  *
@@ -52,4 +54,9 @@ const requestHandler = {
 	],
 };
 
-export default mergeHandlers( requestHandler, newHandler, deleteHandler );
+registerHandlers(
+	'state/data-layer/wpcom/me/settings/profile-links/index.js',
+	mergeHandlers( requestHandler, newHandler, deleteHandler )
+);
+
+export default {};

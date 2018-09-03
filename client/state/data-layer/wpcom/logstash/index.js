@@ -11,6 +11,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { LOGSTASH } from 'state/action-types';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const logToLogstash = action =>
 	http( {
 		method: 'POST',
@@ -19,6 +21,8 @@ const logToLogstash = action =>
 		body: action.params,
 	} );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/logstash/index.js', {
 	[ LOGSTASH ]: [ dispatchRequestEx( { fetch: logToLogstash, onSuccess: noop, onError: noop } ) ],
-};
+} );
+
+export default {};

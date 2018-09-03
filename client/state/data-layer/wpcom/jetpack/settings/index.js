@@ -24,6 +24,8 @@ import {
 import { saveJetpackSettingsSuccess, updateJetpackSettings } from 'state/jetpack/settings/actions';
 import { trailingslashit } from 'lib/route';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 
 export const fromApi = response => {
@@ -177,7 +179,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 	} );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 	[ JETPACK_SETTINGS_REQUEST ]: [
 		dispatchRequest(
 			requestJetpackSettings,
@@ -188,7 +190,10 @@ export default {
 			}
 		),
 	],
+
 	[ JETPACK_SETTINGS_SAVE ]: [
 		dispatchRequest( saveJetpackSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
 	],
-};
+} );
+
+export default {};

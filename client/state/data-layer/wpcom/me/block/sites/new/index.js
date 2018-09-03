@@ -17,6 +17,8 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import { unblockSite } from 'state/reader/site-blocks/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestSiteBlock( action ) {
 	return http(
 		{
@@ -47,7 +49,7 @@ export const receiveSiteBlockError = ( { payload: { siteId } } ) => dispatch => 
 	dispatch( bypassDataLayer( unblockSite( siteId ) ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/block/sites/new/index.js', {
 	[ READER_SITE_BLOCK ]: [
 		dispatchRequestEx( {
 			fetch: requestSiteBlock,
@@ -56,4 +58,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

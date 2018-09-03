@@ -20,6 +20,8 @@ import {
 } from 'state/reader/feeds/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function fromApi( apiResponse ) {
 	const feeds = map( apiResponse.feeds, feed => ( {
 		...feed,
@@ -89,7 +91,7 @@ export function receiveReadFeedError( action, response ) {
 	return receiveReaderFeedRequestFailure( action.payload.ID, response );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/feed/index.js', {
 	[ READER_FEED_SEARCH_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestReadFeedSearch,
@@ -98,6 +100,7 @@ export default {
 			fromApi,
 		} ),
 	],
+
 	[ READER_FEED_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestReadFeed,
@@ -105,4 +108,6 @@ export default {
 			onError: receiveReadFeedError,
 		} ),
 	],
-};
+} );
+
+export default {};

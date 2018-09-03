@@ -14,6 +14,8 @@ import {
 	receiveUserProfileLinks,
 } from 'state/profile-links/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches a request to add profile links for the current user
  *
@@ -67,7 +69,7 @@ export const handleAddSuccess = ( action, data ) => {
 export const handleAddError = ( { profileLinks }, error ) =>
 	addUserProfileLinksError( profileLinks, error );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/new/index.js', {
 	[ USER_PROFILE_LINKS_ADD ]: [
 		dispatchRequestEx( {
 			fetch: addUserProfileLinks,
@@ -75,4 +77,6 @@ export default {
 			onError: handleAddError,
 		} ),
 	],
-};
+} );
+
+export default {};

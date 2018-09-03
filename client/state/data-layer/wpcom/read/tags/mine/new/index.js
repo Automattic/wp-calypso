@@ -15,6 +15,8 @@ import { fromApi as transformTagFromApi } from 'state/data-layer/wpcom/read/tags
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestFollowTag( action ) {
 	return http( {
 		path: `/read/tags/${ action.payload.slug }/mine/new`,
@@ -58,7 +60,7 @@ export function receiveError( action, error ) {
 	return errorNotice( errorText );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/tags/mine/new/index.js', {
 	[ READER_FOLLOW_TAG_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestFollowTag,
@@ -67,4 +69,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

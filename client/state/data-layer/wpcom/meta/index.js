@@ -5,4 +5,7 @@
 import { mergeHandlers } from 'state/action-watchers/utils';
 import countries from './sms-country-codes';
 
-export default mergeHandlers( countries );
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers( 'state/data-layer/wpcom/meta/index.js', mergeHandlers( countries ) );
+export default {};

@@ -13,6 +13,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_LIKE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetch = action => {
 	const query = {};
 	if ( action.source ) {
@@ -46,7 +48,7 @@ export function fromApi( response ) {
 	};
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/posts/likes/new/index.js', {
 	[ POST_LIKE ]: [
 		dispatchRequestEx( {
 			fetch,
@@ -55,4 +57,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

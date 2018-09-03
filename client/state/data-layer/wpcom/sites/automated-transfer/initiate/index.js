@@ -17,6 +17,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { updatePluginUploadProgress, pluginUploadError } from 'state/plugins/upload/actions';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /*
  * Currently this module is only used for initiating transfers
  * with a plugin zip file. For initiating with a plugin ID
@@ -99,10 +101,12 @@ export const updateUploadProgress = ( { dispatch }, { siteId }, { loaded, total 
 	dispatch( updatePluginUploadProgress( siteId, progress ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/initiate/index.js', {
 	[ AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP ]: [
 		dispatchRequest( initiateTransferWithPluginZip, receiveResponse, receiveError, {
 			onProgress: updateUploadProgress,
 		} ),
 	],
-};
+} );
+
+export default {};

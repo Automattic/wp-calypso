@@ -16,6 +16,8 @@ import {
 import { JETPACK_REMOTE_INSTALL } from 'state/action-types';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const JETPACK_REMOTE_INSTALL_RETRIES = 3;
 
 export const installJetpackPlugin = action =>
@@ -79,7 +81,7 @@ export const handleError = ( action, error ) => {
 	return logToTracks( jetpackRemoteInstallUpdateError( url, error.error, error.message ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/jetpack-install/index.js', {
 	[ JETPACK_REMOTE_INSTALL ]: [
 		dispatchRequestEx( {
 			fetch: installJetpackPlugin,
@@ -87,4 +89,6 @@ export default {
 			onError: handleError,
 		} ),
 	],
-};
+} );
+
+export default {};

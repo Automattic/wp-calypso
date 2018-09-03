@@ -14,6 +14,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import { SITE_PLAN_OWNERSHIP_TRANSFER } from 'state/action-types';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const noticeOptions = siteId => ( {
 	duration: 8000,
 	id: `sites-plan-transfer-notice-${ siteId }`,
@@ -62,7 +64,7 @@ export const handleTransferSuccess = ( { siteId } ) => [
 export const handleTransferError = ( { siteId }, { message } ) =>
 	errorNotice( message, noticeOptions( siteId ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/plan-transfer/index.js', {
 	[ SITE_PLAN_OWNERSHIP_TRANSFER ]: [
 		dispatchRequestEx( {
 			fetch: requestPlanOwnershipTransfer,
@@ -70,4 +72,6 @@ export default {
 			onError: handleTransferError,
 		} ),
 	],
-};
+} );
+
+export default {};

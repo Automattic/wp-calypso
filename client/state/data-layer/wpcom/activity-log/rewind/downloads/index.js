@@ -14,6 +14,8 @@ import { rewindBackupUpdateError, getRewindBackupProgress } from 'state/activity
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const createBackup = action =>
 	http(
 		{
@@ -40,7 +42,7 @@ export const receiveBackupSuccess = ( { siteId } ) => getRewindBackupProgress( s
 export const receiveBackupError = ( { siteId }, error ) =>
 	rewindBackupUpdateError( siteId, pick( error, [ 'error', 'status', 'message' ] ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/downloads/index.js', {
 	[ REWIND_BACKUP ]: [
 		dispatchRequestEx( {
 			fetch: createBackup,
@@ -49,4 +51,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

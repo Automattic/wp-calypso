@@ -9,4 +9,11 @@ import eligibility from './eligibility';
 import initiate from './initiate';
 import status from './status';
 
-export default mergeHandlers( eligibility, initiate, status );
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers(
+	'state/data-layer/wpcom/sites/automated-transfer/index.js',
+	mergeHandlers( eligibility, initiate, status )
+);
+
+export default {};

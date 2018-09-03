@@ -19,6 +19,8 @@ import { errorNotice } from 'state/notices/actions';
 import { buildBody } from '../utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestPostEmailSubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
@@ -56,7 +58,7 @@ export function receivePostEmailSubscriptionError( { dispatch }, action ) {
 	dispatch( bypassDataLayer( unsubscribeToNewPostEmail( action.payload.blogId ) ) );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/site/post-email-subscriptions/new/index.js', {
 	[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: [
 		dispatchRequest(
 			requestPostEmailSubscription,
@@ -64,4 +66,6 @@ export default {
 			receivePostEmailSubscriptionError
 		),
 	],
-};
+} );
+
+export default {};

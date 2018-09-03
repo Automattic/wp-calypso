@@ -19,6 +19,8 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function uploadGravatar( { dispatch }, action ) {
 	const { email, file } = action;
 	dispatch(
@@ -63,8 +65,10 @@ export function announceFailure( { dispatch } ) {
 	);
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/gravatar-upload/index.js', {
 	[ GRAVATAR_UPLOAD_REQUEST ]: [
 		dispatchRequest( uploadGravatar, announceSuccess, announceFailure ),
 	],
-};
+} );
+
+export default {};

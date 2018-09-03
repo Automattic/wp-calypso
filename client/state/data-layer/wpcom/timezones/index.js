@@ -13,6 +13,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { TIMEZONES_REQUEST } from 'state/action-types';
 import { timezonesReceive } from 'state/timezones/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Converts an value/label pairs from API into object whose
  * keys are the values and whose values are the labels.
@@ -54,7 +56,7 @@ export const fetchTimezones = action =>
 
 export const addTimezones = ( action, data ) => timezonesReceive( data );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/timezones/index.js', {
 	[ TIMEZONES_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: fetchTimezones,
@@ -63,4 +65,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

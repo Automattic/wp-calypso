@@ -13,6 +13,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { I18N_LANGUAGE_NAMES_REQUEST } from 'state/action-types';
 import { receiveLanguageNames } from 'state/i18n/language-names/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * @module state/data-layer/wpcom/i18n/language-names
  */
@@ -47,6 +49,8 @@ export const dispatchPlansRequest = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/i18n/language-names/index.js', {
 	[ I18N_LANGUAGE_NAMES_REQUEST ]: [ dispatchPlansRequest ],
-};
+} );
+
+export default {};

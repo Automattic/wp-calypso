@@ -15,6 +15,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const activateRewind = action =>
 	http(
 		{
@@ -48,7 +50,7 @@ export const activateFailed = ( { siteId }, { message } ) => [
 	rewindActivateFailure( siteId ),
 ];
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/activity-log/activate/index.js', {
 	[ REWIND_ACTIVATE_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: activateRewind,
@@ -56,4 +58,6 @@ export default {
 			onError: activateFailed,
 		} ),
 	],
-};
+} );
+
+export default {};
