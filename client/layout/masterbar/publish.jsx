@@ -35,9 +35,7 @@ class MasterbarItemNew extends React.Component {
 		isShowingPopover: false,
 	};
 
-	setPostButtonRef = component => {
-		this.postButtonRef = component;
-	};
+	postButtonRef = React.createRef();
 
 	toggleSitesPopover = () => {
 		this.setState( state => ( {
@@ -86,7 +84,7 @@ class MasterbarItemNew extends React.Component {
 				id="popover__sites-popover-masterbar"
 				visible
 				groups
-				context={ this.postButtonRef }
+				context={ this.postButtonRef.current }
 				onClose={ this.closeSitesPopover }
 				onSiteSelect={ this.props.siteSelected }
 				position={ this.getPopoverPosition() }
@@ -102,7 +100,7 @@ class MasterbarItemNew extends React.Component {
 		return (
 			<div className="masterbar__publish">
 				<MasterbarItem
-					ref={ this.setPostButtonRef }
+					ref={ this.postButtonRef }
 					url={ newPostPath }
 					icon="create"
 					onClick={ this.onClick }
