@@ -156,8 +156,7 @@ const Layout = createReactClass( {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ /* TODO: Update InlineHelp to make sense in a Jetpack context */
-				( 'jetpack-connect' !== this.props.section.name ||
+				{ ( 'jetpack-connect' !== this.props.section.name ||
 					this.props.currentRoute === '/jetpack/new' ) && <InlineHelp /> }
 				<SupportArticleDialog />
 				<AppBanner />
