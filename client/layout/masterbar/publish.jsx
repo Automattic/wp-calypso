@@ -75,6 +75,11 @@ class MasterbarItemNew extends React.Component {
 		return 'bottom left';
 	}
 
+	onSiteSelect = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_write_button_clicked' );
+		return false; // handledByHost = false, continue handling by navigating to /post/:site
+	};
+
 	renderPopover() {
 		if ( ! this.state.isShowingPopover ) {
 			return null;
@@ -87,7 +92,7 @@ class MasterbarItemNew extends React.Component {
 				groups
 				context={ this.postButtonRef.current }
 				onClose={ this.closeSitesPopover }
-				onSiteSelect={ this.props.siteSelected }
+				onSiteSelect={ this.onSiteSelect }
 				position={ this.getPopoverPosition() }
 			/>
 		);
@@ -126,11 +131,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	siteSelected: () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_write_button_clicked' ) );
-	},
-} );
+const mapDispatchToProps = { recordTracksEvent };
 
 export default connect(
 	mapStateToProps,
