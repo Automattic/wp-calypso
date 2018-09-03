@@ -132,7 +132,6 @@ class MasterbarLoggedIn extends React.Component {
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				{ ! domainOnlySite && (
 					<Publish
-						user={ this.props.user }
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
 						tooltip={ translate( 'Create a New Post' ) }
