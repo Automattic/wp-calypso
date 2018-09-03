@@ -53,10 +53,10 @@ export class InstallmentsPlanPicker extends React.Component {
 		return (
 			<div className="installments-plan-picker">
 				<div className="installments-plan-picker__header">
-					{ this.props.translate( 'Choose an installments plan', {
+					{ this.props.translate( 'Choose an installment plan', {
 						comment:
 							'In some countries, customers can choose ' +
-							'an installments plan when paying with credit cards',
+							'an installment plan when paying with credit cards',
 					} ) }
 				</div>
 				<div className="installments-plan-picker__options">
