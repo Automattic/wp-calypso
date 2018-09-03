@@ -28,13 +28,9 @@ export const fetchShippingClassesSuccess = ( siteId, data ) => {
 
 export const fetchShippingClassesFailure = ( action, error, dispatch ) => {
 	const { siteId } = action;
-	let noticeAction = null;
+	const noticeId = 'query-shipping-classes-retry';
 
 	const onRetryClick = e => {
-		const {
-			notice: { noticeId },
-		} = noticeAction;
-
 		e.preventDefault();
 
 		dispatch( {
@@ -45,12 +41,11 @@ export const fetchShippingClassesFailure = ( action, error, dispatch ) => {
 		dispatch( removeNotice( noticeId ) );
 	};
 
-	noticeAction = errorNotice( translate( 'Could not retrieve the shipping classes.' ), {
+	return errorNotice( translate( 'Could not retrieve the shipping classes.' ), {
+		id: noticeId,
 		button: translate( 'Try again' ),
 		onClick: onRetryClick,
 	} );
-
-	return noticeAction;
 };
 
 export const fetchShippingClasses = siteId => ( dispatch, getState ) => {

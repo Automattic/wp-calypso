@@ -25,115 +25,109 @@ import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
 const handlers = {};
 
-handlers[ WOOCOMMERCE_SHIPPING_CLASSES_REQUEST ] = [
-	dispatchRequestEx( {
-		fetch: action => {
-			const { siteId } = action;
-			return request( siteId, action ).get( 'products/shipping_classes' );
-		},
+export const shippingClassesRequest = {
+	fetch: action => {
+		const { siteId } = action;
+		return request( siteId, action ).get( 'products/shipping_classes' );
+	},
 
-		onSuccess: ( { siteId }, { data } ) => dispatch => {
-			dispatch( fetchShippingClassesSuccess( siteId, data ) );
-		},
+	onSuccess: ( { siteId }, { data } ) => dispatch => {
+		return dispatch( fetchShippingClassesSuccess( siteId, data ) );
+	},
 
-		onError: ( action, error ) => dispatch => {
-			dispatch( fetchShippingClassesFailure( action, error, dispatch ) );
-		},
+	onError: ( action, error ) => dispatch => {
+		return dispatch( fetchShippingClassesFailure( action, error, dispatch ) );
+	},
 
-		fromApi: verifyResponseHasData,
-	} ),
-];
+	fromApi: verifyResponseHasData,
+};
+handlers[ WOOCOMMERCE_SHIPPING_CLASSES_REQUEST ] = [ dispatchRequestEx( shippingClassesRequest ) ];
 
-handlers[ WOOCOMMERCE_SHIPPING_CLASS_UPDATE ] = [
-	dispatchRequestEx( {
-		fetch: action => {
-			const { siteId, id, changes } = action;
-			return request( siteId, action ).put( 'products/shipping_classes/' + id, changes );
-		},
+export const shippingClassUpdate = {
+	fetch: action => {
+		const { siteId, id, changes } = action;
+		return request( siteId, action ).put( 'products/shipping_classes/' + id, changes );
+	},
 
-		onSuccess: ( { siteId, successCallback }, { data } ) => dispatch => {
-			dispatch( updateShippingClassSuccess( siteId, data ) );
+	onSuccess: ( { siteId, successCallback }, { data } ) => dispatch => {
+		dispatch( updateShippingClassSuccess( siteId, data ) );
 
-			if ( successCallback ) {
-				successCallback();
-			}
-		},
+		if ( successCallback ) {
+			successCallback();
+		}
+	},
 
-		onError: ( action, error ) => dispatch => {
-			const { failureCallback } = action;
+	onError: ( action, error ) => dispatch => {
+		const { failureCallback } = action;
 
-			if ( failureCallback ) {
-				failureCallback();
-			} else {
-				dispatch( updateShippingClassFailure( action, error, dispatch ) );
-			}
-		},
+		if ( failureCallback ) {
+			return failureCallback();
+		}
 
-		fromApi: verifyResponseHasData,
-	} ),
-];
+		return dispatch( updateShippingClassFailure( action, error, dispatch ) );
+	},
 
-handlers[ WOOCOMMERCE_SHIPPING_CLASS_CREATE ] = [
-	dispatchRequestEx( {
-		fetch: action => {
-			const { siteId, data } = action;
-			return request( siteId, action ).post( 'products/shipping_classes/', data );
-		},
+	fromApi: verifyResponseHasData,
+};
+handlers[ WOOCOMMERCE_SHIPPING_CLASS_UPDATE ] = [ dispatchRequestEx( shippingClassUpdate ) ];
 
-		onSuccess: ( action, { data } ) => dispatch => {
-			const { successCallback } = action;
+export const shippingClassCreate = {
+	fetch: action => {
+		const { siteId, data } = action;
+		return request( siteId, action ).post( 'products/shipping_classes/', data );
+	},
 
-			dispatch( createShippingClassSuccess( action, data ) );
+	onSuccess: ( action, { data } ) => dispatch => {
+		const { successCallback } = action;
 
-			if ( successCallback ) {
-				successCallback();
-			}
-		},
+		dispatch( createShippingClassSuccess( action, data ) );
 
-		onError: ( action, error ) => dispatch => {
-			const { failureCallback } = action;
+		if ( successCallback ) {
+			successCallback();
+		}
+	},
 
-			if ( failureCallback ) {
-				failureCallback();
-			} else {
-				dispatch( createShippingClassFailure( action, error, dispatch ) );
-			}
-		},
+	onError: ( action, error ) => dispatch => {
+		const { failureCallback } = action;
 
-		fromApi: verifyResponseHasData,
-	} ),
-];
+		if ( failureCallback ) {
+			return failureCallback();
+		}
 
-handlers[ WOOCOMMERCE_SHIPPING_CLASS_DELETE ] = [
-	dispatchRequestEx( {
-		fetch: action => {
-			const { siteId, classId } = action;
+		return dispatch( createShippingClassFailure( action, error, dispatch ) );
+	},
 
-			return request( siteId, action ).del(
-				'products/shipping_classes/' + classId + '?force=true'
-			);
-		},
+	fromApi: verifyResponseHasData,
+};
+handlers[ WOOCOMMERCE_SHIPPING_CLASS_CREATE ] = [ dispatchRequestEx( shippingClassCreate ) ];
 
-		onSuccess: ( { siteId, classId, successCallback } ) => dispatch => {
-			dispatch( deleteShippingClassSuccess( siteId, classId ) );
+export const shippingClassDelete = {
+	fetch: action => {
+		const { siteId, classId } = action;
 
-			if ( successCallback ) {
-				successCallback();
-			}
-		},
+		return request( siteId, action ).del( 'products/shipping_classes/' + classId + '?force=true' );
+	},
 
-		onError: ( action, error ) => dispatch => {
-			const { failureCallback } = action;
+	onSuccess: ( { siteId, classId, successCallback } ) => dispatch => {
+		dispatch( deleteShippingClassSuccess( siteId, classId ) );
 
-			if ( failureCallback ) {
-				failureCallback();
-			} else {
-				dispatch( deleteShippingClassFailure( action, error, dispatch ) );
-			}
-		},
+		if ( successCallback ) {
+			successCallback();
+		}
+	},
 
-		fromApi: verifyResponseHasData,
-	} ),
-];
+	onError: ( action, error ) => dispatch => {
+		const { failureCallback } = action;
+
+		if ( failureCallback ) {
+			failureCallback();
+		} else {
+			dispatch( deleteShippingClassFailure( action, error, dispatch ) );
+		}
+	},
+
+	fromApi: verifyResponseHasData,
+};
+handlers[ WOOCOMMERCE_SHIPPING_CLASS_DELETE ] = [ dispatchRequestEx( shippingClassDelete ) ];
 
 export default handlers;
