@@ -2211,9 +2211,9 @@
       }
     },
     "babel-loader": {
-      "version": "8.0.0",
-      "resolved": "https://registry.npmjs.org/babel-loader/-/babel-loader-8.0.0.tgz",
-      "integrity": "sha512-lBUGBz411lSfT+8MHPEaqIVQ44odS1D/wxuTMhijqHc9arZR6jhJEaJa0RpZlCSITZoeK6xoDXTaVTrSoFD7IQ==",
+      "version": "8.0.2",
+      "resolved": "https://registry.npmjs.org/babel-loader/-/babel-loader-8.0.2.tgz",
+      "integrity": "sha512-Law0PGtRV1JL8Y9Wpzc0d6EE0GD7LzXWCfaeWwboUMcBWNG6gvaWTK1/+BK7a4X5EmeJiGEuDDFxUsOa8RSWCw==",
       "requires": {
         "find-cache-dir": "^1.0.0",
         "loader-utils": "^1.0.2",
