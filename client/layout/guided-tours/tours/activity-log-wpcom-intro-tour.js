@@ -23,9 +23,9 @@ export const ActivityLogWpcomIntroTour = makeTour(
 		<Step
 			name="init"
 			arrow="top-left"
-			target=".stats-navigation__activity"
+			target="activity"
 			placement="below"
-			scrollContainer=".section-nav__mobile-header"
+			scrollContainer=".sidebar__region"
 		>
 			{ ( { translate } ) => (
 				<Fragment>
