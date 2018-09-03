@@ -157,7 +157,8 @@ const Layout = createReactClass( {
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
 				{ ( 'jetpack-connect' !== this.props.section.name ||
-					this.props.currentRoute === '/jetpack/new' ) && <InlineHelp /> }
+					this.props.currentRoute === '/jetpack/new' ) &&
+					this.props.currentRoute !== '/log-in/jetpack' && <InlineHelp /> }
 				<SupportArticleDialog />
 				<AppBanner />
 				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
