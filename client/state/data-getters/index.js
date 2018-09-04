@@ -81,6 +81,14 @@ export const requestSiteAlerts = siteId => {
 						} ) ),
 						warnings,
 						updates: {
+							plugins: updates.plugins.map( plugin => ( {
+								id: plugin.name,
+								name: plugin.display_name,
+								slug: plugin.slug,
+								type: plugin.type,
+								version: plugin.version,
+								update: true, // fake it till you make it
+							} ) ),
 							themes: updates.themes.map( theme => ( {
 								name: theme.name,
 								slug: theme.slug,
