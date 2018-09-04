@@ -137,4 +137,13 @@ export default {
 		defaultVariation: 'domainsbot',
 		assignmentMethod: 'userId',
 	},
+	readerSearchPlaceholder: {
+		datestamp: '20180830',
+		variations: {
+			justSearch: 34,
+			nextGreatRead: 33,
+			newFavorite: 33,
+		},
+		defaultVariation: 'justSearch',
+	},
 };
