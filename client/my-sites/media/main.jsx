@@ -96,10 +96,13 @@ class Media extends Component {
 			currentDetail: null,
 			selectedItems: [],
 		} );
-		if ( this.props.mediaId && site.slug ) {
+		if ( this.isSingleMediaView() ) {
 			page( '/media/' + site.slug );
 		}
 	};
+
+	isSingleMediaView = () =>
+		this.props.mediaId && this.props.selectedSite && this.props.selectedSite.slug;
 
 	editImage = () => {
 		this.setState( { currentDetail: null, editedImageItem: this.getSelectedIndex() } );
@@ -139,7 +142,7 @@ class Media extends Component {
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
-		if ( this.props.mediaId && site.slug ) {
+		if ( this.isSingleMediaView() ) {
 			page( '/media/' + site.slug );
 		}
 	};
@@ -193,7 +196,7 @@ class Media extends Component {
 		}
 
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
-		if ( this.props.mediaId && site.slug ) {
+		if ( this.isSingleMediaView() ) {
 			page( '/media/' + site.slug );
 		}
 	};
@@ -207,7 +210,7 @@ class Media extends Component {
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 
-		if ( this.props.mediaId && site.slug ) {
+		if ( this.isSingleMediaView() ) {
 			page( '/media/' + site.slug );
 		}
 	};
@@ -302,8 +305,9 @@ class Media extends Component {
 	};
 
 	getSelectedItems = () => {
-		if ( this.props.media ) {
-			return [ this.props.media ];
+		const { media } = this.props;
+		if ( media ) {
+			return [ media ];
 		}
 		return this.state.selectedItems;
 	};
@@ -344,8 +348,7 @@ class Media extends Component {
 	};
 
 	render() {
-		const site = this.props.selectedSite;
-		const mediaId = this.props.mediaId;
+		const { selectedSite: site, mediaId } = this.props;
 		return (
 			<div ref="container" className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }

@@ -18,6 +18,6 @@ export default function getMediaItem( state, siteId, mediaId ) {
 	if ( media === null ) {
 		return null;
 	}
-	// If media doesn't have a URL paramter then it is not an attachment but a post.
+	// If media doesn't have a URL parameter then it is not an attachment but a post.
 	return media.URL ? media : null;
 }
