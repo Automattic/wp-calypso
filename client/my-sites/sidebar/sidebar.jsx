@@ -162,12 +162,12 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const activityLink = '/activity' + siteSuffix;
+		const activityLink = '/activity-log' + siteSuffix;
 		return (
 			<SidebarItem
 				tipTarget="activity"
 				label={ translate( 'Activity' ) }
-				selected={ itemLinkMatches( [ '/activity' ], path ) }
+				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
 				link={ activityLink }
 				onNavigate={ this.trackActivityClick }
 				icon="history"

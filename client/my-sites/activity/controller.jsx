@@ -43,8 +43,8 @@ export function redirect( context ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	if ( siteId ) {
-		page.redirect( '/activity/' + siteId );
+		page.redirect( '/activity-log/' + siteId );
 		return;
 	}
-	page.redirect( '/activity/' );
+	page.redirect( '/activity-log/' );
 }

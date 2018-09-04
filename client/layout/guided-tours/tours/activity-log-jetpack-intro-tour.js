@@ -17,7 +17,7 @@ export const ActivityLogJetpackIntroTour = makeTour(
 	<Tour
 		name="activityLogJetpackIntroTour"
 		version="20180808"
-		path="/activity/"
+		path="/activity-log/"
 		when={ and( isSelectedSiteJetpack, isSelectedSitePlanFree ) }
 	>
 		<Step

@@ -42,7 +42,7 @@ const sections = [
 	},
 	{
 		name: 'activity',
-		paths: [ '/activity' ],
+		paths: [ '/activity-log' ],
 		module: 'my-sites/activity',
 		secondary: true,
 		group: 'sites',

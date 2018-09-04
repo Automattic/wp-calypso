@@ -12,7 +12,7 @@ import { activity } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/activity', siteSelection, sites, makeLayout, clientRender );
+	page( '/activity-log', siteSelection, sites, makeLayout, clientRender );
 
-	page( '/activity/:site', siteSelection, navigation, activity, makeLayout, clientRender );
+	page( '/activity-log/:site', siteSelection, navigation, activity, makeLayout, clientRender );
 }

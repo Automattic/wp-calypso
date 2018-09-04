@@ -497,7 +497,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
-				<PageViewTracker path="/activity/:site" title="Activity" />
+				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }

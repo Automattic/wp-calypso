@@ -27,7 +27,9 @@ const JetpackBackupSecurity = ( { backupEngine, site, siteId, translate } ) => (
 					: translate( 'Visit security dashboard' )
 			}
 			href={
-				backupEngine === 'rewind' ? `/activity/${ site.slug }` : 'https://dashboard.vaultpress.com'
+				backupEngine === 'rewind'
+					? `/activity-log/${ site.slug }`
+					: 'https://dashboard.vaultpress.com'
 			}
 		/>
 	</div>

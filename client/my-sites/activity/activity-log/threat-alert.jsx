@@ -20,7 +20,7 @@ import SplitButton from 'components/split-button';
 /**
  * Module variables
  */
-const debug = debugFactory( 'calypso:activity' );
+const debug = debugFactory( 'calypso:activity-log' );
 
 const detailType = threat => {
 	if ( threat.hasOwnProperty( 'diff' ) ) {

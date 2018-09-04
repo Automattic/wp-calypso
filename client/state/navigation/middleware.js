@@ -22,7 +22,7 @@ export const navigationMiddleware = store => {
 
 				if (
 					get( action, [ 'meta', 'skipUrlUpdate' ] ) ||
-					! /^[/]activity[/]/.test( document.location.pathname )
+					! /^[/]activity-log[/]/.test( document.location.pathname )
 				) {
 					return afterFilter;
 				}
