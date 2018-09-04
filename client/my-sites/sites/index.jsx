@@ -48,7 +48,7 @@ export class Sites extends Component {
 
 		switch ( path ) {
 			case 'activity-log':
-				path = 'Activity';
+				path = i18n.translate( 'Activity' );
 				break;
 			case 'stats':
 				path = i18n.translate( 'Insights' );
