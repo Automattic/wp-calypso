@@ -311,11 +311,13 @@ class Media extends Component {
 		}
 		return this.state.selectedItems;
 	};
-	getSelectedItem = () => {
-		if ( this.props.media ) {
-			return this.props.media;
+
+	getSelectedItem = defaultMediaItem => {
+		const { media } = this.props;
+		if ( media ) {
+			return media;
 		}
-		return this.state.selectedItems[ this.state.editedImageItem ];
+		return this.state.selectedItems[ defaultMediaItem ];
 	};
 
 	getSelectedIndex = () => {
@@ -376,14 +378,14 @@ class Media extends Component {
 						{ this.state.editedImageItem !== null && (
 							<ImageEditor
 								siteId={ site && site.ID }
-								media={ this.getSelectedItem() }
+								media={ this.getSelectedItem( this.state.editedImageItem ) }
 								onDone={ this.onImageEditorDone }
 								onCancel={ this.onImageEditorCancel }
 							/>
 						) }
 						{ this.state.editedVideoItem !== null && (
 							<VideoEditor
-								media={ this.getSelectedItem() }
+								media={ this.getSelectedItem( this.state.editedVideoItem ) }
 								onCancel={ this.onVideoEditorCancel }
 								onUpdatePoster={ this.onVideoEditorUpdatePoster }
 							/>
