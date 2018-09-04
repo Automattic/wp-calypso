@@ -38,9 +38,11 @@ import { canAccessWordads } from 'lib/ads/utils';
 import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import { getAutomatedTransferStatus } from '../automated-transfer/selectors';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
+import { getPlan } from 'lib/plans';
 import { getSelectedSiteId } from '../ui/selectors';
 import { isCurrentUserCurrentPlanOwner } from './plans/selectors';
 import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
+import { PLAN_FREE, PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { transferStates } from '../automated-transfer/constants';
 
 /**
@@ -578,22 +580,9 @@ export function getSitePlan( state, siteId ) {
 
 	if ( get( site.plan, 'expired', false ) ) {
 		if ( site.jetpack ) {
-			return {
-				product_id: 2002,
-				product_slug: 'jetpack_free',
-				product_name_short: 'Free',
-				free_trial: false,
-				expired: false,
-			};
+			return getPlan( PLAN_JETPACK_FREE );
 		}
-
-		return {
-			product_id: 1,
-			product_slug: 'free_plan',
-			product_name_short: 'Free',
-			free_trial: false,
-			expired: false,
-		};
+		return getPlan( PLAN_FREE );
 	}
 
 	return site.plan;
