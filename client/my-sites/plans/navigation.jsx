@@ -96,7 +96,6 @@ class PlansNavigation extends React.Component {
 						{ shouldShowMyPlan && (
 							<NavItem
 								path={ `/plans/my-plan/${ site.slug }` }
-								key="myPlan"
 								selected={ path === '/plans/my-plan' }
 							>
 								{ translate( 'My Plan' ) }
@@ -104,15 +103,15 @@ class PlansNavigation extends React.Component {
 						) }
 						<NavItem
 							path={ `/plans/${ site.slug }` }
-							key="plans"
-							selected={ path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly' }
+							selected={
+								path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
+							}
 						>
 							{ translate( 'Plans' ) }
 						</NavItem>
 						{ canManageDomain && (
 							<NavItem
 								path={ `/domains/manage/${ site.slug }` }
-								key="domains"
 								selected={ path === '/domains/manage' || path === '/domains/add' }
 							>
 								{ translate( 'Domains' ) }
@@ -121,7 +120,6 @@ class PlansNavigation extends React.Component {
 						{ canManageDomain && (
 							<NavItem
 								path={ `/domains/manage/email/${ site.slug }` }
-								key="googleApps"
 								selected={ path === '/domains/manage/email' }
 							>
 								{ translate( 'Email' ) }
