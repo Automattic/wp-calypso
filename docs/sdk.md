@@ -1,7 +1,8 @@
 Calypso SDK
 ===========
 
-Calypso SDK is an early stage tool that's goal is to build, visualize, test, and deliver extensions from a single source.
+Calypso <abbr title="software development kit">SDK</abbr> is an early stage tool with the goal to build, visualize, test, and deliver interfaces for multiple platforms from a single source.
+
 
 ## Using SDK CLI
 
@@ -28,7 +29,13 @@ See usage instructions:
 npm run sdk -- gutenberg --help
 ```
 
+These extensions live under `client/gutenberg/extensions` directory. There are some presets to bundle multiple extensions into one in `client/gutenberg/extensions/presets` directory.
+
+By default, these extensions will be built under `build` folder next to entry script passed.
+
 ## Extending the SDK
+
+Adding new build targets for the SDK is straightforward but should be done with some consideration. Keeping the SDK as generic as possible is essential, and thus this isn't a place to create a new config for every project. Preferably this is a place to create configurations for entirely separate classes of projects.
 
 CLI API definitions live in `bin/sdk-cli.js` and are constructed using [Yargs](http://yargs.js.org/) library.
 
