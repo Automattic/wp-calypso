@@ -200,6 +200,7 @@ class PlanFeatures extends Component {
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
+						availableForPurchase={ available }
 						current={ current }
 						currencyCode={ currencyCode }
 						isJetpack={ isJetpack }
@@ -262,6 +263,7 @@ class PlanFeatures extends Component {
 
 		return map( planProperties, properties => {
 			const {
+				available,
 				currencyCode,
 				current,
 				planConstantObj,
@@ -302,6 +304,7 @@ class PlanFeatures extends Component {
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
+						availableForPurchase={ available }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
 						current={ current }

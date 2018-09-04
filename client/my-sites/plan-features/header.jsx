@@ -174,11 +174,11 @@ export class PlanFeaturesHeader extends Component {
 
 	getPlanFeaturesPrices() {
 		const {
-			currencyCode,
-			discountPrice,
+			availableForPurchase,
 			isInSignup,
 			isPlaceholder,
 			isJetpack,
+			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
 		} = this.props;
@@ -192,38 +192,35 @@ export class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( relatedMonthlyPlan ) {
-			const originalPrice = relatedMonthlyPlan.raw_price * 12;
-			return (
-				<span className="plan-features__header-price-group">
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ originalPrice }
-						isInSignup={ isInSignup }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ rawPrice }
-						isInSignup={ isInSignup }
-						discounted
-					/>
-				</span>
-			);
+		if ( availableForPurchase ) {
+			if ( relatedMonthlyPlan ) {
+				return this.renderPriceGroup(
+					relatedMonthlyPlan.raw_price * 12,
+					discountPrice || rawPrice
+				);
+			} else if ( discountPrice ) {
+				return this.renderPriceGroup( rawPrice, discountPrice );
+			}
 		}
 
-		if ( discountPrice ) {
+		return this.renderPriceGroup( rawPrice );
+	}
+
+	renderPriceGroup( fullPrice, discountedPrice = null ) {
+		const { currencyCode, isInSignup } = this.props;
+
+		if ( fullPrice && discountedPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ rawPrice }
+						rawPrice={ fullPrice }
 						isInSignup={ isInSignup }
 						original
 					/>
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ discountPrice }
+						rawPrice={ discountedPrice }
 						isInSignup={ isInSignup }
 						discounted
 					/>
@@ -232,7 +229,7 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		return (
-			<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } isInSignup={ isInSignup } />
+			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } isInSignup={ isInSignup } />
 		);
 	}
 
@@ -272,6 +269,7 @@ export class PlanFeaturesHeader extends Component {
 }
 
 PlanFeaturesHeader.propTypes = {
+	availableForPurchase: PropTypes.bool,
 	bestValue: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
 	currencyCode: PropTypes.string,
@@ -298,6 +296,7 @@ PlanFeaturesHeader.propTypes = {
 };
 
 PlanFeaturesHeader.defaultProps = {
+	availableForPurchase: true,
 	basePlansPath: null,
 	bestValue: false,
 	current: false,
