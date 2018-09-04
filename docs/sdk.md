@@ -72,12 +72,10 @@ exports.config = ( {
 	const baseConfig = getBaseConfig();
 	return {
 		...baseConfig,
-		...{
-			entry: path.resolve( __dirname, '..', 'client', 'example' ),
-			output: {
-				path: outputDir,
-				filename: 'example-build.js',
-			},
+		entry: path.resolve( __dirname, '..', 'client', 'example' ),
+		output: {
+			path: outputDir,
+			filename: 'example-build.js',
 		},
 	};
 };
