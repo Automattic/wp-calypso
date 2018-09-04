@@ -22,7 +22,7 @@ import { planLevelsMatch } from 'lib/plans/index';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const PlanFeaturesActions = ( {
-	available = true,
+	availableForPurchase = true,
 	canPurchase,
 	className,
 	currentSitePlan,
@@ -60,7 +60,7 @@ const PlanFeaturesActions = ( {
 				{ canPurchase ? translate( 'Manage Plan' ) : translate( 'View Plan' ) }
 			</Button>
 		);
-	} else if ( available || isPlaceholder ) {
+	} else if ( availableForPurchase || isPlaceholder ) {
 		let buttonText = freePlan
 			? translate( 'Select Free', { context: 'button' } )
 			: translate( 'Upgrade', { context: 'verb' } );
@@ -110,7 +110,7 @@ const PlanFeaturesActions = ( {
 };
 
 PlanFeaturesActions.propTypes = {
-	available: PropTypes.bool,
+	availableForPurchase: PropTypes.bool,
 	canPurchase: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	current: PropTypes.bool,
