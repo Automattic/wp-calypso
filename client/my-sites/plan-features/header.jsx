@@ -212,18 +212,20 @@ export class PlanFeaturesHeader extends Component {
 		if ( fullPrice && discountedPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ fullPrice }
-						isInSignup={ isInSignup }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ discountedPrice }
-						isInSignup={ isInSignup }
-						discounted
-					/>
+					<div className="plan-features__header-price-group-prices">
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ fullPrice }
+							isInSignup={ isInSignup }
+							original
+						/>
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ discountedPrice }
+							isInSignup={ isInSignup }
+							discounted
+						/>
+					</div>
 					{ this.renderCreditLabel() }
 				</span>
 			);
@@ -239,6 +241,7 @@ export class PlanFeaturesHeader extends Component {
 			availableForPurchase,
 			currentSitePlan,
 			discountPrice,
+			isJetpack,
 			planType,
 			rawPrice,
 			showPlanCreditsApplied,
@@ -250,6 +253,7 @@ export class PlanFeaturesHeader extends Component {
 			! availableForPurchase ||
 			planMatches( planType, { type: TYPE_FREE } ) ||
 			planType === currentSitePlan.productSlug ||
+			isJetpack ||
 			! discountPrice ||
 			discountPrice >= rawPrice
 		) {
