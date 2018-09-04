@@ -21,8 +21,14 @@ export default function() {
 		page( '/gutenberg/page/:site?/:post?', siteSelection, post, makeLayout, clientRender );
 
 		if ( config.isEnabled( 'manage/custom-post-types' ) ) {
-			page( '/gutenberg/edit/:type', siteSelection, sites, makeLayout, clientRender );
-			page( '/gutenberg/edit/:type/:site?/:post?', siteSelection, post, makeLayout, clientRender );
+			page( '/gutenberg/edit/:customPostType', siteSelection, sites, makeLayout, clientRender );
+			page(
+				'/gutenberg/edit/:customPostType/:site?/:post?',
+				siteSelection,
+				post,
+				makeLayout,
+				clientRender
+			);
 		}
 	} else {
 		page( '/gutenberg', '/post' );

@@ -3,7 +3,6 @@
  * External dependencies
  */
 import React from 'react';
-import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,15 +10,14 @@ import { startsWith } from 'lodash';
 import GutenbergEditor from 'gutenberg/editor/main';
 
 function determinePostType( context ) {
-	if ( startsWith( context.path, '/gutenberg/post' ) ) {
+	if ( context.path.startsWith( '/gutenberg/post/' ) ) {
 		return 'post';
 	}
-
-	if ( startsWith( context.path, '/gutenberg/page' ) ) {
+	if ( context.path.startsWith( '/gutenberg/page/' ) ) {
 		return 'page';
 	}
 
-	return context.params.type;
+	return context.params.customPostType;
 }
 
 export const post = ( context, next ) => {
