@@ -27,10 +27,6 @@ See usage instructions:
 ```
 npm run sdk -- gutenberg --help
 ```
-or
-```
-npm run sdk:gutenberg -- --help
-```
 
 ## Extending the SDK
 
