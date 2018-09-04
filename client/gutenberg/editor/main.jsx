@@ -25,14 +25,30 @@ const post = {
 };
 
 class GutenbergEditor extends Component {
+	state = {
+		isAPIOverrideReady: false,
+	};
+
 	componentDidMount() {
 		registerCoreBlocks();
 		// Prevent Guided tour from showing when editor loads.
 		dispatch( 'core/nux' ).disableTips();
 	}
 
+	static getDerivedStateFromProps( props, state ) {
+		// Execute API override only once when siteSlug is not null.
+		// We can't do this in componentDidMount because it wouldn't work with clean state.
+		// siteSlug would be null and API requests would get executed before the override.
+		if ( ! isEmpty( props.siteSlug ) && ! state.isAPIOverrideReady ) {
+			overrideAPIPaths( props.siteSlug );
+			return { isAPIOverrideReady: true };
+		}
+
+		return null;
+	}
+
 	render() {
-		if ( isEmpty( this.props.siteSlug ) ) {
+		if ( ! this.state.isAPIOverrideReady ) {
 			return null;
 		}
 
