@@ -107,12 +107,10 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @param {object}  env                              additional config options
  * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
- * @param {object}  argv                             given by webpack?
  *
  * @return {object}                                  webpack config
  */
-// eslint-disable-next-line no-unused-vars
-function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {}, argv ) {
+function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {} ) {
 	cssFilename =
 		cssFilename ||
 		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
