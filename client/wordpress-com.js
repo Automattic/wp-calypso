@@ -41,6 +41,13 @@ const sections = [
 		secondary: true,
 	},
 	{
+		name: 'activity',
+		paths: [ '/activity-log' ],
+		module: 'my-sites/activity',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'security',
 		paths: [ '/me/security' ],
 		module: 'me/security',

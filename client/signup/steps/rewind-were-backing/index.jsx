@@ -49,7 +49,7 @@ class RewindWereBacking extends Component {
 							'transformed into the site of your dreams.'
 					) }
 				</p>
-				<Button primary href={ `/stats/activity/${ siteSlug }` }>
+				<Button primary href={ `/activity-log/${ siteSlug }` }>
 					{ translate( 'View your activity' ) }
 				</Button>
 			</Card>

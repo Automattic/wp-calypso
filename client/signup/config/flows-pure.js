@@ -169,7 +169,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		'rewind-switch': {
 			steps: [ 'rewind-migrate', 'rewind-were-backing' ],
 			destination: () => {
-				return '/stats/activity';
+				return '/activity-log';
 			},
 			description:
 				'Allows users with Jetpack plan with VaultPress credentials to migrate credentials',
@@ -182,7 +182,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		'rewind-setup': {
 			steps: [ 'rewind-add-creds', 'rewind-form-creds', 'rewind-were-backing' ],
 			destination: () => {
-				return '/stats/activity';
+				return '/activity-log';
 			},
 			description: 'Allows users with Jetpack plan to setup credentials',
 			lastModified: '2018-01-27',
@@ -194,7 +194,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		'rewind-auto-config': {
 			steps: [ 'creds-permission', 'creds-confirm', 'rewind-were-backing' ],
 			destination: () => {
-				return '/stats/activity';
+				return '/activity-log';
 			},
 			description:
 				'Allow users of sites that can auto-config to grant permission to server credentials',
@@ -216,7 +216,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				'clone-cloning',
 			],
 			destination: () => {
-				return '/stats/activity';
+				return '/activity-log';
 			},
 			description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
 			lastModified: '2018-05-28',

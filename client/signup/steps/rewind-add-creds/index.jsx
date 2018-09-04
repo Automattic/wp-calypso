@@ -71,7 +71,7 @@ class RewindAddCreds extends Component {
 				hideFormattedHeader={ true }
 				hideSkip={ true }
 				hideBack={ false }
-				backUrl={ `/stats/activity/${ this.props.siteSlug }` }
+				backUrl={ `/activity-log/${ this.props.siteSlug }` }
 				allowBackFirstStep={ true }
 			/>
 		);

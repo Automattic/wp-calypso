@@ -5,7 +5,7 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { find, pick, get, isEqual } from 'lodash';
+import { find, pick, get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -17,8 +17,6 @@ import { savePreference } from 'state/preferences/actions';
 import { getSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 import FollowList from 'lib/follow-list';
 import StatsInsights from './stats-insights';
 import StatsOverview from './overview';
@@ -26,10 +24,7 @@ import StatsSite from './site';
 import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
-import ActivityLog from './activity-log';
 import { isDesktop } from 'lib/viewport';
-import { setFilter } from 'state/activity-log/actions';
-import { queryToFilterState } from 'state/activity-log/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
@@ -382,35 +377,6 @@ export default {
 				domain={ siteDomain }
 				siteId={ siteId }
 				followList={ followList }
-			/>
-		);
-
-		next();
-	},
-
-	activityLog: function( context, next ) {
-		const state = context.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
-			? context.query.startDate
-			: undefined;
-
-		const filter = getActivityLogFilter( state, siteId );
-		const queryFilter = queryToFilterState( context.query );
-
-		if ( ! isEqual( filter, queryFilter ) ) {
-			context.store.dispatch( {
-				...setFilter( siteId, queryFilter ),
-				meta: { skipUrlUpdate: true },
-			} );
-		}
-
-		context.primary = (
-			<ActivityLog
-				path={ context.path }
-				siteId={ siteId }
-				context={ context }
-				startDate={ startDate }
 			/>
 		);
 

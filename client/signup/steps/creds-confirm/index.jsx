@@ -44,7 +44,7 @@ class CredsConfirmStep extends Component {
 			this.props.goToNextStep();
 		} else {
 			// The flow /start/rewind-auto-config exits back to AL on the second skip
-			return page.redirect( `/stats/activity/${ this.props.siteSlug }` );
+			return page.redirect( `/activity-log/${ this.props.siteSlug }` );
 		}
 	};
 

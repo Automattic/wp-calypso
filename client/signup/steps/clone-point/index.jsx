@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import ActivityLogItem from 'my-sites/stats/activity-log-item';
+import ActivityLogItem from 'my-sites/activity/activity-log-item';
 import Pagination from 'components/pagination';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -19,7 +19,7 @@ import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
-import { adjustMoment } from 'my-sites/stats/activity-log/utils';
+import { adjustMoment } from 'my-sites/activity/activity-log/utils';
 import { requestActivityLogs } from 'state/data-getters';
 
 const PAGE_SIZE = 20;

@@ -145,6 +145,35 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackActivityClick = () => {
+		this.trackMenuItemClick( 'activity' );
+		this.onNavigate();
+	};
+
+	activity() {
+		const { siteId, canUserViewActivity, path, translate, siteSuffix } = this.props;
+
+		if ( ! siteId ) {
+			return null;
+		}
+
+		if ( ! canUserViewActivity ) {
+			return null;
+		}
+
+		const activityLink = '/activity-log' + siteSuffix;
+		return (
+			<SidebarItem
+				tipTarget="activity"
+				label={ translate( 'Activity' ) }
+				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
+				link={ activityLink }
+				onNavigate={ this.trackActivityClick }
+				icon="history"
+			/>
+		);
+	}
+
 	preview() {
 		const { isPreviewable, path, site, siteId, translate } = this.props;
 
@@ -644,6 +673,7 @@ export class MySitesSidebar extends Component {
 					<ul>
 						{ this.preview() }
 						{ this.stats() }
+						{ this.activity() }
 						{ this.plan() }
 						{ this.store() }
 					</ul>
@@ -715,6 +745,7 @@ function mapStateToProps( state ) {
 		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
+		canUserViewActivity: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),

@@ -315,7 +315,7 @@ export default connect(
 		trackTryRewind: siteSlug =>
 			withAnalytics(
 				recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind' ),
-				navigate( `/stats/activity/${ siteSlug }` )
+				navigate( `/activity-log/${ siteSlug }` )
 			),
 		trackTryRewindHelp: () =>
 			recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind_help' ),
