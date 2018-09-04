@@ -70,7 +70,9 @@ class DomainsStep extends React.Component {
 		if (
 			this.isDomainsFirstFlow() &&
 			domain &&
-			! get( props, 'signupDependencies.domainItem', false )
+			// If someone has a better idea on how to figure if the user landed anew
+			// Because we persist the signupDependencies, but still want the user to be able to go back to search screen
+			props.path.indexOf( '?' ) !== -1
 		) {
 			this.skipRender = true;
 			const productSlug = getDomainProductSlug( domain );
@@ -291,7 +293,13 @@ class DomainsStep extends React.Component {
 	}
 
 	domainForm = () => {
-		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
+		let initialState = {};
+		if ( this.state ) {
+			initialState = this.state.domainForm;
+		}
+		if ( this.props.step ) {
+			initialState = this.props.step.domainForm;
+		}
 
 		return (
 			<RegisterDomainStep

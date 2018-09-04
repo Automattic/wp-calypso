@@ -338,8 +338,6 @@ export default function() {
 		);
 	}
 
-	page( '/domains', () => page.redirect( '/start/domain-first' ) );
-
 	page(
 		'/domains/:site',
 		siteSelection,
@@ -349,4 +347,6 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
+	page( '/domains', () => page.redirect( '/start/domain-first' ) );
 }
