@@ -5,7 +5,7 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { find, pick, get, isEqual } from 'lodash';
+import { find, pick, get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -29,7 +29,7 @@ import StatsCommentFollows from './comment-follows';
 import ActivityLog from './activity-log';
 import { isDesktop } from 'lib/viewport';
 import { setFilter } from 'state/activity-log/actions';
-import { queryToFilterState } from 'state/activity-log/utils';
+import { queryToFilterState, logsNeedRefresh } from 'state/activity-log/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
@@ -398,7 +398,7 @@ export default {
 		const filter = getActivityLogFilter( state, siteId );
 		const queryFilter = queryToFilterState( context.query );
 
-		if ( ! isEqual( filter, queryFilter ) ) {
+		if ( logsNeedRefresh( queryFilter, filter ) ) {
 			context.store.dispatch( {
 				...setFilter( siteId, queryFilter ),
 				meta: { skipUrlUpdate: true },

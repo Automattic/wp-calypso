@@ -14,8 +14,8 @@ import { isJetpackSite } from 'state/sites/selectors';
 /**
  * Internal dependencies
  */
-import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
 import ActivityLogExample from '../activity-log-example';
+import ActivityLogSearch from 'my-sites/stats/activity-log-search';
 import ActivityLogItem from '../activity-log-item';
 import ActivityLogSwitch from '../activity-log-switch';
 import ActivityLogTasklist from '../activity-log-tasklist';
@@ -340,6 +340,7 @@ class ActivityLog extends Component {
 	getActivityLog() {
 		const {
 			enableRewind,
+			filter,
 			filter: { page: requestedPage },
 			logs,
 			moment,
@@ -431,6 +432,7 @@ class ActivityLog extends Component {
 					this.renderNoLogsContent()
 				) : (
 					<div>
+						<ActivityLogSearch filter={ filter } siteId={ siteId } />
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination"
