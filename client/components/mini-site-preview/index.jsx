@@ -11,7 +11,7 @@ import { invoke } from 'lodash';
  */
 import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
 
-export class MiniSitePreviewWrapper extends Component {
+export class MiniSitePreview extends Component {
 	static propTypes = {
 		siteURL: PropTypes.string.isRequired,
 		onFetchSuccess: PropTypes.func,
@@ -87,4 +87,4 @@ export class MiniSitePreviewWrapper extends Component {
 	}
 }
 
-export default MiniSitePreviewWrapper;
+export default MiniSitePreview;
