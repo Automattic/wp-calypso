@@ -5,19 +5,14 @@ Calypso SDK is an early stage tool that's goal is to build, visualize, test, and
 
 ## Using SDK CLI
 
-You can link Calypso SDK to be globally available by running `npm link` in the Calypso directory. That will give you a global SDK CLI command:
-
-```
-calypso-sdk --help
-```
-
-Alternatively, you can run CLI commands directly in Calypso directory:
-
-```
+```bash
 npm run sdk -- --help
 ```
 
-Note using extra `--` delimiter to pass arguments for the SDK.
+Note: It's also possible to run the SDK command "globally" by linking within the Calypso repository with [`npm link`](https://docs.npmjs.com/cli/link). After running this command you can replace all invocations of `npm run sdk --` in the examples below with `calypso-sdk` and may do so from any other directory in the filesystem:
+```
+calypso-sdk --help
+```
 
 ## SDK modules
 
@@ -30,10 +25,9 @@ SDK module to build [Gutenberg](https://wordpress.org/gutenberg/handbook/) exten
 See usage instructions:
 
 ```
-calypso-sdk gutenberg --help
+npm run sdk -- gutenberg --help
 ```
-
-Or via NPM script:
+or
 ```
 npm run sdk:gutenberg -- --help
 ```
@@ -91,6 +85,6 @@ exports.config = ( {
 
 This gives you commands:
 ```bash
-calypso-sdk example --help
-calypso-sdk example --output-dir=./example
+npm run sdk -- example --help
+npm run sdk -- example --output-dir=./example
 ```
