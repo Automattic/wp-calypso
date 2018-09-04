@@ -138,17 +138,26 @@ export class EditorGroundControl extends React.Component {
 	}
 
 	getCloseButtonPath() {
-		// find the last non-editor path in routeHistory, default to "all posts"
-		const lastNonEditorPath = findLast(
-			this.props.routeHistory,
-			action => ! action.path.match( /^\/(post|page|(edit\/[^\/]+))\/[^\/]+(\/\d+)?$/i )
-		);
-		return lastNonEditorPath ? lastNonEditorPath.path : this.props.allPostsUrl;
+		//Checks if the editor path is the first path in the routeHistory
+		if(this.props.routeHistory.length <= 2){
+			//Checks if both paths are /post paths
+			if(this.props.routeHistory[0].path.includes("/post") && this.props.routeHistory[1].path.includes("/post")){
+				return ('/');
+			}
+		} else {
+			// find the last non-editor path in routeHistory, default to "all posts"
+			const lastNonEditorPath = findLast(
+				this.props.routeHistory,
+				action => !action.path.match(/^\/(post|page|(edit\/[^\/]+))\/[^\/]+(\/\d+)?$/i)
+			);
+			return lastNonEditorPath ? lastNonEditorPath.path : this.props.allPostsUrl;
+		}
 	}
 
 	onCloseButtonClick = () => {
 		this.props.recordCloseButtonClick();
 		page.show( this.getCloseButtonPath() );
+
 	};
 
 	render() {
