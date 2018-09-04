@@ -11,28 +11,26 @@ exports.config = ( { argv: { outputDir }, getBaseConfig, __rootDir } ) => {
 
 	return {
 		...baseConfig,
-		...{
-			entry: path.join( __rootDir, 'client', 'notifications', 'src', 'standalone' ),
-			node: {
-				fs: 'empty',
-			},
-			output: {
-				path: outputDir,
-				filename: 'build.min.js',
-			},
-			plugins: [
-				...baseConfig.plugins,
-				new HtmlWebpackPlugin( {
-					filename: path.join( outputDir, 'root.html' ),
-					gitDescribe: spawnSync( 'git', [ 'describe', '--always', '--dirty', '--long' ], {
-						encoding: 'utf8',
-					} ).stdout.replace( '\n', '' ),
-					hash: true,
-					nodePlatform: process.platform,
-					nodeVersion: process.version,
-					template: path.join( __rootDir, 'client', 'notifications', 'src', 'index.ejs' ),
-				} ),
-			],
+		entry: path.join( __rootDir, 'client', 'notifications', 'src', 'standalone' ),
+		node: {
+			fs: 'empty',
 		},
+		output: {
+			path: outputDir,
+			filename: 'build.min.js',
+		},
+		plugins: [
+			...baseConfig.plugins,
+			new HtmlWebpackPlugin( {
+				filename: path.join( outputDir, 'root.html' ),
+				gitDescribe: spawnSync( 'git', [ 'describe', '--always', '--dirty', '--long' ], {
+					encoding: 'utf8',
+				} ).stdout.replace( '\n', '' ),
+				hash: true,
+				nodePlatform: process.platform,
+				nodeVersion: process.version,
+				template: path.join( __rootDir, 'client', 'notifications', 'src', 'index.ejs' ),
+			} ),
+		],
 	};
 };
