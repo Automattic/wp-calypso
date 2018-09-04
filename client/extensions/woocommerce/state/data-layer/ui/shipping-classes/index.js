@@ -23,14 +23,18 @@ import {
 	updateShippingClass,
 } from 'woocommerce/state/sites/shipping-classes/actions';
 
+export const deletingText = translate( 'Deleting a shipping class' );
+export const creatingText = translate( 'Creating a shipping class' );
+export const updatingText = translate( 'Updating a shipping class' );
+
 /**
- * Creates a list of all steps that are required in order to save the shipping classes.
+ * Creates a list of steps that are required in order to save the shipping classes.
  *
  * @param  {object} state  The existing state.
  * @param  {number} siteId The ID of the site to manipulate.
  * @return {Object[]}	   All required steps for the list.
  */
-const getSaveShippingClassesActionListSteps = ( state, siteId ) => {
+export const getSaveShippingClassesSteps = ( state, siteId ) => {
 	const localState = getUiShippingClassesState( state, siteId );
 	const list = [];
 	const { created, deleted } = localState;
@@ -46,7 +50,7 @@ const getSaveShippingClassesActionListSteps = ( state, siteId ) => {
 		}
 
 		list.push( {
-			description: translate( 'Deleting a shipping class' ),
+			description: deletingText,
 			action: deleteShippingClass,
 			args: [ id ],
 		} );
@@ -74,8 +78,11 @@ const getSaveShippingClassesActionListSteps = ( state, siteId ) => {
 			return false;
 		} );
 
+		// Ensure that the changes object only contains actual data
+		delete shippingClass.id;
+
 		list.push( {
-			description: translate( 'Creating a shipping class' ),
+			description: creatingText,
 			action: createShippingClass,
 			args: [ id, shippingClass ],
 		} );
@@ -105,11 +112,24 @@ const getSaveShippingClassesActionListSteps = ( state, siteId ) => {
 		delete allChanges.id;
 
 		list.push( {
-			description: translate( 'Updating a shipping class' ),
+			description: updatingText,
 			action: updateShippingClass,
 			args: [ id, allChanges ],
 		} );
 	} );
+
+	return list;
+};
+
+/**
+ * Converts the list of saving steps to action-list steps.
+ *
+ * @param  {object} state  The existing state.
+ * @param  {number} siteId The ID of the site to manipulate.
+ * @return {Object[]}	   All required steps for the action list.
+ */
+export const getSaveShippingClassesActionListSteps = ( state, siteId ) => {
+	const list = getSaveShippingClassesSteps( state, siteId );
 
 	// Convert the basic list to a proper action list
 	return list.map( ( { action, args, description } ) => ( {
