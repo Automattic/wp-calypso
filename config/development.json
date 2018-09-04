@@ -93,7 +93,6 @@
 		"manage/import/medium": true,
 		"manage/import/site-importer": true,
 		"manage/import-in-sidebar": true,
-		"manage/media": true,
 		"manage/option_sync_non_public_post_stati": true,
 		"manage/pages": true,
 		"manage/pages/set-front-page": true,
