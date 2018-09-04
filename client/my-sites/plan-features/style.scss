@@ -276,6 +276,7 @@ $plan-features-sidebar-width: 272px;
 	font-weight: normal;
 	vertical-align: middle;
 	padding: 0 8px;
+	margin-bottom: 4px;
 	@include breakpoint( '>960px' ) {
 		margin-left: 4px;
 	}
