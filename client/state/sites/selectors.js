@@ -40,6 +40,7 @@ import { getAutomatedTransferStatus } from '../automated-transfer/selectors';
 import { getCustomizerFocus } from 'my-sites/customize/panels';
 import { getSelectedSiteId } from '../ui/selectors';
 import { isCurrentUserCurrentPlanOwner } from './plans/selectors';
+import { isFreePlan } from 'lib/plans';
 import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
 import { transferStates } from '../automated-transfer/constants';
 
@@ -611,13 +612,13 @@ export function getSitePlanSlug( state, siteId ) {
  * @return {?Boolean}               Whether the current plan is paid
  */
 export function isCurrentPlanPaid( state, siteId ) {
-	const sitePlan = getSitePlan( state, siteId );
+	const sitePlanSlug = getSitePlanSlug( state, siteId );
 
-	if ( ! sitePlan ) {
+	if ( ! sitePlanSlug ) {
 		return null;
 	}
 
-	return sitePlan.product_id !== 1 && sitePlan.product_id !== 2002;
+	return ! isFreePlan( sitePlanSlug );
 }
 
 /**
