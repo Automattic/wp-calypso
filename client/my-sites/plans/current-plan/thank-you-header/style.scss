@@ -1,18 +1,20 @@
 /** @format */
 .thank-you-header {
 	box-shadow: none;
-	font-size: 16px;
-	margin-bottom: 40px;
-	padding: 50px 160px 30px;
 	text-align: center;
+
+	@include breakpoint( '>800px' ) {
+		font-size: 16px;
+		// padding: 50px 80px 30px;
+		margin-bottom: 40px;
+	}
+	@include breakpoint( '>1280px' ) {
+		padding: 50px 160px 30px;
+	}
 
 	.progress-bar {
 		max-width: 70%;
 		margin-bottom: 1em;
-	}
-
-	.thank-you-header__skip-setup {
-		font-size: 14px;
 	}
 }
 
@@ -20,12 +22,18 @@
 	display: none;
 	@include breakpoint( '>480px' ) {
 		display: inline;
+		width: 70%;
+	}
+	@include breakpoint( '>800px' ) {
 		width: 52%;
 	}
 }
 
 .thank-you-header__title {
-	font-size: 36px;
-	font-weight: 400;
+	font-size: 24px;
 	margin: 18px 0 14px;
+}
+
+.thank-you-header__skip-setup {
+	font-size: 14px;
 }
