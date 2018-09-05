@@ -2070,8 +2070,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-				77203074,
-				1003
+				77203074
 			);
 
 			expect( isPaid ).toBe( true );
@@ -2090,8 +2089,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-				77203074,
-				1003
+				77203074
 			);
 
 			expect( isPaid ).toBe( false );
@@ -2108,8 +2106,7 @@ describe( 'selectors', () => {
 						},
 					},
 				},
-				77203074,
-				1003
+				77203074
 			);
 
 			expect( isPaid ).toBeNull;
