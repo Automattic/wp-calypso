@@ -89,20 +89,21 @@ class Media extends Component {
 	};
 
 	closeDetailsModal = () => {
-		const site = this.props.selectedSite;
 		this.setState( {
 			editedImageItem: null,
 			editedVideoItem: null,
 			currentDetail: null,
 			selectedItems: [],
 		} );
-		if ( this.isSingleMediaView() ) {
-			page( '/media/' + site.slug );
-		}
+		this.singleMediaViewRedirectToAllMedia();
 	};
 
-	isSingleMediaView = () =>
-		this.props.mediaId && this.props.selectedSite && this.props.selectedSite.slug;
+	singleMediaViewRedirectToAllMedia = () => {
+		const { selectedSite, mediaId } = this.props;
+		if ( mediaId && selectedSite && selectedSite.slug ) {
+			page( '/media/' + selectedSite.slug );
+		}
+	};
 
 	editImage = () => {
 		this.setState( { currentDetail: null, editedImageItem: this.getSelectedIndex() } );
@@ -142,9 +143,7 @@ class Media extends Component {
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
-		if ( this.isSingleMediaView() ) {
-			page( '/media/' + site.slug );
-		}
+		this.singleMediaViewRedirectToAllMedia();
 	};
 
 	getModalButtons() {
@@ -196,23 +195,17 @@ class Media extends Component {
 		}
 
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
-		if ( this.isSingleMediaView() ) {
-			page( '/media/' + site.slug );
-		}
+		this.singleMediaViewRedirectToAllMedia();
 	};
 
 	restoreOriginalMedia = ( siteId, item ) => {
-		const site = this.props.selectedSite;
 		if ( ! siteId || ! item ) {
 			return;
 		}
 
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
-
-		if ( this.isSingleMediaView() ) {
-			page( '/media/' + site.slug );
-		}
+		this.singleMediaViewRedirectToAllMedia();
 	};
 
 	setDetailSelectedIndex = index => {
