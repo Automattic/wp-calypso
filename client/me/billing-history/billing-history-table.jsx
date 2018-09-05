@@ -74,7 +74,12 @@ class BillingHistoryTable extends React.Component {
 				components: { link: <a href="/plans" /> },
 			}
 		);
-		const noFilterResultsText = translate( 'No receipts found.' );
+		const noFilterResultsText = translate(
+			'No receipts found. {{link}}Contact us to get specific receipts{{/link}}.',
+			{
+				components: { link: <a href="/help/contact" /> },
+			}
+		);
 
 		return (
 			<TransactionsTable
