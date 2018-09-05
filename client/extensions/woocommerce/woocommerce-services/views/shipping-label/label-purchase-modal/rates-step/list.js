@@ -11,6 +11,7 @@ import { get, isEmpty, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
+import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
 import Notice from 'components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
@@ -54,6 +55,7 @@ export const ShippingRates = ( {
 		const selectedRate = selectedRates[ pckgId ] || '';
 		const packageRates = get( availableRates, [ pckgId, 'rates' ], [] );
 		const valuesMap = { '': translate( 'Select one…' ) };
+		const packageErrors = errors[ pckgId ] || [];
 
 		packageRates.forEach( rateObject => {
 			valuesMap[ rateObject.service_id ] =
@@ -70,8 +72,12 @@ export const ShippingRates = ( {
 					value={ selectedRate }
 					updateValue={ onRateUpdate }
 					disabled={ isEmpty( packageRates ) }
-					error={ errors[ pckgId ] }
+					error={ packageErrors[ 0 ] }
 				/>
+				{ packageErrors.slice( 1 ).map( ( error, index ) => {
+					// Print the rest of the errors (if any) below the dropdown
+					return <FieldError type="server-error" key={ index } text={ error } />;
+				} ) }
 			</div>
 		);
 	};

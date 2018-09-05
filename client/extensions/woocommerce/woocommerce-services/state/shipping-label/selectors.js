@@ -391,21 +391,22 @@ export const getCustomsErrors = (
 export const getRatesErrors = ( { values: selectedRates, available: allRates } ) =>
 	mapValues( allRates, ( rate, boxId ) => {
 		if ( ! isEmpty( rate.errors ) ) {
-			return (
-				rate.errors[ 0 ].userMessage ||
-				rate.errors[ 0 ].message ||
-				translate( "We couldn't get a rate for this package, please try again." )
-			);
+			const messages = rate.errors.map( err => err.userMessage || err.message ).filter( Boolean );
+			return messages.length
+				? messages
+				: [ "We couldn't get a rate for this package, please try again." ];
 		}
 
 		if ( selectedRates[ boxId ] ) {
-			return null;
+			return [];
 		} else if ( isEmpty( rate.rates ) ) {
-			return translate(
-				'No rates available, please double check dimensions and weight or try using different packaging.'
-			);
+			return [
+				translate(
+					'No rates available, please double check dimensions and weight or try using different packaging.'
+				),
+			];
 		}
-		return translate( 'Please choose a rate' );
+		return [ translate( 'Please choose a rate' ) ];
 	} );
 
 const getSidebarErrors = paperSize => {
