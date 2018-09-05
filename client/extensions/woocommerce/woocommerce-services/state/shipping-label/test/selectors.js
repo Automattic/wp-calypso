@@ -136,14 +136,9 @@ describe( '#getRatesErrors', () => {
 		};
 		const result = getRatesErrors( rates );
 
-		it( 'should return the server error and a form error', () => {
+		it( 'should return the server error', () => {
 			expect( result ).to.eql( {
-				server: {
-					box_1: [ 'There was an error!' ],
-				},
-				form: {
-					box_1: 'Please choose a rate',
-				},
+				box_1: [ 'There was an error!' ],
 			} );
 		} );
 
@@ -155,7 +150,7 @@ describe( '#getRatesErrors', () => {
 		const resultWithUserMessage = getRatesErrors( ratesWithUserMessage );
 
 		it( 'should return the `userMessage` if it exists', () => {
-			expect( resultWithUserMessage.server ).to.eql( {
+			expect( resultWithUserMessage ).to.eql( {
 				box_1: [ 'This is a friendly error message!' ],
 			} );
 		} );
@@ -168,7 +163,7 @@ describe( '#getRatesErrors', () => {
 		const resultWithErrorAndNoMessage = getRatesErrors( ratesWithNoMessage );
 
 		it( 'should return the the default error message if no error message sent', () => {
-			expect( resultWithErrorAndNoMessage.server ).to.eql( {
+			expect( resultWithErrorAndNoMessage ).to.eql( {
 				box_1: [ "We couldn't get a rate for this package, please try again." ],
 			} );
 		} );
@@ -182,8 +177,8 @@ describe( '#getRatesErrors', () => {
 			};
 			const resultWithMultipleErrors = getRatesErrors( ratesWithMultipleErrors );
 
-			it( 'should return array with each server error', () => {
-				expect( resultWithMultipleErrors.server ).to.eql( {
+			it( 'should return all the errors', () => {
+				expect( resultWithMultipleErrors ).to.eql( {
 					box_1: [ 'Error 1', 'Error 2' ],
 				} );
 			} );
@@ -200,14 +195,9 @@ describe( '#getRatesErrors', () => {
 			};
 			const result = getRatesErrors( rates );
 
-			it( 'should return a null form error and no server errors', () => {
+			it( 'should return no error', () => {
 				expect( result ).to.eql( {
-					server: {
-						box_1: [],
-					},
-					form: {
-						box_1: null,
-					},
+					box_1: [],
 				} );
 			} );
 		} );
@@ -221,14 +211,9 @@ describe( '#getRatesErrors', () => {
 			};
 			const result = getRatesErrors( rates );
 
-			it( 'should return a form error and no server errors', () => {
+			it( 'should return an error', () => {
 				expect( result ).to.eql( {
-					server: {
-						box_1: [],
-					},
-					form: {
-						box_1: 'Please choose a rate',
-					},
+					box_1: [ 'Please choose a rate' ],
 				} );
 			} );
 		} );
@@ -245,17 +230,10 @@ describe( '#getRatesErrors', () => {
 			};
 			const result = getRatesErrors( rates );
 
-			it( 'should return the server error for the first box', () => {
-				expect( result.server ).to.eql( {
+			it( 'should return an error only for the first box', () => {
+				expect( result ).to.eql( {
 					box_1: [ 'There was an error!' ],
 					box_2: [],
-				} );
-			} );
-
-			it( 'should return the form error for the second box', () => {
-				expect( result.form ).to.eql( {
-					box_1: 'Please choose a rate',
-					box_2: null,
 				} );
 			} );
 		} );
@@ -270,17 +248,10 @@ describe( '#getRatesErrors', () => {
 			};
 			const result = getRatesErrors( rates );
 
-			it( 'should return the server error for the first box', () => {
-				expect( result.server ).to.eql( {
+			it( 'should return the server error for the first box and the form error for the second', () => {
+				expect( result ).to.eql( {
 					box_1: [ 'There was an error!' ],
-					box_2: [],
-				} );
-			} );
-
-			it( 'should return no error for the second box', () => {
-				expect( result.form ).to.eql( {
-					box_1: 'Please choose a rate',
-					box_2: 'Please choose a rate',
+					box_2: [ 'Please choose a rate' ],
 				} );
 			} );
 		} );

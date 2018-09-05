@@ -333,7 +333,9 @@ export const getCustomsErrors = (
 			} );
 
 			if ( pckg.itn ) {
-				if ( ! /^(AES X\d{14})|(NOEEI 30\.\d{1,2}(\([a-z]\)(\(\d\))?)?)$/.test( pckg.itn ) ) {
+				if (
+					! /^(?:(?:AES X\d{14})|(?:NOEEI 30\.\d{1,2}(?:\([a-z]\)(?:\(\d\))?)?))$/.test( pckg.itn )
+				) {
 					errors.itn = translate( 'Invalid format' );
 				}
 			} else if ( 'CA' !== destinationCountryCode ) {
@@ -388,23 +390,26 @@ export const getCustomsErrors = (
 	};
 };
 
-export const getRatesErrors = ( { values: selectedRates, available: allRates } ) => {
-	return {
-		server: mapValues( allRates, rate => {
-			if ( ! rate.errors ) {
-				return;
-			}
+export const getRatesErrors = ( { values: selectedRates, available: allRates } ) =>
+	mapValues( allRates, ( rate, boxId ) => {
+		if ( ! isEmpty( rate.errors ) ) {
+			const messages = rate.errors.map( err => err.userMessage || err.message ).filter( Boolean );
+			return messages.length
+				? messages
+				: [ "We couldn't get a rate for this package, please try again." ];
+		}
 
-			return rate.errors.map(
-				error =>
-					error.userMessage ||
-					error.message ||
-					translate( "We couldn't get a rate for this package, please try again." )
-			);
-		} ),
-		form: mapValues( selectedRates, rate => ( rate ? null : translate( 'Please choose a rate' ) ) ),
-	};
-};
+		if ( selectedRates[ boxId ] ) {
+			return [];
+		} else if ( isEmpty( rate.rates ) ) {
+			return [
+				translate(
+					'No rates available, please double check dimensions and weight or try using different packaging.'
+				),
+			];
+		}
+		return [ translate( 'Please choose a rate' ) ];
+	} );
 
 const getSidebarErrors = paperSize => {
 	const errors = {};
