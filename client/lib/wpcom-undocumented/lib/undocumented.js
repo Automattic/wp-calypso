@@ -1340,13 +1340,6 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readSitePosts = function( query, fn ) {
-	const params = omit( query, 'site' );
-	debug( '/read/sites/:site/posts' );
-	addReaderContentWidth( params );
-	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts', params, fn );
-};
-
 Undocumented.prototype.readSitePost = function( query, fn ) {
 	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
