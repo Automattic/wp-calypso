@@ -12,6 +12,7 @@ import { get, unionBy } from 'lodash';
  * Internal dependencies
  */
 import { getPluginsWithUpdates } from 'state/plugins/installed/selectors';
+import { isJetpackSiteSecondaryNetworkSite } from 'state/sites/selectors';
 import { requestSiteAlerts } from 'state/data-getters';
 
 const emptyList = [];
@@ -57,8 +58,12 @@ export default WrappedComponent => {
 	}
 	return connect( ( state, { siteId } ) => {
 		const alertsData = requestSiteAlerts( siteId );
+		let pluginsWithUpdates = null;
+		if ( ! isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
+			pluginsWithUpdates = getPluginsWithUpdates( state, [ siteId ] );
+		}
 		return {
-			plugins: getPluginsWithUpdates( state, [ siteId ] ),
+			plugins: pluginsWithUpdates,
 			themes: get( alertsData, 'data.updates.themes', emptyList ),
 			core: get( alertsData, 'data.updates.core', emptyList ),
 		};
