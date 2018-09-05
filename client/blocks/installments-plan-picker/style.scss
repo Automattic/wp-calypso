@@ -14,7 +14,6 @@
 		@include breakpoint('<960px') {
 			max-height: unset;
 		}
-
 	}
 
 	&__option-container {
@@ -35,10 +34,8 @@
 	display: flex;
 	width: 100%;
 	cursor: pointer;
-
 	padding: $padding-size;
 	border-radius: 5px;
-
 	background: $white;
 
 	.installments-plan-picker__option-header {

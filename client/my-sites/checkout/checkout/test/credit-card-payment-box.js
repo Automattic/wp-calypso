@@ -44,10 +44,6 @@ jest.mock( 'lib/cart-values', () => ( {
 	},
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-} ) );
-
 jest.mock( '../terms-of-service', () => {
 	const react = require( 'react' );
 	return class TermsOfService extends react.Component {};

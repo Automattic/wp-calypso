@@ -11,7 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { InstallmentsPlanPicker } from '../index';
+import { InstallmentsPlanPicker } from '../';
 
 describe( 'InstallmentsPlanPicker basic tests', () => {
 	const installmentsPlans = [
