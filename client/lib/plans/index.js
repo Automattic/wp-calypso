@@ -22,6 +22,7 @@ import {
 	TERM_BIENNIALLY,
 	TYPE_BUSINESS,
 	TYPE_FREE,
+	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	GROUP_WPCOM,
@@ -230,6 +231,10 @@ export function isPersonalPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PERSONAL } );
 }
 
+export function isBloggerPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BLOGGER } );
+}
+
 export function isFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE } );
 }
@@ -244,6 +249,10 @@ export function isWpComPremiumPlan( planSlug ) {
 
 export function isWpComPersonalPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_PERSONAL, group: GROUP_WPCOM } );
+}
+
+export function isWpComBloggerPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BLOGGER, group: GROUP_WPCOM } );
 }
 
 export function isWpComFreePlan( planSlug ) {
