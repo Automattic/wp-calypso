@@ -1258,13 +1258,6 @@ Undocumented.prototype.readFollowing = function( query, fn ) {
 	return this.wpcom.req.get( '/read/following', query, fn );
 };
 
-Undocumented.prototype.readA8C = function( query, fn ) {
-	debug( '/read/a8c' );
-	query.apiVersion = '1.2';
-	addReaderContentWidth( query );
-	return this.wpcom.req.get( '/read/a8c', query, fn );
-};
-
 Undocumented.prototype.readConversations = function( query, fn ) {
 	debug( '/read/conversations' );
 	const params = {
