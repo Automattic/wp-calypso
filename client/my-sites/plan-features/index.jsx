@@ -634,7 +634,7 @@ export default connect(
 				}
 
 				return {
-					availableForPurchase: availableForPurchase,
+					availableForPurchase,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
