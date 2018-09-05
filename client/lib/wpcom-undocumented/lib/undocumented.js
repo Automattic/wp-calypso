@@ -1295,11 +1295,6 @@ Undocumented.prototype.readLists = function( fn ) {
 	return this.wpcom.req.get( '/read/lists', { apiVersion: '1.2' }, fn );
 };
 
-Undocumented.prototype.readListsNew = function( title, fn ) {
-	debug( '/read/lists/new' );
-	return this.wpcom.req.post( '/read/lists/new', { apiVersion: '1.2' }, { title: title }, fn );
-};
-
 Undocumented.prototype.readListsUpdate = function( query, fn ) {
 	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:list/update' );
