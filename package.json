@@ -304,7 +304,7 @@
     "pretty-bytes": "5.1.0",
     "react-test-renderer": "16.4.2",
     "readline-sync": "1.4.9",
-    "sinon": "6.1.5",
+    "sinon": "6.2.0",
     "sinon-chai": "3.2.0",
     "socket.io": "2.1.1",
     "stacktrace-gps": "3.0.2",
