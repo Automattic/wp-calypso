@@ -32,7 +32,7 @@ import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getNormalizedPath } from 'isomorphic-routing';
-import { serverRender, serverRenderError, renderJsx } from 'render';
+import { serverRender, renderJsx } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
@@ -237,7 +237,7 @@ function getDefaultContext( request ) {
 			asset => ! asset.startsWith( 'manifest' )
 		),
 		manifest: getAssets().manifests.manifest,
-		faviconURL: '//s1.wp.com/i/favicon.ico',
+		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
@@ -258,7 +258,6 @@ function getDefaultContext( request ) {
 		context.badge = calypsoEnv;
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 		// this is for calypso.live, so that branchName can be available while rendering the page
 		if ( request.query.branch ) {
 			context.branchName = request.query.branch;
@@ -268,20 +267,17 @@ function getDefaultContext( request ) {
 	if ( calypsoEnv === 'horizon' ) {
 		context.badge = 'feedback';
 		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
-		context.faviconURL = '/calypso/images/favicons/favicon-horizon.ico';
 	}
 
 	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
 	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
@@ -494,6 +490,24 @@ function setUpRoute( req, res, next ) {
 function render404( request, response ) {
 	const ctx = getDefaultContext( request );
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
+}
+
+/* eslint-disable no-unused-vars */
+/* We don't use `next` but need to add it for express.js to
+   recognize this function as an error handler, hence the
+   eslint-disable. */
+function renderServerError( err, req, res, next ) {
+	/* eslint-enable no-unused-vars */
+	if ( process.env.NODE_ENV !== 'production' ) {
+		console.error( err );
+	}
+
+	res.status( err.status || 500 );
+	const ctx = {
+		urls: generateStaticUrls(),
+		faviconURL: config( 'favicon_url' ),
+	};
+	res.send( renderJsx( '500', ctx ) );
 }
 
 /**
@@ -773,7 +787,7 @@ module.exports = function() {
 	app.use( render404 );
 
 	// Error handling middleware for displaying the server error 500 page must be the very last middleware defined
-	app.use( serverRenderError );
+	app.use( renderServerError );
 
 	return app;
 };

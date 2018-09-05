@@ -1,6 +1,7 @@
 {
 	"env": "production",
 	"env_id": "wpcalypso",
+	"favicon_url": "/calypso/images/favicons/favicon-wpcalypso.ico",
 	"client_slug": "browser",
 	"directly_rtm_widget_environment": "sandbox",
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",

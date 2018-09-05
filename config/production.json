@@ -1,6 +1,7 @@
 {
 	"env": "production",
 	"env_id": "production",
+	"favicon_url": "//s1.wp.com/i/favicon.ico",
 	"client_slug": "browser",
 	"hostname": "wordpress.com",
 	"i18n_default_locale_slug": "en",
