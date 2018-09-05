@@ -18,6 +18,7 @@ export {
 	removeLocaleFromPath,
 	getPathParts,
 	setLangRevisions,
+	getLangRevisions,
 	getLangRevision,
 } from './utils';
 

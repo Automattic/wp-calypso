@@ -187,11 +187,20 @@ export function setLangRevisions( data ) {
 }
 
 /**
+ * Retrieve the stored language revision map.
+ *
+ * @returns {object} the stored revision map.
+ */
+export function getLangRevisions() {
+	return langRevisions;
+}
+
+/**
  * Retrieve the revision number associated with the given locale slug.
  *
  * @param {string} localeSlug A locale slug. e.g. jp, zh-tw, en
  * @returns {number|null} the revision number.
  */
 export function getLangRevision( localeSlug ) {
-	return langRevisions[ localeSlug ];
+	return langRevisions[ localeSlug ] || null;
 }
