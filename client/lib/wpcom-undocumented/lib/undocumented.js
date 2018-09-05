@@ -1290,18 +1290,6 @@ Undocumented.prototype.readList = function( query, fn ) {
 	return this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
 };
 
-Undocumented.prototype.readListPosts = function( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/list/:list/posts' );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-	return this.wpcom.req.get(
-		'/read/list/' + query.owner + '/' + query.slug + '/posts',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readLists = function( fn ) {
 	debug( '/read/lists' );
 	return this.wpcom.req.get( '/read/lists', { apiVersion: '1.2' }, fn );
