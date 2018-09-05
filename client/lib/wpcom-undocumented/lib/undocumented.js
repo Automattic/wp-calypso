@@ -1251,16 +1251,6 @@ function addReaderContentWidth( params ) {
 	}
 }
 
-Undocumented.prototype.readA8cConversations = function( query, fn ) {
-	debug( '/read/conversations' );
-	const params = {
-		...query,
-		index: 'a8c',
-		apiVersion: '1.2',
-	};
-	return this.wpcom.req.get( '/read/conversations', params, fn );
-};
-
 Undocumented.prototype.discoverFeed = function( query, fn ) {
 	debug( '/read/feed' );
 	return this.wpcom.req.get( '/read/feed/', query, fn );
