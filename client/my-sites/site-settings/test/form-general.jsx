@@ -4,7 +4,7 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'store/store', () => ( {
+jest.mock( 'store', () => ( {
 	get: () => {},
 	User: () => {},
 } ) );
