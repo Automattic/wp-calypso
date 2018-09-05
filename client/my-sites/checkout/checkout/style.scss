@@ -1,3 +1,5 @@
+/** @format */
+
 .checkout {
 	position: relative;
 
@@ -510,6 +512,27 @@
 		}
 	}
 
+	// WeChat Payment Box
+	// -----------------------------------
+	.wechat-payment-box {
+		.payment-box__content {
+			// WeChat Pay QR code Display
+			.checkout__wechat-qrcode {
+				text-align: center;
+				margin-bottom: 12px;
+			}
+			.checkout__wechat-qrcode-redirect {
+				color: $gray-text-min;
+				font-size: 12px;
+			}
+		}
+
+		form.loading {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+
 	// Supporting Text / Fine Print
 	// -----------------------------------
 	.supporting-text {
@@ -662,7 +685,8 @@
 	&.bancontact,
 	&.p24,
 	&.alipay,
-	&.eps {
+	&.eps,
+	&.wechat {
 		margin-left: 1em;
 	}
 
@@ -914,6 +938,7 @@
 
 	.checkout__alipay {
 		width: 100px;
+		height: 24px;
 	}
 
 	.checkout__eps {
@@ -938,6 +963,11 @@
 	.checkout__paytm {
 		width: 50px;
 		margin: -20px 0;
+	}
+
+	.checkout__wechat {
+		height: 24px;
+		margin-right: 5px;
 	}
 
 	.select-dropdown__item-text {
@@ -983,7 +1013,7 @@
 }
 
 .checkout__emergent-paywall-support-link {
-	text-align:center;
+	text-align: center;
 	font-size: 11px;
 	margin-top: -6px;
 }

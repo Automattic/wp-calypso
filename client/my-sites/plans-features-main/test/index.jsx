@@ -15,15 +15,9 @@ jest.mock( 'components/popover', () => 'Popover' );
 jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
+	localize: Component => props => <Component { ...props } translate={ x => x } />,
 	numberFormat: x => x,
+	translate: x => x,
 } ) );
 
 /**
