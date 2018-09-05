@@ -1283,13 +1283,6 @@ Undocumented.prototype.readTagImages = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
-	debug( '/recommendations/posts' );
-	query.apiVersion = '1.2';
-	addReaderContentWidth( query );
-	return this.wpcom.req.get( '/read/recommendations/posts', query, fn );
-};
-
 Undocumented.prototype.readLiked = function( query, fn ) {
 	const params = clone( query );
 	debug( '/read/liked' );
