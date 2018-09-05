@@ -21,6 +21,7 @@
 		"ad-tracking": true,
 		"apple-pay": true,
 		"automated-transfer": true,
+		"blogger-plan": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"code-splitting": true,

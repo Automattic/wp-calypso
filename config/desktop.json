@@ -19,6 +19,7 @@
 		"ad-tracking": true,
 		"always_use_logout_url": true,
 		"apple-pay": false,
+		"blogger-plan": false,
 		"catch-js-errors": false,
 		"code-splitting": false,
 		"desktop": true,
