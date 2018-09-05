@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import SectionHeader from 'components/section-header';
+import GridiconCart from 'gridicons/dist/cart';
 
 class CartSummaryBar extends React.Component {
 	render() {
@@ -26,7 +27,9 @@ class CartSummaryBar extends React.Component {
 
 		return (
 			<div>
-				<SectionHeader className="cart__header" label={ text } />
+				<SectionHeader className="cart__header" label={ text }>
+					<GridiconCart size="18" />
+				</SectionHeader>
 			</div>
 		);
 	}
