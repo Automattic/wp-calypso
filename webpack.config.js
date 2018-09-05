@@ -245,6 +245,8 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
 					store: 'store/dist/store.modern',
+					'@calypso-style': path.resolve( path.join( __dirname, 'assets', 'stylesheets', 'shared' ) ),
+					'@calypso': path.resolve( path.join( __dirname, 'client' ) ),
 				},
 				getAliasesForExtensions()
 			),
