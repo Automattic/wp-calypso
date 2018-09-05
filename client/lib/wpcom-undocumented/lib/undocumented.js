@@ -4,7 +4,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies.
@@ -1281,14 +1281,6 @@ Undocumented.prototype.readTagImages = function( query, fn ) {
 		params,
 		fn
 	);
-};
-
-Undocumented.prototype.readLiked = function( query, fn ) {
-	const params = clone( query );
-	debug( '/read/liked' );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-	return this.wpcom.req.get( '/read/liked', params, fn );
 };
 
 Undocumented.prototype.readList = function( query, fn ) {
