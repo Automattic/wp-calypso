@@ -21,8 +21,6 @@ import { getForumUrl } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 export class HelpSearch extends React.PureComponent {
-	static displayName = 'HelpSearch';
-
 	state = {
 		searchQuery: '',
 	};
