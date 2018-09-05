@@ -15,6 +15,7 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import { isDefaultLocale } from 'lib/i18n-utils';
+import { languageFileUrl } from 'lib/i18n-utils/switch-locale';
 import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
@@ -136,10 +137,8 @@ export function serverRender( req, res ) {
 
 	if ( ! isDefaultLocale( context.lang ) ) {
 		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
-		const langRevision = context.langRevisions[ langFileName ];
 
-		context.i18nLocaleScript =
-			'//widgets.wp.com/languages/calypso/' + langFileName + '.js' + `?v=${ langRevision }`;
+		context.i18nLocaleScript = languageFileUrl( langFileName, 'js' );
 	}
 
 	if ( shouldServerSideRender( context ) ) {

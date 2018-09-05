@@ -42,8 +42,8 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
-import { getLangRevisions } from 'i18n-bootstrap';
-import { getLanguage } from 'lib/i18n-utils';
+import { fetchLangRevisions } from 'i18n-bootstrap';
+import { getLanguage, setLangRevisions } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -346,9 +346,10 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		debug( 'Issuing API call to fetch user object' );
 
-		const langPromise = getLangRevisions()
+		const langPromise = fetchLangRevisions()
 			.then( langRevisions => {
 				req.context.langRevisions = langRevisions;
+				setLangRevisions( langRevisions );
 
 				return langRevisions;
 			} )
@@ -436,9 +437,10 @@ function setUpLoggedInRoute( req, res, next ) {
 			next();
 		} );
 	} else {
-		getLangRevisions()
+		fetchLangRevisions()
 			.then( langRevisions => {
 				req.context.langRevisions = langRevisions;
+				setLangRevisions( langRevisions );
 
 				next();
 			} )
