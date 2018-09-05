@@ -2064,7 +2064,8 @@ describe( 'selectors', () => {
 							77203074: {
 								ID: 77203074,
 								plan: {
-									product_id: 1008,
+									product_id: 2001,
+									product_slug: 'jetpack_business',
 								},
 							},
 						},
@@ -2084,6 +2085,7 @@ describe( 'selectors', () => {
 								ID: 77203074,
 								plan: {
 									product_id: 1,
+									product_slug: 'free_plan',
 								},
 							},
 						},
