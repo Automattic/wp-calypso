@@ -169,6 +169,9 @@ export function generateSteps( {
 		'domains-only': {
 			stepName: 'domains-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			props: {
+				isDomainOnly: true,
+			},
 		},
 
 		'domains-store': {
