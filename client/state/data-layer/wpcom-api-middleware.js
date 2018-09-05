@@ -9,11 +9,13 @@ import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
 import httpHandlers from 'state/http';
 import wpcomHandlers from './wpcom';
+import wpHandlers from './wp';
 
 registerHandlers( 'httpData', httpData );
 registerHandlers( 'httpHandlers', httpHandlers );
 registerHandlers( 'wpcomHttpHandlers', wpcomHttpHandlers );
 registerHandlers( 'wpcomHandlers', wpcomHandlers );
+registerHandlers( 'wpHandlers', wpHandlers );
 
 const shouldNext = action => {
 	const meta = action.meta;
