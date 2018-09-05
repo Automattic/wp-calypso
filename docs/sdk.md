@@ -31,7 +31,7 @@ npm run sdk -- gutenberg --help
 
 These extensions live under `client/gutenberg/extensions` directory. There are some presets to bundle multiple extensions into one in `client/gutenberg/extensions/presets` directory.
 
-By default, these extensions will be built under `build` folder next to entry script passed.
+By default, these extensions will be built under `build` folder in the same folder with entry script.
 
 ## Extending the SDK
 
