@@ -116,7 +116,7 @@ export class PlansFeaturesMain extends Component {
 			personalPlan,
 			findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 			findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
-		].filter( x => x );
+		];
 
 		if ( hideFreePlan ) {
 			plans.shift();
