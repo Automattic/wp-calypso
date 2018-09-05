@@ -1272,13 +1272,6 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readSearch = function( query, fn ) {
-	debug( '/read/search', query );
-	const params = Object.assign( { apiVersion: '1.2' }, query );
-	addReaderContentWidth( params );
-	return this.wpcom.req.get( '/read/search', params, fn );
-};
-
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	const params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
