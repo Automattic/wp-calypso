@@ -166,8 +166,8 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
-		'domains-only': {
-			stepName: 'domains-only',
+		'domain-only': {
+			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,

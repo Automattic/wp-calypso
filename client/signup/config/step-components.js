@@ -49,7 +49,7 @@ export default {
 	'design-type-with-store-nux': DesignTypeWithAtomicStoreComponent,
 	domains: DomainsStepComponent,
 	'domains-store': DomainsStepComponent,
-	'domains-only': DomainsStepComponent,
+	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
 	'import-from-url': ImportURLStepComponent,
 	plans: PlansStepComponent,
