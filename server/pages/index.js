@@ -649,6 +649,10 @@ module.exports = function() {
 		res.redirect( 301, newRoute );
 	} );
 
+	app.get( '/domains', function( req, res ) {
+		res.redirect( '/start/domain-first' );
+	} );
+
 	sections
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {

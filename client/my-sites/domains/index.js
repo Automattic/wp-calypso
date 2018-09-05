@@ -347,6 +347,4 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
-
-	page( '/domains', () => page.redirect( '/start/domain-first' ) );
 }
