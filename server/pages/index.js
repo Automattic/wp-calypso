@@ -650,7 +650,7 @@ module.exports = function() {
 	} );
 
 	app.get( '/domains', function( req, res ) {
-		res.redirect( '/start/domain-first' );
+		res.redirect( 301, '/start/domain-first' );
 	} );
 
 	sections
