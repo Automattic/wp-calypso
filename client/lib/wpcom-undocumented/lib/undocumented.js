@@ -1272,19 +1272,6 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readTagPosts = function( query, fn ) {
-	const params = omit( query, 'tag' );
-	debug( '/read/tags/' + query.tag + '/posts' );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-
-	return this.wpcom.req.get(
-		'/read/tags/' + encodeURIComponent( query.tag ) + '/posts',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readTagImages = function( query, fn ) {
 	const params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/images' );
