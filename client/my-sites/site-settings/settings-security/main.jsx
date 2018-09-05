@@ -98,7 +98,7 @@ export default connect( state => {
 
 	return {
 		showRewindCredentials:
-			rewind.state === 'awaitingCredentials' ||
+			rewind.state === 'awaiting_credentials' ||
 			rewind.state === 'provisioning' ||
 			( rewind.state === 'active' && ! isManaged ),
 		site,
