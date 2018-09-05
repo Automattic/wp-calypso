@@ -2019,16 +2019,23 @@
       "integrity": "sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg=="
     },
     "autoprefixer": {
-      "version": "9.1.3",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.1.3.tgz",
-      "integrity": "sha512-No9xrkPCGIHc9I52e+u1MuvkwfTOIXQt3tu+jGSONAJf4awvQmqOTWmk7JhA9Q3BTvBYIRdpS9PLFtrmpZcImg==",
+      "version": "9.1.5",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.1.5.tgz",
+      "integrity": "sha512-kk4Zb6RUc58ld7gdosERHMF3DzIYJc2fp5sX46qEsGXQQy5bXsu8qyLjoxuY1NuQ/cJuCYnx99BfjwnRggrYIw==",
       "requires": {
-        "browserslist": "^4.0.2",
-        "caniuse-lite": "^1.0.30000878",
+        "browserslist": "^4.1.0",
+        "caniuse-lite": "^1.0.30000884",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
         "postcss": "^7.0.2",
         "postcss-value-parser": "^3.2.3"
+      },
+      "dependencies": {
+        "caniuse-lite": {
+          "version": "1.0.30000884",
+          "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30000884.tgz",
+          "integrity": "sha512-ibROerckpTH6U5zReSjbaitlH4gl5V4NWNCBzRNCa3GEDmzzkfStk+2k5mO4ZDM6pwtdjbZ3hjvsYhPGVLWgNw=="
+        }
       }
     },
     "autosize": {
