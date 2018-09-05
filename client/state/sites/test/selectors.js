@@ -1848,7 +1848,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			chaiExpect( sitePlan ).to.be.null;
+			expect( sitePlan ).toBeNull();
 		} );
 
 		test( "it should return site's plan object.", () => {
@@ -1871,7 +1871,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			chaiExpect( sitePlan ).to.eql( {
+			expect( sitePlan ).toEqual( {
 				product_id: 1008,
 				product_slug: 'business-bundle',
 				product_name_short: 'Business',
@@ -1900,7 +1900,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			chaiExpect( sitePlan ).to.eql( {
+			expect( sitePlan ).toEqual( {
 				product_id: 1,
 				product_slug: 'free_plan',
 				product_name_short: 'Free',
@@ -1909,7 +1909,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		test( 'it should return jetpack free plan if expired', () => {
+		test( 'it should return Jetpack free plan if expired', () => {
 			const sitePlan = getSitePlan(
 				{
 					sites: {
@@ -1931,7 +1931,7 @@ describe( 'selectors', () => {
 				77203074
 			);
 
-			chaiExpect( sitePlan ).to.eql( {
+			expect( sitePlan ).toEqual( {
 				product_id: 2002,
 				product_slug: 'jetpack_free',
 				product_name_short: 'Free',
