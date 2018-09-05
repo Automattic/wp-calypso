@@ -30,7 +30,7 @@ const paymentMethods = {
 		AT: [ 'credit-card', 'eps', 'paypal' ],
 		BE: [ 'credit-card', 'bancontact', 'paypal' ],
 		BR: [ 'credit-card', 'brazil-tef', 'paypal' ],
-		CN: [ 'credit-card', 'alipay', 'paypal' ],
+		CN: [ 'credit-card', 'alipay', 'wechat', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
 		IN: [ 'credit-card', 'emergent-paywall', 'paypal' ],
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
