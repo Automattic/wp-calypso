@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
@@ -12,10 +11,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HelpSearchStore from 'lib/help-search/store';
-import HelpSearchActions from 'lib/help-search/actions';
+import getHelpLinks from 'state/selectors/get-help-links';
 import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
+import QueryHelpLinks from 'components/data/query-help-links';
 import SearchCard from 'components/search-card';
 import CompactCard from 'components/card/compact';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -25,27 +24,19 @@ export class HelpSearch extends React.PureComponent {
 	static displayName = 'HelpSearch';
 
 	state = {
-		helpLinks: {},
 		searchQuery: '',
 	};
 
-	componentDidMount() {
-		HelpSearchStore.on( 'change', this.refreshHelpLinks );
-	}
-
-	componentWillUnmount() {
-		HelpSearchStore.removeListener( 'change', this.refreshHelpLinks );
-	}
-
-	refreshHelpLinks = () => this.setState( { helpLinks: HelpSearchStore.getHelpLinks() } );
-
 	onSearch = searchQuery => {
-		this.setState( { helpLinks: {}, searchQuery: searchQuery } );
-		this.props.fetchSearchResults( searchQuery );
+		this.setState( {
+			searchQuery,
+		} );
+		recordTracksEvent( 'calypso_help_search', { query: searchQuery } );
 	};
 
 	displaySearchResults = () => {
-		const { searchQuery, helpLinks } = this.state;
+		const { searchQuery } = this.state;
+		const { helpLinks } = this.props;
 
 		if ( isEmpty( searchQuery ) ) {
 			return null;
@@ -122,8 +113,11 @@ export class HelpSearch extends React.PureComponent {
 	};
 
 	render() {
+		const { searchQuery } = this.state;
+
 		return (
 			<div className="help-search">
+				<QueryHelpLinks query={ searchQuery } />
 				<SearchCard
 					onSearch={ this.onSearch }
 					initialValue={ this.props.search }
@@ -138,11 +132,10 @@ export class HelpSearch extends React.PureComponent {
 }
 
 export default connect(
-	null,
-	dispatch => ( {
-		fetchSearchResults: searchQuery => {
-			dispatch( recordTracksEvent( 'calypso_help_search', { query: searchQuery } ) );
-			HelpSearchActions.fetch( searchQuery );
-		},
-	} )
+	state => ( {
+		helpLinks: getHelpLinks( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
 )( localize( HelpSearch ) );
