@@ -79,7 +79,9 @@ class StatsOverview extends Component {
 				.format( 'YYYY-MM-DD' );
 
 			if ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) {
-				overview.push( <DatePicker period={ period } date={ date } /> );
+				overview.push(
+					<DatePicker period={ period } date={ date } key={ `datepicker-${ index }` } />
+				);
 			}
 
 			overview.push(
