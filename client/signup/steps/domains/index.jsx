@@ -79,17 +79,14 @@ class DomainsStep extends React.Component {
 			const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 
 			SignupActions.submitSignupStep(
-				Object.assign(
-					{
-						processingMessage: props.translate( 'Adding your domain' ),
-						stepName: props.stepName,
-						domainItem,
-						siteUrl: domain,
-						isPurchasingItem: true,
-						stepSectionName: props.stepSectionName,
-					},
-					this.getThemeArgs()
-				),
+				Object.assign( {
+					processingMessage: props.translate( 'Adding your domain' ),
+					stepName: props.stepName,
+					domainItem,
+					siteUrl: domain,
+					isPurchasingItem: true,
+					stepSectionName: props.stepSectionName,
+				} ),
 				[],
 				{ domainItem }
 			);

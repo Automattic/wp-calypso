@@ -254,7 +254,14 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	}
 
 	flows[ 'domain-first' ] = {
-		steps: [ 'domains', 'site-or-domain', 'site-picker', 'themes', 'plans-site-selected', 'user' ],
+		steps: [
+			'domains-only',
+			'site-or-domain',
+			'site-picker',
+			'themes',
+			'plans-site-selected',
+			'user',
+		],
 		destination: getSiteDestination,
 		description: 'An experimental approach for WordPress.com/domains',
 		disallowResume: true,

@@ -166,6 +166,11 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'domains-only': {
+			stepName: 'domains-only',
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+		},
+
 		'domains-store': {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
