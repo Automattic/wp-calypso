@@ -23,6 +23,22 @@ import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
 class Document extends React.Component {
+	embedLocaleScript() {
+		const { lang, langRevisions = {}, i18nLocaleScript } = this.props;
+
+		if ( ! i18nLocaleScript ) {
+			return null;
+		}
+
+		const langRevision = langRevisions[ lang ];
+
+		return langRevision ? (
+			<script src={ i18nLocaleScript + `?v=${ langRevision }` } />
+		) : (
+			<script src={ i18nLocaleScript } />
+		);
+	}
+
 	render() {
 		const {
 			app,
@@ -30,12 +46,12 @@ class Document extends React.Component {
 			commitSha,
 			faviconURL,
 			head,
-			i18nLocaleScript,
 			initialReduxState,
 			isRTL,
 			entrypoint,
 			manifest,
 			lang,
+			langRevisions,
 			renderedLayout,
 			user,
 			urls,
@@ -64,7 +80,8 @@ class Document extends React.Component {
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
 				: '' ) +
-			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };` : '' );
+			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };` : '' ) +
+			( langRevisions ? `var langRevisions = ${ jsonStringifyForHtml( langRevisions ) };` : '' );
 
 		return (
 			<html
@@ -156,7 +173,7 @@ class Document extends React.Component {
 						} }
 					/>
 
-					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
+					{ this.embedLocaleScript() }
 					{ /*
 						* inline manifest in production, but reference by url for development.
 						* this lets us have the performance benefit in prod, without breaking HMR in dev

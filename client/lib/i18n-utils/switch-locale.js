@@ -11,14 +11,16 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isDefaultLocale, getLanguage } from './utils';
+import { isDefaultLocale, getLanguage, getLangRevision } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
 function languageFileUrl( localeSlug ) {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
+	const revision = getLangRevision( localeSlug );
+	const fileUrl = `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
 
-	return `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
+	return revision ? fileUrl + `?v=${ revision }` : fileUrl;
 }
 
 function setLocaleInDOM( localeSlug, isRTL ) {
