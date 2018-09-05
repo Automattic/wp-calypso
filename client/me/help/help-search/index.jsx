@@ -11,14 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import CompactCard from 'components/card/compact';
 import getHelpLinks from 'state/selectors/get-help-links';
 import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
 import QueryHelpLinks from 'components/data/query-help-links';
 import SearchCard from 'components/search-card';
-import CompactCard from 'components/card/compact';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { getForumUrl } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class HelpSearch extends React.PureComponent {
 	static displayName = 'HelpSearch';
@@ -88,23 +88,23 @@ export class HelpSearch extends React.PureComponent {
 		return (
 			<div>
 				<HelpResults
+					footer={ this.props.translate( 'See more from WordPress.com Documentation…' ) }
 					header={ this.props.translate( 'WordPress.com Documentation' ) }
 					helpLinks={ helpLinks.wordpress_support_links }
-					footer={ this.props.translate( 'See more from WordPress.com Documentation…' ) }
 					iconTypeDescription="book"
 					searchLink={ 'https://en.support.wordpress.com?s=' + searchQuery }
 				/>
 				<HelpResults
+					footer={ this.props.translate( 'See more from Community Forum…' ) }
 					header={ this.props.translate( 'Community Answers' ) }
 					helpLinks={ helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links }
-					footer={ this.props.translate( 'See more from Community Forum…' ) }
 					iconTypeDescription="comment"
 					searchLink={ `${ forumBaseUrl }/search/${ searchQuery }` }
 				/>
 				<HelpResults
+					footer={ this.props.translate( 'See more from Jetpack Documentation…' ) }
 					header={ this.props.translate( 'Jetpack Documentation' ) }
 					helpLinks={ helpLinks.jetpack_support_links }
-					footer={ this.props.translate( 'See more from Jetpack Documentation…' ) }
 					iconTypeDescription="jetpack"
 					searchLink="https://jetpack.me/support/"
 				/>
@@ -119,11 +119,11 @@ export class HelpSearch extends React.PureComponent {
 			<div className="help-search">
 				<QueryHelpLinks query={ searchQuery } />
 				<SearchCard
-					onSearch={ this.onSearch }
-					initialValue=""
-					placeholder={ this.props.translate( 'How can we help?' ) }
 					analyticsGroup="Help"
 					delaySearch={ true }
+					initialValue=""
+					onSearch={ this.onSearch }
+					placeholder={ this.props.translate( 'How can we help?' ) }
 				/>
 				{ this.displaySearchResults() }
 			</div>
