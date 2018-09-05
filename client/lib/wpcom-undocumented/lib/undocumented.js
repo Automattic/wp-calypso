@@ -1251,13 +1251,6 @@ function addReaderContentWidth( params ) {
 	}
 }
 
-Undocumented.prototype.readFollowing = function( query, fn ) {
-	debug( '/read/following' );
-	query.apiVersion = '1.2';
-	addReaderContentWidth( query );
-	return this.wpcom.req.get( '/read/following', query, fn );
-};
-
 Undocumented.prototype.readConversations = function( query, fn ) {
 	debug( '/read/conversations' );
 	const params = {
