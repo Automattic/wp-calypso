@@ -120,7 +120,7 @@ export class HelpSearch extends React.PureComponent {
 				<QueryHelpLinks query={ searchQuery } />
 				<SearchCard
 					onSearch={ this.onSearch }
-					initialValue={ this.props.search }
+					initialValue=""
 					placeholder={ this.props.translate( 'How can we help?' ) }
 					analyticsGroup="Help"
 					delaySearch={ true }
