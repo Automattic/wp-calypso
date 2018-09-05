@@ -2076,6 +2076,7 @@ describe( 'selectors', () => {
 
 			expect( isPaid ).toBe( true );
 		} );
+
 		test( 'it should return false if free plan', () => {
 			const isPaid = isCurrentPlanPaid(
 				{
@@ -2093,8 +2094,32 @@ describe( 'selectors', () => {
 				},
 				77203074
 			);
-
 			expect( isPaid ).toBe( false );
+		} );
+
+		test( 'should respect provided "is_free" property', () => {
+			const paidSiteId = 123;
+			const freeSiteId = 456;
+			const state = {
+				sites: {
+					items: {
+						[ paidSiteId ]: {
+							ID: paidSiteId,
+							plan: {
+								is_free: false,
+							},
+						},
+						[ freeSiteId ]: {
+							ID: freeSiteId,
+							plan: {
+								is_free: true,
+							},
+						},
+					},
+				},
+			};
+			expect( isCurrentPlanPaid( state, paidSiteId ) ).toBe( true );
+			expect( isCurrentPlanPaid( state, freeSiteId ) ).toBe( false );
 		} );
 
 		test( 'it should return null if plan is missing', () => {

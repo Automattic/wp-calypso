@@ -612,12 +612,21 @@ export function getSitePlanSlug( state, siteId ) {
  * @return {?Boolean}               Whether the current plan is paid
  */
 export function isCurrentPlanPaid( state, siteId ) {
-	const sitePlanSlug = getSitePlanSlug( state, siteId );
+	// API provides `is_free`
+	const sitePlan = getSitePlan( state, siteId );
+	if ( sitePlan ) {
+		if ( false === sitePlan.is_free ) {
+			return true;
+		}
+		if ( true === sitePlan.is_free ) {
+			return false;
+		}
+	}
 
+	const sitePlanSlug = getSitePlanSlug( state, siteId );
 	if ( ! sitePlanSlug ) {
 		return null;
 	}
-
 	return ! isFreePlan( sitePlanSlug );
 }
 
