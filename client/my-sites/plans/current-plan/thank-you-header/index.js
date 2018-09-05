@@ -68,11 +68,14 @@ export class PlanSetupHeader extends Component {
 								value={ this.props.progressComplete }
 							/>
 						) }
-					<div>
-						<a href={ /* @TODO (sirreal) fix this */ document.location.pathname }>
+					<p>
+						<a
+							className="thank-you-header__skip-setup"
+							href={ /* @TODO (sirreal) fix this */ document.location.pathname }
+						>
 							{ translate( 'Skip setup. I’ll do this later.' ) }
 						</a>
-					</div>
+					</p>
 				</Card>
 			</>
 		);

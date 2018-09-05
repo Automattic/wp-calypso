@@ -1,8 +1,31 @@
 /** @format */
 .thank-you-header {
+	box-shadow: none;
+	font-size: 16px;
+	margin-bottom: 40px;
+	padding: 50px 160px 30px;
 	text-align: center;
+
+	.progress-bar {
+		max-width: 70%;
+		margin-bottom: 1em;
+	}
+
+	.thank-you-header__skip-setup {
+		font-size: 14px;
+	}
 }
+
 .thank-you-header__illustration {
+	display: none;
+	@include breakpoint( '>480px' ) {
+		display: inline;
+		width: 52%;
+	}
 }
+
 .thank-you-header__title {
+	font-size: 36px;
+	font-weight: 400;
+	margin: 18px 0 14px;
 }
