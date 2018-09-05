@@ -15,7 +15,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import Editor from './edit-post/editor.js';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { overrideAPIPaths } from './utils';
+import { applyAPIMiddlewares } from './utils';
 
 const editorSettings = {};
 
@@ -36,7 +36,7 @@ class GutenbergEditor extends Component {
 			return null;
 		}
 
-		overrideAPIPaths( this.props.siteSlug );
+		applyAPIMiddlewares( this.props.siteSlug );
 
 		return (
 			<Editor settings={ editorSettings } hasFixedToolbar={ true } post={ post } onError={ noop } />
