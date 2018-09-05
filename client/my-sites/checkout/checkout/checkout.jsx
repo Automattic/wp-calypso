@@ -70,11 +70,13 @@ import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { isEnabled } from 'config';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export class Checkout extends React.Component {
 	static propTypes = {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
+		isJetpackNotAtomic: PropTypes.bool,
 		selectedFeature: PropTypes.string,
 	};
 
@@ -366,7 +368,7 @@ export class Checkout extends React.Component {
 			return `/checklist/${ selectedSiteSlug }`;
 		}
 
-		if ( this.props.isJetpack && isEnabled( 'jetpack/checklist' ) ) {
+		if ( this.props.isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ) ) {
 			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
 		}
 
@@ -672,7 +674,8 @@ export default connect(
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
-			isJetpack: isJetpackSite( state, selectedSiteId ),
+			isJetpackNotAtomic:
+				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 		};
 	},
 	{
