@@ -25,7 +25,7 @@ import {
 } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import UpgradesNavigation from 'my-sites/domains/navigation';
+import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'lib/upgrades/actions/domain-management';
 import DomainListNotice from './domain-list-notice';
@@ -154,11 +154,7 @@ export class List extends React.Component {
 			<Main wideLayout={ isPlanFeaturesEnabled() }>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
-				<UpgradesNavigation
-					path={ this.props.context.path }
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite }
-				/>
+				<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
 				{ this.domainWarnings() }
 
 				{ this.domainCreditsInfoNotice() }

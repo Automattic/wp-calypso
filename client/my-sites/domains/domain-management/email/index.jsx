@@ -20,7 +20,7 @@ import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import UpgradesNavigation from 'my-sites/domains/navigation';
+import PlansNavigation from 'my-sites/plans/navigation';
 import EmptyContent from 'components/empty-content';
 import {
 	domainManagementEdit,
@@ -49,13 +49,13 @@ class Email extends React.Component {
 			<Main className="domain-management-email" wideLayout={ isPlanFeaturesEnabled() }>
 				<DocumentHead title={ this.props.translate( 'Email' ) } />
 				<SidebarNavigation />
-				{ this.headerOrUpgradesNavigation() }
+				{ this.headerOrPlansNavigation() }
 				{ this.content() }
 			</Main>
 		);
 	}
 
-	headerOrUpgradesNavigation() {
+	headerOrPlansNavigation() {
 		if ( this.props.selectedDomainName ) {
 			return (
 				<Header
@@ -66,13 +66,7 @@ class Email extends React.Component {
 				</Header>
 			);
 		}
-		return (
-			<UpgradesNavigation
-				path={ this.props.context.path }
-				cart={ this.props.cart }
-				selectedSite={ this.props.selectedSite }
-			/>
-		);
+		return <PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />;
 	}
 
 	content() {
