@@ -19,7 +19,7 @@ const gutenberg = require( './sdk/gutenberg.js' );
 // Show also how npm scripts require delimiter to pass arguments.
 const calleeScript = path.basename( process.argv[ 1 ] );
 const scriptName =
-	calleeScript === path.basename( __filename ) ? 'npm run calypso-sdk' : calleeScript;
+	calleeScript === path.basename( __filename ) ? 'npm run sdk' : calleeScript;
 const delimit = scriptName.substring( 0, 3 ) === 'npm' ? '-- ' : '';
 const __rootDir = path.resolve( __dirname, '..' );
 
