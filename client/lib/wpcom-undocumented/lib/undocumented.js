@@ -1251,15 +1251,6 @@ function addReaderContentWidth( params ) {
 	}
 }
 
-Undocumented.prototype.readConversations = function( query, fn ) {
-	debug( '/read/conversations' );
-	const params = {
-		...query,
-		apiVersion: '1.2',
-	};
-	return this.wpcom.req.get( '/read/conversations', params, fn );
-};
-
 Undocumented.prototype.readA8cConversations = function( query, fn ) {
 	debug( '/read/conversations' );
 	const params = {
