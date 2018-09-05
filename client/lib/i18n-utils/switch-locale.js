@@ -15,10 +15,35 @@ import { isDefaultLocale, getLanguage, getLangRevision } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
-function languageFileUrl( localeSlug ) {
+/**
+ * Get the protocol, domain, and path part of the language file URL.
+ * Normally it should only serve as a helper function for `languageFileUrl`,
+ * but we export it here still in help with the test suite.
+ *
+ * @return {String} The path URL to the language files.
+ */
+export function languageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
+
+	return `${ protocol }widgets.wp.com/languages/calypso/`;
+}
+
+/**
+ * Get the language file URL for the given locale and file type, js or json.
+ * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
+ *
+ * @param {String} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {String} fileType The desired file type, js or json. Default to json.
+ *
+ * @return {String} A language file URL.
+ */
+export function languageFileUrl( localeSlug, fileType = 'json' ) {
+	if ( -1 === [ 'js', 'json' ].indexOf( fileType ) ) {
+		fileType = 'json';
+	}
+
 	const revision = getLangRevision( localeSlug );
-	const fileUrl = `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
+	const fileUrl = languageFilePathUrl() + `${ localeSlug }.${ fileType }`;
 
 	return revision ? fileUrl + `?v=${ revision }` : fileUrl;
 }
