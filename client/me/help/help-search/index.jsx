@@ -34,7 +34,7 @@ export class HelpSearch extends React.PureComponent {
 
 	displaySearchResults = () => {
 		const { searchQuery } = this.state;
-		const { helpLinks } = this.props;
+		const { helpLinks, translate } = this.props;
 
 		if ( isEmpty( searchQuery ) ) {
 			return null;
@@ -70,7 +70,7 @@ export class HelpSearch extends React.PureComponent {
 			return (
 				<CompactCard className="help-search__no-results">
 					<NoResults
-						text={ this.props.translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', {
+						text={ translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', {
 							args: { searchQuery },
 							components: { em: <em /> },
 						} ) }
@@ -86,22 +86,22 @@ export class HelpSearch extends React.PureComponent {
 		return (
 			<div>
 				<HelpResults
-					footer={ this.props.translate( 'See more from WordPress.com Documentation…' ) }
-					header={ this.props.translate( 'WordPress.com Documentation' ) }
+					footer={ translate( 'See more from WordPress.com Documentation…' ) }
+					header={ translate( 'WordPress.com Documentation' ) }
 					helpLinks={ helpLinks.wordpress_support_links }
 					iconTypeDescription="book"
 					searchLink={ 'https://en.support.wordpress.com?s=' + searchQuery }
 				/>
 				<HelpResults
-					footer={ this.props.translate( 'See more from Community Forum…' ) }
-					header={ this.props.translate( 'Community Answers' ) }
+					footer={ translate( 'See more from Community Forum…' ) }
+					header={ translate( 'Community Answers' ) }
 					helpLinks={ helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links }
 					iconTypeDescription="comment"
 					searchLink={ `${ forumBaseUrl }/search/${ searchQuery }` }
 				/>
 				<HelpResults
-					footer={ this.props.translate( 'See more from Jetpack Documentation…' ) }
-					header={ this.props.translate( 'Jetpack Documentation' ) }
+					footer={ translate( 'See more from Jetpack Documentation…' ) }
+					header={ translate( 'Jetpack Documentation' ) }
 					helpLinks={ helpLinks.jetpack_support_links }
 					iconTypeDescription="jetpack"
 					searchLink="https://jetpack.me/support/"
