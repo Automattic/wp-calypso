@@ -2074,7 +2074,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			chaiExpect( isPaid ).to.equal( true );
+			expect( isPaid ).toBe( true );
 		} );
 		test( 'it should return false if free plan', () => {
 			const isPaid = isCurrentPlanPaid(
@@ -2094,7 +2094,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			chaiExpect( isPaid ).to.equal( false );
+			expect( isPaid ).toBe( false );
 		} );
 
 		test( 'it should return null if plan is missing', () => {
@@ -2112,7 +2112,7 @@ describe( 'selectors', () => {
 				1003
 			);
 
-			chaiExpect( isPaid ).to.equal( null );
+			expect( isPaid ).toBeNull;
 		} );
 	} );
 
