@@ -155,6 +155,7 @@
 		"woocommerce/extension-settings-stripe-connect-flows": true,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
+		"woocommerce/extension-wcservices/international-labels": true,
 		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,
