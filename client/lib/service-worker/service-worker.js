@@ -15,7 +15,11 @@
 
 const queuedMessages = [];
 const CACHE_VERSION = 'v1';
-const OFFLINE_CALYPSO_URLS = [ '/offline', '/calypso/images/illustrations/error.svg' ];
+const OFFLINE_CALYPSO_URLS = [
+	'/offline',
+	'/calypso/offline.js',
+	'/calypso/images/illustrations/error.svg',
+];
 const isProduction = self.location.origin === 'https://wordpress.com';
 
 /**
