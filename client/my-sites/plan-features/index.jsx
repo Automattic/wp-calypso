@@ -57,6 +57,7 @@ import {
 	isPopular,
 	getPlanFeaturesObject,
 	getPlanClass,
+	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
@@ -550,6 +551,8 @@ PlanFeatures.defaultProps = {
 };
 
 export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
+	( planMatches( currentPlan, { type: TYPE_BLOGGER, group: GROUP_WPCOM } ) &&
+		planMatches( plan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) ) ||
 	( planMatches( currentPlan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) &&
 		planMatches( plan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) ) ||
 	( planMatches( currentPlan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) &&

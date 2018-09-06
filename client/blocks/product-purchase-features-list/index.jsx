@@ -19,6 +19,7 @@ import {
 	TYPE_BUSINESS,
 	TYPE_PREMIUM,
 	TYPE_PERSONAL,
+	TYPE_BLOGGER,
 	TYPE_FREE,
 } from 'lib/plans/constants';
 import FindNewTheme from './find-new-theme';
@@ -112,6 +113,19 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPersonalFeatures() {
+		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
+
+		return (
+			<Fragment>
+				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<MobileApps />
+			</Fragment>
+		);
+	}
+
+	getBloggerFeatures() {
 		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
 
 		return (
@@ -255,6 +269,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_BUSINESS ]: () => this.getBusinessFeatures(),
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
+				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),

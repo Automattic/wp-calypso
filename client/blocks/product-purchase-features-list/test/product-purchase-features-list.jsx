@@ -13,6 +13,8 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -73,6 +75,28 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	test( 'should render no features for WP free plan', () => {
 		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_FREE } /> );
 		expect( comp.find( '.product-purchase-features-list' ).children() ).toHaveLength( 0 );
+	} );
+
+	test( 'should render WP blogger features for WP blogger plans - 1y', () => {
+		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBloggerFeatures' );
+		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+
+		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_BLOGGER } /> );
+		expect( spy ).toHaveBeenCalled();
+		expect( spyWrong ).not.toHaveBeenCalled();
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+	} );
+
+	test( 'should render WP blogger features for WP blogger plans - 2y', () => {
+		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBloggerFeatures' );
+		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+
+		const comp = shallow(
+			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BLOGGER_2_YEARS } />
+		);
+		expect( spy ).toHaveBeenCalled();
+		expect( spyWrong ).not.toHaveBeenCalled();
+		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'should render WP personal features for WP personal plans - 1y', () => {
