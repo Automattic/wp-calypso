@@ -87,6 +87,7 @@ export class PaypalPaymentBox extends React.Component {
 			cancelUrl,
 			cart,
 			domainDetails: transaction.domainDetails,
+			billingDetails: transaction.billingDetails,
 		} );
 
 		// get PayPal Express URL from rest endpoint

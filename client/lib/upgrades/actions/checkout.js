@@ -8,6 +8,7 @@ import { defer } from 'lodash';
  * Internal dependencies
  */
 import {
+	TRANSACTION_BILLING_DETAILS_SET,
 	TRANSACTION_DOMAIN_DETAILS_SET,
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
@@ -21,6 +22,13 @@ export function setDomainDetails( domainDetails ) {
 	Dispatcher.handleViewAction( {
 		type: TRANSACTION_DOMAIN_DETAILS_SET,
 		domainDetails,
+	} );
+}
+
+export function setBillingDetails( billingDetails ) {
+	Dispatcher.handleViewAction( {
+		type: TRANSACTION_BILLING_DETAILS_SET,
+		billingDetails,
 	} );
 }
 
@@ -47,6 +55,7 @@ export function submitTransaction( { cart, transaction, successUrl, cancelUrl },
 			cart: cart,
 			payment: transaction.payment,
 			domainDetails: transaction.domainDetails,
+			billingDetails: transaction.billingDetails,
 			successUrl,
 			cancelUrl,
 		},

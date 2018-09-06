@@ -12,6 +12,7 @@ import update from 'immutability-helper';
  */
 import {
 	CART_ITEM_REMOVE,
+	TRANSACTION_BILLING_DETAILS_SET,
 	TRANSACTION_DOMAIN_DETAILS_SET,
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
@@ -47,11 +48,16 @@ function createInitialTransaction() {
 		newCardRawDetails: {},
 		step: { name: BEFORE_SUBMIT },
 		domainDetails: null,
+		billingDetails: null,
 	};
 }
 
 function reset() {
 	replaceData( createInitialTransaction() );
+}
+
+function setBillingDetails( billingDetails ) {
+	replaceData( merge( _transaction, { billingDetails } ) );
 }
 
 function setDomainDetails( domainDetails ) {
@@ -98,6 +104,10 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	const action = payload.action;
 
 	switch ( action.type ) {
+		case TRANSACTION_BILLING_DETAILS_SET:
+			setBillingDetails( action.billingDetails );
+			break;
+
 		case TRANSACTION_DOMAIN_DETAILS_SET:
 			setDomainDetails( action.domainDetails );
 			break;

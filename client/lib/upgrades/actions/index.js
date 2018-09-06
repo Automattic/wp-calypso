@@ -26,6 +26,7 @@ export {
 
 export {
 	resetTransaction,
+	setBillingDetails,
 	setDomainDetails,
 	setNewCreditCardDetails,
 	setPayment,

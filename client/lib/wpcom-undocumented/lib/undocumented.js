@@ -1140,6 +1140,30 @@ Undocumented.prototype.transactions = function( method, data, fn ) {
 	);
 };
 
+/**
+ * Retrieves the domain contact information of the user.
+ *
+ * @param {Function} fn The callback function
+ * @api public
+ */
+Undocumented.prototype.getBillingContactInformation = function( fn ) {
+	debug( '/me/billing-contact-information query' );
+
+	return this._sendRequest(
+		{
+			path: '/me/billing-contact-information',
+			method: 'get',
+		},
+		function( error, data ) {
+			if ( error ) {
+				return fn( error );
+			}
+
+			fn( null, mapKeysRecursively( data, camelCase ) );
+		}
+	);
+};
+
 Undocumented.prototype.updateCreditCard = function( params, fn ) {
 	const data = pick( params, [ 'country', 'zip', 'month', 'year', 'name' ] );
 	data.paygate_token = params.cardToken;

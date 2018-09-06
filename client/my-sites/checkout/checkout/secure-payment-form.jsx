@@ -295,7 +295,7 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
-	renderWechatPaymentBox( ) {
+	renderWechatPaymentBox() {
 		return (
 			<PaymentBox
 				classSet="wechat-payment-box"

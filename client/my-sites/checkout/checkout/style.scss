@@ -226,6 +226,32 @@
 		}
 	}
 
+	// Domain Registration
+	// =============================================
+
+	.checkout__domain-registration-information-title {
+		font-weight: 600;
+		margin: 30px 0 10px;
+	}
+
+	.checkout__domain-privacy,
+	.checkout__different-domain-details {
+		margin-top: 5px;
+	}
+
+	.checkout__domain-privacy-label,
+	.checkout__different-domain-details-label {
+		display: block;
+		margin: 15px 0 0;
+	}
+
+	.checkout__item-tip-info {
+		transform: translate( 0.5px, 0.5px );
+		margin-left: 5px;
+		position: relative;
+		top: 2px;
+	}
+
 	// Payment Boxes
 	// =============================================
 

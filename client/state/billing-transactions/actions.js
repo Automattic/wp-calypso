@@ -5,6 +5,11 @@
  */
 
 import {
+	BILLING_CONTACT_DETAILS_RECEIVE,
+	BILLING_CONTACT_DETAILS_REQUEST,
+	BILLING_CONTACT_DETAILS_REQUEST_FAILURE,
+	BILLING_CONTACT_DETAILS_REQUEST_SUCCESS,
+	BILLING_CONTACT_DETAILS_UPDATE,
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
@@ -68,5 +73,42 @@ export const sendBillingReceiptEmail = receiptId => {
 					error,
 				} );
 			} );
+	};
+};
+
+/**
+ * Triggers a network request to query billing contact details
+ * @returns {Function}          Action thunk
+ */
+export function requestBillingContactDetails() {
+	return dispatch => {
+		dispatch( {
+			type: BILLING_CONTACT_DETAILS_REQUEST,
+		} );
+
+		wpcom.undocumented().getBillingContactInformation( ( error, data ) => {
+			if ( error ) {
+				dispatch( {
+					type: BILLING_CONTACT_DETAILS_REQUEST_FAILURE,
+					error,
+				} );
+				return;
+			}
+
+			dispatch( {
+				type: BILLING_CONTACT_DETAILS_RECEIVE,
+				data,
+			} );
+			dispatch( {
+				type: BILLING_CONTACT_DETAILS_REQUEST_SUCCESS,
+			} );
+		} );
+	};
+}
+
+export function updateBillingContactDetails( data ) {
+	return {
+		type: BILLING_CONTACT_DETAILS_UPDATE,
+		data,
 	};
 };

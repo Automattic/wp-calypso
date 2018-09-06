@@ -5,6 +5,11 @@
  */
 
 import {
+	BILLING_CONTACT_DETAILS_RECEIVE,
+	BILLING_CONTACT_DETAILS_REQUEST,
+	BILLING_CONTACT_DETAILS_REQUEST_FAILURE,
+	BILLING_CONTACT_DETAILS_REQUEST_SUCCESS,
+	BILLING_CONTACT_DETAILS_UPDATE,
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
@@ -73,10 +78,23 @@ export const sendingReceiptEmail = createReducer(
 	}
 );
 
+export const contactDetails = createReducer( null, {
+	[ BILLING_CONTACT_DETAILS_RECEIVE ]: ( state, { data } ) => ( data ),
+	[ BILLING_CONTACT_DETAILS_UPDATE ]: ( state, { data } ) => ( data ),
+} );
+
+export const requestingContactDetails = createReducer( false, {
+	[ BILLING_CONTACT_DETAILS_REQUEST ]: () => true,
+	[ BILLING_CONTACT_DETAILS_REQUEST_FAILURE ]: () => false,
+	[ BILLING_CONTACT_DETAILS_REQUEST_SUCCESS ]: () => false,
+} );
+
 export default combineReducers( {
 	items,
 	requesting,
 	sendingReceiptEmail,
+	requestingContactDetails,
+	contactDetails,
 	//individual transactions contains transactions that are not part of the items tree.
 	//TODO: if pagination is implemented, address potential data duplication between individualTransactions and items
 	individualTransactions,

@@ -109,6 +109,14 @@ export default {
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
 	},
+	collectBillingInformation: {
+		datestamp: '20181010',
+		variations: {
+			control: 50,
+			test: 50,
+		},
+		defaultVariation: 'control',
+	},
 	skipDomainOrSiteStep: {
 		datestamp: '20181025',
 		variations: {

@@ -17,6 +17,7 @@ import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
+import BillingDetailsForm from './billing-details-form';
 import {
 	domainMapping,
 	planItem as getCartItemForPlan,
@@ -69,6 +70,7 @@ import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import { abtest } from 'lib/abtest';
 
 export class Checkout extends React.Component {
 	static propTypes = {
@@ -502,34 +504,45 @@ export class Checkout extends React.Component {
 	};
 
 	content() {
-		const { selectedSite } = this.props;
+		const { cart, selectedSite, productsList, isBillingInfoTest } = this.props;
 
-		if ( ! this.isLoading() && this.needsDomainDetails() ) {
-			return (
-				<DomainDetailsForm
-					cart={ this.props.cart }
-					productsList={ this.props.productsList }
-					userCountryCode={ this.props.userCountryCode }
-				/>
-			);
-		} else if ( this.isLoading() ) {
+		if ( this.isLoading() ) {
 			return <SecurePaymentFormPlaceholder />;
 		}
 
+		if ( ! isBillingInfoTest && this.needsDomainDetails() ) {
+			return (
+				<DomainDetailsForm
+					cart={ cart }
+					productsList={ productsList }
+					userCountryCode={ this.props.userCountryCode }
+				/>
+			);
+		}
+
 		return (
-			<SecurePaymentForm
-				cart={ this.props.cart }
-				transaction={ this.props.transaction }
-				cards={ this.props.cards }
-				paymentMethods={ this.paymentMethodsAbTestFilter() }
-				products={ this.props.productsList }
-				selectedSite={ selectedSite }
-				redirectTo={ this.getCheckoutCompleteRedirectPath }
-				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
-				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
-			>
-				{ this.renderSubscriptionLengthPicker() }
-			</SecurePaymentForm>
+			<React.Fragment>
+				{ isBillingInfoTest && (
+					<BillingDetailsForm
+						cart={ cart }
+						productsList={ productsList }
+						userCountryCode={ this.props.userCountryCode }
+					/>
+				) }
+				<SecurePaymentForm
+					cart={ cart }
+					transaction={ this.props.transaction }
+					cards={ this.props.cards }
+					paymentMethods={ this.paymentMethodsAbTestFilter() }
+					products={ productsList }
+					selectedSite={ selectedSite }
+					redirectTo={ this.getCheckoutCompleteRedirectPath }
+					handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
+					handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
+				>
+					{ this.renderSubscriptionLengthPicker() }
+				</SecurePaymentForm>
+			</React.Fragment>
 		);
 	}
 
@@ -685,6 +698,7 @@ export default connect(
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
+			isBillingInfoTest: 'test' === abtest( 'collectBillingInformation' ),
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 		};

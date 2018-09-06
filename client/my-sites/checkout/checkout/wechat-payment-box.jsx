@@ -199,7 +199,7 @@ export class WechatPaymentBox extends Component {
 
 export const requestId = cart => `wechat-payment-box/${ get( cart, 'cart_key', '0' ) }`;
 
-export const requestRedirect = ( cart, domain_details, payment ) => {
+export const requestRedirect = ( cart, { domain_details, billing_details }, payment ) => {
 	return requestHttpData(
 		requestId( cart ),
 		http( {
@@ -209,6 +209,7 @@ export const requestRedirect = ( cart, domain_details, payment ) => {
 			body: {
 				cart,
 				domain_details,
+				billing_details,
 				payment,
 			},
 		} ),
@@ -246,10 +247,15 @@ export default connect(
 				cancel_url: `${ origin }/checkout/${ slug }`,
 			};
 
+			const data = {
+				domain_details: convertToSnakeCase( transaction.domainDetails ),
+				billing_details: convertToSnakeCase( transaction.billingDetails ),
+			};
+
 			dispatch( recordTracksEvent( 'calypso_checkout_with_redirect_wechat' ) );
 			dispatch( recordGoogleEvent( 'Upgrades', 'Clicked Checkout With WeChat Payment Button' ) );
 
-			requestRedirect( cart, convertToSnakeCase( transaction.domainDetails ), payment );
+			requestRedirect( cart, data, payment );
 		},
 		// We should probably extend `update()` in client/state/data-layer/http-data.js
 		// to set state back to 'uninitialized'
