@@ -11531,9 +11531,9 @@
       "integrity": "sha1-y8ec26+P1CKOE/Yh8rGiN8GyB7M="
     },
     "page": {
-      "version": "1.8.6",
-      "resolved": "https://registry.npmjs.org/page/-/page-1.8.6.tgz",
-      "integrity": "sha512-AMF34NihxNZkWtJBUr06EwlydSfeJxVnA057jpxqcie8LVCV+m1XToEzNw2R9e3bBJkZqWvwWgdIJ9QjUUWwFw==",
+      "version": "1.9.0",
+      "resolved": "https://registry.npmjs.org/page/-/page-1.9.0.tgz",
+      "integrity": "sha512-vdvkkw+ow7vg/XM54hHw+r0BT9UXeGzeGupG1ICdIn7GTWe8wrr2xmo7ErlUImw22datzgUEbbqwAME18FJnJw==",
       "requires": {
         "path-to-regexp": "~1.2.1"
       },
