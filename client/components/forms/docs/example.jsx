@@ -41,6 +41,7 @@ import getCountries from 'state/selectors/get-countries';
 import PhoneInput from 'components/phone-input';
 import QuerySmsCountries from 'components/data/query-countries/sms';
 import { CURRENCIES } from 'lib/format-currency/currencies';
+import ComprehensiveFieldExamples from 'components/forms/docs/comprehensive-field';
 
 const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
 const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
@@ -230,6 +231,8 @@ class FormFields extends React.PureComponent {
 						<FormButton>Form Button</FormButton>
 					</FormButtonsBar>
 				</Card>
+
+				<ComprehensiveFieldExamples />
 
 				<Card>
 					<FormSectionHeading>Form Section Heading</FormSectionHeading>
