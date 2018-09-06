@@ -253,7 +253,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		};
 	}
 
-	flows[ 'domain-first' ] = {
+	flows.domain = {
 		steps: [
 			'domain-only',
 			'site-or-domain',
