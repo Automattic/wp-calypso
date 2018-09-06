@@ -7,7 +7,6 @@ import { fetchPreferences, setPreference, savePreference } from 'state/preferenc
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 
 export default {
-	useCalypsoStore: true,
 	selectors: {
 		getPreference,
 		isFetchingPreferences,

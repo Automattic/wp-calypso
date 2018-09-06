@@ -3,6 +3,6 @@
  */
 import preferences from './preferences';
 
-export default {
-	'calypso/preferences': preferences,
+export function registerStores( registry, calypsoStore ) {
+	registry.registerStore( 'calypso/preferences', preferences, calypsoStore );
 };

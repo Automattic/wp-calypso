@@ -3,20 +3,14 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { use, RegistryProvider } from '@wordpress/data';
+import { createRegistry, RegistryProvider } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import calypsoRegistryPlugin from './calypso-registry-plugin';
-import calypsoStores from './calypso-stores';
-
-function registerStores( registry, stores ) {
-	Object.keys( stores ).forEach( key => {
-		const store = stores[ key ];
-		registry.registerStore( key, store );
-	} );
-}
+import internalsPlugin from './plugins/internals-plugin';
+import customStorePlugin from './plugins/custom-store-plugin';
+import { registerStores } from './calypso-stores';
 
 class CalypsoWPDataProvider extends Component {
 	constructor( props ) {
@@ -25,8 +19,11 @@ class CalypsoWPDataProvider extends Component {
 	}
 
 	updateRegistry( calypsoStore ) {
-		this.registry = use( calypsoRegistryPlugin( calypsoStore ) );
-		registerStores( this.registry, calypsoStores );
+		this.registry = createRegistry()
+			.use( internalsPlugin )
+			.use( customStorePlugin );
+
+		registerStores( this.registry, calypsoStore );
 	}
 
 	componentDidUpdate( prevProps ) {
