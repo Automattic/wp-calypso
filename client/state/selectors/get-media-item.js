@@ -14,5 +14,10 @@ export default function getMediaItem( state, siteId, mediaId ) {
 		return null;
 	}
 
-	return queries.getItem( mediaId ) || null;
+	const media = queries.getItem( mediaId ) || null;
+	if ( media === null ) {
+		return null;
+	}
+	// If media doesn't have a URL parameter then it is not an attachment but a post.
+	return media.URL ? media : null;
 }

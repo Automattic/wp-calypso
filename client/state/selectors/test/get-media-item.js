@@ -15,6 +15,7 @@ describe( 'getMediaItem()', () => {
 	const item = {
 		ID: 42,
 		title: 'flowers',
+		URL: 'https://hello.com',
 	};
 
 	const state = {
