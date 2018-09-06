@@ -6,7 +6,6 @@
 import debugFactory from 'debug';
 import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import { parse as parseURL } from 'url';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -75,7 +74,6 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
 			error => {
 				callback( error, providedDependencies );
-				page.redirect( `/checkout/${ siteSlug }` );
 			}
 		);
 	} else {
