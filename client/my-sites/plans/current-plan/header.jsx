@@ -53,7 +53,7 @@ export class CurrentPlanHeader extends Component {
 							  } ) }
 					</span>
 					{ currentPlan.userIsOwner &&
-						currentPlan.id &&
+						Boolean( currentPlan.id ) &&
 						siteSlug && (
 							<Button compact href={ managePurchase( siteSlug, currentPlan.id ) }>
 								{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
