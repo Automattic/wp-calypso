@@ -131,7 +131,11 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<CustomDomain
+					selectedSite={ selectedSite }
+					hasDomainCredit={ planHasDomainCredit }
+					onlyBlogDomain={ true }
+				/>
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<MobileApps />
 			</Fragment>

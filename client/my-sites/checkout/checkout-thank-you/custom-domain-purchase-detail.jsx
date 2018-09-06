@@ -14,15 +14,30 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 import { hasCustomDomain } from 'lib/site/utils';
 
-const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate } ) => {
+const CustomDomainPurchaseDetail = ( {
+	selectedSite,
+	hasDomainCredit,
+	onlyBlogDomain,
+	translate,
+} ) => {
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
 		return (
 			<PurchaseDetail
 				icon={ <img alt="" src="/calypso/images/illustrations/custom-domain.svg" /> }
-				title={ translate( 'Select your custom domain' ) }
-				description={ translate(
-					'Your plan includes a free custom domain, which gives your site a more professional, branded feel.'
-				) }
+				title={
+					onlyBlogDomain
+						? translate( 'Select your .blog domain' )
+						: translate( 'Select your custom domain' )
+				}
+				description={
+					onlyBlogDomain
+						? translate(
+								'Your plan includes a free .blog domain, which gives your site a more professional, branded feel.'
+						  )
+						: translate(
+								'Your plan includes a free custom domain, which gives your site a more professional, branded feel.'
+						  )
+				}
 				buttonText={ translate( 'Claim your free domain' ) }
 				href={ `/domains/add/${ selectedSite.slug }` }
 			/>
@@ -50,6 +65,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 };
 
 CustomDomainPurchaseDetail.propTypes = {
+	onlyBlogDomain: PropTypes.bool,
 	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
 	hasDomainCredit: PropTypes.bool,
 };
