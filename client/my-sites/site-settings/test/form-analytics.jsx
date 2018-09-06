@@ -37,6 +37,8 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -78,7 +80,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		showUpgradeNudge: true,
 	};
 
-	[ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
+	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( product_slug => {
 		test( `Business 1 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<GoogleAnalyticsForm
@@ -94,7 +96,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		} );
 	} );
 
-	[ PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
+	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( product_slug => {
 		test( `Business 2 year for (${ product_slug })`, () => {
 			const comp = shallow(
 				<GoogleAnalyticsForm
