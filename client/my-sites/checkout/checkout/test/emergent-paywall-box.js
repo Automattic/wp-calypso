@@ -6,7 +6,7 @@
  * External dependencies
  */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import { identity } from 'lodash';
 
 /**
@@ -19,8 +19,30 @@ import { EmergentPaywallBox } from '../emergent-paywall-box';
 jest.mock( 'lib/user', () => () => {} );
 
 const defaultProps = {
-	cart: {},
+	cart: {
+		products: [],
+	},
 	transaction: {},
+	selectedSite: {},
+	iframeConfig: {
+		chargeId: '',
+		payload: '',
+		paywallUrl: '',
+		signature: '',
+	},
+	isIframeRequesting: false,
+	iframeRequestFailed: false,
+	iframeRequestSuccess: false,
+	orderId: null,
+	orderErrorMessage: '',
+	isOrderRequesting: false,
+	orderRequestFailed: false,
+	orderRequestSuccess: false,
+	fetchIframeConfig: jest.fn(),
+	fetchOrder: jest.fn(),
+	onOrderCreated: jest.fn(),
+	showErrorNotice: jest.fn(),
+	removeNotice: jest.fn(),
 	translate: identity,
 	userCountryCode: 'IN',
 };
@@ -32,15 +54,18 @@ describe( '<EmergentPaywallBox />', () => {
 	} );
 
 	test( 'should display iframe and form when we assign iframe properties', () => {
-		const wrapper = shallow( <EmergentPaywallBox { ...defaultProps } /> );
+		const wrapper = mount( <EmergentPaywallBox { ...defaultProps } /> );
 		expect( wrapper.find( '.iframe-loaded' ) ).toHaveLength( 0 );
-		wrapper.setState( {
-			hasConfigLoaded: true,
-			paywall_url: 'http://bork.it',
-			signature: 'signature',
-			payload: 'payload',
+		wrapper.setProps( {
+			iframeConfig: {
+				chargeId: 'chargeId',
+				payload: 'payload',
+				paywallUrl: 'http://bork.it',
+				signature: 'signature',
+			},
+			iframeRequestSuccess: true,
 		} );
-		expect( wrapper.find( '.iframe-loaded' ) ).toHaveLength( 1 );
+		expect( wrapper.find( '.is-iframe-loaded' ) ).toHaveLength( 1 );
 		expect( wrapper.find( 'input[name="payload"]' ).props().value ).toEqual( 'payload' );
 		expect( wrapper.find( 'input[name="signature"]' ).props().value ).toEqual( 'signature' );
 		expect( wrapper.find( 'form' ).props().action ).toEqual( 'http://bork.it' );

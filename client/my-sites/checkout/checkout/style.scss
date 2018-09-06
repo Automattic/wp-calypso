@@ -494,7 +494,7 @@
 				@include breakpoint( '>960px' ) {
 					float: left;
 					margin-left: 20px;
-					width: calc(25% - 20px);
+					width: calc( 25% - 20px );
 				}
 			}
 
@@ -506,7 +506,7 @@
 				@include breakpoint( '>960px' ) {
 					clear: none;
 					float: left;
-					width: calc(75% - 20px);
+					width: calc( 75% - 20px );
 				}
 			}
 		}
@@ -995,6 +995,7 @@
 	height: 0;
 	width: 0;
 }
+
 .checkout__emergent-paywall-loading-content {
 	min-height: 300px;
 }
@@ -1006,7 +1007,7 @@
 .checkout__emergent-paywall-frame-container {
 	height: 0;
 	overflow: hidden;
-	&.iframe-loaded {
+	&.is-iframe-loaded {
 		height: auto;
 		overflow: visible;
 	}

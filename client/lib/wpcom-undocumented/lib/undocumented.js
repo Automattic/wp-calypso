@@ -1176,36 +1176,6 @@ Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
 };
 
 /**
- * GET emergent paywall iframe client configuration
- *
- * @param {string} countryCode - user's country code
- * @param {object} cart - current cart object. See: client/lib/cart/store/index.js
- * @param {Function} fn The callback function
- * @api public
- *
- * @returns {Promise} promise
- */
-Undocumented.prototype.emergentPaywallConfiguration = function(
-	countryCode,
-	cart,
-	domainDetails,
-	fn
-) {
-	debug( '/me/emergent-paywall-configuration query' );
-
-	const data = mapKeysRecursively(
-		{
-			country: countryCode,
-			cart,
-			domainDetails,
-		},
-		snakeCase
-	);
-
-	return this.wpcom.req.post( '/me/emergent-paywall-configuration', data, fn );
-};
-
-/**
  * GET paypal_express_url
  *
  * @param {object} [data] The GET data
