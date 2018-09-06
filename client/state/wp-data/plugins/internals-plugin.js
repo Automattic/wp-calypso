@@ -275,7 +275,7 @@ function internalsPlugin() {
 		return get( namespaces, [ reducerKey, 'actions' ] );
 	}
 
-	const registry = {
+	let registry = {
 		registerReducer,
 		registerSelectors,
 		registerResolvers,
@@ -317,13 +317,13 @@ function internalsPlugin() {
 			},
 		};
 
-		const updatedRegistry = {
+		registry = {
 			...registry,
 			...plugin( registryWithInternals, options ),
 		};
 
 		// TODO: Add some warning output if _internals is there?
-		return updatedRegistry;
+		return registry;
 	}
 
 	return registry;
