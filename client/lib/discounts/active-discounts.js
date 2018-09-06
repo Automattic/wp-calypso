@@ -69,7 +69,7 @@ export default [
 			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
 			{
 				args: {
-					coupon: 'AUGUST20',
+					coupon: 'SEPTEMBER20',
 					discount: 20,
 				},
 			}
