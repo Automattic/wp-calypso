@@ -4668,25 +4668,24 @@
       }
     },
     "enzyme-adapter-react-16": {
-      "version": "1.2.0",
-      "resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.2.0.tgz",
-      "integrity": "sha512-UgBra+xZFVFbU5Tw7Inw0bPrNJhM2ru4vCoO7preX6sOicXuDbOH927QJx4pk6m6vatd8jnPXTF6/GCjzytJTg==",
+      "version": "1.5.0",
+      "resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.5.0.tgz",
+      "integrity": "sha512-R2LcVvMB2UwPH763d5jDtVedAIcEj+uZjOnq0nd1sOUs6z8TDbyHDvt8VwfrS4wMt7CawoyPmH0XzC8MtEqqDw==",
       "dev": true,
       "requires": {
-        "enzyme-adapter-utils": "^1.5.0",
+        "enzyme-adapter-utils": "^1.8.0",
         "function.prototype.name": "^1.1.0",
         "object.assign": "^4.1.0",
         "object.values": "^1.0.4",
         "prop-types": "^15.6.2",
         "react-is": "^16.4.2",
-        "react-reconciler": "^0.7.0",
         "react-test-renderer": "^16.0.0-0"
       }
     },
     "enzyme-adapter-utils": {
-      "version": "1.6.0",
-      "resolved": "https://registry.npmjs.org/enzyme-adapter-utils/-/enzyme-adapter-utils-1.6.0.tgz",
-      "integrity": "sha512-8bzxmmBwYNqgEVVpTgONW3IzH3eYHiLZp+V+JL1GPKLVbIMnXSPChsQ7EKMdIimf6+aSHzANUEsGXG+zSRS23w==",
+      "version": "1.8.0",
+      "resolved": "https://registry.npmjs.org/enzyme-adapter-utils/-/enzyme-adapter-utils-1.8.0.tgz",
+      "integrity": "sha512-K9U2RGr1pvWPGEAIRQRVH4UdlqzpfLsKonuHyAK6lxu46yfGsMDVlO3+YvQwQpVjVw8eviEVIOmlFAnMbIhv/w==",
       "dev": true,
       "requires": {
         "function.prototype.name": "^1.1.0",
@@ -13400,18 +13399,6 @@
       "version": "1.0.2",
       "resolved": "https://registry.npmjs.org/react-pure-render/-/react-pure-render-1.0.2.tgz",
       "integrity": "sha1-nYqSjH8sN1E8LQZOV7Pjw1bp+rs="
-    },
-    "react-reconciler": {
-      "version": "0.7.0",
-      "resolved": "https://registry.npmjs.org/react-reconciler/-/react-reconciler-0.7.0.tgz",
-      "integrity": "sha512-50JwZ3yNyMS8fchN+jjWEJOH3Oze7UmhxeoJLn2j6f3NjpfCRbcmih83XTWmzqtar/ivd5f7tvQhvvhism2fgg==",
-      "dev": true,
-      "requires": {
-        "fbjs": "^0.8.16",
-        "loose-envify": "^1.1.0",
-        "object-assign": "^4.1.1",
-        "prop-types": "^15.6.0"
-      }
     },
     "react-redux": {
       "version": "5.0.7",
