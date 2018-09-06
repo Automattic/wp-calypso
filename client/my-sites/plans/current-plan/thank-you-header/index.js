@@ -12,10 +12,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
-import getCurrentPlanPurchaseId from 'state/selectors/get-current-plan-purchase-id';
+import getCurrentPlanPurchase from 'state/selectors/get-current-plan-purchase';
 import ProgressBar from 'components/progress-bar';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getByPurchaseId } from 'state/purchases/selectors';
 import { getPlan } from 'lib/plans';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug } from 'state/sites/selectors';
@@ -82,9 +81,7 @@ export default connect( state => {
 	const planSlug = getSitePlanSlug( state, siteId );
 	return {
 		planName: get( getPlan( planSlug ), [ 'getTitle' ], noop )(),
-		purchaseExpiryDate: get( getByPurchaseId( state, getCurrentPlanPurchaseId( state, siteId ) ), [
-			'expiryDate',
-		] ),
+		purchaseExpiryDate: get( getCurrentPlanPurchase( state, siteId ), [ 'expiryDate' ] ),
 		siteId,
 	};
 } )( localize( ThankYouHeader ) );
