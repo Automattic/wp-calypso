@@ -39,8 +39,20 @@ class RecommendationSelect extends PureComponent {
 		return (
 			<div className="nps-survey__recommendation-select">
 				<div className="nps-survey__scale-labels">
-					<span>{ translate( 'Unlikely' ) }</span>
-					<span className="nps-survey__very-likely-label">{ translate( 'Very likely' ) }</span>
+					<span>
+						{ translate( 'Unlikely', {
+							context: 'NPS',
+							comment:
+								'Answer to the question: How likely are you to recommend WordPress.com to your friends, family, or colleagues?',
+						} ) }
+					</span>
+					<span className="nps-survey__very-likely-label">
+						{ translate( 'Very likely', {
+							context: 'NPS',
+							comment:
+								'Answer to the question: How likely are you to recommend WordPress.com to your friends, family, or colleagues?',
+						} ) }
+					</span>
 				</div>
 				<div className="nps-survey__options">{ options }</div>
 			</div>
