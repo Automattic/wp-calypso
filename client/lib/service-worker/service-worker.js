@@ -16,6 +16,7 @@
 const queuedMessages = [];
 const CACHE_VERSION = 'v1';
 const OFFLINE_CALYPSO_URLS = [ '/offline', '/calypso/images/illustrations/error.svg' ];
+const isProduction = self.location.origin === 'https://wordpress.com';
 
 /**
  *  We want to make sure that if the service worker gets updated that we
@@ -180,6 +181,10 @@ function cacheAssets() {
 
 function canBootOffline() {
 	let downlink = 1;
+
+	if ( isProduction ) {
+		return Promise.reject();
+	}
 
 	if ( 'connection' in navigator && 'downlink' in navigator.connection ) {
 		downlink = self.navigator.connection.downlink;
