@@ -16,6 +16,7 @@ import { stringify } from 'qs';
  */
 import analytics from 'lib/analytics';
 import EmptyContent from 'components/empty-content';
+import Offline from 'components/offline';
 
 /**
  * Module variables
@@ -48,5 +49,9 @@ export function retry( chunkName ) {
 export function show( context, chunkName ) {
 	log( 'Chunk %s could not be loaded', chunkName );
 	analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
-	context.primary = <LoadingErrorMessage />;
+	if ( window.navigator.onLine === false ) {
+		context.primary = <Offline />;
+	} else {
+		context.primary = <LoadingErrorMessage />;
+	}
 }
