@@ -13311,11 +13311,11 @@
       }
     },
     "react-day-picker": {
-      "version": "7.1.10",
-      "resolved": "https://registry.npmjs.org/react-day-picker/-/react-day-picker-7.1.10.tgz",
-      "integrity": "sha512-UoI3ktYU8oN0UTxX5ZbG02TZePHh4znUGT6/h4g+tLNM1O4GGCiafqyFEIp22HYb1sCPQ4UMyw6QFcxu+lFDVQ==",
+      "version": "7.2.3",
+      "resolved": "https://registry.npmjs.org/react-day-picker/-/react-day-picker-7.2.3.tgz",
+      "integrity": "sha512-bfpuaUmbaB6lTfJkzLflrntDv4b5r6f1Bq46XNMtDf+w5288+knGiNoj5osZSgIIFuDQM6imFh4sSx5kxiSLvg==",
       "requires": {
-        "prop-types": "^15.6.1"
+        "prop-types": "^15.6.2"
       }
     },
     "react-dom": {
