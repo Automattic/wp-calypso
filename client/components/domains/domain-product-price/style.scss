@@ -50,7 +50,7 @@
 		}
 	}
 
-	.no-price .domain-product-price__free-text {
+	&.no-price .domain-product-price__free-text {
 		@include breakpoint( '>660px' ) {
 			margin-left: 0;
 		}
