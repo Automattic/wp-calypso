@@ -27,7 +27,7 @@ export class ThankYouHeader extends Component {
 	};
 
 	render() {
-		const { moment, purchaseExpiryDate, planName, siteId, translate } = this.props;
+		const { moment, planName, purchaseExpiryDate, siteId, translate } = this.props;
 		const duration = purchaseExpiryDate
 			? moment.duration( moment().diff( purchaseExpiryDate ) ).humanize()
 			: null;
