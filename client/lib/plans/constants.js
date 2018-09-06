@@ -13,7 +13,7 @@ import { compact, includes } from 'lodash';
  */
 
 import { isEnabled } from 'config';
-import { isBusinessPlan, isFreePlan, isPersonalPlan, isPremiumPlan } from './index';
+import { isBusinessPlan, isFreePlan, isBloggerPlan, isPersonalPlan, isPremiumPlan } from './index';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -22,6 +22,8 @@ export const PLAN_PREMIUM = 'value_bundle';
 export const PLAN_PREMIUM_2_YEARS = 'value_bundle-2y';
 export const PLAN_PERSONAL = 'personal-bundle';
 export const PLAN_PERSONAL_2_YEARS = 'personal-bundle-2y';
+export const PLAN_BLOGGER = 'blogger-bundle';
+export const PLAN_BLOGGER_2_YEARS = 'blogger-bundle-2y';
 export const PLAN_FREE = 'free_plan';
 export const PLAN_JETPACK_FREE = 'jetpack_free';
 export const PLAN_JETPACK_PREMIUM = 'jetpack_premium';
@@ -58,6 +60,7 @@ export const PLAN_BIENNIAL_PERIOD = 730;
 
 // features constants
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
+export const FEATURE_BLOG_DOMAIN = 'blog-domain';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_FREE_THEMES = 'free-themes';
@@ -67,6 +70,7 @@ export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
+export const FEATURE_EMAIL_SUPPORT = 'email-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
 export const FEATURE_BASIC_DESIGN = 'basic-design';
@@ -97,7 +101,9 @@ export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_GOOGLE_ANALYTICS_SIGNUP = 'google-analytics-signup';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
+export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
 export const FEATURE_UNLIMITED_STORAGE_SIGNUP = 'unlimited-storage-signup';
+export const FEATURE_EMAIL_SUPPORT_SIGNUP = 'email-support-signup';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP = 'email-live-chat-support-signup';
 export const FEATURE_MONETISE = 'monetise-your-site';
 export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
@@ -155,6 +161,7 @@ export const TERM_ANNUALLY = 'TERM_ANNUALLY';
 export const TERM_BIENNIALLY = 'TERM_BIENNIALLY';
 
 export const TYPE_FREE = 'TYPE_FREE';
+export const TYPE_BLOGGER = 'TYPE_BLOGGER';
 export const TYPE_PERSONAL = 'TYPE_PERSONAL';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
@@ -162,6 +169,58 @@ export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 const WPComGetBillingTimeframe = () =>
 	i18n.translate( '/month, billed annually or every two years' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
+
+const getPlanBloggerDetails = () => ( {
+	group: GROUP_WPCOM,
+	type: TYPE_BLOGGER,
+	getTitle: () => i18n.translate( 'Blogger' ),
+	// @TODO not updating copy for now, we need to update it after the first round of design {{{
+	getAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getBlogAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getPortfolioAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getStoreAudience: () => i18n.translate( 'Best for hobbyists' ),
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
+				' website with a custom domain name, and remove all WordPress.com advertising. ' +
+				'Get access to high-quality email and live chat support.',
+			{
+				components: {
+					strong: (
+						<strong className="plans__features plan-features__targeted-description-heading" />
+					),
+				},
+			}
+		),
+	// }}}
+	getPlanCompareFeatures: () => [
+		// pay attention to ordering, shared features should align on /plan page
+		FEATURE_BLOG_DOMAIN,
+		FEATURE_JETPACK_ESSENTIAL,
+		FEATURE_EMAIL_SUPPORT,
+		FEATURE_FREE_THEMES,
+		FEATURE_BASIC_DESIGN,
+		FEATURE_6GB_STORAGE,
+		FEATURE_NO_ADS,
+	],
+	getSignupFeatures: () => [
+		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_FREE_DOMAIN,
+		FEATURE_ALL_FREE_FEATURES,
+	],
+	getBlogSignupFeatures: () => [
+		FEATURE_FREE_BLOG_DOMAIN,
+		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_ALL_FREE_FEATURES,
+	],
+	getPortfolioSignupFeatures: () => [
+		FEATURE_FREE_BLOG_DOMAIN,
+		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_ALL_FREE_FEATURES,
+	],
+	// Features not displayed but used for checking plan abilities
+	getHiddenFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
+} );
 
 const getPlanPersonalDetails = () => ( {
 	group: GROUP_WPCOM,
@@ -411,11 +470,31 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 	},
 
+	[ PLAN_BLOGGER ]: {
+		...getPlanBloggerDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: plan => includes( [ PLAN_FREE ], plan ),
+		getProductId: () => 1010,
+		getStoreSlug: () => PLAN_BLOGGER,
+		getPathSlug: () => 'blogger',
+	},
+
+	[ PLAN_BLOGGER_2_YEARS ]: {
+		...getPlanBloggerDetails(),
+		term: TERM_BIENNIALLY,
+		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
+		availableFor: plan => includes( [ PLAN_FREE, PLAN_BLOGGER ], plan ),
+		getProductId: () => 1030,
+		getStoreSlug: () => PLAN_BLOGGER_2_YEARS,
+		getPathSlug: () => 'blogger-2-years',
+	},
+
 	[ PLAN_PERSONAL ]: {
 		...getPlanPersonalDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan => includes( [ PLAN_FREE ], plan ),
+		availableFor: plan => includes( [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ], plan ),
 		getProductId: () => 1009,
 		getStoreSlug: () => PLAN_PERSONAL,
 		getPathSlug: () => 'personal',
@@ -425,7 +504,8 @@ export const PLANS_LIST = {
 		...getPlanPersonalDetails(),
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
-		availableFor: plan => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
+		availableFor: plan =>
+			includes( [ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL ], plan ),
 		getProductId: () => 1029,
 		getStoreSlug: () => PLAN_PERSONAL_2_YEARS,
 		getPathSlug: () => 'personal-2-years',
@@ -435,7 +515,11 @@ export const PLANS_LIST = {
 		...getPlanPremiumDetails(),
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
-		availableFor: plan => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS ], plan ),
+		availableFor: plan =>
+			includes(
+				[ PLAN_FREE, PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS ],
+				plan
+			),
 		getProductId: () => 1003,
 		getStoreSlug: () => PLAN_PREMIUM,
 		getPathSlug: () => 'premium',
@@ -446,7 +530,17 @@ export const PLANS_LIST = {
 		term: TERM_BIENNIALLY,
 		getBillingTimeFrame: WPComGetBiennialBillingTimeframe,
 		availableFor: plan =>
-			includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM ], plan ),
+			includes(
+				[
+					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+				],
+				plan
+			),
 		getProductId: () => 1023,
 		getStoreSlug: () => PLAN_PREMIUM_2_YEARS,
 		getPathSlug: () => 'premium-2-years',
@@ -458,7 +552,15 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: plan =>
 			includes(
-				[ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ],
+				[
+					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+					PLAN_PREMIUM_2_YEARS,
+				],
 				plan
 			),
 		getProductId: () => 1008,
@@ -474,6 +576,8 @@ export const PLANS_LIST = {
 			includes(
 				[
 					PLAN_FREE,
+					PLAN_BLOGGER,
+					PLAN_BLOGGER_2_YEARS,
 					PLAN_PERSONAL,
 					PLAN_PERSONAL_2_YEARS,
 					PLAN_PREMIUM,
@@ -926,6 +1030,15 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ FEATURE_FREE_BLOG_DOMAIN ]: {
+		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Free .blog domain' ),
+		getDescription: () =>
+			i18n.translate(
+				'Get a free custom domain name (example.blog) with this plan to use for your website.'
+			),
+	},
+
 	[ FEATURE_FREE_DOMAIN ]: {
 		getSlug: () => FEATURE_FREE_DOMAIN,
 		getTitle: () => i18n.translate( 'Free custom domain' ),
@@ -962,6 +1075,15 @@ export const FEATURES_LIST = {
 	[ FEATURE_GOOGLE_ANALYTICS_SIGNUP ]: {
 		getSlug: () => FEATURE_GOOGLE_ANALYTICS_SIGNUP,
 		getTitle: () => i18n.translate( 'Google Analytics' ),
+	},
+
+	[ FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
+		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP,
+		getTitle: () => i18n.translate( 'Email support' ),
+		getDescription: () =>
+			i18n.translate(
+				'High quality support to help you get your website up and running and working how you want it.'
+			),
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP ]: {
@@ -1066,6 +1188,23 @@ export const FEATURES_LIST = {
 					'more images, videos, audio, and documents to your website.'
 			),
 		getStoreSlug: () => 'unlimited_space',
+	},
+
+	[ FEATURE_BLOG_DOMAIN ]: {
+		getSlug: () => FEATURE_BLOG_DOMAIN,
+		getTitle: () => i18n.translate( 'Custom .blog Domain' ),
+		getDescription: ( abtest, domainName ) => {
+			if ( domainName ) {
+				return i18n.translate( 'Your domain (%s) is included with this plan.', {
+					args: domainName,
+				} );
+			}
+
+			return i18n.translate(
+				'Get a free custom domain name (example.blog) with this plan ' +
+					'to use for your website. Does not apply to premium domains.'
+			);
+		},
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
@@ -1319,6 +1458,13 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_COMMUNITY_SUPPORT,
 		getTitle: () => i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate( 'Get support through our ' + 'user community forums.' ),
+	},
+
+	[ FEATURE_EMAIL_SUPPORT ]: {
+		getSlug: () => FEATURE_EMAIL_SUPPORT,
+		getTitle: () => i18n.translate( 'Email Support' ),
+		getDescription: () =>
+			i18n.translate( 'Live chat support to help you get started with your site.' ),
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
@@ -1625,6 +1771,10 @@ export function isBestValue( plan ) {
 export function getPlanClass( planKey ) {
 	if ( isFreePlan( planKey ) ) {
 		return 'is-free-plan';
+	}
+
+	if ( isBloggerPlan( planKey ) ) {
+		return 'is-blogger-plan';
 	}
 
 	if ( isPersonalPlan( planKey ) ) {
