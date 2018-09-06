@@ -45,8 +45,6 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_BLOGGER,
-	PLAN_BLOGGER_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -210,13 +208,6 @@ describe( 'Banner basic tests', () => {
 } );
 
 describe( 'Banner should have a class name corresponding to appropriate plan', () => {
-	[ PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].forEach( plan => {
-		test( 'Blogger', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			assert.lengthOf( comp.find( '.is-upgrade-blogger' ), 1 );
-		} );
-	} );
-
 	[
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
