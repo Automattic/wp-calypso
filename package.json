@@ -309,7 +309,7 @@
     "socket.io": "2.1.1",
     "stacktrace-gps": "3.0.2",
     "stylelint": "9.5.0",
-    "supertest": "3.2.0",
+    "supertest": "3.3.0",
     "terminal-kit": "1.26.2",
     "webpack-bundle-analyzer": "2.13.1",
     "webpack-hot-middleware": "2.22.3"
