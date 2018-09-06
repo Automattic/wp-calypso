@@ -20,7 +20,7 @@ import { getPlan } from 'lib/plans';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug } from 'state/sites/selectors';
 
-export class PlanSetupHeader extends Component {
+export class ThankYouHeader extends Component {
 	static propTypes = {
 		progressComplete: PropTypes.number,
 		progressTotal: PropTypes.number,
@@ -87,4 +87,4 @@ export default connect( state => {
 		] ),
 		siteId,
 	};
-} )( localize( PlanSetupHeader ) );
+} )( localize( ThankYouHeader ) );
