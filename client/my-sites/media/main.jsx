@@ -95,10 +95,10 @@ class Media extends Component {
 			currentDetail: null,
 			selectedItems: [],
 		} );
-		this.singleMediaViewRedirectToAllMedia();
+		this.maybeRedirectToAll();
 	};
 
-	singleMediaViewRedirectToAllMedia = () => {
+	maybeRedirectToAll = () => {
 		const { selectedSite, mediaId } = this.props;
 		if ( mediaId && selectedSite && selectedSite.slug ) {
 			page( '/media/' + selectedSite.slug );
@@ -143,7 +143,7 @@ class Media extends Component {
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
-		this.singleMediaViewRedirectToAllMedia();
+		this.maybeRedirectToAll();
 	};
 
 	getModalButtons() {
@@ -195,7 +195,7 @@ class Media extends Component {
 		}
 
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
-		this.singleMediaViewRedirectToAllMedia();
+		this.maybeRedirectToAll();
 	};
 
 	restoreOriginalMedia = ( siteId, item ) => {
@@ -205,7 +205,7 @@ class Media extends Component {
 
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
-		this.singleMediaViewRedirectToAllMedia();
+		this.maybeRedirectToAll();
 	};
 
 	setDetailSelectedIndex = index => {
