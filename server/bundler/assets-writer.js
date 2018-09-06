@@ -85,9 +85,7 @@ Object.assign( AssetsWriter.prototype, {
 				} )
 			);
 
-			self.outputStream.write( JSON.stringify( statsToOutput, null, '\t' ), () =>
-				self.outputStream.end()
-			);
+			self.outputStream.end( JSON.stringify( statsToOutput, null, '\t' ) );
 		} );
 	},
 } );
