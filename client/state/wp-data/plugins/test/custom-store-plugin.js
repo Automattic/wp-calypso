@@ -75,13 +75,9 @@ describe( 'custom-store-plugin', () => {
 		it( 'should use a custom store if provided in options', () => {
 			const reduxStore = createStore( reducer );
 
-			const options = {
-				selectors,
-				actions,
-			};
+			const options = { selectors, actions };
 
 			const listener = jest.fn();
-
 			const store = registry.registerStore( 'grocer', options, reduxStore );
 			const unsubscribe = registry.subscribe( listener );
 
@@ -103,6 +99,28 @@ describe( 'custom-store-plugin', () => {
 			expect( listener ).toHaveBeenCalledTimes( 1 );
 			expect( registry.select( 'grocer' ).getPrice( 'carrots' ) ).toBe( 3 );
 			expect( registry.select( 'grocer' ).getPrice( 'potatoes' ) ).toBe( 2 );
+		} );
+
+		it( 'should not subscribe to the same store more than once', () => {
+			const reduxStore = createStore( reducer );
+
+			const options = { selectors, actions };
+
+			const listener = jest.fn();
+			registry.registerStore( 'store1', options, reduxStore );
+			const unsubscribe = registry.subscribe( listener );
+
+			registry.registerStore( 'store2', options, reduxStore );
+
+			registry.dispatch( 'store1' ).startSale( 'carrots' );
+			expect( listener ).toHaveBeenCalledTimes( 1 );
+
+			registry.dispatch( 'store2' ).startSale( 'carrots' );
+			expect( listener ).toHaveBeenCalledTimes( 2 );
+
+			unsubscribe();
+			registry.dispatch( 'store1' ).startSale( 'carrots' );
+			expect( listener ).toHaveBeenCalledTimes( 2 );
 		} );
 	} );
 } );

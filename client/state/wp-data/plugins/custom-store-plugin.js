@@ -1,4 +1,8 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { findKey } from 'lodash';
 
 /**
  * Creates a plugin that allows custom store implementations.
@@ -23,21 +27,24 @@ function customStorePlugin( registry ) {
 	 */
 	function registerCustomStore( reducerKey, store ) {
 		const { globalListener, namespaces } = registry._internals;
+		const existingStoreKey = findKey( namespaces, value => value.store === store );
 
 		namespaces[ reducerKey ] = { store };
 
-		// Customize subscribe behavior to call listeners only on effective change,
-		// not on every dispatch.
-		let lastState = store.getState();
-		store.subscribe( () => {
-			const state = store.getState();
-			const hasChanged = state !== lastState;
-			lastState = state;
+		if ( ! existingStoreKey ) {
+			// Customize subscribe behavior to call listeners only on effective change,
+			// not on every dispatch.
+			let lastState = store.getState();
+			store.subscribe( () => {
+				const state = store.getState();
+				const hasChanged = state !== lastState;
+				lastState = state;
 
-			if ( hasChanged ) {
-				globalListener();
-			}
-		} );
+				if ( hasChanged ) {
+					globalListener();
+				}
+			} );
+		}
 
 		return store;
 	}
