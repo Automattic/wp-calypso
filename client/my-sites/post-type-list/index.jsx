@@ -29,6 +29,7 @@ import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
 /**
  * Constants
@@ -230,7 +231,7 @@ class PostTypeList extends Component {
 					<UpgradeNudge
 						title={ translate( 'No Ads with WordPress.com Premium' ) }
 						message={ translate( 'Prevent ads from showing on your site.' ) }
-						feature="no-adverts"
+						feature={ FEATURE_NO_ADS }
 						event="published_posts_no_ads"
 					/>
 				) }
