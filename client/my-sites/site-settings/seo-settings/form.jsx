@@ -314,7 +314,6 @@ export class SeoForm extends React.Component {
 			</Button>
 		);
 
-		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
@@ -471,7 +470,6 @@ export class SeoForm extends React.Component {
 				/>
 			</div>
 		);
-		/* eslint-enable react/jsx-no-target-blank */
 	}
 }
 
