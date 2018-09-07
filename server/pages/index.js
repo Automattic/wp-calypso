@@ -301,8 +301,6 @@ function setUpLoggedInRoute( req, res, next ) {
 	} );
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		const user = require( 'user-bootstrap' );
-
 		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
@@ -318,6 +316,8 @@ function setUpLoggedInRoute( req, res, next ) {
 			res.redirect( redirectUrl );
 			return;
 		}
+
+		const user = require( 'user-bootstrap' );
 
 		start = new Date().getTime();
 
@@ -736,11 +736,30 @@ module.exports = function() {
 
 		// Maybe not logged in, note that you need docker to test this properly
 		const user = require( 'user-bootstrap' );
+		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 
 		debug( 'Issuing API call to fetch user object' );
-		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
-		user( req.cookies.wordpress_logged_in, geoCountry, function( error, data ) {
-			if ( error ) {
+
+		user( req.cookies.wordpress_logged_in, geoCountry )
+			.then( data => {
+				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+
+				// A8C check
+				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+					return res.send( renderJsx( 'support-user' ) );
+				}
+
+				// Passed all checks, prepare support user session
+				return res.send(
+					renderJsx( 'support-user', {
+						authorized: true,
+						supportUser: req.query.support_user,
+						supportToken: req.query._support_token,
+						supportPath: req.query.support_path,
+					} )
+				);
+			} )
+			.catch( () => {
 				res.clearCookie( 'wordpress_logged_in', {
 					path: '/',
 					httpOnly: true,
@@ -748,25 +767,7 @@ module.exports = function() {
 				} );
 
 				return res.send( renderJsx( 'support-user' ) );
-			}
-
-			const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
-
-			// A8C check
-			if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
-				return res.send( renderJsx( 'support-user' ) );
-			}
-
-			// Passed all checks, prepare support user session
-			return res.send(
-				renderJsx( 'support-user', {
-					authorized: true,
-					supportUser: req.query.support_user,
-					supportToken: req.query._support_token,
-					supportPath: req.query.support_path,
-				} )
-			);
-		} );
+			} );
 	} );
 
 	// catchall to render 404 for all routes not whitelisted in client/sections
