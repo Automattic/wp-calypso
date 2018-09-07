@@ -819,7 +819,7 @@
       display: block;
 
       .wpnc__selected-note {
-        animation-name: selectIn;
+        animation-name: wpnc__selectIn;
         animation-timing-function: ease-in;
         animation-duration: 0.4s;
         animation-iteration-count: 1;
@@ -858,7 +858,7 @@
     }
 
     .wpnc__single-view {
-      animation-name: slideIn;
+      animation-name: wpnc__slideIn;
       animation-timing-function: ease-out;
       animation-fill-mode: forwards;
       animation-duration: 0.2s;
@@ -866,7 +866,7 @@
     }
   }
 
-  @keyframes slideIn {
+  @keyframes wpnc__slideIn {
     from {
       -webkit-transform: translateX(100%);
       transform: translateX(100%);
@@ -877,7 +877,7 @@
     }
   }
 
-  @keyframes selectIn {
+  @keyframes wpnc__selectIn {
     from {
       background-color: $gray-light;
     }
