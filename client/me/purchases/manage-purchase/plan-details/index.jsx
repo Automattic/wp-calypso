@@ -36,7 +36,7 @@ class PurchasePlanDetails extends Component {
 		pluginList: PropTypes.arrayOf(
 			PropTypes.shape( {
 				slug: PropTypes.string.isRequired,
-				key: PropTypes.string.isRequired,
+				key: PropTypes.string,
 			} ).isRequired
 		).isRequired,
 		siteId: PropTypes.number,
