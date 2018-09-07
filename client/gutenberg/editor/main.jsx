@@ -17,6 +17,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { applyAPIMiddlewares } from './utils';
 
+import 'gutenberg/extensions/presets/o2/editor';
+
 const editorSettings = {};
 
 const post = {
