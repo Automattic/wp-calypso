@@ -7,9 +7,9 @@
 
   font: {
     family: $sans;
-    size: $font-size;
+    size: $wpnc__font-size;
   }
-  line-height: $line-height;
+  line-height: $wpnc__line-height;
   color: $gray-dark;
   // Fixes font anti-aliasing in iframes: andrewmoreton.co.uk/typekit-iframes-safari-weird-antialiasing/
   -webkit-font-smoothing: subpixel-antialiased;
@@ -55,10 +55,10 @@
     border-bottom: 1px solid $gray-lighten-30;
     box-sizing: border-box;
     background-color: $white;
-    font-size: $capital-font-size;
-    height: $title-bar-height + 1px;
-    line-height: $title-bar-height;
-    padding: 0 $padding-medium;
+    font-size: $wpnc__capital-font-size;
+    height: $wpnc__title-bar-height + 1px;
+    line-height: $wpnc__title-bar-height;
+    padding: 0 $wpnc__padding-medium;
     text-align: center;
 
     nav {
@@ -150,7 +150,7 @@
     text-transform: uppercase;
     text-decoration: none;
     font-weight: 600;
-    font-size: $capital-font-size;
+    font-size: $wpnc__capital-font-size;
   }
 
   .rtl header .back:after {
@@ -164,7 +164,7 @@
     border-bottom: 1px solid $gray-lighten-30;
     border-left: 1px solid $white;
     text-align: center; // Center filter in IE 9
-    height: $filter-height;
+    height: $wpnc__filter-height;
     box-sizing: border-box;
     direction: ltr;
     display: table; //fallback for browsers not supporting flexbox
@@ -237,30 +237,30 @@
   }
 
   .wpnc__note {
-    line-height: $line-height;
-    font-size: $font-size;
+    line-height: $wpnc__line-height;
+    font-size: $wpnc__font-size;
     font-weight: normal;
     position: relative;
     clear: both;
     border-bottom: 1px solid $gray-lighten-30;
 
     div.wpnc__body > p, div.wpnc__preface p {
-      line-height: $line-height;
+      line-height: $wpnc__line-height;
       text-align: center;
     }
 
     .wpnc__note-icon {
       display: block;
-      width: $icon-size;
-      height: $icon-size;
+      width: $wpnc__icon-size;
+      height: $wpnc__icon-size;
       position: relative;
       float: left;
-      margin: 0 $padding-medium 0 $padding-medium;
+      margin: 0 $wpnc__padding-medium 0 $wpnc__padding-medium;
     }
 
     .wpnc__note-icon img {
-      width: $icon-size;
-      height: $icon-size;
+      width: $wpnc__icon-size;
+      height: $wpnc__icon-size;
     }
 
     .wpnc__note-icon .wpnc__gridicon {
@@ -381,7 +381,7 @@
     }
 
     .wpnc__text-summary {
-      padding: 0 $padding-medium 0 1.6*$icon-size;
+      padding: 0 $wpnc__padding-medium 0 1.6*$wpnc__icon-size;
       word-wrap: break-word;
       text-align: left;
 
@@ -424,7 +424,7 @@
 
       .gridicons-time {
         align-self: center;
-        margin-left: $padding-medium;
+        margin-left: $wpnc__padding-medium;
         margin-right: 4px;
       }
 
@@ -432,12 +432,12 @@
         cursor: pointer;
         align-self: center;
         margin-left: auto;
-        margin-right: $padding-small;
+        margin-right: $wpnc__padding-small;
       }
     }
 
     .wpnc__time-group-wrap {
-      height: $header-height;
+      height: $wpnc__header-height;
       top: 0;
       z-index: 100;
       text-align: left;
@@ -514,7 +514,7 @@
       p {
         @extend %ellipsy-box;
         -webkit-line-clamp: 1;
-        font-size: $font-size;
+        font-size: $wpnc__font-size;
 
         .wpnc__user__username, a.wpnc__user__site {
           @extend %ellipsy;
@@ -563,7 +563,7 @@
 
     .wpnc__reply {
       color: $gray-text-min;
-      padding: $padding-medium 0;
+      padding: $wpnc__padding-medium 0;
       border-bottom: 1px solid $gray-lighten-30;
 
       .wpnc__gridicon {
@@ -638,7 +638,7 @@
 
   .wpnc__summary {
     @extend %container;
-    padding: $padding-medium 0;
+    padding: $wpnc__padding-medium 0;
   }
 
   .time-notification {
@@ -652,7 +652,7 @@
   .wpnc__body {
     .wpnc__paragraph {
       word-wrap: break-word;
-      margin-top: $padding-large;
+      margin-top: $wpnc__padding-large;
       span.list {
         display: inline-block;
         margin-left: 2em;
@@ -710,7 +710,7 @@
     }
 
     blockquote {
-      margin: 0 $padding-medium $padding-medium;
+      margin: 0 $wpnc__padding-medium $wpnc__padding-medium;
       font-style: italic;
       color: $gray;
       background: transparent;
@@ -734,29 +734,29 @@
   .wpnc__single-view .wpnc__badge img {
     display: block;
     margin: 0 auto;
-    padding: 36px $padding-large $padding-large;
+    padding: 36px $wpnc__padding-large $wpnc__padding-large;
   }
 
   .wpnc__body .wpnc__body-content .wpnc__paragraph {
     font-family: $sans;
-    padding: 0 $padding-large;
+    padding: 0 $wpnc__padding-large;
     text-align: left;
   }
 
   .wpnc__body .wpnc__body-content .wpnc__paragraph:last-child {
-    padding: 0 $padding-large $padding-medium;
+    padding: 0 $wpnc__padding-large $wpnc__padding-medium;
   }
 
   .wpnc__comment .wpnc__body .wpnc__body-content,
   .wpnc__new_post .wpnc__body .wpnc__body-content,
   .wpnc__automattcher .wpnc__body .wpnc__body-content {
     border-bottom: 1px solid $gray-lighten-30;
-    padding-top: $padding-small;
+    padding-top: $wpnc__padding-small;
   }
 
   .wpnc__comment .wpnc__body .wpnc__body-content {
     box-shadow: inset 4px 0 0 $gray-lighten-30;
-    margin: 0 0 0 $padding-medium;
+    margin: 0 0 0 $wpnc__padding-medium;
   }
 
   .wpnc__body-content .match {
@@ -803,15 +803,15 @@
 
   .wpnc__comment .wpnc__body .wpnc__body-content .wpnc__user {
     padding-top: 0;
-    padding-left: $padding-medium;
+    padding-left: $wpnc__padding-medium;
   }
 
   .comment-self p, .comment-other {
-    padding: 0 $padding-medium;
+    padding: 0 $wpnc__padding-medium;
   }
 
   .wpnc__post .wpnc__paragraph {
-    padding: $padding-large $padding-medium 0;
+    padding: $wpnc__padding-large $wpnc__padding-medium 0;
   }
 
   @media only screen and (min-width: 800px) {
