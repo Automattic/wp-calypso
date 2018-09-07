@@ -778,8 +778,8 @@ export default connect(
 			planProperties,
 			selectedSiteSlug,
 			siteType,
+			planCredits,
 			hasPlaceholders: hasPlaceholders( planProperties ),
-			planCredits: calculatePlanCredits( state, siteId, planProperties ),
 			showPlanCreditsApplied:
 				sitePlan &&
 				sitePlan.product_slug !== PLAN_FREE &&
