@@ -11,12 +11,13 @@ import { stubTrue } from 'lodash';
  * Internal dependencies
  */
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 
 const UpgradeNudgeExample = () => {
 	return (
 		<div>
 			<div>
-				<UpgradeNudge feature="custom-domain" href="#" shouldDisplay={ stubTrue } />
+				<UpgradeNudge feature={ FEATURE_CUSTOM_DOMAIN } href="#" shouldDisplay={ stubTrue } />
 			</div>
 			<div>
 				<UpgradeNudge
