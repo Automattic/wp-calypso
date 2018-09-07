@@ -10,6 +10,11 @@ Calypso <abbr title="software development kit">SDK</abbr> is an early stage tool
 npm run sdk -- --help
 ```
 
+To build production ready assets, use `NODE_ENV`:
+```
+NODE_ENV=production npm run sdk -- ...
+```
+
 Note: It's also possible to run the SDK command "globally" by linking within the Calypso repository with [`npm link`](https://docs.npmjs.com/cli/link). After running this command you can replace all invocations of `npm run sdk --` in the examples below with `calypso-sdk` and may do so from any other directory in the filesystem:
 ```
 calypso-sdk --help
@@ -71,11 +76,12 @@ const path = require( 'path' );
 exports.config = ( {
 	{ argv: { outputDir },
 	getBaseConfig,
+	__rootDir,
 } ) => {
 	const baseConfig = getBaseConfig();
 	return {
 		...baseConfig,
-		entry: path.resolve( __dirname, '..', 'client', 'example' ),
+		entry: path.join( __rootDir, 'client', 'example' ),
 		output: {
 			path: outputDir,
 			filename: 'example-build.js',

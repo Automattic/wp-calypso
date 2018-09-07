@@ -16,16 +16,14 @@ exports.config = ( {
 
 	return {
 		...baseConfig,
-		...{
-			entry: {
-				...( editorScript ? { [ outputEditorFile || `${ name }-editor` ]: editorScript } : {} ),
-				...( viewScript ? { [ outputViewFile || `${ name }-view` ]: viewScript } : {} ),
-			},
-			output: {
-				path: outputDir || path.join( path.dirname( editorScript ), 'build' ),
-				filename: '[name].js',
-				libraryTarget: 'window',
-			},
+		entry: {
+			...( editorScript ? { [ outputEditorFile || `${ name }-editor` ]: editorScript } : {} ),
+			...( viewScript ? { [ outputViewFile || `${ name }-view` ]: viewScript } : {} ),
+		},
+		output: {
+			path: outputDir || path.join( path.dirname( editorScript ), 'build' ),
+			filename: '[name].js',
+			libraryTarget: 'window',
 		},
 	};
 };
