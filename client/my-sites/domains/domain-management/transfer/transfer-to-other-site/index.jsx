@@ -188,7 +188,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		currentUser: getCurrentUser( state ),
 		domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-		isDomainOnly: isDomainOnlySite( state, ownProps.selectedSite.ID ),
+		isDomainOnly: isDomainOnlySite( state, get( ownProps, 'selectedSite.ID', null ) ),
 		sites: getSites( state ),
 	} ),
 	{
