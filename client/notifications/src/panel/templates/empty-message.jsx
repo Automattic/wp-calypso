@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import { bumpStat } from '../rest-client/bump-stat';
 
-// from $title-offset in boot/sizes.scss
 const TITLE_OFFSET = 38;
 
 export class EmptyMessage extends Component {
