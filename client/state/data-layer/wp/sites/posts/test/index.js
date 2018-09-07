@@ -15,7 +15,7 @@ import {
 	GUTENBERG_SITE_POST_RECEIVE,
 } from 'state/action-types';
 import {
-	requestCreateGutenbergPostDraft,
+	requestGutenbergPostDraft,
 	createSitePostSuccess,
 	fetchSitePost,
 	fetchSitePostSuccess,
@@ -27,12 +27,12 @@ const POST_ID = 287;
 
 describe( 'wp-api', () => {
 	describe( 'Gutenberg site posts', () => {
-		describe( 'requestCreateGutenbergPostDraft()', () => {
+		describe( 'requestGutenbergPostDraft()', () => {
 			test( "should dispatch a HTTP request to Gutenberg's create draft endpoint", () => {
 				const dispatch = spy();
 				const action = { type: GUTENBERG_SITE_CREATE_DRAFT, siteId: SITE_ID };
 
-				requestCreateGutenbergPostDraft( { dispatch }, action );
+				requestGutenbergPostDraft( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(

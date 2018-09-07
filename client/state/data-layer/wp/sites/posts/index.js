@@ -20,7 +20,7 @@ import { requestSitePost, receiveSitePost } from 'state/gutenberg/actions';
  * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  */
-export const requestCreateGutenbergPostDraft = ( { dispatch }, action ) => {
+export const requestGutenbergPostDraft = ( { dispatch }, action ) => {
 	const { siteId } = action;
 	dispatch(
 		http(
@@ -63,8 +63,8 @@ export const fetchSitePostSuccess = ( { dispatch }, { siteId, postId }, post ) =
 export const handleRequestFailure = ( { dispatch } ) =>
 	dispatch( errorNotice( 'Could not load this post' ) );
 
-const dispatchCreateGutenbergPostDraft = dispatchRequest(
-	requestCreateGutenbergPostDraft,
+const dispatchGutenbergPostDraft = dispatchRequest(
+	requestGutenbergPostDraft,
 	createSitePostSuccess,
 	handleRequestFailure
 );
@@ -76,6 +76,6 @@ const dispatchSitePostRequest = dispatchRequest(
 );
 
 export default {
-	[ GUTENBERG_CREATE_POST_DRAFT ]: [ dispatchCreateGutenbergPostDraft ],
+	[ GUTENBERG_CREATE_POST_DRAFT ]: [ dispatchGutenbergPostDraft ],
 	[ GUTENBERG_SITE_POST_REQUEST ]: [ dispatchSitePostRequest ],
 };
