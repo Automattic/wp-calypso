@@ -69,7 +69,6 @@ import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { isEnabled } from 'config';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export class Checkout extends React.Component {
@@ -368,9 +367,15 @@ export class Checkout extends React.Component {
 			return `/checklist/${ selectedSiteSlug }`;
 		}
 
-		if ( this.props.isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ) ) {
-			return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
-		}
+		/**
+		 * @TODO Enable when plan setup is completed on the My Plan page
+		 *
+		 * This route skips the checkout thank you page where plan setup currently
+		 * occurs. That's undesireable until the plans can be set up correctly on My Plan.
+		 */
+		// if ( this.props.isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ) ) {
+		// 	return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
+		// }
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${
