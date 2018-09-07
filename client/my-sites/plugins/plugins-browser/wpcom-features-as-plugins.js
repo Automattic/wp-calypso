@@ -3,8 +3,13 @@
 /**
  * External dependencies
  */
-
 import { identity } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+
+import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 
 const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 	{
@@ -32,7 +37,7 @@ const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 					'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.'
 				),
 				plan: 'business',
-				feature: 'google-analytics',
+				feature: FEATURE_GOOGLE_ANALYTICS,
 			},
 			{
 				name: translate( 'Social Media' ),
