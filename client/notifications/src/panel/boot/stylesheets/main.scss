@@ -369,7 +369,7 @@
 
     .wpnc__comment-unapproved .wpnc__note-icon .wpnc__gridicon {
       background: $alert-yellow;
-      border-color: $wpnc-yellow-lighter;
+      border-color: $wpnc__yellow-lighter;
     }
 
     .unread {
@@ -764,14 +764,14 @@
   }
 
   .wpnc__list-view .wpnc__comment-unapproved {
-    background: $wpnc-yellow-lighter;
+    background: $wpnc__yellow-lighter;
 
     .wpnc__subject {
-      color: $wpnc-red-darker;
+      color: $wpnc__red-darker;
     }
 
     .wpnc__excerpt {
-      color: $wpnc-yellow-dark;
+      color: $wpnc__yellow-dark;
     }
   }
 
@@ -779,26 +779,26 @@
     .wpnc__body-content {
       box-shadow: inset 4px 0 0 $alert-yellow;
       border-bottom: 1px solid $alert-yellow;
-      background: $wpnc-yellow-lighter;
-      color: $wpnc-red-darker;
+      background: $wpnc__yellow-lighter;
+      color: $wpnc__red-darker;
     }
 
     .blockquote {
-      color: $wpnc-red-darker;
+      color: $wpnc__red-darker;
     }
   }
 
   .wpnc__comment-unapproved .wpnc__body .wpnc__user__meta,
   .wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a {
-    color: $wpnc-yellow-dark;
+    color: $wpnc__yellow-dark;
   }
 
   .wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a:hover {
-    color: darken($wpnc-yellow-dark, 15%);
+    color: darken($wpnc__yellow-dark, 15%);
   }
 
   .wpnc__comment-unapproved .wpnc__body div.wpnc__user .wpnc__user__home {
-    color: $wpnc-red-darker;
+    color: $wpnc__red-darker;
   }
 
   .wpnc__comment .wpnc__body .wpnc__body-content .wpnc__user {
