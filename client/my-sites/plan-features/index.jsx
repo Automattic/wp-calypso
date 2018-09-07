@@ -647,6 +647,9 @@ export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 		} )
 		.reduce( ( max, credits ) => Math.max( max, credits ), 0 );
 
+const hasPlaceholders = planProperties =>
+	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
+
 export default connect(
 	( state, ownProps ) => {
 		const {
@@ -776,6 +779,7 @@ export default connect(
 			selectedSiteSlug,
 			siteType,
 			planCredits,
+			hasPlaceholders: hasPlaceholders( planProperties ),
 			showPlanCreditsApplied:
 				sitePlan &&
 				sitePlan.product_slug !== PLAN_FREE &&
