@@ -767,16 +767,19 @@ export default connect(
 			} )
 		);
 
+		const planCredits = calculatePlanCredits( state, siteId, planProperties );
+
 		return {
 			canPurchase,
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
 			siteType,
-			planCredits: calculatePlanCredits( state, siteId, planProperties ),
+			planCredits,
 			showPlanCreditsApplied:
 				sitePlan &&
 				sitePlan.product_slug !== PLAN_FREE &&
+				planCredits &&
 				! isJetpack &&
 				! isInSignup &&
 				abtest( 'showPlanCreditsApplied' ) === 'test',
