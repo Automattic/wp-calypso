@@ -133,7 +133,53 @@
 	margin-bottom: 20px;
 }
 
+.shipping__class-dialog-name {
+	margin-bottom: 4px;
+}
+
 .shipping__class-delete {
 	float: left;
 	margin-left: 0;
+}
+
+// Styles for the slug field
+&.shipping__class-dialog {
+	.shipping__class-dialog-slug .form-label,
+	.form-click-to-edit-input__input {
+		margin-bottom: 0;
+	}
+
+	.shipping__class-dialog-slug .form-label {
+		display: inline-block;
+		margin-right: 5px;
+		line-height: 30px;
+	}
+
+	.form-click-to-edit-input__wrapper {
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.form-click-to-edit-input__input {
+		padding: 4px 8px;
+		font-size: 13px;
+	}
+
+	.form-click-to-edit-input__text {
+		color: $gray-text-min;
+		display: inline-block;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+
+	.form-click-to-edit-input__wrapper button {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.form-click-to-edit-input__wrapper .gridicon.gridicons-pencil,
+	.form-click-to-edit-input__wrapper .gridicon.gridicons-checkmark {
+		top: 1px;
+	}
 }

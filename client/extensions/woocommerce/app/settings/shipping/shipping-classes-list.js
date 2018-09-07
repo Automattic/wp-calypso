@@ -75,7 +75,7 @@ class ShippingClassesList extends Component {
 		const classesToRender = loaded ? shippingClasses : [ {}, {}, {} ];
 
 		if ( 0 === classesToRender.length ) {
-			return null;
+			return <Card className="shipping__classes" />;
 		}
 
 		return (

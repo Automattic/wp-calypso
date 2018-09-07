@@ -18,6 +18,7 @@ import Dialog from 'components/dialog';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
+import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-input';
 
 import {
 	getCurrentlyOpenShippingClass,
@@ -84,14 +85,20 @@ class ShippingClassDialog extends Component {
 					</h3>
 				</div>
 
-				<FormFieldSet>
+				<FormFieldSet className="shipping__class-dialog-name">
 					<FormLabel>{ translate( 'Name' ) }</FormLabel>
 					<FormTextInput type="text" name="name" value={ data.name } onChange={ this.onChange } />
 				</FormFieldSet>
 
-				<FormFieldSet>
-					<FormLabel>{ translate( 'Slug' ) }</FormLabel>
-					<FormTextInput type="text" name="slug" value={ data.slug } onChange={ this.onChange } />
+				<FormFieldSet className="shipping__class-dialog-slug">
+					<FormLabel>{ translate( 'Slug: ' ) }</FormLabel>
+					<FormClickToEditInput
+						onChange={ this.onSlugChange }
+						value={ this.getSlugToDisplay() }
+						placeholder="-"
+						editAriaLabel={ translate( 'Edit slug' ) }
+						updateAriaLabel={ translate( 'Update slug' ) }
+					/>
 				</FormFieldSet>
 
 				<FormFieldSet>
@@ -107,10 +114,22 @@ class ShippingClassDialog extends Component {
 		);
 	}
 
+	getSlugToDisplay() {
+		const { name, slug } = this.props.data;
+
+		return slug.length ? slug : name.toLowerCase().replace( /\s+/g, '-' );
+	}
+
 	onChange = ( { target: { name, value } } ) => {
 		const { siteId, updateFieldValue } = this.props;
 
 		updateFieldValue( siteId, name, value );
+	};
+
+	onSlugChange = value => {
+		const { siteId, updateFieldValue } = this.props;
+
+		updateFieldValue( siteId, 'slug', value );
 	};
 
 	onCancel = () => {
@@ -136,8 +155,11 @@ class ShippingClassDialog extends Component {
 			siteId,
 			translate,
 			data: { name, slug },
+			updateFieldValue,
 			save,
 		} = this.props;
+
+		const slugToUse = this.getSlugToDisplay();
 
 		// Check if the name is free
 		if ( -1 !== occupiedNames.indexOf( name ) ) {
@@ -148,12 +170,17 @@ class ShippingClassDialog extends Component {
 			);
 		}
 
-		if ( -1 !== occupiedSlugs.indexOf( slug ) ) {
+		if ( -1 !== occupiedSlugs.indexOf( slugToUse ) ) {
 			return this.props.errorNotice(
 				translate( 'The slug "%(slug)s" is already occupied.', {
-					args: { slug },
+					args: { slugToUse },
 				} )
 			);
+		}
+
+		// If there is no slug, use the generated one
+		if ( 0 === slug.trim().length ) {
+			updateFieldValue( siteId, 'slug', slugToUse );
 		}
 
 		save( siteId );
