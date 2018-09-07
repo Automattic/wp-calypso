@@ -169,7 +169,7 @@ describe( 'calculatePlanCredits', () => {
 	test( 'Should return max annual price difference between all available plans - 1 plan', () => {
 		getPlanDiscountedRawPrice.mockReturnValueOnce( 80 );
 		getPlanRawPrice.mockReturnValueOnce( 100 );
-		const credits = calculatePlanCredits( {}, 1, [ { ...baseProps, available: true } ] );
+		const credits = calculatePlanCredits( {}, 1, [ { ...baseProps, availableForPurchase: true } ] );
 		expect( credits ).toBe( 20 );
 	} );
 	test( 'Should return max annual price difference between all available plans - 3 plans', () => {
@@ -183,9 +183,9 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 90 )
 			.mockReturnValueOnce( 130 );
 		const credits = calculatePlanCredits( {}, 1, [
-			{ ...baseProps, available: true },
-			{ ...baseProps, available: true },
-			{ ...baseProps, available: true },
+			{ ...baseProps, availableForPurchase: true },
+			{ ...baseProps, availableForPurchase: true },
+			{ ...baseProps, availableForPurchase: true },
 		] );
 		expect( credits ).toBe( 60 );
 	} );
@@ -200,16 +200,18 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 90 )
 			.mockReturnValueOnce( 130 );
 		const credits = calculatePlanCredits( {}, 1, [
-			{ ...baseProps, available: true },
-			{ ...baseProps, available: false },
-			{ ...baseProps, available: true },
+			{ ...baseProps, availableForPurchase: true },
+			{ ...baseProps, availableForPurchase: false },
+			{ ...baseProps, availableForPurchase: true },
 		] );
 		expect( credits ).toBe( 30 );
 	} );
 	test( 'Should return 0 when no plan is available', () => {
 		getPlanDiscountedRawPrice.mockReturnValueOnce( 70 );
 		getPlanRawPrice.mockReturnValueOnce( 130 );
-		const credits = calculatePlanCredits( {}, 1, [ { ...baseProps, available: false } ] );
+		const credits = calculatePlanCredits( {}, 1, [
+			{ ...baseProps, availableForPurchase: false },
+		] );
 		expect( credits ).toBe( 0 );
 	} );
 	test( 'Should return 0 when difference is negative', () => {
@@ -224,9 +226,9 @@ describe( 'calculatePlanCredits', () => {
 			.mockReturnValueOnce( 70 );
 
 		const credits = calculatePlanCredits( {}, 1, [
-			{ ...baseProps, available: true },
-			{ ...baseProps, available: true },
-			{ ...baseProps, available: true },
+			{ ...baseProps, availableForPurchase: true },
+			{ ...baseProps, availableForPurchase: true },
+			{ ...baseProps, availableForPurchase: true },
 		] );
 		expect( credits ).toBe( 0 );
 	} );

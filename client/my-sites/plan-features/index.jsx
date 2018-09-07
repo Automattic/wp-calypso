@@ -629,8 +629,8 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
-		.map( ( { planName, planConstantObj, available } ) => {
-			if ( ! available ) {
+		.map( ( { planName, planConstantObj, availableForPurchase } ) => {
+			if ( ! availableForPurchase ) {
 				return 0;
 			}
 			const planProductId = planConstantObj.getProductId();
