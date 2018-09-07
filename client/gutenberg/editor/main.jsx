@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 import { dispatch } from '@wordpress/data';
@@ -20,11 +20,6 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
 
 const editorSettings = {};
-
-const mockPost = {
-	type: 'post',
-	content: { raw: 'test content' },
-};
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
@@ -58,6 +53,7 @@ const mapStateToProps = state => {
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		post: getGutenbergCurrentPost( state ),
 	};
 };
 
