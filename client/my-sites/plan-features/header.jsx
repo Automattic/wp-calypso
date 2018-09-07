@@ -212,24 +212,56 @@ export class PlanFeaturesHeader extends Component {
 		if ( fullPrice && discountedPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ fullPrice }
-						isInSignup={ isInSignup }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ discountedPrice }
-						isInSignup={ isInSignup }
-						discounted
-					/>
+					<div className="plan-features__header-price-group-prices">
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ fullPrice }
+							isInSignup={ isInSignup }
+							original
+						/>
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ discountedPrice }
+							isInSignup={ isInSignup }
+							discounted
+						/>
+					</div>
+					{ this.renderCreditLabel() }
 				</span>
 			);
 		}
 
 		return (
 			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } isInSignup={ isInSignup } />
+		);
+	}
+
+	renderCreditLabel() {
+		const {
+			availableForPurchase,
+			currentSitePlan,
+			discountPrice,
+			isJetpack,
+			planType,
+			rawPrice,
+			showPlanCreditsApplied,
+			translate,
+		} = this.props;
+
+		if (
+			! showPlanCreditsApplied ||
+			! availableForPurchase ||
+			planMatches( planType, { type: TYPE_FREE } ) ||
+			planType === currentSitePlan.productSlug ||
+			isJetpack ||
+			! discountPrice ||
+			discountPrice >= rawPrice
+		) {
+			return null;
+		}
+
+		return (
+			<span className="plan-features__header-credit-label">{ translate( 'Credit applied' ) }</span>
 		);
 	}
 
@@ -285,6 +317,7 @@ PlanFeaturesHeader.propTypes = {
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
 	relatedMonthlyPlan: PropTypes.object,
+	showPlanCreditsApplied: PropTypes.bool,
 	siteSlug: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
@@ -308,6 +341,7 @@ PlanFeaturesHeader.defaultProps = {
 	newPlan: false,
 	onClick: noop,
 	popular: false,
+	showPlanCreditsApplied: false,
 	siteSlug: '',
 };
 

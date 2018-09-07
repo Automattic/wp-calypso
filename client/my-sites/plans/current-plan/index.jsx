@@ -18,7 +18,6 @@ import {
 	isCurrentPlanExpiring,
 	isRequestingSitePlans,
 } from 'state/sites/plans/selectors';
-import { isFreeJetpackPlan } from 'lib/products-values';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
@@ -134,15 +133,12 @@ class CurrentPlan extends Component {
 				) }
 
 				<CurrentPlanHeader
-					selectedSite={ selectedSite }
 					isPlaceholder={ isLoading }
 					title={ title }
 					tagLine={ tagLine }
-					currentPlanSlug={ currentPlanSlug }
 					currentPlan={ currentPlan }
 					isExpiring={ isExpiring }
-					isAutomatedTransfer={ isAutomatedTransfer }
-					includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
+					siteSlug={ selectedSite ? selectedSite.slug : null }
 				/>
 				{ isEnabled( 'jetpack/checklist' ) &&
 					isJetpack &&

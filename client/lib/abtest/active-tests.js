@@ -1,5 +1,14 @@
 /** @format */
 export default {
+	showPlanCreditsApplied: {
+		datestamp: '20180903',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 	plansBannerUpsells: {
 		datestamp: '20180824',
 		variations: {
@@ -123,8 +132,8 @@ export default {
 	gSuiteDiscountV2: {
 		datestamp: '20180822',
 		variations: {
-			control: 50,
-			discount: 50,
+			control: 0,
+			discount: 100,
 		},
 		defaultVariation: 'control',
 	},

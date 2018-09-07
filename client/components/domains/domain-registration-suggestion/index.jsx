@@ -1,4 +1,3 @@
-/** @format */
 
 /**
  * External dependencies
@@ -7,10 +6,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isNumber } from 'lodash';
+import { isNumber, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -119,8 +119,19 @@ class DomainRegistrationSuggestion extends React.Component {
 	renderDomain() {
 		const {
 			suggestion: { domain_name: domain },
+			translate
 		} = this.props;
-		return <h3 className="domain-registration-suggestion__title">{ domain }</h3>;
+
+		let isAvailable = false;
+
+		//If we're on the Mapping or Transfer pages, add a note about availability
+		if ( includes( page.current, '/mapping' ) || includes( page.current, '/transfer' ) ) {
+			isAvailable = true;
+		}
+
+		const title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+
+		return <h3 className="domain-registration-suggestion__title">{ title }</h3>;
 	}
 
 	renderProgressBar() {

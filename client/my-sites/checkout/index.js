@@ -102,6 +102,9 @@ export default function() {
 		clientRender
 	);
 
+	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
+	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
+
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',
 		redirectLoggedOut,

@@ -7,6 +7,8 @@ import { siteHasBusinessPlan } from '../is-site-google-my-business-eligible';
 
 import {
 	PLAN_FREE,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM,
@@ -41,6 +43,8 @@ describe( 'siteHasBusinessPlan()', () => {
 	test( 'should return false if site does not have a WP.com business plan', () => {
 		const plans = [
 			PLAN_FREE,
+			PLAN_BLOGGER,
+			PLAN_BLOGGER_2_YEARS,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM,

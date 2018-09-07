@@ -380,11 +380,6 @@ class TransferDomainStep extends React.Component {
 
 		return (
 			<div className={ 'transfer-domain-step__domain-availability' }>
-				<Notice status="is-success" showDismiss={ false }>
-					{ this.props.translate( '%(domain)s is available!', {
-						args: { domain: suggestion.domain_name },
-					} ) }
-				</Notice>
 				<DomainRegistrationSuggestion
 					cart={ this.props.cart }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
