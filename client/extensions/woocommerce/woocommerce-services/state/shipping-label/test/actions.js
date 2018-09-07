@@ -274,7 +274,7 @@ describe( 'Shipping label Actions', () => {
 				},
 			};
 
-			expect( convertToApiPackage( pckg, null, null, null, customsItems ) ).to.deep.equal( {
+			expect( convertToApiPackage( pckg, customsItems ) ).to.deep.equal( {
 				id: 'id',
 				box_id: 'box_id',
 				service_id: 'service_id',

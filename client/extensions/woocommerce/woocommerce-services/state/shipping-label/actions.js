@@ -183,7 +183,7 @@ export const submitStep = ( orderId, siteId, stepName ) => ( dispatch, getState 
 	expandFirstErroneousStep( orderId, siteId, dispatch, getState );
 };
 
-export const convertToApiPackage = ( pckg, siteId, orderId, customsItems ) => {
+export const convertToApiPackage = ( pckg, customsItems ) => {
 	const apiPckg = pick( pckg, [
 		'id',
 		'box_id',
@@ -248,9 +248,7 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	dispatch( NoticeActions.removeNotice( 'wcs-label-rates' ) );
 
 	const customsItems = isCustomsFormRequired( getState(), orderId, siteId ) ? customs.items : null;
-	const apiPackages = map( packages.selected, pckg =>
-		convertToApiPackage( pckg, siteId, orderId, customsItems )
-	);
+	const apiPackages = map( packages.selected, pckg => convertToApiPackage( pckg, customsItems ) );
 	getRates( orderId, siteId, dispatch, origin.values, destination.values, apiPackages )
 		.then( () => expandFirstErroneousStep( orderId, siteId, dispatch, getState ) )
 		.catch( error => {
@@ -949,7 +947,7 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 				origin: getAddressValues( form.origin ),
 				destination: getAddressValues( form.destination ),
 				packages: map( form.packages.selected, ( pckg, pckgId ) => {
-					const packageFields = convertToApiPackage( pckg, siteId, orderId, customsItems );
+					const packageFields = convertToApiPackage( pckg, customsItems );
 					const rate = find( form.rates.available[ pckgId ].rates, {
 						service_id: form.rates.values[ pckgId ],
 					} );
