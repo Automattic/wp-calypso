@@ -65,11 +65,11 @@ const props = {
 describe( 'GoogleAnalyticsForm basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <GoogleAnalyticsForm { ...props } /> );
-		expect( comp.find( '#analytics' ).length ).toBe( 1 );
+		expect( comp.find( '#analytics' ) ).toHaveLength( 1 );
 	} );
 	test( 'should not show upgrade nudge if disabled', () => {
 		const comp = shallow( <GoogleAnalyticsForm { ...props } showUpgradeNudge={ false } /> );
-		expect( comp.find( 'Banner[event="google_analytics_settings"]' ).length ).toBe( 0 );
+		expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 0 );
 	} );
 } );
 
@@ -88,7 +88,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 					site={ { plan: { product_slug } } }
 				/>
 			);
-			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).length ).toBe( 1 );
+			expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
 				PLAN_BUSINESS
 			);
@@ -104,7 +104,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 					site={ { plan: { product_slug } } }
 				/>
 			);
-			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).length ).toBe( 1 );
+			expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
 				PLAN_BUSINESS_2_YEARS
 			);
@@ -121,7 +121,7 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 						site={ { plan: { product_slug } } }
 					/>
 				);
-				expect( comp.find( 'Banner[event="google_analytics_settings"]' ).length ).toBe( 1 );
+				expect( comp.find( 'Banner[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 				expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
 					PLAN_JETPACK_PREMIUM
 				);
