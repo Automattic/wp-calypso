@@ -17,14 +17,18 @@ import Checklist from 'components/checklist';
 import ChecklistBanner from './checklist-banner';
 import ChecklistBannerTask from './checklist-banner-task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
 import { createNotice } from 'state/notices/actions';
+import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
+
+const query = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
 class WpcomChecklist extends PureComponent {
 	static propTypes = {
@@ -83,7 +87,7 @@ class WpcomChecklist extends PureComponent {
 	};
 
 	render() {
-		const { siteId, siteSlug, taskStatuses, translate, viewMode } = this.props;
+		const { siteId, siteSlug, taskStatuses, taskUrls, translate, viewMode } = this.props;
 
 		const ChecklistComponent = 'banner' === viewMode ? ChecklistBanner : Checklist;
 		const TaskComponent = 'banner' === viewMode ? ChecklistBannerTask : Task;
@@ -91,6 +95,7 @@ class WpcomChecklist extends PureComponent {
 		return (
 			<>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				{ siteId && <QueryPosts siteId={ siteId } query={ query } /> }
 				<ChecklistComponent
 					isPlaceholder={ ! taskStatuses }
 					updateCompletion={ this.props.updateCompletion }
@@ -191,7 +196,7 @@ class WpcomChecklist extends PureComponent {
 						onClick={ this.handleTaskStart( {
 							taskId: 'contact_page_updated',
 							tourId: 'checklistContactPage',
-							url: `/post/${ siteSlug }/2`,
+							url: taskUrls.contact_page_updated,
 						} ) }
 						onDismiss={ this.handleTaskDismiss( 'contact_page_updated' ) }
 						siteSlug={ siteSlug }
@@ -207,7 +212,7 @@ class WpcomChecklist extends PureComponent {
 						onClick={ this.handleTaskStart( {
 							taskId: 'post_published',
 							tourId: 'checklistPublishPost',
-							url: `/post/${ siteSlug }`,
+							url: taskUrls.post_published,
 						} ) }
 						onDismiss={ this.handleTaskDismiss( 'post_published' ) }
 						siteSlug={ siteSlug }
@@ -240,10 +245,30 @@ class WpcomChecklist extends PureComponent {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
+
+		const posts = getPostsForQuery( state, siteId, query );
+
+		const firstPost = find( posts, { type: 'post' } );
+		const contactPage = find(
+			posts,
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			post =>
+				// TODO: Separate query for this?
+				post.type === 'page' &&
+				find( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } )
+		);
+
+		const taskUrls = {
+			post_published: `/post/${ siteSlug }/${ get( firstPost, [ 'ID' ], '' ) }`,
+			contact_page_updated: `/page/${ siteSlug }/${ get( contactPage, [ 'ID' ], 2 ) }`,
+		};
+
 		return {
 			siteId,
-			siteSlug: getSiteSlug( state, siteId ),
+			siteSlug,
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
+			taskUrls,
 		};
 	},
 	{
