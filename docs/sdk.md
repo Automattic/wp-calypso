@@ -71,11 +71,12 @@ const path = require( 'path' );
 exports.config = ( {
 	{ argv: { outputDir },
 	getBaseConfig,
+	__rootDir,
 } ) => {
 	const baseConfig = getBaseConfig();
 	return {
 		...baseConfig,
-		entry: path.resolve( __dirname, '..', 'client', 'example' ),
+		entry: path.join( __rootDir, 'client', 'example' ),
 		output: {
 			path: outputDir,
 			filename: 'example-build.js',
