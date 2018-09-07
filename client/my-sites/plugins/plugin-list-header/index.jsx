@@ -242,8 +242,8 @@ export class PluginsListHeader extends PureComponent {
 					key="plugin-list-header__buttons-close-button"
 					className="plugin-list-header__section-actions-close"
 					onClick={ this.props.toggleBulkManagement }
+					aria-label={ translate( 'Close' ) }
 				>
-					<span className="plugin-list-header__screen-reader-text">{ translate( 'Close' ) }</span>
 					<Gridicon icon="cross" />
 				</button>
 			);

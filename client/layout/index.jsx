@@ -39,6 +39,7 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
@@ -120,7 +121,7 @@ const Layout = createReactClass( {
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
 				<QueryPreferences />
-				<AsyncLoad require="layout/guided-tours" />
+				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
@@ -155,7 +156,9 @@ const Layout = createReactClass( {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
-				<InlineHelp />
+				{ ( 'jetpack-connect' !== this.props.section.name ||
+					this.props.currentRoute === '/jetpack/new' ) &&
+					this.props.currentRoute !== '/log-in/jetpack' && <InlineHelp /> }
 				<SupportArticleDialog />
 				<AppBanner />
 				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
@@ -176,5 +179,6 @@ export default connect( state => {
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
+		currentRoute: getCurrentRoute( state ),
 	};
 } )( Layout );

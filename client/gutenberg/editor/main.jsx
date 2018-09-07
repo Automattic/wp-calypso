@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEmpty, noop } from 'lodash';
+import { dispatch } from '@wordpress/data';
 import '@wordpress/core-data'; // Initializes core data store
 import { registerCoreBlocks } from '@wordpress/block-library';
 
@@ -26,6 +27,8 @@ const post = {
 class GutenbergEditor extends Component {
 	componentDidMount() {
 		registerCoreBlocks();
+		// Prevent Guided tour from showing when editor loads.
+		dispatch( 'core/nux' ).disableTips();
 	}
 
 	render() {

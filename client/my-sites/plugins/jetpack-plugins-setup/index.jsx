@@ -549,7 +549,7 @@ class PlansSetup extends React.Component {
 
 		return (
 			<div className="jetpack-plugins-setup">
-				<PageViewTracker path="/plugins/setup/:site" title="Jetpack Plugins Setup" />;
+				<PageViewTracker path="/plugins/setup/:site" title="Jetpack Plugins Setup" />
 				<QueryPluginKeys siteId={ site.ID } />
 				<h1 className="jetpack-plugins-setup__header">
 					{ translate( 'Setting up your %(plan)s Plan', {

@@ -167,7 +167,8 @@ class PostTypeList extends Component {
 	}
 
 	renderListEnd() {
-		return <ListEnd />;
+		const posts = this.props.posts || [];
+		return this.hasListFullyLoaded() && posts.length > 0 ? <ListEnd /> : null;
 	}
 
 	renderMaxPagesNotice() {
@@ -187,7 +188,7 @@ class PostTypeList extends Component {
 	}
 
 	renderPlaceholder() {
-		return <PostItem key="placeholder" />;
+		return this.props.isRequestingPosts ? <PostItem key="placeholder" /> : null;
 	}
 
 	renderPost( post ) {
@@ -238,7 +239,8 @@ class PostTypeList extends Component {
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
 				{ this.renderMaxPagesNotice() }
-				{ this.hasListFullyLoaded() ? this.renderListEnd() : this.renderPlaceholder() }
+				{ this.renderPlaceholder() }
+				{ this.renderListEnd() }
 			</div>
 		);
 	}

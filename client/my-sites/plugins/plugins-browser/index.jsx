@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
 import PropTypes from 'prop-types';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -364,6 +365,18 @@ export class PluginsBrowser extends Component {
 		this.props.doSearch( term );
 	};
 
+	handleUpgradeNudgeClick = () => {
+		const { siteSlug } = this.props;
+		let href = `/plans/${ siteSlug }?feature=${ FEATURE_UPLOAD_PLUGINS }`;
+		if (
+			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
+			abtest( 'pluginsUpsellLandingPage' ) === 'test'
+		) {
+			href = '/feature/plugins/' + siteSlug;
+		}
+		page.redirect( href );
+	};
+
 	getSearchBar() {
 		const suggestedSearches = [
 			this.props.translate( 'Engagement', { context: 'Plugins suggested search term' } ),
@@ -413,6 +426,7 @@ export class PluginsBrowser extends Component {
 	}
 
 	handleUploadPluginButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_click_plugin_upload' );
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	};
 
@@ -499,31 +513,17 @@ export class PluginsBrowser extends Component {
 			return null;
 		}
 
-		const { siteSlug, translate } = this.props;
+		const { translate } = this.props;
 		const plan = findFirstSimilarPlanKey( this.props.sitePlan.product_slug, {
 			type: TYPE_BUSINESS,
 		} );
 		const title = translate( 'Upgrade to the Business plan to install plugins.' );
 
-		if (
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'customPluginAndThemeLandingPages'
-		) {
-			const href = '/feature/plugins/' + siteSlug;
-			return (
-				<Banner
-					event="calypso_plugins_browser_upgrade_nudge_upsell"
-					href={ href }
-					plan={ plan }
-					title={ title }
-				/>
-			);
-		}
-
 		return (
 			<Banner
-				feature={ FEATURE_UPLOAD_PLUGINS }
 				event="calypso_plugins_browser_upgrade_nudge"
+				disableHref={ true }
+				onClick={ this.handleUpgradeNudgeClick }
 				plan={ plan }
 				title={ title }
 			/>

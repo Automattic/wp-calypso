@@ -136,7 +136,7 @@ export class PlansFeaturesMain extends Component {
 				feature: selectedFeature,
 				plan: selectedPlan,
 			},
-			plansLink( plansUrl, siteSlug, intervalType )
+			plansLink( plansUrl, siteSlug, intervalType, true )
 		);
 	}
 

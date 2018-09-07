@@ -12,9 +12,9 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
+const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 const StatsWriter = require( './server/bundler/stats-writer' );
-const prism = require( 'prismjs' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
@@ -107,12 +107,14 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @param {object}  env                              additional config options
  * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
- * @param {object}  argv                             given by webpack?
  *
  * @return {object}                                  webpack config
  */
-// eslint-disable-next-line no-unused-vars
-function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
+function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {} ) {
+	cssFilename =
+		cssFilename ||
+		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
@@ -178,8 +180,8 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 				},
 				{
 					test: /\.(sc|sa|c)ss$/,
-					use: _.compact( [
-						MiniCssExtractPlugin.loader,
+					use: [
+						MiniCssExtractPluginWithRTL.loader,
 						'css-loader',
 						{
 							loader: 'postcss-loader',
@@ -191,9 +193,13 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 							loader: 'sass-loader',
 							options: {
 								includePaths: [ path.join( __dirname, 'client' ) ],
+								data: `@import '${ path.join(
+									__dirname,
+									'assets/stylesheets/shared/_utils.scss'
+								) }';`,
 							},
 						},
-					] ),
+					],
 				},
 				{
 					test: /extensions[\/\\]index/,
@@ -225,22 +231,6 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					test: /node_modules[\/\\]tinymce/,
 					use: 'imports-loader?this=>window',
 				},
-				{
-					test: /README\.md$/,
-					use: [
-						{ loader: 'html-loader' },
-						{
-							loader: 'markdown-loader',
-							options: {
-								sanitize: true,
-								highlight: function( code, language ) {
-									const syntax = prism.languages[ language ];
-									return syntax ? prism.highlight( code, syntax ) : code;
-								},
-							},
-						},
-					],
-				},
 			],
 		},
 		resolve: {
@@ -252,6 +242,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					'react-virtualized': 'react-virtualized/dist/commonjs',
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
+					store: 'store/dist/store.modern',
 				},
 				getAliasesForExtensions()
 			),
@@ -266,7 +257,13 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
-			new MiniCssExtractPlugin(),
+			new MiniCssExtractPluginWithRTL( {
+				filename: cssFilename,
+				rtlEnabled: true,
+			} ),
+			new WebpackRTLPlugin( {
+				minify: ! isDevelopment,
+			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),

@@ -21,6 +21,7 @@ describe( 'reducer', () => {
 			'editor',
 			'googleMyBusiness',
 			'guidedTour',
+			'gutenbergOptInDialog',
 			'hasSidebar',
 			'isLoading',
 			'isNotificationsOpen',

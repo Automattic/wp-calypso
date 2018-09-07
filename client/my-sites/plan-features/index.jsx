@@ -181,7 +181,7 @@ class PlanFeatures extends Component {
 
 		return map( reorderedPlans, properties => {
 			const {
-				available,
+				availableForPurchase,
 				currencyCode,
 				current,
 				features,
@@ -200,6 +200,7 @@ class PlanFeatures extends Component {
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
+						availableForPurchase={ availableForPurchase }
 						current={ current }
 						currencyCode={ currencyCode }
 						isJetpack={ isJetpack }
@@ -220,7 +221,7 @@ class PlanFeatures extends Component {
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
-						available={ available }
+						availableForPurchase={ availableForPurchase }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
@@ -262,6 +263,7 @@ class PlanFeatures extends Component {
 
 		return map( planProperties, properties => {
 			const {
+				availableForPurchase,
 				currencyCode,
 				current,
 				planConstantObj,
@@ -302,6 +304,7 @@ class PlanFeatures extends Component {
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
+						availableForPurchase={ availableForPurchase }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
 						current={ current }
@@ -357,7 +360,7 @@ class PlanFeatures extends Component {
 
 		return map( planProperties, properties => {
 			const {
-				available,
+				availableForPurchase,
 				current,
 				onUpgradeClick,
 				planName,
@@ -376,7 +379,7 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
-						available={ available }
+						availableForPurchase={ availableForPurchase }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
@@ -476,7 +479,7 @@ class PlanFeatures extends Component {
 
 		return map( planProperties, properties => {
 			const {
-				available,
+				availableForPurchase,
 				current,
 				onUpgradeClick,
 				planName,
@@ -493,7 +496,7 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
-						available={ available }
+						availableForPurchase={ availableForPurchase }
 						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
@@ -582,7 +585,7 @@ export default connect(
 				const planObject = getPlan( state, planProductId );
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const showMonthly = ! isMonthly( plan );
-				const available = isInSignup
+				const availableForPurchase = isInSignup
 					? true
 					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
 				const relatedMonthlyPlan = showMonthly
@@ -631,7 +634,7 @@ export default connect(
 				}
 
 				return {
-					available: available,
+					availableForPurchase,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
@@ -647,7 +650,7 @@ export default connect(
 								onUpgradeClick( getCartItemForPlan( planSlug ) );
 						  }
 						: () => {
-								if ( ! available ) {
+								if ( ! availableForPurchase ) {
 									return;
 								}
 

@@ -13,3 +13,32 @@
 .editor {
 	background: none;
 }
+
+// OVERRIDES
+
+.is-section-gutenberg-editor {
+	.layout__content {
+		padding-left: 32px;
+		padding-top: 0;
+
+		@include breakpoint( '<960px' ) {
+			padding-left: 24px;
+		}
+		@include breakpoint( '<660px' ) {
+			padding-left: 0px;
+		}
+	}
+
+	.edit-post-header {
+		padding-top: 0;
+		padding-bottom: 0;
+		left: 0;
+		top: 0;
+	}
+
+	@media (min-width: 600px) {
+		.edit-post-sidebar {
+			top: 57px;
+		}
+	}
+}

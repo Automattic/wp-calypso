@@ -111,7 +111,6 @@ function renderSingleTeamMember( context, next ) {
 
 	context.primary = React.createElement( EditTeamMember, {
 		userLogin: context.params.user_login,
-		prevPath: context.prevPath,
 	} );
 	next();
 }

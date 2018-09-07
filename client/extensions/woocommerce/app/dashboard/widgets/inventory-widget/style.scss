@@ -4,7 +4,7 @@
 		align-items: normal;
 
 		.dashboard-widget__children {
-			overflow: scroll;
+			overflow: auto;
 			max-height: 190px;
 
 			@include breakpoint( "<660px" ) {

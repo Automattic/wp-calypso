@@ -36,7 +36,6 @@ jest.mock( 'i18n-calypso', () => ( {
  */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import { noop } from 'lodash';
 import React from 'react';
 import {
 	PLAN_FREE,
@@ -186,7 +185,7 @@ describe( 'Banner basic tests', () => {
 		const comp = shallow( <Banner { ...props } href={ '/' } callToAction="Go WordPress!" /> );
 		assert.lengthOf( comp.find( 'Card' ), 1 );
 		assert.equal( undefined, comp.find( 'Card' ).props().href );
-		assert.equal( noop, comp.find( 'Card' ).props().onClick );
+		assert.equal( null, comp.find( 'Card' ).props().onClick );
 
 		assert.lengthOf( comp.find( 'Button' ), 1 );
 		assert.equal( '/', comp.find( 'Button' ).props().href );

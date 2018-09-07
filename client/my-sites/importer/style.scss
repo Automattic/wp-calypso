@@ -50,6 +50,9 @@
 	&.site-importer {
 		background-color: #faad4d;
 	}
+	&.squarespace {
+		background-color: #222;
+	}
 
 	@include breakpoint( '>960px' ) {
 		width: 56px;

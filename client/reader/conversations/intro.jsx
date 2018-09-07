@@ -32,12 +32,12 @@ class ConversationsIntro extends React.Component {
 		this.maybeRecordRenderTrack();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.hasUsedConversations !== nextProps.hasUsedConversations ||
-			this.props.isInternal !== nextProps.isInternal
+			this.props.hasUsedConversations !== prevProps.hasUsedConversations ||
+			this.props.isInternal !== prevProps.isInternal
 		) {
-			this.maybeRecordRenderTrack( nextProps );
+			this.maybeRecordRenderTrack();
 		}
 	}
 

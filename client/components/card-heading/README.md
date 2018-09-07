@@ -1,7 +1,7 @@
 CardHeading (JSX)
 =====================
 
-This component displays a heading for a <Card>
+This component displays a heading for a `<Card>`
 
 #### How to use:
 
@@ -11,7 +11,7 @@ import CardHeading from 'components/card-heading';
 render() {
 	return (
 		<CardHeading
-			tagName={ <h1 /> }
+			tagName="h1"
 			size={ 21 }
 		>
 			Put your heading text here

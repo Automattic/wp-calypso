@@ -98,7 +98,7 @@ User.prototype.clearStoreIfChanged = function( userId ) {
 
 	if ( storedUser && storedUser.ID !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
-		store.clear();
+		store.clearAll();
 	}
 };
 
@@ -240,7 +240,7 @@ User.prototype.clear = function( onClear ) {
 	 */
 	this.data = [];
 	delete this.settings;
-	store.clear();
+	store.clearAll();
 	if ( config.isEnabled( 'persist-redux' ) ) {
 		localforage.clear( onClear );
 	} else if ( onClear ) {

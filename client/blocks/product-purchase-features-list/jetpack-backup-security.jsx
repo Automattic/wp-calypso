@@ -28,7 +28,7 @@ const JetpackBackupSecurity = ( { backupEngine, site, siteId, translate } ) => (
 			}
 			href={
 				backupEngine === 'rewind'
-					? `/stats/activity/${ site.slug }`
+					? `/activity-log/${ site.slug }`
 					: 'https://dashboard.vaultpress.com'
 			}
 		/>

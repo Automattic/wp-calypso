@@ -6,15 +6,10 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
 
-/**
- * Internal dependencies
- */
-import isRtlSelector from 'state/selectors/is-rtl';
-
-class ModuleChartLabel extends React.Component {
+export default class ModuleChartLabel extends React.Component {
 	static propTypes = {
+		isRtl: PropTypes.bool,
 		width: PropTypes.number.isRequired,
 		x: PropTypes.number.isRequired,
 		label: PropTypes.string.isRequired,
@@ -23,12 +18,10 @@ class ModuleChartLabel extends React.Component {
 	render() {
 		const { isRtl } = this.props;
 
-		const dir = isRtl ? 'right' : 'left';
 		const labelStyle = {
+			[ isRtl ? 'right' : 'left' ]: this.props.x + 'px',
 			width: this.props.width + 'px',
 		};
-
-		labelStyle[ dir ] = this.props.x + 'px';
 
 		return (
 			<div className="chart__x-axis-label" style={ labelStyle }>
@@ -37,5 +30,3 @@ class ModuleChartLabel extends React.Component {
 		);
 	}
 }
-
-export default connect( state => ( { isRtl: isRtlSelector( state ) } ) )( ModuleChartLabel );

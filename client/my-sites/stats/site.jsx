@@ -151,7 +151,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
+					<ChecklistBanner siteId={ siteId } />
 					{ config.isEnabled( 'google-my-business' ) &&
 						siteId && (
 							<GoogleMyBusinessStatsNudge
@@ -251,6 +251,7 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+
 		return {
 			isJetpack,
 			hasPodcasts:

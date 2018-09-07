@@ -143,8 +143,8 @@ $autobar-height: 20px;
 
 	.masterbar__wpcom-wordmark {
 		display: block;
-		width: 144px;
-		height: 15px;
+		width: 150px;
+		height: 25px;
 		margin: 0 5px;
 	}
 
@@ -488,6 +488,10 @@ $autobar-height: 20px;
 	@include breakpoint( '>480px' ) {
 		flex-grow: 0;
 	}
+}
+
+.masterbar__quick-language-switcher a {
+	cursor: pointer;
 }
 
 // Editor Transition

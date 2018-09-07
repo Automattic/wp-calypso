@@ -43,6 +43,17 @@ exports[`<EmergentPaywallBox /> should render 1`] = `
         height={600}
         name="emergent-paywall-iframe"
       />
+      <div
+        className="checkout__emergent-paywall-support-link"
+      >
+        <a
+          href="/help/contact"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Contact Support
+        </a>
+      </div>
     </div>
   </div>
 </div>

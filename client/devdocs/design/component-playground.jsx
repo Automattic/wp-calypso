@@ -44,9 +44,6 @@ class ComponentPlayground extends Component {
 		const { section } = this.props;
 		let scope = null;
 		switch ( section ) {
-			case 'gutenberg-components':
-				scope = require( '@wordpress/components' );
-				break;
 			case 'gutenberg-blocks':
 				scope = require( 'gutenberg-blocks' );
 				break;

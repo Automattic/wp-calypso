@@ -1,6 +1,7 @@
 {
 	"env": "shared",
 	"env_id": "shared",
+	"favicon_url": "//s1.wp.com/i/favicon.ico",
 	"boom_analytics_enabled": false,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": false,

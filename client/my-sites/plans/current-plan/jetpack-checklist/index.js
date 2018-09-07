@@ -71,7 +71,7 @@ class JetpackChecklist extends PureComponent {
 						duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_backups',
-							url: `/stats/activity/${ siteSlug }`,
+							url: `/activity-log/${ siteSlug }`,
 						} ) }
 						title={ translate( 'Backups & Scanning' ) }
 					/>

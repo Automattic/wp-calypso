@@ -123,12 +123,18 @@ class MediaLibraryScale extends Component {
 		return (
 			<div className="media-library__scale">
 				<SegmentedControl className="media-library__scale-toggle" compact>
-					<SegmentedControlItem selected={ 1 !== scale } onClick={ this.setScaleToMobileGrid }>
-						<span className="media-library__scale-toggle-label">{ translate( 'Grid' ) }</span>
+					<SegmentedControlItem
+						selected={ 1 !== scale }
+						onClick={ this.setScaleToMobileGrid }
+						title={ translate( 'Grid' ) }
+					>
 						<Gridicon icon="grid" size={ 18 } />
 					</SegmentedControlItem>
-					<SegmentedControlItem selected={ 1 === scale } onClick={ this.setScaleToMobileFull }>
-						<span className="media-library__scale-toggle-label">{ translate( 'List' ) }</span>
+					<SegmentedControlItem
+						selected={ 1 === scale }
+						onClick={ this.setScaleToMobileFull }
+						title={ translate( 'List' ) }
+					>
 						<Gridicon icon="menu" size={ 18 } />
 					</SegmentedControlItem>
 				</SegmentedControl>

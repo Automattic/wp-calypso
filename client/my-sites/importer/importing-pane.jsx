@@ -16,7 +16,7 @@ import { mapAuthor, startImporting } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
 import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
-import MappingPane from './author-mapping-pane';
+import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
 
 const sum = ( a, b ) => a + b;
@@ -231,11 +231,12 @@ class ImportingPane extends React.PureComponent {
 			<div className="importer__importing-pane">
 				{ this.isImporting() && <p>{ this.getHeadingText() }</p> }
 				{ this.isMapping() && (
-					<MappingPane
+					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ mapAuthorFor( importerId ) }
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
-						{ ...{ siteId, sourceType } }
+						siteId={ siteId }
+						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }
 						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
 						targetTitle={ siteName }

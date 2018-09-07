@@ -19,6 +19,7 @@ import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import CreditCardPaymentBox from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
+import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
@@ -294,6 +295,29 @@ const SecurePaymentForm = createReactClass( {
 		);
 	},
 
+	renderWechatPaymentBox( ) {
+		return (
+			<PaymentBox
+				classSet="wechat-payment-box"
+				cart={ this.props.cart }
+				paymentMethods={ this.props.paymentMethods }
+				currentPaymentMethod={ 'wechat' }
+				onSelectPaymentMethod={ this.selectPaymentBox }
+			>
+				<QueryPaymentCountries />
+				<WechatPaymentBox
+					cart={ this.props.cart }
+					transaction={ this.props.transaction }
+					selectedSite={ this.props.selectedSite }
+					redirectTo={ this.props.redirectTo }
+					presaleChatAvailable={ this.props.presaleChatAvailable }
+				>
+					{ this.props.children }
+				</WechatPaymentBox>
+			</PaymentBox>
+		);
+	},
+
 	renderGetDotBlogNotice() {
 		const hasProductFromGetDotBlogSignup = find(
 			this.props.cart.products,
@@ -351,6 +375,13 @@ const SecurePaymentForm = createReactClass( {
 					<div>
 						{ this.renderGreatChoiceHeader() }
 						{ this.renderEmergentPaywallBox() }
+					</div>
+				);
+			case 'wechat':
+				return (
+					<div>
+						{ this.renderGreatChoiceHeader() }
+						{ this.renderWechatPaymentBox() }
 					</div>
 				);
 			case 'alipay':

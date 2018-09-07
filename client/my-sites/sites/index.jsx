@@ -47,11 +47,11 @@ export class Sites extends Component {
 		}
 
 		switch ( path ) {
+			case 'activity-log':
+				path = i18n.translate( 'Activity' );
+				break;
 			case 'stats':
 				path = i18n.translate( 'Insights' );
-				if ( '/stats/activity' === this.props.siteBasePath ) {
-					path = i18n.translate( 'Activity' );
-				}
 				break;
 			case 'plans':
 				path = i18n.translate( 'Plans' );

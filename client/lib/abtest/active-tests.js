@@ -1,13 +1,37 @@
 /** @format */
 export default {
-	nudgeAPalooza: {
-		datestamp: '20180806',
+	plansBannerUpsells: {
+		datestamp: '20180824',
 		variations: {
-			sidebarUpsells: 20,
-			themesNudgesUpdates: 20,
-			customPluginAndThemeLandingPages: 20,
-			plansBannerUpsells: 20,
-			control: 20,
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	themesNudgesUpdates: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	pluginsUpsellLandingPage: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	themesUpsellLandingPage: {
+		datestamp: '20180824',
+		variations: {
+			test: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -75,26 +99,18 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSuggestionKrakenV323: {
-		datestamp: '20180815',
+	domainSuggestionKrakenV325: {
+		datestamp: '20180828',
 		variations: {
 			domainsbot: 0,
-			group_1: 22700,
-			group_3: 22700,
-			group_4: 22700,
-			group_6: 0,
-			group_7: 0,
-			group_8: 22700,
+			group_1: 21,
+			group_3: 21,
+			group_4: 21,
+			group_6: 8, // dot with re-ordering
+			group_7: 8, // dot
+			group_8: 21,
 		},
 		defaultVariation: 'domainsbot',
-	},
-	aboutSuggestionMatches: {
-		datestamp: '20180704',
-		variations: {
-			control: 50,
-			enhancedSort: 50,
-		},
-		defaultVariation: 'control',
 	},
 	includeDotBlogSubdomainV2: {
 		datestamp: '20180813',
@@ -111,5 +127,23 @@ export default {
 			discount: 50,
 		},
 		defaultVariation: 'control',
+	},
+	domainManagementSuggestion: {
+		datestamp: '20180822',
+		variations: {
+			domainsbot: 82,
+			group_7: 18,
+		},
+		defaultVariation: 'domainsbot',
+		assignmentMethod: 'userId',
+	},
+	readerSearchPlaceholder: {
+		datestamp: '20180830',
+		variations: {
+			justSearch: 34,
+			nextGreatRead: 33,
+			newFavorite: 33,
+		},
+		defaultVariation: 'justSearch',
 	},
 };

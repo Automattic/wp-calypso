@@ -28,13 +28,17 @@ export class SidebarBanner extends Component {
 		icon: PropTypes.string,
 		href: PropTypes.string,
 		text: PropTypes.string,
+		onClick: PropTypes.func,
 		track: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
-	onClick = () => {
-		const { ctaName, track } = this.props;
+	onClick = e => {
+		const { ctaName, track, onClick } = this.props;
 		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
+		if ( onClick ) {
+			onClick( e );
+		}
 	};
 
 	render() {

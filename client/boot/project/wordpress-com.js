@@ -162,7 +162,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 
 	// delete any lingering local storage data from signup
 	if ( ! startsWith( window.location.pathname, '/start' ) ) {
-		[ 'signupProgress', 'signupDependencies' ].forEach( store.remove );
+		[ 'signupProgress', 'signupDependencies' ].forEach( item => store.remove( item ) );
 	}
 
 	if ( ! currentUser.get() ) {

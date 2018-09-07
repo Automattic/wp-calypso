@@ -3,7 +3,8 @@
 /**
  * External dependencies
  */
-
+import i18n from 'i18n-calypso';
+import moment from 'moment';
 import {
 	compact,
 	every,
@@ -12,42 +13,35 @@ import {
 	flowRight as compose,
 	get,
 	has,
+	includes,
 	map,
 	partialRight,
 	some,
 	split,
-	includes,
 	startsWith,
 } from 'lodash';
-import i18n from 'i18n-calypso';
-import moment from 'moment';
 
 /**
  * Internal dependencies
  */
+import canCurrentUser from 'state/selectors/can-current-user';
 import config from 'config';
-import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
-
-/**
- * Internal dependencies
- */
 import createSelector from 'lib/create-selector';
-import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
-import versionCompare from 'lib/version-compare';
-import { getCustomizerFocus } from 'my-sites/customize/panels';
+import getRawSite from 'state/selectors/get-raw-site';
 import getSiteOptions from 'state/selectors/get-site-options';
 import getSitesItems from 'state/selectors/get-sites-items';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import getRawSite from 'state/selectors/get-raw-site';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { transferStates } from '../automated-transfer/constants';
-import isSiteAutomatedTransfer from '../selectors/is-site-automated-transfer';
 import hasSitePendingAutomatedTransfer from '../selectors/has-site-pending-automated-transfer';
+import isSiteAutomatedTransfer from '../selectors/is-site-automated-transfer';
+import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
+import versionCompare from 'lib/version-compare';
+import { canAccessWordads } from 'lib/ads/utils';
+import { fromApi as seoTitleFromApi } from 'components/seo/meta-title-editor/mappings';
 import { getAutomatedTransferStatus } from '../automated-transfer/selectors';
+import { getCustomizerFocus } from 'my-sites/customize/panels';
 import { getSelectedSiteId } from '../ui/selectors';
-import { FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
 import { isCurrentUserCurrentPlanOwner } from './plans/selectors';
+import { isHttps, withoutHttp, addQueryArgs, urlToSlug } from 'lib/url';
+import { transferStates } from '../automated-transfer/constants';
 
 /**
  * Returns the slug for a site, or null if the site is unknown.
@@ -396,23 +390,7 @@ export function canCurrentUserUseAds( state, siteId = null ) {
 		siteId = getSelectedSiteId( state );
 	}
 	const site = getSite( state, siteId );
-	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	return site && site.options.wordads && canUserManageOptions;
-}
-
-/**
- * Returns true if current user can see and use WordAds option in menu
- *
- * @param  {Object}   state  Global state tree
- * @param  {Number}   siteId Site ID
- * @return {?Boolean}        Whether site is previewable
- */
-export function canAdsBeEnabledOnCurrentSite( state, siteId = null ) {
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
-	}
-	const site = getSite( state, siteId );
-	return site && hasFeature( state, siteId, FEATURE_WORDADS_INSTANT );
+	return site && !! canAccessWordads( site );
 }
 
 /**

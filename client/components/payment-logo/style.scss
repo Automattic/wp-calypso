@@ -8,7 +8,7 @@
 	width: 35px;
 
 	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
-	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef', 'emergent-paywall';
+	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef', 'emergent-paywall', 'wechat';
 
 	@each $brand in $payment-cc-brands {
 		&.is-#{$brand} {

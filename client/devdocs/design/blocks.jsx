@@ -62,6 +62,7 @@ import PostComment from 'blocks/comments/docs/post-comment-example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
+import ImageSelector from 'blocks/image-selector/docs/example';
 import VideoEditor from 'blocks/video-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
@@ -195,6 +196,7 @@ export default class AppComponents extends React.Component {
 						<UserMentions readmeFilePath="user-mentions" />
 					) }
 					<SupportArticleDialog />
+					<ImageSelector readmeFilePath="image-selector" />
 				</Collection>
 			</Main>
 		);

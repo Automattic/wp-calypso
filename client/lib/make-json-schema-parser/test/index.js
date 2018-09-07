@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser, { SchemaError, TransformerError } from '..';
+import makeJsonSchemaParser from '..';
 
 describe( 'makeJsonSchemaParser', () => {
 	test( 'should return a function', () => {
@@ -12,7 +12,7 @@ describe( 'makeJsonSchemaParser', () => {
 
 	test( 'should throw SchemaError on if data does not validate', () => {
 		const parser = makeJsonSchemaParser( { type: 'null' } );
-		expect( () => parser( 0 ) ).toThrow( SchemaError );
+		expect( () => parser( 0 ) ).toThrow( Error, 'Failed to validate with JSON schema' );
 	} );
 
 	test( 'should throw TransformerError if error occurs during transformation', () => {
@@ -20,7 +20,7 @@ describe( 'makeJsonSchemaParser', () => {
 			throw Error( 'Testing error during transform' );
 		};
 		const parser = makeJsonSchemaParser( {}, transformer );
-		expect( () => parser( 0 ) ).toThrow( TransformerError );
+		expect( () => parser( 0 ) ).toThrow( Error, 'Testing error during transform' );
 	} );
 
 	test( 'should return input unchanged if valid and no transformer supplied', () => {

@@ -14,7 +14,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import Button from 'components/button';
 import { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
@@ -27,7 +26,6 @@ import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
-import TrackComponentView from 'lib/analytics/track-component-view';
 import JetpackLogo from 'components/jetpack-logo';
 import { isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -147,6 +145,35 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackActivityClick = () => {
+		this.trackMenuItemClick( 'activity' );
+		this.onNavigate();
+	};
+
+	activity() {
+		const { siteId, canUserViewActivity, path, translate, siteSuffix } = this.props;
+
+		if ( ! siteId ) {
+			return null;
+		}
+
+		if ( ! canUserViewActivity ) {
+			return null;
+		}
+
+		const activityLink = '/activity-log' + siteSuffix;
+		return (
+			<SidebarItem
+				tipTarget="activity"
+				label={ translate( 'Activity' ) }
+				selected={ itemLinkMatches( [ '/activity-log' ], path ) }
+				link={ activityLink }
+				onNavigate={ this.trackActivityClick }
+				icon="history"
+			/>
+		);
+	}
+
 	preview() {
 		const { isPreviewable, path, site, siteId, translate } = this.props;
 
@@ -175,16 +202,8 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	trackAdsUpsellClick = () => {
-		this.trackMenuItemClick( 'ads' );
-		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
-			cta_name: 'store_ads',
-		} );
-		this.onNavigate();
-	};
-
 	ads() {
-		const { path, canUserUpgradeSite, canUserUseAds, isJetpack } = this.props;
+		const { path, canUserUseAds } = this.props;
 
 		if ( canUserUseAds ) {
 			return (
@@ -193,24 +212,6 @@ export class MySitesSidebar extends Component {
 					selected={ itemLinkMatches( '/ads', path ) }
 					link={ '/ads/earnings' + this.props.siteSuffix }
 					onNavigate={ this.trackAdsClick }
-					icon="speaker"
-					tipTarget="wordads"
-				/>
-			);
-		}
-
-		if (
-			! isJetpack &&
-			isEnabled( 'upsell/nudge-a-palooza' ) &&
-			canUserUpgradeSite &&
-			abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
-		) {
-			return (
-				<SidebarItem
-					label={ 'WordAds' }
-					selected={ itemLinkMatches( '/feature/ads', path ) }
-					link={ '/feature/ads' + this.props.siteSuffix }
-					onNavigate={ this.trackAdsUpsellClick }
 					icon="speaker"
 					tipTarget="wordads"
 				/>
@@ -416,39 +417,20 @@ export class MySitesSidebar extends Component {
 		this.onNavigate();
 	};
 
-	trackStoreUpsellClick = () => {
-		this.trackMenuItemClick( 'store' );
-		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
-			cta_name: 'store_sidebar',
-		} );
-		this.onNavigate();
-	};
-
 	store() {
-		const { canUserUpgradeSite, site, canUserUseStore, isJetpack } = this.props;
+		const { translate, site, siteSuffix, canUserUseStore } = this.props;
 
 		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
 
 		if ( ! canUserUseStore ) {
-			if (
-				! isJetpack &&
-				isEnabled( 'upsell/nudge-a-palooza' ) &&
-				canUserUpgradeSite &&
-				abtest( 'nudgeAPalooza' ) === 'sidebarUpsells'
-			) {
-				return this.storeUpsellSidebarItem();
-			}
-
 			return null;
 		}
 
-		return this.storeSidebarItem();
-	}
-
-	storeSidebarItem() {
-		const { siteSuffix, translate } = this.props;
+		if ( ! isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
+			return null;
+		}
 		return (
 			<SidebarItem
 				label={ translate( 'Store' ) }
@@ -456,29 +438,6 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.trackStoreClick }
 				icon="cart"
 			>
-				<div className="sidebar__chevron-right">
-					<Gridicon icon="chevron-right" />
-				</div>
-			</SidebarItem>
-		);
-	}
-
-	storeUpsellSidebarItem() {
-		const { siteSuffix, translate, path } = this.props;
-		return (
-			<SidebarItem
-				label={ translate( 'Store' ) }
-				link={ '/feature/store' + siteSuffix }
-				selected={ itemLinkMatches( '/feature/store', path ) }
-				onNavigate={ this.trackStoreUpsellClick }
-				icon="cart"
-			>
-				<TrackComponentView
-					eventName="calypso_upgrade_nudge_impression"
-					eventProperties={ {
-						cta_name: 'store_upsell',
-					} }
-				/>
 				<div className="sidebar__chevron-right">
 					<Gridicon icon="chevron-right" />
 				</div>
@@ -700,13 +659,6 @@ export class MySitesSidebar extends Component {
 			);
 		}
 
-		// For the duration of nudgeAPalooza test we need to allocate all users who visit calypso.
-		// Having it here is an easy solution that makes it possible to avoid touching redux store
-		// middleware structure
-		if ( isEnabled( 'upsell/nudge-a-palooza' ) ) {
-			abtest( 'nudgeAPalooza' );
-		}
-
 		const manage = !! this.manage(),
 			configuration =
 				!! this.sharing() ||
@@ -721,6 +673,7 @@ export class MySitesSidebar extends Component {
 					<ul>
 						{ this.preview() }
 						{ this.stats() }
+						{ this.activity() }
 						{ this.plan() }
 						{ this.store() }
 					</ul>
@@ -792,6 +745,7 @@ function mapStateToProps( state ) {
 		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		canUserListUsers: canCurrentUser( state, siteId, 'list_users' ),
+		canUserViewActivity: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		canUserViewStats: canCurrentUser( state, siteId, 'view_stats' ),

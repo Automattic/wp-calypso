@@ -7,14 +7,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { connect } from 'react-redux';
 
-/**
- * Internal dependencies
- */
-import isRtlSelector from 'state/selectors/is-rtl';
-
-class ModuleChartBar extends Component {
+export default class ModuleChartBar extends Component {
 	static propTypes = {
 		isTouch: PropTypes.bool,
 		tooltipPosition: PropTypes.string,
@@ -23,6 +17,7 @@ class ModuleChartBar extends Component {
 		data: PropTypes.object.isRequired,
 		max: PropTypes.number,
 		count: PropTypes.number,
+		isRtl: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -30,61 +25,6 @@ class ModuleChartBar extends Component {
 	};
 
 	state = { showPopover: false };
-
-	buildSections = () => {
-		const { active, data, max } = this.props;
-		const { nestedValue, value } = data;
-
-		const percentage = Math.ceil( ( value / max ) * 10000 ) / 100,
-			remain = 100 - percentage,
-			remainFloor = Math.max( 1, Math.floor( remain ) ),
-			sections = [],
-			spacerClassOptions = {
-				'chart__bar-section': true,
-				'is-spacer': true,
-				'is-ghost': 100 === remain && ! active,
-			},
-			remainStyle = {
-				height: remainFloor + '%',
-			},
-			valueStyle = {
-				top: remainFloor + '%',
-			};
-		let nestedBar, nestedPercentage, nestedStyle;
-
-		sections.push(
-			<div key="spacer" className={ classNames( spacerClassOptions ) } style={ remainStyle } />
-		);
-
-		if ( nestedValue ) {
-			nestedPercentage = value ? Math.ceil( ( nestedValue / value ) * 10000 ) / 100 : 0;
-
-			nestedStyle = { height: nestedPercentage + '%' };
-
-			nestedBar = (
-				<div key="nestedValue" className="chart__bar-section-inner" style={ nestedStyle } />
-			);
-		}
-
-		sections.push(
-			<div
-				ref={ this.setRef }
-				key="value"
-				className="chart__bar-section is-bar"
-				style={ valueStyle }
-			>
-				{ nestedBar }
-			</div>
-		);
-
-		sections.push(
-			<div key="label" className="chart__bar-label">
-				{ this.props.label }
-			</div>
-		);
-
-		return sections;
-	};
 
 	clickHandler = () => {
 		if ( typeof this.props.clickHandler === 'function' ) {
@@ -127,21 +67,12 @@ class ModuleChartBar extends Component {
 		const { tooltipData } = this.props.data;
 
 		return tooltipData.map( function( options, i ) {
-			const wrapperClasses = [ 'module-content-list-item' ];
-			let gridiconSpan;
-
-			if ( options.icon ) {
-				gridiconSpan = <Gridicon icon={ options.icon } size={ 18 } />;
-			}
-
-			wrapperClasses.push( options.className );
-
 			return (
-				<li key={ i } className={ wrapperClasses.join( ' ' ) }>
+				<li key={ i } className={ classNames( 'module-content-list-item', options.className ) }>
 					<span className="chart__tooltip-wrapper wrapper">
 						<span className="chart__tooltip-value value">{ options.value }</span>
 						<span className="chart__tooltip-label label">
-							{ gridiconSpan }
+							{ options.icon && <Gridicon icon={ options.icon } size={ 18 } /> }
 							{ options.label }
 						</span>
 					</span>
@@ -150,24 +81,81 @@ class ModuleChartBar extends Component {
 		} );
 	}
 
+	getPercentage() {
+		const {
+			data: { value },
+			max,
+		} = this.props;
+		return Math.ceil( ( value / max ) * 10000 ) / 100;
+	}
+
+	getNestedPercentage() {
+		const {
+			data: { nestedValue, value },
+		} = this.props;
+		return value && nestedValue ? Math.ceil( ( nestedValue / value ) * 10000 ) / 100 : 0;
+	}
+
 	setRef = ref => ( this.bar = ref );
 
-	render() {
-		const barClass = classNames( 'chart__bar', this.props.className );
-		const count = this.props.count || 1;
-		const barStyle = {
-			width: ( 1 / count ) * 100 + '%',
-		};
-
+	renderSpacer() {
+		const percentage = this.getPercentage();
 		return (
 			<div
+				key="spacer"
+				className={ classNames( 'chart__bar-section', 'is-spacer', {
+					'is-ghost': 0 === percentage && ! this.props.active,
+				} ) }
+				style={ { height: `${ Math.max( 1, Math.floor( 100 - percentage ) ) }%` } }
+			/>
+		);
+	}
+
+	renderNestedBar() {
+		const {
+			data: { nestedValue },
+		} = this.props;
+
+		return (
+			nestedValue && (
+				<div
+					key="nestedValue"
+					className="chart__bar-section-inner"
+					style={ { height: `${ this.getNestedPercentage() }%` } }
+				/>
+			)
+		);
+	}
+
+	renderBar() {
+		const percentage = this.getPercentage();
+		return (
+			<div
+				ref={ this.setRef }
+				key="value"
+				className="chart__bar-section is-bar"
+				style={ { top: `${ Math.max( 1, Math.floor( 100 - percentage ) ) }%` } }
+			>
+				{ this.renderNestedBar() }
+			</div>
+		);
+	}
+
+	render() {
+		return (
+			<div
+				role="presentation"
+				aria-hidden="true"
 				onClick={ this.clickHandler }
 				onMouseEnter={ this.mouseEnter }
 				onMouseLeave={ this.mouseLeave }
-				className={ classNames( barClass ) }
-				style={ barStyle }
+				className={ classNames( 'chart__bar', this.props.className ) }
 			>
-				{ this.buildSections() }
+				{ this.renderSpacer() }
+				{ this.renderBar() }
+				<div key="label" className="chart__bar-label">
+					{ this.props.label }
+				</div>
 				<div className="chart__bar-marker is-hundred" />
 				<div className="chart__bar-marker is-fifty" />
 				<div className="chart__bar-marker is-zero" />
@@ -175,7 +163,3 @@ class ModuleChartBar extends Component {
 		);
 	}
 }
-
-export default connect( state => ( {
-	isRtl: isRtlSelector( state ),
-} ) )( ModuleChartBar );

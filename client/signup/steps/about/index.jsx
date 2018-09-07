@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, escapeRegExp } from 'lodash';
+import { invoke, noop, findKey } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -100,11 +100,8 @@ class AboutStep extends Component {
 	};
 
 	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
-		this.setState( { query: value } );
-		this.setState( { siteTopicValue: value } );
-
+		this.setState( { query: value, siteTopicValue: value } );
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
-
 		this.formStateController.handleFieldChange( { name, value } );
 	};
 
@@ -172,19 +169,13 @@ class AboutStep extends Component {
 	};
 
 	getSuggestions() {
-		const query = this.state.query && escapeRegExp( this.state.query ).toLowerCase();
-		const regex = new RegExp( query, 'i' );
+		if ( ! this.state.query ) {
+			return [];
+		}
 
-		// Prioritize suggestions starting with query input first
-		const sortFunction = ( a, b ) =>
-			abtest( 'aboutSuggestionMatches' ) === 'enhancedSort'
-				? a.localeCompare( b ) -
-				  2 * ( b.toLowerCase().indexOf( query ) - a.toLowerCase().indexOf( query ) )
-				: a.localeCompare( b );
-
+		const query = this.state.query.trim().toLocaleLowerCase();
 		return Object.values( hints )
-			.filter( hint => query && hint.match( regex ) )
-			.sort( sortFunction )
+			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
 			.map( hint => ( { label: hint } ) );
 	}
 
