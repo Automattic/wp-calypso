@@ -68,6 +68,7 @@ class SiteImporterInputPane extends React.Component {
 		siteURLInput: '',
 		selectedEndpoint: '',
 		availableEndpoints: [],
+		importStarted: false,
 	};
 
 	componentWillMount = () => {
@@ -282,6 +283,9 @@ class SiteImporterInputPane extends React.Component {
 	importSite = () => {
 		this.setState( {
 			loading: true,
+			// This is a lick of duct-tape to avoid re-mounting
+			// the site-preview component (as that would double up analytics)
+			importStarted: true,
 			...NO_ERROR_STATE,
 		} );
 
@@ -372,6 +376,8 @@ class SiteImporterInputPane extends React.Component {
 	};
 
 	render() {
+		const { importStarted } = this.state;
+
 		return (
 			<div className="site-importer__site-importer-pane">
 				{ this.state.importStage === 'idle' && (
@@ -411,18 +417,19 @@ class SiteImporterInputPane extends React.Component {
 						) }
 					</div>
 				) }
-				{ this.state.importStage === 'importable' && (
-					<div className="site-importer__site-importer-confirm-site-pane">
-						<SiteImporterSitePreview
-							siteURL={ this.state.importSiteURL }
-							importData={ this.state.importData }
-							isLoading={ this.state.loading }
-							resetImport={ this.resetImport }
-							startImport={ this.importSite }
-							site={ this.props.site }
-						/>
-					</div>
-				) }
+				{ this.state.importStage === 'importable' &&
+					! ( importStarted && ! this.state.loading ) && (
+						<div className="site-importer__site-importer-confirm-site-pane">
+							<SiteImporterSitePreview
+								siteURL={ this.state.importSiteURL }
+								importData={ this.state.importData }
+								isLoading={ this.state.loading }
+								resetImport={ this.resetImport }
+								startImport={ this.importSite }
+								site={ this.props.site }
+							/>
+						</div>
+					) }
 				{ this.state.error && (
 					<ErrorPane
 						type={ this.state.errorType || 'importError' }
