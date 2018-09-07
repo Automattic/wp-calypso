@@ -39,11 +39,10 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
+	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
 } from 'lib/plans/constants';
 
 /**
@@ -112,24 +111,21 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 		} );
 	} );
 
-	[
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-	].forEach( product_slug => {
-		test( `Jetpack Business for (${ product_slug })`, () => {
-			const comp = shallow(
-				<GoogleAnalyticsForm
-					{ ...myProps }
-					siteIsJetpack={ true }
-					site={ { plan: { product_slug } } }
-				/>
-			);
-			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).length ).toBe( 1 );
-			expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
-				PLAN_JETPACK_BUSINESS
-			);
-		} );
-	} );
+	[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].forEach(
+		product_slug => {
+			test( `Jetpack Premium for (${ product_slug })`, () => {
+				const comp = shallow(
+					<GoogleAnalyticsForm
+						{ ...myProps }
+						siteIsJetpack={ true }
+						site={ { plan: { product_slug } } }
+					/>
+				);
+				expect( comp.find( 'Banner[event="google_analytics_settings"]' ).length ).toBe( 1 );
+				expect( comp.find( 'Banner[event="google_analytics_settings"]' ).props().plan ).toBe(
+					PLAN_JETPACK_PREMIUM
+				);
+			} );
+		}
+	);
 } );
