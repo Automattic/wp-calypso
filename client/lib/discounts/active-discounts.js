@@ -56,21 +56,24 @@ export default [
 			'Improve your SEO, branding, credibility, and even word-of-mouth marketing with a custom domain. All plan upgrades include a free domain name of your choice.',
 	},
 	{
-		name: 'august20',
-		startsAt: new Date( 2018, 7, 22, 0, 0, 0 ),
-		endsAt: new Date( 2018, 7, 25, 0, 0, 0 ),
-		nudgeText: translate( '20% Off All Plans' ),
-		ctaText: translate( 'UPGRADE' ),
+		name: 'september20',
+		startsAt: new Date( 2018, 8, 6, 0, 0, 0 ),
+		endsAt: new Date( 2018, 8, 21, 0, 0, 0 ),
+		nudgeText: translate( '%(discount)d%% Off All Plans', {
+			args: {
+				discount: 20,
+			},
+		} ),
+		ctaText: translate( 'Upgrade' ),
 		plansPageNoticeText: translate(
-			'Enter coupon code “AUGUST20” during checkout to claim your 20% discount.'
+			'Enter coupon code “%(coupon)s” during checkout to claim your %(discount)d%% discount.',
+			{
+				args: {
+					coupon: 'SEPTEMBER20',
+					discount: 20,
+				},
+			}
 		),
-		targetPlans: [
-			{ type: TYPE_FREE, group: GROUP_WPCOM },
-			{ type: TYPE_PERSONAL, group: GROUP_WPCOM },
-			{ type: TYPE_PREMIUM, group: GROUP_WPCOM },
-			{ type: TYPE_FREE, group: GROUP_JETPACK },
-			{ type: TYPE_PERSONAL, group: GROUP_JETPACK },
-			{ type: TYPE_PREMIUM, group: GROUP_JETPACK },
-		],
+		targetPlans: [ { type: TYPE_FREE }, { type: TYPE_PERSONAL }, { type: TYPE_PREMIUM } ],
 	},
 ];
