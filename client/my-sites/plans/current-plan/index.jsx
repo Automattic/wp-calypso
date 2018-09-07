@@ -36,6 +36,8 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import { isEnabled } from 'config';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import JetpackSetupRunner from 'my-sites/plans/current-plan/jetpack-setup-runner/index';
+import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -49,7 +51,15 @@ class CurrentPlan extends Component {
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
 		isAutomatedTransfer: PropTypes.bool,
+		doJetpackPlanSetup: PropTypes.bool,
+		doPlanSetup: PropTypes.bool,
 	};
+
+	state = {
+		planSetup: {},
+	};
+
+	updatePlanSetupProgress = stateUpdate => void this.setState( { planSetup: stateUpdate } );
 
 	isLoading() {
 		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
@@ -84,6 +94,7 @@ class CurrentPlan extends Component {
 			selectedSiteId,
 			domains,
 			currentPlan,
+			doJetpackPlanSetup,
 			hasDomainsLoaded,
 			isAutomatedTransfer,
 			isExpiring,
@@ -112,6 +123,13 @@ class CurrentPlan extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				{ doJetpackPlanSetup && (
+					<JetpackSetupRunner
+						key={ /* Force remount on site change */ selectedSiteId }
+						notifyProgress={ this.updatePlanSetupProgress }
+						siteId={ selectedSiteId }
+					/>
+				) }
 
 				<PlansNavigation path={ path } />
 
@@ -163,7 +181,7 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state, { doPlanSetup } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
@@ -182,5 +200,11 @@ export default connect( state => {
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		isJetpack,
+		doJetpackPlanSetup: !! (
+			doPlanSetup &&
+			isJetpack &&
+			! isAutomatedTransfer &&
+			isSiteOnPaidPlan( state, selectedSiteId )
+		),
 	};
 } )( localize( CurrentPlan ) );

@@ -57,7 +57,7 @@ import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
-import { isNewSite } from 'state/sites/selectors';
+import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canAddGoogleApps } from 'lib/domains';
@@ -69,11 +69,14 @@ import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { isEnabled } from 'config';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export class Checkout extends React.Component {
 	static propTypes = {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
+		isJetpackNotAtomic: PropTypes.bool,
 		selectedFeature: PropTypes.string,
 	};
 
@@ -363,6 +366,10 @@ export class Checkout extends React.Component {
 				plan: 'paid',
 			} );
 			return `/checklist/${ selectedSiteSlug }`;
+		}
+
+		if ( this.props.isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ) ) {
+			return `/plans/my-plan/${ selectedSiteSlug }?do-setup`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
@@ -667,6 +674,8 @@ export default connect(
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
+			isJetpackNotAtomic:
+				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 		};
 	},
 	{
