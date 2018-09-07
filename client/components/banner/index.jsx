@@ -29,7 +29,7 @@ export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
-		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		description: PropTypes.node,
 		forceHref: PropTypes.bool,
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
