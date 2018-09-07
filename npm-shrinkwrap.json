@@ -10778,14 +10778,6 @@
       "integrity": "sha1-0LFF62kRicY6eNIB3E/bEpPvDAM=",
       "dev": true
     },
-    "notifications-panel": {
-      "version": "2.2.3",
-      "resolved": "https://registry.npmjs.org/notifications-panel/-/notifications-panel-2.2.3.tgz",
-      "integrity": "sha512-SJEX9ppviN6dBUuwOPSqRyVHW950bkvQCIGTE/nz+2HvOuHYv7QVMdlJj4ezMxbQpLCF0ERTFz1kfsyNNjkkvA==",
-      "requires": {
-        "ajv": "^6.5.1"
-      }
-    },
     "npm-merge-driver": {
       "version": "2.3.5",
       "resolved": "https://registry.npmjs.org/npm-merge-driver/-/npm-merge-driver-2.3.5.tgz",
