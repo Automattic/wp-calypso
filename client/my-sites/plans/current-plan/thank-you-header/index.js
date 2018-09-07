@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { get, isFinite, noop } from 'lodash';
+import { get, invoke, isFinite } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -80,7 +80,7 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	const planSlug = getSitePlanSlug( state, siteId );
 	return {
-		planName: get( getPlan( planSlug ), [ 'getTitle' ], noop )(),
+		planName: invoke( getPlan( planSlug ), [ 'getTitle' ] ),
 		purchaseExpiryDate: get( getCurrentPlanPurchase( state, siteId ), [ 'expiryDate' ] ),
 		siteId,
 	};
