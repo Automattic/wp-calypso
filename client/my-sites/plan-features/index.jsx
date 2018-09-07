@@ -58,6 +58,7 @@ import {
 	isPopular,
 	getPlanFeaturesObject,
 	getPlanClass,
+	PLAN_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
@@ -770,7 +771,11 @@ export default connect(
 			selectedSiteSlug,
 			siteType,
 			planCredits: calculatePlanCredits( state, siteId, planProperties ),
-			showPlanCreditsApplied: ! isInSignup && abtest( 'showPlanCreditsApplied' ) === 'test',
+			showPlanCreditsApplied:
+				sitePlan.product_slug !== PLAN_FREE &&
+				! isJetpack &&
+				! isInSignup &&
+				abtest( 'showPlanCreditsApplied' ) === 'test',
 		};
 	},
 	{
