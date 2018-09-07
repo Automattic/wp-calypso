@@ -21,6 +21,7 @@ import posts from './posts';
 import simplePayments from './simple-payments';
 import users from './users';
 import statsGoogleMyBusiness from './stats/google-my-business';
+import './rewind';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
