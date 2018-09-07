@@ -91,7 +91,7 @@ class ShippingClassDialog extends Component {
 				</FormFieldSet>
 
 				<FormFieldSet className="shipping__class-dialog-slug">
-					<FormLabel>{ translate( 'Slug: ' ) }</FormLabel>
+					<FormLabel>{ translate( 'Slug' ) + ': ' }</FormLabel>
 					<FormClickToEditInput
 						onChange={ this.onSlugChange }
 						value={ this.getSlugToDisplay() }
