@@ -772,6 +772,7 @@ export default connect(
 			siteType,
 			planCredits: calculatePlanCredits( state, siteId, planProperties ),
 			showPlanCreditsApplied:
+				sitePlan &&
 				sitePlan.product_slug !== PLAN_FREE &&
 				! isJetpack &&
 				! isInSignup &&
