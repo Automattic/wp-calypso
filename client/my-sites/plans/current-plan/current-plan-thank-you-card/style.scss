@@ -5,17 +5,17 @@
 
 	@include breakpoint( '>800px' ) {
 		font-size: 16px;
-		// padding: 50px 80px 30px;
 		margin-bottom: 40px;
-	}
-	@include breakpoint( '>1280px' ) {
-		padding: 50px 160px 30px;
 	}
 
 	.progress-bar {
-		max-width: 70%;
-		margin-bottom: 1em;
+		max-width: 80%;
 	}
+}
+
+.current-plan-thank-you-card__content {
+	margin: 0 auto;
+	max-width: 720px;
 }
 
 .current-plan-thank-you-card__illustration {
