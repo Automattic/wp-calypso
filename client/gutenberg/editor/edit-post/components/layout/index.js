@@ -10,7 +10,6 @@ import classnames from 'classnames';
 import { Button, Popover, ScrollLock, navigateRegions } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
-	AutosaveMonitor,
 	UnsavedChangesWarning,
 	EditorNotices,
 	PostPublishPanel,
@@ -66,7 +65,6 @@ function Layout( {
 			<DocumentTitle />
 			<BrowserURL />
 			<UnsavedChangesWarning/>
-			<AutosaveMonitor />
 			<Header />
 			<div
 				className="edit-post-layout__content"
