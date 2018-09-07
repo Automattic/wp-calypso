@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSitePost } from 'state/gutenberg/sites/posts/actions';
+import { requestSitePost } from 'state/gutenberg/actions';
 
 export class QueryGutenbergSitePost extends Component {
 	static propTypes = {
