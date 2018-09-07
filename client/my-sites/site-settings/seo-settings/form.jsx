@@ -299,7 +299,7 @@ export class SeoForm extends React.Component {
 		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Enable SEO Tools by upgrading to Jetpack Professional' )
+			? translate( 'Enable SEO Tools by upgrading to Jetpack Premium' )
 			: translate( 'Enable SEO Tools by upgrading to the Business plan' );
 
 		const seoSubmitButton = (
