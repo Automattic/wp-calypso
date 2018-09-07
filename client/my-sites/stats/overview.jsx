@@ -71,32 +71,27 @@ class StatsOverview extends Component {
 		} );
 
 		const sitesList = sitesSorted.map( ( site, index ) => {
-			const overview = [];
-
 			const gmtOffset = get( site, 'options.gmt_offset' );
 			const date = moment()
 				.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 				.format( 'YYYY-MM-DD' );
 
-			if ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) {
-				overview.push(
-					<DatePicker period={ period } date={ date } key={ `datepicker-${ index }` } />
-				);
-			}
-
-			overview.push(
-				<SiteOverview
-					key={ site.ID }
-					siteId={ site.ID }
-					period={ period }
-					date={ date }
-					path={ statsPath }
-					title={ site.title }
-					siteSlug={ site.slug }
-				/>
+			return (
+				<>
+					{ ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) && (
+						<DatePicker period={ period } date={ date } />
+					) }
+					<SiteOverview
+						key={ site.ID }
+						siteId={ site.ID }
+						period={ period }
+						date={ date }
+						path={ statsPath }
+						title={ site.title }
+						siteSlug={ site.slug }
+					/>
+				</>
 			);
-
-			return overview;
 		} );
 
 		return (
