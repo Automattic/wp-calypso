@@ -19,7 +19,7 @@ import { getPlan } from 'lib/plans';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug } from 'state/sites/selectors';
 
-export class ThankYouHeader extends Component {
+export class CurrentPlanThankYouCard extends Component {
 	static propTypes = {
 		progressComplete: PropTypes.number,
 		progressTotal: PropTypes.number,
@@ -31,15 +31,15 @@ export class ThankYouHeader extends Component {
 			? moment.duration( moment().diff( purchaseExpiryDate ) ).humanize()
 			: null;
 		return (
-			<Card className="thank-you-header">
+			<Card className="current-plan-thank-you-card">
 				<QuerySitePurchases siteId={ siteId } />
 				<img
-					className="thank-you-header__illustration"
+					className="current-plan-thank-you-card__illustration"
 					alt=""
 					aria-hidden="true"
 					src="/calypso/images/illustrations/fireworks.svg"
 				/>
-				<h1 className="thank-you-header__title">{ translate( 'Thank you for your purchase!' ) }</h1>
+				<h1 className="current-plan-thank-you-card__title">{ translate( 'Thank you for your purchase!' ) }</h1>
 				<p>
 					{ duration && planName
 						? translate(
@@ -65,7 +65,7 @@ export class ThankYouHeader extends Component {
 					) }
 				<p>
 					<a
-						className="thank-you-header__skip-setup"
+						className="current-plan-thank-you-card__skip-setup"
 						href={ /* @TODO (sirreal) fix this */ document.location.pathname }
 					>
 						{ translate( 'Skip setup. I’ll do this later.' ) }
@@ -84,4 +84,4 @@ export default connect( state => {
 		purchaseExpiryDate: get( getCurrentPlanPurchase( state, siteId ), [ 'expiryDate' ] ),
 		siteId,
 	};
-} )( localize( ThankYouHeader ) );
+} )( localize( CurrentPlanThankYouCard ) );

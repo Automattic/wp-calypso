@@ -1,5 +1,5 @@
 /** @format */
-.thank-you-header {
+.current-plan-thank-you-card {
 	box-shadow: none;
 	text-align: center;
 
@@ -18,7 +18,7 @@
 	}
 }
 
-.thank-you-header__illustration {
+.current-plan-thank-you-card__illustration {
 	display: none;
 	@include breakpoint( '>480px' ) {
 		display: inline;
@@ -29,11 +29,11 @@
 	}
 }
 
-.thank-you-header__title {
+.current-plan-thank-you-card__title {
 	font-size: 24px;
 	margin: 18px 0 14px;
 }
 
-.thank-you-header__skip-setup {
+.current-plan-thank-you-card__skip-setup {
 	font-size: 14px;
 }
