@@ -41,6 +41,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
 	PLAN_FREE,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
@@ -66,6 +68,15 @@ import { getPlanRawPrice } from 'state/plans/selectors';
 const identity = x => x;
 
 describe( 'isPrimaryUpgradeByPlanDelta', () => {
+	test( 'Should return true when called with blogger and personal plan', () => {
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_BLOGGER, PLAN_PERSONAL ) ).toBe( true );
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL ) ).toBe( true );
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_BLOGGER, PLAN_PERSONAL_2_YEARS ) ).toBe( true );
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS ) ).toBe(
+			true
+		);
+	} );
+
 	test( 'Should return true when called with personal and premium plan', () => {
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_PERSONAL, PLAN_PREMIUM ) ).toBe( true );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM ) ).toBe( true );
@@ -100,11 +111,16 @@ describe( 'isPrimaryUpgradeByPlanDelta', () => {
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_PREMIUM, PLAN_PREMIUM ) ).toBe( false );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ) ).toBe( false );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_PREMIUM_2_YEARS, PLAN_PERSONAL ) ).toBe( false );
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_BLOGGER, PLAN_BLOGGER ) ).toBe( false );
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ) ).toBe( false );
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_BLOGGER_2_YEARS, PLAN_PREMIUM ) ).toBe( false );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ) ).toBe( false );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_BUSINESS, PLAN_PREMIUM ) ).toBe( false );
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_BUSINESS, PLAN_BLOGGER ) ).toBe( false );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_BUSINESS, PLAN_PERSONAL ) ).toBe( false );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_BUSINESS, PLAN_FREE ) ).toBe( false );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_FREE, PLAN_PREMIUM ) ).toBe( false );
+		expect( isPrimaryUpgradeByPlanDelta( PLAN_FREE, PLAN_BLOGGER ) ).toBe( false );
 		expect( isPrimaryUpgradeByPlanDelta( PLAN_FREE, PLAN_PERSONAL ) ).toBe( false );
 	} );
 } );
