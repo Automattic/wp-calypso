@@ -14,7 +14,12 @@ import {
 	GUTENBERG_SITE_POST_REQUEST,
 	GUTENBERG_SITE_POST_RECEIVE,
 } from 'state/action-types';
-import { createSitePost, createSitePostSuccess, fetchSitePost, fetchSitePostSuccess } from '../';
+import {
+	requestCreateGutenbergPostDraft,
+	createSitePostSuccess,
+	fetchSitePost,
+	fetchSitePostSuccess,
+} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const SITE_ID = 91750058;
@@ -22,12 +27,12 @@ const POST_ID = 287;
 
 describe( 'wp-api', () => {
 	describe( 'Gutenberg site posts', () => {
-		describe( 'createSitePost()', () => {
+		describe( 'requestCreateGutenbergPostDraft()', () => {
 			test( "should dispatch a HTTP request to Gutenberg's create draft endpoint", () => {
 				const dispatch = spy();
 				const action = { type: GUTENBERG_SITE_CREATE_DRAFT, siteId: SITE_ID };
 
-				createSitePost( { dispatch }, action );
+				requestCreateGutenbergPostDraft( { dispatch }, action );
 
 				expect( dispatch ).to.have.been.calledOnce;
 				expect( dispatch ).to.have.been.calledWith(

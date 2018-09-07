@@ -1,26 +1,25 @@
 /** @format */
+
 /**
  * Internal dependencies
  */
-
 import {
-	GUTENBERG_SITE_CREATE_DRAFT,
+	GUTENBERG_CREATE_POST_DRAFT,
 	GUTENBERG_SITE_POST_REQUEST,
 	GUTENBERG_SITE_POST_RECEIVE,
 } from 'state/action-types';
-
-import { createDraft, requestSitePost, receiveSitePost } from '../actions';
+import { createGutenbergPostDraft, requestSitePost, receiveSitePost } from '../actions';
 
 const SITE_ID = 91750058;
 const POST_ID = 287;
 
 describe( 'actions', () => {
-	describe( 'createDraft()', () => {
+	describe( 'createGutenbergPostDraft()', () => {
 		test( 'should return a create Gutenberg draft action', () => {
-			const action = createDraft( SITE_ID );
+			const action = createGutenbergPostDraft( SITE_ID );
 
 			expect( action ).toMatchObject( {
-				type: GUTENBERG_SITE_CREATE_DRAFT,
+				type: GUTENBERG_CREATE_POST_DRAFT,
 				siteId: SITE_ID,
 			} );
 		} );

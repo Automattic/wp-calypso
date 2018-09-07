@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { createDraft } from 'state/gutenberg/actions';
+import { createGutenbergPostDraft } from 'state/gutenberg/actions';
 
 export class QueryGutenbergCreatePost extends Component {
 	static propTypes = {
@@ -28,9 +28,9 @@ export class QueryGutenbergCreatePost extends Component {
 	}
 
 	request() {
-		const { siteId, createDraft: dispatchCreateDraft } = this.props;
+		const { siteId, createGutenbergPostDraft: dispatchCreateGutenbergPostDraft } = this.props;
 		if ( siteId ) {
-			dispatchCreateDraft( siteId );
+			dispatchCreateGutenbergPostDraft( siteId );
 		}
 	}
 
@@ -41,5 +41,5 @@ export class QueryGutenbergCreatePost extends Component {
 
 export default connect(
 	null,
-	{ createDraft }
+	{ createGutenbergPostDraft }
 )( QueryGutenbergCreatePost );

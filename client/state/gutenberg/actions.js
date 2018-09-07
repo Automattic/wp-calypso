@@ -1,15 +1,16 @@
 /** @format */
+
 /**
  * Internal dependencies
  */
 import {
-	GUTENBERG_SITE_CREATE_DRAFT,
+	GUTENBERG_CREATE_POST_DRAFT,
 	GUTENBERG_SITE_POST_REQUEST,
 	GUTENBERG_SITE_POST_RECEIVE,
 } from 'state/action-types';
 
-export const createDraft = siteId => ( {
-	type: GUTENBERG_SITE_CREATE_DRAFT,
+export const createGutenbergPostDraft = siteId => ( {
+	type: GUTENBERG_CREATE_POST_DRAFT,
 	siteId,
 } );
 

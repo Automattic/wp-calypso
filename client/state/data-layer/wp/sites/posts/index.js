@@ -7,11 +7,32 @@
 /**
  * Internal dependencies
  */
-import { GUTENBERG_SITE_CREATE_DRAFT, GUTENBERG_SITE_POST_REQUEST } from 'state/action-types';
+import { GUTENBERG_CREATE_POST_DRAFT, GUTENBERG_SITE_POST_REQUEST } from 'state/action-types';
 import { dispatchRequest /*, getHeaders*/ } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { requestSitePost, receiveSitePost } from 'state/gutenberg/actions';
+
+/**
+ * Dispatches a request to create a new post draft
+ * to load into Gutenberg
+ *
+ * @param {Function} dispatch Redux dispatcher
+ * @param {Object} action Redux action
+ */
+export const requestCreateGutenbergPostDraft = ( { dispatch }, action ) => {
+	const { siteId } = action;
+	dispatch(
+		http(
+			{
+				path: `/sites/${ siteId }/posts/create-draft`,
+				method: 'GET',
+				apiNamespace: 'wp/v2',
+			},
+			action
+		)
+	);
+};
 
 /**
  * Dispatches a request to fetch a site post
@@ -33,20 +54,6 @@ export const fetchSitePost = ( { dispatch }, action ) => {
 	);
 };
 
-export const createSitePost = ( { dispatch }, action ) => {
-	const { siteId } = action;
-	dispatch(
-		http(
-			{
-				path: `/sites/${ siteId }/posts/create-draft`,
-				method: 'GET',
-				apiNamespace: 'wp/v2',
-			},
-			action
-		)
-	);
-};
-
 export const createSitePostSuccess = ( { dispatch }, { siteId }, { ID: postId } ) =>
 	dispatch( requestSitePost( siteId, postId ) );
 
@@ -56,8 +63,8 @@ export const fetchSitePostSuccess = ( { dispatch }, { siteId, postId }, post ) =
 export const handleRequestFailure = ( { dispatch } ) =>
 	dispatch( errorNotice( 'Could not load this post' ) );
 
-const dispatchCreateSitePost = dispatchRequest(
-	createSitePost,
+const dispatchCreateGutenbergPostDraft = dispatchRequest(
+	requestCreateGutenbergPostDraft,
 	createSitePostSuccess,
 	handleRequestFailure
 );
@@ -69,6 +76,6 @@ const dispatchSitePostRequest = dispatchRequest(
 );
 
 export default {
-	[ GUTENBERG_SITE_CREATE_DRAFT ]: [ dispatchCreateSitePost ],
+	[ GUTENBERG_CREATE_POST_DRAFT ]: [ dispatchCreateGutenbergPostDraft ],
 	[ GUTENBERG_SITE_POST_REQUEST ]: [ dispatchSitePostRequest ],
 };
