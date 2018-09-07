@@ -58,6 +58,13 @@ class EditorMediaModalDetailBase extends React.Component {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
 	};
 
+	getBackButton = () => {
+		if ( this.props.backButtonText ) {
+			return this.props.backButtonText;
+		}
+		return this.props.translate( 'Media Library' );
+	};
+
 	render() {
 		const {
 			items,
@@ -74,10 +81,7 @@ class EditorMediaModalDetailBase extends React.Component {
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake
-					onClick={ onReturnToList }
-					backText={ this.props.translate( 'Media Library' ) }
-				/>
+				<HeaderCake onClick={ onReturnToList } backText={ this.getBackButton() } />
 				<DetailItem
 					site={ site }
 					item={ item }
