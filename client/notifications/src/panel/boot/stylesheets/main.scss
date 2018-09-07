@@ -52,7 +52,7 @@ body {
   }
 
   header {
-    border-bottom: 1px solid lighten($gray, 30);
+    border-bottom: 1px solid $gray-lighten-30;
     box-sizing: border-box;
     background-color: $white;
     font-size: $capital-font-size;
@@ -73,7 +73,7 @@ body {
 
     h1 {
       @extend %headertext;
-      color: darken($gray, 10%);
+      color: $gray-darken-10;
       display: inline;
     }
 
@@ -161,7 +161,7 @@ body {
     width: 100%;
     background-color: $white;
     color: $gray-text-min;
-    border-bottom: 1px solid lighten($gray, 30);
+    border-bottom: 1px solid $gray-lighten-30;
     border-left: 1px solid $white;
     text-align: center; // Center filter in IE 9
     height: $filter-height;
@@ -171,7 +171,7 @@ body {
   }
 
   .wpnc__note-list:not(.is-note-open) .wpnc__filter {
-    border-left: 1px solid lighten($gray, 30);
+    border-left: 1px solid $gray-lighten-30;
   }
 
   .wpnc__filter__segmented-control {
@@ -242,7 +242,7 @@ body {
     font-weight: normal;
     position: relative;
     clear: both;
-    border-bottom: 1px solid lighten($gray, 30);
+    border-bottom: 1px solid $gray-lighten-30;
 
     div.wpnc__body > p, div.wpnc__preface p {
       line-height: $line-height;
@@ -332,7 +332,7 @@ body {
     background-color: $gray-light;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
-    border-left: 1px solid lighten($gray, 30);
+    border-left: 1px solid $gray-lighten-30;
 
     &.is-empty-list {
       overflow-y: hidden;
@@ -369,7 +369,7 @@ body {
 
     .wpnc__comment-unapproved .wpnc__note-icon .wpnc__gridicon {
       background: $alert-yellow;
-      border-color: $alert-yellow-lighter;
+      border-color: $wpnc-yellow-lighter;
     }
 
     .unread {
@@ -417,10 +417,10 @@ body {
     .wpnc__time-group-title {
       display: flex;
       @extend %headertext;
-      color: darken($gray, 10);
+      color: $gray-darken-10;
       padding: 6px 0px;
       background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid lighten($gray, 30);
+      border-bottom: 1px solid $gray-lighten-30;
 
       .gridicons-time {
         align-self: center;
@@ -494,7 +494,7 @@ body {
     box-shadow: -3px 1px 10px -2px rgba($gray-dark, 0.075);
 
     @media only screen and (min-width: 480px) {
-      border-left: 1px solid lighten($gray, 30);
+      border-left: 1px solid $gray-lighten-30;
     }
 
     background-color: $gray-light;
@@ -564,7 +564,7 @@ body {
     .wpnc__reply {
       color: $gray-text-min;
       padding: $padding-medium 0;
-      border-bottom: 1px solid lighten($gray, 30);
+      border-bottom: 1px solid $gray-lighten-30;
 
       .wpnc__gridicon {
         padding: 0 10px;
@@ -592,8 +592,8 @@ body {
 
     .wpnc__note-icon .wpnc__gridicon {
       font-size: 2em;
-      background-color: lighten($gray, 20);
-      border-color: lighten($gray, 20);
+      background-color: $gray-lighten-20;
+      border-color: $gray-lighten-20;
     }
 
     .wpnc__summary {
@@ -667,7 +667,7 @@ body {
 
       pre {
         background: $gray-light;
-        border: 1px solid lighten($gray, 20%);
+        border: 1px solid $gray-lighten-20;
         border-radius: 3px;
         padding: 4px;
 
@@ -680,9 +680,9 @@ body {
       code {
         font-family: $code;
         font-size: 90%;
-        color: darken($gray, 20%);
+        color: $gray-darken-20;
         background: $gray-light;
-        border: 1px solid lighten($gray, 20%);
+        border: 1px solid $gray-lighten-20;
         border-radius: 3px;
         padding: 0 2px;
       }
@@ -750,12 +750,12 @@ body {
   .wpnc__comment .wpnc__body .wpnc__body-content,
   .wpnc__new_post .wpnc__body .wpnc__body-content,
   .wpnc__automattcher .wpnc__body .wpnc__body-content {
-    border-bottom: 1px solid lighten($gray, 30);
+    border-bottom: 1px solid $gray-lighten-30;
     padding-top: $padding-small;
   }
 
   .wpnc__comment .wpnc__body .wpnc__body-content {
-    box-shadow: inset 4px 0 0 lighten($gray, 30);
+    box-shadow: inset 4px 0 0 $gray-lighten-30;
     margin: 0 0 0 $padding-medium;
   }
 
@@ -764,14 +764,14 @@ body {
   }
 
   .wpnc__list-view .wpnc__comment-unapproved {
-    background: $alert-yellow-lighter;
+    background: $wpnc-yellow-lighter;
 
     .wpnc__subject {
-      color: $alert-red-darker;
+      color: $wpnc-red-darker;
     }
 
     .wpnc__excerpt {
-      color: $alert-yellow-dark;
+      color: $wpnc-yellow-dark;
     }
   }
 
@@ -779,18 +779,18 @@ body {
     .wpnc__body-content {
       box-shadow: inset 4px 0 0 $alert-yellow;
       border-bottom: 1px solid $alert-yellow;
-      background: $alert-yellow-lighter;
-      color: $alert-red-darker;
+      background: $wpnc-yellow-lighter;
+      color: $wpnc-red-darker;
     }
 
     .blockquote {
-      color: $alert-red-darker;
+      color: $wpnc-red-darker;
     }
   }
 
   .wpnc__comment-unapproved .wpnc__body .wpnc__user__meta,
   .wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a {
-    color: $alert-yellow-dark;
+    color: $wpnc-yellow-dark;
   }
 
   .wpnc__comment-unapproved div.wpnc__user .wpnc__user__meta a:hover {
@@ -798,7 +798,7 @@ body {
   }
 
   .wpnc__comment-unapproved .wpnc__body div.wpnc__user .wpnc__user__home {
-    color: $alert-red-darker;
+    color: $wpnc-red-darker;
   }
 
   .wpnc__comment .wpnc__body .wpnc__body-content .wpnc__user {
