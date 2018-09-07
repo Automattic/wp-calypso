@@ -9,5 +9,11 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import deleteBlock from './delete';
 import newBlock from './new';
 
-// Used newBlock and deleteBlock because 'new' and 'delete' are reserved words
-export default mergeHandlers( deleteBlock, newBlock );
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers(
+	'state/data-layer/wpcom/me/block/sites/index.js',
+	mergeHandlers( deleteBlock, newBlock )
+);
+
+export default {};

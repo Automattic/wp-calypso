@@ -13,6 +13,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_TYPES_REQUEST } from 'state/action-types';
 import { receivePostTypes } from 'state/post-types/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const handlePostTypesRequest = dispatchRequestEx( {
 	fetch: action =>
 		http(
@@ -26,6 +28,8 @@ const handlePostTypesRequest = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/post-types/index.js', {
 	[ POST_TYPES_REQUEST ]: [ handlePostTypesRequest ],
-};
+} );
+
+export default {};

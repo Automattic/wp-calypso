@@ -15,6 +15,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const deactivateRewind = action =>
 	http(
 		{
@@ -32,7 +34,7 @@ export const deactivateFailed = ( { siteId }, { message } ) => [
 	rewindDeactivateFailure( siteId ),
 ];
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/activity-log/deactivate/index.js', {
 	[ REWIND_DEACTIVATE_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: deactivateRewind,
@@ -40,4 +42,6 @@ export default {
 			onError: deactivateFailed,
 		} ),
 	],
-};
+} );
+
+export default {};

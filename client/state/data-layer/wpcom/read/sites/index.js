@@ -17,6 +17,8 @@ import {
 import { fields } from 'state/reader/sites/fields';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestReadSite( action ) {
 	return http(
 		{
@@ -51,4 +53,9 @@ const index = {
 	],
 };
 
-export default mergeHandlers( index, notificationSubscriptions, posts );
+registerHandlers(
+	'state/data-layer/wpcom/read/sites/index.js',
+	mergeHandlers( index, notificationSubscriptions, posts )
+);
+
+export default {};

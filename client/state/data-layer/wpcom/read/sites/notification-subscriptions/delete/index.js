@@ -15,6 +15,8 @@ import { translate } from 'i18n-calypso';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { subscribeToNewPostNotifications } from 'state/reader/follows/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function fromApi( response ) {
 	const isUnsubscribed = !! ( response && response.subscribed === false );
 	if ( ! isUnsubscribed ) {
@@ -49,7 +51,7 @@ export function receiveNotificationUnsubscriptionError( action ) {
 	];
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/sites/notification-subscriptions/delete/index.js', {
 	[ READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: [
 		dispatchRequestEx( {
 			fetch: requestNotificationUnsubscription,
@@ -58,4 +60,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

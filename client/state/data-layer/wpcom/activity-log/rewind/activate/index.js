@@ -20,6 +20,8 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { requestRewindState } from 'state/rewind/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetch = action => {
 	const notice = successNotice( i18n.translate( 'Obtaining your credentials…' ) );
 	const {
@@ -74,7 +76,7 @@ export const announceFailure = ( { noticeId } ) =>
 		id: noticeId,
 	} );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/activate/index.js', {
 	[ JETPACK_CREDENTIALS_AUTOCONFIGURE ]: [
 		dispatchRequestEx( {
 			fetch,
@@ -82,4 +84,6 @@ export default {
 			onError: announceFailure,
 		} ),
 	],
-};
+} );
+
+export default {};

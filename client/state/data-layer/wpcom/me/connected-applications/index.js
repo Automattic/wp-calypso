@@ -17,6 +17,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveConnectedApplications } from 'state/connected-applications/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const apiTransformer = data => data.connected_applications;
 
 /**
@@ -55,4 +57,9 @@ const requestHandler = {
 	],
 };
 
-export default mergeHandlers( requestHandler, deleteHandler );
+registerHandlers(
+	'state/data-layer/wpcom/me/connected-applications/index.js',
+	mergeHandlers( requestHandler, deleteHandler )
+);
+
+export default {};

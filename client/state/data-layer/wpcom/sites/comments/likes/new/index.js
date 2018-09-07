@@ -15,6 +15,8 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const likeComment = ( { dispatch }, action ) => {
 	dispatch(
 		http(
@@ -51,6 +53,8 @@ export const handleLikeFailure = ( { dispatch }, { siteId, postId, commentId } )
 	dispatch( errorNotice( translate( 'Could not like this comment' ) ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/comments/likes/new/index.js', {
 	[ COMMENTS_LIKE ]: [ dispatchRequest( likeComment, updateCommentLikes, handleLikeFailure ) ],
-};
+} );
+
+export default {};

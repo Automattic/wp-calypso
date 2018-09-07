@@ -19,6 +19,8 @@ import removeBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const requestBlogStickerList = action =>
 	http(
 		{
@@ -48,8 +50,9 @@ const listBlogStickersHandler = {
 	],
 };
 
-export default mergeHandlers(
-	listBlogStickersHandler,
-	addBlogStickerHandler,
-	removeBlogStickerHandler
+registerHandlers(
+	'state/data-layer/wpcom/sites/blog-stickers/index.js',
+	mergeHandlers( listBlogStickersHandler, addBlogStickerHandler, removeBlogStickerHandler )
 );
+
+export default {};

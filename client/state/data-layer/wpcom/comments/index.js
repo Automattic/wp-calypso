@@ -28,6 +28,8 @@ import {
 import getSiteComment from 'state/selectors/get-site-comment';
 import { decodeEntities } from 'lib/formatting';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const commentsFromApi = comments =>
 	map(
 		comments,
@@ -200,7 +202,7 @@ export const announceDeleteFailure = action => {
 	];
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/comments/index.js', {
 	[ COMMENTS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: fetchPostComments,
@@ -208,6 +210,7 @@ export default {
 			onError: announceFailure,
 		} ),
 	],
+
 	[ COMMENTS_DELETE ]: [
 		dispatchRequestEx( {
 			fetch: deleteComment,
@@ -215,4 +218,6 @@ export default {
 			onError: announceDeleteFailure,
 		} ),
 	],
-};
+} );
+
+export default {};

@@ -14,6 +14,8 @@ import { unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestCommentEmailSubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
@@ -41,7 +43,7 @@ export function receiveCommentEmailSubscriptionError( { dispatch }, action ) {
 	dispatch( bypassDataLayer( unsubscribeToNewCommentEmail( action.payload.blogId ) ) );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/site/comment-email-subscriptions/new/index.js', {
 	[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: [
 		dispatchRequest(
 			requestCommentEmailSubscription,
@@ -49,4 +51,6 @@ export default {
 			receiveCommentEmailSubscriptionError
 		),
 	],
-};
+} );
+
+export default {};

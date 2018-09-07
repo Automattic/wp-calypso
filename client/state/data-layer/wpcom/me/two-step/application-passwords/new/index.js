@@ -19,6 +19,8 @@ import {
 	requestApplicationPasswords,
 } from 'state/application-passwords/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const apiTransformer = data => data.application_password;
 
 /**
@@ -67,7 +69,7 @@ export const handleAddError = () =>
 		}
 	);
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/new/index.js', {
 	[ APPLICATION_PASSWORD_CREATE ]: [
 		dispatchRequestEx( {
 			fetch: addApplicationPassword,
@@ -76,4 +78,6 @@ export default {
 			fromApi: makeJsonSchemaParser( schema, apiTransformer ),
 		} ),
 	],
-};
+} );
+
+export default {};

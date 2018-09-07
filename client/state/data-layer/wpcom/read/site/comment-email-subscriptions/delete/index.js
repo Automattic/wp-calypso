@@ -14,6 +14,8 @@ import { subscribeToNewCommentEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestCommentEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
@@ -45,7 +47,7 @@ export function receiveCommentEmailUnsubscriptionError( { dispatch }, action ) {
 	dispatch( bypassDataLayer( subscribeToNewCommentEmail( action.payload.blogId ) ) );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/site/comment-email-subscriptions/delete/index.js', {
 	[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: [
 		dispatchRequest(
 			requestCommentEmailUnsubscription,
@@ -53,4 +55,6 @@ export default {
 			receiveCommentEmailUnsubscriptionError
 		),
 	],
-};
+} );
+
+export default {};

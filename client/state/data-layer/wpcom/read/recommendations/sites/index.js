@@ -13,6 +13,8 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { receiveRecommendedSites } from 'state/reader/recommended-sites/actions';
 import { decodeEntities } from 'lib/formatting';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const requestRecommendedSites = ( { dispatch }, action ) => {
 	const { seed = 1, number = 10, offset = 0 } = action.payload;
 	dispatch(
@@ -56,8 +58,10 @@ export const receiveRecommendedSitesResponse = ( store, action, response ) => {
 	);
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/recommendations/sites/index.js', {
 	[ READER_RECOMMENDED_SITES_REQUEST ]: [
 		dispatchRequest( requestRecommendedSites, receiveRecommendedSitesResponse, noop ),
 	],
-};
+} );
+
+export default {};

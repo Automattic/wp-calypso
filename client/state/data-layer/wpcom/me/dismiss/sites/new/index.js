@@ -15,6 +15,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestSiteDismiss( action ) {
 	return http(
 		{
@@ -44,7 +46,7 @@ export function receiveSiteDismissError() {
 	return errorNotice( translate( 'Sorry, there was a problem dismissing that site.' ) );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/dismiss/sites/new/index.js', {
 	[ READER_DISMISS_SITE ]: [
 		dispatchRequestEx( {
 			fetch: requestSiteDismiss,
@@ -53,6 +55,7 @@ export default {
 			fromApi,
 		} ),
 	],
+
 	[ READER_DISMISS_POST ]: [
 		dispatchRequestEx( {
 			fetch: requestSiteDismiss,
@@ -61,4 +64,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

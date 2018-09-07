@@ -16,6 +16,8 @@ import { USER_DEVICES_REQUEST } from 'state/action-types';
 import { userDevicesAdd } from 'state/user-devices/actions';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const devicesFromApi = devices =>
 	keyBy(
 		devices.map( ( { device_id, device_name } ) => ( { id: device_id, name: device_name } ) ),
@@ -55,7 +57,7 @@ export const handleSuccess = ( action, devices ) => userDevicesAdd( devices );
 export const handleError = () =>
 	errorNotice( translate( "We couldn't load your devices, please try again." ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/devices/index.js', {
 	[ USER_DEVICES_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestUserDevices,
@@ -64,4 +66,6 @@ export default {
 			fromApi: devicesFromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

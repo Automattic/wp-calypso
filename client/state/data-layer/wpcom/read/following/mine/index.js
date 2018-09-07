@@ -22,6 +22,8 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { isValidApiResponse, subscriptionsFromApi } from './utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
 
@@ -124,4 +126,9 @@ const followingMine = {
 	[ READER_FOLLOW ]: [ updateSeenOnFollow ],
 };
 
-export default mergeHandlers( followingMine, followingNew, followingDelete );
+registerHandlers(
+	'state/data-layer/wpcom/read/following/mine/index.js',
+	mergeHandlers( followingMine, followingNew, followingDelete )
+);
+
+export default {};

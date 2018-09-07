@@ -17,6 +17,8 @@ import getReaderFollowForBlog from 'state/selectors/get-reader-follow-for-blog';
 import { buildBody } from '../utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestUpdatePostEmailSubscription( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {
 		meta: {
@@ -58,7 +60,7 @@ export function receiveUpdatePostEmailSubscriptionError(
 	dispatch( bypassDataLayer( updateNewPostEmailSubscription( blogId, previousState ) ) );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/site/post-email-subscriptions/update/index.js', {
 	[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: [
 		dispatchRequest(
 			requestUpdatePostEmailSubscription,
@@ -66,4 +68,6 @@ export default {
 			receiveUpdatePostEmailSubscriptionError
 		),
 	],
-};
+} );
+
+export default {};

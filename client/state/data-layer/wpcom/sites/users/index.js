@@ -14,6 +14,8 @@ import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveUser } from 'state/users/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const DEFAULT_PER_PAGE = 10;
 
 /**
@@ -91,6 +93,8 @@ export const receiveSuccess = ( { dispatch }, action, users ) => {
 
 const dispatchUsersRequest = dispatchRequest( fetchUsers, receiveSuccess, noop );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/users/index.js', {
 	[ USERS_REQUEST ]: [ dispatchUsersRequest ],
-};
+} );
+
+export default {};

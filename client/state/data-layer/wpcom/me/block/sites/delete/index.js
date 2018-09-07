@@ -17,6 +17,8 @@ import { errorNotice, plainNotice } from 'state/notices/actions';
 import { blockSite } from 'state/reader/site-blocks/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestSiteUnblock( action ) {
 	return http(
 		{
@@ -49,7 +51,7 @@ export const receiveSiteUnblockError = ( { payload: { siteId } } ) => dispatch =
 	dispatch( bypassDataLayer( blockSite( siteId ) ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/block/sites/delete/index.js', {
 	[ READER_SITE_UNBLOCK ]: [
 		dispatchRequestEx( {
 			fetch: requestSiteUnblock,
@@ -58,4 +60,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

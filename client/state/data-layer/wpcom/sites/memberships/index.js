@@ -15,6 +15,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import subscriptionsHandlers from './subscriptions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const membershipProductFromApi = product => ( {
 	ID: product.id || product.connected_account_product_id,
 	currency: product.currency,
@@ -51,9 +53,14 @@ export const handleMembershipProductsList = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export default mergeHandlers(
-	{
-		[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
-	},
-	subscriptionsHandlers
+registerHandlers(
+	'state/data-layer/wpcom/sites/memberships/index.js',
+	mergeHandlers(
+		{
+			[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
+		},
+		subscriptionsHandlers
+	)
 );
+
+export default {};

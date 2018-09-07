@@ -31,6 +31,8 @@ import {
 	receiveUpdateProduct,
 } from 'state/simple-payments/product-list/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Convert custom post metadata array to product attributes
  * @param { Array } metadata Array of post metadata
@@ -220,10 +222,12 @@ export const handleProductListDelete = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/simple-payments/index.js', {
 	[ SIMPLE_PAYMENTS_PRODUCT_GET ]: [ handleProductGet ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST ]: [ handleProductList ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_ADD ]: [ handleProductListAdd ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_EDIT ]: [ handleProductListEdit ],
 	[ SIMPLE_PAYMENTS_PRODUCTS_LIST_DELETE ]: [ handleProductListDelete ],
-};
+} );
+
+export default {};

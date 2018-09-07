@@ -13,6 +13,8 @@ import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'state/action-types
 import { addValidationSchemas } from 'state/domains/management/validation-schemas/actions';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Convert an application level request action for domain contact information
  * validation schemas into an HTTP request actions for the data-layer
@@ -58,7 +60,7 @@ export const onError = ( { tlds }, error ) =>
 		] )
 	);
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/domains/validation-schemas/index.js', {
 	[ DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch,
@@ -66,4 +68,6 @@ export default {
 			onError,
 		} ),
 	],
-};
+} );
+
+export default {};

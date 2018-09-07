@@ -17,6 +17,8 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import getRawSite from 'state/selectors/get-raw-site';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	const { siteId, status = 'unapproved' } = action.query;
 
@@ -92,4 +94,9 @@ const treeHandlers = {
 	],
 };
 
-export default mergeHandlers( treeHandlers );
+registerHandlers(
+	'state/data-layer/wpcom/sites/comments-tree/index.js',
+	mergeHandlers( treeHandlers )
+);
+
+export default {};

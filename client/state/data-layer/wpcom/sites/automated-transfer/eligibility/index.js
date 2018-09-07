@@ -17,6 +17,8 @@ import { updateEligibility } from 'state/automated-transfer/actions';
 import { eligibilityHolds } from 'state/automated-transfer/constants';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Maps the constants used in the WordPress.com API with
  * those used inside of Calypso. Somewhat redundant, this
@@ -138,7 +140,7 @@ export const throwRequestError = ( store, action, error ) => {
 	throw new Error( error );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
 	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [
 		dispatchRequest(
 			requestAutomatedTransferEligibility,
@@ -146,4 +148,6 @@ export default {
 			throwRequestError
 		),
 	],
-};
+} );
+
+export default {};

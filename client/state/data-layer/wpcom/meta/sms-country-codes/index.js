@@ -12,6 +12,8 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { COUNTRIES_SMS_FETCH, COUNTRIES_SMS_UPDATED } from 'state/action-types';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches a request to fetch all available WordPress.com countries
  *
@@ -54,8 +56,10 @@ export const updateCountriesSms = ( { dispatch }, action, countries ) =>
 export const showCountriesSmsLoadingError = ( { dispatch } ) =>
 	dispatch( errorNotice( translate( "We couldn't load the countries list." ) ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/meta/sms-country-codes/index.js', {
 	[ COUNTRIES_SMS_FETCH ]: [
 		dispatchRequest( fetchCountriesSms, updateCountriesSms, showCountriesSmsLoadingError ),
 	],
-};
+} );
+
+export default {};

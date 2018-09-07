@@ -12,6 +12,8 @@ import {
 	activePromotionsRequestSuccessAction,
 } from 'state/active-promotions/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * @module state/data-layer/wpcom/active-promotions
  */
@@ -60,6 +62,8 @@ export const dispatchActivePromotionsRequest = dispatchRequestEx( {
 	onError: receiveError,
 } );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/active-promotions/index.js', {
 	[ ACTIVE_PROMOTIONS_REQUEST ]: [ dispatchActivePromotionsRequest ],
-};
+} );
+
+export default {};
