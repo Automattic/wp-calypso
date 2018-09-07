@@ -46,7 +46,7 @@ export class CurrentPlanThankYouCard extends Component {
 					<p>
 						{ duration && planName
 							? translate(
-									'Your website is on a %(planName)s plan for %(duration)s. Let’s walk through a short checklist of essential security features for safeguarding your website.',
+									'Your website is on a %(planName)s plan for %(duration)s. That means it has lots of useful security tools — let’s walk through a short checklist of the essentials so Jetpack can start monitoring things for you.',
 									{
 										args: { duration, planName },
 									}
