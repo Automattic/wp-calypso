@@ -123,7 +123,8 @@ class ManageMenu extends PureComponent {
 	}
 
 	getPluginItem() {
-		const { isAtomicSite, translate } = this.props;
+		const { isAtomicSite, siteSlug, translate } = this.props;
+		const buttonLink = siteSlug ? `/plugins/manage/${ siteSlug }` : '/plugins/manage';
 
 		return {
 			name: 'plugins',
@@ -135,7 +136,7 @@ class ManageMenu extends PureComponent {
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
 			showOnAllMySites: true,
-			buttonLink: ! isAtomicSite ? `/plugins/manage/${ this.props.siteSlug }` : '',
+			buttonLink: ! isAtomicSite ? buttonLink : '',
 			buttonText: translate( 'Manage' ),
 			extraIcon: isAtomicSite ? 'chevron-right' : null,
 			customClassName: isAtomicSite ? 'sidebar__plugins-item' : '',
