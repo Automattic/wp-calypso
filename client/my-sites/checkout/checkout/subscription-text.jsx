@@ -16,25 +16,22 @@ import { cartItems } from 'lib/cart-values';
 
 class SubscriptionText extends React.Component {
 	render() {
-		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
-			const product = this.props.cart.products[ 0 ];
-			let aside_text = '';
+		const { cart, translate } = this.props;
+
+		if ( cartItems.hasRenewalItem( cart ) ) {
+			const product = cart.products[ 0 ];
+			const context = 'Informative text for renewals in /checkout';
+			let informative_text = '';
 
 			if ( isBiennially( product ) ) {
-				aside_text = 'renews biennially';
+				informative_text = translate( 'renews biennially', { context } );
 			} else if ( isYearly( product ) ) {
-				aside_text = 'renews annually';
+				informative_text = translate( 'renews annually', { context } );
 			} else if ( isMonthly( product ) ) {
-				aside_text = 'renews monthly';
+				informative_text = translate( 'renews monthly', { context } );
 			}
 
-			return (
-				<span className="subscription-text">
-					{ this.props.translate( aside_text, {
-						context: 'Informative text for renewals in /checkout',
-					} ) }
-				</span>
-			);
+			return <span className="subscription-text">{ informative_text }</span>;
 		}
 
 		return null;
