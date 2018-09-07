@@ -34,7 +34,7 @@ export function currentPlan( context, next ) {
 	context.primary = (
 		<CurrentPlan
 			path={ context.path }
-			showThankYou={ context.query.hasOwnProperty( 'thank-you' ) }
+			requestThankYou={ context.query.hasOwnProperty( 'thank-you' ) }
 		/>
 	);
 	next();

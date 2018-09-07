@@ -47,6 +47,7 @@ class CurrentPlan extends Component {
 		domains: PropTypes.array,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
+		requestThankYou: PropTypes.bool,
 		shouldShowDomainWarnings: PropTypes.bool,
 		hasDomainsLoaded: PropTypes.bool,
 		showJetpackChecklist: PropTypes.bool,
@@ -171,13 +172,15 @@ class CurrentPlan extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state, { requestThankYou } ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
 	const domains = getDecoratedSiteDomains( state, selectedSiteId );
 
 	const isJetpack = isJetpackSite( state, selectedSiteId );
 	const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
+
+	const isJetpackNotAtomic = false === isAutomatedTransfer && isJetpack;
 
 	return {
 		selectedSite,
@@ -188,7 +191,7 @@ export default connect( state => {
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
-		showJetpackChecklist:
-			false === isAutomatedTransfer && isJetpack && isEnabled( 'jetpack/checklist' ),
+		showJetpackChecklist: isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ),
+		showThankYou: requestThankYou && isJetpackNotAtomic,
 	};
 } )( localize( CurrentPlan ) );
