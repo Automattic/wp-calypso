@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { compact, get } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -260,8 +260,8 @@ export default connect(
 		);
 
 		const taskUrls = {
-			post_published: `/post/${ siteSlug }/${ get( firstPost, [ 'ID' ], '' ) }`,
-			contact_page_updated: `/page/${ siteSlug }/${ get( contactPage, [ 'ID' ], 2 ) }`,
+			post_published: compact( [ '/post', siteSlug, get( firstPost, [ 'ID' ] ) ] ).join( '/' ),
+			contact_page_updated: [ '/page', siteSlug, get( contactPage, [ 'ID' ], 2 ) ].join( '/' ),
 		};
 
 		return {
