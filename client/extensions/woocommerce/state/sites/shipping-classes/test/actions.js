@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import {
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
 } from './../../../action-types';
+import { NOTICE_CREATE } from 'state/action-types';
 import {
 	fetchShippingClassesSuccess,
 	fetchShippingClassesFailure,
@@ -21,7 +23,6 @@ import initialShippingClasses from './data/initial-state';
 
 const siteId = 123;
 
-const dispatchFn = action => action;
 const getState = ( shippingClasses = initialShippingClasses ) => () => ( {
 	extensions: {
 		woocommerce: {
@@ -52,11 +53,12 @@ describe( 'Shipping classes state actions', () => {
 	 */
 
 	test( '#fetchShippingClassesFailure', () => {
-		const result = fetchShippingClassesFailure( { siteId }, '', dispatchFn );
+		const result = fetchShippingClassesFailure( { siteId }, '' );
 
 		expect( result ).to.be.an( 'object' );
-		expect( result.type ).to.equal( 'NOTICE_CREATE' );
+		expect( result.type ).to.equal( NOTICE_CREATE );
 		expect( result.notice ).to.be.an( 'object' );
+		expect( result.notice.status ).to.equal( 'is-error' );
 	} );
 
 	/**
@@ -64,13 +66,13 @@ describe( 'Shipping classes state actions', () => {
 	 */
 
 	test( '#fetchShippingClasses', () => {
-		expect( fetchShippingClasses( siteId )( dispatchFn, getState( false ) ) ).to.eql( {
+		expect( fetchShippingClasses( siteId )( identity, getState( false ) ) ).to.eql( {
 			type: WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 			siteId,
 		} );
 	} );
 
 	test( '#fetchShippingClasses when classes have been already loaded', () => {
-		expect( fetchShippingClasses( siteId )( dispatchFn, getState() ) ).to.equal( undefined );
+		expect( fetchShippingClasses( siteId )( identity, getState() ) ).to.equal( undefined );
 	} );
 } );
