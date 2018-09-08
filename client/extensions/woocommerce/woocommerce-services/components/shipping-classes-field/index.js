@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { uniqBy, map } from 'lodash';
+import { uniq, map, find, filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,7 +41,7 @@ export default class ShippingClassesField extends React.Component {
 					name={ id }
 					placeholder={ placeholder }
 					value={ this.prepareValueForTokenField( value ) }
-					suggestions={ uniqBy( map( options, option => option.name ) ) }
+					suggestions={ uniq( map( options, 'name' ) ) }
 					onChange={ this.onChange }
 					displayTransform={ this.transformForDisplay }
 				/>
@@ -51,27 +51,27 @@ export default class ShippingClassesField extends React.Component {
 	}
 
 	prepareValueForTokenField = value => {
-		return map( value, this.getNameFromId ).filter( selected => null !== selected );
+		return filter( map( value, this.getNameFromId ) );
 	};
 
 	getNameFromId = id => {
-		const found = this.props.options.find( option => {
-			return option.id === id;
-		} );
+		const found = find( this.props.options, { id } );
 
 		return found ? found.name : null;
 	};
 
 	getIdFromName = name => {
-		const found = this.props.options.find( option => {
-			return option.name.toLowerCase() === name.toLowerCase();
+		const lowerCaseName = name.toLowerCase();
+
+		const found = find( this.props.options, option => {
+			return option.name.toLowerCase() === lowerCaseName;
 		} );
 
 		return found ? found.id : null;
 	};
 
 	transformForDisplay = token => {
-		const option = this.props.options.find( item => item.slug === token );
+		const option = find( this.props.options, { slug: token } );
 
 		return option ? option.name : token;
 	};
@@ -79,9 +79,7 @@ export default class ShippingClassesField extends React.Component {
 	onChange = strings => {
 		const { updateValue } = this.props;
 
-		const updatedValue = uniqBy(
-			strings.map( this.getIdFromName ).filter( item => null !== item )
-		);
+		const updatedValue = uniq( filter( map( strings, this.getIdFromName ) ) );
 
 		updateValue( updatedValue );
 	};
