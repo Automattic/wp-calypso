@@ -1,12 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
-/**
  * Internal dependencies
  */
 import {
@@ -29,13 +23,13 @@ describe( 'wp-api', () => {
 	describe( 'Gutenberg site posts', () => {
 		describe( 'requestGutenbergPostDraft()', () => {
 			test( "should dispatch a HTTP request to Gutenberg's create draft endpoint", () => {
-				const dispatch = spy();
+				const dispatch = jest.fn();
 				const action = { type: GUTENBERG_SITE_CREATE_DRAFT, siteId: SITE_ID };
 
 				requestGutenbergPostDraft( { dispatch }, action );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					http(
 						{
 							path: `/sites/${ SITE_ID }/posts/create-draft`,
@@ -50,12 +44,12 @@ describe( 'wp-api', () => {
 
 		describe( 'createSitePostSuccess()', () => {
 			test( 'should dispatch an action to request the created post for Gutenberg', () => {
-				const dispatch = spy();
+				const dispatch = jest.fn();
 
 				createSitePostSuccess( { dispatch }, { siteId: SITE_ID }, { ID: POST_ID } );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( {
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: GUTENBERG_SITE_POST_REQUEST,
 					siteId: SITE_ID,
 					postId: POST_ID,
@@ -65,12 +59,12 @@ describe( 'wp-api', () => {
 
 		describe( 'fetchSitePost()', () => {
 			test( 'should dispatch a HTTP request to fetch a post for Gutenberg', () => {
-				const dispatch = spy();
+				const dispatch = jest.fn();
 				const action = { type: GUTENBERG_SITE_POST_REQUEST, siteId: SITE_ID, postId: POST_ID };
 
 				fetchSitePost( { dispatch }, action );
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledOnceWith(
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith(
 					http(
 						{
 							path: `/sites/${ SITE_ID }/posts/${ POST_ID }?context=edit`,
@@ -85,12 +79,12 @@ describe( 'wp-api', () => {
 
 		describe( 'fetchSitePostSuccess()', () => {
 			test( "should dispatch an action to update Gutenberg's current post", () => {
-				const dispatch = spy();
+				const dispatch = jest.fn();
 
 				fetchSitePostSuccess( { dispatch }, { siteId: SITE_ID, postId: POST_ID }, { id: POST_ID } );
 
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( {
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: GUTENBERG_SITE_POST_RECEIVE,
 					siteId: SITE_ID,
 					postId: POST_ID,

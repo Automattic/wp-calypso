@@ -1,10 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import { GUTENBERG_CREATE_POST_DRAFT, GUTENBERG_SITE_POST_REQUEST } from 'state/action-types';

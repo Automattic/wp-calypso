@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -16,7 +15,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = currentPost( undefined, {} );
 
-			expect( state ).to.eql( { currentPost: {} } );
+			expect( state ).toMatchObject( { currentPost: {} } );
 		} );
 
 		test( 'should replace the Gutenberg current post', () => {
@@ -26,7 +25,7 @@ describe( 'reducer', () => {
 				post: { id: 2 },
 			} );
 
-			expect( newSate ).to.eql( { currentPost: { id: 2 } } );
+			expect( newSate ).toMatchObject( { currentPost: { id: 2 } } );
 		} );
 	} );
 } );
