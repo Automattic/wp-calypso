@@ -1075,7 +1075,9 @@ describe( 'index', () => {
 		test.each( [
 			[ 'http://polldaddy.com/poll/8980420', 8980420 ],
 			[ 'https://polldaddy.com/poll/8980420', 8980420 ],
-		] )( 'links to embedded Polldaddy polls', ( url, id, done ) => {
+			[ 'https://poll.fm/12345678', 12345678 ],
+			[ 'https://survey.fm/12345678', 12345678 ],
+		] )( 'links to embedded Crowdsignal polls', ( url, id, done ) => {
 			normalizer(
 				{
 					content:
@@ -1089,7 +1091,7 @@ describe( 'index', () => {
 				function( err, normalized ) {
 					assert.include(
 						normalized.content,
-						`<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/${ id }">Take our poll</a></p>`
+						`<p><a target="_blank" rel="external noopener noreferrer" href="https://poll.fm/${ id }">Take our poll</a></p>`
 					);
 					done( err );
 				}
