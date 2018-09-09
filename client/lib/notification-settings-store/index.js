@@ -42,7 +42,10 @@ const NotificationSettingsStore = createReducerStore( ( state, payload ) => {
 	switch ( action ) {
 		case actionTypes.SAVE_SETTINGS:
 		case actionTypes.FETCH_SETTINGS:
-			return state.set( 'isFetching', true ).set( 'status', status );
+			return state
+				.set( 'isFetching', true )
+				.set( 'error', null )
+				.set( 'status', status );
 
 		case actionTypes.SAVE_SETTINGS_FAILED:
 		case actionTypes.FETCH_SETTINGS_FAILED:
@@ -58,7 +61,9 @@ const NotificationSettingsStore = createReducerStore( ( state, payload ) => {
 				.setIn( [ 'settings', 'dirty' ], newState );
 
 		case actionTypes.TOGGLE_SETTING:
-			return toggleSetting( state, source, stream, setting ).set( 'status', status );
+			return toggleSetting( state, source, stream, setting )
+				.set( 'error', null )
+				.set( 'status', status );
 	}
 
 	return state;
