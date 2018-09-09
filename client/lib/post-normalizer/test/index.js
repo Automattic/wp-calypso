@@ -1072,7 +1072,10 @@ describe( 'index', () => {
 				}
 			);
 		} );
-		test( 'links to embedded Polldaddy polls', done => {
+		test.each( [
+			[ 'http://polldaddy.com/poll/8980420', 8980420 ],
+			[ 'https://polldaddy.com/poll/8980420', 8980420 ],
+		] )( 'links to embedded Polldaddy polls', ( url, id, done ) => {
 			normalizer(
 				{
 					content:
@@ -1080,13 +1083,13 @@ describe( 'index', () => {
 						'<div class="PDS_Poll" id="PDI_container8980420" style="display:inline-block;"></div>' +
 						'<div id="PD_superContainer"></div>' +
 						'<script type="text/javascript" charset="UTF-8" src="//static.polldaddy.com/p/8980420.js"></script>' +
-						'<noscript><a href="http://polldaddy.com/poll/8980420">Take Our Poll</a></noscript>',
+						`<noscript><a href="${ url }">Take Our Poll</a></noscript>`,
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectPolls ] ) ],
 				function( err, normalized ) {
 					assert.include(
 						normalized.content,
-						'<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>'
+						`<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/${ id }">Take our poll</a></p>`
 					);
 					done( err );
 				}
