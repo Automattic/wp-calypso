@@ -24,7 +24,7 @@ registerBlockType( 'a8c/markdown', {
 	],
 
 	icon: (
-		<svg xmlns="http://www.w3.org/2000/svg" width="208" height="128" viewBox="0 0 208 128">
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 128">
 			<rect
 				width="198"
 				height="118"
