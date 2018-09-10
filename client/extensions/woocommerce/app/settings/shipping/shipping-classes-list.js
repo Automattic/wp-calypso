@@ -49,7 +49,7 @@ class ShippingClassesList extends Component {
 					label={ translate( 'Shipping Classes' ) }
 					description={ translate(
 						'Group products of similar type to provide different shipping ' +
-							'rates to each shipping class.'
+							'rates for each shipping class.'
 					) }
 				>
 					<Button href="#" onClick={ this.onAddNewClick } disabled={ ! loaded }>

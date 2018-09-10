@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -17,28 +18,9 @@ import { localize } from 'i18n-calypso';
 import { editShippingClass } from 'woocommerce/state/ui/shipping/classes/actions';
 import Button from 'components/button';
 
-const ShippingClassEntry = ( { name, slug, description, loaded, translate, edit, isNew } ) => {
-	const cssClasses = [ 'shipping__classes-row' ];
-
-	if ( ! loaded ) {
-		cssClasses.push( 'is-placeholder' );
-	}
-
-	// Indicates that the displayed value is not final
-	const placeholderOrText = text => {
-		if ( ! isNew ) {
-			return text;
-		}
-
-		return text && text.length ? (
-			text
-		) : (
-			<span className="shipping__classes-placeholder">&nbsp;</span>
-		);
-	};
-
+const ShippingClassEntry = ( { name, slug, description, loaded, translate, edit } ) => {
 	return (
-		<div className={ cssClasses.join( ' ' ) }>
+		<div className={ classNames( 'shipping__classes-row', ! loaded && 'is-placeholder' ) }>
 			<div className="shipping__classes-cell shipping__classes-icon">
 				<Gridicon icon="tag" size={ 24 } />
 			</div>
@@ -46,7 +28,7 @@ const ShippingClassEntry = ( { name, slug, description, loaded, translate, edit,
 				<p>{ name }</p>
 			</div>
 			<div className="shipping__classes-cell shipping__classes-slug">
-				<p>{ placeholderOrText( slug ) }</p>
+				<p>{ slug }</p>
 			</div>
 			<div className="shipping__classes-cell shipping__classes-description">
 				<p>{ description }</p>
@@ -65,7 +47,6 @@ ShippingClassEntry.propTypes = {
 	name: PropTypes.string,
 	slug: PropTypes.string,
 	description: PropTypes.string,
-	isNew: PropTypes.bool,
 };
 
 export default connect(

@@ -12,7 +12,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getShippingClassOptions } from 'woocommerce/state/sites/shipping-classes/selectors';
 
 /**
- * A shortcut that extracts the the shipping classes UI state from the whole state.
+ * A shortcut that extracts the shipping classes UI state from the whole state.
  *
  * @param  {Object} state   The current Redux state.
  * @param  {number} siteId  Site ID.
@@ -50,7 +50,7 @@ export const getUiShippingClasses = ( state, siteId = getSelectedSiteId( state )
 		...map( created, id => ( { id, isNew: true } ) ),
 	];
 
-	// Apply all updates consequentially
+	// Apply all updates sequentially
 	const withUpdates = merged.map( shippingClass => {
 		updates.forEach( item => {
 			if ( item.id === shippingClass.id ) {

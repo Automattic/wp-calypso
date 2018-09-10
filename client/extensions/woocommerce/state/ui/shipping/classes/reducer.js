@@ -99,7 +99,7 @@ reducer[ WOOCOMMERCE_SHIPPING_CLASS_SAVE ] = state => {
 		return updateShippingClass( state );
 	}
 
-	const temporaryId = 'temp-' + uniqueId();
+	const temporaryId = uniqueId( 'temp-' );
 
 	return updateShippingClass( {
 		...state,

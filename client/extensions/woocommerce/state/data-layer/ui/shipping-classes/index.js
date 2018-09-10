@@ -150,7 +150,8 @@ export const getSaveShippingClassesActionListSteps = ( state, siteId ) => {
 export default {
 	[ WOOCOMMERCE_SHIPPING_CLASSES_ACTION_LIST_CREATE ]: [
 		/**
-		 * Creates and executes a WCS shipping settings action list
+		 * Creates and executes a WooCommerce shipping classes saving action list.
+		 *
 		 * @param {Object} store  The store that is being mainpulated.
 		 * @param {Object} action An action containing successAction and failureAction.
 		 */
@@ -158,8 +159,9 @@ export default {
 			const { successAction, failureAction, siteId } = action;
 
 			/**
-			 * A callback issued after a successful request
-			 * @param {Function} dispatch Dispatch function
+			 * A callback issued after a successful request.
+			 *
+			 * @param {Function} dispatch Dispatch function.
 			 */
 			const onSuccess = dispatch => {
 				dispatch( successAction );
@@ -167,8 +169,9 @@ export default {
 			};
 
 			/**
-			 * A callback issued after a failed request
-			 * @param {Function} dispatch Dispatch function
+			 * A callback issued after a failed request.
+			 *
+			 * @param {Function} dispatch Dispatch function.
 			 */
 			const onFailure = dispatch => {
 				dispatch( failureAction );
