@@ -15,20 +15,21 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import ChecklistShowShare from 'my-sites/checklist/share';
 import ChecklistBannerTask from './checklist-banner-task';
+import ChecklistShowShare from 'my-sites/checklist/share';
 import Gauge from 'components/gauge';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import ProgressBar from 'components/progress-bar';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
-		translate: PropTypes.func.isRequired,
-		siteDesignType: PropTypes.string,
+		isEligibleForDotcomChecklist: PropTypes.bool,
 		siteSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	state = { closed: false };
@@ -47,11 +48,11 @@ export class ChecklistBanner extends Component {
 	};
 
 	canShow() {
-		if ( this.state.closed ) {
+		if ( ! this.props.isEligibleForDotcomChecklist ) {
 			return false;
 		}
 
-		if ( this.props.siteDesignType !== 'blog' ) {
+		if ( this.state.closed ) {
 			return false;
 		}
 
@@ -148,7 +149,7 @@ export class ChecklistBanner extends Component {
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		siteDesignType: getSiteOption( state, siteId, [ 'design_type' ] ),
+		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	};
