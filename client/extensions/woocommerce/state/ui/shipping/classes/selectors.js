@@ -47,7 +47,7 @@ export const getUiShippingClasses = ( state, siteId = getSelectedSiteId( state )
 		...getShippingClassOptions( state, siteId ),
 
 		// Start with a simple ID, updates will be applied later
-		...map( created, id => ( { id, isNew: true } ) ),
+		...map( created, id => ( { id } ) ),
 	];
 
 	// Apply all updates sequentially
