@@ -56,8 +56,8 @@ const transformRewind = data =>
 		data.links && data.links.dismiss && { dismiss: makeRewindDismisser( data.links.dismiss ) }
 	);
 
-export const transformApi = data =>
-	Object.assign(
+export function transformApi( data ) {
+	return Object.assign(
 		{
 			state: camelCase( data.state ),
 			lastUpdated: new Date(
@@ -72,3 +72,4 @@ export const transformApi = data =>
 		data.reason && { reason: data.reason },
 		data.rewind && { rewind: transformRewind( data.rewind ) }
 	);
+}
