@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 import { dispatch } from '@wordpress/data';
@@ -15,6 +15,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import Editor from './edit-post/editor.js';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import QueryPostTypes from 'components/data/query-post-types';
+import { requestGutenbergDraftPost as requestDraftId, requestSitePost } from 'state/data-getters';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
@@ -50,10 +51,15 @@ class GutenbergEditor extends Component {
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 
+	const requestDraftIdData = requestDraftId( siteId );
+	const postId = get( requestDraftIdData, 'data.ID' );
+
+	const requestSitePostData = requestSitePost( siteId, postId );
+
 	return {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		post: getGutenbergCurrentPost( state ),
+		post: get( requestSitePostData, 'data', null ),
 	};
 };
 
