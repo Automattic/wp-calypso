@@ -16,8 +16,6 @@ import { shallow } from 'enzyme';
 
 import { HelpSearch } from '../';
 
-jest.mock( '', () => ( {} ) );
-
 const defaultProps = {
 	translate: identity,
 };
