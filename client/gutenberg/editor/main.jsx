@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, noop } from 'lodash';
+import { noop } from 'lodash';
 import { dispatch } from '@wordpress/data';
 import '@wordpress/core-data'; // Initializes core data store
 import { registerCoreBlocks } from '@wordpress/block-library';
@@ -15,7 +15,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import Editor from './edit-post/editor.js';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { applyAPIMiddlewares } from './utils';
+import { WithAPIMiddleware } from './api-middleware/utils';
 
 const editorSettings = {};
 
@@ -32,14 +32,17 @@ class GutenbergEditor extends Component {
 	}
 
 	render() {
-		if ( isEmpty( this.props.siteSlug ) ) {
-			return null;
-		}
-
-		applyAPIMiddlewares( this.props.siteSlug );
+		const { siteSlug } = this.props;
 
 		return (
-			<Editor settings={ editorSettings } hasFixedToolbar={ true } post={ post } onError={ noop } />
+			<WithAPIMiddleware siteSlug={ siteSlug }>
+				<Editor
+					settings={ editorSettings }
+					hasFixedToolbar={ true }
+					post={ post }
+					onError={ noop }
+				/>
+			</WithAPIMiddleware>
 		);
 	}
 }
