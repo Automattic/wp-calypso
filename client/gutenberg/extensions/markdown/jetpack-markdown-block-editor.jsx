@@ -3,10 +3,9 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { BlockControls, PlainText } from '@wordpress/editor';
-import { ButtonGroup } from '@wordpress/components';
+import { Toolbar } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 
 /**
@@ -19,14 +18,24 @@ import MarkdownRenderer from './components/markdown-renderer';
  */
 const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
+const MODE_CONTROLS = [
+	{
+		icon: 'editor-code',
+		title: __( 'Markdown' ),
+		mode: PANEL_EDITOR,
+	},
+	{
+		icon: 'editor-kitchensink',
+		title: __( 'Preview' ),
+		mode: PANEL_PREVIEW,
+	},
+];
 
 class JetpackMarkdownBlockEditor extends Component {
 	constructor() {
 		super( ...arguments );
 
 		this.updateSource = this.updateSource.bind( this );
-		this.showEditor = this.showEditor.bind( this );
-		this.showPreview = this.showPreview.bind( this );
 		this.isEmpty = this.isEmpty.bind( this );
 
 		this.state = {
@@ -43,13 +52,9 @@ class JetpackMarkdownBlockEditor extends Component {
 		this.props.setAttributes( { source } );
 	}
 
-	showEditor() {
-		this.setState( { activePanel: 'editor' } );
-	}
-
-	showPreview() {
-		this.setState( { activePanel: 'preview' } );
-	}
+	toggleMode = mode => () => {
+		this.setState( { activePanel: mode } );
+	};
 
 	render() {
 		const { attributes, className, isSelected } = this.props;
@@ -82,32 +87,21 @@ class JetpackMarkdownBlockEditor extends Component {
 			}
 		};
 
-		// Manages css classes for each panel based on component's state
-		const classesForPanel = function( panelName ) {
-			return classNames( {
-				'components-tab-button': true,
-				'is-active': this.state.activePanel === panelName,
-				[ `${ className }__${ panelName }-button` ]: true,
-			} );
-		};
-
 		return (
 			<div className={ className }>
 				<BlockControls>
-					<ButtonGroup>
-						<button
-							className={ classesForPanel.call( this, 'editor' ) }
-							onClick={ this.showEditor }
-						>
-							<span>{ __( 'Markdown' ) }</span>
-						</button>
-						<button
-							className={ classesForPanel.call( this, 'preview' ) }
-							onClick={ this.showPreview }
-						>
-							<span>{ __( 'Preview' ) }</span>
-						</button>
-					</ButtonGroup>
+					<Toolbar
+						controls={ MODE_CONTROLS.map( control => {
+							const { icon, mode, title } = control;
+
+							return {
+								icon,
+								isActive: this.state.activePanel === mode,
+								onClick: this.toggleMode( mode ),
+								title,
+							};
+						} ) }
+					/>
 				</BlockControls>
 				{ editorOrPreviewPanel.call( this ) }
 			</div>
