@@ -9,7 +9,12 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import { debugMiddleware, pathRewriteMiddleware, wpcomProxyMiddleware } from './index';
+import {
+	debugMiddleware,
+	pathRewriteMiddleware,
+	urlRewriteMiddleware,
+	wpcomProxyMiddleware,
+} from './index';
 
 export class WithAPIMiddleware extends Component {
 	state = { hasMiddleware: false };
@@ -36,17 +41,15 @@ export class WithAPIMiddleware extends Component {
 	applyAPIMiddleware = siteSlug => {
 		// First middleware in, last out.
 
-		// Relay requests through wpcom API proxy for authentication.
-		// This intentionally breaks the middleware chain.
+		// This call intentionally breaks the middleware chain.
 		apiFetch.use( options => wpcomProxyMiddleware( options ) );
 
 		apiFetch.use( ( options, next ) => debugMiddleware( options, next ) );
 
-		// rewrite default API paths to match WP.com equivalents
-		// Example: /wp/v2/posts -> /wp/v2/sites/{siteSlug}/posts
+		apiFetch.use( ( options, next ) => urlRewriteMiddleware( options, next, siteSlug ) );
+
 		apiFetch.use( ( options, next ) => pathRewriteMiddleware( options, next, siteSlug ) );
 
-		// Point the default root URL
 		apiFetch.use( apiFetch.createRootURLMiddleware( 'https://public-api.wordpress.com/' ) );
 
 		this.setState( { hasMiddleware: true } );

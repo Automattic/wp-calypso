@@ -18,18 +18,26 @@ export const debugMiddleware = ( options, next ) => {
 	return next( options );
 };
 
-export const pathRewriteMiddleware = ( options, next, siteSlug ) => {
-	// Rewrite default API urls and paths to match WP.com equivalents.
-	// Example: /wp/v2/posts -> /wp/v2/sites/{siteSlug}/posts
-	const wpcomPath = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
+export const urlRewriteMiddleware = ( options, next, siteSlug ) => {
+	// Rewrite default API paths to match WP.com equivalents.
+	// Example: https://public-api.wordpress.com/wp/v2/posts -> https://public-api.wordpress.com/sites/{siteSlug}/posts
 	const wpcomUrl = options.url.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
 
-	return next( { ...options, path: wpcomPath, url: wpcomUrl } );
+	return next( { ...options, url: wpcomUrl } );
+};
+
+export const pathRewriteMiddleware = ( options, next, siteSlug ) => {
+	// Rewrite default API paths to match WP.com equivalents.
+	// Example: /wp/v2/posts -> /wp/v2/sites/{siteSlug}/posts
+	const wpcomPath = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
+
+	return next( { ...options, path: wpcomPath } );
 };
 
 export const wpcomProxyMiddleware = options => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
+	// This intentionally breaks the middleware chain.
 	return new Promise( ( resolve, reject ) => {
 		wpcomProxyRequest(
 			{
