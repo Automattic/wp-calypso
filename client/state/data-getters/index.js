@@ -46,7 +46,7 @@ export const requestSiteAlerts = siteId => {
 
 	return requestHttpData(
 		id,
-		rawHttp(
+		http(
 			{
 				method: 'GET',
 				path: `/sites/${ siteId }/alerts`,
