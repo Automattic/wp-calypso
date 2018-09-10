@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -77,12 +76,11 @@ class StatsOverview extends Component {
 				.format( 'YYYY-MM-DD' );
 
 			return (
-				<>
+				<React.Fragment key={ site.ID }>
 					{ ( 0 === index || sitesSorted[ index - 1 ].periodEnd !== site.periodEnd ) && (
 						<DatePicker period={ period } date={ date } />
 					) }
 					<SiteOverview
-						key={ site.ID }
 						siteId={ site.ID }
 						period={ period }
 						date={ date }
@@ -90,7 +88,7 @@ class StatsOverview extends Component {
 						title={ site.title }
 						siteSlug={ site.slug }
 					/>
-				</>
+				</React.Fragment>
 			);
 		} );
 
