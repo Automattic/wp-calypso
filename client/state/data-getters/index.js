@@ -112,18 +112,19 @@ export const requestGutenbergDraftPost = siteId =>
 			},
 			{}
 		),
-		{
-			formApi: () => ( { ID } ) => [ [ `gutenberg-draft-post-${ siteId }`, ID ] ],
-		}
+		{ formApi: () => ( { ID } ) => [ [ `gutenberg-draft-post-${ siteId }`, ID ] ] }
 	);
 
 export const requestSitePost = ( siteId, postId ) =>
 	requestHttpData(
 		`gutenberg-site-${ siteId }-post-${ postId }`,
-		http( {
-			path: `/sites/${ siteId }/posts/${ postId }?context=edit`,
-			method: 'GET',
-			apiNamespace: 'wp/v2',
-		} ),
+		http(
+			{
+				path: `/sites/${ siteId }/posts/${ postId }?context=edit`,
+				method: 'GET',
+				apiNamespace: 'wp/v2',
+			},
+			{}
+		),
 		{ fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ] }
 	);
