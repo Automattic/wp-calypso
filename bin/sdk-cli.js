@@ -22,10 +22,10 @@ const calleeScript = path.basename( process.argv[ 1 ] );
 const scriptName =
 	calleeScript === path.basename( __filename ) ? 'npm run sdk' : calleeScript;
 const delimit = scriptName.substring( 0, 3 ) === 'npm' ? '-- ' : '';
-const __rootDir = path.resolve( __dirname, '..' );
+const calypsoRoot = path.resolve( __dirname, '..' );
 
 const getBaseConfig = ( options = {} ) => {
-	const getConfig = require( path.join( __rootDir, 'webpack.config.js' ) );
+	const getConfig = require( path.join( calypsoRoot, 'webpack.config.js' ) );
 	const config = getConfig( options );
 
 	// these are currently Calypso-specific
@@ -43,7 +43,7 @@ const getBaseConfig = ( options = {} ) => {
 };
 
 const build = ( target, argv ) => {
-	const config = target.config( { argv, getBaseConfig, __rootDir } );
+	const config = target.config( { argv, getBaseConfig, calypsoRoot } );
 	const compiler = webpack( config );
 
 	// watch takes an additional argument, adjust accordingly
