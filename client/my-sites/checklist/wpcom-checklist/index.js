@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import Checklist from 'components/checklist';
 import ChecklistBanner from './checklist-banner';
-import ChecklistBannerTask from './checklist-banner-task';
+import ChecklistBannerTask from './checklist-banner/task';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QueryPosts from 'components/data/query-posts';
 import QuerySiteChecklist from 'components/data/query-site-checklist';

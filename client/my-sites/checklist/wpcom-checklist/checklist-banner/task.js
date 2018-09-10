@@ -32,8 +32,6 @@ class ChecklistBannerTask extends PureComponent {
 		const { bannerImageSrc, description, onClick, siteSlug, title, translate } = this.props;
 		const { buttonText = translate( 'Do it!' ) } = this.props;
 
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 		return (
 			<>
 				<div className="checklist-banner__content">

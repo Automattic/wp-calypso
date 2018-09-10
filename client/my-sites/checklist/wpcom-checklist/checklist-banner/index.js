@@ -64,8 +64,6 @@ export class ChecklistBanner extends Component {
 		return true;
 	}
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 	render() {
 		const { translate } = this.props;
 
