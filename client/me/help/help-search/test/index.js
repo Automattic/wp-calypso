@@ -15,8 +15,6 @@ import { shallow } from 'enzyme';
 
 import { HelpSearch } from '../';
 
-jest.mock( '', () => ( {} ) );
-
 const defaultProps = {
 	translate: x => x,
 	fetchSearchResults: jest.fn(),
