@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
  */
 import afterLayoutFlush from 'lib/after-layout-flush';
 import QueryPosts from 'components/data/query-posts';
+import QueryPostsViews from 'components/data/query-stats-posts-views';
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -208,6 +209,7 @@ class PostTypeList extends Component {
 		const { query, siteId, isRequestingPosts, translate } = this.props;
 		const { maxRequestedPage } = this.state;
 		const posts = this.props.posts || [];
+		const postIds = posts.map( post => post.ID );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
@@ -225,6 +227,7 @@ class PostTypeList extends Component {
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
+				{ postIds.length && <QueryPostsViews siteId={ siteId } postIds={ postIds } num={ 30 } /> }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
 					<UpgradeNudge
