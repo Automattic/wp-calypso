@@ -5,7 +5,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { BlockControls, PlainText } from '@wordpress/editor';
-import { Toolbar } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 
 /**
@@ -18,19 +17,8 @@ import MarkdownRenderer from './components/markdown-renderer';
  */
 const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
-const MODE_CONTROLS = [
-	{
-		icon: 'editor-code',
-		title: __( 'Markdown' ),
-		mode: PANEL_EDITOR,
-	},
-	{
-		icon: 'editor-kitchensink',
-		title: __( 'Preview' ),
-		mode: PANEL_PREVIEW,
-	},
-];
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 class JetpackMarkdownBlockEditor extends Component {
 	state = {
 		activePanel: PANEL_EDITOR,
@@ -44,6 +32,19 @@ class JetpackMarkdownBlockEditor extends Component {
 	updateSource = source => this.props.setAttributes( { source } );
 
 	toggleMode = mode => () => this.setState( { activePanel: mode } );
+
+	renderToolbarButton( mode, label ) {
+		const { activePanel } = this.state;
+
+		return (
+			<button
+				className={ `components-tab-button ${ activePanel === mode ? 'is-active' : '' }` }
+				onClick={ this.toggleMode( mode ) }
+			>
+				<span>{ label }</span>
+			</button>
+		);
+	}
 
 	render() {
 		const { attributes, className, isSelected } = this.props;
@@ -79,19 +80,16 @@ class JetpackMarkdownBlockEditor extends Component {
 		return (
 			<div className={ className }>
 				<BlockControls>
-					<Toolbar
-						controls={ MODE_CONTROLS.map( ( { icon, mode, title } ) => ( {
-							icon,
-							isActive: this.state.activePanel === mode,
-							onClick: this.toggleMode( mode ),
-							title,
-						} ) ) }
-					/>
+					<div className="components-toolbar">
+						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Markdown' ) ) }
+						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview' ) ) }
+					</div>
 				</BlockControls>
 				{ editorOrPreviewPanel.call( this ) }
 			</div>
 		);
 	}
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default JetpackMarkdownBlockEditor;
