@@ -51,6 +51,8 @@ import { canDisplayCommunityTranslator } from 'components/community-translator/u
 import { ENABLE_TRANSLATOR_KEY } from 'components/community-translator/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
+import UseDataStore from 'state/wp-data/use-data-store';
+import preferences from 'state/preferences';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -771,6 +773,7 @@ const Account = createReactClass( {
 
 		return (
 			<Main className="account">
+				<UseDataStore dataStore={ preferences } />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />

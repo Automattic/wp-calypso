@@ -3,37 +3,25 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { createRegistry, RegistryProvider } from '@wordpress/data';
+import { RegistryProvider } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import internalsPlugin from './plugins/internals-plugin';
-import customStorePlugin from './plugins/custom-store-plugin';
-import { registerStores } from './calypso-stores';
+import registry, { updateCalypsoStore } from './registry';
 
 class CalypsoWPDataProvider extends Component {
 	constructor( props ) {
 		super( ...arguments );
-		this.updateRegistry( props.calypsoStore );
+		updateCalypsoStore( props.calypsoStore );
 	}
 
-	updateRegistry( calypsoStore ) {
-		this.registry = createRegistry()
-			.use( internalsPlugin )
-			.use( customStorePlugin );
-
-		registerStores( this.registry, calypsoStore );
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.calypsoStore !== this.props.calypsoStore ) {
-			this.updateRegistry( this.props.calypsoStore );
-		}
+	componentDidUpdate() {
+		updateCalypsoStore( this.props.calypsoStore );
 	}
 
 	render() {
-		return <RegistryProvider value={ this.registry }>{ this.props.children }</RegistryProvider>;
+		return <RegistryProvider value={ registry }>{ this.props.children }</RegistryProvider>;
 	}
 }
 
