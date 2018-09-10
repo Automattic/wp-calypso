@@ -33,7 +33,7 @@ const query = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 class WpcomChecklist extends PureComponent {
 	static propTypes = {
 		createNotice: PropTypes.func.isRequired,
-		designType: PropTypes.string,
+		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio' ] ),
 		loadTrackingTool: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestGuidedTour: PropTypes.func.isRequired,
