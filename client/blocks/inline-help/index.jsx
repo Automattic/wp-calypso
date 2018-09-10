@@ -66,6 +66,7 @@ class InlineHelp extends Component {
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
+
 		this.shouldShowChecklistNotification();
 	}
 
@@ -202,7 +203,6 @@ class InlineHelp extends Component {
 
 	render() {
 		const { translate, siteId, showChecklistNotification } = this.props;
-
 		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
