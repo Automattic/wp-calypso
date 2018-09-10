@@ -29,7 +29,7 @@ class ChecklistBannerTask extends PureComponent {
 			return null;
 		}
 
-		const { description, onClick, siteSlug, title, translate } = this.props;
+		const { bannerImageSrc, description, onClick, siteSlug, title, translate } = this.props;
 		const { buttonText = translate( 'Do it!' ) } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -53,7 +53,7 @@ class ChecklistBannerTask extends PureComponent {
 							) ) }
 					</div>
 				</div>
-				{ this.props.bannerImageSrc && (
+				{ bannerImageSrc && (
 					<img
 						alt=""
 						aria-hidden="true"
