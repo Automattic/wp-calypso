@@ -4,6 +4,7 @@
 @import 'shipping-zone/style';
 @import 'shipping-classes';
 
+.shipping__table-header,
 .shipping__zones-header {
 	font-weight: 600;
 }
@@ -136,7 +137,7 @@
 }
 
 // Specific shipping-zones table elements
-.shipping__zones:last-child {
+.shipping__zones-row:last-child {
 	background: lighten( $gray, 35% );
 }
 
