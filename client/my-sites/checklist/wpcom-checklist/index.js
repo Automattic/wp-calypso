@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { compact, get } from 'lodash';
+import { compact, find, get } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
