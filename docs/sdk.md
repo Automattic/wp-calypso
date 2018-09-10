@@ -76,12 +76,12 @@ const path = require( 'path' );
 exports.config = ( {
 	{ argv: { outputDir },
 	getBaseConfig,
-	__rootDir,
+	calypsoRoot,
 } ) => {
 	const baseConfig = getBaseConfig();
 	return {
 		...baseConfig,
-		entry: path.join( __rootDir, 'client', 'example' ),
+		entry: path.join( calypsoRoot, 'client', 'example' ),
 		output: {
 			path: outputDir,
 			filename: 'example-build.js',
