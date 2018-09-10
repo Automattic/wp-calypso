@@ -4,9 +4,13 @@ exports[`HelpSearch should render  1`] = `
 <div
   className="help-search"
 >
+  <Connect(QueryHelpLinks)
+    query=""
+  />
   <SearchCard
     analyticsGroup="Help"
     delaySearch={true}
+    initialValue=""
     onSearch={[Function]}
     placeholder="How can we help?"
   />

@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
@@ -12,40 +11,30 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HelpSearchStore from 'lib/help-search/store';
-import HelpSearchActions from 'lib/help-search/actions';
+import CompactCard from 'components/card/compact';
+import getHelpLinks from 'state/selectors/get-help-links';
 import HelpResults from 'me/help/help-results';
 import NoResults from 'my-sites/no-results';
+import QueryHelpLinks from 'components/data/query-help-links';
 import SearchCard from 'components/search-card';
-import CompactCard from 'components/card/compact';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { getForumUrl } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class HelpSearch extends React.PureComponent {
-	static displayName = 'HelpSearch';
-
 	state = {
-		helpLinks: {},
 		searchQuery: '',
 	};
 
-	componentDidMount() {
-		HelpSearchStore.on( 'change', this.refreshHelpLinks );
-	}
-
-	componentWillUnmount() {
-		HelpSearchStore.removeListener( 'change', this.refreshHelpLinks );
-	}
-
-	refreshHelpLinks = () => this.setState( { helpLinks: HelpSearchStore.getHelpLinks() } );
-
 	onSearch = searchQuery => {
-		this.setState( { helpLinks: {}, searchQuery: searchQuery } );
-		this.props.fetchSearchResults( searchQuery );
+		this.setState( {
+			searchQuery,
+		} );
+		this.props.recordTracksEvent( 'calypso_help_search', { query: searchQuery } );
 	};
 
 	displaySearchResults = () => {
-		const { searchQuery, helpLinks } = this.state;
+		const { searchQuery } = this.state;
+		const { helpLinks, translate } = this.props;
 
 		if ( isEmpty( searchQuery ) ) {
 			return null;
@@ -81,7 +70,7 @@ export class HelpSearch extends React.PureComponent {
 			return (
 				<CompactCard className="help-search__no-results">
 					<NoResults
-						text={ this.props.translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', {
+						text={ translate( 'No results found for {{em}}%(searchQuery)s{{/em}}', {
 							args: { searchQuery },
 							components: { em: <em /> },
 						} ) }
@@ -97,23 +86,23 @@ export class HelpSearch extends React.PureComponent {
 		return (
 			<div>
 				<HelpResults
-					header={ this.props.translate( 'WordPress.com Documentation' ) }
+					footer={ translate( 'See more from WordPress.com Documentation…' ) }
+					header={ translate( 'WordPress.com Documentation' ) }
 					helpLinks={ helpLinks.wordpress_support_links }
-					footer={ this.props.translate( 'See more from WordPress.com Documentation…' ) }
 					iconTypeDescription="book"
 					searchLink={ 'https://en.support.wordpress.com?s=' + searchQuery }
 				/>
 				<HelpResults
-					header={ this.props.translate( 'Community Answers' ) }
+					footer={ translate( 'See more from Community Forum…' ) }
+					header={ translate( 'Community Answers' ) }
 					helpLinks={ helpLinks.wordpress_forum_links_localized || helpLinks.wordpress_forum_links }
-					footer={ this.props.translate( 'See more from Community Forum…' ) }
 					iconTypeDescription="comment"
 					searchLink={ `${ forumBaseUrl }/search/${ searchQuery }` }
 				/>
 				<HelpResults
-					header={ this.props.translate( 'Jetpack Documentation' ) }
+					footer={ translate( 'See more from Jetpack Documentation…' ) }
+					header={ translate( 'Jetpack Documentation' ) }
 					helpLinks={ helpLinks.jetpack_support_links }
-					footer={ this.props.translate( 'See more from Jetpack Documentation…' ) }
 					iconTypeDescription="jetpack"
 					searchLink="https://jetpack.me/support/"
 				/>
@@ -122,14 +111,17 @@ export class HelpSearch extends React.PureComponent {
 	};
 
 	render() {
+		const { searchQuery } = this.state;
+
 		return (
 			<div className="help-search">
+				<QueryHelpLinks query={ searchQuery } />
 				<SearchCard
-					onSearch={ this.onSearch }
-					initialValue={ this.props.search }
-					placeholder={ this.props.translate( 'How can we help?' ) }
 					analyticsGroup="Help"
 					delaySearch={ true }
+					initialValue=""
+					onSearch={ this.onSearch }
+					placeholder={ this.props.translate( 'How can we help?' ) }
 				/>
 				{ this.displaySearchResults() }
 			</div>
@@ -138,11 +130,10 @@ export class HelpSearch extends React.PureComponent {
 }
 
 export default connect(
-	null,
-	dispatch => ( {
-		fetchSearchResults: searchQuery => {
-			dispatch( recordTracksEvent( 'calypso_help_search', { query: searchQuery } ) );
-			HelpSearchActions.fetch( searchQuery );
-		},
-	} )
+	state => ( {
+		helpLinks: getHelpLinks( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
 )( localize( HelpSearch ) );

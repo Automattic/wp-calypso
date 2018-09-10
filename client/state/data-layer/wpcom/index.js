@@ -13,6 +13,7 @@ import comments from './comments';
 import concierge from './concierge';
 import domains from './domains';
 import gravatarUpload from './gravatar-upload';
+import helpSearch from './help/search';
 import i18n from './i18n';
 import jetpackConnectionOwner from './jetpack/connection/owner';
 import jetpackInstall from './jetpack-install';
@@ -40,6 +41,7 @@ export const handlers = mergeHandlers(
 	concierge,
 	domains,
 	gravatarUpload,
+	helpSearch,
 	i18n,
 	jetpackConnectionOwner,
 	jetpackInstall,
