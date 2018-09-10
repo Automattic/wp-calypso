@@ -150,7 +150,6 @@ class ShippingClassDialog extends Component {
 
 	onSave = () => {
 		const {
-			existingNames,
 			existingSlugs,
 			siteId,
 			translate,
@@ -160,22 +159,8 @@ class ShippingClassDialog extends Component {
 		} = this.props;
 
 		const slugToUse = this.getSlugToDisplay();
-		const noticeId = `shipping-class-error-${ id }`;
 
-		// Check if the name is free
-		if ( -1 !== existingNames.indexOf( name ) ) {
-			const text = translate(
-				'There was a problem saving %(name)s. A shipping class with this name already exists.',
-				{
-					args: { name },
-				}
-			);
-
-			return this.props.errorNotice( text, {
-				id: noticeId,
-			} );
-		}
-
+		// Check if the slug is free
 		if ( -1 !== existingSlugs.indexOf( slugToUse ) ) {
 			const text = translate(
 				'There was a problem saving %(name)s. A shipping class with this slug already exists.',
@@ -185,7 +170,7 @@ class ShippingClassDialog extends Component {
 			);
 
 			return this.props.errorNotice( text, {
-				id: noticeId,
+				id: `shipping-class-error-${ id }`,
 			} );
 		}
 
@@ -211,7 +196,6 @@ export default connect(
 			siteId,
 			data,
 			isNew: isCurrentlyOpenShippingClassNew( state, siteId ),
-			existingNames: getUsedShippingClassProps( state, 'name', data.id, siteId ),
 			existingSlugs: getUsedShippingClassProps( state, 'slug', data.id, siteId ),
 		};
 	},
