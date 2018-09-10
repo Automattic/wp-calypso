@@ -36,11 +36,12 @@ export default class Checklist extends PureComponent {
 
 	calculateCompletion() {
 		const { children } = this.props;
-		const completedCount = Children.toArray( children ).reduce(
+		const childrenArray = Children.toArray( children );
+		const completedCount = childrenArray.reduce(
 			( count, task ) => ( true === task.props.completed ? count + 1 : count ),
 			0
 		);
-		const total = Children.count( children );
+		const total = childrenArray.length;
 		return [ completedCount, total ];
 	}
 
