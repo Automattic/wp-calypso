@@ -16,19 +16,33 @@ import { StrictMode } from '@wordpress/element';
 import Layout from './components/layout';
 import './store';
 
-function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
-	if ( ! post ) {
+function Editor( {
+	                 settings,
+	                 hasFixedToolbar,
+	                 focusMode,
+	                 post,
+	                 overridePost,
+	                 onError,
+	                 ...props
+                 } ) {
+
+	if ( ! post && ! overridePost ) {
 		return null;
 	}
 
 	const editorSettings = {
 		...settings,
 		hasFixedToolbar,
+		focusMode,
 	};
 
 	return (
 		<StrictMode>
-			<EditorProvider settings={ editorSettings } post={ { ...post, ...overridePost } } { ...props }>
+			<EditorProvider
+				settings={ editorSettings }
+				post={ { ...post, ...overridePost } }
+				{ ...props }
+			>
 				<ErrorBoundary onError={ onError }>
 					<Layout />
 				</ErrorBoundary>
@@ -37,7 +51,8 @@ function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...pr
 	);
 }
 
-
-export default withSelect( ( select ) => ( {
+export default withSelect( ( select, { postId, postType } ) => ( {
 	hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
+	focusMode: select( 'core/edit-post' ).isFeatureActive( 'focusMode' ),
+	post: select( 'core' ).getEntityRecord( 'postType', postType, postId ),
 } ) )( Editor );
