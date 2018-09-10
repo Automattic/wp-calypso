@@ -251,7 +251,7 @@ class SelectDropdown extends Component {
 						className="select-dropdown__header"
 					>
 						<span className="select-dropdown__header-text">
-							{ selectedIcon && selectedIcon.type === Gridicon ? selectedIcon : null }
+							{ selectedIcon }
 							{ selectedText }
 						</span>
 						{ 'number' === typeof this.props.selectedCount && (
