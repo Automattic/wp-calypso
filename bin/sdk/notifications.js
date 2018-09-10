@@ -6,12 +6,12 @@ const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const path = require( 'path' );
 const spawnSync = require( 'child_process' ).spawnSync;
 
-exports.config = ( { argv: { outputDir }, getBaseConfig, __rootDir } ) => {
+exports.config = ( { argv: { outputDir }, getBaseConfig, calypsoRoot } ) => {
 	const baseConfig = getBaseConfig();
 
 	return {
 		...baseConfig,
-		entry: path.join( __rootDir, 'client', 'notifications', 'src', 'standalone' ),
+		entry: path.join( calypsoRoot, 'client', 'notifications', 'src', 'standalone' ),
 		node: {
 			fs: 'empty',
 		},
@@ -29,7 +29,7 @@ exports.config = ( { argv: { outputDir }, getBaseConfig, __rootDir } ) => {
 				hash: true,
 				nodePlatform: process.platform,
 				nodeVersion: process.version,
-				template: path.join( __rootDir, 'client', 'notifications', 'src', 'index.ejs' ),
+				template: path.join( calypsoRoot, 'client', 'notifications', 'src', 'index.ejs' ),
 			} ),
 		],
 	};
