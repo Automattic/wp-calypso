@@ -150,32 +150,43 @@ class ShippingClassDialog extends Component {
 
 	onSave = () => {
 		const {
-			occupiedNames,
-			occupiedSlugs,
+			existingNames,
+			existingSlugs,
 			siteId,
 			translate,
-			data: { name, slug },
+			data: { id, name, slug },
 			updateFieldValue,
 			save,
 		} = this.props;
 
 		const slugToUse = this.getSlugToDisplay();
+		const noticeId = `shipping-class-error-${ id }`;
 
 		// Check if the name is free
-		if ( -1 !== occupiedNames.indexOf( name ) ) {
-			return this.props.errorNotice(
-				translate( 'The name "%(name)s" is already occupied.', {
+		if ( -1 !== existingNames.indexOf( name ) ) {
+			const text = translate(
+				'There was a problem saving %(name)s. A shipping class with this name already exists.',
+				{
 					args: { name },
-				} )
+				}
 			);
+
+			return this.props.errorNotice( text, {
+				id: noticeId,
+			} );
 		}
 
-		if ( -1 !== occupiedSlugs.indexOf( slugToUse ) ) {
-			return this.props.errorNotice(
-				translate( 'The slug "%(slug)s" is already occupied.', {
-					args: { slugToUse },
-				} )
+		if ( -1 !== existingSlugs.indexOf( slugToUse ) ) {
+			const text = translate(
+				'There was a problem saving %(name)s. A shipping class with this slug already exists.',
+				{
+					args: { name },
+				}
 			);
+
+			return this.props.errorNotice( text, {
+				id: noticeId,
+			} );
 		}
 
 		// If there is no slug, use the generated one
@@ -200,8 +211,8 @@ export default connect(
 			siteId,
 			data,
 			isNew: isCurrentlyOpenShippingClassNew( state, siteId ),
-			occupiedNames: getUsedShippingClassProps( state, 'name', data.id, siteId ),
-			occupiedSlugs: getUsedShippingClassProps( state, 'slug', data.id, siteId ),
+			existingNames: getUsedShippingClassProps( state, 'name', data.id, siteId ),
+			existingSlugs: getUsedShippingClassProps( state, 'slug', data.id, siteId ),
 		};
 	},
 	dispatch =>
