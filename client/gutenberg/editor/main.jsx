@@ -15,7 +15,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import Editor from './edit-post/editor.js';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { WithAPIMiddleware } from './utils';
+import { WithAPIMiddleware } from './api-middleware/utils';
 
 const editorSettings = {};
 
