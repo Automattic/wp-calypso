@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCreditCard from 'gridicons/dist/credit-card';
 import { snakeCase } from 'lodash';
 
 /**
@@ -49,7 +49,7 @@ export class PaymentBox extends PureComponent {
 
 		switch ( method ) {
 			case 'credit-card':
-				labelLogo = <Gridicon icon="credit-card" className="checkout__credit-card" />;
+				labelLogo = <GridiconCreditCard className="checkout__credit-card" />;
 				labelAdditionalText = paymentMethodName( method );
 				break;
 			case 'emergent-paywall':

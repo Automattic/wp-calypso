@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -54,7 +54,7 @@ const JetpackConnectHappychatButton = ( {
 			onClick={ getHappyChatButtonClickHandler( eventName ) }
 		>
 			<HappychatConnection />
-			<Gridicon icon="chat" size={ 18 } /> { label || translate( 'Get help setting up Jetpack' ) }
+			<GridiconChat size={ 18 } /> { label || translate( 'Get help setting up Jetpack' ) }
 		</HappychatButton>
 	);
 };

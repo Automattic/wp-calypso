@@ -12,7 +12,8 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
+import GridiconExternal from 'gridicons/dist/external';
 
 class VerticalNavItem extends Component {
 	static propTypes = {
@@ -58,10 +59,10 @@ class VerticalNavItem extends Component {
 
 	getIcon = () => {
 		if ( this.props.external ) {
-			return <Gridicon icon="external" />;
+			return <GridiconExternal />;
 		}
 
-		return <Gridicon icon="chevron-right" />;
+		return <GridiconChevronRight />;
 	};
 }
 

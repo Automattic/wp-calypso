@@ -11,7 +11,10 @@ import classNames from 'classnames';
 import { flowRight, get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
+import GridiconChevronLeft from 'gridicons/dist/chevron-left';
+import GridiconRefresh from 'gridicons/dist/refresh';
+import GridiconPencil from 'gridicons/dist/pencil';
 
 /**
  * Internal dependencies
@@ -139,7 +142,7 @@ export class EditorMediaModalDetailItem extends Component {
 				onClick={ onEdit }
 				disabled={ isItemBeingUploaded( item ) }
 			>
-				<Gridicon icon="pencil" size={ 36 } /> { editText }
+				<GridiconPencil size={ 36 } /> { editText }
 			</Button>
 		);
 	}
@@ -166,7 +169,7 @@ export class EditorMediaModalDetailItem extends Component {
 				onClick={ this.handleOnRestoreClick }
 				disabled={ isItemBeingUploaded( item ) }
 			>
-				<Gridicon icon="refresh" size={ 36 } />
+				<GridiconRefresh size={ 36 } />
 				{ translate( 'Restore Original' ) }
 			</Button>
 		);
@@ -230,7 +233,7 @@ export class EditorMediaModalDetailItem extends Component {
 
 		return (
 			<button onClick={ onShowPreviousItem } className="editor-media-modal-detail__previous">
-				<Gridicon icon="chevron-left" size={ 36 } />
+				<GridiconChevronLeft size={ 36 } />
 				<span className="screen-reader-text">{ translate( 'Previous' ) }</span>
 			</button>
 		);
@@ -245,7 +248,7 @@ export class EditorMediaModalDetailItem extends Component {
 
 		return (
 			<button onClick={ onShowNextItem } className="editor-media-modal-detail__next">
-				<Gridicon icon="chevron-right" size={ 36 } />
+				<GridiconChevronRight size={ 36 } />
 				<span className="screen-reader-text">{ translate( 'Next' ) }</span>
 			</button>
 		);

@@ -9,7 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCloudUpload from 'gridicons/dist/cloud-upload';
 import { localize } from 'i18n-calypso';
 import { identity, includes, noop, without } from 'lodash';
 
@@ -41,7 +41,7 @@ export class DropZone extends React.Component {
 		onVerifyValidTransfer: () => true,
 		onFilesDrop: noop,
 		fullScreen: false,
-		icon: <Gridicon icon="cloud-upload" size={ 48 } />,
+		icon: <GridiconCloudUpload size={ 48 } />,
 		translate: identity,
 		dropZoneName: null,
 	};

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconHelpOutline from 'gridicons/dist/help-outline';
 
 /**
  * Internal dependencies
@@ -76,7 +76,7 @@ class InlineSupportLink extends Component {
 				{ ...externalLinkProps }
 			>
 				{ showText && ( text || translate( 'Learn more' ) ) }
-				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
+				{ supportPostId && showIcon && <GridiconHelpOutline size={ iconSize } /> }
 			</LinkComponent>
 		);
 	}

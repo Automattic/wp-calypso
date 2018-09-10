@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconEllipsis from 'gridicons/dist/ellipsis';
 
 /**
  * Internal dependencies
@@ -90,7 +90,7 @@ class EllipsisMenu extends Component {
 					disabled={ disabled }
 					className="ellipsis-menu__toggle"
 				>
-					<Gridicon icon="ellipsis" className="ellipsis-menu__toggle-icon" />
+					<GridiconEllipsis className="ellipsis-menu__toggle-icon" />
 				</Button>
 				<PopoverMenu
 					isVisible={ isMenuVisible }

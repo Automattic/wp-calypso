@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:stats:action-spam' );
  */
 import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import GridiconSpam from 'gridicons/dist/spam';
 
 class StatsActionSpam extends React.Component {
 	static displayName = 'StatsActionSpam';
@@ -77,7 +77,7 @@ class StatsActionSpam extends React.Component {
 					title={ title }
 					aria-label={ title }
 				>
-					<Gridicon icon="spam" size={ 18 } />
+					<GridiconSpam size={ 18 } />
 					<span className="module-content-list-item-action-label">{ label }</span>
 				</a>
 			</li>

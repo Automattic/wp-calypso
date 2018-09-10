@@ -11,6 +11,8 @@ import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
+import GridiconCross from 'gridicons/dist/cross';
+
 export class Notice extends Component {
 	static defaultProps = {
 		className: '',
@@ -115,7 +117,7 @@ export class Notice extends Component {
 				{ text ? children : null }
 				{ showDismiss && (
 					<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick }>
-						<Gridicon icon="cross" size={ 24 } />
+						<GridiconCross size={ 24 } />
 						<span className="notice__screen-reader-text screen-reader-text">
 							{ translate( 'Dismiss' ) }
 						</span>

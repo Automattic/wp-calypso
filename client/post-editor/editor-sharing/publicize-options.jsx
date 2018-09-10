@@ -8,7 +8,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { includes, map } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
+import GridiconAdd from 'gridicons/dist/add';
 
 /**
  * Internal dependencies
@@ -125,9 +126,9 @@ class EditorSharingPublicizeOptions extends React.Component {
 
 		return (
 			<Button borderless compact onClick={ this.newConnection }>
-				<Gridicon icon="add" /> { this.props.translate( 'Connect new service' ) }
+				<GridiconAdd /> { this.props.translate( 'Connect new service' ) }
 				<span className="editor-sharing__external-link-indicator">
-					<Gridicon icon="external" size={ 18 } />
+					<GridiconExternal size={ 18 } />
 				</span>
 			</Button>
 		);

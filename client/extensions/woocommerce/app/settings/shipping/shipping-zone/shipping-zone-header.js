@@ -6,7 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { isNumber } from 'lodash';
@@ -50,7 +50,7 @@ const ShippingZoneHeader = ( {
 		<ActionHeader breadcrumbs={ breadcrumbs } primaryLabel={ translate( 'Save' ) }>
 			{ showDelete && (
 				<Button borderless scary onClick={ onDelete } disabled={ isSaving }>
-					<Gridicon icon="trash" />
+					<GridiconTrash />
 					{ translate( 'Delete' ) }
 				</Button>
 			) }

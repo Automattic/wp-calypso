@@ -6,7 +6,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCog from 'gridicons/dist/cog';
+import GridiconListUnordered from 'gridicons/dist/list-unordered';
 
 /**
  * Internal dependencies
@@ -35,7 +36,7 @@ const ListStreamHeader = ( {
 	return (
 		<Card className={ classes }>
 			<span className="list-stream__header-icon">
-				<Gridicon icon="list-unordered" size={ 24 } />
+				<GridiconListUnordered size={ 24 } />
 			</span>
 
 			<div className="list-stream__header-details">
@@ -54,7 +55,7 @@ const ListStreamHeader = ( {
 					<div className="list-stream__header-edit">
 						<a href={ editUrl } rel={ isExternal( editUrl ) ? 'external' : '' }>
 							<span className="list-stream__header-action-icon">
-								<Gridicon icon="cog" size={ 24 } />
+								<GridiconCog size={ 24 } />
 							</span>
 							<span className="list-stream__header-action-label">{ translate( 'Edit' ) }</span>
 						</a>

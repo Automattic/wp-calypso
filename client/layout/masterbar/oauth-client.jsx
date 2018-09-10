@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import Gridicon from 'gridicons';
+import GridiconMySites from 'gridicons/dist/my-sites';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -39,7 +39,7 @@ const OauthClientMasterbar = ( { oauth2Client } ) => (
 							className="masterbar__oauth-client-wpcom"
 							target="_self"
 						>
-							<Gridicon icon="my-sites" size={ 24 } />
+							<GridiconMySites size={ 24 } />
 							WordPress.com
 						</a>
 					</li>

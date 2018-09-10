@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -255,7 +255,7 @@ class DeleteUser extends React.Component {
 		return (
 			<CompactCard className="delete-user__multisite">
 				<a className="delete-user__remove-user" onClick={ this.removeUser }>
-					<Gridicon icon="trash" />
+					<GridiconTrash />
 					{ this.getRemoveText() }
 				</a>
 			</CompactCard>

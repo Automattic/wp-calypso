@@ -10,7 +10,7 @@ import createReactClass from 'create-react-class';
 import { reject } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCart from 'gridicons/dist/cart';
 
 /**
  * Internal dependencies
@@ -71,7 +71,7 @@ const PopoverCart = createReactClass( {
 				<div className={ classes }>
 					<button className="cart-toggle-button" ref="toggleButton" onClick={ this.onToggle }>
 						<div className="popover-cart__label">{ this.props.translate( 'Cart' ) }</div>
-						<Gridicon icon="cart" size={ 24 } />
+						<GridiconCart size={ 24 } />
 						{ countBadge }
 					</button>
 				</div>

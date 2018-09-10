@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
@@ -48,7 +48,7 @@ export class ChecklistHeader extends PureComponent {
 						onClick={ this.props.onClick }
 					>
 						<ScreenReaderText>{ buttonText }</ScreenReaderText>
-						<Gridicon icon="chevron-down" />
+						<GridiconChevronDown />
 					</button>
 				</div>
 			</Card>

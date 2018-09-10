@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
 
@@ -504,7 +504,7 @@ class RemovePurchase extends Component {
 		return (
 			<Fragment>
 				<CompactCard tagName="button" className="remove-purchase__card" onClick={ this.openDialog }>
-					<Gridicon icon="trash" />
+					<GridiconTrash />
 					{ translate( 'Remove %(productName)s', { args: { productName } } ) }
 				</CompactCard>
 

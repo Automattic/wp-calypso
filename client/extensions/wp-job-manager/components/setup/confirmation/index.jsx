@@ -6,7 +6,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconHelp from 'gridicons/dist/help';
+import GridiconCog from 'gridicons/dist/cog';
+import GridiconGlobe from 'gridicons/dist/globe';
+import GridiconStar from 'gridicons/dist/star';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -102,10 +105,10 @@ const Confirmation = ( { slug, translate } ) => (
 					components: {
 						ul: <ul className="confirmation__support" />,
 						li: <li />,
-						star: <Gridicon icon="star" size={ 18 } />,
-						globe: <Gridicon icon="globe" size={ 18 } />,
-						cog: <Gridicon icon="cog" size={ 18 } />,
-						help: <Gridicon icon="help" size={ 18 } />,
+						star: <GridiconStar size={ 18 } />,
+						globe: <GridiconGlobe size={ 18 } />,
+						cog: <GridiconCog size={ 18 } />,
+						help: <GridiconHelp size={ 18 } />,
 						review: (
 							<ExternalLink
 								icon={ true }

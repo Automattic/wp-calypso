@@ -7,7 +7,8 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconPencil from 'gridicons/dist/pencil';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -79,11 +80,11 @@ class ReviewReply extends Component {
 		return (
 			<div className="reviews__reply-actions">
 				<Button borderless className="reviews__reply-action-edit" onClick={ this.onEdit }>
-					<Gridicon icon="pencil" size={ 18 } />
+					<GridiconPencil size={ 18 } />
 					<span>{ translate( 'Edit reply' ) }</span>
 				</Button>
 				<Button borderless className="reviews__reply-action-delete" onClick={ this.onDelete }>
-					<Gridicon icon="trash" size={ 18 } />
+					<GridiconTrash size={ 18 } />
 					<span>{ translate( 'Delete reply' ) }</span>
 				</Button>
 			</div>

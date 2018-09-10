@@ -6,7 +6,7 @@
 
 import React, { Fragment } from 'react';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -77,7 +77,7 @@ export const ChecklistUserAvatarTour = makeTour(
 				<Fragment>
 					<h1 className="tours__title">
 						<span className="tours__completed-icon-wrapper">
-							<Gridicon icon="checkmark" className="tours__completed-icon" />
+							<GridiconCheckmark className="tours__completed-icon" />
 						</span>
 						{ translate( 'Well done!' ) }
 					</h1>

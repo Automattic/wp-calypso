@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCrossSmall from 'gridicons/dist/cross-small';
 
 /**
  * Internal dependencies
@@ -51,8 +51,7 @@ export default class extends React.PureComponent {
 				onMouseLeave={ this.props.onMouseLeave }
 			>
 				<span className="token-field__token-text">{ displayTransform( value ) }</span>
-				<Gridicon
-					icon="cross-small"
+				<GridiconCrossSmall
 					size={ 24 }
 					className="token-field__remove-token"
 					onClick={ ! this.props.disabled ? this._onClickRemove : null }

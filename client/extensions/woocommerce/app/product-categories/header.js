@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { isObject } from 'lodash';
 
 /**
@@ -21,7 +21,7 @@ function renderDeleteButton( onDelete, label ) {
 	return (
 		onDelete && (
 			<Button borderless scary onClick={ onDelete ? onDelete : undefined }>
-				<Gridicon icon="trash" />
+				<GridiconTrash />
 				<span>{ label } </span>
 			</Button>
 		)

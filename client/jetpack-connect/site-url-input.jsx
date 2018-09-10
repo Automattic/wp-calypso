@@ -4,7 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconGlobe from 'gridicons/dist/globe';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { noop } from 'lodash';
 
@@ -122,7 +122,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 			<div>
 				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
-					<Gridicon size={ 24 } icon="globe" />
+					<GridiconGlobe size={ 24 } />
 					<FormTextInput
 						ref={ this.refInput }
 						id="siteUrl"

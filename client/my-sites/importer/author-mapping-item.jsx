@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconArrowRight from 'gridicons/dist/arrow-right';
 import { connect } from 'react-redux';
 
 /**
@@ -58,7 +58,7 @@ class ImporterAuthorMapping extends React.Component {
 		return (
 			<div className="importer__author-mapping">
 				<span className="importer__source-author">{ name }</span>
-				<Gridicon className="importer__mapping-relation" icon="arrow-right" />
+				<GridiconArrowRight className="importer__mapping-relation" />
 				{ ! hasSingleAuthor ? (
 					<AuthorSelector siteId={ siteId } onSelect={ onSelect }>
 						<User user={ selectedAuthor } />

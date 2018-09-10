@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconEllipsis from 'gridicons/dist/ellipsis';
 import Item from './item';
 
 const SIDE_PADDING = 50;
@@ -63,7 +63,7 @@ export default class Navbar extends Component {
 				</div>
 				{ this.state.foldable && (
 					<div className="sub-masterbar-nav__switch">
-						<Gridicon icon="ellipsis" className={ ellipsisClass } onClick={ this.toggleList } />
+						<GridiconEllipsis className={ ellipsisClass } onClick={ this.toggleList } />
 					</div>
 				) }
 			</div>

@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconBell from 'gridicons/dist/bell';
 
 /**
  * Internal dependencies
@@ -29,7 +29,7 @@ export default class extends React.PureComponent {
 		return (
 			<div className="notification-settings-form-header">
 				<div className="notification-settings-form-header__title">
-					{ this.props.stream === 'timeline' ? <Gridicon icon="bell" /> : this.renderTitle() }
+					{ this.props.stream === 'timeline' ? <GridiconBell /> : this.renderTitle() }
 				</div>
 			</div>
 		);

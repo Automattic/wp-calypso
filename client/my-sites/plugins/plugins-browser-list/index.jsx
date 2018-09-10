@@ -11,7 +11,7 @@ import { times } from 'lodash';
  */
 import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
 import Card from 'components/card';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
 import SectionHeader from 'components/section-header';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
@@ -73,7 +73,7 @@ class PluginsBrowserList extends Component {
 					href={ this.props.expandedListLink + ( this.props.site || '' ) }
 				>
 					{ this.props.translate( 'See All' ) }
-					<Gridicon icon="chevron-right" size={ 18 } />
+					<GridiconChevronRight size={ 18 } />
 				</a>
 			);
 		}

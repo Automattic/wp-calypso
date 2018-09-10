@@ -16,7 +16,7 @@ import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import { isMultiSelectEnabled, getSelectedPostsCount } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 class PostTypeBulkEditBar extends React.Component {
 	onEdit() {
@@ -52,7 +52,7 @@ class PostTypeBulkEditBar extends React.Component {
 					borderless
 					onClick={ onMultiSelectClick }
 				>
-					<Gridicon icon="cross" />
+					<GridiconCross />
 				</Button>
 			</Card>
 		);

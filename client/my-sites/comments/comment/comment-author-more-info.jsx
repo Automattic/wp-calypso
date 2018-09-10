@@ -6,7 +6,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconGlobe from 'gridicons/dist/globe';
+import GridiconLink from 'gridicons/dist/link';
+import GridiconMail from 'gridicons/dist/mail';
+import GridiconUserCircle from 'gridicons/dist/user-circle';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 import { get } from 'lodash';
 
 /**
@@ -117,7 +121,7 @@ export class CommentAuthorMoreInfo extends Component {
 		return (
 			<div className="comment__author-more-info">
 				<Button borderless onClick={ this.togglePopover } ref={ this.storePopoverButtonRef }>
-					<Gridicon icon="info-outline" size={ 18 } />
+					<GridiconInfoOutline size={ 18 } />
 					{ translate( 'User Info' ) }
 				</Button>
 
@@ -129,7 +133,7 @@ export class CommentAuthorMoreInfo extends Component {
 					position="bottom"
 				>
 					<div className="comment__author-more-info-element">
-						<Gridicon icon="user-circle" />
+						<GridiconUserCircle />
 						<div>
 							<div>
 								<strong>{ authorDisplayName || translate( 'Anonymous' ) }</strong>
@@ -139,7 +143,7 @@ export class CommentAuthorMoreInfo extends Component {
 					</div>
 
 					<div className="comment__author-more-info-element">
-						<Gridicon icon="mail" />
+						<GridiconMail />
 						<div>
 							{ !! authorEmail && (
 								<ExternalLink href={ `mailto:${ authorEmail }` }>{ authorEmail }</ExternalLink>
@@ -149,7 +153,7 @@ export class CommentAuthorMoreInfo extends Component {
 					</div>
 
 					<div className="comment__author-more-info-element">
-						<Gridicon icon="link" />
+						<GridiconLink />
 						<div>
 							{ !! authorUrl && (
 								<ExternalLink href={ authorUrl }>
@@ -161,7 +165,7 @@ export class CommentAuthorMoreInfo extends Component {
 					</div>
 
 					<div className="comment__author-more-info-element">
-						<Gridicon icon="globe" />
+						<GridiconGlobe />
 						<div>{ authorIp || <em>{ translate( 'No IP address' ) }</em> }</div>
 					</div>
 

@@ -7,7 +7,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal Dependencies
@@ -81,7 +81,7 @@ class NavItem extends PureComponent {
 							<Count count={ this.props.count } compact={ this.props.compactCount } />
 						) }
 					</span>
-					{ this.props.isExternalLink ? <Gridicon icon="external" size={ 18 } /> : null }
+					{ this.props.isExternalLink ? <GridiconExternal size={ 18 } /> : null }
 				</a>
 			</li>
 		);

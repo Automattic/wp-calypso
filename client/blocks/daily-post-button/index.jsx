@@ -8,7 +8,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { get, defer } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCreate from 'gridicons/dist/create';
 import { connect } from 'react-redux';
 
 /**
@@ -174,7 +174,7 @@ export class DailyPostButton extends React.Component {
 					primary
 					className={ buttonClasses }
 				>
-					<Gridicon icon="create" />
+					<GridiconCreate />
 					<span>{ translate( 'Post about %(title)s', { args: { title } } ) } </span>
 				</Button>,
 				this.state.showingMenu ? this.renderSitesPopover() : null,

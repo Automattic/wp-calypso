@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconTime from 'gridicons/dist/time';
 import { localize } from 'i18n-calypso';
 
 class OrderCreated extends Component {
@@ -31,7 +31,7 @@ class OrderCreated extends Component {
 		return (
 			<div className="order-created">
 				<div className="order-created__label">
-					<Gridicon icon="time" size={ 24 } />
+					<GridiconTime size={ 24 } />
 					{ createdLabel }
 				</div>
 			</div>

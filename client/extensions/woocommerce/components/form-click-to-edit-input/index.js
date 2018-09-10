@@ -7,7 +7,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconPencil from 'gridicons/dist/pencil';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import { noop, omit } from 'lodash';
 
 /**
@@ -84,7 +85,7 @@ class FormClickToEditInput extends Component {
 					onClick={ this.editEnd ? this.editEnd : undefined }
 					aria-label={ this.props.updateAriaLabel }
 				>
-					<Gridicon icon="checkmark" />
+					<GridiconCheckmark />
 				</Button>
 			</span>
 		);
@@ -109,7 +110,7 @@ class FormClickToEditInput extends Component {
 
 				{ ! disabled && (
 					<Button borderless onClick={ this.editStart } aria-label={ editAriaLabel }>
-						<Gridicon icon="pencil" />
+						<GridiconPencil />
 					</Button>
 				) }
 			</span>

@@ -6,7 +6,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconPlusSmall from 'gridicons/dist/plus-small';
 
 /**
  * Internal Dependencies
@@ -38,7 +38,7 @@ class PartnerLogoGroup extends PureComponent {
 					<g>
 						<g id="Jetpack-+-Partner">
 							<g transform="translate(219 35.082353)">
-								<Gridicon icon="plus-small" size={ 72 } />
+								<GridiconPlusSmall size={ 72 } />
 							</g>
 							{ this.props.children }
 							<JetpackLogo size={ 150 } />

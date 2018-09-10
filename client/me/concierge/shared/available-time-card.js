@@ -10,7 +10,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconCalendar from 'gridicons/dist/calendar';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
@@ -106,7 +106,7 @@ class CalendarCard extends Component {
 
 		return (
 			<div className="shared__available-time-card-header">
-				<Gridicon icon="calendar" className="shared__available-time-card-header-icon" />
+				<GridiconCalendar className="shared__available-time-card-header-icon" />
 				<span>
 					<b>{ this.getDayOfWeekString( date ) } —</b> { date.format( ' MMMM D' ) }
 				</span>

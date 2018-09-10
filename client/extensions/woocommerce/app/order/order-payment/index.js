@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -126,7 +126,7 @@ class OrderPaymentCard extends Component {
 		return (
 			<div className="order-payment">
 				<div className="order-payment__label">
-					<Gridicon icon="checkmark" />
+					<GridiconCheckmark />
 					{ this.getPaymentStatus() }
 				</div>
 				<div className="order-payment__action">{ this.getPaymentAction() }</div>

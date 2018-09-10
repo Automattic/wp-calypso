@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -70,7 +70,7 @@ class EditorViewLink extends React.Component {
 				onMouseLeave={ this.hideViewLinkTooltip }
 				borderless
 			>
-				<Gridicon icon="external" />
+				<GridiconExternal />
 				<Tooltip
 					className="editor-action-bar__view-post-tooltip"
 					context={ this.viewLinkTooltipContext.current }

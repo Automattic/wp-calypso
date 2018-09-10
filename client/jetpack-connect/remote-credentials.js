@@ -5,7 +5,9 @@
 import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import config from 'config';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
+import GridiconLock from 'gridicons/dist/lock';
+import GridiconUser from 'gridicons/dist/user';
 import page from 'page';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
@@ -211,7 +213,7 @@ export class OrgCredentialsForm extends Component {
 			<Fragment>
 				<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
-					<Gridicon size={ 24 } icon="user" />
+					<GridiconUser size={ 24 } />
 					<FormTextInput
 						autoCapitalize="off"
 						autoCorrect="off"
@@ -232,7 +234,7 @@ export class OrgCredentialsForm extends Component {
 				<div className="jetpack-connect__password-container">
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					<div className="jetpack-connect__password-form">
-						<Gridicon size={ 24 } icon="lock" />
+						<GridiconLock size={ 24 } />
 						<FormPasswordInput
 							className={ passwordClassName }
 							disabled={ isSubmitting }
@@ -321,7 +323,7 @@ export class OrgCredentialsForm extends Component {
 						className="jetpack-connect__back-button"
 						onClick={ this.onClickBack }
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
+						<GridiconArrowLeft size={ 18 } />
 						{ translate( 'Back' ) }
 					</Button>
 				</div>

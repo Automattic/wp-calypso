@@ -8,7 +8,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCog from 'gridicons/dist/cog';
 import { isUndefined, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -80,9 +80,8 @@ class DashboardWidget extends Component {
 
 		return (
 			<Card className={ classes }>
-				<Gridicon
+				<GridiconCog
 					className="dashboard-widget__settings-toggle"
-					icon="cog"
 					onClick={ this.toggleSettingsPanel }
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }

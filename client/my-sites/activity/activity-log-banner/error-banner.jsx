@@ -14,7 +14,7 @@ import { isUndefined } from 'lodash';
 import ActivityLogBanner from './index';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
-import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
@@ -111,7 +111,7 @@ class ErrorBanner extends PureComponent {
 					className="activity-log-banner__error-happychat activity-log-confirm-dialog__more-info-link"
 					onClick={ isUndefined( downloadId ) ? trackHappyChatRestore : trackHappyChatBackup }
 				>
-					<Gridicon icon="chat" />
+					<GridiconChat />
 					<span className="activity-log-banner__error-happychat-text activity-log-confirm-dialog__more-info-link-text">
 						{ translate( 'Get help' ) }
 					</span>

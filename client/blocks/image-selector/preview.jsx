@@ -8,7 +8,9 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEqual, uniq } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconAddImage from 'gridicons/dist/add-image';
+import GridiconCrossSmall from 'gridicons/dist/cross-small';
+import GridiconPencil from 'gridicons/dist/pencil';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -165,7 +167,7 @@ export class ImageSelectorPreview extends Component {
 				>
 					<Spinner />
 					{ src ? this.renderUploaded( image ) : <span /> }
-					{ showEditIcon && <Gridicon icon="pencil" className="image-selector__edit-icon" /> }
+					{ showEditIcon && <GridiconPencil className="image-selector__edit-icon" /> }
 				</Button>
 				<Button
 					onClick={ removeImage }
@@ -173,7 +175,7 @@ export class ImageSelectorPreview extends Component {
 					aria-label={ translate( 'Remove image' ) }
 					className="image-selector__remove"
 				>
-					<Gridicon icon="cross-small" size={ 24 } className="image-selector__remove-icon" />
+					<GridiconCrossSmall size={ 24 } className="image-selector__remove-icon" />
 				</Button>
 			</div>
 		);
@@ -200,7 +202,7 @@ export class ImageSelectorPreview extends Component {
 				<div className="image-selector__uploader-picker">
 					<div className="image-selector__uploader-label">
 						<div>
-							<Gridicon icon="add-image" size={ iconSize } />
+							<GridiconAddImage size={ iconSize } />
 							<p>{ ! compact && addString }</p>
 						</div>
 					</div>

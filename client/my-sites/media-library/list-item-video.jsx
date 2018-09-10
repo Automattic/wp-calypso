@@ -12,7 +12,7 @@ import photon from 'photon';
  * Internal dependencies
  */
 import ListItemFileDetails from './list-item-file-details';
-import Gridicon from 'gridicons';
+import GridiconVideoCamera from 'gridicons/dist/video-camera';
 
 import { MEDIA_IMAGE_THUMBNAIL, MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
@@ -56,7 +56,7 @@ export default class extends React.Component {
 					style={ { backgroundImage: 'url(' + url + ')' } }
 				>
 					<span className="media-library__list-item-icon media-library__list-item-centered">
-						<Gridicon icon="video-camera" />
+						<GridiconVideoCamera />
 					</span>
 				</div>
 			);

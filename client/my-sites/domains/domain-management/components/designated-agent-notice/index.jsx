@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 
 /**
  * Internal Dependencies
@@ -15,7 +15,7 @@ import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from 'lib/url/suppor
 
 const DesignatedAgentNotice = props => (
 	<div className="designated-agent-notice__container">
-		<Gridicon icon="info-outline" size={ 18 } />
+		<GridiconInfoOutline size={ 18 } />
 		<p className="designated-agent-notice__copy">
 			{ props.translate(
 				'By clicking {{strong}}%(saveButtonLabel)s{{/strong}}, you agree to the ' +

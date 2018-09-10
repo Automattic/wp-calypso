@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -116,10 +116,7 @@ class UpgradeNudgeExpanded extends Component {
 						<ul className="upgrade-nudge-expanded__features">
 							{ this.props.benefits.map( ( benefitTitle, index ) => (
 								<li key={ index } className="upgrade-nudge-expanded__feature-item">
-									<Gridicon
-										className="upgrade-nudge-expanded__feature-item-checkmark"
-										icon="checkmark"
-									/>
+									<GridiconCheckmark className="upgrade-nudge-expanded__feature-item-checkmark" />
 									{ preventWidows( benefitTitle ) }
 								</li>
 							) ) }

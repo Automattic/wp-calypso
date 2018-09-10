@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -48,7 +48,7 @@ export default class extends React.Component {
 			return (
 				<div className={ welcomeClassName }>
 					<a href="#" className="close-button" onClick={ this.close }>
-						<Gridicon icon="cross" />
+						<GridiconCross />
 					</a>
 					{ this.props.children }
 				</div>

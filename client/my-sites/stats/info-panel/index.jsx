@@ -7,7 +7,9 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconFolder from 'gridicons/dist/folder';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
+import GridiconHelpOutline from 'gridicons/dist/help-outline';
 
 /**
  * Internal dependencies
@@ -51,7 +53,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#marking-spam-referrers"
 								>
-									<Gridicon icon="help-outline" />
+									<GridiconHelpOutline />
 									{ this.props.translate( 'How do I mark a referrer as spam?' ) }
 								</a>
 							</li>
@@ -62,7 +64,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#referrers"
 								>
-									<Gridicon icon="info-outline" />
+									<GridiconInfoOutline />
 									{ this.props.translate( 'About Referrers' ) }
 								</a>
 							</li>
@@ -87,7 +89,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#clicks"
 								>
-									<Gridicon icon="info-outline" />
+									<GridiconInfoOutline />
 									{ this.props.translate( 'About Clicks' ) }
 								</a>
 							</li>
@@ -113,7 +115,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#search-engine-terms"
 								>
-									<Gridicon icon="info-outline" />
+									<GridiconInfoOutline />
 									{ this.props.translate( 'About Search Terms', {
 										context: 'Stats: search terms info module documentation link',
 									} ) }
@@ -140,7 +142,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/getting-more-views-and-traffic/#use-appropriate-tags"
 								>
-									<Gridicon icon="help-outline" />
+									<GridiconHelpOutline />
 									{ this.props.translate( 'How do I tag content effectively?' ) }
 								</a>
 							</li>
@@ -151,7 +153,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/posts/categories-vs-tags/"
 								>
-									<Gridicon icon="info-outline" />
+									<GridiconInfoOutline />
 									{ this.props.translate( 'About Tags & Categories' ) }
 								</a>
 							</li>
@@ -188,7 +190,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/getting-more-views-and-traffic/"
 								>
-									<Gridicon icon="help-outline" />
+									<GridiconHelpOutline />
 									{ this.props.translate( 'How do I get more visitors?', {
 										context: 'Stats: Posts & Pages info box documentation link',
 									} ) }
@@ -201,7 +203,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#top-posts-pages"
 								>
-									<Gridicon icon="info-outline" />
+									<GridiconInfoOutline />
 									{ this.props.translate( 'About Posts & Pages', {
 										context: 'Stats: Posts & Pages info box documentation link',
 									} ) }
@@ -228,7 +230,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/adding-users/"
 								>
-									<Gridicon icon="help-outline" />
+									<GridiconHelpOutline />
 									{ this.props.translate( 'How do I invite someone to my website?' ) }
 								</a>
 							</li>
@@ -239,7 +241,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/category/users/"
 								>
-									<Gridicon icon="folder" />
+									<GridiconFolder />
 									{ this.props.translate( 'About Users' ) }
 								</a>
 							</li>
@@ -264,7 +266,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/videos/"
 								>
-									<Gridicon icon="folder" />
+									<GridiconFolder />
 									{ this.props.translate( 'About Videos on WordPress.com' ) }
 								</a>
 							</li>
@@ -289,7 +291,7 @@ class StatsInfoPanel extends React.PureComponent {
 									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/publicize/"
 								>
-									<Gridicon icon="info-outline" />
+									<GridiconInfoOutline />
 									{ this.props.translate( 'About Publicize' ) }
 								</a>
 							</li>

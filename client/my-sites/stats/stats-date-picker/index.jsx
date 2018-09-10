@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { connect } from 'react-redux';
@@ -124,7 +124,7 @@ class StatsDatePicker extends Component {
 				{ translate( 'Last update: %(time)s', {
 					args: { time: isToday ? date.format( 'LT' ) : date.fromNow() },
 				} ) }
-				<Gridicon icon="info-outline" size={ 18 } />
+				<GridiconInfoOutline size={ 18 } />
 			</span>
 		);
 	}

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCloudUpload from 'gridicons/dist/cloud-upload';
 import classNames from 'classnames';
 
 /**
@@ -65,7 +65,7 @@ class UploadDropZone extends Component {
 				<div className="upload-drop-zone__dropzone">
 					<DropZone onFilesDrop={ this.onFileSelect } />
 					<FilePicker accept="application/zip" onPick={ this.onFileSelect }>
-						<Gridicon className="upload-drop-zone__icon" icon="cloud-upload" size={ 48 } />
+						<GridiconCloudUpload className="upload-drop-zone__icon" size={ 48 } />
 						{ dropText }
 						<span className="upload-drop-zone__instructions">{ uploadInstructionsText }</span>
 					</FilePicker>

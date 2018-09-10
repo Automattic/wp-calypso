@@ -10,7 +10,7 @@ import page from 'page';
 import { identity, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
 import classnames from 'classnames';
 
 /**
@@ -100,7 +100,7 @@ export class HappychatButton extends Component {
 				onClick={ this.onClick }
 				title={ translate( 'Support Chat' ) }
 			>
-				{ children || <Gridicon icon="chat" /> }
+				{ children || <GridiconChat /> }
 			</Button>
 		);
 	}

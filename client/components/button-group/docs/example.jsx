@@ -12,7 +12,11 @@ import React from 'react';
 import ButtonGroup from 'components/button-group';
 import Button from 'components/button';
 import Card from 'components/card';
-import Gridicon from 'gridicons';
+import GridiconCalendar from 'gridicons/dist/calendar';
+import GridiconHistory from 'gridicons/dist/history';
+import GridiconBriefcase from 'gridicons/dist/briefcase';
+import GridiconHeart from 'gridicons/dist/heart';
+import GridiconAddImage from 'gridicons/dist/add-image';
 
 class Buttons extends React.PureComponent {
 	static displayName = 'ButtonGroup';
@@ -50,16 +54,16 @@ class Buttons extends React.PureComponent {
 					<div className="docs__design-button-group-row">
 						<ButtonGroup>
 							<Button compact={ this.state.compact }>
-								<Gridicon icon="add-image" />
+								<GridiconAddImage />
 							</Button>
 							<Button compact={ this.state.compact }>
-								<Gridicon icon="heart" />
+								<GridiconHeart />
 							</Button>
 							<Button compact={ this.state.compact }>
-								<Gridicon icon="briefcase" />
+								<GridiconBriefcase />
 							</Button>
 							<Button compact={ this.state.compact }>
-								<Gridicon icon="history" />
+								<GridiconHistory />
 							</Button>
 						</ButtonGroup>
 					</div>
@@ -69,7 +73,7 @@ class Buttons extends React.PureComponent {
 								Publish
 							</Button>
 							<Button primary compact={ this.state.compact }>
-								<Gridicon icon="calendar" />
+								<GridiconCalendar />
 							</Button>
 						</ButtonGroup>
 					</div>
@@ -78,7 +82,7 @@ class Buttons extends React.PureComponent {
 						<ButtonGroup busy>
 							<Button compact={ this.state.compact }>Busy</Button>
 							<Button compact={ this.state.compact }>
-								<Gridicon icon="calendar" />
+								<GridiconCalendar />
 							</Button>
 						</ButtonGroup>
 
@@ -87,7 +91,7 @@ class Buttons extends React.PureComponent {
 								Primary Busy
 							</Button>
 							<Button primary compact={ this.state.compact }>
-								<Gridicon icon="calendar" />
+								<GridiconCalendar />
 							</Button>
 						</ButtonGroup>
 					</div>

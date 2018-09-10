@@ -8,7 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import page from 'page';
 import { stringify } from 'qs';
 
@@ -204,7 +204,7 @@ class UseYourDomainStep extends React.Component {
 
 					return (
 						<div className="use-your-domain-step__option-reason" key={ index }>
-							<Gridicon icon="checkmark" size={ 18 } />
+							<GridiconCheckmark size={ 18 } />
 							{ phrase }
 						</div>
 					);

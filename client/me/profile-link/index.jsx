@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -49,7 +49,7 @@ class ProfileLink extends React.Component {
 	renderRemove() {
 		return (
 			<Button borderless className="profile-link__remove" onClick={ this.handleRemoveButtonClick }>
-				<Gridicon icon="cross" />
+				<GridiconCross />
 			</Button>
 		);
 	}

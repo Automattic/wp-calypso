@@ -10,6 +10,8 @@ import React from 'react';
  */
 import { NavigationLink } from '../';
 import EMPTY_COMPONENT from 'components/empty-component';
+import GridiconArrowRight from 'gridicons/dist/arrow-right';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 
 jest.mock( 'lib/analytics', () => ( {
 	tracks: {
@@ -22,7 +24,6 @@ jest.mock( 'lib/signup/actions', () => ( {
 jest.mock( 'signup/utils', () => ( {
 	getStepUrl: jest.fn(),
 } ) );
-jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
 const signupUtils = require( 'signup/utils' );
 const { getStepUrl } = signupUtils;
@@ -68,16 +69,14 @@ describe( 'NavigationLink', () => {
 	test( 'should render right-arrow icon when the direction prop is "forward".', () => {
 		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
 
-		expect( wrapper.find( Gridicon ) ).toHaveLength( 1 );
-		expect( wrapper.childAt( 1 ).props().icon ).toEqual( 'arrow-right' );
+		expect( wrapper.find( GridiconArrowRight ) ).toHaveLength( 1 );
 		expect( wrapper.childAt( 0 ).text() ).toEqual( 'translated:Skip for now' );
 	} );
 
 	test( 'should render left-arrow icon when the direction prop is "back".', () => {
 		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
 
-		expect( wrapper.find( Gridicon ) ).toHaveLength( 1 );
-		expect( wrapper.childAt( 0 ).props().icon ).toEqual( 'arrow-left' );
+		expect( wrapper.find( GridiconArrowLeft ) ).toHaveLength( 1 );
 		expect( wrapper.childAt( 1 ).text() ).toEqual( 'translated:Back' );
 	} );
 

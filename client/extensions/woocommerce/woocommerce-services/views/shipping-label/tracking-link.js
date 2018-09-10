@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 const TRACKING_URL_MAP = {
 	usps: tracking => `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${ tracking }`,
@@ -24,7 +24,7 @@ const TrackingLink = ( { tracking, carrierId, translate } ) => {
 	}
 	return (
 		<a target="_blank" rel="noopener noreferrer" href={ url }>
-			{ tracking } <Gridicon icon="external" size={ 12 } />
+			{ tracking } <GridiconExternal size={ 12 } />
 		</a>
 	);
 };

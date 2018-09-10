@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconTime from 'gridicons/dist/time';
 import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
@@ -158,7 +158,7 @@ class Pages extends Component {
 			if ( lastMarker !== marker ) {
 				markedPages.push(
 					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
-						<Gridicon icon="time" size={ 12 } /> { marker }
+						<GridiconTime size={ 12 } /> { marker }
 					</div>
 				);
 			}

@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconTime from 'gridicons/dist/time';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { GUIDED_TRANSFER } from 'lib/url/support';
 const GuidedTransferInProgress = ( { translate } ) => (
 	<Card className="guided-transfer-card__in-progress">
 		<div className="guided-transfer-card__in-progress-icon">
-			<Gridicon icon="time" size={ 48 } />
+			<GridiconTime size={ 48 } />
 		</div>
 		<h1 className="guided-transfer-card__in-progress-title">
 			{ translate( 'Your site is being prepared for transfer' ) }

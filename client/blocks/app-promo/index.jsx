@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { identity, noop, sample } from 'lodash';
 import store from 'store';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -111,7 +111,7 @@ export class AppPromo extends React.Component {
 					onClick={ this.dismiss }
 					aria-label={ translate( 'Dismiss' ) }
 				>
-					<Gridicon icon="cross" size={ 24 } />
+					<GridiconCross size={ 24 } />
 				</button>
 				<a
 					onClick={ this.recordClickEvent }

@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconAddImage from 'gridicons/dist/add-image';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -77,7 +77,7 @@ class ProductImagePicker extends Component {
 				role="button"
 				tabIndex={ 0 }
 			>
-				<Gridicon icon="add-image" size={ 36 } />
+				<GridiconAddImage size={ 36 } />
 				{ this.props.translate( 'Add an Image' ) }
 			</div>
 		);

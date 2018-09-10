@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import { flowRight as compose, includes } from 'lodash';
 
 /**
@@ -69,7 +69,7 @@ class PluginsBrowserListElement extends Component {
 		if ( ( sites && sites.length > 0 ) || this.isWpcomPreinstalled() ) {
 			return (
 				<div className="plugins-browser-item__installed">
-					<Gridicon icon="checkmark" size={ 18 } />
+					<GridiconCheckmark size={ 18 } />
 					{ this.props.translate( 'Installed' ) }
 				</div>
 			);

@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ export class PaymentChatButton extends Component {
 
 		return (
 			<HappychatButton className="checkout__payment-chat-button" onClick={ this.chatButtonClicked }>
-				<Gridicon icon="chat" className="checkout__payment-chat-button-icon" />
+				<GridiconChat className="checkout__payment-chat-button-icon" />
 				{ translate( 'Need help? Chat with us' ) }
 			</HappychatButton>
 		);

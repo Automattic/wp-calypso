@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconPlusSmall from 'gridicons/dist/plus-small';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -202,7 +202,7 @@ class ApplicationPasswords extends Component {
 							) }
 						>
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-							<Gridicon icon="plus-small" size={ 16 } />
+							<GridiconPlusSmall size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							{ translate( 'Add New Application Password' ) }
 						</Button>

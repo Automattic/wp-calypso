@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 
 /**
  * Internal dependencies
@@ -190,7 +190,7 @@ class PluginRemoveButton extends React.Component {
 				className="plugin-remove-button__remove-link"
 			>
 				<a onClick={ handleClick } className="plugin-remove-button__remove-icon">
-					<Gridicon icon="trash" size={ 18 } />
+					<GridiconTrash size={ 18 } />
 				</a>
 			</PluginAction>
 		);

@@ -6,7 +6,8 @@
 
 import page from 'page';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
+import GridiconMail from 'gridicons/dist/mail';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -181,8 +182,8 @@ class MainComponent extends React.Component {
 		return (
 			<div className="mailing-lists">
 				<div className="mailing-lists__header">
-					<Gridicon icon="mail" size={ 54 } />
-					{ this.state.isSubscribed ? null : <Gridicon icon="cross" size={ 24 } /> }
+					<GridiconMail size={ 54 } />
+					{ this.state.isSubscribed ? null : <GridiconCross size={ 24 } /> }
 					<h1>{ preventWidows( headingLabel, 2 ) }</h1>
 					<p>{ preventWidows( messageLabel, 2 ) }</p>
 				</div>

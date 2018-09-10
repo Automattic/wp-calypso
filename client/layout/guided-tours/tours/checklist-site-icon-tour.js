@@ -5,7 +5,7 @@
  */
 
 import React, { Fragment } from 'react';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import { noop } from 'lodash';
 
 /**
@@ -130,7 +130,7 @@ export const ChecklistSiteIconTour = makeTour(
 				<Fragment>
 					<h1 className="tours__title">
 						<span className="tours__completed-icon-wrapper">
-							<Gridicon icon="checkmark" className="tours__completed-icon" />
+							<GridiconCheckmark className="tours__completed-icon" />
 						</span>
 						{ translate( 'Excellent, you’re done!' ) }
 					</h1>

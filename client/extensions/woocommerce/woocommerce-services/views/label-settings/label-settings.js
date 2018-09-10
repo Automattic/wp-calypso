@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, isBoolean } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal dependencies
@@ -297,7 +297,7 @@ class ShippingLabels extends Component {
 				<div className="label-settings__credit-card-description label-settings__external">
 					{ this.renderAddCardExternalInfo() }
 					<Button onClick={ onAddCardExternal } compact>
-						{ buttonLabel } <Gridicon icon="external" />
+						{ buttonLabel } <GridiconExternal />
 					</Button>
 				</div>
 			</div>

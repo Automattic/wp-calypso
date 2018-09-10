@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -29,7 +29,7 @@ export class RemoveButton extends React.Component {
 			<Button onClick={ onRemove } compact className="remove-button">
 				<span className="remove-button__label screen-reader-text">{ translate( 'Remove' ) }</span>
 
-				<Gridicon icon="cross" size={ 24 } className="remove-button__icon" />
+				<GridiconCross size={ 24 } className="remove-button__icon" />
 			</Button>
 		);
 	}

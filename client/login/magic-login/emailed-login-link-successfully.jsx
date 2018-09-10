@@ -23,7 +23,7 @@ import {
 	enhanceWithSiteType,
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {
@@ -81,7 +81,7 @@ class EmailedLoginLinkSuccessfully extends React.Component {
 						href={ login( { isNative: true, locale: this.props.locale } ) }
 						onClick={ this.onClickBackLink }
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
+						<GridiconArrowLeft size={ 18 } />
 						{ translate( 'Back' ) }
 					</a>
 				</div>

@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconCrossSmall from 'gridicons/dist/cross-small';
 
 /**
  * Internal dependencies
@@ -87,7 +87,7 @@ class ThemesBanner extends PureComponent {
 					{ translate( 'See the theme' ) }
 				</Button>
 				<Button className="themes-banner__close" onClick={ this.handleBannerClose }>
-					<Gridicon icon="cross-small" size={ 18 } />
+					<GridiconCrossSmall size={ 18 } />
 				</Button>
 				{ image && (
 					<img

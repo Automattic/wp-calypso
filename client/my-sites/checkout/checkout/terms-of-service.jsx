@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 
 class TermsOfService extends React.Component {
 	static displayName = 'TermsOfService';
@@ -56,7 +56,7 @@ class TermsOfService extends React.Component {
 	render() {
 		return (
 			<div className="checkout-terms" onClick={ this.recordTermsAndConditionsClick }>
-				<Gridicon icon="info-outline" size={ 18 } />
+				<GridiconInfoOutline size={ 18 } />
 				<p>{ this.renderTerms() }</p>
 			</div>
 		);

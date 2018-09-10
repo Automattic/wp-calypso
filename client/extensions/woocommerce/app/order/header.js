@@ -4,7 +4,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -152,7 +152,7 @@ class OrderActionHeader extends Component {
 		// Unshifting so that the Delete is the first action in the row
 		buttons.unshift(
 			<Button key="delete" borderless scary onClick={ this.deleteOrder }>
-				<Gridicon icon="trash" />
+				<GridiconTrash />
 				{ translate( 'Delete' ) }
 			</Button>
 		);

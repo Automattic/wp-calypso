@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconUserAdd from 'gridicons/dist/user-add';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 
@@ -201,7 +201,7 @@ class PeopleInvites extends React.PureComponent {
 					{ translate( 'Invite people to follow your site or help you manage it.' ) }
 				</div>
 				<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
-					<Gridicon icon="user-add" />
+					<GridiconUserAdd />
 					{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
 				</Button>
 			</div>

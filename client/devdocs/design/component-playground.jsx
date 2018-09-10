@@ -7,7 +7,8 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
-import Gridicon from 'gridicons';
+import GridiconCode from 'gridicons/dist/code';
+import GridiconClipboard from 'gridicons/dist/clipboard';
 
 /**
  * Internal dependencies
@@ -74,7 +75,7 @@ class ComponentPlayground extends Component {
 							onClick={ this.handleClick }
 							className="design__component-playground-clipboard"
 						>
-							<Gridicon icon="clipboard" />
+							<GridiconClipboard />
 						</ClipboardButton>
 
 						<LiveError />
@@ -86,7 +87,7 @@ class ComponentPlayground extends Component {
 					toggleCode && (
 						<div className="design__component-playground-show-code">
 							<Button onClick={ this.showCode }>
-								{ this.state.showCode ? 'Hide' : 'Show' } code <Gridicon icon="code" />
+								{ this.state.showCode ? 'Hide' : 'Show' } code <GridiconCode />
 							</Button>
 						</div>
 					) }

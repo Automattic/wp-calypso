@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
 
 /**
  * Internal dependencies
@@ -64,7 +64,7 @@ class SurveyStep extends React.Component {
 				>
 					{ vertical.label() }
 				</span>
-				<Gridicon className="survey__vertical-chevron" icon="chevron-right" />
+				<GridiconChevronRight className="survey__vertical-chevron" />
 			</Button>
 		);
 	};
@@ -93,7 +93,7 @@ class SurveyStep extends React.Component {
 				{ this.state.verticalList.map( this.renderVertical ) }
 				<Button className="survey__vertical" onClick={ this.handleOther }>
 					<span className="survey__vertical-label">{ this.props.translate( 'Other' ) }</span>
-					<Gridicon className="survey__vertical-chevron" icon="chevron-right" />
+					<GridiconChevronRight className="survey__vertical-chevron" />
 				</Button>
 			</div>
 		);

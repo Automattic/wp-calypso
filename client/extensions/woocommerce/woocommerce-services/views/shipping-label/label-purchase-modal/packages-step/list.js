@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconNoticeOutline from 'gridicons/dist/notice-outline';
 import classNames from 'classnames';
 
 /**
@@ -30,7 +30,7 @@ const PackageList = props => {
 	const renderCountOrError = ( isError, count ) => {
 		if ( isError ) {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			return <Gridicon icon="notice-outline" className="is-error" size={ 18 } />;
+			return <GridiconNoticeOutline className="is-error" size={ 18 } />;
 		}
 
 		if ( undefined === count ) {

@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconPencil from 'gridicons/dist/pencil';
 
 /**
  * Internal dependencies
@@ -52,7 +52,7 @@ class ContactFormDialogFieldEditButton extends PureComponent {
 					onMouseEnter={ this.handleMouseEnter }
 					onMouseLeave={ this.handleMouseLeave }
 				>
-					<Gridicon icon="pencil" className={ classes } />
+					<GridiconPencil className={ classes } />
 				</Button>
 				<Popover
 					isVisible={ this.state.showTooltip }

@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isFunction, map } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconEllipsis from 'gridicons/dist/ellipsis';
 
 /**
  * Internal dependencies
@@ -70,7 +70,7 @@ class ThemeMoreButton extends Component {
 		return (
 			<span className={ classes }>
 				<button ref="more" onClick={ this.togglePopover }>
-					<Gridicon icon="ellipsis" size={ 24 } />
+					<GridiconEllipsis size={ 24 } />
 				</button>
 
 				<PopoverMenu

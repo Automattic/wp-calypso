@@ -3,7 +3,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
@@ -86,14 +86,14 @@ class Task extends PureComponent {
 						<ScreenReaderText>
 							{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 						</ScreenReaderText>
-						<Gridicon icon="checkmark" size={ 18 } />
+						<GridiconCheckmark size={ 18 } />
 					</Focusable>
 				) : (
 					<div className="checklist__task-icon">
 						<ScreenReaderText>
 							{ completed ? translate( 'Complete' ) : translate( 'Not complete' ) }
 						</ScreenReaderText>
-						<Gridicon icon="checkmark" size={ 18 } />
+						<GridiconCheckmark size={ 18 } />
 					</div>
 				) }
 			</CompactCard>

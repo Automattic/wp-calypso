@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconHelp from 'gridicons/dist/help';
 
 /**
  * Internal dependencies
@@ -58,7 +58,7 @@ class Connect extends React.Component {
 					title={ this.props.translate( 'Visit the Calypso GitHub repository for help' ) }
 					href="https://github.com/Automattic/wp-calypso"
 				>
-					<Gridicon icon="help" />
+					<GridiconHelp />
 				</a>
 				<div className="auth__links">
 					<a href={ this.getCreateAccountUrl() }>{ this.props.translate( 'Create account' ) }</a>

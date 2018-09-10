@@ -6,14 +6,14 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 
 const TipInfo = ( { info = '', className = '' } ) => {
 	className += ' purchase-detail__info form-setting-explanation';
 	return (
 		<div className={ className }>
 			<span className="purchase-detail__info-icon-container">
-				<Gridicon size={ 12 } icon="info-outline" />
+				<GridiconInfoOutline size={ 12 } />
 			</span>
 			{ info }
 		</div>

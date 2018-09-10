@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { keys, trim } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconTag from 'gridicons/dist/tag';
 
 /**
  * Internal dependencies
@@ -74,7 +74,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 
 				{ post.tags && keys( post.tags ).length > 0 ? (
 					<div className="reader-full-post__header-tags">
-						<Gridicon icon="tag" size={ 18 } />
+						<GridiconTag size={ 18 } />
 						<ReaderFullPostHeaderTags tags={ post.tags } />
 					</div>
 				) : null }

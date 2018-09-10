@@ -5,7 +5,7 @@
  */
 import { assert } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 import React from 'react';
 
 /**
@@ -31,7 +31,7 @@ describe( 'External Link', () => {
 
 	test( 'should have icon if provided', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } /> );
-		assert.lengthOf( externalLink.find( Gridicon ), 1 );
+		assert.lengthOf( externalLink.find( GridiconExternal ), 1 );
 	} );
 
 	test( 'should have a target if given one', () => {
@@ -41,17 +41,17 @@ describe( 'External Link', () => {
 
 	test( 'should have an icon className if specified', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconClassName="foo" /> );
-		assert.equal( 'foo', externalLink.find( Gridicon ).prop( 'className' ) );
+		assert.equal( 'foo', externalLink.find( GridiconExternal ).prop( 'className' ) );
 	} );
 
 	test( 'should have an icon default size of 18', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconClassName="foo" /> );
-		assert.equal( '18', externalLink.find( Gridicon ).prop( 'size' ) );
+		assert.equal( '18', externalLink.find( GridiconExternal ).prop( 'size' ) );
 	} );
 
 	test( 'should have an icon size that is provided', () => {
 		const externalLink = shallow( <ExternalLink icon={ true } iconSize={ 20 } /> );
-		assert.equal( '20', externalLink.find( Gridicon ).prop( 'size' ) );
+		assert.equal( '20', externalLink.find( GridiconExternal ).prop( 'size' ) );
 	} );
 
 	test( 'should have icon first if specified', () => {
@@ -60,7 +60,7 @@ describe( 'External Link', () => {
 			externalLink
 				.children()
 				.first()
-				.is( Gridicon )
+				.is( GridiconExternal )
 		);
 	} );
 } );

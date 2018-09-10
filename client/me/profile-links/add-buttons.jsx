@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconAddOutline from 'gridicons/dist/add-outline';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -70,7 +70,7 @@ class AddProfileLinksButtons extends React.Component {
 					className="popover-icon"
 					onClick={ this.props.onShowPopoverMenu }
 				>
-					<Gridicon icon="add-outline" />
+					<GridiconAddOutline />
 					<span>{ this.props.translate( 'Add' ) }</span>
 				</Button>
 			</div>

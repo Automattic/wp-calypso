@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCloudUpload from 'gridicons/dist/cloud-upload';
 import { connect } from 'react-redux';
 
 /**
@@ -97,7 +97,7 @@ class ReaderImportButton extends React.Component {
 		return (
 			<div className="reader-import-button">
 				<FilePicker accept=".xml,.opml" onClick={ this.onClick } onPick={ this.onPick }>
-					<Gridicon icon="cloud-upload" className="reader-import-button__icon" />
+					<GridiconCloudUpload className="reader-import-button__icon" />
 					<span className="reader-import-button__label">{ this.props.translate( 'Import' ) }</span>
 				</FilePicker>
 			</div>

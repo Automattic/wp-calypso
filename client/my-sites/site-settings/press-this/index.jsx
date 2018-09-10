@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
-import Gridicon from 'gridicons';
+import GridiconCreate from 'gridicons/dist/create';
 import PressThisLink from './link';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -60,7 +60,7 @@ class PressThis extends Component {
 								onClick={ this.recordEvent( 'Clicked Press This Button' ) }
 								onDragStart={ this.recordEvent( 'Dragged Press This Button' ) }
 							>
-								<Gridicon icon="create" />
+								<GridiconCreate />
 								<span>
 									{ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
 								</span>

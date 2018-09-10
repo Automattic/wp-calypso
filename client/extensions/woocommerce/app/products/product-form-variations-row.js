@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { localize } from 'i18n-calypso';
 import { head } from 'lodash';
 
@@ -158,11 +158,7 @@ class ProductFormVariationsRow extends Component {
 				aria-label={ translate( 'Remove image' ) }
 				className="products__product-form-variation-image-remove"
 			>
-				<Gridicon
-					icon="cross"
-					size={ 24 }
-					className="products__product-form-variation-image-remove-icon"
-				/>
+				<GridiconCross size={ 24 } className="products__product-form-variation-image-remove-icon" />
 			</Button>
 		);
 

@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconChevronLeft from 'gridicons/dist/chevron-left';
 
 /**
  * Internal Dependencies
@@ -31,7 +31,7 @@ class SidebarNavigation extends React.Component {
 		return (
 			<header className="current-section">
 				<a onClick={ this.toggleSidebar } className={ this.props.linkClassName }>
-					<Gridicon icon="chevron-left" />
+					<GridiconChevronLeft />
 					{ this.props.children }
 					<div>
 						<p className={ 'current-section__' + this.props.sectionName + '-title' }>

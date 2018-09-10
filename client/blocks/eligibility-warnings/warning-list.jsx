@@ -7,7 +7,8 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconHelpOutline from 'gridicons/dist/help-outline';
+import GridiconCrossSmall from 'gridicons/dist/cross-small';
 
 /**
  * Internal dependencies
@@ -31,7 +32,7 @@ export const WarningList = ( { translate, warnings } ) => (
 		<Card className="eligibility-warnings__warning-list">
 			{ map( warnings, ( { name, description, supportUrl }, index ) => (
 				<div className="eligibility-warnings__warning" key={ index }>
-					<Gridicon icon="cross-small" size={ 24 } />
+					<GridiconCrossSmall size={ 24 } />
 					<div className="eligibility-warnings__message">
 						<span className="eligibility-warnings__message-title">{ name }</span>
 						:&nbsp;
@@ -39,7 +40,7 @@ export const WarningList = ( { translate, warnings } ) => (
 					</div>
 					<div className="eligibility-warnings__action">
 						<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
-							<Gridicon icon="help-outline" size={ 24 } />
+							<GridiconHelpOutline size={ 24 } />
 						</ExternalLink>
 					</div>
 				</div>

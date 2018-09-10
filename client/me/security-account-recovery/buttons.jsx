@@ -13,7 +13,7 @@ import React from 'react';
  */
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 
 class SecurityAccountRecoveryManageContactButtons extends React.Component {
 	static displayName = 'SecurityAccountRecoveryManageContactButtons';
@@ -43,7 +43,7 @@ class SecurityAccountRecoveryManageContactButtons extends React.Component {
 						className={ 'security-account-recovery-contact__remove' }
 						onClick={ this.props.onDelete }
 					>
-						<Gridicon icon="trash" size={ 24 } />
+						<GridiconTrash size={ 24 } />
 						<span>{ this.props.translate( 'Remove' ) }</span>
 					</button>
 				) : null }

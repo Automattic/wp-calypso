@@ -13,6 +13,8 @@ import ActivityIcon from '../activity-log-item/activity-icon';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
+import GridiconNotice from 'gridicons/dist/notice';
 import HappychatButton from 'components/happychat/button';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -58,7 +60,7 @@ const ActivityLogConfirmDialog = ( {
 						className="activity-log-confirm-dialog__more-info-link"
 						href={ supportLink }
 					>
-						<Gridicon icon="notice" />
+						<GridiconNotice />
 						<span className="activity-log-confirm-dialog__more-info-link-text">
 							{ translate( 'More info' ) }
 						</span>
@@ -67,7 +69,7 @@ const ActivityLogConfirmDialog = ( {
 						className="activity-log-confirm-dialog__more-info-link"
 						onClick={ happychatEvent }
 					>
-						<Gridicon icon="chat" />
+						<GridiconChat />
 						<span className="activity-log-confirm-dialog__more-info-link-text">
 							{ translate( 'Any Questions?' ) }
 						</span>

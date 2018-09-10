@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 import classNames from 'classnames';
 
 /**
@@ -49,7 +49,7 @@ export default class InfoTooltip extends Component {
 	saveAnchorRef = ref => ( this.anchorRef = ref );
 
 	render() {
-		const anchor = this.props.anchor || <Gridicon icon="info-outline" size={ 18 } />;
+		const anchor = this.props.anchor || <GridiconInfoOutline size={ 18 } />;
 
 		return (
 			<span className={ classNames( 'info-tooltip', this.props.className ) }>

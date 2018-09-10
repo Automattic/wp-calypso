@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconGlobe from 'gridicons/dist/globe';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -30,7 +30,7 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 					<div className="example-components__browser-chrome-dot" />
 				</div>
 				<div className="example-components__site-address-container">
-					<Gridicon size={ 24 } icon="globe" />
+					<GridiconGlobe size={ 24 } />
 					<FormTextInput
 						className="example-components__browser-chrome-url"
 						disabled

@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconFolder from 'gridicons/dist/folder';
 
 /**
  * Internal dependencies
@@ -61,7 +61,7 @@ class TermSelectorAddTerm extends Component {
 			<div className={ classes }>
 				{ siteId && <QueryTaxonomies { ...{ siteId, postType } } /> }
 				<Button borderless compact onClick={ this.openDialog }>
-					<Gridicon icon="folder" /> { labels.add_new_item }
+					<GridiconFolder /> { labels.add_new_item }
 				</Button>
 				<TermFormDialog
 					showDialog={ this.state.showDialog }

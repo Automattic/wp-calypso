@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { noop, filter, get, flatMap } from 'lodash';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconArrowUp from 'gridicons/dist/arrow-up';
 
 /**
  * Internal dependencies
@@ -38,7 +38,7 @@ class UpdateNotice extends React.PureComponent {
 		return (
 			<button className={ counterClasses } onClick={ this.handleClick }>
 				<DocumentHead unreadCount={ count } />
-				<Gridicon icon="arrow-up" size={ 18 } />
+				<GridiconArrowUp size={ 18 } />
 				{ translate( '%s new post', '%s new posts', {
 					args: [ cappedUnreadCount ],
 					count,

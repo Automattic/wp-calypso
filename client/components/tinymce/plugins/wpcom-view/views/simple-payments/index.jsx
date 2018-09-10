@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -49,7 +49,7 @@ class SimplePaymentsView extends Component {
 			return (
 				<div className="wpview-type-simple-payments__unsupported">
 					<div className="wpview-type-simple-payments__unsupported-icon">
-						<Gridicon icon="cross" />
+						<GridiconCross />
 					</div>
 					<p className="wpview-type-simple-payments__unsupported-message">
 						{ translate( "Your plan doesn't include Simple Payments." ) }

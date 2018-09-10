@@ -10,14 +10,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import GridiconInfo from 'gridicons/dist/info';
 import Button from 'components/button';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import getRewindState from 'state/selectors/get-rewind-state';
 
 const SetupTos = ( { autoConfigure, canAutoconfigure, reset, translate, goToNextStep } ) => (
 	<CompactCard className="credentials-setup-flow__tos" highlight="info">
-		<Gridicon icon="info" size={ 48 } className="credentials-setup-flow__tos-gridicon" />
+		<GridiconInfo size={ 48 } className="credentials-setup-flow__tos-gridicon" />
 		<div className="credentials-setup-flow__tos-text">
 			{ canAutoconfigure
 				? translate(

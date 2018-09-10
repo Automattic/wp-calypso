@@ -27,7 +27,7 @@ import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 import AuthorSegmented from './author-segmented';
 import Button from 'components/button';
-import Gridicon from 'gridicons';
+import GridiconListCheckmark from 'gridicons/dist/list-checkmark';
 
 export class PostTypeFilter extends Component {
 	static displayName = 'PostTypeFilter';
@@ -125,7 +125,7 @@ export class PostTypeFilter extends Component {
 				compact
 				onClick={ onMultiSelectClick }
 			>
-				<Gridicon icon="list-checkmark" />
+				<GridiconListCheckmark />
 				<span className="post-type-filter__multi-select-button-text">
 					{ translate( 'Bulk Edit' ) }
 				</span>

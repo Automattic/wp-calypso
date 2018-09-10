@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, find } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCrossSmall from 'gridicons/dist/cross-small';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -121,7 +121,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 		const removeButton = attributes.length > 1 && (
 			<div className="products__additional-details-form-remove">
 				<Button borderless onClick={ this.removeAttributeHandler } id={ attribute.uid }>
-					<Gridicon icon="cross-small" />
+					<GridiconCrossSmall />
 				</Button>
 			</div>
 		);

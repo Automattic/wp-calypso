@@ -8,6 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import GridiconGlobe from 'gridicons/dist/globe';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -25,7 +26,7 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 		return (
 			<div className="shipping__zones-row is-placeholder">
 				<div className="shipping__zones-row-icon">
-					<Gridicon icon="globe" size={ 24 } />
+					<GridiconGlobe size={ 24 } />
 				</div>
 				<div className="shipping__zones-row-location">
 					<p className="shipping__zones-row-location-name" />

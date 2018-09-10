@@ -4,7 +4,8 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
+import GridiconInstitution from 'gridicons/dist/institution';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -21,7 +22,7 @@ function GoogleMyBusinessLocationPlaceholder( { isCompact } ) {
 	return (
 		<Card className={ classes }>
 			<div className="gmb-location__content">
-				<Gridicon icon="institution" height="60px" width="60px" />
+				<GridiconInstitution height="60px" width="60px" />
 				<div className="gmb-location__description">
 					<div className="gmb-location__name" />
 					<div className="gmb-location__address" />
@@ -50,7 +51,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 						src={ location.picture }
 					/>
 				) : (
-					<Gridicon icon="institution" height="60px" width="60px" />
+					<GridiconInstitution height="60px" width="60px" />
 				) }
 
 				<div className="gmb-location__description">
@@ -64,11 +65,7 @@ function GoogleMyBusinessLocation( { children, isCompact, location, translate } 
 
 					{ isLocationVerified && (
 						<div className="gmb-location__verified">
-							<Gridicon
-								className="gmb-location__verified-icon"
-								icon="checkmark-circle"
-								size={ 18 }
-							/>{' '}
+							<GridiconCheckmarkCircle className="gmb-location__verified-icon" size={ 18 } />{' '}
 							{ translate( 'Verified' ) }
 						</div>
 					) }

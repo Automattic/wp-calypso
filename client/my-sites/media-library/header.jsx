@@ -7,7 +7,8 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
+import GridiconAddImage from 'gridicons/dist/add-image';
 
 /**
  * Internal dependencies
@@ -85,7 +86,7 @@ class MediaLibraryHeader extends React.Component {
 					onAddMedia={ onAddMedia }
 					className="button is-compact"
 				>
-					<Gridicon icon="add-image" />
+					<GridiconAddImage />
 					<span className="is-desktop">
 						{ this.props.translate( 'Add New', { context: 'Media upload' } ) }
 					</span>
@@ -98,7 +99,7 @@ class MediaLibraryHeader extends React.Component {
 					data-tip-target="media-library-upload-more"
 				>
 					<span className="screen-reader-text">{ this.props.translate( 'More Options' ) }</span>
-					<Gridicon icon="chevron-down" size={ 20 } />
+					<GridiconChevronDown size={ 20 } />
 					<PopoverMenu
 						context={ this.state.moreOptionsContext }
 						isVisible={ this.state.isMoreOptionsVisible }

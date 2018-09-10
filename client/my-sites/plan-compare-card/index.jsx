@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -67,7 +67,7 @@ class PlanCompareCard extends React.Component {
 						onClick={ this.buttonClick }
 					>
 						{ this.props.currentPlan && (
-							<Gridicon className="plan-compare-card__button-checkmark" icon="checkmark" />
+							<GridiconCheckmark className="plan-compare-card__button-checkmark" />
 						) }
 						{ this.props.buttonName }
 					</Button>

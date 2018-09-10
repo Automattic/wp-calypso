@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCrossCircle from 'gridicons/dist/cross-circle';
 import { connect } from 'react-redux';
 
 /**
@@ -99,8 +99,7 @@ class ConversationsIntro extends React.Component {
 						title={ translate( 'Close' ) }
 						aria-label={ translate( 'Close' ) }
 					>
-						<Gridicon
-							icon="cross-circle"
+						<GridiconCrossCircle
 							className="conversations__intro-close-icon"
 							title={ translate( 'Close' ) }
 						/>

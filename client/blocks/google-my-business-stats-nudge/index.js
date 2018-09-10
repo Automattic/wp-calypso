@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal Dependencies
@@ -74,8 +74,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 			<Card className="google-my-business-stats-nudge">
 				<QueryPreferences />
 
-				<Gridicon
-					icon="cross"
+				<GridiconCross
 					className="google-my-business-stats-nudge__close-icon"
 					onClick={ this.onDismissClick }
 				/>

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'gridicons';
+import GridiconHelpOutline from 'gridicons/dist/help-outline';
 
 /**
  * Internal Dependencies
@@ -154,7 +154,7 @@ class InlineHelp extends Component {
 					title={ translate( 'Help' ) }
 					ref={ this.inlineHelpToggleRef }
 				>
-					<Gridicon icon="help-outline" size={ 36 } />
+					<GridiconHelpOutline size={ 36 } />
 				</Button>
 				{ showInlineHelp && (
 					<InlineHelpPopover

@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { current as currentPage } from 'page';
 
 /**
@@ -581,7 +581,7 @@ class PostShare extends Component {
 									data-tip-target="post-share__close"
 									onClick={ onClose }
 								>
-									<Gridicon icon="cross" />
+									<GridiconCross />
 								</Button>
 							) }
 						</div>

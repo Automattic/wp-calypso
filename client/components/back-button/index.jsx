@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 import { noop } from 'lodash';
 
 /**
@@ -17,7 +17,7 @@ const BackButton = ( { onClick, translate } ) => {
 	return (
 		<div className="back-button">
 			<Button borderless compact onClick={ onClick }>
-				<Gridicon icon="arrow-left" />
+				<GridiconArrowLeft />
 				<span className="back-button__label">{ translate( 'Back' ) }</span>
 			</Button>
 		</div>

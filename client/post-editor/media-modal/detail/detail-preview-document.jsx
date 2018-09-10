@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconPages from 'gridicons/dist/pages';
 import classNames from 'classnames';
 
 export default class extends React.Component {
@@ -21,7 +21,7 @@ export default class extends React.Component {
 
 		return (
 			<div className={ classes }>
-				<Gridicon icon="pages" size={ 120 } />
+				<GridiconPages size={ 120 } />
 			</div>
 		);
 	}

@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
 
 /**
  * Internal dependencies
@@ -54,11 +54,7 @@ class GoogleMyBusinessSelectLocationButton extends Component {
 		if ( location.isConnected ) {
 			return (
 				<div className="gmb-select-location__status">
-					<Gridicon
-						className="gmb-select-location__connected-icon"
-						icon="checkmark-circle"
-						size={ 18 }
-					/>{' '}
+					<GridiconCheckmarkCircle className="gmb-select-location__connected-icon" size={ 18 } />{' '}
 					{ translate( 'Connected' ) }
 				</div>
 			);

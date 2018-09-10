@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -98,7 +98,7 @@ class MediaLibraryUploadUrl extends Component {
 
 					<button type="button" className="media-library__upload-url-cancel" onClick={ onClose }>
 						<span className="screen-reader-text">{ translate( 'Cancel' ) }</span>
-						<Gridicon icon="cross" />
+						<GridiconCross />
 					</button>
 				</div>
 			</form>

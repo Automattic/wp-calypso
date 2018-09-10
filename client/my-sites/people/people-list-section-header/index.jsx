@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconUserAdd from 'gridicons/dist/user-add';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -54,7 +54,7 @@ class PeopleListSectionHeader extends Component {
 				{ children }
 				{ siteLink && (
 					<Button compact href={ siteLink } className="people-list-section-header__add-button">
-						<Gridicon icon="user-add" />
+						<GridiconUserAdd />
 						<span>
 							{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
 						</span>

@@ -5,7 +5,10 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconCreate from 'gridicons/dist/create';
+import GridiconCalendar from 'gridicons/dist/calendar';
+import GridiconAlignImageLeft from 'gridicons/dist/align-image-left';
 
 /**
  * Internal dependencies
@@ -36,7 +39,7 @@ class SelectDropdownExample extends React.PureComponent {
 			childSelected: 'Published',
 			selectedCount: 10,
 			compactButtons: false,
-			selectedIcon: <Gridicon icon="align-image-left" size={ 18 } />,
+			selectedIcon: <GridiconAlignImageLeft size={ 18 } />,
 		};
 
 		this.state = initialState;
@@ -116,15 +119,15 @@ class SelectDropdownExample extends React.PureComponent {
 						{
 							value: 'published',
 							label: 'Published',
-							icon: <Gridicon icon="align-image-left" size={ 18 } />,
+							icon: <GridiconAlignImageLeft size={ 18 } />,
 						},
 						{
 							value: 'scheduled',
 							label: 'Scheduled',
-							icon: <Gridicon icon="calendar" size={ 18 } />,
+							icon: <GridiconCalendar size={ 18 } />,
 						},
-						{ value: 'drafts', label: 'Drafts', icon: <Gridicon icon="create" size={ 18 } /> },
-						{ value: 'trashed', label: 'Trashed', icon: <Gridicon icon="trash" size={ 18 } /> },
+						{ value: 'drafts', label: 'Drafts', icon: <GridiconCreate size={ 18 } /> },
+						{ value: 'trashed', label: 'Trashed', icon: <GridiconTrash size={ 18 } /> },
 					] }
 				/>
 
@@ -141,11 +144,11 @@ class SelectDropdownExample extends React.PureComponent {
 
 					<DropdownItem
 						selected={ this.state.childSelected === 'Published' }
-						icon={ <Gridicon icon="align-image-left" size={ 18 } /> }
+						icon={ <GridiconAlignImageLeft size={ 18 } /> }
 						onClick={ this.getSelectItemHandler(
 							'Published',
 							10,
-							<Gridicon icon="align-image-left" size={ 18 } />
+							<GridiconAlignImageLeft size={ 18 } />
 						) }
 					>
 						Published
@@ -153,11 +156,11 @@ class SelectDropdownExample extends React.PureComponent {
 
 					<DropdownItem
 						selected={ this.state.childSelected === 'Scheduled' }
-						icon={ <Gridicon icon="calendar" size={ 18 } /> }
+						icon={ <GridiconCalendar size={ 18 } /> }
 						onClick={ this.getSelectItemHandler(
 							'Scheduled',
 							4,
-							<Gridicon icon="calendar" size={ 18 } />
+							<GridiconCalendar size={ 18 } />
 						) }
 					>
 						Scheduled
@@ -165,12 +168,8 @@ class SelectDropdownExample extends React.PureComponent {
 
 					<DropdownItem
 						selected={ this.state.childSelected === 'Drafts' }
-						icon={ <Gridicon icon="create" size={ 18 } /> }
-						onClick={ this.getSelectItemHandler(
-							'Drafts',
-							3343,
-							<Gridicon icon="create" size={ 18 } />
-						) }
+						icon={ <GridiconCreate size={ 18 } /> }
+						onClick={ this.getSelectItemHandler( 'Drafts', 3343, <GridiconCreate size={ 18 } /> ) }
 					>
 						Drafts
 					</DropdownItem>
@@ -179,12 +178,8 @@ class SelectDropdownExample extends React.PureComponent {
 
 					<DropdownItem
 						selected={ this.state.childSelected === 'Trashed' }
-						icon={ <Gridicon icon="trash" size={ 18 } /> }
-						onClick={ this.getSelectItemHandler(
-							'Trashed',
-							3,
-							<Gridicon icon="trash" size={ 18 } />
-						) }
+						icon={ <GridiconTrash size={ 18 } /> }
+						onClick={ this.getSelectItemHandler( 'Trashed', 3, <GridiconTrash size={ 18 } /> ) }
 					>
 						Trashed
 					</DropdownItem>

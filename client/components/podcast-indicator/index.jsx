@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconMicrophone from 'gridicons/dist/microphone';
 
 /**
  * Internal dependencies
@@ -63,8 +63,7 @@ class PodcastIndicator extends React.Component {
 
 		return (
 			<span className={ classes }>
-				<Gridicon
-					icon="microphone"
+				<GridiconMicrophone
 					size={ size }
 					ref={ this.setTooltipContext }
 					onMouseEnter={ this.showTooltip }

@@ -11,7 +11,8 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconBell from 'gridicons/dist/bell';
+import GridiconCog from 'gridicons/dist/cog';
 import ReaderPopover from 'components/reader-popover';
 import SegmentedControl from 'components/segmented-control';
 import ControlItem from 'components/segmented-control/item';
@@ -133,7 +134,7 @@ class ReaderSiteNotificationSettings extends Component {
 					onClick={ this.togglePopoverVisibility }
 					ref={ this.saveSpanRef }
 				>
-					<Gridicon icon="cog" size={ 24 } ref={ this.saveIconRef } />
+					<GridiconCog size={ 24 } ref={ this.saveIconRef } />
 					<span
 						className="reader-site-notification-settings__button-label"
 						title={ translate( 'Notification settings' ) }
@@ -152,7 +153,7 @@ class ReaderSiteNotificationSettings extends Component {
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
 						{ translate( 'Notify me of new posts' ) }
-						<Gridicon icon="bell" size={ 18 } />
+						<GridiconBell size={ 18 } />
 						<FormToggle
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }

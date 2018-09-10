@@ -9,7 +9,8 @@ import React, { Component } from 'react';
 import EmailValidator from 'email-validator';
 import { connect } from 'react-redux';
 import { invoke } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal dependencies
@@ -138,7 +139,7 @@ class PressableStoreStep extends Component {
 							/>
 							<FormButton className="pressable-store__form-submit" tabIndex={ this.getTabIndex() }>
 								{ translate( 'Get started on Pressable' ) }
-								<Gridicon icon="external" size={ 12 } />
+								<GridiconExternal size={ 12 } />
 							</FormButton>
 						</div>
 						{ this.state.error && (
@@ -156,7 +157,7 @@ class PressableStoreStep extends Component {
 						{ translate( 'Pressable Privacy Policy', {
 							comment: '“Pressable” is the name of a WordPress.org hosting provider',
 						} ) }
-						<Gridicon icon="external" size={ 12 } />
+						<GridiconExternal size={ 12 } />
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 			</div>
@@ -176,7 +177,7 @@ class PressableStoreStep extends Component {
 						onClick={ this.props.onBackClick }
 						tabIndex={ this.getTabIndex() }
 					>
-						<Gridicon icon="arrow-left" size={ 18 } />
+						<GridiconArrowLeft size={ 18 } />
 						{ translate( 'Back', { context: 'Return to previous step' } ) }
 					</Button>
 				</div>

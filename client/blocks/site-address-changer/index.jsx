@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { debounce, get, flow, inRange, isEmpty } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 import { connect } from 'react-redux';
 
 /**
@@ -213,7 +213,7 @@ export class SiteAddressChanger extends Component {
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
 				<div className="site-address-changer site-address-changer__only-owner-info">
-					<Gridicon icon="info-outline" />
+					<GridiconInfoOutline />
 					{ isEmpty( currentDomain.owner )
 						? translate( 'Only the site owner can edit this domain name.' )
 						: translate(
@@ -259,7 +259,7 @@ export class SiteAddressChanger extends Component {
 						/>
 						<div className="site-address-changer__footer">
 							<div className="site-address-changer__info">
-								<Gridicon icon="info-outline" size={ 18 } />
+								<GridiconInfoOutline size={ 18 } />
 								<p>
 									{ translate(
 										'Once you change your site address, %(currentDomainName)s will no longer be available.',

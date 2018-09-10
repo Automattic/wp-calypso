@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconRefresh from 'gridicons/dist/refresh';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 
@@ -84,7 +84,7 @@ class PriceInput extends Component {
 						borderless
 						aria-label={ translate( 'Reset to %(value)s', { args: { value: initialValue } } ) }
 					>
-						<Gridicon icon="refresh" />
+						<GridiconRefresh />
 					</Button>
 				);
 			}

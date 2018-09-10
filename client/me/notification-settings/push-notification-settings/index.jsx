@@ -9,7 +9,8 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconBell from 'gridicons/dist/bell';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -658,7 +659,7 @@ class PushNotificationSettings extends React.Component {
 					className="notification-settings-push-notification-settings__instruction-dismiss"
 					onClick={ this.props.toggleUnblockInstructions }
 				>
-					<Gridicon icon="cross" size={ 24 } />
+					<GridiconCross size={ 24 } />
 					<span className="screen-reader-text">{ this.props.translate( 'Dismiss' ) }</span>
 				</span>
 			</Dialog>
@@ -755,10 +756,9 @@ class PushNotificationSettings extends React.Component {
 		return (
 			<Card className="notification-settings-push-notification-settings__settings">
 				<h2 className="notification-settings-push-notification-settings__settings-heading">
-					<Gridicon
+					<GridiconBell
 						size={ 24 }
 						className="notification-settings-push-notification-settings__settings-icon"
-						icon="bell"
 					/>
 					{ this.props.translate( 'Browser Notifications' ) }
 					<small

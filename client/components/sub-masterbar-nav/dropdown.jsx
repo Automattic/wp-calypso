@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import Item from './item';
 
 const OptionShape = PropTypes.shape( {
@@ -51,7 +51,7 @@ export default class Dropdown extends Component {
 						label={ this.props.selected.label }
 						icon={ this.props.selected.icon }
 					/>
-					<Gridicon icon="chevron-down" className="sub-masterbar-nav__select-icon" />
+					<GridiconChevronDown className="sub-masterbar-nav__select-icon" />
 				</div>
 				<div className="sub-masterbar-nav__wrapper">
 					<div className="sub-masterbar-nav__items">

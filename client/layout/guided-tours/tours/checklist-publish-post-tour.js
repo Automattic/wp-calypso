@@ -6,7 +6,7 @@
 
 import React, { Fragment } from 'react';
 import { delay, noop, negate as not } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -209,7 +209,7 @@ export const ChecklistPublishPostTour = makeTour(
 				<Fragment>
 					<h1 className="tours__title">
 						<span className="tours__completed-icon-wrapper">
-							<Gridicon icon="checkmark" className="tours__completed-icon" />
+							<GridiconCheckmark className="tours__completed-icon" />
 						</span>
 						{ translate( 'You did it!' ) }
 					</h1>

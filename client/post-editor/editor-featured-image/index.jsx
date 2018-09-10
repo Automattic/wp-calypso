@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconPencil from 'gridicons/dist/pencil';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 
@@ -168,7 +168,7 @@ class EditorFeaturedImage extends Component {
 						data-tip-target="editor-featured-image-current-image"
 					>
 						{ this.renderCurrentImage() }
-						<Gridicon icon="pencil" className="editor-featured-image__edit-icon" />
+						<GridiconPencil className="editor-featured-image__edit-icon" />
 					</Button>
 					{ featuredImageId && <RemoveButton onRemove={ this.removeImage } /> }
 				</div>

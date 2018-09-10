@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconLink from 'gridicons/dist/link';
 import { get, isEqual } from 'lodash';
 
 /**
@@ -76,7 +76,7 @@ export class CommentAuthor extends Component {
 					{ 'comment' === commentType && !! authorAvatarUrl && <Gravatar user={ gravatarUser } /> }
 					{ 'comment' === commentType &&
 						! authorAvatarUrl && <span className="comment__author-gravatar-placeholder" /> }
-					{ 'comment' !== commentType && <Gridicon icon="link" size={ 24 } /> }
+					{ 'comment' !== commentType && <GridiconLink size={ 24 } /> }
 				</div>
 
 				<div className="comment__author-info">
@@ -87,7 +87,7 @@ export class CommentAuthor extends Component {
 								onMouseLeave={ this.hideLinkTooltip }
 								ref={ this.storeLinkIndicatorRef }
 							>
-								<Gridicon icon="link" className="comment__author-has-link" size={ 18 } />
+								<GridiconLink className="comment__author-has-link" size={ 18 } />
 								<Tooltip
 									context={ this.hasLinkIndicator }
 									isVisible={ isLinkTooltipVisible }

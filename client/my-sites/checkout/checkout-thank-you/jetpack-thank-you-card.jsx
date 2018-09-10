@@ -19,7 +19,7 @@ import FeatureExample from 'components/feature-example';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Spinner from 'components/spinner';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import analytics from 'lib/analytics';
 import { SETTING_UP_PREMIUM_SERVICES } from 'lib/url/support';
@@ -252,7 +252,7 @@ export class JetpackThankYouCard extends Component {
 					icon = <Spinner size={ 18 } />;
 					break;
 				case 'done':
-					icon = <Gridicon icon="checkmark" size={ 18 } />;
+					icon = <GridiconCheckmark size={ 18 } />;
 					break;
 				case 'error':
 					icon = null;

@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
 import { get } from 'lodash';
 
 /**
@@ -126,7 +128,7 @@ class TransferDomainPrecheck extends React.Component {
 			'is-complete': isStepFinished,
 		} );
 
-		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
+		const sectionIcon = isStepFinished ? <GridiconCheckmarkCircle size={ 36 } /> : step;
 
 		return (
 			<Card compact>
@@ -302,7 +304,7 @@ class TransferDomainPrecheck extends React.Component {
 
 		const stepStatus = true === authCodeValid && (
 			<div className="transfer-domain-step__lock-status transfer-domain-step__auth-code-valid">
-				<Gridicon icon="checkmark" size={ 12 } />
+				<GridiconCheckmark size={ 12 } />
 				<span>{ translate( 'Valid' ) } </span>
 			</div>
 		);
@@ -375,7 +377,9 @@ class TransferDomainPrecheck extends React.Component {
 		if ( isSupportUserSession() ) {
 			return (
 				<Notice
-					text={ this.props.translate( 'Transfers cannot be initiated in a support session - please ask the user to do it instead.' ) }
+					text={ this.props.translate(
+						'Transfers cannot be initiated in a support session - please ask the user to do it instead.'
+					) }
 					status="is-warning"
 					showDismiss={ false }
 				/>

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import ActivityLogBanner from './index';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
-import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getSiteUrl from 'state/selectors/get-site-url';
@@ -152,7 +152,7 @@ class SuccessBanner extends PureComponent {
 					className="activity-log-banner__success-happychat activity-log-confirm-dialog__more-info-link"
 					onClick={ params.trackHappyChat }
 				>
-					<Gridicon icon="chat" />
+					<GridiconChat />
 					<span className="activity-log-banner__success-happychat-text activity-log-confirm-dialog__more-info-link-text">
 						{ translate( 'Get help' ) }
 					</span>

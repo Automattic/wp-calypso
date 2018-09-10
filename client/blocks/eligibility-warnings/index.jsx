@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, includes, noop, partition } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconThumbsUp from 'gridicons/dist/thumbs-up';
 
 /**
  * Internal dependencies
@@ -115,7 +115,7 @@ export const EligibilityWarnings = ( {
 				0 === listHolds.length &&
 				0 === warnings.length && (
 					<Card className="eligibility-warnings__no-conflicts">
-						<Gridicon icon="thumbs-up" size={ 24 } />
+						<GridiconThumbsUp size={ 24 } />
 						<span>
 							{ translate( 'This site is eligible to install plugins and upload themes.' ) }
 						</span>

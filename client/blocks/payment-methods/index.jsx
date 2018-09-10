@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconLock from 'gridicons/dist/lock';
 
 /**
  * Internal dependencies
@@ -40,8 +40,7 @@ class PaymentMethods extends Component {
 
 		return (
 			<div className="payment-methods">
-				<Gridicon
-					icon="lock"
+				<GridiconLock
 					size={ 18 }
 					aria-label={ translate( 'Lock icon' ) }
 					className="payment-methods__icon"

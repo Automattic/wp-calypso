@@ -8,7 +8,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { every, find, isEmpty, trim } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconPlusSmall from 'gridicons/dist/plus-small';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -128,7 +128,7 @@ class AddressView extends Component {
 				className="address-view__show-line-2"
 				onClick={ this.onClickShowAddressLine2 }
 			>
-				<Gridicon icon="plus-small" />
+				<GridiconPlusSmall />
 				{ translate( 'Add Address Line 2' ) }
 			</Button>
 		);

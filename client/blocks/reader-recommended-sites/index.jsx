@@ -6,7 +6,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { map, partial, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
+import GridiconThumbsUp from 'gridicons/dist/thumbs-up';
 import { connect } from 'react-redux';
 
 /**
@@ -57,7 +58,7 @@ export class RecommendedSites extends React.PureComponent {
 		return (
 			<div className="reader-recommended-sites">
 				<h1 className="reader-recommended-sites__header">
-					<Gridicon icon="thumbs-up" size={ 18 } />
+					<GridiconThumbsUp size={ 18 } />
 					{ this.props.translate( 'Recommended Sites' ) }
 				</h1>
 				<ul className="reader-recommended-sites__list">
@@ -74,7 +75,7 @@ export class RecommendedSites extends React.PureComponent {
 										title={ this.props.translate( 'Dismiss this recommendation' ) }
 										onClick={ partial( this.handleSiteDismiss, siteId, index ) }
 									>
-										<Gridicon icon="cross" size={ 18 } />
+										<GridiconCross size={ 18 } />
 									</Button>
 								</div>
 								<ConnectedSubscriptionListItem

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconHelpOutline from 'gridicons/dist/help-outline';
 /**
  * Internal dependencies
  */
@@ -43,9 +43,8 @@ class PriceSummary extends Component {
 		const { translate } = this.props;
 		return (
 			<div className="label-purchase-modal__price-item-help">
-				<Gridicon
+				<GridiconHelpOutline
 					ref={ this.setTooltipContext }
-					icon="help-outline"
 					onMouseEnter={ this.showTooltip }
 					onMouseLeave={ this.hideTooltip }
 					size={ 18 }

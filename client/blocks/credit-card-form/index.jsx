@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 
 /**
  * Internal Dependencies
@@ -289,7 +289,7 @@ export class CreditCardForm extends Component {
 						autoFocus={ autoFocus }
 					/>
 					<div className="credit-card-form__card-terms">
-						<Gridicon icon="info-outline" size={ 18 } />
+						<GridiconInfoOutline size={ 18 } />
 						<p>
 							{ translate(
 								'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
@@ -347,7 +347,7 @@ export class CreditCardForm extends Component {
 
 		return (
 			<div className="credit-card-form__card-terms">
-				<Gridicon icon="info-outline" size={ 18 } />
+				<GridiconInfoOutline size={ 18 } />
 				<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
 			</div>
 		);

@@ -7,12 +7,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconNoticeOutline from 'gridicons/dist/notice-outline';
 
 const FieldError = ( { text, type = 'input-validation' } ) => {
 	return (
 		<div className={ classNames( 'field-error', `field-error__${ type }` ) }>
-			<Gridicon size={ 24 } icon="notice-outline" /> <span>{ text }</span>
+			<GridiconNoticeOutline size={ 24 } /> <span>{ text }</span>
 		</div>
 	);
 };

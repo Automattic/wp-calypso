@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconReaderFollow from 'gridicons/dist/reader-follow';
+import GridiconReaderFollowing from 'gridicons/dist/reader-following';
 
 class FollowButton extends React.Component {
 	static propTypes = {
@@ -64,8 +65,8 @@ class FollowButton extends React.Component {
 			menuClasses.push( 'is-disabled' );
 		}
 
-		const followingIcon = <Gridicon key="following" icon="reader-following" size={ iconSize } />;
-		const followIcon = <Gridicon key="follow" icon="reader-follow" size={ iconSize } />;
+		const followingIcon = <GridiconReaderFollowing key="following" size={ iconSize } />;
+		const followIcon = <GridiconReaderFollow key="follow" size={ iconSize } />;
 		const followLabelElement = (
 			<span key="label" className="follow-button__label">
 				{ label }

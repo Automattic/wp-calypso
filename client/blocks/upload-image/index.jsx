@@ -10,7 +10,9 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import path from 'path';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
+import GridiconPencil from 'gridicons/dist/pencil';
+import GridiconAddImage from 'gridicons/dist/add-image';
 import { noop, uniqueId } from 'lodash';
 
 /**
@@ -331,7 +333,7 @@ class UploadImage extends Component {
 		return (
 			<FilePicker accept="image/*" onPick={ this.receiveFiles }>
 				<div className="upload-image__image-picker">
-					<Gridicon icon="add-image" size={ 36 } />
+					<GridiconAddImage size={ 36 } />
 					<span>{ addAnImageText || translate( 'Add an Image' ) }</span>
 				</div>
 			</FilePicker>
@@ -374,11 +376,7 @@ class UploadImage extends Component {
 							compact
 							className="upload-image__uploaded-image-edit-button"
 						>
-							<Gridicon
-								icon="pencil"
-								size={ 18 }
-								className="upload-image__uploaded-image-edit-icon"
-							/>
+							<GridiconPencil size={ 18 } className="upload-image__uploaded-image-edit-icon" />
 						</Button>
 					</div>
 					<Button
@@ -386,11 +384,7 @@ class UploadImage extends Component {
 						compact
 						className="upload-image__uploaded-image-remove"
 					>
-						<Gridicon
-							icon="cross"
-							size={ 24 }
-							className="upload-image__uploaded-image-remove-icon"
-						/>
+						<GridiconCross size={ 24 } className="upload-image__uploaded-image-remove-icon" />
 					</Button>
 				</div>
 			);

@@ -14,7 +14,7 @@ const debug = debugFactory( 'calypso:stats:action-page' );
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import GridiconStats from 'gridicons/dist/stats';
 
 class StatsActionPage extends React.Component {
 	static displayName = 'StatsActionPage';
@@ -47,7 +47,7 @@ class StatsActionPage extends React.Component {
 						context: 'Stats ARIA label: View content in a new window',
 					} ) }
 				>
-					<Gridicon icon="stats" size={ 18 } />
+					<GridiconStats size={ 18 } />
 					<span className="module-content-list-item-action-label">
 						{ this.props.translate( 'View', {
 							context: 'Stats: List item action to view content',

@@ -8,7 +8,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { find, get } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconLock from 'gridicons/dist/lock';
+import GridiconUser from 'gridicons/dist/user';
+import GridiconGlobe from 'gridicons/dist/globe';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -215,7 +217,7 @@ class EditorVisibility extends React.Component {
 		const dropdownItems = [
 			{
 				label: this.props.isPrivateSite ? publicLabelPrivateSite : publicLabelPublicSite,
-				icon: <Gridicon icon="globe" size={ 18 } />,
+				icon: <GridiconGlobe size={ 18 } />,
 				value: 'public',
 				onClick: () => {
 					this.updateVisibility( 'public' );
@@ -226,7 +228,7 @@ class EditorVisibility extends React.Component {
 					context:
 						'Editor: Radio label to set post to private so that only admins and editors can see it',
 				} ),
-				icon: <Gridicon icon="user" size={ 18 } />,
+				icon: <GridiconUser size={ 18 } />,
 				value: 'private',
 				onClick: this.onSetToPrivate,
 			},
@@ -234,7 +236,7 @@ class EditorVisibility extends React.Component {
 				label: this.props.translate( 'Password Protected', {
 					context: 'Editor: Radio label to set post to password protected',
 				} ),
-				icon: <Gridicon icon="lock" size={ 18 } />,
+				icon: <GridiconLock size={ 18 } />,
 				value: 'password',
 				onClick: () => {
 					this.updateVisibility( 'password' );

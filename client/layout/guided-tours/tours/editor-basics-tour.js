@@ -6,7 +6,8 @@
 
 import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCog from 'gridicons/dist/cog';
+import GridiconAddOutline from 'gridicons/dist/add-outline';
 
 /**
  * Internal dependencies
@@ -88,7 +89,7 @@ export const EditorBasicsTour = makeTour(
 							{
 								components: {
 									strong: <strong />,
-									icon: <Gridicon icon="add-outline" />,
+									icon: <GridiconAddOutline />,
 								},
 							}
 						) }
@@ -113,7 +114,7 @@ export const EditorBasicsTour = makeTour(
 					<p>
 						{ translate( 'Click the {{icon/}} to show or hide these settings.', {
 							components: {
-								icon: <Gridicon icon="cog" />,
+								icon: <GridiconCog />,
 							},
 						} ) }
 					</p>

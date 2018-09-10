@@ -5,7 +5,8 @@
  */
 
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconArrowRight from 'gridicons/dist/arrow-right';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -78,7 +79,7 @@ class PaginationPage extends Component {
 				return (
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler } disabled={ currentPage <= 1 }>
-							<Gridicon icon="arrow-left" size={ 18 } />
+							<GridiconArrowLeft size={ 18 } />
 							{ ! compact && ( prevLabel || translate( 'Previous' ) ) }
 						</Button>
 					</li>
@@ -92,7 +93,7 @@ class PaginationPage extends Component {
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler } disabled={ currentPage >= totalPages }>
 							{ ! compact && ( nextLabel || translate( 'Next' ) ) }
-							<Gridicon icon="arrow-right" size={ 18 } />
+							<GridiconArrowRight size={ 18 } />
 						</Button>
 					</li>
 				);

@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconPlugins from 'gridicons/dist/plugins';
 
 const PluginIcon = ( { className, image, isPlaceholder } ) => {
 	const classes = classNames(
@@ -22,7 +22,7 @@ const PluginIcon = ( { className, image, isPlaceholder } ) => {
 	return (
 		<div className={ classes }>
 			{ isPlaceholder || ! image ? (
-				<Gridicon icon="plugins" />
+				<GridiconPlugins />
 			) : (
 				<img className="plugin-icon__img" src={ image } />
 			) }

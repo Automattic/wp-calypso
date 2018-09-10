@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Spinner from 'components/spinner';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';
@@ -128,7 +128,7 @@ export default class extends React.Component {
 		return (
 			<div className={ classes } style={ style } onClick={ this.clickItem } { ...props }>
 				<span className="media-library__list-item-selected-icon">
-					<Gridicon icon="checkmark" size={ 20 } />
+					<GridiconCheckmark size={ 20 } />
 				</span>
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }

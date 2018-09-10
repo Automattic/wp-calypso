@@ -6,7 +6,8 @@ import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconHelp from 'gridicons/dist/help';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal dependencies
@@ -213,10 +214,10 @@ export class Translatable extends Component {
 								href={ this.state.translationUrl }
 								className="community-translator__nav-link"
 							>
-								<Gridicon icon="external" size={ 12 } />
+								<GridiconExternal size={ 12 } />
 							</a>
 						) }
-						<Gridicon icon="help" className="community-translator__nav-link" size={ 12 } />
+						<GridiconHelp className="community-translator__nav-link" size={ 12 } />
 					</nav>
 				</header>
 				<section className="community-translator__dialog-body">

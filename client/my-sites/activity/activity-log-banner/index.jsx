@@ -15,6 +15,8 @@ import { noop } from 'lodash';
 import Card from 'components/card';
 import Gridicon from 'gridicons';
 
+import GridiconCross from 'gridicons/dist/cross';
+
 class ActivityLogBanner extends Component {
 	static propTypes = {
 		icon: PropTypes.string,
@@ -75,7 +77,7 @@ class ActivityLogBanner extends Component {
 						<span className="activity-log-banner__screen-reader-text screen-reader-text">
 							{ translate( 'Dismiss' ) }
 						</span>
-						<Gridicon icon="cross" size={ 24 } />
+						<GridiconCross size={ 24 } />
 					</button>
 				) }
 			</Card>

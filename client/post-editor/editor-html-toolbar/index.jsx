@@ -10,7 +10,12 @@ import { connect } from 'react-redux';
 import { get, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconAddOutline from 'gridicons/dist/add-outline';
+import GridiconMoney from 'gridicons/dist/money';
+import GridiconMention from 'gridicons/dist/mention';
+import GridiconImageMultiple from 'gridicons/dist/image-multiple';
+import GridiconShutter from 'gridicons/dist/shutter';
+import GridiconImage from 'gridicons/dist/image';
 import { Env } from 'tinymce/tinymce';
 
 /**
@@ -513,7 +518,7 @@ export class EditorHtmlToolbar extends Component {
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openMediaModal }
 				>
-					<Gridicon icon="image" />
+					<GridiconImage />
 					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
 				</button>
 
@@ -522,7 +527,7 @@ export class EditorHtmlToolbar extends Component {
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openGoogleModal }
 					>
-						<Gridicon icon="shutter" />
+						<GridiconShutter />
 						<span data-e2e-insert-type="google-media">{ translate( 'Media from Google' ) }</span>
 					</button>
 				) }
@@ -532,7 +537,7 @@ export class EditorHtmlToolbar extends Component {
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openPexelsModal }
 					>
-						<Gridicon icon="image-multiple" />
+						<GridiconImageMultiple />
 						<span data-e2e-insert-type="pexels">{ translate( 'Free photo library' ) }</span>
 					</button>
 				) }
@@ -541,7 +546,7 @@ export class EditorHtmlToolbar extends Component {
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openContactFormDialog }
 				>
-					<Gridicon icon="mention" />
+					<GridiconMention />
 					<span data-e2e-insert-type="contact-form">{ translate( 'Contact form' ) }</span>
 				</button>
 
@@ -549,7 +554,7 @@ export class EditorHtmlToolbar extends Component {
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openSimplePaymentsDialog }
 				>
-					<Gridicon icon="money" />
+					<GridiconMoney />
 					<span data-e2e-insert-type="payment-button">{ translate( 'Payment button' ) }</span>
 				</button>
 			</div>
@@ -629,7 +634,7 @@ export class EditorHtmlToolbar extends Component {
 									compact
 									onClick={ this.toggleInsertContentMenu }
 								>
-									<Gridicon icon="add-outline" />
+									<GridiconAddOutline />
 									<span>{ translate( 'Add' ) }</span>
 								</Button>
 							</div>

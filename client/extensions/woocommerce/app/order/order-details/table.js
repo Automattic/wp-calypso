@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { localize } from 'i18n-calypso';
 import { every, find, findIndex, get, isNaN, noop } from 'lodash';
 
@@ -202,7 +202,7 @@ class OrderDetailsTable extends Component {
 					} ) }
 					onClick={ this.onDelete( item.id, type ) }
 				>
-					<Gridicon icon="trash" />
+					<GridiconTrash />
 				</Button>
 			</TableItem>
 		);

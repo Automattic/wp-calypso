@@ -6,7 +6,8 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
+import GridiconArrowRight from 'gridicons/dist/arrow-right';
 
 /**
  * Internal dependencies
@@ -157,7 +158,7 @@ const PostScheduleExample = localize(
 						<Card className="card__component-instance">
 							<h3>
 								<span>owner</span>
-								<Gridicon icon="arrow-right" size={ 18 } />
+								<GridiconArrowRight size={ 18 } />
 								<span>ownee</span>
 							</h3>
 
@@ -219,7 +220,7 @@ const PostScheduleExample = localize(
 						<Card className="card__component-instance">
 							<h3>
 								<span>owner</span>
-								<Gridicon icon="arrow-left" size={ 18 } />
+								<GridiconArrowLeft size={ 18 } />
 								<span>ownee</span>
 							</h3>
 

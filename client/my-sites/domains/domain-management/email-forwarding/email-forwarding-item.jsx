@@ -7,7 +7,8 @@ import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
+import GridiconMail from 'gridicons/dist/mail';
+import GridiconTrash from 'gridicons/dist/trash';
 
 /**
  * Internal dependencies
@@ -103,7 +104,7 @@ const EmailForwardingItem = createReactClass( {
 		return (
 			<li>
 				<Button borderless disabled={ this.props.emailData.temporary } onClick={ this.deleteItem }>
-					<Gridicon icon="trash" />
+					<GridiconTrash />
 				</Button>
 
 				{ ! this.props.emailData.active && (
@@ -115,7 +116,7 @@ const EmailForwardingItem = createReactClass( {
 							context: 'Email Forwarding',
 						} ) }
 					>
-						<Gridicon icon="mail" />
+						<GridiconMail />
 					</Button>
 				) }
 

@@ -19,7 +19,8 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import Gridicon from 'gridicons';
+import GridiconNoticeOutline from 'gridicons/dist/notice-outline';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import SupportInfo from 'components/support-info';
 import ExternalLink from 'components/external-link';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -71,7 +72,7 @@ const SpamFilteringSettings = ( {
 		className = 'is-valid';
 		header = (
 			<div>
-				<Gridicon icon="checkmark" />
+				<GridiconCheckmark />
 				{ translate( 'Your site is protected from spam.' ) }
 			</div>
 		);
@@ -82,7 +83,7 @@ const SpamFilteringSettings = ( {
 		className = 'is-error';
 		header = (
 			<div>
-				<Gridicon icon="notice-outline" />
+				<GridiconNoticeOutline />
 				{ translate( 'Your site needs an Antispam key.' ) }
 			</div>
 		);

@@ -19,7 +19,7 @@ import { isWithinBreakpoint } from 'lib/viewport';
 import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 import Main from 'components/main';
 import WebPreview from 'components/web-preview';
 
@@ -122,7 +122,7 @@ class PreviewMain extends React.Component {
 		if ( ! isPreviewable ) {
 			const action = (
 				<Button primary icon href={ site.URL } target="_blank">
-					{ translate( 'Open' ) } <Gridicon icon="external" />
+					{ translate( 'Open' ) } <GridiconExternal />
 				</Button>
 			);
 

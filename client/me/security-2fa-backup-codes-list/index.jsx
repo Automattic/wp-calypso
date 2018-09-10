@@ -10,7 +10,10 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import Clipboard from 'clipboard';
 import userFactory from 'lib/user';
-import Gridicon from 'gridicons';
+import GridiconCloudDownload from 'gridicons/dist/cloud-download';
+import GridiconPrint from 'gridicons/dist/print';
+import GridiconClipboard from 'gridicons/dist/clipboard';
+import GridiconNotice from 'gridicons/dist/notice';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:security:2fa-backup-codes-list' );
 
@@ -265,7 +268,7 @@ class Security2faBackupCodesList extends React.Component {
 				</ol>
 
 				<p className="security-2fa-backup-codes-list__warning">
-					<Gridicon icon="notice" />
+					<GridiconNotice />
 					{ this.props.translate(
 						'Without access to the app, your phone, or a backup code, you will lose access to your account.'
 					) }
@@ -306,7 +309,7 @@ class Security2faBackupCodesList extends React.Component {
 							onMouseLeave={ this.disableCopyCodesTooltip }
 							ref="copyCodesBtn"
 						>
-							<Gridicon icon="clipboard" />
+							<GridiconClipboard />
 							<Tooltip
 								context={ this.refs && this.refs.copyCodesBtn }
 								isVisible={ this.state.copyCodesTooltip }
@@ -324,7 +327,7 @@ class Security2faBackupCodesList extends React.Component {
 							onMouseLeave={ this.disablePrintCodesTooltip }
 							ref="printCodesBtn"
 						>
-							<Gridicon icon="print" />
+							<GridiconPrint />
 							<Tooltip
 								context={ this.refs && this.refs.printCodesBtn }
 								isVisible={ this.state.printCodesTooltip }
@@ -342,7 +345,7 @@ class Security2faBackupCodesList extends React.Component {
 							onMouseLeave={ this.disableDownloadCodesTooltip }
 							ref="downloadCodesBtn"
 						>
-							<Gridicon icon="cloud-download" />
+							<GridiconCloudDownload />
 							<Tooltip
 								context={ this.refs && this.refs.downloadCodesBtn }
 								isVisible={ this.state.downloadCodesTooltip }

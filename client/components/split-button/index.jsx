@@ -9,6 +9,8 @@ import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
+
 /**
  * Internal dependencies
  */
@@ -120,7 +122,7 @@ class SplitButton extends PureComponent {
 					disabled={ disabled || disableMenu }
 					className="split-button__toggle"
 				>
-					<Gridicon icon="chevron-down" className="split-button__toggle-icon" />
+					<GridiconChevronDown className="split-button__toggle-icon" />
 				</Button>
 				<PopoverMenu
 					isVisible={ isMenuVisible }

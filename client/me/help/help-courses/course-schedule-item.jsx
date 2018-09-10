@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconTime from 'gridicons/dist/time';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ export default localize( props => {
 	return (
 		<Card compact className="help-courses__course-schedule-item">
 			<p className="help-courses__course-schedule-item-date">
-				<Gridicon className="help-courses__course-schedule-item-icon" icon="time" size={ 18 } />
+				<GridiconTime className="help-courses__course-schedule-item-icon" size={ 18 } />
 				{ translate( '%(date)s at %(time)s', {
 					args: {
 						date: date.format( 'dddd, MMMM D' ),

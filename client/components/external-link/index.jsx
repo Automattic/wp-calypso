@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { assign, omit } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 class ExternalLink extends Component {
 	static defaultProps = {
@@ -52,11 +52,7 @@ class ExternalLink extends Component {
 		}
 
 		const iconComponent = (
-			<Gridicon
-				className={ this.props.iconClassName }
-				icon="external"
-				size={ this.props.iconSize }
-			/>
+			<GridiconExternal className={ this.props.iconClassName } size={ this.props.iconSize } />
 		);
 
 		return (
