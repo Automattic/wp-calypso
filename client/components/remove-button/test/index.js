@@ -4,7 +4,7 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { identity, noop } from 'lodash';
 import React from 'react';
 import { spy } from 'sinon';
@@ -25,7 +25,7 @@ describe( 'Remove Button', () => {
 	test( 'should render the icon', () => {
 		const wrapper = shallow( <RemoveButton onRemove={ noop } translate={ identity } /> );
 
-		expect( wrapper.find( Gridicon ) ).to.have.length( 1 );
+		expect( wrapper.find( GridiconCross ) ).to.have.length( 1 );
 	} );
 
 	test( 'should call the provided callback when the button is clicked', () => {
