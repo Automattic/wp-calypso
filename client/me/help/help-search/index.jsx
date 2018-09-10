@@ -29,7 +29,7 @@ export class HelpSearch extends React.PureComponent {
 		this.setState( {
 			searchQuery,
 		} );
-		recordTracksEvent( 'calypso_help_search', { query: searchQuery } );
+		this.props.recordTracksEvent( 'calypso_help_search', { query: searchQuery } );
 	};
 
 	displaySearchResults = () => {
