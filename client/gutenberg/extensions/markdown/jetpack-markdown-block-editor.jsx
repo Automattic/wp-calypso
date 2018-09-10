@@ -80,16 +80,12 @@ class JetpackMarkdownBlockEditor extends Component {
 			<div className={ className }>
 				<BlockControls>
 					<Toolbar
-						controls={ MODE_CONTROLS.map( control => {
-							const { icon, mode, title } = control;
-
-							return {
-								icon,
-								isActive: this.state.activePanel === mode,
-								onClick: this.toggleMode( mode ),
-								title,
-							};
-						} ) }
+						controls={ MODE_CONTROLS.map( ( { icon, mode, title } ) => ( {
+							icon,
+							isActive: this.state.activePanel === mode,
+							onClick: this.toggleMode( mode ),
+							title,
+						} ) ) }
 					/>
 				</BlockControls>
 				{ editorOrPreviewPanel.call( this ) }
