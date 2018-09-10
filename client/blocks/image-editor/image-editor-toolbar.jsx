@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { noop, values as objectValues } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import classNames from 'classnames';
 
 /**
@@ -156,7 +157,7 @@ export class ImageEditorToolbar extends Component {
 								key={ 'image-editor-toolbar-aspect-' + item.action }
 								action={ item.action }
 							>
-								{ aspectRatio === item.action ? <Gridicon icon="checkmark" size={ 12 } /> : false }
+								{ aspectRatio === item.action ? <GridiconCheckmark size={ 12 } /> : false }
 								{ item.label }
 							</PopoverMenuItem>
 						) : null

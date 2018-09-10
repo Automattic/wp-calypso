@@ -6,7 +6,7 @@
 
 import React, { Fragment } from 'react';
 import { overEvery as and, negate as not } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -88,7 +88,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 					<ButtonRow>
 						<Continue when={ not( isPreviewShowing ) } step="theme-docs">
 							{ translate( 'Tap {{icon/}} to close the live demo.', {
-								components: { icon: <Gridicon icon="cross" /> },
+								components: { icon: <GridiconCross /> },
 							} ) }
 						</Continue>
 					</ButtonRow>

@@ -5,7 +5,8 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconVisible from 'gridicons/dist/visible';
+import GridiconNotVisible from 'gridicons/dist/not-visible';
 import classNames from 'classnames';
 import { omit } from 'lodash';
 
@@ -62,7 +63,7 @@ export default class extends React.Component {
 				/>
 
 				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>
-					{ this.hidden() ? <Gridicon icon="not-visible" /> : <Gridicon icon="visible" /> }
+					{ this.hidden() ? <GridiconNotVisible /> : <GridiconVisible /> }
 				</span>
 			</div>
 		);

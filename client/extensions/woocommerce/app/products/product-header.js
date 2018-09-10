@@ -7,7 +7,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconVisible from 'gridicons/dist/visible';
 import { isObject } from 'lodash';
 
 /**
@@ -28,7 +29,7 @@ function renderViewButton( product, label ) {
 			target="_blank"
 			rel="noopener noreferrer"
 		>
-			<Gridicon icon="visible" />
+			<GridiconVisible />
 			<span>{ label }</span>
 		</Button>
 	);
@@ -38,7 +39,7 @@ function renderTrashButton( onTrash, isBusy, label ) {
 	return (
 		onTrash && (
 			<Button borderless scary onClick={ onTrash ? onTrash : undefined }>
-				<Gridicon icon="trash" />
+				<GridiconTrash />
 				<span>{ label } </span>
 			</Button>
 		)

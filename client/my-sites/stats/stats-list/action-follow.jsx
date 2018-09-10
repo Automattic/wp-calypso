@@ -20,6 +20,8 @@ import observe from 'lib/mixins/data-observe';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 
+import GridiconCross from 'gridicons/dist/cross';
+
 const StatsActionFollow = createReactClass( {
 	displayName: 'StatsActionFollow',
 
@@ -83,7 +85,7 @@ const StatsActionFollow = createReactClass( {
 						{ label }
 					</span>
 					<span className="module-content-list-item-action-label unfollow">
-						<Gridicon icon="cross" size={ 18 } />
+						<GridiconCross size={ 18 } />
 						{ this.props.translate( 'Unfollow', {
 							context: 'Stats ARIA label: Unfollow action',
 						} ) }

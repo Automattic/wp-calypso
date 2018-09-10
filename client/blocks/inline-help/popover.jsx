@@ -8,7 +8,10 @@ import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconChevronLeft from 'gridicons/dist/chevron-left';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
+import GridiconChat from 'gridicons/dist/chat';
+import GridiconHelp from 'gridicons/dist/help';
 
 /**
  * Internal Dependencies
@@ -130,7 +133,7 @@ class InlineHelpPopover extends Component {
 						borderless
 						href="/help"
 					>
-						<Gridicon icon="help" className="inline-help__gridicon-left" />
+						<GridiconHelp className="inline-help__gridicon-left" />
 						{ translate( 'More help' ) }
 					</Button>
 
@@ -139,9 +142,9 @@ class InlineHelpPopover extends Component {
 						className="inline-help__contact-button"
 						borderless
 					>
-						<Gridicon icon="chat" className="inline-help__gridicon-left" />
+						<GridiconChat className="inline-help__gridicon-left" />
 						{ translate( 'Contact us' ) }
-						<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
+						<GridiconChevronRight className="inline-help__gridicon-right" />
 					</Button>
 
 					<Button
@@ -149,7 +152,7 @@ class InlineHelpPopover extends Component {
 						className="inline-help__cancel-button"
 						borderless
 					>
-						<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
+						<GridiconChevronLeft className="inline-help__gridicon-left" />
 						{ translate( 'Back' ) }
 					</Button>
 				</div>

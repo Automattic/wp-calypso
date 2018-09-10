@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { get, map, take, values } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconTag from 'gridicons/dist/tag';
 
 /**
  * Internal Dependencies
@@ -149,7 +149,7 @@ class PostByline extends React.Component {
 							) }
 						{ tags.length > 0 && (
 							<span className="reader-post-card__tags">
-								<Gridicon icon="tag" />
+								<GridiconTag />
 								{ tags }
 							</span>
 						) }

@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconNotice from 'gridicons/dist/notice';
 import classNames from 'classnames';
 import { snakeCase } from 'lodash';
 
@@ -34,7 +34,7 @@ const ShippingServiceEntry = props => {
 				<Checkbox id={ id } checked={ enabled } onChange={ onToggleEnabled } />
 				<span>{ name }</span>
 			</label>
-			{ hasError ? <Gridicon icon="notice" /> : null }
+			{ hasError ? <GridiconNotice /> : null }
 			<NumberInput
 				disabled={ ! enabled }
 				value={ adjustment }

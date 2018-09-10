@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import { get, noop, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
+import GridiconReply from 'gridicons/dist/reply';
 import classnames from 'classnames';
 
 /**
@@ -214,7 +215,7 @@ class PostComment extends React.PureComponent {
 			<div>
 				{ !! replyVisibilityText && (
 					<button className="comments__view-replies-btn" onClick={ this.handleToggleRepliesClick }>
-						<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
+						<GridiconReply size={ 18 } /> { replyVisibilityText }
 					</button>
 				) }
 				{ showReplies && (
@@ -405,7 +406,7 @@ class PostComment extends React.PureComponent {
 					{ this.props.showNestingReplyArrow &&
 						parentAuthorName && (
 							<span className="comments__comment-respondee">
-								<Gridicon icon="chevron-right" size={ 16 } />
+								<GridiconChevronRight size={ 16 } />
 								{ this.renderAuthorTag( {
 									className: 'comments__comment-respondee-link',
 									authorName: parentAuthorName,

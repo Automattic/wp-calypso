@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import { isMobile } from 'lib/viewport';
 export default function PlanFeaturesItem( { children, description, hideInfoPopover } ) {
 	return (
 		<div className="plan-features__item">
-			<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
+			<GridiconCheckmark className="plan-features__item-checkmark" size={ 18 } />
 			{ children }
 			{ hideInfoPopover ? null : (
 				<InfoPopover

@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
+import GridiconTime from 'gridicons/dist/time';
 
 /**
  * Internal dependencies
@@ -76,7 +77,7 @@ class PublicizeActionsList extends PureComponent {
 						<span className="post-share__handle-value">{ connectionName }</span>
 					</div>
 					<div className="post-share__timestamp">
-						<Gridicon icon="time" size={ 18 } />
+						<GridiconTime size={ 18 } />
 						<span className="post-share__timestamp-value">{ shareDate }</span>
 					</div>
 					<div className="post-share__message">{ message }</div>
@@ -102,7 +103,7 @@ class PublicizeActionsList extends PureComponent {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					<Gridicon icon="external" size={ 24 } />
+					<GridiconExternal size={ 24 } />
 				</a>
 			)
 		);

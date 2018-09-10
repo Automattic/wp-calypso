@@ -10,7 +10,9 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
+
+import GridiconLinkBreak from 'gridicons/dist/link-break';
 import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
@@ -54,11 +56,7 @@ class CredentialsConfigured extends Component {
 							scary
 							disabled={ this.state.isDeletingCreds }
 						>
-							<Gridicon
-								className="credentials-configured__revoke-icon"
-								icon="link-break"
-								size={ 18 }
-							/>
+							<GridiconLinkBreak className="credentials-configured__revoke-icon" size={ 18 } />
 							{ translate( 'Revoke credentials' ) }
 						</Button>
 						<Button primary onClick={ this.toggleRevoking }>
@@ -73,8 +71,7 @@ class CredentialsConfigured extends Component {
 			return (
 				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking } href="#">
 					<div className="credentials-configured__info">
-						<Gridicon
-							icon="checkmark-circle"
+						<GridiconCheckmarkCircle
 							size={ 48 }
 							className="credentials-configured__info-gridicon"
 						/>
@@ -88,11 +85,7 @@ class CredentialsConfigured extends Component {
 
 		const header = (
 			<div className="credentials-configured__info">
-				<Gridicon
-					icon="checkmark-circle"
-					size={ 48 }
-					className="credentials-configured__info-gridicon"
-				/>
+				<GridiconCheckmarkCircle size={ 48 } className="credentials-configured__info-gridicon" />
 				<div className="credentials-configured__info-text">
 					<h3 className="credentials-configured__info-protocol">{ translate( 'Connected' ) }</h3>
 					<h4 className="credentials-configured__info-description">

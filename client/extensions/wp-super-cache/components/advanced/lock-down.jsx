@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { pick } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconClipboard from 'gridicons/dist/clipboard';
 
 /**
  * Internal dependencies
@@ -71,7 +71,7 @@ const LockDown = ( {
 								className="wp-super-cache__lock-down-code-block-button"
 								text={ lockdownCodeSnippet }
 							>
-								<Gridicon icon="clipboard" />
+								<GridiconClipboard />
 							</ClipboardButton>
 							<span className="wp-super-cache__lock-down-code-block-snippet">
 								{ lockdownCodeSnippet }

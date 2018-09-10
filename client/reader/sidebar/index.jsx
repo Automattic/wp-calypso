@@ -3,7 +3,11 @@
  * External dependencies
  */
 import closest from 'component-closest';
-import Gridicon from 'gridicons';
+import GridiconStar from 'gridicons/dist/star';
+import GridiconSearch from 'gridicons/dist/search';
+import GridiconMySites from 'gridicons/dist/my-sites';
+import GridiconChat from 'gridicons/dist/chat';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
 import { localize } from 'i18n-calypso';
 import { defer, startsWith, identity } from 'lodash';
 import page from 'page';
@@ -143,7 +147,7 @@ export class ReaderSidebar extends React.Component {
 								} ) }
 							>
 								<a href="/" onClick={ this.handleReaderSidebarFollowedSitesClicked }>
-									<Gridicon icon="checkmark-circle" size={ 24 } />
+									<GridiconCheckmarkCircle size={ 24 } />
 									<span className="menu-link-text">
 										{ this.props.translate( 'Followed Sites' ) }
 									</span>
@@ -170,7 +174,7 @@ export class ReaderSidebar extends React.Component {
 										href="/read/conversations"
 										onClick={ this.handleReaderSidebarConversationsClicked }
 									>
-										<Gridicon icon="chat" size={ 24 } />
+										<GridiconChat size={ 24 } />
 										<span className="menu-link-text">
 											{ this.props.translate( 'Conversations' ) }
 										</span>
@@ -215,7 +219,7 @@ export class ReaderSidebar extends React.Component {
 									} ) }
 								>
 									<a href="/discover" onClick={ this.handleReaderSidebarDiscoverClicked }>
-										<Gridicon icon="my-sites" />
+										<GridiconMySites />
 										<span className="menu-link-text">{ this.props.translate( 'Discover' ) }</span>
 									</a>
 								</li>
@@ -227,7 +231,7 @@ export class ReaderSidebar extends React.Component {
 								} ) }
 							>
 								<a href="/read/search" onClick={ this.handleReaderSidebarSearchClicked }>
-									<Gridicon icon="search" size={ 24 } />
+									<GridiconSearch size={ 24 } />
 									<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
 								</a>
 							</li>
@@ -240,7 +244,7 @@ export class ReaderSidebar extends React.Component {
 								) }
 							>
 								<a href="/activities/likes" onClick={ this.handleReaderSidebarLikeActivityClicked }>
-									<Gridicon icon="star" size={ 24 } />
+									<GridiconStar size={ 24 } />
 									<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
 								</a>
 							</li>

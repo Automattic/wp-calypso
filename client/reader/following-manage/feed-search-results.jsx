@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { take, times } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import classnames from 'classnames';
 
 /**
@@ -101,7 +101,7 @@ class FollowingManageSearchFeedsResults extends React.Component {
 								onClick={ onShowMoreResultsClicked }
 								className="following-manage__show-more-button button"
 							>
-								<Gridicon icon="chevron-down" />
+								<GridiconChevronDown />
 								{ translate( 'Show more' ) }
 							</Button>
 						</div>

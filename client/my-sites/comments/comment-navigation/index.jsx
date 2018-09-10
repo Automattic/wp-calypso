@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { localize } from 'i18n-calypso';
 import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
 
@@ -272,7 +272,7 @@ export class CommentNavigation extends Component {
 					</CommentNavigationTab>
 					<CommentNavigationTab className="comment-navigation__close-bulk">
 						<Button borderless onClick={ toggleBulkMode } tabIndex="0">
-							<Gridicon icon="cross" />
+							<GridiconCross />
 						</Button>
 					</CommentNavigationTab>
 				</SectionNav>

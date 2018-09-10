@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
 import { endsWith } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -110,7 +110,7 @@ class DnsRecord extends React.Component {
 	renderRemoveButton() {
 		return (
 			<Button borderless onClick={ this.deleteDns }>
-				<Gridicon icon="trash" />
+				<GridiconTrash />
 			</Button>
 		);
 	}

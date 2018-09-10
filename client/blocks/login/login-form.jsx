@@ -11,7 +11,7 @@ import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 import { stringify } from 'qs';
 
 /**
@@ -301,7 +301,7 @@ export class LoginForm extends Component {
 						<label htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<a href="#" className="login__form-change-username" onClick={ this.resetView }>
-									<Gridicon icon="arrow-left" size={ 18 } />
+									<GridiconArrowLeft size={ 18 } />
 
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )

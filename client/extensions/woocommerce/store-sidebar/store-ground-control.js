@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import Site from 'blocks/site';
 
 const StoreGroundControl = ( { site, translate } ) => {
@@ -28,7 +28,7 @@ const StoreGroundControl = ( { site, translate } ) => {
 				href={ backLink }
 				aria-label={ translate( 'Close Store' ) }
 			>
-				<Gridicon icon="cross" />
+				<GridiconCross />
 			</Button>
 			<div className="store-sidebar__ground-control-site">
 				<Site site={ site } indicator={ false } homeLink externalLink />

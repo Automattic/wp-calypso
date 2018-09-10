@@ -7,7 +7,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal dependencies
@@ -61,7 +61,7 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 						href={ EMPTY_SITE }
 					>
 						{ translate( 'Follow the Steps' ) }
-						<Gridicon icon="external" size={ 48 } />
+						<GridiconExternal size={ 48 } />
 					</Button>
 					<Button
 						className="action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace

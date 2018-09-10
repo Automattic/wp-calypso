@@ -6,7 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { reject } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -46,7 +46,7 @@ class RemoveButton extends PureComponent {
 				className="editor-media-modal-gallery__remove"
 			>
 				<span className="screen-reader-text">{ translate( 'Remove' ) }</span>
-				<Gridicon icon="cross" />
+				<GridiconCross />
 			</button>
 		);
 	}

@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -21,11 +21,7 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 const OwnershipInformation = ( { isChatActive, isChatAvailable, translate } ) => (
 	<FormFieldset className="manage-connection__formfieldset has-divider is-top-only">
 		<div className="manage-connection__ownership-info">
-			<Gridicon
-				icon="info-outline"
-				size={ 24 }
-				className="manage-connection__ownership-info-icon"
-			/>
+			<GridiconInfoOutline size={ 24 } className="manage-connection__ownership-info-icon" />
 
 			<div className="manage-connection__ownership-info-text">
 				<FormSettingExplanation>

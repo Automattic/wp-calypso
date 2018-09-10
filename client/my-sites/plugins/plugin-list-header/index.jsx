@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -244,7 +244,7 @@ export class PluginsListHeader extends PureComponent {
 					onClick={ this.props.toggleBulkManagement }
 					aria-label={ translate( 'Close' ) }
 				>
-					<Gridicon icon="cross" />
+					<GridiconCross />
 				</button>
 			);
 		}

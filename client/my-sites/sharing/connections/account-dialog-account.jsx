@@ -10,6 +10,8 @@ import Image from 'components/image';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
+import GridiconNotice from 'gridicons/dist/notice';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const AccountDialogAccount = ( { account, conflicting, onChange, selected, defaultIcon } ) => {
 	const classes = classNames( 'account-dialog-account', {
@@ -20,7 +22,7 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 	return (
 		<li className={ classes }>
 			<label className="account-dialog-account__label">
-				{ conflicting && <Gridicon icon="notice" /> }
+				{ conflicting && <GridiconNotice /> }
 				{ ! account.isConnected && (
 					<input
 						type="radio"

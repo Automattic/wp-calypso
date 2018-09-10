@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
 import Gridicon from 'gridicons';
+import GridiconProduct from 'gridicons/dist/product';
 import classNames from 'classnames';
 
 const PackagesListItem = ( {
@@ -24,7 +25,7 @@ const PackagesListItem = ( {
 		return (
 			<div className="packages__packages-row placeholder">
 				<div className="packages__packages-row-icon">
-					<Gridicon icon="product" size={ 18 } />
+					<GridiconProduct size={ 18 } />
 				</div>
 				<div className="packages__packages-row-details">
 					<div className="packages__packages-row-details-name">

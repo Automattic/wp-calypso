@@ -5,7 +5,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import page from 'page';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -185,7 +185,7 @@ class AccountSettingsClose extends Component {
 					<ActionPanelFooter>
 						{ ( isLoading || isDeletePossible ) && (
 							<Button scary onClick={ this.handleDeleteClick }>
-								<Gridicon icon="trash" />
+								<GridiconTrash />
 								{ translate( 'Close account', { context: 'button label' } ) }
 							</Button>
 						) }

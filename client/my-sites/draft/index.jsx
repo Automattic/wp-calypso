@@ -16,7 +16,7 @@ import { flow, noop } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import GridiconTime from 'gridicons/dist/time';
 import photon from 'photon';
 import { hasTouch } from 'lib/touch-detect';
 import * as utils from 'state/posts/utils';
@@ -110,7 +110,7 @@ class Draft extends Component {
 				<div className="draft__actions">
 					<p className="post-relative-time-status">
 						<span className="time">
-							<Gridicon icon="time" size={ 18 } />
+							<GridiconTime size={ 18 } />
 							<span className="time-text" />
 						</span>
 					</p>

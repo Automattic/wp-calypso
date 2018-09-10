@@ -13,7 +13,7 @@ import { isNull, noop, omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconComment from 'gridicons/dist/comment';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
 class CommentButton extends Component {
@@ -50,7 +50,7 @@ class CommentButton extends Component {
 				},
 				isNull
 			),
-			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />,
+			<GridiconComment size={ this.props.size } className="comment-button__icon" />,
 			<span className="comment-button__label">
 				{ commentCount > 0 && (
 					<span className="comment-button__label-count">{ commentCount }</span>

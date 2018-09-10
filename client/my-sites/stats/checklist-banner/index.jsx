@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { find, get, noop, reduce } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import store from 'store';
 
 /**
@@ -180,7 +180,7 @@ export class ChecklistBanner extends Component {
 								className="checklist-banner__close-mobile"
 								onClick={ this.handleClose }
 							>
-								<Gridicon size={ 24 } icon="cross" color="#87a6bc" />
+								<GridiconCross size={ 24 } color="#87a6bc" />
 							</Button>
 						) }
 					</span>
@@ -197,7 +197,7 @@ export class ChecklistBanner extends Component {
 					) }
 				{ completed === total && (
 					<Button borderless className="checklist-banner__close" onClick={ this.handleClose }>
-						<Gridicon size={ 24 } icon="cross" color="#87a6bc" />
+						<GridiconCross size={ 24 } color="#87a6bc" />
 					</Button>
 				) }
 			</Card>

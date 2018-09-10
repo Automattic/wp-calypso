@@ -6,7 +6,8 @@ import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconNoticeOutline from 'gridicons/dist/notice-outline';
+import GridiconCalendar from 'gridicons/dist/calendar';
 import { get, noop, pick } from 'lodash';
 
 /**
@@ -186,7 +187,7 @@ export class CommentEdit extends Component {
 							ref={ this.datePopoverButtonRef }
 							onClick={ this.toggleDatePopover }
 						>
-							<Gridicon icon="calendar" />
+							<GridiconCalendar />
 							<span>{ moment( commentDate ).format( 'lll' ) }</span>
 						</Button>
 						<Popover
@@ -221,7 +222,7 @@ export class CommentEdit extends Component {
 
 					{ ! isEditCommentSupported && (
 						<p className="comment__edit-jetpack-update-notice">
-							<Gridicon icon="notice-outline" />
+							<GridiconNoticeOutline />
 							{ translate( 'Comment editing requires a newer version of Jetpack.' ) }
 							<a
 								className="comment__edit-jetpack-update-notice-link"

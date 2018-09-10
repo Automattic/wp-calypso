@@ -5,7 +5,7 @@
  */
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -122,7 +122,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 							target="_blank"
 							onClick={ this.trackAddYourBusinessClick }
 						>
-							{ translate( 'Add your Business' ) } <Gridicon icon="external" />
+							{ translate( 'Add your Business' ) } <GridiconExternal />
 						</Button>
 
 						<KeyringConnectButton

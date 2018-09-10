@@ -6,7 +6,10 @@
 
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
+import GridiconImageMultiple from 'gridicons/dist/image-multiple';
+import GridiconShutter from 'gridicons/dist/shutter';
+import GridiconImage from 'gridicons/dist/image';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -75,19 +78,19 @@ export class MediaLibraryDataSource extends Component {
 			{
 				value: '',
 				label: translate( 'WordPress library' ),
-				icon: <Gridicon icon="image" size={ 24 } />,
+				icon: <GridiconImage size={ 24 } />,
 			},
 			{
 				value: 'google_photos',
 				label: translate( 'Photos from your Google library' ),
-				icon: <Gridicon icon="shutter" size={ 24 } />,
+				icon: <GridiconShutter size={ 24 } />,
 			},
 		];
 		if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Free photo library' ),
-				icon: <Gridicon icon="image-multiple" size={ 24 } />,
+				icon: <GridiconImageMultiple size={ 24 } />,
 			} );
 		}
 		const currentSelected = find( sources, item => item.value === source );
@@ -112,7 +115,7 @@ export class MediaLibraryDataSource extends Component {
 				>
 					{ currentSelected && currentSelected.icon }
 					{ this.renderScreenReader( currentSelected ) }
-					<Gridicon icon="chevron-down" size={ 18 } />
+					<GridiconChevronDown size={ 18 } />
 
 					<PopoverMenu
 						context={ this.refs && this.refs.popoverMenuButton }

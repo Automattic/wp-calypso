@@ -9,7 +9,7 @@ import React from 'react';
 import { debounce, isEqual, find, isEmpty, isArray } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
 
 /**
  * Internal dependencies
@@ -355,7 +355,7 @@ export class HelpContactForm extends React.PureComponent {
 					/>
 					<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 						{ buttonLabel }
-						<Gridicon icon="chevron-right" />
+						<GridiconChevronRight />
 					</FormButton>
 				</div>
 			);

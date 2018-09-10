@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
@@ -106,7 +106,7 @@ class GoogleMyBusinessNewAccount extends Component {
 								onClick={ this.trackCreateListingClick }
 								primary
 							>
-								{ translate( 'Create Listing' ) } <Gridicon icon="external" />
+								{ translate( 'Create Listing' ) } <GridiconExternal />
 							</Button>
 
 							<KeyringConnectButton

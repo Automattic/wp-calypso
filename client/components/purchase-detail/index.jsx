@@ -8,6 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import GridiconNotice from 'gridicons/dist/notice';
 import { noop } from 'lodash';
 
 /**
@@ -90,7 +91,7 @@ export default class PurchaseDetail extends PureComponent {
 		return (
 			<div className="purchase-detail__icon">
 				{ typeof icon === 'string' ? <Gridicon icon={ icon } /> : icon }
-				{ isRequired && <Gridicon className="purchase-detail__notice-icon" icon="notice" /> }
+				{ isRequired && <GridiconNotice className="purchase-detail__notice-icon" /> }
 			</div>
 		);
 	}

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { head, find, noop, trim, uniqueId } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconAddImage from 'gridicons/dist/add-image';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -205,7 +205,7 @@ class ProductImageUploader extends Component {
 		return (
 			<div className="product-image-uploader__picker compact">
 				<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick }>
-					<Gridicon icon="add-image" size={ 24 } />
+					<GridiconAddImage size={ 24 } />
 				</FilePicker>
 			</div>
 		);
@@ -221,7 +221,7 @@ class ProductImageUploader extends Component {
 				<div className="product-image-uploader__picker">
 					<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick }>
 						<div>
-							<Gridicon icon="add-image" size={ 36 } />
+							<GridiconAddImage size={ 36 } />
 							<p>{ addString }</p>
 						</div>
 					</FilePicker>
@@ -248,7 +248,7 @@ class ProductImageUploader extends Component {
 			<div className={ classes }>
 				<div className="product-image-uploader__picker">
 					<div className="product-image-uploader__file-picker">
-						<Gridicon icon="add-image" size={ 36 } />
+						<GridiconAddImage size={ 36 } />
 						<p>{ ! compact && translate( 'Loading' ) }</p>
 					</div>
 				</div>

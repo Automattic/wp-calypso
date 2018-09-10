@@ -13,7 +13,8 @@ import Button from 'components/button';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
-import Gridicon from 'gridicons';
+import GridiconCog from 'gridicons/dist/cog';
+import GridiconExternal from 'gridicons/dist/external';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 
 class Example extends Component {
@@ -39,7 +40,7 @@ class Example extends Component {
 		const link = <a href="#">An internal Link!</a>;
 		const externalLink = (
 			<a href="#">
-				<Gridicon icon="external" size={ 18 } />
+				<GridiconExternal size={ 18 } />
 			</a>
 		);
 		const placeholder = '';
@@ -47,13 +48,13 @@ class Example extends Component {
 			[ 'one', placeholder, <a href="#">222</a>, 45 ],
 			[ 'really really really really really really long name', placeholder, 55, 777 ],
 			[ 'three', externalLink, <div>9</div>, 45 ],
-			[ link, externalLink, <Gridicon icon="cog" size={ 18 } />, 8 ],
+			[ link, externalLink, <GridiconCog size={ 18 } />, 8 ],
 		];
 		const middleColValues = [
 			[ <FormInputCheckbox />, 'Thing 1', 65 ],
 			[ <FormInputCheckbox />, 'Thing 2', 66 ],
 			[ <FormInputCheckbox />, 'Thing 3', 67 ],
-			[ <FormInputCheckbox />, 'Thing 4', <Gridicon icon="cog" size={ 18 } /> ],
+			[ <FormInputCheckbox />, 'Thing 4', <GridiconCog size={ 18 } /> ],
 		];
 		const middleColTitles = (
 			<TableRow isHeader>

@@ -7,7 +7,8 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconPlugins from 'gridicons/dist/plugins';
+import GridiconPlusSmall from 'gridicons/dist/plus-small';
 
 /**
  * Internal dependencies
@@ -248,8 +249,8 @@ export class PluginInstallButton extends Component {
 						<span className="plugin-install-button__installing">{ label }</span>
 					) : (
 						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
-							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-							<Gridicon icon="plugins" size={ 18 } />
+							<GridiconPlusSmall key="plus-icon" size={ 18 } />
+							<GridiconPlugins size={ 18 } />
 							{ translate( 'Install' ) }
 						</Button>
 					) }

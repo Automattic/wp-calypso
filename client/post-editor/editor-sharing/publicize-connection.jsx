@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal dependencies
@@ -157,7 +157,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 					args: connection.label,
 				} ) }
 				<NoticeAction onClick={ this.props.onRefresh }>
-					Reconnect <Gridicon icon="external" size={ 18 } />
+					Reconnect <GridiconExternal size={ 18 } />
 				</NoticeAction>
 			</Notice>
 		);

@@ -8,6 +8,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconSpam from 'gridicons/dist/spam';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -50,13 +52,13 @@ const ReviewActionsBar = ( {
 				onClick={ spamReview }
 				className={ classNames( 'reviews__action-spam', { 'is-spam': isSpam } ) }
 			>
-				<Gridicon icon="spam" />
+				<GridiconSpam />
 				<span>{ isSpam ? translate( 'Marked as Spam' ) : translate( 'Spam' ) }</span>
 			</Button>
 
 			{ ( 'trash' === currentStatus && (
 				<Button borderless className="reviews__action-delete" onClick={ deleteTheReview }>
-					<Gridicon icon="trash" />
+					<GridiconTrash />
 					<span>{ translate( 'Delete Permanently' ) }</span>
 				</Button>
 			) ) || (
@@ -65,7 +67,7 @@ const ReviewActionsBar = ( {
 					onClick={ trashReview }
 					className={ classNames( 'reviews__action-trash', { 'is-trash': isTrash } ) }
 				>
-					<Gridicon icon="trash" />
+					<GridiconTrash />
 					<span>{ isTrash ? translate( 'Trashed' ) : translate( 'Trash' ) }</span>
 				</Button>
 			) }

@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { isObject, noop } from 'lodash';
 
 /**
@@ -20,7 +20,7 @@ function renderTrashButton( onTrash, isBusy, label ) {
 	return (
 		onTrash && (
 			<Button borderless scary onClick={ onTrash }>
-				<Gridicon icon="trash" />
+				<GridiconTrash />
 				<span>{ label }</span>
 			</Button>
 		)

@@ -10,7 +10,8 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
+import GridiconCalendar from 'gridicons/dist/calendar';
 import { intersection } from 'lodash';
 
 /**
@@ -137,7 +138,7 @@ export class EditorPublishDate extends React.Component {
 
 		return (
 			<div className={ className } onClick={ this.toggleOpenState }>
-				<Gridicon className="editor-publish-date__header-icon" icon="calendar" size={ 18 } />
+				<GridiconCalendar className="editor-publish-date__header-icon" size={ 18 } />
 				<div className="editor-publish-date__header-wrapper">
 					<div className="editor-publish-date__header-description">
 						{ this.getHeaderDescription() }
@@ -148,7 +149,7 @@ export class EditorPublishDate extends React.Component {
 						</div>
 					) }
 				</div>
-				<Gridicon className="editor-publish-date__header-chevron" icon="chevron-down" size={ 18 } />
+				<GridiconChevronDown className="editor-publish-date__header-chevron" size={ 18 } />
 			</div>
 		);
 	}

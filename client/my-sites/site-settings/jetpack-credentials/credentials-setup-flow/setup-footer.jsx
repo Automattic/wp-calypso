@@ -11,7 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
+import GridiconHelp from 'gridicons/dist/help';
 import HappychatButton from 'components/happychat/button';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
@@ -39,7 +40,7 @@ class SetupFooter extends Component {
 		return (
 			<CompactCard className="credentials-setup-flow__footer">
 				<Button ref={ this.setPopoverContext } onClick={ this.togglePopover } borderless>
-					<Gridicon icon="help" />
+					<GridiconHelp />
 					<span className="credentials-setup-flow__help-button-text">
 						{ translate( "Need help finding your site's server credentials?" ) }
 					</span>
@@ -59,7 +60,7 @@ class SetupFooter extends Component {
 
 				{ happychatIsAvailable && (
 					<HappychatButton onClick={ this.props.happychatEvent }>
-						<Gridicon icon="chat" />
+						<GridiconChat />
 						<span className="credentials-setup-flow__happychat-button-text">
 							{ translate( 'Get help' ) }
 						</span>

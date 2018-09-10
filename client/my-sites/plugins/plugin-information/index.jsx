@@ -8,7 +8,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
+import GridiconMySites from 'gridicons/dist/my-sites';
+import GridiconCrossSmall from 'gridicons/dist/cross-small';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
+import GridiconSync from 'gridicons/dist/sync';
 import { get, isEmpty } from 'lodash';
 
 /**
@@ -103,7 +107,7 @@ class PluginInformation extends React.Component {
 			const dateFromNow = i18n.moment
 				.utc( this.props.plugin.last_updated, 'YYYY-MM-DD hh:mma' )
 				.fromNow();
-			const syncIcon = this.props.hasUpdate ? <Gridicon icon="sync" size={ 18 } /> : null;
+			const syncIcon = this.props.hasUpdate ? <GridiconSync size={ 18 } /> : null;
 
 			return (
 				<div className="plugin-information__last-updated">
@@ -131,9 +135,9 @@ class PluginInformation extends React.Component {
 
 		if ( this.props.siteVersion && limits.maxVersion ) {
 			if ( versionCompare( this.props.siteVersion, limits.maxVersion, '<=' ) ) {
-				versionCheck = <Gridicon icon="checkmark" size={ 18 } />;
+				versionCheck = <GridiconCheckmark size={ 18 } />;
 			} else {
-				versionCheck = <Gridicon icon="cross-small" size={ 18 } />;
+				versionCheck = <GridiconCrossSmall size={ 18 } />;
 			}
 		}
 		if ( limits.minVersion && limits.maxVersion && limits.minVersion !== limits.maxVersion ) {
@@ -144,7 +148,7 @@ class PluginInformation extends React.Component {
 						{
 							args: { minVersion: limits.minVersion, maxVersion: limits.maxVersion },
 							components: {
-								wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } />,
+								wpIcon: this.props.siteVersion ? null : <GridiconMySites size={ 18 } />,
 								span: <span className="plugin-information__version-limit-state" />,
 								versionCheck,
 							},
@@ -159,7 +163,7 @@ class PluginInformation extends React.Component {
 					{ this.props.translate( '{{wpIcon/}} Compatible with %(maxVersion)s', {
 						args: { maxVersion: limits.maxVersion },
 						components: {
-							wpIcon: this.props.siteVersion ? null : <Gridicon icon="my-sites" size={ 18 } />,
+							wpIcon: this.props.siteVersion ? null : <GridiconMySites size={ 18 } />,
 						},
 					} ) }
 				</div>
@@ -293,7 +297,7 @@ class PluginInformation extends React.Component {
 									key={ 'action-link-' + index }
 									rel="noopener noreferrer"
 								>
-									{ linkTitle } <Gridicon icon="external" />
+									{ linkTitle } <GridiconExternal />
 								</Button>
 							) ) }
 						</div>

@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconGlobe from 'gridicons/dist/globe';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -42,7 +42,7 @@ export class TranslatorInvite extends Component {
 		if ( localizedLanguageNames && localizedLanguageNames[ locale ] ) {
 			return (
 				<div className="translator-invite__content">
-					<Gridicon className="translator-invite__gridicon" icon="globe" size={ 18 } />
+					<GridiconGlobe className="translator-invite__gridicon" size={ 18 } />
 					{ translate(
 						'Would you like to help us translate WordPress.com into {{a}}%(language)s{{/a}}?',
 						{

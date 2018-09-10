@@ -7,7 +7,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { map, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
+import GridiconThumbsUp from 'gridicons/dist/thumbs-up';
 
 /**
  * Internal Dependencies
@@ -60,7 +61,7 @@ export class RecommendedPosts extends React.PureComponent {
 				<QueryReaderPost postKey={ recommendations[ 0 ] } />
 				<QueryReaderPost postKey={ recommendations[ 1 ] } />
 				<h1 className="reader-stream__recommended-posts-header">
-					<Gridicon icon="thumbs-up" size={ 18 } />
+					<GridiconThumbsUp size={ 18 } />
 					&nbsp;
 					{ this.props.translate( 'Recommended Posts' ) }
 				</h1>
@@ -84,7 +85,7 @@ export class RecommendedPosts extends React.PureComponent {
 											} );
 										} }
 									>
-										<Gridicon icon="cross" size={ 14 } />
+										<GridiconCross size={ 14 } />
 									</Button>
 								</div>
 								<RelatedPostCard

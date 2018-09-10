@@ -11,6 +11,8 @@ import classNames from 'classnames';
 import { noop, size } from 'lodash';
 import Gridicon from 'gridicons';
 
+import GridiconCheckmark from 'gridicons/dist/checkmark';
+
 /**
  * Internal dependencies
  */
@@ -159,7 +161,7 @@ export class Banner extends Component {
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
 								<li key={ key }>
-									<Gridicon icon="checkmark" size={ 18 } />
+									<GridiconCheckmark size={ 18 } />
 									{ item }
 								</li>
 							) ) }

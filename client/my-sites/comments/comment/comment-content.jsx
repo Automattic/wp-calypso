@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconReply from 'gridicons/dist/reply';
 import { get } from 'lodash';
 
 /**
@@ -39,7 +39,7 @@ export class CommentContent extends Component {
 
 		return (
 			<div className="comment__in-reply-to">
-				{ isBulkMode && <Gridicon icon="reply" size={ 18 } /> }
+				{ isBulkMode && <GridiconReply size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
 				<CommentLink
 					commentId={ commentId }

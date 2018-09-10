@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconLink from 'gridicons/dist/link';
 
 /**
  * Internal dependencies
@@ -118,9 +118,8 @@ class EditorPermalink extends Component {
 				onMouseEnter={ this.showTooltip }
 				onMouseLeave={ this.hideTooltip }
 			>
-				<Gridicon
+				<GridiconLink
 					className="editor-permalink__toggle"
-					icon="link"
 					onClick={ this.showPopover }
 					ref={ this.permalinkToggleReference }
 				/>

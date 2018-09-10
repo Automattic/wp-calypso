@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconPencil from 'gridicons/dist/pencil';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ const PostEditButton = ( { post, site, iconSize, onClick, translate } ) => {
 	const editUrl = getEditURL( post, site );
 	return (
 		<a className="post-edit-button" href={ editUrl } onClick={ onClick }>
-			<Gridicon icon="pencil" size={ iconSize } className="post-edit-button__icon" />
+			<GridiconPencil size={ iconSize } className="post-edit-button__icon" />
 			<span className="post-edit-button__label">{ translate( 'Edit' ) }</span>
 		</a>
 	);

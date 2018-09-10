@@ -22,6 +22,8 @@ import Emojify from 'components/emojify';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
+import GridiconEllipsis from 'gridicons/dist/ellipsis';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import { get } from 'lodash';
 import { recordTrack } from 'reader/stats';
 import { decodeEntities } from 'lib/formatting';
@@ -310,7 +312,7 @@ class StatsListItem extends React.Component {
 				show: data.actionMenu && ! this.state.disabled,
 			},
 			actions = this.buildActions(),
-			toggleGridicon = <Gridicon icon="chevron-down" />,
+			toggleGridicon = <GridiconChevronDown />,
 			toggleIcon = this.props.children ? toggleGridicon : null,
 			mobileActionToggle,
 			groupClassOptions,
@@ -338,7 +340,7 @@ class StatsListItem extends React.Component {
 						context: 'Label for hidden menu in a list on the Stats page.',
 					} ) }
 				>
-					<Gridicon icon="ellipsis" />
+					<GridiconEllipsis />
 				</a>
 			);
 			rightClassOptions[ 'is-expanded' ] = this.state.actionMenuOpen;

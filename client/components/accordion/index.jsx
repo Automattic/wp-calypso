@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconDropdown from 'gridicons/dist/dropdown';
 
 /**
  * Internal dependencies
@@ -77,7 +77,7 @@ export default class Accordion extends Component {
 						<span className="accordion__title">{ title }</span>
 						{ subtitle && <span className="accordion__subtitle">{ subtitle }</span> }
 						<span className="accordion__arrow">
-							<Gridicon icon="dropdown" />
+							<GridiconDropdown />
 						</span>
 					</button>
 					{ status && <AccordionStatus { ...status } /> }

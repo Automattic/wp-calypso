@@ -6,7 +6,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import debugModule from 'debug';
 
 /**
@@ -84,7 +84,7 @@ class AuthorSwitcherShell extends React.Component {
 					ref="author-selector-toggle"
 				>
 					{ this.props.children }
-					<Gridicon ref="authorSelectorChevron" icon="chevron-down" size={ 16 } />
+					<GridiconChevronDown ref="authorSelectorChevron" size={ 16 } />
 				</span>
 				<Popover
 					isVisible={ this.state.showAuthorMenu }

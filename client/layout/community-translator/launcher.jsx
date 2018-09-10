@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconGlobe from 'gridicons/dist/globe';
 
 /**
  * Internal dependencies
@@ -126,7 +126,7 @@ class TranslatorLauncher extends React.PureComponent {
 						onClick={ this.toggle }
 						title={ this.props.translate( 'Community Translator' ) }
 					>
-						<Gridicon icon="globe" />
+						<GridiconGlobe />
 						<div className="community-translator__text">{ toggleString }</div>
 					</a>
 				</div>

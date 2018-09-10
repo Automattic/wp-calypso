@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ class ContactFormDialogFieldRemoveButton extends React.PureComponent {
 					onMouseLeave={ () => this.setState( { showTooltip: false } ) }
 					onClick={ this.props.onRemove }
 				>
-					<Gridicon icon="trash" className="editor-contact-form-modal-field__remove" />
+					<GridiconTrash className="editor-contact-form-modal-field__remove" />
 				</Button>
 				<Popover
 					isVisible={ this.state.showTooltip }

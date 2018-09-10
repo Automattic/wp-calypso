@@ -10,6 +10,7 @@ import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import GridiconArrowRight from 'gridicons/dist/arrow-right';
 import classNames from 'classnames';
 import qs from 'qs';
 
@@ -106,7 +107,7 @@ class StatsPeriodNavigation extends PureComponent {
 				) }
 				{ isToday && (
 					<span className="stats-period-navigation__next is-disabled">
-						<Gridicon icon="arrow-right" size={ 18 } />
+						<GridiconArrowRight size={ 18 } />
 					</span>
 				) }
 			</div>

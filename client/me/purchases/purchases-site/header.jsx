@@ -7,7 +7,7 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import GridiconNotice from 'gridicons/dist/notice';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ class PurchaseSiteHeader extends Component {
 			<div className="site is-disconnected">
 				<div className="site__content">
 					<div className="site-icon is-blank">
-						<Gridicon icon="notice" />
+						<GridiconNotice />
 					</div>
 					<div className="site__info">
 						<div className="site__title">{ name }</div>

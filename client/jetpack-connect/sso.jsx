@@ -3,7 +3,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get, map } from 'lodash';
@@ -249,7 +249,7 @@ class JetpackSsoForm extends Component {
 		const { translate } = this.props;
 		const text = (
 			<span className="jetpack-connect__sso-return-to-site">
-				<Gridicon icon="arrow-left" size={ 18 } />
+				<GridiconArrowLeft size={ 18 } />
 				{ translate( 'Return to %(siteName)s', {
 					args: {
 						siteName: get( this.props, 'blogDetails.title' ),

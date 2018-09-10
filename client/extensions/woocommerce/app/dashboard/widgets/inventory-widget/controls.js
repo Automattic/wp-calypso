@@ -4,7 +4,8 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconMinusSmall from 'gridicons/dist/minus-small';
+import GridiconPlusSmall from 'gridicons/dist/plus-small';
 import { isNaN } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -115,7 +116,7 @@ class InventoryControls extends Component {
 	renderPlus = name => {
 		return (
 			<span onClick={ this.increaseValue( name ) } tabIndex="-1" aria-hidden>
-				<Gridicon icon="plus-small" />
+				<GridiconPlusSmall />
 			</span>
 		);
 	};
@@ -123,7 +124,7 @@ class InventoryControls extends Component {
 	renderMinus = name => {
 		return (
 			<span onClick={ this.decreaseValue( name ) } tabIndex="-1" aria-hidden>
-				<Gridicon icon="minus-small" />
+				<GridiconMinusSmall />
 			</span>
 		);
 	};

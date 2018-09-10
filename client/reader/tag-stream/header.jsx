@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { sample } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconTag from 'gridicons/dist/tag';
 
 /**
  * Internal dependencies
@@ -110,7 +110,7 @@ class TagStreamHeader extends React.Component {
 
 				<div className="tag-stream__header-image" style={ imageStyle }>
 					<h1 className="tag-stream__header-image-title">
-						<Gridicon icon="tag" size={ 24 } />
+						<GridiconTag size={ 24 } />
 						{ title }
 					</h1>
 					{ tagImage && (

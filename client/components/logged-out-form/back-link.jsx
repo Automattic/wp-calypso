@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import safeProtocolUrl from 'lib/safe-protocol-url';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 
 function LoggedOutFormBackLink( props ) {
 	const { locale, oauth2Client, translate, recordClick } = props;
@@ -46,7 +46,7 @@ function LoggedOutFormBackLink( props ) {
 				...props.classes,
 			} ) }
 		>
-			<Gridicon icon="arrow-left" size={ 18 } />
+			<GridiconArrowLeft size={ 18 } />
 			{ message }
 		</a>
 	);

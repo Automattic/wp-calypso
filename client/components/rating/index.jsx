@@ -6,7 +6,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconStarOutline from 'gridicons/dist/star-outline';
+import GridiconStar from 'gridicons/dist/star';
 
 export default class Rating extends React.PureComponent {
 	static defaultProps = {
@@ -29,7 +30,7 @@ export default class Rating extends React.PureComponent {
 
 		const stars = [];
 		for ( let i = 0; i < 5; i++ ) {
-			stars.push( <Gridicon key={ 'star-' + i } icon="star" style={ starStyles } /> );
+			stars.push( <GridiconStar key={ 'star-' + i } style={ starStyles } /> );
 		}
 		return stars;
 	}
@@ -53,9 +54,7 @@ export default class Rating extends React.PureComponent {
 				allStyles = Object.assign( {}, starStyles, { fill: '#c8d7e1' } );
 			}
 
-			stars.push(
-				<Gridicon key={ 'star-outline-' + i } icon="star-outline" style={ allStyles } />
-			);
+			stars.push( <GridiconStarOutline key={ 'star-outline-' + i } style={ allStyles } /> );
 		}
 
 		return stars;

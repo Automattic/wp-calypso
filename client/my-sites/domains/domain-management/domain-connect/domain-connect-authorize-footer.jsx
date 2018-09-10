@@ -7,7 +7,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -65,7 +66,7 @@ class DomainConnectAuthorizeFooter extends Component {
 					onClick={ onConfirm }
 					primary
 				>
-					<Gridicon icon="checkmark" /> { confirm }
+					<GridiconCheckmark /> { confirm }
 				</Button>
 				<Button
 					busy={ notReadyToSubmit }
@@ -73,7 +74,7 @@ class DomainConnectAuthorizeFooter extends Component {
 					disabled={ notReadyToSubmit }
 					onClick={ onClose }
 				>
-					<Gridicon icon="cross" /> { cancel }
+					<GridiconCross /> { cancel }
 				</Button>
 			</div>
 		);

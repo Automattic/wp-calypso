@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -48,10 +48,7 @@ export const SeoPreviewNudge = ( { translate, site, isJetpack = false } ) => {
 				<div className="preview-upgrade-nudge__features-details">
 					<ul className="preview-upgrade-nudge__features-list">
 						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon
-								className="preview-upgrade-nudge__features-list-item-checkmark"
-								icon="checkmark"
-							/>
+							<GridiconCheckmark className="preview-upgrade-nudge__features-list-item-checkmark" />
 							{ preventWidows(
 								translate(
 									"Preview your site's content as it will appear on Facebook, Twitter, and the WordPress.com Reader."
@@ -59,10 +56,7 @@ export const SeoPreviewNudge = ( { translate, site, isJetpack = false } ) => {
 							) }
 						</li>
 						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon
-								className="preview-upgrade-nudge__features-list-item-checkmark"
-								icon="checkmark"
-							/>
+							<GridiconCheckmark className="preview-upgrade-nudge__features-list-item-checkmark" />
 							{ preventWidows(
 								translate(
 									'Control how page titles will appear on Google search results and social networks.'
@@ -70,10 +64,7 @@ export const SeoPreviewNudge = ( { translate, site, isJetpack = false } ) => {
 							) }
 						</li>
 						<li className="preview-upgrade-nudge__features-list-item">
-							<Gridicon
-								className="preview-upgrade-nudge__features-list-item-checkmark"
-								icon="checkmark"
-							/>
+							<GridiconCheckmark className="preview-upgrade-nudge__features-list-item-checkmark" />
 							{ preventWidows(
 								translate(
 									'Customize your front page meta data to change how your site appears to search engines.'

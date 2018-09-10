@@ -9,7 +9,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconImage from 'gridicons/dist/image';
+import GridiconMenu from 'gridicons/dist/menu';
+import GridiconGrid from 'gridicons/dist/grid';
 
 /**
  * Internal dependencies
@@ -128,22 +130,22 @@ class MediaLibraryScale extends Component {
 						onClick={ this.setScaleToMobileGrid }
 						title={ translate( 'Grid' ) }
 					>
-						<Gridicon icon="grid" size={ 18 } />
+						<GridiconGrid size={ 18 } />
 					</SegmentedControlItem>
 					<SegmentedControlItem
 						selected={ 1 === scale }
 						onClick={ this.setScaleToMobileFull }
 						title={ translate( 'List' ) }
 					>
-						<Gridicon icon="menu" size={ 18 } />
+						<GridiconMenu size={ 18 } />
 					</SegmentedControlItem>
 				</SegmentedControl>
 				<FormRange
 					step="1"
 					min="0"
 					max={ SLIDER_STEPS - 1 }
-					minContent={ <Gridicon icon="image" size={ 12 } /> }
-					maxContent={ <Gridicon icon="image" size={ 24 } /> }
+					minContent={ <GridiconImage size={ 12 } /> }
+					maxContent={ <GridiconImage size={ 24 } /> }
 					value={ this.getSliderPosition() }
 					onChange={ this.onScaleChange }
 					className="media-library__scale-range"

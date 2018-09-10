@@ -5,7 +5,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconPencil from 'gridicons/dist/pencil';
+import GridiconSpam from 'gridicons/dist/spam';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconReply from 'gridicons/dist/reply';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 
@@ -52,17 +56,13 @@ const CommentActions = ( {
 		<div className="comments__comment-actions">
 			{ showReadMore && (
 				<button className="comments__comment-actions-read-more" onClick={ onReadMore }>
-					<Gridicon
-						icon="chevron-down"
-						size={ 18 }
-						className="comments__comment-actions-read-more-icon"
-					/>
+					<GridiconChevronDown size={ 18 } className="comments__comment-actions-read-more-icon" />
 					{ translate( 'Read More' ) }
 				</button>
 			) }
 			{ showReplyButton && (
 				<button className="comments__comment-actions-reply" onClick={ handleReply }>
-					<Gridicon icon="reply" size={ 18 } />
+					<GridiconReply size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
 				</button>
 			) }
@@ -87,15 +87,15 @@ const CommentActions = ( {
 				<div className="comments__comment-actions-moderation-tools">
 					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
 					<button className="comments__comment-actions-trash" onClick={ trashComment }>
-						<Gridicon icon="trash" size={ 18 } />
+						<GridiconTrash size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
 					</button>
 					<button className="comments__comment-actions-spam" onClick={ spamComment }>
-						<Gridicon icon="spam" size={ 18 } />
+						<GridiconSpam size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
 					</button>
 					<button className="comments__comment-actions-edit" onClick={ editComment }>
-						<Gridicon icon="pencil" size={ 18 } />
+						<GridiconPencil size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
 					</button>
 					<EllipsisMenu toggleTitle={ translate( 'More' ) }>

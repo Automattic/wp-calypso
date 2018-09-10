@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconBookmark from 'gridicons/dist/bookmark';
 
 /**
  * Internal dependencies
@@ -90,7 +90,7 @@ class EditorSticky extends React.Component {
 				aria-label={ translate( 'Stick post to the front page' ) }
 				ref={ this.stickyPostButtonRef }
 			>
-				<Gridicon icon="bookmark" />
+				<GridiconBookmark />
 				<Tooltip
 					className="editor-sticky__tooltip"
 					context={ this.stickyPostButtonRef.current }

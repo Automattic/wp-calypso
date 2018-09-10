@@ -19,7 +19,7 @@ import { localize } from 'i18n-calypso';
  */
 import ReaderPopoverMenu from 'components/reader-popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import Gridicon from 'gridicons';
+import GridiconShare from 'gridicons/dist/share';
 import * as stats from 'reader/stats';
 import { preload } from 'sections-helper';
 import SiteSelector from 'components/site-selector';
@@ -187,7 +187,7 @@ class ReaderShare extends React.Component {
 			},
 			[
 				<span key="button" ref={ this.shareButton } className={ buttonClasses }>
-					<Gridicon icon="share" size={ this.props.iconSize } />
+					<GridiconShare size={ this.props.iconSize } />
 					<span className="reader-share__button-label">
 						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>

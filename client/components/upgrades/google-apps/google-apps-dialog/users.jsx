@@ -8,7 +8,7 @@ import React from 'react';
 import { clone } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconPlus from 'gridicons/dist/plus';
 
 /**
  * Internal dependencies
@@ -46,7 +46,7 @@ class GoogleAppsUsers extends React.Component {
 				{ allUserInputs }
 
 				<button className="google-apps-dialog__add-another-user-button" onClick={ this.addUser }>
-					<Gridicon icon="plus" />
+					<GridiconPlus />
 					{ translate( 'Add Another User' ) }
 				</button>
 			</div>

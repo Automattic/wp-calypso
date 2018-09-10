@@ -3,7 +3,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -60,7 +61,7 @@ class ReviewCard extends Component {
 				aria-expanded={ isExpanded }
 				onClick={ this.toggleExpanded }
 			>
-				<Gridicon icon="chevron-down" />
+				<GridiconChevronDown />
 			</Button>
 		);
 	}
@@ -91,7 +92,7 @@ class ReviewCard extends Component {
 					<div className="reviews__info">
 						<div className="reviews__author-name">
 							{ review.name }
-							{ review.verified && <Gridicon icon="checkmark-circle" size={ 18 } /> }
+							{ review.verified && <GridiconCheckmarkCircle size={ 18 } /> }
 						</div>
 						<div className="reviews__date">{ humanDate( review.date_created_gmt + 'Z' ) }</div>
 					</div>
@@ -134,7 +135,7 @@ class ReviewCard extends Component {
 								{ review.name }
 								{ review.verified && (
 									<span className="reviews__verified-label">
-										<Gridicon icon="checkmark-circle" size={ 18 } />
+										<GridiconCheckmarkCircle size={ 18 } />
 										<span>{ translate( 'Verified buyer' ) }</span>
 									</span>
 								) }

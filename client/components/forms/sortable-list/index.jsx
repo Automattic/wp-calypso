@@ -8,7 +8,8 @@ import { localize } from 'i18n-calypso';
 import { assign, findIndex, fromPairs, noop } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'gridicons';
+import GridiconChevronUp from 'gridicons/dist/chevron-up';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 
 /**
  * Internal dependencies
@@ -328,7 +329,7 @@ class SortableList extends React.Component {
 					disabled={ null === this.state.activeIndex || this.state.activeIndex === 0 }
 				>
 					<span className="screen-reader-text">{ this.props.translate( 'Move previous' ) }</span>
-					<Gridicon icon="chevron-down" size={ 24 } />
+					<GridiconChevronDown size={ 24 } />
 				</button>
 				<button
 					type="button"
@@ -340,7 +341,7 @@ class SortableList extends React.Component {
 					}
 				>
 					<span className="screen-reader-text">{ this.props.translate( 'Move next' ) }</span>
-					<Gridicon icon="chevron-up" size={ 24 } />
+					<GridiconChevronUp size={ 24 } />
 				</button>
 			</div>
 		);

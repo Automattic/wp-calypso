@@ -9,7 +9,8 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
+import GridiconSearch from 'gridicons/dist/search';
 
 /**
  * Internal dependencies
@@ -341,7 +342,7 @@ class Search extends Component {
 					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }
 				>
-					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
+					{ ! this.props.hideOpenIcon && <GridiconSearch className="search__open-icon" /> }
 				</div>
 				<div className={ fadeDivClass }>
 					<input
@@ -395,7 +396,7 @@ class Search extends Component {
 					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }
 				>
-					<Gridicon icon="cross" className="search__close-icon" />
+					<GridiconCross className="search__close-icon" />
 				</div>
 			);
 		}

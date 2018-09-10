@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconStats from 'gridicons/dist/stats';
 
 /**
  * Internal dependencies
@@ -41,7 +41,7 @@ class StatsOverviewPlaceholder extends React.Component {
 						<a href="#" className="module-header__link">
 							{ icon }
 							<span className="module-header__right-icon">
-								<Gridicon icon="stats" />
+								<GridiconStats />
 							</span>
 							<span>{ this.props.translate( 'Loading Stats' ) }</span>
 						</a>

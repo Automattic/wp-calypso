@@ -10,7 +10,7 @@ import { groupBy, head, map, noop, values } from 'lodash';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconImage from 'gridicons/dist/image';
 
 /**
  * Internal dependencies
@@ -210,7 +210,7 @@ class MediaLibraryContent extends React.Component {
 		return (
 			<div className="media-library__connect-message">
 				<p>
-					<Gridicon icon="image" size={ 72 } />
+					<GridiconImage size={ 72 } />
 				</p>
 				<p>{ connectMessage }</p>
 

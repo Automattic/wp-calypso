@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCog from 'gridicons/dist/cog';
 
 /**
  * Internal dependencies
@@ -61,7 +61,7 @@ export class PluginActivateToggle extends Component {
 			return (
 				<span className="plugin-activate-toggle__disabled">
 					<span className="plugin-activate-toggle__icon">
-						<Gridicon icon="cog" size={ 18 } />
+						<GridiconCog size={ 18 } />
 					</span>
 					<span className="plugin-activate-toggle__label">
 						{ translate( 'Manage Connection', {
@@ -79,7 +79,7 @@ export class PluginActivateToggle extends Component {
 					onClick={ this.trackManageConnectionLink }
 					href={ '/settings/manage-connection/' + site.slug }
 				>
-					<Gridicon icon="cog" size={ 18 } />
+					<GridiconCog size={ 18 } />
 				</a>
 				<a
 					className="plugin-activate-toggle__label"

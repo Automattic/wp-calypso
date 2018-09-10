@@ -7,7 +7,7 @@ import React from 'react';
 import Blob from 'blob';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCloudDownload from 'gridicons/dist/cloud-download';
 import { connect } from 'react-redux';
 
 /**
@@ -58,7 +58,7 @@ class ReaderExportButton extends React.Component {
 	render() {
 		return (
 			<button className="reader-export-button" onClick={ this.onClick }>
-				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
+				<GridiconCloudDownload className="reader-export-button__icon" />
 				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
 			</button>
 		);

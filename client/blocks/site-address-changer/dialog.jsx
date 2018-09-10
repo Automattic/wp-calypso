@@ -6,7 +6,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
+import GridiconCrossCircle from 'gridicons/dist/cross-circle';
 
 /**
  * Internal Dependencies
@@ -102,11 +103,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 					) }
 				</p>
 				<div className="site-address-changer__confirmation-detail">
-					<Gridicon
-						icon="cross-circle"
-						size={ 18 }
-						className="site-address-changer__copy-deletion"
-					/>
+					<GridiconCrossCircle size={ 18 } className="site-address-changer__copy-deletion" />
 					<p className="site-address-changer__confirmation-detail-copy">
 						<strong className="site-address-changer__copy-deletion">{ currentDomainName }</strong>
 						{ currentDomainSuffix }
@@ -115,11 +112,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 					</p>
 				</div>
 				<div className="site-address-changer__confirmation-detail">
-					<Gridicon
-						icon="checkmark-circle"
-						size={ 18 }
-						className="site-address-changer__copy-addition"
-					/>
+					<GridiconCheckmarkCircle size={ 18 } className="site-address-changer__copy-addition" />
 					<p className="site-address-changer__confirmation-detail-copy">
 						<strong className="site-address-changer__copy-addition">{ newDomainName }</strong>
 						{ newDomainSuffix }

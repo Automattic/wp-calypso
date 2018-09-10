@@ -8,7 +8,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
 import { some } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconExternal from 'gridicons/dist/external';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -240,7 +241,7 @@ class DeleteSite extends Component {
 							href={ exportLink }
 						>
 							{ strings.exportContent }
-							<Gridicon icon="external" />
+							<GridiconExternal />
 						</Button>
 					</ActionPanelFooter>
 				</ActionPanel>
@@ -318,7 +319,7 @@ class DeleteSite extends Component {
 								disabled={ ! siteId || ! this.props.hasLoadedSitePurchasesFromServer }
 								onClick={ this.handleDeleteSiteClick }
 							>
-								<Gridicon icon="trash" />
+								<GridiconTrash />
 								{ strings.deleteSite }
 							</Button>
 						) }

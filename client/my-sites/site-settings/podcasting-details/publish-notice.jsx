@@ -6,7 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconMicrophone from 'gridicons/dist/microphone';
 
 /**
  * Internal dependencies
@@ -31,7 +31,7 @@ function PodcastingPublishNotice( { translate, podcastingCategoryName } ) {
 
 	return (
 		<div className="podcasting-details__publish-notice">
-			<Gridicon icon="microphone" size={ 24 } />
+			<GridiconMicrophone size={ 24 } />
 			<span className="podcasting-details__publish-notice-text">{ podcastNoticeText }</span>
 		</div>
 	);

@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconMySites from 'gridicons/dist/my-sites';
 import { includes, capitalize } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -178,7 +178,7 @@ class Login extends Component {
 			} );
 
 			if ( isWooOAuth2Client( oauth2Client ) ) {
-				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
+				preHeader = <GridiconMySites size={ 72 } />;
 				postHeader = (
 					<p>
 						{ translate(

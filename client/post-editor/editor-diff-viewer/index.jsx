@@ -10,7 +10,8 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { debounce, filter, first, flow, get, has, last, map, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconArrowDown from 'gridicons/dist/arrow-down';
+import GridiconArrowUp from 'gridicons/dist/arrow-up';
 
 /**
  * Internal dependencies
@@ -214,7 +215,7 @@ class EditorDiffViewer extends PureComponent {
 				{ showHints &&
 					countAbove > 0 && (
 						<div className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
-							<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-up" />
+							<GridiconArrowUp className="editor-diff-viewer__hint-icon" size={ 18 } />
 							{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {
 								args: { numberOfChanges: countAbove },
 								count: countAbove,
@@ -224,7 +225,7 @@ class EditorDiffViewer extends PureComponent {
 				{ showHints &&
 					countBelow > 0 && (
 						<div className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
-							<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-down" />
+							<GridiconArrowDown className="editor-diff-viewer__hint-icon" size={ 18 } />
 							{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {
 								args: { numberOfChanges: countBelow },
 								count: countBelow,

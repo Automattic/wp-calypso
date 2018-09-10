@@ -6,7 +6,7 @@
 
 import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconAddOutline from 'gridicons/dist/add-outline';
 
 /**
  * Internal dependencies
@@ -131,7 +131,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 							{
 								components: {
 									strong: <strong />,
-									icon: <Gridicon icon="add-outline" />,
+									icon: <GridiconAddOutline />,
 								},
 							}
 						) }

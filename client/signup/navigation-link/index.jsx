@@ -6,7 +6,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { find, findIndex, get } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconArrowRight from 'gridicons/dist/arrow-right';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 
 /**
  * Internal dependencies
@@ -116,12 +117,12 @@ export class NavigationLink extends Component {
 		let backGridicon, forwardGridicon, text;
 
 		if ( this.props.direction === 'back' ) {
-			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
+			backGridicon = <GridiconArrowLeft size={ 18 } />;
 			text = labelText ? labelText : translate( 'Back' );
 		}
 
 		if ( this.props.direction === 'forward' ) {
-			forwardGridicon = <Gridicon icon="arrow-right" size={ 18 } />;
+			forwardGridicon = <GridiconArrowRight size={ 18 } />;
 			text = labelText ? labelText : translate( 'Skip for now' );
 		}
 

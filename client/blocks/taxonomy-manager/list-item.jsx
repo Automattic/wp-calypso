@@ -13,6 +13,8 @@ import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
 import Gridicon from 'gridicons';
 
+import GridiconPencil from 'gridicons/dist/pencil';
+
 /**
  * Internal dependencies
  */
@@ -183,7 +185,7 @@ class TaxonomyManagerListItem extends Component {
 				</Tooltip>
 				<EllipsisMenu position="bottom left">
 					<PopoverMenuItem onClick={ onClick }>
-						<Gridicon icon="pencil" size={ 18 } />
+						<GridiconPencil size={ 18 } />
 						{ translate( 'Edit' ) }
 					</PopoverMenuItem>
 					{ ( ! canSetAsDefault || ! isDefault ) && (

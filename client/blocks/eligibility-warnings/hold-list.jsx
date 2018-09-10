@@ -7,7 +7,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconNoticeOutline from 'gridicons/dist/notice-outline';
 
 /**
  * Internal dependencies
@@ -112,11 +112,11 @@ export const HoldList = ( { holds, isPlaceholder, siteSlug, translate } ) => {
 				{ isPlaceholder && (
 					<div>
 						<div className="eligibility-warnings__hold">
-							<Gridicon icon="notice-outline" size={ 24 } />
+							<GridiconNoticeOutline size={ 24 } />
 							<div className="eligibility-warnings__message" />
 						</div>
 						<div className="eligibility-warnings__hold">
-							<Gridicon icon="notice-outline" size={ 24 } />
+							<GridiconNoticeOutline size={ 24 } />
 							<div className="eligibility-warnings__message" />
 						</div>
 					</div>
@@ -124,7 +124,7 @@ export const HoldList = ( { holds, isPlaceholder, siteSlug, translate } ) => {
 				{ ! isPlaceholder &&
 					map( holds, hold => (
 						<div className="eligibility-warnings__hold" key={ hold }>
-							<Gridicon icon="notice-outline" size={ 24 } />
+							<GridiconNoticeOutline size={ 24 } />
 							<div className="eligibility-warnings__message">
 								<span className="eligibility-warnings__message-title">
 									{ holdMessages[ hold ].title }

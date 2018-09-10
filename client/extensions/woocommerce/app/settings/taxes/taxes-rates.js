@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { find, isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -128,7 +128,7 @@ class TaxesRates extends Component {
 
 		return (
 			<div className="taxes__taxes-calculate">
-				<Gridicon icon="checkmark" />
+				<GridiconCheckmark />
 				{ translate(
 					"We'll automatically calculate and charge sales tax " + 'each time a customer checks out.'
 				) }

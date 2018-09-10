@@ -6,12 +6,13 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconStarOutline from 'gridicons/dist/star-outline';
+import GridiconStar from 'gridicons/dist/star';
 
 const LikeIcons = ( { size } ) => (
 	<span className="like-button__like-icons">
-		<Gridicon icon="star" size={ size } />
-		<Gridicon icon="star-outline" size={ size } />
+		<GridiconStar size={ size } />
+		<GridiconStarOutline size={ size } />
 	</span>
 );
 

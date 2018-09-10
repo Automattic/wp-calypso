@@ -17,7 +17,7 @@ import analytics from 'lib/analytics';
 import Button from 'components/button';
 import Card from 'components/card';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
+import GridiconChevronLeft from 'gridicons/dist/chevron-left';
 import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -115,7 +115,7 @@ class CurrentSite extends Component {
 				{ this.props.siteCount > 1 && (
 					<span className="current-site__switch-sites">
 						<Button borderless onClick={ this.switchSites }>
-							<Gridicon icon="chevron-left" />
+							<GridiconChevronLeft />
 							<span className="current-site__switch-sites-label">
 								{ translate( 'Switch Site' ) }
 							</span>

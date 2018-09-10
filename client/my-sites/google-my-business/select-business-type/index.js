@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal dependencies
@@ -115,7 +115,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					{ translate( 'Create Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
 					} ) }{' '}
-					<Gridicon icon="external" />
+					<GridiconExternal />
 				</Button>
 			);
 		}

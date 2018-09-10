@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { connect } from 'react-redux';
 
 /**
@@ -30,7 +30,7 @@ class CustomNameserversRow extends React.PureComponent {
 
 		return (
 			<Button borderless compact onClick={ this.handleRemove }>
-				<Gridicon icon="trash" />
+				<GridiconTrash />
 			</Button>
 		);
 	}

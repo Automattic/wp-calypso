@@ -6,12 +6,12 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 const SelfHostedInstructions = ( { onClickClose, translate } ) => (
 	<div className="auth__self-hosted-instructions">
 		<a href="#" onClick={ onClickClose } className="auth__self-hosted-instructions-close">
-			<Gridicon icon="cross" size={ 24 } />
+			<GridiconCross size={ 24 } />
 		</a>
 
 		<h2>{ translate( 'Add self-hosted site' ) }</h2>

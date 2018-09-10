@@ -9,6 +9,9 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import Gridicon from 'gridicons';
 
+import GridiconStats from 'gridicons/dist/stats';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
+
 /**
  * Internal dependencies
  */
@@ -111,7 +114,7 @@ class StatsModuleHeader extends React.Component {
 					} ) }
 					onClick={ this.toggleModule }
 				>
-					<Gridicon icon="chevron-down" />
+					<GridiconChevronDown />
 				</a>
 			</li>
 		);
@@ -125,7 +128,7 @@ class StatsModuleHeader extends React.Component {
 				<h3 className="module-header-title">
 					<a href={ titleLink } className="module-header__link">
 						<span className="module-header__right-icon">
-							<Gridicon icon="stats" />
+							<GridiconStats />
 						</span>
 						{ title }
 					</a>

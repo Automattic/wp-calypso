@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 const Issue = props => (
 	<li className="guided-transfer__issue">
 		<div className="guided-transfer__issue-title">
-			<Gridicon icon="cross" size={ 18 } className="guided-transfer__issue-icon" />
+			<GridiconCross size={ 18 } className="guided-transfer__issue-icon" />
 			{ props.title }
 		</div>
 		<div className="guided-transfer__issue-description">{ props.children }</div>

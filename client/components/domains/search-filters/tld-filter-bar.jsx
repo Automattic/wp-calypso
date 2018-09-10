@@ -5,7 +5,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import React, { Component } from 'react';
 import { includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -152,7 +152,7 @@ export class TldFilterBar extends Component {
 					context: 'TLD filter button',
 					comment: 'Refers to top level domain name extension, such as ".com"',
 				} ) }
-				<Gridicon icon="chevron-down" size={ 24 } />
+				<GridiconChevronDown size={ 24 } />
 			</Button>
 		);
 	}

@@ -7,7 +7,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 export default class extends React.Component {
 	static displayName = 'PlanCompareCardItem';
@@ -32,7 +32,7 @@ export default class extends React.Component {
 			<li className={ classes }>
 				{ showCheckmark && (
 					<span className="plan-compare-card__item-checkmark">
-						<Gridicon size={ 18 } icon="checkmark" />
+						<GridiconCheckmark size={ 18 } />
 					</span>
 				) }
 				{ this.props.children }

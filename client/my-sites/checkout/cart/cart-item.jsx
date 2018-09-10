@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { get } from 'lodash';
 
 /**
@@ -282,7 +282,7 @@ export class CartItem extends React.Component {
 					onClick={ this.removeFromCart }
 					aria-label={ translate( 'Remove item' ) }
 				>
-					<Gridicon icon="trash" size={ 18 } />
+					<GridiconTrash size={ 18 } />
 				</button>
 			);
 		}

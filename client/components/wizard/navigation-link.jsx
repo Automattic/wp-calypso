@@ -6,7 +6,8 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconArrowRight from 'gridicons/dist/arrow-right';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
@@ -45,9 +46,9 @@ class NavigationLink extends Component {
 				href={ href }
 				onClick={ onClick }
 			>
-				{ direction === 'back' && <Gridicon icon="arrow-left" size={ 18 } /> }
+				{ direction === 'back' && <GridiconArrowLeft size={ 18 } /> }
 				{ this.getText() }
-				{ direction === 'forward' && <Gridicon icon="arrow-right" size={ 18 } /> }
+				{ direction === 'forward' && <GridiconArrowRight size={ 18 } /> }
 			</Button>
 		);
 	}

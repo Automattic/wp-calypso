@@ -12,6 +12,8 @@ import config from 'config';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
+import GridiconCross from 'gridicons/dist/cross';
+
 /**
  * Internal dependencies
  */
@@ -321,7 +323,7 @@ class SiteIndicator extends Component {
 						<div className="site-indicator__action">{ this.getText() }</div>
 						<button className="site-indicator__button" onClick={ this.toggleExpand }>
 							<Animate type="appear">
-								<Gridicon icon="cross" size={ 18 } />
+								<GridiconCross size={ 18 } />
 							</Animate>
 						</button>
 					</div>

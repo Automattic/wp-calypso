@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconVisible from 'gridicons/dist/visible';
 
 /**
  * Internal dependencies
@@ -52,7 +52,7 @@ function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, vi
 			onClick={ clickHandler }
 		>
 			<QueryPostStats siteId={ siteId } postId={ postId } fields={ [ 'views' ] } />
-			<Gridicon icon="visible" size={ 24 } />
+			<GridiconVisible size={ 24 } />
 			<StatUpdateIndicator updateOn={ viewsCountDisplay }>
 				{ viewsCountDisplay }
 			</StatUpdateIndicator>

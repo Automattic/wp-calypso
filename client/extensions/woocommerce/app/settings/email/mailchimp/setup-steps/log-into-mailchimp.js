@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 import React from 'react';
 
 /**
@@ -25,7 +25,7 @@ export default () => (
 			className="setup-steps__mailchimp-login-button"
 		>
 			{ translate( 'Sign up or log in to MailChimp' ) }
-			<Gridicon icon="external" />
+			<GridiconExternal />
 		</Button>
 	</div>
 );

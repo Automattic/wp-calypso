@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconRefresh from 'gridicons/dist/refresh';
 import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -132,7 +132,7 @@ class MediaLibraryExternalHeader extends React.Component {
 
 				{ hasRefreshButton && (
 					<Button compact disabled={ this.state.fetching } onClick={ this.handleClick }>
-						<Gridicon icon="refresh" size={ 24 } />
+						<GridiconRefresh size={ 24 } />
 
 						{ translate( 'Refresh' ) }
 					</Button>

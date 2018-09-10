@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
+import GridiconExternal from 'gridicons/dist/external';
+
 export default class extends React.Component {
 	static displayName = 'NoticeAction';
 
@@ -38,7 +40,7 @@ export default class extends React.Component {
 			<a { ...attributes }>
 				<span>{ this.props.children }</span>
 				{ this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
-				{ this.props.external && <Gridicon icon="external" size={ 24 } /> }
+				{ this.props.external && <GridiconExternal size={ 24 } /> }
 			</a>
 		);
 	}

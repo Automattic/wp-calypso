@@ -31,7 +31,7 @@ import { withEnhancers } from 'state/utils';
 import Main from 'components/main';
 import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 
 class MagicLogin extends React.Component {
 	static propTypes = {
@@ -90,7 +90,7 @@ class MagicLogin extends React.Component {
 		return (
 			<div className="magic-login__footer">
 				<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
-					<Gridicon icon="arrow-left" size={ 18 } />
+					<GridiconArrowLeft size={ 18 } />
 					{ translate( 'Enter a password instead' ) }
 				</a>
 			</div>

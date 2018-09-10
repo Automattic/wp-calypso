@@ -16,6 +16,13 @@ import { flow, get, includes, noop, partial } from 'lodash';
  */
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
+import GridiconStats from 'gridicons/dist/stats';
+import GridiconUndo from 'gridicons/dist/undo';
+import GridiconClipboard from 'gridicons/dist/clipboard';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconHouse from 'gridicons/dist/house';
+import GridiconPencil from 'gridicons/dist/pencil';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Notice from 'components/notice';
@@ -181,7 +188,7 @@ class Page extends Component {
 
 		return (
 			<PopoverMenuItem onClick={ this.updateStatusPublish }>
-				<Gridicon icon="checkmark" size={ 18 } />
+				<GridiconCheckmark size={ 18 } />
 				{ this.props.translate( 'Publish' ) }
 			</PopoverMenuItem>
 		);
@@ -198,7 +205,7 @@ class Page extends Component {
 
 		return (
 			<PopoverMenuItem onClick={ this.editPage } onMouseOver={ preloadEditor }>
-				<Gridicon icon="pencil" size={ 18 } />
+				<GridiconPencil size={ 18 } />
 				{ this.props.translate( 'Edit' ) }
 			</PopoverMenuItem>
 		);
@@ -224,7 +231,7 @@ class Page extends Component {
 		return [
 			<MenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" onClick={ this.setFrontPage }>
-				<Gridicon icon="house" size={ 18 } />
+				<GridiconHouse size={ 18 } />
 				{ this.props.translate( 'Set as Front Page' ) }
 			</PopoverMenuItem>,
 		];
@@ -243,7 +250,7 @@ class Page extends Component {
 			return [
 				<MenuSeparator key="separator" />,
 				<PopoverMenuItem key="item" className="page__trash-item" onClick={ this.updateStatusTrash }>
-					<Gridicon icon="trash" size={ 18 } />
+					<GridiconTrash size={ 18 } />
 					{ this.props.translate( 'Trash' ) }
 				</PopoverMenuItem>,
 			];
@@ -252,7 +259,7 @@ class Page extends Component {
 		return [
 			<MenuSeparator key="separator" />,
 			<PopoverMenuItem key="item" className="page__delete-item" onClick={ this.updateStatusDelete }>
-				<Gridicon icon="trash" size={ 18 } />
+				<GridiconTrash size={ 18 } />
 				{ this.props.translate( 'Delete' ) }
 			</PopoverMenuItem>,
 		];
@@ -271,7 +278,7 @@ class Page extends Component {
 				onClick={ this.copyPage }
 				href={ `/page/${ siteSlugOrId }?copy=${ post.ID }` }
 			>
-				<Gridicon icon="clipboard" size={ 18 } />
+				<GridiconClipboard size={ 18 } />
 				{ this.props.translate( 'Copy' ) }
 			</PopoverMenuItem>
 		);
@@ -284,7 +291,7 @@ class Page extends Component {
 
 		return (
 			<PopoverMenuItem onClick={ this.updateStatusRestore }>
-				<Gridicon icon="undo" size={ 18 } />
+				<GridiconUndo size={ 18 } />
 				{ this.props.translate( 'Restore' ) }
 			</PopoverMenuItem>
 		);
@@ -302,7 +309,7 @@ class Page extends Component {
 
 		return (
 			<PopoverMenuItem onClick={ this.statsPage }>
-				<Gridicon icon="stats" size={ 18 } />
+				<GridiconStats size={ 18 } />
 				{ this.props.translate( 'Stats' ) }
 			</PopoverMenuItem>
 		);

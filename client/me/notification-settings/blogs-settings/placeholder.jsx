@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconGlobe from 'gridicons/dist/globe';
 
 /**
  * Internal dependencies
@@ -26,10 +26,9 @@ export default class extends React.Component {
 					<div className="notification-settings-blog-settings-placeholder__blog">
 						<div className="notification-settings-blog-settings-placeholder__blog__content">
 							<div className="notification-settings-blog-settings-placeholder__blog__content__icon">
-								<Gridicon
+								<GridiconGlobe
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 									className="notification-settings-blog-settings-placeholder__blog__content__icon__gridicon"
-									icon="globe"
 								/>
 							</div>
 							<div className="notification-settings-blog-settings-placeholder__blog__info">

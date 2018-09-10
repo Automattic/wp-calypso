@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ import { GUIDED_TRANSFER } from 'lib/url/support';
 
 const Feature = ( { children } ) => (
 	<li className="guided-transfer-card__feature-list-item">
-		<Gridicon className="guided-transfer-card__feature-icon" size={ 18 } icon="checkmark" />
+		<GridiconCheckmark className="guided-transfer-card__feature-icon" size={ 18 } />
 		<span className="guided-transfer-card__feature-text">{ children }</span>
 	</li>
 );

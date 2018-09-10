@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconChevronLeft from 'gridicons/dist/chevron-left';
 import { isArray } from 'lodash';
 
 /**
@@ -50,7 +50,7 @@ class ActionHeader extends React.Component {
 					onClick={ this.toggleSidebar }
 					className="action-header__back-to-sidebar"
 				>
-					<Gridicon icon="chevron-left" />
+					<GridiconChevronLeft />
 				</Button>
 				<div className="action-header__content">
 					<a href={ site.URL } aria-label={ site.title }>

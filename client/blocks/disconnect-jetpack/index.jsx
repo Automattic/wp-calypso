@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -281,7 +282,7 @@ class DisconnectJetpack extends PureComponent {
 					<div className="disconnect-jetpack__try-rewind-button-wrap">
 						<Button onClick={ this.handleTryRewind }>{ translate( 'Rewind site' ) }</Button>
 						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
-							<Gridicon icon="chat" size={ 18 } />
+							<GridiconChat size={ 18 } />
 							{ translate( 'Get help' ) }
 						</HappychatButton>
 					</div>

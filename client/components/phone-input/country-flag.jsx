@@ -6,7 +6,8 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
+import GridiconGlobe from 'gridicons/dist/globe';
 
 /** Internal Dependencies */
 import Spinner from 'components/spinner';
@@ -61,7 +62,7 @@ export default class extends React.Component {
 					/>
 				);
 			}
-			return <Gridicon icon="globe" size={ 24 } className="phone-input__flag-icon" />;
+			return <GridiconGlobe size={ 24 } className="phone-input__flag-icon" />;
 		}
 	};
 
@@ -70,7 +71,7 @@ export default class extends React.Component {
 			<div className="phone-input__flag-container">
 				{ this.renderSpinner() }
 				{ this.renderFlag() }
-				<Gridicon icon="chevron-down" size={ 12 } className="phone-input__flag-selector-icon" />
+				<GridiconChevronDown size={ 12 } className="phone-input__flag-selector-icon" />
 			</div>
 		);
 	}

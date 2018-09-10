@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconOffline from 'gridicons/dist/offline';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,7 +26,7 @@ const Troubleshoot = ( { isFreePlan, siteUrl, trackDebugClick, translate } ) => 
 			href={ addQueryArgs( { url: siteUrl }, 'https://jetpack.com/support/debug/' ) }
 			onClick={ trackDebugClick }
 		>
-			<Gridicon size={ 18 } icon="offline" /> { translate( 'Diagnose a connection problem' ) }
+			<GridiconOffline size={ 18 } /> { translate( 'Diagnose a connection problem' ) }
 		</LoggedOutFormLinkItem>
 		{ isFreePlan ? (
 			<HelpButton label={ translate( 'Get help from our Happiness Engineers' ) } />

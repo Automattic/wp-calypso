@@ -6,7 +6,7 @@
 
 import React, { Fragment } from 'react';
 import { overEvery as and, negate as not } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconEllipsis from 'gridicons/dist/ellipsis';
 
 /**
  * Internal dependencies
@@ -101,7 +101,7 @@ export const DesignShowcaseWelcomeTour = makeTour(
 							'Scroll down to discover more themes. Found anything you like? ' +
 								'Try clicking the three dots — {{icon/}} — for more theme options.',
 							{
-								components: { icon: <Gridicon icon="ellipsis" /> },
+								components: { icon: <GridiconEllipsis /> },
 							}
 						) }
 					</p>

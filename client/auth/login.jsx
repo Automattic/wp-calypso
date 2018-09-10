@@ -4,7 +4,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import GridiconHelp from 'gridicons/dist/help';
+import GridiconLock from 'gridicons/dist/lock';
+import GridiconUser from 'gridicons/dist/user';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -109,7 +111,7 @@ export class Auth extends Component {
 					<form className="auth__form" onSubmit={ this.submitForm }>
 						<FormFieldset>
 							<div className="auth__input-wrapper">
-								<Gridicon icon="user" />
+								<GridiconUser />
 								<FormTextInput
 									name="login"
 									disabled={ requires2fa || inProgress }
@@ -120,7 +122,7 @@ export class Auth extends Component {
 								/>
 							</div>
 							<div className="auth__input-wrapper">
-								<Gridicon icon="lock" />
+								<GridiconLock />
 								<FormPasswordInput
 									name="password"
 									disabled={ requires2fa || inProgress }
@@ -171,7 +173,7 @@ export class Auth extends Component {
 						title={ translate( 'Visit the WordPress.com support site for help' ) }
 						href="https://en.support.wordpress.com/"
 					>
-						<Gridicon icon="help" />
+						<GridiconHelp />
 					</a>
 					<div className="auth__links">
 						<a href="#" onClick={ this.toggleSelfHostedInstructions }>

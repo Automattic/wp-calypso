@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -167,7 +167,7 @@ class EditorConfirmationSidebar extends Component {
 								title={ this.props.translate( 'Close sidebar' ) }
 								aria-label={ this.props.translate( 'Close sidebar' ) }
 							>
-								<Gridicon icon="cross" />
+								<GridiconCross />
 							</Button>
 						</div>
 						<div className="editor-confirmation-sidebar__action">

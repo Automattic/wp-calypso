@@ -17,7 +17,7 @@ import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
 import HappychatButton from 'components/happychat/button';
 import Button from 'components/button';
 import SplitButton from 'components/split-button';
@@ -232,7 +232,7 @@ class ActivityLogItem extends Component {
 			borderless={ false }
 			onClick={ this.handleTrackHelp }
 		>
-			<Gridicon icon="chat" size={ 18 } />
+			<GridiconChat size={ 18 } />
 			{ this.props.translate( 'Get help' ) }
 		</HappychatButton>
 	);

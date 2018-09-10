@@ -7,7 +7,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconMinusSmall from 'gridicons/dist/minus-small';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import { omit } from 'lodash';
 
 const Checkbox = props => {
@@ -17,8 +18,8 @@ const Checkbox = props => {
 	return (
 		<span className={ classNames( className, 'form-checkbox', { 'is-disabled': disabled } ) }>
 			<input { ...otherProps } type="checkbox" />
-			{ checked && <Gridicon icon="checkmark" size={ 14 } /> }
-			{ ! checked && partialChecked && <Gridicon icon="minus-small" size={ 16 } /> }
+			{ checked && <GridiconCheckmark size={ 14 } /> }
+			{ ! checked && partialChecked && <GridiconMinusSmall size={ 16 } /> }
 		</span>
 	);
 };

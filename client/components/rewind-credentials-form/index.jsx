@@ -21,7 +21,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -310,7 +310,7 @@ export class RewindCredentialsForm extends Component {
 							onClick={ this.handleDelete }
 							className="rewind-credentials-form__delete-button"
 						>
-							<Gridicon icon="trash" size={ 18 } />
+							<GridiconTrash size={ 18 } />
 							{ labels.delete || translate( 'Delete' ) }
 						</Button>
 					) }

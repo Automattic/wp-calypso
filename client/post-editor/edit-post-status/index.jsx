@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconUndo from 'gridicons/dist/undo';
 
 /**
  * Internal dependencies
@@ -128,7 +128,7 @@ export class EditPostStatus extends Component {
 						onClick={ this.revertToDraft }
 						compact={ true }
 					>
-						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
+						<GridiconUndo size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				) }
 			</div>

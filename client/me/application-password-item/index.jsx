@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -42,7 +42,7 @@ class ApplicationPasswordsItem extends React.Component {
 					className="application-password-item__revoke"
 					onClick={ this.handleRemovePasswordButtonClick }
 				>
-					<Gridicon icon="cross" />
+					<GridiconCross />
 				</Button>
 			</li>
 		);

@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { isEmpty, startsWith } from 'lodash';
 
 /**
@@ -136,7 +136,7 @@ const ShippingZoneMethodDialog = ( {
 			action: 'delete',
 			label: (
 				<span>
-					<Gridicon icon="trash" /> { translate( 'Delete this method' ) }
+					<GridiconTrash /> { translate( 'Delete this method' ) }
 				</span>
 			),
 			onClick: onDelete,

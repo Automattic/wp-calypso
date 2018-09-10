@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
 
 /**
  * Internal dependencies
@@ -62,7 +62,7 @@ class DomainSuggestion extends React.Component {
 					{ this.props.buttonContent }
 				</Button>
 				{ this.props.showChevron && (
-					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+					<GridiconChevronRight className="domain-suggestion__chevron" />
 				) }
 			</div>
 		);
@@ -76,7 +76,7 @@ DomainSuggestion.Placeholder = function() {
 				<h3 />
 			</div>
 			<div className="domain-suggestion__action" />
-			<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+			<GridiconChevronRight className="domain-suggestion__chevron" />
 		</div>
 	);
 };

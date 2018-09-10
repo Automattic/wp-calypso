@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, some } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconPencil from 'gridicons/dist/pencil';
 
 /**
  * Internal dependencies
@@ -124,7 +124,7 @@ class EditorFeaturedImagePreview extends Component {
 					className="editor-featured-image__preview-image"
 				/>
 				{ this.props.showEditIcon && (
-					<Gridicon icon="pencil" className="editor-featured-image__edit-icon" />
+					<GridiconPencil className="editor-featured-image__edit-icon" />
 				) }
 			</div>
 		);

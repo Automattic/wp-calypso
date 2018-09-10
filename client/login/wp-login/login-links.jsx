@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconArrowLeft from 'gridicons/dist/arrow-left';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -104,7 +104,7 @@ export class LoginLinks extends React.Component {
 
 				return (
 					<ExternalLink className="wp-login__site-return-link" href={ returnToSiteUrl }>
-						<Gridicon icon="arrow-left" size={ 18 } />
+						<GridiconArrowLeft size={ 18 } />
 						{ linkText }
 					</ExternalLink>
 				);

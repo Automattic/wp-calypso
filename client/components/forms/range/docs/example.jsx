@@ -5,7 +5,8 @@
  */
 
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconPlusSmall from 'gridicons/dist/plus-small';
+import GridiconMinusSmall from 'gridicons/dist/minus-small';
 
 /**
  * Internal dependencies
@@ -28,8 +29,8 @@ export default class extends React.PureComponent {
 	render() {
 		return (
 			<FormRange
-				minContent={ <Gridicon icon="minus-small" /> }
-				maxContent={ <Gridicon icon="plus-small" /> }
+				minContent={ <GridiconMinusSmall /> }
+				maxContent={ <GridiconPlusSmall /> }
 				max="100"
 				value={ this.state.rangeValue }
 				onChange={ this.onChange }

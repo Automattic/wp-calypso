@@ -7,6 +7,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import GridiconReply from 'gridicons/dist/reply';
+import GridiconPencil from 'gridicons/dist/pencil';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconSpam from 'gridicons/dist/spam';
 import classNames from 'classnames';
 import { get, includes, isEqual, isUndefined, noop } from 'lodash';
 
@@ -197,7 +201,7 @@ export class CommentActions extends Component {
 						tabIndex="0"
 						disabled={ ! canModerateComment }
 					>
-						<Gridicon icon="spam" />
+						<GridiconSpam />
 						<span>{ translate( 'Spam' ) }</span>
 					</Button>
 				) }
@@ -210,7 +214,7 @@ export class CommentActions extends Component {
 						tabIndex="0"
 						disabled={ ! canModerateComment }
 					>
-						<Gridicon icon="trash" />
+						<GridiconTrash />
 						<span>{ translate( 'Trash' ) }</span>
 					</Button>
 				) }
@@ -223,7 +227,7 @@ export class CommentActions extends Component {
 						tabIndex="0"
 						disabled={ ! canModerateComment }
 					>
-						<Gridicon icon="trash" />
+						<GridiconTrash />
 						<span>{ translate( 'Delete Permanently' ) }</span>
 					</Button>
 				) }
@@ -251,7 +255,7 @@ export class CommentActions extends Component {
 						tabIndex="0"
 						disabled={ ! canModerateComment }
 					>
-						<Gridicon icon="pencil" />
+						<GridiconPencil />
 						<span>{ translate( 'Edit' ) }</span>
 					</Button>
 				) }
@@ -264,7 +268,7 @@ export class CommentActions extends Component {
 						tabIndex="0"
 						disabled={ ! canModerateComment && ! commentIsApproved }
 					>
-						<Gridicon icon="reply" />
+						<GridiconReply />
 						<span>{ translate( 'Reply' ) }</span>
 					</Button>
 				) }

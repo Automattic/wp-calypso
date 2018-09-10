@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flow, get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal Dependencies
@@ -42,7 +42,7 @@ export class SupportArticleDialog extends Component {
 		return [
 			postUrl ? (
 				<Button href={ postUrl } target="_blank" primary>
-					{ translate( 'Visit Article' ) } <Gridicon icon="external" size={ 12 } />
+					{ translate( 'Visit Article' ) } <GridiconExternal size={ 12 } />
 				</Button>
 			) : (
 				<React.Fragment />

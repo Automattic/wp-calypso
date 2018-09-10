@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { noop, flow } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -45,8 +45,7 @@ class DismissibleCard extends Component {
 		return (
 			<Card className={ className }>
 				<QueryPreferences />
-				<Gridicon
-					icon="cross"
+				<GridiconCross
 					className="dismissible-card__close-icon"
 					onClick={ flow(
 						onClick,

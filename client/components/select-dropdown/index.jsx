@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { filter, find, findIndex, map, result } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 
 /**
  * Internal dependencies
@@ -257,7 +257,7 @@ class SelectDropdown extends Component {
 						{ 'number' === typeof this.props.selectedCount && (
 							<Count count={ this.props.selectedCount } />
 						) }
-						<Gridicon icon="chevron-down" size={ 18 } />
+						<GridiconChevronDown size={ 18 } />
 					</div>
 
 					<ul

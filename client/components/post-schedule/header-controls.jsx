@@ -6,7 +6,8 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
+import GridiconChevronUp from 'gridicons/dist/chevron-up';
 
 /**
  * Globals
@@ -33,7 +34,7 @@ export default class extends React.Component {
 						this.props.onYearChange( 1 );
 					} }
 				>
-					<Gridicon icon="chevron-up" size={ 14 } />
+					<GridiconChevronUp size={ 14 } />
 				</button>
 
 				<button
@@ -42,7 +43,7 @@ export default class extends React.Component {
 						this.props.onYearChange( -1 );
 					} }
 				>
-					<Gridicon icon="chevron-down" size={ 14 } />
+					<GridiconChevronDown size={ 14 } />
 				</button>
 			</div>
 		);

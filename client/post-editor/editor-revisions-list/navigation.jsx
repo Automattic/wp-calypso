@@ -5,7 +5,8 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconChevronUp from 'gridicons/dist/chevron-up';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 
 /**
  * Internal dependencies
@@ -28,7 +29,7 @@ const EditorRevisionsListNavigation = ( {
 				onClick={ selectPreviousRevision }
 				disabled={ prevIsDisabled }
 			>
-				<Gridicon icon="chevron-down" />
+				<GridiconChevronDown />
 			</Button>
 			<Button
 				compact
@@ -37,7 +38,7 @@ const EditorRevisionsListNavigation = ( {
 				onClick={ selectNextRevision }
 				disabled={ nextIsDisabled }
 			>
-				<Gridicon icon="chevron-up" />
+				<GridiconChevronUp />
 			</Button>
 		</ButtonGroup>
 	);

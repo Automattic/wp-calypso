@@ -5,7 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
 
 /**
  * Internal dependencies
@@ -39,7 +39,7 @@ export default class Prediction extends Component {
 				<strong>{ prediction.structured_formatting.main_text }</strong>
 				<br />
 				{ prediction.structured_formatting.secondary_text }
-				<Gridicon className="location-search__prediction-icon" icon="chevron-right" />
+				<GridiconChevronRight className="location-search__prediction-icon" />
 			</CompactCard>
 		);
 	}

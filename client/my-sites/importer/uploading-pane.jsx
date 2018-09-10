@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { flowRight, includes, noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCloudUpload from 'gridicons/dist/cloud-upload';
 
 /**
  * Internal dependencies
@@ -140,7 +140,7 @@ class UploadingPane extends React.PureComponent {
 					onClick={ this.isReadyForImport() ? this.openFileSelector : null }
 				>
 					<div className="importer__upload-content">
-						<Gridicon className="importer__upload-icon" icon="cloud-upload" />
+						<GridiconCloudUpload className="importer__upload-icon" />
 						{ this.getMessage() }
 					</div>
 					{ this.isReadyForImport() ? (

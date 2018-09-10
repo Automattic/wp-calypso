@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -48,7 +48,7 @@ const GettingStarted = localize(
 							<ul className="mailchimp__getting-started-list">
 								{ list.map( ( item, key ) => (
 									<li key={ key }>
-										<Gridicon icon="checkmark" size={ 18 } />
+										<GridiconCheckmark size={ 18 } />
 										{ item }
 									</li>
 								) ) }

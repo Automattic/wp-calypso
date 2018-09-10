@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCloudDownload from 'gridicons/dist/cloud-download';
 
 /**
  * Internal dependencies
@@ -75,7 +75,7 @@ class StatsDownloadCsv extends Component {
 			<Button compact onClick={ this.downloadCsv } disabled={ disabled } borderless={ borderless }>
 				{ siteId &&
 					statType && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				<Gridicon icon="cloud-download" />{' '}
+				<GridiconCloudDownload />{' '}
 				{ translate( 'Download data as CSV', {
 					context: 'Action shown in stats to download data as csv.',
 				} ) }

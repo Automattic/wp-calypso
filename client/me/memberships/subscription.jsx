@@ -20,7 +20,7 @@ import formatCurrency from 'lib/format-currency';
 import HeaderCake from 'components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
 import Site from 'blocks/site';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import CompactCard from 'components/card/compact';
 import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
 import Notice from 'components/notice';
@@ -108,7 +108,7 @@ class Subscription extends React.Component {
 							className="memberships__subscription-remove"
 							onClick={ this.stopSubscription }
 						>
-							<Gridicon icon="trash" />
+							<GridiconTrash />
 							{ translate( 'Stop %s subscription.', { args: subscription.title } ) }
 						</CompactCard>
 					</div>

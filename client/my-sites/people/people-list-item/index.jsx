@@ -8,7 +8,8 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import { get } from 'lodash';
 
 /**
@@ -103,7 +104,7 @@ class PeopleListItem extends React.PureComponent {
 						translate( 'Pending' )
 					) : (
 						<React.Fragment>
-							<Gridicon icon="checkmark" size={ 18 } />
+							<GridiconCheckmark size={ 18 } />
 							{ translate( 'Accepted' ) }
 						</React.Fragment>
 					) ) }
@@ -168,7 +169,7 @@ class PeopleListItem extends React.PureComponent {
 							onClick={ onRemove }
 							data-e2e-remove-login={ get( user, 'login', '' ) }
 						>
-							<Gridicon icon="trash" />
+							<GridiconTrash />
 							{ translate( 'Remove', {
 								context: 'Verb: Remove a user or follower from the blog.',
 							} ) }

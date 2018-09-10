@@ -12,7 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import Gridicon from 'gridicons';
+import GridiconSync from 'gridicons/dist/sync';
 import PluginsActions from 'lib/plugins/actions';
 
 class PluginSiteUpdateIndicator extends React.Component {
@@ -98,7 +98,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 				/* eslint-disable wpcalypso/jsx-gridicon-size */
 				return (
 					<span className="plugin-site-update-indicator">
-						<Gridicon icon="sync" size={ 20 } />
+						<GridiconSync size={ 20 } />
 					</span>
 				);
 				/* eslint-enable wpcalypso/jsx-gridicon-size */

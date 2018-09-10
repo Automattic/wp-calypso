@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import Gridicon from 'gridicons';
+import GridiconClipboard from 'gridicons/dist/clipboard';
 
 /**
  * Internal dependencies
@@ -97,7 +97,7 @@ class EditorMoreOptionsCopyPost extends Component {
 					}
 				>
 					<Button borderless compact onClick={ this.openDialog }>
-						<Gridicon icon="clipboard" />
+						<GridiconClipboard />
 						{ this.isPost()
 							? translate( 'Select a post to copy' )
 							: translate( 'Select a page to copy' ) }

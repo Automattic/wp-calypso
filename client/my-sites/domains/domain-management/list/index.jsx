@@ -4,7 +4,7 @@
  */
 import { connect } from 'react-redux';
 import { find, findIndex, get, identity, noop, times } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import page from 'page';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -286,7 +286,7 @@ export class List extends React.Component {
 					compact
 					onClick={ this.disableChangePrimaryDomainMode }
 				>
-					<Gridicon icon="cross" size={ 24 } />
+					<GridiconCross size={ 24 } />
 				</Button>
 			);
 		}

@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconLink from 'gridicons/dist/link';
 import { get } from 'lodash';
 
 /***
@@ -31,7 +31,7 @@ export default class PostTrackback extends React.Component {
 			<li className={ 'comments__comment depth-0' }>
 				<div className="comments__comment-author">
 					<div className="comments__comment-trackbackicon">
-						<Gridicon icon="link" size={ 24 } />
+						<GridiconLink size={ 24 } />
 					</div>
 
 					{ get( comment, 'author.URL' ) ? (

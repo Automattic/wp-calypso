@@ -7,7 +7,7 @@
 import { localize } from 'i18n-calypso';
 import { assign, some } from 'lodash';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconLock from 'gridicons/dist/lock';
 
 /**
  * Internal dependencies
@@ -193,7 +193,7 @@ export class PaypalPaymentBox extends React.Component {
 
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
-									<Gridicon icon="lock" />
+									<GridiconLock />
 									{ this.props.translate( 'Secure Payment' ) }
 								</div>
 							</div>

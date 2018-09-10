@@ -6,7 +6,11 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'gridicons';
+import GridiconChat from 'gridicons/dist/chat';
+import GridiconMoney from 'gridicons/dist/money';
+import GridiconCustomize from 'gridicons/dist/customize';
+import GridiconDomains from 'gridicons/dist/domains';
+import GridiconTypes from 'gridicons/dist/types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -166,7 +170,7 @@ class WordAdsUpsellComponent extends Component {
 				<div className="feature-upsell__features-list">
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="types" size={ 48 } /> }
+							icon={ <GridiconTypes size={ 48 } /> }
 							title={ 'Unlimited access to premium themes' }
 							description={
 								'You don’t have to be a designer to make a beautiful site. Choose from a range of layouts created by pros.'
@@ -176,7 +180,7 @@ class WordAdsUpsellComponent extends Component {
 					{ isFreePlan( currentSitePlanSlug ) ? (
 						<div className="feature-upsell__features-list-item">
 							<Feature
-								icon={ <Gridicon icon="domains" size={ 48 } /> }
+								icon={ <GridiconDomains size={ 48 } /> }
 								title={ 'Custom site address' }
 								description={
 									'Make your site memorable and professional - choose a .com, .shop, or any other dot.'
@@ -186,7 +190,7 @@ class WordAdsUpsellComponent extends Component {
 					) : null }
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="customize" size={ 48 } /> }
+							icon={ <GridiconCustomize size={ 48 } /> }
 							title={ 'Advanced design customizations' }
 							description={
 								'Take creative control with additional customization features - like color schemes and, background designs, or add completely ' +
@@ -196,7 +200,7 @@ class WordAdsUpsellComponent extends Component {
 					</div>
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="money" size={ 48 } /> }
+							icon={ <GridiconMoney size={ 48 } /> }
 							title={ 'Simple Payments' }
 							description={
 								'Accept credit card payments on your site with the click of a button! Sell products, take donations, ' +
@@ -206,7 +210,7 @@ class WordAdsUpsellComponent extends Component {
 					</div>
 					<div className="feature-upsell__features-list-item">
 						<Feature
-							icon={ <Gridicon icon="chat" size={ 48 } /> }
+							icon={ <GridiconChat size={ 48 } /> }
 							title={ 'Priority support' }
 							description={
 								'Unlimited access to our world-class live chat and email support. No question is too big or too small!'

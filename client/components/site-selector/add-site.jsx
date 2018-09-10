@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconAddOutline from 'gridicons/dist/add-outline';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ class SiteSelectorAddSite extends Component {
 		return (
 			<span className="site-selector__add-new-site">
 				<Button borderless href={ this.getAddNewSiteUrl() } onClick={ this.recordAddNewSite }>
-					<Gridicon icon="add-outline" /> { translate( 'Add New Site' ) }
+					<GridiconAddOutline /> { translate( 'Add New Site' ) }
 				</Button>
 			</span>
 		);

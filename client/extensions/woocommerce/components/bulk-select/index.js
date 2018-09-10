@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconMinusSmall from 'gridicons/dist/minus-small';
 
 const BulkSelect = ( {
 	className,
@@ -41,7 +41,7 @@ const BulkSelect = ( {
 					disabled={ disabled }
 				/>
 				{ hasSomeElementsSelected ? (
-					<Gridicon className={ iconClasses } icon="minus-small" size={ 18 } />
+					<GridiconMinusSmall className={ iconClasses } size={ 18 } />
 				) : null }
 			</span>
 		</span>

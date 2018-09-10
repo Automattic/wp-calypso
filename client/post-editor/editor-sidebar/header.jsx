@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { flow } from 'lodash';
 
 /**
@@ -26,7 +26,7 @@ const EditorSidebarHeader = ( { closeSidebar, translate } ) => (
 			onClick={ closeSidebar }
 			title={ translate( 'Close sidebar' ) }
 		>
-			<Gridicon icon="cross" />
+			<GridiconCross />
 		</Button>
 	</div>
 );

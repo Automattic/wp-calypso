@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconInfoOutline from 'gridicons/dist/info-outline';
 import { localize } from 'i18n-calypso';
 
 class JetpackOnboardingDisclaimer extends React.PureComponent {
@@ -23,7 +23,7 @@ class JetpackOnboardingDisclaimer extends React.PureComponent {
 
 		return (
 			<p className="jetpack-onboarding__disclaimer">
-				<Gridicon icon="info-outline" size={ 18 } />
+				<GridiconInfoOutline size={ 18 } />
 				{ translate( 'By continuing, you agree to our {{link}}Terms of Service{{/link}}.', {
 					components: {
 						link: (

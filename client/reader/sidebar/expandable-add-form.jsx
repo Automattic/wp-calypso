@@ -3,7 +3,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCrossSmall from 'gridicons/dist/cross-small';
 import { localize } from 'i18n-calypso';
 import { noop, identity } from 'lodash';
 import PropTypes from 'prop-types';
@@ -76,7 +76,7 @@ export class ExpandableSidebarAddForm extends Component {
 						ref={ this.menuAddInput }
 						onKeyDown={ this.handleAddKeyDown }
 					/>
-					<Gridicon icon="cross-small" onClick={ this.toggleAdd } />
+					<GridiconCrossSmall onClick={ this.toggleAdd } />
 				</div>
 			</div>
 		);

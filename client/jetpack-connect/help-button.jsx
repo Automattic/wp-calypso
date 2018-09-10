@@ -5,7 +5,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'gridicons';
+import GridiconHelpOutline from 'gridicons/dist/help-outline';
 import { connect } from 'react-redux';
 
 /**
@@ -30,8 +30,7 @@ export class JetpackConnectHelpButton extends PureComponent {
 				rel="noopener noreferrer"
 				onClick={ this.recordClick }
 			>
-				<Gridicon icon="help-outline" size={ 18 } />{' '}
-				{ label || translate( 'Get help setting up Jetpack' ) }
+				<GridiconHelpOutline size={ 18 } /> { label || translate( 'Get help setting up Jetpack' ) }
 			</LoggedOutFormLinkItem>
 		);
 	}

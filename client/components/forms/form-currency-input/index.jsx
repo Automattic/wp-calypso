@@ -5,7 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import { find, get } from 'lodash';
 
 /**
@@ -37,7 +37,7 @@ function renderAffix( currencyValue, onCurrencyChange, currencyList ) {
 	return (
 		<span className="form-currency-input__affix">
 			{ currencyLabel }
-			<Gridicon icon="chevron-down" size={ 18 } className="form-currency-input__select-icon" />
+			<GridiconChevronDown size={ 18 } className="form-currency-input__select-icon" />
 			<select
 				className="form-currency-input__select"
 				value={ currencyValue }

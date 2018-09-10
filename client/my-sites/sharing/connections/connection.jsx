@@ -12,6 +12,8 @@ import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
+import GridiconNotice from 'gridicons/dist/notice';
+
 /**
  * Internal dependencies
  */
@@ -134,7 +136,7 @@ class SharingConnection extends Component {
 		) {
 			return (
 				<a onClick={ this.refresh } className="sharing-connection__account-action reconnect">
-					<Gridicon icon="notice" size={ 18 } />
+					<GridiconNotice size={ 18 } />
 					{ this.props.translate( 'Reconnect' ) }
 				</a>
 			);

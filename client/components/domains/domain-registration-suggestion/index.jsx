@@ -8,7 +8,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { isNumber, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from "gridicons/dist/checkmark";
 import classNames from 'classnames';
 import page from 'page';
 
@@ -96,7 +96,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		let buttonContent;
 
 		if ( isAdded ) {
-			buttonContent = <Gridicon icon="checkmark" />;
+			buttonContent = <GridiconCheckmark />;
 		} else {
 			buttonContent =
 				! isSignupStep &&
@@ -186,15 +186,15 @@ class DomainRegistrationSuggestion extends React.Component {
 		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
 
 		return (
-			<div className="domain-registration-suggestion__match-reasons">
+            <div className="domain-registration-suggestion__match-reasons">
 				{ matchReasons.map( ( phrase, index ) => (
 					<div className="domain-registration-suggestion__match-reason" key={ index }>
-						<Gridicon icon="checkmark" size={ 18 } />
+						<GridiconCheckmark size={ 18 } />
 						{ phrase }
 					</div>
 				) ) }
 			</div>
-		);
+        );
 	}
 
 	render() {

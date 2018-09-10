@@ -13,6 +13,8 @@ import React from 'react';
  */
 import Gridicon from 'gridicons';
 
+import GridiconTime from 'gridicons/dist/time';
+
 class PostRelativeTime extends React.PureComponent {
 	static displayName = 'PostRelativeTime';
 
@@ -51,7 +53,7 @@ class PostRelativeTime extends React.PureComponent {
 
 		return (
 			<span className="post-relative-time-status__time">
-				<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+				<GridiconTime size={ this.props.gridiconSize || 18 } />
 				<time className="post-relative-time-status__time-text" dateTime={ time }>
 					{ this.props.moment( time ).fromNow() }
 				</time>

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconTrash from 'gridicons/dist/trash';
 import { get, isNull } from 'lodash';
 
 /**
@@ -101,7 +101,7 @@ class EditorDeletePost extends React.Component {
 					onClick={ this.onSendToTrash }
 					aria-label={ label }
 				>
-					<Gridicon icon="trash" size={ 18 } />
+					<GridiconTrash size={ 18 } />
 					{ label }
 				</Button>
 			</div>

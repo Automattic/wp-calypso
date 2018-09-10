@@ -8,7 +8,8 @@ import { identity, noop, get, findLast } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconInfo from 'gridicons/dist/info';
+import GridiconCog from 'gridicons/dist/cog';
 import { connect } from 'react-redux';
 
 /**
@@ -110,7 +111,7 @@ export class EditorGroundControl extends React.Component {
 					className="editor-ground-control__toggle-sidebar"
 					onClick={ this.props.toggleSidebar }
 				>
-					<Gridicon icon="cog" />
+					<GridiconCog />
 				</Button>
 				<Button
 					className="editor-ground-control__preview-button"
@@ -186,10 +187,7 @@ export class EditorGroundControl extends React.Component {
 						tabIndex={ 7 }
 						onClick={ this.props.onMoreInfoAboutEmailVerify }
 					>
-						<Gridicon
-							icon="info"
-							className="editor-ground-control__email-verification-notice-icon"
-						/>
+						<GridiconInfo className="editor-ground-control__email-verification-notice-icon" />
 						{ this.getVerificationNoticeLabel() }{' '}
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }

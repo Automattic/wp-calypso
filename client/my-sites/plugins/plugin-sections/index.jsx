@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 
 /**
  * Internal dependencies
@@ -157,7 +157,7 @@ class PluginSections extends React.Component {
 				<span className="plugin-sections__read-more-text">
 					{ this.props.translate( 'Read More' ) }
 				</span>
-				<Gridicon icon="chevron-down" size={ 18 } />
+				<GridiconChevronDown size={ 18 } />
 			</button>
 		);
 		return (

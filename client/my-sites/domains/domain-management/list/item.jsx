@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -82,7 +82,7 @@ class ListItem extends React.PureComponent {
 		if ( this.props.enableSelection ) {
 			return null;
 		}
-		return <Gridicon className="card__link-indicator" icon="chevron-right" />;
+		return <GridiconChevronRight className="card__link-indicator" />;
 	}
 
 	handleClick = () => {

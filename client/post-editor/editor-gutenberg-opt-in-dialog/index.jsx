@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import getCurrentRoute from 'state/selectors/get-current-route';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 
 /**
  * Internal dependencies
@@ -47,7 +47,7 @@ class EditorGutenbergOptInDialog extends Component {
 
 				<header>
 					<button onClick={ this.onCloseDialog } className="editor-gutenberg-opt-in-dialog__close">
-						<Gridicon icon="cross" />
+						<GridiconCross />
 					</button>
 				</header>
 

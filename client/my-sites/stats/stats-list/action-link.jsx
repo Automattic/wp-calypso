@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
 
 /**
  * Internal dependencies
@@ -53,7 +53,7 @@ class StatsActionLink extends PureComponent {
 						context: 'Stats ARIA label: View content in new window action',
 					} ) }
 				>
-					<Gridicon icon="external" size={ 18 } />
+					<GridiconExternal size={ 18 } />
 					<span className="module-content-list-item-action-label module-content-list-item-action-label-view">
 						{ translate( 'View', { context: 'Stats: List item action to view content' } ) }
 					</span>

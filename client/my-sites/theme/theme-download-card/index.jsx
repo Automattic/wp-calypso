@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'gridicons';
+import GridiconCloudDownload from 'gridicons/dist/cloud-download';
 
 /**
  * Internal dependencies
@@ -33,7 +33,7 @@ class ThemeDownloadCard extends React.PureComponent {
 		);
 		return (
 			<Card className="theme-download-card">
-				<Gridicon icon="cloud-download" size={ 48 } />
+				<GridiconCloudDownload size={ 48 } />
 				<p>{ downloadText }</p>
 				<Button href={ href }>{ translate( 'Download' ) }</Button>
 			</Card>

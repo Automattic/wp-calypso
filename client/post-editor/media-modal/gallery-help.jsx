@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Gridicon from 'gridicons';
+import GridiconImageMultiple from 'gridicons/dist/image-multiple';
 
 /**
  * Internal dependencies
@@ -84,7 +84,7 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 				<div className="editor-media-modal__gallery-help-content">
 					<div className="editor-media-modal__gallery-help-instruction">
 						<span className="editor-media-modal__gallery-help-icon">
-							<Gridicon icon="image-multiple" size={ 20 } />
+							<GridiconImageMultiple size={ 20 } />
 						</span>
 						<span className="editor-media-modal__gallery-help-text">
 							{ this.props.translate( 'Select more than one image to create a gallery.' ) }

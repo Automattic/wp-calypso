@@ -7,7 +7,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { noop } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconHouse from 'gridicons/dist/house';
+import GridiconDomains from 'gridicons/dist/domains';
+import GridiconBlock from 'gridicons/dist/block';
+import GridiconLock from 'gridicons/dist/lock';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -119,19 +122,19 @@ class Site extends React.Component {
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							{ this.props.site.is_private && (
 								<span className="site__badge">
-									<Gridicon icon="lock" size={ 14 } />
+									<GridiconLock size={ 14 } />
 								</span>
 							) }
 							{ site.options &&
 								site.options.is_redirect && (
 									<span className="site__badge">
-										<Gridicon icon="block" size={ 14 } />
+										<GridiconBlock size={ 14 } />
 									</span>
 								) }
 							{ site.options &&
 								site.options.is_domain_only && (
 									<span className="site__badge">
-										<Gridicon icon="domains" size={ 14 } />
+										<GridiconDomains size={ 14 } />
 									</span>
 								) }
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
@@ -142,7 +145,7 @@ class Site extends React.Component {
 					{ this.props.homeLink &&
 						this.props.showHomeIcon && (
 							<span className="site__home">
-								<Gridicon icon="house" size={ 18 } />
+								<GridiconHouse size={ 18 } />
 							</span>
 						) }
 				</a>

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
+import GridiconChevronDown from 'gridicons/dist/chevron-down';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -16,7 +16,7 @@ import TranslatableString from 'components/translatable/proptype';
 
 const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
 	<SidebarHeading onClick={ onClick }>
-		<Gridicon icon="chevron-down" />
+		<GridiconChevronDown />
 		<span>{ title }</span>
 		<Count count={ count } />
 	</SidebarHeading>

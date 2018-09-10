@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -178,7 +178,7 @@ class NpsSurvey extends Component {
 						this.state.showFeedbackForm ? this.handleFeedbackFormClose : this.handleDismissClick
 					}
 				>
-					<Gridicon icon="cross" />
+					<GridiconCross />
 					<ScreenReaderText>{ translate( 'Close' ) }</ScreenReaderText>
 				</Button>
 				<div className="nps-survey__question-screen">
