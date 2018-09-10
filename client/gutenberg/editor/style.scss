@@ -1,4 +1,4 @@
-.is-group-gutenberg-group::before {
+.is-group-gutenberg::before {
 	content: '';
 	position: fixed;
 	top: 0;
@@ -7,10 +7,10 @@
 	left: 0;
 	background-color: $white;
 	pointer-events: none;
-	z-index: z-index( 'root', '.is-group-gutenberg-group::before' );
+	z-index: z-index( 'root', '.is-group-gutenberg::before' );
 }
 
-.gutenberg-group {
+.gutenberg {
 	background: none;
 }
 

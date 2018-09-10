@@ -467,7 +467,7 @@ sections.push( {
 	name: 'gutenberg-editor',
 	paths: [ '/gutenberg' ],
 	module: 'gutenberg/editor',
-	group: 'gutenberg-group',
+	group: 'gutenberg',
 	css: 'gutenberg-editor',
 	secondary: false,
 } );
