@@ -23,7 +23,7 @@ import Task from 'components/checklist/task';
 import { createNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
@@ -33,6 +33,7 @@ const query = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 class WpcomChecklist extends PureComponent {
 	static propTypes = {
 		createNotice: PropTypes.func.isRequired,
+		designType: PropTypes.string,
 		loadTrackingTool: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestGuidedTour: PropTypes.func.isRequired,
@@ -87,7 +88,15 @@ class WpcomChecklist extends PureComponent {
 	};
 
 	render() {
-		const { siteId, siteSlug, taskStatuses, taskUrls, translate, viewMode } = this.props;
+		const {
+			designType,
+			siteId,
+			siteSlug,
+			taskStatuses,
+			taskUrls,
+			translate,
+			viewMode,
+		} = this.props;
 
 		const ChecklistComponent = 'banner' === viewMode ? ChecklistBanner : Checklist;
 		const TaskComponent = 'banner' === viewMode ? ChecklistBannerTask : Task;
@@ -166,24 +175,27 @@ class WpcomChecklist extends PureComponent {
 						siteSlug={ siteSlug }
 						title={ translate( 'Create a tagline' ) }
 					/>
-					<TaskComponent
-						bannerImageSrc="/calypso/images/stats/tasks/upload-profile-picture.svg"
-						completed={ this.isComplete( 'avatar_uploaded' ) }
-						completedButtonText={ translate( 'Change' ) }
-						completedTitle={ translate( 'You uploaded a profile picture' ) }
-						description={ translate(
-							'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.'
-						) }
-						duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
-						onClick={ this.handleTaskStart( {
-							taskId: 'avatar_uploaded',
-							tourId: 'checklistUserAvatar',
-							url: '/me',
-						} ) }
-						onDismiss={ this.handleTaskDismiss( 'avatar_uploaded' ) }
-						siteSlug={ siteSlug }
-						title={ translate( 'Upload your profile picture' ) }
-					/>
+
+					{ 'blog' === designType && (
+						<TaskComponent
+							bannerImageSrc="/calypso/images/stats/tasks/upload-profile-picture.svg"
+							completed={ this.isComplete( 'avatar_uploaded' ) }
+							completedButtonText={ translate( 'Change' ) }
+							completedTitle={ translate( 'You uploaded a profile picture' ) }
+							description={ translate(
+								'Who’s the person behind the site? Personalize your posts and comments with a custom profile picture.'
+							) }
+							duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
+							onClick={ this.handleTaskStart( {
+								taskId: 'avatar_uploaded',
+								tourId: 'checklistUserAvatar',
+								url: '/me',
+							} ) }
+							onDismiss={ this.handleTaskDismiss( 'avatar_uploaded' ) }
+							siteSlug={ siteSlug }
+							title={ translate( 'Upload your profile picture' ) }
+						/>
+					) }
 					<TaskComponent
 						bannerImageSrc="/calypso/images/stats/tasks/contact.svg"
 						completed={ this.isComplete( 'contact_page_updated' ) }
@@ -202,22 +214,26 @@ class WpcomChecklist extends PureComponent {
 						siteSlug={ siteSlug }
 						title={ translate( 'Personalize your Contact page' ) }
 					/>
-					<TaskComponent
-						bannerImageSrc="/calypso/images/stats/tasks/first-post.svg"
-						completed={ this.isComplete( 'post_published' ) }
-						completedButtonText={ translate( 'Edit' ) }
-						completedTitle={ translate( 'You published your first blog post' ) }
-						description={ translate( 'Introduce yourself to the world! That’s why you’re here.' ) }
-						duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
-						onClick={ this.handleTaskStart( {
-							taskId: 'post_published',
-							tourId: 'checklistPublishPost',
-							url: taskUrls.post_published,
-						} ) }
-						onDismiss={ this.handleTaskDismiss( 'post_published' ) }
-						siteSlug={ siteSlug }
-						title={ translate( 'Publish your first blog post' ) }
-					/>
+					{ 'blog' === designType && (
+						<TaskComponent
+							bannerImageSrc="/calypso/images/stats/tasks/first-post.svg"
+							completed={ this.isComplete( 'post_published' ) }
+							completedButtonText={ translate( 'Edit' ) }
+							completedTitle={ translate( 'You published your first blog post' ) }
+							description={ translate(
+								'Introduce yourself to the world! That’s why you’re here.'
+							) }
+							duration={ translate( '%d minute', '%d minutes', { count: 10, args: [ 10 ] } ) }
+							onClick={ this.handleTaskStart( {
+								taskId: 'post_published',
+								tourId: 'checklistPublishPost',
+								url: taskUrls.post_published,
+							} ) }
+							onDismiss={ this.handleTaskDismiss( 'post_published' ) }
+							siteSlug={ siteSlug }
+							title={ translate( 'Publish your first blog post' ) }
+						/>
+					) }
 					<TaskComponent
 						bannerImageSrc="/calypso/images/stats/tasks/custom-domain.svg"
 						completed={ this.isComplete( 'custom_domain_registered' ) }
@@ -267,6 +283,7 @@ export default connect(
 		};
 
 		return {
+			designType: getSiteOption( state, siteId, 'design_type' ),
 			siteId,
 			siteSlug,
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
