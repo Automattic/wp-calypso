@@ -24,11 +24,11 @@ import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
-import { tasks } from 'my-sites/checklist/onboardingChecklist';
 import { getSelectedSite, getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getChecklistStatus, setChecklistStatus, getChecklistTask } from 'state/checklist/actions';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import QuerySiteChecklist from 'components/data/query-site-checklist';
+import { getTasks } from 'my-sites/checklist/onboardingChecklist';
+import { getChecklistStatus, setChecklistStatus, getChecklistTask } from 'state/checklist/actions';
 
 /**
  * Module variables
@@ -66,7 +66,6 @@ class InlineHelp extends Component {
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
-		this.shouldShowChecklistNotification();
 	}
 
 	componentWillUnmount() {
@@ -103,7 +102,7 @@ class InlineHelp extends Component {
 
 	getTask = () => {
 		const task = find(
-			tasks,
+			this.props.tasks,
 			( { id, completed } ) => ! completed && ! get( this.props.taskStatuses, [ id, 'completed' ] )
 		);
 		return task;
@@ -133,7 +132,7 @@ class InlineHelp extends Component {
 	};
 
 	shouldShowChecklistNotification = () => {
-		const { taskStatuses, nextChecklistTask } = this.props;
+		const { taskStatuses, nextChecklistTask, tasks } = this.props;
 		const task = this.getTask();
 		const totalTasks = tasks.length;
 		const numComplete = reduce(
@@ -149,7 +148,7 @@ class InlineHelp extends Component {
 			task &&
 			( nextChecklistTask === '' || nextChecklistTask !== task.id )
 		) {
-			this.props.setChecklistStatus( true );
+			return true;
 		}
 	};
 
@@ -203,7 +202,7 @@ class InlineHelp extends Component {
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': showInlineHelp,
-			'has-notification': this.shouldShowChecklist() && showChecklistNotification,
+			'has-notification': this.shouldShowChecklist() && this.shouldShowChecklistNotification(),
 		};
 
 		/* @TODO: This class is not valid and this tricks the linter
@@ -266,25 +265,28 @@ class InlineHelp extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
+const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
+		tasks: getTasks( state, siteId ),
 		siteId,
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
+		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		selectedSite: getSelectedSite( state ),
 		sectionName: getSectionName( state ),
 		showChecklistNotification: getChecklistStatus( state ),
-		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		nextChecklistTask: getChecklistTask( state ),
 	};
-}
+};
+
+const mapDispatchToProps = {
+	recordTracksEvent,
+	setChecklistStatus,
+};
 
 export default connect(
 	mapStateToProps,
-	{
-		recordTracksEvent,
-		setChecklistStatus,
-	}
+	mapDispatchToProps
 )( localize( InlineHelp ) );
