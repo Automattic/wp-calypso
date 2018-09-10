@@ -83,13 +83,16 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		// The cart's contents have changed. We fetch the iframe again.
 		if (
-			prevProps.cart.total_cost !== this.props.cart.total_cost ||
-			prevProps.cart.products.length !== this.props.cart.products.length
+			this.props.cart.products.length &&
+			( prevProps.cart.total_cost !== this.props.cart.total_cost ||
+				prevProps.cart.products.length !== this.props.cart.products.length )
 		) {
 			return this.fetchIframeConfiguration();
 		}
 
+		// We have successfully fetched the iframe config. We can load the iframe via the form.
 		if (
 			this.props.iframeRequestSuccess &&
 			prevProps.iframeConfig.signature !== this.props.iframeConfig.signature
@@ -97,6 +100,12 @@ export class EmergentPaywallBox extends Component {
 			return this.formRef.current.submit();
 		}
 
+		if ( this.props.iframeRequestFailed ) {
+			log( 'Error fetching Paywall iframe: ', this.props.iframeConfigError );
+			return this.handleTransactionError();
+		}
+
+		// We have successfully created an order.
 		if (
 			this.props.orderRequestSuccess &&
 			this.props.orderId &&
@@ -108,11 +117,6 @@ export class EmergentPaywallBox extends Component {
 				paymentMethod: this.state.paymentMethod,
 				siteSlug: this.state.siteSlug,
 			} );
-		}
-
-		if ( this.props.iframeRequestFailed ) {
-			log( 'Error fetching Paywall iframe: ', this.props.iframeConfigError );
-			return this.handleTransactionError();
 		}
 
 		if ( this.props.orderRequestFailed ) {
