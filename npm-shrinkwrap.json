@@ -6075,7 +6075,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6440,7 +6441,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6488,6 +6490,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6526,11 +6529,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -17023,14 +17028,13 @@
       }
     },
     "webpack-dev-middleware": {
-      "version": "3.2.0",
-      "resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.2.0.tgz",
-      "integrity": "sha512-YJLMF/96TpKXaEQwaLEo+Z4NDK8aV133ROF6xp9pe3gQoS7sxfpXh4Rv9eC+8vCvWfmDjRQaMSlRPbO+9G6jgA==",
+      "version": "3.3.0",
+      "resolved": "https://registry.npmjs.org/webpack-dev-middleware/-/webpack-dev-middleware-3.3.0.tgz",
+      "integrity": "sha512-5C5gXtOo1I6+0AEg4UPglYEtu3Rai6l5IiO6aUu65scHXz29dc3oIWMiRwvcNLXgL0HwRkRxa9N02ZjFt4hY8w==",
       "requires": {
         "loud-rejection": "^1.6.0",
         "memory-fs": "~0.4.1",
         "mime": "^2.3.1",
-        "path-is-absolute": "^1.0.0",
         "range-parser": "^1.0.3",
         "url-join": "^4.0.0",
         "webpack-log": "^2.0.0"
@@ -17040,15 +17044,6 @@
           "version": "2.3.1",
           "resolved": "https://registry.npmjs.org/mime/-/mime-2.3.1.tgz",
           "integrity": "sha512-OEUllcVoydBHGN1z84yfQDimn58pZNNNXgZlHXSboxMlFvgI6MXSWpWKpFRra7H1HxpVhHTkrghfRW49k6yjeg=="
-        },
-        "webpack-log": {
-          "version": "2.0.0",
-          "resolved": "https://registry.npmjs.org/webpack-log/-/webpack-log-2.0.0.tgz",
-          "integrity": "sha512-cX8G2vR/85UYG59FgkoMamwHUIkSSlV3bBMRsbxVXVUk2j6NleCKjQ/WE9eYg9WY4w25O9w8wKP4rzNZFmUcUg==",
-          "requires": {
-            "ansi-colors": "^3.0.0",
-            "uuid": "^3.3.2"
-          }
         }
       }
     },
@@ -17079,6 +17074,15 @@
             "ansi-regex": "^2.0.0"
           }
         }
+      }
+    },
+    "webpack-log": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/webpack-log/-/webpack-log-2.0.0.tgz",
+      "integrity": "sha512-cX8G2vR/85UYG59FgkoMamwHUIkSSlV3bBMRsbxVXVUk2j6NleCKjQ/WE9eYg9WY4w25O9w8wKP4rzNZFmUcUg==",
+      "requires": {
+        "ansi-colors": "^3.0.0",
+        "uuid": "^3.3.2"
       }
     },
     "webpack-rtl-plugin": {
