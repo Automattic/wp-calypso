@@ -2,7 +2,17 @@
 	opacity: 0.5;
 	pointer-events: none;
 }
+
 .wp-block-a8c-markdown__preview p {
 	min-height: 1.8em;
 	white-space: pre-wrap;
+}
+
+.wp-block-a8c-markdown {
+	.wp-block-a8c-markdown__editor {
+		&:focus {
+			border-color: transparent;
+			box-shadow: 0 0 0 transparent;
+		}
+	}
 }
