@@ -20,8 +20,8 @@ import Button from 'components/button';
 
 const ShippingClassEntry = ( { name, slug, description, loaded, translate, edit } ) => {
 	return (
-		<div className={ classNames( 'shipping__classes-row', ! loaded && 'is-placeholder' ) }>
-			<div className="shipping__classes-cell shipping__classes-icon">
+		<div className={ classNames( 'shipping__table-row', ! loaded && 'is-placeholder' ) }>
+			<div className="shipping__classes-cell shipping__table-icon">
 				<Gridicon icon="tag" size={ 24 } />
 			</div>
 			<div className="shipping__classes-cell shipping__classes-name">
@@ -33,7 +33,7 @@ const ShippingClassEntry = ( { name, slug, description, loaded, translate, edit 
 			<div className="shipping__classes-cell shipping__classes-description">
 				<p>{ description }</p>
 			</div>
-			<div className="shipping__classes-cell shipping__classes-actions">
+			<div className="shipping__classes-cell shipping__table-actions">
 				<Button compact onClick={ edit } key="edit">
 					{ translate( 'Edit' ) }
 				</Button>

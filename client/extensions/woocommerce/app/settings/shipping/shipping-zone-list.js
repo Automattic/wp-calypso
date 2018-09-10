@@ -67,11 +67,11 @@ class ShippingZoneList extends Component {
 
 		return (
 			<div>
-				<div className="shipping__zones-row shipping__zones-header">
-					<div className="shipping__zones-row-icon" />
-					<div className="shipping__zones-row-location">{ translate( 'Location' ) }</div>
-					<div className="shipping__zones-row-methods">{ translate( 'Shipping methods' ) }</div>
-					<div className="shipping__zones-row-actions" />
+				<div className="shipping__table-row shipping__table-header">
+					<div className="shipping__table-icon" />
+					<div className="shipping__zones-location">{ translate( 'Location' ) }</div>
+					<div className="shipping__zones-methods">{ translate( 'Shipping methods' ) }</div>
+					<div className="shipping__zones-actions" />
 				</div>
 				{ ! isValid && (
 					<Notice
@@ -116,7 +116,7 @@ class ShippingZoneList extends Component {
 						{ translate( 'Add zone' ) }
 					</Button>
 				</ExtendedHeader>
-				<Card className="shipping__zones">{ this.renderContent() }</Card>
+				<Card className="shipping__table">{ this.renderContent() }</Card>
 			</div>
 		);
 	}

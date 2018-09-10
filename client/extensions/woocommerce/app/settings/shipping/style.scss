@@ -61,11 +61,12 @@
 	margin-bottom: 0;
 }
 
-.shipping__zones {
+// Generic shipping table elements
+.shipping__table {
 	padding: 0;
 }
 
-.shipping__zones-row {
+.shipping__table-row {
 	display: flex;
 	flex-direction: row;
 	padding: 16px 0;
@@ -76,54 +77,40 @@
 	}
 }
 
-.shipping__zones-row {
-	&.is-placeholder {
-		@include placeholder();
-		pointer-events: none;
-		background: $white;
+.shipping__table-row.is-placeholder {
+	@include placeholder();
+	pointer-events: none;
+	background: $white;
 
-		.gridicon,
-		p,
-		a,
-		button {
-			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 25% );
-			color: transparent;
-			cursor: default;
-		}
-
-		p {
-			width: 100px;
-			height: 14px;
-		}
-
-		.gridicon {
-			fill: transparent;
-			stroke: transparent;
-		}
+	.gridicon,
+	p,
+	a,
+	button {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 25% );
+		color: transparent;
+		cursor: default;
 	}
 
-	&:last-child {
-		background: lighten( $gray, 35% );
+	p {
+		width: 100px;
+		height: 14px;
+	}
+
+	.gridicon {
+		fill: transparent;
+		stroke: transparent;
 	}
 }
 
-.shipping__zones-row-placeholder {
-	display: block;
-	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: lighten( $gray, 25% );
-	color: transparent;
-	cursor: default;
-}
-
-.shipping__zones-header {
+.shipping__table-header {
 	padding: 12px 0;
 	font-size: 14px;
 	border-top: 0;
 	background: lighten( $gray, 35% );
 }
 
-.shipping__zones-row-icon {
+.shipping__table-icon {
 	width: 48px;
 	text-align: left;
 	padding-left: 16px;
@@ -138,20 +125,40 @@
 	}
 }
 
-.shipping__zones-row-location {
+.shipping__table-actions {
+	width: 20%;
+	text-align: right;
+	padding-right: 16px;
+
+	@include breakpoint( '>480px' ) {
+		padding-right: 24px;
+	}
+}
+
+// Specific shipping-zones table elements
+.shipping__zones:last-child {
+	background: lighten( $gray, 35% );
+}
+
+.shipping__zones-row-placeholder {
+	display: block;
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: lighten( $gray, 25% );
+	color: transparent;
+	cursor: default;
+}
+
+.shipping__zones-location {
 	width: 25%;
 }
 
-.shipping__zones-row-location-name {
+.shipping__zones-location-name {
 	margin-bottom: 0;
 	font-size: 14px;
-}
-
-.shipping__zones-row-location-name {
 	padding-right: 12px;
 }
 
-.shipping__zones-row-method {
+.shipping__zones-method {
 	font-size: 14px;
 	display: flex;
 	flex-direction: column;
@@ -161,8 +168,8 @@
 	}
 }
 
-.shipping__zones-row-location-description,
-.shipping__zones-row-method-description,
+.shipping__zones-location-description,
+.shipping__zones-method-description,
 .shipping__card-name {
 	margin-bottom: 0;
 	color: $gray-text-min;
@@ -170,30 +177,20 @@
 	line-height: 22px;
 }
 
-.shipping__zones-row-method-description {
+.shipping__zones-method-description {
 	@include breakpoint( '>960px' ) {
 		margin-left: 4px;
 	}
 }
 
-.shipping__zones-row-methods {
+.shipping__zones-methods {
 	width: 45%;
 }
 
-.shipping__zones-row-method:not( :last-child ) {
+.shipping__zones-method:not( :last-child ) {
 	margin-bottom: 8px;
 }
 
-.shipping__zones-row-method-name {
+.shipping__zones-method-name {
 	margin-bottom: 0;
-}
-
-.shipping__zones-row-actions {
-	width: 20%;
-	text-align: right;
-	padding-right: 16px;
-
-	@include breakpoint( '>480px' ) {
-		padding-right: 24px;
-	}
 }

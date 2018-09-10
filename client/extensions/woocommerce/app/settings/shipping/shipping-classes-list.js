@@ -75,13 +75,13 @@ class ShippingClassesList extends Component {
 		const classesToRender = loaded ? shippingClasses : [ {}, {}, {} ];
 
 		if ( 0 === classesToRender.length ) {
-			return <Card className="shipping__classes" />;
+			return <Card className="shipping__table" />;
 		}
 
 		return (
-			<Card className="shipping__classes">
-				<div className="shipping__classes-row shipping__classes-header">
-					<div className="shipping__classes-cell shipping__classes-icon" />
+			<Card className="shipping__table">
+				<div className="shipping__table-row shipping__table-header">
+					<div className="shipping__classes-cell shipping__table-icon" />
 					<div className="shipping__classes-cell shipping__classes-name">
 						{ translate( 'Shipping Class' ) }
 					</div>
@@ -91,7 +91,7 @@ class ShippingClassesList extends Component {
 					<div className="shipping__classes-cell shipping__classes-description">
 						{ translate( 'Description' ) }
 					</div>
-					<div className="shipping__classes-cell shipping__classes-actions" />
+					<div className="shipping__table-actions" />
 				</div>
 
 				{ classesToRender.map( this.renderShippingClass ) }
@@ -123,7 +123,7 @@ class ShippingClassesList extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Card className="shipping__classes">
+			<Card className="shipping__table">
 				<p>{ translate( 'Shipping classes could not be loaded.' ) }</p>
 			</Card>
 		);

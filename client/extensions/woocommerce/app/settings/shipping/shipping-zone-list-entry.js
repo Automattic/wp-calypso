@@ -23,25 +23,25 @@ import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/sel
 const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, isValid, site } ) => {
 	if ( ! loaded ) {
 		return (
-			<div className="shipping__zones-row is-placeholder">
-				<div className="shipping__zones-row-icon">
+			<div className="shipping__table-row is-placeholder">
+				<div className="shipping__table-icon">
 					<Gridicon icon="globe" size={ 24 } />
 				</div>
-				<div className="shipping__zones-row-location">
-					<p className="shipping__zones-row-location-name" />
-					<p className="shipping__zones-row-location-description" />
+				<div className="shipping__zones-location">
+					<p className="shipping__zones-location-name" />
+					<p className="shipping__zones-location-description" />
 				</div>
-				<div className="shipping__zones-row-methods">
-					<div className="shipping__zones-row-method">
-						<p className="shipping__zones-row-method-name" />
-						<p className="shipping__zones-row-method-description" />
+				<div className="shipping__zones-methods">
+					<div className="shipping__zones-method">
+						<p className="shipping__zones-method-name" />
+						<p className="shipping__zones-method-description" />
 					</div>
-					<div className="shipping__zones-row-method">
-						<p className="shipping__zones-row-method-name" />
-						<p className="shipping__zones-row-method-description" />
+					<div className="shipping__zones-method">
+						<p className="shipping__zones-method-name" />
+						<p className="shipping__zones-method-description" />
 					</div>
 				</div>
-				<div className="shipping__zones-row-actions">
+				<div className="shipping__table-actions">
 					<Button compact>{ translate( 'Edit' ) }</Button>
 				</div>
 			</div>
@@ -50,9 +50,9 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 
 	const renderMethodCell = ( title, summary = '', key = 0 ) => {
 		return (
-			<div key={ key } className="shipping__zones-row-method">
-				<p className="shipping__zones-row-method-name">{ title }</p>
-				<p className="shipping__zones-row-method-description">{ summary }</p>
+			<div key={ key } className="shipping__zones-method">
+				<p className="shipping__zones-method-name">{ title }</p>
+				<p className="shipping__zones-method-description">{ summary }</p>
 			</div>
 		);
 	};
@@ -78,20 +78,20 @@ const ShippingZoneEntry = ( { translate, id, name, methods, currency, loaded, is
 	};
 
 	return (
-		<div className="shipping__zones-row">
-			<div className="shipping__zones-row-icon">
+		<div className="shipping__table-row shipping__zones-row">
+			<div className="shipping__table-icon">
 				<Gridicon icon={ icon } size={ 24 } />
 			</div>
-			<div className="shipping__zones-row-location">
-				<p className="shipping__zones-row-location-name">{ name }</p>
+			<div className="shipping__zones-location">
+				<p className="shipping__zones-location-name">{ name }</p>
 				{ /*<p className="shipping__zones-row-location-description">{ locationDescription }</p>*/ }
 			</div>
-			<div className="shipping__zones-row-methods">
+			<div className="shipping__zones-methods">
 				{ methods && methods.length
 					? Object.keys( methods ).map( renderMethod )
 					: renderMethodCell( translate( 'No shipping methods' ) ) }
 			</div>
-			<div className="shipping__zones-row-actions">
+			<div className="shipping__table-actions">
 				<Button
 					compact
 					href={ getLink( `/store/settings/shipping/zone/:site/${ id }`, site ) }
