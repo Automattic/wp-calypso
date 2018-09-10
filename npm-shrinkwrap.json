@@ -6075,7 +6075,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6440,7 +6441,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6488,6 +6490,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6526,11 +6529,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
@@ -6868,9 +6873,9 @@
       }
     },
     "gridicons": {
-      "version": "3.0.1",
-      "resolved": "https://registry.npmjs.org/gridicons/-/gridicons-3.0.1.tgz",
-      "integrity": "sha512-PK20czXccH/gwEeeDnDAfSFs9J7KuC1XYmcRObS75JVRM0CEUPeCAk871CP/rqdTL5QSnPn8/uqkRdfL7LwFgQ==",
+      "version": "3.1.1",
+      "resolved": "https://registry.npmjs.org/gridicons/-/gridicons-3.1.1.tgz",
+      "integrity": "sha512-Sec8WviTyXpsSQycju8RlmpN0o8KFSDZQJeVtHjaBT1GJxvS3g1OA9y1XsauNPwNEr9nk4DeLPI4TYnufTqMIg==",
       "requires": {
         "prop-types": "^15.5.7"
       }
