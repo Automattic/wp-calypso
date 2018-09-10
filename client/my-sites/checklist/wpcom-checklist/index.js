@@ -6,7 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { compact, find, get } from 'lodash';
+import { compact, find, get, some } from 'lodash';
 import { isDesktop } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -242,6 +242,15 @@ class WpcomChecklist extends PureComponent {
 	}
 }
 
+function getContactPage( posts ) {
+	return find(
+		posts,
+		post =>
+			post.type === 'page' &&
+			some( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } )
+	);
+}
+
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
@@ -250,14 +259,7 @@ export default connect(
 		const posts = getPostsForQuery( state, siteId, query );
 
 		const firstPost = find( posts, { type: 'post' } );
-		const contactPage = find(
-			posts,
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			post =>
-				// TODO: Separate query for this?
-				post.type === 'page' &&
-				find( post.metadata, { key: '_headstart_post', value: '_hs_contact_page' } )
-		);
+		const contactPage = getContactPage( posts );
 
 		const taskUrls = {
 			post_published: compact( [ '/post', siteSlug, get( firstPost, [ 'ID' ] ) ] ).join( '/' ),
