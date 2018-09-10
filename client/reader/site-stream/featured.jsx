@@ -26,6 +26,7 @@ function getPostUrl( post ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+// This component is used in the Discover site stream only.
 class FeedFeatured extends React.PureComponent {
 	static displayName = 'FeedFeatured';
 
@@ -63,14 +64,14 @@ class FeedFeatured extends React.PureComponent {
 					};
 
 					return (
-						<div
+						<button
 							key={ post.ID }
 							className="reader__featured-post"
 							onClick={ this.handleClick.bind( this, postData ) }
 						>
 							<div className="reader__featured-post-image" style={ style } />
 							<h2 className="reader__featured-post-title">{ post.title }</h2>
-						</div>
+						</button>
 					);
 			}
 		} );
