@@ -57,7 +57,7 @@ export default class Checklist extends PureComponent {
 				<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
 					<ChecklistHeader completed={ completed } total={ total } />
 					<div className="checklist__tasks">
-						{ times( Children.count( this.props.children ), index => (
+						{ times( total, index => (
 							<TaskPlaceholder key={ index } />
 						) ) }
 					</div>
