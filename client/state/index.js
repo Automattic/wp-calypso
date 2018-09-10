@@ -41,7 +41,6 @@ import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import googleMyBusiness from './google-my-business/reducer';
-import gutenberg from './gutenberg/reducer';
 import help from './help/reducer';
 import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
 import i18n from './i18n/reducer';
@@ -137,7 +136,6 @@ const reducers = {
 	form,
 	googleAppsUsers,
 	googleMyBusiness,
-	gutenberg,
 	happinessEngineers,
 	happychat,
 	help,
