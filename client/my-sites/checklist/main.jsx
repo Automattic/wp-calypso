@@ -38,11 +38,7 @@ class ChecklistMain extends PureComponent {
 		this.maybeRedirectJetpack( prevProps );
 	}
 
-	handleCompletionUpdate = ( { complete } ) => {
-		if ( complete !== this.state.complete ) {
-			this.setState( { complete } );
-		}
-	};
+	handleCompletionUpdate = ( { complete } ) => void this.setState( { complete } );
 
 	/**
 	 * Redirect Jetpack checklists to /plans/my-plan/:siteSlug
