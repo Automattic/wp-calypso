@@ -66,6 +66,7 @@ class InlineHelp extends Component {
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
+		this.shouldShowChecklistNotification();
 	}
 
 	componentWillUnmount() {
@@ -78,6 +79,8 @@ class InlineHelp extends Component {
 		if ( ! this.props.isHappychatOpen && nextProps.isHappychatOpen ) {
 			this.closeInlineHelp();
 		}
+
+		this.shouldShowChecklistNotification();
 	}
 
 	preloaded = false;
@@ -148,7 +151,9 @@ class InlineHelp extends Component {
 			task &&
 			( nextChecklistTask === '' || nextChecklistTask !== task.id )
 		) {
-			return true;
+			this.props.setChecklistStatus( true );
+		} else {
+			this.props.setChecklistStatus( false );
 		}
 	};
 
@@ -196,13 +201,13 @@ class InlineHelp extends Component {
 	}
 
 	render() {
-		const { translate, showChecklistNotification, siteId } = this.props;
+		const { translate, siteId, showChecklistNotification } = this.props;
 
 		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': showInlineHelp,
-			'has-notification': this.shouldShowChecklist() && this.shouldShowChecklistNotification(),
+			'has-notification': this.shouldShowChecklist() && showChecklistNotification,
 		};
 
 		/* @TODO: This class is not valid and this tricks the linter
