@@ -32,29 +32,18 @@ const MODE_CONTROLS = [
 ];
 
 class JetpackMarkdownBlockEditor extends Component {
-	constructor() {
-		super( ...arguments );
-
-		this.updateSource = this.updateSource.bind( this );
-		this.isEmpty = this.isEmpty.bind( this );
-
-		this.state = {
-			activePanel: PANEL_EDITOR,
-		};
-	}
+	state = {
+		activePanel: PANEL_EDITOR,
+	};
 
 	isEmpty() {
 		const source = this.props.attributes.source;
 		return ! source || source.trim() === '';
 	}
 
-	updateSource( source ) {
-		this.props.setAttributes( { source } );
-	}
+	updateSource = source => this.props.setAttributes( { source } );
 
-	toggleMode = mode => () => {
-		this.setState( { activePanel: mode } );
-	};
+	toggleMode = mode => () => this.setState( { activePanel: mode } );
 
 	render() {
 		const { attributes, className, isSelected } = this.props;
