@@ -27,7 +27,7 @@ export const selectedSiteId = createReducer( null, {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const links = ( state = [], action ) => {
+export const links = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HELP_LINKS_RECEIVE:
 			return action.helpLinks;
