@@ -78,8 +78,8 @@ class ImportURLStepComponent extends Component {
 					onAction={ this.handleAction }
 					label={ translate( 'URL' ) }
 					onChange={ this.handleInputChange }
+					defaultValue={ urlInputValue }
 					disabled={ isInputDisabled }
-					value={ urlInputValue }
 				/>
 				{ /* <FormInputValidation text="..." /> */ }
 				<ButtonGroup>
