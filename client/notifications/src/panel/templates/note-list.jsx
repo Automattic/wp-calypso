@@ -23,6 +23,7 @@ import UndoListItem from './undo-list-item';
 
 var DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
+// from $wpnc__title-bar-height in boot/sizes.scss
 var TITLE_OFFSET = 38;
 
 const getDOMNodeOrElse = ref => {
