@@ -16,9 +16,11 @@ import { fetchShippingClasses } from 'woocommerce/state/sites/shipping-classes/a
 import { areShippingClassesLoaded } from 'woocommerce/state/sites/shipping-classes/selectors';
 
 class QueryShippingClasses extends React.Component {
-	constructor() {
-		super( ...arguments );
+	componentDidMount() {
+		this.fetch();
+	}
 
+	fetch() {
 		const { siteId, loaded, fetch } = this.props;
 
 		if ( siteId && ! loaded ) {
@@ -26,10 +28,10 @@ class QueryShippingClasses extends React.Component {
 		}
 	}
 
-	componentDidUpdate( { siteId, loaded } ) {
-		//site ID changed, fetch new settings
-		if ( siteId !== this.props.siteId && ! loaded ) {
-			this.fetch( siteId );
+	componentDidUpdate( prevProps ) {
+		// If the site ID changed, fetch new settings
+		if ( prevProps.siteId !== this.props.siteId ) {
+			this.fetch();
 		}
 	}
 
