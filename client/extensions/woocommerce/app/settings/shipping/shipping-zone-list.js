@@ -71,7 +71,7 @@ class ShippingZoneList extends Component {
 					<div className="shipping__table-icon" />
 					<div className="shipping__zones-location">{ translate( 'Location' ) }</div>
 					<div className="shipping__zones-methods">{ translate( 'Shipping methods' ) }</div>
-					<div className="shipping__zones-actions" />
+					<div className="shipping__table-actions" />
 				</div>
 				{ ! isValid && (
 					<Notice
