@@ -20,6 +20,7 @@ import Dialog from 'components/dialog';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import getMediaItem from 'state/selectors/get-media-item';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaActions from 'lib/media/actions';
@@ -99,8 +100,12 @@ class Media extends Component {
 	};
 
 	maybeRedirectToAll = () => {
-		const { selectedSite, mediaId } = this.props;
+		const { selectedSite, mediaId, previousRoute } = this.props;
 		if ( mediaId && selectedSite && selectedSite.slug ) {
+			if ( previousRoute ) {
+				page( previousRoute );
+				return;
+			}
 			page( '/media/' + selectedSite.slug );
 		}
 	};
@@ -343,7 +348,7 @@ class Media extends Component {
 	};
 
 	render() {
-		const { selectedSite: site, mediaId } = this.props;
+		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
 		return (
 			<div ref="container" className="main main-column media" role="main">
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
@@ -362,6 +367,9 @@ class Media extends Component {
 								items={ this.getSelectedItems() }
 								selectedIndex={ this.getSelectedIndex() }
 								onReturnToList={ this.closeDetailsModal }
+								backButtonText={
+									previousRoute ? translate( 'Back' ) : translate( 'Media Library' )
+								}
 								onEditImageItem={ this.editImage }
 								onEditVideoItem={ this.editVideo }
 								onRestoreItem={ this.restoreOriginalMedia }
@@ -412,6 +420,7 @@ class Media extends Component {
 
 const mapStateToProps = ( state, { mediaId } ) => ( {
 	selectedSite: getSelectedSite( state ),
+	previousRoute: getPreviousRoute( state ),
 	media: getMediaItem( state, getSelectedSiteId( state ), mediaId ),
 } );
 
