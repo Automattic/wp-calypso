@@ -8,10 +8,13 @@ references:
   #
   restore-git-cache: &restore-git-cache
     name: Restore git cache
-    key: v1-20180524-git
+    keys:
+      - v2-git-{{ .Branch }}-{{ .Revision }}
+      - v2-git-{{ .Branch }}
+      - v2-git
   save-git-cache: &save-git-cache
     name: Save git cache
-    key: v1-20180524-git
+    key: v2-git-{{ .Branch }}-{{ .Revision }}
     paths:
       - ".git"
 
