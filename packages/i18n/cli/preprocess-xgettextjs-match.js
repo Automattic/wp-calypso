@@ -12,7 +12,7 @@
  * @return {object} data object combining the strings and options passed into translate();
  */
 module.exports = function preProcessXGettextJSMatch( match ) {
-	var finalProps = { line: match.line },
+	let finalProps = { line: match.line },
 		options, i, keyName, args;
 
 	if ( ! match.arguments.length ) {
@@ -37,7 +37,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 		// map options to finalProps object
 		options.properties.forEach( function( property ) {
 			// key might be an  Identifier (name), or a StringLiteral (value)
-			var key = property.key.name || property.key.value;
+			const key = property.key.name || property.key.value;
 			if ( 'StringLiteral' === property.value.type ) {
 				keyName = ( key === 'original' ) ? 'single' : key;
 				finalProps[ keyName ] = ( 'comment' === key ) ? property.value.value : makeDoubleQuoted( property.value.extra.raw );
@@ -77,7 +77,7 @@ module.exports = function preProcessXGettextJSMatch( match ) {
  * @return {string}          - the concatenated string
  */
 function concatenateBinaryExpression( ASTNode ) {
-	var result;
+	let result;
 	if ( ASTNode.operator !== '+' ) {
 		return false;
 	}

@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' ),
+let assert = require( 'assert' ),
 	React = require( 'react' ),
 	ReactDomServer = require( 'react-dom/server');
 
 /**
  * Internal dependencies
  */
-var data = require( './data' ),
+let data = require( './data' ),
 	i18n = require( '..' ),
 	moment = i18n.moment,
 	numberFormat = i18n.numberFormat,
@@ -215,7 +215,7 @@ describe( 'I18n', function() {
 				) );
 			} );
 			it( 'should not throw when passed a circular object', function() {
-				var obj = { foo: 'bar', toString: function() { return 'baz'; } };
+				const obj = { foo: 'bar', toString: function() { return 'baz'; } };
 				obj.obj = obj;
 				assert.equal( 'test1 baz', translate( 'test1 %s',
 					{
@@ -227,7 +227,7 @@ describe( 'I18n', function() {
 
 		describe( 'with mixed components', function() {
 			it( 'should handle sprintf and component interpolation together', function() {
-				var input = React.createElement( 'input' ),
+				let input = React.createElement( 'input' ),
 					expectedResultString = '<span>foo <input/> bar</span>',
 					placeholder = 'bar',
 					translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {

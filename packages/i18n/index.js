@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-var I18N = require( './lib' ),
+let I18N = require( './lib' ),
 	i18n = new I18N();
 
 module.exports = {

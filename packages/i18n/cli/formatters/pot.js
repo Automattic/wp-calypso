@@ -15,7 +15,7 @@ const MAX_COLUMNS = 79,
  * @returns {string}           - A multiline string compatible with the POT format
  */
 function multiline( literal, startAt ) {
-	var nextSpaceIndex, i, char,
+	let nextSpaceIndex, i, char,
 		maxPosition = MAX_COLUMNS - 1; // MAX_COLUMNS minus the last character needed for closing string (a ");
 
 	if ( typeof startAt === 'string' ) {
@@ -72,7 +72,7 @@ function uniqueMatchId( match ) {
 // Reference for the PO format: http://www.gnu.org/software/gettext/manual/gettext.html#PO-Files
 // More details: http://pology.nedohodnik.net/doc/user/en_US/ch-poformat.html
 module.exports = function( matches, options ) {
-	var uniqueMatchesMap = {},
+	let uniqueMatchesMap = {},
 		output;
 
 	// default match for the header
@@ -109,7 +109,7 @@ module.exports = function( matches, options ) {
 	output += '\n';
 
 	matches = matches.map( function( match ) {
-		var matchId = uniqueMatchId( match ),
+		let matchId = uniqueMatchId( match ),
 			firstMatch = uniqueMatchesMap[ matchId ];
 
 		if ( ! firstMatch ) {
@@ -142,7 +142,7 @@ module.exports = function( matches, options ) {
 	} );
 
 	output += matches.map( function( match ) {
-		var matchPotStr = "";
+		let matchPotStr = "";
 
 		matchPotStr += Object.keys( match.lines ).map( function( line ) {
 			return '#: ' + line + '\n';
