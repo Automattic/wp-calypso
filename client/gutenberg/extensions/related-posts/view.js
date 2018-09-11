@@ -14,7 +14,7 @@ import edit from './edit';
 import { MAX_POSTS_TO_SHOW } from './constants';
 
 registerBlockType( 'jetpack/related-posts', {
-	title: 'Related Posts',
+	title: __( 'Related Posts' ),
 
 	icon: 'admin-page',
 
