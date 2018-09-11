@@ -27,16 +27,12 @@ import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-type
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
 import ProgressBar from 'components/progress-bar';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { tasks } from 'my-sites/checklist/onboardingChecklist';
+import { getTasks } from 'my-sites/checklist/onboardingChecklist';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import {
-	getChecklistStatus,
-	setChecklistStatus,
-	getChecklistTask,
-	setChecklistTask,
-} from 'state/checklist/actions';
+import { getChecklistStatus, setChecklistStatus, setChecklistTask } from 'state/checklist/actions';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -44,10 +40,10 @@ class InlineHelpPopover extends Component {
 		setDialogState: PropTypes.func.isRequired,
 		sectionName: PropTypes.string,
 		showChecklistNotification: PropTypes.bool,
-		nextChecklistTask: PropTypes.string,
 		setChecklistStatus: PropTypes.func,
 		setChecklistTask: PropTypes.func,
 		siteId: PropTypes.number,
+		isEligibleForDotcomChecklist: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -128,7 +124,7 @@ class InlineHelpPopover extends Component {
 
 	getTask = () => {
 		const task = find(
-			tasks,
+			this.props.tasks,
 			( { id, completed } ) => ! completed && ! get( this.props.taskStatuses, [ id, 'completed' ] )
 		);
 		return task;
@@ -136,8 +132,6 @@ class InlineHelpPopover extends Component {
 
 	shouldShowChecklist = () => {
 		const { sectionName } = this.props;
-		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
-		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
 		const disallowedSections = [
 			'discover',
 			'reader',
@@ -148,17 +142,20 @@ class InlineHelpPopover extends Component {
 			'checklist',
 		];
 
-		if (
-			! isAtomicSite &&
-			! isJetpackSite &&
-			! ( disallowedSections.indexOf( sectionName ) > -1 )
-		) {
+		if ( isEligibleForDotcomChecklist && ! ( disallowedSections.indexOf( sectionName ) > -1 ) ) {
 			return true;
 		}
 	};
 
 	renderChecklistProgress = () => {
-		const { taskStatuses, siteSuffix, translate, showChecklistNotification, siteId } = this.props;
+		const {
+			taskStatuses,
+			siteSuffix,
+			translate,
+			showChecklistNotification,
+			siteId,
+			tasks,
+		} = this.props;
 		const inlineHelpButtonClasses = {
 			'checklist-count-notification': showChecklistNotification,
 			'inline-help__checklist-count': true,
@@ -284,7 +281,8 @@ function mapStateToProps( state ) {
 		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		sectionName: getSectionName( state ),
 		showChecklistNotification: getChecklistStatus( state ),
-		nextChecklistTask: getChecklistTask( state ),
+		tasks: getTasks( state, siteId ),
+		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
 }
 
