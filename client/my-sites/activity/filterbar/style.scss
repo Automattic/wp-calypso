@@ -28,23 +28,11 @@
 		}
 	}
 
-	.filterbar__open-icon,
-	.filterbar__close-icon {
+	.filterbar__open-icon {
 		flex: 0 0 auto;
 		width: 50px;
 		z-index: z-index( '.filterbar', '.filterbar .filterbar__open-icon' );
-		color: $blue-wordpress;
-		cursor: pointer;
-	}
-
-	.filterbar__open-icon:hover {
-		color: $gray-darken-30;
-	}
-
-	.filterbar__close-icon {
-		color: $gray-darken-30;
-		opacity: 0;
-		transition: opacity .2s ease-in;
+		color: $gray-text-min;
 	}
 
   .filterbar__label {
@@ -53,7 +41,7 @@
 
   .filterbar__selection.button {
     border: 1px solid $gray-lighten-10;
-    border-radius: 0;
+    border-radius: 2px;
     padding: 8px;
     margin: 8px;
   }
@@ -72,7 +60,10 @@
 		margin-right: 8px;
 	}
 }
+.filterbar__activity-types-selection-granular {
+	margin-top:8px;
 
-.filterbar__activity-types-selection-granular label {
-	font-weight: normal;
+	label {
+		font-weight: normal;
+	}
 }
