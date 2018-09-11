@@ -1,5 +1,10 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
 import React from 'react';
-import assign from 'lodash.assign';
+import { assign } from 'lodash';
 import createClass from 'create-react-class';
 
 /**
@@ -11,13 +16,13 @@ export default function( i18n ) {
 	const i18nProps = {
 		moment: i18n.moment,
 		numberFormat: i18n.numberFormat.bind( i18n ),
-		translate: i18n.translate.bind( i18n )
+		translate: i18n.translate.bind( i18n ),
 	};
 
 	return function( ComposedComponent ) {
 		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
-		const component = createClass({
+		const component = createClass( {
 			displayName: 'Localized(' + componentName + ')',
 
 			componentDidMount: function() {
@@ -36,7 +41,7 @@ export default function( i18n ) {
 			render: function() {
 				const props = assign( {}, this.props, i18nProps );
 				return React.createElement( ComposedComponent, props );
-			}
+			},
 		} );
 		component._composedComponent = ComposedComponent;
 		return component;
