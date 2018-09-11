@@ -3,12 +3,13 @@
 /**
  * External dependencies
  */
+import MarkdownIt from 'markdown-it';
 import { RawHTML } from '@wordpress/element';
 
 /**
- * Internal dependencies
+ * Module variables
  */
-import markdownConverter from '../utils/markdown-converter';
+const markdownConverter = new MarkdownIt();
 
 const MarkdownRenderer = function( props ) {
 	const { className, source } = props;
