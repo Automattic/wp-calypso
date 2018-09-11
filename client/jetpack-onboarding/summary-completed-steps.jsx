@@ -6,7 +6,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconCross from 'gridicons/dist/cross';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import { connect } from 'react-redux';
 import { get, map, noop, without } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -34,8 +35,10 @@ const CompletedSteps = ( { basePath, onClick, siteSlug, steps, stepsCompleted, s
 			<div key={ stepName } className={ className }>
 				{ isPending ? (
 					<Spinner size={ 18 } />
+				) : isCompleted ? (
+					<GridiconCheckmark size={ 18 } />
 				) : (
-					<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
+					<GridiconCross size={ 18 } />
 				) }
 				<a
 					href={ [ basePath, stepName, siteSlug ].join( '/' ) }

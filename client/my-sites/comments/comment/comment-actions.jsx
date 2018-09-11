@@ -6,7 +6,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconStarOutline from 'gridicons/dist/star-outline';
+import GridiconStar from 'gridicons/dist/star';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
 import GridiconReply from 'gridicons/dist/reply';
 import GridiconPencil from 'gridicons/dist/pencil';
 import GridiconTrash from 'gridicons/dist/trash';
@@ -188,7 +191,7 @@ export class CommentActions extends Component {
 						tabIndex="0"
 						disabled={ ! canModerateComment }
 					>
-						<Gridicon icon={ commentIsApproved ? 'checkmark-circle' : 'checkmark' } />
+						{ commentIsApproved ? <GridiconCheckmarkCircle /> : <GridiconCheckmark /> }
 						<span>{ commentIsApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
 					</Button>
 				) }
@@ -242,7 +245,7 @@ export class CommentActions extends Component {
 						tabIndex="0"
 						disabled={ ! canModerateComment && ! commentIsApproved }
 					>
-						<Gridicon icon={ commentIsLiked ? 'star' : 'star-outline' } />
+						{ commentIsLiked ? <GridiconStar /> : <GridiconStarOutline /> }
 						<span>{ commentIsLiked ? translate( 'Liked' ) : translate( 'Like' ) }</span>
 					</Button>
 				) }

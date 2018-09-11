@@ -7,7 +7,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
 import GridiconTrash from 'gridicons/dist/trash';
 import GridiconSpam from 'gridicons/dist/spam';
 import { localize } from 'i18n-calypso';
@@ -43,7 +44,7 @@ const ReviewActionsBar = ( {
 				onClick={ isApproved ? unapproveReview : approveReview }
 				className={ classNames( 'reviews__action-approve', { 'is-approved': isApproved } ) }
 			>
-				<Gridicon icon={ isApproved ? 'checkmark-circle' : 'checkmark' } />
+				{ isApproved ? <GridiconCheckmarkCircle /> : <GridiconCheckmark /> }
 				<span>{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }</span>
 			</Button>
 

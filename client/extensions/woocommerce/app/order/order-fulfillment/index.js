@@ -8,7 +8,8 @@ import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { first, includes } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconShipping from 'gridicons/dist/shipping';
+import GridiconCheckmark from 'gridicons/dist/checkmark';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -245,7 +246,7 @@ class OrderFulfillment extends Component {
 		return (
 			<div className={ classes }>
 				<div className="order-fulfillment__label">
-					<Gridicon icon={ 'completed' === order.status ? 'checkmark' : 'shipping' } />
+					{ 'completed' === order.status ? <GridiconCheckmark /> : <GridiconShipping /> }
 					{ this.getFulfillmentStatus() }
 				</div>
 				<div className="order-fulfillment__action">{ this.renderFulfillmentAction() }</div>

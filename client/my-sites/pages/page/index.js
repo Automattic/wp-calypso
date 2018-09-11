@@ -15,7 +15,8 @@ import { flow, get, includes, noop, partial } from 'lodash';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import Gridicon from 'gridicons';
+import GridiconExternal from 'gridicons/dist/external';
+import GridiconVisible from 'gridicons/dist/visible';
 import GridiconStats from 'gridicons/dist/stats';
 import GridiconUndo from 'gridicons/dist/undo';
 import GridiconClipboard from 'gridicons/dist/clipboard';
@@ -123,7 +124,7 @@ class Page extends Component {
 		if ( this.props.page.status !== 'publish' ) {
 			return (
 				<PopoverMenuItem onClick={ this.viewPage }>
-					<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
+					{ isPreviewable ? <GridiconVisible size={ 18 } /> : <GridiconExternal size={ 18 } /> }
 					{ this.props.translate( 'Preview' ) }
 				</PopoverMenuItem>
 			);
@@ -131,7 +132,7 @@ class Page extends Component {
 
 		return (
 			<PopoverMenuItem onClick={ this.viewPage }>
-				<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
+				{ isPreviewable ? <GridiconVisible size={ 18 } /> : <GridiconExternal size={ 18 } /> }
 				{ this.props.translate( 'View Page' ) }
 			</PopoverMenuItem>
 		);

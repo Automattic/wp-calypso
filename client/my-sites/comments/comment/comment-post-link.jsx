@@ -5,7 +5,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconPosts from 'gridicons/dist/posts';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
 import { get } from 'lodash';
 
 /**
@@ -32,7 +33,7 @@ const CommentPostLink = ( {
 	<div className="comment__post-link">
 		{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
-		<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
+		{ isBulkMode ? <GridiconChevronRight size={ 18 } /> : <GridiconPosts size={ 18 } /> }
 
 		<CommentLink
 			commentId={ commentId }

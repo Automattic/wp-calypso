@@ -11,7 +11,8 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isUndefined } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconFolder from 'gridicons/dist/folder';
+import GridiconCheckmarkCircle from 'gridicons/dist/checkmark-circle';
 
 import GridiconPencil from 'gridicons/dist/pencil';
 
@@ -153,7 +154,7 @@ class TaxonomyManagerListItem extends Component {
 		return (
 			<div className={ className }>
 				<span className="taxonomy-manager__icon" onClick={ onClick }>
-					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
+					{ isDefault ? <GridiconCheckmarkCircle /> : <GridiconFolder /> }
 				</span>
 				{ /* FIXME: jsx-a11y issues */ }
 				{ /* eslint-disable-next-line */ }

@@ -5,7 +5,8 @@
  */
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
+import GridiconChevronRight from 'gridicons/dist/chevron-right';
+import GridiconExternal from 'gridicons/dist/external';
 import PropTypes from 'prop-types';
 
 const getClassName = ( { className, compact, displayAsLink, highlight, href, onClick } ) =>
@@ -51,17 +52,21 @@ class Card extends PureComponent {
 
 		return href ? (
 			<a { ...props } href={ href } target={ target } className={ getClassName( this.props ) }>
-				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+				{ target ? (
+					<GridiconExternal className="card__link-indicator" />
+				) : (
+					<GridiconChevronRight className="card__link-indicator" />
+				) }
 				{ children }
 			</a>
 		) : (
 			<TagName { ...props } className={ getClassName( this.props ) }>
-				{ displayAsLink && (
-					<Gridicon
-						className="card__link-indicator"
-						icon={ target ? 'external' : 'chevron-right' }
-					/>
-				) }
+				{ displayAsLink &&
+					( target ? (
+						<GridiconExternal className="card__link-indicator" />
+					) : (
+						<GridiconChevronRight className="card__link-indicator" />
+					) ) }
 				{ children }
 			</TagName>
 		);
