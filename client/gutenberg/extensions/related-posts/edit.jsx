@@ -21,7 +21,6 @@ import {
  */
 import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 export default ( { attributes, setAttributes } ) => {
 	const {
 		displayContext,
@@ -123,4 +122,3 @@ export default ( { attributes, setAttributes } ) => {
 		</Fragment>
 	);
 };
-/* eslint-enable wpcalypso/jsx-classname-namespace */
