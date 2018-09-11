@@ -22,6 +22,7 @@ import Main from 'components/main';
 import Notice from 'components/notice';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import QueryKeyringServices from 'components/data/query-keyring-services';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -212,6 +213,7 @@ class GoogleMyBusinessStats extends Component {
 
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
 				<QueryKeyringConnections forceRefresh />
+				<QueryKeyringServices />
 
 				{ ! isLocationVerified && (
 					<Notice
