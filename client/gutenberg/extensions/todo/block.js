@@ -53,13 +53,14 @@ const edit = class extends Component {
 			itemEntry.value = valueSpan.props.children || valueSpan.props.value;
 			return itemEntry;
 		} );
+
 		this.state = {
-			items: items,
+			items,
 			newItemAt: undefined,
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		if ( 0 === this.state.items.length ) {
 			this.addNewItem();
 		}
