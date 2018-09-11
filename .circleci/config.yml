@@ -63,9 +63,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run:
-          name: "List working directory contents"
-          command: ls -la
+      - run: mocha --recursive client/lib/i18n
 
   #
   # Main Calypso CI
