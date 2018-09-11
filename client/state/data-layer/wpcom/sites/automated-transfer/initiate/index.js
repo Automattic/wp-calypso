@@ -108,5 +108,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/initiate/inde
 		} ),
 	],
 } );
-
-export default {};

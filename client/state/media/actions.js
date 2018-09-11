@@ -22,6 +22,8 @@ import {
 	MEDIA_REQUESTING,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/media';
+
 /**
  * Returns an action object used in signalling that media item(s) for the site
  * have been received.

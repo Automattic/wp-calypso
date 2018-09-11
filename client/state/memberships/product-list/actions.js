@@ -6,6 +6,8 @@
 
 import { MEMBERSHIPS_PRODUCTS_LIST, MEMBERSHIPS_PRODUCT_RECEIVE } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/memberships';
+
 export const requestProducts = siteId => ( {
 	siteId,
 	type: MEMBERSHIPS_PRODUCTS_LIST,

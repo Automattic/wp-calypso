@@ -59,5 +59,3 @@ export const dispatchCountriesTransactions = dispatchRequestEx( {
 registerHandlers( 'state/data-layer/wpcom/me/transactions/supported-countries/index.js', {
 	[ COUNTRIES_PAYMENTS_FETCH ]: [ dispatchCountriesTransactions ],
 } );
-
-export default {};

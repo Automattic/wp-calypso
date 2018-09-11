@@ -56,5 +56,3 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/delete/index
 		} ),
 	],
 } );
-
-export default {};

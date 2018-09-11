@@ -65,5 +65,3 @@ registerHandlers( 'state/data-layer/wpcom/activity-log/delete-credentials/index.
 		} ),
 	],
 } );
-
-export default {};

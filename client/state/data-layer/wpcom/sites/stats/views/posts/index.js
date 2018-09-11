@@ -12,6 +12,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveRecentPostViews } from 'state/stats/recent-post-views/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetch = action => {
 	const { siteId, postIds, num, date, offset } = action;
 
@@ -33,7 +35,7 @@ export const fetch = action => {
 
 export const onSuccess = ( { siteId }, data ) => receiveRecentPostViews( siteId, data );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/stats/views/posts/index.js', {
 	[ STATS_RECENT_POST_VIEWS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch,
@@ -41,4 +43,4 @@ export default {
 			onError: () => {},
 		} ),
 	],
-};
+} );

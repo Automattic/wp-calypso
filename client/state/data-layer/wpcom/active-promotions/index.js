@@ -65,5 +65,3 @@ export const dispatchActivePromotionsRequest = dispatchRequestEx( {
 registerHandlers( 'state/data-layer/wpcom/active-promotions/index.js', {
 	[ ACTIVE_PROMOTIONS_REQUEST ]: [ dispatchActivePromotionsRequest ],
 } );
-
-export default {};

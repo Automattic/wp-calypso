@@ -77,5 +77,3 @@ registerHandlers( 'state/data-layer/wpcom/read/following/mine/delete/index.js', 
 		} ),
 	],
 } );
-
-export default {};

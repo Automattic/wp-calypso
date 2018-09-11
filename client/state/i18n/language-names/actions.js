@@ -5,6 +5,8 @@
  */
 import { I18N_LANGUAGE_NAMES_REQUEST, I18N_LANGUAGE_NAMES_ADD } from 'state/action-types';
 
+import 'state/data-layer/wpcom/i18n/language-names';
+
 /**
  * Action creator function: I18N_LANGUAGE_NAMES_ADD
  *

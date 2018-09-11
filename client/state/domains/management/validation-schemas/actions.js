@@ -12,6 +12,8 @@ import {
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/domains/validation-schemas/index.js';
+
 /**
  * Action creator function: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD
  *

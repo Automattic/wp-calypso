@@ -61,5 +61,3 @@ registerHandlers( 'state/data-layer/wpcom/domains/countries-list/index.js', {
 		} ),
 	],
 } );
-
-export default {};

@@ -52,5 +52,3 @@ export const dispatchPlansRequest = dispatchRequestEx( {
 registerHandlers( 'state/data-layer/wpcom/i18n/language-names/index.js', {
 	[ I18N_LANGUAGE_NAMES_REQUEST ]: [ dispatchPlansRequest ],
 } );
-
-export default {};
