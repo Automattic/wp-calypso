@@ -86,7 +86,7 @@ export default ( { attributes, setAttributes } ) => {
 				<Toolbar controls={ layoutControls } />
 			</BlockControls>
 
-			<div className="related-posts">
+			<div className="related-posts__main">
 				<div className="related-posts__preview">
 					{ headline.length && <h3 className="related-posts__preview-headline">{ headline }</h3> }
 
