@@ -1,22 +1,20 @@
 #!/usr/bin/env node
 
 /**
- * External dependencies/
+ * External dependencies
  */
-import flatten from 'lodash.flatten';
-
 import fs from 'fs';
 import globby from 'globby';
 import path from 'path';
 import program from 'commander';
 
 /**
- * Internal dependencies/
+ * Internal dependencies
  */
 import i18nCalypso from '../cli';
 
 /**
- * Internal variables/
+ * Internal variables
  */
 let keywords, format, projectName, outputFile, extras, arrayName, inputFiles, inputPaths, linesFile, lines;
 
