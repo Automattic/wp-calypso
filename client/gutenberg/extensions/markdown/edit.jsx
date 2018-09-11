@@ -10,7 +10,7 @@ import { Component } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import MarkdownRenderer from './components/markdown-renderer';
+import MarkdownRenderer from './renderer';
 
 /**
  * Module variables
