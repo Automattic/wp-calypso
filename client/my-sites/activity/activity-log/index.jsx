@@ -63,6 +63,7 @@ import isVipSite from 'state/selectors/is-vip-site';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { isMobile } from 'lib/viewport';
+import analytics from 'lib/analytics';
 
 const PAGE_SIZE = 20;
 
@@ -158,6 +159,7 @@ class ActivityLog extends Component {
 	};
 
 	changePage = pageNumber => {
+		analytics.tracks.recordEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
