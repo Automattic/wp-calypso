@@ -149,7 +149,7 @@ const webpackConfig = {
 		],
 		extensions: [ '.json', '.js', '.jsx' ],
 		alias: {
-			'i18n-calypso': 'packages/i18n',
+			'i18n-calypso': 'lib/i18n',
 		},
 	},
 	node: {
