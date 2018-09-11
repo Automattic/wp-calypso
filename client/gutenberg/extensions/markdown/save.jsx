@@ -5,8 +5,6 @@
  */
 import MarkdownRenderer from './renderer';
 
-function JetpackMarkdownBlockSave( { attributes, className } ) {
-	return <MarkdownRenderer className={ className } source={ attributes.source } />;
-}
-
-export default JetpackMarkdownBlockSave;
+export default ( { attributes, className } ) => (
+	<MarkdownRenderer className={ className } source={ attributes.source } />
+);
