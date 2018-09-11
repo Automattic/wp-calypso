@@ -73,12 +73,10 @@ describe( 'Shipping classes UI selectors', () => {
 			},
 			{
 				id: 'temp-1',
-				isNew: true,
 				name: 'Shipping class D (a new one)',
 			},
 			{
 				id: 'temp-2',
-				isNew: true,
 				name: 'Shipping class E (a really new one)',
 			},
 		] );
