@@ -20,31 +20,7 @@ import {
 /**
  * Internal dependencies
  */
-import { MAX_POSTS_TO_SHOW } from './constants';
-
-/**
- * Module variables
- */
-const examplePosts = [
-	{
-		title: 'Big iPhone/iPad Update Now Available',
-		icon: 'tablet',
-		date: 'August 3, 2018',
-		context: 'In "Mobile"',
-	},
-	{
-		title: 'The WordPress for Android App Gets a Big Facelift',
-		icon: 'smartphone',
-		date: 'August 2, 2018',
-		context: 'In "Mobile"',
-	},
-	{
-		title: 'Upgrade Focus: VideoPress For Weddings',
-		icon: 'video-alt2',
-		date: 'August 5, 2018',
-		context: 'In "Upgrade"',
-	},
-];
+import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default ( { attributes, setAttributes } ) => {
@@ -73,7 +49,7 @@ export default ( { attributes, setAttributes } ) => {
 	];
 
 	const displayPosts =
-		examplePosts.length > postsToShow ? examplePosts.slice( 0, postsToShow ) : examplePosts;
+		DEFAULT_POSTS.length > postsToShow ? DEFAULT_POSTS.slice( 0, postsToShow ) : DEFAULT_POSTS;
 
 	return (
 		<Fragment>
