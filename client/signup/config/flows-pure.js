@@ -277,7 +277,6 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: ( { siteSlug } ) => `/settings/import/${ siteSlug }`,
 			description: 'A flow to kick off an import during signup',
 			disallowResume: true,
-			allowContinue: false,
 			lastModified: '2018-08-05',
 		};
 	}
