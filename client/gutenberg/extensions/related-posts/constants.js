@@ -1,3 +1,5 @@
+/** @format */
+
 export const MAX_POSTS_TO_SHOW = 3;
 export const DEFAULT_POSTS = [
 	{
