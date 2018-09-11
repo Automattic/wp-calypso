@@ -73,7 +73,7 @@ class ImportURLStepComponent extends Component {
 		return (
 			<div className="import-url__wrapper">
 				<FormTextInputWithAction
-					placeholder="Enter the URL of your existing site"
+					placeholder={ translate( 'Enter the URL of your existing site' ) }
 					action="Continue"
 					onAction={ this.handleAction }
 					label={ translate( 'URL' ) }
