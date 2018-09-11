@@ -243,7 +243,9 @@ export class PluginMeta extends Component {
 			'google-captcha',
 			'file-manager-advanced',
 			'file-manager',
+			'plugins-garbage-collector',
 			'reset-wp',
+			'ultimate-wp-reset',
 			'wd-youtube',
 			'wordpress-database-reset',
 			'wordpress-reset',
@@ -264,6 +266,7 @@ export class PluginMeta extends Component {
 			'wp-db-backup',
 
 			// caching
+			'cache-enabler',
 			'comet-cache',
 			'hyper-cache',
 			'quick-cache',
@@ -271,6 +274,7 @@ export class PluginMeta extends Component {
 			'wp-cache',
 			'wp-fastest-cache',
 			'wp-rocket',
+			'wp-speed-of-light',
 			'wp-super-cache',
 
 			// sql heavy
@@ -306,9 +310,12 @@ export class PluginMeta extends Component {
 			'wp-staging',
 
 			// misc
+			'anywhere-elementor',
+			'anywhere-elementor-pro',
 			'automatic-video-posts',
 			'bwp-minify',
 			'cryptocurrency-pricing-list',
+			'fast-velocity-minify',
 			'nginx-helper',
 			'porn-embed',
 			'robo-gallery',
@@ -316,6 +323,7 @@ export class PluginMeta extends Component {
 			'woozone',
 			'wp-cleanfix',
 			'wpematico',
+			'zapp-proxy-server',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
