@@ -301,8 +301,6 @@ function setUpLoggedInRoute( req, res, next ) {
 	} );
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		const user = require( 'user-bootstrap' );
-
 		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
@@ -318,13 +316,60 @@ function setUpLoggedInRoute( req, res, next ) {
 			res.redirect( redirectUrl );
 			return;
 		}
+
+		const user = require( 'user-bootstrap' );
+
 		start = new Date().getTime();
 
 		debug( 'Issuing API call to fetch user object' );
-		user( req.cookies.wordpress_logged_in, geoCountry, function( error, data ) {
-			let searchParam, errorMessage;
 
-			if ( error ) {
+		user( req.cookies.wordpress_logged_in, geoCountry )
+			.then( data => {
+				const end = new Date().getTime() - start;
+
+				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
+				req.context.user = data;
+
+				// Setting user in the state is safe as long as we don't cache it
+				setCurrentUserOnReduxStore( data, req.context.store );
+
+				if ( data.localeSlug ) {
+					req.context.lang = data.localeSlug;
+					req.context.store.dispatch( {
+						type: LOCALE_SET,
+						localeSlug: data.localeSlug,
+						localeVariant: data.localeVariant,
+					} );
+				}
+
+				if ( req.path === '/' && req.query ) {
+					const searchParam = req.query.s || req.query.q;
+					if ( searchParam ) {
+						res.redirect(
+							'https://' +
+								req.context.lang +
+								'.search.wordpress.com/?q=' +
+								encodeURIComponent( searchParam )
+						);
+						return;
+					}
+
+					if ( req.query.newuseremail ) {
+						debug( 'Detected legacy email verification action. Redirecting...' );
+						res.redirect( 'https://wordpress.com/verify-email/?' + stringify( req.query ) );
+						return;
+					}
+
+					if ( req.query.action === 'wpcom-invite-users' ) {
+						debug( 'Detected legacy invite acceptance action. Redirecting...' );
+						res.redirect( 'https://wordpress.com/accept-invite/?' + stringify( req.query ) );
+						return;
+					}
+				}
+
+				next();
+			} )
+			.catch( error => {
 				if ( error.error === 'authorization_required' ) {
 					debug( 'User public API authorization required. Redirecting to %s', redirectUrl );
 					res.clearCookie( 'wordpress_logged_in', {
@@ -334,6 +379,8 @@ function setUpLoggedInRoute( req, res, next ) {
 					} );
 					res.redirect( redirectUrl );
 				} else {
+					let errorMessage;
+
 					if ( error.error ) {
 						errorMessage = error.error + ' ' + error.message;
 					} else {
@@ -346,52 +393,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				}
 
 				return;
-			}
-
-			const end = new Date().getTime() - start;
-
-			debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
-			req.context.user = data;
-
-			// Setting user in the state is safe as long as we don't cache it
-			setCurrentUserOnReduxStore( data, req.context.store );
-
-			if ( data.localeSlug ) {
-				req.context.lang = data.localeSlug;
-				req.context.store.dispatch( {
-					type: LOCALE_SET,
-					localeSlug: data.localeSlug,
-					localeVariant: data.localeVariant,
-				} );
-			}
-
-			if ( req.path === '/' && req.query ) {
-				searchParam = req.query.s || req.query.q;
-				if ( searchParam ) {
-					res.redirect(
-						'https://' +
-							req.context.lang +
-							'.search.wordpress.com/?q=' +
-							encodeURIComponent( searchParam )
-					);
-					return;
-				}
-
-				if ( req.query.newuseremail ) {
-					debug( 'Detected legacy email verification action. Redirecting...' );
-					res.redirect( 'https://wordpress.com/verify-email/?' + stringify( req.query ) );
-					return;
-				}
-
-				if ( req.query.action === 'wpcom-invite-users' ) {
-					debug( 'Detected legacy invite acceptance action. Redirecting...' );
-					res.redirect( 'https://wordpress.com/accept-invite/?' + stringify( req.query ) );
-					return;
-				}
-			}
-
-			next();
-		} );
+			} );
 	} else {
 		next();
 	}
@@ -750,11 +752,30 @@ module.exports = function() {
 
 		// Maybe not logged in, note that you need docker to test this properly
 		const user = require( 'user-bootstrap' );
+		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 
 		debug( 'Issuing API call to fetch user object' );
-		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
-		user( req.cookies.wordpress_logged_in, geoCountry, function( error, data ) {
-			if ( error ) {
+
+		user( req.cookies.wordpress_logged_in, geoCountry )
+			.then( data => {
+				const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+
+				// A8C check
+				if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+					return res.send( renderJsx( 'support-user' ) );
+				}
+
+				// Passed all checks, prepare support user session
+				return res.send(
+					renderJsx( 'support-user', {
+						authorized: true,
+						supportUser: req.query.support_user,
+						supportToken: req.query._support_token,
+						supportPath: req.query.support_path,
+					} )
+				);
+			} )
+			.catch( () => {
 				res.clearCookie( 'wordpress_logged_in', {
 					path: '/',
 					httpOnly: true,
@@ -762,25 +783,7 @@ module.exports = function() {
 				} );
 
 				return res.send( renderJsx( 'support-user' ) );
-			}
-
-			const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
-
-			// A8C check
-			if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
-				return res.send( renderJsx( 'support-user' ) );
-			}
-
-			// Passed all checks, prepare support user session
-			return res.send(
-				renderJsx( 'support-user', {
-					authorized: true,
-					supportUser: req.query.support_user,
-					supportToken: req.query._support_token,
-					supportPath: req.query.support_path,
-				} )
-			);
-		} );
+			} );
 	} );
 
 	// catchall to render 404 for all routes not whitelisted in client/sections
