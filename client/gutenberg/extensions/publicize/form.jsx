@@ -18,7 +18,7 @@ import { withSelect, withDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import PublicizeFormUnwrapped from './publicize-form-unwrapped';
+import PublicizeFormUnwrapped from './form-unwrapped';
 
 const PublicizeForm = compose( [
 	withSelect( ( select ) => ( {

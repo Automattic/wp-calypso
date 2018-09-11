@@ -38,6 +38,8 @@ These extensions live under `client/gutenberg/extensions` directory. There are s
 
 By default, these extensions will be built under `build` folder in the same folder with entry script.
 
+Read more from [Gutenberg extension docs](../client/gutenberg/extensions/README.md).
+
 ## Extending the SDK
 
 Adding new build targets for the SDK is straightforward but should be done with some consideration. Keeping the SDK as generic as possible is essential, and thus this isn't a place to create a new config for every project. Preferably this is a place to create configurations for entirely separate classes of projects.
