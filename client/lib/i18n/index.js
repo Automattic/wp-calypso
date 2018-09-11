@@ -4,7 +4,7 @@
 let I18N = require( './lib' ),
 	i18n = new I18N();
 
-module.exports = {
+export default {
 	moment: i18n.moment,
 	numberFormat: i18n.numberFormat.bind( i18n ),
 	translate: i18n.translate.bind( i18n ),

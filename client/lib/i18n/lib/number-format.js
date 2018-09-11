@@ -33,4 +33,4 @@ function number_format( number, decimals, dec_point, thousands_sep ) {
   return s.join( dec );
 }
 
-module.exports = number_format;
+export default number_format;

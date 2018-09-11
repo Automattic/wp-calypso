@@ -8,7 +8,7 @@ let fs = require( 'fs' ),
 	formatters = require( './formatters' ),
 	debug = require( 'debug' )( 'glotpress-js' );
 
-module.exports = function( config ) {
+export default function( config ) {
 	let keywords,
 		data,
 		matches,
