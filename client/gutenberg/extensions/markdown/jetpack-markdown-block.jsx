@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { ExternalLink } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
 
@@ -20,9 +21,9 @@ registerBlockType( 'a8c/markdown', {
 	description: (
 		<Fragment>
 			<p>{ __( 'Write your content in plain-text Markdown syntax.' ) }</p>
-			<p>
-				<a href="https://en.support.wordpress.com/markdown-quick-reference/">Support Reference</a>
-			</p>
+			<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
+				Support Reference
+			</ExternalLink>
 		</Fragment>
 	),
 
