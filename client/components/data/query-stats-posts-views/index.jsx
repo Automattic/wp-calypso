@@ -39,7 +39,6 @@ class QueryPostsViews extends Component {
 
 	request() {
 		const { siteId, postIds, num, date } = this.props;
-		//console.log( 'query', this.props, postIds.join(",") );
 
 		// Only request stats if a list of post Ids is provided.
 		if ( postIds.length ) {

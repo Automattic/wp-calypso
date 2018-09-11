@@ -14,9 +14,8 @@ import { receivePostsViews } from 'state/stats/views/posts/actions';
 
 export const fetch = action => {
 	const { siteId, postIds, num, date, offset } = action;
-	//console.log( 'requesting', action );
 
-	http(
+	return http(
 		{
 			method: 'GET',
 			path: `/sites/${ siteId }/stats/views/posts`,
