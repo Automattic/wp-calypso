@@ -13,6 +13,7 @@ import { find, get, includes, isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
+
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogExample from '../activity-log-example';
 import ActivityLogItem from '../activity-log-item';
@@ -22,6 +23,7 @@ import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
+import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import { isFreePlan } from 'lib/plans';
 import JetpackColophon from 'components/jetpack-colophon';
@@ -428,6 +430,7 @@ class ActivityLog extends Component {
 					this.renderNoLogsContent()
 				) : (
 					<div>
+						{ config.isEnabled( 'activity-filterbar' ) && <Filterbar /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination"
