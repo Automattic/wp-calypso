@@ -1,21 +1,17 @@
+/** @format */
+
 /**
  * Module dependencies/
  */
+
 let fs = require( 'fs' ),
 	path = require( 'path' ),
 	Xgettext = require( 'xgettext-js' ),
 	preProcessXGettextJSMatch = require( './preprocess-xgettextjs-match.js' ),
-	formatters = require( './formatters' ),
-	debug = require( 'debug' )( 'glotpress-js' );
+	formatters = require( './formatters' );
 
 export default function( config ) {
-	let keywords,
-		data,
-		matches,
-		parser,
-		parserKeywords,
-		formatter,
-		textOutput;
+	let keywords, data, matches, parser, parserKeywords, formatter, textOutput;
 
 	keywords = config.keywords || [ 'translate' ];
 	formatter = ( config.format || 'pot' ).toLowerCase();
@@ -45,10 +41,10 @@ export default function( config ) {
 				'exportNamespaceFrom',
 				'jsx',
 				'objectRestSpread',
-				'trailingFunctionCommas'
+				'trailingFunctionCommas',
 			],
-			allowImportExportEverywhere: true
-		}
+			allowImportExportEverywhere: true,
+		},
 	} );
 
 	function getFileMatches( inputFiles ) {
@@ -58,24 +54,30 @@ export default function( config ) {
 			return parser.getMatches( fs.readFileSync( inputFile, 'utf8' ) ).map( function( match ) {
 				match.line = relativeInputFilePath + ':' + match.line;
 				return match;
-			});
+			} );
 		} );
 	}
 
 	if ( config.data ) {
 		// If data is provided, feed it directly to the parser and call the file <unknown>
-		matches = [ parser.getMatches( data ).map( function( match ) {
-			match.location = '<unknown>:' + match.line;
-			return match;
-		}) ];
+		matches = [
+			parser.getMatches( data ).map( function( match ) {
+				match.location = '<unknown>:' + match.line;
+				return match;
+			} ),
+		];
 	} else {
 		matches = getFileMatches( config.inputPaths, config.lines );
 	}
 
 	if ( config.extras ) {
-		matches = matches.concat( getFileMatches( config.extras.map( function( extra ) {
-			return path.join( __dirname, 'extras', extra + '.js' );
-		} ) ) );
+		matches = matches.concat(
+			getFileMatches(
+				config.extras.map( function( extra ) {
+					return path.join( __dirname, 'extras', extra + '.js' );
+				} )
+			)
+		);
 	}
 
 	// The matches array now contains the entries for each file in it's own array:
@@ -86,9 +88,12 @@ export default function( config ) {
 
 	if ( config.lines ) {
 		matches = matches.filter( function( match ) {
-			const line = match.line.split(':');
-			return ( 'undefined' !== typeof config.lines[ line[0] ] && -1 != config.lines[ line[0] ].indexOf( line[1] ) )
-			});
+			const line = match.line.split( ':' );
+			return (
+				'undefined' !== typeof config.lines[ line[ 0 ] ] &&
+				-1 !== config.lines[ line[ 0 ] ].indexOf( line[ 1 ] )
+			);
+		} );
 	}
 
 	if ( 'string' === typeof formatter ) {
@@ -106,4 +111,4 @@ export default function( config ) {
 	}
 
 	return textOutput;
-};
+}
