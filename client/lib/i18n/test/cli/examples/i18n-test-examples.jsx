@@ -99,5 +99,5 @@ corners.` );
 	);
 }
 
-module.exports = test;
+export default test;
 /*eslint-enable */

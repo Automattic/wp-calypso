@@ -71,7 +71,7 @@ function uniqueMatchId( match ) {
 
 // Reference for the PO format: http://www.gnu.org/software/gettext/manual/gettext.html#PO-Files
 // More details: http://pology.nedohodnik.net/doc/user/en_US/ch-poformat.html
-module.exports = function( matches, options ) {
+export default function( matches, options ) {
 	let uniqueMatchesMap = {},
 		output;
 

@@ -7,7 +7,7 @@ let React = require( 'react' ),
  * @param ComposedComponent
  * @returns A new Localized React Component
  */
-module.exports = function( i18n ) {
+export default function( i18n ) {
 	const i18nProps = {
 		moment: i18n.moment,
 		numberFormat: i18n.numberFormat.bind( i18n ),
