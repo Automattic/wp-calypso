@@ -1683,7 +1683,6 @@
       "resolved": "https://registry.npmjs.org/align-text/-/align-text-0.1.4.tgz",
       "integrity": "sha1-DNkKVhCT810KmSVsIrcGlDP60Rc=",
       "dev": true,
-      "optional": true,
       "requires": {
         "kind-of": "^3.0.2",
         "longest": "^1.0.1",
@@ -1695,7 +1694,6 @@
           "resolved": "https://registry.npmjs.org/kind-of/-/kind-of-3.2.2.tgz",
           "integrity": "sha1-MeohpzS6ubuw8yRm2JOupR5KPGQ=",
           "dev": true,
-          "optional": true,
           "requires": {
             "is-buffer": "^1.1.5"
           }
@@ -3073,11 +3071,6 @@
       "resolved": "https://registry.npmjs.org/chardet/-/chardet-0.5.0.tgz",
       "integrity": "sha512-9ZTaoBaePSCFvNlNGrsyI8ZVACP2svUtq0DkM7t4K2ClAa96sqOIRjAzDTc8zXzFt1cZR46rRzLTiHFSJ+Qw0g=="
     },
-    "charenc": {
-      "version": "0.0.2",
-      "resolved": "https://registry.npmjs.org/charenc/-/charenc-0.0.2.tgz",
-      "integrity": "sha1-wKHS86cJLgN3S/qD8UwPxXkKhmc="
-    },
     "check-error": {
       "version": "1.0.2",
       "resolved": "https://registry.npmjs.org/check-error/-/check-error-1.0.2.tgz",
@@ -3784,11 +3777,6 @@
         "shebang-command": "^1.2.0",
         "which": "^1.2.9"
       }
-    },
-    "crypt": {
-      "version": "0.0.2",
-      "resolved": "https://registry.npmjs.org/crypt/-/crypt-0.0.2.tgz",
-      "integrity": "sha1-iNf/fsDfuG9xPch7u0LQRNPmxBs="
     },
     "crypto-browserify": {
       "version": "3.12.0",
@@ -5231,11 +5219,6 @@
       "resolved": "https://registry.npmjs.org/estraverse/-/estraverse-4.2.0.tgz",
       "integrity": "sha1-De4/7TH81GlhjOc0IJn8GvoL2xM="
     },
-    "estree-walker": {
-      "version": "0.5.2",
-      "resolved": "https://registry.npmjs.org/estree-walker/-/estree-walker-0.5.2.tgz",
-      "integrity": "sha512-XpCnW/AE10ws/kDAs37cngSkvgIR8aN3G0MS85m7dUpuK2EREo9VJ00uvw6Dg/hXEpfsE1I1TvJOJr+Z+TL+ig=="
-    },
     "esutils": {
       "version": "2.0.2",
       "resolved": "https://registry.npmjs.org/esutils/-/esutils-2.0.2.tgz",
@@ -6065,8 +6048,7 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6431,8 +6413,7 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6480,7 +6461,6 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
-          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6519,13 +6499,11 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true,
-          "optional": true
+          "bundled": true
         }
       }
     },
@@ -7327,59 +7305,6 @@
         }
       }
     },
-    "i18n-calypso": {
-      "version": "2.0.1",
-      "resolved": "https://registry.npmjs.org/i18n-calypso/-/i18n-calypso-2.0.1.tgz",
-      "integrity": "sha512-Pgl9f4ExfVeRIxI650OpjI68WzL1EH1wmSN4vNYAV+xtWui/6mScpwoY8+3RJDhaTQIHhYEGeye+5vD0WH3MJw==",
-      "requires": {
-        "commander": "^2.9.0",
-        "create-react-class": "^15.6.2",
-        "debug": "^3.1.0",
-        "globby": "^6.1.0",
-        "interpolate-components": "1.1.1",
-        "jed": "1.0.2",
-        "jstimezonedetect": "1.0.5",
-        "lodash.assign": "^4.0.8",
-        "lodash.flatten": "^4.4.0",
-        "lru": "^3.1.0",
-        "moment-timezone": "0.5.11",
-        "react": "0.14.8 || ^15.5.0 || ^16.0.0",
-        "sha1": "^1.1.1",
-        "xgettext-js": "^2.0.0"
-      },
-      "dependencies": {
-        "globby": {
-          "version": "6.1.0",
-          "resolved": "https://registry.npmjs.org/globby/-/globby-6.1.0.tgz",
-          "integrity": "sha1-9abXDoOV4hyFj7BInWTfAkJNUGw=",
-          "requires": {
-            "array-union": "^1.0.1",
-            "glob": "^7.0.3",
-            "object-assign": "^4.0.1",
-            "pify": "^2.0.0",
-            "pinkie-promise": "^2.0.0"
-          }
-        },
-        "jed": {
-          "version": "1.0.2",
-          "resolved": "https://registry.npmjs.org/jed/-/jed-1.0.2.tgz",
-          "integrity": "sha1-coueFHXyrvR0fvk+J4cTqEiQQPo="
-        },
-        "moment-timezone": {
-          "version": "0.5.11",
-          "resolved": "https://registry.npmjs.org/moment-timezone/-/moment-timezone-0.5.11.tgz",
-          "integrity": "sha1-m3bAPY71FMfkJJp7vOZJ7tOe8p8=",
-          "requires": {
-            "moment": ">= 2.6.0"
-          }
-        },
-        "pify": {
-          "version": "2.3.0",
-          "resolved": "https://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
-          "integrity": "sha1-7RQaasBDqEnqWISY59yosVMw6Qw="
-        }
-      }
-    },
     "iconv-lite": {
       "version": "0.4.24",
       "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz",
@@ -7563,16 +7488,6 @@
         "string-width": "^2.1.0",
         "strip-ansi": "^4.0.0",
         "through": "^2.3.6"
-      }
-    },
-    "interpolate-components": {
-      "version": "1.1.1",
-      "resolved": "https://registry.npmjs.org/interpolate-components/-/interpolate-components-1.1.1.tgz",
-      "integrity": "sha1-aZ//RdFSXpjHzntxWVkdmStd1t8=",
-      "requires": {
-        "react": "^0.14.3 || ^15.1.0 || ^16.0.0",
-        "react-addons-create-fragment": "^0.14.3 || ^15.1.0",
-        "react-dom": "^0.14.3 || ^15.1.0 || ^16.0.0"
       }
     },
     "interpret": {
@@ -9459,11 +9374,6 @@
         "verror": "1.10.0"
       }
     },
-    "jstimezonedetect": {
-      "version": "1.0.5",
-      "resolved": "https://registry.npmjs.org/jstimezonedetect/-/jstimezonedetect-1.0.5.tgz",
-      "integrity": "sha1-k9A1zSDox9ZOsTdc9ap6EKAkRmo="
-    },
     "jstransform": {
       "version": "11.0.3",
       "resolved": "https://registry.npmjs.org/jstransform/-/jstransform-11.0.3.tgz",
@@ -9761,11 +9671,6 @@
       "integrity": "sha1-yQRGkMIeBClL6qUXcS/e0fqI3pg=",
       "dev": true
     },
-    "lodash.flatten": {
-      "version": "4.4.0",
-      "resolved": "https://registry.npmjs.org/lodash.flatten/-/lodash.flatten-4.4.0.tgz",
-      "integrity": "sha1-8xwiIlqWMtK7+OSt2+8kCqdlph8="
-    },
     "lodash.flattendeep": {
       "version": "4.4.0",
       "resolved": "https://registry.npmjs.org/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz",
@@ -9845,8 +9750,7 @@
       "version": "1.0.1",
       "resolved": "https://registry.npmjs.org/longest/-/longest-1.0.1.tgz",
       "integrity": "sha1-MKCy2jj3N3DoKUoNIuZiXtd9AJc=",
-      "dev": true,
-      "optional": true
+      "dev": true
     },
     "longest-streak": {
       "version": "2.0.2",
@@ -13294,16 +13198,6 @@
         "prop-types": "^15.6.0"
       }
     },
-    "react-addons-create-fragment": {
-      "version": "15.6.2",
-      "resolved": "https://registry.npmjs.org/react-addons-create-fragment/-/react-addons-create-fragment-15.6.2.tgz",
-      "integrity": "sha1-o5TefCx77Na1R1uhuXrEcs58dPg=",
-      "requires": {
-        "fbjs": "^0.8.4",
-        "loose-envify": "^1.3.1",
-        "object-assign": "^4.1.0"
-      }
-    },
     "react-autosize-textarea": {
       "version": "3.0.3",
       "resolved": "https://registry.npmjs.org/react-autosize-textarea/-/react-autosize-textarea-3.0.3.tgz",
@@ -14541,15 +14435,6 @@
       "requires": {
         "inherits": "^2.0.1",
         "safe-buffer": "^5.0.1"
-      }
-    },
-    "sha1": {
-      "version": "1.1.1",
-      "resolved": "https://registry.npmjs.org/sha1/-/sha1-1.1.1.tgz",
-      "integrity": "sha1-rdqnqTFo85PxnrKxUJFhjicA+Eg=",
-      "requires": {
-        "charenc": ">= 0.0.1",
-        "crypt": ">= 0.0.1"
       }
     },
     "shallow-clone": {
@@ -17791,16 +17676,6 @@
       "resolved": "https://registry.npmjs.org/x-is-string/-/x-is-string-0.1.0.tgz",
       "integrity": "sha1-R0tQhlrzpJqcRlfwWs0UVFj3fYI=",
       "dev": true
-    },
-    "xgettext-js": {
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/xgettext-js/-/xgettext-js-2.0.0.tgz",
-      "integrity": "sha512-ZOv8Fl0x4b4iTuxSFTT/fie3U3v/r5iFziXd4zX74S08GEEn6TxQLzLzb4ksIzM1Hy3ZPzUA6+uTjBDaHQJM7g==",
-      "requires": {
-        "@babel/parser": "^7.0.0-beta.48",
-        "estree-walker": "^0.5.2",
-        "lodash": "^4.13.1"
-      }
     },
     "xml": {
       "version": "1.0.1",
