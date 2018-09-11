@@ -51,7 +51,7 @@ const examplePosts = [
 registerBlockType( 'jetpack/related-posts', {
 	title: 'Related Posts',
 
-	icon: 'admin-post',
+	icon: 'admin-page',
 
 	category: 'layout',
 
