@@ -18,9 +18,14 @@ import classNames from 'classnames';
 import { editShippingClass } from 'woocommerce/state/ui/shipping/classes/actions';
 import Button from 'components/button';
 
-const ShippingClassEntry = ( { name, slug, description, loaded, translate, edit } ) => {
+const ShippingClassEntry = ( { name, slug, description, loaded, disabled, translate, edit } ) => {
 	return (
-		<div className={ classNames( 'shipping__table-row', ! loaded && 'is-placeholder' ) }>
+		<div
+			className={ classNames(
+				'shipping__table-row',
+				( ! loaded || disabled ) && 'is-placeholder'
+			) }
+		>
 			<div className="shipping__classes-cell shipping__table-icon">
 				<Gridicon icon="tag" size={ 24 } />
 			</div>
@@ -34,7 +39,7 @@ const ShippingClassEntry = ( { name, slug, description, loaded, translate, edit 
 				<p>{ description }</p>
 			</div>
 			<div className="shipping__classes-cell shipping__table-actions">
-				<Button compact onClick={ edit } key="edit">
+				<Button compact onClick={ edit } key="edit" disabled={ disabled }>
 					{ translate( 'Edit' ) }
 				</Button>
 			</div>
@@ -47,6 +52,7 @@ ShippingClassEntry.propTypes = {
 	name: PropTypes.string,
 	slug: PropTypes.string,
 	description: PropTypes.string,
+	disabled: PropTypes.bool,
 };
 
 export default connect(

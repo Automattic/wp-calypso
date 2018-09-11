@@ -60,7 +60,16 @@ class ShippingZoneList extends Component {
 			);
 		};
 
-		let zonesToRender = loaded ? shippingZones : [ {}, {}, {} ];
+		let zonesToRender;
+
+		if ( loaded ) {
+			zonesToRender = shippingZones;
+		} else if ( shippingZones && shippingZones.length ) {
+			zonesToRender = shippingZones.map( () => ( {} ) );
+		} else {
+			zonesToRender = [ {}, {}, {} ];
+		}
+
 		if ( fetchError ) {
 			zonesToRender = [];
 		}

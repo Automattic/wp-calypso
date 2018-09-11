@@ -29,6 +29,7 @@ import {
 import { getUiShippingClasses } from 'woocommerce/state/ui/shipping/classes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { addShippingClass } from 'woocommerce/state/ui/shipping/classes/actions';
+import { getActionList } from 'woocommerce/state/action-list/selectors';
 
 /**
  * Renders the box for shipping class management.
@@ -39,7 +40,9 @@ class ShippingClassesList extends Component {
 	};
 
 	render() {
-		const { siteId, loaded, loading, translate } = this.props;
+		const { siteId, loaded, saving, loading, translate } = this.props;
+
+		const buttonDisabled = ! loaded || saving;
 
 		return (
 			<Fragment>
@@ -52,7 +55,7 @@ class ShippingClassesList extends Component {
 							'rates for each shipping class.'
 					) }
 				>
-					<Button href="#" onClick={ this.onAddNewClick } disabled={ ! loaded }>
+					<Button href="#" onClick={ this.onAddNewClick } disabled={ buttonDisabled }>
 						{ translate( 'Add class' ) }
 					</Button>
 				</ExtendedHeader>
@@ -107,10 +110,16 @@ class ShippingClassesList extends Component {
 	 * @return {ShippingClassEntry}   The entry for the shipping class row.
 	 */
 	renderShippingClass = ( shippingClass, index ) => {
-		const { siteId, loaded } = this.props;
+		const { siteId, saving, loaded } = this.props;
 
 		return (
-			<ShippingClassEntry key={ index } siteId={ siteId } loaded={ loaded } { ...shippingClass } />
+			<ShippingClassEntry
+				key={ index }
+				siteId={ siteId }
+				loaded={ loaded }
+				disabled={ saving }
+				{ ...shippingClass }
+			/>
 		);
 	};
 
@@ -171,6 +180,7 @@ export default connect(
 		shippingClasses: getUiShippingClasses( state ),
 		loaded: areShippingClassesLoaded( state ),
 		loading: areShippingClassesLoading( state ),
+		saving: Boolean( getActionList( state ) ),
 	} ),
 	dispatch => bindActionCreators( { addShippingClass }, dispatch )
 )( localize( ShippingClassesList ) );
