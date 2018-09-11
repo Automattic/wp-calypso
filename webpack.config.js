@@ -239,7 +239,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 			alias: Object.assign(
 				{
 					'gridicons/example': 'gridicons/dist/example',
-					'i18n-calypso': 'lib/i18n',
 					'react-virtualized': 'react-virtualized/dist/commonjs',
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
