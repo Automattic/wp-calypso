@@ -29,6 +29,7 @@ import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getTasks } from 'my-sites/checklist/onboardingChecklist';
 import { getChecklistStatus, setChecklistStatus, getChecklistTask } from 'state/checklist/actions';
+import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 /**
  * Module variables
@@ -51,6 +52,7 @@ class InlineHelp extends Component {
 		setChecklistStatus: PropTypes.func,
 		nextChecklistTask: PropTypes.string,
 		siteId: PropTypes.number,
+		isEligibleForDotcomChecklist: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -114,8 +116,6 @@ class InlineHelp extends Component {
 
 	shouldShowChecklist = () => {
 		const { sectionName } = this.props;
-		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
-		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
 		const disallowedSections = [
 			'discover',
 			'reader',
@@ -126,11 +126,7 @@ class InlineHelp extends Component {
 			'checklist',
 		];
 
-		if (
-			! isAtomicSite &&
-			! isJetpackSite &&
-			! ( disallowedSections.indexOf( sectionName ) > -1 )
-		) {
+		if ( isEligibleForDotcomChecklist && ! ( disallowedSections.indexOf( sectionName ) > -1 ) ) {
 			return true;
 		}
 	};
@@ -283,6 +279,7 @@ const mapStateToProps = state => {
 		sectionName: getSectionName( state ),
 		showChecklistNotification: getChecklistStatus( state ),
 		nextChecklistTask: getChecklistTask( state ),
+		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
 };
 
