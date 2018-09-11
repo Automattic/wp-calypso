@@ -10,9 +10,15 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
+import SignupActions from 'lib/signup/actions';
 import ReaderLandingStepContent from './content';
 
 class ReaderLandingStep extends Component {
+	handleButtonClick = () => {
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {} );
+		this.props.goToNextStep();
+	};
+
 	render() {
 		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
 
@@ -28,7 +34,7 @@ class ReaderLandingStep extends Component {
 							'and keep updated on your favorite sites.'
 					) }
 					signupProgress={ signupProgress }
-					stepContent={ <ReaderLandingStepContent /> }
+					stepContent={ <ReaderLandingStepContent onButtonClick={ this.handleButtonClick } /> }
 				/>
 			</div>
 		);

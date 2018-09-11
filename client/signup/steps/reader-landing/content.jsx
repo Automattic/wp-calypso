@@ -13,7 +13,7 @@ import Button from 'components/button';
 
 class ReaderLandingStepContent extends Component {
 	render() {
-		const { translate } = this.props;
+		const { translate, onButtonClick } = this.props;
 		return (
 			<div className="reader-landing__step-content">
 				<img
@@ -21,7 +21,7 @@ class ReaderLandingStepContent extends Component {
 					alt=""
 					className="reader-landing__step-content-illustration"
 				/>
-				<Button primary={ true } type="submit">
+				<Button primary={ true } type="submit" onClick={ onButtonClick }>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
