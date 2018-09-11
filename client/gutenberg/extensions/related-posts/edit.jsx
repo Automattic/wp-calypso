@@ -9,7 +9,6 @@ import { Fragment } from '@wordpress/element';
 import { BlockControls, InspectorControls } from '@wordpress/editor';
 import {
 	Button,
-	Dashicon,
 	PanelBody,
 	RangeControl,
 	TextControl,
@@ -102,7 +101,7 @@ export default ( { attributes, setAttributes } ) => {
 							<div class="related-posts__preview-post" key={ i }>
 								{ displayThumbnails && (
 									<Button className="related-posts__preview-post-link" isLink>
-										<Dashicon icon={ post.icon } size="128" />
+										<img src={ post.image } alt={ post.title } />
 									</Button>
 								) }
 								<h4 className="related-posts__preview-post-title">
