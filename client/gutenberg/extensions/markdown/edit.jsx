@@ -19,7 +19,7 @@ const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-class JetpackMarkdownBlockEditor extends Component {
+class MarkdownEdit extends Component {
 	state = {
 		activePanel: PANEL_EDITOR,
 	};
@@ -92,4 +92,4 @@ class JetpackMarkdownBlockEditor extends Component {
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default JetpackMarkdownBlockEditor;
+export default MarkdownEdit;
