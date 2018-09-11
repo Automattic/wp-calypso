@@ -18,6 +18,7 @@ import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actio
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class EditorGutenbergOptInDialog extends Component {
 	static propTypes = {
@@ -28,13 +29,47 @@ class EditorGutenbergOptInDialog extends Component {
 		hideGutenbergOptInDialog: PropTypes.func,
 	};
 
+	recordOptInStats( closeDialog ) {
+		composeAnalytics(
+			recordGoogleEvent(
+				'Gutenberg Opt-In',
+				'Clicked "Try the new editor" in the editor opt-in sidebar.',
+				'Opt-In',
+				true
+			),
+			recordTracksEvent( 'calypso_gutenberg_opt_in', {
+				opt_in: true,
+			} )
+		);
+		closeDialog();
+	}
+
+	recordOptOutStats( closeDialog ) {
+		composeAnalytics(
+			recordGoogleEvent(
+				'Gutenberg Opt-In',
+				'Clicked "Use the classic editor" in the editor opt-in sidebar.',
+				'Opt-In',
+				false
+			),
+			recordTracksEvent( 'calypso_gutenberg_opt_in', {
+				opt_in: false,
+			} )
+		);
+		closeDialog();
+	}
+
 	render() {
 		const { translate, gutenbergURL, isDialogVisible } = this.props;
 		const buttons = [
-			<Button key="gutenberg" href={ gutenbergURL } primary>
+			<Button key="gutenberg" href={ gutenbergURL } onClick={ this.recordOptInStats } primary>
 				{ translate( 'Try the new editor' ) }
 			</Button>,
-			{ action: 'cancel', label: translate( 'Use the classic editor' ) },
+			{
+				action: 'cancel',
+				label: translate( 'Use the classic editor' ),
+				onClick: this.recordOptOutStats,
+			},
 		];
 		return (
 			<Dialog
