@@ -1,6 +1,6 @@
-let React = require( 'react' ),
-	assign = require( 'lodash.assign' ),
-	createClass = require( 'create-react-class' );
+import React from 'react';
+import assign from 'lodash.assign';
+import createClass from 'create-react-class';
 
 /**
  * Localize a React component
@@ -41,4 +41,4 @@ export default function( i18n ) {
 		component._composedComponent = ComposedComponent;
 		return component;
 	};
-};
+}

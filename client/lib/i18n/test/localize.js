@@ -1,16 +1,21 @@
 /**
  * External dependencies
  */
-let React = require( 'react' ),
-	setupEnzymeAdapter = require( 'enzyme-adapter-react-helper' ),
-	expect = require( 'chai' ).expect,
-	shallow = require( 'enzyme' ).shallow;
+import React from 'react';
+
+import setupEnzymeAdapter from 'enzyme-adapter-react-helper';
+import { expect } from 'chai';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-let localize = require( '..' ).localize,
-	emptyRender = function() { return null; };
+import { localize } from '..';
+
+/**
+ * Internal dependencies
+ */
+let emptyRender = function() { return null; };
 
 describe( 'localize()', function() {
 	setupEnzymeAdapter();

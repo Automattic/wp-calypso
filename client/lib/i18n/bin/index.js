@@ -3,16 +3,17 @@
 /**
  * External dependencies/
  */
-let flatten = require( 'lodash.flatten' ),
-	fs = require( 'fs' ),
-	globby = require( 'globby' ),
-	path = require( 'path' ),
-	program = require( 'commander' );
+import flatten from 'lodash.flatten';
+
+import fs from 'fs';
+import globby from 'globby';
+import path from 'path';
+import program from 'commander';
 
 /**
  * Internal dependencies/
  */
-const i18nCalypso = require( '../cli' );
+import i18nCalypso from '../cli';
 
 /**
  * Internal variables/

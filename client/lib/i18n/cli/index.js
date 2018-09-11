@@ -4,11 +4,12 @@
  * Module dependencies/
  */
 
-let fs = require( 'fs' ),
-	path = require( 'path' ),
-	Xgettext = require( 'xgettext-js' ),
-	preProcessXGettextJSMatch = require( './preprocess-xgettextjs-match.js' ),
-	formatters = require( './formatters' );
+import fs from 'fs';
+
+import path from 'path';
+import Xgettext from 'xgettext-js';
+import preProcessXGettextJSMatch from './preprocess-xgettextjs-match.js';
+import formatters from './formatters';
 
 export default function( config ) {
 	let keywords, data, matches, parser, parserKeywords, formatter, textOutput;
