@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import { dispatch } from '@wordpress/data';
 import '@wordpress/core-data'; // Initializes core data store
 import { registerCoreBlocks } from '@wordpress/block-library';
@@ -30,8 +30,7 @@ class GutenbergEditor extends Component {
 	}
 
 	render() {
-		const { postType, siteId, siteSlug } = this.props;
-		const post = { ...mockPost, type: postType };
+		const { postType, siteId, siteSlug, post } = this.props;
 
 		return (
 			<WithAPIMiddleware siteSlug={ siteSlug }>
