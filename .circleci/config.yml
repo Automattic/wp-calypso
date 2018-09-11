@@ -1,51 +1,88 @@
+references:
+  # Image
+  docker-image: &docker-image
+    - image: circleci/node:10.9.0
+
+  #
+  # Cache management
+  #
+  restore-git-cache: &restore-git-cache
+    name: Restore git cache
+    key: v1-20180524-git
+  save-git-cache: &save-git-cache
+    name: Save git cache
+    key: v1-20180524-git
+    paths:
+      - ".git"
+
+  restore-npm-cache: &restore-npm-cache
+    name: "Restore npm cache"
+    keys:
+       - v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+       - v1-npmcache-{{ checksum ".nvmrc" }}
+  save-npm-cache: &save-npm-cache
+    name: "Save npm cache"
+    key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    paths:
+      - ~/.npm
+
+
 version: 2
 jobs:
-  build:
-    parallelism: 6
+  # Shared setup required for all jobs
+  setup:
+    docker: *docker-image
     working_directory: ~/wp-calypso
-    docker:
-      - image: circleci/node:10.9.0-browsers
-        environment:
-          CIRCLE_ARTIFACTS: /tmp/artifacts
-          CIRCLE_TEST_REPORTS: /tmp/test_results
-
     steps:
-      - restore_cache:
-          name: Restore git cache
-          key: v1-20180524-git
-
+      - restore_cache: *restore-git-cache
       - checkout
-
-    # Update origin/master so we can diff against it later
+      # Update origin/master so we can diff against it later
       - run:
           name: Update master branch
           command: git fetch --force origin master
+      - save_cache: *save-git-cache
 
-      - save_cache:
-          name: Save git cache
-          key: v1-20180524-git
-          paths:
-            - ".git"
+      - restore_cache: *restore-npm-cache
+      - run: npm ci
+      - save_cache: *save-npm-cache
+      - persist_to_workspace:
+          root: .
+          paths: .
+
+
+
+  i18n:
+    docker: *docker-image
+    working_directory: ~/wp-calypso
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: "List working directory contents"
+          command: ls -la
+
+  calypso:
+    parallelism: 6
+    docker: *docker-image
+    working_directory: ~/wp-calypso
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/artifacts
+      CIRCLE_TEST_REPORTS: /tmp/test_results
+
+    steps:
+      - attach_workspace:
+          at: .
+
+      # @TODO remove me
+      - run:
+          name: "List working directory contents"
+          command: ls -la
 
       - run:
           name: Create Directories for Results and Artifacts
           command: |
             mkdir -p $CIRCLE_ARTIFACTS
             mkdir -p $CIRCLE_TEST_REPORTS
-
-      - restore_cache:
-          name: "Restoring npm cache"
-          keys:
-             - v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-             - v1-npmcache-{{ checksum ".nvmrc" }}
-
-      - run: npm ci
-
-      - save_cache:
-          name: "Saving npm cache"
-          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-          paths:
-            - ~/.npm
 
       - run:
           name: Build Server
@@ -118,3 +155,16 @@ jobs:
 notify:
   webhooks:
     - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
+
+workflows:
+  version: 2
+  run-all-the-things:
+    jobs:
+      - setup
+      - i18n:
+          requires:
+            - setup
+      - calypso:
+          requires:
+            - setup
+
