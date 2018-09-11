@@ -63,7 +63,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: mocha --recursive client/lib/i18n
+      - run: npx mocha --recursive client/lib/i18n
 
   #
   # Main Calypso CI
