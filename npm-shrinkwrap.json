@@ -6868,9 +6868,9 @@
       }
     },
     "gridicons": {
-      "version": "3.0.1",
-      "resolved": "https://registry.npmjs.org/gridicons/-/gridicons-3.0.1.tgz",
-      "integrity": "sha512-PK20czXccH/gwEeeDnDAfSFs9J7KuC1XYmcRObS75JVRM0CEUPeCAk871CP/rqdTL5QSnPn8/uqkRdfL7LwFgQ==",
+      "version": "3.1.1",
+      "resolved": "https://registry.npmjs.org/gridicons/-/gridicons-3.1.1.tgz",
+      "integrity": "sha512-Sec8WviTyXpsSQycju8RlmpN0o8KFSDZQJeVtHjaBT1GJxvS3g1OA9y1XsauNPwNEr9nk4DeLPI4TYnufTqMIg==",
       "requires": {
         "prop-types": "^15.5.7"
       }
