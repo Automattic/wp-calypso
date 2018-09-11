@@ -22,7 +22,7 @@ registerBlockType( 'a8c/markdown', {
 		<Fragment>
 			<p>{ __( 'Write your content in plain-text Markdown syntax.' ) }</p>
 			<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
-				Support Reference
+				{ __( 'Support Reference' ) }
 			</ExternalLink>
 		</Fragment>
 	),
