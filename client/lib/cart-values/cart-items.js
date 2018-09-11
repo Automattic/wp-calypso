@@ -1014,7 +1014,7 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'FREE_WITH_PLAN';
 	}
 
-	if ( isNextDomainFree( cart ) ) {
+	if ( isNextDomainFree( cart, suggestion.domain_name ) ) {
 		return 'FREE_WITH_PLAN';
 	}
 
