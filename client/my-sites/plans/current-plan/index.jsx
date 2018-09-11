@@ -192,6 +192,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		hasDomainsLoaded: !! domains,
 		isRequestingSitePlans: isRequestingSitePlans( state, selectedSiteId ),
 		showJetpackChecklist: isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ),
-		showThankYou: requestThankYou && isJetpackNotAtomic,
+		showThankYou: requestThankYou && isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ),
 	};
 } )( localize( CurrentPlan ) );
