@@ -15,6 +15,9 @@ function concatAllFiles( inputFiles ) {
 	} ).join( '\n' );
 }
 
-export default {
-	concatAllFiles: concatAllFiles
+const exported = {
+    concatAllFiles: concatAllFiles
 };
+
+export default exported;
+export { concatAllFiles };
