@@ -3,15 +3,14 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import StepWrapper from 'signup/step-wrapper';
+import ReaderLandingStepContent from './content';
 
 class ReaderLandingStep extends Component {
 	render() {
@@ -25,15 +24,15 @@ class ReaderLandingStep extends Component {
 					positionInFlow={ positionInFlow }
 					headerText={ translate( 'Create an account and start using the Reader' ) }
 					subHeaderText={ translate(
-						'Migrate from email subscriptions to using the WordPress.com Reader ' +
-							'and notifications so as to keep updated on your favorite sites.'
+						'Use your existing email subscriptions in the WordPress.com Reader ' +
+							'and keep updated on your favorite sites.'
 					) }
 					signupProgress={ signupProgress }
-					stepContent={ null }
+					stepContent={ <ReaderLandingStepContent /> }
 				/>
 			</div>
 		);
 	}
 }
 
-export default connect( null )( localize( ReaderLandingStep ) );
+export default localize( ReaderLandingStep );
