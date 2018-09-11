@@ -127,6 +127,7 @@ yargs
 						'Output directory for the built assets. Intermediate directories are created as required.',
 					type: 'string',
 					coerce: path.resolve,
+					required: true,
 					requiresArg: true,
 				},
 			} ),
