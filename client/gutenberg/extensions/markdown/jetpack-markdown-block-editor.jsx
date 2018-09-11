@@ -3,10 +3,8 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { BlockControls, PlainText } from '@wordpress/editor';
-import { ButtonGroup } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 
 /**
@@ -20,35 +18,32 @@ import MarkdownRenderer from './components/markdown-renderer';
 const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 class JetpackMarkdownBlockEditor extends Component {
-	constructor() {
-		super( ...arguments );
-
-		this.updateSource = this.updateSource.bind( this );
-		this.showEditor = this.showEditor.bind( this );
-		this.showPreview = this.showPreview.bind( this );
-		this.isEmpty = this.isEmpty.bind( this );
-
-		this.state = {
-			activePanel: PANEL_EDITOR,
-		};
-	}
+	state = {
+		activePanel: PANEL_EDITOR,
+	};
 
 	isEmpty() {
 		const source = this.props.attributes.source;
 		return ! source || source.trim() === '';
 	}
 
-	updateSource( source ) {
-		this.props.setAttributes( { source } );
-	}
+	updateSource = source => this.props.setAttributes( { source } );
 
-	showEditor() {
-		this.setState( { activePanel: 'editor' } );
-	}
+	toggleMode = mode => () => this.setState( { activePanel: mode } );
 
-	showPreview() {
-		this.setState( { activePanel: 'preview' } );
+	renderToolbarButton( mode, label ) {
+		const { activePanel } = this.state;
+
+		return (
+			<button
+				className={ `components-tab-button ${ activePanel === mode ? 'is-active' : '' }` }
+				onClick={ this.toggleMode( mode ) }
+			>
+				<span>{ label }</span>
+			</button>
+		);
 	}
 
 	render() {
@@ -82,37 +77,19 @@ class JetpackMarkdownBlockEditor extends Component {
 			}
 		};
 
-		// Manages css classes for each panel based on component's state
-		const classesForPanel = function( panelName ) {
-			return classNames( {
-				'components-tab-button': true,
-				'is-active': this.state.activePanel === panelName,
-				[ `${ className }__${ panelName }-button` ]: true,
-			} );
-		};
-
 		return (
 			<div className={ className }>
 				<BlockControls>
-					<ButtonGroup>
-						<button
-							className={ classesForPanel.call( this, 'editor' ) }
-							onClick={ this.showEditor }
-						>
-							<span>{ __( 'Markdown' ) }</span>
-						</button>
-						<button
-							className={ classesForPanel.call( this, 'preview' ) }
-							onClick={ this.showPreview }
-						>
-							<span>{ __( 'Preview' ) }</span>
-						</button>
-					</ButtonGroup>
+					<div className="components-toolbar">
+						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Markdown' ) ) }
+						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview' ) ) }
+					</div>
 				</BlockControls>
 				{ editorOrPreviewPanel.call( this ) }
 			</div>
 		);
 	}
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default JetpackMarkdownBlockEditor;
