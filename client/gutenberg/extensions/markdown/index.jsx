@@ -11,7 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './markdown-editor.scss';
+import './style.scss';
 import edit from './edit';
 import save from './save';
 
