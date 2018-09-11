@@ -148,6 +148,9 @@ const webpackConfig = {
 			'node_modules',
 		],
 		extensions: [ '.json', '.js', '.jsx' ],
+		alias: {
+			'i18n-calypso': 'packages/i18n',
+		},
 	},
 	node: {
 		// Tell webpack we want to supply absolute paths for server code,
