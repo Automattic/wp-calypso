@@ -5,8 +5,10 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { debounce, flow, get } from 'lodash';
+import { flow, get, indexOf } from 'lodash';
 import debugFactory from 'debug';
+import { isWebUri } from 'valid-url';
+import { parse as parseURL } from 'url';
 
 /**
  * Internal dependencies
@@ -15,22 +17,30 @@ import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-//import FormInputValidation from 'components/forms/form-input-validation';
-import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
+import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { setNuxUrlInputValue, setValidationMessage } from 'state/importer-nux/actions';
 import {
 	getNuxUrlInputValue,
 	getSiteDetails,
+	getUrlInputValidationMessage,
 	isUrlInputDisabled,
 } from 'state/importer-nux/temp-selectors';
 
 const debug = debugFactory( 'calypso:signup-step-import-url' );
 
-const DEBOUNCE_CHECK_INTERVAL = 1200;
-
 const normalizeUrlForImportSource = url => {
 	// @TODO sanitize? Prepend https:// ..?
 	return url;
+};
+
+const isValidUrl = ( value = '' ) => {
+	const { protocol } = parseURL( value );
+	const withProtocol = protocol ? value : 'http://' + value;
+	const { hostname } = parseURL( withProtocol );
+
+	return isWebUri( withProtocol ) && indexOf( hostname, '.' ) > 0;
 };
 
 class ImportURLStepComponent extends Component {
@@ -39,13 +49,25 @@ class ImportURLStepComponent extends Component {
 		const urlFromQueryArg = normalizeUrlForImportSource( get( queryObject, 'url' ) );
 
 		if ( urlFromQueryArg ) {
-			this.handleInputChange( urlFromQueryArg );
+			this.updateUrlInputValue( urlFromQueryArg );
 		}
 	}
 
+	state = {
+		showError: false,
+	};
+
 	handleAction = importUrl => {
-		event.preventDefault();
+		const { urlInputValidationMessage } = this.props;
 		debug( { importUrl } );
+
+		if ( urlInputValidationMessage ) {
+			this.setState( {
+				showError: true,
+			} );
+
+			return;
+		}
 
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
 			importUrl,
@@ -55,34 +77,67 @@ class ImportURLStepComponent extends Component {
 		this.props.goToNextStep();
 	};
 
-	handleInputChange = value => {
+	handleInputChange = event => {
+		const value = get( event, 'target.value', '' );
+
+		this.updateUrlInputValue( value );
+	};
+
+	handleInputBlur = () => {
+		if ( this.props.urlInputValidationMessage ) {
+			this.setState( {
+				showError: true,
+			} );
+		}
+	};
+
+	updateUrlInputValue( value ) {
+		this.setState( {
+			showError: false,
+		} );
+
 		this.props.setNuxUrlInputValue( value );
-		this.debouncedFetchIsSiteImportable( normalizeUrlForImportSource( value ) );
-	};
+		this.checkValidation( value );
+	}
 
-	fetchIsSiteImportable = () => {
-		const normalizedUrl = normalizeUrlForImportSource( this.props.urlInputValue );
-		this.props.fetchIsSiteImportable( normalizedUrl );
-	};
+	checkValidation( value ) {
+		const message = isValidUrl( value ) ? '' : this.props.translate( 'Please enter a valid URL.' );
 
-	debouncedFetchIsSiteImportable = debounce( this.fetchIsSiteImportable, DEBOUNCE_CHECK_INTERVAL );
+		this.props.setValidationMessage( message );
+	}
 
 	renderContent = () => {
-		const { isInputDisabled, urlInputValue, translate } = this.props;
+		const { isInputDisabled, urlInputValidationMessage, urlInputValue, translate } = this.props;
+		const { showError } = this.state;
+		const shouldShowError = urlInputValidationMessage && showError;
 
 		return (
 			<div className="import-url__wrapper">
-				<FormTextInputWithAction
+				<FormTextInput
 					placeholder="Enter the URL of your existing site"
 					action="Continue"
-					onAction={ this.handleAction }
 					label={ translate( 'URL' ) }
 					onChange={ this.handleInputChange }
+					onBlur={ this.handleInputBlur }
 					disabled={ isInputDisabled }
 					value={ urlInputValue }
+					isError={ !! shouldShowError }
 				/>
-				{ /* <FormInputValidation text="..." /> */ }
+				{ shouldShowError ? (
+					<FormInputValidation
+						text={ urlInputValidationMessage }
+						isError={ !! shouldShowError }
+						isWarning={ ! shouldShowError }
+					/>
+				) : (
+					<FormSettingExplanation>
+						{ translate( 'Please enter a valid URL.' ) }
+					</FormSettingExplanation>
+				) }
 				<ButtonGroup>
+					<Button onClick={ this.handleAction } primary>
+						{ translate( 'Continue' ) }
+					</Button>
 					<Button>Skip</Button>
 				</ButtonGroup>
 			</div>
@@ -114,10 +169,11 @@ export default flow(
 			urlInputValue: getNuxUrlInputValue( state ),
 			siteDetails: getSiteDetails( state ),
 			isInputDisabled: isUrlInputDisabled( state ),
+			urlInputValidationMessage: getUrlInputValidationMessage( state ),
 		} ),
 		{
-			fetchIsSiteImportable,
 			setNuxUrlInputValue,
+			setValidationMessage,
 		}
 	),
 	localize
