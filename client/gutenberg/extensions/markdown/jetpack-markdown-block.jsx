@@ -4,6 +4,8 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { ExternalLink } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
 
 /**
@@ -16,12 +18,14 @@ import JetpackMarkdownBlockSave from './jetpack-markdown-block-save';
 registerBlockType( 'a8c/markdown', {
 	title: __( 'Markdown' ),
 
-	description: [
-		__( 'Write your content in plain-text Markdown syntax.' ),
-		<p>
-			<a href="https://en.support.wordpress.com/markdown-quick-reference/">Support Reference</a>
-		</p>,
-	],
+	description: (
+		<Fragment>
+			<p>{ __( 'Write your content in plain-text Markdown syntax.' ) }</p>
+			<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
+				{ __( 'Support reference' ) }
+			</ExternalLink>
+		</Fragment>
+	),
 
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 128">
