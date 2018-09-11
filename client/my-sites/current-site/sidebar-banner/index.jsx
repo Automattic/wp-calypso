@@ -15,10 +15,12 @@ import Gridicon from 'gridicons';
  */
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { nudgeClickRequest } from 'state/sites/nudge-click/actions';
 
 export class SidebarBanner extends Component {
 	static defaultProps = {
 		className: '',
+		shouldNotifyBackend: false,
 	};
 
 	static propTypes = {
@@ -27,14 +29,22 @@ export class SidebarBanner extends Component {
 		ctaText: PropTypes.string,
 		icon: PropTypes.string,
 		href: PropTypes.string,
+		shouldNotifyBackend: PropTypes.bool,
+		siteId: PropTypes.number,
 		text: PropTypes.string,
 		track: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	onClick = () => {
-		const { ctaName, track } = this.props;
+		const { ctaName, track, shouldNotifyBackend, siteId, nudgeClickRequest } = this.props;
+
 		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
+
+		// Do any backend work after a nudge is clicked
+		if ( shouldNotifyBackend ) {
+			nudgeClickRequest( siteId, ctaName );
+		}
 	};
 
 	render() {
@@ -62,7 +72,10 @@ export class SidebarBanner extends Component {
 }
 
 const mapStateToProps = null;
-const mapDispatchToProps = { track: recordTracksEvent };
+const mapDispatchToProps = {
+	track: recordTracksEvent,
+	nudgeClickRequest: nudgeClickRequest,
+};
 
 export default connect(
 	mapStateToProps,

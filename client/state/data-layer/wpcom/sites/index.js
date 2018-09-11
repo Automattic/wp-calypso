@@ -14,6 +14,7 @@ import commentsTree from './comments-tree';
 import jitm from './jitm';
 import media from './media';
 import memberships from './memberships';
+import nudges from './nudges';
 import planTransfer from './plan-transfer';
 import plugins from './plugins';
 import postTypes from './post-types';
@@ -30,6 +31,7 @@ export default mergeHandlers(
 	commentsTree,
 	config.isEnabled( 'jitms' ) ? jitm : null,
 	media,
+	nudges,
 	config.isEnabled( 'memberships' ) ? memberships : null,
 	planTransfer,
 	plugins,

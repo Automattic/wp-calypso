@@ -115,6 +115,8 @@ class SiteNotice extends React.Component {
 				href={ href }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
+				shouldNotifyBackend={ true }
+				siteId={ site.ID }
 			/>
 		);
 	}

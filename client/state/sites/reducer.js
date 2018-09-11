@@ -14,6 +14,7 @@ import connection from './connection/reducer';
 import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
 import monitor from './monitor/reducer';
+import nudgeClick from './nudge-click/reducer';
 import vouchers from './vouchers/reducer';
 import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
@@ -305,6 +306,7 @@ export default combineReducers( {
 	plans,
 	guidedTransfer,
 	monitor,
+	nudgeClick,
 	vouchers,
 	requesting,
 	sharingButtons,
