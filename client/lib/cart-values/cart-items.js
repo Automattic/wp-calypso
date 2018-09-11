@@ -42,6 +42,7 @@ import {
 	isJetpackPlan,
 	isNoAds,
 	isPlan,
+	isBlogger,
 	isPremium,
 	isPrivacyProtection,
 	isSiteRedirect,
@@ -273,6 +274,10 @@ export function hasOnlyBundledDomainProducts( cart ) {
 	return (
 		cart && every( [ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ], isBundled )
 	);
+}
+
+export function hasBloggerPlan( cart ) {
+	return some( getAll( cart ), isBlogger );
 }
 
 export function hasPremiumPlan( cart ) {
@@ -930,14 +935,37 @@ export function isDomainBundledWithPlan( cart, domain ) {
 	return '' !== bundledDomain && toLower( domain ) === toLower( get( cart, 'bundled_domain', '' ) );
 }
 
+/**
+ * Returns true if cart contains a plan and also a domain that comes for free with that plan
+ *
+ * @param {object} cart Cart
+ * @param {string} domain Domain
+ * @return {boolean} see description
+ */
 export function isDomainBeingUsedForPlan( cart, domain ) {
-	if ( cart && domain && hasPlan( cart ) ) {
-		const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
-			domainProduct = domainProducts.shift() || {};
-		return domain === domainProduct.meta;
+	if ( ! cart || ! domain ) {
+		return false;
 	}
 
-	return false;
+	if ( ! hasPlan( cart ) ) {
+		return false;
+	}
+
+	const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
+		domainProduct = domainProducts.shift() || {};
+	const processedDomainInCart = domain === domainProduct.meta;
+	if ( ! processedDomainInCart ) {
+		return false;
+	}
+
+	if ( hasBloggerPlan( cart ) ) {
+		const tld = domain.split( '.' ).pop();
+		if ( tld !== 'blog' ) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 export function shouldBundleDomainWithPlan(
