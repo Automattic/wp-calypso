@@ -273,7 +273,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 
 	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
 		flows[ 'from-site' ] = {
-			steps: [ 'import-from-url', 'user' ],
+			steps: [ 'import-from-url', 'user', 'domains' ],
 			destination: () => '/checklist',
 			description: 'A flow to kick off an import during signup',
 			disallowResume: true,
