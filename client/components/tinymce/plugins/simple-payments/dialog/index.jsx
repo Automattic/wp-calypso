@@ -529,8 +529,16 @@ class SimplePaymentsDialog extends Component {
 					title={ translate( 'Want to add a payment button to your site?' ) }
 					action={
 						<Fragment>
-							<p>{ translate( 'Simple Payment buttons cannot be added by Contributors.' ) }</p>
-							<p>{ translate( 'Contact your site administrator for options!' ) }</p>
+							<p>
+								{ translate(
+									"You're a contributor to this site, so you don't currently have permission to do this – only authors, editors, and administrators can add payment buttons."
+								) }
+							</p>
+							<p>
+								{ translate(
+									'Contact your site administrator for options! They can change your permissions or add the button for you.'
+								) }
+							</p>
 						</Fragment>
 					}
 					secondaryAction={
