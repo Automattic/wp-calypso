@@ -11,12 +11,9 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-//import FormInputValidation from 'components/forms/form-input-validation';
 import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import {
 	getNuxUrlInputValue,
@@ -81,10 +78,6 @@ class ImportURLStepComponent extends Component {
 					defaultValue={ urlInputValue }
 					disabled={ isInputDisabled }
 				/>
-				{ /* <FormInputValidation text="..." /> */ }
-				<ButtonGroup>
-					<Button>Skip</Button>
-				</ButtonGroup>
 			</div>
 		);
 	};
