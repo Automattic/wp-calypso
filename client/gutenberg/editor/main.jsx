@@ -56,7 +56,6 @@ const mapStateToProps = state => {
 	const requestSitePostData = requestSitePost( siteId, postId );
 
 	return {
-		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		post: get( requestSitePostData, 'data', null ),
 	};
