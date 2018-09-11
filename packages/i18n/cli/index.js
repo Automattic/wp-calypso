@@ -1,7 +1,7 @@
 /**
  * Module dependencies/
  */
-var fs = require( 'fs' ),
+let fs = require( 'fs' ),
 	path = require( 'path' ),
 	Xgettext = require( 'xgettext-js' ),
 	preProcessXGettextJSMatch = require( './preprocess-xgettextjs-match.js' ),
@@ -9,7 +9,7 @@ var fs = require( 'fs' ),
 	debug = require( 'debug' )( 'glotpress-js' );
 
 module.exports = function( config ) {
-	var keywords,
+	let keywords,
 		data,
 		matches,
 		parser,
@@ -54,7 +54,7 @@ module.exports = function( config ) {
 	function getFileMatches( inputFiles ) {
 		return inputFiles.map( function( inputFile ) {
 			console.log( 'Parsing inputFile: ' + inputFile );
-			var relativeInputFilePath = path.relative( __dirname, inputFile ).replace( /^[\/.]+/, '' );
+			const relativeInputFilePath = path.relative( __dirname, inputFile ).replace( /^[\/.]+/, '' );
 			return parser.getMatches( fs.readFileSync( inputFile, 'utf8' ) ).map( function( match ) {
 				match.line = relativeInputFilePath + ':' + match.line;
 				return match;
@@ -86,8 +86,8 @@ module.exports = function( config ) {
 
 	if ( config.lines ) {
 		matches = matches.filter( function( match ) {
-			var line = match.line.split(':');
-			return ( 'undefined' != typeof config.lines[ line[0] ] && -1 != config.lines[ line[0] ].indexOf( line[1] ) )
+			const line = match.line.split(':');
+			return ( 'undefined' !== typeof config.lines[ line[0] ] && -1 != config.lines[ line[0] ].indexOf( line[1] ) )
 			});
 	}
 
