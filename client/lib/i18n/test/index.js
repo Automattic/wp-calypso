@@ -1,18 +1,22 @@
 /**
  * External dependencies
  */
-let assert = require( 'assert' ),
-	React = require( 'react' ),
-	ReactDomServer = require( 'react-dom/server');
+import assert from 'assert';
+
+import React from 'react';
+import ReactDomServer from 'react-dom/server';
 
 /**
  * Internal dependencies
  */
-let data = require( './data' ),
-	i18n = require( '..' ),
-	moment = i18n.moment,
-	numberFormat = i18n.numberFormat,
-	translate = i18n.translate;
+import data from './data';
+
+import i18n from '..';
+
+/**
+ * Internal dependencies
+ */
+let moment = i18n.moment, numberFormat = i18n.numberFormat, translate = i18n.translate;
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes

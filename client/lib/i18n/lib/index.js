@@ -1,19 +1,21 @@
 /**
  * External dependencies
  */
-let debug = require( 'debug' )( 'i18n-calypso' ),
-	Jed = require( 'jed' ),
-	moment = require( 'moment-timezone' ),
-	sha1 = require( 'hash.js/lib/hash/sha/1' ),
-	EventEmitter = require( 'events' ).EventEmitter,
-	interpolateComponents = require( 'interpolate-components' ).default,
-	LRU = require( 'lru' ),
-	assign = require( 'lodash.assign' );
+import debugFactory from 'debug';
+
+const debug = debugFactory('i18n-calypso');
+import Jed from 'jed';
+import moment from 'moment-timezone';
+import sha1 from 'hash.js/lib/hash/sha/1';
+import { EventEmitter } from 'events';
+import interpolateComponents from 'interpolate-components';
+import LRU from 'lru';
+import assign from 'lodash.assign';
 
 /**
  * Internal dependencies
  */
-const numberFormatPHPJS = require( './number-format' );
+import numberFormatPHPJS from './number-format';
 
 /**
  * Constants
