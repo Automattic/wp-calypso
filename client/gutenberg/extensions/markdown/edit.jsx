@@ -48,6 +48,8 @@ class MarkdownEdit extends Component {
 
 	render() {
 		const { attributes, className, isSelected } = this.props;
+		const { source } = attributes;
+		const { activePanel } = this.state;
 
 		if ( ! isSelected && this.isEmpty() ) {
 			return (
@@ -57,26 +59,6 @@ class MarkdownEdit extends Component {
 			);
 		}
 
-		// Renders the editor panel or the preview panel based on component's state
-		const editorOrPreviewPanel = function() {
-			const source = attributes.source;
-
-			switch ( this.state.activePanel ) {
-				case PANEL_EDITOR:
-					return (
-						<PlainText
-							className={ `${ className }__editor` }
-							onChange={ this.updateSource }
-							aria-label={ __( 'Markdown' ) }
-							value={ attributes.source }
-						/>
-					);
-
-				case PANEL_PREVIEW:
-					return <MarkdownRenderer className={ `${ className }__preview` } source={ source } />;
-			}
-		};
-
 		return (
 			<div className={ className }>
 				<BlockControls>
@@ -85,7 +67,17 @@ class MarkdownEdit extends Component {
 						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview' ) ) }
 					</div>
 				</BlockControls>
-				{ editorOrPreviewPanel.call( this ) }
+
+				{ activePanel === PANEL_PREVIEW ? (
+					<MarkdownRenderer className={ `${ className }__preview` } source={ source } />
+				) : (
+					<PlainText
+						className={ `${ className }__editor` }
+						onChange={ this.updateSource }
+						aria-label={ __( 'Markdown' ) }
+						value={ source }
+					/>
+				) }
 			</div>
 		);
 	}
