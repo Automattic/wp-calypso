@@ -109,14 +109,14 @@ export default {
 		defaultVariation: 'original',
 	},
 	domainSuggestionKrakenV325: {
-		datestamp: '20180828',
+		datestamp: '20180910',
 		variations: {
 			domainsbot: 0,
 			group_1: 21,
 			group_3: 21,
 			group_4: 21,
-			group_6: 8, // dot with re-ordering
-			group_7: 8, // dot
+			group_6: 0, // dot with re-ordering
+			group_7: 0, // dot
 			group_8: 21,
 		},
 		defaultVariation: 'domainsbot',
@@ -138,10 +138,10 @@ export default {
 		defaultVariation: 'control',
 	},
 	domainManagementSuggestion: {
-		datestamp: '20180905',
+		datestamp: '20180910',
 		variations: {
 			domainsbot: 82,
-			group_7: 18,
+			group_7: 0,
 		},
 		defaultVariation: 'domainsbot',
 		assignmentMethod: 'userId',
