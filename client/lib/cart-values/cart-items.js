@@ -925,8 +925,25 @@ export function getIncludedDomain( cartItem ) {
 	return cartItem.extra && cartItem.extra.includedDomain;
 }
 
-export function isNextDomainFree( cart ) {
-	return !! ( cart && cart.next_domain_is_free );
+/**
+ * Returns true if, according to cart attributes, a `domain` should be free
+ *
+ * @param {object} cart Cart
+ * @param {string} domain Domain
+ * @return {boolean} See description
+ */
+export function isNextDomainFree( cart, domain = '' ) {
+	if ( ! cart || ! cart.next_domain_is_free ) {
+		return false;
+	}
+
+	if ( cart.next_domain_condition === 'blog' ) {
+		if ( getTld( domain ) !== 'blog' ) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 export function isDomainBundledWithPlan( cart, domain ) {

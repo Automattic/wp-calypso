@@ -28,6 +28,7 @@ const {
 	planItem,
 	replaceItem,
 	getItemForPlan,
+	isNextDomainFree,
 	hasRenewableSubscription,
 	isDomainBeingUsedForPlan,
 	getCartItemBillPeriod,
@@ -212,19 +213,6 @@ describe( 'replaceItem()', () => {
 	} );
 } );
 
-describe( 'getDomainPriceRule()', () => {
-	test( 'should return FREE_DOMAIN when product slug is empty', () => {
-		expect( getDomainPriceRule( false, null, null, { product_slug: null, cost: '14' } ) ).toBe(
-			'FREE_DOMAIN'
-		);
-	} );
-	test( 'should return FREE_DOMAIN when cost is Free', () => {
-		expect( getDomainPriceRule( false, null, null, { product_slug: 'hi', cost: 'Free' } ) ).toBe(
-			'FREE_DOMAIN'
-		);
-	} );
-} );
-
 describe( 'isDomainBeingUsedForPlan()', () => {
 	const buildCartWithDomain = ( plan_slug = PLAN_PREMIUM, domain = 'domain.com' ) => ( {
 		products: [
@@ -298,5 +286,53 @@ describe( 'isDomainBeingUsedForPlan()', () => {
 				)
 			).toBe( true );
 		} );
+	} );
+} );
+
+describe( 'isNextDomainFree()', () => {
+	test( 'should return true when cart.next_domain_is_free is true', () => {
+		expect( isNextDomainFree( { next_domain_is_free: true } ) ).toBe( true );
+	} );
+	test( 'should return true when cart.next_domain_is_free, next_domain_condition is empty and no domain is passed', () => {
+		expect( isNextDomainFree( { next_domain_is_free: true, next_domain_condition: '' } ) ).toBe(
+			true
+		);
+	} );
+	test( 'should return false when cart.next_domain_is_free, next_domain_condition is blog and no domain is passed', () => {
+		expect( isNextDomainFree( { next_domain_is_free: true, next_domain_condition: 'blog' } ) ).toBe(
+			false
+		);
+	} );
+	test( 'should return false when cart.next_domain_is_free is true, but condition is "blog" and requested domain is .com', () => {
+		expect(
+			isNextDomainFree( { next_domain_is_free: true, next_domain_condition: 'blog' }, 'domain.com' )
+		).toBe( false );
+	} );
+	test( 'should return true when cart.next_domain_is_free is true, but condition is "blog" and requested domain is .blog', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog' },
+				'domain.blog'
+			)
+		).toBe( true );
+	} );
+	test( 'should return false when cart.next_domain_is_free is false', () => {
+		expect( isNextDomainFree( { next_domain_is_free: false } ) ).toBe( false );
+	} );
+	test( 'should return false when cart is null', () => {
+		expect( isNextDomainFree( null ) ).toBe( false );
+	} );
+} );
+
+describe( 'getDomainPriceRule()', () => {
+	test( 'should return FREE_DOMAIN when product slug is empty', () => {
+		expect( getDomainPriceRule( false, null, null, { product_slug: null, cost: '14' } ) ).toBe(
+			'FREE_DOMAIN'
+		);
+	} );
+	test( 'should return FREE_DOMAIN when cost is Free', () => {
+		expect( getDomainPriceRule( false, null, null, { product_slug: 'hi', cost: 'Free' } ) ).toBe(
+			'FREE_DOMAIN'
+		);
 	} );
 } );
