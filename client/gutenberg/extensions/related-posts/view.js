@@ -4,15 +4,10 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import wp from 'wp';
-
-/**
- * WordPress dependencies
- */
-const { __ } = wp.i18n;
-const { Fragment } = wp.element;
-const { BlockControls, InspectorControls } = wp.editor;
-const {
+import { __ } from '@wordpress/i18n';
+import { Fragment } from '@wordpress/element';
+import { BlockControls, InspectorControls } from '@wordpress/editor';
+import {
 	Button,
 	Dashicon,
 	PanelBody,
@@ -20,8 +15,8 @@ const {
 	TextControl,
 	ToggleControl,
 	Toolbar,
-} = wp.components;
-const { registerBlockType } = wp.blocks;
+} from '@wordpress/components';
+import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
