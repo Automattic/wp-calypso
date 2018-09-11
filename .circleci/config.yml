@@ -32,7 +32,9 @@ references:
 
 version: 2
 jobs:
+  #
   # Shared setup required for all jobs
+  #
   setup:
     docker: *docker-image
     working_directory: ~/wp-calypso
@@ -52,8 +54,9 @@ jobs:
           root: .
           paths: .
 
-
-
+  #
+  # i18n CI
+  #
   i18n:
     docker: *docker-image
     working_directory: ~/wp-calypso
@@ -64,6 +67,9 @@ jobs:
           name: "List working directory contents"
           command: ls -la
 
+  #
+  # Main Calypso CI
+  #
   calypso:
     parallelism: 6
     docker: *docker-image
