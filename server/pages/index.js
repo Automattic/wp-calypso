@@ -325,8 +325,6 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		user( req.cookies.wordpress_logged_in, geoCountry )
 			.then( data => {
-				let searchParam;
-
 				const end = new Date().getTime() - start;
 
 				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
@@ -345,7 +343,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				}
 
 				if ( req.path === '/' && req.query ) {
-					searchParam = req.query.s || req.query.q;
+					const searchParam = req.query.s || req.query.q;
 					if ( searchParam ) {
 						res.redirect(
 							'https://' +
