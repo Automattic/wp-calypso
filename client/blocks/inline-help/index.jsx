@@ -125,6 +125,7 @@ class InlineHelp extends Component {
 			'reader-recommendations',
 			'reader-tags',
 			'checklist',
+			'signup',
 		];
 
 		if ( isEligibleForDotcomChecklist && ! ( disallowedSections.indexOf( sectionName ) > -1 ) ) {
