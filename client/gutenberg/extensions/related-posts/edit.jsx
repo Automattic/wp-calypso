@@ -21,7 +21,7 @@ import {
  */
 import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
-export default ( { attributes, setAttributes } ) => {
+export default ( { attributes, className, setAttributes } ) => {
 	const {
 		displayContext,
 		displayDate,
@@ -86,37 +86,33 @@ export default ( { attributes, setAttributes } ) => {
 				<Toolbar controls={ layoutControls } />
 			</BlockControls>
 
-			<div className="related-posts__main">
-				<div className="related-posts__preview">
-					{ headline.length && <h3 className="related-posts__preview-headline">{ headline }</h3> }
+			<div className={ className }>
+				{ headline.length && <h3>{ headline }</h3> }
 
-					<div
-						className={ classNames( 'related-posts__preview-items', {
-							'is-grid': postLayout === 'grid',
-							[ `columns-${ postsToShow }` ]: postLayout === 'grid',
-						} ) }
-					>
-						{ displayPosts.map( ( post, i ) => (
-							<div class="related-posts__preview-post" key={ i }>
-								{ displayThumbnails && (
-									<Button className="related-posts__preview-post-link" isLink>
-										<img src={ post.image } alt={ post.title } />
-									</Button>
-								) }
-								<h4 className="related-posts__preview-post-title">
-									<Button className="related-posts__preview-post-link" isLink>
-										{ post.title }
-									</Button>
-								</h4>
-								{ displayDate && (
-									<span className="related-posts__preview-post-date">{ post.date }</span>
-								) }
-								{ displayContext && (
-									<p className="related-posts__preview-post-context">{ post.context }</p>
-								) }
-							</div>
-						) ) }
-					</div>
+				<div
+					className={ classNames( `${ className }__preview-items`, {
+						'is-grid': postLayout === 'grid',
+						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
+					} ) }
+				>
+					{ displayPosts.map( ( post, i ) => (
+						<div className={ `${ className }__preview-post` } key={ i }>
+							{ displayThumbnails && (
+								<Button className={ `${ className }__preview-post-link` } isLink>
+									<img src={ post.image } alt={ post.title } />
+								</Button>
+							) }
+							<h4>
+								<Button className={ `${ className }__preview-post-link` } isLink>
+									{ post.title }
+								</Button>
+							</h4>
+							{ displayDate && (
+								<span className={ `${ className }__preview-post-date` }>{ post.date }</span>
+							) }
+							{ displayContext && <p>{ post.context }</p> }
+						</div>
+					) ) }
 				</div>
 			</div>
 		</Fragment>

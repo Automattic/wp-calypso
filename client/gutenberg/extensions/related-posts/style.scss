@@ -1,27 +1,27 @@
-.related-posts__preview-items {
+.wp-block-a8c-related-posts__preview-items {
 	&.is-grid {
 		display: flex;
 		padding: 0 10px;
 
-		.related-posts__preview-post {
+		.wp-block-a8c-related-posts__preview-post {
 			margin: 0 10px;
 		}
 	}
 
-	&.columns-3 .related-posts__preview-post {
+	&.columns-3 .wp-block-a8c-related-posts__preview-post {
 		width: 33.33%;
 	}
-	&.columns-2 .related-posts__preview-post {
+	&.columns-2 .wp-block-a8c-related-posts__preview-post {
 		width: 50%;
 	}
 }
 
-.related-posts__preview-post {
-	.related-posts__preview-post-link {
+.wp-block-a8c-related-posts__preview-post {
+	.wp-block-a8c-related-posts__preview-post-link {
 		font-size: inherit;
 	}
 
-	.related-posts__preview-post-date {
+	.wp-block-a8c-related-posts__preview-post-date {
 		font-style: italic;
 	}
 }
