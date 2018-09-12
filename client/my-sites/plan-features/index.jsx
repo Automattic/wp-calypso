@@ -185,8 +185,8 @@ export class PlanFeatures extends Component {
 				status="is-success"
 			>
 				{ translate(
-					'You have {{b}}%(credits)s{{/b}} in upgrade credits available! ' +
-						'Apply the value of your current plan towards an upgrade before your credits expire.',
+					'You have {{b}}%(credits)s{{/b}} of pro-rated credits available from your current plan. ' +
+						'Apply those credits towards an upgrade before they expire!',
 					{
 						args: {
 							credits: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
