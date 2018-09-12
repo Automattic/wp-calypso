@@ -44,7 +44,7 @@ export function requesting( state = {}, action ) {
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case STATS_VIEWS_POSTS_RECEIVE:
+		case STATS_VIEWS_POSTS_RECEIVE: {
 			const viewsForState = {};
 			action.posts.forEach( post => {
 				viewsForState[ post.ID ] = { views: post.views };
@@ -57,6 +57,7 @@ export function items( state = {}, action ) {
 					...viewsForState,
 				},
 			};
+		}
 	}
 
 	return state;
