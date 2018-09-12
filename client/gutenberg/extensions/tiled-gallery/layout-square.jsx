@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * WordPress dependencies
  */
@@ -6,7 +8,7 @@ import { Component } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import TiledGalleryItem from './tiled-gallery-item.js';
+import TiledGalleryItem from './item.jsx';
 
 // hard coded for now - ideally we'd inject $content_width
 // not sure how critical this is, likely necessary to work nicely with themes
@@ -19,7 +21,7 @@ function TiledGallerySquareGroup( { group_size, id, url, link, width, height, ca
 	};
 	return (
 		<div
-			className="gallery-group"
+			className="tiled-gallery__group"
 			style={ styleAttr }
 			data-original-width={ group_size }
 			data-original-height={ group_size }
@@ -109,7 +111,7 @@ class TiledGalleryLayoutSquare extends Component {
 
 		return (
 			<div className={ className }>
-				<div className="tiled-gallery-square tiled-gallery-unresized" data-original-width={ CONTENT_WIDTH }>
+				<div className="tiled-gallery__square tiled-gallery__unresized" data-original-width={ CONTENT_WIDTH }>
 					{ rows.map( ( row, index ) => {
 						const styleAttr = {
 							width: row.width + 'px',
@@ -120,7 +122,7 @@ class TiledGalleryLayoutSquare extends Component {
 						return (
 							<div
 								key={ index }
-								className="tiled-gallery-row gallery-row"
+								className="tiled-gallery__row tiled-gallery__row"
 								style={ styleAttr }
 								data-original-width={ row.width }
 								data-original-height={ row.height }

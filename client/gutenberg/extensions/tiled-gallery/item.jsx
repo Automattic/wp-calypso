@@ -1,7 +1,10 @@
+/** @format */
+
 /**
  * External Dependencies
  */
-import { get } from 'lodash';
+import get from 'lodash/get';
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies
@@ -11,11 +14,11 @@ import { withSelect } from '@wordpress/data';
 
 class TiledGalleryImage extends Component {
 
-	UNSAFE_componentWillReceiveProps( { image, width, height } ) {
+	componentDidUpdate( { image, width, height } ) {
 		// very carefully set width & height attributes once only (to avoid recurse)!
-		if ( image && ! width && ! height && this.props.setAttributes ) {
+		if ( image && ! width && ! height && this.setAttributes ) {
 			const mediaInfo = get( image, [ 'media_details' ], { width: null, height: null } );
-			this.props.setAttributes( {
+			this.setAttributes( {
 				width: mediaInfo.width,
 				height: mediaInfo.height
 			} );
@@ -24,7 +27,7 @@ class TiledGalleryImage extends Component {
 
 	render() {
 		const { url, alt, id, link, width, height, caption } = this.props;
-		const styleAttr = {
+		const style = {
 			width: width + 'px',
 			height: height + 'px',
 		};
@@ -34,50 +37,59 @@ class TiledGalleryImage extends Component {
 				<meta itemProp="width" content={ width } />
 				<meta itemProp="height" content={ height } />
 				<img
-					className="tiled-gallery-image"
-					src={ url } alt={ alt } data-id={ id } data-link={ link }
-					width={ width }
-					height={ height }
-					style={ styleAttr }
+					alt={ alt }
+					className={ classnames( 'tiled-gallery__image', {
+						[ `wp-image-${ id }` ]: id
+					} ) }
+					data-id={ id }
+					data-link={ link }
+					data-original-height={ height }
 					data-original-width={ width }
-					data-original-height={ height } />
-				{ caption && caption.length > 0 && <figcaption className="tiled-gallery-caption">{ caption }</figcaption> }
+					height={ height }
+					src={ url }
+					style={ style }
+					width={ width }
+				/>
+				{ caption && caption.length > 0 &&
+					<figcaption className="tiled-gallery__caption">
+						{ caption }
+					</figcaption>
+				}
 			</figure>
 		);
 	}
 }
 
 function TiledGalleryItem( props ) {
-	const classes = [ 'tiled-gallery-item' ];
-	classes.push( 'tiled-gallery-item-small' );
+	const { alt, caption, height, id, link, linkTo, url, width } = props;
 
 	let href;
-	switch ( props.linkTo ) {
+	switch ( linkTo ) {
 		case 'media':
-			href = props.url;
+			href = url;
 			break;
 		case 'attachment':
-			href = props.link;
+			href = link;
 			break;
 	}
 
 	const img = (
 		<TiledGalleryImage
-			url={ props.url }
-			alt={ props.alt }
-			id={ props.id }
-			link={ props.link }
-			width={ props.width }
-			height={ props.height }
-			caption={ props.caption }
-			linkTo={ props.linkTo }
+			url={ url }
+			alt={ alt }
+			id={ id }
+			link={ link }
+			width={ width }
+			height={ height }
+			caption={ caption }
+			linkTo={ linkTo }
 		/>
 	);
 
 	return (
 		<div
-			key={ props.id || props.url }
-			className={ classes.join( ' ' ) }
+			key={ id || url }
+			className="tiled-gallery__item tiled-gallery__item-small"
 			itemProp="associatedMedia"
 			itemScope=""
 			itemType="http://schema.org/ImageObject">

@@ -1,13 +1,15 @@
+/** @format */
+
 /**
  * External Dependencies
  */
-import { pick } from 'lodash';
+import pick from 'lodash/pick';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component } from '@wordpress/element';
+import { Component, Fragment } from '@wordpress/element';
 import {
 	BlockControls,
 	InspectorControls,
@@ -22,12 +24,13 @@ import {
 	RangeControl,
 	SelectControl,
 	Toolbar,
+	withNotices,
 } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import JetpackGalleryBlockSave from './save.js';
+import TiledGallerySave from './save.jsx';
 
 /**
  * Module variables
@@ -39,7 +42,7 @@ const linkOptions = [
 	{ value: 'none', label: __( 'None' ) },
 ];
 
-class JetpackGalleryBlockEditor extends Component {
+class TiledGalleryEdit extends Component {
 	constructor() {
 		super( ...arguments );
 
@@ -98,21 +101,24 @@ class JetpackGalleryBlockEditor extends Component {
 
 	addFiles( files ) {
 		const currentImages = this.props.attributes.images || [];
-		const { setAttributes } = this.props;
-		mediaUpload(
-			files,
-			( images ) => {
+		const { noticeOperations, setAttributes } = this.props;
+		mediaUpload( {
+			allowedType: 'image',
+			filesList: files,
+			onFileChange: ( images ) => {
 				setAttributes( {
 					images: currentImages.concat( images ),
 				} );
 			},
-			'image',
-		);
+			onError: noticeOperations.createErrorNotice,
+		} );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		// Deselect images when deselecting the block
-		if ( ! nextProps.isSelected && this.props.isSelected ) {
+		if ( ! this.props.isSelected && prevProps.isSelected ) {
+			// @TODO refactor
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				selectedImage: null,
 				captionSelected: false,
@@ -121,7 +127,13 @@ class JetpackGalleryBlockEditor extends Component {
 	}
 
 	render() {
-		const { attributes, isSelected, className } = this.props;
+		const {
+			attributes,
+			className,
+			isSelected,
+			noticeOperations,
+			noticeUI
+		} = this.props;
 		const { images, columns, linkTo } = attributes;
 
 		const dropZone = (
@@ -141,17 +153,16 @@ class JetpackGalleryBlockEditor extends Component {
 								multiple
 								gallery
 								value={ images.map( ( img ) => img.id ) }
-								render={ function( { open } ) {
-									return (
+								render={ ( { open } ) => (
 										<IconButton
+											// Following is a core class-name
+											// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 											className="components-toolbar__control"
 											label={ __( 'Edit Gallery' ) }
 											icon="edit"
 											onClick={ open }
 										/>
-									);
-								}
-							}
+								) }
 							/>
 						</Toolbar>
 					) }
@@ -160,25 +171,32 @@ class JetpackGalleryBlockEditor extends Component {
 		);
 
 		if ( images.length === 0 ) {
-			return [
-				controls,
-				<MediaPlaceholder
-					key="gallery-placeholder"
-					className={ className }
-					icon="format-gallery"
-					labels={ {
-						title: __(  'Jetpack Gallery' ),
-						name: __( 'a gallery' ),
-					} }
-					onSelect={ this.onSelectImages }
-					multiple
-				/>
-			];
+			return (
+				<Fragment>
+					{ controls }
+					{ noticeUI }
+					<MediaPlaceholder
+						key="gallery-placeholder"
+						className={ className }
+						icon="format-gallery"
+						labels={ {
+							title: __(  'Tiled Gallery' ),
+							name: __( 'images' ),
+						} }
+						onSelect={ this.onSelectImages }
+						notices={ noticeUI }
+						onError={ noticeOperations.createErrorNotice }
+						accept="image/*"
+						type="image"
+						multiple
+					/>
+				</Fragment>
+			);
 		}
 
 		// To avoid users accidentally navigating out of Gutenberg by clicking an image, we disable linkTo in the editor view here by forcing 'none'.
 		const imageTiles = (
-			<JetpackGalleryBlockSave
+			<TiledGallerySave
 				attributes={ {
 					className,
 					images,
@@ -188,31 +206,34 @@ class JetpackGalleryBlockEditor extends Component {
 			/>
 		);
 
-		return [
-			controls,
-			isSelected && (
-				<InspectorControls key="inspector">
-					<PanelBody title={ __( 'Jetpack Gallery Settings' ) }>
-						{ images.length > 1 && <RangeControl
-							label={ __( 'Columns' ) }
-							value={ columns }
-							onChange={ this.setColumnsNumber }
-							min={ 1 }
-							max={ Math.min( MAX_COLUMNS, images.length ) }
-						/> }
-						<SelectControl
-							label={ __( 'Link to' ) }
-							value={ linkTo }
-							onChange={ this.setLinkTo }
-							options={ linkOptions }
-						/>
-					</PanelBody>
-				</InspectorControls>
-			),
-			imageTiles,
-			dropZone,
-		];
+		return (
+			<Fragment>
+				{ controls }
+				{ isSelected && (
+					<InspectorControls key="inspector">
+						<PanelBody title={ __( 'Tiled Gallery Settings' ) }>
+							{ images.length > 1 && <RangeControl
+								label={ __( 'Columns' ) }
+								value={ columns }
+								onChange={ this.setColumnsNumber }
+								min={ 1 }
+								max={ Math.min( MAX_COLUMNS, images.length ) }
+							/> }
+							<SelectControl
+								label={ __( 'Link to' ) }
+								value={ linkTo }
+								onChange={ this.setLinkTo }
+								options={ linkOptions }
+							/>
+						</PanelBody>
+					</InspectorControls>
+				) }
+				{ dropZone }
+				{ noticeUI }
+				{ imageTiles }
+			</Fragment>
+		);
 	}
 }
 
-export default JetpackGalleryBlockEditor;
+export default withNotices( TiledGalleryEdit );

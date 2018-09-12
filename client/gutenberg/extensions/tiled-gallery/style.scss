@@ -1,20 +1,20 @@
 .wp-block-a8c-tiled-gallery {
-	.tiled-gallery-square {
+	.tiled-gallery__square {
 		clear: both;
 		margin: 0 0 20px;
 		overflow: hidden;
 	}
-	.tiled-gallery-image {
+	.tiled-gallery__image {
 		margin: 2px !important; /* Ensure that this value isn't overridden by themes that give content images blanket margins */
 	}
-	.gallery-group {
+	.tiled-gallery__group {
 		float: left;
 		position: relative;
 	}
-	.gallery-row {
+	.tiled-gallery__row {
 		 overflow: hidden;
 	}
-	.tiled-gallery-item {
+	.tiled-gallery__item {
 		float: left;
 		margin: 0;
 		position: relative;
@@ -31,8 +31,8 @@
 		figure {
 			margin: 0;
 		}
-		.tiled-gallery-image,
-		.tiled-gallery-image:hover { /* Needs to reset some properties for theme compatibility */
+		.tiled-gallery__image,
+		.tiled-gallery__image:hover { /* Needs to reset some properties for theme compatibility */
 			background: none;
 			border: none;
 			box-shadow: none;
@@ -42,7 +42,7 @@
 		}
 	}
 
-	.tiled-gallery-caption { /* Captions */
+	.tiled-gallery__caption { /* Captions */
 		background: #eee;
 		background: rgba( 255,255,255,0.8 );
 		color: #333;
@@ -58,7 +58,7 @@
 		white-space: nowrap;
 	}
 
-	.tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
+	.tiled-gallery__item-small .tiled-gallery__caption { /* Smaller captions */
 		font-size: 11px;
 	}
 }
