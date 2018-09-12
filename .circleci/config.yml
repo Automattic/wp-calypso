@@ -87,12 +87,6 @@ jobs:
       - run: *setup-results-and-artifacts
 
       - run:
-          name: Build Server
-          environment:
-            NODE_ENV: test
-          command: npm run build-server
-
-      - run:
           name: Build calypso-strings.pot
           command: |
             if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
