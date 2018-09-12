@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,8 +32,12 @@ function getPostID( context ) {
 }
 
 export const post = ( context, next ) => {
-	const postType = determinePostType( context );
 	//reserved space for adding the post to context see post-editor/controller.js
-	context.primary = <GutenbergEditor postId={ getPostID( context ) } postType={ postType } />;
+	const postId = getPostID( context );
+	const uniqueDraftId = uniqueId( 'gutenberg-draft-' );
+	const postType = determinePostType( context );
+
+	//reserved space for adding the post to context see post-editor/controller.js
+	context.primary = <GutenbergEditor { ...{ postId, postType, uniqueDraftId } } />;
 	next();
 };
