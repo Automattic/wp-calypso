@@ -3,26 +3,26 @@
 /**
  * Internal dependencies
  */
-import { languageFilePathUrl, languageFileUrl } from 'lib/i18n-utils/switch-locale';
+import { getLanguageFilePathUrl, getLanguageFileUrl } from 'lib/i18n-utils/switch-locale';
 import { setLangRevisions } from 'lib/i18n-utils';
 
-describe( 'languageFileUrl()', () => {
+describe( 'getLanguageFileUrl()', () => {
 	test( 'should return a JS url.', () => {
-		const expected = languageFilePathUrl() + 'ja.js';
+		const expected = getLanguageFilePathUrl() + 'ja.js';
 
-		expect( languageFileUrl( 'ja', 'js' ) ).toEqual( expected );
+		expect( getLanguageFileUrl( 'ja', 'js' ) ).toEqual( expected );
 	} );
 
 	test( 'should return a JSON url.', () => {
-		const expected = languageFilePathUrl() + 'ja.json';
+		const expected = getLanguageFilePathUrl() + 'ja.json';
 
-		expect( languageFileUrl( 'ja', 'json' ) ).toEqual( expected );
+		expect( getLanguageFileUrl( 'ja', 'json' ) ).toEqual( expected );
 	} );
 
 	test( 'should return a JSON url if an unknown fileType is given.', () => {
-		const expected = languageFilePathUrl() + 'ja.json';
+		const expected = getLanguageFilePathUrl() + 'ja.json';
 
-		expect( languageFileUrl( 'ja', 'Profit!' ) ).toEqual( expected );
+		expect( getLanguageFileUrl( 'ja', 'Profit!' ) ).toEqual( expected );
 	} );
 
 	test( 'should return a protocol-relative path under a browser context.', () => {
@@ -33,7 +33,7 @@ describe( 'languageFileUrl()', () => {
 			hasMockedWindow = true;
 		}
 
-		expect( languageFileUrl( 'ja' ).substring( 0, 2 ) ).toEqual( '//' );
+		expect( getLanguageFileUrl( 'ja' ).substring( 0, 2 ) ).toEqual( '//' );
 
 		if ( hasMockedWindow ) {
 			global.window = null;
@@ -50,15 +50,15 @@ describe( 'languageFileUrl()', () => {
 		} );
 
 		test( 'should append a revision cache buster.', () => {
-			const expected = languageFilePathUrl() + 'zh.js?v=123';
+			const expected = getLanguageFilePathUrl() + 'zh.js?v=123';
 
-			expect( languageFileUrl( 'zh', 'js' ) ).toEqual( expected );
+			expect( getLanguageFileUrl( 'zh', 'js' ) ).toEqual( expected );
 		} );
 
 		test( 'should not append a revision cache buster for an unknown locale.', () => {
-			const expected = languageFilePathUrl() + 'kr.js';
+			const expected = getLanguageFilePathUrl() + 'kr.js';
 
-			expect( languageFileUrl( 'kr', 'js' ) ).toEqual( expected );
+			expect( getLanguageFileUrl( 'kr', 'js' ) ).toEqual( expected );
 		} );
 	} );
 } );

@@ -17,12 +17,12 @@ const debug = debugFactory( 'calypso:i18n' );
 
 /**
  * Get the protocol, domain, and path part of the language file URL.
- * Normally it should only serve as a helper function for `languageFileUrl`,
+ * Normally it should only serve as a helper function for `getLanguageFileUrl`,
  * but we export it here still in help with the test suite.
  *
  * @return {String} The path URL to the language files.
  */
-export function languageFilePathUrl() {
+export function getLanguageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
 
 	return `${ protocol }widgets.wp.com/languages/calypso/`;
@@ -37,13 +37,13 @@ export function languageFilePathUrl() {
  *
  * @return {String} A language file URL.
  */
-export function languageFileUrl( localeSlug, fileType = 'json' ) {
+export function getLanguageFileUrl( localeSlug, fileType = 'json' ) {
 	if ( -1 === [ 'js', 'json' ].indexOf( fileType ) ) {
 		fileType = 'json';
 	}
 
 	const revision = getLangRevision( localeSlug );
-	const fileUrl = languageFilePathUrl() + `${ localeSlug }.${ fileType }`;
+	const fileUrl = getLanguageFilePathUrl() + `${ localeSlug }.${ fileType }`;
 
 	return revision ? fileUrl + `?v=${ revision }` : fileUrl;
 }
@@ -87,7 +87,7 @@ export default function switchLocale( localeSlug ) {
 		i18n.configure( { defaultLocaleSlug: targetLocaleSlug } );
 		setLocaleInDOM( domLocaleSlug, !! language.rtl );
 	} else {
-		request.get( languageFileUrl( targetLocaleSlug ) ).end( function( error, response ) {
+		request.get( getLanguageFileUrl( targetLocaleSlug ) ).end( function( error, response ) {
 			if ( error ) {
 				debug(
 					'Encountered an error loading locale file for ' +

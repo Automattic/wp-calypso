@@ -15,7 +15,7 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import { isDefaultLocale } from 'lib/i18n-utils';
-import { languageFileUrl } from 'lib/i18n-utils/switch-locale';
+import { getLanguageFileUrl } from 'lib/i18n-utils/switch-locale';
 import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
@@ -138,7 +138,7 @@ export function serverRender( req, res ) {
 	if ( ! isDefaultLocale( context.lang ) ) {
 		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
 
-		context.i18nLocaleScript = languageFileUrl( langFileName, 'js' );
+		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js' );
 	}
 
 	if ( shouldServerSideRender( context ) ) {
