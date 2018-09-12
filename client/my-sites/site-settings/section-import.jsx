@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
 import { filter, get } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -23,7 +24,7 @@ import MediumImporter from 'my-sites/importer/importer-medium';
 import BloggerImporter from 'my-sites/importer/importer-blogger';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
-import { fetchState } from 'lib/importer/actions';
+import { fetchState, startImport } from 'lib/importer/actions';
 import {
 	appStates,
 	WORDPRESS,
@@ -37,6 +38,8 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
+
+const debug = debugFactory( 'calypso:section-import' );
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -85,7 +88,15 @@ class SiteSettingsImport extends Component {
 	state = getImporterState();
 
 	componentDidMount() {
+		const { fromSite, engine, site } = this.props;
+
 		ImporterStore.on( 'change', this.updateState );
+
+		debug( { fromSite, engine, site } );
+		if ( 'wix' === engine ) {
+			this.props.startImport( site.ID, 'wix' );
+			debug( 'kick it off' );
+		}
 		this.updateFromAPI();
 	}
 
@@ -268,7 +279,10 @@ class SiteSettingsImport extends Component {
 	}
 }
 
-export default connect( state => ( {
-	site: getSelectedSite( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( SiteSettingsImport ) );
+export default connect(
+	state => ( {
+		site: getSelectedSite( state ),
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{ startImport }
+)( localize( SiteSettingsImport ) );
