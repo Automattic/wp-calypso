@@ -54,7 +54,7 @@ export const JETPACK_SUPPORT = 'https://jetpack.com/support/';
 export const JETPACK_CONTACT_SUPPORT = 'https://jetpack.com/contact-support/?rel=support';
 export const JETPACK_SERVICE_VAULTPRESS = 'https://help.vaultpress.com/install-vaultpress/';
 export const JETPACK_SERVICE_AKISMET = 'https://akismet.com/support/';
-export const JETPACK_SERVICE_POLLDADDY = 'https://support.polldaddy.com/';
+export const JETPACK_SERVICE_CROWDSIGNAL = 'https://crowdsignal.com/support/';
 export const LIVE_CHAT = `${ root }/live-chat`;
 export const MANAGE_PURCHASES = `${ root }/manage-purchases`;
 export const MAP_EXISTING_DOMAIN = `${ root }/domains/map-existing-domain`;
