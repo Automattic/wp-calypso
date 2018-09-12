@@ -28,7 +28,8 @@ import { getSelectedSite, getSelectedSiteId, getSectionName } from 'state/ui/sel
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getTasks } from 'my-sites/checklist/onboardingChecklist';
-import { getChecklistStatus, setChecklistStatus, getChecklistTask } from 'state/checklist/actions';
+import { setChecklistNotificationStatus } from 'state/checklist/actions';
+import { getChecklistNotificationStatus, getChecklistNextTask } from 'state/checklist/selectors';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 /**
@@ -49,7 +50,7 @@ class InlineHelp extends Component {
 		translate: PropTypes.func,
 		sectionName: PropTypes.string,
 		showChecklistNotification: PropTypes.bool,
-		setChecklistStatus: PropTypes.func,
+		setChecklistNotificationStatus: PropTypes.func,
 		nextChecklistTask: PropTypes.string,
 		siteId: PropTypes.number,
 		isEligibleForDotcomChecklist: PropTypes.bool,
@@ -148,9 +149,9 @@ class InlineHelp extends Component {
 			task &&
 			( nextChecklistTask === '' || nextChecklistTask !== task.id )
 		) {
-			this.props.setChecklistStatus( true );
+			this.props.setChecklistNotificationStatus( true );
 		} else {
-			this.props.setChecklistStatus( false );
+			this.props.setChecklistNotificationStatus( false );
 		}
 	};
 
@@ -277,15 +278,15 @@ const mapStateToProps = state => {
 		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		selectedSite: getSelectedSite( state ),
 		sectionName: getSectionName( state ),
-		showChecklistNotification: getChecklistStatus( state ),
-		nextChecklistTask: getChecklistTask( state ),
+		showChecklistNotification: getChecklistNotificationStatus( state ),
+		nextChecklistTask: getChecklistNextTask( state ),
 		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
 };
 
 const mapDispatchToProps = {
 	recordTracksEvent,
-	setChecklistStatus,
+	setChecklistNotificationStatus,
 };
 
 export default connect(
