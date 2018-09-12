@@ -22,8 +22,9 @@ import FormLegend from 'components/forms/form-legend';
 import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
-import validateContactDetails from './fr-validate-contact-details';
-import { disableSubmitButton } from './with-contact-details-validation';
+import WithContactDetailsValidation, {
+	disableSubmitButton,
+} from './with-contact-details-validation';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;
@@ -56,7 +57,7 @@ function renderValidationError( message ) {
 	return <FormInputValidation isError key={ message } text={ message } />;
 }
 
-class RegistrantExtraInfoFrForm extends React.PureComponent {
+export class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object,
 		ccTldDetails: PropTypes.object,
@@ -107,9 +108,11 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	};
 
 	render() {
-		const { ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
+		const { ccTldDetails, translate } = this.props;
 		const registrantType = get( ccTldDetails, 'registrantType', defaultRegistrantType );
-		const formIsValid = isEmpty( contactDetailsValidationErrors );
+		const validationErrors = get( this.props, 'validationErrors.extra.fr', {} );
+		const formIsValid =
+			isEmpty( validationErrors ) && isEmpty( get( this.props.validationErrors, 'organization' ) );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -149,13 +152,14 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	}
 
 	renderOrganizationFields() {
-		const { contactDetails, ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
+		const { contactDetails, ccTldDetails, translate } = this.props;
 		const { registrantVatId, sirenSiret, trademarkNumber } = defaults(
 			{},
 			ccTldDetails,
 			emptyValues
 		);
-		const validationErrors = get( contactDetailsValidationErrors, 'extra.fr', {} );
+		const validationErrors = get( this.props, 'validationErrors.extra.fr', {} );
+		const organizationValidationErrors = get( this.props, 'validationErrors.organization' );
 		const registrantVatIdValidationMessage =
 			validationErrors.registrantVatId &&
 			renderValidationError(
@@ -176,9 +180,13 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 			);
 
 		const trademarkNumberStrings = {
-			maxLength: this.props.translate( 'Too long. An EU Trademark number has 9 digits.' ),
-			oneOf: this.props.translate( 'Too short. An EU Trademark number has 9 digits.' ),
-			pattern: this.props.translate( 'An EU Trademark number uses only digits.' ),
+			'has longer length than allowed': this.props.translate(
+				'Too long. An EU Trademark number has 9 digits.'
+			),
+			'no (or more than one) schemas match': this.props.translate(
+				'Too short. An EU Trademark number has 9 digits.'
+			),
+			'pattern mismatch': this.props.translate( 'An EU Trademark number uses only digits.' ),
 		};
 
 		const trademarkNumberValidationMessage = map( validationErrors.trademarkNumber, error =>
@@ -187,14 +195,19 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 		// Note organization is the level above the other extra fields
 		const organizationValidationStrings = {
-			maxLength: translate( 'Too long, please limit the organization name to 100 characters.' ),
-			not: translate( 'Please use only the characters “%(validCharacters)s”', {
-				args: { validCharacters: "a-z A-Z 0-9 . , ( ) @ & ' - [space]" },
-			} ),
-			$ref: translate( 'Organization field is required' ),
+			'has longer length than allowed': translate(
+				'Too long, please limit the organization name to 100 characters.'
+			),
+			'negative schema matches': translate(
+				'Please use only the characters “%(validCharacters)s”',
+				{
+					args: { validCharacters: "a-z A-Z 0-9 . , ( ) @ & ' - [space]" },
+				}
+			),
+			'referenced schema does not match': translate( 'Organization field is required' ),
 		};
 
-		const organizationValidationMessage = map( contactDetailsValidationErrors.organization, error =>
+		const organizationValidationMessage = map( organizationValidationErrors, error =>
 			renderValidationError( organizationValidationStrings[ error ] )
 		);
 
@@ -286,14 +299,18 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	}
 }
 
+export const ValidatedRegistrantExtraInfoFrForm = WithContactDetailsValidation(
+	'fr',
+	RegistrantExtraInfoFrForm
+);
+
 export default connect(
 	state => {
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,
 			ccTldDetails: get( contactDetails, 'extra.fr', {} ),
-			contactDetailsValidationErrors: validateContactDetails( contactDetails ),
 		};
 	},
 	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoFrForm ) );
+)( localize( ValidatedRegistrantExtraInfoFrForm ) );

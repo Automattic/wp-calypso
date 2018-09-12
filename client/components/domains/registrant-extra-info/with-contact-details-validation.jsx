@@ -19,6 +19,8 @@ import getValidationSchemas from 'state/selectors/get-validation-schemas';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import warn from 'lib/warn';
 
+const missingSchema = { not: {} };
+
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
 		return children;
@@ -104,20 +106,20 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 		displayName = 'WithContactDetailsValidation(' + tld + ', ' + wrappedComponentName + ')';
 
 		componentWillMount() {
-			this.compileValidator();
+			this.props.validationSchema && this.compileValidator( this.props.validationSchema );
 		}
 
 		componentWillReceiveProps( nextProps ) {
 			if ( nextProps.validationSchema !== this.props.validationSchema ) {
-				this.compileValidator();
+				this.compileValidator( nextProps.validationSchema );
 			}
 		}
 
-		compileValidator() {
+		compileValidator( validationSchema ) {
 			// The schema object we compile is available at this.validate.toJSON()
 			// but we already check it's different in componentWillReceiveProps
-			debug( `compiling validation schema for ${ tld }`, this.props.validationSchema );
-			this.validate = validatorFactory( this.props.validationSchema, {
+			debug( `compiling validation schema for ${ tld }`, validationSchema );
+			this.validate = validatorFactory( validationSchema, {
 				greedy: true,
 				verbose: true,
 			} );
@@ -176,7 +178,7 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 
 	return connect(
 		state => ( {
-			validationSchema: get( getValidationSchemas( state ), tld, { not: {} } ),
+			validationSchema: get( getValidationSchemas( state ), tld, missingSchema ),
 			recordTracksEvent,
 		} ),
 		{
