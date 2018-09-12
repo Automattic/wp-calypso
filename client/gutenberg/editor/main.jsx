@@ -47,11 +47,14 @@ class GutenbergEditor extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
+	let { postId } = ownProps;
 
-	const requestDraftIdData = requestDraftId( siteId );
-	const postId = get( requestDraftIdData, 'data.ID' );
+	if ( ! postId ) {
+		const requestDraftIdData = requestDraftId( siteId );
+		postId = get( requestDraftIdData, 'data.ID' );
+	}
 
 	const requestSitePostData = requestSitePost( siteId, postId );
 
