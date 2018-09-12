@@ -164,7 +164,7 @@ notify:
 
 workflows:
   version: 2
-  run-all-the-things:
+  all-the-things:
     jobs:
       - setup
       - translate:
