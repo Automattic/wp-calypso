@@ -18,6 +18,7 @@ import titlecase from 'to-title-case';
 import Gridicon from 'gridicons';
 import { head, split } from 'lodash';
 import photon from 'photon';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -68,6 +69,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 
 class ThemeSheet extends React.Component {
 	static displayName = 'ThemeSheet';
@@ -577,9 +579,26 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
+	goBack = () => {
+		const { previousRoute, backPath } = this.props;
+		if ( previousRoute ) {
+			page.back( previousRoute );
+		} else {
+			page( backPath );
+		}
+	};
+
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
-		const { id, siteId, retired, isPremium, isJetpack, hasUnlimitedPremiumThemes } = this.props;
+		const {
+			id,
+			siteId,
+			retired,
+			isPremium,
+			isJetpack,
+			hasUnlimitedPremiumThemes,
+			previousRoute,
+		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
@@ -665,8 +684,8 @@ class ThemeSheet extends React.Component {
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
-					backHref={ this.props.backPath }
-					backText={ i18n.translate( 'All Themes' ) }
+					backText={ previousRoute ? i18n.translate( 'Back' ) : i18n.translate( 'All Themes' ) }
+					onClick={ this.goBack }
 				>
 					{ ! retired && this.renderButton() }
 				</HeaderCake>
@@ -769,6 +788,7 @@ export default connect(
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
+			previousRoute: getPreviousRoute( state ),
 		};
 	},
 	{
