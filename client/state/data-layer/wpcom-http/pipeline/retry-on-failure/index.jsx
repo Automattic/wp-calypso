@@ -3,12 +3,12 @@
 /**
  * External dependencies
  */
-
-import { get, merge } from 'lodash';
+import { get, includes, merge } from 'lodash';
 import { decorrelatedJitter as defaultDelay } from './delays';
 import { default as defaultPolicy } from './policies';
 
-const isGetRequest = request => 'GET' === get( request, 'method', '' ).toUpperCase();
+const isAllowedRequest = ( request, allowedMethods ) =>
+	includes( allowedMethods, get( request, 'method', '' ).toUpperCase() );
 
 export const retryOnFailure = ( getDelay = defaultDelay ) => inboundData => {
 	const {
@@ -24,16 +24,16 @@ export const retryOnFailure = ( getDelay = defaultDelay ) => inboundData => {
 		return inboundData;
 	}
 
-	// otherwise check if we should try again
-	if ( ! isGetRequest( originalRequest ) ) {
-		return inboundData;
-	}
-
 	const { options: { retryPolicy: policy = defaultPolicy } = {} } = originalRequest;
-	const { delay, maxAttempts, name } = policy;
+	const { allowedMethods, delay, maxAttempts, name } = policy;
+
 	const retryCount = get( originalRequest, 'meta.dataLayer.retryCount', 0 ) + 1;
 
-	if ( 'NO_RETRY' === name || retryCount > maxAttempts ) {
+	if (
+		'NO_RETRY' === name ||
+		! isAllowedRequest( originalRequest, allowedMethods ) ||
+		retryCount > maxAttempts
+	) {
 		return inboundData;
 	}
 
