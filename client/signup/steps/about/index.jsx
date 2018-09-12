@@ -26,6 +26,7 @@ import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
@@ -48,12 +49,16 @@ class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
 		this._isMounted = false;
+		const hasPrepopulatedVertical =
+			isValidLandingPageVertical( props.siteTopic ) &&
+			props.queryObject.vertical === props.siteTopic;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 			showStore: false,
 			pendingStoreClick: false,
+			hasPrepopulatedVertical,
 		};
 	}
 
@@ -274,8 +279,9 @@ class AboutStep extends Component {
 		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
-		const englishSiteTopicInput =
-			findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
+		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
+			? this.state.siteTopicValue
+			: findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
 		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
@@ -548,30 +554,34 @@ class AboutStep extends Component {
 								/>
 							</FormFieldset>
 
-							<FormFieldset>
-								<FormLabel htmlFor="siteTopic">
-									{ translate( 'What will your site be about?' ) }
-									<InfoPopover className="about__info-popover" position="top">
-										{ translate( "We'll use this to personalize your site and experience." ) }
-									</InfoPopover>
-								</FormLabel>
-								<FormTextInput
-									id="siteTopic"
-									name="siteTopic"
-									placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
-									value={ this.state.siteTopicValue }
-									onChange={ this.handleSuggestionChangeEvent }
-									onBlur={ this.hideSuggestions }
-									onKeyDown={ this.handleSuggestionKeyDown }
-									autoComplete="off"
-								/>
-								<Suggestions
-									ref={ this.setSuggestionsRef }
-									query={ this.state.query }
-									suggestions={ this.getSuggestions() }
-									suggest={ this.handleSuggestionMouseDown }
-								/>
-							</FormFieldset>
+							{ ! this.state.hasPrepopulatedVertical && (
+								<FormFieldset>
+									<FormLabel htmlFor="siteTopic">
+										{ translate( 'What will your site be about?' ) }
+										<InfoPopover className="about__info-popover" position="top">
+											{ translate( "We'll use this to personalize your site and experience." ) }
+										</InfoPopover>
+									</FormLabel>
+									<FormTextInput
+										id="siteTopic"
+										name="siteTopic"
+										placeholder={ translate(
+											'e.g. Fashion, travel, design, plumber, electrician'
+										) }
+										value={ this.state.siteTopicValue }
+										onChange={ this.handleSuggestionChangeEvent }
+										onBlur={ this.hideSuggestions }
+										onKeyDown={ this.handleSuggestionKeyDown }
+										autoComplete="off"
+									/>
+									<Suggestions
+										ref={ this.setSuggestionsRef }
+										query={ this.state.query }
+										suggestions={ this.getSuggestions() }
+										suggest={ this.handleSuggestionMouseDown }
+									/>
+								</FormFieldset>
+							) }
 
 							<FormFieldset>
 								<FormLegend>
