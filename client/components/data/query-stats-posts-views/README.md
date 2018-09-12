@@ -42,7 +42,7 @@ The site ID.
 
 The post IDs for which we'll retrieve view data.
 
-### `num`
+### `date`
 
 <table>
 	<tr><th>Type</th><td>String</td></tr>
