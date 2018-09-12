@@ -53,36 +53,16 @@ export const requestSiteChecklistTaskUpdate = ( siteId, taskId ) => ( {
 } );
 
 /**
- * Returns true if site checklist notification is currently showing.
- *
- * @param {Object} state Global state tree
- * @return {bool} True if currently showing checklist notification
- */
-export function getChecklistStatus( state ) {
-	return state.checklist.showChecklistNotification;
-}
-
-/**
  * Action creator function: SITE_CHECKLIST_NOTIFICATION
  *
  * @param {Boolean} bool Checklist notification
  * @return {Object} action object
  */
-export function setChecklistStatus( bool ) {
+export function setChecklistNotificationStatus( bool ) {
 	return {
 		type: SITE_CHECKLIST_NOTIFICATION,
 		bool,
 	};
-}
-
-/**
- * Returns next checklist task.
- *
- * @param {Object} state Global state tree
- * @return {bool} True if currently showing checklist notification
- */
-export function getChecklistTask( state ) {
-	return state.checklist.nextChecklistTask;
 }
 
 /**
@@ -91,7 +71,7 @@ export function getChecklistTask( state ) {
  * @param {String} taskId Next checklist task ID
  * @return {Object} action object
  */
-export function setChecklistTask( taskId ) {
+export function setChecklistNextTask( taskId ) {
 	return {
 		type: SITE_CHECKLIST_NEXT_TASK,
 		taskId,

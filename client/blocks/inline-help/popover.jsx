@@ -31,7 +31,8 @@ import { getTasks } from 'my-sites/checklist/onboardingChecklist';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getChecklistStatus, setChecklistStatus, setChecklistTask } from 'state/checklist/actions';
+import { setChecklistNotificationStatus, setChecklistNextTask } from 'state/checklist/actions';
+import { getChecklistNotificationStatus } from 'state/checklist/selectors';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 class InlineHelpPopover extends Component {
@@ -40,8 +41,8 @@ class InlineHelpPopover extends Component {
 		setDialogState: PropTypes.func.isRequired,
 		sectionName: PropTypes.string,
 		showChecklistNotification: PropTypes.bool,
-		setChecklistStatus: PropTypes.func,
-		setChecklistTask: PropTypes.func,
+		setChecklistNotificationStatus: PropTypes.func,
+		setChecklistNextTask: PropTypes.func,
 		siteId: PropTypes.number,
 		isEligibleForDotcomChecklist: PropTypes.bool,
 	};
@@ -69,9 +70,9 @@ class InlineHelpPopover extends Component {
 		const task = this.getTask();
 
 		if ( task ) {
-			this.props.setChecklistTask( task.id );
+			this.props.setChecklistNextTask( task.id );
 		}
-		this.props.setChecklistStatus( false );
+		this.props.setChecklistNotificationStatus( false );
 
 		this.props.onClose();
 		this.props.recordTracksEvent( 'calypso_inlinehelp_checklist_click' );
@@ -280,7 +281,7 @@ function mapStateToProps( state ) {
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		sectionName: getSectionName( state ),
-		showChecklistNotification: getChecklistStatus( state ),
+		showChecklistNotification: getChecklistNotificationStatus( state ),
 		tasks: getTasks( state, siteId ),
 		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
@@ -292,7 +293,7 @@ export default connect(
 		recordTracksEvent,
 		selectResult,
 		resetContactForm: resetInlineHelpContactForm,
-		setChecklistStatus,
-		setChecklistTask,
+		setChecklistNotificationStatus,
+		setChecklistNextTask,
 	}
 )( localize( InlineHelpPopover ) );
