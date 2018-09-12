@@ -53,13 +53,14 @@ const edit = class extends Component {
 			itemEntry.value = valueSpan.props.children || valueSpan.props.value;
 			return itemEntry;
 		} );
+
 		this.state = {
-			items: items,
+			items,
 			newItemAt: undefined,
 		};
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		if ( 0 === this.state.items.length ) {
 			this.addNewItem();
 		}
@@ -153,10 +154,11 @@ const edit = class extends Component {
 	}
 
 	render() {
+		const { className } = this.props;
 		const { items, newItemAt } = this.state;
 		return (
-			<div className="wp-editor-a8c-todo">
-				<ul className="wp-editor-a8c-todo-list">
+			<div className={ className }>
+				<ul className={ `${ className }__list` }>
 					{ items.map( ( item, itemIndex ) => {
 						const moveUp = () => {
 							this.moveUp( itemIndex );
@@ -179,13 +181,12 @@ const edit = class extends Component {
 						const onSplit = () => {
 							this.insertNewItemAfter( itemIndex );
 						};
-						const classNames = classnames( 'todolist-item', {
-							'item-done': item.done,
-							'item-todo': ! item.done,
+						const classNames = classnames( `${ className }__item`, {
+							[ `${ className }__item--done` ]: item.done,
 						} );
 
-						// if we've inserted an item at this index, and it does not have a value, request autofocus
-						const autoFocusThisItem =
+						// if we've inserted an item at this index, and it does not have a value, request focus
+						const shouldFocusThisItem =
 							itemIndex === newItemAt && ( ! item.value || 0 === item.value.length );
 
 						return (
@@ -201,7 +202,7 @@ const edit = class extends Component {
 								onDelete={ onDelete }
 								onChange={ onChange }
 								onSplit={ onSplit }
-								autoFocus={ autoFocusThisItem }
+								shouldFocus={ shouldFocusThisItem }
 							/>
 						);
 					} ) }
