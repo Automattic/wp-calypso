@@ -82,6 +82,7 @@ export default ( { attributes, className, setAttributes } ) => {
 					/>
 				</PanelBody>
 			</InspectorControls>
+
 			<BlockControls>
 				<Toolbar controls={ layoutControls } />
 			</BlockControls>
