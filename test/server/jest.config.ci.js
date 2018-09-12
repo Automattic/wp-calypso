@@ -1,7 +1,10 @@
 module.exports = Object.assign(
 	{},
 	{
-		testResultsProcessor: 'jest-junit',
+		reporters: [
+			'default',
+			'jest-junit',
+		],
 		verbose: false,
 	},
 	require( './jest.config.json' )
