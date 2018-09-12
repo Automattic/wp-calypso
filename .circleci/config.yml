@@ -148,7 +148,7 @@ jobs:
               jest                                    \
                 --ci                                  \
                 --testResultsProcessor="jest-junit"   \
-                --config=./test/client/jest.config.js \
+                --config=test/client/jest.config.json \
                 --maxWorkers=2                        \
                 $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
 
