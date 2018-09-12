@@ -143,12 +143,13 @@ jobs:
       - run:
           name: Run Client Tests
           command: |
+            ls -la
             TEST_REPORT_FILENAME="$CIRCLE_TEST_REPORTS/client/test-results-client.xml" npx --no-install \
-              jest                                  \
-                --ci                                \
-                --testResultsProcessor="jest-junit" \
-                --config=test/client/jest.config.js \
-                --maxWorkers=2                      \
+              jest                                    \
+                --ci                                  \
+                --testResultsProcessor="jest-junit"   \
+                --config=./test/client/jest.config.js \
+                --maxWorkers=2                        \
                 $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
 
       - run:
