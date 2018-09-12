@@ -55,19 +55,6 @@ jobs:
           paths: .
 
   #
-  # i18n CI
-  #
-  i18n:
-    docker: *docker-image
-    working_directory: ~/wp-calypso
-    steps:
-      - attach_workspace:
-          at: .
-      - run: |
-          cd client/lib/i18n
-          npm cit
-
-  #
   # Main Calypso CI
   #
   calypso:
@@ -81,11 +68,6 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-
-      # @TODO remove me
-      - run:
-          name: "List working directory contents"
-          command: ls -la
 
       - run:
           name: Create Directories for Results and Artifacts
@@ -165,9 +147,6 @@ workflows:
   run-all-the-things:
     jobs:
       - setup
-      - i18n:
-          requires:
-            - setup
       - calypso:
           requires:
             - setup
