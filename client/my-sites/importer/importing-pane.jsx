@@ -131,19 +131,23 @@ class ImportingPane extends React.PureComponent {
 			pageLink = <a href={ '/pages/' + slug } />,
 			pageText = translate( 'Pages', { context: 'noun' } ),
 			postLink = <a href={ '/posts/' + slug } />,
-			postText = translate( 'Posts', { context: 'noun' } );
+			postText = translate( 'Posts', { context: 'noun' } ),
+			mediaLink = <a href={ '/media/' + slug } />,
+			mediaText = translate( 'Media', { context: 'noun' } );
 
 		const pageCount = page.total;
 		const postCount = post.total;
 
 		if ( pageCount && postCount ) {
 			return this.props.translate(
-				'All done! Check out {{a}}Posts{{/a}} and ' +
-					'{{b}}Pages{{/b}} to see your imported content.',
+				'All done! Check out {{a}}Posts{{/a}}, ' +
+					'{{b}}Pages{{/b}}, ' +
+					'and {{c}}Media{{/c}} to see your imported content.',
 				{
 					components: {
 						a: postLink,
 						b: pageLink,
+						c: mediaLink,
 					},
 				}
 			);

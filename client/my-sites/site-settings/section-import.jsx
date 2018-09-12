@@ -228,7 +228,7 @@ class SiteSettingsImport extends Component {
 			{
 				args: { title },
 				components: {
-					a: <a href="https://support.wordpress.com/import/" />,
+					a: <a href="https://en.support.wordpress.com/import/" />,
 					strong: <strong />,
 				},
 			}
