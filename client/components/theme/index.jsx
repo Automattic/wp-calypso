@@ -206,6 +206,7 @@ export class Theme extends Component {
 					<a
 						className="theme__thumbnail"
 						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
+						onClick={ this.onScreenshotClick }
 					>
 						{ isActionable && (
 							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
@@ -217,7 +218,6 @@ export class Theme extends Component {
 								className="theme__img"
 								src={ themeImgSrc }
 								srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-								onClick={ this.onScreenshotClick }
 								id={ screenshotID }
 							/>
 						) : (
