@@ -137,7 +137,7 @@ class MapDomainStep extends React.Component {
 
 					<div className="map-domain-step__domain-text">
 						{ translate(
-							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider (they'll remind you when it's time.) {{a}}Learn more about adding a domain{{/a}}.",
+							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider. (They'll remind you when it's time.) {{a}}Learn more about adding a domain{{/a}}.",
 							{
 								components: {
 									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
