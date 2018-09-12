@@ -88,7 +88,7 @@ export default ( { attributes, className, setAttributes } ) => {
 			</BlockControls>
 
 			<div className={ className }>
-				{ headline.length && <h3>{ headline }</h3> }
+				{ headline.length ? <h3>{ headline }</h3> : null }
 
 				<div
 					className={ classNames( `${ className }__preview-items`, {
