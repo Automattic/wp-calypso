@@ -72,12 +72,6 @@ jobs:
 
       - run:
           name: Run Integration Tests
-
-          ### @TODO REMOVE ###
-          environment:
-            RUN_ARGS: '--nightly'
-          ####################
-
           command: |
             bin/run-integration $(circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings)
 
@@ -94,13 +88,11 @@ jobs:
           name: Run Client Tests
           command: |
               npm run test-client:ci $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
-          when: always
 
       - run:
           name: Run Server Tests
           command: |
               npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
-          when: always
 
       - run:
           name: Gather Test Results

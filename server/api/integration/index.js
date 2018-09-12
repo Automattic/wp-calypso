@@ -11,10 +11,7 @@ import unmodifiedConfig from 'config';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 
-/* eslint-disable jest/no-focused-tests */
-describe.only( 'api', () => {
-	test.only( 'FAIL', () => global.expect( true ).toBe( false ) );
-
+describe( 'api', () => {
 	let app, config, localRequest, sandbox;
 
 	useSandbox( newSandbox => ( sandbox = newSandbox ) );
