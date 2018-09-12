@@ -59,14 +59,14 @@ export default ( { attributes, className, setAttributes } ) => {
 						onChange={ value => setAttributes( { headline: value } ) }
 					/>
 					<ToggleControl
-						label={ __( 'Display date' ) }
-						checked={ displayDate }
-						onChange={ value => setAttributes( { displayDate: value } ) }
-					/>
-					<ToggleControl
 						label={ __( 'Display thumbnails' ) }
 						checked={ displayThumbnails }
 						onChange={ value => setAttributes( { displayThumbnails: value } ) }
+					/>
+					<ToggleControl
+						label={ __( 'Display date' ) }
+						checked={ displayDate }
+						onChange={ value => setAttributes( { displayDate: value } ) }
 					/>
 					<ToggleControl
 						label={ __( 'Display context (category or tag)' ) }
