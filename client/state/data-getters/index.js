@@ -1,5 +1,9 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { sortBy } from 'lodash';
+/**
  * Internal dependencies
  */
 import { http as rawHttp } from 'state/http/actions';
@@ -31,7 +35,9 @@ export const requestActivityActionTypeCounts = ( siteId, { freshness = 10 * 1000
 };
 
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
-	const id = `activity-log-${ siteId }`;
+	const group =
+		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
+	const id = `activity-log-${ siteId }-${ group }`;
 
 	return requestHttpData(
 		id,

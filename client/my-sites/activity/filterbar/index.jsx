@@ -5,12 +5,14 @@
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-
+import { connect } from 'react-redux';
+import { pullAt } from 'lodash';
 /**
  * Internal dependencies
  */
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
+import { updateFilter } from 'state/activity-log/actions';
 
 export class Filterbar extends Component {
 	state = {
@@ -37,16 +39,23 @@ export class Filterbar extends Component {
 		this.setState( { showActivityTypes: false } );
 	};
 
-	onSelectClick = ( checkbox, event ) => {
-		const selectedCheckboxes = this.state.selectedCheckboxes;
-		selectedCheckboxes[ checkbox.key ] = ! selectedCheckboxes[ checkbox.key ];
-		// create a new object so react rerender the ActionTypeSelector component
-		this.setState( { selectedCheckboxes: Object.assign( {}, selectedCheckboxes ) } );
+	onSelectClick = ( group, event ) => {
+		const { filter, selectActionType, siteId } = this.props;
 		event.preventDefault();
+		const actionTypes =
+			filter && filter.group && !! filter.group.length ? filter.group.slice() : [];
+		const index = actionTypes.indexOf( group.key );
+		if ( index >= 0 ) {
+			pullAt( actionTypes, index );
+		} else {
+			actionTypes.push( group.key );
+		}
+		selectActionType( siteId, actionTypes );
 	};
 
 	render() {
-		const { translate, siteId } = this.props;
+		const { translate, siteId, filter } = this.props;
+
 		return (
 			<div className="filterbar card">
 				<div className="filterbar__icon-navigation">
@@ -63,10 +72,16 @@ export class Filterbar extends Component {
 					onButtonClick={ this.toggleActivityTypesSelector }
 					onClose={ this.closeActivityTypes }
 					onSelectClick={ this.onSelectClick }
-					selected={ this.state.selectedCheckboxes }
+					selected={ filter && filter.group }
 				/>
 			</div>
 		);
 	}
 }
-export default localize( Filterbar );
+
+export default connect(
+	() => ( {} ),
+	{
+		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
+	}
+)( localize( Filterbar ) );

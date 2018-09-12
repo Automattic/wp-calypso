@@ -23,7 +23,7 @@ export function activity( context, next ) {
 		? context.query.startDate
 		: undefined;
 
-	const filter = getActivityLogFilter( state, siteId );
+	const filter = siteId && getActivityLogFilter( state, siteId );
 	const queryFilter = queryToFilterState( context.query );
 
 	if ( ! isEqual( filter, queryFilter ) ) {
