@@ -13,7 +13,7 @@ import './style.scss';
 import edit from './edit';
 import { MAX_POSTS_TO_SHOW } from './constants';
 
-registerBlockType( 'jetpack/related-posts', {
+registerBlockType( 'a8c/related-posts', {
 	title: __( 'Related Posts' ),
 
 	icon: 'admin-page',
