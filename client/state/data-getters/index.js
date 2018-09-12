@@ -107,10 +107,10 @@ export const requestGutenbergDraftPost = ( siteId, draftId ) =>
 		draftId,
 		http(
 			{
-				path: `/sites/${ siteId }/posts/create-draft`,
-				method: 'POST',
-				apiNamespace: 'wp/v2',
-				body: {},
+				path: `/sites/${ siteId }/p2/post`,
+				method: 'GET', //this should be a POST, remember
+				apiNamespace: 'wpcom/v2',
+				body: {}, //this is for a POST verb.
 			},
 			{}
 		),
