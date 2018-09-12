@@ -139,7 +139,7 @@ jobs:
                 --reporters=default                   \
                 --reporters=jest-junit                \
                 --config=test/client/jest.config.json \
-                --runInBand                           \
+                --maxWorkers=2                        \
                 $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
 
       - run:
