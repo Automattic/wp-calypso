@@ -114,7 +114,7 @@ export const requestGutenbergDraftPost = ( siteId, draftId ) =>
 			},
 			{}
 		),
-		{ formApi: () => ( { ID } ) => [ [ draftId, ID ] ] }
+		{ formApi: () => data => [ [ draftId, data ] ] }
 	);
 
 export const requestSitePost = ( siteId, postId ) =>

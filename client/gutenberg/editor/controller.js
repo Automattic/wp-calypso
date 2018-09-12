@@ -9,6 +9,7 @@ import { uniqueId } from 'lodash';
  * Internal dependencies
  */
 import GutenbergEditor from 'gutenberg/editor/main';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/gutenberg/post/' ) ) {
@@ -32,12 +33,14 @@ function getPostID( context ) {
 }
 
 export const post = ( context, next ) => {
-	//reserved space for adding the post to context see post-editor/controller.js
+	const state = context.store.getState();
+
+	const siteId = getSelectedSiteId( state );
 	const postId = getPostID( context );
-	const uniqueDraftId = uniqueId( 'gutenberg-draft-' );
+	const uniqueDraftKey = uniqueId( 'gutenberg-draft-' );
 	const postType = determinePostType( context );
 
 	//reserved space for adding the post to context see post-editor/controller.js
-	context.primary = <GutenbergEditor { ...{ postId, postType, uniqueDraftId } } />;
+	context.primary = <GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey } } />;
 	next();
 };

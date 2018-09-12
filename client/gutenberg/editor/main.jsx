@@ -16,11 +16,10 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import Editor from './edit-post/editor.js';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import QueryPostTypes from 'components/data/query-post-types';
-import { requestGutenbergDraftPost as requestDraftId, requestSitePost } from 'state/data-getters';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestGutenbergDraftPost as createAutoDraft, requestSitePost } from 'state/data-getters';
+import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
-import { withUniqueDraftId } from './components/with-unique-draft-id';
 
 const editorSettings = {};
 
@@ -29,6 +28,11 @@ class GutenbergEditor extends Component {
 		registerCoreBlocks();
 		// Prevent Guided tour from showing when editor loads.
 		dispatch( 'core/nux' ).disableTips();
+
+		const { siteId, postId, uniqueDraftKey } = this.props;
+		if ( ! postId ) {
+			createAutoDraft( siteId, uniqueDraftKey );
+		}
 	}
 
 	render() {
@@ -49,23 +53,23 @@ class GutenbergEditor extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	const siteId = getSelectedSiteId( state );
-	let { postId } = ownProps;
-
-	if ( ! postId ) {
-		const { uniqueDraftId } = ownProps;
-		const requestDraftIdData = requestDraftId( siteId, uniqueDraftId );
-
-		postId = get( requestDraftIdData, 'data.ID' );
+const getPost = ( siteId, postId ) => {
+	if ( siteId && postId ) {
+		const requestSitePostData = requestSitePost( siteId, postId );
+		return get( requestSitePostData, 'data', null );
 	}
 
-	const requestSitePostData = requestSitePost( siteId, postId );
+	return null;
+};
+
+const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey } ) => {
+	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
+	const post = getPost( siteId, postId || draftPostId );
 
 	return {
 		siteSlug: getSiteSlug( state, siteId ),
-		post: get( requestSitePostData, 'data', null ),
+		post,
 	};
 };
 
-export default withUniqueDraftId( connect( mapStateToProps )( GutenbergEditor ) );
+export default connect( mapStateToProps )( GutenbergEditor );
