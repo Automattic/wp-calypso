@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -19,6 +20,7 @@ import { requestGutenbergDraftPost as requestDraftId, requestSitePost } from 'st
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
+import { withUniqueDraftId } from './components/with-unique-draft-id';
 
 const editorSettings = {};
 
@@ -52,7 +54,9 @@ const mapStateToProps = ( state, ownProps ) => {
 	let { postId } = ownProps;
 
 	if ( ! postId ) {
-		const requestDraftIdData = requestDraftId( siteId );
+		const { uniqueDraftId } = ownProps;
+		const requestDraftIdData = requestDraftId( siteId, uniqueDraftId );
+
 		postId = get( requestDraftIdData, 'data.ID' );
 	}
 
@@ -64,4 +68,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps )( GutenbergEditor );
+export default withUniqueDraftId( connect( mapStateToProps )( GutenbergEditor ) );
