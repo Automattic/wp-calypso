@@ -204,9 +204,11 @@ export class Theme extends Component {
 				) }
 				<div className="theme__content">
 					<a
+						aria-label={ name }
 						className="theme__thumbnail"
 						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
 						onClick={ this.onScreenshotClick }
+						title={ description }
 					>
 						{ isActionable && (
 							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
