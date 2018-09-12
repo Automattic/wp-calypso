@@ -14,7 +14,9 @@ function AsyncGridicon( { icon = '' } ) {
 	return (
 		<AsyncLoad
 			require={ function( callback ) {
-				import( `gridicons/dist/${ icon }` ).then( g => callback( g.default ) );
+				import( /* webpackChunkName: "gridicons-[request]" */ `gridicons/dist/${ icon }` ).then(
+					g => callback( g.default )
+				);
 			} }
 		/>
 	);
