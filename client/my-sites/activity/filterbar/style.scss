@@ -45,6 +45,11 @@
     padding: 8px;
     margin: 8px;
   }
+	.filterbar__selection.is-selected {
+    border: 1px solid $gray-darken-30;
+    background: $gray-darken-30;
+		color: $white;
+  }
 
 }
 
@@ -66,4 +71,9 @@
 	label {
 		font-weight: normal;
 	}
+}
+.filterbar__activity-types-selection-placeholder {
+		@include placeholder();
+		margin: 16px 0;
+    height: 24px;
 }

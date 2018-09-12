@@ -430,7 +430,7 @@ class ActivityLog extends Component {
 					this.renderNoLogsContent()
 				) : (
 					<div>
-						{ config.isEnabled( 'activity-filterbar' ) && <Filterbar /> }
+						{ config.isEnabled( 'activity-filterbar' ) && <Filterbar siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination"

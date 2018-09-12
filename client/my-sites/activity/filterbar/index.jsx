@@ -9,32 +9,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import Popover from 'components/popover';
-import CalendarPopover from 'blocks/calendar-popover';
+import DateRangeSelector from './date-range-selector';
+import ActionTypeSelector from './action-type-selector';
 
 export class Filterbar extends Component {
-	constructor( props ) {
-		super( props );
-		this.dateRangeButton = React.createRef();
-		this.activityTypeButton = React.createRef();
-	}
-
 	state = {
 		showActivityTypes: false,
 		showActivityDates: false,
+		selectedCheckboxes: {},
 	};
 
-	toggleActivityDate = () => {
+	toggleDateRangeSelector = () => {
 		this.setState( {
 			showActivityDates: ! this.state.showActivityDates,
 			showActivityTypes: false,
 		} );
 	};
 
-	toggleActivityTypes = () => {
+	toggleActivityTypesSelector = () => {
 		this.setState( {
 			showActivityTypes: ! this.state.showActivityTypes,
 			showActivityDates: false,
@@ -45,76 +37,36 @@ export class Filterbar extends Component {
 		this.setState( { showActivityTypes: false } );
 	};
 
-	renderCheckbox = checkbox => {
-		return (
-			<FormLabel key={ checkbox.key }>
-				<FormCheckbox id={ checkbox.key } name={ checkbox.key } />
-				{ checkbox.name }
-			</FormLabel>
-		);
+	onSelectClick = ( checkbox, event ) => {
+		const selectedCheckboxes = this.state.selectedCheckboxes;
+		selectedCheckboxes[ checkbox.key ] = ! selectedCheckboxes[ checkbox.key ];
+		// create a new object so react rerender the ActionTypeSelector component
+		this.setState( { selectedCheckboxes: Object.assign( {}, selectedCheckboxes ) } );
+		event.preventDefault();
 	};
 
 	render() {
-		const { translate } = this.props;
-		const checkboxes = [
-			{ key: 'posts', name: 'Posts and Pages' },
-			{ key: 'Comments', name: 'Comments' },
-			{ key: 'plugins', name: 'Plugins' },
-			{ key: 'themes', name: 'Theme' },
-			{ key: 'core', name: 'WordPress' },
-			{ key: 'settings', name: 'Posts and Pages' },
-			{ key: 'media', name: 'Media' },
-			{ key: 'users', name: 'People' },
-		];
-
+		const { translate, siteId } = this.props;
 		return (
 			<div className="filterbar card">
 				<div className="filterbar__icon-navigation">
 					<Gridicon icon="filter" className="filterbar__open-icon" />
 				</div>
 				<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
-				<Button
-					className="filterbar__selection"
-					compact
-					borderless
-					onClick={ this.toggleActivityDate }
-					ref={ this.dateRangeButton }
-				>
-					{ translate( 'Date Range' ) }
-				</Button>
-				<CalendarPopover
-					context={ this.dateRangeButton.current }
+				<DateRangeSelector
 					isVisible={ this.state.showActivityDates }
+					onButtonClick={ this.toggleDateRangeSelector }
 				/>
-				<Button
-					className="filterbar__selection"
-					compact
-					borderless
-					onClick={ this.toggleActivityTypes }
-					ref={ this.activityTypeButton }
-				>
-					{ translate( 'Activity Type' ) }
-				</Button>
-				<Popover
-					id="filterbar__activity-types"
+				<ActionTypeSelector
+					siteId={ siteId }
 					isVisible={ this.state.showActivityTypes }
+					onButtonClick={ this.toggleActivityTypesSelector }
 					onClose={ this.closeActivityTypes }
-					position={ 'bottom' }
-					context={ this.activityTypeButton.current }
-				>
-					<div className="filterbar__activity-types-selection-wrap">
-						<FormLabel>
-							<FormCheckbox id="comment_like_notification" name="comment_like_notification" />
-							<strong>{ translate( 'All activity type' ) }</strong>
-						</FormLabel>
-						<div className="filterbar__activity-types-selection-granular">
-							{ checkboxes.map( this.renderCheckbox ) }
-						</div>
-					</div>
-				</Popover>
+					onSelectClick={ this.onSelectClick }
+					selected={ this.state.selectedCheckboxes }
+				/>
 			</div>
 		);
 	}
 }
-
 export default localize( Filterbar );

@@ -8,6 +8,28 @@ import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 
+export const requestActivityActionTypeCounts = ( siteId, { freshness = 10 * 1000 } = {} ) => {
+	const id = `activity-action-type-${ siteId }`;
+
+	return requestHttpData(
+		id,
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+				path: `/sites/${ siteId }/activity/count/group`,
+			},
+			{}
+		),
+		{
+			freshness,
+			fromApi: () => data => {
+				return [ [ id, data ] ];
+			},
+		}
+	);
+};
+
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
 	const id = `activity-log-${ siteId }`;
 
