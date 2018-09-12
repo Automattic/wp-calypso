@@ -38,6 +38,13 @@ references:
     paths:
       - ~/.npm
 
+  #
+  # Artifact prep
+  #
+  setup-results-and-artifacts: &setup-results-and-artifacts
+    name: Create Directories for Results and Artifacts
+    command: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+
 
 version: 2
 jobs:
@@ -75,11 +82,7 @@ jobs:
       - attach_workspace:
           at: .
 
-      - run:
-          name: Create Directories for Results and Artifacts
-          command: |
-            mkdir -p $CIRCLE_ARTIFACTS
-            mkdir -p $CIRCLE_TEST_REPORTS
+      - run: *setup-results-and-artifacts
 
       - run:
           name: Build Server
@@ -118,6 +121,8 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+
+      - run: *setup-results-and-artifacts
 
       - run:
           name: Run Integration Tests
