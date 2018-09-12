@@ -89,19 +89,15 @@ jobs:
       - run:
           name: Build calypso-strings.pot
           command: |
-            if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
-              npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
-              mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
-            fi
+            npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
+            mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
 
       - run:
           name: Build New Strings .pot
           command: |
-            if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
-              git clone https://github.com/Automattic/gp-localci-client.git
-              bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
-              rm -rf gp-localci-client
-            fi
+            git clone https://github.com/Automattic/gp-localci-client.git
+            bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
+            rm -rf gp-localci-client
       - store_artifacts:
           path: /tmp/artifacts
 
