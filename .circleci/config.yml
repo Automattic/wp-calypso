@@ -1,5 +1,14 @@
 references:
+  #
+  # Environment
+  #
+  shared-environment: &shared-environment
+    CIRCLE_ARTIFACTS: /tmp/artifacts
+    CIRCLE_TEST_REPORTS: /tmp/test_results
+
+  #
   # Image
+  #
   docker-image: &docker-image
     - image: circleci/node:10.10.0-browsers
 
@@ -55,15 +64,13 @@ jobs:
           paths: .
 
   #
-  # Main Calypso CI
+  # Build translations
   #
-  calypso:
+  translate:
     parallelism: 6
     docker: *docker-image
     working_directory: ~/wp-calypso
-    environment:
-      CIRCLE_ARTIFACTS: /tmp/artifacts
-      CIRCLE_TEST_REPORTS: /tmp/test_results
+    environment: *shared-environment
 
     steps:
       - attach_workspace:
@@ -78,7 +85,7 @@ jobs:
       - run:
           name: Build Server
           environment:
-              NODE_ENV: test
+            NODE_ENV: test
           command: npm run build-server
 
       - run:
@@ -97,6 +104,19 @@ jobs:
               bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
               rm -rf gp-localci-client
             fi
+
+  #
+  # Test Calypso
+  #
+  test-calypso:
+    parallelism: 6
+    docker: *docker-image
+    working_directory: ~/wp-calypso
+    environment: *shared-environment
+
+    steps:
+      - attach_workspace:
+          at: .
 
       - run:
           name: Run Integration Tests
@@ -132,8 +152,6 @@ jobs:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/test_results
-      - store_artifacts:
-          path: /tmp/artifacts
 
 # We need to work around this bit because
 # the notification system in 2.0 is a bit flakey
@@ -147,7 +165,10 @@ workflows:
   run-all-the-things:
     jobs:
       - setup
-      - calypso:
+      - translate:
+          requires:
+            - setup
+      - test-calypso:
           requires:
             - setup
 
