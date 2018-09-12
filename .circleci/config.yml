@@ -150,12 +150,6 @@ jobs:
                 --maxWorkers=2                        \
                 $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
 
-      - run:
-          name: Gather Test Results
-          command: |
-            find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
-          when: always
-
       - store_test_results:
           path: /tmp/test_results
       - store_artifacts:
