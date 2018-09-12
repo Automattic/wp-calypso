@@ -3,10 +3,7 @@
 /**
  * Internal dependencies
  */
-import {
-	SITES_STATS_VIEWS_POSTS_REQUEST,
-	SITES_STATS_VIEWS_POSTS_RECEIVE,
-} from 'state/action-types';
+import { STATS_VIEWS_POSTS_REQUEST, STATS_VIEWS_POSTS_RECEIVE } from 'state/action-types';
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
@@ -20,7 +17,7 @@ import {
  */
 export function requestPostsViews( siteId, postIds, num, date ) {
 	return {
-		type: SITES_STATS_VIEWS_POSTS_REQUEST,
+		type: STATS_VIEWS_POSTS_REQUEST,
 		siteId,
 		postIds,
 		num,
@@ -37,7 +34,7 @@ export function requestPostsViews( siteId, postIds, num, date ) {
  */
 export function receivePostsViews( siteId, { date, posts } ) {
 	return {
-		type: SITES_STATS_VIEWS_POSTS_RECEIVE,
+		type: STATS_VIEWS_POSTS_RECEIVE,
 		siteId,
 		date,
 		posts,
