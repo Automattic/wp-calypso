@@ -142,10 +142,15 @@ jobs:
 
       - run:
           name: Run Client Tests
-          environment:
-            TEST_REPORT_FILENAME: "$CIRCLE_TEST_REPORTS/client/test-results-client.xml"
           command: |
-            npx --no-install jest -c=test/client/jest.config.ci.js -w=2 $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
+            TEST_REPORT_FILENAME="$CIRCLE_TEST_REPORTS/client/test-results-client.xml" npx --no-install \
+              jest                                  \
+                --ci                                \
+                --testResultsProcessor="jest-junit" \
+                -c=test/client/jest.config.js       \
+                --runInBand                         \
+                --maxWorkers=2                      \
+                $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
 
       - run:
           name: Run Server Tests
