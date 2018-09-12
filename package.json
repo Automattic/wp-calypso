@@ -311,7 +311,7 @@
     "stylelint": "9.5.0",
     "supertest": "3.3.0",
     "terminal-kit": "1.26.2",
-    "webpack-bundle-analyzer": "3.0.1",
+    "webpack-bundle-analyzer": "3.0.2",
     "webpack-hot-middleware": "2.22.3"
   },
   "optionalDependencies": {

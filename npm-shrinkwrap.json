@@ -10351,29 +10351,6 @@
         "minimist": "0.0.8"
       }
     },
-    "mobx": {
-      "version": "5.1.0",
-      "resolved": "https://registry.npmjs.org/mobx/-/mobx-5.1.0.tgz",
-      "integrity": "sha512-cQzBmF2gbpcBR2xKwt5jZx0ncDMC9Hg5nYrp3Krv0qHH4GFqWZyR+ZLkRJRcvVF4rqxpy2G96Qbk5YzyQ8tdXw==",
-      "dev": true
-    },
-    "mobx-preact": {
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/mobx-preact/-/mobx-preact-3.0.0.tgz",
-      "integrity": "sha1-aD8YBeRydXDI7OFWGiXzR3O3tgE=",
-      "dev": true,
-      "requires": {
-        "hoist-non-react-statics": "^2.3.1"
-      },
-      "dependencies": {
-        "hoist-non-react-statics": {
-          "version": "2.5.5",
-          "resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz",
-          "integrity": "sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw==",
-          "dev": true
-        }
-      }
-    },
     "moment": {
       "version": "2.22.2",
       "resolved": "https://registry.npmjs.org/moment/-/moment-2.22.2.tgz",
@@ -16999,13 +16976,11 @@
       }
     },
     "webpack-bundle-analyzer": {
-      "version": "3.0.1",
-      "resolved": "https://registry.npmjs.org/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.0.1.tgz",
-      "integrity": "sha512-qW5+ohUtywGqBqUtN4iq1dGqj9eD/reFyu4bbjgW+CQwwyp+kJO3PSnOq5Ki1gqTNE3adJJMOnk5iZvB/UMWHg==",
+      "version": "3.0.2",
+      "resolved": "https://registry.npmjs.org/webpack-bundle-analyzer/-/webpack-bundle-analyzer-3.0.2.tgz",
+      "integrity": "sha512-cZG4wSQtKrSpk5RJ33dxiaAyo8bP0V+JvycAyIDFEiDIhw4LHhhVKhn40YT1w6TR9E4scHA00LnIoBtTA13Mow==",
       "dev": true,
       "requires": {
-        "@babel/polyfill": "7.0.0",
-        "@babel/runtime": "7.0.0",
         "acorn": "^5.7.3",
         "bfj": "^6.1.1",
         "chalk": "^2.4.1",
@@ -17014,10 +16989,8 @@
         "express": "^4.16.3",
         "filesize": "^3.6.1",
         "gzip-size": "^5.0.0",
-        "lodash": "4.17.10",
+        "lodash": "^4.17.10",
         "mkdirp": "^0.5.1",
-        "mobx": "5.1.0",
-        "mobx-preact": "3.0.0",
         "opener": "^1.5.1",
         "ws": "^6.0.0"
       },
