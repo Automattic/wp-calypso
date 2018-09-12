@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { forOwn, indexOf } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -48,7 +49,15 @@ export class ActionTypeSelector extends Component {
 		selection && !! selection.length && indexOf( selection, key ) >= 0;
 
 	render() {
-		const { translate, actionTypes, isVisible, onClose, onButtonClick, selected } = this.props;
+		const {
+			translate,
+			actionTypes,
+			isVisible,
+			onClose,
+			onButtonClick,
+			selected,
+			onResetSelection,
+		} = this.props;
 		const checkboxes = [];
 		const selectedNames = [];
 		let totalCount = 0;
@@ -83,6 +92,16 @@ export class ActionTypeSelector extends Component {
 					{ ! selectedNames.length && translate( 'Activity Type' ) }
 					{ !! selectedNames.length && selectedNames.join( ', ' ) }
 				</Button>
+				{ !! selectedNames.length && (
+					<Button
+						className="filterbar__selection-close"
+						compact
+						borderless
+						onClick={ onResetSelection }
+					>
+						<Gridicon icon="cross-small" />
+					</Button>
+				) }
 				<Popover
 					id="filterbar__activity-types"
 					isVisible={ isVisible }

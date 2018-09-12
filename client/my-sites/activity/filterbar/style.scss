@@ -41,16 +41,32 @@
 
   .filterbar__selection.button {
     border: 1px solid $gray-lighten-10;
-    border-radius: 5px;
+  	border-radius: 5px;
     padding: 8px;
     margin: 8px;
   }
 	.filterbar__selection.is-selected {
+		border-radius: 0;
+		border-top-left-radius: 5px;
+		border-bottom-left-radius: 5px;
     border: 1px solid $gray-darken-30;
     background: $gray-darken-30;
 		color: $white;
+		margin: 8px 0 8px 8px;
   }
-
+	.filterbar__selection-close {
+		background: $gray-darken-30;
+		color: $white;
+		border-radius: 0;
+		border-top-right-radius: 5px;
+		border-bottom-right-radius: 5px;
+		border: 1px solid $gray-darken-30;
+		padding: 8px 8px 8px 0;
+		margin: 8px 8px 8px 0;
+	}
+	.filterbar__selection-close:hover {
+		color: $white;
+	}
 }
 
 .filterbar__activity-types-selection-wrap {

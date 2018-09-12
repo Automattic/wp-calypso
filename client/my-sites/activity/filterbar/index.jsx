@@ -18,7 +18,6 @@ export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
 		showActivityDates: false,
-		selectedCheckboxes: {},
 	};
 
 	toggleDateRangeSelector = () => {
@@ -26,6 +25,12 @@ export class Filterbar extends Component {
 			showActivityDates: ! this.state.showActivityDates,
 			showActivityTypes: false,
 		} );
+	};
+
+	resetActivityTypeSelector = event => {
+		const { selectActionType, siteId } = this.props;
+		selectActionType( siteId, [] );
+		event.preventDefault();
 	};
 
 	toggleActivityTypesSelector = () => {
@@ -73,6 +78,7 @@ export class Filterbar extends Component {
 					onClose={ this.closeActivityTypes }
 					onSelectClick={ this.onSelectClick }
 					selected={ filter && filter.group }
+					onResetSelection={ this.resetActivityTypeSelector }
 				/>
 			</div>
 		);
