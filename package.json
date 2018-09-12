@@ -128,7 +128,7 @@
     "keymaster": "1.6.2",
     "loader-utils": "1.1.0",
     "localforage": "1.7.2",
-    "lodash": "4.17.10",
+    "lodash": "4.17.11",
     "lru": "3.1.0",
     "lunr": "2.3.3",
     "marked": "0.5.0",
