@@ -119,22 +119,6 @@ export class Theme extends Component {
 		);
 	};
 
-	renderHover = () => {
-		if ( this.props.screenshotClickUrl || this.props.onScreenshotClick ) {
-			return (
-				<a
-					aria-label={ this.props.theme.name }
-					title={ this.props.theme.description }
-					className="theme__active-focus"
-					href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
-					onClick={ this.onScreenshotClick }
-				>
-					<span>{ this.props.actionLabel }</span>
-				</a>
-			);
-		}
-	};
-
 	renderInstalling = () => {
 		if ( this.props.installing ) {
 			return (
@@ -155,9 +139,10 @@ export class Theme extends Component {
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
+		const isActionable = !! this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
-			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick ),
+			'is-actionable': isActionable,
 		} );
 
 		const hasPrice = /\d/g.test( price );
@@ -218,9 +203,13 @@ export class Theme extends Component {
 					</Ribbon>
 				) }
 				<div className="theme__content">
-					{ this.renderHover() }
-
-					<a href={ this.props.screenshotClickUrl }>
+					<a
+						className="theme__thumbnail"
+						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
+					>
+						{ isActionable && (
+							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
+						) }
 						{ this.renderInstalling() }
 						{ screenshot ? (
 							<img
