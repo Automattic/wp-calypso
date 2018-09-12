@@ -13,7 +13,6 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import EmptyContent from 'components/empty-content';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -168,7 +167,7 @@ class DomainSearch extends Component {
 								offerUnavailableOption
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
-								vendor={ abtest( 'domainManagementSuggestion' ) }
+								vendor="domainsbot"
 							/>
 						</EmailVerificationGate>
 					</div>
