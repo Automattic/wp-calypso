@@ -104,6 +104,8 @@ jobs:
               bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
               rm -rf gp-localci-client
             fi
+      - store_artifacts:
+          path: /tmp/artifacts
 
   #
   # Test Calypso
