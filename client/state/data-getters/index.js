@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * Internal dependencies
  */
@@ -101,9 +102,9 @@ export const requestSiteAlerts = siteId => {
 	);
 };
 
-export const requestGutenbergDraftPost = siteId =>
+export const requestGutenbergDraftPost = ( siteId, draftId ) =>
 	requestHttpData(
-		`gutenberg-draft-post-${ siteId }`,
+		draftId,
 		http(
 			{
 				path: `/sites/${ siteId }/posts/create-draft`,
@@ -113,7 +114,7 @@ export const requestGutenbergDraftPost = siteId =>
 			},
 			{}
 		),
-		{ formApi: () => ( { ID } ) => [ [ `gutenberg-draft-post-${ siteId }`, ID ] ] }
+		{ formApi: () => ( { ID } ) => [ [ draftId, ID ] ] }
 	);
 
 export const requestSitePost = ( siteId, postId ) =>
