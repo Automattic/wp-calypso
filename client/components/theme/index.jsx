@@ -123,7 +123,7 @@ export class Theme extends Component {
 					aria-label={ this.props.theme.name }
 					title={ this.props.theme.description }
 					className="theme__active-focus"
-					href={ this.props.screenshotClickUrl }
+					href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
 					onClick={ this.onScreenshotClick }
 				>
 					<span>{ this.props.actionLabel }</span>
