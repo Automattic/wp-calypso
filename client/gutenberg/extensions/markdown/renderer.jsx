@@ -11,7 +11,7 @@ import { RawHTML } from '@wordpress/element';
  */
 const markdownConverter = new MarkdownIt();
 
-export default ( { className, source } ) => (
+export default ( { className, source = '' } ) => (
 	<RawHTML className={ className }>
 		{ source.length ? markdownConverter.render( source ) : '' }
 	</RawHTML>
