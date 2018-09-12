@@ -169,6 +169,7 @@
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": true,
 		"signup/domain-first-flow": true,
+		"signup/import-landing-handler": true,
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,

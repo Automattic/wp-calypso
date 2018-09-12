@@ -271,6 +271,16 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		};
 	}
 
+	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
+		flows[ 'from-site' ] = {
+			steps: [ 'import-from-url', 'user', 'domains' ],
+			destination: ( { siteSlug } ) => `/settings/import/${ siteSlug }`,
+			description: 'A flow to kick off an import during signup',
+			disallowResume: true,
+			lastModified: '2018-09-12',
+		};
+	}
+
 	return flows;
 }
 

@@ -337,6 +337,11 @@ export function generateSteps( {
 			stepName: 'clone-cloning',
 			providesDependencies: [],
 		},
+
+		'import-from-url': {
+			stepName: 'import-from-url',
+			providesDependencies: [ 'importUrl', 'themeSlugWithRepo' ],
+		},
 	};
 }
 
