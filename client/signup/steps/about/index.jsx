@@ -49,13 +49,16 @@ class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
 		this._isMounted = false;
+		const hasPrepopulatedVertical =
+			isValidLandingPageVertical( props.siteTopic ) &&
+			props.queryObject.vertical === props.siteTopic;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 			showStore: false,
 			pendingStoreClick: false,
-			hasPrepopulatedVertical: isValidLandingPageVertical( this.props.siteTopic ),
+			hasPrepopulatedVertical,
 		};
 	}
 
