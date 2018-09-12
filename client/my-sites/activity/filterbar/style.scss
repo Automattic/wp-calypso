@@ -34,11 +34,12 @@
 	}
 
 	.filterbar__label {
+		margin-right: 8px;
 		color: $gray;
 	}
 
 	.filterbar__selection.button {
-		margin: 8px;
+		margin: 6px;
 		padding: 8px;
 		border: 1px solid $gray-lighten-10;
 		border-radius: 5px;
@@ -72,14 +73,15 @@
 
 .filterbar__activity-types-selection-wrap {
 	min-width: 200px;
-	padding: 16px;
+	padding: 24px 24px 18px;
 
 	label {
 		text-align: left;
 	}
 
-	input {
-		margin-right: 8px;
+	input[type=checkbox] {
+		margin-top: 3px;
+		margin-right: 10px;
 	}
 }
 
