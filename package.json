@@ -254,7 +254,6 @@
     "test": "run-s -s test-client test-server",
     "pretest-client": "npm run -s pretest",
     "test-client": "jest -c=test/client/jest.config.json",
-    "test-client:ci": "cross-env-shell TEST_REPORT_FILENAME=./test-results-client.xml jest -c=test/client/jest.config.ci.js -w=2",
     "test-client:watch": "npm run -s test-client -- --watch",
     "pretest-integration": "npm run -s pretest",
     "test-integration": "jest -c=test/integration/jest.config.json",
