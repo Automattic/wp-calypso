@@ -67,7 +67,6 @@ jobs:
   # Build translations
   #
   translate:
-    parallelism: 6
     docker: *docker-image
     working_directory: ~/wp-calypso
     environment: *shared-environment
