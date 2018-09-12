@@ -24,7 +24,7 @@ const currentReducer = ( state, query ) =>
 
 const initialState = {
 	initial: false,
-	current: false,
+	current: {},
 	previous: false,
 };
 
