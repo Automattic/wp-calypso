@@ -294,7 +294,10 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
 		flows.import = {
 			steps: [ 'from-url', 'user', 'domains' ],
-			destination: ( { siteSlug } ) => `/settings/import/${ siteSlug }`,
+			destination: ( { importSiteDetails, importUrl, siteSlug } ) =>
+				`/settings/import/${ siteSlug }` +
+				( importSiteDetails.engine === 'wix' ? '/wix' : '' ) +
+				( importUrl ? `?from-site=${ encodeURIComponent( importUrl ) }` : '' ),
 			description: 'A flow to kick off an import during signup',
 			disallowResume: true,
 			lastModified: '2018-09-12',
