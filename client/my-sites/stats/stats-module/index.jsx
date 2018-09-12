@@ -32,6 +32,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
+import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 
 class StatsModule extends Component {
 	static propTypes = {
@@ -189,7 +190,7 @@ class StatsModule extends Component {
 									'Upgrade to a Business Plan for Google Analytics integration.'
 								) }
 								event="googleAnalytics-stats-countries"
-								feature="google-analytics"
+								feature={ FEATURE_GOOGLE_ANALYTICS }
 							/>
 						) }
 				</Card>
