@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Returns `true` or `false` if views for a given site are being requested.
  *
  * @param   {Object}  state    Global state tree
@@ -20,7 +25,7 @@ export function isRequestingViewsForSite( state, siteId ) {
  * @returns {boolean}          Whether or not views are being requested for post.
  */
 export function isRequestingViewsForPost( state, siteId, postId ) {
-	return !! state.stats.views.requesting[ siteId ][ postId ];
+	return !! get( state, [ 'stats', 'views', 'requesting', siteId, postId ], false );
 }
 
 /**
@@ -32,9 +37,5 @@ export function isRequestingViewsForPost( state, siteId, postId ) {
  * @returns {?String}          Post views.
  */
 export function getViewsForPost( state, siteId, postId ) {
-	const post = state.stats.views.items[ siteId ][ postId ];
-	if ( ! post ) {
-		return null;
-	}
-	return post.views;
+	return get( state, [ 'stats', 'views', 'items', siteId, postId, 'views' ], null );
 }

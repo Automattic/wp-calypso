@@ -19,6 +19,7 @@ import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/s
 import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
 import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
+import { getViewsForPost } from 'state/stats/views/posts/selectors';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {
@@ -79,6 +80,34 @@ class PostActionCounts extends PureComponent {
 		);
 	}
 
+	renderViewCount() {
+		const { viewCount: count, numberFormat, postId, showViews, siteSlug, translate } = this.props;
+		if ( ! count || count < 1 || ! showViews ) {
+			return null;
+		}
+		return (
+			<li>
+				<a
+					href={ `/stats/post/${ postId }/${ siteSlug }` }
+					onClick={ this.onActionClick( 'stats' ) }
+					title={ translate(
+						'%(count)s recent view in the past 30 days.',
+						'%(count)s recent views in the past 30 days',
+						{
+							count,
+							args: { count: numberFormat( count ) },
+						}
+					) }
+				>
+					{ translate( '%(count)s Recent View', '%(count)s Recent Views', {
+						count,
+						args: { count: numberFormat( count ) },
+					} ) }
+				</a>
+			</li>
+		);
+	}
+
 	renderLikeCount() {
 		const {
 			likeCount: count,
@@ -120,6 +149,7 @@ class PostActionCounts extends PureComponent {
 	render() {
 		return (
 			<ul className="post-action-counts">
+				{ this.renderViewCount() }
 				{ this.renderLikeCount() }
 				{ this.renderCommentCount() }
 			</ul>
@@ -155,6 +185,7 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			type: get( post, 'type', 'unknown' ),
+			viewCount: getViewsForPost( state, siteId, postId ),
 			isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
 		};
 	},
