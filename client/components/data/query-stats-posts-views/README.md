@@ -1,24 +1,21 @@
-Query Users
+Query Posts Views
 ===========
 
-`<QueryUsers />` is a React component used to request users data.
+`<QueryPostsViews />` is a React component used to request views of a set of posts across a given time period.
 
 ## Usage
 
-Render the component, passing `siteId` and `userIds`. It does not accept any children, nor does it render any element to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
+Render the component, passing `siteId` and `postIds`. It does not accept any children, nor does it render any element to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
 import React from 'react';
-import QueryUsers from 'components/data/query-users';
+import QueryPostsViews from 'components/data/query-stats-posts-views';
 
-export default function Users( { users } ) {
+export default function ViewCount( { viewCount } ) {
 	return (
 		<div>
-			<QueryUsers
-				siteId={ 12345678 }
-				userIds={ userIds }
-			/>
-			<div>{ users }</div>
+			<QueryPostsViews siteId={ 12345678 } postIds={ [ 1, 2, 3, 4] } num={ 30 } />
+			<div>{ viewCount }</div>
 		</div>
 	);
 }
@@ -33,14 +30,32 @@ export default function Users( { users } ) {
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The site ID for which we request post revisions.
+The site ID.
 
 
-### `userIds`
+### `postIds`
 
 <table>
 	<tr><th>Type</th><td>Array[Number]</td></tr>
+	<tr><th>Required</th><td>Yes</td></tr>
+</table>
+
+The post IDs for which we'll retrieve view data.
+
+### `num`
+
+<table>
+	<tr><th>Type</th><td>String</td></tr>
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-Limit result set to specific IDs. The userIds will be filtered to exclude the current user in order to only request data that is not present yet, as well as to preserve the current user state.
+The most recent day from which to query views for `postIds`. Defaults to current date.
+
+### `num`
+
+<table>
+	<tr><th>Type</th><td>Number</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+The number of days from `date` to query views for `postIds`. Defaults to 1.
