@@ -61,10 +61,12 @@ describe.only( 'index', () => {
 			} );
 
 			test( 'ignores non-existent keys', () => {
+				// eslint-disable-next-line no-console
 				expect( console.error.calledOnce ).to.eql( false );
 				const reduxStoreNoArgs = createReduxStore().getState();
 				const reduxStoreBadData = createReduxStore( { some: { bad: { stuff: true } } } ).getState();
 				expect( reduxStoreBadData ).to.eql( reduxStoreNoArgs );
+				// eslint-disable-next-line no-console
 				expect( console.error.calledOnce ).to.eql( true );
 			} );
 		} );
