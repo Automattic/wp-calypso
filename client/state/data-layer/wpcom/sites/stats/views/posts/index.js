@@ -20,7 +20,6 @@ export const fetch = action => {
 			method: 'GET',
 			path: `/sites/${ siteId }/stats/views/posts`,
 			apiVersion: '1.1',
-			apiNamespace: 'rest/v1',
 			query: {
 				post_ids: postIds,
 				num,
