@@ -1,4 +1,5 @@
 /** @format */
+
 /**
  * External dependencies
  */
@@ -128,3 +129,32 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
+
+export const requestGutenbergDraftPost = ( siteId, draftId ) =>
+	requestHttpData(
+		draftId,
+		http(
+			{
+				path: `/sites/${ siteId }/p2/post`,
+				method: 'GET', //this should be a POST, remember
+				apiNamespace: 'wpcom/v2',
+				body: {}, //this is for a POST verb.
+			},
+			{}
+		),
+		{ formApi: () => data => [ [ draftId, data ] ] }
+	);
+
+export const requestSitePost = ( siteId, postId ) =>
+	requestHttpData(
+		`gutenberg-site-${ siteId }-post-${ postId }`,
+		http(
+			{
+				path: `/sites/${ siteId }/posts/${ postId }?context=edit`,
+				method: 'GET',
+				apiNamespace: 'wp/v2',
+			},
+			{}
+		),
+		{ fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ] }
+	);

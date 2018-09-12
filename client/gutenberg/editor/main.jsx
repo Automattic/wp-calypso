@@ -1,10 +1,11 @@
 /** @format */
+
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import { dispatch } from '@wordpress/data';
 import '@wordpress/core-data'; // Initializes core data store
 import { registerCoreBlocks } from '@wordpress/block-library';
@@ -15,27 +16,27 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import Editor from './edit-post/editor.js';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import QueryPostTypes from 'components/data/query-post-types';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestGutenbergDraftPost as createAutoDraft, requestSitePost } from 'state/data-getters';
+import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
 
 const editorSettings = {};
-
-const mockPost = {
-	type: 'post',
-	content: { raw: 'test content' },
-};
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
 		registerCoreBlocks();
 		// Prevent Guided tour from showing when editor loads.
 		dispatch( 'core/nux' ).disableTips();
+
+		const { siteId, postId, uniqueDraftKey } = this.props;
+		if ( ! postId ) {
+			createAutoDraft( siteId, uniqueDraftKey );
+		}
 	}
 
 	render() {
-		const { postType, siteId, siteSlug } = this.props;
-		const post = { ...mockPost, type: postType };
+		const { postType, siteId, siteSlug, post } = this.props;
 
 		return (
 			<WithAPIMiddleware siteSlug={ siteSlug }>
@@ -52,12 +53,22 @@ class GutenbergEditor extends Component {
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
+const getPost = ( siteId, postId ) => {
+	if ( siteId && postId ) {
+		const requestSitePostData = requestSitePost( siteId, postId );
+		return get( requestSitePostData, 'data', null );
+	}
+
+	return null;
+};
+
+const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey } ) => {
+	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
+	const post = getPost( siteId, postId || draftPostId );
 
 	return {
-		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		post,
 	};
 };
 
