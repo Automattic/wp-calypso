@@ -33,7 +33,7 @@ import QueryPreferences from 'components/data/query-preferences';
 import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
-import { hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
+import { masterbarIsVisible } from 'state/ui/selectors';
 import InlineHelp from 'blocks/inline-help';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
@@ -174,7 +174,6 @@ export default connect( state => {
 		isLoading,
 		isSupportUser: state.support.isSupportUser,
 		section,
-		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
