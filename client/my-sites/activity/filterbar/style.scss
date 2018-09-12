@@ -43,6 +43,8 @@
 		padding: 8px;
 		border: 1px solid $gray-lighten-10;
 		border-radius: 5px;
+		overflow: hidden;
+		white-space: nowrap;
 	}
 
 	.filterbar__selection.is-selected {
