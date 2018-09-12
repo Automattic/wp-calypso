@@ -76,7 +76,9 @@ export default ( { attributes, className, setAttributes } ) => {
 					<RangeControl
 						label={ __( 'Number of posts' ) }
 						value={ postsToShow }
-						onChange={ value => setAttributes( { postsToShow: value } ) }
+						onChange={ value =>
+							setAttributes( { postsToShow: Math.min( value, MAX_POSTS_TO_SHOW ) } )
+						}
 						min={ 1 }
 						max={ MAX_POSTS_TO_SHOW }
 					/>
