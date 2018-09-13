@@ -46,8 +46,7 @@ export default ( { attributes, className, setAttributes } ) => {
 		},
 	];
 
-	const displayPosts =
-		DEFAULT_POSTS.length > postsToShow ? DEFAULT_POSTS.slice( 0, postsToShow ) : DEFAULT_POSTS;
+	const displayPosts = DEFAULT_POSTS.slice( 0, postsToShow );
 
 	return (
 		<Fragment>
