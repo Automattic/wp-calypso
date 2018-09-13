@@ -24,6 +24,7 @@ export class ThemesList extends React.Component {
 		loading: PropTypes.bool.isRequired,
 		fetchNextPage: PropTypes.func.isRequired,
 		getButtonOptions: PropTypes.func,
+		getScreenshotUrl: PropTypes.func,
 		onScreenshotClick: PropTypes.func.isRequired,
 		onMoreButtonClick: PropTypes.func,
 		getActionLabel: PropTypes.func,

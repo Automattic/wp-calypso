@@ -13,7 +13,7 @@ exports[`Theme rendering with default display buttonContents should match snapsh
     <a
       aria-label="Twenty Seventeen"
       className="theme__active-focus"
-      href="#"
+      href="javascript:;"
       onClick={[Function]}
     >
       <span />
