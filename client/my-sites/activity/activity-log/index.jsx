@@ -317,13 +317,20 @@ class ActivityLog extends Component {
 			return isFilterEmpty ? (
 				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 			) : (
-				<EmptyContent title={ translate( 'No matching events found.' ) } />
+				<Fragment>
+					{ config.isEnabled( 'activity-filterbar' ) &&
+						! isFilterEmpty && <Filterbar siteId={ siteId } filter={ filter } /> }
+					<EmptyContent title={ translate( 'No matching events found.' ) } />
+				</Fragment>
 			);
 		}
 
 		// The network request is still ongoing
 		return (
 			<section className="activity-log__wrapper">
+				{ config.isEnabled( 'activity-filterbar' ) && (
+					<Filterbar siteId={ siteId } filter={ filter } />
+				) }
 				<div className="activity-log__time-period is-loading">
 					<span />
 				</div>
