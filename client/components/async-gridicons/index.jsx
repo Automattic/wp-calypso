@@ -14,7 +14,7 @@ function AsyncGridicon( { icon = '' } ) {
 	return (
 		<AsyncLoad
 			require={ function( callback ) {
-				import( /* webpackChunkName: "gridicons", webpackInclude: /\.js$/, webpackMode: "lazy-once" */ `gridicons/dist/${ icon }` ).then(
+				import( /* webpackChunkName: "gridicons-[request]" */ `gridicons/dist/${ icon }` ).then(
 					g => callback( g.default )
 				);
 			} }
