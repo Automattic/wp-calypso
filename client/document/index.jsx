@@ -40,7 +40,7 @@ class Document extends React.Component {
 			entrypoint,
 			manifest,
 			lang,
-			langRevisions,
+			languageRevisions,
 			renderedLayout,
 			user,
 			urls,
@@ -72,7 +72,9 @@ class Document extends React.Component {
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
 				: '' ) +
 			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' ) +
-			( langRevisions ? `var langRevisions = ${ jsonStringifyForHtml( langRevisions ) };\n` : '' );
+			( languageRevisions
+				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
+				: '' );
 
 		return (
 			<html
