@@ -103,9 +103,9 @@ export class Filterbar extends Component {
 				enteredToDate: day,
 			} );
 		}
-		if ( ! this.isSelectingDayInPast( day ) ) {
+		if ( ! this.isSelectingDayInPast( day ) && ! toDate ) {
 			this.setState( {
-				enteredToDate: new Date(),
+				enteredToDate: fromDate,
 			} );
 		}
 	};
