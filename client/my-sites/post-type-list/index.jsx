@@ -227,7 +227,9 @@ class PostTypeList extends Component {
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ postIds.length && <QueryPostsViews siteId={ siteId } postIds={ postIds } num={ 30 } /> }
+				{ postIds.length > 0 && (
+					<QueryPostsViews siteId={ siteId } postIds={ postIds } num={ 30 } />
+				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
 					<UpgradeNudge

@@ -92,10 +92,14 @@ class PostActionCounts extends PureComponent {
 					onClick={ this.onActionClick( 'stats' ) }
 				>
 					<span
-						title={ translate( '%(count)s view in 30 days', '%(count)s views in 30 days', {
-							count,
-							args: { count: numberFormat( count ) },
-						} ) }
+						title={ translate(
+							'%(count)s view in the past 30 days',
+							'%(count)s views in the past 30 days',
+							{
+								count,
+								args: { count: numberFormat( count ) },
+							}
+						) }
 					>
 						{ translate( '%(count)s Recent View', '%(count)s Recent Views', {
 							count,
