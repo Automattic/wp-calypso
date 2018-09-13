@@ -180,11 +180,17 @@ function validatePlacement( placement: DialogPosition, target: Element | null ):
 	const targetSlug =
 		target && ( target as HTMLElement ).dataset && ( target as HTMLElement ).dataset.tipTarget;
 
-	if ( targetSlug === 'sidebar' && isMobile() ) {
-		return 'middle';
+	if ( isMobile() ) {
+		if ( targetSlug === 'sidebar' ) {
+			return 'middle';
+		}
+
+		if ( target && placement !== 'center' ) {
+			return 'below';
+		}
 	}
 
-	return target && placement !== 'center' && isMobile() ? 'below' : placement;
+	return placement;
 }
 
 function scrollIntoView( target: Element, scrollContainer: Element | null ) {
