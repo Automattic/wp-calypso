@@ -7,7 +7,7 @@ import { Button, Dashicon } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { RichText } from '@wordpress/editor';
 
-export const ItemEditor = class extends Component {
+export class ItemEditor extends Component {
 	constructor() {
 		super( ...arguments );
 		this.toggleDone = this.toggleDone.bind( this );
@@ -85,4 +85,4 @@ export const ItemEditor = class extends Component {
 			</li>
 		);
 	}
-};
+}
