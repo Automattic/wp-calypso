@@ -102,7 +102,7 @@ $color-accent-green: #31843f;
 	}
 
 	// Add new item form
-	.add-new-todo-item-form {
+	&__add-form {
 		align-items: center;
 
 		.components-button {
