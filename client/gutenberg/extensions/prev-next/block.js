@@ -31,8 +31,8 @@ const blockAttributes = {
 const save = ( { attributes: { prev, next }, className, isEditor } ) =>
 	prev || next ? (
 		<div className={ isEditor ? className : '' }>
-			{ prev ? <a href={ prev }>← Prev</a> : <span> </span> }
-			{ next ? <a href={ next }>Next →</a> : <span> </span> }
+			{ prev ? <a href={ prev }>← { __( 'Prev' ) }</a> : <span> </span> }
+			{ next ? <a href={ next }>{ __( 'Next' ) } →</a> : <span> </span> }
 		</div>
 	) : (
 		<Fragment />
@@ -56,11 +56,13 @@ const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 		);
 	}
 
-	return attributes.prev || attributes.next ? (
-		save( { attributes, className, isEditor: true } )
-	) : (
+	if ( attributes.prev || attributes.next ) {
+		return save( { attributes, className, isEditor: true } );
+	}
+
+	return (
 		<div style={ { textAlign: 'center' } }>
-			← Add prev/next links to related posts in a series. →
+			← { __( 'Add prev/next links to related posts in a series.' ) } →
 		</div>
 	);
 };
