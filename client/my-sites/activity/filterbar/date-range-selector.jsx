@@ -90,6 +90,7 @@ export class DateRangeSelector extends Component {
 			onDayClick,
 			onDayMouseEnter,
 			onResetSelection,
+			onClearSelection,
 		} = this.props;
 		const modifiers = { start: from, end: enteredTo };
 		const disabledDays = [ { after: new Date() } ];
@@ -136,13 +137,36 @@ export class DateRangeSelector extends Component {
 							onSelectDay={ onDayClick }
 							onDayMouseEnter={ onDayMouseEnter }
 						/>
-						<Button primary onClick={ onClose } disabled={ ! from }>
-							{ translate( 'Done' ) }
-						</Button>
-						<div>
-							{ ! to && <Gridicon icon="info" /> }
-							{ ! from && ! to && translate( 'Please select the first day.' ) }
-							{ from && ! to && translate( 'Please select the last day.' ) }
+						<div className="filterbar__date-range-selection-info">
+							<div className="filterbar__date-range-info">
+								{ ! from &&
+									! to &&
+									translate( '{{icon/}} Please select the first day.', {
+										components: { icon: <Gridicon icon="info" /> },
+									} ) }
+								{ from &&
+									! to &&
+									translate( '{{icon/}} Please select the last day.', {
+										components: { icon: <Gridicon icon="info" /> },
+									} ) }
+								{ from &&
+									to && (
+										<Button borderless compact onClick={ onClearSelection }>
+											{ translate( '{{icon/}} clear dates', {
+												components: { icon: <Gridicon icon="cross-small" /> },
+											} ) }
+										</Button>
+									) }
+							</div>
+							<Button
+								className="filterbar__date-range-apply"
+								primary
+								compact
+								onClick={ onClose }
+								disabled={ ! from }
+							>
+								{ translate( 'Apply' ) }
+							</Button>
 						</div>
 					</div>
 				</Popover>

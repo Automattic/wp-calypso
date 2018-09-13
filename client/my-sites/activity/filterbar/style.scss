@@ -109,7 +109,12 @@
 	.DayPicker-Day .date-picker__day {
 		padding: 0 7px;
 	}
-
+	.filterbar__date-range-selection-info {
+		 display: flex;
+		 flex-flow: row nowrap;
+		 justify-content: space-between;
+	}
+	
 	.DayPicker-Day--start {
 		background-color: $blue-light;
 		border-radius: 0;
