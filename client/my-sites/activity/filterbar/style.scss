@@ -184,7 +184,7 @@
     left: -1px;
     right: auto;
 	}
-
+	.DayPicker-Day--start:hover .date-picker__day:after,
 	.DayPicker-Day--start.DayPicker-Day--end .date-picker__day:after {
     background: transparent;
 	}

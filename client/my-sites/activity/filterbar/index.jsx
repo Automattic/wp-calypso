@@ -33,9 +33,26 @@ export class Filterbar extends Component {
 	};
 
 	closeDateRangeSelector = () => {
+		const { siteId, selectDateRange } = this.props;
+		const { fromDate, toDate } = this.state;
 		this.setState( {
 			showActivityDates: false,
+			toDate: null,
+			fromDate: null,
+			enteredToDate: null,
 		} );
+		if ( fromDate && toDate ) {
+			selectDateRange(
+				siteId,
+				moment( fromDate ).format( DATE_FORMAT ),
+				moment( toDate ).format( DATE_FORMAT )
+			);
+			return;
+		}
+
+		if ( fromDate ) {
+			selectDateRange( siteId, moment( fromDate ).format( DATE_FORMAT ), null );
+		}
 	};
 
 	isSelectingFirstDay = ( from, to, day ) => {
@@ -50,30 +67,31 @@ export class Filterbar extends Component {
 	};
 
 	handleDayClick = date => {
-		const { siteId, selectDateRange, filter } = this.props;
+		const { filter } = this.props;
 		const day = date.toDate();
+
 		const fromDate = this.getFromDate( filter );
 		const toDate = this.getToDate( filter );
-		if ( fromDate && toDate && day >= fromDate && day <= toDate ) {
-			this.handleResetSelection();
+
+		if ( fromDate && toDate && day >= toDate ) {
+			this.setState( {
+				enteredToDate: day,
+				toDate: day,
+			} );
 			return;
 		}
 		if ( this.isSelectingFirstDay( fromDate, toDate, day ) ) {
 			this.setState( {
+				fromDate: day,
 				enteredToDate: null,
 			} );
-			selectDateRange( siteId, moment( day ).format( DATE_FORMAT ), null );
 			return;
 		}
 
 		this.setState( {
 			enteredToDate: day,
+			toDate: day,
 		} );
-		selectDateRange(
-			siteId,
-			moment( fromDate ).format( DATE_FORMAT ),
-			moment( day ).format( DATE_FORMAT )
-		);
 	};
 
 	handleDayMouseEnter = day => {
@@ -91,6 +109,8 @@ export class Filterbar extends Component {
 		const { siteId, selectDateRange } = this.props;
 		this.setState( {
 			enteredToDate: null,
+			fromDate: null,
+			toDate: null,
 		} );
 		selectDateRange( siteId, null, null );
 	};
@@ -127,10 +147,18 @@ export class Filterbar extends Component {
 	};
 
 	getFromDate = filter => {
+		const { fromDate } = this.state;
+		if ( fromDate ) {
+			return fromDate;
+		}
 		return filter && filter.after ? moment( filter.after ).toDate() : null;
 	};
 
 	getToDate = filter => {
+		const { toDate } = this.state;
+		if ( toDate ) {
+			return toDate;
+		}
 		return filter && filter.before ? moment( filter.before ).toDate() : null;
 	};
 

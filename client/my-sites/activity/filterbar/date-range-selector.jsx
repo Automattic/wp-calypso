@@ -92,7 +92,7 @@ export class DateRangeSelector extends Component {
 			onResetSelection,
 		} = this.props;
 		const modifiers = { start: from, end: enteredTo };
-		const disabledDays = [ { before: from, after: new Date() } ];
+		const disabledDays = [ { after: new Date() } ];
 		const selectedDays = [ from, { from, to: enteredTo } ];
 
 		const buttonClass = classnames( {
@@ -136,6 +136,9 @@ export class DateRangeSelector extends Component {
 							onSelectDay={ onDayClick }
 							onDayMouseEnter={ onDayMouseEnter }
 						/>
+						<Button primary onClick={ onClose } disabled={ ! from }>
+							{ translate( 'Done' ) }
+						</Button>
 						<div>
 							{ ! to && <Gridicon icon="info" /> }
 							{ ! from && ! to && translate( 'Please select the first day.' ) }
