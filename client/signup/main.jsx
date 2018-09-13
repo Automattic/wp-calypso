@@ -340,14 +340,15 @@ class Signup extends React.Component {
 		if ( userIsLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
-				return ( window.location.href = destination );
+				console.log( 'window.location.href = destination' );
+				return;
 			}
 
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
 				this.signupFlowController.reset();
-				window.location.href = destination;
+				console.log( 'window.location.href = destination;' );
 			} );
 		}
 
@@ -355,7 +356,7 @@ class Signup extends React.Component {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
 			this.signupFlowController.reset();
-			window.location.href = destination;
+			console.log( 'window.location.href = destination;' );
 			return;
 		}
 
