@@ -33,6 +33,7 @@ const {
 	isDomainBeingUsedForPlan,
 	getCartItemBillPeriod,
 	getDomainPriceRule,
+	hasToUpgradeToPayForADomain,
 } = cartItems;
 
 /**
@@ -325,6 +326,15 @@ describe( 'isNextDomainFree()', () => {
 } );
 
 describe( 'getDomainPriceRule()', () => {
+	const buildCartWithDomain = ( plan_slug = PLAN_PREMIUM, domain = 'domain.com' ) => ( {
+		products: [
+			{ product_slug: plan_slug },
+			{
+				is_domain_registration: true,
+				meta: domain,
+			},
+		],
+	} );
 	test( 'should return FREE_DOMAIN when product slug is empty', () => {
 		expect( getDomainPriceRule( false, null, null, { product_slug: null, cost: '14' } ) ).toBe(
 			'FREE_DOMAIN'
@@ -334,5 +344,128 @@ describe( 'getDomainPriceRule()', () => {
 		expect( getDomainPriceRule( false, null, null, { product_slug: 'hi', cost: 'Free' } ) ).toBe(
 			'FREE_DOMAIN'
 		);
+	} );
+	test( 'should return FREE_WITH_PLAN when domain is being use for plan [ premium ]', () => {
+		expect(
+			getDomainPriceRule( false, null, buildCartWithDomain( PLAN_PREMIUM, 'domain.com' ), {
+				domain_name: 'domain.com',
+				product_slug: 'domain',
+			} )
+		).toBe( 'FREE_WITH_PLAN' );
+	} );
+
+	test( 'should return FREE_WITH_PLAN when next domain is free [ premium ]', () => {
+		expect(
+			getDomainPriceRule(
+				false,
+				null,
+				{
+					products: [ { product_slug: PLAN_PREMIUM } ],
+					next_domain_is_free: true,
+				},
+				{ domain_name: 'domain.com', product_slug: 'domain' }
+			)
+		).toBe( 'FREE_WITH_PLAN' );
+	} );
+
+	test( 'should return FREE_WITH_PLAN when .blog domain is being use for plan [ blogger ]', () => {
+		expect(
+			getDomainPriceRule( false, null, buildCartWithDomain( PLAN_BLOGGER, 'domain.blog' ), {
+				domain_name: 'domain.blog',
+				product_slug: 'domain',
+			} )
+		).toBe( 'FREE_WITH_PLAN' );
+	} );
+
+	test( 'should return PRICE when .com domain is being use for plan [ blogger ]', () => {
+		expect(
+			getDomainPriceRule( false, null, buildCartWithDomain( PLAN_BLOGGER, 'domain.blog' ), {
+				domain_name: 'domain.com',
+				product_slug: 'domain',
+			} )
+		).toBe( 'PRICE' );
+	} );
+
+	test( 'should return FREE_WITH_PLAN when next domain is free [ .blog domain, blogger plan ]', () => {
+		expect(
+			getDomainPriceRule(
+				false,
+				null,
+				{
+					products: [ { product_slug: PLAN_BLOGGER } ],
+					next_domain_is_free: true,
+				},
+				{ domain_name: 'domain.blog', product_slug: 'domain' }
+			)
+		).toBe( 'FREE_WITH_PLAN' );
+	} );
+
+	test( 'should return PRICE when .com domain is being use for plan that already has a domain [ premium ]', () => {
+		expect(
+			getDomainPriceRule(
+				false,
+				{ plan: { product_slug: PLAN_PERSONAL }, domain: {} },
+				{
+					is_domain_registration: true,
+					meta: 'domain.com',
+				},
+				{ domain_name: 'domain.com', product_slug: 'domain' }
+			)
+		).toBe( 'PRICE' );
+	} );
+} );
+
+describe( 'hasToUpgradeToPayForADomain()', () => {
+	test( 'should return true if current site is on a blogger plan', () => {
+		expect( hasToUpgradeToPayForADomain( { plan: { product_slug: PLAN_BLOGGER } }, {} ) ).toBe(
+			true
+		);
+	} );
+
+	test( 'should return true if blogger plan is in the cart', () => {
+		expect(
+			hasToUpgradeToPayForADomain( {}, { products: [ { product_slug: PLAN_BLOGGER } ] } )
+		).toBe( true );
+	} );
+
+	test( 'should return true if blogger plan 2y is in the cart', () => {
+		expect(
+			hasToUpgradeToPayForADomain( {}, { products: [ { product_slug: PLAN_BLOGGER_2_YEARS } ] } )
+		).toBe( true );
+	} );
+
+	test( 'should return false if blogger plan is not in the cart', () => {
+		expect(
+			hasToUpgradeToPayForADomain(
+				{ plan: { product_slug: PLAN_FREE } },
+				{ products: [ { product_slug: PLAN_PERSONAL } ] }
+			)
+		).toBe( false );
+	} );
+
+	[
+		PLAN_FREE,
+		PLAN_PERSONAL,
+		PLAN_PERSONAL_2_YEARS,
+		PLAN_PREMIUM,
+		PLAN_PREMIUM_2_YEARS,
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+	].forEach( product_slug => {
+		test( `should return false if current site is not on a blogger plan [${ product_slug }]`, () => {
+			expect( hasToUpgradeToPayForADomain( { plan: { product_slug } }, {} ) ).toBe( false );
+		} );
+	} );
+
+	test( 'should return false if current site has no plan', () => {
+		expect( hasToUpgradeToPayForADomain( { plan: {} }, {} ) ).toBe( false );
+	} );
+
+	test( 'should return false if current site is empty', () => {
+		expect( hasToUpgradeToPayForADomain( {}, {} ) ).toBe( false );
+	} );
+
+	test( 'should return false if current site is not passed', () => {
+		expect( hasToUpgradeToPayForADomain( null, {} ) ).toBe( false );
 	} );
 } );
