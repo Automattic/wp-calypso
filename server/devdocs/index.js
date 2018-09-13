@@ -6,7 +6,6 @@
 import express from 'express';
 import fs from 'fs';
 import fspath from 'path';
-import marked from 'marked';
 import lunr from 'lunr';
 import { find, escape as escapeHTML } from 'lodash';
 import Prism from 'prismjs';
@@ -34,14 +33,6 @@ const DEFAULT_SNIPPET_LENGTH = 100;
 
 // Alias `javascript` language to `es6`
 Prism.languages.es6 = Prism.languages.javascript;
-
-// Configure marked to use Prism for code-block highlighting.
-marked.setOptions( {
-	highlight: function( code, language ) {
-		const syntax = Prism.languages[ language ];
-		return syntax ? Prism.highlight( code, syntax ) : code;
-	},
-} );
 
 /**
  * Query the index using lunr.
@@ -213,7 +204,6 @@ module.exports = function() {
 	// markdown format)
 	app.get( '/devdocs/service/content', ( request, response ) => {
 		let path = request.query.path;
-		const format = request.query.format || 'html';
 
 		if ( ! path ) {
 			response
@@ -239,7 +229,7 @@ module.exports = function() {
 
 		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
 
-		response.send( 'html' === format ? marked( fileContents ) : fileContents );
+		response.send( fileContents );
 	} );
 
 	// return json for the components usage stats
