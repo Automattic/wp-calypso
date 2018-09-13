@@ -31,6 +31,7 @@ import {
 } from 'woocommerce/app/store-stats/constants';
 import { getEndPeriod, getQueries, getWidgetPath } from './utils';
 import QuerySiteStats from 'components/data/query-site-stats';
+import config from 'config';
 import StoreStatsReferrerWidget from './store-stats-referrer-widget';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
@@ -98,24 +99,8 @@ class StoreStats extends Component {
 						showQueryDate
 					/>
 				</StatsPeriodNavigation>
-				<div className="store-stats__widgets">
-					<div className="store-stats__widgets-column widgets">
-						<Module
-							siteId={ siteId }
-							emptyMessage={ noDataMsg }
-							query={ orderQuery }
-							statType="statsOrders"
-						>
-							<WidgetList
-								siteId={ siteId }
-								query={ orderQuery }
-								selectedDate={ endSelectedDate }
-								statType="statsOrders"
-								widgets={ sparkWidgets }
-							/>
-						</Module>
-					</div>
-					<div className="store-stats__widgets-column widgets">
+				{ config.isEnabled( 'woocommerce/extension-referrers' ) && (
+					<div>
 						{ siteId && (
 							<QuerySiteStats
 								statType="statsStoreReferrers"
@@ -148,6 +133,26 @@ class StoreStats extends Component {
 							/>
 						</Module>
 					</div>
+				) }
+				<div className="store-stats__widgets">
+					{ sparkWidgets.map( ( widget, index ) => (
+						<div className="store-stats__widgets-column widgets" key={ index }>
+							<Module
+								siteId={ siteId }
+								emptyMessage={ noDataMsg }
+								query={ orderQuery }
+								statType="statsOrders"
+							>
+								<WidgetList
+									siteId={ siteId }
+									query={ orderQuery }
+									selectedDate={ endSelectedDate }
+									statType="statsOrders"
+									widgets={ widget }
+								/>
+							</Module>
+						</div>
+					) ) }
 					{ topWidgets.map( widget => {
 						const header = (
 							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
