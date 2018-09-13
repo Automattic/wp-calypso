@@ -93,6 +93,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="layout-blocks"
+							label="Muriel Components"
+							link="/devdocs/docs/muriel/index.md"
+							selected={ this.isItemSelected( '/devdocs/docs/muriel', false ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="layout-blocks"
 							label="UI Components"
 							link="/devdocs/design"
 							selected={ this.isItemSelected( '/devdocs/design', false ) }
