@@ -11,7 +11,7 @@ import { map, noop, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isDefaultLocale, getLanguage, getLangRevision } from './utils';
+import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -34,16 +34,17 @@ export function getLanguageFilePathUrl() {
  *
  * @param {String} localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {String} fileType The desired file type, js or json. Default to json.
+ * @param {Object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
  *
  * @return {String} A language file URL.
  */
-export function getLanguageFileUrl( localeSlug, fileType = 'json' ) {
+export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevisions = {} ) {
 	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
 		fileType = 'json';
 	}
 
-	const revision = getLangRevision( localeSlug );
-	const fileUrl = getLanguageFilePathUrl() + `${ localeSlug }.${ fileType }`;
+	const revision = languageRevisions[ localeSlug ];
+	const fileUrl = `${ getLanguageFilePathUrl() }${ localeSlug }.${ fileType }`;
 
 	return revision ? fileUrl + `?v=${ revision }` : fileUrl;
 }

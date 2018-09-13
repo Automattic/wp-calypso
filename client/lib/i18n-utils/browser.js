@@ -17,9 +17,6 @@ export {
 	canBeTranslated,
 	removeLocaleFromPath,
 	getPathParts,
-	setLangRevisions,
-	getLangRevisions,
-	getLangRevision,
 } from './utils';
 
 export const getLocaleSlug = () => i18n.getLocaleSlug();
