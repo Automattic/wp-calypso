@@ -50,17 +50,16 @@ export class Filterbar extends Component {
 	};
 
 	handleDayClick = date => {
-		const { siteId, selectDateRange } = this.props;
+		const { siteId, selectDateRange, filter } = this.props;
 		const day = date.toDate();
-		const { fromDate, toDate } = this.state;
+		const fromDate = this.getFromDate( filter );
+		const toDate = this.getToDate( filter );
 		if ( fromDate && toDate && day >= fromDate && day <= toDate ) {
 			this.handleResetSelection();
 			return;
 		}
 		if ( this.isSelectingFirstDay( fromDate, toDate, day ) ) {
 			this.setState( {
-				fromDate: day,
-				toDate: null,
 				enteredToDate: null,
 			} );
 			selectDateRange( siteId, moment( day ).format( DATE_FORMAT ), null );
@@ -68,7 +67,6 @@ export class Filterbar extends Component {
 		}
 
 		this.setState( {
-			toDate: day,
 			enteredToDate: day,
 		} );
 		selectDateRange(
@@ -79,7 +77,9 @@ export class Filterbar extends Component {
 	};
 
 	handleDayMouseEnter = day => {
-		const { fromDate, toDate } = this.state;
+		const { filter } = this.props;
+		const fromDate = this.getFromDate( filter );
+		const toDate = this.getToDate( filter );
 		if ( ! this.isSelectingFirstDay( fromDate, toDate, day ) && this.isSelectingDayInPast( day ) ) {
 			this.setState( {
 				enteredToDate: day,
@@ -88,11 +88,11 @@ export class Filterbar extends Component {
 	};
 
 	handleResetSelection = () => {
+		const { siteId, selectDateRange } = this.props;
 		this.setState( {
-			fromDate: null,
-			toDate: null,
 			enteredToDate: null,
 		} );
+		selectDateRange( siteId, null, null );
 	};
 
 	resetActivityTypeSelector = event => {
@@ -126,6 +126,21 @@ export class Filterbar extends Component {
 		selectActionType( siteId, actionTypes );
 	};
 
+	getFromDate = filter => {
+		return filter && filter.after ? moment( filter.after ).toDate() : null;
+	};
+
+	getToDate = filter => {
+		return filter && filter.before ? moment( filter.before ).toDate() : null;
+	};
+
+	getEnteredToDate = filter => {
+		if ( this.state.enteredToDate ) {
+			return this.state.enteredToDate;
+		}
+		return this.getToDate( filter );
+	};
+
 	render() {
 		const { translate, siteId, filter } = this.props;
 		return (
@@ -141,9 +156,9 @@ export class Filterbar extends Component {
 					onDayMouseEnter={ this.handleDayMouseEnter }
 					onResetSelection={ this.handleResetSelection }
 					onDayClick={ this.handleDayClick }
-					from={ this.state.fromDate }
-					to={ this.state.toDate }
-					enteredTo={ this.state.enteredToDate }
+					from={ this.getFromDate( filter ) }
+					to={ this.getToDate( filter ) }
+					enteredTo={ this.getEnteredToDate( filter ) }
 				/>
 				<ActionTypeSelector
 					siteId={ siteId }
