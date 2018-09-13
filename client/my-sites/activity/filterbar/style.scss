@@ -184,6 +184,10 @@
     left: -1px;
     right: auto;
 	}
+	
+	.DayPicker-Day--start .date-picker__day:hover:after {
+    background: transparent;
+	}
 
 	.gridicons-info {
 		margin: 3px 6px -8px 0;
