@@ -27,6 +27,19 @@ export class Filterbar extends Component {
 		} );
 	};
 
+	closeDateRangeSelector = () => {
+		this.setState( {
+			showActivityDates: false,
+		} );
+	};
+
+	onSelectDate = () => {
+		// const { selectActionType, siteId } = this.props;
+		// console.log( before, after, event );
+		// selectDateRange( siteId, [] );
+		// event.preventDefault();
+	};
+
 	resetActivityTypeSelector = event => {
 		const { selectActionType, siteId } = this.props;
 		selectActionType( siteId, [] );
@@ -70,6 +83,8 @@ export class Filterbar extends Component {
 				<DateRangeSelector
 					isVisible={ this.state.showActivityDates }
 					onButtonClick={ this.toggleDateRangeSelector }
+					onClose={ this.closeDateRangeSelector }
+					onSelect={ this.onSelectDate }
 				/>
 				<ActionTypeSelector
 					siteId={ siteId }
@@ -89,5 +104,6 @@ export default connect(
 	() => ( {} ),
 	{
 		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
+		selectDateRange: ( siteId, dateRange ) => updateFilter( siteId, { dateRange: dateRange } ),
 	}
 )( localize( Filterbar ) );

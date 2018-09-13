@@ -23,12 +23,15 @@ class DatePicker extends PureComponent {
 		calendarViewDate: PropTypes.object,
 		showOutsideDays: PropTypes.bool,
 		events: PropTypes.array,
+		selectedDays: PropTypes.array,
+		disabledDays: PropTypes.array,
 		locale: PropTypes.object,
 		modifiers: PropTypes.object,
 		moment: PropTypes.func.isRequired,
 
 		selectedDay: PropTypes.object,
 		timeReference: PropTypes.object,
+		fromMonth: PropTypes.object,
 
 		onMonthChange: PropTypes.func,
 		onSelectDay: PropTypes.func,
@@ -40,7 +43,9 @@ class DatePicker extends PureComponent {
 		showOutsideDays: true,
 		calendarViewDate: new Date(),
 		modifiers: {},
+		fromMonth: null,
 		selectedDay: null,
+
 		onMonthChange: noop,
 		onSelectDay: noop,
 		onDayMouseEnter: noop,
@@ -188,7 +193,9 @@ class DatePicker extends PureComponent {
 				modifiers={ modifiers }
 				ref="daypicker"
 				className="date-picker"
+				selectedDays={ this.props.selectedDays }
 				disabledDays={ this.props.disabledDays }
+				fromMonth={ this.props.fromMonth }
 				month={ this.props.calendarViewDate }
 				onDayClick={ this.setCalendarDay }
 				renderDay={ this.renderDay }
