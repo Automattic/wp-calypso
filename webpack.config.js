@@ -135,11 +135,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				name: isDevelopment || shouldEmitStats,
 				maxAsyncRequests: 20,
 				maxInitialRequests: 5,
-				cacheGroups: {
-					gridicons: {
-						test: /gridicons/,
-					},
-				},
 			},
 			runtimeChunk: codeSplit ? { name: 'manifest' } : false,
 			moduleIds: 'named',
@@ -248,6 +243,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
 					store: 'store/dist/store.modern',
+					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
 				},
 				getAliasesForExtensions()
 			),
