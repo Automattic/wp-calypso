@@ -1044,8 +1044,6 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'INCLUDED_IN_PREMIUM';
 	}
 
-	// two cases: blogger with used domain credit should say "upgrade to premium to be able to buy this domain",
-	// blogger with available domain credit should say "included in premium"
 	if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
 		return 'UPGRADE_TO_PREMIUM_TO_BUY';
 	}
