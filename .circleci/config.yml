@@ -12,6 +12,7 @@ references:
       mkdir -p                             \
         "$CIRCLE_ARTIFACTS/translate"      \
         "$CIRCLE_TEST_REPORTS/client"      \
+        "$CIRCLE_TEST_REPORTS/eslint"      \
         "$CIRCLE_TEST_REPORTS/integration" \
         "$CIRCLE_TEST_REPORTS/server"
 
@@ -119,7 +120,30 @@ jobs:
           name: Lint Client and Server
           when: always
           command: |
-            ./node_modules/.bin/eslint-eslines $(git diff --name-only --diff-filter=d origin/master... | grep -E '^(client|server)' | grep -E '\.jsx?$' | circleci tests split)
+            # We'll use failure code to do some additional processing and report failure manually
+            set +o errexit
+
+            # Run the lint
+            npx --no-install eslint-eslines                           \
+              $(                                                      \
+                git diff --name-only --diff-filter=d origin/master... \
+                | grep -E '^(client|server)'                          \
+                | grep -E '\.jsx?$'                                   \
+                | circleci tests split                                \
+              )                                                       \
+              -- --format junit                                       \
+              > ~/eslint-results.xml
+
+            # Ensure we don't upload empty reports.
+            # Eslint would not produce a malformed empty xml using the --format and -o options.
+            # However, with eslint-eslines and the redirected > output, we may get an empty file.
+            # We only put the file into the reports directory if the status code informs us that
+            # lint issues have been encountered.
+            ESLINT_RESULT="$?"
+            if [ "$ESLINT_RESULT" -ne 0 ]; then
+              mv ~/eslint-results.xml "$CIRCLE_TEST_REPORTS/eslint"
+              exit "$ESLINT_RESULT"
+            fi
 
       - run:
           name: Run Client Tests
