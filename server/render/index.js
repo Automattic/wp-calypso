@@ -138,7 +138,7 @@ export function serverRender( req, res ) {
 	if ( ! isDefaultLocale( context.lang ) ) {
 		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
 
-		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js' );
+		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js', context.languageRevisions );
 	}
 
 	if ( shouldServerSideRender( context ) ) {
