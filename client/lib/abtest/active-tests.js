@@ -108,19 +108,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSuggestionKrakenV325: {
-		datestamp: '20180910',
-		variations: {
-			domainsbot: 0,
-			group_1: 21,
-			group_3: 21,
-			group_4: 21,
-			group_6: 0, // dot with re-ordering
-			group_7: 0, // dot
-			group_8: 21,
-		},
-		defaultVariation: 'domainsbot',
-	},
 	includeDotBlogSubdomainV2: {
 		datestamp: '20180813',
 		variations: {
@@ -136,16 +123,6 @@ export default {
 			discount: 100,
 		},
 		defaultVariation: 'control',
-	},
-	domainManagementSuggestion: {
-		datestamp: '20180910',
-		variations: {
-			domainsbot: 82,
-			group_7: 0,
-		},
-		defaultVariation: 'domainsbot',
-		assignmentMethod: 'userId',
-		allowExistingUsers: true,
 	},
 	readerSearchPlaceholder: {
 		datestamp: '20180830',
