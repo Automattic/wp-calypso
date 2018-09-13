@@ -12,6 +12,7 @@ import unmodifiedConfig from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'api', () => {
+	test( 'FAIL', () => expect( true ).toBe( false ) );
 	let app, config, localRequest, sandbox;
 
 	useSandbox( newSandbox => ( sandbox = newSandbox ) );

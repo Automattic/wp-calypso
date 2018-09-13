@@ -74,6 +74,7 @@ const ssrDisabledContext = {
 };
 
 describe( 'shouldServerSideRender', () => {
+	test( 'FAIL', () => expect( true ).toBe( false ) );
 	beforeEach( () => remock() );
 
 	test( 'feature-flag server-side-render should enable SSR (default behavior)', () => {
