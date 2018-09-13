@@ -38,15 +38,9 @@ const save = ( { attributes: { prev, next }, className, isEditor } ) =>
 		<Fragment />
 	);
 
-registerBlockType( 'a8c/prev-next', {
-	title: __( 'Prev/Next Links' ),
-	icon: 'leftright',
-	category: 'common',
-	description: __( 'Link this post to sequential posts in a series of related posts.' ),
-	keywords: [ __( 'links' ) ],
-	attributes: blockAttributes,
-	edit: ( { attributes, className, isSelected, setAttributes } ) =>
-		isSelected ? (
+const edit = ( { attributes, className, isSelected, setAttributes } ) => {
+	if ( isSelected ) {
+		return (
 			<Fragment>
 				<TextControl
 					label={ __( 'Previous Post' ) }
@@ -59,12 +53,27 @@ registerBlockType( 'a8c/prev-next', {
 					onChange={ next => setAttributes( { next } ) }
 				/>
 			</Fragment>
-		) : attributes.prev || attributes.next ? (
-			save( { attributes, className, isEditor: true } )
-		) : (
-			<div style={ { textAlign: 'center' } }>
-				← Add prev/next links to related posts in a series. →
-			</div>
-		),
+		);
+	}
+
+	if ( attributes.prev || attributes.next ) {
+		return save( { attributes, className, isEditor: true } );
+	}
+
+	return (
+		<div style={ { textAlign: 'center' } }>
+			← { __( 'Add prev/next links to related posts in a series.' ) } →
+		</div>
+	);
+};
+
+registerBlockType( 'a8c/prev-next', {
+	title: __( 'Prev/Next Links' ),
+	icon: 'leftright',
+	category: 'common',
+	description: __( 'Link this post to sequential posts in a series of related posts.' ),
+	keywords: [ __( 'links' ) ],
+	attributes: blockAttributes,
+	edit,
 	save,
 } );

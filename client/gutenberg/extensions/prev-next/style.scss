@@ -1,5 +1,5 @@
 .wp-block-a8c-prev-next {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+	display: flex;
+	flex-direction: row;/*rtl:row-reverse*/
+	justify-content: space-between;
 }

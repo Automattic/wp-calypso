@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Component } from '@wordpress/element';
 import { Dropdown } from '@wordpress/components';
 import { registerBlockType } from '@wordpress/blocks';
@@ -100,6 +100,9 @@ class Trial extends Component {
 				className={ `status-badge status-${ status.key }` }
 				onClick={ onClick }
 				onKeyUp={ clickOnEnter }
+				role="button"
+				tabIndex="0"
+				aria-label={ sprintf( 'Status: %s', status.text ) }
 				{ ...optional }
 			>
 				{ status.text.replace( / /g, '\xa0' ) }
