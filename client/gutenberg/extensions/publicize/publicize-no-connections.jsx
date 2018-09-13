@@ -8,10 +8,6 @@
  * @since  5.9.1
  */
 
-// Since this is a Jetpack originated block in Calypso codebase,
-// we're relaxing className rules.
-/* eslint wpcalypso/jsx-classname-namespace: 0 */
-
 /**
  * External dependencies
  */

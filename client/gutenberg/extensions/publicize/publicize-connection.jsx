@@ -8,8 +8,7 @@
  */
 
 // Since this is a Jetpack originated block in Calypso codebase,
-// we're relaxing className and some accessibility rules.
-/* eslint wpcalypso/jsx-classname-namespace: 0 */
+// we're relaxing some accessibility rules.
 /* eslint jsx-a11y/label-has-for: 0 */
 
 /**
