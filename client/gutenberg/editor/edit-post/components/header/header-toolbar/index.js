@@ -32,7 +32,6 @@ import {
  * Internal dependencies
  */
 import Button from 'components/button';
-import Drafts from 'layout/masterbar/drafts';
 import Site from 'blocks/site';
 import { addSiteFragment } from 'lib/route';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
@@ -62,7 +61,6 @@ function HeaderToolbar( {
 				{ translate( 'Close' ) }
 			</Button>
 			<Site compact site={ site } indicator={ false } onSelect={ recordSiteButtonClick } />
-			<Drafts />
 			<Inserter position="bottom right" />
 			<EditorHistoryUndo />
 			<EditorHistoryRedo />
