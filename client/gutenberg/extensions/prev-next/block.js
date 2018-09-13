@@ -31,8 +31,8 @@ const blockAttributes = {
 const save = ( { attributes: { prev, next }, className, isEditor } ) =>
 	prev || next ? (
 		<div className={ isEditor ? className : '' }>
-			{ prev ? <a href={ prev }>← { __( 'Prev' ) }</a> : <span> </span> }
-			{ next ? <a href={ next }>{ __( 'Next' ) } →</a> : <span> </span> }
+			{ prev ? <a href={ prev }>← Prev</a> : <span> </span> }
+			{ next ? <a href={ next }>Next →</a> : <span> </span> }
 		</div>
 	) : (
 		<Fragment />
