@@ -90,19 +90,18 @@ class PostActionCounts extends PureComponent {
 				<a
 					href={ `/stats/post/${ postId }/${ siteSlug }` }
 					onClick={ this.onActionClick( 'stats' ) }
-					title={ translate(
-						'%(count)s recent view in the past 30 days.',
-						'%(count)s recent views in the past 30 days',
-						{
+				>
+					<span
+						title={ translate( '%(count)s view in 30 days', '%(count)s views in 30 days', {
 							count,
 							args: { count: numberFormat( count ) },
-						}
-					) }
-				>
-					{ translate( '%(count)s Recent View', '%(count)s Recent Views', {
-						count,
-						args: { count: numberFormat( count ) },
-					} ) }
+						} ) }
+					>
+						{ translate( '%(count)s Recent View', '%(count)s Recent Views', {
+							count,
+							args: { count: numberFormat( count ) },
+						} ) }
+					</span>
 				</a>
 			</li>
 		);
