@@ -14,11 +14,21 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import isGutenbergOptInDialogShowing from 'state/selectors/is-gutenberg-opt-in-dialog-showing';
-import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
+import {
+	hideGutenbergOptInDialog,
+	optInToGutenberg,
+	optOutOfGutenberg,
+} from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	withAnalytics,
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+	bumpStat,
+} from 'state/analytics/actions';
 
 class EditorGutenbergOptInDialog extends Component {
 	static propTypes = {
@@ -26,49 +36,31 @@ class EditorGutenbergOptInDialog extends Component {
 		translate: PropTypes.func,
 		gutenbergURL: PropTypes.string,
 		isDialogVisible: PropTypes.bool,
-		hideGutenbergOptInDialog: PropTypes.func,
+		hideDialog: PropTypes.func,
+		optIn: PropTypes.func,
+		optOut: PropTypes.func,
 	};
 
-	recordOptInStats( closeDialog ) {
-		composeAnalytics(
-			recordGoogleEvent(
-				'Gutenberg Opt-In',
-				'Clicked "Try the new editor" in the editor opt-in sidebar.',
-				'Opt-In',
-				true
-			),
-			recordTracksEvent( 'calypso_gutenberg_opt_in', {
-				opt_in: true,
-			} )
-		);
-		closeDialog();
-	}
+	optInAndHideDialog = () => {
+		this.props.optIn();
+		this.props.hideDialog();
+	};
 
-	recordOptOutStats( closeDialog ) {
-		composeAnalytics(
-			recordGoogleEvent(
-				'Gutenberg Opt-In',
-				'Clicked "Use the classic editor" in the editor opt-in sidebar.',
-				'Opt-In',
-				false
-			),
-			recordTracksEvent( 'calypso_gutenberg_opt_in', {
-				opt_in: false,
-			} )
-		);
-		closeDialog();
-	}
+	optOutAndHideDialog = () => {
+		this.props.optOut();
+		this.props.hideDialog();
+	};
 
 	render() {
-		const { translate, gutenbergURL, isDialogVisible } = this.props;
+		const { translate, gutenbergURL, isDialogVisible, hideDialog } = this.props;
 		const buttons = [
-			<Button key="gutenberg" href={ gutenbergURL } onClick={ this.recordOptInStats } primary>
+			<Button key="gutenberg" href={ gutenbergURL } onClick={ this.optInAndHideDialog } primary>
 				{ translate( 'Try the new editor' ) }
 			</Button>,
 			{
 				action: 'cancel',
 				label: translate( 'Use the classic editor' ),
-				onClick: this.recordOptOutStats,
+				onClick: this.optOutAndHideDialog,
 			},
 		];
 		return (
@@ -76,12 +68,12 @@ class EditorGutenbergOptInDialog extends Component {
 				additionalClassNames="editor-gutenberg-opt-in-dialog"
 				isVisible={ isDialogVisible }
 				buttons={ buttons }
-				onClose={ this.onCloseDialog }
+				onClose={ hideDialog }
 			>
 				<div className="editor-gutenberg-opt-in-dialog__illustration" />
 
 				<header>
-					<button onClick={ this.onCloseDialog } className="editor-gutenberg-opt-in-dialog__close">
+					<button onClick={ hideDialog } className="editor-gutenberg-opt-in-dialog__close">
 						<Gridicon icon="cross" />
 					</button>
 				</header>
@@ -102,11 +94,49 @@ class EditorGutenbergOptInDialog extends Component {
 			</Dialog>
 		);
 	}
-
-	onCloseDialog = () => {
-		this.props.hideGutenbergOptInDialog();
-	};
 }
+
+const mapDispatchToProps = dispatch => ( {
+	optIn: () => {
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordGoogleEvent(
+						'Gutenberg Opt-In',
+						'Clicked "Try the new editor" in the editor opt-in sidebar.',
+						'Opt-In',
+						true
+					),
+					recordTracksEvent( 'calypso_gutenberg_opt_in', {
+						opt_in: true,
+					} ),
+					bumpStat( 'calypso_opt_in' )
+				),
+				optInToGutenberg()
+			)
+		);
+	},
+	optOut: () => {
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordGoogleEvent(
+						'Gutenberg Opt-Out',
+						'Clicked "Use the classic editor" in the editor opt-in sidebar.',
+						'Opt-In',
+						false
+					),
+					recordTracksEvent( 'calypso_gutenberg_opt_in', {
+						opt_in: false,
+					} ),
+					bumpStat( 'calypso_opt_out' )
+				),
+				optOutOfGutenberg()
+			)
+		);
+	},
+	hideDialog: () => dispatch( hideGutenbergOptInDialog() ),
+} );
 
 export default connect(
 	state => {
@@ -117,7 +147,5 @@ export default connect(
 			isDialogVisible,
 		};
 	},
-	{
-		hideGutenbergOptInDialog,
-	}
+	mapDispatchToProps
 )( localize( EditorGutenbergOptInDialog ) );
