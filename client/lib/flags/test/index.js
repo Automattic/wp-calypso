@@ -23,10 +23,10 @@ describe( 'flagUrl', () => {
 	} );
 
 	test( 'Given an invalid country code, returns a fallback inline SVG ', () => {
-		// 'xk' stands for Kosovo, for which there is no flag SVG in the flag-icons-css npm (yet)
 		const gridicon = <GridiconGlobe size={ 24 } />;
 		const globeSvg = 'data:image/svg+xml;utf8,' + renderToStaticMarkup( gridicon );
 
+		// 'xk' stands for Kosovo, for which there is no flag SVG in the flag-icons-css npm (yet)
 		expect( flagUrl( 'xk' ) ).toBe( globeSvg );
 	} );
 } );
