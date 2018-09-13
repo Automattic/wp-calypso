@@ -154,8 +154,10 @@ class Search extends Component {
 		// for now, don't even show upgrade nudge
 		if ( ! fields.jetpack_search_supported && ! isSearchEligible ) {
 			const upgradeTitle = siteIsJetpack
-				? translate( 'Get a faster and more advanced sitewide search with Jetpack Professional' )
-				: translate( 'Get a faster and more advanced sitewide search with WordPress.com Business' );
+				? translate( 'Add faster, more advanced searching to your site with Jetpack Professional' )
+				: translate(
+						'Add faster, more advanced searching to your site with WordPress.com Business'
+				  );
 			return (
 				<div>
 					<SectionHeader label={ translate( 'Jetpack Search' ) } />
@@ -170,7 +172,7 @@ class Search extends Component {
 								</p>
 								<p>
 									{ translate(
-										'Jetpack Search replaces the built-in search with a fast, scalable, customizable, and highly relevant search engine that is hosted in the WordPress.com cloud. The result: Your users find the content they want, faster.'
+										'Jetpack Search replaces the built-in search with a fast, scalable, customizable, and highly-relevant search hosted in the WordPress.com cloud. The result: Your users find the content they want, faster.'
 									) }
 								</p>
 							</div>
