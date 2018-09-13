@@ -178,9 +178,15 @@ export default class Step extends Component {
 
 		if ( ! this.observer ) {
 			this.observer = new MutationObserver( () => {
-				const target = document.querySelector( `[data-tip-target="${ this.props.target }"]` );
-				if ( ! target ) {
-					this.props.onTargetDisappear( {
+				const { target, onTargetDisappear } = this.props;
+
+				if ( ! target || ! onTargetDisappear ) {
+					return;
+				}
+
+				const targetEl = document.querySelector( `[data-tip-target="${ target }"]` );
+				if ( ! targetEl ) {
+					onTargetDisappear( {
 						quit: () => this.context.quit( this.context ),
 						next: () => this.skipToNext( this.props, this.context ),
 					} );
