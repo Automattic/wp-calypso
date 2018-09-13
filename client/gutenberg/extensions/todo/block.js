@@ -209,7 +209,7 @@ const edit = class extends Component {
 				</ul>
 				<div className={ `${ className }__add-form` }>
 					<Button onClick={ this.addNewItem }>
-						<Dashicon icon="plus" /> Add new item
+						<Dashicon icon="plus" /> { __( 'Add new item' ) }
 					</Button>
 				</div>
 			</div>
