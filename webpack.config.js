@@ -247,7 +247,10 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				getAliasesForExtensions()
 			),
 		},
-		node: false,
+		// This node Process API emulation is necessary for react-markdown support
+		node: {
+			process: true,
+		},
 		plugins: _.compact( [
 			! codeSplit && new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 			new webpack.DefinePlugin( {
