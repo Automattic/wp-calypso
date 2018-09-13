@@ -69,6 +69,18 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
+	renderUpgradeToPremiumToBuy() {
+		const { translate } = this.props;
+
+		return (
+			<div className="domain-product-price domain-product-price__is-with-plans-only">
+				{ translate( 'Upgrade to premium to buy for %(cost)s/year', {
+					args: { cost: this.props.price },
+				} ) }
+			</div>
+		);
+	}
+
 	renderPrice() {
 		return (
 			<div className="domain-product-price">
@@ -98,6 +110,8 @@ class DomainProductPrice extends React.Component {
 				return this.renderFreeWithPlan();
 			case 'INCLUDED_IN_PREMIUM':
 				return this.renderIncludedInPremium();
+			case 'UPGRADE_TO_PREMIUM_TO_BUY':
+				return this.renderUpgradeToPremiumToBuy();
 			case 'PRICE':
 			default:
 				return this.renderPrice();

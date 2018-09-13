@@ -377,15 +377,6 @@ describe( 'getDomainPriceRule()', () => {
 		).toBe( 'FREE_WITH_PLAN' );
 	} );
 
-	test( 'should return PRICE when .com domain is being use for plan [ blogger ]', () => {
-		expect(
-			getDomainPriceRule( false, null, buildCartWithDomain( PLAN_BLOGGER, 'domain.blog' ), {
-				domain_name: 'domain.com',
-				product_slug: 'domain',
-			} )
-		).toBe( 'PRICE' );
-	} );
-
 	test( 'should return FREE_WITH_PLAN when next domain is free [ .blog domain, blogger plan ]', () => {
 		expect(
 			getDomainPriceRule(
@@ -412,6 +403,26 @@ describe( 'getDomainPriceRule()', () => {
 				{ domain_name: 'domain.com', product_slug: 'domain' }
 			)
 		).toBe( 'PRICE' );
+	} );
+
+	test( 'should return UPGRADE_TO_PREMIUM_TO_BUY when .com domain is being use for plan [ blogger ]', () => {
+		expect(
+			getDomainPriceRule( false, null, buildCartWithDomain( PLAN_BLOGGER, 'domain.blog' ), {
+				domain_name: 'domain.com',
+				product_slug: 'domain',
+			} )
+		).toBe( 'UPGRADE_TO_PREMIUM_TO_BUY' );
+	} );
+
+	test( 'should return UPGRADE_TO_PREMIUM_TO_BUY when .com domain is being use for plan that already has no domain [ bloger ]', () => {
+		expect(
+			getDomainPriceRule(
+				false,
+				{ plan: { product_slug: PLAN_BLOGGER }, domain: {} },
+				{},
+				{ domain_name: 'domain.com', product_slug: 'domain' }
+			)
+		).toBe( 'UPGRADE_TO_PREMIUM_TO_BUY' );
 	} );
 } );
 
