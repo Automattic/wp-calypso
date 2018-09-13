@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import React from 'react';
 import DocService from './service';
 import Error from './error';
 import DocumentHead from 'components/data/document-head';
-import highlight from 'lib/highlight';
+// import highlight from 'lib/highlight';
 
 export default class extends React.Component {
 	static displayName = 'SingleDocument';
@@ -106,6 +107,7 @@ export default class extends React.Component {
 			return null;
 		}
 
+		// @todo Fix/re-introduce highlight() support in the Markdown content
 		return (
 			<div className="devdocs__body">
 				<a
@@ -116,11 +118,10 @@ export default class extends React.Component {
 				>
 					Improve this document on GitHub
 				</a>
-				<div
-					className="devdocs__doc-content"
-					//eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, body ) } }
-				/>
+
+				<div className="devdocs__doc-content">
+					<ReactMarkdown source={ body } />
+				</div>
 			</div>
 		);
 	}
