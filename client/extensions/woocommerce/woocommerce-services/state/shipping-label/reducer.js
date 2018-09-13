@@ -645,6 +645,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = (
 			width,
 			weight,
 			box_id: boxTypeId,
+			is_letter: box.is_letter,
 		};
 	}
 
