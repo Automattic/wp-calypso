@@ -14,19 +14,15 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import isGutenbergOptInDialogShowing from 'state/selectors/is-gutenberg-opt-in-dialog-showing';
-import {
-	hideGutenbergOptInDialog,
-	optInToGutenberg,
-	optOutOfGutenberg,
-} from 'state/ui/gutenberg-opt-in-dialog/actions';
+import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
 import {
-	withAnalytics,
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
+	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
 
@@ -41,26 +37,20 @@ class EditorGutenbergOptInDialog extends Component {
 		optOut: PropTypes.func,
 	};
 
-	optInAndHideDialog = () => {
-		this.props.optIn();
-		this.props.hideDialog();
-	};
-
-	optOutAndHideDialog = () => {
-		this.props.optOut();
+	onCloseDialog = () => {
 		this.props.hideDialog();
 	};
 
 	render() {
-		const { translate, gutenbergURL, isDialogVisible, hideDialog } = this.props;
+		const { translate, gutenbergURL, isDialogVisible, optIn, optOut } = this.props;
 		const buttons = [
-			<Button key="gutenberg" href={ gutenbergURL } onClick={ this.optInAndHideDialog } primary>
+			<Button key="gutenberg" href={ gutenbergURL } onClick={ optIn } primary>
 				{ translate( 'Try the new editor' ) }
 			</Button>,
 			{
 				action: 'cancel',
 				label: translate( 'Use the classic editor' ),
-				onClick: this.optOutAndHideDialog,
+				onClick: optOut,
 			},
 		];
 		return (
@@ -68,12 +58,12 @@ class EditorGutenbergOptInDialog extends Component {
 				additionalClassNames="editor-gutenberg-opt-in-dialog"
 				isVisible={ isDialogVisible }
 				buttons={ buttons }
-				onClose={ hideDialog }
+				onClose={ this.onCloseDialog }
 			>
 				<div className="editor-gutenberg-opt-in-dialog__illustration" />
 
 				<header>
-					<button onClick={ hideDialog } className="editor-gutenberg-opt-in-dialog__close">
+					<button onClick={ this.onCloseDialog } className="editor-gutenberg-opt-in-dialog__close">
 						<Gridicon icon="cross" />
 					</button>
 				</header>
@@ -112,7 +102,7 @@ const mapDispatchToProps = dispatch => ( {
 					} ),
 					bumpStat( 'calypso_opt_in' )
 				),
-				optInToGutenberg()
+				hideGutenbergOptInDialog()
 			)
 		);
 	},
@@ -131,7 +121,7 @@ const mapDispatchToProps = dispatch => ( {
 					} ),
 					bumpStat( 'calypso_opt_out' )
 				),
-				optOutOfGutenberg()
+				hideGutenbergOptInDialog()
 			)
 		);
 	},
