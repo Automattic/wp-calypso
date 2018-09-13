@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import RemarkShortcodes from 'remark-shortcodes';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import ReactMarkdown from 'react-markdown';
 import DocService from './service';
 import Error from './error';
 import DocumentHead from 'components/data/document-head';
+import Shortcode from './shortcode';
 // import highlight from 'lib/highlight';
 
 export default class extends React.Component {
@@ -120,7 +122,11 @@ export default class extends React.Component {
 				</a>
 
 				<div className="devdocs__doc-content">
-					<ReactMarkdown source={ body } />
+					<ReactMarkdown
+						source={ body }
+						renderers={ { shortcode: Shortcode } }
+						plugins={ [ RemarkShortcodes ] }
+					/>
 				</div>
 			</div>
 		);
