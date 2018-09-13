@@ -23,17 +23,20 @@ $white: #fff;
 
 $color-accent-green: #31843f;
 
-.wp-block-a8c-todo {
+// Provided by Gutenberg register
+$block-base-class: '.wp-block-a8c-todo';
+
+#{$block-base-class} {
 	margin-bottom: 20px;
 
 	// This would be ideal but it's being overridden.
-	.wp-block-a8c-todo__list {
+	#{$block-base-class}__list {
 		list-style-type: none;
 		margin-bottom: 20px;
 	}
 
 	// Individual to-do list item.
-	.wp-block-a8c-todo__item {
+	#{$block-base-class}__item {
 		border-bottom: 1px solid $light-gray-500;
 		display: flex;
 		justify-content: space-between;
@@ -57,7 +60,7 @@ $color-accent-green: #31843f;
 	}
 
 	// Completed checklist item.
-	.wp-block-a8c-todo__item--done {
+	#{$block-base-class}__item--done {
 		color: $color-accent-green;
 
 		.item-status {
@@ -102,7 +105,7 @@ $color-accent-green: #31843f;
 	}
 
 	// Add new item form
-	&__add-form {
+	#{$block-base-class}__add-form {
 		align-items: center;
 
 		.components-button {
@@ -131,12 +134,12 @@ $color-accent-green: #31843f;
 }
 
 // We need to be super-specific here to be sure we're overwriting the default UL styling.
-.edit-post-visual-editor .wp-block-a8c-todo .wp-block-a8c-todo__list {
+.edit-post-visual-editor #{$block-base-class} .wp-block-a8c-todo__list {
 	list-style-type: none;
 }
 
 // Same for the "add item" input.
-.editor-block-list__block .wp-block-a8c-todo .add-new-item {
+.editor-block-list__block #{$block-base-class} .add-new-item {
 	width: 100%;
 	margin-right: 6px;
 	padding: 7.5px 8px;
@@ -144,20 +147,20 @@ $color-accent-green: #31843f;
 
 // P2-specific styling.
 body:not( .wp-admin ) .gutenberg {
-	.wp-block-a8c-todo .wp-block-a8c-todo__item {
+	#{$block-base-class} .wp-block-a8c-todo__item {
 		padding: 10px 0 4px;
 	}
 }
 
 
 // Only show the "add new" form when it's strictly needed.
-.wp-block-a8c-todo .add-new-todo-item-form {
+#{$block-base-class} .add-new-todo-item-form {
 	display: none;
 }
 
 .editor-block-list__block.is-selected,
 .editor-block-list__block.is-typing {
-	.wp-block-a8c-todo .add-new-todo-item-form {
+	#{$block-base-class} .add-new-todo-item-form {
 		display: flex;
 	}
 }
