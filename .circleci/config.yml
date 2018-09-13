@@ -11,7 +11,9 @@ references:
     command: |
       mkdir -p                             \
         "$CIRCLE_ARTIFACTS/translate"      \
-        "$CIRCLE_TEST_REPORTS"
+        "$CIRCLE_TEST_REPORTS/client"      \
+        "$CIRCLE_TEST_REPORTS/integration" \
+        "$CIRCLE_TEST_REPORTS/server"
 
 
   restore-git-cache: &restore-git-cache
@@ -89,7 +91,19 @@ jobs:
       - run:
           name: Run Integration Tests
           command: |
-            bin/run-integration $(circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings)
+            if [[ "$RUN_ARGS" != "--nightly" ]]; then
+              echo "Regular build: skipping tests."
+              exit 0
+            fi
+
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/test-results-integration.xml" npx --no-install \
+              jest                                         \
+                --ci                                       \
+                --maxWorkers=2                             \
+                --reporters=default                        \
+                --reporters=jest-junit                     \
+                --config=test/integration/jest.config.json \
+                $( circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings )
 
       - run:
           name: Lint Config Keys
@@ -103,18 +117,26 @@ jobs:
       - run:
           name: Run Client Tests
           command: |
-              npm run test-client:ci $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/test-results-client.xml" npx --no-install \
+              jest                                    \
+                --ci                                  \
+                --maxWorkers=2                        \
+                --reporters=default                   \
+                --reporters=jest-junit                \
+                --config=test/client/jest.config.json \
+                $( circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings )
 
       - run:
           name: Run Server Tests
           command: |
-              npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
-
-      - run:
-          name: Gather Test Results
-          command: |
-            find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} "$CIRCLE_TEST_REPORTS/" \;
-          when: always
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/test-results-client.xml" npx --no-install \
+              jest                                    \
+                --ci                                  \
+                --maxWorkers=2                        \
+                --reporters=default                   \
+                --reporters=jest-junit                \
+                --config=test/server/jest.config.json \
+                $( circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings )
 
       - store_test_results:
           path: /tmp/test_results
