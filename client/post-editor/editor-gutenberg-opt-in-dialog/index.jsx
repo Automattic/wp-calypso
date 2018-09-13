@@ -100,7 +100,7 @@ const mapDispatchToProps = dispatch => ( {
 					recordTracksEvent( 'calypso_gutenberg_opt_in', {
 						opt_in: true,
 					} ),
-					bumpStat( 'calypso_opt_in' )
+					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
 				),
 				hideGutenbergOptInDialog()
 			)
@@ -119,7 +119,7 @@ const mapDispatchToProps = dispatch => ( {
 					recordTracksEvent( 'calypso_gutenberg_opt_in', {
 						opt_in: false,
 					} ),
-					bumpStat( 'calypso_opt_out' )
+					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt Out' )
 				),
 				hideGutenbergOptInDialog()
 			)
