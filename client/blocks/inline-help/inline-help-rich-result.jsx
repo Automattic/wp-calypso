@@ -28,6 +28,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSearchQuery } from 'state/inline-help/selectors';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { getSupportSiteLocale } from 'lib/i18n-utils';
 
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
@@ -61,6 +62,7 @@ class InlineHelpRichResult extends Component {
 		const { type, result } = this.props;
 		const tour = get( result, RESULT_TOUR );
 		const postId = get( result, 'post_id' );
+		const isSupportLocaleEnglish = 'en' === getSupportSiteLocale();
 		const tracksData = omitBy(
 			{
 				search_query: this.props.searchQuery,
@@ -85,8 +87,9 @@ class InlineHelpRichResult extends Component {
 					videoLink: get( result, RESULT_LINK ),
 				} );
 			}
-		} else if ( type === RESULT_ARTICLE && postId ) {
-			event.preventDefault();
+			// Until we can deliver localized inline support article content, we send the
+			// the user to the localized support blog, if one exists.
+		} else if ( type === RESULT_ARTICLE && postId && isSupportLocaleEnglish ) {
 			this.props.openSupportArticleDialog( { postId, postUrl: href } );
 		} else {
 			if ( ! href ) {
