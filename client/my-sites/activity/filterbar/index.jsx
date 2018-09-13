@@ -103,6 +103,11 @@ export class Filterbar extends Component {
 				enteredToDate: day,
 			} );
 		}
+		if ( ! this.isSelectingDayInPast( day ) ) {
+			this.setState( {
+				enteredToDate: new Date(),
+			} );
+		}
 	};
 
 	handleResetSelection = () => {
