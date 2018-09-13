@@ -18,9 +18,6 @@ import {
 	getSupportSiteLocale,
 	getForumUrl,
 	getPathParts,
-	setLangRevisions,
-	getLangRevisions,
-	getLangRevision,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -325,30 +322,6 @@ describe( 'utils', () => {
 				'the',
 				'money',
 			] );
-		} );
-	} );
-
-	describe( '#langRevisions', () => {
-		const mockRevisionMap = {
-			zh: 123,
-			fr: 456,
-			jp: 789,
-		};
-
-		beforeAll( () => {
-			setLangRevisions( mockRevisionMap );
-		} );
-
-		test( 'should store the given revision map', () => {
-			expect( getLangRevisions() ).toEqual( mockRevisionMap );
-		} );
-
-		test( 'getLanguageRevision() should return the expected revision', () => {
-			expect( getLangRevision( 'zh' ) ).toEqual( 123 );
-		} );
-
-		test( 'getLanguageRevision() should return null for locales not defined in the map', () => {
-			expect( getLangRevision( 'kr' ) ).toBeNull();
 		} );
 	} );
 } );

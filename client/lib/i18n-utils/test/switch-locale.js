@@ -8,7 +8,6 @@ import { startsWith } from 'lodash';
  * Internal dependencies
  */
 import { getLanguageFilePathUrl, getLanguageFileUrl } from 'lib/i18n-utils/switch-locale';
-import { setLangRevisions } from 'lib/i18n-utils';
 
 describe( 'getLanguageFileUrl()', () => {
 	test( 'should return a JS url.', () => {
@@ -44,25 +43,15 @@ describe( 'getLanguageFileUrl()', () => {
 		}
 	} );
 
-	describe( 'revision number as a cache buster', () => {
-		beforeAll( () => {
-			setLangRevisions( { zh: 123 } );
-		} );
+	test( 'should append a revision cache buster.', () => {
+		const expected = getLanguageFilePathUrl() + 'zh.js?v=123';
 
-		afterAll( () => {
-			setLangRevisions( {} );
-		} );
+		expect( getLanguageFileUrl( 'zh', 'js', { zh: 123 } ) ).toEqual( expected );
+	} );
 
-		test( 'should append a revision cache buster.', () => {
-			const expected = getLanguageFilePathUrl() + 'zh.js?v=123';
+	test( 'should not append a revision cache buster for an unknown locale.', () => {
+		const expected = getLanguageFilePathUrl() + 'kr.js';
 
-			expect( getLanguageFileUrl( 'zh', 'js' ) ).toEqual( expected );
-		} );
-
-		test( 'should not append a revision cache buster for an unknown locale.', () => {
-			const expected = getLanguageFilePathUrl() + 'kr.js';
-
-			expect( getLanguageFileUrl( 'kr', 'js' ) ).toEqual( expected );
-		} );
+		expect( getLanguageFileUrl( 'kr', 'js', { xd: 222 } ) ).toEqual( expected );
 	} );
 } );
