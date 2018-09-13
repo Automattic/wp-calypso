@@ -104,6 +104,11 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
+		// Omit Google Site Verification, which is only available from the Jetpack UI for now
+		if ( 'google_site_verification' === service.ID ) {
+			return false;
+		}
+
 		return true;
 	} );
 }
