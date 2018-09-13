@@ -11,6 +11,7 @@ import { DateUtils } from 'react-day-picker';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
@@ -182,6 +183,22 @@ export class Filterbar extends Component {
 		return this.getToDate( filter );
 	};
 
+	handleRemoveFilters = () => {
+		const { siteId, resetFilters } = this.props;
+		resetFilters( siteId );
+	};
+
+	renderCloseButton = () => {
+		const { filter } = this.props;
+		if ( filter && ( filter.group || filter.before || filter.after ) ) {
+			return (
+				<Button onClick={ this.handleRemoveFilters } borderless className="filterbar__icon-reset">
+					<Gridicon icon="cross" />
+				</Button>
+			);
+		}
+	}
+
 	render() {
 		const { translate, siteId, filter } = this.props;
 		return (
@@ -211,6 +228,7 @@ export class Filterbar extends Component {
 					selected={ filter && filter.group }
 					onResetSelection={ this.resetActivityTypeSelector }
 				/>
+				{ this.renderCloseButton() }
 			</div>
 		);
 	}
@@ -219,6 +237,7 @@ export class Filterbar extends Component {
 export default connect(
 	() => ( {} ),
 	{
+		resetFilters: sideId => updateFilter( sideId, { group: null, after: null, before: null } ),
 		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
 		selectDateRange: ( siteId, from, to ) => updateFilter( siteId, { after: from, before: to } ),
 	}
