@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import Gridicon from 'gridicons';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { pullAt } from 'lodash';
 import { DateUtils } from 'react-day-picker';
@@ -15,6 +15,7 @@ import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
 
+const DATE_FORMAT = 'YYYY-MM-DD';
 export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
@@ -49,10 +50,11 @@ export class Filterbar extends Component {
 	};
 
 	handleDayClick = date => {
+		const { siteId, selectDateRange } = this.props;
 		const day = date.toDate();
 		const { fromDate, toDate } = this.state;
 		if ( fromDate && toDate && day >= fromDate && day <= toDate ) {
-			this.handleResetClick();
+			this.handleResetSelection();
 			return;
 		}
 		if ( this.isSelectingFirstDay( fromDate, toDate, day ) ) {
@@ -61,6 +63,7 @@ export class Filterbar extends Component {
 				toDate: null,
 				enteredToDate: null,
 			} );
+			selectDateRange( siteId, moment( day ).format( DATE_FORMAT ), null );
 			return;
 		}
 
@@ -68,6 +71,11 @@ export class Filterbar extends Component {
 			toDate: day,
 			enteredToDate: day,
 		} );
+		selectDateRange(
+			siteId,
+			moment( fromDate ).format( DATE_FORMAT ),
+			moment( day ).format( DATE_FORMAT )
+		);
 	};
 
 	handleDayMouseEnter = day => {
@@ -120,7 +128,6 @@ export class Filterbar extends Component {
 
 	render() {
 		const { translate, siteId, filter } = this.props;
-
 		return (
 			<div className="filterbar card">
 				<div className="filterbar__icon-navigation">
@@ -156,6 +163,6 @@ export default connect(
 	() => ( {} ),
 	{
 		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
-		selectDateRange: ( siteId, dateRange ) => updateFilter( siteId, { dateRange: dateRange } ),
+		selectDateRange: ( siteId, from, to ) => updateFilter( siteId, { after: from, before: to } ),
 	}
 )( localize( Filterbar ) );
