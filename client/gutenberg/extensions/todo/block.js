@@ -5,7 +5,7 @@
  */
 import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
-import { Button, Dashicon } from '@wordpress/components';
+import { IconButton } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
 import { RichText } from '@wordpress/editor';
@@ -207,10 +207,10 @@ const edit = class extends Component {
 						);
 					} ) }
 				</ul>
-				<div className={ `${ className }__add-form` }>
-					<Button onClick={ this.addNewItem }>
-						<Dashicon icon="plus" /> { __( 'Add new item' ) }
-					</Button>
+				<div>
+					<IconButton icon="plus" isDefault onClick={ this.addNewItem }>
+						{ __( 'Add new item' ) }
+					</IconButton>
 				</div>
 			</div>
 		);

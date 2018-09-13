@@ -105,31 +105,6 @@ $block-base-class: '.wp-block-a8c-todo';
 			}
 		}
 	}
-
-	// Add new item form
-	#{$block-base-class}__add-form {
-		align-items: center;
-
-		.components-button {
-			font-size: 13px !important; // yep, I'm a monster.
-			color: $dark-gray-500;
-			border: 1px solid $light-gray-700;
-			background: $light-gray-200;
-			box-shadow: 0 1px 0 $light-gray-700;
-			margin: 0;
-			height: 33px;
-			line-height: 32px;
-			border-radius: 3px;
-			padding: 0 12px 2px;
-			white-space: nowrap;
-
-			.dashicon {
-				fill: $dark-gray-200;
-				vertical-align: middle;
-				display: inline;
-			}
-		}
-	}
 }
 
 // We need to be super-specific here to be sure we're overwriting the default UL styling.
