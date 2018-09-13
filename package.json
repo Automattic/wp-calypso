@@ -167,6 +167,7 @@
     "redux-form": "7.4.2",
     "redux-thunk": "2.3.0",
     "refx": "3.1.1",
+    "remark-shortcodes": "0.2.1",
     "rememo": "3.0.0",
     "rtlcss": "2.4.0",
     "sass-loader": "7.1.0",
