@@ -16386,9 +16386,9 @@
       "integrity": "sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g="
     },
     "tinymce": {
-      "version": "4.8.2",
-      "resolved": "https://registry.npmjs.org/tinymce/-/tinymce-4.8.2.tgz",
-      "integrity": "sha512-ssq/cGcK8ELG+a96H2mqH6QvsmTSlQk9wj+OYxLIOxsDnWfu90T1TGIachwcQnXsD5FeNFz5X7K860CP9JQCtQ=="
+      "version": "4.8.3",
+      "resolved": "https://registry.npmjs.org/tinymce/-/tinymce-4.8.3.tgz",
+      "integrity": "sha512-kNEsKTqUYZRG+GTZ7tcVAktUlDeApz6d3IqnNaZXNX0CP0BsK8NPC02FCJ0EVYxdNnq6fvvknWkItmbreXD9aA=="
     },
     "title-case-minors": {
       "version": "1.0.0",
