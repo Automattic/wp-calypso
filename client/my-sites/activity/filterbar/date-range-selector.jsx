@@ -49,8 +49,12 @@ export class DateRangeSelector extends Component {
 		if ( ! to ) {
 			return null;
 		}
+		if ( from.format( 'YYYY-MM-DD' ) === to.format( 'YYYY-MM-DD' ) ) {
+			return to.format( 'll' );
+		}
+
 		if ( from.format( 'YYYY-MM' ) === to.format( 'YYYY-MM' ) ) {
-			return `${ from.format( 'MMMM D' ) } – ${ to.format( 'D, YYYY' ) }`;
+			return `${ from.format( 'MMM D' ) } – ${ to.format( 'D, YYYY' ) }`;
 		}
 
 		return to.format( 'll' );
