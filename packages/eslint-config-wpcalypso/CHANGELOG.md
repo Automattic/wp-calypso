@@ -1,3 +1,9 @@
+### v4.0.1 (2018-09-13)
+- Allow usage of eslint v5 (159e240)
+
+### v4.0.0 (2018-05-15)
+- Add ignoreRestSiblings flag to the no-unused-vars rule (94f3de2)
+
 ### v3.0.0 (2018-04-25)
 - Breaking: removed the react/jsx-no-bind rule. We now allow bound functions by default.
 - Updated to react/jsx-tag-spacing from react/jsx-space-before-closing, which was deprecated
