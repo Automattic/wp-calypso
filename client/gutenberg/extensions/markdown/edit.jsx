@@ -10,7 +10,7 @@ import { Component } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import MarkdownRenderer from './components/markdown-renderer';
+import MarkdownRenderer from './renderer';
 
 /**
  * Module variables
@@ -19,7 +19,7 @@ const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-class JetpackMarkdownBlockEditor extends Component {
+class MarkdownEdit extends Component {
 	state = {
 		activePanel: PANEL_EDITOR,
 	};
@@ -48,6 +48,8 @@ class JetpackMarkdownBlockEditor extends Component {
 
 	render() {
 		const { attributes, className, isSelected } = this.props;
+		const { source } = attributes;
+		const { activePanel } = this.state;
 
 		if ( ! isSelected && this.isEmpty() ) {
 			return (
@@ -57,26 +59,6 @@ class JetpackMarkdownBlockEditor extends Component {
 			);
 		}
 
-		// Renders the editor panel or the preview panel based on component's state
-		const editorOrPreviewPanel = function() {
-			const source = attributes.source;
-
-			switch ( this.state.activePanel ) {
-				case PANEL_EDITOR:
-					return (
-						<PlainText
-							className={ `${ className }__editor` }
-							onChange={ this.updateSource }
-							aria-label={ __( 'Markdown' ) }
-							value={ attributes.source }
-						/>
-					);
-
-				case PANEL_PREVIEW:
-					return <MarkdownRenderer className={ `${ className }__preview` } source={ source } />;
-			}
-		};
-
 		return (
 			<div className={ className }>
 				<BlockControls>
@@ -85,11 +67,21 @@ class JetpackMarkdownBlockEditor extends Component {
 						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview' ) ) }
 					</div>
 				</BlockControls>
-				{ editorOrPreviewPanel.call( this ) }
+
+				{ activePanel === PANEL_PREVIEW ? (
+					<MarkdownRenderer className={ `${ className }__preview` } source={ source } />
+				) : (
+					<PlainText
+						className={ `${ className }__editor` }
+						onChange={ this.updateSource }
+						aria-label={ __( 'Markdown' ) }
+						value={ source }
+					/>
+				) }
 			</div>
 		);
 	}
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default JetpackMarkdownBlockEditor;
+export default MarkdownEdit;
