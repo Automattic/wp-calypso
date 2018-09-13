@@ -16,8 +16,8 @@ export class ItemEditor extends Component {
 		this.editor = undefined;
 	}
 
-	componentWillReceiveProps( newProps ) {
-		if ( newProps.shouldFocus && ! this.props.shouldFocus ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.shouldFocus && ! prevProps.shouldFocus ) {
 			window.requestAnimationFrame( () => {
 				this.editor.focus();
 			} );
