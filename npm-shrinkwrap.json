@@ -9669,9 +9669,9 @@
       }
     },
     "lolex": {
-      "version": "2.7.2",
-      "resolved": "https://registry.npmjs.org/lolex/-/lolex-2.7.2.tgz",
-      "integrity": "sha512-4LJIU5SOEFTLA8iF/F0/xN8x13HsQBzp1Izovbpex+c5eEoa27zgV/C/Fnu+KBUs+ux+m2/5JOAT7hk1vTowcw==",
+      "version": "2.7.4",
+      "resolved": "https://registry.npmjs.org/lolex/-/lolex-2.7.4.tgz",
+      "integrity": "sha512-Gh6Vffq/piTeHwunLNFR1jFVaqlwK9GMNUxFcsO1cwHyvbRKHwX8UDkxmrDnbcPdHNmpv7z2kxtkkSx5xkNpMw==",
       "dev": true
     },
     "longest": {
@@ -14493,9 +14493,9 @@
       "integrity": "sha512-OpUzgR+P/Qsu6ztZehr4PxvTbV4sDW91hAqc2tnz4fjuFTqErWIUdUMbnzX+19F4IEpSSfa0vCAz5xJSs0LpPw=="
     },
     "sinon": {
-      "version": "6.2.0",
-      "resolved": "https://registry.npmjs.org/sinon/-/sinon-6.2.0.tgz",
-      "integrity": "sha512-gLFZz5UYvOhYzQ+DBzw/OCkmWaLAHlAyQiE2wxUOmAGVdasP9Yw93E+OwZ0UuhW3ReMu1FKniuNsL6VukvC77w==",
+      "version": "6.3.1",
+      "resolved": "https://registry.npmjs.org/sinon/-/sinon-6.3.1.tgz",
+      "integrity": "sha512-sEFERR7FGK/PWDzWqCJ1w9ywixwfJ0pbHwHdaWeOsK/bm8Uh25TXHFY0vtF+ZawV3kD8+fA+yyklMX+COlJr6w==",
       "dev": true,
       "requires": {
         "@sinonjs/commons": "^1.0.2",
@@ -14503,7 +14503,7 @@
         "@sinonjs/samsam": "^2.0.0",
         "diff": "^3.5.0",
         "lodash.get": "^4.4.2",
-        "lolex": "^2.7.2",
+        "lolex": "^2.7.4",
         "nise": "^1.4.4",
         "supports-color": "^5.5.0",
         "type-detect": "^4.0.8"
