@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { isEqual, range, throttle } from 'lodash';
+import { isEqual, range, throttle, difference, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -66,6 +66,7 @@ class PostTypeList extends Component {
 		const maxRequestedPage = this.estimatePageCountFromPosts( this.props.posts );
 		this.state = {
 			maxRequestedPage,
+			recentViewIds: '',
 		};
 	}
 
@@ -74,7 +75,7 @@ class PostTypeList extends Component {
 		window.addEventListener( 'scroll', this.maybeLoadNextPageThrottled );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! isEqual( this.props.query, nextProps.query ) ||
 			! isEqual( this.props.siteId, nextProps.siteId )
@@ -82,6 +83,21 @@ class PostTypeList extends Component {
 			const maxRequestedPage = this.estimatePageCountFromPosts( nextProps.posts );
 			this.setState( {
 				maxRequestedPage,
+			} );
+		}
+
+		if ( ! isEqual( this.props.posts, nextProps.posts ) ) {
+			//console.log( 'different' );
+
+			const postIds = ! isEmpty( this.props.posts ) ? this.props.posts.map( post => post.ID ) : [];
+			const nextPostIds = ! isEmpty( nextProps.posts )
+				? nextProps.posts.map( post => post.ID )
+				: [];
+
+			//console.log( 'differentPostIds', postIds, nextPostIds );
+
+			this.setState( {
+				recentViewIds: difference( nextPostIds, postIds ).join( ',' ),
 			} );
 		}
 	}
@@ -207,9 +223,10 @@ class PostTypeList extends Component {
 
 	render() {
 		const { query, siteId, isRequestingPosts, translate } = this.props;
-		const { maxRequestedPage } = this.state;
+		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
-		const postIds = posts.map( post => post.ID );
+		//console.log( 'posts', posts );
+		//console.log( 'recentViewIds', recentViewIds );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
@@ -227,8 +244,8 @@ class PostTypeList extends Component {
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ postIds.length > 0 && (
-					<QueryPostsViews siteId={ siteId } postIds={ postIds } num={ 30 } />
+				{ recentViewIds && (
+					<QueryPostsViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
