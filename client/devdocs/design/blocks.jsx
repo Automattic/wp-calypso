@@ -154,7 +154,7 @@ export default class AppComponents extends React.Component {
 					<SiteIcon readmeFilePath="site-icon" />
 					<Theme />
 					<ThemesListExample />
-					<UpgradeNudge readmeFilePath="upgrade-nudge-expanded" />
+					<UpgradeNudge readmeFilePath="/../my-sites/upgrade-nudge" />
 					<PlanCompareCard />
 					<FeatureComparison />
 					<DomainTip />
