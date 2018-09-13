@@ -167,7 +167,7 @@ class Search extends Component {
 							<div>
 								<p>
 									{ translate(
-										"WordPress' built-in search is fine for small sites, but becomes slow and inefficient as they grow."
+										'The built-in WordPress search is great for sites without much content. But as your site grows, searches slow down and return less relevant results.'
 									) }
 								</p>
 								<p>
@@ -187,7 +187,7 @@ class Search extends Component {
 		}
 
 		return (
-			<div style={ { marginBottom: '16px' } }>
+			<div className="site-settings__search-block">
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
 
 				<SectionHeader label={ translate( 'Jetpack Search' ) } />
