@@ -9,6 +9,7 @@ import page from 'page';
  */
 import {
 	blogListing,
+	communityEvents,
 	feedDiscovery,
 	feedListing,
 	following,
@@ -100,4 +101,17 @@ export default function() {
 		makeLayout,
 		clientRender
 	);
+
+	if ( config.isEnabled( 'reader/community-events' ) ) {
+		page(
+			'/read/community-events',
+			redirectLoggedOut,
+			updateLastRoute,
+			prettyRedirects,
+			sidebar,
+			communityEvents,
+			makeLayout,
+			clientRender
+		);
+	}
 }

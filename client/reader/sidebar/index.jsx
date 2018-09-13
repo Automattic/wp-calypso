@@ -19,6 +19,7 @@ import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarTeams from './reader-sidebar-teams';
 import QueryReaderLists from 'components/data/query-reader-lists';
 import QueryReaderTeams from 'components/data/query-reader-teams';
+import config from 'config';
 import Sidebar from 'layout/sidebar';
 import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
@@ -108,6 +109,12 @@ export class ReaderSidebar extends React.Component {
 		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
 		recordTrack( 'calypso_reader_sidebar_automattic_conversations_clicked' );
+	}
+
+	handleReaderSidebarCommunityEventsClicked() {
+		recordAction( 'clicked_reader_sidebar_community_events' );
+		recordGaEvent( 'Clicked Reader Sidebar Community Events' );
+		recordTrack( 'calypso_reader_sidebar_community_events_clicked' );
 	}
 
 	handleReaderSidebarDiscoverClicked() {
@@ -203,7 +210,27 @@ export class ReaderSidebar extends React.Component {
 									</a>
 								</li>
 							) }
-
+							{ config.isEnabled( 'reader/community-events' ) && (
+								<li
+									className={ ReaderSidebarHelper.itemLinkClass(
+										'/read/community-events',
+										this.props.path,
+										{
+											'sidebar-streams__community-events': true,
+										}
+									) }
+								>
+									<a
+										href="/read/community-events"
+										onClick={ this.handleReaderSidebarCommunityEventsClicked }
+									>
+										<Gridicon icon="multiple-users" />
+										<span className="menu-link-text">
+											{ this.props.translate( 'Community Events' ) }
+										</span>
+									</a>
+								</li>
+							) }
 							{ isDiscoverEnabled() ? (
 								<li
 									className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, {

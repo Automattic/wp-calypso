@@ -267,9 +267,15 @@ const exported = {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 		next();
 	},
+
+	communityEvents( context, next ) {
+		context.primary = <AsyncLoad require="reader/community-events" />;
+		next();
+	},
 };
 
 export const {
+	communityEvents,
 	initAbTests,
 	prettyRedirects,
 	legacyRedirects,
