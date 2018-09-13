@@ -73,8 +73,13 @@ const ssrDisabledContext = {
 	serverSideRender: false,
 };
 
-describe( 'shouldServerSideRender', () => {
+/* eslint-disable jest/no-focused-tests */
+describe.only( 'shouldServerSideRender', () => {
 	beforeEach( () => remock() );
+
+	test.only( 'FAIL', () => {
+		expect( false ).toBe( true );
+	} );
 
 	test( 'feature-flag server-side-render should enable SSR (default behavior)', () => {
 		expect( shouldServerSideRender( ssrEnabledContext ) ).toBe( true );

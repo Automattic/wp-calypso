@@ -1,79 +1,121 @@
+references:
+  #
+  # Environment
+  #
+  shared-environment: &shared-environment
+    CIRCLE_ARTIFACTS: /tmp/artifacts
+    CIRCLE_TEST_REPORTS: /tmp/test_results
+
+  #
+  # Image
+  #
+  docker-image: &docker-image
+    - image: circleci/node:10.10.0
+
+  #
+  # Cache management
+  #
+  restore-git-cache: &restore-git-cache
+    name: Restore git cache
+    keys:
+      - v2-git-{{ .Branch }}-{{ .Revision }}
+      - v2-git-{{ .Branch }}
+      - v2-git
+  save-git-cache: &save-git-cache
+    name: Save git cache
+    key: v2-git-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ".git"
+
+  restore-npm-cache: &restore-npm-cache
+    name: "Restore npm cache"
+    keys:
+       - v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+       - v1-npmcache-{{ checksum ".nvmrc" }}
+  save-npm-cache: &save-npm-cache
+    name: "Save npm cache"
+    key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    paths:
+      - ~/.npm
+
+  #
+  # Artifact prep
+  #
+  setup-results-and-artifacts: &setup-results-and-artifacts
+    name: Create Directories for Results and Artifacts
+    command: mkdir -p                  \
+      $CIRCLE_ARTIFACTS                \
+      $CIRCLE_TEST_REPORTS/client      \
+      $CIRCLE_TEST_REPORTS/server
+
+
 version: 2
 jobs:
-  build:
-    parallelism: 6
+  #
+  # Shared setup required for all jobs
+  #
+  setup:
+    docker: *docker-image
     working_directory: ~/wp-calypso
-    docker:
-      - image: circleci/node:10.10.0-browsers
-        environment:
-          CIRCLE_ARTIFACTS: /tmp/artifacts
-          CIRCLE_TEST_REPORTS: /tmp/test_results
-
     steps:
-      - restore_cache:
-          name: Restore git cache
-          key: v1-20180524-git
-
+      - restore_cache: *restore-git-cache
       - checkout
-
-    # Update origin/master so we can diff against it later
+      # Update origin/master so we can diff against it later
       - run:
           name: Update master branch
           command: git fetch --force origin master
+      - save_cache: *save-git-cache
 
-      - save_cache:
-          name: Save git cache
-          key: v1-20180524-git
-          paths:
-            - ".git"
-
-      - run:
-          name: Create Directories for Results and Artifacts
-          command: |
-            mkdir -p $CIRCLE_ARTIFACTS
-            mkdir -p $CIRCLE_TEST_REPORTS
-
-      - restore_cache:
-          name: "Restoring npm cache"
-          keys:
-             - v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-             - v1-npmcache-{{ checksum ".nvmrc" }}
-
+      - restore_cache: *restore-npm-cache
       - run: npm ci
+      - save_cache: *save-npm-cache
+      - persist_to_workspace:
+          root: .
+          paths: .
 
-      - save_cache:
-          name: "Saving npm cache"
-          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-          paths:
-            - ~/.npm
+  #
+  # Build translations
+  #
+  translate:
+    docker: *docker-image
+    working_directory: ~/wp-calypso
+    environment: *shared-environment
 
-      - run:
-          name: Build Server
-          environment:
-              NODE_ENV: test
-          command: npm run build-server
+    steps:
+      - attach_workspace:
+          at: .
+
+      - run: *setup-results-and-artifacts
 
       - run:
           name: Build calypso-strings.pot
           command: |
-            if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
-              npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
-              mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
-            fi
+            npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
+            mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
 
       - run:
           name: Build New Strings .pot
           command: |
-            if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
-              git clone https://github.com/Automattic/gp-localci-client.git
-              bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
-              rm -rf gp-localci-client
-            fi
+            git clone https://github.com/Automattic/gp-localci-client.git
+            bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
+            rm -rf gp-localci-client
+      - store_artifacts:
+          path: /tmp/artifacts
 
-      - run:
-          name: Run Integration Tests
-          command: |
-            bin/run-integration $(circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings)
+  #
+  # Test Calypso
+  #
+  test-calypso:
+    parallelism: 6
+    docker: *docker-image
+    working_directory: ~/wp-calypso
+    environment: *shared-environment
+
+    steps:
+      - attach_workspace:
+          at: .
+
+      - run: *setup-results-and-artifacts
 
       - run:
           name: Lint Config Keys
@@ -87,25 +129,31 @@ jobs:
       - run:
           name: Run Client Tests
           command: |
-              npm run test-client:ci $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/test-results-client.xml" npx --no-install \
+              jest                                    \
+                --ci                                  \
+                --reporters=default                   \
+                --reporters=jest-junit                \
+                --config=test/client/jest.config.json \
+                --maxWorkers=2                        \
+                $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
 
       - run:
           name: Run Server Tests
           command: |
-              npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
-
-      - run:
-          name: Gather Test Results
-          command: |
-            find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
-          when: always
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/test-results-client.xml" npx --no-install \
+              jest                                    \
+                --ci                                  \
+                --reporters=default                   \
+                --reporters=jest-junit                \
+                --config=test/server/jest.config.json \
+                --maxWorkers=2                        \
+                $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
 
       - store_test_results:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/test_results
-      - store_artifacts:
-          path: /tmp/artifacts
 
 # We need to work around this bit because
 # the notification system in 2.0 is a bit flakey
@@ -113,3 +161,16 @@ jobs:
 notify:
   webhooks:
     - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
+
+workflows:
+  version: 2
+  all-the-things:
+    jobs:
+      - setup
+      - translate:
+          requires:
+            - setup
+      - test-calypso:
+          requires:
+            - setup
+

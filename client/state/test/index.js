@@ -14,7 +14,15 @@ import { useSandbox } from 'test/helpers/use-sinon';
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
 
-describe( 'index', () => {
+/* eslint-disable jest/no-focused-tests */
+describe.only( 'index', () => {
+	// @TODO Do not merge me
+	describe.only( 'FAIL', () => {
+		test.only( 'FAIL', () => {
+			global.expect( true ).toBe( false );
+		} );
+	} );
+
 	describe( 'createReduxStore', () => {
 		test( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
@@ -53,10 +61,12 @@ describe( 'index', () => {
 			} );
 
 			test( 'ignores non-existent keys', () => {
+				// eslint-disable-next-line no-console
 				expect( console.error.calledOnce ).to.eql( false );
 				const reduxStoreNoArgs = createReduxStore().getState();
 				const reduxStoreBadData = createReduxStore( { some: { bad: { stuff: true } } } ).getState();
 				expect( reduxStoreBadData ).to.eql( reduxStoreNoArgs );
+				// eslint-disable-next-line no-console
 				expect( console.error.calledOnce ).to.eql( true );
 			} );
 		} );
