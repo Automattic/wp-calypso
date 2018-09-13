@@ -43,7 +43,7 @@ registerBlockType( 'a8c/markdown', {
 		</svg>
 	),
 
-	category: 'formatting',
+	category: 'jetpack',
 
 	attributes: {
 		//The Markdown source is saved in the block content comments delimiter
