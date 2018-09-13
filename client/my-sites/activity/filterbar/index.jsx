@@ -7,6 +7,7 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { pullAt } from 'lodash';
+import { DateUtils } from 'react-day-picker';
 /**
  * Internal dependencies
  */
@@ -18,6 +19,9 @@ export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
 		showActivityDates: false,
+		fromDate: null,
+		toDate: null,
+		enteredToDate: null,
 	};
 
 	toggleDateRangeSelector = () => {
@@ -33,11 +37,54 @@ export class Filterbar extends Component {
 		} );
 	};
 
-	onSelectDate = () => {
-		// const { selectActionType, siteId } = this.props;
-		// console.log( before, after, event );
-		// selectDateRange( siteId, [] );
-		// event.preventDefault();
+	isSelectingFirstDay = ( from, to, day ) => {
+		const isBeforeFirstDay = from && DateUtils.isDayBefore( day, from );
+		const isRangeSelected = from && to;
+		return ! from || isBeforeFirstDay || isRangeSelected;
+	};
+
+	isSelectingDayInPast = day => {
+		const today = new Date();
+		return day.getTime() <= today.getTime();
+	};
+
+	handleDayClick = date => {
+		const day = date.toDate();
+		const { fromDate, toDate } = this.state;
+		if ( fromDate && toDate && day >= fromDate && day <= toDate ) {
+			this.handleResetClick();
+			return;
+		}
+		if ( this.isSelectingFirstDay( fromDate, toDate, day ) ) {
+			this.setState( {
+				fromDate: day,
+				toDate: null,
+				enteredToDate: null,
+			} );
+			return;
+		}
+
+		this.setState( {
+			toDate: day,
+			enteredToDate: day,
+		} );
+	};
+
+	handleDayMouseEnter = day => {
+		const { fromDate, toDate } = this.state;
+		if ( ! this.isSelectingFirstDay( fromDate, toDate, day ) && this.isSelectingDayInPast( day ) ) {
+			this.setState( {
+				enteredToDate: day,
+			} );
+		}
+	};
+
+	handleResetSelection = () => {
+		this.setState( {
+			fromDate: null,
+			toDate: null,
+			enteredToDate: null,
+		} );
 	};
 
 	resetActivityTypeSelector = event => {
@@ -57,7 +104,7 @@ export class Filterbar extends Component {
 		this.setState( { showActivityTypes: false } );
 	};
 
-	onSelectClick = ( group, event ) => {
+	handleSelectClick = ( group, event ) => {
 		const { filter, selectActionType, siteId } = this.props;
 		event.preventDefault();
 		const actionTypes =
@@ -84,14 +131,19 @@ export class Filterbar extends Component {
 					isVisible={ this.state.showActivityDates }
 					onButtonClick={ this.toggleDateRangeSelector }
 					onClose={ this.closeDateRangeSelector }
-					onSelect={ this.onSelectDate }
+					onDayMouseEnter={ this.handleDayMouseEnter }
+					onResetSelection={ this.handleResetSelection }
+					onDayClick={ this.handleDayClick }
+					from={ this.state.fromDate }
+					to={ this.state.toDate }
+					enteredTo={ this.state.enteredToDate }
 				/>
 				<ActionTypeSelector
 					siteId={ siteId }
 					isVisible={ this.state.showActivityTypes }
 					onButtonClick={ this.toggleActivityTypesSelector }
 					onClose={ this.closeActivityTypes }
-					onSelectClick={ this.onSelectClick }
+					onSelectClick={ this.handleSelectClick }
 					selected={ filter && filter.group }
 					onResetSelection={ this.resetActivityTypeSelector }
 				/>
