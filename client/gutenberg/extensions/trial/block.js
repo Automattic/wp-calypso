@@ -100,6 +100,8 @@ class Trial extends Component {
 				className={ `status-badge status-${ status.key }` }
 				onClick={ onClick }
 				onKeyUp={ clickOnEnter }
+				role="button"
+				tabIndex="0"
 				{ ...optional }
 			>
 				{ status.text.replace( / /g, '\xa0' ) }
