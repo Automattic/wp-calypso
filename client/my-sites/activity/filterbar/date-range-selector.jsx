@@ -6,6 +6,7 @@ import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import { localize, moment } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -18,6 +19,64 @@ export class DateRangeSelector extends Component {
 		super( props );
 		this.dateRangeButton = React.createRef();
 	}
+
+	getFormatedFromDate = ( from, to ) => {
+		if ( ! from ) {
+			return null;
+		}
+
+		if ( ! to ) {
+			return from.format( 'LL' );
+		}
+
+		// Same day Selected
+		if ( from.format( 'YYYY-MM-DD' ) === to.format( 'YYYY-MM-DD' ) ) {
+			return '';
+		}
+		// Same Month selected
+		if ( from.format( 'YYYY-MM' ) === to.format( 'YYYY-MM' ) ) {
+			return '';
+		}
+
+		// Same Year Selected
+		if ( from.format( 'YYYY' ) === to.format( 'YYYY' ) ) {
+			return from.format( 'MMM D' );
+		}
+		return from.format( 'll' );
+	};
+
+	getFormatedToDate = ( from, to ) => {
+		if ( ! to ) {
+			return null;
+		}
+		if ( from.format( 'YYYY-MM' ) === to.format( 'YYYY-MM' ) ) {
+			return `${ from.format( 'MMMM D' ) } – ${ to.format( 'D, YYYY' ) }`;
+		}
+
+		return to.format( 'll' );
+	};
+
+	getFromatedDate = ( from, to ) => {
+		const { translate } = this.props;
+		const fromMoment = from ? moment( from ) : null;
+		const toMoment = to ? moment( to ) : null;
+		const fromFormated = this.getFormatedFromDate( fromMoment, toMoment );
+		const toFormated = this.getFormatedToDate( fromMoment, toMoment );
+
+		if ( fromFormated && ! toFormated ) {
+			return fromFormated;
+		}
+
+		if ( ! isEmpty( fromFormated ) && toFormated ) {
+			return `${ fromFormated } – ${ toFormated }`;
+		}
+
+		if ( toFormated ) {
+			return `${ toFormated }`;
+		}
+
+		return translate( 'Date Range' );
+	};
 
 	render() {
 		const {
@@ -35,11 +94,10 @@ export class DateRangeSelector extends Component {
 		const modifiers = { start: from, end: enteredTo };
 		const disabledDays = [ { before: from, after: new Date() } ];
 		const selectedDays = [ from, { from, to: enteredTo } ];
-		const fromMoment = from ? moment( from ).format( 'll' ) : null;
-		const toMoment = to ? moment( to ).format( 'll' ) : null;
+
 		const buttonClass = classnames( {
 			filterbar__selection: true,
-			'is-selected': !! fromMoment,
+			'is-selected': !! from,
 		} );
 		return (
 			<Fragment>
@@ -50,12 +108,7 @@ export class DateRangeSelector extends Component {
 					onClick={ onButtonClick }
 					ref={ this.dateRangeButton }
 				>
-					{ fromMoment && ! toMoment && `${ fromMoment }` }
-					{ fromMoment &&
-						toMoment &&
-						`${ fromMoment } to
-							 ${ toMoment }` }
-					{ ! from && ! to && translate( 'Date Range' ) }
+					{ this.getFromatedDate( from, to ) }
 				</Button>
 				{ ( from || to ) && (
 					<Button
