@@ -61,7 +61,11 @@ export const authQueryPropTypes = PropTypes.shape( {
 
 export function addCalypsoEnvQueryArg( url ) {
 	let calypsoEnv = config( 'env_id' );
-	if ( window && window.COMMIT_SHA && window.location.host === 'calypso.live' ) {
+	if (
+		window &&
+		window.COMMIT_SHA &&
+		/hash-[a-f0-9]{40}\.calypso\.live/.test( window.location.host )
+	) {
 		calypsoEnv = `live-${ COMMIT_SHA }`;
 	}
 	return addQueryArgs( { calypso_env: calypsoEnv }, url );
