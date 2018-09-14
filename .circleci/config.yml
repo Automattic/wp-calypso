@@ -168,7 +168,6 @@ jobs:
                 --reporters=default                   \
                 --reporters=jest-junit                \
                 --config=test/client/jest.config.js   \
-                $( [ "$CIRCLE_BRANCH" != "master" ] && echo "--changedSince='master'" ) \
                 $( circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split )
 
       - run:
@@ -181,7 +180,6 @@ jobs:
                 --reporters=default                   \
                 --reporters=jest-junit                \
                 --config=test/server/jest.config.js   \
-                $( [ "$CIRCLE_BRANCH" != "master" ] && echo "--changedSince='master'" ) \
                 $( circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split )
 
       - save_cache: *save-jest-cache
