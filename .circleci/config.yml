@@ -10,12 +10,27 @@ references:
     name: Create Directories for Results and Artifacts
     command: |
       mkdir -p                             \
+        "~/jest-cache"                     \
         "$CIRCLE_ARTIFACTS/translate"      \
         "$CIRCLE_TEST_REPORTS/client"      \
         "$CIRCLE_TEST_REPORTS/eslint"      \
         "$CIRCLE_TEST_REPORTS/integration" \
         "$CIRCLE_TEST_REPORTS/server"
 
+  restore-jest-cache: &restore-jest-cache
+    name: Restore Jest cache
+    # @TODO drop dev
+    keys:
+      - v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+  save-jest-cache: &save-jest-cache
+    name: Save Jest cache
+    # @TODO drop dev
+    key: v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/jest-cache
 
   restore-git-cache: &restore-git-cache
     name: Restore git cache
@@ -89,6 +104,8 @@ jobs:
               rm -rf gp-localci-client
             fi
 
+      - restore_cache: *restore-jest-cache
+
       - run:
           name: Run Integration Tests
 
@@ -110,7 +127,7 @@ jobs:
                 --reporters=default                        \
                 --reporters=jest-junit                     \
                 --config=test/integration/jest.config.js   \
-                $( circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings )
+                $( circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split )
 
       - run:
           name: Lint Config Keys
@@ -156,7 +173,7 @@ jobs:
                 --reporters=default                   \
                 --reporters=jest-junit                \
                 --config=test/client/jest.config.js   \
-                $( circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings )
+                $( circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split )
 
       - run:
           name: Run Server Tests
@@ -169,7 +186,9 @@ jobs:
                 --reporters=default                   \
                 --reporters=jest-junit                \
                 --config=test/server/jest.config.js   \
-                $( circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings )
+                $( circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split )
+
+      - save_cache: *save-jest-cache
 
       - store_test_results:
           path: /tmp/test_results
