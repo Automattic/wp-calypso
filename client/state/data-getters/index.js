@@ -38,8 +38,10 @@ export const requestActivityActionTypeCounts = ( siteId, { freshness = 10 * 1000
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
 	const group =
 		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
-	const id = `activity-log-${ siteId }-${ group }`;
+	const before = filter && filter.before ? filter.before : '';
+	const after = filter && filter.after ? filter.after : '';
 
+	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }`;
 	return requestHttpData(
 		id,
 		http(
