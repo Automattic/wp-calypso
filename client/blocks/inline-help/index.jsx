@@ -234,6 +234,7 @@ class InlineHelp extends Component {
 						context={ this.inlineHelpToggle }
 						onClose={ this.closeInlineHelp }
 						setDialogState={ this.setDialogState }
+						shouldShowChecklist={ this.shouldShowChecklist() }
 					/>
 				) }
 				{ showDialog && (

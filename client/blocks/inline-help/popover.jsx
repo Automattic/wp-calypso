@@ -131,24 +131,6 @@ class InlineHelpPopover extends Component {
 		return task;
 	};
 
-	shouldShowChecklist = () => {
-		const { sectionName } = this.props;
-		const disallowedSections = [
-			'discover',
-			'reader',
-			'reader-activities',
-			'reader-list',
-			'reader-recommendations',
-			'reader-tags',
-			'checklist',
-			'signup',
-		];
-
-		if ( isEligibleForDotcomChecklist && ! ( disallowedSections.indexOf( sectionName ) > -1 ) ) {
-			return true;
-		}
-	};
-
 	renderChecklistProgress = () => {
 		const {
 			taskStatuses,
@@ -170,7 +152,7 @@ class InlineHelpPopover extends Component {
 			0
 		);
 
-		if ( ! this.shouldShowChecklist() ) {
+		if ( ! this.props.shouldShowChecklist ) {
 			return false;
 		}
 
