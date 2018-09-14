@@ -110,9 +110,16 @@
 		padding: 0 7px;
 	}
 	.filterbar__date-range-selection-info {
-		 display: flex;
-		 flex-flow: row nowrap;
-		 justify-content: space-between;
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: space-between;
+		margin-top: 16px;
+		padding-top: 14px;
+		border-top: 1px solid lighten( $gray, 25% );
+	}
+
+	.filterbar__date-range-info .button.is-borderless {
+		margin-top: 2px;
 	}
 	
 	.DayPicker-Day--start {
