@@ -115,7 +115,7 @@ jobs:
           command: |
             # We'll use failure code to do some additional processing and report failure manually
             set +o errexit
-            npx --no-install eslint-eslines                           \
+            ./node_modules/.bin/eslint-eslines                        \
               $(                                                      \
                 git diff --name-only --diff-filter=d origin/master... \
                 | grep -E '^(client|server)'                          \
@@ -166,8 +166,8 @@ jobs:
       - run:
           name: Run Client Tests
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/test-results-client.xml" npx --no-install \
-              jest                                    \
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/test-results-client.xml" \
+              ./node_modules/.bin/jest                \
                 --ci                                  \
                 --maxWorkers=2                        \
                 --reporters=default                   \
@@ -213,8 +213,8 @@ jobs:
               echo "Regular build: skipping tests."
               exit 0
             fi
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/test-results-integration.xml" npx --no-install \
-              jest                                         \
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/test-results-integration.xml" \
+              ./node_modules/.bin/jest                     \
                 --ci                                       \
                 --maxWorkers=2                             \
                 --reporters=default                        \
@@ -256,8 +256,8 @@ jobs:
       - run:
           name: Run Server Tests
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/test-results-client.xml" npx --no-install \
-              jest                                    \
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/test-results-client.xml" \
+              ./node_modules/.bin/jest                \
                 --ci                                  \
                 --maxWorkers=2                        \
                 --reporters=default                   \
