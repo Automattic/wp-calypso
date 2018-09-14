@@ -109,7 +109,7 @@ jobs:
                 --maxWorkers=2                             \
                 --reporters=default                        \
                 --reporters=jest-junit                     \
-                --config=test/integration/jest.config.json \
+                --config=test/integration/jest.config.js   \
                 $( circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings )
 
       - run:
@@ -155,7 +155,7 @@ jobs:
                 --maxWorkers=2                        \
                 --reporters=default                   \
                 --reporters=jest-junit                \
-                --config=test/client/jest.config.json \
+                --config=test/client/jest.config.js   \
                 $( circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings )
 
       - run:
@@ -168,7 +168,7 @@ jobs:
                 --maxWorkers=2                        \
                 --reporters=default                   \
                 --reporters=jest-junit                \
-                --config=test/server/jest.config.json \
+                --config=test/server/jest.config.js   \
                 $( circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings )
 
       - store_test_results:
