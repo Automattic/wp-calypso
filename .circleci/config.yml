@@ -110,31 +110,6 @@ jobs:
               rm -rf gp-localci-client
             fi
 
-      - restore_cache: *restore-jest-cache
-
-      - run:
-          name: Run Integration Tests
-
-          #### @TODO REMOVE - FOR DEVELOPMENT ONLY ####
-          environment:
-            RUN_ARGS: "--nightly"
-          #############################################
-
-          command: |
-            if [[ "$RUN_ARGS" != "--nightly" ]]; then
-              echo "Regular build: skipping tests."
-              exit 0
-            fi
-
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/test-results-integration.xml" npx --no-install \
-              jest                                         \
-                --ci                                       \
-                --maxWorkers=2                             \
-                --reporters=default                        \
-                --reporters=jest-junit                     \
-                --config=test/integration/jest.config.js   \
-                $( circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split )
-
       - run:
           name: Lint Config Keys
           command: npm run lint:config-defaults
@@ -167,6 +142,32 @@ jobs:
               mv ~/eslint-results.xml "$CIRCLE_TEST_REPORTS/eslint"
               exit "$ESLINT_RESULT"
             fi
+
+      - restore_cache: *restore-jest-cache
+
+      - run:
+          name: Run Integration Tests
+
+          #### @TODO REMOVE - FOR DEVELOPMENT ONLY ####
+          environment:
+            RUN_ARGS: "--nightly"
+          #############################################
+
+          command: |
+            if [[ "$RUN_ARGS" != "--nightly" ]]; then
+              echo "Regular build: skipping tests."
+              exit 0
+            fi
+
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/test-results-integration.xml" npx --no-install \
+              jest                                         \
+                --ci                                       \
+                --maxWorkers=2                             \
+                --reporters=default                        \
+                --reporters=jest-junit                     \
+                --config=test/integration/jest.config.js   \
+                $( circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split )
+
 
       - run:
           name: Run Client Tests
