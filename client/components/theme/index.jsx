@@ -101,7 +101,7 @@ export class Theme extends Component {
 	onScreenshotClick = () => {
 		const { onScreenshotClick } = this.props;
 		if ( typeof onScreenshotClick === 'function' ) {
-			this.props.onScreenshotClick( this.props.theme.id, this.props.index );
+			onScreenshotClick( this.props.theme.id, this.props.index );
 		}
 	};
 
