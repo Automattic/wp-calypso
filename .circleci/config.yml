@@ -175,7 +175,7 @@ jobs:
                 --runTestsByPath                      \
                 --silent                              \
                 --config=test/client/jest.config.js   \
-                $( circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split )
+                $( circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings )
       - save_cache: *save-jest-cache
       - store_test_results:
           path: /tmp/test_results
@@ -265,7 +265,7 @@ jobs:
                 --runTestsByPath                      \
                 --silent                              \
                 --config=test/server/jest.config.js   \
-                $( circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split )
+                $( circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings )
       - save_cache: *save-jest-cache
       - store_test_results:
           path: /tmp/test_results
