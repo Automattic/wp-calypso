@@ -13142,14 +13142,24 @@
       "integrity": "sha512-73HInnxHyMh/BnJMAZUtErIWX6reY4TU9+AHC4U/VLd9s2h1SHT2VoONO8jj9pv0+e4SVhiDzV+rxOPT/BWn6Q=="
     },
     "react": {
-      "version": "16.5.0",
-      "resolved": "https://registry.npmjs.org/react/-/react-16.5.0.tgz",
-      "integrity": "sha512-nw/yB/L51kA9PsAy17T1JrzzGRk+BlFCJwFF7p+pwVxgqwPjYNeZEkkH7LXn9dmflolrYMXLWMTkQ77suKPTNQ==",
+      "version": "16.5.1",
+      "resolved": "https://registry.npmjs.org/react/-/react-16.5.1.tgz",
+      "integrity": "sha512-E+23+rbpPsJgSX812LQkwupUCFnbVE84+L8uxlkqN5MU0DcraWMlVf9cRvKCKtGu0XvScyRnW7Z+9d7ymkjy3A==",
       "requires": {
         "loose-envify": "^1.1.0",
         "object-assign": "^4.1.1",
         "prop-types": "^15.6.2",
-        "schedule": "^0.3.0"
+        "schedule": "^0.4.0"
+      },
+      "dependencies": {
+        "schedule": {
+          "version": "0.4.0",
+          "resolved": "https://registry.npmjs.org/schedule/-/schedule-0.4.0.tgz",
+          "integrity": "sha512-hYjmoaEMojiMkWCxKr6ue+LYcZ29u29+AamWYmzwT2VOO9ws5UJp/wNhsVUPiUeNh+EdRfZm7nDeB40ffTfMhA==",
+          "requires": {
+            "object-assign": "^4.1.1"
+          }
+        }
       }
     },
     "react-addons-create-fragment": {
@@ -13219,14 +13229,24 @@
       }
     },
     "react-dom": {
-      "version": "16.5.0",
-      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-16.5.0.tgz",
-      "integrity": "sha512-qgsQdjFH54pQ1AGLCBKsqjPxib4Pnp+cOsNxGPlkHn5YnsSt43sBvHSif6FheY7NMMS6HPeSJOxXf6ECanjacA==",
+      "version": "16.5.1",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-16.5.1.tgz",
+      "integrity": "sha512-l4L9GtX7ezgnDIIr6AaNvGBM4BiK0fSs4/V8bdsu9X6xqrtHr+jp6auT0hbHpN7bH9WRvDBZceWQ9WJ3lGCIvQ==",
       "requires": {
         "loose-envify": "^1.1.0",
         "object-assign": "^4.1.1",
         "prop-types": "^15.6.2",
-        "schedule": "^0.3.0"
+        "schedule": "^0.4.0"
+      },
+      "dependencies": {
+        "schedule": {
+          "version": "0.4.0",
+          "resolved": "https://registry.npmjs.org/schedule/-/schedule-0.4.0.tgz",
+          "integrity": "sha512-hYjmoaEMojiMkWCxKr6ue+LYcZ29u29+AamWYmzwT2VOO9ws5UJp/wNhsVUPiUeNh+EdRfZm7nDeB40ffTfMhA==",
+          "requires": {
+            "object-assign": "^4.1.1"
+          }
+        }
       }
     },
     "react-is": {
@@ -13333,21 +13353,21 @@
       }
     },
     "react-test-renderer": {
-      "version": "16.5.0",
-      "resolved": "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.5.0.tgz",
-      "integrity": "sha512-cuN9BoZ1p6T3oxrjxN7pQDSmgWzAxWBi8gtCHcViMYcw/1xqOIyatt2YFhiCWg7115TPQqkTKEu+F44YjFE4ig==",
+      "version": "16.5.1",
+      "resolved": "https://registry.npmjs.org/react-test-renderer/-/react-test-renderer-16.5.1.tgz",
+      "integrity": "sha512-NOOtwdN5DNGFqsOyU4zqO2+N82wBt7Z5gNOW+ZY/Aui1K/ohmW7uqd5yUW6UYN0Y64Ci/m9CbwrytTHYIMIWtQ==",
       "dev": true,
       "requires": {
         "object-assign": "^4.1.1",
         "prop-types": "^15.6.2",
-        "react-is": "^16.5.0",
-        "schedule": "^0.3.0"
+        "react-is": "^16.5.1",
+        "schedule": "^0.4.0"
       },
       "dependencies": {
         "react-is": {
-          "version": "16.5.0",
-          "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.5.0.tgz",
-          "integrity": "sha512-kpkCGLsChXTEQJVmowQqHpCjHKJFwB4SIChYaaaiAkq8OtE2aBg5pQe8/xnFlGmz9KmMx1H4oQRUyxP7qC9v5A==",
+          "version": "16.5.1",
+          "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.5.1.tgz",
+          "integrity": "sha512-Q7S+9y2lJA9oJCMqLt045f+kLRhsMLA1wW2DAGXA6b7wcTQRHnUDMc5oR49tn0Z4swvnfV+/t8iZFXY74IQmpA==",
           "dev": true
         }
       }
@@ -14246,9 +14266,10 @@
       "integrity": "sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw=="
     },
     "schedule": {
-      "version": "0.3.0",
-      "resolved": "https://registry.npmjs.org/schedule/-/schedule-0.3.0.tgz",
-      "integrity": "sha512-20+1KVo517sR7Nt+bYBN8a+bEJDKLPEx7Ohtts1kX05E4/HY53YUNuhfkVNItmWAnBYHcpG9vsd2/CJxG+aPCQ==",
+      "version": "0.4.0",
+      "resolved": "https://registry.npmjs.org/schedule/-/schedule-0.4.0.tgz",
+      "integrity": "sha512-hYjmoaEMojiMkWCxKr6ue+LYcZ29u29+AamWYmzwT2VOO9ws5UJp/wNhsVUPiUeNh+EdRfZm7nDeB40ffTfMhA==",
+      "dev": true,
       "requires": {
         "object-assign": "^4.1.1"
       }
