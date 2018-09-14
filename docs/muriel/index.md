@@ -6,5 +6,5 @@ This is client-side loaded and parsed Markdown content.
 0. Spread the word.
 0. Materialize it all.
 
-[[ShortcodeExample attr="value"]]
+[[ComponentExample name="button" variant="compact"]]
 
