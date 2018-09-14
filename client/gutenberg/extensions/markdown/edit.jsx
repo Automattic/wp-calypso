@@ -18,7 +18,6 @@ import MarkdownRenderer from './renderer';
 const PANEL_EDITOR = 'editor';
 const PANEL_PREVIEW = 'preview';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 class MarkdownEdit extends Component {
 	state = {
 		activePanel: PANEL_EDITOR,
@@ -82,6 +81,5 @@ class MarkdownEdit extends Component {
 		);
 	}
 }
-/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default MarkdownEdit;

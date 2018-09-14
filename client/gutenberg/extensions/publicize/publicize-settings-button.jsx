@@ -9,8 +9,7 @@
  */
 
 // Since this is a Jetpack originated block in Calypso codebase,
-// we're relaxing className and some accessibility rules.
-/* eslint wpcalypso/jsx-classname-namespace: 0 */
+// we're relaxing some accessibility rules.
 /* eslint jsx-a11y/anchor-is-valid: 0 */
 /* eslint jsx-a11y/click-events-have-key-events: 0 */
 /* eslint jsx-a11y/no-static-element-interactions: 0 */
