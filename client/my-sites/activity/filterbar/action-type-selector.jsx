@@ -24,15 +24,26 @@ export class ActionTypeSelector extends Component {
 		this.activityTypeButton = React.createRef();
 	}
 
-	renderCheckbox = checkbox => {
+	isAllCheckboxSelected = checkboxes => {
+		if ( ! this.props.selected ) {
+			return true;
+		}
+		if ( checkboxes.length === this.props.selected.length ) {
+			return true;
+		}
+
+		return false;
+	};
+
+	renderCheckbox = ( allCheckboxes, checkbox ) => {
 		const { onSelectClick, selected } = this.props;
 		return (
 			<FormLabel key={ checkbox.key }>
 				<FormCheckbox
 					id={ checkbox.key }
-					checked={ !! this.isSelected( selected, checkbox.key ) }
+					checked={ !! this.isSelected( selected, checkbox.key ) || ! selected }
 					name={ checkbox.key }
-					onChange={ onSelectClick.bind( this, checkbox ) }
+					onChange={ onSelectClick.bind( this, checkbox, allCheckboxes ) }
 				/>
 				{ checkbox.name + ' (' + checkbox.count + ')' }
 			</FormLabel>
@@ -57,6 +68,7 @@ export class ActionTypeSelector extends Component {
 			onButtonClick,
 			selected,
 			onResetSelection,
+			onToggleAllCheckboxes,
 		} = this.props;
 		const checkboxes = [];
 		const selectedNames = [];
@@ -110,20 +122,28 @@ export class ActionTypeSelector extends Component {
 					context={ this.activityTypeButton.current }
 				>
 					<div className="filterbar__activity-types-selection-wrap">
-						{ !! checkboxes.length && (
-							<Fragment>
-								<FormLabel>
-									<FormCheckbox id="comment_like_notification" name="comment_like_notification" />
-									<strong>
-										{ translate( 'All activity type (%(totalCount)d)', { args: { totalCount } } ) }
-									</strong>
-								</FormLabel>
-								<div className="filterbar__activity-types-selection-granular">
-									{ checkboxes.map( this.renderCheckbox ) }
-								</div>
-							</Fragment>
-						) }
-						{ ! checkboxes.length && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
+						{ actionTypes &&
+							!! checkboxes.length && (
+								<Fragment>
+									<FormLabel>
+										<FormCheckbox
+											id="comment_like_notification"
+											onChange={ onToggleAllCheckboxes.bind( this, checkboxes ) }
+											checked={ this.isAllCheckboxSelected( checkboxes ) }
+											name="comment_like_notification"
+										/>
+										<strong>
+											{ translate( 'All activity type (%(totalCount)d)', {
+												args: { totalCount },
+											} ) }
+										</strong>
+									</FormLabel>
+									<div className="filterbar__activity-types-selection-granular">
+										{ checkboxes.map( this.renderCheckbox.bind( null, checkboxes ) ) }
+									</div>
+								</Fragment>
+							) }
+						{ ! actionTypes && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
 					</div>
 				</Popover>
 			</Fragment>

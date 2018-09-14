@@ -149,8 +149,29 @@ export class Filterbar extends Component {
 	handleSelectClick = ( group, event ) => {
 		const { filter, selectActionType, siteId } = this.props;
 		event.preventDefault();
-		const actionTypes =
-			filter && filter.group && !! filter.group.length ? filter.group.slice() : [];
+		// unchecked -> check off everything by setting the groups to null
+		if ( filter && filter.group && filter.group.length !== checkboxes.length ) {
+			selectActionType( siteId, null );
+			return;
+		}
+		// checked -> uncheck everyhing by setting the group to no-group
+		selectActionType( siteId, [ 'no-group' ] );
+	};
+
+	onSelectClick = ( group, allGroups, event ) => {
+		const { filter, selectActionType, siteId } = this.props;
+		event.preventDefault();
+
+		if ( ! ( filter && filter.group ) ) {
+			// We are displaying everything now.
+			// We want to deselect the current key but select all the other all keys
+			const allGroupKeys = allGroups.map( singleGroup => singleGroup.key );
+			const removedKeyArray = allGroupKeys.filter( key => group.key !== key );
+			selectActionType( siteId, removedKeyArray );
+			return;
+		}
+
+		const actionTypes = filter.group.slice();
 		const index = actionTypes.indexOf( group.key );
 		if ( index >= 0 ) {
 			pullAt( actionTypes, index );
@@ -197,8 +218,7 @@ export class Filterbar extends Component {
 				</Button>
 			);
 		}
-	}
-
+	};
 	render() {
 		const { translate, siteId, filter } = this.props;
 		return (
@@ -227,6 +247,7 @@ export class Filterbar extends Component {
 					onSelectClick={ this.handleSelectClick }
 					selected={ filter && filter.group }
 					onResetSelection={ this.resetActivityTypeSelector }
+					onToggleAllCheckboxes={ this.handleToggleAllActionTypeSelector }
 				/>
 				{ this.renderCloseButton() }
 			</div>
