@@ -319,7 +319,7 @@ notify:
 
 workflows:
   version: 2
-  test:
+  calypso:
     jobs:
       - lint
       - test-client
