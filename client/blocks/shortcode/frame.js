@@ -24,10 +24,12 @@ export default class extends React.Component {
 		style: PropTypes.object,
 		onLoad: PropTypes.func,
 		className: PropTypes.string,
+		allowSameOrigin: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onLoad: () => {},
+		allowSameOrigin: false,
 	};
 
 	state = {
@@ -78,14 +80,16 @@ export default class extends React.Component {
 		// `shouldComponentUpdate`
 		const key = Math.random();
 
+		const sandbox = ( this.props.allowSameOrigin ? 'allow-same-origin ' : '' ) + 'allow-scripts';
+
 		return (
 			<ResizableIframe
 				key={ key }
-				{ ...omit( this.props, 'body', 'scripts', 'styles' ) }
+				{ ...omit( this.props, 'body', 'scripts', 'styles', 'allowSameOrigin' ) }
 				src="https://wpcomwidgets.com/render/"
 				onLoad={ this.onFrameLoad }
 				frameBorder="0"
-				sandbox="allow-scripts"
+				sandbox={ sandbox }
 				className={ classes }
 			/>
 		);
