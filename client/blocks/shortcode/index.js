@@ -46,10 +46,12 @@ Shortcode.propTypes = {
 	filterRenderResult: PropTypes.func.isRequired,
 	className: PropTypes.string,
 	shortcode: PropTypes.object,
+	allowSameOrigin: PropTypes.bool,
 };
 
 Shortcode.defaultProps = {
 	filterRenderResult: identity,
+	allowSameOrigin: false,
 };
 
 export default connect(
