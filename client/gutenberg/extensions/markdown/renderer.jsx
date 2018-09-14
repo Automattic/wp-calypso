@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import MarkdownIt from 'markdown-it';
 import { RawHTML } from '@wordpress/element';
 
