@@ -7,8 +7,6 @@ import {
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_REQUEST,
 	SITE_CHECKLIST_TASK_UPDATE,
-	SITE_CHECKLIST_NOTIFICATION,
-	SITE_CHECKLIST_NEXT_TASK,
 } from 'state/action-types';
 
 /**
@@ -49,29 +47,3 @@ export const requestSiteChecklistTaskUpdate = ( siteId, taskId ) => ( {
 	siteId,
 	taskId,
 } );
-
-/**
- * Action creator function: SITE_CHECKLIST_NOTIFICATION
- *
- * @param {Boolean} bool Checklist notification
- * @return {Object} action object
- */
-export function setChecklistNotificationStatus( bool ) {
-	return {
-		type: SITE_CHECKLIST_NOTIFICATION,
-		bool,
-	};
-}
-
-/**
- * Action creator function: SITE_CHECKLIST_NEXT_TASK
- *
- * @param {String} taskId Next checklist task ID
- * @return {Object} action object
- */
-export function setChecklistNextTask( taskId ) {
-	return {
-		type: SITE_CHECKLIST_NEXT_TASK,
-		taskId,
-	};
-}

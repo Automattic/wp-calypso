@@ -28,8 +28,6 @@ import { getSelectedSite, getSelectedSiteId, getSectionName } from 'state/ui/sel
 import getSiteChecklist from 'state/selectors/get-site-checklist';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getTasks } from 'my-sites/checklist/onboardingChecklist';
-import { setChecklistNotificationStatus } from 'state/checklist/actions';
-import { getChecklistNotificationStatus, getChecklistNextTask } from 'state/checklist/selectors';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 
 /**
@@ -49,9 +47,6 @@ class InlineHelp extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
 		sectionName: PropTypes.string,
-		showChecklistNotification: PropTypes.bool,
-		setChecklistNotificationStatus: PropTypes.func,
-		nextChecklistTask: PropTypes.string,
 		siteId: PropTypes.number,
 		isEligibleForDotcomChecklist: PropTypes.bool,
 	};
@@ -63,6 +58,7 @@ class InlineHelp extends Component {
 	state = {
 		showInlineHelp: false,
 		shouldShowChecklist: false,
+		nextChecklistTask: null,
 	};
 
 	componentDidMount() {
@@ -133,8 +129,17 @@ class InlineHelp extends Component {
 		}
 	};
 
+	nextChecklistTask = task => {
+		const { nextChecklistTask } = this.state;
+
+		if ( task !== nextChecklistTask ) {
+			this.setState( { nextChecklistTask: task } );
+		}
+	};
+
 	shouldShowChecklistNotification = () => {
-		const { taskStatuses, nextChecklistTask, tasks } = this.props;
+		const { taskStatuses, tasks } = this.props;
+		const { nextChecklistTask } = this.state;
 		const task = this.getTask();
 		const totalTasks = tasks.length;
 		const numComplete = reduce(
@@ -148,11 +153,11 @@ class InlineHelp extends Component {
 			totalTasks &&
 			numComplete !== totalTasks &&
 			task &&
-			( nextChecklistTask === '' || nextChecklistTask !== task.id )
+			( null === nextChecklistTask || task.id !== nextChecklistTask )
 		) {
-			this.props.setChecklistNotificationStatus( true );
+			return true;
 		} else {
-			this.props.setChecklistNotificationStatus( false );
+			return false;
 		}
 	};
 
@@ -200,12 +205,12 @@ class InlineHelp extends Component {
 	}
 
 	render() {
-		const { translate, siteId, showChecklistNotification } = this.props;
+		const { translate, siteId } = this.props;
 		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': showInlineHelp,
-			'has-notification': this.shouldShowChecklist() && showChecklistNotification,
+			'has-notification': this.shouldShowChecklist() && this.shouldShowChecklistNotification(),
 		};
 
 		/* @TODO: This class is not valid and this tricks the linter
@@ -234,7 +239,9 @@ class InlineHelp extends Component {
 						context={ this.inlineHelpToggle }
 						onClose={ this.closeInlineHelp }
 						setDialogState={ this.setDialogState }
-						shouldShowChecklist={ this.shouldShowChecklist() }
+						showChecklist={ this.shouldShowChecklist() }
+						showChecklistNotification={ this.shouldShowChecklistNotification() }
+						nextChecklistTask={ this.nextChecklistTask }
 					/>
 				) }
 				{ showDialog && (
@@ -280,15 +287,12 @@ const mapStateToProps = state => {
 		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		selectedSite: getSelectedSite( state ),
 		sectionName: getSectionName( state ),
-		showChecklistNotification: getChecklistNotificationStatus( state ),
-		nextChecklistTask: getChecklistNextTask( state ),
 		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
 };
 
 const mapDispatchToProps = {
 	recordTracksEvent,
-	setChecklistNotificationStatus,
 };
 
 export default connect(
