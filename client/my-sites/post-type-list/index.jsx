@@ -66,7 +66,8 @@ class PostTypeList extends Component {
 		const maxRequestedPage = this.estimatePageCountFromPosts( this.props.posts );
 		this.state = {
 			maxRequestedPage,
-			recentViewIds: '',
+			// Request recent views for posts loaded from hydrated state.
+			recentViewIds: this.postIdsFromPosts( this.props.posts ),
 		};
 	}
 
@@ -87,17 +88,12 @@ class PostTypeList extends Component {
 		}
 
 		if ( ! isEqual( this.props.posts, nextProps.posts ) ) {
-			//console.log( 'different' );
+			const postIds = this.postIdsFromPosts( this.props.posts );
+			const nextPostIds = this.postIdsFromPosts( nextProps.posts );
 
-			const postIds = ! isEmpty( this.props.posts ) ? this.props.posts.map( post => post.ID ) : [];
-			const nextPostIds = ! isEmpty( nextProps.posts )
-				? nextProps.posts.map( post => post.ID )
-				: [];
-
-			//console.log( 'differentPostIds', postIds, nextPostIds );
-
+			// Request updated recent view counts for posts added to list.
 			this.setState( {
-				recentViewIds: difference( nextPostIds, postIds ).join( ',' ),
+				recentViewIds: difference( nextPostIds, postIds ),
 			} );
 		}
 	}
@@ -133,6 +129,10 @@ class PostTypeList extends Component {
 
 		// Avoid making more than 5 concurrent requests on page load.
 		return Math.min( pageCount, 5 );
+	}
+
+	postIdsFromPosts( posts ) {
+		return ! isEmpty( posts ) ? posts.map( post => post.ID ) : [];
 	}
 
 	getPostsPerPageCount() {
@@ -225,8 +225,6 @@ class PostTypeList extends Component {
 		const { query, siteId, isRequestingPosts, translate } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
-		//console.log( 'posts', posts );
-		//console.log( 'recentViewIds', recentViewIds );
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
@@ -244,7 +242,7 @@ class PostTypeList extends Component {
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ recentViewIds && (
+				{ recentViewIds.length > 0 && (
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }

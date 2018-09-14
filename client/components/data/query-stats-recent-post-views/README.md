@@ -14,7 +14,7 @@ import QueryRecentPostViews from 'components/data/query-stats-recent-post-views'
 export default function ViewCount( { viewCount } ) {
 	return (
 		<div>
-			<QueryPostsViews siteId={ 12345678 } postIds={ '1,2,3,4' } num={ 30 } />
+			<QueryPostsViews siteId={ 12345678 } postIds={ [ 1,2,3,4 ] } num={ 30 } />
 			<div>{ viewCount }</div>
 		</div>
 	);
@@ -36,11 +36,11 @@ The site ID.
 ### `postIds`
 
 <table>
-	<tr><th>Type</th><td>String</td></tr>
+	<tr><th>Type</th><td>Array[Number]</td></tr>
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-A comma separated list of post IDs for which we'll retrieve view data.
+An array of post IDs for which we'll retrieve view data.
 
 ### `date`
 
@@ -49,7 +49,7 @@ A comma separated list of post IDs for which we'll retrieve view data.
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-The most recent day from which to query views for `postIds`. Defaults to current date.
+The most recent day from which to query views for `postIds` in `YYYY-MM-DD` format. Defaults to current date.
 
 ### `num`
 
