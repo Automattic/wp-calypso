@@ -13202,9 +13202,9 @@
       }
     },
     "react-day-picker": {
-      "version": "7.2.3",
-      "resolved": "https://registry.npmjs.org/react-day-picker/-/react-day-picker-7.2.3.tgz",
-      "integrity": "sha512-bfpuaUmbaB6lTfJkzLflrntDv4b5r6f1Bq46XNMtDf+w5288+knGiNoj5osZSgIIFuDQM6imFh4sSx5kxiSLvg==",
+      "version": "7.2.4",
+      "resolved": "https://registry.npmjs.org/react-day-picker/-/react-day-picker-7.2.4.tgz",
+      "integrity": "sha512-LaePKijvAdXTrQhTyU7XfxxD5NQIFb4FH4vr1T862xNtmncoS8jZLliyHieMHNhZZ8RJU1pruqoQzkZQ05646w==",
       "requires": {
         "prop-types": "^15.6.2"
       }
