@@ -14,13 +14,14 @@ import analytics from 'lib/analytics';
 export class ActivityLogDocumentationLink extends Component {
 	static propTypes = {
 		eventName: PropTypes.string,
+		source: PropTypes.string,
 		text: PropTypes.string,
 		url: PropTypes.string,
 	};
 
 	handleClick = () => {
-		const { eventName } = this.props;
-		analytics.tracks.recordEvent( eventName );
+		const { eventName, source } = this.props;
+		analytics.tracks.recordEvent( eventName, { source } );
 	};
 
 	render() {
@@ -35,6 +36,7 @@ export class ActivityLogDocumentationLink extends Component {
 
 ActivityLogDocumentationLink.defaultProps = {
 	eventName: 'calypso_activitylog_documentation_click',
+	source: 'unknown',
 	text: null,
 	url: 'https://jetpack.com/support/activity-log/',
 };

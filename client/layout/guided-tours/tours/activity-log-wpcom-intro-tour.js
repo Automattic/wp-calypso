@@ -10,6 +10,7 @@ import { overEvery as and } from 'lodash';
 /**
  * Internal dependencies
  */
+import ActivityLogDocumentationLink from 'my-sites/activity/activity-log/activity-log-documentation-link';
 import { makeTour, Tour, Step, ButtonRow, Quit } from 'layout/guided-tours/config-elements';
 import { isSelectedSiteNotJetpack, isSelectedSitePlanFree } from 'state/ui/guided-tours/contexts';
 
@@ -32,7 +33,17 @@ export const ActivityLogWpcomIntroTour = makeTour(
 					<p>
 						{ translate(
 							"Keep tabs on all your site's activity — new posts, pages, and comments, " +
-								'setting modifications, and more.'
+								'setting modifications, and more. {{<DocumentationLink />}}',
+							{
+								components: {
+									DocumentationLink: (
+										<ActivityLogDocumentationLink
+											url="https://en.support.wordpress.com/activity-log/"
+											source="activityLogWpcomIntroTour"
+										/>
+									),
+								},
+							}
 						) }
 					</p>
 					<ButtonRow>

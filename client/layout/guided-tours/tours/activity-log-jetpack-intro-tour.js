@@ -34,7 +34,13 @@ export const ActivityLogJetpackIntroTour = makeTour(
 						{ translate(
 							"Keep tabs on all your site's activity — plugin and theme updates, user logins, " +
 								'setting modifications, and more. {{DocumentationLink/}}',
-							{ components: { DocumentationLink: <ActivityLogDocumentationLink /> } }
+							{
+								components: {
+									DocumentationLink: (
+										<ActivityLogDocumentationLink source="activityLogJetpackIntroTour" />
+									),
+								},
+							}
 						) }
 					</p>
 					<ButtonRow>
