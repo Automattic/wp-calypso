@@ -99,7 +99,10 @@ export class Theme extends Component {
 	}
 
 	onScreenshotClick = () => {
-		this.props.onScreenshotClick( this.props.theme.id, this.props.index );
+		const { onScreenshotClick } = this.props;
+		if ( typeof onScreenshotClick === 'function' ) {
+			onScreenshotClick( this.props.theme.id, this.props.index );
+		}
 	};
 
 	isBeginnerTheme = () => {
