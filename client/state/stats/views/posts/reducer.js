@@ -10,8 +10,11 @@ import { get, merge } from 'lodash';
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
-import { items as itemSchemas } from './schema';
-import { STATS_VIEWS_POSTS_REQUEST, STATS_VIEWS_POSTS_RECEIVE } from 'state/action-types';
+import { items as itemsSchemas } from './schema';
+import {
+	STATS_RECENT_POST_VIEWS_REQUEST,
+	STATS_RECENT_POST_VIEWS_RECEIVE,
+} from 'state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
@@ -23,11 +26,11 @@ import { STATS_VIEWS_POSTS_REQUEST, STATS_VIEWS_POSTS_RECEIVE } from 'state/acti
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
-		case STATS_VIEWS_POSTS_REQUEST:
-		case STATS_VIEWS_POSTS_RECEIVE:
+		case STATS_RECENT_POST_VIEWS_REQUEST:
+		case STATS_RECENT_POST_VIEWS_RECEIVE:
 			return merge( {}, state, {
 				[ action.siteId ]:
-					STATS_VIEWS_POSTS_RECEIVE !== action.type ? action.postIds.split( ',' ) : false,
+					STATS_RECENT_POST_VIEWS_RECEIVE !== action.type ? action.postIds.split( ',' ) : false,
 			} );
 	}
 
@@ -44,7 +47,7 @@ export function requesting( state = {}, action ) {
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
-		case STATS_VIEWS_POSTS_RECEIVE: {
+		case STATS_RECENT_POST_VIEWS_RECEIVE: {
 			const viewsForState = {};
 			action.posts.forEach( post => {
 				viewsForState[ post.ID ] = { views: post.views };
@@ -62,7 +65,7 @@ export function items( state = {}, action ) {
 
 	return state;
 }
-items.schema = itemSchemas;
+items.schema = itemsSchemas;
 
 export default combineReducers( {
 	requesting,

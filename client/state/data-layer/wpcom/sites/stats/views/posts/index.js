@@ -7,10 +7,10 @@
 /**
  * Internal Dependencies
  */
-import { STATS_VIEWS_POSTS_REQUEST } from 'state/action-types';
+import { STATS_RECENT_POST_VIEWS_REQUEST } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receivePostsViews } from 'state/stats/views/posts/actions';
+import { receiveRecentPostViews } from 'state/stats/views/posts/actions';
 
 export const fetch = action => {
 	const { siteId, postIds, num, date, offset } = action;
@@ -31,10 +31,10 @@ export const fetch = action => {
 	);
 };
 
-export const onSuccess = ( { siteId }, data ) => receivePostsViews( siteId, data );
+export const onSuccess = ( { siteId }, data ) => receiveRecentPostViews( siteId, data );
 
 export default {
-	[ STATS_VIEWS_POSTS_REQUEST ]: [
+	[ STATS_RECENT_POST_VIEWS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch,
 			onSuccess,

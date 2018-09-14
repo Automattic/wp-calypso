@@ -19,7 +19,7 @@ import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/s
 import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
 import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
-import { getViewsForPost } from 'state/stats/views/posts/selectors';
+import { getRecentViewsForPost } from 'state/stats/views/posts/selectors';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {
@@ -188,7 +188,7 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			type: get( post, 'type', 'unknown' ),
-			viewCount: getViewsForPost( state, siteId, postId ),
+			viewCount: getRecentViewsForPost( state, siteId, postId ),
 			isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
 		};
 	},

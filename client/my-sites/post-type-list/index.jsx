@@ -16,7 +16,7 @@ import { localize } from 'i18n-calypso';
  */
 import afterLayoutFlush from 'lib/after-layout-flush';
 import QueryPosts from 'components/data/query-posts';
-import QueryPostsViews from 'components/data/query-stats-posts-views';
+import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -245,7 +245,7 @@ class PostTypeList extends Component {
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
 				{ recentViewIds && (
-					<QueryPostsViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
+					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (

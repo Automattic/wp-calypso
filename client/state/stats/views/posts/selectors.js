@@ -12,8 +12,8 @@ import { get } from 'lodash';
  * @param   {Number}  siteId   Site ID
  * @returns {boolean}          Whether or not views are being requested for site.
  */
-export function isRequestingViewsForSite( state, siteId ) {
-	return !! state.stats.views.requesting[ siteId ];
+export function isRequestingRecentViewsForSite( state, siteId ) {
+	return !! get( state, [ 'stats', 'recentViews', 'requesting', siteId ], false );
 }
 
 /**
@@ -24,8 +24,8 @@ export function isRequestingViewsForSite( state, siteId ) {
  * @param   {Number}  postId   Post ID
  * @returns {boolean}          Whether or not views are being requested for post.
  */
-export function isRequestingViewsForPost( state, siteId, postId ) {
-	return !! get( state, [ 'stats', 'views', 'requesting', siteId, postId ], false );
+export function isRequestingRecentViewsForPost( state, siteId, postId ) {
+	return !! get( state, [ 'stats', 'recentViews', 'requesting', siteId, postId ], false );
 }
 
 /**
@@ -36,6 +36,6 @@ export function isRequestingViewsForPost( state, siteId, postId ) {
  * @param   {Number}  postId   Post ID
  * @returns {?String}          Post views.
  */
-export function getViewsForPost( state, siteId, postId ) {
-	return get( state, [ 'stats', 'views', 'items', siteId, postId, 'views' ], null );
+export function getRecentViewsForPost( state, siteId, postId ) {
+	return get( state, [ 'stats', 'recentViews', 'items', siteId, postId, 'views' ], null );
 }

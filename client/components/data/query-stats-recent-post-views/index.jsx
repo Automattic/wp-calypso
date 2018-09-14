@@ -12,9 +12,9 @@ import { isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { requestPostsViews } from 'state/stats/views/posts/actions';
+import { requestRecentPostViews } from 'state/stats/views/posts/actions';
 
-class QueryPostsViews extends Component {
+class QueryRecentPostViews extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		postIds: PropTypes.string.isRequired,
@@ -42,7 +42,7 @@ class QueryPostsViews extends Component {
 			return;
 		}
 
-		this.props.requestPostsViews( siteId, postIds, num, date );
+		this.props.requestRecentPostViews( siteId, postIds, num, date );
 	}
 
 	render() {
@@ -52,5 +52,5 @@ class QueryPostsViews extends Component {
 
 export default connect(
 	null,
-	{ requestPostsViews }
-)( QueryPostsViews );
+	{ requestRecentPostViews }
+)( QueryRecentPostViews );

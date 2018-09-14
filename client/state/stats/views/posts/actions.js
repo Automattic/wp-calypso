@@ -3,7 +3,10 @@
 /**
  * Internal dependencies
  */
-import { STATS_VIEWS_POSTS_REQUEST, STATS_VIEWS_POSTS_RECEIVE } from 'state/action-types';
+import {
+	STATS_RECENT_POST_VIEWS_REQUEST,
+	STATS_RECENT_POST_VIEWS_RECEIVE,
+} from 'state/action-types';
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
@@ -15,9 +18,9 @@ import { STATS_VIEWS_POSTS_REQUEST, STATS_VIEWS_POSTS_RECEIVE } from 'state/acti
  * @param  {String}   date     The most recent day to include in results (YYYY-MM-DD format)
  * @return {Object}  Action object
  */
-export function requestPostsViews( siteId, postIds, num, date ) {
+export function requestRecentPostViews( siteId, postIds, num, date ) {
 	return {
-		type: STATS_VIEWS_POSTS_REQUEST,
+		type: STATS_RECENT_POST_VIEWS_REQUEST,
 		siteId,
 		postIds,
 		num,
@@ -32,9 +35,9 @@ export function requestPostsViews( siteId, postIds, num, date ) {
  * @param  {Number}  siteId   Site ID
  * @return {Object}  Action object
  */
-export function receivePostsViews( siteId, { date, posts } ) {
+export function receiveRecentPostViews( siteId, { date, posts } ) {
 	return {
-		type: STATS_VIEWS_POSTS_RECEIVE,
+		type: STATS_RECENT_POST_VIEWS_RECEIVE,
 		siteId,
 		date,
 		posts,

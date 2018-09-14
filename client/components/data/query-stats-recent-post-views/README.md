@@ -1,7 +1,7 @@
-Query Posts Views
+Query Recent Post Views
 ===========
 
-`<QueryPostsViews />` is a React component used to request views of a set of posts across a given time period.
+`<QueryRecentPostViews />` is a React component used to request views of a set of posts across a given time period.
 
 ## Usage
 
@@ -9,12 +9,12 @@ Render the component, passing `siteId` and `postIds`. It does not accept any chi
 
 ```jsx
 import React from 'react';
-import QueryPostsViews from 'components/data/query-stats-posts-views';
+import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
 
 export default function ViewCount( { viewCount } ) {
 	return (
 		<div>
-			<QueryPostsViews siteId={ 12345678 } postIds={ [ 1, 2, 3, 4] } num={ 30 } />
+			<QueryPostsViews siteId={ 12345678 } postIds={ '1,2,3,4' } num={ 30 } />
 			<div>{ viewCount }</div>
 		</div>
 	);
@@ -36,11 +36,11 @@ The site ID.
 ### `postIds`
 
 <table>
-	<tr><th>Type</th><td>Array[Number]</td></tr>
+	<tr><th>Type</th><td>String</td></tr>
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The post IDs for which we'll retrieve view data.
+A comma separated list of post IDs for which we'll retrieve view data.
 
 ### `date`
 
