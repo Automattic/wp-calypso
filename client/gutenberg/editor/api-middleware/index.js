@@ -4,6 +4,7 @@
  * External dependencies
  */
 import wpcomProxyRequest from 'wpcom-proxy-request';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,9 +40,12 @@ export const wpcomProxyMiddleware = options => {
 	// bypassing the apiFetch call that uses window.fetch.
 	// This intentionally breaks the middleware chain.
 	return new Promise( ( resolve, reject ) => {
+		const { body, data } = options;
+
 		wpcomProxyRequest(
 			{
-				...options,
+				...omit( options, [ 'body', 'data' ] ),
+				...( ( body || data ) && { body: body || data } ),
 				apiNamespace: 'wp/v2',
 			},
 			( error, body ) => {
