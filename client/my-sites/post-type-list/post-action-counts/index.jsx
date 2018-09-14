@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
 import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
 import { getRecentViewsForPost } from 'state/stats/recent-post-views/selectors';
+import ScreenReaderText from 'components/screen-reader-text';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {
@@ -85,27 +86,25 @@ class PostActionCounts extends PureComponent {
 		if ( ! count || count < 1 || ! showViews ) {
 			return null;
 		}
+		const visibleText = translate( '%(count)s Recent View', '%(count)s Recent Views', {
+			count,
+			args: { count: numberFormat( count ) },
+		} );
+		const screenReaderText = translate( 'in the past 30 days', {
+			comment:
+				'specifies time period for recent view count, i.e. "10 Recent Views in the past 30 days."',
+		} );
+		const linkTitleText = `${ visibleText } ${ screenReaderText }`;
+
 		return (
 			<li>
 				<a
 					href={ `/stats/post/${ postId }/${ siteSlug }` }
 					onClick={ this.onActionClick( 'stats' ) }
+					title={ linkTitleText }
 				>
-					<span
-						title={ translate(
-							'%(count)s view in the past 30 days',
-							'%(count)s views in the past 30 days',
-							{
-								count,
-								args: { count: numberFormat( count ) },
-							}
-						) }
-					>
-						{ translate( '%(count)s Recent View', '%(count)s Recent Views', {
-							count,
-							args: { count: numberFormat( count ) },
-						} ) }
-					</span>
+					{ visibleText }
+					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
 				</a>
 			</li>
 		);
