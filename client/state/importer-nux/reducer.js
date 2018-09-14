@@ -33,8 +33,8 @@ export const siteDetails = createReducer(
 );
 
 export const error = createReducer( null, {
-	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: null,
+	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: () => null,
 	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: ( state, action ) => action.error,
 } );
 
-export default combineReducers( { urlInputValue, siteDetails, error, isUrlInputDisabled } );
+export default combineReducers( { error, isUrlInputDisabled, siteDetails, urlInputValue } );
