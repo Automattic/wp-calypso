@@ -7,10 +7,10 @@
 import posts from './posts/reducer';
 import { combineReducers } from 'state/utils';
 import lists from './lists/reducer';
-import recentViews from './views/posts/reducer';
+import recentPostViews from './recent-post-views/reducer';
 
 export default combineReducers( {
 	posts,
 	lists,
-	recentViews,
+	recentPostViews,
 } );

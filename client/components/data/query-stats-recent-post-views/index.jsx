@@ -12,7 +12,7 @@ import { chunk, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { requestRecentPostViews } from 'state/stats/views/posts/actions';
+import { requestRecentPostViews } from 'state/stats/recent-post-views/actions';
 
 class QueryRecentPostViews extends Component {
 	static propTypes = {
@@ -42,7 +42,7 @@ class QueryRecentPostViews extends Component {
 			return;
 		}
 
-		// Break post_ids into chunks of 100 because `stats/views/posts`
+		// Break post_ids into chunks of 100 because `stats/recent-post-views`
 		// is limited to 100 post_ids per query.
 		const postIdsChunks = chunk( postIds, 100 );
 		postIdsChunks.forEach( postIdsChunk =>

@@ -13,7 +13,7 @@ import { get } from 'lodash';
  * @returns {boolean}          Whether or not views are being requested for site.
  */
 export function isRequestingRecentViewsForSite( state, siteId ) {
-	return !! get( state, [ 'stats', 'recentViews', 'requesting', siteId ], false );
+	return !! get( state, [ 'stats', 'recentPostViews', 'requesting', siteId ], false );
 }
 
 /**
@@ -25,7 +25,7 @@ export function isRequestingRecentViewsForSite( state, siteId ) {
  * @returns {boolean}          Whether or not views are being requested for post.
  */
 export function isRequestingRecentViewsForPost( state, siteId, postId ) {
-	return !! get( state, [ 'stats', 'recentViews', 'requesting', siteId, postId ], false );
+	return !! get( state, [ 'stats', 'recentPostViews', 'requesting', siteId, postId ], false );
 }
 
 /**
@@ -37,5 +37,5 @@ export function isRequestingRecentViewsForPost( state, siteId, postId ) {
  * @returns {?String}          Post views.
  */
 export function getRecentViewsForPost( state, siteId, postId ) {
-	return get( state, [ 'stats', 'recentViews', 'items', siteId, postId, 'views' ], null );
+	return get( state, [ 'stats', 'recentPostViews', 'items', siteId, postId, 'views' ], null );
 }

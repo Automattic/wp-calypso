@@ -10,7 +10,7 @@
 import { STATS_RECENT_POST_VIEWS_REQUEST } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveRecentPostViews } from 'state/stats/views/posts/actions';
+import { receiveRecentPostViews } from 'state/stats/recent-post-views/actions';
 
 export const fetch = action => {
 	const { siteId, postIds, num, date, offset } = action;
