@@ -13,7 +13,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { errorNotice } from 'state/notices/actions';
 import Dialog from 'components/dialog';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -23,12 +22,11 @@ import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-inpu
 import {
 	getCurrentlyOpenShippingClass,
 	isCurrentlyOpenShippingClassNew,
-	getUsedShippingClassProps,
 } from 'woocommerce/state/ui/shipping/classes/selectors';
 import {
 	closeShippingClass,
 	updateShippingClassSetting,
-	saveCurrentlyOpenShippingClass,
+	saveCurrentlyOpenShippingClassWithUniqueSlug,
 	removeShippingClass,
 } from 'woocommerce/state/ui/shipping/classes/actions';
 
@@ -117,7 +115,7 @@ class ShippingClassDialog extends Component {
 	getSlugToDisplay() {
 		const { name, slug } = this.props.data;
 
-		return slug.length ? slug : name.toLowerCase().replace( /\s+/g, '-' );
+		return slug.trim().length ? slug.trim() : name.toLowerCase().replace( /\s+/g, '-' );
 	}
 
 	onChange = ( { target: { name, value } } ) => {
@@ -149,35 +147,7 @@ class ShippingClassDialog extends Component {
 	};
 
 	onSave = () => {
-		const {
-			existingSlugs,
-			siteId,
-			translate,
-			data: { id, name, slug },
-			updateFieldValue,
-			save,
-		} = this.props;
-
-		const slugToUse = this.getSlugToDisplay();
-
-		// Check if the slug is free
-		if ( -1 !== existingSlugs.indexOf( slugToUse ) ) {
-			const text = translate(
-				'There was a problem saving %(name)s. A shipping class with this slug already exists.',
-				{
-					args: { name },
-				}
-			);
-
-			return this.props.errorNotice( text, {
-				id: `shipping-class-error-${ id }`,
-			} );
-		}
-
-		// If there is no slug, use the generated one
-		if ( 0 === slug.trim().length ) {
-			updateFieldValue( siteId, 'slug', slugToUse );
-		}
+		const { siteId, save } = this.props;
 
 		save( siteId );
 	};
@@ -196,7 +166,6 @@ export default connect(
 			siteId,
 			data,
 			isNew: isCurrentlyOpenShippingClassNew( state, siteId ),
-			existingSlugs: getUsedShippingClassProps( state, 'slug', data.id, siteId ),
 		};
 	},
 	dispatch =>
@@ -205,8 +174,7 @@ export default connect(
 				close: closeShippingClass,
 				updateFieldValue: updateShippingClassSetting,
 				deleteClass: removeShippingClass,
-				save: saveCurrentlyOpenShippingClass,
-				errorNotice,
+				save: saveCurrentlyOpenShippingClassWithUniqueSlug,
 			},
 			dispatch
 		)
