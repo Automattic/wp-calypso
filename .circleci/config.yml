@@ -19,34 +19,30 @@ references:
 
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
-    # @TODO drop dev
     keys:
-      - v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-      - v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
-      - v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+      - v1-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v1-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v1-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v1-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
-    # @TODO drop dev
-    key: v1dev-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    key: v1-jest-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
 
   restore-git-cache: &restore-git-cache
     name: Restore git cache
-    # @TODO drop dev
     keys:
-      - v2dev-git-{{ .Branch }}-{{ .Revision }}
-      - v2dev-git-{{ .Branch }}
-      - v2dev-git-master
-      - v2dev-git
+      - v2-git-{{ .Branch }}-{{ .Revision }}
+      - v2-git-{{ .Branch }}
+      - v2-git-master
+      - v2-git
   update-git-master: &update-git-master
     name: Update master branch
     command: git fetch --force origin master
   save-git-cache: &save-git-cache
     name: Save git cache
-    # @TODO drop dev
-    key: v2dev-git-{{ .Branch }}-{{ .Revision }}
+    key: v2-git-{{ .Branch }}-{{ .Revision }}
     paths:
       - ".git"
 
