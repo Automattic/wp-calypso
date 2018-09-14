@@ -80,7 +80,10 @@ export default class extends React.Component {
 		// `shouldComponentUpdate`
 		const key = Math.random();
 
-		const sandbox = ( this.props.allowSameOrigin ? 'allow-same-origin ' : '' ) + 'allow-scripts';
+		const sandbox = classNames( {
+			'allow-scripts': true,
+			'allow-same-origin': this.props.allowSameOrigin,
+		} );
 
 		return (
 			<ResizableIframe

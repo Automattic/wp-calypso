@@ -35,9 +35,11 @@ function VideoView( { siteId, content, width } ) {
 		)
 	);
 
-	const allowSameOrigin = true;
-
-	return <Shortcode { ...{ siteId, width, allowSameOrigin } }>{ shortcode }</Shortcode>;
+	return (
+		<Shortcode siteId={ siteId } width={ width } allowSameOrigin={ true }>
+			{ shortcode }
+		</Shortcode>
+	);
 }
 
 VideoView.propTypes = {
