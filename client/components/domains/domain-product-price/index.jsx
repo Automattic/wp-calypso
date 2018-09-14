@@ -74,9 +74,7 @@ class DomainProductPrice extends React.Component {
 
 		return (
 			<div className="domain-product-price domain-product-price__is-with-plans-only">
-				{ translate( 'Upgrade to premium to buy for %(cost)s/year', {
-					args: { cost: this.props.price },
-				} ) }
+				{ translate( 'Personal plan required' ) }
 			</div>
 		);
 	}
