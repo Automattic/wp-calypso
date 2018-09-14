@@ -37,12 +37,6 @@ $theme-info-height: 54px;
 		}
 	}
 
-	&:not( .is-actionable ) {
-		.theme__thumbnail {
-			cursor: default;
-		}
-	}
-
 	&.is-actionable {
 		.theme__thumbnail {
 			cursor: pointer;
@@ -143,6 +137,7 @@ $theme-info-height: 54px;
 }
 
 .theme__thumbnail {
+	cursor: default;
 	opacity: 1;
 	transition: all 200ms ease-in-out;
 
