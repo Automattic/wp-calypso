@@ -259,7 +259,4 @@ workflows:
   version: 2
   test:
     jobs:
-      - lint-and-maybe-integration
-      - translate
       - test-client
-      - test-server
