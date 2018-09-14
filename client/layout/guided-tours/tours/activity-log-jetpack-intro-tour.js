@@ -12,14 +12,14 @@ import { overEvery as and } from 'lodash';
  */
 import ActivityLogDocumentationLink from 'my-sites/activity/activity-log/activity-log-documentation-link';
 import { makeTour, Tour, Step, ButtonRow, Quit } from 'layout/guided-tours/config-elements';
-import { isSelectedSiteJetpack, isSelectedSitePlanFree } from 'state/ui/guided-tours/contexts';
+import { isSelectedSiteJetpack } from 'state/ui/guided-tours/contexts';
 
 export const ActivityLogJetpackIntroTour = makeTour(
 	<Tour
 		name="activityLogJetpackIntroTour"
 		version="20180808"
 		path="/activity-log/"
-		when={ and( isSelectedSiteJetpack, isSelectedSitePlanFree ) }
+		when={ and( isSelectedSiteJetpack ) }
 	>
 		<Step
 			name="init"
