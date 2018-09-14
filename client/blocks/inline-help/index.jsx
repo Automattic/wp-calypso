@@ -156,9 +156,9 @@ class InlineHelp extends Component {
 			( null === nextChecklistTask || task.id !== nextChecklistTask )
 		) {
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	};
 
 	showInlineHelp = () => {
