@@ -139,7 +139,7 @@ export class Theme extends Component {
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
-		const isActionable = !! this.props.screenshotClickUrl || this.props.onScreenshotClick;
+		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': isActionable,
