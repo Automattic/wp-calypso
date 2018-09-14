@@ -34,13 +34,19 @@ references:
 
   restore-git-cache: &restore-git-cache
     name: Restore git cache
-    key: v1-20180524-git
+    # @TODO drop dev
+    keys:
+      - v2dev-git-{{ .Branch }}-{{ .Revision }}
+      - v2dev-git-{{ .Branch }}
+      - v2dev-git-master
+      - v2dev-git
   update-git-master: &update-git-master
     name: Update master branch
     command: git fetch --force origin master
   save-git-cache: &save-git-cache
     name: Save git cache
-    key: v1-20180524-git
+    # @TODO drop dev
+    key: v2dev-git-{{ .Branch }}-{{ .Revision }}
     paths:
       - ".git"
 
