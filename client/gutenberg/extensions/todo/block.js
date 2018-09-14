@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { IconButton } from '@wordpress/components';
 import { Component } from '@wordpress/element';
@@ -181,9 +180,6 @@ const edit = class extends Component {
 						const onSplit = () => {
 							this.insertNewItemAfter( itemIndex );
 						};
-						const classNames = classnames( `${ className }__item`, {
-							[ `${ className }__item--done` ]: item.done,
-						} );
 
 						// if we've inserted an item at this index, and it does not have a value, request focus
 						const shouldFocusThisItem =
@@ -191,16 +187,16 @@ const edit = class extends Component {
 
 						return (
 							<ItemEditor
-								moveUp={ moveUp }
+								canMoveDown={ itemIndex < items.length - 1 }
+								canMoveUp={ itemIndex > 0 }
+								className={ `${ className }__item` }
+								item={ item }
 								moveDown={ moveDown }
 								moveLeft={ moveLeft }
 								moveRight={ moveRight }
-								canMoveUp={ itemIndex > 0 }
-								canMoveDown={ itemIndex < items.length - 1 }
-								classNames={ classNames }
-								item={ item }
-								onDelete={ onDelete }
+								moveUp={ moveUp }
 								onChange={ onChange }
+								onDelete={ onDelete }
 								onSplit={ onSplit }
 								shouldFocus={ shouldFocusThisItem }
 							/>

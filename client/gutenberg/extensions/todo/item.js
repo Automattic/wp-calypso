@@ -3,7 +3,8 @@
 /**
  * External dependencies
  */
-import { Button, Dashicon } from '@wordpress/components';
+import classnames from 'classnames';
+import { Button, Dashicon, IconButton } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 import { RichText } from '@wordpress/editor';
 
@@ -47,17 +48,23 @@ export class ItemEditor extends Component {
 	}
 
 	render() {
-		const { item, moveUp, moveDown, canMoveUp, canMoveDown, classNames, onDelete } = this.props;
+		const { canMoveDown, canMoveUp, className, item, moveDown, moveUp, onDelete } = this.props;
 		const { done, value } = item;
 		return (
-			<li className={ classNames }>
-				<span className="item-status" onClick={ this.toggleDone }>
-					{ done && <Dashicon icon="yes" /> }
-				</span>
+			<li
+				className={ classnames( className, {
+					[ `${ className }--done` ]: !! done,
+				} ) }
+			>
+				<IconButton
+					className={ `${ className }-status` }
+					icon={ done ? 'yes' : undefined }
+					onClick={ this.toggleDone }
+				/>
 				{ /* { 0 < item.level && <Button onClick={ moveLeft }>&lt;</Button> }
 				{ 2 > item.level && <Button onClick={ moveRight }>&gt;</Button> }
 				{ '-'.repeat( item.level ) }  */ }
-				<span className="item-title">
+				<span className={ `${ className }-title` }>
 					<RichText
 						tagName="div"
 						value={ value }

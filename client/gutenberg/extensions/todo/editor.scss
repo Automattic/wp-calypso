@@ -37,48 +37,6 @@ $block-base-class: '.wp-block-a8c-todo';
 		margin-bottom: 20px;
 	}
 
-	// Individual to-do list item.
-	#{$block-base-class}__item {
-		border-bottom: 1px solid $light-gray-500;
-		display: flex;
-		justify-content: space-between;
-		padding: 4px 0;
-	}
-
-	// Status.
-	.item-status {
-		display: inline-block;
-		content: '';
-		border: 1px solid $light-gray-500;
-		border-radius: 50%;
-		margin: 7px 8px 0 0;
-		height: 16px;
-		width: 18px;
-	}
-
-	// Set width of title to 100% so it doesn't end up centered.
-	.item-title {
-		width: 100%;
-	}
-
-	// Completed checklist item.
-	#{$block-base-class}__item--done {
-		color: $color-accent-green;
-
-		.item-status {
-			background: $color-accent-green;
-			border: 0;
-			position: relative;
-		}
-
-		.item-status .dashicon {
-			fill: $white;
-			position: absolute;
-			top: -2px;
-			left: -2px;
-		}
-	}
-
 	// Up and down buttons.
 	.move-buttons {
 		width: 78px;
@@ -104,6 +62,47 @@ $block-base-class: '.wp-block-a8c-todo';
 				fill: $dark-gray-500;
 			}
 		}
+	}
+}
+
+// Individual to-do list item.
+#{$block-base-class}__item {
+	border-bottom: 1px solid $light-gray-500;
+	display: flex;
+	justify-content: space-between;
+	padding: 4px 0;
+}
+
+// @TODO work out active/hover/focus
+#{$block-base-class}__item-status {
+	display: inline-block;
+	border: 1px solid $light-gray-500;
+	border-radius: 50%;
+	margin: 7px 8px 0 0;
+	height: 16px;
+	width: 18px;
+	position: relative;
+
+	.dashicon {
+		fill: $white;
+		position: absolute;
+		top: -2px;
+		left: -2px;
+	}
+}
+
+// Set width of title to 100% so it doesn't end up centered.
+#{$block-base-class}__item-title {
+	width: 100%;
+}
+
+// Completed checklist item.
+#{$block-base-class}__item--done {
+	color: $color-accent-green;
+
+	#{$block-base-class}__item-status {
+		background: $color-accent-green;
+		border: 0;
 	}
 }
 
