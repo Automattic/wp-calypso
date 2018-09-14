@@ -146,9 +146,10 @@ export class Filterbar extends Component {
 		this.setState( { showActivityTypes: false } );
 	};
 
-	handleSelectClick = ( group, event ) => {
+	handleToggleAllActionTypeSelector = ( checkboxes, event ) => {
 		const { filter, selectActionType, siteId } = this.props;
 		event.preventDefault();
+
 		// unchecked -> check off everything by setting the groups to null
 		if ( filter && filter.group && filter.group.length !== checkboxes.length ) {
 			selectActionType( siteId, null );
@@ -158,7 +159,7 @@ export class Filterbar extends Component {
 		selectActionType( siteId, [ 'no-group' ] );
 	};
 
-	onSelectClick = ( group, allGroups, event ) => {
+	handleSelectClick = ( group, allGroups, event ) => {
 		const { filter, selectActionType, siteId } = this.props;
 		event.preventDefault();
 

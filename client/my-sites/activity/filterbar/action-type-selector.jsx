@@ -87,6 +87,10 @@ export class ActionTypeSelector extends Component {
 				}
 			} );
 		}
+
+		if ( selected && selected[ 0 ] === 'no-group' ) {
+			selectedNames.push( translate( 'Activity Type: None Selected' ) );
+		}
 		const buttonClass = classnames( {
 			filterbar__selection: true,
 			'is-selected': !! selectedNames.length,

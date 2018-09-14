@@ -309,7 +309,7 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan } = this.props;
+		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan, slug } = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
@@ -320,7 +320,12 @@ class ActivityLog extends Component {
 				<Fragment>
 					{ config.isEnabled( 'activity-filterbar' ) &&
 						! isFilterEmpty && <Filterbar siteId={ siteId } filter={ filter } /> }
-					<EmptyContent title={ translate( 'No matching events found.' ) } />
+					<EmptyContent
+						title={ translate( 'No matching events found.' ) }
+						line={ translate( 'Try adjusting your date range or acitvity type filters' ) }
+						action={ translate( 'Remove all filters' ) }
+						actionURL={ '/activity-log/' + slug }
+					/>
 				</Fragment>
 			);
 		}
