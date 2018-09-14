@@ -160,7 +160,7 @@ $theme-info-height: 54px;
 		opacity: 0;
 		pointer-events: none;
 
-		z-index: z-index( 'root', '.is-actionable .theme__active-focus' );
+		z-index: z-index( 'root', '.is-actionable .theme__thumbnail-label' );
 		position: absolute;
 		top: 36%;
 		left: 50%;
