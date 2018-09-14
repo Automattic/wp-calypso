@@ -193,6 +193,7 @@ export const convertToApiPackage = ( pckg, siteId, orderId, state, customsItems 
 		'height',
 		'weight',
 		'signature',
+		'is_letter',
 	] );
 	if ( customsItems ) {
 		apiPckg.contents_type = pckg.contentsType || 'merchandise';
