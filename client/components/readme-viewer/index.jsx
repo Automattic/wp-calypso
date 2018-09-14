@@ -5,11 +5,9 @@
  */
 
 import React, { Component } from 'react';
-import { Parser } from 'html-to-react';
+import ReactMarkdown from 'react-markdown';
 import PropTypes from 'prop-types';
 import request from 'superagent';
-
-const htmlToReactParser = new Parser();
 
 /**
  * Internal Dependencies
@@ -36,7 +34,7 @@ class ReadmeViewer extends Component {
 			.query( { path: readmeFilePath } )
 			.then( ( { text } ) => {
 				this.setState( {
-					readme: htmlToReactParser.parse( text ),
+					readme: text,
 				} );
 			} );
 	}
@@ -52,12 +50,18 @@ class ReadmeViewer extends Component {
 			</a>
 		);
 
+		let content;
+
+		if ( ! this.state.readme ) {
+			content = <div className="readme-viewer__not-available">No documentation available.</div>;
+		} else {
+			content = <ReactMarkdown source={ this.state.readme } />;
+		}
+
 		return this.props.readmeFilePath ? (
 			<div className="readme-viewer__wrapper devdocs__doc-content">
 				{ this.state.readme && showEditLink && editLink }
-				{ this.state.readme || (
-					<div className="readme-viewer__not-available">No documentation available.</div>
-				) }
+				{ content }
 			</div>
 		) : null;
 	}
