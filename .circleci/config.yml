@@ -205,16 +205,10 @@ jobs:
       ###################
       # End Basic Setup #
       ###################
-      # No cache for this Jest run!
-      # We'd need to add special keys to avoid saving and restoring an empty cache from noop runs.
-      # The suite is small enough that no-cache is not a concern.
+      - restore_cache: *restore-jest-cache
       - run:
           name: Run Integration Tests
           command: |
-            if [[ "$RUN_ARGS" != "--nightly" ]]; then
-              echo "Regular build: skipping tests."
-              exit 0
-            fi
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/test-results-integration.xml" \
               ./node_modules/.bin/jest                     \
                 --ci                                       \
@@ -225,6 +219,7 @@ jobs:
                 --silent                                   \
                 --config=test/integration/jest.config.js   \
                 $( circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split )
+      - save_cache: *save-jest-cache
       - store_test_results:
           path: /tmp/test_results
       - store_artifacts:
@@ -324,6 +319,17 @@ workflows:
     jobs:
       - lint
       - test-client
-      - test-integration
       - test-server
       - translate
+
+  nightly:
+    jobs:
+      - test-integration
+    triggers:
+      - schedule:
+          cron: "0 4 * * *"
+          filters:
+            branches:
+              only:
+                - master
+                - update/circleci-test-runners
