@@ -141,7 +141,7 @@ jobs:
 
   test-client:
     <<: *defaults
-    parallelism: 8
+    parallelism: 4
     steps:
       ###############
       # Basic Setup #
