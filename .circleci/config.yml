@@ -72,7 +72,7 @@ references:
 
 version: 2
 jobs:
-  lint:
+  lint-and-translate:
     <<: *defaults
     parallelism: 1
     steps:
@@ -95,6 +95,7 @@ jobs:
       ###################
       - run:
           name: Lint Config Keys
+          when: always
           command: npm run lint:config-defaults
       - run:
           name: Lint Client and Server
@@ -120,10 +121,25 @@ jobs:
               mv ~/eslint-results.xml "$CIRCLE_TEST_REPORTS/eslint"
               exit "$ESLINT_RESULT"
             fi
+      - run:
+          name: Build calypso-strings.pot
+          when: always
+          command: |
+            npm run translate
+            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
+      - run:
+          name: Build New Strings .pot
+          when: always
+          command: |
+            git clone https://github.com/Automattic/gp-localci-client.git
+            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            rm -rf gp-localci-client
       - store_test_results:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/artifacts
 
   test-client:
     <<: *defaults
@@ -245,42 +261,6 @@ jobs:
       - store_artifacts:
           path: /tmp/test_results
 
-  translate:
-    <<: *defaults
-    parallelism: 1
-    steps:
-      ###############
-      # Basic Setup #
-      # #############
-      # repo
-      - restore_cache: *restore-git-cache
-      - checkout
-      - run: *update-git-master
-      - save_cache: *save-git-cache
-      # npm dependencies
-      - restore_cache: *restore-node-modules-cache
-      - run: *npm-install
-      - save_cache: *save-node-modules-cache
-      # folders to collect results
-      - run: *setup-results-and-artifacts
-      ###################
-      # End Basic Setup #
-      ###################
-      - run:
-          name: Build calypso-strings.pot
-          command: |
-            npm run translate
-            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
-      - run:
-          name: Build New Strings .pot
-          command: |
-            git clone https://github.com/Automattic/gp-localci-client.git
-            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
-            rm -rf gp-localci-client
-      - store_artifacts:
-          path: /tmp/artifacts
-
-
 # We need to work around this bit because
 # the notification system in 2.0 is a bit flakey
 # and is not yet working as expected.
@@ -292,10 +272,9 @@ workflows:
   version: 2
   calypso:
     jobs:
-      - lint
+      - lint-and-translate
       - test-client
       - test-server
-      - translate
 
   calypso-nightly:
     jobs:
