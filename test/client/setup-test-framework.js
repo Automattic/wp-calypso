@@ -1,10 +1,8 @@
-/**
- * @format
- */
-
+/** @format */
 /**
  * External dependencies
  */
+import 'cache-require-paths';
 import { disableNetConnect } from 'nock';
 
 // It disables all network requests for all tests.
