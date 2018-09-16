@@ -22,7 +22,7 @@ import {
 	getNuxUrlInputValue,
 	getSiteDetails,
 	getUrlInputValidationMessage,
-	isUrlInputDisabled,
+	isIsSiteImportableFetching,
 } from 'state/importer-nux/temp-selectors';
 
 const normalizeUrlForImportSource = url => {
@@ -110,7 +110,8 @@ class ImportURLStepComponent extends Component {
 					onAction={ this.handleAction }
 					label={ translate( 'URL' ) }
 					onChange={ this.handleInputChange }
-					defaultValue={ urlInputValue }
+					value={ urlInputValue }
+					defaultValue={ null }
 					disabled={ isInputDisabled }
 					onBlur={ this.handleInputBlur }
 				/>
@@ -152,7 +153,7 @@ export default flow(
 		state => ( {
 			urlInputValue: getNuxUrlInputValue( state ),
 			siteDetails: getSiteDetails( state ),
-			isInputDisabled: isUrlInputDisabled( state ),
+			isInputDisabled: isIsSiteImportableFetching( state ),
 			urlInputValidationMessage: getUrlInputValidationMessage( state ),
 		} ),
 		{

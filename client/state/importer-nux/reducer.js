@@ -10,6 +10,7 @@ import {
 	IMPORTER_NUX_URL_VALIDATION_SET,
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 } from 'state/action-types';
+import sitePreview from 'state/importer-nux/site-preview-reducer';
 
 export const urlInputValue = ( state = '', action ) =>
 	action.type === IMPORTER_NUX_URL_INPUT_SET ? action.value : state;
@@ -17,7 +18,7 @@ export const urlInputValue = ( state = '', action ) =>
 export const urlInputValidationMessage = ( state = '', action ) =>
 	action.type === IMPORTER_NUX_URL_VALIDATION_SET ? action.message : state;
 
-export const isUrlInputDisabled = createReducer( false, {
+export const isIsSiteImportableFetching = createReducer( false, {
 	[ IMPORT_IS_SITE_IMPORTABLE_START_FETCH ]: () => true,
 	[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: () => false,
 	[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => false,
@@ -44,7 +45,8 @@ export const error = createReducer( null, {
 export default combineReducers( {
 	urlInputValue,
 	siteDetails,
+	sitePreview,
 	error,
-	isUrlInputDisabled,
+	isIsSiteImportableFetching,
 	urlInputValidationMessage,
 } );

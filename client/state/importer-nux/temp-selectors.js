@@ -9,7 +9,11 @@ export const getNuxUrlInputValue = state => get( state, 'importerNux.urlInputVal
 
 export const getSiteDetails = state => get( state, 'importerNux.siteDetails' );
 
-export const isUrlInputDisabled = state => get( state, 'importerNux.isUrlInputDisabled' );
+export const isIsSiteImportableFetching = state => get( state, 'importerNux.isIsSiteImportableFetching' );
 
 export const getUrlInputValidationMessage = state =>
 	get( state, 'importerNux.urlInputValidationMessage' );
+
+// TODO: Better naming?
+export const isSiteImportableFetching = state =>
+	get( state, 'importerNux.isIsSiteImportableFetching' );
