@@ -141,7 +141,7 @@ jobs:
 
   test-client:
     <<: *defaults
-    parallelism: 4
+    parallelism: 6
     steps:
       ###############
       # Basic Setup #
@@ -322,9 +322,11 @@ workflows:
       - test-server
       - translate
 
-  nightly:
+  calypso-nightly:
     jobs:
+      - test-client
       - test-integration
+      - test-server
     triggers:
       - schedule:
           cron: "0 4 * * *"
