@@ -20,16 +20,15 @@ references:
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
     keys:
-      - v3-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-      - v3-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v3-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
-      - v3-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+      - v2-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v2-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v2-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v2-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
-    key: v3-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    key: v2-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
-      - ~/babel-cache
 
   restore-git-cache: &restore-git-cache
     name: Restore git cache
@@ -150,8 +149,6 @@ jobs:
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Client Tests
-          environment:
-            BABEL_CACHE_PATH: ~/babel-cache
           command: |
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/test-results-client.xml" \
               ./node_modules/.bin/jest                \
@@ -193,8 +190,6 @@ jobs:
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Integration Tests
-          environment:
-            BABEL_CACHE_PATH: ~/babel-cache
           command: |
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/test-results-integration.xml" \
               ./node_modules/.bin/jest                     \
@@ -234,8 +229,6 @@ jobs:
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Server Tests
-          environment:
-            BABEL_CACHE_PATH: ~/babel-cache
           command: |
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/test-results-client.xml" \
               ./node_modules/.bin/jest                \
