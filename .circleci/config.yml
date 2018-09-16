@@ -46,17 +46,6 @@ references:
     paths:
       - ".git"
 
-  restore-npm-cache: &restore-npm-cache
-    name: "Restore npm cache"
-    keys:
-       - v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-       - v1-npmcache-{{ checksum ".nvmrc" }}
-  save-npm-cache: &save-npm-cache
-    name: "Save npm cache"
-    key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-    paths:
-      - ~/.npm
-
   # We'll conditionally cache and restore node_modules if
   # .nvmrc and npm-shrinkwrap are identical. We'll use the
   # presence of node_modules to conditionally run npm ci.
@@ -96,11 +85,9 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-npm-cache
       - restore_cache: *restore-node-modules-cache
       - run: *npm-install
       - save_cache: *save-node-modules-cache
-      - save_cache: *save-npm-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
       ###################
@@ -151,11 +138,9 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-npm-cache
       - restore_cache: *restore-node-modules-cache
       - run: *npm-install
       - save_cache: *save-node-modules-cache
-      - save_cache: *save-npm-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
       ###################
@@ -194,11 +179,9 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-npm-cache
       - restore_cache: *restore-node-modules-cache
       - run: *npm-install
       - save_cache: *save-node-modules-cache
-      - save_cache: *save-npm-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
       ###################
@@ -235,11 +218,9 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-npm-cache
       - restore_cache: *restore-node-modules-cache
       - run: *npm-install
       - save_cache: *save-node-modules-cache
-      - save_cache: *save-npm-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
       ###################
@@ -277,11 +258,9 @@ jobs:
       - run: *update-git-master
       - save_cache: *save-git-cache
       # npm dependencies
-      - restore_cache: *restore-npm-cache
       - restore_cache: *restore-node-modules-cache
       - run: *npm-install
       - save_cache: *save-node-modules-cache
-      - save_cache: *save-npm-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
       ###################
