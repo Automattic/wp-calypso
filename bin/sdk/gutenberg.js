@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+const fs = require( 'fs' );
 const path = require( 'path' );
 
 const EDITOR_FILENAME = 'editor';
@@ -18,8 +19,8 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	return {
 		...baseConfig,
 		entry: {
-			...( editorScript ? { [ EDITOR_FILENAME ]: editorScript } : {} ),
-			...( viewScript ? { [ VIEW_FILENAME ]: viewScript } : {} ),
+			...( fs.existsSync( editorScript ) ? { [ EDITOR_FILENAME ]: editorScript } : {} ),
+			...( fs.existsSync( viewScript ) ? { [ VIEW_FILENAME ]: viewScript } : {} ),
 		},
 		output: {
 			path: outputDir || path.join( inputDir, 'build' ),
