@@ -33,14 +33,24 @@ function getPostID( context ) {
 }
 
 export const post = ( context, next ) => {
-	const state = context.store.getState();
+	//see post-editor/controller.js for reference
 
-	const siteId = getSelectedSiteId( state );
-	const postId = getPostID( context );
 	const uniqueDraftKey = uniqueId( 'gutenberg-draft-' );
+	const postId = getPostID( context );
 	const postType = determinePostType( context );
 
-	//reserved space for adding the post to context see post-editor/controller.js
-	context.primary = <GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey } } />;
-	next();
+	const unsubscribe = context.store.subscribe( () => {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+
+		if ( ! siteId ) {
+			return;
+		}
+
+		unsubscribe();
+
+		context.primary = <GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey } } />;
+
+		next();
+	} );
 };
