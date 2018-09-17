@@ -47,6 +47,16 @@ registerBlockType( 'a8c/related-posts', {
 		},
 	},
 
+	transforms: {
+		from: [
+			{
+				type: 'shortcode',
+				tag: 'jetpack-related-posts',
+			},
+		],
+	},
+
 	edit,
+
 	save: () => null,
 } );
