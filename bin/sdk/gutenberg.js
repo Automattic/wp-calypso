@@ -4,24 +4,25 @@
  */
 const path = require( 'path' );
 
-exports.config = ( {
-	argv: { editorScript, viewScript, outputDir, outputEditorFile, outputViewFile },
-	getBaseConfig,
-} ) => {
+const EDITOR_FILENAME = 'editor';
+const VIEW_FILENAME = 'view';
+
+exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	const baseConfig = getBaseConfig( {
 		cssFilename: '[name].css',
 		externalizeWordPressPackages: true,
 	} );
-	const name = path.basename( path.dirname( editorScript ).replace( /\/$/, '' ) );
+	const editorScript = path.join( inputDir, `${ EDITOR_FILENAME }.js` );
+	const viewScript = path.join( inputDir, `${ VIEW_FILENAME }.js` );
 
 	return {
 		...baseConfig,
 		entry: {
-			...( editorScript ? { [ outputEditorFile || `${ name }-editor` ]: editorScript } : {} ),
-			...( viewScript ? { [ outputViewFile || `${ name }-view` ]: viewScript } : {} ),
+			...( editorScript ? { [ EDITOR_FILENAME ]: editorScript } : {} ),
+			...( viewScript ? { [ VIEW_FILENAME ]: viewScript } : {} ),
 		},
 		output: {
-			path: outputDir || path.join( path.dirname( editorScript ), 'build' ),
+			path: outputDir || path.join( inputDir, 'build' ),
 			filename: '[name].js',
 			libraryTarget: 'window',
 		},
