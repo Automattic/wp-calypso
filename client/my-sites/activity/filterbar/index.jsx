@@ -172,7 +172,9 @@ export class Filterbar extends Component {
 			return;
 		}
 
-		const actionTypes = filter.group.slice().filter( ( selectedGroup ) => selectedGroup !== 'no-group' );
+		const actionTypes = filter.group
+			.slice()
+			.filter( selectedGroup => selectedGroup !== 'no-group' );
 		const index = actionTypes.indexOf( group.key );
 		if ( index >= 0 ) {
 			pullAt( actionTypes, index );
@@ -241,6 +243,7 @@ export class Filterbar extends Component {
 					enteredTo={ this.getEnteredToDate( filter ) }
 				/>
 				<ActionTypeSelector
+					filter={ filter }
 					siteId={ siteId }
 					isVisible={ this.state.showActivityTypes }
 					onButtonClick={ this.toggleActivityTypesSelector }

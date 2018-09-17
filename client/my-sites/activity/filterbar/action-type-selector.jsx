@@ -154,8 +154,8 @@ export class ActionTypeSelector extends Component {
 		);
 	}
 }
-const mapStateToProps = ( state, { siteId } ) => {
-	const actionTypesRequest = requestActivityActionTypeCounts( siteId );
+const mapStateToProps = ( state, { siteId, filter } ) => {
+	const actionTypesRequest = requestActivityActionTypeCounts( siteId, filter );
 	return {
 		actionTypes: actionTypesRequest.data,
 	};
