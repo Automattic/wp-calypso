@@ -304,7 +304,7 @@ class DomainsStep extends React.Component {
 				path={ this.props.path }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
-				products={ this.props.productList }
+				products={ this.props.productsList }
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
@@ -341,7 +341,7 @@ class DomainsStep extends React.Component {
 					onRegisterDomain={ this.handleAddDomain }
 					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					products={ this.props.productList }
+					products={ this.props.productsList }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					analyticsSection="signup"
@@ -370,7 +370,7 @@ class DomainsStep extends React.Component {
 					onRegisterDomain={ this.handleAddDomain }
 					onTransferDomain={ this.handleAddTransfer }
 					onSave={ this.onTransferSave }
-					products={ this.props.productList }
+					products={ this.props.productsList }
 				/>
 			</div>
 		);
@@ -390,7 +390,7 @@ class DomainsStep extends React.Component {
 					isSignupStep
 					mapDomainUrl={ this.getMapDomainUrl() }
 					transferDomainUrl={ this.getTransferDomainUrl() }
-					products={ this.props.productList }
+					products={ this.props.productsList }
 				/>
 			</div>
 		);
