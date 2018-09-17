@@ -7446,9 +7446,9 @@
       "integrity": "sha1-nbHb0Pr43m++D13V5Wu2BigN5ps="
     },
     "immutability-helper": {
-      "version": "2.7.1",
-      "resolved": "https://registry.npmjs.org/immutability-helper/-/immutability-helper-2.7.1.tgz",
-      "integrity": "sha512-6uhvN9F1TRPtirUV3b7MIeY34h+U2hFR5hyK6jaWOvT36BNXYCx2tGujZhx/41fzUta/VNmK47scDhohTFYRDw==",
+      "version": "2.8.1",
+      "resolved": "https://registry.npmjs.org/immutability-helper/-/immutability-helper-2.8.1.tgz",
+      "integrity": "sha512-8AVB5EUpRBUdXqfe4cFsFECsOIZ9hX/Arl8B8S9/tmwpYv3UWvOsXUPOjkuZIMaVxfSWkxCzkng1rjmEoSWrxQ==",
       "requires": {
         "invariant": "^2.2.0"
       }
