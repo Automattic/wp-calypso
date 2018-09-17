@@ -23,6 +23,7 @@ import Gridicon from 'gridicons';
 import Main from 'components/main';
 import { showInlineHelpPopover } from 'state/inline-help/actions';
 import WebPreview from 'components/web-preview';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:my-sites:preview' );
 
@@ -107,8 +108,11 @@ class PreviewMain extends React.Component {
 	}
 
 	updateSiteLocation = pathname => {
-		this.setState( {
-			externalUrl: this.props.site.URL + ( pathname === '/' ? '' : pathname ),
+		const externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
+		this.setState( { externalUrl } );
+		this.props.recordTracksEvent( 'calypso_view_site_page_view', {
+			full_url: externalUrl,
+			pathname,
 		} );
 	};
 
@@ -176,6 +180,7 @@ const mapState = state => {
 export default connect(
 	mapState,
 	{
+		recordTracksEvent,
 		setLayoutFocus,
 		showInlineHelpPopover,
 	}
