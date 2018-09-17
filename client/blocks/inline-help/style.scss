@@ -48,7 +48,6 @@
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 	border: 1px solid darken( $blue-wordpress, 5 );
 	transition: all 0.2s ease-in-out;
-	overflow: visible;
 
 	.gridicon {
 		fill: $white;
@@ -70,19 +69,6 @@
 	&.is-active {
 		background: $blue-medium;
 		border-color: darken( $blue-medium, 5 )
-	}
-
-	&.has-notification::before {
-		display: block;
-		background-color: $orange-jazzy;
-		border: 2px solid $white;
-		content: "";
-		border-radius: 50%;
-		width: 10px;
-		height: 10px;
-		position: absolute;
-			top: -2px;
-			left: -3px;
 	}
 }
 
@@ -303,59 +289,6 @@
 			max-height: 20vh;
 		}
 	}
-}
-
-.inline-help__checklist {
-	border-top: 1px solid $gray-lighten-20;
-}
-
-.inline-help__checklist .button.is-borderless.inline-help__checklist-button {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	font-weight: bold;
-	width: 100%;
-	padding: 0;
-
-	&:hover,
-	&:focus {
-		color: $blue-medium;
-	}
-}
-
-.inline-help__checklist-label {
-	padding: 12px 0 10px 17px;
-	position: relative;
-}
-
-.inline-help__checklist-button.button .gridicon.inline-help__gridicon-list-checkmark {
-	margin: 0;
-	position: absolute;
-		top: 11px;
-		left: 13px;
-}
-
-.inline-help__checklist-count {
-	padding: 12px 20px 10px 0;
-
-	&.checklist-count-notification::before {
-		display: inline-block;
-		background-color: $orange-jazzy;
-		content: "";
-		border-radius: 50%;
-		margin-right: 6px;
-		width: 8px;
-		height: 8px;
-	}
-}
-
-.inline-help__checklist .progress-bar {
-	display: block;
-}
-
-.inline-help__checklist .inline-help__progress-bar-margin {
-	margin: 0 18px 12px 16px;
-	width: 100%;
 }
 
 .inline-help__footer {
