@@ -1,7 +1,14 @@
+.wp-block-a8c-related-posts {
+	[data-align='full'] & {
+		padding: 0 20px;
+	}
+}
+
 .wp-block-a8c-related-posts__preview-items {
 	&.is-grid {
 		display: flex;
 		padding: 0 10px;
+		margin: 0 -20px;
 
 		.wp-block-a8c-related-posts__preview-post {
 			margin: 0 10px;
