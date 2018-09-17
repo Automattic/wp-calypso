@@ -11,7 +11,7 @@ import {
 
 describe( 'fetch', () => {
 	it( 'should dispatch an http request', () => {
-		const action = requestRecentPostViews( 1, '1,2,3', 30, '2018-01-01' );
+		const action = requestRecentPostViews( 1, [ 1, 2, 3 ], 30, '2018-01-01' );
 		expect( fetch( action ) ).toEqual(
 			http(
 				{

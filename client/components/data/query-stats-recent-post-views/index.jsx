@@ -42,7 +42,7 @@ class QueryRecentPostViews extends Component {
 			return;
 		}
 
-		// Break post_ids into chunks of 100 because `stats/recent-post-views`
+		// Break post_ids into chunks of 100 because `stats/views/posts`
 		// is limited to 100 post_ids per query.
 		const postIdsChunks = chunk( postIds, 100 );
 		postIdsChunks.forEach( postIdsChunk =>
