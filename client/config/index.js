@@ -18,16 +18,15 @@ if ( 'undefined' === typeof window || ! window.configData ) {
 
 const configData = window.configData;
 
-// https://calypso.live matches
-// https://calypso.live/hello matches
-// https://hash-abcd1234.calypso.live matches
-// https://calypso.live.com doesn't match
-const CALYPSO_LIVE_REGEX = /^https:\/\/([a-zA-Z0-9-]+\.)?calypso.live($|\/)/;
+// calypso.live matches
+// hash-abcd1234.calypso.live matches
+// calypso.live.com doesn't match
+const CALYPSO_LIVE_REGEX = /^([a-zA-Z0-9-]+\.)?calypso\.live$/;
 
 if (
 	process.env.NODE_ENV === 'development' ||
 	configData.env_id === 'stage' ||
-	( window && CALYPSO_LIVE_REGEX.test( window.location.href ) )
+	( typeof window !== 'undefined' && CALYPSO_LIVE_REGEX.test( window.location.host ) )
 ) {
 	const match =
 		document.location.search && document.location.search.match( /[?&]flags=([^&]+)(&|$)/ );
