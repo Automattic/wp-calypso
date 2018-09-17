@@ -342,6 +342,11 @@ export function generateSteps( {
 			stepName: 'import-from-url',
 			providesDependencies: [ 'importUrl', 'themeSlugWithRepo' ],
 		},
+
+		'import-from-url-confirmation': {
+			stepName: 'import-from-url-confirmation',
+			// providesDependencies: [ 'importUrl', 'themeSlugWithRepo' ],
+		},
 	};
 }
 
