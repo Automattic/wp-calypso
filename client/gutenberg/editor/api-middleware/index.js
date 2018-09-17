@@ -4,7 +4,6 @@
  * External dependencies
  */
 import wpcomProxyRequest from 'wpcom-proxy-request';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,7 +43,7 @@ export const wpcomProxyMiddleware = options => {
 
 		wpcomProxyRequest(
 			{
-				...omit( options, [ 'body', 'data' ] ),
+				...options,
 				...( ( body || data ) && { body: body || data } ),
 				apiNamespace: 'wp/v2',
 			},
