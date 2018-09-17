@@ -21,7 +21,7 @@ export const fetch = action => {
 			path: `/sites/${ siteId }/stats/views/posts`,
 			apiVersion: '1.1',
 			query: {
-				post_ids: postIds,
+				post_ids: postIds.join( ',' ),
 				num,
 				date,
 				offset,
