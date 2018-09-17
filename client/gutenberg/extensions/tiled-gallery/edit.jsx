@@ -70,7 +70,7 @@ class TiledGalleryEdit extends Component {
 
 	onSelectImages( images ) {
 		this.props.setAttributes( {
-			images: images.map( ( image ) => pick( image, [ 'alt', 'caption', 'id', 'url', 'link' ] ) ),
+			images: images.map( image => pick( image, [ 'alt', 'caption', 'id', 'url', 'link' ] ) ),
 		} );
 	}
 
@@ -83,7 +83,10 @@ class TiledGalleryEdit extends Component {
 	}
 
 	setImageAttributes( index, attributes ) {
-		const { attributes: { images }, setAttributes } = this.props;
+		const {
+			attributes: { images },
+			setAttributes,
+		} = this.props;
 		if ( ! images[ index ] ) {
 			return;
 		}
@@ -105,7 +108,7 @@ class TiledGalleryEdit extends Component {
 		mediaUpload( {
 			allowedType: 'image',
 			filesList: files,
-			onFileChange: ( images ) => {
+			onFileChange: images => {
 				setAttributes( {
 					images: currentImages.concat( images ),
 				} );
@@ -127,47 +130,33 @@ class TiledGalleryEdit extends Component {
 	}
 
 	render() {
-		const {
-			attributes,
-			className,
-			isSelected,
-			noticeOperations,
-			noticeUI
-		} = this.props;
+		const { attributes, className, isSelected, noticeOperations, noticeUI } = this.props;
 		const { images, columns, linkTo } = attributes;
 
-		const dropZone = (
-			<DropZone key="item-dropzone"
-				onFilesDrop={ this.addFiles }
-			/>
-		);
+		const dropZone = <DropZone key="item-dropzone" onFilesDrop={ this.addFiles } />;
 
-		const controls = (
-			isSelected && (
-				<BlockControls key="controls">
-					{ !! images.length && (
-						<Toolbar>
-							<MediaUpload
-								onSelect={ this.onSelectImages }
-								type="image"
-								multiple
-								gallery
-								value={ images.map( ( img ) => img.id ) }
-								render={ ( { open } ) => (
-										<IconButton
-											// Following is a core class-name
-											// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-											className="components-toolbar__control"
-											label={ __( 'Edit Gallery' ) }
-											icon="edit"
-											onClick={ open }
-										/>
-								) }
-							/>
-						</Toolbar>
-					) }
-				</BlockControls>
-			)
+		const controls = isSelected && (
+			<BlockControls key="controls">
+				{ !! images.length && (
+					<Toolbar>
+						<MediaUpload
+							onSelect={ this.onSelectImages }
+							type="image"
+							multiple
+							gallery
+							value={ images.map( img => img.id ) }
+							render={ ( { open } ) => (
+								<IconButton
+									className="components-toolbar__control"
+									label={ __( 'Edit Gallery' ) }
+									icon="edit"
+									onClick={ open }
+								/>
+							) }
+						/>
+					</Toolbar>
+				) }
+			</BlockControls>
 		);
 
 		if ( images.length === 0 ) {
@@ -180,7 +169,7 @@ class TiledGalleryEdit extends Component {
 						className={ className }
 						icon="format-gallery"
 						labels={ {
-							title: __(  'Tiled Gallery' ),
+							title: __( 'Tiled Gallery' ),
 							name: __( 'images' ),
 						} }
 						onSelect={ this.onSelectImages }
@@ -212,13 +201,15 @@ class TiledGalleryEdit extends Component {
 				{ isSelected && (
 					<InspectorControls key="inspector">
 						<PanelBody title={ __( 'Tiled Gallery Settings' ) }>
-							{ images.length > 1 && <RangeControl
-								label={ __( 'Columns' ) }
-								value={ columns }
-								onChange={ this.setColumnsNumber }
-								min={ 1 }
-								max={ Math.min( MAX_COLUMNS, images.length ) }
-							/> }
+							{ images.length > 1 && (
+								<RangeControl
+									label={ __( 'Columns' ) }
+									value={ columns }
+									onChange={ this.setColumnsNumber }
+									min={ 1 }
+									max={ Math.min( MAX_COLUMNS, images.length ) }
+								/>
+							) }
 							<SelectControl
 								label={ __( 'Link to' ) }
 								value={ linkTo }
