@@ -167,11 +167,9 @@ jobs:
           name: Run Client Tests
           no_output_timeout: 2m
           command: |
-
-            # Use Jest to list tests to run. If we're on a branch, only run tests that differ from master
+            # Use Jest to list tests to run via config
             ./node_modules/.bin/jest                                                \
               --listTests                                                           \
-              $( [ "$CIRCLE_BRANCH" != "master" ] && echo "--changedSince=master" ) \
               --config=test/client/jest.config.js                                   \
               > ~/jest-tests
 
@@ -263,7 +261,6 @@ jobs:
                 --reporters=default                                                   \
                 --reporters=jest-junit                                                \
                 --silent                                                              \
-                $( [ "$CIRCLE_BRANCH" != "master" ] && echo "--changedSince=master" ) \
                 --config=test/server/jest.config.js
       - save_cache: *save-jest-cache
       - store_test_results:
