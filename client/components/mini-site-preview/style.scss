@@ -1,6 +1,5 @@
 .mini-site-preview {
 	max-width: 60%;
-	width: 100%;
 
 	.mini-site-preview__browser-chrome {
 		flex-grow: 0;
@@ -26,7 +25,6 @@
 
 	.mini-site-preview__image {
 		border: 1px solid #c6d7e2;
-		box-sizing: border-box;
 
 		&:after {
 			content: '';
@@ -41,12 +39,6 @@
 				rgba( 255, 255, 255, 0 ) 50%,
 				rgba( 255, 255, 255, 1 )
 			);
-		}
-
-		&.placeholder {
-			padding-top: 60%;
-			animation: pulse-light 800ms ease-in-out infinite;
-			background: transparentize( $gray-lighten-20, .5 );
 		}
 	}
 
