@@ -270,7 +270,6 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.0.0",
     "babel-jest": "23.6.0",
-    "cache-require-paths": "0.3.0",
     "chai": "4.1.2",
     "chai-enzyme": "1.0.0-beta.1",
     "check-node-version": "3.2.0",
