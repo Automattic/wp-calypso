@@ -13,6 +13,12 @@ import {
 	IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
 } from 'state/action-types';
 import wpLib from 'lib/wp';
+import {
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
+import { loadmShotsPreview } from 'my-sites/importer/site-importer/site-preview-actions';
+
 const wpcom = wpLib.undocumented();
 
 export const setNuxUrlInputValue = value => ( {
@@ -40,24 +46,45 @@ export const fetchSitePreviewImage = importUrl => dispatch => {
 	} )
 		.then( imageBlob => {
 			console.log('fetchSitePreviewImage then...')
-			dispatch( {
-				type: IMPORTER_NUX_SITE_PREVIEW_RECEIVE,
-				imageBlob,
-			} );
-			this.props.recordTracksEvent( 'calypso_importer_signup_site_preview_success', {
-				site_url: importUrl,
-				time_taken_ms: Date.now() - previewStartTime,
-			} );
+			// dispatch( {
+			// 	type: IMPORTER_NUX_SITE_PREVIEW_RECEIVE,
+			// 	imageBlob,
+			// } );
+			// this.props.recordTracksEvent( 'calypso_importer_signup_site_preview_success', {
+			// 	site_url: importUrl,
+			// 	time_taken_ms: Date.now() - previewStartTime,
+			// } );
+			dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_importer_signup_site_preview_success', {
+						site_url: importUrl,
+						time_taken_ms: Date.now() - previewStartTime,
+					} ),
+					{
+						type: IMPORTER_NUX_SITE_PREVIEW_RECEIVE,
+						imageBlob,
+					}
+				)
+			)
 		} )
 		.catch( () => {
 			console.log('fetchSitePreviewImage catch...')
-			dispatch( {
-				type: IMPORTER_NUX_SITE_PREVIEW_FAIL,
-			} );
-			this.props.recordTracksEvent( 'calypso_importer_signup_site_preview_fail', {
-				site_url: importUrl,
-				time_taken_ms: Date.now() - previewStartTime,
-			} );
+			// dispatch( {
+			// 	type: IMPORTER_NUX_SITE_PREVIEW_FAIL,
+			// } );
+			// this.props.recordTracksEvent( 'calypso_importer_signup_site_preview_fail', {
+			// 	site_url: importUrl,
+			// 	time_taken_ms: Date.now() - previewStartTime,
+			// } );
+			dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_importer_signup_site_preview_fail', {
+						site_url: importUrl,
+						time_taken_ms: Date.now() - previewStartTime,
+					} ),
+					{ type: IMPORTER_NUX_SITE_PREVIEW_FAIL }
+				)
+			)
 		} );
 };
 
