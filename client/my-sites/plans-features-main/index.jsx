@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import PlanFeatures from 'my-sites/plan-features';
 import {
 	TYPE_FREE,
+	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
@@ -113,6 +114,7 @@ export class PlansFeaturesMain extends Component {
 		const personalPlan = findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ];
 		const plans = [
 			findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
+			findPlansKeys( { group, type: TYPE_BLOGGER } )[ 0 ],
 			personalPlan,
 			findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 			findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],

@@ -106,9 +106,9 @@ class DomainProductPrice extends React.Component {
 				return this.renderFree();
 			case 'FREE_WITH_PLAN':
 				return this.renderFreeWithPlan();
-			case 'INCLUDED_IN_PREMIUM':
+			case 'INCLUDED_IN_HIGHER_PLAN':
 				return this.renderIncludedInPremium();
-			case 'UPGRADE_TO_PREMIUM_TO_BUY':
+			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
 				return this.renderUpgradeToPremiumToBuy();
 			case 'PRICE':
 			default:

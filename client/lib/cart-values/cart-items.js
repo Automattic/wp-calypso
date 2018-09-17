@@ -1041,11 +1041,11 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 	}
 
 	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) ) {
-		return 'INCLUDED_IN_PREMIUM';
+		return 'INCLUDED_IN_HIGHER_PLAN';
 	}
 
 	if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
-		return 'UPGRADE_TO_PREMIUM_TO_BUY';
+		return 'UPGRADE_TO_HIGHER_PLAN_TO_BUY';
 	}
 
 	return 'PRICE';

@@ -350,7 +350,7 @@ describe( 'getDomainPriceRule()', () => {
 	} );
 
 	describe( 'site is on a free plan', () => {
-		test( 'should return INCLUDED_IN_PREMIUM if site has no domain and no plan in cart [withPlansOnly=true]', () => {
+		test( 'should return INCLUDED_IN_HIGHER_PLAN if site has no domain and no plan in cart [withPlansOnly=true]', () => {
 			expect(
 				getDomainPriceRule(
 					true,
@@ -358,7 +358,7 @@ describe( 'getDomainPriceRule()', () => {
 					{},
 					{ domain_name: 'domain.com', product_slug: 'domain' }
 				)
-			).toBe( 'INCLUDED_IN_PREMIUM' );
+			).toBe( 'INCLUDED_IN_HIGHER_PLAN' );
 		} );
 		test( 'should return PRICE if site has no domain and no plan in cart [withPlansOnly=false]', () => {
 			expect(
@@ -528,7 +528,7 @@ describe( 'getDomainPriceRule()', () => {
 			).toBe( 'FREE_WITH_PLAN' );
 		} );
 
-		test( 'should return UPGRADE_TO_PREMIUM_TO_BUY when next domain is free ( .com domain )', () => {
+		test( 'should return UPGRADE_TO_HIGHER_PLAN_TO_BUY when next domain is free ( .com domain )', () => {
 			expect(
 				getDomainPriceRule(
 					false,
@@ -540,19 +540,19 @@ describe( 'getDomainPriceRule()', () => {
 					},
 					{ domain_name: 'domain.com', product_slug: 'domain' }
 				)
-			).toBe( 'UPGRADE_TO_PREMIUM_TO_BUY' );
+			).toBe( 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' );
 		} );
 
-		test( 'should return UPGRADE_TO_PREMIUM_TO_BUY when .com domain is being used for plan', () => {
+		test( 'should return UPGRADE_TO_HIGHER_PLAN_TO_BUY when .com domain is being used for plan', () => {
 			expect(
 				getDomainPriceRule( false, null, buildCartWithDomain( PLAN_BLOGGER, 'domain.blog' ), {
 					domain_name: 'domain.com',
 					product_slug: 'domain',
 				} )
-			).toBe( 'UPGRADE_TO_PREMIUM_TO_BUY' );
+			).toBe( 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' );
 		} );
 
-		test( 'should return UPGRADE_TO_PREMIUM_TO_BUY when .com domain is being used for plan that already has no domain', () => {
+		test( 'should return UPGRADE_TO_HIGHER_PLAN_TO_BUY when .com domain is being used for plan that already has no domain', () => {
 			expect(
 				getDomainPriceRule(
 					false,
@@ -560,7 +560,7 @@ describe( 'getDomainPriceRule()', () => {
 					{},
 					{ domain_name: 'domain.com', product_slug: 'domain' }
 				)
-			).toBe( 'UPGRADE_TO_PREMIUM_TO_BUY' );
+			).toBe( 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' );
 		} );
 	} );
 } );
