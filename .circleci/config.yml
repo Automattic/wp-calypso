@@ -10,12 +10,12 @@ references:
     name: Create Directories for Results and Artifacts
     command: |
       mkdir -p                             \
-        "~/jest-cache"                     \
         "$CIRCLE_ARTIFACTS/translate"      \
         "$CIRCLE_TEST_REPORTS/client"      \
         "$CIRCLE_TEST_REPORTS/eslint"      \
         "$CIRCLE_TEST_REPORTS/integration" \
-        "$CIRCLE_TEST_REPORTS/server"
+        "$CIRCLE_TEST_REPORTS/server"      \
+        "$HOME/jest-cache"
 
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
@@ -168,13 +168,14 @@ jobs:
           no_output_timeout: 2m
           command: |
             # Use Jest to list tests to run via config
-            ./node_modules/.bin/jest                                                \
-              --listTests                                                           \
-              --config=test/client/jest.config.js                                   \
+            ./node_modules/.bin/jest              \
+              --listTests                         \
+              --config=test/client/jest.config.js \
               > ~/jest-tests
 
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
               ./node_modules/.bin/jest                                  \
+                --cacheDirectory="$HOME/jest-cache"                     \
                 --ci                                                    \
                 --maxWorkers=2                                          \
                 --reporters=default                                     \
@@ -216,6 +217,7 @@ jobs:
           command: |
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/results.xml" \
               ./node_modules/.bin/jest                     \
+                --cacheDirectory="$HOME/jest-cache"        \
                 --ci                                       \
                 --maxWorkers=2                             \
                 --reporters=default                        \
@@ -254,13 +256,14 @@ jobs:
           name: Run Server Tests
           no_output_timeout: 2m
           command: |
-            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml"               \
-              ./node_modules/.bin/jest                                                \
-                --ci                                                                  \
-                --maxWorkers=2                                                        \
-                --reporters=default                                                   \
-                --reporters=jest-junit                                                \
-                --silent                                                              \
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
+              ./node_modules/.bin/jest                                  \
+                --cacheDirectory="$HOME/jest-cache"                     \
+                --ci                                                    \
+                --maxWorkers=2                                          \
+                --reporters=default                                     \
+                --reporters=jest-junit                                  \
+                --silent                                                \
                 --config=test/server/jest.config.js
       - save_cache: *save-jest-cache
       - store_test_results:
