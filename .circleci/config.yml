@@ -17,6 +17,22 @@ references:
         "$CIRCLE_TEST_REPORTS/server"      \
         "$HOME/jest-cache"
 
+  # Jest cache caching
+  #
+  # Jest uses a cache to speed up builds. If we persist this cache across builds,
+  # we can improve the speed of subsequent builds.
+  #
+  # Circle caches never overwritten, so we must ensure that Jest caches from different jobs
+  # do not collide or we'll only cache 1 job.
+  #
+  # We also need to ensure that different nodes and different total nodes do not collide.
+  # When we split tests, different nodes will receive a different set of tests so each node's
+  # cache should be unique.
+  #
+  # Finally, we cache on the branch and revision, falling back to master. This should give us
+  # pretty good "nearest neighbor" primer for the Jest cache.
+  #
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
     keys:
@@ -30,6 +46,15 @@ references:
     paths:
       - ~/jest-cache
 
+  # Git cache
+  #
+  # Calypso is a big repository with a lot of history. It can take a long time to do a full checkout.
+  # By including the `.git` directory in the cache, we can speed things up by only needing to update
+  # the local repository.
+  #
+  # We cache on the branch and revision, falling back to master, or any recent cache.
+  #
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-git-cache: &restore-git-cache
     name: Restore git cache
     keys:
@@ -46,10 +71,21 @@ references:
     paths:
       - ".git"
 
-  # We'll conditionally cache and restore node_modules if
-  # .nvmrc and npm-shrinkwrap are identical. We'll use the
-  # presence of node_modules to conditionally run npm ci.
-  # Do not add any fall backs to restore!
+  # node_modules cache
+  #
+  # We'll cache node_modules to save ourselves npm installation during build. Any cache hit
+  # for identical `.nvmrc` and `npm-shrinkwrap.json` should produce identical node_modules,
+  # so the checksum for these files builds our cache.
+  #
+  # We only match this cache identically with no fallbacks. This allows us to skip any npm
+  # installation if a cache hits and we find node_modules. Otherwise, cache misses and we'll
+  # need to do an npm install.
+  #
+  # Some prior art:
+  #   - https://github.com/Automattic/wp-calypso/pull/25431
+  #   - https://github.com/Automattic/wp-calypso/pull/25487
+  #
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-node-modules-cache: &restore-node-modules-cache
     name: "Restore node_modules cache"
     key: v1-node-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
