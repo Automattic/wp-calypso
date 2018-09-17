@@ -86,15 +86,31 @@ class PostActionCounts extends PureComponent {
 		if ( ! count || count < 1 || ! showViews ) {
 			return null;
 		}
-		const visibleText = translate( '%(count)s Recent View', '%(count)s Recent Views', {
-			count,
-			args: { count: numberFormat( count ) },
-		} );
-		const screenReaderText = translate( 'in the past 30 days', {
-			comment:
-				'specifies time period for recent view count, i.e. "10 Recent Views in the past 30 days."',
-		} );
-		const linkTitleText = `${ visibleText } ${ screenReaderText }`;
+		const recentViewsText = translate(
+			'%(count)s Recent View {{srText}}in the past 30 days{{/srText}}',
+			'%(count)s Recent Views {{srText}}in the past 30 days{{/srText}}',
+			{
+				count,
+				args: {
+					count: numberFormat( count ),
+				},
+				comment:
+					'text wrapped by "srText" is not visible on screen for brevity, but is read by screen readers to provide more context',
+				components: {
+					srText: <ScreenReaderText />,
+				},
+			}
+		);
+		const linkTitleText = translate(
+			'%(count)s recent view in the past 30 days',
+			'%(count)s recent views in the past 30 days',
+			{
+				count,
+				args: {
+					count: numberFormat( count ),
+				},
+			}
+		);
 
 		return (
 			<li>
@@ -103,8 +119,7 @@ class PostActionCounts extends PureComponent {
 					onClick={ this.onActionClick( 'stats' ) }
 					title={ linkTitleText }
 				>
-					{ visibleText }
-					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
+					{ recentViewsText }
 				</a>
 			</li>
 		);
