@@ -55,6 +55,11 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	renderConfirmationNotice() {
+		// we want the user-first flow to stay focused, don't try to send them to their inbox
+		if ( this.props.flowName === 'user-first' ) {
+			return null;
+		}
+
 		if ( this.props.user && this.props.user.email_verified ) {
 			return;
 		}
