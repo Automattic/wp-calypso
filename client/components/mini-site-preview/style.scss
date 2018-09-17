@@ -23,6 +23,7 @@
 
 	.mini-site-preview__image {
 		border: 1px solid #c6d7e2;
+		position: relative;
 
 		&:after {
 			content: '';
