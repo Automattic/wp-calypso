@@ -10,12 +10,12 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import './editor.scss';
 
-registerBlockType( 'calypsoberg/hello-dolly', {
+registerBlockType( 'a8c/hello-dolly', {
 	title: 'Hello Dolly',
 	icon: 'format-audio',
 	category: 'layout',
 	edit: ( { isSelected } ) => (
-		<p class="hello-dolly">{ isSelected ? 'Editing Hello Dolly' : 'Viewing Hello Dolly' }</p>
+		<p className="hello-dolly">{ isSelected ? 'Editing Hello Dolly' : 'Viewing Hello Dolly' }</p>
 	),
-	save: () => <p class="hello-dolly">Saving Hello Dolly</p>,
+	save: () => <p className="hello-dolly">Saving Hello Dolly</p>,
 } );
