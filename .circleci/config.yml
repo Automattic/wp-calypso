@@ -106,164 +106,209 @@ references:
     docker: *docker-image
     environment: *shared-environment
 
-  #
-  # Job control
-  #
-  # With these sets of steps, we can build out jobs without duplicating large chunks of steps.
-  #
-  steps-setup: &steps-setup
-    # repo
-    - restore_cache: *restore-git-cache
-    - checkout
-    - run: *update-git-master
-    - save_cache: *save-git-cache
-    # npm dependencies
-    - restore_cache: *restore-node-modules-cache
-    - run: *npm-install
-    - save_cache: *save-node-modules-cache
-    # folders to collect results
-    - run: *setup-results-and-artifacts
-
-  steps-lint: &steps-lint
-    - run:
-        name: Lint Config Keys
-        when: always
-        command: npm run lint:config-defaults
-    - run:
-        name: Lint Client and Server
-        when: always
-        command: |
-          # We'll use failure code to do some additional processing and report failure manually
-          set +o errexit
-          ./node_modules/.bin/eslint-eslines                        \
-            $(                                                      \
-              git diff --name-only --diff-filter=d origin/master... \
-              | grep -E '^(client|server)'                          \
-              | grep -E '\.jsx?$'                                   \
-            )                                                       \
-            -- --format junit                                       \
-            > ~/eslint-results.xml
-          # Ensure we don't upload empty reports.
-          # Eslint would not produce a malformed empty xml using the --format and -o options.
-          # However, with eslint-eslines and the redirected > output, we may get an empty file.
-          # We only put the file into the reports directory if the status code informs us that
-          # lint issues have been encountered.
-          ESLINT_RESULT="$?"
-          if [ "$ESLINT_RESULT" -ne 0 ]; then
-            mv ~/eslint-results.xml "$CIRCLE_TEST_REPORTS/eslint/results.xml"
-            exit "$ESLINT_RESULT"
-          fi
-
-  steps-translate: &steps-translate
-    - run:
-        name: Build calypso-strings.pot
-        when: always
-        command: |
-          npm run translate
-          mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
-    - run:
-        name: Build New Strings .pot
-        when: always
-        command: |
-          git clone https://github.com/Automattic/gp-localci-client.git
-          bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
-          rm -rf gp-localci-client
-
-  steps-test-client: &steps-test-client
-    - restore_cache: *restore-jest-cache
-    - run:
-        name: Run Client Tests
-        no_output_timeout: 2m
-        command: |
-          # Use Jest to list tests to run via config
-          ./node_modules/.bin/jest              \
-            --listTests                         \
-            --config=test/client/jest.config.js \
-            > ~/jest-tests
-
-          # Run jest on the CircleCI split for parallelization across containers
-          # Avoid using `--split-by=timings` here so that per-node Jest caches
-          # receive a stable sub-set of tests for optimal cache usage.
-          JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
-            ./node_modules/.bin/jest                                  \
-              --cacheDirectory="$HOME/jest-cache"                     \
-              --ci                                                    \
-              --maxWorkers=2                                          \
-              --reporters=default                                     \
-              --reporters=jest-junit                                  \
-              --runTestsByPath                                        \
-              --silent                                                \
-              --config=test/client/jest.config.js                     \
-              $( circleci tests split < ~/jest-tests )
-    - save_cache: *save-jest-cache
-
-  steps-test-integration: &steps-test-integration
-    - restore_cache: *restore-jest-cache
-    - run:
-        name: Run Integration Tests
-        command: |
-          JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/results.xml" \
-            ./node_modules/.bin/jest                     \
-              --cacheDirectory="$HOME/jest-cache"        \
-              --ci                                       \
-              --maxWorkers=2                             \
-              --reporters=default                        \
-              --reporters=jest-junit                     \
-              --silent                                   \
-              --config=test/integration/jest.config.js
-    - save_cache: *save-jest-cache
-
-  steps-test-server: &steps-test-server
-    - restore_cache: *restore-jest-cache
-    - run:
-        name: Run Server Tests
-        no_output_timeout: 2m
-        command: |
-          JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
-            ./node_modules/.bin/jest                                  \
-              --cacheDirectory="$HOME/jest-cache"                     \
-              --ci                                                    \
-              --maxWorkers=2                                          \
-              --reporters=default                                     \
-              --reporters=jest-junit                                  \
-              --silent                                                \
-              --config=test/server/jest.config.js
-    - save_cache: *save-jest-cache
-
-  steps-teardown: &steps-teardown
-    - store_test_results:
-        path: /tmp/test_results
-    - store_artifacts:
-        path: /tmp/test_results
-    - store_artifacts:
-        path: /tmp/artifacts
-
-####################
-# Job Declarations #
-####################
 version: 2
 jobs:
   lint-and-translate:
     <<: *defaults
+    parallelism: 1
     steps:
-      <<: [ *steps-setup, *steps-lint, *steps-translate, *steps-teardown ]
+      ###############
+      # Basic Setup #
+      # #############
+      # repo
+      - restore_cache: *restore-git-cache
+      - checkout
+      - run: *update-git-master
+      - save_cache: *save-git-cache
+      # npm dependencies
+      - restore_cache: *restore-node-modules-cache
+      - run: *npm-install
+      - save_cache: *save-node-modules-cache
+      # folders to collect results
+      - run: *setup-results-and-artifacts
+      ###################
+      # End Basic Setup #
+      ###################
+      - run:
+          name: Lint Config Keys
+          when: always
+          command: npm run lint:config-defaults
+      - run:
+          name: Lint Client and Server
+          when: always
+          command: |
+            # We'll use failure code to do some additional processing and report failure manually
+            set +o errexit
+            ./node_modules/.bin/eslint-eslines                        \
+              $(                                                      \
+                git diff --name-only --diff-filter=d origin/master... \
+                | grep -E '^(client|server)'                          \
+                | grep -E '\.jsx?$'                                   \
+              )                                                       \
+              -- --format junit                                       \
+              > ~/eslint-results.xml
+            # Ensure we don't upload empty reports.
+            # Eslint would not produce a malformed empty xml using the --format and -o options.
+            # However, with eslint-eslines and the redirected > output, we may get an empty file.
+            # We only put the file into the reports directory if the status code informs us that
+            # lint issues have been encountered.
+            ESLINT_RESULT="$?"
+            if [ "$ESLINT_RESULT" -ne 0 ]; then
+              mv ~/eslint-results.xml "$CIRCLE_TEST_REPORTS/eslint/results.xml"
+              exit "$ESLINT_RESULT"
+            fi
+      - run:
+          name: Build calypso-strings.pot
+          when: always
+          command: |
+            npm run translate
+            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
+      - run:
+          name: Build New Strings .pot
+          when: always
+          command: |
+            git clone https://github.com/Automattic/gp-localci-client.git
+            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            rm -rf gp-localci-client
+      - store_test_results:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/artifacts
 
   test-client:
     <<: *defaults
     parallelism: 6
     steps:
-      <<: [ *steps-setup, *steps-test-client, *steps-teardown ]
+      ###############
+      # Basic Setup #
+      # #############
+      # repo
+      - restore_cache: *restore-git-cache
+      - checkout
+      - run: *update-git-master
+      - save_cache: *save-git-cache
+      # npm dependencies
+      - restore_cache: *restore-node-modules-cache
+      - run: *npm-install
+      - save_cache: *save-node-modules-cache
+      # folders to collect results
+      - run: *setup-results-and-artifacts
+      ###################
+      # End Basic Setup #
+      ###################
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Client Tests
+          no_output_timeout: 2m
+          command: |
+            # Use Jest to list tests to run via config
+            ./node_modules/.bin/jest              \
+              --listTests                         \
+              --config=test/client/jest.config.js \
+              > ~/jest-tests
+
+            # Run jest on the CircleCI split for parallelization across containers
+            # Avoid using `--split-by=timings` here so that per-node Jest caches
+            # receive a stable sub-set of tests for optimal cache usage.
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
+              ./node_modules/.bin/jest                                  \
+                --cacheDirectory="$HOME/jest-cache"                     \
+                --ci                                                    \
+                --maxWorkers=2                                          \
+                --reporters=default                                     \
+                --reporters=jest-junit                                  \
+                --runTestsByPath                                        \
+                --silent                                                \
+                --config=test/client/jest.config.js                     \
+                $( circleci tests split < ~/jest-tests )
+      - save_cache: *save-jest-cache
+      - store_test_results:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/test_results
 
   test-integration:
     <<: *defaults
+    parallelism: 1
     steps:
-      <<: [ *steps-setup, *steps-test-integration, *steps-teardown ]
+      ###############
+      # Basic Setup #
+      # #############
+      # repo
+      - restore_cache: *restore-git-cache
+      - checkout
+      - run: *update-git-master
+      - save_cache: *save-git-cache
+      # npm dependencies
+      - restore_cache: *restore-node-modules-cache
+      - run: *npm-install
+      - save_cache: *save-node-modules-cache
+      # folders to collect results
+      - run: *setup-results-and-artifacts
+      ###################
+      # End Basic Setup #
+      ###################
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Integration Tests
+          command: |
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/results.xml" \
+              ./node_modules/.bin/jest                     \
+                --cacheDirectory="$HOME/jest-cache"        \
+                --ci                                       \
+                --maxWorkers=2                             \
+                --reporters=default                        \
+                --reporters=jest-junit                     \
+                --silent                                   \
+                --config=test/integration/jest.config.js
+      - save_cache: *save-jest-cache
+      - store_test_results:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/test_results
 
   test-server:
     <<: *defaults
     parallelism: 1
     steps:
-      <<: [ *steps-setup, *steps-test-server, *steps-teardown ]
+      ###############
+      # Basic Setup #
+      # #############
+      # repo
+      - restore_cache: *restore-git-cache
+      - checkout
+      - run: *update-git-master
+      - save_cache: *save-git-cache
+      # npm dependencies
+      - restore_cache: *restore-node-modules-cache
+      - run: *npm-install
+      - save_cache: *save-node-modules-cache
+      # folders to collect results
+      - run: *setup-results-and-artifacts
+      ###################
+      # End Basic Setup #
+      ###################
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Server Tests
+          no_output_timeout: 2m
+          command: |
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
+              ./node_modules/.bin/jest                                  \
+                --cacheDirectory="$HOME/jest-cache"                     \
+                --ci                                                    \
+                --maxWorkers=2                                          \
+                --reporters=default                                     \
+                --reporters=jest-junit                                  \
+                --silent                                                \
+                --config=test/server/jest.config.js
+      - save_cache: *save-jest-cache
+      - store_test_results:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/test_results
 
 # We need to work around this bit because
 # the notification system in 2.0 is a bit flakey
@@ -272,9 +317,6 @@ notify:
   webhooks:
     - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
 
-#########################
-# Workflow Declarations #
-#########################
 workflows:
   version: 2
   calypso:
