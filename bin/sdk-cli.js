@@ -91,16 +91,6 @@ yargs
 					coerce: path.resolve,
 					requiresArg: true,
 				},
-				'output-editor-file': {
-					description: 'Name of the built editor script output file (without the file extension).',
-					type: 'string',
-					requiresArg: true,
-				},
-				'output-view-file': {
-					description: 'Name of the built view script output file (without the file extension).',
-					type: 'string',
-					requiresArg: true,
-				},
 				watch: {
 					alias: 'w',
 					description: 'Whether to watch for changes and automatically rebuild.',
