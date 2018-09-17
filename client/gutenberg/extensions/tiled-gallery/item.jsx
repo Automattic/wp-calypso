@@ -3,7 +3,6 @@
 /**
  * External Dependencies
  */
-import get from 'lodash/get';
 import classnames from 'classnames';
 
 /**
@@ -13,15 +12,11 @@ import { Component } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
 
 class TiledGalleryImage extends Component {
-
-	componentDidUpdate( { image, width, height } ) {
-		// very carefully set width & height attributes once only (to avoid recurse)!
-		if ( image && ! width && ! height && this.setAttributes ) {
-			const mediaInfo = get( image, [ 'media_details' ], { width: null, height: null } );
-			this.setAttributes( {
-				width: mediaInfo.width,
-				height: mediaInfo.height
-			} );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.image && this.props.setAttributes ) {
+			if ( prevProps.height !== this.props.height ) {
+				this.props.setAttributes( { height: this.props.height } );
+			}
 		}
 	}
 
@@ -39,7 +34,7 @@ class TiledGalleryImage extends Component {
 				<img
 					alt={ alt }
 					className={ classnames( 'tiled-gallery__image', {
-						[ `wp-image-${ id }` ]: id
+						[ `wp-image-${ id }` ]: id,
 					} ) }
 					data-id={ id }
 					data-link={ link }
@@ -50,11 +45,10 @@ class TiledGalleryImage extends Component {
 					style={ style }
 					width={ width }
 				/>
-				{ caption && caption.length > 0 &&
-					<figcaption className="tiled-gallery__caption">
-						{ caption }
-					</figcaption>
-				}
+				{ caption &&
+					caption.length > 0 && (
+						<figcaption className="tiled-gallery__caption">{ caption }</figcaption>
+					) }
 			</figure>
 		);
 	}
@@ -92,7 +86,8 @@ function TiledGalleryItem( props ) {
 			className="tiled-gallery__item tiled-gallery__item-small"
 			itemProp="associatedMedia"
 			itemScope=""
-			itemType="http://schema.org/ImageObject">
+			itemType="http://schema.org/ImageObject"
+		>
 			{ href ? <a href={ href }>{ img }</a> : img }
 		</div>
 	);
