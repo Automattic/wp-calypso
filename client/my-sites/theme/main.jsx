@@ -648,7 +648,7 @@ class ThemeSheet extends React.Component {
 						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
 					) }
 					event="themes_plan_particular_free_with_plan"
-					callToAction={ translate( 'View plans' ) }
+					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
 				/>
 			);
