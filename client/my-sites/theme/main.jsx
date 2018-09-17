@@ -23,7 +23,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -59,7 +58,6 @@ import {
 	getThemeForumUrl,
 } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
-import { abtest } from 'lib/abtest';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
@@ -596,6 +594,7 @@ class ThemeSheet extends React.Component {
 			retired,
 			isPremium,
 			isJetpack,
+			translate,
 			hasUnlimitedPremiumThemes,
 			previousRoute,
 		} = this.props;
@@ -638,23 +637,16 @@ class ThemeSheet extends React.Component {
 		}
 
 		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner =
-			! isJetpack &&
-			isPremium &&
-			! hasUnlimitedPremiumThemes &&
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'themesNudgesUpdates' ) === 'test';
+		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes;
 		if ( hasUpsellBanner ) {
-			// This is just for US-english audience and is not translated, remember to add translate() calls before
-			// removing a/b test check and enabling it for everyone
 			pageUpsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
 					className="is-particular-theme-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
-					title={ 'Access this theme for FREE with a Premium or Business plan!' }
-					description={
+					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
+					description={ translate(
 						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
-					}
+					) }
 					event="themes_plan_particular_free_with_plan"
 					callToAction={ 'View plans' }
 					forceHref={ true }

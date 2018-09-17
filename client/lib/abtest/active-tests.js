@@ -18,8 +18,8 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	themesNudgesUpdates: {
-		datestamp: '20180824',
+	cartNudgeUpdateToPremium: {
+		datestamp: '20180917',
 		variations: {
 			test: 50,
 			control: 50,
