@@ -3,7 +3,6 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -17,11 +16,10 @@ import { isCommunityTranslatorEnabled } from 'components/community-translator/ut
 import AsyncLoad from 'components/async-load';
 import TranslatorLauncher from 'layout/community-translator/launcher';
 
-
-const FloatingActions = ( { isHappychatButtonVisible, showInlineHelp = true } ) => (
+const FloatingActions = ( { isHappychatButtonVisible } ) => (
 	<div className="floating-actions">
 		<div className="floating-actions__vertical-bar">
-			{ showInlineHelp && <InlineHelp /> }
+			<InlineHelp />
 			{ config.isEnabled( 'i18n/community-translator' ) ? (
 				isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
 			) : (
@@ -35,11 +33,6 @@ const FloatingActions = ( { isHappychatButtonVisible, showInlineHelp = true } ) 
 );
 
 FloatingActions.displayName = 'FloatingActions';
-
-FloatingActions.propTypes = {
-	isHappychatButtonVisible: PropTypes.bool,
-	showInlineHelp: PropTypes.bool,
-};
 
 export default connect( state => ( {
 	isHappychatButtonVisible: hasActiveHappychatSession( state ),

@@ -1,9 +1,15 @@
 .inline-help {
+	position: fixed;
+		right: 24px;
+		bottom: 24px;
+
 	z-index: z-index( 'root', '.floating-help' );
 }
 
 .button.is-borderless.inline-help__button {
-	margin: 4px;
+	position: absolute;
+		right: 0px;
+		bottom: 0px;
 	line-height: 0;
 	padding: 1px;
 	border-radius: 100%;
