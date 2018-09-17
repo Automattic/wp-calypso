@@ -1,7 +1,7 @@
 /** @format */
 
 /**
- * External dependencies
+ * External dependencies - bump
  */
 
 import PropTypes from 'prop-types';
