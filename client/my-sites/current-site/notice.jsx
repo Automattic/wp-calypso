@@ -8,7 +8,6 @@ import url from 'url';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -31,8 +30,6 @@ import {
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
-import { abtest } from 'lib/abtest';
-import config from 'config';
 
 class SiteNotice extends React.Component {
 	static propTypes = {
@@ -95,33 +92,18 @@ class SiteNotice extends React.Component {
 		);
 	}
 
-	handleFreeToPaidPlanNoticeClick = e => {
-		e.preventDefault();
-
-		const { site } = this.props;
-		let href = '/plans/' + site.slug;
-		if (
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'plansBannerUpsells' ) === 'test'
-		) {
-			href = href + '/?discount=free_domain';
-		}
-		page.redirect( href );
-	};
-
 	freeToPaidPlanNotice() {
 		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
 			return null;
 		}
 
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 
 		return (
 			<SidebarBanner
 				ctaName="free-to-paid-sidebar"
 				ctaText={ translate( 'Upgrade' ) }
-				onClick={ this.handleFreeToPaidPlanNoticeClick }
-				href={ '/plans' }
+				href={ '/plans/' + site.slug }
 				icon="info-outline"
 				text={ translate( 'Free domain with a plan' ) }
 			/>
