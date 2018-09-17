@@ -21,6 +21,10 @@ registerBlockType( 'a8c/related-posts', {
 	category: 'layout',
 
 	attributes: {
+		align: {
+			type: 'string',
+			default: '',
+		},
 		postLayout: {
 			type: 'string',
 			default: 'grid',
@@ -45,6 +49,14 @@ registerBlockType( 'a8c/related-posts', {
 			type: 'number',
 			default: MAX_POSTS_TO_SHOW,
 		},
+	},
+
+	getEditWrapperProps: attributes => {
+		const { align } = attributes;
+
+		if ( 'left' === align || 'right' === align || 'wide' === align || 'full' === align ) {
+			return { 'data-align': align };
+		}
 	},
 
 	transforms: {

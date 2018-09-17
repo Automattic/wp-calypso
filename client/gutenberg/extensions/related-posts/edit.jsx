@@ -6,7 +6,7 @@
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from '@wordpress/element';
-import { BlockControls, InspectorControls } from '@wordpress/editor';
+import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
 import {
 	Button,
 	PanelBody,
@@ -23,6 +23,7 @@ import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 export default ( { attributes, className, setAttributes } ) => {
 	const {
+		align,
 		displayContext,
 		displayDate,
 		displayThumbnails,
@@ -85,6 +86,13 @@ export default ( { attributes, className, setAttributes } ) => {
 			</InspectorControls>
 
 			<BlockControls>
+				<BlockAlignmentToolbar
+					value={ align }
+					onChange={ nextAlign => {
+						setAttributes( { align: nextAlign } );
+					} }
+					controls={ [ 'center', 'wide', 'full' ] }
+				/>
 				<Toolbar controls={ layoutControls } />
 			</BlockControls>
 
