@@ -69,7 +69,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	renderContent = () => {
-		const { isIsSiteImportableFetching, isInputDisabled, sitePreview, urlInputValidationMessage, urlInputValue, translate } = this.props;
+		const { isIsSiteImportableFetching, sitePreview, urlInputValidationMessage, urlInputValue, translate } = this.props;
 		const {
 			siteURL,
 			sitePreviewImage,
@@ -100,25 +100,50 @@ class ImportURLStepComponent extends Component {
 
 		return (
 			<div className="import-url__wrapper">
-				{ loadingPreviewImage && <h2>Loading</h2> }
-				{ sitePreviewImage && (
-					<MiniSitePreview imageSrc={ this.state.sitePreviewImage } />
+				{ sitePreview.image && (
+					<MiniSitePreview imageSrc={ sitePreview.image } />
 				) }
-				{ sitePreviewFailed && <h2>Failed</h2> }
+				{ sitePreview.error && (
+					<h2>sitePreview errored</h2>
+				) }
 			</div>
 		);
 	};
 
 	render() {
-		const { importUrl, flowName, positionInFlow, signupProgress, stepName, translate, sitePreview } = this.props;
+		const { importUrl, flowName, positionInFlow, signupProgress, stepName, translate, sitePreview, isIsSiteImportableFetching } = this.props;
 
-		const headerText = translate( 'One moment please.')
-		const subHeaderText = translate(
-			"We're looking for your site at %(url)s",
-			{ args: { url: importUrl } }
-		);
+		const isLoading = isSiteImportableFetching || sitePreview.fetching;
 
-		console.log( sitePreview );
+		console.log( {
+			isLoading,
+			isSiteImportableFetching,
+			'sitePreview.fetching': sitePreview.fetching
+		} );
+
+		const { headerText, subHeaderText } = isLoading
+			? {
+				headerText: translate( 'One moment please.' ),
+				subHeaderText: translate(
+					"We're looking for your site at %(url)s",
+					{ args: { url: importUrl } }
+				),
+			}
+			: {
+				headerText: translate( 'Is This Your Site?' ),
+				subHeaderText: translate(
+					"Here's what we found at %(url)s",
+					{ args: { url: importUrl } }
+				),
+			};
+
+		// const headerText = translate( 'One moment please.')
+		// const subHeaderText = translate(
+		// 	"We're looking for your site at %(url)s",
+		// 	{ args: { url: importUrl } }
+		// );
+
+		// console.log( sitePreview );
 
 		return (
 			<StepWrapper
@@ -143,9 +168,8 @@ export default flow(
 			sitePreview: get( state, 'importerNux.sitePreview' ),
 			urlInputValue: getNuxUrlInputValue( state ),
 			siteDetails: getSiteDetails( state ),
-			isInputDisabled: isIsSiteImportableFetching( state ),
 			urlInputValidationMessage: getUrlInputValidationMessage( state ),
-			isIsSiteImportableFetching: isSiteImportableFetching( state ),
+			isSiteImportableFetching: isIsSiteImportableFetching( state ),
 		} ),
 		{
 			setNuxUrlInputValue,
