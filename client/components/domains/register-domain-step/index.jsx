@@ -141,7 +141,35 @@ class RegisterDomainStep extends React.Component {
 		vendor: 'domainsbot',
 	};
 
-	state = this.getState();
+	constructor( props ) {
+		super( props );
+
+		resetSearchCount();
+
+		this._isMounted = false;
+		this.state = this.getState();
+		if ( props.initialState ) {
+			this.state = { ...props.initialState, railcarSeed: this.getNewRailcarSeed() };
+
+			if (
+				this.state.lastSurveyVertical &&
+				this.state.lastSurveyVertical !== props.surveyVertical
+			) {
+				this.state.loadingResults = true;
+
+				if ( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) {
+					this.state.loadingSubdomainResults = true;
+				}
+
+				delete this.state.lastSurveyVertical;
+			}
+
+			if ( props.suggestion ) {
+				this.state.lastQuery = props.suggestion;
+				this.state.loadingResults = true;
+			}
+		}
+	}
 
 	getState() {
 		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
@@ -220,33 +248,6 @@ class RegisterDomainStep extends React.Component {
 				this.showValidationErrorMessage( queryObject.query, error.error );
 			}
 		}
-	}
-
-	UNSAFE_componentWillMount() {
-		resetSearchCount();
-
-		if ( this.props.initialState ) {
-			const state = { ...this.props.initialState, railcarSeed: this.getNewRailcarSeed() };
-
-			if ( state.lastSurveyVertical && state.lastSurveyVertical !== this.props.surveyVertical ) {
-				state.loadingResults = true;
-
-				if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
-					state.loadingSubdomainResults = true;
-				}
-
-				delete state.lastSurveyVertical;
-			}
-
-			if ( this.props.suggestion ) {
-				state.lastQuery = this.props.suggestion;
-				state.loadingResults = true;
-			}
-
-			this.setState( state );
-		}
-
-		this._isMounted = false;
 	}
 
 	componentWillUnmount() {
