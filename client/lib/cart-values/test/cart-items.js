@@ -2,6 +2,8 @@
 
 import {
 	PLAN_FREE,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM,
@@ -26,8 +28,11 @@ const {
 	planItem,
 	replaceItem,
 	getItemForPlan,
+	isNextDomainFree,
 	hasRenewableSubscription,
+	isDomainBeingUsedForPlan,
 	getCartItemBillPeriod,
+	getDomainPriceRule,
 } = cartItems;
 
 /**
@@ -205,5 +210,129 @@ describe( 'replaceItem()', () => {
 		expect( newCart.products.length ).toBe( 2 );
 		expect( newCart.products[ 0 ] ).toBe( neutralProduct );
 		expect( newCart.products[ 1 ] ).toBe( newProduct );
+	} );
+} );
+
+describe( 'isDomainBeingUsedForPlan()', () => {
+	const buildCartWithDomain = ( plan_slug = PLAN_PREMIUM, domain = 'domain.com' ) => ( {
+		products: [
+			{ product_slug: plan_slug },
+			{
+				is_domain_registration: true,
+				meta: domain,
+			},
+		],
+	} );
+	test( 'should return true for premium plan and .com domain', () => {
+		expect( isDomainBeingUsedForPlan( buildCartWithDomain(), 'domain.com' ) ).toBe( true );
+	} );
+	test( 'should return false when cart is null', () => {
+		expect( isDomainBeingUsedForPlan( null, 'domain.com' ) ).toBe( false );
+	} );
+	test( 'should return false when domain is falsey', () => {
+		expect( isDomainBeingUsedForPlan( buildCartWithDomain(), null ) ).toBe( false );
+	} );
+	test( 'should return false when domain does not match one in the cart', () => {
+		expect( isDomainBeingUsedForPlan( buildCartWithDomain(), 'anotherdomain.com' ) ).toBe( false );
+	} );
+
+	[
+		PLAN_PERSONAL,
+		PLAN_PERSONAL_2_YEARS,
+		PLAN_PREMIUM,
+		PLAN_PREMIUM_2_YEARS,
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+	].forEach( product_slug => {
+		test( `should return true for ${ product_slug } plan and .com domain`, () => {
+			expect( isDomainBeingUsedForPlan( buildCartWithDomain( product_slug ), 'domain.com' ) ).toBe(
+				true
+			);
+		} );
+	} );
+
+	[
+		PLAN_PERSONAL,
+		PLAN_PERSONAL_2_YEARS,
+		PLAN_PREMIUM,
+		PLAN_PREMIUM_2_YEARS,
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+	].forEach( product_slug => {
+		test( `should return true for ${ product_slug } plan and .blog domain`, () => {
+			expect(
+				isDomainBeingUsedForPlan(
+					buildCartWithDomain( product_slug, 'domain.blog' ),
+					'domain.blog'
+				)
+			).toBe( true );
+		} );
+	} );
+
+	[ PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].forEach( product_slug => {
+		test( `should return false for ${ product_slug } plan and .com domain`, () => {
+			expect( isDomainBeingUsedForPlan( buildCartWithDomain( product_slug ), 'domain.com' ) ).toBe(
+				false
+			);
+		} );
+	} );
+
+	[ PLAN_BLOGGER, PLAN_BLOGGER_2_YEARS ].forEach( product_slug => {
+		test( `should return false for ${ product_slug } plan and .blog domain`, () => {
+			expect(
+				isDomainBeingUsedForPlan(
+					buildCartWithDomain( product_slug, 'domain.blog' ),
+					'domain.blog'
+				)
+			).toBe( true );
+		} );
+	} );
+} );
+
+describe( 'isNextDomainFree()', () => {
+	test( 'should return true when cart.next_domain_is_free is true', () => {
+		expect( isNextDomainFree( { next_domain_is_free: true } ) ).toBe( true );
+	} );
+	test( 'should return true when cart.next_domain_is_free, next_domain_condition is empty and no domain is passed', () => {
+		expect( isNextDomainFree( { next_domain_is_free: true, next_domain_condition: '' } ) ).toBe(
+			true
+		);
+	} );
+	test( 'should return false when cart.next_domain_is_free, next_domain_condition is blog and no domain is passed', () => {
+		expect( isNextDomainFree( { next_domain_is_free: true, next_domain_condition: 'blog' } ) ).toBe(
+			false
+		);
+	} );
+	test( 'should return false when cart.next_domain_is_free is true, but condition is "blog" and requested domain is .com', () => {
+		expect(
+			isNextDomainFree( { next_domain_is_free: true, next_domain_condition: 'blog' }, 'domain.com' )
+		).toBe( false );
+	} );
+	test( 'should return true when cart.next_domain_is_free is true, but condition is "blog" and requested domain is .blog', () => {
+		expect(
+			isNextDomainFree(
+				{ next_domain_is_free: true, next_domain_condition: 'blog' },
+				'domain.blog'
+			)
+		).toBe( true );
+	} );
+	test( 'should return false when cart.next_domain_is_free is false', () => {
+		expect( isNextDomainFree( { next_domain_is_free: false } ) ).toBe( false );
+	} );
+	test( 'should return false when cart is null', () => {
+		expect( isNextDomainFree( null ) ).toBe( false );
+	} );
+} );
+
+describe( 'getDomainPriceRule()', () => {
+	test( 'should return FREE_DOMAIN when product slug is empty', () => {
+		expect( getDomainPriceRule( false, null, null, { product_slug: null, cost: '14' } ) ).toBe(
+			'FREE_DOMAIN'
+		);
+	} );
+	test( 'should return FREE_DOMAIN when cost is Free', () => {
+		expect( getDomainPriceRule( false, null, null, { product_slug: 'hi', cost: 'Free' } ) ).toBe(
+			'FREE_DOMAIN'
+		);
 	} );
 } );
