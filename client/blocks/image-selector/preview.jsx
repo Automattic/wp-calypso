@@ -103,7 +103,13 @@ export class ImageSelectorPreview extends Component {
 		} );
 
 		const imageIds = images.map( image => image.ID );
-		if ( onImageChange && images && images.length && ! isEqual( imageIds, itemIds ) ) {
+		if (
+			onImageChange &&
+			images &&
+			images.length &&
+			! isEqual( imageIds, itemIds ) &&
+			images.length === itemIds.length
+		) {
 			onImageChange( images );
 		}
 	};
