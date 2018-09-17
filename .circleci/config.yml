@@ -36,13 +36,13 @@ references:
   restore-jest-cache: &restore-jest-cache
     name: Restore Jest cache
     keys:
-      - v6-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
-      - v6-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
-      - v6-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
-      - v6-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
   save-jest-cache: &save-jest-cache
     name: Save Jest cache
-    key: v6-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    key: v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/jest-cache
 
@@ -209,6 +209,9 @@ jobs:
               --config=test/client/jest.config.js \
               > ~/jest-tests
 
+            # Run jest on the CircleCI split for parallelization across containers
+            # Avoid using `--split-by=timings` here so that per-node Jest caches
+            # receive a stable sub-set of tests for optimal cache usage.
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
               ./node_modules/.bin/jest                                  \
                 --cacheDirectory="$HOME/jest-cache"                     \
@@ -219,7 +222,7 @@ jobs:
                 --runTestsByPath                                        \
                 --silent                                                \
                 --config=test/client/jest.config.js                     \
-                $( circleci tests split --split-by=timings < ~/jest-tests )
+                $( circleci tests split < ~/jest-tests )
       - save_cache: *save-jest-cache
       - store_test_results:
           path: /tmp/test_results
