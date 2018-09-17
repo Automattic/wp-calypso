@@ -9,9 +9,7 @@
 @import '../shared/mixins/long-content-fade';
 @import '../shared/mixins/placeholder';
 @import '../shared/typography';
-
-// Required to access variables or @extend styles
-@import '../main';
+@import '../shared/variables';
 @import '../shared/forms';
 
 @import './media';
