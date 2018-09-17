@@ -100,7 +100,7 @@ class TranslatorLauncher extends React.PureComponent {
 		const infoDialogButtons = [ { action: 'cancel', label: this.props.translate( 'Ok' ) } ];
 
 		return (
-			<div className="community-translator__container">
+			<div>
 				<Dialog
 					isVisible={ this.state.infoDialogVisible }
 					buttons={ infoDialogButtons }
