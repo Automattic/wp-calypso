@@ -1,7 +1,7 @@
 /** @format */
 
 /**
- * External dependencies
+ * External dependencies - blah
  */
 
 import PropTypes from 'prop-types';
