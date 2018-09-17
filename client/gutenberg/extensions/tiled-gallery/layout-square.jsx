@@ -14,7 +14,17 @@ import TiledGalleryItem from './item.jsx';
 // not sure how critical this is, likely necessary to work nicely with themes
 const CONTENT_WIDTH = 520;
 
-function TiledGallerySquareGroup( { group_size, id, url, link, width, height, caption, linkTo, setAttributes } ) {
+function TiledGallerySquareGroup( {
+	group_size,
+	id,
+	url,
+	link,
+	width,
+	height,
+	caption,
+	linkTo,
+	setAttributes,
+} ) {
 	const styleAttr = {
 		width: group_size + 'px',
 		height: group_size + 'px',
@@ -25,7 +35,7 @@ function TiledGallerySquareGroup( { group_size, id, url, link, width, height, ca
 			style={ styleAttr }
 			data-original-width={ group_size }
 			data-original-height={ group_size }
-			>
+		>
 			<TiledGalleryItem
 				id={ id }
 				url={ url }
@@ -42,22 +52,21 @@ function TiledGallerySquareGroup( { group_size, id, url, link, width, height, ca
 }
 
 class TiledGalleryLayoutSquare extends Component {
-
 	computeItems() {
 		const { columns, images } = this.props;
 
 		const content_width = CONTENT_WIDTH; // todo: get content width
-		const images_per_row = ( columns > 1 ? columns : 1 );
+		const images_per_row = columns > 1 ? columns : 1;
 		const margin = 2;
 
-		const margin_space = ( images_per_row * margin ) * 2;
+		const margin_space = images_per_row * margin * 2;
 		const size = Math.floor( ( content_width - margin_space ) / images_per_row );
 		let remainder_size = size;
 		let img_size = remainder_size;
 		const remainder = images.length % images_per_row;
 		let remainder_space = 0;
 		if ( remainder > 0 ) {
-			remainder_space = ( remainder * margin ) * 2;
+			remainder_space = remainder * margin * 2;
 			remainder_size = Math.floor( ( content_width - remainder_space ) / remainder );
 		}
 
@@ -80,7 +89,7 @@ class TiledGalleryLayoutSquare extends Component {
 			c++;
 			items_in_row++;
 
-			if ( images_per_row === items_in_row || ( remainder + 1 ) === c ) {
+			if ( images_per_row === items_in_row || remainder + 1 === c ) {
 				rows.push( row );
 				items_in_row = 0;
 
@@ -111,23 +120,26 @@ class TiledGalleryLayoutSquare extends Component {
 
 		return (
 			<div className={ className }>
-				<div className="tiled-gallery__square tiled-gallery__unresized" data-original-width={ CONTENT_WIDTH }>
+				<div
+					className="tiled-gallery__square tiled-gallery__unresized"
+					data-original-width={ CONTENT_WIDTH }
+				>
 					{ rows.map( ( row, index ) => {
 						const styleAttr = {
 							width: row.width + 'px',
 							height: row.height + 'px',
 						};
-						const setMyAttributes = ( attrs ) => this.setImageAttributes( index, attrs );
+						const setMyAttributes = attrs => this.setImageAttributes( index, attrs );
 
 						return (
 							<div
 								key={ index }
-								className="tiled-gallery__row tiled-gallery__row"
+								className="tiled-gallery__row"
 								style={ styleAttr }
 								data-original-width={ row.width }
 								data-original-height={ row.height }
-								>
-								{ row.images.map( ( image ) => (
+							>
+								{ row.images.map( image => (
 									<TiledGallerySquareGroup
 										key={ image.id }
 										group_size={ row.group_size }
