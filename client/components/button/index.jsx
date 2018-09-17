@@ -23,8 +23,6 @@ export default class Button extends PureComponent {
 		type: 'button',
 	};
 
-	componentWillReceiveProps() {}
-
 	render() {
 		const className = classNames( 'button', this.props.className, {
 			'is-compact': this.props.compact,

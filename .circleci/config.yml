@@ -281,7 +281,6 @@ workflows:
     jobs:
       - lint-and-translate
       - test-client
-      - test-integration
       - test-server
 
   calypso-nightly:
