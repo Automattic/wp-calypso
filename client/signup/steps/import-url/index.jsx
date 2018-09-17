@@ -93,7 +93,10 @@ class ImportURLStepComponent extends Component {
 	};
 
 	checkValidation( value ) {
-		const message = isValidUrl( value ) ? '' : this.props.translate( 'Please enter a valid URL.' );
+		const { translate } = this.props;
+		const message = isValidUrl( value )
+			? ''
+			: translate( 'Please enter the full URL of your site.' );
 
 		this.props.setValidationMessage( message );
 	}
@@ -105,7 +108,7 @@ class ImportURLStepComponent extends Component {
 		return (
 			<div className="import-url__wrapper">
 				<FormTextInputWithAction
-					placeholder={ translate( 'Enter the URL of your existing site' ) }
+					placeholder={ translate( 'Please enter the full URL of your site.' ) }
 					action="Continue"
 					onAction={ this.handleAction }
 					label={ translate( 'URL' ) }
@@ -116,12 +119,12 @@ class ImportURLStepComponent extends Component {
 				/>
 				{ showValidation ? (
 					<FormInputValidation
-						text={ urlInputValidationMessage || translate( 'This URL is valid (copy)' ) }
+						text={ urlInputValidationMessage || translate( 'This URL is valid.' ) }
 						isError={ !! urlInputValidationMessage }
 					/>
 				) : (
 					<FormSettingExplanation>
-						{ translate( 'Please enter a valid URL.' ) }
+						{ translate( 'Please enter the full URL of your site.' ) }
 					</FormSettingExplanation>
 				) }
 			</div>
