@@ -835,29 +835,26 @@ class RegisterDomainStep extends React.Component {
 			this.props.recordSearchFormSubmit
 		);
 
-		this.setState( {
-			lastDomainSearched: domain,
-			railcarSeed: this.getNewRailcarSeed(),
+		this.setState( { lastDomainSearched: domain, railcarSeed: this.getNewRailcarSeed() }, () => {
+			const timestamp = Date.now();
+
+			this.getAvailableTlds( domain, this.props.vendor );
+			const domainSuggestions = Promise.all( [
+				this.checkDomainAvailability( domain, timestamp ),
+				this.getDomainsSuggestions( domain, timestamp ),
+			] );
+
+			domainSuggestions
+				.catch( () => [] ) // handle the error and return an empty list
+				.then( this.handleDomainSuggestions( domain ) );
+
+			if (
+				shouldQuerySubdomains &&
+				( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
+			) {
+				this.getSubdomainSuggestions( domain, timestamp );
+			}
 		} );
-
-		const timestamp = Date.now();
-
-		this.getAvailableTlds( domain, this.props.vendor );
-		const domainSuggestions = Promise.all( [
-			this.checkDomainAvailability( domain, timestamp ),
-			this.getDomainsSuggestions( domain, timestamp ),
-		] );
-
-		domainSuggestions
-			.catch( () => [] ) // handle the error and return an empty list
-			.then( this.handleDomainSuggestions( domain ) );
-
-		if (
-			shouldQuerySubdomains &&
-			( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
-		) {
-			this.getSubdomainSuggestions( domain, timestamp );
-		}
 	};
 
 	showNextPage = () => {
