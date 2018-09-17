@@ -112,6 +112,7 @@ export class ImageSelectorPreview extends Component {
 		return url( image, {
 			maxWidth: this.props.maxWidth,
 			size: 'post-thumbnail',
+			photon: true,
 		} );
 	};
 
@@ -123,12 +124,12 @@ export class ImageSelectorPreview extends Component {
 		return placeholder;
 	};
 
-	renderUploaded = ( { URL, ID } ) => {
+	renderUploaded = ( src, id ) => {
 		return (
 			<figure>
 				<ImagePreloader
-					src={ URL }
-					placeholder={ this.renderPlaceholder( ID ) }
+					src={ src }
+					placeholder={ this.renderPlaceholder( id ) }
 					draggable="false"
 				/>
 			</figure>
@@ -159,7 +160,7 @@ export class ImageSelectorPreview extends Component {
 					data-tip-target="image-selector-image"
 				>
 					<Spinner />
-					{ src ? this.renderUploaded( image ) : <span /> }
+					{ src ? this.renderUploaded( src, id ) : <span /> }
 					{ showEditIcon && <Gridicon icon="pencil" className="image-selector__edit-icon" /> }
 				</Button>
 				<Button
