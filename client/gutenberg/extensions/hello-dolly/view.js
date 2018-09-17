@@ -3,4 +3,4 @@
 /**
  * Internal dependencies
  */
-import './block.scss';
+import './view.scss';
