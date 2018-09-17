@@ -61,6 +61,7 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isWpComFreePlan,
+	isWpComBloggerPlan,
 } from 'lib/plans';
 
 /**
@@ -1005,6 +1006,27 @@ export function shouldBundleDomainWithPlan(
 	); // site has a plan
 }
 
+/**
+ * Sites on a blogger plan are not allowed to get an additional domain - they need to buy an upgrade to do that.
+ * This function checks tells if user has to upgrade just to be able to pay for a domain.
+ *
+ * @param {object} selectedSite Site
+ * @param {object} cart Cart
+ * @return {boolean} See description
+ */
+export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
+	const sitePlanSlug = ( ( selectedSite || {} ).plan || {} ).product_slug;
+	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) ) {
+		return true;
+	}
+
+	if ( hasBloggerPlan( cart ) ) {
+		return true;
+	}
+
+	return false;
+}
+
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -1019,7 +1041,11 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 	}
 
 	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) ) {
-		return 'INCLUDED_IN_PREMIUM';
+		return 'INCLUDED_IN_HIGHER_PLAN';
+	}
+
+	if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
+		return 'UPGRADE_TO_HIGHER_PLAN_TO_BUY';
 	}
 
 	return 'PRICE';
