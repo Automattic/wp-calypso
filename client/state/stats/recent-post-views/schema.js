@@ -11,6 +11,9 @@ export const items = {
 				// Post Id
 				'^\\d+$': {
 					type: 'object',
+					properties: {
+						views: { type: 'number' },
+					},
 				},
 			},
 		},
