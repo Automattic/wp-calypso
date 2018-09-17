@@ -19,7 +19,7 @@ import {
 /**
  * Internal dependencies
  */
-import { DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
+import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants';
 
 export default ( { attributes, className, setAttributes } ) => {
 	const {
@@ -91,7 +91,7 @@ export default ( { attributes, className, setAttributes } ) => {
 					onChange={ nextAlign => {
 						setAttributes( { align: nextAlign } );
 					} }
-					controls={ [ 'center', 'wide', 'full' ] }
+					controls={ ALIGNMENT_OPTIONS }
 				/>
 				<Toolbar controls={ layoutControls } />
 			</BlockControls>

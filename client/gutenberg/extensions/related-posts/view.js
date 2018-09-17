@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
+import { includes } from 'lodash';
 import { registerBlockType } from '@wordpress/blocks';
 
 /**
@@ -11,7 +12,7 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import './style.scss';
 import edit from './edit';
-import { MAX_POSTS_TO_SHOW } from './constants';
+import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
 
 registerBlockType( 'a8c/related-posts', {
 	title: __( 'Related Posts' ),
@@ -54,7 +55,7 @@ registerBlockType( 'a8c/related-posts', {
 	getEditWrapperProps: attributes => {
 		const { align } = attributes;
 
-		if ( 'center' === align || 'wide' === align || 'full' === align ) {
+		if ( includes( ALIGNMENT_OPTIONS, align ) ) {
 			return { 'data-align': align };
 		}
 	},
