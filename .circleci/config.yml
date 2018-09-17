@@ -165,7 +165,7 @@ jobs:
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Client Tests
-          no_output_timeout: 30s
+          no_output_timeout: 2m
           command: |
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
               ./node_modules/.bin/jest                \
@@ -246,7 +246,7 @@ jobs:
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Server Tests
-          no_output_timeout: 30s
+          no_output_timeout: 2m
           command: |
             JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
               ./node_modules/.bin/jest                \
