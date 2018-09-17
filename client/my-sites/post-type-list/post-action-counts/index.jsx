@@ -87,8 +87,8 @@ class PostActionCounts extends PureComponent {
 			return null;
 		}
 		const recentViewsText = translate(
-			'%(count)s Recent View {{srText}}in the past 30 days{{/srText}}',
-			'%(count)s Recent Views {{srText}}in the past 30 days{{/srText}}',
+			'%(count)s Recent View{{srText}}in the past 30 days{{/srText}}',
+			'%(count)s Recent Views{{srText}}in the past 30 days{{/srText}}',
 			{
 				count,
 				args: {
