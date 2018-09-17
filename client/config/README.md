@@ -43,3 +43,19 @@ Note: the `?flags` argument won't work for feature flags used by the Node.js
 server.  For this case, you can use the
 [`ENABLE_FEATURES` and/or `DISABLE_FEATURES`](../../config/README.md#feature-flags)
 environment variables instead.
+
+Testing for calypso.live environment
+------------------------------------
+
+We often need to enable or disable certain features not only based on the Calypso environment
+(development, production, staging, horizon, ...) but also when Calypso runs in the calypso.live
+testing environment. The `config` module exports a helper function `isCalypsoLive` that returns
+`true` if Calypso is running on the `*.calypso.live` origin.
+
+```js
+import { isCalypsoLive } from 'config';
+
+if ( isCalypsoLive() ) {
+  /* ... */
+}
+```

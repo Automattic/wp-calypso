@@ -23,11 +23,12 @@ const configData = window.configData;
 // calypso.live.com doesn't match
 const CALYPSO_LIVE_REGEX = /^([a-zA-Z0-9-]+\.)?calypso\.live$/;
 
-if (
-	process.env.NODE_ENV === 'development' ||
-	configData.env_id === 'stage' ||
-	( typeof window !== 'undefined' && CALYPSO_LIVE_REGEX.test( window.location.host ) )
-) {
+// check if the current browser location is *.calypso.live
+export function isCalypsoLive() {
+	return typeof window !== 'undefined' && CALYPSO_LIVE_REGEX.test( window.location.host );
+}
+
+if ( process.env.NODE_ENV === 'development' || configData.env_id === 'stage' || isCalypsoLive() ) {
 	const match =
 		document.location.search && document.location.search.match( /[?&]flags=([^&]+)(&|$)/ );
 	if ( match ) {
