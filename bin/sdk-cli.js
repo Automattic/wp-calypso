@@ -77,7 +77,8 @@ yargs
 		desc: 'Build a Gutenberg extension',
 		builder: yargs =>
 			yargs.positional('input-dir', {
-				description: 'Directory containing block code',
+				description: 'Directory containing entry point files editor.js and (optionally) view.js ' +
+					'(for editor and frontend view modes, respectively)',
 				type: 'string',
 				required: true,
 				coerce: value => path.resolve( __dirname, '../', value ),
