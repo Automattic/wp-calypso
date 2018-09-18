@@ -93,22 +93,6 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Tumblr Publicize when no accounts are connected',
 				} );
 			},
-			path: function() {
-				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate(
-						'Sharing posts to your Path timeline.',
-						'Sharing posts to your Path timelines.',
-						{
-							count: this.props.numberOfConnections,
-							comment: 'Description for Path Publicize when one or more accounts are connected',
-						}
-					);
-				}
-
-				return this.props.translate( 'Share posts to your Path timeline.', {
-					comment: 'Description for Path Publicize when no accounts are connected',
-				} );
-			},
 			eventbrite: function() {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate( 'Connected to your Eventbrite account.', {
