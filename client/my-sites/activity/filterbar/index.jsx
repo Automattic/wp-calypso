@@ -44,17 +44,16 @@ export class Filterbar extends Component {
 			fromDate: null,
 			enteredToDate: null,
 		} );
-		if ( fromDate && toDate ) {
-			selectDateRange(
-				siteId,
-				moment( fromDate ).format( DATE_FORMAT ),
-				moment( toDate ).format( DATE_FORMAT )
-			);
+
+		const formattedFromDate = fromDate && moment( fromDate ).format( DATE_FORMAT );
+		const formattedToDate = toDate && moment( toDate ).format( DATE_FORMAT );
+		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
+			selectDateRange( siteId, formattedFromDate, formattedToDate );
 			return;
 		}
 
-		if ( fromDate ) {
-			selectDateRange( siteId, moment( fromDate ).format( DATE_FORMAT ), null );
+		if ( formattedFromDate ) {
+			selectDateRange( siteId, formattedFromDate, null );
 		}
 	};
 
