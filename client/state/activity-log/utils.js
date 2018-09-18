@@ -4,6 +4,7 @@ export const filterStateToApiQuery = filter =>
 	Object.assign(
 		{},
 		filter.action && { action: filter.action },
+		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
 		filter.before && { before: filter.before },
 		filter.by && { by: filter.by },
@@ -18,6 +19,7 @@ export const filterStateToQuery = filter =>
 	Object.assign(
 		{},
 		filter.action && { action: filter.action.join( ',' ) },
+		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
 		filter.before && { before: filter.before },
 		filter.by && { by: filter.by },
@@ -32,6 +34,7 @@ export const queryToFilterState = query =>
 	Object.assign(
 		{},
 		query.action && { action: decodeURI( query.action ).split( ',' ) },
+		query.on && { on: query.on },
 		query.after && { after: query.after },
 		query.before && { before: query.before },
 		query.by && { by: query.by },

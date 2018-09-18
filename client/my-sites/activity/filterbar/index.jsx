@@ -34,25 +34,26 @@ export class Filterbar extends Component {
 	};
 
 	closeDateRangeSelector = () => {
-		const { siteId, selectDateRange } = this.props;
-		const { fromDate, toDate } = this.state;
+		const { siteId, selectDateRange, filter } = this.props;
+		const fromDate = this.getFromDate( filter );
+		const toDate = this.getToDate( filter );
+
 		this.setState( {
 			showActivityDates: false,
 			toDate: null,
 			fromDate: null,
 			enteredToDate: null,
 		} );
-		if ( fromDate && toDate ) {
-			selectDateRange(
-				siteId,
-				moment( fromDate ).format( DATE_FORMAT ),
-				moment( toDate ).format( DATE_FORMAT )
-			);
+
+		const formattedFromDate = fromDate && moment( fromDate ).format( DATE_FORMAT );
+		const formattedToDate = toDate && moment( toDate ).format( DATE_FORMAT );
+		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
+			selectDateRange( siteId, formattedFromDate, formattedToDate );
 			return;
 		}
 
-		if ( fromDate ) {
-			selectDateRange( siteId, moment( fromDate ).format( DATE_FORMAT ), null );
+		if ( formattedFromDate ) {
+			selectDateRange( siteId, formattedFromDate, null );
 		}
 	};
 
@@ -121,14 +122,6 @@ export class Filterbar extends Component {
 		selectDateRange( siteId, null, null );
 	};
 
-	handleClearSelection = () => {
-		this.setState( {
-			enteredToDate: null,
-			fromDate: null,
-			toDate: null,
-		} );
-	};
-
 	resetActivityTypeSelector = event => {
 		const { selectActionType, siteId } = this.props;
 		selectActionType( siteId, [] );
@@ -189,7 +182,10 @@ export class Filterbar extends Component {
 		if ( fromDate ) {
 			return fromDate;
 		}
-		return filter && filter.after ? moment( filter.after ).toDate() : null;
+		if ( filter && filter.after ) {
+			return moment( filter.after ).toDate();
+		}
+		return filter && filter.on ? moment( filter.on ).toDate() : null;
 	};
 
 	getToDate = filter => {
@@ -237,7 +233,7 @@ export class Filterbar extends Component {
 					onDayMouseEnter={ this.handleDayMouseEnter }
 					onResetSelection={ this.handleResetSelection }
 					onDayClick={ this.handleDayClick }
-					onClearSelection={ this.handleClearSelection }
+					onClearSelection={ this.handleResetSelection }
 					from={ this.getFromDate( filter ) }
 					to={ this.getToDate( filter ) }
 					enteredTo={ this.getEnteredToDate( filter ) }
@@ -264,6 +260,11 @@ export default connect(
 	{
 		resetFilters: sideId => updateFilter( sideId, { group: null, after: null, before: null } ),
 		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
-		selectDateRange: ( siteId, from, to ) => updateFilter( siteId, { after: from, before: to } ),
+		selectDateRange: ( siteId, from, to ) => {
+			if ( to ) {
+				return updateFilter( siteId, { after: from, before: to, on: null } );
+			}
+			return updateFilter( siteId, { on: from, after: null, before: null } );
+		},
 	}
 )( localize( Filterbar ) );
