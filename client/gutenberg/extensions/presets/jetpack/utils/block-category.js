@@ -9,5 +9,5 @@ import { getCategories, setCategories } from '@wordpress/blocks';
 setCategories( [
 	// Add a Jetpack block category
 	{ slug: 'jetpack', title: __( 'Jetpack' ) },
-	...getCategories(),
+	...getCategories().filter( ( { slug } ) => slug !== 'jetpack' ),
 ] );
