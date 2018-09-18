@@ -24,6 +24,7 @@ function languageFileUrl( localeSlug ) {
 function setLocaleInDOM( localeSlug, isRTL ) {
 	document.documentElement.lang = localeSlug;
 	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+	document.body.classList[ isRTL ? 'add' : 'remove' ]( 'rtl' );
 
 	const directionFlag = isRTL ? '-rtl' : '';
 	const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
