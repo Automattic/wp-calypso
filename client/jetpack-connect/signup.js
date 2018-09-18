@@ -164,6 +164,10 @@ export class JetpackSignup extends Component {
 			} );
 			return;
 		}
+		if ( error && 'password_invalid' === error.code ) {
+			errorNotice( error.message );
+			return;
+		}
 		errorNotice(
 			translate( 'There was a problem creating your account. Please contact support.' )
 		);
