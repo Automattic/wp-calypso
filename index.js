@@ -4,8 +4,6 @@
  * External dependencies.
  */
 var boot = require( 'boot' ),
-	http = require( 'http' ),
-	https = require( 'https' ),
 	chalk = require( 'chalk' ),
 	fs = require( 'fs' );
 
@@ -43,13 +41,13 @@ console.log(
 
 // Start a development HTTPS server.
 if ( protocol === 'https' ) {
-	const httpsOptions = {
+	const options = {
 		key: fs.readFileSync( './config/server/key.pem' ),
 		cert: fs.readFileSync( './config/server/certificate.pem' )
 	};
-	server = https.createServer( httpsOptions, app );
+	server = require( 'https' ).createServer( options, app );
 } else {
-	server = http.createServer( app );
+	server = require( 'http' ).createServer( app );
 }
 
 // The desktop app runs Calypso in a fork.
