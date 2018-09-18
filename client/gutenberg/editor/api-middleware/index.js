@@ -3,12 +3,14 @@
 /**
  * External dependencies
  */
-import wpcomProxyRequest from 'wpcom-proxy-request';
+// import wpcomProxyRequest from 'wpcom-proxy-request';
 
 /**
  * Internal dependencies
  */
 import debugFactory from 'debug';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { /*requestHttpData,*/ requestGutenbergHttpData } from 'state/data-layer/http-data';
 
 const debug = debugFactory( 'calypso:gutenberg' );
 
@@ -41,19 +43,33 @@ export const wpcomProxyMiddleware = parameters => {
 	return new Promise( ( resolve, reject ) => {
 		const { body, data, ...options } = parameters;
 
-		wpcomProxyRequest(
-			{
-				...options,
-				...( ( body || data ) && { body: body || data } ),
-				apiNamespace: 'wp/v2',
-			},
-			( error, bodyOrData ) => {
-				if ( error ) {
-					return reject( error );
-				}
+		const method = 'GET';
 
-				return resolve( bodyOrData );
-			}
+		requestGutenbergHttpData(
+			http( {
+				...options,
+				method,
+				apiNamespace: 'wp/v2',
+			} ),
+			{ resolve, reject }
 		);
 	} );
+	// return new Promise( ( resolve, reject ) => {
+	// 	const { body, data, ...options } = parameters;
+
+	// 	wpcomProxyRequest(
+	// 		{
+	// 			...options,
+	// 			...( ( body || data ) && { body: body || data } ),
+	// 			apiNamespace: 'wp/v2',
+	// 		},
+	// 		( error, bodyOrData ) => {
+	// 			if ( error ) {
+	// 				return reject( error );
+	// 			}
+
+	// 			return resolve( bodyOrData );
+	// 		}
+	// 	);
+	// } );
 };

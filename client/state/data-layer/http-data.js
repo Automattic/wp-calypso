@@ -1,8 +1,14 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
+import { identity } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'state/action-types';
+import { HTTP_DATA_REQUEST, HTTP_DATA_TICK, HTTP_GUTENBERG_DATA_REQUEST } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 
 export const httpData = new Map();
@@ -126,6 +132,13 @@ export default {
 			onError,
 		} ),
 	],
+	[ HTTP_GUTENBERG_DATA_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch,
+			onSuccess: ( { resolve }, data ) => resolve( data ),
+			onError: ( { reject }, error ) => reject( error ),
+		} ),
+	],
 };
 
 export const reducer = ( state = 0, { type } ) => ( HTTP_DATA_TICK === type ? state + 1 : state );
@@ -176,6 +189,27 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
 			id: requestId,
 			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
 			fromApi: 'function' === typeof fromApi ? fromApi : () => a => a,
+		};
+
+		dispatch ? dispatch( action ) : dispatchQueue.push( action );
+	}
+
+	return data;
+};
+
+export const requestGutenbergHttpData = ( fetchAction, { resolve, reject } ) => {
+	const { path } = fetchAction;
+	const data = getHttpData( path );
+	const { state /*, lastUpdated*/ } = data;
+
+	if ( 'pending' !== state ) {
+		const action = {
+			type: HTTP_GUTENBERG_DATA_REQUEST,
+			id: path,
+			fetch: fetchAction,
+			fromApi: identity,
+			resolve,
+			reject,
 		};
 
 		dispatch ? dispatch( action ) : dispatchQueue.push( action );
