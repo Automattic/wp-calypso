@@ -21,6 +21,8 @@ registerBlockType( 'a8c/related-posts', {
 
 	category: 'layout',
 
+	keywords: [ __( 'similar' ), __( 'linked' ), __( 'connected' ) ],
+
 	attributes: {
 		align: {
 			type: 'string',
