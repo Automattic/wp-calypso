@@ -12,6 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
+import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
 
 export const requestActivityActionTypeCounts = (
 	siteId,
@@ -37,7 +38,7 @@ export const requestActivityActionTypeCounts = (
 		{
 			freshness,
 			fromApi: () => data => {
-				return [ [ id, data ] ];
+				return [ [ id, fromActivityTypeApi( data ) ] ];
 			},
 		}
 	);

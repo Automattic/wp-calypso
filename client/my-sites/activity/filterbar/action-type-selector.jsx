@@ -6,7 +6,7 @@ import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { forOwn, indexOf } from 'lodash';
+import { concat, without, isEmpty, find } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -17,35 +17,118 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
 import { requestActivityActionTypeCounts } from 'state/data-getters';
+import { updateFilter } from 'state/activity-log/actions';
 
 export class ActionTypeSelector extends Component {
+	state = {
+		userHasSelected: false,
+		selectedCheckboxes: [],
+	};
+
 	constructor( props ) {
 		super( props );
 		this.activityTypeButton = React.createRef();
 	}
 
-	isAllCheckboxSelected = checkboxes => {
-		if ( ! this.props.selected ) {
+	resetActivityTypeSelector = event => {
+		const { selectActionType, siteId } = this.props;
+		selectActionType( siteId, [] );
+		event.preventDefault();
+	};
+
+	handleToggleAllActionTypeSelector = () => {
+		const { activityTypes } = this.props;
+		if ( this.isAllCheckboxSelected() ) {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: [],
+			} );
+		} else {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: activityTypes.map( type => type.key ),
+			} );
+		}
+	};
+
+	handleSelectClick = event => {
+		const group = event.target.getAttribute( 'id' );
+
+		if ( this.isAllCheckboxSelected() ) {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: [ group ],
+			} );
+		} else if ( this.state.selectedCheckboxes.includes( group ) ) {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: without( this.state.selectedCheckboxes, group ),
+			} );
+		} else {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: concat( this.state.selectedCheckboxes, group ),
+			} );
+		}
+	};
+
+	getSelectedCheckboxes = () => {
+		const { selectedState } = this.props;
+		if ( this.state.userHasSelected ) {
+			return this.state.selectedCheckboxes;
+		}
+		if ( selectedState && selectedState.length ) {
+			return selectedState;
+		}
+		return [];
+	};
+
+	activityKeyToName = key => {
+		const { activityTypes } = this.props;
+		const match = find( activityTypes, [ 'key', key ] );
+		return ( match && match.name ) || key;
+	};
+
+	isAllCheckboxSelected = () => {
+		const { activityTypes, selectedState } = this.props;
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+
+		if ( ! this.state.userHasSelected && ! selectedState ) {
 			return true;
 		}
-		if ( checkboxes.length === this.props.selected.length ) {
+
+		if ( selectedCheckboxes.length === activityTypes.length ) {
 			return true;
 		}
 
 		return false;
 	};
 
-	renderCheckbox = ( allCheckboxes, checkbox ) => {
-		const { onSelectClick, selected } = this.props;
+	handleClose = () => {
+		const { siteId, onClose, selectActionType } = this.props;
+		if ( this.isAllCheckboxSelected() ) {
+			selectActionType( siteId, [] );
+		} else {
+			selectActionType( siteId, this.getSelectedCheckboxes() );
+		}
+
+		this.setState( {
+			userHasSelected: false,
+			selectedCheckboxes: [],
+		} );
+		onClose();
+	};
+
+	renderCheckbox = group => {
 		return (
-			<FormLabel key={ checkbox.key }>
+			<FormLabel key={ group.key }>
 				<FormCheckbox
-					id={ checkbox.key }
-					checked={ !! this.isSelected( selected, checkbox.key ) || ! selected }
-					name={ checkbox.key }
-					onChange={ onSelectClick.bind( this, checkbox, allCheckboxes ) }
+					id={ group.key }
+					checked={ this.isSelected( group.key ) || this.isAllCheckboxSelected() }
+					name={ group.key }
+					onChange={ this.handleSelectClick }
 				/>
-				{ checkbox.name + ' (' + checkbox.count + ')' }
+				{ group.name + ' (' + group.count + ')' }
 			</FormLabel>
 		);
 	};
@@ -56,44 +139,19 @@ export class ActionTypeSelector extends Component {
 		);
 	};
 
-	isSelected = ( selection, key ) =>
-		selection && !! selection.length && indexOf( selection, key ) >= 0;
+	isSelected = key => this.getSelectedCheckboxes().includes( key );
 
 	render() {
-		const {
-			translate,
-			actionTypes,
-			isVisible,
-			onClose,
-			onButtonClick,
-			selected,
-			onResetSelection,
-			onToggleAllCheckboxes,
-		} = this.props;
-		const checkboxes = [];
-		const selectedNames = [];
-		let totalCount = 0;
+		const { translate, activityTypes, isVisible, onButtonClick } = this.props;
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes ) && ! this.isAllCheckboxSelected();
+		const totalItems = activityTypes
+			? activityTypes.reduce( ( accumulator, currentValue ) => currentValue.count + accumulator, 0 )
+			: 0;
 
-		if ( actionTypes && actionTypes.groups ) {
-			forOwn( actionTypes.groups, ( group, slug ) => {
-				checkboxes.push( {
-					key: slug,
-					name: group.name,
-					count: group.count,
-				} );
-				totalCount += group.count;
-				if ( this.isSelected( selected, slug ) ) {
-					selectedNames.push( group.name );
-				}
-			} );
-		}
-
-		if ( selected && selected[ 0 ] === 'no-group' ) {
-			selectedNames.push( translate( 'Activity Type: None Selected' ) );
-		}
 		const buttonClass = classnames( {
 			filterbar__selection: true,
-			'is-selected': !! selectedNames.length,
+			'is-selected': hasSelectedCheckboxes,
 		} );
 
 		return (
@@ -105,15 +163,16 @@ export class ActionTypeSelector extends Component {
 					onClick={ onButtonClick }
 					ref={ this.activityTypeButton }
 				>
-					{ ! selectedNames.length && translate( 'Activity Type' ) }
-					{ !! selectedNames.length && selectedNames.join( ', ' ) }
+					{ translate( 'Activity Type' ) }
+					{ hasSelectedCheckboxes && <span>: </span> }
+					{ hasSelectedCheckboxes && selectedCheckboxes.map( this.activityKeyToName ).join( ', ' ) }
 				</Button>
-				{ !! selectedNames.length && (
+				{ hasSelectedCheckboxes && (
 					<Button
 						className="filterbar__selection-close"
 						compact
 						borderless
-						onClick={ onResetSelection }
+						onClick={ this.resetActivityTypeSelector }
 					>
 						<Gridicon icon="cross-small" />
 					</Button>
@@ -121,35 +180,48 @@ export class ActionTypeSelector extends Component {
 				<Popover
 					id="filterbar__activity-types"
 					isVisible={ isVisible }
-					onClose={ onClose }
+					onClose={ this.handleClose }
 					autoPosition={ true }
 					context={ this.activityTypeButton.current }
 				>
 					<div className="filterbar__activity-types-selection-wrap">
-						{ actionTypes &&
-							!! checkboxes.length && (
-								<Fragment>
-									<FormLabel>
-										<FormCheckbox
-											id="comment_like_notification"
-											onChange={ onToggleAllCheckboxes.bind( this, checkboxes ) }
-											checked={ this.isAllCheckboxSelected( checkboxes ) }
-											name="comment_like_notification"
-										/>
-										<strong>
-											{ translate( 'All activity type (%(totalCount)d)', {
-												args: { totalCount },
-											} ) }
-										</strong>
-									</FormLabel>
-									<div className="filterbar__activity-types-selection-granular">
-										{ checkboxes.map( this.renderCheckbox.bind( null, checkboxes ) ) }
+						{ activityTypes &&
+							!! activityTypes.length && (
+								<div>
+									<Fragment>
+										<FormLabel>
+											<FormCheckbox
+												id="comment_like_notification"
+												onChange={ this.handleToggleAllActionTypeSelector }
+												checked={ this.isAllCheckboxSelected() }
+												name="comment_like_notification"
+											/>
+											<strong>
+												{ translate( 'All activity type (%(totalCount)d)', {
+													args: { totalCount: totalItems },
+												} ) }
+											</strong>
+										</FormLabel>
+										<div className="filterbar__activity-types-selection-granular">
+											{ activityTypes.map( this.renderCheckbox ) }
+										</div>
+									</Fragment>
+									<div className="filterbar__activity-types-selection-info">
+										<Button
+											className="filterbar__activity-types-apply"
+											primary
+											compact
+											disabled={ ! this.state.userHasSelected }
+											onClick={ this.handleClose }
+										>
+											{ translate( 'Apply' ) }
+										</Button>
 									</div>
-								</Fragment>
+								</div>
 							) }
-						{ ! actionTypes && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
-						{ actionTypes &&
-							! checkboxes.length && (
+						{ ! activityTypes && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
+						{ activityTypes &&
+							! activityTypes.length && (
 								<p>{ translate( 'No activities recorded in the selected date range.' ) }</p>
 							) }
 					</div>
@@ -158,10 +230,17 @@ export class ActionTypeSelector extends Component {
 		);
 	}
 }
-const mapStateToProps = ( state, { siteId, filter } ) => {
-	const actionTypesRequest = requestActivityActionTypeCounts( siteId, filter );
-	return {
-		actionTypes: actionTypesRequest.data,
-	};
-};
-export default connect( mapStateToProps )( localize( ActionTypeSelector ) );
+
+export default connect(
+	( state, { siteId, filter } ) => {
+		const activityTypes = siteId && requestActivityActionTypeCounts( siteId, filter );
+		const selectedState = filter && filter.group;
+		return {
+			activityTypes: ( siteId && activityTypes.data ) || [],
+			selectedState,
+		};
+	},
+	{
+		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group, page: 1 } ),
+	}
+)( localize( ActionTypeSelector ) );
