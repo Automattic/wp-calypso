@@ -44,8 +44,8 @@ console.log(
 // Start a development HTTPS server.
 if ( protocol === 'https' ) {
 	const httpsOptions = {
-		key: fs.readFileSync( './test/server/key.pem' ),
-		cert: fs.readFileSync( './test/server/certificate.pem' )
+		key: fs.readFileSync( './config/server/key.pem' ),
+		cert: fs.readFileSync( './config/server/certificate.pem' )
 	};
 	server = https.createServer( httpsOptions, app );
 } else {
