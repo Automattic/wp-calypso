@@ -20,7 +20,8 @@ export const requestActivityActionTypeCounts = (
 ) => {
 	const before = filter && filter.before ? filter.before : '';
 	const after = filter && filter.after ? filter.after : '';
-	const id = `activity-log-${ siteId }-${ after }-${ before }`;
+	const on = filter && filter.on ? filter.on : '';
+	const id = `activity-log-${ siteId }-${ after }-${ before }-${ on }`;
 
 	return requestHttpData(
 		id,
