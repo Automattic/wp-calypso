@@ -10404,9 +10404,9 @@
       }
     },
     "nock": {
-      "version": "9.6.1",
-      "resolved": "https://registry.npmjs.org/nock/-/nock-9.6.1.tgz",
-      "integrity": "sha512-EDgl/WgNQ0C1BZZlASOQkQdE6tAWXJi8QQlugqzN64JJkvZ7ILijZuG24r4vCC7yOfnm6HKpne5AGExLGCeBWg==",
+      "version": "10.0.0",
+      "resolved": "https://registry.npmjs.org/nock/-/nock-10.0.0.tgz",
+      "integrity": "sha512-hE0O9Uhrg7uOpAqnA6ZfnvCS/TZy0HJgMslJ829E7ZuRytcS86/LllupHDD6Tl8fFKQ24kWe1ikX3MCrKkwaaQ==",
       "dev": true,
       "requires": {
         "chai": "^4.1.2",
