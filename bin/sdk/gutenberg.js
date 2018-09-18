@@ -5,22 +5,19 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 
-const EDITOR_FILENAME = 'editor';
-const VIEW_FILENAME = 'view';
-
 exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	const baseConfig = getBaseConfig( {
 		cssFilename: '[name].css',
 		externalizeWordPressPackages: true,
 	} );
-	const editorScript = path.join( inputDir, `${ EDITOR_FILENAME }.js` );
-	const viewScript = path.join( inputDir, `${ VIEW_FILENAME }.js` );
+	const editorScript = path.join( inputDir, 'editor.js' );
+	const viewScript = path.join( inputDir, 'view.js' );
 
 	return {
 		...baseConfig,
 		entry: {
-			...( fs.existsSync( editorScript ) ? { [ EDITOR_FILENAME ]: editorScript } : {} ),
-			...( fs.existsSync( viewScript ) ? { [ VIEW_FILENAME ]: viewScript } : {} ),
+			...( fs.existsSync( editorScript ) ? { editor: editorScript } : {} ),
+			...( fs.existsSync( viewScript ) ? { view: viewScript } : {} ),
 		},
 		output: {
 			path: outputDir || path.join( inputDir, 'build' ),
