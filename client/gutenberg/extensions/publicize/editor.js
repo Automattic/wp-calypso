@@ -20,8 +20,8 @@ import { registerStore } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import PublicizePanel from './publicize-panel';
-import publicizeStore from './publicize-gutenberg-store';
+import PublicizePanel from './panel';
+import publicizeStore from './gutenberg-store';
 import JetpackLogo from 'components/jetpack-logo';
 
 /**

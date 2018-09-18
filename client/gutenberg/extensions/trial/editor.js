@@ -11,7 +11,6 @@ import { RichText } from '@wordpress/editor';
 /**
  * Internal dependencies
  */
-import './style.scss';
 import './editor.scss';
 
 const statuses = [

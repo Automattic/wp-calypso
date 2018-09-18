@@ -3,4 +3,4 @@
 /**
  * Internal dependencies
  */
-import 'gutenberg/extensions/tiled-gallery/index.js';
+import 'gutenberg/extensions/tiled-gallery/view';
