@@ -45,7 +45,7 @@ registerBlockType( 'a8c/markdown', {
 
 	category: 'jetpack',
 
-	keywords: [ __( 'formatting' ), __( 'syntax' ), __( 'code' ) ],
+	keywords: [ __( 'formatting' ), __( 'syntax' ), __( 'markup' ) ],
 
 	attributes: {
 		//The Markdown source is saved in the block content comments delimiter
