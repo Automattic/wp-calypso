@@ -15,11 +15,7 @@ import { parse as parseURL } from 'url';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import {
-	fetchIsSiteImportable,
-	setNuxUrlInputValue,
-	setValidationMessage,
-} from 'state/importer-nux/actions';
+import { setNuxUrlInputValue, setValidationMessage } from 'state/importer-nux/actions';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import {
@@ -58,8 +54,6 @@ class ImportURLStepComponent extends Component {
 	};
 
 	handleAction = () => {
-		event.preventDefault();
-
 		if ( this.props.urlInputValidationMessage ) {
 			return this.setState( {
 				showValidation: true,
@@ -103,11 +97,6 @@ class ImportURLStepComponent extends Component {
 
 		this.props.setValidationMessage( message );
 	}
-
-	fetchIsSiteImportable = () => {
-		const normalizedUrl = normalizeUrlForImportSource( this.props.urlInputValue );
-		this.props.fetchIsSiteImportable( normalizedUrl );
-	};
 
 	renderContent = () => {
 		const { isInputDisabled, urlInputValidationMessage, urlInputValue, translate } = this.props;
@@ -167,7 +156,6 @@ export default flow(
 			urlInputValidationMessage: getUrlInputValidationMessage( state ),
 		} ),
 		{
-			fetchIsSiteImportable,
 			setNuxUrlInputValue,
 			setValidationMessage,
 		}
