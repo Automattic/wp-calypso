@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { sortBy, omit } from 'lodash';
+import { sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -21,7 +21,6 @@ export const requestActivityActionTypeCounts = (
 	const before = filter && filter.before ? filter.before : '';
 	const after = filter && filter.after ? filter.after : '';
 	const id = `activity-log-${ siteId }-${ after }-${ before }`;
-	const filter_removed_group = omit( filter, 'group' );
 
 	return requestHttpData(
 		id,
@@ -30,7 +29,7 @@ export const requestActivityActionTypeCounts = (
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 				path: `/sites/${ siteId }/activity/count/group`,
-				query: filterStateToApiQuery( filter_removed_group ),
+				query: filterStateToApiQuery( filter ),
 			},
 			{}
 		),
