@@ -34,12 +34,12 @@ export const pathRewriteMiddleware = ( options, next, siteSlug ) => {
 	return next( { ...options, path: wpcomPath } );
 };
 
-export const wpcomProxyMiddleware = options => {
+export const wpcomProxyMiddleware = parameters => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
 	// This intentionally breaks the middleware chain.
 	return new Promise( ( resolve, reject ) => {
-		const { body, data } = options;
+		const { body, data, ...options } = parameters;
 
 		wpcomProxyRequest(
 			{
@@ -47,12 +47,12 @@ export const wpcomProxyMiddleware = options => {
 				...( ( body || data ) && { body: body || data } ),
 				apiNamespace: 'wp/v2',
 			},
-			( error, body ) => {
+			( error, bodyOrData ) => {
 				if ( error ) {
 					return reject( error );
 				}
 
-				return resolve( body );
+				return resolve( bodyOrData );
 			}
 		);
 	} );
