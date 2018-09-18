@@ -189,7 +189,10 @@ export class Filterbar extends Component {
 		if ( fromDate ) {
 			return fromDate;
 		}
-		return filter && filter.after ? moment( filter.after ).toDate() : null;
+		if ( filter && filter.after ) {
+			return moment( filter.after ).toDate();
+		}
+		return filter && filter.on ? moment( filter.on ).toDate() : null;
 	};
 
 	getToDate = filter => {
@@ -264,6 +267,11 @@ export default connect(
 	{
 		resetFilters: sideId => updateFilter( sideId, { group: null, after: null, before: null } ),
 		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
-		selectDateRange: ( siteId, from, to ) => updateFilter( siteId, { after: from, before: to } ),
+		selectDateRange: ( siteId, from, to ) => {
+			if ( to ) {
+				return updateFilter( siteId, { after: from, before: to } );
+			}
+			return updateFilter( siteId, { on: from } );
+		},
 	}
 )( localize( Filterbar ) );

@@ -48,8 +48,9 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
 	const before = filter && filter.before ? filter.before : '';
 	const after = filter && filter.after ? filter.after : '';
+	const on = filter && filter.on ? filter.on : '';
 
-	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }`;
+	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }`;
 	return requestHttpData(
 		id,
 		http(
