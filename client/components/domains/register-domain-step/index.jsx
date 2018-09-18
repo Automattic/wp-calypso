@@ -150,7 +150,7 @@ class RegisterDomainStep extends React.Component {
 		this._isMounted = false;
 		this.state = this.getState();
 		if ( props.initialState ) {
-			this.state = { ...props.initialState, railcarId: this.getNewRailcarId() };
+			this.state = { ...this.state, ...props.initialState };
 
 			if (
 				this.state.lastSurveyVertical &&
@@ -167,7 +167,22 @@ class RegisterDomainStep extends React.Component {
 
 			if ( props.suggestion ) {
 				this.state.lastQuery = props.suggestion;
-				this.state.loadingResults = true;
+			}
+
+			if ( props.initialState.searchResults ) {
+				this.state.loadingResults = false;
+				this.state.searchResults = props.initialState.searchResults;
+			}
+
+			if ( props.initialState.subdomainSearchResults ) {
+				this.state.loadingSubdomainResults = false;
+				this.state.subdomainSearchResults = props.initialState.subdomainSearchResults;
+			}
+
+			if ( this.state.searchResults || this.state.subdomainSearchResults ) {
+				this.state.lastQuery = props.initialState.lastQuery;
+			} else {
+				this.state.railcarId = this.getNewRailcarId();
 			}
 		}
 	}
@@ -249,15 +264,17 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	componentDidMount() {
-		if ( this.state.lastQuery ) {
+		if (
+			this.state.lastQuery &&
+			! this.state.searchResults &&
+			! this.state.subdomainSearchResults
+		) {
 			this.onSearch( this.state.lastQuery );
 		} else {
 			this.getAvailableTlds();
 		}
-
-		this.props.recordSearchFormView( this.props.analyticsSection );
-
 		this._isMounted = true;
+		this.props.recordSearchFormView( this.props.analyticsSection );
 	}
 
 	componentDidUpdate( prevProps ) {
