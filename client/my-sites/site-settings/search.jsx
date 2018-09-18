@@ -24,10 +24,11 @@ import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
+import Banner from 'components/banner';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { isJetpackSite, getCustomizerUrl } from 'state/sites/selectors';
 import { isBusiness, isEnterprise, isVipPlan, isJetpackBusiness } from 'lib/products-values';
-
+import { FEATURE_SEARCH, PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise );
 
 class Search extends Component {
@@ -152,11 +153,41 @@ class Search extends Component {
 
 		// for now, don't even show upgrade nudge
 		if ( ! fields.jetpack_search_supported && ! isSearchEligible ) {
-			return null;
+			const upgradeTitle = siteIsJetpack
+				? translate( 'Add faster, more advanced searching to your site with Jetpack Professional' )
+				: translate(
+						'Add faster, more advanced searching to your site with WordPress.com Business'
+				  );
+			return (
+				<div>
+					<SectionHeader label={ translate( 'Jetpack Search' ) } />
+
+					<Banner
+						description={
+							<div>
+								<p>
+									{ translate(
+										'The built-in WordPress search is great for sites without much content. But as your site grows, searches slow down and return less relevant results.'
+									) }
+								</p>
+								<p>
+									{ translate(
+										'Jetpack Search replaces the built-in search with a fast, scalable, customizable, and highly-relevant search hosted in the WordPress.com cloud. The result: Your users find the content they want, faster.'
+									) }
+								</p>
+							</div>
+						}
+						event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
+						feature={ FEATURE_SEARCH }
+						plan={ siteIsJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
+						title={ upgradeTitle }
+					/>
+				</div>
+			);
 		}
 
 		return (
-			<div>
+			<div className="site-settings__search-block">
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
 
 				<SectionHeader label={ translate( 'Jetpack Search' ) } />
