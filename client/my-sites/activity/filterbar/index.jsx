@@ -218,6 +218,7 @@ export class Filterbar extends Component {
 			);
 		}
 	};
+
 	render() {
 		const { translate, siteId, filter } = this.props;
 		return (
@@ -258,13 +259,14 @@ export class Filterbar extends Component {
 export default connect(
 	() => ( {} ),
 	{
-		resetFilters: sideId => updateFilter( sideId, { group: null, after: null, before: null } ),
-		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
+		resetFilters: sideId =>
+			updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } ),
+		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group, page: 1 } ),
 		selectDateRange: ( siteId, from, to ) => {
 			if ( to ) {
-				return updateFilter( siteId, { after: from, before: to, on: null } );
+				return updateFilter( siteId, { after: from, before: to, on: null, page: 1 } );
 			}
-			return updateFilter( siteId, { on: from, after: null, before: null } );
+			return updateFilter( siteId, { on: from, after: null, before: null, page: 1 } );
 		},
 	}
 )( localize( Filterbar ) );
