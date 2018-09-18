@@ -34,8 +34,10 @@ export class Filterbar extends Component {
 	};
 
 	closeDateRangeSelector = () => {
-		const { siteId, selectDateRange } = this.props;
-		const { fromDate, toDate } = this.state;
+		const { siteId, selectDateRange, filter } = this.props;
+		const fromDate = this.getFromDate( filter );
+		const toDate = this.getToDate( filter );
+
 		this.setState( {
 			showActivityDates: false,
 			toDate: null,
