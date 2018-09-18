@@ -21,6 +21,7 @@ import CloseButton from 'my-sites/importer/importer-header/close-button';
 import StartButton from 'my-sites/importer/importer-header/start-button';
 import StopButton from 'my-sites/importer/importer-header/stop-button';
 import DoneButton from 'my-sites/importer/importer-header/done-button';
+import { loadTrackingTool } from 'state/analytics/actions';
 
 /**
  * Module variables
