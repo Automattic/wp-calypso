@@ -71,7 +71,7 @@ const build = ( target, argv ) => {
 yargs
 	.scriptName( scriptName )
 	.usage( `Usage: $0 <command> ${ delimit }[options]` )
-	.example( `$0 gutenberg ${ delimit }hello-dolly` )
+	.example( `$0 gutenberg ${ delimit }client/gutenberg/extensions/hello-dolly` )
 	.command( {
 		command: 'gutenberg <input-dir>',
 		desc: 'Build a Gutenberg extension',
