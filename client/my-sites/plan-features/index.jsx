@@ -285,7 +285,7 @@ export class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -390,7 +390,7 @@ export class PlanFeatures extends Component {
 						rawPrice={ rawPrice }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
 					/>
 				</td>
