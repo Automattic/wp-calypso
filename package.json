@@ -312,7 +312,7 @@
     "supertest": "3.3.0",
     "terminal-kit": "1.26.2",
     "webpack-bundle-analyzer": "3.0.2",
-    "webpack-hot-middleware": "2.22.3"
+    "webpack-hot-middleware": "2.24.0"
   },
   "optionalDependencies": {
     "fsevents": "1.2.4"
