@@ -14,14 +14,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { appStates } from 'state/imports/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
 import ImporterLogo from 'my-sites/importer/importer-logo';
 
 import CloseButton from 'my-sites/importer/importer-header/close-button';
 import StartButton from 'my-sites/importer/importer-header/start-button';
 import StopButton from 'my-sites/importer/importer-header/stop-button';
 import DoneButton from 'my-sites/importer/importer-header/done-button';
-import { loadTrackingTool } from 'state/analytics/actions';
 
 /**
  * Module variables
@@ -67,6 +66,10 @@ class ImporterHeader extends React.PureComponent {
 		return null;
 	}
 
+	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
+	}
+
 	render() {
 		const { importerStatus, icon, isEnabled, title, description } = this.props;
 		const ButtonComponent = this.getButtonComponent();
@@ -90,5 +93,5 @@ class ImporterHeader extends React.PureComponent {
 
 export default connect(
 	null,
-	{ recordTracksEvent }
+	{ loadTrackingTool, recordTracksEvent }
 )( localize( ImporterHeader ) );
