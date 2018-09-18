@@ -11,6 +11,7 @@ import { DateUtils } from 'react-day-picker';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
@@ -145,11 +146,35 @@ export class Filterbar extends Component {
 		this.setState( { showActivityTypes: false } );
 	};
 
-	handleSelectClick = ( group, event ) => {
+	handleToggleAllActionTypeSelector = ( checkboxes, event ) => {
 		const { filter, selectActionType, siteId } = this.props;
 		event.preventDefault();
-		const actionTypes =
-			filter && filter.group && !! filter.group.length ? filter.group.slice() : [];
+
+		// unchecked -> check off everything by setting the groups to null
+		if ( filter && filter.group && filter.group.length !== checkboxes.length ) {
+			selectActionType( siteId, null );
+			return;
+		}
+		// checked -> uncheck everyhing by setting the group to no-group
+		selectActionType( siteId, [ 'no-group' ] );
+	};
+
+	handleSelectClick = ( group, allGroups, event ) => {
+		const { filter, selectActionType, siteId } = this.props;
+		event.preventDefault();
+
+		if ( ! ( filter && filter.group ) ) {
+			// We are displaying everything now.
+			// We want to deselect the current key but select all the other all keys
+			const allGroupKeys = allGroups.map( singleGroup => singleGroup.key );
+			const removedKeyArray = allGroupKeys.filter( key => group.key !== key );
+			selectActionType( siteId, removedKeyArray );
+			return;
+		}
+
+		const actionTypes = filter.group
+			.slice()
+			.filter( selectedGroup => selectedGroup !== 'no-group' );
 		const index = actionTypes.indexOf( group.key );
 		if ( index >= 0 ) {
 			pullAt( actionTypes, index );
@@ -182,6 +207,21 @@ export class Filterbar extends Component {
 		return this.getToDate( filter );
 	};
 
+	handleRemoveFilters = () => {
+		const { siteId, resetFilters } = this.props;
+		resetFilters( siteId );
+	};
+
+	renderCloseButton = () => {
+		const { filter } = this.props;
+		if ( filter && ( filter.group || filter.before || filter.after ) ) {
+			return (
+				<Button onClick={ this.handleRemoveFilters } borderless className="filterbar__icon-reset">
+					<Gridicon icon="cross" />
+				</Button>
+			);
+		}
+	};
 	render() {
 		const { translate, siteId, filter } = this.props;
 		return (
@@ -203,6 +243,7 @@ export class Filterbar extends Component {
 					enteredTo={ this.getEnteredToDate( filter ) }
 				/>
 				<ActionTypeSelector
+					filter={ filter }
 					siteId={ siteId }
 					isVisible={ this.state.showActivityTypes }
 					onButtonClick={ this.toggleActivityTypesSelector }
@@ -210,7 +251,9 @@ export class Filterbar extends Component {
 					onSelectClick={ this.handleSelectClick }
 					selected={ filter && filter.group }
 					onResetSelection={ this.resetActivityTypeSelector }
+					onToggleAllCheckboxes={ this.handleToggleAllActionTypeSelector }
 				/>
+				{ this.renderCloseButton() }
 			</div>
 		);
 	}
@@ -219,6 +262,7 @@ export class Filterbar extends Component {
 export default connect(
 	() => ( {} ),
 	{
+		resetFilters: sideId => updateFilter( sideId, { group: null, after: null, before: null } ),
 		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
 		selectDateRange: ( siteId, from, to ) => updateFilter( siteId, { after: from, before: to } ),
 	}

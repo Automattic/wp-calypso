@@ -18,14 +18,11 @@
 		height: 100%;
 		background-color: $white;
 		border-radius: inherit;
-
-		.accessible-focus &:focus {
-			position: relative;
-			z-index: 9999;
-			box-shadow: inset 0 0 0 2px $blue-light;
-		}
 	}
-
+	.filterbar__icon-reset {
+	    margin-left: auto;
+			width: 48px;
+	}
 	.filterbar__open-icon {
 		flex: 0 0 auto;
 		width: 50px;
@@ -120,7 +117,7 @@
 	.filterbar__date-range-info .button.is-borderless {
 		margin-top: 2px;
 	}
-	
+
 	.DayPicker-Day--start {
 		background-color: $blue-light;
 		border-radius: 0;
