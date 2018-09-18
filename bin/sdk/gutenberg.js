@@ -16,7 +16,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	return {
 		...baseConfig,
 		entry: {
-			...( fs.existsSync( editorScript ) ? { editor: editorScript } : {} ),
+			editor: editorScript,
 			...( fs.existsSync( viewScript ) ? { view: viewScript } : {} ),
 		},
 		output: {
