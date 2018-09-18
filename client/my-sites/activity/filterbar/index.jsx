@@ -13,6 +13,7 @@ import Button from 'components/button';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export class Filterbar extends Component {
 	state = {
@@ -85,6 +86,45 @@ export class Filterbar extends Component {
 		);
 	}
 }
+const mapStateToProps = () => ( {} );
+
+const mapDispatchToProps = dispatch => ( {
+	resetFilters: sideId =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
+				updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } )
+			)
+		),
+	selectActionType: ( siteId, group ) =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_select_type', {
+					group: group.join( '-' ),
+				} ),
+				updateFilter( siteId, { group: group, page: 1 } )
+			)
+		),
+	selectDateRange: ( siteId, from, to ) => {
+		if ( to ) {
+			return dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_filterbar_select_range', {
+						after: from,
+						before: to,
+					} ),
+					updateFilter( siteId, { after: from, before: to, on: null, page: 1 } )
+				)
+			);
+		}
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_select_range', { on: from } ),
+				updateFilter( siteId, { on: from, after: null, before: null, page: 1 } )
+			)
+		);
+	},
+} );
 
 export default connect(
 	null,
