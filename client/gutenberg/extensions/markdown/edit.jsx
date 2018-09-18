@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { BlockControls, PlainText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';

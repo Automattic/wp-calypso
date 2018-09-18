@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { ExternalLink } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
-import { registerBlockType } from '@wordpress/blocks';
+// import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -15,7 +16,9 @@ import './style.scss';
 import edit from './edit';
 import save from './save';
 
-registerBlockType( 'a8c/markdown', {
+export const name = 'a8c/markdown';
+
+export const settings = {
 	title: __( 'Markdown' ),
 
 	description: (
@@ -55,4 +58,6 @@ registerBlockType( 'a8c/markdown', {
 	edit,
 
 	save,
-} );
+};
+
+// registerBlockType( name, settings );

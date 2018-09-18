@@ -176,6 +176,12 @@ const devdocs = {
 		context.primary = <AsyncLoad block={ context.params.block } require="./gutenberg-blocks" />;
 		next();
 	},
+
+	// Gutenberg-Automattic Blocks
+	gutenbergAutomatticBlocks: function( context, next ) {
+		context.primary = <AsyncLoad block={ context.params.block } require="./gutenberg-a8c-blocks" />;
+		next();
+	},
 };
 
 export default devdocs;

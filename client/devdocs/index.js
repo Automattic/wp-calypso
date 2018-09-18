@@ -88,6 +88,14 @@ export default function() {
 				makeLayout,
 				clientRender
 			);
+
+			page(
+				'/devdocs/gutenberg-a8c-blocks/:block*',
+				controller.sidebar,
+				controller.gutenbergAutomatticBlocks,
+				makeLayout,
+				clientRender
+			);
 		}
 
 		page( '/devdocs/:path*', controller.sidebar, controller.singleDoc, makeLayout, clientRender );
