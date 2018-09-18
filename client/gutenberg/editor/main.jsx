@@ -55,13 +55,27 @@ class GutenbergEditor extends Component {
 	}
 }
 
+const addGutenbergDemoContent = post => {
+	const title = {
+		raw: 'Welcome to the Gutenberg Editor',
+		rendered: 'Welcome to the Gutenberg Editor',
+	};
+
+	return {
+		...post,
+		title,
+	};
+};
+
 const getPost = ( siteId, postId ) => {
-	if ( siteId && postId ) {
-		const requestSitePostData = requestSitePost( siteId, postId );
-		return get( requestSitePostData, 'data', null );
+	if ( ! siteId || ! postId ) {
+		return null;
 	}
 
-	return null;
+	const sitePostData = get( requestSitePost( siteId, postId ), 'data', null );
+	return sitePostData && 'auto-draft' === sitePostData.status
+		? addGutenbergDemoContent( sitePostData )
+		: sitePostData;
 };
 
 const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey } ) => {
