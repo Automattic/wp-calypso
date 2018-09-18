@@ -121,14 +121,6 @@ export class Filterbar extends Component {
 		selectDateRange( siteId, null, null );
 	};
 
-	handleClearSelection = () => {
-		this.setState( {
-			enteredToDate: null,
-			fromDate: null,
-			toDate: null,
-		} );
-	};
-
 	resetActivityTypeSelector = event => {
 		const { selectActionType, siteId } = this.props;
 		selectActionType( siteId, [] );
@@ -240,7 +232,7 @@ export class Filterbar extends Component {
 					onDayMouseEnter={ this.handleDayMouseEnter }
 					onResetSelection={ this.handleResetSelection }
 					onDayClick={ this.handleDayClick }
-					onClearSelection={ this.handleClearSelection }
+					onClearSelection={ this.handleResetSelection }
 					from={ this.getFromDate( filter ) }
 					to={ this.getToDate( filter ) }
 					enteredTo={ this.getEnteredToDate( filter ) }
