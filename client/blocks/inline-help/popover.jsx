@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, get, reduce, find } from 'lodash';
+import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -23,23 +23,17 @@ import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
 import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
 import { getHelpSelectedSite } from 'state/help/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
-import ProgressBar from 'components/progress-bar';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { getTasks } from 'my-sites/checklist/onboardingChecklist';
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
-		sectionName: PropTypes.string,
 		siteId: PropTypes.number,
-		isEligibleForDotcomChecklist: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -59,17 +53,6 @@ class InlineHelpPopover extends Component {
 	moreHelpClicked = () => {
 		this.props.onClose();
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
-	};
-
-	checklistClicked = () => {
-		const task = this.getTask();
-
-		if ( task ) {
-			this.props.nextChecklistTask( task.id );
-		}
-
-		this.props.onClose();
-		this.props.recordTracksEvent( 'calypso_inlinehelp_checklist_click' );
 	};
 
 	setSecondaryViewKey = secondaryViewKey => {
@@ -117,73 +100,8 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
-	getTask = () => {
-		const task = find(
-			this.props.tasks,
-			( { id, completed } ) => ! completed && ! get( this.props.taskStatuses, [ id, 'completed' ] )
-		);
-		return task;
-	};
-
-	renderChecklistProgress = () => {
-		const {
-			taskStatuses,
-			siteSuffix,
-			translate,
-			showChecklistNotification,
-			siteId,
-			tasks,
-		} = this.props;
-		const inlineHelpButtonClasses = {
-			'checklist-count-notification': showChecklistNotification,
-			'inline-help__checklist-count': true,
-		};
-		const totalTasks = tasks.length;
-		const numComplete = reduce(
-			tasks,
-			( count, { id, completed: taskComplete } ) =>
-				taskComplete || get( taskStatuses, [ id, 'completed' ] ) ? count + 1 : count,
-			0
-		);
-
-		if ( ! this.props.showChecklist ) {
-			return false;
-		}
-
-		if ( numComplete === totalTasks ) {
-			// @TODO show something else?
-			return false;
-		}
-
-		const checklistLink = '/checklist' + siteSuffix;
-
-		return (
-			<div className="inline-help__checklist">
-				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				<Button
-					onClick={ this.checklistClicked }
-					href={ checklistLink }
-					className="inline-help__checklist-button"
-					borderless
-				>
-					<span className="inline-help__checklist-label">
-						{ translate( 'Continue Site Setup' ) }
-					</span>
-
-					<span className={ classNames( inlineHelpButtonClasses ) }>
-						{ numComplete }/{ totalTasks }
-					</span>
-
-					<div className="inline-help__progress-bar-margin">
-						<ProgressBar color="#4ab866" total={ totalTasks } value={ numComplete } compact />
-					</div>
-				</Button>
-			</div>
-		);
-	};
-
 	render() {
-		const { translate } = this.props;
+		const { translate, showNotification, setNotification, setStoredTask } = this.props;
 		const { showSecondaryView } = this.state;
 		const popoverClasses = { 'is-secondary-view-active': showSecondaryView };
 
@@ -208,7 +126,14 @@ class InlineHelpPopover extends Component {
 				</div>
 
 				{ this.renderSecondaryView() }
-				{ this.renderChecklistProgress() }
+
+				<WpcomChecklist
+					viewMode="navigation"
+					closePopover={ this.props.onClose }
+					showNotification={ showNotification }
+					setNotification={ setNotification }
+					setStoredTask={ setStoredTask }
+				/>
 
 				<div className="inline-help__footer">
 					<Button
@@ -256,10 +181,6 @@ function mapStateToProps( state ) {
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
-		sectionName: getSectionName( state ),
-		tasks: getTasks( state, siteId ),
-		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
 }
 

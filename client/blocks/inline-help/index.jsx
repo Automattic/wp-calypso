@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, get, reduce, find } from 'lodash';
+import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -24,11 +24,8 @@ import ResizableIframe from 'components/resizable-iframe';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
-import { getSelectedSite, getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { getTasks } from 'my-sites/checklist/onboardingChecklist';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 
 /**
  * Module variables
@@ -46,9 +43,7 @@ const InlineHelpPopover = props => (
 class InlineHelp extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
-		sectionName: PropTypes.string,
 		siteId: PropTypes.number,
-		isEligibleForDotcomChecklist: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,16 +52,14 @@ class InlineHelp extends Component {
 
 	state = {
 		showInlineHelp: false,
-		shouldShowChecklist: false,
-		nextChecklistTask: null,
+		showChecklistNotification: false,
+		storedTask: null,
 	};
 
 	componentDidMount() {
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
-
-		this.shouldShowChecklistNotification();
 	}
 
 	componentWillUnmount() {
@@ -79,8 +72,6 @@ class InlineHelp extends Component {
 		if ( ! this.props.isHappychatOpen && nextProps.isHappychatOpen ) {
 			this.closeInlineHelp();
 		}
-
-		this.shouldShowChecklistNotification();
 	}
 
 	preloaded = false;
@@ -101,64 +92,6 @@ class InlineHelp extends Component {
 		} else {
 			this.showInlineHelp();
 		}
-	};
-
-	getTask = () => {
-		const task = find(
-			this.props.tasks,
-			( { id, completed } ) => ! completed && ! get( this.props.taskStatuses, [ id, 'completed' ] )
-		);
-		return task;
-	};
-
-	shouldShowChecklist = () => {
-		const { sectionName } = this.props;
-		const disallowedSections = [
-			'discover',
-			'reader',
-			'reader-activities',
-			'reader-list',
-			'reader-recommendations',
-			'reader-tags',
-			'checklist',
-			'signup',
-		];
-
-		if ( isEligibleForDotcomChecklist && ! ( disallowedSections.indexOf( sectionName ) > -1 ) ) {
-			return true;
-		}
-	};
-
-	nextChecklistTask = task => {
-		const { nextChecklistTask } = this.state;
-
-		if ( task !== nextChecklistTask ) {
-			this.setState( { nextChecklistTask: task } );
-		}
-	};
-
-	shouldShowChecklistNotification = () => {
-		const { taskStatuses, tasks } = this.props;
-		const { nextChecklistTask } = this.state;
-		const task = this.getTask();
-		const totalTasks = tasks.length;
-		const numComplete = reduce(
-			tasks,
-			( count, { id, completed: taskComplete } ) =>
-				taskComplete || get( taskStatuses, [ id, 'completed' ] ) ? count + 1 : count,
-			0
-		);
-
-		if (
-			totalTasks &&
-			numComplete !== totalTasks &&
-			task &&
-			( null === nextChecklistTask || task.id !== nextChecklistTask )
-		) {
-			return true;
-		}
-
-		return false;
 	};
 
 	showInlineHelp = () => {
@@ -204,13 +137,28 @@ class InlineHelp extends Component {
 		return [];
 	}
 
+	setNotification = status => {
+		this.setState( { showChecklistNotification: status } );
+	};
+
+	setStoredTask = taskKey => {
+		this.setState( { storedTask: taskKey } );
+	};
+
 	render() {
-		const { translate, siteId } = this.props;
-		const { showInlineHelp, showDialog, videoLink, dialogType } = this.state;
+		const { translate } = this.props;
+		const {
+			showInlineHelp,
+			showDialog,
+			videoLink,
+			dialogType,
+			showChecklistNotification,
+			storedTask,
+		} = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': showInlineHelp,
-			'has-notification': this.shouldShowChecklist() && this.shouldShowChecklistNotification(),
+			'has-notification': showChecklistNotification,
 		};
 
 		/* @TODO: This class is not valid and this tricks the linter
@@ -222,7 +170,11 @@ class InlineHelp extends Component {
 
 		return (
 			<div className="inline-help">
-				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+				<WpcomChecklist
+					viewMode="notification"
+					setNotification={ this.setNotification }
+					storedTask={ storedTask }
+				/>
 				<Button
 					className={ classNames( inlineHelpButtonClasses ) }
 					onClick={ this.handleHelpButtonClicked }
@@ -239,9 +191,9 @@ class InlineHelp extends Component {
 						context={ this.inlineHelpToggle }
 						onClose={ this.closeInlineHelp }
 						setDialogState={ this.setDialogState }
-						showChecklist={ this.shouldShowChecklist() }
-						showChecklistNotification={ this.shouldShowChecklistNotification() }
-						nextChecklistTask={ this.nextChecklistTask }
+						setNotification={ this.setNotification }
+						setStoredTask={ this.setStoredTask }
+						showNotification={ showChecklistNotification }
 					/>
 				) }
 				{ showDialog && (
@@ -280,14 +232,10 @@ const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		tasks: getTasks( state, siteId ),
 		siteId,
 		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
-		taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 		selectedSite: getSelectedSite( state ),
-		sectionName: getSectionName( state ),
-		isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
 	};
 };
 
