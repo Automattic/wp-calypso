@@ -9,7 +9,6 @@ import { createBlock, registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './view.scss';
 import TiledGalleryEdit from './edit.jsx';
 import TiledGallerySave from './save.jsx';
 
