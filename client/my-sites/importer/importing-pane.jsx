@@ -18,6 +18,7 @@ import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
 import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
+import { loadTrackingTool } from 'state/analytics/actions';
 
 const sum = ( a, b ) => a + b;
 
@@ -197,6 +198,10 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
+	componentDidMount() {
+		this.props.loadTrackingTool( 'HotJar' );
+	}
+
 	render() {
 		const {
 			importerStatus: { importerId, errorData = {}, customData },
@@ -265,6 +270,7 @@ const mapDispatchToProps = dispatch => ( {
 		setTimeout( () => {
 			dispatch( mapAuthor( importerId, source, target ) );
 		}, 0 ),
+	loadTrackingTool,
 } );
 
 export default connectDispatcher( null, mapDispatchToProps )( localize( ImportingPane ) );
