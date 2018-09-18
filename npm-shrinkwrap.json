@@ -981,12 +981,23 @@
       "dev": true,
       "requires": {
         "@sinonjs/samsam": "2.1.0"
+      },
+      "dependencies": {
+        "@sinonjs/samsam": {
+          "version": "2.1.0",
+          "resolved": "https://registry.npmjs.org/@sinonjs/samsam/-/samsam-2.1.0.tgz",
+          "integrity": "sha512-5x2kFgJYupaF1ns/RmharQ90lQkd2ELS8A9X0ymkAAdemYHGtI2KiUHG8nX2WU0T1qgnOU5YMqnBM2V7NUanNw==",
+          "dev": true,
+          "requires": {
+            "array-from": "^2.1.1"
+          }
+        }
       }
     },
     "@sinonjs/samsam": {
-      "version": "2.1.0",
-      "resolved": "https://registry.npmjs.org/@sinonjs/samsam/-/samsam-2.1.0.tgz",
-      "integrity": "sha512-5x2kFgJYupaF1ns/RmharQ90lQkd2ELS8A9X0ymkAAdemYHGtI2KiUHG8nX2WU0T1qgnOU5YMqnBM2V7NUanNw==",
+      "version": "2.1.1",
+      "resolved": "https://registry.npmjs.org/@sinonjs/samsam/-/samsam-2.1.1.tgz",
+      "integrity": "sha512-7oX6PXMulvdN37h88dvlvRyu61GYZau40fL4wEZvPEHvrjpJc3lDv6xDM5n4Z0StufUVB5nDvVZUM+jZHdMOOQ==",
       "dev": true,
       "requires": {
         "array-from": "^2.1.1"
@@ -14513,14 +14524,14 @@
       "integrity": "sha512-OpUzgR+P/Qsu6ztZehr4PxvTbV4sDW91hAqc2tnz4fjuFTqErWIUdUMbnzX+19F4IEpSSfa0vCAz5xJSs0LpPw=="
     },
     "sinon": {
-      "version": "6.3.3",
-      "resolved": "https://registry.npmjs.org/sinon/-/sinon-6.3.3.tgz",
-      "integrity": "sha512-LTZ3vnkscWQHyRI5mN7NrCVC9V01wgl3XWCspFqLKJ8yKhrkj8iOfvQLjdrYqcGoo+Q+sCMOMSBMlcUwua4pbQ==",
+      "version": "6.3.4",
+      "resolved": "https://registry.npmjs.org/sinon/-/sinon-6.3.4.tgz",
+      "integrity": "sha512-NIaR56Z1mefuRBXYrf4otqBxkWiKveX+fvqs3HzFq2b07HcgpkMgIwmQM/owNjNFAHkx0kJXW+Q0mDthiuslXw==",
       "dev": true,
       "requires": {
         "@sinonjs/commons": "^1.0.2",
         "@sinonjs/formatio": "^3.0.0",
-        "@sinonjs/samsam": "^2.1.0",
+        "@sinonjs/samsam": "^2.1.1",
         "diff": "^3.5.0",
         "lodash.get": "^4.4.2",
         "lolex": "^2.7.4",
