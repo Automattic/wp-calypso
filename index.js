@@ -5,7 +5,9 @@
  */
 var boot = require( 'boot' ),
 	http = require( 'http' ),
-	chalk = require( 'chalk' );
+	https = require( 'https' ),
+	chalk = require( 'chalk' ),
+	fs = require( 'fs' );
 
 /**
  * Internal dependencies
@@ -14,6 +16,7 @@ var pkg = require( './package.json' ),
 	config = require( 'config' );
 
 var start = Date.now(),
+	protocol = process.env.PROTOCOL || config( 'protocol' ),
 	port = process.env.PORT || config( 'port' ),
 	host = process.env.HOST || config( 'hostname' ),
 	app = boot(),
@@ -29,9 +32,25 @@ function sendBootStatus( status ) {
 	process.send( { boot: status } );
 }
 
-console.log( chalk.yellow( '%s booted in %dms - http://%s:%s' ), pkg.name, ( Date.now() ) - start, host, port );
+console.log(
+	chalk.yellow( '%s booted in %dms - %s://%s:%s' ),
+	pkg.name,
+	( Date.now() ) - start,
+	protocol,
+	host,
+	port
+);
 
-server = http.createServer( app );
+// Start a development HTTPS server.
+if ( protocol === 'https' ) {
+	const httpsOptions = {
+		key: fs.readFileSync( './test/server/key.pem' ),
+		cert: fs.readFileSync( './test/server/certificate.pem' )
+	};
+	server = https.createServer( httpsOptions, app );
+} else {
+	server = http.createServer( app );
+}
 
 // The desktop app runs Calypso in a fork.
 // Let non-forks listen on any host.

@@ -11,6 +11,7 @@ const getWebpackConfig = require( 'webpack.config' );
 
 const config = require( 'config' );
 
+const protocol = process.env.PROTOCOL || config( 'protocol' );
 const port = process.env.PORT || config( 'port' );
 const shouldProfile = process.env.PROFILE === 'true';
 
@@ -49,7 +50,9 @@ function middleware( app ) {
 				if ( beforeFirstCompile ) {
 					beforeFirstCompile = false;
 					console.info(
-						chalk.cyan( `\nReady! You can load http://calypso.localhost:${ port }/ now. Have fun!` )
+						chalk.cyan(
+							`\nReady! You can load ${ protocol }://calypso.localhost:${ port }/ now. Have fun!`
+						)
 					);
 				} else {
 					console.info( chalk.cyan( '\nReady! All assets are re-compiled. Have fun!' ) );
