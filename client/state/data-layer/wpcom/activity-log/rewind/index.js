@@ -8,4 +8,11 @@ import restoreHandler from './to';
 import restoreStatusHandler from './restore-status';
 import backupHandler from './downloads';
 
-export default mergeHandlers( activate, restoreHandler, restoreStatusHandler, backupHandler );
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers(
+	'state/data-layer/wpcom/activity-log/rewind/index.js',
+	mergeHandlers( activate, restoreHandler, restoreStatusHandler, backupHandler )
+);
+
+export default {};

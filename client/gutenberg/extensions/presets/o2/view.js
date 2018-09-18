@@ -3,4 +3,4 @@
 /**
  * Internal dependencies
  */
-import 'gutenberg/extensions/trial/view.js';
+import 'gutenberg/extensions/trial/view';

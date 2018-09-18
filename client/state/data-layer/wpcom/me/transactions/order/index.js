@@ -13,6 +13,8 @@ import { setOrderTransaction, setOrderTransactionError } from 'state/order-trans
 import { ORDER_TRANSACTION_FETCH } from 'state/action-types';
 import fromApi from './from-api';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetchOrderTransaction = action =>
 	http(
 		{
@@ -32,7 +34,7 @@ export const onSuccess = ( { orderId }, detail ) => setOrderTransaction( orderId
 
 export const onError = ( { orderId }, error ) => setOrderTransactionError( orderId, error );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/transactions/order/index.js', {
 	[ ORDER_TRANSACTION_FETCH ]: [
 		dispatchRequestEx( {
 			fetch: fetchOrderTransaction,
@@ -41,4 +43,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

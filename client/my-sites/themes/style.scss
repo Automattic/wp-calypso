@@ -74,6 +74,7 @@
 
 .themes__site-selector-modal {
 	padding-bottom: 24px;
+	overflow-y: inherit;
 
 	.site-selector-modal__content {
 		.theme {

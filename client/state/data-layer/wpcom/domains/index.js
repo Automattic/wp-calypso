@@ -7,4 +7,11 @@ import countries from './countries-list';
 import transfer from './transfer';
 import validationSchemas from './validation-schemas';
 
-export default mergeHandlers( countries, transfer, validationSchemas );
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers(
+	'state/data-layer/wpcom/domains/index.js',
+	mergeHandlers( countries, transfer, validationSchemas )
+);
+
+export default {};

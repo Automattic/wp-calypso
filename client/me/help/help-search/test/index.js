@@ -7,6 +7,7 @@
  * External dependencies
  */
 import React from 'react';
+import { identity } from 'lodash';
 import { shallow } from 'enzyme';
 
 /**
@@ -15,11 +16,8 @@ import { shallow } from 'enzyme';
 
 import { HelpSearch } from '../';
 
-jest.mock( '', () => ( {} ) );
-
 const defaultProps = {
-	translate: x => x,
-	fetchSearchResults: jest.fn(),
+	translate: identity,
 };
 
 const helpLinks = {
@@ -48,8 +46,8 @@ describe( 'HelpSearch', () => {
 	} );
 
 	test( 'should prioritize and pass localized forum search results if available ', () => {
-		const wrapper = shallow( <HelpSearch { ...defaultProps } /> );
-		wrapper.setState( { searchQuery, helpLinks } );
+		const wrapper = shallow( <HelpSearch { ...defaultProps } helpLinks={ helpLinks } /> );
+		wrapper.setState( { searchQuery } );
 		wrapper.update();
 		const HelpResultsElements = wrapper.find( 'HelpResults' );
 		expect( HelpResultsElements ).toHaveLength( 3 );
@@ -59,13 +57,13 @@ describe( 'HelpSearch', () => {
 	} );
 
 	test( 'should display `en` forum search results localized not available', () => {
-		const wrapper = shallow( <HelpSearch { ...defaultProps } /> );
-		wrapper.setState( {
-			searchQuery,
-			helpLinks: {
-				wordpress_forum_links: helpLinks.wordpress_forum_links,
-			},
-		} );
+		const wrapper = shallow(
+			<HelpSearch
+				{ ...defaultProps }
+				helpLinks={ { wordpress_forum_links: helpLinks.wordpress_forum_links } }
+			/>
+		);
+		wrapper.setState( { searchQuery } );
 		wrapper.update();
 		const HelpResultsElements = wrapper.find( 'HelpResults' );
 		expect( HelpResultsElements ).toHaveLength( 3 );

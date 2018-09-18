@@ -13,6 +13,8 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetchCommentCounts = action => {
 	const { siteId, postId } = action;
 
@@ -65,4 +67,9 @@ const countHandlers = {
 	],
 };
 
-export default mergeHandlers( countHandlers );
+registerHandlers(
+	'state/data-layer/wpcom/sites/comment-counts/index.js',
+	mergeHandlers( countHandlers )
+);
+
+export default {};

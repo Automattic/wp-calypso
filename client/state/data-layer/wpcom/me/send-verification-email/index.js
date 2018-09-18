@@ -12,6 +12,8 @@ import {
 	EMAIL_VERIFY_REQUEST_FAILURE,
 } from 'state/action-types';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const requestEmailVerification = function( { dispatch }, action ) {
 	dispatch(
 		http(
@@ -36,8 +38,10 @@ export const handleSuccess = ( { dispatch } ) => {
 	dispatch( { type: EMAIL_VERIFY_REQUEST_SUCCESS } );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/send-verification-email/index.js', {
 	[ EMAIL_VERIFY_REQUEST ]: [
 		dispatchRequest( requestEmailVerification, handleSuccess, handleError ),
 	],
-};
+} );
+
+export default {};

@@ -33,7 +33,7 @@ import Notice from 'components/notice';
 
 class MapDomainStep extends React.Component {
 	static propTypes = {
-		products: PropTypes.object.isRequired,
+		products: PropTypes.object,
 		cart: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		initialQuery: PropTypes.string,
@@ -80,7 +80,7 @@ class MapDomainStep extends React.Component {
 	}
 
 	render() {
-		const suggestion = this.props.products.domain_map
+		const suggestion = get( this.props, 'products.domain_map', false )
 			? {
 					cost: this.props.products.domain_map.cost_display,
 					product_slug: this.props.products.domain_map.product_slug,
@@ -137,7 +137,7 @@ class MapDomainStep extends React.Component {
 
 					<div className="map-domain-step__domain-text">
 						{ translate(
-							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider (they'll remind you when it's time.) {{a}}Learn more about adding a domain{{/a}}.",
+							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider. (They'll remind you when it's time.) {{a}}Learn more about adding a domain{{/a}}.",
 							{
 								components: {
 									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,

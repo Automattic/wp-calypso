@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -36,7 +35,7 @@ class DomainSearchResults extends React.Component {
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
-		products: PropTypes.object.isRequired,
+		products: PropTypes.object,
 		selectedSite: PropTypes.object,
 		availableDomain: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		suggestions: PropTypes.array,
@@ -96,7 +95,7 @@ class DomainSearchResults extends React.Component {
 				],
 				lastDomainStatus
 			) &&
-			this.props.products.domain_map
+			get( this.props, 'products.domain_map', false )
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 

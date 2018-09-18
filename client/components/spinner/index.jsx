@@ -1,13 +1,6 @@
 /** @format */
 
 /**
- * If making changes in this file, please also open a PR in
- * the https://github.com/Automattic/notifications-panel repo,
- * which uses this same code for its spinner.
- * src/templates/spinner.jsx
- */
-
-/**
  * External dependencies
  */
 

@@ -14,9 +14,11 @@ import { bindActionCreators } from 'redux';
  */
 import { fetchShippingMethods } from 'woocommerce/state/sites/shipping-methods/actions';
 import { fetchShippingZones } from 'woocommerce/state/sites/shipping-zones/actions';
+import { fetchShippingClasses } from 'woocommerce/state/sites/shipping-classes/actions';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { areLocationsLoaded } from 'woocommerce/state/sites/data/locations/selectors';
+import { areShippingClassesLoaded } from 'woocommerce/state/sites/shipping-classes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryLocations from 'woocommerce/components/query-locations';
 
@@ -24,6 +26,7 @@ class QueryShippingZones extends Component {
 	fetch( siteId ) {
 		this.props.actions.fetchShippingZones( siteId );
 		this.props.actions.fetchShippingMethods( siteId );
+		this.props.actions.fetchShippingClasses( siteId );
 	}
 
 	componentWillMount() {
@@ -54,7 +57,8 @@ export const areShippingZonesFullyLoaded = ( state, siteId = getSelectedSiteId( 
 	return (
 		areShippingMethodsLoaded( state, siteId ) &&
 		areShippingZonesLoaded( state, siteId ) &&
-		areLocationsLoaded( state, siteId )
+		areLocationsLoaded( state, siteId ) &&
+		areShippingClassesLoaded( state, siteId )
 	);
 };
 
@@ -67,6 +71,7 @@ export default connect(
 			{
 				fetchShippingZones,
 				fetchShippingMethods,
+				fetchShippingClasses,
 			},
 			dispatch
 		),

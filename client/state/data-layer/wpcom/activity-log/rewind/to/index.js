@@ -16,6 +16,8 @@ import { requestRewindState } from 'state/rewind/actions';
 import { REWIND_RESTORE, REWIND_CLONE } from 'state/action-types';
 import { SchemaError } from 'lib/make-json-schema-parser';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const fromApi = data => {
 	const restoreId = parseInt( data.restore_id, 10 );
 
@@ -64,7 +66,7 @@ export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 				)
 		  );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/to/index.js', {
 	[ REWIND_RESTORE ]: [
 		dispatchRequestEx( {
 			fetch: requestRestore,
@@ -73,6 +75,7 @@ export default {
 			fromApi,
 		} ),
 	],
+
 	[ REWIND_CLONE ]: [
 		dispatchRequestEx( {
 			fetch: requestClone,
@@ -81,4 +84,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

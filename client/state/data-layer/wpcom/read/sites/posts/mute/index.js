@@ -19,6 +19,8 @@ import { updateConversationFollowStatus } from 'state/reader/conversations/actio
 import { bypassDataLayer } from 'state/data-layer/utils';
 import getReaderConversationFollowStatus from 'state/selectors/get-reader-conversation-follow-status';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestConversationMute( { dispatch, getState }, action ) {
 	const actionWithRevert = merge( {}, action, {
 		meta: {
@@ -77,7 +79,7 @@ export function receiveConversationMuteError(
 	);
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/sites/posts/mute/index.js', {
 	[ READER_CONVERSATION_MUTE ]: [
 		dispatchRequest(
 			requestConversationMute,
@@ -85,4 +87,6 @@ export default {
 			receiveConversationMuteError
 		),
 	],
-};
+} );
+
+export default {};

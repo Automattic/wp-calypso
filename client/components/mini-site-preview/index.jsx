@@ -4,10 +4,11 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
-const MiniSitePreview = ( { imageSrc } ) =>
+const MiniSitePreview = ( { className, imageSrc  } ) =>
 	imageSrc ? (
-		<div className="mini-site-preview">
+		<div className={ classnames( 'mini-site-preview', className ) }>
 			<div className="mini-site-preview__browser-chrome">
 				<span>● ● ●</span>
 			</div>
@@ -18,6 +19,7 @@ const MiniSitePreview = ( { imageSrc } ) =>
 	) : null;
 
 MiniSitePreview.propTypes = {
+	className: PropTypes.string,
 	imageSrc: PropTypes.string,
 };
 

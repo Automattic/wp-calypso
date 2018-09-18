@@ -9,6 +9,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
 import { setPosterUrl, showError, showUploadProgress } from 'state/ui/editor/video-editor/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const updatePoster = action => {
 	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {
 		return;
@@ -46,6 +48,8 @@ export const dispatchPosterRequest = dispatchRequestEx( {
 	onProgress: receiveUploadProgress,
 } );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/videos/poster/index.js', {
 	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchPosterRequest ],
-};
+} );
+
+export default {};

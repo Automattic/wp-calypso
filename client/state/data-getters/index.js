@@ -1,4 +1,9 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
+import { sortBy, omit } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -8,9 +13,43 @@ import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 
-export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
-	const id = `activity-log-${ siteId }`;
+export const requestActivityActionTypeCounts = (
+	siteId,
+	filter,
+	{ freshness = 10 * 1000 } = {}
+) => {
+	const before = filter && filter.before ? filter.before : '';
+	const after = filter && filter.after ? filter.after : '';
+	const id = `activity-log-${ siteId }-${ after }-${ before }`;
+	const filter_removed_group = omit( filter, 'group' );
 
+	return requestHttpData(
+		id,
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+				path: `/sites/${ siteId }/activity/count/group`,
+				query: filterStateToApiQuery( filter_removed_group ),
+			},
+			{}
+		),
+		{
+			freshness,
+			fromApi: () => data => {
+				return [ [ id, data ] ];
+			},
+		}
+	);
+};
+
+export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
+	const group =
+		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
+	const before = filter && filter.before ? filter.before : '';
+	const after = filter && filter.after ? filter.after : '';
+
+	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }`;
 	return requestHttpData(
 		id,
 		http(
@@ -100,3 +139,32 @@ export const requestSiteAlerts = siteId => {
 		}
 	);
 };
+
+export const requestGutenbergDraftPost = ( siteId, draftId ) =>
+	requestHttpData(
+		draftId,
+		http(
+			{
+				path: `/sites/${ siteId }/posts/auto-draft`,
+				method: 'POST',
+				apiNamespace: 'wpcom/v2',
+				body: {}, //this is for a POST verb.
+			},
+			{}
+		),
+		{ fromApi: () => data => [ [ draftId, data ] ] }
+	);
+
+export const requestSitePost = ( siteId, postId ) =>
+	requestHttpData(
+		`gutenberg-site-${ siteId }-post-${ postId }`,
+		http(
+			{
+				path: `/sites/${ siteId }/posts/${ postId }?context=edit`,
+				method: 'GET',
+				apiNamespace: 'wp/v2',
+			},
+			{}
+		),
+		{ fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ] }
+	);

@@ -166,6 +166,14 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'domain-only': {
+			stepName: 'domain-only',
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			props: {
+				isDomainOnly: true,
+			},
+		},
+
 		'domains-store': {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
@@ -336,6 +344,11 @@ export function generateSteps( {
 		'clone-cloning': {
 			stepName: 'clone-cloning',
 			providesDependencies: [],
+		},
+
+		'import-from-url': {
+			stepName: 'import-from-url',
+			providesDependencies: [ 'importUrl', 'themeSlugWithRepo' ],
 		},
 	};
 }

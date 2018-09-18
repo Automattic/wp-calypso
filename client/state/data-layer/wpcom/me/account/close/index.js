@@ -16,6 +16,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { closeAccountSuccess } from 'state/account/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestAccountClose( action ) {
 	return http(
 		{
@@ -46,7 +48,7 @@ export function receiveAccountCloseError() {
 	);
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/me/account/close/index.js', {
 	[ ACCOUNT_CLOSE ]: [
 		dispatchRequestEx( {
 			fetch: requestAccountClose,
@@ -55,4 +57,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

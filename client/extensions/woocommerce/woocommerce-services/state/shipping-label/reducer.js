@@ -340,6 +340,14 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT ] = (
 				selected: newPackages,
 				saved: false,
 			},
+			rates: {
+				...state.form.rates,
+				values: {
+					...state.form.rates.values,
+					[ packageId ]: '',
+				},
+				available: {},
+			},
 		},
 	};
 };
@@ -363,6 +371,14 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE ] = (
 				...state.form.packages,
 				selected: newPackages,
 				saved: false,
+			},
+			rates: {
+				...state.form.rates,
+				values: {
+					...state.form.rates.values,
+					[ packageId ]: '',
+				},
+				available: {},
 			},
 		},
 	};
@@ -645,6 +661,7 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE ] = (
 			width,
 			weight,
 			box_id: boxTypeId,
+			is_letter: box.is_letter,
 		};
 	}
 

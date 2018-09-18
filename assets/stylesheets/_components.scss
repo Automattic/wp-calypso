@@ -356,6 +356,7 @@
 @import 'my-sites/ads/style';
 @import 'my-sites/all-sites-icon/style';
 @import 'my-sites/checklist/style';
+@import 'my-sites/checklist/wpcom-checklist/checklist-banner/style';
 @import 'my-sites/current-site/style';
 @import 'my-sites/current-site/sidebar-banner/style';
 @import 'my-sites/customize/style';
@@ -389,6 +390,7 @@
 @import 'my-sites/plan-price/style';
 @import 'my-sites/plans-features-main/style';
 @import 'my-sites/plans/style';
+@import 'my-sites/plans/current-plan/current-plan-thank-you-card/style';
 @import 'my-sites/plans/current-plan/style';
 @import 'my-sites/post/post-image/style';
 @import 'my-sites/post-relative-time-status/style';
@@ -445,9 +447,9 @@
 @import 'my-sites/activity/activity-log-item/style';
 @import 'my-sites/activity/activity-log-switch/style';
 @import 'my-sites/activity/activity-log-tasklist/style';
+@import 'my-sites/activity/filterbar/style';
 @import 'my-sites/stats/all-time/style';
 @import 'my-sites/stats/annual-site-stats/style';
-@import 'my-sites/stats/checklist-banner/style';
 @import 'my-sites/stats/geochart/style';
 @import 'my-sites/stats/most-popular/style';
 @import 'my-sites/stats/post-performance/style';
@@ -495,6 +497,7 @@
 @import 'my-sites/domains/domain-management/components/inbound-transfer-verification/style';
 @import 'my-sites/domains/domain-management/components/icann-verification/style';
 @import 'notifications/style';
+@import 'notifications/src/panel/boot/stylesheets/style';
 @import 'reader/conversations/style';
 @import 'reader/discover/style';
 @import 'reader/following/style';

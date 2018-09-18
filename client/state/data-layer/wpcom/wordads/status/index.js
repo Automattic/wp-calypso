@@ -9,7 +9,9 @@ import { errorNotice } from 'state/notices/actions';
 import { WORDADS_STATUS_REQUEST } from 'state/action-types';
 import { receiveStatus } from 'state/wordads/status/actions';
 
-export default {
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers( 'state/data-layer/wpcom/wordads/status/index.js', {
 	[ WORDADS_STATUS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: action =>
@@ -24,4 +26,6 @@ export default {
 			onError: ( action, error ) => errorNotice( error ),
 		} ),
 	],
-};
+} );
+
+export default {};

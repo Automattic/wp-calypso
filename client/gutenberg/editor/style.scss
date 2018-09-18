@@ -1,4 +1,4 @@
-.is-group-editor::before {
+.is-group-gutenberg::before {
 	content: '';
 	position: fixed;
 	top: 0;
@@ -7,10 +7,10 @@
 	left: 0;
 	background-color: $white;
 	pointer-events: none;
-	z-index: z-index( 'root', '.is-group-editor::before' );
+	z-index: z-index( 'root', '.is-group-gutenberg::before' );
 }
 
-.editor {
+.gutenberg {
 	background: none;
 }
 
@@ -30,8 +30,7 @@
 	}
 
 	.edit-post-header {
-		padding-top: 0;
-		padding-bottom: 0;
+		padding: 0 10px 0 0;
 		left: 0;
 		top: 0;
 	}

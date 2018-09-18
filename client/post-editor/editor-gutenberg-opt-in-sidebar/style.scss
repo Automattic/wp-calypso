@@ -3,7 +3,8 @@
 .editor-gutenberg-opt-in-sidebar {
 	text-align: center;
 	font-weight: bold;
-	padding: 10%;
+	margin: 10%;
+	cursor: pointer;
 
 	img {
 		min-height: 200px;
@@ -20,5 +21,10 @@
 		position: relative;
 		z-index: 1;
 		margin-bottom: 8px;
+	}
+
+	&:focus {
+		border-color: $blue-medium;
+		box-shadow: 0 0 0 2px $blue-light;
 	}
 }

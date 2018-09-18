@@ -18,6 +18,8 @@ import { mergeHandlers } from 'state/action-watchers/utils';
 import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestTags( action ) {
 	const path =
 		action.payload && action.payload.slug ? `/read/tags/${ action.payload.slug }` : '/read/tags';
@@ -84,4 +86,9 @@ const readTagsHandler = {
 	],
 };
 
-export default mergeHandlers( readTagsHandler, requestFollowHandler, requestUnfollowHandler );
+registerHandlers(
+	'state/data-layer/wpcom/read/tags/index.js',
+	mergeHandlers( readTagsHandler, requestFollowHandler, requestUnfollowHandler )
+);
+
+export default {};

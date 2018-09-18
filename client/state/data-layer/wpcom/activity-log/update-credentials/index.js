@@ -27,6 +27,8 @@ import {
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const navigateTo =
 	undefined !== typeof window ? path => window.open( path, '_blank' ) : path => page( path );
 
@@ -218,7 +220,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	}
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/activity-log/update-credentials/index.js', {
 	[ JETPACK_CREDENTIALS_UPDATE ]: [
 		primeHappychat,
 		dispatchRequestEx( {
@@ -227,4 +229,6 @@ export default {
 			onError: failure,
 		} ),
 	],
-};
+} );
+
+export default {};

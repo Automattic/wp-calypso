@@ -63,10 +63,12 @@ class EditorMediaModalDetailBase extends React.Component {
 			items,
 			selectedIndex,
 			site,
+			backButtonText,
 			onEditImageItem,
 			onEditVideoItem,
 			onRestoreItem,
 			onReturnToList,
+			translate,
 		} = this.props;
 
 		const item = items[ selectedIndex ];
@@ -76,7 +78,7 @@ class EditorMediaModalDetailBase extends React.Component {
 			<div className="editor-media-modal-detail">
 				<HeaderCake
 					onClick={ onReturnToList }
-					backText={ this.props.translate( 'Media Library' ) }
+					backText={ backButtonText ? backButtonText : translate( 'Media Library' ) }
 				/>
 				<DetailItem
 					site={ site }

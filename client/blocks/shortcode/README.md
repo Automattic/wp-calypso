@@ -33,6 +33,7 @@ The following props can be passed to the Shortcode component. Any additional pro
 | `siteId`             | Number   | yes      |                        | The site ID for which to render the shortcode. |
 | `children`           | String   | yes      |                        | The shortcode to render. |
 | `filterRenderResult` | Function | no       | `( result ) => result` | Function to override default render result. Passed the original result of the [shortcode render endpoint](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/shortcodes/render/) response, the function is expected to return a modified result. |
+| `allowSameOrigin`    | Boolean  | no       | `false`                | Whether or not to set `allow-same-origin` on rendered 'iframe' `sandbox` attribute |
 
 ## Resources
 

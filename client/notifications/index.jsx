@@ -19,7 +19,6 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
 import wpcom from 'lib/wp';
-import 'config';
 import { connect } from 'react-redux';
 
 /**
@@ -28,7 +27,7 @@ import { connect } from 'react-redux';
 import analytics from 'lib/analytics';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
-import NotificationsPanel, { refreshNotes } from 'notifications-panel';
+import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
 import { setUnseenCount } from 'state/notifications';

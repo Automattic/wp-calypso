@@ -4,7 +4,7 @@ jobs:
     parallelism: 6
     working_directory: ~/wp-calypso
     docker:
-      - image: circleci/node:10.9.0-browsers
+      - image: circleci/node:10.10.0-browsers
         environment:
           CIRCLE_ARTIFACTS: /tmp/artifacts
           CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -48,12 +48,6 @@ jobs:
             - ~/.npm
 
       - run:
-          name: Build Server
-          environment:
-              NODE_ENV: test
-          command: npm run build-server
-
-      - run:
           name: Build calypso-strings.pot
           command: |
             if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
@@ -82,17 +76,12 @@ jobs:
       - run:
           name: Lint Client and Server
           command: |
-            ./node_modules/.bin/eslint-eslines $(git diff --name-only origin/master... | grep -E '^(client|server)' | grep -E '\.jsx?$' | circleci tests split)
+            ./node_modules/.bin/eslint-eslines $(git diff --name-only --diff-filter=d origin/master... | grep -E '^(client|server)' | grep -E '\.jsx?$' | circleci tests split)
 
       - run:
           name: Run Client Tests
           command: |
               npm run test-client:ci $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
-
-      - run:
-          name: Store coverage file
-          command: |
-             cp -r coverage $CIRCLE_ARTIFACTS/
 
       - run:
           name: Run Server Tests

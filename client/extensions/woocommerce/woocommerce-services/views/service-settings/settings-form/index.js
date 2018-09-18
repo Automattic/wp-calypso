@@ -18,6 +18,7 @@ import getFormErrors from 'woocommerce/woocommerce-services/state/service-settin
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getSite } from 'state/sites/selectors';
+import { getShippingClassOptions } from 'woocommerce/state/sites/shipping-classes/selectors';
 
 const SettingsForm = props => {
 	const renderGroup = index => {
@@ -40,6 +41,7 @@ function mapStateToProps( state, props ) {
 	);
 	return {
 		formData: getCurrentlyOpenShippingZoneMethod( state, props.siteId ),
+		shippingClasses: getShippingClassOptions( state, props.siteId ),
 		errors: getFormErrors( state, props.siteId ),
 		storeOptions,
 		schema: formSchema,

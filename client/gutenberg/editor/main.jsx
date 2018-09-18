@@ -1,10 +1,11 @@
 /** @format */
+
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, noop } from 'lodash';
+import { get, noop } from 'lodash';
 import { dispatch } from '@wordpress/data';
 import '@wordpress/core-data'; // Initializes core data store
 import { registerCoreBlocks } from '@wordpress/block-library';
@@ -13,42 +14,61 @@ import { registerCoreBlocks } from '@wordpress/block-library';
  * Internal dependencies
  */
 import Editor from './edit-post/editor.js';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
+import QueryPostTypes from 'components/data/query-post-types';
+import { requestGutenbergDraftPost as createAutoDraft, requestSitePost } from 'state/data-getters';
+import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
-import { applyAPIMiddlewares } from './utils';
+import { WithAPIMiddleware } from './api-middleware/utils';
 
 const editorSettings = {};
-
-const post = {
-	type: 'post',
-	content: 'test content',
-};
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
 		registerCoreBlocks();
 		// Prevent Guided tour from showing when editor loads.
 		dispatch( 'core/nux' ).disableTips();
+
+		const { siteId, postId, uniqueDraftKey } = this.props;
+		if ( ! postId ) {
+			createAutoDraft( siteId, uniqueDraftKey );
+		}
 	}
 
 	render() {
-		if ( isEmpty( this.props.siteSlug ) ) {
-			return null;
-		}
-
-		applyAPIMiddlewares( this.props.siteSlug );
+		const { postType, siteId, siteSlug, post } = this.props;
 
 		return (
-			<Editor settings={ editorSettings } hasFixedToolbar={ true } post={ post } onError={ noop } />
+			<WithAPIMiddleware siteSlug={ siteSlug }>
+				<QueryPostTypes siteId={ siteId } />
+				<EditorPostTypeUnsupported type={ postType } />
+				<Editor
+					settings={ editorSettings }
+					hasFixedToolbar={ true }
+					post={ post }
+					onError={ noop }
+				/>
+			</WithAPIMiddleware>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
+const getPost = ( siteId, postId ) => {
+	if ( siteId && postId ) {
+		const requestSitePostData = requestSitePost( siteId, postId );
+		return get( requestSitePostData, 'data', null );
+	}
+
+	return null;
+};
+
+const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey } ) => {
+	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
+	const post = getPost( siteId, postId || draftPostId );
 
 	return {
 		siteSlug: getSiteSlug( state, siteId ),
+		post,
 	};
 };
 

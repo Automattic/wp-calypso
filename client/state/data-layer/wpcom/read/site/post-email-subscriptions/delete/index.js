@@ -14,6 +14,8 @@ import { subscribeToNewPostEmail } from 'state/reader/follows/actions';
 import { errorNotice } from 'state/notices/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function requestPostEmailUnsubscription( { dispatch }, action ) {
 	dispatch(
 		http( {
@@ -45,7 +47,7 @@ export function receivePostEmailUnsubscriptionError( { dispatch }, action ) {
 	dispatch( bypassDataLayer( subscribeToNewPostEmail( action.payload.blogId ) ) );
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/site/post-email-subscriptions/delete/index.js', {
 	[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: [
 		dispatchRequest(
 			requestPostEmailUnsubscription,
@@ -53,4 +55,6 @@ export default {
 			receivePostEmailUnsubscriptionError
 		),
 	],
-};
+} );
+
+export default {};

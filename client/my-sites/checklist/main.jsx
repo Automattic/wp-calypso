@@ -3,7 +3,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { Fragment, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { some } from 'lodash';
@@ -11,7 +11,6 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import ChecklistShow from './checklist-show';
 import ChecklistShowShare from './share';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
@@ -22,21 +21,15 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import WpcomChecklist from './wpcom-checklist';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { isEnabled } from 'config';
 
-/**
- * Included to fix regression.
- * https://github.com/Automattic/wp-calypso/issues/26572
- * @TODO clean up module separation.
- */
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import { mergeObjectIntoArrayById } from './util';
-import { tasks as wpcomTasks } from './onboardingChecklist';
-
 class ChecklistMain extends PureComponent {
+	state = { complete: false };
+
 	componentDidMount() {
 		this.maybeRedirectJetpack();
 	}
@@ -44,6 +37,8 @@ class ChecklistMain extends PureComponent {
 	componentDidUpdate( prevProps ) {
 		this.maybeRedirectJetpack( prevProps );
 	}
+
+	handleCompletionUpdate = ( { complete } ) => void this.setState( { complete } );
 
 	/**
 	 * Redirect Jetpack checklists to /plans/my-plan/:siteSlug
@@ -76,12 +71,12 @@ class ChecklistMain extends PureComponent {
 	}
 
 	renderHeader() {
-		const { displayMode, isNewlyCreatedSite, tasks, translate } = this.props;
-		const completed = tasks && ! some( tasks, { completed: false } );
+		const { displayMode, isNewlyCreatedSite, translate } = this.props;
+		const { complete } = this.state;
 
-		if ( completed ) {
+		if ( complete ) {
 			return (
-				<Fragment>
+				<>
 					<img
 						src="/calypso/images/signup/confetti.svg"
 						aria-hidden="true"
@@ -95,13 +90,13 @@ class ChecklistMain extends PureComponent {
 						) }
 					/>
 					<ChecklistShowShare className="checklist__share" siteSlug={ this.props.siteSlug } />
-				</Fragment>
+				</>
 			);
 		}
 
 		if ( isNewlyCreatedSite ) {
 			return (
-				<Fragment>
+				<>
 					<img
 						src="/calypso/images/signup/confetti.svg"
 						aria-hidden="true"
@@ -132,7 +127,7 @@ class ChecklistMain extends PureComponent {
 								  )
 						}
 					/>
-				</Fragment>
+				</>
 			);
 		}
 
@@ -164,11 +159,11 @@ class ChecklistMain extends PureComponent {
 				<SidebarNavigation />
 				<DocumentHead title={ translatedTitle } />
 				{ checklistAvailable ? (
-					<Fragment>
+					<>
 						{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 						{ this.renderHeader() }
-						<ChecklistShow />
-					</Fragment>
+						<WpcomChecklist updateCompletion={ this.handleCompletionUpdate } />
+					</>
 				) : (
 					<EmptyContent title={ translate( 'Checklist not available for this site' ) } />
 				) }
@@ -182,14 +177,6 @@ export default connect( state => {
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 
-	/**
-	 * Included to fix regression.
-	 * https://github.com/Automattic/wp-calypso/issues/26572
-	 * @TODO clean up module separation.
-	 */
-	const siteChecklist = getSiteChecklist( state, siteId );
-	const tasksFromServer = siteChecklist && siteChecklist.tasks;
-
 	return {
 		checklistAvailable: ! isAtomic && ( isEnabled( 'jetpack/checklist' ) || ! isJetpack ),
 		isAtomic,
@@ -199,12 +186,5 @@ export default connect( state => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		user: getCurrentUser( state ),
-
-		/**
-		 * Included to fix regression.
-		 * https://github.com/Automattic/wp-calypso/issues/26572
-		 * @TODO clean up module separation.
-		 */
-		tasks: tasksFromServer ? mergeObjectIntoArrayById( wpcomTasks, tasksFromServer ) : null,
 	};
 } )( localize( ChecklistMain ) );

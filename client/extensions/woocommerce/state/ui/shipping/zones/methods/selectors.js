@@ -12,8 +12,10 @@ import {
 	isNil,
 	map,
 	merge,
+	mergeWith,
 	pullAll,
 	startsWith,
+	isArray,
 } from 'lodash';
 
 /**
@@ -237,7 +239,38 @@ export const getCurrentlyOpenShippingZoneMethod = (
 		? false !== openMethod.enabled
 		: false !== zone.methods.currentlyEditingChanges.enabled;
 
-	return merge( {}, defaultValues, openMethod, zone.methods.currentlyEditingChanges, { enabled } );
+	// Overwrites the default behavior of `merge` while ignoring arrays and focusing on objects.
+	const customizer = ( objValue, srcValue ) => {
+		if ( isArray( objValue ) ) {
+			return srcValue;
+		}
+	};
+
+	/**
+	 * The usage of mergeWith using a customizer is prefered because
+	 * in standard mode `merge` does not always allow the elements of
+	 * standard arrays to be removed.
+	 *
+	 * Example:
+
+	const openMethod              = { shipping_classes: [ 19 ] };
+	const currentlyEditingChanges = { shipping_classes: [] };
+
+	_.merge( {}, openMethod, currentlyEditingChanges );
+	// { shipping_classes: [ 19 ] }
+
+	_.mergeWith( {}, openMethod, currentlyEditingChanges, customizer );
+	// { shipping_classes: [] }
+	*/
+
+	return mergeWith(
+		{},
+		defaultValues,
+		openMethod,
+		zone.methods.currentlyEditingChanges,
+		{ enabled },
+		customizer
+	);
 };
 
 /**

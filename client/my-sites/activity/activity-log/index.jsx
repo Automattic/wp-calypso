@@ -13,6 +13,7 @@ import { find, get, includes, isEmpty, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
+
 import ActivityLogBanner from '../activity-log-banner';
 import ActivityLogExample from '../activity-log-example';
 import ActivityLogItem from '../activity-log-item';
@@ -22,6 +23,7 @@ import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
+import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import { isFreePlan } from 'lib/plans';
 import JetpackColophon from 'components/jetpack-colophon';
@@ -63,6 +65,7 @@ import isVipSite from 'state/selectors/is-vip-site';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { isMobile } from 'lib/viewport';
+import analytics from 'lib/analytics';
 
 const PAGE_SIZE = 20;
 
@@ -158,6 +161,7 @@ class ActivityLog extends Component {
 	};
 
 	changePage = pageNumber => {
+		analytics.tracks.recordEvent( 'calypso_activitylog_change_page', { page: pageNumber } );
 		this.props.selectPage( this.props.siteId, pageNumber );
 		window.scrollTo( 0, 0 );
 	};
@@ -305,7 +309,7 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan } = this.props;
+		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan, slug } = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
@@ -313,7 +317,14 @@ class ActivityLog extends Component {
 			return isFilterEmpty ? (
 				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 			) : (
-				<EmptyContent title={ translate( 'No matching events found.' ) } />
+				<Fragment>
+					<EmptyContent
+						title={ translate( 'No matching events found.' ) }
+						line={ translate( 'Try adjusting your date range or acitvity type filters' ) }
+						action={ translate( 'Remove all filters' ) }
+						actionURL={ '/activity-log/' + slug }
+					/>
+				</Fragment>
 			);
 		}
 
@@ -424,6 +435,7 @@ class ActivityLog extends Component {
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
+				{ this.renderFilterbar( siteId, this.props.filter, isEmpty( logs ) ) }
 				{ isEmpty( logs ) ? (
 					this.renderNoLogsContent()
 				) : (
@@ -470,6 +482,17 @@ class ActivityLog extends Component {
 					</div>
 				) }
 			</div>
+		);
+	}
+
+	renderFilterbar( siteId, filter, noLogs ) {
+		const isFilterEmpty = isEqual( emptyFilter, filter );
+		if ( noLogs && isFilterEmpty ) {
+			return null;
+		}
+
+		return (
+			config.isEnabled( 'activity-filterbar' ) && <Filterbar siteId={ siteId } filter={ filter } />
 		);
 	}
 

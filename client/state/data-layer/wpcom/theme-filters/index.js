@@ -14,6 +14,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const fetchFilters = action =>
 	http(
 		{
@@ -28,7 +30,7 @@ const storeFilters = ( action, data ) => ( { type: THEME_FILTERS_ADD, filters: d
 
 const reportError = () => errorNotice( i18n.translate( 'Problem fetching theme filters.' ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 	[ THEME_FILTERS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: fetchFilters,
@@ -36,4 +38,6 @@ export default {
 			onError: reportError,
 		} ),
 	],
-};
+} );
+
+export default {};

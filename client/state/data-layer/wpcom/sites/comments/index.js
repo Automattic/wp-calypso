@@ -33,6 +33,8 @@ import {
 import { updateCommentsQuery } from 'state/ui/comments/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	const { siteId, commentId, status } = action;
 	const previousStatus = get(
@@ -284,4 +286,9 @@ export const fetchHandler = {
 	[ COMMENTS_EDIT ]: [ dispatchRequest( editComment, updateComment, announceEditFailure ) ],
 };
 
-export default mergeHandlers( fetchHandler, replies, likes );
+registerHandlers(
+	'state/data-layer/wpcom/sites/comments/index.js',
+	mergeHandlers( fetchHandler, replies, likes )
+);
+
+export default {};

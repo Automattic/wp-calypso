@@ -118,14 +118,14 @@ EditorPostTypeUnsupported.propTypes = {
 	siteSlug: PropTypes.string,
 };
 
-export default connect( state => {
+export default connect( ( state, { type } ) => {
 	const siteId = getSelectedSiteId( state );
-	const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
+	const postType = type || getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 
 	return {
-		type,
+		type: postType,
 		types: getPostTypes( state, siteId ),
-		typeObject: getPostType( state, siteId, type ),
+		typeObject: getPostType( state, siteId, postType ),
 		writePostPath: getEditorNewPostPath( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 	};

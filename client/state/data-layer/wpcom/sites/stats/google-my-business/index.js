@@ -12,6 +12,8 @@ import {
 	failedRequestGoogleMyBusinessStats,
 } from 'state/google-my-business/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fromApi = data => convertToCamelCase( data );
 
 export const fetchStats = ( { dispatch }, action ) => {
@@ -60,8 +62,10 @@ export const receiveStatsError = ( { dispatch }, action, error ) => {
 	dispatch( failedRequestGoogleMyBusinessStats( siteId, statType, interval, aggregation, error ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/stats/google-my-business/index.js', {
 	[ GOOGLE_MY_BUSINESS_STATS_REQUEST ]: [
 		dispatchRequest( fetchStats, receiveStats, receiveStatsError ),
 	],
-};
+} );
+
+export default {};

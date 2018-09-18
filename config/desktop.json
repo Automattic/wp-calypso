@@ -99,7 +99,6 @@
 		"rubberband-scroll-disable": false,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
-		"signup/domain-first-flow": true,
 		"signup/social": false,
 		"signup/social-management": true,
 		"signup/wpcc": true,
@@ -128,6 +127,7 @@
 		"woocommerce/extension-settings-stripe-connect-flows": false,
 		"woocommerce/extension-settings-tax": false,
 		"woocommerce/extension-wcservices": false,
+		"woocommerce/extension-wcservices/international-labels": false,
 		"woocommerce/store-on-non-atomic-sites": false,
 		"wpcom-user-bootstrap": false
 	},

@@ -45,7 +45,12 @@ import {
 } from 'state/sites/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, TYPE_BUSINESS, TERM_ANNUALLY } from 'lib/plans/constants';
+import {
+	FEATURE_GOOGLE_ANALYTICS,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+	TERM_ANNUALLY,
+} from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
@@ -136,7 +141,7 @@ export class GoogleAnalyticsForm extends Component {
 			siteSupportsEnhancedEcommerceTracking;
 
 		const nudgeTitle = siteIsJetpack
-			? translate( 'Enable Google Analytics by upgrading to Jetpack Professional' )
+			? translate( 'Enable Google Analytics by upgrading to Jetpack Premium' )
 			: translate( 'Enable Google Analytics by upgrading to the Business plan' );
 
 		return (
@@ -177,7 +182,7 @@ export class GoogleAnalyticsForm extends Component {
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
-							type: TYPE_BUSINESS,
+							type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
 							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 						} ) }
 						title={ nudgeTitle }

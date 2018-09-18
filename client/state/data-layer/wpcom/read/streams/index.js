@@ -18,6 +18,8 @@ import { keyForPost } from 'reader/post-key';
 import { recordTracksEvent } from 'state/analytics/actions';
 import XPostHelper from 'reader/xpost-helper';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Pull the suffix off of a stream key
  *
@@ -243,7 +245,7 @@ export function handlePage( action, data ) {
 	return actions;
 }
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/streams/index.js', {
 	[ READER_STREAMS_PAGE_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestPage,
@@ -251,4 +253,6 @@ export default {
 			onError: noop,
 		} ),
 	],
-};
+} );
+
+export default {};

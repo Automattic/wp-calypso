@@ -30,6 +30,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
 	"features": {
+		"activity-filterbar": true,
 		"account-recovery": true,
 		"ad-tracking": false,
 		"automated-transfer": true,
@@ -167,7 +168,7 @@
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": true,
-		"signup/domain-first-flow": true,
+		"signup/import-landing-handler": true,
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,

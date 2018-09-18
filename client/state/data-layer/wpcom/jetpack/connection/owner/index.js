@@ -14,6 +14,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_USER_CONNECTION_CHANGE_OWNER } from 'state/action-types';
 import { requestJetpackUserConnectionData } from 'state/jetpack/connection/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 const changeConnectionOwner = action =>
 	http(
 		{
@@ -45,7 +47,7 @@ const handleError = ( { newOwnerWpcomDisplayName } ) =>
 		} )
 	);
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/jetpack/connection/owner/index.js', {
 	[ JETPACK_USER_CONNECTION_CHANGE_OWNER ]: [
 		dispatchRequestEx( {
 			fetch: changeConnectionOwner,
@@ -53,4 +55,6 @@ export default {
 			onError: handleError,
 		} ),
 	],
-};
+} );
+
+export default {};

@@ -13,6 +13,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { REWIND_RESTORE_PROGRESS_REQUEST } from 'state/action-types';
 import { updateRewindRestoreProgress } from 'state/activity-log/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /** @type {Number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;
 
@@ -84,7 +86,7 @@ export const announceFailure = () =>
 		{ id: ERROR_NOTICE_ID }
 	);
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/restore-status/index.js', {
 	[ REWIND_RESTORE_PROGRESS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: fetchProgress,
@@ -93,4 +95,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

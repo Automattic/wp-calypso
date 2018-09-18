@@ -34,6 +34,7 @@ $z-layers: (
 	'root': (
 		'.NuxWelcome:before': -1,
 		'.is-group-editor::before': -1,
+		'.is-group-gutenberg::before': -1,
 		'.site-icon.is-blank .gridicon': 0,
 		'.chart__bar-section.is-spacer': 0,
 		'.reader__featured-post': 0,
@@ -69,7 +70,7 @@ $z-layers: (
 		'.module-content-table::after': 1,
 		'.stats-popular__empty': 1,
 		'.people-list-item__label': 1,
-		'.is-actionable .theme__active-focus': 1,
+		'.is-actionable .theme__thumbnail-label': 1,
 		'.is-section-themes.focus-sidebar #secondary': 1,
 		'.is-section-themes.focus-sites #secondary': 1,
 		'.accessible-focus .current-theme__button:focus': 1,

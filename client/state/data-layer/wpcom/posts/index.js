@@ -7,4 +7,7 @@
 import { mergeHandlers } from 'state/action-watchers/utils';
 import revisions from './revisions';
 
-export default mergeHandlers( revisions );
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers( 'state/data-layer/wpcom/posts/index.js', mergeHandlers( revisions ) );
+export default {};

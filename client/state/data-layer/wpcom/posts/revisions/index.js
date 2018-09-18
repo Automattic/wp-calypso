@@ -12,6 +12,8 @@ import {
 	receivePostRevisionsFailure,
 } from 'state/posts/revisions/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 /**
  * Dispatches returned error from post revisions request
  *
@@ -67,6 +69,8 @@ const dispatchPostRevisionsDiffsRequest = dispatchRequest(
 	receiveError
 );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/posts/revisions/index.js', {
 	[ POST_REVISIONS_REQUEST ]: [ dispatchPostRevisionsDiffsRequest ],
-};
+} );
+
+export default {};

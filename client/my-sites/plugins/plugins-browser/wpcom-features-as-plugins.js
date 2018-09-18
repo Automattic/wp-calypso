@@ -3,8 +3,18 @@
 /**
  * External dependencies
  */
-
 import { identity } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+
+import {
+	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_ADVANCED_DESIGN,
+	FEATURE_ADVANCED_SEO,
+	FEATURE_VIDEO_UPLOADS,
+} from 'lib/plans/constants';
 
 const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 	{
@@ -23,7 +33,7 @@ const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 				link: 'https://support.wordpress.com/seo-tools/',
 				description: translate( 'Custom meta descriptions, social media previews, and more.' ),
 				plan: 'business',
-				feature: 'advanced-seo',
+				feature: FEATURE_ADVANCED_SEO,
 			},
 			{
 				name: translate( 'Google Analytics' ),
@@ -32,7 +42,7 @@ const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 					'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.'
 				),
 				plan: 'business',
-				feature: 'google-analytics',
+				feature: FEATURE_GOOGLE_ANALYTICS,
 			},
 			{
 				name: translate( 'Social Media' ),
@@ -127,7 +137,7 @@ const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 					"Customize your blog's look with custom fonts, a CSS editor, and more."
 				),
 				plan: 'premium',
-				feature: 'advanced-design',
+				feature: FEATURE_ADVANCED_DESIGN,
 			},
 			{
 				name: translate( 'Extended Widgets' ),
@@ -173,7 +183,7 @@ const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 				link: 'https://support.wordpress.com/videopress/',
 				description: translate( 'Upload and host your video files on your site with VideoPress.' ),
 				plan: 'premium',
-				feature: 'video-upload',
+				feature: FEATURE_VIDEO_UPLOADS,
 			},
 			{
 				name: translate( 'Importer' ),

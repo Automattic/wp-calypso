@@ -375,11 +375,13 @@
 }
 
 @media print {
-	.is-section-billing {
+	.is-section-billing,
+	.is-section-purchases {
 		#secondary,
 		.masterbar,
 		.billing-history__receipt-links,
-		.header-cake.card {
+		.header-cake.card,
+		.inline-help {
 			display: none;
 		}
 	}

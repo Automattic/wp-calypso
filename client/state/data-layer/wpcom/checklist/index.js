@@ -14,6 +14,8 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveSiteChecklist } from 'state/checklist/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetchChecklist = action =>
 	http(
 		{
@@ -56,7 +58,9 @@ const dispatchChecklistTaskUpdate = dispatchRequestEx( {
 	onError: noop,
 } );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/checklist/index.js', {
 	[ SITE_CHECKLIST_REQUEST ]: [ dispatchChecklistRequest ],
 	[ SITE_CHECKLIST_TASK_UPDATE ]: [ dispatchChecklistTaskUpdate ],
-};
+} );
+
+export default {};

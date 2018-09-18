@@ -145,7 +145,6 @@
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": true,
-		"signup/domain-first-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
@@ -183,6 +182,7 @@
 		"woocommerce/extension-settings-stripe-connect-flows": true,
 		"woocommerce/extension-settings-tax": true,
 		"woocommerce/extension-wcservices": true,
+		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/store-on-non-atomic-sites": true,
 		"wpcom-user-bootstrap": false
 	}

@@ -1,11 +1,11 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 
-import Notifications, { refreshNotes } from '../src/Notifications';
+import Notifications, { refreshNotes } from '../panel/Notifications';
 import AuthWrapper from './auth-wrapper';
 import { receiveMessage, sendMessage } from './messaging';
 
-require('../src/boot/stylesheets/style.scss');
+require('../panel/boot/stylesheets/style.scss');
 
 const localePattern = /[&?]locale=([\w_-]+)/;
 const match = localePattern.exec(document.location.search);

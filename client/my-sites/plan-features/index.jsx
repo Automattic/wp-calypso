@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import formatCurrency from 'lib/format-currency';
 import FoldableCard from 'components/foldable-card';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
@@ -57,13 +58,15 @@ import {
 	isPopular,
 	getPlanFeaturesObject,
 	getPlanClass,
+	TYPE_BLOGGER,
+	PLAN_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
 } from 'lib/plans/constants';
 
-class PlanFeatures extends Component {
+export class PlanFeatures extends Component {
 	render() {
 		const { isInSignup, planProperties } = this.props;
 		const tableClasses = classNames(
@@ -89,8 +92,7 @@ class PlanFeatures extends Component {
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
-					{ this.renderUpgradeDisabledNotice() }
-					{ this.renderDiscountNotice() }
+					{ this.renderNotice() }
 					<div className="plan-features__content">
 						{ mobileView }
 						<table className={ tableClasses }>
@@ -108,18 +110,19 @@ class PlanFeatures extends Component {
 		);
 	}
 
+	renderNotice() {
+		return (
+			this.renderUpgradeDisabledNotice() || this.renderDiscountNotice() || this.renderCreditNotice()
+		);
+	}
+
 	renderDiscountNotice() {
-		const { canPurchase, hasPlaceholders, withDiscount } = this.props;
-		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
-		if ( ! bannerContainer ) {
+		if ( ! this.hasDiscountNotice() ) {
 			return false;
 		}
 
-		const activeDiscount = getDiscountByName( withDiscount );
-		if ( ! activeDiscount || hasPlaceholders || ! canPurchase ) {
-			return ReactDOM.createPortal( <div />, bannerContainer );
-		}
-
+		const bannerContainer = this.getBannerContainer();
+		const activeDiscount = getDiscountByName( this.props.withDiscount );
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
@@ -137,6 +140,69 @@ class PlanFeatures extends Component {
 			</Notice>,
 			bannerContainer
 		);
+	}
+
+	hasDiscountNotice() {
+		const { canPurchase, hasPlaceholders, withDiscount } = this.props;
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
+
+		const activeDiscount = getDiscountByName( withDiscount );
+		if ( ! activeDiscount || hasPlaceholders || ! canPurchase ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	renderCreditNotice() {
+		const {
+			canPurchase,
+			hasPlaceholders,
+			translate,
+			planCredits,
+			planProperties,
+			showPlanCreditsApplied,
+		} = this.props;
+		const bannerContainer = this.getBannerContainer();
+		if (
+			hasPlaceholders ||
+			! canPurchase ||
+			! bannerContainer ||
+			! showPlanCreditsApplied ||
+			! planCredits
+		) {
+			return null;
+		}
+
+		return ReactDOM.createPortal(
+			<Notice
+				className="plan-features__notice-credits"
+				showDismiss={ false }
+				icon="info-outline"
+				status="is-success"
+			>
+				{ translate(
+					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
+						'Apply those credits towards an upgrade before they expire!',
+					{
+						args: {
+							amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</Notice>,
+			bannerContainer
+		);
+	}
+
+	getBannerContainer() {
+		return document.querySelector( '.plans-features-main__notice' );
 	}
 
 	renderUpgradeDisabledNotice() {
@@ -163,6 +229,7 @@ class PlanFeatures extends Component {
 			planProperties,
 			selectedPlan,
 			translate,
+			showPlanCreditsApplied,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -218,6 +285,7 @@ class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
+						showPlanCreditsApplied={ showPlanCreditsApplied && ! this.hasDiscountNotice() }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -259,6 +327,7 @@ class PlanFeatures extends Component {
 			planProperties,
 			selectedPlan,
 			siteType,
+			showPlanCreditsApplied,
 		} = this.props;
 
 		return map( planProperties, properties => {
@@ -321,6 +390,7 @@ class PlanFeatures extends Component {
 						rawPrice={ rawPrice }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
+						showPlanCreditsApplied={ showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
 					/>
 				</td>
@@ -550,10 +620,35 @@ PlanFeatures.defaultProps = {
 };
 
 export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
+	( planMatches( currentPlan, { type: TYPE_BLOGGER, group: GROUP_WPCOM } ) &&
+		planMatches( plan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) ) ||
 	( planMatches( currentPlan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) &&
 		planMatches( plan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) ) ||
 	( planMatches( currentPlan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) &&
 		planMatches( plan, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) );
+
+export const calculatePlanCredits = ( state, siteId, planProperties ) =>
+	planProperties
+		.map( ( { planName, planConstantObj, availableForPurchase } ) => {
+			if ( ! availableForPurchase ) {
+				return 0;
+			}
+			const planProductId = planConstantObj.getProductId();
+			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName, {
+				isMonthly: false,
+			} );
+			const annualRawPrice = getPlanRawPrice( state, planProductId, false );
+
+			if ( typeof annualDiscountPrice !== 'number' || typeof annualDiscountPrice !== 'number' ) {
+				return 0;
+			}
+
+			return annualRawPrice - annualDiscountPrice;
+		} )
+		.reduce( ( max, credits ) => Math.max( max, credits ), 0 );
+
+const hasPlaceholders = planProperties =>
+	planProperties.filter( planProps => planProps.isPlaceholder ).length > 0;
 
 export default connect(
 	( state, ownProps ) => {
@@ -675,12 +770,23 @@ export default connect(
 			} )
 		);
 
+		const planCredits = calculatePlanCredits( state, siteId, planProperties );
+
 		return {
 			canPurchase,
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
 			siteType,
+			planCredits,
+			hasPlaceholders: hasPlaceholders( planProperties ),
+			showPlanCreditsApplied:
+				sitePlan &&
+				sitePlan.product_slug !== PLAN_FREE &&
+				planCredits &&
+				! isJetpack &&
+				! isInSignup &&
+				abtest( 'showPlanCreditsApplied' ) === 'test',
 		};
 	},
 	{

@@ -18,6 +18,8 @@ import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getSiteName } from 'reader/get-helpers';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const requestUnfollow = action =>
 	http( {
 		method: 'POST',
@@ -65,7 +67,7 @@ export const unfollowError = action => ( dispatch, getState ) => {
 	dispatch( bypassDataLayer( follow( action.payload.feedUrl ) ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/read/following/mine/delete/index.js', {
 	[ READER_UNFOLLOW ]: [
 		dispatchRequestEx( {
 			fetch: requestUnfollow,
@@ -74,4 +76,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

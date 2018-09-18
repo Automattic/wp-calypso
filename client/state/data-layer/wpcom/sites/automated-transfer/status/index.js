@@ -20,6 +20,8 @@ import {
 } from 'state/automated-transfer/actions';
 import { transferStates } from 'state/automated-transfer/constants';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const requestStatus = ( { dispatch }, action ) => {
 	const { siteId } = action;
 
@@ -65,8 +67,10 @@ export const requestingStatusFailure = ( { dispatch }, { siteId } ) => {
 	dispatch( automatedTransferStatusFetchingFailure( siteId ) );
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/status/index.js', {
 	[ AUTOMATED_TRANSFER_STATUS_REQUEST ]: [
 		dispatchRequest( requestStatus, receiveStatus, requestingStatusFailure ),
 	],
-};
+} );
+
+export default {};

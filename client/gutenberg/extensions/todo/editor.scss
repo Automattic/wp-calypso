@@ -23,17 +23,17 @@ $white: #fff;
 
 $color-accent-green: #31843f;
 
-.wp-editor-a8c-todo {
+.wp-block-a8c-todo {
 	margin-bottom: 20px;
 
 	// This would be ideal but it's being overridden.
-	.wp-editor-a8c-todo-list {
+	.wp-block-a8c-todo__list {
 		list-style-type: none;
 		margin-bottom: 20px;
 	}
 
 	// Individual to-do list item.
-	.todolist-item {
+	.wp-block-a8c-todo__item {
 		border-bottom: 1px solid $light-gray-500;
 		display: flex;
 		justify-content: space-between;
@@ -57,7 +57,7 @@ $color-accent-green: #31843f;
 	}
 
 	// Completed checklist item.
-	.item-done {
+	.wp-block-a8c-todo__item--done {
 		color: $color-accent-green;
 
 		.item-status {
@@ -131,12 +131,12 @@ $color-accent-green: #31843f;
 }
 
 // We need to be super-specific here to be sure we're overwriting the default UL styling.
-.edit-post-visual-editor .wp-editor-a8c-todo .wp-editor-a8c-todo-list {
+.edit-post-visual-editor .wp-block-a8c-todo .wp-block-a8c-todo__list {
 	list-style-type: none;
 }
 
 // Same for the "add item" input.
-.editor-block-list__block .wp-editor-a8c-todo .add-new-item {
+.editor-block-list__block .wp-block-a8c-todo .add-new-item {
 	width: 100%;
 	margin-right: 6px;
 	padding: 7.5px 8px;
@@ -144,20 +144,20 @@ $color-accent-green: #31843f;
 
 // P2-specific styling.
 body:not( .wp-admin ) .gutenberg {
-	.wp-editor-a8c-todo .todolist-item {
+	.wp-block-a8c-todo .wp-block-a8c-todo__item {
 		padding: 10px 0 4px;
 	}
 }
 
 
 // Only show the "add new" form when it's strictly needed.
-.wp-editor-a8c-todo .add-new-todo-item-form {
+.wp-block-a8c-todo .add-new-todo-item-form {
 	display: none;
 }
 
 .editor-block-list__block.is-selected,
 .editor-block-list__block.is-typing {
-	.wp-editor-a8c-todo .add-new-todo-item-form {
+	.wp-block-a8c-todo .add-new-todo-item-form {
 		display: flex;
 	}
 }

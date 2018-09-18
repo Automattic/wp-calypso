@@ -14,7 +14,6 @@ import {
 	UnsavedChangesWarning,
 	EditorNotices,
 	PostPublishPanel,
-	DocumentTitle,
 	PreserveScrollInReorder,
 } from '@wordpress/editor';
 import { withDispatch, withSelect } from '@wordpress/data';
@@ -63,7 +62,6 @@ function Layout( {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className={ className }>
-			<DocumentTitle />
 			<BrowserURL />
 			<UnsavedChangesWarning/>
 			<AutosaveMonitor />

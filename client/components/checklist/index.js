@@ -16,37 +16,54 @@ import TaskPlaceholder from 'components/checklist/task-placeholder';
 export default class Checklist extends PureComponent {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
+		updateCompletion: PropTypes.func,
 	};
+
+	componentDidMount() {
+		this.notifyCompletion();
+	}
+
+	componentDidUpdate() {
+		this.notifyCompletion();
+	}
+
+	notifyCompletion() {
+		if ( 'function' === typeof this.props.updateCompletion ) {
+			const [ complete, total ] = this.calculateCompletion();
+			this.props.updateCompletion( { complete: complete >= total } );
+		}
+	}
+
+	calculateCompletion() {
+		const { children } = this.props;
+		const childrenArray = Children.toArray( children );
+		const completedCount = childrenArray.reduce(
+			( count, task ) => ( true === task.props.completed ? count + 1 : count ),
+			0
+		);
+		const total = childrenArray.length;
+		return [ completedCount, total ];
+	}
 
 	state = { hideCompleted: false };
 
 	toggleCompleted = () =>
 		this.setState( ( { hideCompleted } ) => ( { hideCompleted: ! hideCompleted } ) );
 
-	renderPlaceholder() {
-		return (
-			<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
-				<ChecklistHeader total={ 0 } completed={ 0 } />
-				<div className="checklist__tasks">
-					{ times( Children.count( this.props.children ), index => (
-						<TaskPlaceholder key={ index } />
-					) ) }
-				</div>
-			</div>
-		);
-	}
-
 	render() {
+		const [ completed, total ] = this.calculateCompletion();
 		if ( this.props.isPlaceholder ) {
-			return this.renderPlaceholder();
+			return (
+				<div className={ classNames( 'checklist', 'is-expanded', 'is-placeholder' ) }>
+					<ChecklistHeader completed={ completed } total={ total } />
+					<div className="checklist__tasks">
+						{ times( total, index => (
+							<TaskPlaceholder key={ index } />
+						) ) }
+					</div>
+				</div>
+			);
 		}
-
-		const { children } = this.props;
-
-		const count = Children.map( children, child => child.props.completed ).reduce(
-			( acc, completed ) => ( true === completed ? acc + 1 : acc ),
-			0
-		);
 
 		return (
 			<div
@@ -56,12 +73,12 @@ export default class Checklist extends PureComponent {
 				} ) }
 			>
 				<ChecklistHeader
-					completed={ count }
+					completed={ completed }
 					hideCompleted={ this.state.hideCompleted }
 					onClick={ this.toggleCompleted }
-					total={ Children.count( children ) }
+					total={ total }
 				/>
-				<div className="checklist__tasks">{ children }</div>
+				<div className="checklist__tasks">{ this.props.children }</div>
 			</div>
 		);
 	}

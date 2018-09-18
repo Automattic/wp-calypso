@@ -18,6 +18,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveApplicationPasswords } from 'state/application-passwords/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const apiTransformer = data => data.application_passwords;
 
 /**
@@ -57,4 +59,9 @@ const requestHandler = {
 	],
 };
 
-export default mergeHandlers( requestHandler, newHandler, deleteHandler );
+registerHandlers(
+	'state/data-layer/wpcom/me/two-step/application-passwords/index.js',
+	mergeHandlers( requestHandler, newHandler, deleteHandler )
+);
+
+export default {};

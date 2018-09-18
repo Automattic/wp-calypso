@@ -39,7 +39,7 @@ export class UpgradeNudge extends React.Component {
 		compact: PropTypes.bool,
 		plan: PropTypes.oneOf( [ null, ...Object.keys( getPlans() ) ] ),
 		feature: PropTypes.oneOf( [ null, ...getValidFeatureKeys() ] ),
-		shouldDisplay: PropTypes.func,
+		shouldDisplay: PropTypes.oneOfType( [ PropTypes.func, PropTypes.bool ] ),
 		site: PropTypes.object,
 		translate: PropTypes.func,
 	};
@@ -74,6 +74,10 @@ export class UpgradeNudge extends React.Component {
 
 	shouldDisplay() {
 		const { feature, jetpack, planHasFeature, shouldDisplay, site, canManageSite } = this.props;
+
+		if ( shouldDisplay === true ) {
+			return true;
+		}
 
 		if ( shouldDisplay ) {
 			return shouldDisplay();

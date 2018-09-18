@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -33,7 +32,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
-import ChecklistBanner from './checklist-banner';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
@@ -151,7 +150,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					<ChecklistBanner siteId={ siteId } />
+					{ config.isEnabled( 'onboarding-checklist' ) && <WpcomChecklist viewMode="banner" /> }
 					{ config.isEnabled( 'google-my-business' ) &&
 						siteId && (
 							<GoogleMyBusinessStatsNudge

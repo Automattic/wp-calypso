@@ -3,8 +3,8 @@
 /**
  * Internal dependencies
  */
-import 'gutenberg/extensions/editor-notes/index.js';
-import 'gutenberg/extensions/prev-next/block.js';
-import 'gutenberg/extensions/todo/block.js';
-import 'gutenberg/extensions/trials/block.js';
-import 'gutenberg/extensions/trial/block.js';
+import 'gutenberg/extensions/editor-notes/editor';
+import 'gutenberg/extensions/prev-next/editor';
+import 'gutenberg/extensions/todo/editor';
+import 'gutenberg/extensions/trial/editor';
+import 'gutenberg/extensions/trials/editor';

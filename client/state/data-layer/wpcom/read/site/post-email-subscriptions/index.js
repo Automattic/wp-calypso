@@ -7,4 +7,11 @@ import subscribe from './new';
 import update from './update';
 import unsubscribe from './delete';
 
-export default mergeHandlers( subscribe, update, unsubscribe );
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
+registerHandlers(
+	'state/data-layer/wpcom/read/site/post-email-subscriptions/index.js',
+	mergeHandlers( subscribe, update, unsubscribe )
+);
+
+export default {};

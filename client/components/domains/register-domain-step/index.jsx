@@ -20,7 +20,6 @@ import {
 	pickBy,
 	reject,
 	snakeCase,
-	startsWith,
 	times,
 } from 'lodash';
 import page from 'page';
@@ -74,6 +73,8 @@ import {
 	recordShowMoreResults,
 	recordTransferDomainButtonClick,
 	recordUseYourDomainButtonClick,
+	resetSearchCount,
+	enqueueSearchStatReport,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
 
@@ -93,12 +94,6 @@ const MIN_QUERY_LENGTH = 2;
 
 const FEATURED_SUGGESTIONS_AT_TOP = [ 'group_7', 'group_8' ];
 
-let searchQueue = [];
-let searchStackTimer = null;
-let lastSearchTimestamp = null;
-let searchCount = 0;
-let recordSearchFormSubmitWithDispatch;
-
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
@@ -113,51 +108,11 @@ function getQueryObject( props ) {
 	};
 }
 
-function processSearchStatQueue() {
-	const queue = searchQueue.slice();
-	window.clearTimeout( searchStackTimer );
-	searchStackTimer = null;
-	searchQueue = [];
-
-	outerLoop: for ( let i = 0; i < queue.length; i++ ) {
-		for ( let k = i + 1; k < queue.length; k++ ) {
-			if ( startsWith( queue[ k ].query, queue[ i ].query ) ) {
-				continue outerLoop;
-			}
-		}
-		reportSearchStats( queue[ i ] );
-	}
-}
-
-function reportSearchStats( { query, section, timestamp, vendor } ) {
-	let timeDiffFromLastSearchInSeconds = 0;
-	if ( lastSearchTimestamp ) {
-		timeDiffFromLastSearchInSeconds = Math.floor( ( timestamp - lastSearchTimestamp ) / 1000 );
-	}
-	lastSearchTimestamp = timestamp;
-	searchCount++;
-	recordSearchFormSubmitWithDispatch(
-		query,
-		section,
-		timeDiffFromLastSearchInSeconds,
-		searchCount,
-		vendor
-	);
-}
-
-function enqueueSearchStatReport( search ) {
-	searchQueue.push( Object.assign( {}, search, { timestamp: Date.now() } ) );
-	if ( searchStackTimer ) {
-		window.clearTimeout( searchStackTimer );
-	}
-	searchStackTimer = window.setTimeout( processSearchStatQueue, 10000 );
-}
-
 class RegisterDomainStep extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		onDomainsAvailabilityChange: PropTypes.func,
-		products: PropTypes.object.isRequired,
+		products: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		basePath: PropTypes.string.isRequired,
 		suggestion: PropTypes.string,
@@ -185,13 +140,7 @@ class RegisterDomainStep extends React.Component {
 		vendor: 'domainsbot',
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = this.getState();
-
-		recordSearchFormSubmitWithDispatch = this.props.recordSearchFormSubmit;
-	}
+	state = this.getState();
 
 	getState() {
 		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
@@ -273,7 +222,7 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	UNSAFE_componentWillMount() {
-		searchCount = 0; // reset the counter
+		resetSearchCount();
 
 		if ( this.props.initialState ) {
 			const state = { ...this.props.initialState, railcarSeed: this.getNewRailcarSeed() };
@@ -872,11 +821,10 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		enqueueSearchStatReport( {
-			query: searchQuery,
-			section: this.props.analyticsSection,
-			vendor: this.props.vendor,
-		} );
+		enqueueSearchStatReport(
+			{ query: searchQuery, section: this.props.analyticsSection, vendor: this.props.vendor },
+			this.props.recordSearchFormSubmit
+		);
 
 		this.setState( {
 			lastDomainSearched: domain,

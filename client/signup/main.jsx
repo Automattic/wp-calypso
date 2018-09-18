@@ -52,6 +52,7 @@ import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -262,6 +263,13 @@ class Signup extends React.Component {
 				surveySiteType: 'blog',
 				surveyQuestion: vertical,
 			} );
+			// Track our landing page verticals
+			if ( isValidLandingPageVertical( vertical ) ) {
+				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+					vertical,
+					flow: this.props.flowName,
+				} );
+			}
 		}
 	};
 
