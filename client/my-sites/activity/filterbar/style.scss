@@ -29,7 +29,6 @@
 	.filterbar__open-icon {
 		flex: 0 0 auto;
 		width: 50px;
-		z-index: z-index( '.filterbar', '.filterbar .filterbar__open-icon' );
 		color: $gray-text-min;
 	}
 
