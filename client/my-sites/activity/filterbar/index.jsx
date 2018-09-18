@@ -269,9 +269,9 @@ export default connect(
 		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
 		selectDateRange: ( siteId, from, to ) => {
 			if ( to ) {
-				return updateFilter( siteId, { after: from, before: to } );
+				return updateFilter( siteId, { after: from, before: to, on: null } );
 			}
-			return updateFilter( siteId, { on: from } );
+			return updateFilter( siteId, { on: from, after: null, before: null } );
 		},
 	}
 )( localize( Filterbar ) );
