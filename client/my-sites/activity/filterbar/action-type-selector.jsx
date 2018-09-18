@@ -148,6 +148,10 @@ export class ActionTypeSelector extends Component {
 								</Fragment>
 							) }
 						{ ! actionTypes && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
+						{ actionTypes &&
+							! checkboxes.length && (
+								<p>{ translate( 'No activities recorded in the selected date range.' ) }</p>
+							) }
 					</div>
 				</Popover>
 			</Fragment>
