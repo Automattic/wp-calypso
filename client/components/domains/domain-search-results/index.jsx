@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import classNames from 'classnames';
-import { endsWith, get, includes, times, first } from 'lodash';
+import { get, includes, times, first } from 'lodash';
 
 /**
  * Internal dependencies
@@ -250,9 +250,7 @@ class DomainSearchResults extends React.Component {
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-${ i + 2 }` }
 						uiPosition={ i + 2 }
-						fetchAlgo={
-							endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo
-						}
+						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult }
 					/>

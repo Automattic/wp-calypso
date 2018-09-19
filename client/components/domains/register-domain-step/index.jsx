@@ -9,6 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	compact,
+	endsWith,
 	find,
 	flatten,
 	get,
@@ -754,6 +755,13 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	handleSubdomainSuggestions = ( domain, timestamp ) => subdomainSuggestions => {
+		subdomainSuggestions = subdomainSuggestions.map( suggestion => {
+			suggestion.fetch_algo = endsWith( suggestion.domain_name, '.wordpress.com' )
+				? '/domains/search/wpcom'
+				: '/domains/search/dotblogsub';
+			return suggestion;
+		} );
+
 		this.props.onDomainsAvailabilityChange( true );
 		const timeDiff = Date.now() - timestamp;
 		const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
@@ -959,6 +967,8 @@ class RegisterDomainStep extends React.Component {
 				this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
 
+		const isSignup = this.props.isSignupStep ? '/signup' : '/domains';
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -982,7 +992,7 @@ class RegisterDomainStep extends React.Component {
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
 				railcarSeed={ this.state.railcarSeed }
-				fetchAlgo={ `${ this.props.vendor }/v1` }
+				fetchAlgo={ '/domains/search/' + this.props.vendor + isSignup }
 				cart={ this.props.cart }
 			>
 				{ showTldFilterBar && (

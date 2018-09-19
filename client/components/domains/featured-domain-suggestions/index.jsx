@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { endsWith, pick } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -82,7 +82,7 @@ export class FeaturedDomainSuggestions extends Component {
 	}
 
 	getFetchAlgorithm( suggestion ) {
-		return endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo;
+		return suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo;
 	}
 
 	hasMatchReasons() {
