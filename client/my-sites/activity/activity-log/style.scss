@@ -224,3 +224,12 @@
 	font-size: smaller;
 	padding: 20px 0;
 }
+
+.activity-log__filterbar {
+	height: 50px;
+	background-color: $gray-lighten-20;
+
+	&.is-loading {
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}
