@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import ActionCard from 'components/action-card';
 import CompactCard from 'components/card';
+import ConciergeBanner from '../concierge-banner';
 import EmptyContent from 'components/empty-content';
 import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
 import Main from 'components/main';
@@ -50,26 +50,7 @@ class PurchasesList extends Component {
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
 			content = (
 				<div>
-					{ this.props.isBusinessPlanUser && (
-						<ActionCard
-							headerText={ this.props.translate( 'Looking for Expert Help?' ) }
-							mainText={ this.props.translate(
-								'Get 30 minutes dedicated to the success of your site. Schedule your free 1-1 concierge session with a Happiness Engineer!'
-							) }
-							buttonText="Schedule Now"
-							buttonIcon={ null }
-							buttonPrimary={ true }
-							buttonHref="/me/concierge"
-							buttonTarget={ null }
-							buttonOnClick={ () => {
-								this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click', {
-									referer: '/me/purchases',
-								} );
-							} }
-							compact={ false }
-							illustration="/calypso/images/illustrations/illustration-start.svg"
-						/>
-					) }
+					{ this.props.isBusinessPlanUser && <ConciergeBanner /> }
 
 					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
 						<PurchasesSite
