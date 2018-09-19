@@ -14,6 +14,7 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
 import { isEnabled } from 'config';
+import murielNavStructure from './muriel/navigation.json';
 
 export default class DevdocsSidebar extends React.PureComponent {
 	static displayName = 'DevdocsSidebar';
@@ -93,10 +94,11 @@ export default class DevdocsSidebar extends React.PureComponent {
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="layout-blocks"
-							label="Muriel Components"
+							label="Muriel"
 							link="/devdocs/docs/muriel/index.md"
 							selected={ this.isItemSelected( '/devdocs/docs/muriel', false ) }
 						/>
+						{ this.renderMurielNav( murielNavStructure ) }
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="layout-blocks"
@@ -150,6 +152,25 @@ export default class DevdocsSidebar extends React.PureComponent {
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
+		);
+	}
+
+	renderMurielNav( items ) {
+		if ( ! this.isItemSelected( '/devdocs/docs/muriel', false ) || ! items || ! items.length ) {
+			return;
+		}
+
+		return (
+			<ul>
+				{ items.map( item => {
+					return (
+						<li key={ item.href }>
+							<a href={ item.href }>{ item.title }</a>
+							{ this.renderMurielNav( item.children ) }
+						</li>
+					);
+				} ) }
+			</ul>
 		);
 	}
 }

@@ -1,0 +1,128 @@
+[
+	{
+		"title": "What is Muriel?",
+		"href": "/devdocs/docs/muriel/what-is-muriel/index.md",
+		"children": [
+			{
+				"title": "A Day in the Life",
+				"href":  "/devdocs/docs/muriel/what-is-muriel/a-day-in-the-life-with-muriel.md"
+			},
+			{
+				"title": "FAQ",
+				"href":  "/devdocs/docs/muriel/what-is-muriel/faq.md"
+			}
+		]
+	},
+	{
+		"title": "The Principles",
+		"href": "/devdocs/docs/muriel/principles/index.md",
+		"children": [
+			{
+				"title": "Inclusion",
+				"href": "/devdocs/docs/muriel/principles/inclusion.md"
+			},
+			{
+				"title": "Data",
+				"href": "/devdocs/docs/muriel/principles/data.md"
+			},
+			{
+				"title": "People",
+				"href": "/devdocs/docs/muriel/principles/people.md"
+			},
+			{
+				"title": "Ease",
+				"href": "/devdocs/docs/muriel/principles/ease.md"
+			},
+			{
+				"title": "Predictability",
+				"href": "/devdocs/docs/muriel/principles/predictability.md"
+			}
+		]
+	},
+	{
+		"title": "The Landscape",
+		"href": "/devdocs/docs/muriel/landscape/index.md",
+		"children": [
+			{
+				"title": "Planet Discover",
+				"href": "/devdocs/docs/muriel/landscape/planet-discover.md"
+			},
+			{
+				"title": "Planet Hypothesis",
+				"href": "/devdocs/docs/muriel/landscape/planet-hypothesis.md"
+			},
+			{
+				"title": "Planet Deliver",
+				"href": "/devdocs/docs/muriel/landscape/planet-deliver.md"
+			},
+			{
+				"title": "Planet Listen",
+				"href": "/devdocs/docs/muriel/landscape/planet-listen.md"
+			},
+			{
+				"title": "The Space Between",
+				"href": "/devdocs/docs/muriel/landscape/the-space-between.md"
+			},
+			{
+				"title": "(A Note About Metaphors)",
+				"href": "/devdocs/docs/muriel/landscape/note-about-metaphors.md"
+			}
+		]
+	},
+	{
+		"title": "The Infrastructure",
+		"href": "/devdocs/docs/muriel/infrastructure/index.md",
+		"children": [
+			{
+				"title": "Overview",
+				"href": "/devdocs/docs/muriel/infrastructure/Overview.md"
+			},
+			{
+				"title": "Layout",
+				"href": "/devdocs/docs/muriel/infrastructure/layout.md"
+			},
+			{
+				"title": "Spacing Methods",
+				"href": "/devdocs/docs/muriel/infrastructure/spacing-methods.md"
+			},
+			{
+				"title": "Typography",
+				"href": "/devdocs/docs/muriel/infrastructure/typography.md"
+			},
+			{
+				"title": "Iconography",
+				"href": "/devdocs/docs/muriel/infrastructure/iconography.md"
+			}
+		]
+	},
+	{
+		"title": "The Components",
+		"href": "/devdocs/docs/muriel/components/index.md",
+		"children": [
+			{
+				"title": "Banners",
+				"href": "/devdocs/docs/muriel/components/banners.md"
+			},
+			{
+				"title": "Buttons",
+				"href": "/devdocs/docs/muriel/components/buttons.md"
+			},
+			{
+				"title": "Callout Cards",
+				"href": "/devdocs/docs/muriel/components/callout-cards.md"
+			},
+			{
+				"title": "Dialogs",
+				"href": "/devdocs/docs/muriel/components/dialogs.md"
+			},
+			{
+				"title": "Selection Controls",
+				"href": "/devdocs/docs/muriel/components/selection-controls.md"
+			},
+			{
+				"title": "Snackbars",
+				"href": "/devdocs/docs/muriel/components/snackbars.md"
+			}
+		]
+	}
+]

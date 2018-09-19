@@ -1,10 +1,21 @@
-# Welcome to Muriel docs
+# Muriel 
 
-This is client-side loaded and parsed Markdown content.
+Developers, support, designers, growth — we all have the same goals:
 
-0. Write some docs.
-0. Spread the word.
-0. Materialize it all.
+Consistent, inclusive, beautiful design.
 
-[[ComponentExample name="button" variant="compact"]]
+Efficient development and iteration.
+
+Clean, stable code.
+
+Delightful, intuitive, useful user experiences.
+
+Products that work for people, so people don’t have to work at their products.
+
+**There’s a system for that. It’s called Muriel.**
+
+---
+
+> “There is still no magic way — but we propose to keep working at it.”
+> — Muriel Cooper
 
