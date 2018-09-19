@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,8 +28,9 @@ function getQueryObject( site, siteSlug, vendor ) {
 		return null;
 	}
 	return {
-		query: siteSlug.split( '.' )[ 0 ],
 		quantity: 1,
+		query: siteSlug.split( '.' )[ 0 ],
+		recommendationContext: ( site.name || '' ).replace( ' ', ',' ).toLocaleLowerCase(),
 		vendor,
 	};
 }
@@ -42,8 +44,9 @@ class DomainTip extends React.Component {
 		shouldNudgePlanUpgrade: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
 		queryObject: PropTypes.shape( {
-			query: PropTypes.string,
 			quantity: PropTypes.number,
+			query: PropTypes.string,
+			recommendationContext: PropTypes.string,
 			vendor: PropTypes.string,
 		} ),
 		vendor: PropTypes.string,
