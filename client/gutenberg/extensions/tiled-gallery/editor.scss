@@ -1,0 +1,18 @@
+.wp-block-a8c-tiled-gallery {
+	.editor-inner-blocks {
+		@media ( min-width: 600px ) {
+			.editor-block-list__layout {
+				// This is to let innorBlock area cover whole parent block container
+				.editor-block-list__block {
+					margin-left: -15px;
+					margin-right: -15px;
+					max-width: none; // was 610px
+					.editor-block-list__block-edit {
+						padding-left: 15px;
+						padding-right: 15px;
+					}
+				}
+			}
+		}
+	}
+}

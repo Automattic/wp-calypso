@@ -1,12 +1,14 @@
+/** @format */
+
 /**
- * Internal dependencies
+ * External dependencies
  */
-import TiledGalleryLayoutSquare from './layout-square.jsx';
+import { InnerBlocks } from '@wordpress/editor';
 
-function TiledGallerySave( { attributes } ) {
+export default ( { className } ) => {
 	return (
-		<TiledGalleryLayoutSquare { ...attributes } />
+		<div className={ className }>
+			<InnerBlocks.Content />
+		</div>
 	);
-}
-
-export default TiledGallerySave;
+};
