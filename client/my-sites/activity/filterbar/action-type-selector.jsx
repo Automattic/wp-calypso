@@ -59,15 +59,15 @@ export class ActionTypeSelector extends Component {
 				userHasSelected: true,
 				selectedCheckboxes: [ group ],
 			} );
-		} else if ( this.state.selectedCheckboxes.includes( group ) ) {
+		} else if ( this.getSelectedCheckboxes().includes( group ) ) {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: without( this.state.selectedCheckboxes, group ),
+				selectedCheckboxes: without( this.getSelectedCheckboxes(), group ),
 			} );
 		} else {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: concat( this.state.selectedCheckboxes, group ),
+				selectedCheckboxes: concat( this.getSelectedCheckboxes(), group ),
 			} );
 		}
 	};
