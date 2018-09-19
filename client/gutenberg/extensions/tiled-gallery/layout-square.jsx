@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import React from 'react';
+
+/**
  * WordPress dependencies
  */
 import { Component } from '@wordpress/element';

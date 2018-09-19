@@ -3,6 +3,7 @@
 /**
  * External Dependencies
  */
+import React from 'react';
 import pick from 'lodash/pick';
 
 /**
