@@ -198,8 +198,22 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
-	componentDidMount() {
+	maybeLoadHotJar = () => {
+		if ( this.hjLoaded || ! this.isImporting() ) {
+			return;
+		}
+
+		this.hjLoaded = true;
+
 		this.props.loadTrackingTool( 'HotJar' );
+	};
+
+	componentDidMount() {
+		this.maybeLoadHotJar();
+	}
+
+	componentDidUpdate() {
+		this.maybeLoadHotJar();
 	}
 
 	render() {
