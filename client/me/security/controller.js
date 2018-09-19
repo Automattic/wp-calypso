@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
