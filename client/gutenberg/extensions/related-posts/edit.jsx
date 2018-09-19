@@ -4,10 +4,10 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import moment from 'moment';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from '@wordpress/element';
 import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
+import { moment } from '@wordpress/date';
 import {
 	Button,
 	PanelBody,
