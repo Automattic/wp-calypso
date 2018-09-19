@@ -4,6 +4,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import moment from 'moment';
 import { __ } from '@wordpress/i18n';
 import { Fragment } from '@wordpress/element';
 import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
@@ -118,7 +119,16 @@ export default ( { attributes, className, setAttributes } ) => {
 								</Button>
 							</h4>
 							{ displayDate && (
-								<span className={ `${ className }__preview-post-date` }>{ post.date }</span>
+								<time
+									dateTime={ moment( post.date )
+										.utc()
+										.format() }
+									className={ `${ className }__preview-post-date` }
+								>
+									{ moment( post.date )
+										.local()
+										.format( 'MMMM DD, Y' ) }
+								</time>
 							) }
 							{ displayContext && <p>{ post.context }</p> }
 						</div>
