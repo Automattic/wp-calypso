@@ -97,15 +97,16 @@ export default ( { attributes, className, setAttributes } ) => {
 				<Toolbar controls={ layoutControls } />
 			</BlockControls>
 
-			<div className={ className }>
+			<div
+				className={ classNames( `${ className }`, {
+					'is-grid': postLayout === 'grid',
+					[ `columns-${ postsToShow }` ]: postLayout === 'grid',
+					[ `align${ align }` ]: align,
+				} ) }
+			>
 				{ headline.length ? <h3>{ headline }</h3> : null }
 
-				<div
-					className={ classNames( `${ className }__preview-items`, {
-						'is-grid': postLayout === 'grid',
-						[ `columns-${ postsToShow }` ]: postLayout === 'grid',
-					} ) }
-				>
+				<div className={ `${ className }__preview-items` }>
 					{ displayPosts.map( ( post, i ) => (
 						<div className={ `${ className }__preview-post` } key={ i }>
 							{ displayThumbnails && (

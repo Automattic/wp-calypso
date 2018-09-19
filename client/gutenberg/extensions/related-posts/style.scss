@@ -1,11 +1,17 @@
 .wp-block-a8c-related-posts {
-	[data-align='full'] & {
+	&.alignfull {
 		padding: 0 20px;
+	}
+
+	&.aligncenter {
+		.wp-block-a8c-related-posts__preview-post-link {
+			text-align: center;
+		}
 	}
 }
 
 .wp-block-a8c-related-posts__preview-items {
-	&.is-grid {
+	.is-grid & {
 		display: flex;
 		margin: 0 -10px;
 	}
