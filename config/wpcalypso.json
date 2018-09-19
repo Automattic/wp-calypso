@@ -120,7 +120,6 @@
 		"privacy-policy": true,
 		"publicize-preview": true,
 		"reader": true,
-		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/paste-to-link": true,
