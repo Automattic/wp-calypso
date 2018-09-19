@@ -8,7 +8,7 @@
 	flex-wrap: wrap;
 	font-weight: bold;
 	width: 100%;
-	padding: 0;
+	padding: 12px 20px 14px 17px;
 
 	&:hover,
 	&:focus {
@@ -17,13 +17,12 @@
 }
 
 .checklist-navigation__label {
-	padding: 12px 0 10px 17px;
+	margin-bottom: 8px;
 	position: relative;
 }
 
 .checklist-navigation__count {
-	padding: 12px 20px 10px 0;
-
+	margin-bottom: 8px;
 	&.has-notification::before {
 		display: inline-block;
 		background-color: $orange-jazzy;
@@ -39,7 +38,11 @@
 	display: block;
 }
 
+.checklist-navigation .progress-bar__progress {
+	background-color: $alert-green;
+}
+
 .checklist-navigation .checklist-navigation__progress-bar-margin {
-	margin: 0 18px 12px 16px;
+	margin: 0;
 	width: 100%;
 }

@@ -78,7 +78,7 @@ export class ChecklistNavigation extends Component {
 					</span>
 
 					<div className="checklist-navigation__progress-bar-margin">
-						<ProgressBar color="#4ab866" total={ total } value={ completeCount } compact />
+						<ProgressBar total={ total } value={ completeCount } compact />
 					</div>
 				</Button>
 			</div>
