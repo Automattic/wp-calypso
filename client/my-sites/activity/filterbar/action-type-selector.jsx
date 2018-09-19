@@ -127,6 +127,7 @@ export class ActionTypeSelector extends Component {
 					checked={ this.isSelected( group.key ) || this.isAllCheckboxSelected() }
 					name={ group.key }
 					onChange={ this.handleSelectClick }
+					className={ this.isAllCheckboxSelected() ? 'is-intermitten' : null }
 				/>
 				{ group.name + ' (' + group.count + ')' }
 			</FormLabel>
