@@ -3,6 +3,14 @@
  */
 import { Component } from '@wordpress/element';
 import { withSelect } from '@wordpress/data';
+import { connect } from 'react-redux';
+import { flowRight } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import getCurrentRoute from 'state/selectors/get-current-route';
+
 
 /**
  * After making changes to a new post, this component will update the url to append the post id:
@@ -13,13 +21,8 @@ import { withSelect } from '@wordpress/data';
  * https://wordpress.com/gutenberg/post/mysiteslug/1234
  */
 export class BrowserURL extends Component {
-	constructor() {
-		super( ...arguments );
 
-		this.state = {
-			historyId: null,
-		};
-	}
+	state = { historyId: null };
 
 	componentDidUpdate( prevProps ) {
 		const { postId, postStatus } = this.props;
@@ -36,15 +39,13 @@ export class BrowserURL extends Component {
 	 * @param {number} postId Post ID for which to generate post editor URL.
 	 */
 	setBrowserURL( postId ) {
+		this.setState( { historyId: postId } );
+
 		window.history.replaceState(
 			{ id: postId },
 			null,
-			`${ window.location.href }/${ postId }`
+			`${ this.props.currentRoute }/${ postId }`
 		);
-
-		this.setState( () => ( {
-			historyId: postId,
-		} ) );
 	}
 
 	render() {
@@ -52,12 +53,21 @@ export class BrowserURL extends Component {
 	}
 }
 
-export default withSelect( ( select ) => {
-	const { getCurrentPost } = select( 'core/editor' );
-	const { id, status } = getCurrentPost();
+export default flowRight(
+	withSelect( ( select ) => {
+		const { getCurrentPost } = select( 'core/editor' );
+		const { id, status } = getCurrentPost();
 
-	return {
-		postId: id,
-		postStatus: status,
-	};
-} )( BrowserURL );
+		return {
+			postId: id,
+			postStatus: status,
+		};
+	} ),
+	connect(
+		( state ) => {
+			return {
+				currentRoute: getCurrentRoute( state ),
+			}
+		}
+	),
+)( BrowserURL );
