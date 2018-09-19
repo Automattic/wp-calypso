@@ -121,9 +121,7 @@ export default ( { attributes, className, setAttributes } ) => {
 							</h4>
 							{ displayDate && (
 								<time
-									dateTime={ moment( post.date )
-										.utc()
-										.format() }
+									dateTime={ moment( post.date ).toISOString() }
 									className={ `${ className }__preview-post-date` }
 								>
 									{ moment( post.date )
