@@ -25,7 +25,7 @@ import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
 import { createNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -65,21 +65,7 @@ class WpcomChecklist extends PureComponent {
 	}
 
 	canShow = () => {
-		const disallowedSections = [
-			'discover',
-			'reader',
-			'reader-activities',
-			'reader-list',
-			'reader-recommendations',
-			'reader-tags',
-			'checklist',
-			'signup',
-		];
-
-		if (
-			! this.props.isEligibleForDotcomChecklist ||
-			disallowedSections.indexOf( this.props.sectionName ) > -1
-		) {
+		if ( ! this.props.isEligibleForDotcomChecklist || ! this.props.isSiteSection ) {
 			return false;
 		}
 
@@ -390,7 +376,7 @@ export default connect(
 		return {
 			designType: getSiteOption( state, siteId, 'design_type' ),
 			isEligibleForDotcomChecklist: isEligibleForDotcomChecklist( state, siteId ),
-			sectionName: getSectionName( state ),
+			isSiteSection: isSiteSection( state ),
 			siteId,
 			siteSlug,
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
