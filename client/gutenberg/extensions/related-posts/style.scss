@@ -7,23 +7,17 @@
 .wp-block-a8c-related-posts__preview-items {
 	&.is-grid {
 		display: flex;
-		padding: 0 10px;
-		margin: 0 -20px;
-
-		.wp-block-a8c-related-posts__preview-post {
-			margin: 0 10px;
-		}
-	}
-
-	&.columns-3 .wp-block-a8c-related-posts__preview-post {
-		width: 33.33%;
-	}
-	&.columns-2 .wp-block-a8c-related-posts__preview-post {
-		width: 50%;
+		margin: 0 -10px;
 	}
 }
 
 .wp-block-a8c-related-posts__preview-post {
+	.is-grid & {
+		flex-grow: 1;
+		flex-basis: 0;
+		margin: 0 10px;
+	}
+
 	.wp-block-a8c-related-posts__preview-post-link {
 		font-size: inherit;
 	}
