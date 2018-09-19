@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
+import includes from 'lodash/includes';
 import { __ } from '@wordpress/i18n';
-import { includes } from 'lodash';
 import { registerBlockType } from '@wordpress/blocks';
 
 /**
