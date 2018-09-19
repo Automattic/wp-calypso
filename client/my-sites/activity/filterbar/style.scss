@@ -18,6 +18,10 @@
 		height: 100%;
 		background-color: $white;
 		border-radius: inherit;
+
+		@include breakpoint( '<480px' ) {
+			display: none;
+		}
 	}
 	.filterbar__icon-reset {
 	    margin-left: auto;
@@ -32,6 +36,10 @@
 	.filterbar__label {
 		margin-right: 8px;
 		color: $gray;
+
+		@include breakpoint( '<480px' ) {
+			margin-left: 10px;
+		}
 	}
 
 	.filterbar__selection.button {
