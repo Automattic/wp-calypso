@@ -20,6 +20,7 @@ import { requestGutenbergDraftPost as createAutoDraft, requestSitePost } from 's
 import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
+import { translate } from 'i18n-calypso';
 
 const editorSettings = {
 	autosaveInterval: 3, //interval to debounce autosaving events, in seconds.
@@ -57,8 +58,8 @@ class GutenbergEditor extends Component {
 
 const addGutenbergDemoContent = post => {
 	const title = {
-		raw: 'Welcome to the Gutenberg Editor',
-		rendered: 'Welcome to the Gutenberg Editor',
+		raw: translate( 'Welcome to the Gutenberg Editor' ),
+		rendered: translate( 'Welcome to the Gutenberg Editor' ),
 	};
 
 	return {
