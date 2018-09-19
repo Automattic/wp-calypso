@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, translate, localize } from 'i18n-calypso';
 import { has, omit } from 'lodash';
@@ -279,12 +280,14 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapFluxDispatchToProps = dispatch => ( {
 	mapAuthorFor: importerId => ( source, target ) =>
 		setTimeout( () => {
 			dispatch( mapAuthor( importerId, source, target ) );
 		}, 0 ),
-	loadTrackingTool,
 } );
 
-export default connectDispatcher( null, mapDispatchToProps )( localize( ImportingPane ) );
+export default connect(
+	null,
+	{ loadTrackingTool }
+)( connectDispatcher( null, mapFluxDispatchToProps )( localize( ImportingPane ) ) );
