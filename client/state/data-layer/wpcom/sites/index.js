@@ -41,7 +41,7 @@ registerHandlers(
 		posts,
 		simplePayments,
 		users,
-		stats,
+		stats
 	)
 );
 

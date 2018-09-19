@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-const MiniSitePreview = ( { className, imageSrc  } ) =>
+const MiniSitePreview = ( { className, imageSrc } ) =>
 	imageSrc ? (
 		<div className={ classnames( 'mini-site-preview', className ) }>
 			<div className="mini-site-preview__browser-chrome">
