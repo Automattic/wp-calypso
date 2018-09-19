@@ -13,8 +13,15 @@ import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 
-export const requestActivityActionTypeCounts = ( siteId, { freshness = 10 * 1000 } = {} ) => {
-	const id = `activity-action-type-${ siteId }`;
+export const requestActivityActionTypeCounts = (
+	siteId,
+	filter,
+	{ freshness = 10 * 1000 } = {}
+) => {
+	const before = filter && filter.before ? filter.before : '';
+	const after = filter && filter.after ? filter.after : '';
+	const on = filter && filter.on ? filter.on : '';
+	const id = `activity-log-${ siteId }-${ after }-${ before }-${ on }`;
 
 	return requestHttpData(
 		id,
@@ -23,6 +30,7 @@ export const requestActivityActionTypeCounts = ( siteId, { freshness = 10 * 1000
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 				path: `/sites/${ siteId }/activity/count/group`,
+				query: filterStateToApiQuery( filter ),
 			},
 			{}
 		),
@@ -40,8 +48,9 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
 	const before = filter && filter.before ? filter.before : '';
 	const after = filter && filter.after ? filter.after : '';
+	const on = filter && filter.on ? filter.on : '';
 
-	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }`;
+	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }`;
 	return requestHttpData(
 		id,
 		http(
@@ -144,7 +153,7 @@ export const requestGutenbergDraftPost = ( siteId, draftId ) =>
 			},
 			{}
 		),
-		{ formApi: () => data => [ [ draftId, data ] ] }
+		{ fromApi: () => data => [ [ draftId, data ] ] }
 	);
 
 export const requestSitePost = ( siteId, postId ) =>

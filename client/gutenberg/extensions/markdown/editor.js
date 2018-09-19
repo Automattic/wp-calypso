@@ -11,7 +11,7 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './style.scss';
+import './editor.scss';
 import edit from './edit';
 import save from './save';
 
@@ -43,7 +43,9 @@ registerBlockType( 'a8c/markdown', {
 		</svg>
 	),
 
-	category: 'formatting',
+	category: 'jetpack',
+
+	keywords: [ __( 'formatting' ), __( 'syntax' ), __( 'markup' ) ],
 
 	attributes: {
 		//The Markdown source is saved in the block content comments delimiter

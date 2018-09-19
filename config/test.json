@@ -26,6 +26,7 @@
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
+		"activity-filterbar": true,
 		"ad-tracking": false,
 		"apple-pay": true,
 		"blogger-plan": false,
@@ -100,7 +101,6 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
-		"signup/domain-first-flow": true,
 		"signup/social": true,
 		"support-user": true,
 		"ui/first-view": false,

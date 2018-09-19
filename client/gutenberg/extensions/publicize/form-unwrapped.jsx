@@ -23,8 +23,8 @@ import { isNil } from 'lodash';
 /**
  * Internal dependencies
  */
-import PublicizeConnection from './publicize-connection';
-import PublicizeSettingsButton from './publicize-settings-button';
+import PublicizeConnection from './connection';
+import PublicizeSettingsButton from './settings-button';
 
 class PublicizeFormUnwrapped extends Component {
 	constructor( props ) {
@@ -132,4 +132,3 @@ class PublicizeFormUnwrapped extends Component {
 }
 
 export default PublicizeFormUnwrapped;
-

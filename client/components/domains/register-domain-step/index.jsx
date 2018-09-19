@@ -112,7 +112,7 @@ class RegisterDomainStep extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		onDomainsAvailabilityChange: PropTypes.func,
-		products: PropTypes.object.isRequired,
+		products: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		basePath: PropTypes.string.isRequired,
 		suggestion: PropTypes.string,

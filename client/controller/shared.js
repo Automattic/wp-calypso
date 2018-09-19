@@ -51,7 +51,7 @@ function loadSectionCSS( context, next ) {
 	if ( section.css && typeof document !== 'undefined' ) {
 		const url = isRTL( context.store.getState() ) ? section.css.urls.rtl : section.css.urls.ltr;
 
-		switchCSS( 'section-css-' + section.css.id, url, next );
+		switchCSS( 'section-css-' + section.css.id, url ).then( next );
 
 		return;
 	}

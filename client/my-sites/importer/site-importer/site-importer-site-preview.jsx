@@ -103,7 +103,10 @@ class SiteImporterSitePreview extends React.Component {
 						</div>
 						<div className={ containerClass }>
 							<div className="site-importer__site-preview-column-container">
-								<MiniSitePreview imageSrc={ this.state.sitePreviewImage } />
+								<MiniSitePreview
+									className="site-importer__site-preview"
+									imageSrc={ this.state.sitePreviewImage }
+								/>
 								<ImportableContent importData={ this.props.importData } />
 							</div>
 						</div>

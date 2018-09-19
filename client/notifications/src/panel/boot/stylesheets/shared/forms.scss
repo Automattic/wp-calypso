@@ -5,7 +5,7 @@
   color: $gray-dark;
   font-size: 16px;
   line-height: 1.5;
-  border: 1px solid lighten($gray, 20%);
+  border: 1px solid $gray-lighten-20;
   background-color: $white;
   transition: all .15s ease-in-out;
   box-sizing: border-box;
@@ -15,7 +15,7 @@
   }
 
   &:hover {
-    border-color: lighten($gray, 10%);
+    border-color: $gray-lighten-10;
   }
 
   &:focus {
@@ -30,15 +30,15 @@
 
   &:disabled {
     background: $white;
-    border-color: lighten($gray, 30%);
-    color: lighten($gray, 30%);
+    border-color: $gray-lighten-30;
+    color: $gray-lighten-30;
 
     &:hover {
       cursor: default;
     }
 
     &::placeholder {
-      color: lighten($gray, 30%);
+      color: $gray-lighten-30;
     }
   }
 }

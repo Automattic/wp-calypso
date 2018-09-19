@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * WordPress dependencies
  */
@@ -7,29 +9,29 @@ import { createBlock, registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './tiled-gallery.scss';
-import JetpackGalleryBlockEditor from './edit.js';
-import JetpackGalleryBlockSave from './save.js';
+import TiledGalleryEdit from './edit.jsx';
+import TiledGallerySave from './save.jsx';
 
-const JetpackGalleryBlockType = 'a8c/tiled-gallery';
+const blockType = 'a8c/tiled-gallery';
 
-const settings = {
+const blockSettings = {
 	title: __( 'Tiled Gallery' ),
+	description: __( 'Display multiple images in an elegantly organized tiled layout.' ),
 	icon: 'format-gallery',
-	category: 'layout',
-
+	category: 'jetpack',
+	keywords: [ __( 'images' ), __( 'photos' ) ],
 	attributes: {
 		columns: {
 			type: 'integer',
-			'default': 3,
+			default: 3,
 		},
 		linkTo: {
 			type: 'string',
-			'default': 'none',
+			default: 'none',
 		},
 		images: {
 			type: 'array',
-			'default': [],
+			default: [],
 			source: 'query',
 			selector: '.tiled-gallery-item',
 			query: {
@@ -57,7 +59,7 @@ const settings = {
 					source: 'attribute',
 					selector: 'img',
 					attribute: 'alt',
-					'default': '',
+					default: '',
 				},
 				id: {
 					source: 'attribute',
@@ -79,7 +81,7 @@ const settings = {
 				type: 'block',
 				blocks: [ 'core/gallery' ],
 				transform: function( content ) {
-					return createBlock( JetpackGalleryBlockType, content );
+					return createBlock( blockType, content );
 				},
 			},
 		],
@@ -93,12 +95,8 @@ const settings = {
 			},
 		],
 	},
-
-	edit: JetpackGalleryBlockEditor,
-	save: JetpackGalleryBlockSave
+	edit: TiledGalleryEdit,
+	save: TiledGallerySave,
 };
 
-registerBlockType(
-	JetpackGalleryBlockType,
-	settings
-);
+registerBlockType( blockType, blockSettings );

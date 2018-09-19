@@ -33,6 +33,7 @@ const {
 	isDomainBeingUsedForPlan,
 	getCartItemBillPeriod,
 	getDomainPriceRule,
+	hasToUpgradeToPayForADomain,
 } = cartItems;
 
 /**
@@ -325,14 +326,296 @@ describe( 'isNextDomainFree()', () => {
 } );
 
 describe( 'getDomainPriceRule()', () => {
-	test( 'should return FREE_DOMAIN when product slug is empty', () => {
-		expect( getDomainPriceRule( false, null, null, { product_slug: null, cost: '14' } ) ).toBe(
-			'FREE_DOMAIN'
+	const buildCartWithDomain = ( plan_slug = PLAN_PREMIUM, domain = 'domain.com' ) => ( {
+		products: [
+			{ product_slug: plan_slug },
+			{
+				is_domain_registration: true,
+				meta: domain,
+			},
+		],
+	} );
+
+	describe( 'general', () => {
+		test( 'should return FREE_DOMAIN when product slug is empty', () => {
+			expect( getDomainPriceRule( false, null, null, { product_slug: null, cost: '14' } ) ).toBe(
+				'FREE_DOMAIN'
+			);
+		} );
+		test( 'should return FREE_DOMAIN when cost is Free', () => {
+			expect( getDomainPriceRule( false, null, null, { product_slug: 'hi', cost: 'Free' } ) ).toBe(
+				'FREE_DOMAIN'
+			);
+		} );
+	} );
+
+	describe( 'site is on a free plan', () => {
+		test( 'should return INCLUDED_IN_HIGHER_PLAN if site has no domain and no plan in cart [withPlansOnly=true]', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					{ plan: { product_slug: 'free_plan' } },
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'INCLUDED_IN_HIGHER_PLAN' );
+		} );
+		test( 'should return PRICE if site has no domain and no plan in cart [withPlansOnly=false]', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					{ plan: { product_slug: 'free_plan' } },
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'PRICE' );
+		} );
+
+		test( 'should return FREE_WITH_YOUR_PLAN if site has plan in cart and next_domain_is_free is true', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					{ plan: { product_slug: 'free_plan' } },
+					{
+						products: [ { product_slug: PLAN_PREMIUM } ],
+						next_domain_is_free: true,
+					},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'FREE_WITH_PLAN' );
+		} );
+
+		test( 'should return FREE_WITH_YOUR_PLAN if site has plan in cart and a domain in cart', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					{ plan: { product_slug: 'free_plan' } },
+					{
+						products: [
+							{ product_slug: PLAN_PREMIUM },
+							{ is_domain_registration: true, meta: 'domain.com' },
+						],
+					},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'FREE_WITH_PLAN' );
+		} );
+
+		test( 'should return PAID if site has plan in cart and next_domain_is_free is false', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					{ plan: { product_slug: 'free_plan' } },
+					{
+						products: [ { product_slug: PLAN_PREMIUM } ],
+						next_domain_is_free: false,
+					},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'PRICE' );
+		} );
+	} );
+
+	describe( 'site is on a personal plan', () => {
+		test( 'should return PRICE if site has no domain and no plan in cart (next_domain_is_free is not set)', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					{ plan: { product_slug: PLAN_PERSONAL } },
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'PRICE' );
+		} );
+		test( 'should return FREE_WITH_PLAN if site has no domain and no plan in cart (next_domain_is_free=true)', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					{ plan: { product_slug: PLAN_PERSONAL } },
+					{ next_domain_is_free: true },
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'FREE_WITH_PLAN' );
+		} );
+		test( 'should return PRICE if site has no domain and a plan in cart (next_domain_is_free=false)', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					{ plan: { product_slug: PLAN_PERSONAL } },
+					{
+						products: [ { product_slug: PLAN_PREMIUM } ],
+						next_domain_is_free: false,
+					},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'PRICE' );
+		} );
+		test( 'should return PRICE if site has no domain and no plan in cart (next_domain_is_free=false)', () => {
+			expect(
+				getDomainPriceRule(
+					true,
+					{ plan: { product_slug: PLAN_PERSONAL } },
+					{
+						next_domain_is_free: false,
+					},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'PRICE' );
+		} );
+	} );
+
+	describe( 'site is on a premium plan', () => {
+		test( 'should return FREE_WITH_PLAN when domain is being used for plan', () => {
+			expect(
+				getDomainPriceRule( false, null, buildCartWithDomain( PLAN_PREMIUM, 'domain.com' ), {
+					domain_name: 'domain.com',
+					product_slug: 'domain',
+				} )
+			).toBe( 'FREE_WITH_PLAN' );
+		} );
+
+		test( 'should return FREE_WITH_PLAN when next domain is free', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					null,
+					{
+						products: [ { product_slug: PLAN_PREMIUM } ],
+						next_domain_is_free: true,
+					},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'FREE_WITH_PLAN' );
+		} );
+
+		test( 'should return PRICE when .com domain is being used for plan that already has a domain', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					{ plan: { product_slug: PLAN_PERSONAL }, domain: {} },
+					{
+						is_domain_registration: true,
+						meta: 'domain.com',
+					},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'PRICE' );
+		} );
+	} );
+
+	describe( 'site is on a blogger plan', () => {
+		test( 'should return FREE_WITH_PLAN when .blog domain is being used for plan', () => {
+			expect(
+				getDomainPriceRule( false, null, buildCartWithDomain( PLAN_BLOGGER, 'domain.blog' ), {
+					domain_name: 'domain.blog',
+					product_slug: 'domain',
+				} )
+			).toBe( 'FREE_WITH_PLAN' );
+		} );
+
+		test( 'should return FREE_WITH_PLAN when next domain is free ( .blog domain )', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					null,
+					{
+						products: [ { product_slug: PLAN_BLOGGER } ],
+						next_domain_is_free: true,
+						next_domain_condition: 'blog',
+					},
+					{ domain_name: 'domain.blog', product_slug: 'domain' }
+				)
+			).toBe( 'FREE_WITH_PLAN' );
+		} );
+
+		test( 'should return UPGRADE_TO_HIGHER_PLAN_TO_BUY when next domain is free ( .com domain )', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					null,
+					{
+						products: [ { product_slug: PLAN_BLOGGER } ],
+						next_domain_is_free: true,
+						next_domain_condition: 'blog',
+					},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' );
+		} );
+
+		test( 'should return UPGRADE_TO_HIGHER_PLAN_TO_BUY when .com domain is being used for plan', () => {
+			expect(
+				getDomainPriceRule( false, null, buildCartWithDomain( PLAN_BLOGGER, 'domain.blog' ), {
+					domain_name: 'domain.com',
+					product_slug: 'domain',
+				} )
+			).toBe( 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' );
+		} );
+
+		test( 'should return UPGRADE_TO_HIGHER_PLAN_TO_BUY when .com domain is being used for plan that already has no domain', () => {
+			expect(
+				getDomainPriceRule(
+					false,
+					{ plan: { product_slug: PLAN_BLOGGER }, domain: {} },
+					{},
+					{ domain_name: 'domain.com', product_slug: 'domain' }
+				)
+			).toBe( 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' );
+		} );
+	} );
+} );
+
+describe( 'hasToUpgradeToPayForADomain()', () => {
+	test( 'should return true if current site is on a blogger plan', () => {
+		expect( hasToUpgradeToPayForADomain( { plan: { product_slug: PLAN_BLOGGER } }, {} ) ).toBe(
+			true
 		);
 	} );
-	test( 'should return FREE_DOMAIN when cost is Free', () => {
-		expect( getDomainPriceRule( false, null, null, { product_slug: 'hi', cost: 'Free' } ) ).toBe(
-			'FREE_DOMAIN'
-		);
+
+	test( 'should return true if blogger plan is in the cart', () => {
+		expect(
+			hasToUpgradeToPayForADomain( {}, { products: [ { product_slug: PLAN_BLOGGER } ] } )
+		).toBe( true );
+	} );
+
+	test( 'should return true if blogger plan 2y is in the cart', () => {
+		expect(
+			hasToUpgradeToPayForADomain( {}, { products: [ { product_slug: PLAN_BLOGGER_2_YEARS } ] } )
+		).toBe( true );
+	} );
+
+	test( 'should return false if blogger plan is not in the cart', () => {
+		expect(
+			hasToUpgradeToPayForADomain(
+				{ plan: { product_slug: PLAN_FREE } },
+				{ products: [ { product_slug: PLAN_PERSONAL } ] }
+			)
+		).toBe( false );
+	} );
+
+	[
+		PLAN_FREE,
+		PLAN_PERSONAL,
+		PLAN_PERSONAL_2_YEARS,
+		PLAN_PREMIUM,
+		PLAN_PREMIUM_2_YEARS,
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+	].forEach( product_slug => {
+		test( `should return false if current site is not on a blogger plan [${ product_slug }]`, () => {
+			expect( hasToUpgradeToPayForADomain( { plan: { product_slug } }, {} ) ).toBe( false );
+		} );
+	} );
+
+	test( 'should return false if current site has no plan', () => {
+		expect( hasToUpgradeToPayForADomain( { plan: {} }, {} ) ).toBe( false );
+	} );
+
+	test( 'should return false if current site is empty', () => {
+		expect( hasToUpgradeToPayForADomain( {}, {} ) ).toBe( false );
+	} );
+
+	test( 'should return false if current site is not passed', () => {
+		expect( hasToUpgradeToPayForADomain( null, {} ) ).toBe( false );
 	} );
 } );

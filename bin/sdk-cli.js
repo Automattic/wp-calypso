@@ -71,41 +71,25 @@ const build = ( target, argv ) => {
 yargs
 	.scriptName( scriptName )
 	.usage( `Usage: $0 <command> ${ delimit }[options]` )
-	.example( `$0 gutenberg ${ delimit }--editor-script=hello-dolly.js` )
+	.example( `$0 gutenberg ${ delimit }client/gutenberg/extensions/hello-dolly` )
 	.command( {
-		command: 'gutenberg',
+		command: 'gutenberg <input-dir>',
 		desc: 'Build a Gutenberg extension',
 		builder: yargs =>
-			yargs.options( {
-				'editor-script': {
-					description: 'Entry for editor-side JavaScript file',
-					type: 'string',
-					required: true,
-					coerce: value => path.resolve( __dirname, '../', value ),
-					requiresArg: true,
-				},
-				'view-script': {
-					description: 'Entry for rendered-page-side JavaScript file',
-					type: 'string',
-					coerce: value => path.resolve( __dirname, '../', value ),
-					requiresArg: true,
-				},
+			yargs.positional('input-dir', {
+				description: 'Directory containing entry point files editor.js and (optionally) view.js ' +
+					'(for editor and frontend view modes, respectively)',
+				type: 'string',
+				required: true,
+				coerce: value => path.resolve( __dirname, '../', value ),
+			})
+			.options( {
 				'output-dir': {
 					alias: 'o',
 					description:
 						'Output directory for the built assets. Intermediate directories are created as required.',
 					type: 'string',
 					coerce: path.resolve,
-					requiresArg: true,
-				},
-				'output-editor-file': {
-					description: 'Name of the built editor script output file (without the file extension).',
-					type: 'string',
-					requiresArg: true,
-				},
-				'output-view-file': {
-					description: 'Name of the built view script output file (without the file extension).',
-					type: 'string',
 					requiresArg: true,
 				},
 				watch: {

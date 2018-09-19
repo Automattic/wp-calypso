@@ -6,7 +6,7 @@
     top: 50%;
   }
 
-  @keyframes rotate-spinner {
+  @keyframes wpnc__rotate-spinner {
     100% {
       transform: rotate( 360deg );
     }
@@ -18,7 +18,7 @@
     border: 0.1em solid transparent;
     border-radius: 50%;
     animation: 3s linear infinite;
-    animation-name: rotate-spinner;
+    animation-name: wpnc__rotate-spinner;
   }
 
   .wpnc__spinner__outer {

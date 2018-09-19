@@ -338,8 +338,6 @@ export default function() {
 		);
 	}
 
-	page( '/domains', siteSelection, sites, makeLayout, clientRender );
-
 	page(
 		'/domains/:site',
 		siteSelection,

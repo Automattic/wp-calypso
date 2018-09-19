@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -21,24 +20,18 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import DomainImage from 'signup/steps/design-type-with-store/domain-image';
 import NewSiteImage from 'signup/steps/design-type-with-store/new-site-image';
 import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
-import NavigationLink from 'signup/navigation-link';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
 import { getDomainProductSlug } from 'lib/domains';
 
 class SiteOrDomain extends Component {
 	getDomainName() {
-		const {
-			initialContext: { query },
-			step,
-		} = this.props;
-		let domain,
-			isValidDomain = false;
+		const { signupDependencies } = this.props;
+		let domain;
+		let isValidDomain = false;
 
-		if ( query && query.new ) {
-			domain = query.new;
-		} else if ( step && step.domainItem ) {
-			domain = step.domainItem.meta;
+		if ( signupDependencies && signupDependencies.domainItem ) {
+			domain = signupDependencies.domainItem.meta;
 		}
 
 		if ( domain ) {
@@ -102,29 +95,11 @@ class SiteOrDomain extends Component {
 		);
 	}
 
-	renderBackLink() {
-		// Hacky way to add back link to /domains
-		return (
-			<div className="site-or-domain__button">
-				<NavigationLink
-					direction="back"
-					flowName={ this.props.flowName }
-					positionInFlow={ 1 }
-					stepName={ this.props.stepName }
-					stepSectionName={ this.props.stepSectionName }
-					backUrl="/domains"
-					signupProgress={ this.props.signupProgress }
-				/>
-			</div>
-		);
-	}
-
 	renderScreen() {
 		return (
 			<div>
 				{ ! this.props.productsLoaded && <QueryProductsList /> }
 				{ this.renderChoices() }
-				{ this.renderBackLink() }
 			</div>
 		);
 	}
@@ -189,8 +164,8 @@ class SiteOrDomain extends Component {
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
+					fallbackHeaderText={ headerText }
+					fallbackSubHeaderText={ subHeaderText }
 					signupProgress={ this.props.signupProgress }
 				/>
 			);

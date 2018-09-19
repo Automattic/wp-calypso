@@ -20,7 +20,7 @@ import postTypes from './post-types';
 import posts from './posts';
 import simplePayments from './simple-payments';
 import users from './users';
-import statsGoogleMyBusiness from './stats/google-my-business';
+import stats from './stats';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -41,7 +41,7 @@ registerHandlers(
 		posts,
 		simplePayments,
 		users,
-		statsGoogleMyBusiness
+		stats
 	)
 );
 

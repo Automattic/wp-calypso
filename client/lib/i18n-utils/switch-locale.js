@@ -6,7 +6,6 @@
 import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,6 +23,7 @@ function languageFileUrl( localeSlug ) {
 function setLocaleInDOM( localeSlug, isRTL ) {
 	document.documentElement.lang = localeSlug;
 	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+	document.body.classList[ isRTL ? 'add' : 'remove' ]( 'rtl' );
 
 	const directionFlag = isRTL ? '-rtl' : '';
 	const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
@@ -83,10 +83,8 @@ export default function switchLocale( localeSlug ) {
 
 const bundles = {};
 
-export function switchCSS( elementId, cssUrl, callback = noop ) {
+export async function switchCSS( elementId, cssUrl ) {
 	if ( bundles.hasOwnProperty( elementId ) && bundles[ elementId ] === cssUrl ) {
-		callback();
-
 		return;
 	}
 
@@ -95,49 +93,44 @@ export function switchCSS( elementId, cssUrl, callback = noop ) {
 	const currentLink = document.getElementById( elementId );
 
 	if ( currentLink && currentLink.getAttribute( 'href' ) === cssUrl ) {
-		callback();
-
 		return;
 	}
 
-	loadCSS( cssUrl, currentLink, ( error, newLink ) => {
-		if ( currentLink && currentLink.parentElement ) {
-			currentLink.parentElement.removeChild( currentLink );
-		}
+	const newLink = await loadCSS( cssUrl, currentLink );
 
-		newLink.id = elementId;
+	if ( currentLink && currentLink.parentElement ) {
+		currentLink.parentElement.removeChild( currentLink );
+	}
 
-		callback();
-	} );
+	newLink.id = elementId;
 }
 
 /**
- * Loads a css stylesheet into the page.
+ * Loads a CSS stylesheet into the page.
  *
- * @param {string} cssUrl - a url to a css resource to be inserted into the page
- * @param {Element} currentLink - a <link> DOM element that we want to use as a reference for stylesheet order
- * @param {Function} callback - a callback function to be called when the CSS has been loaded (after 500ms have passed).
+ * @param {string} cssUrl URL of a CSS stylesheet to be loaded into the page
+ * @param {Element} currentLink an existing <link> DOM element before which we want to insert the new one
+ * @returns {Promise<String>} the new <link> DOM element after the CSS has been loaded
  */
-function loadCSS( cssUrl, currentLink, callback = noop ) {
-	const link = Object.assign( document.createElement( 'link' ), {
-		rel: 'stylesheet',
-		type: 'text/css',
-		href: cssUrl,
-	} );
+function loadCSS( cssUrl, currentLink ) {
+	return new Promise( resolve => {
+		const link = document.createElement( 'link' );
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = cssUrl;
 
-	const onload = () => {
 		if ( 'onload' in link ) {
-			link.onload = null;
+			link.onload = () => {
+				link.onload = null;
+				resolve( link );
+			};
+		} else {
+			// just wait 500ms if the browser doesn't support link.onload
+			// https://pie.gd/test/script-link-events/
+			// https://github.com/ariya/phantomjs/issues/12332
+			setTimeout( () => resolve( link ), 500 );
 		}
 
-		callback( null, link );
-	};
-
-	if ( 'onload' in link ) {
-		link.onload = onload;
-	} else {
-		setTimeout( onload, 500 );
-	}
-
-	document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
+		document.head.insertBefore( link, currentLink ? currentLink.nextSibling : null );
+	} );
 }

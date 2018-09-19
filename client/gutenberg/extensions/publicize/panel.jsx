@@ -29,9 +29,9 @@ import { withSelect, withDispatch } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import PublicizeConnectionVerify from './publicize-connection-verify';
-import PublicizeForm from './publicize-form';
-import PublicizeNoConnections from './publicize-no-connections';
+import PublicizeConnectionVerify from './connection-verify';
+import PublicizeForm from './form';
+import PublicizeNoConnections from './no-connections';
 import { requestPublicizeConnections } from './async-publicize-lib';
 
 class PublicizePanel extends Component {

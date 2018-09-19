@@ -3,10 +3,9 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get } from 'lodash';
+import { defer, endsWith, get, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
@@ -17,7 +16,6 @@ import { abtest } from 'lib/abtest';
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
-import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import SignupActions from 'lib/signup/actions';
 import { getStepUrl } from 'signup/utils';
@@ -38,8 +36,9 @@ import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-
-const productsList = productsListFactory();
+import { getDomainProductSlug } from 'lib/domains';
+import QueryProductsList from 'components/data/query-products-list';
+import { getAvailableProductsList } from 'state/products-list/selectors';
 
 class DomainsStep extends React.Component {
 	static propTypes = {
@@ -62,11 +61,39 @@ class DomainsStep extends React.Component {
 		store: PropTypes.object,
 	};
 
-	state = { products: productsList.get() };
+	constructor( props ) {
+		super( props );
 
-	showDomainSearch = () => {
-		page( getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
-	};
+		this.skipRender = false;
+
+		const domain = get( props, 'queryObject.new', false );
+		if (
+			this.isDomainsFirstFlow() &&
+			domain &&
+			// If someone has a better idea on how to figure if the user landed anew
+			// Because we persist the signupDependencies, but still want the user to be able to go back to search screen
+			props.path.indexOf( '?' ) !== -1
+		) {
+			this.skipRender = true;
+			const productSlug = getDomainProductSlug( domain );
+			const domainItem = cartItems.domainRegistration( { productSlug, domain } );
+
+			SignupActions.submitSignupStep(
+				Object.assign( {
+					processingMessage: props.translate( 'Adding your domain' ),
+					stepName: props.stepName,
+					domainItem,
+					siteUrl: domain,
+					isPurchasingItem: true,
+					stepSectionName: props.stepSectionName,
+				} ),
+				[],
+				{ domainItem }
+			);
+
+			props.goToNextStep();
+		}
+	}
 
 	getMapDomainUrl = () => {
 		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
@@ -77,25 +104,12 @@ class DomainsStep extends React.Component {
 	};
 
 	getUseYourDomainUrl = () => {
-		const url = getStepUrl(
+		return getStepUrl(
 			this.props.flowName,
 			this.props.stepName,
 			'use-your-domain',
 			this.props.locale
 		);
-		return url;
-	};
-
-	componentDidMount() {
-		productsList.on( 'change', this.refreshState );
-	}
-
-	componentWillUnmount() {
-		productsList.off( 'change', this.refreshState );
-	}
-
-	refreshState = () => {
-		this.setState( { products: productsList.get() } );
 	};
 
 	handleAddDomain = suggestion => {
@@ -276,7 +290,13 @@ class DomainsStep extends React.Component {
 	}
 
 	domainForm = () => {
-		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
+		let initialState = {};
+		if ( this.state ) {
+			initialState = this.state.domainForm;
+		}
+		if ( this.props.step ) {
+			initialState = this.props.step.domainForm;
+		}
 
 		return (
 			<RegisterDomainStep
@@ -284,17 +304,19 @@ class DomainsStep extends React.Component {
 				path={ this.props.path }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
-				products={ this.state.products }
+				products={ this.props.productsList }
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
 				useYourDomainUrl={ this.getUseYourDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerUnavailableOption={ ! this.props.isDomainOnly }
+				offerUnavailableOption={ ! this.props.isDomainOnly && ! this.isDomainsFirstFlow() }
 				analyticsSection="signup"
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ ! this.props.isDomainOnly && ! this.isDomainForAtomicSite() }
+				includeWordPressDotCom={
+					! this.props.isDomainOnly && ! this.isDomainForAtomicSite() && ! this.isDomainsFirstFlow()
+				}
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				showExampleSuggestions
@@ -319,7 +341,7 @@ class DomainsStep extends React.Component {
 					onRegisterDomain={ this.handleAddDomain }
 					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					products={ productsList.get() }
+					products={ this.props.productsList }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					analyticsSection="signup"
@@ -348,7 +370,7 @@ class DomainsStep extends React.Component {
 					onRegisterDomain={ this.handleAddDomain }
 					onTransferDomain={ this.handleAddTransfer }
 					onSave={ this.onTransferSave }
-					products={ productsList.get() }
+					products={ this.props.productsList }
 				/>
 			</div>
 		);
@@ -368,7 +390,7 @@ class DomainsStep extends React.Component {
 					isSignupStep
 					mapDomainUrl={ this.getMapDomainUrl() }
 					transferDomainUrl={ this.getTransferDomainUrl() }
-					products={ productsList.get() }
+					products={ this.props.productsList }
 				/>
 			</div>
 		);
@@ -379,6 +401,10 @@ class DomainsStep extends React.Component {
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
 			? translate( 'Use a domain you already own with your new WordPress.com site.' )
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
+	}
+
+	isDomainsFirstFlow() {
+		return 'domain' === this.props.flowName;
 	}
 
 	renderContent() {
@@ -396,7 +422,7 @@ class DomainsStep extends React.Component {
 			content = this.useYourDomainForm();
 		}
 
-		if ( ! this.props.stepSectionName ) {
+		if ( ! this.props.stepSectionName || this.isDomainsFirstFlow() ) {
 			content = this.domainForm();
 		}
 
@@ -415,6 +441,10 @@ class DomainsStep extends React.Component {
 	}
 
 	render() {
+		if ( this.skipRender ) {
+			return null;
+		}
+
 		const { translate } = this.props;
 		let backUrl = undefined;
 
@@ -447,6 +477,7 @@ class DomainsStep extends React.Component {
 						transitionLeave={ false }
 						transitionName="domains__step-content"
 					>
+						{ ! this.props.productsLoaded && <QueryProductsList /> }
 						{ this.renderContent() }
 					</ReactCSSTransitionGroup>
 				}
@@ -488,15 +519,22 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	state => ( {
-		designType: getDesignType( state ),
-		// no user = DOMAINS_WITH_PLANS_ONLY
-		domainsWithPlansOnly: getCurrentUser( state )
-			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-			: true,
-		siteGoals: getSiteGoals( state ),
-		surveyVertical: getSurveyVertical( state ),
-	} ),
+	state => {
+		const productsList = getAvailableProductsList( state );
+		const productsLoaded = ! isEmpty( productsList );
+
+		return {
+			designType: getDesignType( state ),
+			// no user = DOMAINS_WITH_PLANS_ONLY
+			domainsWithPlansOnly: getCurrentUser( state )
+				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+				: true,
+			productsList,
+			productsLoaded,
+			siteGoals: getSiteGoals( state ),
+			surveyVertical: getSurveyVertical( state ),
+		};
+	},
 	{
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,

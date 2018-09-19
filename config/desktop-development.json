@@ -145,7 +145,6 @@
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,
 		"settings/theme-setup": true,
-		"signup/domain-first-flow": true,
 		"signup/social": true,
 		"signup/social-management": true,
 		"signup/atomic-store-flow": true,
