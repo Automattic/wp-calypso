@@ -128,7 +128,6 @@
 		"publicize-preview": true,
 		"push-notifications": true,
 		"reader": true,
-		"reader/conversations": true,
 		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/list-management": false,

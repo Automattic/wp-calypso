@@ -98,7 +98,6 @@
 		"preview-layout": true,
 		"privacy-policy": true,
 		"reader": true,
-		"reader/conversations": false,
 		"reader/following-intro": true,
 		"reader/related-posts": true,
 		"reader/user-mention-suggestions": true,

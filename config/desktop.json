@@ -92,7 +92,6 @@
 		"reader": true,
 		"reader/following-intro": true,
 		"reader/full-errors": false,
-		"reader/conversations": false,
 		"reader/user-mention-suggestions": false,
 		"resume-editing": true,
 		"republicize": true,
