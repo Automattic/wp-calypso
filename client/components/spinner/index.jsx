@@ -23,7 +23,7 @@ export default class Spinner extends PureComponent {
 	};
 
 	render() {
-		const className = classNames( 'spinner', this.props.className );
+		const className = classNames( 'CALYPSO-spinner', this.props.className );
 
 		const style = {
 			width: this.props.size,
