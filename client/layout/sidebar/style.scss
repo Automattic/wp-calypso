@@ -144,6 +144,46 @@
 			margin-right: 0;
 		}
 	}
+
+	.sidebar__sub-nav {
+		display: block;
+		margin-bottom: 22px;
+
+		a {
+			width: 100%;
+		}
+
+		li {
+			display: block;
+			flex-shrink: unset;
+
+			&.selected {
+				background: $gray-light;
+
+				> a {
+					color: var( --sidebar-menu-selected-background-color );
+					font-weight: bold;
+				}
+
+				a {
+					color: var( --sidebar-color );
+
+					&:after {
+						display: none;
+					}
+				}
+
+				ul {
+					display: block;
+				}
+			}
+		}
+
+		ul {
+			display: none;
+			padding-left: 20px;
+		}
+	}
 }
 
 a.sidebar__button,

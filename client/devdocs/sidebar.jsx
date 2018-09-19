@@ -21,6 +21,11 @@ export default class DevdocsSidebar extends React.PureComponent {
 
 	isItemSelected( itemPath, isStrict = true ) {
 		const { path } = this.props;
+		const indexPattern = /index\.md$/;
+
+		if ( itemPath.match( indexPattern ) ) {
+			itemPath = itemPath.replace( indexPattern, '' );
+		}
 
 		if ( isStrict ) {
 			return path === itemPath;
@@ -98,7 +103,8 @@ export default class DevdocsSidebar extends React.PureComponent {
 							link="/devdocs/docs/muriel/index.md"
 							selected={ this.isItemSelected( '/devdocs/docs/muriel', false ) }
 						/>
-						{ this.renderMurielNav( murielNavStructure ) }
+						{ this.isItemSelected( '/devdocs/docs/muriel', false ) &&
+							this.renderSubNav( murielNavStructure, 'sidebar__sub-nav' ) }
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="layout-blocks"
@@ -155,18 +161,21 @@ export default class DevdocsSidebar extends React.PureComponent {
 		);
 	}
 
-	renderMurielNav( items ) {
-		if ( ! this.isItemSelected( '/devdocs/docs/muriel', false ) || ! items || ! items.length ) {
+	renderSubNav( items, className = '' ) {
+		if ( ! items || ! items.length ) {
 			return;
 		}
 
 		return (
-			<ul>
+			<ul className={ className }>
 				{ items.map( item => {
 					return (
-						<li key={ item.href }>
+						<li
+							key={ item.href }
+							className={ this.isItemSelected( item.href, false ) ? 'selected' : '' }
+						>
 							<a href={ item.href }>{ item.title }</a>
-							{ this.renderMurielNav( item.children ) }
+							{ this.renderSubNav( item.children ) }
 						</li>
 					);
 				} ) }
