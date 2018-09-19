@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  **/
 import { localize } from 'i18n-calypso';
+import Badge from 'components/badge';
 import formatCurrency from 'lib/format-currency';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
@@ -261,7 +262,11 @@ export class PlanFeaturesHeader extends Component {
 		}
 
 		return (
-			<span className="plan-features__header-credit-label">{ translate( 'Credit applied' ) }</span>
+			<span className="plan-features__header-credit-badge">
+				<Badge type="success" size="small">
+					{ translate( 'Credit applied' ) }
+				</Badge>
+			</span>
 		);
 	}
 

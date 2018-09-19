@@ -266,16 +266,7 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features__header-credit-label {
-	font-size: 11px;
-	line-height: 20px;
-	height: 20px;
-	border-radius: 10px;
-	color: $white;
-	background: $alert-green;
-	font-weight: normal;
-	vertical-align: middle;
-	padding: 0 8px;
+.plan-features__header-credit-badge {
 	margin-bottom: 4px;
 	@include breakpoint( '>960px' ) {
 		margin-left: 4px;

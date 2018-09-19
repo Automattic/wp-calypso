@@ -21,6 +21,12 @@ BadgeExample.defaultProps = {
 		<div>
 			<Badge type="success">Success Badge</Badge>
 			<Badge type="warning">Warning Badge</Badge>
+			<Badge type="success" size="small">
+				Small success badge
+			</Badge>
+			<Badge type="warning" size="small">
+				Small warning badge
+			</Badge>
 		</div>
 	),
 };

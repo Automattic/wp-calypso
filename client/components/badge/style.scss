@@ -4,6 +4,8 @@
 	padding: 2px 11px;
 	font-size: 14px;
 	line-height: 18px;
+	font-weight: normal;
+	vertical-align: middle;
 }
 
 .badge--warning {
@@ -12,6 +14,13 @@
 }
 
 .badge--success {
-	color: $gray-dark;
+	color: $white;
 	background-color: lighten( $alert-green, 15%);
+}
+
+.badge.is-small {
+	min-height: 20px;
+	font-size: 11px;
+	line-height: 20px;
+	padding: 0 8px;
 }
