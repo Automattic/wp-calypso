@@ -50,33 +50,20 @@ class GutenbergEditor extends Component {
 					hasFixedToolbar={ true }
 					post={ post }
 					onError={ noop }
+					overridePost={ { title: translate( 'Add title' ) } }
 				/>
 			</WithAPIMiddleware>
 		);
 	}
 }
 
-const addGutenbergDemoContent = post => {
-	const title = {
-		raw: translate( 'Welcome to the Gutenberg Editor' ),
-		rendered: translate( 'Welcome to the Gutenberg Editor' ),
-	};
-
-	return {
-		...post,
-		title,
-	};
-};
-
 const getPost = ( siteId, postId ) => {
-	if ( ! siteId || ! postId ) {
-		return null;
+	if ( siteId && postId ) {
+		const requestSitePostData = requestSitePost( siteId, postId );
+		return get( requestSitePostData, 'data', null );
 	}
 
-	const sitePostData = get( requestSitePost( siteId, postId ), 'data', null );
-	return sitePostData && 'auto-draft' === sitePostData.status
-		? addGutenbergDemoContent( sitePostData )
-		: sitePostData;
+	return null;
 };
 
 const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey } ) => {
