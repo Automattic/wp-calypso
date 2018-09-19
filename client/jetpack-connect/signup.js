@@ -166,7 +166,7 @@ export class JetpackSignup extends Component {
 			return;
 		}
 		if ( error && error.error && 'password_invalid' === error.error ) {
-			errorNotice( error.message );
+			errorNotice( error.message, { id: 'user-creation-error-password_invalid' } );
 			return;
 		}
 		errorNotice(
