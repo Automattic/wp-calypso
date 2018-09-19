@@ -182,6 +182,12 @@ export function serverRender( req, res ) {
 
 	context.head = { title, metas, links };
 	context.clientData = config.clientData;
+	try {
+		context.buildTimestamp = BUILD_TIMESTAMP;
+	} catch ( e ) {
+		context.buildTimestamp = null;
+		debug( 'BUILD_TIMESTAMP is not defined for wp-desktop builds and is expected to fail here.' );
+	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.send( renderJsx( 'desktop', context ) );
