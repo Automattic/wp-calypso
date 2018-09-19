@@ -330,19 +330,21 @@ class ActivityLog extends Component {
 
 		// The network request is still ongoing
 		return (
-			<section className="activity-log__wrapper">
-				<div className="activity-log__time-period is-loading">
-					<span />
-				</div>
-				{ [ 1, 2, 3 ].map( i => (
-					<div key={ i } className="activity-log-item is-loading">
-						<div className="activity-log-item__type">
-							<div className="activity-log-item__activity-icon" />
-						</div>
-						<div className="card foldable-card activity-log-item__card" />
+			<Fragment>
+				<section className="activity-log__wrapper">
+					<div className="activity-log__time-period is-loading">
+						<span />
 					</div>
-				) ) }
-			</section>
+					{ [ 1, 2, 3 ].map( i => (
+						<div key={ i } className="activity-log-item is-loading">
+							<div className="activity-log-item__type">
+								<div className="activity-log-item__activity-icon" />
+							</div>
+							<div className="card foldable-card activity-log-item__card" />
+						</div>
+					) ) }
+				</section>
+			</Fragment>
 		);
 	}
 
