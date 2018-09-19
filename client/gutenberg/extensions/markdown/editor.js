@@ -35,7 +35,7 @@ registerBlockType( 'a8c/markdown', {
 				x="5"
 				y="5"
 				ry="10"
-				stroke="#000"
+				stroke="currentColor"
 				strokeWidth="10"
 				fill="none"
 			/>
