@@ -12239,12 +12239,24 @@
       }
     },
     "postcss-custom-properties": {
-      "version": "8.0.2",
-      "resolved": "https://registry.npmjs.org/postcss-custom-properties/-/postcss-custom-properties-8.0.2.tgz",
-      "integrity": "sha512-JyLGxiZ1f9AUXMjnGrw41CqqSD1I33lGBGv9G1S5uHy6gkDTUViNIc3+p5kV0sBpfuLRlvwZP0/vxa88IBT4yg==",
+      "version": "8.0.3",
+      "resolved": "https://registry.npmjs.org/postcss-custom-properties/-/postcss-custom-properties-8.0.3.tgz",
+      "integrity": "sha512-JdMWVis1D/u+y7S3FGxR8uEpY6dJ6F/KEHf3/OwUENxYRagZccyHm4E82azwzaOrZs5CyNrmRivBt+pAODc3Ug==",
       "requires": {
         "postcss": "^7.0.2",
-        "postcss-values-parser": "^1.5.0"
+        "postcss-values-parser": "^2.0.0"
+      },
+      "dependencies": {
+        "postcss-values-parser": {
+          "version": "2.0.0",
+          "resolved": "https://registry.npmjs.org/postcss-values-parser/-/postcss-values-parser-2.0.0.tgz",
+          "integrity": "sha512-cyRdkgbRRefu91ByAlJow4y9w/hnBmmWgLpWmlFQ2bpIy2eKrqowt3VeYcaHQ08otVXmC9V2JtYW1Z/RpvYR8A==",
+          "requires": {
+            "flatten": "^1.0.2",
+            "indexes-of": "^1.0.1",
+            "uniq": "^1.0.1"
+          }
+        }
       }
     },
     "postcss-discard-unused": {
@@ -12960,6 +12972,7 @@
       "version": "1.5.0",
       "resolved": "https://registry.npmjs.org/postcss-values-parser/-/postcss-values-parser-1.5.0.tgz",
       "integrity": "sha512-3M3p+2gMp0AH3da530TlX8kiO1nxdTnc3C6vr8dMxRLIlh8UYkz0/wcwptSXjhtx2Fr0TySI7a+BHDQ8NL7LaQ==",
+      "dev": true,
       "requires": {
         "flatten": "^1.0.2",
         "indexes-of": "^1.0.1",
