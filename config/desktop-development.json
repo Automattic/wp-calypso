@@ -23,6 +23,7 @@
 		"automated-transfer": true,
 		"apple-pay": false,
 		"blogger-plan": false,
+		"calypsoify/gutenberg": false,
 		"code-splitting": false,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
