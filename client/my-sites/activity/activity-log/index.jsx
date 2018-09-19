@@ -331,6 +331,7 @@ class ActivityLog extends Component {
 		// The network request is still ongoing
 		return (
 			<Fragment>
+				<div className="activity-log__filterbar is-loading" />
 				<section className="activity-log__wrapper">
 					<div className="activity-log__time-period is-loading">
 						<span />
