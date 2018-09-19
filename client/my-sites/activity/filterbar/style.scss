@@ -206,3 +206,20 @@
 		fill: $gray;
 	}
 }
+
+.color-scheme.is-dark {
+
+	.filterbar__selection.button.is-borderless {
+		color: $gray-text-min;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $gray-dark;
+		}
+
+		&.is-selected {
+			color: $white;
+		}
+	}
+}
