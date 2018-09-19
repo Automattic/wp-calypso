@@ -74,7 +74,7 @@ input[type=checkbox] {
 		speak: none;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%2300aadc' stroke-width='3.12' d='M1.73,12.91 8.1,19.28 22.79,4.59'/%3E%3C/svg%3E");
 	}
-	&.is-intermitten:checked:before {
+	&.is-intermittent:checked:before {
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23a8bece' stroke-width='3.12' d='M1.73,12.91 8.1,19.28 22.79,4.59'/%3E%3C/svg%3E");
 	}
 
