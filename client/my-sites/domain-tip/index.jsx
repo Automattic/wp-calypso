@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -84,10 +83,9 @@ class DomainTip extends React.Component {
 			} );
 		}
 
-		const { query, quantity, vendor } = this.props.queryObject;
 		return (
 			<div className={ classNames( 'domain-tip', this.props.className ) }>
-				<QueryDomainsSuggestions query={ query } quantity={ quantity } vendor={ vendor } />
+				<QueryDomainsSuggestions { ...this.props.queryObject } />
 				<UpgradeNudge
 					event={ `domain_tip_${ this.props.event }` }
 					feature={ FEATURE_CUSTOM_DOMAIN }
