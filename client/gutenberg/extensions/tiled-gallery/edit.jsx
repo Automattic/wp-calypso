@@ -10,6 +10,7 @@ import pick from 'lodash/pick';
  */
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
+import { compose } from '@wordpress/compose';
 import {
 	BlockControls,
 	InspectorControls,
@@ -31,6 +32,7 @@ import {
  * Internal dependencies
  */
 import TiledGallerySave from './save.jsx';
+import withJetpackModuleToggleFallback from 'gutenberg/extensions/with-jetpack-module-toggle-fallback';
 
 /**
  * Module variables
@@ -227,4 +229,7 @@ class TiledGalleryEdit extends Component {
 	}
 }
 
-export default withNotices( TiledGalleryEdit );
+export default compose(
+	withJetpackModuleToggleFallback( 'tiled-gallery' ),
+	withNotices
+)( TiledGalleryEdit );

@@ -11,6 +11,7 @@ import { Component } from '@wordpress/element';
  * Internal dependencies
  */
 import MarkdownRenderer from './renderer';
+import withJetpackModuleToggleFallback from 'gutenberg/extensions/with-jetpack-module-toggle-fallback';
 
 /**
  * Module variables
@@ -82,4 +83,4 @@ class MarkdownEdit extends Component {
 	}
 }
 
-export default MarkdownEdit;
+export default withJetpackModuleToggleFallback( 'markdown' )( MarkdownEdit );
