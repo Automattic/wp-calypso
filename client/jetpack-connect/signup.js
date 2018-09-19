@@ -14,7 +14,8 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize, noop } from 'i18n-calypso';
+import { get, noop } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -165,7 +166,7 @@ export class JetpackSignup extends Component {
 			} );
 			return;
 		}
-		if ( error && error.error && 'password_invalid' === error.error ) {
+		if ( get( error, [ 'error' ] ) === 'password_invalid' ) {
 			errorNotice( error.message, { id: 'user-creation-error-password_invalid' } );
 			return;
 		}
