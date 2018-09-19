@@ -181,7 +181,8 @@ export class ActionTypeSelector extends Component {
 					id="filterbar__activity-types"
 					isVisible={ isVisible }
 					onClose={ this.handleClose }
-					autoPosition={ true }
+					position="bottom"
+					relativePosition={ { left: -50 } }
 					context={ this.activityTypeButton.current }
 				>
 					<div className="filterbar__activity-types-selection-wrap">
