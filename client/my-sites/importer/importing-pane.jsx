@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { numberFormat, translate, localize } from 'i18n-calypso';
 import { has, omit } from 'lodash';
@@ -18,6 +19,7 @@ import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
 import AuthorMappingPane from './author-mapping-pane';
 import Spinner from 'components/spinner';
+import { loadTrackingTool } from 'state/analytics/actions';
 
 const sum = ( a, b ) => a + b;
 
@@ -197,6 +199,24 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
+	maybeLoadHotJar = () => {
+		if ( this.hjLoaded || ! this.isImporting() ) {
+			return;
+		}
+
+		this.hjLoaded = true;
+
+		this.props.loadTrackingTool( 'HotJar' );
+	};
+
+	componentDidMount() {
+		this.maybeLoadHotJar();
+	}
+
+	componentDidUpdate() {
+		this.maybeLoadHotJar();
+	}
+
 	render() {
 		const {
 			importerStatus: { importerId, errorData = {}, customData },
@@ -260,11 +280,14 @@ class ImportingPane extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapFluxDispatchToProps = dispatch => ( {
 	mapAuthorFor: importerId => ( source, target ) =>
 		setTimeout( () => {
 			dispatch( mapAuthor( importerId, source, target ) );
 		}, 0 ),
 } );
 
-export default connectDispatcher( null, mapDispatchToProps )( localize( ImportingPane ) );
+export default connect(
+	null,
+	{ loadTrackingTool }
+)( connectDispatcher( null, mapFluxDispatchToProps )( localize( ImportingPane ) ) );
