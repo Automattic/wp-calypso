@@ -9,15 +9,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	plansBannerUpsells: {
-		datestamp: '20180824',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	themesNudgesUpdates: {
 		datestamp: '20180824',
 		variations: {
