@@ -64,7 +64,7 @@ class WpcomChecklist extends PureComponent {
 		const location = 'banner' === this.props.viewMode ? 'checklist_banner' : 'checklist_show';
 
 		this.props.recordTracksEvent( 'calypso_checklist_task_start', {
-			checklist_name: 'jetpack',
+			checklist_name: 'new_blog',
 			location,
 			step_name: taskId,
 		} );
