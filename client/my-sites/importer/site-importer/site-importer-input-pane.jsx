@@ -65,7 +65,7 @@ class SiteImporterInputPane extends React.Component {
 		error: false,
 		errorMessage: '',
 		errorType: null,
-		siteURLInput: '',
+		siteURLInput: this.props.fromSite || '',
 		selectedEndpoint: '',
 		availableEndpoints: [],
 	};
@@ -75,6 +75,10 @@ class SiteImporterInputPane extends React.Component {
 			this.fetchEndpoints();
 		}
 	};
+
+	componentDidMount() {
+		this.validateSite();
+	}
 
 	// TODO This can be improved if we move to Redux.
 	componentWillReceiveProps = nextProps => {
@@ -181,6 +185,11 @@ class SiteImporterInputPane extends React.Component {
 
 	validateSite = () => {
 		const siteURL = trim( this.state.siteURLInput );
+
+		if ( ! siteURL ) {
+			return;
+		}
+
 		const { hostname, pathname } = url.parse(
 			siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
 		);

@@ -53,16 +53,12 @@ class ImportURLStepComponent extends Component {
 		showValidation: false,
 	};
 
-	handleAction = importUrl => {
+	handleAction = () => {
 		if ( this.props.urlInputValidationMessage ) {
 			return this.setState( {
 				showValidation: true,
 			} );
 		}
-		const { siteDetails } = this.props;
-
-		event.preventDefault();
-		debug( { importUrl, siteDetails } );
 
 		this.goToNextStep( {} );
 	};
@@ -71,7 +67,6 @@ class ImportURLStepComponent extends Component {
 		const { siteDetails, urlInputValue } = this.props;
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
 			importUrl: urlInputValue,
-			importFromService: 'wix', // @TODO pull this out of the siteDetails
 			importSiteDetails: siteDetails,
 			themeSlugWithRepo: 'pub/radcliffe-2',
 		} );
