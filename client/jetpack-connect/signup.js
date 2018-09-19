@@ -14,7 +14,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, noop } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -94,12 +94,13 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
-	handleSubmitSignup = ( _, userData ) => {
+	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
 				.createAccount( userData )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
+				.finally( afterSubmit )
 		);
 	};
 
@@ -164,7 +165,7 @@ export class JetpackSignup extends Component {
 			} );
 			return;
 		}
-		if ( error && 'password_invalid' === error.code ) {
+		if ( error && error.error && 'password_invalid' === error.error ) {
 			errorNotice( error.message );
 			return;
 		}
