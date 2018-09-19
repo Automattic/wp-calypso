@@ -18,6 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
 import { requestActivityActionTypeCounts } from 'state/data-getters';
 import { updateFilter } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export class ActionTypeSelector extends Component {
 	state = {
@@ -232,16 +233,29 @@ export class ActionTypeSelector extends Component {
 	}
 }
 
+const mapStateToProps = ( state, { siteId, filter } ) => {
+	const activityTypes = siteId && requestActivityActionTypeCounts( siteId, filter );
+	const selectedState = filter && filter.group;
+	return {
+		activityTypes: ( siteId && activityTypes.data ) || [],
+		selectedState,
+	};
+};
+
+const mapDispatchToProps = dispatch => ( {
+	selectActionType: ( siteId, group ) =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_select_type', {
+					num_groups_selected: group && group.length ? group.length : 0,
+					selected_group: group && group.length ? group.join( '-' ) : '',
+				} ),
+				updateFilter( siteId, { group: group, page: 1 } )
+			)
+		),
+} );
+
 export default connect(
-	( state, { siteId, filter } ) => {
-		const activityTypes = siteId && requestActivityActionTypeCounts( siteId, filter );
-		const selectedState = filter && filter.group;
-		return {
-			activityTypes: ( siteId && activityTypes.data ) || [],
-			selectedState,
-		};
-	},
-	{
-		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group, page: 1 } ),
-	}
+	mapStateToProps,
+	mapDispatchToProps
 )( localize( ActionTypeSelector ) );

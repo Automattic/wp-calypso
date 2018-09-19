@@ -86,7 +86,6 @@ export class Filterbar extends Component {
 		);
 	}
 }
-const mapStateToProps = () => ( {} );
 
 const mapDispatchToProps = dispatch => ( {
 	resetFilters: sideId =>
@@ -96,40 +95,9 @@ const mapDispatchToProps = dispatch => ( {
 				updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } )
 			)
 		),
-	selectActionType: ( siteId, group ) =>
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_filterbar_select_type', {
-					group: group.join( '-' ),
-				} ),
-				updateFilter( siteId, { group: group, page: 1 } )
-			)
-		),
-	selectDateRange: ( siteId, from, to ) => {
-		if ( to ) {
-			return dispatch(
-				withAnalytics(
-					recordTracksEvent( 'calypso_activitylog_filterbar_select_range', {
-						after: from,
-						before: to,
-					} ),
-					updateFilter( siteId, { after: from, before: to, on: null, page: 1 } )
-				)
-			);
-		}
-		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_filterbar_select_range', { on: from } ),
-				updateFilter( siteId, { on: from, after: null, before: null, page: 1 } )
-			)
-		);
-	},
 } );
 
 export default connect(
 	null,
-	{
-		resetFilters: sideId =>
-			updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } ),
-	}
+	mapDispatchToProps
 )( localize( Filterbar ) );
