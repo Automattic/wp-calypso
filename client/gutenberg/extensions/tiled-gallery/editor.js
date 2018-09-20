@@ -15,7 +15,7 @@ import TiledGallerySave from './save.jsx';
 const blockType = 'a8c/tiled-gallery';
 
 const blockSettings = {
-	title: __( 'Tiled Gallery' ),
+	title: __( 'Tiled Gallery v1' ),
 	description: __( 'Display multiple images in an elegantly organized tiled layout.' ),
 	icon: 'format-gallery',
 	category: 'jetpack',
