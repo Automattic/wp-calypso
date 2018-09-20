@@ -22,13 +22,10 @@ import getCurrentRoute from 'state/selectors/get-current-route';
  */
 export class BrowserURL extends Component {
 
-	state = { historyId: null };
-
 	componentDidUpdate( prevProps ) {
 		const { postId, postStatus } = this.props;
-		const { historyId } = this.state;
 
-		if ( ( postId !== prevProps.postId || postId !== historyId ) && postStatus !== 'auto-draft' ) {
+		if ( postStatus === 'draft' && prevProps.postStatus === 'auto-draft' ) {
 			this.setBrowserURL( postId );
 		}
 	}
@@ -39,8 +36,6 @@ export class BrowserURL extends Component {
 	 * @param {number} postId Post ID for which to generate post editor URL.
 	 */
 	setBrowserURL( postId ) {
-		this.setState( { historyId: postId } );
-
 		window.history.replaceState(
 			{ id: postId },
 			null,
