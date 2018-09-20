@@ -206,7 +206,7 @@ export class ActionTypeSelector extends Component {
 													compact
 													onClick={ this.handleToggleAllActionTypeSelector }
 												>
-													{ translate( '{{icon/}} clear checkboxes', {
+													{ translate( '{{icon/}} clear', {
 														components: { icon: <Gridicon icon="cross-small" /> },
 													} ) }
 												</Button>
