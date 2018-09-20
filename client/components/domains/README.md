@@ -5,10 +5,6 @@ This directory contains React components that are used for purchasing domains at
 
 It contains the following components:
 
-domain-mapping-suggestion
--------------------------
-Suggests that you may want to map a domain you searched for
-
 domain-product-price
 --------------------
 Shows the price of a domain product
@@ -40,3 +36,7 @@ Enables users to select a domain to map
 register-domain-step
 --------------------
 Enables users to select a domain to register
+
+registrant-extra-info
+---------------------
+Forms to collect additional tld-specific user information

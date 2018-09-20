@@ -1,41 +1,43 @@
-/**
- * External dependencies
- */
-import page from 'page';
+/** @format */
 
 /**
  * Internal dependencies
  */
-import paths from './paths';
-
-function getPurchase( props ) {
-	return props.selectedPurchase.data;
-}
-
-function goToList() {
-	page( paths.list() );
-}
-
-function goToEditCardDetails( props ) {
-	const { domain, id, payment: { creditCard } } = getPurchase( props );
-
-	page( paths.editCardDetails( domain, id, creditCard.id ) );
-}
-
-function goToManagePurchase( props ) {
-	const { domain, id } = getPurchase( props );
-
-	page( paths.managePurchase( domain, id ) );
-}
+import config from 'config';
+import { addCardDetails, editCardDetails } from './paths';
+import {
+	isExpired,
+	isIncludedWithPlan,
+	isOneTimePurchase,
+	isPaidWithCreditCard,
+} from 'lib/purchases';
+import { isDomainTransfer } from 'lib/products-values';
 
 function isDataLoading( props ) {
-	return ( ! props.selectedSite || ! props.selectedPurchase.hasLoadedFromServer );
+	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 }
 
-export {
-	getPurchase,
-	goToList,
-	goToEditCardDetails,
-	goToManagePurchase,
-	isDataLoading
+function canEditPaymentDetails( purchase ) {
+	if ( ! config.isEnabled( 'upgrades/credit-cards' ) ) {
+		return false;
+	}
+	return (
+		! isExpired( purchase ) &&
+		! isOneTimePurchase( purchase ) &&
+		! isIncludedWithPlan( purchase ) &&
+		! isDomainTransfer( purchase )
+	);
 }
+
+function getEditCardDetailsPath( siteSlug, purchase ) {
+	if ( isPaidWithCreditCard( purchase ) ) {
+		const {
+			payment: { creditCard },
+		} = purchase;
+
+		return editCardDetails( siteSlug, purchase.id, creditCard.id );
+	}
+	return addCardDetails( siteSlug, purchase.id );
+}
+
+export { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading };

@@ -1,35 +1,32 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:module-chart:label' );
 
-/**
- * Internal dependencies
- */
-var user = require( 'lib/user' )();
+import PropTypes from 'prop-types';
+import React from 'react';
 
-module.exports = React.createClass( {
-	displayName: 'ModuleChartLabel',
+export default class ModuleChartLabel extends React.Component {
+	static propTypes = {
+		isRtl: PropTypes.bool,
+		width: PropTypes.number.isRequired,
+		x: PropTypes.number.isRequired,
+		label: PropTypes.string.isRequired,
+	};
 
-	propTypes: {
-		width: React.PropTypes.number.isRequired,
-		x: React.PropTypes.number.isRequired,
-		label: React.PropTypes.string.isRequired
-	},
+	render() {
+		const { isRtl } = this.props;
 
-	render: function() {
-		debug( 'Rendering label' );
-
-		var labelStyle,
-			dir = user.isRTL() ? 'right' : 'left';
-
-		labelStyle = {
-			width: this.props.width + 'px'
+		const labelStyle = {
+			[ isRtl ? 'right' : 'left' ]: this.props.x + 'px',
+			width: this.props.width + 'px',
 		};
 
-		labelStyle[ dir ] = this.props.x + 'px';
-
-		return <div className="chart__x-axis-label" style={ labelStyle }>{ this.props.label }</div>;
+		return (
+			<div className="chart__x-axis-label" style={ labelStyle }>
+				{ this.props.label }
+			</div>
+		);
 	}
-} );
+}

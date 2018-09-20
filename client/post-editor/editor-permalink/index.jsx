@@ -1,136 +1,145 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	pick = require( 'lodash/object/pick' );
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { pick } from 'lodash';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' ),
-	Slug = require( 'post-editor/editor-slug' ),
-	Popover = require( 'components/popover' ),
-	Tooltip = require( 'components/tooltip' ),
-	ClipboardButton = require( 'components/forms/clipboard-button' );
+import Slug from 'post-editor/editor-slug';
+import Popover from 'components/popover';
+import Tooltip from 'components/tooltip';
+import ClipboardButton from 'components/forms/clipboard-button';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostSlug } from 'state/posts/selectors';
 
-var EditorPermalink = React.createClass( {
+class EditorPermalink extends Component {
+	static propTypes = {
+		path: PropTypes.string,
+		isEditable: PropTypes.bool,
+		translate: PropTypes.func,
+		slug: PropTypes.string,
+	};
 
-	propTypes: {
-		path: React.PropTypes.string,
-		slug: React.PropTypes.string,
-		isEditable: React.PropTypes.bool
-	},
+	permalinkToggleReference = React.createRef();
 
-	getInitialState: function() {
-		return {
+	constructor() {
+		super( ...arguments );
+		this.showPopover = this.showPopover.bind( this );
+		this.showTooltip = this.showTooltip.bind( this );
+		this.onCopy = this.onCopy.bind( this );
+		this.hideTooltip = this.hideTooltip.bind( this );
+		this.closePopover = this.closePopover.bind( this );
+
+		this.state = {
 			showPopover: false,
-			popoverVisible: false,
 			showCopyConfirmation: false,
-			tooltip: false
+			tooltip: false,
 		};
-	},
+	}
 
-	componentDidUpdate: function( prevProps, prevState ) {
-		if ( this.state.showPopover !== prevState.showPopover ) {
-			// The contents of <Popover /> are only truly rendered into the
-			// DOM after its `componentDidUpdate` finishes executing, so we
-			// wait to render the clipboard button until after the update.
-			this.setState( {
-				popoverVisible: this.state.showPopover
-			} );
-		}
-	},
+	componentWillUnmount() {
+		clearTimeout( this.dismissCopyConfirmation );
+	}
 
-	showPopover: function() {
+	showPopover() {
 		this.setState( {
 			showPopover: ! this.state.showPopover,
-			tooltip: false
+			tooltip: false,
 		} );
-	},
+	}
 
-	showTooltip: function() {
+	showTooltip() {
 		if ( ! this.state.showPopover ) {
 			this.setState( { tooltip: true } );
 		}
-	},
+	}
 
-	onCopy: function() {
+	onCopy() {
 		this.setState( {
-			showCopyConfirmation: true
+			showCopyConfirmation: true,
 		} );
 
 		clearTimeout( this.dismissCopyConfirmation );
 		this.dismissCopyConfirmation = setTimeout( () => {
 			this.setState( {
-				showCopyConfirmation: false
+				showCopyConfirmation: false,
 			} );
 		}, 4000 );
-	},
+	}
 
-	hideTooltip: function() {
+	hideTooltip() {
 		this.setState( { tooltip: false } );
-	},
+	}
 
-	closePopover: function() {
+	closePopover() {
 		this.setState( { showPopover: false } );
-	},
+	}
 
-	renderCopyButton: function() {
-		var label;
+	renderCopyButton() {
+		const { path, slug, translate } = this.props;
 
-		if ( ! this.state.popoverVisible ) {
-			return;
-		}
-
+		let label;
 		if ( this.state.showCopyConfirmation ) {
-			label = this.translate( 'Copied!' );
+			label = translate( 'Copied!' );
 		} else {
-			label = this.translate( 'Copy', { context: 'verb' } );
+			label = translate( 'Copy', { context: 'verb' } );
 		}
 
 		return (
-			<ClipboardButton
-				text={ this.props.path + this.props.slug }
-				onCopy={ this.onCopy }
-				compact>
+			<ClipboardButton text={ path + slug } onCopy={ this.onCopy } compact>
 				{ label }
 			</ClipboardButton>
-		)
-	},
+		);
+	}
 
-	render: function() {
-		var tooltipMessage;
+	render() {
+		const { translate } = this.props;
+		let tooltipMessage;
 
 		if ( this.props.isEditable ) {
-			tooltipMessage = this.translate( 'Edit post URL' );
+			tooltipMessage = translate( 'Edit post URL' );
 		} else {
-			tooltipMessage = this.translate( 'View post URL' );
+			tooltipMessage = translate( 'View post URL' );
 		}
 
 		return (
-			<div className="editor-permalink" onMouseEnter={ this.showTooltip } onMouseLeave={ this.hideTooltip }>
+			<div
+				className="editor-permalink"
+				onMouseEnter={ this.showTooltip }
+				onMouseLeave={ this.hideTooltip }
+			>
 				<Gridicon
 					className="editor-permalink__toggle"
 					icon="link"
 					onClick={ this.showPopover }
-					ref="popoverButton"
+					ref={ this.permalinkToggleReference }
 				/>
 				<Popover
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
 					position={ 'bottom right' }
-					context={ this.refs && this.refs.popoverButton }
-					className="popover editor-permalink__popover"
+					context={ this.permalinkToggleReference.current }
+					className="editor-permalink__popover"
 				>
 					<Slug
-						{ ...pick( this.props, 'slug', 'path', 'isEditable' ) }
+						{ ...pick( this.props, 'path', 'isEditable' ) }
 						onEscEnter={ this.closePopover }
 						instanceName="post-popover"
 					/>
 					{ this.renderCopyButton() }
 				</Popover>
 				<Tooltip
-					context={ this.refs && this.refs.popoverButton }
+					context={ this.permalinkToggleReference.current }
 					isVisible={ this.state.tooltip }
 					position="bottom"
 				>
@@ -139,6 +148,13 @@ var EditorPermalink = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = EditorPermalink;
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const postId = getEditorPostId( state );
+
+	return {
+		slug: getEditedPostSlug( state, siteId, postId ),
+	};
+} )( localize( EditorPermalink ) );

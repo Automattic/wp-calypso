@@ -1,54 +1,55 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	some = require( 'lodash/collection/some' ),
-	where = require( 'lodash/collection/where' );
+
+import { filter, some } from 'lodash';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var ButtonsLabelEditor = require( './label-editor' ),
-	ButtonsPreviewButtons = require( './preview-buttons' ),
-	ButtonsPreviewAction = require( './preview-action' ),
-	ButtonsTray = require( './tray'),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	analytics = require( 'analytics' );
+import ButtonsLabelEditor from './label-editor';
+import ButtonsPreviewButtons from './preview-buttons';
+import ButtonsPreviewAction from './preview-action';
+import ButtonsTray from './tray';
+import { decodeEntities } from 'lib/formatting';
+import analytics from 'lib/analytics';
 
-module.exports = React.createClass( {
-	displayName: 'SharingButtonsPreview',
+class SharingButtonsPreview extends React.Component {
+	static displayName = 'SharingButtonsPreview';
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		style: React.PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
-		label: React.PropTypes.string,
-		buttons: React.PropTypes.array,
-		showLike: React.PropTypes.bool,
-		showReblog: React.PropTypes.bool,
-		onLabelChange: React.PropTypes.func,
-		onButtonsChange: React.PropTypes.func
-	},
+	static propTypes = {
+		isPrivateSite: PropTypes.bool,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		label: PropTypes.string,
+		buttons: PropTypes.array,
+		showLike: PropTypes.bool,
+		showReblog: PropTypes.bool,
+		onLabelChange: PropTypes.func,
+		onButtonsChange: PropTypes.func,
+	};
 
-	getInitialState: function() {
-		return {
-			isEditingLabel: false,
-			buttonsTrayVisibility: null
-		};
-	},
+	static defaultProps = {
+		style: 'icon',
+		buttons: [],
+		showLike: true,
+		showReblog: true,
+		onLabelChange: function() {},
+		onButtonsChange: function() {},
+	};
 
-	getDefaultProps: function() {
-		return {
-			style: 'icon',
-			buttons: [],
-			showLike: true,
-			showReblog: true,
-			onLabelChange: function() {},
-			onButtonsChange: function() {}
-		};
-	},
+	state = {
+		isEditingLabel: false,
+		buttonsTrayVisibility: null,
+	};
 
-	toggleEditLabel: function() {
-		var isEditingLabel = ! this.state.isEditingLabel;
+	toggleEditLabel = () => {
+		const isEditingLabel = ! this.state.isEditingLabel;
 		this.setState( { isEditingLabel: isEditingLabel } );
 
 		if ( isEditingLabel ) {
@@ -57,18 +58,18 @@ module.exports = React.createClass( {
 		} else {
 			analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Text Done Button' );
 		}
-	},
+	};
 
-	showButtonsTray: function( visibility ) {
+	showButtonsTray = visibility => {
 		this.setState( {
 			isEditingLabel: false,
-			buttonsTrayVisibility: visibility
+			buttonsTrayVisibility: visibility,
 		} );
 
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Links', visibility );
-	},
+	};
 
-	hideButtonsTray: function() {
+	hideButtonsTray = () => {
 		if ( ! this.state.buttonsTrayVisibility ) {
 			return;
 		}
@@ -77,69 +78,86 @@ module.exports = React.createClass( {
 		this.setState( { buttonsTrayVisibility: null } );
 
 		analytics.ga.recordEvent( 'Sharing', 'Clicked Edit Buttons Done Button' );
-	},
+	};
 
-	getButtonsTrayToggleButtonLabel: function( visibility, enabledButtonsExist ) {
+	getButtonsTrayToggleButtonLabel = ( visibility, enabledButtonsExist ) => {
 		if ( 'visible' === visibility ) {
 			if ( enabledButtonsExist ) {
-				return this.translate( 'Edit sharing buttons', { context: 'Sharing: Buttons edit label' } );
-			} else {
-				return this.translate( 'Add sharing buttons', { context: 'Sharing: Buttons edit label' } );
+				return this.props.translate( 'Edit sharing buttons', {
+					context: 'Sharing: Buttons edit label',
+				} );
 			}
-		} else {
-			if ( enabledButtonsExist ) {
-				return this.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons edit label' } );
-			} else {
-				return this.translate( 'Add “More” button', { context: 'Sharing: Buttons edit label' } );
-			}
+			return this.props.translate( 'Add sharing buttons', {
+				context: 'Sharing: Buttons edit label',
+			} );
+		} else if ( enabledButtonsExist ) {
+			return this.props.translate( 'Edit “More” buttons', {
+				context: 'Sharing: Buttons edit label',
+			} );
 		}
-	},
 
-	getButtonsTrayToggleButtonElement: function( visibility ) {
-		var enabledButtonsExist = some( this.props.buttons, {
-			'visibility': visibility,
-			enabled: true
+		return this.props.translate( 'Add “More” button', {
+			context: 'Sharing: Buttons edit label',
+		} );
+	};
+
+	getButtonsTrayToggleButtonElement = visibility => {
+		const enabledButtonsExist = some( this.props.buttons, {
+			visibility: visibility,
+			enabled: true,
 		} );
 
 		return (
 			<ButtonsPreviewAction
 				active={ null === this.state.buttonsTrayVisibility }
 				onClick={ this.showButtonsTray.bind( null, visibility ) }
-				icon={ enabledButtonsExist ? 'edit' : 'plus' }
-				position="bottom-left">
-					{ this.getButtonsTrayToggleButtonLabel( visibility, enabledButtonsExist ) }
+				icon={ enabledButtonsExist ? 'pencil' : 'plus' }
+				position="bottom-left"
+			>
+				{ this.getButtonsTrayToggleButtonLabel( visibility, enabledButtonsExist ) }
 			</ButtonsPreviewAction>
 		);
-	},
+	};
 
-	getReblogButtonElement: function() {
+	// 16 is used in the preview to match the buttons on the frontend of the website.
+	getReblogButtonElement = () => {
 		if ( this.props.showReblog ) {
 			return (
 				<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
-					<span className="noticon noticon-reblog" />{ this.translate( 'Reblog' ) }
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+					{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
+					<Gridicon icon="reblog" size={ 16 } />
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+					{ this.props.translate( 'Reblog' ) }
 				</a>
 			);
 		}
-	},
+	};
 
-	getLikeButtonElement: function() {
+	getLikeButtonElement = () => {
 		if ( this.props.showLike ) {
 			return (
 				<span>
 					<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
-						<span className="noticon noticon-like" />{ this.translate( 'Like' ) }
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
+						<Gridicon icon="star" size={ 16 } />
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						{ this.props.translate( 'Like' ) }
 					</a>
 					<div className="sharing-buttons-preview__fake-user">
 						<img src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60" />
 					</div>
-					<div className="sharing-buttons-preview__fake-like">{ this.translate( 'One blogger likes this.' ) }</div>
+					<div className="sharing-buttons-preview__fake-like">
+						{ this.props.translate( 'One blogger likes this.' ) }
+					</div>
 				</span>
 			);
 		}
-	},
+	};
 
-	getPreviewButtonsElement: function() {
-		var enabledButtons = where( this.props.buttons, { enabled: true } );
+	getPreviewButtonsElement = () => {
+		const enabledButtons = filter( this.props.buttons, { enabled: true } );
 
 		if ( enabledButtons.length ) {
 			return (
@@ -147,28 +165,42 @@ module.exports = React.createClass( {
 					buttons={ enabledButtons }
 					visibility="visible"
 					style={ this.props.style }
-					showMore={ 'hidden' === this.state.buttonsTrayVisibility || some( this.props.buttons, { visibility: 'hidden' } ) }
-					forceMorePreviewVisible={ 'hidden' === this.state.buttonsTrayVisibility } />
+					showMore={
+						'hidden' === this.state.buttonsTrayVisibility ||
+						some( this.props.buttons, { visibility: 'hidden' } )
+					}
+					forceMorePreviewVisible={ 'hidden' === this.state.buttonsTrayVisibility }
+				/>
 			);
 		}
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="sharing-buttons-preview">
-				<ButtonsPreviewAction active={ ! this.state.isEditingLabel } onClick={ this.toggleEditLabel } icon="edit" position="top-left">
-					{ this.translate( 'Edit label text', { context: 'Sharing: Buttons edit label' } ) }
+				<ButtonsPreviewAction
+					active={ ! this.state.isEditingLabel }
+					onClick={ this.toggleEditLabel }
+					icon="pencil"
+					position="top-left"
+				>
+					{ this.props.translate( 'Edit label text', {
+						context: 'Sharing: Buttons edit label',
+					} ) }
 				</ButtonsPreviewAction>
 				<ButtonsLabelEditor
 					active={ this.state.isEditingLabel }
 					value={ this.props.label }
 					onChange={ this.props.onLabelChange }
 					onClose={ this.toggleEditLabel }
-					hasEnabledButtons={ some( this.props.buttons, { enabled: true } ) } />
+					hasEnabledButtons={ some( this.props.buttons, { enabled: true } ) }
+				/>
 
-				<h2 className="sharing-buttons-preview__heading">{ this.translate( 'Preview' ) }</h2>
+				<h2 className="sharing-buttons-preview__heading">{ this.props.translate( 'Preview' ) }</h2>
 				<div className="sharing-buttons-preview__display">
-					<span className="sharing-buttons-preview__label">{ decodeEntities( this.props.label ) }</span>
+					<span className="sharing-buttons-preview__label">
+						{ decodeEntities( this.props.label ) }
+					</span>
 					<div className="sharing-buttons-preview__buttons">
 						{ this.getPreviewButtonsElement() }
 					</div>
@@ -191,8 +223,11 @@ module.exports = React.createClass( {
 					onButtonsChange={ this.props.onButtonsChange }
 					onClose={ this.hideButtonsTray }
 					active={ null !== this.state.buttonsTrayVisibility }
-					limited={ this.props.site.is_private } />
+					limited={ this.props.isPrivateSite }
+				/>
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( SharingButtonsPreview );

@@ -1,25 +1,37 @@
-global.window = { screenTop: 0, screenLeft: 0, innerWidth: 1280, innerHeight: 720 };
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect;
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var PopupMonitor = require( '../' );
+import PopupMonitor from '../';
 
-describe( 'PopupMonitor', function() {
-	var popupMonitor;
+describe( 'PopupMonitor', () => {
+	let popupMonitor;
 
-	beforeEach( function() {
+	beforeAll( () => {
+		Object.assign( global.window, {
+			screenTop: 0,
+			screenLeft: 0,
+			innerWidth: 1280,
+			innerHeight: 720,
+		} );
+	} );
+
+	beforeEach( () => {
 		popupMonitor = new PopupMonitor();
 	} );
 
-	describe( '#getScreenCenterSpecs()', function() {
-		it( 'should generate a popup specification string given the desired width and height', function() {
-			var specs = popupMonitor.getScreenCenterSpecs( 650, 500 );
+	describe( '#getScreenCenterSpecs()', () => {
+		test( 'should generate a popup specification string given the desired width and height', () => {
+			const specs = popupMonitor.getScreenCenterSpecs( 650, 500 );
 
 			expect( specs ).to.equal( 'width=650,height=500,top=110,left=315' );
 		} );

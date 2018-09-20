@@ -1,2 +1,8 @@
-server/devdocs/search-index.js
-client/components/tinymce/plugins/wptextpattern/plugin.js
+.vscode
+/assets/
+/bin/
+/build/
+/docs/
+/public/
+!.eslintrc.js
+/server/devdocs/search-index.js

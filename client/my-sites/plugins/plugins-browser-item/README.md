@@ -6,9 +6,9 @@ This component is used to display small infobox with the data of a plugin.
 #### How to use:
 
 ```js
-var PluginListItem = require( 'my-sites/plugins-browser-item' );
+import PluginListItem from 'my-sites/plugins-browser-item';
 
-render: function() {
+render() {
 	return (
 		<div>
 			<PluginListItem

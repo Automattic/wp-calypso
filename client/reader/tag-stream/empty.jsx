@@ -1,38 +1,79 @@
-var React = require( 'react' );
+/** @format */
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-var EmptyContent = require( 'components/empty-content' ),
-	ExternalLink = require( 'components/external-link' ),
-	stats = require( 'reader/stats' );
+/**
+ * Internal dependencies
+ */
+import EmptyContent from 'components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
-var TagEmptyContent = React.createClass( {
-	shouldComponentUpdate: function() {
+class TagEmptyContent extends React.Component {
+	static propTypes = {
+		decodedTagSlug: PropTypes.string,
+	};
+
+	shouldComponentUpdate() {
 		return false;
-	},
-
-	recordAction: function() {
-		stats.recordAction( 'clicked_tags_on_empty' );
-		stats.recordGaEvent( 'Clicked Tags on EmptyContent' );
-	},
-
-	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
-	},
-
-	render: function() {
-		var action = ( <a
-			className="empty-content__action button"
-			onClick={ this.recordSecondaryAction }
-			href="/discover">{ this.translate( 'Explore Discover' ) }</a> );
-
-		return ( <EmptyContent
-			title={ this.translate( 'No recent posts…' ) }
-			line={ this.translate( 'No posts have recently been tagged with this tag for your language.' ) }
-			action={ action }
-			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-			illustrationWidth={ 500 }
-			/> );
 	}
-} );
 
-module.exports = TagEmptyContent;
+	recordAction = () => {
+		recordAction( 'clicked_following_on_empty' );
+		recordGaEvent( 'Clicked Following on EmptyContent' );
+		recordTrack( 'calypso_reader_following_on_empty_tag_stream_clicked' );
+	};
+
+	recordSecondaryAction = () => {
+		recordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordTrack( 'calypso_reader_discover_on_empty_tag_stream_clicked' );
+	};
+
+	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		const action = (
+			<a className="empty-content__action button is-primary" onClick={ this.recordAction } href="/">
+				{ this.props.translate( 'Back to Following' ) }
+			</a>
+		);
+
+		const secondaryAction = isDiscoverEnabled() ? (
+			<a
+				className="empty-content__action button"
+				onClick={ this.recordSecondaryAction }
+				href="/discover"
+			>
+				{ this.props.translate( 'Explore Discover' ) }
+			</a>
+		) : null;
+
+		const message = this.props.translate(
+			'No posts have recently been tagged with {{tagName /}} for your language.',
+			{
+				components: {
+					tagName: <em>{ this.props.decodedTagSlug }</em>,
+				},
+			}
+		);
+
+		return (
+			<EmptyContent
+				className="tag-stream__empty-content"
+				title={ this.props.translate( 'No recent posts' ) }
+				line={ message }
+				action={ action }
+				secondaryAction={ secondaryAction }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustrationWidth={ 400 }
+			/>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+}
+
+export default localize( TagEmptyContent );

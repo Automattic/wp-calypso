@@ -1,0 +1,15 @@
+{
+  "extends": [
+	"config:base",
+	"default:pinDigestsDisabled"
+  ],
+  "statusCheckVerify": true,
+  "ignoreDeps": [
+    "jquery"
+  ],
+  "labels": [
+	"Framework",
+	"[Type] Task",
+	"[Status] Needs Review"
+  ]
+}

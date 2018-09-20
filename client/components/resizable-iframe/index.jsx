@@ -1,8 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
+import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
 import React from 'react';
 import debugFactory from 'debug';
+import { omit } from 'lodash';
 
 /**
  * Globals
@@ -10,56 +16,46 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:resizable-iframe' ),
 	noop = () => {};
 
-export default React.createClass( {
-	displayName: 'ResizableIframe',
+export default class extends React.Component {
+	static displayName = 'ResizableIframe';
 
-	propTypes: {
-		src: React.PropTypes.string,
-		width: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.number
-		] ),
-		height: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.number
-		] ),
-		onLoad: React.PropTypes.func,
-		onResize: React.PropTypes.func
-	},
+	static propTypes = {
+		src: PropTypes.string,
+		width: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		height: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		onLoad: PropTypes.func,
+		onResize: PropTypes.func,
+	};
 
-	getInitialState: function() {
-		return { width: 0, height: 0 };
-	},
+	static defaultProps = {
+		onLoad: noop,
+		onResize: noop,
+	};
 
-	getDefaultProps: function() {
-		return {
-			onLoad: noop,
-			onResize: noop
-		};
-	},
+	state = { width: 0, height: 0 };
 
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		window.addEventListener( 'message', this.checkMessageForResize, false );
 		this.maybeConnect();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.maybeConnect();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		window.removeEventListener( 'message', this.checkMessageForResize );
-	},
+	}
 
-	getFrameBody: function() {
-		return React.findDOMNode( this.refs.iframe ).contentDocument.body;
-	},
+	getFrameBody = () => {
+		return ReactDom.findDOMNode( this.refs.iframe ).contentDocument.body;
+	};
 
-	maybeConnect: function() {
+	maybeConnect = () => {
 		if ( ! this.isFrameAccessible() ) {
 			return;
 		}
@@ -69,7 +65,7 @@ export default React.createClass( {
 			return;
 		}
 
-		let script = document.createElement( 'script' );
+		const script = document.createElement( 'script' );
 		script.innerHTML = `
 			( function() {
 				var observer;
@@ -96,6 +92,24 @@ export default React.createClass( {
 					subtree: true
 				} );
 
+				window.addEventListener( 'load', sendResize, true );
+
+				// Hack: Remove viewport unit styles, as these are relative
+				// the iframe root and interfere with our mechanism for
+				// determining the unconstrained page bounds.
+				function removeViewportStyles( ruleOrNode ) {
+					[ 'width', 'height', 'minHeight', 'maxHeight' ].forEach( function( style ) {
+						if ( /^\\d+(vmin|vmax|vh|vw)$/.test( ruleOrNode.style[ style ] ) ) {
+							ruleOrNode.style[ style ] = '';
+						}
+					} );
+				}
+
+				Array.prototype.forEach.call( document.querySelectorAll( '[style]' ), removeViewportStyles );
+				Array.prototype.forEach.call( document.styleSheets, function( stylesheet ) {
+					Array.prototype.forEach.call( stylesheet.cssRules || stylesheet.rules, removeViewportStyles );
+				} );
+
 				document.body.style.position = 'absolute';
 				document.body.setAttribute( 'data-resizable-iframe-connected', '' );
 
@@ -103,22 +117,22 @@ export default React.createClass( {
 			} )();
 		`;
 		body.appendChild( script );
-	},
+	};
 
-	isFrameAccessible: function() {
+	isFrameAccessible = () => {
 		try {
 			return !! this.getFrameBody();
 		} catch ( e ) {
 			return false;
 		}
-	},
+	};
 
-	checkMessageForResize: function( event ) {
-		const iframe = React.findDOMNode( this.refs.iframe );
+	checkMessageForResize = event => {
+		const iframe = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Attempt to parse the message data as JSON if passed as string
 		let data = event.data || {};
-		if ( 'string' === typeof data ) {
+		if ( typeof data === 'string' ) {
 			try {
 				data = JSON.parse( data );
 			} catch ( e ) {} // eslint-disable-line no-empty
@@ -140,21 +154,23 @@ export default React.createClass( {
 			this.setState( { width, height } );
 			this.props.onResize();
 		}
-	},
+	};
 
-	onLoad: function( event ) {
+	onLoad = event => {
 		this.maybeConnect();
 		this.props.onLoad( event );
-	},
+	};
 
-	render: function() {
+	render() {
+		const omitProps = [ 'onResize' ];
 		return (
 			<iframe
 				ref="iframe"
-				{ ...this.props }
+				{ ...omit( this.props, omitProps ) }
 				onLoad={ this.onLoad }
 				width={ this.props.width || this.state.width }
-				height={ this.props.height || this.state.height } />
+				height={ this.props.height || this.state.height }
+			/>
 		);
 	}
-} );
+}

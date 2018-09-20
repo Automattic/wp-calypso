@@ -1,0 +1,47 @@
+.upload-drop-zone__dropzone {
+	position: relative;
+	background-color: $gray-light;
+	border: 2px dashed $gray;
+	transition: all 200ms ease-out, color 100ms ease-out;
+	cursor: pointer;
+
+	svg * {
+		transition: color 100ms ease-out;
+	}
+
+	.file-picker {
+		color: $gray-dark;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		height: 180px;
+	}
+
+	&:hover {
+		border-color: $gray-dark;
+		transform: translate3d( 0, -1px, 0 );
+		box-shadow: 0 2px 4px $gray-lighten-20;
+
+		.upload-drop-zone__icon {
+			color: $gray-dark;
+		}
+	}
+}
+
+.upload-drop-zone__icon {
+	color: $gray;
+}
+
+.upload-drop-zone__instructions {
+	font-style: italic;
+	font-size: 12px;
+}
+
+
+.upload-drop-zone {
+	&.is-disabled {
+		opacity: 0.2;
+		pointer-events: none;
+	}
+}

@@ -1,28 +1,27 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
 
+import React from 'react';
 /**
  * Internal dependencies
  */
-var Count = require( 'components/count' );
+import Count from 'components/count';
 
-module.exports = React.createClass( {
-	displayName: 'Count',
+const count = () => {
+	/* Because Count is wrapped in Localize we have to store the example in a string */
+};
 
-	mixins: [ React.addons.PureRenderMixin ],
+count.defaultProps = {
+	exampleCode:
+		'<div>' +
+		'\n\t<Count count={ 65365 } />' +
+		'\n\t<Count primary count={ 65366 } />' +
+		'\n</div>',
+};
 
-	render: function() {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/count">Count</a>
-				</h2>
-				<div>
-					<Count count={ 65365 } />
-				</div>
-			</div>
-		);
-	}
-} );
+count.displayName = 'Count';
+
+export default count;

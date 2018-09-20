@@ -1,32 +1,35 @@
+/** @format */
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:desktop' ),
-	page = require( 'page' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:desktop' );
 
 /**
  * Internal dependencies
  */
-var siteStatsStickyTabStore = require( 'lib/site-stats-sticky-tab/store' ),
-	paths = require( 'lib/paths' ),
-	user = require( 'lib/user' )(),
-	sites = require( 'lib/sites-list' )(),
-	ipc = require( 'ipc' ),          // From Electron
-	store = require( 'store' ),
-	oAuthToken = require( 'lib/oauth-token' ),
-	userUtilities = require( 'lib/user/utils' ),
-	location = require( './page-notifier' );
+import { newPost } from 'lib/paths';
+import userFactory from 'lib/user';
+const user = userFactory();
+import { ipcRenderer as ipc } from 'electron'; // From Electron
+import * as oAuthToken from 'lib/oauth-token';
+import userUtilities from 'lib/user/utils';
+import { getStatsPathForTab } from 'lib/route';
+import { getReduxStore } from 'lib/redux-bridge';
+import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
+import isNotificationsOpen from 'state/selectors/is-notifications-open';
+import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
 
 /**
  * Module variables
  */
-var widgetDomain = 'https://widgets.wp.com';
 
-var Desktop = {
+const Desktop = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 */
-	init: function() {
+	init: async function() {
 		debug( 'Registering IPC listeners' );
 
 		// Register IPC listeners
@@ -36,35 +39,48 @@ var Desktop = {
 		ipc.on( 'new-post', this.onNewPost.bind( this ) );
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
-		ipc.on( 'cookie-auth-complete', this.onCookieAuthComplete.bind( this ) );
+		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 
-		window.addEventListener( 'message', this.receiveMessage.bind( this ) );
+		this.store = await getReduxStore();
 
 		// Send some events immediatley - this sets the app state
-		this.sendNotificationCount( store.get( 'wpnotes_unseen_count' ) );
+		this.notificationStatus();
 		this.sendUserLoginStatus();
-
-		location( function( context ) {
-			ipc.send( 'render', context );
-		} );
 	},
 
-	receiveMessage: function( event ) {
-		var data;
+	selectedSite: null,
 
-		if ( event.origin !== widgetDomain ) {
-			return;
+	navigate: function( to ) {
+		if ( isNotificationsOpen( this.store.getState() ) ) {
+			this.toggleNotificationsPanel();
 		}
 
-		data = JSON.parse( event.data );
+		this.store.dispatch( navigate( to ) );
+	},
 
-		if ( data.type === 'notesIframeMessage' ) {
-			if ( data.action === 'render' ) {
-				this.sendNotificationCount( data.num_new );
-			} else if ( data.action === 'renderAllSeen' ) {
-				this.sendNotificationCount( 0 );
+	toggleNotificationsPanel: function() {
+		this.store.dispatch( toggleNotificationsPanel() );
+	},
+
+	setSelectedSite: function( site ) {
+		this.selectedSite = site;
+	},
+
+	notificationStatus: function() {
+		let previousHasUnseen = hasUnseenNotifications( this.store.getState() );
+
+		// Send initial status to main process
+		ipc.send( 'unread-notices-count', previousHasUnseen );
+
+		this.store.subscribe( () => {
+			const hasUnseen = hasUnseenNotifications( this.store.getState() );
+
+			if ( hasUnseen !== previousHasUnseen ) {
+				ipc.send( 'unread-notices-count', hasUnseen );
+
+				previousHasUnseen = hasUnseen;
 			}
-		}
+		} );
 	},
 
 	sendUserLoginStatus: function() {
@@ -80,26 +96,10 @@ var Desktop = {
 		ipc.send( 'user-auth', user, oAuthToken.getToken() );
 	},
 
-	sendNotificationCount: function( count ) {
-		debug( 'Sending notification count ' + store.get( 'wpnotes_unseen_count' ) );
-
-		ipc.send( 'unread-notices-count', count );
-	},
-
-	clearNotificationBar: function() {
-		// todo find a better way. seems to be react component state based
-		var bar = document.querySelector( '#wpnt-notes-panel2' );
-
-		if ( bar.style.display === 'block' ) {
-			this.onToggleNotifications();
-		}
-	},
-
 	onToggleNotifications: function() {
-		// todo find a better way of doing this - masterbar seems to use state to toggle this
 		debug( 'Toggle notifications' );
 
-		document.querySelector( '.notifications a' ).click();
+		this.toggleNotificationsPanel();
 	},
 
 	onSignout: function() {
@@ -110,38 +110,39 @@ var Desktop = {
 
 	onShowMySites: function() {
 		debug( 'Showing my sites' );
+		const site = this.selectedSite;
+		const siteSlug = site ? site.slug : null;
 
-		this.clearNotificationBar();
-		page( siteStatsStickyTabStore.getUrl() );
+		this.navigate( getStatsPathForTab( 'day', siteSlug ) );
 	},
 
 	onShowReader: function() {
 		debug( 'Showing reader' );
 
-		this.clearNotificationBar();
-		page( '/' );
+		this.navigate( '/' );
 	},
 
 	onShowProfile: function() {
 		debug( 'Showing my profile' );
 
-		this.clearNotificationBar();
-		page( '/me' );
+		this.navigate( '/me' );
 	},
 
 	onNewPost: function() {
 		debug( 'New post' );
 
-		this.clearNotificationBar();
-		page( paths.newPost( sites.getSelectedSite() ) );
+		this.navigate( newPost( this.selectedSite ) );
 	},
 
-	// now that our browser session has a valid wordpress.com cookie, let's force
-	// reload the notifications iframe so wpcom-proxy-request API calls work
-	onCookieAuthComplete: function() {
-		var iframe = document.querySelector( '#wpnt-notes-iframe2' );
-		iframe.src = iframe.src;
-	}
+	onShowHelp: function() {
+		debug( 'Showing help' );
+
+		this.navigate( '/help' );
+	},
+
+	print: function( title, html ) {
+		ipc.send( 'print', title, html );
+	},
 };
 
-module.exports = Desktop;
+export default Desktop;

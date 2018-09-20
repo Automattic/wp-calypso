@@ -1,77 +1,117 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:sharing' ),
-	find = require( 'lodash/collection/find' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { find, get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Main = require( 'components/main' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	sites = require( 'lib/sites-list' )();
+import canCurrentUser from 'state/selectors/can-current-user';
 
-module.exports = React.createClass( {
-	displayName: 'Sharing',
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import DocumentHead from 'components/data/document-head';
+import { getSiteSlug, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import Main from 'components/main';
+import NavItem from 'components/section-nav/item';
+import NavTabs from 'components/section-nav/tabs';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import SectionNav from 'components/section-nav';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
-	componentDidMount: function() {
-		debug( 'Sharing React component mounted.' );
-	},
+export const Sharing = ( {
+	contentComponent,
+	path,
+	showButtons,
+	showConnections,
+	siteId,
+	siteSlug,
+	translate,
+} ) => {
+	const pathSuffix = siteSlug ? '/' + siteSlug : '';
+	const filters = [];
 
-	getSelectedText: function() {
-		var selected = find( this.getFilters(), { path: this.props.path } );
-		if ( selected ) {
-			return selected.title;
-		}
+	// Include Connections link if all sites are selected. Otherwise,
+	// verify that the required Jetpack module is active
+	if ( showConnections ) {
+		filters.push( {
+			id: 'sharing-connections',
+			route: '/sharing' + pathSuffix,
+			title: translate( 'Connections' ),
+		} );
+	}
 
-		return '';
-	},
+	// Include Sharing Buttons link if a site is selected and the
+	// required Jetpack module is active
+	if ( showButtons ) {
+		filters.push( {
+			id: 'sharing-buttons',
+			route: '/sharing/buttons' + pathSuffix,
+			title: translate( 'Sharing Buttons' ),
+		} );
+	}
 
-	getFilters: function() {
-		var site = sites.getSelectedSite(),
-			pathSuffix = sites.selected ? '/' + sites.selected : '',
-			filters = [];
+	const selected = find( filters, { route: path } );
 
-		// Include Connections link if all sites are selected. Otherwise,
-		// verify that the required Jetpack module is active
-		if ( ! site || ! site.jetpack || site.isModuleActive( 'publicize' ) ) {
-			filters.push( { title: this.translate( 'Connections' ), path: '/sharing' + pathSuffix, id: 'sharing-connections' } );
-		}
-
-		// Include Sharing Buttons link if a site is selected and the
-		// required Jetpack module is active
-		if ( site && site.user_can_manage && ( ! site.jetpack || ( site.isModuleActive( 'sharedaddy' ) && site.versionCompare( '3.4-dev', '>=' ) ) ) ) {
-			filters.push( { title: this.translate( 'Sharing Buttons' ), path: '/sharing/buttons' + pathSuffix, id: 'sharing-buttons' } );
-		}
-
-		return filters;
-	},
-
-	render: function() {
-		return (
-			<Main className="sharing">
-				<SidebarNavigation />
-				<SectionNav selectedText={ this.getSelectedText() }>
+	return (
+		<Main className="sharing">
+			<DocumentHead title={ translate( 'Sharing' ) } />
+			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
+			<SidebarNavigation />
+			{ filters.length > 0 && (
+				<SectionNav selectedText={ get( selected, 'title', '' ) }>
 					<NavTabs>
-						{ this.getFilters().map( function( filterItem ) {
-							return (
-								<NavItem
-									key={ filterItem.id }
-									path={ filterItem.path }
-									selected={ filterItem.path === this.props.path }
-								>
-									{ filterItem.title }
-								</NavItem>
-							);
-						}, this ) }
+						{ filters.map( ( { id, route, title } ) => (
+							<NavItem key={ id } path={ route } selected={ path === route }>
+								{ title }
+							</NavItem>
+						) ) }
 					</NavTabs>
 				</SectionNav>
-				{ this.props.contentComponent }
-			</Main>
-		);
-	}
-} );
+			) }
+			<UpgradeNudge
+				event="sharing_no_ads"
+				feature={ FEATURE_NO_ADS }
+				message={ translate( 'Prevent ads from showing on your site.' ) }
+				title={ translate( 'No Ads with WordPress.com Premium' ) }
+			/>
+			{ contentComponent }
+		</Main>
+	);
+};
+
+Sharing.propTypes = {
+	canManageOptions: PropTypes.bool,
+	contentComponent: PropTypes.node,
+	path: PropTypes.string,
+	showButtons: PropTypes.bool,
+	showConnections: PropTypes.bool,
+	siteId: PropTypes.number,
+	siteSlug: PropTypes.string,
+	translate: PropTypes.func,
+};
+
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
+	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const hasSharedaddy =
+		isJetpackModuleActive( state, siteId, 'sharedaddy' ) &&
+		isJetpackMinimumVersion( state, siteId, '3.4-dev' );
+
+	return {
+		showButtons: siteId && canManageOptions && ( ! isJetpack || hasSharedaddy ),
+		showConnections: ! siteId || ! isJetpack || isJetpackModuleActive( state, siteId, 'publicize' ),
+		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
+	};
+} )( localize( Sharing ) );

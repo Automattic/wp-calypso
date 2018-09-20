@@ -1,18 +1,21 @@
-/**
- * External Dependencies
- */
-var debug = require( 'debug' )( 'calypso:notices' );
+/** @format */
 
-var Emitter = require( 'lib/mixins/emitter' );
+/**
+ * External dependencies
+ */
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:notices' );
+import Emitter from 'lib/mixins/emitter';
 
 debug( 'initializing notices' );
 
-var list = { containerNames: {} };
+const list = { containerNames: {} };
 Emitter( list );
-var delayedNotices = [];
+let delayedNotices = [];
 
-module.exports = {
-
+const notices = {
 	/**
 	 * Creates a new notice
 	 * @private
@@ -21,7 +24,7 @@ module.exports = {
 	 */
 	new: function( text, options, status ) {
 		// Set container
-		var container = options.overlay ? 'overlay-notices' : 'notices';
+		const container = options.overlay ? 'overlay-notices' : 'notices';
 
 		// keep track of container
 		list.containerNames[ container ] = container;
@@ -37,12 +40,17 @@ module.exports = {
 			container: container,
 			button: options.button,
 			href: options.href,
-			onClick: options.onClick,
+			onClick: event => {
+				if ( typeof options.onClick === 'function' ) {
+					const closeFn = notices.removeNotice.bind( notices, noticeObject );
+					return options.onClick( event, closeFn );
+				}
+			},
 			onRemoveCallback: options.onRemoveCallback || function() {},
 			arrow: options.arrow,
 			isCompact: options.isCompact,
 			showDismiss: options.showDismiss,
-			persistent: options.persistent
+			persistent: options.persistent,
 		};
 
 		// if requested, delay the notice until the next page load
@@ -114,7 +122,7 @@ module.exports = {
 		if ( ! notice.container ) {
 			return;
 		}
-		var containerList = list[ notice.container ],
+		let containerList = list[ notice.container ],
 			index = containerList.indexOf( notice );
 
 		if ( -1 === index ) {
@@ -130,7 +138,8 @@ module.exports = {
 	 */
 	clearNoticesOnNavigation: function( context, next ) {
 		debug( 'clearNoticesOnNavigation' );
-		var length, container,
+		let length,
+			container,
 			changed = false,
 			isNoticePersistent = function( notice ) {
 				return notice.persistent;
@@ -154,7 +163,7 @@ module.exports = {
 		}
 
 		if ( changed ) {
-			list.emit( 'changed' );
+			list.emit( 'change' );
 		}
 		next();
 	},
@@ -186,6 +195,7 @@ module.exports = {
 		if ( noticeObject.success ) {
 			return 'is-success';
 		}
-	}
-
+	},
 };
+
+export default notices;

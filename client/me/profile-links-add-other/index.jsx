@@ -1,36 +1,32 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormButton = require( 'components/forms/form-button' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	SimpleNotice = require( 'notices/simple-notice' );
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
+import { addUserProfileLinks } from 'state/profile-links/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
-
-	displayName: 'ProfileLinksAddOther',
-
-	mixins: [ React.addons.LinkedStateMixin, eventRecorder ],
-
-	getInitialState: function() {
-		return {
-			title: '',
-			value: '',
-			lastError: false
-		};
-	},
+class ProfileLinksAddOther extends React.Component {
+	state = {
+		title: '',
+		value: '',
+	};
 
 	// As the user types, the component state changes thanks to the LinkedStateMixin.
 	// This function, called in render, validates their input on each state change
 	// and is used to decide whether or not to enable the Add Site button
-	getFormDisabled: function() {
-		var trimmedValue = this.state.value.trim();
+	getFormDisabled() {
+		const trimmedValue = this.state.value.trim();
 
 		if ( ! this.state.title.trim() || ! trimmedValue ) {
 			return true;
@@ -54,9 +50,32 @@ module.exports = React.createClass( {
 		}
 
 		return false;
-	},
+	}
 
-	onSubmit: function( event ) {
+	recordClickEvent = action => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	};
+
+	getClickHandler = action => {
+		return () => this.recordClickEvent( action );
+	};
+
+	getFocusHandler = action => {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	};
+
+	handleCancelButtonClick = event => {
+		event.preventDefault();
+		this.recordClickEvent( 'Cancel Other Site Button' );
+		this.props.onCancel();
+	};
+
+	handleChange = e => {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
+	};
+
+	onSubmit = event => {
 		event.preventDefault();
 
 		// When the form's submit button is disabled, the form's onSubmit does not
@@ -66,100 +85,64 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		this.props.userProfileLinks.addProfileLinks(
-			[ {
+		this.props.addUserProfileLinks( [
+			{
 				title: this.state.title.trim(),
-				value: this.state.value.trim()
-			} ],
-			this.onSubmitResponse
-		);
-	},
+				value: this.state.value.trim(),
+			},
+		] );
+		this.props.onSuccess();
+	};
 
-	onCancel: function( event ) {
-		event.preventDefault();
-		this.props.onCancel();
-	},
-
-	onSubmitResponse: function( error, data ) {
-		if ( error ) {
-			this.setState(
-				{
-					lastError: this.translate( 'Unable to add link right now. Please try again later.' )
-				}
-			);
-		} else if ( data.duplicate ) {
-			this.setState(
-				{
-					lastError: this.translate( 'That link is already in your profile links. No changes were made.' )
-				}
-			);
-		} else if ( data.malformed ) {
-			this.setState(
-				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' )
-				}
-			);
-		} else {
-			this.props.onSuccess();
-		}
-	},
-
-	clearLastError: function() {
-		this.setState( { lastError: false } );
-	},
-
-	possiblyRenderError: function() {
-		if ( ! this.state.lastError ) {
-			return null;
-		}
-
-		return (
-			<SimpleNotice
-				className="profile-links-add-other__error"
-				isCompact
-				status="is-error"
-				onClick={ this.clearLastError }
-				text={ this.state.lastError }
-			/>
-		);
-	},
-
-	render: function() {
+	render() {
 		return (
 			<form className="profile-links-add-other" onSubmit={ this.onSubmit }>
 				<p>
-					{ this.translate( 'Please enter the URL and description of the site you want to add to your profile.' ) }
+					{ this.props.translate(
+						'Please enter the URL and description of the site you want to add to your profile.'
+					) }
 				</p>
-				{ this.possiblyRenderError() }
 				<FormFieldset>
 					<FormTextInput
 						className="profile-links-add-other__value"
-						valueLink={ this.linkState( 'value' ) }
-						placeholder={ this.translate( 'Enter a URL' ) }
-						onFocus={ this.recordFocusEvent( 'Add Other Site URL Field' ) }
+						placeholder={ this.props.translate( 'Enter a URL' ) }
+						onFocus={ this.getFocusHandler( 'Add Other Site URL Field' ) }
+						name="value"
+						value={ this.state.value }
+						onChange={ this.handleChange }
 					/>
 					<FormTextInput
 						className="profile-links-add-other__title"
-						valueLink={ this.linkState( 'title' ) }
-						placeholder={ this.translate( 'Enter a description' ) }
-						onFocus={ this.recordFocusEvent( 'Add Other Site Description Field' ) }
+						placeholder={ this.props.translate( 'Enter a description' ) }
+						onFocus={ this.getFocusHandler( 'Add Other Site Description Field' ) }
+						name="title"
+						value={ this.state.title }
+						onChange={ this.handleChange }
 					/>
 					<FormButton
 						className="profile-links-add-other__add"
 						disabled={ this.getFormDisabled() }
-						onClick={ this.recordClickEvent( 'Save Other Site Button' ) }
+						onClick={ this.getClickHandler( 'Save Other Site Button' ) }
 					>
-						{ this.translate( 'Add Site' ) }
+						{ this.props.translate( 'Add Site' ) }
 					</FormButton>
 					<FormButton
 						className="profile-links-add-other__cancel"
 						isPrimary={ false }
-						onClick={ this.recordClickEvent( 'Cancel Other Site Button', this.onCancel ) }
+						onClick={ this.handleCancelButtonClick }
 					>
-						{ this.translate( 'Cancel' ) }
+						{ this.props.translate( 'Cancel' ) }
 					</FormButton>
 				</FormFieldset>
 			</form>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{
+		addUserProfileLinks,
+		recordGoogleEvent,
+	}
+)( localize( ProfileLinksAddOther ) );

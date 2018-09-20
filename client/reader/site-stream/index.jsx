@@ -1,98 +1,96 @@
-var React = require( 'react' );
+/** @format */
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import page from 'page';
 
-var FeedHeader = require( 'reader/feed-header' ),
-	EmptyContent = require( './empty' ),
-	FollowingStream = require( 'reader/following-stream' ),
-	SiteStore = require( 'lib/reader-site-store' ),
-	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state,
-	FeedError = require( 'reader/feed-error' );
+/**
+ * Internal dependencies
+ */
+import DocumentHead from 'components/data/document-head';
+import ReaderFeedHeader from 'blocks/reader-feed-header';
+import EmptyContent from './empty';
+import Stream from 'reader/stream';
+import FeedError from 'reader/feed-error';
+import { getSite } from 'state/reader/sites/selectors';
+import { getFeed } from 'state/reader/feeds/selectors';
+import isSiteBlocked from 'state/selectors/is-site-blocked';
+import SiteBlocked from 'reader/site-blocked';
 
-var SiteStream = React.createClass( {
+import QueryReaderSite from 'components/data/query-reader-site';
+import QueryReaderFeed from 'components/data/query-reader-feed';
+import FeedFeatured from './featured';
 
-	getInitialState: function() {
-		return {
-			site: SiteStore.get( this.props.siteId ),
-			title: this.getTitle()
-		};
-	},
+class SiteStream extends React.Component {
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+		className: PropTypes.string,
+		showBack: PropTypes.bool,
+		isDiscoverStream: PropTypes.bool,
+		featuredStreamKey: PropTypes.string,
+	};
 
-	componentDidMount: function() {
-		SiteStore.on( 'change', this.updateState );
-	},
+	static defaultProps = {
+		showBack: true,
+		className: 'is-site-stream',
+		isDiscoverStream: false,
+	};
 
-	componentWillUnmount: function() {
-		SiteStore.off( 'change', this.updateState );
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.siteId !== this.props.siteId ) {
-			this.updateState();
+	goBack = () => {
+		if ( typeof window !== 'undefined' ) {
+			window.history.back();
 		}
-	},
+	};
 
-	updateState: function() {
-		var site = SiteStore.get( this.props.siteId ),
-			newTitle = this.getTitle();
-		if ( newTitle !== this.state.title || site !== this.state.site ) {
-			this.setState( {
-				title: newTitle,
-				site: site
-			} );
-		}
-	},
-
-	getSite: function() {
-		var site = SiteStore.get( this.props.siteId );
-
-		if ( ! site ) {
-			SiteStoreActions.fetch( this.props.siteId );
-		}
-
-		if ( site && site.get( 'state' ) !== SiteState.COMPLETE ) {
-			site = null; // don't accept an incomplete or error site
-		}
-
-		return site;
-	},
-
-	getTitle: function() {
-		var site = this.getSite();
-		if ( ! site ) {
-			return;
-		}
-		if ( site.get( 'state' ) === SiteState.COMPLETE ) {
-			return site.get( 'title' ) || site.get( 'domain' );
-		} else if ( site.get( 'state' ) === SiteState.ERROR ) {
-			return this.translate( 'Error fetching site' );
-		}
-	},
-
-	render: function() {
-		var site = this.state.site,
-			title = this.state.title,
-			emptyContent = ( <EmptyContent /> );
-
-		if ( ! title ) {
-			title = this.translate( 'Loading Site' );
+	render() {
+		const { site, feed, featuredStreamKey, isBlocked, siteId } = this.props;
+		// check for redirect
+		if ( site && site.prefer_feed && site.feed_ID ) {
+			page.replace( '/read/feeds/' + site.feed_ID );
 		}
 
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( title );
+		const emptyContent = <EmptyContent />;
+		const title = site ? site.name : this.props.translate( 'Loading Site' );
+
+		if ( isBlocked ) {
+			return <SiteBlocked title={ title } siteId={ siteId } />;
 		}
 
-		if ( site && site.get( 'state' ) === SiteState.ERROR ) {
-			return <FeedError listName={ title } />;
+		if ( ( site && site.is_error ) || ( feed && feed.is_error ) ) {
+			return <FeedError sidebarTitle={ title } />;
 		}
+
+		const featuredContent = featuredStreamKey && <FeedFeatured streamKey={ featuredStreamKey } />;
 
 		return (
-			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent }>
-				<FeedHeader site={ this.state.site } />
-			</FollowingStream>
-
+			<Stream
+				{ ...this.props }
+				listName={ title }
+				emptyContent={ emptyContent }
+				showPostHeader={ false }
+				showSiteNameOnCards={ false }
+				isDiscoverStream={ this.props.isDiscoverStream }
+				shouldCombineCards={ false }
+			>
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
+				<ReaderFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
+				{ featuredContent }
+				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
+				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
+			</Stream>
 		);
 	}
+}
 
-} );
-
-module.exports = SiteStream;
+export default connect( ( state, ownProps ) => {
+	const site = getSite( state, ownProps.siteId );
+	return {
+		site: site,
+		feed: site && site.feed_ID && getFeed( state, site.feed_ID ),
+		isBlocked: isSiteBlocked( state, ownProps.siteId ),
+	};
+} )( localize( SiteStream ) );

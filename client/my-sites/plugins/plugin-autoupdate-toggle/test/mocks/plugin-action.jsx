@@ -1,10 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
 
-module.exports = React.createClass( {
-	render: function() {
-		return <div className="plugin-action" onClick={ this.props.action }></div>;
+import React from 'react';
+
+export default class extends React.Component {
+	static displayName = 'MockPluginAction';
+
+	render() {
+		return <div className="plugin-action" onClick={ this.props.action } />;
 	}
-} );
+}

@@ -1,6 +1,9 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import { ReduceStore } from 'flux/utils';
 
 /**
@@ -9,7 +12,6 @@ import { ReduceStore } from 'flux/utils';
 import Dispatcher from 'dispatcher';
 
 class PostEditEmbedsStore extends ReduceStore {
-
 	getInitialState() {
 		return {};
 	}
@@ -28,25 +30,27 @@ class PostEditEmbedsStore extends ReduceStore {
 
 			case 'FETCH_EMBED':
 				state = Object.assign( {}, state, {
-					[action.url]: {
-						status: 'LOADING'
-					}
+					[ action.url ]: {
+						status: 'LOADING',
+					},
 				} );
 				break;
 
 			case 'RECEIVE_EMBED':
 				if ( action.error ) {
 					state = Object.assign( {}, state, {
-						[action.url]: {
-							status: 'ERROR'
-						}
+						[ action.url ]: {
+							status: 'ERROR',
+						},
 					} );
-				} else {
+				} else if ( action.data ) {
 					state = Object.assign( {}, state, {
-						[action.url]: {
+						[ action.url ]: {
 							status: 'LOADED',
-							body: action.body
-						}
+							body: action.data.result,
+							scripts: action.data.scripts,
+							styles: action.data.styles,
+						},
 					} );
 				}
 				break;

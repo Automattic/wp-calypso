@@ -1,6 +1,9 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
+
 import { createReducerStore } from 'lib/store';
 import { getInitialStateForSite, reducer } from './reducer';
 

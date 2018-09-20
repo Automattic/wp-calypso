@@ -1,36 +1,46 @@
-var React = require( 'react' );
+/** @format */
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+import React from 'react';
 
-var FollowButtonContainer = require( 'components/follow-button' ),
-	FollowButton = require( 'components/follow-button/button' ),
-	stats = require( 'reader/stats' );
+/**
+ * Internal dependencies
+ */
+import FollowButtonContainer from 'blocks/follow-button';
+import FollowButton from 'blocks/follow-button/button';
+import {
+	recordFollow as recordFollowTracks,
+	recordUnfollow as recordUnfollowTracks,
+} from 'reader/stats';
 
-var ReaderFollowButton = React.createClass( {
+function ReaderFollowButton( props ) {
+	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl } = props;
 
-	mixins: [ React.addons.PureRenderMixin ],
-
-	recordFollowToggle: function( isFollowing ) {
-		stats.recordAction( isFollowing ? 'followed_blog' : 'unfollowed_blog' );
-		stats.recordGaEvent( isFollowing ? 'Clicked Follow Blog' : 'Clicked Unfollow Blog', this.props.location );
-
-		stats[ isFollowing ? 'recordFollow' : 'recordUnfollow' ]();
-
-		if ( this.props.onFollowToggle ) {
-			this.props.onFollowToggle();
+	function recordFollowToggle( isFollowing ) {
+		if ( isFollowing ) {
+			recordFollowTracks( siteUrl, railcar, { follow_source: followSource } );
+		} else {
+			recordUnfollowTracks( siteUrl, railcar, { follow_source: followSource } );
 		}
-	},
 
-	render: function() {
-		if ( this.props.isButtonOnly ) {
-			return (
-				<FollowButton { ...this.props } onFollowToggle={ this.recordFollowToggle } />
-			);
+		if ( onFollowToggle ) {
+			onFollowToggle( isFollowing );
 		}
-
-		return (
-			<FollowButtonContainer { ...this.props } onFollowToggle={ this.recordFollowToggle } />
-		);
 	}
 
-} );
+	if ( isButtonOnly ) {
+		return <FollowButton { ...props } onFollowToggle={ recordFollowToggle } />;
+	}
 
-module.exports = ReaderFollowButton;
+	return <FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />;
+}
+
+ReaderFollowButton.propTypes = {
+	onFollowToggle: PropTypes.func,
+	railcar: PropTypes.object,
+	followSource: PropTypes.string,
+};
+
+export default ReaderFollowButton;

@@ -1,143 +1,159 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:steps:plans' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { isEmpty } from 'lodash';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var productsList = require( 'lib/products-list' )(),
-	analytics = require( 'analytics' ),
-	featuresList = require( 'lib/features-list' )(),
-	plansList = require( 'lib/plans-list' )(),
-	PlanList = require( 'components/plans/plan-list' ),
-	PlansCompare = require( 'components/plans/plans-compare' ),
-	SignupActions = require( 'lib/signup/actions' ),
-	StepWrapper = require( 'signup/step-wrapper' );
+import analytics from 'lib/analytics';
+import { cartItems } from 'lib/cart-values';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { getSiteBySlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import SignupActions from 'lib/signup/actions';
+import StepWrapper from 'signup/step-wrapper';
+import PlansFeaturesMain from 'my-sites/plans-features-main';
+import PlansSkipButton from 'components/plans/plans-skip-button';
+import QueryPlans from 'components/data/query-plans';
 
-module.exports = React.createClass( {
-	displayName: 'PlansStep',
-
-	getInitialState: function() {
-		return { plans: [] };
-	},
-
-	componentDidMount: function() {
-		debug( 'PlansStep component mounted' );
-		plansList.on( 'change', this.updatePlans );
-		productsList.on( 'change', this.updatePlans );
-		featuresList.on( 'change', this.updatePlans );
-
-		this.updatePlans();
-	},
-
-	componentWillUnmount: function() {
-		debug( 'PlansStep component unmounted' );
-		plansList.off( 'change', this.updatePlans );
-		productsList.off( 'change', this.updatePlans );
-		featuresList.off( 'change', this.updatePlans );
-	},
-
-	updatePlans: function() {
-		this.setState( {
-			plans: plansList.get(),
-			features: featuresList.get(),
-			productsList: productsList.get()
+class PlansStep extends Component {
+	componentDidMount() {
+		SignupActions.saveSignupStep( {
+			stepName: this.props.stepName,
 		} );
-	},
+	}
 
-	onSelectPlan: function( cartItem ) {
+	onSelectPlan = cartItem => {
+		const {
+				additionalStepData,
+				stepSectionName,
+				stepName,
+				goToNextStep,
+				translate,
+				signupDependencies: { domainItem },
+			} = this.props,
+			privacyItem =
+				cartItem && domainItem && cartItems.domainPrivacyProtection( { domain: domainItem.meta } );
+
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
-				from_section: this.props.stepSectionName ? this.props.stepSectionName : 'default'
+				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
-				from_section: this.props.stepSectionName ? this.props.stepSectionName : 'default'
+				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		}
 
-		SignupActions.submitSignupStep( {
-			processingMessage: isEmpty( cartItem ) ? this.translate( 'Free plan selected' ) : this.translate( 'Adding your plan' ),
-			stepName: this.props.stepName,
-			stepSectionName: this.props.stepSectionName,
-			cartItem
-		}, [], { cartItem } );
+		const step = {
+			processingMessage: isEmpty( cartItem )
+				? translate( 'Free plan selected' )
+				: translate( 'Adding your plan' ),
+			stepName,
+			stepSectionName,
+			cartItem,
+			privacyItem,
+			...additionalStepData,
+		};
 
-		this.props.goToNextStep();
-	},
+		const providedDependencies = { cartItem, privacyItem };
 
-	comparePlansUrl: function() {
-		return this.props.stepName + '/compare';
-	},
+		SignupActions.submitSignupStep( step, [], providedDependencies );
 
-	handleComparePlansLinkClick: function( linkLocation ) {
-		analytics.tracks.recordEvent( 'calypso_signup_compare_plans_click', { location: linkLocation } );
-	},
+		goToNextStep();
+	};
 
-	plansList: function() {
+	getDomainName() {
+		return (
+			this.props.signupDependencies.domainItem && this.props.signupDependencies.domainItem.meta
+		);
+	}
+
+	handleFreePlanButtonClick = () => {
+		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
+	};
+
+	plansFeaturesList() {
+		const { hideFreePlan, isDomainOnly, selectedSite } = this.props;
+
 		return (
 			<div>
-				<PlanList
-					plans={ this.state.plans }
-					comparePlansUrl={ this.comparePlansUrl() }
+				<QueryPlans />
+
+				<PlansFeaturesMain
+					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
-					onSelectPlan={ this.onSelectPlan } />
-				<a
-					href={ this.comparePlansUrl() }
-					className='plans-step__compare-plans-link'
-					onClick={ this.handleComparePlansLinkClick.bind( null, 'footer' ) }>
-					{ this.translate( 'Compare Plans' ) }
-				</a>
+					onUpgradeClick={ this.onSelectPlan }
+					showFAQ={ false }
+					displayJetpackPlans={ false }
+					domainName={ this.getDomainName() }
+				/>
+				{ /* The `hideFreePlan` means that we want to hide the Free Plan Info Column.
+				   * In most cases, we want to show the 'Start with Free' PlansSkipButton instead --
+				   * unless we've already selected an option that implies a paid plan.
+				   * This is in particular true for domain names. */
+				hideFreePlan &&
+					! isDomainOnly &&
+					! this.getDomainName() && <PlansSkipButton onClick={ this.handleFreePlanButtonClick } /> }
 			</div>
 		);
-	},
+	}
 
-	plansSelection: function() {
-		let headerText = this.translate( 'Pick a plan that\'s right for you.' ),
-			subHeaderText = this.translate(
-				'Not sure which plan to choose? Take a look at our {{a}}plan comparison chart{{/a}}.',
-				{ components: { a: <a
-					href={ this.comparePlansUrl() }
-					onClick={ this.handleComparePlansLinkClick.bind( null, 'header' ) } /> } }
-			);
+	plansFeaturesSelection = () => {
+		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
+
+		const headerText = translate( "Pick a plan that's right for you." );
 
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
 				headerText={ headerText }
-				subHeaderText={ subHeaderText }
 				fallbackHeaderText={ headerText }
-				fallbackSubHeaderText={ subHeaderText }
-				signupProgressStore={ this.props.signupProgressStore }
-				stepContent={ this.plansList() } />
+				signupProgress={ signupProgress }
+				isWideLayout={ true }
+				stepContent={ this.plansFeaturesList() }
+			/>
 		);
-	},
+	};
 
-	plansCompare: function() {
-		return <PlansCompare
-			className="plans-step__compare"
-			onSelectPlan={ this.onSelectPlan }
-			isInSignup={ true }
-			backUrl={ this.props.path.replace( '/compare', '' ) }
-			plans={ plansList }
-			features={ featuresList }
-			productsList={ productsList } />;
-	},
+	render() {
+		const classes = classNames( 'plans plans-step', {
+			'has-no-sidebar': true,
+			'is-wide-layout': true,
+		} );
 
-	render: function() {
-		return <div className="plans plans-step has-no-sidebar">
-			{
-				'compare' === this.props.stepSectionName ?
-				this.plansCompare() :
-				this.plansSelection()
-			}
-		</div>;
+		return <div className={ classes }>{ this.plansFeaturesSelection() }</div>;
 	}
-} );
+}
+
+PlansStep.propTypes = {
+	additionalStepData: PropTypes.object,
+	goToNextStep: PropTypes.func.isRequired,
+	hideFreePlan: PropTypes.bool,
+	selectedSite: PropTypes.object,
+	stepName: PropTypes.string.isRequired,
+	stepSectionName: PropTypes.string,
+	translate: PropTypes.func.isRequired,
+};
+
+export default connect( ( state, { signupDependencies: { siteSlug } } ) => ( {
+	// This step could be used to set up an existing site, in which case
+	// some descendants of this component may display discounted prices if
+	// they apply to the given site.
+	isDomainOnly: isDomainOnlySite( state, getSelectedSiteId( state ) ),
+	selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+} ) )( localize( PlansStep ) );

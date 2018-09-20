@@ -29,7 +29,7 @@ Actions get triggered by views and stores.
 
 `options` is an object that describes any custom query params you want to pass into the `wpcom.js` [usersList method](https://github.com/Automattic/wpcom.js/blob/master/docs/site.md#siteuserslistquery-fn) which passes parameters into the REST API [`/site/$site/users` endpoint](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/users/). The only required attribute is siteId. Current default values include:
 
-```
+```js
 {
 	number: 100,
 	offset: 0
@@ -38,52 +38,39 @@ Actions get triggered by views and stores.
 
 ###Example Component Code
 
-```
+```es6
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var UsersStore = require( 'lib/users/store' );
+import UsersStore from 'lib/users/store';
 
-module.exports = React.createClass( { 
-
-	displayName: 'yourComponent',
+export default class extends React.Component {
+	static displayName = 'yourComponent';
+	state = this.getUsers();
 	
-	componentDidMount: function() {
+	componentDidMount() {
 		UsersStore.on( 'change', this.refreshUsers );
-	},
+	}
 	
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		UsersStore.removeListener( 'change', this.refreshUsers );
-	},
-
-	getInitialState: function() {
-		return this.getUsers();
-	},
+	} 
 	
-	getUsers: function() {
+	getUsers = () => {
 		return {
 			users: UsersStore.fetch( { siteId: this.props.site.ID } )
 		};
 	},
 
-	refreshUsers: function() {
-		this.setState( this.getUsers() );
-	},
+	refreshUsers = () => this.setState( this.getUsers() );
 	
-	render: function() {
+	render() {
 		
-	}
-	
-} );
-
+	} 
+} 
 ```
-
-####Testing
-
-To run tests go to 
-```cd client/lib/users/ && make test```

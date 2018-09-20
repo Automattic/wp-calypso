@@ -1,0 +1,183 @@
+// Podcasting section/link on Writing settings page
+
+.podcasting-details__link {
+	&:not( .is-enabled ) {
+		.podcasting-details__link-button {
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+	}
+
+	.podcasting-details__link-action-container {
+		display: flex;
+		align-items: flex-start;
+
+		.podcasting-details__link-info {
+			flex-grow: 1;
+			color: $gray-text;
+		}
+
+		.podcasting-details__link-button {
+			color: $gray-darken-20;
+			font-weight: 600;
+			flex-shrink: 0;
+			margin-left: 12px;
+			// For viewports/translations when the text is taller than the button
+			align-self: center;
+		}
+	}
+
+	.podcasting-details__link-feed-label {
+		font-weight: 600;
+		margin-bottom: 5px;
+	}
+}
+
+.podcasting-details__publish-wrapper {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 16px;
+}
+
+.podcasting-details__publish-notice {
+	position: relative;
+	background: $gray-lighten-30;
+	border-radius: 4px;
+	align-self: stretch;
+	padding: 6px;
+	font-size: 14px;
+	text-align: left;
+	// Center contents vertically
+	// Note this element contains a <span> container to ensure normal
+	// display (whitespace) between text items
+	display: flex;
+	flex-grow: 1;
+	align-items: center;
+
+	.gridicons-microphone {
+		flex-shrink: 0;
+		margin-right: 6px;
+		color: $podcasting-purple;
+	}
+
+	a {
+		color: $gray-dark;
+		text-decoration: underline;
+	}
+
+	.podcasting-details__support-link {
+		margin-left: 4px;
+	}
+}
+
+.podcasting-details__publish-button {
+	color: $gray-darken-20;
+	font-weight: 600;
+	flex-shrink: 0;
+	margin-left: 12px;
+	// For viewports/translations when the text is taller than the button
+	align-self: center;
+}
+
+.podcasting-details__link.is-enabled {
+	.podcasting-details__link-feed {
+		margin-top: 20px;
+	}
+}
+
+@include breakpoint( '<800px' ) {
+	.podcasting-details__link.is-enabled .podcasting-details__link-action-container,
+	.podcasting-details__publish-wrapper {
+		display: block;
+		text-align: right;
+	}
+	.podcasting-details__link.is-enabled .podcasting-details__link-info,
+	.podcasting-details__publish-notice {
+		margin-bottom: 8px;
+	}
+}
+
+// Podcasting details page
+
+.podcasting-details__wrapper .form-setting-explanation,
+.podcasting-details__category-wrapper .form-setting-explanation {
+	margin-bottom: 6px;
+}
+
+.podcasting-details__category-wrapper .notice.is-compact {
+	width: 100%;
+}
+
+.podcasting-details__category-wrapper.card {
+	width: 100%;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.podcasting-details__title-subtitle-wrapper {
+	@include breakpoint( '>960px' ) {
+		float: left;
+		width: 75%;
+	}
+}
+
+.podcasting-details__wrapper {
+	.podcast-cover-image-setting {
+		float: left;
+		margin-right: 24px;
+	}
+
+	.form-select {
+		@include breakpoint( '<480px' ) {
+			width: 100%;
+		}
+	}
+
+	&.is-disabled {
+		background-color: $gray-light;
+		border-color: $gray-lighten-20;
+	}
+
+	&.is-disabled label,
+	&.is-disabled .form-setting-explanation {
+		color: $gray-lighten-10;
+	}
+
+	&.is-disabled .form-text-input,
+	&.is-disabled .form-textarea {
+		color: $gray-lighten-10;
+		border-color: $gray-lighten-20;
+	}
+}
+
+.podcasting-details__private-site,
+.podcasting-details__no-permissions {
+	.site-settings .podcasting-details__link & {
+		p {
+			margin-bottom: 0.75em;
+		}
+		// Necessary to state this again for specificity
+		p:last-child {
+			margin-bottom: 0;
+		}
+	}
+	p:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.podcasting-details__disable-podcasting {
+	color: $gray-text-min;
+	text-align: center;
+	width: 80%;
+	margin: 0 auto;
+
+	.button {
+		margin: 12px 0 6px;
+	}
+}
+
+.podcasting-details__support-link {
+	text-decoration: underline;
+	white-space: nowrap;
+}

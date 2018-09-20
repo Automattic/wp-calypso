@@ -1,150 +1,120 @@
-.is-section-post .wp-primary {
-	// We don't need the space for a sidebar
-	margin-left: 0;
-	padding-bottom: 0;
-
-	// Lets go full width on smaller screens
-	@include breakpoint( "<660px" ) {
-		padding: 0;
-	}
+.is-group-editor::before {
+	content: '';
+	position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	background-color: $white;
+	pointer-events: none;
+	z-index: z-index( 'root', '.is-group-editor::before' );
 }
 
-.post-editor {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	// remove normal #content padding
-	margin-top: -32px;
-
-	display: flex;
-	flex-direction: column;
+.is-group-editor .sidebar {
+	left: auto;
+	right: -273px;
 }
 
-.post-editor .current-section {
-	margin: 0;
-
-	// show for tablet size viewports
-	@include breakpoint( "<660px" ) {
-		display: block;
+@include breakpoint( "<660px" ) {
+	.is-group-editor.focus-sidebar::before,
+	.is-group-editor.focus-editor-confirmation-sidebar::before {
+		background-color: $gray-lighten-30;
 	}
+
+	.is-group-editor .sidebar {
+		right: auto;
+	}
+
 }
 
-// Row of buttons
-.post-editor__sidebar-header {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	margin-top: 16px;
-
-	@include breakpoint( ">660px" ) {
-		justify-content: space-between;
-	}
-
-	@include breakpoint( "<660px" ) {
-		padding: 0 8px;
-	}
-}
-
-.post-editor__toggle-sidebar {
-	margin-left: 16px;
-	@include breakpoint( ">660px" ) {
-		display: none;
-	}
+.is-group-editor .layout__content {
+	padding: 47px 0 0;
+	overflow: inherit;
 }
 
 .post-editor__inner {
-	padding: 0 24px;
 	position: relative;
-	width: 1040px;
+	padding-bottom: 47px;
+}
 
-	display: flex;
-	flex: 1;
-	flex-basis: auto;
+.post-editor__content {
+	position: relative;
+	margin: 0;
+	backface-visibility: hidden;
+	perspective: 1000;
+	display: none;
 
-	box-sizing: border-box;
-
-	@include breakpoint( "<1040px" ) {
-		max-width: 100%;
+	.focus-content & {
+		display: block;
 	}
 
-	@include breakpoint( "<660px" ) {
-		margin-top: 32px;
-		padding: 0;
+	@include breakpoint( ">660px" ) {
+		display: block;
+		backface-visibility: visible;
+		perspective: none;
 	}
 }
 
 .post-editor__content {
-	flex: 1;
-	position: relative;
+	margin: 0 auto; // born centered, so when width collapses for sidebar anim it doesn't move
+	left: 0;
 
-
-	@include breakpoint( "<660px" ) {
-		flex: none;
-		transform: translateX( 0 );
-		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
-		width: 100%;
-
-		.focus-sidebar & {
-			transform: translateX( 100vw );
-		}
+	.focus-sidebar &,
+	.focus-editor-confirmation-sidebar & {
+		left: ( $sidebar-width-max / -2 );
+		width: calc( 100% - ( #{ $sidebar-width-max } ) ); // subtract sidebar width
 	}
 }
 
-.post-editor__sidebar {
-	flex: 0 0 269px;
-	max-width: 269px;
-	margin-right: 40px;
-	order: -1;
-
-	@include breakpoint( "<660px" ) {
-		box-sizing: border-box;
-		max-width: 100vw;
-		width: 100%;
-		flex: none;
-		margin: 0;
-		padding: 0 20%;
-		position: absolute;
-		transform: translateX( -100vw );
-		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
-
-		.focus-sidebar & {
-			transform: translateX( 0 );
-			position: inherit;
-		}
-	}
-
-	@include breakpoint( "660px-960px" ) {
-		max-width: 220px;
-		margin-right: 24px;
-	}
-
-	@include breakpoint( "<480px" ) {
-		padding: 0;
-	}
-}
-
-.post-editor__close {
-	color: $gray-dark;
-	cursor: pointer;
-	display: none;
-	line-height: 1.5;
-	font-size: 11px;
-	text-transform: uppercase;
-	align-self: flex-start;
-
-	&:hover,
-	&:visited {
-		color: inherit;
-	}
-
-	.gridicon {
-		color: $gray;
-		margin-right: 4px;
-		vertical-align: bottom;
-	}
+.post-editor__site {
+	display:  flex;
+	margin-bottom: 16px;
+	background: $gray-lighten-30;
 
 	@include breakpoint( ">660px" ) {
-		display: block;
+		display: none;
+	}
+
+	.site__content {
+		padding-top: 12px;
+		padding-bottom: 12px;
+	}
+
+	.site__title,
+	.site__domain {
+		&::after {
+			@include long-content-fade( $color: $gray-lighten-30 );
+		}
+	}
+
+	.editor-status-label {
+		text-align: right;
+		align-self: center;
+		margin-right: 8px;
+	}
+}
+
+.post-editor__header,
+.post-editor .mce-container-body,
+.post-editor .tinymce {
+	width: 100%;
+	max-width: 700px;
+	margin: 0 auto;
+}
+
+.focus-content .post-editor__header {
+	@include breakpoint( ">660px" ) {
+		width: 700px;
+	}
+}
+
+.post-editor__header,
+.post-editor .mce-edit-area {
+	box-sizing: border-box;
+	padding: 0 16px;
+
+	@include breakpoint( ">1040px" ) {
+		padding: 0;
 	}
 }
 
@@ -152,129 +122,79 @@
 	display: none;
 }
 
-.post-editor-status-label {
-	color: $gray;
-	cursor: pointer;
-	display: block;
-	font-size: 11px;
-	line-height: 1.65;
-	padding-left: 18px;
-	text-align: left;
-	text-transform: uppercase;
-
-	.gridicon {
-		display: inline-block;
-		fill: lighten( $gray, 10% );
-		position: absolute;
-			left: 14px;
-	}
-
-	strong {
-		color: darken( $gray, 10% );
-		display: block;
-	}
-
-	&.is-publish strong {
-		display: inline;
-	}
-
-	&.is-pending strong {
-		color: $alert-yellow;
-	}
-
-	&.is-trash strong {
-		color: $orange-fire;
-	}
-
-	&.is-placeholder {
-		padding-left: 0;
-	}
-}
-
-.post-editor-status-label__full-date {
-	color: darken( $gray, 10% );
-	display: block;
-	font-size: 13px;
-	padding: 8px 16px;
-}
-
-.post-editor-status-label__full-date__tooltip {
-	color: lighten( $gray, 10% );
-	display: block;
-	font-size: 11px;
-	padding: 2px 10px 2px;
-	margin-top: -8px;
-	margin-bottom: 6px;
-}
-
-.post-editor__notice {
-	.notice__text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: inline-block;
-
-		a {
-			text-decoration: underline;
-			background-image: none;
-		}
-	}
-}
-
 // Component <Editor>
-.editor {
-	background: $white;
-	padding: 24px 16px;
+.post-editor__content-editor {
 	position: relative;
+}
 
-	@include breakpoint( ">480px" ) {
-		padding: 48px;
+.post-editor__content-editor .editor-notice .notice {
+	@include breakpoint( ">660px" ) {
+		margin: 0;
 	}
 }
 
-.editor .tinymce {
+/*
+ * Constrain the `MediaLibraryDropZone` to the editor content area, instead of taking up the entire
+ * screen. This allows room for the `FeaturedImageDropZone`.
+ *
+ * It's only done while an image is actively being dragged, because it interferes with TinyMCE
+ * toolbar pinning/unpinning.
+ */
+.post-editor__content-editor .editor-featured-image.has-active-drop-zone ~ div.tinymce-container {
+	position: relative;
+}
+
+.post-editor .tinymce-container.editor-mode-tinymce .drop-zone.is-active {
+	top: 75px; /* Move it below the TinyMCE toolbar, because it looks bad when they overlap */
+}
+
+.post-editor .tinymce-container.editor-mode-html .drop-zone.is-active {
+	top: 40px; /* Move it below the TinyMCE toolbar, because it looks bad when they overlap */
+}
+
+.post-editor .tinymce {
 	min-height: 100vh;
 	resize: none;
-	margin: 0 -48px; /* Offset padding from .editor */
 	border-width: 0;
-	border-top-width: 1px;
-	padding: 48px 59px; /* 59px = 48px + the 11px padding on Visual mode */
-	width: calc( 100% + 96px ); /* Increase width by adjusted margin */
+	padding: 32px 11px; /* Inherited from TinyMCE iframe body */
 
 	// typography for HTML view
 	font-family: $monospace;
 	font-size: 14px;
+	margin-bottom: 64px;
 
 	@include breakpoint( "<480px" ) {
-		margin: 0 -16px; /* Offset padding from .editor */
 		padding: 24px 27px; /* 27px = 16px + the 11px padding on Visual mode */
-		width: calc( 100% + 32px ); /* Increase width by adjusted margin */
+		margin-bottom: 0;
 	}
 
 	&:focus {
-		border-color: lighten( $gray, 20% );
+		border-color: $gray-lighten-20;
 		box-shadow: none;
 	}
 }
 
-.editor__header {
-	&.is-pinned {
-		visibility: none;
-	}
-}
-
-.editor__switch-mode {
-	float: right;
-	min-width: 160px;
-	margin: 0 2px -1px;
+.post-editor__header {
 	position: relative;
-	z-index: 1;
+	padding-bottom: 27px;
+}
 
-	@include breakpoint( ">480px" ) {
-		margin: 0 -28px -1px;
+.post-editor__switch-mode {
+	position: absolute;
+		right: 16px;
+	width: 160px;
+	z-index: z-index( 'root', '.post-editor__switch-mode' );
+
+	@include breakpoint( ">960px" ) {
+		right: 32px;
+	}
+
+	@include breakpoint( ">1040px" ) {
+		right: 0;
 	}
 }
 
-.editor__switch-mode .segmented-control__item {
+.post-editor__switch-mode .segmented-control__item {
 	&:first-of-type {
 		.segmented-control__link {
 			border-bottom-left-radius: 0;
@@ -283,73 +203,67 @@
 
 	&:last-of-type {
 		.segmented-control__link {
-			border-right-color: lighten( $gray, 20% );
+			border-right-color: $gray-lighten-20;
 			border-bottom-right-radius: 0;
 		}
 	}
 
 	&.is-selected {
 		+ .segmented-control__item .segmented-control__link {
-			border-left-color: lighten( $gray, 20% );
+			border-left-color: $gray-lighten-20;
 		}
 	}
 }
 
-.editor__switch-mode .segmented-control__link {
+.post-editor__switch-mode .segmented-control__link {
 	background: $gray-light;
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 }
 
-.editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
-	border-color: lighten( $gray, 20% );
+.post-editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
+	border-color: $gray-lighten-20;
 	border-bottom-color: $white;
 	background-color: $white;
 }
 
-.post-editor .drafts__list {
-	margin: 16px 0;
+.post-editor__header-divider {
+	background-color: lighten( $gray, 25% );
+	max-width: 700px;
+	margin: 0 auto;
+
+	& ~ .mce-tinymce {
+		margin-top: -1px;
+	}
 }
+
+.post-editor .drafts__list + .list-end::after {
+	background-color: $gray-lighten-30;
+}
+
 .post-editor .draft {
 	padding: 16px;
 }
 
-.editor__header .notice {
-	margin: -24px -16px 24px;
+.post-editor__content-editor .editor-featured-image {
+	display: none;
+	border-bottom: 1px solid lighten( $gray, 20 );
+	border-top: 1px solid lighten( $gray, 20 );
+	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
+	background: rgba( lighten( $gray, 30 ), 0.3 );
 
-	@include breakpoint( ">480px" ) {
-		margin: 0 -48px 24px;
-	}
-}
-
-// featured image
-.editor .editor-featured-image {
-	background: $gray-light;
-	margin: -26px -48px 24px;
 	overflow: hidden;
+
+	&.is-assigned {
+		display: block;
+		padding: 12px 0 18px; /* Make room for the RemoveButton */
+
+		@include breakpoint( ">660px" ) {
+			margin: -24px 0 24px;
+		}
+	}
 
 	img {
 		margin: 0 auto;
-		display: block;
 		max-height: 400px;
-	}
-}
-
-.post-editor__word-count-wrapper {
-	@include clear-fix;
-	border-top: 1px solid lighten( $gray, 30% );
-	background-color: $white;
-	font-size: 11px;
-	line-height: 18px;
-
-	& .editor-word-count {
-		float: right;
-		color: $gray;
-		text-transform: uppercase;
-		padding: 8px;
-
-		& .count {
-			margin-left: 4px;
-			color: darken( $gray, 10% );
-		}
 	}
 }

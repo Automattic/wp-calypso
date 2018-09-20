@@ -1,207 +1,198 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	_times = require( 'lodash/utility/times' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var ProfileLink = require( 'me/profile-link' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	ProfileLinksAddWordPress = require( 'me/profile-links-add-wordpress' ),
-	ProfileLinksAddOther = require( 'me/profile-links-add-other' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
-	eventRecorder = require( 'me/event-recorder' );
+import ProfileLink from 'me/profile-link';
+import QueryProfileLinks from 'components/data/query-profile-links';
+import AddProfileLinksButtons from 'me/profile-links/add-buttons';
+import SectionHeader from 'components/section-header';
+import Card from 'components/card';
+import Notice from 'components/notice';
+import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
+import ProfileLinksAddOther from 'me/profile-links-add-other';
+import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
+import getProfileLinks from 'state/selectors/get-profile-links';
+import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
 
-module.exports = React.createClass( {
+class ProfileLinks extends React.Component {
+	state = {
+		showingForm: false,
+		showPopoverMenu: false,
+	};
 
-	displayName: 'ProfileLinks',
+	showAddWordPress = () => {
+		this.setState( {
+			showingForm: 'wordpress',
+			showPopoverMenu: false,
+		} );
+	};
 
-	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
+	showAddOther = () => {
+		this.setState( {
+			showingForm: 'other',
+			showPopoverMenu: false,
+		} );
+	};
 
-	componentDidMount: function() {
-		this.props.userProfileLinks.getProfileLinks();
-		if ( typeof document.hidden !== 'undefined' ) {
-			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
-		}
-	},
+	showPopoverMenu = () => {
+		this.setState( {
+			showPopoverMenu: ! this.state.showPopoverMenu,
+		} );
+	};
 
-	componentWillUnmount: function() {
-		if ( typeof document.hidden !== 'undefined' ) {
-			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
-		}
-	},
+	closePopoverMenu = () => {
+		this.setState( {
+			showPopoverMenu: false,
+		} );
+	};
 
-	handleVisibilityChange: function() {
-		// if we're visible now, fetch the links again in case they
-		// changed (added/removed) something while the component this tab
-		// is on was hidden
-		if ( ! document.hidden ) {
-			this.props.userProfileLinks.fetchProfileLinks();
-		}
-	},
-
-	getDefaultProps: function() {
-		return {
-			userProfileLinks: {
-				initialized: false
-			}
-		};
-	},
-
-	getInitialState: function() {
-		return {
+	hideForms = () => {
+		this.setState( {
 			showingForm: false,
-			lastError: false
-		};
-	},
+		} );
+	};
 
-	showAddWordPress: function( event ) {
-		event.preventDefault();
-		this.setState( { showingForm: 'wordpress' } );
-	},
+	onRemoveLink = profileLink => {
+		return () => this.props.deleteUserProfileLink( profileLink.link_slug );
+	};
 
-	showAddOther: function( event ) {
-		event.preventDefault();
-		this.setState( { showingForm: 'other' } );
-	},
+	getErrorMessage() {
+		const { errorType, translate } = this.props;
 
-	hideForms: function() {
-		this.setState( { showingForm: false } );
-	},
-
-	onRemoveLinkResponse: function( error ) {
-		if ( error ) {
-			this.setState( { lastError: error } );
-		} else {
-			this.setState( { lastError: false } );
+		if ( ! errorType ) {
+			return null;
 		}
-	},
 
-	clearLastError: function() {
-		this.setState( { lastError: false } );
-	},
+		if ( errorType === 'duplicate' ) {
+			return translate( 'That link is already in your profile links. No changes were made.' );
+		}
+		return translate( 'An unexpected error occurred. Please try again later.' );
+	}
 
-	onRemoveLink: function( profileLink ) {
-		this.props.userProfileLinks.deleteProfileLinkBySlug( profileLink.link_slug, this.onRemoveLinkResponse );
-	},
-
-	renderFormVisibilityControls: function() {
-		return (
-			<FormButtonsBar>
-				<FormButton onClick={ this.recordClickEvent( 'Add Other Site Button', this.showAddOther ) } isPrimary={ false } >
-					{ this.translate( 'Add Other Site' ) }
-				</FormButton>
-				<FormButton onClick={ this.recordClickEvent( 'Add a WordPress Site Button', this.showAddWordPress ) } isPrimary={ false } >
-					{ this.translate( 'Add a WordPress Site' ) }
-				</FormButton>
-			</FormButtonsBar>
-		);
-	},
-
-	possiblyRenderError: function() {
-		if ( ! this.state.lastError ) {
+	possiblyRenderError() {
+		const errorMessage = this.getErrorMessage();
+		if ( ! errorMessage ) {
 			return null;
 		}
 
 		return (
-				<SimpleNotice className="profile-links__error"
-					isCompact={ true }
-					status="is-error"
-					onClick={ this.clearLastError }>
-					{ this.translate( 'An error occurred while attempting to remove the link. Please try again later.' ) }
-				</SimpleNotice>
-		);
-	},
-
-	renderProfileLinks: function() {
-		return (
-			<ul className="profile-links">
-				{ this.props.userProfileLinks.getProfileLinks().map( function( profileLink ) {
-					return (
-						<ProfileLink
-							key={ profileLink.link_slug }
-							title={ profileLink.title }
-							url={ profileLink.value }
-							slug={ profileLink.link_slug }
-							onRemoveLink={ this.onRemoveLink.bind( this, profileLink ) } />
-					);
-				}, this )
-			}
-			</ul>
-		);
-	},
-
-	renderNoProfileLinks: function() {
-		return (
-			<p className="profile-links__no-links">
-				{
-					this.translate( 'You have no sites in your profile links. You may add sites if you\'d like.' )
-				}
-			</p>
-		);
-	},
-
-	render: function() {
-		// If userProfileLinks has not initialized, let's render some placeholder content
-		if ( ! this.props.userProfileLinks.initialized ) {
-			return (
-				<div className="profile-links">
-					{ _times( 2, function( index ) {
-						return (
-							<ProfileLink
-								title="Loading Profile Links"
-								url="http://wordpress.com"
-								slug="A placeholder profile link"
-								isPlaceholder
-								key={ index }
-							/>
-						);
-					} ) }
-				</div>
-			);
-		}
-
-		// If userProfileLinks has been initialized, then attempt to render profile links.
-		return (
-			<div className="profile-links">
-				{ this.possiblyRenderError() }
-
-				{
-					this.props.userProfileLinks.getProfileLinks().length > 0
-					? this.renderProfileLinks()
-					: this.renderNoProfileLinks()
-				}
-
-				{
-					'wordpress' === this.state.showingForm
-					? (
-						<ProfileLinksAddWordPress
-							userProfileLinks={ this.props.userProfileLinks }
-							onSuccess={ this.hideForms }
-							onCancel={ this.hideForms }
-						/>
-					)
-					: null
-				}
-
-				{
-					'other' === this.state.showingForm
-					? (
-						<ProfileLinksAddOther
-							userProfileLinks={ this.props.userProfileLinks }
-							onSuccess={ this.hideForms }
-							onCancel={ this.hideForms }
-						/>
-					)
-					: null
-				}
-
-				{ ! this.state.showingForm ? this.renderFormVisibilityControls() : null }
-		</div>
+			<Notice
+				className="profile-links__error"
+				status="is-error"
+				onDismissClick={ this.props.resetUserProfileLinkErrors }
+			>
+				{ errorMessage }
+			</Notice>
 		);
 	}
-} );
+
+	renderProfileLinksList() {
+		return (
+			<ul className="profile-links__list">
+				{ this.props.profileLinks.map( profileLink => (
+					<ProfileLink
+						key={ profileLink.link_slug }
+						title={ profileLink.title }
+						url={ profileLink.value }
+						slug={ profileLink.link_slug }
+						onRemoveLink={ this.onRemoveLink( profileLink ) }
+					/>
+				) ) }
+			</ul>
+		);
+	}
+
+	renderNoProfileLinks() {
+		return (
+			<p className="profile-links__no-links">
+				{ this.props.translate(
+					"You have no sites in your profile links. You may add sites if you'd like."
+				) }
+			</p>
+		);
+	}
+
+	renderPlaceholders() {
+		return (
+			<ul className="profile-links__list">
+				{ times( 2, index => (
+					<ProfileLink
+						title="Loading Profile Links"
+						url="http://wordpress.com"
+						slug="A placeholder profile link"
+						isPlaceholder
+						key={ index }
+					/>
+				) ) }
+			</ul>
+		);
+	}
+
+	renderProfileLinks() {
+		const initialized = this.props.profileLinks !== null;
+		const countLinks = initialized ? this.props.profileLinks.length : 0;
+		let links;
+
+		if ( ! initialized ) {
+			links = this.renderPlaceholders();
+		} else {
+			links = countLinks > 0 ? this.renderProfileLinksList() : this.renderNoProfileLinks();
+		}
+
+		return (
+			<div>
+				<p>{ this.props.translate( 'Manage which sites appear in your profile.' ) }</p>
+
+				{ this.possiblyRenderError() }
+				{ links }
+			</div>
+		);
+	}
+
+	renderForm() {
+		if ( 'wordpress' === this.state.showingForm ) {
+			return <ProfileLinksAddWordPress onSuccess={ this.hideForms } onCancel={ this.hideForms } />;
+		}
+
+		return <ProfileLinksAddOther onSuccess={ this.hideForms } onCancel={ this.hideForms } />;
+	}
+
+	render() {
+		return (
+			<div>
+				<QueryProfileLinks />
+				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
+					<AddProfileLinksButtons
+						showingForm={ !! this.state.showingForm }
+						onShowAddOther={ this.showAddOther }
+						showPopoverMenu={ this.state.showPopoverMenu }
+						onShowAddWordPress={ this.showAddWordPress }
+						onShowPopoverMenu={ this.showPopoverMenu }
+						onClosePopoverMenu={ this.closePopoverMenu }
+					/>
+				</SectionHeader>
+				<Card>{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
+			</div>
+		);
+	}
+}
+
+export default connect(
+	state => ( {
+		profileLinks: getProfileLinks( state ),
+		errorType: getProfileLinksErrorType( state ),
+	} ),
+	{
+		deleteUserProfileLink,
+		resetUserProfileLinkErrors,
+	}
+)( localize( ProfileLinks ) );

@@ -1,16 +1,14 @@
+/** @format */
 /**
  * External dependencies
  */
-var memoize = require( 'lodash/function/memoize' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+import { isEqual, memoize } from 'lodash';
 
 /**
  * Module variables
  */
-var Shortcode = {},
-	REGEXP_ATTR_STRING = /(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/g,
-	REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*(?:\[(?!\/\2\])[^\[]*)*)(\[\/\2\]))?)(\]?)/,
-	parseAttributes;
+const REGEXP_ATTR_STRING = /(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/g;
+const REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:\/(?!\])[^\]\/]*)*?)(?:(\/)\]|\](?:([^\[]*(?:\[(?!\/\2\])[^\[]*)*)(\[\/\2\]))?)(\]?)/;
 
 /**
  * Given a string, parses shortcode attributes and returns an object containing
@@ -24,32 +22,32 @@ var Shortcode = {},
  * @param  {string} text A shortcode attribute string
  * @return {Object}      An object of attributes, split as named and numeric
  */
-parseAttributes = memoize( function( text ) {
-	var named = {},
-		numeric = [],
-		match;
+export const parseAttributes = memoize( function( text ) {
+	const named = {};
+	const numeric = [];
+	let match;
 
 	// Map zero-width spaces to actual spaces.
 	text = text.replace( /[\u00a0\u200b]/g, ' ' );
 
 	// Match and normalize attributes.
 	while ( ( match = REGEXP_ATTR_STRING.exec( text ) ) ) {
-		if ( match[1] ) {
-			named[ match[1].toLowerCase() ] = match[2];
-		} else if ( match[3] ) {
-			named[ match[3].toLowerCase() ] = match[4];
-		} else if ( match[5] ) {
-			named[ match[5].toLowerCase() ] = match[6];
-		} else if ( match[7] ) {
-			numeric.push( match[7] );
-		} else if ( match[8] ) {
-			numeric.push( match[8] );
+		if ( match[ 1 ] ) {
+			named[ match[ 1 ].toLowerCase() ] = match[ 2 ];
+		} else if ( match[ 3 ] ) {
+			named[ match[ 3 ].toLowerCase() ] = match[ 4 ];
+		} else if ( match[ 5 ] ) {
+			named[ match[ 5 ].toLowerCase() ] = match[ 6 ];
+		} else if ( match[ 7 ] ) {
+			numeric.push( match[ 7 ] );
+		} else if ( match[ 8 ] ) {
+			numeric.push( match[ 8 ] );
 		}
 	}
 
 	return {
 		named: named,
-		numeric: numeric
+		numeric: numeric,
 	};
 } );
 
@@ -62,14 +60,18 @@ parseAttributes = memoize( function( text ) {
  * @param  {*}      attributes An object to normalize
  * @return {Object}            An object of attributes, split as named and numeric
  */
-function normalizeAttributes( attributes ) {
-	var named, numeric;
+export const normalizeAttributes = function( attributes ) {
+	let named;
+	let numeric;
 
 	if ( 'string' === typeof attributes ) {
 		return parseAttributes( attributes );
 	} else if ( Array.isArray( attributes ) ) {
 		numeric = attributes;
-	} else if ( 'object' === typeof attributes && isEqual( Object.keys( attributes ), [ 'named', 'numeric' ] ) ) {
+	} else if (
+		'object' === typeof attributes &&
+		isEqual( Object.keys( attributes ), [ 'named', 'numeric' ] )
+	) {
 		return attributes;
 	} else if ( 'object' === typeof attributes ) {
 		named = attributes;
@@ -77,9 +79,9 @@ function normalizeAttributes( attributes ) {
 
 	return {
 		named: named || {},
-		numeric: numeric || []
+		numeric: numeric || [],
 	};
-}
+};
 
 /**
  * Given a shortcode object, returns the string value of that shortcode.
@@ -87,12 +89,12 @@ function normalizeAttributes( attributes ) {
  * @param  {Object} shortcode A shortcode object
  * @return {string}           The string value of the shortcode
  */
-Shortcode.stringify = function( shortcode ) {
-	var text = '[' + shortcode.tag,
-		attributes = normalizeAttributes( shortcode.attrs );
+export const stringify = function( shortcode ) {
+	let text = '[' + shortcode.tag;
+	const attributes = normalizeAttributes( shortcode.attrs );
 
 	Object.keys( attributes.named ).forEach( function( name ) {
-		var value = attributes.named[ name ];
+		const value = attributes.named[ name ];
 		text += ' ' + name + '="' + value + '"';
 	} );
 
@@ -129,9 +131,9 @@ Shortcode.stringify = function( shortcode ) {
  * @param  {string} shortcode A shortcode string
  * @return {Object}           The object value of the shortcode
  */
-Shortcode.parse = function( shortcode ) {
-	var match = shortcode.match( REGEXP_SHORTCODE ),
-		type, parsed;
+export const parse = function( shortcode ) {
+	const match = shortcode.match( REGEXP_SHORTCODE );
+	let type;
 
 	if ( ! match ) {
 		return null;
@@ -145,9 +147,9 @@ Shortcode.parse = function( shortcode ) {
 		type = 'single';
 	}
 
-	parsed = {
+	const parsed = {
 		tag: match[ 2 ],
-		type: type
+		type: type,
 	};
 
 	if ( /\S/.test( match[ 3 ] ) ) {
@@ -180,8 +182,13 @@ Shortcode.parse = function( shortcode ) {
  * @param {String} tag - shortcode name
  * @return {RegExp} regular expression
  */
-Shortcode.regexp = memoize( function( tag ) {
-	return new RegExp( '\\[(\\[?)(' + tag + ')(?![\\w-])([^\\]\\/]*(?:\\/(?!\\])[^\\]\\/]*)*?)(?:(\\/)\\]|\\](?:([^\\[]*(?:\\[(?!\\/\\2\\])[^\\[]*)*)(\\[\\/\\2\\]))?)(\\]?)', 'g' );
+export const regexp = memoize( function( tag ) {
+	return new RegExp(
+		'\\[(\\[?)(' +
+			tag +
+			')(?![\\w-])([^\\]\\/]*(?:\\/(?!\\])[^\\]\\/]*)*?)(?:(\\/)\\]|\\](?:([^\\[]*(?:\\[(?!\\/\\2\\])[^\\[]*)*)(\\[\\/\\2\\]))?)(\\]?)',
+		'g'
+	);
 } );
 
 /**
@@ -199,41 +206,38 @@ Shortcode.regexp = memoize( function( tag ) {
  *
  * @return {Object|void} next match
  */
-Shortcode.next = function( tag, text, index ) {
-	var re = Shortcode.regexp( tag ),
-		match, result;
+export const next = function( tag, text, index = 0 ) {
+	const re = regexp( tag );
 
 	re.lastIndex = index || 0;
-	match = re.exec( text );
+	const match = re.exec( text );
 
 	if ( ! match ) {
 		return;
 	}
 
 	// If we matched an escaped shortcode, try again.
-	if ( '[' === match[1] && ']' === match[7] ) {
-		return Shortcode.next( tag, text, re.lastIndex );
+	if ( '[' === match[ 1 ] && ']' === match[ 7 ] ) {
+		return next( tag, text, re.lastIndex );
 	}
 
-	result = {
+	const result = {
 		index: match.index,
-		content: match[0],
-		shortcode: Shortcode.parse( match[0] )
+		content: match[ 0 ],
+		shortcode: parse( match[ 0 ] ),
 	};
 
 	// If we matched a leading `[`, strip it from the match
 	// and increment the index accordingly.
-	if ( match[1] ) {
+	if ( match[ 1 ] ) {
 		result.content = result.content.slice( 1 );
 		result.index++;
 	}
 
 	// If we matched a trailing `]`, strip it from the match.
-	if ( match[7] ) {
+	if ( match[ 7 ] ) {
 		result.content = result.content.slice( 0, -1 );
 	}
 
 	return result;
 };
-
-module.exports = Shortcode;

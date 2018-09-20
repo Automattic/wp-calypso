@@ -1,34 +1,37 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { getLabelForStream } from './locales'
+import { getLabelForStream } from './locales';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormHeader',
+export default class extends React.PureComponent {
+	static displayName = 'NotificationSettingsFormHeader';
 
-	mixins: [ React.addons.PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		stream: PropTypes.string,
-		title: PropTypes.string
-	},
+		title: PropTypes.string,
+	};
 
-	renderTitle() {
+	renderTitle = () => {
 		return getLabelForStream( this.props.stream ) || this.props.title;
-	},
+	};
 
 	render() {
 		return (
 			<div className="notification-settings-form-header">
 				<div className="notification-settings-form-header__title">
-					{ this.props.stream === 'timeline' ? <span className="noticon noticon-bell"></span> : this.renderTitle() }
+					{ this.props.stream === 'timeline' ? <Gridicon icon="bell" /> : this.renderTitle() }
 				</div>
 			</div>
 		);
 	}
-} );
+}

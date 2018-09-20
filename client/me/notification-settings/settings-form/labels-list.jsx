@@ -1,31 +1,39 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { getLabelForSetting } from './locales'
+import { getLabelForSetting } from './locales';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormLabelList',
+export default class extends React.Component {
+	static displayName = 'NotificationSettingsFormLabelList';
 
-	propTypes: {
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired
-	},
+	static propTypes = {
+		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
+	};
 
 	shouldComponentUpdate() {
 		return false;
-	},
+	}
 
 	render() {
 		return (
 			<ul className="notification-settings-form-label-list">
 				{ this.props.settingKeys.map( ( key, index ) => {
-					return <li key={ index } className="notification-settings-form-label-list__item">{ getLabelForSetting( key ) }</li>
+					return (
+						<li key={ index } className="notification-settings-form-label-list__item">
+							{ getLabelForSetting( key ) }
+						</li>
+					);
 				} ) }
 			</ul>
 		);
 	}
-} );
+}

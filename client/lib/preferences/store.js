@@ -1,26 +1,30 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var forOwn = require( 'lodash/object/forOwn' );
+
+import { forOwn } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	PreferencesConstants = require( './constants' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import PreferencesConstants from './constants';
 
 /**
  * Module variables
  */
-var PreferencesStore = {},
-	_preferences;
+const PreferencesStore = {
+	_preferences: undefined,
+};
 
 emitter( PreferencesStore );
 
 function ensurePreferencesObject() {
-	if ( ! _preferences ) {
-		_preferences = {};
+	if ( ! PreferencesStore._preferences ) {
+		PreferencesStore._preferences = {};
 	}
 }
 
@@ -28,9 +32,9 @@ function receiveSingle( key, value ) {
 	ensurePreferencesObject();
 
 	if ( null === value ) {
-		delete _preferences[ key ];
+		delete PreferencesStore._preferences[ key ];
 	} else {
-		_preferences[ key ] = value;
+		PreferencesStore._preferences[ key ] = value;
 	}
 }
 
@@ -48,7 +52,7 @@ function receiveMany( preferences ) {
  * @return {Object} All key-value pairs in the store
  */
 PreferencesStore.getAll = function() {
-	return _preferences;
+	return PreferencesStore._preferences;
 };
 
 /**
@@ -58,13 +62,13 @@ PreferencesStore.getAll = function() {
  * @return {*}          The value of the item
  */
 PreferencesStore.get = function( key ) {
-	if ( _preferences ) {
-		return _preferences[ key ];
+	if ( PreferencesStore._preferences ) {
+		return PreferencesStore._preferences[ key ];
 	}
 };
 
 PreferencesStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case 'UPDATE_ME_SETTINGS':
@@ -77,4 +81,4 @@ PreferencesStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = PreferencesStore;
+export default PreferencesStore;

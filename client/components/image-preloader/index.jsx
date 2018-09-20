@@ -1,65 +1,68 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
-	noop = require( 'lodash/utility/noop' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { noop, omit } from 'lodash';
 
 /**
- * Module variables
+ * Constants
  */
-var LoadStatus = {
+const LoadStatus = {
 	PENDING: 'PENDING',
 	LOADING: 'LOADING',
 	LOADED: 'LOADED',
-	FAILED: 'FAILED'
+	FAILED: 'FAILED',
 };
 
-module.exports = React.createClass( {
-	displayName: 'ImagePreloader',
+export default class ImagePreloader extends React.Component {
+	static propTypes = {
+		src: PropTypes.string,
+		placeholder: PropTypes.element.isRequired,
+		onLoad: PropTypes.func,
+		onError: PropTypes.func,
+	};
 
-	propTypes: {
-		src: React.PropTypes.string.isRequired,
-		placeholder: React.PropTypes.element.isRequired,
-		children: React.PropTypes.node
-	},
+	state = {
+		status: LoadStatus.PENDING,
+	};
 
-	getInitialState: function() {
-		return {
-			status: LoadStatus.PENDING
-		};
-	},
-
-	componentWillMount: function() {
+	componentWillMount() {
 		this.createLoader();
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.src !== this.props.src ) {
 			this.createLoader( nextProps );
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.destroyLoader();
-	},
+	}
 
-	createLoader: function( nextProps ) {
-		var src = ( nextProps || this.props ).src;
+	createLoader = nextProps => {
+		const src = ( nextProps || this.props ).src;
 
 		this.destroyLoader();
+		this.setState( {
+			status: LoadStatus.LOADING,
+		} );
+
+		if ( ! src ) {
+			return;
+		}
 
 		this.image = new Image();
 		this.image.src = src;
 		this.image.onload = this.onLoadComplete;
 		this.image.onerror = this.onLoadComplete;
+	};
 
-		this.setState( {
-			status: LoadStatus.LOADING
-		} );
-	},
-
-	destroyLoader: function() {
+	destroyLoader = () => {
 		if ( ! this.image ) {
 			return;
 		}
@@ -67,18 +70,28 @@ module.exports = React.createClass( {
 		this.image.onload = noop;
 		this.image.onerror = noop;
 		delete this.image;
-	},
+	};
 
-	onLoadComplete: function( event ) {
+	onLoadComplete = event => {
 		this.destroyLoader();
 
-		this.setState( {
-			status: 'load' === event.type ? LoadStatus.LOADED : LoadStatus.FAILED
-		} );
-	},
+		if ( event.type !== 'load' ) {
+			return this.setState( { status: LoadStatus.FAILED }, () => {
+				if ( this.props.onError ) {
+					this.props.onError( event );
+				}
+			} );
+		}
 
-	render: function() {
-		var children, imageProps;
+		this.setState( { status: LoadStatus.LOADED }, () => {
+			if ( this.props.onLoad ) {
+				this.props.onLoad( event );
+			}
+		} );
+	};
+
+	render() {
+		let children, imageProps;
 
 		switch ( this.state.status ) {
 			case LoadStatus.LOADING:
@@ -94,13 +107,10 @@ module.exports = React.createClass( {
 				children = this.props.children;
 				break;
 
-			default: break;
+			default:
+				break;
 		}
 
-		return (
-			<div className="image-preloader">
-				{ children }
-			</div>
-		);
+		return <div className="image-preloader">{ children }</div>;
 	}
-} );
+}

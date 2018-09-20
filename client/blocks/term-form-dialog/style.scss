@@ -1,0 +1,36 @@
+/** @format */
+
+.term-form-dialog .dialog__content {
+	min-width: 40vw;
+}
+
+.term-form-dialog .form-input-validation {
+	padding-bottom: 0;
+}
+
+@include breakpoint( '<660px' ) {
+	.term-form-dialog {
+		width: 90%;
+	}
+
+	.term-form-dialog .dialog__content {
+		min-width: none;
+	}
+}
+
+.term-form-dialog textarea {
+	resize: vertical;
+}
+
+.term-form-dialog__top-level-description {
+	color: $gray-text-min;
+	display: block;
+	font-weight: normal;
+	margin-left: 52px;
+}
+
+.term-form-dialog__parent-tree-selector {
+	border-top: 1px solid $gray-lighten-30;
+	margin-top: 20px;
+	padding-top: 20px;
+}

@@ -1,3 +1,4 @@
+/** @format */
 import * as dom from './dom';
 import * as string from './string';
 import * as shortcode from './shortcode';

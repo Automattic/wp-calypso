@@ -1,18 +1,23 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-import { createInitialFormState, createNullFieldValues, initializeFields } from '../';
+
+import FormStateStore from '../';
+
+const { createInitialFormState, createNullFieldValues, initializeFields } = FormStateStore;
 
 function asyncInitialize( { fieldNames, loadFunction } ) {
 	return {
 		initialize() {
-			return ( dispatch ) => {
+			return dispatch => {
 				dispatch( { type: 'INITIALIZE_START' } );
 
 				loadFunction( ( error, fieldValues ) => {
 					dispatch( {
 						type: 'INITIALIZE_SUCCESS',
-						fieldValues
+						fieldValues,
 					} );
 				} );
 			};
@@ -35,7 +40,7 @@ function asyncInitialize( { fieldNames, loadFunction } ) {
 			}
 
 			return next;
-		}
+		},
 	};
 }
 

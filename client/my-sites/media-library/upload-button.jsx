@@ -1,42 +1,58 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' ),
-	classNames = require( 'classnames' );
+
+import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { noop, uniq } from 'lodash';
+import classNames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	MediaActions = require( 'lib/media/actions' ),
-	MediaUtils = require( 'lib/media/utils' );
+import analytics from 'lib/analytics';
+import MediaActions from 'lib/media/actions';
+import { getAllowedFileTypesForSite, isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils';
+import { VideoPressFileTypes } from 'lib/media/constants';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryUploadButton',
+export default class extends React.Component {
+	static displayName = 'MediaLibraryUploadButton';
 
-	propTypes: {
-		site: React.PropTypes.object,
-		onAddMedia: React.PropTypes.func,
-		className: React.PropTypes.string
-	},
+	static propTypes = {
+		site: PropTypes.object,
+		onAddMedia: PropTypes.func,
+		className: PropTypes.string,
+	};
 
-	getDefaultProps: function() {
-		return {
-			onAddMedia: noop
-		};
-	},
+	static defaultProps = {
+		onAddMedia: noop,
+		type: 'button',
+		href: null,
+	};
 
-	uploadFiles: function( event ) {
+	onClick = () => {
+		if ( this.props.onClick ) {
+			this.props.onClick();
+		}
+		if ( this.props.href ) {
+			page( this.props.href );
+		}
+	};
+
+	uploadFiles = event => {
 		if ( event.target.files && this.props.site ) {
 			MediaActions.clearValidationErrors( this.props.site.ID );
-			MediaActions.add( this.props.site.ID, event.target.files );
+			MediaActions.add( this.props.site, event.target.files );
 		}
 
-		React.findDOMNode( this.refs.form ).reset();
+		ReactDom.findDOMNode( this.refs.form ).reset();
 		this.props.onAddMedia();
 		analytics.mc.bumpStat( 'editor_upload_via', 'add_button' );
-	},
+	};
 
 	/**
 	 * Returns a string of comma-separated file extensions supported for the
@@ -47,27 +63,32 @@ module.exports = React.createClass( {
 	 *
 	 * @return {string} Supported file extensions, as comma-separated string
 	 */
-	getInputAccept: function() {
-		if ( ! MediaUtils.isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
+	getInputAccept = () => {
+		if ( ! isSiteAllowedFileTypesToBeTrusted( this.props.site ) ) {
 			return null;
 		}
+		const allowedFileTypesForSite = getAllowedFileTypesForSite( this.props.site );
 
-		return MediaUtils.getAllowedFileTypesForSite( this.props.site ).map( ( type ) => `.${type}` ).join();
-	},
+		return uniq( allowedFileTypesForSite.concat( VideoPressFileTypes ) )
+			.map( type => `.${ type }` )
+			.join();
+	};
 
-	render: function() {
-		var classes = classNames( 'media-library__upload-button', this.props.className );
+	render() {
+		const classes = classNames( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
 			<form ref="form" className={ classes }>
-				<span>{ this.props.children }</span>
+				{ this.props.children }
 				<input
 					type="file"
 					accept={ this.getInputAccept() }
 					multiple
 					onChange={ this.uploadFiles }
-					className="media-library__upload-button-input" />
+					onClick={ this.onClick }
+					className="media-library__upload-button-input"
+				/>
 			</form>
 		);
 	}
-} );
+}

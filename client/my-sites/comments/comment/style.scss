@@ -1,0 +1,713 @@
+/** @format */
+
+// Comment Base Style
+
+.card.comment {
+	font-size: 14px;
+	margin: 0 auto;
+	padding: 0;
+
+	.accessible-focus &:focus {
+		box-shadow: 0 0 0 1px $blue-medium, 0 0 0 3px $blue-light;
+		z-index: z-index( 'root', '.card.comment.accessible-focus:focus' );
+	}
+
+	&.is-pending {
+		background: mix( $alert-yellow, $white, 8.5% );
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
+			0 1px 2px $gray-lighten-30;
+	}
+
+	@include breakpoint( '>660px' ) {
+		margin: 10px auto;
+	}
+}
+
+// `transition` here is applied with less specificity to avoid overwriting ReactCSSTransitionGroup's animation.
+.comment {
+	transition: margin 0.15s linear;
+}
+
+// Comment Header Block
+
+.comment__header {
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+}
+
+.comment__bulk-select {
+	align-self: center;
+	padding: 16px;
+
+	.form-checkbox {
+		margin: 0;
+	}
+}
+
+// Comment Author Block
+
+.comment__author {
+	display: flex;
+	flex-flow: row;
+	flex-grow: 1;
+	flex-wrap: nowrap;
+	padding: 8px 16px 8px 8px;
+	width: 0;
+}
+
+.comment__author-avatar {
+	align-self: center;
+	height: 32px;
+	flex-grow: 0;
+	flex-shrink: 0;
+	padding: 0 8px;
+	width: 32px;
+
+	.gridicon {
+		background-color: $gray;
+		border-radius: 50%;
+		fill: $white;
+		padding: 4px;
+	}
+}
+
+.comment__author-info {
+	display: flex;
+	flex-flow: column;
+	width: calc( 100% - 48px );
+}
+
+.comment__author-has-link {
+	margin: 0 4px -4px 0;
+	color: $alert-red;
+}
+
+.comment__author-info-element {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	a {
+		color: $gray-text-min;
+	}
+	a:focus,
+	a:hover {
+		color: $blue-wordpress;
+	}
+
+	.comment__post-link {
+		display: inline;
+
+		.gridicon {
+			color: $gray;
+			margin-bottom: -4px;
+		}
+	}
+
+	.comment__date,
+	.comment__author-url {
+		font-size: 12px;
+	}
+
+	.comment__author-url-separator {
+		color: $gray;
+		margin: 0 4px;
+	}
+}
+
+// Comment Author More Info Block
+
+.comment__author-more-info {
+	align-items: stretch;
+	display: flex;
+	flex-grow: 0;
+	flex-shrink: 0;
+
+	.button.is-borderless {
+		border-radius: 0;
+		font-weight: 400;
+		padding: 0 16px 0 8px;
+
+		.gridicon {
+			height: 18px;
+			margin-right: 4px;
+			top: 3px;
+			width: 18px;
+		}
+	}
+}
+
+.popover.comment__author-more-info-popover {
+	/* applying a lower z-index to ensure it is layered behind global notice */
+	z-index: z-index( 'root', '.popover.comment__author-more-info-popover' );
+
+	.popover__inner {
+		color: $gray-text-min;
+		font-size: 13px;
+		max-width: 220px;
+		padding: 16px;
+		text-align: left;
+	}
+}
+
+.comment__author-more-info-element {
+	align-items: center;
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+	margin-bottom: 8px;
+	word-break: break-all;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	.gridicon {
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin-right: 8px;
+		width: 24px;
+	}
+
+	.button {
+		width: 100%;
+	}
+}
+
+// Comment Content Block
+
+.comment__content {
+	padding: 8px 16px 16px 56px;
+
+	.comment__post-link {
+		font-weight: 600;
+		margin-bottom: 16px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		.gridicon {
+			color: $gray-text-min;
+			margin: 0 4px -3px 0;
+		}
+	}
+
+	.comment__status-label {
+		border-radius: 9px;
+		float: right;
+		font-size: 12px;
+		margin-left: 8px;
+		padding: 0 10px;
+
+		&.is-pending {
+			background: lighten( $alert-yellow, 18% );
+		}
+		&.is-spam,
+		&.is-trash {
+			background: lighten( $alert-red, 18% );
+		}
+	}
+
+	.comment__in-reply-to {
+		border-left: 4px solid $gray-lighten-30;
+		color: $gray-text-min;
+		margin-bottom: 16px;
+		overflow: hidden;
+		padding: 2px 4px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		.gridicon {
+			fill: $gray-text-min;
+			margin-bottom: -4px;
+		}
+
+		span {
+			margin: 0 4px;
+		}
+
+		a {
+			color: $gray-text-min;
+		}
+		a:focus,
+		a:hover {
+			color: $blue-wordpress;
+		}
+	}
+
+	.comment__content-body *:last-child {
+		margin-bottom: 0;
+	}
+
+	.comment__content-body blockquote {
+		padding: 8px 16px;
+		margin: 8px 0 16px;
+		border-left: 2px solid $gray-lighten-30;
+	}
+}
+
+.comment__content-preview {
+	max-height: 42px;
+	overflow: hidden;
+	position: relative;
+
+	&:after {
+		background: linear-gradient( to right, rgba( $white, 0 ), rgba( $white, 1 ) 50% );
+		content: '';
+		height: 20px;
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		width: 30%;
+	}
+}
+.comment.is-pending .comment__content-preview:after {
+	background: linear-gradient(
+		to right,
+		rgba( mix( $alert-yellow, $white, 8.5% ), 0 ),
+		rgba( mix( $alert-yellow, $white, 8.5% ), 1 ) 50%
+	);
+}
+
+@supports ( -webkit-line-clamp: 2 ) {
+	.comment .comment__content-preview,
+	.comment.is-pending .comment__content-preview {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+
+		&:after {
+			background: transparent;
+		}
+	}
+}
+
+// Comment Post Link Block
+
+.comment__post-link {
+	font-family: $serif;
+
+	a {
+		color: $gray-text-min;
+	}
+	a:focus,
+	a:hover {
+		color: $blue-wordpress;
+	}
+}
+
+// Comment Actions Block
+
+.comment__actions {
+	align-items: center;
+	border-top: 1px solid $gray-lighten-30;
+	display: flex;
+	flex-flow: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	margin: 0 16px 0 56px;
+	padding-top: 8px;
+	padding-bottom: 8px;
+
+	@include breakpoint( '>960px' ) {
+		justify-content: flex-start;
+		margin-left: 40px;
+		padding-top: 0;
+	}
+}
+
+.button.is-borderless.comment__action {
+	flex-basis: 0;
+	flex-grow: 1;
+	padding: 8px 4px;
+	text-align: center;
+
+	span {
+		display: none;
+		font-weight: 400;
+		padding-top: 4px;
+	}
+
+	&.comment__action-approve:hover {
+		color: $alert-green;
+	}
+	&.comment__action-like:hover {
+		color: $orange-jazzy;
+	}
+	&.comment__action-delete:hover,
+	&.comment__action-spam:hover,
+	&.comment__action-trash:hover {
+		color: $alert-red;
+	}
+
+	&.is-approved {
+		color: $alert-green;
+	}
+	&.is-liked {
+		color: $orange-jazzy;
+	}
+
+	@include breakpoint( '>480px' ) {
+		span {
+			display: block;
+		}
+	}
+
+	@include breakpoint( '>960px' ) {
+		flex-basis: auto;
+		flex-grow: 0;
+		padding: 8px 16px;
+		text-align: left;
+
+		.gridicon {
+			margin-right: 4px;
+		}
+
+		span {
+			display: inline;
+		}
+	}
+}
+
+.button[disabled].is-borderless.comment__action.is-approved {
+	color: $gray-lighten-30;
+}
+
+.button[disabled].is-borderless.comment__action:hover {
+	color: $gray-lighten-30;
+}
+
+// Comment Reply Block
+
+.comment__reply {
+	display: none;
+	padding: 0 16px 16px 16px;
+	position: relative;
+}
+
+.comment__reply-textarea {
+	font-size: 14px;
+	height: 47px; // 1 line
+	line-height: 21px;
+	min-height: 47px; // 1 line
+	overflow: hidden;
+	padding: 12px 70px 12px 16px;
+	resize: vertical;
+	transition: min-height 0.15s linear;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+
+	&::placeholder {
+		color: $gray-text-min;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	&:not( :focus ) {
+		resize: none;
+	}
+
+	&:focus,
+	&.has-focus {
+		min-height: 68px; // 2 lines
+	}
+
+	&.has-scrollbar {
+		overflow-y: auto;
+	}
+}
+
+.comment__reply-submit.button.is-compact.is-borderless {
+	color: $gray;
+	font-weight: 600;
+	padding: 4px;
+	position: absolute;
+	right: 28px;
+	top: 13px;
+	text-transform: uppercase;
+
+	&.is-active {
+		color: $blue-wordpress;
+		cursor: pointer;
+	}
+}
+
+// Comment Edit Block
+
+.comment__edit {
+	.form-fieldset {
+		padding: 0 8px;
+		width: 50%;
+
+		@include breakpoint( '>1280px' ) {
+			width: 33%;
+		}
+	}
+
+	.form-textarea {
+		height: 184px; // 8 lines
+		margin: 0 0 20px 0;
+		resize: vertical;
+		transition: none;
+		width: 100%;
+	}
+
+	label {
+		display: inline-block;
+	}
+
+	input[type='text'],
+	textarea {
+		font-size: 14px;
+	}
+
+	.info-popover {
+		display: inline-block;
+		margin-left: 4px;
+		vertical-align: middle;
+	}
+
+	.comment__edit-jetpack-update-notice {
+		color: $alert-red;
+		margin-left: 8px;
+		margin-right: 8px;
+
+		.gridicon {
+			margin-right: 4px;
+			vertical-align: middle;
+		}
+	}
+
+	.comment__edit-jetpack-update-notice-link {
+		color: $alert-red;
+		margin-left: 4px;
+		text-decoration: underline;
+	}
+}
+
+.comment__edit-header {
+	border-bottom: 1px solid $gray-lighten-30;
+	padding: 12px 16px;
+}
+
+.comment__edit-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 16px 8px 0 8px;
+}
+
+.comment__edit-buttons {
+	padding: 0 8px 16px 8px;
+	width: 100%;
+}
+
+.comment__edit-date-button {
+	display: block;
+}
+.comment__edit-date-popover {
+	min-width: 300px;
+	.popover__inner {
+		padding: 0 8px;
+	}
+}
+.comment__edit-date-popover-buttons {
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: flex-start;
+	padding-bottom: 8px;
+
+	.button {
+		margin-left: 10px;
+	}
+}
+
+// HTML Editor
+
+.comment-html-editor {
+	margin: 0 8px;
+	width: 100%;
+}
+
+.comment-html-editor__toolbar .button {
+	border-right: 1px solid lighten( $gray, 30% );
+	border-radius: 0px;
+	color: darken( $gray, 20% );
+	margin-bottom: 8px;
+	min-width: 30px;
+	padding: 4px 8px;
+	position: relative;
+	text-transform: lowercase;
+
+	&:hover {
+		color: $gray-dark;
+	}
+
+	&:last-child {
+		border-right: none;
+	}
+
+	&.is-tag-open {
+		padding-left: 12px;
+		padding-right: 4px;
+		&::before {
+			content: '/';
+			left: 8px;
+			position: absolute;
+		}
+	}
+}
+
+.comment-html-editor__toolbar-button-strong {
+	font-weight: bold;
+}
+.comment-html-editor__toolbar-button-em {
+	font-style: italic;
+}
+.comment-html-editor__toolbar-button-a.button {
+	color: $blue-wordpress;
+	text-decoration: underline;
+}
+.comment-html-editor__toolbar-button-del {
+	text-decoration: line-through;
+}
+.comment-html-editor__toolbar-button-ins {
+	text-decoration: underline;
+}
+.comment-html-editor__toolbar-button-code {
+	font-family: $code;
+}
+.comment-html-editor__toolbar-button-close-tags.button[disabled]:hover {
+	color: lighten( $gray, 30% );
+}
+
+.comment-html-editor__dialog {
+	max-height: 90%;
+
+	.dialog__content {
+		min-width: 40vw;
+	}
+	.form-fieldset {
+		margin-bottom: 8px;
+	}
+	.post-selector {
+		margin-bottom: 16px;
+		.post-selector__results {
+			height: 24vh;
+		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		width: 90%;
+		.dialog__content {
+			min-width: none;
+		}
+	}
+}
+
+// Bulk Mode View
+
+.card.comment.is-bulk-mode {
+	margin: 0 auto;
+
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+		z-index: z-index( 'root', '.card.comment.is-bulk-mode:hover' );
+	}
+	&.is-pending:hover {
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+	}
+
+	a {
+		color: $gray-text-min;
+		cursor: default;
+		pointer-events: none;
+	}
+
+	.comment__author {
+		padding-left: 0;
+	}
+
+	.comment__content {
+		padding-top: 0;
+	}
+
+	.comment__in-reply-to {
+		border: none;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+// Reply Visible
+
+.card.comment.is-reply-visible {
+	.comment__reply {
+		display: block;
+	}
+}
+
+// Placeholder View
+
+.card.comment.is-placeholder {
+	@include placeholder();
+
+	background-color: $white;
+
+	.comment__bulk-select {
+		display: none;
+	}
+
+	.comment__author {
+		padding: 8px;
+	}
+
+	.comment__author-gravatar-placeholder {
+		background-color: $gray-lighten-30;
+		border-radius: 50%;
+		display: block;
+		height: 32px;
+		width: 32px;
+	}
+
+	.comment__author-info {
+		padding: 5px 8px 5px 0;
+	}
+
+	.comment__author-info-element {
+		background-color: $gray-lighten-30;
+		color: transparent;
+		height: 16px;
+
+		a,
+		a:focus,
+		a:hover,
+		.gridicon,
+		.comment__author-url-separator {
+			color: transparent;
+			cursor: default;
+		}
+	}
+
+	.comment__author-more-info {
+		display: none;
+	}
+
+	.comment__content {
+		display: none;
+	}
+
+	.comment__actions {
+		display: none;
+	}
+}
+
+// Nested comment at max depth
+
+.card.comment {
+	&.is-at-max-depth {
+		margin-bottom: 0px;
+		box-shadow: 0 -1px transparentize( $gray-lighten-20, 0.5 );
+	}
+}

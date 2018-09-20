@@ -1,41 +1,36 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var CountedTextarea = require( 'components/forms/counted-textarea' );
+import CountedTextarea from 'components/forms/counted-textarea';
 
-module.exports = React.createClass( {
-	displayName: 'CountedTextareas',
+export default class extends React.PureComponent {
+	static displayName = 'CountedTextareas';
 
-	mixins: [ React.addons.PureRenderMixin ],
+	state = {
+		value: 'Hello World!',
+	};
 
-	getInitialState: function() {
-		return {
-			value: 'Hello World!'
-		};
-	},
-
-	onChange: function( event ) {
+	onChange = event => {
 		this.setState( {
-			value: event.target.value
+			value: event.target.value,
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/counted-textareas">Counted Textareas</a>
-				</h2>
-
-				<div>
-					<CountedTextarea value={ this.state.value } onChange={ this.onChange } acceptableLength={ 20 } />
-				</div>
-			</div>
+			<CountedTextarea
+				value={ this.state.value }
+				onChange={ this.onChange }
+				acceptableLength={ 20 }
+			/>
 		);
 	}
-} );
+}

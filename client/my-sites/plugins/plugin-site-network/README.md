@@ -6,17 +6,17 @@ This component is used to display a single instance of a plugin within a multisi
 #### How to use:
 
 ```js
-var PluginSiteNetwork = require( 'my-sites/plugins/plugin-site/plugin-site-network' );
+import PluginSiteNetwork from 'my-sites/plugins/plugin-site/plugin-site-network';
 
-render: function() {
+render() {
     return (
-        <PluginSiteNetwork
-            site={ site }
-            plugin={ plugin }
-            notices={ notices }
-            secondarySites={ secondarySites }
-            />
-    );
+		<PluginSiteNetwork
+			site={ site }
+			plugin={ plugin }
+			notices={ notices }
+			secondarySites={ secondarySites }
+		/>
+	);
 }
 ```
 

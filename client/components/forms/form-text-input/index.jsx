@@ -1,44 +1,55 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' ),
-	classNames = require( 'classnames' );
 
-module.exports = React.createClass( {
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { omit } from 'lodash';
 
-	displayName: 'FormTextInput',
+export default class FormTextInput extends PureComponent {
+	static propTypes = {
+		isError: PropTypes.bool,
+		isValid: PropTypes.bool,
+		selectOnFocus: PropTypes.bool,
+		className: PropTypes.string,
+	};
 
-	getDefaultProps: function() {
-		return {
-			isError: false,
-			isValid: false,
-			selectOnFocus: false,
-			type: 'text'
-		};
-	},
+	constructor() {
+		super( ...arguments );
 
-	render: function() {
-		var otherProps = omit( this.props, [ 'className', 'type' ] ),
-			classes = classNames( {
-				'form-text-input': true,
-				'is-error': this.props.isError,
-				'is-valid': this.props.isValid
-			} );
+		this.selectOnFocus = this.selectOnFocus.bind( this );
+	}
+
+	focus() {
+		this.refs.textField.focus();
+	}
+
+	selectOnFocus( event ) {
+		if ( this.props.selectOnFocus ) {
+			event.target.select();
+		}
+	}
+
+	render() {
+		const { inputRef } = this.props;
+		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus', 'inputRef' );
+
+		const classes = classNames( 'form-text-input', this.props.className, {
+			'is-error': this.props.isError,
+			'is-valid': this.props.isValid,
+		} );
 
 		return (
 			<input
-				{ ...otherProps }
-				type={ this.props.type }
-				className={ joinClasses( this.props.className, classes ) }
-				onClick={ this.props.selectOnFocus ? this.selectOnFocus : null }
-				/>
+				type="text"
+				{ ...props }
+				ref={ inputRef || 'textField' }
+				className={ classes }
+				onClick={ this.selectOnFocus }
+			/>
 		);
-	},
-
-	selectOnFocus: function( event ) {
-		event.target.select();
 	}
-
-} );
+}

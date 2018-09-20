@@ -1,37 +1,52 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	PureRenderMixin = React.addons.PureRenderMixin;
+
+import PropTypes from 'prop-types';
+import i18n, { localize } from 'i18n-calypso';
+import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var translator = require( 'lib/translator-jumpstart' ),
-	localStorageHelper = require( 'store' ),
-	Dialog = require( 'components/dialog' ),
-	analytics = require( 'analytics' );
+import translator from 'lib/translator-jumpstart';
+import localStorageHelper from 'store';
+import Dialog from 'components/dialog';
+import analytics from 'lib/analytics';
+import userSettings from 'lib/user-settings';
 
-module.exports = React.createClass( {
-	displayName: 'TranslatorLauncher',
+class TranslatorLauncher extends React.PureComponent {
+	static displayName = 'TranslatorLauncher';
 
-	propTypes: {
-		isActive: React.PropTypes.bool.isRequired,
-		isEnabled: React.PropTypes.bool.isRequired
-	},
+	static propTypes = {
+		translate: PropTypes.func,
+	};
 
-	mixins: [ PureRenderMixin ],
+	state = {
+		infoDialogVisible: false,
+		firstActivation: true,
+		isActive: translator.isActivated(),
+		isEnabled: translator.isEnabled(),
+	};
 
-	getInitialState: function() {
-		return {
-			infoDialogVisible: false,
-			firstActivation: true
-		};
-	},
+	componentDidMount() {
+		i18n.on( 'change', this.onI18nChange );
+		userSettings.on( 'change', this.onUserSettingsChange );
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( ! this.props.isActive && nextProps.isActive ) {
+	componentWillUnmount() {
+		i18n.off( 'change', this.onI18nChange );
+		userSettings.off( 'change', this.onUserSettingsChange );
+	}
+
+	onI18nChange = () => {
+		if ( ! this.state.isActive && translator.isActivated() ) {
 			// Activating
+			this.setState( { isActive: true } );
+
 			if ( ! localStorageHelper.get( 'translator_hide_infodialog' ) ) {
 				this.setState( { infoDialogVisible: true } );
 			}
@@ -40,57 +55,84 @@ module.exports = React.createClass( {
 				analytics.mc.bumpStat( 'calypso_translator_toggle', 'intial_activation' );
 				this.setState( { firstActivation: false } );
 			}
+		} else if ( this.state.isActive && ! translator.isActivated() ) {
+			// Deactivating
+			this.setState( { isActive: false } );
 		}
-	},
+	};
 
-	toggleInfoCheckbox: function( event ) {
+	onUserSettingsChange = () => {
+		if ( this.state.isEnabled !== translator.isEnabled() ) {
+			this.setState( { isEnabled: translator.isEnabled() } );
+		}
+	};
+
+	toggleInfoCheckbox = event => {
 		localStorageHelper.set( 'translator_hide_infodialog', event.target.checked );
-	},
+	};
 
-	infoDialogClose: function() {
+	infoDialogClose = () => {
 		this.setState( { infoDialogVisible: false } );
-	},
+	};
 
-	toggle: function( event ) {
+	toggle = event => {
 		event.preventDefault();
-		analytics.mc.bumpStat( 'calypso_translator_toggle', this.props.isActive ? 'off' : 'on' );
-		translator.toggle();
-	},
+		const nextIsActive = translator.toggle();
+		analytics.mc.bumpStat( 'calypso_translator_toggle', nextIsActive ? 'on' : 'off' );
+		this.setState( { isActive: nextIsActive } );
+	};
 
-	render: function() {
-		var launcherClasses = 'translator',
-			toggleString,
-			infoDialogButtons;
+	render() {
+		let launcherClasses = 'community-translator';
+		let toggleString;
 
-		if ( ! this.props.isEnabled ) {
+		if ( ! this.state.isEnabled ) {
 			return null;
 		}
 
-		if ( this.props.isActive ) {
-			toggleString = this.translate( 'Disable Translator' );
-			launcherClasses += ' active';
+		if ( this.state.isActive ) {
+			toggleString = this.props.translate( 'Disable Translator' );
+			launcherClasses += ' is-active';
 		} else {
-			toggleString = this.translate( 'Enable Translator' );
+			toggleString = this.props.translate( 'Enable Translator' );
 		}
 
-		infoDialogButtons = [ { action: 'cancel', label: this.translate( 'Ok' ) }, ];
+		const infoDialogButtons = [ { action: 'cancel', label: this.props.translate( 'Ok' ) } ];
 
 		return (
 			<div>
-				<Dialog isVisible={ this.state.infoDialogVisible } buttons={ infoDialogButtons } onClose={ this.infoDialogClose } additionalClassNames="translator-modal">
-					<h1>{ this.translate( 'Community Translator' ) }</h1>
-					<p>{ this.translate( 'You have now enabled the translator.  Right click highlighted text to translate it.' ) }</p>
+				<Dialog
+					isVisible={ this.state.infoDialogVisible }
+					buttons={ infoDialogButtons }
+					onClose={ this.infoDialogClose }
+					additionalClassNames="community-translator__modal"
+				>
+					<h1>{ this.props.translate( 'Community Translator' ) }</h1>
 					<p>
-						<label><input type="checkbox" onClick={ this.toggleInfoCheckbox } /><span>{ this.translate( "Don't show again" ) }</span></label>
+						{ this.props.translate(
+							'You have now enabled the translator. Right click the text to translate it.'
+						) }
+					</p>
+					<p>
+						<label>
+							<input type="checkbox" onClick={ this.toggleInfoCheckbox } />
+							<span>{ this.props.translate( "Don't show again" ) }</span>
+						</label>
 					</p>
 				</Dialog>
-				<div id='translator-launcher' className={ launcherClasses }>
-					<a onClick={ this.toggle } href='' title={ this.translate( 'Community Translator' ) }>
-						<span className="noticon noticon-website"></span>
-						<div className="text">{ toggleString }</div>
+				<div className={ launcherClasses }>
+					<a
+						className="community-translator__button"
+						onClick={ this.toggle }
+						title={ this.props.translate( 'Community Translator' ) }
+					>
+						<Gridicon icon="globe" />
+						<div className="community-translator__text">{ toggleString }</div>
 					</a>
 				</div>
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( TranslatorLauncher );

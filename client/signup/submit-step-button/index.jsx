@@ -1,27 +1,28 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var SignupActions = require( 'lib/signup/actions' );
+import SignupActions from 'lib/signup/actions';
 
-module.exports = React.createClass( {
-	displayName: 'SubmitStepButton',
-
-	handleSubmit: function() {
+export default class SubmitStepButton extends Component {
+	handleSubmit = () => {
 		SignupActions.submitSignupStep( { stepName: this.props.stepName } );
 
 		this.props.goToNextStep();
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<button onClick={ this.handleSubmit } className='button is-primary'>
+			<button onClick={ this.handleSubmit } className="submit-step-button button is-primary">
 				{ this.props.buttonText }
 			</button>
 		);
 	}
-} );
+}

@@ -1,35 +1,53 @@
+.webpack-cache
 .sass-cache
+.babel-cache
 .vagrant
 .unison
 .env
 .DS_Store
 .idea
+.vscode
 *.iml
 *.iws
-tags
+/tags
 node_modules
 /npm-debug.log*
 *.sw?
 !*.swf
-
-# script used during docker build that is specific to the environment
-env-config.sh
+.eslintcache
+test-results*.xml
+/stats.json
 
 # added during build
 /config/secrets.json
 
+# config overrides
+/config/*.local.json
+
+/coverage
+
 /build
 
 /public/*.js
-/public/style*.css
-/public/style*.css.map
-/public/editor*.css
+/public/*.js.map
+/public/*.css
+/public/*.css.map
+/public/sections/*
+/public/sections-rtl/*
+/public/images/*.svg
 /server/devdocs/search-index.js
-/server/bundler/assets-*.json
+/server/devdocs/components-usage-stats.json
+/server/devdocs/proptypes-index.json
+/server/bundler/assets.json
 
 *.rdb
 *.db
 
-/calypso-strings.php
+/calypso-strings.pot
 cover.html
 .test.log
+
+cached-requests.json
+
+# Gutenberg extensions
+/client/gutenberg/extensions/**/build

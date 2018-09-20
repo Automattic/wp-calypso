@@ -6,18 +6,18 @@ This component is used to implement toggle switches.
 #### How to use:
 
 ```js
-var FormToggle = require( 'components/forms/form-toggle' );
+import FormToggle from 'components/forms/form-toggle';
 
-render: function() {
+export default function MyComponent() {
 	return (
 		<div className="you-rock">
-		  <FormToggle
-			checked={ this.props.checked }
-			toggling={ this.props.toggling }
-			disabled={ this.props.disabled }
-			onChange={ this.props.onChange }
-			id={ 'you-rock-uniquely' }
-		  />
+			<FormToggle
+				checked={ this.props.checked }
+				toggling={ this.props.toggling }
+				disabled={ this.props.disabled }
+				onChange={ this.props.onChange }
+				id="you-rock-uniquely"
+			/>
 		</div>
 	);
 }

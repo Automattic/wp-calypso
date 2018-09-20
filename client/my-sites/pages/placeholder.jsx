@@ -1,38 +1,54 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react/addons' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var CompactCard = require( 'components/card/compact' ),
-	SiteIcon = require( 'components/site-icon' );
+import CompactCard from 'components/card/compact';
+import SiteIcon from 'blocks/site-icon';
 
-module.exports = {
-	Page: React.createClass( {
-		displayName: 'PagePlaceholder',
+class PagePlaceholder extends React.Component {
+	static displayName = 'PagePlaceholder';
 
-		render: function() {
-			return (
-				<CompactCard className="page is-placeholder">
-					{ this.props.multisite ? <SiteIcon size={ 34 } /> : null }
-					<a className="page__title"><span className="placeholder-text">{ this.translate( 'Loading a page of Pages…' ) }</span></a>
-					{ this.props.multisite ? <span className="page__site-url "><span className="placeholder-text">{ this.translate( 'A domain, quite soon…') }</span></span> : null }
-				</CompactCard>
-			);
-		}
-	} ),
-	Marker: React.createClass( {
-		displayName: 'MarkerPlaceholder',
+	render() {
+		return (
+			<CompactCard className="page is-placeholder">
+				{ this.props.multisite ? <SiteIcon size={ 34 } /> : null }
+				<a className="page__title">
+					<span className="placeholder-text">
+						{ this.props.translate( 'Loading a page of Pages…' ) }
+					</span>
+				</a>
+				{ this.props.multisite ? (
+					<span className="page__site-url ">
+						<span className="placeholder-text">
+							{ this.props.translate( 'A domain, quite soon…' ) }
+						</span>
+					</span>
+				) : null }
+			</CompactCard>
+		);
+	}
+}
 
-		render: function() {
-			return (
-				<div className="page-list__header is-placeholder">
-					<span className="noticon noticon-time" />
-					<span className="placeholder-text">{ this.translate( "Loading time marker…" ) }</span>
-				</div>
-			);
-		}
-	} )
+class MarkerPlaceholder extends React.Component {
+	static displayName = 'MarkerPlaceholder';
+
+	render() {
+		return (
+			<div className="pages__page-list-header is-placeholder">
+				<span>&nbsp;</span>
+			</div>
+		);
+	}
+}
+
+export default {
+	Page: localize( PagePlaceholder ),
+	Marker: localize( MarkerPlaceholder ),
 };

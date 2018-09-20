@@ -1,53 +1,62 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+import PropTypes from 'prop-types';
+import React from 'react';
+import { omit, noop } from 'lodash';
 
-var TokenInput = React.createClass( {
-	propTypes: {
-		onChange: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		value: React.PropTypes.string
-	},
+class TokenInput extends React.PureComponent {
+	static propTypes = {
+		disabled: PropTypes.bool,
+		hasFocus: PropTypes.bool,
+		onChange: PropTypes.func,
+		onBlur: PropTypes.func,
+		placeholder: PropTypes.string,
+		value: PropTypes.string,
+	};
 
-	getDefaultProps: function() {
-		return {
-			onChange: function() {},
-			onBlur: function() {},
-			value: ''
-		};
-	},
+	static defaultProps = {
+		disabled: false,
+		hasFocus: false,
+		onChange: noop,
+		onBlur: noop,
+		placeholder: '',
+		value: '',
+	};
 
-	mixins: [ React.addons.PureRenderMixin ],
+	componentDidUpdate() {
+		if ( this.props.hasFocus ) {
+			this.textInput.focus();
+		}
+	}
 
-	render: function() {
+	render() {
+		const { placeholder, value } = this.props;
+		const size =
+			( ( value.length === 0 && placeholder && placeholder.length ) || value.length ) + 1;
+
 		return (
 			<input
-				type="text"
-				value={ this.props.value }
-			 	size={ this.props.value.length + 1 }
-				onBlur={ this.props.onBlur }
-				onChange={ this._onChange }
 				className="token-field__input"
+				onChange={ this.onChange }
+				ref={ this.setTextInput }
+				size={ size }
+				type="text"
+				{ ...omit( this.props, [ 'hasFocus', 'onChange' ] ) }
 			/>
 		);
-	},
-
-	focus: function() {
-		if ( this.isMounted() ) {
-			this.getDOMNode().focus();
-		}
-	},
-
-	hasFocus: function() {
-		return this.isMounted() && this.getDOMNode() === document.activeElement;
-	},
-
-	_onChange: function( event ) {
-		this.props.onChange( {
-			value: event.target.value
-		} );
 	}
-} );
 
-module.exports = TokenInput;
+	setTextInput = input => {
+		this.textInput = input;
+	};
+
+	onChange = event => {
+		this.props.onChange( {
+			value: event.target.value,
+		} );
+	};
+}
+
+export default TokenInput;

@@ -1,0 +1,70 @@
+.credit-card-form-fields__extras {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-left: -15px;
+
+	.credit-card-form-fields__field {
+		flex-basis: calc( 100% - 15px );
+		flex-grow: 1;
+		flex-shrink: 0;
+		margin-left: 15px;
+	}
+
+	.checkout__ebanx-payment-fields {
+		margin-left: 0;
+	}
+
+	@include breakpoint( '>480px' ) {
+		.cvv,
+		.expiration-date {
+			flex-basis: calc( 50% - 15px );
+		}
+
+		.country {
+			flex-basis: auto;
+		}
+
+		.postal-code {
+			flex-basis: 8em;
+		}
+	}
+}
+
+.credit-card-form-fields {
+	margin-bottom: 15px;
+}
+
+.credit-card-form-fields__field {
+	margin-top: 15px;
+	position: relative;
+
+	&.name {
+		margin-top: 0;
+	}
+
+	select {
+		font-size: 15px;
+		width: 100%;
+	}
+
+	input[disabled] {
+		cursor: not-allowed;
+	}
+}
+
+.credit-card-form-fields__cvv-info {
+	.gridicon {
+		margin-bottom: -3px;
+	}
+
+	.popover__inner {
+		align-items: flex-start;
+		display: flex;
+	}
+}
+
+.credit-card-form-fields__cvv-illustration {
+	flex: 0 0 42px;
+	margin-right: 10px;
+}

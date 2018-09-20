@@ -9,32 +9,11 @@
 	}
 
 	.editor-sharing__external-link-indicator {
-		float: right;
 		color: $gray;
+		margin-left: 4px;
+		vertical-align: text-top;
 	}
-}
-
-.editor-sharing__add-connection {
-	position: relative;
-	display: block;
-	padding-left: 20px;
-	margin-bottom: 16px;
-}
-
-.editor-sharing__add-connection-icon {
-	position: absolute;
-		top: 50%;
-		left: 0;
-	transform: translateY( -50% );
-}
-
-.editor-sharing__publicize-disabled {
-	text-align: center;
-	span {
-		display: block;
+	.notice.is-compact {
+		margin: 8px 0;
 	}
-}
-
-.editor-sharing__jetpack-modules-button {
-	margin-top: 10px;
 }

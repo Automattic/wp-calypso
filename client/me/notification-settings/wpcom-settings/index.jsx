@@ -1,26 +1,34 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
-import notices from 'notices';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
 import Card from 'components/card';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import store from 'lib/notification-settings-store';
-import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notification-settings-store/actions';
+import {
+	fetchSettings,
+	toggleWPcomEmailSetting,
+	saveSettings,
+} from 'lib/notification-settings-store/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import EmailCategory from './email-category';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Module variables
@@ -28,103 +36,144 @@ import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notifi
 const options = {
 	marketing: 'marketing',
 	research: 'research',
-	community: 'community'
+	community: 'community',
+	promotion: 'promotion',
+	news: 'news',
+	digest: 'digest',
 };
 
-export default React.createClass( {
-	displayName: 'WPCOMNotifications',
+class WPCOMNotifications extends React.Component {
+	static displayName = 'WPCOMNotifications';
 
-	getInitialState() {
-		return {
-			settings: null
-		};
-	},
+	state = {
+		settings: null,
+	};
 
 	componentDidMount() {
 		store.on( 'change', this.onChange );
 		fetchSettings();
-	},
+	}
 
 	componentWillUnmount() {
 		store.off( 'change', this.onChange );
-	},
+	}
 
-	onChange() {
+	onChange = () => {
 		const state = store.getStateFor( 'wpcom' );
 
 		if ( state.error ) {
-			notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice(
+				this.props.translate( 'There was a problem saving your changes. Please, try again.' )
+			);
 		}
 
 		if ( state.status === 'success' ) {
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( this.props.translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
-	},
+	};
 
-	toggleSetting( setting ) {
+	toggleSetting = setting => {
 		toggleWPcomEmailSetting( setting );
-	},
+	};
 
-	renderWpcomPreferences() {
+	saveSettings = () => {
+		saveSettings( 'wpcom', this.state.settings );
+	};
+
+	renderWpcomPreferences = () => {
 		return (
 			<div>
-				<p>{ this.translate( 'We\'ll always send important emails regarding your account, security, privacy, and purchase transactions, but you can get some fun extras, too!' ) }</p>
+				<p>
+					{ this.props.translate(
+						"We'll always send important emails regarding your account, security, " +
+							'privacy, and purchase transactions, but you can get some helpful extras, too.'
+					) }
+				</p>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Suggestions' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.marketing ) } onChange={ this.toggleSetting.bind( this, options.marketing ) }/>
-						<span>{ this.translate( 'Tips for getting the most out of WordPress.com.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Research' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.research ) } onChange={ this.toggleSetting.bind( this, options.research ) }/>
-						<span>{ this.translate( 'Opportunities to participate in WordPress.com research & surveys.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Community' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.community ) } onChange={ this.toggleSetting.bind( this, options.community ) }/>
-						<span>{ this.translate( 'Information on WordPress.com courses and events (online & in-person).' ) }</span>
-					</FormLabel>
-				</FormFieldset>
-
-				<ActionButtons
-					onSave={ () => saveSettings( 'wpcom', this.state.settings ) }
-					disabled={ ! this.state.hasUnsavedChanges }
+				<EmailCategory
+					name={ options.marketing }
+					isEnabled={ this.state.settings.get( options.marketing ) }
+					title={ this.props.translate( 'Suggestions' ) }
+					description={ this.props.translate( 'Tips for getting the most out of WordPress.com.' ) }
 				/>
+
+				<EmailCategory
+					name={ options.research }
+					isEnabled={ this.state.settings.get( options.research ) }
+					title={ this.props.translate( 'Research' ) }
+					description={ this.props.translate(
+						'Opportunities to participate in WordPress.com research and surveys.'
+					) }
+				/>
+
+				<EmailCategory
+					name={ options.community }
+					isEnabled={ this.state.settings.get( options.community ) }
+					title={ this.props.translate( 'Community' ) }
+					description={ this.props.translate(
+						'Information on WordPress.com courses and events (online and in-person).'
+					) }
+				/>
+
+				<EmailCategory
+					name={ options.promotion }
+					isEnabled={ this.state.settings.get( options.promotion ) }
+					title={ this.props.translate( 'Promotions' ) }
+					description={ this.props.translate( 'Promotions and deals on upgrades.' ) }
+				/>
+
+				<EmailCategory
+					name={ options.news }
+					isEnabled={ this.state.settings.get( options.news ) }
+					title={ this.props.translate( 'News' ) }
+					description={ this.props.translate( 'WordPress.com news and announcements.' ) }
+				/>
+
+				<EmailCategory
+					name={ options.digest }
+					isEnabled={ this.state.settings.get( options.digest ) }
+					title={ this.props.translate( 'Digests' ) }
+					description={ this.props.translate(
+						'Popular content from the blogs you follow, and reports on ' +
+							'your own site and its performance.'
+					) }
+				/>
+
+				<ActionButtons onSave={ this.saveSettings } disabled={ ! this.state.hasUnsavedChanges } />
 			</div>
 		);
-	},
+	};
 
-	renderPlaceholder() {
-		return (
-			<p className="notification-settings-wpcom-settings__placeholder">&nbsp;</p>
-		);
-	},
+	renderPlaceholder = () => {
+		return <p className="notification-settings-wpcom-settings__placeholder">&nbsp;</p>;
+	};
 
 	render() {
 		return (
 			<Main>
+				<PageViewTracker
+					path="/me/notifications/updates"
+					title="Me > Notifications > Updates from WordPress.com"
+				/>
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 				<Navigation path={ this.props.path } />
 
 				<Card>
-					<FormSectionHeading className="is-primary">
-						{ this.translate( 'Email from WordPress.com' ) }
+					<FormSectionHeading>
+						{ this.props.translate( 'Email from WordPress.com' ) }
 					</FormSectionHeading>
 					{ this.state.settings ? this.renderWpcomPreferences() : this.renderPlaceholder() }
 				</Card>
 			</Main>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+)( localize( WPCOMNotifications ) );

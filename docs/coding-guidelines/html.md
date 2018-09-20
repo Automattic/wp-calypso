@@ -42,10 +42,9 @@ When mixing JavaScript and HTML (via JSX) together, indent JavaScript blocks to 
 Correct:
 
 ```js
-var Post = React.createClass({
-
-	render: function() {
-		var post = this.props.post;
+class Post extends React.Component {
+	render() {
+		const post = this.props.post;
 
 		return (
 			<div id={ 'post-' + post.ID } className="post">
@@ -56,16 +55,15 @@ var Post = React.createClass({
 			</div>
 		);
 	}
-});
+}
 ```
 
 Incorrect:
 
 ```js
-var Post = React.createClass({
-
-	render: function() {
-		var post = this.props.post;
+class Post extends React.Component {
+	render() {
+		const post = this.props.post;
 
 		return (
 			<div id={ 'post-' + post.ID } className="post">
@@ -76,6 +74,6 @@ var Post = React.createClass({
 			</div>
 		);
 	}
-});
+}
 ```
 

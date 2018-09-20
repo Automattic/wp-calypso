@@ -1,125 +1,76 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import _debug from 'debug';
-const debug = _debug( 'calypso:media-library:header' );
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
-import FormRange from 'components/forms/range';
-import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
+import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'lib/site/utils';
+import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
+import Card from 'components/card';
+import ButtonGroup from 'components/button-group';
+import Button from 'components/button';
+import StickyPanel from 'components/sticky-panel';
 
-export default React.createClass( {
-	displayName: 'MediaLibraryHeader',
+class MediaLibraryHeader extends React.Component {
+	static displayName = 'MediaLibraryHeader';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
 		filter: PropTypes.string,
-		scale: PropTypes.number,
-		onMediaScaleChange: PropTypes.func,
-		mediaScaleChoices: PropTypes.arrayOf( PropTypes.number ).isRequired,
-		mediaScale: PropTypes.number.isRequired,
 		sliderPositionCount: PropTypes.number,
-		onAddMedia: PropTypes.func
-	},
+		onMediaScaleChange: PropTypes.func,
+		onAddMedia: PropTypes.func,
+		sticky: PropTypes.bool,
+	};
 
-	statics: {
-		SCALE_TOUCH_GRID: 0.32
-	},
+	static defaultProps = {
+		onAddMedia: () => {},
+		sliderPositionCount: 100,
+		sticky: false,
+	};
 
-	getInitialState() {
-		return {
-			addingViaUrl: false,
-			isMoreOptionsVisible: false
-		};
-	},
+	state = {
+		addingViaUrl: false,
+		isMoreOptionsVisible: false,
+	};
 
-	getDefaultProps() {
-		return {
-			onAddMedia: () => {},
-			onMediaScaleChange: () => {},
-			sliderPositionCount: 100
-		};
-	},
-
-	setMoreOptionsContext( component ) {
+	setMoreOptionsContext = component => {
 		if ( ! component ) {
 			return;
 		}
 
 		this.setState( {
-			moreOptionsContext: component
+			moreOptionsContext: component,
 		} );
-	},
+	};
 
-	onMediaScaleChange( event ) {
-		const sliderPosition = parseInt( event.target.value ),
-			scaleIndex = sliderPosition * this.props.mediaScaleChoices.length / this.props.sliderPositionCount,
-			scale = this.props.mediaScaleChoices[ Math.floor( scaleIndex ) ];
-
-		debug(
-			'onMediaScaleChange sliderPosition=%d scaleIndex=%d scale=%f',
-			sliderPosition, scaleIndex, scale
-		);
-
-		this.props.onMediaScaleChange( scale );
-		this.setState( { sliderPosition } );
-	},
-
-	getMediaScaleSliderPosition() {
-		// As part of the smooth motion of the slider, the user can move it
-		// between two snap points, and we want to remember this.
-
-		if ( typeof this.state.sliderPosition !== 'undefined' ) {
-			return this.state.sliderPosition;
-		}
-
-		const scale = this.props.mediaScale,
-			scaleIndex = this.props.mediaScaleChoices.indexOf( scale );
-
-		// Map the media scale index back to a slider position as follows:
-		// index 0 -> position 0
-		// index this.props.mediaScaleChoices.length - 1 -> position this.props.sliderPositionCount - 1
-
-		if ( scaleIndex < 0 ) {
-			debug( 'getMediaScaleSliderPosition unrecognized scale %f', scale );
-			return 0;
-		}
-
-		const { sliderPositionCount, mediaScaleChoices } = this.props,
-			sliderPosition = Math.floor( scaleIndex * ( sliderPositionCount - 1 ) / ( mediaScaleChoices.length - 1 ) );
-
-		debug(
-			'getMediaScaleSliderPosition scale=%f scaleIndex=%d sliderPosition=%d',
-			scale, scaleIndex, sliderPosition
-		);
-		return sliderPosition;
-	},
-
-	toggleAddViaUrl( state ) {
+	toggleAddViaUrl = state => {
 		this.setState( {
 			addingViaUrl: state,
-			isMoreOptionsVisible: false
+			isMoreOptionsVisible: false,
 		} );
-	},
+	};
 
-	toggleMoreOptions( state ) {
+	toggleMoreOptions = state => {
 		this.setState( {
-			isMoreOptionsVisible: state
+			isMoreOptionsVisible: state,
 		} );
-	},
+	};
 
-	renderUploadButtons() {
+	renderUploadButtons = () => {
 		const { site, filter, onAddMedia } = this.props;
 
 		if ( ! userCan( 'upload_files', site ) ) {
@@ -127,80 +78,42 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className="media-library__upload-buttons">
+			<ButtonGroup className="media-library__upload-buttons">
 				<UploadButton
 					site={ site }
 					filter={ filter }
 					onAddMedia={ onAddMedia }
-					className="button is-primary">
-					{ this.translate( 'Add New', { context: 'Media upload' } ) }
+					className="button is-compact"
+				>
+					<Gridicon icon="add-image" />
+					<span className="is-desktop">
+						{ this.props.translate( 'Add New', { context: 'Media upload' } ) }
+					</span>
 				</UploadButton>
-				<button
-					onClick={ this.toggleAddViaUrl.bind( this, true ) }
-					className="button is-desktop">
-					{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
-				</button>
-				<button
+				<Button
+					compact
 					ref={ this.setMoreOptionsContext }
 					onClick={ this.toggleMoreOptions.bind( this, ! this.state.isMoreOptionsVisible ) }
-					className="button is-primary is-mobile">
-					<span className="screen-reader-text">
-						{ this.translate( 'More Options' ) }
-					</span>
-					<Gridicon icon="chevron-down" size={ 20 }/>
+					className="button media-library__upload-more"
+					data-tip-target="media-library-upload-more"
+				>
+					<span className="screen-reader-text">{ this.props.translate( 'More Options' ) }</span>
+					<Gridicon icon="chevron-down" size={ 20 } />
 					<PopoverMenu
 						context={ this.state.moreOptionsContext }
 						isVisible={ this.state.isMoreOptionsVisible }
 						onClose={ this.toggleMoreOptions.bind( this, false ) }
 						position="bottom right"
-						className="popover is-dialog-visible">
+						className="is-dialog-visible media-library__header-popover"
+					>
 						<PopoverMenuItem onClick={ this.toggleAddViaUrl.bind( this, true ) }>
-							{ this.translate( 'Add via URL', { context: 'Media upload' } ) }
+							{ this.props.translate( 'Add via URL', { context: 'Media upload' } ) }
 						</PopoverMenuItem>
 					</PopoverMenu>
-				</button>
-			</div>
+				</Button>
+			</ButtonGroup>
 		);
-	},
-
-	renderScaleToggle() {
-		const { mediaScale, sliderPositionCount, onMediaScaleChange } = this.props;
-
-		if ( isMobile() ) {
-			return (
-				<SegmentedControl className="media-library__scale-toggle" compact>
-					<SegmentedControlItem
-						selected={ 1 !== mediaScale }
-						onClick={ () => onMediaScaleChange( this.constructor.SCALE_TOUCH_GRID ) }>
-						<span className="screen-reader-text">
-							{ this.translate( 'Grid' ) }
-						</span>
-						<Gridicon icon="grid" />
-					</SegmentedControlItem>
-					<SegmentedControlItem
-						selected={ 1 === mediaScale }
-						onClick={ () => onMediaScaleChange( 1 ) }>
-						<span className="screen-reader-text">
-							{ this.translate( 'List' ) }
-						</span>
-						<Gridicon icon="menu" />
-					</SegmentedControlItem>
-				</SegmentedControl>
-			);
-		}
-
-		return (
-			<FormRange
-				step="1"
-				min="0"
-				max={ sliderPositionCount - 1 }
-				minContent={ <Gridicon icon="image" size={ 16 } /> }
-				maxContent={ <Gridicon icon="image" size={ 24 }/> }
-				value={ this.getMediaScaleSliderPosition() }
-				onChange={ this.onMediaScaleChange }
-				className="media-library__scale-range" />
-		);
-	},
+	};
 
 	render() {
 		const { site, onAddMedia } = this.props;
@@ -211,16 +124,30 @@ export default React.createClass( {
 					site={ site }
 					onAddMedia={ onAddMedia }
 					onClose={ this.toggleAddViaUrl.bind( this, false ) }
-					className="media-library__header" />
+					className="media-library__header"
+				/>
 			);
 		}
 
-		return (
-			<header className="media-library__header">
-				<h2 className="media-library__heading">{ this.translate( 'Media Library' ) }</h2>
+		const card = (
+			<Card className="media-library__header">
 				{ this.renderUploadButtons() }
-				{ this.renderScaleToggle() }
-			</header>
+				<MediaModalSecondaryActions
+					selectedItems={ this.props.selectedItems }
+					onViewDetails={ this.props.onViewDetails }
+					onDelete={ this.props.onDeleteItem }
+					site={ this.props.site }
+					view={ 'LIST' }
+				/>
+				<MediaLibraryScale onChange={ this.props.onMediaScaleChange } />
+			</Card>
 		);
+
+		if ( this.props.sticky ) {
+			return <StickyPanel minLimit={ 660 }>{ card }</StickyPanel>;
+		}
+		return card;
 	}
-} );
+}
+
+export default localize( MediaLibraryHeader );

@@ -1,87 +1,151 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var FoldableCard = require( 'components/foldable-card' ),
-	PluginsLog = require( 'lib/plugins/log-store' ),
-	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
-	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
-	PluginUpdateIndicator = require( 'my-sites/plugins/plugin-site-update-indicator' ),
-	PluginInstallButton = require( 'my-sites/plugins/plugin-install-button' ),
-	PluginRemoveButton = require( 'my-sites/plugins/plugin-remove-button' ),
-	PluginSiteDisabledManage = require( 'my-sites/plugins/plugin-site-disabled-manage' ),
-	Site = require( 'my-sites/site' );
+import FoldableCard from 'components/foldable-card';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
+import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
+import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
+import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
+import Site from 'blocks/site';
 
-module.exports = React.createClass( {
+class PluginSiteJetpack extends React.Component {
+	static propTypes = {
+		site: PropTypes.object,
+		plugin: PropTypes.object,
+		notices: PropTypes.object,
+		allowedActions: PropTypes.shape( {
+			activation: PropTypes.bool,
+			autoupdate: PropTypes.bool,
+			remove: PropTypes.bool,
+		} ),
+		isAutoManaged: PropTypes.bool,
+	};
 
-	displayName: 'PluginSiteJetpack',
+	static defaultProps = {
+		allowedActions: {
+			activation: true,
+			autoupdate: true,
+			remove: true,
+		},
+		isAutoManaged: false,
+	};
 
-	propTypes: {
-		site: React.PropTypes.object,
-		plugin: React.PropTypes.object,
-		notices: React.PropTypes.object,
-	},
+	renderInstallButton = () => {
+		const installInProgress = PluginsLog.isInProgressAction(
+			this.props.site.ID,
+			this.props.plugin.slug,
+			'INSTALL_PLUGIN'
+		);
 
-	renderInstallButton: function() {
-		var installInProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, 'INSTALL_PLUGIN' );
+		return (
+			<PluginInstallButton
+				isEmbed={ true }
+				selectedSite={ this.props.site }
+				plugin={ this.props.plugin }
+				isInstalling={ installInProgress }
+			/>
+		);
+	};
 
-		return <PluginInstallButton
-			isEmbed={ true }
-			notices={ this.props.notices }
-			selectedSite={ this.props.site }
-			plugin={ this.props.plugin }
-			isInstalling={ installInProgress } />;
-	},
-
-	renderInstallPlugin: function() {
+	renderInstallPlugin = () => {
 		return (
 			<FoldableCard
 				compact
 				className="plugin-site-jetpack"
 				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={ this.renderInstallButton() } >
-			</FoldableCard>
+				actionButton={ this.renderInstallButton() }
+			/>
 		);
-	},
+	};
 
-	renderPluginSite: function() {
+	renderPluginSite = () => {
+		const {
+			activation: canToggleActivation,
+			autoupdate: canToggleAutoupdate,
+			remove: canToggleRemove,
+		} = this.props.allowedActions;
+
+		const showAutoManagedMessage = this.props.isAutoManaged;
+
 		return (
-			<FoldableCard compact
+			<FoldableCard
+				compact
 				clickableHeader
 				className="plugin-site-jetpack"
 				header={ <Site site={ this.props.site } indicator={ false } /> }
-				summary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ false } /> }
-				expandedSummary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ true } /> }
-				>
+				summary={
+					<PluginUpdateIndicator
+						site={ this.props.site }
+						plugin={ this.props.plugin }
+						notices={ this.props.notices }
+						expanded={ false }
+					/>
+				}
+				expandedSummary={
+					<PluginUpdateIndicator
+						site={ this.props.site }
+						plugin={ this.props.plugin }
+						notices={ this.props.notices }
+						expanded={ true }
+					/>
+				}
+			>
 				<div>
-					<PluginActivateToggle site={ this.props.site } plugin={ this.props.site.plugin } notices={ this.props.notices } />
-					<PluginAutoupdateToggle site={ this.props.site } plugin={ this.props.site.plugin } notices={ this.props.notices } wporg={ true } />
-					<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } notices={ this.props.notices } />
+					{ canToggleActivation && (
+						<PluginActivateToggle site={ this.props.site } plugin={ this.props.site.plugin } />
+					) }
+					{ canToggleAutoupdate && (
+						<PluginAutoupdateToggle
+							site={ this.props.site }
+							plugin={ this.props.site.plugin }
+							wporg={ true }
+						/>
+					) }
+					{ canToggleRemove && (
+						<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
+					) }
+					{ showAutoManagedMessage && (
+						<div className="plugin-site-jetpack__automanage-notice">
+							{ this.props.translate( 'Auto-managed on this site' ) }
+						</div>
+					) }
 				</div>
 			</FoldableCard>
 		);
-	},
+	};
 
-	renderManageWarning: function() {
+	renderManageWarning = () => {
 		return (
 			<FoldableCard
 				compact
 				className="plugin-site-jetpack has-manage-error"
 				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={ <PluginSiteDisabledManage site={ this.props.site } plugin={ this.props.plugin } /> } />
+				actionButton={
+					<PluginSiteDisabledManage site={ this.props.site } plugin={ this.props.plugin } />
+				}
+			/>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return null;
 		}
 
-		if ( ! this.props.site.canManage() ) {
+		if ( ! this.props.site.canManage ) {
 			return this.renderManageWarning();
 		}
 
@@ -91,4 +155,6 @@ module.exports = React.createClass( {
 
 		return this.renderPluginSite();
 	}
-} );
+}
+
+export default localize( PluginSiteJetpack );

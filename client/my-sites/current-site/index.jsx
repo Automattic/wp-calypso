@@ -1,191 +1,151 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	debug = require( 'debug' )( 'calypso:my-sites:current-site' ),
-	analytics = require( 'analytics' ),
-	url = require( 'url' );
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-var AllSites = require( 'my-sites/all-sites' ),
-	AddNewButton = require( 'components/add-new-button' ),
-	Card = require( 'components/card' ),
-	SiteNotice = require( 'notices/site-notice' ),
-	layoutFocus = require( 'lib/layout-focus' ),
-	Site = require( 'my-sites/site' ),
-	Gridicon = require( 'components/gridicon' ),
-	config = require( 'config' ),
-	UpgradesActions = require( 'lib/upgrades/actions' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' ),
-	paths = require( 'my-sites/upgrades/paths' );
+import AllSites from 'blocks/all-sites';
+import AsyncLoad from 'components/async-load';
+import analytics from 'lib/analytics';
+import Button from 'components/button';
+import Card from 'components/card';
+import Site from 'blocks/site';
+import Gridicon from 'gridicons';
+import SiteNotice from './notice';
+import CartStore from 'lib/cart/store';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSectionName, getSelectedSite } from 'state/ui/selectors';
+import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
+import getVisibleSites from 'state/selectors/get-visible-sites';
+import { infoNotice, removeNotice } from 'state/notices/actions';
+import { getNoticeLastTimeShown } from 'state/notices/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { hasAllSitesList } from 'state/sites/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'CurrentSite',
-
-	componentDidMount: function() {
-		debug( 'The current site React component is mounted.' );
-	},
-
-	propTypes: {
-		sites: React.PropTypes.object.isRequired,
-		siteCount: React.PropTypes.number.isRequired
-	},
+class CurrentSite extends Component {
+	static propTypes = {
+		siteCount: PropTypes.number.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
+		selectedSite: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		anySiteSelected: PropTypes.array,
+	};
 
 	componentWillMount() {
-		const selectedSite = this.getSelectedSite();
+		CartStore.on( 'change', this.showStaleCartItemsNotice );
+	}
 
-		if ( selectedSite ) {
-			UpgradesActions.fetchDomains( selectedSite.ID );
-		}
-		this.prevSelectedSite = selectedSite;
+	componentWillUnmount() {
+		CartStore.off( 'change', this.showStaleCartItemsNotice );
+	}
 
-		DomainsStore.on( 'change', this.handleStoreChange );
-	},
+	showStaleCartItemsNotice = () => {
+		const { selectedSite } = this.props,
+			cartItems = require( 'lib/cart-values' ).cartItems,
+			staleCartItemNoticeId = 'stale-cart-item-notice';
 
-	componentWillUnmount: function() {
-		DomainsStore.off( 'change', this.handleStoreChange );
-	},
+		// Remove any existing stale cart notice
+		this.props.removeNotice( staleCartItemNoticeId );
 
-	getInitialState: function() {
-		return {
-			domainsStore: DomainsStore
-		};
-	},
-
-	componentWillUpdate() {
-		const selectedSite = this.getSelectedSite();
-
-		if ( selectedSite && this.prevSelectedSite !== selectedSite ) {
-			UpgradesActions.fetchDomains( selectedSite.ID );
-		}
-		this.prevSelectedSite = selectedSite;
-	},
-
-	handleStoreChange: function() {
-		this.setState( { domainsStore: DomainsStore } );
-	},
-
-	switchSites: function( event ) {
-		event.preventDefault();
-		event.stopPropagation();
-		layoutFocus.set( 'sites' );
-
-		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
-	},
-
-	getSelectedSite: function() {
-		if ( this.props.sites.get().length === 1 ) {
-			return this.props.sites.getPrimary();
-		}
-
-		return this.props.sites.getSelectedSite();
-	},
-
-	getSiteRedirectNotice: function( site ) {
-		const isSiteRedirected = site.options && site.options.is_redirect;
-
-		if ( ! isSiteRedirected ) {
+		// Don't show on the checkout page?
+		if ( this.props.sectionName === 'upgrades' ) {
 			return null;
 		}
-		const { hostname } = url.parse( site.URL );
-		let href = 'https://wordpress.com/my-domains';
 
-		if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-			href = paths.domainManagementList( site.domain );
+		// Show a notice if there are stale items in the cart and it hasn't been shown in the last 10 minutes (cart abandonment)
+		if (
+			selectedSite &&
+			cartItems.hasStaleItem( CartStore.get() ) &&
+			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
+		) {
+			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
+
+			this.props.infoNotice( this.props.translate( 'Your cart is awaiting payment.' ), {
+				id: staleCartItemNoticeId,
+				isPersistent: false,
+				duration: 10000,
+				button: this.props.translate( 'Complete your purchase' ),
+				href: '/checkout/' + selectedSite.slug,
+				onClick: this.clickStaleCartItemsNotice,
+			} );
 		}
+	};
 
-		return (
-			<SiteNotice status="is-info">
-				{ this.translate( 'The site redirects to {{a}}%(url)s{{/a}}', {
-					args: { url: hostname },
-					components: { a: <a href={ href }/> }
-				} ) }
-			</SiteNotice>
-		);
-	},
+	clickStaleCartItemsNotice = () => {
+		this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_click' );
+	};
 
-	getDomainExpirationNotices: function() {
-		let domainStore = this.state.domainsStore.getForSite( this.getSelectedSite().ID ),
-			domains = domainStore && domainStore.list || [];
-		return (
-			<DomainWarnings
-				selectedSite={this.getSelectedSite()}
-				domains={ domains }
-				ruleWhiteList={ [ 'expiredDomains', 'expiringDomains' ] } />
-		);
-	},
+	switchSites = event => {
+		event.preventDefault();
+		event.stopPropagation();
+		this.props.setLayoutFocus( 'sites' );
 
-	getSiteNotices: function( site ) {
-		return (
-			<div>
-				{ this.getDomainExpirationNotices() }
-				{ this.getSiteRedirectNotice( site ) }
-			</div>
-		);
-	},
+		analytics.ga.recordEvent( 'Sidebar', 'Clicked Switch Site' );
+	};
 
-	focusContent: function() {
-		layoutFocus.set( 'content' );
-	},
+	render() {
+		const { selectedSite, translate, anySiteSelected } = this.props;
 
-	addNewWordPressButton: function() {
-		return (
-			<AddNewButton
-				isCompact={ true }
-				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-				onClick={ this.focusContent }
-			>
-				{ this.translate( 'Add New WordPress' ) }
-			</AddNewButton>
-		);
-	},
-
-	render: function() {
-		var site,
-			hasOneSite = this.props.siteCount === 1;
-
-		if ( ! this.props.sites.initialized ) {
+		if ( ! anySiteSelected.length || ( ! selectedSite && ! this.props.hasAllSitesList ) ) {
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Card className="current-site is-loading">
 					<div className="site">
-					{ hasOneSite
-						? this.addNewWordPressButton()
-						: <span className="current-site__switch-sites" />
-					}
 						<a className="site__content">
 							<div className="site-icon" />
 							<div className="site__info">
-								<span className="site__title">{ this.translate( 'Loading My Sites…' ) }</span>
+								<span className="site__title">{ translate( 'Loading My Sites…' ) }</span>
 							</div>
 						</a>
 					</div>
 				</Card>
 			);
-		}
-
-		if ( this.props.sites.selected ) {
-			site = this.props.sites.getSelectedSite();
-		} else {
-			site = this.props.sites.getPrimary();
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
 		return (
 			<Card className="current-site">
-				{ hasOneSite
-					? this.addNewWordPressButton()
-					: <span
-						className="current-site__switch-sites"
-						onClick={ this.switchSites }>
-							<Gridicon icon="arrow-left" size={ 16 } />
-							{ this.translate( 'Switch Site' ) }
-						</span>
-				}
-				{ this.props.sites.selected ? <Site site={ site }/> : <AllSites sites={ this.props.sites }/> }
-				{ this.getSiteNotices( site ) }
+				{ this.props.siteCount > 1 && (
+					<span className="current-site__switch-sites">
+						<Button borderless onClick={ this.switchSites }>
+							<Gridicon icon="chevron-left" />
+							<span className="current-site__switch-sites-label">
+								{ translate( 'Switch Site' ) }
+							</span>
+						</Button>
+					</span>
+				) }
+
+				{ selectedSite ? (
+					<div>
+						<Site site={ selectedSite } />
+					</div>
+				) : (
+					<AllSites />
+				) }
+
+				<SiteNotice site={ selectedSite } />
+				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 			</Card>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => ( {
+		selectedSite: getSelectedSite( state ),
+		anySiteSelected: getSelectedOrAllSites( state ),
+		siteCount: getVisibleSites( state ).length,
+		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
+		sectionName: getSectionName( state ),
+		hasAllSitesList: hasAllSitesList( state ),
+	} ),
+	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent }
+)( localize( CurrentSite ) );

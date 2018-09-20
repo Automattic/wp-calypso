@@ -1,50 +1,52 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Interanl dependencies
  */
-var MediaValidationStore = require( 'lib/media/validation-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' );
+import MediaValidationStore from 'lib/media/validation-store';
+import passToChildren from 'lib/react-pass-to-children';
 
 function getStateData( siteId ) {
 	return {
-		mediaValidationErrors: MediaValidationStore.getAllErrors( siteId )
+		mediaValidationErrors: MediaValidationStore.getAllErrors( siteId ),
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'MediaValidationData',
+export default class extends React.Component {
+	static displayName = 'MediaValidationData';
 
-	propTypes: {
-		siteId: React.PropTypes.number.isRequired
-	},
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+	};
 
-	getInitialState: function() {
-		return getStateData( this.props.siteId );
-	},
+	state = getStateData( this.props.siteId );
 
-	componentDidMount: function() {
+	componentDidMount() {
 		MediaValidationStore.on( 'change', this.updateState );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		MediaValidationStore.off( 'change', this.updateState );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.setState( getStateData( nextProps.siteId ) );
 		}
-	},
+	}
 
-	updateState: function() {
+	updateState = () => {
 		this.setState( getStateData( this.props.siteId ) );
-	},
+	};
 
-	render: function() {
+	render() {
 		return passToChildren( this, this.state );
 	}
-} );
+}

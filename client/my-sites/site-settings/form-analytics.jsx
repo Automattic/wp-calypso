@@ -1,174 +1,367 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	notices = require( 'notices' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
+import config from 'config';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { find, flowRight, partialRight, pick, overSome } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var formBase = require( './form-base' ),
-	productsValues = require( 'lib/products-values' ),
-	config = require( 'config' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	EmptyContent = require( 'components/empty-content' ),
-	analytics = require( 'analytics' );
+import wrapSettingsForm from './wrap-settings-form';
+import Card from 'components/card';
+import Button from 'components/button';
+import SectionHeader from 'components/section-header';
+import ExternalLink from 'components/external-link';
+import SupportInfo from 'components/support-info';
+import Banner from 'components/banner';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { getPlugins } from 'state/plugins/installed/selectors';
+import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextValidation from 'components/forms/form-input-validation';
+import FormAnalyticsStores from './form-analytics-stores';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import {
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness,
+	isJetpackPremium,
+	isVipPlan,
+} from 'lib/products-values';
+import {
+	getSiteOption,
+	isJetpackMinimumVersion,
+	isJetpackSite,
+	siteSupportsGoogleAnalyticsIPAnonymization,
+	siteSupportsGoogleAnalyticsBasicEcommerceTracking,
+	siteSupportsGoogleAnalyticsEnhancedEcommerceTracking,
+} from 'state/sites/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import {
+	FEATURE_GOOGLE_ANALYTICS,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+	TERM_ANNUALLY,
+} from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
-module.exports = React.createClass( {
+const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
+const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness, isVipPlan );
 
-	displayName: 'SiteSettingsFormAnalytics',
+export class GoogleAnalyticsForm extends Component {
+	state = {
+		isCodeValid: true,
+	};
 
-	mixins: [ protectForm.mixin, formBase ],
+	handleFieldChange = ( key, value ) => {
+		const { fields, updateFields } = this.props;
+		const updatedWgaFields = Object.assign( {}, fields.wga || {}, { [ key ]: value } );
+		updateFields( { wga: updatedWgaFields } );
+	};
 
-	getInitialState: function() {
-		return {
-			isCodeValid: true
-		};
-	},
-
-	resetState: function() {
-		this.replaceState( {
-			wga: {
-				code: null
-			},
-			fetchingSettings: true
-		} );
-		debug( 'resetting state' );
-	},
-
-	getSettingsFromSite: function( siteInstance ) {
-		var site = siteInstance || this.props.site,
-			settings = {
-				wga: {
-					code: ''
-				},
-				fetchingSettings: site.fetchingSettings
-			};
-
-		if ( site.settings ) {
-			debug( 'site settings fetched' );
-			settings.wga = site.settings.wga;
-		}
-
-		return settings;
-	},
-
-	isCodeValid: function( code ) {
-		return ! code || code.match( /^UA-\d+-\d+$/i );
-	},
-
-	handleCodeChange: function( event ) {
-		var code = event.target.value,
-			notice = this.state.notice,
-			isCodeValid = this.isCodeValid( code );
-
-		if ( ! isCodeValid && ! notice ) {
-			notice = notices.error( this.translate( 'Invalid Google Analytics Tracking ID.' ) );
-		} else if ( isCodeValid && notice ) {
-			notices.removeNotice( notice );
-			notice = null;
-		}
+	handleCodeChange = event => {
+		const code = event.target.value.trim();
 
 		this.setState( {
-			wga: {
-				 code: event.target.value
-			},
-			isCodeValid: isCodeValid,
-			notice: notice
+			isCodeValid: validateGoogleAnalyticsCode( code ),
 		} );
-	},
+		this.handleFieldChange( 'code', code );
+	};
 
-	isSubmitButtonDisabled: function() {
-		return this.state.fetchingSettings || this.state.submittingForm || ! this.state.isCodeValid;
-	},
+	handleToggleChange = key => {
+		const { fields } = this.props;
+		const value = fields.wga ? ! fields.wga[ key ] : false;
+		this.handleFieldChange( key, value );
+	};
 
-	form: function() {
-		var placeholderText = '';
+	handleAnonymizeChange = () => {
+		this.handleToggleChange( 'anonymize_ip' );
+	};
 
-		if ( this.state.fetchingSettings ) {
-			placeholderText = this.translate( 'Loading' );
-		}
+	isSubmitButtonDisabled() {
+		const { isRequestingSettings, isSavingSettings } = this.props;
 		return (
-			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
-				<fieldset>
-					<label htmlFor="wgaCode">{ this.translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }</label>
-					<input
-						name="wgaCode"
-						id="wgaCode"
-						type="text"
-						value={ this.state.wga.code }
-						onChange={this.handleCodeChange}
-						placeholder={ placeholderText }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Clicked Analytics Key Field' ) }
-						onKeyPress={ this.recordEventOnce.bind( this, 'typedAnalyticsKey', 'Typed In Analytics Key Field' ) }
+			isRequestingSettings ||
+			isSavingSettings ||
+			! this.state.isCodeValid ||
+			! this.props.enableForm
+		);
+	}
+
+	form() {
+		const {
+			enableForm,
+			eventTracker,
+			fields,
+			handleSubmitForm,
+			isRequestingSettings,
+			isSavingSettings,
+			jetpackVersionSupportsModule,
+			showUpgradeNudge,
+			site,
+			sitePlugins,
+			siteId,
+			siteIsJetpack,
+			siteSlug,
+			siteSupportsBasicEcommerceTracking,
+			siteSupportsEnhancedEcommerceTracking,
+			siteSupportsIPAnonymization,
+			translate,
+			uniqueEventTracker,
+		} = this.props;
+		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
+		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsModule;
+		const analyticsSupportUrl = siteIsJetpack
+			? 'https://jetpack.com/support/google-analytics/'
+			: 'https://support.wordpress.com/google-analytics/';
+
+		const wooCommercePlugin = find( sitePlugins, { slug: 'woocommerce' } );
+		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
+		const showAnalyticsForStores =
+			config.isEnabled( 'jetpack/google-analytics-for-stores' ) &&
+			siteIsJetpack &&
+			wooCommerceActive &&
+			siteSupportsBasicEcommerceTracking;
+		const showAnonymizeIP =
+			config.isEnabled( 'jetpack/google-analytics-anonymize-ip' ) &&
+			siteIsJetpack &&
+			siteSupportsIPAnonymization;
+		const showEnhancedAnalyticsForStores =
+			config.isEnabled( 'jetpack/google-analytics-for-stores-enhanced' ) &&
+			siteIsJetpack &&
+			siteSupportsEnhancedEcommerceTracking;
+
+		const nudgeTitle = siteIsJetpack
+			? translate( 'Enable Google Analytics by upgrading to Jetpack Premium' )
+			: translate( 'Enable Google Analytics by upgrading to the Business plan' );
+
+		return (
+			<form id="analytics" onSubmit={ handleSubmitForm }>
+				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
+
+				{ isJetpackUnsupported &&
+					! showUpgradeNudge && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ translate( 'Google Analytics require a newer version of Jetpack.' ) }
+						>
+							<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
+								{ translate( 'Update Now' ) }
+							</NoticeAction>
+						</Notice>
+					) }
+
+				<SectionHeader label={ translate( 'Google Analytics' ) }>
+					{ ! showUpgradeNudge && (
+						<Button
+							primary
+							compact
+							disabled={ this.isSubmitButtonDisabled() }
+							onClick={ handleSubmitForm }
+						>
+							{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+						</Button>
+					) }
+				</SectionHeader>
+
+				{ showUpgradeNudge && site && site.plan ? (
+					<Banner
+						description={ translate(
+							"Add your unique tracking ID to monitor your site's performance in Google Analytics."
+						) }
+						event={ 'google_analytics_settings' }
+						feature={ FEATURE_GOOGLE_ANALYTICS }
+						plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
+							type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
+							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
+						} ) }
+						title={ nudgeTitle }
 					/>
-					<p className="settings-explanation"><a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">{
-						this.translate( 'Where to find my code?' )
-					}
-					</a></p>
-				</fieldset>
-				<p>{
-					this.translate( 'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} with different insights into your traffic. WordPress.com stats and Google Analytics use different methods to identify and track activity on your site, so they will normally show slightly different totals for your visits, views, etc.', {
-					components: {
-						a: <a href={ '/stats/' + this.props.site.domain } />
-					} } )
-				}</p>
-				<p>{
-					this.translate( 'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.', {
-					components: {
-						a: <a href="http://en.support.wordpress.com/google-analytics/" target="_blank" />
-					} } )
-				}</p>
-				<button
-					type="submit"
-					className="button is-primary"
-					disabled={ this.isSubmitButtonDisabled() }
-				>
-					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-				</button>
+				) : (
+					<Card className="analytics-settings site-settings__analytics-settings">
+						{ siteIsJetpack && (
+							<fieldset>
+								<SupportInfo
+									text={ translate(
+										'Reports help you track the path visitors take' +
+											' through your site, and goal conversion lets you' +
+											' measure how visitors complete specific tasks.'
+									) }
+									link="https://jetpack.com/support/google-analytics/"
+								/>
+								<JetpackModuleToggle
+									siteId={ siteId }
+									moduleSlug="google-analytics"
+									label={ translate(
+										'Track your WordPress site statistics with Google Analytics.'
+									) }
+									disabled={ isRequestingSettings || isSavingSettings }
+								/>
+							</fieldset>
+						) }
+
+						<fieldset>
+							<FormLabel htmlFor="wgaCode">
+								{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
+							</FormLabel>
+							<FormTextInput
+								name="wgaCode"
+								id="wgaCode"
+								value={ fields.wga ? fields.wga.code : '' }
+								onChange={ this.handleCodeChange }
+								placeholder={ placeholderText }
+								disabled={ isRequestingSettings || ! enableForm }
+								onClick={ eventTracker( 'Clicked Analytics Key Field' ) }
+								onKeyPress={ uniqueEventTracker( 'Typed In Analytics Key Field' ) }
+								isError={ ! this.state.isCodeValid }
+							/>
+							{ ! this.state.isCodeValid && (
+								<FormTextValidation
+									isError={ true }
+									text={ translate( 'Invalid Google Analytics Tracking ID.' ) }
+								/>
+							) }
+							<ExternalLink
+								icon
+								href="https://support.google.com/analytics/answer/1032385?hl=en"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{ translate( 'Where can I find my Tracking ID?' ) }
+							</ExternalLink>
+						</fieldset>
+						{ showAnonymizeIP && (
+							<fieldset>
+								<CompactFormToggle
+									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
+									disabled={ isRequestingSettings || ! enableForm }
+									onChange={ this.handleAnonymizeChange }
+								>
+									{ translate( 'Anonymize IP addresses' ) }
+								</CompactFormToggle>
+								<FormSettingExplanation>
+									{ translate(
+										'Enabling this option is mandatory in certain countries due to national ' +
+											'privacy laws.'
+									) }
+									<ExternalLink
+										icon
+										href="https://support.google.com/analytics/answer/2763052"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{ translate( 'Learn more' ) }
+									</ExternalLink>
+								</FormSettingExplanation>
+							</fieldset>
+						) }
+						{ showAnalyticsForStores && (
+							<FormAnalyticsStores
+								fields={ fields }
+								handleToggleChange={ this.handleToggleChange }
+								showEnhanced={ showEnhancedAnalyticsForStores }
+							/>
+						) }
+						<p>
+							{ translate(
+								'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} ' +
+									'with different insights into your traffic. WordPress.com stats and Google Analytics ' +
+									'use different methods to identify and track activity on your site, so they will ' +
+									'normally show slightly different totals for your visits, views, etc.',
+								{
+									components: {
+										a: <a href={ '/stats/' + site.domain } />,
+									},
+								}
+							) }
+						</p>
+						<p>
+							{ translate(
+								'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
+								{
+									components: {
+										a: <a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />,
+									},
+								}
+							) }
+						</p>
+					</Card>
+				) }
 			</form>
 		);
-	},
+	}
 
-	upgradePrompt: function() {
-		var plansLink = '/plans/';
-
-		if ( config.isEnabled( 'manage/plans' ) ) {
-			plansLink += this.props.site.domain;
-		} else {
-			plansLink += this.props.site.ID;
-		}
-
-		return (
-			<EmptyContent
-				illustration="/calypso/images/drake/drake-whoops.svg"
-				title={ this.translate( 'Want to use Google Analytics on your site?', { context: 'site setting upgrade' } ) }
-				line={ this.translate( 'Support for Google Analytics is now available with WordPress.com Business.', { context: 'site setting upgrade' } ) }
-				action={ this.translate( 'Upgrade Now', { context: 'site setting upgrade' } ) }
-				actionURL={ plansLink }
-				isCompact={ true }
-				actionCallback={ this.trackUpgradeClick }
-			/>
-		);
-	},
-
-	trackUpgradeClick: function() {
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'google_analytics' } );
-	},
-
-	render: function() {
+	render() {
 		// we need to check that site has loaded first... a placeholder would be better,
 		// but returning null is better than a fatal error for now
 		if ( ! this.props.site ) {
 			return null;
 		}
 		// Only show Google Analytics for business users.
-		if ( productsValues.isBusiness( this.props.site.plan ) || productsValues.isEnterprise( this.props.site.plan )) {
-			return this.form();
-		} else {
-			return this.upgradePrompt();
-		}
+		return this.form();
 	}
-} );
+}
+
+const mapStateToProps = state => {
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
+	const isGoogleAnalyticsEligible =
+		site && site.plan && ( hasBusinessPlan( site.plan ) || isJetpackPremium( site.plan ) );
+	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
+	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
+	const jetpackVersionSupportsModule = isJetpackMinimumVersion( state, siteId, '4.6-alpha' );
+	const siteSupportsIPAnonymization = siteSupportsGoogleAnalyticsIPAnonymization( state, siteId );
+	const siteSupportsBasicEcommerceTracking = siteSupportsGoogleAnalyticsBasicEcommerceTracking(
+		state,
+		siteId
+	);
+	const siteSupportsEnhancedEcommerceTracking = siteSupportsGoogleAnalyticsEnhancedEcommerceTracking(
+		state,
+		siteId
+	);
+	const siteIsJetpack = isJetpackSite( state, siteId );
+	const googleAnalyticsEnabled =
+		site &&
+		( ! siteIsJetpack || ( siteIsJetpack && jetpackModuleActive && jetpackVersionSupportsModule ) );
+	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
+
+	return {
+		site,
+		siteId,
+		siteSlug,
+		siteIsJetpack,
+		showUpgradeNudge: ! isGoogleAnalyticsEligible,
+		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
+		jetpackManagementUrl,
+		jetpackVersionSupportsModule,
+		sitePlugins,
+		siteSupportsBasicEcommerceTracking,
+		siteSupportsEnhancedEcommerceTracking,
+		siteSupportsIPAnonymization,
+	};
+};
+
+const connectComponent = connect(
+	mapStateToProps,
+	null,
+	null,
+	{ pure: false }
+);
+
+const getFormSettings = partialRight( pick, [ 'wga' ] );
+
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( GoogleAnalyticsForm );

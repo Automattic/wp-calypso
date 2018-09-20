@@ -1,10 +1,6 @@
 {
-    "options": {
-        "preserveComments": true,
-        "preserveDirectives": false,
-        "swapLeftRightInUrl": true,
-        "swapLtrRtlInUrl": true,
-        "swapWestEastInUrl": false,
-        "autoRename": false
-    }
+	"options": {
+		"processUrls": { "atrule": true, "decl": false }
+	}
 }
+

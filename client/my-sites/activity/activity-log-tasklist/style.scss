@@ -1,0 +1,88 @@
+.card.activity-log-tasklist {
+	padding-bottom: 4px;
+	font-size: 14px;
+
+	.activity-log-tasklist__heading {
+		display: flex;
+		font-weight: 600;
+		justify-content: space-between;
+		margin-bottom: 16px;
+
+		.ellipsis-menu {
+			position: relative;
+			top: -4px;
+		}
+
+		.ellipsis-menu__toggle {
+			padding: 0;
+		}
+	}
+}
+
+.card.activity-log-tasklist__task {
+	align-items: center;
+	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, .5 );
+	display: flex;
+	justify-content: flex-end;
+	padding: 16px 0;
+
+	.activity-log-item__activity-icon {
+		margin-right: 16px;
+	}
+}
+
+.activity-log-tasklist__update-item {
+	flex-grow: 1;
+
+	& > div {
+		line-height: 100%;
+	}
+}
+
+.activity-log-tasklist__update-text {
+	margin-bottom: 8px;
+	a, span {
+		font-weight: 500;
+	}
+}
+.activity-log-tasklist__update-text
+
+.activity-log-tasklist__update-version {
+	color: $gray-text-min;
+}
+
+.activity-log-tasklist__update-bullet,
+.activity-log-tasklist__update-type {
+	color: $gray;
+}
+
+.activity-log-tasklist__update-bullet {
+	font-size: 7px;
+	margin: 0 7px;
+	vertical-align: middle;
+}
+
+.activity-log-tasklist__update-action {
+	white-space: pre;
+}
+
+.activity-log-tasklist__menu-item {
+	display: flex;
+	align-items: center;
+}
+
+.activity-log-tasklist__unlinked {
+	cursor: default;
+}
+
+.activity-log-tasklist__footer {
+	display: flex;
+	justify-content: space-between;
+	box-shadow: 0 -1px 0 transparentize( $gray-lighten-20, .5 );
+	padding: 16px 0;
+	color: $gray-text-min;
+
+	a {
+		text-decoration: underline;
+	}
+}

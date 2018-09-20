@@ -9,6 +9,7 @@
 
 .media-library__upload-url-button-group {
 	display: flex;
+	flex-shrink: 0;
 	padding-left: 8px;
 }
 
@@ -21,6 +22,6 @@
 	fill: $gray;
 
 	&:hover {
-		fill: darken( $gray, 10% );
+		fill: $gray-darken-10;
 	}
 }

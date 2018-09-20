@@ -6,9 +6,9 @@ This component is used to display a single instance of a plugin within a jetpack
 #### How to use:
 
 ```js
-var PluginSiteJetpack = require( 'my-sites/plugins/plugin-site/plugin-site-jetpack' );
+import PluginSiteJetpack from 'my-sites/plugins/plugin-site/plugin-site-jetpack';
 
-render: function() {
+render() {
     return (
         <PluginSiteJetpack
             site={ site }

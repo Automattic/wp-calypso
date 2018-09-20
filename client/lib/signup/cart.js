@@ -1,19 +1,48 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var forEach = require( 'lodash/collection/forEach' );
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	productsList = require( 'lib/products-list' )(),
-	cartValues = require( 'lib/cart-values' ),
-	cartItems = cartValues.cartItems;
+import wpcom from 'lib/wp';
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
+import { cartItems, preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-values';
 
-module.exports = {
-	addToCart: function( siteSlug, newCartItems, callback ) {
-		wpcom.undocumented().cart( siteSlug, function( error, data ) {
+function addProductsToCart( cart, newCartItems ) {
+	forEach( newCartItems, function( cartItem ) {
+		cartItem.extra = Object.assign( cartItem.extra || {}, {
+			context: 'signup',
+		} );
+		const addFunction = cartItems.add( cartItem );
+
+		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
+	} );
+
+	return cart;
+}
+
+export default {
+	createCart: function( cartKey, newCartItems, callback ) {
+		let newCart = {
+			cart_key: cartKey,
+			products: [],
+			temporary: false,
+		};
+
+		newCart = addProductsToCart( newCart, newCartItems );
+		newCart = preprocessCartForServer( newCart );
+
+		wpcom.undocumented().setCart( cartKey, newCart, function( postError ) {
+			callback( postError );
+		} );
+	},
+	addToCart: function( cartKey, newCartItems, callback ) {
+		wpcom.undocumented().getCart( cartKey, function( error, data ) {
 			if ( error ) {
 				return callback( error );
 			}
@@ -22,18 +51,10 @@ module.exports = {
 				newCartItems = [ newCartItems ];
 			}
 
-			let newCart = data;
+			let newCart = addProductsToCart( data, newCartItems );
+			newCart = preprocessCartForServer( newCart );
 
-			forEach( newCartItems, function( cartItem ) {
-				cartItem.extra = Object.assign( cartItem.extra || {}, { context: 'signup' } );
-				const addFunction = cartItems.add( cartItem );
-
-				newCart = cartValues.fillInAllCartItemAttributes( addFunction( newCart ), productsList.get() );
-			} );
-
-			wpcom.undocumented().cart( siteSlug, 'POST', newCart, function( postError ) {
-				callback( postError );
-			} );
+			wpcom.undocumented().setCart( cartKey, newCart, callback );
 		} );
-	}
+	},
 };

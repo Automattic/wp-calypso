@@ -6,9 +6,9 @@ Component used to declare the main area of any given section — it's the main w
 #### How to use:
 
 ```js
-var Main = require( 'components/main' );
+import Main from 'components/main';
 
-render: function() {
+render() {
 	return (
 		<Main (optional) className="your-component">
 			Your section content...

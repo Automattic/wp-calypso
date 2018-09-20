@@ -1,0 +1,68 @@
+.card.app-banner {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: $blue-light;
+	color: $blue-dark;
+	/* Needed for banner to appear in front of notifications panel. */
+	z-index: z-index( 'root', '.app-banner' );
+
+	background-repeat: no-repeat;
+	/*
+	 * Needed to match the design as closely as possible,
+	 * we want the background image to be smaller than the containing div.
+	 */
+	background-size: 270px;
+	background-position: right 0 bottom 0;
+}
+
+.card.app-banner.post-editor {
+	background-image: url( '/calypso/images/illustrations/app-banner-editor.svg' );
+}
+
+.card.app-banner.notifications {
+	background-image: url( '/calypso/images/illustrations/app-banner-notifications.svg' );
+}
+
+.card.app-banner.reader {
+	background-image: url( '/calypso/images/illustrations/app-banner-reader.svg' );
+}
+
+.card.app-banner.stats {
+	background-image: url( '/calypso/images/illustrations/app-banner-stats.svg' );
+}
+
+.app-banner__text-content {
+	width: calc( 100% - 84px );
+	min-height: 66px;
+}
+
+.app-banner__title {
+	font-size: 17px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.app-banner__copy {
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.app-banner__buttons {
+	width: calc( 100% - 84px );
+}
+
+.button.app-banner__open-button {
+	margin-top: 8px;
+}
+
+a.app-banner__no-thanks-button {
+	color: $blue-dark;
+	display: inline-block;
+	margin-top: 8px;
+	padding: 7px 0 9px 14px;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 24px;
+}

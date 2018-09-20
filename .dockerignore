@@ -1,2 +1,25 @@
+Dockerfile
+.dockerignore
 .git
-node_modules
+.npm-debug.log*
+.vscode
+/.babel-cache
+/build
+/cached-requests.json
+/node_modules
+/public/*.css
+/public/*.css.map
+/public/*.js
+/public/*.js.map
+/public/sections-rtl/*.css
+/public/sections-rtl/*.css.map
+/public/sections/*.css
+/public/sections/*.css.map
+/server/bundler/*.json
+/server/devdocs/components-usage-stats.json
+/server/devdocs/proptypes-index.json
+/server/devdocs/search-index.js
+
+# Tests do not need to be included in build
+/server/**/test/**
+/client/**/test/**

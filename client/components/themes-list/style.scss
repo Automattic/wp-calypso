@@ -1,0 +1,19 @@
+.themes-list {
+	display: flex;
+	flex-flow: row wrap;
+	list-style: none;
+	padding: 0;
+	margin: 0 -10px; // items flush against list edge
+
+	.feature-example & {
+		max-width: 1000px;
+		margin: auto;
+	}
+}
+
+.themes-list__spacer {
+	width: 230px;
+	height: 0px;
+	margin: 0 10px;
+	flex-grow: 1;
+}

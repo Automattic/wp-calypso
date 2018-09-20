@@ -1,251 +1,385 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	classNames = require( 'classnames' ),
-	uniq = require( 'lodash/array/uniq' ),
-	i18n = require( 'lib/mixins/i18n' );
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { flowRight as compose, isEqual, uniqBy } from 'lodash';
+import { localize, moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var CompactCard = require( 'components/card/compact' ),
-	PluginIcon = require( 'my-sites/plugins/plugin-icon/plugin-icon' ),
-	PluginsActions = require( 'lib/plugins/actions' ),
-	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
-	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
-	Notice = require( 'notices/notice' ),
-	PluginNotices = require( 'lib/plugins/notices' ),
-	analytics = require( 'analytics' );
+import CompactCard from 'components/card/compact';
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import Count from 'components/count';
+import Notice from 'components/notice';
+import PluginNotices from 'lib/plugins/notices';
+import { errorNotice } from 'state/notices/actions';
 
-module.exports = React.createClass( {
+function checkPropsChange( nextProps, propArr ) {
+	let i;
 
-	displayName: 'PluginItem',
+	for ( i = 0; i < propArr.length; i++ ) {
+		const prop = propArr[ i ];
 
-	getInitialState: function() {
-		return { clicked: false };
-	},
+		if ( ! isEqual( nextProps[ prop ], this.props[ prop ] ) ) {
+			return true;
+		}
+	}
+	return false;
+}
 
-	recordEvent: function( eventAction ) {
-		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
-	},
+class PluginItem extends Component {
+	static propTypes = {
+		plugin: PropTypes.object,
+		sites: PropTypes.array,
+		isSelected: PropTypes.bool,
+		isSelectable: PropTypes.bool,
+		onClick: PropTypes.func,
+		pluginLink: PropTypes.string,
+		allowedActions: PropTypes.shape( {
+			activation: PropTypes.bool,
+			autoupdate: PropTypes.bool,
+		} ),
+		isAutoManaged: PropTypes.bool,
+		progress: PropTypes.array,
+		notices: PropTypes.shape( {
+			completed: PropTypes.array,
+			errors: PropTypes.array,
+			inProgress: PropTypes.array,
+		} ),
+		hasAllNoManageSites: PropTypes.bool,
+		hasUpdate: PropTypes.func,
+	};
 
-	ago: function( date ) {
-		return i18n.moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
-	},
+	static defaultProps = {
+		allowedActions: {
+			activation: true,
+			autoupdate: true,
+		},
+		progress: [],
+		isAutoManaged: false,
+		hasUpdate: () => false,
+	};
 
-	hasUpdate: function() {
-		return this.props.sites.some( function( site ) {
-			return site.plugin && site.plugin.update && site.canUpdateFiles;
+	shouldComponentUpdate( nextProps ) {
+		const propsToCheck = [
+			'plugin',
+			'sites',
+			'selectedSite',
+			'isMock',
+			'isSelectable',
+			'isSelected',
+		];
+		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
+			return true;
+		}
+
+		if ( this.props.hasAllNoManageSites !== nextProps.hasAllNoManageSites ) {
+			return true;
+		}
+
+		if (
+			this.props.notices &&
+			PluginNotices.shouldComponentUpdateNotices( this.props.notices, nextProps.notices )
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	ago( date ) {
+		return moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
+	}
+
+	doing() {
+		const { translate, progress } = this.props;
+		const log = progress[ 0 ];
+		const uniqLogs = uniqBy( progress, function( uniqLog ) {
+			return uniqLog.site.ID;
 		} );
-	},
+		const translationArgs = {
+			args: { count: uniqLogs.length },
+			count: uniqLogs.length,
+		};
 
-	doing: function() {
-		var progress = this.props.progress ? this.props.progress : [],
-			log = progress[ 0 ],
-			message,
-			uniqLogs = uniq( progress, function( uniqLog ) {
-				return uniqLog.site.ID;
-			} ),
-			translationArgs = {
-				args: { count: uniqLogs.length },
-				count: uniqLogs.length
-			};
-
+		let message;
 		switch ( log && log.action ) {
-
 			case 'UPDATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'updating', { context: 'plugin' } ) :
-					i18n.translate( 'updating on %(count)s site', 'updating on %(count)s sites', translationArgs ) );
+				message = this.props.selectedSite
+					? translate( 'Updating', { context: 'plugin' } )
+					: translate(
+							'Updating on %(count)s site',
+							'Updating on %(count)s sites',
+							translationArgs
+					  );
 				break;
 
 			case 'ACTIVATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'activating', { context: 'plugin' } ) :
-					i18n.translate( 'activating on %(count)s site', 'activating on %(count)s sites', translationArgs ) );
+				message = this.props.selectedSite
+					? translate( 'Activating', { context: 'plugin' } )
+					: translate(
+							'Activating on %(count)s site',
+							'Activating on %(count)s sites',
+							translationArgs
+					  );
 				break;
 
 			case 'DEACTIVATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'deactivating', { context: 'plugin' } ) :
-					i18n.translate( 'deactivating on %(count)s site', 'deactivating on %(count)s sites', translationArgs ) );
+				message = this.props.selectedSite
+					? translate( 'Deactivating', { context: 'plugin' } )
+					: translate(
+							'Deactivating on %(count)s site',
+							'Deactivating on %(count)s sites',
+							translationArgs
+					  );
 				break;
 
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'enabling autoupdates' ) :
-					i18n.translate( 'enabling autoupdates on %(count)s site', 'enabling autoupdates on %(count)s sites', translationArgs ) );
+				message = this.props.selectedSite
+					? translate( 'Enabling autoupdates' )
+					: translate(
+							'Enabling autoupdates on %(count)s site',
+							'Enabling autoupdates on %(count)s sites',
+							translationArgs
+					  );
 				break;
 
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
-				message = ( this.props.selectedSite ?
-					i18n.translate( 'disabling autoupdates' ) :
-					i18n.translate( 'disabling autoupdates on %(count)s site', 'disabling autoupdates on %(count)s sites', translationArgs ) );
+				message = this.props.selectedSite
+					? translate( 'Disabling autoupdates' )
+					: translate(
+							'Disabling autoupdates on %(count)s site',
+							'Disabling autoupdates on %(count)s sites',
+							translationArgs
+					  );
+
 				break;
+			case 'REMOVE_PLUGIN':
+				message = this.props.selectedSite
+					? translate( 'Removing' )
+					: translate(
+							'Removing from %(count)s site',
+							'Removing from %(count)s sites',
+							translationArgs
+					  );
 		}
 		return message;
-	},
+	}
 
-	pluginMeta: function( pluginData ) {
-		var metaText,
-			meta;
-		if ( this.props.progress.length ) {
-			meta = (
-				<div className="plugin-item__meta doing">
-						{ this.doing() }
-				</div>
-				);
-		} else if ( this.hasUpdate() ) {
-			meta = (
-				<div className="plugin-item__meta has-update">
-					<span className="noticon noticon-refresh"></span>
-					<span className="plugin-item__meta-text ">
-						{ this.translate( 'A newer version is available' ) }
-					</span>
-				</div>
-				);
-		} else {
-			if ( pluginData.wpcom ) {
-				metaText = this.translate( 'Updated Automatically' );
-			} else if ( pluginData.last_updated ) {
-				metaText = this.translate( 'Last updated %(ago)s', {
-					args: { ago: this.ago( pluginData.last_updated ) }
-				} );
-			} else {
-				metaText = '';
-			}
+	renderUpdateFlag() {
+		const { sites, translate } = this.props;
+		const recentlyUpdated = sites.some( function( site ) {
+			return site.plugin && site.plugin.update && site.plugin.update.recentlyUpdated;
+		} );
 
-			meta = <div className="plugin-item__meta">{ metaText }</div>;
-		}
-
-		return meta;
-	},
-
-	clickNoManageItem: function() {
-		this.setState( { clicked: true } );
-	},
-
-	getNoManageWarning: function() {
-		return <Notice text={ i18n.translate( 'Jetpack Manage is disabled for all the sites where this plugin is installed' ) }
-			status="is-error"
-			showDismiss={ false } />;
-	},
-
-	renderActions: function() {
-		if ( this.props.selectedSite ) {
-			return <div className="plugin-item__actions">
-				<PluginActivateToggle plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } />
-				<PluginAutoupdateToggle plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices }  wporg={ !! this.props.plugin.wporg } />
-			</div>;
-		}
-		return null;
-	},
-
-	render: function() {
-		var pluginTitle,
-			plugin = this.props.plugin,
-			errors = this.props.errors ? this.props.errors : [],
-			numberOfWarningIcons = 0,
-			errorNotices = [],
-			errorCounter = 0,
-			pluginItemClasses = classNames( 'plugin-item', {
-				disabled: this.props.hasAllNoManageSites,
-				'is-placeholder': ! plugin
-			} );
-		if ( ! plugin ) {
+		if ( recentlyUpdated ) {
 			return (
-				<CompactCard className={ pluginItemClasses }>
-					<PluginIcon isPlaceholder={ true } />
-					<div className="plugin-item__title is-placeholder"></div>
-					<div className="plugin-item__meta is-placeholder"></div>
-				</CompactCard>
+				<Notice
+					isCompact
+					icon="checkmark"
+					status="is-success"
+					inline={ true }
+					text={ translate( 'Updated' ) }
+				/>
 			);
 		}
 
-		if ( this.props.hasNoManageSite ) {
-			numberOfWarningIcons++;
-		}
-		if ( this.hasUpdate() ) {
-			numberOfWarningIcons++;
-		}
-		pluginTitle = (
-			<div className="plugin-item__title" data-warnings={ numberOfWarningIcons }>
-				{ plugin.name }
-			</div>
-			);
+		const updated_versions = this.props.plugin.sites
+			.map( site => {
+				if ( site.plugin.update && site.plugin.update.new_version ) {
+					return site.plugin.update.new_version;
+				}
+				return false;
+			} )
+			.filter( version => version );
 
-		if ( this.props.isSelectable ) {
-			errors.forEach( function( error ) {
-				errorNotices.push(
-					<Notice
-						type='message'
-						status='is-error'
-						text={ PluginNotices.getMessage( [ error ], PluginNotices.errorMessage.bind( PluginNotices ) ) }
-						isCompact={ true }
-						button={ PluginNotices.getErrorButton( error ) }
-						href={ PluginNotices.getErrorHref( error ) }
-						raw={ { onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, [ error ] ) } }
-						inline={ true }
-						key={ 'notice-' + errorCounter } />
-				);
-				errorCounter++;
-			}, this );
-			return (
-				<div>
-					<CompactCard className={ pluginItemClasses }>
-						<input
-							className="plugin-item__checkbox"
-							id={ plugin.slug }
-							type="checkbox"
-							onClick={ this.props.onClick }
-							checked={ this.props.isSelected }
-							readOnly={ true }
-						/>
-						<label className="plugin-item__label" htmlFor={ plugin.slug }>
-							<span className="screen-reader-text">
-								{ this.translate( 'Toggle selection of %(plugin)s', { args: { plugin: plugin.name } } ) }
-							</span>
-						</label>
-						<div className="plugin-item__info">
-							{ pluginTitle }
-							{ this.pluginMeta( plugin ) }
-						</div>
-					</CompactCard>
-					<div>
-					{ errorNotices }
-					</div>
-				</div>
-			);
-		}
-		if ( this.props.hasAllNoManageSites ) {
-			return (
-				<div className="plugin-item__wrapper">
-					<CompactCard className={ pluginItemClasses }
-						onClick={ this.clickNoManageItem }
-					>
-						<span className="plugin-item__disabled">
-							<PluginIcon image={ plugin.icon }/>
-							{ pluginTitle }
-							{ this.pluginMeta( plugin ) }
-						</span>
-					</CompactCard>
-					<div>
-					{ this.state.clicked ? this.getNoManageWarning() : null }
-					</div>
-				</div>
-			);
-		}
 		return (
-			<CompactCard className="plugin-item">
-				<a href={ this.props.pluginLink } className="plugin-item__link">
-					<PluginIcon image={ plugin.icon }/>
-					{ pluginTitle }
-					{ this.pluginMeta( plugin ) }
-				</a>
-				{ this.renderActions() }
+			<Notice
+				isCompact
+				icon="sync"
+				status="is-warning"
+				inline={ true }
+				text={ translate( 'Version %(newPluginVersion)s is available', {
+					args: { newPluginVersion: updated_versions[ 0 ] },
+				} ) }
+			/>
+		);
+	}
+
+	pluginMeta( pluginData ) {
+		const { progress, translate } = this.props;
+		if ( progress.length ) {
+			const message = this.doing();
+			if ( message ) {
+				return <Notice isCompact status="is-info" text={ message } inline={ true } />;
+			}
+		}
+		if ( this.props.isAutoManaged ) {
+			return (
+				<div className="plugin-item__last-updated">
+					{ translate( 'Auto-managed on this site' ) }
+				</div>
+			);
+		}
+
+		if ( this.props.hasUpdate( pluginData ) ) {
+			return this.renderUpdateFlag();
+		}
+
+		if ( pluginData.last_updated ) {
+			return (
+				<div className="plugin-item__last-updated">
+					{ translate( 'Last updated %(ago)s', {
+						args: { ago: this.ago( pluginData.last_updated ) },
+					} ) }
+				</div>
+			);
+		}
+
+		return null;
+	}
+
+	showNoManageNotice() {
+		this.props.errorNotice(
+			this.props.translate(
+				'Jetpack Manage is disabled for all the sites where this plugin is installed'
+			),
+			{ id: 'plugin-no-manage-error' } // Display the notice only once on repeated clicks
+		);
+	}
+
+	renderActions() {
+		const {
+			activation: canToggleActivation,
+			autoupdate: canToggleAutoupdate,
+		} = this.props.allowedActions;
+
+		return (
+			<div className="plugin-item__actions">
+				{ canToggleActivation && (
+					<PluginActivateToggle
+						isMock={ this.props.isMock }
+						plugin={ this.props.plugin }
+						disabled={ this.props.isSelectable }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+					/>
+				) }
+				{ canToggleAutoupdate && (
+					<PluginAutoupdateToggle
+						isMock={ this.props.isMock }
+						plugin={ this.props.plugin }
+						disabled={ this.props.isSelectable }
+						site={ this.props.selectedSite }
+						notices={ this.props.notices }
+						wporg={ !! this.props.plugin.wporg }
+					/>
+				) }
+			</div>
+		);
+	}
+
+	renderSiteCount() {
+		const { sites, translate } = this.props;
+		return (
+			<div className="plugin-item__count">
+				{ translate( 'Sites {{count/}}', {
+					components: {
+						count: <Count count={ sites.length } />,
+					},
+				} ) }
+			</div>
+		);
+	}
+
+	renderPlaceholder() {
+		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+			<CompactCard className="plugin-item is-placeholder">
+				<div className="plugin-item__link">
+					<PluginIcon isPlaceholder />
+					<div className="plugin-item__info">
+						<div className="plugin-item__title is-placeholder" />
+					</div>
+				</div>
 			</CompactCard>
 		);
 	}
 
-} );
+	onItemClick = event => {
+		if ( this.props.hasAllNoManageSites ) {
+			event.preventDefault();
+			this.showNoManageNotice();
+		} else if ( this.props.isSelectable ) {
+			event.preventDefault();
+			this.props.onClick( this );
+		}
+	};
+
+	render() {
+		const plugin = this.props.plugin;
+
+		if ( ! plugin ) {
+			return this.renderPlaceholder();
+		}
+
+		const disabled = this.props.hasAllNoManageSites;
+
+		const pluginTitle = <div className="plugin-item__title">{ plugin.name }</div>;
+
+		let pluginActions = null;
+		if ( ! this.props.selectedSite ) {
+			pluginActions = this.renderSiteCount();
+		} else if ( ! disabled ) {
+			pluginActions = this.renderActions();
+		}
+
+		const pluginItemClasses = classNames( 'plugin-item', 'plugin-item-' + plugin.slug, {
+			disabled,
+		} );
+
+		return (
+			<CompactCard className={ pluginItemClasses }>
+				{ disabled || ! this.props.isSelectable ? null : (
+					<input
+						className="plugin-item__checkbox"
+						id={ plugin.slug }
+						type="checkbox"
+						onClick={ this.props.onClick }
+						checked={ this.props.isSelected }
+						readOnly={ true }
+					/>
+				) }
+				<a
+					className="plugin-item__link"
+					href={ this.props.pluginLink }
+					onClick={ this.onItemClick }
+				>
+					<PluginIcon image={ plugin.icon } />
+					<div className="plugin-item__info">
+						{ pluginTitle }
+						{ this.pluginMeta( plugin ) }
+					</div>
+				</a>
+				{ pluginActions }
+			</CompactCard>
+		);
+	}
+}
+
+export default compose(
+	connect(
+		null,
+		{ errorNotice }
+	),
+	localize
+)( PluginItem );

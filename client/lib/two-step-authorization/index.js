@@ -1,18 +1,25 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:two-step-authorization' );
+import debugFactory from 'debug';
+import { replace } from 'lodash';
+
+const debug = debugFactory( 'calypso:two-step-authorization' );
 
 /**
  * Internal Dependencies
  */
-var emitter = require( 'lib/mixins/emitter' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	userSettings = require( 'lib/user-settings' ),
-	applicationPasswords = require( 'lib/application-passwords-data' ),
-	connectedApplications = require( 'lib/connected-applications-data' ),
-	profileLinks = require( 'lib/user-profile-links' ),
-	analytics = require( 'analytics' );
+import analytics from 'lib/analytics';
+import emitter from 'lib/mixins/emitter';
+import userSettings from 'lib/user-settings';
+import wp from 'lib/wp';
+import { reduxDispatch } from 'lib/redux-bridge';
+import { requestConnectedApplications } from 'state/connected-applications/actions';
+import { requestUserProfileLinks } from 'state/profile-links/actions';
+
+const wpcom = wp.undocumented();
 
 /*
  * Initialize TwoStepAuthorization with defaults
@@ -24,11 +31,13 @@ function TwoStepAuthorization() {
 
 	this.data = null;
 	this.initialized = false;
-	this.indvalidCode = false;
 	this.smsResendThrottled = false;
-	this.backupCodes = false;
+
 	this.bumpMCStat = function( eventAction ) {
 		analytics.mc.bumpStat( '2fa', eventAction );
+		analytics.tracks.recordEvent( 'calypso_login_twostep_authorize', {
+			event_action: eventAction,
+		} );
 	};
 
 	this.fetch();
@@ -38,72 +47,78 @@ function TwoStepAuthorization() {
  * fetch data about users two step configuration from /me/two-step
  */
 TwoStepAuthorization.prototype.fetch = function( callback ) {
-	wpcom.me().getTwoStep( function( error, data ) {
-		if ( ! error ) {
-			this.data = data;
+	wpcom.me().getTwoStep(
+		function( error, data ) {
+			if ( ! error ) {
+				this.data = data;
 
-			if ( this.isReauthRequired() && this.isTwoStepSMSEnabled() && ! this.initialized ) {
-				this.sendSMSCode();
+				if ( this.isReauthRequired() && ! this.initialized ) {
+					this.bumpMCStat( 'reauth-required' );
+				}
+
+				this.initialized = true;
+				this.emit( 'change' );
 			}
 
-			if ( this.isReauthRequired() && ! this.initialized ) {
-				this.bumpMCStat( 'reauth-required' );
+			if ( callback ) {
+				callback( error, data );
 			}
-
-			this.initialized = true;
-			this.emit( 'change' );
-		}
-
-		if ( callback ) {
-			callback( error, data );
-		}
-	}.bind( this ) );
+		}.bind( this )
+	);
 };
 
 /*
  * Given a code, validate the code which will update a user's twostep_auth cookie
  */
 TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
-	wpcom.me().validateTwoStepCode( args, function( error, data ) {
-		if ( ! error && data.success ) {
-			// If the validation was successful AND reauth was required, fetch
-			// data from the following modules.
-			if ( this.isReauthRequired() ) {
-				userSettings.fetchSettings();
-				applicationPasswords.fetch();
-				connectedApplications.fetch();
-				profileLinks.fetchProfileLinks();
+	wpcom.me().validateTwoStepCode(
+		{
+			...args,
+			code: replace( args.code, /\s/g, '' ),
+		},
+		function( error, data ) {
+			if ( ! error && data.success ) {
+				// If the validation was successful AND reauth was required, fetch
+				// data from the following modules.
+				if ( this.isReauthRequired() ) {
+					userSettings.fetchSettings();
+					reduxDispatch( requestConnectedApplications() );
+					reduxDispatch( requestUserProfileLinks() );
+				}
+
+				this.data.two_step_reauthorization_required = false;
+				this.data.two_step_authorization_expires_soon = false;
+				this.invalidCode = false;
+
+				if ( args.action ) {
+					this.bumpMCStat(
+						'enable-two-step' === args.action ? 'enable-2fa-successful' : 'disable-2fa-successful'
+					);
+				} else {
+					this.bumpMCStat( 'reauth-successful' );
+				}
+
+				this.emit( 'change' );
+			} else if ( ! error ) {
+				// If code was invalid but API did not error
+				this.invalidCode = true;
+
+				if ( args.action ) {
+					this.bumpMCStat(
+						'enable-two-step' === args.action
+							? 'enable-2fa-failed-invalid-code'
+							: 'disable-2fa-failed-invalid-code'
+					);
+				} else {
+					this.bumpMCStat( 'reauth-failed-invalid-code' );
+				}
 			}
 
-			this.data.two_step_reauthorization_required = false;
-			this.data.two_step_authorization_expires_soon = false;
-			this.invalidCode = false;
-
-			if ( 'enable-two-step' === args.action && data.backup_codes ) {
-				this.backupCodes = data.backup_codes;
+			if ( callback ) {
+				callback( error, data );
 			}
-
-			if ( args.action ) {
-				this.bumpMCStat( 'enable-two-step' === args.action ? 'enable-2fa-successful' : 'disable-2fa-successful' );
-			} else {
-				this.bumpMCStat( 'reauth-successful' );
-			}
-
-			this.emit( 'change' );
-		} else if ( ! error ) { // If code was invalid but API did not error
-			this.invalidCode = true;
-
-			if ( args.action ) {
-				this.bumpMCStat( 'enable-two-step' === args.action ? 'enable-2fa-failed-invalid-code' : 'disable-2fa-failed-invalid-code' );
-			} else {
-				this.bumpMCStat( 'reauth-failed-invalid-code' );
-			}
-		}
-
-		if ( callback ) {
-			callback( error, data );
-		}
-	}.bind( this ) );
+		}.bind( this )
+	);
 };
 
 /*
@@ -111,33 +126,47 @@ TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
  * /me/two-step/sms/new
  */
 TwoStepAuthorization.prototype.sendSMSCode = function( callback ) {
-	wpcom.me().sendSMSValidationCode( function( error, data ) {
-		if ( error ) {
-			debug( 'Sending SMS code failed: ' + JSON.stringify( error ) );
+	wpcom.me().sendSMSValidationCode(
+		function( error, data ) {
+			if ( error ) {
+				debug( 'Sending SMS code failed: ' + JSON.stringify( error ) );
 
-			if ( error.error && 'rate_limited' === error.error ) {
-				debug( 'SMS resend throttled.' );
-				this.bumpMCStat( 'sms-code-send-throttled' );
-				this.smsResendThrottled = true;
+				if ( error.error && 'rate_limited' === error.error ) {
+					debug( 'SMS resend throttled.' );
+					this.bumpMCStat( 'sms-code-send-throttled' );
+					this.smsResendThrottled = true;
+				}
+			} else {
+				this.smsResendThrottled = false;
+				this.bumpMCStat( 'sms-code-send-success' );
 			}
-		} else {
-			this.smsResendThrottled = false;
-			this.bumpMCStat( 'sms-code-send-success' );
-		}
 
-		this.emit( 'change' );
+			this.emit( 'change' );
 
-		if ( callback ) {
-			callback( error, data );
-		}
-	}.bind( this ) );
+			if ( callback ) {
+				callback( error, data );
+			}
+		}.bind( this )
+	);
 };
 
 /*
- * Returns an array of backup codes.
+ * Fetches a new set of backup codes by calling /me/two-step/backup-codes/new
  */
-TwoStepAuthorization.prototype.getBackupCodes = function() {
-	return this.backupCodes ? this.backupCodes : [];
+TwoStepAuthorization.prototype.backupCodes = function( callback ) {
+	wpcom.me().backupCodes(
+		function( error, data ) {
+			if ( error ) {
+				debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
+			} else {
+				this.bumpMCStat( 'new-backup-codes-success' );
+			}
+
+			if ( callback ) {
+				callback( error, data );
+			}
+		}.bind( this )
+	);
 };
 
 /*
@@ -146,24 +175,29 @@ TwoStepAuthorization.prototype.getBackupCodes = function() {
  * transition until it is ready
  */
 TwoStepAuthorization.prototype.validateBackupCode = function( code, callback ) {
-	var args = {
-		code: code,
-		action: 'create-backup-receipt'
+	const args = {
+		code: replace( code, /\s/g, '' ),
+		action: 'create-backup-receipt',
 	};
 
-	wpcom.me().validateTwoStepCode( args, function( error, data ) {
-		if ( error ) {
-			debug( 'Validating Two Step Code failed: ' + JSON.stringify( error ) );
-		}
+	wpcom.me().validateTwoStepCode(
+		args,
+		function( error, data ) {
+			if ( error ) {
+				debug( 'Validating Two Step Code failed: ' + JSON.stringify( error ) );
+			}
 
-		if ( data ) {
-			this.bumpMCStat( data.success ? 'backup-code-validate-success' : 'backup-code-validate-failure' );
-		}
+			if ( data ) {
+				this.bumpMCStat(
+					data.success ? 'backup-code-validate-success' : 'backup-code-validate-failure'
+				);
+			}
 
-		if ( callback ) {
-			callback( error, data );
-		}
-	}.bind( this ) );
+			if ( callback ) {
+				callback( error, data );
+			}
+		}.bind( this )
+	);
 };
 
 /*
@@ -211,4 +245,4 @@ emitter( TwoStepAuthorization.prototype );
 /**
  * Expose TwoStepAuthorization
  */
-module.exports = new TwoStepAuthorization();
+export default new TwoStepAuthorization();

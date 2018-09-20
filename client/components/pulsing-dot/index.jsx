@@ -1,27 +1,13 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' );
 
-var PulsingDot = React.createClass( {
+import React from 'react';
+import classnames from 'classnames';
 
-	getDefaultProps: function() {
-		return {
-			active: false
-		};
-	},
-
-	render: function() {
-		var className = classnames( {
-			'pulsing-dot': true,
-			'is-active': this.props.active
-		} );
-		return (
-			<div className={ className } />
-		);
-	}
-
-} );
-
-module.exports = PulsingDot;
+export default function PulsingDot( { active } ) {
+	const className = classnames( 'pulsing-dot', { 'is-active': active } );
+	return <div className={ className } />;
+}

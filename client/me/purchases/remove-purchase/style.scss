@@ -1,0 +1,31 @@
+/** @format */
+
+.remove-purchase__dialog {
+	max-width: 500px;
+}
+
+.remove-purchase__card {
+	color: $blue-wordpress;
+	text-align: left;
+	width: 100%;
+
+	&:active,
+	&:focus,
+	&:hover {
+		color: $link-highlight;
+	}
+
+	.gridicon {
+		margin-top: -2px;
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+}
+
+.remove-purchase__chat-button {
+	display: block;
+
+	@include breakpoint( '>480px' ) {
+		float: left;
+	}
+}

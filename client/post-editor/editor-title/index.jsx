@@ -1,112 +1,141 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import ReactDom from 'react-dom';
 import classNames from 'classnames';
-import omit from 'lodash/object/omit';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
-import PostUtils from 'lib/posts/utils';
-import SiteUtils from 'lib/site/utils';
+import * as PostUtils from 'state/posts/utils';
 import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
-import FormTextInput from 'components/forms/form-text-input';
+import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
-import * as stats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
+import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { editPost } from 'state/posts/actions';
 
-export default React.createClass( {
-	displayName: 'EditorTitle',
+/**
+ * Constants
+ */
+const REGEXP_NEWLINES = /[\r\n]+/g;
 
-	propTypes: {
+class EditorTitle extends Component {
+	static propTypes = {
+		editPost: PropTypes.func,
+		isNew: PropTypes.bool,
+		onChange: PropTypes.func,
 		post: PropTypes.object,
 		site: PropTypes.object,
-		isNew: PropTypes.bool,
-		onChange: PropTypes.func
-	},
+		siteId: PropTypes.number,
+		tabIndex: PropTypes.number,
+		translate: PropTypes.func,
+	};
 
-	getInitialState() {
-		return {
-			isFocused: false
-		};
-	},
+	static defaultProps = {
+		isNew: true,
+		onChange: () => {},
+	};
 
-	getDefaultProps() {
-		return {
-			isNew: true,
-			onChange: () => {}
-		};
-	},
-
-	onChange( event ) {
-		const { post, onChange } = this.props;
-
-		if ( ! post ) {
+	componentDidUpdate( prevProps ) {
+		if ( isMobile() ) {
 			return;
 		}
 
-		PostActions.edit( {
-			title: event.target.value
+		// If next post is new, or the next site is different, focus title
+		const { isNew, siteId } = this.props;
+		if ( ( isNew && ! prevProps.isNew ) || ( isNew && prevProps.siteId !== siteId ) ) {
+			const input = ReactDom.findDOMNode( this.refs.titleInput );
+			input.focus();
+		}
+	}
+
+	onChange = event => {
+		const { siteId, editedPostId } = this.props;
+		const newTitle = event.target.value.replace( REGEXP_NEWLINES, ' ' );
+		this.props.editPost( siteId, editedPostId, {
+			title: newTitle,
 		} );
+		this.props.onChange( newTitle );
+	};
 
-		onChange( event );
-	},
+	resizeAfterNewlineInput = event => {
+		const title = event.target.value;
+		if ( REGEXP_NEWLINES.test( title ) ) {
+			event.target.value = title.replace( REGEXP_NEWLINES, ' ' );
+			this.refs.titleInput.resize();
+		}
+	};
 
-	recordChangeStats() {
+	recordChangeStats = () => {
 		const isPage = PostUtils.isPage( this.props.post );
-		stats.recordStat( isPage ? 'page_title_changed' : 'post_title_changed' );
-		stats.recordEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
-	},
-
-	onBlur( event ) {
-		this.setState( {
-			isFocused: false
-		} );
-
-		this.onChange( event );
-
-		event.target.scrollLeft = 0;
-	},
-
-	onFocus() {
-		this.setState( {
-			isFocused: true
-		} );
-	},
+		this.props.recordEditorStat( isPage ? 'page_title_changed' : 'post_title_changed' );
+		this.props.recordEditorEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
+	};
 
 	render() {
-		const { post, site, isNew } = this.props;
-		const isPermalinkEditable = SiteUtils.isPermalinkEditable( site );
+		const { post, isPermalinkEditable, isNew, tabIndex, translate } = this.props;
 
 		const classes = classNames( 'editor-title', {
-			'is-focused': this.state.isFocused,
-			'is-loading': ! post
+			'is-loading': ! post,
 		} );
 
 		return (
 			<div className={ classes }>
-				{ post && post.ID && ! PostUtils.isPage( post ) &&
-					<EditorPermalink
-						slug={ post.slug }
-						path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
-						isEditable={ isPermalinkEditable }
-					/> }
+				{ post &&
+					post.ID &&
+					! PostUtils.isPage( post ) && (
+						<EditorPermalink
+							path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
+							isEditable={ isPermalinkEditable }
+						/>
+					) }
 				<TrackInputChanges onNewValue={ this.recordChangeStats }>
-					<FormTextInput
-						{ ...omit( this.props, Object.keys( this.constructor.propTypes ) ) }
+					<TextareaAutosize
+						tabIndex={ tabIndex }
 						className="editor-title__input"
-						placeholder={ this.translate( 'Title' ) }
+						placeholder={ translate( 'Title' ) }
 						onChange={ this.onChange }
+						onInput={ this.resizeAfterNewlineInput }
 						onBlur={ this.onBlur }
-						onFocus={ this.onFocus }
 						autoFocus={ isNew && ! isMobile() }
-						value={ post ? post.title : '' }
-						aria-label={ this.translate( 'Edit title' ) }
+						value={ post && post.title ? post.title : '' }
+						aria-label={ translate( 'Edit title' ) }
+						ref="titleInput"
+						rows="1"
 					/>
 				</TrackInputChanges>
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const isPermalinkEditable = areSitePermalinksEditable( state, siteId );
+		const editedPostId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, editedPostId );
+		const isNew = isEditorNewPost( state );
+
+		return {
+			editedPostId,
+			isPermalinkEditable,
+			isNew,
+			post,
+			siteId,
+		};
+	},
+	{ editPost, recordEditorStat, recordEditorEvent }
+)( localize( EditorTitle ) );

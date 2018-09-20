@@ -1,78 +1,109 @@
+/** @format */
+/**
+ * External dependencies
+ */
+import { includes } from 'lodash';
+
 /**
  * Internal Dependencies
  */
-var trailingslashit = require( './trailingslashit' ),
-	untrailingslashit = require( './untrailingslashit' ),
-	abtest = require( 'lib/abtest' ).abtest,
-	config = require( 'config' );
+import { trailingslashit, untrailingslashit } from './index';
 
 /**
  * Module variables
  */
-var statsLocationsByTab = {
+const statsLocationsByTab = {
 	day: '/stats/day/',
 	week: '/stats/week/',
 	month: '/stats/month/',
 	year: '/stats/year/',
-	insights: '/stats/insights/'
+	insights: '/stats/insights/',
+	googleMyBusiness: '/google-my-business/stats/',
 };
 
-function getSiteFragment( path ) {
-	var basePath = path.split( '?' )[0],
-		pieces = basePath.split( '/' ),
-		siteOldStyle = pieces[ pieces.length - 1 ],
-		siteNewStyle = pieces[2] || '';
+export function getSiteFragment( path ) {
+	const basePath = path.split( '?' )[ 0 ];
+	const pieces = basePath.split( '/' );
 
-	if ( siteNewStyle.indexOf( '.' ) >= 0 ) {
-		// This is a new-style URL like /:section/:site[/:filter/...]
-		return siteNewStyle;
-	} else if ( siteOldStyle.indexOf( '.' ) >= 0 ) {
-		// This is an old-style URL like /:section/:filter/:site
-		return siteOldStyle;
-	} else if ( siteNewStyle && ! isNaN( siteNewStyle ) ) {
-		// Allow numeric site IDs in /:section/:site[/:filter/...]
-		return parseInt( siteNewStyle, 10 );
-	} else if ( siteOldStyle && ! isNaN( siteOldStyle ) ) {
-		// Allow numeric site IDs in /:section/:filter/:site
-		return parseInt( siteOldStyle, 10 );
-	} else {
-		// No site fragment here
+	// There are 2 URL positions where we should look for the site fragment:
+	// last (most sections) and second-to-last (post ID is last in editor)
+
+	// Avoid confusing the receipt ID for the site ID in domain-only checkouts.
+	if ( 0 === basePath.indexOf( '/checkout/thank-you/no-site/' ) ) {
 		return false;
 	}
+
+	// In some paths, the site fragment could also be in third position.
+	// e.g. /me/purchases/example.wordpress.com/foo/bar
+	if (
+		0 === basePath.indexOf( '/me/purchases/' ) ||
+		0 === basePath.indexOf( '/checkout/thank-you/' )
+	) {
+		const piece = pieces[ 3 ]; // 0 is the empty string before the first `/`
+		if ( piece && -1 !== piece.indexOf( '.' ) ) {
+			return piece;
+		}
+		const numericPiece = parseInt( piece, 10 );
+		if ( Number.isSafeInteger( numericPiece ) ) {
+			return numericPiece;
+		}
+	}
+
+	// Check last and second-to-last piece for site slug
+	for ( let i = 2; i > 0; i-- ) {
+		const piece = pieces[ pieces.length - i ];
+		if ( piece && -1 !== piece.indexOf( '.' ) ) {
+			return piece;
+		}
+	}
+
+	// Check last and second-to-last piece for numeric site ID
+	for ( let i = 2; i > 0; i-- ) {
+		const piece = parseInt( pieces[ pieces.length - i ], 10 );
+		if ( Number.isSafeInteger( piece ) ) {
+			return piece;
+		}
+	}
+
+	// No site fragment here
+	return false;
 }
 
-function addSiteFragment( path, site ) {
-	var pieces = sectionify( path ).split( '/' );
+export function addSiteFragment( path, site ) {
+	const pieces = sectionify( path ).split( '/' );
 
-	if ( pieces[1] === 'post' || pieces[1] === 'page' ) {
-		// New-style URL; change /:section[/:filter/...] into /:section/:site/[:filter/...]
-		pieces.splice( 2, 0, site );
+	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
+		// Editor-style URL; insert the site as either the 2nd or 3rd piece of
+		// the URL ( '/post/:site' or '/edit/:cpt/:site' )
+		const sitePos = 'edit' === pieces[ 1 ] ? 3 : 2;
+		pieces.splice( sitePos, 0, site );
 	} else {
-		// Old-style URL; add /:site onto the end
+		// Somewhere else in Calypso; add /:site onto the end
 		pieces.push( site );
 	}
 
 	return pieces.join( '/' );
 }
 
-function sectionify( path ) {
-	var basePath = path.split( '?' )[0],
-		site = getSiteFragment( basePath );
+export function sectionify( path, siteFragment ) {
+	let basePath = path.split( '?' )[ 0 ];
 
-	if ( site ) {
-		basePath = trailingslashit( basePath ).replace( '/' + site + '/', '/' );
+	// Sometimes the caller knows better than `getSiteFragment` what the `siteFragment` is.
+	// For example, when the `:site` parameter is not the last or second-last part of the route
+	// and is retrieved from `context.params.site`. In that case, it can pass the `siteFragment`
+	// explicitly as the second parameter. We call `getSiteFragment` only as a fallback.
+	if ( ! siteFragment ) {
+		siteFragment = getSiteFragment( basePath );
+	}
+
+	if ( siteFragment ) {
+		basePath = trailingslashit( basePath ).replace( '/' + siteFragment + '/', '/' );
 	}
 	return untrailingslashit( basePath );
 }
 
-function getStatsDefaultSitePage( slug ) {
-	var path;
-
-	if ( config.isEnabled( 'manage/stats/insights' ) && 'insights' === abtest( 'statsDefaultFilter' ) ) {
-		path = '/stats/insights/';
-	} else {
-		path = '/stats/day/';
-	}
+export function getStatsDefaultSitePage( slug ) {
+	const path = '/stats/day/';
 
 	if ( slug ) {
 		return path + slug;
@@ -81,9 +112,7 @@ function getStatsDefaultSitePage( slug ) {
 	return untrailingslashit( path );
 }
 
-function getStatsPathForTab( tab, siteIdOrSlug ) {
-	var path;
-
+export function getStatsPathForTab( tab, siteIdOrSlug ) {
 	if ( ! tab ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
 	}
@@ -93,7 +122,7 @@ function getStatsPathForTab( tab, siteIdOrSlug ) {
 		return getStatsDefaultSitePage();
 	}
 
-	path = statsLocationsByTab[ tab ];
+	const path = statsLocationsByTab[ tab ];
 
 	if ( ! path ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
@@ -111,27 +140,22 @@ function getStatsPathForTab( tab, siteIdOrSlug ) {
  * @param  {string} status  Status param from route
  * @return {string}         mapped status value
  */
-function mapPostStatus( status ) {
+export function mapPostStatus( status ) {
 	switch ( status ) {
 		// Drafts
-		case 'drafts' :
+		case 'drafts':
 			return 'draft,pending';
 		// Posts scheduled in the future
-		case 'scheduled' :
+		case 'scheduled':
 			return 'future';
 		// Trashed posts
-		case 'trashed' :
+		case 'trashed':
 			return 'trash';
-		default :
+		default:
 			return 'publish,private';
 	}
 }
 
-module.exports = {
-	getSiteFragment: getSiteFragment,
-	addSiteFragment: addSiteFragment,
-	getStatsDefaultSitePage: getStatsDefaultSitePage,
-	getStatsPathForTab: getStatsPathForTab,
-	sectionify: sectionify,
-	mapPostStatus: mapPostStatus
-};
+export function externalRedirect( url ) {
+	window.location = url;
+}

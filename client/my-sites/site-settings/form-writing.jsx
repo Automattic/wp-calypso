@@ -1,125 +1,301 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { flowRight, get, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var formBase = require( './form-base' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	config = require( 'config' ),
-	PressThisLink = require( './press-this-link' );
+import wrapSettingsForm from './wrap-settings-form';
+import config from 'config';
+import PressThis from './press-this';
+import SectionHeader from 'components/section-header';
+import Button from 'components/button';
+import QueryTaxonomies from 'components/data/query-taxonomies';
+import TaxonomyCard from './taxonomies/taxonomy-card';
+import {
+	isJetpackSite,
+	isJetpackMinimumVersion,
+	siteSupportsJetpackSettingsUi,
+} from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestPostTypes } from 'state/post-types/actions';
+import Composing from './composing';
+import CustomContentTypes from './custom-content-types';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import FeedSettings from 'my-sites/site-settings/feed-settings';
+import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
+import Masterbar from './masterbar';
+import MediaSettings from './media-settings';
+import ThemeEnhancements from './theme-enhancements';
+import PublishingTools from './publishing-tools';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import SpeedUpYourSite from './speed-up-site-settings';
 
-module.exports = React.createClass( {
-
-	displayName: 'SiteSettingsFormWriting',
-
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
-
-	getSettingsFromSite: function( site ) {
-		var writingAttributes = [
-				'default_category',
-				'post_categories',
-				'default_post_format'
-			],
-			settings = {};
-
-		site = site || this.props.site;
-
-		if ( site.settings ) {
-			writingAttributes.map( function( attribute ) {
-				settings[ attribute ] = site.settings[ attribute ];
-			}, this );
-		}
-		settings.fetchingSettings = site.fetchingSettings;
-		settings.post_categories = settings.post_categories || [];
-
-		return settings;
-	},
-
-	resetState: function() {
-		this.replaceState( {
-			fetchingSettings: true,
-			default_category: '',
-			post_categories: [],
-			default_post_format: '',
-		} );
-	},
-
-	render: function() {
+class SiteSettingsFormWriting extends Component {
+	renderSectionHeader( title, showButton = true ) {
+		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
 		return (
-			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
-				<button
-					type="submit"
-					className="button is-primary"
-					disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-				</button>
-				<fieldset>
-					<label htmlFor="default_category">
-						{ this.translate( 'Default Post Category' ) }
-					</label>
-					<select
-						name="default_category"
-						id="default_category"
-						valueLink={ this.linkState( 'default_category' ) }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Selected Default Post Category' ) }
+			<SectionHeader label={ title }>
+				{ showButton && (
+					<Button
+						compact
+						primary
+						onClick={ handleSubmitForm }
+						disabled={ isRequestingSettings || isSavingSettings }
 					>
-						{ this.state.post_categories.map( function( category ) {
-							return <option value={ category.value } key={ 'post-category-' + category.value }>{ category.name }</option>;
-						} ) }
-					</select>
-					<label htmlFor="default_post_format">
-						{ this.translate( 'Default Post Format' ) }
-					</label>
-					<select
-						name="default_post_format"
-						id="default_post_format"
-						valueLink={ this.linkState( 'default_post_format' ) }
-						disabled={ this.state.fetchingSettings }
-						onClick={ this.recordEvent.bind( this, 'Selected Default Post Format' ) }
-					>
-						<option value="0">{ this.translate( 'Standard', { context: 'Post format' } ) }</option>
-						<option value="aside">{ this.translate( 'Aside', { context: 'Post format' } ) }</option>
-						<option value="chat">{ this.translate( 'Chat', { context: 'Post format' } ) }</option>
-						<option value="gallery">{ this.translate( 'Gallery', { context: 'Post format' } ) }</option>
-						<option value="link">{ this.translate( 'Link', { context: 'Post format' } ) }</option>
-						<option value="image">{ this.translate( 'Image', { context: 'Post format' } ) }</option>
-						<option value="quote">{ this.translate( 'Quote', { context: 'Post format' } ) }</option>
-						<option value="status">{ this.translate( 'Status', { context: 'Post format' } ) }</option>
-						<option value="video">{ this.translate( 'Video', { context: 'Post format' } ) }</option>
-						<option value="audio">{ this.translate( 'Audio', { context: 'Post format' } ) }</option>
-					</select>
-				</fieldset>
+						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					</Button>
+				) }
+			</SectionHeader>
+		);
+	}
+
+	isMobile() {
+		return /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent );
+	}
+
+	render() {
+		const {
+			eventTracker,
+			uniqueEventTracker,
+			fields,
+			handleSelect,
+			handleToggle,
+			handleAutosavingToggle,
+			handleAutosavingRadio,
+			handleSubmitForm,
+			isPodcastingSupported,
+			isMasterbarSectionVisible,
+			isRequestingSettings,
+			isSavingSettings,
+			jetpackSettingsUISupported,
+			onChangeField,
+			setFieldValue,
+			siteId,
+			siteIsJetpack,
+			translate,
+			updateFields,
+			jetpackVersionSupportsLazyImages,
+		} = this.props;
+
+		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
+
+		return (
+			<form
+				id="site-settings"
+				onSubmit={ handleSubmitForm }
+				className="site-settings__general-settings"
+			>
+				{ isMasterbarSectionVisible && (
+					<div>
+						{ this.renderSectionHeader( translate( 'WordPress.com toolbar' ), false ) }
+						<Masterbar
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+						/>
+					</div>
+				) }
+
+				{ config.isEnabled( 'manage/site-settings/categories' ) && (
+					<div className="site-settings__taxonomies">
+						<QueryTaxonomies siteId={ siteId } postType="post" />
+						<TaxonomyCard taxonomy="category" postType="post" />
+						<TaxonomyCard taxonomy="post_tag" postType="post" />
+					</div>
+				) }
+
+				{ this.renderSectionHeader( translate( 'Composing' ) ) }
+				<Composing
+					handleSelect={ handleSelect }
+					handleToggle={ handleToggle }
+					onChangeField={ onChangeField }
+					setFieldValue={ setFieldValue }
+					eventTracker={ eventTracker }
+					uniqueEventTracker={ uniqueEventTracker }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+					updateFields={ updateFields }
+				/>
+				{ jetpackSettingsUI && (
+					<div>
+						{ this.renderSectionHeader( translate( 'Media' ) ) }
+						<MediaSettings
+							siteId={ siteId }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							onChangeField={ onChangeField }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+						/>
+					</div>
+				) }
+
+				{ jetpackSettingsUI &&
+					jetpackVersionSupportsLazyImages && (
+						<div>
+							{ this.renderSectionHeader( translate( 'Speed up your site' ), false ) }
+							<SpeedUpYourSite
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+								jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+							/>
+						</div>
+					) }
+
+				{ this.renderSectionHeader( translate( 'Content types' ) ) }
+
+				<CustomContentTypes
+					handleAutosavingToggle={ handleAutosavingToggle }
+					onChangeField={ onChangeField }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+
+				<FeedSettings
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+					handleSubmitForm={ handleSubmitForm }
+					handleToggle={ handleToggle }
+					onChangeField={ onChangeField }
+				/>
+
+				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
+
+				{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
+
+				<ThemeEnhancements
+					onSubmitForm={ handleSubmitForm }
+					handleAutosavingToggle={ handleAutosavingToggle }
+					handleAutosavingRadio={ handleAutosavingRadio }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					jetpackSettingsUI={ jetpackSettingsUI }
+					fields={ fields }
+				/>
+
+				{ jetpackSettingsUI &&
+					config.isEnabled( 'press-this' ) && (
+						<PublishingTools
+							onSubmitForm={ handleSubmitForm }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					) }
 
 				{ config.isEnabled( 'press-this' ) &&
-					<div className="press-this">
-						<label>{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }</label>
-						<p>{ this.translate( 'Press This is a bookmarklet: a little app that runs in your browser and lets you grab bits of the web.' ) }</p>
-						<p>{ this.translate( 'Use Press This to clip text, images and videos from any web page. Then edit and add more straight from Press This before you save or publish it in a post on your site.' ) }</p>
-						<p>{ this.translate( 'Drag-and-drop the following link to your bookmarks bar or right click it and add it to your favorites for a posting shortcut.' ) }</p>
-						<p className="pressthis">
-							<PressThisLink
-								site={ this.props.site }
-								onClick={ this.recordEvent.bind( this, 'Clicked Press This Button' ) }
-								onDragStart={ this.recordEvent.bind( this, 'Dragged Press This Button' ) }
-							>
-								<span className="noticon noticon-pinned"></span>
-								{ this.translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-							</PressThisLink>
-						</p>
-					</div>
-				}
+					! this.isMobile() &&
+					! ( siteIsJetpack || jetpackSettingsUISupported ) && (
+						<div>
+							{ this.renderSectionHeader(
+								translate( 'Press This', {
+									context: 'name of browser bookmarklet tool',
+								} ),
+								false
+							) }
 
-				<button
-					type="submit"
-					className="button is-primary"
-					disabled={ this.state.fetchingSettings || this.state.submittingForm }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-				</button>
+							<PressThis />
+						</div>
+					) }
 			</form>
 		);
 	}
-} );
+}
+
+const connectComponent = connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const siteIsJetpack = isJetpackSite( state, siteId );
+		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
+
+		return {
+			jetpackSettingsUISupported: siteSupportsJetpackSettingsUi( state, siteId ),
+			siteIsJetpack,
+			siteId,
+			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
+			isMasterbarSectionVisible:
+				siteIsJetpack &&
+				isJetpackMinimumVersion( state, siteId, '4.8' ) &&
+				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
+				! siteIsAutomatedTransfer,
+			isPodcastingSupported,
+		};
+	},
+	{ requestPostTypes },
+	null,
+	{ pure: false }
+);
+
+const getFormSettings = settings => {
+	const formSettings = pick( settings, [
+		'posts_per_page',
+		'posts_per_rss',
+		'rss_use_excerpt',
+		'default_post_format',
+		'custom-content-types',
+		'jetpack_testimonial',
+		'jetpack_testimonial_posts_per_page',
+		'jetpack_portfolio',
+		'jetpack_portfolio_posts_per_page',
+		'infinite-scroll',
+		'infinite_scroll',
+		'infinite_scroll_blocked',
+		'minileven',
+		'wp_mobile_excerpt',
+		'wp_mobile_featured_images',
+		'wp_mobile_app_promos',
+		'post_by_email_address',
+		'after-the-deadline',
+		'onpublish',
+		'onupdate',
+		'guess_lang',
+		'Bias Language',
+		'Cliches',
+		'Complex Expression',
+		'Diacritical Marks',
+		'Double Negative',
+		'Hidden Verbs',
+		'Jargon Language',
+		'Passive voice',
+		'Phrases to Avoid',
+		'Redundant Expression',
+		'ignored_phrases',
+		'photon',
+		'carousel',
+		'carousel_background_color',
+		'carousel_display_exif',
+		'date_format',
+		'start_of_week',
+		'time_format',
+		'timezone_string',
+		'lazy-images',
+		'podcasting_category_id',
+	] );
+
+	// handling `gmt_offset` and `timezone_string` values
+	const gmt_offset = get( settings, 'gmt_offset' );
+	const timezone_string = get( settings, 'timezone_string' );
+
+	if ( ! timezone_string && typeof gmt_offset === 'string' && gmt_offset.length ) {
+		formSettings.timezone_string = 'UTC' + ( /\-/.test( gmt_offset ) ? '' : '+' ) + gmt_offset;
+	}
+
+	return formSettings;
+};
+
+export default flowRight(
+	connectComponent,
+	wrapSettingsForm( getFormSettings )
+)( SiteSettingsFormWriting );

@@ -1,25 +1,26 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var mapValues = require( 'lodash/object/mapValues' ),
-	without = require( 'lodash/array/without' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	pick = require( 'lodash/object/pick' );
+
+import { isEmpty, mapValues, pickBy, without } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	sites = require( 'lib/sites-list' )(),
-	MediaUtils = require( './utils' ),
-	MediaValidationErrors = require( './constants' ).ValidationErrors;
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import * as MediaUtils from './utils';
+import { ValidationErrors as MediaValidationErrors } from './constants';
 
 /**
  * Module variables
  */
-var MediaValidationStore = {},
-	_errors;
+const MediaValidationStore = {
+	_errors: {},
+};
+const ERROR_GLOBAL_ITEM_ID = 0;
 
 /**
  * Errors are represented as an object, mapping a site to an object of items
@@ -38,51 +39,56 @@ var MediaValidationStore = {},
  * @type {Object}
  * @private
  */
-_errors = {};
 
 emitter( MediaValidationStore );
 
 function ensureErrorsObjectForSite( siteId ) {
-	if ( siteId in _errors ) {
+	if ( siteId in MediaValidationStore._errors ) {
 		return;
 	}
 
-	_errors[ siteId ] = {};
+	MediaValidationStore._errors[ siteId ] = {};
 }
 
-function validateItem( siteId, item ) {
-	var site = sites.getSite( siteId ),
-		itemErrors = [];
+const isExternalError = message => message.error && message.error === 'servicefail';
+const isMediaError = action => action.error && ( action.id || isExternalError( action.error ) );
+
+MediaValidationStore.validateItem = function( site, item ) {
+	const itemErrors = [];
 
 	if ( ! site ) {
 		return;
 	}
 
 	if ( ! MediaUtils.isSupportedFileTypeForSite( item, site ) ) {
-		itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
+		if ( MediaUtils.isSupportedFileTypeInPremium( item, site ) ) {
+			itemErrors.push( MediaValidationErrors.FILE_TYPE_NOT_IN_PLAN );
+		} else {
+			itemErrors.push( MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
+		}
 	}
 
-	if ( true === MediaUtils.isExceedingSiteMaxUploadSize( item.size, site ) ) {
+	if ( true === MediaUtils.isExceedingSiteMaxUploadSize( item, site ) ) {
 		itemErrors.push( MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE );
 	}
 
 	if ( itemErrors.length ) {
-		ensureErrorsObjectForSite( siteId );
-		_errors[ siteId ][ item.ID ] = itemErrors;
+		ensureErrorsObjectForSite( site.ID );
+		MediaValidationStore._errors[ site.ID ][ item.ID ] = itemErrors;
 	}
-}
+};
 
-function clearValidationErrors( siteId, itemId ) {
-	if ( ! ( siteId in _errors ) ) {
+MediaValidationStore.clearValidationErrors = function( siteId, itemId ) {
+	if ( ! ( siteId in MediaValidationStore._errors ) ) {
 		return;
 	}
 
 	if ( itemId ) {
-		delete _errors[ siteId ][ itemId ];
+		delete MediaValidationStore._errors[ siteId ][ itemId ];
 	} else {
-		delete _errors[ siteId ];
+		delete MediaValidationStore._errors[ siteId ];
 	}
-}
+};
 
 /**
  * Update the errors object for a site by picking only items where errors still
@@ -91,46 +97,50 @@ function clearValidationErrors( siteId, itemId ) {
  * @param {Number}               siteId    The site ID
  * @param {MediaValidationError} errorType The error type to remove
  */
-function clearValidationErrorsByType( siteId, errorType ) {
-	if ( ! ( siteId in _errors ) ) {
+MediaValidationStore.clearValidationErrorsByType = function( siteId, errorType ) {
+	if ( ! ( siteId in MediaValidationStore._errors ) ) {
 		return;
 	}
 
-	_errors[ siteId ] = pick(
-		mapValues( _errors[ siteId ], ( errors ) => without( errors, errorType ) ),
-		( errors ) => ! isEmpty( errors )
+	MediaValidationStore._errors[ siteId ] = pickBy(
+		mapValues( MediaValidationStore._errors[ siteId ], errors => without( errors, errorType ) ),
+		errors => ! isEmpty( errors )
 	);
-}
+};
 
 function receiveServerError( siteId, itemId, errors ) {
 	ensureErrorsObjectForSite( siteId );
 
-	_errors[ siteId ][ itemId ] = errors.map( ( error ) => {
-		let errorType;
-
+	MediaValidationStore._errors[ siteId ][ itemId ] = errors.map( error => {
 		switch ( error.error ) {
 			case 'http_404':
-				errorType = MediaValidationErrors.UPLOAD_VIA_URL_404;
-				break;
+				return MediaValidationErrors.UPLOAD_VIA_URL_404;
+			case 'upload_error':
+				if ( error.message.indexOf( 'Not enough space to upload' ) === 0 ) {
+					return MediaValidationErrors.NOT_ENOUGH_SPACE;
+				}
+				if ( error.message.indexOf( 'You have used your space quota' ) === 0 ) {
+					return MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT;
+				}
+				return MediaValidationErrors.SERVER_ERROR;
+			case 'servicefail':
+				return MediaValidationErrors.SERVICE_FAILED;
 			default:
-				errorType = MediaValidationErrors.SERVER_ERROR;
-				break;
+				return MediaValidationErrors.SERVER_ERROR;
 		}
-
-		return errorType;
 	} );
 }
 
 MediaValidationStore.getAllErrors = function( siteId ) {
-	return _errors[ siteId ] || {};
+	return MediaValidationStore._errors[ siteId ] || {};
 };
 
 MediaValidationStore.getErrors = function( siteId, itemId ) {
-	if ( ! ( siteId in _errors ) ) {
+	if ( ! ( siteId in MediaValidationStore._errors ) ) {
 		return [];
 	}
 
-	return _errors[ siteId ][ itemId ] || [];
+	return MediaValidationStore._errors[ siteId ][ itemId ] || [];
 };
 
 MediaValidationStore.hasErrors = function( siteId, itemId ) {
@@ -142,8 +152,9 @@ MediaValidationStore.hasErrors = function( siteId, itemId ) {
 };
 
 MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		items, errors;
+	let action = payload.action,
+		items,
+		errors;
 
 	switch ( action.type ) {
 		case 'CREATE_MEDIA_ITEM':
@@ -153,9 +164,9 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 			items = Array.isArray( action.data.media ) ? action.data.media : [ action.data ];
 			errors = items.reduce( function( memo, item ) {
-				var itemErrors;
+				let itemErrors;
 
-				validateItem( action.siteId, item );
+				MediaValidationStore.validateItem( action.site, item );
 
 				itemErrors = MediaValidationStore.getErrors( action.siteId, item.ID );
 				if ( itemErrors.length ) {
@@ -173,8 +184,8 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 		case 'RECEIVE_MEDIA_ITEM':
 		case 'RECEIVE_MEDIA_ITEMS':
-			// Track any errors which occurred during upload
-			if ( ! action.error || ! action.id ) {
+			// Track any errors which occurred during upload or getting external media
+			if ( ! isMediaError( action ) ) {
 				break;
 			}
 
@@ -184,19 +195,20 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 				errors = [ action.error ];
 			}
 
-			receiveServerError( action.siteId, action.id, errors );
+			receiveServerError( action.siteId, action.id ? action.id : ERROR_GLOBAL_ITEM_ID, errors );
 			MediaValidationStore.emit( 'change' );
 			break;
 
+		case 'CHANGE_MEDIA_SOURCE':
 		case 'CLEAR_MEDIA_VALIDATION_ERRORS':
 			if ( ! action.siteId ) {
 				break;
 			}
 
 			if ( action.errorType ) {
-				clearValidationErrorsByType( action.siteId, action.errorType );
+				MediaValidationStore.clearValidationErrorsByType( action.siteId, action.errorType );
 			} else {
-				clearValidationErrors( action.siteId, action.itemId );
+				MediaValidationStore.clearValidationErrors( action.siteId, action.itemId );
 			}
 
 			MediaValidationStore.emit( 'change' );
@@ -204,4 +216,4 @@ MediaValidationStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
-module.exports = MediaValidationStore;
+export default MediaValidationStore;

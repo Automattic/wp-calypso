@@ -1,57 +1,109 @@
-module.exports = {
-	statsDefaultFilter: {
-		datestamp: '20150601',
+/** @format */
+export default {
+	showPlanCreditsApplied: {
+		datestamp: '20180903',
 		variations: {
-			day: 90,
-			insights: 10
+			test: 50,
+			control: 50,
 		},
-		defaultVariation: 'day'
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
-	multiDomainRegistrationV1: {
-		datestamp: '20200721',
+	cartNudgeUpdateToPremium: {
+		datestamp: '20180917',
 		variations: {
-			singlePurchaseFlow: 10,
-			popupCart: 45,
-			keepSearchingInGapps: 45
+			test: 50,
+			control: 50,
 		},
-		defaultVariation: 'singlePurchaseFlow'
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
-	translatorInvitation: {
-		datestamp: '20150910',
+	springSale30PercentOff: {
+		datestamp: '20180413',
 		variations: {
-			noNotice: 1,
-			startNow: 1,
-			helpUs: 1,
-			tryItNow: 1,
-			startTranslating: 1,
-			improve: 1
+			upsell: 50,
+			control: 50,
 		},
-		defaultVariation: 'noNotice',
-		allowAnyLocale: true
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
-	plansPageBusinessAATest: {
-		datestamp: '20151104',
+	signupAtomicStoreVsPressable: {
+		datestamp: '20171101',
 		variations: {
-			originalA: 50,
-			originalB: 50
+			atomic: 99,
+			pressable: 1,
 		},
-		defaultVariation: 'originalA'
+		defaultVariation: 'atomic',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
-	nuxTrampoline: {
-		datestamp: '20151113',
+	businessPlanDescriptionAT: {
+		datestamp: '20170605',
 		variations: {
-			main: 10,
-			'landing-main': 10,
-			notTested: 80
+			original: 50,
+			pluginsAndThemes: 50,
 		},
-		defaultVariation: 'main'
+		defaultVariation: 'original',
 	},
-	businessPluginsNudge: {
-		datestamp: '20151119',
+	ATPromptOnCancel: {
+		datestamp: '20170515',
 		variations: {
-			drake: 50,
-			nudge: 50
+			hide: 20,
+			show: 80,
 		},
-		defaultVariation: 'drake'
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	ATUpgradeOnCancel: {
+		datestamp: '20170515',
+		variations: {
+			hide: 20,
+			show: 80,
+		},
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	skipThemesSelectionModal: {
+		datestamp: '20170904',
+		variations: {
+			skip: 50,
+			show: 50,
+		},
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	jetpackSignupGoogleTop: {
+		datestamp: '20180427',
+		variations: {
+			original: 50,
+			top: 50,
+		},
+		defaultVariation: 'original',
+	},
+	includeDotBlogSubdomainV2: {
+		datestamp: '20180813',
+		variations: {
+			yes: 50,
+			no: 50,
+		},
+		defaultVariation: 'no',
+	},
+	gSuiteDiscountV2: {
+		datestamp: '20180822',
+		variations: {
+			control: 0,
+			discount: 100,
+		},
+		defaultVariation: 'control',
+	},
+	readerSearchPlaceholder: {
+		datestamp: '20180830',
+		variations: {
+			justSearch: 34,
+			nextGreatRead: 33,
+			newFavorite: 33,
+		},
+		defaultVariation: 'justSearch',
 	},
 };

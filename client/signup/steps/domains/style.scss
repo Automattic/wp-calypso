@@ -1,4 +1,16 @@
-.domains-step__section-wrapper {
+.domains__step-section-wrapper {
 	margin: 0 auto;
-	max-width: 650px;
+	max-width: 720px;
+}
+
+.domains__step-content-enter {
+	opacity: 0.01;
+	transform: translate3d( 0, 32px, 0 );
+
+	&.domains__step-content-enter-active {
+		opacity: 1;
+		pointer-events: none;
+		transition: all 0.2s ease-in-out;
+		transform: translate3d( 0, 0, 0 );
+	}
 }

@@ -1,0 +1,30 @@
+.blog-stickers {
+	display: inline;
+}
+
+.blog-stickers__list {
+	overflow-y: auto;
+	max-height: 210px;
+}
+
+.blog-stickers__list-title {
+	font-weight: bold;
+	margin-bottom: 3px;
+}
+
+.blog-stickers__list-ul {
+	list-style-type: none;
+	margin: 0;
+}
+
+.blog-stickers__list-item {
+	padding-left: 15px;
+	position: relative;
+
+	&::before {
+		color: $gray-lighten-10;
+		content: " • ";
+		position: absolute;
+			left: 0;
+	}
+}

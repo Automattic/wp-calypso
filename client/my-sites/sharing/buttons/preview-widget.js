@@ -1,34 +1,33 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var qs = require( 'querystring' );
 
-/**
- * Internal dependencies
- */
-var i18n = require( 'lib/mixins/i18n' );
+import { stringify } from 'qs';
+import i18n from 'i18n-calypso';
 
-var baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
+const baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 
-module.exports = {
+export default {
 	generatePreviewUrlFromButtons: function( buttons, showMore ) {
-		var numberOfCustomButtons = 0,
+		let numberOfCustomButtons = 0,
 			query = {};
 
 		// Build the query parameter array of services names to be rendered
 		// by the official sharing buttons preview widget
 		buttons.forEach( function( button ) {
-			var index;
+			let index;
 
 			if ( button.custom ) {
 				// Custom buttons previews are specified by index using the
 				// name and a URL to the icon
 				index = numberOfCustomButtons++;
-				query['custom[' + index + '][name]'] = encodeURIComponent( button.name );
-				query['custom[' + index + '][icon]'] = encodeURIComponent( button.icon );
+				query[ 'custom[' + index + '][name]' ] = encodeURIComponent( button.name );
+				query[ 'custom[' + index + '][icon]' ] = encodeURIComponent( button.icon );
 			} else {
-				query['service[]'] = query['service[]'] || [];
-				query['service[]'].push( button.ID );
+				query[ 'service[]' ] = query[ 'service[]' ] || [];
+				query[ 'service[]' ].push( button.ID );
 			}
 		} );
 
@@ -36,6 +35,6 @@ module.exports = {
 			query.more = i18n.translate( 'More' );
 		}
 
-		return baseUrl + '?' + qs.stringify( query );
-	}
+		return baseUrl + '?' + stringify( query );
+	},
 };

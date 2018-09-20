@@ -1,30 +1,35 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
 
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import Gridicon from 'gridicons';
 
-export default React.createClass( {
-	displayName: 'PostSelectorSearch',
+class PostSelectorSearch extends React.Component {
+	static displayName = 'PostSelectorSearch';
 
-	propTypes: {
+	static propTypes = {
 		searchTerm: PropTypes.string,
-		onSearch: PropTypes.func.isRequired
-	},
+		onSearch: PropTypes.func.isRequired,
+	};
 
 	render() {
 		return (
 			<div className="post-selector__search">
 				<Gridicon icon="search" size={ 18 } />
-				<input type="search"
-					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
+				<input
+					type="search"
+					placeholder={ this.props.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }
-					onChange={ this.props.onSearch } />
+					onChange={ this.props.onSearch }
+				/>
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( PostSelectorSearch );

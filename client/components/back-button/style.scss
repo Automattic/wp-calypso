@@ -1,0 +1,41 @@
+.back-button {
+	margin: 0;
+	position: fixed;
+		top: 47px;
+		left: 0;
+	z-index: z-index( '.masterbar', '.reader-back'	);
+
+	.button.is-compact.is-borderless {
+		padding: 20px 8px 16px;
+
+		@include breakpoint( ">660px" ) {
+			padding: 18px 40px 18px 20px;
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 46px;
+		background: $white;
+		border-bottom: 1px solid $gray-light;
+	}
+}
+
+.back-button__label {
+	@include breakpoint( "<660px") {
+		display: none;
+	}
+}
+
+.back-button__example {
+	.back-button {
+		position: relative;
+		top: 0;
+
+		.button.is-compact.is-borderless {
+			padding: 0;
+		}
+	}
+}

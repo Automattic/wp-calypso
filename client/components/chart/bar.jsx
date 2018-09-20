@@ -1,133 +1,165 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
-	debug = require( 'debug' )( 'calypso:module-chart:bar' );
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
-/**
- * Internal dependencies
- */
-var Popover = require( 'components/popover' ),
-	Tooltip = require( 'components/chart/tooltip' );
+export default class ModuleChartBar extends Component {
+	static propTypes = {
+		isTouch: PropTypes.bool,
+		tooltipPosition: PropTypes.string,
+		className: PropTypes.string,
+		clickHandler: PropTypes.func,
+		data: PropTypes.object.isRequired,
+		max: PropTypes.number,
+		count: PropTypes.number,
+		isRtl: PropTypes.bool,
+	};
 
-module.exports = React.createClass( {
-	displayName: 'ModuleChartBar',
+	static defaultProps = {
+		max: Infinity,
+	};
 
-	propTypes: {
-		isTouch: React.PropTypes.bool,
-		tooltipPosition: React.PropTypes.string,
-		className: React.PropTypes.string,
-		clickHandler: React.PropTypes.func,
-		data: React.PropTypes.object.isRequired,
-		max: React.PropTypes.number,
-		count: React.PropTypes.number
-	},
+	state = { showPopover: false };
 
-	getInitialState: function() {
-		return { showPopover: false };
-	},
-
-	buildSections: function() {
-		var value = this.props.data.value,
-			max = this.props.max,
-			percentage = max ? Math.ceil( ( value / max ) * 10000 ) / 100 : 0,
-			remain = 100 - percentage,
-			remainFloor = Math.max( 1, Math.floor( remain ) ),
-			sections = [],
-			remainStyle,
-			valueStyle,
-			nestedValue = this.props.data.nestedValue,
-			nestedBar,
-			nestedPercentage,
-			nestedStyle,
-			spacerClassOptions = {
-				'chart__bar-section': true,
-				'is-spacer': true,
-				'is-ghost': ( 100 === remain ) && ! this.props.active
-			};
-
-		remainStyle = {
-			height: remainFloor + '%'
-		};
-
-		sections.push( <div key="spacer" className={ classNames( spacerClassOptions ) } style={ remainStyle } /> );
-
-		valueStyle = {
-			top: remainFloor + '%'
-		};
-
-		if ( nestedValue ) {
-			nestedPercentage = value ? Math.ceil( ( nestedValue / value ) * 10000 ) / 100 : 0;
-
-			nestedStyle = { height: nestedPercentage + '%' };
-
-			nestedBar = ( <div key="nestedValue" className="chart__bar-section-inner" style={ nestedStyle } /> );
-		}
-
-		sections.push( <div ref="valueBar" key="value" className="chart__bar-section is-bar" style={ valueStyle }>{ nestedBar }</div> );
-
-		sections.push( <div key="label" className="chart__bar-label">{ this.props.label }</div> );
-
-		return sections;
-	},
-
-	clickHandler: function(){
-		if ( 'function' === typeof( this.props.clickHandler ) ) {
+	clickHandler = () => {
+		if ( typeof this.props.clickHandler === 'function' ) {
 			this.props.clickHandler( this.props.data );
 		}
-	},
+	};
 
+	computeTooltipPosition() {
+		const { chartWidth, index, count, isRtl } = this.props;
 
-	mouseEnter: function(){
-		this.setState( { showPopover: true } );
-	},
+		const barWidth = chartWidth / count;
+		const barOffset = barWidth * ( index + 1 );
 
-	mouseLeave: function() {
-		this.setState( { showPopover: false } );
-	},
+		let tooltipPosition = isRtl ? 'bottom left' : 'bottom right';
 
-	render: function() {
-		debug( 'Rendering bar', this.state );
-
-		var barStyle,
-			barClass,
-			count = this.props.count || 1,
-			tooltip;
-
-		barClass = { chart__bar: true };
-
-		if ( this.props.className ){
-			barClass[ this.props.className ] = true;
+		if ( barOffset + 230 > chartWidth && barOffset + barWidth - 230 > 0 ) {
+			tooltipPosition = isRtl ? 'bottom right' : 'bottom left';
 		}
 
-		barStyle = {
-			width: ( ( 1 / count ) * 100 ) + '%'
-		};
+		return tooltipPosition;
+	}
 
-		if ( this.props.data.tooltipData && this.props.data.tooltipData.length && ! this.props.isTouch ) {
-			tooltip = <Popover context={ this.refs && this.refs.valueBar }
-							isVisible={ this.state.showPopover }
-							position={ this.props.tooltipPosition }
-							onClose={ noop }
-							className="chart__tooltip">
-							<Tooltip data={ this.props.data.tooltipData } />
-						</Popover>;
+	mouseEnter = () => {
+		if (
+			! this.props.data.tooltipData ||
+			! this.props.data.tooltipData.length ||
+			this.props.isTouch
+		) {
+			return null;
 		}
+
+		this.props.setTooltip( this.bar, this.computeTooltipPosition(), this.getTooltipData() );
+	};
+
+	mouseLeave = () => {
+		this.props.setTooltip( null );
+	};
+
+	getTooltipData() {
+		const { tooltipData } = this.props.data;
+
+		return tooltipData.map( function( options, i ) {
+			return (
+				<li key={ i } className={ classNames( 'module-content-list-item', options.className ) }>
+					<span className="chart__tooltip-wrapper wrapper">
+						<span className="chart__tooltip-value value">{ options.value }</span>
+						<span className="chart__tooltip-label label">
+							{ options.icon && <Gridicon icon={ options.icon } size={ 18 } /> }
+							{ options.label }
+						</span>
+					</span>
+				</li>
+			);
+		} );
+	}
+
+	getPercentage() {
+		const {
+			data: { value },
+			max,
+		} = this.props;
+		return Math.ceil( ( value / max ) * 10000 ) / 100;
+	}
+
+	getNestedPercentage() {
+		const {
+			data: { nestedValue, value },
+		} = this.props;
+		return value && nestedValue ? Math.ceil( ( nestedValue / value ) * 10000 ) / 100 : 0;
+	}
+
+	setRef = ref => ( this.bar = ref );
+
+	renderSpacer() {
+		const percentage = this.getPercentage();
+		return (
+			<div
+				key="spacer"
+				className={ classNames( 'chart__bar-section', 'is-spacer', {
+					'is-ghost': 0 === percentage && ! this.props.active,
+				} ) }
+				style={ { height: `${ Math.max( 1, Math.floor( 100 - percentage ) ) }%` } }
+			/>
+		);
+	}
+
+	renderNestedBar() {
+		const {
+			data: { nestedValue },
+		} = this.props;
 
 		return (
-			<div onClick={ this.clickHandler } 
-				 onMouseEnter={ this.mouseEnter }
-				 onMouseLeave={ this.mouseLeave }
-				 className={ classNames( barClass ) } 
-				 style={ barStyle }>
-				{ this.buildSections() }
-				<div className="chart__bar-marker is-hundred"></div>
-				<div className="chart__bar-marker is-fifty"></div>
-				<div className="chart__bar-marker is-zero"></div>
-				{ tooltip }
+			nestedValue && (
+				<div
+					key="nestedValue"
+					className="chart__bar-section-inner"
+					style={ { height: `${ this.getNestedPercentage() }%` } }
+				/>
+			)
+		);
+	}
+
+	renderBar() {
+		const percentage = this.getPercentage();
+		return (
+			<div
+				ref={ this.setRef }
+				key="value"
+				className="chart__bar-section is-bar"
+				style={ { top: `${ Math.max( 1, Math.floor( 100 - percentage ) ) }%` } }
+			>
+				{ this.renderNestedBar() }
 			</div>
 		);
 	}
-} );
+
+	render() {
+		return (
+			<div
+				role="presentation"
+				aria-hidden="true"
+				onClick={ this.clickHandler }
+				onMouseEnter={ this.mouseEnter }
+				onMouseLeave={ this.mouseLeave }
+				className={ classNames( 'chart__bar', this.props.className ) }
+			>
+				{ this.renderSpacer() }
+				{ this.renderBar() }
+				<div key="label" className="chart__bar-label">
+					{ this.props.label }
+				</div>
+				<div className="chart__bar-marker is-hundred" />
+				<div className="chart__bar-marker is-fifty" />
+				<div className="chart__bar-marker is-zero" />
+			</div>
+		);
+	}
+}

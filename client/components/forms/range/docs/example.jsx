@@ -1,44 +1,40 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var FormRange = require( 'components/forms/range' );
+import FormRange from '../';
 
-module.exports = React.createClass( {
-	displayName: 'Ranges',
+export default class extends React.PureComponent {
+	static displayName = 'Ranges';
 
-	mixins: [ React.addons.PureRenderMixin ],
+	state = {
+		rangeValue: 24,
+	};
 
-	getInitialState: function() {
-		return {
-			rangeValue: 24
-		};
-	},
-
-	onChange: function( event ) {
+	onChange = event => {
 		this.setState( {
-			rangeValue: event.target.value
+			rangeValue: event.target.value,
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/ranges">Ranges</a>
-				</h2>
-				<FormRange
-					minContent={ <span className="noticon noticon-minus" /> }
-					maxContent={ <span className="noticon noticon-plus" /> }
-					max="100"
-					value={ this.state.rangeValue }
-					onChange={ this.onChange }
-					showValueLabel={ true } />
-			</div>
+			<FormRange
+				minContent={ <Gridicon icon="minus-small" /> }
+				maxContent={ <Gridicon icon="plus-small" /> }
+				max="100"
+				value={ this.state.rangeValue }
+				onChange={ this.onChange }
+				showValueLabel={ true }
+			/>
 		);
 	}
-} );
+}

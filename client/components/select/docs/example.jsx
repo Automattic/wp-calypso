@@ -1,18 +1,20 @@
+/** @format */
+
 /**
-* External dependencies
-*/
-var React = require( 'react' );
+ * External dependencies
+ */
 
-var Selects = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+import React from 'react';
 
-	render: function() {
+class Selects extends React.PureComponent {
+	render() {
 		return (
-			<div className="design-assets__group">
+			<div className="docs__design-group">
 				<h2>
 					<a href="/devdocs/design/selects">Selects</a>
 				</h2>
-				<label>Label
+				<label>
+					Label
 					<select>
 						<option>Item One</option>
 						<option>Item Two</option>
@@ -21,7 +23,7 @@ var Selects = React.createClass( {
 					</select>
 				</label>
 
-				<br/>
+				<br />
 
 				<p>
 					Pack my
@@ -41,6 +43,6 @@ var Selects = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = Selects;
+export default Selects;

@@ -1,28 +1,32 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:users:store' ),
-	omit = require( 'lodash/object/omit' ),
-	find = require( 'lodash/collection/find' );
+
+import deterministicStringify from 'json-stable-stringify';
+import { endsWith, find, omit } from 'lodash';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:users:store' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	deterministicStringify = require( 'lib/deterministic-stringify' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
-var _fetchingUsersByNamespace = {}, // store fetching state (boolean)
+let _fetchingUsersByNamespace = {}, // store fetching state (boolean)
+	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)
 	_usersBySite = {}, // store user objects
 	_totalUsersByNamespace = {}, // store total found for params
 	_usersFetchedByNamespace = {}, // store fetch progress
 	_offsetByNamespace = {}, // store fetch progress
 	_userIDsByNamespace = {}; // store user order
 
-var UsersStore = {
+const UsersStore = {
 	// This data can help manage infinite scroll
 	getPaginationData: function( fetchOptions ) {
-		var namespace = getNamespace( fetchOptions );
+		const namespace = getNamespace( fetchOptions );
 		debug( 'getPaginationData:', namespace );
 		return {
 			fetchInitialized: _usersFetchedByNamespace.hasOwnProperty( namespace ),
@@ -30,12 +34,12 @@ var UsersStore = {
 			fetchingUsers: _fetchingUsersByNamespace[ namespace ] || false,
 			usersCurrentOffset: _offsetByNamespace[ namespace ],
 			numUsersFetched: _usersFetchedByNamespace[ namespace ],
-			fetchNameSpace: namespace
+			fetchNameSpace: namespace,
 		};
 	},
 	// Get Users for a set of fetchOptions
 	getUsers: function( fetchOptions ) {
-		var namespace = getNamespace( fetchOptions ),
+		let namespace = getNamespace( fetchOptions ),
 			siteId = fetchOptions.siteId,
 			users = [];
 
@@ -68,9 +72,19 @@ var UsersStore = {
 		} );
 	},
 
+	getUpdatedParams( fetchOptions ) {
+		const namespace = getNamespace( fetchOptions );
+		const requestNumber = _usersFetchedByNamespace[ namespace ] || fetchOptions.number;
+
+		return Object.assign( {}, fetchOptions, {
+			offset: 0,
+			number: Math.min( requestNumber, 1000 ),
+		} );
+	},
+
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 function updateUser( siteId, id, user ) {
@@ -87,7 +101,10 @@ function updateUser( siteId, id, user ) {
 
 function decrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if (
+			endsWith( namespace, 'siteId=' + siteId ) &&
+			_userIDsByNamespace[ namespace ].has( userId )
+		) {
 			_totalUsersByNamespace[ namespace ]--;
 			_usersFetchedByNamespace[ namespace ]--;
 		}
@@ -96,7 +113,10 @@ function decrementPaginationData( siteId, userId ) {
 
 function incrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if (
+			endsWith( namespace, 'siteId=' + siteId ) &&
+			_userIDsByNamespace[ namespace ].has( userId )
+		) {
 			_totalUsersByNamespace[ namespace ]++;
 			_usersFetchedByNamespace[ namespace ]++;
 		}
@@ -113,8 +133,11 @@ function deleteUserFromSite( siteId, userId ) {
 
 function deleteUserFromNamespaces( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
-			delete _userIDsByNamespace[ namespace ][ userId ];
+		if (
+			endsWith( namespace, 'siteId=' + siteId ) &&
+			_userIDsByNamespace[ namespace ].has( userId )
+		) {
+			_userIDsByNamespace[ namespace ].delete( userId );
 		}
 	} );
 }
@@ -128,7 +151,7 @@ function addSingleUser( fetchOptions, user, namespace ) {
 }
 
 function updateUsers( fetchOptions, users, total ) {
-	var namespace = getNamespace( fetchOptions ),
+	let namespace = getNamespace( fetchOptions ),
 		offset = fetchOptions.offset;
 
 	debug( 'updateUsers:', namespace );
@@ -153,7 +176,7 @@ function getNamespace( fetchOptions ) {
 }
 
 UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
+	let action = payload.action,
 		namespace;
 
 	switch ( action.type ) {
@@ -166,6 +189,15 @@ UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
 				UsersStore.emitChange();
 			}
 
+			break;
+		case 'RECEIVE_UPDATED_USERS':
+			namespace = getNamespace( action.fetchOptions );
+			_fetchingUpdatedUsersByNamespace[ namespace ] = false;
+
+			if ( ! action.error ) {
+				updateUsers( action.fetchOptions, action.data.users, action.data.found );
+				UsersStore.emitChange();
+			}
 			break;
 		case 'UPDATE_SITE_USER':
 			updateUser( action.siteId, action.user.ID, action.user );
@@ -193,6 +225,11 @@ UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
 			_fetchingUsersByNamespace[ namespace ] = true;
 			UsersStore.emitChange();
 			break;
+		case 'FETCHING_UPDATED_USERS':
+			namespace = getNamespace( action.fetchOptions );
+			_fetchingUpdatedUsersByNamespace[ namespace ] = true;
+			UsersStore.emitChange();
+			break;
 		case 'RECEIVE_SINGLE_USER':
 			namespace = getNamespace( action.fetchOptions );
 			_fetchingUsersByNamespace[ namespace ] = false;
@@ -209,4 +246,4 @@ UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 emitter( UsersStore );
 
-module.exports = UsersStore;
+export default UsersStore;

@@ -1,95 +1,93 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	noop = require( 'lodash/utility/noop' ),
-	classNames = require( 'classnames' );
 
-module.exports = React.createClass( {
-	displayName: 'Accordion',
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { noop } from 'lodash';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
-	propTypes: {
-		initialExpanded: React.PropTypes.bool,
-		onToggle: React.PropTypes.func,
-		title: React.PropTypes.string.isRequired,
-		subtitle: React.PropTypes.string,
-		icon: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.element
-		] )
-	},
+/**
+ * Internal dependencies
+ */
+import AccordionStatus from './status';
 
-	getInitialState: function() {
-		return {
-			isExpanded: this.props.initialExpanded
+export default class Accordion extends Component {
+	static propTypes = {
+		initialExpanded: PropTypes.bool,
+		forceExpand: PropTypes.bool,
+		onToggle: PropTypes.func,
+		title: PropTypes.string.isRequired,
+		subtitle: PropTypes.string,
+		status: PropTypes.object,
+		icon: PropTypes.element,
+		e2eTitle: PropTypes.string,
+	};
+
+	static defaultProps = {
+		initialExpanded: false,
+		forceExpand: false,
+		onToggle: noop,
+	};
+
+	constructor( props ) {
+		super( ...arguments );
+
+		this.state = {
+			isExpanded: props.initialExpanded,
 		};
-	},
+	}
 
-	getDefaultProps: function() {
-		return {
-			onToggle: noop
-		};
-	},
+	toggleExpanded = () => {
+		this.setExpandedStatus( ! this.state.isExpanded );
+	};
 
-	toggleExpanded: function() {
-		var isExpanded = ! this.state.isExpanded;
-
-		this.setState( {
-			isExpanded: isExpanded
-		} );
-
+	setExpandedStatus = isExpanded => {
+		this.setState( { isExpanded } );
 		this.props.onToggle( isExpanded );
-	},
+	};
 
-	renderIcon: function() {
-		if ( ! this.props.icon ) {
-			return;
-		}
+	_mountChildren = false;
 
-		if ( 'string' === typeof this.props.icon ) {
-			return <span className={ classNames( 'accordion__icon', this.props.icon ) } />;
-		}
-
-		return <span className="accordion__icon">{ this.props.icon }</span>;
-	},
-
-	renderSubtitle: function() {
-		if ( this.props.subtitle ) {
-			return <span className="accordion__subtitle">{ this.props.subtitle }</span>;
-		}
-	},
-
-	renderHeader: function() {
-		var classes = classNames( 'accordion__header', {
-			'has-icon': !! this.props.icon,
-			'has-subtitle': !! this.props.subtitle
+	render() {
+		const { className, icon, title, subtitle, status, children, e2eTitle } = this.props;
+		const isExpanded = this.state.isExpanded || this.props.forceExpand;
+		const classes = classNames( 'accordion', className, {
+			'is-expanded': isExpanded,
+			'has-icon': !! icon,
+			'has-subtitle': !! subtitle,
+			'has-status': !! status,
 		} );
 
-		return (
-			<header className={ classes }>
-				<button type="button" onTouchTap={ this.toggleExpanded } className="accordion__toggle">
-					{ this.renderIcon() }
-					<span className="accordion__title">{ this.props.title }</span>
-					{ this.renderSubtitle() }
-				</button>
-			</header>
-		);
-	},
-
-	render: function() {
-		var classes = classNames( 'accordion', this.props.className, {
-			'is-expanded': this.state.isExpanded
-		} );
+		// Keep children off the render tree until it's first expanded.
+		this._mountChildren = this._mountChildren || isExpanded;
 
 		return (
-			<div className={ classes }>
-				{ this.renderHeader() }
-				<div ref="content" className="accordion__content">
-					<div className="accordion__content-wrap">
-						{ this.props.children }
+			<div
+				className={ classes }
+				data-e2e-title={ e2eTitle }
+				data-tip-target={ `accordion-${ e2eTitle }` }
+			>
+				<header className="accordion__header">
+					<button type="button" onClick={ this.toggleExpanded } className="accordion__toggle">
+						{ icon && <span className="accordion__icon">{ icon }</span> }
+						<span className="accordion__title">{ title }</span>
+						{ subtitle && <span className="accordion__subtitle">{ subtitle }</span> }
+						<span className="accordion__arrow">
+							<Gridicon icon="dropdown" />
+						</span>
+					</button>
+					{ status && <AccordionStatus { ...status } /> }
+				</header>
+				{ this._mountChildren && (
+					<div className="accordion__content">
+						<div className="accordion__content-wrap">{ children }</div>
 					</div>
-				</div>
+				) }
 			</div>
 		);
 	}
-} );
+}

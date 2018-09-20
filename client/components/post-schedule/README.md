@@ -8,17 +8,16 @@ This React component implements a small calendar (shown by month) which allows u
 ## Example Usage
 
 ```js
-var PostSchedule = require( 'components/post-schedule' );
+import PostSchedule from 'components/post-schedule';
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
 
 	onDateChange: function( date ) {
 		console.log( 'current date: ', date );
 	},
 
-	render: function() {
+	render() {
 		var events = [
 			{
 				id: 1,
@@ -44,7 +43,7 @@ module.exports = React.createClass( {
 	
 	// ...
 
-} );
+}
 ```
 
 ---
@@ -61,6 +60,8 @@ module.exports = React.createClass( {
 correction when the given timezone is different from the user's timezone. `timezone` takes priority over `gmtOffset`.
 
 `gmtOffset` - **optional** Number - Like as timezone-like manner, an offset correction will be applied if there is difference between the given gmtOffset and the user's gmtOffset. Ignored if `timezone` also passed.
+
+`displayInputChrono` - **optional** Boolean - True if an `InputChrono` (a React component that creates a Date object from a user-entered textual date description) should be displayed. Default: true
 
 `onDateChange` - **optional** Called when user selects a new date on the calendar. Passed a moment Date object.
 

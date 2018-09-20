@@ -1,75 +1,81 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:site-users-fetcher' ),
-	omit = require( 'lodash/object/omit' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	includes = require( 'lodash/collection/includes' ),
-	partition = require( 'lodash/collection/partition' );
+
+import { includes, isEqual, omit, partition } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:site-users-fetcher' );
 
 /**
  * Internal dependencies
  */
-var UsersStore = require( 'lib/users/store' ),
-	UsersActions = require( 'lib/users/actions' );
+import UsersStore from 'lib/users/store';
+import { fetchUpdated, fetchUsers } from 'lib/users/actions';
+import pollers from 'lib/data-poller';
 
 /**
  * Module variables
  */
-var defaultOptions = {
+const defaultOptions = {
 	number: 100,
-	offset: 0
+	offset: 0,
 };
 
-module.exports = React.createClass( {
-	displayName: 'SiteUsersFetcher',
+export default class extends React.Component {
+	static displayName = 'SiteUsersFetcher';
 
-	propTypes: {
-		fetchOptions: React.PropTypes.object.isRequired,
-		exclude: React.PropTypes.oneOfType( [
-			React.PropTypes.arrayOf( React.PropTypes.number ),
-			React.PropTypes.func
-		] )
-	},
+	static propTypes = {
+		fetchOptions: PropTypes.object.isRequired,
+		exclude: PropTypes.oneOfType( [ PropTypes.arrayOf( PropTypes.number ), PropTypes.func ] ),
+	};
 
-	getInitialState: function() {
-		return this._getState();
-	},
-
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting SiteUsersFetcher' );
 		UsersStore.on( 'change', this._updateSiteUsers );
 		this._fetchIfEmpty();
-	},
+		this._poller = pollers.add( UsersStore, () => fetchUpdated( this.props.fetchOptions ), {
+			leading: false,
+		} );
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		UsersStore.off( 'change', this._updateSiteUsers );
-	},
+		pollers.remove( this._poller );
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.fetchOptions ) {
 			return;
 		}
 		if ( ! isEqual( this.props.fetchOptions, nextProps.fetchOptions ) ) {
 			this._updateSiteUsers( nextProps.fetchOptions );
 			this._fetchIfEmpty( nextProps.fetchOptions );
+			pollers.remove( this._poller );
+			this._poller = pollers.add( UsersStore, () => fetchUpdated( nextProps.fetchOptions ), {
+				leading: false,
+			} );
 		}
-	},
+	}
 
-	render: function() {
-		var childrenProps = Object.assign( omit( this.props, 'children' ), this.state );
-		// Clone the child element along and pass along state (containing data from the store)
-		return React.cloneElement( this.props.children, childrenProps );
-	},
+	render() {
+		const childrenProps = Object.assign( omit( this.props, 'children' ), this.state );
 
-	_updateSiteUsers: function( fetchOptions ) {
+		// If child elements are passed, clone them and
+		// pass along state (containing data from the store)
+		return this.props.children ? React.cloneElement( this.props.children, childrenProps ) : null;
+	}
+
+	_updateSiteUsers = fetchOptions => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		this.setState( this._getState( fetchOptions ) );
-	},
+	};
 
-	_getState: function( fetchOptions ) {
-		var paginationData, users;
+	_getState = fetchOptions => {
+		let paginationData, users;
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		fetchOptions = Object.assign( {}, defaultOptions, fetchOptions );
 		paginationData = UsersStore.getPaginationData( fetchOptions );
@@ -79,23 +85,26 @@ module.exports = React.createClass( {
 			// Partition will return an array of two arrays.
 			// users[0] will be a list of the users that were not excluded.
 			// users[1] will be a list of the excluded users.
-			users = partition( users, function( user ) {
-				if ( 'function' === typeof this.props.exclude ) {
-					return ! this.props.exclude( user );
-				}
+			users = partition(
+				users,
+				function( user ) {
+					if ( 'function' === typeof this.props.exclude ) {
+						return ! this.props.exclude( user );
+					}
 
-				return ! includes( this.props.exclude, user.ID );
-			}.bind( this ) );
+					return ! includes( this.props.exclude, user.ID );
+				}.bind( this )
+			);
 		}
 
 		return Object.assign( {}, paginationData, {
-			users: this.props.exclude ? users[0] : users,
+			users: this.props.exclude ? users[ 0 ] : users,
 			fetchOptions: fetchOptions,
-			excludedUsers: this.props.exclude ? users[1] : []
+			excludedUsers: this.props.exclude ? users[ 1 ] : [],
 		} );
-	},
+	};
 
-	_fetchIfEmpty: function( fetchOptions ) {
+	_fetchIfEmpty = fetchOptions => {
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		if ( ! fetchOptions || ! fetchOptions.siteId ) {
 			return;
@@ -107,12 +116,13 @@ module.exports = React.createClass( {
 		}
 		// defer fetch requests to avoid dispatcher conflicts
 		setTimeout( function() {
-			var paginationData = UsersStore.getPaginationData( fetchOptions );
+			const paginationData = UsersStore.getPaginationData( fetchOptions );
 			if ( paginationData.fetchingUsers ) {
 				return;
 			}
-			UsersActions.fetchUsers( fetchOptions, 0 );
+			fetchUsers( fetchOptions );
 		}, 0 );
-	}
+	};
 
-} );
+	state = this._getState();
+}

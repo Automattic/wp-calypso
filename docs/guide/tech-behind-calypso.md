@@ -4,7 +4,7 @@ Understanding the technologies and abstractions on which Calypso is built can ma
 
 ## No Big Famous Framework
 
-Calypso is using neither Angular nor Ember; because we are building Calypso for the long haul, updating and improving a home-grown framework is a better long-term approach for us. Currently, we're using React and Flux; they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small startup project; we know it will need to scale and our technology will need to scale with it.
+Calypso is using neither Angular nor Ember; because we are building Calypso for the long haul, updating and improving a home-grown framework is a better long-term approach for us. Currently, we're using React and Flux/Redux; they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small startup project; we know it will need to scale and our technology will need to scale with it.
 
 ## Modern Modular JavaScript
 
@@ -35,7 +35,6 @@ Key concepts checklist:
 Here are some great React resources:
 
 * [Official documentation](http://facebook.github.io/react/docs/getting-started.html)
-* [React.js Introduction For People Who Know Just Enough jQuery To Get By](http://reactfordesigners.com/labs/reactjs-introduction-for-people-who-know-just-enough-jquery-to-get-by/)
 * [Tutorial at Scotch.io](https://scotch.io/tutorials/learning-react-getting-started-and-concepts)
 * [ReactJS For Stupid People](http://blog.andrewray.me/reactjs-for-stupid-people/)
 * [Thinking in React](http://facebook.github.io/react/docs/thinking-in-react.html)
@@ -53,6 +52,18 @@ Key concepts checklist:
 * [Component lifecycle methods](http://facebook.github.io/react/docs/component-specs.html)
 * [Mixins](http://facebook.github.io/react/docs/reusable-components.html#mixins)
 * [Why shouldn’t we touch the DOM the old way](http://facebook.github.io/react/docs/working-with-the-browser.html)
+
+## Redux
+
+All new code uses [Redux](http://redux.js.org/) to manage state in Calypso – making sure all components work with and react to the same data, living in a single place, instead of scattered between components’ state. Older code uses various [Flux](https://facebook.github.io/flux/) implementations or other data components.
+
+Few, but solid Redux resources:
+
+* [The official website](http://redux.js.org)
+* Probably the best way to learn Redux is via the Egghead [Get Started with Redux](https://egghead.io/courses/getting-started-with-redux) video course
+* When good with the basics, the [Building React Applications with Idiomatic Redux](https://egghead.io/courses/building-react-applications-with-idiomatic-redux) video course is also super useful (though we do few things differently in Calypso, like routing)
+* The [Ecosystem](http://redux.js.org/docs/introduction/Ecosystem.html) page on the official site has a lot of links to tutorials and examples
+* For more Calypso-specific details, see the [Our Approach to Data](../our-approach-to-data.md) document
 
 ## Git
 
@@ -88,6 +99,6 @@ The way we use Git with Calypso is described in the [Git Workflow document](../g
 * [express.js](http://expressjs.com) – light server-side framework we use to serve the initial page
 * [lodash](https://lodash.com) – general purpose utility library; includes a ton of useful functions for dealing with arrays, objects, and collections
 * [webpack](http://webpack.github.io) – building a JavaScript bundle of all of our modules and making sure loading them works just fine
-* [make](http://www.gnu.org/software/make/manual/make.html) – our build tool of choice
+* [Babel](https://babeljs.io) – for transpiling ES2015+ and JSX
 
-Previous: [Hello, World!](hello-world.md) Next: [Contributing to Calypso](../../CONTRIBUTING.md)
+Previous: [Hello, World!](hello-world.md) Next: [Information Architecture](information-architecture.md)

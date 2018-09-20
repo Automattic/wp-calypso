@@ -1,55 +1,109 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { flow, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import getPostRevisions from 'state/selectors/get-post-revisions';
+import getPostRevisionsAuthorsId from 'state/selectors/get-post-revisions-authors-id';
+import getPostRevisionsComparisons from 'state/selectors/get-post-revisions-comparisons';
+import getPostRevisionsSelectedRevisionId from 'state/selectors/get-post-revisions-selected-revision-id';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
+import EditorDiffViewer from 'post-editor/editor-diff-viewer';
+import EditorRevisionsList from 'post-editor/editor-revisions-list';
+import QueryPostRevisions from 'components/data/query-post-revisions';
+import QueryUsers from 'components/data/query-users';
 
-export default React.createClass( {
-
-	displayName: 'EditorRevisions',
-
-	mixins: [ React.addons.PureRenderMixin ],
-
-	propTypes: {
-		adminUrl: React.PropTypes.string,
-		revisions: React.PropTypes.array
-	},
-
-	getDefaultProps() {
-		return {
-			revisions: []
-		};
-	},
+class EditorRevisions extends Component {
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_editor_post_revisions_open' );
+	}
 
 	render() {
-		if ( ! this.props.revisions.length ) {
-			return null;
-		}
-
-		const lastRevision = this.props.revisions[0];
-		const revisionsLink = this.props.adminUrl + 'revision.php?revision=' + lastRevision;
+		const {
+			authorsIds,
+			comparisons,
+			postId,
+			revisions,
+			selectedDiff,
+			selectedRevisionId,
+			siteId,
+		} = this.props;
 
 		return (
-			<a className="editor-revisions"
-				href={ revisionsLink }
-				target="_blank"
-				aria-label={ this.translate( 'Open list of revisions' ) }
-			>
-				<Gridicon icon="history" size={ 18 } />
-				{ this.translate(
-					'%(revisions)d revision',
-					'%(revisions)d revisions', {
-						count: this.props.revisions.length,
-						args: {
-							revisions: this.props.revisions.length
-						}
-					}
-				) }
-			</a>
+			<div className="editor-revisions__wrapper">
+				<QueryPostRevisions
+					postId={ postId }
+					siteId={ siteId }
+					selectedRevisionId={ selectedRevisionId }
+				/>
+				<QueryUsers siteId={ siteId } userIds={ authorsIds } />
+				<EditorDiffViewer
+					diff={ selectedDiff }
+					postId={ postId }
+					selectedRevisionId={ selectedRevisionId }
+					siteId={ siteId }
+				/>
+				<EditorRevisionsList
+					comparisons={ comparisons }
+					postId={ postId }
+					revisions={ revisions }
+					selectedRevisionId={ selectedRevisionId }
+					siteId={ siteId }
+				/>
+			</div>
 		);
 	}
-} );
+}
+
+EditorRevisions.propTypes = {
+	// connected to state
+	authorsIds: PropTypes.array.isRequired,
+	comparisons: PropTypes.object,
+	postId: PropTypes.number.isRequired,
+	revisions: PropTypes.array.isRequired,
+	selectedDiff: PropTypes.object,
+	selectedRevisionId: PropTypes.number,
+	siteId: PropTypes.number.isRequired,
+
+	// connected to dispatch
+	recordTracksEvent: PropTypes.func.isRequired,
+
+	// localize
+	translate: PropTypes.func.isRequired,
+};
+
+export default flow(
+	localize,
+	connect(
+		state => {
+			const postId = getEditorPostId( state );
+			const siteId = getSelectedSiteId( state );
+
+			const revisions = getPostRevisions( state, siteId, postId );
+			const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
+			const comparisons = getPostRevisionsComparisons( state, siteId, postId );
+			const selectedDiff = get( comparisons, [ selectedRevisionId, 'diff' ], {} );
+
+			return {
+				authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
+				comparisons,
+				postId,
+				revisions,
+				selectedDiff,
+				selectedRevisionId,
+				siteId,
+			};
+		},
+		{ recordTracksEvent }
+	)
+)( EditorRevisions );

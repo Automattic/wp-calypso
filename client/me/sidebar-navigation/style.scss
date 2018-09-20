@@ -1,8 +1,8 @@
 .current-section .gravatar {
-	position: absolute;
-		top: 12px;
-		left: 32px;
-	border: 1px solid #fff;
+	width: 32px;
+	height: 32px;
+	margin-right: 8px;
+	border: 1px solid $white;
 }
 
 .current-section__me-title {

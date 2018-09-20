@@ -1,0 +1,30 @@
+/**
+ * List End:
+ * ------
+ * Marker that can be appended to indicate the end of a list (e.g. posts).
+ */
+
+.list-end {
+	width: 100%;
+	margin-top: 32px;
+	text-align: center;
+	border-top: solid 1px $gray-lighten-20;
+
+	.gridicon {
+		fill: $gray;
+		position: relative;
+		top: -13px;
+		background: $gray-light;
+		padding: 0 8px;
+	}
+
+	// Reader is special since is has a white background, and has lots
+	// of random horizontal lines already.
+	.is-reader-page & {
+		border-top: none;
+
+		.gridicon {
+			background: $white;
+		}
+	}
+}

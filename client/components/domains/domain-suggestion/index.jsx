@@ -1,68 +1,84 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var DomainProductPrice = require( 'components/domains/domain-product-price' ),
-	Gridicon = require( 'components/gridicon' );
+import DomainProductPrice from 'components/domains/domain-product-price';
+import Button from 'components/button';
 
-var DomainSuggestion = React.createClass( {
+class DomainSuggestion extends React.Component {
+	static propTypes = {
+		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+		buttonProps: PropTypes.object,
+		extraClasses: PropTypes.string,
+		onButtonClick: PropTypes.func.isRequired,
+		priceRule: PropTypes.string,
+		price: PropTypes.string,
+		domain: PropTypes.string,
+		hidePrice: PropTypes.bool,
+		showChevron: PropTypes.bool,
+	};
 
-	propTypes: {
-		buttonLabel: React.PropTypes.string,
-		buttonClasses: React.PropTypes.string,
-		extraClasses: React.PropTypes.string,
-		onButtonClick: React.PropTypes.func,
-		price: React.PropTypes.string,
-		cart: React.PropTypes.object,
-		isAdded: React.PropTypes.bool.isRequired
-	},
+	static defaultProps = {
+		buttonProps: { primary: true },
+		showChevron: false,
+	};
 
-	formatPrice: function( price ) {
-		// remove trailing zeroes from the price
-		price = price ? price.replace( /\.00$/, '' ) : price;
-		return price;
-	},
-
-	renderButton: function() {
-		var buttonContent;
-		if ( this.props.isAdded ) {
-			buttonContent = <Gridicon icon="checkmark" ref="checkmark" />;
-		} else {
-			buttonContent = this.props.buttonLabel;
-		}
-		return (
-			<button ref="button" className={ 'button ' + this.props.buttonClasses } onClick={ this.props.onButtonClick }>
-				{ buttonContent }
-			</button>
+	render() {
+		const { children, extraClasses, hidePrice, isAdded, price, priceRule } = this.props;
+		const classes = classNames(
+			'domain-suggestion',
+			'card',
+			'is-compact',
+			'is-clickable',
+			{
+				'is-added': isAdded,
+			},
+			extraClasses
 		);
-	},
-
-	render: function() {
-		var classes = classNames( 'domain-suggestion', 'card', 'is-compact', {
-				'is-placeholder': this.props.isLoading,
-				'is-added': this.props.isAdded
-			}, this.props.extraClasses );
 
 		return (
-			<div className={ classes }>
+			<div
+				className={ classes }
+				onClick={ this.props.onButtonClick }
+				data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+				role="button"
+				data-e2e-domain={ this.props.domain }
+			>
 				<div className="domain-suggestion__content">
-					{ this.props.children }
-					<DomainProductPrice
-						isLoading={ this.props.isLoading }
-						price={ this.props.price }
-						cart={ this.props.cart } />
+					{ children }
+					{ ! hidePrice && <DomainProductPrice price={ price } rule={ priceRule } /> }
 				</div>
-				<div className="domain-suggestion__action">
-					{ this.renderButton() }
-				</div>
+				<Button className="domain-suggestion__action" { ...this.props.buttonProps }>
+					{ this.props.buttonContent }
+				</Button>
+				{ this.props.showChevron && (
+					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+				) }
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = DomainSuggestion;
+DomainSuggestion.Placeholder = function() {
+	return (
+		<div className="domain-suggestion card is-compact is-placeholder is-clickable">
+			<div className="domain-suggestion__content">
+				<h3 />
+			</div>
+			<div className="domain-suggestion__action" />
+			<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+		</div>
+	);
+};
+
+export default DomainSuggestion;

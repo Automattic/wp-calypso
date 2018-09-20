@@ -1,24 +1,24 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginIcon = require( 'my-sites/plugins/plugin-icon/plugin-icon' );
+import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 
-module.exports = React.createClass( {
+export default class extends React.Component {
+	static displayName = 'ConnectedApplicationIcon';
 
-	displayName: 'ConnectedApplicationIcon',
+	static defaultProps = {
+		size: 40,
+	};
 
-	getDefaultProps: function() {
-		return {
-			size: 40
-		};
-	},
-
-	render: function() {
+	render() {
 		return (
 			<PluginIcon
 				className="connected-application-icon"
@@ -27,4 +27,4 @@ module.exports = React.createClass( {
 			/>
 		);
 	}
-} );
+}

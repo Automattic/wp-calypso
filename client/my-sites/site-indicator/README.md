@@ -6,11 +6,29 @@ This component is used to display a round badge next to a site with information 
 #### How to use
 
 ```js
-var SiteIndicator = require( 'my-sites/site-indicator' );
+import SiteIndicator from 'my-sites/site-indicator';
 
-render: function() {
-    return(
-        <SiteIndicator site={ siteObject } />
-    );
+render() {
+	return(
+		<SiteIndicator site={ siteObject } />
+	);
 }
 ```
+
+## Props
+
+### `site`
+
+<table>
+	<tr><th>Type</th><td>Object</td></tr>
+	<tr><th>Required</th><td>Yes</td></tr>
+</table>
+
+The site object. 
+
+### `onSelect`
+
+<table>
+	<tr><th>Type</th><td>Function</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>

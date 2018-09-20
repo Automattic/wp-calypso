@@ -1,0 +1,80 @@
+/** @format */
+
+.email-settings__container {
+	.components__notification-component-title {
+		width: 50%;
+	}
+
+	.components__notification-component-title-long {
+		width: 80%;
+	}
+
+	.components__notification-component-title,
+	.components__notification-component-title-long {
+		.form-setting-explanation {
+			margin-top: 0;
+		}
+
+		.form-label {
+			margin-bottom: 0;
+		}
+	}
+
+	.components__notification-component-input {
+		flex-shrink: 1;
+		width: 40%;
+	}
+
+	.components__notification-component-toggle {
+		height: 58px;
+		width: 80px;
+	}
+
+	.components__notification-component-toggle-label,
+	.components__notification-component-toggle {
+		width: 100px;
+		text-align: center;
+	}
+
+	.form-toggle__label .form-toggle__label-content {
+		margin-left: 0;
+	}
+
+	.list-header {
+		background: lighten( $gray, 35% );
+	}
+
+	.list-header + .list-item {
+		border-top: 0;
+	}
+
+	.components__notification-component-item {
+		flex-wrap: nowrap;
+		align-items: center;
+		border-top: 1px solid $border-ultra-light-gray;
+	}
+
+	.components__notification-origin {
+		width: 100%;
+		margin-bottom: 20px;
+	}
+
+	.components__notification-origin:last-child {
+		margin-bottom: 0;
+	}
+
+	.components__is-placeholder {
+		@include placeholder();
+		padding: 0px;
+		margin: 0px 0px 4px 0px;
+		pointer-events: none;
+		background: $white;
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 25% );
+		color: transparent;
+		cursor: default;
+		&::placeholder {
+			color: transparent;
+		}
+	}
+}

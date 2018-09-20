@@ -1,17 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var ListItemFileDetails = require( './list-item-file-details' );
+import ListItemFileDetails from './list-item-file-details';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryListItemDocument',
+export default class extends React.Component {
+	static displayName = 'MediaLibraryListItemDocument';
 
-	render: function() {
+	render() {
 		return <ListItemFileDetails { ...this.props } />;
 	}
-} );
+}

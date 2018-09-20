@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * External dependencies
  */
@@ -5,7 +7,7 @@
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * PopupMonitor component
@@ -15,6 +17,12 @@ var Emitter = require( 'lib/mixins/emitter' );
 function PopupMonitor() {
 	this.intervals = {};
 	this.monitorInterval = null;
+	this.windowInstance = null;
+	this.onMessage = messageEvent => {
+		if ( messageEvent.source === this.windowInstance ) {
+			this.emit( 'message', messageEvent.data );
+		}
+	};
 }
 
 /**
@@ -33,11 +41,12 @@ Emitter( PopupMonitor.prototype );
  * @public
  */
 PopupMonitor.prototype.open = function( url, name, specs ) {
-	var windowInstance;
 	name = name || Date.now();
 
-	windowInstance = window.open( url, name, specs );
-	this.startMonitoring( name, windowInstance );
+	this.windowInstance = window.open( url, name, specs );
+	this.startMonitoring( name, this.windowInstance );
+
+	window.addEventListener( 'message', this.onMessage, false );
 
 	return this;
 };
@@ -52,14 +61,14 @@ PopupMonitor.prototype.open = function( url, name, specs ) {
  * @public
  */
 PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
-	var screenTop = ( typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY ),
-		screenLeft = ( typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX );
+	let screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
+		screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
 
 	return [
 		'width=' + width,
 		'height=' + height,
-		'top=' + ( screenTop + ( window.innerHeight / 2 ) - ( height / 2 ) ),
-		'left=' + ( screenLeft + ( window.innerWidth / 2 ) - ( width / 2 ) )
+		'top=' + ( screenTop + window.innerHeight / 2 - height / 2 ),
+		'left=' + ( screenLeft + window.innerWidth / 2 - width / 2 ),
 	].join();
 };
 
@@ -71,7 +80,7 @@ PopupMonitor.prototype.getScreenCenterSpecs = function( width, height ) {
  * @public
  */
 PopupMonitor.prototype.isOpen = function( name ) {
-	var isClosed = false;
+	let isClosed = false;
 
 	try {
 		isClosed = this.intervals[ name ] && this.intervals[ name ].closed;
@@ -86,7 +95,7 @@ PopupMonitor.prototype.isOpen = function( name ) {
  * open, then the interval is stopped.
  */
 PopupMonitor.prototype.checkStatus = function() {
-	for ( var name in this.intervals ) {
+	for ( const name in this.intervals ) {
 		if ( this.intervals.hasOwnProperty( name ) && ! this.isOpen( name ) ) {
 			this.emit( 'close', name );
 			delete this.intervals[ name ];
@@ -96,6 +105,7 @@ PopupMonitor.prototype.checkStatus = function() {
 	if ( 0 === Object.keys( this.intervals ).length ) {
 		clearInterval( this.monitorInterval );
 		delete this.monitorInterval;
+		window.removeEventListener( 'message', this.onMessage );
 	}
 };
 
@@ -117,4 +127,4 @@ PopupMonitor.prototype.startMonitoring = function( name, windowInstance ) {
 /**
  * Expose `PopupMonitor`
  */
-module.exports = PopupMonitor;
+export default PopupMonitor;

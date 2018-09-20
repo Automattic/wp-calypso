@@ -1,8 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import isEqual from 'lodash/lang/isEqual';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,43 +14,42 @@ import isEqual from 'lodash/lang/isEqual';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import { filterItemsByMimePrefix } from 'lib/media/utils';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryDropZone',
+export default class extends React.Component {
+	static displayName = 'EditorMediaModalGalleryDropZone';
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object,
-		onInvalidItemAdded: PropTypes.func
-	},
+		onInvalidItemAdded: PropTypes.func,
+	};
 
-	getDefaultProps() {
-		return {
-			onInvalidItemAdded: () => {}
-		};
-	},
+	static defaultProps = {
+		onInvalidItemAdded: () => {},
+	};
 
-	filterDroppedImagesSelected() {
+	filterDroppedImagesSelected = () => {
 		const { site } = this.props;
 		if ( ! site ) {
 			return;
 		}
 
 		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
-		const filteredItems = MediaUtils.filterItemsByMimePrefix( selectedItems, 'image' );
+		const filteredItems = filterItemsByMimePrefix( selectedItems, 'image' );
 
 		if ( ! isEqual( selectedItems, filteredItems ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, filteredItems );
 			this.props.onInvalidItemAdded();
 		}
-	},
+	};
 
 	render() {
 		return (
 			<MediaLibraryDropZone
 				site={ this.props.site }
 				onAddMedia={ this.filterDroppedImagesSelected }
-				fullScreen={ false } />
+				fullScreen={ false }
+			/>
 		);
 	}
-} );
+}

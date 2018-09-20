@@ -1,66 +1,59 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:application-password-item' );
+import React from 'react';
+import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	ActionRemove = require( 'me/action-remove' ),
-	eventRecorder = require( 'me/event-recorder' );
+import Button from 'components/button';
+import { deleteApplicationPassword } from 'state/application-passwords/actions';
+import { errorNotice } from 'state/notices/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
+class ApplicationPasswordsItem extends React.Component {
+	handleRemovePasswordButtonClick = () => {
+		const { password } = this.props;
 
-	displayName: 'ApplicationPasswordsItem',
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Remove Application Password Button' );
+		this.props.deleteApplicationPassword( password.ID );
+	};
 
-	mixins: [ eventRecorder ],
+	render() {
+		const { moment, password, translate } = this.props;
 
-	componentDidMount: function() {
-		debug( this.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.displayName + ' React component is unmounting.' );
-	},
-
-	getInitialState: function() {
-		return {
-			removingPassword: false
-		};
-	},
-
-	removeApplicationPassword: function() {
-		this.setState( { removingPassword: true } );
-
-		this.props.appPasswordsData.revoke( parseInt( this.props.password.ID, 10 ), function( error ) {
-			if ( error && 'unknown_application_password' !== error.error ) {
-				this.setState( { removingPassword: false } );
-				notices.error( this.translate( 'The application password was not successfully deleted. Please try again.' ) );
-			}
-		}.bind( this ) );
-	},
-
-	render: function() {
-		var password = this.props.password;
 		return (
-			<li className="application-password-item__password" key={ password.ID } >
+			<li className="application-password-item__password" key={ password.ID }>
 				<div className="application-password-item__details">
 					<h2 className="application-password-item__name">{ password.name }</h2>
 					<p className="application-password-item__generated">
-						{
-							this.translate( 'Generated on %s', {
-								args: this.moment( password.generated ).format( 'MMM DD, YYYY @ h:mm a' )
-							} )
-						}
+						{ translate( 'Generated on %s', {
+							args: moment( password.generated ).format( 'lll' ),
+						} ) }
 					</p>
 				</div>
-				<ActionRemove
+				<Button
+					borderless
 					className="application-password-item__revoke"
-					onClick={ this.recordClickEvent( 'Remove Application Password Button', this.removeApplicationPassword ) }
-				/>
+					onClick={ this.handleRemovePasswordButtonClick }
+				>
+					<Gridicon icon="cross" />
+				</Button>
 			</li>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{
+		deleteApplicationPassword,
+		errorNotice,
+		recordGoogleEvent,
+	}
+)( localize( ApplicationPasswordsItem ) );

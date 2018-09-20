@@ -1,151 +1,184 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	isFunction = require( 'lodash/lang/isFunction' ),
-	classNames = require( 'classnames' );
+
+import debug from 'debug';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var DocService = require( './service' ),
-	Main = require( 'components/main' ),
-	SearchCard = require( 'components/search-card' );
+import DocService from './service';
+import DocumentHead from 'components/data/document-head';
+import Card from 'components/card';
+import Main from 'components/main';
+import SearchCard from 'components/search-card';
 
-var DEFAULT_FILES = [
-		'docs/guide/index.md',
-		'README.md',
-		'CONTRIBUTING.md',
-		'docs/coding-guidelines.md',
-		'client/lib/mixins/i18n/README.md',
-		'docs/coding-guidelines/javascript.md',
-		'docs/coding-guidelines/css.md',
-		'docs/coding-guidelines/html.md'
-	];
+/**
+ * Constants
+ */
 
-module.exports = React.createClass( {
-	displayName: 'Devdocs',
-	propTypes: {
-		term: React.PropTypes.string
-	},
+const DEFAULT_FILES = [
+	'docs/guide/index.md',
+	'README.md',
+	'.github/CONTRIBUTING.md',
+	'docs/coding-guidelines.md',
+	'docs/coding-guidelines/javascript.md',
+	'docs/coding-guidelines/css.md',
+	'docs/coding-guidelines/html.md',
+	'docs/accessibility.md',
+];
 
-	getDefaultProps: function() {
-		return {
-			term: ''
-		};
-	},
+/**
+ * Module variables
+ */
 
-	getInitialState: function() {
-		return {
-			term: this.props.term,
-			results: [],
-			defaultResults: [],
-			inputValue: '',
-			searching: false
-		};
-	},
+const log = debug( 'calypso:devdocs' );
+
+export default class Devdocs extends React.Component {
+	static displayName = 'Devdocs';
+
+	static propTypes = {
+		term: PropTypes.string,
+	};
+
+	static defaultProps = {
+		term: '',
+	};
+
+	state = {
+		term: this.props.term,
+		results: [],
+		defaultResults: [],
+		inputValue: '',
+		searching: false,
+	};
 
 	// load default files if not already cached
-	loadDefaultFiles: function() {
+	loadDefaultFiles = () => {
 		if ( this.state.defaultResults.length ) {
 			return;
 		}
 
-		DocService.list( DEFAULT_FILES, function( err, results ) {
-			if ( !err && this.isMounted() ) {
-				this.setState( {
-					defaultResults: results
-				} );
-			}
-		}.bind( this ) );
-	},
+		DocService.list(
+			DEFAULT_FILES,
+			function( err, results ) {
+				if ( ! err ) {
+					this.setState( {
+						defaultResults: results,
+					} );
+				}
+			}.bind( this )
+		);
+	};
 
-	componentDidMount: function() {
-		var term = this.state.term;
+	componentDidMount() {
+		const { term } = this.state;
 		this.loadDefaultFiles();
 		if ( ! term ) {
 			return;
 		}
 		this.onSearchChange( this.state.term );
 		this.onSearch( this.state.term );
-	},
+	}
 
-	componentDidUpdate: function() {
-		if ( isFunction( this.props.onSearchChange ) ) {
+	componentDidUpdate( prevProps, prevState ) {
+		if ( isFunction( this.props.onSearchChange ) && prevState.term !== this.state.term ) {
 			this.props.onSearchChange( this.state.term );
 		}
-	},
+	}
 
-	notFound: function() {
-		return this.state.inputValue && this.state.term && ! this.state.results.length && ! this.state.searching;
-	},
+	notFound = () => {
+		return (
+			this.state.inputValue &&
+			this.state.term &&
+			! this.state.results.length &&
+			! this.state.searching
+		);
+	};
 
-	onSearchChange: function( term ) {
+	onSearchChange = term => {
 		this.setState( {
 			inputValue: term,
 			term: term,
-			searching: !! term
+			searching: !! term,
 		} );
-	},
+	};
 
-	onSearch: function( term ) {
+	onSearch = term => {
 		if ( ! term ) {
 			return;
 		}
-		DocService.search( term, function( err, results ) {
-			if ( err ) {
-				console.log( err );
-			}
+		DocService.search(
+			term,
+			function( err, results ) {
+				if ( err ) {
+					log( 'search error: %o', err );
+				}
 
-			this.setState( {
-				results: results,
-				searching: false
-			} );
-		}.bind( this ) );
-	},
+				this.setState( {
+					results: results,
+					searching: false,
+				} );
+			}.bind( this )
+		);
+	};
 
-	results: function() {
-		var searchResults;
-
+	results = () => {
 		if ( this.notFound() ) {
 			return <p>Not Found</p>;
 		}
 
-		searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
+		const searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
 		return searchResults.map( function( result ) {
+			let url = '/devdocs/' + result.path;
+
+			if ( this.state.term ) {
+				url += '?term=' + encodeURIComponent( this.state.term );
+			}
+
 			return (
-				<div className="devdocs__result" key={ result.path }>
-					<header>
-						<h1><a href={ '/devdocs/' + result.path + '?term=' + encodeURIComponent( this.state.term ) }>{ result.title }</a></h1>
-						<h2>{ result.path }</h2>
+				<Card compact className="devdocs__result" key={ result.path }>
+					<header className="devdocs__result-header">
+						<h1 className="devdocs__result-title">
+							<a className="devdocs__result-link" href={ url }>
+								{ result.title }
+							</a>
+						</h1>
+						<h2 className="devdocs__result-path">{ result.path }</h2>
 					</header>
 					{ this.snippet( result ) }
-				</div>
+				</Card>
 			);
 		}, this );
-	},
+	};
 
-	snippet: function( result ) {
+	snippet = result => {
 		// split around <mark> tags to avoid setting unescaped inner HTML
-		var parts = result.snippet.split(/(<mark>.*?<\/mark>)/);
+		const parts = result.snippet.split( /(<mark>.*?<\/mark>)/ );
 
 		return (
 			<div className="devdocs__result-snippet" key={ 'snippet' + result.path }>
 				{ parts.map( function( part, i ) {
-					var markMatch = part.match( /<mark>(.*?)<\/mark>/ );
+					const markMatch = part.match( /<mark>(.*?)<\/mark>/ );
 					if ( markMatch ) {
-						return <mark key={ 'mark' + i }>{markMatch[1]}</mark>;
-					} else {
-						return part;
+						return <mark key={ 'mark' + i }>{ markMatch[ 1 ] }</mark>;
 					}
+					return part;
 				} ) }
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<Main className="devdocs">
+			<Main className="devdocs devdocs__search">
+				<DocumentHead title="Calypso Docs" />
+
 				<SearchCard
 					autoFocus
 					placeholder="Search documentation…"
@@ -155,10 +188,8 @@ module.exports = React.createClass( {
 					onSearchChange={ this.onSearchChange }
 					onSearch={ this.onSearch }
 				/>
-				<div className="devdocs__results">
-					{ this.results() }
-				</div>
+				<div className="devdocs__results">{ this.results() }</div>
 			</Main>
 		);
 	}
-} );
+}

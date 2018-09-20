@@ -1,0 +1,11 @@
+.filtered-list__container {
+	border: 1px solid $gray-lighten-20;
+	border-top: none;
+	padding: 8px;
+	height: 190px;
+	overflow-y: scroll;
+}
+
+.filtered-list__list {
+	margin: 0;
+}

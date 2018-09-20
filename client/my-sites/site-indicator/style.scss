@@ -2,12 +2,17 @@
  * Site Indicator
  */
 
-.site-indicator {
+.site-indicator__main {
 	align-self: center;
 	margin-right: 16px;
 }
 
+.site-indicator__wrapper {
+	align-self: center;
+}
+
 .site-indicator__button {
+	align-self: center;
 	background: $gray-light;
 	border: none;
 	border-radius: 50%;
@@ -21,19 +26,10 @@
 	position: relative;
 	text-align: center;
 	text-transform: none;
-	z-index: 3;
+	z-index: z-index( 'root', '.site-indicator__button' );
 	overflow: initial;
+	line-height: 28px;
 
-	&::before {
-		@include noticon( '\f420', 16px );
-		line-height: 1;
-		margin: 0;
-		opacity: 0.8;
-		position: absolute;
-			top: 5px;
-			left: 5px;
-		vertical-align: middle;
-	}
 	&:focus {
 		box-shadow: none;
 	}
@@ -53,40 +49,29 @@
 	.is-update & {
 		background: $alert-yellow;
 		color: $white;
-		&::before {
-			content: '\f420';
-		}
 	}
 
 	.is-warning & {
 		background: $alert-yellow;
 		color: $white;
-		&::before {
-			content: '\f414';
-		}
 	}
 
 	.is-error & {
 		background: $alert-red;
 		color: $white;
-		&::before {
-			content: '\f414',
-		}
 	}
 
 	.is-expanded & {
-		&::before {
-			content: '\f406';
-			font-size: 12px;
-			top: 7px;
-			left: 7px;
-		}
 		.accessible-focus &:focus {
 			border: 1px dotted $white;
 			&::before {
 				top: 6px;
 				left: 6px;
 			}
+		}
+		.site-indicator__button {
+			position: absolute;
+				right: 0;
 		}
 	}
 
@@ -97,23 +82,19 @@
 	}
 }
 
-.site-indicator__progress-indicator.progress-indicator {
-	margin-top: -10px;
-	position: absolute;
-		top: 50%;
-		right: 21px;
-
-}
 // Displayed on top of a Site element once the user clicks on the button
 .site-indicator__message {
 	color: $white;
 	font-size: 12px;
-	padding: 5px 50px 5px 15px;
+	line-height: 1.4;
+	padding: 5px 16px 5px 16px;
 	position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
+	display: flex;
+	justify-content: space-between;
 
 	.is-warning &,
 	.is-update & {
@@ -122,23 +103,26 @@
 	.is-error & {
 		background: $alert-red;
 	}
-	&::before {
-		content: '';
-		display: inline-block;
-		height: 100%;
-		margin-right: -0.25em;
-		vertical-align: middle;
-	}
 }
 .site-indicator__action {
+	align-self: center;
 	display: inline-block;
 	vertical-align: middle;
 
 	// Links within the action message
 	a,
-	.button.is-link {
+	a:visited,
+	.button.is-borderless.is-scary,
+	.site-indicator__action-button {
 		border-bottom: 1px solid rgba( 255, 255, 255, 0.6 );
+		border-radius: 0;
 		color: $white;
 		text-decoration: none;
+	}
+
+	a > .gridicons-external {
+		// TODO: improve the styles of ExternalLink to use the relative em units
+		margin-left: 0.5em;
+		position: static;
 	}
 }

@@ -1,96 +1,75 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-
-var expect = require( 'chai' ).expect,
-	mockery = require( 'mockery' ),
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import UserUtils from '../utils';
+import configMock from 'config';
 
-const LOGOUT_WITH_DOMAIN = '/url-with-|subdomain|';
-const LOGOUT_WITHOUT_DOMAIN = '/url-without-domain';
+jest.mock( 'config', () => {
+	const { stub } = require( 'sinon' );
 
-describe( 'UserUtils', function() {
-	var user, UserUtils;
-	var logout_URL;
-	var always_use_logout_url = false;
-	var mockedConfig = function() {
-		return logout_URL;
-	}
+	const configMock = stub();
+	configMock.isEnabled = stub();
 
-	mockedConfig.isEnabled = function( feature ) {
-		if ( feature === 'desktop' ) {
-			return false;
-		}
+	return configMock;
+} );
+jest.mock( 'lib/wp', () => ( {
+	me: () => ( {
+		get: () => {},
+	} ),
+} ) );
 
-		if ( feature === 'always_use_logout_url' ) {
-			return always_use_logout_url;
-		}
+describe( 'UserUtils', () => {
+	let user;
 
-		return true;
-	};
-
-	beforeEach( function() {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-
-		mockery.registerMock( 'config', mockedConfig );
-
+	beforeAll( () => {
 		user = require( 'lib/user' )();
-		UserUtils = require( '../utils' );
 	} );
 
-	afterEach( function() {
-		mockery.disable();
-		mockery.deregisterMock( 'config' );
+	beforeEach( () => {
+		configMock.returns( '/url-with-|subdomain|' );
 	} );
 
-	it( 'uses userData.logout_URL when available', function() {
-		sinon.stub( user, 'get', function() {
-			return {
-				logout_URL: '/userdata'
-			};
+	describe( 'without logout url', () => {
+		beforeAll( () => {
+			configMock.isEnabled.withArgs( 'always_use_logout_url' ).returns( false );
 		} );
 
-		always_use_logout_url = false;
-		logout_URL = LOGOUT_WITH_DOMAIN;
-		expect( UserUtils.getLogoutUrl() ).to.be.equals( '/userdata' );
-
-		user.get.restore();
+		test( 'uses userData.logout_URL when available', () => {
+			sinon.stub( user, 'get' ).returns( { logout_URL: '/userdata' } );
+			expect( UserUtils.getLogoutUrl() ).to.equal( '/userdata' );
+			user.get.restore();
+		} );
 	} );
 
-	it( 'works when |subdomain| is not present', function() {
-		always_use_logout_url = true;
-		logout_URL = LOGOUT_WITHOUT_DOMAIN;
-		expect( UserUtils.getLogoutUrl() ).to.be.equals( '/url-without-domain' );
-	} );
-
-	it( 'replaces |subdomain| when present and have domain', function() {
-		sinon.stub( user, 'get', function() {
-			return {
-				localeSlug: 'es'
-			};
+	describe( 'with logout url', () => {
+		beforeAll( () => {
+			configMock.isEnabled.withArgs( 'always_use_logout_url' ).returns( true );
 		} );
 
-		always_use_logout_url = true;
-		logout_URL = LOGOUT_WITH_DOMAIN;
-		expect( UserUtils.getLogoutUrl() ).to.be.equals( '/url-with-es.' );
+		test( 'works when |subdomain| is not present', () => {
+			configMock.returns( '/url-without-domain' );
+			expect( UserUtils.getLogoutUrl() ).to.equal( '/url-without-domain' );
+		} );
 
-		user.get.restore();
-	} );
+		test( 'replaces |subdomain| when present and have domain', () => {
+			sinon.stub( user, 'get' ).returns( { localeSlug: 'es' } );
+			expect( UserUtils.getLogoutUrl() ).to.equal( '/url-with-es.' );
+			user.get.restore();
+		} );
 
-	it( 'replaces |subdomain| when present but no domain', function() {
-		always_use_logout_url = true;
-		logout_URL = LOGOUT_WITH_DOMAIN;
-
-		expect( UserUtils.getLogoutUrl() ).to.be.equals( '/url-with-' );
+		test( 'replaces |subdomain| when present but no domain', () => {
+			expect( UserUtils.getLogoutUrl() ).to.equal( '/url-with-' );
+		} );
 	} );
 } );

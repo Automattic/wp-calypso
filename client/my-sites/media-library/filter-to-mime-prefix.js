@@ -6,13 +6,16 @@
  * library, but does not include the `/` suffix required for REST API
  * filtering, but not utilized in MediaLibrary mime prefix detection.
  *
- * @see /client/components/data/media-list-data/utils.js
  *
- * @param  {string} filter Media filter path segment
+ *
+ * @format
+ * @see /client/components/data/media-list-data/utils.js
+ * @param {string} filter Media filter path segment
  * @return {string}        Media mime type prefix
  */
+
 export default function( filter ) {
-	var mimePrefix;
+	let mimePrefix;
 
 	switch ( filter ) {
 		case 'images':

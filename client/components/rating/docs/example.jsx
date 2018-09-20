@@ -1,27 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Rating = require( 'components/rating' );
+import Rating from 'components/rating';
 
-module.exports = React.createClass( {
-	displayName: 'Rating',
+export default class RatingExample extends React.PureComponent {
+	static displayName = 'Rating';
 
-	mixins: [ React.addons.PureRenderMixin ],
-
-	render: function() {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/rating">Rating</a>
-				</h2>
-
-				<Rating rating={ 65 } size={ 50 } />
-			</div>
-		);
+	render() {
+		return <Rating rating={ 70 } size={ 48 } />;
 	}
-} );
+}

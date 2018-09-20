@@ -1,13 +1,17 @@
-/***** WARNING: ES5 code only here. Not transpiled! *****/
+/** @format */
+/*
+ *  WARNING: ES5 code only here. Not transpiled! ****
+ */
 
 /**
  * External dependencies
  */
-var socketio = require( 'socket.io' );
+const socketio = require( 'socket.io' );
+const debug = require( 'debug' )( 'calypso:bundler:hot-reloader' );
+const cssHotReloader = require( './css-hot-reload' );
 
-var io = null,
-	_stats = null,
-	hotReloader;
+let io = null,
+	_stats = null;
 
 function invalidPlugin() {
 	if ( io ) {
@@ -35,8 +39,7 @@ function sendStats( socket, stats, force ) {
 	}
 }
 
-hotReloader = {
-
+const hotReloader = {
 	listen: function( server, webpackCompiler ) {
 		io = socketio.listen( server, { 'log level': 1 } );
 		io.sockets.on( 'connection', function( socket ) {
@@ -56,6 +59,14 @@ hotReloader = {
 			sendStats( io.sockets, stats.toJson() );
 			_stats = stats;
 		} );
+
+		// CSS hot reloading logic
+
+		io.of( '/css-hot-reload' ).on( 'connection', function() {
+			debug( '/css-hot-reload new connection' );
+		} );
+
+		cssHotReloader( io );
 	},
 
 	close: function() {
@@ -64,7 +75,6 @@ hotReloader = {
 			io = null;
 		}
 	},
-
 };
 
 module.exports = hotReloader;

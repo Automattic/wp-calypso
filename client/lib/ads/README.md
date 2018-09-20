@@ -3,43 +3,7 @@ Users
 
 A [flux](https://facebook.github.io/flux/docs/overview.html#content) approach for interacting with a site's WordAds data.
 
-###The Data
-The Data is stored in a private variable but can be accessed though the stores public methods.
-####Earnings
-The Data that is stored in a site's WordAds earnings store looks like this:
-```
-{
-	123456: { // site.ID
-		total_earnings: '3.50'
-		total_amount_owed: '2.00'
-		wordads: {
-			'2015-09': { // period YYYY-MM
-				amount: 12.34
-				pageviews: '1234'
-				status: '1'
-			}, etc.
-
-		},
-		sponsored: {
-			'2015-09': { // period YYYY-MM
-				amount: 12.34
-				pageviews: '1234'
-				status: '1'
-			}, etc.
-
-		},
-		adjustment: {
-			'2015-09': { // period YYYY-MM
-				amount: 12.34
-				pageviews: '1234'
-				status: '1'
-			}, etc.
-
-		},
-	}, etc.
-}
-```
-####Settings
+#### Settings
 The Data that is stored in a site's WordAds settings store looks like this:
 ```
 {
@@ -60,27 +24,8 @@ The Data that is stored in a site's WordAds settings store looks like this:
 	}, etc
 }
 ```
-####TOS
-The Data that is stored in a site's WordAds TOS store looks like this:
-```
-{
-	// site.ID
-	123456 : 'signed', etc.
-}
-```
-####Public Methods
 
-**EarningsStore.getById( site.ID )**
-Returns object with earnings data and some flags:
-```
-{
-	earnings: { see above },
-	isLoading: true | false,
-	error: { API error object } | null
-}
-```
-
----
+#### Public Methods
 
 **WordadsSettingsStore.getById( site.ID )**
 Returns object with settings data and some flags:
@@ -106,78 +51,58 @@ Returns object with settings data and some flags:
 }
 ```
 
----
-
-**WordadsTosStore.getById( site.ID )**
-Returns object with tos data and some flags:
-```
-{
-	tos: 'signed',
-	isLoading: true | false,
-	error: { API error object } | null
-	notice: _notice
-}
-```
-
-###Actions
+### Actions
 Actions get triggered by views and stores.
 
-####Public methods.
-
-**WordadsActions.fetchEarnings( site );**
+#### Public methods.
 
 **WordadsActions.fetchSettings( site );**
 
 **WordadsActions.updateSettings( site, settings );**
 
-**WordadsActions.fetchTos( site );**
+### Example Component Code
 
-**WordadsActions.signTos( site );**
-
-###Example Component Code
-
-```
+```js
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var SettingsStore = require( 'lib/ads/settings-store' );
+import SettingsStore from 'lib/ads/settings-store';
 
-module.exports = React.createClass( {
+export default class extends React.Component {
+	static displayName = 'yourComponent';
 
-	displayName: 'yourComponent',
+	state = this.getSettingsFromStore();
 
-	componentDidMount: function() {
+	componentDidMount() {
 		SettingsStore.on( 'change', this.updateSettings );
 		this._fetchIfEmpty();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		SettingsStore.removeListener( 'change', this.updateSettings );
-	},
+	}
 
-	getInitialState: function() {
-		return this.getSettingsFromStore();
-	},
 
-	getSettingsFromStore: function( siteInstance ) {
+	getSettingsFromStore: ( siteInstance ) => {
 		var site = siteInstance || this.props.site;
 		return SettingsStore.getById( site.ID );
-	},
+	}
 
-	updateSettings: function() {
+	updateSettings: () => {
 		this.setState( this.getSettingsFromStore() );
-	},
+	}
 
-	render: function() {
+	render() {
 		...
 	}
 
-	_fetchIfEmpty: function( site ) {
+	fetchIfEmpty: ( site ) => {
 		site = site || this.props.site;
 		if ( ! site || ! site.ID ) {
 			return;
@@ -193,10 +118,5 @@ module.exports = React.createClass( {
 			SettingsStore.fetchSettings( site );
 		}, 0 );
 	}
-} );
+}
 ```
-
-####Testing
-
-To run tests go to
-```cd client/lib/ads/ && make test```

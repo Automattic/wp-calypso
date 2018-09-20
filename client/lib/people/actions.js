@@ -1,17 +1,18 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' );
 
-var PeopleActions = {
+import Dispatcher from 'dispatcher';
 
-	removePeopleNotices: ( logs ) => {
+const PeopleActions = {
+	removePeopleNotices: logs => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PEOPLE_NOTICES',
-			logs: logs
+			logs: logs,
 		} );
-	}
-
+	},
 };
 
-module.exports = PeopleActions;
+export default PeopleActions;

@@ -1,124 +1,166 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt' );
+import Button from 'components/button';
+import Card from 'components/card';
+import Notice from 'components/notice';
+import SectionHeader from 'components/section-header';
+import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
+import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
+class Security2faBackupCodes extends React.Component {
+	constructor( props ) {
+		super( props );
+		const printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
 
-	displayName: 'Security2faBackupCodes',
-
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
-
-	getInitialState: function() {
-		var printed = this.props.userSettings.getSetting( 'two_step_backup_codes_printed' );
-
-		return {
-			printed: printed,
+		this.state = {
+			printed,
 			verified: printed,
-			showPrompt: ! printed
+			showPrompt: ! printed,
+			backupCodes: [],
+			generatingCodes: false,
 		};
-	},
+	}
 
-	onGenerate: function() {
-		this.setState(
-			{
-				verified: false,
-				showPrompt: true
-			}
-		);
-	},
+	handleGenerateButtonClick = () => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate New Backup Codes Button' );
 
-	onNextStep: function() {
-		this.setState(
-			{
-				printed: true,
-				verified: false,
-				showPrompt: true
-			}
-		);
-	},
+		this.setState( {
+			generatingCodes: true,
+			verified: false,
+			showPrompt: true,
+		} );
 
-	onVerified: function() {
-		this.setState(
-			{
-				printed: true,
-				verified: true,
-				showPrompt: false
-			}
-		);
-	},
+		twoStepAuthorization.backupCodes( this.onRequestComplete );
+	};
 
-	renderStatus: function() {
+	onRequestComplete = ( error, data ) => {
+		if ( error ) {
+			this.setState( {
+				lastError: this.props.translate(
+					'Unable to obtain backup codes.  Please try again later.'
+				),
+			} );
+			return;
+		}
+
+		this.setState( {
+			backupCodes: data.codes,
+			generatingCodes: false,
+		} );
+	};
+
+	onNextStep = () => {
+		this.setState( {
+			backupCodes: [],
+			printed: true,
+		} );
+	};
+
+	onVerified = () => {
+		this.setState( {
+			printed: true,
+			verified: true,
+			showPrompt: false,
+		} );
+	};
+
+	renderStatus() {
 		if ( ! this.state.printed ) {
 			return (
-				this.translate(
-					'{{status}}Status:{{/status}} Backup Codes have {{notVerified}}not been verified{{/notVerified}}.',
-					{
-						components: {
-							status: <span className="security-2fa-backup-codes__status-heading"/>,
-							notVerified: <span className="security-2fa-backup-codes__status-not-verified"/>
-						}
-					}
-				)
+				<Notice
+					isCompact
+					status="is-error"
+					text={ this.props.translate( 'Backup codes have not been verified.' ) }
+				/>
 			);
 		}
 
 		if ( ! this.state.verified ) {
 			return (
-				this.translate(
-					'{{verify}}Backup Codes have just been printed, but need to be verified. ' +
-					'Please enter one of them below for verification.{{/verify}}',
-					{
-						components: {
-							verify: <span className="security-2fa-backup-codes__status-need-verification"/>,
-						}
-					}
-				)
+				<Notice
+					isCompact
+					text={ this.props.translate(
+						'New backup codes have just been generated, but need to be verified.'
+					) }
+				/>
 			);
 		}
 
 		return (
-			this.translate(
-				'{{status}}Status:{{/status}} Backup Codes have been {{verified}}verified{{/verified}}.',
-				{
-					components: {
-						status: <span className="security-2fa-backup-codes__status-heading"/>,
-						verified: <span className="security-2fa-backup-codes__status-verified"/>
-					}
-				}
-			)
+			<Notice
+				isCompact
+				status="is-success"
+				text={ this.props.translate( 'Backup codes have been verified' ) }
+			/>
 		);
-	},
+	}
 
-	render: function() {
+	renderList() {
+		return (
+			<Security2faBackupCodesList
+				backupCodes={ this.state.backupCodes }
+				onNextStep={ this.onNextStep }
+				userSettings={ this.props.userSettings }
+				showList
+			/>
+		);
+	}
+
+	renderPrompt() {
 		return (
 			<div>
 				<p>
-					{
-						this.translate(
-							'Backup codes let you access your account if your phone is ' +
+					{ this.props.translate(
+						'Backup codes let you access your account if your phone is ' +
 							'lost, stolen, or if you run it through the washing ' +
-							'machine and the bag of rice trick doesn\'t work.'
-						)
-					}
+							"machine and the bag of rice trick doesn't work."
+					) }
 				</p>
 
-				<p className="security-2fa-backup-codes__status">{ this.renderStatus() }</p>
+				{ this.renderStatus() }
 
-				{ this.state.showPrompt ? <Security2faBackupCodesPrompt onSuccess={ this.onVerified }/> : null }
+				{ this.state.showPrompt && <Security2faBackupCodesPrompt onSuccess={ this.onVerified } /> }
 			</div>
 		);
 	}
-} );
+
+	render() {
+		return (
+			<div className="security-2fa-backup-codes">
+				<SectionHeader label={ this.props.translate( 'Backup Codes' ) }>
+					<Button
+						compact
+						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
+						onClick={ this.handleGenerateButtonClick }
+					>
+						{ this.props.translate( 'Generate New Backup Codes' ) }
+					</Button>
+				</SectionHeader>
+				<Card>
+					{ this.state.generatingCodes || this.state.backupCodes.length
+						? this.renderList()
+						: this.renderPrompt() }
+				</Card>
+			</div>
+		);
+	}
+}
+
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( localize( Security2faBackupCodes ) );

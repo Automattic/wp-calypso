@@ -10,6 +10,7 @@
 }
 
 .help-contact-form__subject,
+.help-contact-form__site-selection,
 .help-contact-form__selection {
 	margin-bottom: 24px;
 
@@ -51,4 +52,11 @@
 	display: block;
 	font-size: 11px;
 	line-height: 16px;
+}
+
+.help-contact-form__title {
+	display: block;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 5px;
 }

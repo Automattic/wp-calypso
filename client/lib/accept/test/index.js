@@ -1,81 +1,49 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
- * External dependencies
+ * @format
+ * @jest-environment jsdom
  */
-var expect = require( 'chai' ).expect,
-	TestUtils = require( 'react/addons' ).addons.TestUtils,
-	mockery = require( 'mockery' ),
-	sinon = require( 'sinon' );
 
 /**
  * Internal dependencies
  */
-var accept, AcceptDialog;
+import accept from '../';
 
-describe( '#accept()', function() {
-	before( function() {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-		mockery.registerSubstitute( 'event', 'component-event' );
-		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
-		mockery.registerSubstitute( 'query', 'component-query' );
-		accept = require( '../' );
-		AcceptDialog = require( '../dialog' );
-		AcceptDialog.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
-	} );
-
-	beforeEach( function() {
+describe( '#accept()', () => {
+	beforeEach( () => {
 		document.body.innerHTML = '';
 	} );
 
-	after( function() {
-		delete AcceptDialog.prototype.__reactAutoBindMap.translate;
-		mockery.deregisterAll();
-		mockery.disable();
-	} );
-
-	it( 'should render a dialog to the document body', function() {
-		var message = 'Are you sure?',
-			dialog;
+	test( 'should render a dialog to the document body', () => {
+		const message = 'Are you sure?';
 
 		accept( message, function() {} );
 
-		dialog = document.querySelector( '.accept-dialog' );
-		expect( dialog ).to.be.an.instanceof( window.Element );
-		expect( dialog.textContent ).to.equal( message );
+		const dialog = document.querySelector( '.accept-dialog' );
+		expect( dialog ).toBeInstanceOf( window.Element );
+		expect( dialog.textContent ).toEqual( message );
 	} );
 
-	it( 'should trigger the callback with an accepted prompt', function( done ) {
+	test( 'should trigger the callback with an accepted prompt', done => {
 		accept( 'Are you sure?', function( accepted ) {
-			expect( accepted ).to.be.be.true;
+			expect( accepted ).toBe( true );
 			done();
 		} );
 
-		TestUtils.Simulate.click( document.querySelector( '.button.is-primary' ) );
+		document.querySelector( '.button.is-primary' ).click();
 	} );
 
-	it( 'should trigger the callback with a denied prompt', function( done ) {
+	test( 'should trigger the callback with a denied prompt', done => {
 		accept( 'Are you sure?', function( accepted ) {
-			expect( accepted ).to.be.be.false;
+			expect( accepted ).toBe( false );
 			done();
 		} );
 
-		TestUtils.Simulate.click( document.querySelector( '.button:not( .is-primary )' ) );
+		document.querySelector( '.button.is-cancel' ).click();
 	} );
 
-	it( 'should clean up after itself once the prompt is closed', function( done ) {
-		accept( 'Are you sure?', function() {
-			process.nextTick( function() {
-				expect( document.querySelector( '.accept-dialog' ) ).to.be.null;
-
-				done();
-			} );
-		} );
-
-		TestUtils.Simulate.click( document.querySelector( '.button.is-primary' ) );
+	test( 'should clean up after itself once the prompt is closed', () => {
+		accept( 'Are you sure?', () => {} );
+		document.querySelector( '.button.is-primary' ).click();
+		expect( document.querySelector( '.accept-dialog' ) ).toBe( null );
 	} );
 } );

@@ -64,7 +64,7 @@ page( /^\/me(\/.*)?$/, function( context, next ) {
 } );
 ```
 
-Webpack then turns `require.ensure` into a jsonp function call that loads the script and then executes the callback `onload`. For Calypso, we have a Webpack plugin at `server/bundler/plugin` that tweaks the jsonp function in order to incorporate some error handling and add support for a `debug` mode that switches to the uncompressed versions of the scripts. If there is an error loading the script, we append `?retry=1` and try refreshing. This should catch any situations where a user has an old version of the application running and for whatever reason the old version of the JavaScript file is no longer available (e.g. due to the static file cache being flushed).
+Webpack then turns `require.ensure` into a jsonp function call that loads the script and then executes the callback `onload`. If there is an error loading the chunk, we append `?retry=1` and try refreshing. This should catch any situations where a user has an old version of the application running and for whatever reason the old version of the JavaScript file is no longer available (e.g. due to the static file cache being flushed).
 
 #### Server
 
@@ -77,9 +77,19 @@ There are two different modes of operation:
 
 1. development - in development mode, the JavaScript are generated on-the-fly and cached in the server’s memory. The server is running an instance of the webpack compiler that is in watch mode so that it responds to changes to the files. If a file changes, the assets are regenerated and a hot update is emitted over a websocket to the client. The hot update is used by the React hot loader to replace the React component on-the-fly while preserving the components state.
 
-2. production - in production mode, the files are written to the public directory by running the `make build` command. The command runs `webpack`, generates a `assets-$CALYPSO_ENV.json` file, and then minifies each file. The `assets-$CALYPSO_ENV.json` file is used in the server to map the chunk name to the current asset.
+2. production - in production mode, the files are written to the public directory by running the `npm run build` command. The command runs `webpack`, generates a `assets.json` file, and then minifies each file. The `assets.json` file is used in the server to map the chunk name to the current asset.
 
 
 ### Caching
 
 In most of the environments that Calypso is deployed to, the static assets are served and cached by nginx. Each filename includes a hash that is calculated by Webpack, which means that we can cache assets for all the various versions of Calpso that may be in active use. The hash also busts the cache on the client-side.
+
+### Webpack Stats
+
+Webpack stats can be serialized as JSON for the purposes of analyzing the results of a build. This can be used with tools like [Webpack Analyze](https://webpack.github.io/analyse/) or [Webpack Visualizer](https://chrisbateman.github.io/webpack-visualizer/) to visualize the modules and dependencies comprising a build. To generate a JSON file during a build, use the `preanalyze-bundles` NPM script:
+
+```bash
+NODE_ENV=production npm run preanalyze-bundles
+```
+
+This will cause a JSON file `stats.json` to be written to the root project directory once the build succeeds.

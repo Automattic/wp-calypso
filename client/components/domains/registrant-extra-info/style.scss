@@ -1,0 +1,68 @@
+.registrant-extra-info__form-title {
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0 0 5px;
+}
+
+.registrant-extra-info__form-desciption {
+	font-weight: 16px;
+	margin: 0 0 1.7em;
+}
+
+// Turn off number spinners
+.registrant-extra-info__form {
+	input[type=number] {
+		-moz-appearance: textfield;
+
+		&::-webkit-inner-spin-button,
+		&::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	}
+
+	.form-label .form-label__optional {
+		font-size: 100%;
+		margin-left: 5px;
+	}
+
+	.form-input-validation {
+		font-weight: normal;
+	}
+}
+
+.registrant-extra-info__form-country-select {
+	width: 100%;
+}
+
+.registrant-extra-info__dob-inputs {
+	flex-direction: row;
+	display: flex;
+
+	.registrant-extra-info__dob-year {
+		box-sizing: content-box;
+		width: 42px;
+	}
+
+	.registrant-extra-info__dob-month,
+	.registrant-extra-info__dob-day {
+		box-sizing: content-box;
+		width: 28px;
+	}
+}
+
+
+.registrant-extra-info__dob-column {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 0 5px;
+
+	&:first-child {
+		margin-left: 0;
+	}
+}
+
+.registrant-extra-info__title-card {
+	margin-bottom: 0;
+}

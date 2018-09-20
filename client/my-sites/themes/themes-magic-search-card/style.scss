@@ -1,0 +1,215 @@
+
+/*
+ * Search card and text input
+ */
+.themes-magic-search {
+	margin-top: 24px;
+}
+
+.themes-magic-search-card {
+	display: flex;
+	align-items: center;
+	background: white;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ), 0 1px 2px $gray-lighten-30;
+	transition: all 0.15s ease-in-out;
+
+	&.has-highlight {
+		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+	}
+
+	.search {
+		flex: 0 1 auto;
+		margin: 0;
+
+		&.has-focus {
+			box-shadow: none;
+		}
+	}
+
+	.search.is-expanded-to-container {
+		height: 58px;
+	}
+
+	.section-nav {
+		margin: 0;
+	}
+
+	.search .search-open__icon {
+		color: $gray-lighten-10;
+	}
+
+	.themes-magic-search-card__icon {
+		margin-left: 8px;
+		display: flex;
+		color: $blue-wordpress;
+		cursor: pointer;
+		z-index: z-index( '.search', '.search .search__open-icon' );
+
+		.accessible-focus &:focus {
+			outline: dotted 1px $blue-wordpress;
+		}
+
+		.themes-magic-search-card__icon-close {
+			flex: 0 0 auto;
+			color: $gray-darken-30;
+			align-items: center;
+		}
+	}
+
+	.segmented-control {
+		flex: 0 0 auto;
+		min-width: 0;
+		padding: 11px 14px 11px;
+
+		.segmented-control__item,
+		.segmented-control__link,
+		.segmented-control__text {
+			min-width: inherit;
+		}
+	}
+
+	.more {
+		flex: 0 1 auto;
+		padding: 8px 14px 8px;
+	}
+}
+
+
+/*
+ * Tokens
+ */
+.themes-magic-search-card__token {
+	/* These are required to make token alignment work */
+	font: inherit;
+	pointer-events: none;
+	position: relative;
+
+	/* These are styling */
+
+	&:before {
+		content: "";
+		position: absolute;
+		width: 100%;
+		height: calc( 100% + -3px );
+		z-index: -1;
+	}
+
+	.themes-magic-search-card__token-taxonomy {
+		/* These are required to make token alignment work */
+		pointer-events: none;
+		display: inline-block;
+
+		/* These are styling */
+		border-bottom: 3px solid $blue-medium;
+		opacity: 0.6;
+	}
+
+	.themes-magic-search-card__token-separator {
+		/* These are required to make token alignment work */
+		pointer-events: none;
+		display: inline-block;
+
+		/* These are styling */
+		border-bottom: 3px solid $blue-medium;
+		opacity: 0.6;
+	}
+
+	.themes-magic-search-card__token-filter {
+		/* These are required to make token alignment work */
+		pointer-events: none;
+		display: inline-block;
+
+		/* These are styling */
+		border-bottom: 3px solid $blue-medium;
+	}
+}
+
+.themes-magic-search-card__search-text {
+	/* These are required to make token alignment work */
+	font: inherit;
+	pointer-events: none;
+	color: transparent;
+}
+
+.themes-magic-search-card__search-white-space {
+	/* These are required to make token alignment work */
+	font: inherit;
+	pointer-events: none;
+	white-space: pre;
+}
+
+
+/*
+ * Suggestions: Welcome Card
+ */
+.themes-magic-search-card__welcome {
+	color: $gray;
+	background-color: $white;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ), 0 1px 2px $gray-lighten-30;
+	display: flex;
+	flex-direction: column;
+}
+
+.themes-magic-search-card__welcome-header {
+	background-color: $gray-light;
+	border-bottom: 1px solid darken( $gray-light, 10% );
+	border-top: 0px;
+	padding: 4px 8px;
+	font-size: 13px;
+
+	text-transform: uppercase;
+	color: $gray-dark;
+}
+
+.themes-magic-search-card__welcome-taxonomies {
+	display: flex;
+	flex-wrap: wrap;
+
+	@include breakpoint( ">660px" ) {
+		flex-wrap: nowrap;
+	}
+}
+
+.themes-magic-search-card__welcome-taxonomy {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	flex: 1 0 auto;
+	overflow: hidden;
+	padding: 10px 6px;
+	margin: 0;
+	font-size: 13px;
+	line-height: 16px;
+	text-transform: capitalize;
+	cursor: pointer;
+	color: $gray-dark;
+	transition: all 200ms ease-in;
+
+	@include breakpoint( ">660px" ) {
+		width: auto;
+	}
+
+	.gridicon {
+		fill: $gray-dark;
+		margin: 0 auto;
+		transition: fill 200ms ease-in;
+	}
+
+	&.themes-magic-search-card__welcome-taxonomy-highlight,
+	&:hover {
+		color: $blue-medium;
+
+		.gridicon {
+			fill: $blue-medium;
+		}
+
+		@include breakpoint( ">660px" ) {
+			background: lighten( $gray, 35% );
+			box-shadow: inset 0 -3px 0 0 $blue-medium;
+		}
+	}
+}
+
+.themes-magic-search-card__welcome-taxonomy-icon {
+	pointer-events: none;
+}

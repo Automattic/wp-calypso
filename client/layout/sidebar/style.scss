@@ -1,0 +1,432 @@
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	padding: 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+
+	@include breakpoint( '<660px' ) {
+		-webkit-overflow-scrolling: touch;
+	}
+}
+
+// Clearing out the sidebar list styles
+.sidebar {
+	margin: 0;
+
+	.current-site,
+	.sidebar__footer {
+		flex-shrink: 0; // prevents items from squishing together under their initial height in Safari
+	}
+
+	ul {
+		flex-shrink: 0;
+		list-style: none;
+		margin: 0;
+	}
+
+	li {
+		flex-shrink: 0;
+		position: relative;
+	}
+}
+
+// Sidebar group headings
+.sidebar__heading {
+	color: var( --sidebar-heading-color );
+	font-size: 14px;
+	font-weight: 600;
+	margin: 16px 8px 6px 16px;
+	display: flex;
+}
+
+// Menu Links
+.sidebar__menu {
+	display: block;
+
+	@include breakpoint( '<660px' ) {
+		margin-top: 24px;
+	}
+
+	li {
+		display: flex;
+
+		@include breakpoint( '<660px' ) {
+			background-color: $gray-light;
+			border-bottom: 1px solid lighten( $gray, 25 );
+
+			&:first-child {
+				border-top: 1px solid lighten( $gray, 25 );
+			}
+		}
+	}
+
+	a:first-child {
+		flex: 1 0 auto;
+		width: 0;
+
+		// Fade overlay for longer labels
+		&:after {
+			content: '';
+			text-align: right;
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: 15%;
+
+			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
+
+			@include breakpoint( '<660px' ) {
+				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+			}
+		}
+	}
+
+	a {
+		font-size: 15px;
+		line-height: 1;
+		position: relative;
+		padding: 11px 16px 11px 20px;
+		color: var( --sidebar-color );
+		box-sizing: border-box;
+		white-space: nowrap;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+
+		.accessible-focus &:focus {
+			outline: none;
+			box-shadow: inset 0 0 0 2px $blue-light;
+
+			&:after {
+				top: 2px;
+				right: 2px;
+				bottom: 2px;
+			}
+		}
+
+		-webkit-tap-highlight-color: rgba( $gray-dark, 0.2 );
+
+		.sidebar__menu-link-secondary-text {
+			padding: 3px 8px 4px 8px;
+			margin-right: 8px;
+			align-self: center;
+			font-weight: 600;
+			font-size: 12px;
+			position: absolute;
+			right: 0;
+			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
+			color: var( --sidebar-menu-link-secondary-text-color );
+		}
+	}
+
+	.gridicon,
+	.jetpack-logo {
+		fill: var( --sidebar-gridicon-fill );
+		height: 24px;
+		width: 24px;
+		margin-right: 12px;
+		flex-shrink: 0;
+
+		// External indicator for sections that aren't available in Calypso
+		&.gridicons-external {
+			position: absolute;
+			top: 13px;
+			right: 8px;
+			left: auto;
+			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
+			height: 18px;
+			margin-right: 0;
+		}
+	}
+}
+
+a.sidebar__button,
+form.sidebar__button {
+	display: flex;
+	position: relative;
+	align-self: center;
+	box-sizing: border-box;
+	overflow: hidden;
+	padding: 2px 8px 3px 8px;
+	height: 24px;
+	margin-right: 8px;
+	line-height: 18px;
+	background-color: $white;
+	color: $gray-darken-20;
+	font-size: 12px;
+	font-weight: 600;
+	border-radius: 3px;
+	border: 1px solid $gray-lighten-20;
+
+	@include breakpoint( '<660px' ) {
+		font-size: 14px;
+		height: 30px;
+		line-height: 23px;
+	}
+}
+
+// Expanding clickable area of mini buttons
+a.sidebar__button:after,
+form.sidebar__button input {
+	content: '';
+	position: absolute;
+	top: -10px;
+	bottom: -10px;
+	right: -10px;
+	left: -10px;
+	width: 100%;
+}
+
+// Selected Menu
+@include breakpoint( '>660px' ) {
+	.sidebar__menu .selected:not( .sidebar__plugins-item ) {
+		background-color: var( --sidebar-menu-selected-background-color );
+
+		a {
+			color: var( --sidebar-menu-selected-a-color );
+
+			.sidebar__menu-link-secondary-text {
+				color: inherit;
+			}
+
+			&:first-child:after {
+				background: overflow-gradient(
+					var( --sidebar-menu-selected-a-first-child-after-background )
+				);
+			}
+		}
+
+		.sidebar__button {
+			color: $gray-dark;
+			border: 1px solid $gray-darken-30;
+
+			&:hover {
+				color: $blue-medium;
+			}
+		}
+
+		.gridicon,
+		.jetpack-logo {
+			fill: var( --sidebar-menu-selected-a-color );
+		}
+
+		&.is-action-button-selected a {
+			&:first-child:after {
+				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+			}
+		}
+	}
+}
+
+// Menu Hover
+.notouch .sidebar__menu li:hover {
+	&:not( .selected ) {
+		background-color: lighten( $sidebar-bg-color, 3% );
+
+		a,
+		form {
+			&:first-child:after {
+				background: linear-gradient(
+					to right,
+					rgba( lighten( $sidebar-bg-color, 3% ), 0 ),
+					rgba( lighten( $sidebar-bg-color, 3% ), 1 ) 50%
+				);
+			}
+
+			&.sidebar__button {
+				background-color: lighten( $sidebar-bg-color, 10% );
+				color: $sidebar-text-color;
+			}
+		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		background-color: $gray-light;
+
+		a,
+		form {
+			color: $blue-medium;
+
+			&:first-child:after {
+				background: linear-gradient( to right, rgba( $gray-light, 0 ), rgba( $gray-light, 1 ) 50% );
+			}
+
+			&.sidebar__button {
+				background-color: $white;
+				color: $gray-dark;
+			}
+		}
+
+		.gridicon {
+			fill: $blue-medium;
+		}
+	}
+}
+
+.notouch .sidebar__menu li:not( .selected ) {
+	a,
+	form {
+		&.sidebar__button:hover {
+			color: $blue-medium;
+		}
+	}
+
+	form.sidebar__button:hover {
+		border-color: darken( $sidebar-bg-color, 10% );
+	}
+
+	a:hover,
+	form:hover {
+		color: $blue-medium;
+
+		.sidebar__menu-link-secondary-text {
+			color: inherit;
+		}
+
+		.gridicon,
+		.jetpack-logo {
+			fill: $blue-medium;
+		}
+	}
+}
+
+.sidebar .sidebar__separator {
+	border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
+}
+
+.sidebar .sidebar__footer {
+	align-items: center;
+	padding: 0;
+	border-top: 1px solid darken( $sidebar-bg-color, 10% );
+	margin: auto 0 0;
+	display: flex;
+	flex-direction: row;
+	padding-left: 10px;
+	min-height: 42px;
+}
+
+.sidebar .sidebar__footer .button {
+	box-sizing: border-box;
+	display: inline-block;
+	text-transform: uppercase;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 8px;
+	color: var( --sidebar-footer-button-color );
+	line-height: 2.1;
+	margin-right: auto;
+
+	&.is-active {
+		background: $blue-medium;
+
+		.gridicon {
+			fill: $white;
+		}
+	}
+
+	&:hover {
+		color: $gray-dark;
+	}
+
+	@include breakpoint( '<660px' ) {
+		padding: 16px;
+	}
+
+	.gridicon {
+		display: block;
+		float: left;
+		margin-right: 6px;
+		top: auto;
+		margin-top: auto;
+	}
+}
+
+.sidebar__region {
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	overflow-x: hidden;
+	flex: 1;
+	-webkit-overflow-scrolling: touch;
+}
+
+.sidebar__skip-navigation {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	flex-shrink: 0;
+
+	&:focus {
+		position: static;
+		width: auto;
+		height: auto;
+		padding: 11px 16px 11px 18px;
+		outline: none;
+		box-shadow: inset 0 0 0 2px $blue-light;
+		font-size: 14px;
+		line-height: 1;
+		color: var( --sidebar-color );
+		box-sizing: border-box;
+		white-space: nowrap;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+
+		&:after {
+			top: 2px;
+			right: 2px;
+			bottom: 2px;
+		}
+	}
+}
+
+.sidebar__menu {
+	.is-placeholder {
+		cursor: default;
+		pointer-events: none;
+
+		.gridicon,
+		span,
+		.sidebar__button {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: lighten( $gray, 25% );
+			color: transparent;
+		}
+
+		.gridicon {
+			fill: transparent;
+			stroke: transparent;
+		}
+
+		a {
+			&:after {
+				display: none;
+			}
+		}
+	}
+}
+
+.sidebar__chevron-right {
+	position: relative;
+	width: 36px;
+	height: 46px;
+	pointer-events: none;
+
+	.gridicon {
+		padding-top: 10px;
+	}
+
+	:hover + & .gridicon {
+		fill: $blue-medium;
+	}
+}

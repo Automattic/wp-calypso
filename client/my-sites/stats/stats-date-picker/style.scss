@@ -1,0 +1,14 @@
+.stats-date-picker__refresh-status {
+	line-height: 16px;
+
+	.stats-date-picker__update-date {
+		color: $gray;
+		display: inline-block;
+		font-size: 13px;
+
+		.gridicon {
+			padding: 0 5px;
+			vertical-align: bottom;
+		}
+	}
+}

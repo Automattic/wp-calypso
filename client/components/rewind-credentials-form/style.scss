@@ -1,0 +1,50 @@
+.rewind-credentials-form {
+	.form-fieldset {
+		width: 100%;
+	}
+}
+
+.rewind-credentials-form__row {
+	display: flex;
+	flex-wrap: wrap;
+
+	.form-fieldset:last-child {
+		margin-bottom: 24px;
+	}
+}
+
+@include breakpoint( ">960px" ) {
+	.rewind-credentials-form__server-address,
+	.rewind-credentials-form__username,
+	.rewind-credentials-form__password {
+		flex: 1 0 240px;
+	}
+
+	.rewind-credentials-form__server-address,
+	.rewind-credentials-form__username {
+		margin-right: 16px;
+	}
+
+	.rewind-credentials-form__port-number {
+		flex: 0 0 160px;
+	}
+}
+
+.rewind-credentials-form__cancel-button {
+	float: right;
+	margin-right: 15px;
+}
+
+.rewind-credentials-form__delete-button.button.is-borderless {
+	color: $alert-red;
+	float: left;
+}
+
+.rewind-credentials-form__advanced-button.button.button {
+	float: none;
+	margin-top: -8px;
+}
+
+.rewind-credentials-form__advanced-settings {
+	margin-top: 24px;
+}

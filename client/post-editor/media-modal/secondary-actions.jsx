@@ -1,166 +1,130 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import values from 'lodash/object/values';
-import noop from 'lodash/utility/noop';
-import some from 'lodash/collection/some';
+import { values, noop, some, every, flow, partial, pick } from 'lodash';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
-import { Views as ModalViews } from './constants';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import Gridicon from 'components/gridicon';
-import { userCan } from 'lib/site/utils';
+import { canUserDeleteItem } from 'lib/media/utils';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getMediaModalView } from 'state/ui/media-modal/selectors';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import Button from 'components/button';
 
-export default React.createClass( {
-	displayName: 'MediaModalSecondaryActions',
-
-	propTypes: {
+class MediaModalSecondaryActions extends Component {
+	static propTypes = {
+		user: PropTypes.object,
 		site: PropTypes.object,
 		selectedItems: PropTypes.array,
-		activeView: React.PropTypes.oneOf( values( ModalViews ) ),
+		view: PropTypes.oneOf( values( ModalViews ) ),
 		disabled: PropTypes.bool,
 		onDelete: PropTypes.func,
-		onChangeView: PropTypes.func
-	},
+		onViewDetails: PropTypes.func,
+	};
 
-	getDefaultProps() {
-		return {
-			disabled: false,
-			onDelete: noop,
-			onChangeView: noop
-		};
-	},
-
-	getInitialState() {
-		return {
-			isMobilePopoverVisible: false
-		};
-	},
-
-	setMobilePopoverContext( component ) {
-		if ( ! component ) {
-			return;
-		}
-
-		this.setState( {
-			mobilePopoverContext: component
-		} );
-	},
-
-	onEdit() {
-		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_dialog' );
-		analytics.ga.recordEvent( 'Media', 'Clicked Dialog Edit Button' );
-
-		this.props.onChangeView( ModalViews.DETAIL );
-	},
+	static defaultProps = {
+		disabled: false,
+		onDelete: noop,
+	};
 
 	getButtons() {
 		const {
-			site,
-			selectedItems,
-			activeView,
 			disabled,
-			onDelete
+			selectedItems,
+			site,
+			translate,
+			user,
+			view,
+
+			onDelete,
+			onViewDetails,
 		} = this.props;
 
-		let buttons = [];
+		const buttons = [];
 
-		if ( ModalViews.LIST === activeView && selectedItems.length ) {
+		if ( ModalViews.LIST === view && selectedItems.length ) {
 			buttons.push( {
 				key: 'edit',
-				value: this.translate( 'Edit' ),
+				text: translate( 'Edit' ),
 				disabled: disabled,
-				onClick: this.onEdit
+				primary: true,
+				onClick: onViewDetails,
 			} );
 		}
 
-		if ( ModalViews.GALLERY !== activeView && selectedItems.length && userCan( 'upload_files', site ) ) {
+		const canDeleteItems =
+			selectedItems.length &&
+			every( selectedItems, item => {
+				return canUserDeleteItem( item, user, site );
+			} );
+
+		if ( ModalViews.GALLERY !== view && canDeleteItems ) {
+			const isButtonDisabled = disabled || some( selectedItems, 'transient' );
 			buttons.push( {
 				key: 'delete',
-				value: this.translate( 'Delete' ),
-				className: 'is-link editor-media-modal__delete',
-				disabled: disabled || some( selectedItems, 'transient' ),
-				onClick: onDelete
+				icon: 'trash',
+				className: 'editor-media-modal__delete',
+				disabled: isButtonDisabled,
+				onClick: isButtonDisabled ? noop : onDelete,
 			} );
 		}
 
 		return buttons;
-	},
-
-	toggleMobilePopover() {
-		this.setState( {
-			isMobilePopoverVisible: ! this.state.isMobilePopoverVisible
-		} );
-	},
-
-	renderMobileButtons() {
-		const buttons = this.getButtons();
-
-		if ( ! buttons.length ) {
-			return;
-		}
-
-		const classes = classNames( 'editor-media-modal__secondary-action', 'button', 'is-mobile', 'is-link', {
-			'is-active': this.state.isMobilePopoverVisible
-		} );
-
-		const menuItems = buttons.map( ( button ) => {
-			const onClick = () => {
-				this.toggleMobilePopover();
-
-				if ( button.onClick ) {
-					button.onClick();
-				}
-			};
-
-			return React.createElement( PopoverMenuItem, {
-				key: button.key,
-				action: button.key,
-				onClick: onClick
-			}, button.value );
-		} );
-
-		return (
-			<button
-				ref={ this.setMobilePopoverContext }
-				onClick={ this.toggleMobilePopover }
-				className={ classes }>
-				<span className="screen-reader-text">{ this.translate( 'More Options' ) }</span>
-				<Gridicon icon="ellipsis" size={ 24 } />
-				<PopoverMenu
-					context={ this.state.mobilePopoverContext }
-					isVisible={ this.state.isMobilePopoverVisible }
-					onClose={ this.toggleMobilePopover }
-					position="top right"
-					className="popover is-dialog-visible">
-					{ menuItems }
-				</PopoverMenu>
-			</button>
-		);
-	},
-
-	renderDesktopButtons() {
-		return this.getButtons().map( ( button ) => {
-			return React.createElement( 'input', Object.assign( {
-				type: 'button'
-			}, button, {
-				className: classNames( 'editor-media-modal__secondary-action', 'button', 'is-desktop', button.className )
-			} ) );
-		} );
-	},
+	}
 
 	render() {
 		return (
-			<div className="editor-media-modal__secondary-actions">
-				{ this.renderMobileButtons() }
-				{ this.renderDesktopButtons() }
+			<div>
+				{ this.getButtons().map( button => (
+					<Button
+						className={ classNames( 'editor-media-modal__secondary-action', button.className ) }
+						data-e2e-button={ button.key }
+						compact
+						{ ...pick( button, [ 'key', 'disabled', 'onClick', 'primary' ] ) }
+					>
+						{ button.icon && <Gridicon icon={ button.icon } /> }
+						{ button.text && button.text }
+					</Button>
+				) ) }
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state, ownProps ) => ( {
+		view: getMediaModalView( state ),
+		user: getCurrentUser( state ),
+		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : '',
+	} ),
+	{
+		onViewDetails: flow(
+			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
+			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
+			partial( setEditorMediaModalView, ModalViews.DETAIL )
+		),
+	},
+	function mergeProps( stateProps, dispatchProps, ownProps ) {
+		//We want to overwrite connected props if 'onViewDetails', 'view' were provided
+		return Object.assign(
+			{},
+			ownProps,
+			stateProps,
+			dispatchProps,
+			pick( ownProps, [ 'onViewDetails', 'view' ] )
+		);
+	}
+)( localize( MediaModalSecondaryActions ) );

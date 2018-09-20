@@ -1,31 +1,28 @@
+/** @format */
+
 /**
-* External dependencies
-*/
-var React = require( 'react' );
+ * External dependencies
+ */
+
+import React from 'react';
 
 /**
 * Internal dependencies
 */
-var InfoPopover = require( 'components/info-popover' );
+import InfoPopover from 'components/info-popover';
 
-var InfoPopoverExample = React.createClass( {
-	displayName: 'InfoPopover',
+class InfoPopoverExample extends React.PureComponent {
+	static displayName = 'InfoPopover';
 
-	mixins: [ React.addons.PureRenderMixin ],
+	state = {
+		popoverPosition: 'bottom left',
+	};
 
-	getInitialState: function() {
-		return {
-			popoverPosition: 'bottom left',
-		};
-	},
-
-	render: function() {
+	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/info-popover">Info Popover</a>
-				</h2>
-				<label>Position
+			<div>
+				<label>
+					Position
 					<select value={ this.state.popoverPosition } onChange={ this._changePopoverPosition }>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
@@ -40,18 +37,16 @@ var InfoPopoverExample = React.createClass( {
 
 				<br />
 
-				<InfoPopover position={ this.state.popoverPosition }>
+				<InfoPopover id="popover__info-popover-example" position={ this.state.popoverPosition }>
 					Some informational text.
 				</InfoPopover>
-
 			</div>
 		);
-	},
-
-	_changePopoverPosition: function( event ) {
-		this.setState( { popoverPosition: event.target.value } );
 	}
 
-} );
+	_changePopoverPosition = event => {
+		this.setState( { popoverPosition: event.target.value } );
+	};
+}
 
-module.exports = InfoPopoverExample;
+export default InfoPopoverExample;

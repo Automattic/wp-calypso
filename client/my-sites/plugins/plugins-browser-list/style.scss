@@ -1,23 +1,26 @@
 .plugins-browser-list {
-	margin: 24px 0;
+	margin-bottom: 16px;
 	background: $white;
-	box-shadow: 0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 1px 2px $gray-lighten-30;
+
+	.feature-example & {
+		margin: 0 0;
+	}
 }
 
 .plugins-browser-list__header {
 	background: $gray-light;
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-lighten-30;
 	overflow: hidden; // lazy clearfix
 }
 
 .button.plugins-browser-list__select-all,
 .plugins-browser-list__title {
 	display: inline-block;
-	padding: 6px 16px 7px;
-	color: $gray;
-	font-size: 11px;
-	line-height: 1.6;
-	text-transform: uppercase;
+	padding: 5px 0px;
+	color: $gray-dark;
+	font-size: 12px;
+	line-height: 1.5;
 
 	&.is-expanded {
 		padding-left: 24px;
@@ -25,19 +28,17 @@
 	}
 	.gridicon {
 		float: right;
-		top: 5px;
+		top: 2px;
 		margin-left: 3px;
-		width: 12px;
-		height: 12px;
 	}
 }
 
 .button.plugins-browser-list__select-all {
 	float: right;
-	padding-right: 16px;
 }
 
 .plugins-browser-list__elements {
-	min-height: 50px;
-	overflow: hidden; // lazy clearfix
+	display: flex;
+	flex-wrap: wrap;
+	padding: 0;
 }

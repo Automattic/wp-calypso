@@ -1,27 +1,33 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import EventEmitter from 'events/';
-import forEach from 'lodash/collection/forEach';
-import pluck from 'lodash/collection/pluck';
-import mapValues from 'lodash/object/mapValues';
-import values from 'lodash/object/values';
+
+import EventEmitter from 'events';
+import { forEach, map, mapValues, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
+import * as ContactFormView from './views/contact-form';
+import * as VideoView from './views/video';
+import SimplePaymentsView from './views/simple-payments';
 
 /**
  * Module variables
  */
 const views = {
 	gallery: GalleryView,
-	embed: new EmbedViewManager()
+	embed: new EmbedViewManager(),
+	contactForm: ContactFormView,
+	video: VideoView,
+	simplePayments: SimplePaymentsView,
 };
 
-const components = mapValues( views, ( view ) => {
+const components = mapValues( views, view => {
 	if ( 'function' === typeof view.getComponent ) {
 		return view.getComponent();
 	}
@@ -29,10 +35,9 @@ const components = mapValues( views, ( view ) => {
 	return view;
 } );
 
-const emitters = values( views ).filter( ( view ) => view instanceof EventEmitter );
+const emitters = values( views ).filter( view => view instanceof EventEmitter );
 
 export default {
-
 	/**
 	 * Scans a given string for each view's pattern,
 	 * replacing any matches with markers,
@@ -43,7 +48,7 @@ export default {
 	 * @return {String} The string with markers.
 	 */
 	setMarkers( content ) {
-		var pieces = [ { content: content } ],
+		let pieces = [ { content: content } ],
 			current;
 
 		forEach( views, function( view, type ) {
@@ -51,7 +56,7 @@ export default {
 			pieces = [];
 
 			forEach( current, function( piece ) {
-				var remaining = piece.content,
+				let remaining = piece.content,
 					result;
 
 				// Ignore processed pieces, but retain their location.
@@ -70,8 +75,13 @@ export default {
 
 					// Add the processed piece for the match.
 					pieces.push( {
-						content: '<p class="wpview-marker" data-wpview-text="' + view.serialize( result.content, result.options ) + '" data-wpview-type="' + type + '">.</p>',
-						processed: true
+						content:
+							'<p class="wpview-marker" data-wpview-text="' +
+							view.serialize( result.content, result.options ) +
+							'" data-wpview-type="' +
+							type +
+							'">.</p>',
+						processed: true,
 					} );
 
 					// Update the remaining content.
@@ -86,8 +96,10 @@ export default {
 			} );
 		} );
 
-		content = pluck( pieces, 'content' ).join( '' );
-		return content.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' ).replace( /<\/p>\s*<\/p>/g, '</p>' );
+		content = map( pieces, 'content' ).join( '' );
+		return content
+			.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' )
+			.replace( /<\/p>\s*<\/p>/g, '</p>' );
 	},
 
 	isEditable( type ) {
@@ -104,6 +116,5 @@ export default {
 
 	components: components,
 
-	emitters: emitters
-
+	emitters: emitters,
 };

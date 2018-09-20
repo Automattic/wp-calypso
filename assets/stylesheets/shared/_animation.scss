@@ -146,7 +146,7 @@ html {
 	}
 }
 
-// Sliding responsive filter and nav menus up and down
+// Sliding responsive filter
 
 @keyframes slideMenuDown {
 	0% {
@@ -229,7 +229,7 @@ html {
 }
 
 // Simple animation to make elements appear
-@keyframes "appear" {
+@keyframes appear {
 	0% {
 		opacity: 0;
 	}
@@ -238,17 +238,28 @@ html {
 	}
 }
 
-@keyframes "pulse-light" {
-	50% { background-color: lighten( $gray, 30% ); }
+@keyframes appearWithScaling {
+	0% {
+		transform: scale( 0.9, 0.9 );
+		opacity: 0;
+	}
+	100% {
+		transform: scale( 1, 1 );
+		opacity: 1;
+	}
 }
 
-@keyframes "loading-dot-pulse" {
+@keyframes pulse-light {
+	50% { background-color: $gray-lighten-30; }
+}
+
+@keyframes loading-dot-pulse {
 	0% { opacity: 0; }
 	50% { opacity: 1; }
 	100% { opacity: 0; }
 }
 
-@keyframes "loading-fade" {
+@keyframes loading-fade {
 	0% { opacity: .5; }
 	50% { opacity: 1; }
 	100% { opacity: .5; }

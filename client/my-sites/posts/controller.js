@@ -1,96 +1,71 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
-var page = require( 'page' ),
-	React = require( 'react' ),
-	qs = require( 'querystring' ),
-	debug = require( 'debug' )( 'calypso:my-sites:posts' );
+
+import page from 'page';
+import React from 'react';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:posts' );
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var user = require( 'lib/user' )(),
-	sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	titlecase = require( 'to-title-case' ),
-	trackScrollPage = require( 'lib/track-scroll-page' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import Posts from 'my-sites/posts/main';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
-module.exports = {
+export default {
+	posts: function( context, next ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const author = context.params.author === 'my' ? getCurrentUserId( state ) : null;
+		let search = context.query.s || '';
+		const category = context.query.category;
+		const tag = context.query.tag;
 
-	posts: function( context ) {
-		var Posts = require( 'my-sites/posts/main' ),
-			siteID = route.getSiteFragment( context.path ),
-			author = ( context.params.author === 'my' ) ? user.get().ID : null,
-			statusSlug = ( author ) ? context.params.status : context.params.author,
-			search = qs.parse( context.querystring ).s,
-			basePath = route.sectionify( context.path ),
-			analyticsPageTitle = 'Blog Posts',
-			baseAnalyticsPath;
-
-		function shouldRedirectMyPosts( author, sites ) {
-			var selectedSite = sites.getSelectedSite() || {};
+		function shouldRedirectMyPosts() {
 			if ( ! author ) {
 				return false;
 			}
-			if ( sites.fetched && sites.allSingleSites ) {
+			if ( areAllSitesSingleUser( state ) ) {
 				return true;
 			}
-			if ( selectedSite.single_user_site || selectedSite.jetpack ) {
+			if ( isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId ) ) {
 				return true;
 			}
 		}
 
-		debug( 'siteID: `%s`', siteID );
 		debug( 'author: `%s`', author );
 
-		statusSlug = ( ! statusSlug || statusSlug === 'my' || statusSlug === siteID )
-			? ''
-			: statusSlug;
-		debug( 'statusSlug: `%s`', statusSlug );
+		// Disable search in all-sites mode because it doesn't work.
+		if ( ! siteId ) {
+			search = '';
+		}
 
-		search = ( 'undefined' !== typeof search ) ? search : '';
 		debug( 'search: `%s`', search );
 
-		if ( shouldRedirectMyPosts( author, sites ) ) {
+		if ( shouldRedirectMyPosts() ) {
 			page.redirect( context.path.replace( /\/my\b/, '' ) );
 			return;
 		}
 
-		titleActions.setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ), { siteID: siteID } );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ) ) );
 
-		if ( siteID ) {
-			baseAnalyticsPath = basePath + '/:site';
-		} else {
-			baseAnalyticsPath = basePath;
-		}
-
-		if ( statusSlug.length ) {
-			analyticsPageTitle += ' > ' + titlecase( statusSlug );
-		} else {
-			analyticsPageTitle += ' > Published';
-		}
-
-		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
-
-		React.render(
-			React.createElement( Posts, {
-				context: context,
-				siteID: siteID,
-				author: author,
-				statusSlug: statusSlug,
-				sites: sites,
-				search: search,
-				trackScrollPage: trackScrollPage.bind(
-					null,
-					baseAnalyticsPath,
-					analyticsPageTitle,
-					'Posts'
-				)
-			} ),
-			document.getElementById( 'primary' )
-		);
-	}
+		context.primary = React.createElement( Posts, {
+			context,
+			author,
+			statusSlug: context.params.status,
+			search,
+			category,
+			tag,
+		} );
+		next();
+	},
 };

@@ -1,0 +1,718 @@
+/** @format */
+.jetpack-connect__main {
+	max-width: 400px;
+
+	.logged-out-form__links {
+		max-width: 100%;
+
+		/* Move up to the Card above */
+		margin-top: -10px;
+		@include breakpoint( '>480px' ) {
+			margin-top: -16px;
+		}
+	}
+
+	.signup-form__social-top {
+		.logged-out-form__links {
+			margin-top: 0px;
+			@include breakpoint( '>480px' ) {
+				margin-top: 0px;
+			}
+		}
+	}
+
+	.formatted-header {
+		margin-bottom: 16px;
+	}
+
+	&.is-mobile-app-flow {
+		.logged-out-form__links {
+			display: none;
+		}
+
+		.jetpack-connect__back-button {
+			display: none;
+		}
+	}
+
+	.button.is-primary {
+		background-color: $green-jetpack;
+		border-color: darken( $green-jetpack, 5% );
+
+		&:hover,
+		&:focus {
+			border-color: darken( $green-jetpack, 30% );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+		}
+
+		&[disabled],
+		&:disabled {
+			background: tint( $green-jetpack, 50% );
+			border-color: tint( $green-jetpack, 35% );
+			color: $white;
+		}
+	}
+}
+
+.jetpack-connect__main-logo {
+	text-align: center;
+
+	@include breakpoint( '<660px' ) {
+		margin-top: 20px;
+	}
+}
+
+.jetpack-connect__main.is-wide {
+	max-width: 100%;
+	text-align: center;
+	margin-bottom: 24px;
+
+	.button.is-primary {
+		width: 320px;
+	}
+
+	.jetpack-connect__happychat-button {
+		text-align: center;
+	}
+}
+
+.jetpack-connect__main-error {
+	.logged-out-form__links {
+		margin-top: 15px;
+		text-align: center;
+
+		.jetpack-connect__happychat-button {
+			text-align: center;
+		}
+	}
+}
+
+.jetpack-connect__site-url-entry-container {
+	max-width: 400px;
+}
+
+.jetpack-connect__wp-admin-dialog.dialog.card {
+	max-width: 400px;
+
+	.jetpack-connect__install-wp-admin {
+		width: 400px;
+		height: 294px;
+	}
+}
+
+.jetpack-connect__site-url-input-container,
+.example-components__site-url-input-container {
+	.jetpack-connect__site-address-container,
+	.example-components__site-address-container {
+		position: relative;
+
+		.gridicons-user,
+		.gridicons-globe {
+			position: absolute;
+			top: 8px;
+			left: 8px;
+			color: $gray-lighten-20;
+		}
+
+		.form-text-input {
+			padding-left: 40px;
+		}
+
+		.spinner {
+			position: absolute;
+			right: 8px;
+			top: 10px;
+		}
+	}
+
+	.button {
+		width: 100%;
+		margin-top: 16px;
+		word-wrap: nowrap;
+	}
+}
+
+.jetpack-connect__authorize-form {
+	.jetpack-connect__authorize-form-header {
+		text-align: center;
+	}
+}
+
+.jetpack-connect__logged-in-form {
+	.jetpack-connect__logged-in-form-user-text {
+		text-align: center;
+	}
+
+	.gravatar {
+		display: block;
+		margin: 0 auto 8px auto;
+	}
+
+	.button {
+		width: 100%;
+	}
+}
+
+.jetpack-connect__back-button {
+	margin-top: 16px;
+}
+
+.jetpack-connect__install {
+	margin-bottom: 16px;
+}
+
+.jetpack-connect__install-steps {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	flex-wrap: wrap;
+
+	@include breakpoint( '>660px' ) {
+		flex-direction: row;
+	}
+}
+
+.jetpack-connect__install-step {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-width: 320px;
+
+	@include breakpoint( '>480px' ) {
+		max-width: 360px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		margin: 0 8px 16px 8px;
+	}
+
+	&.jetpack-connect__creds-form {
+		margin-left: 20px;
+	}
+}
+
+.jetpack-connect__install-step-title {
+	font-size: 21px;
+	font-weight: 300;
+}
+
+.jetpack-connect__install-step-text {
+	color: $gray;
+	font-size: 12px;
+	margin: 8px 0 16px 0;
+	flex-grow: 2;
+}
+
+.example-components__main {
+	cursor: pointer;
+	width: 100%;
+
+	&:hover > div {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
+	}
+}
+
+.example-components__browser-chrome {
+	padding: 8px;
+	background-color: $gray-lighten-30;
+	border-radius: 8px 8px 0 0;
+}
+
+.example-components__browser-chrome-dots {
+	line-height: 0;
+	margin-bottom: 8px;
+}
+
+.example-components__browser-chrome-dot {
+	display: inline-block;
+	margin-right: 8px;
+	background-color: $gray-lighten-10;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+}
+
+.example-components__content {
+	position: relative;
+	margin: 0;
+	line-height: 0;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+}
+
+.example-components__install-plugin-header {
+	width: 100%;
+	padding-bottom: 12%;
+	background-color: $green-jetpack;
+}
+
+.example-components__install-plugin-body {
+	width: 100%;
+	padding-bottom: 38%;
+}
+
+.example-components__install-plugin-footer {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	padding: 9px 16px;
+	text-align: right;
+	background-color: #f3f3f3;
+}
+
+.example-components__install-plugin-footer-button {
+	display: inline-block;
+	font-size: 12px;
+	padding: 7px 14px;
+	line-height: 1;
+	color: $white;
+	background-color: #008ec2; // wp-admin button blue
+	border: 1px solid #006799;
+	border-radius: 3px;
+}
+
+.example-components__activate-jetpack {
+	background-color: #f1f1f1;
+}
+
+.example-components__connect-jetpack {
+	background-color: #f1f1f1;
+}
+
+.example-components__content-wp-admin-masterbar {
+	width: 100%;
+	padding-bottom: 6%;
+	background-color: #23282d;
+}
+
+.example-components__content-wp-admin-sidebar {
+	display: inline-block;
+	width: 15%;
+	padding-bottom: 44%;
+	line-height: 0;
+	background-color: #23282d;
+}
+
+.example-components__content-wp-admin-main {
+	display: inline-block;
+	vertical-align: top;
+	width: 85%;
+	line-height: 1.5;
+}
+
+.example-components__connect-jetpack {
+	.example-components__content-wp-admin-plugin-name {
+		font-size: 14px;
+		margin-bottom: 8px;
+	}
+
+	.example-components__content-wp-admin-connect-banner {
+		margin: 10px;
+		padding: 10px 10px 12px 10px;
+		background-color: $white;
+	}
+
+	.example-components__content-wp-admin-connect-button {
+		display: inline-block;
+		font-size: 12px;
+		padding: 7px 14px;
+		line-height: 1;
+		color: $white;
+		border-radius: 3px;
+		background-color: #00be28;
+		border: 2px #00a523 solid;
+		border-width: 1px 1px 2px;
+	}
+}
+
+.example-components__connect-jetpack.is-legacy {
+	.example-components__content-wp-admin-connect-banner {
+		margin: 10px;
+		padding: 12px 10px 16px 10px;
+		text-align: right;
+		background-color: #81a844;
+		border-left: 0;
+	}
+
+	.example-components__content-wp-admin-connect-button {
+		display: inline-block;
+		font-size: 12px;
+		line-height: 1;
+		padding: 11px 10px;
+		color: $white;
+		background-color: #518d2a;
+		border-color: #518d2a;
+		border-radius: 4px;
+		box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, 0.2 ), 0 4px 0 0 #3e6c20;
+	}
+}
+
+.example-components__content-wp-admin-plugin-card {
+	margin: 10px;
+	padding: 12px 10px;
+	background-color: $white;
+}
+
+.example-components__content-wp-admin-plugin-name {
+	font-size: 12px;
+}
+
+.example-components__content-wp-admin-plugin-activate-link {
+	font-size: 12px;
+	color: #0073aa;
+}
+
+.example-components__content-wp-admin-activate-view {
+	margin: 10px;
+}
+
+.example-components__content-wp-admin-activate-link {
+	font-size: 12px;
+	display: inline-block;
+	padding: 7px 14px;
+	line-height: 1;
+	color: $white;
+	background-color: #008ec2; // wp-admin button blue
+	border: 1px solid #006799;
+	border-radius: 3px;
+}
+
+.example-components__site-url-input-container
+	.example-components__site-address-container
+	.example-components__browser-chrome-url {
+	height: 40px;
+	font-size: 12px;
+	color: $gray;
+}
+
+.jetpack-connect__sso-user-profile {
+	margin-bottom: 16px;
+}
+
+.jetpack-connect__sso-user-profile .gravatar {
+	display: block;
+	margin: 0 auto 16px;
+}
+
+.jetpack-connect__sso-log-in-as {
+	font-family: $sans;
+	font-size: 21px;
+	font-weight: 300;
+	text-align: center;
+}
+
+.jetpack-connect__sso-display-name {
+	font-family: $serif;
+}
+
+.jetpack-connect__sso-user-email {
+	color: $gray-lighten-10;
+	font-weight: 400;
+	text-align: center;
+}
+
+.jetpack-connect__sso-actions .button {
+	display: block;
+	text-align: center;
+	width: 100%;
+}
+
+.jetpack-connect__logged-in-form-loading {
+	text-align: center;
+
+	span {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		display: block;
+	}
+
+	.spinner {
+		display: inline-block;
+		margin-top: 8px;
+	}
+}
+
+.jetpack-connect__tos-link {
+	font-size: 11px;
+	margin: 0 0 16px 0;
+	text-align: center;
+}
+
+.jetpack-connect__tos-link-text {
+	white-space: nowrap;
+}
+
+.jetpack-connect__connect-button-card {
+	background: lighten( $gray, 34% );
+	border-top: 1px solid $gray-lighten-30;
+	box-shadow: none;
+	margin: 16px -16px -16px -16px;
+	padding: 16px;
+
+	@include breakpoint( '>480px' ) {
+		margin: 24px -24px -24px -24px;
+		padding: 24px;
+	}
+
+	.button.is-primary {
+		margin: 0;
+	}
+}
+
+.jetpack-connect__site.card {
+	padding: 0;
+}
+
+.jetpack-connect__sso-terms-dialog {
+	max-height: 70vh;
+	overflow-y: auto;
+}
+
+.jetpack-connect__sso-shared-details-table {
+	border-collapse: separate;
+}
+
+.jetpack-connect__sso-shared-detail-row {
+	margin-bottom: 16px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.jetpack-connect__sso-shared-detail-label {
+	font-weight: bold;
+}
+
+.jetpack-connect__sso-shared-detail-value {
+	padding-left: 16px;
+}
+
+.jetpack-connect__sso-shared-detail-label,
+.jetpack-connect__sso-shared-detail-value {
+	padding-bottom: 8px;
+}
+
+@include breakpoint( '<480px' ) {
+	.jetpack-connect__sso-shared-detail-label,
+	.jetpack-connect__sso-shared-detail-value {
+		display: block;
+	}
+
+	.jetpack-connect__sso-shared-detail-label {
+		padding-bottom: 0;
+	}
+
+	.jetpack-connect__sso-shared-detail-value {
+		padding-left: 0;
+	}
+}
+
+.jetpack-connect__sso-placeholder {
+	@include placeholder( 23% );
+	background-color: transparent;
+}
+
+.jetpack-connect__sso-placeholder a {
+	color: transparent;
+}
+
+.jetpack-connect__sso .email-verification-gate .notice {
+	margin-bottom: 0;
+}
+
+.jetpack-connect__sso .email-verification-gate .notice__text {
+	word-wrap: break-word;
+	word-break: break-word;
+}
+
+.jetpack-connect__error-details {
+	margin-bottom: 16px;
+}
+
+.jetpack-connect__happychat-button {
+	background: none;
+	border: none;
+	color: $gray-darken-20;
+	font-weight: normal;
+	padding: 16px 24px;
+	text-align: left;
+	width: 100%;
+
+	&:hover {
+		color: $blue-medium;
+	}
+}
+
+.jetpack-connect__plans {
+	.plan-features__header-figure {
+		height: 32px;
+		width: 32px;
+	}
+
+	.plan-features__header-timeframe {
+		height: 20px;
+		margin-top: 11px;
+	}
+
+	.plan-price.is-original {
+		align-self: center;
+		font-size: 16px;
+		margin-top: 6px;
+	}
+
+	.plan-price.is-original .plan-price__currency-symbol,
+	.plan-price.is-original .plan-price__fraction {
+		font-size: 8px;
+	}
+
+	.plan-price.is-discounted {
+		margin-right: 0;
+	}
+
+	.formatted-header,
+	.formatted-header.is-without-subhead {
+		margin-bottom: 8px;
+	}
+
+	.logged-out-form__links,
+	.jetpack-connect__happychat-button {
+		text-align: center;
+	}
+}
+
+.jetpack-connect__plans.placeholder {
+	.placeholder-text,
+	.jetpack-connect-plans-placeholder__plans-content {
+		@include placeholder();
+	}
+	.jetpack-connect-plans-placeholder__plans-content {
+		min-height: 400px;
+	}
+
+	.plan-features--signup .plan-price.is-original:before {
+		border-top: 0;
+	}
+
+	.plan-features__actions-buttons {
+		margin-top: 16px;
+	}
+
+	.plan-features__item {
+		.placeholder-text {
+			margin: 0 auto;
+		}
+	}
+}
+
+.jetpack-connect__hide-plan-icons {
+	.plans-skip-button {
+		margin-bottom: 0;
+	}
+
+	.jetpack-connect__plans {
+		.plans-wrapper {
+			padding-bottom: 0;
+		}
+
+		.plan-features__graphic {
+			display: none;
+		}
+
+		.plan-features__pricing {
+			padding-top: 16px;
+		}
+	}
+}
+
+.jetpack-connect__credentials-submit {
+	transition: none;
+
+	&.is-error,
+	&[type='password'] {
+		margin-bottom: 0;
+	}
+
+	&.is-primary {
+		background-color: $green-jetpack;
+		border-color: darken( $green-jetpack, 5% );
+	}
+}
+
+.jetpack-connect__password-container {
+	position: relative;
+	margin-bottom: 22px;
+	margin-top: 22px;
+
+	.spinner {
+		z-index: z-index(
+			'root',
+			'.jetpack-connect__creds-form-footer .jetpack-connect__creds-form-spinner'
+		);
+	}
+}
+
+.jetpack-connect__creds-form-footer {
+	.button {
+		margin-top: 22px;
+	}
+}
+
+.jetpack-connect__password-form {
+	position: relative;
+
+	.gridicons-lock {
+		position: absolute;
+		z-index: z-index( 'root', '.jetpack-connect__password-form .gridicon' );
+		left: 8px;
+		top: 7px;
+		fill: $gray-lighten-20;
+	}
+}
+
+.jetpack-connect__password-form-input {
+	&[type='password'] {
+		padding-left: 40px;
+	}
+}
+
+.jetpack-connect__creds-form-spinner {
+	margin-top: -10px;
+	margin-bottom: -10px;
+}
+
+.jetpack-connect__navigation {
+	text-align: center;
+}
+
+.layout.has-chat.is-section-jetpack-connect:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader )
+	.layout__content {
+	@include breakpoint( '>1040px' ) {
+		padding-left: 32px;
+		padding-right: 319px;
+	}
+}
+
+.jetpack-connect__plan-info {
+	text-align: center;
+	max-width: 500px;
+	margin-top: 40px;
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+
+.jetpack-connect__plan-info-illustration {
+	max-width: 200px;
+}
+
+.jetpack-connect__plan-info-buttons {
+	.button + .button {
+		margin-left: 10px;
+	}
+}
+
+.jetpack-connect__connect-button {
+	text-align: center;
+}

@@ -1,192 +1,169 @@
+/** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	page = require( 'page' );
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	config = require( 'config' ),
-	analytics = require( 'analytics' ),
-	titlecase = require( 'to-title-case' ),
-	SiteSettingsComponent = require( 'my-sites/site-settings/main' ),
-	DeleteSite = require( './delete-site' ),
-	StartOver = require( './start-over' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import AsyncLoad from 'components/async-load';
+import config from 'config';
+import DeleteSite from './delete-site';
+import ConfirmDisconnection from './disconnect-site/confirm';
+import DisconnectSite from './disconnect-site';
+import { billingHistory } from 'me/purchases/paths';
+import SiteSettingsMain from 'my-sites/site-settings/main';
+import StartOver from './start-over';
+import ThemeSetup from './theme-setup';
+import ManageConnection from './manage-connection';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isVipSite from 'state/selectors/is-vip-site';
+import { SITES_ONCE_CHANGED } from 'state/action-types';
+import { setSection } from 'state/ui/actions';
 
-function canDeleteSite( site ) {
-	return site.capabilities && site.capabilities.manage_options && ! site.jetpack && ! site.is_vip;
+function canDeleteSite( state, siteId ) {
+	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+
+	if ( ! siteId || ! canManageOptions ) {
+		// Current user doesn't have manage options to delete the site
+		return false;
+	}
+
+	if ( isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ) ) {
+		// Current user can't delete a Jetpack site, but can request to delete an Atomic site
+		return false;
+	}
+
+	if ( isVipSite( state, siteId ) ) {
+		// Current user can't delete a VIP site
+		return false;
+	}
+
+	return true;
 }
 
-module.exports = {
-
-	redirectToGeneral: function() {
+const controller = {
+	redirectToGeneral() {
 		page.redirect( '/settings/general' );
 	},
 
-	siteSettings: function( context ) {
-		var analyticsPageTitle = 'Site Settings',
-			basePath = route.sectionify( context.path ),
-			fiveMinutes = 5 * 60 * 1000,
-			site;
+	redirectIfCantDeleteSite( context, next ) {
+		const state = context.store.getState();
+		const dispatch = context.store.dispatch;
+		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
 
-		titleActions.setTitle( i18n.translate( 'Site Settings', { textOnly: true } ),
-			{ siteID: route.getSiteFragment( context.path ) }
-		);
-
-		site = sites.getSelectedSite();
-
-		// if site loaded, but user cannot manage site, redirect
-		if ( 'undefined' !== typeof site.user_can_manage && ! site.user_can_manage ) {
-			page.redirect( '/stats' );
-			return;
+		if ( siteId && ! canDeleteSite( state, siteId ) ) {
+			return page.redirect( '/settings/general/' + siteSlug );
 		}
 
-		// if user went directly to jetpack settings page, redirect
-		if ( site.jetpack && ! config.isEnabled( 'manage/jetpack' ) ) {
-			window.location.href = '//wordpress.com/manage/' + site.ID;
-			return;
-		}
-
-		if ( ! site.latestSettings || new Date().getTime() - site.latestSettings > ( fiveMinutes ) ) {
-			if ( sites.initialized ) {
-				site.fetchSettings();
-			} else {
-				sites.once( 'change', function() {
-					site = sites.getSelectedSite();
-					site.fetchSettings();
-				} );
-			}
-		}
-
-		React.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				subsection: context.params.subsection,
-				section: context.params.section,
-				path: context.path
-			} ),
-			document.getElementById( 'primary' )
-		);
-
-		// analytics tracking
-		if ( 'undefined' !== typeof context.params.section ) {
-			analyticsPageTitle += ' > ' + titlecase( context.params.section );
-		}
-		if ( 'undefined' !== typeof context.params.subsection ) {
-			analyticsPageTitle += ' > ' + titlecase( context.params.section );
-		}
-		analytics.pageView.record( basePath + '/:site', analyticsPageTitle );
-	},
-
-	importSite: function( context ) {
-		React.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				section: 'import',
-				path: context.path
-			} ),
-			document.getElementById( 'primary' )
-		);
-	},
-
-	exportSite: function( context ) {
-		React.render(
-			React.createElement( SiteSettingsComponent, {
-				context: context,
-				sites: sites,
-				section: 'export',
-				path: context.path
-			} ),
-			document.getElementById( 'primary' )
-		);
-	},
-
-	deleteSite: function( context ) {
-		var site = sites.getSelectedSite();
-
-		if ( sites.initialized ) {
-			if ( ! canDeleteSite( site ) ) {
-				return page( '/settings/general/' + site.slug );
-			}
-		} else {
-			sites.once( 'change', function() {
-				site = sites.getSelectedSite();
-				if ( ! canDeleteSite( site ) ) {
-					return page( '/settings/general/' + site.slug );
-				}
+		if ( ! siteId ) {
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: () => {
+					const updatedState = context.store.getState();
+					const updatedSiteId = getSelectedSiteId( updatedState );
+					const updatedSiteSlug = getSelectedSiteSlug( updatedState );
+					if ( ! canDeleteSite( updatedState, updatedSiteId ) ) {
+						return page.redirect( '/settings/general/' + updatedSiteSlug );
+					}
+				},
 			} );
 		}
-
-		React.render(
-			React.createElement( DeleteSite, {
-				context: context,
-				sites: sites,
-				path: context.path
-			} ),
-			document.getElementById( 'primary' )
-		);
+		next();
 	},
 
-	startOver: function( context ) {
-		var site = sites.getSelectedSite();
+	general( context, next ) {
+		context.primary = <SiteSettingsMain />;
+		next();
+	},
 
-		if ( sites.initialized ) {
-			if ( ! canDeleteSite( site ) ) {
-				return page( '/settings/general/' + site.slug );
-			}
-		} else {
-			sites.once( 'change', function() {
-				site = sites.getSelectedSite();
-				if ( ! canDeleteSite( site ) ) {
-					return page( '/settings/general/' + site.slug );
-				}
-			} );
+	importSite( context, next ) {
+		context.primary = <AsyncLoad require="my-sites/site-settings/section-import" />;
+		next();
+	},
+
+	exportSite( context, next ) {
+		context.primary = <AsyncLoad require="my-sites/site-settings/section-export" />;
+		next();
+	},
+
+	guidedTransfer( context, next ) {
+		context.primary = (
+			<AsyncLoad require="my-sites/guided-transfer" hostSlug={ context.params.host_slug } />
+		);
+		next();
+	},
+
+	deleteSite( context, next ) {
+		context.primary = <DeleteSite path={ context.path } />;
+
+		next();
+	},
+
+	disconnectSite( context, next ) {
+		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+		context.primary = <DisconnectSite reason={ context.params.reason } />;
+		next();
+	},
+
+	disconnectSiteConfirm( context, next ) {
+		const { reason, text } = context.query;
+		context.store.dispatch( setSection( null, { hasSidebar: false } ) );
+		context.primary = <ConfirmDisconnection reason={ reason } text={ text } />;
+		next();
+	},
+
+	startOver( context, next ) {
+		context.primary = <StartOver path={ context.path } />;
+		next();
+	},
+
+	themeSetup( context, next ) {
+		const site = getSelectedSite( context.store.getState() );
+		if ( site && site.jetpack ) {
+			return page.redirect( '/settings/general/' + site.slug );
 		}
 
-		React.render(
-			React.createElement( StartOver, {
-				context: context,
-				sites: sites,
-				path: context.path
-			} ),
-			document.getElementById( 'primary' )
-		);
+		if ( ! config.isEnabled( 'settings/theme-setup' ) ) {
+			return page.redirect( '/settings/general/' + site.slug );
+		}
+
+		context.primary = <ThemeSetup />;
+		next();
 	},
 
-	legacyRedirects: function( context, next ) {
-		var section = context.params.section,
-			redirectMap;
+	manageConnection( context, next ) {
+		context.primary = <ManageConnection />;
+		next();
+	},
+
+	legacyRedirects( context, next ) {
+		const section = context.params.section,
+			redirectMap = {
+				account: '/me/account',
+				password: '/me/security',
+				'public-profile': '/me/public-profile',
+				notifications: '/me/notifications',
+				disbursements: '/me/public-profile',
+				earnings: '/me/public-profile',
+				'billing-history': billingHistory,
+				'billing-history-v2': billingHistory,
+				'connected-apps': '/me/security/connected-applications',
+			};
 		if ( ! context ) {
 			return page( '/me/public-profile' );
 		}
-		redirectMap = {
-			account: '/me/account',
-			password: '/me/security',
-			security: '/me/security',
-			'public-profile': '/me/public-profile',
-			notifications: '/me/notifications',
-			disbursements: '/me/public-profile',
-			earnings: '/me/public-profile',
-			'billing-history': '/me/billing',
-			'billing-history-v2': '/me/billing',
-			'connected-apps': '/me/security/connected-applications'
-		};
 		if ( redirectMap[ section ] ) {
 			return page.redirect( redirectMap[ section ] );
 		}
 		next();
 	},
-
-	setScroll: function( context, next ) {
-		window.scroll( 0, 0 );
-		next();
-	}
-
 };
+
+export default controller;

@@ -1,0 +1,160 @@
+.action-header {
+	width: 100%;
+	min-height: 47px;
+	margin: 0 0 8px;
+	padding: 8px 16px 8px 0;
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: row;
+	align-items: center;
+	box-sizing: border-box;
+	color: $gray-dark;
+	background: $white;
+	border-bottom: 1px solid $gray-lighten-20;
+	position: fixed;
+	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
+	top: 47px;
+	left: 0px;
+
+	@include breakpoint( ">480px" ) {
+		padding: 8px 24px 8px 0;
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding: 5px 16px;
+		padding-left: 0;
+		margin: 0;
+		margin-left: 40px;
+
+		.gridicons-chevron-left {
+			display: none;
+		}
+	}
+}
+
+.action-header__back-to-sidebar {
+	flex-grow: 0;
+	flex-shrink: 0;
+	min-width: 40px;
+}
+
+.action-header__content {
+	flex-grow: 2;
+	flex-shrink: 0;
+	display: flex;
+	justify-content: flex-start;
+
+	@include breakpoint( ">660px" ) {
+		margin-left: -32px;
+	}
+
+	.site-icon {
+		margin-right: 8px;
+	}
+
+	.action-header__site-title {
+		font-size: 10px;
+		color: $gray-darken-10;
+		margin: 2px 0 -3px;
+
+		a, a:hover {
+			color: $gray-darken-10;
+		}
+	}
+
+	.action-header__breadcrumbs {
+		font-size: 13px;
+
+		span {
+			display: inline-block;
+		}
+
+		span + span::before {
+			content: ' / ';
+			color: $gray;
+			margin: 0 2px 0 4px;
+		}
+	}
+}
+
+.action-header__actions {
+	flex-grow: 1;
+	flex-shrink: 2;
+	// Triggers the width of the list, so ActionButtons correctly measures the space.
+	overflow: hidden;
+	text-align: right;
+
+	@include breakpoint( ">660px" ) {
+		margin-right: 40px;
+	}
+
+	.action-header__actions-list {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		flex-wrap: nowrap;
+
+		.button {
+			flex-basis: auto;
+		}
+	}
+
+	&.is-dropdown .action-header__actions-list {
+		display: none;
+	}
+
+	.action-header__split-button {
+		.button + .button {
+			margin-left: 0;
+		}
+	}
+
+	.button {
+		white-space: nowrap;
+		overflow: visible;
+		padding: 5px 14px 7px;
+
+		& + .button {
+			margin-left: 12px;
+		}
+
+		&.is-borderless {
+			padding: 0;
+			margin-top: -6px;
+		}
+
+		&.is-borderless .gridicon {
+			margin-right: 2px;
+		}
+
+		&.is-borderless + .button {
+			margin-left: 24px;
+		}
+	}
+}
+
+// & refers to .woocommerce base class
+&.popover .popover__menu-item {
+	padding: 8px 16px;
+
+	.gridicon {
+		top: 4px;
+	}
+
+	&.is-scary {
+		.gridicon {
+			color: $alert-red;
+		}
+
+		&.is-selected,
+		&:hover,
+		&:focus {
+			background: $alert-red;
+			color: $white;
+
+			.gridicon {
+				color: $white;
+			}
+		}
+	}
+}

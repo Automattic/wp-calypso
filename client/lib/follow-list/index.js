@@ -1,7 +1,15 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
+
+import { find } from 'lodash';
+
 /**
  * Internal dependencies
  */
-var FollowListSite = require( './site.js' );
+import FollowListSite from './site.js';
 
 /**
  * FollowList component
@@ -15,12 +23,11 @@ function FollowList() {
 	this.data = [];
 }
 
-
 /**
  * Adds a new follower object to the data store
  */
 FollowList.prototype.add = function( object ) {
-	var site = this.siteExists( object.site_id );
+	let site = this.siteExists( object.site_id );
 	if ( ! site ) {
 		site = new FollowListSite( object );
 		this.data.push( site );
@@ -29,10 +36,7 @@ FollowList.prototype.add = function( object ) {
 };
 
 FollowList.prototype.siteExists = function( site_id ) {
-	var match = this.data.filter( function( followListSite ) {
-		return followListSite.site_id === site_id;
-	} );
-	return match.length ? match[ 0 ] : false;
+	return find( this.data, { site_id } ) || false;
 };
 
-module.exports = FollowList;
+export default FollowList;

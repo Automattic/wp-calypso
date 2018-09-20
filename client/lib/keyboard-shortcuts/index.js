@@ -1,25 +1,25 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
+import { flatMap } from 'lodash';
+
 // only require keymaster if this is a browser environment
-var keymaster = ( typeof window === 'undefined' ) ? undefined : require( 'keymaster' ),
+const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaster' ),
 	defaultFilter = keymaster ? keymaster.filter : undefined;
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' ),
-	keyBindings = require( 'lib/keyboard-shortcuts/key-bindings' ).get();
+import Emitter from 'lib/mixins/emitter';
+import KEY_BINDINGS from './key-bindings';
 
-/**
- * Module variables
- */
-var flatKeyBindings = [];
-
-// flatten the key-bindings object to create an array of key-bindings
-Object.keys( keyBindings ).forEach( function( category ) {
-	flatKeyBindings = flatKeyBindings.concat( keyBindings[ category ] );
-} );
+// Flatten the key-bindings object to create an array of key-bindings. `_.flatMap` converts
+// object in shape `{ c1: [ k1, k2 ], c2: [ k3, k4 ] }` to `[ k1, k2, k3, k4 ]`, i.e., flat-maps
+// over the object property values.
+const flatKeyBindings = flatMap( KEY_BINDINGS );
 
 // filter for `keymaster` that also ignores `contenteditable` nodes
 function ignoreDefaultAndContentEditableFilter( event ) {
@@ -50,16 +50,19 @@ function KeyboardShortcuts( keyBindings ) {
 	// save a copy of the bound last-key-pressed handler so it can be removed later
 	this.boundKeyHandler = this.handleKeyPress.bind( this );
 
+	// is the notifications panel open? If so we don't fire off key-handlers
+	this.isNotificationsOpen = false;
+
 	// bind the shortcuts if this is a browser environment
 	if ( typeof window !== 'undefined' ) {
 		keymaster.filter = ignoreDefaultAndContentEditableFilter;
 
-		this.bindShortcuts( flatKeyBindings );
+		this.bindShortcuts( keyBindings );
 	}
 }
 
 KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
-	var self = this;
+	const self = this;
 
 	// bind keys from the key bindings to their named events
 	keyBindings.forEach( function( keyBinding ) {
@@ -76,11 +79,11 @@ KeyboardShortcuts.prototype.bindShortcuts = function( keyBindings ) {
 };
 
 KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, checkKeys ) {
-	var self = this,
+	let self = this,
 		keyCombinations = [],
 		matches;
 
-	if ( typeof keys[0] === 'string' ) {
+	if ( typeof keys[ 0 ] === 'string' ) {
 		// this is a single key combination
 		keyCombinations = [ keys ];
 	} else {
@@ -90,11 +93,16 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 
 	keyCombinations.forEach( function( keys ) {
 		if ( 'sequence' === type ) {
-			keymaster( keys[1], function( event, handler ) {
-				if ( self.lastKey === keys[0] && self.lastKeyTime > Date.now() - self.timeLimit ) {
+			keymaster( keys[ 1 ], function( event, handler ) {
+				// if the notifications panel is open, do not handle any sequences
+				if ( self.isNotificationsOpen ) {
+					return;
+				}
+
+				if ( self.lastKey === keys[ 0 ] && self.lastKeyTime > Date.now() - self.timeLimit ) {
 					self.emitEvent( eventName, event, handler );
 
-					self.lastKey = keys[1];
+					self.lastKey = keys[ 1 ];
 					self.lastKeyTime = Date.now();
 
 					// return false at the end of a sequence to prevent other shortcuts from firing
@@ -104,7 +112,15 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 		} else {
 			keys = keys.join( '+' );
 			keymaster( keys, function( event, handler ) {
-				var keyValue;
+				// if the notifications panel is open, do not handle any presses besides `n` to toggle the panel
+				if (
+					self.isNotificationsOpen &&
+					( self._getKey( event ) !== 'n' && event.keyCode !== 27 )
+				) {
+					return;
+				}
+
+				let keyValue;
 				// Check if the value of the pressed key matches. This is needed
 				// for keys being used with shift modifiers, as the charCode only
 				// matches the modified key: '/' instead of '?'. Many of these
@@ -114,6 +130,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 				// https://bugs.webkit.org/show_bug.cgi?id=19906
 				if ( checkKeys && checkKeys.length > 0 ) {
 					keyValue = self._getKey( event );
+					// TODO: Could this be replaced by Array#some ?
 					matches = checkKeys.filter( function( key ) {
 						return key === keyValue;
 					} );
@@ -138,7 +155,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
  * @private
  */
 KeyboardShortcuts.prototype._getKey = function( event ) {
-	var key;
+	let key;
 	if ( !! event.key ) {
 		return event.key;
 	}
@@ -159,8 +176,12 @@ KeyboardShortcuts.prototype.handleKeyPress = function( event ) {
 	}
 };
 
+KeyboardShortcuts.prototype.setNotificationsOpen = function( isOpen ) {
+	this.isNotificationsOpen = isOpen;
+};
+
 // add EventEmitter methods to prototype
 Emitter( KeyboardShortcuts.prototype );
 
 // Return a single instance of KeyboardShortcuts, which will be cached by webpack
-module.exports = new KeyboardShortcuts( flatKeyBindings );
+export default new KeyboardShortcuts( flatKeyBindings );

@@ -1,47 +1,59 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-code-prompt' );
+
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+
+const debug = debugFactory( 'calypso:me:security:2fa-code-prompt' );
 
 /**
  * Internal dependencies
  */
-var FormButton = require( 'components/forms/form-button' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'analytics' );
+import analytics from 'lib/analytics';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
+import Notice from 'components/notice';
+import twoStepAuthorization from 'lib/two-step-authorization';
 
-module.exports = React.createClass( {
+class Security2faCodePrompt extends React.Component {
+	static displayName = 'Security2faCodePrompt';
 
-	displayName: 'Security2faCodePrompt',
+	static defaultProps = {
+		action: false,
+		requestSMSOnMount: false,
+		showCancelButton: true,
+		showSMSButton: true,
+	};
 
-	mixins: [ React.addons.LinkedStateMixin ],
+	static propTypes = {
+		action: PropTypes.string,
+		onCancel: PropTypes.func,
+		onSuccess: PropTypes.func.isRequired,
+		requestSMSOnMount: PropTypes.bool,
+		showCancelButton: PropTypes.bool,
+	};
 
-	codeRequestTimer: false,
+	state = {
+		codeRequestPerformed: false,
+		codeRequestsAllowed: false,
+		lastError: false,
+		lastErrorType: false,
+		submittingCode: false,
+		verificationCode: '',
+	};
 
-	getDefaultProps: function() {
-		return {
-			action: false,
-			requestSMSOnMount: false,
-			showCancelButton: true,
-			showSMSButton: true
-		};
-	},
+	codeRequestTimer = false;
 
-	propTypes: {
-		action: React.PropTypes.string,
-		onCancel: React.PropTypes.func,
-		onSuccess: React.PropTypes.func.isRequired,
-		requestSMSOnMount: React.PropTypes.bool,
-		showCancelButton: React.PropTypes.bool
-	},
-
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
 
 		if ( this.props.requestSMSOnMount ) {
@@ -49,78 +61,65 @@ module.exports = React.createClass( {
 		} else {
 			this.allowCodeRequests();
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 		this.cancelCodeRequestTimer();
-	},
+	}
 
-	cancelCodeRequestTimer: function() {
+	cancelCodeRequestTimer = () => {
 		if ( this.codeRequestTimer ) {
 			clearTimeout( this.codeRequestTimer );
 		}
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			codeRequestPerformed: false,
-			codeRequestsAllowed: false,
-			lastError: false,
-			lastErrorType: false,
-			submittingCode: false,
-			verificationCode: ''
-		};
-	},
-
-	allowCodeRequests: function() {
+	allowCodeRequests = () => {
 		this.setState( { codeRequestsAllowed: true } );
-	},
+	};
 
-	onRequestCode: function( event ) {
+	onRequestCode = event => {
 		event.preventDefault();
 		this.requestCode();
-	},
+	};
 
-	onCancel: function( event ) {
+	onCancel = event => {
 		event.preventDefault();
 		if ( this.props.onCancel ) {
 			this.props.onCancel();
 		}
-	},
+	};
 
-	requestCode: function() {
-		this.setState(
-			{
-				codeRequestsAllowed: false,
-				codeRequestPerformed: true,
-				lastError: false
-			}
-		);
+	requestCode = () => {
+		this.setState( {
+			codeRequestsAllowed: false,
+			codeRequestPerformed: true,
+			lastError: false,
+		} );
 		twoStepAuthorization.sendSMSCode( this.onCodeRequestResponse );
 		this.codeRequestTimer = setTimeout( this.allowCodeRequests, 60000 );
-	},
+	};
 
-	onCodeRequestResponse: function( error ) {
+	onCodeRequestResponse = error => {
 		if ( error ) {
-			this.setState(
-				{
-					codeRequestPerformed: false,
-					lastError: this.translate( 'Unable to request a code via SMS right now. Please try again after one minute.' ),
-					lastErrorType: 'is-info'
-				}
-			);
+			this.setState( {
+				codeRequestPerformed: false,
+				lastError: this.props.translate(
+					'Unable to request a code via SMS right now. Please try again after one minute.'
+				),
+				lastErrorType: 'is-info',
+			} );
 		}
-	},
+	};
 
-	onSubmit: function( event ) {
+	onSubmit = event => {
 		event.preventDefault();
 		this.setState( { submittingCode: true }, this.onBeginCodeValidation );
-	},
+	};
 
-	onBeginCodeValidation: function() {
-		var args = {
-			code: this.state.verificationCode
+	onBeginCodeValidation = () => {
+		const args = {
+			code: this.state.verificationCode,
 		};
 
 		if ( this.props.action ) {
@@ -128,134 +127,130 @@ module.exports = React.createClass( {
 		}
 
 		twoStepAuthorization.validateCode( args, this.onValidationResponseReceived );
-	},
+	};
 
-	onValidationResponseReceived: function( error, data ) {
+	onValidationResponseReceived = ( error, data ) => {
 		this.setState( { submittingCode: false } );
 
 		if ( error ) {
-			this.setState(
-				{
-					lastError: this.translate( 'An unexpected error occurred. Please try again later.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.props.translate( 'An unexpected error occurred. Please try again later.' ),
+				lastErrorType: 'is-error',
+			} );
 		} else if ( ! data.success ) {
-			this.setState(
-				{
-					lastError: this.translate( 'You entered an invalid code. Please try again.' ),
-					lastErrorType: 'is-error'
-				}
-			);
+			this.setState( {
+				lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
+				lastErrorType: 'is-error',
+			} );
 		} else {
 			this.props.onSuccess();
 		}
-	},
+	};
 
-	getSubmitButtonLabel: function() {
-		var label;
-
+	getSubmitButtonLabel = () => {
 		switch ( this.props.action ) {
 			case 'disable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Disabling Two-Step…' ) : this.translate( 'Disable Two-Step' );
-				break;
+				return this.state.submittingCode
+					? this.props.translate( 'Disabling Two-Step…' )
+					: this.props.translate( 'Disable Two-Step' );
+
 			case 'enable-two-step':
-				label = this.state.submittingCode ? this.translate( 'Enabling Two-Step…' ) : this.translate( 'Enable Two-Step' );
-				break;
+				return this.state.submittingCode
+					? this.props.translate( 'Enabling Two-Step…' )
+					: this.props.translate( 'Enable Two-Step' );
+
 			default:
-				label = this.state.submittingCode ? this.translate( 'Submitting…' ) : this.translate( 'Submit' );
+				return this.state.submittingCode
+					? this.props.translate( 'Submitting…' )
+					: this.props.translate( 'Submit' );
 		}
+	};
 
-		return label;
-	},
-
-	clearLastError: function() {
+	clearLastError = () => {
 		this.setState( { lastError: false, lastErrorType: false } );
-	},
+	};
 
-	getFormDisabled: function() {
-		return ( this.state.submittingCode || 6 > this.state.verificationCode.trim().length );
-	},
+	getFormDisabled = () => {
+		return this.state.submittingCode || 6 > this.state.verificationCode.trim().length;
+	};
 
-	possiblyRenderError: function() {
+	possiblyRenderError = () => {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
 
 		return (
-			<SimpleNotice
-				isCompact
+			<Notice
 				status={ this.state.lastErrorType }
-				onClick={ this.clearLastError }
+				onDismissClick={ this.clearLastError }
 				text={ this.state.lastError }
 			/>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
+		const method = twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
+
 		return (
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
 				<FormFieldset>
-					<FormLabel htmlFor="verification-code">{ this.translate( 'Verification Code' ) }</FormLabel>
-					<FormTextInput
+					<FormLabel htmlFor="verification-code">
+						{ this.props.translate( 'Verification Code' ) }
+					</FormLabel>
+
+					<FormVerificationCodeInput
+						autoFocus
 						className="security-2fa-code-prompt__verification-code"
 						disabled={ this.state.submittingForm }
-						name="verification-code"
-						type="text"
-						autoComplete="off"
-						valueLink={ this.linkState( 'verificationCode' ) }
+						method={ method }
+						name="verificationCode"
 						onFocus={ function() {
 							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Disable Code Verification Input' );
 						} }
+						value={ this.state.verificationCode }
+						onChange={ this.handleChange }
 					/>
-					{
-						this.state.codeRequestPerformed
-						? (
-							<FormSettingExplanation>
-								{
-									this.translate(
-										'A code has been sent to your device via SMS.  ' +
-										'You may request another code after one minute.'
-									)
-								}
-							</FormSettingExplanation>
-						)
-						: null
-					}
+					{ this.state.codeRequestPerformed ? (
+						<FormSettingExplanation>
+							{ this.props.translate(
+								'A code has been sent to your device via SMS.  ' +
+									'You may request another code after one minute.'
+							) }
+						</FormSettingExplanation>
+					) : null }
 					{ this.possiblyRenderError() }
 				</FormFieldset>
+				<FormButtonsBar className="security-2fa-code-prompt__buttons-bar">
+					<FormButton
+						className="security-2fa-code-prompt__verify-code"
+						disabled={ this.getFormDisabled() }
+						onClick={ function() {
+							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
+						} }
+					>
+						{ this.getSubmitButtonLabel() }
+					</FormButton>
 
-				<FormButton
-					className="security-2fa-code-prompt__verify-code"
-					disabled={ this.getFormDisabled() }
-					onClick={ function() {
-						analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Verify Button' );
-					} }
-				>
-					{ this.getSubmitButtonLabel() }
-				</FormButton>
-
-				{
-					this.props.showSMSButton
-					? (
+					{ this.props.showSMSButton ? (
 						<FormButton
 							className="security-2fa-code-prompt__send-code"
 							disabled={ ! this.state.codeRequestsAllowed }
 							isPrimary={ false }
 							onClick={ function( event ) {
-								analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Code Prompt Send Code Via SMS Button' );
+								analytics.ga.recordEvent(
+									'Me',
+									'Clicked On 2fa Code Prompt Send Code Via SMS Button'
+								);
 								this.onRequestCode( event );
 							}.bind( this ) }
 						>
-							{ this.state.codeRequestPerformed ? this.translate( 'Resend Code' ) : this.translate( 'Send Code via SMS' ) }
+							{ this.state.codeRequestPerformed
+								? this.props.translate( 'Resend Code' )
+								: this.props.translate( 'Send Code via SMS' ) }
 						</FormButton>
-					)
-					: null
-				}
+					) : null }
 
-				{
-					this.props.showCancelButton
-					? (
+					{ this.props.showCancelButton ? (
 						<FormButton
 							className="security-2fa-code-prompt__cancel"
 							isPrimary={ false }
@@ -264,12 +259,18 @@ module.exports = React.createClass( {
 								this.onCancel( event );
 							}.bind( this ) }
 						>
-							{ this.translate( 'Cancel' ) }
+							{ this.props.translate( 'Cancel' ) }
 						</FormButton>
-					)
-					: null
-				}
+					) : null }
+				</FormButtonsBar>
 			</form>
 		);
 	}
-} );
+
+	handleChange = e => {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
+	};
+}
+
+export default localize( Security2faCodePrompt );

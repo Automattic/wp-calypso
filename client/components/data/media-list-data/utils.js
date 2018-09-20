@@ -1,4 +1,5 @@
-module.exports = {
+/** @format */
+export default {
 	/**
 	 * Given a media filter, returns a partial mime type that can be used to
 	 * find only media of a certain type. Returns a blank mime if no filter,
@@ -7,7 +8,7 @@ module.exports = {
 	 * @param {string} filter - The filter to get a mime from
 	 */
 	getMimeBaseTypeFromFilter: function( filter ) {
-		var mime;
+		let mime;
 
 		switch ( filter ) {
 			case 'images':
@@ -32,5 +33,5 @@ module.exports = {
 		}
 
 		return mime;
-	}
+	},
 };

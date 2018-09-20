@@ -1,27 +1,31 @@
 /**
- * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http://github.com/webmodules/jsonp
+ * Simple jsonp module that works with the slightly unconventional api.wordpress.org api. Highly inspired by http:
+ *
+ * @format
  */
 
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'jsonp' ),
-	qs = require( 'qs' );
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'jsonp' );
+import { stringify } from 'qs';
 
 /**
  * Module exports.
  */
-module.exports = jsonp;
+export default jsonp;
 
 /**
  * Callback index.
  */
-var count = 0;
+let count = 0;
 
 /**
  * Noop function. Does nothing.
  */
-function noop() { }
+function noop() {}
 
 /**
  * JSONP handler
@@ -31,16 +35,16 @@ function noop() { }
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {
-	var prefix = '__jp',
+	let prefix = '__jp',
 		timeout = 60000,
 		enc = encodeURIComponent,
-		target = document.getElementsByTagName( 'script' )[0] || document.head,
+		target = document.getElementsByTagName( 'script' )[ 0 ] || document.head,
 		script,
 		timer,
 		id;
 
 	// generate a unique id for this request
-	id = prefix + ( count++ );
+	id = prefix + count++;
 
 	if ( timeout ) {
 		timer = setTimeout( function() {
@@ -56,19 +60,19 @@ function jsonp( url, query, fn ) {
 			script.parentNode.removeChild( script );
 		}
 
-		window[id] = noop;
+		window[ id ] = noop;
 		if ( timer ) {
 			clearTimeout( timer );
 		}
 	}
 
 	function cancel() {
-		if ( window[id] ) {
+		if ( window[ id ] ) {
 			cleanup();
 		}
 	}
 
-	window[id] = function( data ) {
+	window[ id ] = function( data ) {
 		debug( 'jsonp got', data );
 		cleanup();
 		if ( fn ) {
@@ -77,7 +81,7 @@ function jsonp( url, query, fn ) {
 	};
 
 	// add qs component
-	url += '=' + enc( id ) + '?' + qs.stringify( query );
+	url += '=' + enc( id ) + '?' + stringify( query );
 
 	debug( 'jsonp req "%s"', url );
 

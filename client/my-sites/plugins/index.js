@@ -1,26 +1,142 @@
+/** @format */
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( 'my-sites/controller' ),
-	config = require( 'config' ),
-	pluginsController = require( './controller' );
+import { navigation, siteSelection, sites } from 'my-sites/controller';
+import config from 'config';
+import pluginsController from './controller';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { makeLayout, render as clientRender } from 'controller';
 
-module.exports = function() {
-	if ( config.isEnabled( 'manage/plugins/browser' ) ) {
-		page( '/plugins/browse/:category/:site', controller.siteSelection, controller.navigation, pluginsController.browsePlugins );
-		page( '/plugins/browse/:siteOrCategory?', controller.siteSelection, controller.navigation, pluginsController.browsePlugins );
+export default function() {
+	if ( config.isEnabled( 'manage/plugins/setup' ) ) {
+		page(
+			'/plugins/setup',
+			pluginsController.scrollTopIfNoHash,
+			siteSelection,
+			pluginsController.setupPlugins,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/plugins/setup/:site',
+			pluginsController.scrollTopIfNoHash,
+			siteSelection,
+			pluginsController.setupPlugins,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	if ( config.isEnabled( 'manage/plugins' ) ) {
-		page( '/plugins', controller.siteSelection, controller.navigation, pluginsController.jetpackManageActive, pluginsController.plugins.bind( null, 'all' ) );
-		[ 'active', 'inactive', 'updates' ].forEach( function( filter ) {
-			page( '/plugins/' + filter + '/:site_id?', controller.siteSelection, controller.navigation, pluginsController.jetpackManageActive, pluginsController.jetpackCanUpdate.bind( null, filter ), pluginsController.plugins.bind( null, filter ) );
+		page( '/plugins/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
+			page.redirect( `/plugins/${ context.params.site }` );
 		} );
-		page( '/plugins/:plugin/:business_plugin?/:site_id?', controller.siteSelection, controller.navigation, pluginsController.jetpackManageActive, pluginsController.plugin );
+
+		page( '/plugins/browse/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
+			page.redirect( `/plugins/browse/${ context.params.site }` );
+		} );
+
+		page( '/plugins/manage/wpcom-masterbar-redirect/:site', context => {
+			context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_manage_click' ) );
+			page.redirect( `/plugins/manage/${ context.params.site }` );
+		} );
+
+		page( '/plugins/browse/:category/:site', context => {
+			const { category, site } = context.params;
+			page.redirect( `/plugins/${ category }/${ site }` );
+		} );
+
+		page( '/plugins/browse/:siteOrCategory?', context => {
+			const { siteOrCategory } = context.params;
+			page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
+		} );
+
+		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
+			page(
+				'/plugins/upload',
+				pluginsController.scrollTopIfNoHash,
+				siteSelection,
+				sites,
+				makeLayout,
+				clientRender
+			);
+			page(
+				'/plugins/upload/:site_id',
+				pluginsController.scrollTopIfNoHash,
+				siteSelection,
+				navigation,
+				pluginsController.upload,
+				makeLayout,
+				clientRender
+			);
+		}
+
+		page(
+			'/plugins',
+			pluginsController.scrollTopIfNoHash,
+			siteSelection,
+			navigation,
+			pluginsController.browsePlugins,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/plugins/manage/:site?',
+			pluginsController.scrollTopIfNoHash,
+			siteSelection,
+			navigation,
+			pluginsController.plugins,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
+			pluginsController.scrollTopIfNoHash,
+			siteSelection,
+			navigation,
+			pluginsController.jetpackCanUpdate,
+			pluginsController.plugins,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/plugins/:plugin/:site_id?',
+			pluginsController.scrollTopIfNoHash,
+			siteSelection,
+			navigation,
+			pluginsController.browsePluginsOrPlugin,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/plugins/:plugin/eligibility/:site_id',
+			pluginsController.scrollTopIfNoHash,
+			siteSelection,
+			navigation,
+			pluginsController.eligibility,
+			makeLayout,
+			clientRender
+		);
+
+		page.exit( '/plugins/*', ( context, next ) => {
+			if ( 0 !== page.current.indexOf( '/plugins/' ) ) {
+				pluginsController.resetHistory();
+			}
+
+			next();
+		} );
 	}
-};
+}

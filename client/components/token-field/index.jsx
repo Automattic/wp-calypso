@@ -1,220 +1,267 @@
+/** @format */
 /**
  * External dependencies
  */
-var take = require( 'lodash/array/take' ),
-	clone = require( 'lodash/lang/clone' ),
-	contains = require( 'lodash/collection/contains' ),
-	map = require( 'lodash/collection/map' ),
-	React = require( 'react/addons' ),
-	without = require( 'lodash/array/without' ),
-	each = require( 'lodash/collection/each' ),
-	identity = require( 'lodash/utility/identity' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:token-field' );
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
+import { clone, difference, each, forEach, identity, last, map, some, take, uniq } from 'lodash';
+import classNames from 'classnames';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var SuggestionsList = require( './suggestions-list' ),
-	Token = require( './token' ),
-	TokenInput = require( './token-input' );
+import SuggestionsList from './suggestions-list';
+import Token from './token';
+import TokenInput from './token-input';
 
-var TokenField = React.createClass( {
-	propTypes: {
-		suggestions: React.PropTypes.array,
-		maxSuggestions: React.PropTypes.number,
-		value: React.PropTypes.array,
-		valueTransform: React.PropTypes.func,
-		onChange: React.PropTypes.func
-	},
+const debug = debugFactory( 'calypso:token-field' );
 
-	getDefaultProps: function() {
-		return {
-			suggestions: Object.freeze( [] ),
-			maxSuggestions: 100,
-			value: Object.freeze( [] ),
-			valueTransform: identity,
-			onChange: function() {}
-		};
-	},
+class TokenField extends PureComponent {
+	static propTypes = {
+		suggestions: PropTypes.array,
+		maxSuggestions: PropTypes.number,
+		displayTransform: PropTypes.func,
+		saveTransform: PropTypes.func,
+		onChange: PropTypes.func,
+		isBorderless: PropTypes.bool,
+		maxLength: PropTypes.number,
+		onFocus: PropTypes.func,
+		disabled: PropTypes.bool,
+		tokenizeOnSpace: PropTypes.bool,
+		placeholder: PropTypes.string,
+		id: PropTypes.string,
+		isExpanded: PropTypes.bool,
+		value: function( props ) {
+			const value = props.value;
+			if ( ! Array.isArray( value ) ) {
+				return new Error( 'Value prop is expected to be an array.' );
+			}
 
-	mixins: [ React.addons.PureRenderMixin ],
+			forEach( value, item => {
+				if ( 'object' === typeof item ) {
+					if ( ! ( 'value' in item ) ) {
+						return new Error(
+							"When using object for value prop, each object is expected to have a 'value' property."
+						);
+					}
+				}
+			} );
+		},
+	};
 
-	getInitialState: function() {
-		return {
-			incompleteTokenValue: '',
-			inputOffsetFromEnd: 0,
-			isActive: false,
-			selectedSuggestionIndex: -1,
-			selectedSuggestionScroll: false
-		};
-	},
+	static defaultProps = {
+		suggestions: Object.freeze( [] ),
+		maxSuggestions: 100,
+		value: Object.freeze( [] ),
+		placeholder: '',
+		displayTransform: identity,
+		saveTransform: function( token ) {
+			return token.trim();
+		},
+		onChange: function() {},
+		isBorderless: false,
+		disabled: false,
+		tokenizeOnSpace: false,
+		isExpanded: false,
+	};
 
-	componentDidUpdate: function() {
-		if ( this.state.isActive && ! this.refs.input.hasFocus() ) {
-			debug( 'componentDidUpdate focusing input' );
-			this.refs.input.focus(); // make sure focus is on input
+	static initialState = {
+		incompleteTokenValue: '',
+		inputOffsetFromEnd: 0,
+		isActive: false,
+		selectedSuggestionIndex: -1,
+		selectedSuggestionScroll: false,
+		tokenInputHasFocus: false,
+	};
+
+	state = this.constructor.initialState;
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.disabled && this.state.isActive ) {
+			this.setState( {
+				isActive: false,
+				incompleteTokenValue: '',
+			} );
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
-		debug( 'componentWillUnmount' );
-		this._clearBlurTimeout();
-	},
-
-	render: function() {
-		var classes = classNames( 'token-field', {
-			'is-active': this.state.isActive
+	render() {
+		const classes = classNames( 'token-field', {
+			'is-active': this.state.isActive,
+			'is-disabled': this.props.disabled,
 		} );
 
+		let tokenFieldProps = {
+			ref: 'main',
+			className: classes,
+			tabIndex: '-1',
+		};
+
+		if ( ! this.props.disabled ) {
+			tokenFieldProps = Object.assign( {}, tokenFieldProps, {
+				onKeyDown: this._onKeyDown,
+				onKeyPress: this._onKeyPress,
+				onFocus: this._onFocus,
+			} );
+		}
+
 		return (
-			<div className={ classes } tabIndex="-1" onKeyDown={ this._onKeyDown } onBlur={ this._onBlur } onFocus={ this._onFocus }>
-				<div ref="tokensAndInput" className="token-field__input-container" onClick={ this._onClick } tabIndex="-1">
+			<div { ...tokenFieldProps }>
+				<div
+					ref={ this.setTokensAndInput }
+					className="token-field__input-container"
+					tabIndex="-1"
+					onMouseDown={ this._onContainerTouched }
+					onTouchStart={ this._onContainerTouched }
+				>
 					{ this._renderTokensAndInput() }
 				</div>
 				<SuggestionsList
-					match={ this.state.incompleteTokenValue }
-					valueTransform={ this.props.valueTransform }
+					match={ this.props.saveTransform( this.state.incompleteTokenValue ) }
+					displayTransform={ this.props.displayTransform }
 					suggestions={ this._getMatchingSuggestions() }
 					selectedIndex={ this.state.selectedSuggestionIndex }
 					scrollIntoView={ this.state.selectedSuggestionScroll }
-					isExpanded={ this.state.isActive }
+					isExpanded={ this.props.isExpanded || this.state.isActive }
 					onHover={ this._onSuggestionHovered }
-					onSelect={ this._onSuggestionSelected } />
+					onSelect={ this._onSuggestionSelected }
+				/>
 			</div>
 		);
-	},
+	}
 
-	_renderTokensAndInput: function() {
-		var components = map( this.props.value, this._renderToken );
+	_renderTokensAndInput = () => {
+		const components = map( this.props.value, this._renderToken );
 
 		components.splice( this._getIndexOfInput(), 0, this._renderInput() );
 
 		return components;
-	},
+	};
 
-	_renderToken: function( token ) {
+	_renderToken = token => {
+		const value = this._getTokenValue( token );
+		const status = token.status ? token.status : undefined;
+
 		return (
 			<Token
-				key={ 'token-' + token }
-				value={ token }
-				valueTransform={ this.props.valueTransform }
+				key={ 'token-' + value }
+				value={ value }
+				status={ status }
+				tooltip={ token.tooltip }
+				displayTransform={ this.props.displayTransform }
 				onClickRemove={ this._onTokenClickRemove }
+				isBorderless={ token.isBorderless || this.props.isBorderless }
+				onMouseEnter={ token.onMouseEnter }
+				onMouseLeave={ token.onMouseLeave }
+				disabled={ 'error' !== status && this.props.disabled }
 			/>
 		);
-	},
+	};
 
-	_renderInput: function() {
-		return (
-			<TokenInput
-				ref="input"
-				key="input"
-				value={ this.state.incompleteTokenValue }
-				onChange={ this._onInputChange } />
-		);
-	},
+	_renderInput = () => {
+		const {
+			autoCapitalize,
+			autoComplete,
+			autoCorrect,
+			id,
+			maxLength,
+			placeholder,
+			spellCheck,
+			value,
+		} = this.props;
 
-	_onFocus: function() {
-		if ( this._blurTimeoutID ) {
-			this._clearBlurTimeout();
-			return;
-		} else if ( this.state.isActive ) {
-			return; // already active
+		let props = {
+			autoCapitalize,
+			autoComplete,
+			autoCorrect,
+			disabled: this.props.disabled,
+			hasFocus: this.state.tokenInputHasFocus,
+			id,
+			key: 'input',
+			onBlur: this._onBlur,
+			spellCheck,
+			value: this.state.incompleteTokenValue,
+		};
+
+		if ( value.length === 0 && placeholder ) {
+			props.placeholder = placeholder;
 		}
 
-		this.setState( { isActive: true } );
-	},
+		if ( ! ( maxLength && value.length >= maxLength ) ) {
+			props = { ...props, onChange: this._onInputChange };
+		}
 
-	_onBlur: function( event ) {
-		var stillActive = this.getDOMNode().contains( event.relatedTarget );
+		return <TokenInput { ...props } />;
+	};
 
-		if ( stillActive ) {
-			debug( '_onBlur but component still active; not doing anything' );
-			return; // we didn't leave the component, so don't do anything
+	setTokensAndInput = input => {
+		this.tokensAndInput = input;
+	};
+
+	_onFocus = event => {
+		this.setState( { isActive: true, tokenInputHasFocus: true } );
+		if ( 'function' === typeof this.props.onFocus ) {
+			this.props.onFocus( event );
+		}
+	};
+
+	_onBlur = () => {
+		if ( this._inputHasValidValue() ) {
+			debug( '_onBlur adding current token' );
+			this.setState( { isActive: false }, this._addCurrentToken );
 		} else {
-			debug( '_onBlur before timeout setting component inactive' );
-			this.setState( {
-				isActive: false
-			} );
-			/* When the component blurs, we need to add the current text, or
-			 * the selected suggestion (if any).
-			 *
-			 * Two reasons to set a timeout rather than do this immediately:
-			 *  - Some other user action (like tapping on a suggestion) may
-			 *    have caused this blur.  If there is another user-triggered
-			 *    event, we need to give it a chance to complete first.
-			 *  - At one point, using the right arrow key to move the text
-			 *    input was causing a blur to outside the component?! (left
-			 *    arrow key does not do this).  So, we delay the resetting of
-			 *    the state and cancel it if we get focus back quick enough.
-			 */
-			debug( '_onBlur waiting to add current token' );
-			this._blurTimeoutID = window.setTimeout( function() {
-				// Add the current token, UNLESS the text input is empty and
-				// there is a suggested token selected.  In that case, we don't
-				// want to add it, because it's easy to inadvertently hover
-				// over a suggestion.
-				if ( this._isInputEmptyOrWhitespace() ) {
-					debug( '_onBlur after timeout not adding current token' );
-				} else {
-					debug( '_onBlur after timeout adding current token' );
-					this._addCurrentToken();
-				}
-				debug( '_onBlur resetting component state' );
-				this.setState( this.getInitialState() );
-				this._clearBlurTimeout();
-			}.bind( this ), 0 );
+			debug( '_onBlur not adding current token' );
+			this.setState( this.constructor.initialState );
 		}
-	},
+	};
 
-	_clearBlurTimeout: function() {
-		if ( this._blurTimeoutID ) {
-			debug( '_blurTimeoutID cleared' );
-			window.clearTimeout( this._blurTimeoutID );
-			this._blurTimeoutID = null;
-		}
-	},
-
-	_onClick: function( event ) {
-		var inputContainer = this.refs.tokensAndInput.getDOMNode();
-		if ( event.target === inputContainer || inputContainer.contains( event.target ) ) {
-			debug( '_onClick activating component' );
-			this.setState( {
-				isActive: true
-			} );
-		}
-	},
-
-	_onTokenClickRemove: function( event ) {
+	_onTokenClickRemove = event => {
 		this._deleteToken( event.value );
-	},
+	};
 
-	_onSuggestionHovered: function( suggestion ) {
-		var index = this._getMatchingSuggestions().indexOf( suggestion );
+	_onSuggestionHovered = suggestion => {
+		const index = this._getMatchingSuggestions().indexOf( suggestion );
 
 		if ( index >= 0 ) {
 			this.setState( {
 				selectedSuggestionIndex: index,
-				selectedSuggestionScroll: false
+				selectedSuggestionScroll: false,
 			} );
 		}
-	},
+	};
 
-	_onSuggestionSelected: function( suggestion ) {
+	_onSuggestionSelected = suggestion => {
 		debug( '_onSuggestionSelected', suggestion );
 		this._addNewToken( suggestion );
-	},
+	};
 
-	_onInputChange: function( event ) {
+	_onInputChange = event => {
+		const text = event.value;
+		const separator = this.props.tokenizeOnSpace ? /[ ,\t]+/ : /[,\t]+/;
+		const items = text.split( separator );
+
+		if ( items.length > 1 ) {
+			this._addNewTokens( items.slice( 0, -1 ) );
+		}
+
 		this.setState( {
-			incompleteTokenValue: event.value,
+			incompleteTokenValue: last( items ) || '',
 			selectedSuggestionIndex: -1,
-			selectedSuggestionScroll: false
+			selectedSuggestionScroll: false,
 		} );
-	},
+	};
 
-	_onKeyDown: function( event ) {
-		var preventDefault = false;
+	_onContainerTouched = event => {
+		// Prevent clicking/touching the tokensAndInput container from blurring
+		// the input and adding the current token.
+		if ( event.target === this.tokensAndInput && this.state.isActive ) {
+			event.preventDefault();
+		}
+	};
+
+	_onKeyDown = event => {
+		let preventDefault = false;
 
 		switch ( event.keyCode ) {
 			case 8: // backspace (delete to left)
@@ -241,9 +288,9 @@ var TokenField = React.createClass( {
 			case 46: // delete (to right)
 				preventDefault = this._handleDeleteKey( this._deleteTokenAfterInput );
 				break;
-			case 188: // comma
-				if ( ! event.shiftKey ) { // ignore <
-					preventDefault = this._handleCommaKey();
+			case 32: // space
+				if ( this.props.tokenizeOnSpace ) {
+					preventDefault = this._addCurrentToken();
 				}
 				break;
 			default:
@@ -253,69 +300,89 @@ var TokenField = React.createClass( {
 		if ( preventDefault ) {
 			event.preventDefault();
 		}
-	},
+	};
 
-	_handleDeleteKey: function( deleteToken ) {
-		var preventDefault = false;
+	_onKeyPress = event => {
+		let preventDefault = false;
 
-		if ( this.refs.input.hasFocus() && this._isInputEmpty() ) {
+		switch ( event.charCode ) {
+			case 44: // comma
+				preventDefault = this._handleCommaKey();
+				break;
+			default:
+				break;
+		}
+
+		if ( preventDefault ) {
+			event.preventDefault();
+		}
+	};
+
+	_handleDeleteKey = deleteToken => {
+		let preventDefault = false;
+
+		if ( this.state.tokenInputHasFocus && this._isInputEmpty() ) {
 			deleteToken();
 			preventDefault = true;
 		}
 
 		return preventDefault;
-	},
+	};
 
-	_getMatchingSuggestions: function() {
-		var suggestions = this.props.suggestions,
-			match = this.state.incompleteTokenValue,
+	_getMatchingSuggestions = () => {
+		let suggestions = this.props.suggestions,
+			match = this.props.saveTransform( this.state.incompleteTokenValue ),
 			startsWithMatch = [],
 			containsMatch = [];
 
-		if ( match.length > 0 ) {
+		if ( match.length === 0 ) {
+			suggestions = difference( suggestions, this.props.value );
+		} else {
 			match = match.toLocaleLowerCase();
 
-			each( suggestions, function( suggestion ) {
-				var index = suggestion.toLocaleLowerCase().indexOf( match );
-				if ( this.props.value.indexOf( suggestion ) === -1 ) {
-					if ( index === 0 ) {
-						startsWithMatch.push( suggestion );
-					} else if ( index > 0 ) {
-						containsMatch.push( suggestion );
+			each(
+				suggestions,
+				function( suggestion ) {
+					const index = suggestion.toLocaleLowerCase().indexOf( match );
+					if ( this.props.value.indexOf( suggestion ) === -1 ) {
+						if ( index === 0 ) {
+							startsWithMatch.push( suggestion );
+						} else if ( index > 0 ) {
+							containsMatch.push( suggestion );
+						}
 					}
-				}
-			}.bind( this ) );
+				}.bind( this )
+			);
 
 			suggestions = startsWithMatch.concat( containsMatch );
 		}
 
-		return take( suggestions, this.props.maxSuggestions )
-	},
+		return take( suggestions, this.props.maxSuggestions );
+	};
 
-	_getSelectedSuggestion: function() {
+	_getSelectedSuggestion = () => {
 		if ( this.state.selectedSuggestionIndex !== -1 ) {
 			return this._getMatchingSuggestions()[ this.state.selectedSuggestionIndex ];
 		}
-	},
+	};
 
-	_addCurrentToken: function() {
-		var preventDefault = false,
-			isInputEmpty = this._isInputEmptyOrWhitespace(),
+	_addCurrentToken = () => {
+		let preventDefault = false,
 			selectedSuggestion = this._getSelectedSuggestion();
 
 		if ( selectedSuggestion ) {
 			this._addNewToken( selectedSuggestion );
 			preventDefault = true;
-		} else if ( ! isInputEmpty ) {
+		} else if ( this._inputHasValidValue() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
 			preventDefault = true;
 		}
 
 		return preventDefault;
-	},
+	};
 
-	_handleLeftArrowKey: function() {
-		var preventDefault = false;
+	_handleLeftArrowKey = () => {
+		let preventDefault = false;
 
 		if ( this._isInputEmpty() ) {
 			this._moveInputBeforePreviousToken();
@@ -323,10 +390,10 @@ var TokenField = React.createClass( {
 		}
 
 		return preventDefault;
-	},
+	};
 
-	_handleRightArrowKey: function() {
-		var preventDefault = false;
+	_handleRightArrowKey = () => {
+		let preventDefault = false;
 
 		if ( this._isInputEmpty() ) {
 			this._moveInputAfterNextToken();
@@ -334,113 +401,139 @@ var TokenField = React.createClass( {
 		}
 
 		return preventDefault;
-	},
+	};
 
-	_handleUpArrowKey: function() {
+	_handleUpArrowKey = () => {
 		this.setState( {
 			selectedSuggestionIndex: Math.max( ( this.state.selectedSuggestionIndex || 0 ) - 1, 0 ),
-			selectedSuggestionScroll: true
+			selectedSuggestionScroll: true,
 		} );
 
 		return true; // preventDefault
-	},
+	};
 
-	_handleDownArrowKey: function() {
+	_handleDownArrowKey = () => {
 		this.setState( {
 			selectedSuggestionIndex: Math.min(
-				( this.state.selectedSuggestionIndex + 1 ) || 0,
+				this.state.selectedSuggestionIndex + 1 || 0,
 				this._getMatchingSuggestions().length - 1
 			),
-			selectedSuggestionScroll: true
+			selectedSuggestionScroll: true,
 		} );
 
 		return true; // preventDefault
-	},
+	};
 
-	_handleCommaKey: function() {
-		var preventDefault = true;
+	_handleCommaKey = () => {
+		const preventDefault = true;
 
-		if ( ! this._isInputEmpty() ) {
+		if ( this._inputHasValidValue() ) {
 			this._addNewToken( this.state.incompleteTokenValue );
-			preventDefault = true;
 		}
 
 		return preventDefault;
-	},
+	};
 
-	_isInputEmpty: function() {
+	_isInputEmpty = () => {
 		return this.state.incompleteTokenValue.length === 0;
-	},
+	};
 
-	_isInputEmptyOrWhitespace: function() {
-		return /^\s*$/.test( this.state.incompleteTokenValue );
-	},
+	_inputHasValidValue = () => {
+		return this.props.saveTransform( this.state.incompleteTokenValue ).length > 0;
+	};
 
-	_deleteTokenBeforeInput: function() {
-		var index = this._getIndexOfInput() - 1;
+	_deleteTokenBeforeInput = () => {
+		const index = this._getIndexOfInput() - 1;
 
 		if ( index > -1 ) {
 			this._deleteToken( this.props.value[ index ] );
 		}
-	},
+	};
 
-	_deleteTokenAfterInput: function() {
-		var index = this._getIndexOfInput();
+	_deleteTokenAfterInput = () => {
+		const index = this._getIndexOfInput();
 
 		if ( index < this.props.value.length ) {
 			this._deleteToken( this.props.value[ index ] );
 			// update input offset since it's the offset from the last token
 			this._moveInputToIndex( index );
 		}
-	},
+	};
 
-	_deleteToken: function( token ) {
-		this.props.onChange( without( this.props.value, token ) );
-	},
-
-	_moveInputToIndex: function( index ) {
-		this.setState( {
-			inputOffsetFromEnd: this.props.value.length - Math.max( index, -1 ) - 1
+	_deleteToken = token => {
+		const newTokens = this.props.value.filter( item => {
+			return this._getTokenValue( item ) !== this._getTokenValue( token );
 		} );
-	},
+		this.props.onChange( newTokens );
+	};
 
-	_moveInputBeforePreviousToken: function() {
+	_moveInputToIndex = index => {
 		this.setState( {
-			inputOffsetFromEnd: Math.min( this.state.inputOffsetFromEnd + 1, this.props.value.length )
+			inputOffsetFromEnd: this.props.value.length - Math.max( index, -1 ) - 1,
 		} );
-	},
+	};
 
-	_moveInputAfterNextToken: function() {
+	_moveInputBeforePreviousToken = () => {
 		this.setState( {
-			inputOffsetFromEnd: Math.max( this.state.inputOffsetFromEnd - 1, 0 )
+			inputOffsetFromEnd: Math.min( this.state.inputOffsetFromEnd + 1, this.props.value.length ),
 		} );
-	},
+	};
 
-	_addNewToken: function( token ) {
-		var newValue;
+	_moveInputAfterNextToken = () => {
+		this.setState( {
+			inputOffsetFromEnd: Math.max( this.state.inputOffsetFromEnd - 1, 0 ),
+		} );
+	};
 
-		if ( ! contains( this.props.value, token ) ) {
-			newValue = clone( this.props.value );
-			newValue.splice( this._getIndexOfInput(), 0, token );
+	_addNewTokens = tokens => {
+		const tokensToAdd = uniq(
+			tokens
+				.map( this.props.saveTransform )
+				.filter( Boolean )
+				.filter( token => ! this._valueContainsToken( token ) )
+		);
+		debug( '_addNewTokens: tokensToAdd', tokensToAdd );
 
+		if ( tokensToAdd.length > 0 ) {
+			const newValue = clone( this.props.value );
+			newValue.splice.apply( newValue, [ this._getIndexOfInput(), 0 ].concat( tokensToAdd ) );
+			debug( '_addNewTokens: onChange', newValue );
 			this.props.onChange( newValue );
 		}
+	};
+
+	_addNewToken = token => {
+		this._addNewTokens( [ token ] );
 
 		this.setState( {
 			incompleteTokenValue: '',
 			selectedSuggestionIndex: -1,
-			selectedSuggestionScroll: false
+			selectedSuggestionScroll: false,
 		} );
 
 		if ( this.state.isActive ) {
 			debug( '_addNewToken focusing input' );
-			this.refs.input.focus();
+			this.setState( { tokenInputHasFocus: true } );
 		}
-	},
+	};
 
-	_getIndexOfInput: function() {
+	_valueContainsToken = token => {
+		return some( this.props.value, item => {
+			return this._getTokenValue( token ) === this._getTokenValue( item );
+		} );
+	};
+
+	_getTokenValue = token => {
+		if ( 'object' === typeof token ) {
+			return token.value;
+		}
+
+		return token;
+	};
+
+	_getIndexOfInput = () => {
 		return this.props.value.length - this.state.inputOffsetFromEnd;
-	}
-} );
+	};
+}
 
-module.exports = TokenField;
+export default TokenField;

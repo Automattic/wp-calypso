@@ -1,42 +1,50 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { size, map, first } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import getUserDevices from 'state/selectors/get-user-devices';
 import StreamHeader from './stream-header';
 import FormSelect from 'components/forms/form-select';
 
-export default React.createClass( {
-	displayName: 'NotificationSettingsFormDeviceSelector',
-
-	mixins: [ React.addons.PureRenderMixin ],
-
-	propTypes: {
-		devices: PropTypes.object.isRequired,
-		selectedDeviceIndex: PropTypes.number.isRequired,
-		onChange: PropTypes.func.isRequired
-	},
+class NotificationSettingsFormDeviceSelector extends PureComponent {
+	static propTypes = {
+		devices: PropTypes.array.isRequired,
+		selectedDeviceId: PropTypes.number.isRequired,
+		onChange: PropTypes.func.isRequired,
+	};
 
 	render() {
-		if ( this.props.devices.get().length === 1 ) {
-			return ( <StreamHeader title={ this.props.devices.get()[0].device_name } /> );
+		const { devices } = this.props;
+		if ( size( devices ) === 1 ) {
+			return <StreamHeader title={ first( devices ).name } />;
 		}
 
 		return (
 			<div className="notification-settings-form-header">
 				<div className="notification-settings-form-header__title">
-					<FormSelect
-						value={ this.props.selectedDeviceIndex }
-						onChange={ this.props.onChange } >
-						{ this.props.devices.get().map( ( device, index ) => {
-							return <option key={ index } value={ index }>{ device.device_name }</option>;
-						} ) }
+					<FormSelect value={ this.props.selectedDeviceId } onChange={ this.props.onChange }>
+						{ map( devices, ( { id, name } ) => (
+							<option key={ id } value={ id }>
+								{ name }
+							</option>
+						) ) }
 					</FormSelect>
 				</div>
 			</div>
 		);
 	}
-} );
+}
+
+export default connect( state => ( {
+	devices: getUserDevices( state ),
+} ) )( NotificationSettingsFormDeviceSelector );

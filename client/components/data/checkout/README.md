@@ -8,21 +8,21 @@ CheckoutData
 Wrap a child component with `<CheckoutData />`. [As a controller-view](https://facebook.github.io/flux/docs/overview.html#views-and-controller-views), `CheckoutData` does not render any content of its own; instead, it simply renders the child component. When mounted, the component will automatically trigger a network request for data if data hasn't yet been retrieved for the site.
 
 ```jsx
-var React = require( 'react' ),
-	CheckoutData = require( 'components/data/checkout' ),
-	MyChildComponent = require( './my-child-component' );
+import React from 'react';
+import CheckoutData from 'components/data/checkout';
+import MyChildComponent from './my-child-component';
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+export default class extends React.component {
+	static displayName = 'MyComponent';
 
-	render: function() {
+	render() {
 		return (
 			<CheckoutData>
 				<MyChildComponent />
 			</CheckoutData>
 		);
 	}
-} );
+}
 ```
 
 The child component should expect to receive any props defined during the render.

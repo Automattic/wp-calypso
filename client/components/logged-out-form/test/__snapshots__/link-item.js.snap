@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoggedOutFormLinkItem should render an <a> element 1`] = `
+<a
+  className="logged-out-form__link-item"
+  href="http://example.com"
+>
+  Example text here
+</a>
+`;

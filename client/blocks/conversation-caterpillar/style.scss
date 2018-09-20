@@ -1,0 +1,41 @@
+.conversation-caterpillar {
+	display: flex;
+}
+
+.conversation-caterpillar__count {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.conversation-caterpillar__count {
+	cursor: pointer;
+	color: $blue-medium;
+	display: flex;
+	margin-left: 8px;
+	flex: 1 1 auto;
+	font-size: 14px;
+	font-weight: 400;
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+
+	&:hover {
+		color: $blue-light;
+	}
+
+	&::after {
+		@include long-content-fade( $size: 35px );
+		height: 16px * 2;
+		width: 16px * 2;
+		z-index: 1;
+	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 0;
+		text-align: left;
+	}
+}
+
+.conversations__stream .conversation-caterpillar {
+	margin-top: 20px;
+}

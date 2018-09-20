@@ -1,13 +1,13 @@
 # Reader Full Post
 
-The full post view in the Reader. This is based on the Dialog component.
+The full post view in the Reader.
 
-## Props
+For a feed item:
 
-Takes either a `blogId` and `postId` or a `feedId` and `postId`. The kind of `postId` varies depending on what was passed.
+/read/feeds/:feed_id/posts/:feed_item_id
 
-- `feedId`: The ID of the feed that holds the post
-- `blogId`: The ID of the blog that holds the post
-- `postId`: The ID of the post
-- `isVisible`: bool, whether or not the dialog is visible
-- `onClose`: function, called when the Dialog is closed
+For a blog post (i.e. from a WordPress.com or Jetpack site):
+
+/read/blogs/:blog_id/posts/:post_id
+
+The component used to render the page can be found in blocks/reader-full-post.

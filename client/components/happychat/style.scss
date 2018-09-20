@@ -1,0 +1,469 @@
+/**
+ * Live Chat
+ */
+
+.happychat__active-toolbar {
+	display: flex;
+	flex: 1 1 auto;
+
+	>:first-child {
+		flex: 1;
+		margin-left: 12px;
+	}
+
+	> div {
+		padding: 11px;
+		cursor: pointer;
+	}
+
+	> div:hover {
+		background: lighten( $blue-medium, 5% );
+	}
+
+	svg {
+		display: block;
+	}
+
+}
+
+
+/**
+ * Base styles
+ */
+
+.happychat__container {
+	overflow: hidden;
+	position: fixed;
+	bottom: 0;
+	right: 12px;
+	font-size: 14px;
+	display: none;		/* disabled */
+	box-sizing: border-box;
+
+	transform: translateZ(0);
+	backface-visibility: hidden;
+
+	.happychat__title {
+		cursor: default;
+		padding: 0;
+		background: $blue-medium;
+		border-bottom: 1px solid darken( $blue-medium, 5% );
+		color: $white;
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		line-height: 32px;
+	}
+
+	.happychat__active-toolbar > div {
+		padding: 4px 11px;
+	}
+
+	&.is-open {
+		display: block;
+		background: $gray-lighten-30;
+		bottom: 0;
+		z-index: z-index( 'root', '.happychat__container.is-open' );
+	}
+
+}
+
+.happychat__conversation {
+	flex: 1 1 auto;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	padding-bottom: 6px;
+
+	&::before {
+		content: '';
+		flex: 1 1 auto;
+	}
+
+}
+
+.happychat__notice {
+	padding: 12px;
+	border-top: 1px solid $gray-lighten-20;
+	color: $white;
+	background-color: lighten( $gray-dark, 20% );
+	margin: 0;
+}
+
+.happychat__welcome {
+	flex: 1 auto;
+	padding: 16px;
+	color: $gray-dark;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+
+	p {
+		margin: 0;
+		padding: 0;
+	}
+}
+
+// experiment: style scrollbars
+.happychat, .happychat__page {
+
+	::-webkit-scrollbar {
+		width: 12px;
+		height: 12px;
+	}
+
+	::-webkit-scrollbar-thumb {
+		border-radius: 10px;
+		background-color: $gray-lighten-10;
+		border: 3px solid transparent;
+		background-clip: padding-box;
+
+		&:hover {
+			background-color: $gray;
+		}
+
+	}
+
+}
+
+
+/**
+ * Minimize animation
+ */
+
+.layout .happychat .happychat__container.is-open.is-minimizing {
+	animation: happychat-minimize .5s 1 forwards;
+
+	> .happychat__composer,
+	> .happychat__welcome,
+	> .happychat__conversation,
+	> .happychat__title .happychat__active-toolbar * {
+		visibility: hidden;
+	}
+
+	> .happychat__title {
+		transform: translateZ(0);
+		position: relative;
+		animation: happychat-disappear .1s 1 forwards;
+	}
+
+}
+
+@keyframes happychat-disappear {
+	0% {
+		top: 0px;
+	}
+	50% {
+		top: 4px;
+	}
+	100% {
+		top: -47px;
+	}
+}
+
+@keyframes happychat-minimize {
+	0% {
+		max-height: 220px;
+	}
+	50% {
+		opacity: 1;
+	}
+	99%, 100% {
+		right: 25px;
+		width: 34px;
+		max-height: 34px;
+		bottom: 90px;
+		opacity: 0;
+	}
+	100% {
+		max-height: 0;
+	}
+}
+
+@include breakpoint( ">960px" ) {
+	@keyframes happychat-minimize {
+		0% {
+			max-height: 100%;
+		}
+		50% {
+			opacity: 1;
+		}
+		99%, 100% {
+			right: 25px;
+			width: 34px;
+			max-height: 34px;
+			bottom: 90px;
+			opacity: 0;
+		}
+		100% {
+			max-height: 0;
+		}
+	}
+}
+
+
+/**
+ * Chat composer
+ */
+
+.happychat__composer {
+	display: flex;
+	flex: 0 0 auto;
+	background: $white;
+	border-top: 1px solid lighten( $gray, 25% );
+	position: relative;
+
+	&.is-disabled {
+		background: lighten( $alert-yellow, 30 );
+	}
+}
+
+.happychat__message {
+	flex: 1 1 auto;
+	border-radius: 4px;
+	border: 0;
+
+	> textarea {
+		padding: 12px;
+		border: none;
+		background: transparent;
+		font-size: 14px;
+		min-height: initial;
+		align-self: stretch;
+		resize: none;
+		height: 100%;
+
+		&:focus, &:active {
+			outline: none;
+			box-shadow: none;
+		}
+	}
+}
+
+.happychat__submit {
+	align-self: flex-start;
+	flex: 0 0 auto;
+	border-radius: 8px;
+	background: $blue-medium;
+	color: $white;
+	padding: 4px 8px;
+	margin: 8px 12px 0 0;
+	cursor: pointer;
+
+	> svg {
+		fill: currentColor;
+		display: block;
+	}
+
+	&:hover {
+		background: lighten( $blue-medium, 10% );
+	}
+
+	&:disabled {
+		display: none;
+	}
+}
+
+.happychat__message-text {
+	font-size: 14px;
+	flex: 1;
+	padding: 8px 12px;
+	border-radius: 8px 8px 8px 0;
+	color: $gray-dark;
+	background: $white;
+	position: relative;
+
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	word-break: break-word;
+	hyphens: auto;
+
+	white-space: pre-wrap;
+
+	p {
+		margin: 8px 0;
+		&:first-child { margin-top: 0 }
+		&:last-child { margin-bottom: 0 }
+	}
+
+	&:after {
+		content: "";
+		display: block;
+		position: absolute;
+		bottom: 0;
+		left: -8px;
+
+		// draw a triangle
+		width: 0;
+		height: 0;
+		border-bottom: 8px solid $white;
+		border-left: 8px solid transparent;
+	}
+
+	.is-user-message & {
+		color: $white;
+		background: $blue-medium;
+		border-radius: 8px 8px 0 8px;
+
+		&:after {
+			left: auto;
+			right: -8px;
+
+			// draw a triangle
+			width: 0;
+			height: 0;
+			border-bottom: 8px solid $blue-medium;
+			border-left: none;
+			border-right: 8px solid transparent;
+		}
+	}
+}
+
+.happychat__timeline-message {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: row-reverse;
+	padding: 0 10px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	margin-right: auto;
+	margin-left: 0;
+
+	a {
+		color: $blue-medium;
+		text-decoration: underline;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
+	&.is-user-message {
+		flex-direction: row;
+		margin-left: auto;
+		margin-right: 0;
+
+		a {
+			color: lighten( $blue-light, 10% );
+		}
+
+	}
+}
+
+/**
+ * Panel mode
+ */
+
+@include breakpoint( ">480px" ) {
+
+	.layout:not( .is-section-happychat ) {
+		.happychat__container.is-open {
+			box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
+			width: 280px;
+		}
+
+		.happychat__message {
+			height: auto;
+		}
+
+		.happychat__message > textarea {
+			padding: 12px;
+		}
+
+		.happychat__conversation,
+		.happychat__welcome {
+			min-height: 160px;
+			max-height: 220px;
+		}
+	}
+
+}
+
+@include breakpoint( "<480px" ) {
+
+	.layout:not( .is-section-happychat ) {
+		.happychat__container.is-open {
+			right: 0;
+		}
+
+		.happychat__conversation,
+		.happychat__welcome {
+			min-height: 160px;
+			max-height: 220px;
+		}
+	}
+
+}
+
+
+/**
+ * Sidebar mode
+ */
+
+@include breakpoint( ">1040px" ) {
+
+	// be more specific in scope to override the panel mode
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .happychat__container.is-open {
+		position: fixed;
+		height: calc( 100% - 47px );
+		bottom: 0;
+		right: 0;
+		width: 272px;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		box-shadow: none;
+
+		.happychat__conversation,
+		.happychat__composer,
+		.happychat__welcome {
+			border-left: 1px solid lighten( $gray, 25% );
+		}
+
+		.happychat__active-toolbar {
+			border-left: 1px solid darken( $blue-medium, 2% );
+		}
+
+		.happychat__title {
+			line-height: 46px;
+		}
+
+		.happychat__active-toolbar > div {
+			padding: 11px;
+		}
+
+		.happychat__message {
+			height: auto;
+		}
+
+		.happychat__message > textarea {
+			padding: 12px 12px 32px 12px;
+		}
+
+		.happychat__conversation,
+		.happychat__welcome {
+			min-height: 160px;
+			max-height: none;
+		}
+
+	}
+
+
+	// add space in the main column for the docked sidebar
+	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .layout__content {
+		padding: 79px 304px 32px;
+	}
+
+	// adjust when scoll arrows show up in stats insights when panel is open
+	.has-chat.is-section-stats .post-trends__scroll-left,
+	.has-chat.is-section-stats .post-trends__scroll-right {
+			display: block;
+	}
+
+	// make space in customizer
+	.has-chat .main.customize.is-iframe {
+		right: 272px;
+	}
+
+}

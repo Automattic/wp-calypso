@@ -4,8 +4,9 @@ Current User
 This component is a wrapper module for interacting with the wpcom.js `/me` endpoint to expose current user object and related methods. User info is currently stored in localstorage.
 
 ## User
-```
-var user = require( 'lib/user' )();
+```es6
+import userFactory from 'lib/user';
+const user = userFactory();
 ```
 
 ### `User#get()`
@@ -21,8 +22,8 @@ Currently will just check for local cached data and return it if present.
 Clears user stored data and handles relevant redirects based on type of authentication.
 
 ## UserUtilities
-```
-var user = require( 'lib/user/utilities' );
+```es6
+import user from 'lib/user/utilities';
 ```
 
 ### `UserUtilities#logout()`

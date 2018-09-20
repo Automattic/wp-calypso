@@ -1,0 +1,30 @@
+.reader-post-actions {
+	box-sizing: border-box;
+	display: flex;
+	font-family: $sans;
+	flex-direction: row;
+	height: auto;
+	justify-content: flex-end;
+	list-style-type: none;
+	margin: 10px 0 0;
+}
+
+.reader-post-actions .reader-post-actions__item {
+	margin-right: 13px;
+
+	&.reader-post-actions__visit {
+		flex: 1;
+
+		.reader-visit-link {
+			align-items: center;
+			box-sizing: border-box;
+			display: inline-flex;
+			padding: 4px 4px 4px 0;
+			position: relative;
+		}
+	}
+
+	&:last-child {
+		margin-right: 0;
+	}
+}

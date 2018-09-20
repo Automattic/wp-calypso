@@ -7,25 +7,67 @@
 	vertical-align: middle;
 	width: 35px;
 
-	&.is-amex {
-		background-image: url( '/calypso/images/upgrades/cc-amex.svg' );
+	$payment-cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
+	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'brazil-tef', 'emergent-paywall', 'wechat';
+
+	@each $brand in $payment-cc-brands {
+		&.is-#{$brand} {
+			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
+		}
 	}
 
-	&.is-discover {
-		background-image: url( '/calypso/images/upgrades/cc-discover.svg' );
-	}
-
-	&.is-mastercard {
-		background-image: url( '/calypso/images/upgrades/cc-mastercard.svg' );
-	}
-
-	&.is-visa {
-		background-image: url( '/calypso/images/upgrades/cc-visa.svg' );
+	@each $type in $payment-types {
+		&.is-#{$type} {
+			background-image: url('/calypso/images/upgrades/#{$type}.svg');
+		}
 	}
 
 	&.is-paypal {
-		background-image: url( '/calypso/images/upgrades/paypal.svg' );
 		background-size: 70px;
 		width: 70px;
+
+		&.is-compact {
+			width: 16px;
+		}
+	}
+
+	&.is-ideal {
+		height: 30px;
+	}
+
+	&.is-giropay {
+		background-size: 60px auto;
+		width: 60px;
+		height: 20px;
+	}
+
+	&.is-bancontact {
+		height: 20px;
+		background-size: 100px auto;
+		width: 100px;
+	}
+
+	&.is-p24 {
+		height: 20px;
+		background-size: 70px auto;
+		width: 70px;
+	}
+
+	&.is-alipay {
+		height: 20px;
+		background-size: 70px auto;
+		width: 70px;
+	}
+
+	&.is-brazil-tef {
+		background-size: 100px auto;
+		width: 100px;
+	}
+
+	&.is-emergent-paywall {
+		background-size: 200px auto;
+		width: 200px;
+		margin-top: 5px;
+		height: 30px;
 	}
 }

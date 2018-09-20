@@ -1,37 +1,41 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:account-password' ),
-	_debounce = require( 'lodash/function/debounce' ),
-	_first = require( 'lodash/array/first' ),
-	_isEmpty = require( 'lodash/lang/isEmpty' ),
-	classNames = require( 'classnames' );
+
+import { localize } from 'i18n-calypso';
+import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
+import React from 'react';
+import createReactClass from 'create-react-class';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:account-password' );
+import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var protectForm = require( 'lib/mixins/protect-form' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormPasswordInput = require( 'components/forms/form-password-input' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	notices = require( 'notices' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	notices = require( 'notices' );
+import { ProtectFormGuard } from 'lib/protect-form';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormInputValidation from 'components/forms/form-input-validation';
+/* eslint-disable no-restricted-imports */
+import observe from 'lib/mixins/data-observe';
+import { errorNotice } from 'state/notices/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
-
+const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, observe( 'accountPasswordData' ), eventRecorder ],
+	mixins: [ observe( 'accountPasswordData' ) ],
 
 	componentDidMount: function() {
-		this.debouncedPasswordValidate = _debounce( this.validatePassword, 300 );
+		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
 	},
 
 	componentWillUnmount: function() {
@@ -40,56 +44,79 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
+			password: '',
 			pendingValidation: true,
-			savingPassword: false
+			savingPassword: false,
+			isUnsaved: false,
 		};
 	},
 
 	generateStrongPassword: function() {
 		this.setState( {
 			password: this.props.accountPasswordData.generate(),
-			pendingValidation: true
+			pendingValidation: true,
+			isUnsaved: true,
 		} );
 		this.debouncedPasswordValidate();
-		this.markChanged();
 	},
 
 	validatePassword: function() {
 		debug( 'Validating password' );
-		this.props.accountPasswordData.validate( this.state.password, function() {
-			this.setState( { pendingValidation: false } );
-		}.bind( this ) );
+		this.props.accountPasswordData.validate(
+			this.state.password,
+			function() {
+				this.setState( { pendingValidation: false } );
+			}.bind( this )
+		);
 	},
 
-	handlePasswordChange: function( newPassword ) {
+	handlePasswordChange: function( event ) {
+		const newPassword = event.currentTarget.value;
 		debug( 'Handle password change has been called.' );
 		this.debouncedPasswordValidate();
-		this.setState( { password: newPassword, pendingValidation: true } );
+		this.setState( {
+			password: newPassword,
+			pendingValidation: true,
+			isUnsaved: '' !== newPassword,
+		} );
+	},
 
-		if ( '' === newPassword ) {
-			this.markSaved();
-		} else {
-			this.markChanged();
-		}
+	handleSaveButtonClick() {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Save Password Button' );
+	},
+
+	handleGenerateButtonClick() {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate Strong Password Button' );
+		this.generateStrongPassword();
+	},
+
+	handleNewPasswordFieldFocus() {
+		this.props.recordGoogleEvent( 'Me', 'Focused on New Password Field' );
 	},
 
 	submitForm: function( event ) {
+		const { translate, errorNotice: showErrorNotice } = this.props;
+
 		event.preventDefault();
 
 		this.setState( {
-			savingPassword: true
+			savingPassword: true,
 		} );
 
 		this.props.userSettings.saveSettings(
 			function( error, response ) {
-				this.setState( { savingPassword: false } );
-				this.markSaved();
+				this.setState( {
+					savingPassword: false,
+					isUnsaved: false,
+				} );
 
 				if ( error ) {
 					debug( 'Error saving password: ' + JSON.stringify( error ) );
 
 					// handle error case here
-					notices.error( this.translate( 'There was a problem saving your password. Please, try again.' ) );
+					showErrorNotice(
+						translate( 'There was a problem saving your password. Please, try again.' )
+					);
 					this.setState( { submittingForm: false } );
 				} else {
 					debug( 'Password saved successfully' + JSON.stringify( response ) );
@@ -103,34 +130,28 @@ module.exports = React.createClass( {
 	},
 
 	renderValidationNotices: function() {
-		var failure = _first( this.props.accountPasswordData.getValidationFailures() );
+		const { translate } = this.props;
+		const failure = head( this.props.accountPasswordData.getValidationFailures() );
 
 		if ( this.props.accountPasswordData.passwordValidationSuccess() ) {
-			return (
-				<FormInputValidation text={ this.translate( 'Your password can be saved.' ) } />
-			);
-		} else if ( ! _isEmpty( failure ) ) {
-			return (
-				<FormInputValidation isError text={ failure.explanation } />
-			);
+			return <FormInputValidation text={ translate( 'Your password can be saved.' ) } />;
+		} else if ( ! isEmpty( failure ) ) {
+			return <FormInputValidation isError text={ failure.explanation } />;
 		}
 	},
 
 	render: function() {
-		var passwordValueLink = {
-				value: this.state.password,
-				requestChange: this.handlePasswordChange
-			},
-			passwordInputClasses = classNames( {
-				'account-password__password-field': true,
-				'is-error': this.props.accountPasswordData.getValidationFailures().length
-			}
-		);
+		const { translate } = this.props;
+		const passwordInputClasses = classNames( {
+			'account-password__password-field': true,
+			'is-error': this.props.accountPasswordData.getValidationFailures().length,
+		} );
 
 		return (
 			<form className="account-password" onSubmit={ this.submitForm }>
+				<ProtectFormGuard isChanged={ this.state.isUnsaved } />
 				<FormFieldset>
-					<FormLabel htmlFor="password">{ this.translate( 'New Password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ translate( 'New Password' ) }</FormLabel>
 					<FormPasswordInput
 						autoCapitalize="off"
 						autoComplete="off"
@@ -138,14 +159,16 @@ module.exports = React.createClass( {
 						className={ passwordInputClasses }
 						id="password"
 						name="password"
-						onFocus={ this.recordFocusEvent( 'New Password Field' ) }
-						valueLink={ passwordValueLink }
-						submitting={ this.state.savingPassword } />
+						onChange={ this.handlePasswordChange }
+						onFocus={ this.handleNewPasswordFieldFocus }
+						value={ this.state.password }
+						submitting={ this.state.savingPassword }
+					/>
 
 					{ this.renderValidationNotices() }
 
 					<FormSettingExplanation>
-						{ this.translate(
+						{ translate(
 							"If you can't think of a good password use the button below to generate one."
 						) }
 					</FormSettingExplanation>
@@ -153,20 +176,33 @@ module.exports = React.createClass( {
 
 				<FormButtonsBar className="account-password__buttons-group">
 					<FormButton
-						disabled={ this.state.pendingValidation || this.props.accountPasswordData.passwordValidationFailed() }
-						onClick={ this.recordClickEvent( 'Save Password Button' ) }>
-						{ this.state.savingPassword ? this.translate( 'Saving…' ) : this.translate( 'Save Password' ) }
+						disabled={
+							this.state.pendingValidation ||
+							this.props.accountPasswordData.passwordValidationFailed()
+						}
+						onClick={ this.handleSaveButtonClick }
+					>
+						{ this.state.savingPassword ? translate( 'Saving…' ) : translate( 'Save Password' ) }
 					</FormButton>
 
 					<FormButton
 						className="button"
 						isPrimary={ false }
-						onClick={ this.recordClickEvent( 'Generate Strong Password Button', this.generateStrongPassword ) }
-						type="button">
-						{ this.translate( 'Generate strong password' ) }
+						onClick={ this.handleGenerateButtonClick }
+						type="button"
+					>
+						{ translate( 'Generate strong password' ) }
 					</FormButton>
 				</FormButtonsBar>
 			</form>
 		);
-	}
+	},
 } );
+
+export default compose(
+	connect(
+		null,
+		{ errorNotice, recordGoogleEvent }
+	),
+	localize
+)( AccountPassword );

@@ -1,56 +1,60 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var pluck = require( 'lodash/collection/pluck' );
+
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var MediaStore = require( './store' ),
-	Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import MediaStore from './store';
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
 /**
  * Module variables
  */
-var _media = {},
-	MediaLibrarySelectedStore = {};
+const MediaLibrarySelectedStore = {
+	_media: {},
+};
 
 function ensureSelectedItemsForSiteId( siteId ) {
-	if ( siteId in _media ) {
+	if ( siteId in MediaLibrarySelectedStore._media ) {
 		return;
 	}
 
-	_media[ siteId ] = [];
+	MediaLibrarySelectedStore._media[ siteId ] = [];
 }
 
 function setSelectedItems( siteId, items ) {
-	_media[ siteId ] = pluck( items, 'ID' );
+	MediaLibrarySelectedStore._media[ siteId ] = map( items, 'ID' );
 }
 
 function addSingle( siteId, item ) {
 	ensureSelectedItemsForSiteId( siteId );
-	_media[ siteId ].push( item.ID );
+	MediaLibrarySelectedStore._media[ siteId ].push( item.ID );
 }
 
 function receiveSingle( siteId, item, itemId ) {
-	var index;
+	let index;
 
 	if ( ! itemId ) {
 		itemId = item.ID;
 	}
 
-	if ( ! itemId || ! ( siteId in _media ) ) {
+	if ( ! itemId || ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return;
 	}
 
-	index = _media[ siteId ].indexOf( itemId );
+	index = MediaLibrarySelectedStore._media[ siteId ].indexOf( itemId );
 	if ( -1 === index ) {
 		return;
 	}
 
 	// Replace existing index if one exists
-	_media[ siteId ].splice( index, 1, item.ID );
+	MediaLibrarySelectedStore._media[ siteId ].splice( index, 1, item.ID );
 }
 
 function receiveMany( siteId, items ) {
@@ -60,15 +64,15 @@ function receiveMany( siteId, items ) {
 }
 
 function removeSingle( siteId, item ) {
-	var index;
+	let index;
 
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return;
 	}
 
-	index = _media[ siteId ].indexOf( item.ID );
+	index = MediaLibrarySelectedStore._media[ siteId ].indexOf( item.ID );
 	if ( -1 !== index ) {
-		_media[ siteId ].splice( index, 1 );
+		MediaLibrarySelectedStore._media[ siteId ].splice( index, 1 );
 	}
 }
 
@@ -79,21 +83,27 @@ MediaLibrarySelectedStore.get = function( siteId, itemId ) {
 };
 
 MediaLibrarySelectedStore.getAll = function( siteId ) {
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaLibrarySelectedStore._media ) ) {
 		return [];
 	}
 
-	return _media[ siteId ].map( function( itemId ) {
-		return MediaStore.get( siteId, itemId );
-	} );
+	// Avoid keeping invalid items in the selected list.
+	return MediaLibrarySelectedStore._media[ siteId ]
+		.map( itemId => MediaStore.get( siteId, itemId ) )
+		.filter( item => item && ( item.guid || item.transient ) );
 };
 
 MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );
 
 	switch ( action.type ) {
+		case 'CHANGE_MEDIA_SOURCE':
+			setSelectedItems( action.siteId, [] );
+			MediaLibrarySelectedStore.emit( 'change' );
+			break;
+
 		case 'SET_MEDIA_LIBRARY_SELECTED_ITEMS':
 			if ( action.error || ! action.siteId || ! action.data || ! Array.isArray( action.data ) ) {
 				break;
@@ -143,4 +153,4 @@ MediaLibrarySelectedStore.dispatchToken = Dispatcher.register( function( payload
 	}
 } );
 
-module.exports = MediaLibrarySelectedStore;
+export default MediaLibrarySelectedStore;

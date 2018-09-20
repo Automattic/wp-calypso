@@ -1,0 +1,160 @@
+.following .search {
+	margin-bottom: 0;
+}
+
+.following__search.card.is-compact {
+	padding: 0;
+	box-shadow: 0 0 0 2px $gray-lighten-20, 0 1px 2px $gray-lighten-20;
+	z-index: z-index( 'root', '.reader-following-search' );
+}
+
+// Following intro
+.following__intro {
+	background: url( '/calypso/images/reader/reader-intro-background.svg' ) $white no-repeat 100% 20px;
+	border: 1px solid $gray-lighten-30;
+
+	.following__intro-copy {
+		color: #045182;
+
+		a {
+			color: #1785be;
+			border-bottom: 1px #1785be solid;
+
+			&:hover {
+				color: $blue-medium;
+				border-bottom: 1px solid $blue-medium;
+			}
+		}
+	}
+
+	.following__intro-character {
+		background: url( '/calypso/images/reader/reader-intro-character.svg' ) no-repeat 8px bottom;
+	}
+}
+
+.following__intro {
+	background-size: 450px;
+	min-height: 140px;
+
+	@media (min-width: 661px) and (max-width: 773px) {
+		background-position: 150px 20px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		background-position: 120px 20px;
+	}
+
+	.following__intro-copy-hidden {
+		@include breakpoint( '<660px' ) {
+			display: none;
+			visibility: hidden;
+		}
+	}
+
+	.following__intro-character {
+		background-size: 106px;
+		flex: 0 0 110px;
+		min-height: 140px;
+		margin-right: -2px; // prevent right cropping of illustration
+
+		// Hides the character when main content column gets too narrow
+		@media (min-width: 661px) and (max-width: 773px) {
+			display: none;
+		}
+
+		@include breakpoint( '<660px' ) {
+			background-size: 106px;
+		}
+	}
+}
+
+.following__intro .following__intro-header {
+	align-items: stretch;
+	display: flex;
+	flex-direction: row;
+}
+
+.following__intro .following__intro-copy {
+	display: flex;
+	flex: 1 1 0px;
+	flex-direction: column;
+	font-size: 18px;
+	justify-content: center;
+	margin-left: 24px;
+
+	@media (min-width: 661px) and (max-width: 773px) {
+		margin-bottom: 20px;
+		margin-top: 20px;
+	}
+
+	@include breakpoint( '<960px' ) {
+		font-size: 16px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		font-size: 18px;
+	}
+
+	@include breakpoint( '<480px' ) {
+		font-size: 16px;
+	}
+}
+
+.following__search {
+	margin-top: 8px;
+
+	@include breakpoint( '>660px' ) {
+		margin-top: 30px;
+	}
+}
+
+// Dismiss button
+.following__intro .following__intro-close {
+	align-items: flex-start;
+	margin-top: -4px;
+	margin-right: 20px;
+	height: 24px;
+	width: 24px;
+
+	.following__intro-close-icon {
+		position: absolute;
+		z-index: z-index( 'root', '.following__intro-close-icon' );
+		fill: $white;
+
+		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
+		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
+		transform: scale( 1 );
+
+		&:hover {
+			cursor: pointer;
+			fill: darken( #62a9a7, 15% );
+		}
+
+		&:hover + .following__intro-close-icon-bg {
+			background-color: lighten( #62a9a7, 50% );
+			box-shadow: 0 0 0 2px lighten( #62a9a7, 40% );
+		}
+	}
+
+	.following__intro-close-icon-bg {
+		background-color: #5ca8a6;
+		border-radius: 10px;
+		display: block;
+		height: 20px;
+		position: absolute;
+		left: 2px;
+		top: 2px;
+		z-index: z-index( 'root', '.following__intro-close-icon-bg' );
+		width: 20px;
+	}
+}
+
+.following__intro .following__intro-close {
+	.following__intro-close-icon {
+		fill: $gray-lighten-10;
+	}
+
+	.following__intro-close-icon-bg {
+		background-color: $white;
+	}
+}

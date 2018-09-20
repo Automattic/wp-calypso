@@ -1,19 +1,12 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' );
+import React from 'react';
+import classnames from 'classnames';
 
-module.exports = React.createClass( {
+const FormInputCheckbox = ( { className, ...otherProps } ) => (
+	<input { ...otherProps } type="checkbox" className={ classnames( className, 'form-checkbox' ) } />
+);
 
-	displayName: 'FormInputCheckbox',
-
-	render: function() {
-		var otherProps = omit( this.props, [ 'className', 'type' ] );
-
-		return (
-			<input { ...otherProps } type="checkbox" className={ joinClasses( this.props.className, 'form-checkbox' ) } />
-		);
-	}
-} );
+export default FormInputCheckbox;

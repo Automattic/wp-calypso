@@ -1,74 +1,71 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Internal Dependencies
  */
-var SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' );
+import ControlItem from 'components/segmented-control/item';
+import SegmentedControl from 'components/segmented-control';
 
 /**
  * Internal variables
  */
-var _instance = 1;
+let _instance = 1;
 
 /**
  * Main
  */
-var NavSegmented = React.createClass( {
+class NavSegmented extends Component {
+	static propTypes = {
+		label: PropTypes.string,
+		hasSiblingControls: PropTypes.bool,
+	};
 
-	propTypes: {
-		label: React.PropTypes.string,
-		hasSiblingControls: React.PropTypes.bool
-	},
+	static defaultProps = {
+		hasSiblingControls: false,
+	};
 
-	getDefaultProps: function() {
-		return {
-			hasSiblingControls: false
-		};
-	},
-
-	componentWillMount: function() {
+	componentWillMount() {
 		this.id = _instance;
 		_instance++;
-	},
+	}
 
-	render: function() {
-		var segmentedClassName = classNames( {
+	render() {
+		const segmentedClassName = classNames( {
 			'section-nav-group': true,
 			'section-nav__segmented': true,
-			'has-siblings': this.props.hasSiblingControls
+			'has-siblings': this.props.hasSiblingControls,
 		} );
 
 		return (
 			<div className={ segmentedClassName }>
-				{
-					this.props.label &&
-					<h6 className="section-nav-group__label">{ this.props.label }</h6>
-				}
+				{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
 
-				<SegmentedControl>
-					{ this.getControlItems() }
-				</SegmentedControl>
+				<SegmentedControl>{ this.getControlItems() }</SegmentedControl>
 			</div>
 		);
-	},
-
-	getControlItems: function() {
-		return React.Children.map( this.props.children, function( child, index ) {
-			return (
-				<ControlItem
-					{ ...child.props }
-					key={ 'navSegmented-' + this.id + '-' + index }
-				>
-					{ child.props.children }
-				</ControlItem>
-			);
-		}, this );
 	}
-} );
 
-module.exports = NavSegmented;
+	getControlItems = () => {
+		return React.Children.map(
+			this.props.children,
+			function( child, index ) {
+				return (
+					<ControlItem { ...child.props } key={ 'navSegmented-' + this.id + '-' + index }>
+						{ child.props.children }
+					</ControlItem>
+				);
+			},
+			this
+		);
+	};
+}
+
+export default NavSegmented;

@@ -1,91 +1,231 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	difference = require( 'lodash/array/difference' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	pick = require( 'lodash/object/pick' );
+import { assign, difference, get, isEmpty, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var schema = require( './schema.json' );
+import {
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_FREE,
+	PLAN_JETPACK_FREE,
+	PLAN_HOST_BUNDLE,
+	PLAN_WPCOM_ENTERPRISE,
+	PLAN_CHARGEBACK,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	GROUP_JETPACK,
+} from 'lib/plans/constants';
 
-var productDependencies = {
+import {
+	planMatches,
+	isBusinessPlan,
+	isPremiumPlan,
+	isPersonalPlan,
+	isBloggerPlan,
+} from 'lib/plans';
+import { domainProductSlugs } from 'lib/domains/constants';
+import schema from './schema.json';
+
+const productDependencies = {
 	domain: {
 		domain_redemption: true,
 		gapps: true,
 		gapps_extra_license: true,
 		gapps_unlimited: true,
-		private_whois: true
+		private_whois: true,
 	},
-	domain_redemption: {
-		domain: true
-	}
+	[ PLAN_BUSINESS ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_BUSINESS_2_YEARS ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PERSONAL ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PERSONAL_2_YEARS ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PREMIUM ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PREMIUM_2_YEARS ]: {
+		domain_redemption: true,
+	},
+	[ domainProductSlugs.TRANSFER_IN ]: {
+		[ domainProductSlugs.TRANSFER_IN_PRIVACY ]: true,
+	},
 };
 
 function assertValidProduct( product ) {
-	var missingAttributes = difference( schema.required, Object.keys( product ) );
+	const missingAttributes = difference( schema.required, Object.keys( product ) );
 
 	if ( ! isEmpty( missingAttributes ) ) {
-		throw new Error( 'Missing required attributes for ProductValue: [' +
-		missingAttributes.join( ', ' ) + ']' );
+		throw new Error(
+			'Missing required attributes for ProductValue: [' + missingAttributes.join( ', ' ) + ']'
+		);
 	}
 }
 
-function formatProduct( product ) {
+export function formatProduct( product ) {
 	return assign( {}, product, {
 		product_slug: product.product_slug || product.productSlug,
-		is_domain_registration: product.is_domain_registration !== undefined
-			? product.is_domain_registration
-			: product.isDomainRegistration
+		product_type: product.product_type || product.productType,
+		is_domain_registration:
+			product.is_domain_registration !== undefined
+				? product.is_domain_registration
+				: product.isDomainRegistration,
+		free_trial: product.free_trial || product.freeTrial,
 	} );
 }
 
-function isJpphpBundle( product ) {
+export function isChargeback( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'host-bundle';
+	return product.product_slug === PLAN_CHARGEBACK;
 }
 
-function isFreePlan( product ) {
+export function includesProduct( products, product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'free_plan';
+	return products.indexOf( product.product_slug ) >= 0;
 }
 
-function isPremium( product ) {
-	var premiumProducts = [ 'value_bundle', 'jetpack_premium' ];
-
+export function isFreePlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return ( premiumProducts.indexOf( product.product_slug ) >= 0 );
+	return product.product_slug === PLAN_FREE;
 }
 
-function isBusiness( product ) {
-	var businessProducts = [ 'business-bundle', 'jetpack_business' ];
-
+export function isFreeJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return ( businessProducts.indexOf( product.product_slug ) >= 0 );
+	return product.product_slug === PLAN_JETPACK_FREE;
 }
 
-function isEnterprise( product ) {
+export function isFreeTrial( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === 'wpcom-enterprise';
+	return Boolean( product.free_trial );
 }
 
-function isPlan( product ) {
+export function isPersonal( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isPersonalPlan( product.product_slug );
+}
+
+export function isBlogger( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isBloggerPlan( product.product_slug );
+}
+
+export function isPremium( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isPremiumPlan( product.product_slug );
+}
+
+export function isBusiness( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isBusinessPlan( product.product_slug );
+}
+
+export function isEnterprise( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === PLAN_WPCOM_ENTERPRISE;
+}
+
+export function isJetpackPlan( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return planMatches( product.product_slug, { group: GROUP_JETPACK } );
+}
+
+export function isJetpackBusiness( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isBusiness( product ) && isJetpackPlan( product );
+}
+
+export function isJetpackPremium( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isPremium( product ) && isJetpackPlan( product );
+}
+
+export function isVipPlan( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return 'vip' === product.product_slug;
+}
+
+export function isJetpackMonthlyPlan( product ) {
+	return isMonthly( product ) && isJetpackPlan( product );
+}
+
+export function isMonthly( rawProduct ) {
+	const product = formatProduct( rawProduct );
+	assertValidProduct( product );
+
+	return parseInt( product.bill_period, 10 ) === PLAN_MONTHLY_PERIOD;
+}
+
+export function isYearly( rawProduct ) {
+	const product = formatProduct( rawProduct );
+	assertValidProduct( product );
+
+	return parseInt( product.bill_period, 10 ) === PLAN_ANNUAL_PERIOD;
+}
+
+export function isBiennially( rawProduct ) {
+	const product = formatProduct( rawProduct );
+	assertValidProduct( product );
+
+	return parseInt( product.bill_period, 10 ) === PLAN_BIENNIAL_PERIOD;
+}
+
+export function isJpphpBundle( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === PLAN_HOST_BUNDLE;
+}
+
+export function isPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return (
+		isBlogger( product ) ||
+		isPersonal( product ) ||
 		isPremium( product ) ||
 		isBusiness( product ) ||
 		isEnterprise( product ) ||
@@ -93,189 +233,268 @@ function isPlan( product ) {
 	);
 }
 
-function isPrivateRegistration( product ) {
+export function isDotComPlan( product ) {
+	return isPlan( product ) && ! isJetpackPlan( product );
+}
+
+export function isPrivacyProtection( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'private_whois';
 }
 
-function isDomainProduct( product ) {
+export function isDomainProduct( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return (
-		isDomainRegistration( product ) ||
-		product.product_slug === 'domain_map' ||
-		product.product_slug === 'private_whois'
+		isDomainMapping( product ) || isDomainRegistration( product ) || isPrivacyProtection( product )
 	);
 }
 
-function isDomainRedemption( product ) {
+export function isDomainRedemption( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'domain_redemption';
 }
 
-function isDomainRegistration( product ) {
+export function isDomainRegistration( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	if ( typeof product.is_domain_registration === 'undefined' ) {
-		throw new Error( 'The `is_domain_registration` product attribute is ' +
-		'required to use this function.' );
-	}
-
-	return product.is_domain_registration;
+	return !! product.is_domain_registration;
 }
 
-function isDomainMapping( product ) {
+export function isDomainMapping( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'domain_map';
 }
 
-function isSiteRedirect( product ) {
+export function isSiteRedirect( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return product.product_slug === 'offsite_redirect';
 }
 
-function isCredits( product ) {
+export function isDomainTransferProduct( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isDomainTransfer( product ) || isDomainTransferPrivacy( product );
+}
+
+export function isDomainTransfer( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === domainProductSlugs.TRANSFER_IN;
+}
+
+export function isDomainTransferPrivacy( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return product.product_slug === domainProductSlugs.TRANSFER_IN_PRIVACY;
+}
+
+export function isDelayedDomainTransfer( product ) {
+	return isDomainTransfer( product ) && product.delayedProvisioning;
+}
+
+export function isBundled( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return !! product.is_bundled;
+}
+
+export function isCredits( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'wordpress-com-credits' === product.product_slug;
 }
 
-function getDomainProductRanking( product ) {
+export function getDomainProductRanking( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	if ( isDomainRegistration( product ) ) {
 		return 0;
-	} else if ( product.product_slug === 'domain_map' ) {
+	} else if ( isDomainMapping( product ) ) {
 		return 1;
-	} else if ( product.product_slug === 'private_whois' ) {
+	} else if ( isPrivacyProtection( product ) ) {
 		return 2;
 	}
 }
 
-function isDependentProduct( product, dependentProduct ) {
-	var slug, dependentSlug;
+export function getDomain( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	const domainToBundle = get( product, 'extra.domain_to_bundle', false );
+	if ( domainToBundle ) {
+		return domainToBundle;
+	}
+
+	return product.meta;
+}
+
+export function isDependentProduct( product, dependentProduct, domainsWithPlansOnly ) {
+	let isPlansOnlyDependent = false;
 
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
-	dependentSlug = isDomainRegistration( dependentProduct ) ? 'domain' : dependentProduct.product_slug;
+	const slug = isDomainRegistration( product ) ? 'domain' : product.product_slug;
+	const dependentSlug = isDomainRegistration( dependentProduct )
+		? 'domain'
+		: dependentProduct.product_slug;
+
+	if ( domainsWithPlansOnly ) {
+		isPlansOnlyDependent =
+			isPlan( product ) &&
+			( isDomainRegistration( dependentProduct ) || isDomainMapping( dependentProduct ) );
+	}
 
 	return (
-		productDependencies[ slug ] &&
-		productDependencies[ slug ][ dependentSlug ] &&
-		product.meta === dependentProduct.meta
+		isPlansOnlyDependent ||
+		( productDependencies[ slug ] &&
+			productDependencies[ slug ][ dependentSlug ] &&
+			getDomain( product ) === getDomain( dependentProduct ) )
+	);
+}
+export function isFreeWordPressComDomain( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+	return product.is_free === true;
+}
+
+export function isGoogleApps( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return (
+		'gapps' === product.product_slug ||
+		'gapps_unlimited' === product.product_slug ||
+		'gapps_extra_license' === product.product_slug
 	);
 }
 
-function isGoogleApps( product ) {
+export function isGuidedTransfer( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return 'gapps' === product.product_slug || 'gapps_unlimited' === product.product_slug || 'gapps_extra_license' === product.product_slug;
+	return 'guided_transfer' === product.product_slug;
 }
 
-function isTheme( product ) {
+export function isTheme( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'premium_theme' === product.product_slug;
 }
 
-function isCustomDesign( product ) {
+export function isCustomDesign( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'custom-design' === product.product_slug;
 }
 
-function isNoAds( product ) {
+export function isNoAds( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'no-adverts/no-adverts.php' === product.product_slug;
 }
 
-function isVideoPress( product ) {
+export function isVideoPress( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'videopress' === product.product_slug;
 }
 
-function isUnlimitedSpace( product ) {
+export function isUnlimitedSpace( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'unlimited_space' === product.product_slug;
 }
 
-function isUnlimitedThemes( product ) {
+export function isUnlimitedThemes( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
 	return 'unlimited_themes' === product.product_slug;
 }
 
-function whitelistAttributes( product ) {
+export function whitelistAttributes( product ) {
 	return pick( product, Object.keys( schema.properties ) );
 }
 
-function isSpaceUpgrade( product ) {
+export function isSpaceUpgrade( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return '1gb_space_upgrade' === product.product_slug ||
+	return (
+		'1gb_space_upgrade' === product.product_slug ||
 		'5gb_space_upgrade' === product.product_slug ||
 		'10gb_space_upgrade' === product.product_slug ||
 		'50gb_space_upgrade' === product.product_slug ||
-		'100gb_space_upgrade' === product.product_slug;
+		'100gb_space_upgrade' === product.product_slug
+	);
 }
 
-function canRemoveFromCart( product ) {
-	if ( isPrivateRegistration( product ) || isCredits( product ) ) {
-		return false;
-	}
-
-	return true;
-}
-
-module.exports = {
-	canRemoveFromCart,
+export default {
 	formatProduct,
-	isFreePlan: isFreePlan,
-	isPremium: isPremium,
-	isBusiness: isBusiness,
-	isEnterprise: isEnterprise,
-	isPlan: isPlan,
-	isPrivateRegistration,
-	isDomainProduct: isDomainProduct,
-	isDomainRedemption,
-	isDomainRegistration: isDomainRegistration,
-	isDomainMapping: isDomainMapping,
-	isSiteRedirect,
-	isCredits: isCredits,
-	getDomainProductRanking: getDomainProductRanking,
-	isDependentProduct: isDependentProduct,
-	isGoogleApps: isGoogleApps,
-	isTheme,
+	getDomainProductRanking,
+	includesProduct,
+	isBusiness,
+	isChargeback,
+	isCredits,
 	isCustomDesign,
+	isDependentProduct,
+	isDelayedDomainTransfer,
+	isDomainMapping,
+	isDomainProduct,
+	isDomainRedemption,
+	isDomainRegistration,
+	isDomainTransfer,
+	isDomainTransferPrivacy,
+	isDomainTransferProduct,
+	isBundled,
+	isDotComPlan,
+	isEnterprise,
+	isFreeJetpackPlan,
+	isFreePlan,
+	isPersonal,
+	isFreeTrial,
+	isFreeWordPressComDomain,
+	isGoogleApps,
+	isGuidedTransfer,
+	isJetpackBusiness,
+	isJetpackPlan,
+	isJetpackPremium,
+	isJetpackMonthlyPlan,
+	isVipPlan,
+	isMonthly,
+	isJpphpBundle,
 	isNoAds,
-	isVideoPress,
+	isPlan,
+	isPremium,
+	isPrivacyProtection,
+	isSiteRedirect,
+	isSpaceUpgrade,
+	isTheme,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
-	isSpaceUpgrade,
-	whitelistAttributes: whitelistAttributes
+	isVideoPress,
+	whitelistAttributes,
 };

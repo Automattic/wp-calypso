@@ -1,9 +1,5 @@
-/**
- * External dependencies
- */
-var classes = require( 'component-classes' );
-
-var keyboardNavigation = false,
+/** @format */
+let keyboardNavigation = false,
 	keyboardNavigationKeycodes = [ 9, 32, 37, 38, 39, 40 ]; // keyCodes for tab, space, left, up, right, down respectively
 
 function accessibleFocus() {
@@ -13,7 +9,7 @@ function accessibleFocus() {
 		}
 		if ( keyboardNavigationKeycodes.indexOf( event.keyCode ) !== -1 ) {
 			keyboardNavigation = true;
-			classes( document.documentElement ).add( 'accessible-focus' );
+			document.documentElement.classList.add( 'accessible-focus' );
 		}
 	} );
 	document.addEventListener( 'mouseup', function() {
@@ -21,8 +17,8 @@ function accessibleFocus() {
 			return;
 		}
 		keyboardNavigation = false;
-		classes( document.documentElement ).remove( 'accessible-focus' );
+		document.documentElement.classList.remove( 'accessible-focus' );
 	} );
 }
 
-module.exports = accessibleFocus;
+export default accessibleFocus;

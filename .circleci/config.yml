@@ -1,0 +1,109 @@
+version: 2
+jobs:
+  build:
+    parallelism: 6
+    working_directory: ~/wp-calypso
+    docker:
+      - image: circleci/node:10.10.0-browsers
+        environment:
+          CIRCLE_ARTIFACTS: /tmp/artifacts
+          CIRCLE_TEST_REPORTS: /tmp/test_results
+
+    steps:
+      - restore_cache:
+          name: Restore git cache
+          key: v1-20180524-git
+
+      - checkout
+
+    # Update origin/master so we can diff against it later
+      - run:
+          name: Update master branch
+          command: git fetch --force origin master
+
+      - save_cache:
+          name: Save git cache
+          key: v1-20180524-git
+          paths:
+            - ".git"
+
+      - run:
+          name: Create Directories for Results and Artifacts
+          command: |
+            mkdir -p $CIRCLE_ARTIFACTS
+            mkdir -p $CIRCLE_TEST_REPORTS
+
+      - restore_cache:
+          name: "Restoring npm cache"
+          keys:
+             - v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+             - v1-npmcache-{{ checksum ".nvmrc" }}
+
+      - run: npm ci
+
+      - save_cache:
+          name: "Saving npm cache"
+          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+          paths:
+            - ~/.npm
+
+      - run:
+          name: Build calypso-strings.pot
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
+              npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
+              mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
+            fi
+
+      - run:
+          name: Build New Strings .pot
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" == "0" ]; then
+              git clone https://github.com/Automattic/gp-localci-client.git
+              bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
+              rm -rf gp-localci-client
+            fi
+
+      - run:
+          name: Run Integration Tests
+          command: |
+            bin/run-integration $(circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings)
+
+      - run:
+          name: Lint Config Keys
+          command: npm run lint:config-defaults
+
+      - run:
+          name: Lint Client and Server
+          command: |
+            ./node_modules/.bin/eslint-eslines $(git diff --name-only --diff-filter=d origin/master... | grep -E '^(client|server)' | grep -E '\.jsx?$' | circleci tests split)
+
+      - run:
+          name: Run Client Tests
+          command: |
+              npm run test-client:ci $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
+
+      - run:
+          name: Run Server Tests
+          command: |
+              npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
+
+      - run:
+          name: Gather Test Results
+          command: |
+            find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
+          when: always
+
+      - store_test_results:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/artifacts
+
+# We need to work around this bit because
+# the notification system in 2.0 is a bit flakey
+# and is not yet working as expected.
+notify:
+  webhooks:
+    - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh

@@ -1,45 +1,43 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
-	classNames = require( 'classnames' );
+import { assign } from 'lodash';
+import ReactDomServer from 'react-dom/server';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Shortcode = require( 'lib/shortcode' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	MediaSerialization = require( 'lib/media-serialization' ),
-	sites = require( 'lib/sites-list' )();
+import { parse, stringify } from 'lib/shortcode';
+import * as MediaUtils from 'lib/media/utils';
+import { deserialize } from 'lib/media-serialization';
 
 /**
  * Module variables
  */
-var Markup;
-
-Markup = {
+const Markup = {
 	/**
-	 * Given a media object, returns a markup string representing that object
+	 * Given a media object and a site, returns a markup string representing that object
 	 * as HTML.
 	 *
+	 * @param  {Object} site    A site object
 	 * @param  {Object} media   A media object
 	 * @param  {Object} options Appearance options
 	 * @return {string}         A markup string
 	 */
-	get: function( media, options ) {
-		var mimePrefix;
-
-		if ( ! media ) {
+	get: function( site, media, options ) {
+		if ( ! media || media.hasOwnProperty( 'status' ) ) {
 			return '';
 		}
 
-		mimePrefix = MediaUtils.getMimePrefix( media );
+		const mimePrefix = MediaUtils.getMimePrefix( media );
 
 		// Attempt to find a matching function in the mimeTypes object using
 		// the MIME type prefix
 		if ( mimePrefix && 'function' === typeof Markup.mimeTypes[ mimePrefix ] ) {
-			return Markup.mimeTypes[ mimePrefix ]( media, options );
+			return Markup.mimeTypes[ mimePrefix ]( site, media, options );
 		}
 
 		return Markup.link( media );
@@ -53,16 +51,20 @@ Markup = {
 	 * @return {string}       A link markup string
 	 */
 	link: function( media ) {
-		var element = React.createElement( 'a', {
-			href: media.URL,
-			title: media.title
-		}, media.title );
+		const element = React.createElement(
+			'a',
+			{
+				href: media.URL,
+				title: media.title,
+			},
+			media.title
+		);
 
-		return React.renderToStaticMarkup( element );
+		return ReactDomServer.renderToStaticMarkup( element );
 	},
 
 	/**
-	 * Given a media object or markup string, returns a caption React element.
+	 * Given a media object or markup string and a site, returns a caption React element.
 	 *
 	 * Adapted from WordPress.
 	 *
@@ -70,23 +72,24 @@ Markup = {
 	 * @license See CREDITS.md.
 	 * @see https://github.com/WordPress/WordPress/blob/4.3/wp-includes/js/tinymce/plugins/wpeditimage/plugin.js#L97-L157
 	 *
+	 * @param  {Object} site           A site object
 	 * @param  {(Object|String)} media A media object or markup string
 	 * @return {String}                A caption React element, or null if not
 	 *                                 a captioned item.
 	 */
-	caption: function( media ) {
-		var parsed, match, img, caption, width;
+	caption: function( site, media ) {
+		let img, caption, width;
 
 		if ( 'string' !== typeof media ) {
-			media = Markup.get( media );
+			media = Markup.get( site, media );
 		}
 
-		parsed = Shortcode.parse( media );
+		const parsed = parse( media );
 		if ( ! parsed || ! parsed.content ) {
 			return null;
 		}
 
-		match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
+		const match = parsed.content.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
 		if ( match ) {
 			img = match[ 1 ].trim();
 			caption = match[ 2 ].trim();
@@ -94,34 +97,45 @@ Markup = {
 
 		width = parsed.attrs.named.width;
 		if ( ! width ) {
-			width = MediaSerialization.deserialize( img ).width;
+			width = deserialize( img ).width;
 		}
 
+		/*eslint-disable react/no-danger*/
 		return (
-			<dl className={ classNames( 'wp-caption', parsed.attrs.named.align, parsed.attrs.named.classes ) } style={ { width: width } }>
+			<dl
+				className={ classNames(
+					'wp-caption',
+					parsed.attrs.named.align,
+					parsed.attrs.named.classes
+				) }
+				style={ { width: parseInt( width, 10 ) } }
+			>
 				<dt className="wp-caption-dt" dangerouslySetInnerHTML={ { __html: img } } />
 				<dd className="wp-caption-dd">{ caption }</dd>
 			</dl>
 		);
+		/*eslint-enable react/no-danger*/
 	},
 
 	mimeTypes: {
 		/**
-		 * Given an image media object, returns a markup string representing that
+		 * Given an image media object and a site, returns a markup string representing that
 		 * image object as HTML.
 		 *
+		 * @param  {Object} site    A site object
 		 * @param  {Object} media   An image media object
-	 	 * @param  {Object} options Appearance options
+		 * @param  {Object} options Appearance options
 		 * @return {string}         An image markup string
 		 */
-		image: function( media, options ) {
-			const site = sites.getSelectedSite();
-
-			options = assign( {
-				size: 'full',
-				align: 'none',
-				forceResize: false
-			}, options );
+		image: function( site, media, options ) {
+			options = assign(
+				{
+					size: 'full',
+					align: 'none',
+					forceResize: false,
+				},
+				options
+			);
 
 			let width, height;
 			if ( 'full' === options.size ) {
@@ -130,8 +144,8 @@ Markup = {
 			} else {
 				const dimensions = MediaUtils.getThumbnailSizeDimensions( options.size, site );
 				const ratio = Math.min(
-					( dimensions.width / media.width ) || Infinity,
-					( dimensions.height / media.height ) || Infinity
+					dimensions.width / media.width || Infinity,
+					dimensions.height / media.height || Infinity
 				);
 
 				width = Math.round( media.width * ratio );
@@ -150,18 +164,25 @@ Markup = {
 				alt: media.alt || media.title,
 				width: isFinite( width ) ? width : null,
 				height: isFinite( height ) ? height : null,
-				className: classNames( 'align' + options.align, 'size-' + options.size, 'wp-image-' + media.ID )
+				className: classNames(
+					'align' + options.align,
+					'size-' + options.size,
+					'wp-image-' + media.ID
+				),
+				// make data-istransient a boolean att https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute
+				// it is false if it doesn't exist
+				'data-istransient': media.transient ? 'istransient' : null,
 			} );
 
-			let markup = React.renderToStaticMarkup( img );
+			let markup = ReactDomServer.renderToStaticMarkup( img );
 			if ( media.caption && width ) {
-				markup = Shortcode.stringify( {
+				markup = stringify( {
 					tag: 'caption',
 					attrs: {
 						id: 'attachment_' + media.ID,
-						width: width
+						width: width,
 					},
-					content: [ markup, media.caption ].join( ' ' )
+					content: [ markup, media.caption ].join( ' ' ),
 				} );
 			}
 
@@ -172,15 +193,16 @@ Markup = {
 		 * Given an audio media object, returns a markup string representing that
 		 * audio object as HTML.
 		 *
+		 * @param  {Object} site  A site object
 		 * @param  {Object} media An audio media object
 		 * @return {string}       An audio markup string
 		 */
-		audio: function( media ) {
-			return Shortcode.stringify( {
+		audio: function( site, media ) {
+			return stringify( {
 				tag: 'audio',
 				attrs: {
-					src: media.URL
-				}
+					src: media.URL,
+				},
 			} );
 		},
 
@@ -188,28 +210,29 @@ Markup = {
 		 * Given a video media object, returns a markup string representing that
 		 * video object as HTML.
 		 *
+		 * @param  {Object} site  A site object
 		 * @param  {string} media A video media object
 		 * @return {string}       A video markup string
 		 */
-		video: function( media ) {
+		video: function( site, media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {
-				return Shortcode.stringify( {
+				return stringify( {
 					tag: 'wpvideo',
 					attrs: [ media.videopress_guid ],
-					type: 'single'
+					type: 'single',
 				} );
 			}
 
-			return Shortcode.stringify( {
+			return stringify( {
 				tag: 'video',
 				attrs: {
 					src: media.URL,
 					height: media.height,
-					width: media.width
-				}
+					width: media.width,
+				},
 			} );
-		}
-	}
+		},
+	},
 };
 
-module.exports = Markup;
+export default Markup;

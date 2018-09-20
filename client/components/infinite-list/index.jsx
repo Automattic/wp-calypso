@@ -1,70 +1,66 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:infinite-list' ),
-	omit = require( 'lodash/object/omit' ),
-	raf = require( 'raf' ),
-	React = require( 'react' ),
-	page = require( 'page' );
+
+import debugFactory from 'debug';
+import { noop, omit } from 'lodash';
+import page from 'page';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-var ScrollHelper = require( './scroll-helper' ),
-	InfiniteListPositionsStore = require( 'lib/infinite-list/positions-store' ),
-	InfiniteListScrollStore = require( 'lib/infinite-list/scroll-store' ),
-	InfiniteListActions = require( 'lib/infinite-list/actions' ),
-	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
-	scrollTo = require( 'lib/scroll-to' ),
-	smartSetState = require( 'lib/react-smart-set-state' );
+import detectHistoryNavigation from 'lib/detect-history-navigation';
+import ScrollStore from './scroll-store';
+import ScrollHelper from './scroll-helper';
+import scrollTo from 'lib/scroll-to';
+import smartSetState from 'lib/react-smart-set-state';
 
-module.exports = React.createClass( {
-	displayName: 'InfiniteList',
+const debug = debugFactory( 'calypso:infinite-list' );
 
-	lastScrollTop: -1,
-	scrollRAFHandle: false,
-	scrollHelper: null,
-	isScrolling: false,
+export default class InfiniteList extends React.Component {
+	static propTypes = {
+		items: PropTypes.array.isRequired,
+		fetchingNextPage: PropTypes.bool.isRequired,
+		lastPage: PropTypes.bool.isRequired,
+		guessedItemHeight: PropTypes.number.isRequired,
+		itemsPerRow: PropTypes.number,
+		fetchNextPage: PropTypes.func.isRequired,
+		getItemRef: PropTypes.func.isRequired,
+		renderItem: PropTypes.func.isRequired,
+		renderLoadingPlaceholders: PropTypes.func.isRequired,
+		renderTrailingItems: PropTypes.func,
+		context: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+	};
 
-	propTypes: {
-		items: React.PropTypes.array.isRequired,
-		fetchingNextPage: React.PropTypes.bool.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
-		guessedItemHeight: React.PropTypes.number.isRequired,
-		itemsPerRow: React.PropTypes.number,
+	static defaultProps = {
+		itemsPerRow: 1,
+		renderTrailingItems: noop,
+	};
 
-		fetchNextPage: React.PropTypes.func.isRequired,
-		getItemRef: React.PropTypes.func.isRequired,
-		renderItem: React.PropTypes.func.isRequired,
-		renderLoadingPlaceholders: React.PropTypes.func.isRequired,
-		renderTrailingItems: React.PropTypes.func,
-		context: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool,
-		] ),
-	},
+	lastScrollTop = -1;
+	scrollRAFHandle = false;
+	scrollHelper = null;
+	isScrolling = false;
+	_isMounted = false;
+	smartSetState = smartSetState;
 
-	getDefaultProps: function() {
-		return {
-			itemsPerRow: 1,
-			renderTrailingItems: () => {}
-		};
-	},
-
-	smartSetState: smartSetState,
-
-	componentWillMount: function() {
-		var url = page.current,
-			newState, scrollPosition;
+	componentWillMount() {
+		const url = page.current;
+		let newState, scrollTop;
 
 		if ( detectHistoryNavigation.loadedViaHistory() ) {
-			newState = InfiniteListPositionsStore.get( url );
-			scrollPosition = InfiniteListScrollStore.get( url );
+			newState = ScrollStore.getPositions( url );
+			scrollTop = ScrollStore.getScrollTop( url );
 		}
 
-		if ( newState && scrollPosition ) {
-			debug( 'overriding scrollTop:', scrollPosition );
-			newState.scrollTop = scrollPosition;
+		if ( newState && scrollTop ) {
+			debug( 'overriding scrollTop:', scrollTop );
+			newState.scrollTop = scrollTop;
 		}
 
 		this.scrollHelper = new ScrollHelper( this.boundsForRef );
@@ -85,14 +81,15 @@ module.exports = React.createClass( {
 				topPlaceholderHeight: 0,
 				lastRenderedIndex: this.scrollHelper.initialLastRenderedIndex(),
 				bottomPlaceholderHeight: 0,
-				scrollTop: 0
+				scrollTop: 0,
 			};
 		}
 		debug( 'infinite list mounting', newState );
 		this.setState( newState );
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
+		this._isMounted = true;
 		if ( this._contextLoaded() ) {
 			this._setContainerY( this.state.scrollTop );
 		}
@@ -103,21 +100,21 @@ module.exports = React.createClass( {
 		}
 		debug( 'setting scrollTop:', this.state.scrollTop );
 		this.updateScroll( {
-			triggeredByScroll: false
+			triggeredByScroll: false,
 		} );
 		if ( this._contextLoaded() ) {
 			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
 		}
-	},
+	}
 
-	componentWillReceiveProps: function( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
 
 		// New item may have arrived, should we change the rendered range?
 		if ( ! this.isScrolling ) {
 			this.cancelAnimationFrame();
 			this.updateScroll( {
-				triggeredByScroll: false
+				triggeredByScroll: false,
 			} );
 		}
 
@@ -128,9 +125,9 @@ module.exports = React.createClass( {
 		if ( this._contextLoaded() ) {
 			this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		}
-	},
+	}
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
@@ -155,60 +152,84 @@ module.exports = React.createClass( {
 		if ( ! this.isScrolling ) {
 			this.cancelAnimationFrame();
 			this.updateScroll( {
-				triggeredByScroll: false
+				triggeredByScroll: false,
 			} );
 		}
-	},
+	}
 
-	componentWillUnmount: function() {
+	// Instance method that is called externally (via a ref) by a parent component
+	reset() {
+		this.cancelAnimationFrame();
+
+		this.scrollHelper = new ScrollHelper( this.boundsForRef );
+		this.scrollHelper.props = this.props;
+		if ( this._contextLoaded() ) {
+			this._scrollContainer = this.props.context || window;
+			this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
+		}
+
+		this.isScrolling = false;
+
+		this.setState( {
+			firstRenderedIndex: 0,
+			topPlaceholderHeight: 0,
+			lastRenderedIndex: this.scrollHelper.initialLastRenderedIndex(),
+			bottomPlaceholderHeight: 0,
+			scrollTop: 0,
+		} );
+	}
+
+	componentWillUnmount() {
 		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		this.cancelAnimationFrame();
-	},
+		this._isMounted = false;
+	}
 
-	cancelAnimationFrame: function() {
+	cancelAnimationFrame() {
 		if ( this.scrollRAFHandle ) {
-			raf.cancel( this.scrollRAFHandle );
+			window.cancelAnimationFrame( this.scrollRAFHandle );
 			this.scrollRAFHandle = null;
 		}
 		this.lastScrollTop = -1;
-	},
+	}
 
-	onScroll: function() {
+	onScroll = () => {
 		if ( this.isScrolling ) {
 			return;
 		}
 		if ( ! this.scrollRAFHandle && this.getCurrentScrollTop() !== this.lastScrollTop ) {
-			this.scrollRAFHandle = raf( this.scrollChecks );
+			this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 		}
-	},
+	};
 
-	getCurrentContextHeight: function() {
-		var context = this.props.context || window.document.documentElement;
+	getCurrentContextHeight() {
+		const context = this.props.context || window.document.documentElement;
 		return context.clientHeight;
-	},
+	}
 
-	getCurrentScrollTop: function() {
+	getCurrentScrollTop() {
 		if ( this.props.context ) {
 			debug( 'getting scrollTop from context' );
 			return this.props.context.scrollTop;
 		}
 		return window.pageYOffset;
-	},
+	}
 
-	scrollChecks: function() {
+	scrollChecks = () => {
 		// isMounted is necessary to prevent running this before it is mounted,
 		// which could be triggered by data-observe mixin.
-		if ( ! this.isMounted() || this.getCurrentScrollTop() === this.lastScrollTop ) {
+		if ( ! this._isMounted || this.getCurrentScrollTop() === this.lastScrollTop ) {
 			this.scrollRAFHandle = null;
 			return;
 		}
 		this.updateScroll( {
-			triggeredByScroll: true
+			triggeredByScroll: true,
 		} );
-	},
+	};
 
-	scrollToTop: function() {
+	// Instance method that is called externally (via a ref) by a parent component
+	scrollToTop() {
 		this.cancelAnimationFrame();
 		this.isScrolling = true;
 		if ( this.props.context && this.props.context !== window ) {
@@ -221,25 +242,25 @@ module.exports = React.createClass( {
 				y: 0,
 				duration: 250,
 				onComplete: () => {
-					if ( this.isMounted() ) {
+					if ( this._isMounted ) {
 						this.updateScroll( { triggeredByScroll: false } );
 					}
 					this.isScrolling = false;
-				}
+				},
 			} );
 		}
-	},
+	}
 
-	updateScroll: function( options ) {
-		var url = page.current,
-			newState;
+	updateScroll( options ) {
+		const url = page.current;
+		let newState;
 
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
 
 		this.lastScrollTop = this.getCurrentScrollTop();
-		InfiniteListActions.storeScroll( url, this.lastScrollTop );
+		ScrollStore.storeScrollTop( url, this.lastScrollTop );
 		this.scrollHelper.updateContextHeight( this.getCurrentContextHeight() );
 		this.scrollHelper.scrollPosition = this.lastScrollTop;
 		this.scrollHelper.triggeredByScroll = options.triggeredByScroll;
@@ -253,7 +274,7 @@ module.exports = React.createClass( {
 				topPlaceholderHeight: this.scrollHelper.topPlaceholderHeight,
 				lastRenderedIndex: this.scrollHelper.lastRenderedIndex,
 				bottomPlaceholderHeight: this.scrollHelper.bottomPlaceholderHeight,
-				scrollTop: this.lastScrollTop
+				scrollTop: this.lastScrollTop,
 			};
 
 			// Force one more check on next animation frame,
@@ -262,37 +283,40 @@ module.exports = React.createClass( {
 
 			debug( 'new scroll positions', newState, this.state );
 			this.smartSetState( newState );
-			InfiniteListActions.storePositions( url, newState );
+			ScrollStore.storePositions( url, newState );
 		}
 
-		this.scrollRAFHandle = raf( this.scrollChecks );
-	},
+		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
+	}
 
-	boundsForRef: function( ref ) {
+	boundsForRef = ref => {
 		if ( ref in this.refs ) {
-			return this.refs[ ref ].getDOMNode().getBoundingClientRect();
+			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
 		return null;
-	},
+	};
 
 	/**
 	 * Returns a list of visible item indexes. This includes any items that are
-	 * partially visible in the viewport.
-	 * @param options.offsetTop - in pixels, 0 if unspecified
-	 * @param options.offsetBottom - in pixels, 0 if unspecified
-	 * @returns {Array}
+	 * partially visible in the viewport. Instance method that is called externally
+	 * (via a ref) by a parent component.
+	 * @param {Object} options - offset properties
+	 * @param {Integer} options.offsetTop - in pixels, 0 if unspecified
+	 * @param {Integer} options.offsetBottom - in pixels, 0 if unspecified
+	 * @returns {Array} This list of indexes
 	 */
-	getVisibleItemIndexes: function( options ) {
-		var container = React.findDOMNode( this ),
+	getVisibleItemIndexes( options ) {
+		const container = ReactDom.findDOMNode( this ),
 			visibleItemIndexes = [],
 			firstIndex = this.state.firstRenderedIndex,
 			lastIndex = this.state.lastRenderedIndex,
-			offsetTop = options && options.offsetTop ? options.offsetTop : 0,
-			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0,
-			windowHeight,
+			offsetTop = options && options.offsetTop ? options.offsetTop : 0;
+		let windowHeight,
 			rect,
 			children,
-			i;
+			i,
+			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
+
 		offsetBottom = offsetBottom || 0;
 		if ( lastIndex > -1 ) {
 			// stored item heights are not reliable at all in scroll helper,
@@ -304,27 +328,35 @@ module.exports = React.createClass( {
 				windowHeight = window.innerHeight || document.documentElement.clientHeight;
 				if (
 					( rect.top < 0 && Math.abs( rect.top ) < rect.height - offsetTop ) ||
-					( rect.top > 0 && rect.top < windowHeight - offsetBottom ) ) {
+					( rect.top > 0 && rect.top < windowHeight - offsetBottom )
+				) {
 					visibleItemIndexes.push( {
 						index: firstIndex + i - 1,
-						bounds: rect
+						bounds: rect,
 					} );
 				}
 			}
 		}
 		return visibleItemIndexes;
-	},
+	}
 
-	render: function() {
-		var lastRenderedIndex = this.state.lastRenderedIndex,
-			itemsToRender = [],
-			propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
-			spacerClassName = 'infinite-list__spacer',
-			i;
+	render() {
+		const propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
+			spacerClassName = 'infinite-list__spacer';
+		let i,
+			lastRenderedIndex = this.state.lastRenderedIndex,
+			itemsToRender = [];
 
 		if ( lastRenderedIndex === -1 || lastRenderedIndex > this.props.items.length - 1 ) {
-			debug( 'resetting lastRenderedIndex, currently at %s, %d items', lastRenderedIndex, this.props.items.length );
-			lastRenderedIndex = Math.min( this.state.firstRenderedIndex + this.scrollHelper.initialLastRenderedIndex(), this.props.items.length - 1 );
+			debug(
+				'resetting lastRenderedIndex, currently at %s, %d items',
+				lastRenderedIndex,
+				this.props.items.length
+			);
+			lastRenderedIndex = Math.min(
+				this.state.firstRenderedIndex + this.scrollHelper.initialLastRenderedIndex(),
+				this.props.items.length - 1
+			);
 			debug( 'reset lastRenderedIndex to %s', lastRenderedIndex );
 		}
 
@@ -339,41 +371,45 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div {...propsToTransfer}>
-				<div ref="topPlaceholder"
+			<div { ...propsToTransfer }>
+				<div
+					ref="topPlaceholder"
 					className={ spacerClassName }
-					style={ { height: this.state.topPlaceholderHeight } } />
+					style={ { height: this.state.topPlaceholderHeight } }
+				/>
 				{ itemsToRender }
 				{ this.props.renderTrailingItems() }
-				<div ref="bottomPlaceholder"
+				<div
+					ref="bottomPlaceholder"
 					className={ spacerClassName }
-					style={ { height: this.state.bottomPlaceholderHeight } } />
+					style={ { height: this.state.bottomPlaceholderHeight } }
+				/>
 			</div>
 		);
-	},
+	}
 
-	_setContainerY: function( position ) {
+	_setContainerY( position ) {
 		if ( this.props.context && this.props.context !== window ) {
 			this.props.context.scrollTop = position;
 			return;
 		}
 		window.scrollTo( 0, position );
-	},
+	}
 
 	/**
 	 * We are manually setting the scroll position to the last remembered one, so we
 	 * want to override the scroll position that would otherwise get applied from
 	 * HTML5 history.
 	 */
-	_overrideHistoryScroll: function() {
+	_overrideHistoryScroll() {
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
-	},
+	}
 
-	_resetScroll: function( event ) {
-		var position = this.state.scrollTop;
+	_resetScroll = event => {
+		const position = this.state.scrollTop;
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
@@ -381,14 +417,13 @@ module.exports = React.createClass( {
 		this._setContainerY( position );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		debug( 'override scroll position from HTML5 history popstate:', position );
-	},
+	};
 
 	/**
 	 * Determine whether context is available or still being rendered.
 	 * @return {bool} whether context is available
 	 */
-	_contextLoaded: function() {
+	_contextLoaded() {
 		return this.props.context || this.props.context === false || ! ( 'context' in this.props );
 	}
-
-} );
+}

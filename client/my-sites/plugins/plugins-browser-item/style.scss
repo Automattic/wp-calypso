@@ -1,10 +1,9 @@
 .plugins-browser-item {
-	border-left: 1px solid lighten( $gray, 30% );
+	border-left: 1px solid $gray-lighten-30;
 	box-sizing: border-box;
 	cursor: pointer;
 	display: block;
 	float: left;
-	height: 96px;
 	margin: 0;
 	position: relative;
 	overflow: hidden;
@@ -15,7 +14,7 @@
 	}
 
 	.plugins-browser-item__link {
-		padding: 16px;
+		padding: 16px 16px 48px;
 		display: block;
 	}
 
@@ -27,27 +26,15 @@
 		}
 
 		&:nth-child( n + 4 ) {
-			border-top: 1px solid lighten( $gray, 30% );
+			border-top: 1px solid $gray-lighten-30;
 		}
 	}
 
 	@include breakpoint( "<960px" ) {
-		width: 50%;
-
-		&:nth-child( 2n + 1 )  {
-			border-left: 0;
-		}
-
-		&:nth-child( n + 3 ) {
-			border-top: 1px solid lighten( $gray, 30% );
-		}
-	}
-
-	@include breakpoint( "<480px" ) {
 		width: 100%;
 
 		&:nth-child( n + 2 ) {
-			border-top: 1px solid lighten( $gray, 30% );
+			border-top: 1px solid $gray-lighten-30;
 		}
 
 		&.is-empty {
@@ -58,8 +45,8 @@
 
 .plugins-browser-item {
 	.plugin-icon {
-		width: 40px;
-		height: 40px;
+		width: 48px;
+		height: 48px;
 
 		&.is-placeholder {
 			animation: loading-fade 1.6s ease-in-out infinite;
@@ -69,58 +56,61 @@
 
 .plugins-browser-item__info {
 	overflow: hidden; // lazy clearfix
-	margin-bottom: 5px;
 }
 
 .plugins-browser-item__title,
 .plugins-browser-item__author {
-	margin-left: 52px;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
+	margin-left: 60px;
 
 	.is-placeholder & {
 		color: transparent;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
 .plugins-browser-item__title {
-	color: darken( $gray, 20% );
+	color: $gray-dark;
 	font-weight: 600;
-	font-size: 14px;
+	font-size: 15px;
+	margin-top: 3px;
 }
 
 .plugins-browser-item__author {
-	color: $gray;
-	font-size: 10px;
-	text-transform: uppercase;
-}
-
-.plugins-browser-item .plugin-icon.is-placeholder,
-.plugins-browser-item .plugin-icon[style*='undefined'] {
-	&:before {
-		width: 40px;
-		height: 40px;
-		font: normal 40px/40px Noticons;
-	}
+	color: $gray-text-min;
+	font-size: 13px;
 }
 
 .plugins-browser-item .plugin-icon {
 	margin-right: 0;
 }
 
-.plugins-browser-item  .rating {
-	padding-top: 10px;
+.plugins-browser-item .rating {
+	margin-top: 12px;
+	position: absolute;
 }
 
 .plugins-browser-item__installed {
+	display: flex;
+	align-items: center;
 	position: absolute;
-		bottom: 8px;
+		bottom: 16px;
 		right: 16px;
-	color: $gray;
-	font-size: 10px;
-	text-transform: uppercase;
+	color: $alert-green;
+	font-size: 12px;
+	font-weight: 500;
 	animation: appear .15s ease-in;
+
+	.gridicon {
+		margin-right: 3px;
+	}
+}
+
+.button.plugins-browser-item__upgrade-button {
+	position: absolute;
+		bottom: 16px;
+		right: 16px;
 }

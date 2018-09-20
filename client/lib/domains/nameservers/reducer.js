@@ -1,63 +1,71 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react/addons';
+
+import update from 'immutability-helper';
 
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
+import {
+	NAMESERVERS_FETCH,
+	NAMESERVERS_FETCH_COMPLETED,
+	NAMESERVERS_FETCH_FAILED,
+	NAMESERVERS_UPDATE_COMPLETED,
+} from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	isFetching: false,
 	hasLoadedFromServer: false,
-	list: null
+	list: null,
 };
 
 /**
- * @desc Updates nameservers entry for given domain.
+ * @desc Updates name servers entry for given domain.
  *
  * @param {Object} [state] Current state.
  * @param {string} [domainName] Domain name.
- * @param {Object} [data] Domain nameservers data.
+ * @param {Object} [data] Domain name servers data.
  * @return {Object} New state
  */
 function updateState( state, domainName, data ) {
 	const command = {
 		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data )
-		}
+			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data ),
+		},
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.NAMESERVERS_FETCH:
+		case NAMESERVERS_FETCH:
 			state = updateState( state, action.domainName, {
-				isFetching: true
+				isFetching: true,
 			} );
 			break;
-		case UpgradesActionTypes.NAMESERVERS_FETCH_FAILED:
+		case NAMESERVERS_FETCH_FAILED:
 			state = updateState( state, action.domainName, {
-				isFetching: false
+				isFetching: false,
 			} );
 			break;
-		case UpgradesActionTypes.NAMESERVERS_FETCH_COMPLETED:
+		case NAMESERVERS_FETCH_COMPLETED:
 			state = updateState( state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,
-				list: action.nameservers
+				list: action.nameservers,
 			} );
 			break;
-		case UpgradesActionTypes.NAMESERVERS_UPDATE_COMPLETED:
+		case NAMESERVERS_UPDATE_COMPLETED:
 			state = updateState( state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,
-				list: action.nameservers
+				list: action.nameservers,
 			} );
 			break;
 	}
@@ -65,7 +73,4 @@ function reducer( state, payload ) {
 	return state;
 }
 
-export {
-	initialDomainState,
-	reducer
-};
+export { initialDomainState, reducer };

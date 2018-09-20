@@ -1,6 +1,9 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
 
 /**
@@ -8,33 +11,33 @@ import React from 'react';
  */
 import CompactCard from 'components/card/compact';
 import HelpResult from './item';
+import SectionHeader from 'components/section-header';
 
-module.exports = React.createClass( {
-	displayName: 'HelpResults',
+export default class extends React.PureComponent {
+	static displayName = 'HelpResults';
 
-	mixins: [ React.addons.PureRenderMixin ],
-
-	render: function() {
+	render() {
 		if ( ! this.props.helpLinks.length ) {
 			return null;
 		}
 
 		return (
 			<div className="help-results">
-				<CompactCard className="help-results__header">
-					<span className="help-results__header-text">
-						{ this.props.header }
-					</span>
-				</CompactCard>
-				{ this.props.helpLinks.map( helpLink => <HelpResult key={ helpLink.link } helpLink={ helpLink } iconPathDescription={ this.props.iconPathDescription } /> ) }
-				<a href={ this.props.searchLink } target="__blank" >
+				<SectionHeader label={ this.props.header } />
+				{ this.props.helpLinks.map( helpLink => (
+					<HelpResult
+						key={ helpLink.link }
+						helpLink={ helpLink }
+						iconTypeDescription={ this.props.iconTypeDescription }
+						onClick={ this.props.onClick }
+					/>
+				) ) }
+				<a href={ this.props.searchLink } target="__blank">
 					<CompactCard className="help-results__footer">
-						<span className="help-results__footer-text">
-							{ this.props.footer }
-						</span>
+						<span className="help-results__footer-text">{ this.props.footer }</span>
 					</CompactCard>
 				</a>
 			</div>
 		);
 	}
-} );
+}

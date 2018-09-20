@@ -1,14 +1,14 @@
 All Sites Icon
 ==============
 
-This component is used to display a composite grid of site icons from the user's sites. It takes the sites-list instance object as a prop.
+This component is used to display a composite grid of site icons from the user's sites. It takes an array of all user's sites as a prop.
 
 #### How to use:
 
 ```js
-var AllSitesIcon = require( 'my-sites/all-sites-icon' );
+import AllSitesIcon from 'my-sites/all-sites-icon';
 
-render: function() {
+render() {
 	return (
 		<div className="your-stuff">
 			<AllSitesIcon sites={ sitesList } />

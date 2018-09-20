@@ -12,3 +12,13 @@
 		content: '\00a0';
 	}
 }
+
+@mixin placeholder-dark( $darken-percentage: 30% ) {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: darken( $gray, $darken-percentage );
+	color: transparent;
+
+	&:after {
+		content: '\00a0';
+	}
+}

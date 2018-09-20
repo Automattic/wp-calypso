@@ -1,0 +1,83 @@
+.is-reader-page .discover-attribution {
+	align-items: flex-start;
+	display: flex;
+	color: $gray;
+	font-size: 13px;
+	font-family: $sans;
+	margin-bottom: 8px;
+	margin-top: 13px;
+	position: relative;
+	text-transform: lowercase;
+
+	&.is-site {
+		margin-top: 15px;
+	}
+
+	.discover-attribution__site-title {
+		flex-shrink: 0;
+		line-height: 1.6;
+		max-height: 13px * 1.6;
+		overflow: hidden;
+		position: relative;
+		max-width: calc( 100% - 95px );
+	}
+
+	.gravatar {
+		background: $gray-light;
+		position: relative;
+		margin: 1px 6px 1px 0;
+	}
+
+	.discover-attribution__author,
+	.discover-attribution__blog {
+		color: $blue-medium;
+		text-decoration: none;
+		text-transform: none;
+
+		&:hover {
+			color: $blue-light;
+		}
+	}
+
+	.discover-attribution__blog {
+		margin-right: 6px;
+	}
+
+	.site-icon {
+		margin-right: 6px;
+		background: $gray-lighten-20;
+
+		.gridicon {
+			color: $white;
+		}
+	}
+
+	.site-icon:not(.is-blank) {
+		background: inherit;
+	}
+
+	.follow-button {
+		background: transparent;
+		border: 0;
+		color: $gray-lighten-10;
+		float: none;
+		font-size: 13px;
+		padding: 0;
+		position: relative;
+			top: -1px;
+
+		&.is-following {
+			color: $alert-green;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		.follow-button__label {
+			@include breakpoint( "<660px" ) {
+				display: inline-block;
+			}
+		}
+	}
+}

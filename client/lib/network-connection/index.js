@@ -1,24 +1,29 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:network-connection' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	request = require( 'superagent' );
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:network-connection' );
+import Emitter from 'lib/mixins/emitter';
+import request from 'superagent';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	PollerPool = require( 'lib/data-poller' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	notices = require( 'notices' );
+import config from 'config';
+import PollerPool from 'lib/data-poller';
 
-var STATUS_CHECK_INTERVAL = 20000,
+import { connectionLost, connectionRestored } from 'state/application/actions';
+
+let STATUS_CHECK_INTERVAL = 20000,
 	connected = true,
 	NetworkConnectionApp;
 
 NetworkConnectionApp = {
-
 	/**
 	 * @returns {boolean}
 	 */
@@ -29,10 +34,8 @@ NetworkConnectionApp = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 */
-	init: function() {
-		var changeCallback,
-			disconnectedNotice = null,
-			connectedNotice = null;
+	init: function( reduxStore ) {
+		let changeCallback;
 
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
@@ -41,51 +44,35 @@ NetworkConnectionApp = {
 		changeCallback = function() {
 			if ( connected ) {
 				debug( 'Showing notice "Connection restored".' );
-				if ( disconnectedNotice ) {
-					notices.removeNotice( disconnectedNotice );
-					disconnectedNotice = null;
-				}
-				connectedNotice = notices.success(
-					i18n.translate( 'Connection restored.' ),
-					{
-						showDismiss: false,
-						duration: 5000,
-						persistent: true
-					}
-				);
+				reduxStore.dispatch( connectionRestored( i18n.translate( 'Connection restored.' ) ) );
 			} else {
-				debug( 'Showing notice "No internet connection".' );
-				if ( connectedNotice ) {
-					notices.removeNotice( connectedNotice );
-					connectedNotice = null;
-				}
-				disconnectedNotice = notices.warning(
-					i18n.translate( 'Not connected. Some information may be out of sync.' ),
-					{
-						showDismiss: false,
-						persistent: true
-					}
+				reduxStore.dispatch(
+					connectionLost( i18n.translate( 'Not connected. Some information may be out of sync.' ) )
 				);
+				debug( 'Showing notice "No internet connection".' );
 			}
 		};
 
 		if ( config.isEnabled( 'desktop' ) ) {
-			connected = typeof navigator !== 'undefined' ? !!navigator.onLine : true;
+			connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
 
 			window.addEventListener( 'online', this.emitConnected.bind( this ) );
 			window.addEventListener( 'offline', this.emitDisconnected.bind( this ) );
 		} else {
 			PollerPool.add( this, 'checkNetworkStatus', {
-				interval: STATUS_CHECK_INTERVAL
+				interval: STATUS_CHECK_INTERVAL,
 			} );
 		}
 
 		this.on( 'change', changeCallback );
 
-		window.addEventListener( 'beforeunload', function() {
-			debug( 'Removing listener.' );
-			this.off( 'change', changeCallback );
-		}.bind( this ) );
+		window.addEventListener(
+			'beforeunload',
+			function() {
+				debug( 'Removing listener.' );
+				this.off( 'change', changeCallback );
+			}.bind( this )
+		);
 	},
 
 	/**
@@ -95,15 +82,18 @@ NetworkConnectionApp = {
 	checkNetworkStatus: function() {
 		debug( 'Checking network status.' );
 
-		request.head( '/version?' + ( new Date() ).getTime() )
+		request
+			.head( '/version?' + new Date().getTime() )
 			.timeout( STATUS_CHECK_INTERVAL / 2 )
-			.end( function( error, response ) { // eslint-disable-line no-unused-vars
-				if ( error ) {
-					this.emitDisconnected();
-				} else {
-					this.emitConnected();
-				}
-			}.bind( this ) );
+			.end(
+				function( error ) {
+					if ( error ) {
+						this.emitDisconnected();
+					} else {
+						this.emitConnected();
+					}
+				}.bind( this )
+			);
 	},
 
 	/**
@@ -139,7 +129,7 @@ NetworkConnectionApp = {
 	 */
 	isConnected: function() {
 		return connected;
-	}
+	},
 };
 
 /**
@@ -147,4 +137,4 @@ NetworkConnectionApp = {
  */
 Emitter( NetworkConnectionApp );
 
-module.exports = NetworkConnectionApp;
+export default NetworkConnectionApp;

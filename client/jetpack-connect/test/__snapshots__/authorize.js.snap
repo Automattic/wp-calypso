@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JetpackAuthorize renders as expected 1`] = `
+<Connect(Localized(JetpackConnectMainWrapper))>
+  <div
+    className="jetpack-connect__authorize-form"
+  >
+    <div
+      className="jetpack-connect__logged-in-form"
+    >
+      <Connect(QueryUserConnection)
+        siteId={98765}
+        siteIsOnSitesList={false}
+      />
+      <Connect(Localized(AuthFormHeader))
+        authQuery={
+          Object {
+            "authApproved": false,
+            "blogname": "Example Blog",
+            "clientId": 98765,
+            "from": "banner-44-slide-1-dashboard",
+            "homeUrl": "http://an.example.site",
+            "jpVersion": "5.4",
+            "nonce": "fooBarNonce",
+            "redirectAfterAuth": "http://an.example.site/wp-admin/admin.php?page=jetpack",
+            "redirectUri": "http://an.example.site/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack",
+            "scope": "administrator:fooBarBaz",
+            "secret": "fooBarSecret",
+            "site": "http://an.example.site",
+            "siteIcon": "",
+            "siteUrl": "http://an.example.site",
+            "state": "1",
+            "userEmail": "email@an.example.site",
+          }
+        }
+      />
+      <Card
+        highlight={false}
+        tagName="div"
+      >
+        <Connect(Gravatar)
+          size={64}
+          user={
+            Object {
+              "display_name": "A User's Name",
+            }
+          }
+        />
+        <p
+          className="jetpack-connect__logged-in-form-user-text"
+        >
+          Connecting as {{strong}}%(user)s{{/strong}}
+        </p>
+        <LoggedOutFormFooter
+          className="jetpack-connect__action-disclaimer"
+        >
+          <Connect(Localized(JetpackConnectDisclaimer))
+            siteName="Example Blog"
+          />
+          <Button
+            disabled={false}
+            onClick={[Function]}
+            primary={true}
+            type="button"
+          >
+            Approve
+          </Button>
+        </LoggedOutFormFooter>
+      </Card>
+      <LoggedOutFormLinks>
+        <LoggedOutFormLinkItem
+          href="http://an.example.site/wp-admin/admin.php?page=jetpack"
+        >
+          <t
+            icon="arrow-left"
+            size={18}
+          />
+           
+          Return to %(sitename)s
+        </LoggedOutFormLinkItem>
+        <LoggedOutFormLinkItem
+          href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F"
+        >
+          Sign in as a different user
+        </LoggedOutFormLinkItem>
+        <LoggedOutFormLinkItem
+          onClick={[Function]}
+        >
+          Create a new account
+        </LoggedOutFormLinkItem>
+        <Connect(Localized(JetpackConnectHappychatButton))
+          eventName="calypso_jpc_authorize_chat_initiated"
+        >
+          <Connect(Localized(JetpackConnectHelpButton)) />
+        </Connect(Localized(JetpackConnectHappychatButton))>
+      </LoggedOutFormLinks>
+    </div>
+  </div>
+</Connect(Localized(JetpackConnectMainWrapper))>
+`;

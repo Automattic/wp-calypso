@@ -1,0 +1,48 @@
+/** @format */
+.disconnect-site__card {
+	position: relative;
+	padding: 24px;
+
+	@include breakpoint( '<480px' ) {
+		max-width: 300px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		margin-top: 2em;
+		max-width: 500px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		margin-top: 17px;
+		max-width: 800px;
+	}
+}
+
+.disconnect-site__site-settings {
+	.section-header__label:before {
+		background: inherit;
+	}
+}
+
+.disconnect-site__survey-other-option {
+	align-items: center;
+	display: flex;
+	white-space: nowrap;
+
+	.form-text-input {
+		line-height: 1em;
+		margin-left: 8px;
+	}
+}
+
+.disconnect-site__navigation-links {
+	text-align: center;
+}
+
+// 'Missing Feature' page
+.disconnect-site__missing-feature {
+	.button {
+		margin-top: 16px;
+		float: right;
+	}
+}

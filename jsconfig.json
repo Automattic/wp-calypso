@@ -1,10 +1,22 @@
 {
 	"compilerOptions": {
-		"target": "ES6"
+		"allowSyntheticDefaultImports": true,
+		"module": "commonjs",
+		"target": "ES6",
+		"baseUrl": ".",
+		"paths": {
+			"*": [
+				"test/*",
+				"server/*",
+				"client/*"
+			]
+		}
 	},
 	"exclude": [
-		"build",
 		"node_modules",
-		"public"
+		"**/node_modules/*",
+		"public",
+		"build"
 	]
 }
+

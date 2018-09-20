@@ -1,8 +1,14 @@
-var i18n = require( 'lib/mixins/i18n' );
+/** @format */
+
+/**
+ * External dependencies
+ */
+
+import i18n from 'i18n-calypso';
 
 const MILLIS_IN_MINUTE = 60 * 1000;
 
-module.exports = function humanDate( dateOrMoment ) {
+export default function humanDate( dateOrMoment, dateFormat = 'll' ) {
 	const now = i18n.moment();
 	dateOrMoment = i18n.moment( dateOrMoment );
 
@@ -12,44 +18,38 @@ module.exports = function humanDate( dateOrMoment ) {
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE ) {
-		let seconds = Math.ceil( millisAgo / 1000 );
-		return i18n.translate( '%(seconds)ds ago', {
-			args: {
-				seconds: seconds
-			},
-			comment: 'example for a resulting string: 3s ago'
-		} );
+		return i18n.translate( 'just now' );
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 ) {
-		let minutes = Math.ceil( millisAgo / ( MILLIS_IN_MINUTE ) );
+		const minutes = Math.ceil( millisAgo / MILLIS_IN_MINUTE );
 		return i18n.translate( '%(minutes)dm ago', {
 			args: {
-				minutes: minutes
+				minutes: minutes,
 			},
-			comment: 'example for a resulting string: 2m ago'
+			comment: 'example for a resulting string: 2m ago',
 		} );
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 ) {
-		let hours = now.diff( dateOrMoment, 'hours' );
+		const hours = now.diff( dateOrMoment, 'hours' );
 		return i18n.translate( '%(hours)dh ago', {
 			args: {
-				hours: hours
+				hours: hours,
 			},
-			comment: 'example for a resulting string: 5h ago'
+			comment: 'example for a resulting string: 5h ago',
 		} );
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE * 60 * 24 * 7 ) {
-		let days = now.diff( dateOrMoment, 'days' );
+		const days = now.diff( dateOrMoment, 'days' );
 		return i18n.translate( '%(days)dd ago', {
 			args: {
-				days: days
+				days: days,
 			},
-			comment: 'example for a resulting string: 4d ago'
+			comment: 'example for a resulting string: 4d ago',
 		} );
 	}
 
-	return dateOrMoment.format( 'll' );
-};
+	return dateOrMoment.format( dateFormat );
+}

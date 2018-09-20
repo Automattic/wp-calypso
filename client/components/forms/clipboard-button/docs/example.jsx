@@ -1,43 +1,40 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var ClipboardButton = require( '../' );
+import ClipboardButton from '../';
 
-module.exports = React.createClass( {
-	displayName: 'ClipboardButtons',
+export default class extends React.PureComponent {
+	static displayName = 'ClipboardButtons';
 
-	mixins: [ React.addons.PureRenderMixin ],
+	state = {
+		isCopied: false,
+	};
 
-	getInitialState: function() {
-		return {
-			isCopied: false
-		};
-	},
-
-	onCopy: function() {
+	onCopy = () => {
 		this.setState( {
-			isCopied: true
+			isCopied: true,
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/clipboard-buttons">Clipboard Buttons</a>
-				</h2>
+			<div>
 				<ClipboardButton
 					onCopy={ this.onCopy }
 					text="This text was copied via ClipboardButton"
-					style={ { float: 'none' } }>
+					style={ { float: 'none' } }
+				>
 					{ this.state.isCopied ? 'Copied!' : 'Copy to clipboard' }
 				</ClipboardButton>
 			</div>
 		);
 	}
-} );
+}

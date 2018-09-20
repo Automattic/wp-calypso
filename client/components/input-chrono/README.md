@@ -8,8 +8,7 @@ React component that creates a Date object from a user-entered textual date desc
 ```js
 import InputChrono from 'components/input-chrono';
 
-export default React.createClass( {
-
+export default class extends React.Component {
 	// ...
 
 	onSet( date ) {
@@ -17,14 +16,9 @@ export default React.createClass( {
 	},
 
 	render() {
-		return (
-			<InputChrono
-				onSet={ this.onSet }
-			</InputChrono>
-		);
-	}
-
-} );
+		return <InputChrono onSet={ this.onSet }/>;
+	} 
+}
 ```
 
 ---

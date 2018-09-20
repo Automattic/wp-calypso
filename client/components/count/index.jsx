@@ -1,21 +1,41 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { omit } from 'lodash';
 
-export default React.createClass( {
+/**
+ * Internal dependencies
+ */
+import formatNumberCompact from 'lib/format-number-compact';
 
-	displayName: 'Count',
+export const Count = ( { count, compact, numberFormat, primary, ...inheritProps } ) => {
+	return (
+		// Omit props passed from the `localize` higher-order component that we don't need.
+		<span
+			className={ classnames( 'count', { 'is-primary': primary } ) }
+			{ ...omit( inheritProps, [ 'translate', 'moment' ] ) }
+		>
+			{ compact ? formatNumberCompact( count ) || numberFormat( count ) : numberFormat( count ) }
+		</span>
+	);
+};
 
-	mixins: [ React.addons.PureRenderMixin ],
+Count.propTypes = {
+	count: PropTypes.number.isRequired,
+	numberFormat: PropTypes.func,
+	primary: PropTypes.bool,
+	compact: PropTypes.bool,
+};
 
-	propTypes: {
-		count: React.PropTypes.number.isRequired,
-	},
+Count.defaultProps = {
+	primary: false,
+	compact: false,
+};
 
-	render() {
-		return (
-			<span className="count">{ this.numberFormat( this.props.count ) }</span>
-		);
-	}
-} );
+export default localize( Count );

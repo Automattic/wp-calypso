@@ -1,31 +1,30 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var reject = require( 'lodash/collection/reject' ),
-	isArray = require( 'lodash/lang/isArray' ),
-	clone = require( 'lodash/lang/clone' ),
-	indexOf = require( 'lodash/array/indexOf' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	pullAt = require( 'lodash/array/pullAt' ),
-	debug = require( 'debug' )( 'calypso:my-sites:plugins:log-store' );
+
+import { clone, findIndex, indexOf, isArray, pullAt } from 'lodash';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
-var _errors = [],
+let _errors = [],
 	_inProgress = [],
 	_completed = [],
 	LogStore;
 
 function addLog( status, action, site, plugin, error ) {
-	var log = {
+	const log = {
 		status: status,
 		action: action,
 		site: site,
-		plugin: plugin
+		plugin: plugin,
 	};
 
 	debug( 'add in ' + status + ' data:', log );
@@ -45,28 +44,25 @@ function addLog( status, action, site, plugin, error ) {
 	}
 }
 
-function removeLog( log ) {
-	debug( 'removing log:', log );
-	switch ( log.status ) {
+function clearLog( status ) {
+	debug( 'clearing log:', status );
+	switch ( status ) {
 		case 'error':
-			_errors = reject( _errors, log );
-			debug( 'current errors:', _errors );
+			_errors = [];
 			break;
 
 		case 'inProgress':
-			_inProgress = reject( _inProgress, log );
-			debug( 'current in progress:', _inProgress );
+			_inProgress = [];
 			break;
 
 		case 'completed':
-			_completed = reject( _completed, log );
-			debug( 'current completed:', _completed );
+			_completed = [];
 			break;
 	}
 }
 
 function removeSingleLog( log ) {
-	var index;
+	let index;
 	debug( 'removing log:', log );
 	switch ( log.status ) {
 		case 'error':
@@ -90,7 +86,6 @@ function removeSingleLog( log ) {
 }
 
 LogStore = {
-
 	getErrors: function() {
 		return clone( _errors );
 	},
@@ -104,9 +99,9 @@ LogStore = {
 	},
 
 	isInProgressAction: function( siteId, pluginSlug, action ) {
-		var dones = arguments.length;
+		const dones = arguments.length;
 		return _inProgress.some( function( log ) {
-			var done = 0;
+			let done = 0;
 			if ( action && isArray( action ) ) {
 				if ( indexOf( action, log.action ) !== -1 ) {
 					done++;
@@ -129,16 +124,16 @@ LogStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 LogStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	debug( 'register event Type', action.type, payload );
 	switch ( action.type ) {
 		case 'REMOVE_PLUGINS_NOTICES':
-			action.logs.forEach( removeLog );
+			action.logs.forEach( clearLog );
 			LogStore.emitChange();
 			break;
 		case 'UPDATE_PLUGIN':
@@ -162,7 +157,7 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 				status: 'inProgress',
 				action: action.action,
 				site: action.site,
-				plugin: action.plugin
+				plugin: action.plugin,
 			} );
 			if ( action.type === 'RECEIVE_ACTIVATED_PLUGIN' ) {
 				if ( ! ( action.data && action.data.active ) && ! action.error ) {
@@ -170,12 +165,21 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 				}
 			}
 
-			if ( action.error && [ 'activation_error', 'deactivation_error' ].indexOf( action.error.error ) === -1 ) {
+			if (
+				action.error &&
+				[ 'activation_error', 'deactivation_error' ].indexOf( action.error.error ) === -1
+			) {
 				addLog( 'error', action.action, action.site, action.plugin, action.error );
 			} else {
 				addLog( 'completed', action.action, action.site, action.plugin );
 			}
 			LogStore.emitChange();
+			break;
+		case 'RECEIVE_PLUGINS':
+			if ( action.error ) {
+				addLog( 'error', action.action, action.site, null, action.error );
+				LogStore.emitChange();
+			}
 			break;
 	}
 } );
@@ -183,4 +187,4 @@ LogStore.dispatchToken = Dispatcher.register( function( payload ) {
 // Add the Store to the emitter so we can emit change events.
 emitter( LogStore );
 
-module.exports = LogStore;
+export default LogStore;

@@ -1,0 +1,17 @@
+.wp-block-a8c-markdown__placeholder {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.wp-block-a8c-markdown__preview {
+	min-height: 1.8em;
+}
+
+.wp-block-a8c-markdown {
+	.wp-block-a8c-markdown__editor {
+		&:focus {
+			border-color: transparent;
+			box-shadow: 0 0 0 transparent;
+		}
+	}
+}

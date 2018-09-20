@@ -1,21 +1,22 @@
 .profile-link {
 	margin-bottom: 15px;
 	position: relative;
-	padding-left: 60px;
+	padding-left: 62px;
 	height: 50px;
 
 	&.is-placeholder {
-		.profile-link__image,
+		.profile-link__image-link,
 		.profile-link__title,
 		.profile-link__url,
 		.profile-link__remove {
 			color: transparent;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
 		.profile-link__title {
-			height: 15px;
+			height: 18px;
+			margin-bottom: 2px;
 		}
 
 		.profile-link__url {
@@ -24,7 +25,7 @@
 
 	}
 
-	.action-remove {
+	.profile-link__remove {
 		float: none;
 		position: absolute;
 		top: 0;
@@ -32,13 +33,14 @@
 	}
 }
 
-.profile-link__image {
+.profile-link__image-link {
 	display: block;
-	height: 50px;
+	height: 32px;
 	width: 50px;
 	position: absolute;
 	top: 0;
 	left: 0;
+	border: 1px solid $gray-lighten-30;
 }
 
 .profile-link__link {
@@ -46,12 +48,15 @@
 }
 
 .profile-link__title {
-	display: block;
-	font-size: 15px;
-	text-decoration: underline;
-	font-weight: bold;
+	color: $gray-dark;
+	float: left;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.4;
 	overflow: hidden;
 	white-space: nowrap;
+	width: 100%;
+	text-decoration: none;
 
 	&:after {
 		@include long-content-fade( $size: 45% );
@@ -59,7 +64,9 @@
 }
 
 .profile-link__url {
-	display: block;
-	font-size: 12px;
+	font-size: 11px;
+	line-height: 1.4;
 	color: $gray;
+	float: left;
+	clear: left;
 }

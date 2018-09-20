@@ -1,12 +1,15 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import assign from 'lodash/object/assign';
+
+import { assign } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix } from 'lib/media/utils';
 import { MediaTypes } from '../constants';
 
 /**
@@ -17,15 +20,18 @@ import { MediaTypes } from '../constants';
  * @return {Object}      Normalized object
  */
 export function deserialize( node ) {
-	let normalized = {
-		media: assign( {
-			transient: false
-		}, node ),
-		appearance: {}
+	const normalized = {
+		media: assign(
+			{
+				transient: false,
+			},
+			node
+		),
+		appearance: {},
 	};
 
 	// Infer media type
-	switch ( MediaUtils.getMimePrefix( node ) ) {
+	switch ( getMimePrefix( node ) ) {
 		case 'image':
 			normalized.type = MediaTypes.IMAGE;
 			break;

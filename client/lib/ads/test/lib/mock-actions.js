@@ -1,26 +1,24 @@
-var site = require( './mock-site' ),
-	earnings = require( './mock-earnings' ),
-	settings = require( './mock-settings' );
+/** @format */
 
-module.exports = {
-	fetchedEarnings: {
-		type: 'RECEIVE_EARNINGS',
-		site: site,
-		error: null,
-		data: earnings
-	},
+/**
+ * Internal dependencies
+ */
 
+import site from './mock-site';
+import settings from './mock-settings';
+
+export default {
 	fetchedSettings: {
 		type: 'RECEIVE_WORDADS_SETTINGS',
 		site: site,
 		error: null,
-		data: settings
+		data: settings,
 	},
 
 	fetchedTos: {
 		type: 'RECEIVE_WORDADS_TOS',
 		site: site,
 		error: null,
-		data: { tos: 'signed' }
-	}
+		data: { tos: 'signed' },
+	},
 };

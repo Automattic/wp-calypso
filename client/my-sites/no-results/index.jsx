@@ -1,18 +1,16 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
-var noResults = React.createClass( {
+class NoResults extends React.Component {
+	static defaultProps = {
+		text: 'No results',
+		image: false,
+	};
 
-	getDefaultProps: function() {
-		return {
-			text: 'No results',
-			image: false
-		};
-	},
-
-	render: function() {
+	render() {
 		return (
 			<div className="no-results">
 				{ this.props.image ? <img className="no-results__img" src={ this.props.image } /> : null }
@@ -20,6 +18,6 @@ var noResults = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = noResults;
+export default NoResults;

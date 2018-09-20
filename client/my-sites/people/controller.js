@@ -1,115 +1,116 @@
+/** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import page from 'page';
-import route from 'lib/route';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import i18n from 'lib/mixins/i18n';
-import sitesList from 'lib/sites-list';
 import PeopleList from './main';
 import EditTeamMember from './edit-team-member-form';
-import qs from 'querystring';
-import layoutFocus from 'lib/layout-focus';
-import analytics from 'analytics';
-import titlecase from 'to-title-case';
-import UsersStore from 'lib/users/store';
-import UsersActions from 'lib/users/actions';
 import PeopleLogStore from 'lib/people/log-store';
-import titleActions from 'lib/screen-title/actions';
-
-/**
- * Module variables
- */
-const sites = sitesList();
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import InvitePeople from './invite-people';
+import PeopleInvites from './people-invites';
+import PeopleInviteDetails from './people-invite-details';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteFragment } from 'lib/route';
 
 export default {
-	redirectToTeam() {
-		// if we are redirecting we need to retain our intended layout-focus
-		layoutFocus.setNext( layoutFocus.getCurrent() );
-		page.redirect( '/people/team' );
-	},
+	redirectToTeam,
 
 	enforceSiteEnding( context, next ) {
-		let siteId = route.getSiteFragment( context.path );
+		const siteId = getSiteFragment( context.path );
 
 		if ( ! siteId ) {
-			this.redirectToTeam();
+			redirectToTeam( context );
 		}
 
 		next();
 	},
 
-	people( filter, context ) {
-		renderPeopleList( filter, context );
+	people( context, next ) {
+		renderPeopleList( context, next );
 	},
 
-	person( context ) {
-		renderSingleTeamMember( context );
-	}
+	invitePeople( context, next ) {
+		renderInvitePeople( context, next );
+	},
+
+	person( context, next ) {
+		renderSingleTeamMember( context, next );
+	},
+
+	peopleInvites( context, next ) {
+		renderPeopleInvites( context, next );
+	},
+
+	peopleInviteDetails( context, next ) {
+		renderPeopleInviteDetails( context, next );
+	},
 };
 
-function renderPeopleList( filter, context ) {
-	titleActions.setTitle( i18n.translate( 'People', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
-
-	React.render(
-		React.createElement( PeopleList, {
-			sites: sites,
-			peopleLog: PeopleLogStore,
-			filter: filter,
-			search: qs.parse( context.querystring ).s
-		} ),
-		document.getElementById( 'primary' )
-	);
-	analytics.pageView.record( 'people/' + filter + '/:site', 'People > ' + titlecase( filter ) );
+function redirectToTeam( context ) {
+	if ( context ) {
+		// if we are redirecting we need to retain our intended layout-focus
+		const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
+		context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
+	}
+	page.redirect( '/people/team' );
 }
 
-function renderSingleTeamMember( context ) {
-	let site,
-		siteId,
-		user,
-		userLogin = context.params.user_login;
+function renderPeopleList( context, next ) {
+	const filter = context.params.filter;
 
-	if ( ! sites.initialized ) {
-		sites.once( 'change', () => page( context.path ) );
-	}
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) );
 
-	site = sites.getSelectedSite();
-	siteId = site && site.ID ? site.ID : 0;
+	context.primary = React.createElement( PeopleList, {
+		peopleLog: PeopleLogStore,
+		filter: filter,
+		search: context.query.s,
+	} );
+	next();
+}
 
-	titleActions.setTitle( i18n.translate( 'View Team Member', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
+function renderInvitePeople( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
 
-	if ( siteId && 0 !== siteId ) {
-		user = UsersStore.getUserByLogin( siteId, userLogin );
+	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		if ( ! user ) {
-			UsersActions.fetchUser( { siteId: siteId }, userLogin );
-			PeopleLogStore.once( 'change', function() {
-				let fetchUserError = PeopleLogStore.getErrors(
-					log => siteId === log.siteId && 'RECEIVE_USER_FAILED' === log.action && userLogin === log.user
-				);
-				if ( fetchUserError.length ) {
-					layoutFocus.setNext( layoutFocus.getCurrent() );
-					page.redirect( '/people/team/' + site.slug );
-				}
-			} );
-		} else {
-			analytics.pageView.record( 'people/edit/:user_login/:site', 'View Team Member' );
-		}
-	}
+	context.primary = React.createElement( InvitePeople, {
+		site: site,
+	} );
+	next();
+}
 
-	React.render(
-		React.createElement( EditTeamMember, {
-			siteSlug: site && site.slug ? site.slug : undefined,
-			siteId: site && site.ID ? site.ID : undefined,
-			isJetpack: site && site.jetpack,
-			isMultisite: site && site.is_multisite,
-			userLogin: userLogin,
-			prevPath: context.prevPath
-		} ),
-		document.getElementById( 'primary' )
-	);
+function renderPeopleInvites( context, next ) {
+	context.store.dispatch( setTitle( i18n.translate( 'Invites', { textOnly: true } ) ) );
+
+	context.primary = React.createElement( PeopleInvites );
+	next();
+}
+
+function renderPeopleInviteDetails( context, next ) {
+	context.store.dispatch( setTitle( i18n.translate( 'Invite Details', { textOnly: true } ) ) );
+
+	context.primary = React.createElement( PeopleInviteDetails, {
+		inviteKey: context.params.invite_key,
+	} );
+	next();
+}
+
+function renderSingleTeamMember( context, next ) {
+	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+
+	context.primary = React.createElement( EditTeamMember, {
+		userLogin: context.params.user_login,
+	} );
+	next();
 }

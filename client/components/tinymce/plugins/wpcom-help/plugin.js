@@ -1,41 +1,43 @@
+/** @format */
+
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	tinymce = require( 'tinymce/tinymce' );
+
+import ReactDom from 'react-dom';
+import React from 'react';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
-const HelpModal = require( './help-modal' );
+import HelpModal from './help-modal';
 
 function wpcomHelpPlugin( editor ) {
-	var node;
+	let node;
 
 	editor.on( 'init', function() {
-		node = editor.getContainer().appendChild(
-			document.createElement( 'div' )
-		);
+		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
 	editor.on( 'remove', function() {
-		React.unmountComponentAtNode( node );
+		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );
 
-	editor.addCommand( 'Wpcom_Help', function() {
+	editor.addCommand( 'WP_Help', function() {
 		function onClose() {
 			editor.focus();
 			render( 'hide' );
 		}
 
 		function render( visibility = 'show' ) {
-			React.render(
+			ReactDom.render(
 				React.createElement( HelpModal, {
 					showDialog: visibility === 'show' ? true : false,
 					onClose: onClose,
-					macosx: tinymce.Env.mac
+					macosx: tinymce.Env.mac,
 				} ),
 				node
 			);
@@ -45,6 +47,6 @@ function wpcomHelpPlugin( editor ) {
 	} );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/help', wpcomHelpPlugin );
-};
+}

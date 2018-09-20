@@ -1,7 +1,8 @@
+/** @format */
 /**
  * Internal dependencies
  */
-import Shortcode from 'lib/shortcode';
+import { parse } from 'lib/shortcode';
 import { deserialize as _recurse } from '../';
 import createElementFromString from '../create-element-from-string';
 
@@ -16,7 +17,7 @@ import createElementFromString from '../create-element-from-string';
 function parseAsShortcode( node, _parsed ) {
 	// Attempt to convert string element into DOM node. If successful, recurse
 	// to trigger the shortcode strategy
-	const shortcode = Shortcode.parse( node );
+	const shortcode = parse( node );
 	if ( shortcode ) {
 		return _recurse( shortcode, _parsed );
 	}
@@ -52,10 +53,7 @@ function parseAsElement( node, _parsed ) {
  * @return {Object}         Object of all detected values
  */
 export function deserialize( node, _parsed = { media: {}, appearance: {} } ) {
-	return [
-		parseAsShortcode,
-		parseAsElement
-	].reduce( ( memo, parse ) => {
+	return [ parseAsShortcode, parseAsElement ].reduce( ( memo, parse ) => {
 		return Object.assign( memo, parse( node, _parsed ) );
 	}, {} );
 }

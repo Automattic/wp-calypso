@@ -1,8 +1,11 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import debugModule from 'debug';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,20 +18,20 @@ import emitter from 'lib/mixins/emitter';
  */
 const debug = debugModule( 'calypso:wordads:store' );
 
-var _settings = {},
-	_loadingError = null,
+let _loadingError = null,
 	_notice = null,
 	_isLoading = false,
-	_isSubmitting = false,
-	WordadsSettingsStore;
+	_isSubmitting = false;
 
-WordadsSettingsStore = {
+const _settings = {};
+
+const WordadsSettingsStore = {
 	get: function() {
 		return _settings;
 	},
 
 	getById: function( siteId ) {
-		var settings = _settings.hasOwnProperty( siteId ) ? _settings[ siteId ] : {};
+		const settings = _settings.hasOwnProperty( siteId ) ? _settings[ siteId ] : {};
 		settings.isLoading = _isLoading;
 		settings.isSubmitting = _isSubmitting;
 		settings.error = _loadingError;
@@ -63,7 +66,7 @@ WordadsSettingsStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 function updateSettings( siteId, data ) {
@@ -76,7 +79,7 @@ function setLoadingError( error ) {
 }
 
 WordadsSettingsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	switch ( action.type ) {
 		case 'UPDATING_WORDADS_SETTINGS':
 			_isSubmitting = true;
@@ -107,4 +110,4 @@ WordadsSettingsStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 emitter( WordadsSettingsStore );
 
-module.exports = WordadsSettingsStore;
+export default WordadsSettingsStore;

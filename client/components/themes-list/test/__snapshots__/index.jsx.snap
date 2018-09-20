@@ -1,0 +1,87 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ThemesList should render a div with a className of "themes-list" 1`] = `
+<div
+  className="themes-list"
+>
+  <Connect(Localized(Theme))
+    actionLabel=""
+    active={false}
+    index={0}
+    installing={false}
+    key="theme-1"
+    onScreenshotClick={[Function]}
+    price=""
+    theme={
+      Object {
+        "id": "1",
+        "name": "kubrick",
+        "screenshot": "/theme/kubrick/screenshot.png",
+      }
+    }
+  />
+  <Connect(Localized(Theme))
+    actionLabel=""
+    active={false}
+    index={1}
+    installing={false}
+    key="theme-2"
+    onScreenshotClick={[Function]}
+    price=""
+    theme={
+      Object {
+        "id": "2",
+        "name": "picard",
+        "screenshot": "/theme/picard/screenshot.png",
+      }
+    }
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-0"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-1"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-2"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-3"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-4"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-5"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-6"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-7"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-8"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-9"
+  />
+  <div
+    className="themes-list__spacer"
+    key="themes-list__spacer-10"
+  />
+  <InfiniteScroll
+    nextPageMethod={[Function]}
+  />
+</div>
+`;

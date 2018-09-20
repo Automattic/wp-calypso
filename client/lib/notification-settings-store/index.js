@@ -1,4 +1,8 @@
-/*eslint-disable new-cap */
+/**
+ * /*eslint-disable new-cap
+ *
+ * @format
+ */
 
 /**
  * External Dependencies
@@ -18,17 +22,13 @@ const initialState = {
 	error: null,
 	settings: {
 		clean: null,
-		dirty: null
-	}
+		dirty: null,
+	},
 };
 
-function removeHeaders( data ) {
-	return Object.assign( {}, data, { _headers: undefined } );
-}
-
 function toggleSetting( state, source ) {
-	if ( toggleState[source] ) {
-		return toggleState[source].apply( this, arguments );
+	if ( toggleState[ source ] ) {
+		return toggleState[ source ].apply( this, arguments );
 	}
 
 	return toggleState.blog.apply( this, arguments );
@@ -36,8 +36,8 @@ function toggleSetting( state, source ) {
 
 const NotificationSettingsStore = createReducerStore( ( state, payload ) => {
 	const { action, data, error, source, stream, setting } = payload.action;
-	let status = null,
-		newState = null;
+	const status = null;
+	let newState = null;
 
 	switch ( action ) {
 		case actionTypes.SAVE_SETTINGS:
@@ -50,7 +50,7 @@ const NotificationSettingsStore = createReducerStore( ( state, payload ) => {
 
 		case actionTypes.SAVE_SETTINGS_COMPLETE:
 		case actionTypes.FETCH_SETTINGS_COMPLETE:
-			newState = Immutable.fromJS( removeHeaders( data ) );
+			newState = Immutable.fromJS( data );
 			return state
 				.set( 'isFetching', false )
 				.set( 'status', action === actionTypes.SAVE_SETTINGS_COMPLETE ? 'success' : null )
@@ -73,9 +73,9 @@ NotificationSettingsStore.getStateFor = function( source ) {
 		status: state.get( 'status' ),
 		error: state.get( 'error' ),
 		settings: dirty && dirty.get( source ),
-		hasUnsavedChanges: ! Immutable.is( clean, dirty )
+		hasUnsavedChanges: ! Immutable.is( clean, dirty ),
 	};
-}
+};
 
 export default NotificationSettingsStore;
 /*eslint-enable new-cap */

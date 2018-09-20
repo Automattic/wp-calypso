@@ -1,76 +1,76 @@
-/* eslint-disable vars-on-top */
-
-require( 'lib/react-test-env-setup' )();
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	ReactInjection = require( 'react/lib/ReactInjection' ),
-	TestUtils = React.addons.TestUtils,
-	expect = require( 'chai' ).expect;
+import { expect } from 'chai';
+import { shallow, mount } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	mockCountriesList = require( './mock-countries-list' ),
-	mockCountriesListEmpty = require( './mock-countries-list-empty' );
+import { FormPhoneInput } from '../';
 
-var countries = mockCountriesList.get();
+const countriesList = [
+	{
+		code: 'US',
+		name: 'United States (+1)',
+		numeric_code: '+1',
+		country_name: 'United States',
+	},
+	{
+		code: 'AR',
+		name: 'Argentina (+54)',
+		numeric_code: '+54',
+		country_name: 'Argentina',
+	},
+];
 
-describe( 'FormPhoneInput', function() {
-	var FormPhoneInput;
+describe( 'FormPhoneInput', () => {
+	describe( 'getValue()', () => {
+		test( 'should set country from props', () => {
+			const phoneComponent = shallow(
+				<FormPhoneInput
+					countriesList={ countriesList }
+					initialCountryCode={ countriesList[ 1 ].code }
+				/>
+			);
 
-	before( function() {
-		i18n.initialize();
-		ReactInjection.Class.injectMixin( i18n.mixin );
-		FormPhoneInput = require( 'components/forms/form-phone-input' );
-	} );
-
-	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
-	} );
-
-	describe( 'getValue()', function() {
-		it( 'should set country from props', function() {
-			var phoneComponent = React.render( <FormPhoneInput countriesList={ mockCountriesList } initialCountryCode={ countries[ 1 ].code } />, document.body );
-
-			expect( phoneComponent.getValue().countryData ).to.deep.equal( countries[ 1 ] );
+			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
+				countriesList[ 1 ]
+			);
 		} );
 
-		it( 'should set country to first element when not specified', function() {
-			var phoneComponent = React.render( <FormPhoneInput countriesList={ mockCountriesList } />, document.body );
+		test( 'should set country to first element when not specified', () => {
+			const phoneComponent = shallow( <FormPhoneInput countriesList={ countriesList } /> );
 
-			expect( phoneComponent.getValue().countryData ).to.deep.equal( countries[ 0 ] );
+			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
+				countriesList[ 0 ]
+			);
 		} );
 
-		it( 'should update country on change', function() {
-			var phoneComponent = React.render( <FormPhoneInput countriesList={ mockCountriesList } />, document.body ),
-				select = TestUtils.findRenderedDOMComponentWithTag( phoneComponent, 'select' );
+		test( 'should update country on change', () => {
+			const phoneComponent = mount( <FormPhoneInput countriesList={ countriesList } /> );
 
-			TestUtils.Simulate.change( select.getDOMNode(), {
+			phoneComponent.find( 'select' ).simulate( 'change', {
 				target: {
-					value: countries[ 1 ].code
-				}
+					value: countriesList[ 1 ].code,
+				},
 			} );
 
-			expect( phoneComponent.getValue().countryData ).to.deep.equal( countries[ 1 ] );
+			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
+				countriesList[ 1 ]
+			);
 		} );
 
-		it( 'should have no country with empty countryList', function() {
-			var phoneComponent = React.render( <FormPhoneInput countriesList={ mockCountriesListEmpty } />, document.body );
+		test( 'should have no country with empty countryList', () => {
+			const phoneComponent = shallow( <FormPhoneInput countriesList={ [] } /> );
 
-			expect( phoneComponent.getValue().countryData ).to.equal( undefined );
-		} );
-
-		it( 'should update country on countryList change', function() {
-			var phoneComponent = React.render( <FormPhoneInput countriesList={ mockCountriesListEmpty } />, document.body );
-
-			// Render again with filled country list
-			phoneComponent = React.render( <FormPhoneInput countriesList={ mockCountriesList } />, document.body );
-
-			expect( phoneComponent.getValue().countryData ).to.deep.equal( countries[ 0 ] );
+			expect( phoneComponent.instance().getValue().countryData ).to.equal( undefined );
 		} );
 	} );
 } );

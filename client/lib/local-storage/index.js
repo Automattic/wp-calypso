@@ -1,9 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:local-storage' );
 
-var _data = {},
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:local-storage' );
+
+let _data = {},
 	storage = {
 		setItem: function( id, val ) {
 			_data[ id ] = String( val );
@@ -18,7 +23,7 @@ var _data = {},
 		clear: function() {
 			_data = {};
 			return _data;
-		}
+		},
 	},
 	getLength = function() {
 		return Object.keys( _data ).length;
@@ -28,7 +33,7 @@ var _data = {},
  * Overwrite window.localStorage if necessary
  * @param  {object} root Object to instantiate `windows` object to test in node.js
  */
-module.exports = function( root ) {
+export default function( root ) {
 	root = root || window;
 
 	if ( ! root.localStorage ) {
@@ -41,7 +46,7 @@ module.exports = function( root ) {
 		root.localStorage.setItem( 'localStorageTest', '' );
 		root.localStorage.removeItem( 'localStorageTest' );
 		debug( 'localStorage tested and working correctly' );
-	} catch( error ) {
+	} catch ( error ) {
 		debug( 'localStorage not working correctly, setting to polyfill' );
 		// we cannot overwrite window.localStorage directly, but we can overwrite its methods
 		root.localStorage.setItem = storage.setItem;
@@ -50,4 +55,4 @@ module.exports = function( root ) {
 		root.localStorage.clear = storage.clear;
 		root.localStorage.__defineGetter__( 'length', getLength );
 	}
-};
+}

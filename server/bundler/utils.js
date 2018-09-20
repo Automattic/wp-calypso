@@ -1,39 +1,56 @@
-var path = require( 'path' );
-
-function getAssets( stats ) {
-	var chunks = stats.chunks;
-
-	return chunks.map( function( chunk ) {
-		var filename = chunk.files[0];
-		return {
-			name: chunk.names[0],
-			hash: chunk.hash,
-			file: filename,
-			url: path.resolve( stats.publicPath, filename )
-		};
-	} );
-}
-
-function pathToRegExp( path ) {
-	return new RegExp( '^' + path + '(/.*)?$' );
-}
-
+/** @format */
 /**
- * Node 0.x does not correctly escape slashes in `RegExp.prototype.toString`,
- * but node 4.x does. This is a polyfill that should return the escaped string
- * in either version. It can also accept any other object that has a `toString`
- * method (like Strings).
+ * External dependencies
  */
-function regExpToString( exp ) {
-	var str = exp.toString();
-	if ( /\\\//.test( str ) ) {
-		return str;
+const crypto = require( 'crypto' );
+const fs = require( 'fs' );
+const qs = require( 'qs' );
+
+const HASH_LENGTH = 10;
+const URL_BASE_PATH = '/calypso';
+const SERVER_BASE_PATH = '/public';
+
+function hashFile( path ) {
+	const md5 = crypto.createHash( 'md5' );
+	let data, hash;
+
+	try {
+		data = fs.readFileSync( path );
+		md5.update( data );
+		hash = md5.digest( 'hex' );
+		hash = hash.slice( 0, HASH_LENGTH );
+	} catch ( e ) {
+		hash = new Date().getTime().toString();
 	}
-	return str.replace( /\//g, '\\/' );
+
+	return hash;
+}
+
+function getUrl( filename, hash ) {
+	return (
+		URL_BASE_PATH +
+		'/' +
+		filename +
+		'?' +
+		qs.stringify( {
+			v: hash,
+		} )
+	);
+}
+
+function getHashedUrl( filename ) {
+	return getUrl( filename, hashFile( process.cwd() + SERVER_BASE_PATH + '/' + filename ) );
+}
+
+function getCssUrls( css ) {
+	return {
+		ltr: getHashedUrl( 'sections/' + css + '.css' ),
+		rtl: getHashedUrl( 'sections-rtl/' + css + '.rtl.css' ),
+	};
 }
 
 module.exports = {
-	getAssets: getAssets,
-	pathToRegExp: pathToRegExp,
-	regExpToString: regExpToString
+	hashFile: hashFile,
+	getUrl: getUrl,
+	getCssUrls: getCssUrls,
 };

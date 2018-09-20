@@ -1,136 +1,198 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
-	async = require( 'async' );
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { flowRight } from 'lodash';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	ButtonsAppearance = require( './appearance' ),
-	ButtonsOptions = require( './options' ),
-	notices = require( 'notices' ),
-	analytics = require( 'analytics' ),
-	protectForm = require( 'lib/mixins/protect-form' ).mixin;
+import ButtonsAppearance from './appearance';
+import ButtonsOptions from './options';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import QuerySharingButtons from 'components/data/query-sharing-buttons';
+import { saveSiteSettings } from 'state/site-settings/actions';
+import { saveSharingButtons } from 'state/sites/sharing-buttons/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import {
+	getSiteSettings,
+	isSavingSiteSettings,
+	isSiteSettingsSaveSuccessful,
+} from 'state/site-settings/selectors';
+import getSharingButtons from 'state/selectors/get-sharing-buttons';
+import isSavingSharingButtons from 'state/selectors/is-saving-sharing-buttons';
+import isSharingButtonsSaveSuccessful from 'state/selectors/is-sharing-buttons-save-successful';
+import { isJetpackSite } from 'state/sites/selectors';
+import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import { activateModule } from 'state/jetpack/modules/actions';
+import { protectForm } from 'lib/protect-form';
 
-module.exports = React.createClass( {
-	displayName: 'SharingButtons',
+class SharingButtons extends Component {
+	state = {
+		values: {},
+		buttonsPendingSave: null,
+	};
 
-	mixins: [
-		observe( 'site', 'buttons', 'postTypes' ),
-		protectForm
-	],
+	static propTypes = {
+		buttons: PropTypes.array,
+		isSaving: PropTypes.bool,
+		isSaveSettingsSuccessful: PropTypes.bool,
+		isSaveButtonsSuccessful: PropTypes.bool,
+		markSaved: PropTypes.func,
+		markChanged: PropTypes.func,
+		settings: PropTypes.object,
+		siteId: PropTypes.number,
+		translate: PropTypes.func,
+	};
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		buttons: React.PropTypes.object.isRequired,
-		postTypes: React.PropTypes.object.isRequired
-	},
-
-	getInitialState: function() {
-		return {
-			values: {},
-			isSaving: false,
-			buttonsPendingSave: null
-		};
-	},
-
-	saveChanges: function( event ) {
-		var tasks = [
-			this.props.site.saveSettings.bind( this.props.site, this.state.values )
-		];
-
-		if ( this.state.buttonsPendingSave ) {
-			tasks.push(
-				this.props.buttons.saveAll.bind( this.props.buttons, this.props.site.ID, this.state.buttonsPendingSave )
-			);
-		}
-
-		async.parallel( tasks, this.onSaveComplete );
-
-		this.setState( {
-			isSaving: true
-		} );
-
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Save Changes Button' );
+	saveChanges = event => {
+		const { isJetpack, isLikesModuleActive, siteId } = this.props;
 
 		event.preventDefault();
-	},
 
-	onSaveComplete: function( error ) {
-		if ( error ) {
-			notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
-		} else {
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+		this.props.saveSiteSettings( this.props.siteId, this.state.values );
+		if ( this.state.buttonsPendingSave ) {
+			this.props.saveSharingButtons( this.props.siteId, this.state.buttonsPendingSave );
+		}
+		this.props.recordGoogleEvent( 'Sharing', 'Clicked Save Changes Button' );
+
+		if ( ! isJetpack || isLikesModuleActive !== false ) {
+			return;
 		}
 
-		this.markSaved();
-		this.setState( {
-			values: {},
-			isSaving: false,
-			buttonsPendingSave: null
-		} );
-	},
-
-	handleChange: function( option, value ) {
-		var pairs;
-
-		if ( undefined === value ) {
-			pairs = option;
-		} else {
-			pairs = {};
-			pairs[ option ] = value;
+		const updatedSettings = this.getUpdatedSettings();
+		if ( updatedSettings.disabled_likes ) {
+			return;
 		}
 
-		this.markChanged();
-		this.setState( {
-			values: assign( {}, this.state.values, pairs )
-		} );
-	},
+		this.props.activateModule( siteId, 'likes', true );
+	};
 
-	handleButtonsChange: function( buttons ) {
-		this.markChanged();
+	handleChange = ( option, value ) => {
+		const pairs = undefined === value ? option : { [ option ]: value };
+		this.props.markChanged();
+		this.setState( {
+			values: Object.assign( {}, this.state.values, pairs ),
+		} );
+	};
+
+	handleButtonsChange = buttons => {
+		this.props.markChanged();
 		this.setState( { buttonsPendingSave: buttons } );
-	},
+	};
 
-	getPreviewButtons: function() {
-		return this.state.buttonsPendingSave || this.props.buttons.get( this.props.site.ID );
-	},
-
-	isInitialized: function( sources ) {
-		return sources.every( function( source ) {
-			if ( 'settings' === source ) {
-				return this.props.site.settings;
+	componentWillReceiveProps( nextProps ) {
+		// Save request has been performed
+		if ( this.props.isSaving && ! nextProps.isSaving ) {
+			if (
+				nextProps.isSaveSettingsSuccessful &&
+				( nextProps.isSaveButtonsSuccessful || ! this.state.buttonsPendingSave )
+			) {
+				nextProps.successNotice( nextProps.translate( 'Settings saved successfully!' ) );
+				nextProps.markSaved();
+				this.setState( {
+					values: {},
+					buttonsPendingSave: null,
+				} );
 			} else {
-				return this.props[ source ].hasDataForSiteId( this.props.site.ID );
+				nextProps.errorNotice(
+					nextProps.translate( 'There was a problem saving your changes. Please, try again.' )
+				);
 			}
-		}, this );
-	},
+		}
+	}
 
-	render: function() {
-		var settings = assign( {}, this.props.site.settings, this.state.values );
+	getUpdatedSettings() {
+		const { isJetpack, isLikesModuleActive, settings } = this.props;
+		const disabledSettings =
+			isJetpack && isLikesModuleActive === false
+				? {
+						// Like button should be disabled if the Likes Jetpack module is deactivated.
+						disabled_likes: true,
+				  }
+				: {};
+
+		return Object.assign( {}, settings, disabledSettings, this.state.values );
+	}
+
+	render() {
+		const { buttons, isJetpack, isSaving, settings, siteId } = this.props;
+		const updatedSettings = this.getUpdatedSettings();
+		const updatedButtons = this.state.buttonsPendingSave || buttons;
 
 		return (
-			<form onSubmit={ this.saveChanges } id="sharing-buttons" className="sharing-settings sharing-buttons">
+			<form
+				onSubmit={ this.saveChanges }
+				id="sharing-buttons"
+				className="sharing-settings sharing-buttons"
+			>
+				<PageViewTracker path="/sharing/buttons/:site" title="Sharing > Sharing Buttons" />
+				<QuerySiteSettings siteId={ siteId } />
+				<QuerySharingButtons siteId={ siteId } />
+				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<ButtonsAppearance
-					site={ this.props.site }
-					buttons={ this.getPreviewButtons() }
-					values={ settings }
+					buttons={ updatedButtons }
+					values={ updatedSettings }
 					onChange={ this.handleChange }
 					onButtonsChange={ this.handleButtonsChange }
-					initialized={ this.isInitialized( [ 'settings', 'buttons' ] ) }
-					saving={ this.state.isSaving } />
+					initialized={ !! buttons && !! settings }
+					saving={ isSaving }
+				/>
 				<ButtonsOptions
-					site={ this.props.site }
-					postTypes={ this.props.postTypes.get( this.props.site.ID ) }
-					buttons={ this.props.buttons.get( this.props.site.ID ) }
-					values={ settings }
+					settings={ updatedSettings }
 					onChange={ this.handleChange }
-					initialized={ this.isInitialized( [ 'settings', 'postTypes' ] ) }
-					saving={ this.state.isSaving } />
+					saving={ isSaving }
+				/>
 			</form>
 		);
 	}
-} );
+}
+
+const connectComponent = connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const settings = getSiteSettings( state, siteId );
+		const buttons = getSharingButtons( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
+		const isSavingSettings = isSavingSiteSettings( state, siteId );
+		const isSavingButtons = isSavingSharingButtons( state, siteId );
+		const isSaveSettingsSuccessful = isSiteSettingsSaveSuccessful( state, siteId );
+		const isSaveButtonsSuccessful = isSharingButtonsSaveSuccessful( state, siteId );
+
+		return {
+			isJetpack,
+			isLikesModuleActive,
+			isSaving: isSavingSettings || isSavingButtons,
+			isSaveSettingsSuccessful,
+			isSaveButtonsSuccessful,
+			settings,
+			buttons,
+			siteId,
+		};
+	},
+	{
+		activateModule,
+		errorNotice,
+		recordGoogleEvent,
+		saveSharingButtons,
+		saveSiteSettings,
+		successNotice,
+	}
+);
+
+export default flowRight(
+	connectComponent,
+	protectForm,
+	localize
+)( SharingButtons );

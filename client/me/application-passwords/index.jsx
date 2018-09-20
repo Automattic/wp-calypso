@@ -1,207 +1,239 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:application-passwords' );
+import React, { Component, Fragment } from 'react';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	AppPasswordItem = require( 'me/application-password-item' ),
-	notices = require( 'notices' ),
-	SectionHeader = require( 'components/section-header' ),
-	Button = require( 'components/button' ),
-	Gridicon = require( 'components/gridicon' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	Card = require( 'components/card' ),
-	classNames = require( 'classnames' );
+import AppPasswordItem from 'me/application-password-item';
+import Button from 'components/button';
+import Card from 'components/card';
+import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormSectionHeading from 'components/forms/form-section-heading';
+import FormTextInput from 'components/forms/form-text-input';
+import QueryApplicationPasswords from 'components/data/query-application-passwords';
+import SectionHeader from 'components/section-header';
+import {
+	clearNewApplicationPassword,
+	createApplicationPassword,
+} from 'state/application-passwords/actions';
+import getApplicationPasswords from 'state/selectors/get-application-passwords';
+import getNewApplicationPassword from 'state/selectors/get-new-application-password';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
+class ApplicationPasswords extends Component {
+	static initialState = Object.freeze( {
+		applicationName: '',
+		addingPassword: false,
+		submittingForm: false,
+	} );
 
-	displayName: 'ApplicationPasswords',
+	state = this.constructor.initialState;
 
-	mixins: [ observe( 'appPasswordsData' ), React.addons.LinkedStateMixin, eventRecorder ],
+	componentWillReceiveProps( nextProps ) {
+		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
+			this.setState( { submittingForm: false } );
+		}
+	}
 
-	componentDidMount: function() {
-		debug( this.displayName + ' React component is mounted.' );
-	},
+	getClickHandler = ( action, callback ) => {
+		return event => {
+			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
-	componentWillUnmount: function() {
-		debug( this.displayName + ' React component is unmounting.' );
-	},
-
-	getInitialState: function() {
-		return {
-			applicationName: '',
-			addingPassword: false,
-			submittingForm: false
+			if ( callback ) {
+				callback( event );
+			}
 		};
-	},
+	};
 
-	createApplicationPassword: function( event ) {
+	handleApplicationNameFocus = () => {
+		this.props.recordGoogleEvent( 'Me', 'Focused on Application Name Field' );
+	};
+
+	createApplicationPassword = event => {
 		event.preventDefault();
 		this.setState( { submittingForm: true } );
+		this.props.createApplicationPassword( this.state.applicationName );
+	};
 
-		this.props.appPasswordsData.create(
-			this.state.applicationName,
-			function( error ) {
-				this.setState( { submittingForm: false } );
-				if ( error ) {
-					debug( 'Failure creating application password.' );
+	clearNewApplicationPassword = () => {
+		this.props.clearNewApplicationPassword();
+		this.setState( this.constructor.initialState );
+	};
 
-					// handle error case here
-					notices.clearNotices( 'notices' );
-					notices.error( this.translate( 'There was a problem creating your application password. Please try again.' ) );
-				} else {
-					debug( 'Application password created successfully.' );
-				}
-			}.bind( this )
-		);
-	},
-
-	clearNewApplicationPassword: function() {
-		this.props.appPasswordsData.clearNewPassword();
-		this.setState( this.getInitialState() );
-	},
-
-	toggleNewPassword: function( e ) {
-		e.preventDefault();
+	toggleNewPassword = event => {
+		event.preventDefault();
 		this.setState( { addingPassword: ! this.state.addingPassword } );
-	},
+	};
 
-	renderNewAppPasswordForm: function() {
-		const cardClasses = classNames( 'application-passwords__add-new-card', { 'is-visible': this.state.addingPassword } );
+	handleChange = event => {
+		const { name, value } = event.currentTarget;
+		this.setState( { [ name ]: value } );
+	};
 
-			return (
-				<Card className={ cardClasses }>
-					<form
-						id="add-application-password"
-						className="application-passwords__add-new"
-						onSubmit={ this.createApplicationPassword } >
+	renderNewAppPasswordForm() {
+		const { appPasswords, translate } = this.props;
+		const cardClasses = classNames( 'application-passwords__add-new-card', {
+			'is-visible': this.state.addingPassword,
+		} );
 
-						<FormFieldset>
-							<FormLabel htmlFor="application-name">{ this.translate( 'Application Name' ) }</FormLabel>
-							<FormTextInput
-								className="application-passwords__add-new-field"
-								disabled={ this.state.submittingForm }
-								id="application-name"
-								name="application-name"
-								onFocus={ this.recordFocusEvent( 'Application Name Field' ) }
-								valueLink={ this.linkState( 'applicationName' ) } />
-						</FormFieldset>
+		return (
+			<Card className={ cardClasses }>
+				<form
+					id="add-application-password"
+					className="application-passwords__add-new"
+					onSubmit={ this.createApplicationPassword }
+				>
+					<FormFieldset>
+						<FormLabel htmlFor="application-name">{ translate( 'Application Name' ) }</FormLabel>
+						<FormTextInput
+							className="application-passwords__add-new-field"
+							disabled={ this.state.submittingForm }
+							id="application-name"
+							name="applicationName"
+							onFocus={ this.handleApplicationNameFocus }
+							value={ this.state.applicationName }
+							onChange={ this.handleChange }
+						/>
+					</FormFieldset>
 
-						<FormButtonsBar>
+					<FormButtonsBar>
+						<FormButton
+							disabled={ this.state.submittingForm || '' === this.state.applicationName }
+							onClick={ this.getClickHandler( 'Generate New Application Password Button' ) }
+						>
+							{ this.state.submittingForm
+								? translate( 'Generating Password…' )
+								: translate( 'Generate Password' ) }
+						</FormButton>
+						{ appPasswords.length ? (
 							<FormButton
-								disabled={ this.state.submittingForm || '' === this.state.applicationName }
-								onClick={ this.recordClickEvent( 'Generate New Application Password Button' ) } >
-								{ this.state.submittingForm ? this.translate( 'Generating Password…' ) : this.translate( 'Generate Password' ) }
+								isPrimary={ false }
+								onClick={ this.getClickHandler(
+									'Cancel Generate New Application Password Button',
+									this.toggleNewPassword
+								) }
+							>
+								{ translate( 'Cancel' ) }
 							</FormButton>
-							{  this.props.appPasswordsData.get().length ?
-								<FormButton
-									isPrimary={ false }
-									onClick={ this.recordClickEvent( 'Cancel Generate New Application Password Button', this.toggleNewPassword ) }
-								>
-									{ this.translate( 'Cancel' ) }
-								</FormButton> :
-								null
-							}
-						</FormButtonsBar>
-					</form>
+						) : null }
+					</FormButtonsBar>
+				</form>
 			</Card>
-			);
-	},
+		);
+	}
 
-	renderNewAppPassword: function() {
-		var newPassword = this.props.appPasswordsData.newApplicationPassword;
+	renderNewAppPassword() {
+		const { newAppPassword, translate } = this.props;
 		return (
 			<Card className="application-passwords__new-password">
-				<p className="application-passwords__new-password-display">
-					{ newPassword.application_password }
-				</p>
+				<p className="application-passwords__new-password-display">{ newAppPassword }</p>
 
 				<p className="application-passwords__new-password-help">
-					{
-						this.translate(
-							'Use this password to log in to {{strong}}%(appName)s{{/strong}}. Note: spaces are ignored.', {
+					{ translate(
+						'Use this password to log in to {{strong}}%(appName)s{{/strong}}. Note: spaces are ignored.',
+						{
 							args: {
-								appName: this.state.applicationName
+								appName: this.state.applicationName,
 							},
 							components: {
-								strong: <strong/>
-							}
-						} )
-					}
+								strong: <strong />,
+							},
+						}
+					) }
 				</p>
 
 				<FormButtonsBar>
-					<FormButton onClick={ this.recordClickEvent( 'New Application Password Done Button', this.clearNewApplicationPassword ) } >
-						{ this.translate( 'Done' ) }
+					<FormButton
+						onClick={ this.getClickHandler(
+							'New Application Password Done Button',
+							this.clearNewApplicationPassword
+						) }
+					>
+						{ translate( 'Done' ) }
 					</FormButton>
 				</FormButtonsBar>
 			</Card>
 		);
-	},
+	}
 
-	renderApplicationPasswords: function() {
-		if ( ! this.props.appPasswordsData.get().length ) {
+	renderApplicationPasswords() {
+		const { appPasswords, translate } = this.props;
+		if ( ! appPasswords.length ) {
 			return null;
 		}
 
 		return (
 			<div className="application-passwords__active">
-				<FormSectionHeading>{ this.translate( 'Active Passwords' ) }</FormSectionHeading>
+				<FormSectionHeading>{ translate( 'Active Passwords' ) }</FormSectionHeading>
 				<ul className="application-passwords__list">
-					{
-						this.props.appPasswordsData.get().map( function( password ) {
-							return (
-								<AppPasswordItem password={ password } appPasswordsData={ this.props.appPasswordsData } key={ password.ID } />
-							);
-						}, this )
-					}
+					{ appPasswords.map( password => (
+						<AppPasswordItem password={ password } key={ password.ID } />
+					) ) }
 				</ul>
 			</div>
 		);
-	},
+	}
 
-	render: function() {
-		var hasNewPassword = this.props.appPasswordsData.hasNewPassword();
+	render() {
+		const { newAppPassword, translate } = this.props;
 
 		return (
-			<div>
-				<SectionHeader label={ this.translate( 'Application Passwords' ) }>
-					<Button compact onClick={ this.recordClickEvent( 'Create Application Password Button', this.toggleNewPassword ) }>
-						<Gridicon icon="plus-small" size={ 16 } />
-						{ this.translate( 'Add New Application Password' ) }
-					</Button>
+			<Fragment>
+				<QueryApplicationPasswords />
+
+				<SectionHeader label={ translate( 'Application Passwords' ) }>
+					{ ! newAppPassword && (
+						<Button
+							compact
+							onClick={ this.getClickHandler(
+								'Create Application Password Button',
+								this.toggleNewPassword
+							) }
+						>
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							<Gridicon icon="plus-small" size={ 16 } />
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+							{ translate( 'Add New Application Password' ) }
+						</Button>
+					) }
 				</SectionHeader>
 				<Card>
-
-					{ hasNewPassword
-					 	? this.renderNewAppPassword()
-						: this.renderNewAppPasswordForm() }
+					{ newAppPassword ? this.renderNewAppPassword() : this.renderNewAppPasswordForm() }
 
 					<p>
-						{
-							this.translate(
-								'With Two-Step Authentication active, you can generate a custom password for ' +
+						{ translate(
+							'With Two-Step Authentication active, you can generate a custom password for ' +
 								'each third-party application you authorize to use your WordPress.com account. ' +
 								'You can revoke access for an individual application here if you ever need to.'
-							)
-						}
+						) }
 					</p>
 
 					{ this.renderApplicationPasswords() }
-
 				</Card>
-			</div>
-
+			</Fragment>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => ( {
+		appPasswords: getApplicationPasswords( state ),
+		newAppPassword: getNewApplicationPassword( state ),
+	} ),
+	{
+		clearNewApplicationPassword,
+		createApplicationPassword,
+		recordGoogleEvent,
+	}
+)( localize( ApplicationPasswords ) );

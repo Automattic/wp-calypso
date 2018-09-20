@@ -1,131 +1,207 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	includes = require( 'lodash/collection/includes' ),
-	noop = require( 'lodash/utility/noop' );
+
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import { identity, includes, noop, pull, union } from 'lodash';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-var SectionNav = require( 'components/section-nav' ),
-	SectionNavTabs = require( 'components/section-nav/tabs' ),
-	SectionNavTabItem = require( 'components/section-nav/item' ),
-	Search = require( 'components/search' );
+import SectionNav from 'components/section-nav';
+import SectionNavTabs from 'components/section-nav/tabs';
+import SectionNavTabItem from 'components/section-nav/item';
+import Search from 'components/search';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import PlanStorage from 'blocks/plan-storage';
+import DataSource from './data-source';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryFilterBar',
+// These source supply very large images, and there are instances such as
+// the site icon editor, where we want to disable them because the editor
+// can't handle the large images.
+const largeImageSources = [ 'pexels' ];
 
-	propTypes: {
-		site: React.PropTypes.object,
-		basePath: React.PropTypes.string,
-		filter: React.PropTypes.string,
-		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
-		search: React.PropTypes.string,
-		onFilterChange: React.PropTypes.func,
-		onSearch: React.PropTypes.func
-	},
+export class MediaLibraryFilterBar extends Component {
+	static propTypes = {
+		basePath: PropTypes.string,
+		enabledFilters: PropTypes.arrayOf( PropTypes.string ),
+		filter: PropTypes.string,
+		filterRequiresUpgrade: PropTypes.bool,
+		search: PropTypes.string,
+		source: PropTypes.string,
+		site: PropTypes.object,
+		onFilterChange: PropTypes.func,
+		onSearch: PropTypes.func,
+		translate: PropTypes.func,
+		post: PropTypes.bool,
+		isConnected: PropTypes.bool,
+		disableLargeImageSources: PropTypes.bool,
+		disabledDataSources: PropTypes.arrayOf( PropTypes.string ),
+	};
 
-	getDefaultProps: function() {
-		return {
-			filter: '',
-			basePath: '/media',
-			onFilterChange: noop,
-			onSearch: noop
-		};
-	},
+	static defaultProps = {
+		filter: '',
+		basePath: '/media',
+		onFilterChange: noop,
+		onSourceChange: noop,
+		onSearch: noop,
+		translate: identity,
+		source: '',
+		post: false,
+		isConnected: true,
+		disableLargeImageSources: false,
+		disabledDataSources: [],
+	};
 
-	getSearchPlaceholderText: function() {
-		var placeholderText;
-
-		switch ( this.props.filter ) {
-			case 'images':
-				placeholderText = this.translate( 'Search images…', { textOnly: true } );
-				break;
-			case 'audio':
-				placeholderText = this.translate( 'Search audio files…', { textOnly: true } );
-				break;
-			case 'videos':
-				placeholderText = this.translate( 'Search videos…', { textOnly: true } );
-				break;
-			case 'documents':
-				placeholderText = this.translate( 'Search documents…', { textOnly: true } );
-				break;
-			default:
-				placeholderText = this.translate( 'Search all media…', { textOnly: true } );
-				break;
+	getSearchPlaceholderText() {
+		const { filter, source, translate } = this.props;
+		if ( 'google_photos' === source ) {
+			return translate( 'Search your Google library…' );
 		}
 
-		return placeholderText;
-	},
-
-	getFilterLabel: function( filter ) {
-		var label;
+		if ( 'pexels' === source ) {
+			return translate( 'Search for free photos…' );
+		}
 
 		switch ( filter ) {
+			case 'this-post':
+				return translate( 'Search media uploaded to this post…' );
 			case 'images':
-				label = this.translate( 'Images', { comment: 'Filter label for media list', textOnly: true } );
-				break;
+				return translate( 'Search images…' );
 			case 'audio':
-				label = this.translate( 'Audio', { comment: 'Filter label for media list', textOnly: true } );
-				break;
+				return translate( 'Search audio files…' );
 			case 'videos':
-				label = this.translate( 'Videos', { comment: 'Filter label for media list', textOnly: true } );
-				break;
+				return translate( 'Search videos…' );
 			case 'documents':
-				label = this.translate( 'Documents', { comment: 'Filter label for media list', textOnly: true } );
-				break;
+				return translate( 'Search documents…' );
 			default:
-				label = this.translate( 'All', { comment: 'Filter label for media list', textOnly: true } );
-				break;
+				return translate( 'Search all media…' );
+		}
+	}
+
+	getFilterLabel( filter ) {
+		const { translate } = this.props;
+
+		switch ( filter ) {
+			case 'this-post':
+				return translate( 'This Post', { comment: 'Filter label for media list' } );
+			case 'images':
+				return translate( 'Images', { comment: 'Filter label for media list' } );
+			case 'audio':
+				return translate( 'Audio', { comment: 'Filter label for media list' } );
+			case 'videos':
+				return translate( 'Videos', { comment: 'Filter label for media list' } );
+			case 'documents':
+				return translate( 'Documents', { comment: 'Filter label for media list' } );
+			default:
+				return translate( 'All', { comment: 'Filter label for media list' } );
+		}
+	}
+
+	isFilterDisabled( filter ) {
+		const { enabledFilters } = this.props;
+		return enabledFilters && ( ! filter.length || ! includes( enabledFilters, filter ) );
+	}
+
+	changeFilter = filter => () => {
+		this.props.onFilterChange( filter );
+	};
+
+	renderTabItems() {
+		if ( this.props.source !== '' ) {
+			return null;
 		}
 
-		return label;
-	},
+		const tabs = [ '', 'this-post', 'images', 'documents', 'videos', 'audio' ];
 
-	isFilterDisabled: function( filter ) {
-		return this.props.enabledFilters && ( ! filter.length || ! includes( this.props.enabledFilters, filter ) );
-	},
-
-	renderTabItems: function() {
-		var tabs = [ '', 'images', 'documents' ],
-			site = this.props.site;
-
-		if ( site && ( site.options.videopress_enabled || site.jetpack ) ) {
-			tabs.push( 'videos' );
+		if ( ! this.props.post ) {
+			pull( tabs, 'this-post' );
 		}
 
-		if ( site && ( site.options.upgraded_filetypes_enabled || site.jetpack ) ) {
-			tabs.push( 'audio' );
-		}
-
-		return tabs.map( function( filter ) {
-			return (
-				<SectionNavTabItem
-					key={ 'filter-tab-' + filter }
-					selected={ this.props.filter === filter }
-					onClick={ this.props.onFilterChange.bind( null, filter ) }
-					disabled={ this.isFilterDisabled( filter ) }>
-					{ this.getFilterLabel( filter ) }
-				</SectionNavTabItem>
-			);
-		}, this );
-	},
-
-	render: function() {
 		return (
-			<SectionNav selectedText={ this.getFilterLabel( this.props.filter ) } hasSearch={ true }>
-				<SectionNavTabs>
-					{ this.renderTabItems() }
-				</SectionNavTabs>
-				<Search
-					analyticsGroup="Media"
-					pinned={ true }
-					onSearch={ this.props.onSearch }
-					initialValue={ this.props.search }
-					placeholder={ this.getSearchPlaceholderText() }
-					delaySearch={ true } />
-			</SectionNav>
+			<SectionNavTabs>
+				{ tabs.map( filter => (
+					<SectionNavTabItem
+						key={ 'filter-tab-' + filter }
+						selected={ this.props.filter === filter }
+						onClick={ this.changeFilter( filter ) }
+						disabled={ this.isFilterDisabled( filter ) }
+					>
+						{ this.getFilterLabel( filter ) }
+					</SectionNavTabItem>
+				) ) }
+			</SectionNavTabs>
 		);
 	}
-} );
+
+	renderSearchSection() {
+		if ( this.props.filterRequiresUpgrade || ! this.props.isConnected ) {
+			return null;
+		}
+
+		const isPinned = this.props.source === '';
+
+		// Set the 'key' value so if the source is changed the component is refreshed, forcing it to clear the existing state
+		return (
+			<Search
+				key={ this.props.source }
+				analyticsGroup="Media"
+				pinned={ isPinned }
+				fitsContainer
+				onSearch={ this.props.onSearch }
+				initialValue={ this.props.search }
+				placeholder={ this.getSearchPlaceholderText() }
+				delaySearch={ true }
+			/>
+		);
+	}
+
+	renderPlanStorage() {
+		//hide the plan storage when viewing external sources
+		if ( this.props.source ) {
+			return null;
+		}
+
+		const eventName = 'calypso_upgrade_nudge_impression';
+		const eventProperties = { cta_name: 'plan-media-storage' };
+		return (
+			<PlanStorage siteId={ this.props.site.ID }>
+				<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+			</PlanStorage>
+		);
+	}
+
+	render() {
+		const disabledSources = this.props.disableLargeImageSources
+			? union( this.props.disabledDataSources, largeImageSources )
+			: this.props.disabledDataSources;
+
+		// Dropdown is disabled when viewing any external data source
+		return (
+			<div className="media-library__filter-bar">
+				<DataSource
+					source={ this.props.source }
+					onSourceChange={ this.props.onSourceChange }
+					disabledSources={ disabledSources }
+				/>
+
+				<SectionNav
+					selectedText={ this.getFilterLabel( this.props.filter ) }
+					hasSearch={ true }
+					allowDropdown={ ! this.props.source }
+				>
+					{ this.renderTabItems() }
+					{ this.renderSearchSection() }
+				</SectionNav>
+
+				{ this.renderPlanStorage() }
+			</div>
+		);
+	}
+}
+
+export default localize( MediaLibraryFilterBar );

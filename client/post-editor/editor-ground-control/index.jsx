@@ -1,424 +1,231 @@
+/** @format */
 /**
  * External dependencies
  */
-var noop = require( 'lodash/utility/noop' ),
-	React = require( 'react/addons' );
+import React from 'react';
+import PropTypes from 'prop-types';
+import { identity, noop, get, findLast } from 'lodash';
+import moment from 'moment';
+import page from 'page';
+import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	EditPostStatus = require( 'post-editor/edit-post-status' ),
-	Gridicon = require( 'components/gridicon' ),
-	Popover = require( 'components/popover' ),
-	Site = require( 'my-sites/site' ),
-	StatusLabel = require( 'post-editor/status-label' ),
-	postUtils = require( 'lib/posts/utils' ),
-	siteUtils = require( 'lib/site/utils' ),
-	Popover = require( 'components/popover' ),
-	PostSchedule = require( 'components/post-schedule' ),
-	postActions = require( 'lib/posts/actions' ),
-	StickyPanel = require( 'components/sticky-panel' ),
-	Tooltip = require( 'components/tooltip' ),
-	PostListFetcher = require( 'components/post-list-fetcher' ),
-	StickyPanel = require( 'components/sticky-panel' ),
-	stats = require( 'lib/posts/stats' );
+import Card from 'components/card';
+import Site from 'blocks/site';
+import EditorPublishButton from 'post-editor/editor-publish-button';
+import Button from 'components/button';
+import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
+import Drafts from 'layout/masterbar/drafts';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
+import isVipSite from 'state/selectors/is-vip-site';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { getRouteHistory } from 'state/ui/action-log/selectors';
 
-function isPostEmpty( props ) {
-	return ( props.isNew && ! props.isDirty ) || ! props.hasContent;
-}
+export class EditorGroundControl extends React.Component {
+	static propTypes = {
+		hasContent: PropTypes.bool,
+		isConfirmationSidebarEnabled: PropTypes.bool,
+		confirmationSidebarStatus: PropTypes.string,
+		isDirty: PropTypes.bool,
+		isSaveBlocked: PropTypes.bool,
+		isPublishing: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		isSidebarOpened: PropTypes.bool,
+		moment: PropTypes.func,
+		onPreview: PropTypes.func,
+		onPublish: PropTypes.func,
+		onSave: PropTypes.func,
+		onSaveDraft: PropTypes.func,
+		onMoreInfoAboutEmailVerify: PropTypes.func,
+		setPostDate: PropTypes.func,
+		site: PropTypes.object,
+		toggleSidebar: PropTypes.func,
+		translate: PropTypes.func,
+	};
 
-module.exports = React.createClass( {
-	displayName: 'EditorGroundControl',
-	propTypes: {
-		hasContent: React.PropTypes.bool,
-		isDirty: React.PropTypes.bool,
-		isSaveBlocked: React.PropTypes.bool,
-		isPublishing: React.PropTypes.bool,
-		isSaving: React.PropTypes.bool,
-		onClose: React.PropTypes.func,
-		onPreview: React.PropTypes.func,
-		onPublish: React.PropTypes.func,
-		onSaveDraft: React.PropTypes.func,
-		post: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		site: React.PropTypes.object,
-		type: React.PropTypes.string
-	},
+	static defaultProps = {
+		hasContent: false,
+		isConfirmationSidebarEnabled: true,
+		isDirty: false,
+		isSaveBlocked: false,
+		isPublishing: false,
+		isSaving: false,
+		moment,
+		onPublish: noop,
+		onSaveDraft: noop,
+		site: {},
+		translate: identity,
+		setPostDate: noop,
+	};
 
-	mixins: [ React.addons.PureRenderMixin ],
+	getPreviewLabel() {
+		return this.props.translate( 'Preview' );
+	}
 
-	getDefaultProps: function() {
-		return {
-			hasContent: false,
-			isDirty: false,
-			isSaveBlocked: false,
-			isPublishing: false,
-			isSaving: false,
-			onClose: noop,
-			onPublish: noop,
-			onSaveDraft: noop,
-			post: null,
-			savedPost: null,
-			site: {}
-		};
-	},
+	getVerificationNoticeLabel() {
+		const { translate, publishButtonStatus } = this.props;
 
-	getInitialState: function() {
-		return {
-			showSchedulePopover: false,
-			showAdvanceStatus: false,
-			showDateTooltip: false,
-			siteTooltip: false,
-			firstDayOfTheMonth: this.getFirstDayOfTheMonth(),
-			lastDayOfTheMonth: this.getLastDayOfTheMonth()
-		};
-	},
-
-	setPostDate: function( date ) {
-		postActions.edit( { date: date ? date.format() : null } );
-	},
-
-	setCurrentMonth: function( date ) {
-		this.setState( {
-			firstDayOfTheMonth: this.getFirstDayOfTheMonth( date ),
-			lastDayOfTheMonth: this.getLastDayOfTheMonth( date )
-		} );
-	},
-
-	getPreviewLabel: function() {
-		if ( postUtils.isPublished( this.props.savedPost ) && this.props.site.jetpack ) {
-			return this.translate( 'View' );
+		switch ( publishButtonStatus ) {
+			case 'update':
+				return translate( 'To update, check your email and confirm your address.' );
+			case 'schedule':
+				return translate( 'To schedule, check your email and confirm your address.' );
+			case 'publish':
+				return translate( 'To publish, check your email and confirm your address.' );
+			case 'requestReview':
+				return translate( 'To submit for review, check your email and confirm your address.' );
+			default:
+				return null;
 		}
+	}
 
-		return this.translate( 'Preview' );
-	},
-
-	trackPrimaryButton: function() {
-		const postEvents = {
-			update: 'Clicked Update Post Button',
-			schedule: 'Clicked Schedule Post Button',
-			requestReview: 'Clicked Request-Review Post Button',
-			publish: 'Clicked Publish Post Button',
-		};
-		const pageEvents = {
-			update: 'Clicked Update Page Button',
-			schedule: 'Clicked Schedule Page Button',
-			requestReview: 'Clicked Request-Review Page Button',
-			publish: 'Clicked Publish Page Button',
-		};
-		const buttonState = this.getPrimaryButtonState();
-		const eventString = postUtils.isPage( this.props.post ) ? pageEvents[ buttonState ] : postEvents[ buttonState ];
-		stats.recordEvent( eventString );
-		stats.recordEvent( 'Clicked Primary Button' )
-	},
-
-	getPrimaryButtonState: function() {
-		if (
-			postUtils.isPublished( this.props.savedPost ) &&
-			! postUtils.isFutureDated( this.props.post ) ||
-			(
-				this.props.savedPost &&
-				this.props.savedPost.status === 'future' &&
-				postUtils.isFutureDated( this.props.post )
-			)
-		) {
-			return 'update';
-		}
-
-		if ( postUtils.isFutureDated( this.props.post ) ) {
-			return 'schedule';
-		}
-
-		if ( siteUtils.userCan( 'publish_posts', this.props.site ) ) {
-			return 'publish';
-		}
-
-		if ( this.props.savedPost && this.props.savedPost.status === 'pending' ) {
-			return 'update';
-		}
-
-		return 'requestReview';
-	},
-
-	getPrimaryButtonLabel: function() {
-		const primaryButtonState = this.getPrimaryButtonState();
-		const buttonLabels = {
-			update: this.translate( 'Update' ),
-			schedule: this.translate( 'Schedule' ),
-			publish: this.translate( 'Publish' ),
-			requestReview: this.translate( 'Submit for Review' ),
-		};
-		return buttonLabels[ primaryButtonState ];
-	},
-
-	toggleSchedulePopover: function() {
-		this.setState( { showSchedulePopover: ! this.state.showSchedulePopover } );
-	},
-
-	closeSchedulePopover: function( event ) {
-		// if `event` is defined means that popover has been canceled (ESC key)
-		if ( ! event ) {
-			let date = this.props.savedPost && this.props.savedPost.date
-				? this.moment( this.props.savedPost.date )
-				: null;
-
-			this.setPostDate( date );
-		}
-
-		this.setState( { showSchedulePopover: false } );
-	},
-
-	renderPostScheduler: function() {
-		var tz = siteUtils.timezone( this.props.site ),
-			gmtOffset = siteUtils.gmtOffset( this.props.site ),
-			postDate = this.props.post && this.props.post.date
-				? this.props.post.date
-				: null;
-
+	isPreviewEnabled() {
 		return (
-			<PostSchedule
-				selectedDay={ postDate }
-				timezone={ tz }
-				gmtOffset={ gmtOffset }
-				onDateChange={ this.setPostDate }
-				onMonthChange={ this.setCurrentMonth }>
-			</PostSchedule>
-		)
-	},
-
-	schedulePostPopover: function() {
-		var postScheduler = this.renderPostScheduler();
-
-		return (
-			<Popover
-				isVisible={ this.state.showSchedulePopover }
-				onClose={ this.closeSchedulePopover }
-				position={ 'bottom left' }
-				context={ this.refs && this.refs.schedulePost }>
-				<span className="editor-ground-control__schedule-post">
-					{ postUtils.isPage( this.props.post )
-						? postScheduler
-						: <PostListFetcher
-							siteID={ this.props.site.ID }
-							status="publish,future"
-							before={ this.state.lastDayOfTheMonth.format() }
-							after={ this.state.firstDayOfTheMonth.format() }
-							number={ 100 }
-						>
-							{ postScheduler }
-						</PostListFetcher>
-					}
-				</span>
-			</Popover>
-		);
-	},
-
-	getFirstDayOfTheMonth: function( date ) {
-		var tz = siteUtils.timezone( this.props.site );
-		date = date || this.moment();
-
-		return postUtils.getOffsetDate( date, tz ).set( {
-			year: date.year(),
-			month: date.month(),
-			date: 1,
-			hours: 0,
-			minutes: 0,
-			seconds: 0,
-			milliseconds: 0
-		} );
-	},
-
-	getLastDayOfTheMonth: function( date ) {
-		return this.getFirstDayOfTheMonth( date )
-			.add( 1, 'month' )
-			.second( -1 );
-	},
-
-	isSaveEnabled: function() {
-		return ! this.props.isSaving &&
-			! this.props.isSaveBlocked &&
-			this.props.isDirty &&
 			this.props.hasContent &&
-			!! this.props.post &&
-			! postUtils.isPublished( this.props.post );
-	},
-
-	isPreviewEnabled: function() {
-		return ! isPostEmpty( this.props ) && ! this.props.isSaveBlocked;
-	},
-
-	isPrimaryButtonEnabled: function() {
-		return ! this.props.isPublishing &&
-			! isPostEmpty( this.props ) &&
-			! this.props.isSaveBlocked;
-	},
-
-	toggleAdvancedStatus: function() {
-		this.setState( { showAdvanceStatus: ! this.state.showAdvanceStatus } );
-	},
-
-	showSiteTooltip: function() {
-		this.setState( { siteTooltip: true } );
-	},
-
-	hideSiteTooltip: function() {
-		this.setState( { siteTooltip: false } );
-	},
-
-	onPrimaryButtonClick: function() {
-		this.trackPrimaryButton();
-
-		if ( postUtils.isFutureDated( this.props.post ) ) {
-			return this.props.onSave( 'future' );
-		}
-
-		if ( postUtils.isPublished( this.props.savedPost ) ) {
-			return this.props.onSave();
-		}
-
-		if ( siteUtils.userCan( 'publish_posts', this.props.site ) ) {
-			return this.props.onPublish();
-		}
-
-		return this.props.onSave( 'pending' );
-	},
-
-	onSaveButtonClick: function() {
-		this.props.onSave();
-		const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Save Page Button' : 'Clicked Save Post Button';
-		stats.recordEvent( eventLabel );
-		stats.recordStat( 'save_draft_clicked' );
-	},
-
-	onPreviewButtonClick: function( event ) {
-		this.props.onPreview( event );
-		const eventLabel = postUtils.isPage( this.props.page ) ? 'Clicked Preview Page Button' : 'Clicked Preview Post Button';
-		stats.recordEvent( eventLabel );
-	},
-
-	renderDateTooltip: function() {
-		if ( this.state.showSchedulePopover ) {
-			return null;
-		}
-
-		return (
-			<Tooltip
-				context={ this.refs && this.refs.schedulePost }
-				isVisible={ this.state.showDateTooltip }
-				position="top"
-				onClose={ noop }
-			>
-				{ this.translate( 'Set date and time' ) }
-			</Tooltip>
-		);
-	},
-
-	showDateTooltip: function() {
-		this.setState( { showDateTooltip: true } );
-	},
-
-	hideDateTooltip: function() {
-		this.setState( { showDateTooltip: false } );
-	},
-
-	render: function() {
-		return (
-			<StickyPanel className="editor-ground-control">
-				<Card>
-					<Site
-						site={ this.props.site }
-						indicator={ false }
-						href={ this.props.site.URL }
-						externalLink={ true }
-						ref="site"
-						onMouseEnter={ this.showSiteTooltip }
-						onMouseLeave={ this.hideSiteTooltip }
-					/>
-					<Tooltip context={ this.refs && this.refs.site } isVisible={ this.state.siteTooltip } position="right">
-						<span className="editor-ground-control__view-site-tooltip">
-							{ this.translate( 'View site' ) }
-						</span>
-					</Tooltip>
-					<hr className="editor-ground-control__separator" />
-					<div className="editor-ground-control__status">
-						<StatusLabel
-							post={ this.props.savedPost }
-							onClick={ this.toggleAdvancedStatus }
-							advancedStatus={ this.state.showAdvanceStatus }
-							type={ this.props.type }
-						/>
-						{ this.isSaveEnabled() &&
-							<button
-								className="editor-ground-control__save button is-link"
-								onClick={ this.onSaveButtonClick }
-								tabIndex={ 3 }
-							>
-								{ this.translate( 'Save' ) }
-							</button>
-						}
-						{ this.props.isSaving &&
-							<span className="editor-ground-control__saving">
-								{ this.translate( 'Saving…' ) }
-							</span>
-						}
-					</div>
-					{
-						this.state.showAdvanceStatus &&
-							<EditPostStatus
-								post={ this.props.post }
-								savedPost={ this.props.savedPost }
-								type={ this.props.type }
-								onSave={ this.props.onSave }
-								onTrashingPost={ this.props.onTrashingPost }
-								onDateChange={ this.setPostDate }
-								site={ this.props.site }>
-							</EditPostStatus>
-					}
-					<div className="editor-ground-control__action-buttons">
-						<button
-							className="editor-ground-control__preview-button button"
-							disabled={ ! this.isPreviewEnabled() }
-							onClick={ this.onPreviewButtonClick }
-							tabIndex={ 4 }
-						>
-							{ this.getPreviewLabel() }
-						</button>
-						<div className="editor-ground-control__publish-combo">
-							<button
-								className="editor-ground-control__publish-button button is-primary"
-								onClick={ this.onPrimaryButtonClick }
-								disabled={ ! this.isPrimaryButtonEnabled() }
-								tabIndex={ 5 }
-							>
-								{ this.getPrimaryButtonLabel() }
-							</button>
-							{ siteUtils.userCan( 'publish_posts', this.props.site ) &&
-								<button
-									ref="schedulePost"
-									className="editor-ground-control__time-button button is-primary"
-									onClick={ this.toggleSchedulePopover }
-									onMouseEnter={ this.showDateTooltip }
-									onMouseLeave={ this.hideDateTooltip }
-									aria-label={ this.translate( 'Schedule date and time to publish post.' ) }
-									aria-pressed={ !! this.state.showSchedulePopover }
-									tabIndex={ 6 }
-								>
-									{ postUtils.isFutureDated( this.props.post )
-										? <Gridicon icon="scheduled" size={ 18 } />
-										: <Gridicon icon="calendar" size={ 18 } />
-									}
-								</button>
-							}
-							{ this.renderDateTooltip() }
-						</div>
-						{ siteUtils.userCan( 'publish_posts', this.props.site ) &&
-							this.schedulePostPopover()
-						}
-					</div>
-				</Card>
-			</StickyPanel>
+			! ( this.props.isNew && ! this.props.isDirty ) &&
+			! this.props.isSaveBlocked
 		);
 	}
-} );
 
+	onPreviewButtonClick = event => {
+		if ( this.isPreviewEnabled() ) {
+			this.props.onPreview( event );
+		}
+	};
+
+	renderGroundControlActionButtons() {
+		if ( this.props.confirmationSidebarStatus === 'open' ) {
+			return;
+		}
+
+		return (
+			<div className="editor-ground-control__action-buttons">
+				<Button
+					borderless
+					className="editor-ground-control__toggle-sidebar"
+					onClick={ this.props.toggleSidebar }
+				>
+					<Gridicon icon="cog" />
+				</Button>
+				<Button
+					className="editor-ground-control__preview-button"
+					disabled={ ! this.isPreviewEnabled() }
+					onClick={ this.onPreviewButtonClick }
+					tabIndex={ 4 }
+				>
+					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
+				</Button>
+				<div className="editor-ground-control__publish-button">
+					<EditorPublishButton
+						onSave={ this.props.onSave }
+						onPublish={ this.props.onPublish }
+						tabIndex={ 5 }
+						isConfirmationSidebarEnabled={ this.props.isConfirmationSidebarEnabled }
+						isSaving={ this.props.isSaving }
+						isPublishing={ this.props.isPublishing }
+						isSaveBlocked={ this.props.isSaveBlocked }
+						hasContent={ this.props.hasContent }
+						needsVerification={ this.props.userNeedsVerification }
+					/>
+				</div>
+			</div>
+		);
+	}
+
+	getCloseButtonPath() {
+		// find the last non-editor path in routeHistory, default to "all posts"
+		const lastNonEditorPath = findLast(
+			this.props.routeHistory,
+			action => ! action.path.match( /^\/(post|page|(edit\/[^\/]+))\/[^\/]+(\/\d+)?$/i )
+		);
+		return lastNonEditorPath ? lastNonEditorPath.path : this.props.allPostsUrl;
+	}
+
+	onCloseButtonClick = () => {
+		this.props.recordCloseButtonClick();
+		page.show( this.getCloseButtonPath() );
+	};
+
+	render() {
+		const {
+			isSaving,
+			isSaveBlocked,
+			isDirty,
+			hasContent,
+			onSave,
+			translate,
+			userNeedsVerification,
+		} = this.props;
+
+		return (
+			<Card className="editor-ground-control">
+				<Button
+					borderless
+					className="editor-ground-control__back"
+					href={ '' }
+					onClick={ this.onCloseButtonClick }
+					aria-label={ translate( 'Close' ) }
+				>
+					{ translate( 'Close' ) }
+				</Button>
+				<Site
+					compact
+					site={ this.props.site }
+					onSelect={ this.props.recordSiteButtonClick }
+					indicator={ false }
+				/>
+				<Drafts />
+				{ userNeedsVerification && (
+					<div
+						className="editor-ground-control__email-verification-notice"
+						tabIndex={ 7 }
+						onClick={ this.props.onMoreInfoAboutEmailVerify }
+					>
+						<Gridicon
+							icon="info"
+							className="editor-ground-control__email-verification-notice-icon"
+						/>
+						{ this.getVerificationNoticeLabel() }{' '}
+						<span className="editor-ground-control__email-verification-notice-more">
+							{ translate( 'Learn More' ) }
+						</span>
+					</div>
+				) }
+				<QuickSaveButtons
+					isSaving={ isSaving }
+					isSaveBlocked={ isSaveBlocked }
+					isDirty={ isDirty }
+					hasContent={ hasContent }
+					onSave={ onSave }
+				/>
+				{ this.renderGroundControlActionButtons() }
+			</Card>
+		);
+	}
+}
+
+const mapStateToProps = ( state, ownProps ) => {
+	const siteId = get( ownProps, 'site.ID', null );
+
+	return {
+		publishButtonStatus: getEditorPublishButtonStatus( state ),
+		routeHistory: getRouteHistory( state ),
+		// do not allow publish for unverified e-mails, but allow if the site is VIP
+		userNeedsVerification: ! isCurrentUserEmailVerified( state ) && ! isVipSite( state, siteId ),
+	};
+};
+
+const mapDispatchToProps = {
+	recordSiteButtonClick: () => recordTracksEvent( 'calypso_editor_site_button_click' ),
+	recordCloseButtonClick: () => recordTracksEvent( 'calypso_editor_close_button_click' ),
+};
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( EditorGroundControl ) );

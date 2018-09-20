@@ -1,63 +1,92 @@
+/** @format **/
+/**
+ * Externel dependencies
+ */
+import { noop } from 'lodash';
+import i18n from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from '../constants';
-import { isInitialized as isDomainInitialized } from 'lib/domains';
+import {
+	DNS_ADD,
+	DNS_ADD_COMPLETED,
+	DNS_ADD_FAILED,
+	DNS_APPLY_TEMPLATE_COMPLETED,
+	DNS_DELETE,
+	DNS_DELETE_COMPLETED,
+	DNS_DELETE_FAILED,
+	DNS_FETCH,
+	DNS_FETCH_COMPLETED,
+	DNS_FETCH_FAILED,
+	DOMAIN_TRANSFER_ACCEPT_COMPLETED,
+	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_DECLINE_COMPLETED,
+	EMAIL_FORWARDING_ADD_COMPLETED,
+	EMAIL_FORWARDING_DELETE_COMPLETED,
+	EMAIL_FORWARDING_FETCH,
+	EMAIL_FORWARDING_FETCH_COMPLETED,
+	EMAIL_FORWARDING_FETCH_FAILED,
+	ICANN_VERIFICATION_RESEND_COMPLETED,
+	NAMESERVERS_FETCH,
+	NAMESERVERS_FETCH_COMPLETED,
+	NAMESERVERS_FETCH_FAILED,
+	NAMESERVERS_UPDATE_COMPLETED,
+	PRIMARY_DOMAIN_SET,
+	PRIVACY_PROTECTION_ENABLE_COMPLETED,
+	SITE_REDIRECT_FETCH,
+	SITE_REDIRECT_FETCH_COMPLETED,
+	SITE_REDIRECT_FETCH_FAILED,
+	SITE_REDIRECT_NOTICE_CLOSE,
+	SITE_REDIRECT_UPDATE,
+	SITE_REDIRECT_UPDATE_COMPLETED,
+	SITE_REDIRECT_UPDATE_FAILED,
+	WAPI_DOMAIN_INFO_FETCH,
+	WAPI_DOMAIN_INFO_FETCH_COMPLETED,
+	WAPI_DOMAIN_INFO_FETCH_FAILED,
+	WHOIS_FETCH,
+	WHOIS_FETCH_COMPLETED,
+	WHOIS_FETCH_FAILED,
+	WHOIS_UPDATE_COMPLETED,
+} from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
-import domainsAssembler from 'lib/domains/assembler';
-import DomainsStore from 'lib/domains/store';
+import DnsStore from 'lib/domains/dns/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
-import googleAppsUsersAssembler from 'lib/domains/google-apps-users/assembler';
-import i18n from 'lib/mixins/i18n';
 import NameserversStore from 'lib/domains/nameservers/store';
-import sitesFactory from 'lib/sites-list';
+import { requestSite } from 'state/sites/actions';
 import wapiDomainInfoAssembler from 'lib/domains/wapi-domain-info/assembler';
 import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
 import whoisAssembler from 'lib/domains/whois/assembler';
 import WhoisStore from 'lib/domains/whois/store';
 import wp from 'lib/wp';
+import debugFactory from 'debug';
+import { isBeingProcessed } from 'lib/domains/dns';
+import { fetchSiteDomains } from 'state/sites/domains/actions';
 
-const sites = sitesFactory(),
-	wpcom = wp.undocumented();
+const debug = debugFactory( 'actions:domain-management' );
 
-function setPrimaryDomain( siteId, domainName, onComplete ) {
+const wpcom = wp.undocumented();
+
+export const setPrimaryDomain = ( siteId, domainName, onComplete = noop ) => dispatch => {
+	debug( 'setPrimaryDomain', siteId, domainName );
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.PRIMARY_DOMAIN_SET,
-		siteId
+		type: PRIMARY_DOMAIN_SET,
+		siteId,
 	} );
 	wpcom.setPrimaryDomain( siteId, domainName, ( error, data ) => {
 		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIMARY_DOMAIN_SET_FAILED,
-				error: error && error.message || i18n.translate( 'There was a problem setting the primary domain. Please try again later or contact supprt.' ),
-				siteId,
-				domainName
-			} );
-
 			return onComplete( error, data );
 		}
 
-		sites.setSelectedSite( siteId );
-
-		Dispatcher.handleServerAction( {
-			type: 'FETCH_SITES'
+		fetchSiteDomains( siteId )( dispatch ).then( () => {
+			onComplete( null, data );
+			requestSite( siteId )( dispatch );
 		} );
-
-		sites.once( 'change', () => {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.PRIMARY_DOMAIN_SET_COMPLETED,
-				siteId,
-				domainName
-			} );
-
-			onComplete( null, data )
-		} );
-
-		fetchDomains( siteId );
 	} );
-}
+};
 
-function fetchEmailForwarding( domainName ) {
+export function fetchEmailForwarding( domainName ) {
 	const emailForwarding = EmailForwardingStore.getByDomainName( domainName );
 
 	if ( ! emailForwarding.needsUpdate ) {
@@ -65,34 +94,34 @@ function fetchEmailForwarding( domainName ) {
 	}
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.EMAIL_FORWARDING_FETCH,
-		domainName
+		type: EMAIL_FORWARDING_FETCH,
+		domainName,
 	} );
 
 	wpcom.emailForwards( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.EMAIL_FORWARDING_FETCH_FAILED,
-				domainName
+				type: EMAIL_FORWARDING_FETCH_FAILED,
+				domainName,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.EMAIL_FORWARDING_FETCH_COMPLETED,
+				type: EMAIL_FORWARDING_FETCH_COMPLETED,
 				domainName,
-				forwards: data.forwards
+				forwards: data.forwards,
 			} );
 		}
 	} );
 }
 
-function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
-	wpcom.addEmailForward( domainName, mailbox, destination, ( error ) => {
+export function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
+	wpcom.addEmailForward( domainName, mailbox, destination, error => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.EMAIL_FORWARDING_ADD_COMPLETED,
+				type: EMAIL_FORWARDING_ADD_COMPLETED,
 				domainName,
 				mailbox,
-				destination
+				destination,
 			} );
 			fetchEmailForwarding( domainName );
 		}
@@ -101,13 +130,13 @@ function addEmailForwarding( domainName, mailbox, destination, onComplete ) {
 	} );
 }
 
-function deleteEmailForwarding( domainName, mailbox, onComplete ) {
-	wpcom.deleteEmailForward( domainName, mailbox, ( error ) => {
+export function deleteEmailForwarding( domainName, mailbox, onComplete ) {
+	wpcom.deleteEmailForward( domainName, mailbox, error => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED,
+				type: EMAIL_FORWARDING_DELETE_COMPLETED,
 				domainName,
-				mailbox
+				mailbox,
 			} );
 			fetchEmailForwarding( domainName );
 		}
@@ -116,37 +145,16 @@ function deleteEmailForwarding( domainName, mailbox, onComplete ) {
 	} );
 }
 
-function fetchDomains( siteId ) {
-	if ( ! isDomainInitialized( DomainsStore.get(), siteId ) ) {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.DOMAINS_INITIALIZE,
-			siteId
-		} );
-	}
-
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DOMAINS_FETCH,
-		siteId
-	} );
-
-	wpcom.site( siteId ).domains( function( error, data ) {
-		if ( error ) {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DOMAINS_FETCH_FAILED,
-				siteId,
-				error
-			} );
-		} else {
-			Dispatcher.handleServerAction( {
-				type: ActionTypes.DOMAINS_FETCH_COMPLETED,
-				siteId,
-				domains: domainsAssembler.createDomainObjects( data.domains )
-			} );
-		}
-	} );
+export function resendVerificationEmailForwarding( domainName, mailbox, onComplete ) {
+	wpcom.resendVerificationEmailForward( domainName, mailbox, onComplete );
 }
 
-function fetchWhois( domainName ) {
+/**
+ * Gets the current WHOIS data for `domainName` from the backend
+ *
+ * @param {String} domainName - current domain name
+ */
+export function fetchWhois( domainName ) {
 	const whois = WhoisStore.getByDomainName( domainName );
 
 	if ( ! whois.needsUpdate ) {
@@ -154,36 +162,51 @@ function fetchWhois( domainName ) {
 	}
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.WHOIS_FETCH,
-		domainName
+		type: WHOIS_FETCH,
+		domainName,
 	} );
 
 	wpcom.fetchWhois( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.WHOIS_FETCH_FAILED,
-				domainName
+				type: WHOIS_FETCH_FAILED,
+				domainName,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.WHOIS_FETCH_COMPLETED,
+				type: WHOIS_FETCH_COMPLETED,
 				domainName,
-				data: whoisAssembler.createDomainObject( data )
+				data: whoisAssembler.createDomainWhois( data ),
 			} );
 		}
 	} );
 }
 
-function updateWhois( domainName, contactInformation, onComplete ) {
-	wpcom.updateWhois( domainName, contactInformation, ( error, data ) => {
+/**
+ * Posts new WHOIS contact information data for `domainName` to the backend
+ *
+ * @param {String} domainName - current domain name
+ * @param {Object} registrantContactDetails - registrant contact details to be sent to server
+ * @param {Boolean} transferLock - state of opt-out of the 60-day transfer lock checkbox
+ * @param {Function} onComplete - callback after HTTP action
+ */
+export function updateWhois( domainName, registrantContactDetails, transferLock, onComplete ) {
+	wpcom.updateWhois( domainName, registrantContactDetails, transferLock, ( error, data ) => {
 		if ( ! error ) {
-			// update may take a few minutes, we try after 1 minute to see if it is already done
+			Dispatcher.handleServerAction( {
+				type: WHOIS_UPDATE_COMPLETED,
+				domainName,
+				registrantContactDetails,
+			} );
+
+			// For WWD the update may take longer
+			// After 1 minute, we mark the WHOIS as needing updating
 			setTimeout( () => {
 				Dispatcher.handleServerAction( {
-					type: ActionTypes.WHOIS_UPDATE_COMPLETED,
-					domainName
+					type: WHOIS_UPDATE_COMPLETED,
+					domainName,
+					registrantContactDetails,
 				} );
-				fetchWhois( domainName );
 			}, 60000 );
 		}
 
@@ -191,46 +214,95 @@ function updateWhois( domainName, contactInformation, onComplete ) {
 	} );
 }
 
-function fetchDns( domainName ) {
+export function fetchDns( domainName ) {
+	const dns = DnsStore.getByDomainName( domainName );
+
+	if ( dns.isFetching || dns.hasLoadedFromServer ) {
+		return;
+	}
+
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_DNS,
-		domainName
+		type: DNS_FETCH,
+		domainName,
 	} );
 
 	wpcom.fetchDns( domainName, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.RECEIVE_DNS,
-			records: data && data.records,
-			domainName,
-			error
-		} );
+		if ( ! error ) {
+			Dispatcher.handleServerAction( {
+				type: DNS_FETCH_COMPLETED,
+				records: data && data.records,
+				domainName,
+			} );
+		} else {
+			Dispatcher.handleServerAction( {
+				type: DNS_FETCH_FAILED,
+				domainName,
+			} );
+		}
 	} );
 }
 
-function addDns( domainName, record, onComplete ) {
-	wpcom.addDns( domainName, record, ( error ) => {
+export function addDns( domainName, record, onComplete ) {
+	Dispatcher.handleServerAction( {
+		type: DNS_ADD,
+		domainName,
+		record,
+	} );
+
+	const dns = DnsStore.getByDomainName( domainName );
+
+	wpcom.updateDns( domainName, dns.records, error => {
+		const type = ! error ? DNS_ADD_COMPLETED : DNS_ADD_FAILED;
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.ADD_DNS,
+			type,
 			domainName,
 			record,
-			error
 		} );
 
 		onComplete( error );
 	} );
 }
 
-function deleteDns( domainName, record, onComplete ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.DELETING_DNS,
+export function deleteDns( domainName, record, onComplete ) {
+	if ( isBeingProcessed( record ) ) {
+		return;
+	}
+
+	Dispatcher.handleServerAction( {
+		type: DNS_DELETE,
 		domainName,
-		record
+		record,
 	} );
 
-	wpcom.deleteDns( domainName, record, onComplete );
+	const dns = DnsStore.getByDomainName( domainName );
+
+	wpcom.updateDns( domainName, dns.records, error => {
+		const type = ! error ? DNS_DELETE_COMPLETED : DNS_DELETE_FAILED;
+
+		Dispatcher.handleServerAction( {
+			type,
+			domainName,
+			record,
+		} );
+
+		onComplete( error );
+	} );
 }
 
-function fetchNameservers( domainName ) {
+export function applyDnsTemplate( domainName, provider, service, variables, onComplete ) {
+	wpcom.applyDnsTemplate( domainName, provider, service, variables, ( error, data ) => {
+		if ( ! error ) {
+			Dispatcher.handleServerAction( {
+				type: DNS_APPLY_TEMPLATE_COMPLETED,
+				records: data && data.records,
+				domainName,
+			} );
+		}
+		onComplete( error );
+	} );
+}
+
+export function fetchNameservers( domainName ) {
 	const nameservers = NameserversStore.getByDomainName( domainName );
 
 	if ( nameservers.isFetching || nameservers.hasLoadedFromServer ) {
@@ -238,39 +310,39 @@ function fetchNameservers( domainName ) {
 	}
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.NAMESERVERS_FETCH,
-		domainName
+		type: NAMESERVERS_FETCH,
+		domainName,
 	} );
 
 	wpcom.nameservers( domainName, ( error, data ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.NAMESERVERS_FETCH_FAILED,
-				domainName
+				type: NAMESERVERS_FETCH_FAILED,
+				domainName,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.NAMESERVERS_FETCH_COMPLETED,
+				type: NAMESERVERS_FETCH_COMPLETED,
 				domainName,
-				nameservers: data
+				nameservers: data,
 			} );
 		}
 	} );
 }
 
-function updateNameservers( domainName, nameservers, onComplete ) {
-	const postData = nameservers.map( ( nameserver ) => {
+export function updateNameservers( domainName, nameservers, onComplete ) {
+	const postData = nameservers.map( nameserver => {
 		return {
-			nameserver
+			nameserver,
 		};
 	} );
 
-	wpcom.updateNameservers( domainName, { nameservers: postData }, ( error ) => {
+	wpcom.updateNameservers( domainName, { nameservers: postData }, error => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.NAMESERVERS_UPDATE_COMPLETED,
+				type: NAMESERVERS_UPDATE_COMPLETED,
 				domainName,
-				nameservers
+				nameservers,
 			} );
 		}
 
@@ -278,12 +350,12 @@ function updateNameservers( domainName, nameservers, onComplete ) {
 	} );
 }
 
-function resendIcannVerification( domainName, onComplete ) {
-	wpcom.resendIcannVerification( domainName, ( error ) => {
+export function resendIcannVerification( domainName, onComplete ) {
+	wpcom.resendIcannVerification( domainName, error => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.RESEND_ICANN_VERIFICATION,
-				domainName
+				type: ICANN_VERIFICATION_RESEND_COMPLETED,
+				domainName,
 			} );
 		}
 
@@ -291,66 +363,48 @@ function resendIcannVerification( domainName, onComplete ) {
 	} );
 }
 
-function fetchGoogleAppsUsers( domainName ) {
+export function closeSiteRedirectNotice( siteId ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_GOOGLE_APPS_USERS,
-		domainName
-	} );
-
-	wpcom.googleAppsListAll( domainName, ( error, data ) => {
-		if ( error ) {
-			// TODO: handle error
-			return;
-		}
-
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.RECEIVE_GOOGLE_APPS_USERS,
-			domainName,
-			users: googleAppsUsersAssembler.createDomainObject( data )
-		} );
+		type: SITE_REDIRECT_NOTICE_CLOSE,
+		siteId,
 	} );
 }
 
-function closeSiteRedirectNotice( siteId ) {
+export function fetchSiteRedirect( siteId ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.SITE_REDIRECT_NOTICE_CLOSE,
-		siteId
-	} );
-}
-
-function fetchSiteRedirect( siteId ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.SITE_REDIRECT_FETCH,
-		siteId
+		type: SITE_REDIRECT_FETCH,
+		siteId,
 	} );
 
 	wpcom.getSiteRedirect( siteId, ( error, data ) => {
 		if ( data && data.location ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_FETCH_COMPLETED,
+				type: SITE_REDIRECT_FETCH_COMPLETED,
 				location: data.location,
-				siteId
+				siteId,
 			} );
 		} else if ( error && error.message ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_FETCH_FAILED,
+				type: SITE_REDIRECT_FETCH_FAILED,
 				error: error.message,
-				siteId
+				siteId,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_FETCH_FAILED,
-				error: i18n.translate( 'There was a problem retrieving the redirect settings. Please try again later or contact support.' ),
-				siteId
+				type: SITE_REDIRECT_FETCH_FAILED,
+				error: i18n.translate(
+					'There was a problem retrieving the redirect settings. Please try again later or contact support.'
+				),
+				siteId,
 			} );
 		}
 	} );
 }
 
-function updateSiteRedirect( siteId, location, onComplete ) {
+export function updateSiteRedirect( siteId, location, onComplete ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.SITE_REDIRECT_UPDATE,
-		siteId
+		type: SITE_REDIRECT_UPDATE,
+		siteId,
 	} );
 
 	wpcom.setSiteRedirect( siteId, location, ( error, data ) => {
@@ -358,24 +412,26 @@ function updateSiteRedirect( siteId, location, onComplete ) {
 
 		if ( data && data.success ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_UPDATE_COMPLETED,
+				type: SITE_REDIRECT_UPDATE_COMPLETED,
 				location,
 				siteId,
-				success: i18n.translate( 'The redirect settings were updated successfully.' )
+				success: i18n.translate( 'The redirect settings were updated successfully.' ),
 			} );
 
 			success = true;
 		} else if ( error && error.message ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_UPDATE_FAILED,
+				type: SITE_REDIRECT_UPDATE_FAILED,
 				error: error.message,
-				siteId
+				siteId,
 			} );
 		} else {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.SITE_REDIRECT_UPDATE_FAILED,
-				error: i18n.translate( 'There was a problem updating the redirect settings. Please try again later or contact support.' ),
-				siteId
+				type: SITE_REDIRECT_UPDATE_FAILED,
+				error: i18n.translate(
+					'There was a problem updating the redirect settings. Please try again later or contact support.'
+				),
+				siteId,
 			} );
 		}
 
@@ -383,7 +439,7 @@ function updateSiteRedirect( siteId, location, onComplete ) {
 	} );
 }
 
-function fetchWapiDomainInfo( domainName ) {
+export function fetchWapiDomainInfo( domainName ) {
 	const wapiDomainInfo = WapiDomainInfoStore.getByDomainName( domainName );
 
 	if ( ! wapiDomainInfo.needsUpdate ) {
@@ -391,137 +447,124 @@ function fetchWapiDomainInfo( domainName ) {
 	}
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.WAPI_DOMAIN_INFO_FETCH,
-		domainName
+		type: WAPI_DOMAIN_INFO_FETCH,
+		domainName,
 	} );
 
 	wpcom.fetchWapiDomainInfo( domainName, ( error, status ) => {
 		if ( error ) {
 			Dispatcher.handleServerAction( {
-				type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_FAILED,
+				type: WAPI_DOMAIN_INFO_FETCH_FAILED,
 				error,
-				domainName
+				domainName,
 			} );
 
 			return;
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.WAPI_DOMAIN_INFO_FETCH_COMPLETED,
+			type: WAPI_DOMAIN_INFO_FETCH_COMPLETED,
 			status: wapiDomainInfoAssembler.createDomainObject( status ),
-			domainName
+			domainName,
 		} );
 	} );
 }
 
-function requestTransferCode( options, onComplete ) {
+export function requestTransferCode( options, onComplete ) {
 	const { siteId, domainName, unlock, disablePrivacy } = options;
 
-	wpcom.requestTransferCode( options, ( error ) => {
+	wpcom.requestTransferCode( options, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
+			type: DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 			siteId,
 			domainName,
 			unlock,
-			disablePrivacy
+			disablePrivacy,
 		} );
 
 		onComplete( null );
 	} );
 }
 
-function enableDomainLocking( domainName, onComplete ) {
-	wpcom.enableDomainLocking( domainName, ( error ) => {
+export function cancelTransferRequest( options, onComplete ) {
+	wpcom.cancelTransferRequest( options, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_ENABLE_LOCKING_COMPLETED,
-			domainName
+			type: DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
+			domainName: options.domainName,
+			locked: options.lockDomain,
 		} );
+
+		if ( options.enablePrivacy ) {
+			Dispatcher.handleServerAction( {
+				type: PRIVACY_PROTECTION_ENABLE_COMPLETED,
+				siteId: options.siteId,
+				domainName: options.domainName,
+			} );
+		}
 
 		onComplete( null );
 	} );
 }
 
-function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
-	wpcom.enablePrivacyProtection( domainName, ( error ) => {
+export function enablePrivacyProtection( { siteId, domainName }, onComplete ) {
+	wpcom.enablePrivacyProtection( domainName, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED,
+			type: PRIVACY_PROTECTION_ENABLE_COMPLETED,
 			siteId,
-			domainName
+			domainName,
 		} );
 
 		onComplete( null );
 	} );
 }
 
-function acceptTransfer( domainName, onComplete ) {
-	wpcom.acceptTransfer( domainName, ( error ) => {
+export function acceptTransfer( domainName, onComplete ) {
+	wpcom.acceptTransfer( domainName, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_TRANSFER_ACCEPT_COMPLETED,
-			domainName
+			type: DOMAIN_TRANSFER_ACCEPT_COMPLETED,
+			domainName,
 		} );
 
 		onComplete( null );
 	} );
 }
 
-function declineTransfer( domainName, onComplete ) {
-	wpcom.declineTransfer( domainName, ( error ) => {
+export function declineTransfer( domainName, onComplete ) {
+	wpcom.declineTransfer( domainName, error => {
 		if ( error ) {
 			onComplete( error );
 			return;
 		}
 
 		Dispatcher.handleServerAction( {
-			type: ActionTypes.DOMAIN_TRANSFER_DECLINE_COMPLETED,
-			domainName
+			type: DOMAIN_TRANSFER_DECLINE_COMPLETED,
+			domainName,
 		} );
 
 		onComplete( null );
 	} );
 }
 
-export {
-	acceptTransfer,
-	addDns,
-	addEmailForwarding,
-	closeSiteRedirectNotice,
-	declineTransfer,
-	deleteDns,
-	deleteEmailForwarding,
-	enableDomainLocking,
-	enablePrivacyProtection,
-	fetchDns,
-	fetchDomains,
-	fetchEmailForwarding,
-	fetchGoogleAppsUsers,
-	fetchNameservers,
-	fetchSiteRedirect,
-	fetchWapiDomainInfo,
-	fetchWhois,
-	requestTransferCode,
-	resendIcannVerification,
-	setPrimaryDomain,
-	updateNameservers,
-	updateSiteRedirect,
-	updateWhois
-};
+export function requestGdprConsentManagementLink( domainName, onComplete ) {
+	wpcom.requestGdprConsentManagementLink( domainName, onComplete );
+}

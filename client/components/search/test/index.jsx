@@ -1,62 +1,58 @@
-require( 'lib/react-test-env-setup' )();
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-import chai from 'chai';
-import React from 'react/addons';
+import { expect } from 'chai';
+import React from 'react';
+import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
-import mockery from 'mockery';
 
-const expect = chai.expect,
-	TestUtils = React.addons.TestUtils;
+/**
+ * Internal dependencies
+ */
+import searchClass from '../';
 
-describe( 'Search', function() {
-	beforeEach( function() {
-		mockery.registerMock( 'analytics', {} );
-		mockery.enable();
-		mockery.warnOnUnregistered( false );
+jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
 
-		this.searchClass = require( '../' );
-		this.searchClass.prototype.__reactAutoBindMap.translate = sinon.stub();
-	} );
+describe( 'Search', () => {
+	describe( 'initialValue', () => {
+		let onSearch, rendered;
 
-	afterEach( function() {
-		mockery.deregisterMock( 'analytics' );
-		mockery.disable();
-
-		delete this.searchClass.prototype.__reactAutoBindMap.translate;
-	} );
-
-	describe( 'initialValue', function() {
-		beforeEach( function() {
-			this.onSearch = sinon.stub();
+		beforeEach( () => {
+			onSearch = sinon.stub();
 		} );
 
-		context( 'with initialValue', function() {
-			beforeEach( function() {
-				this.initialValue = 'hello';
-				this.searchElement = React.createElement( this.searchClass, {
-					initialValue: this.initialValue,
-					onSearch: this.onSearch
+		describe( 'with initialValue', () => {
+			const initialValue = 'hello';
+
+			beforeEach( () => {
+				const searchElement = React.createElement( searchClass, {
+					initialValue,
+					onSearch,
 				} );
-				this.rendered = TestUtils.renderIntoDocument( this.searchElement );
+				rendered = TestUtils.renderIntoDocument( searchElement );
 			} );
 
-			it( 'should set state.keyword with the initialValue after mount', function() {
-				expect( this.rendered.state.keyword ).to.equal( this.initialValue );
+			test( 'should set state.keyword with the initialValue after mount', () => {
+				expect( rendered.state.keyword ).to.equal( initialValue );
 			} );
 		} );
-		context( 'without initialValue', function() {
-			beforeEach( function() {
-				this.searchElement = React.createElement( this.searchClass, {
-					onSearch: this.onSearch
+
+		describe( 'without initialValue', () => {
+			beforeEach( () => {
+				const searchElement = React.createElement( searchClass, {
+					onSearch,
 				} );
-				this.rendered = TestUtils.renderIntoDocument( this.searchElement );
+				rendered = TestUtils.renderIntoDocument( searchElement );
 			} );
 
-			it( 'should set state.keyword empty string after mount', function() {
-				expect( this.rendered.state.keyword ).to.equal( '' );
+			test( 'should set state.keyword empty string after mount', () => {
+				expect( rendered.state.keyword ).to.equal( '' );
 			} );
 		} );
 	} );

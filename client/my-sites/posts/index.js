@@ -1,20 +1,36 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
-var page = require( 'page' );
+
+import page from 'page';
 
 /**
  * Internal Dependencies
  */
-var removeOverlay = require( 'remove-overlay' ),
-	controller = require( 'my-sites/controller' ),
-	postsController = require( './controller' );
+import { navigation, siteSelection } from 'my-sites/controller';
+import postsController from './controller';
+import { makeLayout, render as clientRender } from 'controller';
+import { getSiteFragment } from 'lib/route';
 
-module.exports = function() {
-	page( '/posts/:author?/:status?/:domain?',
-		controller.siteSelection,
-		controller.navigation,
-		removeOverlay,
-		postsController.posts
+export default function() {
+	page(
+		'/posts/:author(my)?/:status(published|drafts|scheduled|trashed)?/:domain?',
+		siteSelection,
+		navigation,
+		postsController.posts,
+		makeLayout,
+		clientRender
 	);
-};
+
+	page( '/posts/*', ( { path } ) => {
+		const siteFragment = getSiteFragment( path );
+
+		if ( siteFragment ) {
+			return page.redirect( `/posts/my/${ siteFragment }` );
+		}
+
+		return page.redirect( '/posts/my' );
+	} );
+}

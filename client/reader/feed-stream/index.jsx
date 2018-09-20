@@ -1,150 +1,86 @@
-var React = require( 'react' ),
-	url = require( 'url' );
+/** @format */
+/**
+ * External dependencies
+ */
+import PropTypes from 'prop-types';
+import React from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
-var EmptyContent = require( './empty' ),
-	FollowingStream = require( 'reader/following-stream' ),
-	FeedHeader = require( 'reader/feed-header' ),
-	FeedStore = require( 'lib/feed-store' ),
-	FeedStoreActions = require( 'lib/feed-store/actions' ),
-	FeedStoreState = require( 'lib/feed-store/constants' ).state,
-	FeedError = require( 'reader/feed-error' ),
-	SiteStore = require( 'lib/reader-site-store' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state;
+/**
+ * Internal dependencies
+ */
+import EmptyContent from './empty';
+import DocumentHead from 'components/data/document-head';
+import Stream from 'reader/stream';
+import FeedError from 'reader/feed-error';
+import ReaderFeedHeader from 'blocks/reader-feed-header';
+import QueryReaderSite from 'components/data/query-reader-site';
+import QueryReaderFeed from 'components/data/query-reader-feed';
+import { getSite } from 'state/reader/sites/selectors';
+import { getFeed } from 'state/reader/feeds/selectors';
+import { getSiteName } from 'reader/get-helpers';
+import isSiteBlocked from 'state/selectors/is-site-blocked';
+import SiteBlocked from 'reader/site-blocked';
 
-var FeedStream = React.createClass( {
+// If the blog_ID of a reader feed is 0, that means no site exists for it.
+const getReaderSiteId = feed => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );
 
-	getInitialState: function() {
-		var feed = this.getFeed(),
-			site = this.getSite( feed ),
-			title = this.getTitle( feed, site );
+class FeedStream extends React.Component {
+	static propTypes = {
+		feedId: PropTypes.number.isRequired,
+		className: PropTypes.string,
+		showBack: PropTypes.bool,
+	};
 
-		return {
-			title,
-			feed,
-			site
-		};
-	},
+	static defaultProps = {
+		showBack: true,
+		className: 'is-site-stream',
+	};
+	constructor( props ) {
+		super( props );
+		this.title = props.translate( 'Loading Feed' );
+	}
+	render() {
+		const { feed, site, siteId, isBlocked } = this.props;
 
-	componentDidMount: function() {
-		FeedStore.on( 'change', this.updateState );
-		SiteStore.on( 'change', this.updateState );
-	},
+		const emptyContent = <EmptyContent />;
+		const title = getSiteName( { feed, site } ) || this.title;
 
-	componentWillUnmount: function() {
-		FeedStore.off( 'change', this.updateState );
-		SiteStore.off( 'change', this.updateState );
-	},
-
-	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.feedId !== this.props.feedId ) {
-			this.updateState();
-		}
-	},
-
-	getTitle: function( feed, site ) {
-		var title;
-
-		if ( ! feed && ! site ) {
-			return this.translate( 'Loading Feed' );
-		}
-
-		if ( feed.state === FeedStoreState.ERROR ) {
-			title = this.translate( 'Error fetching feed' );
-		} else if ( feed.state === FeedStoreState.COMPLETE ) {
-			title = feed.name;
+		if ( isBlocked ) {
+			return <SiteBlocked title={ title } siteId={ siteId } />;
 		}
 
-		if ( ! title && site ) {
-			title = site.get( 'name' );
-		}
-
-		if ( ! title && feed ) {
-			title = feed.URL || feed.feed_URL;
-			if ( title ) {
-				title = url.parse( title ).hostname;
-			}
-		}
-
-		if ( ! title && site ) {
-			title = site.get( 'URL' );
-			if ( title ) {
-				title = url.parse( title ).hostname;
-			}
-		}
-
-		if ( ! title ) {
-			title = this.translate( 'Loading Feed' );
-		}
-
-		return title;
-	},
-
-	getFeed: function() {
-		var feed = FeedStore.get( this.props.feedId );
-
-		if ( ! feed ) {
-			FeedStoreActions.fetch( this.props.feedId );
-		}
-
-		return feed;
-	},
-
-	getSite: function() {
-		var feed = FeedStore.get( this.props.feedId ),
-			site;
-		if ( feed && feed.blog_ID ) {
-			// this comes in via a meta request, so don't bother querying it
-			site = SiteStore.get( feed.blog_ID );
-			if ( site && site.get( 'state' ) !== SiteState.COMPLETE ) {
-				site = null; // don't accept an incomplete or error site
-			}
-		}
-
-		return site;
-	},
-
-	updateState: function() {
-		var feed = this.getFeed(),
-			site = this.getSite(),
-			title = this.getTitle( feed, site ),
-			newState = {};
-
-		if ( feed !== this.state.feed ) {
-			newState.feed = feed;
-		}
-
-		if ( title !== this.state.title ) {
-			newState.title = title;
-		}
-
-		if ( site && site !== this.state.site ) {
-			newState.site = site;
-		}
-
-		if ( Object.keys( newState ).length > 0 ) {
-			this.setState( newState );
-		}
-	},
-
-	render: function() {
-		var feed = FeedStore.get( this.props.feedId ),
-			emptyContent = ( <EmptyContent /> );
-
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( this.state.title );
-		}
-
-		if ( feed && feed.state === FeedStoreState.ERROR ) {
-			return <FeedError listName={ this.state.title } />;
+		if ( ( feed && feed.is_error ) || ( site && site.is_error ) ) {
+			return <FeedError sidebarTitle={ title } />;
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } >
-				<FeedHeader feed={ feed } site={ this.state.site } />
-			</FollowingStream>
+			<Stream
+				{ ...this.props }
+				listName={ title }
+				emptyContent={ emptyContent }
+				showPostHeader={ false }
+				showSiteNameOnCards={ false }
+				shouldCombineCards={ false }
+			>
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
+				<ReaderFeedHeader feed={ feed } site={ site } showBack={ this.props.showBack } />
+				{ ! feed && <QueryReaderFeed feedId={ this.props.feedId } /> }
+				{ siteId && <QueryReaderSite siteId={ siteId } /> }
+			</Stream>
 		);
 	}
+}
 
-} );
+export default connect( ( state, ownProps ) => {
+	const feed = getFeed( state, ownProps.feedId );
+	const siteId = getReaderSiteId( feed );
 
-module.exports = FeedStream;
+	return {
+		feed,
+		siteId,
+		site: siteId && getSite( state, siteId ),
+		isBlocked: isSiteBlocked( state, siteId ),
+	};
+} )( localize( FeedStream ) );

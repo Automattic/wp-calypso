@@ -1,8 +1,15 @@
-var Emitter = require( 'lib/mixins/emitter' ),
-	wrap = require( 'lodash/function/wrap' ),
-	debug = require( 'debug' )( 'calypso:ticker' );
+/** @format */
 
-var ticker = {};
+/**
+ * External dependencies
+ */
+
+import { wrap } from 'lodash';
+import Emitter from 'lib/mixins/emitter';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:ticker' );
+
+const ticker = {};
 
 Emitter( ticker );
 
@@ -24,9 +31,11 @@ ticker._start = function() {
 		return;
 	}
 
+	debug( '%d listeners active', ticker.listeners( 'tick' ).length );
+
 	if ( ! ticker.interval ) {
 		debug( 'starting interval' );
-		ticker.interval = setInterval( ticker.tick, 60000 );
+		ticker.interval = setInterval( ticker.tick, 10000 );
 	}
 };
 
@@ -59,7 +68,7 @@ ticker.off = wrap( ticker.off, function( func, type, callback ) {
 } );
 
 ticker.handleVisibilityChange = function() {
-	debug( 'viz change');
+	debug( 'viz change' );
 	if ( document.hidden ) {
 		debug( 'stopping' );
 		ticker._stop();
@@ -71,4 +80,4 @@ ticker.handleVisibilityChange = function() {
 
 ticker.setMaxListeners( 100 );
 
-module.exports = ticker;
+export default ticker;
