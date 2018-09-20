@@ -38,15 +38,16 @@ export class ActionTypeSelector extends Component {
 
 	handleToggleAllActionTypeSelector = () => {
 		const { activityTypes } = this.props;
-		if ( this.isAllCheckboxSelected() ) {
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+		if ( ! selectedCheckboxes.length ) {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: [],
+				selectedCheckboxes: activityTypes.map( type => type.key ),
 			} );
 		} else {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: activityTypes.map( type => type.key ),
+				selectedCheckboxes: [],
 			} );
 		}
 	};
@@ -124,7 +125,7 @@ export class ActionTypeSelector extends Component {
 			<FormLabel key={ group.key }>
 				<FormCheckbox
 					id={ group.key }
-					checked={ this.isSelected( group.key ) || this.isAllCheckboxSelected() }
+					checked={ this.isSelected( group.key ) }
 					name={ group.key }
 					onChange={ this.handleSelectClick }
 				/>
@@ -145,9 +146,6 @@ export class ActionTypeSelector extends Component {
 		const { translate, activityTypes, isVisible, onButtonClick } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes ) && ! this.isAllCheckboxSelected();
-		const totalItems = activityTypes
-			? activityTypes.reduce( ( accumulator, currentValue ) => currentValue.count + accumulator, 0 )
-			: 0;
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
@@ -190,24 +188,35 @@ export class ActionTypeSelector extends Component {
 							!! activityTypes.length && (
 								<div>
 									<Fragment>
-										<FormLabel>
-											<FormCheckbox
-												id="comment_like_notification"
-												onChange={ this.handleToggleAllActionTypeSelector }
-												checked={ this.isAllCheckboxSelected() }
-												name="comment_like_notification"
-											/>
-											<strong>
-												{ translate( 'All activity type (%(totalCount)d)', {
-													args: { totalCount: totalItems },
-												} ) }
-											</strong>
-										</FormLabel>
 										<div className="filterbar__activity-types-selection-granular">
 											{ activityTypes.map( this.renderCheckbox ) }
 										</div>
 									</Fragment>
 									<div className="filterbar__activity-types-selection-info">
+										<div className="filterbar__date-range-info">
+											{ selectedCheckboxes.length === 0 && (
+												<Button
+													borderless
+													compact
+													onClick={ this.handleToggleAllActionTypeSelector }
+												>
+													{ translate( '{{icon/}} select all', {
+														components: { icon: <Gridicon icon="checkmark" /> },
+													} ) }
+												</Button>
+											) }
+											{ selectedCheckboxes.length !== 0 && (
+												<Button
+													borderless
+													compact
+													onClick={ this.handleToggleAllActionTypeSelector }
+												>
+													{ translate( '{{icon/}} clear checkboxes', {
+														components: { icon: <Gridicon icon="cross-small" /> },
+													} ) }
+												</Button>
+											) }
+										</div>
 										<Button
 											className="filterbar__activity-types-apply"
 											primary
