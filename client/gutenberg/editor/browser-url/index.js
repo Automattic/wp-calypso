@@ -10,7 +10,7 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import getCurrentRoute from 'state/selectors/get-current-route';
-
+import { replaceHistory } from 'state/ui/actions';
 
 /**
  * After making changes to a new post, this component will update the url to append the post id:
@@ -23,24 +23,11 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 export class BrowserURL extends Component {
 
 	componentDidUpdate( prevProps ) {
-		const { postId, postStatus } = this.props;
+		const { postId, postStatus, currentRoute } = this.props;
 
 		if ( postStatus === 'draft' && prevProps.postStatus === 'auto-draft' ) {
-			this.setBrowserURL( postId );
+			this.props.replaceHistory( `${ currentRoute }/${ postId }` );
 		}
-	}
-
-	/**
-	 * Replaces the browser URL with a post editor link for the given post ID
-	 *
-	 * @param {number} postId Post ID for which to generate post editor URL.
-	 */
-	setBrowserURL( postId ) {
-		window.history.replaceState(
-			{ id: postId },
-			null,
-			`${ this.props.currentRoute }/${ postId }`
-		);
 	}
 
 	render() {
@@ -63,6 +50,7 @@ export default flowRight(
 			return {
 				currentRoute: getCurrentRoute( state ),
 			}
-		}
+		},
+		{ replaceHistory }
 	),
 )( BrowserURL );
