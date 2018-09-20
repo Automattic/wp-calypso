@@ -10,7 +10,7 @@ import React from 'react';
  */
 import AsyncLoad from 'components/async-load';
 
-function AsyncGridicon( { icon = '' } ) {
+function AsyncGridicon( { icon = '', ...rest } ) {
 	return (
 		<AsyncLoad
 			require={ function( callback ) {
@@ -18,6 +18,8 @@ function AsyncGridicon( { icon = '' } ) {
 					g => callback( g.default )
 				);
 			} }
+			placeholder={ null }
+			{ ...rest }
 		/>
 	);
 }
