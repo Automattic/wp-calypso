@@ -197,7 +197,7 @@ export class ActionTypeSelector extends Component {
 												name="comment_like_notification"
 											/>
 											<strong>
-												{ translate( 'All activity type (%(totalCount)d)', {
+												{ translate( 'All activity types (%(totalCount)d)', {
 													args: { totalCount: totalItems },
 												} ) }
 											</strong>
