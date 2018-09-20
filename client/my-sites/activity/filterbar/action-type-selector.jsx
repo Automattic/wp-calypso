@@ -13,12 +13,15 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
 import { requestActivityActionTypeCounts } from 'state/data-getters';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import MobileSelectPortal from './mobile-select-portal';
+import { isWithinBreakpoint } from 'lib/viewport';
 
 export class ActionTypeSelector extends Component {
 	state = {
@@ -111,6 +114,58 @@ export class ActionTypeSelector extends Component {
 		);
 	};
 
+	renderCheckboxSelection = () => {
+		const { translate, activityTypes } = this.props;
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+
+		return (
+			<div className="filterbar__activity-types-selection-wrap">
+				{ activityTypes &&
+					!! activityTypes.length && (
+						<div>
+							<Fragment>
+								<div className="filterbar__activity-types-selection-granular">
+									{ activityTypes.map( this.renderCheckbox ) }
+								</div>
+							</Fragment>
+							<div className="filterbar__activity-types-selection-info">
+								<div className="filterbar__date-range-info">
+									{ selectedCheckboxes.length === 0 && (
+										<Button borderless compact onClick={ this.handleToggleAllActionTypeSelector }>
+											{ translate( '{{icon/}} select all', {
+												components: { icon: <Gridicon icon="checkmark" /> },
+											} ) }
+										</Button>
+									) }
+									{ selectedCheckboxes.length !== 0 && (
+										<Button borderless compact onClick={ this.handleToggleAllActionTypeSelector }>
+											{ translate( '{{icon/}} clear', {
+												components: { icon: <Gridicon icon="cross-small" /> },
+											} ) }
+										</Button>
+									) }
+								</div>
+								<Button
+									className="filterbar__activity-types-apply"
+									primary
+									compact
+									disabled={ ! this.state.userHasSelected }
+									onClick={ this.handleClose }
+								>
+									{ translate( 'Apply' ) }
+								</Button>
+							</div>
+						</div>
+					) }
+				{ ! activityTypes && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
+				{ activityTypes &&
+					! activityTypes.length && (
+						<p>{ translate( 'No activities recorded in the selected date range.' ) }</p>
+					) }
+			</div>
+		);
+	};
+
 	renderPlaceholder = i => {
 		return (
 			<div className="filterbar__activity-types-selection-placeholder" key={ 'placeholder' + i } />
@@ -120,7 +175,7 @@ export class ActionTypeSelector extends Component {
 	isSelected = key => this.getSelectedCheckboxes().includes( key );
 
 	render() {
-		const { translate, activityTypes, isVisible, onButtonClick } = this.props;
+		const { translate, isVisible, onButtonClick } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes );
 
@@ -152,67 +207,23 @@ export class ActionTypeSelector extends Component {
 						<Gridicon icon="cross-small" />
 					</Button>
 				) }
-				<Popover
-					id="filterbar__activity-types"
-					isVisible={ isVisible }
-					onClose={ this.handleClose }
-					position="bottom"
-					relativePosition={ { left: -80 } }
-					context={ this.activityTypeButton.current }
-				>
-					<div className="filterbar__activity-types-selection-wrap">
-						{ activityTypes &&
-							!! activityTypes.length && (
-								<div>
-									<Fragment>
-										<div className="filterbar__activity-types-selection-granular">
-											{ activityTypes.map( this.renderCheckbox ) }
-										</div>
-									</Fragment>
-									<div className="filterbar__activity-types-selection-info">
-										<div className="filterbar__date-range-info">
-											{ selectedCheckboxes.length === 0 && (
-												<Button
-													borderless
-													compact
-													onClick={ this.handleToggleAllActionTypeSelector }
-												>
-													{ translate( '{{icon/}} select all', {
-														components: { icon: <Gridicon icon="checkmark" /> },
-													} ) }
-												</Button>
-											) }
-											{ selectedCheckboxes.length !== 0 && (
-												<Button
-													borderless
-													compact
-													onClick={ this.handleToggleAllActionTypeSelector }
-												>
-													{ translate( '{{icon/}} clear', {
-														components: { icon: <Gridicon icon="cross-small" /> },
-													} ) }
-												</Button>
-											) }
-										</div>
-										<Button
-											className="filterbar__activity-types-apply"
-											primary
-											compact
-											disabled={ ! this.state.userHasSelected }
-											onClick={ this.handleClose }
-										>
-											{ translate( 'Apply' ) }
-										</Button>
-									</div>
-								</div>
-							) }
-						{ ! activityTypes && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
-						{ activityTypes &&
-							! activityTypes.length && (
-								<p>{ translate( 'No activities recorded in the selected date range.' ) }</p>
-							) }
-					</div>
-				</Popover>
+				{ isWithinBreakpoint( '>660px' ) && (
+					<Popover
+						id="filterbar__activity-types"
+						isVisible={ isVisible }
+						onClose={ this.handleClose }
+						position="bottom"
+						relativePosition={ { left: -80 } }
+						context={ this.activityTypeButton.current }
+					>
+						{ this.renderCheckboxSelection() }
+					</Popover>
+				) }
+				{ ! isWithinBreakpoint( '>660px' ) && (
+					<MobileSelectPortal isVisible={ isVisible }>
+						<Card>{ this.renderCheckboxSelection() }</Card>
+					</MobileSelectPortal>
+				) }
 			</Fragment>
 		);
 	}

@@ -62,26 +62,29 @@ export class Filterbar extends Component {
 	render() {
 		const { translate, siteId, filter } = this.props;
 		return (
-			<div className="filterbar card">
-				<div className="filterbar__icon-navigation">
-					<Gridicon icon="filter" className="filterbar__open-icon" />
+			<div className="filterbar">
+				<div className="filterbar__wrap card">
+					<div className="filterbar__icon-navigation">
+						<Gridicon icon="filter" className="filterbar__open-icon" />
+					</div>
+					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
+					<DateRangeSelector
+						isVisible={ this.state.showActivityDates }
+						onButtonClick={ this.toggleDateRangeSelector }
+						onClose={ this.closeDateRangeSelector }
+						filter={ filter }
+						siteId={ siteId }
+					/>
+					<ActionTypeSelector
+						filter={ filter }
+						siteId={ siteId }
+						isVisible={ this.state.showActivityTypes }
+						onButtonClick={ this.toggleActivityTypesSelector }
+						onClose={ this.closeActivityTypes }
+					/>
+					{ this.renderCloseButton() }
 				</div>
-				<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
-				<DateRangeSelector
-					isVisible={ this.state.showActivityDates }
-					onButtonClick={ this.toggleDateRangeSelector }
-					onClose={ this.closeDateRangeSelector }
-					filter={ filter }
-					siteId={ siteId }
-				/>
-				<ActionTypeSelector
-					filter={ filter }
-					siteId={ siteId }
-					isVisible={ this.state.showActivityTypes }
-					onButtonClick={ this.toggleActivityTypesSelector }
-					onClose={ this.closeActivityTypes }
-				/>
-				{ this.renderCloseButton() }
+				<div className="filterbar__mobile-wrap" />
 			</div>
 		);
 	}

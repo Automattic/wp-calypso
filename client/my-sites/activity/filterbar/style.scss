@@ -1,7 +1,7 @@
 /**
  * @component Search
  */
-.filterbar {
+.filterbar__wrap {
 	position: relative;
 	display: flex;
 	flex: 1 1 auto;
@@ -10,6 +10,7 @@
 	height: 51px;
 	padding: 0;
 	margin: 0;
+
 
 	.filterbar__icon-navigation {
 		display: none;
