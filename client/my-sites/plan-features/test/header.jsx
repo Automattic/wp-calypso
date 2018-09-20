@@ -476,7 +476,7 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 	test( 'Should display credit label for discounted higher-tier plans that are available for purchase', () => {
 		const instance = new PlanFeaturesHeader( { ...baseProps } );
 		const wrapper = shallow( <span>{ instance.renderCreditLabel() }</span> );
-		expect( wrapper.find( '.plan-features__header-credit-label' ).length ).toBe( 1 );
+		expect( wrapper.find( '.plan-features__header-credit-badge' ).length ).toBe( 1 );
 	} );
 
 	test( 'Should not display credit label when plan is not available for purchase', () => {
