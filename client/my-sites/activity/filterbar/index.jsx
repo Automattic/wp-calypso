@@ -65,7 +65,7 @@ export class Filterbar extends Component {
 				<div className="filterbar__icon-navigation">
 					<Gridicon icon="filter" className="filterbar__open-icon" />
 				</div>
-				<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
+				<span className="filterbar__label">{ translate( 'Filter&nbsp;by:' ) }</span>
 				<DateRangeSelector
 					isVisible={ this.state.showActivityDates }
 					onButtonClick={ this.toggleDateRangeSelector }
