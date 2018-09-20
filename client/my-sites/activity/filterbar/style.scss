@@ -128,8 +128,9 @@
 }
 
 .filterbar__date-range-wrap {
-	min-width: 280px;
+	width: 280px;
 	padding: 16px;
+	margin: 0 auto;
 
 	.DayPicker-Day {
 		cursor: pointer;
