@@ -20,10 +20,7 @@ import { requestGutenbergDraftPost as createAutoDraft, requestSitePost } from 's
 import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
-
-const editorSettings = {
-	autosaveInterval: 3, //interval to debounce autosaving events, in seconds.
-};
+import { translate } from 'i18n-calypso';
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
@@ -38,7 +35,14 @@ class GutenbergEditor extends Component {
 	}
 
 	render() {
-		const { postType, siteId, siteSlug, post } = this.props;
+		const { postType, siteId, siteSlug, post, overridePost } = this.props;
+
+		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
+		const editorSettings = {
+			autosaveInterval: 3, //interval to debounce autosaving events, in seconds.
+			titlePlaceholder: translate( 'Add title' ),
+			bodyPlaceholder: translate( 'Write your story' ),
+		};
 
 		return (
 			<WithAPIMiddleware siteSlug={ siteSlug }>
@@ -49,6 +53,7 @@ class GutenbergEditor extends Component {
 					hasFixedToolbar={ true }
 					post={ post }
 					onError={ noop }
+					overridePost={ overridePost }
 				/>
 			</WithAPIMiddleware>
 		);
@@ -67,10 +72,13 @@ const getPost = ( siteId, postId ) => {
 const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey } ) => {
 	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
 	const post = getPost( siteId, postId || draftPostId );
+	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
+	const overridePost = isAutoDraft ? { title: '' } : null;
 
 	return {
 		siteSlug: getSiteSlug( state, siteId ),
 		post,
+		overridePost,
 	};
 };
 
