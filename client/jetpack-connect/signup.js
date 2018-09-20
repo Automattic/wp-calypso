@@ -14,6 +14,7 @@ import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { get, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -94,12 +95,13 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
-	handleSubmitSignup = ( _, userData ) => {
+	handleSubmitSignup = ( _, userData, analyticsData, afterSubmit = noop ) => {
 		debug( 'submitting new account', userData );
 		this.setState( { isCreatingAccount: true }, () =>
 			this.props
 				.createAccount( userData )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
+				.finally( afterSubmit )
 		);
 	};
 
@@ -162,6 +164,10 @@ export class JetpackSignup extends Component {
 			warningNotice( text, {
 				button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,
 			} );
+			return;
+		}
+		if ( get( error, [ 'error' ] ) === 'password_invalid' ) {
+			errorNotice( error.message, { id: 'user-creation-error-password_invalid' } );
 			return;
 		}
 		errorNotice(
