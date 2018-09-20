@@ -22,10 +22,6 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
 import { translate } from 'i18n-calypso';
 
-const editorSettings = {
-	autosaveInterval: 3, //interval to debounce autosaving events, in seconds.
-};
-
 class GutenbergEditor extends Component {
 	componentDidMount() {
 		registerCoreBlocks();
@@ -41,6 +37,13 @@ class GutenbergEditor extends Component {
 	render() {
 		const { postType, siteId, siteSlug, post } = this.props;
 
+		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
+		const editorSettings = {
+			autosaveInterval: 3, //interval to debounce autosaving events, in seconds.
+			titlePlaceholder: translate( 'Add title' ),
+			bodyPlaceholder: translate( 'Write your story' ),
+		};
+
 		return (
 			<WithAPIMiddleware siteSlug={ siteSlug }>
 				<QueryPostTypes siteId={ siteId } />
@@ -50,7 +53,7 @@ class GutenbergEditor extends Component {
 					hasFixedToolbar={ true }
 					post={ post }
 					onError={ noop }
-					overridePost={ { title: translate( 'Add title' ) } }
+					overridePost={ { title: '' } }
 				/>
 			</WithAPIMiddleware>
 		);
