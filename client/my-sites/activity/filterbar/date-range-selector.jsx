@@ -305,7 +305,7 @@ export class DateRangeSelector extends Component {
 const mapDispatchToProps = dispatch => ( {
 	selectDateRange: ( siteId, from, to ) => {
 		if ( to ) {
-			const record = { selected_duraion: 1, from_current_date: 0 };
+			const record = { selected_duration: 1, from_current_date: 0 };
 			return dispatch(
 				withAnalytics(
 					recordTracksEvent( 'calypso_activitylog_filterbar_select_range', record ),
@@ -313,7 +313,7 @@ const mapDispatchToProps = dispatch => ( {
 				)
 			);
 		}
-		const record = { selected_duraion: 1, from_current_date: 0 };
+		const record = { selected_duration: 1, from_current_date: 0 };
 		dispatch(
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_filterbar_select_range', record ),
