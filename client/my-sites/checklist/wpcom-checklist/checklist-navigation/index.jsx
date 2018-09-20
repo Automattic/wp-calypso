@@ -74,10 +74,10 @@ export class ChecklistNavigation extends Component {
 					</span>
 
 					<span className={ classNames( buttonClasses ) }>
-						{ translate( '%(complete)d/%(total)d', { 
-							context: 'Numerical progress indicator, like 5/9', 
-							args: { 
-								complete: completeCount, 
+						{ translate( '%(complete)d/%(total)d', {
+							context: 'Numerical progress indicator, like 5/9',
+							args: {
+								complete: completeCount,
 								total: total,
 							},
 						} ) }
