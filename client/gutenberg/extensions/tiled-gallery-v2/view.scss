@@ -1,5 +1,15 @@
-/** @format */
-
-.wp-block-a8c-tiled-gallery-v2 {
-	border: 1px solid red;
+.wp-block-gallery {
+	&.is-style-a8c-gallery-tile {
+		.blocks-gallery-item:not( .has-add-item-button ) {
+			width: 200px;
+			height: 200px;
+			margin: 2px;
+		}
+	}
+	&.is-style-a8c-gallery-circle {
+		.blocks-gallery-item:not( .has-add-item-button ) {
+			border-radius: 50%;
+			overflow: hidden;
+		}
+	}
 }
