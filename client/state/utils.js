@@ -407,6 +407,24 @@ export function createReducer( initialState, handlers, schema ) {
 	return reducer;
 }
 
+/*
+ * Wrap the reducer with appropriate persistence code. If it has the `hasCustomPersistence` flag,
+ * it means it's already set up and we don't need to make any changes.
+ * If the reducer has a `schema` property, it means that persistence is requested and we
+ * wrap it with code that validates the schema when loading persisted state.
+ */
+function setupReducerPersistence( reducer ) {
+	if ( reducer.hasCustomPersistence ) {
+		return reducer;
+	}
+
+	if ( reducer.schema ) {
+		return withSchemaValidation( reducer.schema, reducer );
+	}
+
+	return withoutPersistence( reducer );
+}
+
 /**
  * Returns a single reducing function that ensures that persistence is opt-in.
  * If you don't need state to be stored, simply use this method instead of
@@ -475,19 +493,12 @@ export function createReducer( initialState, handlers, schema ) {
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
-	const validatedReducers = mapValues( reducers, next => {
-		if ( next.hasCustomPersistence ) {
-			return next;
-		}
+	// set up persistence of reducers passed from app and then create a combined one
+	return createCombinedReducer( mapValues( reducers, setupReducerPersistence ) );
+}
 
-		if ( next.schema ) {
-			return withSchemaValidation( next.schema, next );
-		}
-
-		return withoutPersistence( next );
-	} );
-
-	const combined = combine( validatedReducers );
+function createCombinedReducer( reducers ) {
+	const combined = combine( reducers );
 	const combinedWithSerializer = ( state, action ) => {
 		// SERIALIZE needs behavior that's slightly different from `combineReducers` from Redux:
 		// - `undefined` is a valid value returned from SERIALIZE reducer, but `combineReducers`
@@ -503,7 +514,7 @@ export function combineReducers( reducers ) {
 				return undefined;
 			}
 			return reduce(
-				validatedReducers,
+				reducers,
 				( result, reducer, key ) => {
 					const serialized = reducer( state[ key ], action );
 					if ( serialized !== undefined ) {
