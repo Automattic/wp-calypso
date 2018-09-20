@@ -14,3 +14,16 @@
 		transform: translate3d( 0, 0, 0 );
 	}
 }
+
+.is-section-signup {
+	.example-domain-suggestions__explanation,
+	.use-your-domain-step__footer {
+		color: $gray-lighten-20;
+	}
+
+	.example-domain-suggestions__mapping-information a,
+	.use-your-domain-step__footer a {
+		color: $white;
+		text-decoration: underline;
+	}
+}
