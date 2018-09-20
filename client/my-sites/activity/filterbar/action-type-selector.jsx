@@ -102,12 +102,8 @@ export class ActionTypeSelector extends Component {
 
 	handleClose = () => {
 		const { siteId, onClose, selectActionType } = this.props;
-		if ( this.isAllCheckboxSelected() ) {
-			selectActionType( siteId, [] );
-		} else {
-			selectActionType( siteId, this.getSelectedCheckboxes() );
-		}
 
+		selectActionType( siteId, this.getSelectedCheckboxes() );
 		this.setState( {
 			userHasSelected: false,
 			selectedCheckboxes: [],
@@ -140,7 +136,7 @@ export class ActionTypeSelector extends Component {
 	render() {
 		const { translate, activityTypes, isVisible, onButtonClick } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
-		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes ) && ! this.isAllCheckboxSelected();
+		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes );
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
