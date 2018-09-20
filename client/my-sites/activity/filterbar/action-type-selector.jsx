@@ -181,7 +181,7 @@ export class ActionTypeSelector extends Component {
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
-			'is-selected': hasSelectedCheckboxes,
+			'is-selected': hasSelectedCheckboxes || isVisible,
 		} );
 
 		return (

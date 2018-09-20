@@ -131,8 +131,12 @@
 	min-width: 280px;
 	padding: 16px;
 
-	.DayPicker-Day .date-picker__day {
-		padding: 0 7px;
+	.DayPicker-Day {
+		cursor: pointer;
+
+		.date-picker__day {
+			padding: 0 7px;
+		}
 	}
 
 	.filterbar__date-range-selection-info {
