@@ -93,6 +93,28 @@ class StepWrapper extends Component {
 		}
 	}
 
+	testimonial() {
+		const { translate } = this.props;
+
+		if ( 'about' !== this.props.stepName ) return null;
+
+		return (
+			<div className="step-wrapper__testimonial">
+				<div className="step-wrapper__testimonial-image">
+					<img alt="" />
+				</div>
+				<div className="step-wrapper__testimonial-content">
+					{ translate(
+						'“WordPress.com has given me a platform to reach thousands of people. I’ve been able to communicate, bond, and connect.”'
+					) }
+				</div>
+				<div className="step-wrapper__testimonial-name">
+					{ translate( 'Lorilin, bugbugbooks.com' ) }
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
@@ -110,6 +132,8 @@ class StepWrapper extends Component {
 						{ headerButton }
 					</FormattedHeader>
 				) }
+
+				{ this.testimonial() }
 
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }

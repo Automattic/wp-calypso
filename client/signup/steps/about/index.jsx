@@ -535,6 +535,7 @@ class AboutStep extends Component {
 				<div className={ aboutFormClassName }>
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
+							<h3>{ translate( 'Tell us about your site.' ) }</h3>
 							<FormFieldset>
 								<FormLabel htmlFor="siteTitle">
 									{ translate( 'What would you like to name your site?' ) }
@@ -610,11 +611,10 @@ class AboutStep extends Component {
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
+				className="about__section"
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Let’s create a site.' ) }
-				subHeaderText={ translate(
-					'Please answer these questions so we can help you make the site you need.'
-				) }
+				headerText={ translate( 'Let’s create a site!' ) }
+				subHeaderText={ translate( 'The next few steps will take you through your site setup.' ) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
 			/>
