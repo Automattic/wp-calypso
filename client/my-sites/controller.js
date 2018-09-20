@@ -378,8 +378,8 @@ export function siteSelection( context, next ) {
 		const calypsoifyGutenberg =
 			config.isEnabled( 'gutenberg' ) &&
 			config.isEnabled( 'gutenberg/opt-in' ) &&
-			config.isEnabled( 'calypsoify/gutenberg' ) /* &&
-			isAtomicSite*/;
+			config.isEnabled( 'calypsoify/gutenberg' ) &&
+			isAtomicSite;
 
 		if (
 			window &&
@@ -413,7 +413,7 @@ export function siteSelection( context, next ) {
 			/^\/gutenberg\//.test( basePath )
 		) {
 			let gutenbergURL = 'post-new.php?calypsoify=1'; // Defaults to post type: `post`
-			if ( isFinite( context.params.post ) ) {
+			if ( isFinite( parseInt( context.params.post, 10 ) ) ) {
 				// If there is a post ID, the URL ignores the post type
 				gutenbergURL = `post.php?calypsoify=1&post=${ context.params.post }&action=edit`;
 			} else if ( /^\/gutenberg\/page/.test( basePath ) ) {
