@@ -215,7 +215,13 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					loader: 'html-loader',
 				},
 				{
-					test: /\.(svg)$/,
+					test: /\.svg$/,
+					include: /gridicons/,
+					use: '@svgr/webpack',
+				},
+				{
+					test: /\.svg$/,
+					exclude: /gridicons/,
 					use: [
 						{
 							loader: 'file-loader',
