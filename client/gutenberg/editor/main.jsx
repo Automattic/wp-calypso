@@ -44,6 +44,8 @@ class GutenbergEditor extends Component {
 			bodyPlaceholder: translate( 'Write your story' ),
 		};
 
+		const isAutoDraft = () => post && 'auto-draft' === post.status;
+
 		return (
 			<WithAPIMiddleware siteSlug={ siteSlug }>
 				<QueryPostTypes siteId={ siteId } />
@@ -53,7 +55,7 @@ class GutenbergEditor extends Component {
 					hasFixedToolbar={ true }
 					post={ post }
 					onError={ noop }
-					overridePost={ { title: '' } }
+					overridePost={ isAutoDraft() ? { title: '' } : null }
 				/>
 			</WithAPIMiddleware>
 		);
