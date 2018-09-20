@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -15,64 +15,60 @@ import { isRequestingDomainsSuggestions } from 'state/domains/suggestions/select
 import { requestDomainsSuggestions } from 'state/domains/suggestions/actions';
 
 function getQueryObject( props ) {
-	const { query, vendor, quantity, includeSubdomain, surveyVertical } = props;
 	return {
-		query,
-		vendor,
-		quantity,
-		include_wordpressdotcom: includeSubdomain,
-		vertical: surveyVertical,
+		include_wordpressdotcom: props.includeSubdomain,
+		quantity: props.quantity,
+		query: props.query,
+		recommendation_context: props.recommendationContext,
+		vendor: props.vendor,
+		vertical: props.surveyVertical,
 	};
 }
 
-class QueryDomainsSuggestions extends Component {
-	constructor( props ) {
-		super( props );
-		this.requestDomainsSuggestions = this.requestDomainsSuggestions.bind( this );
-	}
+class QueryDomainsSuggestions extends PureComponent {
+	static propTypes = {
+		includeSubdomain: PropTypes.bool,
+		quantity: PropTypes.number,
+		query: PropTypes.string.isRequired,
+		recommendation_context: PropTypes.string,
+		requestDomainsSuggestions: PropTypes.func,
+		requestingDomainsSuggestions: PropTypes.bool,
+		vendor: PropTypes.string.isRequired,
+	};
 
-	requestDomainsSuggestions( props = this.props ) {
-		if ( ! props.requestingDomainsSuggestions ) {
-			props.requestDomainsSuggestions( getQueryObject( props ) );
-		}
-	}
+	static defaultProps = {
+		includeSubdomain: false,
+		quantity: 5,
+		requestDomainsSuggestions: () => {},
+	};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.requestDomainsSuggestions();
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			nextProps.requestingDomainsSuggestions ||
-			( this.props.query === nextProps.query &&
-				this.props.vendor === nextProps.vendor &&
-				this.props.quantity === nextProps.quantity &&
-				this.props.includeSubdomain === nextProps.includeSubdomain )
+			this.props.requestingDomainsSuggestions ||
+			( prevProps.query === this.props.query &&
+				prevProps.vendor === this.props.vendor &&
+				prevProps.quantity === this.props.quantity &&
+				prevProps.includeSubdomain === this.props.includeSubdomain )
 		) {
 			return;
 		}
-		this.requestDomainsSuggestions( nextProps );
+		this.requestDomainsSuggestions();
+	}
+
+	requestDomainsSuggestions() {
+		if ( ! this.props.requestingDomainsSuggestions ) {
+			this.props.requestDomainsSuggestions( getQueryObject( this.props ) );
+		}
 	}
 
 	render() {
 		return null;
 	}
 }
-
-QueryDomainsSuggestions.propTypes = {
-	query: PropTypes.string.isRequired,
-	vendor: PropTypes.string.isRequired,
-	quantity: PropTypes.number,
-	includeSubdomain: PropTypes.bool,
-	requestingDomainsSuggestions: PropTypes.bool,
-	requestDomainsSuggestions: PropTypes.func,
-};
-
-QueryDomainsSuggestions.defaultProps = {
-	requestDomainsSuggestions: () => {},
-	includeSubdomain: false,
-	quantity: 5,
-};
 
 export default connect(
 	( state, ownProps ) => {
