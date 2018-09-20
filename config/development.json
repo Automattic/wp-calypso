@@ -125,6 +125,7 @@
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/notifications": true,
+		"me/site-block-list": true,
 		"me/trophies": false,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
