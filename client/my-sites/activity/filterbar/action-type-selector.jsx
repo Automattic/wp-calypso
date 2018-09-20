@@ -55,12 +55,7 @@ export class ActionTypeSelector extends Component {
 	handleSelectClick = event => {
 		const group = event.target.getAttribute( 'id' );
 
-		if ( this.isAllCheckboxSelected() ) {
-			this.setState( {
-				userHasSelected: true,
-				selectedCheckboxes: [ group ],
-			} );
-		} else if ( this.getSelectedCheckboxes().includes( group ) ) {
+		if ( this.getSelectedCheckboxes().includes( group ) ) {
 			this.setState( {
 				userHasSelected: true,
 				selectedCheckboxes: without( this.getSelectedCheckboxes(), group ),
