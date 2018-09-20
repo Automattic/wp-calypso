@@ -304,19 +304,35 @@ export class DateRangeSelector extends Component {
 
 const mapDispatchToProps = dispatch => ( {
 	selectDateRange: ( siteId, from, to ) => {
-		if ( to ) {
-			const record = { selected_duration: 1, from_current_date: 0 };
+		if ( ! from && ! to ) {
 			return dispatch(
 				withAnalytics(
-					recordTracksEvent( 'calypso_activitylog_filterbar_select_range', record ),
+					recordTracksEvent( 'calypso_activitylog_filterbar_reset_range' ),
+					updateFilter( siteId, { after: from, before: to, on: null, page: 1 } )
+				)
+			);
+		} else if ( to ) {
+			const dateTo = new Date( to );
+			const dateFrom = new Date( from );
+			const dateNow = Date.now();
+			const duration = ( dateTo - dateFrom ) / ( 24 * 60 * 60 * 1000 );
+			const distance = Math.floor( ( dateNow - dateFrom ) / ( 24 * 60 * 60 * 1000 ) );
+			return dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_filterbar_select_range', { duration, distance } ),
 					updateFilter( siteId, { after: from, before: to, on: null, page: 1 } )
 				)
 			);
 		}
-		const record = { selected_duration: 1, from_current_date: 0 };
-		dispatch(
+		const dateFrom = new Date( from );
+		const dateNow = Date.now();
+		const distance = Math.floor( ( dateNow - dateFrom ) / ( 24 * 60 * 60 * 1000 ) );
+		return dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_filterbar_select_range', record ),
+				recordTracksEvent( 'calypso_activitylog_filterbar_select_range', {
+					duration: 1,
+					distance,
+				} ),
 				updateFilter( siteId, { on: from, after: null, before: null, page: 1 } )
 			)
 		);
