@@ -187,7 +187,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 	return bestPos;
 }
 
-function offset( pos, el, target ) {
+function offset( pos, el, target, relativePosition ) {
 	const pad = 15;
 	const tipRect = getBoundingClientRect( el );
 
@@ -217,14 +217,20 @@ function offset( pos, el, target ) {
 		case 'top':
 			_pos = {
 				top: to.top - eh,
-				left: to.left + tw / 2 - ew / 2,
+				left:
+					relativePosition && relativePosition.left
+						? to.left + relativePosition.left
+						: to.left + tw / 2 - ew / 2,
 			};
 			break;
 
 		case 'bottom':
 			_pos = {
 				top: to.top + th,
-				left: to.left + tw / 2 - ew / 2,
+				left:
+					relativePosition && relativePosition.left
+						? to.left + relativePosition.left
+						: to.left + tw / 2 - ew / 2,
 			};
 			break;
 

@@ -250,7 +250,8 @@ export class DateRangeSelector extends Component {
 					id="filterbar__date-range"
 					isVisible={ isVisible }
 					onClose={ this.handleClose }
-					autoPosition={ true }
+					position="bottom"
+					relativePosition={ { left: -125 } }
 					context={ this.dateRangeButton.current }
 				>
 					<div className="filterbar__date-range-wrap">

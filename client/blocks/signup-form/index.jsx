@@ -326,7 +326,9 @@ class SignupForm extends Component {
 				times_password_validation_failed: timesPasswordValidationFailed,
 			};
 
-			this.props.submitForm( this.state.form, this.getUserData(), analyticsData );
+			this.props.submitForm( this.state.form, this.getUserData(), analyticsData, () => {
+				this.setState( { submitting: false } );
+			} );
 
 			resetAnalyticsData();
 		} );

@@ -12,15 +12,15 @@
 	margin: 0;
 
 	.filterbar__icon-navigation {
-		display: flex;
+		display: none;
 		flex: 0 0 auto;
 		align-items: center;
 		height: 100%;
 		background-color: $white;
 		border-radius: inherit;
 
-		@include breakpoint( '<480px' ) {
-			display: none;
+		@include breakpoint( '>480px' ) {
+			display: flex;
 		}
 	}
 
@@ -36,16 +36,16 @@
 	}
 
 	.filterbar__label {
-		margin-right: 8px;
+		margin:0 8px 0 16px;
 		color: $gray;
 
-		@include breakpoint( '<480px' ) {
-			margin-left: 10px;
+		@include breakpoint( '>480px' ) {
+			margin-left:0;
 		}
 	}
 
 	.filterbar__selection.button {
-		margin: 6px;
+		margin: 8px;
 		padding: 8px;
 		border: 1px solid $gray-lighten-10;
 		border-radius: 5px;
@@ -54,13 +54,17 @@
 	}
 
 	.filterbar__selection.is-selected {
-		margin: 8px 0 8px 8px;
+		margin: 8px;
 		border-radius: 0;
-		border-top-left-radius: 5px;
-		border-bottom-left-radius: 5px;
+		border-radius: 5px;
 		border: 1px solid $gray-darken-30;
 		background: $gray-darken-30;
 		color: $white;
+		@include breakpoint( '>480px' ) {
+			margin-right: 0;
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
 	}
 
 	.filterbar__selection-close {
@@ -72,6 +76,10 @@
 		border-top-right-radius: 5px;
 		border-bottom-right-radius: 5px;
 		border: 1px solid $gray-darken-30;
+		display: none;
+		@include breakpoint( '>480px' ) {
+			display: inline;
+		}
 	}
 
 	.filterbar__selection-close:hover {

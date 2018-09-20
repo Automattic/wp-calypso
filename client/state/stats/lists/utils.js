@@ -21,7 +21,6 @@ import { moment, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { flagUrl } from 'lib/flags';
 import { PUBLICIZE_SERVICES_LABEL_ICON } from './constants';
 
 /**
@@ -465,7 +464,6 @@ export const normalizers = {
 
 		return map( countryData, viewData => {
 			const country = countryInfo[ viewData.country_code ];
-			const icon = flagUrl( viewData.country_code.toLowerCase() );
 
 			// ’ in country names causes google's geo viz to break
 			return {
@@ -473,7 +471,6 @@ export const normalizers = {
 				countryCode: viewData.country_code,
 				value: viewData.views,
 				region: country.map_region,
-				backgroundImage: icon,
 			};
 		} );
 	},
