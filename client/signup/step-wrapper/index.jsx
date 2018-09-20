@@ -101,15 +101,15 @@ class StepWrapper extends Component {
 		return (
 			<div className="step-wrapper__testimonial">
 				<div className="step-wrapper__testimonial-image">
-					<img alt="" />
+					<img src="/calypso/images/signup/debperlman.jpg" alt="" />
 				</div>
 				<div className="step-wrapper__testimonial-content">
 					{ translate(
-						'“WordPress.com has given me a platform to reach thousands of people. I’ve been able to communicate, bond, and connect.”'
+						'“I love having a place where I can share what I’m working on in an immediate way and have a conversation with people who are equally excited about it.”'
 					) }
 				</div>
 				<div className="step-wrapper__testimonial-name">
-					{ translate( 'Lorilin, bugbugbooks.com' ) }
+					{ translate( 'Deb Perlman, smittenkitchen.com' ) }
 				</div>
 			</div>
 		);
