@@ -785,8 +785,7 @@ export default connect(
 				sitePlan.product_slug !== PLAN_FREE &&
 				planCredits &&
 				! isJetpack &&
-				! isInSignup &&
-				abtest( 'showPlanCreditsApplied' ) === 'test',
+				! isInSignup,
 		};
 	},
 	{
