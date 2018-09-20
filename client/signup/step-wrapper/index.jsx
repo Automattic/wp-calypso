@@ -133,8 +133,6 @@ class StepWrapper extends Component {
 					</FormattedHeader>
 				) }
 
-				{ this.testimonial() }
-
 				<div className="step-wrapper__content is-animated-content">
 					{ stepContent }
 
@@ -143,6 +141,8 @@ class StepWrapper extends Component {
 						{ ! hideSkip && this.renderSkip() }
 					</div>
 				</div>
+
+				{ this.testimonial() }
 			</div>
 		);
 	}
