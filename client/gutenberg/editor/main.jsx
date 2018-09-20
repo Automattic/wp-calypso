@@ -14,6 +14,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
  * Internal dependencies
  */
 import Editor from './edit-post/editor.js';
+import EditorDocumentHead from './edit-post/components/editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import QueryPostTypes from 'components/data/query-post-types';
 import { createAutoDraft, requestSitePost } from 'state/data-getters';
@@ -37,7 +38,7 @@ class GutenbergEditor extends Component {
 	}
 
 	render() {
-		const { postType, siteId, siteSlug, post, overridePost } = this.props;
+		const { postId, postType, siteId, siteSlug, post, overridePost } = this.props;
 
 		//see also https://github.com/WordPress/gutenberg/blob/45bc8e4991d408bca8e87cba868e0872f742230b/lib/client-assets.php#L1451
 		const editorSettings = {
@@ -50,6 +51,7 @@ class GutenbergEditor extends Component {
 			<WithAPIMiddleware siteSlug={ siteSlug }>
 				<QueryPostTypes siteId={ siteId } />
 				<EditorPostTypeUnsupported type={ postType } />
+				<EditorDocumentHead postId={ postId } postType={ postType } />
 				<Editor
 					settings={ editorSettings }
 					hasFixedToolbar={ true }
