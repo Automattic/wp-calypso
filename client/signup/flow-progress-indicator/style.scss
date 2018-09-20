@@ -1,16 +1,19 @@
 .flow-progress-indicator {
 	display: flex;
-	align-items: center;
-	justify-content: center;
+	align-items: start;
+	justify-content: start;
 
-	color: darken( $gray, 20 );
+	color: $white;
 	font-size: 14px;
 	font-weight: 300;
-	margin-bottom: -10px;
-	text-align: center;
+	margin: 0 auto -12px;
 
 	@include breakpoint( '<660px' ) {
-		padding-top: 10px;
+		padding-top: 12px;
+	}
+
+	@include breakpoint( '>960px' ) {
+		max-width: 960px;
 	}
 }
 
