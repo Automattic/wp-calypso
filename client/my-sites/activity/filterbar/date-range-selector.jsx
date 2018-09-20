@@ -278,7 +278,7 @@ export class DateRangeSelector extends Component {
 								{ from &&
 									to && (
 										<Button borderless compact onClick={ this.handleResetSelection }>
-											{ translate( '{{icon/}} clear dates', {
+											{ translate( '{{icon/}} clear', {
 												components: { icon: <Gridicon icon="cross-small" /> },
 											} ) }
 										</Button>

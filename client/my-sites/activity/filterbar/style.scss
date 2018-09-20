@@ -18,14 +18,17 @@
 		height: 100%;
 		background-color: $white;
 		border-radius: inherit;
+
 		@include breakpoint( '>480px' ) {
 			display: flex;
 		}
 	}
+
 	.filterbar__icon-reset {
 	    margin-left: auto;
 			width: 48px;
 	}
+
 	.filterbar__open-icon {
 		flex: 0 0 auto;
 		width: 50px;
@@ -123,16 +126,21 @@
 	border-top: 1px solid lighten( $gray, 25% );
 }
 
-.filterbar__activity-types-selection-info {
-	justify-content: flex-end;
-}
-
 .filterbar__date-range-wrap {
 	min-width: 280px;
 	padding: 16px;
 
 	.DayPicker-Day .date-picker__day {
 		padding: 0 7px;
+	}
+
+	.filterbar__date-range-selection-info {
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: space-between;
+		margin-top: 16px;
+		padding-top: 14px;
+		border-top: 1px solid lighten( $gray, 25% );
 	}
 
 	.filterbar__date-range-info .button.is-borderless {
@@ -145,6 +153,7 @@
 		border-top-left-radius: 50%;
 		border-bottom-left-radius: 50%;
 	}
+
 	.DayPicker-Day--end {
 		background-color: $blue-light;
 		border-radius: 0;
@@ -159,6 +168,7 @@
 		z-index: 0;
 		background: transparent;
 	}
+
 	.DayPicker-Day--today .date-picker__day:before {
 		content: '';
 		position: absolute;
@@ -172,10 +182,12 @@
 		top: -1px;
 		z-index: -2;
 	}
+
 	.DayPicker-Day--selected .date-picker__day {
 		background-color: $blue-light;
 		border-radius: 0;
 	}
+
 	.DayPicker-Day--start .date-picker__day,
 	.DayPicker-Day--end .date-picker__day {
 		border-radius: 50%;
@@ -200,10 +212,12 @@
 		height: 26px;
 		background-color: $blue-light;
 	}
+
 	.DayPicker-Day--start .date-picker__day:after {
 		top: -1px;
 		left: 12px;
 	}
+
 	.DayPicker-Day--start .date-picker__day:before,
 	.DayPicker-Day--end .date-picker__day:before {
 		width: 26px;
@@ -213,6 +227,7 @@
 		background-color: $blue-wordpress;
 		border-radius: 50%;
 	}
+
 	.DayPicker-Day--start:hover .date-picker__day:after,
 	.DayPicker-Day--start.DayPicker-Day--end .date-picker__day:after {
 		background: transparent;
@@ -225,5 +240,22 @@
 	.gridicons-info {
 		margin: 3px 6px -8px 0;
 		fill: $gray;
+	}
+}
+
+.color-scheme.is-dark {
+
+	.filterbar__selection.button.is-borderless {
+		color: $gray-text-min;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $gray-dark;
+		}
+
+		&.is-selected {
+			color: $white;
+		}
 	}
 }

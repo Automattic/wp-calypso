@@ -21,7 +21,9 @@ import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
 
-const editorSettings = {};
+const editorSettings = {
+	autosaveInterval: 3, //interval to debounce autosaving events, in seconds.
+};
 
 class GutenbergEditor extends Component {
 	componentDidMount() {
