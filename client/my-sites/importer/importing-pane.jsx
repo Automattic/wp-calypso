@@ -92,10 +92,6 @@ class ImportingPane extends React.PureComponent {
 				pages: PropTypes.number,
 				posts: PropTypes.number,
 			} ),
-			errorData: PropTypes.shape( {
-				description: PropTypes.string.isRequired,
-				type: PropTypes.string.isRequired,
-			} ),
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			site: PropTypes.shape( {
@@ -219,7 +215,7 @@ class ImportingPane extends React.PureComponent {
 
 	render() {
 		const {
-			importerStatus: { importerId, errorData = {}, customData },
+			importerStatus: { importerId, customData },
 			mapAuthorFor,
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 			sourceType,
@@ -233,7 +229,7 @@ class ImportingPane extends React.PureComponent {
 		let blockingMessage;
 
 		if ( this.isError() ) {
-			statusMessage = this.getErrorMessage( errorData );
+			statusMessage = '';
 		}
 
 		if ( this.isFinished() ) {
