@@ -844,15 +844,18 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 
 	dispatch( purchaseLabelResponse( orderId, siteId, labels, false ) );
 
-	const labelsToPrint = labels.map( ( label, index ) => ( {
-		caption: translate( 'PACKAGE %(num)d (OF %(total)d)', {
-			args: {
-				num: index + 1,
-				total: labels.length,
-			},
-		} ),
-		labelId: label.label_id,
-	} ) );
+	const labelsToPrint =
+		1 === labels.length
+			? [ { labelId: labels[ 0 ].label_id } ] // No need to print the "Package 1 (of 1)" message if there's only 1 label
+			: labels.map( ( label, index ) => ( {
+					caption: translate( 'PACKAGE %(num)d (OF %(total)d)', {
+						args: {
+							num: index + 1,
+							total: labels.length,
+						},
+					} ),
+					labelId: label.label_id,
+			  } ) );
 	const state = getShippingLabel( getState(), orderId, siteId );
 	const printUrl = getPrintURL( state.paperSize, labelsToPrint );
 	const showSuccessNotice = () => {
