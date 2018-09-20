@@ -53,6 +53,7 @@ const sections = [
 		module: 'me/security',
 		group: 'me',
 		secondary: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'privacy',

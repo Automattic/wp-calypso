@@ -13,7 +13,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import CartAd from './cart-ad';
 import { abtest } from 'lib/abtest';
 import { cartItems } from 'lib/cart-values';
@@ -44,14 +43,13 @@ class CartPlanAdTheme extends Component {
 
 		return (
 			! isJetpack &&
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
 			! hasUnlimitedPremiumThemes &&
 			cart.hasLoadedFromServer &&
 			! cart.hasPendingServerUpdates &&
 			hasOnlyAPremiumTheme &&
 			selectedSite &&
 			selectedSite.plan &&
-			abtest( 'themesNudgesUpdates' ) === 'test'
+			abtest( 'cartNudgeUpdateToPremium' ) === 'test'
 		);
 	};
 

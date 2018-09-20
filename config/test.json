@@ -80,7 +80,6 @@
 		"me/notifications": true,
 		"me/trophies": false,
 		"network-connection": true,
-		"notifications2beta": true,
 		"onboarding-checklist": false,
 		"perfmon": false,
 		"persist-redux": true,

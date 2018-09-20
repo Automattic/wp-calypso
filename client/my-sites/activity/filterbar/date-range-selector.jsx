@@ -3,22 +3,123 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize, moment } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { isEmpty } from 'lodash';
+import { DateUtils } from 'react-day-picker';
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
+import { updateFilter } from 'state/activity-log/actions';
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class DateRangeSelector extends Component {
+	state = {
+		fromDate: null,
+		toDate: null,
+		enteredToDate: null,
+	};
+
 	constructor( props ) {
 		super( props );
 		this.dateRangeButton = React.createRef();
 	}
+
+	handleClose = () => {
+		const { siteId, filter, onClose, selectDateRange } = this.props;
+		const fromDate = this.getFromDate( filter );
+		const toDate = this.getToDate( filter );
+
+		this.setState( {
+			toDate: null,
+			fromDate: null,
+			enteredToDate: null,
+		} );
+
+		const formattedFromDate = fromDate && moment( fromDate ).format( DATE_FORMAT );
+		const formattedToDate = toDate && moment( toDate ).format( DATE_FORMAT );
+		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
+			selectDateRange( siteId, formattedFromDate, formattedToDate );
+			onClose();
+			return;
+		}
+
+		if ( formattedFromDate ) {
+			selectDateRange( siteId, formattedFromDate, null );
+		}
+
+		onClose();
+	};
+
+	isSelectingFirstDay = ( from, to, day ) => {
+		const isBeforeFirstDay = from && DateUtils.isDayBefore( day, from );
+		const isRangeSelected = from && to;
+		return ! from || isBeforeFirstDay || isRangeSelected;
+	};
+
+	isSelectingDayInPast = day => {
+		const today = new Date();
+		return day.getTime() <= today.getTime();
+	};
+
+	handleDayClick = date => {
+		const { filter } = this.props;
+		const day = date.toDate();
+
+		const fromDate = this.getFromDate( filter );
+		const toDate = this.getToDate( filter );
+
+		if ( fromDate && toDate && day >= toDate ) {
+			this.setState( {
+				enteredToDate: day,
+				toDate: day,
+			} );
+			return;
+		}
+		if ( this.isSelectingFirstDay( fromDate, toDate, day ) ) {
+			this.setState( {
+				fromDate: day,
+				enteredToDate: null,
+			} );
+			return;
+		}
+
+		this.setState( {
+			enteredToDate: day,
+			toDate: day,
+		} );
+	};
+
+	handleDayMouseEnter = day => {
+		const { filter } = this.props;
+		const fromDate = this.getFromDate( filter );
+		const toDate = this.getToDate( filter );
+		if ( ! this.isSelectingFirstDay( fromDate, toDate, day ) && this.isSelectingDayInPast( day ) ) {
+			this.setState( {
+				enteredToDate: day,
+			} );
+		}
+		if ( ! this.isSelectingDayInPast( day ) && ! toDate ) {
+			this.setState( {
+				enteredToDate: fromDate,
+			} );
+		}
+	};
+
+	handleResetSelection = () => {
+		const { siteId, selectDateRange } = this.props;
+		this.setState( {
+			enteredToDate: null,
+			fromDate: null,
+			toDate: null,
+		} );
+		selectDateRange( siteId, null, null );
+	};
 
 	getFormatedFromDate = ( from, to ) => {
 		if ( ! from ) {
@@ -82,20 +183,40 @@ export class DateRangeSelector extends Component {
 		return translate( 'Date Range' );
 	};
 
+	getFromDate = () => {
+		const { filter } = this.props;
+		const { fromDate } = this.state;
+		if ( fromDate ) {
+			return fromDate;
+		}
+		if ( filter && filter.after ) {
+			return moment( filter.after ).toDate();
+		}
+		return filter && filter.on ? moment( filter.on ).toDate() : null;
+	};
+
+	getToDate = () => {
+		const { filter } = this.props;
+		const { toDate } = this.state;
+		if ( toDate ) {
+			return toDate;
+		}
+		return filter && filter.before ? moment( filter.before ).toDate() : null;
+	};
+
+	getEnteredToDate = () => {
+		const { filter } = this.props;
+		if ( this.state.enteredToDate ) {
+			return this.state.enteredToDate;
+		}
+		return this.getToDate( filter );
+	};
+
 	render() {
-		const {
-			translate,
-			isVisible,
-			onButtonClick,
-			onClose,
-			from,
-			to,
-			enteredTo,
-			onDayClick,
-			onDayMouseEnter,
-			onResetSelection,
-			onClearSelection,
-		} = this.props;
+		const { translate, isVisible, onButtonClick } = this.props;
+		const from = this.getFromDate();
+		const to = this.getToDate();
+		const enteredTo = this.getEnteredToDate();
 		const modifiers = { start: from, end: enteredTo };
 		const disabledDays = [ { after: new Date() } ];
 		const selectedDays = [ from, { from, to: enteredTo } ];
@@ -120,7 +241,7 @@ export class DateRangeSelector extends Component {
 						className="filterbar__selection-close"
 						compact
 						borderless
-						onClick={ onResetSelection }
+						onClick={ this.handleResetSelection }
 					>
 						<Gridicon icon="cross-small" />
 					</Button>
@@ -128,18 +249,18 @@ export class DateRangeSelector extends Component {
 				<Popover
 					id="filterbar__date-range"
 					isVisible={ isVisible }
-					onClose={ onClose }
+					onClose={ this.handleClose }
 					autoPosition={ true }
 					context={ this.dateRangeButton.current }
 				>
 					<div className="filterbar__date-range-wrap">
 						<DatePicker
-							fromMonth={ from }
+							fromMonth={ this.getFromDate() }
 							selectedDays={ selectedDays }
 							disabledDays={ disabledDays }
 							modifiers={ modifiers }
-							onSelectDay={ onDayClick }
-							onDayMouseEnter={ onDayMouseEnter }
+							onSelectDay={ this.handleDayClick }
+							onDayMouseEnter={ this.handleDayMouseEnter }
 						/>
 						<div className="filterbar__date-range-selection-info">
 							<div className="filterbar__date-range-info">
@@ -155,7 +276,7 @@ export class DateRangeSelector extends Component {
 									} ) }
 								{ from &&
 									to && (
-										<Button borderless compact onClick={ onClearSelection }>
+										<Button borderless compact onClick={ this.handleResetSelection }>
 											{ translate( '{{icon/}} clear dates', {
 												components: { icon: <Gridicon icon="cross-small" /> },
 											} ) }
@@ -166,7 +287,7 @@ export class DateRangeSelector extends Component {
 								className="filterbar__date-range-apply"
 								primary
 								compact
-								onClick={ onClose }
+								onClick={ this.handleClose }
 								disabled={ ! from }
 							>
 								{ translate( 'Apply' ) }
@@ -179,4 +300,14 @@ export class DateRangeSelector extends Component {
 	}
 }
 
-export default localize( DateRangeSelector );
+export default connect(
+	null,
+	{
+		selectDateRange: ( siteId, from, to ) => {
+			if ( to ) {
+				return updateFilter( siteId, { after: from, before: to, on: null, page: 1 } );
+			}
+			return updateFilter( siteId, { on: from, after: null, before: null, page: 1 } );
+		},
+	}
+)( localize( DateRangeSelector ) );
