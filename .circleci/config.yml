@@ -176,6 +176,30 @@ jobs:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/artifacts
+      - run:
+          name: Notify GlotPress translations are ready
+          when: always
+          command: |
+            curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
+              -H 'Cache-Control: no-cache' \
+              -H 'Content-Type: application/json' \
+              -d '{
+                    "payload": {
+                      "branch": "'"$CIRCLE_BRANCH"'",
+                      "build_num": '"$CIRCLE_BUILD_NUM"',
+                      "pull_requests": [
+                        {
+                          "url": "'"$CIRCLE_PULL_REQUEST"'"
+                        }
+                      ],
+                      "reponame": "'"$CIRCLE_PROJECT_REPONAME"'",
+                      "username": "'"$CIRCLE_PROJECT_USERNAME"'",
+                      "vcs_revision": "'"$CIRCLE_SHA1"'",
+                      "vcs_type": "github"
+                    }
+                  }'
+
+
 
   test-client:
     <<: *defaults
@@ -309,13 +333,6 @@ jobs:
           path: /tmp/test_results
       - store_artifacts:
           path: /tmp/test_results
-
-# We need to work around this bit because
-# the notification system in 2.0 is a bit flakey
-# and is not yet working as expected.
-notify:
-  webhooks:
-    - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
 
 workflows:
   version: 2
