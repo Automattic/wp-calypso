@@ -12,6 +12,7 @@ import {
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	NAVIGATE,
+	HISTORY_REPLACE,
 } from 'state/action-types';
 
 /**
@@ -90,6 +91,13 @@ export const toggleNotificationsPanel = () => {
  * @return {Object}      Action object
  */
 export const navigate = path => ( { type: NAVIGATE, path } );
+
+/**
+ * Replaces the current url and modifies the browser history entry. Equivalent to window.replaceHistory
+ * @param  {String} path Navigation path
+ * @return {Object}      Action object
+ */
+export const replaceHistory = path => ( { type: HISTORY_REPLACE, path } );
 
 /**
  * Hide the masterbar.
