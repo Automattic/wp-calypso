@@ -172,45 +172,33 @@ export class Notifications extends Component {
 			],
 			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
 			OPEN_POST: [
-				( store, { siteId, postId, href } ) => {
-					if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
-						this.props.checkToggle();
-						this.props.recordTracksEvent( 'calypso_notifications_open_post', {
-							site_id: siteId,
-							post_id: postId,
-						} );
-						page( `/read/blogs/${ siteId }/posts/${ postId }` );
-					} else {
-						window.open( href, '_blank' );
-					}
+				( store, { siteId, postId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_post', {
+						site_id: siteId,
+						post_id: postId,
+					} );
+					page( `/read/blogs/${ siteId }/posts/${ postId }` );
 				},
 			],
 			OPEN_COMMENT: [
-				( store, { siteId, postId, href, commentId } ) => {
-					if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
-						this.props.checkToggle();
-						this.props.recordTracksEvent( 'calypso_notifications_open_comment', {
-							site_id: siteId,
-							post_id: postId,
-							comment_id: commentId,
-						} );
-						page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
-					} else {
-						window.open( href, '_blank' );
-					}
+				( store, { siteId, postId, commentId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_comment', {
+						site_id: siteId,
+						post_id: postId,
+						comment_id: commentId,
+					} );
+					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
 				},
 			],
 			OPEN_SITE: [
-				( store, { siteId, href } ) => {
-					if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
-						this.props.checkToggle();
-						this.props.recordTracksEvent( 'calypso_notifications_open_site', {
-							site_id: siteId,
-						} );
-						page( `/read/blogs/${ siteId }` );
-					} else {
-						window.open( href, '_blank' );
-					}
+				( store, { siteId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_site', {
+						site_id: siteId,
+					} );
+					page( `/read/blogs/${ siteId }` );
 				},
 			],
 			VIEW_SETTINGS: [

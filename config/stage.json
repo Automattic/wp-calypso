@@ -91,7 +91,6 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"me/trophies": false,
-		"notifications/link-to-reader": true,
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
 		"nps-survey/notice": true,

@@ -84,7 +84,6 @@
 		"me/notifications": true,
 		"me/trophies": false,
 		"network-connection": true,
-		"notifications/link-to-reader": true,
 		"onboarding-checklist": false,
 		"perfmon": true,
 		"persist-redux": true,
