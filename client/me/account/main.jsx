@@ -5,7 +5,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import i18n, { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 import emailValidator from 'email-validator';
@@ -795,13 +796,16 @@ const Account = createReactClass( {
 						</FormFieldset>
 
 						{ /* This is how we animate showing/hiding the form field sections */ }
-						<ReactCSSTransitionGroup
-							transitionName="account__username-form-toggle"
-							transitionEnterTimeout={ 500 }
-							transitionLeaveTimeout={ 10 }
-						>
-							{ renderUsernameForm ? this.renderUsernameFields() : this.renderAccountFields() }
-						</ReactCSSTransitionGroup>
+						{ /* <ReactCSSTransitionGroup transitionName="account__username-form-toggle" transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 10 } > */ }
+						<TransitionGroup>
+							<CSSTransition
+								key={ renderUsernameForm ? 'username' : 'account' }
+								classNames="account__username-form-toggle"
+								timeout={ { enter: 500, exit: 10 } }
+							>
+								{ renderUsernameForm ? this.renderUsernameFields() : this.renderAccountFields() }
+							</CSSTransition>
+						</TransitionGroup>
 					</form>
 				</Card>
 
