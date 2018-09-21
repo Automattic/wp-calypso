@@ -107,7 +107,12 @@ export async function switchCSS( elementId, cssUrl ) {
 	newLink.id = elementId;
 }
 
-function flipRTL( url, isRTL ) {
+/*
+ * CSS links come in two flavors: either RTL stylesheets with `.rtl.css` suffix, or LTR ones
+ * with `.css` suffix. This function sets a desired `isRTL` flag on the supplied URL, i.e., it
+ * changes the extension if necessary.
+ */
+function setRTLFlagOnCSSLink( url, isRTL ) {
 	if ( isRTL ) {
 		return url.endsWith( '.rtl.css' ) ? url : url.replace( /\.css$/, '.rtl.css' );
 	}
@@ -120,7 +125,7 @@ function switchWebpackCSS( isRTL ) {
 
 	return map( currentLinks, async currentLink => {
 		const currentHref = currentLink.getAttribute( 'href' );
-		const newHref = flipRTL( currentHref, isRTL );
+		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
 		if ( currentHref === newHref ) {
 			return;
 		}
