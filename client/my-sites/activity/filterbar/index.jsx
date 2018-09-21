@@ -62,9 +62,6 @@ export class Filterbar extends Component {
 		const { translate, siteId, filter } = this.props;
 		return (
 			<div className="filterbar card">
-				<div className="filterbar__icon-navigation">
-					<Gridicon icon="filter" className="filterbar__open-icon" />
-				</div>
 				<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
 				<DateRangeSelector
 					isVisible={ this.state.showActivityDates }
