@@ -320,7 +320,7 @@ class ActivityLog extends Component {
 				<Fragment>
 					<EmptyContent
 						title={ translate( 'No matching events found.' ) }
-						line={ translate( 'Try adjusting your date range or acitvity type filters' ) }
+						line={ translate( 'Try adjusting your date range or activity type filters' ) }
 						action={ translate( 'Remove all filters' ) }
 						actionURL={ '/activity-log/' + slug }
 					/>
