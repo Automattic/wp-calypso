@@ -154,6 +154,28 @@ class WpcomChecklist extends PureComponent {
 					updateCompletion={ this.props.updateCompletion }
 				>
 					<TaskComponent
+						completed={ this.isComplete( 'email_verified' ) }
+						completedTitle={ translate( 'You validated your email address' ) }
+						description={ translate(
+							'Please click the link in the email we sent to %(email)s.{{br /}}' +
+								'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
+							{
+								args: {
+									email: this.props.userEmail,
+								},
+								components: {
+									br: <br />,
+									changeButton: <a href="/me/account" />,
+								},
+							}
+						) }
+						duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
+						onClick={ this.handleSendVerificationEmail }
+						siteSlug={ siteSlug }
+						title={ translate( 'Confirm your email address' ) }
+						buttonText={ this.verificationTaskButtonText() }
+					/>
+					<TaskComponent
 						completed
 						completedTitle={ translate( 'You created your site' ) }
 						description={ translate( 'This is where your adventure begins.' ) }
@@ -182,28 +204,6 @@ class WpcomChecklist extends PureComponent {
 						onDismiss={ this.handleTaskDismiss( 'blogname_set' ) }
 						siteSlug={ siteSlug }
 						title={ translate( 'Give your site a name' ) }
-					/>
-					<TaskComponent
-						completed={ this.isComplete( 'email_verified' ) }
-						completedTitle={ translate( 'You validated your email address' ) }
-						description={ translate(
-							'Please click the link in the email we sent to %(email)s.{{br /}}' +
-								'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
-							{
-								args: {
-									email: this.props.userEmail,
-								},
-								components: {
-									br: <br />,
-									changeButton: <a href="/me/account" />,
-								},
-							}
-						) }
-						duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
-						onClick={ this.handleSendVerificationEmail }
-						siteSlug={ siteSlug }
-						title={ translate( 'Confirm your email address' ) }
-						buttonText={ this.verificationTaskButtonText() }
 					/>
 					<TaskComponent
 						bannerImageSrc="/calypso/images/stats/tasks/upload-icon.svg"
