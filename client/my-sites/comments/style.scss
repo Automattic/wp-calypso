@@ -121,10 +121,10 @@
 	}
 }
 
-.comment-list__transition-leave {
+.comment-list__transition-exit {
 	opacity: 1;
 
-	&.comment-list__transition-leave-active {
+	&.comment-list__transition-exit-active {
 		opacity: 0.01;
 		transition: opacity 0.15s linear;
 	}
