@@ -61,8 +61,8 @@ class ActivityLogExample extends Component {
 		return (
 			<div className="activity-log-example">
 				<FormattedHeader
-					headerText={ translate( 'This is your activity log' ) }
-					subHeaderText={ translate( 'Events happening at your site will appear here.' ) }
+					headerText={ translate( 'This is your activity log.' ) }
+					subHeaderText={ translate( 'Events happening on your site will appear here.' ) }
 				/>
 				<FeatureExample role="presentation">
 					{ exampleItems.map( log => (
