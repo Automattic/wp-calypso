@@ -19,6 +19,7 @@ import SuggestionProvider from 'reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
 import config from 'config';
 import { getSearchPlaceholderText } from 'reader/search/utils';
+import Banner from 'components/banner';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -45,6 +46,15 @@ const FollowingStream = props => {
 	return (
 		<Stream { ...props }>
 			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
+			<Banner
+				title="National Voter Registration Day is September 25th."
+				callToAction="Be a Voter"
+				description="Take two minutes to register now."
+				dismissPreferenceName="reader-gotv"
+				event="reader-gotv"
+				href="https://turbovote.org/"
+				icon="star"
+			/>
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
