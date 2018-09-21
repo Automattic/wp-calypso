@@ -280,7 +280,8 @@ export class DateRangeSelector extends Component {
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
-			'is-selected': !! from || isVisible,
+			'is-selected': !! from,
+			'is-active': isVisible && ! from,
 		} );
 		return (
 			<Fragment>

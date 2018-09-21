@@ -58,7 +58,6 @@
 
 	.filterbar__selection.is-selected {
 		margin: 8px;
-		border-radius: 0;
 		border-radius: 5px;
 		border: 1px solid $gray-darken-30;
 		background: $gray-darken-30;
@@ -69,6 +68,14 @@
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 		}
+	}
+
+	.filterbar__selection.is-active {
+		margin: 8px;
+		border-radius: 5px;
+		border: 1px solid $gray-darken-30;
+		background: $gray-darken-30;
+		color: $white;
 	}
 
 	.filterbar__selection-close {
