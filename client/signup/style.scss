@@ -54,9 +54,6 @@
 
 /* New Signup Styles */
 
-$blue-signup-dark: #01576A;
-$blue-signup-medium: #016880;
-
 .is-section-signup {
 	background: $blue-signup-dark;
 }
@@ -80,6 +77,10 @@ $blue-signup-medium: #016880;
 
 .signup__step {
 	position: relative;
+}
+
+.is-section-signup .card {
+	box-shadow: none;
 }
 
 @include breakpoint( '>960px' ) {
