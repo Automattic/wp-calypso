@@ -160,9 +160,11 @@ export class PlansAtomicStoreStep extends Component {
 		} = this.props;
 
 		let headerText = translate( "Pick a plan that's right for you." );
+		let subHeaderText = translate( 'Based on your needs, we recommend the Business plan.' );
 
 		if ( designType === DESIGN_TYPE_STORE ) {
 			headerText = translate( "You'll need the Business plan." );
+			subHeaderText = null;
 		}
 
 		return (
@@ -171,6 +173,7 @@ export class PlansAtomicStoreStep extends Component {
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
+				subHeaderText={ subHeaderText }
 				fallbackHeaderText={ headerText }
 				signupProgress={ signupProgress }
 				isWideLayout={ true }

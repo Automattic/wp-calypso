@@ -295,6 +295,7 @@ export class UserStep extends Component {
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
+				className="two-columns"
 				headerText={ this.getHeaderText() }
 				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }

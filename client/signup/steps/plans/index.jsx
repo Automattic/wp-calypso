@@ -121,6 +121,7 @@ class PlansStep extends Component {
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
+				className="two-columns"
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				subHeaderText={ subHeaderText }

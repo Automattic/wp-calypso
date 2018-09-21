@@ -108,10 +108,6 @@
 	}
 }
 
-.about__last-fieldset {
-	margin-bottom: 0;
-}
-
 .about__section .step-wrapper__content {
 	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
 }
@@ -119,100 +115,4 @@
 .about__section .step-wrapper__content label,
 .about__section .step-wrapper__content .form-legend {
 	font-weight: 400;
-}
-
-.about__section .step-wrapper__testimonial {
-	color: $gray-lighten-20;
-	font-size: 18px;
-}
-
-.about__section .step-wrapper__testimonial-image {
-	width: 72px;
-	height: 72px;
-
-	img {
-		border-radius: 50%;
-		width: 100%;
-		height: 100%;
-	}
-}
-
-.about__section .step-wrapper__testimonial-content {
-	margin-top: 12px;
-}
-
-.about__section .step-wrapper__testimonial-name {
-	font-size: 16px;
-	margin-top: 12px;
-}
-
-@include breakpoint( '>960px' ) {
-	.about__section.step-wrapper {
-		display: grid;
-		grid-template-columns: repeat(12,1fr);
-		grid-column-gap: 24px;
-		grid-template-rows: 24px repeat(5,auto) 48px;
-		grid-row-gap: 24px;
-		width: 100%;
-	}
-
-	.about__section .step-wrapper__content h3 {
-		font-weight: bold;
-		font-size: 34px;
-		line-height: 1;
-		margin-bottom: 24px;
-	}
-
-	.about__section .flow-progress-indicator {
-		grid-column-start: 1;
-		grid-column-end: span 4;
-		grid-row-start: 2;
-		align-self: end;
-		margin-top: 84px;
-	}
-
-	.about__section .formatted-header {
-		grid-column-start: 1;
-		grid-column-end: span 4;
-		grid-row-start: 3;
-		grid-row-end: span 2;
-		margin: 0;
-	}
-
-	.about__section .step-wrapper__testimonial {
-		grid-column-start: 1;
-		grid-column-end: span 4;
-		grid-row-start: 5;
-		grid-row-end: span 1;
-		margin-top: 84px;
-	}
-
-	.about__section .step-wrapper__content {
-		background: $white;
-		grid-column-start: 6;
-		grid-column-end: span 7;
-		grid-row-start: 2;
-		grid-row-end: span 4;
-		align-self: start;
-	}
-
-	.about__section .step-wrapper__testimonial-image {
-		width: 72px;
-		height: 72px;
-
-		img {
-			border-radius: 50%;
-			width: 100%;
-			height: 100%;
-		}
-	}
-
-	.about__section .step-wrapper__testimonial-content {
-		margin-top: 12px;
-	}
-
-	.about__section .step-wrapper__testimonial-name {
-		font-size: 16px;
-		margin-top: 12px;
-	}
 }
