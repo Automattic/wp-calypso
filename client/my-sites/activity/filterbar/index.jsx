@@ -75,7 +75,12 @@ export class Filterbar extends Component {
 	};
 
 	render() {
-		const { translate, siteId, filter } = this.props;
+		const { translate, siteId, filter, isLoading } = this.props;
+
+		if ( isLoading ) {
+			return <div className="filterbar is-loading" />;
+		}
+
 		return (
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">

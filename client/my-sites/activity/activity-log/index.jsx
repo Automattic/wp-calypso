@@ -486,7 +486,7 @@ class ActivityLog extends Component {
 	}
 
 	renderFilterbar() {
-		const { siteId, filter, logs, siteIsOnFreePlan } = this.props;
+		const { siteId, filter, logs, siteIsOnFreePlan, logLoadingState } = this.props;
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( siteIsOnFreePlan ) {
@@ -498,7 +498,13 @@ class ActivityLog extends Component {
 		}
 
 		return (
-			config.isEnabled( 'activity-filterbar' ) && <Filterbar siteId={ siteId } filter={ filter } />
+			config.isEnabled( 'activity-filterbar' ) && (
+				<Filterbar
+					siteId={ siteId }
+					filter={ filter }
+					isLoading={ logLoadingState !== 'success' }
+				/>
+			)
 		);
 	}
 

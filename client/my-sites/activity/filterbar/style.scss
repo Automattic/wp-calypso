@@ -1,6 +1,13 @@
 /**
  * @component Search
  */
+
+ .filterbar.is-loading {
+	 	height: 50px;
+ 		background-color: $gray-lighten-20;
+		animation: loading-fade 1.6s ease-in-out infinite;
+ }
+ 
 .filterbar__wrap {
 	position: relative;
 	display: flex;

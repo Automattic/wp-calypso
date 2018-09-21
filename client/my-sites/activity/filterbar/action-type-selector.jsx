@@ -253,7 +253,7 @@ const mapDispatchToProps = dispatch => ( {
 			return dispatch(
 				withAnalytics(
 					recordTracksEvent( 'calypso_activitylog_filterbar_reset_type' ),
-					updateFilter( siteId, { group: group, page: 1 } )
+					updateFilter( siteId, { group: null, page: 1 } )
 				)
 			);
 		}
