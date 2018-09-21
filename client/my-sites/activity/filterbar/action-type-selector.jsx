@@ -100,6 +100,13 @@ export class ActionTypeSelector extends Component {
 		onClose();
 	};
 
+	humanReadable = count => {
+		if ( count >= 1000 ) {
+			return '+' + ( count / 1000 ).toFixed( 1 ) + 'k';
+		}
+		return count;
+	};
+
 	renderCheckbox = group => {
 		return (
 			<FormLabel key={ group.key }>
@@ -109,7 +116,7 @@ export class ActionTypeSelector extends Component {
 					name={ group.key }
 					onChange={ this.handleSelectClick }
 				/>
-				{ group.name + ' (' + group.count + ')' }
+				{ group.name + ' (' + this.humanReadable( group.count ) + ')' }
 			</FormLabel>
 		);
 	};
