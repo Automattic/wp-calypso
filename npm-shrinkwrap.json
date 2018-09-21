@@ -5335,9 +5335,9 @@
       }
     },
     "eslint-plugin-jest": {
-      "version": "21.22.0",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-21.22.0.tgz",
-      "integrity": "sha512-0TzGIZ5moLR9orka/J9lg+7Ezv+S0TsnkavrMmI5xPFnbyIDjc2jLlwtBsaBbdZuOSCl+kcofh9ojknTI9L32Q==",
+      "version": "21.22.1",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-21.22.1.tgz",
+      "integrity": "sha512-OcVizyXljSps3nVfuPomfK8RKt7jvDsIsDrO7l1ZA4bDbiO9bEGWpsdU/x5F0pymVDG7ME88VlTboxbYJumLGQ==",
       "dev": true
     },
     "eslint-plugin-jsx-a11y": {
@@ -6284,7 +6284,8 @@
         },
         "ansi-regex": {
           "version": "2.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -6649,7 +6650,8 @@
         },
         "safe-buffer": {
           "version": "5.1.1",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -6697,6 +6699,7 @@
         "strip-ansi": {
           "version": "3.0.1",
           "bundled": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -6735,11 +6738,13 @@
         },
         "wrappy": {
           "version": "1.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.2",
-          "bundled": true
+          "bundled": true,
+          "optional": true
         }
       }
     },
