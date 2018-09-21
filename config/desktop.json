@@ -56,7 +56,6 @@
 		"manage/customize": true,
 		"manage/edit-user": true,
 		"manage/import-in-sidebar": true,
-		"manage/import/squarespace": false,
 		"manage/import/medium": true,
 		"manage/import/site-importer": true,
 		"manage/option_sync_non_public_post_stati": false,

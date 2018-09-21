@@ -69,7 +69,6 @@
 		"manage/custom-post-types": true,
 		"manage/edit-user": true,
 		"manage/export/guided-transfer": true,
-		"manage/import/squarespace": false,
 		"manage/import/medium": true,
 		"manage/import/site-importer": true,
 		"manage/option_sync_non_public_post_stati": true,
