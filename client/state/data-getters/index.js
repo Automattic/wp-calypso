@@ -3,13 +3,13 @@
 /**
  * External dependencies
  */
-import { sortBy } from 'lodash';
+import { chunk, difference, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
 import { http as rawHttp } from 'state/http/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestHttpData } from 'state/data-layer/http-data';
+import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
@@ -81,6 +81,47 @@ export const requestGeoLocation = () =>
 		} ),
 		{ fromApi: () => ( { body: { country_short } } ) => [ [ 'geo', country_short ] ] }
 	);
+
+export const requestRecentPostViews = ( siteId, postIds ) => {
+	const key = `recent-post-views-${ siteId }`;
+	const freshness = 5 * 60 * 1000; // 5 min
+
+	// Don't re-request recent post views that are cached and up to date OR
+	// have a pending request.
+	const freshPostIds = postIds.filter(
+		postId =>
+			getHttpData( `${ key }-${ postId }` ).lastUpdated >= Date.now() - freshness &&
+			getHttpData( `${ key }-${ postId }` ).status !== 'pending'
+	);
+	const requestPostIds = difference( postIds, freshPostIds );
+
+	// Break post_ids into chunks of 100 because `stats/views/posts`
+	// is limited to 100 post_ids per query.
+	return chunk( requestPostIds, 100 ).map( postIdsChunk => {
+		const postIdsList = postIdsChunk.join( ',' );
+
+		return requestHttpData(
+			`${ key }-${ postIdsList }`,
+			http(
+				{
+					method: 'GET',
+					path: `/sites/${ siteId }/stats/views/posts`,
+					apiVersion: '1.1',
+					query: {
+						post_ids: postIdsList,
+						num: 30,
+					},
+				},
+				{}
+			),
+			{
+				fromApi: () => ( { posts } ) =>
+					posts.map( post => [ `${ key }-${ post.ID }`, post.views ] ),
+				freshness,
+			}
+		);
+	} );
+};
 
 export const requestSiteAlerts = siteId => {
 	const id = `site-alerts-${ siteId }`;

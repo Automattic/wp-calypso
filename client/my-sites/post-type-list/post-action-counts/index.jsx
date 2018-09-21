@@ -19,6 +19,8 @@ import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/s
 import { recordTracksEvent } from 'state/analytics/actions';
 import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
 import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
+import { getHttpData } from 'state/data-layer/http-data';
+import ScreenReaderText from 'components/screen-reader-text';
 
 class PostActionCounts extends PureComponent {
 	static propTypes = {
@@ -49,6 +51,49 @@ class PostActionCounts extends PureComponent {
 	setLikesPopoverContext = element => {
 		this.setState( { likesPopoverContext: element } );
 	};
+
+	renderViewCount() {
+		const { viewCount: count, numberFormat, postId, showViews, siteSlug, translate } = this.props;
+		if ( ! count || count < 1 || ! showViews ) {
+			return null;
+		}
+		const recentViewsText = translate(
+			'%(count)s Recent View{{srText}}in the past 30 days{{/srText}}',
+			'%(count)s Recent Views{{srText}}in the past 30 days{{/srText}}',
+			{
+				count,
+				args: {
+					count: numberFormat( count ),
+				},
+				comment:
+					'text wrapped by "srText" is not visible on screen for brevity, but is read by screen readers to provide more context',
+				components: {
+					srText: <ScreenReaderText />,
+				},
+			}
+		);
+		const linkTitleText = translate(
+			'%(count)s view in the past 30 days',
+			'%(count)s views in the past 30 days',
+			{
+				count,
+				args: {
+					count: numberFormat( count ),
+				},
+			}
+		);
+		return (
+			<li>
+				<a
+					href={ `/stats/post/${ postId }/${ siteSlug }` }
+					onClick={ this.onActionClick( 'stats' ) }
+					title={ linkTitleText }
+				>
+					{ recentViewsText }
+				</a>
+			</li>
+		);
+	}
 
 	renderCommentCount() {
 		const {
@@ -120,6 +165,7 @@ class PostActionCounts extends PureComponent {
 	render() {
 		return (
 			<ul className="post-action-counts">
+				{ this.renderViewCount() }
 				{ this.renderLikeCount() }
 				{ this.renderCommentCount() }
 			</ul>
@@ -155,6 +201,7 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			type: get( post, 'type', 'unknown' ),
+			viewCount: getHttpData( `recent-post-views-${ siteId }-${ postId }` ).data,
 			isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
 		};
 	},

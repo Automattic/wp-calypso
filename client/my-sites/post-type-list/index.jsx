@@ -24,6 +24,7 @@ import {
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
+import { requestRecentPostViews } from 'state/data-getters';
 import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
@@ -67,6 +68,8 @@ class PostTypeList extends Component {
 		this.state = {
 			maxRequestedPage,
 		};
+
+		this.updateRecentPostViews();
 	}
 
 	componentDidMount() {
@@ -93,6 +96,10 @@ class PostTypeList extends Component {
 			// ahead and load the next page.
 			this.maybeLoadNextPageAfterLayoutFlush();
 		}
+
+		if ( ! isEqual( prevProps.posts, this.props.posts ) ) {
+			this.updateRecentPostViews();
+		}
 	}
 
 	componentWillUnmount() {
@@ -117,6 +124,15 @@ class PostTypeList extends Component {
 
 		// Avoid making more than 5 concurrent requests on page load.
 		return Math.min( pageCount, 5 );
+	}
+
+	updateRecentPostViews() {
+		const { posts, siteId } = this.props;
+
+		if ( posts && posts.length > 0 ) {
+			const postIds = posts.map( post => post.ID );
+			requestRecentPostViews( siteId, postIds );
+		}
 	}
 
 	getPostsPerPageCount() {
