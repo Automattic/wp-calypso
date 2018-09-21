@@ -116,6 +116,11 @@
 	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
 }
 
+.about__section .step-wrapper__content label,
+.about__section .step-wrapper__content .form-legend {
+	font-weight: 400;
+}
+
 .about__section .step-wrapper__testimonial {
 	color: $gray-lighten-20;
 	font-size: 18px;
@@ -159,11 +164,16 @@
 		margin-bottom: 24px;
 	}
 
+	.about__section .flow-progress-indicator {
+		grid-column-start: 1;
+		grid-row-start: 2;
+		align-self: end;
+	}
+
 	.about__section .formatted-header {
 		grid-column-start: 1;
 		grid-column-end: 5;
 		grid-row-start: 3;
-		grid-row-end: 4;
 		margin: 0;
 	}
 
@@ -200,13 +210,5 @@
 	.about__section .step-wrapper__testimonial-name {
 		font-size: 16px;
 		margin-top: 12px;
-	}
-
-	.flow-progress-indicator {
-		position: absolute;
-		left: 50%;
-		top: 204px;
-		transform: translateX(-50%);
-		width: 960px;
 	}
 }
