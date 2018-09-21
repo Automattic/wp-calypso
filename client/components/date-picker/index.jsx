@@ -135,11 +135,6 @@ class DatePicker extends PureComponent {
 		this.props.onSelectDay( date, dateMods, modifiers );
 	};
 
-	setCalendarMonth = () => {
-		const { daypicker } = this.refs;
-		daypicker.showMonth( new Date() );
-	};
-
 	getDateInstance( v ) {
 		if ( this.props.moment.isMoment( v ) ) {
 			return v.toDate();
@@ -191,7 +186,6 @@ class DatePicker extends PureComponent {
 		return (
 			<DayPicker
 				modifiers={ modifiers }
-				ref="daypicker"
 				className="date-picker"
 				selectedDays={ this.props.selectedDays }
 				disabledDays={ this.props.disabledDays }
@@ -202,7 +196,6 @@ class DatePicker extends PureComponent {
 				localeUtils={ this.locale() }
 				onMonthChange={ this.props.onMonthChange }
 				showOutsideDays={ this.props.showOutsideDays }
-				onCaptionClick={ this.setCalendarMonth }
 				navbarElement={ <DatePickerNavBar /> }
 			/>
 		);
