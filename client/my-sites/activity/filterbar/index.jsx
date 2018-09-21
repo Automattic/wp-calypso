@@ -75,10 +75,14 @@ export class Filterbar extends Component {
 	};
 
 	render() {
-		const { translate, siteId, filter, isLoading } = this.props;
+		const { translate, siteId, filter, isLoading, isVisible } = this.props;
 
 		if ( isLoading ) {
 			return <div className="filterbar is-loading" />;
+		}
+
+		if ( ! isVisible ) {
+			return null;
 		}
 
 		return (
