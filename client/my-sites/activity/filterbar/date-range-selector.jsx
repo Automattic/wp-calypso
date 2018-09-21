@@ -84,18 +84,15 @@ export class DateRangeSelector extends Component {
 				enteredToDate: day,
 				toDate: day,
 			} );
-			alert( 'set second day?' );
 			return;
 		}
 		if ( this.isSelectingFirstDay( fromDate, toDate, day ) ) {
-			alert( 'set first day' );
 			this.setState( {
 				fromDate: day,
 				enteredToDate: null,
 			} );
 			return;
 		}
-		alert( 'set second day' );
 		this.setState( {
 			enteredToDate: day,
 			toDate: day,
