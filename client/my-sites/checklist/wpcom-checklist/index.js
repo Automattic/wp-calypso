@@ -187,9 +187,8 @@ class WpcomChecklist extends PureComponent {
 						completed={ this.isComplete( 'email_verified' ) }
 						completedTitle={ translate( 'You validated your email address' ) }
 						description={ translate(
-							'To post and keep using WordPress.com you need to confirm your email address. ' +
-								'Please click the link in the email we sent to %(email)s.{{br /}}' +
-								'Alternatively, {{changeButton}}change the email address on your account{{/changeButton}}.',
+							'Please click the link in the email we sent to %(email)s.{{br /}}' +
+								'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
 							{
 								args: {
 									email: this.props.userEmail,
