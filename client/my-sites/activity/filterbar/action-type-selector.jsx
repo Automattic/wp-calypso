@@ -102,7 +102,7 @@ export class ActionTypeSelector extends Component {
 
 	humanReadable = count => {
 		if ( count >= 1000 ) {
-			return '+' + ( count / 1000 ).toFixed( 1 ) + 'k';
+			return Math.round( ( count / 1000 ) * 10 ) / 10 + 'K';
 		}
 		return count;
 	};
