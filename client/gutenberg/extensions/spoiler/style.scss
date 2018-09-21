@@ -1,0 +1,7 @@
+.wp-block-a8c-spoiler {
+	filter: blur( 5px );
+}
+.wp-block-a8c-spoiler:hover {
+	filter: blur( 0px );
+	transition: filter 1s;
+}

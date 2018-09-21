@@ -1,0 +1,6 @@
+.wp-block-a8c-spoiler {
+	filter: blur( 1px );
+}
+.editor-block-list__block.is-selected .wp-block-a8c-spoiler {
+	filter: none;
+}
