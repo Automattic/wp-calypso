@@ -41,8 +41,11 @@ export class ActionTypeSelector extends Component {
 	};
 
 	handleToggleAllActionTypeSelector = () => {
-		const { activityTypes } = this.props;
+		const { activityTypes, siteIsOnFreePlan } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
+		if ( siteIsOnFreePlan ) {
+			return;
+		}
 		if ( ! selectedCheckboxes.length ) {
 			this.setState( {
 				userHasSelected: true,
