@@ -7,13 +7,11 @@ import { translate as __ } from 'i18n-calypso';
 import { RichText, BlockControls, AlignmentToolbar } from '@wordpress/editor';
 import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { Fragment } from '@wordpress/element';
-//import React from 'react';
 
 /**
  * Internal dependencies
  */
 import './editor.scss';
-import './style.scss';
 
 export const name = 'a8c/spoiler';
 

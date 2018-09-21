@@ -1,6 +1,9 @@
-.wp-block-a8c-spoiler {
+//namespaced, since editor styles are still loaded on view pages in p2
+.o2-editor .wp-block-a8c-spoiler,
+.gutenberg__editor .wp-block-a8c-spoiler {
 	filter: blur( 1px );
 }
-.editor-block-list__block.is-selected .wp-block-a8c-spoiler {
+.o2-editor .editor-block-list__block.is-selected .wp-block-a8c-spoiler,
+.gutenberg__editor .editor-block-list__block.is-selected .wp-block-a8c-spoiler {
 	filter: none;
 }
