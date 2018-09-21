@@ -91,11 +91,22 @@
 
 .filterbar__activity-types-selection-wrap {
 	min-width: 200px;
-	padding: 24px 24px 18px;
+	padding: 0;
+
+	@include breakpoint( '>660px' ) {
+		padding: 24px 24px 18px;
+	}
 
 	label {
+		margin-bottom: 7px;
+		font-size: 15px;
 		text-align: left;
 		cursor: pointer;
+
+		@include breakpoint( '>660px' ) {
+			margin-bottom: 5px;
+			font-size: 14px;
+		}
 	}
 
 	input[type=checkbox] {
