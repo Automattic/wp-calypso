@@ -31,9 +31,15 @@ export class ActionTypeSelector extends Component {
 	}
 
 	resetActivityTypeSelector = event => {
-		const { selectActionType, siteId } = this.props;
-		selectActionType( siteId, [] );
+		const { selectActionType, siteId, siteIsOnFreePlan } = this.props;
 		event.preventDefault();
+		this.setState( {
+			selectedCheckboxes: [],
+			userHasSelected: false,
+		} );
+		if ( ! siteIsOnFreePlan ) {
+			selectActionType( siteId, [] );
+		}
 	};
 
 	handleToggleAllActionTypeSelector = () => {
@@ -101,7 +107,12 @@ export class ActionTypeSelector extends Component {
 	};
 
 	handleClose = () => {
-		const { siteId, onClose, selectActionType } = this.props;
+		const { siteId, onClose, selectActionType, siteIsOnFreePlan } = this.props;
+
+		if ( siteIsOnFreePlan ) {
+			onClose();
+			return;
+		}
 
 		selectActionType( siteId, this.getSelectedCheckboxes() );
 		this.setState( {

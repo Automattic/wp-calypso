@@ -31,9 +31,14 @@ export class DateRangeSelector extends Component {
 	}
 
 	handleClose = () => {
-		const { siteId, filter, onClose, selectDateRange } = this.props;
+		const { siteId, filter, onClose, selectDateRange, siteIsOnFreePlan } = this.props;
 		const fromDate = this.getFromDate( filter );
 		const toDate = this.getToDate( filter );
+
+		if ( siteIsOnFreePlan ) {
+			onClose();
+			return;
+		}
 
 		this.setState( {
 			toDate: null,
@@ -112,13 +117,15 @@ export class DateRangeSelector extends Component {
 	};
 
 	handleResetSelection = () => {
-		const { siteId, selectDateRange } = this.props;
+		const { siteId, selectDateRange, siteIsOnFreePlan } = this.props;
 		this.setState( {
 			enteredToDate: null,
 			fromDate: null,
 			toDate: null,
 		} );
-		selectDateRange( siteId, null, null );
+		if ( ! siteIsOnFreePlan ) {
+			selectDateRange( siteId, null, null );
+		}
 	};
 
 	getFormatedFromDate = ( from, to ) => {

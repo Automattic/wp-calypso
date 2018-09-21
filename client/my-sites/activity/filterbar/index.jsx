@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  */
 import Button from 'components/button';
 import DateRangeSelector from './date-range-selector';
+import FilterbarBanner from 'my-sites/activity/activity-log-banner/filterbar-banner';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
 
@@ -18,28 +19,31 @@ export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
 		showActivityDates: false,
+		showUpgradeNudge: false,
 	};
 
 	toggleDateRangeSelector = () => {
 		this.setState( {
 			showActivityDates: ! this.state.showActivityDates,
 			showActivityTypes: false,
+			showUpgradeNudge: false,
 		} );
 	};
 
 	closeDateRangeSelector = () => {
-		this.setState( { showActivityDates: false } );
+		this.setState( { showActivityDates: false, showUpgradeNudge: true } );
 	};
 
 	toggleActivityTypesSelector = () => {
 		this.setState( {
 			showActivityTypes: ! this.state.showActivityTypes,
 			showActivityDates: false,
+			showUpgradeNudge: false,
 		} );
 	};
 
 	closeActivityTypes = () => {
-		this.setState( { showActivityTypes: false } );
+		this.setState( { showActivityTypes: false, showUpgradeNudge: true } );
 	};
 
 	handleRemoveFilters = () => {
@@ -59,28 +63,33 @@ export class Filterbar extends Component {
 	};
 
 	render() {
-		const { translate, siteId, filter } = this.props;
+		const { translate, siteId, filter, siteIsOnFreePlan } = this.props;
 		return (
-			<div className="filterbar card">
-				<div className="filterbar__icon-navigation">
-					<Gridicon icon="filter" className="filterbar__open-icon" />
+			<div>
+				<div className="filterbar card">
+					<div className="filterbar__icon-navigation">
+						<Gridicon icon="filter" className="filterbar__open-icon" />
+					</div>
+					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
+					<DateRangeSelector
+						isVisible={ this.state.showActivityDates }
+						onButtonClick={ this.toggleDateRangeSelector }
+						onClose={ this.closeDateRangeSelector }
+						filter={ filter }
+						siteId={ siteId }
+						siteIsOnFreePlan={ siteIsOnFreePlan }
+					/>
+					<ActionTypeSelector
+						filter={ filter }
+						siteId={ siteId }
+						isVisible={ this.state.showActivityTypes }
+						onButtonClick={ this.toggleActivityTypesSelector }
+						onClose={ this.closeActivityTypes }
+						siteIsOnFreePlan={ siteIsOnFreePlan }
+					/>
+					{ this.renderCloseButton() }
 				</div>
-				<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
-				<DateRangeSelector
-					isVisible={ this.state.showActivityDates }
-					onButtonClick={ this.toggleDateRangeSelector }
-					onClose={ this.closeDateRangeSelector }
-					filter={ filter }
-					siteId={ siteId }
-				/>
-				<ActionTypeSelector
-					filter={ filter }
-					siteId={ siteId }
-					isVisible={ this.state.showActivityTypes }
-					onButtonClick={ this.toggleActivityTypesSelector }
-					onClose={ this.closeActivityTypes }
-				/>
-				{ this.renderCloseButton() }
+				{ this.state.showUpgradeNudge && siteIsOnFreePlan && <FilterbarBanner siteId={ siteId } /> }
 			</div>
 		);
 	}
