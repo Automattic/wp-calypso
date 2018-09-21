@@ -435,7 +435,7 @@ class ActivityLog extends Component {
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
-				{ this.renderFilterbar( siteId, this.props.filter, isEmpty( logs ) ) }
+				{ this.renderFilterbar() }
 				{ isEmpty( logs ) ? (
 					this.renderNoLogsContent()
 				) : (
@@ -485,9 +485,15 @@ class ActivityLog extends Component {
 		);
 	}
 
-	renderFilterbar( siteId, filter, noLogs ) {
+	renderFilterbar() {
+		const { siteId, filter, logs, siteIsOnFreePlan } = this.props;
 		const isFilterEmpty = isEqual( emptyFilter, filter );
-		if ( noLogs && isFilterEmpty ) {
+
+		if ( siteIsOnFreePlan ) {
+			return null;
+		}
+
+		if ( isEmpty( logs ) && isFilterEmpty ) {
 			return null;
 		}
 
