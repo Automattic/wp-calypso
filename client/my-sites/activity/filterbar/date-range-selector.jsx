@@ -84,16 +84,18 @@ export class DateRangeSelector extends Component {
 				enteredToDate: day,
 				toDate: day,
 			} );
+			alert( 'set second day?' );
 			return;
 		}
 		if ( this.isSelectingFirstDay( fromDate, toDate, day ) ) {
+			alert( 'set first day' );
 			this.setState( {
 				fromDate: day,
 				enteredToDate: null,
 			} );
 			return;
 		}
-
+		alert( 'set second day' );
 		this.setState( {
 			enteredToDate: day,
 			toDate: day,
@@ -235,6 +237,9 @@ export class DateRangeSelector extends Component {
 					modifiers={ modifiers }
 					onSelectDay={ this.handleDayClick }
 					onDayMouseEnter={ this.handleDayMouseEnter }
+					onDayTouchStart={ this.handleDayClick }
+					onDayTouchEnd={ this.handleDayClick }
+					onDayTouchMove={ this.handleDayMouseEnter }
 				/>
 				<div className="filterbar__date-range-selection-info">
 					<div className="filterbar__date-range-info">
