@@ -34,7 +34,8 @@ const normalizeUrlForImportSource = ( url = '' ) => {
 const getValidationMessageForUrl = ( value = '' ) => {
 	const url = normalizeUrlForImportSource( value );
 	const { hostname, pathname } = parseURL( url );
-	const hasDot = isString( hostname ) && inRange( indexOf( hostname, '.' ), 1, hostname.length - 2 );
+	const hasDot =
+		isString( hostname ) && inRange( indexOf( hostname, '.' ), 1, hostname.length - 2 );
 
 	if ( ! isWebUri( url ) || ! hasDot ) {
 		return translate( 'Please enter a full URL.' );
@@ -42,13 +43,13 @@ const getValidationMessageForUrl = ( value = '' ) => {
 		return translate(
 			"You've entered the URL for the Wix editor, which only you can access. Please enter your site's public URL. It should look like one of the examples below."
 		);
-	} else if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
+	} else if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
 		return translate(
 			"You haven't entered the full URL. Please include the part of the URL that comes after wixsite.com. See below for an example."
 		);
 	} else if ( hostname.indexOf( 'wordpress.com' ) > -1 ) {
 		return translate(
-			"You have entered a URL of WordPress.com site. Please enter a URL of a Wix site to start the import."
+			'You have entered a URL of WordPress.com site. Please enter a URL of a Wix site to start the import.'
 		);
 	}
 
@@ -71,13 +72,20 @@ class ImportURLStepComponent extends Component {
 
 	handleAction = () => {
 		if ( this.props.urlInputValidationMessage ) {
-			return this.setState( {
-				showValidation: true,
-			} );
+			return this.setState(
+				{
+					showValidation: true,
+				},
+				this.focusInput
+			);
 		}
 
 		this.goToNextStep( {} );
 	};
+
+	handleInputRef = el => ( this.inputRef = el );
+
+	focusInput = () => this.inputRef && this.inputRef.focus();
 
 	goToNextStep = () => {
 		const { urlInputValue } = this.props;
@@ -121,6 +129,7 @@ class ImportURLStepComponent extends Component {
 					defaultValue={ urlInputValue }
 					disabled={ isInputDisabled }
 					onBlur={ this.handleInputBlur }
+					inputRef={ this.handleInputRef }
 				/>
 				{ showValidation ? (
 					<FormInputValidation
