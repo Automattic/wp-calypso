@@ -36,12 +36,12 @@
 	}
 
 	.filterbar__label {
-		margin: 0 8px 0 16px;
+		margin: 0 2px 0 10px;
 		color: $gray;
 		white-space: nowrap;
 
-		@include breakpoint( '>480px' ) {
-			margin-left:0;
+		@include breakpoint( '>660px' ) {
+			margin: 0 8px 0 16px;
 		}
 	}
 
