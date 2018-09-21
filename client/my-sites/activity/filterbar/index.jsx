@@ -74,10 +74,23 @@ export class Filterbar extends Component {
 		}
 	};
 
+	isEmptyFilter = filter => {
+		if ( ! filter ) {
+			return true;
+		}
+		if ( filter.group || filter.on || filter.before || filter.after ) {
+			return false;
+		}
+		if ( filter.page !== 1 ) {
+			return false;
+		}
+		return true;
+	};
+
 	render() {
 		const { translate, siteId, filter, isLoading, isVisible } = this.props;
 
-		if ( isLoading ) {
+		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
 			return <div className="filterbar is-loading" />;
 		}
 
