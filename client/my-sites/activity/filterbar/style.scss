@@ -20,7 +20,7 @@
 		background-color: $white;
 		border-radius: inherit;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint( '>660px' ) {
 			display: flex;
 		}
 	}
@@ -42,8 +42,8 @@
 		color: $gray;
 		white-space: nowrap;
 
-		@include breakpoint( '>480px' ) {
-			margin-left:0;
+		@include breakpoint( '>660px' ) {
+			margin-left: 0;
 		}
 	}
 
@@ -63,7 +63,8 @@
 		border: 1px solid $gray-darken-30;
 		background: $gray-darken-30;
 		color: $white;
-		@include breakpoint( '>480px' ) {
+
+		@include breakpoint( '>660px' ) {
 			margin-right: 0;
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
@@ -80,7 +81,8 @@
 		border-bottom-right-radius: 5px;
 		border: 1px solid $gray-darken-30;
 		display: none;
-		@include breakpoint( '>480px' ) {
+
+		@include breakpoint( '>660px' ) {
 			display: inline;
 		}
 	}
@@ -117,7 +119,6 @@
 }
 
 .filterbar__activity-types-selection-granular {
-	margin-top: 12px;
 
 	label {
 		font-weight: normal;
