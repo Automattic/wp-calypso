@@ -37,6 +37,9 @@ class DatePicker extends PureComponent {
 		onSelectDay: PropTypes.func,
 		onDayMouseEnter: PropTypes.func,
 		onDayMouseLeave: PropTypes.func,
+		onDayTouchStart: PropTypes.func,
+		onDayTouchEnd: PropTypes.func,
+		onDayTouchMove: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -50,6 +53,9 @@ class DatePicker extends PureComponent {
 		onSelectDay: noop,
 		onDayMouseEnter: noop,
 		onDayMouseLeave: noop,
+		onDayTouchStart: noop,
+		onDayTouchEnd: noop,
+		onDayTouchMove: noop,
 	};
 
 	isSameDay( d0, d1 ) {
@@ -166,6 +172,11 @@ class DatePicker extends PureComponent {
 		this.props.onDayMouseLeave( date, modifiers, event, eventsByDay );
 	};
 
+	handleDayTouchMove = ( date, modifiers, event ) => {
+		const eventsByDay = this.filterEventsByDay( date );
+		this.props.onDayTouchMove( date, modifiers, event, eventsByDay );
+	};
+
 	render() {
 		const modifiers = {
 			...this.props.modifiers,
@@ -192,6 +203,9 @@ class DatePicker extends PureComponent {
 				fromMonth={ this.props.fromMonth }
 				month={ this.props.calendarViewDate }
 				onDayClick={ this.setCalendarDay }
+				onDayTouchStart={ this.setCalendarDay }
+				onDayTouchEnd={ this.setCalendarDay }
+				onDayTouchMove={ this.handleDayTouchMove }
 				renderDay={ this.renderDay }
 				localeUtils={ this.locale() }
 				onMonthChange={ this.props.onMonthChange }
