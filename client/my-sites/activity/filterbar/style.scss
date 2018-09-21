@@ -11,39 +11,19 @@
 	padding: 0;
 	margin: 0;
 
-
-	.filterbar__icon-navigation {
-		display: none;
-		flex: 0 0 auto;
-		align-items: center;
-		height: 100%;
-		background-color: $white;
-		border-radius: inherit;
-
-		@include breakpoint( '>660px' ) {
-			display: flex;
-		}
-	}
-
 	.filterbar__icon-reset {
 		width: 48px;
 	    margin-left: auto;
 	    margin-right: 8px;
 	}
 
-	.filterbar__open-icon {
-		flex: 0 0 auto;
-		width: 50px;
-		color: $gray-text-min;
-	}
-
 	.filterbar__label {
-		margin: 0 8px 0 16px;
+		margin: 0 2px 0 10px;
 		color: $gray;
 		white-space: nowrap;
 
 		@include breakpoint( '>660px' ) {
-			margin-left: 0;
+			margin: 0 8px 0 16px;
 		}
 	}
 
