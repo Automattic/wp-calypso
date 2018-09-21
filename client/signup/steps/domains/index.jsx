@@ -9,7 +9,6 @@ import { defer, endsWith, get, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition from 'react-transition-group/CSSTransition';
-// import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 /**
  * Internal dependencies
