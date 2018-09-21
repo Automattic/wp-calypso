@@ -1,11 +1,5 @@
 .plans-step {
 	margin: 0 auto;
-	max-width: 700px;
-
-	&.is-wide-layout {
-		margin: auto;
-		max-width: 1200px;
-	}
 
 	&.is-store-flow {
 		max-width: 500px;
@@ -17,12 +11,6 @@
 
 	.formatted-header.is-without-subhead {
 		margin-bottom: 15px;
-	}
-
-	.step-wrapper {
-		&.is-wide-layout {
-			max-width: 1200px;
-		}
 	}
 }
 

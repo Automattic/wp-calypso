@@ -99,8 +99,6 @@ class StepWrapper extends Component {
 	testimonial() {
 		const { translate } = this.props;
 
-		if ( ( 'about' || 'plans' ) !== this.props.stepName ) return null;
-
 		return (
 			<div className="step-wrapper__testimonial">
 				<div className="step-wrapper__testimonial-image">
@@ -123,7 +121,14 @@ class StepWrapper extends Component {
 	}
 
 	render() {
-		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
+		const {
+			stepContent,
+			headerButton,
+			hideFormattedHeader,
+			hideBack,
+			hideSkip,
+			stepName,
+		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
@@ -158,7 +163,7 @@ class StepWrapper extends Component {
 					</div>
 				</div>
 
-				{ this.testimonial() }
+				{ 'domains' === stepName ? null : this.testimonial() }
 			</div>
 		);
 	}

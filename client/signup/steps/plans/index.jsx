@@ -115,6 +115,7 @@ class PlansStep extends Component {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( "Pick a plan that's right for you." );
+		const subHeaderText = translate( 'Based on your needs, we recommend the Business plan.' );
 
 		return (
 			<StepWrapper
@@ -122,6 +123,7 @@ class PlansStep extends Component {
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
+				subHeaderText={ subHeaderText }
 				fallbackHeaderText={ headerText }
 				signupProgress={ signupProgress }
 				isWideLayout={ true }

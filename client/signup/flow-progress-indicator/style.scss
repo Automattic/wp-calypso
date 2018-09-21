@@ -6,14 +6,9 @@
 	color: $white;
 	font-size: 14px;
 	font-weight: 300;
-	margin: 0 auto -12px;
 
 	@include breakpoint( '<660px' ) {
 		padding-top: 12px;
-	}
-
-	@include breakpoint( '>960px' ) {
-		max-width: 960px;
 	}
 }
 
