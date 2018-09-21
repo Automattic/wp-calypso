@@ -31,7 +31,9 @@ class FeedFeatured extends React.PureComponent {
 	static displayName = 'FeedFeatured';
 
 	componentDidMount() {
-		this.props.requestPage( { streamKey: this.props.streamKey } );
+		if ( ! this.props.posts || this.props.posts.length < 3 ) {
+			this.props.requestPage( { streamKey: this.props.streamKey } );
+		}
 	}
 
 	handleClick = postData => {
