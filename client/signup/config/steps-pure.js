@@ -118,7 +118,12 @@ export function generateSteps( {
 
 		about: {
 			stepName: 'about',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
+			providesDependencies: [
+				'designType',
+				'themeSlugWithRepo',
+				'siteTitle',
+				'surveyQuestion',
+			],
 		},
 
 		user: {
@@ -213,7 +218,12 @@ export function generateSteps( {
 				oauth2Signup: true,
 			},
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
 		},
 
 		'get-dot-blog-plans': {
@@ -349,6 +359,11 @@ export function generateSteps( {
 		'import-from-url': {
 			stepName: 'import-from-url',
 			providesDependencies: [ 'importUrl', 'themeSlugWithRepo' ],
+		},
+
+		'reader-landing': {
+			stepName: 'reader-landing',
+			providesDependencies: [],
 		},
 	};
 }
