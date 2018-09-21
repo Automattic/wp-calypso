@@ -19,31 +19,28 @@ export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
 		showActivityDates: false,
-		showUpgradeNudge: false,
 	};
 
 	toggleDateRangeSelector = () => {
 		this.setState( {
 			showActivityDates: ! this.state.showActivityDates,
 			showActivityTypes: false,
-			showUpgradeNudge: false,
 		} );
 	};
 
 	closeDateRangeSelector = () => {
-		this.setState( { showActivityDates: false, showUpgradeNudge: true } );
+		this.setState( { showActivityDates: false } );
 	};
 
 	toggleActivityTypesSelector = () => {
 		this.setState( {
 			showActivityTypes: ! this.state.showActivityTypes,
 			showActivityDates: false,
-			showUpgradeNudge: false,
 		} );
 	};
 
 	closeActivityTypes = () => {
-		this.setState( { showActivityTypes: false, showUpgradeNudge: true } );
+		this.setState( { showActivityTypes: false } );
 	};
 
 	handleRemoveFilters = () => {
@@ -89,7 +86,7 @@ export class Filterbar extends Component {
 					/>
 					{ this.renderCloseButton() }
 				</div>
-				{ this.state.showUpgradeNudge && siteIsOnFreePlan && <FilterbarBanner siteId={ siteId } /> }
+				{ siteIsOnFreePlan && <FilterbarBanner siteId={ siteId } /> }
 			</div>
 		);
 	}

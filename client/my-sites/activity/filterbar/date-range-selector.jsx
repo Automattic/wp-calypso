@@ -169,11 +169,15 @@ export class DateRangeSelector extends Component {
 	};
 
 	getFromatedDate = ( from, to ) => {
-		const { translate } = this.props;
+		const { translate, siteIsOnFreePlan } = this.props;
 		const fromMoment = from ? moment( from ) : null;
 		const toMoment = to ? moment( to ) : null;
 		const fromFormated = this.getFormatedFromDate( fromMoment, toMoment );
 		const toFormated = this.getFormatedToDate( fromMoment, toMoment );
+
+		if ( siteIsOnFreePlan ) {
+			return translate( 'Date Range' );
+		}
 
 		if ( fromFormated && ! toFormated ) {
 			return fromFormated;
@@ -220,7 +224,7 @@ export class DateRangeSelector extends Component {
 	};
 
 	render() {
-		const { translate, isVisible, onButtonClick } = this.props;
+		const { translate, isVisible, onButtonClick, siteIsOnFreePlan } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
 		const enteredTo = this.getEnteredToDate();
@@ -230,7 +234,7 @@ export class DateRangeSelector extends Component {
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
-			'is-selected': !! from,
+			'is-selected': !! from && ! siteIsOnFreePlan,
 		} );
 		return (
 			<Fragment>
@@ -243,16 +247,17 @@ export class DateRangeSelector extends Component {
 				>
 					{ this.getFromatedDate( from, to ) }
 				</Button>
-				{ ( from || to ) && (
-					<Button
-						className="filterbar__selection-close"
-						compact
-						borderless
-						onClick={ this.handleResetSelection }
-					>
-						<Gridicon icon="cross-small" />
-					</Button>
-				) }
+				{ ( from || to ) &&
+					! siteIsOnFreePlan && (
+						<Button
+							className="filterbar__selection-close"
+							compact
+							borderless
+							onClick={ this.handleResetSelection }
+						>
+							<Gridicon icon="cross-small" />
+						</Button>
+					) }
 				<Popover
 					id="filterbar__date-range"
 					isVisible={ isVisible }

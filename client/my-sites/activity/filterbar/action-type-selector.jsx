@@ -145,9 +145,9 @@ export class ActionTypeSelector extends Component {
 	isSelected = key => this.getSelectedCheckboxes().includes( key );
 
 	render() {
-		const { translate, activityTypes, isVisible, onButtonClick } = this.props;
+		const { translate, activityTypes, isVisible, onButtonClick, siteIsOnFreePlan } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
-		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes );
+		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes ) && ! siteIsOnFreePlan;
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
