@@ -109,6 +109,11 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
+		// Omit Path until API stops returning this service.
+		if ( 'path' === service.ID ) {
+			return false;
+		}
+
 		return true;
 	} );
 }
