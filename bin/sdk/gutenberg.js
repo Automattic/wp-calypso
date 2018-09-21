@@ -4,10 +4,10 @@
  */
 const fs = require( 'fs' );
 const path = require( 'path' );
-
+//TODO: DO NOT MERGE - TEMP FOR SANITY
 exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 	const baseConfig = getBaseConfig( {
-		cssFilename: '[name].css',
+		cssFilename: 'o2-[name].css',
 		externalizeWordPressPackages: true,
 	} );
 	const editorScript = path.join( inputDir, 'editor.js' );
@@ -21,7 +21,7 @@ exports.config = ( { argv: { inputDir, outputDir }, getBaseConfig } ) => {
 		},
 		output: {
 			path: outputDir || path.join( inputDir, 'build' ),
-			filename: '[name].js',
+			filename: 'o2-[name].js',
 			libraryTarget: 'window',
 		},
 	};
