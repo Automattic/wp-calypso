@@ -25,3 +25,135 @@
 .plans-step__compare {
 	margin-top: 25px;
 }
+
+.plans-step {
+	.plan-features--signup .plan-features__content {
+		padding: 0;
+	}
+
+	.plan-features--signup .plan-features__table {
+		border-spacing: 24px !important;
+	}
+
+	.plan-features--signup .plan-features__table tbody {
+		display: grid;
+		grid-template-columns: 60% 40%;
+
+		& > tr:first-of-type {
+			display: grid;
+			grid-template-rows: repeat(4,1fr);
+
+			& > td:first-of-type {
+				border-top: 0;
+				padding-top: 0;
+			}
+		}
+
+		& > tr:nth-of-type(2) {
+			display: grid;
+			grid-template-rows: repeat(4,1fr);
+
+			.plan-features__table-item {
+				border-top: 1px solid $gray-lighten-30;
+			}
+
+			& > td:first-of-type {
+				border-top: 0;
+				padding-top: 0;
+			}
+		}
+
+		.plan-features__table-item {
+			border-left: 0;
+			border-right: 0;
+			padding: 18px 0;
+		}
+	}
+
+	.plan-features__header-wrapper {
+		display: grid;
+		grid-template-columns: 72px auto;
+		grid-template-rows: auto auto;
+		grid-column-gap: 18px;
+		align-items: start;
+		justify-items: start;
+	}
+
+	.plan-features__header {
+		display: block;
+		grid-column-start: 2;
+		padding: 0;
+		text-align: left;
+	}
+
+	.plan-features__graphic {
+		grid-column-start: 1;
+		grid-row-start: 1;
+		grid-row-end: span 2;
+		margin: 0;
+		width: 72px;
+		height: 72px;
+
+		img {
+			width: 72px;
+			height: 72px;
+		}
+	}
+
+	.plan-features__header-title {
+		font-weight: 700;
+		margin: 0 0 6px;
+	}
+
+	.plan-features__pricing {
+		grid-column-start: 2;
+		grid-row-start: 2;
+		margin: 0;
+		padding: 0;
+		text-align: left;
+
+		span span {
+			color: $blue-signup-medium;
+			display: block;
+			width: 100%;
+		}
+	}
+
+	.plan-price {
+		font-size: 20px;
+	}
+
+	.is-free-plan .plan-features__header-title {
+		color: $gray-signup;
+	}
+
+	.is-personal-plan .plan-features__header-title {
+		color: $orange-signup;
+	}
+
+	.is-business-plan .plan-features__header-title {
+		color: $purple-signup;
+	}
+
+	.is-premium-plan .plan-features__header-title {
+		color: $blue-signup-bright;
+	}
+
+	.plan-features__header-subtitle,
+	.plan-features__row,
+	.ribbon {
+		display: none;
+	}
+
+	.plan-features__actions {
+		padding: 0 0 0 24px;
+	}
+
+	.plan-features__header {
+		border-bottom: 0;
+	}
+
+	.plan-features--signup .plan-features__actions-button {
+		margin-top: 0;
+	}
+}

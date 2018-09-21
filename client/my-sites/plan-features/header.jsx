@@ -79,7 +79,7 @@ export class PlanFeaturesHeader extends Component {
 					{ bestValue && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>
-						{ audience }
+						<span className="plan-features__header-subtitle">{ audience }</span>
 					</div>
 				</header>
 				<div className="plan-features__graphic">
