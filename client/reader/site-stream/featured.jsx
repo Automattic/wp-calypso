@@ -25,13 +25,15 @@ function getPostUrl( post ) {
 	return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
 }
 
+const FEED_FEATURED_MAX_POST_COUNT = 3;
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 // This component is used in the Discover site stream only.
 class FeedFeatured extends React.PureComponent {
 	static displayName = 'FeedFeatured';
 
 	componentDidMount() {
-		if ( ! this.props.posts || this.props.posts.length < 3 ) {
+		if ( ! this.props.posts || this.props.posts.length < FEED_FEATURED_MAX_POST_COUNT ) {
 			this.props.requestPage( { streamKey: this.props.streamKey } );
 		}
 	}
