@@ -15,6 +15,7 @@ import FilterbarBanner from 'my-sites/activity/activity-log-banner/filterbar-ban
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
@@ -91,6 +92,7 @@ export class Filterbar extends Component {
 		);
 	}
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 export default connect(
 	null,
