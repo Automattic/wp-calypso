@@ -1,3 +1,9 @@
+.plans__wrapper {
+	background: $white;
+	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
+	padding-bottom: 6px;
+}
+
 .plans-step .step-wrapper {
 	margin: 0 auto;
 	max-width: 960px;
@@ -18,13 +24,4 @@
 
 .plans-step__compare {
 	margin-top: 25px;
-}
-
-.plans-step .step-wrapper__content {
-	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
-}
-
-.plans-step .step-wrapper__content label,
-.plans-step .step-wrapper__content .form-legend {
-	font-weight: 400;
 }

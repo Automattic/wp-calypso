@@ -88,7 +88,7 @@ class PlansStep extends Component {
 		const { hideFreePlan, isDomainOnly, selectedSite } = this.props;
 
 		return (
-			<div>
+			<div className="plans__wrapper">
 				<QueryPlans />
 
 				<PlansFeaturesMain

@@ -83,6 +83,11 @@
 	box-shadow: none;
 }
 
+.is-section-signup .logged-out-form,
+.is-section-signup .signup-form__social {
+	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
+}
+
 .step-wrapper__testimonial {
 	color: $gray-lighten-20;
 	font-size: 18px;
@@ -171,7 +176,6 @@
 	}
 
 	.two-columns .step-wrapper__content {
-		background: $white;
 		grid-column-start: 6;
 		grid-column-end: span 7;
 		grid-row-start: 2;

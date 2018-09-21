@@ -1,5 +1,8 @@
 .about__wrapper {
 	position: relative;
+	background: $white;
+	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
+	padding-bottom: 6px;
 }
 
 .about__wrapper .card {
@@ -106,10 +109,6 @@
 	@include breakpoint( '<480px' ) {
 		width: 100%;
 	}
-}
-
-.about__section .step-wrapper__content {
-	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
 }
 
 .about__section .step-wrapper__content label,
