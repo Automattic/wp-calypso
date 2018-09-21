@@ -32,13 +32,20 @@ export class ActionTypeSelector extends Component {
 
 	resetActivityTypeSelector = event => {
 		const { selectActionType, siteId } = this.props;
-		selectActionType( siteId, [] );
 		event.preventDefault();
+		this.setState( {
+			selectedCheckboxes: [],
+			userHasSelected: false,
+		} );
+		selectActionType( siteId, [] );
 	};
 
 	handleToggleAllActionTypeSelector = () => {
-		const { activityTypes } = this.props;
+		const { activityTypes, siteIsOnFreePlan } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
+		if ( siteIsOnFreePlan ) {
+			return;
+		}
 		if ( ! selectedCheckboxes.length ) {
 			this.setState( {
 				userHasSelected: true,
@@ -112,6 +119,7 @@ export class ActionTypeSelector extends Component {
 	};
 
 	renderCheckbox = group => {
+		const { siteIsOnFreePlan } = this.props;
 		return (
 			<FormLabel key={ group.key }>
 				<FormCheckbox
@@ -119,6 +127,7 @@ export class ActionTypeSelector extends Component {
 					checked={ this.isSelected( group.key ) }
 					name={ group.key }
 					onChange={ this.handleSelectClick }
+					disabled={ siteIsOnFreePlan }
 				/>
 				{ group.name + ' (' + group.count + ')' }
 			</FormLabel>

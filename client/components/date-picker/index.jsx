@@ -37,6 +37,7 @@ class DatePicker extends PureComponent {
 		onSelectDay: PropTypes.func,
 		onDayMouseEnter: PropTypes.func,
 		onDayMouseLeave: PropTypes.func,
+		canChangeMonth: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -45,6 +46,7 @@ class DatePicker extends PureComponent {
 		modifiers: {},
 		fromMonth: null,
 		selectedDay: null,
+		canChangeMonth: true,
 
 		onMonthChange: noop,
 		onSelectDay: noop,
@@ -197,6 +199,7 @@ class DatePicker extends PureComponent {
 				onMonthChange={ this.props.onMonthChange }
 				showOutsideDays={ this.props.showOutsideDays }
 				navbarElement={ <DatePickerNavBar /> }
+				canChangeMonth={ this.props.canChangeMonth }
 			/>
 		);
 	}

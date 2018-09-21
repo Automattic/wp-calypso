@@ -213,12 +213,14 @@ export class DateRangeSelector extends Component {
 	};
 
 	render() {
-		const { translate, isVisible, onButtonClick } = this.props;
+		const { translate, isVisible, onButtonClick, siteIsOnFreePlan } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
 		const enteredTo = this.getEnteredToDate();
 		const modifiers = { start: from, end: enteredTo };
-		const disabledDays = [ { after: new Date() } ];
+		const disabledDays = siteIsOnFreePlan
+			? [ { daysOfWeek: [ 0, 1, 2, 3, 4, 5, 6 ] } ]
+			: [ { after: new Date() } ];
 		const selectedDays = [ from, { from, to: enteredTo } ];
 
 		const buttonClass = classnames( {
@@ -262,6 +264,7 @@ export class DateRangeSelector extends Component {
 							modifiers={ modifiers }
 							onSelectDay={ this.handleDayClick }
 							onDayMouseEnter={ this.handleDayMouseEnter }
+							canChangeMonth={ ! siteIsOnFreePlan }
 						/>
 						<div className="filterbar__date-range-selection-info">
 							<div className="filterbar__date-range-info">
