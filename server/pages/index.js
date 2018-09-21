@@ -11,12 +11,14 @@ import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import {
+	defaults,
 	endsWith,
 	get,
 	includes,
 	pick,
 	flatten,
 	forEach,
+	groupBy,
 	intersection,
 	snakeCase,
 	split,
@@ -90,6 +92,21 @@ const getAssets = ( () => {
 	};
 } )();
 
+const EMPTY_ASSETS = { js: [], 'css.ltr': [], 'css.rtl': [] };
+
+const getAssetType = asset => {
+	if ( asset.endsWith( '.rtl.css' ) ) {
+		return 'css.rtl';
+	}
+	if ( asset.endsWith( '.css' ) ) {
+		return 'css.ltr';
+	}
+
+	return 'js';
+};
+
+const groupAssetsByType = assets => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
+
 const getFilesForChunk = chunkName => {
 	const assets = getAssets();
 
@@ -108,14 +125,21 @@ const getFilesForChunk = chunkName => {
 		assets.chunks.forEach( c => {
 			console.log( '    ' + c.id + ': ' + c.names.join( ',' ) );
 		} );
-		return [];
+		return EMPTY_ASSETS;
 	}
 
 	const allTheFiles = chunk.files.concat(
 		flatten( chunk.siblings.map( sibling => getChunkById( sibling ).files ) )
 	);
 
-	return allTheFiles;
+	return groupAssetsByType( allTheFiles );
+};
+
+const getFilesForEntrypoint = () => {
+	const entrypointAssets = getAssets().entrypoints.build.assets.filter(
+		asset => ! asset.startsWith( 'manifest' )
+	);
+	return groupAssetsByType( entrypointAssets );
 };
 
 /**
@@ -233,9 +257,7 @@ function getDefaultContext( request ) {
 		isDebug,
 		badge: false,
 		lang,
-		entrypoint: getAssets().entrypoints.build.assets.filter(
-			asset => ! asset.startsWith( 'manifest' )
-		),
+		entrypoint: getFilesForEntrypoint(),
 		manifest: getAssets().manifests.manifest,
 		faviconURL: config( 'favicon_url' ),
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
@@ -671,7 +693,7 @@ module.exports = function() {
 					if ( config.isEnabled( 'code-splitting' ) ) {
 						req.context.chunkFiles = getFilesForChunk( section.name );
 					} else {
-						req.context.chunkFiles = [];
+						req.context.chunkFiles = EMPTY_ASSETS;
 					}
 
 					if ( section.secondary && req.context ) {

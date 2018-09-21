@@ -34,7 +34,6 @@ export function getSections() {
 }
 
 function maybeLoadCSS( sectionName ) {
-	//eslint-disable-line no-unused-vars
 	const section = find( sections, { name: sectionName } );
 
 	if ( ! ( section && section.css ) ) {

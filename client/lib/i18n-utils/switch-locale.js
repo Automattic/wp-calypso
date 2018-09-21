@@ -6,6 +6,7 @@
 import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 	const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
 
 	switchCSS( 'main-css', cssUrl );
+	switchWebpackCSS( isRTL );
 }
 
 let lastRequestedLocale = null;
@@ -103,6 +105,38 @@ export async function switchCSS( elementId, cssUrl ) {
 	}
 
 	newLink.id = elementId;
+}
+
+/*
+ * CSS links come in two flavors: either RTL stylesheets with `.rtl.css` suffix, or LTR ones
+ * with `.css` suffix. This function sets a desired `isRTL` flag on the supplied URL, i.e., it
+ * changes the extension if necessary.
+ */
+function setRTLFlagOnCSSLink( url, isRTL ) {
+	if ( isRTL ) {
+		return url.endsWith( '.rtl.css' ) ? url : url.replace( /\.css$/, '.rtl.css' );
+	}
+
+	return ! url.endsWith( '.rtl.css' ) ? url : url.replace( /\.rtl.css$/, '.css' );
+}
+
+function switchWebpackCSS( isRTL ) {
+	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
+
+	return map( currentLinks, async currentLink => {
+		const currentHref = currentLink.getAttribute( 'href' );
+		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
+		if ( currentHref === newHref ) {
+			return;
+		}
+
+		const newLink = await loadCSS( newHref, currentLink );
+		newLink.setAttribute( 'data-webpack', true );
+
+		if ( currentLink.parentElement ) {
+			currentLink.parentElement.removeChild( currentLink );
+		}
+	} );
 }
 
 /**
