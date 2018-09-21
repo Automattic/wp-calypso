@@ -58,7 +58,6 @@ import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import steps from './config/steps';
 import flows from './config/flows';
 import stepComponents from './config/step-components';
-import FlowProgressIndicator from './flow-progress-indicator';
 import {
 	canResumeFlow,
 	getCompletedSteps,
@@ -550,9 +549,6 @@ class Signup extends React.Component {
 			return null;
 		}
 
-		const flow = flows.getFlow( this.props.flowName );
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-
 		const pageTitle =
 			this.props.flowName === 'account'
 				? translate( 'Create an account' )
@@ -561,14 +557,6 @@ class Signup extends React.Component {
 		return (
 			<span>
 				<DocumentHead title={ pageTitle } />
-				{ ! this.state.loadingScreenStartTime &&
-					showProgressIndicator && (
-						<FlowProgressIndicator
-							positionInFlow={ this.getPositionInFlow() }
-							flowLength={ flow.steps.length }
-							flowName={ this.props.flowName }
-						/>
-					) }
 				<ReactCSSTransitionGroup
 					component="div"
 					className="signup__steps"

@@ -8,12 +8,15 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { indexOf } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import FlowProgressIndicator from 'signup/flow-progress-indicator';
+import flows from 'signup/config/flows';
 
 class StepWrapper extends Component {
 	static propTypes = {
@@ -96,7 +99,7 @@ class StepWrapper extends Component {
 	testimonial() {
 		const { translate } = this.props;
 
-		if ( 'about' !== this.props.stepName ) return null;
+		if ( ( 'about' || 'plans' ) !== this.props.stepName ) return null;
 
 		return (
 			<div className="step-wrapper__testimonial">
@@ -115,14 +118,27 @@ class StepWrapper extends Component {
 		);
 	}
 
+	getPositionInFlow() {
+		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+	}
+
 	render() {
 		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
+		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
+		const flow = flows.getFlow( this.props.flowName );
 
 		return (
 			<div className={ classes }>
+				{ showProgressIndicator && (
+					<FlowProgressIndicator
+						positionInFlow={ this.getPositionInFlow() }
+						flowLength={ flow.steps.length }
+						flowName={ this.props.flowName }
+					/>
+				) }
 				{ ! hideFormattedHeader && (
 					<FormattedHeader
 						id={ 'step-header' }
