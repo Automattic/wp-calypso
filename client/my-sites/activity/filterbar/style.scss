@@ -140,8 +140,11 @@
 
 .filterbar__date-range-wrap {
 	width: 280px;
-	padding: 16px;
 	margin: 0 auto;
+
+	@include breakpoint( '>660px' ) {
+		padding: 16px;
+	}
 
 	.DayPicker-Day {
 		cursor: pointer;
