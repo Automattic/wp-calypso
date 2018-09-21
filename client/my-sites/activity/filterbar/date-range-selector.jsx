@@ -31,14 +31,9 @@ export class DateRangeSelector extends Component {
 	}
 
 	handleClose = () => {
-		const { siteId, filter, onClose, selectDateRange, siteIsOnFreePlan } = this.props;
+		const { siteId, filter, onClose, selectDateRange } = this.props;
 		const fromDate = this.getFromDate( filter );
 		const toDate = this.getToDate( filter );
-
-		if ( siteIsOnFreePlan ) {
-			onClose();
-			return;
-		}
 
 		this.setState( {
 			toDate: null,
@@ -117,15 +112,13 @@ export class DateRangeSelector extends Component {
 	};
 
 	handleResetSelection = () => {
-		const { siteId, selectDateRange, siteIsOnFreePlan } = this.props;
+		const { siteId, selectDateRange } = this.props;
 		this.setState( {
 			enteredToDate: null,
 			fromDate: null,
 			toDate: null,
 		} );
-		if ( ! siteIsOnFreePlan ) {
-			selectDateRange( siteId, null, null );
-		}
+		selectDateRange( siteId, null, null );
 	};
 
 	getFormatedFromDate = ( from, to ) => {
@@ -169,15 +162,11 @@ export class DateRangeSelector extends Component {
 	};
 
 	getFromatedDate = ( from, to ) => {
-		const { translate, siteIsOnFreePlan } = this.props;
+		const { translate } = this.props;
 		const fromMoment = from ? moment( from ) : null;
 		const toMoment = to ? moment( to ) : null;
 		const fromFormated = this.getFormatedFromDate( fromMoment, toMoment );
 		const toFormated = this.getFormatedToDate( fromMoment, toMoment );
-
-		if ( siteIsOnFreePlan ) {
-			return translate( 'Date Range' );
-		}
 
 		if ( fromFormated && ! toFormated ) {
 			return fromFormated;
@@ -229,12 +218,14 @@ export class DateRangeSelector extends Component {
 		const to = this.getToDate();
 		const enteredTo = this.getEnteredToDate();
 		const modifiers = { start: from, end: enteredTo };
-		const disabledDays = [ { after: new Date() } ];
+		const disabledDays = siteIsOnFreePlan
+			? [ { daysOfWeek: [ 0, 1, 2, 3, 4, 5, 6 ] } ]
+			: [ { after: new Date() } ];
 		const selectedDays = [ from, { from, to: enteredTo } ];
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
-			'is-selected': !! from && ! siteIsOnFreePlan,
+			'is-selected': !! from,
 		} );
 		return (
 			<Fragment>
@@ -247,17 +238,16 @@ export class DateRangeSelector extends Component {
 				>
 					{ this.getFromatedDate( from, to ) }
 				</Button>
-				{ ( from || to ) &&
-					! siteIsOnFreePlan && (
-						<Button
-							className="filterbar__selection-close"
-							compact
-							borderless
-							onClick={ this.handleResetSelection }
-						>
-							<Gridicon icon="cross-small" />
-						</Button>
-					) }
+				{ ( from || to ) && (
+					<Button
+						className="filterbar__selection-close"
+						compact
+						borderless
+						onClick={ this.handleResetSelection }
+					>
+						<Gridicon icon="cross-small" />
+					</Button>
+				) }
 				<Popover
 					id="filterbar__date-range"
 					isVisible={ isVisible }
@@ -274,6 +264,7 @@ export class DateRangeSelector extends Component {
 							modifiers={ modifiers }
 							onSelectDay={ this.handleDayClick }
 							onDayMouseEnter={ this.handleDayMouseEnter }
+							canChangeMonth={ ! siteIsOnFreePlan }
 						/>
 						<div className="filterbar__date-range-selection-info">
 							<div className="filterbar__date-range-info">

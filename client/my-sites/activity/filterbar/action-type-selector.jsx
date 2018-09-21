@@ -31,15 +31,13 @@ export class ActionTypeSelector extends Component {
 	}
 
 	resetActivityTypeSelector = event => {
-		const { selectActionType, siteId, siteIsOnFreePlan } = this.props;
+		const { selectActionType, siteId } = this.props;
 		event.preventDefault();
 		this.setState( {
 			selectedCheckboxes: [],
 			userHasSelected: false,
 		} );
-		if ( ! siteIsOnFreePlan ) {
-			selectActionType( siteId, [] );
-		}
+		selectActionType( siteId, [] );
 	};
 
 	handleToggleAllActionTypeSelector = () => {
@@ -107,12 +105,7 @@ export class ActionTypeSelector extends Component {
 	};
 
 	handleClose = () => {
-		const { siteId, onClose, selectActionType, siteIsOnFreePlan } = this.props;
-
-		if ( siteIsOnFreePlan ) {
-			onClose();
-			return;
-		}
+		const { siteId, onClose, selectActionType } = this.props;
 
 		selectActionType( siteId, this.getSelectedCheckboxes() );
 		this.setState( {
@@ -123,6 +116,7 @@ export class ActionTypeSelector extends Component {
 	};
 
 	renderCheckbox = group => {
+		const { siteIsOnFreePlan } = this.props;
 		return (
 			<FormLabel key={ group.key }>
 				<FormCheckbox
@@ -130,6 +124,7 @@ export class ActionTypeSelector extends Component {
 					checked={ this.isSelected( group.key ) }
 					name={ group.key }
 					onChange={ this.handleSelectClick }
+					disabled={ siteIsOnFreePlan }
 				/>
 				{ group.name + ' (' + group.count + ')' }
 			</FormLabel>
@@ -145,9 +140,9 @@ export class ActionTypeSelector extends Component {
 	isSelected = key => this.getSelectedCheckboxes().includes( key );
 
 	render() {
-		const { translate, activityTypes, isVisible, onButtonClick, siteIsOnFreePlan } = this.props;
+		const { translate, activityTypes, isVisible, onButtonClick } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
-		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes ) && ! siteIsOnFreePlan;
+		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes );
 
 		const buttonClass = classnames( {
 			filterbar__selection: true,
