@@ -18,6 +18,7 @@
 		"pt-br"
 	],
 	"features": {
+		"activity-filterbar": true,
 		"ad-tracking": true,
 		"apple-pay": true,
 		"automated-transfer": true,
