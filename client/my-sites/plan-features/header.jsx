@@ -67,23 +67,19 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderSignupHeader() {
-		const { planType, popular, newPlan, bestValue, title, audience, translate } = this.props;
+		const { planType, title, isInSignup } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
 			<div className="plan-features__header-wrapper">
 				<header className={ headerClasses } onClick={ this.props.onClick }>
-					{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
-					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
-					{ bestValue && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>
-						<span className="plan-features__header-subtitle">{ audience }</span>
 					</div>
 				</header>
 				<div className="plan-features__graphic">
-					<PlanIcon plan={ planType } />
+					<PlanIcon plan={ planType } isInSignup={ isInSignup } />
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }

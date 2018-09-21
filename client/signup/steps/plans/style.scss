@@ -32,7 +32,8 @@
 	}
 
 	.plan-features--signup .plan-features__table {
-		border-spacing: 24px !important;
+		border-spacing: 0 !important;
+		padding: 0 24px;
 	}
 
 	.plan-features--signup .plan-features__table tbody {
@@ -45,7 +46,7 @@
 
 			& > td:first-of-type {
 				border-top: 0;
-				padding-top: 0;
+				padding-top: 24px;
 			}
 		}
 
@@ -59,7 +60,7 @@
 
 			& > td:first-of-type {
 				border-top: 0;
-				padding-top: 0;
+				padding-top: 24px;
 			}
 		}
 

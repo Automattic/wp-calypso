@@ -16,12 +16,17 @@ import { isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
 
 export default class PlanIcon extends Component {
 	getIcon( planName ) {
-		const { plan, className } = this.props;
+		const { plan, className, isInSignup } = this.props;
 		const planClass = getPlanClass( plan );
+		let planIconUrl = `/calypso/images/plans/plan-${ planName }-circle.svg`;
+
+		if ( isInSignup ) {
+			planIconUrl = `/calypso/images/plans/signup-plan-${ planName }.svg`;
+		}
 
 		return (
 			<img
-				src={ `/calypso/images/plans/plan-${ planName }-circle.svg` }
+				src={ planIconUrl }
 				className={ classNames( 'plan-icon', `plan-icon__${ planName }`, planClass, className ) }
 			/>
 		);
