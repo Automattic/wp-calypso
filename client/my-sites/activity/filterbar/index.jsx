@@ -13,6 +13,7 @@ import Button from 'components/button';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export class Filterbar extends Component {
 	state = {
@@ -86,10 +87,17 @@ export class Filterbar extends Component {
 	}
 }
 
+const mapDispatchToProps = dispatch => ( {
+	resetFilters: sideId =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
+				updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } )
+			)
+		),
+} );
+
 export default connect(
 	null,
-	{
-		resetFilters: sideId =>
-			updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } ),
-	}
+	mapDispatchToProps
 )( localize( Filterbar ) );

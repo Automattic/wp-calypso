@@ -18,6 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
 import { requestActivityActionTypeCounts } from 'state/data-getters';
 import { updateFilter } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export class ActionTypeSelector extends Component {
 	state = {
@@ -31,8 +32,8 @@ export class ActionTypeSelector extends Component {
 	}
 
 	resetActivityTypeSelector = event => {
-		const { selectActionType, siteId } = this.props;
-		selectActionType( siteId, [] );
+		const { selectActionType, siteId, activityTypes } = this.props;
+		selectActionType( siteId, [], activityTypes );
 		event.preventDefault();
 	};
 
@@ -85,25 +86,10 @@ export class ActionTypeSelector extends Component {
 		return ( match && match.name ) || key;
 	};
 
-	isAllCheckboxSelected = () => {
-		const { activityTypes, selectedState } = this.props;
-		const selectedCheckboxes = this.getSelectedCheckboxes();
-
-		if ( ! this.state.userHasSelected && ! selectedState ) {
-			return true;
-		}
-
-		if ( selectedCheckboxes.length === activityTypes.length ) {
-			return true;
-		}
-
-		return false;
-	};
-
 	handleClose = () => {
-		const { siteId, onClose, selectActionType } = this.props;
+		const { siteId, onClose, selectActionType, activityTypes } = this.props;
 
-		selectActionType( siteId, this.getSelectedCheckboxes() );
+		selectActionType( siteId, this.getSelectedCheckboxes(), activityTypes );
 		this.setState( {
 			userHasSelected: false,
 			selectedCheckboxes: [],
@@ -232,16 +218,41 @@ export class ActionTypeSelector extends Component {
 	}
 }
 
-export default connect(
-	( state, { siteId, filter } ) => {
-		const activityTypes = siteId && requestActivityActionTypeCounts( siteId, filter );
-		const selectedState = filter && filter.group;
-		return {
-			activityTypes: ( siteId && activityTypes.data ) || [],
-			selectedState,
-		};
+const mapStateToProps = ( state, { siteId, filter } ) => {
+	const activityTypes = siteId && requestActivityActionTypeCounts( siteId, filter );
+	const selectedState = filter && filter.group;
+	return {
+		activityTypes: ( siteId && activityTypes.data ) || [],
+		selectedState,
+	};
+};
+
+const mapDispatchToProps = dispatch => ( {
+	selectActionType: ( siteId, group, allTypes ) => {
+		if ( 0 === group.length ) {
+			return dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_filterbar_reset_type' ),
+					updateFilter( siteId, { group: group, page: 1 } )
+				)
+			);
+		}
+		const eventProps = { num_groups_selected: group.length };
+		allTypes.forEach( type => ( eventProps[ 'group_' + type.key ] = group.includes( type.key ) ) );
+		eventProps.num_total_activities_selected = allTypes.reduce( ( accumulator, type ) => {
+			return group.includes( type.key ) ? accumulator + type.count : accumulator;
+		}, 0 );
+
+		return dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_select_type', eventProps ),
+				updateFilter( siteId, { group: group, page: 1 } )
+			)
+		);
 	},
-	{
-		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group, page: 1 } ),
-	}
+} );
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
 )( localize( ActionTypeSelector ) );

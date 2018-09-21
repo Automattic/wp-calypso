@@ -16,6 +16,7 @@ import Button from 'components/button';
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
 import { updateFilter } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class DateRangeSelector extends Component {
@@ -301,14 +302,44 @@ export class DateRangeSelector extends Component {
 	}
 }
 
+const mapDispatchToProps = dispatch => ( {
+	selectDateRange: ( siteId, from, to ) => {
+		if ( ! from && ! to ) {
+			return dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_filterbar_reset_range' ),
+					updateFilter( siteId, { after: from, before: to, on: null, page: 1 } )
+				)
+			);
+		} else if ( to ) {
+			const dateTo = new Date( to );
+			const dateFrom = new Date( from );
+			const dateNow = Date.now();
+			const duration = ( dateTo - dateFrom ) / ( 24 * 60 * 60 * 1000 );
+			const distance = Math.floor( ( dateNow - dateFrom ) / ( 24 * 60 * 60 * 1000 ) );
+			return dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_filterbar_select_range', { duration, distance } ),
+					updateFilter( siteId, { after: from, before: to, on: null, page: 1 } )
+				)
+			);
+		}
+		const dateFrom = new Date( from );
+		const dateNow = Date.now();
+		const distance = Math.floor( ( dateNow - dateFrom ) / ( 24 * 60 * 60 * 1000 ) );
+		return dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_select_range', {
+					duration: 1,
+					distance,
+				} ),
+				updateFilter( siteId, { on: from, after: null, before: null, page: 1 } )
+			)
+		);
+	},
+} );
+
 export default connect(
 	null,
-	{
-		selectDateRange: ( siteId, from, to ) => {
-			if ( to ) {
-				return updateFilter( siteId, { after: from, before: to, on: null, page: 1 } );
-			}
-			return updateFilter( siteId, { on: from, after: null, before: null, page: 1 } );
-		},
-	}
+	mapDispatchToProps
 )( localize( DateRangeSelector ) );
