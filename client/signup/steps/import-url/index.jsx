@@ -14,7 +14,8 @@ import { parse as parseURL } from 'url';
  */
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
+import FormTextInput from 'components/forms/form-text-input';
+import FormButton from 'components/forms/form-button';
 import {
 	fetchIsSiteImportable,
 	setNuxUrlInputValue,
@@ -53,6 +54,12 @@ class ImportURLStepComponent extends Component {
 		}
 	}
 
+	componentDidUpdate() {
+		if ( this.props.siteDetails.siteUrl ) {
+			// this.goToNextStep();
+		}
+	}
+
 	state = {
 		showValidation: false,
 	};
@@ -64,7 +71,7 @@ class ImportURLStepComponent extends Component {
 			} );
 		}
 
-		this.props.fetchIsSiteImportable( this.props.urlInputValue ).then( this.goToNextStep );
+		this.props.fetchIsSiteImportable( this.props.urlInputValue );
 	};
 
 	goToNextStep = () => {
@@ -78,8 +85,8 @@ class ImportURLStepComponent extends Component {
 		this.props.goToNextStep();
 	};
 
-	handleInputChange = value => {
-		const validationMessage = isValidUrl( value )
+	handleInputChange = event => {
+		const validationMessage = isValidUrl( event.target.value )
 			? ''
 			: this.props.translate( 'Please enter a valid URL.' );
 
@@ -87,7 +94,7 @@ class ImportURLStepComponent extends Component {
 			showValidation: false,
 		} );
 
-		this.props.setNuxUrlInputValue( value );
+		this.props.setNuxUrlInputValue( event.target.value );
 		this.props.setValidationMessage( validationMessage );
 	};
 
@@ -107,21 +114,29 @@ class ImportURLStepComponent extends Component {
 	}
 
 	renderContent = () => {
-		const { isInputDisabled, urlInputValidationMessage, urlInputValue, translate } = this.props;
+		const { isLoading, urlInputValidationMessage, urlInputValue, translate } = this.props;
 		const { showValidation } = this.state;
 
 		return (
-			<div className="import-url__wrapper">
-				<FormTextInputWithAction
-					placeholder={ translate( 'Please enter the full URL of your site.' ) }
-					action="Continue"
-					onAction={ this.handleAction }
-					label={ translate( 'URL' ) }
-					onChange={ this.handleInputChange }
-					defaultValue={ urlInputValue }
-					disabled={ isInputDisabled }
-					onBlur={ this.handleInputBlur }
-				/>
+			<div className="import-url__wrapper site-importer__site-importer-pane">
+				<form className="import-url__form site-importer__site-importer-url-input">
+					<FormTextInput
+						placeholder="https://example.wixsite.com/mysite"
+						disabled={ isLoading }
+						defaultValue={ urlInputValue }
+						onChange={ this.handleInputChange }
+						onBlur={ this.handleInputBlur }
+					/>
+					<FormButton
+						// className="form-text-input-with-action__button is-compact"
+						disabled={ isLoading }
+						busy={ isLoading }
+						onClick={ this.handleAction }
+						type="submit"
+					>
+						{ translate( 'Continue' ) }
+					</FormButton>
+				</form>
 				{ showValidation ? (
 					<FormInputValidation
 						text={ urlInputValidationMessage || translate( 'This URL is valid.' ) }
@@ -160,7 +175,7 @@ export default flow(
 		state => ( {
 			urlInputValue: getNuxUrlInputValue( state ),
 			siteDetails: getSiteDetails( state ),
-			isInputDisabled: isUrlInputDisabled( state ),
+			isLoading: isUrlInputDisabled( state ),
 			urlInputValidationMessage: getUrlInputValidationMessage( state ),
 		} ),
 		{
