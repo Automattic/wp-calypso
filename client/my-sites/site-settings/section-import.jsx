@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, first, get, includes, isEmpty, keyBy, keys, pickBy } from 'lodash';
+import { filter, find, flow, get, includes, keyBy, keys, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -82,6 +82,8 @@ const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, importItem => importItem.site.ID === siteID );
 };
 
+const getSiteTitle = site => site.title || site.slug || '';
+
 class SiteSettingsImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -107,6 +109,10 @@ class SiteSettingsImport extends Component {
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
 	renderIdleImporters( site, siteTitle, state ) {
+		// TODO: It feels like renderIdleImporters shouldn't have the responsibility
+		// of supplying the above arguments. state is always either disabled or inactive.
+		// We could use redux state instead to work out if the UI should be disabled, based
+		// on whether or not it's been hydrated yet.
 		const importerElements = importers.map( importer => {
 			const { type, isImporterEnabled, component: ImporterComponent } = importer;
 
@@ -147,30 +153,37 @@ class SiteSettingsImport extends Component {
 	}
 
 	/**
-	 * Receives import jobs data (`importsForSite`) and maps this to return an
-	 * importer element for the first valid active import job
+	 * Receives import jobs data (`activeImporter`) and returns an
+	 * importer view for that importer
 	 *
-	 * @param {Array} importsForSite The list of active import jobs
+	 * @param {Object} activeImporter
 	 * @returns {Component||null} Importer Component for the active import job
 	 */
-	renderImporterScreen( importsForSite ) {
-		const { importerOption } = this.props;
-		const enabledImports = filter( importsForSite, importer =>
-			includes( enabledImporterTypes, importer.type )
-		);
-		const activeImporter = first( enabledImports );
-
-		if ( ! activeImporter ) {
-			return null;
-		}
-
-		const ImporterComponent = get( importersDataObject, [ importerOption, 'component' ] );
+	renderImporterScreen( activeImporter ) {
+		const { importerOption, site } = this.props;
+		const selectedImportType = activeImporter.type || importerOption;
+		const ImporterComponent = get( importersDataObject, [ selectedImportType, 'component' ] );
 
 		if ( ! ImporterComponent ) {
+			// TODO: We should cover cases where the engine does not
+			// have a corresponding component. It seems unlikely to happen though.
 			return null;
 		}
 
-		return <ImporterComponent site={ activeImporter.site } importerStatus={ activeImporter } />;
+		// TODO: activeImporter is initially a locally generated instance that later
+		// gets replaced with a proper importer instance.
+		// We hope to eliminate the need for this and will need to make changes here
+		// when that time comes
+		return (
+			<ImporterComponent
+				site={ site }
+				importerStatus={ {
+					...activeImporter,
+					site,
+					siteTitle: getSiteTitle( site ),
+				} }
+			/>
+		);
 	}
 
 	/**
@@ -183,23 +196,32 @@ class SiteSettingsImport extends Component {
 			api: { isHydrated },
 			importers: imports,
 		} = this.state;
-		const { site } = this.props;
-		const { slug, title } = site;
-		const siteTitle = title.length ? title : slug;
+		// TODO: site and siteTitle should be taken from props where needed,
+		// rather than passed along to methods
+		const { importerOption, site } = this.props;
+		const siteTitle = getSiteTitle( site );
 
 		if ( ! isHydrated ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.DISABLED );
 		}
 
-		const importsForSite = filterImportsForSite( site.ID, imports )
-			// Add in the 'site' and 'siteTitle' properties to the import objects.
-			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
+		const activeImporter = flow(
+			// Pick only imports for the current site
+			items => filterImportsForSite( site.ID, items ),
+			// Add in the 'site' and 'siteTitle' properties
+			items =>
+				items.map( item => ( {
+					...item,
+					site,
+					siteTitle,
+				} ) ),
+			// Find the first enabled import
+			items => find( items, item => includes( enabledImporterTypes, item.type ) )
+		)( imports );
 
-		if ( isEmpty( importsForSite ) ) {
-			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
-		}
-
-		return this.renderImporterScreen( importsForSite );
+		return activeImporter || importerOption
+			? this.renderImporterScreen( activeImporter )
+			: this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
 	}
 
 	updateFromAPI = () => {
