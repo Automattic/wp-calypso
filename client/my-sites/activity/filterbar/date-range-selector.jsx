@@ -13,9 +13,14 @@ import { DateUtils } from 'react-day-picker';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import DatePicker from 'components/date-picker';
 import Popover from 'components/popover';
 import { updateFilter } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import MobileSelectPortal from './mobile-select-portal';
+import { isWithinBreakpoint } from 'lib/viewport';
+
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class DateRangeSelector extends Component {
@@ -88,7 +93,6 @@ export class DateRangeSelector extends Component {
 			} );
 			return;
 		}
-
 		this.setState( {
 			enteredToDate: day,
 			toDate: day,
@@ -212,8 +216,8 @@ export class DateRangeSelector extends Component {
 		return this.getToDate( filter );
 	};
 
-	render() {
-		const { translate, isVisible, onButtonClick } = this.props;
+	renderDateRangeSelection = () => {
+		const { translate } = this.props;
 		const from = this.getFromDate();
 		const to = this.getToDate();
 		const enteredTo = this.getEnteredToDate();
@@ -221,9 +225,71 @@ export class DateRangeSelector extends Component {
 		const disabledDays = [ { after: new Date() } ];
 		const selectedDays = [ from, { from, to: enteredTo } ];
 
+		return (
+			<div className="filterbar__date-range-wrap">
+				<DatePicker
+					fromMonth={ this.getFromDate() }
+					selectedDays={ selectedDays }
+					disabledDays={ disabledDays }
+					modifiers={ modifiers }
+					onSelectDay={ this.handleDayClick }
+					onDayMouseEnter={ this.handleDayMouseEnter }
+					onDayTouchStart={ this.handleDayClick }
+					onDayTouchEnd={ this.handleDayClick }
+					onDayTouchMove={ this.handleDayMouseEnter }
+				/>
+				<div className="filterbar__date-range-selection-info">
+					<div className="filterbar__date-range-info">
+						{ ! from &&
+							! to &&
+							translate( '{{icon/}} Please select the first day.', {
+								components: { icon: <Gridicon icon="info" /> },
+							} ) }
+						{ from &&
+							! to &&
+							translate( '{{icon/}} Please select the last day.', {
+								components: { icon: <Gridicon icon="info" /> },
+							} ) }
+						{ from &&
+							to && (
+								<Button borderless compact onClick={ this.handleResetSelection }>
+									{ translate( '{{icon/}} clear', {
+										components: { icon: <Gridicon icon="cross-small" /> },
+									} ) }
+								</Button>
+							) }
+					</div>
+					<Button
+						className="filterbar__date-range-apply"
+						primary
+						compact
+						onClick={ this.handleClose }
+						disabled={ ! from }
+					>
+						{ translate( 'Apply' ) }
+					</Button>
+				</div>
+			</div>
+		);
+	};
+
+	handleButtonClick = () => {
+		const { isVisible, onButtonClick } = this.props;
+		if ( isVisible ) {
+			this.handleClose();
+		}
+		onButtonClick();
+	};
+
+	render() {
+		const { isVisible } = this.props;
+		const from = this.getFromDate();
+		const to = this.getToDate();
+
 		const buttonClass = classnames( {
 			filterbar__selection: true,
 			'is-selected': !! from,
+			'is-active': isVisible && ! from,
 		} );
 		return (
 			<Fragment>
@@ -231,7 +297,7 @@ export class DateRangeSelector extends Component {
 					className={ buttonClass }
 					compact
 					borderless
-					onClick={ onButtonClick }
+					onClick={ this.handleButtonClick }
 					ref={ this.dateRangeButton }
 				>
 					{ this.getFromatedDate( from, to ) }
@@ -246,69 +312,66 @@ export class DateRangeSelector extends Component {
 						<Gridicon icon="cross-small" />
 					</Button>
 				) }
-				<Popover
-					id="filterbar__date-range"
-					isVisible={ isVisible }
-					onClose={ this.handleClose }
-					position="bottom"
-					relativePosition={ { left: -125 } }
-					context={ this.dateRangeButton.current }
-				>
-					<div className="filterbar__date-range-wrap">
-						<DatePicker
-							fromMonth={ this.getFromDate() }
-							selectedDays={ selectedDays }
-							disabledDays={ disabledDays }
-							modifiers={ modifiers }
-							onSelectDay={ this.handleDayClick }
-							onDayMouseEnter={ this.handleDayMouseEnter }
-						/>
-						<div className="filterbar__date-range-selection-info">
-							<div className="filterbar__date-range-info">
-								{ ! from &&
-									! to &&
-									translate( '{{icon/}} Please select the first day.', {
-										components: { icon: <Gridicon icon="info" /> },
-									} ) }
-								{ from &&
-									! to &&
-									translate( '{{icon/}} Please select the last day.', {
-										components: { icon: <Gridicon icon="info" /> },
-									} ) }
-								{ from &&
-									to && (
-										<Button borderless compact onClick={ this.handleResetSelection }>
-											{ translate( '{{icon/}} clear', {
-												components: { icon: <Gridicon icon="cross-small" /> },
-											} ) }
-										</Button>
-									) }
-							</div>
-							<Button
-								className="filterbar__date-range-apply"
-								primary
-								compact
-								onClick={ this.handleClose }
-								disabled={ ! from }
-							>
-								{ translate( 'Apply' ) }
-							</Button>
-						</div>
-					</div>
-				</Popover>
+				{ isWithinBreakpoint( '>660px' ) && (
+					<Popover
+						id="filterbar__date-range"
+						isVisible={ isVisible }
+						onClose={ this.handleClose }
+						position="bottom"
+						relativePosition={ { left: -125 } }
+						context={ this.dateRangeButton.current }
+					>
+						{ this.renderDateRangeSelection() }
+					</Popover>
+				) }
+				{ ! isWithinBreakpoint( '>660px' ) && (
+					<MobileSelectPortal isVisible={ isVisible }>
+						<Card>{ this.renderDateRangeSelection() }</Card>
+					</MobileSelectPortal>
+				) }
 			</Fragment>
 		);
 	}
 }
 
+const mapDispatchToProps = dispatch => ( {
+	selectDateRange: ( siteId, from, to ) => {
+		if ( ! from && ! to ) {
+			return dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_filterbar_reset_range' ),
+					updateFilter( siteId, { after: from, before: to, on: null, page: 1 } )
+				)
+			);
+		} else if ( to ) {
+			const dateTo = new Date( to );
+			const dateFrom = new Date( from );
+			const dateNow = Date.now();
+			const duration = ( dateTo - dateFrom ) / ( 24 * 60 * 60 * 1000 );
+			const distance = Math.floor( ( dateNow - dateFrom ) / ( 24 * 60 * 60 * 1000 ) );
+			return dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_filterbar_select_range', { duration, distance } ),
+					updateFilter( siteId, { after: from, before: to, on: null, page: 1 } )
+				)
+			);
+		}
+		const dateFrom = new Date( from );
+		const dateNow = Date.now();
+		const distance = Math.floor( ( dateNow - dateFrom ) / ( 24 * 60 * 60 * 1000 ) );
+		return dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_select_range', {
+					duration: 1,
+					distance,
+				} ),
+				updateFilter( siteId, { on: from, after: null, before: null, page: 1 } )
+			)
+		);
+	},
+} );
+
 export default connect(
 	null,
-	{
-		selectDateRange: ( siteId, from, to ) => {
-			if ( to ) {
-				return updateFilter( siteId, { after: from, before: to, on: null, page: 1 } );
-			}
-			return updateFilter( siteId, { on: from, after: null, before: null, page: 1 } );
-		},
-	}
+	mapDispatchToProps
 )( localize( DateRangeSelector ) );
