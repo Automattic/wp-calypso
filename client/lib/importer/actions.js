@@ -27,8 +27,8 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
 import { appStates } from 'calypso/state/imports/constants';
-import { fromApi, toApi } from './common';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { fromApi, toApi } from 'calypso/lib/importer/common';
 
 // This library unfortunately relies on global Redux state directly, by e.g. creating actions.
 // Because of this, we need to ensure that the relevant portion of state is initialized.
