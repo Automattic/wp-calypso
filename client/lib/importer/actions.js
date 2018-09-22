@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
+import { castArray, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -74,8 +74,6 @@ const apiFailure = ( data ) => {
 	return data;
 };
 
-const asArray = ( a ) => [].concat( a );
-
 function receiveImporterStatus( importerStatus ) {
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_RECEIVE,
@@ -116,7 +114,7 @@ export function fetchState( siteId ) {
 	return wpcom
 		.fetchImporterState( siteId )
 		.then( apiSuccess )
-		.then( asArray )
+		.then( castArray )
 		.then( ( importers ) => importers.map( fromApi ) )
 		.then( ( importers ) => importers.map( receiveImporterStatus ) )
 		.catch( apiFailure );
