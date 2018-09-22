@@ -4,6 +4,8 @@
 	filter: blur( 1px );
 }
 .o2-editor .editor-block-list__block.is-selected .wp-block-a8c-spoiler,
-.gutenberg__editor .editor-block-list__block.is-selected .wp-block-a8c-spoiler {
+.gutenberg__editor .editor-block-list__block.is-selected .wp-block-a8c-spoiler,
+.o2-editor .editor-block-list__block.is-typing .wp-block-a8c-spoiler,
+.gutenberg__editor .editor-block-list__block.is-typing .wp-block-a8c-spoiler {
 	filter: none;
 }
