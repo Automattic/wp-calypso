@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'calypso/dispatcher';
-import { includes, partial } from 'lodash';
-import wpLib from 'calypso/lib/wp';
-const wpcom = wpLib.undocumented();
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Dispatcher from 'calypso/dispatcher';
+import wpLib from 'calypso/lib/wp';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -34,6 +33,8 @@ import { reduxDispatch } from 'calypso/lib/redux-bridge';
 // This library unfortunately relies on global Redux state directly, by e.g. creating actions.
 // Because of this, we need to ensure that the relevant portion of state is initialized.
 import 'calypso/state/imports/init';
+
+const wpcom = wpLib.undocumented();
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -72,13 +73,6 @@ const apiFailure = ( data ) => {
 
 	return data;
 };
-const setImportLock = ( shouldEnableLock, importerId ) => {
-	const type = shouldEnableLock ? IMPORTS_IMPORT_LOCK : IMPORTS_IMPORT_UNLOCK;
-
-	Dispatcher.handleViewAction( { type, importerId } );
-};
-const lockImport = partial( setImportLock, true );
-const unlockImport = partial( setImportLock, false );
 
 const asArray = ( a ) => [].concat( a );
 
@@ -90,8 +84,11 @@ function receiveImporterStatus( importerStatus ) {
 }
 
 export function cancelImport( siteId, importerId ) {
-	lockImport( importerId );
-
+	const lockImportAction = {
+		type: IMPORTS_IMPORT_LOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( lockImportAction );
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_CANCEL,
 		importerId,
@@ -141,8 +138,11 @@ export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) =>
 
 export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	lockImport( importerId );
-
+	const lockImportAction = {
+		type: IMPORTS_IMPORT_LOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( lockImportAction );
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_RESET,
 		importerId,
@@ -160,7 +160,10 @@ export function resetImport( siteId, importerId ) {
 
 export function clearImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	lockImport( importerId );
+	Dispatcher.handleViewAction( {
+		type: IMPORTS_IMPORT_LOCK,
+		importerId,
+	} );
 
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_IMPORT_RESET,
@@ -178,8 +181,11 @@ export function clearImport( siteId, importerId ) {
 }
 
 export function startMappingAuthors( importerId ) {
-	lockImport( importerId );
-
+	const lockImportAction = {
+		type: IMPORTS_IMPORT_LOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( lockImportAction );
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_AUTHORS_START_MAPPING,
 		importerId,
@@ -212,8 +218,9 @@ export function startImporting( importerStatus ) {
 		site: { ID: siteId },
 	} = importerStatus;
 
-	unlockImport( importerId );
+	const unlockImportAction = { type: IMPORTS_IMPORT_UNLOCK, importerId };
 
+	Dispatcher.handleViewAction( unlockImportAction );
 	Dispatcher.handleViewAction( {
 		type: IMPORTS_START_IMPORTING,
 		importerId,
