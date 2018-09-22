@@ -15,6 +15,7 @@ import { useSandbox } from 'test/helpers/use-sinon';
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'index', () => {
+	test( 'FAIL', () => global.expect( true ).toBe( false ) );
 	describe( 'createReduxStore', () => {
 		test( 'can be called without specifying initialState', () => {
 			const reduxStoreNoArgs = createReduxStore().getState();
