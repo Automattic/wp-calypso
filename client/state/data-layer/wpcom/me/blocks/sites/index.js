@@ -15,8 +15,8 @@ export const handleSiteBlocksRequest = action =>
 			method: 'GET',
 			path: '/me/blocks/sites',
 			query: {
-				page: action.page ? action.page : 1,
-				per_page: action.perPage ? action.perPage : 100,
+				page: action.page || null,
+				per_page: action.perPage || null,
 			},
 		},
 		action
