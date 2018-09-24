@@ -6,6 +6,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { initial, flatMap, trim } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -32,6 +33,8 @@ function handleSearch( query ) {
 	}
 }
 
+const lastDayForVoteBanner = new Date( '2018-10-02T00:00:00' );
+
 const FollowingStream = props => {
 	const suggestionList =
 		props.suggestions &&
@@ -42,9 +45,8 @@ const FollowingStream = props => {
 			] )
 		);
 	const placeholderText = getSearchPlaceholderText();
-	const userInUSA = getCurrentUserCountryCode( state ) === 'US';
-	const date = new Date();
-	const showRegistrationMsg = userInUSA && date <= new Date( '2018-10-01' );
+	const now = new Date();
+	const showRegistrationMsg = props.userInUSA && now < lastDayForVoteBanner;
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -84,4 +86,6 @@ const FollowingStream = props => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-export default SuggestionProvider( localize( FollowingStream ) );
+export default connect( state => ( {
+	userInUSA: getCurrentUserCountryCode( state ) === 'US',
+} ) )( SuggestionProvider( localize( FollowingStream ) ) );
