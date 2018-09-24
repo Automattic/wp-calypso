@@ -65,14 +65,17 @@
 
 .formatted-header__title {
 	color: $white;
-	font-size: 60px;
+	font-size: 48px;
 	line-height: 1;
+	margin-left: 18px;
+	margin-right: 18px;
+	padding: 0;
 }
 
 .formatted-header__subtitle {
 	color: $white;
-	font-size: 18px;
-	margin-top: 24px;
+	margin: 24px 18px 0;
+	padding: 0;
 }
 
 .signup__step {
@@ -84,14 +87,21 @@
 	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
 }
 
+.flow-progress-indicator {
+	margin: 0 18px;
+	padding-top: 24px;
+}
+
 .step-wrapper__testimonial {
 	color: $gray-lighten-20;
-	font-size: 18px;
+	font-size: 16px;
+	margin: 48px 18px;
 }
 
 .step-wrapper__testimonial-image {
 	width: 72px;
 	height: 72px;
+	margin: 0 auto;
 
 	img {
 		border-radius: 50%;
@@ -105,36 +115,66 @@
 }
 
 .step-wrapper__testimonial-name {
-	font-size: 16px;
+	font-size: 14px;
 	margin-top: 12px;
+}
+
+@include breakpoint( '>480px' ) {
+	.formatted-header__title {
+		font-size: 60px;
+	}
+	.formatted-header__subtitle {
+		font-size: 18px;
+	}
+	.step-wrapper__testimonial {
+		font-size: 18px;
+	}
+	.step-wrapper__testimonial-name {
+		font-size: 16px;
+	}
+}
+
+.is-section-signup {
+	overflow: hidden;
+	position: relative;
+	min-height: 100%;
+}
+
+.is-section-signup .layout__content,
+.is-section-signup .layout__primary {
+	overflow: hidden;
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+	min-height: 100%;
+}
+
+.is-section-signup:before,
+.is-section-signup .layout__primary:before {
+	content: "";
+	background: $blue-signup-medium;
+	display: block;
+	position: absolute;
+	width: 250px;
+	height: 250px;
+	transform: rotate(-10deg);
+	left: -30px;
+	bottom: -30px;
+}
+
+.is-section-signup .layout__primary:before {
+	left: auto;
+	bottom: auto;
+	top: -30px;
+	right: -30px;
 }
 
 @include breakpoint( '>960px' ) {
 
-	.is-section-signup {
-		overflow: hidden;
-		position: relative;
-		min-height: 100%;
-	}
-
-	.is-section-signup .layout__content,
-	.is-section-signup .layout__primary {
-		overflow: hidden;
-		padding-left: 0;
-		padding-right: 0;
-		padding-bottom: 0;
-		min-height: 100%;
-	}
-
 	.is-section-signup:before,
 	.is-section-signup .layout__primary:before {
-		content: "";
-		background: $blue-signup-medium;
-		display: block;
-		position: absolute;
 		width: 500px;
 		height: 500px;
-		transform: rotate(-10deg);
 		left: -170px;
 		bottom: -170px;
 	}
