@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { SITE_BLOCKS_REQUEST, SITE_BLOCKS_RECEIVE } from 'state/action-types';
@@ -13,10 +18,10 @@ export const handleSiteBlocksRequest = action =>
 		{
 			apiNamespace: 'wpcom/v2',
 			method: 'GET',
-			path: '/me/site-blocks',
+			path: '/me/blocks/sites',
 			query: {
-				page: action.payload.page,
-				per_page: action.payload.perPage,
+				page: action.page ? action.page : 1,
+				per_page: action.perPage ? action.perPage : 100,
 			},
 		},
 		action
@@ -33,7 +38,7 @@ export const siteBlocksRequestFailure = error => ( {
 	error: true,
 } );
 
-registerHandlers( 'state/data-layer/wpcom/me/site-blocks/index.js', {
+registerHandlers( 'state/data-layer/wpcom/me/blocks/sites/index.js', {
 	[ SITE_BLOCKS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: handleSiteBlocksRequest,
