@@ -66,7 +66,7 @@
 .formatted-header__title {
 	color: $white;
 	font-size: 48px;
-	line-height: 1;
+	line-height: 1.1;
 	margin-left: 18px;
 	margin-right: 18px;
 	padding: 0;
@@ -88,7 +88,7 @@
 }
 
 .flow-progress-indicator {
-	margin: 0 18px;
+	margin: 36px 18px 0;
 	padding-top: 24px;
 }
 
@@ -117,21 +117,6 @@
 .step-wrapper__testimonial-name {
 	font-size: 14px;
 	margin-top: 12px;
-}
-
-@include breakpoint( '>480px' ) {
-	.formatted-header__title {
-		font-size: 60px;
-	}
-	.formatted-header__subtitle {
-		font-size: 18px;
-	}
-	.step-wrapper__testimonial {
-		font-size: 18px;
-	}
-	.step-wrapper__testimonial-name {
-		font-size: 16px;
-	}
 }
 
 .is-section-signup {
@@ -193,6 +178,37 @@
 		grid-template-rows: 24px repeat(5,auto) 48px;
 		grid-row-gap: 24px;
 		width: 100%;
+	}
+
+	.flow-progress-indicator {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.formatted-header__title {
+		font-size: 60px;
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.formatted-header__subtitle {
+		font-size: 18px;
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.step-wrapper__testimonial {
+		font-size: 18px;
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.step-wrapper__testimonial-name {
+		font-size: 16px;
+	}
+
+	.step-wrapper__testimonial-image {
+		margin: 0;
 	}
 
 	.step-wrapper__two-columns .flow-progress-indicator {

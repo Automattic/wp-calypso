@@ -165,22 +165,42 @@
 		}
 	}
 
+	.formatted-header.is-without-subhead .formatted-header__title {
+		margin-bottom: 36px;
+	}
+
+	@include breakpoint( '>960px' ) {
+		.formatted-header.is-without-subhead .formatted-header__title {
+			margin-bottom: 0;
+		}
+	}
+
 	.plan-features__header {
 		border-bottom: 0;
 	}
 
 	.plan-features--signup .plan-features__actions-button {
 		margin-top: 0;
+		margin-bottom: 24px;
 	}
 
 	.plan-features__mobile-plan {
 		border: 0;
 		border-top: 1px solid $gray-lighten-20;
 		padding: 24px 0 0;
+		margin-bottom: 12px;
+
+		&:first-of-type {
+			border-top: 0;
+		}
 	}
 
 	.foldable-card.is-compact .foldable-card__header {
 		padding: 12px 0;
+	}
+
+	.plan-features__mobile .foldable-card {
+		border-top: 1px solid $gray-lighten-30;
 	}
 
 	.plan-features--signup .plan-features__item {
@@ -188,7 +208,13 @@
 		margin-right: 0;
 	}
 
-	.plan-features__summary, .plan-features__description {
+	.plan-features__summary,
+	.plan-features__description {
 		padding: 12px 0;
+	}
+
+	.payment-methods {
+		margin: 0 12px 36px;
+		width: auto;
 	}
 }
