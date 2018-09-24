@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { handleSiteBlocksRequest, siteBlocksRequestReceived, siteBlocksRequestFailure } from '../';
-import { SITE_BLOCKS_RECEIVE } from 'state/action-types';
+import { READER_SITE_BLOCKS_RECEIVE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
 const action = { type: 'DUMMY_ACTION' };
@@ -28,7 +28,7 @@ test( 'should return a SITE_BLOCKS_RECEIVE action with error when request errors
 	const result = siteBlocksRequestFailure( action );
 
 	expect( result ).toEqual( {
-		type: SITE_BLOCKS_RECEIVE,
+		type: READER_SITE_BLOCKS_RECEIVE,
 		payload: action,
 		error: true,
 	} );
@@ -47,7 +47,7 @@ test( 'should return a SITE_BLOCKS_RECEIVE action without error when request suc
 	const result = siteBlocksRequestReceived( action, apiResponse );
 
 	expect( result ).toEqual( {
-		type: SITE_BLOCKS_RECEIVE,
+		type: READER_SITE_BLOCKS_RECEIVE,
 		payload: apiResponse,
 	} );
 } );

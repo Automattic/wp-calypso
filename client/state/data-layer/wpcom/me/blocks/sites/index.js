@@ -1,14 +1,9 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { SITE_BLOCKS_REQUEST, SITE_BLOCKS_RECEIVE } from 'state/action-types';
+import { READER_SITE_BLOCKS_REQUEST, READER_SITE_BLOCKS_RECEIVE } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -28,18 +23,18 @@ export const handleSiteBlocksRequest = action =>
 	);
 
 export const siteBlocksRequestReceived = ( action, apiResponse ) => ( {
-	type: SITE_BLOCKS_RECEIVE,
+	type: READER_SITE_BLOCKS_RECEIVE,
 	payload: apiResponse,
 } );
 
 export const siteBlocksRequestFailure = error => ( {
-	type: SITE_BLOCKS_RECEIVE,
+	type: READER_SITE_BLOCKS_RECEIVE,
 	payload: error,
 	error: true,
 } );
 
 registerHandlers( 'state/data-layer/wpcom/me/blocks/sites/index.js', {
-	[ SITE_BLOCKS_REQUEST ]: [
+	[ READER_SITE_BLOCKS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: handleSiteBlocksRequest,
 			onSuccess: siteBlocksRequestReceived,
