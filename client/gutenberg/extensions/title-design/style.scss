@@ -1,0 +1,150 @@
+.wp-block-atavist-title-design  {
+  width: 100%;
+  height: 100vh;
+  background-color: #2b2b2b;
+  display: block;
+  position: relative;
+  overflow: hidden; 
+  .atavist-multi-background {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    .atavist-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      background-size: cover;
+      background-position: 50% 50%;
+    }
+    .atavist-background-image-with-shim-shim {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      background-color: rgba(0, 0, 0, 1);
+      -webkit-transform: translate3D(0,0,0);
+      -moz-transform: translate3D(0,0,0);
+      -ms-transform: translate3D(0,0,0);
+      -o-transform: translate3D(0,0,0);
+      transform: translate3D(0,0,0);
+    }
+  }
+
+  h1, h2 {
+    color: white;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  h1 {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+  h2 {
+    font-weight: 300;
+    opacity: 0.875;
+    margin-bottom: 0;
+  }
+  .cover-subtitle .atavist-story-data {
+    display: block;
+    padding-bottom: 1.5rem;
+  }
+  .cover-byline {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    color: white;
+    margin-top: 1.25rem;
+    opacity: 0.875;
+  }
+  & > .cover-text-container {
+    position: relative;
+    z-index: 2;
+  }
+  .cover-text-outside-wrapper {
+    width: 100%;
+    position: absolute;
+    z-index: 2;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+      -webkit-transform: translate3D(0,0,0); /* prevents shim and text disappearing in Retina browsers over video */
+      -moz-transform: translate3D(0,0,0);
+      -ms-transform: translate3D(0,0,0);
+      -o-transform: translate3D(0,0,0);
+      transform: translate3D(0,0,0);  
+  }
+  .cover-text-inside-wrapper {
+    width: 50rem;
+    max-width: 100%;
+    float: none;
+    margin: 0 auto;
+    padding: 0.5rem 0;
+  }
+  .cover-text-outside-wrapper[data-cover-text-alignment="top-left"],
+  .cover-text-outside-wrapper[data-cover-text-alignment="top-middle"],
+  .cover-text-outside-wrapper[data-cover-text-alignment="top-right"] {
+    top: 4rem;
+  }
+  .cover-text-outside-wrapper[data-cover-text-alignment="center-left"],
+  .cover-text-outside-wrapper[data-cover-text-alignment="center-middle"],
+  .cover-text-outside-wrapper[data-cover-text-alignment="center-right"] {
+    top: 50%;
+    -webkit-transform: translate3D(0, -50%, 0);
+    -moz-transform: translate3D(0, -50%, 0);
+    -ms-transform: translate3D(0, -50%, 0);
+    -o-transform: translate3D(0, -50%, 0);
+    transform: translate3D(0, -50%, 0);
+  }
+  .cover-text-outside-wrapper[data-cover-text-alignment="bottom-left"],
+  .cover-text-outside-wrapper[data-cover-text-alignment="bottom-middle"],
+  .cover-text-outside-wrapper[data-cover-text-alignment="bottom-right"] {
+    bottom: 4rem;
+  }
+  .cover-text-outside-wrapper[data-cover-text-alignment="top-left"] .cover-text-inside-wrapper,
+  .cover-text-outside-wrapper[data-cover-text-alignment="center-left"] .cover-text-inside-wrapper,
+  .cover-text-outside-wrapper[data-cover-text-alignment="bottom-left"] .cover-text-inside-wrapper  {
+    float: left;
+    text-align: left;
+  }
+  .cover-text-outside-wrapper[data-cover-text-alignment="top-middle"] .cover-text-inside-wrapper,
+  .cover-text-outside-wrapper[data-cover-text-alignment="center-middle"] .cover-text-inside-wrapper,
+  .cover-text-outside-wrapper[data-cover-text-alignment="bottom-middle"] .cover-text-inside-wrapper  {
+    text-align: center;
+  }
+  .cover-text-outside-wrapper[data-cover-text-alignment="top-right"] .cover-text-inside-wrapper,
+  .cover-text-outside-wrapper[data-cover-text-alignment="center-right"] .cover-text-inside-wrapper,
+  .cover-text-outside-wrapper[data-cover-text-alignment="bottom-right"] .cover-text-inside-wrapper  {
+    float: right;
+    text-align: right;
+  }
+  .cover-text-insider-wrapper {
+    width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  img {
+    max-width: 100%;
+  }
+  .image-shim {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: " ";
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.375);
+    z-index: 1;
+  }
+}
