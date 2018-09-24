@@ -1,8 +1,7 @@
-
+/** @format */
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -52,6 +51,19 @@ class DomainRegistrationSuggestion extends React.Component {
 	};
 
 	componentDidMount() {
+		this.recordRender();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.railcarId !== this.props.railcarId ||
+			prevProps.uiPosition !== this.props.uiPosition
+		) {
+			this.recordRender();
+		}
+	}
+
+	recordRender() {
 		if ( this.props.railcarId && isNumber( this.props.uiPosition ) ) {
 			let resultSuffix = '';
 			if ( this.props.suggestion.isRecommended ) {
@@ -119,7 +131,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	renderDomain() {
 		const {
 			suggestion: { domain_name: domain },
-			translate
+			translate,
 		} = this.props;
 
 		let isAvailable = false;

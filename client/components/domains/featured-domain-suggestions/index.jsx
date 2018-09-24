@@ -21,7 +21,7 @@ export class FeaturedDomainSuggestions extends Component {
 		fetchAlgo: PropTypes.string,
 		isSignupStep: PropTypes.bool,
 		primarySuggestion: PropTypes.object,
-		railcarSeed: PropTypes.string,
+		railcarId: PropTypes.string,
 		secondarySuggestion: PropTypes.object,
 		showPlaceholders: PropTypes.bool,
 	};
@@ -107,7 +107,8 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ primarySuggestion }
 						isFeatured
-						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-0` }
+						railcarId={ this.props.railcarId }
+						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						{ ...childProps }
@@ -117,7 +118,8 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ secondarySuggestion }
 						isFeatured
-						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-1` }
+						railcarId={ this.props.railcarId }
+						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 1 }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }

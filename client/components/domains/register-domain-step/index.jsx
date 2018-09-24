@@ -24,6 +24,7 @@ import {
 	times,
 } from 'lodash';
 import page from 'page';
+import { v4 as uuid } from 'uuid';
 import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -141,7 +142,50 @@ class RegisterDomainStep extends React.Component {
 		vendor: 'domainsbot',
 	};
 
-	state = this.getState();
+	constructor( props ) {
+		super( props );
+
+		resetSearchCount();
+
+		this._isMounted = false;
+		this.state = this.getState();
+		if ( props.initialState ) {
+			this.state = { ...this.state, ...props.initialState };
+
+			if (
+				this.state.lastSurveyVertical &&
+				this.state.lastSurveyVertical !== props.surveyVertical
+			) {
+				this.state.loadingResults = true;
+
+				if ( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) {
+					this.state.loadingSubdomainResults = true;
+				}
+
+				delete this.state.lastSurveyVertical;
+			}
+
+			if ( props.suggestion ) {
+				this.state.lastQuery = props.suggestion;
+			}
+
+			if ( props.initialState.searchResults ) {
+				this.state.loadingResults = false;
+				this.state.searchResults = props.initialState.searchResults;
+			}
+
+			if ( props.initialState.subdomainSearchResults ) {
+				this.state.loadingSubdomainResults = false;
+				this.state.subdomainSearchResults = props.initialState.subdomainSearchResults;
+			}
+
+			if ( this.state.searchResults || this.state.subdomainSearchResults ) {
+				this.state.lastQuery = props.initialState.lastQuery;
+			} else {
+				this.state.railcarId = this.getNewRailcarId();
+			}
+		}
+	}
 
 	getState() {
 		const suggestion = this.props.suggestion ? getFixedDomainSearch( this.props.suggestion ) : '';
@@ -176,13 +220,6 @@ class RegisterDomainStep extends React.Component {
 			exactSldMatchesOnly: false,
 			tlds: [],
 		};
-	}
-
-	getNewRailcarSeed() {
-		// Generate a 7 character random hash on base16. E.g. ac618a3
-		return Math.floor( ( 1 + Math.random() ) * 0x10000000 )
-			.toString( 16 )
-			.substring( 1 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -222,47 +259,22 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillMount() {
-		resetSearchCount();
-
-		if ( this.props.initialState ) {
-			const state = { ...this.props.initialState, railcarSeed: this.getNewRailcarSeed() };
-
-			if ( state.lastSurveyVertical && state.lastSurveyVertical !== this.props.surveyVertical ) {
-				state.loadingResults = true;
-
-				if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
-					state.loadingSubdomainResults = true;
-				}
-
-				delete state.lastSurveyVertical;
-			}
-
-			if ( this.props.suggestion ) {
-				state.lastQuery = this.props.suggestion;
-				state.loadingResults = true;
-			}
-
-			this.setState( state );
-		}
-
-		this._isMounted = false;
-	}
-
 	componentWillUnmount() {
 		this._isMounted = false;
 	}
 
 	componentDidMount() {
-		if ( this.state.lastQuery ) {
+		if (
+			this.state.lastQuery &&
+			! this.state.searchResults &&
+			! this.state.subdomainSearchResults
+		) {
 			this.onSearch( this.state.lastQuery );
 		} else {
 			this.getAvailableTlds();
 		}
-
-		this.props.recordSearchFormView( this.props.analyticsSection );
-
 		this._isMounted = true;
+		this.props.recordSearchFormView( this.props.analyticsSection );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -272,6 +284,10 @@ class RegisterDomainStep extends React.Component {
 		) {
 			this.focusSearchCard();
 		}
+	}
+
+	getNewRailcarId() {
+		return `${ uuid().replace( /-/g, '' ) }-domain-suggestion`;
 	}
 
 	focusSearchCard = () => {
@@ -834,29 +850,26 @@ class RegisterDomainStep extends React.Component {
 			this.props.recordSearchFormSubmit
 		);
 
-		this.setState( {
-			lastDomainSearched: domain,
-			railcarSeed: this.getNewRailcarSeed(),
+		this.setState( { lastDomainSearched: domain, railcarId: this.getNewRailcarId() }, () => {
+			const timestamp = Date.now();
+
+			this.getAvailableTlds( domain, this.props.vendor );
+			const domainSuggestions = Promise.all( [
+				this.checkDomainAvailability( domain, timestamp ),
+				this.getDomainsSuggestions( domain, timestamp ),
+			] );
+
+			domainSuggestions
+				.catch( () => [] ) // handle the error and return an empty list
+				.then( this.handleDomainSuggestions( domain ) );
+
+			if (
+				shouldQuerySubdomains &&
+				( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
+			) {
+				this.getSubdomainSuggestions( domain, timestamp );
+			}
 		} );
-
-		const timestamp = Date.now();
-
-		this.getAvailableTlds( domain, this.props.vendor );
-		const domainSuggestions = Promise.all( [
-			this.checkDomainAvailability( domain, timestamp ),
-			this.getDomainsSuggestions( domain, timestamp ),
-		] );
-
-		domainSuggestions
-			.catch( () => [] ) // handle the error and return an empty list
-			.then( this.handleDomainSuggestions( domain ) );
-
-		if (
-			shouldQuerySubdomains &&
-			( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
-		) {
-			this.getSubdomainSuggestions( domain, timestamp );
-		}
 	};
 
 	showNextPage = () => {
@@ -991,7 +1004,7 @@ class RegisterDomainStep extends React.Component {
 				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
-				railcarSeed={ this.state.railcarSeed }
+				railcarId={ this.state.railcarId }
 				fetchAlgo={ '/domains/search/' + this.props.vendor + isSignup }
 				cart={ this.props.cart }
 			>
