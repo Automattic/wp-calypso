@@ -20,6 +20,7 @@ import FollowingIntro from './intro';
 import config from 'config';
 import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
+import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 
 function handleSearch( query ) {
 	recordTrack( 'calypso_reader_search_from_following', {
@@ -41,20 +42,26 @@ const FollowingStream = props => {
 			] )
 		);
 	const placeholderText = getSearchPlaceholderText();
+	const userInUSA = getCurrentUserCountryCode( state ) === 'US';
+	const date = new Date();
+	const showRegistrationMsg = userInUSA && date <= new Date( '2018-10-01' );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
 			{ config.isEnabled( 'reader/following-intro' ) && <FollowingIntro /> }
-			<Banner
-				title="National Voter Registration Day is September 25th."
-				callToAction="Be a Voter"
-				description="Take two minutes to register now."
-				dismissPreferenceName="reader-gotv"
-				event="reader-gotv"
-				href="https://turbovote.org/"
-				icon="star"
-			/>
+			{ showRegistrationMsg && (
+				<Banner
+					className="following__reader-vote"
+					title="The Internet can wait."
+					callToAction="Be a Voter"
+					description="Register to vote."
+					dismissPreferenceName="reader-vote-register"
+					event="reader-vote-register"
+					href="https://iamavoter.turbovote.org/?r=wordpress"
+					icon="star"
+				/>
+			) }
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
