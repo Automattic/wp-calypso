@@ -105,6 +105,7 @@ export function createSiteWithCart(
 	{
 		cartItem,
 		domainItem,
+		flowName,
 		googleAppsCartItem,
 		isPurchasingItem,
 		siteUrl,
@@ -132,7 +133,7 @@ export function createSiteWithCart(
 				siteGoals: siteGoals || undefined,
 			},
 			validate: false,
-			find_available_url: isPurchasingItem,
+			find_available_url: isPurchasingItem || 'from-site' === flowName,
 		},
 		function( error, response ) {
 			if ( error ) {
