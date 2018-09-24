@@ -78,13 +78,6 @@ const sections = [
 		secondary: true,
 	},
 	{
-		name: 'site-blocks',
-		paths: [ '/me/site-blocks' ],
-		module: 'me/site-blocks',
-		group: 'me',
-		secondary: true,
-	},
-	{
 		name: 'concierge',
 		paths: [ '/me/concierge' ],
 		module: 'me/concierge',
