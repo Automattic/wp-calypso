@@ -14,7 +14,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
  * Internal dependencies
  */
 import Editor from './edit-post/editor.js';
-import EditorDocumentHead from './edit-post/components/editor-document-head';
+import EditorDocumentHead from './editor-document-head';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import QueryPostTypes from 'components/data/query-post-types';
 import { createAutoDraft, requestSitePost } from 'state/data-getters';
