@@ -161,7 +161,7 @@ class SiteSettingsImport extends Component {
 	 */
 	renderImporterScreen( activeImporter ) {
 		const { importerOption, site } = this.props;
-		const selectedImportType = activeImporter.type || importerOption;
+		const selectedImportType = get( activeImporter, 'type' ) || importerOption;
 		const ImporterComponent = get( importersDataObject, [ selectedImportType, 'component' ] );
 
 		if ( ! ImporterComponent ) {
