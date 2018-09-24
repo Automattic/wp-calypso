@@ -82,7 +82,7 @@ export class AuthFormHeader extends Component {
 				return translate( "You're all set!" );
 			case 'logged-in':
 			default:
-				return translate( 'Completing set up' );
+				return translate( 'Completing setup' );
 		}
 	}
 
@@ -98,7 +98,7 @@ export class AuthFormHeader extends Component {
 				return translate( 'Your new plan requires a connection to WordPress.com' );
 			case 'logged-in':
 			default:
-				return translate( 'Jetpack is finishing set up' );
+				return translate( 'Jetpack is finishing setup' );
 		}
 	}
 
