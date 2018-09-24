@@ -296,7 +296,9 @@ class AboutStep extends Component {
 
 		//Site Goals
 		this.props.setSiteGoals( siteGoalsInput );
-		themeRepo = getThemeForSiteGoals( siteGoalsInput );
+		themeRepo = this.state.hasPrepopulatedVertical
+			? 'pub/radcliffe-2'
+			: getThemeForSiteGoals( siteGoalsInput );
 		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
 
 		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
