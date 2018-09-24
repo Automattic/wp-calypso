@@ -1,7 +1,7 @@
 .about__wrapper {
 	position: relative;
 	background: $white;
-	box-shadow: 0 30px 50px 0 rgba(0,0,0,0.13);
+	box-shadow: 0 30px 50px 0 transparentize( $black-signup, 0.87 );
 	padding-bottom: 6px;
 }
 

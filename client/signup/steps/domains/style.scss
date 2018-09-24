@@ -26,4 +26,20 @@
 		color: $white;
 		text-decoration: underline;
 	}
+
+	.domain-search-results {
+		box-shadow: 0 30px 50px 0 transparentize( $black-signup, 0.87 );
+	}
+
+	.register-domain-step__next-page {
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 
+					0 1px 2px $gray-lighten-30, 
+					0 30px 50px 0 transparentize( $black-signup, 0.87 );
+
+		&:hover {
+			box-shadow: 0 0 0 1px $gray,
+						0 0 0 0 $gray,
+						0 30px 50px 0 transparentize( $black-signup, 0.87 );
+		}
+	}
 }
