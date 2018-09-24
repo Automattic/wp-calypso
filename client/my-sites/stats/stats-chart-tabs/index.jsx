@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import compareProps from 'lib/compare-props';
-import ElementChart from 'components/chart';
+import Chart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -255,11 +255,7 @@ class StatModuleChartTabs extends Component {
 						clickHandler={ this.onLegendClick }
 					/>
 					<StatsModulePlaceholder className="is-chart" isLoading={ activeTabLoading } />
-					<ElementChart
-						loading={ activeTabLoading }
-						data={ chartData }
-						barClick={ this.props.barClick }
-					/>
+					<Chart loading={ activeTabLoading } data={ chartData } barClick={ this.props.barClick } />
 					<StatTabs
 						data={ data }
 						tabs={ this.props.charts }
