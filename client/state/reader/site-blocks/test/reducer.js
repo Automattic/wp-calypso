@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import { items } from '../reducer';
 import {
 	READER_SITE_BLOCK,
+	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_UNBLOCK,
 	READER_SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -74,6 +75,23 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state[ 123 ] ).toBeUndefined();
+		} );
+
+		test( 'should add new blocks from a successful site blocks listing request', () => {
+			const original = deepFreeze( { 122: true, 123: true, 124: false } );
+
+			const state = items( original, {
+				type: READER_SITE_BLOCKS_RECEIVE,
+				payload: {
+					sites: [
+						{ ID: 123, name: 'Example', URL: 'http://example.com' },
+						{ ID: 124, name: 'Example2', URL: 'http://example2.com' },
+						{ ID: 125, name: 'Example3', URL: 'http://example3.com' },
+					],
+				},
+			} );
+
+			expect( state ).toEqual( { 122: true, 123: true, 124: true, 125: true } );
 		} );
 	} );
 } );
