@@ -97,4 +97,14 @@ export default {
 		},
 		defaultVariation: 'justSearch',
 	},
+	domainManagementSuggestion: {
+		datestamp: '20180918',
+		variations: {
+			domainsbot: 80,
+			group_7: 20,
+		},
+		defaultVariation: 'domainsbot',
+		assignmentMethod: 'userId',
+		allowExistingUsers: true,
+	},
 };
