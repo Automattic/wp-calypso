@@ -48,6 +48,10 @@
 				border-top: 0;
 				padding-top: 24px;
 			}
+
+			& > td:last-of-type {
+				border-bottom: 1px solid $gray-lighten-30;
+			}
 		}
 
 		& > tr:nth-of-type(2) {
@@ -61,6 +65,10 @@
 			& > td:first-of-type {
 				border-top: 0;
 				padding-top: 24px;
+			}
+
+			& > td:last-of-type {
+				border-bottom: 1px solid $gray-lighten-30;
 			}
 		}
 
