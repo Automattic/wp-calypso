@@ -175,13 +175,8 @@ class StatModuleChartTabs extends Component {
 		return find( props.charts, { attr: props.chartTab } ) || props.charts[ 0 ];
 	}
 
-	getLoadedData() {
-		const { quickQueryData, fullQueryData, fullQueryRequesting } = this.props;
-		return fullQueryRequesting ? quickQueryData : fullQueryData;
-	}
-
 	buildChartData() {
-		const data = this.getLoadedData();
+		const { data } = this.props;
 		if ( ! data ) {
 			return [];
 		}
@@ -220,20 +215,10 @@ class StatModuleChartTabs extends Component {
 	}
 
 	render() {
-		const { fullQuery, quickQuery, quickQueryRequesting, fullQueryRequesting, siteId } = this.props;
-		const chartData = this.buildChartData();
+		const { data, fullQuery, isActiveTabLoading, quickQuery, siteId } = this.props;
 		const activeTab = this.getActiveTab();
 		let availableCharts = [];
-		const data = this.getLoadedData();
-		const activeTabLoading =
-			quickQueryRequesting && fullQueryRequesting && ! ( data && data.length );
-		const classes = [
-			'stats-module',
-			'is-chart-tabs',
-			{
-				'is-loading': activeTabLoading,
-			},
-		];
+		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
 		if ( activeTab.legendOptions ) {
 			availableCharts = activeTab.legendOptions;
 		}
@@ -254,8 +239,13 @@ class StatModuleChartTabs extends Component {
 						activeCharts={ this.state.activeLegendCharts }
 						clickHandler={ this.onLegendClick }
 					/>
-					<StatsModulePlaceholder className="is-chart" isLoading={ activeTabLoading } />
-					<Chart loading={ activeTabLoading } data={ chartData } barClick={ this.props.barClick } />
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+					<Chart
+						barClick={ this.props.barClick }
+						data={ this.buildChartData() }
+						loading={ isActiveTabLoading }
+					/>
 					<StatTabs
 						data={ data }
 						tabs={ this.props.charts }
@@ -291,38 +281,37 @@ const connectComponent = connect(
 				.format( 'YYYY-MM-DD' );
 		}
 
-		let quickQueryFields = chartTab;
 		// If we are on the default Tab, grab visitors too
-		if ( 'views' === quickQueryFields ) {
-			quickQueryFields = 'views,visitors';
-		}
+		const quickQueryFields = 'views' === chartTab ? 'views,visitors' : chartTab;
 
-		const query = {
-			unit: period,
-			date,
-			quantity,
-		};
-		const quickQuery = {
-			...query,
-			stat_fields: quickQueryFields,
-		};
-		const fullQuery = {
-			...query,
-			stat_fields: 'views,visitors,likes,comments,post_titles',
-		};
+		const query = { unit: period, date, quantity };
+		const quickQuery = { ...query, stat_fields: quickQueryFields };
+		const fullQuery = { ...query, stat_fields: 'views,visitors,likes,comments,post_titles' };
+
+		const quickQueryRequesting = isRequestingSiteStatsForQuery(
+			state,
+			siteId,
+			'statsVisits',
+			quickQuery
+		);
+		const fullQueryRequesting = isRequestingSiteStatsForQuery(
+			state,
+			siteId,
+			'statsVisits',
+			fullQuery
+		);
+
+		const quickQueryData = getSiteStatsNormalizedData( state, siteId, 'statsVisits', quickQuery );
+		const fullQueryData = getSiteStatsNormalizedData( state, siteId, 'statsVisits', fullQuery );
+		const data = fullQueryRequesting ? quickQueryData : fullQueryData;
 
 		return {
-			quickQueryRequesting: isRequestingSiteStatsForQuery(
-				state,
-				siteId,
-				'statsVisits',
-				quickQuery
-			),
-			quickQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', quickQuery ),
-			fullQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', fullQuery ),
-			fullQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', fullQuery ),
-			quickQuery,
+			data,
 			fullQuery,
+			fullQueryRequesting,
+			isActiveTabLoading: quickQueryRequesting && fullQueryRequesting && ! ( data && data.length ),
+			quickQuery,
+			quickQueryRequesting,
 			siteId,
 		};
 	},
