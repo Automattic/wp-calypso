@@ -29,6 +29,7 @@
 .plans-step {
 	.plan-features--signup .plan-features__content {
 		padding: 0;
+		margin: 0;
 	}
 
 	.plan-features--signup .plan-features__table {
@@ -155,7 +156,13 @@
 	}
 
 	.plan-features__actions {
-		padding: 0 0 0 24px;
+		padding: 0;
+	}
+
+	@include breakpoint( '>660px' ) {
+		.plan-features__actions {
+			padding: 0 0 0 24px;
+		}
 	}
 
 	.plan-features__header {
@@ -164,5 +171,24 @@
 
 	.plan-features--signup .plan-features__actions-button {
 		margin-top: 0;
+	}
+
+	.plan-features__mobile-plan {
+		border: 0;
+		border-top: 1px solid $gray-lighten-20;
+		padding: 24px 0 0;
+	}
+
+	.foldable-card.is-compact .foldable-card__header {
+		padding: 12px 0;
+	}
+
+	.plan-features--signup .plan-features__item {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.plan-features__summary, .plan-features__description {
+		padding: 12px 0;
 	}
 }
