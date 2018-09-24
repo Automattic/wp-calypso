@@ -185,11 +185,11 @@ export class PlanFeatures extends Component {
 				status="is-success"
 			>
 				{ translate(
-					'You have {{b}}%(credits)s{{/b}} in upgrade credits available! ' +
-						'Apply the value of your current plan towards an upgrade before your credits expire.',
+					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
+						'Apply those credits towards an upgrade before they expire!',
 					{
 						args: {
-							credits: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
+							amountInCurrency: formatCurrency( planCredits, planProperties[ 0 ].currencyCode ),
 						},
 						components: {
 							b: <strong />,
@@ -285,7 +285,7 @@ export class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -390,7 +390,7 @@ export class PlanFeatures extends Component {
 						rawPrice={ rawPrice }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
-						showPlanCreditsApplied={ showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
 					/>
 				</td>
@@ -785,8 +785,7 @@ export default connect(
 				sitePlan.product_slug !== PLAN_FREE &&
 				planCredits &&
 				! isJetpack &&
-				! isInSignup &&
-				abtest( 'showPlanCreditsApplied' ) === 'test',
+				! isInSignup,
 		};
 	},
 	{

@@ -6,36 +6,163 @@ import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { forOwn, indexOf } from 'lodash';
+import { concat, without, isEmpty, find } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import Popover from 'components/popover';
 import { requestActivityActionTypeCounts } from 'state/data-getters';
+import { updateFilter } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import MobileSelectPortal from './mobile-select-portal';
+import { isWithinBreakpoint } from 'lib/viewport';
 
 export class ActionTypeSelector extends Component {
+	state = {
+		userHasSelected: false,
+		selectedCheckboxes: [],
+	};
+
 	constructor( props ) {
 		super( props );
 		this.activityTypeButton = React.createRef();
 	}
 
-	renderCheckbox = checkbox => {
-		const { onSelectClick, selected } = this.props;
+	resetActivityTypeSelector = event => {
+		const { selectActionType, siteId, activityTypes } = this.props;
+		selectActionType( siteId, [], activityTypes );
+		event.preventDefault();
+	};
+
+	handleToggleAllActionTypeSelector = () => {
+		const { activityTypes } = this.props;
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+		if ( ! selectedCheckboxes.length ) {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: activityTypes.map( type => type.key ),
+			} );
+		} else {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: [],
+			} );
+		}
+	};
+
+	handleSelectClick = event => {
+		const group = event.target.getAttribute( 'id' );
+
+		if ( this.getSelectedCheckboxes().includes( group ) ) {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: without( this.getSelectedCheckboxes(), group ),
+			} );
+		} else {
+			this.setState( {
+				userHasSelected: true,
+				selectedCheckboxes: concat( this.getSelectedCheckboxes(), group ),
+			} );
+		}
+	};
+
+	getSelectedCheckboxes = () => {
+		const { selectedState } = this.props;
+		if ( this.state.userHasSelected ) {
+			return this.state.selectedCheckboxes;
+		}
+		if ( selectedState && selectedState.length ) {
+			return selectedState;
+		}
+		return [];
+	};
+
+	activityKeyToName = key => {
+		const { activityTypes } = this.props;
+		const match = find( activityTypes, [ 'key', key ] );
+		return ( match && match.name ) || key;
+	};
+
+	handleClose = () => {
+		const { siteId, onClose, selectActionType, activityTypes } = this.props;
+
+		selectActionType( siteId, this.getSelectedCheckboxes(), activityTypes );
+		this.setState( {
+			userHasSelected: false,
+			selectedCheckboxes: [],
+		} );
+		onClose();
+	};
+
+	renderCheckbox = group => {
 		return (
-			<FormLabel key={ checkbox.key }>
+			<FormLabel key={ group.key }>
 				<FormCheckbox
-					id={ checkbox.key }
-					checked={ !! this.isSelected( selected, checkbox.key ) }
-					name={ checkbox.key }
-					onChange={ onSelectClick.bind( this, checkbox ) }
+					id={ group.key }
+					checked={ this.isSelected( group.key ) }
+					name={ group.key }
+					onChange={ this.handleSelectClick }
 				/>
-				{ checkbox.name + ' (' + checkbox.count + ')' }
+				{ group.name + ' (' + group.count + ')' }
 			</FormLabel>
+		);
+	};
+
+	renderCheckboxSelection = () => {
+		const { translate, activityTypes } = this.props;
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+
+		return (
+			<div className="filterbar__activity-types-selection-wrap">
+				{ activityTypes &&
+					!! activityTypes.length && (
+						<div>
+							<Fragment>
+								<div className="filterbar__activity-types-selection-granular">
+									{ activityTypes.map( this.renderCheckbox ) }
+								</div>
+							</Fragment>
+							<div className="filterbar__activity-types-selection-info">
+								<div className="filterbar__date-range-info">
+									{ selectedCheckboxes.length === 0 && (
+										<Button borderless compact onClick={ this.handleToggleAllActionTypeSelector }>
+											{ translate( '{{icon/}} select all', {
+												components: { icon: <Gridicon icon="checkmark" /> },
+											} ) }
+										</Button>
+									) }
+									{ selectedCheckboxes.length !== 0 && (
+										<Button borderless compact onClick={ this.handleToggleAllActionTypeSelector }>
+											{ translate( '{{icon/}} clear', {
+												components: { icon: <Gridicon icon="cross-small" /> },
+											} ) }
+										</Button>
+									) }
+								</div>
+								<Button
+									className="filterbar__activity-types-apply"
+									primary
+									compact
+									disabled={ ! this.state.userHasSelected }
+									onClick={ this.handleClose }
+								>
+									{ translate( 'Apply' ) }
+								</Button>
+							</div>
+						</div>
+					) }
+				{ ! activityTypes && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
+				{ activityTypes &&
+					! activityTypes.length && (
+						<p>{ translate( 'No activities recorded in the selected date range.' ) }</p>
+					) }
+			</div>
 		);
 	};
 
@@ -45,39 +172,25 @@ export class ActionTypeSelector extends Component {
 		);
 	};
 
-	isSelected = ( selection, key ) =>
-		selection && !! selection.length && indexOf( selection, key ) >= 0;
+	isSelected = key => this.getSelectedCheckboxes().includes( key );
+
+	handleButtonClick = () => {
+		const { isVisible, onButtonClick } = this.props;
+		if ( isVisible ) {
+			this.handleClose();
+		}
+		onButtonClick();
+	};
 
 	render() {
-		const {
-			translate,
-			actionTypes,
-			isVisible,
-			onClose,
-			onButtonClick,
-			selected,
-			onResetSelection,
-		} = this.props;
-		const checkboxes = [];
-		const selectedNames = [];
-		let totalCount = 0;
+		const { translate, isVisible } = this.props;
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes );
 
-		if ( actionTypes && actionTypes.groups ) {
-			forOwn( actionTypes.groups, ( group, slug ) => {
-				checkboxes.push( {
-					key: slug,
-					name: group.name,
-					count: group.count,
-				} );
-				totalCount += group.count;
-				if ( this.isSelected( selected, slug ) ) {
-					selectedNames.push( group.name );
-				}
-			} );
-		}
 		const buttonClass = classnames( {
 			filterbar__selection: true,
-			'is-selected': !! selectedNames.length,
+			'is-selected': hasSelectedCheckboxes,
+			'is-active': isVisible && ! hasSelectedCheckboxes,
 		} );
 
 		return (
@@ -86,54 +199,80 @@ export class ActionTypeSelector extends Component {
 					className={ buttonClass }
 					compact
 					borderless
-					onClick={ onButtonClick }
+					onClick={ this.handleButtonClick }
 					ref={ this.activityTypeButton }
 				>
-					{ ! selectedNames.length && translate( 'Activity Type' ) }
-					{ !! selectedNames.length && selectedNames.join( ', ' ) }
+					{ translate( 'Activity Type' ) }
+					{ hasSelectedCheckboxes && <span>: </span> }
+					{ hasSelectedCheckboxes && selectedCheckboxes.map( this.activityKeyToName ).join( ', ' ) }
 				</Button>
-				{ !! selectedNames.length && (
+				{ hasSelectedCheckboxes && (
 					<Button
 						className="filterbar__selection-close"
 						compact
 						borderless
-						onClick={ onResetSelection }
+						onClick={ this.resetActivityTypeSelector }
 					>
 						<Gridicon icon="cross-small" />
 					</Button>
 				) }
-				<Popover
-					id="filterbar__activity-types"
-					isVisible={ isVisible }
-					onClose={ onClose }
-					autoPosition={ true }
-					context={ this.activityTypeButton.current }
-				>
-					<div className="filterbar__activity-types-selection-wrap">
-						{ !! checkboxes.length && (
-							<Fragment>
-								<FormLabel>
-									<FormCheckbox id="comment_like_notification" name="comment_like_notification" />
-									<strong>
-										{ translate( 'All activity type (%(totalCount)d)', { args: { totalCount } } ) }
-									</strong>
-								</FormLabel>
-								<div className="filterbar__activity-types-selection-granular">
-									{ checkboxes.map( this.renderCheckbox ) }
-								</div>
-							</Fragment>
-						) }
-						{ ! checkboxes.length && [ 1, 2, 3 ].map( this.renderPlaceholder ) }
-					</div>
-				</Popover>
+				{ isWithinBreakpoint( '>660px' ) && (
+					<Popover
+						id="filterbar__activity-types"
+						isVisible={ isVisible }
+						onClose={ this.handleClose }
+						position="bottom"
+						relativePosition={ { left: -80 } }
+						context={ this.activityTypeButton.current }
+					>
+						{ this.renderCheckboxSelection() }
+					</Popover>
+				) }
+				{ ! isWithinBreakpoint( '>660px' ) && (
+					<MobileSelectPortal isVisible={ isVisible }>
+						<Card>{ this.renderCheckboxSelection() }</Card>
+					</MobileSelectPortal>
+				) }
 			</Fragment>
 		);
 	}
 }
-const mapStateToProps = ( state, { siteId } ) => {
-	const actionTypesRequest = requestActivityActionTypeCounts( siteId );
+
+const mapStateToProps = ( state, { siteId, filter } ) => {
+	const activityTypes = siteId && requestActivityActionTypeCounts( siteId, filter );
+	const selectedState = filter && filter.group;
 	return {
-		actionTypes: actionTypesRequest.data,
+		activityTypes: ( siteId && activityTypes.data ) || [],
+		selectedState,
 	};
 };
-export default connect( mapStateToProps )( localize( ActionTypeSelector ) );
+
+const mapDispatchToProps = dispatch => ( {
+	selectActionType: ( siteId, group, allTypes ) => {
+		if ( 0 === group.length ) {
+			return dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_activitylog_filterbar_reset_type' ),
+					updateFilter( siteId, { group: group, page: 1 } )
+				)
+			);
+		}
+		const eventProps = { num_groups_selected: group.length };
+		allTypes.forEach( type => ( eventProps[ 'group_' + type.key ] = group.includes( type.key ) ) );
+		eventProps.num_total_activities_selected = allTypes.reduce( ( accumulator, type ) => {
+			return group.includes( type.key ) ? accumulator + type.count : accumulator;
+		}, 0 );
+
+		return dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_select_type', eventProps ),
+				updateFilter( siteId, { group: group, page: 1 } )
+			)
+		);
+	},
+} );
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( ActionTypeSelector ) );

@@ -42,6 +42,7 @@ import {
 	isJetpackPlan,
 	isNoAds,
 	isPlan,
+	isBlogger,
 	isPremium,
 	isPrivacyProtection,
 	isSiteRedirect,
@@ -60,6 +61,7 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isWpComFreePlan,
+	isWpComBloggerPlan,
 } from 'lib/plans';
 
 /**
@@ -273,6 +275,10 @@ export function hasOnlyBundledDomainProducts( cart ) {
 	return (
 		cart && every( [ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ], isBundled )
 	);
+}
+
+export function hasBloggerPlan( cart ) {
+	return some( getAll( cart ), isBlogger );
 }
 
 export function hasPremiumPlan( cart ) {
@@ -920,8 +926,25 @@ export function getIncludedDomain( cartItem ) {
 	return cartItem.extra && cartItem.extra.includedDomain;
 }
 
-export function isNextDomainFree( cart ) {
-	return !! ( cart && cart.next_domain_is_free );
+/**
+ * Returns true if, according to cart attributes, a `domain` should be free
+ *
+ * @param {object} cart Cart
+ * @param {string} domain Domain
+ * @return {boolean} See description
+ */
+export function isNextDomainFree( cart, domain = '' ) {
+	if ( ! cart || ! cart.next_domain_is_free ) {
+		return false;
+	}
+
+	if ( cart.next_domain_condition === 'blog' ) {
+		if ( getTld( domain ) !== 'blog' ) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 export function isDomainBundledWithPlan( cart, domain ) {
@@ -930,14 +953,37 @@ export function isDomainBundledWithPlan( cart, domain ) {
 	return '' !== bundledDomain && toLower( domain ) === toLower( get( cart, 'bundled_domain', '' ) );
 }
 
+/**
+ * Returns true if cart contains a plan and also a domain that comes for free with that plan
+ *
+ * @param {object} cart Cart
+ * @param {string} domain Domain
+ * @return {boolean} see description
+ */
 export function isDomainBeingUsedForPlan( cart, domain ) {
-	if ( cart && domain && hasPlan( cart ) ) {
-		const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
-			domainProduct = domainProducts.shift() || {};
-		return domain === domainProduct.meta;
+	if ( ! cart || ! domain ) {
+		return false;
 	}
 
-	return false;
+	if ( ! hasPlan( cart ) ) {
+		return false;
+	}
+
+	const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
+		domainProduct = domainProducts.shift() || {};
+	const processedDomainInCart = domain === domainProduct.meta;
+	if ( ! processedDomainInCart ) {
+		return false;
+	}
+
+	if ( hasBloggerPlan( cart ) ) {
+		const tld = domain.split( '.' ).pop();
+		if ( tld !== 'blog' ) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 export function shouldBundleDomainWithPlan(
@@ -960,6 +1006,27 @@ export function shouldBundleDomainWithPlan(
 	); // site has a plan
 }
 
+/**
+ * Sites on a blogger plan are not allowed to get an additional domain - they need to buy an upgrade to do that.
+ * This function checks tells if user has to upgrade just to be able to pay for a domain.
+ *
+ * @param {object} selectedSite Site
+ * @param {object} cart Cart
+ * @return {boolean} See description
+ */
+export function hasToUpgradeToPayForADomain( selectedSite, cart ) {
+	const sitePlanSlug = ( ( selectedSite || {} ).plan || {} ).product_slug;
+	if ( sitePlanSlug && isWpComBloggerPlan( sitePlanSlug ) ) {
+		return true;
+	}
+
+	if ( hasBloggerPlan( cart ) ) {
+		return true;
+	}
+
+	return false;
+}
+
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -969,12 +1036,16 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'FREE_WITH_PLAN';
 	}
 
-	if ( isNextDomainFree( cart ) ) {
+	if ( isNextDomainFree( cart, suggestion.domain_name ) ) {
 		return 'FREE_WITH_PLAN';
 	}
 
 	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) ) {
-		return 'INCLUDED_IN_PREMIUM';
+		return 'INCLUDED_IN_HIGHER_PLAN';
+	}
+
+	if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
+		return 'UPGRADE_TO_HIGHER_PLAN_TO_BUY';
 	}
 
 	return 'PRICE';

@@ -6,13 +6,15 @@ import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { pullAt } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { isWithinBreakpoint } from 'lib/viewport';
 
 export class Filterbar extends Component {
 	state = {
@@ -25,12 +27,11 @@ export class Filterbar extends Component {
 			showActivityDates: ! this.state.showActivityDates,
 			showActivityTypes: false,
 		} );
+		this.scrollIntoView();
 	};
 
-	resetActivityTypeSelector = event => {
-		const { selectActionType, siteId } = this.props;
-		selectActionType( siteId, [] );
-		event.preventDefault();
+	closeDateRangeSelector = () => {
+		this.setState( { showActivityDates: false } );
 	};
 
 	toggleActivityTypesSelector = () => {
@@ -38,56 +39,80 @@ export class Filterbar extends Component {
 			showActivityTypes: ! this.state.showActivityTypes,
 			showActivityDates: false,
 		} );
+		this.scrollIntoView();
 	};
 
 	closeActivityTypes = () => {
 		this.setState( { showActivityTypes: false } );
 	};
 
-	onSelectClick = ( group, event ) => {
-		const { filter, selectActionType, siteId } = this.props;
-		event.preventDefault();
-		const actionTypes =
-			filter && filter.group && !! filter.group.length ? filter.group.slice() : [];
-		const index = actionTypes.indexOf( group.key );
-		if ( index >= 0 ) {
-			pullAt( actionTypes, index );
-		} else {
-			actionTypes.push( group.key );
+	handleRemoveFilters = () => {
+		const { siteId, resetFilters } = this.props;
+		resetFilters( siteId );
+	};
+
+	renderCloseButton = () => {
+		const { filter } = this.props;
+		if ( filter && ( filter.group || filter.before || filter.after ) ) {
+			return (
+				<Button onClick={ this.handleRemoveFilters } borderless className="filterbar__icon-reset">
+					<Gridicon icon="cross" />
+				</Button>
+			);
 		}
-		selectActionType( siteId, actionTypes );
+	};
+
+	scrollIntoView = () => {
+		if ( isWithinBreakpoint( '>660px' ) ) {
+			//  scroll into view only happends on mobile
+			return true;
+		}
+		const filterbar = document.getElementById( 'filterbar' );
+		if ( filterbar ) {
+			filterbar.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
+			window.scrollBy( 0, -50 );
+		}
 	};
 
 	render() {
 		const { translate, siteId, filter } = this.props;
-
 		return (
-			<div className="filterbar card">
-				<div className="filterbar__icon-navigation">
-					<Gridicon icon="filter" className="filterbar__open-icon" />
+			<div className="filterbar" id="filterbar">
+				<div className="filterbar__wrap card">
+					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
+					<DateRangeSelector
+						isVisible={ this.state.showActivityDates }
+						onButtonClick={ this.toggleDateRangeSelector }
+						onClose={ this.closeDateRangeSelector }
+						filter={ filter }
+						siteId={ siteId }
+					/>
+					<ActionTypeSelector
+						filter={ filter }
+						siteId={ siteId }
+						isVisible={ this.state.showActivityTypes }
+						onButtonClick={ this.toggleActivityTypesSelector }
+						onClose={ this.closeActivityTypes }
+					/>
+					{ this.renderCloseButton() }
 				</div>
-				<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
-				<DateRangeSelector
-					isVisible={ this.state.showActivityDates }
-					onButtonClick={ this.toggleDateRangeSelector }
-				/>
-				<ActionTypeSelector
-					siteId={ siteId }
-					isVisible={ this.state.showActivityTypes }
-					onButtonClick={ this.toggleActivityTypesSelector }
-					onClose={ this.closeActivityTypes }
-					onSelectClick={ this.onSelectClick }
-					selected={ filter && filter.group }
-					onResetSelection={ this.resetActivityTypeSelector }
-				/>
+				<div className="filterbar__mobile-wrap" />
 			</div>
 		);
 	}
 }
 
+const mapDispatchToProps = dispatch => ( {
+	resetFilters: sideId =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_filterbar_reset' ),
+				updateFilter( sideId, { group: null, after: null, before: null, on: null, page: 1 } )
+			)
+		),
+} );
+
 export default connect(
-	() => ( {} ),
-	{
-		selectActionType: ( siteId, group ) => updateFilter( siteId, { group: group } ),
-	}
+	null,
+	mapDispatchToProps
 )( localize( Filterbar ) );

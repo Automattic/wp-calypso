@@ -14,6 +14,7 @@ import NumberField from 'woocommerce/woocommerce-services/components/number-fiel
 import Text from 'woocommerce/woocommerce-services/components/text';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import RadioButtons from 'woocommerce/woocommerce-services/components/radio-buttons';
+import ShippingClassesField from 'woocommerce/woocommerce-services/components/shipping-classes-field';
 import getPackagingManagerLink from 'woocommerce/woocommerce-services/lib/utils/get-packaging-manager-link';
 import ShippingServiceGroups from '../shipping-services';
 import FormLegend from 'components/forms/form-legend';
@@ -27,6 +28,7 @@ const SettingsItem = ( {
 	errors,
 	translate,
 	site,
+	shippingClasses,
 } ) => {
 	const id = layout.key ? layout.key : layout;
 	const updateValue = value => formValueActions.updateField( id, value );
@@ -96,6 +98,18 @@ const SettingsItem = ( {
 					placeholder={ layout.placeholder }
 					updateValue={ updateValue }
 					error={ fieldError }
+				/>
+			);
+
+		case 'shipping_classes':
+			return (
+				<ShippingClassesField
+					id={ id }
+					title={ fieldSchema.title }
+					description={ fieldSchema.description }
+					value={ fieldValue }
+					options={ shippingClasses }
+					updateValue={ updateValue }
 				/>
 			);
 

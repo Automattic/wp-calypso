@@ -6,7 +6,8 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -98,13 +99,13 @@ class GoogleAppsDialog extends React.Component {
 						domain={ this.props.domain }
 						{ ...prices }
 					/>
-					<ReactCSSTransitionGroup
-						transitionName="google-apps-dialog__users"
-						transitionEnterTimeout={ 200 }
-						transitionLeaveTimeout={ 200 }
-					>
-						{ this.state.isAddingEmail && this.renderGoogleAppsUsers() }
-					</ReactCSSTransitionGroup>
+					<TransitionGroup>
+						{ this.state.isAddingEmail && (
+							<CSSTransition classNames="google-apps-dialog__users" timeout={ 200 }>
+								{ this.renderGoogleAppsUsers() }
+							</CSSTransition>
+						) }
+					</TransitionGroup>
 				</CompactCard>
 				<CompactCard>{ this.footer() }</CompactCard>
 			</form>

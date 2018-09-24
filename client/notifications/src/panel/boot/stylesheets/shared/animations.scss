@@ -1,21 +1,12 @@
 .wpnc__single-view {
-  animation-name: fadeIn;
+  animation-name: wpnc_fadeIn;
   animation-duration: 0.2s;
   animation-timing-function: ease-in;
 }
 
-@keyframes 'fadeOut' {
+@keyframes wpnc_fadeIn {
   from {
-    opacity: 1.0;
-  }
-  to {
     opacity: 0;
-  }
-}
-
-@keyframes 'fadeIn' {
-  from {
-    opacity: 0.0;
   }
   to {
     opacity: 1.0;

@@ -309,7 +309,7 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan } = this.props;
+		const { filter, logLoadingState, siteId, translate, siteIsOnFreePlan, slug } = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
@@ -317,7 +317,14 @@ class ActivityLog extends Component {
 			return isFilterEmpty ? (
 				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteIsOnFreePlan } />
 			) : (
-				<EmptyContent title={ translate( 'No matching events found.' ) } />
+				<Fragment>
+					<EmptyContent
+						title={ translate( 'No matching events found.' ) }
+						line={ translate( 'Try adjusting your date range or acitvity type filters' ) }
+						action={ translate( 'Remove all filters' ) }
+						actionURL={ '/activity-log/' + slug }
+					/>
+				</Fragment>
 			);
 		}
 
@@ -428,13 +435,11 @@ class ActivityLog extends Component {
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
 				{ this.renderErrorMessage() }
 				{ this.renderActionProgress() }
+				{ this.renderFilterbar() }
 				{ isEmpty( logs ) ? (
 					this.renderNoLogsContent()
 				) : (
 					<div>
-						{ config.isEnabled( 'activity-filterbar' ) && (
-							<Filterbar siteId={ siteId } filter={ this.props.filter } />
-						) }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination"
@@ -477,6 +482,23 @@ class ActivityLog extends Component {
 					</div>
 				) }
 			</div>
+		);
+	}
+
+	renderFilterbar() {
+		const { siteId, filter, logs, siteIsOnFreePlan } = this.props;
+		const isFilterEmpty = isEqual( emptyFilter, filter );
+
+		if ( siteIsOnFreePlan ) {
+			return null;
+		}
+
+		if ( isEmpty( logs ) && isFilterEmpty ) {
+			return null;
+		}
+
+		return (
+			config.isEnabled( 'activity-filterbar' ) && <Filterbar siteId={ siteId } filter={ filter } />
 		);
 	}
 

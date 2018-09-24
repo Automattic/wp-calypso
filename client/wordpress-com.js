@@ -53,6 +53,7 @@ const sections = [
 		module: 'me/security',
 		group: 'me',
 		secondary: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'privacy',
@@ -410,7 +411,6 @@ sections.push( {
 	enableLoggedOut: true,
 	secondary: false,
 	isomorphic: true,
-	css: 'login',
 } );
 
 sections.push( {

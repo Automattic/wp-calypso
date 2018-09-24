@@ -1,7 +1,7 @@
 /**
  * @component Search
  */
-.filterbar {
+.filterbar__wrap {
 	position: relative;
 	display: flex;
 	flex: 1 1 auto;
@@ -11,35 +11,24 @@
 	padding: 0;
 	margin: 0;
 
-	.filterbar__icon-navigation {
-		display: flex;
-		flex: 0 0 auto;
-		align-items: center;
-		height: 100%;
-		background-color: $white;
-		border-radius: inherit;
-
-		.accessible-focus &:focus {
-			position: relative;
-			z-index: 9999;
-			box-shadow: inset 0 0 0 2px $blue-light;
-		}
-	}
-
-	.filterbar__open-icon {
-		flex: 0 0 auto;
-		width: 50px;
-		z-index: z-index( '.filterbar', '.filterbar .filterbar__open-icon' );
-		color: $gray-text-min;
+	.filterbar__icon-reset {
+		width: 48px;
+	    margin-left: auto;
+	    margin-right: 8px;
 	}
 
 	.filterbar__label {
-		margin-right: 8px;
+		margin: 0 2px 0 10px;
 		color: $gray;
+		white-space: nowrap;
+
+		@include breakpoint( '>660px' ) {
+			margin: 0 8px 0 16px;
+		}
 	}
 
 	.filterbar__selection.button {
-		margin: 6px;
+		margin: 8px;
 		padding: 8px;
 		border: 1px solid $gray-lighten-10;
 		border-radius: 5px;
@@ -48,10 +37,22 @@
 	}
 
 	.filterbar__selection.is-selected {
-		margin: 8px 0 8px 8px;
-		border-radius: 0;
-		border-top-left-radius: 5px;
-		border-bottom-left-radius: 5px;
+		margin: 8px;
+		border-radius: 5px;
+		border: 1px solid $gray-darken-30;
+		background: $gray-darken-30;
+		color: $white;
+
+		@include breakpoint( '>660px' ) {
+			margin-right: 0;
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+	}
+
+	.filterbar__selection.is-active {
+		margin: 8px;
+		border-radius: 5px;
 		border: 1px solid $gray-darken-30;
 		background: $gray-darken-30;
 		color: $white;
@@ -66,6 +67,11 @@
 		border-top-right-radius: 5px;
 		border-bottom-right-radius: 5px;
 		border: 1px solid $gray-darken-30;
+		display: none;
+
+		@include breakpoint( '>660px' ) {
+			display: inline;
+		}
 	}
 
 	.filterbar__selection-close:hover {
@@ -75,11 +81,22 @@
 
 .filterbar__activity-types-selection-wrap {
 	min-width: 200px;
-	padding: 24px 24px 18px;
+	padding: 0;
+
+	@include breakpoint( '>660px' ) {
+		padding: 24px 24px 18px;
+	}
 
 	label {
+		margin-bottom: 7px;
+		font-size: 15px;
 		text-align: left;
 		cursor: pointer;
+
+		@include breakpoint( '>660px' ) {
+			margin-bottom: 5px;
+			font-size: 14px;
+		}
 	}
 
 	input[type=checkbox] {
@@ -89,7 +106,6 @@
 }
 
 .filterbar__activity-types-selection-granular {
-	margin-top: 12px;
 
 	label {
 		font-weight: normal;
@@ -100,4 +116,159 @@
 	@include placeholder();
 	height: 24px;
 	margin: 16px 0;
+}
+
+.filterbar__date-range-selection-info, .filterbar__activity-types-selection-info {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	margin-top: 16px;
+	padding-top: 14px;
+	border-top: 1px solid lighten( $gray, 25% );
+}
+
+.filterbar__date-range-wrap {
+	width: 280px;
+	margin: 0 auto;
+
+	@include breakpoint( '>660px' ) {
+		padding: 16px;
+	}
+
+	.DayPicker-Day {
+		cursor: pointer;
+
+		.date-picker__day {
+			padding: 0 7px;
+		}
+	}
+
+	.filterbar__date-range-selection-info {
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: space-between;
+		margin-top: 16px;
+		padding-top: 14px;
+		border-top: 1px solid lighten( $gray, 25% );
+	}
+
+	.filterbar__date-range-info {
+		font-size: 12px;
+
+		.button.is-borderless {
+			margin-top: 2px;
+		}
+	}
+
+	.DayPicker-Day--start {
+		background-color: $blue-light;
+		border-radius: 0;
+		border-top-left-radius: 50%;
+		border-bottom-left-radius: 50%;
+	}
+
+	.DayPicker-Day--end {
+		background-color: $blue-light;
+		border-radius: 0;
+		border-top-right-radius: 50%;
+		border-bottom-right-radius: 50%;
+	}
+
+	.DayPicker-Day--today .date-picker__day {
+		color: $white;
+		position: relative;
+		display:block;
+		z-index: 0;
+		background: transparent;
+	}
+
+	.DayPicker-Day--today .date-picker__day:before {
+		content: '';
+		position: absolute;
+		display: block;
+		background-color: $gray-dark;
+		z-index: -1;
+		border-radius: 50%;
+		width: 26px;
+		height: 26px;
+		left: 6px;
+		top: -1px;
+		z-index: -2;
+	}
+
+	.DayPicker-Day--selected .date-picker__day {
+		background-color: $blue-light;
+		border-radius: 0;
+	}
+
+	.DayPicker-Day--start .date-picker__day,
+	.DayPicker-Day--end .date-picker__day {
+		border-radius: 50%;
+		color: $white;
+		padding: 0;
+		position: relative;
+		display:block;
+		z-index: 0;
+	}
+
+	.DayPicker-Day--start .date-picker__day:before,
+	.DayPicker-Day--end .date-picker__day:before,
+	.DayPicker-Day--start .date-picker__day:after,
+	.DayPicker-Day--end .date-picker__day:after {
+		content:'';
+		display: block;
+		position: absolute;
+		z-index: -2;
+		top: -1px;
+		right: 12px;
+		width: 20px;
+		height: 26px;
+		background-color: $blue-light;
+	}
+
+	.DayPicker-Day--start .date-picker__day:after {
+		top: -1px;
+		left: 12px;
+	}
+
+	.DayPicker-Day--start .date-picker__day:before,
+	.DayPicker-Day--end .date-picker__day:before {
+		width: 26px;
+		left: -1px;
+		right: auto;
+		z-index: -1;
+		background-color: $blue-wordpress;
+		border-radius: 50%;
+	}
+
+	.DayPicker-Day--start:hover .date-picker__day:after,
+	.DayPicker-Day--start.DayPicker-Day--end .date-picker__day:after {
+		background: transparent;
+	}
+
+	.DayPicker-Day--disabled .date-picker__day {
+		 cursor: default;
+	}
+
+	.gridicons-info {
+		margin: 3px 6px -8px 0;
+		fill: $gray;
+	}
+}
+
+.color-scheme.is-dark {
+
+	.filterbar__selection.button.is-borderless {
+		color: $gray-text-min;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $gray-dark;
+		}
+
+		&.is-selected {
+			color: $white;
+		}
+	}
 }

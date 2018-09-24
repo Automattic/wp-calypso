@@ -9,7 +9,12 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { addQueryArgs } from 'lib/url';
-import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE, NAVIGATE } from 'state/action-types';
+import {
+	ACTIVITY_LOG_FILTER_SET,
+	ACTIVITY_LOG_FILTER_UPDATE,
+	NAVIGATE,
+	HISTORY_REPLACE,
+} from 'state/action-types';
 import { filterStateToQuery } from 'state/activity-log/utils';
 import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 
@@ -40,7 +45,11 @@ export const navigationMiddleware = store => {
 				}
 
 				return next( action );
-
+			case HISTORY_REPLACE:
+				if ( action.path ) {
+					page.replace( action.path );
+				}
+				return next( action );
 			default:
 				return next( action );
 		}

@@ -1,43 +1,7 @@
 /** @format */
 export default {
-	showPlanCreditsApplied: {
-		datestamp: '20180903',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	plansBannerUpsells: {
-		datestamp: '20180824',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	themesNudgesUpdates: {
-		datestamp: '20180824',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	pluginsUpsellLandingPage: {
-		datestamp: '20180824',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	themesUpsellLandingPage: {
-		datestamp: '20180824',
+	cartNudgeUpdateToPremium: {
+		datestamp: '20180917',
 		variations: {
 			test: 50,
 			control: 50,
@@ -132,5 +96,15 @@ export default {
 			newFavorite: 33,
 		},
 		defaultVariation: 'justSearch',
+	},
+	domainManagementSuggestion: {
+		datestamp: '20180918',
+		variations: {
+			domainsbot: 80,
+			group_7: 20,
+		},
+		defaultVariation: 'domainsbot',
+		assignmentMethod: 'userId',
+		allowExistingUsers: true,
 	},
 };

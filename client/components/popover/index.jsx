@@ -56,6 +56,7 @@ class Popover extends Component {
 		showDelay: PropTypes.number,
 		onClose: PropTypes.func,
 		onShow: PropTypes.func,
+		relativePosition: PropTypes.shape( { left: PropTypes.number } ),
 		// Bypass position calculations and provide custom position values
 		customPosition: PropTypes.shape( {
 			top: PropTypes.number,
@@ -341,7 +342,7 @@ class Popover extends Component {
 		}
 
 		const { domContainer, domContext } = this;
-		const { position } = this.props;
+		const { position, relativePosition } = this.props;
 
 		if ( ! domContainer || ! domContext ) {
 			this.debug( '[WARN] no DOM elements to work' );
@@ -349,7 +350,6 @@ class Popover extends Component {
 		}
 
 		let suggestedPosition = position;
-
 		this.debug( 'position: %o', suggestedPosition );
 
 		if ( this.props.autoRtl ) {
@@ -364,7 +364,10 @@ class Popover extends Component {
 
 		const reposition = Object.assign(
 			{},
-			constrainLeft( offset( suggestedPosition, domContainer, domContext ), domContainer ),
+			constrainLeft(
+				offset( suggestedPosition, domContainer, domContext, relativePosition ),
+				domContainer
+			),
 			{ positionClass: this.getPositionClass( suggestedPosition ) }
 		);
 

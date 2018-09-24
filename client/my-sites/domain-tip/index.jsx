@@ -22,14 +22,15 @@ import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { FEATURE_CUSTOM_DOMAIN } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/products-values';
 
-function getQueryObject( site, siteSlug ) {
+function getQueryObject( site, siteSlug, vendor ) {
 	if ( ! site || ! siteSlug ) {
 		return null;
 	}
 	return {
-		query: siteSlug.split( '.' )[ 0 ],
 		quantity: 1,
-		vendor: 'domainsbot',
+		query: siteSlug.split( '.' )[ 0 ],
+		recommendationContext: ( site.name || '' ).replace( ' ', ',' ).toLocaleLowerCase(),
+		vendor,
 	};
 }
 
@@ -42,10 +43,12 @@ class DomainTip extends React.Component {
 		shouldNudgePlanUpgrade: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
 		queryObject: PropTypes.shape( {
-			query: PropTypes.string,
 			quantity: PropTypes.number,
+			query: PropTypes.string,
+			recommendationContext: PropTypes.string,
 			vendor: PropTypes.string,
 		} ),
+		vendor: PropTypes.string,
 	};
 
 	renderPlanUpgradeNudge() {
@@ -80,10 +83,9 @@ class DomainTip extends React.Component {
 			} );
 		}
 
-		const { query, quantity, vendor } = this.props.queryObject;
 		return (
 			<div className={ classNames( 'domain-tip', this.props.className ) }>
-				<QueryDomainsSuggestions query={ query } quantity={ quantity } vendor={ vendor } />
+				<QueryDomainsSuggestions { ...this.props.queryObject } />
 				<UpgradeNudge
 					event={ `domain_tip_${ this.props.event }` }
 					feature={ FEATURE_CUSTOM_DOMAIN }
@@ -101,10 +103,10 @@ class DomainTip extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+const ConnectedDomainTip = connect( ( state, ownProps ) => {
 	const site = getSite( state, ownProps.siteId );
 	const siteSlug = getSiteSlug( state, ownProps.siteId );
-	const queryObject = getQueryObject( site, siteSlug );
+	const queryObject = getQueryObject( site, siteSlug, ownProps.vendor );
 	const domainsWithPlansOnly = currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY );
 	const isPaidWithoutDomainCredit =
 		site && siteSlug && ! isFreePlan( site.plan ) && ! hasDomainCredit( state, ownProps.siteId );
@@ -120,3 +122,9 @@ export default connect( ( state, ownProps ) => {
 		suggestions: queryObject && getDomainsSuggestions( state, queryObject ),
 	};
 } )( localize( DomainTip ) );
+
+ConnectedDomainTip.defaultProps = {
+	vendor: 'domainsbot',
+};
+
+export default ConnectedDomainTip;

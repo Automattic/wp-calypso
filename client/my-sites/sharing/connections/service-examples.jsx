@@ -35,7 +35,6 @@ const SERVICES_WHITELIST = [
 	'google_my_business',
 	'instagram',
 	'linkedin',
-	'path',
 	'tumblr',
 	'twitter',
 	'google_photos',
@@ -273,25 +272,6 @@ class SharingServiceExamples extends Component {
 					{
 						components: {
 							link: <a href={ this.getSharingButtonsLink() } />,
-						},
-					}
-				),
-			},
-		];
-	}
-
-	path() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/path-publicize.png',
-					alt: this.props.translate( 'Share posts to your Path timeline', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts to your Path timeline.',
-					{
-						components: {
-							strong: <strong />,
 						},
 					}
 				),

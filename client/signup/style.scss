@@ -17,7 +17,7 @@
 }
 
 .signup__step-enter.signup__step-enter-active,
-.signup__step-leave.signup__step-leave-active {
+.signup__step-exit.signup__step-exit-active {
 	pointer-events: none;
 }
 
@@ -33,7 +33,7 @@
 	}
 }
 
-.signup__step-leave {
+.signup__step-exit {
 	opacity: 1;
 
 	.is-animated-content {
@@ -41,7 +41,7 @@
 	}
 }
 
-.signup__step-leave.signup__step-leave-active {
+.signup__step-exit.signup__step-exit-active {
 	opacity: 0.01;
 	transition: .2s ease-in-out;
 

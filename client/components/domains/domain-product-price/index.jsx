@@ -69,6 +69,16 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
+	renderUpgradeToPremiumToBuy() {
+		const { translate } = this.props;
+
+		return (
+			<div className="domain-product-price domain-product-price__is-with-plans-only">
+				{ translate( 'Personal plan required' ) }
+			</div>
+		);
+	}
+
 	renderPrice() {
 		return (
 			<div className="domain-product-price">
@@ -96,8 +106,10 @@ class DomainProductPrice extends React.Component {
 				return this.renderFree();
 			case 'FREE_WITH_PLAN':
 				return this.renderFreeWithPlan();
-			case 'INCLUDED_IN_PREMIUM':
+			case 'INCLUDED_IN_HIGHER_PLAN':
 				return this.renderIncludedInPremium();
+			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
+				return this.renderUpgradeToPremiumToBuy();
 			case 'PRICE':
 			default:
 				return this.renderPrice();

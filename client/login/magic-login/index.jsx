@@ -33,6 +33,11 @@ import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class MagicLogin extends React.Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,

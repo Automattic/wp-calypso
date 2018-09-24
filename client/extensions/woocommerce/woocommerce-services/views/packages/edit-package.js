@@ -119,7 +119,7 @@ const EditPackage = props => {
 
 	return (
 		<div>
-			{ 'add' === mode ? renderTypeSelection() : null }
+			{ 'add-custom' === mode ? renderTypeSelection() : null }
 			<FormFieldset>
 				<FormLabel htmlFor="name">{ translate( 'Package name' ) }</FormLabel>
 				<FormTextInput

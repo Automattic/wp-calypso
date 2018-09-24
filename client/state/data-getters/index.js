@@ -12,9 +12,17 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
+import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
 
-export const requestActivityActionTypeCounts = ( siteId, { freshness = 10 * 1000 } = {} ) => {
-	const id = `activity-action-type-${ siteId }`;
+export const requestActivityActionTypeCounts = (
+	siteId,
+	filter,
+	{ freshness = 10 * 1000 } = {}
+) => {
+	const before = filter && filter.before ? filter.before : '';
+	const after = filter && filter.after ? filter.after : '';
+	const on = filter && filter.on ? filter.on : '';
+	const id = `activity-log-${ siteId }-${ after }-${ before }-${ on }`;
 
 	return requestHttpData(
 		id,
@@ -23,13 +31,14 @@ export const requestActivityActionTypeCounts = ( siteId, { freshness = 10 * 1000
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 				path: `/sites/${ siteId }/activity/count/group`,
+				query: filterStateToApiQuery( filter ),
 			},
 			{}
 		),
 		{
 			freshness,
 			fromApi: () => data => {
-				return [ [ id, data ] ];
+				return [ [ id, fromActivityTypeApi( data ) ] ];
 			},
 		}
 	);
@@ -38,8 +47,11 @@ export const requestActivityActionTypeCounts = ( siteId, { freshness = 10 * 1000
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
 	const group =
 		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
-	const id = `activity-log-${ siteId }-${ group }`;
+	const before = filter && filter.before ? filter.before : '';
+	const after = filter && filter.after ? filter.after : '';
+	const on = filter && filter.on ? filter.on : '';
 
+	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }`;
 	return requestHttpData(
 		id,
 		http(
@@ -135,14 +147,14 @@ export const requestGutenbergDraftPost = ( siteId, draftId ) =>
 		draftId,
 		http(
 			{
-				path: `/sites/${ siteId }/p2/post`,
-				method: 'GET', //this should be a POST, remember
+				path: `/sites/${ siteId }/posts/auto-draft`,
+				method: 'POST',
 				apiNamespace: 'wpcom/v2',
 				body: {}, //this is for a POST verb.
 			},
 			{}
 		),
-		{ formApi: () => data => [ [ draftId, data ] ] }
+		{ fromApi: () => data => [ [ draftId, data ] ] }
 	);
 
 export const requestSitePost = ( siteId, postId ) =>

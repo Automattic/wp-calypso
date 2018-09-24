@@ -54,6 +54,12 @@ class Desktop extends React.Component {
 						}
 						type="text/css"
 					/>
+					<link
+						rel="stylesheet"
+						type="text/css"
+						data-webpack={ true }
+						href={ `/calypso/build.${ isRTL ? 'rtl.css' : 'css' }` }
+					/>
 					<link rel="stylesheet" id="desktop-css" href="/desktop/wordpress-desktop.css" />
 				</Head>
 				<body className={ classNames( { rtl: isRTL } ) }>

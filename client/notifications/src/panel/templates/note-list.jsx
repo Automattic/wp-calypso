@@ -21,11 +21,9 @@ import Spinner from './spinner';
 import StatusBar from './status-bar';
 import UndoListItem from './undo-list-item';
 
-var debug = require('debug')('notifications:list');
-
 var DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
-// from $title-offset in boot/sizes.scss
+// from $wpnc__title-bar-height in boot/sizes.scss
 var TITLE_OFFSET = 38;
 
 const getDOMNodeOrElse = ref => {

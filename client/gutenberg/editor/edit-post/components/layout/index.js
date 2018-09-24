@@ -25,7 +25,7 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import BrowserURL from '../browser-url';
+import BrowserURL from 'gutenberg/editor/browser-url';
 import BlockSidebar from '../sidebar/block-sidebar';
 import DocumentSidebar from '../sidebar/document-sidebar';
 import Header from '../header';

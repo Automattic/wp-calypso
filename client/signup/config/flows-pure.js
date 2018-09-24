@@ -24,7 +24,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
-			description: 'Create an account and a blog and then add the business plan to the users cart.',
+			description:
+				'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2018-01-24',
 			meta: {
 				skipBundlingPlan: true,
@@ -36,7 +37,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/premium/' + dependencies.siteSlug;
 			},
-			description: 'Create an account and a blog and then add the premium plan to the users cart.',
+			description:
+				'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2018-01-24',
 			meta: {
 				skipBundlingPlan: true,
@@ -48,7 +50,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/personal/' + dependencies.siteSlug;
 			},
-			description: 'Create an account and a blog and then add the personal plan to the users cart.',
+			description:
+				'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2018-01-24',
 		},
 
@@ -253,23 +256,28 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		};
 	}
 
-	if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
-		flows[ 'domain-first' ] = {
-			steps: [ 'site-or-domain', 'site-picker', 'themes', 'plans-site-selected', 'user' ],
-			destination: getSiteDestination,
-			description: 'An experimental approach for WordPress.com/domains',
-			disallowResume: true,
-			lastModified: '2017-05-09',
-		};
+	flows.domain = {
+		steps: [
+			'domain-only',
+			'site-or-domain',
+			'site-picker',
+			'themes',
+			'plans-site-selected',
+			'user',
+		],
+		destination: getSiteDestination,
+		description: 'An experimental approach for WordPress.com/domains',
+		disallowResume: true,
+		lastModified: '2017-05-09',
+	};
 
-		flows[ 'site-selected' ] = {
-			steps: [ 'themes-site-selected', 'plans-site-selected' ],
-			destination: getSiteDestination,
-			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
-			description: 'A flow to test updating an existing site with `Signup`',
-			lastModified: '2017-01-19',
-		};
-	}
+	flows[ 'site-selected' ] = {
+		steps: [ 'themes-site-selected', 'plans-site-selected' ],
+		destination: getSiteDestination,
+		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
+		description: 'A flow to test updating an existing site with `Signup`',
+		lastModified: '2017-01-19',
+	};
 
 	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
 		flows[ 'from-site' ] = {
@@ -278,6 +286,15 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			description: 'A flow to kick off an import during signup',
 			disallowResume: true,
 			lastModified: '2018-09-12',
+		};
+	}
+
+	if ( config.isEnabled( 'signup/reader' ) ) {
+		flows.reader = {
+			steps: [ 'reader-landing', 'user' ],
+			destination: '/',
+			description: 'Signup for an account and migrate email subs to the reader.',
+			lastModified: '2018-09-04',
 		};
 	}
 

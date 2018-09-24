@@ -68,7 +68,7 @@ const importers = [
 	},
 	{
 		type: SQUARESPACE,
-		isImporterEnabled: isEnabled( 'manage/import/squarespace' ),
+		isImporterEnabled: true,
 		component: SquarespaceImporter,
 	},
 ];
