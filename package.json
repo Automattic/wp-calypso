@@ -160,7 +160,7 @@
     "react-modal": "3.5.1",
     "react-pure-render": "1.0.2",
     "react-redux": "5.0.7",
-    "react-transition-group": "1.2.1",
+    "react-transition-group": "2.4.0",
     "react-virtualized": "9.20.1",
     "redux": "4.0.0",
     "redux-form": "7.4.2",

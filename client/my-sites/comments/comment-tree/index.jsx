@@ -9,7 +9,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 
 /**
  * Internal dependencies
@@ -28,6 +29,10 @@ import isCommentsTreeInitialized from 'state/selectors/is-comments-tree-initiali
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { COMMENTS_PER_PAGE } from '../constants';
+
+const CommentTransition = props => (
+	<CSSTransition { ...props } classNames="comment-list__transition" timeout={ 150 } />
+);
 
 export class CommentTree extends Component {
 	static propTypes = {
@@ -167,7 +172,6 @@ export class CommentTree extends Component {
 		return (
 			<div className="comment-tree comment-list">
 				<QuerySiteSettings siteId={ siteId } />
-
 				{ ! isCommentsTreeSupported && (
 					<QuerySiteCommentsList
 						number={ 100 }
@@ -177,9 +181,7 @@ export class CommentTree extends Component {
 					/>
 				) }
 				{ isCommentsTreeSupported && <QuerySiteCommentsTree siteId={ siteId } status={ status } /> }
-
 				{ isPostView && <CommentListHeader postId={ postId } /> }
-
 				<CommentNavigation
 					commentsPage={ commentsPage }
 					isBulkMode={ isBulkMode }
@@ -194,42 +196,44 @@ export class CommentTree extends Component {
 					toggleBulkMode={ this.toggleBulkMode }
 					toggleSelectAll={ this.toggleSelectAll }
 				/>
-
-				<ReactCSSTransitionGroup
-					className="comment-tree__transition-wrapper comment-list__transition-wrapper"
-					transitionEnterTimeout={ 150 }
-					transitionLeaveTimeout={ 150 }
-					transitionName="comment-list__transition"
-				>
+				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
+				<TransitionGroup className="comment-list__transition-wrapper">
+					{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 					{ map( commentsPage, commentId => (
-						<Comment
-							commentId={ commentId }
-							key={ `comment-${ siteId }-${ commentId }` }
-							isBulkMode={ isBulkMode }
-							isPostView={ isPostView }
-							isSelected={ this.isCommentSelected( commentId ) }
-							refreshCommentData={
-								isCommentsTreeSupported &&
-								! this.hasCommentJustMovedBackToCurrentStatus( commentId )
-							}
-							toggleSelected={ this.toggleCommentSelected }
-							updateLastUndo={ this.updateLastUndo }
-						/>
+						<CommentTransition key={ `comment-${ siteId }-${ commentId }` }>
+							<Comment
+								commentId={ commentId }
+								isBulkMode={ isBulkMode }
+								isPostView={ isPostView }
+								isSelected={ this.isCommentSelected( commentId ) }
+								refreshCommentData={
+									isCommentsTreeSupported &&
+									! this.hasCommentJustMovedBackToCurrentStatus( commentId )
+								}
+								toggleSelected={ this.toggleCommentSelected }
+								updateLastUndo={ this.updateLastUndo }
+							/>
+						</CommentTransition>
 					) ) }
 
-					{ showPlaceholder && <Comment commentId={ 0 } key="comment-detail-placeholder" /> }
+					{ showPlaceholder && (
+						<CommentTransition>
+							<Comment commentId={ 0 } key="comment-detail-placeholder" />
+						</CommentTransition>
+					) }
 
 					{ showEmptyContent && (
-						<EmptyContent
-							illustration="/calypso/images/comments/illustration_comments_gray.svg"
-							illustrationWidth={ 150 }
-							key="comment-list-empty"
-							line={ emptyMessageLine }
-							title={ emptyMessageTitle }
-						/>
+						<CommentTransition>
+							<EmptyContent
+								illustration="/calypso/images/comments/illustration_comments_gray.svg"
+								illustrationWidth={ 150 }
+								key="comment-list-empty"
+								line={ emptyMessageLine }
+								title={ emptyMessageTitle }
+							/>
+						</CommentTransition>
 					) }
-				</ReactCSSTransitionGroup>
-
+				</TransitionGroup>
 				{ ! showPlaceholder &&
 					! showEmptyContent && (
 						<Pagination

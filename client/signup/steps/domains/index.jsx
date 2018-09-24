@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, endsWith, get, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 
 /**
  * Internal dependencies
@@ -437,7 +438,16 @@ class DomainsStep extends React.Component {
 			);
 		}
 
-		return content;
+		return (
+			<CSSTransition
+				key={ this.props.step + this.props.stepSectionName }
+				classNames="domains__step-content"
+				timeout={ 200 }
+				exit={ false }
+			>
+				{ content }
+			</CSSTransition>
+		);
 	}
 
 	render() {
@@ -471,15 +481,10 @@ class DomainsStep extends React.Component {
 				fallbackHeaderText={ translate( 'Give your site an address.' ) }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
-					<ReactCSSTransitionGroup
-						component="div"
-						transitionEnterTimeout={ 200 }
-						transitionLeave={ false }
-						transitionName="domains__step-content"
-					>
+					<TransitionGroup>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }
 						{ this.renderContent() }
-					</ReactCSSTransitionGroup>
+					</TransitionGroup>
 				}
 			/>
 		);
