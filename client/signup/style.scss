@@ -150,7 +150,7 @@
 		right: -170px;
 	}
 
-	.two-columns.step-wrapper {
+	.step-wrapper__two-columns.step-wrapper {
 		display: grid;
 		grid-template-columns: repeat(12,1fr);
 		grid-column-gap: 24px;
@@ -159,7 +159,7 @@
 		width: 100%;
 	}
 
-	.two-columns .flow-progress-indicator {
+	.step-wrapper__two-columns .flow-progress-indicator {
 		grid-column-start: 1;
 		grid-column-end: span 4;
 		grid-row-start: 2;
@@ -167,7 +167,7 @@
 		margin-top: 84px;
 	}
 
-	.two-columns .formatted-header {
+	.step-wrapper__two-columns .formatted-header {
 		grid-column-start: 1;
 		grid-column-end: span 4;
 		grid-row-start: 3;
@@ -175,7 +175,7 @@
 		margin: 0;
 	}
 
-	.two-columns .step-wrapper__content {
+	.step-wrapper__two-columns .step-wrapper__content {
 		grid-column-start: 6;
 		grid-column-end: span 7;
 		grid-row-start: 2;
