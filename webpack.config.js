@@ -227,7 +227,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
 				},
 				{
-					include: path.join( __dirname, 'client/sections.js' ),
+					include: path.join( __dirname, 'client', 'sections.js' ),
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 				},
 				{
@@ -261,9 +261,9 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					'gridicons/example': 'gridicons/dist/example',
 					'react-virtualized': 'react-virtualized/dist/commonjs',
 					'social-logos/example': 'social-logos/build/example',
-					debug: path.resolve( __dirname, 'node_modules/debug' ),
+					debug: path.resolve( __dirname, 'node_modules', 'debug' ),
 					store: 'store/dist/store.modern',
-					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
+					gridicons$: path.resolve( __dirname, 'client', 'components', 'async-gridicons' ),
 				},
 				getAliasesForExtensions()
 			),
