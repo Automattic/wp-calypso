@@ -318,11 +318,7 @@ workflows:
   version: 2
   calypso:
     jobs:
-      - approve-notifications:
-          type: approval
-      - build-notifications:
-          requires:
-            - approve-notifications
+      - build-notifications
       - lint-and-translate
       - test-client
       - test-server
