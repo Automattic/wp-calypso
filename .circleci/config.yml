@@ -354,6 +354,5 @@ workflows:
             branches:
               only:
                 - master
-                - update/circleci-test-runners
 
 # vi: sts=2 ts=2 sw=2 et
