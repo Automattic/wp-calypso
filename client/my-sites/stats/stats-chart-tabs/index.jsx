@@ -27,7 +27,7 @@ import {
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSiteOption } from 'state/sites/selectors';
-import { getQueryDate } from './utility';
+import { formatDate, getQueryDate } from './utility';
 
 class StatModuleChartTabs extends Component {
 	state = {
@@ -51,24 +51,8 @@ class StatModuleChartTabs extends Component {
 
 	buildTooltipData( item ) {
 		const tooltipData = [];
-		const date = this.props.moment( item.data.period );
 
-		let dateLabel;
-		switch ( this.props.period.period ) {
-			case 'day':
-				dateLabel = date.format( 'LL' );
-				break;
-			case 'week':
-				dateLabel = date.format( 'L' ) + ' - ' + date.add( 6, 'days' ).format( 'L' );
-				break;
-			case 'month':
-				dateLabel = date.format( 'MMMM YYYY' );
-				break;
-			case 'year':
-				dateLabel = date.format( 'YYYY' );
-				break;
-		}
-
+		const dateLabel = formatDate( item.data.period, this.props.period.period );
 		tooltipData.push( {
 			label: dateLabel,
 			className: 'is-date-label',
