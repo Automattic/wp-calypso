@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, indexOf, inRange } from 'lodash';
+import { flow, indexOf, inRange, isEqual } from 'lodash';
 import { isWebUri } from 'valid-url';
 import { parse as parseURL } from 'url';
 
@@ -52,14 +52,40 @@ class ImportURLStepComponent extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { goToNextStep, urlInputValue, stepName, siteDetails } = this.props;
+		const {
+			isSiteImportableError,
+			goToNextStep,
+			urlInputValue,
+			stepName,
+			siteDetails,
+		} = this.props;
 
+		// isSiteImportable error--focus input to revise url.
+		if (
+			! isEqual( prevProps.isSiteImportableError, isSiteImportableError ) &&
+			isSiteImportableError
+		) {
+			this.focusInput();
+		}
+
+<<<<<<< HEAD
 		// goToNextStep = () => {
 		// 	const { urlInputValue } = this.props;
 		// 	SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
 		// 		importUrl: urlInputValue,
 		// 		themeSlugWithRepo: 'pub/radcliffe-2',
 		// 	} );
+=======
+		// We have a verified, importable site url.
+		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && siteDetails ) {
+			SignupActions.submitSignupStep( { stepName }, [], {
+				importUrl: urlInputValue,
+				themeSlugWithRepo: 'pub/radcliffe-2',
+			} );
+
+			goToNextStep();
+		}
+>>>>>>> Focus input on validation or is-site-importable error
 	}
 
 	handleInputChange = event => {
@@ -75,12 +101,17 @@ class ImportURLStepComponent extends Component {
 		this.validateUrl();
 	};
 
+	handleInputRef = el => ( this.inputRef = el );
+
+	focusInput = () => this.inputRef && this.inputRef.focus();
+
 	handleSubmit = event => {
 		event.preventDefault();
 
 		const isValid = this.validateUrl();
 
 		if ( ! isValid ) {
+			this.focusInput();
 			return;
 		}
 
@@ -145,6 +176,7 @@ class ImportURLStepComponent extends Component {
 						defaultValue={ urlInputValue }
 						onChange={ this.handleInputChange }
 						onBlur={ this.handleInputBlur }
+						inputRef={ this.handleInputRef }
 					/>
 					<FormButton disabled={ isLoading } busy={ isLoading } type="submit">
 						{ translate( 'Continue' ) }
