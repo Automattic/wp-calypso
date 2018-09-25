@@ -106,7 +106,7 @@ references:
     docker: *docker-image
     environment: *shared-environment
 
-version: 2
+version: 2.1
 jobs:
   lint-and-translate:
     <<: *defaults
@@ -335,7 +335,7 @@ jobs:
           path: /tmp/test_results
 
 workflows:
-  version: 2
+  version: 2.1
   calypso:
     jobs:
       - lint-and-translate
