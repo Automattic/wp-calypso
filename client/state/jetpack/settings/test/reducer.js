@@ -39,8 +39,9 @@ describe( 'reducer', () => {
 			},
 		};
 
-		test( 'should default to an empty object', () => {
+		test( 'should default to an empty object --dummy change--', () => {
 			const state = settingsReducer( undefined, {} );
+
 			expect( state ).toEqual( {} );
 		} );
 
