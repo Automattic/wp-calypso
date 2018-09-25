@@ -26,7 +26,6 @@
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
-		"activity-filterbar": true,
 		"ad-tracking": false,
 		"apple-pay": true,
 		"blogger-plan": false,

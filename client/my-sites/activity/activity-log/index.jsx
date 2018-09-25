@@ -494,14 +494,12 @@ class ActivityLog extends Component {
 		}
 
 		return (
-			config.isEnabled( 'activity-filterbar' ) && (
 				<Filterbar
 					siteId={ siteId }
 					filter={ filter }
 					isLoading={ logLoadingState !== 'success' }
 					isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
 				/>
-			)
 		);
 	}
 
