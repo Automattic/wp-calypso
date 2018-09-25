@@ -14,12 +14,13 @@ import { parse as parseURL } from 'url';
  */
 import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
-// import SignupActions from 'lib/signup/actions';
+import SignupActions from 'lib/signup/actions';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import FormInputValidation from 'components/forms/form-input-validation';
 import {
+	getNuxUrlError,
 	getNuxUrlInputValue,
 	getSiteDetails,
 	isUrlInputDisabled,
@@ -48,34 +49,18 @@ class ImportURLStepComponent extends Component {
 		// Url message could be client-side validation or server-side error.
 		showUrlMessage: false,
 		urlValidationMessage: '',
-		isSiteImportableError: '',
 	};
 
-	// componentDidUpdate() {
-	// 	if ( this.props.siteDetails.siteUrl ) {
-	// 		// this.goToNextStep();
-	// 	}
-	// }
+	componentDidUpdate( prevProps ) {
+		const { goToNextStep, urlInputValue, stepName, siteDetails } = this.props;
 
-<<<<<<< HEAD
-	goToNextStep = () => {
-		const { siteDetails, urlInputValue } = this.props;
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-			importUrl: urlInputValue,
-			importSiteDetails: siteDetails,
-			themeSlugWithRepo: 'pub/radcliffe-2',
-		} );
-=======
-	// goToNextStep = () => {
-	// 	const { urlInputValue } = this.props;
-	// 	SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-	// 		importUrl: urlInputValue,
-	// 		themeSlugWithRepo: 'pub/radcliffe-2',
-	// 	} );
->>>>>>> Updates site validation UI and check if a valid url is importable
-
-	// 	// this.props.goToNextStep();
-	// };
+		// goToNextStep = () => {
+		// 	const { urlInputValue } = this.props;
+		// 	SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
+		// 		importUrl: urlInputValue,
+		// 		themeSlugWithRepo: 'pub/radcliffe-2',
+		// 	} );
+	}
 
 	handleInputChange = event => {
 		// Hide validation if user is updating input.
@@ -114,13 +99,39 @@ class ImportURLStepComponent extends Component {
 		return isValid;
 	};
 
-	isUrlValid = () => ! this.state.urlValidationMessage;
+	getUrlMessage = () => {
+		if ( this.state.urlValidationMessage ) {
+			return this.state.urlValidationMessage;
+		} else if ( this.props.isSiteImportableError ) {
+			return this.getIsSiteImportableError();
+		}
+
+		return '';
+	};
+
+	getIsSiteImportableError = () => {
+		if ( ! this.props.isSiteImportableError ) {
+			return null;
+		}
+
+		const { isSiteImportableError, translate } = this.props;
+
+		switch ( isSiteImportableError.code ) {
+			case 1000001:
+				return translate( "Please check the url, it doesn't seem to be valid." );
+			case 1000002:
+				return translate(
+					"We're not able to reach that site at this time, or it's not compatible with our URL importer."
+				);
+		}
+
+		return translate( 'There was an error with the importer, please try again.' );
+	};
 
 	renderContent = () => {
-		// const { isLoading, urlInputValidationMessage, urlInputValue, translate } = this.props;
 		const { isLoading, urlInputValue, translate } = this.props;
-		const { showUrlMessage, urlValidationMessage } = this.state;
-		const isUrlInvalid = ! this.isUrlValid();
+		const { showUrlMessage } = this.state;
+		const urlMessage = this.getUrlMessage();
 
 		return (
 			<Card className="import-url__wrapper site-importer__site-importer-pane" tagName="div">
@@ -140,9 +151,7 @@ class ImportURLStepComponent extends Component {
 					</FormButton>
 				</form>
 				{ showUrlMessage &&
-					isUrlInvalid && (
-						<FormInputValidation text={ urlValidationMessage } isError={ isUrlInvalid } />
-					) }
+					urlMessage && <FormInputValidation text={ urlMessage } isError={ !! urlMessage } /> }
 			</Card>
 		);
 	};
@@ -169,6 +178,7 @@ class ImportURLStepComponent extends Component {
 export default flow(
 	connect(
 		state => ( {
+			isSiteImportableError: getNuxUrlError( state ),
 			urlInputValue: getNuxUrlInputValue( state ),
 			siteDetails: getSiteDetails( state ),
 			isLoading: isUrlInputDisabled( state ),
