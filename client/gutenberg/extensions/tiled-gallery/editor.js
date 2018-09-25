@@ -1,78 +1,92 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import filter from 'lodash/filter';
+
+/**
  * WordPress dependencies
  */
-import { createBlock, registerBlockType } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
+import { createBlock, registerBlockStyle, registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import TiledGalleryEdit from './edit.jsx';
-import TiledGallerySave from './save.jsx';
-import { __ } from 'gutenberg/extensions/presets/jetpack/utils/i18n';
+import './editor.scss';
+import { DEFAULT_COLUMNS, LAYOUTS } from './constants';
+import { default as edit } from './edit';
+import { default as save } from './save';
 
-const blockType = 'jetpack/tiled-gallery';
-
-const blockSettings = {
-	title: __( 'Tiled Gallery' ),
-	description: __( 'Display multiple images in an elegantly organized tiled layout.' ),
-	icon: 'format-gallery',
-	category: 'jetpack',
-	keywords: [ __( 'images' ), __( 'photos' ) ],
-	attributes: {
-		columns: {
-			type: 'integer',
-			default: 3,
-		},
-		linkTo: {
-			type: 'string',
-			default: 'none',
-		},
-		images: {
-			type: 'array',
-			default: [],
-			source: 'query',
-			selector: '.tiled-gallery-item',
-			query: {
-				width: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'data-original-width',
-				},
-				height: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'data-original-height',
-				},
-				url: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'src',
-				},
-				link: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'data-link',
-				},
-				alt: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'alt',
-					default: '',
-				},
-				id: {
-					source: 'attribute',
-					selector: 'img',
-					attribute: 'data-id',
-				},
-				caption: {
-					type: 'array',
-					source: 'children',
-					selector: 'figcaption',
-				},
+const blockAttributes = {
+	images: {
+		type: 'array',
+		default: [],
+		source: 'query',
+		selector: 'ul.wp-block-a8c-tiled-gallery .tiled-gallery__item',
+		query: {
+			url: {
+				source: 'attribute',
+				selector: 'img',
+				attribute: 'src',
+			},
+			link: {
+				source: 'attribute',
+				selector: 'img',
+				attribute: 'data-link',
+			},
+			alt: {
+				source: 'attribute',
+				selector: 'img',
+				attribute: 'alt',
+				default: '',
+			},
+			id: {
+				source: 'attribute',
+				selector: 'img',
+				attribute: 'data-id',
+			},
+			caption: {
+				type: 'array',
+				source: 'children',
+				selector: 'figcaption',
 			},
 		},
+	},
+	columns: {
+		type: 'number',
+		default: DEFAULT_COLUMNS,
+	},
+	imageCrop: {
+		type: 'boolean',
+		default: true,
+	},
+	linkTo: {
+		type: 'string',
+		default: 'none',
+	},
+};
+
+const blockName = 'jetpack/tiled-gallery';
+
+const blockSettings = {
+	title: __( 'Tiled gallery', 'jetpack' ),
+	description: __( 'Display multiple images in an elegantly organized tiled layout.', 'jetpack' ),
+	icon: (
+		<svg viewBox="0 0 20 20">
+			<rect x="8" y="11" width="9" height="6" />
+			<rect x="3" y="11" width="4" height="6" />
+			<rect x="13" y="7" width="4" height="3" />
+			<rect x="13" y="3" width="4" height="3" />
+			<rect x="3" y="3" width="9" height="7" />
+		</svg>
+	),
+	category: 'jetpack',
+	keywords: [ __( 'images', 'jetpack' ), __( 'photos', 'jetpack' ), __( 'masonry', 'jetpack' ) ],
+	attributes: blockAttributes,
+	supports: {
+		align: true,
 	},
 
 	transforms: {
@@ -80,8 +94,50 @@ const blockSettings = {
 			{
 				type: 'block',
 				blocks: [ 'core/gallery' ],
-				transform: function( content ) {
-					return createBlock( blockType, content );
+				transform: attributes => {
+					const validImages = filter( attributes.images, ( { id, url } ) => id && url );
+					if ( validImages.length > 0 ) {
+						return createBlock( blockName, {
+							images: validImages.map( ( { id, url, alt, caption } ) => ( {
+								id,
+								url,
+								alt,
+								caption,
+							} ) ),
+						} );
+					}
+					return createBlock( blockName );
+				},
+			},
+			{
+				type: 'shortcode',
+				tag: 'gallery',
+				attributes: {
+					// @TODO: other params (https://en.support.wordpress.com/gallery/#gallery-shortcode)
+					images: {
+						type: 'array',
+						shortcode: ( { named: { ids } } ) => {
+							if ( ! ids ) {
+								return [];
+							}
+
+							return ids.split( ',' ).map( id => ( {
+								id: parseInt( id, 10 ),
+							} ) );
+						},
+					},
+					columns: {
+						type: 'number',
+						shortcode: ( { named: { columns = '3' } } ) => {
+							return parseInt( columns, 10 );
+						},
+					},
+					linkTo: {
+						type: 'string',
+						shortcode: ( { named: { link = 'attachment' } } ) => {
+							return link === 'file' ? 'media' : link;
+						},
+					},
 				},
 			},
 		],
@@ -89,14 +145,30 @@ const blockSettings = {
 			{
 				type: 'block',
 				blocks: [ 'core/gallery' ],
-				transform: function( content ) {
-					return createBlock( 'core/gallery', content );
+				transform: ( { images, columns, imageCrop, linkTo } ) =>
+					createBlock( 'core/gallery', { images, columns, imageCrop, linkTo } ),
+			},
+			{
+				type: 'block',
+				blocks: [ 'core/image' ],
+				transform: ( { images } ) => {
+					if ( images.length > 0 ) {
+						return images.map( ( { id, url, alt, caption } ) =>
+							createBlock( 'core/image', { id, url, alt, caption } )
+						);
+					}
+					return createBlock( 'core/image' );
 				},
 			},
 		],
 	},
-	edit: TiledGalleryEdit,
-	save: TiledGallerySave,
+
+	edit,
+	save,
 };
 
-registerBlockType( blockType, blockSettings );
+LAYOUTS.forEach( layout => {
+	registerBlockStyle( blockName, layout );
+} );
+
+registerBlockType( blockName, blockSettings );
