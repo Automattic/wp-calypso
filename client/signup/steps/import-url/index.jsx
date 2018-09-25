@@ -13,6 +13,7 @@ import { parse as parseURL } from 'url';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Notice from 'components/notice';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormTextInput from 'components/forms/form-text-input';
@@ -60,7 +61,7 @@ class ImportURLStepComponent extends Component {
 			siteDetails,
 		} = this.props;
 
-		// isSiteImportable error--focus input to revise url.
+		// isSiteImportable error, focus input to revise url.
 		if (
 			! isEqual( prevProps.isSiteImportableError, isSiteImportableError ) &&
 			isSiteImportableError
@@ -189,20 +190,33 @@ class ImportURLStepComponent extends Component {
 	};
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, isLoading, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const noticeText = translate( "Please wait, we're checking this URL." );
 
 		return (
-			<StepWrapper
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Where can we find your old site?' ) }
-				subHeaderText={ translate(
-					"Enter your Wix site's URL, sometimes called a domain name or site address."
+			<div>
+				{ isLoading && (
+					<Notice
+						status="is-info"
+						icon="info"
+						isLoading={ true }
+						text={ noticeText }
+						showDismiss={ false }
+						isCompact={ true }
+					/>
 				) }
-				signupProgress={ signupProgress }
-				stepContent={ this.renderContent() }
-			/>
+				<StepWrapper
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
+					headerText={ translate( 'Where can we find your old site?' ) }
+					subHeaderText={ translate(
+						"Enter your Wix site's URL, sometimes called a domain name or site address."
+					) }
+					signupProgress={ signupProgress }
+					stepContent={ this.renderContent() }
+				/>
+			</div>
 		);
 	}
 }
