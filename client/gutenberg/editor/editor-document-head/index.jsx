@@ -4,24 +4,21 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { withSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getPostType } from 'state/post-types/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
-export const EditorDocumentHead = ( { isNewPost, postType, postTypeObject, translate } ) => {
+//TODO: CPT support once https://github.com/Automattic/wp-calypso/issues/27430 is fixed
+export const EditorDocumentHead = ( { isNewPost, postType, translate } ) => {
 	let title = '';
 	if ( 'post' === postType ) {
 		title = isNewPost ? translate( 'New Post' ) : translate( 'Edit Post' );
 	} else if ( 'page' === postType ) {
 		title = isNewPost ? translate( 'New Page' ) : translate( 'Edit Page' );
-	} else if ( !! postTypeObject ) {
-		title = isNewPost ? postTypeObject.labels.new_item : postTypeObject.labels.edit_item;
 	} else {
 		title = isNewPost ? translate( 'New' ) : translate( 'Edit' );
 	}
@@ -31,17 +28,14 @@ export const EditorDocumentHead = ( { isNewPost, postType, postTypeObject, trans
 
 EditorDocumentHead.propTypes = {
 	isNewPost: PropTypes.bool,
-	postId: PropTypes.number,
 	postType: PropTypes.string,
-	postTypeObject: PropTypes.object,
 };
 
-const mapStateToProps = ( state, { postId, postType } ) => {
-	const siteId = getSelectedSiteId( state );
+export default withSelect( select => {
+	const { getCurrentPost } = select( 'core/editor' );
+	const { status } = getCurrentPost();
+
 	return {
-		isNewPost: ! postId,
-		postTypeObject: getPostType( state, siteId, postType ),
+		isNewPost: status === 'auto-draft',
 	};
-};
-
-export default connect( mapStateToProps )( localize( EditorDocumentHead ) );
+} )( localize( EditorDocumentHead ) );
