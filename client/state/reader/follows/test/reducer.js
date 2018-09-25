@@ -153,10 +153,10 @@ describe( 'reducer', () => {
 					blog_ID: 124,
 				},
 				'in-flight.wordpress.com': {
-					feed_URL: 'http://dailypost.wordpress.com',
-					URL: 'http://dailypost.wordpress.com',
+					feed_URL: 'http://in-flight.wordpress.com',
+					URL: 'http://in-flight.wordpress.com',
 					is_following: true,
-					blog_ID: 124,
+					blog_ID: 125,
 				},
 			} );
 			expect( items( original, { type: SERIALIZE } ) ).toEqual( {
