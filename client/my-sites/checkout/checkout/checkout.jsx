@@ -63,7 +63,6 @@ import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canAddGoogleApps } from 'lib/domains';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
-import { loadTrackingTool } from 'state/analytics/actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
@@ -103,7 +102,6 @@ export class Checkout extends React.Component {
 		}
 
 		window.scrollTo( 0, 0 );
-		this.props.loadTrackingTool( 'HotJar' );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -689,6 +687,5 @@ export default connect(
 		fetchReceiptCompleted,
 		recordApplePayStatus,
 		requestSite,
-		loadTrackingTool,
 	}
 )( localize( Checkout ) );
