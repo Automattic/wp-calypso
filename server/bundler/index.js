@@ -12,6 +12,7 @@ const getWebpackConfig = require( 'webpack.config' );
 const config = require( 'config' );
 
 const protocol = process.env.PROTOCOL || config( 'protocol' );
+const host = process.env.HOST || config( 'hostname' );
 const port = process.env.PORT || config( 'port' );
 const shouldProfile = process.env.PROFILE === 'true';
 
@@ -51,7 +52,7 @@ function middleware( app ) {
 					beforeFirstCompile = false;
 					console.info(
 						chalk.cyan(
-							`\nReady! You can load ${ protocol }://calypso.localhost:${ port }/ now. Have fun!`
+							`\nReady! You can load ${ protocol }://${ host }:${ port }/ now. Have fun!`
 						)
 					);
 				} else {
