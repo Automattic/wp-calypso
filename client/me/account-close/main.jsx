@@ -32,10 +32,8 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
 import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
 import isAccountClosed from 'state/selectors/is-account-closed';
-import {
-	hasLoadedUserPurchasesFromServer,
-	hasCancelableUserPurchases,
-} from 'state/purchases/selectors';
+import { hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import hasCancelableUserPurchases from 'state/selectors/has-cancelable-user-purchases';
 import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
 import userUtils from 'lib/user/utils';
 
