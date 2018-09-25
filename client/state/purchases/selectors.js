@@ -115,22 +115,6 @@ export const hasCancelableUserPurchases = ( state, userId ) => {
 	return purchases && purchases.length > 0;
 };
 
-/**
- * Return the details of any premium themes the user has purchased
- * @param  {Object}  state       global state
- * @param  {Number}  userId      the user id
- * @return {Array|null} Details of any premium themes the user has purchased
- */
-export const getUserPurchasedPremiumThemes = ( state, userId ) => {
-	if ( ! state.purchases.hasLoadedUserPurchasesFromServer ) {
-		return false;
-	}
-
-	return getUserPurchases( state, userId ).filter(
-		purchase => purchase.productSlug === 'premium_theme'
-	);
-};
-
 export const isFetchingUserPurchases = state => state.purchases.isFetchingUserPurchases;
 export const isFetchingSitePurchases = state => state.purchases.isFetchingSitePurchases;
 export const hasLoadedUserPurchasesFromServer = state =>

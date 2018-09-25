@@ -35,8 +35,8 @@ import isAccountClosed from 'state/selectors/is-account-closed';
 import {
 	hasLoadedUserPurchasesFromServer,
 	hasCancelableUserPurchases,
-	getUserPurchasedPremiumThemes,
 } from 'state/purchases/selectors';
+import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
 import userUtils from 'lib/user/utils';
 
 class AccountSettingsClose extends Component {
