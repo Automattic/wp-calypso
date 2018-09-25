@@ -136,15 +136,23 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should only SERIALIZE followed items', () => {
+		test( 'should only SERIALIZE followed items with an ID', () => {
 			const original = deepFreeze( {
 				'discover.wordpress.com': {
+					ID: 1,
 					feed_URL: 'http://discover.wordpress.com',
 					URL: 'http://discover.wordpress.com',
 					is_following: false,
 					blog_ID: 123,
 				},
 				'dailypost.wordpress.com': {
+					ID: 2,
+					feed_URL: 'http://dailypost.wordpress.com',
+					URL: 'http://dailypost.wordpress.com',
+					is_following: true,
+					blog_ID: 124,
+				},
+				'in-flight.wordpress.com': {
 					feed_URL: 'http://dailypost.wordpress.com',
 					URL: 'http://dailypost.wordpress.com',
 					is_following: true,
@@ -153,6 +161,7 @@ describe( 'reducer', () => {
 			} );
 			expect( items( original, { type: SERIALIZE } ) ).toEqual( {
 				'dailypost.wordpress.com': {
+					ID: 2,
 					feed_URL: 'http://dailypost.wordpress.com',
 					URL: 'http://dailypost.wordpress.com',
 					is_following: true,

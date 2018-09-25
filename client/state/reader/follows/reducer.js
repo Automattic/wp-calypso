@@ -250,7 +250,7 @@ export const items = createReducer(
 			// or follows that we picked up from a feed, site, or post object.
 			return omitBy( state, follow => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
 		},
-		[ SERIALIZE ]: state => pickBy( state, item => item.is_following ),
+		[ SERIALIZE ]: state => pickBy( state, item => item.ID && item.is_following ),
 	},
 	itemsSchema
 );
