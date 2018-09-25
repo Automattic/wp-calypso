@@ -205,7 +205,6 @@ class Signup extends React.Component {
 			ref: this.props.refParameter,
 		} );
 		this.recordReferralVisit();
-		this.props.loadTrackingTool( 'HotJar' );
 		recordSignupStart();
 	}
 

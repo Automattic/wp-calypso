@@ -24,7 +24,7 @@ import { createNotice } from 'state/notices/actions';
 import { getPostsForQuery } from 'state/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 
@@ -34,7 +34,6 @@ class WpcomChecklist extends PureComponent {
 	static propTypes = {
 		createNotice: PropTypes.func.isRequired,
 		designType: PropTypes.oneOf( [ 'blog', 'page', 'portfolio' ] ),
-		loadTrackingTool: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		requestGuidedTour: PropTypes.func.isRequired,
 		requestSiteChecklistTaskUpdate: PropTypes.func.isRequired,
@@ -47,10 +46,6 @@ class WpcomChecklist extends PureComponent {
 	static defaultProps = {
 		viewMode: 'checklist',
 	};
-
-	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
-	}
 
 	isComplete( taskId ) {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
@@ -292,7 +287,6 @@ export default connect(
 	},
 	{
 		createNotice,
-		loadTrackingTool,
 		recordTracksEvent,
 		requestGuidedTour,
 		requestSiteChecklistTaskUpdate,
