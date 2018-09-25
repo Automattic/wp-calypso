@@ -12,6 +12,7 @@ const wpcom = wpLib.undocumented();
 /**
  * Internal dependencies
  */
+import invokeAndContinue from 'lib/invoke-and-continue';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
@@ -56,16 +57,8 @@ const importOrder = importerStatus =>
 	toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
 
 const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
-const apiSuccess = data => {
-	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_COMPLETED } );
-
-	return data;
-};
-const apiFailure = data => {
-	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_FAILED } );
-
-	return data;
-};
+const apiSuccess = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH_COMPLETED } );
+const apiFailure = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH_FAILED } );
 const setImportLock = ( shouldEnableLock, importerId ) => {
 	const type = shouldEnableLock ? IMPORTS_IMPORT_LOCK : IMPORTS_IMPORT_UNLOCK;
 
@@ -101,10 +94,10 @@ export function cancelImport( siteId, importerId ) {
 	apiStart();
 	wpcom
 		.updateImporter( siteId, cancelOrder( siteId, importerId ) )
-		.then( apiSuccess )
+		.then( invokeAndContinue( apiSuccess ) )
 		.then( fromApi )
 		.then( receiveImporterStatus )
-		.catch( apiFailure );
+		.catch( invokeAndContinue( apiFailure ) );
 }
 
 export const failUpload = importerId => ( { message: error } ) => ( {
@@ -118,11 +111,11 @@ export function fetchState( siteId ) {
 
 	return wpcom
 		.fetchImporterState( siteId )
-		.then( apiSuccess )
+		.then( invokeAndContinue( apiSuccess ) )
 		.then( asArray )
 		.then( importers => importers.map( fromApi ) )
 		.then( importers => importers.map( receiveImporterStatus ) )
-		.catch( apiFailure );
+		.catch( invokeAndContinue( apiFailure ) );
 }
 
 export const finishUpload = importerId => importerStatus => ( {
@@ -151,10 +144,10 @@ export function resetImport( siteId, importerId ) {
 	apiStart();
 	wpcom
 		.updateImporter( siteId, expiryOrder( siteId, importerId ) )
-		.then( apiSuccess )
+		.then( invokeAndContinue( apiSuccess ) )
 		.then( fromApi )
 		.then( receiveImporterStatus )
-		.catch( apiFailure );
+		.catch( invokeAndContinue( apiFailure ) );
 }
 
 export function startMappingAuthors( importerId ) {
