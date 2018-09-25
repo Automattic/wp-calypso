@@ -113,7 +113,7 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
 									{ purchasedPremiumThemes && (
 										<ActionPanelFigureListItem>
-											{ translate( 'Premium Themes' ) }
+											{ translate( 'Premium themes' ) }
 										</ActionPanelFigureListItem>
 									) }
 								</ActionPanelFigureList>
@@ -176,7 +176,7 @@ class AccountSettingsClose extends Component {
 										{ translate(
 											'You will also lose access to the following premium themes you have purchased:'
 										) }
-										<ul>
+										<ul className="account-close__theme-list">
 											{ map( purchasedPremiumThemes, purchasedPremiumTheme => {
 												return (
 													<li key={ purchasedPremiumTheme.id }>
@@ -247,13 +247,17 @@ class AccountSettingsClose extends Component {
 export default connect( state => {
 	const user = getCurrentUser( state );
 	const currentUserId = user && user.ID;
-	const isLoading = ! hasLoadedSites( state ) || ! hasLoadedUserPurchasesFromServer( state );
+	const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, currentUserId );
+	const isLoading =
+		! purchasedPremiumThemes ||
+		! hasLoadedSites( state ) ||
+		! hasLoadedUserPurchasesFromServer( state );
 
 	return {
 		currentUserId: user && user.ID,
 		isLoading,
 		hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
-		purchasedPremiumThemes: getUserPurchasedPremiumThemes( state, currentUserId ),
+		purchasedPremiumThemes,
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 		isAccountClosed: isAccountClosed( state ),
 	};
