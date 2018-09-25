@@ -15,7 +15,11 @@ import { parse as parseURL } from 'url';
 import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { setNuxUrlInputValue, setValidationMessage } from 'state/importer-nux/actions';
+import {
+	fetchIsSiteImportable,
+	setNuxUrlInputValue,
+	setValidationMessage,
+} from 'state/importer-nux/actions';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import {
@@ -60,7 +64,7 @@ class ImportURLStepComponent extends Component {
 			} );
 		}
 
-		this.goToNextStep( {} );
+		this.props.fetchIsSiteImportable( this.props.urlInputValue ).then( () => this.goToNextStep() );
 	};
 
 	goToNextStep = () => {
@@ -160,6 +164,7 @@ export default flow(
 			urlInputValidationMessage: getUrlInputValidationMessage( state ),
 		} ),
 		{
+			fetchIsSiteImportable,
 			setNuxUrlInputValue,
 			setValidationMessage,
 		}
