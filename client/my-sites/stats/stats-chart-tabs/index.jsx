@@ -214,8 +214,20 @@ class StatModuleChartTabs extends Component {
 		} );
 	}
 
+	renderQueries() {
+		const { fullQuery, quickQuery, siteId } = this.props;
+		return (
+			siteId && (
+				<>
+					<QuerySiteStats statType="statsVisits" siteId={ siteId } query={ quickQuery } />
+					<QuerySiteStats statType="statsVisits" siteId={ siteId } query={ fullQuery } />
+				</>
+			)
+		);
+	}
+
 	render() {
-		const { data, fullQuery, isActiveTabLoading, quickQuery, siteId } = this.props;
+		const { isActiveTabLoading } = this.props;
 		const activeTab = this.getActiveTab();
 		let availableCharts = [];
 		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
@@ -225,13 +237,8 @@ class StatModuleChartTabs extends Component {
 
 		return (
 			<div>
-				{ siteId && (
-					<QuerySiteStats statType="statsVisits" siteId={ siteId } query={ quickQuery } />
-				) }
-				{ siteId && (
-					<QuerySiteStats statType="statsVisits" siteId={ siteId } query={ fullQuery } />
-				) }
 				<Card className={ classNames( ...classes ) }>
+					{ this.renderQueries() }
 					<Legend
 						tabs={ this.props.charts }
 						activeTab={ activeTab }
@@ -247,7 +254,7 @@ class StatModuleChartTabs extends Component {
 						loading={ isActiveTabLoading }
 					/>
 					<StatTabs
-						data={ data }
+						data={ this.props.data }
 						tabs={ this.props.charts }
 						switchTab={ this.props.switchTab }
 						selectedTab={ this.props.chartTab }
