@@ -263,6 +263,10 @@ class StatModuleChartTabs extends Component {
 const connectComponent = connect(
 	( state, { moment, period: periodObject, chartTab, queryDate } ) => {
 		const siteId = getSelectedSiteId( state );
+		if ( ! siteId ) {
+			return { siteId, data: [] };
+		}
+
 		const { period } = periodObject;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const momentSiteZone = moment().utcOffset( timezoneOffset );
