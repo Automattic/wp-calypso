@@ -114,32 +114,12 @@ class StatModuleChartTabs extends Component {
 				} );
 
 				if ( item.data.post_titles && item.data.post_titles.length ) {
-					// only show two post titles
-					if ( item.data.post_titles.length > 2 ) {
-						tooltipData.push( {
-							label: this.props.translate( 'Posts Published' ),
-							value: this.props.numberFormat( item.data.post_titles.length ),
-							className: 'is-published-nolist',
-							icon: 'posts',
-						} );
-					} else {
-						tooltipData.push( {
-							label:
-								this.props.translate( 'Post Published', 'Posts Published', {
-									textOnly: true,
-									count: item.data.post_titles.length,
-								} ) + ':',
-							className: 'is-published',
-							icon: 'posts',
-							value: '',
-						} );
-						item.data.post_titles.forEach( post_title => {
-							tooltipData.push( {
-								className: 'is-published-item',
-								label: post_title,
-							} );
-						} );
-					}
+					tooltipData.push( {
+						label: this.props.translate( 'Posts Published' ),
+						value: this.props.numberFormat( item.data.post_titles.length ),
+						className: 'is-published-nolist',
+						icon: 'posts',
+					} );
 				}
 				break;
 		}
