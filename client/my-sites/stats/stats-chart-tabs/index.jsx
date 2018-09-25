@@ -30,25 +30,23 @@ import { getSiteOption } from 'state/sites/selectors';
 import { getQueryDate } from './utility';
 
 class StatModuleChartTabs extends Component {
-	constructor( props ) {
-		super( props );
-		const activeTab = this.getActiveTab();
-		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
-		this.state = {
-			activeLegendCharts: activeCharts,
-			activeTab: activeTab,
-		};
+	state = {
+		activeLegendCharts: null,
+		activeTab: null,
+	};
+
+	static getDerivedStateFromProps( props, state ) {
+		const activeTab = StatModuleChartTabs.getActiveTab( props );
+		const activeLegendCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
+
+		if ( activeTab !== state.activeTab ) {
+			return { activeLegendCharts, activeTab };
+		}
+		return null;
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		const activeTab = this.getActiveTab( nextProps );
-		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
-		if ( activeTab !== this.state.activeTab ) {
-			this.setState( {
-				activeLegendCharts: activeCharts,
-				activeTab: activeTab,
-			} );
-		}
+	static getActiveTab( props ) {
+		return find( props.charts, { attr: props.chartTab } ) || props.charts[ 0 ];
 	}
 
 	buildTooltipData( item ) {
@@ -170,11 +168,6 @@ class StatModuleChartTabs extends Component {
 		} );
 	};
 
-	getActiveTab( nextProps ) {
-		const props = nextProps || this.props;
-		return find( props.charts, { attr: props.chartTab } ) || props.charts[ 0 ];
-	}
-
 	buildChartData() {
 		const { data } = this.props;
 		if ( ! data ) {
@@ -216,12 +209,7 @@ class StatModuleChartTabs extends Component {
 
 	render() {
 		const { isActiveTabLoading, siteId, quickQuery, fullQuery } = this.props;
-		const activeTab = this.getActiveTab();
-		let availableCharts = [];
 		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
-		if ( activeTab.legendOptions ) {
-			availableCharts = activeTab.legendOptions;
-		}
 
 		return (
 			<div>
@@ -233,11 +221,11 @@ class StatModuleChartTabs extends Component {
 				) }
 				<Card className={ classNames( ...classes ) }>
 					<Legend
-						tabs={ this.props.charts }
-						activeTab={ activeTab }
-						availableCharts={ availableCharts }
 						activeCharts={ this.state.activeLegendCharts }
+						activeTab={ this.state.activeTab }
+						availableCharts={ this.state.activeLegendCharts }
 						clickHandler={ this.onLegendClick }
+						tabs={ this.props.charts }
 					/>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
