@@ -336,7 +336,7 @@ jobs:
           path: /tmp/test_results
 
 workflows:
-  version: 2.1
+  version: 2
   calypso:
     jobs:
       - lint-and-translate
