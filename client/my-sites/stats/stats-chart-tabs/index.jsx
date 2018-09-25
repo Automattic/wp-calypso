@@ -21,13 +21,15 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	isRequestingSiteStatsForQuery,
-	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSiteOption } from 'state/sites/selectors';
-import { formatDate, getQueryDate } from './utility';
+import {
+	formatDate,
+	generateQueries,
+	getMergedData,
+	getQueryDate,
+	getRequestStatuses,
+} from './utility';
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
@@ -42,6 +44,13 @@ class StatModuleChartTabs extends Component {
 				visits: PropTypes.number,
 			} )
 		),
+		queries: PropTypes.shape( {
+			comments: PropTypes.object,
+			likes: PropTypes.object,
+			post_titles: PropTypes.object,
+			views: PropTypes.object,
+			visitors: PropTypes.object,
+		} ),
 		isActiveTabLoading: PropTypes.bool,
 	};
 
@@ -187,14 +196,16 @@ class StatModuleChartTabs extends Component {
 	}
 
 	renderQueries() {
-		const { fullQuery, quickQuery, siteId } = this.props;
 		return (
-			siteId && (
-				<>
-					<QuerySiteStats statType="statsVisits" siteId={ siteId } query={ quickQuery } />
-					<QuerySiteStats statType="statsVisits" siteId={ siteId } query={ fullQuery } />
-				</>
-			)
+			this.props.siteId &&
+			Object.values( this.props.queries ).map( q => (
+				<QuerySiteStats
+					key={ q.stat_fields }
+					query={ q }
+					siteId={ this.props.siteId }
+					statType="statsVisits"
+				/>
+			) )
 		);
 	}
 
@@ -208,7 +219,7 @@ class StatModuleChartTabs extends Component {
 					{ this.renderQueries() }
 					<Legend
 						activeCharts={ this.state.activeLegendCharts }
-						activeTab={ this.state.activeTab }
+						activeTab={ StatModuleChartTabs.getActiveTab( this.props ) }
 						availableCharts={ this.state.activeLegendCharts }
 						clickHandler={ this.onLegendClick }
 						tabs={ this.props.charts }
@@ -221,12 +232,12 @@ class StatModuleChartTabs extends Component {
 						loading={ isActiveTabLoading }
 					/>
 					<StatTabs
-						data={ this.props.data }
-						tabs={ this.props.charts }
-						switchTab={ this.props.switchTab }
-						selectedTab={ this.props.chartTab }
 						activeIndex={ this.props.queryDate }
 						activeKey="period"
+						data={ this.props.data }
+						selectedTab={ this.props.chartTab }
+						switchTab={ this.props.switchTab }
+						tabs={ this.props.charts }
 					/>
 				</Card>
 			</div>
@@ -244,46 +255,22 @@ const connectComponent = connect(
 		const quantity = 'year' === period ? 10 : 30;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
 		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
-
-		// If we are on the default Tab, grab visitors too
-		const quickQueryFields = 'views' === chartTab ? 'views,visitors' : chartTab;
-
-		const query = { unit: period, date, quantity };
-		const quickQuery = { ...query, stat_fields: quickQueryFields };
-		const fullQuery = { ...query, stat_fields: 'views,visitors,likes,comments,post_titles' };
-
-		const quickQueryRequesting = isRequestingSiteStatsForQuery(
-			state,
-			siteId,
-			'statsVisits',
-			quickQuery
-		);
-		const fullQueryRequesting = isRequestingSiteStatsForQuery(
-			state,
-			siteId,
-			'statsVisits',
-			fullQuery
-		);
-
-		const quickQueryData = getSiteStatsNormalizedData( state, siteId, 'statsVisits', quickQuery );
-		const fullQueryData = getSiteStatsNormalizedData( state, siteId, 'statsVisits', fullQuery );
-		const data = fullQueryRequesting ? quickQueryData : fullQueryData;
+		const queries = generateQueries( period, date, quantity );
+		const data = getMergedData( state, siteId, queries );
+		const isRequesting = getRequestStatuses( state, siteId, queries );
 
 		return {
 			data,
-			fullQuery,
-			fullQueryRequesting,
-			isAsactiveTabLoading:
-				quickQueryRequesting && fullQueryRequesting && ! ( data && data.length ),
-			quickQuery,
-			quickQueryRequesting,
+			isActiveTabLoading: isRequesting[ chartTab ] && ! ( data && data.length ),
+			isRequesting,
+			queries,
 			siteId,
 		};
 	},
 	{ recordGoogleEvent },
 	null,
 	{
-		areStatePropsEqual: compareProps( { deep: [ 'quickQuery', 'fullQuery' ] } ),
+		areStatePropsEqual: compareProps( { deep: [ 'siteId', 'isRequesting' ] } ),
 	}
 );
 
