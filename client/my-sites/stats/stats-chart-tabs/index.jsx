@@ -3,8 +3,8 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { find, flowRight } from 'lodash';
 import { connect } from 'react-redux';
@@ -30,6 +30,21 @@ import { getSiteOption } from 'state/sites/selectors';
 import { formatDate, getQueryDate } from './utility';
 
 class StatModuleChartTabs extends Component {
+	static propTypes = {
+		data: PropTypes.arrayOf(
+			PropTypes.shape( {
+				comments: PropTypes.number,
+				labelDay: PropTypes.string,
+				likes: PropTypes.number,
+				period: PropTypes.string,
+				posts: PropTypes.number,
+				visitors: PropTypes.number,
+				visits: PropTypes.number,
+			} )
+		),
+		isActiveTabLoading: PropTypes.bool,
+	};
+
 	state = {
 		activeLegendCharts: null,
 		activeTab: null,
