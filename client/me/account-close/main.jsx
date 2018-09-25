@@ -9,6 +9,7 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,7 +32,11 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import hasLoadedSites from 'state/selectors/has-loaded-sites';
 import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
 import isAccountClosed from 'state/selectors/is-account-closed';
-import { hasLoadedUserPurchasesFromServer, getUserPurchases } from 'state/purchases/selectors';
+import {
+	hasLoadedUserPurchasesFromServer,
+	hasCancelableUserPurchases,
+	getUserPurchasedPremiumThemes,
+} from 'state/purchases/selectors';
 import userUtils from 'lib/user/utils';
 
 class AccountSettingsClose extends Component {
@@ -66,8 +71,15 @@ class AccountSettingsClose extends Component {
 	};
 
 	render() {
-		const { translate, currentUserId, hasAtomicSites, hasPurchases, isLoading } = this.props;
-		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasPurchases;
+		const {
+			translate,
+			currentUserId,
+			hasAtomicSites,
+			hasCancelablePurchases,
+			isLoading,
+			purchasedPremiumThemes,
+		} = this.props;
+		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
 		const containerClasses = classnames( 'account-close', 'main', {
 			'is-loading': isLoading,
 		} );
@@ -99,6 +111,11 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
+									{ purchasedPremiumThemes && (
+										<ActionPanelFigureListItem>
+											{ translate( 'Premium Themes' ) }
+										</ActionPanelFigureListItem>
+									) }
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
@@ -128,7 +145,7 @@ class AccountSettingsClose extends Component {
 								</Fragment>
 							) }
 						{ ! isLoading &&
-							hasPurchases &&
+							hasCancelablePurchases &&
 							! hasAtomicSites && (
 								<Fragment>
 									<p className="account-close__body-copy">
@@ -154,6 +171,22 @@ class AccountSettingsClose extends Component {
 										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
 									) }
 								</p>
+								{ purchasedPremiumThemes && (
+									<Fragment>
+										{ translate(
+											'You will also lose access to the following premium themes you have purchased:'
+										) }
+										<ul>
+											{ map( purchasedPremiumThemes, purchasedPremiumTheme => {
+												return (
+													<li key={ purchasedPremiumTheme.id }>
+														{ purchasedPremiumTheme.productName }
+													</li>
+												);
+											} ) }
+										</ul>
+									</Fragment>
+								) }
 								<p className="account-close__body-copy">
 									{ translate(
 										'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
@@ -194,7 +227,7 @@ class AccountSettingsClose extends Component {
 								{ translate( 'Contact support' ) }
 							</Button>
 						) }
-						{ hasPurchases &&
+						{ hasCancelablePurchases &&
 							! hasAtomicSites && (
 								<Button primary href="/me/purchases">
 									{ translate( 'Manage purchases', { context: 'button label' } ) }
@@ -214,14 +247,13 @@ class AccountSettingsClose extends Component {
 export default connect( state => {
 	const user = getCurrentUser( state );
 	const currentUserId = user && user.ID;
-	const purchases = getUserPurchases( state, currentUserId );
-	const isLoading =
-		! purchases || ! hasLoadedSites( state ) || ! hasLoadedUserPurchasesFromServer( state );
+	const isLoading = ! hasLoadedSites( state ) || ! hasLoadedUserPurchasesFromServer( state );
 
 	return {
 		currentUserId: user && user.ID,
 		isLoading,
-		hasPurchases: purchases && purchases.length > 0,
+		hasCancelablePurchases: hasCancelableUserPurchases( state, currentUserId ),
+		purchasedPremiumThemes: getUserPurchasedPremiumThemes( state, currentUserId ),
 		hasAtomicSites: userHasAnyAtomicSites( state ),
 		isAccountClosed: isAccountClosed( state ),
 	};
