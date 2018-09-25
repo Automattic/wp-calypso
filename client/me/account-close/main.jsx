@@ -109,11 +109,12 @@ class AccountSettingsClose extends Component {
 									<ActionPanelFigureListItem>{ translate( 'Media' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
 									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
-									{ purchasedPremiumThemes && (
-										<ActionPanelFigureListItem>
-											{ translate( 'Premium themes' ) }
-										</ActionPanelFigureListItem>
-									) }
+									{ purchasedPremiumThemes &&
+										purchasedPremiumThemes.length > 0 && (
+											<ActionPanelFigureListItem>
+												{ translate( 'Premium themes' ) }
+											</ActionPanelFigureListItem>
+										) }
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
@@ -169,22 +170,23 @@ class AccountSettingsClose extends Component {
 										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
 									) }
 								</p>
-								{ purchasedPremiumThemes && (
-									<Fragment>
-										{ translate(
-											'You will also lose access to the following premium themes you have purchased:'
-										) }
-										<ul className="account-close__theme-list">
-											{ map( purchasedPremiumThemes, purchasedPremiumTheme => {
-												return (
-													<li key={ purchasedPremiumTheme.id }>
-														{ purchasedPremiumTheme.productName }
-													</li>
-												);
-											} ) }
-										</ul>
-									</Fragment>
-								) }
+								{ purchasedPremiumThemes &&
+									purchasedPremiumThemes.length > 0 && (
+										<Fragment>
+											{ translate(
+												'You will also lose access to the following premium themes you have purchased:'
+											) }
+											<ul className="account-close__theme-list">
+												{ map( purchasedPremiumThemes, purchasedPremiumTheme => {
+													return (
+														<li key={ purchasedPremiumTheme.id }>
+															{ purchasedPremiumTheme.productName }
+														</li>
+													);
+												} ) }
+											</ul>
+										</Fragment>
+									) }
 								<p className="account-close__body-copy">
 									{ translate(
 										'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
