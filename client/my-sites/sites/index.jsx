@@ -73,13 +73,14 @@ export class Sites extends Component {
 				break;
 		}
 
-		return i18n.translate( 'Please select a site to open {{strong}}%(path)s{{/strong}}', {
+		return i18n.translate( "Not a real string we're interested in translating", {
 			args: {
 				path: path,
 			},
 			components: {
 				strong: <strong />,
 			},
+			comment: 'TRANSLATORS: This is just a test. Do not translate!',
 		} );
 	};
 
