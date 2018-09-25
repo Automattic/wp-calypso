@@ -102,9 +102,9 @@ export class ActionTypeSelector extends Component {
 
 	humanReadable = count => {
 		if ( count >= 1000 ) {
-			return this.props.translate( '%(number_over_thousend)d K+', {
+			return this.props.translate( '%(number_over_thousand)d K+', {
 				args: {
-					number_over_thousend: Math.floor( ( count / 1000 ) * 10 ) / 10,
+					number_over_thousand: Math.floor( ( count / 1000 ) * 10 ) / 10,
 				},
 			} );
 		}
