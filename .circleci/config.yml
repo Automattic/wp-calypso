@@ -106,7 +106,7 @@ references:
     docker: *docker-image
     environment: *shared-environment
 
-version: 2
+version: 2.1
 jobs:
   lint-and-translate:
     <<: *defaults
