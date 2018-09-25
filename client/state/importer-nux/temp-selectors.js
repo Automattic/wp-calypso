@@ -14,6 +14,3 @@ export const getSelectedImportEngine = state => get( getSiteDetails( state ), 'e
 export const getImporterSiteUrl = state => get( getSiteDetails( state ), 'siteUrl' );
 
 export const isUrlInputDisabled = state => get( state, 'importerNux.isUrlInputDisabled' );
-
-export const getUrlInputValidationMessage = state =>
-	get( state, 'importerNux.urlInputValidationMessage' );

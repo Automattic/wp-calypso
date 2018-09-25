@@ -5,35 +5,30 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, indexOf, inRange } from 'lodash';
+import { flow, indexOf, inRange } from 'lodash';
 import { isWebUri } from 'valid-url';
 import { parse as parseURL } from 'url';
 
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import StepWrapper from 'signup/step-wrapper';
-import SignupActions from 'lib/signup/actions';
+// import SignupActions from 'lib/signup/actions';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
-import {
-	fetchIsSiteImportable,
-	setNuxUrlInputValue,
-	setValidationMessage,
-} from 'state/importer-nux/actions';
+import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import FormInputValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import {
 	getNuxUrlInputValue,
 	getSiteDetails,
-	getUrlInputValidationMessage,
 	isUrlInputDisabled,
 } from 'state/importer-nux/temp-selectors';
 
-const normalizeUrlForImportSource = url => {
-	// @TODO sanitize? Prepend https:// ..?
-	return url;
-};
+// const normalizeUrlForImportSource = url => {
+// 	// @TODO sanitize? Prepend https:// ..?
+// 	return url;
+// };
 
 const isValidUrl = ( value = '' ) => {
 	const { protocol } = parseURL( value );
@@ -44,36 +39,25 @@ const isValidUrl = ( value = '' ) => {
 	return isWebUri( withProtocol ) && hasDot;
 };
 
+const getUrlValidationMessage = function( url ) {
+	return isValidUrl( url ) ? null : 'Please enter a valid URL';
+};
+
 class ImportURLStepComponent extends Component {
-	componentDidMount() {
-		const { queryObject } = this.props;
-		const urlFromQueryArg = normalizeUrlForImportSource( get( queryObject, 'url' ) );
-
-		if ( urlFromQueryArg ) {
-			this.handleInputChange( urlFromQueryArg );
-		}
-	}
-
-	componentDidUpdate() {
-		if ( this.props.siteDetails.siteUrl ) {
-			// this.goToNextStep();
-		}
-	}
-
 	state = {
-		showValidation: false,
+		// Url message could be client-side validation or server-side error.
+		showUrlMessage: false,
+		urlValidationMessage: '',
+		isSiteImportableError: '',
 	};
 
-	handleAction = () => {
-		if ( this.props.urlInputValidationMessage ) {
-			return this.setState( {
-				showValidation: true,
-			} );
-		}
+	// componentDidUpdate() {
+	// 	if ( this.props.siteDetails.siteUrl ) {
+	// 		// this.goToNextStep();
+	// 	}
+	// }
 
-		this.props.fetchIsSiteImportable( this.props.urlInputValue );
-	};
-
+<<<<<<< HEAD
 	goToNextStep = () => {
 		const { siteDetails, urlInputValue } = this.props;
 		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
@@ -81,45 +65,69 @@ class ImportURLStepComponent extends Component {
 			importSiteDetails: siteDetails,
 			themeSlugWithRepo: 'pub/radcliffe-2',
 		} );
+=======
+	// goToNextStep = () => {
+	// 	const { urlInputValue } = this.props;
+	// 	SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
+	// 		importUrl: urlInputValue,
+	// 		themeSlugWithRepo: 'pub/radcliffe-2',
+	// 	} );
+>>>>>>> Updates site validation UI and check if a valid url is importable
 
-		this.props.goToNextStep();
-	};
+	// 	// this.props.goToNextStep();
+	// };
 
 	handleInputChange = event => {
-		const validationMessage = isValidUrl( event.target.value )
-			? ''
-			: this.props.translate( 'Please enter a valid URL.' );
-
+		// Hide validation if user is updating input.
 		this.setState( {
-			showValidation: false,
+			showUrlMessage: false,
 		} );
 
 		this.props.setNuxUrlInputValue( event.target.value );
-		this.props.setValidationMessage( validationMessage );
 	};
 
 	handleInputBlur = () => {
-		this.setState( {
-			showValidation: true,
-		} );
+		this.validateUrl();
 	};
 
-	checkValidation( value ) {
-		const { translate } = this.props;
-		const message = isValidUrl( value )
-			? ''
-			: translate( 'Please enter the full URL of your site.' );
+	handleSubmit = event => {
+		event.preventDefault();
 
-		this.props.setValidationMessage( message );
-	}
+		const isValid = this.validateUrl();
+
+		if ( ! isValid ) {
+			return;
+		}
+
+		this.props.fetchIsSiteImportable( this.props.urlInputValue );
+	};
+
+	validateUrl = () => {
+		const validationMessage = getUrlValidationMessage( this.props.urlInputValue );
+		const isValid = ! validationMessage;
+
+		this.setState( {
+			urlValidationMessage: isValid ? '' : validationMessage,
+			showUrlMessage: true,
+		} );
+
+		return isValid;
+	};
+
+	isUrlValid = () => ! this.state.urlValidationMessage;
 
 	renderContent = () => {
-		const { isLoading, urlInputValidationMessage, urlInputValue, translate } = this.props;
-		const { showValidation } = this.state;
+		// const { isLoading, urlInputValidationMessage, urlInputValue, translate } = this.props;
+		const { isLoading, urlInputValue, translate } = this.props;
+		const { showUrlMessage, urlValidationMessage } = this.state;
+		const isUrlInvalid = ! this.isUrlValid();
 
 		return (
-			<div className="import-url__wrapper site-importer__site-importer-pane">
-				<form className="import-url__form site-importer__site-importer-url-input">
+			<Card className="import-url__wrapper site-importer__site-importer-pane" tagName="div">
+				<form
+					className="import-url__form site-importer__site-importer-url-input"
+					onSubmit={ this.handleSubmit }
+				>
 					<FormTextInput
 						placeholder="https://example.wixsite.com/mysite"
 						disabled={ isLoading }
@@ -127,27 +135,15 @@ class ImportURLStepComponent extends Component {
 						onChange={ this.handleInputChange }
 						onBlur={ this.handleInputBlur }
 					/>
-					<FormButton
-						// className="form-text-input-with-action__button is-compact"
-						disabled={ isLoading }
-						busy={ isLoading }
-						onClick={ this.handleAction }
-						type="submit"
-					>
+					<FormButton disabled={ isLoading } busy={ isLoading } type="submit">
 						{ translate( 'Continue' ) }
 					</FormButton>
 				</form>
-				{ showValidation ? (
-					<FormInputValidation
-						text={ urlInputValidationMessage || translate( 'This URL is valid.' ) }
-						isError={ !! urlInputValidationMessage }
-					/>
-				) : (
-					<FormSettingExplanation>
-						{ translate( 'Please enter the full URL of your site.' ) }
-					</FormSettingExplanation>
-				) }
-			</div>
+				{ showUrlMessage &&
+					isUrlInvalid && (
+						<FormInputValidation text={ urlValidationMessage } isError={ isUrlInvalid } />
+					) }
+			</Card>
 		);
 	};
 
@@ -161,7 +157,7 @@ class ImportURLStepComponent extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ translate( 'Where can we find your old site?' ) }
 				subHeaderText={ translate(
-					"Enter your site's URL, sometimes called a domain name or site address."
+					"Enter your Wix site's URL, sometimes called a domain name or site address."
 				) }
 				signupProgress={ signupProgress }
 				stepContent={ this.renderContent() }
@@ -176,12 +172,10 @@ export default flow(
 			urlInputValue: getNuxUrlInputValue( state ),
 			siteDetails: getSiteDetails( state ),
 			isLoading: isUrlInputDisabled( state ),
-			urlInputValidationMessage: getUrlInputValidationMessage( state ),
 		} ),
 		{
 			fetchIsSiteImportable,
 			setNuxUrlInputValue,
-			setValidationMessage,
 		}
 	),
 	localize
