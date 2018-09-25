@@ -228,11 +228,7 @@ class MediaLibraryContent extends React.Component {
 	}
 
 	getThumbnailType() {
-		if ( this.props.source !== '' ) {
-			return MEDIA_IMAGE_THUMBNAIL;
-		}
-
-		return MEDIA_IMAGE_RESIZER;
+		return this.props.source !== '' ? MEDIA_IMAGE_THUMBNAIL : MEDIA_IMAGE_RESIZER;
 	}
 
 	needsToBeConnected() {
