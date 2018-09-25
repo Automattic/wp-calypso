@@ -26,8 +26,8 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { rangeOfPeriod } from 'state/stats/lists/utils';
 import { getSiteOption } from 'state/sites/selectors';
+import { getQueryDate } from './utility';
 
 class StatModuleChartTabs extends Component {
 	constructor( props ) {
@@ -261,29 +261,15 @@ class StatModuleChartTabs extends Component {
 }
 
 const connectComponent = connect(
-	( state, { moment, period: periodObject, chartTab, queryDate } ) => {
+	( state, { period: { period }, chartTab, queryDate } ) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return { siteId, data: [] };
 		}
 
-		const { period } = periodObject;
+		const quantity = 'year' === period ? 10 : 30;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const momentSiteZone = moment().utcOffset( timezoneOffset );
-		let date = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
-
-		let quantity = 30;
-		switch ( period ) {
-			case 'year':
-				quantity = 10;
-				break;
-		}
-		const periodDifference = moment( date ).diff( moment( queryDate ), period );
-		if ( periodDifference >= quantity ) {
-			date = moment( date )
-				.subtract( Math.floor( periodDifference / quantity ) * quantity, period )
-				.format( 'YYYY-MM-DD' );
-		}
+		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 
 		// If we are on the default Tab, grab visitors too
 		const quickQueryFields = 'views' === chartTab ? 'views,visitors' : chartTab;
