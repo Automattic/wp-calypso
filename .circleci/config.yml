@@ -1,3 +1,5 @@
+version: 2.1
+
 references:
   shared-environment: &shared-environment
     CIRCLE_ARTIFACTS: /tmp/artifacts
@@ -106,15 +108,10 @@ references:
     docker: *docker-image
     environment: *shared-environment
 
-version: 2
-jobs:
-  lint-and-translate:
-    <<: *defaults
-    parallelism: 1
+commands:
+  setup:
+    description: "Basic Setup"
     steps:
-      ###############
-      # Basic Setup #
-      # #############
       # repo
       - restore_cache: *restore-git-cache
       - checkout
@@ -126,9 +123,13 @@ jobs:
       - save_cache: *save-node-modules-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
-      ###################
-      # End Basic Setup #
-      ###################
+
+jobs:
+  lint-and-translate:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - setup
       - run:
           name: Lint Config Keys
           when: always
@@ -205,23 +206,7 @@ jobs:
     <<: *defaults
     parallelism: 6
     steps:
-      ###############
-      # Basic Setup #
-      # #############
-      # repo
-      - restore_cache: *restore-git-cache
-      - checkout
-      - run: *update-git-master
-      - save_cache: *save-git-cache
-      # npm dependencies
-      - restore_cache: *restore-node-modules-cache
-      - run: *npm-install
-      - save_cache: *save-node-modules-cache
-      # folders to collect results
-      - run: *setup-results-and-artifacts
-      ###################
-      # End Basic Setup #
-      ###################
+      - setup
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Client Tests
@@ -257,23 +242,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      ###############
-      # Basic Setup #
-      # #############
-      # repo
-      - restore_cache: *restore-git-cache
-      - checkout
-      - run: *update-git-master
-      - save_cache: *save-git-cache
-      # npm dependencies
-      - restore_cache: *restore-node-modules-cache
-      - run: *npm-install
-      - save_cache: *save-node-modules-cache
-      # folders to collect results
-      - run: *setup-results-and-artifacts
-      ###################
-      # End Basic Setup #
-      ###################
+      - setup
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Integration Tests
@@ -297,23 +266,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      ###############
-      # Basic Setup #
-      # #############
-      # repo
-      - restore_cache: *restore-git-cache
-      - checkout
-      - run: *update-git-master
-      - save_cache: *save-git-cache
-      # npm dependencies
-      - restore_cache: *restore-node-modules-cache
-      - run: *npm-install
-      - save_cache: *save-node-modules-cache
-      # folders to collect results
-      - run: *setup-results-and-artifacts
-      ###################
-      # End Basic Setup #
-      ###################
+      - setup
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Server Tests
