@@ -56,7 +56,7 @@ export const items = ( state = [], action ) => {
 					nextGap = [ { isGap: true, from, to } ];
 				}
 
-				return [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ];
+				return combineXPosts( [ ...beforeGap, ...streamItems, ...nextGap, ...afterGap ] );
 			}
 
 			const newState = [ ...state, ...streamItems ];
@@ -131,7 +131,14 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 				return state;
 			}
 
-			const newItems = [ ...streamItems ];
+			let newItems = [ ...streamItems ];
+
+			// Find any x-posts and filter out duplicates
+			const newXPosts = filter( newItems, postKey => postKey.xPostMetadata );
+
+			if ( newXPosts ) {
+				newItems = combineXPosts( newItems );
+			}
 
 			// there is a gap if the oldest item in the poll is newer than last update time
 			if ( state.lastUpdated && minDate.isAfter( state.lastUpdated ) ) {
