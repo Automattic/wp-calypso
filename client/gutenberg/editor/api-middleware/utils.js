@@ -14,6 +14,7 @@ import {
 	pathRewriteMiddleware,
 	urlRewriteMiddleware,
 	wpcomProxyMiddleware,
+	oembedMiddleware,
 } from './index';
 
 export class WithAPIMiddleware extends Component {
@@ -43,6 +44,9 @@ export class WithAPIMiddleware extends Component {
 
 		// This call intentionally breaks the middleware chain.
 		apiFetch.use( options => wpcomProxyMiddleware( options ) );
+
+		// This call may break the middleware chain if we match an oembed
+		apiFetch.use( ( options, next ) => oembedMiddleware( options, next, siteSlug ) );
 
 		apiFetch.use( ( options, next ) => debugMiddleware( options, next ) );
 

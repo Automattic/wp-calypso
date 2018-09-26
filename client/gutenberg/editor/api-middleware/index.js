@@ -4,6 +4,8 @@
  * External dependencies
  */
 import wpcomProxyRequest from 'wpcom-proxy-request';
+import url from 'url';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -32,6 +34,38 @@ export const pathRewriteMiddleware = ( options, next, siteSlug ) => {
 	const wpcomPath = options.path.replace( '/wp/v2/', `/sites/${ siteSlug }/` );
 
 	return next( { ...options, path: wpcomPath } );
+};
+
+export const oembedMiddleware = ( options, next, siteSlug ) => {
+	// Updates https://public-api.wordpress.com/wp/v2/oembed/1.0/proxy?url=<source URL> to
+	// https://public-api.wordpress.com/rest/v1.1/sites/<site ID>/embeds/render?embed_url=<source URL>&force=wpcom
+	// This intentionally breaks the middleware chain if we match an embed.
+	if ( /oembed\/1.0\/proxy/.test( options.url ) ) {
+		const urlObject = url.parse( options.url, { parseQueryString: true } );
+		// Make authenticated calls using the WordPress.com REST Proxy
+		// bypassing the apiFetch call that uses window.fetch.
+		// This intentionally breaks the middleware chain.
+		return new Promise( ( resolve, reject ) => {
+			const query = {
+				force: 'wpcom',
+				embed_url: urlObject.query.url,
+			};
+			wpcomProxyRequest(
+				{
+					path: `/sites/${ siteSlug }/embeds/render?${ stringify( query ) }`,
+					apiVersion: '1.1',
+				},
+				( error, bodyOrData ) => {
+					if ( error ) {
+						return reject( error );
+					}
+
+					return resolve( bodyOrData );
+				}
+			);
+		} );
+	}
+	return next( options );
 };
 
 export const wpcomProxyMiddleware = parameters => {
