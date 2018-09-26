@@ -119,7 +119,7 @@ class DomainsStep extends React.Component {
 			suggestion,
 		};
 
-		this.props.recordAddDomainButtonClick( suggestion.domain_name, 'signup' );
+		this.props.recordAddDomainButtonClick( suggestion.domain_name, this.getAnalyticsSection() );
 
 		SignupActions.saveSignupStep( stepData );
 
@@ -167,7 +167,7 @@ class DomainsStep extends React.Component {
 				  } )
 				: undefined;
 
-		this.props.submitDomainStepSelection( suggestion, 'signup' );
+		this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
 		SignupActions.submitSignupStep(
 			Object.assign(
@@ -197,7 +197,7 @@ class DomainsStep extends React.Component {
 		const domainItem = cartItems.domainMapping( { domain } );
 		const isPurchasingItem = true;
 
-		this.props.recordAddDomainButtonClickInMapDomain( domain, 'signup' );
+		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
 
 		SignupActions.submitSignupStep(
 			Object.assign(
@@ -229,7 +229,7 @@ class DomainsStep extends React.Component {
 		} );
 		const isPurchasingItem = true;
 
-		this.props.recordAddDomainButtonClickInTransferDomain( domain, 'signup' );
+		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
 
 		SignupActions.submitSignupStep(
 			Object.assign(
@@ -313,7 +313,7 @@ class DomainsStep extends React.Component {
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerUnavailableOption={ ! this.props.isDomainOnly && ! this.isDomainsFirstFlow() }
-				analyticsSection="signup"
+				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom={
 					! this.props.isDomainOnly && ! this.isDomainForAtomicSite() && ! this.isDomainsFirstFlow()
@@ -337,6 +337,7 @@ class DomainsStep extends React.Component {
 		return (
 			<div className="domains__step-section-wrapper" key="mappingForm">
 				<MapDomainStep
+					analyticsSection={ this.getAnalyticsSection() }
 					initialState={ initialState }
 					path={ this.props.path }
 					onRegisterDomain={ this.handleAddDomain }
@@ -345,7 +346,6 @@ class DomainsStep extends React.Component {
 					products={ this.props.productsList }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
-					analyticsSection="signup"
 				/>
 			</div>
 		);
@@ -362,7 +362,7 @@ class DomainsStep extends React.Component {
 		return (
 			<div className="domains__step-section-wrapper" key="transferForm">
 				<TransferDomainStep
-					analyticsSection="signup"
+					analyticsSection={ this.getAnalyticsSection() }
 					basePath={ this.props.path }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
@@ -384,7 +384,7 @@ class DomainsStep extends React.Component {
 		return (
 			<div className="domains__step-section-wrapper" key="useYourDomainForm">
 				<UseYourDomainStep
-					analyticsSection="signup"
+					analyticsSection={ this.getAnalyticsSection() }
 					basePath={ this.props.path }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
@@ -406,6 +406,10 @@ class DomainsStep extends React.Component {
 
 	isDomainsFirstFlow() {
 		return 'domain' === this.props.flowName;
+	}
+
+	getAnalyticsSection() {
+		return this.isDomainsFirstFlow() ? 'domain-first' : 'signup';
 	}
 
 	renderContent() {
