@@ -97,11 +97,11 @@ export default {
 		},
 		defaultVariation: 'justSearch',
 	},
-	domainManagementSuggestion: {
-		datestamp: '20180918',
+	domainManagementSuggestionV2: {
+		datestamp: '20180927',
 		variations: {
 			domainsbot: 80,
-			group_7: 20,
+			dot_v1: 20,
 		},
 		defaultVariation: 'domainsbot',
 		assignmentMethod: 'userId',
