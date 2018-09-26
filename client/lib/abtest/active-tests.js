@@ -98,12 +98,12 @@ export default {
 		defaultVariation: 'justSearch',
 	},
 	domainManagementSuggestionV2: {
-		datestamp: '20180927',
+		datestamp: '20181001',
 		variations: {
-			domainsbot: 80,
-			dot_v1: 20,
+			domainsbot_front: 80,
+			variation_front: 20,
 		},
-		defaultVariation: 'domainsbot',
+		defaultVariation: 'domainsbot_front',
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
 	},
