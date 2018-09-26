@@ -285,6 +285,12 @@ const sections = [
 		secondary: true,
 		css: 'feature-upsell',
 	},
+	{
+		name: 'tic-tac-toe',
+		paths: [ '/tic-tac-toe' ],
+		module: 'tic-tac-toe',
+		secondary: false,
+	},
 ];
 
 sections.push( {
