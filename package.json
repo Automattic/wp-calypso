@@ -243,8 +243,6 @@
     "lint:css": "stylelint \"client/**/*.scss\" --syntax scss",
     "lint:js": "npm run -s install-if-deps-outdated && eslint-eslines .",
     "lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
-    "precommit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
-    "prepush": "npm run -s install-if-no-packages && node bin/pre-push-hook.js",
     "rm": "node bin/rm.js",
     "prestart": "npx check-node-version --package && npm run -s install-if-deps-outdated && node bin/welcome.js",
     "start": "npm run -s build",
@@ -288,7 +286,7 @@
     "eslint-plugin-wpcalypso": "4.0.2",
     "fs-extra": "7.0.0",
     "glob": "7.1.3",
-    "husky": "0.14.3",
+    "husky": "1.0.0",
     "jest": "23.6.0",
     "jest-docblock": "23.2.0",
     "jest-junit": "5.1.0",
@@ -313,5 +311,11 @@
   },
   "optionalDependencies": {
     "fsevents": "1.2.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
+      "pre-push": "npm run -s install-if-no-packages && node bin/pre-push-hook.js"
+    }
   }
 }
