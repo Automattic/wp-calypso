@@ -27,6 +27,7 @@ import {
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import WpcomFAQ from './wpcom-faq';
+import CartData from 'components/data/cart';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isEnabled } from 'config';
@@ -185,7 +186,9 @@ export class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 				{ this.getPlanFeatures() }
-				<PaymentMethods />
+				<CartData>
+					<PaymentMethods />
+				</CartData>
 				{ faqs }
 			</div>
 		);

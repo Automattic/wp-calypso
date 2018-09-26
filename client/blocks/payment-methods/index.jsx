@@ -5,7 +5,6 @@
  */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -13,7 +12,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import PaymentLogo from 'components/payment-logo';
-import getCurrentUserPaymentMethods from 'state/selectors/get-current-user-payment-methods';
+import { getEnabledPaymentMethods } from 'lib/cart-values';
 
 class PaymentMethods extends Component {
 	renderPaymentMethods = methods => {
@@ -37,6 +36,9 @@ class PaymentMethods extends Component {
 
 	render() {
 		const { translate } = this.props;
+		if ( ! this.props.cart.hasLoadedFromServer ) {
+			return false;
+		}
 
 		return (
 			<div className="payment-methods">
@@ -50,14 +52,10 @@ class PaymentMethods extends Component {
 					comment: 'Followed by a graphical list of payment methods available to the user',
 				} ) }
 
-				{ this.renderPaymentMethods( this.props.paymentMethods ) }
+				{ this.renderPaymentMethods( getEnabledPaymentMethods( this.props.cart ) ) }
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	return {
-		paymentMethods: getCurrentUserPaymentMethods( state ),
-	};
-} )( localize( PaymentMethods ) );
+export default localize( PaymentMethods );
