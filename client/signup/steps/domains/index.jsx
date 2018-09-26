@@ -71,16 +71,12 @@ class DomainsStep extends React.Component {
 		if ( flowName === 'from-site' && importUrl ) {
 			this.skipRender = true;
 
-			SignupActions.submitSignupStep(
-				Object.assign( {
-					flowName,
-					siteUrl: importUrl,
-					stepName: props.stepName,
-					stepSectionName: props.stepSectionName,
-				} ),
-				[],
-				{}
-			);
+			SignupActions.submitSignupStep( {
+				flowName,
+				siteUrl: importUrl,
+				stepName: props.stepName,
+				stepSectionName: props.stepSectionName,
+			} );
 			props.goToNextStep();
 			return;
 		}
