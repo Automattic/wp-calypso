@@ -26,6 +26,8 @@ import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
 import WizardComponent from './wizard-component';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { navigate } from 'state/ui/actions';
 
 const devdocs = {
 	/*
@@ -141,20 +143,23 @@ const devdocs = {
 	pleaseLogIn: function( context, next ) {
 		const currentUrl = url.parse( location.href );
 		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
-
-		context.primary = React.createElement( EmptyContent, {
-			title: 'Log In to start hacking',
-			line: 'Required to access the WordPress.com API',
-			action: 'Log In to WordPress.com',
-			actionURL: login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
-				redirectTo,
-			} ),
-			secondaryAction: 'Register',
-			secondaryActionURL: '/start/developer',
-			illustration: '/calypso/images/illustrations/illustration-nosites.svg',
-		} );
-		next();
+		if ( ! getCurrentUserId( context.store.getState() ) ) {
+			context.primary = React.createElement( EmptyContent, {
+				title: 'Log In to start hacking',
+				line: 'Required to access the WordPress.com API',
+				action: 'Log In to WordPress.com',
+				actionURL: login( {
+					isNative: config.isEnabled( 'login/native-login-links' ),
+					redirectTo,
+				} ),
+				secondaryAction: 'Register',
+				secondaryActionURL: '/start/developer',
+				illustration: '/calypso/images/illustrations/illustration-nosites.svg',
+			} );
+			next();
+		} else {
+			context.store.dispatch( navigate( redirectTo ) );
+		}
 	},
 
 	// Welcome screen
