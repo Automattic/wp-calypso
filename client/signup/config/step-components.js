@@ -52,7 +52,7 @@ export default {
 	'domains-store': DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
-	'import-from-url': ImportURLStepComponent,
+	'from-url': ImportURLStepComponent,
 	plans: PlansStepComponent,
 	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
