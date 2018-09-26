@@ -483,8 +483,20 @@ class Signup extends React.Component {
 		return flowSteps.length === completedSteps.length;
 	};
 
-	getPositionInFlow() {
-		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+	getPositionInFlow( fakedForTwoPartFlows = false ) {
+		let position = indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		if ( fakedForTwoPartFlows && this.props.flowName === 'user-continue' ) {
+			position++;
+		}
+		return position;
+	}
+
+	getFlowLength() {
+		// fake it for our two-step flow
+		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
+			return 4;
+		}
+		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
 	renderCurrentStep() {
@@ -552,13 +564,11 @@ class Signup extends React.Component {
 			return null;
 		}
 
-		const flow = flows.getFlow( this.props.flowName );
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-
 		const pageTitle =
 			this.props.flowName === 'account'
 				? translate( 'Create an account' )
 				: translate( 'Create a site' );
+		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<span>
@@ -566,8 +576,8 @@ class Signup extends React.Component {
 				{ ! this.state.loadingScreenStartTime &&
 					showProgressIndicator && (
 						<FlowProgressIndicator
-							positionInFlow={ this.getPositionInFlow() }
-							flowLength={ flow.steps.length }
+							positionInFlow={ this.getPositionInFlow( true ) }
+							flowLength={ this.getFlowLength() }
 							flowName={ this.props.flowName }
 						/>
 					) }
