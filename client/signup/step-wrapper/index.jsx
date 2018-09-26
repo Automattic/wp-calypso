@@ -108,8 +108,9 @@ class StepWrapper extends Component {
 						'“I love having a place where I can share what I’m working on in an immediate way and have a conversation with people who are equally excited about it.”'
 					) }
 				</div>
-				<div className="step-wrapper__testimonial-name">
-					{ translate( 'Deb Perlman, smittenkitchen.com' ) }
+				<div className="step-wrapper__testimonial-author">
+					<span class="step-wrapper__testimonial-name">Deb Perlman</span>,{' '}
+					<span class="step-wrapper__testimonial-site">smittenkitchen.com</span>
 				</div>
 			</div>
 		);

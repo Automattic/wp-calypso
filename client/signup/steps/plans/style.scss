@@ -6,7 +6,7 @@
 
 .plans-step .step-wrapper {
 	margin: 0 auto;
-	max-width: 960px;
+	max-width: 1040px;
 }
 
 .plans-step__compare-plans-link {
@@ -169,7 +169,7 @@
 		margin-bottom: 36px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( '>1040px' ) {
 		.formatted-header.is-without-subhead .formatted-header__title {
 			margin-bottom: 0;
 		}

@@ -1,11 +1,6 @@
 .step-wrapper {
-	max-width: 960px;
+	max-width: 1040px;
 	margin: 0 auto;
-
-
-	&.is-wide-layout {
-		max-width: 1040px;
-	}
 }
 
 .signup__step-enter {
@@ -65,8 +60,10 @@
 
 .formatted-header__title {
 	color: $white;
+	font-family: "Noto Sans";
 	font-size: 48px;
-	line-height: 1.1;
+	font-weight: 700;
+	line-height: 1.2;
 	margin-left: 18px;
 	margin-right: 18px;
 	padding: 0;
@@ -95,6 +92,7 @@
 .step-wrapper__testimonial {
 	color: $gray-lighten-20;
 	font-size: 16px;
+	font-family: "Noto Sans";
 	margin: 48px 18px;
 }
 
@@ -112,11 +110,20 @@
 
 .step-wrapper__testimonial-content {
 	margin-top: 12px;
+	font-weight: 700;
+}
+
+.step-wrapper__testimonial-author {
+	font-size: 14px;
+	margin-top: 12px;
 }
 
 .step-wrapper__testimonial-name {
-	font-size: 14px;
-	margin-top: 12px;
+	font-weight: 700;
+}
+
+.step-wrapper__testimonial-site {
+	font-style: italic;
 }
 
 .is-section-signup {
@@ -154,7 +161,7 @@
 	right: -30px;
 }
 
-@include breakpoint( '>960px' ) {
+@include breakpoint( '>1040px' ) {
 
 	.is-section-signup:before,
 	.is-section-signup .layout__primary:before {
@@ -217,8 +224,8 @@
 	.step-wrapper__two-columns .flow-progress-indicator {
 		-ms-grid-column: 1;
 		grid-column-start: 1;
-		-ms-grid-column-span: 4;
-		grid-column-end: span 4;
+		-ms-grid-column-span: 5;
+		grid-column-end: span 5;
 		-ms-grid-row: 2;
 		grid-row-start: 2;
 		align-self: end;
@@ -228,8 +235,8 @@
 	.step-wrapper__two-columns .formatted-header {
 		-ms-grid-column: 1;
 		grid-column-start: 1;
-		-ms-grid-column-span: 4;
-		grid-column-end: span 4;
+		-ms-grid-column-span: 5;
+		grid-column-end: span 5;
 		-ms-grid-row: 3;
 		grid-row-start: 3;
 		-ms-grid-row-span: 2;
@@ -240,8 +247,8 @@
 	.step-wrapper__two-columns .step-wrapper__content {
 		-ms-grid-column: 6;
 		grid-column-start: 6;
-		-ms-grid-column-span: 7;
-		grid-column-end: span 7;
+		-ms-grid-column-span: 6;
+		grid-column-end: span 6;
 		-ms-grid-row: 2;
 		grid-row-start: 2;
 		-ms-grid-row-span: 4;
