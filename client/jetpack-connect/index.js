@@ -29,8 +29,10 @@ export default function() {
 	);
 
 	if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
+		// This route is subject to a page redirect
+		// See `componentWillMount()` in client/jetpack-connect/remote-credentials.js
 		page(
-			'/jetpack/connect/install',
+			'/jetpack/connect/install/:locale?',
 			controller.setMasterbar,
 			controller.credsForm,
 			makeLayout,

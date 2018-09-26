@@ -2,6 +2,9 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
+/**
+ * External dependencies
+ */
 import classnames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import config from 'config';
@@ -10,8 +13,9 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
 import { localize } from 'i18n-calypso';
+
 /**
- * External dependencies
+ * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
@@ -48,6 +52,7 @@ import {
 	INVALID_PERMISSIONS,
 	UNKNOWN_REMOTE_INSTALL_ERROR,
 } from './connection-notice-types';
+import { getLocaleFromPath } from 'lib/i18n-utils';
 
 export class OrgCredentialsForm extends Component {
 	state = {
@@ -84,7 +89,8 @@ export class OrgCredentialsForm extends Component {
 
 		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 			if ( ! siteToConnect ) {
-				page.redirect( '/jetpack/connect' );
+				const path = getLocaleFromPath( page.current ) || '';
+				page.redirect( `/jetpack/connect/${ path }` );
 			}
 		}
 
