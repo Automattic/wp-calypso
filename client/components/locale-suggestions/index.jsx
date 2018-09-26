@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug } from 'i18n-calypso';
+import startsWith from 'lodash/startsWith';
 
 /**
  * Internal dependencies
@@ -72,7 +73,7 @@ export class LocaleSuggestions extends Component {
 		}
 
 		const usersOtherLocales = localeSuggestions.filter( function( locale ) {
-			return locale.locale !== getLocaleSlug();
+			return ! startsWith( getLocaleSlug(), locale.locale );
 		} );
 
 		if ( usersOtherLocales.length === 0 ) {
