@@ -11,7 +11,7 @@ export const countries = {
 		isoCode: 'UM',
 		dialCode: '1',
 		nationalPrefix: '',
-		patternRegion: 'us',
+		patternRegion: 'US',
 		priority: -99,
 	},
 	BV: {
