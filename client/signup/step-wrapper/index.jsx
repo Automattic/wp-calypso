@@ -171,7 +171,9 @@ class StepWrapper extends Component {
 					</div>
 				</div>
 
-				{ 'domains' === stepName ? null : this.testimonial() }
+				{ 'domains' === stepName || 'rebrand-cities-welcome' === stepName
+					? null
+					: this.testimonial() }
 			</div>
 		);
 	}
