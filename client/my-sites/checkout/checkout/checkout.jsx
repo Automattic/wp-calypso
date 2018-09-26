@@ -13,7 +13,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { cartItems } from 'lib/cart-values';
+import { cartItems, getEnabledPaymentMethods } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
@@ -47,7 +47,6 @@ import {
 	setDomainDetails,
 } from 'lib/upgrades/actions';
 import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import getCurrentUserPaymentMethods from 'state/selectors/get-current-user-payment-methods';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isEligibleForCheckoutToChecklist from 'state/selectors/is-eligible-for-checkout-to-checklist';
@@ -585,8 +584,7 @@ export class Checkout extends React.Component {
 	paymentMethodsAbTestFilter() {
 		// This methods can be used to filter payment methods
 		// For example, for the purpose of AB tests.
-
-		return this.props.paymentMethods;
+		return getEnabledPaymentMethods( this.props.cart );
 	}
 
 	isLoading() {
@@ -667,7 +665,6 @@ export default connect(
 
 		return {
 			cards: getStoredCards( state ),
-			paymentMethods: getCurrentUserPaymentMethods( state ),
 			isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
