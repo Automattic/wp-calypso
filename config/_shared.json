@@ -36,7 +36,7 @@
 	"facebook_app_id": "611241942420191",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
     "livechat_support_locales": [ "en", "es", "pt-br" ],
-    "support_site_locales": [ "en", "es", "de", "ja", "pt-br" ],
+    "support_site_locales": [ "en", "es", "de", "fr", "he", "id", "it", "ja", "nl", "pt-br", "ru", "tr" ],
     "forum_locales": [ "ar", "de", "el", "en", "es", "fa", "fi", "fr", "he", "id", "it", "ja", "nl", "pt", "pt-br", "ru", "sv", "th", "tl", "tr" ],
     "magnificent_non_en_locales": [ "es", "pt-br", "de", "fr", "he", "ja", "it", "nl", "ru", "tr", "id", "zh-cn", "zh-tw", "ko", "ar", "sv" ],
     "english_locales": [ "en", "en-gb"],

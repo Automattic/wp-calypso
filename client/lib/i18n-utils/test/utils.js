@@ -103,6 +103,10 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 
 describe( 'utils', () => {
+	afterEach( () => {
+		getLocaleSlug.mockReset();
+	} );
+
 	describe( '#isDefaultLocale', () => {
 		test( 'should return false when a non-default locale provided', () => {
 			expect( isDefaultLocale( 'fr' ) ).toEqual( false );

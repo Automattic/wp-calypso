@@ -39,42 +39,41 @@ class Help extends React.PureComponent {
 	static displayName = 'Help';
 
 	getHelpfulArticles = () => {
+		const { supportSiteLocaleSubdomain, translate } = this.props;
+
 		const helpfulResults = [
 			{
-				link:
-					'https://en.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/',
-				title: this.props.translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
-				description: this.props.translate(
+				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/`,
+				title: translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
+				description: translate(
 					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
 				),
 			},
 			{
-				link: 'https://en.support.wordpress.com/business-plan/',
-				title: this.props.translate( 'Uploading custom plugins and themes' ),
-				description: this.props.translate(
+				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/business-plan/`,
+				title: translate( 'Uploading custom plugins and themes' ),
+				description: translate(
 					'Learn more about installing a custom theme or plugin using the Business plan.'
 				),
 			},
 			{
-				link: 'https://en.support.wordpress.com/all-about-domains/',
-				title: this.props.translate( 'All About Domains' ),
-				description: this.props.translate(
+				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/all-about-domains/`,
+				title: translate( 'All About Domains' ),
+				description: translate(
 					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 				),
 			},
 			{
-				link: `https://${ getSupportSiteLocale() }.support.wordpress.com/start/`,
-				title: this.props.translate( 'Get Started' ),
-				description: this.props.translate(
+				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/start/`,
+				title: translate( 'Get Started' ),
+				description: translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
 				),
 			},
 			{
-				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
-				title: this.props.translate( 'Privacy Settings' ),
-				description: this.props.translate(
-					'Limit your site’s visibility or make it completely private.'
-				),
+				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/settings/privacy-settings/`,
+				title: translate( 'Privacy Settings' ),
+				description: translate( 'Limit your site’s visibility or make it completely private.' ),
 			},
 		];
 
@@ -104,19 +103,18 @@ class Help extends React.PureComponent {
 	};
 
 	getSupportLinks = () => {
+		const { supportSiteLocaleSubdomain, translate } = this.props;
 		return (
 			<div className="help__support-links">
 				<CompactCard
 					className="help__support-link"
-					href={ `https://${ getSupportSiteLocale() }.support.wordpress.com` }
+					href={ `https://${ supportSiteLocaleSubdomain }.support.wordpress.com` }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">
-							{ this.props.translate( 'All support articles' ) }
-						</h2>
+						<h2 className="help__support-link-title">{ translate( 'All support articles' ) }</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
+							{ translate(
 								'Looking to learn more about a feature? Our docs have all the details.'
 							) }
 						</p>
@@ -124,15 +122,15 @@ class Help extends React.PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href="https://en.support.wordpress.com/video-tutorials/"
+					href={ `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/video-tutorials/` }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Quick help video tutorials' ) }
+							{ translate( 'Quick help video tutorials' ) }
 						</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
+							{ translate(
 								'These short videos will demonstrate some of our most popular features.'
 							) }
 						</p>
@@ -145,10 +143,10 @@ class Help extends React.PureComponent {
 				>
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Self-guided email courses for site owners and bloggers' ) }
+							{ translate( 'Self-guided email courses for site owners and bloggers' ) }
 						</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
+							{ translate(
 								'Pick from our ever-growing list of free email courses to improve your knowledge.'
 							) }
 						</p>
@@ -161,12 +159,10 @@ class Help extends React.PureComponent {
 				>
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Self-guided online tutorial' ) }
+							{ translate( 'Self-guided online tutorial' ) }
 						</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
-								'A step-by-step guide to getting familiar with the platform.'
-							) }
+							{ translate( 'A step-by-step guide to getting familiar with the platform.' ) }
 						</p>
 					</div>
 				</CompactCard>
@@ -175,15 +171,13 @@ class Help extends React.PureComponent {
 					href="/help/contact/"
 				>
 					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">{ this.props.translate( 'Get in touch' ) }</h2>
+						<h2 className="help__support-link-title">{ translate( 'Get in touch' ) }</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
-								"Can't find the answer? Drop us a line and we'll lend a hand."
-							) }
+							{ translate( "Can't find the answer? Drop us a line and we'll lend a hand." ) }
 						</p>
 					</div>
 					<Button className="help__support-link-button" primary>
-						{ this.props.translate( 'Contact Us' ) }
+						{ translate( 'Contact Us' ) }
 					</Button>
 				</CompactCard>
 			</div>
@@ -260,6 +254,7 @@ export const mapStateToProps = ( state, ownProps ) => {
 	const isLoading = isFetchingUserPurchases( state );
 	const isBusinessPlanUser = some( purchases, purchaseIsWpComBusinessPlan );
 	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
+	const supportSiteLocaleSubdomain = getSupportSiteLocale();
 
 	return {
 		userId,
@@ -267,6 +262,7 @@ export const mapStateToProps = ( state, ownProps ) => {
 		showCoursesTeaser,
 		isLoading,
 		isEmailVerified,
+		supportSiteLocaleSubdomain,
 	};
 };
 
