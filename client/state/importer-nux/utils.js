@@ -4,7 +4,7 @@
  */
 import { memoize } from 'lodash';
 
-export const normalizeImportUrl = memoize( url =>
+export const normalizeImportUrl = memoize( ( url = '' ) =>
 	url
 		.replace( /^https?:\/\/(www)?/gi, '' )
 		.replace( /wixsite(\.com)?/i, '' )
