@@ -19,7 +19,8 @@ export default function() {
 	const isLoggedOut = ! user.get();
 
 	page(
-		'/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?',
+		'/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?/:locale?',
+		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,
