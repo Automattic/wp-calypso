@@ -22,7 +22,7 @@ function AsyncGridicon( { icon = '', ...rest } ) {
 						callback( FallbackIcon );
 					} );
 			} }
-			placeholder={ null }
+			placeholder={ <FallbackIcon /> }
 			{ ...rest }
 		/>
 	);
