@@ -44,7 +44,7 @@ class CartTotal extends React.Component {
 					</div>
 					<div className="cart-total">
 						<span className="cart-subtotal-label">
-							{ translate( 'Coupon applied "%(coupon)s"', {
+							{ translate( 'Coupon applied: "%(coupon)s"', {
 								args: { coupon: this.props.cart.coupon },
 							} ) }
 						</span>
