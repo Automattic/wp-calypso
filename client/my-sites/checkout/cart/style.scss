@@ -111,15 +111,28 @@
 		font-weight: 600;
 		font-size: 14px;
 
-		.cart-total-label {
+		.cart-total-label,
+		.cart-subtotal-label {
 			display: inline-block;
 			width: 70%;
 		}
 
-		.cart-total-amount {
+		.cart-total-amount,
+		.cart-subtotal-amount {
 			display: inline-block;
 			text-align: right;
 			width: 30%;
+		}
+
+		.cart-subtotal-label,
+		.cart-subtotal-amount {
+            font-size: 13px;
+			font-weight: normal;
+		}
+
+		.cart-remove-coupon {
+			width: 100%;
+			font-size: 11px;
 		}
 	}
 

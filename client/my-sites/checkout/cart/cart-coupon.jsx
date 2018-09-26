@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { applyCoupon, removeCoupon } from 'lib/upgrades/actions';
+import { applyCoupon } from 'lib/upgrades/actions';
 
 export class CartCoupon extends React.Component {
 	static displayName = 'CartCoupon';
@@ -33,6 +33,10 @@ export class CartCoupon extends React.Component {
 		if ( ! this.state.userChangedCoupon ) {
 			this.setState( { couponInputValue: nextProps.cart.coupon } );
 		}
+
+		if ( nextProps.cart.is_coupon_applied && ! this.props.cart.coupon.is_coupon_applied ) {
+			this.setState( { isCouponFormShowing: false, couponInputValue: '' } );
+		}
 	}
 
 	render() {
@@ -50,18 +54,7 @@ export class CartCoupon extends React.Component {
 	}
 
 	renderAppliedCoupon() {
-		return (
-			<div className="cart__coupon">
-				<span className="cart__details">
-					{ this.props.translate( 'Coupon applied: %(coupon)s', {
-						args: { coupon: this.appliedCouponCode },
-					} ) }
-				</span>{' '}
-				<button onClick={ this.clearCoupon } className="button is-link cart__remove-link">
-					{ this.props.translate( 'Remove' ) }
-				</button>
-			</div>
-		);
+		return false;
 	}
 
 	renderApplyCouponUI() {
@@ -124,20 +117,6 @@ export class CartCoupon extends React.Component {
 		}
 	};
 
-	clearCoupon = event => {
-		event.preventDefault();
-		event.stopPropagation();
-		this.setState(
-			{
-				couponInputValue: '',
-				isCouponFormShowing: false,
-			},
-			() => {
-				this.removeCoupon( event );
-			}
-		);
-	};
-
 	applyCoupon = event => {
 		event.preventDefault();
 
@@ -146,16 +125,6 @@ export class CartCoupon extends React.Component {
 		}
 
 		this.props.applyCoupon( this.state.couponInputValue );
-	};
-
-	removeCoupon = event => {
-		event.preventDefault();
-
-		if ( this.isSubmitting ) {
-			return;
-		}
-
-		this.props.removeCoupon();
 	};
 
 	handleCouponInputChange = event => {
@@ -171,10 +140,6 @@ const mapDispatchToProps = dispatch => ( {
 	applyCoupon: coupon_code => {
 		dispatch( recordTracksEvent( 'calypso_checkout_coupon_submit', { coupon_code } ) );
 		applyCoupon( coupon_code );
-	},
-	removeCoupon: () => {
-		dispatch( recordTracksEvent( 'calypso_checkout_coupon_submit', { coupon_code: '' } ) );
-		removeCoupon();
 	},
 } );
 

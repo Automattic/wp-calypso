@@ -47,7 +47,7 @@ export class CartItem extends React.Component {
 	price() {
 		const { cartItem, translate } = this.props;
 
-		if ( typeof cartItem.cost === 'undefined' ) {
+		if ( typeof cartItem.cost_before_coupon === 'undefined' ) {
 			return translate( 'Loading price' );
 		}
 
@@ -59,7 +59,7 @@ export class CartItem extends React.Component {
 			return this.getDomainPlanPrice( cartItem );
 		}
 
-		const cost = cartItem.cost * cartItem.volume;
+		const cost = cartItem.cost_before_coupon * cartItem.volume;
 
 		return translate( '%(cost)s %(currency)s', {
 			args: {
@@ -112,9 +112,9 @@ export class CartItem extends React.Component {
 	}
 
 	calcMonthlyBillingDetails() {
-		const { cost, product_slug } = this.props.cartItem;
+		const { cost_before_coupon, product_slug } = this.props.cartItem;
 		return {
-			monthlyPrice: calculateMonthlyPriceForPlan( product_slug, cost ),
+			monthlyPrice: calculateMonthlyPriceForPlan( product_slug, cost_before_coupon ),
 			months: getBillingMonthsForPlan( product_slug ),
 		};
 	}
