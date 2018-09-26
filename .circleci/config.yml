@@ -205,23 +205,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      ###############
-      # Basic Setup #
-      # #############
-      # repo
-      - restore_cache: *restore-git-cache
-      - checkout
-      - run: *update-git-master
-      - save_cache: *save-git-cache
-      # npm dependencies
-      - restore_cache: *restore-node-modules-cache
-      - run: *npm-install
-      - save_cache: *save-node-modules-cache
-      # folders to collect results
-      - run: *setup-results-and-artifacts
-      ###################
-      # End Basic Setup #
-      ###################
+      - setup
       - run:
           name: Build Notifications Panel
           command: |
