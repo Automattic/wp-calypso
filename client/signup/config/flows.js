@@ -129,7 +129,7 @@ function filterFlowName( flowName ) {
 		if ( flowName === 'user-continue' ) {
 			flowName === 'main';
 		}
-		// logged out, in main flow, maybe enter user-first abtset
+		// logged out, in main flow, maybe enter user-first abtest
 		if ( flowName === 'main' && abtest( 'userFirstSignup' ) === 'userFirst' ) {
 			flowName = 'user-first';
 		}
