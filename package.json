@@ -131,7 +131,7 @@
     "lodash": "4.17.11",
     "lru": "3.1.0",
     "lunr": "2.3.3",
-    "marked": "0.5.0",
+    "marked": "0.5.1",
     "mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
     "mkdirp": "0.5.1",
     "moment": "2.22.2",
