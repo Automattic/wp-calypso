@@ -569,17 +569,19 @@ class Signup extends React.Component {
 			this.props.flowName === 'account'
 				? translate( 'Create an account' )
 				: translate( 'Create a site' );
+		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<span>
 				<DocumentHead title={ pageTitle } />
-				{ ! this.state.loadingScreenStartTime && (
-					<FlowProgressIndicator
-						positionInFlow={ this.getPositionInFlow( true ) }
-						flowLength={ this.getFlowLength() }
-						flowName={ this.props.flowName }
-					/>
-				) }
+				{ ! this.state.loadingScreenStartTime &&
+					showProgressIndicator && (
+						<FlowProgressIndicator
+							positionInFlow={ this.getPositionInFlow( true ) }
+							flowLength={ this.getFlowLength() }
+							flowName={ this.props.flowName }
+						/>
+					) }
 				<TransitionGroup component="div" className="signup__steps">
 					{ this.renderCurrentStep() }
 				</TransitionGroup>
