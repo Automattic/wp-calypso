@@ -15169,12 +15169,12 @@
       }
     },
     "react-transition-group": {
-      "version": "2.4.0",
-      "resolved": "https://registry.npmjs.org/react-transition-group/-/react-transition-group-2.4.0.tgz",
-      "integrity": "sha512-Xv5d55NkJUxUzLCImGSanK8Cl/30sgpOEMGc5m86t8+kZwrPxPCPcFqyx83kkr+5Lz5gs6djuvE5By+gce+VjA==",
+      "version": "2.5.0",
+      "resolved": "https://registry.npmjs.org/react-transition-group/-/react-transition-group-2.5.0.tgz",
+      "integrity": "sha512-qYB3JBF+9Y4sE4/Mg/9O6WFpdoYjeeYqx0AFb64PTazVy8RPMiE3A47CG9QmM4WJ/mzDiZYslV+Uly6O1Erlgw==",
       "requires": {
         "dom-helpers": "^3.3.1",
-        "loose-envify": "^1.3.1",
+        "loose-envify": "^1.4.0",
         "prop-types": "^15.6.2",
         "react-lifecycles-compat": "^3.0.4"
       }
