@@ -19,6 +19,7 @@ import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
+import PaymentMethods from 'blocks/payment-methods';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { isEnabled } from 'config';
 import PlanFeatures from 'my-sites/plan-features';
@@ -133,7 +134,7 @@ export class PlansAtomicStoreStep extends Component {
 		}
 
 		return (
-			<div>
+			<div className="atomic-store__wrapper">
 				<QueryPlans />
 				<QuerySitePlans siteId={ siteId } />
 
@@ -145,6 +146,7 @@ export class PlansAtomicStoreStep extends Component {
 					domainName={ this.getDomainName() }
 					displayJetpackPlans={ false }
 				/>
+				<PaymentMethods />
 			</div>
 		);
 	}
@@ -171,6 +173,7 @@ export class PlansAtomicStoreStep extends Component {
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
+				className="step-wrapper__two-columns"
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				subHeaderText={ subHeaderText }
