@@ -5,9 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, indexOf, inRange, isEqual } from 'lodash';
-import { isWebUri } from 'valid-url';
-import { parse as parseURL } from 'url';
+import { flow, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,24 +24,12 @@ import {
 	getSiteDetails,
 	isUrlInputDisabled,
 } from 'state/importer-nux/temp-selectors';
+import { validateImportUrl } from '../../../my-sites/importer/site-importer/url-validation';
 
 // const normalizeUrlForImportSource = url => {
 // 	// @TODO sanitize? Prepend https:// ..?
 // 	return url;
 // };
-
-const isValidUrl = ( value = '' ) => {
-	const { protocol } = parseURL( value );
-	const withProtocol = protocol ? value : 'http://' + value;
-	const { hostname } = parseURL( withProtocol );
-	const hasDot = inRange( indexOf( hostname, '.' ), 1, hostname.length - 2 );
-
-	return isWebUri( withProtocol ) && hasDot;
-};
-
-const getUrlValidationMessage = function( url ) {
-	return isValidUrl( url ) ? null : 'Please enter a valid URL';
-};
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -120,7 +106,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	validateUrl = () => {
-		const validationMessage = getUrlValidationMessage( this.props.urlInputValue );
+		const validationMessage = validateImportUrl( this.props.urlInputValue );
 		const isValid = ! validationMessage;
 
 		this.setState( {
@@ -150,7 +136,8 @@ class ImportURLStepComponent extends Component {
 
 		switch ( isSiteImportableError.code ) {
 			case 1000001:
-				return translate( "Please check the url, it doesn't seem to be valid." );
+				return translate( 'This does not appear to be a valid URL or website address.' );
+			// @TODO differentiate an unreachable site from one that's not compatible.
 			case 1000002:
 				return translate(
 					"We're not able to reach that site at this time, or it's not compatible with our URL importer."
