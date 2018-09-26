@@ -75,7 +75,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			this.props.recordTracksEvent( 'calypso_traintracks_render', {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
-				fetch_algo: this.props.fetchAlgo,
+				fetch_algo: `${ this.props.fetchAlgo }/${ this.props.suggestion.vendor }`,
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
 			} );
