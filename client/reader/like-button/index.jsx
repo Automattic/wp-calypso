@@ -17,6 +17,7 @@ import { getPostByKey } from 'state/reader/posts/selectors';
 import { isEnabled } from 'config';
 import QueryPostLikes from 'components/data/query-post-likes';
 import getPostLikeCount from 'state/selectors/get-post-like-count';
+import isLikedPost from 'state/selectors/is-liked-post';
 
 class ReaderLikeButton extends React.Component {
 	constructor( props ) {
@@ -71,12 +72,13 @@ class ReaderLikeButton extends React.Component {
 		}
 		this.hidePopoverTimeout = setTimeout( () => {
 			this.setState( { showLikesPopover: false } );
-		}, 500 );
+		}, 200 );
 	};
 
 	render() {
-		const { siteId, postId, likeCount } = this.props;
+		const { siteId, postId, likeCount, iLike } = this.props;
 		const { showLikesPopover, likesPopoverContext } = this.state;
+		const hasEnoughLikes = ( likeCount > 0 && ! iLike ) || ( likeCount > 1 && iLike );
 
 		return (
 			<Fragment>
@@ -92,7 +94,7 @@ class ReaderLikeButton extends React.Component {
 				{ showLikesPopover &&
 					siteId &&
 					postId &&
-					likeCount > 0 && (
+					hasEnoughLikes && (
 						<PostLikesPopover
 							className="reader-likes-popover" // eslint-disable-line
 							onMouseEnter={ this.maybeShowLikesPopover }
@@ -112,6 +114,7 @@ export default connect(
 	( state, { siteId, postId } ) => {
 		return {
 			likeCount: getPostLikeCount( state, siteId, postId ),
+			iLike: isLikedPost( state, siteId, postId ),
 		};
 	},
 	{ markPostSeen }
