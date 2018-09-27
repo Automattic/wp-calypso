@@ -1,1 +1,0 @@
-[[DisplayPrototypeContent slug="principles/data"]]

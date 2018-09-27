@@ -1,1 +1,0 @@
-[[DisplayPrototypeContent slug="faq-tk"]]
