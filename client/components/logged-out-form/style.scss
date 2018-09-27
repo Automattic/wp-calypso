@@ -56,3 +56,16 @@
 		top: 3px;
 	}
 }
+
+.is-section-signup .logged-out-form__link-item {
+	color: $white;
+
+	&:visited {
+		color: $white;
+	}
+
+	&:hover {
+		color: $white;
+		text-decoration: underline;
+	}
+}
