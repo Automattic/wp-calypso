@@ -7,8 +7,7 @@
 
 	.formatted-header__title {
 		font-size: 48px;
-		margin-bottom: 18px;
-		text-align: center;
+		margin: 0 10% 18px;
 
 		@include breakpoint( '>960px' ) {
 			font-size: 60px;
@@ -35,7 +34,7 @@
 }
 
 .rebrand-cities-welcome__illustration {
-	background: url( '/calypso/images/illustrations/rebrand-cities-welcome.svg' ) no-repeat 50% 0;
+	background: url( '/calypso/images/illustrations/rebrand-cities-welcome.svg' ) no-repeat 50% -50px;
 	background-size: 100%;
 	padding-top: 53%; /* percentage ratio of height to width */
 	width: 100%;
