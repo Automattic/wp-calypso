@@ -1,1 +1,1 @@
-# Buttons
+[[DisplayPrototypeContent slug="components/buttons"]]

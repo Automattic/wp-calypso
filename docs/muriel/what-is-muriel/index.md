@@ -1,1 +1,1 @@
-# What is Muriel?
+[[DisplayPrototypeContent slug="all-about-muriel"]]

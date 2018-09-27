@@ -1,1 +1,1 @@
-# FAQ
+[[DisplayPrototypeContent slug="faq-tk"]]
