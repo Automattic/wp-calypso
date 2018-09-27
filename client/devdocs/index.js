@@ -90,6 +90,14 @@ export default function() {
 			);
 		}
 
+		page(
+			'/devdocs/muriel/:slug*',
+			controller.sidebar,
+			controller.murielDoc,
+			makeLayout,
+			clientRender
+		);
+
 		page( '/devdocs/:path*', controller.sidebar, controller.singleDoc, makeLayout, clientRender );
 	}
 }

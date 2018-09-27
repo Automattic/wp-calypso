@@ -20,6 +20,7 @@ import config from 'config';
 import AsyncLoad from './devdocs-async-load';
 import DocsComponent from './main';
 import { login } from 'lib/paths';
+import MurielDocComponent from './muriel/doc';
 import SingleDocComponent from './doc';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
@@ -71,6 +72,13 @@ const devdocs = {
 			// we debounce with wait time of 0, so that the search doesn’t happen
 			// in the same tick as the keyUp event and possibly cause typing lag
 			onSearchChange: debounce( onSearchChange, 0 ),
+		} );
+		next();
+	},
+
+	murielDoc: function( context, next ) {
+		context.primary = React.createElement( MurielDocComponent, {
+			slug: context.params.slug,
 		} );
 		next();
 	},

@@ -4,10 +4,6 @@
 		"href": "/devdocs/docs/muriel/what-is-muriel/index.md",
 		"children": [
 			{
-				"title": "A Day in the Life",
-				"href":  "/devdocs/docs/muriel/what-is-muriel/a-day-in-the-life-with-muriel.md"
-			},
-			{
 				"title": "FAQ",
 				"href":  "/devdocs/docs/muriel/what-is-muriel/faq.md"
 			}
@@ -79,7 +75,29 @@
 			},
 			{
 				"title": "Buttons",
-				"href": "/devdocs/docs/muriel/components/buttons.md"
+				"href": "/devdocs/docs/muriel/components/buttons.md",
+				"children": [
+					{
+						"title": "Text button",
+						"href": "/devdocs/docs/muriel/components/buttons/text-button.md"
+					},
+					{
+						"title": "Outlined button",
+						"href": "/devdocs/docs/muriel/components/buttons/outlined-button.md"
+					},
+					{
+						"title": "Contained button",
+						"href": "/devdocs/docs/muriel/components/buttons/contained-button.md"
+					},
+					{
+						"title": "Toggle button",
+						"href": "/devdocs/docs/muriel/components/buttons/toggle-button.md"
+					},
+					{
+						"title": "Floating action button",
+						"href": "/devdocs/docs/muriel/components/buttons/floating-action-button.md"
+					}
+				]
 			},
 			{
 				"title": "Callout Cards",
@@ -98,5 +116,9 @@
 				"href": "/devdocs/docs/muriel/components/snackbars.md"
 			}
 		]
+	},
+	{
+		"title": "Leave Feedback",
+		"href": "https://murieldesignsystem.blog/leave-feedback/"
 	}
 ]
