@@ -1,1 +1,1 @@
-# People
+[[DisplayPrototypeContent slug="principles/people"]]

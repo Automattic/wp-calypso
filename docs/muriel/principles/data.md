@@ -1,1 +1,1 @@
-# Data
+[[DisplayPrototypeContent slug="principles/data"]]

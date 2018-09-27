@@ -1,1 +1,1 @@
-# Ease
+[[DisplayPrototypeContent slug="principles/ease"]]

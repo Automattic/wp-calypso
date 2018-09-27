@@ -1,2 +1,1 @@
-# Predictability
-
+[[DisplayPrototypeContent slug="principles/predictability"]]

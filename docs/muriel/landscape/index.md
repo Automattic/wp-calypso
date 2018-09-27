@@ -1,1 +1,1 @@
-# The Landscape
+[[DisplayPrototypeContent slug="the-landscape"]]

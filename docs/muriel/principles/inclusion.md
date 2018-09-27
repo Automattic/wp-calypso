@@ -1,1 +1,1 @@
-# Inclusion
+[[DisplayPrototypeContent slug="principles/inclusion"]]
