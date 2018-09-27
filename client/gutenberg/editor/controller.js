@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React from 'react';
-import { uniqueId } from 'lodash';
+import { has, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +38,7 @@ export const post = ( context, next ) => {
 	const uniqueDraftKey = uniqueId( 'gutenberg-draft-' );
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
+	const isDemoContent = ! postId && has( context.query, 'gutenberg-demo' );
 
 	const unsubscribe = context.store.subscribe( () => {
 		const state = context.store.getState();
@@ -49,7 +50,9 @@ export const post = ( context, next ) => {
 
 		unsubscribe();
 
-		context.primary = <GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey } } />;
+		context.primary = (
+			<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
+		);
 
 		next();
 	} );
