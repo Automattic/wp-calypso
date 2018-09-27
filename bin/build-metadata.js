@@ -221,7 +221,7 @@ function injectHardCodedValues( libPhoneNumberData ) {
 			isoCode: 'UM',
 			dialCode: '1',
 			nationalPrefix: '',
-			patternRegion: 'us',
+			patternRegion: 'US',
 			priority: priorityData.UM
 		},
 		BV: {

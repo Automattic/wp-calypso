@@ -24,7 +24,6 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import MediaActions from 'lib/media/actions';
 import {
 	ValidationErrors as MediaValidationErrors,
-	MEDIA_IMAGE_PHOTON,
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
 } from 'lib/media/constants';
@@ -229,15 +228,7 @@ class MediaLibraryContent extends React.Component {
 	}
 
 	getThumbnailType() {
-		if ( this.props.source !== '' ) {
-			return MEDIA_IMAGE_THUMBNAIL;
-		}
-
-		if ( this.props.site.is_private ) {
-			return MEDIA_IMAGE_RESIZER;
-		}
-
-		return MEDIA_IMAGE_PHOTON;
+		return this.props.source !== '' ? MEDIA_IMAGE_THUMBNAIL : MEDIA_IMAGE_RESIZER;
 	}
 
 	needsToBeConnected() {

@@ -15,7 +15,6 @@ import moment from 'moment';
  */
 import { themeActivated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
-import { loadTrackingTool } from 'state/analytics/actions';
 import WordPressLogo from 'components/wordpress-logo';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
@@ -142,10 +141,6 @@ export class CheckoutThankYou extends React.Component {
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
 
 		window.scrollTo( 0, 0 );
-
-		if ( this.isNewUser() ) {
-			this.props.loadTrackingTool( 'HotJar' );
-		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -591,9 +586,6 @@ export default connect(
 			},
 			refreshSitePlans( site ) {
 				dispatch( refreshSitePlans( site.ID ) );
-			},
-			loadTrackingTool( name ) {
-				dispatch( loadTrackingTool( name ) );
 			},
 			recordStartTransferClickInThankYou( domain ) {
 				dispatch( recordStartTransferClickInThankYou( domain ) );

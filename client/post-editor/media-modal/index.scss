@@ -120,8 +120,9 @@
 	padding: 4px 16px;
 	transform: translateZ( 0 );
 	pointer-events: all;
-
+	bottom: 120px;
 	@include breakpoint( ">480px" ) {
+		bottom: 74px;
 		top: 131px;
 	}
 

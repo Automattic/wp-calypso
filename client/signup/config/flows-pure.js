@@ -116,6 +116,21 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2018-01-24',
 		},
 
+		'user-first': {
+			steps: [ 'user' ],
+			destination: '/start/user-continue/about',
+			description: 'User-first signup flow.',
+			lastModified: '2018-09-13',
+			autoContinue: true,
+		},
+
+		'user-continue': {
+			steps: [ 'about', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'Second phase for user-first',
+			lastModified: '2018-09-13',
+		},
+
 		'delta-discover': {
 			steps: [ 'user' ],
 			destination: '/',
@@ -280,8 +295,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 	};
 
 	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
-		flows[ 'from-site' ] = {
-			steps: [ 'import-from-url', 'user', 'domains' ],
+		flows.import = {
+			steps: [ 'from-url', 'user', 'domains' ],
 			destination: ( { siteSlug } ) => `/settings/import/${ siteSlug }`,
 			description: 'A flow to kick off an import during signup',
 			disallowResume: true,

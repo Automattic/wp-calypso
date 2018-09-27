@@ -77,7 +77,7 @@ const Layout = createReactClass( {
 	},
 
 	renderMasterbar: function() {
-		if ( ! this.props.user ) {
+		if ( ! this.props.user || /^\/start\/user-continue\//.test( this.props.currentRoute ) ) {
 			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
 		}
 

@@ -100,6 +100,17 @@ export class ActionTypeSelector extends Component {
 		onClose();
 	};
 
+	humanReadable = count => {
+		if ( count >= 1000 ) {
+			return this.props.translate( '%(number_over_thousand)d K+', {
+				args: {
+					number_over_thousand: Math.floor( ( count / 1000 ) * 10 ) / 10,
+				},
+			} );
+		}
+		return count;
+	};
+
 	renderCheckbox = group => {
 		return (
 			<FormLabel key={ group.key }>
@@ -109,7 +120,7 @@ export class ActionTypeSelector extends Component {
 					name={ group.key }
 					onChange={ this.handleSelectClick }
 				/>
-				{ group.name + ' (' + group.count + ')' }
+				{ group.name + ' (' + this.humanReadable( group.count ) + ')' }
 			</FormLabel>
 		);
 	};
@@ -253,7 +264,7 @@ const mapDispatchToProps = dispatch => ( {
 			return dispatch(
 				withAnalytics(
 					recordTracksEvent( 'calypso_activitylog_filterbar_reset_type' ),
-					updateFilter( siteId, { group: group, page: 1 } )
+					updateFilter( siteId, { group: null, page: 1 } )
 				)
 			);
 		}

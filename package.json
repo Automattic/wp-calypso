@@ -110,7 +110,7 @@
     "gridicons": "3.1.1",
     "gzip-size": "5.0.0",
     "hash.js": "1.1.5",
-    "he": "1.1.1",
+    "he": "1.2.0",
     "html-loader": "0.5.5",
     "html-to-react": "1.3.3",
     "html-webpack-plugin": "3.2.0",
@@ -131,7 +131,7 @@
     "lodash": "4.17.11",
     "lru": "3.1.0",
     "lunr": "2.3.3",
-    "marked": "0.5.0",
+    "marked": "0.5.1",
     "mini-css-extract-plugin-with-rtl": "github:Automattic/mini-css-extract-plugin-with-rtl",
     "mkdirp": "0.5.1",
     "moment": "2.22.2",
@@ -145,7 +145,7 @@
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.8",
     "photon": "2.0.1",
     "postcss-cli": "6.0.0",
-    "postcss-custom-properties": "8.0.5",
+    "postcss-custom-properties": "8.0.6",
     "postcss-loader": "3.0.0",
     "prismjs": "1.15.0",
     "prop-types": "15.6.2",
@@ -157,10 +157,10 @@
     "react-dom": "16.5.2",
     "react-lazily-render": "1.1.0",
     "react-live": "1.11.0",
-    "react-modal": "3.5.1",
+    "react-modal": "3.6.1",
     "react-pure-render": "1.0.2",
     "react-redux": "5.0.7",
-    "react-transition-group": "2.4.0",
+    "react-transition-group": "2.5.0",
     "react-virtualized": "9.20.1",
     "redux": "4.0.0",
     "redux-form": "7.4.2",
@@ -186,9 +186,9 @@
     "url": "0.11.0",
     "uuid": "3.3.2",
     "valid-url": "1.0.9",
-    "webpack": "4.19.1",
+    "webpack": "4.20.2",
     "webpack-cli": "3.1.1",
-    "webpack-dev-middleware": "3.3.0",
+    "webpack-dev-middleware": "3.4.0",
     "webpack-rtl-plugin": "1.7.0",
     "wpcom": "5.4.2",
     "wpcom-oauth": "0.3.4",
@@ -197,7 +197,7 @@
     "yargs": "12.0.2"
   },
   "engines": {
-    "node": "^10.5.0",
+    "node": "^10.11.0",
     "npm": "^6.1.0"
   },
   "scripts": {
@@ -243,8 +243,6 @@
     "lint:css": "stylelint \"client/**/*.scss\" --syntax scss",
     "lint:js": "npm run -s install-if-deps-outdated && eslint-eslines .",
     "lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
-    "precommit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
-    "prepush": "npm run -s install-if-no-packages && node bin/pre-push-hook.js",
     "rm": "node bin/rm.js",
     "prestart": "npx check-node-version --package && npm run -s install-if-deps-outdated && node bin/welcome.js",
     "start": "npm run -s build",
@@ -253,16 +251,13 @@
     "pretest": "npm run -s install-if-deps-outdated",
     "test": "run-s -s test-client test-server",
     "pretest-client": "npm run -s pretest",
-    "test-client": "jest -c=test/client/jest.config.json",
-    "test-client:ci": "cross-env-shell JEST_JUNIT_OUTPUT=./test-results-client.xml jest -c=test/client/jest.config.ci.js -w=2",
+    "test-client": "jest -c=test/client/jest.config.js",
     "test-client:watch": "npm run -s test-client -- --watch",
     "pretest-integration": "npm run -s pretest",
-    "test-integration": "jest -c=test/integration/jest.config.json",
-    "test-integration:ci": "cross-env-shell JEST_JUNIT_OUTPUT=./test-results-integration.xml jest -c=test/integration/jest.config.ci.js -w=2",
+    "test-integration": "jest -c=test/integration/jest.config.js",
     "test-integration:watch": "npm run -s test-integration -- --watch",
     "pretest-server": "npm run -s pretest",
-    "test-server": "jest -c=test/server/jest.config.json",
-    "test-server:ci": "cross-env-shell JEST_JUNIT_OUTPUT=./test-results-server.xml jest -c=test/server/jest.config.ci.js -w=2",
+    "test-server": "jest -c=test/server/jest.config.js",
     "test-server:coverage": "npm run -s test-server -- --coverage",
     "test-server:watch": "npm run -s test-server -- --watch",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
@@ -271,9 +266,9 @@
   },
   "devDependencies": {
     "babel-core": "7.0.0-bridge.0",
-    "babel-eslint": "9.0.0",
+    "babel-eslint": "10.0.0",
     "babel-jest": "23.6.0",
-    "chai": "4.1.2",
+    "chai": "4.2.0",
     "chai-enzyme": "1.0.0-beta.1",
     "check-node-version": "3.2.0",
     "enzyme": "3.6.0",
@@ -291,7 +286,7 @@
     "eslint-plugin-wpcalypso": "4.0.2",
     "fs-extra": "7.0.0",
     "glob": "7.1.3",
-    "husky": "0.14.3",
+    "husky": "1.0.1",
     "jest": "23.6.0",
     "jest-docblock": "23.2.0",
     "jest-junit": "5.1.0",
@@ -316,5 +311,11 @@
   },
   "optionalDependencies": {
     "fsevents": "1.2.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run -s install-if-no-packages && node bin/pre-commit-hook.js",
+      "pre-push": "npm run -s install-if-no-packages && node bin/pre-push-hook.js"
+    }
   }
 }

@@ -320,7 +320,7 @@ class ActivityLog extends Component {
 				<Fragment>
 					<EmptyContent
 						title={ translate( 'No matching events found.' ) }
-						line={ translate( 'Try adjusting your date range or acitvity type filters' ) }
+						line={ translate( 'Try adjusting your date range or activity type filters' ) }
 						action={ translate( 'Remove all filters' ) }
 						actionURL={ '/activity-log/' + slug }
 					/>
@@ -486,19 +486,20 @@ class ActivityLog extends Component {
 	}
 
 	renderFilterbar() {
-		const { siteId, filter, logs, siteIsOnFreePlan } = this.props;
+		const { siteId, filter, logs, siteIsOnFreePlan, logLoadingState } = this.props;
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( siteIsOnFreePlan ) {
 			return null;
 		}
 
-		if ( isEmpty( logs ) && isFilterEmpty ) {
-			return null;
-		}
-
 		return (
-			config.isEnabled( 'activity-filterbar' ) && <Filterbar siteId={ siteId } filter={ filter } />
+				<Filterbar
+					siteId={ siteId }
+					filter={ filter }
+					isLoading={ logLoadingState !== 'success' }
+					isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
+				/>
 		);
 	}
 

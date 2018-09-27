@@ -74,8 +74,30 @@ export class Filterbar extends Component {
 		}
 	};
 
+	isEmptyFilter = filter => {
+		if ( ! filter ) {
+			return true;
+		}
+		if ( filter.group || filter.on || filter.before || filter.after ) {
+			return false;
+		}
+		if ( filter.page !== 1 ) {
+			return false;
+		}
+		return true;
+	};
+
 	render() {
-		const { translate, siteId, filter } = this.props;
+		const { translate, siteId, filter, isLoading, isVisible } = this.props;
+
+		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
+			return <div className="filterbar is-loading" />;
+		}
+
+		if ( ! isVisible ) {
+			return null;
+		}
+
 		return (
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
