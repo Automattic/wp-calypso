@@ -3,7 +3,9 @@
 /**
  * External dependencies
  */
-import { toPairs } from 'lodash';
+import url from 'url';
+import { stringify } from 'qs';
+import { toPairs, identity } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,7 +16,12 @@ import wpcom from 'lib/wp';
 const debug = debugFactory( 'calypso:gutenberg' );
 
 export const debugMiddleware = ( options, next ) => {
-	debug( 'Sending API request to: ', options.url );
+	const { path, apiNamespace = 'wp/v2', apiVersion } = options;
+	if ( apiVersion ) {
+		debug( 'Sending API request to: ', `/rest/v${ apiVersion }${ path }` );
+	} else {
+		debug( 'Sending API request to: ', `/${ apiNamespace }${ path }` );
+	}
 
 	return next( options );
 };
@@ -53,6 +60,8 @@ export const wpcomProxyMiddleware = parameters => {
 		method: rawMethod,
 		apiVersion,
 		apiNamespace = 'wp/v2',
+		transformResponse = identity,
+		transformError = identity,
 	} = parameters;
 
 	const method = rawMethod ? rawMethod.toUpperCase() : 'GET';
@@ -79,11 +88,61 @@ export const wpcomProxyMiddleware = parameters => {
 			},
 			//error, data, headers
 			( error, dataResponse ) => {
-				if ( error ) {
-					return reject( error );
+				if ( error || dataResponse.error ) {
+					return reject( transformError( error || dataResponse.error ) );
 				}
-				return resolve( dataResponse );
+				return resolve( transformResponse( dataResponse ) );
 			}
 		);
 	} );
+};
+
+/**
+ * Transforms a v1.1 wpcom response to a wp/v2 response
+ * @param   {Object}  response the v1.1 oembed response
+ * @returns {Object}  transformed response
+ */
+const transformOembedResponseFromWpcomToCore = response => {
+	const { result, ...rest } = response;
+	return {
+		...rest,
+		html: result,
+	};
+};
+
+/**
+ * Error handling for an oembed error
+ * @param   {String}  embedUrl the fallback embed url
+ * @returns {Object}  transformed response
+ */
+const handleOembedError = embedUrl => errorResponse => {
+	debug( 'oembed failed with error: ', errorResponse );
+	// we've tried to embed a URL that can't be embedded. Emulate core's fallback link here.
+	return {
+		html: `<a href="${ embedUrl }">${ embedUrl }</a>`,
+		type: 'rich',
+		provider_name: 'Embed',
+	};
+};
+
+export const oembedMiddleware = ( options, next, siteSlug ) => {
+	// Updates https://public-api.wordpress.com/wp/v2/oembed/1.0/proxy?url=<source URL> to
+	// https://public-api.wordpress.com/rest/v1.1/sites/<site ID>/embeds/render?embed_url=<source URL>&force=wpcom
+	if ( /oembed\/1.0\/proxy/.test( options.url ) ) {
+		const urlObject = url.parse( options.url, { parseQueryString: true } );
+		const embedUrl = urlObject.query.url;
+		const query = {
+			force: 'wpcom',
+			embed_url: embedUrl,
+		};
+		const oembedPath = `/sites/${ siteSlug }/embeds/render?${ stringify( query ) }`;
+		return next( {
+			...options,
+			path: oembedPath,
+			apiVersion: '1.1',
+			transformError: handleOembedError( embedUrl ),
+			transformResponse: transformOembedResponseFromWpcomToCore,
+		} );
+	}
+	return next( options );
 };

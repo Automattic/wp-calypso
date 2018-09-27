@@ -41,3 +41,8 @@
 		}
 	}
 }
+
+//needed for oembed iframes to appear
+.wp-block-embed__wrapper > iframe {
+	width: 100%;
+}

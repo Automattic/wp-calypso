@@ -14,6 +14,7 @@ import {
 	pathRewriteMiddleware,
 	urlRewriteMiddleware,
 	wpcomProxyMiddleware,
+	oembedMiddleware,
 } from './index';
 
 export class WithAPIMiddleware extends Component {
@@ -45,6 +46,8 @@ export class WithAPIMiddleware extends Component {
 		apiFetch.use( options => wpcomProxyMiddleware( options ) );
 
 		apiFetch.use( ( options, next ) => debugMiddleware( options, next ) );
+
+		apiFetch.use( ( options, next ) => oembedMiddleware( options, next, siteSlug ) );
 
 		apiFetch.use( ( options, next ) => urlRewriteMiddleware( options, next, siteSlug ) );
 
