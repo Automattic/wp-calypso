@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 // This script will return a url of the calypso-strings.pot file generated in our latest master build.
-// eg: node bin/get-circle-string-artifact-url | xargs curl
+// If passed a `notifications` param (eg. `./bin/get-circle-artifact-url notifications`), it will return
+// a URL that is part of the most recent notifications build.
+// eg: `node bin/get-circle-string-artifact-url | xargs curl`
 
 const https = require( 'https' );
 
@@ -25,19 +27,23 @@ const basePath =  '/api/v1.1/project/github/Automattic/wp-calypso';
 
 		const buildNumbersWithArtifacts = builds.filter( build => build.has_artifacts ).map( build => build.build_num );
 
+		const regex = 'notifications' === process.argv[2]
+			? /\/notifications-panel/
+			: /\/calypso-strings\.pot$/
+
 		for ( const buildNumber of buildNumbersWithArtifacts ) {
 			const artifacts = await httpsGetJsonPromise( {
 				...baseOptions,
 				path: `${ basePath }/${ buildNumber }/artifacts`,
 			} );
-			const artifact = artifacts.filter( ( artifact ) => artifact.path.match( /\/calypso-strings\.pot$/ ) ).shift();
-			if( artifact ) {
+			const artifact = artifacts.filter( ( artifact ) => artifact.path.match( regex ) ).shift();
+			if ( artifact ) {
 				console.log( artifact.url );
 				process.exit( 0 );
 			}
 		}
 
-		console.error( 'failed to find pot in circle ci' );
+		console.error( 'Failed to find the target artifact in CircleCI.' );
 		process.exit( 1 );
 
 	} catch ( e ) {
@@ -45,7 +51,7 @@ const basePath =  '/api/v1.1/project/github/Automattic/wp-calypso';
 		process.exit( 1 );
 	}
 
-	console.error( 'failed to get recent translation artifact from CircleCI' );
+	console.error( 'Failed to get recent artifacts from from CircleCI.' );
 	process.exit( 1 );
 }());
 
