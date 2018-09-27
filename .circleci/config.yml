@@ -309,6 +309,7 @@ jobs:
   danger:
     <<: *defaults
     steps:
+      - restore_cache: *restore-git-cache
       - checkout
       - run:
           name: Danger.js
