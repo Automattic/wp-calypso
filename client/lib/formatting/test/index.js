@@ -4,11 +4,6 @@
  */
 
 /**
- * External dependencies
- */
-import chai from 'chai';
-
-/**
  * Internal dependencies
  */
 import { capitalPDangit, parseHtml, preventWidows } from '../index';
@@ -19,11 +14,9 @@ describe( 'formatting', () => {
 			const types = [ {}, undefined, 1, true, [], function() {} ];
 
 			types.forEach( function( type ) {
-				chai
-					.expect( function() {
-						capitalPDangit( type );
-					} )
-					.to.throw( Error );
+				expect( function() {
+					capitalPDangit( type );
+				} ).toThrow( Error );
 			} );
 		} );
 
@@ -31,19 +24,18 @@ describe( 'formatting', () => {
 			const strings = [ 'wordpress', 'I love wordpress' ];
 
 			strings.forEach( function( string ) {
-				chai.assert.equal( capitalPDangit( string ), string );
+				expect( capitalPDangit( string ) ).toBe( string );
 			} );
 		} );
 
 		test( 'should return WordPress with a capital P when passed Wordpress', function() {
-			chai.assert.equal( capitalPDangit( 'Wordpress' ), 'WordPress' );
-			chai.assert.equal( capitalPDangit( 'I love Wordpress' ), 'I love WordPress' );
+			expect( capitalPDangit( 'Wordpress' ) ).toBe( 'WordPress' );
+			expect( capitalPDangit( 'I love Wordpress' ) ).toBe( 'I love WordPress' );
 		} );
 
 		test( 'should replace all instances of Wordpress', function() {
-			chai.assert.equal( capitalPDangit( 'Wordpress Wordpress' ), 'WordPress WordPress' );
-			chai.assert.equal(
-				capitalPDangit( 'I love Wordpress and Wordpress loves me' ),
+			expect( capitalPDangit( 'Wordpress Wordpress' ) ).toBe( 'WordPress WordPress' );
+			expect( capitalPDangit( 'I love Wordpress and Wordpress loves me' ) ).toBe(
 				'I love WordPress and WordPress loves me'
 			);
 		} );
@@ -54,24 +46,24 @@ describe( 'formatting', () => {
 			const types = [ {}, undefined, 1, true, [], function() {} ];
 
 			types.forEach( function( type ) {
-				chai.assert.equal( parseHtml( type ), null );
+				expect( parseHtml( type ) ).toBeNull();
 			} );
 		} );
 
 		test( 'should return a DOM element if you pass in DOM element', function() {
 			const div = document.createElement( 'div' );
-			chai.assert.equal( div, parseHtml( div ) );
+			expect( div ).toBe( parseHtml( div ) );
 		} );
 
 		test( 'should return a document fragment if we pass in a string', function() {
 			const fragment = parseHtml( 'hello' );
-			chai.assert.isFunction( fragment.querySelector );
-			chai.assert.equal( fragment.querySelectorAll( '*' ).length, 0 );
+			expect( typeof fragment.querySelector ).toBe( 'function' );
+			expect( fragment.querySelectorAll( '*' ).length ).toBe( 0 );
 		} );
 
 		test( 'should return a document fragment if we pass in a HTML string', function() {
 			const fragment = parseHtml( '<div>hello</div>' );
-			chai.assert.equal( fragment.querySelectorAll( 'div' ).length, 1 );
+			expect( fragment.querySelectorAll( 'div' ).length ).toBe( 1 );
 		} );
 
 		test( 'should parseHtml and return document fragment that can be queried', function() {
@@ -82,7 +74,7 @@ describe( 'formatting', () => {
 
 			strings.forEach( function( string ) {
 				const link = parseHtml( string ).querySelectorAll( 'a' );
-				chai.assert.equal( link[ 0 ].innerHTML, 'hello world' );
+				expect( link[ 0 ].innerHTML ).toBe( 'hello world' );
 			} );
 		} );
 	} );
@@ -92,7 +84,7 @@ describe( 'formatting', () => {
 			const types = [ {}, undefined, 1, true, [], function() {} ];
 
 			types.forEach( type => {
-				chai.assert.equal( preventWidows( type ), type );
+				expect( preventWidows( type ) ).toBe( type );
 			} );
 		} );
 
@@ -100,27 +92,25 @@ describe( 'formatting', () => {
 			const inputs = [ ' ', '\t', '\n' ];
 
 			inputs.forEach( input => {
-				chai.assert.equal( preventWidows( input ), '' );
+				expect( preventWidows( input ) ).toBe( '' );
 			} );
 		} );
 
 		test( 'should return input when only one word', () => {
-			chai.assert.equal( preventWidows( 'test' ), 'test' );
+			expect( preventWidows( 'test' ) ).toBe( 'test' );
 		} );
 
 		test( 'should trim whitespace', () => {
-			chai.assert.equal( preventWidows( 'test ' ), 'test' );
-			chai.assert.equal( preventWidows( '\ntest string ' ), 'test\xA0string' );
+			expect( preventWidows( 'test ' ) ).toBe( 'test' );
+			expect( preventWidows( '\ntest string ' ) ).toBe( 'test\xA0string' );
 		} );
 
 		test( 'should add non-breaking space between words to keep', () => {
 			const input = 'I really love BBQ. It is one of my favorite foods. Beef ribs are amazing.';
-			chai.assert.equal(
-				preventWidows( input ),
+			expect( preventWidows( input ) ).toBe(
 				'I really love BBQ. It is one of my favorite foods. Beef ribs are\xA0amazing.'
 			);
-			chai.assert.equal(
-				preventWidows( input, 4 ),
+			expect( preventWidows( input, 4 ) ).toBe(
 				'I really love BBQ. It is one of my favorite foods. Beef\xA0ribs\xA0are\xA0amazing.'
 			);
 		} );
