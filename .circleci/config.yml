@@ -124,8 +124,31 @@ commands:
       - save_cache: *save-node-modules-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
+  store-artifacts-and-test-results:
+    description: Stores artifacts and test results
+    steps:
+      - store_test_results:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/artifacts
 
 jobs:
+  build-jetpack-blocks:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - setup
+      - run:
+          name: Build Jetpack Blocks
+          command: |
+            NODE_ENV=production npm run sdk --              \
+              gutenberg                                     \
+              client/gutenberg/extensions/presets/jetpack   \
+              --output-dir=$CIRCLE_ARTIFACTS/jetpack-blocks
+      - store-artifacts-and-test-results
+
   lint-and-translate:
     <<: *defaults
     parallelism: 1
@@ -172,12 +195,7 @@ jobs:
             git clone https://github.com/Automattic/gp-localci-client.git
             bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
             rm -rf gp-localci-client
-      - store_test_results:
-          path: /tmp/test_results
-      - store_artifacts:
-          path: /tmp/test_results
-      - store_artifacts:
-          path: /tmp/artifacts
+      - store-artifacts-and-test-results
       - run:
           name: Notify GlotPress translations are ready
           when: always
@@ -210,8 +228,7 @@ jobs:
           name: Build Notifications Panel
           command: |
             NODE_ENV=production npm run sdk -- notifications --output-dir=$CIRCLE_ARTIFACTS/notifications-panel
-      - store_artifacts:
-          path: /tmp/artifacts
+      - store-artifacts-and-test-results
 
   test-client:
     <<: *defaults
@@ -244,10 +261,7 @@ jobs:
                 --config=test/client/jest.config.js                     \
                 $( circleci tests split < ~/jest-tests )
       - save_cache: *save-jest-cache
-      - store_test_results:
-          path: /tmp/test_results
-      - store_artifacts:
-          path: /tmp/test_results
+      - store-artifacts-and-test-results
 
   test-integration:
     <<: *defaults
@@ -268,10 +282,7 @@ jobs:
                 --silent                                   \
                 --config=test/integration/jest.config.js
       - save_cache: *save-jest-cache
-      - store_test_results:
-          path: /tmp/test_results
-      - store_artifacts:
-          path: /tmp/test_results
+      - store-artifacts-and-test-results
 
   test-server:
     <<: *defaults
@@ -293,15 +304,13 @@ jobs:
                 --silent                                                \
                 --config=test/server/jest.config.js
       - save_cache: *save-jest-cache
-      - store_test_results:
-          path: /tmp/test_results
-      - store_artifacts:
-          path: /tmp/test_results
+      - store-artifacts-and-test-results
 
 workflows:
   version: 2
   calypso:
     jobs:
+      - build-jetpack-blocks
       - build-notifications
       - lint-and-translate
       - test-client
