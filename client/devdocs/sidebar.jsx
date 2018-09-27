@@ -100,10 +100,10 @@ export default class DevdocsSidebar extends React.PureComponent {
 							className="devdocs__navigation-item"
 							icon="layout-blocks"
 							label="Muriel"
-							link="/devdocs/docs/muriel/index.md"
-							selected={ this.isItemSelected( '/devdocs/docs/muriel', false ) }
+							link="/devdocs/muriel"
+							selected={ this.isItemSelected( '/devdocs/muriel', false ) }
 						/>
-						{ this.isItemSelected( '/devdocs/docs/muriel', false ) &&
+						{ this.isItemSelected( '/devdocs/muriel', false ) &&
 							this.renderSubNav( murielNavStructure, 'sidebar__sub-nav' ) }
 						<SidebarItem
 							className="devdocs__navigation-item"

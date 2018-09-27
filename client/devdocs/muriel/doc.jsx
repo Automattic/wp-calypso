@@ -17,15 +17,17 @@ export default class extends React.Component {
 	static displayName = 'MurielDocument';
 
 	static propTypes = {
-		slug: PropTypes.string.isRequired,
+		slug: PropTypes.string,
 	};
 
 	render() {
+		const slug = this.props.slug || '/';
+
 		return (
 			<div className="devdocs devdocs__doc">
 				<div className="devdocs__body">
 					<div className="devdocs__doc-content">
-						<PrototypeContent slug={ this.props.slug } />
+						<PrototypeContent slug={ slug } />
 					</div>
 				</div>
 			</div>

@@ -28,6 +28,16 @@ export default class extends React.Component {
 	};
 
 	componentDidMount() {
+		this.fetch();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( this.props.slug !== prevProps.slug ) {
+			this.fetch();
+		}
+	}
+
+	fetch() {
 		handler(
 			'/sites/murieldesignsystem.blog/posts/slug:' + encodeURIComponent( this.props.slug ),
 			( error, body ) => {
