@@ -20,6 +20,8 @@
     "> 1%"
   ],
   "dependencies": {
+    "@automattic/muriel-base-components": "file:packages/muriel-base-components",
+    "@babel/cli": "7.1.0",
     "@babel/core": "7.1.0",
     "@babel/plugin-proposal-class-properties": "7.1.0",
     "@babel/plugin-proposal-export-default-from": "7.0.0",
@@ -215,6 +217,7 @@
     "build-css:editor": "node-sass --include-path client assets/stylesheets/editor.scss public/editor.css --output-style compressed && npm run -s autoprefixer -- public/editor.css",
     "build-css:style": "node-sass --include-path client assets/stylesheets/style.scss public/style.css --output-style compressed && npm run -s postcss -- public/style.css && rtlcss public/style.css public/style-rtl.css",
     "build-css:sections": "node-sass assets/stylesheets/sections --include-path client -o public/sections --source-map public/sections --output-style compressed && node bin/process-extensions-scss.js && npm run -s autoprefixer -- public/sections/*.css && rtlcss -d public/sections public/sections-rtl",
+    "build:packages": "node bin/build-packages.js",
     "prebuild-desktop": "npm run -s install-if-deps-outdated",
     "build-desktop": "run-p -s build-server build-css",
     "postbuild-desktop": "npm run -s bundle",
@@ -290,6 +293,7 @@
     "jest": "23.6.0",
     "jest-docblock": "23.2.0",
     "jest-junit": "5.1.0",
+    "lerna": "^3.4.0",
     "markdown-it": "8.4.2",
     "md5-file": "4.0.0",
     "mixedindentlint": "1.2.0",
