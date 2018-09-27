@@ -57,6 +57,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	),
 	translate: x => x,
 	numberFormat: x => x,
+	getLocaleSlug: () => 'en',
 } ) );
 
 import purchasesSelectors from 'state/purchases/selectors';
