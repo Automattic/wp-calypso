@@ -7445,9 +7445,9 @@
       "integrity": "sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM="
     },
     "husky": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/husky/-/husky-1.0.0.tgz",
-      "integrity": "sha512-BCJmbzfauxXwfxIZYETNS95zNxnwQgzTbVPs4DL0CbMmSDvuMEAcfEjGDFEb+mmPslvywKlXZroYAdNLRDLayQ==",
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/husky/-/husky-1.0.1.tgz",
+      "integrity": "sha512-MxwLwwwgY7mqV4auSpGWKPTCkZ9RmsdGojQQBvRtr6vxnjSOyI5l/M58QdUz0vRKb0igTpbzBeoUsScx4XJwQg==",
       "dev": true,
       "requires": {
         "cosmiconfig": "^5.0.6",
