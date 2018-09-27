@@ -8,13 +8,13 @@
 import { mergeHandlers } from 'state/action-watchers/utils';
 import account from './account';
 import block from './block';
-import blocks from './blocks';
 import connectedApplications from './connected-applications';
 import devices from './devices';
 import dismiss from './dismiss';
 import notification from './notification';
 import settings from './settings';
 import sendVerificationEmail from './send-verification-email';
+import siteBlocks from './blocks/sites';
 import countries from './transactions/supported-countries';
 import order from './transactions/order';
 import twoStep from './two-step';
@@ -26,7 +26,6 @@ registerHandlers(
 	mergeHandlers(
 		account,
 		block,
-		blocks,
 		connectedApplications,
 		countries,
 		devices,
@@ -34,6 +33,7 @@ registerHandlers(
 		notification,
 		settings,
 		sendVerificationEmail,
+		siteBlocks,
 		twoStep,
 		order
 	)

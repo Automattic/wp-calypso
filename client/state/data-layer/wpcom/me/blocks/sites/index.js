@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { READER_SITE_BLOCKS_REQUEST, READER_SITE_BLOCKS_RECEIVE } from 'state/action-types';
+import { READER_SITE_BLOCKS_RECEIVE, READER_SITE_BLOCKS_REQUEST } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -22,9 +22,9 @@ export const handleSiteBlocksRequest = action =>
 		action
 	);
 
-export const siteBlocksRequestReceived = ( action, apiResponse ) => ( {
+export const siteBlocksRequestReceived = ( action, payload ) => ( {
 	type: READER_SITE_BLOCKS_RECEIVE,
-	payload: apiResponse,
+	payload,
 } );
 
 export const siteBlocksRequestFailure = error => ( {
