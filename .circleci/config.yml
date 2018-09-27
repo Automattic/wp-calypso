@@ -313,7 +313,7 @@ jobs:
       - checkout
       - run:
           name: Danger.js
-          command: npx danger@4 ci
+          command: npx danger ci
 
 workflows:
   version: 2
