@@ -18,7 +18,7 @@ import { isEnabled } from 'config';
 import { purchasesRoot } from 'me/purchases/paths';
 import { getSupportSiteLocale } from 'lib/i18n-utils';
 
-const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
+const WpcomFAQ = ( { isChatAvailable, siteSlug, supportSiteLocaleSubDomain, translate } ) => {
 	const helpLink =
 		isEnabled( 'happychat' ) && isChatAvailable ? (
 			<HappychatButton className="plans-features-main__happychat-button" />
@@ -38,7 +38,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/all-about-domains/"
+									href={ `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/all-about-domains/` }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -58,7 +58,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href={ 'https://' + getSupportSiteLocale() + '.support.wordpress.com/plugins/' }
+									href={ `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/plugins/` }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -99,7 +99,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/add-email/"
+									href={ `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/add-email/` }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -120,7 +120,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/custom-design/"
+									href={ `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/custom-design/` }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
@@ -166,4 +166,5 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 export default connect( state => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	siteSlug: getSelectedSiteSlug( state ),
+	supportSiteLocaleSubDomain: getSupportSiteLocale(),
 } ) )( localize( WpcomFAQ ) );

@@ -39,39 +39,39 @@ class Help extends React.PureComponent {
 	static displayName = 'Help';
 
 	getHelpfulArticles = () => {
-		const { supportSiteLocaleSubdomain, translate } = this.props;
+		const { supportSiteLocaleSubDomain, translate } = this.props;
 
 		const helpfulResults = [
 			{
-				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/`,
+				link: `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/`,
 				title: translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
 				description: translate(
 					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
 				),
 			},
 			{
-				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/business-plan/`,
+				link: `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/business-plan/`,
 				title: translate( 'Uploading custom plugins and themes' ),
 				description: translate(
 					'Learn more about installing a custom theme or plugin using the Business plan.'
 				),
 			},
 			{
-				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/all-about-domains/`,
+				link: `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/all-about-domains/`,
 				title: translate( 'All About Domains' ),
 				description: translate(
 					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
 				),
 			},
 			{
-				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/start/`,
+				link: `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/start/`,
 				title: translate( 'Get Started' ),
 				description: translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
 				),
 			},
 			{
-				link: `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/settings/privacy-settings/`,
+				link: `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/settings/privacy-settings/`,
 				title: translate( 'Privacy Settings' ),
 				description: translate( 'Limit your site’s visibility or make it completely private.' ),
 			},
@@ -103,12 +103,12 @@ class Help extends React.PureComponent {
 	};
 
 	getSupportLinks = () => {
-		const { supportSiteLocaleSubdomain, translate } = this.props;
+		const { supportSiteLocaleSubDomain, translate } = this.props;
 		return (
 			<div className="help__support-links">
 				<CompactCard
 					className="help__support-link"
-					href={ `https://${ supportSiteLocaleSubdomain }.support.wordpress.com` }
+					href={ `https://${ supportSiteLocaleSubDomain }.support.wordpress.com` }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
@@ -122,7 +122,7 @@ class Help extends React.PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href={ `https://${ supportSiteLocaleSubdomain }.support.wordpress.com/video-tutorials/` }
+					href={ `https://${ supportSiteLocaleSubDomain }.support.wordpress.com/video-tutorials/` }
 					target="__blank"
 				>
 					<div className="help__support-link-section">
@@ -254,7 +254,7 @@ export const mapStateToProps = ( state, ownProps ) => {
 	const isLoading = isFetchingUserPurchases( state );
 	const isBusinessPlanUser = some( purchases, purchaseIsWpComBusinessPlan );
 	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
-	const supportSiteLocaleSubdomain = getSupportSiteLocale();
+	const supportSiteLocaleSubDomain = getSupportSiteLocale();
 
 	return {
 		userId,
@@ -262,7 +262,7 @@ export const mapStateToProps = ( state, ownProps ) => {
 		showCoursesTeaser,
 		isLoading,
 		isEmailVerified,
-		supportSiteLocaleSubdomain,
+		supportSiteLocaleSubDomain,
 	};
 };
 
