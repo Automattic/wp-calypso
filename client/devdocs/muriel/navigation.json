@@ -18,56 +18,30 @@
 		"href": "/devdocs/docs/muriel/principles/index.md",
 		"children": [
 			{
-				"title": "Inclusion",
+				"title": "Inclusive and Accessible",
 				"href": "/devdocs/docs/muriel/principles/inclusion.md"
 			},
 			{
-				"title": "Data",
+				"title": "Informed by Data",
 				"href": "/devdocs/docs/muriel/principles/data.md"
 			},
 			{
-				"title": "People",
+				"title": "Built for Real People",
 				"href": "/devdocs/docs/muriel/principles/people.md"
 			},
 			{
-				"title": "Ease",
-				"href": "/devdocs/docs/muriel/principles/ease.md"
+				"title": "Trustworthy",
+				"href": "/devdocs/docs/muriel/principles/predictability.md"
 			},
 			{
-				"title": "Predictability",
-				"href": "/devdocs/docs/muriel/principles/predictability.md"
+				"title": "Easy to Use, Not Make",
+				"href": "/devdocs/docs/muriel/principles/ease.md"
 			}
 		]
 	},
 	{
-		"title": "The Landscape",
-		"href": "/devdocs/docs/muriel/landscape/index.md",
-		"children": [
-			{
-				"title": "Planet Discover",
-				"href": "/devdocs/docs/muriel/landscape/planet-discover.md"
-			},
-			{
-				"title": "Planet Hypothesis",
-				"href": "/devdocs/docs/muriel/landscape/planet-hypothesis.md"
-			},
-			{
-				"title": "Planet Deliver",
-				"href": "/devdocs/docs/muriel/landscape/planet-deliver.md"
-			},
-			{
-				"title": "Planet Listen",
-				"href": "/devdocs/docs/muriel/landscape/planet-listen.md"
-			},
-			{
-				"title": "The Space Between",
-				"href": "/devdocs/docs/muriel/landscape/the-space-between.md"
-			},
-			{
-				"title": "(A Note About Metaphors)",
-				"href": "/devdocs/docs/muriel/landscape/note-about-metaphors.md"
-			}
-		]
+		"title": "The Process",
+		"href": "/devdocs/docs/muriel/landscape/index.md"
 	},
 	{
 		"title": "The Infrastructure",

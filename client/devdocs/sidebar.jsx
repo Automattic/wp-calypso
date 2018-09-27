@@ -15,6 +15,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarItem from 'layout/sidebar/item';
 import { isEnabled } from 'config';
 import murielNavStructure from './muriel/navigation.json';
+import handler from 'wpcom-xhr-request';
 
 export default class DevdocsSidebar extends React.PureComponent {
 	static displayName = 'DevdocsSidebar';

@@ -40,9 +40,9 @@ export default class extends React.Component {
 	}
 
 	renderDisplayPrototypeContent() {
-		const { url } = this.props.attributes;
+		const { slug } = this.props.attributes;
 
-		return <PrototypeContent url={ url } />;
+		return <PrototypeContent slug={ slug } />;
 	}
 
 	renderShowComponent() {

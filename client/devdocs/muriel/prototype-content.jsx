@@ -10,37 +10,53 @@ import SpinnerLine from 'components/spinner-line';
  * External dependencies
  */
 
+import handler from 'wpcom-xhr-request';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default class extends React.Component {
 	static displayName = 'Shortcode';
 
+	static propTypes = {
+		slug: PropTypes.string,
+	};
+
 	state = {
+		title: null,
 		content: null,
-		isLoading: false,
+		isLoading: true,
 	};
 
 	componentDidMount() {
-		fetch( this.props.url )
-			.then( response => {
-				if ( response.ok ) {
-					return response.text();
+		handler(
+			'/sites/murieldesignsystem.blog/posts/slug:' + encodeURIComponent( this.props.slug ),
+			( error, body ) => {
+				if ( error ) {
+					return this.setState( { isLoading: false } );
 				}
 
-				throw new Error( 'Something went wrong ...' );
-			} )
-			.then( data => this.setState( { content: data, isLoading: false } ) )
-			.catch( error => this.setState( { error, isLoading: false } ) );
+				this.setState( {
+					isLoading: false,
+					title: body.title,
+					content: body.content,
+				} );
+			}
+		);
 	}
 
 	render() {
-		const { content, isLoading } = this.state;
+		const { title, content, isLoading } = this.state;
 
-		if ( ! isLoading ) {
+		if ( isLoading ) {
 			return <SpinnerLine />;
 		}
 
-		//eslint-disable-next-line react/no-danger
-		return <div dangerouslySetInnerHTML={ { __html: content } } />;
+		return (
+			<div>
+				<h1>{ title }</h1>
+				{ /*eslint-disable-next-line react/no-danger*/ }
+				<div dangerouslySetInnerHTML={ { __html: content } } />
+			</div>
+		);
 	}
 }
