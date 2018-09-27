@@ -66,6 +66,7 @@ import {
 	getDestination,
 	getFilteredSteps,
 	getFirstInvalidStep,
+	getPreviousStepName,
 	getStepUrl,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
@@ -455,6 +456,13 @@ class Signup extends React.Component {
 		}
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
+	};
+
+	goToPreviousStep = () => {
+		const { flowName, stepName } = this.props;
+		const previousStepName = getPreviousStepName( flowName, stepName );
+
+		this.goToStep( previousStepName );
 	};
 
 	goToFirstInvalidStep = ( progress = this.props.progress ) => {
