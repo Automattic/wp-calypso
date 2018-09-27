@@ -124,8 +124,20 @@ class StepWrapper extends Component {
 		);
 	}
 
-	getPositionInFlow() {
-		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+	getPositionInFlow( fakedForTwoPartFlows = false ) {
+		let position = indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		if ( fakedForTwoPartFlows && this.props.flowName === 'user-continue' ) {
+			position++;
+		}
+		return position;
+	}
+
+	getFlowLength() {
+		// fake it for our two-step flow
+		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
+			return 4;
+		}
+		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
 	render() {
@@ -141,14 +153,13 @@ class StepWrapper extends Component {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
 		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-		const flow = flows.getFlow( this.props.flowName );
 
 		return (
 			<div className={ classes }>
 				{ showProgressIndicator && (
 					<FlowProgressIndicator
-						positionInFlow={ this.getPositionInFlow() }
-						flowLength={ flow.steps.length }
+						positionInFlow={ this.getPositionInFlow( true ) }
+						flowLength={ this.getFlowLength() }
 						flowName={ this.props.flowName }
 					/>
 				) }

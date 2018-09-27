@@ -490,14 +490,6 @@ class Signup extends React.Component {
 		return position;
 	}
 
-	getFlowLength() {
-		// fake it for our two-step flow
-		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
-			return 4;
-		}
-		return flows.getFlow( this.props.flowName ).steps.length;
-	}
-
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } ),
@@ -567,7 +559,6 @@ class Signup extends React.Component {
 			this.props.flowName === 'account'
 				? translate( 'Create an account' )
 				: translate( 'Create a site' );
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<span>
