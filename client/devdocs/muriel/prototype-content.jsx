@@ -14,11 +14,14 @@ import handler from 'wpcom-xhr-request';
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const FETCH_URL_BASE = '/sites/murieldesignsystem.blog/posts/';
+
 export default class extends React.Component {
 	static displayName = 'Shortcode';
 
 	static propTypes = {
 		slug: PropTypes.string,
+		id: PropTypes.number,
 	};
 
 	state = {
@@ -38,20 +41,25 @@ export default class extends React.Component {
 	}
 
 	fetch() {
-		handler(
-			'/sites/murieldesignsystem.blog/posts/slug:' + encodeURIComponent( this.props.slug ),
-			( error, body ) => {
-				if ( error ) {
-					return this.setState( { isLoading: false } );
-				}
-
-				this.setState( {
-					isLoading: false,
-					title: body.title,
-					content: body.content,
-				} );
+		handler( FETCH_URL_BASE + this.getFetchUrl(), ( error, body ) => {
+			if ( error ) {
+				return this.setState( { isLoading: false } );
 			}
-		);
+
+			this.setState( {
+				isLoading: false,
+				title: body.title,
+				content: body.content,
+			} );
+		} );
+	}
+
+	getFetchUrl() {
+		if ( this.props.slug ) {
+			return 'slug:' + encodeURIComponent( this.props.slug );
+		} else {
+			return this.props.id;
+		}
 	}
 
 	render() {

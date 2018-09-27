@@ -13,6 +13,8 @@ import React from 'react';
 
 import PrototypeContent from './prototype-content';
 
+const HOMEPAGE_POST_ID = 38;
+
 export default class extends React.Component {
 	static displayName = 'MurielDocument';
 
@@ -21,14 +23,18 @@ export default class extends React.Component {
 	};
 
 	render() {
-		const slug = this.props.slug || '/';
+		let prototypeContent;
+
+		if ( this.props.slug ) {
+			prototypeContent = <PrototypeContent slug={ this.props.slug } />;
+		} else {
+			prototypeContent = <PrototypeContent id={ HOMEPAGE_POST_ID } />;
+		}
 
 		return (
 			<div className="devdocs devdocs__doc">
 				<div className="devdocs__body">
-					<div className="devdocs__doc-content">
-						<PrototypeContent slug={ slug } />
-					</div>
+					<div className="devdocs__doc-content">{ prototypeContent }</div>
 				</div>
 			</div>
 		);
