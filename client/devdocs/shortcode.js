@@ -6,7 +6,6 @@
 
 import AsyncLoad from 'components/async-load';
 import PrototypeContent from './muriel/prototype-content';
-import SpinnerLine from 'components/spinner-line';
 
 /**
  * External dependencies
