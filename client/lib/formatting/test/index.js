@@ -11,16 +11,9 @@ import chai from 'chai';
 /**
  * Internal dependencies
  */
-import decodeEntitiesNode from '../decode-entities/node';
 import { capitalPDangit, parseHtml, preventWidows } from '../index';
 
 describe( 'formatting', () => {
-	let decodeEntitiesBrowser;
-
-	beforeAll( () => {
-		decodeEntitiesBrowser = require( '../decode-entities/browser' );
-	} );
-
 	describe( '#capitalPDangtest()', function() {
 		test( 'should error when input is not a string', function() {
 			const types = [ {}, undefined, 1, true, [], function() {} ];
@@ -90,32 +83,6 @@ describe( 'formatting', () => {
 			strings.forEach( function( string ) {
 				const link = parseHtml( string ).querySelectorAll( 'a' );
 				chai.assert.equal( link[ 0 ].innerHTML, 'hello world' );
-			} );
-		} );
-	} );
-
-	describe( '#decodeEntities()', () => {
-		[ 'node', 'browser' ].forEach( env => {
-			let decodeEntities;
-			beforeAll( () => {
-				switch ( env ) {
-					case 'node':
-						decodeEntities = decodeEntitiesNode;
-					case 'browser':
-						decodeEntities = decodeEntitiesBrowser;
-				}
-			} );
-
-			describe( env, () => {
-				test( 'should decode entities', () => {
-					const decoded = decodeEntities( 'Ribs &gt; Chicken' );
-					chai.assert.equal( decoded, 'Ribs > Chicken' );
-				} );
-
-				test( 'should not alter already-decoded entities', () => {
-					const decoded = decodeEntities( 'Ribs > Chicken. Truth &amp; Liars.' );
-					chai.assert.equal( decoded, 'Ribs > Chicken. Truth & Liars.' );
-				} );
 			} );
 		} );
 	} );
