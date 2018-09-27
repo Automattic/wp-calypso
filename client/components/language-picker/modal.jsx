@@ -64,7 +64,6 @@ export class LanguagePickerModal extends PureComponent {
 			search: false,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
-			localeSlug: getLocaleSlug(),
 		};
 	}
 
@@ -156,7 +155,7 @@ export class LanguagePickerModal extends PureComponent {
 			return null;
 		}
 
-		const { languages } = this.props;
+		const { languages, currentLocaleSlug } = this.props;
 		const suggestedLanguages = [];
 
 		for ( const langSlug of navigator.languages ) {
@@ -168,7 +167,12 @@ export class LanguagePickerModal extends PureComponent {
 			if ( ! language ) {
 				language = find( languages, lang => startsWith( lcLangSlug, lang.langSlug + '-' ) );
 			}
-			if ( language && ! includes( suggestedLanguages, language ) ) {
+
+			if (
+				language &&
+				currentLocaleSlug !== language.langSlug &&
+				! includes( suggestedLanguages, language )
+			) {
 				suggestedLanguages.push( language );
 			}
 		}
@@ -324,4 +328,5 @@ export class LanguagePickerModal extends PureComponent {
 
 export default connect( state => ( {
 	localizedLanguageNames: getLocalizedLanguageNames( state ),
+	currentLocaleSlug: getLocaleSlug(),
 } ) )( localize( LanguagePickerModal ) );
