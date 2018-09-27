@@ -1,2 +1,2 @@
 /** @format */
-export default require( 'he' ).decode;
+export { decode as default } from 'he';
