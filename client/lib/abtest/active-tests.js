@@ -116,4 +116,13 @@ export default {
 		defaultVariation: 'default',
 		allowExistingUsers: false,
 	},
+	dotBlogSuggestions: {
+		datestamp: '20181001',
+		variations: {
+			simple: 50,
+			complex: 50,
+		},
+		defaultVariation: 'simple',
+		allowExistingUsers: true,
+	},
 };
