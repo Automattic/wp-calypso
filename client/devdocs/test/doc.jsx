@@ -30,7 +30,7 @@ describe( 'SingleDoc', () => {
 			const wrapper = shallow( <SingleDocClass { ...defaultProps } /> );
 			wrapper.setState( { body: '# something hello' } );
 			expect( wrapper.find( '.devdocs__body .devdocs__doc-content' ).html() ).toEqual(
-				'<div class="devdocs__doc-content"><h1>something <mark>hello</mark></h1></div>'
+				'<div class="devdocs__doc-content"><div><h1>something <mark>hello</mark></h1></div></div>'
 			);
 			expect( wrapper.find( 'Error' ) ).toHaveLength( 0 );
 		} );
