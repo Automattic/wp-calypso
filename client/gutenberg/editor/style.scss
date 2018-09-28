@@ -50,7 +50,7 @@
 		}
 	}
 
-	.edit-post-block-sidebar__panel {
+	.edit-post-sidebar {
 		.components-panel__body {
 			&:first-child {
 				margin-top: 0;
@@ -65,6 +65,10 @@
 
 		.editor-block-inspector__card {
 			margin-bottom: 0;
+		}
+
+		.editor-post-last-revision__title {
+			width: auto;
 		}
 	}
 
