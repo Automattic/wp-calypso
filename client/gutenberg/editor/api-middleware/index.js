@@ -60,8 +60,8 @@ export const wpcomProxyMiddleware = parameters => {
 		method: rawMethod,
 		apiVersion,
 		apiNamespace = 'wp/v2',
-		transformResponse = identity,
-		transformError = identity,
+		onError = identity,
+		fromApi = identity,
 	} = parameters;
 
 	const method = rawMethod ? rawMethod.toUpperCase() : 'GET';
@@ -89,25 +89,12 @@ export const wpcomProxyMiddleware = parameters => {
 			//error, data, headers
 			( error, dataResponse ) => {
 				if ( error || dataResponse.error ) {
-					return reject( transformError( error || dataResponse.error ) );
+					return reject( onError( error || dataResponse.error ) );
 				}
-				return resolve( transformResponse( dataResponse ) );
+				return resolve( fromApi( dataResponse ) );
 			}
 		);
 	} );
-};
-
-/**
- * Transforms a v1.1 wpcom response to a wp/v2 response
- * @param   {Object}  response the v1.1 oembed response
- * @returns {Object}  transformed response
- */
-const transformOembedResponseFromWpcomToCore = response => {
-	const { result, ...rest } = response;
-	return {
-		...rest,
-		html: result,
-	};
 };
 
 /**
@@ -126,22 +113,21 @@ const handleOembedError = embedUrl => errorResponse => {
 };
 
 export const oembedMiddleware = ( options, next, siteSlug ) => {
-	// Updates https://public-api.wordpress.com/wp/v2/oembed/1.0/proxy?url=<source URL> to
-	// https://public-api.wordpress.com/rest/v1.1/sites/<site ID>/embeds/render?embed_url=<source URL>&force=wpcom
+	// Updates https://public-api.wordpress.com/oembed/1.0/proxy?url=<source URL> to
+	// https://public-api.wordpress.com/oembed/1.0/sites/<site ID>/proxy?url=<source URL>&force=wpcom
 	if ( /oembed\/1.0\/proxy/.test( options.url ) ) {
 		const urlObject = url.parse( options.url, { parseQueryString: true } );
 		const embedUrl = urlObject.query.url;
 		const query = {
 			force: 'wpcom',
-			embed_url: embedUrl,
+			url: embedUrl,
 		};
-		const oembedPath = `/sites/${ siteSlug }/embeds/render?${ stringify( query ) }`;
+		const oembedPath = `/sites/${ siteSlug }/proxy?${ stringify( query ) }`;
 		return next( {
 			...options,
 			path: oembedPath,
-			apiVersion: '1.1',
-			transformError: handleOembedError( embedUrl ),
-			transformResponse: transformOembedResponseFromWpcomToCore,
+			apiNamespace: 'oembed/1.0',
+			onError: handleOembedError( embedUrl ),
 		} );
 	}
 	return next( options );
