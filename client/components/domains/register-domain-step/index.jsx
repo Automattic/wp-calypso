@@ -680,7 +680,7 @@ class RegisterDomainStep extends React.Component {
 				if ( error && error.statusCode === 503 && ! this.props.isSignupStep ) {
 					const maintenanceEndTime = get( error, 'data.maintenance_end_time', 0 );
 					this.props.onDomainsAvailabilityChange( false, maintenanceEndTime );
-				} else if ( error && error.error ) {
+				} else if ( error && error.error && error.error !== domainAvailability.EMPTY_RESULTS ) {
 					this.showValidationErrorMessage( domain, error.error, {
 						maintenanceEndTime: get( error, 'data.maintenance_end_time', null ),
 					} );
