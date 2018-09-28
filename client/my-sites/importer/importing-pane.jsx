@@ -215,7 +215,7 @@ class ImportingPane extends React.PureComponent {
 
 	render() {
 		const {
-			importerStatus: { importerId, customData },
+			importerStatus: { importerId, errorData = {}, customData },
 			mapAuthorFor,
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 			sourceType,
@@ -229,7 +229,7 @@ class ImportingPane extends React.PureComponent {
 		let blockingMessage;
 
 		if ( this.isError() ) {
-			statusMessage = '';
+			statusMessage = this.getErrorMessage( errorData );
 		}
 
 		if ( this.isFinished() ) {
