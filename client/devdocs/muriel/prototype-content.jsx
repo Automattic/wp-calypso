@@ -22,6 +22,7 @@ export default class extends React.Component {
 	static propTypes = {
 		slug: PropTypes.string,
 		id: PropTypes.number,
+		onFetch: PropTypes.func,
 	};
 
 	state = {
@@ -51,6 +52,10 @@ export default class extends React.Component {
 				title: body.title,
 				content: body.content,
 			} );
+
+			if ( this.props.onFetch ) {
+				this.props.onFetch.call();
+			}
 		} );
 	}
 

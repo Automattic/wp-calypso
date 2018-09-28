@@ -79,6 +79,7 @@ const devdocs = {
 	murielDoc: function( context, next ) {
 		context.primary = React.createElement( MurielDocComponent, {
 			slug: context.params.slug,
+			sectionId: Object.keys( context.hash )[ 0 ],
 		} );
 		next();
 	},
