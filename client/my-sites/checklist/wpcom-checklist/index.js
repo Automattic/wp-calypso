@@ -154,6 +154,7 @@ class WpcomChecklist extends PureComponent {
 					updateCompletion={ this.props.updateCompletion }
 				>
 					<TaskComponent
+						bannerImageSrc="/calypso/images/illustrations/checkEmailsDesktop.svg"
 						completed={ this.isComplete( 'email_verified' ) }
 						completedTitle={ translate( 'You validated your email address' ) }
 						description={ translate(
