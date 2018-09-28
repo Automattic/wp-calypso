@@ -439,3 +439,7 @@ I18N.prototype.registerTranslateHook = function( callback ) {
 };
 
 export default I18N;
+
+export const {
+    throwErrors
+} = I18N;
