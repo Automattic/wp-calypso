@@ -11,7 +11,7 @@
  * @param  {object} match - parser matching object
  * @return {object} data object combining the strings and options passed into translate();
  */
-module.exports = function preProcessXGettextJSMatch( match ) {
+export default function preProcessXGettextJSMatch( match ) {
 	let finalProps = { line: match.line },
 		options, i, keyName, args;
 

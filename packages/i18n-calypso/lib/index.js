@@ -438,4 +438,4 @@ I18N.prototype.registerTranslateHook = function( callback ) {
 	this.translateHooks.push( callback );
 };
 
-module.exports = I18N;
+export default I18N;

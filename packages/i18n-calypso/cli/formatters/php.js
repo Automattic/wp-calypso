@@ -70,7 +70,7 @@ function buildPHPString( properties, textdomain ) {
  * @param  {string} arrayName  - name of the array in the php resulting php file
  * @return {string}            - string representation of the final php file
  */
-module.exports = function formatInPHP( matches, options ) {
+export default function formatInPHP( matches, options ) {
 	const arrayName = options.phpArrayName || ( options.projectName + '_i18n_strings' );
 	return [
 		// start of the php file

@@ -6,4 +6,4 @@ function test() {
 	i18n.translate( 'My test has two files.' );
 }
 
-module.exports = test;
+export default test;

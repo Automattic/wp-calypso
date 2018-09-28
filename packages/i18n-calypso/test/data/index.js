@@ -186,4 +186,4 @@ const locale = {
 	]
 };
 
-exports.locale = locale;
+export { locale };
