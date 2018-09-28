@@ -28,9 +28,9 @@ describe( 'SingleDoc', () => {
 	describe( 'render test', () => {
 		test( 'should render html with marked text', () => {
 			const wrapper = shallow( <SingleDocClass { ...defaultProps } /> );
-			wrapper.setState( { body: '<div><p>something hello</p></div>' } );
+			wrapper.setState( { body: '# something hello' } );
 			expect( wrapper.find( '.devdocs__body .devdocs__doc-content' ).html() ).toEqual(
-				'<div class="devdocs__doc-content"><div><p>something <mark>hello</mark></p></div></div>'
+				'<div class="devdocs__doc-content"><h1>something <mark>hello</mark></h1></div>'
 			);
 			expect( wrapper.find( 'Error' ) ).toHaveLength( 0 );
 		} );
