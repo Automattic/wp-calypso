@@ -16,7 +16,7 @@ import DocService from './service';
 import Error from './error';
 import DocumentHead from 'components/data/document-head';
 import Shortcode from './shortcode';
-// import highlight from 'lib/highlight';
+import highlight from 'lib/highlight';
 
 export default class extends React.Component {
 	static displayName = 'SingleDocument';
@@ -109,7 +109,6 @@ export default class extends React.Component {
 			return null;
 		}
 
-		// @todo Fix/re-introduce highlight() support in the Markdown content
 		return (
 			<div className="devdocs__body">
 				<a
@@ -123,7 +122,9 @@ export default class extends React.Component {
 
 				<div className="devdocs__doc-content">
 					<ReactMarkdown
-						source={ body }
+						escapeHtml={ false }
+						skipHtml={ false }
+						source={ highlight( this.props.term, body ) }
 						renderers={ { shortcode: Shortcode } }
 						plugins={ [ RemarkShortcodes ] }
 					/>
