@@ -40,4 +40,13 @@
 			top: 57px;
 		}
 	}
+
+	.editor-inserter__menu {
+		.editor-inserter__search {
+			width: auto;
+		}
+		.editor-block-types-list__list-item {
+			box-sizing: border-box;
+		}
+	}
 }
