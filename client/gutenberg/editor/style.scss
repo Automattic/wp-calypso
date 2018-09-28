@@ -49,6 +49,24 @@
 			box-sizing: border-box;
 		}
 	}
+
+	.edit-post-block-sidebar__panel {
+		.components-panel__body {
+			&:first-child {
+				margin-top: 0;
+			}
+			&:last-child {
+				margin-bottom: 0;
+			}
+			&.editor-block-inspector__advanced {
+				margin-bottom: -16px;
+			}
+		}
+
+		.editor-block-inspector__card {
+			margin-bottom: 0;
+		}
+	}
 }
 
 //needed for oembed iframes to appear

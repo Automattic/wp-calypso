@@ -11,11 +11,11 @@
 		color: $dark-gray-500;
 	}
 
-	&.editor-block-inspector__advanced {
+	&:first-child {
+		margin-top: 16px;
+	}
+
+	&:last-child {
 		margin-bottom: -16px;
 	}
-}
-
-.editor-block-inspector__card {
-	margin-bottom: 0;
 }
