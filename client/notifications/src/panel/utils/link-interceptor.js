@@ -1,6 +1,6 @@
 import { store } from '../state';
 
-const openLink = href => ({ type: 'OPEN_LINK', href });
+const openLink = (href, tracksEvent) => ({ type: 'OPEN_LINK', href, tracksEvent });
 const openSite = ({ siteId, href }) => ({ type: 'OPEN_SITE', siteId, href });
 const openPost = (siteId, postId, href) => ({ type: 'OPEN_POST', siteId, postId, href });
 const openComment = ({ siteId, postId, href, commentId }) => ({
@@ -20,7 +20,7 @@ export const interceptLinks = event => {
 
   const node = 'A' === target.tagName ? target : target.parentNode;
   const { dataset = {}, href } = node;
-  const { linkType, postId, siteId, commentId } = dataset;
+  const { linkType, postId, siteId, commentId, tracksEvent } = dataset;
 
   if (!linkType) {
     return true;
@@ -44,7 +44,7 @@ export const interceptLinks = event => {
   } else if ('site' === linkType) {
     store.dispatch(openSite({ siteId, href }));
   } else {
-    store.dispatch(openLink(href));
+    store.dispatch(openLink(href, tracksEvent));
   }
 
   return false;

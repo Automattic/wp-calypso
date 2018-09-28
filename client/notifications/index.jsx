@@ -170,7 +170,16 @@ export class Notifications extends Component {
 					this.props.setUnseenCount( newNoteCount );
 				},
 			],
-			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
+			OPEN_LINK: [
+				( store, { href, tracksEvent } ) => {
+					if ( tracksEvent ) {
+						this.props.recordTracksEvent( 'calypso_notifications_' + tracksEvent, {
+							link: href,
+						} );
+					}
+					window.open( href, '_blank' );
+				},
+			],
 			OPEN_POST: [
 				( store, { siteId, postId } ) => {
 					this.props.checkToggle();
