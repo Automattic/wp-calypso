@@ -3,12 +3,13 @@
 /**
  * External dependencies
  */
-import wpcomProxyRequest from 'wpcom-proxy-request';
+import { toPairs } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import debugFactory from 'debug';
+import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:gutenberg' );
 
@@ -34,25 +35,54 @@ export const pathRewriteMiddleware = ( options, next, siteSlug ) => {
 	return next( { ...options, path: wpcomPath } );
 };
 
+const wpcomRequest = method => {
+	if ( method !== 'GET' ) {
+		return wpcom.req.post.bind( wpcom.req );
+	}
+	return wpcom.req.get.bind( wpcom.req );
+};
+
 export const wpcomProxyMiddleware = parameters => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
 	// This intentionally breaks the middleware chain.
-	return new Promise( ( resolve, reject ) => {
-		const { body, data, ...options } = parameters;
+	const {
+		path,
+		body = {},
+		data,
+		method: rawMethod,
+		apiVersion,
+		apiNamespace = 'wp/v2',
+	} = parameters;
 
-		wpcomProxyRequest(
+	const method = rawMethod ? rawMethod.toUpperCase() : 'GET';
+
+	const payload = {};
+	if ( body.constructor.name === 'FormData' && body.has( 'file' ) ) {
+		// options.body is a FormData object which we need to convert to a plain old object
+		// Due to error below using Chrome and Safari using the wpcom proxy
+		// Error: Uncaught DOMException: Failed to execute 'postMessage' on 'Window': FormData object could not be cloned.
+		payload.data = toPairs( Array.from( body.entries() ) );
+		payload.formData = [ [ 'file', body.get( 'file' ) ] ];
+	} else if ( data || body ) {
+		payload.body = data || body;
+	}
+
+	return new Promise( ( resolve, reject ) => {
+		wpcomRequest( method )(
 			{
-				...options,
-				...( ( body || data ) && { body: body || data } ),
-				apiNamespace: 'wp/v2',
+				path,
+				method,
+				...( !! apiVersion && { apiVersion } ),
+				...( ! apiVersion && { apiNamespace } ),
+				...payload,
 			},
-			( error, bodyOrData ) => {
+			//error, data, headers
+			( error, dataResponse ) => {
 				if ( error ) {
 					return reject( error );
 				}
-
-				return resolve( bodyOrData );
+				return resolve( dataResponse );
 			}
 		);
 	} );
