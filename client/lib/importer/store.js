@@ -17,7 +17,6 @@ import {
 	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
 	IMPORTS_IMPORT_RESET,
-	IMPORTS_IMPORT_START,
 	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_STORE_RESET,
@@ -114,6 +113,8 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			return {
 				...state,
 				importers: {
+					// We may no longer need to omit as importerId should be undefined
+					// It is safer, however to omit until we are absolutely sure of it's redundancy
 					...omit( state.importers, action.importerId ),
 					[ action.importerStatus.importerId ]: action.importerStatus,
 				},
@@ -191,33 +192,6 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				importers: activeImporters,
 			};
 		}
-		case IMPORTS_UPLOAD_SET_PROGRESS:
-			return {
-				...state,
-				importers: {
-					...state.importers,
-					[ action.importerId ]: {
-						...getImporterItemById( state, action.importerId ),
-						percentComplete:
-							( action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) ) * 100,
-					},
-				},
-			};
-
-		case IMPORTS_IMPORT_START:
-			return {
-				...state,
-				count: get( state, 'count', 0 ) + 1,
-				importers: {
-					...state.importers,
-					[ action.importerId ]: {
-						importerId: action.importerId,
-						type: action.importerType,
-						importerState: appStates.READY_FOR_UPLOAD,
-						site: { ID: action.siteId },
-					},
-				},
-			};
 
 		case IMPORTS_START_IMPORTING:
 			return {
@@ -236,14 +210,15 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 				...state,
 				importers: {
 					...state.importers,
-					[ action.importerId ]: {
-						...getImporterItemById( state, action.importerId ),
-						importerState: appStates.UPLOADING,
-						filename: action.filename,
-					},
+					...( action.importerId && {
+						[ action.importerId ]: {
+							...getImporterItemById( state, action.importerId ),
+							importerState: appStates.UPLOADING,
+							filename: action.filename,
+						},
+					} ),
 				},
 			};
-
 		case IMPORTS_IMPORT_LOCK:
 			return {
 				...state,

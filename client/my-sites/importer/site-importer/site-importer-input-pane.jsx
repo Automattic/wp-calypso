@@ -25,7 +25,7 @@ import { toApi, fromApi } from 'lib/importer/common';
 import { startMappingAuthors, startImporting, mapAuthor, finishUpload } from 'lib/importer/actions';
 import user from 'lib/user';
 
-import { appStates } from 'state/imports/constants';
+import { appStates, SITE_IMPORTER } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import ErrorPane from '../error-pane';
 import TextInput from 'components/forms/form-text-input';
@@ -44,12 +44,12 @@ const NO_ERROR_STATE = {
 	errorType: null,
 };
 class SiteImporterInputPane extends React.Component {
-	static displayName = 'SiteImporterSitePreview';
+	static displayName = 'SiteImporterInputPane';
 
 	static propTypes = {
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 		importerStatus: PropTypes.shape( {
-			importerState: PropTypes.string.isRequired,
+			importerState: PropTypes.string,
 			percentComplete: PropTypes.number,
 		} ),
 		onStartImport: PropTypes.func,
@@ -302,14 +302,18 @@ class SiteImporterInputPane extends React.Component {
 		const endpointParam =
 			this.state.selectedEndpoint && `?force_endpoint=${ this.state.selectedEndpoint }`;
 
+		const importData = JSON.stringify(
+			toApi( {
+				...this.props.importerStatus,
+				type: SITE_IMPORTER,
+			} )
+		);
+
 		wpcom.wpcom.req
 			.post( {
 				path: `/sites/${ this.props.site.ID }/site-importer/import-site${ endpointParam }`,
 				apiNamespace: 'wpcom/v2',
-				formData: [
-					[ 'import_status', JSON.stringify( toApi( this.props.importerStatus ) ) ],
-					[ 'site_url', this.state.importSiteURL ],
-				],
+				formData: [ [ 'import_status', importData ], [ 'site_url', this.state.importSiteURL ] ],
 			} )
 			.then( resp => {
 				this.setState( { loading: false } );

@@ -24,7 +24,7 @@ class ImporterSquarespace extends React.PureComponent {
 			title: PropTypes.string.isRequired,
 		} ).isRequired,
 		importerStatus: PropTypes.shape( {
-			importerState: PropTypes.string.isRequired,
+			importerState: PropTypes.string,
 			errorData: PropTypes.shape( {
 				type: PropTypes.string.isRequired,
 				description: PropTypes.string.isRequired,

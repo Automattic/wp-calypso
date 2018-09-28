@@ -53,7 +53,7 @@ export default class extends React.PureComponent {
 				description: PropTypes.string.isRequired,
 			} ),
 			filename: PropTypes.string,
-			importerState: PropTypes.string.isRequired,
+			importerState: PropTypes.string,
 			percentComplete: PropTypes.number,
 			siteTitle: PropTypes.string.isRequired,
 			statusMessage: PropTypes.string,
@@ -79,7 +79,7 @@ export default class extends React.PureComponent {
 				{ includes( importingStates, state.importerState ) && (
 					<ImportingPane importerStatus={ state } site={ this.props.site } />
 				) }
-				{ includes( uploadingStates, state.importerState ) && (
+				{ ( ! state.importerState || includes( uploadingStates, state.importerState ) ) && (
 					<SiteImporterInputPane
 						{ ...this.props }
 						description={ uploadDescription }
