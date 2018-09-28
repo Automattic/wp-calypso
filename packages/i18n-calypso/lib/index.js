@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'i18n-calypso' ),
+let debug = require( 'debug' )( 'i18n-calypso' ),
 	Jed = require( 'jed' ),
 	moment = require( 'moment-timezone' ),
 	sha1 = require( 'hash.js/lib/hash/sha/1' ),
@@ -13,22 +13,22 @@ var debug = require( 'debug' )( 'i18n-calypso' ),
 /**
  * Internal dependencies
  */
-var numberFormatPHPJS = require( './number-format' );
+const numberFormatPHPJS = require( './number-format' );
 
 /**
  * Constants
  */
-var decimal_point_translation_key = 'number_format_decimals',
+let decimal_point_translation_key = 'number_format_decimals',
 	thousands_sep_translation_key = 'number_format_thousands_sep';
 
-var translationLookup = [
+const translationLookup = [
 	// By default don't modify the options when looking up translations.
 	function( options ) {
 		return options;
 	}
 ];
 
-var hashCache = {};
+const hashCache = {};
 
 // raise a console warning
 function warn() {
@@ -51,7 +51,7 @@ function simpleArguments( args ) {
  * @return {object}         - a single object describing translation needs
  */
 function normalizeTranslateArguments( args ) {
-	var original = args[ 0 ],
+	let original = args[ 0 ],
 		options = {},
 		i;
 
@@ -119,7 +119,7 @@ function getJedArgs( jedMethod, props ) {
  * @return {string}         - the returned translation from Jed
  */
 function getTranslationFromJed( jed, options ) {
-	var jedMethod = 'gettext',
+	let jedMethod = 'gettext',
 		jedArgs;
 
 	if ( options.context ) {
@@ -136,7 +136,7 @@ function getTranslationFromJed( jed, options ) {
 }
 
 function getTranslation( i18n, options ) {
-	var i, lookup;
+	let i, lookup;
 
 	for ( i = translationLookup.length - 1; i >= 0; i-- ) {
 		lookup = translationLookup[ i ]( assign( {}, options ) );
@@ -183,7 +183,7 @@ I18N.prototype.moment = moment;
  * @return {string}         Formatted number as string
  */
 I18N.prototype.numberFormat = function( number ) {
-	var options = arguments[ 1 ] || {},
+	let options = arguments[ 1 ] || {},
 		decimals = ( typeof options === 'number' ) ? options : options.decimals || 0,
 		decPoint = options.decPoint || this.state.numberFormatSettings.decimal_point || '.',
 		thousandsSep = options.thousandsSep || this.state.numberFormatSettings.thousands_sep || ',';
@@ -198,14 +198,14 @@ I18N.prototype.configure = function( options ) {
 
 I18N.prototype.setLocale = function( localeData ) {
 	if ( localeData && localeData[ '' ] && localeData[ '' ][ 'key-hash' ] ) {
-		var hashLength, minHashLength, maxHashLength, keyHash = localeData[ '' ][ 'key-hash' ];
+		let hashLength, minHashLength, maxHashLength, keyHash = localeData[ '' ][ 'key-hash' ];
 
-		var transform = function( string, hashLength ) {
+		const transform = function( string, hashLength ) {
 			const lookupPrefix = hashLength === false ? '' : String( hashLength );
 			if ( typeof hashCache[ lookupPrefix + string ] !== 'undefined' ) {
 				return hashCache[ lookupPrefix + string ];
 			}
-			var hash = sha1().update( string ).digest('hex');
+			const hash = sha1().update( string ).digest('hex');
 
 			if ( hashLength ) {
 				return hashCache[ lookupPrefix + string ] = hash.substr( 0, hashLength );
@@ -214,7 +214,7 @@ I18N.prototype.setLocale = function( localeData ) {
 			return hashCache[ lookupPrefix + string ] = hash;
 		};
 
-		var generateLookup = function( hashLength ) {
+		const generateLookup = function( hashLength ) {
 			return function( options ) {
 				if ( options.context ) {
 					options.original = transform( options.context + String.fromCharCode( 4 ) + options.original, hashLength );
@@ -231,7 +231,7 @@ I18N.prototype.setLocale = function( localeData ) {
 			if ( keyHash.length === 4 ) {
 				translationLookup.push( generateLookup( false ) );
 			} else {
-				var variableHashLengthPos = keyHash.substr( 5 ).indexOf( '-' );
+				const variableHashLengthPos = keyHash.substr( 5 ).indexOf( '-' );
 				if ( variableHashLengthPos < 0 ) {
 					hashLength = Number( keyHash.substr( 5 ) );
 					translationLookup.push( generateLookup( hashLength ) );
@@ -312,7 +312,7 @@ I18N.prototype.getLocaleSlug = function() {
  * Adds new translations to the locale data, overwriting any existing translations with a matching key
  **/
 I18N.prototype.addTranslations = function( localeData ) {
-	for ( var prop in localeData ) {
+	for ( const prop in localeData ) {
 		if ( prop !== '' ) {
 			this.state.jed.options.locale_data.messages[prop] = localeData[prop];
 		}
@@ -344,7 +344,7 @@ I18N.prototype.hasTranslation = function() {
  * @return {string|React-components} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function() {
-	var options, translation, sprintfArgs, errorMethod, optionsString, cacheable;
+	let options, translation, sprintfArgs, errorMethod, optionsString, cacheable;
 
 	options = normalizeTranslateArguments( arguments );
 

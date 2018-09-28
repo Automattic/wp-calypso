@@ -6,7 +6,7 @@
  * @return {string}            returns the function name
  */
 function getGlotPressFunction( properties ) {
-	var wpFunc = [ '_' ];
+	let wpFunc = [ '_' ];
 
 	if ( properties.plural ) {
 		wpFunc.push( 'n' );
@@ -32,7 +32,7 @@ function getGlotPressFunction( properties ) {
  * @return {string}            the equivalent php code for each translation request
  */
 function buildPHPString( properties, textdomain ) {
-	var wpFunc = getGlotPressFunction( properties ),
+	let wpFunc = getGlotPressFunction( properties ),
 		response = [],
 		string,
 		closing = textdomain ? ( ', "' + textdomain.replace( /"/g, '\\"' ) + '" ),' ) : ' ),',
@@ -71,7 +71,7 @@ function buildPHPString( properties, textdomain ) {
  * @return {string}            - string representation of the final php file
  */
 module.exports = function formatInPHP( matches, options ) {
-	var arrayName = options.phpArrayName || ( options.projectName + '_i18n_strings' );
+	const arrayName = options.phpArrayName || ( options.projectName + '_i18n_strings' );
 	return [
 		// start of the php file
 		'<?php',
