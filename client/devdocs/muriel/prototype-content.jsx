@@ -62,9 +62,9 @@ export default class extends React.Component {
 	getFetchUrl() {
 		if ( this.props.slug ) {
 			return 'slug:' + encodeURIComponent( this.props.slug );
-		} else {
-			return this.props.id;
 		}
+
+		return this.props.id;
 	}
 
 	render() {
