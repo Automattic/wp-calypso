@@ -6,7 +6,7 @@
 import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
-import { map, noop, includes } from 'lodash';
+import { map, includes } from 'lodash';
 
 /**
  * Internal dependencies
