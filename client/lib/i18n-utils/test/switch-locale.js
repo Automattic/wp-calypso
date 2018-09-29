@@ -1,4 +1,8 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +37,7 @@ describe( 'getLanguageFileUrl()', () => {
 			hasMockedWindow = true;
 		}
 
-		expect( getLanguageFileUrl( 'ja' ).substring( 0, 2 ) ).toEqual( '//' );
+		expect( startsWith( getLanguageFileUrl( 'ja' ), '//' ) ).toBe( true );
 
 		if ( hasMockedWindow ) {
 			global.window = null;

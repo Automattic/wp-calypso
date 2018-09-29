@@ -6,7 +6,7 @@
 import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
-import { map } from 'lodash';
+import { map, noop, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +38,7 @@ export function getLanguageFilePathUrl() {
  * @return {String} A language file URL.
  */
 export function getLanguageFileUrl( localeSlug, fileType = 'json' ) {
-	if ( -1 === [ 'js', 'json' ].indexOf( fileType ) ) {
+	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
 		fileType = 'json';
 	}
 
