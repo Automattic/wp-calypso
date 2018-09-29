@@ -1,7 +1,7 @@
 /**
  * Module dependencies/
  */
-const fs = require( 'fs' );
+import fs from 'fs';
 
 /**
  * Reads the inputFiles and concat all their content into one string.

@@ -1,6 +1,8 @@
+import php from './php';
+import pot from './pot';
 const exported = {
-    php: require( './php' ),
-    pot: require( './pot' )
+    php,
+    pot
 };
 
 export default exported;

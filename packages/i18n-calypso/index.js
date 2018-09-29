@@ -1,8 +1,12 @@
 /**
  * Internal dependencies
  */
-let I18N = require( './lib' ),
-	i18n = new I18N();
+import I18N from './lib';
+
+/**
+ * Internal dependencies
+ */
+let i18n = new I18N();
 
 const exported = {
     moment: i18n.moment,

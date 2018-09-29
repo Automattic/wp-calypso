@@ -1,12 +1,14 @@
 /**
  * Module dependencies/
  */
-let fs = require( 'fs' ),
-	path = require( 'path' ),
-	Xgettext = require( 'xgettext-js' ),
-	preProcessXGettextJSMatch = require( './preprocess-xgettextjs-match.js' ),
-	formatters = require( './formatters' ),
-	debug = require( 'debug' )( 'glotpress-js' );
+import fs from 'fs';
+
+import path from 'path';
+import Xgettext from 'xgettext-js';
+import preProcessXGettextJSMatch from './preprocess-xgettextjs-match.js';
+import formatters from './formatters';
+import debugFactory from 'debug';
+const debug = debugFactory('glotpress-js');
 
 export default function( config ) {
 	let keywords,
@@ -106,4 +108,4 @@ export default function( config ) {
 	}
 
 	return textOutput;
-};
+}

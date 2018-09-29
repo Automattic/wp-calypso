@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-let expect = require( 'chai' ).expect,
-	path = require( 'path' ),
-	fs = require( 'fs'),
-	rewire = require( 'rewire' );
+import { expect } from 'chai';
+
+import path from 'path';
+import fs from 'fs';
+import rewire from 'rewire';
 
 /**
  * Internal dependencies
  */
-const i18nCalypsoCLI = require( '../../cli' );
+import i18nCalypsoCLI from '../../cli';
 
 // generate whitelist file
 let sourceFiles;
