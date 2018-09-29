@@ -3,6 +3,7 @@
  * Internal dependencies
  */
 import I18N from './lib';
+import makeLocalize from './lib/localize';
 
 const i18n = new I18N();
 
@@ -23,7 +24,7 @@ const exported = {
 	on: i18n.stateObserver.on.bind( i18n.stateObserver ),
 	off: i18n.stateObserver.removeListener.bind( i18n.stateObserver ),
 	emit: i18n.stateObserver.emit.bind( i18n.stateObserver ),
-	localize: require( './lib/localize' )( i18n ),
+	localize: makeLocalize( i18n ),
 	$this: i18n,
 	I18N: I18N,
 };
