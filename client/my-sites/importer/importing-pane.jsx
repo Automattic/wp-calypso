@@ -122,7 +122,7 @@ class ImportingPane extends React.PureComponent {
 	};
 
 	getHeadingTextProcessing = () => {
-		return translate( 'Processing your file. It might take a while, please wait.' );
+		return translate( 'Processing your file. Please wait a few moments.' );
 	};
 
 	getSuccessText = () => {
@@ -223,7 +223,7 @@ class ImportingPane extends React.PureComponent {
 
 	render() {
 		const {
-			importerStatus: { importerId, /*errorData = {},*/ customData },
+			importerStatus: { importerId, customData },
 			mapAuthorFor,
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 			sourceType,
@@ -237,7 +237,10 @@ class ImportingPane extends React.PureComponent {
 		let blockingMessage;
 
 		if ( this.isError() ) {
-			//statusMessage = this.getErrorMessage( errorData );
+			/**
+			 * TODO: This is for the status message that appears at the bottom
+			 * of the import section. This shouldn't be used for Error reporting.
+			 */
 			statusMessage = '';
 		}
 
