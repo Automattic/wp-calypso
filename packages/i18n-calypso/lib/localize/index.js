@@ -1,3 +1,7 @@
+/** @format */
+/**
+ * External dependencies
+ */
 import React from 'react';
 import assign from 'lodash.assign';
 import createClass from 'create-react-class';
@@ -11,21 +15,21 @@ export default function( i18n ) {
 	const i18nProps = {
 		moment: i18n.moment,
 		numberFormat: i18n.numberFormat.bind( i18n ),
-		translate: i18n.translate.bind( i18n )
+		translate: i18n.translate.bind( i18n ),
 	};
 
 	return function( ComposedComponent ) {
 		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
-		const component = createClass({
+		const component = createClass( {
 			displayName: 'Localized(' + componentName + ')',
 
-			componentDidMount: function() {
+			componentDidMount() {
 				this.boundForceUpdate = this.forceUpdate.bind( this );
 				i18n.stateObserver.addListener( 'change', this.boundForceUpdate );
 			},
 
-			componentWillUnmount: function() {
+			componentWillUnmount() {
 				// in some cases, componentWillUnmount is called before componentDidMount
 				// Supposedly fixed in React 15.1.0: https://github.com/facebook/react/issues/2410
 				if ( this.boundForceUpdate ) {
@@ -33,10 +37,10 @@ export default function( i18n ) {
 				}
 			},
 
-			render: function() {
+			render() {
 				const props = assign( {}, this.props, i18nProps );
 				return React.createElement( ComposedComponent, props );
-			}
+			},
 		} );
 		component._composedComponent = ComposedComponent;
 		return component;
