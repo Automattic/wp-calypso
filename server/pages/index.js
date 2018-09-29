@@ -336,7 +336,7 @@ function setUpLoggedInRoute( req, res, next ) {
 		.catch( error => {
 			console.error( 'Failed to fetch the language revision files.', error );
 
-			return error;
+			throw error;
 		} );
 
 	const setupRequests = [ langPromise ];
@@ -429,21 +429,15 @@ function setUpLoggedInRoute( req, res, next ) {
 					console.error( 'API Error: ' + errorMessage );
 				}
 
-				return error;
+				throw error;
 			} );
 
 		setupRequests.push( userPromise );
 	}
 
-	Promise.all( setupRequests ).then( results => {
-		const rejectedWithErrors = results.filter( r => null != r && r.error );
-
-		if ( 0 !== rejectedWithErrors.length ) {
-			return next( rejectedWithErrors );
-		}
-
-		next();
-	} );
+	Promise.all( setupRequests )
+		.then( () => next() )
+		.catch( error => next( error ) );
 }
 
 /**
