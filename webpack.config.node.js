@@ -42,6 +42,9 @@ function getExternals() {
 	// with modules that are incompatible with webpack bundling.
 	fs.readdirSync( 'node_modules' )
 		.filter( function( module ) {
+			if ( module === 'i18n-calypso' ) {
+				return false;
+			}
 			return [ '.bin' ].indexOf( module ) === -1;
 		} )
 		.forEach( function( module ) {
