@@ -21,6 +21,7 @@ import CloseButton from 'my-sites/importer/importer-header/close-button';
 import StartButton from 'my-sites/importer/importer-header/start-button';
 import StopButton from 'my-sites/importer/importer-header/stop-button';
 import DoneButton from 'my-sites/importer/importer-header/done-button';
+import ResetButton from 'my-sites/importer/importer-header/reset-button';
 
 /**
  * Module variables
@@ -33,7 +34,8 @@ const cancelStates = [
 	appStates.UPLOAD_SUCCESS,
 	appStates.UPLOADING,
 ];
-const stopStates = [ appStates.IMPORT_FAILURE, appStates.IMPORTING ];
+const stopStates = [ appStates.IMPORTING ];
+const errorStates = [ appStates.IMPORT_FAILURE ];
 const doneStates = [ appStates.IMPORT_SUCCESS ];
 
 class ImporterHeader extends React.PureComponent {
@@ -61,6 +63,8 @@ class ImporterHeader extends React.PureComponent {
 			return StartButton;
 		} else if ( includes( doneStates, importerState ) ) {
 			return DoneButton;
+		} else if ( includes( errorStates, importerState ) ) {
+			return ResetButton;
 		}
 
 		return null;
@@ -73,11 +77,13 @@ class ImporterHeader extends React.PureComponent {
 		return (
 			<header className="importer-header">
 				<ImporterLogo icon={ icon } />
-				<ButtonComponent
-					importerStatus={ importerStatus }
-					isEnabled={ isEnabled }
-					site={ this.props.site }
-				/>
+				{ ButtonComponent && (
+					<ButtonComponent
+						importerStatus={ importerStatus }
+						isEnabled={ isEnabled }
+						site={ this.props.site }
+					/>
+				) }
 				<div className="importer-header__service-info">
 					<h1 className="importer-header__service-title">{ title }</h1>
 					<p>{ description }</p>

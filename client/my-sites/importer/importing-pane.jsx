@@ -92,10 +92,6 @@ class ImportingPane extends React.PureComponent {
 				pages: PropTypes.number,
 				posts: PropTypes.number,
 			} ),
-			errorData: PropTypes.shape( {
-				description: PropTypes.string.isRequired,
-				type: PropTypes.string.isRequired,
-			} ),
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			site: PropTypes.shape( {

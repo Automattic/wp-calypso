@@ -13,6 +13,7 @@ export const appStates = Object.freeze( {
 	UPLOAD_SUCCESS: 'importer-upload-success',
 	UPLOAD_FAILURE: 'importer-upload-failure',
 	UPLOADING: 'importer-uploading',
+	IMPORT_CLEAR: 'importer-clear',
 } );
 
 export const WORDPRESS = 'importer-type-wordpress';

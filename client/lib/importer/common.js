@@ -26,6 +26,7 @@ const importerStateMap = [
 	[ appStates.UPLOAD_SUCCESS, 'uploadSuccess' ],
 	[ appStates.UPLOAD_FAILURE, 'importer-upload-failure' ],
 	[ appStates.UPLOADING, 'importer-uploading' ],
+	[ appStates.IMPORT_CLEAR, 'importer-clear' ],
 ];
 
 function apiToAppState( state ) {
@@ -66,7 +67,15 @@ function replaceUserInfoWithIds( customData ) {
 }
 
 export function fromApi( state ) {
-	const { importId: importerId, importStatus, type, progress, customData, siteId } = state;
+	const {
+		importId: importerId,
+		importStatus,
+		type,
+		progress,
+		customData,
+		errorData,
+		siteId,
+	} = state;
 
 	return {
 		importerId,
@@ -75,6 +84,7 @@ export function fromApi( state ) {
 		progress,
 		customData: generateSourceAuthorIds( customData ),
 		site: { ID: siteId },
+		errorData,
 	};
 }
 
