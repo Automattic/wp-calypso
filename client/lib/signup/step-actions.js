@@ -121,9 +121,7 @@ export function createSiteWithCart(
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const siteGoals = getSiteGoals( reduxStore.getState() ).trim();
 	const importingFromUrl =
-		'from-site' === flowName
-			? normalizeImportUrl( getNuxUrlInputValue( reduxStore.getState() ) )
-			: '';
+		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( reduxStore.getState() ) ) : '';
 
 	wpcom.undocumented().sitesNew(
 		{
