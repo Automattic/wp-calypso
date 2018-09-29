@@ -2,9 +2,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { Component, createElement } from 'react';
 import assign from 'lodash.assign';
-import createClass from 'create-react-class';
 
 /**
  * Localize a React component
@@ -21,13 +20,13 @@ export default function( i18n ) {
 	return function( ComposedComponent ) {
 		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
 
-		const component = createClass( {
-			displayName: 'Localized(' + componentName + ')',
+		class component extends Component {
+			static displayName = 'Localized(' + componentName + ')';
 
 			componentDidMount() {
 				this.boundForceUpdate = this.forceUpdate.bind( this );
 				i18n.stateObserver.addListener( 'change', this.boundForceUpdate );
-			},
+			}
 
 			componentWillUnmount() {
 				// in some cases, componentWillUnmount is called before componentDidMount
@@ -35,13 +34,13 @@ export default function( i18n ) {
 				if ( this.boundForceUpdate ) {
 					i18n.stateObserver.removeListener( 'change', this.boundForceUpdate );
 				}
-			},
+			}
 
 			render() {
 				const props = assign( {}, this.props, i18nProps );
-				return React.createElement( ComposedComponent, props );
-			},
-		} );
+				return createElement( ComposedComponent, props );
+			}
+		}
 		component._composedComponent = ComposedComponent;
 		return component;
 	};
