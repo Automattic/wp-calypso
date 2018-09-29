@@ -188,25 +188,16 @@ jobs:
           name: Lint Client and Server
           when: always
           command: |
-            # We'll use failure code to do some additional processing and report failure manually
-            set +o errexit
-            ./node_modules/.bin/eslint-eslines                        \
-              $(                                                      \
-                git diff --name-only --diff-filter=d origin/master... \
-                | grep -E '^(client|server)'                          \
-                | grep -E '\.jsx?$'                                   \
-              )                                                       \
-              -- --format junit                                       \
-              > ~/eslint-results.xml
-            # Ensure we don't upload empty reports.
-            # Eslint would not produce a malformed empty xml using the --format and -o options.
-            # However, with eslint-eslines and the redirected > output, we may get an empty file.
-            # We only put the file into the reports directory if the status code informs us that
-            # lint issues have been encountered.
-            ESLINT_RESULT="$?"
-            if [ "$ESLINT_RESULT" -ne 0 ]; then
-              mv ~/eslint-results.xml "$CIRCLE_TEST_REPORTS/eslint/results.xml"
-              exit "$ESLINT_RESULT"
+            FILES_TO_LINT=$(
+              git diff --name-only --diff-filter=d origin/master... \
+                | grep -E '^(client|server)'                        \
+                | grep -E '\.jsx?$'
+            )
+            if [ ! -z $FILES_TO_LINT ]; then
+              ./node_modules/.bin/eslint                                \
+                --format junit                                          \
+                --output-file "$CIRCLE_TEST_REPORTS/eslint/results.xml" \
+                $FILES_TO_LINT
             fi
       - run:
           name: Build calypso-strings.pot
