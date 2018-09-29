@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { Component, createElement } from 'react';
-import assign from 'lodash.assign';
 
 /**
  * Localize a React component
@@ -37,8 +36,7 @@ export default function( i18n ) {
 			}
 
 			render() {
-				const props = assign( {}, this.props, i18nProps );
-				return createElement( ComposedComponent, props );
+				return createElement( ComposedComponent, { ...this.props, ...i18nProps } );
 			}
 		}
 		component._composedComponent = ComposedComponent;
