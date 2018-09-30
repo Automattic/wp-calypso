@@ -306,10 +306,23 @@ jobs:
       - save_cache: *save-jest-cache
       - store-artifacts-and-test-results
 
+  danger:
+    <<: *defaults
+    steps:
+      - restore_cache: *restore-git-cache
+      - checkout
+      - run:
+          name: Danger.js
+          command: npx danger ci
+
 workflows:
   version: 2
   calypso:
     jobs:
+      - danger:
+          filters:
+            branches:
+              ignore: master
       - build-jetpack-blocks
       - build-notifications
       - lint-and-translate
