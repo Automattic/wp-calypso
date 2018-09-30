@@ -265,7 +265,8 @@
     "test-server:watch": "npm run -s test-server -- --watch",
     "translate": "i18n-calypso --format pot --output-file ./calypso-strings.pot -e date \"**/*.js\" \"**/*.jsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\"",
     "update-deps": "npm run -s rm -- node_modules && npm run -s rm -- npm-shrinkwrap.json && npm install && npm shrinkwrap",
-    "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\""
+    "postshrinkwrap": "node -e \"fs.utimesSync( './node_modules', new Date(), new Date() );\"",
+    "whybundled": "whybundled stats.json"
   },
   "devDependencies": {
     "babel-core": "7.0.0-bridge.0",
@@ -311,7 +312,8 @@
     "supertest": "3.3.0",
     "terminal-kit": "1.26.2",
     "webpack-bundle-analyzer": "3.0.2",
-    "webpack-hot-middleware": "2.24.2"
+    "webpack-hot-middleware": "2.24.2",
+    "whybundled": "1.4.2"
   },
   "optionalDependencies": {
     "fsevents": "1.2.4"
