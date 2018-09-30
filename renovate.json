@@ -2,9 +2,9 @@
 	"extends": [ "config:base", "default:pinDigestsDisabled" ],
 	"packageRules": [
 		{
-			"paths": "packages/**",
+			"paths": [ "packages/**" ],
 			"groupName": "calypso-packages",
-			"rangeStragedy": "replace"
+			"rangeStrategy": "replace"
 		}
 	],
 	"statusCheckVerify": true,
