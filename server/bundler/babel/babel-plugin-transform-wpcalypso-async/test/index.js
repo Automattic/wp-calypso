@@ -36,7 +36,7 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 				const code = transform( 'export default () => <AsyncLoad require="foo" />;' );
 
 				expect( code ).toBe(
-					'var _ref = function (callback) {\n  import(\n  /*webpackChunkName: "async-load-foo", webpackPrefetch: true*/\n  "foo").then(function load(mod) {\n' +
+					'var _ref = function (callback) {\n  import(\n  /*webpackChunkName: "async-load-foo"*/\n  "foo").then(function load(mod) {\n' +
 						'    callback(mod.__esModule ? mod.default : mod);\n' +
 						'  });\n};\n\nexport default (() => <AsyncLoad require={_ref} />);'
 				);
@@ -72,16 +72,14 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 			test( 'should just issue the import if no callback is specified', () => {
 				const code = transform( 'asyncRequire( "foo/bar" );' );
 
-				expect( code ).toBe(
-					'import(\n/*webpackChunkName: "async-load-foo-bar", webpackPrefetch: true*/\n"foo/bar");'
-				);
+				expect( code ).toBe( 'import(\n/*webpackChunkName: "async-load-foo-bar"*/\n"foo/bar");' );
 			} );
 
 			test( 'should invoke callback with require after ensure', () => {
 				const code = transform( 'asyncRequire( "foo/bar", cb );' );
 
 				expect( code ).toBe(
-					'import(\n/*webpackChunkName: "async-load-foo-bar", webpackPrefetch: true*/\n"foo/bar").then(function load(mod) {\n  cb(mod.__esModule ? ' +
+					'import(\n/*webpackChunkName: "async-load-foo-bar"*/\n"foo/bar").then(function load(mod) {\n  cb(mod.__esModule ? ' +
 						'mod.default : mod);\n});'
 				);
 			} );

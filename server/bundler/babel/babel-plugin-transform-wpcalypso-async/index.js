@@ -112,7 +112,7 @@ module.exports = ( { types: t } ) => {
 					const argumentWithMagicComments = t.addComment(
 						argument,
 						'leading',
-						`webpackChunkName: "${ chunkName }", webpackPrefetch: true`,
+						`webpackChunkName: "${ chunkName }"`,
 						false
 					);
 					const importCall = t.callExpression( t.identifier( 'import' ), [
