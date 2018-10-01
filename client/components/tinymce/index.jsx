@@ -92,6 +92,11 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Internal Variables
  */
 let _instance = 1;
