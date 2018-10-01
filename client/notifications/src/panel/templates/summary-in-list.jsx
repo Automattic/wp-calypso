@@ -40,7 +40,8 @@ export class SummaryInList extends React.Component {
     var excerpt = null;
 
     if (1 < this.props.note.subject.length) {
-      excerpt = <div className="wpnc__excerpt">{this.props.note.subject[1].text}</div>;
+      const comment = this.props.note.subject[1].text.slice( 0, this.props.note.subject[1].text.length - 1);
+      excerpt = <div className="wpnc__excerpt" data-e2e-comment={ comment }>{this.props.note.subject[1].text}</div>;
     }
 
     return (
