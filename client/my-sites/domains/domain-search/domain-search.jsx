@@ -168,7 +168,7 @@ class DomainSearch extends Component {
 								offerUnavailableOption
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
-								vendor={ abtest( 'domainManagementSuggestion' ) }
+								vendor={ abtest( 'domainManagementSuggestionV2' ) }
 							/>
 						</EmailVerificationGate>
 					</div>
