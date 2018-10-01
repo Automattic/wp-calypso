@@ -69,7 +69,7 @@ const StatsInsights = props => {
 					<DomainTip
 						siteId={ siteId }
 						event="stats_insights_domain"
-						vendor={ abtest( 'domainManagementSuggestion' ) }
+						vendor={ abtest( 'domainManagementSuggestionV2' ) }
 					/>
 				) }
 				<div className="stats-insights__nonperiodic has-recent">
