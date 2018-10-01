@@ -10,8 +10,7 @@ const debug = debugFactory( 'calypso:desktop' );
  * Internal dependencies
  */
 import { newPost } from 'lib/paths';
-import userFactory from 'lib/user';
-const user = userFactory();
+import { getCurrentUser } from 'state/current-user/selectors';
 import { ipcRenderer as ipc } from 'electron'; // From Electron
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
@@ -42,6 +41,7 @@ const Desktop = {
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 
 		this.store = await getReduxStore();
+		this.user = getCurrentUser( this.store );
 
 		// Send some events immediatley - this sets the app state
 		this.notificationStatus();
@@ -86,14 +86,14 @@ const Desktop = {
 	sendUserLoginStatus: function() {
 		let status = true;
 
-		if ( user.data === false || user.data instanceof Array ) {
+		if ( ! this.user ) {
 			status = false;
 		}
 
 		debug( 'Sending logged-in = ' + status );
 
 		ipc.send( 'user-login-status', status );
-		ipc.send( 'user-auth', user, oAuthToken.getToken() );
+		ipc.send( 'user-auth', { data: this.user || false }, oAuthToken.getToken() );
 	},
 
 	onToggleNotifications: function() {
