@@ -19,10 +19,10 @@ class PulsingDot extends React.Component {
 	}
 
 	componentDidMount() {
-		const { timeout } = this.props;
+		const { delay } = this.props;
 		this.timeout = setTimeout( () => {
 			this.setState( { show: true } );
-		}, timeout );
+		}, delay );
 	}
 
 	componentWillUnmount() {
@@ -41,11 +41,11 @@ class PulsingDot extends React.Component {
 }
 
 PulsingDot.propTypes = {
-	timeout: number.isRequired,
+	delay: number.isRequired,
 };
 
 PulsingDot.defaultProps = {
-	timeout: 0,
+	delay: 0,
 };
 
 export default PulsingDot;

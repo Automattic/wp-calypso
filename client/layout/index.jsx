@@ -127,7 +127,7 @@ const Layout = createReactClass( {
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<div className={ loadingClass }>
-					{ this.props.isLoading && <PulsingDot timeout={ 400 } active /> }
+					{ this.props.isLoading && <PulsingDot delay={ 400 } active /> }
 				</div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
