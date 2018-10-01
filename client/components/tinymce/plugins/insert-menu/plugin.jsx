@@ -11,7 +11,7 @@ import GridiconAddOutline from 'gridicons/dist/add-outline';
 /**
  * Internal dependencies
  */
-import { menuItems, GridiconButtonEx } from './menu-items';
+import { menuItems, GridiconButton } from './menu-items';
 
 const initialize = editor => {
 	menuItems.forEach( item =>
@@ -33,7 +33,7 @@ const initialize = editor => {
 			const [ insertContentElm ] = this.$el[ 0 ].children;
 
 			insertContentElm.innerHTML = renderToString(
-				<GridiconButtonEx icon={ <GridiconAddOutline /> } label={ i18n.translate( 'Add' ) } />
+				<GridiconButton icon={ <GridiconAddOutline /> } label={ i18n.translate( 'Add' ) } />
 			);
 		},
 	} );

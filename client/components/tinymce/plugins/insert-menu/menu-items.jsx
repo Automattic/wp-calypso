@@ -18,7 +18,7 @@ import GridiconMention from 'gridicons/dist/mention';
 import config from 'config';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export const GridiconButtonEx = ( { icon, label, e2e } ) => (
+export const GridiconButton = ( { icon, label, e2e } ) => (
 	<div className="wpcom-insert-menu__menu">
 		{ React.cloneElement( icon, { className: 'wpcom-insert-menu__menu-icon' } ) }
 		<span className="wpcom-insert-menu__menu-label" data-e2e-insert-type={ e2e }>
@@ -32,11 +32,7 @@ export const menuItems = [
 	{
 		name: 'insert_media_item',
 		item: (
-			<GridiconButtonEx
-				icon={ <GridiconImage /> }
-				label={ i18n.translate( 'Media' ) }
-				e2e="media"
-			/>
+			<GridiconButton icon={ <GridiconImage /> } label={ i18n.translate( 'Media' ) } e2e="media" />
 		),
 		cmd: 'wpcomAddMedia',
 	},
@@ -47,7 +43,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 		menuItems.push( {
 			name: 'insert_from_google',
 			item: (
-				<GridiconButtonEx
+				<GridiconButton
 					icon={ <GridiconShutter /> }
 					label={ i18n.translate( 'Media from Google' ) }
 					e2e="google-media"
@@ -60,7 +56,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 		menuItems.push( {
 			name: 'insert_from_pexels',
 			item: (
-				<GridiconButtonEx
+				<GridiconButton
 					icon={ <GridiconImageMultiple /> }
 					label={ i18n.translate( 'Free photo library' ) }
 					e2e="stock-media-pexels"
@@ -74,7 +70,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 menuItems.push( {
 	name: 'insert_contact_form',
 	item: (
-		<GridiconButtonEx
+		<GridiconButton
 			icon={ <GridiconMention /> }
 			label={ i18n.translate( 'Contact form' ) }
 			e2e="contact-form"
@@ -86,7 +82,7 @@ menuItems.push( {
 menuItems.push( {
 	name: 'insert_payment_button',
 	item: (
-		<GridiconButtonEx
+		<GridiconButton
 			icon={ <GridiconMoney /> }
 			label={ i18n.translate( 'Payment button' ) }
 			e2e="payment-button"
@@ -99,7 +95,7 @@ if ( config.isEnabled( 'memberships' ) ) {
 	menuItems.push( {
 		name: 'insert_memberships_button',
 		item: (
-			<GridiconButtonEx
+			<GridiconButton
 				icon={ <GridiconMoney /> }
 				label={ i18n.translate( 'Recurring Payment' ) }
 				e2e="memberships"
