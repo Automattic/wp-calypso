@@ -36,6 +36,7 @@ import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site
 import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
 import getSiteId from 'state/selectors/get-site-id';
 import getSites from 'state/selectors/get-sites';
+import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -119,7 +120,8 @@ function renderEmptySites( context ) {
 }
 
 function renderNoVisibleSites( context ) {
-	const currentUser = user.get();
+	const { getState } = getStore( context );
+	const currentUser = getCurrentUser( getState() );
 	const hiddenSites = currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
@@ -297,7 +299,7 @@ export function siteSelection( context, next ) {
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const basePath = sectionify( context.path, siteFragment );
-	const currentUser = user.get();
+	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser.visible_site_count === 1;
 	const allSitesPath = sectionify( context.path, siteFragment );
 
