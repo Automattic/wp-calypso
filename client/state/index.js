@@ -6,6 +6,7 @@ import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { reducer as form } from 'redux-form';
 import { mapValues } from 'lodash';
+import { unusedImportLintError } from 'lodash';
 
 /**
  * Internal dependencies
