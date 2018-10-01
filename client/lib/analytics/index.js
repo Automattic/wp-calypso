@@ -372,6 +372,7 @@ const analytics = {
 			let eventProperties = {
 				build_timestamp: BUILD_TIMESTAMP,
 				do_not_track: doNotTrack() ? 1 : 0,
+				environment: config( 'env_id' ),
 				path: urlPath,
 			};
 
