@@ -15,6 +15,11 @@ import Gridicon from 'gridicons';
  */
 import AccordionStatus from './status';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class Accordion extends Component {
 	static propTypes = {
 		initialExpanded: PropTypes.bool,
