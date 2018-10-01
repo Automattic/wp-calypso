@@ -13,6 +13,11 @@ import PropTypes from 'prop-types';
 import Card from 'components/card';
 import Button from 'components/button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ActionCard = ( {
 	headerText,
 	mainText,
