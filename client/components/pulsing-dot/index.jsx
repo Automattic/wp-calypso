@@ -49,5 +49,3 @@ PulsingDot.defaultProps = {
 };
 
 export default PulsingDot;
-
-// export default function PulsingDot( { active, timeout = 0 } ) {}
