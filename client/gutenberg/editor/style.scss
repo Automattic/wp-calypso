@@ -107,3 +107,9 @@
 .wp-block-embed__wrapper > iframe {
 	width: 100%;
 }
+
+//block icons sizing
+.components-toolbar__control.components-button > svg,
+.editor-block-settings-menu__content {
+	box-sizing: border-box;
+}
