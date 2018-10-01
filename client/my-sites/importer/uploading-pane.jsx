@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
-import { flowRight, includes, noop } from 'lodash';
+import { includes, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -19,7 +19,6 @@ import { appStates } from 'state/imports/constants';
 import Button from 'components/forms/form-button';
 import DropZone from 'components/drop-zone';
 import ProgressBar from 'components/progress-bar';
-import { connectDispatcher } from './dispatcher-converter';
 
 class UploadingPane extends React.PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
@@ -111,8 +110,6 @@ class UploadingPane extends React.PureComponent {
 	};
 
 	startUpload = file => {
-		const { startUpload } = this.props;
-
 		if ( window.chrome && window.chrome.webstore ) {
 			/**
 			 * This is a workaround for a Chrome issue that prevents file uploads from `calypso.localhost` through
@@ -158,11 +155,4 @@ class UploadingPane extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	startUpload: flowRight(
-		dispatch,
-		startUpload
-	),
-} );
-
-export default connectDispatcher( null, mapDispatchToProps )( localize( UploadingPane ) );
+export default localize( UploadingPane );

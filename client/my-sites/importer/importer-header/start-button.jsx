@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { flow, flowRight } from 'lodash';
+import { flow } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
  */
 import Button from 'components/forms/form-button';
 import { startImport } from 'lib/importer/actions';
-import { connectDispatcher } from 'my-sites/importer/dispatcher-converter';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class StartButton extends React.PureComponent {
@@ -32,11 +31,10 @@ class StartButton extends React.PureComponent {
 		const {
 			importerStatus: { type },
 			site: { ID: siteId },
-			startImportFn,
 		} = this.props;
 		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
-		startImportFn( siteId, type );
+		startImport( siteId, type );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
@@ -55,18 +53,10 @@ class StartButton extends React.PureComponent {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
-	startImportFn: flowRight(
-		dispatch,
-		startImport
-	),
-} );
-
 export default flow(
 	connect(
 		null,
 		{ recordTracksEvent }
 	),
-	connectDispatcher( null, mapDispatchToProps ),
 	localize
 )( StartButton );
