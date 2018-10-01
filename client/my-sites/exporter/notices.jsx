@@ -16,6 +16,8 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import { getExportingState } from 'state/site-settings/exporter/selectors';
+import getExportedDownloadUrl from 'state/selectors/get-exported-download-url';
+import getExportedMediaDownloadUrl from 'state/selectors/get-exported-media-download-url';
 import { isGuidedTransferAwaitingPurchase } from 'state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { States } from 'state/site-settings/exporter/constants';
@@ -25,7 +27,13 @@ import { States } from 'state/site-settings/exporter/constants';
  */
 class Notices extends Component {
 	exportNotice() {
-		const { exportDidComplete, exportDidFail, exportDownloadURL, translate } = this.props;
+		const {
+			exportDidComplete,
+			exportDidFail,
+			exportDownloadURL,
+			mediaDownloadURL,
+			translate,
+		} = this.props;
 
 		if ( exportDidComplete ) {
 			return (
@@ -37,6 +45,9 @@ class Notices extends Component {
 					) }
 				>
 					<NoticeAction href={ exportDownloadURL }>{ translate( 'Download' ) }</NoticeAction>
+					{ mediaDownloadURL && (
+						<NoticeAction href={ mediaDownloadURL }>{ translate( 'Download Media' ) }</NoticeAction>
+					) }
 				</Notice>
 			);
 		}
@@ -72,7 +83,8 @@ class Notices extends Component {
 const mapStateToProps = state => ( {
 	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
 	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
-	exportDownloadURL: state.siteSettings.exporter.downloadURL,
+	exportDownloadURL: getExportedDownloadUrl( state ),
+	mediaDownloadURL: getExportedMediaDownloadUrl( state ),
 	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase(
 		state,
 		getSelectedSiteId( state )
