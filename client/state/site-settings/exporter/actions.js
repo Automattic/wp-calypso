@@ -145,7 +145,9 @@ export function exportStatusFetch( siteId ) {
 		const success = ( response = {} ) => {
 			switch ( response.status ) {
 				case 'finished':
-					return dispatch( exportComplete( siteId, response.attachment_url ) );
+					return dispatch(
+						exportComplete( siteId, response.attachment_url, response.media_archive_url )
+					);
 				case 'running':
 					return;
 			}
@@ -169,11 +171,12 @@ export function exportFailed( siteId, error ) {
 	};
 }
 
-export function exportComplete( siteId, downloadURL ) {
+export function exportComplete( siteId, downloadURL, mediaDownloadURL = null ) {
 	return {
 		type: EXPORT_COMPLETE,
 		siteId,
 		downloadURL,
+		mediaDownloadURL,
 	};
 }
 

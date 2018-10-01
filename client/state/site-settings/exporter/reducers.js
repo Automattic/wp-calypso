@@ -137,6 +137,17 @@ export function downloadURL( state = null, action ) {
 	return state;
 }
 
+export function mediaDownloadURL( state = null, action ) {
+	switch ( action.type ) {
+		case EXPORT_COMPLETE:
+			return action.mediaDownloadURL;
+		case EXPORT_CLEAR:
+			return null;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	selectedPostType,
 	selectedAdvancedSettings,
@@ -144,4 +155,5 @@ export default combineReducers( {
 	fetchingAdvancedSettings,
 	advancedSettings,
 	downloadURL,
+	mediaDownloadURL,
 } );
