@@ -188,11 +188,14 @@ jobs:
           name: Lint Client and Server
           when: always
           command: |
+            # We may not have files to lint which returns non-0 exit
+            # Ensure this does not cause job failure (see `|| exit 0`)
             FILES_TO_LINT=$(
               git diff --name-only --diff-filter=d origin/master... \
                 | grep -E '^(client|server)'                        \
                 | grep -E '\.jsx?$'
-            )
+            ) || exit 0
+
             if [ ! -z $FILES_TO_LINT ]; then
               ./node_modules/.bin/eslint                                \
                 --format junit                                          \
