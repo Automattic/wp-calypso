@@ -21,6 +21,7 @@ import getMediaExportUrl from 'state/selectors/get-media-export-url';
 import { isGuidedTransferAwaitingPurchase } from 'state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { States } from 'state/site-settings/exporter/constants';
+import config from 'config';
 
 /**
  * Displays local notices for the Export tab of Site Settings
@@ -45,9 +46,10 @@ class Notices extends Component {
 					) }
 				>
 					<NoticeAction href={ contentExportUrl }>{ translate( 'Download' ) }</NoticeAction>
-					{ mediaExportUrl && (
-						<NoticeAction href={ mediaExportUrl }>{ translate( 'Download Media' ) }</NoticeAction>
-					) }
+					{ config.isEnabled( 'export-media' ) &&
+						mediaExportUrl && (
+							<NoticeAction href={ mediaExportUrl }>{ translate( 'Download Media' ) }</NoticeAction>
+						) }
 				</Notice>
 			);
 		}
