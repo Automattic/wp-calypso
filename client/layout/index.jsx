@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -59,6 +60,10 @@ class Layout extends Component {
 		colorSchemePreference: PropTypes.string,
 	};
 
+	pageHandler = e => {
+		page.onclick( e.nativeEvent );
+	};
+
 	render() {
 		const sectionClass = classnames(
 				'layout',
@@ -78,7 +83,7 @@ class Layout extends Component {
 			} );
 
 		return (
-			<div className={ sectionClass }>
+			<div className={ sectionClass } onClick={ this.pageHandler }>
 				<DocumentHead />
 				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
