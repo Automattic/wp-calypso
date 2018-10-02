@@ -146,7 +146,12 @@ export function exportStatusFetch( siteId ) {
 			switch ( response.status ) {
 				case 'finished':
 					return dispatch(
-						exportComplete( siteId, response.content_export_url, response.media_export_url )
+						exportComplete(
+							siteId,
+							// TODO: remove the fallback here once the endpoint response reshaping patch has landed.
+							response.content_export_url || response.attachment_url,
+							response.media_export_url
+						)
 					);
 				case 'running':
 					return;
