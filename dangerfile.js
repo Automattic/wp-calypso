@@ -21,6 +21,11 @@ if (
 	process.exit( 0 ); // eslint-disable-line no-process-exit
 }
 
+// Skip danger check if we have a Renovate PR
+if ( danger.github.pr.user.login === 'renovate[bot]' ) {
+	process.exit( 0 ); // eslint-disable-line no-process-exit
+}
+
 // No PR is too small to include a description of why you made a change
 if ( danger.github.pr.body.length < 10 ) {
 	warn( 'Please include a description of your PR changes.' );

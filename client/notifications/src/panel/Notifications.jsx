@@ -16,6 +16,11 @@ import { init as initAPI } from './rest-client/wpcom';
 
 import Layout from './templates';
 
+/**
+ * Style dependencies
+ */
+import './boot/stylesheets/style.scss';
+
 let client;
 
 const globalData = {};
