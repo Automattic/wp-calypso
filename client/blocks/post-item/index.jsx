@@ -175,7 +175,11 @@ class PostItem extends React.Component {
 							onMouseOver={ preloadEditor }
 						>
 							{ ! externalPostLink && (
-								<a href={ enabledPostLink } className="post-item__title-link">
+								<a
+									href={ enabledPostLink }
+									className="post-item__title-link"
+									data-e2e-title={ title }
+								>
 									{ title || translate( 'Untitled' ) }
 								</a>
 							) }
