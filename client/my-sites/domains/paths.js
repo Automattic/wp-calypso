@@ -38,6 +38,18 @@ export function domainManagementAddGoogleApps( siteName, domainName ) {
 	return path;
 }
 
+export function domainManagementAddGoogleAppsBusiness( siteName, domainName ) {
+	let path;
+
+	if ( domainName ) {
+		path = domainManagementEdit( siteName, domainName, 'add-google-apps-business' );
+	} else {
+		path = domainManagementRoot() + '/add-google-apps-business/' + siteName;
+	}
+
+	return path;
+}
+
 export function domainManagementContactsPrivacy( siteName, domainName ) {
 	return domainManagementEdit( siteName, domainName, 'contacts-privacy' );
 }

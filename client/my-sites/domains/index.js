@@ -63,6 +63,8 @@ export default function() {
 		paths: [
 			paths.domainManagementAddGoogleApps( ':site', ':domain' ),
 			paths.domainManagementAddGoogleApps( ':site' ),
+			paths.domainManagementAddGoogleAppsBusiness( ':site', ':domain' ),
+			paths.domainManagementAddGoogleAppsBusiness( ':site' ),
 		],
 		handlers: [
 			...getCommonHandlers(),

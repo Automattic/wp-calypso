@@ -18,7 +18,10 @@ import { get } from 'lodash';
 import Button from 'components/forms/form-button';
 import CompactCard from 'components/card/compact';
 import config from 'config';
-import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
+import {
+	domainManagementAddGoogleApps,
+	domainManagementAddGoogleAppsBusiness,
+} from 'my-sites/domains/paths';
 import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
@@ -38,11 +41,18 @@ const AddGoogleAppsCard = createReactClass( {
 	render() {
 		const { currencyCode, translate } = this.props,
 			price = get( this.props, [ 'products', 'gapps', 'prices', currencyCode ], 0 ),
+			priceBusiness = get(
+				this.props,
+				[ 'products', 'gapps_unlimited', 'prices', currencyCode ],
+				0
+			),
 			googleAppsSupportUrl = ADDING_GOOGLE_APPS_TO_YOUR_SITE,
 			selectedDomainName = this.props.selectedSite.domain;
 
 		const annualPrice = getAnnualPrice( price, currencyCode );
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
+		const annualPriceBusiness = getAnnualPrice( priceBusiness, currencyCode );
+		const monthlyPriceBusiness = getMonthlyPrice( priceBusiness, currencyCode );
 
 		return (
 			<div>
@@ -96,6 +106,46 @@ const AddGoogleAppsCard = createReactClass( {
 
 						<div className="email__add-google-apps-card-logos">
 							<img src="/calypso/images/g-suite/g-suite.svg" />
+						</div>
+					</div>
+				</CompactCard>
+				<CompactCard>
+					<div className="email__add-google-apps-card-product-details">
+						<div className="email__add-google-apps-card-description">
+							<h2 className="email__add-google-apps-card-title">
+								{ translate( 'G Suite Business.' ) }
+							</h2>
+
+							<p className="email__add-google-apps-card-sub-title">
+								{ translate(
+									'Subscribe to G Suite Business for unlimited storage and archiving.'
+								) }
+							</p>
+
+							<div className="email__add-google-apps-card-price">
+								<h4 className="email__add-google-apps-card-price-per-user">
+									<span>
+										{ translate( '{{strong}}%(price)s{{/strong}} per user / month', {
+											components: {
+												strong: <strong />,
+											},
+											args: {
+												price: monthlyPriceBusiness,
+											},
+										} ) }
+									</span>
+								</h4>
+
+								{ this.renderAddGoogleAppsBusinessButton() }
+
+								<h5 className="email__add-google-apps-card-billing-period">
+									{ translate( '%(price)s billed yearly (2 months free!)', {
+										args: {
+											price: annualPriceBusiness,
+										},
+									} ) }
+								</h5>
+							</div>
 						</div>
 					</div>
 				</CompactCard>
@@ -206,6 +256,20 @@ const AddGoogleAppsCard = createReactClass( {
 		);
 	},
 
+	renderAddGoogleAppsBusinessButton() {
+		const { translate } = this.props;
+
+		if ( ! config.isEnabled( 'upgrades/checkout' ) ) {
+			return null;
+		}
+
+		return (
+			<Button type="button" onClick={ this.goToAddGoogleAppsBusiness }>
+				{ translate( 'Add G Suite Business' ) }
+			</Button>
+		);
+	},
+
 	handleLearnMoreClick() {
 		this.recordEvent( 'learnMoreClick', this.props.selectedDomainName || null );
 	},
@@ -217,6 +281,15 @@ const AddGoogleAppsCard = createReactClass( {
 	goToAddGoogleApps() {
 		page(
 			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName )
+		);
+	},
+
+	goToAddGoogleAppsBusiness() {
+		page(
+			domainManagementAddGoogleAppsBusiness(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName
+			)
 		);
 	},
 } );

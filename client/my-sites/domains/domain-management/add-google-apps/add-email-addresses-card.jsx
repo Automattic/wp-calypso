@@ -40,6 +40,7 @@ const AddEmailAddressesCard = createReactClass( {
 		domains: PropTypes.object.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string,
+		isBusiness: PropTypes.bool.isRequired,
 	},
 
 	getInitialState() {
@@ -273,6 +274,7 @@ const AddEmailAddressesCard = createReactClass( {
 				users: this.state.fieldsets,
 				fields: this.getFields(),
 			} ),
+			isBusiness: this.props.isBusiness,
 		} );
 		googleAppsCartItems.forEach( addItem );
 
@@ -288,7 +290,7 @@ const AddEmailAddressesCard = createReactClass( {
 	},
 } );
 
-function getGoogleAppsCartItems( { domains, fieldsets } ) {
+function getGoogleAppsCartItems( { domains, fieldsets, isBusiness } ) {
 	let groups = groupBy( fieldsets, function( fieldset ) {
 		return fieldset.domain.value;
 	} );
@@ -307,6 +309,8 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 
 		if ( hasGoogleApps( domainInfo ) ) {
 			item = cartItems.googleAppsExtraLicenses( { domain, users } );
+		} else if ( isBusiness ) {
+			item = cartItems.googleAppsBusiness( { domain, users } );
 		} else {
 			item = cartItems.googleApps( { domain, users } );
 		}

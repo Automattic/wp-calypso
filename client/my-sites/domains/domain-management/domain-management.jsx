@@ -25,6 +25,7 @@ import Transfer from './transfer';
 
 export default {
 	AddGoogleApps,
+	AddGoogleAppsBusiness: AddGoogleApps,
 	ContactsPrivacy,
 	Dns,
 	DomainConnectMapping,

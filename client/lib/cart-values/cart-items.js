@@ -622,6 +622,10 @@ export function googleAppsExtraLicenses( properties ) {
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
+export function googleAppsBusiness( properties ) {
+	return googleApps( assign( {}, properties, { product_slug: 'gapps_unlimited' } ) );
+}
+
 export function fillGoogleAppsRegistrationData( cart, registrationData ) {
 	const googleAppsItems = filter( getAll( cart ), isGoogleApps );
 	return flow.apply(
@@ -1096,6 +1100,7 @@ export default {
 	getSiteRedirects,
 	getTlds,
 	googleApps,
+	googleAppsBusiness,
 	googleAppsExtraLicenses,
 	guidedTransferItem,
 	isDomainBeingUsedForPlan,
