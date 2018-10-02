@@ -21,6 +21,8 @@ import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
 import { translate } from 'i18n-calypso';
+//TEMP
+import 'gutenberg/extensions/slider/editor';
 
 import 'gutenberg/extensions/slider/editor';
 
