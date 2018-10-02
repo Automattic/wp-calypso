@@ -6,6 +6,7 @@ import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { renderToString } from 'react-dom/server';
 import i18n from 'i18n-calypso';
+import GridiconAddOutline from 'gridicons/dist/add-outline';
 
 /**
  * Internal dependencies
@@ -32,7 +33,7 @@ const initialize = editor => {
 			const [ insertContentElm ] = this.$el[ 0 ].children;
 
 			insertContentElm.innerHTML = renderToString(
-				<GridiconButton icon="add-outline" label={ i18n.translate( 'Add' ) } />
+				<GridiconButton icon={ <GridiconAddOutline /> } label={ i18n.translate( 'Add' ) } />
 			);
 		},
 	} );
