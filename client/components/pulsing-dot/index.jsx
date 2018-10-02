@@ -9,17 +9,19 @@ import { number } from 'prop-types';
 import classnames from 'classnames';
 
 class PulsingDot extends React.Component {
-	constructor( props ) {
-		super( props );
+	timeout = null;
 
-		this.timeout = null;
-		this.state = {
-			show: false,
-		};
-	}
+	state = {
+		show: false,
+	};
 
 	componentDidMount() {
 		const { delay } = this.props;
+
+		if ( ! delay ) {
+			return;
+		}
+
 		this.timeout = setTimeout( () => {
 			this.setState( { show: true } );
 		}, delay );
@@ -35,8 +37,12 @@ class PulsingDot extends React.Component {
 		const { active } = this.props;
 		const { show } = this.state;
 
+		if ( ! show ) {
+			return null;
+		}
+
 		const className = classnames( 'pulsing-dot', { 'is-active': active } );
-		return show ? <div className={ className } /> : null;
+		return <div className={ className } />;
 	}
 }
 
