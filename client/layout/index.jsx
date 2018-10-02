@@ -78,7 +78,6 @@ const Layout = createReactClass( {
 
 		return (
 			<MasterbarLoggedIn
-				user={ this.props.user }
 				section={ this.props.section.group }
 				compact={ this.props.section.name === 'checkout' }
 			/>

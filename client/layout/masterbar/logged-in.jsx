@@ -34,7 +34,6 @@ import { domainManagementList } from 'my-sites/domains/paths';
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
 		domainOnlySite: PropTypes.bool,
-		user: PropTypes.object,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
