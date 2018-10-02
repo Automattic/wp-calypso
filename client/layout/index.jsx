@@ -39,6 +39,7 @@ import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
+import { isUserLoggedIn } from 'state/current-user/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
@@ -60,7 +61,6 @@ const Layout = createReactClass( {
 	propTypes: {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
-		user: PropTypes.object,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
@@ -72,7 +72,10 @@ const Layout = createReactClass( {
 	},
 
 	renderMasterbar: function() {
-		if ( ! this.props.user || /^\/start\/user-continue\//.test( this.props.currentRoute ) ) {
+		if (
+			! this.props.isUserLoggedIn ||
+			/^\/start\/user-continue\//.test( this.props.currentRoute )
+		) {
 			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
 		}
 
@@ -173,5 +176,6 @@ export default connect( state => {
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
 		currentRoute: getCurrentRoute( state ),
+		isUserLoggedIn: isUserLoggedIn( state ),
 	};
 } )( Layout );
