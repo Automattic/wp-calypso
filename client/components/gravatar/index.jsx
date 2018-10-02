@@ -17,6 +17,7 @@ import classnames from 'classnames';
  */
 import safeImageURL from 'lib/safe-image-url';
 import { getUserTempGravatar } from 'state/current-user/gravatar-status/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export class Gravatar extends Component {
 	constructor() {
@@ -94,4 +95,5 @@ export class Gravatar extends Component {
 
 export default connect( ( state, ownProps ) => ( {
 	tempImage: getUserTempGravatar( state, get( ownProps, 'user.ID', false ) ),
+	user: getCurrentUser( state ),
 } ) )( Gravatar );
