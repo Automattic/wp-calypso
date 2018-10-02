@@ -54,7 +54,7 @@ export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
  * divs.
  */
 export function clientRouter( route, ...middlewares ) {
-	page( route, ...middlewares, render );
+	page( route, ...middlewares, hydrate );
 }
 
 export function redirectLoggedIn( context, next ) {
@@ -98,4 +98,8 @@ export function redirectLoggedOut( context, next ) {
 
 export function render( context ) {
 	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
+}
+
+export function hydrate( context ) {
+	ReactDom.hydrate( context.layout, document.getElementById( 'wpcom' ) );
 }
