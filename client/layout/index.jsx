@@ -38,7 +38,6 @@ import SitePreview from 'blocks/site-preview';
 import SupportArticleDialog from 'blocks/support-article-dialog';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { isUserLoggedIn } from 'state/current-user/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
@@ -68,10 +67,6 @@ const Layout = createReactClass( {
 		section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		isOffline: PropTypes.bool,
 		colorSchemePreference: PropTypes.string,
-	},
-
-	newestSite: function() {
-		return sortBy( this.props.sites, property( 'ID' ) ).pop();
 	},
 
 	renderPreview() {
@@ -109,7 +104,6 @@ const Layout = createReactClass( {
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				<MasterbarLoggedIn
 					section={ this.props.section.group }
-					sites={ this.props.sites }
 					compact={ this.props.section.name === 'checkout' }
 				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
@@ -167,6 +161,5 @@ export default connect( state => {
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
 		currentRoute: getCurrentRoute( state ),
-		isUserLoggedIn: isUserLoggedIn( state ),
 	};
 } )( Layout );
