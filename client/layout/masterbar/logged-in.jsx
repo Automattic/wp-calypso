@@ -155,7 +155,6 @@ class MasterbarLoggedIn extends React.Component {
 					</span>
 				</Item>
 				<Notifications
-					user={ this.props.user }
 					isShowing={ this.props.isNotificationsShowing }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
