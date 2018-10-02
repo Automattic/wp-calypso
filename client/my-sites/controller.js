@@ -11,7 +11,6 @@ import { get, noop, some, startsWith, uniq } from 'lodash';
  * Internal Dependencies
  */
 import { SITES_ONCE_CHANGED } from 'state/action-types';
-import userFactory from 'lib/user';
 import { receiveSite, requestSite } from 'state/sites/actions';
 import {
 	getSite,
@@ -74,7 +73,6 @@ const getStore = context => ( {
 /**
  * Module vars
  */
-const user = userFactory();
 const sitesPageTitleForAnalytics = 'Sites';
 
 /*
@@ -84,6 +82,8 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @returns { object } React element containing the site selector and sidebar
  */
 function createNavigation( context ) {
+	const { getState } = getStore( context );
+	const currentUser = getCurrentUser( getState() );
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
@@ -96,7 +96,7 @@ function createNavigation( context ) {
 			path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
-			user={ user }
+			user={ currentUser }
 		/>
 	);
 }
