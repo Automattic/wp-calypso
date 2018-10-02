@@ -8,13 +8,21 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { selectedAdvancedSettings, advancedSettings, fetchingAdvancedSettings } from '../reducers';
+import {
+	selectedAdvancedSettings,
+	advancedSettings,
+	fetchingAdvancedSettings,
+	contentExportUrl,
+	mediaExportUrl,
+} from '../reducers';
 import { SAMPLE_ADVANCED_SETTINGS, SAMPLE_ADVANCED_SETTINGS_EMPTY } from './data';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_RECEIVE,
 	EXPORT_POST_TYPE_FIELD_SET,
+	EXPORT_COMPLETE,
+	EXPORT_CLEAR,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -142,6 +150,46 @@ describe( 'reducer', () => {
 				100658273: SAMPLE_ADVANCED_SETTINGS,
 				12345: SAMPLE_ADVANCED_SETTINGS_EMPTY,
 			} );
+		} );
+	} );
+
+	describe( '#contentExportUrl', () => {
+		test( 'should store the content export url field.', () => {
+			const expectedUrl = 'https://examples.com/content';
+			expect(
+				contentExportUrl( null, {
+					type: EXPORT_COMPLETE,
+					contentExportUrl: expectedUrl,
+				} )
+			).to.eql( expectedUrl );
+		} );
+
+		test( 'should become null.', () => {
+			expect(
+				contentExportUrl( 'something', {
+					type: EXPORT_CLEAR,
+				} )
+			).to.be.null;
+		} );
+	} );
+
+	describe( '#mediaExportUrl', () => {
+		test( 'should store the media export url field.', () => {
+			const expectedUrl = 'https://examples.com/media';
+			expect(
+				mediaExportUrl( null, {
+					type: EXPORT_COMPLETE,
+					mediaExportUrl: expectedUrl,
+				} )
+			).to.eql( expectedUrl );
+		} );
+
+		test( 'should become null.', () => {
+			expect(
+				mediaExportUrl( 'something', {
+					type: EXPORT_CLEAR,
+				} )
+			).to.be.null;
 		} );
 	} );
 } );
