@@ -14,7 +14,6 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
@@ -71,20 +70,8 @@ const Layout = createReactClass( {
 		colorSchemePreference: PropTypes.string,
 	},
 
-	renderMasterbar: function() {
-		if (
-			! this.props.isUserLoggedIn ||
-			/^\/start\/user-continue\//.test( this.props.currentRoute )
-		) {
-			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
-		}
-
-		return (
-			<MasterbarLoggedIn
-				section={ this.props.section.group }
-				compact={ this.props.section.name === 'checkout' }
-			/>
-		);
+	newestSite: function() {
+		return sortBy( this.props.sites, property( 'ID' ) ).pop();
 	},
 
 	renderPreview() {
@@ -120,7 +107,11 @@ const Layout = createReactClass( {
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				{ this.renderMasterbar() }
+				<MasterbarLoggedIn
+					section={ this.props.section.group }
+					sites={ this.props.sites }
+					compact={ this.props.section.name === 'checkout' }
+				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<div className={ loadingClass }>
 					{ this.props.isLoading && <PulsingDot delay={ 400 } active /> }
