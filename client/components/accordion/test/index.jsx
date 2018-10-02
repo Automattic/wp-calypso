@@ -130,11 +130,12 @@ describe( 'Accordion', () => {
 		} );
 
 		test( 'should render content when forced', () => {
-			const wrapper = shallow(
-				<Accordion forceExpand={ true } title="Section">
-					Content
-				</Accordion>
-			);
+			const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
+			expect( wrapper.state( 'isExpanded' ) ).toBe( false );
+			expect( wrapper.state( 'hasExpanded' ) ).toBe( false );
+			expect( wrapper.find( '.accordion__content' ) ).toHaveLength( 0 );
+
+			wrapper.setProps( { forceExpand: true } );
 			expect( wrapper.state( 'isExpanded' ) ).toBe( false );
 			expect( wrapper.state( 'hasExpanded' ) ).toBe( true );
 			expect( wrapper.find( '.accordion__content' ).text() ).toBe( 'Content' );
