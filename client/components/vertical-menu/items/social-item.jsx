@@ -11,6 +11,11 @@ import { localize } from 'i18n-calypso';
 import { get, identity } from 'lodash';
 import SocialLogo from 'social-logos';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const services = translate => ( {
 	facebook: { icon: 'facebook', label: translate( 'Facebook' ) },
 	google: { icon: 'google', label: translate( 'Google search' ) },
