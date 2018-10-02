@@ -95,6 +95,7 @@
 		"preview-layout": true,
 		"privacy-policy": true,
 		"reader": true,
+		"reader/community-events": true,
 		"reader/following-intro": true,
 		"reader/related-posts": true,
 		"reader/user-mention-suggestions": true,

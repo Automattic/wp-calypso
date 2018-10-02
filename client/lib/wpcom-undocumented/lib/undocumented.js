@@ -796,6 +796,20 @@ Undocumented.prototype.getSitePlans = function( siteDomain, fn ) {
 };
 
 /**
+ * Get community events for a location
+ *
+ * @param {Object} query Query params
+ * @returns {Promise} Resolving to the API response
+ * @api public
+ */
+Undocumented.prototype.getCommunityEvents = function( query = {} ) {
+	debug( 'GET: /community-events', query );
+	query.apiNamespace = 'wpcom/v2';
+
+	return this.wpcom.req.get( '/community-events', query );
+};
+
+/**
  * Get cart.
  *
  * @param {string} cartKey The cart's key.

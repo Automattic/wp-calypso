@@ -1,0 +1,73 @@
+.community-events.main {
+	max-width: 800px;
+
+	@include breakpoint('>660px') {
+		margin: 30px auto;
+	}
+}
+
+.community-events__event {
+	margin: 16px 0;
+	.card-heading {
+		margin-top: 0;
+		font-family: $serif;
+		font-weight: 700;
+	}
+}
+
+.community-events__event-placeholder {
+	margin: 16px 0;
+	pointer-events: none;
+	user-select: none;
+	font-family: $serif;
+
+	.card-heading,
+	.community-events__event-meetup,
+	.community-events__event-date,
+	.community-events__event-location,
+	.community-events__event-link {
+		color: transparent;
+		background-color: $gray-lighten-30;
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+
+	.community-events__event-meetup {
+		display: inline-block;
+	}
+
+	.community-events__event-date {
+		max-width: 40%;
+		margin: 4px 0;
+	}
+
+	.community-events__event-location {
+		margin-right: 2em;
+	}
+}
+
+.community-events__event-details-container {
+	display: flex;
+}
+
+.community-events__event-details {
+	flex: 0 1 90%;
+	font-family: $serif;
+}
+
+.community-events__event-date {
+	color: $gray;
+}
+
+.community-events__event-link {
+	flex: 0 0 75px;
+	align-self: flex-end;
+	text-align: right;
+}
+
+.community-events__empty-results {
+	margin: 16px 0;
+	p:last-child {
+		margin-bottom: 0;
+	}
+	font-family: $serif;
+}

@@ -144,6 +144,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": true,
+		"reader/community-events": true,
 		"reader/following-intro": true,
 		"reader/full-errors": true,
 		"reader/likes-hover": true,
