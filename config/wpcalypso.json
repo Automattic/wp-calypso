@@ -127,7 +127,6 @@
 		"reader/user-mention-suggestions": true,
 		"resume-editing": true,
 		"republicize": true,
-		"restore-last-location": false,
 		"rewind/clone-site": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,

@@ -135,7 +135,6 @@
 		"reader/tags-with-elasticsearch": false,
 		"resume-editing": true,
 		"republicize": true,
-		"restore-last-location": false,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
