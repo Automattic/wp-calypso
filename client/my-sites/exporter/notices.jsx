@@ -16,8 +16,8 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import { getExportingState } from 'state/site-settings/exporter/selectors';
-import getExportedDownloadUrl from 'state/selectors/get-exported-download-url';
-import getExportedMediaDownloadUrl from 'state/selectors/get-exported-media-download-url';
+import getContentExportUrl from 'state/selectors/get-content-export-url';
+import getMediaExportUrl from 'state/selectors/get-media-export-url';
 import { isGuidedTransferAwaitingPurchase } from 'state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { States } from 'state/site-settings/exporter/constants';
@@ -30,8 +30,8 @@ class Notices extends Component {
 		const {
 			exportDidComplete,
 			exportDidFail,
-			exportDownloadURL,
-			mediaDownloadURL,
+			contentExportUrl,
+			mediaExportUrl,
 			translate,
 		} = this.props;
 
@@ -44,9 +44,9 @@ class Notices extends Component {
 						'Your export was successful! ' + 'A download link has also been sent to your email.'
 					) }
 				>
-					<NoticeAction href={ exportDownloadURL }>{ translate( 'Download' ) }</NoticeAction>
-					{ mediaDownloadURL && (
-						<NoticeAction href={ mediaDownloadURL }>{ translate( 'Download Media' ) }</NoticeAction>
+					<NoticeAction href={ contentExportUrl }>{ translate( 'Download' ) }</NoticeAction>
+					{ mediaExportUrl && (
+						<NoticeAction href={ mediaExportUrl }>{ translate( 'Download Media' ) }</NoticeAction>
 					) }
 				</Notice>
 			);
@@ -83,8 +83,8 @@ class Notices extends Component {
 const mapStateToProps = state => ( {
 	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
 	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
-	exportDownloadURL: getExportedDownloadUrl( state ),
-	mediaDownloadURL: getExportedMediaDownloadUrl( state ),
+	contentExportUrl: getContentExportUrl( state ),
+	mediaExportUrl: getMediaExportUrl( state ),
 	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase(
 		state,
 		getSelectedSiteId( state )

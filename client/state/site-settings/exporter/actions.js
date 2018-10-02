@@ -146,7 +146,7 @@ export function exportStatusFetch( siteId ) {
 			switch ( response.status ) {
 				case 'finished':
 					return dispatch(
-						exportComplete( siteId, response.attachment_url, response.media_archive_url )
+						exportComplete( siteId, response.content_export_url, response.media_export_url )
 					);
 				case 'running':
 					return;
@@ -171,12 +171,12 @@ export function exportFailed( siteId, error ) {
 	};
 }
 
-export function exportComplete( siteId, downloadURL, mediaDownloadURL = null ) {
+export function exportComplete( siteId, contentExportUrl, mediaExportUrl = null ) {
 	return {
 		type: EXPORT_COMPLETE,
 		siteId,
-		downloadURL,
-		mediaDownloadURL,
+		contentExportUrl,
+		mediaExportUrl,
 	};
 }
 
