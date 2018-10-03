@@ -10,7 +10,7 @@ import { flow, get, isUndefined, map, noop, omit, omitBy } from 'lodash';
  * Internal dependencies
  */
 import { USERS_REQUEST } from 'state/action-types';
-import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveUser } from 'state/users/actions';
 
@@ -41,22 +41,20 @@ export const normalizeUser = user =>
  * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  */
-export const fetchUsers = ( { dispatch }, action ) => {
+export const fetchUsers = action => {
 	const { siteId, ids, page = 1, perPage = DEFAULT_PER_PAGE } = action;
-	dispatch(
-		http(
-			{
-				path: `/sites/${ siteId }/users`,
-				method: 'GET',
-				apiNamespace: 'wp/v2',
-				query: {
-					include: ids,
-					page,
-					per_page: perPage,
-				},
+	return http(
+		{
+			path: `/sites/${ siteId }/users`,
+			method: 'GET',
+			apiNamespace: 'wp/v2',
+			query: {
+				include: ids,
+				page,
+				per_page: perPage,
 			},
-			action
-		)
+		},
+		action
 	);
 };
 
@@ -67,31 +65,26 @@ export const fetchUsers = ( { dispatch }, action ) => {
  * @param {Object} action Redux action
  * @param {Array} users raw data from post revisions API
  */
-export const receiveSuccess = ( { dispatch }, action, users ) => {
+export const receiveSuccess = ( action, users ) => {
 	const { page = 1, perPage = DEFAULT_PER_PAGE } = action;
 	const normalizedUsers = map( users, normalizeUser );
 
 	if ( get( getHeaders( action ), 'X-WP-TotalPages', 0 ) > page ) {
-		fetchUsers(
-			{ dispatch },
-			{
-				...omit( action, 'meta' ),
-				page: page + 1,
-				perPage,
-			}
-		);
+		fetchUsers( {
+			...omit( action, 'meta' ),
+			page: page + 1,
+			perPage,
+		} );
 	}
 
-	map(
-		normalizedUsers,
-		flow(
-			receiveUser,
-			dispatch
-		)
-	);
+	map( normalizedUsers, flow( receiveUser ) );
 };
 
-const dispatchUsersRequest = dispatchRequest( fetchUsers, receiveSuccess, noop );
+const dispatchUsersRequest = dispatchRequestEx( {
+	fetch: fetchUsers,
+	onSuccess: receiveSuccess,
+	onError: noop,
+} );
 
 registerHandlers( 'state/data-layer/wpcom/sites/users/index.js', {
 	[ USERS_REQUEST ]: [ dispatchUsersRequest ],
