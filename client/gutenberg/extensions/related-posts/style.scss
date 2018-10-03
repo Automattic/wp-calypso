@@ -1,6 +1,5 @@
 // @TODO: Replace with Gutenberg variables
 $dark-gray-300: #6c7781;
-$default-font-size: 13px;
 
 .wp-block-a8c-related-posts {
 	&.alignfull {
@@ -34,6 +33,5 @@ $default-font-size: 13px;
 
 	.wp-block-a8c-related-posts__preview-post-date {
 		color: $dark-gray-300;
-		font-size: $default-font-size;
 	}
 }

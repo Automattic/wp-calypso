@@ -122,7 +122,7 @@ export default ( { attributes, className, setAttributes } ) => {
 							{ displayDate && (
 								<time
 									dateTime={ moment( post.date ).toISOString() }
-									className={ `${ className }__preview-post-date` }
+									className={ `${ className }__preview-post-date has-small-font-size` }
 								>
 									{ moment( post.date )
 										.local()
