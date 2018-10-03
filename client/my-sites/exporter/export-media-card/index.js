@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import ActionCard from 'components/action-card';
 import QueryMediaExport from 'components/data/query-media-export';
 import getMediaExportData from 'state/selectors/get-media-export-data';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ExportMediaCard extends Component {
 	render() {
@@ -30,6 +31,7 @@ class ExportMediaCard extends Component {
 					buttonPrimary={ true }
 					buttonHref={ mediaExportUrl }
 					buttonDisabled={ ! mediaExportUrl }
+					buttonOnClick={ this.props.recordMediaExportClick }
 					compact={ false }
 				/>
 			</div>
@@ -37,6 +39,12 @@ class ExportMediaCard extends Component {
 	}
 }
 
-export default connect( state => ( {
-	mediaExportData: getMediaExportData( state ),
-} ) )( localize( ExportMediaCard ) );
+export default connect(
+	state => ( {
+		mediaExportData: getMediaExportData( state ),
+	} ),
+	dispatch => ( {
+		recordMediaExportClick: () =>
+			dispatch( recordTracksEvent( 'calypso_export_media_download_button_click' ) ),
+	} )
+)( localize( ExportMediaCard ) );
