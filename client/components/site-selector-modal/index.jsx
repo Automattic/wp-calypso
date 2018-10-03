@@ -20,6 +20,11 @@ import SitesDropdown from 'components/sites-dropdown';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import getVisibleSites from 'state/selectors/get-visible-sites';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SiteSelectorModal extends Component {
 	static propTypes = {
 		// children: Custom content. Will be displayed above the `SitesDropdown`.
