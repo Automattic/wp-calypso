@@ -18,21 +18,27 @@ import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
 import { isUserLoggedIn } from 'state/current-user/selectors';
 import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
 
 /**
  * Re-export
  */
 export { setSection, setUpLocale } from './shared.js';
 
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
-	<ReduxProvider store={ store }>
-		{ isUserLoggedIn( store.getState() ) ? (
-			<Layout primary={ primary } secondary={ secondary } />
-		) : (
+export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+	const state = store.getState();
+	const currentRoute = getCurrentRoute( state );
+	const userLoggedIn = isUserLoggedIn( state );
+	let layout = <Layout primary={ primary } secondary={ secondary } />;
+
+	if ( ! userLoggedIn || /^\/start\/user-continue\//.test( currentRoute ) ) {
+		layout = (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		) }
-	</ReduxProvider>
-);
+		);
+	}
+
+	return <ReduxProvider store={ store }>{ layout }</ReduxProvider>;
+};
 
 export const makeLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
