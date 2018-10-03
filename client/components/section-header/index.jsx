@@ -13,6 +13,11 @@ import classNames from 'classnames';
 import CompactCard from 'components/card/compact';
 import Count from 'components/count';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class SectionHeader extends PureComponent {
 	static defaultProps = {
 		label: '',

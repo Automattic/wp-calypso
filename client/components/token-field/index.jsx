@@ -15,6 +15,11 @@ import SuggestionsList from './suggestions-list';
 import Token from './token';
 import TokenInput from './token-input';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const debug = debugFactory( 'calypso:token-field' );
 
 class TokenField extends PureComponent {
