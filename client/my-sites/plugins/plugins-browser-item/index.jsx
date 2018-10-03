@@ -122,7 +122,9 @@ class PluginsBrowserListElement extends Component {
 							image={ this.props.plugin.icon }
 							isPlaceholder={ this.props.isPlaceholder }
 						/>
-						<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>
+						<div className="plugins-browser-item__title" data-e2e-plugin={ this.props.plugin.name }>
+							{ this.props.plugin.name }
+						</div>
 						<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
 						{ this.renderInstalledIn() }
 					</div>
