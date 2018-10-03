@@ -66,6 +66,19 @@ class SharingServiceDescription extends Component {
 					comment: 'Description for Google+ Publicize when no accounts are connected',
 				} );
 			},
+			mailchimp: function() {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate(
+						'Subscribing your followers to your mailchimp list.',
+						'Subscribing your followers to your mailchimp lists.',
+						{
+							count: this.props.numberOfConnections,
+						}
+					);
+				}
+
+				return this.props.translate( 'Subscribe your followers to a Mailchimp list.' );
+			},
 			linkedin: function() {
 				if ( this.props.numberOfConnections > 0 ) {
 					return this.props.translate( 'Sharing posts to your connections.', {
