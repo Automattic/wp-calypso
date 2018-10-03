@@ -7,6 +7,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
+import { startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -31,7 +32,7 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 	const userLoggedIn = isUserLoggedIn( state );
 	let layout = <Layout primary={ primary } secondary={ secondary } />;
 
-	if ( ! userLoggedIn || /^\/start\/user-continue\//.test( currentRoute ) ) {
+	if ( ! userLoggedIn || startsWith( currentRoute, '/start/user-continue/' ) ) {
 		layout = (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 		);
