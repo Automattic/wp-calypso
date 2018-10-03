@@ -193,9 +193,9 @@ export function requestMediaExport( siteId ) {
 	};
 }
 
-export function setMediaExportData( mediaExportData ) {
+export function setMediaExportData( mediaExportUrl ) {
 	return {
 		type: SET_MEDIA_EXPORT_DATA,
-		mediaExportData,
+		mediaExportUrl,
 	};
 }

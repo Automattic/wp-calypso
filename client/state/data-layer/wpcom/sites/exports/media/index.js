@@ -28,7 +28,7 @@ export const fetch = action =>
 		action
 	);
 
-export const onSuccess = ( action, mediaExportData ) => setMediaExportData( mediaExportData );
+export const onSuccess = ( action, { mediaExportUrl } ) => setMediaExportData( mediaExportUrl );
 
 export const onError = () =>
 	errorNotice(

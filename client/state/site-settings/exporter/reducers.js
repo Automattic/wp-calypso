@@ -138,9 +138,9 @@ export function downloadURL( state = null, action ) {
 	return state;
 }
 
-export function mediaExportData( state = {}, action ) {
+export function mediaExportUrl( state = null, action ) {
 	if ( action.type === SET_MEDIA_EXPORT_DATA ) {
-		return action.mediaExportData;
+		return action.mediaExportUrl;
 	}
 
 	return state;
@@ -153,5 +153,5 @@ export default combineReducers( {
 	fetchingAdvancedSettings,
 	advancedSettings,
 	downloadURL,
-	mediaExportData,
+	mediaExportUrl,
 } );
