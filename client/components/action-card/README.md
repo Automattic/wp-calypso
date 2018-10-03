@@ -19,6 +19,7 @@ render() {
 			buttonHref="https://wordpress.com"
 			buttonTarget="_blank"
 			buttonOnClick={ noop }
+			buttonDisabled={ false }
 		/>;
 	);
 }
