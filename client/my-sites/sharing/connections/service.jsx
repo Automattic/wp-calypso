@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, isEqual, find, replace, some, isFunction } from 'lodash';
+import { identity, isEqual, find, replace, some, isFunction, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -479,6 +479,10 @@ export class SharingService extends Component {
 							) ) }
 						</ServiceConnectedAccounts>
 						<ServiceTip service={ this.props.service } />
+						{ connectionStatus === 'connected' &&
+							get( this, 'props.service.ID' ) === 'mailchimp' && (
+								<div>{ 'Potatoes are great' }</div>
+							) }
 					</div>
 				</FoldableCard>
 			</li>
