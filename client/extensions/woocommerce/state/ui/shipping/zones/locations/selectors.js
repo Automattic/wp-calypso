@@ -773,25 +773,31 @@ export const getCurrentlyEditingShippingZoneStates = createSelector(
  * @return {Boolean} Whether the locations for the shipping zone currently being edited are valid. This includes
  * temporary edits, as it's designed to be used for enabling / disabling the "Save Changes" button.
  */
-export const areCurrentlyEditingShippingZoneLocationsValid = (
-	state,
-	siteId = getSelectedSiteId( state )
-) => {
-	const locations = getShippingZoneLocationsWithEdits( state, siteId );
-	if ( ! locations ) {
-		return false;
+export const areCurrentlyEditingShippingZoneLocationsValid = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const locations = getShippingZoneLocationsWithEdits( state, siteId );
+		if ( ! locations ) {
+			return false;
+		}
+		if ( every( locations, isEmpty ) ) {
+			return false;
+		}
+		if ( areLocationsFilteredByPostcode( state, siteId ) && ! locations.postcode[ 0 ] ) {
+			return false;
+		}
+		if ( areLocationsFilteredByState( state, siteId ) && isEmpty( locations.state ) ) {
+			return false;
+		}
+		return true;
+	},
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		return [
+			getShippingZoneLocationsWithEdits( state, siteId ),
+			areLocationsFilteredByPostcode( state, siteId ),
+			areLocationsFilteredByState( state, siteId ),
+		];
 	}
-	if ( every( locations, isEmpty ) ) {
-		return false;
-	}
-	if ( areLocationsFilteredByPostcode( state, siteId ) && ! locations.postcode[ 0 ] ) {
-		return false;
-	}
-	if ( areLocationsFilteredByState( state, siteId ) && isEmpty( locations.state ) ) {
-		return false;
-	}
-	return true;
-};
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -799,39 +805,46 @@ export const areCurrentlyEditingShippingZoneLocationsValid = (
  * @return {Object} A map of the new "order" property that the zones will need to have to preserve a correct ordering.
  * The keys will be the zone IDs, and the values will be the required order property for those zones
  */
-export const getOrderOperationsToSaveCurrentZone = (
-	state,
-	siteId = getSelectedSiteId( state )
-) => {
-	const moves = {};
-	const allLocations = getRawShippingZoneLocations( state, siteId );
-	const allZones = orderBy( getAPIShippingZones( state, siteId ), 'order' );
+export const getOrderOperationsToSaveCurrentZone = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const moves = {};
+		const allLocations = getRawShippingZoneLocations( state, siteId );
+		const allZones = orderBy( getAPIShippingZones( state, siteId ), 'order' );
 
-	const currentZone = getCurrentlyEditingShippingZone( state, siteId );
-	const currentZoneOrder = 'number' === typeof currentZone.id ? currentZone.order : 0;
-	const currentZoneLocations = getShippingZoneLocationsWithEdits( state, siteId );
-	const currentZonePriority = getZoneLocationsPriority( currentZoneLocations );
-	if ( currentZonePriority && currentZoneOrder !== currentZonePriority ) {
-		moves[ currentZone.id ] = currentZonePriority;
+		const currentZone = getCurrentlyEditingShippingZone( state, siteId );
+		const currentZoneOrder = 'number' === typeof currentZone.id ? currentZone.order : 0;
+		const currentZoneLocations = getShippingZoneLocationsWithEdits( state, siteId );
+		const currentZonePriority = getZoneLocationsPriority( currentZoneLocations );
+		if ( currentZonePriority && currentZoneOrder !== currentZonePriority ) {
+			moves[ currentZone.id ] = currentZonePriority;
+		}
+
+		// Normally this won't be needed because all the already saved zones will have the correct order according
+		// to their priority, but for example that's not the case after the initial setup (the "home country" zone
+		// has order=0)
+		for ( const { id, order } of allZones ) {
+			// Skip over the "Locations not covered by your other zones" zone, the current zone and zones with no locations
+			if ( currentZone.id === id || 0 === id ) {
+				continue;
+			}
+			const priority = getZoneLocationsPriority( allLocations[ id ] );
+			if ( ! priority ) {
+				continue;
+			}
+
+			if ( order !== priority ) {
+				moves[ id ] = priority;
+			}
+		}
+
+		return moves;
+	},
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		return [
+			getRawShippingZoneLocations( state, siteId ),
+			getAPIShippingZones( state, siteId ),
+			getCurrentlyEditingShippingZone( state, siteId ),
+			getShippingZoneLocationsWithEdits( state, siteId ),
+		];
 	}
-
-	// Normally this won't be needed because all the already saved zones will have the correct order according
-	// to their priority, but for example that's not the case after the initial setup (the "home country" zone
-	// has order=0)
-	for ( const { id, order } of allZones ) {
-		// Skip over the "Locations not covered by your other zones" zone, the current zone and zones with no locations
-		if ( currentZone.id === id || 0 === id ) {
-			continue;
-		}
-		const priority = getZoneLocationsPriority( allLocations[ id ] );
-		if ( ! priority ) {
-			continue;
-		}
-
-		if ( order !== priority ) {
-			moves[ id ] = priority;
-		}
-	}
-
-	return moves;
-};
+);
