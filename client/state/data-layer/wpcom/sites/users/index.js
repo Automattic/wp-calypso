@@ -38,7 +38,6 @@ export const normalizeUser = user =>
 /**
  * Dispatches a request to fetch post revisions users
  *
- * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  */
 export const fetchUsers = action => {
@@ -61,7 +60,6 @@ export const fetchUsers = action => {
 /**
  * Dispatches returned users
  *
- * @param {Function} dispatch Redux dispatcher
  * @param {Object} action Redux action
  * @param {Array} users raw data from post revisions API
  */
