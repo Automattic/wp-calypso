@@ -14,9 +14,6 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-/* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import TranslatorLauncher from './community-translator/launcher';
@@ -53,8 +50,6 @@ import { isE2ETest } from 'lib/e2e';
 const Layout = createReactClass( {
 	/* eslint-enable react/no-deprecated */
 	displayName: 'Layout',
-
-	mixins: [ observe( 'user' ) ],
 
 	propTypes: {
 		primary: PropTypes.element,
