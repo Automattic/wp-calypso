@@ -43,6 +43,11 @@ export default class Accordion extends Component {
 	}
 
 	static getDerivedStateFromProps( props, state ) {
+		// in order to improve the performance, hasExpanded determines if the
+		// accordion content should be rendered or not. the content has to
+		// be rendered as soon as the accordion is expanded manually
+		// (isExpanded) or forced (forceExpand) or if it has been previously
+		// expanded
 		if ( state.isExpanded || props.forceExpand || state.hasExpanded ) {
 			return { hasExpanded: true };
 		}
