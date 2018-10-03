@@ -43,7 +43,9 @@ const ProductsListRow = ( { site, product } ) => {
 		<TableRow href={ getLink( '/store/product/:site/' + product.id, site ) }>
 			<TableItem isTitle className="products__list-product">
 				<ImageThumb src={ ( featuredImage && featuredImage.src ) || '' } alt="" />
-				<span className="products__list-name">{ product.name }</span>
+				<span className="products__list-name" data-e2e-product={ product.name }>
+					{ product.name }
+				</span>
 			</TableItem>
 			<TableItem>{ renderStock() }</TableItem>
 			<TableItem>{ renderCategories() }</TableItem>
