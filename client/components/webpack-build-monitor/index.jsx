@@ -13,6 +13,11 @@ import { find, startsWith } from 'lodash';
  */
 import Spinner from 'components/spinner';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const MESSAGE_STATUS_MAP = {
 	'[HMR] connected': { isConnected: true },
 	'[WDS] Disconnected!': { isConnected: false },

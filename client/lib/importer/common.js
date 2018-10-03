@@ -23,6 +23,7 @@ const importerStateMap = [
 	[ appStates.INACTIVE, 'importer-inactive' ],
 	[ appStates.MAP_AUTHORS, 'importer-map-authors' ],
 	[ appStates.READY_FOR_UPLOAD, 'importer-ready-for-upload' ],
+	[ appStates.UPLOAD_PROCESSING, 'uploadProcessing' ],
 	[ appStates.UPLOAD_SUCCESS, 'uploadSuccess' ],
 	[ appStates.UPLOAD_FAILURE, 'importer-upload-failure' ],
 	[ appStates.UPLOADING, 'importer-uploading' ],
