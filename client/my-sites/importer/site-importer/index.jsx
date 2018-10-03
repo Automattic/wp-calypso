@@ -33,6 +33,7 @@ const uploadingStates = [
 	appStates.READY_FOR_UPLOAD,
 	appStates.UPLOAD_FAILURE,
 	appStates.UPLOAD_SUCCESS,
+	appStates.UPLOAD_PROCESSING,
 	appStates.UPLOADING,
 ];
 
