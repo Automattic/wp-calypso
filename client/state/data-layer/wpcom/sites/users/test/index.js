@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { chunk, times } from 'lodash';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -87,21 +85,15 @@ describe( '#fetchUsers', () => {
 describe( '#receiveSuccess', () => {
 	test( 'should normalize the users and dispatch `receiveUser` for each one', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
-		const dispatch = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, [ { id: 10 }, { id: 11 } ] );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( receiveSuccess( action, [ { id: 10 }, { id: 11 } ] ) ).toEqual( [
 			receiveUser( {
 				ID: 10,
-			} )
-		);
-		expect( dispatch ).to.have.been.calledWith(
+			} ),
 			receiveUser( {
 				ID: 11,
-			} )
-		);
+			} ),
+		] );
 	} );
 
 	test( 'should fetch another page if it receives a full page of users (default per page)', () => {
