@@ -15,6 +15,7 @@ import {
 	EXPORT_START_REQUEST,
 	EXPORT_STARTED,
 	EXPORT_FAILURE,
+	SET_MEDIA_EXPORT_DATA,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 import { States } from './constants';
@@ -137,6 +138,14 @@ export function downloadURL( state = null, action ) {
 	return state;
 }
 
+export function mediaExportData( state = {}, action ) {
+	if ( action.type === SET_MEDIA_EXPORT_DATA ) {
+		return action.mediaExportData;
+	}
+
+	return state;
+}
+
 export default combineReducers( {
 	selectedPostType,
 	selectedAdvancedSettings,
@@ -144,4 +153,5 @@ export default combineReducers( {
 	fetchingAdvancedSettings,
 	advancedSettings,
 	downloadURL,
+	mediaExportData,
 } );
