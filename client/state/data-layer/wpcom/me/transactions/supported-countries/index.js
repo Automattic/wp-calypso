@@ -17,7 +17,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 /**
  * Dispatches a request to fetch all available WordPress.com countries
  *
- * @param 	{String} action The action to dispatch next
+ * @param 	{Object} action The action to dispatch next
  * @returns {Object} WordPress.com API HTTP Request action object
  */
 export const fetchCountriesTransactions = action =>
