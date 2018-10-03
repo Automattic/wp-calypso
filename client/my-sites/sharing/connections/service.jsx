@@ -44,6 +44,12 @@ import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
 import requestExternalAccess from 'lib/sharing';
+import QueryMailchimpLists from 'components/data/query-mailchimp-lists';
+import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
+import FormRadio from 'components/forms/form-radio';
+import FormLabel from 'components/forms/form-label';
+import FormFieldset from 'components/forms/form-fieldset';
+import { requestSettingsUpdate } from 'state/mailchimp/settings/actions';
 
 export class SharingService extends Component {
 	static propTypes = {
@@ -403,6 +409,13 @@ export class SharingService extends Component {
 		);
 	}
 
+	chooseMailchimpList = listId => {
+		this.props.requestSettingsUpdate( this.props.siteId, {
+			follower_list_id: listId,
+			keyring_id: this.props.keyringConnections[ 0 ].ID,
+		} );
+	};
+
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
@@ -481,7 +494,22 @@ export class SharingService extends Component {
 						<ServiceTip service={ this.props.service } />
 						{ connectionStatus === 'connected' &&
 							get( this, 'props.service.ID' ) === 'mailchimp' && (
-								<div>{ 'Potatoes are great' }</div>
+								<div>
+									<QueryMailchimpLists siteId={ this.props.siteId } />
+									<QueryMailchimpSettings siteId={ this.props.siteId } />
+									<FormFieldset>
+										{ this.props.mailchimpLists.map( list => (
+											<FormLabel key={ list.id }>
+												<FormRadio
+													value={ list.id }
+													checked={ list.id === this.props.mailchimpListId }
+													onChange={ () => this.chooseMailchimpList( list.id ) }
+												/>
+												<span>{ list.name }</span>
+											</FormLabel>
+										) ) }
+									</FormFieldset>
+								</div>
 							) }
 					</div>
 				</FoldableCard>
@@ -519,6 +547,12 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				userId,
+				mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], [] ),
+				mailchimpListId: get(
+					state,
+					[ 'mailchimp', 'settings', 'items', siteId, 'follower_list_id' ],
+					0
+				),
 			};
 
 			return isFunction( mapStateToProps ) ? mapStateToProps( state, props ) : props;
@@ -534,6 +568,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,
+			requestSettingsUpdate,
 			...mapDispatchToProps,
 		}
 	)( localize( sharingService ) );

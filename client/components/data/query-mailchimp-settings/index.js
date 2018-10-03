@@ -14,7 +14,15 @@ import { requestSettings } from 'state/mailchimp/settings/actions';
 
 class QueryMailchimpSettings extends Component {
 	componentDidMount() {
-		this.props.requestSettings();
+		if ( this.props.siteId ) {
+			this.props.requestSettings( this.props.siteId );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( this.props.siteId !== prevProps.siteId ) {
+			this.props.requestSettings( this.props.siteId );
+		}
 	}
 
 	render() {
