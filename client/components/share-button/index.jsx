@@ -13,6 +13,11 @@ import { noop } from 'lodash';
 import Button from 'components/button';
 import services from './services';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class ShareButton extends PureComponent {
 	static propTypes = {
 		service: PropTypes.string.isRequired,
