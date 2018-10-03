@@ -43,7 +43,7 @@ export default class Accordion extends Component {
 	}
 
 	static getDerivedStateFromProps( props, state ) {
-		if ( state.isExpanded || props.forceExpand ) {
+		if ( state.isExpanded || props.forceExpand || state.hasExpanded ) {
 			return { hasExpanded: true };
 		}
 		return null;
@@ -54,10 +54,7 @@ export default class Accordion extends Component {
 	};
 
 	setExpandedStatus = isExpanded => {
-		this.setState( {
-			isExpanded,
-			hasExpanded: isExpanded || this.state.hasExpanded,
-		} );
+		this.setState( { isExpanded } );
 		this.props.onToggle( isExpanded );
 	};
 
