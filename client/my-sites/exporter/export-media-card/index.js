@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -20,16 +20,18 @@ class ExportMediaCard extends Component {
 		const mediaExportUrl = mediaExportData.mediaExportUrl ? mediaExportData.mediaExportUrl : '';
 
 		return (
-			<Fragment>
+			<div className="export-media-card">
 				<QueryMediaExport siteId={ siteId } />
 				<ActionCard
+					className="export-media-card__content export-card"
 					headerText={ translate( 'Export Media Library' ) }
 					mainText={ translate( 'Click the button to download your media library as an archive.' ) }
 					buttonText={ translate( 'Download' ) }
 					buttonPrimary={ true }
 					buttonHref={ mediaExportUrl }
+					compact={ false }
 				/>
-			</Fragment>
+			</div>
 		);
 	}
 }
