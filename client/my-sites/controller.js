@@ -82,6 +82,8 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @returns { object } React element containing the site selector and sidebar
  */
 function createNavigation( context ) {
+	const { getState } = getStore( context );
+	const currentUser = getCurrentUser( getState() );
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
@@ -94,6 +96,7 @@ function createNavigation( context ) {
 			path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
+			user={ currentUser }
 		/>
 	);
 }
