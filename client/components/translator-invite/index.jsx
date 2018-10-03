@@ -18,6 +18,11 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentNonDefaultLocale } from 'components/translator-invite/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class TranslatorInvite extends Component {
 	static propTypes = {
 		locale: PropTypes.string,

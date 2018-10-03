@@ -8,7 +8,7 @@ import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
-import Gridicon from 'gridicons';
+import GridiconLinkBreak from 'gridicons/dist/link-break';
 
 /**
  * Internal dependencies
@@ -264,7 +264,7 @@ class LinkDialog extends React.Component {
 		if ( this.state.url && ! this.state.isNew ) {
 			buttons.push(
 				<button className={ 'wplink__remove-link' } onClick={ this.removeLink }>
-					<Gridicon icon="link-break" />
+					<GridiconLinkBreak />
 					{ this.props.translate( 'Remove' ) }
 				</button>
 			);

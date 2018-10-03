@@ -33,6 +33,11 @@ import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant'
 import { setUnseenCount } from 'state/notifications';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Returns whether or not the browser session
  * is currently visible to the user
  *
