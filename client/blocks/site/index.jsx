@@ -115,7 +115,7 @@ class Site extends React.Component {
 				>
 					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
 					<div className="site__info">
-						<div className="site__title">
+						<div className="site__title" data-e2e-title={ site.title }>
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							{ this.props.site.is_private && (
 								<span className="site__badge">
@@ -137,7 +137,9 @@ class Site extends React.Component {
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							{ site.title }
 						</div>
-						<div className="site__domain">{ site.domain }</div>
+						<div className="site__domain" data-e2e-domain={ site.domain }>
+							{ site.domain }
+						</div>
 					</div>
 					{ this.props.homeLink &&
 						this.props.showHomeIcon && (
