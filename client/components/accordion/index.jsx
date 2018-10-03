@@ -48,7 +48,7 @@ export default class Accordion extends Component {
 		// be rendered as soon as the accordion is expanded manually
 		// (isExpanded) or forced (forceExpand) or if it has been previously
 		// expanded
-		if ( state.isExpanded || props.forceExpand || state.hasExpanded ) {
+		if ( state.isExpanded || props.forceExpand ) {
 			return { hasExpanded: true };
 		}
 		return null;
