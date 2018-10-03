@@ -57,6 +57,7 @@
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/max-characters-filter": true,
 		"domains/kracken-ui/pagination": true,
+		"export-media": true,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,

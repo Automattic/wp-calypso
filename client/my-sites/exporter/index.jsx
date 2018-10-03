@@ -16,6 +16,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
 import Notices from './notices';
 import ExportCard from './export-card';
+import ExportMediaCard from './export-media-card';
 import GuidedTransferCard from './guided-transfer-card';
 import InProgressCard from './guided-transfer-card/in-progress';
 
@@ -31,6 +32,7 @@ class Exporter extends Component {
 				<Notices />
 				{ showGuidedTransferOptions && isTransferInProgress && <InProgressCard /> }
 				<ExportCard siteId={ siteId } />
+				{ config.isEnabled( 'export-media' ) && <ExportMediaCard siteId={ siteId } /> }
 				{ showGuidedTransferOptions && ! isTransferInProgress && <GuidedTransferCard /> }
 			</div>
 		);
