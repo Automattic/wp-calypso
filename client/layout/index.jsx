@@ -4,8 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
-import createReactClass from 'create-react-class';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -46,12 +45,9 @@ import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
 
-/* eslint-disable react/no-deprecated */
-const Layout = createReactClass( {
-	/* eslint-enable react/no-deprecated */
-	displayName: 'Layout',
-
-	propTypes: {
+class Layout extends Component {
+	static displayName = 'Layout';
+	static propTypes = {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
 		focus: PropTypes.object,
@@ -62,15 +58,15 @@ const Layout = createReactClass( {
 		section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		isOffline: PropTypes.bool,
 		colorSchemePreference: PropTypes.string,
-	},
+	};
 
 	renderPreview() {
 		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
 			return <SitePreview />;
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		const sectionClass = classnames(
 				'layout',
 				'color-scheme',
@@ -140,8 +136,8 @@ const Layout = createReactClass( {
 				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => {
 	const { isLoading, section } = state.ui;
