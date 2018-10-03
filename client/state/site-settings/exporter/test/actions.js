@@ -228,6 +228,8 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: EXPORT_COMPLETE,
 					siteId: 100658273,
+					contentExportUrl: SAMPLE_EXPORT_COMPLETE_RESPONSE.content_export_url,
+					mediaExportUrl: SAMPLE_EXPORT_COMPLETE_RESPONSE.media_export_url,
 				} );
 			} );
 		} );

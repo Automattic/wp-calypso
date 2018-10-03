@@ -38,7 +38,8 @@ export const SAMPLE_ADVANCED_SETTINGS_EMPTY = {
 export const SAMPLE_EXPORT_COMPLETE_RESPONSE = {
 	status: 'finished',
 	export_file_lifetime_days: 7,
-	$attachment_url: 'https://example.files.wordpress.com/2016/02/not-a-real-file.zip',
+	content_export_url: 'https://example.files.wordpress.com/2016/02/not-a-real-file.zip',
+	media_export_url: 'https://just.a.media.export.url.com/profit',
 };
 
 export const SAMPLE_EXPORT_RUNNING_RESPONSE = {

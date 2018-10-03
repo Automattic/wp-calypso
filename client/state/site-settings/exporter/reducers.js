@@ -126,10 +126,21 @@ export function advancedSettings( state = {}, action ) {
 	return state;
 }
 
-export function downloadURL( state = null, action ) {
+export function contentExportUrl( state = null, action ) {
 	switch ( action.type ) {
 		case EXPORT_COMPLETE:
-			return action.downloadURL;
+			return action.contentExportUrl;
+		case EXPORT_CLEAR:
+			return null;
+	}
+
+	return state;
+}
+
+export function mediaExportUrl( state = null, action ) {
+	switch ( action.type ) {
+		case EXPORT_COMPLETE:
+			return action.mediaExportUrl;
 		case EXPORT_CLEAR:
 			return null;
 	}
@@ -143,5 +154,6 @@ export default combineReducers( {
 	exportingState,
 	fetchingAdvancedSettings,
 	advancedSettings,
-	downloadURL,
+	contentExportUrl,
+	mediaExportUrl,
 } );
