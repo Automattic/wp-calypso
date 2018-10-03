@@ -62,7 +62,10 @@ class ExportCard extends Component {
 						<div>
 							<h1 className="export-card__title">{ translate( 'Export your content' ) }</h1>
 							<h2 className="export-card__subtitle">
-								{ translate( 'Or select specific content items to export' ) }
+								{ translate(
+									'Or select specific content items to export. Please note this does not include your media library, ' +
+										'but only text content like posts and pages.'
+								) }
 							</h2>
 						</div>
 					}

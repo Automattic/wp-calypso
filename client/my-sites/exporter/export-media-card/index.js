@@ -25,7 +25,7 @@ class ExportMediaCard extends Component {
 				<QueryMediaExport siteId={ siteId } />
 				<ActionCard
 					className="export-media-card__content export-card"
-					headerText={ translate( 'Export Media Library' ) }
+					headerText={ translate( 'Export media library' ) }
 					mainText={ translate( 'Click the button to download your media library as an archive.' ) }
 					buttonText={ translate( 'Download' ) }
 					buttonPrimary={ true }
