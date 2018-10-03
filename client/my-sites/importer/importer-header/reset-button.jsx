@@ -65,7 +65,7 @@ export class ResetButton extends React.PureComponent {
 				scary
 				onClick={ this.handleClick }
 			>
-				{ translate( 'Close', { context: 'verb, to end an import session' } ) }
+				{ translate( 'Close', { context: 'verb, to Close a dialog' } ) }
 			</Button>
 		);
 	}
