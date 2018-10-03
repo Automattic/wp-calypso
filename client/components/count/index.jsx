@@ -14,6 +14,11 @@ import { omit } from 'lodash';
  */
 import formatNumberCompact from 'lib/format-number-compact';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export const Count = ( { count, compact, numberFormat, primary, ...inheritProps } ) => {
 	return (
 		// Omit props passed from the `localize` higher-order component that we don't need.
