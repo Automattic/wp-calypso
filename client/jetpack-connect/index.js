@@ -13,13 +13,16 @@ import * as controller from './controller';
 import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
+import { getLanguageSlugs } from 'lib/i18n-utils';
+
+const lang = `(${ getLanguageSlugs().join( '|' ) })`;
 
 export default function() {
 	const user = userFactory();
 	const isLoggedOut = ! user.get();
 
 	page(
-		'/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?/:locale?',
+		`/jetpack/connect/:type(personal|premium|pro)/:interval(yearly|monthly)?/:locale${ lang }?`,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
@@ -32,7 +35,7 @@ export default function() {
 		// This route is subject to a page redirect
 		// See `componentWillMount()` in client/jetpack-connect/remote-credentials.js
 		page(
-			'/jetpack/connect/install/:locale?',
+			`/jetpack/connect/install/:locale${ lang }?`,
 			controller.setMasterbar,
 			controller.credsForm,
 			makeLayout,
@@ -40,7 +43,7 @@ export default function() {
 		);
 	} else {
 		page(
-			'/jetpack/connect/:type(install)/:locale?',
+			`/jetpack/connect/:type(install)/:locale${ lang }?`,
 			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.persistMobileAppFlow,
 			controller.setMasterbar,
@@ -61,7 +64,7 @@ export default function() {
 
 	if ( isLoggedOut ) {
 		page(
-			'/jetpack/connect/authorize/:locale?',
+			`/jetpack/connect/authorize/:locale${ lang }?`,
 			controller.maybeOnboard,
 			controller.setMasterbar,
 			controller.signupForm,
@@ -70,7 +73,7 @@ export default function() {
 		);
 	} else {
 		page(
-			'/jetpack/connect/authorize/:locale?',
+			`/jetpack/connect/authorize/:locale${ lang }?`,
 			controller.maybeOnboard,
 			controller.redirectWithoutLocaleIfLoggedIn,
 			controller.setMasterbar,
@@ -89,7 +92,7 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/store/:interval(yearly|monthly)?/:locale?',
+		`/jetpack/connect/store/:interval(yearly|monthly)?/:locale${ lang }?`,
 		controller.setLoggedOutLocale,
 		controller.plansLanding,
 		makeLayout,
@@ -117,7 +120,7 @@ export default function() {
 	);
 
 	page(
-		'/jetpack/connect/:locale?',
+		`/jetpack/connect/:locale${ lang }?`,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
