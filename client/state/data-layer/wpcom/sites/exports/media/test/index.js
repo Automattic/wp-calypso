@@ -42,7 +42,7 @@ describe( 'onSuccess()', () => {
 		const data = {
 			mediaExportUrl: 'aaa',
 		};
-		expect( onSuccess( action, data ) ).toEqual( setMediaExportData( data ) );
+		expect( onSuccess( action, data ) ).toEqual( setMediaExportData( data.mediaExportUrl ) );
 	} );
 } );
 
