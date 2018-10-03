@@ -15,6 +15,11 @@ import { noop, pick } from 'lodash';
 import Button from 'components/button';
 import AsyncLoad from 'components/async-load';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class CalendarButton extends Component {
 	static propTypes = {
 		icon: PropTypes.string,
