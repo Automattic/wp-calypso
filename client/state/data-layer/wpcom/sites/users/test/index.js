@@ -43,12 +43,8 @@ describe( '#normalizeRevision', () => {
 describe( '#fetchUsers', () => {
 	test( 'should dispatch HTTP request to users endpoint', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
-		const dispatch = sinon.spy();
 
-		fetchUsers( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( fetchUsers( action ) ).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -69,12 +65,8 @@ describe( '#fetchUsers', () => {
 		const action = requestUsers( 12345678, [ 10 ] );
 		action.page = 2;
 		action.perPage = 42;
-		const dispatch = sinon.spy();
 
-		fetchUsers( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( fetchUsers( action ) ).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -119,25 +111,23 @@ describe( '#receiveSuccess', () => {
 		const usersChunks = chunk( users, DEFAULT_PER_PAGE );
 
 		const action = requestUsers( 12345678, ids );
-		const dispatch = sinon.spy();
 
-		receiveSuccess(
-			{ dispatch },
-			{
-				...action,
-				meta: {
-					dataLayer: {
-						headers: {
-							'X-WP-Total': nbUsers,
-							'X-WP-TotalPages': Math.ceil( nbUsers / DEFAULT_PER_PAGE ),
+		expect(
+			receiveSuccess(
+				{
+					...action,
+					meta: {
+						dataLayer: {
+							headers: {
+								'X-WP-Total': nbUsers,
+								'X-WP-TotalPages': Math.ceil( nbUsers / DEFAULT_PER_PAGE ),
+							},
 						},
 					},
 				},
-			},
-			usersChunks[ 0 ]
-		);
-
-		expect( dispatch ).to.have.been.calledWith(
+				usersChunks[ 0 ]
+			)
+		).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -169,25 +159,23 @@ describe( '#receiveSuccess', () => {
 			...requestUsers( 12345678, ids ),
 			perPage: perPage,
 		};
-		const dispatch = sinon.spy();
 
-		receiveSuccess(
-			{ dispatch },
-			{
-				...action,
-				meta: {
-					dataLayer: {
-						headers: {
-							'X-WP-Total': nbUsers,
-							'X-WP-TotalPages': Math.ceil( nbUsers / perPage ),
+		expect(
+			receiveSuccess(
+				{
+					...action,
+					meta: {
+						dataLayer: {
+							headers: {
+								'X-WP-Total': nbUsers,
+								'X-WP-TotalPages': Math.ceil( nbUsers / perPage ),
+							},
 						},
 					},
 				},
-			},
-			usersChunks[ 0 ]
-		);
-
-		expect( dispatch ).to.have.been.calledWith(
+				usersChunks[ 0 ]
+			)
+		).toEqual(
 			http(
 				{
 					method: 'GET',
