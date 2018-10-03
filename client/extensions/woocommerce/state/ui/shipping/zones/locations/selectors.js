@@ -322,17 +322,26 @@ export const getShippingZoneLocationsWithEdits = createSelector(
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean} Whether the "Edit Locations" modal is opened or not.
  */
-export const isEditLocationsModalOpen = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if (
-		! areShippingZonesLoaded( state, siteId ) ||
-		! getCurrentlyEditingShippingZone( state, siteId )
-	) {
-		return false;
+export const isEditLocationsModalOpen = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if (
+			! areShippingZonesLoaded( state, siteId ) ||
+			! getCurrentlyEditingShippingZone( state, siteId )
+		) {
+			return false;
+		}
+		return Boolean(
+			getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations.temporaryChanges
+		);
+	},
+	( state, siteId ) => {
+		return [
+			areShippingZonesLoaded( state, siteId ),
+			getCurrentlyEditingShippingZone( state, siteId ),
+			getShippingZonesEdits( state, siteId ),
+		];
 	}
-	return Boolean(
-		getShippingZonesEdits( state, siteId ).currentlyEditingChanges.locations.temporaryChanges
-	);
-};
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -340,13 +349,21 @@ export const isEditLocationsModalOpen = ( state, siteId = getSelectedSiteId( sta
  * @return {Boolean} Whether the locations can be filtered (by state or postcode) or not. They can be filtered if there
  * is only one country selected (and no continents).
  */
-export const canLocationsBeFiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! isEditLocationsModalOpen( state, siteId ) ) {
-		return false;
+export const canLocationsBeFiltered = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! isEditLocationsModalOpen( state, siteId ) ) {
+			return false;
+		}
+		const locations = getShippingZoneLocationsWithEdits( state, siteId );
+		return locations && isEmpty( locations.continent ) && 1 === locations.country.length;
+	},
+	( state, siteId ) => {
+		return [
+			isEditLocationsModalOpen( state, siteId ),
+			getShippingZoneLocationsWithEdits( state, siteId ),
+		];
 	}
-	const locations = getShippingZoneLocationsWithEdits( state, siteId );
-	return locations && isEmpty( locations.continent ) && 1 === locations.country.length;
-};
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -355,16 +372,22 @@ export const canLocationsBeFiltered = ( state, siteId = getSelectedSiteId( state
  * currently selected country isn't owned by any other zone. If this returns a Zone ID, then the user shouldn't be able
  * to filter by "whole country", only by states / postcode.
  */
-export const getCurrentSelectedCountryZoneOwner = (
-	state,
-	siteId = getSelectedSiteId( state )
-) => {
-	if ( ! canLocationsBeFiltered( state, siteId ) ) {
-		return null;
+export const getCurrentSelectedCountryZoneOwner = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! canLocationsBeFiltered( state, siteId ) ) {
+			return null;
+		}
+		const locations = getShippingZoneLocationsWithEdits( state, siteId );
+		return getCountriesOwnedByOtherZone( state, siteId )[ locations.country[ 0 ] ];
+	},
+	( state, siteId ) => {
+		return [
+			canLocationsBeFiltered( state, siteId ),
+			getShippingZoneLocationsWithEdits( state, siteId ),
+			getCountriesOwnedByOtherZone( state, siteId ),
+		];
 	}
-	const locations = getShippingZoneLocationsWithEdits( state, siteId );
-	return getCountriesOwnedByOtherZone( state, siteId )[ locations.country[ 0 ] ];
-};
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -372,14 +395,17 @@ export const getCurrentSelectedCountryZoneOwner = (
  * @return {Boolean} Whether the locations currently being edited can be filtered by state. This will happen when there
  * is only one country selected and it has a list of available states.
  */
-export const canLocationsBeFilteredByState = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! canLocationsBeFiltered( state, siteId ) ) {
-		return false;
-	}
+export const canLocationsBeFilteredByState = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		if ( ! canLocationsBeFiltered( state, siteId ) ) {
+			return false;
+		}
 
-	const locations = getShippingZoneLocationsWithEdits( state, siteId );
-	return locations && hasStates( state, locations.country[ 0 ], siteId );
-};
+		const locations = getShippingZoneLocationsWithEdits( state, siteId );
+		return locations && hasStates( state, locations.country[ 0 ], siteId );
+	},
+	( state, siteId ) => getShippingZoneLocationsWithEdits( state, siteId )
+);
 
 /**
  * @param {Object} state Whole Redux state tree
@@ -474,14 +500,24 @@ export const areLocationsFilteredByState = createSelector(
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Boolean} Whether the "Ship to the whole country" option is selected.
  */
-export const areLocationsUnfiltered = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return (
-		canLocationsBeFiltered( state, siteId ) &&
-		! getCurrentSelectedCountryZoneOwner( state, siteId ) &&
-		! areLocationsFilteredByState( state, siteId ) &&
-		! areLocationsFilteredByPostcode( state, siteId )
-	);
-};
+export const areLocationsUnfiltered = createSelector(
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		return (
+			canLocationsBeFiltered( state, siteId ) &&
+			! getCurrentSelectedCountryZoneOwner( state, siteId ) &&
+			! areLocationsFilteredByState( state, siteId ) &&
+			! areLocationsFilteredByPostcode( state, siteId )
+		);
+	},
+	( state, siteId ) => {
+		return [
+			canLocationsBeFiltered( state, siteId ),
+			getCurrentSelectedCountryZoneOwner( state, siteId ),
+			areLocationsFilteredByState( state, siteId ),
+			areLocationsFilteredByPostcode( state, siteId ),
+		];
+	}
+);
 
 /**
  * @param {Object} state Whole Redux state tree
