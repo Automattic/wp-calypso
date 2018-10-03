@@ -29,6 +29,7 @@ class ExportMediaCard extends Component {
 					buttonText={ translate( 'Download' ) }
 					buttonPrimary={ true }
 					buttonHref={ mediaExportUrl }
+					buttonDisabled={ ! mediaExportUrl }
 					compact={ false }
 				/>
 			</div>
