@@ -10,6 +10,7 @@ export const appStates = Object.freeze( {
 	INACTIVE: 'importer-inactive',
 	MAP_AUTHORS: 'importer-map-authors',
 	READY_FOR_UPLOAD: 'importer-ready-for-upload',
+	UPLOAD_PROCESSING: 'importer-upload-processing',
 	UPLOAD_SUCCESS: 'importer-upload-success',
 	UPLOAD_FAILURE: 'importer-upload-failure',
 	UPLOADING: 'importer-uploading',

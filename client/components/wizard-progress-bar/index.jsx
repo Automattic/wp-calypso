@@ -15,6 +15,11 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import ProgressBar from 'components/progress-bar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class WizardProgressBar extends Component {
 	static propTypes = {
 		currentStep: PropTypes.number.isRequired,

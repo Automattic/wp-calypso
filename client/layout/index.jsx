@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import { property, sortBy } from 'lodash';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
@@ -72,10 +71,6 @@ const Layout = createReactClass( {
 		colorSchemePreference: PropTypes.string,
 	},
 
-	newestSite: function() {
-		return sortBy( this.props.sites, property( 'ID' ) ).pop();
-	},
-
 	renderMasterbar: function() {
 		if ( ! this.props.user || /^\/start\/user-continue\//.test( this.props.currentRoute ) ) {
 			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
@@ -85,7 +80,6 @@ const Layout = createReactClass( {
 			<MasterbarLoggedIn
 				user={ this.props.user }
 				section={ this.props.section.group }
-				sites={ this.props.sites }
 				compact={ this.props.section.name === 'checkout' }
 			/>
 		);
