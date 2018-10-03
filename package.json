@@ -189,7 +189,7 @@
     "uuid": "3.3.2",
     "valid-url": "1.0.9",
     "webpack": "4.20.2",
-    "webpack-cli": "3.1.1",
+    "webpack-cli": "3.1.2",
     "webpack-dev-middleware": "3.4.0",
     "webpack-rtl-plugin": "1.7.0",
     "wpcom": "5.4.2",
