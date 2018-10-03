@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import SpinnerButton from 'components/spinner-button';
 import FoldableCard from 'components/foldable-card';
 import Interval, { EVERY_SECOND } from 'lib/interval';
@@ -62,10 +63,12 @@ class ExportCard extends Component {
 						<div>
 							<h1 className="export-card__title">{ translate( 'Export your content' ) }</h1>
 							<h2 className="export-card__subtitle">
-								{ translate(
-									'Or select specific content items to export. Please note this does not include your media library, ' +
-										'but only text content like posts and pages.'
-								) }
+								{ config.isEnabled( 'export-media' )
+									? translate(
+											'Or select specific content items to export. Please note this does not include your media library, ' +
+												'but only text content like posts and pages.'
+									  )
+									: translate( 'Or select specific content items to export' ) }
 							</h2>
 						</div>
 					}
