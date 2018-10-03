@@ -27,6 +27,11 @@ import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions'
 import { withEnhancers } from 'state/utils';
 import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
