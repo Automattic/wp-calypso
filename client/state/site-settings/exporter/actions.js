@@ -17,6 +17,8 @@ import {
 	EXPORT_STATUS_FETCH,
 	EXPORT_POST_TYPE_SET,
 	EXPORT_POST_TYPE_FIELD_SET,
+	EXPORT_MEDIA_REQUEST,
+	SET_MEDIA_EXPORT_DATA,
 } from 'state/action-types';
 
 import { prepareExportRequest } from './selectors';
@@ -181,5 +183,19 @@ export function clearExport( siteId ) {
 	return {
 		type: EXPORT_CLEAR,
 		siteId,
+	};
+}
+
+export function requestMediaExport( siteId ) {
+	return {
+		type: EXPORT_MEDIA_REQUEST,
+		siteId,
+	};
+}
+
+export function setMediaExportData( mediaExportData ) {
+	return {
+		type: SET_MEDIA_EXPORT_DATA,
+		mediaExportData,
 	};
 }
