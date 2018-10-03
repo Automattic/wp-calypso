@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { truncateArticleContent } from '../helpers';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class GooglePlusSharePreview extends PureComponent {
 	static propTypes = {
 		articleUrl: PropTypes.string,
