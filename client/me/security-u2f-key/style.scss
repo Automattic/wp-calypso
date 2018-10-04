@@ -8,13 +8,23 @@
 	margin: 0;
 }
 
-.security-u2f-key__list-item {
+.security-u2f-key__item {
 	display: flex;
 	vertical-align: middle;
 
-	& > span {
+	&:hover {
+		// TODO probably remove
+		background: #ebebeb;
+	}
+
+	.security-u2f-key__item-information {
 		flex-grow: 1;
+		flex-shrink: 0;
 		align-self: flex-start;
+
+		.security-u2f-key__item-subtitle {
+			color: #989898;
+		}
 	}
 
 	.security-u2f-key-delete {
