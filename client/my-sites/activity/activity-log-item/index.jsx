@@ -91,7 +91,10 @@ class ActivityLogItem extends Component {
 					/>
 				) }
 				<div className="activity-log-item__description">
-					<div className="activity-log-item__description-content">
+					<div
+						className="activity-log-item__description-content"
+						data-e2e-activity={ this.getPLainTextActivityDescription() }
+					>
 						{ this.getActivityDescription() }
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
@@ -149,6 +152,34 @@ class ActivityLogItem extends Component {
 				/>
 			);
 		} );
+	}
+
+	getPLainTextActivityDescription() {
+		const {
+			activity: { activityName, activityDescription, activityMeta },
+			translate,
+			rewindIsActive,
+		} = this.props;
+
+		// If backup failed due to invalid credentials but Rewind is now active means it was fixed.
+		if (
+			'rewind__backup_error' === activityName &&
+			'bad_credentials' === activityMeta.errorCode &&
+			rewindIsActive
+		) {
+			return translate(
+				'Jetpack had some trouble connecting to your site, but that problem has been resolved.'
+			);
+		}
+
+		/* There is no great way to generate a more valid React key here
+         * but the index is probably sufficient because these sub-items
+         * shouldn't be changing. */
+		return activityDescription
+			.map( part => {
+				return part.children ? part.children.join( '' ) : part;
+			} )
+			.join( '' );
 	}
 
 	renderItemAction() {
