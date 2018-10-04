@@ -1,0 +1,25 @@
+{
+	"name": "@automattic/jetpack-blocks",
+	"version": "0.1.0-alpha.1",
+	"description": "Gutenberg Blocks for the Jetpack WordPress Plugin",
+	"main": "editor.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git"
+	},
+	"keywords": [
+		"jetpack",
+		"gutenberg",
+		"wordpress",
+		"blocks"
+	],
+	"author": "Automattic",
+	"license": "GPL-2.0",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso#readme"
+}
