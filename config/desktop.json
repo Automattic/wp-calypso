@@ -51,6 +51,7 @@
 		"login/magic-login": false,
 		"login/native-login-links": false,
 		"login/wp-login": false,
+		"mailchimp": false,
 		"manage/comments": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,

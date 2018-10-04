@@ -50,6 +50,7 @@
 		"login/native-login-links": true,
 		"login/wp-login": true,
 		"keyboard-shortcuts": true,
+		"mailchimp": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
 		"manage/import/medium": true,
