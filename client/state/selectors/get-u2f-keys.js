@@ -11,4 +11,4 @@ import { get } from 'lodash';
  * @param  {Object} state Global state tree
  * @return {Array}        U2f Keys
  */
-export default state => get( state, [ 'u2fKeys', 'items' ], [] );
+export default state => get( state, [ 'u2fKeys', 'items' ], [ 1, 2, 4, 5, 6, 7 ] );
