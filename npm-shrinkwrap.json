@@ -10,6 +10,18 @@
         "react": "^16.5.0"
       }
     },
+    "@automattic/tree-select": {
+      "version": "file:packages/tree-select",
+      "requires": {
+        "lodash": "^4.17.0"
+      },
+      "dependencies": {
+        "lodash": {
+          "version": "4.17.11",
+          "bundled": true
+        }
+      }
+    },
     "@babel/cli": {
       "version": "7.1.2",
       "resolved": "https://registry.npmjs.org/@babel/cli/-/cli-7.1.2.tgz",

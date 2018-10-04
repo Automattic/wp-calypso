@@ -21,6 +21,7 @@
   ],
   "dependencies": {
     "@automattic/muriel-base-components": "file:packages/muriel-base-components",
+    "@automattic/tree-select": "file:packages/tree-select",
     "@babel/cli": "7.1.2",
     "@babel/core": "7.1.2",
     "@babel/plugin-proposal-class-properties": "7.1.0",

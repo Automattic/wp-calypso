@@ -11,10 +11,14 @@ glob( 'packages/*/package.json', ( err, matches ) => {
 	matches.forEach( match => {
 		const dir = path.dirname( match );
 		const inputDir = path.join( dir, 'src' );
-		const outputDir = path.join( dir, 'dist', 'esm' );
+		const outputDirEsm = path.join( dir, 'dist', 'esm' );
+		const outputDirCommon = path.join( dir, 'dist', 'cjs' );
 		console.log( `Building ${ dir }...` );
-		execSync( `node ./node_modules/.bin/babel -d ${outputDir} ${inputDir}`, {
+		execSync( `node ./node_modules/.bin/babel -d ${outputDirEsm} ${inputDir}`, {
 			env: Object.assign( {}, process.env, { CALYPSO_CLIENT: 'true' } )
+		} );
+		execSync( `node ./node_modules/.bin/babel -d ${outputDirCommon} ${inputDir}`, {
+			env: Object.assign( {}, process.env, { CALYPSO_CLIENT: 'false' } )
 		} );
 	 } );
 	 console.log('Done building packages');

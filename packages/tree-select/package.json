@@ -1,0 +1,27 @@
+{
+  "name": "@automattic/tree-select",
+  "version": "1.0.0",
+  "description": "A selector library for Redux",
+  "keywords": [
+    "redux",
+    "selector"
+  ],
+  "author": "Ben Lowery <ben.lowery@automattic.com>",
+  "homepage": "https://github.com/Automattic/wp-calypso",
+  "license": "GPL-2.0-only",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Automattic/wp-calypso.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/Automattic/wp-calypso/issues"
+  },
+  "dependencies": {
+    "lodash": "^4.17.0"
+  }
+}
