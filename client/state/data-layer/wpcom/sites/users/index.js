@@ -75,7 +75,7 @@ export const receiveSuccess = ( action, users ) => {
 		} );
 	}
 
-	map( normalizedUsers, flow( receiveUser ) );
+	return map( normalizedUsers, flow( receiveUser ) );
 };
 
 const dispatchUsersRequest = dispatchRequestEx( {
