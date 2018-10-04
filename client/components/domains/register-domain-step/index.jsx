@@ -348,7 +348,7 @@ class RegisterDomainStep extends React.Component {
 							onBlur={ this.save }
 							onSearch={ this.onSearch }
 							onSearchChange={ this.onSearchChange }
-							placeholder={ this.props.translate( 'Enter a name or keyword' ) }
+							placeholder={ this.props.translate( 'Please enter a name or keyword' ) }
 							ref={ this.bindSearchCardReference }
 						/>
 						{ this.renderSearchFilters() }
