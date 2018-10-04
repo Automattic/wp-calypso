@@ -1,2 +1,2 @@
 /** @format */
-export { default } from '@automattic/tree-select';
+export default from '@automattic/tree-select';
