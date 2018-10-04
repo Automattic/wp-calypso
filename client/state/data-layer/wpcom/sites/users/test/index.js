@@ -20,7 +20,7 @@ describe( '#normalizeRevision', () => {
 				name: 'Alice Bob',
 				slug: 'alicebob',
 			} )
-		).to.eql( {
+		).toEqual( {
 			ID: 10,
 			display_name: 'Alice Bob',
 			username: 'alicebob',
@@ -32,7 +32,7 @@ describe( '#normalizeRevision', () => {
 			normalizeUser( {
 				id: 10,
 			} )
-		).to.eql( {
+		).toEqual( {
 			ID: 10,
 		} );
 	} );
