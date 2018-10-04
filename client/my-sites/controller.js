@@ -11,6 +11,7 @@ import { get, noop, some, startsWith, uniq } from 'lodash';
  * Internal Dependencies
  */
 import { SITES_ONCE_CHANGED } from 'state/action-types';
+import userFactory from 'lib/user';
 import { receiveSite, requestSite } from 'state/sites/actions';
 import {
 	getSite,
@@ -35,7 +36,6 @@ import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site
 import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
 import getSiteId from 'state/selectors/get-site-id';
 import getSites from 'state/selectors/get-sites';
-import { getCurrentUser } from 'state/current-user/selectors';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -73,6 +73,7 @@ const getStore = context => ( {
 /**
  * Module vars
  */
+const user = userFactory();
 const sitesPageTitleForAnalytics = 'Sites';
 
 /*
@@ -82,8 +83,6 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @returns { object } React element containing the site selector and sidebar
  */
 function createNavigation( context ) {
-	const { getState } = getStore( context );
-	const currentUser = getCurrentUser( getState() );
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
@@ -96,7 +95,7 @@ function createNavigation( context ) {
 			path={ context.path }
 			allSitesPath={ basePath }
 			siteBasePath={ basePath }
-			user={ currentUser }
+			user={ user }
 		/>
 	);
 }
@@ -120,8 +119,7 @@ function renderEmptySites( context ) {
 }
 
 function renderNoVisibleSites( context ) {
-	const { getState } = getStore( context );
-	const currentUser = getCurrentUser( getState() );
+	const currentUser = user.get();
 	const hiddenSites = currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
@@ -299,7 +297,7 @@ export function siteSelection( context, next ) {
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const basePath = sectionify( context.path, siteFragment );
-	const currentUser = getCurrentUser( getState() );
+	const currentUser = user.get();
 	const hasOneSite = currentUser.visible_site_count === 1;
 	const allSitesPath = sectionify( context.path, siteFragment );
 
