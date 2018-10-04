@@ -3,6 +3,9 @@
 	"version": "0.1.0-alpha.1",
 	"description": "Gutenberg Blocks for the Jetpack WordPress Plugin",
 	"main": "editor.js",
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"build": "../../../../../bin/sdk-cli.js gutenberg client/gutenberg/extensions/presets/jetpack/",
 		"prepublishOnly": "npm run build",
