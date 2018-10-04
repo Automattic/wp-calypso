@@ -6,7 +6,7 @@
 import getReaderFollows from 'state/selectors/get-reader-follows';
 
 import getReaderStream from 'state/selectors/get-reader-stream';
-import treeSelect from 'lib/tree-select';
+import treeSelect from '@automattic/tree-select';
 import { injectRecommendations, getDistanceBetweenRecs, combineCards } from 'reader/stream/utils';
 
 /*

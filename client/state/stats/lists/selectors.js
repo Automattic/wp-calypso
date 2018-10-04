@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import treeSelect from 'lib/tree-select';
+import treeSelect from '@automattic/tree-select';
 import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
 import { getSite } from 'state/sites/selectors';
 

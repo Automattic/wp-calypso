@@ -24,6 +24,7 @@ const needsInstall = () => {
 };
 
 if ( needsInstall() ) {
+	console.log( '!!!!! REINSTALLING !!!!' );
 	const installResult = spawnSync( 'npm', [ 'ci' ], {
 		shell: true,
 		stdio: 'inherit',
