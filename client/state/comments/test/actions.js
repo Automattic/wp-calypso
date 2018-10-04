@@ -101,10 +101,11 @@ describe( 'actions', () => {
 
 	describe( '#deleteComment()', () => {
 		test( 'should dispatch remove for a placeholder when provided', () => {
-			const deleteCommentAction = deleteComment( SITE_ID, POST_ID, 'placeholder-123' );
+			const dispatch = jest.fn();
+			deleteComment( SITE_ID, POST_ID, 'placeholder-123' )( dispatch, () => ( { comments: [] } ) );
 
-			expect( deleteCommentAction.type ).toEqual( COMMENTS_DELETE );
-			expect( deleteCommentAction.commentId ).toEqual( 'placeholder-123' );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toEqual( COMMENTS_DELETE );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].commentId ).toEqual( 'placeholder-123' );
 		} );
 	} );
 
