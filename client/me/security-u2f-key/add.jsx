@@ -9,19 +9,16 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import u2f from './u2f-api';
 
 class SecurityU2fKeyAdd extends React.Component {
-	componentDidMount() {
-		this.registerKey();
-	}
-
-	registerKey() {
+	registerKey = () => {
 		const registerRequests = [
 			{ version: 'U2F_V2', challenge: this.createChallenge(), attestation: 'direct' },
 		];
 		u2f.register( 'https://wordpress.com', registerRequests, [], this.keyRegistered );
-	}
+	};
 
 	keyRegistered( data ) {
 		console.log( JSON.stringify( data ) ); // eslint-disable-line
@@ -37,7 +34,17 @@ class SecurityU2fKeyAdd extends React.Component {
 
 	render() {
 		window.u2f = u2f;
-		return <Fragment>{ !! u2f && <Card>Aaaaaaaaddddddd</Card> }</Fragment>;
+		return (
+			<Fragment>
+				{ !! u2f && (
+					<Card>
+						<Button compact onClick={ this.registerKey }>
+							Register Key
+						</Button>
+					</Card>
+				) }
+			</Fragment>
+		);
 	}
 }
 
