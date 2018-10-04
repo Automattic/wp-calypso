@@ -4,6 +4,8 @@
 	"description": "Gutenberg Blocks for the Jetpack WordPress Plugin",
 	"main": "editor.js",
 	"scripts": {
+		"build": "../../../../../bin/sdk-cli.js gutenberg .",
+		"prepublishOnly": "npm run build",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {
