@@ -1,1 +1,25 @@
 /** @format */
+
+.security-u2f-key__active-keys {
+}
+
+.security-u2f-key__list {
+	list-style-type: none;
+	margin: 0;
+}
+
+.security-u2f-key__list-item {
+	display: flex;
+	vertical-align: middle;
+
+	& > span {
+		flex-grow: 1;
+		align-self: flex-start;
+	}
+
+	.security-u2f-key-delete {
+		flex-grow: 0;
+		flex-shrink: 0;
+		align-self: flex-end;
+	}
+}
