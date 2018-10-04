@@ -17,7 +17,7 @@ import { recordGoogleEvent } from "../../state/analytics/actions";
 class U2FKeyDeleteButton extends React.Component {
 
 	handleRemoveKeyButtonClick = () => {
-		//console.log('Click delete', this.props);
+		console.log('Click delete', this.props);
 	};
 
 	render() {

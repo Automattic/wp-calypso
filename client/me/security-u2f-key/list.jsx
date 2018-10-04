@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordGoogleEvent } from '../../state/analytics/actions';
-import U2FDeleteButton from '../security-u2f-key-delete';
+import U2FItem from './item';
 
 import './style.scss';
 
@@ -23,9 +23,8 @@ class SecurityU2fKeyList extends React.Component {
 				<FormSectionHeading>{ this.props.translate( 'Active keys' ) }</FormSectionHeading>
 				<ul className="security-u2f-key__list">
 					{ this.props.keys.map( key => (
-						<li className="security-u2f-key__list-item">
-							<span>Fooooooo { key }</span>
-							<U2FDeleteButton keyId={ 1 } />
+						<li key={ key } className="security-u2f-key__list-item">
+							<U2FItem key={ key } />
 						</li>
 					) ) }
 				</ul>
