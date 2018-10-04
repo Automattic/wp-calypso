@@ -20,6 +20,7 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import ReauthRequired from 'me/reauth-required';
 import Security2faBackupCodes from 'me/security-2fa-backup-codes';
 import Security2faDisable from 'me/security-2fa-disable';
+import Security2faKey from 'me/security-2fa-key';
 import Security2faSetup from 'me/security-2fa-setup';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -140,6 +141,14 @@ class TwoStep extends Component {
 		return <AppPasswords />;
 	};
 
+	render2faKey = () => {
+		if ( ! this.state.initialized || this.state.doingSetup ) {
+			return null;
+		}
+
+		return <Security2faKey />;
+	};
+
 	renderBackupCodes = () => {
 		if ( ! this.state.initialized || this.state.doingSetup ) {
 			return null;
@@ -164,6 +173,7 @@ class TwoStep extends Component {
 
 				{ this.renderBackupCodes() }
 				{ this.renderApplicationPasswords() }
+				{ this.render2faKey() }
 			</Main>
 		);
 	}
