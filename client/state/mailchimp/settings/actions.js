@@ -35,7 +35,7 @@ export const requestSettingsUpdate = ( siteId, settings ) => {
 		} );
 
 		return wpcom.req
-			.post( `/sites/${ siteId }/mailchimp/settings`, { body: settings } )
+			.post( `/sites/${ siteId }/mailchimp/settings`, settings )
 			.then( () => {
 				dispatch( {
 					type: MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
