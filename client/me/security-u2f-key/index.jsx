@@ -16,7 +16,8 @@ import Card from 'components/card';
 import getU2fKeys from 'state/selectors/get-u2f-keys';
 import getNewU2fKey from 'state/selectors/get-new-u2f-key';
 import SectionHeader from 'components/section-header';
-import SecurityU2fKeyList from 'me/security-u2f-key-list';
+import SecurityU2fKeyAdd from './add';
+import SecurityU2fKeyList from './list';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class SecurityU2fKey extends React.Component {
@@ -64,7 +65,7 @@ class SecurityU2fKey extends React.Component {
 						) }
 				</SectionHeader>
 				{ !! u2fKeys.length && <SecurityU2fKeyList /> }
-				{ addingKey && <SecurityU2fKeyList /> }
+				{ addingKey && <SecurityU2fKeyAdd /> }
 				{ ! addingKey &&
 					! u2fKeys.length && <Card>Use a Universal 2nd Factor security key to sign in.</Card> }
 			</Fragment>
