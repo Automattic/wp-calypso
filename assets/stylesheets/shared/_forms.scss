@@ -1,63 +1,3 @@
-// Below, you can choose from either using global form styles or class-driven
-// form styles. By default, the global styles are on.
-
-%form {
-	ul {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-}
-
-%form-field {
-	margin: 0;
-	padding: 7px 14px;
-	width: 100%;
-	color: $gray-dark;
-	font-size: 16px;
-	line-height: 1.5;
-	border: 1px solid lighten( $gray, 20% );
-	background-color: $white;
-	transition: all .15s ease-in-out;
-	box-sizing: border-box;
-
-	&::placeholder {
-		color: $gray;
-	}
-
-	&:hover {
-		border-color: lighten( $gray, 10% );
-	}
-
-	&:focus {
-		border-color: $blue-wordpress;
-		outline: none;
-		box-shadow: 0 0 0 2px $blue-light;
-
-		&::-ms-clear {
-			display: none;
-		}
-	}
-
-	&:disabled {
-		background: $gray-light;
-		border-color: lighten( $gray, 30% );
-		color: lighten( $gray, 10% );
-
-		&:hover {
-			cursor: default;
-		}
-
-		&::placeholder {
-			color: lighten( $gray, 10% );
-		}
-	}
-}
-
-%textarea {
-	min-height: 92px;
-}
-
 
 // ==========================================================================
 // Global form elements
@@ -105,7 +45,7 @@ input[type=radio] {
 	display: inline-block;
 	line-height: 0;
 	height: 16px;
-	margin: 4px 0 0;
+	margin: 2px 0 0;
 	float: left;
 	outline: 0;
 	padding: 0;
@@ -123,21 +63,19 @@ input[type=radio] + span {
 }
 
 input[type=checkbox] {
-	&:checked:before {
-		@extend %clear-text;
+	border-radius: 2px;
 
-		content: '\f418';
-		margin: -4px 0 0 -5px;
-		float: left;
+	&:checked:before {
+		content: url( "/calypso/images/checkbox-icons/checkmark.svg" );
+		width: 12px;
+		height: 12px;
+		margin: 1px auto;
 		display: inline-block;
-		vertical-align: middle;
-		width: 16px;
-		font: 400 23px/1 Noticons;
 		speak: none;
-		color: $blue-medium;
 	}
+
 	&:disabled:checked:before {
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 	}
 }
 
@@ -161,7 +99,7 @@ input[type=radio] {
 	}
 
 	&:disabled:checked:before {
-		background: lighten( $gray, 30% );
+		background: $gray-lighten-30;
 	}
 }
 
@@ -196,131 +134,9 @@ input[type=radio] {
 /* end checkbooms */
 
 
-// ==========================================================================
-// Custom form elements
-// ==========================================================================
-
-// Tristate checkbox for bulk selection options
-
-// Example:
-// <a class="checkbox-tristate" role="checkbox">
-//   <span class="screen-reader-text" >Check all</span>
-// </a>
-
-.checkbox-tristate {
-	@extend input[type=checkbox];
-	position: relative;
-	margin: 20px 0 19px 20px;
-
-	&:before {
-		position: absolute;
-		color: $blue-medium;
-		font-family: Noticons;
-	}
-
-	.some-selected & {
-		&:before {
-			content: '\f421'; // .noticon-minimize
-			top: 7px;
-			left: 0;
-		}
-	}
-	.all-selected & {
-		&:before {
-			content: url("data:image/svg+xml;utf8,<svg fill='" + $blue-medium + "' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='none' d='M0 0h24v24H0z'/><path d='M9 19.414l-6.707-6.707 1.414-1.414L9 16.586 20.293 5.293l1.414 1.414'/></svg>");
-			height: 100%;
-			width: 100%;
-			top: 0;
-		}
-	}
-}
-
-
-// Toggle switches
-.toggle[type="checkbox"] {
-	display: none;
-}
-
-.toggle {
-	+ .toggle-label {
-		position: relative;
-		display: inline-block;
-		border-radius: 12px;
-		padding: 2px;
-		width: 40px;
-		height: 24px;
-		background: lighten( $gray, 10% );
-		vertical-align: middle;
-		outline: 0;
-		cursor: pointer;
-		transition: all .4s ease;
-
-		&:after, &:before{
-			position: relative;
-			display: block;
-			content: "";
-			width: 20px;
-			height: 20px;
-		}
-		&:after{
-			left: 0;
-			border-radius: 50%;
-			background: #fff;
-			transition: all .2s ease;
-		}
-		&:before{
-			display: none;
-		}
-		&:hover{
-			background: lighten( $gray, 20% );
-		}
-	}
-	&:focus{
-		+ .toggle-label{
-			box-shadow: 0 0 0 2px $blue-medium;
-		}
-		&:checked + .toggle-label{
-			box-shadow: 0 0 0 2px $blue-light;
-		}
-	}
-	&:checked{
-		+ .toggle-label{
-			background: $blue-medium;
-
-			&:after{
-				left: 16px;
-			}
-		}
-	}
-	&:checked:hover{
-		+ .toggle-label{
-			background: $blue-light;
-		}
-	}
-
-	&:disabled,
-	&:disabled:hover {
-		+ .toggle-label{
-			background: lighten( $gray, 30% );
-		}
-	}
-}
-
-// Classes for toggle state before action is complete (updating plugin or something)
-.toggle.is-toggling {
-	+ .toggle-label {
-		background: $blue-medium;
-	}
-	&:checked {
-		+ .toggle-label {
-			background: lighten( $gray, 20% );
-		}
-	}
-}
-
 select {
 	background: $white url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmFycm93LWRvd248L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJhcnJvdy1kb3duIiBza2V0Y2g6dHlwZT0iTVNBcnRib2FyZEdyb3VwIiBmaWxsPSIjQzhEN0UxIj4gICAgICAgICAgICA8cGF0aCBkPSJNMTUuNSw2IEwxNyw3LjUgTDEwLjI1LDE0LjI1IEwzLjUsNy41IEw1LDYgTDEwLjI1LDExLjI1IEwxNS41LDYgWiIgaWQ9IkRvd24tQXJyb3ciIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==) no-repeat right 10px center;
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 	border-style: solid;
 	border-radius: 4px;
 	border-width: 1px 1px 2px;
@@ -330,9 +146,9 @@ select {
 	margin: 0;
 	outline: 0;
 	overflow: hidden;
-	font-size: 14px;
-	line-height: 21px;
-	font-weight: 600;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 1.4em;
 	text-overflow: ellipsis;
 	text-decoration: none;
 	vertical-align: top;

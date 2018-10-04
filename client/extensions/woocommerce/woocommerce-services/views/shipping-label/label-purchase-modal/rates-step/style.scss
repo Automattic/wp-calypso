@@ -1,0 +1,26 @@
+.rates-step__package-container {
+	margin-bottom: 20px;
+
+	.form-fieldset:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.rates-step__package-container .form-server-error {
+	margin-left: -2px; // align with form-input-validation gridicon
+}
+
+.rates-step__package-container .form-fieldset ~ .form-server-error {
+	// when there is a rates drop-down
+	margin-top: -1em;
+}
+
+.notice.rates-step__notice {
+	margin: -24px -24px 24px;
+	width: inherit;
+}
+
+.rates-step__shipping-info-method,
+.rates-step__shipping-info-cost {
+	font-weight: 600;
+}

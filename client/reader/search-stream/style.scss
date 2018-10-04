@@ -1,0 +1,429 @@
+.is-reader-page .main.search-stream {
+	max-width: 960px;
+}
+
+.search-stream__intro {
+	@include breakpoint( "<660px" ) {
+		margin-left: 16px;
+	}
+}
+
+.search-stream .search {
+	margin-bottom: 0;
+}
+
+.is-reader-page .search-stream__fixed-area {
+	background-color: $white;
+	position: fixed;
+	top: 0;
+	margin-top: 47px; // masterbar is exactly 47px
+	z-index: 20;
+	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
+
+	// Below 660px we show the MobileBackToSidebar header so no padding needed
+	@include breakpoint( ">660px") {
+		padding-top: 30px;
+	}
+
+	.mobile-back-to-sidebar {
+		margin: 0;
+	}
+}
+
+.search-stream__fixed-area .section-nav-tabs.is-dropdown {
+	margin: 0;
+}
+
+.search-stream .search-stream__input-card.card {
+	box-shadow: 0 0 0 2px $gray-lighten-20, 0 1px 2px $gray-lighten-20;
+	margin-bottom: 0;
+}
+
+.search-stream__input-card.card {
+	margin-bottom: 16px;
+	padding: 0;
+	z-index: z-index( 'root', '.search-stream__input-card' );
+}
+
+// Top margin for site results
+.main.search-stream {
+
+	@include breakpoint( "<660px") {
+		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
+	}
+}
+
+// Search term suggestions
+.search-stream__blank-suggestions {
+	border-bottom: 1px solid $gray-lighten-20;
+	font-size: 13px;
+	color: $gray;
+	padding: 16px 0;
+	text-align:left;
+
+	a,
+	a:visited {
+		color: $blue-medium;
+	}
+
+	a:hover {
+		color: $blue-light;
+	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 16px 16px;
+	}
+}
+
+// Post recommendations in Search
+.is-reader-page .search-stream .reader__content {
+	display: flex;
+	flex-flow: row wrap;
+
+	@include breakpoint( "<960px") {
+		flex-flow: column wrap;
+	}
+
+	@include breakpoint( "<660px" ) {
+		flex-flow: row wrap;
+		padding: 15px 5px 15px 15px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		flex-flow: column wrap;
+	}
+}
+
+.is-reader-page .search-stream.search-stream__with-sites .search-stream__results.is-two-columns .reader__content,
+.is-reader-page .search-stream.search-stream__with-sites .search-stream__single-column-results.is-post-results .reader__content {
+	flex-flow: inherit;
+	flex-direction: column; // So post results are stacked
+}
+
+.is-reader-page .search-stream__recommendation-list-item {
+	box-sizing: border-box;
+	border-bottom: 1px solid $gray-lighten-20;
+	display: flex;
+	flex-basis: calc( 50% - 15px );
+	margin: 0 0 0 15px;
+	padding: 20px 0;
+
+	@include breakpoint( "<960px" ) {
+		margin: 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		margin: 0 0 0 15px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin: 0 5px 0 0;
+	}
+
+	&:nth-child( 2n ) {
+		margin: 0 15px 0 0;
+
+		@include breakpoint( "<960px" ) {
+			margin: 0;
+		}
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 5px 0 0;
+		}
+	}
+
+	.reader-related-card__post {
+		max-height: 16px * 1.6 * 11;
+
+		@include breakpoint( "<960px" ) {
+			max-height: 16px * 1.6 * 8;
+		}
+	}
+
+	 .has-thumbnail {
+
+		.reader-related-card__post {
+			max-height: 110px;
+		}
+
+		.reader-related-card__meta {
+			margin-bottom: 18px;
+		}
+	}
+
+	.reader-related-card__featured-image {
+		margin: 0 0 14px;
+	}
+
+	.reader-related-card__meta {
+		align-items: flex-start;
+		margin-bottom: 12px;
+
+		.reader-related-card__byline,
+		.reader-related-card__byline-author,
+		.reader-related-card__byline-site {
+			margin-top: 0;
+		}
+
+		.reader-related-card__byline-author {
+			margin-bottom: -3px;
+		}
+
+		.follow-button {
+			height: 25px;
+			margin-top: 0;
+			position: relative;
+				top: -2px;
+
+			@include breakpoint( "<480px" ) {
+				margin-right: 0;
+			}
+		}
+
+		.gravatar {
+			margin: 4px 8px 0 0;
+		}
+	}
+}
+
+// Date and Relevance sorter
+.search-stream__sort-picker {
+	position: absolute;
+	right: 50px;
+	top: 11px;
+	z-index: z-index( 'root', '.search-stream__sort-picker' );
+}
+
+// Posts and Sites results
+.search-stream .search-stream__results.is-two-columns {
+	display: flex;
+}
+
+// Post and Sites static headers
+.search-stream__headers {
+	color: $gray;
+	display: flex;
+	font-size: 14px;
+	display: flex;
+	font-weight: 600;
+	list-style-type: none;
+	margin: 17px 0 0;
+	text-transform: uppercase;
+}
+
+.search-stream__post-header,
+.search-stream__site-header {
+	border-bottom: 1px solid $gray-lighten-20;
+	padding-bottom: 15px;
+}
+
+.search-stream .search-stream__post-header,
+.search-stream .search-stream__site-header {
+	flex: 1 1 auto;
+}
+
+.search-stream .search-stream__post-header {
+	margin-right: 40px;
+}
+
+.search-stream .search-stream__site-header {
+	max-width: 265px;
+}
+
+// Posts and Sites tabbed headers
+.search-stream__header .section-nav-tabs__dropdown,
+.search-stream__header .section-nav__mobile-header {
+	display: none;
+}
+
+.search-stream__header .section-nav {
+	background: inherit;
+	border-bottom: 1px solid $gray-lighten-20;
+	box-shadow: none;
+	height: 53px;
+	margin-bottom: 0;
+	padding-bottom: 0;
+
+	@include breakpoint( ">480px" ) {
+		height: 58px;
+	}
+}
+
+.search-stream__header .section-nav-group {
+	display: flex;
+	flex: 1 0 0%;
+	margin-top: 5px;
+	width: 0;
+}
+
+.search-stream__header .section-nav-tabs__list {
+	display: flex;
+
+	.section-nav-tab.is-selected {
+		border-bottom: 2px solid $gray-dark;
+	}
+
+	.is-selected .section-nav-tab__link {
+		color: $gray-dark;
+	}
+
+	.section-nav-tab__link {
+		background-color: transparent;
+		color: $blue-wordpress;
+		padding: 16px;
+
+		&:hover {
+			color: $blue-medium;
+		}
+	}
+
+	.section-nav-tab__text {
+		font-weight: 600;
+		font-size: 13px;
+		letter-spacing: .04em;
+		text-transform: uppercase;
+		width: 100%;
+	}
+}
+
+// Site results
+.search-stream .search-stream__site-results {
+	max-width: 265px;
+	min-width: 265px;
+	margin-left: 40px;
+
+	.reader-infinite-stream__row-wrapper {
+		border: 0;
+	}
+
+	.reader-subscription-list-item .follow-button__label,
+	.reader-subscription-list-item__settings-label {
+		display: none;
+	}
+
+	.reader-site-notification-settings__button-label {
+		display: none;
+	}
+}
+
+.search-stream__results.is-two-columns .reader-subscription-list-item__byline {
+	min-width: 180px;
+	max-width: 180px;
+}
+
+.search-stream__single-column-results .reader-subscription-list-item__options {
+	align-items: flex-end;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	max-width: 25px;
+
+	@include breakpoint( ">660px" ) {
+		align-items: flex-start;
+		min-width: 90px;
+	}
+}
+
+// Hide the last updated date for the moment - see https://github.com/Automattic/wp-calypso/issues/15121
+.search-stream__single-column-results .reader-subscription-list-item__timestamp {
+	display: none;
+}
+
+// Custom styling for cards in post results
+.search-stream__results.is-two-columns {
+	display: flex;
+}
+
+.is-reader-page .search-stream .reader-post-card.card {
+	flex-basis: 100%; // Override the 50% flex-basis for post recommendations
+}
+
+.search-stream__results.is-two-columns .search-stream__post-results {
+	max-width: 660px;
+	width: calc( 100% - 300px );
+
+	.reader-post-card__post {
+
+		@include breakpoint( "<960px" ) {
+			flex-direction: column;
+		}
+	}
+
+	.reader-post-card.card.has-thumbnail .reader-featured-image {
+
+		@include breakpoint( "<960px" ) {
+			height: 80px;
+			margin: 0 0 20px;
+			max-width: 100%;
+		}
+	}
+
+	.reader-post-card.is-photo .reader-post-card__title {
+		white-space: normal;
+	}
+
+	.reader-post-card.is-gallery .reader-post-card__gallery-item:last-child {
+
+		@include breakpoint( "<960px" ) {
+			display: block;
+		}
+	}
+
+	.reader-share__button-label,
+	.comment-button__label-status,
+	.like-button__label-status {
+		display: none;
+	}
+
+	.reader-share__button {
+		top: 2px;
+	}
+}
+
+.search-stream__results.is-two-columns .search-stream__site-results {
+
+	.gridicons-cog {
+		top: 8px;
+	}
+}
+
+.card.reader-search-card.is-photo {
+	@include breakpoint( "<660px" ) {
+		z-index: z-index( 'root', '.reader-search-card' );
+	}
+}
+
+.search-stream__url-follow {
+	border-bottom: 1px solid $gray-lighten-30;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 13px 0 10px;
+	position: relative;
+	z-index: z-index( 'root', '.following-manage__url-follow' );
+
+	.follow-button {
+
+		.gridicon {
+			fill: $blue-medium;
+		}
+
+		.follow-button__label {
+			color: $blue-medium;
+
+			@include breakpoint ( "<660px" ) {
+				display: inline;
+			}
+		}
+
+		&.is-following {
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
+		}
+	}
+}

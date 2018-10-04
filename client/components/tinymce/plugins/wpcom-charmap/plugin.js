@@ -1,7 +1,12 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
+import ReactDom from 'react-dom';
 import React from 'react';
+import tinymce from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
@@ -9,7 +14,7 @@ import React from 'react';
 import CharMap from './charmap';
 
 function wpcomCharMapPlugin( editor ) {
-	var node;
+	let node;
 
 	editor.on( 'init', function() {
 		node = document.createElement( 'div' );
@@ -18,7 +23,7 @@ function wpcomCharMapPlugin( editor ) {
 	} );
 
 	editor.on( 'remove', function() {
-		React.unmountComponentAtNode( node );
+		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );
@@ -30,11 +35,11 @@ function wpcomCharMapPlugin( editor ) {
 		}
 
 		function render( visibility = 'show' ) {
-			React.render(
+			ReactDom.render(
 				React.createElement( CharMap, {
 					showDialog: visibility === 'show',
 					onClose: onClose,
-					editor: editor
+					editor: editor,
 				} ),
 				node
 			);
@@ -44,6 +49,6 @@ function wpcomCharMapPlugin( editor ) {
 	} );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/charmap', wpcomCharMapPlugin );
-};
+}

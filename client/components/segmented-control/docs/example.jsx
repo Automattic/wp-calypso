@@ -1,60 +1,63 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' );
+import SegmentedControl from 'components/segmented-control';
+import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import ControlItem from 'components/segmented-control/item';
 
-/**
- * Segmented Control Demo
- */
-var SegmentedControlDemo = React.createClass( {
-	displayName: 'SegmentedControl',
+class SegmentedControlDemo extends React.PureComponent {
+	static displayName = 'SegmentedControl';
 
-	mixins: [ React.addons.PureRenderMixin ],
+	static defaultProps = {
+		options: [
+			{ value: 'all', label: 'All' },
+			{ value: 'unread', label: 'Unread' },
+			{ value: 'comments', label: 'Comments' },
+			{ value: 'follows', label: 'Follows' },
+			{ value: 'likes', label: 'Likes' },
+		],
+	};
 
-	getInitialState: function() {
-		return {
-			childSelected: 'all'
-		};
-	},
+	state = {
+		childSelected: 'all',
+		compact: false,
+	};
 
-	getDefaultProps: function() {
-		return {
-			options: [
-				{ value: 'all', label: 'All' },
-				{ value: 'unread', label: 'Unread' },
-				{ value: 'comments', label: 'Comments' },
-				{ value: 'follows', label: 'Follows' },
-				{ value: 'likes', label: 'Likes' }
-			]
-		};
-	},
+	toggleCompact = () => {
+		this.setState( { compact: ! this.state.compact } );
+	};
 
-	render: function() {
+	render() {
 		var controlDemoStyles = { maxWidth: 386 };
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/segmented-control">Segmented Control</a>
-				</h2>
+			<div>
+				<a className="docs__design-toggle button" onClick={ this.toggleCompact }>
+					{ this.state.compact ? 'Normal' : 'Compact' }
+				</a>
 
 				<h3>Items passed as options prop</h3>
-				<SegmentedControl
+				<SimplifiedSegmentedControl
 					options={ this.props.options }
 					onSelect={ this.selectSegment }
 					style={ controlDemoStyles }
+					compact={ this.state.compact }
 				/>
 
-				<h3 style={ { marginTop: 20 } }>items passed as children</h3>
+				<h3 style={ { marginTop: 20 } }>Primary version</h3>
 				<SegmentedControl
 					selectedText={ this.state.childSelected }
 					style={ controlDemoStyles }
+					primary={ true }
+					compact={ this.state.compact }
 				>
 					<ControlItem
 						selected={ this.state.childSelected === 'all' }
@@ -92,9 +95,9 @@ var SegmentedControlDemo = React.createClass( {
 					</ControlItem>
 				</SegmentedControl>
 
-				<h3 style={ { marginTop: 20 } }>Compact version of segmented control</h3>
+				<h3 style={ { marginTop: 20 } }>Three items</h3>
 				<SegmentedControl
-					compact={ true }
+					compact={ this.state.compact }
 					selectedText={ this.state.childSelected }
 					style={ { maxWidth: 280 } }
 				>
@@ -121,19 +124,19 @@ var SegmentedControlDemo = React.createClass( {
 				</SegmentedControl>
 			</div>
 		);
-	},
+	}
 
-	selectChildSegment: function( childSelected, event ) {
+	selectChildSegment = ( childSelected, event ) => {
 		event.preventDefault();
 		this.setState( {
-			childSelected: childSelected
+			childSelected: childSelected,
 		} );
 		console.log( 'Segmented Control (selected):', childSelected );
-	},
+	};
 
-	selectSegment: function( option ) {
+	selectSegment = option => {
 		console.log( 'Segmented Control (selected):', option );
-	}
-} );
+	};
+}
 
-module.exports = SegmentedControlDemo;
+export default SegmentedControlDemo;

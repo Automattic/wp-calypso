@@ -1,65 +1,56 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Bar = require( './bar' ),
-	XAxis = require( './x-axis' ),
-	user = require( 'lib/user' )();
+import Bar from './bar';
+import XAxis from './x-axis';
 
-module.exports = React.createClass( {
-	displayName: 'ModuleChartBarContainer',
+export default class extends React.Component {
+	static displayName = 'ModuleChartBarContainer';
 
-	propTypes: {
-		isTouch: React.PropTypes.bool,
-		data: React.PropTypes.array,
-		yAxisMax: React.PropTypes.number,
-		width: React.PropTypes.number,
-		barClick: React.PropTypes.func
-	},
+	static propTypes = {
+		isTouch: PropTypes.bool,
+		data: PropTypes.array,
+		yAxisMax: PropTypes.number,
+		width: PropTypes.number,
+		barClick: PropTypes.func,
+		isRtl: PropTypes.bool,
+	};
 
-	buildBars: function( max ) {
-		var bars,
-			numberBars = this.props.data.length,
-			tooltipPosition = user.isRTL() ? 'bottom left' : 'bottom right',
-			width = this.props.chartWidth,
-			barWidth = ( width / numberBars );
-
-		bars = this.props.data.map( function ( item, index ) {
-			var barOffset = barWidth * ( index + 1 );
-
-			if ( 
-				 ( ( barOffset + 230 ) > width ) && 
-				 ( ( ( barOffset + barWidth ) - 230 ) > 0 )
-				) {
-				tooltipPosition = user.isRTL() ? 'bottom right' : 'bottom left';
-			}
-
-			return <Bar index={ index }
-						key={ index }
-						isTouch={ this.props.isTouch }
-						tooltipPosition={ tooltipPosition }
-						className={ item.className }
-						clickHandler={ this.props.barClick }
-						data={ item }
-						max={ max } 
-						count={ numberBars } />;
+	buildBars = max => {
+		return this.props.data.map( function( item, index ) {
+			return (
+				<Bar
+					index={ index }
+					key={ index }
+					isTouch={ this.props.isTouch }
+					className={ item.className }
+					clickHandler={ this.props.barClick }
+					data={ item }
+					max={ max }
+					count={ this.props.data.length }
+					chartWidth={ this.props.chartWidth }
+					setTooltip={ this.props.setTooltip }
+					isRtl={ this.props.isRtl }
+				/>
+			);
 		}, this );
+	};
 
-		return bars;
-	},
-
-	render: function() {
-		return ( 
+	render() {
+		return (
 			<div>
-				<div className="chart__bars">
-					{ this.buildBars( this.props.yAxisMax ) }
-				</div>
-				<XAxis data={ this.props.data } labelWidth={ 42 } />
+				<div className="chart__bars">{ this.buildBars( this.props.yAxisMax ) }</div>
+				<XAxis data={ this.props.data } labelWidth={ 42 } isRtl={ this.props.isRtl } />
 			</div>
 		);
 	}
-} );
+}

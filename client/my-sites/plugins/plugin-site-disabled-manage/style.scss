@@ -2,7 +2,7 @@
 	position: absolute;
 		top: 0;
 		right: 16px;
-	line-height: 52px;
+	line-height: 66px;
 	display: flex;
 	align-items: center;
 	text-transform: uppercase;
@@ -35,8 +35,8 @@
 }
 .plugin-site-disabled-manage__link {
 	@include breakpoint( "<480px" )  {
-		position: absolute;
+		margin: 18px 0 0 0;
+		position: relative;
 		right: 0;
 	}
 }
-

@@ -1,46 +1,36 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	qs = require( 'querystring' );
+import React from 'react';
+import i18n from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import MediaComponent from 'my-sites/media/main';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { getSiteFragment } from 'lib/route';
 
-module.exports = {
-
-	media: function( context ) {
-		var MediaComponent = require( 'my-sites/media/main' ),
-			filter = context.params.filter,
-			search = qs.parse( context.querystring ).s,
-			baseAnalyticsPath = route.sectionify( context.path );
-
-		// Analytics
-		if ( sites.getSelectedSite() ) {
-			baseAnalyticsPath += '/:site';
+export default {
+	media: function( context, next ) {
+		if ( ! getSiteFragment( context.path ) ) {
+			return page.redirect( '/media' );
 		}
-		analytics.pageView.record( baseAnalyticsPath, 'Media' );
 
 		// Page Title
-		titleActions.setTitle( i18n.translate( 'Media', { textOnly: true } ), {
-			siteID: route.getSiteFragment( context.path )
-		} );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Media', { textOnly: true } ) ) );
 
+		const mediaId = context.params.mediaId ? parseInt( context.params.mediaId ) : null;
 		// Render
-		React.render(
-			React.createElement( MediaComponent, {
-				sites: sites,
-				filter: filter,
-				search: search
-			} ),
-			document.getElementById( 'primary' )
-		);
-	}
-
+		context.primary = React.createElement( MediaComponent, {
+			filter: context.params.filter,
+			search: context.query.s,
+			mediaId,
+		} );
+		next();
+	},
 };

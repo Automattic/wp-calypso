@@ -1,46 +1,58 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
 
-module.exports = React.createClass( {
-	displayName: 'RootChild',
+import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 
-	componentDidMount: function() {
+export default class RootChild extends React.Component {
+	static contextTypes = {
+		store: PropTypes.object,
+	};
+
+	componentDidMount() {
 		this.container = document.createElement( 'div' );
 		document.body.appendChild( this.container );
 		this.renderChildren();
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.renderChildren();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( ! this.container ) {
 			return;
 		}
 
-		React.unmountComponentAtNode( this.container );
+		ReactDom.unmountComponentAtNode( this.container );
 		document.body.removeChild( this.container );
 		delete this.container;
-	},
+	}
 
-	renderChildren: function() {
-		var content;
+	renderChildren = () => {
+		let content;
 
-		if ( this.props &&
-			( Object.keys( this.props ).length > 1 || ! this.props.children )
-		) {
+		if ( this.props && ( Object.keys( this.props ).length > 1 || ! this.props.children ) ) {
 			content = <div { ...this.props }>{ this.props.children }</div>;
 		} else {
 			content = this.props.children;
 		}
 
-		React.render( content, this.container );
-	},
+		// Context is lost when creating a new render hierarchy, so ensure that
+		// we preserve the context that we care about
+		if ( this.context.store ) {
+			content = <ReduxProvider store={ this.context.store }>{ content }</ReduxProvider>;
+		}
 
-	render: function() {
+		ReactDom.render( content, this.container );
+	};
+
+	render() {
 		return null;
 	}
-} );
+}

@@ -1,20 +1,31 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react/addons';
+
+import update from 'immutability-helper';
 
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/upgrades/constants';
+import {
+	SITE_REDIRECT_FETCH,
+	SITE_REDIRECT_FETCH_COMPLETED,
+	SITE_REDIRECT_FETCH_FAILED,
+	SITE_REDIRECT_NOTICE_CLOSE,
+	SITE_REDIRECT_UPDATE,
+	SITE_REDIRECT_UPDATE_COMPLETED,
+	SITE_REDIRECT_UPDATE_FAILED,
+} from 'lib/upgrades/action-types';
 
 function updateStateForSite( state, siteId, data ) {
 	const command = state[ siteId ] ? '$merge' : '$set';
 
-	return React.addons.update( state, {
+	return update( state, {
 		[ siteId ]: {
-			[ command ]: data
-		}
+			[ command ]: data,
+		},
 	} );
 }
 
@@ -23,7 +34,7 @@ function getInitialStateForSite() {
 		isFetching: false,
 		isUpdating: false,
 		notice: null,
-		value: null
+		value: null,
 	};
 }
 
@@ -31,66 +42,66 @@ function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case ActionTypes.SITE_REDIRECT_NOTICE_CLOSE:
+		case SITE_REDIRECT_NOTICE_CLOSE:
 			state = updateStateForSite( state, action.siteId, {
-				notice: null
+				notice: null,
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH:
+		case SITE_REDIRECT_FETCH:
 			state = updateStateForSite( state, action.siteId, {
-				isFetching: true
+				isFetching: true,
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH_COMPLETED:
+		case SITE_REDIRECT_FETCH_COMPLETED:
 			state = updateStateForSite( state, action.siteId, {
 				isFetching: false,
 				notice: null,
-				value: action.location
+				value: action.location,
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_FETCH_FAILED:
+		case SITE_REDIRECT_FETCH_FAILED:
 			state = updateStateForSite( state, action.siteId, {
 				isFetching: false,
 				notice: {
 					error: true,
-					text: action.error
-				}
+					text: action.error,
+				},
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE:
+		case SITE_REDIRECT_UPDATE:
 			state = updateStateForSite( state, action.siteId, {
-				isUpdating: true
+				isUpdating: true,
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE_COMPLETED:
+		case SITE_REDIRECT_UPDATE_COMPLETED:
 			state = updateStateForSite( state, action.siteId, {
 				isUpdating: false,
 				notice: {
 					success: true,
-					text: action.success
+					text: action.success,
 				},
-				value: action.location
+				value: action.location,
 			} );
 
 			break;
 
-		case ActionTypes.SITE_REDIRECT_UPDATE_FAILED:
+		case SITE_REDIRECT_UPDATE_FAILED:
 			state = updateStateForSite( state, action.siteId, {
 				isUpdating: false,
 				notice: {
 					error: true,
-					text: action.error
-				}
+					text: action.error,
+				},
 			} );
 
 			break;
@@ -99,7 +110,4 @@ function reducer( state, payload ) {
 	return state;
 }
 
-export {
-	getInitialStateForSite,
-	reducer
-};
+export { getInitialStateForSite, reducer };

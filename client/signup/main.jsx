@@ -1,120 +1,148 @@
+/** @format */
 /**
  * External dependencies
  */
+import cookie from 'cookie';
 import debugModule from 'debug';
-const debug = debugModule( 'calypso:signup' );
-import React from 'react';
-import TimeoutTransitionGroup from 'timeout-transition-group';
 import page from 'page';
-import startsWith from 'lodash/string/startsWith';
-import sortBy from 'lodash/collection/sortBy';
-import last from 'lodash/array/last';
-import find from 'lodash/collection/find';
-import some from 'lodash/collection/some';
-import defer from 'lodash/function/defer';
-import delay from 'lodash/function/delay';
-import assign from 'lodash/object/assign';
-import matchesProperty from 'lodash/utility/matchesProperty';
-import indexOf from 'lodash/array/indexOf';
-import reject from 'lodash/collection/reject';
+import PropTypes from 'prop-types';
+import React from 'react';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
+import url from 'url';
+import {
+	assign,
+	defer,
+	delay,
+	find,
+	get,
+	indexOf,
+	isEmpty,
+	isEqual,
+	last,
+	pick,
+	startsWith,
+} from 'lodash';
+import { translate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import SignupDependencyStore from 'lib/signup/dependency-store';
-import SignupProgressStore from 'lib/signup/progress-store';
-import SignupFlowController from 'lib/signup/flow-controller';
-import LocaleSuggestions from './locale-suggestions';
-import FlowProgressIndicator from './flow-progress-indicator';
-import steps from './config/steps';
-import stepComponents from './config/step-components';
-import flows from './config/flows';
-import WpcomLoginForm from './wpcom-login-form';
-import userModule from 'lib/user';
-const user = userModule();
-import analytics from 'analytics';
+import config from 'config';
+
+// Components
+import DocumentHead from 'components/data/document-head';
+import LocaleSuggestions from 'components/locale-suggestions';
 import SignupProcessingScreen from 'signup/processing-screen';
-import utils from './utils';
+
+// Libraries
+import analytics from 'lib/analytics';
+import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-tracking';
+import * as oauthToken from 'lib/oauth-token';
+import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
+import SignupActions from 'lib/signup/actions';
+import SignupFlowController from 'lib/signup/flow-controller';
+import { disableCart } from 'lib/upgrades/actions';
+
+// State actions and selectors
+import { loadTrackingTool } from 'state/analytics/actions';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
+import { affiliateReferral } from 'state/refer/actions';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
+import { getSignupProgress } from 'state/signup/progress/selectors';
+import { setSurvey } from 'state/signup/steps/survey/actions';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
+
+// Current directory dependencies
+import steps from './config/steps';
+import flows from './config/flows';
+import stepComponents from './config/step-components';
+import FlowProgressIndicator from './flow-progress-indicator';
+import {
+	canResumeFlow,
+	getCompletedSteps,
+	getDestination,
+	getFilteredSteps,
+	getFirstInvalidStep,
+	getStepUrl,
+} from './utils';
+import WpcomLoginForm from './wpcom-login-form';
 
 /**
  * Constants
  */
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 1000;
+const debug = debugModule( 'calypso:signup' );
+const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
 
-const Signup = React.createClass( {
-	displayName: 'Signup',
+class Signup extends React.Component {
+	static displayName = 'Signup';
 
-	getInitialState() {
-		return {
+	static contextTypes = {
+		store: PropTypes.object,
+	};
+
+	static propTypes = {
+		domainsWithPlansOnly: PropTypes.bool,
+		isLoggedIn: PropTypes.bool,
+		loadTrackingTool: PropTypes.func.isRequired,
+		setSurvey: PropTypes.func.isRequired,
+		signupDependencies: PropTypes.object,
+		trackAffiliateReferral: PropTypes.func.isRequired,
+	};
+
+	constructor( props, context ) {
+		super( props, context );
+
+		this.state = {
+			controllerHasReset: false,
 			login: false,
-			progress: SignupProgressStore.get(),
-			dependencies: SignupDependencyStore.get(),
+			dependencies: props.signupDependencies,
 			loadingScreenStartTime: undefined,
-			resumingStep: undefined
+			resumingStep: undefined,
+			loginHandler: null,
+			hasCartItems: false,
+			plans: false,
+			previousFlowName: null,
 		};
-	},
+	}
 
-	loadDependenciesFromStore() {
-		this.setState( { dependencies: SignupDependencyStore.get() } );
-	},
+	UNSAFE_componentWillMount() {
+		// Signup updates the cart through `SignupCart`. To prevent
+		// synchronization issues and unnecessary polling, the cart is disabled
+		// here.
+		disableCart();
 
-	loadProgressFromStore() {
-		var newProgress = SignupProgressStore.get(),
-			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
-			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
-			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
+		this.submitQueryDependencies();
 
-		this.setState( { progress: newProgress } );
+		const flow = flows.getFlow( this.props.flowName );
+		const queryObject = ( this.props.initialContext && this.props.initialContext.query ) || {};
 
-		if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
+		let providedDependencies;
+
+		if ( flow.providesDependenciesInQuery ) {
+			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
-
-		if ( startLoadingScreen ) {
-			this.setState( { loadingScreenStartTime: Date.now() } );
-		}
-
-		if ( invalidSteps ) {
-			this.setState( { loadingScreenStartTime: undefined } );
-		}
-	},
-
-	componentWillMount() {
-		analytics.tracks.recordEvent( 'calypso_signup_start', {
-			flow: this.props.flowName,
-			ref: this.props.refParameter
-		} );
 
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
-			onComplete: function( dependencies, destination ) {
-				var timeSinceLoading = this.state.loadingScreenStartTime ?
-					Date.now() - this.state.loadingScreenStartTime :
-					undefined;
-
-				if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
-					return delay(
-						this.handleFlowComplete.bind( this, dependencies, destination ),
-						MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
-					);
-				}
-
-				return this.handleFlowComplete( dependencies, destination );
-			}.bind( this )
+			providedDependencies,
+			reduxStore: this.context.store,
+			onComplete: this.handleSignupFlowControllerCompletion,
 		} );
 
-		this.loadProgressFromStore();
+		this.updateLoadingScreenStartTime();
 
-		if ( SignupProgressStore.get().length > 0 ) {
-			// we loaded progress from local storage, attempt to resume progress
+		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
+			// Resume progress if possible
 			return this.resumeProgress();
 		}
 
-		if ( this.positionInFlow() !== 0 ) {
-			// no progress was resumed and we're on a non-zero step
-			// redirect to the beginning of the flow
+		if ( this.getPositionInFlow() !== 0 ) {
+			// Flow is not resumable; redirect to the beginning of the flow
 			return page.redirect(
-				utils.getStepUrl(
+				getStepUrl(
 					this.props.flowName,
 					flows.getFlow( this.props.flowName ).steps[ 0 ],
 					this.props.locale
@@ -122,10 +150,12 @@ const Signup = React.createClass( {
 			);
 		}
 
-		this.recordStep();
-	},
+		this.checkForCartItems( this.props.signupDependencies );
 
-	componentWillReceiveProps( { stepName } ) {
+		this.recordStep();
+	}
+
+	UNSAFE_componentWillReceiveProps( { signupDependencies, stepName, flowName, progress } ) {
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName );
 		}
@@ -133,47 +163,214 @@ const Signup = React.createClass( {
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
 		}
-	},
 
-	recordStep( stepName = this.props.stepName ) {
-		analytics.tracks.recordEvent( 'calypso_signup_step_start', { flow: this.props.flowName, step: stepName } );
-	},
-
-	handleFlowComplete( dependencies, destination ) {
-		debug( 'The flow is completed. Logging you in...' );
-
-		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
-
-		if ( user.get() ) {
-			// deferred in case the user is logged in and the redirect triggers a dispatch
-			defer( function() {
-				page( destination );
-			}.bind( this ) );
-		} else {
-			this.setState( {
-				bearerToken: dependencies.bearer_token,
-				username: dependencies.username,
-				redirectTo: this.loginRedirectTo( destination )
-			} );
+		if ( cookie.parse( document.cookie )[ 'wp-affiliate-tracker' ] ) {
+			this.setState( { plans: true } );
 		}
 
-		this.signupFlowController.reset();
-	},
+		if ( this.props.flowName !== flowName ) {
+			this.signupFlowController.changeFlowName( flowName );
+		}
+
+		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
+			this.updateLoadingScreenStartTime( progress );
+		}
+
+		this.checkForCartItems( signupDependencies );
+	}
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		SignupProgressStore.on( 'change', this.loadProgressFromStore );
-		SignupProgressStore.on( 'change', this.loadDependenciesFromStore );
-	},
+		this.recordSignupStart();
+	}
 
-	componentWillUnmount() {
-		debug( 'Signup component unmounted' );
-		SignupProgressStore.off( 'change', this.loadProgressFromStore );
-		SignupProgressStore.off( 'change', this.loadDependenciesFromStore );
-	},
+	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
+		const timeSinceLoading = this.state.loadingScreenStartTime
+			? Date.now() - this.state.loadingScreenStartTime
+			: undefined;
+		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
 
-	loginRedirectTo( path ) {
-		var redirectTo;
+		if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
+			return delay(
+				this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
+				MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
+			);
+		}
+		return this.handleFlowComplete( dependencies, filteredDestination );
+	};
+
+	recordSignupStart() {
+		analytics.tracks.recordEvent( 'calypso_signup_start', {
+			flow: this.props.flowName,
+			ref: this.props.refParameter,
+		} );
+		this.recordReferralVisit();
+		recordSignupStart();
+	}
+
+	recordReferralVisit() {
+		const urlPath = location.href;
+		const parsedUrl = url.parse( urlPath, true );
+		const affiliateId = parsedUrl.query.aff;
+		const campaignId = parsedUrl.query.cid;
+
+		if ( affiliateId && ! isNaN( affiliateId ) ) {
+			this.props.trackAffiliateReferral( { affiliateId, campaignId, urlPath } );
+			// Record the referral in Tracks
+			analytics.tracks.recordEvent( 'calypso_refer_visit', {
+				flow: this.props.flowName,
+				// The current page without any query params
+				page: `${ parsedUrl.host }${ parsedUrl.pathname }`,
+			} );
+		}
+	}
+
+	updateLoadingScreenStartTime = ( progress = this.props.progress ) => {
+		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress ),
+			waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress ),
+			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
+
+		if ( this.isEveryStepSubmitted( progress ) ) {
+			this.goToFirstInvalidStep( progress );
+		}
+
+		if ( startLoadingScreen ) {
+			this.setState( { loadingScreenStartTime: Date.now() } );
+		}
+
+		if ( hasInvalidSteps ) {
+			this.setState( { loadingScreenStartTime: undefined } );
+		}
+	};
+
+	submitQueryDependencies = () => {
+		if ( isEmpty( this.props.initialContext && this.props.initialContext.query ) ) {
+			return;
+		}
+
+		const queryObject = this.props.initialContext.query;
+		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+
+		// `vertical` query parameter
+		const vertical = queryObject.vertical;
+		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+			debug( 'From query string: vertical = %s', vertical );
+			this.props.setSurvey( {
+				vertical,
+				otherText: '',
+			} );
+			SignupActions.submitSignupStep( { stepName: 'survey' }, [], {
+				surveySiteType: 'blog',
+				surveyQuestion: vertical,
+			} );
+			// Track our landing page verticals
+			if ( isValidLandingPageVertical( vertical ) ) {
+				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+					vertical,
+					flow: this.props.flowName,
+				} );
+			}
+		}
+	};
+
+	checkForCartItems = signupDependencies => {
+		const dependenciesContainCartItem = dependencies => {
+			return (
+				dependencies &&
+				( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+			);
+		};
+
+		if ( dependenciesContainCartItem( signupDependencies ) ) {
+			this.setState( { hasCartItems: true } );
+		}
+	};
+
+	recordStep = ( stepName = this.props.stepName ) => {
+		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
+			flow: this.props.flowName,
+			step: stepName,
+		} );
+	};
+
+	handleFlowComplete = ( dependencies, destination ) => {
+		debug( 'The flow is completed. Destination: %s', destination );
+
+		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewSite = !! ( dependencies && dependencies.siteSlug );
+		const hasCartItems = !! (
+			dependencies &&
+			( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+		);
+		const isNewUserOnFreePlan = isNewUser && isNewSite && ! hasCartItems;
+
+		analytics.tracks.recordEvent( 'calypso_signup_complete', {
+			flow: this.props.flowName,
+			is_new_user: isNewUser,
+			is_new_site: isNewSite,
+			has_cart_items: hasCartItems,
+			is_new_user_on_free_plan: isNewUserOnFreePlan,
+		} );
+		recordSignupCompletion( { isNewUser, isNewSite, hasCartItems, isNewUserOnFreePlan } );
+
+		if (
+			dependencies.cartItem ||
+			dependencies.domainItem ||
+			this.signupFlowController.shouldAutoContinue()
+		) {
+			this.handleLogin( dependencies, destination );
+		} else {
+			this.setState( {
+				loginHandler: this.handleLogin.bind( this, dependencies, destination ),
+			} );
+		}
+	};
+
+	handleLogin = ( dependencies, destination, event ) => {
+		const userIsLoggedIn = this.props.isLoggedIn;
+
+		if ( event && event.redirectTo ) {
+			destination = event.redirectTo;
+		}
+
+		debug( `Logging you in to "${ destination }"` );
+
+		this.setState( { controllerHasReset: true } );
+
+		if ( userIsLoggedIn ) {
+			// don't use page.js for external URLs (eg redirect to new site after signup)
+			if ( /^https?:\/\//.test( destination ) ) {
+				return ( window.location.href = destination );
+			}
+
+			// deferred in case the user is logged in and the redirect triggers a dispatch
+			defer( () => {
+				debug( `Redirecting you to "${ destination }"` );
+				this.signupFlowController.reset();
+				window.location.href = destination;
+			} );
+		}
+
+		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
+			debug( `Handling oauth login` );
+			oauthToken.setToken( dependencies.bearer_token );
+			this.signupFlowController.reset();
+			window.location.href = destination;
+			return;
+		}
+
+		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
+			debug( `Handling regular login` );
+			this.setState( {
+				bearerToken: dependencies.bearer_token,
+				username: dependencies.username,
+				redirectTo: this.loginRedirectTo( destination ),
+			} );
+		}
+	};
+
+	loginRedirectTo = path => {
+		let redirectTo;
 
 		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
 			return path;
@@ -185,160 +382,230 @@ const Signup = React.createClass( {
 			redirectTo += ':' + window.location.port;
 		}
 		return redirectTo + path;
-	},
+	};
 
-	firstUnsubmittedStepName() {
-		const signupProgress = signupProgressStore.get(),
-			currentSteps = flows.getFlow( this.props.flowName ).steps,
+	firstUnsubmittedStepName = () => {
+		const currentSteps = flows.getFlow( this.props.flowName ).steps,
+			signupProgress = getFilteredSteps( this.props.flowName, this.props.progress ),
 			nextStepName = currentSteps[ signupProgress.length ],
 			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
 			firstInProgressStepName = firstInProgressStep.stepName;
 
 		return firstInProgressStepName || nextStepName || last( currentSteps );
-	},
+	};
 
-	resumeProgress() {
-		const signupProgress = SignupProgressStore.get(),
-			lastUpdatedStep = sortBy( signupProgress, 'lastUpdated' ).reverse()[ 0 ],
-			lastUpdatedStepName = lastUpdatedStep.stepName,
-			stepSectionName = lastUpdatedStep.stepSectionName,
-			resumingStep = lastUpdatedStepName || this.firstUnsubmittedStepName();
+	resumeProgress = () => {
+		// Update the Flows object to know that the signup flow is being resumed.
+		flows.resumingFlow = true;
+
+		const firstUnsubmittedStep = this.firstUnsubmittedStepName(),
+			stepSectionName = firstUnsubmittedStep.stepSectionName;
 
 		// set `resumingStep` so we don't render/animate anything until we have mounted this step
-		this.setState( { resumingStep } );
+		this.setState( { firstUnsubmittedStep } );
 
-		return page.redirect( utils.getStepUrl(
-			this.props.flowName,
-			resumingStep,
-			stepSectionName,
-			this.props.locale
-		) );
-	},
+		return page.redirect(
+			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
+		);
+	};
 
-	goToNextStep() {
+	// `flowName` is an optional parameter used to redirect to another flow, i.e., from `main`
+	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
+	goToStep = ( stepName, stepSectionName, flowName = this.props.flowName ) => {
 		if ( this.state.scrolling ) {
 			return;
 		}
 
-		this.setState( { scrolling: true } );
+		// animate the scroll position to the top
+		const scrollPromise = new Promise( resolve => {
+			this.setState( { scrolling: true } );
 
-		this.windowScroller = setInterval( () => {
-			if ( window.pageYOffset > 0 ) {
-				window.scrollBy( 0, -10 );
-			} else {
-				this.setState( { scrolling: false } );
-				this.loadNextStep();
+			const scrollIntervalId = setInterval( () => {
+				if ( window.pageYOffset > 0 ) {
+					window.scrollBy( 0, -10 );
+				} else {
+					this.setState( { scrolling: false } );
+					resolve( clearInterval( scrollIntervalId ) );
+				}
+			}, 1 );
+		} );
+
+		// redirect the user to the next step
+		scrollPromise.then( () => {
+			if ( ! this.isEveryStepSubmitted() ) {
+				page( getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
+			} else if ( this.isEveryStepSubmitted() ) {
+				this.goToFirstInvalidStep();
 			}
-		}, 1 );
-	},
+		} );
+	};
 
-	loadNextStep() {
-		var flowSteps = flows.getFlow( this.props.flowName ).steps,
+	// `nextFlowName` is an optional parameter used to redirect to another flow, i.e., from `main`
+	// to `store-nux`. If not specified, the current flow (`this.props.flowName`) continues.
+	goToNextStep = ( nextFlowName = this.props.flowName ) => {
+		const flowSteps = flows.getFlow( nextFlowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
-			nextStepSection = this.state.progress[ currentStepIndex + 1 ] ?
-				this.state.progress[ currentStepIndex + 1 ].stepSectionName :
-				'';
+			nextProgressItem = this.props.progress[ currentStepIndex + 1 ],
+			nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
-		clearInterval( this.windowScroller );
-
-		if ( ! this.isEveryStepSubmitted() && nextStepName ) {
-			page( utils.getStepUrl( this.props.flowName, nextStepName, nextStepSection, this.props.locale ) );
-		} else if ( this.isEveryStepSubmitted() ) {
-			this.goToFirstInvalidStep();
+		if ( nextFlowName !== this.props.flowName ) {
+			SignupActions.changeSignupFlow( nextFlowName );
+			this.setState( { previousFlowName: this.props.flowName } );
 		}
-	},
 
-	goToFirstInvalidStep() {
-		var firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
+		this.goToStep( nextStepName, nextStepSection, nextFlowName );
+	};
+
+	goToFirstInvalidStep = ( progress = this.props.progress ) => {
+		const firstInvalidStep = getFirstInvalidStep( this.props.flowName, progress );
 
 		if ( firstInvalidStep ) {
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
 				step: firstInvalidStep.stepName,
-				flow: this.props.flowName
+				flow: this.props.flowName,
 			} );
-			page( utils.getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
+
+			if ( firstInvalidStep.stepName === this.props.stepName ) {
+				// No need to redirect
+				debug( `Already navigated to the first invalid step: ${ firstInvalidStep.stepName }` );
+				return;
+			}
+
+			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
-	},
+	};
 
-	isEveryStepSubmitted() {
-		var flowSteps = flows.getFlow( this.props.flowName ).steps;
-		return flowSteps.length === reject( SignupProgressStore.get(), { status: 'in-progress' } ).length;
-	},
+	isEveryStepSubmitted = ( progress = this.props.progress ) => {
+		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const completedSteps = getCompletedSteps( this.props.flowName, progress );
+		return flowSteps.length === completedSteps.length;
+	};
 
-	positionInFlow() {
-		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
-	},
+	getPositionInFlow( fakedForTwoPartFlows = false ) {
+		let position = indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		if ( fakedForTwoPartFlows && this.props.flowName === 'user-continue' ) {
+			position++;
+		}
+		return position;
+	}
 
-	localeSuggestions() {
-		return 0 === this.positionInFlow() && ! user.get() ?
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } /> :
-			null;
-	},
+	getFlowLength() {
+		// fake it for our two-step flow
+		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
+			return 4;
+		}
+		return flows.getFlow( this.props.flowName ).steps.length;
+	}
 
-	loginForm() {
-		return this.state.bearerToken ?
-			<WpcomLoginForm
-				authorization={ 'Bearer ' + this.state.bearerToken }
-				log={ this.state.username }
-				redirectTo={ this.state.redirectTo } /> :
-			null;
-	},
-
-	currentStep() {
-		let currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
+	renderCurrentStep() {
+		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
+		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
-			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName;
+			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
+			flow = flows.getFlow( this.props.flowName ),
+			hideFreePlan = !! (
+				this.state.plans ||
+				( ( isDomainRegistration( domainItem ) ||
+					isDomainTransfer( domainItem ) ||
+					isDomainMapping( domainItem ) ) &&
+					this.props.domainsWithPlansOnly )
+			);
+		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
-			<div className="signup__step" key={ stepKey }>
-				{ this.localeSuggestions() }
-				{
-					this.state.loadingScreenStartTime ?
-					<SignupProcessingScreen steps={ this.state.progress } /> :
-					<CurrentComponent
-						path={ this.props.path }
-						step={ currentStepProgress }
-						goToNextStep={ this.goToNextStep }
-						flowName={ this.props.flowName }
-						signupProgressStore={ this.state.progress }
-						signupDependencies={ this.state.dependencies }
-						stepSectionName={ this.props.stepSectionName }
-						positionInFlow={ this.positionInFlow() }
-						{ ...propsFromConfig } />
-				}
-			</div>
+			<CSSTransition classNames="signup__step" timeout={ 400 } key={ stepKey }>
+				<div className="signup__step">
+					{ shouldRenderLocaleSuggestions && (
+						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+					) }
+					{ this.state.loadingScreenStartTime ? (
+						<SignupProcessingScreen
+							hasCartItems={ this.state.hasCartItems }
+							steps={ this.props.progress }
+							loginHandler={ this.state.loginHandler }
+							signupDependencies={ this.props.signupDependencies }
+							flowName={ this.props.flowName }
+							flowSteps={ flow.steps }
+						/>
+					) : (
+						<CurrentComponent
+							path={ this.props.path }
+							step={ currentStepProgress }
+							initialContext={ this.props.initialContext }
+							steps={ flow.steps }
+							stepName={ this.props.stepName }
+							meta={ flow.meta || {} }
+							goToNextStep={ this.goToNextStep }
+							goToStep={ this.goToStep }
+							previousFlowName={ this.state.previousFlowName }
+							flowName={ this.props.flowName }
+							signupProgress={ this.props.progress }
+							signupDependencies={ this.props.signupDependencies }
+							stepSectionName={ this.props.stepSectionName }
+							positionInFlow={ this.getPositionInFlow() }
+							hideFreePlan={ hideFreePlan }
+							{ ...propsFromConfig }
+						/>
+					) }
+				</div>
+			</CSSTransition>
 		);
-	},
+	}
 
 	render() {
-		if ( ! this.props.stepName ||
-			( this.positionInFlow() > 0 && this.state.progress.length === 0 ) ||
-			this.state.resumingStep ) {
+		if (
+			! this.props.stepName ||
+			( this.getPositionInFlow() > 0 && this.props.progress.length === 0 ) ||
+			this.state.resumingStep
+		) {
 			return null;
 		}
 
+		const pageTitle =
+			this.props.flowName === 'account'
+				? translate( 'Create an account' )
+				: translate( 'Create a site' );
+		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
+
 		return (
 			<span>
-				{
-					this.state.loadingScreenStartTime ?
-					null :
-					<FlowProgressIndicator
-						positionInFlow={ this.positionInFlow() }
-						flowName={ this.props.flowName } />
-				}
-				<TimeoutTransitionGroup
-					className="signup__steps"
-					transitionName="signup__step"
-					enterTimeout={ 500 }
-					leaveTimeout={ 300 }>
-					{ this.currentStep() }
-				</TimeoutTransitionGroup>
-				{ this.loginForm() }
+				<DocumentHead title={ pageTitle } />
+				{ ! this.state.loadingScreenStartTime &&
+					showProgressIndicator && (
+						<FlowProgressIndicator
+							positionInFlow={ this.getPositionInFlow( true ) }
+							flowLength={ this.getFlowLength() }
+							flowName={ this.props.flowName }
+						/>
+					) }
+				<TransitionGroup component="div" className="signup__steps">
+					{ this.renderCurrentStep() }
+				</TransitionGroup>
+				{ this.state.bearerToken && (
+					<WpcomLoginForm
+						authorization={ 'Bearer ' + this.state.bearerToken }
+						log={ this.state.username }
+						redirectTo={ this.state.redirectTo }
+					/>
+				) }
 			</span>
 		);
 	}
-} );
+}
 
-export default Signup;
+export default connect(
+	state => ( {
+		domainsWithPlansOnly: getCurrentUser( state )
+			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+			: true,
+		progress: getSignupProgress( state ),
+		signupDependencies: getSignupDependencyStore( state ),
+		isLoggedIn: isUserLoggedIn( state ),
+	} ),
+	{ setSurvey, loadTrackingTool, trackAffiliateReferral: affiliateReferral },
+	undefined,
+	{ pure: false }
+)( Signup );

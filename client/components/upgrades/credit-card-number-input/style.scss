@@ -7,19 +7,11 @@
 		padding-right: 50px;
 	}
 
-	.amex input {
-		background-image: url( '/calypso/images/upgrades/cc-amex.svg' );
-	}
+	$cc-brands: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
 
-	.discover input {
-		background-image: url( '/calypso/images/upgrades/cc-discover.svg' );
-	}
-
-	.mastercard input {
-		background-image: url( '/calypso/images/upgrades/cc-mastercard.svg' );
-	}
-
-	.visa input {
-		background-image: url( '/calypso/images/upgrades/cc-visa.svg' );
+	@each $brand in $cc-brands {
+		.#{$brand} input {
+			background-image: url('/calypso/images/upgrades/cc-#{$brand}.svg');
+		}
 	}
 }

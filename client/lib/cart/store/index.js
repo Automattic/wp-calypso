@@ -1,80 +1,79 @@
+/** @format */
 /**
  * External dependencies
  */
-var extend = require( 'lodash/object/assign' ),
-	partialRight = require( 'lodash/function/partialRight' ),
-	compose = require( 'lodash/function/compose' );
+import { assign, flow, flowRight, partialRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	emitter = require( 'lib/mixins/emitter' ),
-	sites = require( 'lib/sites-list' )(),
-	cartSynchronizer = require( './cart-synchronizer' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	PollerPool = require( 'lib/data-poller' ),
-	cartAnalytics = require( './cart-analytics' ),
-	productsList = require( 'lib/products-list' )(),
-	Dispatcher = require( 'dispatcher' ),
-	cartValues = require( 'lib/cart-values' ),
-	applyCoupon = cartValues.applyCoupon,
-	cartItems = cartValues.cartItems;
+import {
+	CART_COUPON_APPLY,
+	CART_COUPON_REMOVE,
+	CART_DISABLE,
+	CART_ITEM_REMOVE,
+	CART_ITEM_REPLACE,
+	CART_ITEMS_ADD,
+	CART_PRIVACY_PROTECTION_ADD,
+	CART_PRIVACY_PROTECTION_REMOVE,
+	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+} from 'lib/upgrades/action-types';
+import emitter from 'lib/mixins/emitter';
+import cartSynchronizer from './cart-synchronizer';
+import PollerPool from 'lib/data-poller';
+import { recordEvents } from './cart-analytics';
+import productsListFactory from 'lib/products-list';
+const productsList = productsListFactory();
+import Dispatcher from 'dispatcher';
+import { applyCoupon, removeCoupon, cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
+import wp from 'lib/wp';
 
-var POLLING_INTERVAL = 5000;
+const wpcom = wp.undocumented();
 
-var _selectedSiteID = null,
-	_synchronizer = null,
-	_poller = null;
+let _cartKey = null;
+let _synchronizer = null;
+let _poller = null;
 
-var CartStore = {
+const CartStore = {
 	get: function() {
-		var value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
+		const value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
 
-		return extend( {}, value, {
+		return assign( {}, value, {
 			hasLoadedFromServer: hasLoadedFromServer(),
-			hasPendingServerUpdates: hasPendingServerUpdates()
+			hasPendingServerUpdates: hasPendingServerUpdates(),
 		} );
-	}
+	},
+	setSelectedSiteId( selectedSiteId ) {
+		if ( selectedSiteId && _cartKey === selectedSiteId ) {
+			return;
+		}
+
+		if ( ! selectedSiteId ) {
+			_cartKey = 'no-site';
+		} else {
+			_cartKey = selectedSiteId;
+		}
+
+		if ( _synchronizer && _poller ) {
+			PollerPool.remove( _poller );
+			_synchronizer.off( 'change', emitChange );
+		}
+
+		_synchronizer = cartSynchronizer( _cartKey, wpcom );
+		_synchronizer.on( 'change', emitChange );
+
+		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
+	},
 };
 
 emitter( CartStore );
 
 function hasLoadedFromServer() {
-	return ( _synchronizer && _synchronizer.hasLoadedFromServer() );
+	return _synchronizer && _synchronizer.hasLoadedFromServer();
 }
 
 function hasPendingServerUpdates() {
-	return ( _synchronizer && _synchronizer.hasPendingServerUpdates() );
-}
-
-function setSelectedSite() {
-	var selectedSite = sites.getSelectedSite();
-
-	if ( ! selectedSite ) {
-		_selectedSiteID = null;
-		return;
-	}
-
-	if ( _selectedSiteID === selectedSite.ID ) {
-		return;
-	}
-
-	if ( ! selectedSite.isUpgradeable() ) {
-		return;
-	}
-
-	if ( _synchronizer && _poller ) {
-		PollerPool.remove( _poller );
-		_synchronizer.off( 'change', emitChange );
-	}
-
-	_selectedSiteID = selectedSite.ID;
-
-	_synchronizer = cartSynchronizer( selectedSite.ID, wpcom );
-	_synchronizer.on( 'change', emitChange );
-
-	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ), { interval: POLLING_INTERVAL } );
+	return _synchronizer && _synchronizer.hasPendingServerUpdates();
 }
 
 function emitChange() {
@@ -82,57 +81,77 @@ function emitChange() {
 }
 
 function update( changeFunction ) {
-	var wrappedFunction,
-		previousCart,
-		nextCart;
-
-	wrappedFunction = compose(
-		partialRight( cartValues.fillInAllCartItemAttributes, productsList.get() ),
+	const wrappedFunction = flowRight(
+		partialRight( fillInAllCartItemAttributes, productsList.get() ),
 		changeFunction
 	);
 
-	previousCart = CartStore.get();
-	nextCart = wrappedFunction( previousCart );
+	const previousCart = CartStore.get();
+	const nextCart = wrappedFunction( previousCart );
 
 	_synchronizer.update( wrappedFunction );
-	cartAnalytics.recordEvents( previousCart, nextCart );
+	recordEvents( previousCart, nextCart );
 }
 
-CartStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		cartItem;
-
-	if ( action.cartItem ) {
-		cartItem = cartValues.fillInSingleCartItemAttributes(
-			action.cartItem,
-			productsList.get()
-		);
+function disable() {
+	if ( _synchronizer && _poller ) {
+		PollerPool.remove( _poller );
+		_synchronizer.off( 'change', emitChange );
 	}
 
+	_synchronizer = null;
+	_poller = null;
+	_cartKey = null;
+}
+
+CartStore.dispatchToken = Dispatcher.register( payload => {
+	const { action } = payload;
+
 	switch ( action.type ) {
-		case UpgradesActionTypes.ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS:
+		case CART_DISABLE:
+			disable();
+			break;
+
+		case CART_PRIVACY_PROTECTION_ADD:
 			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.REMOVE_PRIVACY_FROM_ALL_DOMAIN_CART_ITEMS:
+		case CART_PRIVACY_PROTECTION_REMOVE:
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.ADD_CART_ITEM:
-			update( cartItems.add( cartItem ) );
+		case GOOGLE_APPS_REGISTRATION_DATA_ADD:
+			update(
+				cartItems.fillGoogleAppsRegistrationData( CartStore.get(), action.registrationData )
+			);
 			break;
 
-		case UpgradesActionTypes.APPLY_CART_COUPON:
+		case CART_ITEMS_ADD:
+			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
+			break;
+
+		case CART_COUPON_APPLY:
 			update( applyCoupon( action.coupon ) );
 			break;
 
-		case UpgradesActionTypes.REMOVE_CART_ITEM:
-			update( cartItems.removeItemAndDependencies( cartItem, CartStore.get() ) );
+		case CART_COUPON_REMOVE:
+			update( removeCoupon() );
+			break;
+
+		case CART_ITEM_REMOVE:
+			update(
+				cartItems.removeItemAndDependencies(
+					action.cartItem,
+					CartStore.get(),
+					action.domainsWithPlansOnly
+				)
+			);
+			break;
+
+		case CART_ITEM_REPLACE:
+			update( cartItems.replaceItem( action.oldItem, action.newItem ) );
 			break;
 	}
 } );
 
-sites.on( 'change', setSelectedSite );
-setSelectedSite();
-
-module.exports = CartStore;
+export default CartStore;

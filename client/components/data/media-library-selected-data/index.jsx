@@ -1,50 +1,52 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-var MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' );
+import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
+import passToChildren from 'lib/react-pass-to-children';
 
 function getStateData( siteId ) {
 	return {
-		mediaLibrarySelectedItems: MediaLibrarySelectedStore.getAll( siteId )
+		mediaLibrarySelectedItems: MediaLibrarySelectedStore.getAll( siteId ),
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibrarySelectedData',
+export default class extends React.Component {
+	static displayName = 'MediaLibrarySelectedData';
 
-	propTypes: {
-		siteId: React.PropTypes.number.isRequired
-	},
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+	};
 
-	getInitialState: function() {
-		return getStateData( this.props.siteId );
-	},
+	state = getStateData( this.props.siteId );
 
-	componentDidMount: function() {
+	componentDidMount() {
 		MediaLibrarySelectedStore.on( 'change', this.updateState );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		MediaLibrarySelectedStore.off( 'change', this.updateState );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId ) {
 			this.setState( getStateData( nextProps.siteId ) );
 		}
-	},
+	}
 
-	updateState: function() {
+	updateState = () => {
 		this.setState( getStateData( this.props.siteId ) );
-	},
+	};
 
-	render: function() {
+	render() {
 		return passToChildren( this, this.state );
 	}
-} );
+}

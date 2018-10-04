@@ -14,8 +14,8 @@
 	padding: 2px;
 	width: 40px;
 	height: 24px;
-	background: lighten( $gray, 10% );
 	vertical-align: middle;
+	align-self: flex-start;
 	outline: 0;
 	cursor: pointer;
 	transition: all .4s ease, box-shadow 0s;
@@ -37,9 +37,6 @@
 	&:before {
 		display: none;
 	}
-	&:hover {
-		background: lighten( $gray, 20% );
-	}
 	.accessible-focus &:focus{
 		box-shadow: 0 0 0 2px $blue-medium;
 	}
@@ -47,6 +44,15 @@
 
 .form-toggle__label {
 	cursor: pointer;
+
+	.is-disabled & {
+		cursor: default;
+	}
+
+	.form-toggle__label-content {
+		flex: 0 1 100%;
+		margin-left: 12px;
+	}
 }
 
 .form-toggle {
@@ -58,6 +64,17 @@
 			box-shadow: 0 0 0 2px $blue-light;
 		}
 	}
+
+	& + .form-toggle__label .form-toggle__switch {
+		background: $gray-lighten-10;
+	}
+
+	&:not( :disabled ) {
+		+ .form-toggle__label:hover .form-toggle__switch {
+			background: $gray-lighten-20;
+		}
+	}
+
 	&:checked{
 		+ .form-toggle__label .form-toggle__switch {
 			background: $blue-medium;
@@ -67,15 +84,17 @@
 			}
 		}
 	}
-	&:checked {
-		+ .form-toggle__label .form-toggle__switch:hover {
+
+	&:checked:not( :disabled ) {
+		+ .form-toggle__label:hover .form-toggle__switch {
 			background: $blue-light;
 		}
 	}
-	&:disabled,
-	&:disabled:hover {
-		+ .form-toggle__label .form-toggle__switch {
-			background: lighten( $gray, 30% );
+
+	&:disabled {
+		+ label.form-toggle__label span.form-toggle__switch {
+			opacity: 0.25;
+			cursor: default;
 		}
 	}
 }
@@ -87,7 +106,7 @@
 	}
 	&:checked {
 		+ .form-toggle__label .form-toggle__switch {
-			background: lighten( $gray, 20% );
+			background: $gray-lighten-20;
 		}
 	}
 }

@@ -1,9 +1,47 @@
-.plugin-activate-toggle .disconnect-jetpack-button {
-	font-size: 11px;
-	color: $alert-red;
-	text-transform: uppercase;
+.plugin-activate-toggle__disabled,
+.plugin-activate-toggle__link {
+	display: inline-flex;
+	flex-direction: row-reverse;
+	font-size: 12px;
+	line-height: 16px;
 }
 
-.plugin-activate-toggle .plugin-action__children {
-	float: none;
+.plugin-activate-toggle__link:hover,
+.plugin-activate-toggle__link:hover .plugin-activate-toggle__icon {
+	color: $link-highlight;
+}
+
+.plugin-activate-toggle__disabled {
+	color: $gray-lighten-10;
+}
+
+.plugin-activate-toggle__disabled .plugin-activate-toggle__icon {
+	color: $gray-lighten-30;
+}
+
+.plugin-activate-toggle__label {
+	margin-left: 0px;
+	margin-right: 8px;
+}
+
+.plugin-activate-toggle__link {
+	cursor: pointer;
+}
+
+.plugin-activate-toggle__link a {
+	color: currentcolor;
+	line-height: 16px;
+}
+
+.plugin-activate-toggle__link .plugin-activate-toggle__icon {
+	color: $gray;
+}
+
+.plugin-activate-toggle__icon {
+	flex: none;
+	margin: -1px 3px;
+
+	.gridicon {
+		display: block;
+	}
 }

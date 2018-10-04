@@ -1,0 +1,109 @@
+.author-compact-profile {
+	font-size: 14px;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+
+	.reader-avatar {
+		margin-bottom: 18px;
+	}
+
+	.gravatar,
+	.site-icon {
+		margin: auto;
+	}
+
+	.follow-button {
+		border: 0;
+		border-radius: 0;
+		padding: 0;
+
+		.gridicons-reader-follow {
+			fill: $blue-medium;
+		}
+
+		.follow-button__label {
+			color: $blue-medium;
+
+
+			@include breakpoint( "<660px" ) {
+				display: inline-block;
+			}
+		}
+
+		&.is-following .follow-button__label {
+			color: $alert-green;
+		}
+
+		// No hover if already following
+		&.is-following {
+			&:hover {
+				.gridicons-reader-follow {
+					fill: $alert-green;
+				}
+
+				.follow-button__label {
+					color: $alert-green;
+				}
+			}
+		}
+	}
+
+	// If there's an author link, present site stream link in normal font weight
+	&.has-author-link {
+		.author-compact-profile__site-link {
+			font-weight: inherit;
+			margin-top: 4px;
+		}
+	}
+}
+
+.author-compact-profile .reader-author-link,
+.author-compact-profile__site-link,
+.author-compact-profile__follow {
+	align-items: center;
+	color: $blue-medium;
+	display: flex;
+	justify-content: center;
+
+	&:hover {
+		color: $gray-text-min;
+	}
+}
+
+.author-compact-profile .reader-author-link,
+.author-compact-profile__site-link {
+	font-weight: 600;
+}
+
+.author-compact-profile__follow {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 11px 0;
+
+	.follow-button {
+		padding: 5px;
+	}
+}
+
+.author-compact-profile__follow-count {
+	color: $gray;
+	padding: 5px;
+}
+
+// Placeholders
+.author-compact-profile__site-link.is-placeholder,
+.author-compact-profile__follow-count.is-placeholder {
+	@include placeholder();
+}
+
+.author-compact-profile__site-link.is-placeholder {
+	@include breakpoint( ">660px" ) {
+		margin-left: 50px;
+		margin-right: 50px;
+	}
+}
+
+.author-compact-profile__follow-count.is-placeholder {
+	padding: 0;
+}

@@ -1,0 +1,32 @@
+&.referrers {
+	.pagination {
+		padding: 0.5em 0;
+	}
+
+	.referrers__search {
+		max-width: 100%;
+		margin: 0 auto 16px;
+	}
+
+	.referrers__widgets {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
+		.store-stats-referrer-widget.card {
+			margin: 0;
+			width: 100%;
+		}
+
+		.store-stats-referrer-conv-widget.card {
+			margin: 0;
+			width: 100%;
+		}
+	}
+}
+
+.referrers__search-filter {
+	margin-bottom: 10px;
+}
+

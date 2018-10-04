@@ -1,18 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:my-sites:people:log-store' ),
-	clone = require( 'lodash/lang/clone' ),
-	find = require( 'lodash/collection/find' ),
-	reject = require( 'lodash/collection/reject' );
+
+import { clone, find, reject } from 'lodash';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:my-sites:people:log-store' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
-var _errors = [],
+let _errors = [],
 	_inProgress = [],
 	_completed = [],
 	PeopleLogStore;
@@ -38,12 +40,12 @@ function removeLog( log ) {
 }
 
 function addLog( status, action, siteId, user, error ) {
-	var log = {
+	const log = {
 		status: status,
 		action: action,
 		siteId: siteId,
 		user: user,
-		error: error
+		error: error,
 	};
 
 	debug( 'Add in ' + status + ' data:', log );
@@ -62,7 +64,7 @@ function getList( listName ) {
 }
 
 function filterList( listName, filterBy ) {
-	var list = getList( listName );
+	let list = getList( listName );
 	if ( filterBy ) {
 		list = list.filter( filterBy );
 	}
@@ -88,11 +90,11 @@ PeopleLogStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 PeopleLogStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
 		case 'REMOVE_PEOPLE_NOTICES':
@@ -105,7 +107,13 @@ PeopleLogStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'RECEIVE_EMAIL_FOLLOWERS':
 		case 'RECEIVE_ROLES':
 			if ( action.error ) {
-				addLog( 'error', action.type, action.siteId || action.fetchOptions.siteId, null, action.error.error );
+				addLog(
+					'error',
+					action.type,
+					action.siteId || action.fetchOptions.siteId,
+					null,
+					action.error.error
+				);
 				PeopleLogStore.emitChange();
 			}
 			break;
@@ -126,7 +134,7 @@ PeopleLogStore.dispatchToken = Dispatcher.register( function( payload ) {
 				status: 'inProgress',
 				action: action.action,
 				siteId: action.siteId,
-				user: action.user
+				user: action.user,
 			} );
 			if ( action.error ) {
 				addLog( 'error', action.type, action.siteId, action.user, action.error );
@@ -135,11 +143,10 @@ PeopleLogStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			PeopleLogStore.emitChange();
 			break;
-
 	}
 } );
 
 // Add the Store to the emitter so we can emit change events.
 emitter( PeopleLogStore );
 
-module.exports = PeopleLogStore;
+export default PeopleLogStore;

@@ -1,0 +1,12 @@
+.post-type-post-author {
+	flex-shrink: 0;
+}
+
+.post-type-post-author__name {
+	margin: 0;
+	padding-bottom: 2px;
+	line-height: 16px;
+	vertical-align: middle;
+	font-size: 13px;
+	color: $gray-text-min;
+}

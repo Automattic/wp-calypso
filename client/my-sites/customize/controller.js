@@ -1,38 +1,27 @@
+/** @format */
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	Qs = require( 'qs' );
+import i18n from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import CustomizeComponent from 'my-sites/customize/main';
 
-module.exports = {
+export function customize( context, next ) {
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Customizer', { textOnly: true } ) ) );
 
-	customize: function( context ) {
-		var CustomizeComponent = require( 'my-sites/customize/main' ),
-			basePath = route.sectionify( context.path ),
-			siteID = route.getSiteFragment( context.path );
+	context.primary = React.createElement( CustomizeComponent, {
+		domain: context.params.domain || '',
+		pathname: context.pathname,
+		prevPath: context.prevPath || '',
+		query: context.query,
+		panel: context.params.panel,
+	} );
 
-		analytics.pageView.record( basePath, 'Customizer' );
-
-		titleActions.setTitle( i18n.translate( 'Customizer', { textOnly: true } ), { siteID: siteID } );
-
-		React.render(
-			React.createElement( CustomizeComponent, {
-				domain: context.params.domain || '',
-				sites: sites,
-				prevPath: context.prevPath || '',
-				query: Qs.parse( context.querystring )
-			} ),
-			document.getElementById( 'primary' )
-		);
-	}
-
-};
+	next();
+}

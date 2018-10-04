@@ -1,42 +1,74 @@
-function list() {
-	return '/purchases';
+/** @format */
+
+export const purchasesRoot = '/me/purchases';
+
+export const addCreditCard = purchasesRoot + '/add-credit-card';
+
+export const billingHistory = purchasesRoot + '/billing';
+
+export function billingHistoryReceipt( receiptId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof receiptId ) {
+			throw new Error( 'receiptId must be provided' );
+		}
+	}
+	return billingHistory + `/${ receiptId }`;
 }
 
-function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
-	return list() + `/${ siteName }/${ purchaseId }`;
+export function managePurchase( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
+	return purchasesRoot + `/${ siteName }/${ purchaseId }`;
 }
 
-function managePurchaseDestination( siteName = ':site', purchaseId = ':purchaseId', destinationType = ':destinationType?' ) {
-	return managePurchase( siteName, purchaseId ) + `/${ destinationType }`;
-}
-
-function cancelPurchase( siteName, purchaseId ) {
+export function cancelPurchase( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
 	return managePurchase( siteName, purchaseId ) + '/cancel';
 }
 
-function confirmCancelPurchase( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/confirm-cancel';
+export function confirmCancelDomain( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
+	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
 }
 
-function cancelPrivateRegistration( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/cancel-private-registration';
+export function cancelPrivacyProtection( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
+	return managePurchase( siteName, purchaseId ) + '/cancel-privacy-protection';
 }
 
-function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
-	return editPaymentMethod( siteName, purchaseId ) + `/edit/${ cardId }`;
+export function addCardDetails( siteName, purchaseId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
+			throw new Error( 'siteName and purchaseId must be provided' );
+		}
+	}
+	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
-function editPaymentMethod( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/payment';
+export function editCardDetails( siteName, purchaseId, cardId ) {
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if (
+			'undefined' === typeof siteName ||
+			'undefined' === typeof purchaseId ||
+			'undefined' === typeof cardId
+		) {
+			throw new Error( 'siteName, purchaseId, and cardId must be provided' );
+		}
+	}
+	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
-
-export default {
-	cancelPurchase,
-	confirmCancelPurchase,
-	cancelPrivateRegistration,
-	editCardDetails,
-	editPaymentMethod,
-	list,
-	managePurchase,
-	managePurchaseDestination
-};

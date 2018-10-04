@@ -1,28 +1,25 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import defer from 'lodash/function/defer';
+
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 const SignupActions = {
-	fetchCachedSignup() {
-		Dispatcher.handleViewAction( { type: 'FETCH_CACHED_SIGNUP' } );
-	},
-
 	saveSignupStep( step ) {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_save_step', { step: step.stepName } );
-
 		// there are some conditions in which a step could be saved/processed in the same event loop
 		// so we should defer the action
 		defer( () => {
 			Dispatcher.handleViewAction( {
 				type: 'SAVE_SIGNUP_STEP',
-				data: step
+				data: step,
 			} );
 		} );
 	},
@@ -34,20 +31,18 @@ const SignupActions = {
 			type: 'SUBMIT_SIGNUP_STEP',
 			data: step,
 			errors: undefined === errors ? [] : errors,
-			providedDependencies: providedDependencies
+			providedDependencies: providedDependencies,
 		} );
 	},
 
 	processSignupStep( step, errors, providedDependencies ) {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_process_step', { step: step.stepName } );
-
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			Dispatcher.handleViewAction( {
 				type: 'PROCESS_SIGNUP_STEP',
 				data: step,
 				errors: undefined === errors ? [] : errors,
-				providedDependencies: providedDependencies
+				providedDependencies: providedDependencies,
 			} );
 		} );
 	},
@@ -59,9 +54,28 @@ const SignupActions = {
 			type: 'PROCESSED_SIGNUP_STEP',
 			data: step,
 			errors: undefined === errors ? [] : errors,
-			providedDependencies: providedDependencies
+			providedDependencies: providedDependencies,
 		} );
-	}
+	},
+
+	/**
+	 * Action for providing dependencies not associated with a step.
+	 *
+	 * @param {object} providedDependencies - Object containing dependencies
+	 */
+	provideDependencies( providedDependencies ) {
+		Dispatcher.handleViewAction( {
+			type: 'PROVIDE_SIGNUP_DEPENDENCIES',
+			providedDependencies,
+		} );
+	},
+
+	changeSignupFlow( flowName ) {
+		Dispatcher.handleViewAction( {
+			type: 'CHANGE_SIGNUP_FLOW',
+			flowName,
+		} );
+	},
 };
 
 export default SignupActions;

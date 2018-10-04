@@ -1,14 +1,18 @@
-/**
- * Internal Dependencies
- */
-var config = require( 'config' );
+/** @format */
+/* eslint-disable no-console */
 
-function warn() {
-	if ( config( 'env' ) !== 'production' ) {
-		try{
-			window.console.warn.apply( window.console, arguments );
-		} catch( e ) {}
-	}
+/*
+ * Wraps console.warn to only emit in development and test environments.
+ *
+ * Many utility libraries in Calypso utilize this to warn about misuse of functions,
+ * For example: stats warns when any tracks events aren't properly formatted (@see lib/analytics)
+ */
+
+let warn;
+if ( process.env.NODE_ENV === 'production' || 'function' !== typeof console.warn ) {
+	warn = () => {};
+} else {
+	warn = ( ...args ) => console.warn( ...args );
 }
 
-module.exports = warn;
+export default warn;

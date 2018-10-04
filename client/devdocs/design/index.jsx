@@ -1,224 +1,299 @@
+/** @format */
 /**
-* External dependencies
-*/
-var React = require( 'react' ),
-	page = require( 'page' ),
-	toTitleCase = require( 'to-title-case' ),
-	trim = require( 'lodash/string/trim' );
+ * External dependencies
+ */
+import React from 'react';
+import PropTypes from 'prop-types';
+import page from 'page';
+import classnames from 'classnames';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { slugToCamelCase } from 'devdocs/docs-example/util';
+import { trim } from 'lodash';
+import Gridicons from 'gridicons/example';
 
 /**
  * Internal dependencies
  */
-var SearchCard = require( 'components/search-card' ),
-	SearchDemo = require( 'components/search/docs/example' ),
-	Typography = require( 'components/typography/docs/example' ),
-	Notices = require( 'components/notices/docs/example' ),
-	Buttons = require( 'components/button/docs/example' ),
-	ButtonGroups = require( 'components/button-group/docs/example' ),
-	AddNewButtons = require( 'components/add-new-button/docs/example' ),
-	CommentButtons = require( 'components/comment-button/docs/example' ),
-	LikeButtons = require( 'components/like-button/docs/example' ),
-	FollowButtons = require( 'components/follow-button/docs/example' ),
-	Accordions = require( 'components/accordion/docs/example' ),
-	Gridicons = require( 'components/gridicon/docs/example' ),
-	SelectDropdown = require( 'components/select-dropdown/docs/example' ),
-	SegmentedControl = require( 'components/segmented-control/docs/example' ),
-	Cards = require( 'components/card/docs/example' ),
-	Sites = require( 'lib/sites-list/docs/example' ),
-	TokenFields = require( 'components/token-field/docs/example' ),
-	CountedTextareas = require( 'components/forms/counted-textarea/docs/example' ),
-	ProgressBar = require( 'components/progress-bar/docs/example' ),
-	Popovers = require( 'components/popover/docs/example' ),
-	Ranges = require( 'components/forms/range/docs/example' ),
-	Gauge = require( 'components/gauge/docs/example' ),
-	Headers = require( 'components/header-cake/docs/example' ),
-	DropZones = require( 'components/drop-zone/docs/example' ),
-	FormFields = require( 'components/forms/docs/example' ),
-	SectionNav = require( 'components/section-nav/docs/example' ),
-	Spinners = require( 'components/spinner/docs/example' ),
-	Rating = require( 'components/rating/docs/example' ),
-	DatePicker = require( 'components/date-picker/docs/example' ),
-	Theme = require( 'components/theme/docs/example' ),
-	PostSchedule = require( 'components/post-schedule/docs/example' ),
-	InputChrono = require( 'components/input-chrono/docs/example' ),
-	TimezoneDropdown = require( 'components/timezone-dropdown/docs/example' ),
-	ClipboardButtons = require( 'components/forms/clipboard-button/docs/example' ),
-	HeaderCake = require( 'components/header-cake' ),
-	InfoPopover = require( 'components/info-popover/docs/example' ),
-	FoldableCard = require( 'components/foldable-card/docs/example' ),
-	SectionHeader = require( 'components/section-header/docs/example' ),
-	Flag = require( 'components/flag/docs/example' ),
-	Count = require( 'components/count/docs/example' ),
-	Version = require( 'components/version/docs/example' ),
-	BulkSelect = require( 'components/bulk-select/docs/example' ),
-	ExternalLink = require( 'components/external-link/docs/example' ),
-	Collection,
-	FilterSummary,
-	Hider;
+import config from 'config';
+import DocumentHead from 'components/data/document-head';
+import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
+import ReadmeViewer from 'components/readme-viewer';
+import SearchCard from 'components/search-card';
 
-Hider = React.createClass( {
-	displayName: 'Hider',
+/**
+ * Docs examples
+ */
+import Accordions from 'components/accordion/docs/example';
+import ActionCard from 'components/action-card/docs/example';
+import ActionPanel from 'components/action-panel/docs/example';
+import Animate from 'components/animate/docs/example';
+import BackButton from 'components/back-button/docs/example';
+import Badge from 'components/badge/docs/example';
+import Banner from 'components/banner/docs/example';
+import BulkSelect from 'components/bulk-select/docs/example';
+import ButtonGroups from 'components/button-group/docs/example';
+import Buttons from 'components/button/docs/example';
+import CardHeading from 'components/card-heading/docs/example';
+import Cards from 'components/card/docs/example';
+import Chart from 'components/chart/docs/example';
+import Checklist from 'components/checklist/docs/example';
+import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
+import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
+import Collection from 'devdocs/design/search-collection';
+import Count from 'components/count/docs/example';
+import CountedTextareas from 'components/forms/counted-textarea/docs/example';
+import CreditCard from 'components/credit-card/docs/example';
+import DatePicker from 'components/date-picker/docs/example';
+import DiffViewerExample from 'components/diff-viewer/docs/example';
+import DropZones from 'components/drop-zone/docs/example';
+import EllipsisMenu from 'components/ellipsis-menu/docs/example';
+import EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
+import EmojifyExample from 'components/emojify/docs/example';
+import EmptyContent from 'components/empty-content/docs/example';
+import ExternalLink from 'components/external-link/docs/example';
+import FAQ from 'components/faq/docs/example';
+import FeatureGate from 'components/feature-example/docs/example';
+import FilePickers from 'components/file-picker/docs/example';
+import FocusableExample from 'components/focusable/docs/example';
+import FoldableCard from 'components/foldable-card/docs/example';
+import FormattedHeader from 'components/formatted-header/docs/example';
+import FormFields from 'components/forms/docs/example';
+import Gauge from 'components/gauge/docs/example';
+import GlobalNotices from 'components/global-notices/docs/example';
+import Gravatar from 'components/gravatar/docs/example';
+import GravatarCaterpillar from 'components/gravatar-caterpillar/docs/example';
+import HeaderButton from 'components/header-button/docs/example';
+import Headers from 'components/header-cake/docs/example';
+import ImagePreloader from 'components/image-preloader/docs/example';
+import InfoPopover from 'components/info-popover/docs/example';
+import InlineSupportLink from 'components/inline-support-link/docs/example';
+import InputChrono from 'components/input-chrono/docs/example';
+import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
+import JetpackHeaderExample from 'components/jetpack-header/docs/example';
+import JetpackLogoExample from 'components/jetpack-logo/docs/example';
+import LanguagePicker from 'components/language-picker/docs/example';
+import LineChart from 'components/line-chart/docs/example';
+import ListEnd from 'components/list-end/docs/example';
+import MarkedLinesExample from 'components/marked-lines/docs/example';
+import Notices from 'components/notice/docs/example';
+import PaginationExample from 'components/pagination/docs/example';
+import PaymentLogo from 'components/payment-logo/docs/example';
+import PieChart from 'components/pie-chart/docs/example';
+import PlansSkipButton from 'components/plans/plans-skip-button/docs/example';
+import PodcastIndicator from 'components/podcast-indicator/docs/example';
+import Popovers from 'components/popover/docs/example';
+import ProgressBar from 'components/progress-bar/docs/example';
+import Ranges from 'components/forms/range/docs/example';
+import Rating from 'components/rating/docs/example';
+import Ribbon from 'components/ribbon/docs/example';
+import ScreenReaderTextExample from 'components/screen-reader-text/docs/example';
+import SearchDemo from 'components/search/docs/example';
+import SectionHeader from 'components/section-header/docs/example';
+import SectionNav from 'components/section-nav/docs/example';
+import SegmentedControl from 'components/segmented-control/docs/example';
+import SelectDropdown from 'components/select-dropdown/docs/example';
+import ShareButton from 'components/share-button/docs/example';
+import SiteTitleControl from 'components/site-title/docs/example';
+import SocialLogos from 'social-logos/example';
+import Spinner from 'components/spinner/docs/example';
+import SpinnerButton from 'components/spinner-button/docs/example';
+import SpinnerLine from 'components/spinner-line/docs/example';
+import SplitButton from 'components/split-button/docs/example';
+import Suggestions from 'components/suggestions/docs/example';
+import SupportInfoExample from 'components/support-info/docs/example';
+import TextareaAutosize from 'components/textarea-autosize/docs/example';
+import TextDiff from 'components/text-diff/docs/example';
+import TileGrid from 'components/tile-grid/docs/example';
+import TimeSince from 'components/time-since/docs/example';
+import Timezone from 'components/timezone/docs/example';
+import TokenFields from 'components/token-field/docs/example';
+import Tooltip from 'components/tooltip/docs/example';
+import UserItem from 'components/user/docs/example';
+import Version from 'components/version/docs/example';
+import VerticalMenu from 'components/vertical-menu/docs/example';
+import VerticalNav from 'components/vertical-nav/docs/example';
+import Wizard from 'components/wizard/docs/example';
+import WizardProgressBar from 'components/wizard-progress-bar/docs/example';
 
-	propTypes: {
-		hide: React.PropTypes.bool,
-	},
+class DesignAssets extends React.Component {
+	static displayName = 'DesignAssets';
+	state = { filter: '' };
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
-		return this.props.hide !== nextProps.hide;
-	},
-
-	render: function() {
-		return (
-			<div style={ this.props.hide ? { display: 'none' } : { } }>
-				{ this.props.children }
-			</div>
-		);
-	}
-} );
-
-Collection = React.createClass( {
-	displayName: 'Collection',
-
-	shouldWeHide: function( example ) {
-		var filter, searchString;
-
-		filter = this.props.filter || '';
-		searchString = example.type.displayName;
-
-		if ( this.props.component ) {
-			return example.type.displayName.toLowerCase() !== this.props.component.replace( /-([a-z])/g, '$1' );
+	componentWillMount() {
+		if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
+			const { dispatchFetchComponentsUsageStats } = this.props;
+			dispatchFetchComponentsUsageStats();
 		}
-
-		if ( example.props.searchKeywords ) {
-			searchString += ' ' + example.props.searchKeywords;
-		}
-
-		return ! ( ! filter || searchString.toLowerCase().indexOf( filter ) > -1 );
-	},
-
-	visibleExamples: function() {
-		return this.props.children.filter( function( child ) {
-			return !child.props.hide;
-		} );
-	},
-
-	render: function() {
-		var summary, examples;
-
-		summary = !this.props.component ? <FilterSummary items={ this.visibleExamples() } total={ this.props.children.length } /> : null;
-
-		examples = this.props.children.map( ( example ) => {
-			return (
-				<Hider hide={ this.shouldWeHide( example ) } key={ "example-" + example.type.displayName }>
-					{ example }
-				</Hider>
-			);
-		});
-
-		return (
-			<div className="collection">
-				{ summary }
-				{ examples }
-			</div>
-		);
-
 	}
-} );
 
-FilterSummary = React.createClass( {
-	render: function() {
-		var names;
-
-		if ( this.props.items.length === 0 ) {
-			return ( <p>No matches found</p> );
-		} else if ( this.props.items.length === this.props.total || this.props.items.length === 1 ) {
-			return null;
-		}
-
-		names = this.props.items.map( function( item ) {
-			return item.props.children.type.displayName;
-		} );
-
-		return (
-			<p>Showing: { names.join( ', ' ) }</p>
-		);
-	}
-} );
-
-module.exports = React.createClass( {
-	displayName: 'DesignAssets',
-
-	getInitialState: function() {
-		return { filter: '' };
-	},
-
-	onSearch: function( term ) {
+	onSearch = term => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
-	},
+	};
 
-	backToComponents: function() {
+	backToComponents = () => {
 		page( '/devdocs/design/' );
-	},
+	};
 
-	render: function() {
+	render() {
+		const { componentsUsageStats = {}, component } = this.props;
+		const { filter } = this.state;
+
+		const className = classnames( 'devdocs', 'devdocs__components', {
+			'is-single': this.props.component,
+			'is-list': ! this.props.component,
+		} );
+
 		return (
-			<div className="design-assets" role="main">
-				{
-					this.props.component
-					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ toTitleCase( this.props.component ) }
+			<Main className={ className }>
+				<DocumentHead title="UI Components" />
+
+				{ component ? (
+					<HeaderCake onClick={ this.backToComponents } backText="All Components">
+						{ slugToCamelCase( component ) }
 					</HeaderCake>
-					: <SearchCard
-						onSearch={ this.onSearch }
-						initialValue={ this.state.filter }
-						placeholder="Search components…"
-						analyticsGroup="Docs">
-					</SearchCard>
-				}
-				<Collection component={ this.props.component } filter={ this.state.filter }>
-					<Typography />
-					<Notices />
-					<Buttons />
-					<ButtonGroups />
-					<AddNewButtons />
-					<CommentButtons />
+				) : (
+					<div>
+						<ReadmeViewer readmeFilePath="/client/devdocs/design/README.md" />
+						<SearchCard
+							onSearch={ this.onSearch }
+							initialValue={ filter }
+							placeholder="Search components…"
+							analyticsGroup="Docs"
+							className="design__ui-components-search"
+						/>
+					</div>
+				) }
+
+				<Collection component={ component } filter={ filter }>
+					<ActionCard readmeFilePath="action-card" />
+					<ActionPanel readmeFilePath="action-panel" />
+					<Accordions
+						componentUsageStats={ componentsUsageStats.accordion }
+						readmeFilePath="accordion"
+					/>
+					<Animate readmeFilePath="animate" />
+					<BackButton readmeFilePath="back-button" />
+					<Badge readmeFilePath="badge" />
+					<Banner readmeFilePath="banner" />
+					<BulkSelect readmeFilePath="bulk-select" />
+					<ButtonGroups readmeFilePath="button-group" />
+					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<SplitButton readmeFilePath="split-button" />
+					<Cards readmeFilePath="card" />
+					<CardHeading readmeFilePath="card-heading" />
+					<Chart readmeFilePath="chart" />
+					<Checklist readmeFilePath="checklist" />
+					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
+					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
+					<Count readmeFilePath="count" />
+					<CountedTextareas readmeFilePath="forms/counted-textarea" />
+					<CreditCard readmeFilePath="credit-card" />
+					<DatePicker readmeFilePath="date-picker" />
+					<DiffViewerExample readmeFilePath="diff-viewer" />
+					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
+					<EllipsisMenu readmeFilePath="ellipsis-menu" />
+					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
+					<EmojifyExample readmeFilePath="emojify" />
+					<EmptyContent readmeFilePath="empty-content" />
+					<ExternalLink readmeFilePath="external-link" />
+					<FAQ readmeFilePath="faq" />
+					<FeatureGate readmeFilePath="feature-example" />
+					<FilePickers readmeFilePath="file-picker" />
+					<FocusableExample readmeFilePath="focusable" />
+					<FoldableCard readmeFilePath="foldable-card" />
+					<FormattedHeader readmeFilePath="formatted-header" />
+					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
+					<Gauge readmeFilePath="gauge" />
+					<GlobalNotices readmeFilePath="global-notices" />
+					<Gravatar readmeFilePath="gravatar" />
+					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
 					<Gridicons />
-					<LikeButtons />
-					<FollowButtons />
-					<Accordions />
-					<SelectDropdown searchKeywords="menu" />
-					<SegmentedControl />
-					<Cards />
-					<Sites />
-					<TokenFields />
-					<CountedTextareas />
-					<ProgressBar />
-					<Popovers />
-					<InfoPopover />
-					<Ranges />
-					<Gauge />
-					<SearchDemo />
-					<Headers />
-					<DropZones />
-					<FormFields searchKeywords="input textbox textarea radio"/>
-					<ClipboardButtons />
-					<Rating />
-					<Count />
-					<Version />
-					<ExternalLink />
-					<DatePicker />
-					<Spinners />
-					<Theme />
-					<PostSchedule />
-					<InputChrono />
-					<TimezoneDropdown />
-					<FoldableCard />
-					<Flag />
-					<BulkSelect />
-					<SectionHeader />
-					<SectionNav />
+					<HeaderButton readmeFilePath="header-button" />
+					<Headers readmeFilePath="header-cake" />
+					<ImagePreloader readmeFilePath="image-preloader" />
+					<InfoPopover readmeFilePath="info-popover" />
+					<InlineSupportLink readmeFilePath="inline-support-link" />
+					<InputChrono readmeFilePath="input-chrono" />
+					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
+					<JetpackHeaderExample readmeFilePath="jetpack-header" />
+					<JetpackLogoExample readmeFilePath="jetpack-logo" />
+					<LanguagePicker readmeFilePath="language-picker" />
+					<LineChart readmeFilePath="line-chart" />
+					<ListEnd readmeFilePath="list-end" />
+					<MarkedLinesExample readmeFilePath="marked-lines" />
+					<Notices readmeFilePath="notice" />
+					<PaginationExample readmeFilePath="pagination" />
+					<PaymentLogo readmeFilePath="payment-logo" />
+					<PieChart readmeFilePath="pie-chart" />
+					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
+					<PodcastIndicator readmeFilePath="podcast-indicator" />
+					<Popovers readmeFilePath="popover" />
+					<ProgressBar readmeFilePath="progress-bar" />
+					<Ranges readmeFilePath="forms/range" />
+					<Rating readmeFilePath="rating" />
+					<Ribbon readmeFilePath="ribbon" />
+					<ScreenReaderTextExample readmeFilePath="screen-reader-text" />
+					<SearchDemo readmeFilePath="search" />
+					<SectionHeader readmeFilePath="section-header" />
+					<SectionNav readmeFilePath="section-nav" />
+					<SegmentedControl readmeFilePath="segmented-control" />
+					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
+					<ShareButton readmeFilePath="share-button" />
+					<SiteTitleControl readmeFilePath="site-title" />
+					<SocialLogos />
+					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
+					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
+					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
+					<Suggestions readmeFilePath="suggestions" />
+					<SupportInfoExample />
+					<TextareaAutosize readmeFilePath="textarea-autosize" />
+					<TextDiff readmeFilePath="text-diff" />
+					<TileGrid readmeFilePath="tile-grid" />
+					<TimeSince readmeFilePath="time-since" />
+					<Timezone readmeFilePath="timezone" />
+					<TokenFields readmeFilePath="token-field" />
+					<Tooltip readmeFilePath="tooltip" />
+					<UserItem readmeFilePath="user" />
+					<VerticalMenu readmeFilePath="vertical-menu" />
+					<VerticalNav readmeFilePath="vertical-nav" />
+					<Version readmeFilePath="version" />
+					<Wizard readmeFilePath="wizard" />
+					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 				</Collection>
-			</div>
+			</Main>
 		);
 	}
-} );
+}
+
+if ( config.isEnabled( 'devdocs/components-usage-stats' ) ) {
+	const mapStateToProps = state => {
+		const { componentsUsageStats } = state;
+
+		return componentsUsageStats;
+	};
+
+	const mapDispatchToProps = dispatch => {
+		return bindActionCreators(
+			{
+				dispatchFetchComponentsUsageStats: fetchComponentsUsageStats,
+			},
+			dispatch
+		);
+	};
+
+	DesignAssets.propTypes = {
+		componentsUsageStats: PropTypes.object,
+		isFetching: PropTypes.bool,
+		dispatchFetchComponentsUsageStats: PropTypes.func,
+	};
+
+	DesignAssets = connect(
+		mapStateToProps,
+		mapDispatchToProps
+	)( DesignAssets );
+}
+
+export default DesignAssets;

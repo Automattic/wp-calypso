@@ -1,0 +1,16 @@
+.edit-post-post-schedule {
+	width: 100%;
+	position: relative;
+}
+
+.components-button.edit-post-post-schedule__toggle {
+	text-align: right;
+}
+
+.edit-post-post-schedule__dialog .components-popover__content {
+	padding: 10px;
+
+	@include break-medium {
+		width: 270px;
+	}
+}

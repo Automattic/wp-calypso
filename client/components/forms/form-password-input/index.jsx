@@ -1,63 +1,70 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	Gridicon = require( 'components/gridicon' ),
-	classNames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' );
+
+import React from 'react';
+import Gridicon from 'gridicons';
+import classNames from 'classnames';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var FormTextInput = require( 'components/forms/form-text-input' ),
-	viewport = require( 'lib/viewport' );
+import FormTextInput from 'components/forms/form-text-input';
+import { isMobile } from 'lib/viewport';
 
-module.exports = React.createClass( {
+export default class extends React.Component {
+	static displayName = 'FormPasswordInput';
 
-	displayName: 'FormPasswordInput',
+	state = {
+		hidePassword: true,
+	};
 
-	getInitialState: function() {
-		var isMobile = viewport.isMobile();
-
-		if ( isMobile ) {
-			return { hidePassword: false };
-		} else {
-			return { hidePassword: true };
+	componentDidMount() {
+		if ( isMobile() ) {
+			this.state = { hidePassword: false };
+			return;
 		}
-	},
+		this.state = { hidePassword: true };
+		return;
+	}
 
-	togglePasswordVisibility: function() {
+	togglePasswordVisibility = () => {
 		this.setState( { hidePassword: ! this.state.hidePassword } );
-	},
+	};
 
-	hidden: function() {
+	hidden() {
 		if ( this.props.hideToggle ) {
 			return true;
 		}
 		return this.props.submitting || this.state.hidePassword;
-	},
+	}
 
-	render: function() {
+	focus = () => {
+		this.refs.textField.focus();
+	};
 
-		var toggleVisibilityClasses = classNames( {
+	render() {
+		const toggleVisibilityClasses = classNames( {
 			'form-password-input__toggle': true,
-			'form-password-input__toggle-visibility': ! this.props.hideToggle
+			'form-password-input__toggle-visibility': ! this.props.hideToggle,
 		} );
 
 		return (
 			<div className="form-password-input">
-				<FormTextInput { ...omit( this.props, 'hideToggle' ) }
+				<FormTextInput
+					{ ...omit( this.props, 'hideToggle', 'submitting' ) }
 					autoComplete="off"
-					type={ this.hidden() ? 'password' : 'text' } />
+					ref="textField"
+					type={ this.hidden() ? 'password' : 'text' }
+				/>
 
 				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>
-				{ this.hidden() ?
-					<Gridicon icon="not-visible" />
-				:
-					<Gridicon icon="visible" />
-				}
+					{ this.hidden() ? <Gridicon icon="not-visible" /> : <Gridicon icon="visible" /> }
 				</span>
 			</div>
 		);
 	}
-} );
+}

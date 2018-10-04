@@ -1,38 +1,46 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react';
-import noop from 'lodash/utility/noop';
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
+import Gridicon from 'gridicons';
 
-const VerticalNavItem = React.createClass( {
-	propTypes: {
-		external: React.PropTypes.bool,
-		isPlaceholder: React.PropTypes.bool,
-		onClick: React.PropTypes.func,
-		path: React.PropTypes.string
-	},
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-	getDefaultProps() {
-		return {
-			external: false,
-			isPlaceholder: false,
-			onClick: noop
-		};
-	},
+class VerticalNavItem extends Component {
+	static propTypes = {
+		external: PropTypes.bool,
+		isPlaceholder: PropTypes.bool,
+		onClick: PropTypes.func,
+		path: PropTypes.string,
+	};
 
-	placeholder() {
+	static defaultProps = {
+		external: false,
+		isPlaceholder: false,
+		onClick: noop,
+	};
+
+	placeholder = () => {
 		return (
 			<CompactCard className="vertical-nav-item is-placeholder">
-				<span></span>
-				<span></span>
+				<span />
+				<span />
 			</CompactCard>
 		);
-	},
+	};
 
 	render() {
 		if ( this.props.isPlaceholder ) {
@@ -43,22 +51,23 @@ const VerticalNavItem = React.createClass( {
 			<a
 				href={ this.props.path }
 				onClick={ this.props.onClick }
-				target={ this.props.external ? '_blank' : null }>
+				target={ this.props.external ? '_blank' : null }
+			>
 				<CompactCard className="vertical-nav-item">
 					{ this.getIcon() }
 					<span>{ this.props.children }</span>
 				</CompactCard>
 			</a>
 		);
-	},
+	}
 
-	getIcon() {
+	getIcon = () => {
 		if ( this.props.external ) {
-			return <span className="noticon noticon-external"></span>;
+			return <Gridicon icon="external" />;
 		}
 
-		return <span className="noticon noticon-collapse"></span>;
-	}
-} );
+		return <Gridicon icon="chevron-right" />;
+	};
+}
 
 export default VerticalNavItem;

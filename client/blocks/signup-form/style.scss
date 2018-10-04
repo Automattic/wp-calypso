@@ -1,0 +1,59 @@
+/*rtl:ignore*/
+.signup-form .signup-form__input {
+	margin-bottom: 20px;
+	transition: none;
+
+	&.is-error,
+	&[type="password"] {
+		margin-bottom: 0;
+	}
+}
+
+.signup-form .logged-out-form__footer {
+	margin-top: 20px;
+}
+
+.signup-form__terms-of-service-link {
+	font-size: 11px;
+	margin: 0 0 20px 0;
+	text-align: center;
+
+	a {
+		@include breakpoint( ">480px" ) {
+			white-space: pre;
+		}
+	}
+}
+
+.signup-form__social {
+	p {
+		margin: 0 0 20px 0;
+		text-align: center;
+
+		&:last-child {
+			margin: 10px 0 0;
+		}
+	}
+
+	&.signup-form__social-top {
+		margin-bottom: 0;
+	}
+}
+
+.signup-form__social-buttons {
+	button {
+		margin: 0 0 10px;
+		width: 100%;
+	}
+}
+
+.social-buttons__button-container + .social-buttons__button-container {
+	margin-top: 10px;
+}
+
+.signup-form__social,
+.signup-form__notice.notice {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 400px;
+}

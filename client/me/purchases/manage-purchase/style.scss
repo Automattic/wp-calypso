@@ -1,43 +1,59 @@
+/** @format */
 .manage-purchase__info {
 	font-size: 13px;
-	padding: 16px;
+	padding: 0;
 
-	@include breakpoint ( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		font-size: 14px;
-		padding: 16px 24px;
+		padding: 0;
 	}
 
 	&.is-expired {
 		background: $gray-light;
-		margin-bottom: 0;
 
-		.manage-purchase__detail,
+		.manage-purchase__header,
+		.manage-purchase__content,
 		.manage-purchase__detail-label,
-		.manage-purchase__settings-link,
-		.manage-purchase__title,
-		.manage-purchase__subtitle {
-			opacity: .6;
+		.manage-purchase__detail,
+		.manage-purchase__detail .user {
+			opacity: 0.7;
+		}
+	}
+
+	&.is-expired + .notice {
+		margin-top: -10px;
+
+		@include breakpoint( '>480px' ) {
+			margin-top: -16px;
 		}
 	}
 
 	&.is-placeholder {
-		.manage-purchase__detail,
-		.manage-purchase__detail-label,
-		.manage-purchase__settings-link,
+		.manage-purchase__plan-icon,
 		.manage-purchase__title,
-		.manage-purchase__subtitle {
+		.manage-purchase__subtitle,
+		.manage-purchase__description,
+		.manage-purchase__settings-link,
+		.manage-purchase__detail-label,
+		.manage-purchase__detail {
 			@include placeholder( 23% );
 
 			display: block;
 		}
 
+		.manage-purchase__plan-icon {
+			height: 56px;
+			border-radius: 50%;
+		}
+
+		.manage-purchase__header {
+			border-bottom: 2px solid $gray-light;
+		}
+
 		.manage-purchase__subtitle,
 		.manage-purchase__title {
 			margin-bottom: 3px;
-		}
-
-		.manage-purchase__detail {
-			height: 40px;
+			margin-left: 64px;
 		}
 
 		.manage-purchase__detail-label {
@@ -55,75 +71,128 @@
 		.manage-purchase__title {
 			width: 60%;
 		}
+
+		@include breakpoint( '>660px' ) {
+			.manage-purchase__description,
+			.manage-purchase__detail,
+			.manage-purchase__detail-label {
+				height: 40px;
+			}
+		}
+
+		@include breakpoint( '<660px' ) {
+			.manage-purchase__detail {
+				width: 25%;
+			}
+
+			.manage-purchase__detail-label {
+				width: 70%;
+			}
+		}
+	}
+}
+
+.manage-purchase__header,
+.manage-purchase__content {
+	padding: 16px 24px;
+
+	@include breakpoint( '<660px' ) {
+		padding: 16px;
 	}
 }
 
 .manage-purchase__header {
-	border-bottom: 1px solid lighten( $gray, 30% );
 	overflow: auto;
-	padding: 0 0 16px 0;
+	border-bottom: 2px solid $blue-medium;
+
+	.is-personal & {
+		border-bottom: 2px solid $alert-yellow;
+	}
+
+	.is-premium & {
+		border-bottom: 2px solid $alert-green;
+	}
+
+	.is-business & {
+		border-bottom: 2px solid $alert-purple;
+	}
+}
+
+.manage-purchase__plan-icon {
+	margin: 0 12px 0 0;
+	max-width: 56px;
+	width: 56px;
+	float: left;
+
+	.gridicon {
+		box-sizing: border-box;
+		padding: 4px;
+		border-radius: 50%;
+		background: $blue-medium;
+		fill: $white;
+	}
+
+	.gridicons-themes {
+		border-radius: 8px;
+	}
 }
 
 .manage-purchase__title {
-	color: $gray-dark;
+	color: $blue-wordpress;
 	display: block;
 	font-size: 18px;
 	font-weight: 400;
+	clear: none;
 
-	@include breakpoint( ">660px" ) {
-		font-family: $serif;
-		font-size: 24px;
-		font-weight: 700;
+	@include breakpoint( '>660px' ) {
+		font-size: 22px;
 		padding-right: 100px;
 	}
 }
 
-.manage-purchase__subtitle {
-	color: darken( $gray, 10% );
+.manage-purchase__price .plan-price {
+	clear: none;
+}
+
+.manage-purchase__description {
+	color: $gray-text-min;
 	display: block;
-	font-size: 11px;
-	text-transform: uppercase;
 }
 
 .manage-purchase__settings-link {
-	font-size: 13px;
-	line-height: 1.75em;
-
-	.gridicon {
-		position: relative;
-		top: 2px;
-		left: 3px;
-		color: $gray;
-	}
+	display: block;
+	margin-top: 16px;
 }
 
 .manage-purchase__meta {
 	display: flex;
-	list-style: none;
 	margin: 0;
+	list-style: none;
 	overflow: auto;
-	padding: 0;
+	padding: 0 24px;
+	border-top: 1px solid $gray-lighten-30;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		flex-direction: column;
+		padding: 0 16px 16px;
 	}
 
 	li {
-		color: darken( $gray, 30% );
+		color: $gray-darken-30;
 		font-size: 13px;
-		margin-top: 15px;
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			clear: both;
 			overflow: auto;
+			margin-top: 15px;
 		}
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			box-sizing: border-box;
 			flex: 1 1 auto;
-			font-size: 18px;
+			font-size: 14px;
 			text-align: center;
-			padding: 0 8px;
+			padding: 15px 8px 12px;
 
 			&:first-child {
 				padding-left: 0;
@@ -134,13 +203,13 @@
 		}
 
 		+ li {
-			@include breakpoint( ">660px" ) {
-				border-left: 1px solid lighten( $gray, 30% );
+			@include breakpoint( '>660px' ) {
+				border-left: 1px solid $gray-lighten-30;
 			}
 		}
 
 		> a {
-			color: darken( $gray, 30% );
+			color: $gray-darken-30;
 			display: block;
 			text-decoration: none;
 		}
@@ -151,70 +220,72 @@
 	font-style: normal;
 	font-weight: 600;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		flex-direction: row;
 		float: left;
 	}
 
-	@include breakpoint( ">660px" ) {
-		color: darken( $gray, 10% );
+	@include breakpoint( '>660px' ) {
+		color: $gray-text-min;
 		display: block;
 		font-family: $sans;
-		font-size: 10px;
+		font-size: 12px;
 		font-weight: 400;
-		margin: 0 0 5px 0;
-		text-transform: uppercase;
+		margin: 0 0 12px;
 	}
 }
 
-.manage-purchase__time-period {
-	font-size: 75%;
-	opacity: .7;
-}
-
 .manage-purchase__detail {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		display: block;
 		float: right;
 		text-align: right;
 	}
 
-	&.is-placeholder {
-		@include placeholder( 23% );
-
-		display: block;
-		height: 25px;
+	.payment-logo {
+		margin-right: 5px;
 	}
 
 	a {
 		display: block;
-		font-size: 12px;
 		cursor: pointer;
 	}
+}
+
+.manage-purchase__detail .user__name {
+	margin-right: 0;
 }
 
 .manage-purchase__expiring-credit-card-notice.notice,
 .manage-purchase__purchase-expiring-notice.notice {
 	margin-bottom: 10px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		margin-bottom: 16px;
 	}
 }
 
 .manage-purchase__renew-button {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		margin-top: 16px;
 		width: 100%;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		position: absolute;
-			right: 24px;
-			top: 16px;
+		right: 24px;
+		top: 16px;
 	}
 }
 
-.manage-purchase__payment-info .payment-logo {
-	margin-right: 5px;
+.manage-purchase__contact-support {
+	color: $gray-text-min;
+	border-top: solid 1px $gray-lighten-30;
+	margin: 0 auto;
+	padding: 16px;
+	background: $white;
+
+	@include breakpoint( '>480px' ) {
+		padding: 16px 24px;
+	}
 }

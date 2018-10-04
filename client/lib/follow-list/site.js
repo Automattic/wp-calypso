@@ -1,13 +1,19 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:follow-list:site' );
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:follow-list:site' );
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import config from 'config';
+import wpcom from 'lib/wp';
+import Emitter from 'lib/mixins/emitter';
 
 /**
  * FollowList component
@@ -30,32 +36,38 @@ function FollowListSite( args ) {
 Emitter( FollowListSite.prototype );
 
 /**
-*	if is_following is false, calls the follow endpoint
-*/
+ *	if is_following is false, calls the follow endpoint
+ */
 
 FollowListSite.prototype.follow = function() {
 	if ( ! this.is_following ) {
 		debug( 'following site', this.site_id );
 		this.is_following = true;
 		this.emit( 'change' );
-		wpcom.site( this.site_id ).follow().add( function( resp ) {
-			debug( 'follow success', resp );
-		} );
+		wpcom
+			.site( this.site_id )
+			.follow()
+			.add( { source: config( 'readerFollowingSource' ) }, function( resp ) {
+				debug( 'follow success', resp );
+			} );
 	}
 };
 
 /**
-*	if is_following is true, calls the delete action on follow
-*/
+ *	if is_following is true, calls the delete action on follow
+ */
 
 FollowListSite.prototype.unfollow = function() {
 	if ( this.is_following ) {
 		this.is_following = false;
 		this.emit( 'change' );
-		wpcom.site( this.site_id ).follow().del( function( resp ) {
-			debug( 'unfollow success', resp );
-		} );
+		wpcom
+			.site( this.site_id )
+			.follow()
+			.del( { source: config( 'readerFollowingSource' ) }, function( resp ) {
+				debug( 'unfollow success', resp );
+			} );
 	}
 };
 
-module.exports = FollowListSite;
+export default FollowListSite;

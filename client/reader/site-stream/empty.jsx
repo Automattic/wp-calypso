@@ -1,45 +1,66 @@
-var React = require( 'react' );
+/** @format */
+/**
+ * External dependencies
+ */
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-var EmptyContent = require( 'components/empty-content' ),
-	ExternalLink = require( 'components/external-link' ),
-	stats = require( 'reader/stats' );
+/**
+ * Internal dependencies
+ */
+import EmptyContent from 'components/empty-content';
+import { recordAction as statRecordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
-var SiteEmptyContent = React.createClass( {
-	shouldComponentUpdate: function() {
-		return false;
-	},
+const SiteEmptyContent = ( { translate } ) => {
+	const recordAction = () => {
+		statRecordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordTrack( 'calypso_reader_discover_on_empty_site_stream_clicked' );
+	};
 
-	recordAction: function() {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
-	},
+	const recordSecondaryAction = () => {
+		statRecordAction( 'clicked_search_on_empty' );
+		recordGaEvent( 'Clicked Search on EmptyContent' );
+		recordTrack( 'calypso_reader_search_on_empty_site_stream_clicked' );
+	};
 
-	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_recommendations_on_empty' );
-		stats.recordGaEvent( 'Clicked Recommendations on EmptyContent' );
-	},
+	let action;
 
-	render: function() {
-		var action = (
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	if ( isDiscoverEnabled() ) {
+		action = (
 			<a
 				className="empty-content__action button is-primary"
-				onClick={ this.recordAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ),
-			secondaryAction = (
-				<a
-					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
-					href="/recommendations">{ this.translate( 'Get recommendations on who to follow' ) }</a> );
+				onClick={ recordAction }
+				href="/discover"
+			>
+				{ translate( 'Explore Discover' ) }
+			</a>
+		);
+	}
 
-		return ( <EmptyContent
-			title={ this.translate( 'No Posts' ) }
-			line={ this.translate( 'This site has not posted anything yet. Try back later.' ) }
+	const secondaryAction = (
+		<a
+			className="empty-content__action button"
+			onClick={ recordSecondaryAction }
+			href="/read/search"
+		>
+			{ translate( 'Find Sites to Follow' ) }
+		</a>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+
+	return (
+		<EmptyContent
+			title={ translate( 'No Posts' ) }
+			line={ translate( 'This site has not posted anything yet. Try back later.' ) }
 			action={ action }
 			secondaryAction={ secondaryAction }
-			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+			illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 			illustrationWidth={ 500 }
-			/> );
-	}
-} );
+		/>
+	);
+};
 
-module.exports = SiteEmptyContent;
+export default localize( SiteEmptyContent );

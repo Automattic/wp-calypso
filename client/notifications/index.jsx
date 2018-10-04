@@ -1,83 +1,66 @@
 /**
+ * Loads the notifications client into Calypso and
+ * connects the messaging and interactive elements
+ *
+ *  - messages through iframe
+ *  - keyboard hotkeys
+ *  - window/pane scrolling
+ *  - service worker
+ *
+ *
+ * @format
+ * @module notifications
+ */
+
+/**
  * External dependencies
  */
-var React = require( 'react' ),
-	config = require( 'config' ),
-	debug = require( 'debug' )( 'calypso:notifications' ),
-	assign = require( 'lodash/object/assign' ),
-	classes = require( 'component-classes' );
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import page from 'page';
+import wpcom from 'lib/wp';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	user = require( 'lib/user' )();
+import analytics from 'lib/analytics';
+import config from 'config';
+import { recordTracksEvent } from 'state/analytics/actions';
+import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
+import { setUnseenCount } from 'state/notifications';
 
 /**
- * Module variables
+ * Style dependencies
  */
-var widgetDomain = 'https://widgets.wp.com';
+import './style.scss';
 
-var Notifications = React.createClass({
-	getInitialState: function() {
-		return {
-			'loaded' : true,
-			'iframeLoaded' : false,
-			'shownOnce' : false,
-			'widescreen' : false
-		};
-	},
+/**
+ * Returns whether or not the browser session
+ * is currently visible to the user
+ *
+ * @returns {boolean} is the browser session visible
+ */
+const getIsVisible = () => {
+	if ( ! document ) {
+		return true;
+	}
 
-	preventDefault: function( event ) {
-		event.preventDefault();
-	},
+	if ( ! document.visibilityState ) {
+		return true;
+	}
 
-	enableMainWindowScroll: function() {
-		document.body.removeEventListener( 'mousewheel', this.preventDefault, false );
-	},
+	return document.visibilityState === 'visible';
+};
 
-	disableMainWindowScroll: function() {
-		document.body.addEventListener( 'mousewheel', this.preventDefault, false );
-	},
+export class Notifications extends Component {
+	state = {
+		isVisible: getIsVisible(),
+	};
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.visible && !this.state.loaded ) {
-			this.setState( { 'loaded' : true } );
-		} else if ( !nextProps.visible && !this.state.iframeLoaded && this.state.shownOnce ) {
-			// for cases where iframe is stuck loading, this will remove it from
-			// the DOM so we can try reloading it next time
-			this.setState( { 'loaded' : false } );
-		}
-
-		// tell the iframe if we're changing visible status
-		if ( nextProps.visible !== this.props.visible ) {
-			this.postMessage( { 'action': 'togglePanel', 'showing': nextProps.visible } );
-			this.setState( { 'shownOnce' : true, 'widescreen': false } );
-		}
-
-		if ( classes( document.documentElement ).has( 'touch' ) ) {
-			// prevent scrolling on main page on mobile
-			if ( this.props.visible && ! nextProps.visible ) {
-				document.body.removeEventListener( 'touchmove', this.preventDefault, false );
-			} else if ( ! this.props.visible && nextProps.visible ) {
-				document.body.addEventListener( 'touchmove', this.preventDefault, false );
-			}
-		}
-	},
-
-	componentDidUpdate: function( prevProps ) {
-		var frameNode;
-		if ( this.props.visible && ! prevProps.visible ) {
-			// showing the panel, focus so we can use shortcuts
-			frameNode = this.refs.widgetFrame.getDOMNode();
-			if ( frameNode ) {
-				frameNode.contentWindow.focus();
-			}
-		}
-	},
-
-	componentDidMount: function() {
-		window.addEventListener( 'message', this.receiveMessage );
+	componentDidMount() {
 		window.addEventListener( 'mousedown', this.props.checkToggle );
 		window.addEventListener( 'touchstart', this.props.checkToggle );
 		window.addEventListener( 'keydown', this.handleKeyPress );
@@ -85,22 +68,40 @@ var Notifications = React.createClass({
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 		}
-	},
 
-	componentWillUnmount: function() {
-		window.removeEventListener( 'message', this.receiveMessage );
+		if (
+			'serviceWorker' in window.navigator &&
+			'addEventListener' in window.navigator.serviceWorker
+		) {
+			window.navigator.serviceWorker.addEventListener(
+				'message',
+				this.receiveServiceWorkerMessage
+			);
+			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
+		}
+	}
+
+	componentWillUnmount() {
 		window.removeEventListener( 'mousedown', this.props.checkToggle );
 		window.removeEventListener( 'touchstart', this.props.checkToggle );
 		window.removeEventListener( 'keydown', this.handleKeyPress );
-		document.body.removeEventListener( 'mousewheel', this.preventDefault, false );
-		document.body.removeEventListener( 'touchmove', this.preventDefault, false );
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
 		}
-	},
 
-	handleKeyPress: function( event ) {
+		if (
+			'serviceWorker' in window.navigator &&
+			'removeEventListener' in window.navigator.serviceWorker
+		) {
+			window.navigator.serviceWorker.removeEventListener(
+				'message',
+				this.receiveServiceWorkerMessage
+			);
+		}
+	}
+
+	handleKeyPress = event => {
 		if ( event.target !== document.body && event.target.tagName !== 'A' ) {
 			return;
 		}
@@ -114,109 +115,151 @@ var Notifications = React.createClass({
 			event.preventDefault();
 			this.props.checkToggle( null, true );
 		}
-	},
 
-	handleVisibilityChange: function() {
-		this.postMessage( {
-			'action' : 'toggleVisibility',
-			'hidden' : document.hidden ? true : false
-		} );
-	},
+		if ( 27 === event.keyCode && this.props.isShowing ) {
+			event.stopPropagation();
+			event.preventDefault();
+			this.props.checkToggle( null, true );
+		}
+	};
 
-	receiveMessage: function(event) {
-		// Receives messages from the notifications widget
-		if ( event.origin !== widgetDomain ) {
+	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
+
+	receiveServiceWorkerMessage = event => {
+		// Receives messages from the service worker
+		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
+		// Firefox does not support document.origin; we can use location.origin instead
+		if ( event.origin && event.origin !== location.origin ) {
 			return;
 		}
 
-		var data = event.data;
-		if ( typeof data === 'string' ) {
-			data = JSON.parse( data );
-		}
-
-		if ( data.type !== 'notesIframeMessage' ) {
+		if ( ! ( 'action' in event.data ) ) {
 			return;
 		}
 
-		if ( data.action === 'togglePanel' ) {
-			this.props.checkToggle();
-		} else if ( data.action === 'render' ) {
-			this.props.setIndicator( data.num_new );
+		switch ( event.data.action ) {
+			case 'openPanel':
+				// checktoggle closes panel with no parameters
+				this.props.checkToggle();
+				// ... and toggles when the 2nd parameter is true
+				this.props.checkToggle( null, true );
+				return refreshNotes();
 
-		} else if ( data.action === 'iFrameReady' ) {
-			// the iframe is loaded, send any pending messages
-			this.setState( { 'iframeLoaded' : true } );
-			debug( 'notifications iframe loaded' );
-			if ( this.queuedMessage ) {
-				this.postMessage( this.queuedMessage );
-				this.queuedMessage = null;
-			}
+			case 'trackClick':
+				analytics.tracks.recordEvent( 'calypso_web_push_notification_clicked', {
+					push_notification_note_id: event.data.notification.note_id,
+					push_notification_type: event.data.notification.type,
+				} );
 
-		} else if ( data.action === 'renderAllSeen' ) {
-			// user has seen the notes, no longer new
-			this.props.setIndicator( 0 );
-		} else if ( data.action === 'widescreen') {
-			this.setState( { widescreen: data.widescreen } );
-		} else {
-			debug( 'unknown message from iframe: %s', event.data );
+				return;
 		}
-	},
+	};
 
-	postMessage: function( message ) {
-		var iframeMessage = { 'type': 'notesIframeMessage' };
-		iframeMessage = assign( {}, iframeMessage, message );
-
-		if ( this.refs.widgetFrame && this.state.iframeLoaded ) {
-			var widgetWindow = this.refs.widgetFrame.getDOMNode().contentWindow;
-			widgetWindow.postMessage( JSON.stringify( iframeMessage ), widgetDomain );
-		} else {
-			// save only the latest message to send when iframe is loaded
-			this.queuedMessage = message;
-		}
-	},
-
-	render: function() {
-		var userData = user.get(),
-			localeSlug = userData.localeSlug || config( 'i18n_default_locale_slug' ),
-			widgetURL = widgetDomain,
-			divStyle = {},
-			frameClasses = [ 'wide' ],
-			panelClasses = [ 'wide' ],
-			now = new Date();
-
-		if ( config.isEnabled( 'notifications2beta' ) ) {
-			widgetURL = widgetURL + '/notificationsbeta/';
-		} else {
-			widgetURL = widgetURL + '/notifications/';
-		}
-		if ( user.isRTL() ) {
-			widgetURL += 'rtl.html';
-		}
-		widgetURL += '?locale=' + localeSlug;
-
-		// cache buster
-		widgetURL += '&' + now.getFullYear() + ( now.getMonth() + 1 ) + now.getDate();
-
-		if ( this.state.widescreen && this.props.visible ) {
-			frameClasses.push( 'widescreen' );
+	postServiceWorkerMessage = message => {
+		if ( ! ( 'serviceWorker' in window.navigator ) ) {
+			return;
 		}
 
-		if ( this.props.visible ) {
-			panelClasses.push( 'wpnt-open' );
-		} else {
-			panelClasses.push( 'wpnt-closed' );
-		}
+		window.navigator.serviceWorker.ready.then(
+			registration => 'active' in registration && registration.active.postMessage( message )
+		);
+	};
 
-		if ( ! this.props.visible && ! this.state.loaded ) {
-			return <div />;
-		}
+	render() {
+		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
+
+		const customMiddleware = {
+			APP_RENDER_NOTES: [
+				( store, { newNoteCount } ) => {
+					this.props.setIndicator( newNoteCount );
+					this.props.setUnseenCount( newNoteCount );
+				},
+			],
+			OPEN_LINK: [
+				( store, { href, tracksEvent } ) => {
+					if ( tracksEvent ) {
+						this.props.recordTracksEvent( 'calypso_notifications_' + tracksEvent, {
+							link: href,
+						} );
+					}
+					window.open( href, '_blank' );
+				},
+			],
+			OPEN_POST: [
+				( store, { siteId, postId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_post', {
+						site_id: siteId,
+						post_id: postId,
+					} );
+					page( `/read/blogs/${ siteId }/posts/${ postId }` );
+				},
+			],
+			OPEN_COMMENT: [
+				( store, { siteId, postId, commentId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_comment', {
+						site_id: siteId,
+						post_id: postId,
+						comment_id: commentId,
+					} );
+					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
+				},
+			],
+			OPEN_SITE: [
+				( store, { siteId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_open_site', {
+						site_id: siteId,
+					} );
+					page( `/read/blogs/${ siteId }` );
+				},
+			],
+			VIEW_SETTINGS: [
+				() => {
+					this.props.checkToggle();
+					page( '/me/notifications' );
+				},
+			],
+			EDIT_COMMENT: [
+				( store, { siteId, postId, commentId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_edit_comment', {
+						site_id: siteId,
+						post_id: postId,
+						comment_id: commentId,
+					} );
+					page( `/comment/${ siteId }/${ commentId }?action=edit` );
+				},
+			],
+		};
 
 		return (
-			<div id="wpnt-notes-panel2" className={ panelClasses.join( ' ' ) } onMouseEnter={ this.disableMainWindowScroll } onMouseLeave={ this.enableMainWindowScroll }>
-				<iframe ref="widgetFrame" id="wpnt-notes-iframe2" className={ frameClasses.join( ' ' ) } src={ widgetURL } frameBorder="0" allowTransparency="true"></iframe>
+			<div
+				id="wpnc-panel"
+				className={ classNames( 'wide', 'wpnc__main', {
+					'wpnt-open': this.props.isShowing,
+					'wpnt-closed': ! this.props.isShowing,
+				} ) }
+			>
+				<NotificationsPanel
+					customMiddleware={ customMiddleware }
+					isShowing={ this.props.isShowing }
+					isVisible={ this.state.isVisible }
+					locale={ localeSlug }
+					wpcom={ wpcom }
+				/>
 			</div>
 		);
 	}
-});
+}
 
-module.exports = Notifications;
+export default connect(
+	state => ( {
+		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
+	} ),
+	{
+		recordTracksEvent,
+		setUnseenCount,
+	}
+)( Notifications );

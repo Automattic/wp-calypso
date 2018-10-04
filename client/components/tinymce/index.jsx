@@ -1,50 +1,95 @@
-/**
- * External Dependencies
- */
-const React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	autosize = require( 'autosize' ),
-	forEach = require( 'lodash/collection/forEach' ),
-	assign = require( 'lodash/object/assign' ),
-	tinymce = require( 'tinymce/tinymce' );
+/** @format */
 
-require( 'tinymce/themes/modern/theme.js' );
+/**
+ * External dependencies
+ */
+
+import { assign, forEach } from 'lodash';
+import ReactDom from 'react-dom';
+import React from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import autosize from 'autosize';
+import tinymce from 'tinymce/tinymce';
+import 'tinymce/themes/modern/theme.js';
 
 // TinyMCE plugins
-require( 'tinymce/plugins/colorpicker/plugin.js' );
-require( 'tinymce/plugins/hr/plugin.js' );
-require( 'tinymce/plugins/lists/plugin.js' );
-require( 'tinymce/plugins/media/plugin.js' );
-require( 'tinymce/plugins/paste/plugin.js' );
-require( 'tinymce/plugins/tabfocus/plugin.js' );
-require( 'tinymce/plugins/textcolor/plugin.js' );
-
-// TinyMCE plugins copied from .org
-require( './plugins/wptextpattern/plugin.js' );
+import 'tinymce/plugins/colorpicker/plugin.js';
+import 'tinymce/plugins/directionality/plugin.js';
+import 'tinymce/plugins/hr/plugin.js';
+import 'tinymce/plugins/lists/plugin.js';
+import 'tinymce/plugins/media/plugin.js';
+import 'tinymce/plugins/paste/plugin.js';
+import 'tinymce/plugins/tabfocus/plugin.js';
+import 'tinymce/plugins/textcolor/plugin.js';
 
 // TinyMCE plugins that we've forked or written ourselves
-require( './plugins/wpcom/plugin.js' )();
-require( './plugins/wpcom-autoresize/plugin.js' )();
-require( './plugins/wpcom-help/plugin.js' )();
-require( './plugins/wpcom-charmap/plugin.js' )();
-require( './plugins/wpcom-view/plugin.js' )();
-require( './plugins/wpeditimage/plugin.js' )();
-require( './plugins/wplink/plugin.js' )();
-require( './plugins/media/plugin' )();
-require( './plugins/advanced/plugin' )();
-require( './plugins/wpcom-tabindex/plugin' )();
-require( './plugins/touch-scroll-toolbar/plugin' )();
-require( './plugins/editor-button-analytics/plugin' )();
-require( './plugins/calypso-alert/plugin' )();
+import wpcomPlugin from './plugins/wpcom/plugin.js';
+import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
+import wpcomHelpPlugin from './plugins/wpcom-help/plugin.js';
+import wpcomCharmapPlugin from './plugins/wpcom-charmap/plugin.js';
+import wpcomViewPlugin from './plugins/wpcom-view/plugin.js';
+import wpcomSourcecode from './plugins/wpcom-sourcecode/plugin';
+import wpeditimagePlugin from './plugins/wpeditimage/plugin.js';
+import wplinkPlugin from './plugins/wplink/plugin.js';
+import mediaPlugin from './plugins/media/plugin';
+import advancedPlugin from './plugins/advanced/plugin';
+import wpcomTabindexPlugin from './plugins/wpcom-tabindex/plugin';
+import wpcomTrackPaste from './plugins/wpcom-track-paste/plugin';
+import touchScrollToolbarPlugin from './plugins/touch-scroll-toolbar/plugin';
+import editorButtonAnalyticsPlugin from './plugins/editor-button-analytics/plugin';
+import calypsoAlertPlugin from './plugins/calypso-alert/plugin';
+import contactFormPlugin from './plugins/contact-form/plugin';
+import simplePaymentsPlugin from './plugins/simple-payments/plugin';
+import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
+import wptextpatternPlugin from './plugins/wptextpattern/plugin';
+import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
+import insertMenuPlugin from './plugins/insert-menu/plugin';
+import embedPlugin from './plugins/embed/plugin';
+import embedReversalPlugin from './plugins/embed-reversal/plugin';
+import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
+import mentionsPlugin from './plugins/mentions/plugin';
+import membershipsPlugin from './plugins/simple-payments/memberships-plugin';
+import markdownPlugin from './plugins/markdown/plugin';
+import wpEmojiPlugin from './plugins/wpemoji/plugin';
+
+[
+	wpcomPlugin,
+	wpcomAutoresizePlugin,
+	wpcomHelpPlugin,
+	wpcomCharmapPlugin,
+	wpcomViewPlugin,
+	wpcomSourcecode,
+	wpeditimagePlugin,
+	wplinkPlugin,
+	insertMenuPlugin,
+	mediaPlugin,
+	advancedPlugin,
+	wpcomTabindexPlugin,
+	wpcomTrackPaste,
+	touchScrollToolbarPlugin,
+	editorButtonAnalyticsPlugin,
+	calypsoAlertPlugin,
+	contactFormPlugin,
+	afterTheDeadlinePlugin,
+	wptextpatternPlugin,
+	toolbarPinPlugin,
+	embedPlugin,
+	embedReversalPlugin,
+	markdownPlugin,
+	wpEmojiPlugin,
+	simplePaymentsPlugin,
+].forEach( initializePlugin => initializePlugin() );
 
 /**
  * Internal Dependencies
  */
-const formatting = require( 'lib/formatting' ),
-	user = require( 'lib/user' )(),
-	i18n = require( './i18n' ),
-	hasTouch = require( 'lib/touch-detect' ).hasTouch,
-	viewport = require( 'lib/viewport' );
+import i18n from './i18n';
+import { isMobile } from 'lib/viewport';
+import config from 'config';
+import { decodeEntities, wpautop, removep } from 'lib/formatting';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import isRtlSelector from 'state/selectors/is-rtl';
 
 /**
  * Internal Variables
@@ -63,17 +108,19 @@ const EVENTS = {
 	focus: 'onFocus',
 	hide: 'onHide',
 	init: 'onInit',
+	mouseUp: 'onMouseUp',
 	redo: 'onRedo',
 	remove: 'onRemove',
 	reset: 'onReset',
 	show: 'onShow',
 	submit: 'onSubmit',
 	undo: 'onUndo',
-	setContent: 'onSetContent'
+	setContent: 'onSetContent',
 };
 
 const PLUGINS = [
 	'colorpicker',
+	'embed',
 	'hr',
 	'lists',
 	'media',
@@ -84,6 +131,9 @@ const PLUGINS = [
 	'wpcom',
 	'wpeditimage',
 	'wplink',
+	'AtD',
+	'directionality',
+	'wpemoji',
 	'wpcom/autoresize',
 	'wpcom/media',
 	'wpcom/advanced',
@@ -95,64 +145,80 @@ const PLUGINS = [
 	'wpcom/editorbuttonanalytics',
 	'wpcom/calypsoalert',
 	'wpcom/tabindex',
+	'wpcom/toolbarpin',
+	'wpcom/contactform',
+	'wpcom/sourcecode',
+	'wpcom/embedreversal',
+	'wpcom/trackpaste',
+	'wpcom/insertmenu',
+	'wpcom/markdown',
+	'wpcom/simplepayments',
 ];
+
+if ( config.isEnabled( 'memberships' ) ) {
+	membershipsPlugin();
+	PLUGINS.push( 'wpcom/memberships' );
+}
+
+mentionsPlugin();
+PLUGINS.push( 'wpcom/mentions' );
 
 const CONTENT_CSS = [
-	window.app.tinymceWpSkin,
-	'//s1.wp.com/wp-includes/css/dashicons.css',
-	window.app.tinymceEditorCss,
-	'//fonts.googleapis.com/css?family=Merriweather:700%2C400%2C700italic%2C400italic',
+	window.app.staticUrls[ 'tinymce/skins/wordpress/wp-content.css' ],
+	'//s1.wp.com/wp-includes/css/dashicons.css?v=20150727',
+	window.app.staticUrls[ 'editor.css' ],
+	'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese',
 ];
 
-module.exports = React.createClass( {
-	displayName: 'TinyMCE',
+export default class extends React.Component {
+	static displayName = 'TinyMCE';
 
-	propTypes: {
-		mode: React.PropTypes.string,
-		onActivate: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		onDeactivate: React.PropTypes.func,
-		onFocus: React.PropTypes.func,
-		onHide: React.PropTypes.func,
-		onInit: React.PropTypes.func,
-		onRedo: React.PropTypes.func,
-		onRemove: React.PropTypes.func,
-		onReset: React.PropTypes.func,
-		onShow: React.PropTypes.func,
-		onSubmit: React.PropTypes.func,
-		onUndo: React.PropTypes.func,
-		onSetContent: React.PropTypes.func,
-		tabIndex: React.PropTypes.number,
-		isNew: React.PropTypes.bool,
-		onTextEditorChange: React.PropTypes.func,
-		onKeyUp: React.PropTypes.func,
-		onTogglePin: React.PropTypes.func
-	},
+	static propTypes = {
+		isNew: PropTypes.bool,
+		mode: PropTypes.string,
+		tabIndex: PropTypes.number,
+		onActivate: PropTypes.func,
+		onBlur: PropTypes.func,
+		onChange: PropTypes.func,
+		onDeactivate: PropTypes.func,
+		onFocus: PropTypes.func,
+		onHide: PropTypes.func,
+		onInit: PropTypes.func,
+		onInput: PropTypes.func,
+		onKeyUp: PropTypes.func,
+		onMouseUp: PropTypes.func,
+		onRedo: PropTypes.func,
+		onRemove: PropTypes.func,
+		onReset: PropTypes.func,
+		onShow: PropTypes.func,
+		onSubmit: PropTypes.func,
+		onSetContent: PropTypes.func,
+		onUndo: PropTypes.func,
+		onTextEditorChange: PropTypes.func,
+	};
 
-	getDefaultProps: function() {
-		return {
-			mode: 'tinymce',
-			isNew: false
-		};
-	},
+	static contextTypes = {
+		store: PropTypes.object,
+	};
 
-	getInitialState: function() {
-		return {
-			content: ''
-		};
-	},
+	static defaultProps = {
+		mode: 'tinymce',
+		isNew: false,
+	};
 
-	_editor: null,
+	state = {
+		content: '',
+		selection: null,
+	};
 
-	_pinned: false,
+	_editor = null;
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this._id = 'tinymce-' + _instance;
 		_instance++;
-	},
+	}
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		if ( ! this._editor ) {
 			return;
 		}
@@ -162,84 +228,118 @@ module.exports = React.createClass( {
 		if ( this.props.mode !== prevProps.mode ) {
 			this.toggleEditor();
 		}
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
+		this.mounted = true;
+
 		const setup = function( editor ) {
 			this._editor = editor;
-			this.bindEditorEvents();
-			editor.on( 'SetTextAreaContent', ( event ) => this.setTextAreaContent( event.content ) );
 
-			if ( ! hasTouch() ) {
-				window.addEventListener( 'scroll', this.onScrollPinTools );
-				editor.once( 'PostRender', this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } ) );
+			if ( ! this.mounted ) {
+				this.destroyEditor();
+				return;
 			}
+
+			this.bindEditorEvents();
+			editor.on( 'SetTextAreaContent', event => this.setTextAreaContent( event.content ) );
+			editor.once(
+				'PostRender',
+				this.toggleEditor.bind( this, { autofocus: ! this.props.isNew } )
+			);
 		}.bind( this );
 
-		this.localize();
+		const store = this.context.store;
+		let isRtl = false;
+		let localeSlug = 'en';
+
+		if ( store ) {
+			const state = store.getState();
+
+			isRtl = isRtlSelector( state );
+			localeSlug = getCurrentLocaleSlug( state );
+		}
+
+		this.localize( isRtl, localeSlug );
+
+		const ltrButton = isRtl ? 'ltr,' : '';
 
 		tinymce.init( {
 			selector: '#' + this._id,
-			skin_url: '//s1.wp.com/wp-includes/js/tinymce/skins/lightgray',
+			skin_url: '/calypso/tinymce/skins/lightgray',
 			skin: 'lightgray',
-			content_css: CONTENT_CSS.join( ',' ),
-			language: user.get() ? user.get().localeSlug : 'en',
+			content_css: CONTENT_CSS,
+			language: localeSlug,
 			language_url: DUMMY_LANG_URL,
+			directionality: isRtl ? 'rtl' : 'ltr',
 			formats: {
 				alignleft: [
 					{
 						selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li',
-						styles: { textAlign: 'left' }
+						styles: { textAlign: 'left' },
 					},
 					{
 						selector: 'img,table,dl.wp-caption',
-						classes: 'alignleft'
-					}
+						classes: 'alignleft',
+					},
 				],
 				aligncenter: [
 					{
 						selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li',
-						styles: { textAlign: 'center' }
+						styles: { textAlign: 'center' },
 					},
 					{
 						selector: 'img,table,dl.wp-caption',
-						classes: 'aligncenter'
-					}
+						classes: 'aligncenter',
+					},
 				],
 				alignright: [
 					{
 						selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li',
-						styles: { textAlign: 'right' }
+						styles: { textAlign: 'right' },
 					},
 					{
 						selector: 'img,table,dl.wp-caption',
-						classes: 'alignright'
-					}
+						classes: 'alignright',
+					},
 				],
-				strikethrough: { inline: 'del' }
+				strikethrough: { inline: 'del' },
 			},
 			relative_urls: false,
 			remove_script_host: false,
 			convert_urls: false,
+			branding: false,
 			browser_spellcheck: true,
 			fix_list_elements: true,
 			entities: '38,amp,60,lt,62,gt',
 			entity_encoding: 'raw',
 			keep_styles: false,
 			wpeditimage_html5_captions: true,
+			redux_store: this.context.store,
+			textarea: this.refs.text,
 
 			// Limit the preview styles in the menu/toolbar
 			preview_styles: 'font-family font-size font-weight font-style text-decoration text-transform',
 			end_container_on_empty_block: true,
-			plugins: PLUGINS.join( ',' ),
+			plugins: PLUGINS.join(),
 			statusbar: false,
 			resize: false,
 			menubar: false,
 			indent: false,
 
-			autoresize_min_height: document.documentElement.clientHeight,
-			toolbar1: 'wpcom_add_media,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,wpcom_advanced',
-			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
+			// AfterTheDeadline Configuration
+			atd_rpc_id: 'https://wordpress.com',
+			atd_ignore_enable: true,
+
+			// Try to find a suitable minimum size based on the viewport height
+			// minus the surrounding editor chrome to avoid scrollbars. In the
+			// future, we should calculate from the rendered editor bounds.
+			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
+			autoresize_bottom_margin: isMobile() ? 10 : 50,
+
+			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,${ ltrButton }wpcom_advanced`,
+			toolbar2:
+				'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',
 			toolbar4: '',
 
@@ -248,91 +348,56 @@ module.exports = React.createClass( {
 			body_class: 'content post-type-post post-status-draft post-format-standard locale-en-us',
 			add_unload_trigger: false,
 
-			setup: setup
-
+			setup: setup,
 		} );
 
-		autosize( React.findDOMNode( this.refs.text ) );
-	},
+		autosize( ReactDom.findDOMNode( this.refs.text ) );
+	}
 
-	componentWillUnmount: function() {
-		forEach( EVENTS, function( eventHandler, eventName ) {
-			if ( this.props[ eventHandler ] ) {
-				this._editor.off( eventName, this.props[ eventHandler ] );
-			}
-		}, this );
+	componentWillUnmount() {
+		this.mounted = false;
+		if ( this._editor ) {
+			this.destroyEditor();
+		}
+	}
 
-		window.removeEventListener( 'scroll', this.onScrollPinTools );
-		tinymce.remove( this._editor );
-		this._editor = null;
-		autosize.destroy( React.findDOMNode( this.refs.text ) );
-	},
-
-	doAutosizeUpdate: function() {
-		autosize.update( React.findDOMNode( this.refs.text ) );
-	},
-
-	bindEditorEvents: function( prevProps ) {
-		prevProps = prevProps || {};
-
-		forEach( EVENTS, function( eventHandler, eventName ) {
-			if ( prevProps[ eventHandler ] !== this.props[ eventHandler ] ) {
+	destroyEditor = () => {
+		forEach(
+			EVENTS,
+			function( eventHandler, eventName ) {
 				if ( this.props[ eventHandler ] ) {
-					this._editor.on( eventName, this.props[ eventHandler ] );
-				} else {
 					this._editor.off( eventName, this.props[ eventHandler ] );
 				}
-			}
-		}, this );
-	},
+			}.bind( this )
+		);
 
-	onScrollPinTools: function() {
-		const editor = this._editor,
-			$ = editor.$;
+		tinymce.remove( this._editor );
+		this._editor = null;
+		autosize.destroy( ReactDom.findDOMNode( this.refs.text ) );
+	};
 
-		if ( ! editor || this.props.mode === 'html' ) {
-			return;
-		}
+	doAutosizeUpdate = () => {
+		autosize.update( ReactDom.findDOMNode( this.refs.text ) );
+	};
 
-		const container = editor.getContainer();
-		const rect = container.getBoundingClientRect();
+	bindEditorEvents = prevProps => {
+		prevProps = prevProps || {};
 
-		if ( rect.top < 46 && ! this._pinned && viewport.isWithinBreakpoint( '>660px' ) ) {
-			this._pinned = true;
-			const toolbar = $( '.mce-toolbar-grp:not(.mce-inline-toolbar-grp)', container ).first();
-			const toolbarComputedStyle = window.getComputedStyle( toolbar[ 0 ] );
-			const toolbarWidth = toolbar[ 0 ].parentNode.clientWidth - parseInt( toolbarComputedStyle.marginLeft, 10 ) - parseInt( toolbarComputedStyle.marginRight, 10 );
+		forEach(
+			EVENTS,
+			function( eventHandler, eventName ) {
+				if ( prevProps[ eventHandler ] !== this.props[ eventHandler ] ) {
+					if ( this.props[ eventHandler ] ) {
+						this._editor.on( eventName, this.props[ eventHandler ] );
+					} else {
+						this._editor.off( eventName, this.props[ eventHandler ] );
+					}
+				}
+			}.bind( this )
+		);
+	};
 
-			toolbar.css( {
-				boxSizing: 'border-box',
-				position: 'fixed',
-				top: '46px',
-				left: 'auto',
-				right: 'auto',
-				width: toolbarWidth + 'px',
-				'z-index': 20
-			} );
-
-			if ( this.props.onTogglePin ) {
-				this.props.onTogglePin( 'pin' );
-			}
-		} else if ( window.pageYOffset < 164 && this._pinned ) {
-			this._pinned = false;
-			$( '.mce-toolbar-grp:not(.mce-inline-toolbar-grp)', container ).first().css( {
-				position: 'absolute',
-				top: 0,
-				left: 0,
-				right: 0,
-				width: 'auto',
-				'z-index': 'auto'
-			} );
-			if ( this.props.onTogglePin ) {
-				this.props.onTogglePin( 'unpin' );
-			}
-		}
-	},
-
-	toggleEditor: function( options = { autofocus: true } ) {
+	toggleEditor = ( options = { autofocus: true } ) => {
 		if ( ! this._editor ) {
 			return;
 		}
@@ -341,7 +406,7 @@ module.exports = React.createClass( {
 			this._editor.hide();
 			this.doAutosizeUpdate();
 			if ( options.autofocus ) {
-				this.focusEditor( );
+				this.focusEditor();
 			}
 			return;
 		}
@@ -350,21 +415,29 @@ module.exports = React.createClass( {
 		if ( options.autofocus ) {
 			this.focusEditor();
 		}
-	},
+	};
 
-	focusEditor: function() {
+	focusEditor = () => {
 		if ( this.props.mode === 'html' ) {
-			const textNode = React.findDOMNode( this.refs.text );
+			const textNode = ReactDom.findDOMNode( this.refs.text );
 
 			// Collapse selection to avoid scrolling to the bottom of the textarea
-			textNode.setSelectionRange( 0, 0 );
-			textNode.focus();
+			if ( this.state.selection ) {
+				this.selectTextInTextArea( this.state.selection );
+			} else {
+				textNode.setSelectionRange( 0, 0 );
+			}
+
+			// Browser is not Internet Explorer 11
+			if ( 11 !== tinymce.Env.ie ) {
+				textNode.focus();
+			}
 		} else if ( this._editor ) {
 			this._editor.focus();
 		}
-	},
+	};
 
-	getContent: function( args ) {
+	getContent = args => {
 		if ( this.props.mode === 'html' ) {
 			return this.state.content;
 		}
@@ -379,35 +452,65 @@ module.exports = React.createClass( {
 			// TODO: fix code duplication between the wordpress plugin and the React component
 			content = content.replace( /<p>(?:<br ?\/?>|\u00a0|\uFEFF| )*<\/p>/g, '<p>&nbsp;</p>' );
 
-			content = formatting.removep( content );
+			content = removep( content );
 		}
 
 		return content;
-	},
+	};
 
-	isDirty: function() {
+	isDirty = () => {
 		if ( this._editor ) {
 			return this._editor.isDirty();
 		}
 		return false;
-	},
+	};
 
-	setTextAreaContent: function( content ) {
-		this.setState( { content }, this.doAutosizeUpdate );
-	},
+	setTextAreaContent = content => {
+		this.setState(
+			{
+				content: decodeEntities( content ),
+			},
+			this.doAutosizeUpdate
+		);
+	};
 
-	setEditorContent: function( content ) {
+	setEditorContent = ( content, args = {} ) => {
 		if ( this._editor ) {
-			this._editor.setContent( formatting.wpautop( content ) );
-
-			// clear the undo stack to ensure that we don't have any leftovers
-			this._editor.undoManager.clear();
+			const { mode } = this.props;
+			this._editor.setContent( wpautop( content ), { ...args, mode } );
+			if ( args.initial ) {
+				// Clear the undo stack when initially setting content
+				this._editor.undoManager.clear();
+			}
 		}
 
 		this.setTextAreaContent( content );
-	},
+	};
 
-	onTextAreaChange: function( event ) {
+	setSelection = selection => {
+		this.setState( {
+			selection,
+		} );
+	};
+
+	selectTextInTextArea = selection => {
+		// only valid in the text area mode and if we have selection
+		if ( ! selection ) {
+			return;
+		}
+
+		const textNode = ReactDom.findDOMNode( this.refs.text );
+
+		const start = selection.start;
+		const end = selection.end || selection.start;
+		// Collapse selection to avoid scrolling to the bottom of the textarea
+		textNode.setSelectionRange( start, end );
+
+		// clear out the selection from the state
+		this.setState( { selection: null } );
+	};
+
+	onTextAreaChange = event => {
 		const content = event.target.value;
 
 		if ( this.props.onTextEditorChange ) {
@@ -415,41 +518,64 @@ module.exports = React.createClass( {
 		}
 
 		this.setState( { content: content }, this.doAutosizeUpdate );
-	},
+	};
 
-	localize: function() {
-		const userData = user.get();
-		let i18nStrings = i18n;
-
-		if ( ! userData ) {
-			return;
+	onToolbarChangeContent = content => {
+		if ( this.props.onTextEditorChange ) {
+			this.props.onTextEditorChange( content );
 		}
 
-		if ( user.isRTL() ) {
+		this.setState( { content }, this.doAutosizeUpdate );
+	};
+
+	localize = ( isRtl, localeSlug ) => {
+		let i18nStrings = i18n;
+
+		if ( isRtl ) {
 			i18nStrings = assign( { _dir: 'rtl' }, i18nStrings );
 		}
 
-		tinymce.addI18n( userData.localeSlug, i18nStrings );
+		tinymce.addI18n( localeSlug, i18nStrings );
 
 		// Stop TinyMCE from trying to load the lang script by marking as done
 		tinymce.ScriptLoader.markDone( DUMMY_LANG_URL );
-	},
+	};
 
-	render: function() {
+	render() {
+		const { mode } = this.props;
 		const className = classnames( {
 			tinymce: true,
-			'is-visible': this.props.mode === 'html'
+			'is-visible': mode === 'html',
 		} );
 
+		/*
+		 * Using `classnames()` here is partly a hack to avoid the linter complaining that the
+		 * container is named `tinymce-container` instead of `tinymce`. Ideally the containing
+		 * `div` and the `textarea` should be refactored so that the `div` has the `tinymce`
+		 * class, but that would interfere with higher priority fixes. This component is slated
+		 * for some refactoring in the near future, so that will be a more convenient time to
+		 * clean this up.
+		 */
+		const containerClassName = classnames( 'tinymce-container', 'editor-mode-' + mode );
+
 		return (
-			<textarea
-				ref="text"
-				className={ className }
-				id={ this._id }
-				onChange={ this.onTextAreaChange }
-				tabIndex={ this.props.tabIndex }
-				value={ this.state.content }
-			/>
+			<div className={ containerClassName }>
+				{ 'html' === mode &&
+					config.isEnabled( 'post-editor/html-toolbar' ) && (
+						<EditorHtmlToolbar
+							content={ this.refs.text }
+							onToolbarChangeContent={ this.onToolbarChangeContent }
+						/>
+					) }
+				<textarea
+					ref="text"
+					className={ className }
+					id={ this._id }
+					onChange={ this.onTextAreaChange }
+					tabIndex={ this.props.tabIndex }
+					value={ this.state.content }
+				/>
+			</div>
 		);
 	}
-} );
+}

@@ -1,37 +1,33 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
 
-module.exports = React.createClass( {
-	displayName: 'SharingServiceExample',
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
 
-	propTypes: {
-		image: React.PropTypes.shape( {
-			src: React.PropTypes.string,
-			alt: React.PropTypes.string
-		} ),
-		label: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element, React.PropTypes.object ] ),
-		single: React.PropTypes.bool
-	},
+const SharingServiceExample = ( { image, label, single } ) => (
+	<div className={ classNames( 'sharing-service-example', { 'is-single': single } ) }>
+		<div className="sharing-service-example-screenshot">
+			<img src={ image.src } alt={ image.alt } />
+		</div>
+		<div className="sharing-service-example-screenshot-label">{ label }</div>
+	</div>
+);
 
-	getDefaultProps: function() {
-		return { single: false };
-	},
+SharingServiceExample.propTypes = {
+	image: PropTypes.shape( {
+		src: PropTypes.string,
+		alt: PropTypes.string,
+	} ),
+	label: PropTypes.node,
+	single: PropTypes.bool,
+};
 
-	render: function() {
-		var classes = classNames( 'sharing-service-example', {
-			'is-single': this.props.single
-		} );
+SharingServiceExample.defaultProps = {
+	single: false,
+};
 
-		return (
-			<div className={ classes }>
-				<div className="sharing-service-example-screenshot">
-					<img src={ this.props.image.src } alt={ this.props.image.alt } />
-				</div>
-				<div className="sharing-service-example-screenshot-label">{ this.props.label }</div>
-			</div>
-		);
-	}
-} );
+export default SharingServiceExample;

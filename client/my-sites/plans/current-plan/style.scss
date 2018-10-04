@@ -1,0 +1,125 @@
+.current-plan__header {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+	margin-bottom: 12px;
+}
+
+.current-plan__header-content {
+	background-color: $white;
+	padding: 32px;
+	width: 100%;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
+
+	@include breakpoint( ">660px" ) {
+		text-align: left;
+	}
+	flex-direction: column;
+}
+
+.current-plan__header-content-main {
+	flex-direction: row;
+}
+
+.current-plan__header-icon {
+	width: 80px;
+	height: 80px;
+	float: left;
+	margin-left: 20px;
+	margin-right: 40px;
+	display: flex;
+}
+
+.current-plan__header-copy {
+	width: 100%;
+	text-align: left;
+	margin-top: -20px;
+	margin-bottom: 40px;
+}
+
+.current-plan__header-heading,
+.current-plan__header-text {
+	clear: none;
+}
+
+.current-plan__header-heading {
+	font-size: 24px;
+	font-weight: 400;
+	margin: 24px 0 8px 0;
+}
+
+.current-plan__header-text {
+	font-size: 18px;
+	font-weight: 300;
+}
+
+.current-plan__header.is-placeholder {
+	.current-plan__header-icon {
+		display: none;
+	}
+
+	.current-plan__header-heading,
+	.current-plan__header-text {
+		@include placeholder( 23% );
+
+		display: block;
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 auto;
+		}
+	}
+
+	.current-plan__header-heading {
+		width: 50%;
+	}
+
+	.current-plan__header-text {
+		line-height: 2em;
+		margin-bottom: 8px;
+		margin-top: 15px;
+		width: 90%;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 18px;
+			margin-top: 18px;
+		}
+	}
+}
+
+.current-plan__header-purchase-info-wrapper.card.is-compact {
+	margin: 24px -32px -32px;
+	display: flex;
+	flex-direction: column;
+}
+
+.current-plan__header-purchase-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&.is-expiring {
+		.current-plan__expires-in {
+			color: $alert-red;
+		}
+	}
+
+	.button.is-compact {
+		flex-shrink: 0;
+	}
+}
+
+.current-plan__header-expires-in {
+	color: $gray-text-min;
+}
+
+.current-plan__compare-plans {
+	margin: 16px 0 0;
+	text-align: center;
+}
+
+.current-plan__text {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-align: center;
+}

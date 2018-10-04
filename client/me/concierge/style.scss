@@ -1,0 +1,59 @@
+/** @format */
+
+.book__skeleton-site-block .site__content,
+.book__info-step-site-block .site__content,
+.shared__site-block .site__content {
+	// Override the site block's padding to use the containing card's padding instead
+	padding: 0;
+}
+
+.shared__available-time-card.is-expanded {
+	background: lighten( $gray, 36% );
+}
+
+.shared__available-time-card-header {
+	display: flex;
+	align-items: center;
+}
+
+.shared__available-time-card-header-icon {
+	color: $gray;
+	border: 1px solid $gray-lighten-20;
+	border-radius: 100%;
+	padding: 6px;
+	margin-right: 12px;
+}
+
+.shared__info-illustration {
+	display: block;
+	margin: 0 auto 20px;
+	max-width: 300px;
+}
+
+.shared__info-link {
+	display: block;
+	margin: 0 auto;
+	width: auto;
+	text-align: center;
+}
+
+.shared__confirmation {
+	text-align: center;
+}
+
+.shared__confirmation-illustration {
+	display: block;
+	margin: 50px auto 20px;
+	max-width: 182px;
+}
+
+.cancel__reschedule-button {
+	margin-right: 10px;
+}
+
+.book__schedule-button,
+.cancel__schedule-button,
+.reschedule__schedule-button,
+.cancel__confirmation-button {
+	margin-bottom: 40px;
+}

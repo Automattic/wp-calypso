@@ -1,68 +1,96 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var CountedTextarea = require( 'components/forms/counted-textarea' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	PostActions = require( 'lib/posts/actions' ),
-	stats = require( 'lib/posts/stats' ),
-	TrackInputChanges = require( 'components/track-input-changes' ),
-	InfoPopover = require( 'components/info-popover' );
+import CountedTextarea from 'components/forms/counted-textarea';
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
+import FormTextarea from 'components/forms/form-textarea';
+import InfoPopover from 'components/info-popover';
+import TrackInputChanges from 'components/track-input-changes';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 
-module.exports = React.createClass( {
-	displayName: 'PublicizeMessage',
+class PublicizeMessage extends Component {
+	static propTypes = {
+		disabled: PropTypes.bool,
+		message: PropTypes.string,
+		preview: PropTypes.string,
+		acceptableLength: PropTypes.number,
+		requireCount: PropTypes.bool,
+		displayMessageHeading: PropTypes.bool,
+		onChange: PropTypes.func,
+		preFilledMessage: PropTypes.string,
+	};
 
-	propTypes: {
-		message: React.PropTypes.string,
-		preview: React.PropTypes.string,
-		acceptableLength: React.PropTypes.number,
-		requireCount: React.PropTypes.bool
-	},
+	static defaultProps = {
+		disabled: false,
+		message: '',
+		acceptableLength: 280,
+		requireCount: false,
+		displayMessageHeading: true,
+		onChange: noop,
+		preFilledMessage: '',
+	};
 
-	getDefaultProps: function() {
-		return {
-			message: '',
-			acceptableLength: 140,
-			requireCount: false,
-		};
-	},
+	userHasEditedMessage = false;
 
-	onChange: function( event ) {
-		PostActions.updateMetadata( '_wpas_mess', event.target.value );
-	},
+	onChange = event => {
+		this.userHasEditedMessage = true;
+		this.props.onChange( event.target.value );
+	};
 
-	recordStats: function() {
-		stats.recordStat( 'sharing_message_changed' );
-		stats.recordEvent( 'Publicize Sharing Message Changed' );
-	},
+	recordStats = () => {
+		this.props.recordEditorStat( 'sharing_message_changed' );
+		this.props.recordEditorEvent( 'Publicize Sharing Message Changed' );
+	};
 
-	renderInfoPopover: function() {
+	shouldPreFillMessage() {
+		return ! this.userHasEditedMessage && '' === this.props.message;
+	}
+
+	getMessage() {
+		if ( this.shouldPreFillMessage() ) {
+			return this.props.preFilledMessage;
+		}
+		return this.props.message;
+	}
+
+	renderInfoPopover() {
 		return (
 			<InfoPopover
-				className="publicize-message-counter-info"
+				className="editor-sharing__publicize-message-counter-info"
 				position="bottom left"
 				gaEventCategory="Editor"
 				popoverName="SharingMessage"
 			>
-				{ this.translate(
+				{ this.props.translate(
 					'The length includes space for the link to your post and an attached image.',
 					{ context: 'Post editor sharing message counter explanation' }
-			) }
+				) }
 			</InfoPopover>
 		);
-	},
+	}
 
-	renderTextarea: function() {
+	renderTextarea() {
+		const placeholder =
+			this.props.preview || this.props.translate( 'Write a message for your audience here.' );
 		if ( this.props.requireCount ) {
 			return (
 				<CountedTextarea
-					value={ this.props.message }
-					placeholder={ this.props.preview }
+					disabled={ this.props.disabled }
+					placeholder={ placeholder }
 					countPlaceholderLength={ true }
+					value={ this.getMessage() }
 					onChange={ this.onChange }
 					showRemainingCharacters={ true }
 					acceptableLength={ this.props.acceptableLength }
@@ -71,27 +99,48 @@ module.exports = React.createClass( {
 					{ this.renderInfoPopover() }
 				</CountedTextarea>
 			);
-		} else {
-			return (
-				<FormTextarea
-					value={ this.props.message }
-					placeholder={ this.props.preview }
-					onChange={ this.onChange }
-					className="editor-sharing__message-input"/>
-			);
 		}
-	},
+		return (
+			<FormTextarea
+				disabled={ this.props.disabled }
+				value={ this.getMessage() }
+				placeholder={ placeholder }
+				onChange={ this.onChange }
+				className="editor-sharing__message-input"
+			/>
+		);
+	}
 
-	render: function() {
+	render() {
+		const { displayMessageHeading, translate } = this.props;
 		return (
 			<div className="editor-sharing__publicize-message">
-				<h5 className="editor-sharing__message-heading">
-					{ this.translate( 'Customize the message', { context: 'Post editor sharing message heading' } ) }
-				</h5>
-				<TrackInputChanges onNewValue={ this.recordStats }>
-					{ this.renderTextarea() }
-				</TrackInputChanges>
+				{ displayMessageHeading && (
+					<EditorDrawerLabel
+						helpText={ translate(
+							'The following text will be shared along with a link to your post.'
+						) }
+						labelText={ translate( 'Customize the message', {
+							context: 'Post editor sharing message heading',
+						} ) }
+					>
+						<TrackInputChanges onNewValue={ this.recordStats }>
+							{ this.renderTextarea() }
+						</TrackInputChanges>
+					</EditorDrawerLabel>
+				) }
+
+				{ ! displayMessageHeading && (
+					<TrackInputChanges onNewValue={ this.recordStats }>
+						{ this.renderTextarea() }
+					</TrackInputChanges>
+				) }
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{ recordEditorStat, recordEditorEvent }
+)( localize( PublicizeMessage ) );

@@ -1,44 +1,61 @@
-var React = require( 'react' );
+/** @format */
+/**
+ * External Dependencies
+ */
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
-var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' );
+/**
+ * Internal Dependencies
+ */
+import EmptyContent from 'components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
-var FeedEmptyContent = React.createClass( {
-	shouldComponentUpdate: function() {
-		return false;
-	},
+class FeedEmptyContent extends React.PureComponent {
+	recordAction = () => {
+		recordAction( 'clicked_search_on_empty' );
+		recordGaEvent( 'Clicked Search on EmptyContent' );
+		recordTrack( 'calypso_reader_search_on_empty_feed_clicked' );
+	};
 
-	recordAction: function() {
-		stats.recordAction( 'clicked_discover_on_empty' );
-		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
-	},
+	recordSecondaryAction = () => {
+		recordAction( 'clicked_discover_on_empty' );
+		recordGaEvent( 'Clicked Discover on EmptyContent' );
+		recordTrack( 'calypso_reader_discover_on_empty_feed_clicked' );
+	};
 
-	recordSecondaryAction: function() {
-		stats.recordAction( 'clicked_recommendations_on_empty' );
-		stats.recordGaEvent( 'Clicked Recommendations on EmptyContent' );
-	},
-
-	render: function() {
-		var action = (
-			<a
-				className="empty-content__action button is-primary"
-				onClick={ this.recordAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ),
+	render() {
+		const translate = this.props.translate;
+		const action = (
+				<a
+					className="empty-content__action button is-primary" //eslint-disable-line
+					onClick={ this.recordAction }
+					href="/read/search"
+				>
+					{ translate( 'Find Sites to Follow' ) }
+				</a>
+			),
 			secondaryAction = (
 				<a
-					className="empty-content__action button"
+					className="empty-content__action button" //eslint-disable-line
 					onClick={ this.recordSecondaryAction }
-					href="/recommendations">{ this.translate( 'Get recommendations on who to follow' ) }</a> );
+					href="/discover"
+				>
+					{ translate( 'Explore Discover' ) }
+				</a>
+			);
 
-		return ( <EmptyContent
-			title={ this.translate( 'No recent posts…' ) }
-			line={ this.translate( 'This site has not posted anything recently.' ) }
-			action={ action }
-			secondaryAction={ secondaryAction }
-			illustration={ '/calypso/images/drake/drake-empty-results.svg' }
-			illustrationWidth={ 500 }
-			/> );
+		return (
+			<EmptyContent
+				title={ translate( 'No recent posts' ) }
+				line={ translate( 'This site has not posted anything recently.' ) }
+				action={ action }
+				secondaryAction={ secondaryAction }
+				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustrationWidth={ 500 }
+			/>
+		);
 	}
-} );
+}
 
-module.exports = FeedEmptyContent;
+export default localize( FeedEmptyContent );

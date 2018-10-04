@@ -1,131 +1,203 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
-	EditorMediaModal = require( 'post-editor/media-modal' ),
-	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
-	PostActions = require( 'lib/posts/actions' ),
-	PostUtils = require( 'lib/posts/utils' ),
-	stats = require( 'lib/posts/stats' ),
-	AccordionSection = require( 'components/accordion/section' ),
-	EditorFeaturedImagePreviewContainer = require( './preview-container' );
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import MediaModal from 'post-editor/media-modal';
+import MediaActions from 'lib/media/actions';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
+import EditorFeaturedImagePreviewContainer from './preview-container';
+import FeaturedImageDropZone from './dropzone';
+import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
+import Button from 'components/button';
+import RemoveButton from 'components/remove-button';
+import getMediaItem from 'state/selectors/get-media-item';
+import { getFeaturedImageId } from 'state/posts/utils';
+import QueryMedia from 'components/data/query-media';
+import { localize } from 'i18n-calypso';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { editPost } from 'state/posts/actions';
 
-var EditorFeaturedImage = React.createClass( {
+class EditorFeaturedImage extends Component {
+	static propTypes = {
+		featuredImage: PropTypes.object,
+		hasDropZone: PropTypes.bool,
+		isDropZoneVisible: PropTypes.bool,
+		maxWidth: PropTypes.number,
+		recordTracksEvent: PropTypes.func,
+		selecting: PropTypes.bool,
+		translate: PropTypes.func,
+		onImageSelected: PropTypes.func,
+	};
 
-	propTypes: {
-		maxWidth: React.PropTypes.number,
-		site: React.PropTypes.object,
-		post: React.PropTypes.object
-	},
+	static defaultProps = {
+		hasDropZone: false,
+		isDropZoneVisible: false,
+		maxWidth: 450,
+		onImageSelected: noop,
+	};
 
-	getDefaultProps: function() {
-		return {
-			editable: false,
-			maxWidth: 450
-		};
-	},
+	state = {
+		isSelecting: false,
+	};
 
-	getInitialState: function() {
-		return {
-			isSelecting: false
-		};
-	},
+	showMediaModal = () => {
+		const { siteId, featuredImage } = this.props;
 
-	toggleMediaModal: function( action ) {
+		if ( featuredImage ) {
+			MediaActions.setLibrarySelectedItems( siteId, [ featuredImage ] );
+		}
+
 		this.setState( {
-			isSelecting: ( 'show' === action )
+			isSelecting: true,
 		} );
-	},
+	};
 
-	setImage: function( items ) {
-		this.toggleMediaModal( 'hide' );
+	hideMediaModal = () => {
+		this.setState( {
+			isSelecting: false,
+		} );
+	};
 
-		if ( ! items || ! items.length ) {
+	setImage = value => {
+		this.hideMediaModal();
+		this.props.onImageSelected();
+
+		if ( ! value ) {
 			return;
 		}
 
-		PostActions.edit( {
-			featured_image: items[0].ID
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			featured_image: value.items[ 0 ].ID,
 		} );
 
-		stats.recordStat( 'featured_image_set' );
-		stats.recordEvent( 'Featured image set' );
-	},
+		this.props.recordEditorStat( 'featured_image_set' );
+		this.props.recordEditorEvent( 'Featured image set' );
 
-	removeImage: function() {
-		PostActions.edit( {
-			featured_image: null
+		this.props.recordTracksEvent( 'calypso_editor_featured_image_upload', {
+			source: 'medialibrary',
+			type: 'click',
 		} );
+	};
 
-		stats.recordStat( 'featured_image_removed' );
-		stats.recordEvent( 'Featured image removed' );
-	},
+	removeImage = () => {
+		this.props.editPost( this.props.siteId, this.props.postId, { featured_image: '' } );
 
-	renderMediaModal: function() {
-		if ( ! this.props.site ) {
+		this.props.recordEditorStat( 'featured_image_removed' );
+		this.props.recordEditorEvent( 'Featured image removed' );
+	};
+
+	// called when media library item transitions from temporary ID to a permanent ID, e.g.,
+	// after creating an item by uploading or selecting from Google library.
+	onImageChange = imageId => {
+		if ( imageId !== this.props.featuredImageId ) {
+			this.props.editPost( this.props.siteId, this.props.postId, {
+				featured_image: imageId,
+			} );
+		}
+	};
+
+	renderMediaModal() {
+		if ( ! this.props.siteId ) {
 			return;
 		}
 
 		return (
-			<MediaLibrarySelectedData siteId={ this.props.site.ID }>
-				<EditorMediaModal
-					visible={ this.state.isSelecting }
+			<MediaLibrarySelectedData siteId={ this.props.siteId }>
+				<MediaModal
+					visible={ this.props.selecting || this.state.isSelecting }
 					onClose={ this.setImage }
-					site={ this.props.site }
-					labels={ { confirm: this.translate( 'Set Featured Image' ) } }
+					siteId={ this.props.siteId }
+					labels={ { confirm: this.props.translate( 'Set Featured Image' ) } }
 					enabledFilters={ [ 'images' ] }
-					single />
+					single
+				/>
 			</MediaLibrarySelectedData>
 		);
-	},
+	}
 
-	renderCurrentImage: function() {
-		var itemId;
+	renderCurrentImage() {
+		const { siteId, featuredImageId } = this.props;
 
-		if ( ! this.props.site || ! this.props.post ) {
-			return;
-		}
-
-		itemId = PostUtils.getFeaturedImageId( this.props.post );
-		if ( ! itemId ) {
+		if ( ! featuredImageId ) {
 			return;
 		}
 
 		return (
 			<EditorFeaturedImagePreviewContainer
-				siteId={ this.props.site.ID }
-				itemId={ itemId }
-				maxWidth={ this.props.maxWidth } />
+				siteId={ siteId }
+				itemId={ featuredImageId }
+				maxWidth={ this.props.maxWidth }
+				onImageChange={ this.onImageChange }
+			/>
 		);
-	},
+	}
 
-	render: function() {
-		if ( this.props.editable ) {
-			return (
-				<AccordionSection className="editor-featured-image">
-					{ this.renderMediaModal() }
-					<EditorDrawerWell
-						icon="image"
-						label={ this.translate( 'Set Featured Image' ) }
-						onClick={ () => this.toggleMediaModal( 'show' ) }
-						onRemove={ this.removeImage }>
-						{ this.renderCurrentImage() }
-					</EditorDrawerWell>
-				</AccordionSection>
-			);
-		}
+	render() {
+		const { siteId, featuredImageId } = this.props;
+		const classes = classnames( 'editor-featured-image', {
+			'is-assigned': !! featuredImageId,
+			'has-active-drop-zone': this.props.hasDropZone && this.props.isDropZoneVisible,
+		} );
 
 		return (
-			<div className="editor-featured-image">
-				{ this.renderCurrentImage() }
+			<div className={ classes }>
+				{ featuredImageId && <QueryMedia siteId={ siteId } mediaId={ featuredImageId } /> }
+				{ this.renderMediaModal() }
+				<div className="editor-featured-image__inner-content">
+					<Button
+						className="editor-featured-image__current-image"
+						onClick={ this.showMediaModal }
+						borderless
+						compact
+						data-tip-target="editor-featured-image-current-image"
+					>
+						{ this.renderCurrentImage() }
+						<Gridicon icon="pencil" className="editor-featured-image__edit-icon" />
+					</Button>
+					{ featuredImageId && <RemoveButton onRemove={ this.removeImage } /> }
+				</div>
+
+				{ this.props.hasDropZone && <FeaturedImageDropZone /> }
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = EditorFeaturedImage;
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+		const featuredImageId = getFeaturedImageId( post );
+
+		return {
+			siteId,
+			postId,
+			featuredImageId,
+			featuredImage: getMediaItem( state, siteId, featuredImageId ),
+			isDropZoneVisible: isDropZoneVisible( state, 'featuredImage' ),
+		};
+	},
+	{
+		editPost,
+		recordEditorStat,
+		recordEditorEvent,
+		recordTracksEvent,
+	}
+)( localize( EditorFeaturedImage ) );

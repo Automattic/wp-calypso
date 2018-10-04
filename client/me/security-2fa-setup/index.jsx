@@ -1,120 +1,113 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa:setup' );
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	Security2faEnable = require( 'me/security-2fa-enable' ),
-	Security2faSetupBackupCodes = require( 'me/security-2fa-setup-backup-codes' ),
-	Security2faSMSSettings = require( 'me/security-2fa-sms-settings' ),
-	Security2faInitialSetup = require( 'me/security-2fa-initial-setup' );
+import Security2faEnable from 'me/security-2fa-enable';
+import Security2faSetupBackupCodes from 'me/security-2fa-setup-backup-codes';
+import Security2faSMSSettings from 'me/security-2fa-sms-settings';
+import Security2faInitialSetup from 'me/security-2fa-initial-setup';
+import { successNotice } from 'state/notices/actions';
 
-module.exports = React.createClass( {
+class Security2faSetup extends Component {
+	static propTypes = {
+		onFinished: PropTypes.func.isRequired,
+		userSettings: PropTypes.object.isRequired,
+		translate: PropTypes.func,
+	};
 
-	displayName: 'Security2faSetup',
-
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
-
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
-
-	getInitialState: function() {
-		return {
-			step: 'initial-setup'
+	constructor() {
+		super( ...arguments );
+		this.state = {
+			step: 'initial-setup',
 		};
-	},
+	}
 
-	propTypes: {
-		onFinished: React.PropTypes.func.isRequired
-	},
-
-	onCancelSetup: function( event ) {
+	onCancelSetup = event => {
 		event.preventDefault();
 		this.setState( { step: 'initial-setup' } );
-	},
+	};
 
-	onInitialSetupSuccess: function() {
+	onInitialSetupSuccess = () => {
 		this.setState( { step: 'sms-settings' } );
-	},
+	};
 
-	onSetupSuccess: function() {
+	onSetupSuccess = () => {
 		this.setState( { step: 'backup-codes' } );
-	},
+	};
 
-	onFinished: function() {
-		notices.success( this.translate( 'Successfully enabled Two-Step Authentication.' ) );
+	onFinished = () => {
+		this.props.successNotice(
+			this.props.translate( 'Successfully enabled Two-Step Authentication.' ),
+			{
+				duration: 4000,
+			}
+		);
 		this.props.onFinished();
-	},
+	};
 
-	onVerifyByApp: function() {
+	onVerifyByApp = () => {
 		this.setState( { step: 'app-based' } );
-	},
+	};
 
-	onVerifyBySMS: function() {
+	onVerifyBySMS = () => {
 		this.setState( { step: 'sms-based' } );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<div className="security-2fa-setup__steps-container">
-				{
-					'initial-setup' === this.state.step
-					? <Security2faInitialSetup onSuccess={ this.onInitialSetupSuccess } />
-					: null
-				}
+				{ 'initial-setup' === this.state.step ? (
+					<Security2faInitialSetup onSuccess={ this.onInitialSetupSuccess } />
+				) : null }
 
-				{
-					'sms-settings' === this.state.step
-					? (
-						<Security2faSMSSettings
-							userSettings={ this.props.userSettings }
-							onCancel={ this.onCancelSetup }
-							onVerifyByApp={ this.onVerifyByApp }
-							onVerifyBySMS={ this.onVerifyBySMS }
-						/>
-					)
-					: null
-				}
+				{ 'sms-settings' === this.state.step ? (
+					<Security2faSMSSettings
+						userSettings={ this.props.userSettings }
+						onCancel={ this.onCancelSetup }
+						onVerifyByApp={ this.onVerifyByApp }
+						onVerifyBySMS={ this.onVerifyBySMS }
+					/>
+				) : null }
 
-				{
-					'app-based' === this.state.step
-					? (
-						<Security2faEnable
-							doSMSFlow={ false }
-							onCancel={ this.onCancelSetup }
-							onSuccess={ this.onSetupSuccess }
-							userSettings={ this.props.userSettings }
-						/>
-					)
-					: null
-				}
+				{ 'app-based' === this.state.step ? (
+					<Security2faEnable
+						doSMSFlow={ false }
+						onCancel={ this.onCancelSetup }
+						onSuccess={ this.onSetupSuccess }
+						userSettings={ this.props.userSettings }
+					/>
+				) : null }
 
-				{
-					'sms-based' === this.state.step
-					? (
-						<Security2faEnable
-							doSMSFlow
-							onCancel={ this.onCancelSetup }
-							onSuccess={ this.onSetupSuccess }
-							userSettings={ this.props.userSettings }
-						/>
-					)
-					: null
-				}
+				{ 'sms-based' === this.state.step ? (
+					<Security2faEnable
+						doSMSFlow
+						onCancel={ this.onCancelSetup }
+						onSuccess={ this.onSetupSuccess }
+						userSettings={ this.props.userSettings }
+					/>
+				) : null }
 
-				{
-					'backup-codes' === this.state.step
-					? <Security2faSetupBackupCodes onFinished={ this.onFinished } />
-					: null
-				}
+				{ 'backup-codes' === this.state.step ? (
+					<Security2faSetupBackupCodes onFinished={ this.onFinished } />
+				) : null }
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{ successNotice },
+	null,
+	{ pure: false }
+)( localize( Security2faSetup ) );

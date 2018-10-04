@@ -1,0 +1,14 @@
+/** @format */
+
+.horizontal-bar {
+	rect {
+		fill: $blue-wordpress;
+	}
+	text {
+		fill: $white;
+
+		&.is-offset-text {
+			fill: $gray-dark;
+		}
+	}
+}

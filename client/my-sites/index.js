@@ -1,16 +1,18 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var page = require( 'page' );
+
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( './controller' ),
-	removeOverlay = require( 'remove-overlay' );
+import { siteSelection, sites } from './controller';
+import { makeLayout, render as clientRender } from 'controller';
 
-module.exports = function() {
-
-	page( '/sites/:sitesFilter?', controller.siteSelection, removeOverlay, controller.sites );
-
-};
+export default function() {
+	page( '/sites/:site', context => page.redirect( '/stats/insights/' + context.params.site ) );
+	page( '/sites', siteSelection, sites, makeLayout, clientRender );
+}

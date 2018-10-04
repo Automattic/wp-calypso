@@ -1,89 +1,93 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import update from 'immutability-helper';
 
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
-import DomainsStore from 'lib/domains/store';
-import { getSelectedDomain } from 'lib/domains';
+import {
+	DOMAIN_TRANSFER_ACCEPT_COMPLETED,
+	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_DECLINE_COMPLETED,
+	PRIVACY_PROTECTION_ENABLE_COMPLETED,
+	WAPI_DOMAIN_INFO_FETCH,
+	WAPI_DOMAIN_INFO_FETCH_COMPLETED,
+	WAPI_DOMAIN_INFO_FETCH_FAILED,
+} from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	hasLoadedFromServer: false,
 	data: null,
-	needsUpdate: true
+	needsUpdate: true,
 };
 
 function updateDomainState( state, domainName, data ) {
 	const command = {
 		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data )
-		}
+			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data ),
+		},
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH:
+		case WAPI_DOMAIN_INFO_FETCH:
 			return updateDomainState( state, action.domainName, {
-				needsUpdate: false
+				needsUpdate: false,
 			} );
 
-		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH_COMPLETED:
+		case WAPI_DOMAIN_INFO_FETCH_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				hasLoadedFromServer: true,
 				data: action.status,
-				needsUpdate: false
+				needsUpdate: false,
 			} );
 
-		case UpgradesActionTypes.WAPI_DOMAIN_INFO_FETCH_FAILED:
+		case WAPI_DOMAIN_INFO_FETCH_FAILED:
 			return updateDomainState( state, action.domainName, {
-				needsUpdate: true
+				needsUpdate: true,
 			} );
 
-		case UpgradesActionTypes.DOMAIN_ENABLE_LOCKING_COMPLETED:
-			return updateDomainState( state, action.domainName, {
-				data: Object.assign( {}, state[ action.domainName ].data, {
-					locked: true,
-					pendingTransfer: false
-				} )
-			} );
-
-		case UpgradesActionTypes.DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED:
+		case DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
-					pendingTransfer: false
-				} )
-			} );
-
-		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
-			const { data } = state[ action.domainName ],
-				domainData = getSelectedDomain( {
-					domains: DomainsStore.getForSite( action.siteId ),
-					selectedDomainName: action.domainName
+					locked: action.locked,
+					pendingTransfer: false,
 				} ),
-				locked = ( ! action.unlock ) && data.locked,
-				pendingTransfer = ! domainData.privateDomain && ! locked;
+			} );
+
+		case PRIVACY_PROTECTION_ENABLE_COMPLETED:
+			return updateDomainState( state, action.domainName, {
+				data: Object.assign( {}, state[ action.domainName ].data, {
+					pendingTransfer: false,
+				} ),
+			} );
+
+		case DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
+			const { data } = state[ action.domainName ],
+				locked = ! action.unlock && data.locked;
 
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					locked,
-					pendingTransfer
-				} )
+				} ),
+				needsUpdate: true,
 			} );
 
-		case UpgradesActionTypes.DOMAIN_TRANSFER_ACCEPT_COMPLETED:
-		case UpgradesActionTypes.DOMAIN_TRANSFER_DECLINE_COMPLETED:
+		case DOMAIN_TRANSFER_ACCEPT_COMPLETED:
+		case DOMAIN_TRANSFER_DECLINE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
-					pendingTransfer: false
-				} )
+					pendingTransfer: false,
+				} ),
 			} );
 
 		default:
@@ -91,7 +95,4 @@ function reducer( state, payload ) {
 	}
 }
 
-export {
-	initialDomainState,
-	reducer
-};
+export { initialDomainState, reducer };

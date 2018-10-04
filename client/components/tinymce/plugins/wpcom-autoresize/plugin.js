@@ -3,17 +3,20 @@
  *
  * Adapted from WordPress.
  *
+ *
+ * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
-*/
+ */
 
 /**
  * External dependencies
  */
-var tinymce = require( 'tinymce/tinymce' );
+import tinymce from 'tinymce/tinymce';
 
 function wcpomAutoResize( editor ) {
-	var settings = editor.settings, oldSize = 0;
+	let settings = editor.settings,
+		oldSize = 0;
 
 	function isFullscreen() {
 		return editor.plugins.fullscreen && editor.plugins.fullscreen.isFullscreen();
@@ -24,12 +27,44 @@ function wcpomAutoResize( editor ) {
 		return;
 	}
 
+	function isEndOfEditor() {
+		let range, start, body, element, child;
+		range = editor.selection.getRng();
+
+		if ( ( range.startOffset === 0 && range.endOffset !== 0 ) || ! range.collapsed ) {
+			return false;
+		}
+
+		start = range.startContainer;
+		body = editor.getBody();
+		element = start;
+		do {
+			child = element;
+			element = element.parentNode;
+			if ( element.childNodes[ element.childNodes.length - 1 ] !== child ) {
+				return false;
+			}
+		} while ( element !== body );
+		return true;
+	}
+
 	function resize( e ) {
-		var deltaSize, doc, body, docElm, DOM = tinymce.DOM, resizeHeight, myHeight,
-			marginTop, marginBottom, paddingTop, paddingBottom, borderTop, borderBottom;
+		let deltaSize,
+			doc,
+			body,
+			docElm,
+			DOM = tinymce.DOM,
+			resizeHeight,
+			myHeight,
+			marginTop,
+			marginBottom,
+			paddingTop,
+			paddingBottom,
+			borderTop,
+			borderBottom;
 
 		doc = editor.getDoc();
-		if ( !doc ) {
+		if ( ! doc ) {
 			return;
 		}
 
@@ -37,7 +72,7 @@ function wcpomAutoResize( editor ) {
 		docElm = doc.documentElement;
 		resizeHeight = settings.autoresize_min_height;
 
-		if ( !body || ( e && e.type === 'setcontent' && e.initial ) || isFullscreen() ) {
+		if ( ! body || ( e && e.type === 'setcontent' && e.initial ) || isFullscreen() ) {
 			if ( body && docElm ) {
 				body.style.overflowY = 'auto';
 				docElm.style.overflowY = 'auto'; // Old IE
@@ -50,12 +85,20 @@ function wcpomAutoResize( editor ) {
 		marginTop = editor.dom.getStyle( body, 'margin-top', true );
 		marginBottom = editor.dom.getStyle( body, 'margin-bottom', true );
 		paddingTop = editor.dom.getStyle( body, 'padding-top', true );
-		paddingBottom = editor.dom.getStyle( body, 'padding-bottom', true );
 		borderTop = editor.dom.getStyle( body, 'border-top-width', true );
 		borderBottom = editor.dom.getStyle( body, 'border-bottom-width', true );
-		myHeight = body.offsetHeight + parseInt( marginTop, 10 ) + parseInt( marginBottom, 10 ) +
-			parseInt( paddingTop, 10 ) + parseInt( paddingBottom, 10 ) +
-			parseInt( borderTop, 10 ) + parseInt( borderBottom, 10 );
+		// paddingBottom seems to get reset to 1 somewhere, so grab
+		// autoresize_bottom_margin directly here
+		paddingBottom = editor.getParam( 'autoresize_bottom_margin', 50 );
+
+		myHeight =
+			body.offsetHeight +
+			parseInt( marginTop, 10 ) +
+			parseInt( marginBottom, 10 ) +
+			parseInt( paddingTop, 10 ) +
+			parseInt( paddingBottom, 10 ) +
+			parseInt( borderTop, 10 ) +
+			parseInt( borderBottom, 10 );
 
 		// IE < 11, other?
 		if ( myHeight && myHeight < docElm.offsetHeight ) {
@@ -65,7 +108,13 @@ function wcpomAutoResize( editor ) {
 		// Make sure we have a valid height
 		if ( isNaN( myHeight ) || myHeight <= 0 ) {
 			// Get height differently depending on the browser used
-			myHeight = tinymce.Env.ie ? body.scrollHeight : ( tinymce.Env.webkit && body.clientHeight === 0 ? 0 : body.offsetHeight );
+			if ( tinymce.Env.ie ) {
+				myHeight = body.scrollHeight;
+			} else if ( tinymce.Env.webkit && body.clientHeight === 0 ) {
+				myHeight = 0;
+			} else {
+				myHeight = body.offsetHeight;
+			}
 		}
 
 		// Don't make it smaller than the minimum height
@@ -95,6 +144,15 @@ function wcpomAutoResize( editor ) {
 			if ( tinymce.isWebKit && deltaSize < 0 ) {
 				resize( e );
 			}
+
+			if (
+				( e && e.type === 'keyup' ) ||
+				( e && e.type === 'nodechange' && e.element && e.element.tagName === 'BR' )
+			) {
+				if ( isEndOfEditor() ) {
+					window.scrollTo( 0, document.body.scrollHeight );
+				}
+			}
 		}
 	}
 
@@ -111,14 +169,17 @@ function wcpomAutoResize( editor ) {
 	}
 
 	// Define minimum height
-	settings.autoresize_min_height = parseInt( editor.getParam( 'autoresize_min_height', editor.getElement().offsetHeight ), 10 );
+	settings.autoresize_min_height = parseInt(
+		editor.getParam( 'autoresize_min_height', editor.getElement().offsetHeight ),
+		10
+	);
 
 	// Define maximum height
 	settings.autoresize_max_height = parseInt( editor.getParam( 'autoresize_max_height', 0 ), 10 );
 
 	// Add padding at the bottom for better UX
 	editor.on( 'init', function() {
-		var overflowPadding, bottomMargin;
+		let overflowPadding, bottomMargin;
 
 		overflowPadding = editor.getParam( 'autoresize_overflow_padding', 1 );
 		bottomMargin = editor.getParam( 'autoresize_bottom_margin', 50 );
@@ -126,13 +187,13 @@ function wcpomAutoResize( editor ) {
 		if ( overflowPadding !== false ) {
 			editor.dom.setStyles( editor.getBody(), {
 				paddingLeft: overflowPadding,
-				paddingRight: overflowPadding
+				paddingRight: overflowPadding,
 			} );
 		}
 
 		if ( bottomMargin !== false ) {
 			editor.dom.setStyles( editor.getBody(), {
-				paddingBottom: bottomMargin
+				paddingBottom: bottomMargin,
 			} );
 		}
 	} );
@@ -156,6 +217,6 @@ function wcpomAutoResize( editor ) {
 	editor.addCommand( 'wpcomAutoResize', resize );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/autoresize', wcpomAutoResize );
-};
+}

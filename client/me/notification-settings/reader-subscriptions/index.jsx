@@ -1,14 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
+import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { flowRight } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import MeSidebarNavigation from 'me/sidebar-navigation';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'lib/protect-form';
 import formBase from 'me/form-base';
 import Card from 'components/card';
 import Navigation from 'me/notification-settings/navigation';
@@ -23,150 +29,172 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
-import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-module.exports = React.createClass( {
+const NotificationSubscriptions = createReactClass( {
 	displayName: 'NotificationSubscriptions',
 
-	mixins: [ formBase, React.addons.LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
+	mixins: [ formBase, observe( 'userSettings' ) ],
 
-	getDeliveryHourLabel( hour ) {
-		return this.translate(
-			'%(fromHour)s - %(toHour)s',
-			{
-				context: 'Hour range between which subscriptions are delivered',
-				args: {
-					fromHour: this.moment().hour( hour ).minute( 0 ).format( 'LT' ),
-					toHour: this.moment().hour( hour + 2 ).minute( 0 ).format( 'LT' )
-				}
-			}
-		);
+	handleClickEvent( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	},
 
-	renderNotificationsControlPanel() {
-		return (
-			<div>
-				<FormSectionHeading className="is-primary">
-					{ this.translate( 'Notification Emails' ) }
-				</FormSectionHeading>
+	handleFocusEvent( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	},
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( '"Like" Comments' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'comment_like_notification' ) }
-							disabled={ this.getDisabledState() }
-							id="comment_like_notification"
-							name="comment_like_notification"
-							onClick={ this.recordCheckboxEvent( 'Comment Like Notifications' ) } />
-							{ this.translate( 'Email me when someone Likes one of my comments.' ) }
-					</FormLabel>
-				</FormFieldset>
+	handleCheckboxEvent( action ) {
+		return event => {
+			const eventAction = 'Clicked ' + action + ' checkbox';
+			const optionValue = event.target.checked ? 1 : 0;
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Mentions' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'mentions_notification' ) }
-							disabled={ this.getDisabledState() }
-							id="mentions_notification"
-							name="mentions_notification"
-							onClick={ this.recordCheckboxEvent( 'Mention Notifications' ) } />
-							{ this.translate( 'Email me when someone mentions my username.' ) }
-					</FormLabel>
-				</FormFieldset>
-			</div>
-		);
+			this.props.recordGoogleEvent( 'Me', eventAction, 'checked', optionValue );
+		};
+	},
+
+	getDeliveryHourLabel( hour ) {
+		return this.props.translate( '%(fromHour)s - %(toHour)s', {
+			context: 'Hour range between which subscriptions are delivered',
+			args: {
+				fromHour: this.props
+					.moment()
+					.hour( hour )
+					.minute( 0 )
+					.format( 'LT' ),
+				toHour: this.props
+					.moment()
+					.hour( hour + 2 )
+					.minute( 0 )
+					.format( 'LT' ),
+			},
+		} );
 	},
 
 	render() {
 		return (
-			<Main className="notifications">
+			<Main className="notifications-settings">
+				<PageViewTracker
+					path="/me/notifications/subscriptions"
+					title="Me > Notifications > Subscriptions Delivery"
+				/>
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				{ config.isEnabled( 'me/notifications-control-panel' ) ? <Navigation path={ this.props.path } /> : null }
+				<Navigation path={ this.props.path } />
 
 				<Card className="me-notification-settings">
-					<form id="notification-settings" onChange={ this.markChanged } onSubmit={ this.submitForm } >
-						{ config.isEnabled( 'me/notifications-control-panel' ) ? null : this.renderNotificationsControlPanel() }
-						<FormSectionHeading>{ this.translate( 'Subscriptions Delivery' ) }</FormSectionHeading>
+					<form
+						id="notification-settings"
+						onChange={ this.props.markChanged }
+						onSubmit={ this.submitForm }
+					>
+						<FormSectionHeading>
+							{ this.props.translate( 'Subscriptions Delivery' ) }
+						</FormSectionHeading>
 						<p>
-							{ this.translate( '{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
+							{ this.props.translate(
+								'{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
 								{
 									components: {
-										readerLink: <a rel="external" href="https://wordpress.com/following/edit/" onClick={ this.recordClickEvent( 'Edit Subscriptions in Reader Link' ) } />
-									}
-								} )
-							}
+										readerLink: (
+											<a
+												href="/following/edit"
+												onClick={ this.handleClickEvent( 'Edit Subscriptions in Reader Link' ) }
+											/>
+										),
+									},
+								}
+							) }
 						</p>
 
 						<FormFieldset>
-							<FormLabel htmlFor="subscription_delivery_email_default">{ this.translate( 'Default Email Delivery' ) }</FormLabel>
+							<FormLabel htmlFor="subscription_delivery_email_default">
+								{ this.props.translate( 'Default Email Delivery' ) }
+							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
 								id="subscription_delivery_email_default"
 								name="subscription_delivery_email_default"
-								onFocus={ this.recordFocusEvent( 'Default Email Delivery' ) }
-								valueLink={ this.valueLink( 'subscription_delivery_email_default' ) } >
-								<option value="never">{ this.translate( 'Never send email' ) }</option>
-								<option value="instantly">{ this.translate( 'Send email instantly' ) }</option>
-								<option value="daily">{ this.translate( 'Send email daily' ) }</option>
-								<option value="weekly">{ this.translate( 'Send email every week' ) }</option>
+								onChange={ this.updateSetting }
+								onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
+								value={ this.getSetting( 'subscription_delivery_email_default' ) }
+							>
+								<option value="never">{ this.props.translate( 'Never send email' ) }</option>
+								<option value="instantly">
+									{ this.props.translate( 'Send email instantly' ) }
+								</option>
+								<option value="daily">{ this.props.translate( 'Send email daily' ) }</option>
+								<option value="weekly">{ this.props.translate( 'Send email every week' ) }</option>
 							</FormSelect>
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
+							<FormLegend>{ this.props.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
-									checkedLink={ this.valueLink( 'subscription_delivery_jabber_default' ) }
+									checked={ this.getSetting( 'subscription_delivery_jabber_default' ) }
 									disabled={ this.getDisabledState() }
 									id="subscription_delivery_jabber_default"
 									name="subscription_delivery_jabber_default"
-									onClick={ this.recordCheckboxEvent( 'Notification Delivery by Jabber' ) } />
-									{ this.translate( 'Default delivery via Jabber instant message' ) }
+									onChange={ this.toggleSetting }
+									onClick={ this.handleCheckboxEvent( 'Notification Delivery by Jabber' ) }
+								/>
+								<span>
+									{ this.props.translate( 'Default delivery via Jabber instant message' ) }
+								</span>
 							</FormLabel>
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="subscription_delivery_mail_option">{ this.translate( 'Email Delivery Format' ) }</FormLabel>
+							<FormLabel htmlFor="subscription_delivery_mail_option">
+								{ this.props.translate( 'Email Delivery Format' ) }
+							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
 								id="subscription_delivery_mail_option"
 								name="subscription_delivery_mail_option"
-								onFocus={ this.recordFocusEvent( 'Email Delivery Format' ) }
-								valueLink={ this.valueLink( 'subscription_delivery_mail_option' ) } >
-								<option value="html">{ this.translate( 'HTML' ) }</option>
-								<option value="text">{ this.translate( 'Plain Text' ) }</option>
+								onChange={ this.updateSetting }
+								onFocus={ this.handleFocusEvent( 'Email Delivery Format' ) }
+								value={ this.getSetting( 'subscription_delivery_mail_option' ) }
+							>
+								<option value="html">{ this.props.translate( 'HTML' ) }</option>
+								<option value="text">{ this.props.translate( 'Plain Text' ) }</option>
 							</FormSelect>
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLabel htmlFor="subscription_delivery_day">{ this.translate( 'Email Delivery Window' ) }</FormLabel>
+							<FormLabel htmlFor="subscription_delivery_day">
+								{ this.props.translate( 'Email Delivery Window' ) }
+							</FormLabel>
 							<FormSelect
 								disabled={ this.getDisabledState() }
 								className="me-notification-settings__delivery-window"
 								id="subscription_delivery_day"
 								name="subscription_delivery_day"
-								onFocus={ this.recordFocusEvent( 'Email Delivery Window Day' ) }
-								valueLink={ this.valueLink( 'subscription_delivery_day' ) } >
-								<option value="0">{ this.translate( 'Sunday' ) }</option>
-								<option value="1">{ this.translate( 'Monday' ) }</option>
-								<option value="2">{ this.translate( 'Tuesday' ) }</option>
-								<option value="3">{ this.translate( 'Wednesday' ) }</option>
-								<option value="4">{ this.translate( 'Thursday' ) }</option>
-								<option value="5">{ this.translate( 'Friday' ) }</option>
-								<option value="6">{ this.translate( 'Saturday' ) }</option>
+								onChange={ this.updateSetting }
+								onFocus={ this.handleFocusEvent( 'Email Delivery Window Day' ) }
+								value={ this.getSetting( 'subscription_delivery_day' ) }
+							>
+								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
+								<option value="1">{ this.props.translate( 'Monday' ) }</option>
+								<option value="2">{ this.props.translate( 'Tuesday' ) }</option>
+								<option value="3">{ this.props.translate( 'Wednesday' ) }</option>
+								<option value="4">{ this.props.translate( 'Thursday' ) }</option>
+								<option value="5">{ this.props.translate( 'Friday' ) }</option>
+								<option value="6">{ this.props.translate( 'Saturday' ) }</option>
 							</FormSelect>
 
 							<FormSelect
 								disabled={ this.getDisabledState() }
 								id="subscription_delivery_hour"
 								name="subscription_delivery_hour"
-								onFocus={ this.recordFocusEvent( 'Email Delivery Window Time' ) }
-								valueLink={ this.valueLink( 'subscription_delivery_hour' ) } >
+								onChange={ this.updateSetting }
+								onFocus={ this.handleFocusEvent( 'Email Delivery Window Time' ) }
+								value={ this.getSetting( 'subscription_delivery_hour' ) }
+							>
 								<option value="0">{ this.getDeliveryHourLabel( 0 ) }</option>
 								<option value="2">{ this.getDeliveryHourLabel( 2 ) }</option>
 								<option value="4">{ this.getDeliveryHourLabel( 4 ) }</option>
@@ -182,32 +210,54 @@ module.exports = React.createClass( {
 							</FormSelect>
 
 							<FormSettingExplanation>
-								{ this.translate( 'When choosing daily or weekly email delivery, which time of day would you prefer?' ) }
+								{ this.props.translate(
+									'When choosing daily or weekly email delivery, which time of day would you prefer?'
+								) }
 							</FormSettingExplanation>
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.translate( 'Block Emails' ) }</FormLegend>
+							<FormLegend>{ this.props.translate( 'Block Emails' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
-									checkedLink={ this.valueLink( 'subscription_delivery_email_blocked' ) }
+									checked={ this.getSetting( 'subscription_delivery_email_blocked' ) }
 									disabled={ this.getDisabledState() }
 									id="subscription_delivery_email_blocked"
 									name="subscription_delivery_email_blocked"
-									onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }/>
-									{ this.translate( 'Block all email updates from blogs you’re following on WordPress.com' ) }
+									onChange={ this.toggleSetting }
+									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
+								/>
+								<span>
+									{ this.props.translate(
+										'Block all email updates from blogs you’re following on WordPress.com'
+									) }
+								</span>
 							</FormLabel>
 						</FormFieldset>
 
 						<FormButton
 							isSubmitting={ this.state.submittingForm }
 							disabled={ this.getDisabledState() }
-							onClick={ this.recordClickEvent( 'Save Notification Settings Button' ) } >
-							{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Notification Settings' ) }
+							onClick={ this.handleClickEvent( 'Save Notification Settings Button' ) }
+						>
+							{ this.state.submittingForm
+								? this.props.translate( 'Saving…' )
+								: this.props.translate( 'Save Notification Settings' ) }
 						</FormButton>
 					</form>
 				</Card>
 			</Main>
 		);
-	}
+	},
 } );
+
+const connectComponent = connect(
+	null,
+	{ recordGoogleEvent }
+);
+
+export default flowRight(
+	connectComponent,
+	localize,
+	protectForm
+)( NotificationSubscriptions );

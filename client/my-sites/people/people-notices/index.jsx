@@ -1,25 +1,30 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+
+import React from 'react';
+import i18n from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var PeopleLog = require( 'lib/people/log-store' ),
-	PeopleActions = require( 'lib/people/actions' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
-	i18n = require( 'lib/mixins/i18n' );
+import PeopleLog from 'lib/people/log-store';
+import PeopleActions from 'lib/people/actions';
+import Notice from 'components/notice';
+import { getSelectedSite } from 'state/ui/selectors';
 
-let isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;
+const isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;
 
-let isSameUser = ( userId, log ) => userId && log.user && log.user.ID === userId;
+const isSameUser = ( userId, log ) => userId && log.user && log.user.ID === userId;
 
-let translateArg = ( log ) => {
-	return { user: 'string' === typeof log.user ? log.user : log.user.login }
+const translateArg = log => {
+	return { user: 'string' === typeof log.user ? log.user : log.user.login };
 };
 
-let filterBy = ( siteId, userId, log ) => {
+const filterBy = ( siteId, userId, log ) => {
 	if ( ! siteId && ! userId ) {
 		return true;
 	}
@@ -33,54 +38,79 @@ let filterBy = ( siteId, userId, log ) => {
 	return false;
 };
 
-module.exports = React.createClass( {
+const isMultisite = site => {
+	return site && site.is_multisite;
+};
 
-	displayName: 'PeopleNotices',
-
-	getInitialState() {
-		return this.getState();
-	},
+class PeopleNotices extends React.Component {
+	static displayName = 'PeopleNotices';
 
 	componentDidMount() {
 		PeopleLog.on( 'change', this.refreshNotices );
-	},
+	}
 
 	componentWillUnmount() {
 		PeopleLog.removeListener( 'change', this.refreshNotices );
-	},
+	}
 
-	getState() {
-		let siteId = this.props.siteId,
-			userId = this.props.user && this.props.user.ID;
+	getState = () => {
+		const siteId = this.props.site ? this.props.site.ID : null;
+		const userId = this.props.user ? this.props.user.ID : null;
+
 		return {
 			errors: PeopleLog.getErrors( filterBy.bind( this, siteId, userId ) ),
 			inProgress: PeopleLog.getInProgress( filterBy.bind( this, siteId, userId ) ),
-			completed: PeopleLog.getCompleted( filterBy.bind( this, siteId, userId ) )
+			completed: PeopleLog.getCompleted( filterBy.bind( this, siteId, userId ) ),
 		};
-	},
+	};
 
-	refreshNotices() {
+	refreshNotices = () => {
 		this.setState( this.getState() );
-	},
+	};
 
-	inProgressMessage() {
-		let log = this.state.inProgress[0];
+	inProgressMessage = () => {
+		const log = this.state.inProgress[ 0 ];
 		switch ( log.action ) {
 			case 'UPDATE_SITE_USER':
-				return i18n.translate( 'Updating @%(user)s', { args: translateArg( log ), context: 'In progress message while a site is performing actions on users.' } );
+				return i18n.translate( 'Updating @%(user)s', {
+					args: translateArg( log ),
+					context: 'In progress message while a site is performing actions on users.',
+				} );
 			case 'DELETE_SITE_USER':
-				return i18n.translate( 'Deleting @%(user)s', { args: translateArg( log ), context: 'In progress message while a site is performing actions on users.' } );
-		}
-	},
+				if ( isMultisite( this.props.site ) ) {
+					return i18n.translate( 'Removing @%(user)s', {
+						args: translateArg( log ),
+						context: 'In progress message while a site is performing actions on users.',
+					} );
+				}
 
-	errorMessage() {
-		let log = this.state.errors[ this.state.errors.length - 1 ];
+				return i18n.translate( 'Deleting @%(user)s', {
+					args: translateArg( log ),
+					context: 'In progress message while a site is performing actions on users.',
+				} );
+		}
+	};
+
+	errorMessage = () => {
+		const log = this.state.errors[ this.state.errors.length - 1 ];
 		switch ( log.action ) {
 			case 'RECEIVE_UPDATE_SITE_USER_FAILURE':
 				// Generic update error. Use `localStorage.setItem( 'debug', 'calypso:users:actions' ) for a more detailed error.
-				return i18n.translate( 'There was an error updating @%(user)s', { args: translateArg( log ), context: 'Error message after A site has failed to perform actions on a user.' } );
+				return i18n.translate( 'There was an error updating @%(user)s', {
+					args: translateArg( log ),
+					context: 'Error message after A site has failed to perform actions on a user.',
+				} );
 			case 'RECEIVE_DELETE_SITE_USER_FAILURE':
-				return i18n.translate( 'There was an error deleting @%(user)s', { args: translateArg( log ), context: 'Error message after A site has failed to perform actions on a user.' } );
+				if ( isMultisite( this.props.site ) ) {
+					return i18n.translate( 'There was an error removing @%(user)s', {
+						args: translateArg( log ),
+						context: 'Error message after A site has failed to perform actions on a user.',
+					} );
+				}
+				return i18n.translate( 'There was an error deleting @%(user)s', {
+					args: translateArg( log ),
+					context: 'Error message after A site has failed to perform actions on a user.',
+				} );
 			case 'RECEIVE_USERS':
 				return i18n.translate( 'There was an error retrieving users' );
 			case 'RECEIVE_FOLLOWERS':
@@ -90,30 +120,51 @@ module.exports = React.createClass( {
 			case 'RECEIVE_VIEWERS':
 				return i18n.translate( 'There was an error retrieving viewers' );
 		}
-	},
+	};
 
-	successMessage() {
-		let log = this.state.completed[ this.state.completed.length - 1 ];
+	successMessage = () => {
+		const log = this.state.completed[ this.state.completed.length - 1 ];
 		switch ( log.action ) {
 			case 'RECEIVE_UPDATE_SITE_USER_SUCCESS':
-				return i18n.translate( 'Successfully updated @%(user)s', { args: translateArg( log ), context: 'Success message after a user has been modified.' } );
+				return i18n.translate( 'Successfully updated @%(user)s', {
+					args: translateArg( log ),
+					context: 'Success message after a user has been modified.',
+				} );
 			case 'RECEIVE_DELETE_SITE_USER_SUCCESS':
-				return i18n.translate( 'Successfully deleted @%(user)s', { args: translateArg( log ), context: 'Success message after a user has been modified.' } );
+				if ( isMultisite( this.props.site ) ) {
+					return i18n.translate( 'Successfully removed @%(user)s', {
+						args: translateArg( log ),
+						context: 'Success message after a user has been modified.',
+					} );
+				}
+				return i18n.translate( 'Successfully deleted @%(user)s', {
+					args: translateArg( log ),
+					context: 'Success message after a user has been modified.',
+				} );
 		}
-	},
+	};
+
+	state = this.getState();
 
 	render() {
-		let logNotices = this.state,
-			notice = null,
+		const logNotices = this.state,
+			onDismissErrorNotice = () => {
+				PeopleActions.removePeopleNotices( logNotices.errors );
+			},
+			onDismissSuccessNotice = () => {
+				PeopleActions.removePeopleNotices( logNotices.completed );
+			};
+
+		let notice = null,
 			message;
 
 		if ( logNotices.inProgress.length > 0 ) {
 			message = this.inProgressMessage();
 			if ( message ) {
 				notice = (
-					<SimpleNotice showDismiss={ false } className="people-notice">
+					<Notice showDismiss={ false } className="people-notices__notice">
 						{ message }
-					</SimpleNotice>
+					</Notice>
 				);
 			}
 		}
@@ -121,22 +172,36 @@ module.exports = React.createClass( {
 			message = this.errorMessage();
 			if ( message ) {
 				notice = (
-					<SimpleNotice status="is-error" className="people-notice" onClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.errors ) }>
+					<Notice
+						status="is-error"
+						className="people-notices__notice"
+						onDismissClick={ onDismissErrorNotice }
+					>
 						{ message }
-					</SimpleNotice>
+					</Notice>
 				);
 			}
 		} else if ( logNotices.completed.length > 0 ) {
 			message = this.successMessage();
 			if ( message ) {
 				notice = (
-					<SimpleNotice status="is-success" className="people-notice" onClick={ PeopleActions.removePeopleNotices.bind( this, logNotices.completed ) }>
+					<Notice
+						status="is-success"
+						className="people-notices__notice"
+						onDismissClick={ onDismissSuccessNotice }
+					>
 						{ message }
-					</SimpleNotice>
+					</Notice>
 				);
 			}
 		}
 
 		return notice;
-	},
-} );
+	}
+}
+
+export default connect( state => {
+	return {
+		site: getSelectedSite( state ),
+	};
+} )( PeopleNotices );

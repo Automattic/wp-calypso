@@ -1,0 +1,114 @@
+.activity-log-banner {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-content: flex-start;
+	align-items: flex-start;
+
+	// Success!
+	&.is-success {
+		.activity-log-banner__icon {
+			background-color: $alert-green;
+		}
+	}
+
+	// Warning
+	&.is-warning {
+		.activity-log-banner__icon {
+			background-color: $alert-yellow;
+		}
+	}
+
+	// Error! OHNO!
+	&.is-error {
+		.activity-log-banner__icon {
+			background-color: $alert-red;
+		}
+	}
+
+	// General notice
+	&.is-info {
+		.activity-log-banner__icon {
+			background-color: $blue-wordpress;
+		}
+	}
+
+}
+
+.activity-log-banner__icon {
+	width: 24px;
+	height: 24px;
+	padding: 8px;
+	margin-left: -5px;
+	margin-right: 16px;
+	border-radius: 50%;
+	color: $white;
+
+	background-color: $gray;
+}
+
+.activity-log-banner__content {
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: 200px;
+}
+.activity-log-banner__title {
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+.activity-log-banner__action {
+	width: 50px;
+}
+
+.activity-log-banner__dismiss {
+	color: $gray;
+	cursor: pointer;
+	margin-top: -8px;
+	margin-right: -8px;
+}
+
+.activity-log-banner__success-gotit {
+	margin-left: 16px;
+}
+
+.activity-log-banner__progress-bar--queued.is-pulsing .progress-bar__progress {
+	$bar-color: $gray;
+	background-image: linear-gradient(
+		-45deg,
+		$bar-color 28%,
+		lighten( $bar-color, 5% ) 28%,
+		lighten( $bar-color, 5% ) 72%,
+		$bar-color 72%
+	);
+}
+
+// HappyChat button in error banner
+.button.is-primary + .activity-log-confirm-dialog__more-info-link {
+	margin-left: 16px;
+	display: inline-block;
+	vertical-align: text-top;
+}
+
+// Got it and HappyChat button in success banner
+.activity-log-banner__success-gotit {
+	margin-left: 8px;
+}
+.activity-log-banner__success-happychat {
+	margin-left: 16px;
+}
+
+.activity-log__fader {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: linear-gradient( to bottom, rgba( 243, 246, 248, 0.1 ), #f3f6f8 );
+	z-index: 179;
+	height: 15%;
+	pointer-events: none;
+}
+
+.activity-log-banner__upgrade {
+	margin-top: 1px;
+}

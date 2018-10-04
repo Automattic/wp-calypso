@@ -1,43 +1,80 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
 
-module.exports = React.createClass( {
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import classnames from 'classnames';
 
-	displayName: 'ProgressBar',
+/**
+ * Internal dependencies
+ */
+import ScreenReaderText from 'components/screen-reader-text';
 
-	getDefaultProps: function() {
-		return { total: 100 };
-	},
+export default class ProgressBar extends PureComponent {
+	static defaultProps = {
+		total: 100,
+		compact: false,
+		isPulsing: false,
+		canGoBackwards: false,
+	};
 
-	propTypes: {
-		value: React.PropTypes.number.isRequired,
-		total: React.PropTypes.number,
-		color: React.PropTypes.string,
-		title: React.PropTypes.string,
-		className: React.PropTypes.string
-	},
+	static propTypes = {
+		value: PropTypes.number.isRequired,
+		total: PropTypes.number,
+		color: PropTypes.string,
+		title: PropTypes.string,
+		compact: PropTypes.bool,
+		className: PropTypes.string,
+		isPulsing: PropTypes.bool,
+		canGoBackwards: PropTypes.bool,
+	};
 
-	renderBar: function() {
-		var styles = { width: Math.ceil( this.props.value / this.props.total * 100 ) + '%' },
-			title = this.props.title
-				? <span className="screen-reader-text">{ this.props.title }</span>
-				: null;
+	static getDerivedStateFromProps( props, state ) {
+		return {
+			allTimeMax: Math.max( state.allTimeMax, props.value ),
+		};
+	}
 
+	state = {
+		allTimeMax: this.props.value,
+	};
+
+	getCompletionPercentage() {
+		const percentage = Math.ceil(
+			( ( this.props.canGoBackwards ? this.props.value : this.state.allTimeMax ) /
+				this.props.total ) *
+				100
+		);
+
+		// The percentage should not be allowed to be more than 100
+		return Math.min( percentage, 100 );
+	}
+
+	renderBar() {
+		const title = this.props.title ? (
+			<ScreenReaderText>{ this.props.title }</ScreenReaderText>
+		) : null;
+
+		const styles = { width: this.getCompletionPercentage() + '%' };
 		if ( this.props.color ) {
 			styles.backgroundColor = this.props.color;
 		}
 
-		return <div className="progress-bar__progress" style={ styles } >{ title }</div>;
-	},
-
-	render: function() {
 		return (
-			<div className={ joinClasses( this.props.className, 'progress-bar' ) }>
-				{ this.renderBar() }
+			<div className="progress-bar__progress" style={ styles }>
+				{ title }
 			</div>
 		);
 	}
-} );
+
+	render() {
+		const classes = classnames( this.props.className, 'progress-bar', {
+			'is-compact': this.props.compact,
+			'is-pulsing': this.props.isPulsing,
+		} );
+		return <div className={ classes }>{ this.renderBar() }</div>;
+	}
+}

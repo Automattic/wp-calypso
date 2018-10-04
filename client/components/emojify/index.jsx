@@ -1,84 +1,78 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	PureRenderMixin = React.addons.PureRenderMixin,
-	punycode = require( 'punycode' );
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import classNames from 'classnames';
+import twemoji from 'twemoji';
 
-/**
- * Internal dependencies
- */
-var baseCDNUrl = '//s0.wp.com/wp-content/mu-plugins/emoji/twemoji/';
+export default class Emojify extends PureComponent {
+	static propTypes = {
+		imgClassName: PropTypes.string,
+		tagName: PropTypes.string,
+		twemojiUrl: PropTypes.string,
+	};
 
-module.exports = React.createClass( {
-	mixins: [ PureRenderMixin ],
-	propTypes: {
-		children: React.PropTypes.string.isRequired,
+	static defaultProps = {
+		imgClassName: 'emojify__emoji',
+		tagName: 'div',
+	};
 
-		 // Optional. These are dependent on your CDN.
-		size: React.PropTypes.oneOf( [
-			'16x16', '36x36', '72x72'
-		] )
-	},
+	constructor( props ) {
+		super( props );
+		this.setRef = this.setRef.bind( this );
+	}
 
-	getDefaultProps: function() {
-		return {
-			size: '36x36'
-		};
-	},
+	componentDidMount() {
+		this.parseEmoji();
+	}
 
-	isEmojiCode: function( charCode ) {
-		return (
-			( charCode >= 0x1F300 && charCode <= 0x1F5FF ) ||
-			( charCode >= 0x1F600 && charCode <= 0x1F64F ) ||
-			( charCode >= 0x1F680 && charCode <= 0x1F6FF ) ||
-			( charCode >= 0x2600 && charCode <= 0x26FF )
-		);
-	},
+	componentDidUpdate() {
+		this.parseEmoji();
+	}
 
-	emojiTransform: function( text ) {
-		var decoded,
-			entries = [];
+	setRef( component ) {
+		this.emojified = component;
+	}
 
-		if ( null === text ) {
-			return null;
-		}
+	parseEmoji = () => {
+		const { imgClassName, twemojiUrl } = this.props;
 
-		decoded = punycode.ucs2.decode( text );
+		twemoji.parse( this.emojified, {
+			base: twemojiUrl,
+			size: '72x72',
+			className: imgClassName,
+			callback: function( icon, options ) {
+				const ignored = [ 'a9', 'ae', '2122', '2194', '2660', '2663', '2665', '2666' ];
 
-		decoded.forEach( function( charCode, idx ) {
-			var hexCode,
-				lastIdx,
-				src,
-				char;
-
-			if ( this.isEmojiCode( charCode ) ) {
-
-				// emoji char encountered, insert img tag
-				hexCode = charCode.toString( 16 );
-				src = encodeURI( baseCDNUrl + this.props.size + '/' + hexCode + '.png' );
-
-				entries.push(
-					<img className="emojified__emoji" src={ src } key={ idx } alt={ 'U+' + hexCode } />
-				);
-			} else {
-				char = punycode.ucs2.encode( [ charCode ] );
-				lastIdx = entries.length - 1;
-
-				if ( typeof entries[ lastIdx ] === 'string' ) {
-					entries[ lastIdx ] += char;
-				} else {
-					entries.push( char );
+				if ( -1 !== ignored.indexOf( icon ) ) {
+					return false;
 				}
-			}
-		}, this );
 
-		return entries;
-	},
+				return ''.concat( options.base, options.size, '/', icon, options.ext );
+			},
+		} );
+	};
 
-	render: function() {
+	render() {
+		// We want other props to content everything but children, className, imgClassName, and twemojiUrl.
+		// We can't delete imgClassName and twemojiUrl despite they not being used here.
+		const {
+			children,
+			className,
+			imgClassName,
+			tagName: WrapperTagName,
+			twemojiUrl,
+			...other
+		} = this.props; // eslint-disable-line no-unused-vars
+		const classes = classNames( className, 'emojify' );
+
 		return (
-			<span>{ this.emojiTransform( this.props.children ) }</span>
+			<WrapperTagName className={ classes } ref={ this.setRef } { ...other }>
+				{ children }
+			</WrapperTagName>
 		);
 	}
-} );
+}

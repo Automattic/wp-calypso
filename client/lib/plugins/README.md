@@ -1,15 +1,15 @@
 Plugins
 =======
 
-Plugins uses a [flux](https://facebook.github.io/flux/docs/overview.html#content) approach to managing plugins data in calypso. 
+Plugins uses a [flux](https://facebook.github.io/flux/docs/overview.html#content) approach to managing plugins data in calypso.
 
 ###Plugins Store
-The Plugins Store is responsible for keeping each site's plugin list up to date. Initially it loads the data and request it as it gets updated. This store also listens to any actions relevant to keep the data up to date such as the plugin update/activate/deactivate etc. 
+The Plugins Store is responsible for keeping each site's plugin list up to date. Initially it loads the data and request it as it gets updated. This store also listens to any actions relevant to keep the data up to date such as the plugin update/activate/deactivate etc.
 
 ####The Data
 The Data that is stored in the sites plugin store looks like this:
 
-```
+```js
 {
 	123456 : { // site.ID
 		akismet : { // plugin.slug
@@ -77,59 +77,54 @@ Returns an array of sites that have a particular plugin.
 
 ####Example Component Code:
 
-```
+```es6
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginsStore = require( 'lib/plugins/store' );
+import PluginsStore 'lib/plugins/store';
 
-module.exports = React.createClass( { 
+export default class extends React.Component {
+	static displayName = 'yourComponent';
 
-	displayName: 'yourComponent',
-	
-	componentDidMount: function() {
+	state = this.getPlugins();
+
+	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
-	},
-	
-	componentWillUnmount: function() {
+	}
+
+	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
-	},
+	}
 
-	getInitialState: function() {
-		return this.getPlugins();
-	},
-	
-	getPlugins: function() {
-
-		var sites = this.props.sites.getSelectedOrAllWithPlugins();
+	getPlugins = () => { 
+		let sites = this.props.sites.getSelectedOrAllWithPlugins();
 
 		return {
 			plugins: PluginsStore.getPlugins( sites )
 		};
 	},
 
-	refreshSitesAndPlugins: function() {
+	refreshSitesAndPlugins = () => {
 		this.setState( this.getPlugins() );
 	},
-	
-	render: function() {
-		
-	}
-	
+
+	render() {
+
+	} 
 } );
 
 ```
 
 
-###Actions 
-Actions get triggered by views and stores. 
+###Actions
+Actions get triggered by views and stores.
 
-####Public methods. 
+####Public methods.
 
 Triggers api call to fetch the site data.
 
@@ -180,39 +175,29 @@ Toggle AutoUpdates for a plugin on a site.
 
 ####Example Component Code:
 
-```
+```jsx
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginsActions = require( 'lib/plugins/actions' );
+import PluginsActions from 'lib/plugins/actions';
 
-module.exports = React.createClass( { 
+export default class extends React.Component {
+	static displayName = 'yourComponent';
 
-	displayName: 'yourComponent',
-	
-	updatePlugin: function() {
+	updatePlugin = () => {
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
-	},
-	
-	render: function() {
+	}
+
+	render() {
 		return (
 			<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
 		)
-	}
-	
+	} 
 } );
 
 ```
-
-
-
-###Testing
-
-To run tests go to 
-```cd client/lib/plugins/ && make test```
-

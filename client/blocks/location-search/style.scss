@@ -1,0 +1,14 @@
+.location-search__prediction {
+	cursor: pointer;
+	&:hover {
+		color: lighten( $blue-wordpress, 5% );
+	}
+}
+
+.location-search__prediction-icon {
+	display: block;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	right: 16px;
+}

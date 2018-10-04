@@ -1,81 +1,100 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' ),
-	noop = require( 'lodash/utility/noop' );
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { localize, translate } from 'i18n-calypso';
+import classNames from 'classnames';
+import { omit, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var FormTextarea = require( 'components/forms/form-textarea' );
+import FormTextarea from 'components/forms/form-textarea';
 
-module.exports = React.createClass( {
-	displayName: 'CountedTextarea',
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-	propTypes: {
-		value: React.PropTypes.string,
-		placeholder: React.PropTypes.string,
-		countPlaceholderLength: React.PropTypes.bool,
-		onChange: React.PropTypes.func,
-		acceptableLength: React.PropTypes.number,
-		showRemainingCharacters: React.PropTypes.bool
-	},
+export class CountedTextarea extends React.Component {
+	static propTypes = {
+		value: PropTypes.string,
+		placeholder: PropTypes.string,
+		countPlaceholderLength: PropTypes.bool,
+		onChange: PropTypes.func,
+		acceptableLength: PropTypes.number,
+		showRemainingCharacters: PropTypes.bool,
+		translate: PropTypes.func,
+	};
 
-	getDefaultProps: function() {
-		return {
-			value: '',
-			placeholder: '',
-			countPlaceholderLength: false,
-			onChange: noop,
-			showRemainingCharacters: false,
-		};
-	},
+	static defaultProps = {
+		value: '',
+		placeholder: '',
+		countPlaceholderLength: false,
+		onChange: noop,
+		showRemainingCharacters: false,
+		translate,
+	};
 
-	renderCountPanel: function() {
-		var length = this.props.value.length;
-
+	renderCountPanel = () => {
+		let length = this.props.value.length;
 		if ( ! length && this.props.countPlaceholderLength ) {
 			length = this.props.placeholder.length;
 		}
 
+		let panelText;
 		if ( this.props.showRemainingCharacters && this.props.acceptableLength ) {
-			return ( <div className="counted-textarea__count-panel">
-				{ this.translate( '%d character remaining', '%d characters remaining', {
-					context: 'Input length',
-					args: [ this.props.acceptableLength - length ],
-					count: this.props.acceptableLength - length
-				} ) }
-					{ this.props.children }
-				</div>
-			);
+			panelText = this.props.translate( '%d character remaining', '%d characters remaining', {
+				context: 'Input length',
+				args: [ this.props.acceptableLength - length ],
+				count: this.props.acceptableLength - length,
+			} );
 		} else {
-			return (
-				<div className="counted-textarea__count-panel">
-					{ this.translate( '%d character', '%d characters', {
-						context: 'Input length',
-						args: [ length ],
-						count: length
-					} ) }
-					{ this.props.children }
-				</div>
-			);
+			panelText = this.props.translate( '%d character', '%d characters', {
+				context: 'Input length',
+				args: [ length ],
+				count: length,
+			} );
 		}
-	},
 
-	render: function() {
-		var classes = classNames( 'counted-textarea', this.props.className, {
-			'is-exceeding-acceptable-length': this.props.acceptableLength && this.props.value.length > this.props.acceptableLength
+		return (
+			<div className="counted-textarea__count-panel">
+				{ panelText }
+				{ this.props.children }
+			</div>
+		);
+	};
+
+	render() {
+		const classes = classNames( 'counted-textarea', this.props.className, {
+			'is-exceeding-acceptable-length':
+				this.props.acceptableLength && this.props.value.length > this.props.acceptableLength,
 		} );
 
 		return (
 			<div className={ classes }>
 				<FormTextarea
-					{ ...omit( this.props, 'className', 'acceptableLength', 'showRemainingCharacters', 'children' ) }
-					className="counted-textarea__input" />
+					{ ...omit(
+						this.props,
+						'className',
+						'acceptableLength',
+						'showRemainingCharacters',
+						'children',
+						'countPlaceholderLength',
+						'moment',
+						'numberFormat',
+						'translate'
+					) }
+					className="counted-textarea__input"
+				/>
 				{ this.renderCountPanel() }
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( CountedTextarea );

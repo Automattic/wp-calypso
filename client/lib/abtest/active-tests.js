@@ -1,57 +1,128 @@
-module.exports = {
-	statsDefaultFilter: {
-		datestamp: '20150601',
+/** @format */
+export default {
+	cartNudgeUpdateToPremium: {
+		datestamp: '20180917',
 		variations: {
-			day: 90,
-			insights: 10
+			test: 50,
+			control: 50,
 		},
-		defaultVariation: 'day'
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
-	multiDomainRegistrationV1: {
-		datestamp: '20200721',
+	springSale30PercentOff: {
+		datestamp: '20180413',
 		variations: {
-			singlePurchaseFlow: 10,
-			popupCart: 45,
-			keepSearchingInGapps: 45
+			upsell: 50,
+			control: 50,
 		},
-		defaultVariation: 'singlePurchaseFlow'
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
-	translatorInvitation: {
-		datestamp: '20150910',
+	signupAtomicStoreVsPressable: {
+		datestamp: '20171101',
 		variations: {
-			noNotice: 1,
-			startNow: 1,
-			helpUs: 1,
-			tryItNow: 1,
-			startTranslating: 1,
-			improve: 1
+			atomic: 99,
+			pressable: 1,
 		},
-		defaultVariation: 'noNotice',
-		allowAnyLocale: true
+		defaultVariation: 'atomic',
+		allowExistingUsers: true,
+		localeTargets: 'any',
 	},
-	plansPageBusinessAATest: {
-		datestamp: '20151104',
+	businessPlanDescriptionAT: {
+		datestamp: '20170605',
 		variations: {
-			originalA: 50,
-			originalB: 50
+			original: 50,
+			pluginsAndThemes: 50,
 		},
-		defaultVariation: 'originalA'
+		defaultVariation: 'original',
 	},
-	nuxTrampoline: {
-		datestamp: '20151113',
+	ATPromptOnCancel: {
+		datestamp: '20170515',
 		variations: {
-			main: 10,
-			'landing-main': 10,
-			notTested: 80
+			hide: 20,
+			show: 80,
 		},
-		defaultVariation: 'main'
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
 	},
-	businessPluginsNudge: {
-		datestamp: '20151119',
+	ATUpgradeOnCancel: {
+		datestamp: '20170515',
 		variations: {
-			drake: 50,
-			nudge: 50
+			hide: 20,
+			show: 80,
 		},
-		defaultVariation: 'drake'
+		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	skipThemesSelectionModal: {
+		datestamp: '20170904',
+		variations: {
+			skip: 50,
+			show: 50,
+		},
+		defaultVariation: 'show',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
+	jetpackSignupGoogleTop: {
+		datestamp: '20180427',
+		variations: {
+			original: 50,
+			top: 50,
+		},
+		defaultVariation: 'original',
+	},
+	includeDotBlogSubdomainV2: {
+		datestamp: '20180813',
+		variations: {
+			yes: 50,
+			no: 50,
+		},
+		defaultVariation: 'no',
+	},
+	gSuiteDiscountV2: {
+		datestamp: '20180822',
+		variations: {
+			control: 100,
+			discount: 0,
+		},
+		defaultVariation: 'control',
+	},
+	readerSearchPlaceholder: {
+		datestamp: '20180830',
+		variations: {
+			justSearch: 34,
+			nextGreatRead: 33,
+			newFavorite: 33,
+		},
+		defaultVariation: 'justSearch',
+	},
+	domainManagementSuggestionV2: {
+		datestamp: '20181001',
+		variations: {
+			domainsbot_front: 80,
+			variation_front: 20,
+		},
+		defaultVariation: 'domainsbot_front',
+		assignmentMethod: 'userId',
+		allowExistingUsers: true,
+	},
+	userFirstSignup: {
+		datestamp: '20180913',
+		variations: {
+			default: 1,
+			userFirst: 1,
+		},
+		defaultVariation: 'default',
+		allowExistingUsers: false,
+	},
+	dotBlogSuggestions: {
+		datestamp: '20181001',
+		variations: {
+			simple: 50,
+			complex: 50,
+		},
+		defaultVariation: 'simple',
+		allowExistingUsers: true,
 	},
 };

@@ -1,230 +1,416 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	omit = require( 'lodash/object/omit' );
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
+import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var PostListFetcher = require( 'components/post-list-fetcher' ),
-	Page = require( './page' ),
-	infiniteScroll = require( 'lib/mixins/infinite-scroll' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	EmptyContent = require( 'components/empty-content' ),
-	NoResults = require( 'my-sites/no-results' ),
-	actions = require( 'lib/posts/actions' ),
-	Placeholder = require( './placeholder' ),
-	mapStatus = require( 'lib/route' ).mapPostStatus,
-	config = require( 'config' );
+import ListEnd from 'components/list-end';
+import QueryPosts from 'components/data/query-posts';
+import Page from './page';
+import { preload } from 'sections-helper';
+import InfiniteScroll from 'components/infinite-scroll';
+import EmptyContent from 'components/empty-content';
+import NoResults from 'my-sites/no-results';
+import Placeholder from './placeholder';
+import { mapPostStatus as mapStatus } from 'lib/route';
+import { sortPagesHierarchically } from './helpers';
+import BlogPostsPage from './blog-posts-page';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import {
+	getPostsForQueryIgnoringPage,
+	isRequestingPostsForQuery,
+	isPostsLastPageForQuery,
+} from 'state/posts/selectors';
+import { getSite } from 'state/sites/selectors';
 
-var PageList = React.createClass( {
+function preloadEditor() {
+	preload( 'post-editor' );
+}
 
-	mixins: [ React.addons.PureRenderMixin ],
+export default class PageList extends Component {
+	static propTypes = {
+		search: PropTypes.string,
+		siteId: PropTypes.number,
+		status: PropTypes.string,
+	};
 
-	propTypes: {
-		context: React.PropTypes.object,
-		search: React.PropTypes.string,
-		sites: React.PropTypes.object,
-		statusSlug: React.PropTypes.string,
-		siteID: React.PropTypes.any
-	},
+	state = {
+		page: 1,
+	};
 
-	render: function() {
+	componentWillReceiveProps( nextProps ) {
+		if (
+			nextProps.search !== this.props.search ||
+			nextProps.siteId !== this.props.siteId ||
+			nextProps.status !== this.props.status
+		) {
+			this.resetPage();
+		}
+	}
+
+	incrementPage = () => {
+		this.setState( { page: this.state.page + 1 } );
+	};
+
+	resetPage = () => {
+		this.setState( { page: 1 } );
+	};
+
+	render() {
+		const { search, siteId, status } = this.props;
+
+		const query = {
+			page: this.state.page,
+			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			search,
+			status: mapStatus( status ),
+			type: 'page',
+		};
+
 		return (
-			<PostListFetcher
-				type="page"
-				siteID={ this.props.siteID }
-				status={ mapStatus( this.props.status ) }
-				search={ this.props.search }>
-				<Pages
-					{ ...omit( this.props, 'children' ) }
-				/>
-			</PostListFetcher>
+			<div>
+				<QueryPosts siteId={ siteId } query={ query } />
+				<ConnectedPages incrementPage={ this.incrementPage } query={ query } siteId={ siteId } />
+			</div>
 		);
 	}
-} );
+}
 
-var Pages = React.createClass({
+class Pages extends Component {
+	static propTypes = {
+		incrementPage: PropTypes.func.isRequired,
+		lastPage: PropTypes.bool,
+		loading: PropTypes.bool.isRequired,
+		page: PropTypes.number.isRequired,
+		pages: PropTypes.array.isRequired,
+		search: PropTypes.string,
+		site: PropTypes.object,
+		siteId: PropTypes.any,
+		hasSites: PropTypes.bool.isRequired,
+		trackScrollPage: PropTypes.func.isRequired,
+		query: PropTypes.object,
+	};
 
-	displayName: 'Pages',
+	static defaultProps = {
+		perPage: 100,
+		loading: false,
+		lastPage: false,
+		page: 0,
+		pages: [],
+		trackScrollPage: function() {},
+		query: {},
+	};
 
-	mixins: [ infiniteScroll( 'fetchPages' ), observe( 'sites' ) ],
+	state = {
+		pages: this.props.pages,
+		shadowItems: {},
+	};
 
-	propTypes: {
-		context: React.PropTypes.object.isRequired,
-		lastPage: React.PropTypes.bool.isRequired,
-		loading: React.PropTypes.bool.isRequired,
-		page: React.PropTypes.number.isRequired,
-		posts: React.PropTypes.array.isRequired,
-		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
-		sites: React.PropTypes.object.isRequired,
-		statusSlug: React.PropTypes.string,
-		trackScrollPage: React.PropTypes.func.isRequired
-	},
+	componentWillReceiveProps( nextProps ) {
+		if (
+			nextProps.pages !== this.props.pages &&
+			( size( this.state.shadowItems ) === 0 || ! isEqual( nextProps.query, this.props.query ) )
+		) {
+			this.setState( { pages: nextProps.pages, shadowItems: {} } );
+		}
+	}
 
-	getDefaultProps: function() {
-		return {
-			perPage: 20,
-			loading: false,
-			lastPage: false,
-			page: 0,
-			posts: [],
-			trackScrollPage: function() {}
-		};
-	},
-
-	fetchPages: function( options ) {
+	fetchPages = options => {
 		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
-		actions.fetchNextPage();
-	},
+		this.props.incrementPage();
+	};
 
-	_insertTimeMarkers: function( pages ) {
-		var markedPages = [],
-			now = this.moment(),
-			lastMarker, buildMarker;
+	_insertTimeMarkers( pages ) {
+		const markedPages = [],
+			now = this.props.moment();
+		let lastMarker;
 
-		buildMarker = function( pageDate ) {
-			pageDate = this.moment( pageDate );
-			var days = now.diff( pageDate, 'days' );
+		const buildMarker = function( pageDate ) {
+			pageDate = this.props.moment( pageDate );
+			const days = now.diff( pageDate, 'days' );
 			if ( days <= 0 ) {
-				return this.translate( 'Today' );
+				return this.props.translate( 'Today' );
 			}
 			if ( days === 1 ) {
-				return this.translate( 'Yesterday' );
+				return this.props.translate( 'Yesterday' );
 			}
 			return pageDate.from( now );
 		}.bind( this );
 
 		pages.forEach( function( page ) {
-			var date = this.moment( page.date ),
+			const date = this.props.moment( page.date ),
 				marker = buildMarker( date );
 			if ( lastMarker !== marker ) {
-				markedPages.push( <div key={ 'marker-' + date.unix() } className="page-list__header"><span className="noticon noticon-time" /> { marker } </div> );
+				markedPages.push(
+					<div key={ 'marker-' + date.unix() } className="pages__page-list-header">
+						<Gridicon icon="time" size={ 12 } /> { marker }
+					</div>
+				);
 			}
 			lastMarker = marker;
 			markedPages.push( page );
 		}, this );
 
 		return markedPages;
-	},
+	}
 
-	getNoContentMessage: function() {
-		var selectedSite = this.props.sites.getSelectedSite(),
-			attributes, newPageLink;
+	updateShadowStatus = ( globalID, shadowStatus ) =>
+		new Promise( resolve =>
+			this.setState( ( state, props ) => {
+				if ( shadowStatus ) {
+					// add or update the `globalID` key in the `shadowItems` map
+					return {
+						shadowItems: {
+							...state.shadowItems,
+							[ globalID ]: shadowStatus,
+						},
+					};
+				}
 
-		if ( this.props.search ) {
-			return <NoResults
-				image="/calypso/images/pages/illustration-pages.svg"
-				text={
-					this.translate( 'No posts match your search for {{searchTerm/}}.', {
+				// remove `globalID` from the `shadowItems` map
+				const newShadowItems = without( state.shadowItems, globalID );
+				const newState = {
+					shadowItems: newShadowItems,
+				};
+
+				// if the last shadow item just got removed, start showing the up-to-date post
+				// list as specified by props.
+				if ( size( newShadowItems ) === 0 ) {
+					newState.pages = props.pages;
+				}
+
+				return newState;
+			}, resolve )
+		);
+
+	getNoContentMessage() {
+		const { query, translate, site, siteId } = this.props;
+		const { search, status } = query;
+
+		if ( search ) {
+			return (
+				<NoResults
+					image="/calypso/images/pages/illustration-pages.svg"
+					text={ translate( 'No pages match your search for {{searchTerm/}}.', {
 						components: {
-							searchTerm: <em>{ this.props.search }</em>
-						}
-					} )	}
-			/>;
-		} else {
+							searchTerm: <em>{ search }</em>,
+						},
+					} ) }
+				/>
+			);
+		}
 
-			if ( config.isEnabled( 'post-editor/pages' ) ) {
-				newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
-			} else {
-				newPageLink = selectedSite ? '//wordpress.com/page/' + selectedSite.ID + '/new' : '//wordpress.com/page';
-			}
+		const sitePart = ( site && site.slug ) || siteId;
+		const newPageLink = siteId ? '/page/' + sitePart : '/page';
+		let attributes;
 
-			switch( this.props.statusSlug ) {
-				case 'drafts':
-					attributes = {
-						title: this.translate( 'You don\'t have any drafts.' ),
-						line: this.translate( 'Would you like to create one?' ),
-						action: this.translate( 'Start a Page' ),
-						actionURL: newPageLink
-					};
-					break;
-				case 'trashed':
-					attributes = {
-						title: this.translate( 'You don\'t have any pages in your trash folder.' ),
-						line: this.translate( 'Everything you write is solid gold.' )
-					};
-					break;
-				default:
-					attributes = {
-						title: this.translate( 'You haven\'t published any pages yet.' ),
-						line: this.translate( 'Would you like to publish your first page?' ),
-						action: this.translate( 'Start a Page' ),
-						actionURL: newPageLink
-					};
-			}
+		switch ( status ) {
+			case 'draft,pending':
+				attributes = {
+					title: translate( "You don't have any drafts." ),
+					line: translate( 'Would you like to create one?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink,
+				};
+				break;
+			case 'future':
+				attributes = {
+					title: translate( "You don't have any scheduled pages yet." ),
+					line: translate( 'Would you like to create one?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink,
+				};
+				break;
+			case 'trash':
+				attributes = {
+					title: translate( "You don't have any pages in your trash folder." ),
+					line: translate( 'Everything you write is solid gold.' ),
+				};
+				break;
+			default:
+				attributes = {
+					title: translate( "You haven't published any pages yet." ),
+					line: translate( 'Would you like to publish your first page?' ),
+					action: translate( 'Start a Page' ),
+					actionURL: newPageLink,
+				};
 		}
 
 		attributes.illustration = '/calypso/images/pages/illustration-pages.svg';
 		attributes.illustrationWidth = 150;
 
-		return <EmptyContent
-			title={ attributes.title }
-			line={ attributes.line }
-			action={ attributes.action }
-			actionURL={ attributes.actionURL }
-			illustration={ attributes.illustration }
-			illustrationWidth={ attributes.illustrationWidth }
-		/>;
-	},
+		return (
+			<EmptyContent
+				title={ attributes.title }
+				line={ attributes.line }
+				action={ attributes.action }
+				actionURL={ attributes.actionURL }
+				actionHoverCallback={ preloadEditor }
+				illustration={ attributes.illustration }
+				illustrationWidth={ attributes.illustrationWidth }
+			/>
+		);
+	}
 
-	addLoadingRows: function( rows, count ) {
-		var i;
-		for ( i = 0; i < count; i++ ) {
-			if ( i % 4 === 0) {
-				rows.push ( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
+	addLoadingRows( rows, count ) {
+		for ( let i = 0; i < count; i++ ) {
+			if ( i % 4 === 0 ) {
+				rows.push( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
 			}
-			rows.push ( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ this.props.siteID === false } /> );
+			rows.push(
+				<Placeholder.Page key={ 'placeholder-page-' + i } multisite={ ! this.props.site } />
+			);
 		}
-	},
+	}
 
-	render: function() {
-		var pages = this.props.posts,
-			rows = [];
-
-		// pages have loaded, sites have loaded, and we have a site instance or are viewing all-sites
-		if ( pages.length && this.props.sites.initialized ) {
-			if ( ! this.props.search ) {
-				// we're listing in reverse chrono. use the markers.
-				pages = this._insertTimeMarkers( pages );
-			}
-			rows = pages.map( function( page ) {
-					if ( ! ( 'site_ID' in page ) ) {
-						return page;
-					}
-					// Get the site the page belongs to
-					var site = this.props.sites.getSite( page.site_ID );
-
-					// Render each page
-					return (
-						<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
-					);
-			}, this );
-
-			if ( this.props.loading ) {
-				this.addLoadingRows( rows, 1 );
-			}
-
-		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
-			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
-		} else {
-			this.addLoadingRows( rows, 1 );
-		}
+	renderLoading() {
+		const rows = [];
+		this.addLoadingRows( rows, 1 );
 
 		return (
-			<div id="pages" className="page-list">
+			<div id="pages" className="pages__page-list">
 				{ rows }
-				{ this.props.lastPage && pages.length ? <div className="infinite-scroll-end" /> : null }
 			</div>
 		);
 	}
-});
 
-module.exports = PageList;
+	renderListEnd() {
+		return this.props.lastPage && ! this.props.loading ? <ListEnd /> : null;
+	}
+
+	renderPagesList( { pages } ) {
+		const { site, lastPage, query } = this.props;
+
+		// Pages only display hierarchically for published pages on single-sites when
+		// there are 100 or fewer pages and no more pages to load (last page).
+		// Pages are not displayed hierarchically for search.
+		const showHierarchical =
+			site &&
+			query.status === 'publish,private' &&
+			lastPage &&
+			pages.length <= 100 &&
+			! query.search;
+
+		return showHierarchical
+			? this.renderHierarchical( { pages, site } )
+			: this.renderChronological( { pages, site } );
+	}
+
+	renderHierarchical( { pages, site } ) {
+		pages = sortPagesHierarchically( pages );
+		const rows = pages.map( function( page ) {
+			return (
+				<Page
+					key={ 'page-' + page.global_ID }
+					shadowStatus={ this.state.shadowItems[ page.global_ID ] }
+					onShadowStatusChange={ this.updateShadowStatus }
+					page={ page }
+					multisite={ false }
+					hierarchical={ true }
+					hierarchyLevel={ page.indentLevel || 0 }
+				/>
+			);
+		}, this );
+
+		return (
+			<div id="pages" className="pages__page-list">
+				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				{ rows }
+				{ this.renderListEnd() }
+			</div>
+		);
+	}
+
+	renderChronological( { pages, site } ) {
+		const { search, status } = this.props.query;
+
+		if ( ! search ) {
+			// we're listing in reverse chrono. use the markers.
+			pages = this._insertTimeMarkers( pages );
+		}
+		const rows = pages.map( function( page ) {
+			if ( ! ( 'site_ID' in page ) ) {
+				return page;
+			}
+
+			// Render each page
+			return (
+				<Page
+					key={ 'page-' + page.global_ID }
+					shadowStatus={ this.state.shadowItems[ page.global_ID ] }
+					onShadowStatusChange={ this.updateShadowStatus }
+					page={ page }
+					multisite={ this.props.siteId === null }
+				/>
+			);
+		}, this );
+
+		if ( this.props.loading ) {
+			this.addLoadingRows( rows, 1 );
+		}
+
+		const showBlogPostsPage = site && status === 'publish,private' && ! search;
+
+		return (
+			<div id="pages" className="pages__page-list">
+				{ showBlogPostsPage && (
+					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				) }
+				{ rows }
+				<InfiniteScroll nextPageMethod={ this.fetchPages } />
+				{ this.renderListEnd() }
+			</div>
+		);
+	}
+
+	renderNoContent() {
+		return (
+			<div id="pages" className="pages__page-list">
+				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
+			</div>
+		);
+	}
+
+	render() {
+		const { hasSites, loading } = this.props;
+		const { pages } = this.state;
+
+		if ( pages.length && hasSites ) {
+			return this.renderPagesList( { pages } );
+		}
+
+		if ( ! loading && hasSites ) {
+			return this.renderNoContent();
+		}
+
+		return this.renderLoading();
+	}
+}
+
+const mapState = ( state, { query, siteId } ) => ( {
+	hasSites: hasInitializedSites( state ),
+	loading: isRequestingPostsForQuery( state, siteId, query ),
+	lastPage: isPostsLastPageForQuery( state, siteId, query ),
+	pages: getPostsForQueryIgnoringPage( state, siteId, query ) || [],
+	site: getSite( state, siteId ),
+} );
+
+const ConnectedPages = flowRight(
+	connect( mapState ),
+	localize
+)( Pages );

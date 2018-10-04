@@ -1,0 +1,28 @@
+@import 'my-sites/google-my-business/style';
+
+.gmb-select-business-type__explanation {
+	display: flex;
+	margin-bottom: 16px;
+
+	@include breakpoint( '<960px' ) {
+		flex-direction: column-reverse;
+	}
+}
+
+.gmb-select-business-type__explanation-main {
+	max-width: 540px;
+	flex: 2 1;
+}
+
+.gmb-select-business-type__illustration {
+	max-width: 200px;
+
+	@include breakpoint( '<960px' ) {
+		margin-bottom: 10px;
+	}
+
+	@include breakpoint( '>960px' ) {
+		margin-left: 50px;
+		max-width: 300px;
+	}
+}

@@ -1,111 +1,92 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	defer = require( 'lodash/function/defer' ),
-	pick = require( 'lodash/object/pick' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	titleCase = require( 'to-title-case' ),
-	capitalPDangit = require( 'lib/formatting' ).capitalPDangit;
+
+import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import titleCase from 'to-title-case';
+import { capitalPDangit } from 'lib/formatting';
 
 /**
  * Internal dependencies
  */
-var TransactionsHeader = require( './transactions-header' ),
-	tableRows = require( './table-rows' ),
-	eventRecorder = require( 'me/event-recorder' );
+import CompactCard from 'components/card/compact';
+import Pagination from 'components/pagination';
+import TransactionsHeader from './transactions-header';
+import { groupDomainProducts } from './utils';
+import SearchCard from 'components/search-card';
+import { setPage, setQuery } from 'state/ui/billing-transactions/actions';
+import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
+import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
 
-var TransactionsTable = React.createClass( {
-	displayName: 'TransactionsTable',
+class TransactionsTable extends React.Component {
+	static displayName = 'TransactionsTable';
 
-	mixins: [ eventRecorder ],
+	static defaultProps = {
+		header: false,
+	};
 
-	getInitialState: function() {
-		var initialTransactions;
+	onPageClick = page => {
+		this.props.setPage( this.props.transactionType, page );
+	};
 
-		if ( this.props.transactions ) {
-			initialTransactions = tableRows.filter( this.props.transactions, this.props.initialFilter );
-		}
+	onSearch = terms => {
+		this.props.setQuery( this.props.transactionType, terms );
+	};
 
-		return {
-			transactions: initialTransactions,
-			filter: this.props.initialFilter
-		};
-	},
-
-	getDefaultProps: function() {
-		return {
-			header: false
-		};
-	},
-
-	componentWillUpdate: function() {
-		if ( ! this.state.transactions ) {
-			// `defer` is necessary to prevent a React.js rendering error. It is
-			// not possible to call `this.setState` during `componentWillUpdate`, so
-			// we use `defer` to run the update on the next event loop.
-			defer( this.filterTransactions.bind( this, this.state.filter ) );
-		}
-	},
-
-	filterTransactions: function( filter ) {
-		var newFilter, newTransactions;
-
-		if ( filter.search ) {
-			// In this case the user is typing in the search box. We remove any other
-			// filter parameters besides the text we're searching for.
-			newFilter = pick( filter, 'search' );
-		} else {
-			// Otherwise, the user intends to set a new filter. When we do this, we
-			// get rid of any data from a previous search.
-			newFilter = filter;
-		}
-
-		newTransactions = tableRows.filter( this.props.transactions, newFilter );
-
-		this.setState( {
-			transactions: newTransactions,
-			filter: newFilter
-		} );
-	},
-
-	render: function() {
-		var header;
+	render() {
+		let header;
 
 		if ( false !== this.props.header ) {
-			header = <TransactionsHeader
-				onNewFilter={ this.filterTransactions }
-				transactions={ this.props.transactions }
-				filter={ this.state.filter } />;
+			header = <TransactionsHeader transactionType={ this.props.transactionType } />;
 		}
 
 		return (
-			<table className="transactions">
-				{ header }
-				<tbody>{ this.renderRows() }</tbody>
-			</table>
+			<div>
+				<SearchCard
+					placeholder={ this.props.translate( 'Search all receipts…', { textOnly: true } ) }
+					onSearch={ this.onSearch }
+				/>
+				<table className="billing-history__transactions">
+					{ header }
+					<tbody>{ this.renderRows() }</tbody>
+				</table>
+				{ this.renderPagination() }
+			</div>
 		);
-	},
+	}
 
-	serviceName: function( transaction ) {
-		var item,
-			name;
-
+	serviceName = transaction => {
 		if ( ! transaction.items ) {
-			name = this.serviceNameDescription( transaction );
-		} else if ( transaction.items.length === 1 ) {
-			item = transaction.items[ 0 ];
-			item.plan = capitalPDangit( titleCase( item.variation ) );
-			name = this.serviceNameDescription( item );
-		} else {
-			name = <strong>{ this.translate( 'Multiple items' ) }</strong>;
+			return this.serviceNameDescription( transaction );
 		}
 
-		return name;
-	},
+		const [ transactionItem, ...moreTransactionItems ] = groupDomainProducts(
+			transaction.items,
+			this.props.translate
+		);
 
-	serviceNameDescription: function( transaction ) {
-		var description;
+		if ( moreTransactionItems.length > 0 ) {
+			return <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
+		}
+
+		if ( transactionItem.product === transactionItem.variation ) {
+			return transactionItem.product;
+		}
+
+		return this.serviceNameDescription( {
+			...transactionItem,
+			plan: capitalPDangit( titleCase( transactionItem.variation ) ),
+		} );
+	};
+
+	serviceNameDescription = transaction => {
+		let description;
 		if ( transaction.domain ) {
 			description = (
 				<div>
@@ -114,46 +95,128 @@ var TransactionsTable = React.createClass( {
 				</div>
 			);
 		} else {
-			description = <strong>{ transaction.product } { transaction.plan }</strong>;
+			description = (
+				<strong>
+					{ transaction.product } { transaction.plan }
+				</strong>
+			);
 		}
 
 		return description;
-	},
+	};
 
-	renderRows: function() {
-		if ( ! this.state.transactions ) {
+	renderPlaceholder = () => {
+		return (
+			<tr className="billing-history__transaction is-placeholder">
+				<td>
+					<div className="billing-history__transaction-text" />
+				</td>
+				<td className="billing-history__trans-app">
+					<div className="billing-history__transaction-text" />
+				</td>
+				<td className="billing-history__amount">
+					<div className="billing-history__transaction-text" />
+				</td>
+			</tr>
+		);
+	};
+
+	renderPagination = () => {
+		if ( this.props.total <= this.props.pageSize ) {
+			return null;
+		}
+
+		return (
+			<CompactCard>
+				<Pagination
+					page={ this.props.page }
+					perPage={ this.props.pageSize }
+					total={ this.props.total }
+					pageClick={ this.onPageClick }
+				/>
+			</CompactCard>
+		);
+	};
+
+	renderRows = () => {
+		const { transactions, date, app, query } = this.props;
+		if ( ! transactions ) {
+			return this.renderPlaceholder();
+		}
+
+		if ( isEmpty( transactions ) ) {
+			let noResultsText;
+			if ( ! date.newest || '' !== app || '' !== query ) {
+				noResultsText = this.props.noFilterResultsText;
+			} else {
+				noResultsText = this.props.emptyTableText;
+			}
 			return (
-				<tr className="transactions__no-results">
-					<td className="no-results-cell" colSpan="3">{ this.translate( 'Loading…' ) }</td>
-				</tr>
-			);
-		} else if ( isEmpty( this.state.transactions ) ) {
-			return (
-				<tr className="transactions__no-results">
-					<td className="no-results-cell" colSpan="3">{ this.translate( 'No matching receipts found' ) }</td>
+				<tr className="billing-history__no-results">
+					<td className="billing-history__no-results-cell" colSpan="3">
+						{ noResultsText }
+					</td>
 				</tr>
 			);
 		}
 
-		return this.state.transactions.map( function( transaction ) {
-			var date = tableRows.formatDate( transaction.date );
+		return transactions.map( transaction => {
+			const transactionDate = this.props.moment( transaction.date ).format( 'll' );
 
 			return (
-				<tr key={ transaction.id } className="transaction">
-					<td className="date">{ date }</td>
-					<td className="trans-app">
-						<div className="trans-wrap">
-							<div className="service-description">
-								<div className="service-name">{ this.serviceName( transaction ) }</div>
-								{ this.props.description.call( this, transaction ) }
+				<tr key={ transaction.id } className="billing-history__transaction">
+					<td>{ transactionDate }</td>
+					<td className="billing-history__trans-app">
+						<div className="billing-history__trans-wrap">
+							<div className="billing-history__service-description">
+								<div className="billing-history__service-name">
+									{ this.serviceName( transaction ) }
+								</div>
+								{ this.props.transactionRenderer( transaction ) }
 							</div>
 						</div>
 					</td>
-					<td className="amount">{ transaction.amount }</td>
+					<td className="billing-history__amount">{ transaction.amount }</td>
 				</tr>
 			);
 		}, this );
-	}
-} );
+	};
+}
 
-module.exports = TransactionsTable;
+TransactionsTable.propTypes = {
+	//connected props
+	app: PropTypes.string,
+	date: PropTypes.object,
+	page: PropTypes.number,
+	pageSize: PropTypes.number.isRequired,
+	query: PropTypes.string.isRequired,
+	total: PropTypes.number.isRequired,
+	transactions: PropTypes.array,
+	//own props
+	transactionType: PropTypes.string.isRequired,
+	//array allows to accept the output of translate() with components in the string
+	emptyTableText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
+	noFilterResultsText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
+	transactionRenderer: PropTypes.func.isRequired,
+	header: PropTypes.bool,
+};
+
+export default connect(
+	( state, { transactionType } ) => {
+		const filteredTransactions = getFilteredBillingTransactions( state, transactionType );
+		const filter = getBillingTransactionFilters( state, transactionType );
+		return {
+			app: filter.app,
+			date: filter.date,
+			page: filter.page,
+			pageSize: filteredTransactions.pageSize,
+			query: filter.query,
+			total: filteredTransactions.total,
+			transactions: filteredTransactions.transactions,
+		};
+	},
+	{
+		setPage,
+		setQuery,
+	}
+)( localize( TransactionsTable ) );

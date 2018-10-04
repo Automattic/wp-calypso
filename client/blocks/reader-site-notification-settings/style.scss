@@ -1,0 +1,85 @@
+.reader-site-notification-settings__button {
+	color: $gray;
+
+	&:hover {
+		cursor: pointer;
+	}
+}
+
+.reader-site-notification-settings__button-label {
+	font-size: 14px;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+}
+
+.reader-site-notification-settings .gridicons-cog {
+	fill: $gray-lighten-10;
+	height: 18px;
+	position: relative;
+		top: 4px;
+		left: -4px;
+
+	@include breakpoint( "<660px" ) {
+		left: -1px;
+	}
+}
+
+.reader-popover__wrapper {
+	.segmented-control {
+		background: inherit;
+		padding: 0 12px 17px 16px;
+	}
+
+	.segmented-control__link {
+		background: $white;
+	}
+
+	.reader-site-notification-settings__popout-toggle:nth-child(2),
+	.reader-site-notification-settings__popout-toggle:nth-child(3),
+	.reader-site-notification-settings__popout-toggle:nth-child(4) {
+		display: flex;
+		justify-content: space-between;
+	}
+}
+
+.reader-site-notification-settings__popout-toggle,
+.reader-site-notification-settings__popout-instructions {
+	border-top: 1px solid $gray-lighten-20;
+	color: $gray-dark;
+	font-size: 14px;
+	padding: 10px 0 10px 15px;
+	text-align: left;
+
+	&:first-child {
+		border-top: 0;
+	}
+
+	.gridicon {
+		fill: $gray;
+		position: relative;
+			left: 3px;
+			top: 2px;
+	}
+}
+
+.reader-site-notification-settings__popout-form-toggle {
+	margin-left: 45px;
+}
+
+.reader-site-notification-settings__popout-hint,
+.reader-site-notification-settings__popout-instructions-hint {
+	color: $gray;
+	font-size: 12px;
+	margin-bottom: 0;
+}
+
+.reader-site-notification-settings__popout-hint {
+	width: 220px;
+}
+
+.reader-site-notification-settings__popout-instructions-hint {
+	margin-top: 4px;
+	width: 250px;
+}

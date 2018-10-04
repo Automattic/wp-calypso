@@ -1,12 +1,26 @@
+/** @format */
 /**
  * External dependencies
  */
-import assign from 'lodash/object/assign';
+import { assign } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from '../constants';
+import {
+	CART_COUPON_APPLY,
+	CART_COUPON_REMOVE,
+	CART_DISABLE,
+	CART_ITEM_REMOVE,
+	CART_ITEM_REPLACE,
+	CART_ITEMS_ADD,
+	CART_ON_MOBILE_SHOW,
+	CART_POPUP_CLOSE,
+	CART_POPUP_OPEN,
+	CART_PRIVACY_PROTECTION_ADD,
+	CART_PRIVACY_PROTECTION_REMOVE,
+	GOOGLE_APPS_REGISTRATION_DATA_ADD,
+} from 'lib/upgrades/action-types';
 import Dispatcher from 'dispatcher';
 import { cartItems } from 'lib/cart-values';
 
@@ -14,79 +28,110 @@ import { cartItems } from 'lib/cart-values';
 // dispatcher even though it's not used directly here
 import 'lib/cart/store';
 
-function openCartPopup( options ) {
+export function disableCart() {
+	Dispatcher.handleViewAction( { type: CART_DISABLE } );
+}
+
+export function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.OPEN_CART_POPUP,
-		options: options || {}
+		type: CART_POPUP_OPEN,
+		options: options || {},
 	} );
 }
 
-function closeCartPopup() {
+export function closeCartPopup() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CLOSE_CART_POPUP
+		type: CART_POPUP_CLOSE,
 	} );
 }
 
-function addPrivacyToAllDomains() {
+export function showCartOnMobile( show ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS
+		type: CART_ON_MOBILE_SHOW,
+		show,
 	} );
 }
 
-function removePrivacyFromAllDomains() {
+export function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.REMOVE_PRIVACY_FROM_ALL_DOMAIN_CART_ITEMS
+		type: CART_PRIVACY_PROTECTION_ADD,
 	} );
 }
 
-function addItem( cartItem ) {
-	const extra = assign( {}, cartItem.extra, {
-			context: 'calypstore'
-		} ),
-		newCartItem = assign( {}, cartItem, { extra } );
-
+export function removePrivacyFromAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.ADD_CART_ITEM,
-		cartItem: newCartItem
+		type: CART_PRIVACY_PROTECTION_REMOVE,
 	} );
 }
 
-function removeItem( cartItem ) {
+export function addItem( item ) {
+	addItems( [ item ] );
+}
+
+export function addItems( items ) {
+	const extendedItems = items.map( item => {
+		const extra = assign( {}, item.extra, {
+			context: 'calypstore',
+		} );
+		return assign( {}, item, { extra } );
+	} );
+
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.REMOVE_CART_ITEM,
-		cartItem
+		type: CART_ITEMS_ADD,
+		cartItems: extendedItems,
 	} );
 }
 
-function addDomainToCart( domainSuggestion ) {
-	addItem( cartItems.domainRegistration( {
-		domain: domainSuggestion.domain_name,
-		productSlug: domainSuggestion.product_slug
-	} ) );
-}
-
-function removeDomainFromCart( domainSuggestion ) {
-	removeItem( cartItems.domainRegistration( {
-		domain: domainSuggestion.domain_name,
-		productSlug: domainSuggestion.product_slug
-	} ) );
-}
-
-function applyCoupon( coupon ) {
+export function removeItem( item, domainsWithPlansOnly ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.APPLY_CART_COUPON,
-		coupon
+		type: CART_ITEM_REMOVE,
+		cartItem: item,
+		domainsWithPlansOnly,
 	} );
 }
 
-export {
-	addDomainToCart,
-	addItem,
-	addPrivacyToAllDomains,
-	applyCoupon,
-	closeCartPopup,
-	openCartPopup,
-	removeDomainFromCart,
-	removeItem,
-	removePrivacyFromAllDomains
-};
+export function replaceItem( oldItem, newItem ) {
+	Dispatcher.handleViewAction( {
+		type: CART_ITEM_REPLACE,
+		oldItem,
+		newItem,
+	} );
+}
+
+export function addDomainToCart( domainSuggestion ) {
+	addItem(
+		cartItems.domainRegistration( {
+			domain: domainSuggestion.domain_name,
+			productSlug: domainSuggestion.product_slug,
+		} )
+	);
+}
+
+export function addGoogleAppsRegistrationData( registrationData ) {
+	Dispatcher.handleViewAction( {
+		type: GOOGLE_APPS_REGISTRATION_DATA_ADD,
+		registrationData: registrationData,
+	} );
+}
+
+export function removeDomainFromCart( domainSuggestion ) {
+	removeItem(
+		cartItems.domainRegistration( {
+			domain: domainSuggestion.domain_name,
+			productSlug: domainSuggestion.product_slug,
+		} )
+	);
+}
+
+export function applyCoupon( coupon ) {
+	Dispatcher.handleViewAction( {
+		type: CART_COUPON_APPLY,
+		coupon,
+	} );
+}
+
+export function removeCoupon() {
+	Dispatcher.handleViewAction( {
+		type: CART_COUPON_REMOVE,
+	} );
+}

@@ -10,17 +10,16 @@ React component used to display a particular section's navigation bar. Or more t
 ## Example Usage
 
 ```js
-var SectionNav = require( 'components/section-nav' ),
-	NavTabs = require( 'components/section-nav/tabs' ),
-	NavSegmented = require( 'components/section-nav/segmented' ),
-	NavItem = require( 'components/section-nav/item' ),
-	Search = require( 'components/search' );
+import SectionNav from 'components/section-nav' );
+import NavTabs from 'components/section-nav/tabs';
+import NavSegmented from 'components/section-nav/segmented';
+import NavItem from 'components/section-nav/item';
+import Search from 'components/search';
 
-module.exports = React.createClass( {
-
+export default class extends React.Component { 
 	// ...
 
-	render: function() {
+	render() {
 		var sectionNavSelectedText = (
 			<span>
 				<span>Published</span>
@@ -36,14 +35,15 @@ module.exports = React.createClass( {
 					<NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
 					<NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
 				</NavTabs>
-				
+
 				<NavSegmented label="Author">
 					<NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
 					<NavItem path="/posts" selected={ true }>Everyone</NavItem>
 				</NavSegmented>
-				
+
 				<Search
-					pinned={ true }
+					pinned
+					fitsContainer
 					onSearch={ this.doSearch }
 					initialValue={ this.props.search }
 					placeholder="Search Published..."
@@ -53,10 +53,10 @@ module.exports = React.createClass( {
 			</SectionNav>
 		);
 	}
-} );
+}
 ```
 
-Keep in mind that every `prop` referenced in the example can and *should* be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [posts]((/client/my-sites/posts/posts-navigation.jsx)) for more working examples.
+Keep in mind that every `prop` referenced in the example can and *should* be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [post types]((/client/my-sites/post-type-filter/index.jsx)) for more working examples.
 
 ---
 

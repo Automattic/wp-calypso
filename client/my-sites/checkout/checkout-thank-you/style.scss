@@ -1,0 +1,334 @@
+.checkout-thank-you {
+	box-sizing: border-box;
+	position: static;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint( "<660px" ) {
+		background: transparent;
+		padding: 14px;
+	}
+
+	&.main {
+		max-width: 960px;
+	}
+}
+
+.checkout-thank-you__content {
+	padding: 0;
+}
+
+.checkout-thank-you__domain-registration-details-compact .purchase-detail {
+	border-radius: 0;
+	margin: 0 auto;
+
+	.purchase-detail__required-notice {
+		display: none;
+	}
+
+	&:first-child {
+		border-bottom: none;
+		border-radius: 3px 3px 0 0;
+		margin-top: 16px;
+
+		.purchase-detail__required-notice {
+			display: block;
+		}
+	}
+
+	&:last-child {
+		border-bottom: 1px solid $gray-lighten-30;
+		border-radius: 0 0 3px 3px;
+	}
+}
+
+.checkout-thank-you__domain-mapping-details, .checkout-thank-you__failed-purchases-details {
+	.purchase-detail__icon {
+		top: 30%;
+	}
+
+	.purchase-detail__text {
+		text-align: left;
+	}
+}
+
+.checkout-thank-you__domain-mapping-details-nameservers, .checkout-thank-you__failed-purchases-details-list {
+	border-left: solid 5px lighten( $gray, 25% );
+	list-style: none;
+	margin-left: 0;
+	padding-left: 15px;
+	text-align: left;
+}
+
+.checkout-thank-you__features-header {
+	color: $gray-darken-20;
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 32px;
+	margin: 48px 48px 24px 48px;
+
+	@include breakpoint( ">660px" ) {
+		box-shadow: none;
+		margin-bottom: 0;
+	}
+
+	&.is-placeholder {
+		@include placeholder( 23% );
+
+		margin-left: auto;
+		margin-right: auto;
+		width: 20%;
+	}
+}
+
+.checkout-thank-you__purchase-details-list {
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		margin: 0 24px;
+		padding-bottom: 48px;
+	}
+}
+
+// Header subcomponent styles
+.checkout-thank-you__header {
+	position: relative;
+	color: $gray-text-min;
+	padding: 12px 24px 48px;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		padding-bottom: 72px;
+	}
+}
+.checkout-thank-you__header::before {
+	content: '';
+	position: absolute;
+	top: -1px;
+	left: 0;
+	width: 100%;
+	border-top: 1px solid #fff;
+}
+
+.checkout-thank-you__header-content {
+	margin: 0 auto;
+	max-width: 700px;
+}
+
+.checkout-thank-you__header-icon {
+	display: block;
+	margin: 0 auto;
+	position: relative;
+	width: 132px;
+	height: 132px;
+}
+
+.checkout-thank-you__header-copy {
+	width: 100%;
+}
+
+.checkout-thank-you__header-heading,
+.checkout-thank-you__header-text {
+	clear: none;
+}
+
+.checkout-thank-you__header-button {
+	margin: 2em 0;
+}
+
+.checkout-thank-you__header-heading {
+	font-size: 24px;
+	font-weight: 400;
+	margin: 24px 0 8px 0;
+}
+
+.checkout-thank-you__header-text {
+	font-size: 18px;
+	font-weight: 300;
+}
+
+.checkout-thank-you__header.is-placeholder {
+	@include breakpoint( "<660px" ) {
+		padding-top: 170px;
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding-left: 190px;
+	}
+
+	.checkout-thank-you__header-icon {
+		display: none;
+	}
+
+	.checkout-thank-you__header-heading,
+	.checkout-thank-you__header-text {
+		@include placeholder( 23% );
+
+		display: block;
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 auto;
+		}
+	}
+
+	.checkout-thank-you__header-heading {
+		width: 50%;
+
+		@include breakpoint( "<660px" ) {
+
+		}
+	}
+
+	.checkout-thank-you__header-text {
+		line-height: 2em;
+		margin-bottom: 8px;
+		margin-top: 15px;
+		width: 90%;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 18px;
+			margin-top: 18px;
+		}
+	}
+}
+
+// Footer Subcomponent styles
+.checkout-thank-you__footer {
+	font-size: 16px;
+	padding: 32px 20px;
+	text-align: left;
+
+	@include breakpoint( ">660px" ) {
+		padding: 60px 24px;
+	}
+
+	.happiness-support {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 634px;
+	}
+}
+
+.checkout-thank-you__verification-notice {
+	width: 100%;
+	max-width: 500px;
+	text-align: left;
+	margin: 0 auto;
+}
+
+.checkout-thank-you__verification-notice-email {
+	word-break: break-word;
+}
+
+// Jetpack thank you styles
+.checkout-thank-you__jetpack {
+	max-width: 500px;
+	margin: 0 auto;
+
+	&.is-errored .thank-you-card__description {
+		margin-bottom: 0;
+	}
+}
+
+.checkout-thank-you__jetpack-plugins {
+	margin: 0 auto;
+}
+
+.checkout-thank-you__jetpack-features {
+	display: inline-block;
+	margin: 0 auto;
+}
+
+.checkout-thank-you__jetpack-feature {
+	display: flex;
+	margin-bottom: 4px;
+
+	&.is-placeholder {
+		@include placeholder();
+	}
+}
+
+.checkout-thank-you__jetpack-feature-status-icon {
+	align-items: center;
+	display: flex;
+	margin-right: 8px;
+	width: 18px;
+}
+
+.checkout-thank-you__jetpack-feature-status-text {
+	font-size: 16px;
+	text-align: left;
+}
+
+.checkout-thank-you__jetpack-feature.with-error .checkout-thank-you__jetpack-feature-status-text {
+	color: $gray-text-min;
+}
+
+.checkout-thank-you__jetpack-feature-status-icon .spinner,
+.checkout-thank-you__jetpack-feature-status-icon .spinner__image {
+	display: inline;
+}
+
+.checkout-thank-you__jetpack-feature-status-icon .gridicons-notice-outline {
+	color: $alert-red;
+}
+
+.checkout-thank-you__jetpack {
+	&.is-personal-plan {
+		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
+			color: $alert-yellow;
+		}
+	}
+
+	&.is-premium-plan {
+		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
+			color: $alert-green;
+		}
+	}
+
+	&.is-business-plan {
+		.checkout-thank-you__jetpack-feature-status-icon .gridicons-checkmark {
+			color: $alert-purple;
+		}
+	}
+}
+
+.checkout-thank-you__jetpack .button.thank-you-card__button {
+	font-weight: inherit;
+}
+
+.checkout-thank-you__jetpack-error-card {
+	text-align: left;
+}
+
+.checkout-thank-you__jetpack-error-heading {
+	font-size: 21px;
+	font-weight: 300;
+	line-height: 32px;
+	margin-top: 0;
+}
+
+.checkout-thank-you__jetpack-error-explanation {
+	color: $gray-text-min;
+	font-size: 14px;
+	font-style: italic;
+	font-weight: 400;
+}
+
+.checkout-thank-you__jetpack-description-in-actions a {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.checkout-thank-you__jetpack-action-buttons {
+	display:flex;
+}
+
+.checkout-thank-you__jetpack .thank-you-card__action .button {
+	max-width: 45%;
+}
+
+.checkout-thank-you .checkout-thank-you__gsuite-support-link {
+	color: inherit;
+	text-decoration: underline;
+}

@@ -1,0 +1,67 @@
+.twitter-share-preview {
+	background-color: $white;
+	border: 1px solid #e6ecf0;
+	color: #14171a;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.375;
+	margin: 0 auto;
+	max-width: 565px;
+	padding: 12px;
+}
+
+.twitter-share-preview__content {
+	display: flex;
+}
+
+.twitter-share-preview__profile-picture-part {
+	flex: 0 0 48px;
+	margin: 3px 10px 0 0;
+	width: 48px;
+}
+
+.twitter-share-preview__profile-picture {
+	border-radius: 5px;
+	display: block;
+}
+
+.twitter-share-preview__profile-name {
+	color: #14171a;
+	font-weight: bold;
+	margin-right: 5px;
+
+	&:hover {
+		color: #0084B4;
+		text-decoration: underline;
+	}
+}
+
+.twitter-share-preview__profile-handle {
+	color: #657786;
+	font-size: 13px;
+}
+
+.twitter-share-preview__message,
+.twitter-share-preview__article-url {
+	font-size: 16px;
+	line-height: 22px;
+}
+
+.twitter-share-preview__message a,
+.twitter-share-preview__article-url {
+	color: #0084B4;
+}
+
+.twitter-share-preview__article-url-line {
+	word-break: break-word;
+}
+
+.twitter-share-preview__image-wrapper {
+	margin-top: 10px;
+}
+
+.twitter-share-preview__image {
+	border: 1px solid rgba(0,0,0,0.1);
+	border-radius: 5px;
+	display: block;
+}

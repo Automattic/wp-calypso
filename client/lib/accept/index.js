@@ -1,19 +1,24 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import ReactDom from 'react-dom';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var AcceptDialog = require( './dialog' );
+import AcceptDialog from './dialog';
 
-module.exports = function( message, callback, confirmButtonText, cancelButtonText ) {
-	var wrapper = document.createElement( 'div' );
+export default function( message, callback, confirmButtonText, cancelButtonText, options ) {
+	let wrapper = document.createElement( 'div' );
 	document.body.appendChild( wrapper );
 
 	function onClose( result ) {
 		if ( wrapper ) {
+			ReactDom.unmountComponentAtNode( wrapper );
 			document.body.removeChild( wrapper );
 			wrapper = null;
 		}
@@ -23,13 +28,14 @@ module.exports = function( message, callback, confirmButtonText, cancelButtonTex
 		}
 	}
 
-	React.render(
+	ReactDom.render(
 		React.createElement( AcceptDialog, {
 			message: message,
 			onClose: onClose,
 			confirmButtonText: confirmButtonText,
 			cancelButtonText: cancelButtonText,
+			options,
 		} ),
 		wrapper
 	);
-};
+}

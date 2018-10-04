@@ -1,83 +1,89 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
+import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormFieldset from 'components/forms/form-fieldset';
+import AuthCodeButton from './auth-code-button';
+import AuthStore from 'lib/oauth-store';
+import config from 'config';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'notices/notice';
-import AuthStore from 'lib/oauth-store';
-import * as AuthActions from 'lib/oauth-store/actions';
-import eventRecorder from 'me/event-recorder';
-import Gridicon from 'components/gridicon';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormTextInput from 'components/forms/form-text-input';
+import LostPassword from './lost-password';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import SelfHostedInstructions from './self-hosted-instructions';
 import WordPressLogo from 'components/wordpress-logo';
+import { login } from 'lib/oauth-store/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-const LostPassword = React.createClass( {
-	render: function() {
-		return (
-			<p className="auth__lost-password">
-				<a href="https://wordpress.com/wp-login.php?action=lostpassword" target="_blank">
-					{ this.translate( 'Lost your password?' ) }
-				</a>
-			</p>
-        );
-	}
-} );
+export class Auth extends Component {
+	state = {
+		login: '',
+		password: '',
+		auth_code: '',
+		...AuthStore.get(),
+	};
 
-module.exports = React.createClass( {
-	displayName: 'Auth',
-
-	mixins: [ React.addons.LinkedStateMixin, eventRecorder ],
-
-	componentDidMount: function() {
+	componentDidMount() {
 		AuthStore.on( 'change', this.refreshData );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		AuthStore.off( 'change', this.refreshData );
-	},
+	}
 
-	refreshData: function() {
+	getClickHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+
+	getFocusHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+
+	refreshData = () => {
 		this.setState( AuthStore.get() );
-	},
+	};
 
-	componentDidUpdate() {
+	focusInput = input => {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
-			this.refs.auth_code.getDOMNode().focus();
+			input.focus();
 		}
-	},
+	};
 
-	getInitialState: function() {
-		return Object.assign( {
-			login: '',
-			password: '',
-			auth_code: ''
-		}, AuthStore.get() );
-	},
-
-	submitForm: function( event ) {
+	submitForm = event => {
 		event.preventDefault();
 		event.stopPropagation();
 
-		AuthActions.login( this.state.login, this.state.password, this.state.auth_code );
-	},
+		login( this.state.login, this.state.password, this.state.auth_code );
+	};
 
-	hasLoginDetails: function() {
+	toggleSelfHostedInstructions = () => {
+		const isShowing = ! this.state.showInstructions;
+		this.setState( { showInstructions: isShowing } );
+	};
+
+	handleChange = event => {
+		const { name, value } = event.currentTarget;
+
+		this.setState( { [ name ]: value } );
+	};
+
+	hasLoginDetails() {
 		if ( this.state.login === '' || this.state.password === '' ) {
 			return false;
 		}
 
 		return true;
-	},
+	}
 
-	canSubmitForm: function() {
+	canSubmitForm() {
 		// No submission until the ajax has finished
 		if ( this.state.inProgress ) {
 			return false;
@@ -90,67 +96,101 @@ module.exports = React.createClass( {
 
 		// Don't allow submission until username+password is entered
 		return this.hasLoginDetails();
-	},
+	}
 
-	render: function() {
-		const { requires2fa, inProgress, errorMessage, errorLevel } = this.state;
+	render() {
+		const { translate } = this.props;
+		const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
 		return (
-			<Main className="auth is-full">
-				<WordPressLogo />
-				<form className="auth__form" onSubmit={ this.submitForm }>
-					<FormFieldset>
-						<div className="auth__input-wrapper">
-							<Gridicon icon="user"/>
-							<FormTextInput
-								name="login"
-								ref="login"
-								disabled={ requires2fa || inProgress }
-								placeholder={ this.translate( 'Username or email address' ) }
-								onFocus={ this.recordFocusEvent( 'Username or email address' ) }
-								valueLink={ this.linkState( 'login' ) } />
-						</div>
-						<div className="auth__input-wrapper">
-							<Gridicon icon="lock" />
-							<FormPasswordInput
-								name="password"
-								ref="password"
-								disabled={ requires2fa || inProgress }
-								placeholder={ this.translate( 'Password' ) }
-								onFocus={ this.recordFocusEvent( 'Password' ) }
-								hideToggle={ requires2fa }
-								submitting={ inProgress }
-								valueLink={ this.linkState( 'password' ) } />
-						</div>
-						{ requires2fa &&
-							<FormFieldset>
+			<Main className="auth">
+				<div className="auth__content">
+					<WordPressLogo />
+					<form className="auth__form" onSubmit={ this.submitForm }>
+						<FormFieldset>
+							<div className="auth__input-wrapper">
+								<Gridicon icon="user" />
 								<FormTextInput
-									name="auth_code"
-									type="number"
-									ref="auth_code"
-									disabled={ inProgress }
-									placeholder={ this.translate( 'Verification code' ) }
-									onFocus={ this.recordFocusEvent( 'Verification code' ) }
-									valueLink={ this.linkState( 'auth_code' ) } />
-							</FormFieldset>
-						}
-					</FormFieldset>
-					<FormButtonsBar>
-						<FormButton disabled={ ! this.canSubmitForm() } onClick={ this.recordClickEvent( 'Sign in' ) } >
-							{ requires2fa ? this.translate( 'Verify' ) : this.translate( 'Sign in' ) }
-						</FormButton>
-					</FormButtonsBar>
-					{ ! requires2fa && <LostPassword /> }
-					{ errorMessage && <Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } /> }
-				</form>
-				<a className="auth__help" target="_blank" title={ this.translate( 'Visit the WordPress.com support site for help' ) } href="https://en.support.wordpress.com/">
-					<Gridicon icon="help" />
-				</a>
-				<div className="auth__links">
-					<a href="https://jetpack.me/support/site-management/" target="_blank">{ this.translate( 'Add self-hosted site' ) }</a>
-					<a href="https://wordpress.com/signup" target="_blank">{ this.translate( 'Create account' ) }</a>
+									name="login"
+									disabled={ requires2fa || inProgress }
+									placeholder={ translate( 'Email address or username' ) }
+									onFocus={ this.getFocusHandler( 'Username or email address' ) }
+									value={ this.state.login }
+									onChange={ this.handleChange }
+								/>
+							</div>
+							<div className="auth__input-wrapper">
+								<Gridicon icon="lock" />
+								<FormPasswordInput
+									name="password"
+									disabled={ requires2fa || inProgress }
+									placeholder={ translate( 'Password' ) }
+									onFocus={ this.getFocusHandler( 'Password' ) }
+									hideToggle={ requires2fa }
+									submitting={ inProgress }
+									value={ this.state.password }
+									onChange={ this.handleChange }
+								/>
+							</div>
+							{ requires2fa && (
+								<FormFieldset>
+									<FormTextInput
+										autoComplete="off"
+										name="auth_code"
+										type="tel"
+										ref={ this.focusInput }
+										disabled={ inProgress }
+										placeholder={ translate( 'Verification code' ) }
+										onFocus={ this.getFocusHandler( 'Verification code' ) }
+										value={ this.state.auth_code }
+										onChange={ this.handleChange }
+									/>
+								</FormFieldset>
+							) }
+						</FormFieldset>
+						<FormButtonsBar>
+							<FormButton
+								disabled={ ! this.canSubmitForm() }
+								onClick={ this.getClickHandler( 'Sign in' ) }
+							>
+								{ requires2fa ? translate( 'Verify' ) : translate( 'Sign in' ) }
+							</FormButton>
+						</FormButtonsBar>
+						{ ! requires2fa && <LostPassword /> }
+						{ errorMessage && (
+							<Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } />
+						) }
+						{ requires2fa && (
+							<AuthCodeButton username={ this.state.login } password={ this.state.password } />
+						) }
+					</form>
+					<a
+						className="auth__help"
+						target="_blank"
+						rel="noopener noreferrer"
+						title={ translate( 'Visit the WordPress.com support site for help' ) }
+						href="https://en.support.wordpress.com/"
+					>
+						<Gridicon icon="help" />
+					</a>
+					<div className="auth__links">
+						<a href="#" onClick={ this.toggleSelfHostedInstructions }>
+							{ translate( 'Add self-hosted site' ) }
+						</a>
+						<a href={ config( 'signup_url' ) }>{ translate( 'Create account' ) }</a>
+					</div>
+					{ showInstructions && (
+						<SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } />
+					) }
 				</div>
 			</Main>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( localize( Auth ) );

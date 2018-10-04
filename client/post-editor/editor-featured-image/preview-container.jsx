@@ -1,52 +1,52 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import defer from 'lodash/function/defer';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
-import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
 
-export default React.createClass( {
-	displayName: 'EditorFeaturedImagePreviewContainer',
+export default class extends React.Component {
+	static displayName = 'EditorFeaturedImagePreviewContainer';
 
-	propTypes: {
+	static propTypes = {
 		siteId: PropTypes.number.isRequired,
-		itemId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string
-		] ).isRequired,
-		maxWidth: PropTypes.number
-	},
+		itemId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ).isRequired,
+		maxWidth: PropTypes.number,
+		onImageChange: PropTypes.func,
+		showEditIcon: PropTypes.bool,
+	};
 
-	getInitialState: function() {
-		return {
-			image: null
-		};
-	},
+	state = {
+		image: null,
+	};
 
 	componentDidMount() {
 		this.fetchImage();
 		MediaStore.on( 'change', this.updateImageState );
-	},
+	}
 
 	componentDidUpdate( prevProps ) {
 		const { siteId, itemId } = this.props;
 		if ( siteId !== prevProps.siteId || itemId !== prevProps.itemId ) {
 			this.fetchImage();
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		MediaStore.off( 'change', this.updateImageState );
-	},
+	}
 
-	fetchImage() {
+	fetchImage = () => {
 		// We may not necessarily need to trigger a network request if we
 		// already have the data for the media item, so first update the state
 		this.updateImageState( () => {
@@ -58,9 +58,9 @@ export default React.createClass( {
 				MediaActions.fetch( this.props.siteId, this.props.itemId );
 			} );
 		} );
-	},
+	};
 
-	updateImageState( callback ) {
+	updateImageState = callback => {
 		const image = MediaStore.get( this.props.siteId, this.props.itemId );
 		this.setState( { image }, () => {
 			if ( 'function' === typeof callback ) {
@@ -69,19 +69,19 @@ export default React.createClass( {
 		} );
 
 		defer( () => {
-			if ( image && image.ID !== this.props.itemId ) {
-				PostActions.edit( {
-					featured_image: image.ID
-				} );
+			if ( this.props.onImageChange && image && image.ID ) {
+				this.props.onImageChange( image.ID );
 			}
 		} );
-	},
+	};
 
 	render() {
 		return (
 			<EditorFeaturedImagePreview
 				image={ this.state.image }
-				maxWidth={ this.props.maxWidth } />
+				maxWidth={ this.props.maxWidth }
+				showEditIcon
+			/>
 		);
 	}
-} );
+}

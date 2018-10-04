@@ -1,4 +1,5 @@
-module.exports = {
+/** @format */
+export default {
 	ID: 95327318,
 	URL: 'https://restapiusertests.wordpress.com',
 	canUpdateFiles: true,
@@ -27,5 +28,5 @@ module.exports = {
 	jp_version: '3.6',
 	user_can_manage: true,
 	visible: true,
-	wpcom_url: 'restapiusertests.wordpress.com'
+	wpcom_url: 'restapiusertests.wordpress.com',
 };

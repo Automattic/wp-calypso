@@ -1,0 +1,11 @@
+.loading-placeholder {
+	button, input, select {
+		@include placeholder(23%);
+		cursor: default;
+		pointer-events: none;
+	}
+}
+
+.loading-placeholder__content {
+	@include placeholder(23%);
+}

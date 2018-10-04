@@ -1,0 +1,36 @@
+/** @format */
+
+.product-purchase-features-list {
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+}
+
+.product-purchase-features-list__item {
+	page-break-inside: avoid; // For Firefox
+	break-inside: avoid-column; // For IE
+	-webkit-column-break-inside: avoid; // For others
+
+	padding-top: 12px;
+	max-width: 150%;
+
+	@include breakpoint( '>1040px' ) {
+		max-width: 49.5%;
+	}
+}
+
+.product-purchase-features-list__item .purchase-detail,
+.product-purchase-features-list__item .happiness-support {
+	background-color: $white;
+	border-radius: 0;
+	margin: 0;
+}
+
+.product-purchase-features-list__item .happiness-support {
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+	box-sizing: border-box;
+	color: $gray-text-min;
+	padding: 32px;
+}

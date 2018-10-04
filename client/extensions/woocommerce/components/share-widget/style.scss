@@ -1,0 +1,57 @@
+.share-widget__container {
+	@include breakpoint( ">660px" ) {
+		padding-top: 48px;
+	}
+
+	ul.share-widget__services {
+		list-style-type: none;
+		margin: 0 auto;
+		max-width: 480px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+
+		li.share-widget__service {
+			margin: 0 4px;
+
+			a {
+				transition: transform ease-in-out .15s;
+				display: block;
+
+				&:hover {
+					transform: translateY( -4px );
+				}
+			}
+		}
+	}
+
+	img {
+		max-width: 600px;
+	}
+}
+
+.share-widget__service .social-logo {
+	&.facebook {
+		color: $color-facebook;
+	}
+
+	&.twitter {
+		color: $color-twitter;
+	}
+
+	&.google-plus {
+		color: $color-gplus;
+	}
+
+	&.linkedin {
+		color: $color-linkedin;
+	}
+
+	&.tumblr {
+		color: $color-tumblr;
+	}
+
+	&.pinterest {
+		color: $color-pinterest;
+	}
+}

@@ -1,8 +1,14 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:stats-data:local-list' ),
-	store = require( 'store' );
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:stats-data:local-list' );
+import store from 'store';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +34,6 @@ function StatsDataLocalList( options ) {
 	return this;
 }
 
-
 /**
  * Get the data from localStorage
  *
@@ -36,7 +41,7 @@ function StatsDataLocalList( options ) {
  * @api public
  */
 StatsDataLocalList.prototype.getData = function() {
-	var localStoreData = store.get( this.localStoreKey ) || [];
+	const localStoreData = store.get( this.localStoreKey ) || [];
 	return localStoreData;
 };
 
@@ -60,13 +65,13 @@ StatsDataLocalList.prototype.clear = function() {
  * @api public
  */
 StatsDataLocalList.prototype.set = function( key, value ) {
-	var record = { key: key, createdAt: new Date().getTime(), data: value },
+	let record = { key: key, createdAt: new Date().getTime(), data: value },
 		localData = this.getData(),
 		newLocalData;
 
 	debug( 'storing data locally ' + key, value );
 	newLocalData = localData.filter( function( cachedRecord ) {
-		return cachedRecord && ( cachedRecord.key !== key );
+		return cachedRecord && cachedRecord.key !== key;
 	} );
 
 	newLocalData.push( record );
@@ -80,7 +85,6 @@ StatsDataLocalList.prototype.set = function( key, value ) {
 	return record;
 };
 
-
 /**
  * Finds 'value' for the 'key' in localStorage
  *
@@ -89,21 +93,10 @@ StatsDataLocalList.prototype.set = function( key, value ) {
  * @api public
  */
 StatsDataLocalList.prototype.find = function( key ) {
-	var matchedRecord;
-
-	matchedRecord = this.getData().filter( function( cachedRecord ) {
-		return cachedRecord && ( cachedRecord.key === key );
-	} );
-
-	if ( matchedRecord.length > 0  ) {
-		debug( 'found local record for ' + key , matchedRecord[ 0 ] );
-		return matchedRecord[ 0 ];
-	} else {
-		return false;
-	}
+	return find( this.getData(), { key } ) || false;
 };
 
 /**
  * Expose `StatsDataLocalList`
  */
-module.exports = StatsDataLocalList;
+export default StatsDataLocalList;

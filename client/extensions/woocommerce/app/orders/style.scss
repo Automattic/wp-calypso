@@ -1,0 +1,54 @@
+.orders__container {
+	thead {
+		.table-row {
+			&:hover {
+				background: transparent;
+			}
+		}
+	}
+
+	.table-row {
+		&:hover {
+			background: lighten( $gray, 35% );
+		}
+
+		&.orders__status-processing {
+			background: lighten( $blue-light, 25% );
+
+			&:hover {
+				background: lighten( $blue-light, 24% );
+			}
+		}
+	}
+
+	.orders__row-placeholder span {
+		display: inline-block;
+		width: 75%;
+		@include placeholder();
+	}
+
+	.search,
+	.search .search__open-icon {
+		z-index: initial;
+	}
+}
+
+.orders__item-link,
+.orders__item-name {
+	display: inline-block;
+	font-weight: normal;
+	color: $blue-wordpress;
+}
+
+.orders__item-link {
+	margin-right: 5px;
+}
+
+.orders__table-total {
+	text-align: right;
+}
+
+.orders__table-old-total {
+	text-decoration: line-through;
+	color: $gray-text-min;
+}

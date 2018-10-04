@@ -8,14 +8,14 @@ MediaValidationData is a React component intended to be used as a controller-vie
 Wrap a child component with `<MediaValidationData />`, passing a `siteId`. [As a controller-view](https://facebook.github.io/flux/docs/overview.html#views-and-controller-views), MediaValidationData does not render any content of its own; instead, it simply renders the child component.
 
 ```jsx
-var React = require( 'react' ),
-	MediaValidationData = require( 'components/data/media-validation-data' ),
-	MyChildComponent = require( './my-child-component' );
+import React from 'react';
+import MediaValidationData from 'components/data/media-validation-data';
+import MyChildComponent from './my-child-component';
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+export default class extends React.Component {
+	static displayName = 'MyComponent';
 
-	render: function() {
+	render() {
 		return (
 			<MediaValidationData siteId={ this.props.siteId }>
 				<MyChildComponent />

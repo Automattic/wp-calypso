@@ -1,58 +1,71 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	Clipboard = require( 'clipboard' ),
-	omit = require( 'lodash/object/omit' ),
-	noop = require( 'lodash/utility/noop' ),
-	classNames = require( 'classnames' );
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import ReactDom from 'react-dom';
+import Clipboard from 'clipboard';
+import { omit, noop } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Button = require( 'components/button' );
+import Button from 'components/button';
 
-module.exports = React.createClass( {
-	displayName: 'ClipboardButton',
+class ClipboardButton extends React.Component {
+	static propTypes = {
+		className: PropTypes.string,
+		text: PropTypes.string,
+		onCopy: PropTypes.func,
+		// from localize()
+		moment: PropTypes.func,
+		numberFormat: PropTypes.func,
+		translate: PropTypes.func,
+	};
 
-	propTypes: {
-		className: React.PropTypes.string,
-		text: React.PropTypes.string,
-		onCopy: React.PropTypes.func
-	},
+	static defaultProps = {
+		onCopy: noop,
+	};
 
-	getDefaultProps: function() {
-		return {
-			onCopy: noop
-		};
-	},
+	buttonReference = React.createRef();
 
-	componentDidMount: function() {
-		var button = React.findDOMNode( this.refs.button );
+	componentDidMount() {
+		const button = ReactDom.findDOMNode( this.buttonReference.current );
 		this.clipboard = new Clipboard( button, {
-			text: () => this.props.text
+			text: () => this.props.text,
 		} );
 		this.clipboard.on( 'success', this.props.onCopy );
 		this.clipboard.on( 'error', this.displayPrompt );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this.clipboard.destroy();
 		delete this.clipboard;
-	},
+	}
 
-	displayPrompt: function() {
-		window.prompt( this.translate( 'Highlight and copy the following text to your clipboard:' ), this.props.text );
-	},
+	displayPrompt = () => {
+		window.prompt(
+			this.props.translate( 'Highlight and copy the following text to your clipboard:' ),
+			this.props.text
+		);
+	};
 
-	render: function() {
-		var classes = classNames( 'clipboard-button', this.props.className );
+	render() {
+		const classes = classNames( 'clipboard-button', this.props.className );
 
 		return (
 			<Button
-				ref="button"
+				ref={ this.buttonReference }
 				{ ...omit( this.props, Object.keys( this.constructor.propTypes ) ) }
-				className={ classes } />
+				className={ classes }
+			/>
 		);
 	}
-} );
+}
+
+export default localize( ClipboardButton );

@@ -1,0 +1,52 @@
+/** @format */
+
+/**
+ * Internal dependencies
+ */
+import {
+	READER_CONVERSATION_FOLLOW,
+	READER_CONVERSATION_MUTE,
+	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+} from 'state/action-types';
+import {
+	followConversation,
+	muteConversation,
+	updateConversationFollowStatus,
+} from 'state/reader/conversations/actions';
+import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
+
+describe( 'actions', () => {
+	describe( '#followConversation', () => {
+		test( 'should return an action when a conversation is followed', () => {
+			const action = followConversation( { siteId: 123, postId: 456 } );
+			expect( action ).toEqual( {
+				type: READER_CONVERSATION_FOLLOW,
+				payload: { siteId: 123, postId: 456 },
+			} );
+		} );
+	} );
+
+	describe( '#muteConversation', () => {
+		test( 'should return an action when a conversation is muted', () => {
+			const action = muteConversation( { siteId: 123, postId: 456 } );
+			expect( action ).toEqual( {
+				type: READER_CONVERSATION_MUTE,
+				payload: { siteId: 123, postId: 456 },
+			} );
+		} );
+	} );
+
+	describe( '#updateConversationFollowStatus', () => {
+		test( 'should return an action when a conversation follow status is updated', () => {
+			const action = updateConversationFollowStatus( {
+				siteId: 123,
+				postId: 456,
+				followStatus: CONVERSATION_FOLLOW_STATUS.muting,
+			} );
+			expect( action ).toEqual( {
+				type: READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+				payload: { siteId: 123, postId: 456, followStatus: CONVERSATION_FOLLOW_STATUS.muting },
+			} );
+		} );
+	} );
+} );

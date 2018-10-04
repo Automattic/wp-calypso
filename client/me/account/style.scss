@@ -11,15 +11,34 @@
 	opacity: 1;
 }
 
-.account__username-form-toggle-leave {
+.account__username-form-toggle-exit {
 	opacity: 1;
 	transition: opacity .01s ease-in;
 }
 
-.account__username-form-toggle-leave-active {
+.account__username-form-toggle-exit-active {
 	opacity: 0.01;
 }
 
 .account__settings-form select {
 	width: 100%;
+}
+
+/* Account close */
+.account__close-section-title {
+	margin-bottom: 4px;
+	font-size: 14px;
+	line-height: 18px;
+	color: $gray-dark;
+
+	&.is-warning {
+		color: $alert-red;
+	}
+}
+
+.account__close-section-desc {
+	margin-bottom: 0;
+	font-size: 13px;
+	color: $gray-text-min;
+	font-style: italic;
 }

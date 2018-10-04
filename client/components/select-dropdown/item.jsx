@@ -1,33 +1,44 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var Count = require( 'components/count' );
+import Count from 'components/count';
+import TranslatableString from 'components/translatable/proptype';
 
-var SelectDropdownItem = React.createClass( {
-	propTypes: {
-		children: React.PropTypes.string.isRequired,
-		path: React.PropTypes.string,
-		selected: React.PropTypes.bool,
-		onClick: React.PropTypes.func,
-		count: React.PropTypes.number
-	},
+class SelectDropdownItem extends Component {
+	static propTypes = {
+		children: TranslatableString.isRequired,
+		compactCount: PropTypes.bool,
+		path: PropTypes.string,
+		isDropdownOpen: PropTypes.bool,
+		selected: PropTypes.bool,
+		onClick: PropTypes.func,
+		count: PropTypes.number,
+		disabled: PropTypes.bool,
+		icon: PropTypes.element,
+	};
 
-	getDefaultProps: function() {
-		return {
-			selected: false
-		};
-	},
+	static defaultProps = {
+		isDropdownOpen: false,
+		selected: false,
+	};
 
-	render: function() {
-		var optionClassName = classNames( {
+	render() {
+		const optionClassName = classNames( this.props.className, {
 			'select-dropdown__item': true,
-			'is-selected': this.props.selected
+			'is-selected': this.props.selected,
+			'is-disabled': this.props.disabled,
+			'has-icon': !! this.props.icon,
 		} );
 
 		return (
@@ -36,23 +47,26 @@ var SelectDropdownItem = React.createClass( {
 					ref="itemLink"
 					href={ this.props.path }
 					className={ optionClassName }
-					onClick={ this.props.onClick }
+					onClick={ this.props.disabled ? null : this.props.onClick }
 					data-bold-text={ this.props.value || this.props.children }
 					role="menuitem"
-					tabIndex={ 0 }
+					tabIndex={ this.props.isDropdownOpen ? 0 : '' }
 					aria-selected={ this.props.selected }
+					data-e2e-title={ this.props.e2eTitle }
 				>
 					<span className="select-dropdown__item-text">
+						{ this.props.icon && this.props.icon.type === Gridicon ? this.props.icon : null }
 						{ this.props.children }
-						{
-							'number' === typeof this.props.count &&
-							<Count count={ this.props.count } />
-						}
 					</span>
+					{ 'number' === typeof this.props.count && (
+						<span data-text={ this.props.count } className="select-dropdown__item-count">
+							<Count count={ this.props.count } compact={ this.props.compactCount } />
+						</span>
+					) }
 				</a>
 			</li>
 		);
 	}
-} );
+}
 
-module.exports = SelectDropdownItem;
+export default SelectDropdownItem;

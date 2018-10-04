@@ -1,42 +1,65 @@
-.domain-product-price {
-	color: darken( $gray, 10% );
-	display: inline-block;
-	font-size: 17px;
-	font-weight: 600;
+/** @format */
 
-	@include breakpoint( ">660px" ) {
-		min-width: 125px
+.domain-product-price {
+	color: $gray-darken-30;
+	font-weight: 600;
+	line-height: 1;
+
+	@include breakpoint( '>660px' ) {
+		align-items: center;
+		display: flex;
+		flex: 0 2 360px;
+		font-size: 17px;
+		justify-content: flex-end;
+		padding-right: 2em;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
+		display: inline-block;
 		font-size: 14px;
 	}
 
 	.map-domain-step & {
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			padding-bottom: 5px;
 		}
 	}
 
 	small {
 		font-weight: 400;
-		opacity: .6;
+		opacity: 0.6;
+	}
+
+	&.domain-product-price__is-with-plans-only {
+		font-weight: 400;
+		font-size: 0.9em;
+	}
+
+	.domain-product-price__premium-text {
+		cursor: pointer;
 	}
 
 	.domain-product-price__free-text {
-		color: $alert-green;
+		color: $gray-darken-30;
 		display: block;
-		font-size: 11px;
-		text-transform: uppercase;
+		font-size: 14px;
+		font-weight: 400;
+
+		@include breakpoint( '>660px' ) {
+			margin-left: 14px;
+		}
+	}
+
+	&.no-price .domain-product-price__free-text {
+		@include breakpoint( '>660px' ) {
+			margin-left: 0;
+		}
 	}
 
 	&.is-free-domain {
-		display: block;
 		font-size: 13px;
-
-		@include breakpoint( ">960px" ) {
-			margin-top: -6px;
-		}
+		line-height: 1.7;
+		margin-top: 2px;
 
 		small {
 			font-size: 100%;
@@ -44,19 +67,25 @@
 		}
 
 		.domain-product-price__price {
-			opacity: .6;
+			opacity: 0.6;
 			text-decoration: line-through;
+		}
+
+		@include breakpoint( '>660px' ) {
+			font-size: 16px;
+			line-height: 1.5;
+			margin-top: 0;
 		}
 	}
 
 	.is-placeholder & {
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: none;
 		}
 
-		@include breakpoint( "<660px" ) {
+		@include breakpoint( '<660px' ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			color: transparent;
 		}
 	}

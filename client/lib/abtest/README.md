@@ -11,7 +11,7 @@ Turn on debugging in the JavaScript developer console to view details about what
 
 In `active-tests.js`, add your test info to the exported object:
 
-```
+```js
 module.exports = {
 	freeTrialButtonWording: {
 		datestamp: '20150216',
@@ -26,31 +26,32 @@ module.exports = {
 
 You should include the following information:
 
-* `datestamp` - The YYYMMDD date you want to start tracking the results of the test. If you deploy to production prior to this date, the `abtest` function (see below) will return the value you set for `defaultVariation` and won't track the results.
+* `datestamp` - The YYYMMDD date you want to start tracking the results of the test. If you deploy to production prior to this date, the `abtest` function (see below) will return the any stored variation (which makes for easier testing) or the value you set for `defaultVariation` and won't track the results.
 * `variations` - An object where the keys are the variation names and the values are the allocations. The variation names should be descriptive (don't use `variationA`, `original`, etc). The allocations (50/50) are how you want those variations to be allocated to users. For example, you could also do 90/10 if you want one variation to be shown to only 10% of users. 90/10 is the same as 9/1. If you had three variations you could do 1/1/1 to show each variation one third of the time.
 * `defaultVariation` - The variation to assign users who are not eligible to participate in the test. See the "Dealing with ineligible users" section below for more information.
 
 There are also several optional configuration settings available:
 
-* `excludeJetpackSites` - A/B tests run where a Jetpack site is selected will not be eligible for the test. Default is false (Jetpack sites are eligible).
-* `excludeSitesWithPaidPlan` - A/B tests run on sites with a paid plan is selected will not be eligible for the test. Default is false (sites with paid plans are eligible).
-* `allowAnyLocale` - Relaxes the locale restraint on the A/B test, allowing users of any locale to be allocated to a test.  Don't forget: this means strings will need to be translated.
+* `localeTargets` - By default, tests only run on users where the locale is set to English. You can also run for all locales by setting `localeTargets` to 'any', or to an array of a specific locale or locales  `localeTargets: ['de']`
+Don't forget: any test that runs for locales other than English means strings will need to be translated.
+* `countryCodeTargets` - (array) Only run tests for users from specific countries. You'll need to pass the current user country to the abtest method when calling it.
+* `assignmentMethod` - By default, test variations are assigned using a random number generator. You can also assign test variations using the 'userId'. Using the userId to assign test variations will still assign a random assignment; however, it ensures the user is assigned the same assignment in the event their local storage gets cleared or is compromised. This includes cases where they manually clear their local storage, use multiple devices, or use an incognito window (storageless browser). This assignment method should not be used if a user does not have a userId by the time the AB test starts.
 
-Next, in your code, require the `abtest` module's `abtest` method:
+Next, in your code, import the `abtest` method from the `abtest` module:
 
-```js
-var abtest = require( 'lib/abtest' ).abtest;
+```es6
+import { abtest } from 'lib/abtest';
 ```
 
-The exported `abtest` method takes a test name and returns one of the variations you defined in the config file.
+The exported `abtest` method takes a test name (and optional country code) and returns one of the variations you defined in the config file.
 
-Here's how you would use it:
+Here's how you would use it to vary the text attribute of a button:
 
-```
-var buttonWording;
+```jsx
+let buttonWording;
 
 if ( abtest( 'freeTrialButtonWording' ) === 'startFreeTrial' ) {
-    buttonWording = this.translate( 'Start Free Trial', { textOnly: true } );
+    buttonWording = translate( 'Start Free Trial' );
 } else {
     // Note: Don't make this translatable because it's only visible to English-language users
     buttonWording = 'Begin Your Free Trial';
@@ -61,21 +62,35 @@ if ( abtest( 'freeTrialButtonWording' ) === 'startFreeTrial' ) {
 
 You should keep the translation comment to make it clear to people reading the code why the string is not translated.
 
-When this code runs the first time, we'll fire a `calypso_abtest_start` Tracks event with two properties: `abtest_name` and `abtest_variation`. This information is used by Tracks to help you analyze the impact of your test.
+When this code runs the first time, we'll fire a `calypso_abtest_start` Tracks event with two properties: `abtest_name` and `abtest_variation`. This information is used by Tracks to help you analyze the impact of your test. For logged-in users, this event is fired via POST request to the `/me/abtest` endpoint and can be seen in a browser's network tab. For logged-out users, this event is fired via the [analytics.tracks.recordEvent method](https://github.com/Automattic/wp-calypso/tree/master/client/lib/analytics#tracks-api) and can be seen by watching the `calypso:analytics` string via [the debug module](https://github.com/Automattic/wp-calypso/blob/master/.github/CONTRIBUTING.md#debugging). The event is fired when there is no variant stored for a given test in localStorage. So you can trigger the event again by removing the record from localStorage.
 
-Also, the user's variation is saved in local storage. You can see this in Chrome's dev tools by going to Resources > Local Storage > Calypso URL and viewing the `ABTests` key. If you'd like to force a specific variation while testing, you can simply change the value for your particular test then reload the page. In the example above, you'd change the value for `freeTrialButtonWording_20150216` to either `startFreeTrial` or `beginYourFreeTrial`.
+Also, the user's variation is saved in local storage. You can see this in Chrome's dev tools by going to Application > Local Storage > Calypso URL and viewing the `ABTests` key. If you'd like to force a specific variation while testing, you can simply change the value for your particular test then reload the page. In the example above, you'd change the value for `freeTrialButtonWording_20150216` to either `startFreeTrial` or `beginYourFreeTrial`.
+
+Here's another example with country targeting:
+```jsx
+const userCountryCode = requestGeoLocation().data;
+let buttonWording;
+
+if ( abtest( 'freeTrialButtonWordingForIndia', userCountryCode ) === 'startFreeTrial' ) {
+    buttonWording = translate( 'India Special: Start Free Trial' );
+} else {
+   buttonWording = translate( 'Start Free Trial' );
+}
+
+<Button text={ buttonWording } />
+```
 
 ## Determining whether the user is a participant in an A/B test
 
-If you want to determine whether the user is a participant in a specific A/B test, you can require the `abtest` module's `getABTestVariation` method:
+If you want to determine whether the user is a participant in a specific A/B test, you can import the `abtest` module's `getABTestVariation` method:
 
-```
-var getABTestVariation = require( 'lib/abtest' ).getABTestVariation;
+```es6
+import { getABTestVariation } from 'lib/abtest';
 
 // ...
 
 // currentVariation will either be the variation or null if the user is not participating in the test
-var currentVariation = getABTestVariation( 'freeTrialButtonWording' );
+const currentVariation = getABTestVariation( 'freeTrialButtonWording' );
 ```
 
 This is useful when your A/B test affects multiple pages and you just want to check on one page whether the user is a participant without assigning them to the test.
@@ -84,11 +99,11 @@ This is useful when your A/B test affects multiple pages and you just want to ch
 
 If you would like to manually add yourself to a variant group to test it out visually, you can do so by modifying the `localStorage` setting for the test.  For the example above, to add yourself to the `beginYourFreeTrial` group you would execute:
 
-```
+```es6
 // localStorage values are comprised of:
-// localStorage.setItem('ABTests','{"<testObjectKey>_<datestamp>":"<variationName>"}')
+// localStorage.setItem( 'ABTests', '{"<testObjectKey>_<datestamp>":"<variationName>"}' );
 
-localStorage.setItem('ABTests','{"freeTrialButtonWording_20150216":"beginYourFreeTrial"}')
+localStorage.setItem( 'ABTests', '{"freeTrialButtonWording_20150216":"beginYourFreeTrial"}' );
 ```
 
 The key used in the `ABTests` object above is comprised object key name from the test config object ( In our example `freeTrialButtonWording` ), followed by the `datestamp` of the test start date ( `20150216` in the example ).
@@ -97,7 +112,7 @@ The key used in the `ABTests` object above is comprised object key name from the
 
 When you set up an A/B test, think about what you want to measure its impact on. For example, if you run a test within the NUX flow you might want to measure its impact on how many people successfully sign up for an account. We call this the _conversion event_.
 
-You should make sure that the conversion event is being record in Tracks prior to deploying your A/B test. To create a new event, see the Tracks API section in the [Analytics README](https://wpcalypso.wordpress.com/devdocs/client/analytics/README.md).
+You should make sure that the conversion event is being record in Tracks prior to deploying your A/B test. To create a new event, see the Tracks API section in the [Analytics README](../analytics/README.md).
 
 ## Ensuring users don't participate in future tests
 
@@ -109,10 +124,65 @@ To account for this, the A/B test module is smart enough to know that if the use
 
 ## Dealing with ineligible users
 
-By default, users are only included in the test if their locale is set to English (`en`), the current date is on or after the datestamp you set, and they have not participated in a test with the same name in the past.
-
-The locale restriction can be relaxed by adding `allowAnyLocale: true` to the test configuration.
+By default, users are only included in the test if their locale is set to English (`en`), the current date is on or after the datestamp you set, they have not participated in a test with the same name in the past, and they registered on or after the date that the test started.
 
 In cases where the user is ineligible, the `abtest` function will return the value for `defaultVariation` value that you specify in the config file. This value should be one of the variations contained in `variations`.
 
 No `calypso_abtest_start` Tracks event is triggered for these users so they don't impact the results of the test.
+
+## Updating our end-to-end tests to avoid inconsistencies with A/B tests
+
+Our WordPress.com end-to-end (e2e) tests need to know which A/B test group to use otherwise this can lead to non-deterministic and inconsistent behaviour and test results.
+
+### Updating known A/B tests and overrides in the e2e tests
+
+Every time you add a new A/B test to Calypso you must update the [e2e tests repository](https://github.com/Automattic/wp-e2e-tests/) with that A/B test and optionally set an override of behaviour.
+
+For example, if you were adding:
+
+In `active-tests.js`:
+
+```js
+module.exports = {
+	freeTrialButtonWording: {
+		datestamp: '20150216',
+		variations: {
+			startFreeTrial: 50,
+			beginYourFreeTrial: 50
+		},
+		defaultVariation: 'startFreeTrial'
+	}
+};
+```
+
+If your change was purely cosmetic, e.g. a text label or color change that doesn't affect functionality, you would only need to update [config/default.json](https://github.com/Automattic/wp-e2e-tests/blob/master/config/default.json) to include:
+
+```js
+"knownABTestKeys": [
+   "freeTrialButtonWording"
+ ]
+ ```
+
+ This lets our e2e tests know this A/B test exists, but doesn't set or override any of the behavior, so e2e test users will be assigned to groups in the same way as anyone else.
+
+ If your change was functional, e.g. adding a new signup step, you would need to update `knownABTestKeys` and _also_ add an override to the same file:
+
+```js
+ "overrideABTests": [
+  [ "freeTrialButtonWording_201502160", "startFreeTrial" ]
+ ]
+```
+
+This ensures that all e2e test users are in the specified group so that behavior remains the same and consistent across all e2e test runs. Ideally you should aim to put the e2e tests in the most common (>50%) group, or in the default (existing) behavior.
+
+*Note:* You should add this change to the e2e tests _before_ merging your wp-calypso change - it doesn't matter if the A/B test doesn't exist in wp-calypso yet when merging the e2e test change.
+
+### Changing a known A/B test
+
+If you're making an update to an A/B test - changing the date for example - you should update the e2e tests in the same way as above to reflect the new date.
+
+### Removing a known A/B test
+
+When your A/B test is complete and removed from `wp-calypso` you should also remove it from the e2e test config. This doesn't have to happen _immediately_ (it doesn't matter to override an A/B test that doesn't exist) but you should do it as soon as possible to keep things neat and tidy.
+
+If your A/B test was successful and ***you're making permanent functional changes***, you should make permanent updates to the e2e tests to take into account these new functional changes. Speak to Flow Patrol if you need help.

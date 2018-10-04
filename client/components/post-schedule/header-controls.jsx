@@ -1,28 +1,28 @@
-/**
- * External Dependencies
- */
-import React from 'react';
+/** @format */
 
 /**
- * Internal dependencies
+ * External dependencies
  */
-import Gridicon from 'components/gridicon';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Globals
  */
-var noop = () => {};
+const noop = () => {};
 
-export default React.createClass( {
-	propTypes: {
-		onYearChange: React.PropTypes.func
-	},
+export default class extends React.Component {
+	static displayName = 'PostScheduleHeaderControls';
 
-	getDefaultProps() {
-		return {
-			onYearChange: noop
-		};
-	},
+	static propTypes = {
+		onYearChange: PropTypes.func,
+	};
+
+	static defaultProps = {
+		onYearChange: noop,
+	};
 
 	render() {
 		return (
@@ -47,4 +47,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}

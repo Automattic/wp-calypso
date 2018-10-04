@@ -1,93 +1,137 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
 
-module.exports = React.createClass( {
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
-	displayName: 'PostRelativeTime',
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'gridicons';
 
-	mixins: [ React.addons.PureRenderMixin ],
+class PostRelativeTime extends React.PureComponent {
+	static displayName = 'PostRelativeTime';
 
-	propTypes: {
-		post: React.PropTypes.object.isRequired,
-		includeNonDraftStatuses: React.PropTypes.bool,
-		link: React.PropTypes.string,
-		target: React.PropTypes.string
-	},
+	static propTypes = {
+		post: PropTypes.object.isRequired,
+		includeNonDraftStatuses: PropTypes.bool,
+		link: PropTypes.string,
+		target: PropTypes.string,
+		gridiconSize: PropTypes.number,
+	};
 
-	getDefaultProps: function() {
-		return {
-			includeNonDraftStatuses: false,
-			link: null,
-			target: null
-		};
-	},
+	static defaultProps = {
+		includeNonDraftStatuses: false,
+		link: null,
+		target: null,
+	};
 
-	getRelativeTimeText: function() {
-		var status = this.props.post.status,
-			time, timeReference;
+	getTimestamp = () => {
+		const status = this.props.post.status;
 
+		let time;
 		if ( status === 'draft' || status === 'pending' ) {
 			time = this.props.post.modified;
-			timeReference = ( <small>{ this.translate( ' (last-modified)' ) }</small> );
 		} else if ( status !== 'new' ) {
 			time = this.props.post.date;
-			timeReference = null;
 		}
 
+		return time;
+	};
+
+	getRelativeTimeText = () => {
+		const time = this.getTimestamp();
 		if ( ! time ) {
-			return null;
+			return;
 		}
 
-		return ( <span className="time"><span className="noticon noticon-time"></span><span className="time-text">{ this.moment( time ).fromNow() }</span>{ timeReference }</span> );
-	},
+		return (
+			<span className="post-relative-time-status__time">
+				<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+				<time className="post-relative-time-status__time-text" dateTime={ time }>
+					{ this.props.moment( time ).fromNow() }
+				</time>
+			</span>
+		);
+	};
 
-	getStatusText: function() {
-		var status = this.props.post.status,
-			statusClassName = 'status',
+	getStatusText = () => {
+		let status = this.props.post.status,
+			statusClassName = 'post-relative-time-status__status',
+			statusIcon = 'aside',
 			statusText;
 
 		if ( this.props.post.sticky ) {
-			statusText = this.translate( 'sticky' );
+			statusText = this.props.translate( 'sticky' );
 			statusClassName += ' is-sticky';
+			statusIcon = 'bookmark-outline';
 		} else if ( status === 'pending' ) {
-			statusText = this.translate( 'pending review' );
+			statusText = this.props.translate( 'pending review' );
 			statusClassName += ' is-pending';
 		} else if ( status === 'future' ) {
-			statusText = this.translate( 'scheduled' );
+			statusText = this.props.translate( 'scheduled' );
 			statusClassName += ' is-scheduled';
+			statusIcon = 'calendar';
 		} else if ( status === 'trash' ) {
-			statusText = this.translate( 'trashed' );
+			statusText = this.props.translate( 'trashed' );
 			statusClassName += ' is-trash';
+			statusIcon = 'trash';
 		} else if ( this.props.includeBasicStatus ) {
 			if ( status === 'draft' ) {
-				statusText = this.translate( 'draft' );
+				statusText = this.props.translate( 'draft' );
 			} else if ( status === 'publish' ) {
-				statusText = this.translate( 'published' );
+				statusText = this.props.translate( 'published' );
 			} else if ( status === 'new' ) {
-				statusText = this.translate( 'Publish immediately' );
+				statusText = this.props.translate( 'Publish immediately' );
 			}
 		}
 
 		if ( statusText ) {
-			return ( <span className={ statusClassName }><span className="noticon noticon-document"></span><span className="status-text">{ statusText }</span></span> );
+			return (
+				<span className={ statusClassName }>
+					<Gridicon icon={ statusIcon } size={ this.props.gridiconSize || 18 } />
+					<span className="post-relative-time-status__status-text">{ statusText }</span>
+				</span>
+			);
 		}
-	},
+	};
 
-	render: function() {
-		var timeText = this.getRelativeTimeText(),
+	render() {
+		let timeText = this.getRelativeTimeText(),
 			statusText = this.getStatusText(),
-			realtiveTimeClass = ( timeText ) ? 'post-relative-time-status' : null,
-			innerText = ( <span>{ timeText }{ statusText }</span> ),
-			details;
+			relativeTimeClass = timeText ? 'post-relative-time-status' : null,
+			innerText = (
+				<span>
+					{ timeText }
+					{ statusText }
+				</span>
+			),
+			time = this.getTimestamp();
 
 		if ( this.props.link ) {
-			details = ( <p className={ realtiveTimeClass }><a href={ this.props.link } target={ this.props.target } onClick={ this.props.onClick }>{ innerText }</a></p> );
-		} else {
-			details = ( <p className={ realtiveTimeClass }>{ innerText }</p> );
+			const rel = this.props.target === '_blank' ? 'noopener noreferrer' : null;
+			innerText = (
+				<a
+					href={ this.props.link }
+					target={ this.props.target }
+					rel={ rel }
+					onClick={ this.props.onClick }
+				>
+					{ innerText }
+				</a>
+			);
 		}
 
-		return details;
+		return (
+			<p className={ relativeTimeClass } title={ time }>
+				{ innerText }
+			</p>
+		);
 	}
-} );
+}
+
+export default localize( PostRelativeTime );

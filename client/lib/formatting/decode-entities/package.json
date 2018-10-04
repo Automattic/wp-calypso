@@ -1,0 +1,7 @@
+{
+  "name": "decode",
+  "version": "1.0.0",
+  "description": "Decode HTML entities",
+  "main": "node.js",
+  "browser": "browser.js"
+}

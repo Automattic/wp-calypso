@@ -1,6 +1,8 @@
 Data Change
 ===========
 
+**This is deprecated! Please use Redux instead. Refer to the [docs on data handling](/docs/our-approach-to-data.md).**
+
 A React mixin that makes it easy to trigger re-rendering of a component when a `prop` emits a `change` event.
 
 
@@ -8,9 +10,10 @@ A React mixin that makes it easy to trigger re-rendering of a component when a `
 
 
 ```js
-var observe = require( 'lib/mixins/data-observe' );
+import observe from 'lib/mixins/data-observe';
+import createReactClass from 'create-react-class';
 
-var Component = React.createClass({
+const Component = createReactClass({
 	mixins: [ observe( 'sites', 'user' ) ]
 });
 ```

@@ -1,136 +1,102 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	get = require( 'lodash/object/get' ),
-	includes = require( 'lodash/collection/includes' ),
-	pluck = require( 'lodash/collection/pluck' ),
-	classNames = require( 'classnames' );
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import { connect } from 'react-redux';
+import { includes, map } from 'lodash';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var PublicizeMessage = require( './publicize-message' ),
-	PublicizeServices = require( './publicize-services' ),
-	paths = require( 'lib/paths' ),
-	PostMetadata = require( 'lib/post-metadata' ),
-	PopupMonitor = require( 'lib/popup-monitor' ),
-	AddNewButton = require( 'components/add-new-button' ),
-	siteUtils = require( 'lib/site/utils' ),
-	Gridicon = require( 'components/gridicon' ),
-	stats = require( 'lib/posts/stats' );
+import QueryPostTypes from 'components/data/query-post-types';
+import PublicizeMessage from './publicize-message';
+import PublicizeServices from './publicize-services';
+import { publicizeConnections } from 'lib/paths';
+import PostMetadata from 'lib/post-metadata';
+import PopupMonitor from 'lib/popup-monitor';
+import Button from 'components/button';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
+import { updatePostMetadata } from 'state/posts/actions';
 
-module.exports = React.createClass( {
-	displayName: 'EditorSharingPublicizeOptions',
-	connectionPopupMonitor: false,
-	jetpackModulePopupMonitor: false,
+class EditorSharingPublicizeOptions extends React.Component {
+	static propTypes = {
+		site: PropTypes.object,
+		post: PropTypes.object,
+		siteId: PropTypes.number,
+		isPublicizeEnabled: PropTypes.bool,
+		connections: PropTypes.array,
+		requestConnections: PropTypes.func,
+	};
 
-	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		connections: React.PropTypes.array,
-		fetchConnections: React.PropTypes.func
-	},
+	connectionPopupMonitor = false;
 
-	getDefaultProps() {
-		return {
-			fetchConnections: () => {}
-		};
-	},
-
-	hasConnections: function() {
+	hasConnections = () => {
 		return this.props.connections && this.props.connections.length;
-	},
+	};
 
 	componentWillUnmount() {
 		if ( this.connectionPopupMonitor ) {
 			this.connectionPopupMonitor.off( 'close', this.onNewConnectionPopupClosed );
 		}
+	}
 
-		if ( this.jetpackModulePopupMonitor ) {
-			this.jetpackModulePopupMonitor.off( 'close', this.onModuleConnectionPopupClosed );
-		}
-	},
-
-	newConnectionPopup: function() {
-		let href;
-
+	newConnectionPopup = () => {
 		if ( ! this.props.site ) {
 			return;
 		}
 
-		href = paths.publicizeConnections( this.props.site );
+		const href = publicizeConnections( this.props.site );
 
 		if ( ! this.connectionPopupMonitor ) {
 			this.connectionPopupMonitor = new PopupMonitor();
 		}
 
 		this.connectionPopupMonitor.open( href );
-		this.connectionPopupMonitor.once( 'close', this.props.fetchConnections );
-	},
+		this.connectionPopupMonitor.once( 'close', this.onNewConnectionPopupClosed );
+	};
 
-	newConnection: function() {
+	onNewConnectionPopupClosed = () => {
+		this.props.requestConnections( this.props.site.ID );
+	};
+
+	newConnection = () => {
 		this.newConnectionPopup();
-		stats.recordStat( 'sharing_create_service' );
-		stats.recordEvent( 'Opened Create New Sharing Service Dialog' );
-	},
+		this.props.recordEditorStat( 'sharing_create_service' );
+		this.props.recordEditorEvent( 'Opened Create New Sharing Service Dialog' );
+	};
 
-	jetpackModulePopup: function() {
-		let href;
-
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
-			return;
-		}
-
-		href = paths.jetpackModules( this.props.site, 'publicize' );
-
-		if ( ! this.jetpackModulePopupMonitor ) {
-			this.jetpackModulePopupMonitor = new PopupMonitor();
-		}
-
-		this.jetpackModulePopupMonitor.open( href );
-		this.jetpackModulePopupMonitor.once( 'close', this.onModuleConnectionPopupClosed );
-	},
-
-	onModuleConnectionPopupClosed: function() {
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
-			return;
-		}
-
-		this.props.site.fetchModules();
-
-		// Refresh the list of connections so that the user is given the latest
-		// possible state.  Also prevents a possible infinite loading state due
-		// to connections previously returning a 400 error
-		this.props.site.once( 'change', () => {
-			if ( this.props.site.isModuleActive( 'publicize' ) ) {
-				this.props.fetchConnections();
-			}
-		} );
-	},
-
-	renderServices: function() {
+	renderServices = () => {
 		if ( ! this.props.site || ! this.hasConnections() ) {
 			return;
 		}
 
-		return (
-			<PublicizeServices
-				post={ this.props.post }
-				siteId={ this.props.site.ID }
-				connections={ this.props.connections }
-				newConnectionPopup={ this.newConnectionPopup } />
-		);
-	},
+		return <PublicizeServices newConnectionPopup={ this.newConnectionPopup } />;
+	};
 
-	renderMessage: function() {
-		var preview = get( this.props.post, 'title' ),
-			skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
-			targeted = this.hasConnections() ? this.props.connections.filter( function( connection ) {
-				return skipped && -1 === skipped.indexOf( connection.keyring_connection_ID );
-			} ) : [],
-			requireCount = includes( pluck( targeted, 'service' ), 'twitter' ),
-			acceptableLength = ( requireCount ) ? 140 - 23 - 23 : null;
+	renderMessage = () => {
+		const skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
+			targeted = this.hasConnections()
+				? this.props.connections.filter(
+						connection => skipped && -1 === skipped.indexOf( connection.keyring_connection_ID )
+				  )
+				: [],
+			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
+			acceptableLength = requireCount ? 280 - 23 - 23 : null,
+			preFilledMessage = this.props.post ? this.props.post.title : '';
 
 		if ( ! this.hasConnections() ) {
 			return;
@@ -138,75 +104,64 @@ module.exports = React.createClass( {
 
 		return (
 			<PublicizeMessage
-				message={ PostMetadata.publicizeMessage( this.props.post ) }
-				preview={ preview }
+				message={ PostMetadata.publicizeMessage( this.props.post ) || '' }
+				onChange={ this.onMessageChange }
 				requireCount={ requireCount }
-				acceptableLength={ acceptableLength } />
+				acceptableLength={ acceptableLength }
+				preFilledMessage={ preFilledMessage }
+			/>
 		);
-	},
+	};
 
-	renderAddNewButton: function() {
+	onMessageChange = message => {
+		this.props.updatePostMetadata( this.props.siteId, this.props.postId, '_wpas_mess', message );
+	};
+
+	renderAddNewButton = () => {
 		// contributors cannot create publicize connections
-		if ( ! siteUtils.userCan( 'publish_posts', this.props.site ) ) {
+		if ( ! this.props.canUserPublishPosts ) {
 			return;
 		}
 
 		return (
-			<AddNewButton
-				isCompact={ true }
-				onClick={ this.newConnection }
-				>
-				{ this.translate( 'Connect new service' ) }
-			<span className="editor-sharing__external-link-indicator">
-				<Gridicon icon="external" size={ 18 } />
-			</span>
-			</AddNewButton>
+			<Button borderless compact onClick={ this.newConnection }>
+				<Gridicon icon="add" /> { this.props.translate( 'Connect new service' ) }
+				<span className="editor-sharing__external-link-indicator">
+					<Gridicon icon="external" size={ 18 } />
+				</span>
+			</Button>
 		);
-	},
+	};
 
-	renderInfoNotice: function() {
+	renderInfoNotice = () => {
 		// don't show the message if the are no connections
 		// and the user is not allowed to add any
-		if ( ! this.hasConnections() && ! siteUtils.userCan( 'publish_posts', this.props.site ) ) {
+		if ( ! this.hasConnections() && ! this.props.canUserPublishPosts ) {
 			return;
 		}
 
 		return (
 			<p className="editor-drawer__description">
-				{ this.translate( 'Connect and select social media services to automatically share this post.' ) }
+				{ this.props.translate(
+					'Connect and select social media services to automatically share this post.'
+				) }
 			</p>
 		);
-	},
+	};
 
-	render: function() {
-		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
-			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p>{ this.translate( 'Publicize is disabled on this site.' ) }</p>
-				</div>
-			);
-		}
-
-		if ( this.props.site && this.props.site.jetpack && ! this.props.site.isModuleActive( 'publicize' ) ) {
-			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p>{ this.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</p>
-					<button
-							className="editor-sharing__jetpack-modules-button button is-secondary"
-							onClick={ this.jetpackModulePopup } >
-						{ this.translate( 'View Module Settings' ) }
-					</button>
-				</div>
-			);
+	render() {
+		if ( ! this.props.isPublicizeEnabled ) {
+			return null;
 		}
 
 		const classes = classNames( 'editor-sharing__publicize-options', {
 			'has-connections': this.hasConnections(),
-			'has-add-option': siteUtils.userCan( 'publish_posts', this.props.site )
+			'has-add-option': this.props.canUserPublishPosts,
 		} );
 
 		return (
 			<div className={ classes }>
+				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
 				{ this.renderInfoNotice() }
 				{ this.renderServices() }
 				{ this.renderAddNewButton() }
@@ -214,4 +169,28 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const userId = getCurrentUserId( state );
+		const postId = getEditorPostId( state );
+		const site = getSite( state, siteId );
+		const post = getEditedPost( state, siteId, postId );
+		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+
+		const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
+
+		return {
+			siteId,
+			postId,
+			site,
+			post,
+			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
+			canUserPublishPosts,
+			connections: getSiteUserConnections( state, siteId, userId ),
+		};
+	},
+	{ requestConnections, updatePostMetadata, recordEditorStat, recordEditorEvent }
+)( localize( EditorSharingPublicizeOptions ) );

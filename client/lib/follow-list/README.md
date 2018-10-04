@@ -3,7 +3,8 @@ FollowList
 If you have components that utlize 'Follow' actions for users, the follow-list acts as a central store for all site/follow data.  So if a user clicks follow within one component, all other associated follow buttons can be updated by an emitted change event.
 
 ```js
-var follow-list = require( 'follow-list' )();
+import FollowList from 'follow-list';
+var follow-list = FollowList();
 ```
 
 ### add( { site_id: site.ID, is_following: true } )

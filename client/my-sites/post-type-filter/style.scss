@@ -1,0 +1,19 @@
+.post-type-filter .section-nav-tab {
+	box-sizing: border-box;
+	height: 50px;
+}
+
+.post-type-filter__multi-select-button {
+	background-color: $gray-light;
+
+	@include breakpoint( "<480px" ) {
+		position: absolute;
+		top: 8px;
+		right: 50px;
+		padding: 12px 8px 10px;
+
+		& .post-type-filter__multi-select-button-text {
+			display: none;
+		}
+	}
+}

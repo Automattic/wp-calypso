@@ -8,26 +8,28 @@ React component used to display a Date Picker.
 ## Example Usage
 
 ```js
-var DatePicker = require( 'components/date-picker' );
+import React from 'react';
+import DatePicker from 'components/date-picker';
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
 
-	this.onSelect: function( date ) {
+	this.onSelectDay: function( date ) {
 		this.setState( { date: date } );
 	},
 
-	render: function() {
+	render() {
 		var events = [
 			{
 				title: '1 other post scheduled',
 				date: new Date( '2015-10-15 10:30' ),
-				type: 'schedulled'
+				type: 'scheduled',
+				icon: 'time',
 			},
 			{
 				title: 'Happy birthday Damian!',
-				date: new Date( '2015-07-18 15:00' )
+				date: new Date( '2015-07-18 15:00' ),
+				socialIcon: 'path',
 			}
 		];
 
@@ -35,13 +37,11 @@ module.exports = React.createClass( {
 			<DatePicker
 				initialMonth = { new Date( '2015-07-01' ) }
 				events= { events }
-				onSelect= { this.onSelect }
-				selectedDay= { this.state.date } >
-			</DatePicker>
+				onSelectDay= { this.onSelectDay }
+				selectedDay= { this.state.date } />
 		);
 	}
-
-} );
+}
 ```
 
 ---
@@ -61,8 +61,8 @@ is selected.
 
 `className` - **optional** Add a custom class property.
 
-`onSelect` - **optional**
+`onSelectDay` - **optional** Called when day is selected by user.
 
-`onMonthChange` - **optional**
+`onMonthChange` - **optional** Called when month is changed by user.
 
 ------------

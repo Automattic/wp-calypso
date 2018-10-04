@@ -1,0 +1,37 @@
+.comment-button {
+	align-items: center;
+	box-sizing: border-box;
+	color: $gray;
+	cursor: pointer;
+	display: inline-flex;
+	list-style-type: none;
+	padding: 4px;
+	position: relative;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $blue-medium;
+	}
+
+	.comment-button__label-count {
+		margin-right: 4px;
+	}
+
+	.comment-button__label-status {
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+}
+
+.comment-button__label {
+	font-size: 14px;
+	margin-left: 4px;
+}
+
+.comment-button__icon {
+	position: relative;
+		top: 2px;
+}

@@ -1,72 +1,113 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import omit from 'lodash/object/omit';
-import noop from 'lodash/utility/noop';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { reduce, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Selector from './selector';
-import PostListFetcher from 'components/post-list-fetcher';
+import PostSelectorPosts from './selector';
 
-export default React.createClass( {
-	displayName: 'PostSelector',
+export default class extends React.PureComponent {
+	static displayName = 'PostSelector';
 
-	mixins: [ React.addons.PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		type: PropTypes.string,
+		excludePrivateTypes: PropTypes.bool,
 		siteId: PropTypes.number.isRequired,
 		status: PropTypes.string,
 		multiple: PropTypes.bool,
 		onChange: PropTypes.func,
 		selected: PropTypes.number,
 		excludeTree: PropTypes.number,
+		emptyMessage: PropTypes.string,
+		createLink: PropTypes.string,
 		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
-		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] )
-	},
+		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
+		showTypeLabels: PropTypes.bool,
+		suppressFirstPageLoad: PropTypes.bool,
+	};
 
-	getDefaultProps() {
-		return {
-			type: 'post',
-			status: 'publish,private',
-			multiple: false,
-			onChange: noop,
-			orderBy: 'title',
-			order: 'ASC'
-		};
-	},
+	static defaultProps = {
+		type: 'post',
+		status: 'publish,private',
+		multiple: false,
+		orderBy: 'title',
+		order: 'ASC',
+		suppressFirstPageLoad: false,
+	};
 
-	getInitialState() {
-		return {
-			searchTerm: null
-		};
-	},
+	state = {
+		search: '',
+	};
 
-	onSearch( term ) {
-		if ( term !== this.state.searchTerm ) {
-			this.setState( { searchTerm: term } );
+	onSearch = term => {
+		if ( term !== this.state.search ) {
+			this.setState( {
+				search: term,
+			} );
 		}
-	},
+	};
+
+	getQuery = () => {
+		const { type, status, excludeTree, orderBy, order, excludePrivateTypes } = this.props;
+		const { search } = this.state;
+
+		return reduce(
+			{ type, status, excludeTree, orderBy, order, excludePrivateTypes, search },
+			( memo, value, key ) => {
+				if ( null === value || undefined === value ) {
+					return memo;
+				}
+
+				// if we don't have a search term, default to ordering by date
+				if ( key === 'orderBy' && search !== '' ) {
+					value = 'date';
+				}
+
+				if ( key === 'order' && search !== '' ) {
+					value = 'DESC';
+				}
+
+				memo[ snakeCase( key ) ] = value;
+				return memo;
+			},
+			{}
+		);
+	};
 
 	render() {
+		const {
+			siteId,
+			multiple,
+			onChange,
+			emptyMessage,
+			createLink,
+			selected,
+			excludeTree,
+			showTypeLabels,
+			suppressFirstPageLoad,
+		} = this.props;
+
 		return (
-			<PostListFetcher
-				type={ this.props.type }
-				siteID={ this.props.siteId }
-				search={ this.state.searchTerm }
-				status={ this.props.status }
-				excludeTree={ this.props.excludeTree }
-				orderBy={ this.props.orderBy }
-				order={ this.props.order }
-			>
-				<Selector
-					{ ...omit( this.props, 'children' ) }
-					onSearch={ this.onSearch }
-				/>
-			</PostListFetcher>
+			<PostSelectorPosts
+				siteId={ siteId }
+				query={ this.getQuery() }
+				onSearch={ this.onSearch }
+				multiple={ multiple }
+				onChange={ onChange }
+				emptyMessage={ emptyMessage }
+				createLink={ createLink }
+				selected={ selected }
+				excludePost={ excludeTree }
+				showTypeLabels={ showTypeLabels }
+				suppressFirstPageLoad={ suppressFirstPageLoad }
+			/>
 		);
 	}
-} );
+}

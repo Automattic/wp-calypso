@@ -1,0 +1,11 @@
+.store-stats-chart__top {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.store-stats-chart__title {
+		height: 10px;
+		padding: 12px 19px 10px 20px;
+	}
+}

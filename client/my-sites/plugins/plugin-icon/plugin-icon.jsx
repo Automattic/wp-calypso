@@ -1,26 +1,38 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	Gridicon = require( 'components/gridicon' );
 
-module.exports = React.createClass( {
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
-	displayName: 'PluginIcon',
-
-	render: function() {
-		var className = classNames( {
+const PluginIcon = ( { className, image, isPlaceholder } ) => {
+	const classes = classNames(
+		{
 			'plugin-icon': true,
-			'is-placeholder': this.props.isPlaceholder,
-			'is-fallback': ! this.props.image
-		} ),
-		avatar = ( this.props.isPlaceholder || ! this.props.image ) ? <Gridicon icon="plugins" /> : <img className="plugin-icon__img" src={ this.props.image } />;
+			'is-placeholder': isPlaceholder,
+			'is-fallback': ! image,
+		},
+		className
+	);
 
-		return (
-			<div className={ classNames( this.props.className, className ) } >
-				{ avatar }
-			</div>
-		);
-	}
-} );
+	return (
+		<div className={ classes }>
+			{ isPlaceholder || ! image ? (
+				<Gridicon icon="plugins" />
+			) : (
+				<img className="plugin-icon__img" src={ image } />
+			) }
+		</div>
+	);
+};
+
+PluginIcon.propTypes = {
+	image: PropTypes.string,
+	isPlaceholder: PropTypes.bool,
+};
+
+export default PluginIcon;

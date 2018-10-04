@@ -1,203 +1,535 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	page = require( 'page' ),
-	noop = require( 'lodash/utility/noop' ),
-	classNames = require( 'classnames' );
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import classNames from 'classnames';
+import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
+import scrollIntoView from 'dom-scroll-into-view';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var AllSites = require( 'my-sites/all-sites' ),
-	AddNewButton = require( 'components/add-new-button' ),
-	Site = require( 'my-sites/site' ),
-	SitePlaceholder = require( 'my-sites/site/placeholder' ),
-	Search = require( 'components/search' ),
-	user = require( 'lib/user' )(),
-	config = require( 'config' );
+import { getPreference } from 'state/preferences/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getSite, hasAllSitesList } from 'state/sites/selectors';
+import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
+import getSites from 'state/selectors/get-sites';
+import getVisibleSites from 'state/selectors/get-visible-sites';
+import hasLoadedSites from 'state/selectors/has-loaded-sites';
+import AllSites from 'blocks/all-sites';
+import Site from 'blocks/site';
+import SitePlaceholder from 'blocks/site/placeholder';
+import Search from 'components/search';
+import SiteSelectorAddSite from './add-site';
+import searchSites from 'components/search-sites';
 
-module.exports = React.createClass( {
-	displayName: 'SiteSelector',
+const ALL_SITES = 'ALL_SITES';
 
-	propTypes: {
-		showAddNewSite: React.PropTypes.bool,
-		showAllSites: React.PropTypes.bool,
-		indicator: React.PropTypes.bool,
-		autoFocus: React.PropTypes.bool,
-		onClose: React.PropTypes.func
-	},
+const debug = debugFactory( 'calypso:site-selector' );
 
-	getDefaultProps: function() {
-		return {
-			showAddNewSite: false,
-			showAllSites: false,
-			indicator: false,
-			onClose: noop
-		};
-	},
+class SiteSelector extends Component {
+	static propTypes = {
+		isPlaceholder: PropTypes.bool,
+		sites: PropTypes.array,
+		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		showAddNewSite: PropTypes.bool,
+		showAllSites: PropTypes.bool,
+		indicator: PropTypes.bool,
+		autoFocus: PropTypes.bool,
+		onClose: PropTypes.func,
+		selected: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+		hideSelected: PropTypes.bool,
+		filter: PropTypes.func,
+		groups: PropTypes.bool,
+		onSiteSelect: PropTypes.func,
+		showRecentSites: PropTypes.bool,
+		recentSites: PropTypes.array,
+		selectedSite: PropTypes.object,
+		visibleSites: PropTypes.arrayOf( PropTypes.object ),
+		allSitesPath: PropTypes.string,
+		navigateToSite: PropTypes.func.isRequired,
+	};
 
-	getInitialState: function() {
-		return {
-			search: ''
-		};
-	},
+	static defaultProps = {
+		sites: {},
+		showAddNewSite: false,
+		showAllSites: false,
+		siteBasePath: false,
+		indicator: false,
+		hideSelected: false,
+		selected: null,
+		onClose: noop,
+		onSiteSelect: noop,
+		groups: false,
+		autoFocus: false,
+	};
 
-	getCount: function() {
-		return user.get().visible_site_count;
-	},
+	state = {
+		highlightedIndex: -1,
+		showSearch: false,
+		isKeyboardEngaged: false,
+	};
 
-	onSearch: function( terms ) {
-		this.setState( { search: terms } );
-	},
+	onSearch = terms => {
+		this.props.searchSites( terms );
 
-	onSiteSelect: function( event ) {
-		this.closeSelector();
-		this.props.onClose( event );
+		this.setState( {
+			highlightedIndex: terms ? 0 : -1,
+			showSearch: terms ? true : this.state.showSearch,
+			isKeyboardEngaged: true,
+		} );
+	};
 
-		// ignore mouse events as the default page() click event will handle navigation
-		if ( event.type !== 'mouseup' ) {
-			page( event.currentTarget.pathname );
+	componentDidUpdate( prevProps, prevState ) {
+		if (
+			this.state.isKeyboardEngaged &&
+			prevState.highlightedIndex !== this.state.highlightedIndex
+		) {
+			this.scrollToHighlightedSite();
 		}
-	},
+	}
 
-	closeSelector: function() {
-		this.refs.siteSearch.blur();
-	},
+	scrollToHighlightedSite() {
+		if ( ! this.siteSelectorRef ) {
+			return;
+		}
 
-	visibleCount: function() {
-		return this.props.sites.selected ? 1 : this.getCount();
-	},
+		const selectorElement = ReactDom.findDOMNode( this.siteSelectorRef );
 
-	// more complex translation logic here
-	getTranslations: function() {
-		var output = {},
-			visibleCount = this.visibleCount();
+		if ( ! selectorElement ) {
+			return;
+		}
 
-		if ( ! this.props.sites.selected ) {
-			output.selectedSites = this.translate( 'All sites' );
+		// Note: Update CSS selectors if the class names change.
+		const highlightedSiteElem = selectorElement.querySelector(
+			'.site.is-highlighted, .site-selector .all-sites.is-highlighted'
+		);
+
+		if ( ! highlightedSiteElem ) {
+			return;
+		}
+
+		scrollIntoView( highlightedSiteElem, selectorElement, {
+			onlyScrollIfNeeded: true,
+		} );
+	}
+
+	computeHighlightedSite() {
+		// site can be highlighted by either keyboard or by mouse and
+		// we need to switch seemlessly between the two
+		let highlightedSiteId, highlightedIndex;
+		if ( this.state.isKeyboardEngaged ) {
+			debug( 'using highlight from last keyboard interaction' );
+			highlightedSiteId = this.visibleSites[ this.state.highlightedIndex ];
+			highlightedIndex = this.state.highlightedIndex;
+		} else if ( this.lastMouseHover ) {
+			debug( `restoring highlight from last mouse hover (${ this.lastMouseHover })` );
+			highlightedSiteId = this.props.highlightedSiteId || this.lastMouseHover;
+			highlightedIndex = this.visibleSites.indexOf( highlightedSiteId );
 		} else {
-			output.selectedSites = this.translate( '%(numberSelected)s site selected', '%(numberSelected)s sites selected', {
-				count: visibleCount,
-				args: {
-					numberSelected: visibleCount
+			debug( 'reseting highlight as mouse left site selector' );
+			highlightedSiteId = null;
+			highlightedIndex = -1;
+		}
+
+		return { highlightedSiteId, highlightedIndex };
+	}
+
+	onKeyDown = event => {
+		const visibleLength = this.visibleSites.length;
+
+		// ignore keyboard access when there are no results
+		// or when manipulating a text selection in input
+		if ( visibleLength === 0 || event.shiftKey ) {
+			return;
+		}
+
+		const { highlightedSiteId, highlightedIndex } = this.computeHighlightedSite();
+		let nextIndex = null;
+
+		switch ( event.key ) {
+			case 'ArrowUp':
+				nextIndex = highlightedIndex - 1;
+				if ( nextIndex < 0 ) {
+					nextIndex = visibleLength - 1;
 				}
+				break;
+			case 'ArrowDown':
+				nextIndex = highlightedIndex + 1;
+				if ( nextIndex >= visibleLength ) {
+					nextIndex = 0;
+				}
+				break;
+			case 'Enter':
+				if ( highlightedSiteId ) {
+					if ( highlightedSiteId === ALL_SITES ) {
+						this.onSiteSelect( event, ALL_SITES );
+					} else {
+						this.onSiteSelect( event, highlightedSiteId );
+					}
+				}
+				break;
+		}
+
+		if ( nextIndex !== null ) {
+			this.lastMouseHover = null;
+			this.setState( {
+				highlightedIndex: nextIndex,
+				isKeyboardEngaged: true,
 			} );
 		}
+	};
 
-		output.totalSites = this.translate( '%(numberTotal)s site', 'All %(numberTotal)s Sites', {
-			count: this.getCount(),
-			args: {
-				numberTotal: this.getCount()
+	onSiteSelect = ( event, siteId ) => {
+		const handledByHost = this.props.onSiteSelect( siteId );
+		this.props.onClose( event, siteId );
+
+		if ( ! this.siteSelectorRef ) {
+			return;
+		}
+
+		const node = ReactDom.findDOMNode( this.siteSelectorRef );
+		if ( node ) {
+			node.scrollTop = 0;
+		}
+
+		// Some hosts of this component can properly handle selection and want to call into page themselves (or do
+		// any number of things). handledByHost gives them the chance to avoid the simulated navigation,
+		// even for touchend
+		if ( ! handledByHost ) {
+			this.props.navigateToSite( siteId, this.props );
+		}
+	};
+
+	onAllSitesSelect = event => {
+		this.onSiteSelect( event, ALL_SITES );
+	};
+
+	onSiteHover = ( event, siteId ) => {
+		if ( this.lastMouseHover !== siteId ) {
+			debug( `${ siteId } hovered` );
+			this.lastMouseHover = siteId;
+		}
+	};
+
+	onAllSitesHover = () => {
+		if ( this.lastMouseHover !== ALL_SITES ) {
+			debug( 'ALL_SITES hovered' );
+			this.lastMouseHover = ALL_SITES;
+		}
+	};
+
+	onMouseLeave = () => {
+		debug( 'mouse left site selector - nothing hovered anymore' );
+		this.lastMouseHover = null;
+	};
+
+	onMouseMove = event => {
+		// we need to test here if cursor position was actually moved, because
+		// mouseMove event can also be triggered by scrolling the parent element
+		// and we scroll that element via keyboard access
+		if ( event.pageX !== this.lastMouseMoveX || event.pageY !== this.lastMouseMoveY ) {
+			this.lastMouseMoveY = event.pageY;
+			this.lastMouseMoveX = event.pageX;
+
+			if ( this.state.isKeyboardEngaged ) {
+				this.setState( { isKeyboardEngaged: false } );
 			}
-		} );
+		}
+	};
 
-		return output;
-	},
-
-	addNewSite: function() {
+	isSelected( site ) {
+		const selectedSite = this.props.selected || this.props.selectedSite;
 		return (
-			<AddNewButton
-				isCompact={ true }
-				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
-			>
-				{ this.translate( 'Add New WordPress' ) }
-			</AddNewButton>
+			( site === ALL_SITES && selectedSite === null ) ||
+			selectedSite === site.ID ||
+			selectedSite === site.domain ||
+			selectedSite === site.slug
 		);
-	},
+	}
 
-	renderSiteElements: function() {
-		var allSitesPath = this.props.allSitesPath,
-			sites, postsBase, siteElements;
+	isHighlighted( siteId ) {
+		return (
+			this.state.isKeyboardEngaged &&
+			this.visibleSites.indexOf( siteId ) === this.state.highlightedIndex
+		);
+	}
 
-		if ( this.state.search ) {
-			sites = this.props.sites.search( this.state.search );
+	shouldShowGroups() {
+		return this.props.groups;
+	}
+
+	setSiteSelectorRef = component => ( this.siteSelectorRef = component );
+
+	sitesToBeRendered() {
+		let sites;
+
+		if ( this.props.sitesFound ) {
+			sites = this.props.sitesFound;
 		} else {
-			sites = this.props.sites.getVisible();
+			sites = this.props.visibleSites;
+		}
+
+		if ( this.props.filter ) {
+			sites = sites.filter( this.props.filter );
+		}
+
+		if ( this.props.hideSelected && this.props.selected ) {
+			sites = sites.filter( site => site.slug !== this.props.selected );
+		}
+
+		return sites;
+	}
+
+	shouldRenderRecentSites() {
+		return this.props.showRecentSites && this.shouldShowGroups() && ! this.props.sitesFound;
+	}
+
+	renderAllSites() {
+		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
+			return null;
+		}
+
+		this.visibleSites.push( ALL_SITES );
+
+		const isHighlighted = this.isHighlighted( ALL_SITES );
+
+		return (
+			<AllSites
+				key="selector-all-sites"
+				sites={ this.props.sites }
+				onSelect={ this.onAllSitesSelect }
+				onMouseEnter={ this.onAllSitesHover }
+				isHighlighted={ isHighlighted }
+				isSelected={ this.isSelected( ALL_SITES ) }
+			/>
+		);
+	}
+
+	renderRecentSites( sites ) {
+		if ( ! this.shouldRenderRecentSites() ) {
+			return null;
+		}
+
+		const recentSites = [];
+		for ( const siteId of this.props.recentSites ) {
+			const site = find( sites, { ID: siteId } );
+			if ( site ) {
+				recentSites.push( site );
+			}
+		}
+
+		if ( isEmpty( recentSites ) ) {
+			return null;
+		}
+
+		const renderedRecentSites = recentSites.map( this.renderSite, this );
+
+		return <div className="site-selector__recent">{ renderedRecentSites }</div>;
+	}
+
+	renderSites( sites ) {
+		if ( ! this.props.hasAllSitesList ) {
+			return <SitePlaceholder key="site-placeholder" />;
+		}
+
+		// Filter recentSites
+		if ( this.shouldRenderRecentSites() ) {
+			const recentSites = this.props.recentSites;
+			sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
 		}
 
 		// Render sites
-		siteElements = sites.map( function( site ) {
-			var siteBasePath = this.props.siteBasePath;
-			postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
+		const siteElements = sites.map( this.renderSite, this );
 
-			// Default posts to /posts/my when possible and /posts when not
-			siteBasePath = siteBasePath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-			// Default stats to /stats/slug when on a 3rd level post/page summary
-			if ( siteBasePath.match( /^\/stats\/(post|page)\// ) ) {
-				siteBasePath = '/stats';
-			}
-
-			if ( siteBasePath.match( /^\/domains\/manage\// ) ) {
-				siteBasePath = '/domains/manage';
-			}
-
+		if ( ! siteElements.length ) {
 			return (
-				<Site
-					site={ site }
-					href={ siteBasePath + '/' + site.slug }
-					key={ 'site-' + site.ID }
-					indicator={ this.props.indicator }
-					onSelect={ this.onSiteSelect }
-					isSelected={ this.props.sites.selected === site.domain }
-				/>
-			);
-		}, this );
-
-		if ( this.props.showAllSites && ! this.state.search && allSitesPath ) {
-			// default posts links to /posts/my when possible and /posts when not
-			postsBase = ( this.props.sites.allSingleSites ) ? '/posts' : '/posts/my';
-			allSitesPath = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-			// There is currently no "all sites" version of the insights page
-			allSitesPath = allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
-
-			siteElements.unshift(
-				<AllSites
-					key="selector-all-sites"
-					sites={ this.props.sites }
-					href={ allSitesPath }
-					onSelect={ this.closeSelector }
-					isSelected={ ! this.props.sites.selected }
-				/>
+				<div className="site-selector__no-results">
+					{ this.props.translate( 'No sites found' ) }
+				</div>
 			);
 		}
 
 		return siteElements;
-	},
+	}
 
-	render: function() {
-		var isLarge = this.getCount() > 6,
-			hasOneSite = this.getCount() === 1,
-			sitesInitialized = this.props.sites.initialized,
-			siteElements, selectorClass;
-
-		if ( sitesInitialized ) {
-			siteElements = this.renderSiteElements();
-		} else {
-			siteElements = [ <SitePlaceholder key="site-placeholder" /> ];
+	renderSite( site ) {
+		if ( ! site ) {
+			return null;
 		}
 
-		selectorClass = classNames( 'site-selector', 'sites-list', {
-			'is-large': isLarge,
-			'is-single': hasOneSite
-		} );
+		this.visibleSites.push( site.ID );
+
+		const isHighlighted = this.isHighlighted( site.ID );
 
 		return (
-			<div className={ selectorClass } ref="siteSelector">
-				<Search ref="siteSearch" onSearch={ this.onSearch } autoFocus={ this.props.autoFocus } disabled={ ! sitesInitialized } />
+			<Site
+				site={ site }
+				key={ 'site-' + site.ID }
+				indicator={ this.props.indicator }
+				onSelect={ this.onSiteSelect }
+				onMouseEnter={ this.onSiteHover }
+				isHighlighted={ isHighlighted }
+				isSelected={ this.isSelected( site ) }
+			/>
+		);
+	}
 
-				<div className="site-selector__sites">
-					{ siteElements.length ? siteElements :
-						<div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>
-					}
+	render() {
+		// Render an empty div.site-selector element as a placeholder. It's useful for lazy
+		// rendering of the selector in sidebar while keeping the on-appear animation work.
+		if ( this.props.isPlaceholder ) {
+			return <div className="site-selector" />;
+		}
+
+		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
+
+		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
+			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
+			'is-single': this.props.visibleSiteCount === 1,
+			'is-hover-enabled': ! this.state.isKeyboardEngaged,
+		} );
+
+		this.visibleSites = [];
+
+		const sites = this.sitesToBeRendered();
+
+		return (
+			<div
+				className={ selectorClass }
+				onMouseMove={ this.onMouseMove }
+				onMouseLeave={ this.onMouseLeave }
+			>
+				<Search
+					ref="siteSearch"
+					onSearch={ this.onSearch }
+					delaySearch={ true }
+					autoFocus={ this.props.autoFocus }
+					disabled={ ! this.props.hasLoadedSites }
+					onSearchClose={ this.props.onClose }
+					onKeyDown={ this.onKeyDown }
+				/>
+				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
+					{ this.renderAllSites() }
+					{ this.renderRecentSites( sites ) }
+					{ this.renderSites( sites ) }
+					{ hiddenSitesCount > 0 &&
+						! this.props.sitesFound && (
+							<span className="site-selector__hidden-sites-message">
+								{ this.props.translate(
+									'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
+									'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
+									{
+										count: hiddenSitesCount,
+										args: {
+											hiddenSitesCount: hiddenSitesCount,
+										},
+										components: {
+											br: <br />,
+											a: (
+												<a
+													href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+													className="site-selector__manage-hidden-sites"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</span>
+						) }
 				</div>
-
-				{ this.props.showAddNewSite ?
-					this.addNewSite()
-				: null }
+				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
 			</div>
 		);
 	}
-} );
+}
+
+const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) => (
+	dispatch,
+	getState
+) => {
+	const state = getState();
+	const pathname = getPathnameForSite();
+	if ( pathname ) {
+		page( pathname );
+	}
+
+	function getPathnameForSite() {
+		const site = getSite( state, siteId );
+		debug( 'getPathnameForSite', siteId, site );
+
+		if ( siteId === ALL_SITES ) {
+			// default posts links to /posts/my when possible and /posts when not
+			const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
+			const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
+
+			// There is currently no "all sites" version of the insights page
+			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
+		} else if ( siteBasePath ) {
+			return getSiteBasePath( site ) + '/' + site.slug;
+		}
+	}
+
+	function getSiteBasePath( site ) {
+		let path = siteBasePath;
+		const postsBase = site.jetpack || site.single_user_site ? '/posts' : '/posts/my';
+
+		// Default posts to /posts/my when possible and /posts when not
+		path = path.replace( /^\/posts\b(\/my)?/, postsBase );
+
+		// Default stats to /stats/slug when on a 3rd level post/page summary
+		if ( path.match( /^\/stats\/(post|page)\// ) ) {
+			path = '/stats';
+		}
+
+		if ( path.match( /^\/domains\/manage\// ) ) {
+			path = '/domains/manage';
+		}
+
+		if ( path.match( /^\/store\/stats\// ) ) {
+			const isStore = site.jetpack && site.options && site.options.woocommerce_is_active;
+			if ( ! isStore ) {
+				path = '/stats/day';
+			}
+		}
+
+		return path;
+	}
+};
+
+const mapState = state => {
+	const user = getCurrentUser( state );
+	const visibleSiteCount = get( user, 'visible_site_count', 0 );
+
+	return {
+		hasLoadedSites: hasLoadedSites( state ),
+		sites: getSites( state ),
+		showRecentSites: get( user, 'visible_site_count', 0 ) > 11,
+		recentSites: getPreference( state, 'recentSites' ),
+		siteCount: get( user, 'site_count', 0 ),
+		visibleSiteCount: visibleSiteCount,
+		selectedSite: getSelectedSite( state ),
+		visibleSites: getVisibleSites( state ),
+		allSitesSingleUser: areAllSitesSingleUser( state ),
+		hasAllSitesList: hasAllSitesList( state ),
+	};
+};
+
+export default flow(
+	localize,
+	searchSites,
+	connect(
+		mapState,
+		{ navigateToSite }
+	)
+)( SiteSelector );

@@ -1,19 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import classnames from 'classnames';
 
-	displayName: 'FormFieldset',
+const FormFieldset = ( { className, children, ...otherProps } ) => (
+	<fieldset { ...otherProps } className={ classnames( className, 'form-fieldset' ) }>
+		{ children }
+	</fieldset>
+);
 
-	render: function() {
-		return (
-			<fieldset { ...omit( this.props, 'className' ) } className={ joinClasses( this.props.className, 'form-fieldset' ) } >
-				{ this.props.children }
-			</fieldset>
-		);
-	}
-} );
+export default FormFieldset;

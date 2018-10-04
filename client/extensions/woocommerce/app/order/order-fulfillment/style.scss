@@ -1,0 +1,34 @@
+.order-fulfillment {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	background: lighten( $blue-light, 25% );
+
+	&.is-completed {
+		background: transparent;
+
+		.order-fulfillment__label .gridicon {
+			color: $alert-green;
+		}
+	}
+}
+
+.order-fulfillment__print-container {
+	display: flex;
+	align-items: center;
+	margin-top: 16px;
+	@include breakpoint( ">960px" ) {
+		margin-top: 0;
+	}
+}
+
+.order-fulfillment__tracking,
+.order-fulfillment__email {
+	margin: 0 0 24px;
+}
+
+&.dialog__content.order-fulfillment {
+	.form-text-input {
+		text-align: left;
+	}
+}

@@ -1,118 +1,151 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var FoldableCard = require( 'components/foldable-card' ),
-	CompactCard = require( 'components/card/compact' ),
-	AllSitesIcon = require( 'my-sites/all-sites-icon' ),
-	PluginsLog = require( 'lib/plugins/log-store' ),
-	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
-	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
-	PluginUpdateIndicator = require( 'my-sites/plugins/plugin-site-update-indicator' ),
-	PluginInstallButton = require( 'my-sites/plugins/plugin-install-button' ),
-	PluginRemoveButton = require( 'my-sites/plugins/plugin-remove-button' ),
-	PluginSiteDisabledManage = require( 'my-sites/plugins/plugin-site-disabled-manage' ),
-	Site = require( 'my-sites/site' );
+import FoldableCard from 'components/foldable-card';
+import CompactCard from 'components/card/compact';
+import AllSites from 'blocks/all-sites';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
+import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
+import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
+import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
+import Site from 'blocks/site';
 
-module.exports = React.createClass( {
+class PluginSiteNetwork extends React.Component {
+	static displayName = 'PluginSiteNetwork';
 
-	displayName: 'PluginSiteNetwork',
+	static propTypes = {
+		site: PropTypes.object,
+		plugin: PropTypes.object,
+		notices: PropTypes.object,
+		secondarySites: PropTypes.array,
+	};
 
-	propTypes: {
-		site: React.PropTypes.object,
-		plugin: React.PropTypes.object,
-		notices: React.PropTypes.object,
-		secondarySites: React.PropTypes.array,
-	},
-
-	renderInstallButton: function() {
-		if ( ! this.props.site.canManage() ) {
+	renderInstallButton = () => {
+		if ( ! this.props.site.canManage ) {
 			return this.renderManageWarning();
 		}
-		const installInProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, 'INSTALL_PLUGIN' );
+		const installInProgress = PluginsLog.isInProgressAction(
+			this.props.site.ID,
+			this.props.plugin.slug,
+			'INSTALL_PLUGIN'
+		);
 
-		return <PluginInstallButton
-			isEmbed={ true }
-			notices={ this.props.notices }
-			selectedSite={ this.props.site }
-			plugin={ this.props.plugin }
-			isInstalling={ installInProgress } />;
-	},
+		return (
+			<PluginInstallButton
+				isEmbed={ true }
+				selectedSite={ this.props.site }
+				plugin={ this.props.plugin }
+				isInstalling={ installInProgress }
+			/>
+		);
+	};
 
-	renderMultisiteHeader: function() {
+	renderMultisiteHeader = () => {
 		return (
 			<div className="plugin-site-network__header">
-				<AllSitesIcon sites={ this.props.secondarySites } />
-				<div className="plugin-site-network__header_info">
-					<div className="site__title">{ this.translate( '%(mainSiteName)s\'s Network', {
+				<AllSites
+					sites={ this.props.secondarySites }
+					count={ this.props.secondarySites.length }
+					domain={ this.props.site.domain }
+					title={ this.props.translate( "%(mainSiteName)s's Network", {
 						args: {
-							mainSiteName: this.props.site.name
+							mainSiteName: this.props.site.name,
 						},
-					} ) } </div>
-					<div className="site__domain">{ this.props.site.domain }</div>
-				</div>
+					} ) }
+				/>
 			</div>
 		);
-	},
+	};
 
-	renderInstallPlugin: function() {
+	renderInstallPlugin = () => {
 		return (
-			<FoldableCard compact
+			<FoldableCard
+				compact
 				className="plugin-site-network"
 				header={ this.renderMultisiteHeader() }
-				actionButton={ this.renderInstallButton() } >
-			</FoldableCard>
+				actionButton={ this.renderInstallButton() }
+			/>
 		);
-	},
+	};
 
-	renderPluginActions: function() {
-		if ( ! this.props.site.canManage() ) {
+	renderPluginActions = () => {
+		if ( ! this.props.site.canManage ) {
 			return this.renderManageWarning();
 		}
 
 		return (
 			<div className="plugin-site-network__actions">
-				<PluginAutoupdateToggle site={ this.props.site } plugin={ this.props.site.plugin } notices={ this.props.notices } wporg={ true } />
-				<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } notices={ this.props.notices } />
+				<PluginAutoupdateToggle
+					site={ this.props.site }
+					plugin={ this.props.site.plugin }
+					wporg={ true }
+				/>
+				<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
 			</div>
 		);
-	},
+	};
 
-	renderPluginSite: function() {
+	renderPluginSite = () => {
 		return (
-			<FoldableCard compact clickableHeader
+			<FoldableCard
+				compact
+				clickableHeader
 				className="plugin-site-network"
 				header={ this.renderMultisiteHeader() }
-				summary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ false }/> }
-				expandedSummary={ <PluginUpdateIndicator site={ this.props.site } plugin={ this.props.plugin } notices={ this.props.notices } expanded={ true }/> }
-				>
+				summary={
+					<PluginUpdateIndicator
+						site={ this.props.site }
+						plugin={ this.props.plugin }
+						notices={ this.props.notices }
+						expanded={ false }
+					/>
+				}
+				expandedSummary={
+					<PluginUpdateIndicator
+						site={ this.props.site }
+						plugin={ this.props.plugin }
+						notices={ this.props.notices }
+						expanded={ true }
+					/>
+				}
+			>
 				<div>
 					{ this.renderPluginActions() }
 					<div className="plugin-site__secondary-sites">
 						{ this.props.secondarySites.map( this.renderSecondarySite ) }
 					</div>
-
 				</div>
-
 			</FoldableCard>
 		);
-	},
+	};
 
-	renderSecondarySite: function( site ) {
+	renderSecondarySite = site => {
 		return (
-			<CompactCard className="plugin-site-network__secondary-site" key={ 'secondary-site-' + site.ID }>
+			<CompactCard
+				className="plugin-site-network__secondary-site"
+				key={ 'secondary-site-' + site.ID }
+			>
 				<Site site={ site } indicator={ false } />
 				{ this.renderSecondarySiteActions( site ) }
 			</CompactCard>
 		);
-	},
+	};
 
-	renderSecondarySiteActions: function( site ) {
-		if ( ! site.canManage() ) {
+	renderSecondarySiteActions = site => {
+		if ( ! site.canManage ) {
 			return (
 				<div className="plugin-site-network__secondary-site-actions">
 					<PluginSiteDisabledManage site={ site } plugin={ site.plugin } />
@@ -121,20 +154,24 @@ module.exports = React.createClass( {
 		}
 		return (
 			<div className="plugin-site-network__secondary-site-actions">
-				<PluginActivateToggle site={ site } plugin={ site.plugin } notices={ this.props.notices } />
+				<PluginActivateToggle site={ site } plugin={ site.plugin } />
 			</div>
 		);
-	},
+	};
 
-	renderManageWarning: function() {
+	renderManageWarning = () => {
 		return (
 			<div className="plugin-site-network__network_disabled">
-				<PluginSiteDisabledManage site={ this.props.site } plugin={ this.props.plugin } isNetwork={ true } />
+				<PluginSiteDisabledManage
+					site={ this.props.site }
+					plugin={ this.props.plugin }
+					isNetwork={ true }
+				/>
 			</div>
 		);
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return null;
 		}
@@ -145,4 +182,6 @@ module.exports = React.createClass( {
 
 		return this.renderPluginSite();
 	}
-} );
+}
+
+export default localize( PluginSiteNetwork );

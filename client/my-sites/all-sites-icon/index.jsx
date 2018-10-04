@@ -1,50 +1,50 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	union = require( 'lodash/array/union' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { union } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var SiteIcon = require( 'components/site-icon' );
+import SiteIcon from 'blocks/site-icon';
 
-module.exports = React.createClass( {
-	displayName: 'AllSitesIcon',
+const MAX_ICONS = 10;
 
-	propTypes: {
-		sites: React.PropTypes.array.isRequired,
-	},
+export default class extends React.Component {
+	static displayName = 'AllSitesIcon';
 
-	getMaxSites: function() {
-		return this.props.sites.slice( 0, 3 );
-	},
+	static propTypes = {
+		sites: PropTypes.array.isRequired,
+	};
 
-	getSitesWithIcons: function() {
-		return this.props.sites.filter( function( site ) {
-			return site.icon;
-		} ).slice( 0, 3 );
-	},
+	getMaxSites = () => {
+		return this.props.sites.slice( 0, MAX_ICONS );
+	};
 
-	getIcons: function() {
-		var sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, 3 );
+	getSitesWithIcons = () => {
+		return this.props.sites
+			.filter( function( site ) {
+				return site.icon;
+			} )
+			.slice( 0, MAX_ICONS );
+	};
 
+	getIcons = () => {
+		const sites = union( this.getSitesWithIcons(), this.getMaxSites() ).slice( 0, MAX_ICONS );
 		return sites.map( function( site ) {
-			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 15 } />;
+			return <SiteIcon site={ site } key={ site.ID + '-icon' } size={ 14 } />;
 		} );
-	},
+	};
 
-	render: function() {
-		var icons = this.getIcons(),
-			classes;
+	render() {
+		const icons = this.getIcons();
+		const classes = `all-sites-icon has-${ this.getMaxSites().length }-icons`;
 
-		// Set element class attribute
-		classes = 'all-sites-icon is-shape-' + this.getMaxSites().length;
-
-		return (
-			<div className={ classes }>
-				{ icons }
-			</div>
-		);
+		return <div className={ classes }>{ icons }</div>;
 	}
-} );
+}

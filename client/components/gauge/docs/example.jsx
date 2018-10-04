@@ -1,26 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var Gauge = require( 'components/gauge' );
+import Gauge from 'components/gauge';
 
-module.exports = React.createClass( {
-	displayName: 'Gauge',
+export default class extends React.PureComponent {
+	static displayName = 'Gauge';
 
-	mixins: [ React.addons.PureRenderMixin ],
-
-	render: function() {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/gauge">Gauge</a>
-				</h2>
-				<Gauge percentage={ 27 } metric={ 'test' } />
-			</div>
-		);
+	render() {
+		return <Gauge percentage={ 27 } metric={ 'test' } />;
 	}
-} );
+}

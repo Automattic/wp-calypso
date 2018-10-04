@@ -1,0 +1,163 @@
+.line-chart__base {
+	cursor: pointer;
+}
+
+.line-chart__line-color-0 {
+	fill: none;
+	stroke: $blue-dark;
+	stroke-width: 3px;
+}
+
+.line-chart__line-color-1 {
+	fill: none;
+	stroke: $blue-medium;
+	stroke-width: 3px;
+}
+
+.line-chart__line-color-2 {
+	fill: none;
+	stroke: $blue-light;
+	stroke-width: 3px;
+}
+
+.line-chart__line-selected {
+	stroke-width: 5px;
+}
+
+.line-chart__line-not-selected, .line-chart__area-not-selected {
+	opacity: 0.5;
+}
+
+.line-chart__area-color-0 {
+	fill: $blue-dark;
+	opacity: 0.6;
+}
+
+.line-chart__area-color-1 {
+	fill: $blue-medium;
+	opacity: 0.3;
+}
+
+.line-chart__area-color-2 {
+	fill: $blue-light;
+	opacity: 0.1;
+}
+
+.line-chart__line-point {
+	cursor: pointer;
+	fill: $white;
+	stroke-width: 3px;
+}
+
+.line-chart__line-point-color-0 {
+	stroke: $blue-dark;
+}
+
+.line-chart__line-point-color-1 {
+	stroke: $blue-medium;
+}
+
+.line-chart__line-point-color-2 {
+	stroke: $blue-light;
+}
+
+.line-chart__area-selected {
+	&.line-chart__area-color-0 {
+		opacity: 0.8;
+	}
+
+	&.line-chart__area-color-1 {
+		opacity: 0.5;
+	}
+
+	&.line-chart__area-color-2 {
+		opacity: 0.3;
+	}
+}
+
+.line-chart__line-end-point-color-0 {
+	fill: $blue-dark;
+	stroke: $blue-dark;
+}
+
+.line-chart__line-end-point-color-1 {
+	fill: $blue-medium;
+	stroke: $blue-medium;
+}
+
+.line-chart__line-end-point-color-2 {
+	fill: $blue-light;
+	stroke: $blue-light;
+}
+
+.line-chart__placeholder {
+	@include placeholder();
+
+	padding-bottom: 50%;
+}
+
+.line-chart__x-axis,
+.line-chart__y-axis {
+	font-size: 11px;
+
+	.domain,
+	line {
+		stroke: $gray-lighten-30;
+	}
+}
+
+.line-chart__x-axis text {
+	fill: $gray-darken-30;
+}
+
+.line-chart__y-axis text {
+	fill: $gray-darken-10;
+}
+
+.line-chart__legend {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+
+	.legend-item {
+		cursor: pointer;
+	}
+
+	.legend-item:not( :first-child ) {
+		margin-left: 20px;
+	}
+}
+
+.line-chart__legend-sample-0 {
+	fill: $blue-dark;
+}
+
+.line-chart__legend-sample-1 {
+	fill: $blue-medium;
+}
+
+.line-chart__legend-sample-2 {
+	fill: $blue-light;
+}
+
+.line-chart__legend-sample-0-fill {
+	fill: $blue-dark;
+}
+
+ .line-chart__legend-sample-1-fill {
+	fill: $blue-medium;
+}
+
+.line-chart__legend-sample-2-fill {
+	fill: $blue-light;
+}
+
+.line-chart__date-range-selected {
+	fill: $blue-medium;
+	opacity: 0.1;
+}
+
+.line-chart__tooltip {
+	pointer-events: none;
+}

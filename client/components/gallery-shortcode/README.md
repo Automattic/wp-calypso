@@ -11,8 +11,9 @@ Simply pass a site ID and an array of media items.
 import React from 'react';
 import GalleryShortcode from 'components/gallery-shortcode';
 
-export default React.createClass( {
-	displayName: 'MyComponent',
+
+export default class extends React.Component {
+	static displayName = 'MyComponent';
 
 	render() {
 		return (
@@ -22,81 +23,22 @@ export default React.createClass( {
 				className="my-component" />
 		);
 	}
-} );
+}
 ```
 
 ## Props
 
 The following props can be passed to the GalleryShortcode component. If a `className` is passed, it will be added to the rendered `.gallery-shortcode` element.
 
-### `siteId`
-
-<table>
-	<tr><td>Type</td><td>Number</td></tr>
-	<tr><td>Required</td><td>Yes</td></tr>
-</table>
-
-The site ID for which to render the shortcode.
-
-### `items`
-
-<table>
-	<tr><td>Type</td><td>Array&lt;Media&gt;</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>[]</code></td></tr>
-</table>
-
-The media items to include in the rendered gallery.
-
-### `type`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>"default"</code></td></tr>
-</table>
-
-The rendered style of the gallery. Available options include `default` (Thumbnail Grid), `rectangle` (Tiled Mosaic), `square` (Square Tiles), `circle` (Circles), `columns` (Tiled Columns), and `slideshow` (Slideshow). Defaults to `default`.
-
-### `columns`
-
-<table>
-	<tr><td>Type</td><td>Number</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>3</code></td></tr>
-</table>
-
-The number of columns. The gallery will include a break tag at the end of each row, and calculate the column width as appropriate.
-
-### `orderBy`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>"menu_order"</code></td></tr>
-</table>
-
-The rendered order of the gallery. Available options include `menu_order` (order specified by the media modal), `title` (order by the title of the image in the Media Library), `post_date` (sort by date/time uploaded), `rand` (order randomly) and `ID` (order by media item ID). Defaults to `menu_order`.
-
-### `link`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>''</code></td></tr>
-</table>
-
-The type of link that each image will link to. Available options include `''` (Empty string which specifies that the link goes to the image's attachment page), `file` (Link to the image file), `none` (No link). Defaults to `''` (attachment page).
-
-### `size`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>thumbnail</code></td></tr>
-</table>
-
-The image size to use for the gallery thumbnail display. Available options include `thumbnail`, `medium`, `large`, `full` and any other additional image size that was registered with on the site. Defaults to `thumbnail`. 
+| property  | type           | required | default        | comment |
+| --------- | -------------- | -------- | -------------- | ------- |
+| `siteId`  | Number         | yes      |                | The site ID for which to render the shortcode. |
+| `items`   | Array\<Media\> | no       | `[]`           | The media items to include in the rendered gallery. |
+| `type`    | String         | no       | `"default"`    | The rendered style of the gallery. Available options include `default` (Thumbnail Grid), `rectangle` (Tiled Mosaic), `square` (Square Tiles), `circle` (Circles), `columns` (Tiled Columns), and `slideshow` (Slideshow). Defaults to `default`. |
+| `columns` | Number         | no       | `3`            | The number of columns. The gallery will include a break tag at the end of each row, and calculate the column width as appropriate. |
+| `orderBy` | String         | no       | `"menu_order"` | The rendered order of the gallery. Available options include `menu_order` (order specified by the media modal), `title` (order by the title of the image in the Media Library), `post_date` (sort by date/time uploaded), `rand` (order randomly) and `ID` (order by media item ID). Defaults to `menu_order`. |
+| `link`    | String         | no       | `''`           | The type of link that each image will link to. Available options include `''` (Empty string which specifies that the link goes to the image's attachment page), `file` (Link to the image file), `none` (No link). Defaults to `''` (attachment page). |
+| `size`    | String         | no       | `"thumbnail"`  | The image size to use for the gallery thumbnail display. Available options include `thumbnail`, `medium`, `large`, `full` and any other additional image size that was registered with on the site. Defaults to `thumbnail`. |
 
 ## Resources
 

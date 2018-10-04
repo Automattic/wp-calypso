@@ -1,84 +1,174 @@
-/* eslint-disable no-multi-spaces */
+/**
+ * /* eslint-disable no-multi-spaces
+ *
+ * @format
+ */
 
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	forEach = require( 'lodash/collection/forEach' );
+import { forEach } from 'lodash';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-const Dialog = require( 'components/dialog' ),
-	FormButton = require( 'components/forms/form-button' );
+import Dialog from 'components/dialog';
+import FormButton from 'components/forms/form-button';
 
-const HelpModal = React.createClass( {
+class HelpModal extends React.Component {
+	static propTypes = {
+		onClose: PropTypes.func,
+		macosx: PropTypes.bool,
+		showDialog: PropTypes.bool,
+	};
 
-	propTypes: {
-		onClose: React.PropTypes.func,
-		macosx: React.PropTypes.bool,
-		showDialog: React.PropTypes.bool
-	},
-
-	defaultShortcuts() {
+	defaultShortcuts = () => {
+		const { translate } = this.props;
 		return [
-			{ c: this.translate( 'Copy' ),      x: this.translate( 'Cut' )              },
-			{ v: this.translate( 'Paste' ),     a: this.translate( 'Select all' )       },
-			{ z: this.translate( 'Undo' ),      y: this.translate( 'Redo' )             },
-			{ b: this.translate( 'Bold' ),      i: this.translate( 'Italic' )           },
-			{ u: this.translate( 'Underline' ), k: this.translate( 'Insert/edit link' ) }
+			[
+				{ shortcut: 'c', action: translate( 'Copy' ) },
+				{ shortcut: 'x', action: translate( 'Cut' ) },
+			],
+			[
+				{ shortcut: 'v', action: translate( 'Paste' ) },
+				{ shortcut: 'a', action: translate( 'Select all' ) },
+			],
+			[
+				{ shortcut: 'z', action: translate( 'Undo' ) },
+				{ shortcut: 'y', action: translate( 'Redo' ) },
+			],
+			[
+				{ shortcut: 'b', action: translate( 'Bold' ) },
+				{ shortcut: 'i', action: translate( 'Italic' ) },
+			],
+			[
+				{ shortcut: 'u', action: translate( 'Underline' ) },
+				{ shortcut: 'k', action: translate( 'Insert/edit link' ) },
+			],
 		];
-	},
+	};
 
-	additionalShortcuts() {
+	additionalShortcuts = () => {
+		const { translate } = this.props;
 		return [
-			{ 1: this.translate( 'Heading 1' ),             2: this.translate( 'Heading 2' ) },
-			{ 3: this.translate( 'Heading 3' ),             4: this.translate( 'Heading 4' ) },
-			{ 5: this.translate( 'Heading 5' ),             6: this.translate( 'Heading 6' ) },
-			{ l: this.translate( 'Align left' ),            c: this.translate( 'Align center' ) },
-			{ r: this.translate( 'Align right' ),           j: this.translate( 'Justify' ) },
-			{ d: this.translate( 'Strikethrough' ),         q: this.translate( 'Blockquote' ) },
-			{ u: this.translate( 'Bullet list' ),           o: this.translate( 'Numbered list' ) },
-			{ a: this.translate( 'Insert/edit link' ),      s: this.translate( 'Remove link' ) },
-			{ m: this.translate( 'Insert/edit image' ),     t: this.translate( 'Insert Read More tag' ) },
-			{ h: this.translate( 'Keyboard Shortcuts' ),    x: this.translate( 'Code' ) },
-			{ p: this.translate( 'Insert Page Break tag' ) }
+			[
+				{ shortcut: 1, action: translate( 'Heading 1' ) },
+				{ shortcut: 2, action: translate( 'Heading 2' ) },
+			],
+			[
+				{ shortcut: 3, action: translate( 'Heading 3' ) },
+				{ shortcut: 4, action: translate( 'Heading 4' ) },
+			],
+			[
+				{ shortcut: 5, action: translate( 'Heading 5' ) },
+				{ shortcut: 6, action: translate( 'Heading 6' ) },
+			],
+			[
+				{ shortcut: 'l', action: translate( 'Align left' ) },
+				{ shortcut: 'c', action: translate( 'Align center' ) },
+			],
+			[
+				{ shortcut: 'r', action: translate( 'Align right' ) },
+				{ shortcut: 'j', action: translate( 'Justify' ) },
+			],
+			[
+				{ shortcut: 'd', action: translate( 'Strikethrough' ) },
+				{ shortcut: 'q', action: translate( 'Blockquote' ) },
+			],
+			[
+				{ shortcut: 'u', action: translate( 'Bulleted list' ) },
+				{ shortcut: 'o', action: translate( 'Numbered list' ) },
+			],
+			[
+				{ shortcut: 'a', action: translate( 'Insert/edit link' ) },
+				{ shortcut: 's', action: translate( 'Remove link' ) },
+			],
+			[
+				{ shortcut: 'm', action: translate( 'Insert/edit image' ) },
+				{ shortcut: 't', action: translate( 'Insert Read More tag' ) },
+			],
+			[
+				{ shortcut: 'h', action: translate( 'Keyboard Shortcuts' ) },
+				{ shortcut: 'x', action: translate( 'Code' ) },
+			],
+			[ { shortcut: 'p', action: translate( 'Insert Page Break tag' ) } ],
 		];
-	},
+	};
 
-	renderRow( row, index ) {
-		let columns = [];
+	spaceFormatShortcuts = () => {
+		const { translate } = this.props;
+		return [
+			[
+				{ shortcut: '*', action: translate( 'Bulleted list' ) },
+				{ shortcut: '1.', action: translate( 'Numbered list' ) },
+			],
+			[
+				{ shortcut: '-', action: translate( 'Bulleted list' ) },
+				{ shortcut: '1)', action: translate( 'Numbered list' ) },
+			],
+		];
+	};
 
-		forEach( row, ( text, key ) => {
+	enterFormatShortcuts = () => {
+		const { translate } = this.props;
+		return [
+			[
+				{ shortcut: '>', action: translate( 'Blockquote' ) },
+				{ shortcut: '##', action: translate( 'Heading 2' ) },
+			],
+			[
+				{ shortcut: '###', action: translate( 'Heading 3' ) },
+				{ shortcut: '####', action: translate( 'Heading 4' ) },
+			],
+			[
+				{ shortcut: '#####', action: translate( 'Heading 5' ) },
+				{ shortcut: '######', action: translate( 'Heading 6' ) },
+			],
+			[ { shortcut: '---', action: translate( 'Horizontal line' ) } ],
+		];
+	};
+
+	renderRow = ( row, rowIndex ) => {
+		const columns = [];
+
+		forEach( row, cellPair => {
 			columns.push(
-				<th className="wpcom-help__key" key={ key }><kbd>{ key }</kbd></th>
+				<th className="wpcom-help__key" key={ cellPair.shortcut }>
+					<kbd>{ cellPair.shortcut }</kbd>
+				</th>
 			);
-			columns.push( <td className="wpcom-help__action" key={ text }>{ text }</td> );
+			columns.push(
+				<td className="wpcom-help__action" key={ cellPair.action }>
+					{ cellPair.action }
+				</td>
+			);
 		} );
 
-		return <tr key={ index }>{ columns }</tr>;
-	},
+		return <tr key={ rowIndex }>{ columns }</tr>;
+	};
 
-	getButtons() {
+	getButtons = () => {
 		return [
-			<FormButton
-				key="close"
-				isPrimary={ false }
-				onClick={ this.props.onClose }>
-					{ this.translate( 'Close' ) }
-			</FormButton>
+			<FormButton key="close" isPrimary={ false } onClick={ this.props.onClose }>
+				{ this.props.translate( 'Close' ) }
+			</FormButton>,
 		];
-	},
+	};
 
-	getKeyLabel() {
-		return this.translate( 'Key', { context: 'Computer key used in keyboard shortcut' } );
-	},
+	getKeyLabel = () => {
+		return this.props.translate( 'Key', { context: 'Computer key used in keyboard shortcut' } );
+	};
 
-	getActionLabel() {
-		return this.translate( 'Action', { context: 'Action taken when pressing keyboard shortcut' } );
-	},
+	getActionLabel = () => {
+		return this.props.translate( 'Action', {
+			context: 'Action taken when pressing keyboard shortcut',
+		} );
+	};
 
-	getTableHead() {
+	getTableHead = () => {
 		return (
 			<thead>
 				<tr>
@@ -89,42 +179,62 @@ const HelpModal = React.createClass( {
 				</tr>
 			</thead>
 		);
-	},
+	};
 
 	render() {
-		const defaultText = this.props.macosx ?
-			this.translate( 'Default shortcuts, Command + key:', { context: 'Mac shortcuts' } ) :
-			this.translate( 'Default shortcuts, Ctrl + key:', { context: 'Windows shortcuts' } );
+		const translate = this.props.translate;
 
-		const additionalText = this.props.macosx ?
-			this.translate( 'Additional shortcuts, Control + Option + key:', { context: 'Mac shortcuts' } ) :
-			this.translate( 'Additional shortcuts, Shift + Alt + key:', { context: 'Windows shortcuts' } );
+		const defaultText = this.props.macosx
+			? translate( 'Default shortcuts. Command + key:', { context: 'Mac shortcuts' } )
+			: translate( 'Default shortcuts. Ctrl + key:', { context: 'Windows shortcuts' } );
+
+		const additionalText = this.props.macosx
+			? translate( 'Additional shortcuts. Control + Option + key:', {
+					context: 'Mac shortcuts',
+			  } )
+			: translate( 'Additional shortcuts. Shift + Alt + key:', {
+					context: 'Windows shortcuts',
+			  } );
+
+		const tableHead = this.getTableHead();
 
 		return (
 			<Dialog
 				isVisible={ this.props.showDialog }
 				buttons={ this.getButtons() }
 				additionalClassNames="wpcom-help__dialog"
-				onClose={ this.props.onClose }>
-				<h2 className="wpcom-help__heading">{ this.translate( 'Keyboard Shortcuts' ) }</h2>
+				onClose={ this.props.onClose }
+			>
+				<h2 className="wpcom-help__heading">{ translate( 'Keyboard Shortcuts' ) }</h2>
 				<p>{ defaultText }</p>
 				<table className="wpcom-help__table">
-					{ this.getTableHead() }
-					<tbody>
-						{ this.defaultShortcuts().map( this.renderRow, this ) }
-					</tbody>
+					{ tableHead }
+					<tbody>{ this.defaultShortcuts().map( this.renderRow, this ) }</tbody>
 				</table>
 				<p>{ additionalText }</p>
 				<table className="wpcom-help__table">
-					{ this.getTableHead() }
-					<tbody>
-						{ this.additionalShortcuts().map( this.renderRow, this ) }
-					</tbody>
+					{ tableHead }
+					<tbody>{ this.additionalShortcuts().map( this.renderRow, this ) }</tbody>
+				</table>
+				<p>
+					{ translate(
+						'Formatting shortcuts. Start a new paragraph with the shortcut and press Space to apply the formatting.'
+					) }
+				</p>
+				<table className="wpcom-help__table">
+					<tbody>{ this.spaceFormatShortcuts().map( this.renderRow, this ) }</tbody>
+				</table>
+				<p>
+					{ translate(
+						'Formatting shortcuts. These shortcuts are turned into formatting when you press Enter.'
+					) }
+				</p>
+				<table className="wpcom-help__table">
+					<tbody>{ this.enterFormatShortcuts().map( this.renderRow, this ) }</tbody>
 				</table>
 			</Dialog>
 		);
 	}
+}
 
-} );
-
-module.exports = HelpModal;
+export default localize( HelpModal );

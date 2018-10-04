@@ -1,62 +1,97 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	url = require( 'url' ),
-	qs = require( 'querystring' );
+
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import url from 'url';
+import { parse, stringify } from 'qs';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var safeImageURL = require( 'lib/safe-image-url' );
+import safeImageURL from 'lib/safe-image-url';
+import { getUserTempGravatar } from 'state/current-user/gravatar-status/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'Gravatar',
-
-	propTypes: {
-		user: React.PropTypes.object,
-		size: React.PropTypes.number,
-		imgSize: React.PropTypes.number
-	},
-
-	getDefaultProps: function() {
-		// The REST-API returns s=96 by default, so that is most likely to be cached
-		return {
-			imgSize: 96,
-			size: 32
+export class Gravatar extends Component {
+	constructor() {
+		super( ...arguments );
+		this.state = {
+			failedToLoad: false,
 		};
-	},
+	}
 
-	_getResizedImageURL: function( imageURL ) {
-		var parsedURL, query;
+	static propTypes = {
+		user: PropTypes.object,
+		size: PropTypes.number,
+		imgSize: PropTypes.number,
+		// connected props:
+		tempImage: PropTypes.oneOfType( [
+			PropTypes.string, // the temp image base64 string if it exists
+			PropTypes.bool, // or false if the temp image does not exist
+		] ),
+	};
 
+	static defaultProps = {
+		// The REST-API returns s=96 by default, so that is most likely to be cached
+		imgSize: 96,
+		size: 32,
+	};
+
+	getResizedImageURL( imageURL ) {
+		const { imgSize } = this.props;
 		imageURL = imageURL || 'https://www.gravatar.com/avatar/0';
-		parsedURL = url.parse( imageURL );
-		query = qs.parse( parsedURL.query );
+		const parsedURL = url.parse( imageURL );
+		const query = parse( parsedURL.query );
+
 		if ( /^([-a-zA-Z0-9_]+\.)*(gravatar.com)$/.test( parsedURL.hostname ) ) {
-			query.s = this.props.imgSize;
+			query.s = imgSize;
 			query.d = 'mm';
 		} else {
 			// assume photon
-			query.resize = this.props.imgSize + ',' + this.props.imgSize;
+			query.resize = imgSize + ',' + imgSize;
 		}
-		parsedURL.search = qs.stringify( query );
+
+		parsedURL.search = stringify( query );
 		return url.format( parsedURL );
-	},
+	}
 
-	render: function() {
-		const size = this.props.size;
+	onError = () => this.setState( { failedToLoad: true } );
 
-		if ( ! this.props.user ) {
+	render() {
+		const { alt, title, size, tempImage, user } = this.props;
+
+		if ( ! user ) {
 			return <span className="gravatar is-placeholder" style={ { width: size, height: size } } />;
 		}
 
-		const alt = this.props.alt || this.props.user.display_name;
-		const avatarURL = this._getResizedImageURL( safeImageURL( this.props.user.avatar_URL ) );
+		if ( this.state.failedToLoad && ! tempImage ) {
+			return <span className="gravatar is-missing" />;
+		}
+
+		const altText = alt || user.display_name || user.name;
+		const avatarURL = tempImage || this.getResizedImageURL( safeImageURL( user.avatar_URL ) );
+		const classes = classnames( 'gravatar', this.props.className );
 
 		return (
-			<img alt={ alt } className="gravatar" src={ avatarURL } width={ size } height={ size } />
+			<img
+				alt={ altText }
+				title={ title }
+				className={ classes }
+				src={ avatarURL }
+				width={ size }
+				height={ size }
+				onError={ this.onError }
+			/>
 		);
 	}
+}
 
-} );
+export default connect( ( state, ownProps ) => ( {
+	tempImage: getUserTempGravatar( state, get( ownProps, 'user.ID', false ) ),
+} ) )( Gravatar );

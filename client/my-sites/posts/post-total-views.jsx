@@ -1,98 +1,80 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require('react'),
-	classNames = require( 'classnames' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var StatUpdateIndicator = require( 'components/stat-update-indicator' ),
-	postStatsStore = require( 'lib/post-stats/store' ),
-	Gridicon = require( 'components/gridicon'),
-	HEARTBEAT_IN_SECONDS = 60;
+import StatUpdateIndicator from 'components/stat-update-indicator';
+import QueryPostStats from 'components/data/query-post-stats';
+import QuerySites from 'components/data/query-sites';
+import { getPostStat } from 'state/stats/posts/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
-var PostTotalViews = React.createClass( {
+function PostTotalViews( { clickHandler, numberFormat, post, slug, translate, viewCount } ) {
+	const { ID: postId, site_ID: siteId } = post;
+	let viewsCountDisplay = '',
+		viewsTitle;
 
-	propTypes: {
-		post: React.PropTypes.object.isRequired,
-		clickHandler: React.PropTypes.func
-	},
-
-	getInitialState: function() {
-		return {
-			totalViews: this.getTotalViews()
-		};
-	},
-
-	componentWillMount: function() {
-		postStatsStore.on( 'change', this.handleChange );
-
-		this.interval = setInterval( function() {
-			// Keep it fresh!
-			this.getTotalViews();
-
-		}.bind( this ), HEARTBEAT_IN_SECONDS * 1000 );
-	},
-
-	componentWillUnmount: function() {
-		clearInterval( this.interval );
-		postStatsStore.off( 'change', this.handleChange );
-	},
-
-	handleChange: function() {
-		var totalViews = this.getTotalViews();
-
-		if ( this.state.totalViews === totalViews ) {
-			return;
-		}
-
-		this.setState( {
-			totalViews: totalViews
+	if ( viewCount ) {
+		viewsCountDisplay = numberFormat( viewCount );
+		viewsTitle = translate( '%(count)s Total View', '%(count)s Total Views', {
+			count: viewCount,
+			args: {
+				count: viewCount,
+			},
 		} );
-	},
-
-	getTotalViews: function() {
-		var post = this.props.post,
-			postId = post.ID,
-			siteId = post.site_ID;
-
-		return postStatsStore.getItem( 'totalViews', siteId, postId );
-	},
-
-	render: function() {
-		var views = this.state.totalViews,
-			post = this.props.post,
-			postId = post.ID,
-			siteId = post.site_ID,
-			viewsCountDisplay = '',
-			viewsTitle;
-
-		if ( views && ! isNaN( views ) ) {
-			viewsCountDisplay = this.numberFormat( views );
-			viewsTitle = this.translate( '1 Total View', '%(count)s Total Views', {
-				count: views,
-				args: {
-					count: views
-				}
-			} );
-		} else {
-			viewsTitle = this.translate( 'Total Views' );
-		}
-
-		return (
-			<a href={ '/stats/post/' + postId + '/' + siteId }
-				className={ classNames( {
-					'post__total-views': true,
-					'is-empty': ! viewsCountDisplay
-				} ) }
-				title={ viewsTitle }
-				onClick={ this.props.clickHandler }>
-				<Gridicon icon="visible" size={ 24 } />
-				<StatUpdateIndicator updateOn={ viewsCountDisplay }>{ viewsCountDisplay }</StatUpdateIndicator>
-			</a>
-		);
+	} else {
+		viewsTitle = translate( 'Total Views' );
 	}
-} );
 
-module.exports = PostTotalViews;
+	if ( ! slug ) {
+		return <QuerySites siteId={ siteId } />;
+	}
+
+	return (
+		<a
+			href={ `/stats/post/${ postId }/${ slug }` }
+			className={ classNames( {
+				'post__total-views': true,
+				'is-empty': ! viewsCountDisplay,
+			} ) }
+			title={ viewsTitle }
+			onClick={ clickHandler }
+		>
+			<QueryPostStats siteId={ siteId } postId={ postId } fields={ [ 'views' ] } />
+			<Gridicon icon="visible" size={ 24 } />
+			<StatUpdateIndicator updateOn={ viewsCountDisplay }>
+				{ viewsCountDisplay }
+			</StatUpdateIndicator>
+		</a>
+	);
+}
+
+PostTotalViews.propTypes = {
+	clickHandler: PropTypes.func,
+	numberFormat: PropTypes.func,
+	post: PropTypes.object.isRequired,
+	slug: PropTypes.string,
+	translate: PropTypes.func,
+	viewCount: PropTypes.number,
+};
+
+export default connect( ( state, ownProps ) => {
+	const { post } = ownProps;
+	const viewCount = getPostStat( state, post.site_ID, post.ID, 'views' );
+
+	return {
+		slug: getSiteSlug( state, post.site_ID ),
+		viewCount,
+	};
+} )( localize( PostTotalViews ) );

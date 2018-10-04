@@ -1,93 +1,78 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	omit = require( 'lodash/object/omit' ),
-	titleCase = require( 'to-title-case' );
 
-var RolesStore = require( 'lib/site-roles/store' ),
-	RolesActions = require( 'lib/site-roles/actions' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormSelect = require( 'components/forms/form-select' );
+import React from 'react';
+import { omit, map } from 'lodash';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-module.exports = React.createClass( {
-	displayName: 'RoleSelect',
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import QuerySites from 'components/data/query-sites';
+import QuerySiteRoles from 'components/data/query-site-roles';
+import { getSite } from 'state/sites/selectors';
+import { getSiteRoles } from 'state/site-roles/selectors';
 
-	getInitialState: function() {
-		return ( {
-			roles: this.props.siteId ? RolesStore.getRoles( this.props.siteId ) : {}
-		} );
-	},
+const getWpcomFollowerRole = ( { site, translate } ) => {
+	const displayName = site.is_private
+		? translate( 'Viewer', { context: 'Role that is displayed in a select' } )
+		: translate( 'Follower', { context: 'Role that is displayed in a select' } );
 
-	componentDidMount: function() {
-		RolesStore.on( 'change', this.refreshRoles );
-		this.fetchRoles();
-	},
+	return {
+		display_name: displayName,
+		name: 'follower',
+	};
+};
 
-	componentWillUnmount: function() {
-		RolesStore.removeListener( 'change', this.refreshRoles );
-	},
+const RoleSelect = props => {
+	let { siteRoles } = props;
+	const { site, includeFollower, siteId, id, explanation, translate } = props;
+	const omitProps = [
+		'site',
+		'key',
+		'siteId',
+		'includeFollower',
+		'explanation',
+		'siteRoles',
+		'dispatch',
+		'moment',
+		'numberFormat',
+		'translate',
+	];
 
-	componentWillReceiveProps: function( nextProps ) {
-		this.refreshRoles( nextProps );
-	},
-
-	refreshRoles: function( nextProps ) {
-		var siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
-
-		if ( siteId ) {
-			this.setState( {
-				roles: RolesStore.getRoles( siteId )
-			} );
-		}
-	},
-
-	fetchRoles: function() {
-		var siteId = this.props.siteId || null;
-		if ( ! siteId ) {
-			return;
-		}
-
-		if ( RolesStore.getRoles( siteId ).length ) {
-			debug( 'initial fetch not necessary' );
-			return;
-		}
-
-		// defer fetch requests to avoid dispatcher conflicts
-		setTimeout( function() {
-			var fetching = RolesStore.isFetching( siteId );
-			if ( fetching ) {
-				return;
-			}
-			RolesActions.fetch( siteId );
-		}, 0 );
-	},
-
-	render: function() {
-		var roles = Object.keys( this.state.roles );
-		return (
-			<FormFieldset key={ this.props.key } disabled={ ! roles.length }>
-				<FormLabel htmlFor={ this.props.id }>
-					{ this.translate( 'Role', {
-						context: 'Text that is displayed in a label of a form.'
-					} ) }
-				</FormLabel>
-				<FormSelect { ...omit( this.props, [ 'site', 'key' ] ) }>
-					{
-						roles.map( function( role ) {
-							return (
-								<option value={ role } key={ role }>
-									{ titleCase( role ) }
-								</option>
-							);
-						} )
-					}
-				</FormSelect>
-			</FormFieldset>
-		);
+	if ( site && siteRoles && includeFollower ) {
+		siteRoles = siteRoles.concat( getWpcomFollowerRole( props ) );
 	}
-} );
+
+	return (
+		<FormFieldset key={ siteId } disabled={ ! siteRoles }>
+			{ siteId && <QuerySites siteId={ siteId } /> }
+			{ siteId && <QuerySiteRoles siteId={ siteId } /> }
+			<FormLabel htmlFor={ id }>{ translate( 'Role' ) }</FormLabel>
+			<FormSelect { ...omit( props, omitProps ) }>
+				{ siteRoles &&
+					map( siteRoles, role => {
+						return (
+							<option value={ role.name } key={ role.name }>
+								{ role.display_name }
+							</option>
+						);
+					} ) }
+			</FormSelect>
+			{ explanation && <FormSettingExplanation>{ explanation }</FormSettingExplanation> }
+		</FormFieldset>
+	);
+};
+
+export default connect( ( state, ownProps ) => ( {
+	site: getSite( state, ownProps.siteId ),
+	siteRoles: getSiteRoles( state, ownProps.siteId ),
+} ) )( localize( RoleSelect ) );

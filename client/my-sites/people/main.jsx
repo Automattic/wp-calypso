@@ -1,29 +1,47 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	omit = require( 'lodash/object/omit' ),
-	debug = require( 'debug' )( 'calypso:my-sites:people:main' );
+
+import React from 'react';
+import createReactClass from 'create-react-class';
+import { localize } from 'i18n-calypso';
+import debugModule from 'debug';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
-	FollowersList = require( './followers-list' ),
-	ViewersList = require( './viewers-list' ),
-	TeamList = require( 'my-sites/people/team-list' ),
-	EmptyContent = require( 'components/empty-content' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	PeopleNotices = require( 'my-sites/people/people-notices' ),
-	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' ),
-	PeopleSectionNav = require( 'my-sites/people/people-section-nav' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' );
+import Main from 'components/main';
+import FollowersList from './followers-list';
+import ViewersList from './viewers-list';
+import TeamList from 'my-sites/people/team-list';
+import EmptyContent from 'components/empty-content';
+import observe from 'lib/mixins/data-observe';
+import PeopleNotices from 'my-sites/people/people-notices';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PeopleSectionNav from 'my-sites/people/people-section-nav';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isPrivateSite from 'state/selectors/is-private-site';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import titlecase from 'to-title-case';
 
-module.exports = React.createClass( {
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:my-sites:people:main' );
+
+// TODO: port to es6 once we remove the last observe
+export const People = createReactClass( {
+	// eslint-disable-line react/prefer-es6-class
 
 	displayName: 'People',
 
-	mixins: [ observe( 'sites', 'peopleLog' ) ],
+	mixins: [ observe( 'peopleLog' ) ],
 
 	componentDidMount: function() {
 		debug( 'PeopleList React component mounted.' );
@@ -33,56 +51,99 @@ module.exports = React.createClass( {
 		switch ( this.props.filter ) {
 			case 'team':
 				return <TeamList site={ site } search={ this.props.search } />;
-				break;
 			case 'followers':
-				return <FollowersList site={ site } label={ this.translate( 'Followers' ) } />;
-				break;
+				return <FollowersList site={ site } label={ this.props.translate( 'Followers' ) } />;
 			case 'email-followers':
-				return <FollowersList site={ site } search={ this.props.search } label={ this.translate( 'Email Followers' ) } type="email" />;
-				break;
+				return (
+					<FollowersList
+						site={ site }
+						search={ this.props.search }
+						label={ this.props.translate( 'Email Followers' ) }
+						type="email"
+					/>
+				);
 			case 'viewers':
-				return <ViewersList site={ site } label={ this.translate( 'Viewers' ) } />;
+				return <ViewersList site={ site } label={ this.props.translate( 'Viewers' ) } />;
 			default:
 				return null;
 		}
 	},
 
 	render: function() {
-		var site = this.props.sites.getSelectedSite();
+		const {
+			isJetpack,
+			jetpackPeopleSupported,
+			canViewPeople,
+			siteId,
+			site,
+			search,
+			filter,
+			isPrivate,
+		} = this.props;
 
 		// Jetpack 3.7 is necessary to manage people
-		if ( site && site.jetpack && site.versionCompare( '3.7.0-beta', '<' ) ) {
+		if ( isJetpack && ! jetpackPeopleSupported ) {
 			return (
 				<Main>
-					<SidebarNavigation />
-					<JetpackManageErrorPage
-						template="updateJetpack"
-						site={ site }
-						version="3.7"
+					<PageViewTracker
+						path={ `/people/${ filter }/:site` }
+						title={ `People > ${ titlecase( filter ) }` }
 					/>
+					<SidebarNavigation />
+					<JetpackManageErrorPage template="updateJetpack" siteId={ siteId } version="3.7" />
 				</Main>
 			);
 		}
-		if ( site && site.capabilities && ! site.capabilities.list_users ) {
+		if ( siteId && ! canViewPeople ) {
 			return (
 				<Main>
+					<PageViewTracker
+						path={ `/people/${ filter }/:site` }
+						title={ `People > ${ titlecase( filter ) }` }
+					/>
 					<SidebarNavigation />
 					<EmptyContent
-						title={ this.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/drake/drake-empty-results.svg' }
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					/>
 				</Main>
 			);
 		}
 		return (
 			<Main>
+				<PageViewTracker
+					path={ `/people/${ filter }/:site` }
+					title={ `People > ${ titlecase( filter ) }` }
+				/>
 				<SidebarNavigation />
 				<div>
-					{ <PeopleSectionNav { ...omit( this.props, [ 'sites' ] ) } site={ site } /> }
-					<PeopleNotices siteId={ site && site.ID } />
+					{
+						<PeopleSectionNav
+							isJetpack={ isJetpack }
+							isPrivate={ isPrivate }
+							jetpackPeopleSupported={ jetpackPeopleSupported }
+							canViewPeople={ canViewPeople }
+							search={ search }
+							filter={ filter }
+							site={ site }
+						/>
+					}
+					<PeopleNotices />
 					{ this.renderPeopleList( site ) }
 				</div>
 			</Main>
 		);
-	}
+	},
 } );
+
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		site: getSelectedSite( state ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isPrivate: isPrivateSite( state, siteId ),
+		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+		jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
+	};
+} )( localize( People ) );

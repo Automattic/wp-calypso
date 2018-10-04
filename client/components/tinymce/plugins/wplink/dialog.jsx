@@ -1,45 +1,86 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	tinymce = require( 'tinymce/tinymce' );
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import tinymce from 'tinymce/tinymce';
+import { connect } from 'react-redux';
+import { find } from 'lodash';
+import GridiconLinkBreak from 'gridicons/dist/link-break';
 
 /**
  * Internal dependencies
  */
-var MediaSerialization = require( 'lib/media-serialization' ),
-	MediaStore = require( 'lib/media/store' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	sites = require( 'lib/sites-list' )(),
-	Dialog = require( 'components/dialog' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	Gridicon = require( 'components/gridicon' );
+import { deserialize } from 'lib/media-serialization';
+import MediaStore from 'lib/media/store';
+import { url as mediaUrl } from 'lib/media/utils';
+import Dialog from 'components/dialog';
+import FormTextInput from 'components/forms/form-text-input';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import PostSelector from 'my-sites/post-selector';
+import { getSelectedSite } from 'state/ui/selectors';
+import { getSitePosts } from 'state/posts/selectors';
+import { decodeEntities } from 'lib/formatting';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 
 /**
  * Module variables
  */
-var REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i;
+let REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+	REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i,
+	REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
-var LinkDialog = React.createClass( {
+class LinkDialog extends React.Component {
+	static propTypes = {
+		visible: PropTypes.bool,
+		editor: PropTypes.object,
+		onClose: PropTypes.func,
+		site: PropTypes.object,
+		sitePosts: PropTypes.array,
+		firstLoad: PropTypes.bool,
+	};
 
-	getInitialState: function() {
-		return this.getState();
-	},
+	static defaultProps = {
+		onClose: () => {},
+		firstLoad: false,
+	};
 
-	getLink: function() {
-		var editor = this.props.editor;
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.visible && ! this.props.visible ) {
+			this.setState( this.getState() );
+		}
+	}
+
+	getLink = () => {
+		const editor = this.props.editor;
 
 		return editor.dom.getParent( editor.selection.getNode(), 'a' );
-	},
+	};
 
-	updateEditor: function() {
-		var editor = this.props.editor,
-			attrs, link, linkText;
+	getCorrectedUrl = () => {
+		const url = this.state.url.trim();
+
+		if ( REGEXP_EMAIL.test( url ) ) {
+			return 'mailto:' + url;
+		}
+
+		if ( ! REGEXP_STANDALONE_URL.test( url ) ) {
+			return 'http://' + url;
+		}
+
+		return url;
+	};
+
+	updateEditor = () => {
+		let editor = this.props.editor,
+			attrs,
+			link,
+			linkText;
 
 		editor.focus();
 
@@ -55,8 +96,8 @@ var LinkDialog = React.createClass( {
 		link = this.getLink();
 		linkText = this.state.linkText;
 		attrs = {
-			href: this.state.url,
-			target: this.state.newWindow ? '_blank' : ''
+			href: this.getCorrectedUrl(),
+			target: this.state.newWindow ? '_blank' : '',
 		};
 
 		if ( link ) {
@@ -77,21 +118,19 @@ var LinkDialog = React.createClass( {
 		}
 
 		this.closeDialog();
-	},
+	};
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.visible && ! this.state.showDialog ) {
-			this.setState( this.getState() );
-		}
-	},
-
-	hasSelectedText: function( linkNode ) {
-		var editor = this.props.editor,
+	hasSelectedText = linkNode => {
+		let editor = this.props.editor,
 			html = editor.selection.getContent(),
-			nodes, i;
+			nodes,
+			i;
 
 		// Partial html and not a fully selected anchor element
-		if ( /</.test( html ) && ( ! /^<a [^>]+>[^<]+<\/a>$/.test( html ) || html.indexOf( 'href=' ) === -1 ) ) {
+		if (
+			/</.test( html ) &&
+			( ! /^<a [^>]+>[^<]+<\/a>$/.test( html ) || html.indexOf( 'href=' ) === -1 )
+		) {
 			return false;
 		}
 
@@ -110,11 +149,13 @@ var LinkDialog = React.createClass( {
 		}
 
 		return true;
-	},
+	};
 
-	getInferredUrl: function() {
-		var selectedText = this.props.editor.selection.getContent(),
-			selectedNode, site, parsedImage, knownImage;
+	getInferredUrl = () => {
+		let selectedText = this.props.editor.selection.getContent(),
+			selectedNode,
+			parsedImage,
+			knownImage;
 
 		if ( REGEXP_EMAIL.test( selectedText ) ) {
 			return 'mailto:' + selectedText;
@@ -123,32 +164,32 @@ var LinkDialog = React.createClass( {
 		}
 
 		selectedNode = this.props.editor.selection.getNode();
-		site = sites.getSelectedSite();
 		if ( selectedNode && 'IMG' === selectedNode.nodeName ) {
-			parsedImage = MediaSerialization.deserialize( selectedNode );
-			if ( site && parsedImage.media.ID ) {
-				knownImage = MediaStore.get( site.ID, parsedImage.media.ID ) || parsedImage.media;
-				return MediaUtils.url( knownImage, {
-					size: 'full'
+			parsedImage = deserialize( selectedNode );
+			if ( this.props.site && parsedImage.media.ID ) {
+				knownImage =
+					MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
+				return mediaUrl( knownImage, {
+					size: 'full',
 				} );
 			} else if ( parsedImage.media.URL ) {
 				return parsedImage.media.URL;
 			}
 		}
-	},
+	};
 
-	getState: function() {
-		var editor = this.props.editor,
+	getState = () => {
+		let editor = this.props.editor,
 			selectedNode = editor.selection.getNode(),
 			linkNode = editor.dom.getParent( selectedNode, 'a[href]' ),
 			onlyText = this.hasSelectedText( linkNode ),
 			nextState = {
-				showDialog: true,
 				isNew: true,
 				newWindow: false,
 				showLinkText: true,
 				linkText: '',
-				url: ''
+				url: '',
+				isUserDefinedLinkText: false,
 			};
 
 		if ( linkNode ) {
@@ -169,76 +210,105 @@ var LinkDialog = React.createClass( {
 		}
 
 		return nextState;
-	},
+	};
 
-	closeDialog: function() {
-		this.props.editor.focus();
-		this.setState( { showDialog: false } );
-	},
+	closeDialog = () => {
+		this.props.onClose();
+	};
 
-	setUrl: function( event ) {
+	setUrl = event => {
 		this.setState( { url: event.target.value } );
-	},
+	};
 
-	setLinkText: function( event ) {
-		this.setState( { linkText: event.target.value } );
-	},
+	setLinkText = event => {
+		this.setState( {
+			linkText: event.target.value,
+			isUserDefinedLinkText: true,
+		} );
+	};
 
-	setNewWindow: function( event ) {
+	setNewWindow = event => {
 		this.setState( { newWindow: event.target.checked } );
-	},
+	};
 
-	onInputKeyDown: function( event ) {
+	onInputKeyDown = event => {
 		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 			this.updateEditor();
 		}
-	},
+	};
 
-	removeLink: function() {
+	removeLink = () => {
 		this.props.editor.execCommand( 'unlink' );
 		this.closeDialog();
-	},
+	};
 
-	getButtons: function() {
-		var buttonText, buttons;
+	getButtons = () => {
+		let buttonText, buttons;
 
 		if ( this.state.isNew ) {
-			buttonText = this.translate( 'Add Link' );
+			buttonText = this.props.translate( 'Add Link' );
 		} else {
-			buttonText = this.translate( 'Save' );
+			buttonText = this.props.translate( 'Save' );
 		}
 
 		buttons = [
-			<FormButton
-				key="save"
-				onClick={ this.updateEditor }>
-					{ buttonText }
+			<FormButton key="save" onClick={ this.updateEditor }>
+				{ buttonText }
 			</FormButton>,
-			<FormButton
-				key="cancel"
-				isPrimary={ false }
-				onClick={ this.closeDialog }>
-					{ this.translate( 'Cancel' ) }
-			</FormButton>
+			<FormButton key="cancel" isPrimary={ false } onClick={ this.closeDialog }>
+				{ this.props.translate( 'Cancel' ) }
+			</FormButton>,
 		];
 
 		if ( this.state.url && ! this.state.isNew ) {
 			buttons.push(
 				<button className={ 'wplink__remove-link' } onClick={ this.removeLink }>
-					<Gridicon icon="link-break" />
-					{ this.translate( 'Remove' ) }
+					<GridiconLinkBreak />
+					{ this.props.translate( 'Remove' ) }
 				</button>
 			);
 		}
 
 		return buttons;
-	},
+	};
 
-	render: function() {
+	setExistingContent = post => {
+		const state = { url: post.URL };
+		const shouldSetLinkText =
+			! this.state.isUserDefinedLinkText &&
+			! this.props.editor.selection.getContent() &&
+			! this.getLink();
+
+		if ( shouldSetLinkText ) {
+			Object.assign( state, {
+				linkText: decodeEntities( post.title ),
+			} );
+		}
+
+		this.props.recordEditorStat( 'link-existing-content' );
+		this.props.recordEditorEvent( 'Set link to existing content' );
+
+		this.setState( state );
+	};
+
+	getSelectedPostId = () => {
+		if ( ! this.state.url || ! this.props.sitePosts ) {
+			return;
+		}
+
+		const selectedPost = find( this.props.sitePosts, { URL: this.state.url } );
+		if ( selectedPost ) {
+			return selectedPost.ID;
+		}
+	};
+
+	state = this.getState();
+
+	render() {
 		return (
 			<Dialog
-				isVisible={ this.state.showDialog }
+				isVisible={ this.props.visible }
 				onClose={ this.closeDialog }
 				buttons={ this.getButtons() }
 				autoFocus={ false }
@@ -246,7 +316,7 @@ var LinkDialog = React.createClass( {
 			>
 				<FormFieldset>
 					<FormLabel>
-						<span>{ this.translate( 'URL' ) }</span>
+						<span>{ this.props.translate( 'URL' ) }</span>
 						<FormTextInput
 							ref="url"
 							autoFocus={ true }
@@ -255,26 +325,54 @@ var LinkDialog = React.createClass( {
 							onKeyDown={ this.onInputKeyDown }
 						/>
 					</FormLabel>
-					{ this.state.showLinkText ?
+					{ this.state.showLinkText ? (
 						<FormLabel>
-							<span>{ this.translate( 'Link Text' ) }</span>
+							<span>{ this.props.translate( 'Link Text' ) }</span>
 							<FormTextInput
 								onChange={ this.setLinkText }
 								value={ this.state.linkText }
 								onKeyDown={ this.onInputKeyDown }
 							/>
 						</FormLabel>
-					: null }
+					) : null }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
 						<FormCheckbox onChange={ this.setNewWindow } checked={ this.state.newWindow } />
-						<span>{ this.translate( 'Open link in a new window/tab' ) }</span>
+						<span>{ this.props.translate( 'Open link in a new window/tab' ) }</span>
+					</FormLabel>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>
+						<span>{ this.props.translate( 'Link to existing content' ) }</span>
+						{ this.props.site && (
+							<PostSelector
+								siteId={ this.props.site.ID }
+								type="any"
+								excludePrivateTypes={ true }
+								status="publish"
+								orderBy="date"
+								order="DESC"
+								selected={ this.getSelectedPostId() }
+								onChange={ this.setExistingContent }
+								suppressFirstPageLoad={ ! this.props.firstLoad }
+								emptyMessage={ this.props.translate( 'No posts found' ) }
+							/>
+						) }
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>
 		);
 	}
-} );
+}
 
-module.exports = LinkDialog;
+export default connect(
+	state => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			site: selectedSite,
+			sitePosts: selectedSite ? getSitePosts( state, selectedSite.ID ) : null,
+		};
+	},
+	{ recordEditorEvent, recordEditorStat }
+)( localize( LinkDialog ) );

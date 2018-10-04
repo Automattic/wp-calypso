@@ -1,163 +1,143 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:signup-progress-store' ), // eslint-disable-line no-unused-vars
-	store = require( 'store' ),
-	assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	find = require( 'lodash/collection/find' ),
-	map = require( 'lodash/collection/map' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	clone = require( 'lodash/lang/clone' );
+
+import { isEqual, get, isEmpty, omit } from 'lodash';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:signup-progress-store' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	config = require( 'config' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	SignupDependencyStore = require( './dependency-store' ),
-	steps = require( 'signup/config/steps' );
+import Dispatcher from 'dispatcher';
+import steps from 'signup/config/steps-pure';
+import { SIGNUP_COMPLETE_RESET, SIGNUP_PROGRESS_SET } from 'state/action-types';
+import {
+	completeStep,
+	processStep,
+	removeUnneededSteps,
+	saveStep,
+	invalidateStep,
+	submitStep,
+} from 'state/signup/progress/actions';
+import { getSignupProgress } from 'state/signup/progress/selectors';
+import SignupDependencyStore from './dependency-store';
 
-/**
- * Constants
- */
-const STORAGE_KEY = 'signupProgress';
+const SignupProgressStore = {
+	currentValue: null,
+	reduxStore: null,
+	subscribers: new Map(),
 
-/**
- * Module variables
- */
-let signupProgress = [];
-
-var SignupProgressStore = {
-	get: function() {
-		return clone( signupProgress );
+	get() {
+		if ( ! this.reduxStore ) {
+			debug( 'Tried to read redux state before store was ready' );
+			return [];
+		}
+		return getSignupProgress( this.reduxStore.getState() );
 	},
-	reset: function() {
-		signupProgress = [];
-		store.remove( STORAGE_KEY );
-	}
+	reset() {
+		this.unsubscribeAll();
+		this.reduxStore.dispatch( {
+			type: SIGNUP_COMPLETE_RESET,
+		} );
+	},
+	set( input ) {
+		this.reduxStore.dispatch( {
+			type: SIGNUP_PROGRESS_SET,
+			steps: input,
+		} );
+	},
+	setReduxStore( reduxStore ) {
+		this.reduxStore = reduxStore;
+	},
+
+	// Subscriptions and change handling
+	off( eventName, callback ) {
+		eventName === 'change' && this.unsubscribe( callback );
+	},
+	on( eventName, callback ) {
+		eventName === 'change' && this.subscribe( callback );
+	},
+	subscribe( callback ) {
+		this.currentValue = this.get();
+		const unsubscribeFn = this.reduxStore.subscribe( () => {
+			if ( ! isEqual( this.currentValue, this.get() ) ) {
+				this.currentValue = this.get();
+				callback( this.currentValue );
+			}
+		} );
+		this.subscribers.set( callback, unsubscribeFn );
+	},
+	unsubscribe( callback ) {
+		if ( this.subscribers.has( callback ) ) {
+			// NOTE: Executing the function stored at this key unsubscribes the listener
+			this.subscribers.get( callback )();
+			this.subscribers.delete( callback );
+		}
+	},
+	unsubscribeAll() {
+		[ ...this.subscribers.keys() ].forEach( key => this.unsubscribe( key ) );
+	},
 };
 
-emitter( SignupProgressStore );
-
-function updateStep( newStep ) {
-	signupProgress = map( signupProgress, function( step ) {
-		if ( step.stepName === newStep.stepName ) {
-			const { status } = newStep;
-			if ( ! newStep.processingMessage && ( status === 'pending' || status === 'completed' ) ) {
-				// pending or completed steps can omit the processing message if they are skipped
-				return assign( {}, omit( step, 'processingMessage' ), newStep );
-			}
-
-			return assign( {}, step, newStep );
-		}
-
-		return step;
-	} );
-
-	handleChange();
-}
-
-function addStep( step ) {
-	signupProgress = signupProgress.concat( step );
-
-	handleChange();
-}
-
-function updateOrAddStep( step ) {
-	if ( find( signupProgress, { stepName: step.stepName } ) ) {
-		updateStep( step );
-	} else {
-		addStep( step );
-	}
-}
-
-function setStepInvalid( step, errors ) {
-	updateOrAddStep( assign( {}, step, {
-		status: 'invalid',
-		errors: errors
-	} ) );
-}
-
-function saveStep( step ) {
-	if ( find( signupProgress, { stepName: step.stepName } ) ) {
-		updateStep( step );
-	} else {
-		addStep( assign( {}, step, { status: 'in-progress' } ) );
-	}
-}
-
-function submitStep( step ) {
-	const stepHasApiRequestFunction = steps[ step.stepName ] && steps[ step.stepName ].apiRequestFunction,
-		status = stepHasApiRequestFunction ? 'pending' : 'completed';
-
-	updateOrAddStep( assign( {}, step, { status } ) );
-}
-
-function processStep( step ) {
-	updateStep( assign( {}, step, { status: 'processing' } ) );
-}
-
-function completeStep( step ) {
-	updateStep( assign( {}, step, { status: 'completed' } ) );
-}
-
 function addTimestamp( step ) {
-	return assign( {}, step, { lastUpdated: Date.now() } );
+	return { ...step, lastUpdated: Date.now() };
 }
 
-function loadProgressFromCache() {
-	const cachedSignupProgress = store.get( STORAGE_KEY );
+function addStorableDependencies( step, action ) {
+	const unstorableDependencies = get( steps, [ step.stepName, 'unstorableDependencies' ] );
 
-	if ( ! isEmpty( cachedSignupProgress ) ) {
-		signupProgress = cachedSignupProgress;
+	if ( isEmpty( action.providedDependencies ) ) {
+		return step;
 	}
 
-	handleChange();
+	const providedDependencies = omit( action.providedDependencies, unstorableDependencies );
+
+	return { ...step, providedDependencies };
 }
 
-function omitUserData( progress ) {
-	return map( progress, step => {
-		return omit( step, 'userData' );
-	} );
-}
-
-function handleChange() {
-	SignupProgressStore.emit( 'change' );
-
-	store.set( STORAGE_KEY, omitUserData( signupProgress ) );
-}
-
+/**
+ * Compatibility layer
+ */
 SignupProgressStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		step = addTimestamp( action.data );
+	const { action } = payload;
+	const step = addTimestamp( action.data );
 
 	Dispatcher.waitFor( [ SignupDependencyStore.dispatchToken ] );
 
 	if ( ! isEmpty( action.errors ) ) {
-		return setStepInvalid( step, action.errors );
+		SignupProgressStore.reduxStore.dispatch( invalidateStep( step, action.errors ) );
+		return;
 	}
 
+	debug( `Handling ${ action.type }` );
 	switch ( action.type ) {
-		case 'FETCH_CACHED_SIGNUP':
-			loadProgressFromCache();
-			break;
 		case 'SAVE_SIGNUP_STEP':
-			saveStep( step );
+			SignupProgressStore.reduxStore.dispatch(
+				saveStep( addStorableDependencies( step, action ) )
+			);
 			break;
 		case 'SUBMIT_SIGNUP_STEP':
-			debug( 'submit step' );
-			submitStep( step );
+			SignupProgressStore.reduxStore.dispatch(
+				submitStep( addStorableDependencies( step, action ) )
+			);
 			break;
 		case 'PROCESS_SIGNUP_STEP':
-			processStep( step );
+			SignupProgressStore.reduxStore.dispatch(
+				processStep( addStorableDependencies( step, action ) )
+			);
 			break;
 		case 'PROCESSED_SIGNUP_STEP':
-			debug( 'complete step' );
-			completeStep( step );
+			SignupProgressStore.reduxStore.dispatch(
+				completeStep( addStorableDependencies( step, action ) )
+			);
+			break;
+		case 'CHANGE_SIGNUP_FLOW':
+			SignupProgressStore.reduxStore.dispatch( removeUnneededSteps( action.flowName ) );
 			break;
 	}
 } );
 
-module.exports = SignupProgressStore;
+export default SignupProgressStore;

@@ -1,15 +1,23 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { getCreditCardType} from 'lib/credit-card-details';
-import Input from 'my-sites/upgrades/components/form/input';
+import { getCreditCardType } from 'lib/checkout';
+import Input from 'my-sites/domains/components/form/input';
 
-const CreditCardNumberInput = React.createClass( {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+class CreditCardNumberInput extends React.Component {
 	render() {
 		return (
 			<div className="credit-card-number-input">
@@ -17,6 +25,6 @@ const CreditCardNumberInput = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default CreditCardNumberInput;

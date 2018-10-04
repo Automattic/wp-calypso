@@ -1,0 +1,32 @@
+.creds-permission__card {
+	text-align: center;
+	max-width: 640px;
+	padding: rem( 40px );
+	margin-top: 1px;
+	padding-bottom: rem( 30px );
+}
+
+.creds-permission__title {
+	display: inline-block;
+	font-size: rem( 25px );
+	font-weight: 300;
+	letter-spacing: rem( 1.5px );
+	color: $gray-text;
+}
+
+.creds-permission__description {
+	color: $gray-text-min;
+	font-size: rem( 13.5px );
+	font-weight: 100;
+	line-height: rem( 25px );
+}
+
+.creds-permission__image {
+	max-width: 200px;
+	display: block;
+	margin: 2rem auto;
+}
+
+.creds-permission .button {
+	font-weight: 100;
+}

@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthFormHeader renders as expected 1`] = `
+<div>
+  <FormattedHeader
+    headerText="Create an account to set up Jetpack"
+    subHeaderText="You are moments away from a better WordPress."
+  />
+  <CompactCard
+    className="jetpack-connect__site"
+  >
+    <Connect(Localized(Site))
+      site={
+        Object {
+          "ID": null,
+          "admin_url": "http://an.example.site/wp-admin",
+          "domain": "an.example.site",
+          "icon": false,
+          "is_vip": false,
+          "title": "Example Blog",
+          "url": "http://an.example.site",
+        }
+      }
+    />
+  </CompactCard>
+</div>
+`;

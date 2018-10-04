@@ -1,6 +1,9 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
+
 import { MediaTypes } from '../constants';
 
 /**
@@ -21,11 +24,13 @@ function parseImage( node, _parsed ) {
 	_parsed.type = MediaTypes.IMAGE;
 	_parsed.media.URL = node.getAttribute( 'src' );
 	_parsed.media.alt = node.getAttribute( 'alt' );
-	_parsed.media.transient = ( 0 === ( _parsed.media.URL || '' ).indexOf( 'blob:' ) );
+	// consider data-istransient a boolean attribute https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attribute
+	// will only be false if it doesn't exist
+	_parsed.media.transient = node.hasAttribute( 'data-istransient' );
 
 	// Parse dimensions
-	[ 'width', 'height' ].forEach( ( dimension ) => {
-		var natural = 'natural' + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ),
+	[ 'width', 'height' ].forEach( dimension => {
+		let natural = 'natural' + dimension[ 0 ].toUpperCase() + dimension.slice( 1 ),
 			value = node.getAttribute( dimension ) || node[ natural ] || node[ dimension ];
 
 		if ( value && isFinite( value ) ) {

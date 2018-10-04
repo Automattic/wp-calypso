@@ -1,46 +1,79 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
-import i18n from 'lib/mixins/i18n';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { moment } from 'i18n-calypso';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import InputChrono from 'components/input-chrono';
 import DatePicker from 'components/date-picker';
-import User from 'lib/user';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import EventsTooltip from 'components/date-picker/events-tooltip';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**
  * Local dependencies
  */
 import Clock from './clock';
 import Header from './header';
-import utils from './utils';
+import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
 
-var user = new User(),
-	noop = () => {};
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+const noop = () => {};
 
 class PostSchedule extends Component {
-	constructor( props ) {
-		super( props );
+	static propTypes = {
+		events: PropTypes.array,
+		posts: PropTypes.array,
+		timezone: PropTypes.string,
+		gmtOffset: PropTypes.number,
+		site: PropTypes.object,
+		displayInputChrono: PropTypes.bool,
+		onDateChange: PropTypes.func,
+		onMonthChange: PropTypes.func,
+		onDayMouseEnter: PropTypes.func,
+		onDayMouseLeave: PropTypes.func,
+		userLocale: PropTypes.string,
+	};
 
-		this.state = {
-			calendarViewDate: i18n.moment(
-				this.props.selectedDay
-					? this.props.selectedDay
-					: new Date()
-			)
-		};
-	}
+	static defaultProps = {
+		posts: [],
+		events: [],
+		displayInputChrono: true,
+		onDateChange: noop,
+		onMonthChange: noop,
+		onDayMouseEnter: noop,
+		onDayMouseLeave: noop,
+	};
+
+	state = {
+		calendarViewDate: moment( this.props.selectedDay ? this.props.selectedDay : new Date() ),
+		tooltipContext: null,
+		showTooltip: false,
+	};
 
 	componentWillMount() {
 		if ( ! this.props.selectedDay ) {
-			return this.setState( { localizedDate: null } );
+			return this.setState( {
+				localizedDate: null,
+				isFutureDate: false,
+			} );
 		}
 
+		const localizedDate = this.getDateToUserLocation( this.props.selectedDay );
 		this.setState( {
-			localizedDate: this.getDateToUserLocation( this.props.selectedDay )
+			localizedDate,
+			isFutureDate: localizedDate.isAfter(),
 		} );
 	}
 
@@ -54,7 +87,7 @@ class PostSchedule extends Component {
 		}
 
 		this.setState( {
-			localizedDate: this.getDateToUserLocation( nextProps.selectedDay )
+			localizedDate: this.getDateToUserLocation( nextProps.selectedDay ),
 		} );
 	}
 
@@ -62,71 +95,99 @@ class PostSchedule extends Component {
 		return {
 			formatMonthTitle: function() {
 				return;
-			}
+			},
 		};
 	}
 
 	events() {
-		return this.props.events.concat(
-			this.getEventsFromPosts( this.props.posts )
-		);
+		return this.props.events.concat( this.getEventsFromPosts( this.props.posts ) );
 	}
 
 	getEventsFromPosts( postsList = [] ) {
 		return postsList.map( post => {
-			let localDate = this.getDateToUserLocation( post.date );
+			const localDate = this.getDateToUserLocation( post.date );
 
 			return {
 				id: post.ID,
 				title: post.title,
-				date: localDate.toDate()
-			}
+				date: localDate.toDate(),
+			};
 		} );
 	}
 
 	getDateToUserLocation( date ) {
-		return utils.convertDateToUserLocation(
+		return convertDateToUserLocation(
 			date || new Date(),
 			this.props.timezone,
 			this.props.gmtOffset
 		);
 	}
 
-	setCurrentMonth( date ) {
-		date = i18n.moment( date );
+	setCurrentMonth = date => {
+		date = moment( date );
 		this.props.onMonthChange( date );
 		this.setState( { calendarViewDate: date } );
-	}
+	};
 
-	setViewDate( date ) {
-		this.setState( { calendarViewDate: i18n.moment( date ) } );
-	}
+	setViewDate = date => {
+		this.setState( { calendarViewDate: moment( date ) } );
+	};
 
 	getCurrentDate() {
-		return i18n.moment( this.state.localizedDate || this.getDateToUserLocation() );
+		return moment( this.state.localizedDate || this.getDateToUserLocation() );
 	}
 
-	updateDate( date ) {
-		this.setState( { calendarViewDate: date } );
-
-		this.props.onDateChange( utils.convertDateToGivenOffset(
+	updateDate = date => {
+		const convertedDate = convertDateToGivenOffset(
 			date,
 			this.props.timezone,
 			this.props.gmtOffset
-		) );
-	}
+		);
 
-	/** Renders **/
+		this.setState( {
+			calendarViewDate: date,
+			isFutureDate: convertedDate.isAfter(),
+		} );
+
+		this.props.onDateChange( convertedDate );
+	};
+
+	handleOnDayMouseEnter = ( date, modifiers, event, eventsByDay ) => {
+		const postEvents = this.getEventsFromPosts( this.props.posts );
+
+		if ( ! postEvents || ! postEvents.length ) {
+			return this.props.onDayMouseEnter( date, modifiers, event, eventsByDay );
+		}
+
+		this.setState( {
+			eventsByDay,
+			tooltipContext: event.target,
+			showTooltip: true,
+		} );
+	};
+
+	handleOnDayMouseLeave = ( date, modifiers, event, eventsByDay ) => {
+		const postEvents = this.getEventsFromPosts( this.props.posts );
+
+		if ( ! postEvents || ! postEvents.length ) {
+			return this.props.onDayMouseLeave( date, modifiers, event, eventsByDay );
+		}
+
+		this.setState( {
+			eventsByDay: [],
+			tooltipContext: null,
+			showTooltip: false,
+		} );
+	};
 
 	renderInputChrono() {
-		var lang = user.getLanguage(),
-			date = this.getCurrentDate(),
-			chronoText;
+		const date = this.getCurrentDate();
+		let chronoText;
 
 		if ( this.state.localizedDate ) {
-			let today = i18n.moment().startOf( 'day' ),
-				selected = i18n.moment( date ).startOf( 'day' ),
-				diffInMinutes = selected.diff( today, 'days' );
+			const today = moment().startOf( 'day' );
+			const selected = moment( date ).startOf( 'day' );
+			const diffInMinutes = selected.diff( today, 'days' );
 
 			if ( -7 <= diffInMinutes && diffInMinutes <= 6 ) {
 				chronoText = date.calendar();
@@ -136,12 +197,12 @@ class PostSchedule extends Component {
 		}
 
 		return (
-			<div className="chrono__container">
+			<div className="post-schedule__input-chrono">
 				<InputChrono
 					value={ chronoText }
 					placeholder={ date.calendar() }
-					lang={ lang ? lang.langSlug : null }
-					onSet={ this.updateDate.bind( this ) }
+					lang={ this.props.userLocale }
+					onSet={ this.updateDate }
 				/>
 
 				<hr className="post-schedule__hr" />
@@ -161,62 +222,61 @@ class PostSchedule extends Component {
 				date={ date }
 				timezone={ this.props.timezone }
 				gmtOffset={ this.props.gmtOffset }
-				onChange={ this.updateDate.bind( this ) }
+				siteId={ this.props.site ? this.props.site.ID : null }
+				siteSlug={ this.props.site ? this.props.site.slug : null }
+				onChange={ this.updateDate }
 			/>
 		);
 	}
 
 	render() {
+		const handleEventsTooltip = ! this.props.events || ! this.props.events.length;
+
+		const className = classNames( 'post-schedule', {
+			'is-future-date': this.state.isFutureDate,
+		} );
+
 		return (
-			<div className="post-schedule" >
+			<div className={ className }>
+				{ // Used by Clock for now, likely others in the future.
+				this.props.site && <QuerySiteSettings siteId={ this.props.site.ID } /> }
 				<Header
 					date={ this.state.calendarViewDate }
-					onDateChange={ this.setViewDate.bind( this ) }
+					onDateChange={ this.setViewDate }
+					inputChronoDisplayed={ this.props.displayInputChrono }
 				/>
 
-				{ this.renderInputChrono() }
+				{ this.props.displayInputChrono && this.renderInputChrono() }
 
 				<DatePicker
 					events={ this.events() }
 					locale={ this.locale() }
-					selectedDay={
-						this.state.localizedDate
-							? this.state.localizedDate.toDate()
-							: null
-					}
+					disabledDays={ this.props.disabledDays }
+					showOutsideDays={ this.props.showOutsideDays }
+					modifiers={ this.props.modifiers }
+					selectedDay={ this.state.localizedDate ? this.state.localizedDate.toDate() : null }
 					timeReference={ this.getCurrentDate() }
 					calendarViewDate={ this.state.calendarViewDate.toDate() }
-
-					onMonthChange={ this.setCurrentMonth.bind( this ) }
-					onSelectDay={ this.updateDate.bind( this ) }
+					onMonthChange={ this.setCurrentMonth }
+					onSelectDay={ this.updateDate }
+					onDayMouseEnter={ this.handleOnDayMouseEnter }
+					onDayMouseLeave={ this.handleOnDayMouseLeave }
 				/>
 
 				{ this.renderClock() }
+
+				{ handleEventsTooltip && (
+					<EventsTooltip
+						events={ this.state.eventsByDay }
+						context={ this.state.tooltipContext }
+						isVisible={ this.state.showTooltip }
+					/>
+				) }
 			</div>
 		);
 	}
-};
+}
 
-/**
- * Statics
- */
-PostSchedule.displayName = 'PostSchedule';
-
-PostSchedule.propTypes = {
-	events: PropTypes.array,
-	posts: PropTypes.array,
-	timezone: PropTypes.string,
-	gmtOffset: PropTypes.number,
-
-	onDateChange: PropTypes.func,
-	onMonthChange: PropTypes.func
-};
-
-PostSchedule.defaultProps = {
-	posts: [],
-	events: [],
-	onDateChange: noop,
-	onMonthChange: noop
-};
-
-export default PostSchedule;
+export default connect( state => ( {
+	userLocale: getCurrentUserLocale( state ),
+} ) )( PostSchedule );

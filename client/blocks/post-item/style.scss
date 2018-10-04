@@ -1,0 +1,177 @@
+$post-item-background-color: $white;
+
+$post-item-border-color: darken( $sidebar-bg-color, 5% );
+$expanded-post-item-outline-color: $sidebar-selected-color;
+
+$post-item-border: solid 1px $post-item-border-color;
+$expanded-post-item-border: 1px solid $expanded-post-item-outline-color;
+$expanded-post-item-outline: 4px solid $post-item-border-color;
+
+.post-item {
+	box-sizing: border-box;
+	margin: 0 -1px; // to line up with SectionNav, which still uses box-shadow
+
+	&,
+	&.is-expanded + & {
+		border: $post-item-border;
+	}
+
+	&:not( :first-child ) {
+		border-top: 0;
+	}
+
+	&.is-expanded {
+		margin-top: 16px;
+		margin-bottom: 16px;
+
+		border: $expanded-post-item-border;
+		outline: $expanded-post-item-outline;
+	}
+}
+
+.post-item__panel {
+	box-sizing: border-box;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 16px;
+	background: $post-item-background-color;
+}
+
+.post-item__select {
+	align-self: stretch;
+	display: flex;
+	align-items: start;
+	cursor: pointer;
+
+	&:hover .form-checkbox {
+		border-color: $gray-lighten-10;
+	}
+
+	padding: 16px 16px 0;
+	margin-left: -16px;
+
+	@include breakpoint( ">480px" ) {
+		padding-left: 24px;
+		margin-left: -24px;
+	}
+}
+
+.post-item__site-info-link,
+.post-item__post-author-link {
+	display: block;
+}
+
+.post-item__detail {
+	position: relative;
+	width: calc( 100% - 50px );
+	margin-right: auto;
+	word-break: break-word;
+	word-wrap: break-word;
+
+	padding: 16px 0;
+	.post-item__card.is-mini & {
+		padding: 12px 0;
+	}
+}
+
+.post-item__title {
+	@extend %content-font;
+	margin: 0;
+	padding: 0;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 1.2;
+}
+
+a.post-item__title-link,
+a.post-item__title-link:visited {
+	color: $gray-dark;
+	display: block;
+	padding-bottom: 2px;
+	padding-right: 8px;
+
+	&:hover {
+		color: $gray-darken-20;
+	}
+
+	.post-item__panel.is-untitled & {
+		color: $gray;
+		font-style: italic;
+	}
+
+	.post-item__panel.is-placeholder & {
+		@include placeholder;
+		display: inline-block;
+	}
+}
+
+.post-item__meta {
+	font-size: 12px;
+	color: $gray-text-min;
+}
+
+.post-item__meta .post-time,
+.post-item__meta .post-status,
+.post-item__meta .post-status__text {
+	margin-bottom: 0;
+}
+
+.post-item__meta .post-status {
+	margin-left: 7px;
+}
+
+.post-item__meta .post-status__icon {
+	width: 14px;
+	height: 14px;
+	margin-right: 2px;
+}
+
+.post-item__meta-time-status {
+	display: inline-block;
+	margin-right: 16px;
+}
+
+.post-item__time-status-link,
+.post-item__time-status-link:active,
+.post-item__time-status-link:visited {
+	color: $gray-text-min;
+	display: block;
+}
+
+.post-type-list__post-thumbnail-wrapper {
+	display: none;
+	position: relative;
+	width: 80px;
+	align-self: stretch;
+	overflow: hidden;
+
+	margin: 8px 0;
+	.post-item__card.is-mini & {
+		margin: 0;
+	}
+
+	&.has-image,
+	.post-item__card.is-placeholder & {
+		display: block;
+	}
+
+	.post-item__card.is-placeholder & {
+		@include placeholder;
+	}
+}
+
+.post-type-list__post-thumbnail-link {
+	display: block;
+	height: 100%;
+}
+
+.post-type-list__post-thumbnail {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+	height: 100%;
+	max-height: 80px;
+	max-width: none;
+}

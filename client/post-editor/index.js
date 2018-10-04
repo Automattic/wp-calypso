@@ -1,25 +1,32 @@
+/** @format */
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	sitesController = require( 'my-sites/controller' ),
-	controller = require( './controller' );
+import { siteSelection, sites } from 'my-sites/controller';
+import controller from './controller';
+import config from 'config';
+import { makeLayout, render as clientRender } from 'controller';
 
-module.exports = function() {
-	if ( config.isEnabled( 'post-editor' ) ) {
-		page( '/post', controller.pressThis, sitesController.siteSelection, sitesController.sites );
-		page( '/post/new', () => page.redirect( '/post' ) ); // redirect from beep-beep-boop
-		page( '/post/:site?/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
-	}
+export default function() {
+	page( '/post', controller.pressThis, siteSelection, sites, makeLayout, clientRender );
+	page( '/post/new', () => page.redirect( '/post' ) ); // redirect from beep-beep-boop
+	page( '/post/:site?/:post?', siteSelection, controller.post, makeLayout, clientRender );
+	page.exit( '/post/:site?/:post?', controller.exitPost );
 
-	if ( config.isEnabled( 'post-editor/pages' ) ) {
-		page( '/page', sitesController.siteSelection, sitesController.sites );
-		page( '/page/new', () => page.redirect( '/page' ) ); // redirect from beep-beep-boop
-		page( '/page/:site?/:post?', sitesController.siteSelection, sitesController.fetchJetpackSettings, controller.post );
+	page( '/page', siteSelection, sites, makeLayout, clientRender );
+	page( '/page/new', () => page.redirect( '/page' ) ); // redirect from beep-beep-boop
+	page( '/page/:site?/:post?', siteSelection, controller.post, makeLayout, clientRender );
+	page.exit( '/page/:site?/:post?', controller.exitPost );
+
+	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
+		page( '/edit/:type', siteSelection, sites, makeLayout, clientRender );
+		page( '/edit/:type/new', context => page.redirect( `/edit/${ context.params.type }` ) );
+		page( '/edit/:type/:site?/:post?', siteSelection, controller.post, makeLayout, clientRender );
+		page.exit( '/edit/:type/:site?/:post?', controller.exitPost );
 	}
-};
+}

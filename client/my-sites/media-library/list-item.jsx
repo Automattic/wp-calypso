@@ -1,118 +1,128 @@
-/**
- * External dependencies
- */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
-	assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+/** @format */
 
 /**
  * External dependencies
  */
-var Spinner = require( 'components/spinner' ),
-	Gridicon = require( 'components/gridicon' ),
-	Button = require( 'components/button' ),
-	ListItemImage = require( './list-item-image' ),
-	ListItemVideo = require( './list-item-video' ),
-	ListItemAudio = require( './list-item-audio' ),
-	ListItemDocument = require( './list-item-document' ),
-	EditorMediaModalGalleryHelpContainer = require( 'post-editor/media-modal/gallery-help-container' ),
-	MediaUtils = require( 'lib/media/utils' );
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryListItem',
+import { assign, isEqual, noop, omit } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
 
-	propTypes: {
-		media: React.PropTypes.object,
-		scale: React.PropTypes.number.isRequired,
-		maxImageWidth: React.PropTypes.number,
-		photon: React.PropTypes.bool,
-		showGalleryHelp: React.PropTypes.bool,
-		selectedIndex: React.PropTypes.number,
-		onToggle: React.PropTypes.func,
-		onEditItem: React.PropTypes.func,
-		style: React.PropTypes.object,
-	},
+/**
+ * Internal dependencies
+ */
+import Spinner from 'components/spinner';
+import Gridicon from 'gridicons';
+import ListItemImage from './list-item-image';
+import ListItemVideo from './list-item-video';
+import ListItemAudio from './list-item-audio';
+import ListItemDocument from './list-item-document';
+import { getMimePrefix } from 'lib/media/utils';
+import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
-	getDefaultProps: function() {
-		return {
-			maxImageWidth: 450,
-			photon: true,
-			selectedIndex: -1,
-			onToggle: noop,
-			onEditItem: noop
-		};
-	},
+export default class extends React.Component {
+	static displayName = 'MediaLibraryListItem';
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
-		return ! ( nextProps.media === this.props.media &&
+	static propTypes = {
+		media: PropTypes.object,
+		scale: PropTypes.number.isRequired,
+		maxImageWidth: PropTypes.number,
+		thumbnailType: PropTypes.string,
+		showGalleryHelp: PropTypes.bool,
+		selectedIndex: PropTypes.number,
+		onToggle: PropTypes.func,
+		onEditItem: PropTypes.func,
+		style: PropTypes.object,
+	};
+
+	static defaultProps = {
+		maxImageWidth: 450,
+		thumbnailType: MEDIA_IMAGE_PHOTON,
+		selectedIndex: -1,
+		onToggle: noop,
+		onEditItem: noop,
+	};
+
+	shouldComponentUpdate( nextProps ) {
+		return ! (
+			nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
 			nextProps.maxImageWidth === this.props.maxImageWidth &&
-			nextProps.photon === this.props.photon &&
+			nextProps.thumbnailType === this.props.thumbnailType &&
 			nextProps.selectedIndex === this.props.selectedIndex &&
-			isEqual( nextProps.style, this.props.style ) );
-	},
+			isEqual( nextProps.style, this.props.style )
+		);
+	}
 
-	clickItem: function( event ) {
+	clickItem = event => {
 		this.props.onToggle( this.props.media, event.shiftKey );
-	},
+	};
 
-	editItem: function( event ) {
-		this.props.onEditItem( this.props.media );
-
-		// Prevent default list item toggle behavior
-		event.stopPropagation();
-	},
-
-	renderItem: function() {
-		var component;
+	renderItem = () => {
+		let component;
 
 		if ( ! this.props.media ) {
 			return;
 		}
 
-		switch ( MediaUtils.getMimePrefix( this.props.media ) ) {
-			case 'image': component = ListItemImage; break;
-			case 'video': component = ListItemVideo; break;
-			case 'audio': component = ListItemAudio; break;
-			default: component = ListItemDocument; break;
+		switch ( getMimePrefix( this.props.media ) ) {
+			case 'image':
+				component = ListItemImage;
+				break;
+			case 'video':
+				component = ListItemVideo;
+				break;
+			case 'audio':
+				component = ListItemAudio;
+				break;
+			default:
+				component = ListItemDocument;
+				break;
 		}
 
 		return React.createElement( component, this.props );
-	},
+	};
 
-	renderSpinner: function() {
+	renderSpinner = () => {
 		if ( ! this.props.media || ! this.props.media.transient ) {
 			return;
 		}
 
-		return <Spinner className="media-library__list-item-spinner" />;
-	},
+		return (
+			<div className="media-library__list-item-spinner">
+				<Spinner />
+			</div>
+		);
+	};
 
-	render: function() {
-		var classes, props, style, title;
+	render() {
+		let title, selectedNumber;
 
-		classes = classNames( 'media-library__list-item', {
+		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,
 			'is-selected': -1 !== this.props.selectedIndex,
 			'is-transient': this.props.media && this.props.media.transient,
-			'is-small': this.props.scale <= 0.125
+			'is-small': this.props.scale <= 0.125,
 		} );
 
-		props = omit( this.props, Object.keys( this.constructor.propTypes ) );
+		const props = omit( this.props, Object.keys( this.constructor.propTypes ) );
 
-		style = assign( {
-			width: ( this.props.scale * 100 ) + '%'
-		}, this.props.style );
+		const style = assign(
+			{
+				width: this.props.scale * 100 + '%',
+			},
+			this.props.style
+		);
 
 		if ( this.props.media ) {
 			title = this.props.media.file;
 		}
 
 		if ( -1 !== this.props.selectedIndex ) {
-			props[ 'data-selected-number' ] = this.props.selectedIndex + 1;
+			selectedNumber = this.props.selectedIndex + 1;
+			props[ 'data-selected-number' ] = selectedNumber > 99 ? '99+' : selectedNumber;
 		}
 
 		return (
@@ -123,17 +133,9 @@ module.exports = React.createClass( {
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
 					{ this.renderSpinner() }
-					{ this.props.showGalleryHelp && (
-						<EditorMediaModalGalleryHelpContainer />
-					) }
-					<Button type="button" className="media-library__list-item-edit" onClick={ this.editItem }>
-						<span className="screen-reader-text">
-							{ this.translate( 'Edit', { context: 'verb' } ) }
-						</span>
-						<Gridicon icon="pencil" />
-					</Button>
+					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
 			</div>
 		);
 	}
-} );
+}

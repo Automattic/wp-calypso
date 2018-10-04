@@ -1,55 +1,57 @@
-// ==========================================================================
-// PluginItem
-// ==========================================================================
-
 .plugin-item.card {
 	padding: 0;
+	margin: 0;
+	box-shadow: none;
+
+	.is-bulk-editing & {
+		padding-left: 16px;
+	}
+
+	& ~ .notice.is-error {
+		margin-bottom: 0;
+	}
+
+	input {
+		margin-right: 8px;
+	}
 
 	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
+
 	.plugins-list &.is-compact:last-child {
 		margin-bottom: 0;
 	}
 }
-
 
 .plugin-item {
 	position: relative;
 	display: flex;
 	overflow: hidden; // lazy clearfix
 
-	@include breakpoint( '<480px' ) {
-		flex-wrap: wrap;
+	&.disabled {
+		opacity: 0.5;
+		background: $gray-light;
 	}
 }
 
-.plugin-item__link,
-.plugin-item__disabled,
-.is-bulk-editing .plugin-item,
-.plugin-item.is-placeholder {
-	display: block;
+.plugin-item__link {
+	display: flex;
 	flex-grow: 1;
 	padding: 16px;
 	overflow: hidden; // lazy clearfix
 	cursor: pointer;
 
-	@include breakpoint( '<480px' ) {
-		flex-basis: 100%;
+	.is-bulk-editing & {
+		padding-left: 32px;
 	}
-	@include breakpoint( '>660px' ) {
-		padding: 24px;
-	}
-}
-
-.plugin-item__disabled {
-	opacity: 0.5;
-	background: $gray-light;
 }
 
 // Checkbox for multiselect purposes
 .plugin-item__checkbox[type=checkbox] {
-	margin-top: 0;
+	position: absolute;
+	top: 50%;
+	margin-top: -8px;
 
 	&:after { // Making tap area larger
 		content: '';
@@ -68,177 +70,138 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 1;
+	z-index: z-index( 'root', '.plugin-item__label' );
 	cursor: pointer;
 }
 
-
-// Wraps plugin title and secondary info in bulk edit mode
+// Wraps plugin title and secondary info
 .plugin-item__info {
-	margin-left: 32px;
-
-	@include breakpoint( '>480px' ) {
-		margin-left: 40px;
-	}
+	flex: auto;
+	min-width: 0;
 }
 
 // Plugin title
 .plugin-item__title {
-	display: block;
-	margin-top: 2px;
 	color: $gray-dark;
-	font-size: 14px;
-	font-weight: 600;
-	white-space: pre;
-	text-overflow: ellipsis;
-	overflow: hidden;
-
-	@include breakpoint( '>480px' ) {
-		font-size: 24px;
-		font-weight: 700;
-		font-family: $serif;
-	}
-	@include breakpoint( '<480px') {
-		&[data-warnings="1"] {
-			padding-right: 32px;
-		}
-		&[data-warnings="2"] {
-			padding-right: 64px;
-		}
-	}
-
-	&.is-placeholder {
-		width: 56%;
-		background-color: lighten( $gray, 30% );
-		animation: loading-fade 1.6s ease-in-out infinite;
-
-		&:before {
-			content: ' ';
-		}
-	}
-	.bulk-editing & {
-		margin-top: -4px;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: -6px;
-		}
-	}
-}
-
-.plugins__lists .is-compact {
-	margin-bottom: 1px;
-}
-.plugins__lists .is-compact:last-child {
-	margin-bottom: 8px;
-}
-
-// Last updated, version, whatever
-.plugin-item__meta {
 	display: block;
-	font-size: 11px;
-	color: $gray;
-	white-space: pre;
-	text-overflow: ellipsis;
+	font-size: 15px;
+	font-weight: 600;
+	margin-top: 3px;
 	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 
-	@include breakpoint( '>480px' ) {
-		text-transform: uppercase;
-	}
-	&.has-update {
-		display: inline-block;
-
-		@include breakpoint( '>480px' ) {
-			padding: 2px 6px 2px 2px;
-			border-radius: 2px;
-			background: $alert-yellow;
-			color: $white;
-		}
-	}
-	&.is-warning {
-		@include breakpoint( '>480px' ) {
-			display: inline-block;
-			margin-top: -3px;
-			padding: 2px 6px 2px 2px;
-			border-radius: 2px;
-			background: $alert-red;
-			color: $white;
-		}
-	}
 	&.is-placeholder {
-		margin-top: 4px;
-		width: 40%;
-		background-color: lighten( $gray, 30% );
-		animation: loading-fade 1.6s ease-in-out infinite;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: 5px;
-		}
-		&:before {
-			content: ' ';
-		}
-	}
-	.noticon {
-		margin-right: 2px;
-		vertical-align: middle;
-
-		@include breakpoint( '<480px' ) {
-			position: absolute;
-			top: 50%;
-			right: 16px;
-			margin-top: -12px;
-			color: $alert-yellow;
-			font-size: 24px;
-		}
-	}
-
-	.plugin-item__meta ~ & {
-		margin-left: 8px;
+		@include placeholder();
 	}
 }
 
-.plugin-item__meta-text {
-	vertical-align: middle;
-
-	 @include breakpoint( "<480px" ) {
-		display: none;
-	}
-}
-
-.plugin-item__meta_manage {
-	left: 5px;
-	top: 60px;
-}
-
-
-.plugin-item__meta.has-update {
-	@include breakpoint( "<480px" ) {
-		& ~ .plugin-item__meta.is-warning .noticon {
-			margin-right: 30px !important;
-		}
-	}
-}
-
-// Plugin actions
+// Plugin actions and Count
+.plugin-item__count,
 .plugin-item__actions {
 	padding: 16px;
-	flex-grow: 1;
-	flex-shrink: 0;
-	align-self: center;
+	flex: none;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 
-	@include breakpoint( '>480px' ) {
-		flex-grow: 0;
-		text-align: right;
-	}
-	@include breakpoint( '>660px' ) {
-		padding-right: 24px;
-		padding-left: 24px;
+	.is-bulk-editing & {
+		padding-left: 32px;
 	}
 }
 
+.plugin-item__count {
+	font-size: 12px;
+	line-height: 18px;
+	color: $gray-text-min;
+}
+
+.plugin-item__count .count {
+	margin-left: 8px;
+	float: right;
+}
+
+.plugin-item .plugin-item__count,
 .plugin-item .plugin-item__actions {
 	display: none;
 
 	@include breakpoint( '>480px' ) {
-		display: block;
+		align-self: center;
+		display: flex;
+		flex-direction: column;
+		text-align: right;
 	}
+}
+
+.plugin-item .plugin-item__count {
+	flex-direction: row;
+}
+
+.plugin-item__last-updated {
+	color: $gray-text-min;
+	font-size: 13px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.plugin-item .plugin-icon {
+	flex: none;
+	margin-right: 12px;
+	width: 48px;
+	height: 48px;
+}
+
+.plugin-item .plugin-action {
+	@include breakpoint( '>1040px' ) {
+		margin-top: 6px;
+	}
+
+	&:first-child {
+		@include breakpoint( '<1040px' ) {
+			margin-top: 0;
+		}
+	}
+}
+
+.plugin-item .plugin-action__label {
+	@include breakpoint( '>1040px' ) {
+		flex-direction: row;
+		margin-right: 0;
+		margin-left: 8px;
+	}
+}
+
+.plugin-item .plugin-action .form-toggle__label {
+	@include breakpoint( '>1040px' ) {
+		flex-direction: row;
+	}
+}
+
+.plugin-item .form-toggle__label .form-toggle__label-content {
+	@include breakpoint( '>1040px' ) {
+		margin-right: 12px;
+		margin-left: 0;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__link,
+.plugin-item .plugin-activate-toggle__disabled {
+	@include breakpoint( '>1040px' ) {
+		flex-direction: row;
+		margin-right: 12px;
+	}
+}
+
+.plugin-item .plugin-activate-toggle__label {
+	@include breakpoint( '>1040px' ) {
+		margin-left: 8px;
+		margin-right: 0;
+	}
+}
+
+.plugin-item {
+	box-sizing: border-box;
+	border: 0 solid $gray-lighten-30;
 }

@@ -1,7 +1,9 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react';
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -10,42 +12,40 @@ import ViewersStore from 'lib/viewers/store';
 import ViewersActions from 'lib/viewers/actions';
 import passToChildren from 'lib/react-pass-to-children';
 
-export default React.createClass( {
-	displayName: 'ViewersData',
+export default class ViewersData extends Component {
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+	};
 
-	propTypes: {
-		siteId: React.PropTypes.number.isRequired
-	},
+	static initialState = {
+		viewers: false,
+		totalViewers: false,
+		currentPage: false,
+		fetchInitialized: false,
+	};
 
-	getInitialState() {
-		return {
-			viewers: false,
-			totalViewers: false,
-			currentPage: false,
-			fetchInitialized: false
-		};
-	},
+	state = this.constructor.initialState;
 
 	componentDidMount() {
 		ViewersStore.on( 'change', this.refreshViewers );
 		this.fetchIfEmpty( this.props.siteId );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.siteId ) {
 			return;
 		}
 		if ( this.props.siteId !== nextProps.siteId ) {
-			this.setState( this.getInitialState() );
+			this.setState( this.constructor.initialState );
 			this.fetchIfEmpty( nextProps.siteId );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		ViewersStore.removeListener( 'change', this.refreshViewers );
-	},
+	}
 
-	fetchIfEmpty( siteId ) {
+	fetchIfEmpty = siteId => {
 		siteId = siteId || this.props.siteId;
 		if ( ! siteId ) {
 			return;
@@ -56,8 +56,8 @@ export default React.createClass( {
 		}
 
 		// defer fetch requests to avoid dispatcher conflicts
-		let defer = function() {
-			var paginationData = ViewersStore.getPaginationData( siteId );
+		const defer = function() {
+			const paginationData = ViewersStore.getPaginationData( siteId );
 			if ( paginationData.fetchingViewers ) {
 				return;
 			}
@@ -65,10 +65,10 @@ export default React.createClass( {
 			this.setState( { fetchInitialized: true } );
 		}.bind( this );
 		setTimeout( defer, 0 );
-	},
+	};
 
-	isFetching: function() {
-		let siteId = this.props.siteId;
+	isFetching = () => {
+		const siteId = this.props.siteId;
 		if ( ! siteId ) {
 			return true;
 		}
@@ -77,24 +77,24 @@ export default React.createClass( {
 			return true;
 		}
 
-		let paginationData = ViewersStore.getPaginationData( siteId );
+		const paginationData = ViewersStore.getPaginationData( siteId );
 
 		if ( paginationData.fetchingViewers ) {
 			return true;
 		}
 		return false;
-	},
+	};
 
-	refreshViewers( siteId ) {
+	refreshViewers = siteId => {
 		siteId = siteId || this.props.siteId;
 		this.setState( {
 			viewers: ViewersStore.getViewers( siteId ),
 			totalViewers: ViewersStore.getPaginationData( siteId ).totalViewers,
-			currentPage: ViewersStore.getPaginationData( siteId ).currentViewersPage
+			currentPage: ViewersStore.getPaginationData( siteId ).currentViewersPage,
 		} );
-	},
+	};
 
 	render() {
 		return passToChildren( this, Object.assign( {}, this.state, { fetching: this.isFetching() } ) );
 	}
-} );
+}

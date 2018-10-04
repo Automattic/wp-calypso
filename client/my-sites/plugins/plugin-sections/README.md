@@ -6,9 +6,9 @@ This component is used to display the sections for a plugin as returned from the
 #### How to use:
 
 ```js
-var PluginSections = require( 'my-sites/plugins/plugin-sections' );
+import PluginSections from 'my-sites/plugins/plugin-sections';
 
-render: function() {
+render() {
 	return
 		<PluginSections
 			plugin={ plugin }

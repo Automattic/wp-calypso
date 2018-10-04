@@ -1,19 +1,29 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import classNames from 'classnames';
 
-	displayName: 'FormSelect',
+class FormSelect extends React.Component {
+	static defaultProps = {
+		isError: false,
+	};
 
-	render: function() {
+	render() {
+		const { inputRef, className, isError, ...props } = this.props;
+		const classes = classNames( className, 'form-select', {
+			'is-error': isError,
+		} );
+
 		return (
-			<select { ...omit( this.props, 'classname' ) } className={ joinClasses( this.props.className, 'form-select' ) } >
+			<select { ...props } ref={ inputRef } className={ classes }>
 				{ this.props.children }
 			</select>
 		);
 	}
-} );
+}
+
+export default FormSelect;

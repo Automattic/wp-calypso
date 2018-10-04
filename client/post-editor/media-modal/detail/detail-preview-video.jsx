@@ -1,31 +1,34 @@
+/** @format */
+
 /**
  * External dependencies
  */
-const React = require( 'react' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-const MediaUtils = require( 'lib/media/utils' ),
-	EditorMediaModalDetailItemVideoPress = require( './detail-preview-videopress' );
+import { isVideoPressItem, url } from 'lib/media/utils';
+import EditorMediaModalDetailItemVideoPress from './detail-preview-videopress';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewVideo',
+export default class extends React.Component {
+	static displayName = 'EditorMediaModalDetailPreviewVideo';
 
-	propTypes: {
-		item: React.PropTypes.object.isRequired
-	},
+	static propTypes = {
+		className: PropTypes.string,
+		item: PropTypes.object.isRequired,
+	};
 
 	render() {
-		if ( MediaUtils.isVideoPressItem( this.props.item ) ) {
+		if ( isVideoPressItem( this.props.item ) ) {
 			return <EditorMediaModalDetailItemVideoPress { ...this.props } />;
 		}
 
-		return (
-			<video
-				src={ MediaUtils.url( this.props.item ) }
-				controls
-				className="editor-media-modal-detail__preview is-video" />
-		);
+		const classes = classNames( this.props.className, 'is-video' );
+
+		return <video src={ url( this.props.item ) } controls className={ classes } />;
 	}
-} );
+}

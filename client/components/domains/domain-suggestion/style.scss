@@ -1,14 +1,28 @@
+/** @format */
+
 .domain-suggestion {
 	box-sizing: border-box;
-	display: flex;
 
 	@include clear-fix;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 15px 20px;
+	}
 
-		.domain-product-price {
-			margin-left: 5%;
+	@include breakpoint( '>480px' ) {
+		display: flex;
+		align-items: center;
+	}
+
+	&.is-clickable {
+		cursor: pointer;
+
+		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
+
+		&:hover {
+			box-shadow: 0 0 0 1px $gray;
+			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
 		}
 	}
 
@@ -16,7 +30,8 @@
 		background-color: lighten( $gray, 35% );
 
 		.domain-suggestion__content {
-			h3, .domain-product-price {
+			h3,
+			.domain-product-price {
 				color: $gray;
 			}
 		}
@@ -25,22 +40,63 @@
 
 .domain-suggestion__content {
 	width: 100%;
+	min-height: 32px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
-		margin: 8px 0 0 0;
+	}
+
+	.notice.is-compact {
+		margin: 0 0 0 8px;
+		color: $white;
+
+		&.is-success {
+			background: $alert-green;
+		}
+
+		&.is-info {
+			background: $blue-wordpress;
+		}
+
+		&.is-warning {
+			background: $alert-yellow;
+		}
+
+		.notice__content {
+			padding: 4px 8px;
+		}
+	}
+
+	.notice__icon-wrapper {
+		display: none;
 	}
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		color: transparent;
+		min-height: 44px;
+	}
+
+	@include breakpoint( '>660px' ) {
+		.is-placeholder & {
+			margin-right: 50%;
+			min-height: 22px;
+		}
+
+		.is-placeholder:nth-of-type( 2n + 1 ) & {
+			margin-right: 52%;
+		}
+
+		.is-placeholder:nth-of-type( 1 ) & {
+			margin-right: 40%;
+		}
 	}
 
 	> h3 {
 		word-break: break-all;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 75%;
 		}
 
@@ -50,41 +106,83 @@
 	}
 }
 
-.domain-suggestion__action {
-	margin: 1px 0 0 5%;
-	min-width: 100px;
+.domain-product-price__price {
+	font-size: 1.2em;
 
-	@include breakpoint( ">660px" ) {
-		margin-top: 3px;
+	@include breakpoint( '>480px' ) {
+		font-size: 1em;
 	}
+}
 
-	@include breakpoint( ">960px" ) {
-		margin-top: 0;
+.domain-registration-suggestion__title {
+	font-size: 1.3em;
+
+	@include breakpoint( '>480px' ) {
+		align-self: center;
+		padding-right: 2em;
+		font-size: 1em;
+		line-height: 1.25;
+	}
+}
+
+.button.domain-suggestion__action {
+	min-width: 66px;
+	text-align: center;
+	color: $blue-medium;
+	margin-top: 0.5em;
+	padding: 0.25em 3em;
+	float: right;
+
+	&.is-primary {
+		color: $white;
+		transition: all 0.1s linear;
+
+		&:hover {
+			background-color: lighten( $blue-medium, 4% );
+			border-color: darken( $blue-medium, 4% );
+		}
+
+		@include breakpoint( '>480px' ) {
+			margin-left: 1em;
+			margin-top: 0;
+		}
 	}
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		border: none;
 		border-radius: 0;
 		color: transparent;
-
-		.button {
-			opacity: 0;
-			pointer-events: none;
-		}
+		margin-left: 40px;
+		min-height: 26px;
 	}
 
-	.button {
-		width: 100%;
+	@include breakpoint( '>480px' ) {
+		flex: 1 0 auto;
+		float: none;
+	}
+}
 
-		&.added {
-			background-color: $gray-light;
+.domain-transfer-suggestion {
+	display: flex;
+	align-items: center;
 
-			.noticon {
-				font-size: 25px;
-				line-height: 16px;
-			}
-		}
+	.button.domain-suggestion__action {
+		flex: 1 0 auto;
+		margin: 0;
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.domain-suggestion__chevron {
+	margin-left: 10px;
+	flex: 1 0 auto;
+	color: $gray;
+
+	.is-placeholder & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		color: $gray-lighten-30;
 	}
 }

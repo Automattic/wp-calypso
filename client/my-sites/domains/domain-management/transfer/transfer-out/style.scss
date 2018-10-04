@@ -1,0 +1,44 @@
+.transfer__remove-privacy-dialog {
+	max-width: 480px;
+}
+
+.transfer-out__section-header {
+	flex-wrap: wrap;
+	button {
+		margin-left: 10px;
+		&:first-of-type {
+			margin-left: 0;
+		}
+	}
+}
+
+.transfer-out__action-button {
+	float: right;
+	margin-right: 10px;
+	&:first-of-type {
+		margin-right: 0;
+	}
+}
+
+.transfer-card {
+	p {
+		color: $gray-darken-20;
+	}
+}
+
+.transfer__ips_tag_set_dialog {
+	@extend .dialog.card;
+	max-width: 50%;
+}
+
+.transfer__ips_tag_set_dialog__backdrop {
+	@extend .dialog__backdrop;
+}
+
+.transfer__ips_tag_set_dialog__content {
+	@extend .dialog__content;
+}
+
+.transfer__ips_tag_set_dialog__action-buttons {
+	@extend .dialog__action-buttons;
+}

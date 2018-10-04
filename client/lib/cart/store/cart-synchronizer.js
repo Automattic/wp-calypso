@@ -1,31 +1,30 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var extend = require( 'lodash/object/assign' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	pick = require( 'lodash/object/pick' ),
-	omit = require( 'lodash/object/omit' ),
-	compose = require( 'lodash/function/compose' ),
-	Dispatcher = require( 'dispatcher' ),
-	upgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	debug = require( 'debug' )( 'calypso:cart-data:cart-synchronizer' );
+import { assign, flowRight } from 'lodash';
+import i18n from 'i18n-calypso';
+import Dispatcher from 'dispatcher';
+import { TRANSACTION_STEP_SET } from 'lib/upgrades/action-types';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+import Emitter from 'lib/mixins/emitter';
+import { preprocessCartForServer } from 'lib/cart-values';
+
+/**
+ * Internal dependencies
+ */
+const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 
 function preprocessCartFromServer( cart ) {
-	var newCart = extend( {}, cart, {
+	return assign( {}, cart, {
 		client_metadata: createClientMetadata(),
-		products: castProductIDsToNumbers( cart.products )
+		products: castProductIDsToNumbers( cart.products ),
 	} );
-
-	// Get rid of `_headers` data from `wpcom.js` until we actually need to use
-	// it.
-	newCart = omit( newCart, '_headers' );
-
-	return newCart;
 }
 
 // Add a server response date so we can distinguish between carts with the
@@ -41,29 +40,16 @@ function createClientMetadata() {
 //   with the API where it sometimes returns product IDs as strings.
 function castProductIDsToNumbers( cartItems ) {
 	return cartItems.map( function( item ) {
-		return extend( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
+		return assign( {}, item, { product_id: parseInt( item.product_id, 10 ) } );
 	} );
 }
 
-function preprocessCartForServer( cart ) {
-	var newCartItems, newCart;
-
-	newCart = pick( cart, 'products', 'coupon', 'is_coupon_applied', 'currency', 'temporary', 'extra' );
-
-	newCartItems = cart.products.map( function( cartItem ) {
-		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
-	} );
-	newCart = extend( {}, newCart, { products: newCartItems } );
-
-	return newCart;
-}
-
-function CartSynchronizer( siteID, wpcom ) {
+function CartSynchronizer( cartKey, wpcom ) {
 	if ( ! ( this instanceof CartSynchronizer ) ) {
-		return new CartSynchronizer( siteID, wpcom );
+		return new CartSynchronizer( cartKey, wpcom );
 	}
 
-	this._siteID = siteID;
+	this._cartKey = cartKey;
 	this._wpcom = wpcom;
 	this._latestValue = null;
 	this._hasLoadedFromServer = false;
@@ -77,14 +63,13 @@ function CartSynchronizer( siteID, wpcom ) {
 Emitter( CartSynchronizer.prototype );
 
 CartSynchronizer.prototype.handleDispatch = function( payload ) {
-	var action = payload.action,
-		step;
+	const { action } = payload;
 
-	if ( action.type !== upgradesActionTypes.TRANSACTION_STEP ) {
+	if ( action.type !== TRANSACTION_STEP_SET ) {
 		return;
 	}
 
-	step = action.step;
+	const { step } = action;
 
 	if ( step.first && step.last ) {
 		return;
@@ -132,7 +117,10 @@ CartSynchronizer.prototype.resume = function() {
 
 CartSynchronizer.prototype._enqueueChange = function( changeFunction ) {
 	if ( this._queuedChanges ) {
-		this._queuedChanges = compose( changeFunction, this._queuedChanges );
+		this._queuedChanges = flowRight(
+			changeFunction,
+			this._queuedChanges
+		);
 	} else {
 		this._queuedChanges = changeFunction;
 	}
@@ -154,7 +142,10 @@ CartSynchronizer.prototype._processQueuedChanges = function() {
 };
 
 CartSynchronizer.prototype._postToServer = function( callback ) {
-	this._wpcom.cart( this._siteID, 'POST', preprocessCartForServer( this._latestValue ), function( error, newValue ) {
+	this._wpcom.setCart( this._cartKey, preprocessCartForServer( this._latestValue ), function(
+		error,
+		newValue
+	) {
 		if ( error ) {
 			callback( error );
 			return;
@@ -173,7 +164,7 @@ CartSynchronizer.prototype.fetch = function() {
 };
 
 CartSynchronizer.prototype._getFromServer = function( callback ) {
-	this._wpcom.cart( this._siteID, 'GET', function( error, newValue ) {
+	this._wpcom.getCart( this._cartKey, function( error, newValue ) {
 		if ( error ) {
 			callback( error );
 			return;
@@ -183,11 +174,9 @@ CartSynchronizer.prototype._getFromServer = function( callback ) {
 	} );
 };
 
-var requestCounter = 0;
+let requestCounter = 0;
 
 CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
-	var request;
-
 	if ( type === 'poll' && this._paused ) {
 		return;
 	}
@@ -196,36 +185,39 @@ CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
 		return false;
 	}
 
-	request = {
+	const request = {
 		id: requestCounter++,
 		type: type,
-		state: 'pending'
+		state: 'pending',
 	};
+
 	this._activeRequest = request;
 
 	debug( request.id + ': starting ' + request.type );
 
-	requestFunction( function onResponse( error, newValue ) {
-		if ( request.state === 'canceled' ) {
-			debug( request.id + ': canceled ' + request.type );
-			return;
-		}
+	requestFunction(
+		function onResponse( error, newValue ) {
+			if ( request.state === 'canceled' ) {
+				debug( request.id + ': canceled ' + request.type );
+				return;
+			}
 
-		if ( error ) {
-			throw error;
-		}
-		debug( request.id + ': finishing ' + request.type );
+			if ( error ) {
+				throw error;
+			}
+			debug( request.id + ': finishing ' + request.type );
 
-		this._latestValue = newValue;
-		request.state = 'completed';
+			this._latestValue = newValue;
+			request.state = 'completed';
 
-		if ( ! this._hasLoadedFromServer ) {
-			this._processQueuedChanges();
-			this._hasLoadedFromServer = true;
-		}
+			if ( ! this._hasLoadedFromServer ) {
+				this._processQueuedChanges();
+				this._hasLoadedFromServer = true;
+			}
 
-		this.emit( 'change' );
-	}.bind( this ) );
+			this.emit( 'change' );
+		}.bind( this )
+	);
 };
 
 CartSynchronizer.prototype.getLatestValue = function() {
@@ -248,4 +240,4 @@ CartSynchronizer.prototype.hasPendingServerUpdates = function() {
 	);
 };
 
-module.exports = CartSynchronizer;
+export default CartSynchronizer;

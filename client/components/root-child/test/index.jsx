@@ -1,25 +1,28 @@
-require( 'lib/react-test-env-setup' )();
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	React = require( 'react' );
+import { expect } from 'chai';
+import { mount } from 'enzyme';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-var RootChild = require( '../' );
+import RootChild from '../';
 
 /**
  * Module variables
  */
-var Greeting = React.createClass( {
-	getDefaultProps: function() {
-		return { toWhom: 'World' };
-	},
+class Greeting extends React.Component {
+	static defaultProps = { toWhom: 'World' };
 
-	render: function() {
+	render() {
 		return (
 			<div className="parent">
 				<h1 ref="parentChild">Greeting</h1>
@@ -29,74 +32,57 @@ var Greeting = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-describe( 'RootChild', function() {
-	var container;
+describe( 'RootChild', () => {
+	let container;
 
-	before( function() {
+	beforeAll( function() {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 	} );
 
-	afterEach( function() {
-		React.unmountComponentAtNode( container );
+	afterEach( () => {
+		ReactDom.unmountComponentAtNode( container );
 	} );
 
-	describe( 'rendering', function() {
-		it( 'should render any children as descendents of body', function() {
-			var tree = React.render( React.createElement( Greeting ), container );
+	describe( 'rendering', () => {
+		test( 'should render any children as descendants of body', () => {
+			const tree = ReactDom.render( React.createElement( Greeting ), container );
 
-			expect( tree.refs.parentChild
-				.getDOMNode()
-				.parentNode.className
-			).to.equal( 'parent' );
+			expect( tree.refs.parentChild.parentNode.className ).to.equal( 'parent' );
 
-			expect( tree.refs.rootChild
-				.getDOMNode()
-				.parentNode
-				.parentNode
-			).to.eql( document.body );
+			expect( tree.refs.rootChild.parentNode.parentNode ).to.eql( document.body );
 		} );
 
-		it( 'accepts props to be added to a wrapper element', function() {
-			var tree = React.render( React.createElement( Greeting, {
-				rootChildProps: { className: 'wrapper' }
-			} ), container );
+		test( 'accepts props to be added to a wrapper element', () => {
+			const tree = ReactDom.render(
+				React.createElement( Greeting, {
+					rootChildProps: { className: 'wrapper' },
+				} ),
+				container
+			);
 
-			expect( tree.refs.rootChild
-				.getDOMNode()
-				.parentNode
-				.className )
-			.to.equal( 'wrapper' );
+			expect( tree.refs.rootChild.parentNode.className ).to.equal( 'wrapper' );
 
-			expect( tree.refs.rootChild
-				.getDOMNode()
-				.parentNode
-				.parentNode
-				.parentNode
-			).to.eql( document.body );
+			expect( tree.refs.rootChild.parentNode.parentNode.parentNode ).to.eql( document.body );
 		} );
 
-		it( 'should update the children if parent is re-rendered', function() {
-			var tree = React.render( React.createElement( Greeting ), container );
+		test( 'should update the children if parent is re-rendered', () => {
+			const tree = mount( React.createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
-			expect( tree.refs.rootChild
-				.getDOMNode()
-				.textContent
-			).to.equal( 'Hello Universe!' );
+			expect( tree.ref( 'rootChild' ).innerHTML ).to.equal( 'Hello Universe!' );
+			tree.detach();
 		} );
 	} );
 
-	describe( 'unmounting', function() {
-		it( 'should destroy the root child when the component is unmounted', function() {
-			React.render( React.createElement( Greeting ), container );
-			React.unmountComponentAtNode( container );
+	describe( 'unmounting', () => {
+		test( 'should destroy the root child when the component is unmounted', () => {
+			ReactDom.render( React.createElement( Greeting ), container );
+			ReactDom.unmountComponentAtNode( container );
 
-			expect( [].slice.call(
-				document.body.querySelectorAll( '*' )
-			) ).to.eql( [ container ] );
+			expect( [].slice.call( document.body.querySelectorAll( '*' ) ) ).to.eql( [ container ] );
 		} );
 	} );
 } );

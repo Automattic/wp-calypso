@@ -1,0 +1,111 @@
+$follow-button-gray-disabled: $gray-lighten-20;
+
+.follow-button,
+button.follow-button {
+	border: 0;
+	padding: 0;
+
+	.gridicons-reader-follow {
+		fill: $blue-medium;
+		pointer-events: auto;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+	}
+
+	&:hover {
+		color: $blue-medium;
+
+		.gridicons-reader-follow {
+			fill: $blue-medium;
+		}
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	// Hides Following icon by default
+	.gridicons-reader-following {
+		display: none;
+		pointer-events: none;
+	}
+
+	&.is-following {
+
+		.gridicons-reader-following {
+			display: inline-block;
+			fill: $alert-green;
+			pointer-events: auto;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		// Hides Follow icon if already following
+		.gridicons-reader-follow {
+			display: none;
+			pointer-events: none;
+		}
+
+		&:hover {
+			color: $alert-green;
+
+			.gridicons-reader-following {
+				fill: $alert-green;
+			}
+		}
+	}
+
+	.gridicons-reader-following {
+		pointer-events: none;
+	}
+
+	.gridicon {
+		height: 18px;
+		padding-right: 6px;
+		top: 5px;
+		width: 18px;
+	}
+
+	&.is-disabled {
+		@include no-select();
+		color: $follow-button-gray-disabled;
+		border-color: $follow-button-gray-disabled;
+		pointer-events: none;
+
+		.follow-button__label {
+			color: $follow-button-gray-disabled;
+		}
+
+		.gridicon {
+			fill: $follow-button-gray-disabled;
+		}
+
+		&:hover {
+			color: $follow-button-gray-disabled;
+			cursor: default;
+
+			.gridicon {
+				fill: $follow-button-gray-disabled;
+			}
+		}
+
+		&:active {
+			border-width: 1px 1px 2px;
+		}
+	}
+}
+
+.follow-button__label {
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+}
+
+// Override .button style
+.button.follow-button .gridicon:not(:last-child) {
+	margin-right: 0;
+}

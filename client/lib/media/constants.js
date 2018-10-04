@@ -1,7 +1,10 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import keyMirror from 'react/lib/keyMirror';
+
+import keyMirror from 'key-mirror';
 
 /**
  * An enum set of possible media validation errors.
@@ -11,25 +14,41 @@ import keyMirror from 'react/lib/keyMirror';
  */
 export const ValidationErrors = keyMirror( {
 	FILE_TYPE_UNSUPPORTED: null,
+	FILE_TYPE_NOT_IN_PLAN: null,
 	SERVER_ERROR: null,
 	UPLOAD_VIA_URL_404: null,
-	EXCEEDS_MAX_UPLOAD_SIZE: null
+	EXCEEDS_MAX_UPLOAD_SIZE: null,
+	EXCEEDS_PLAN_STORAGE_LIMIT: null,
+	NOT_ENOUGH_SPACE: null,
+	SERVICE_FAILED: null,
 } );
 
 export const ThumbnailSizeDimensions = {
 	thumbnail: {
 		width: 150,
-		height: 150
+		height: 150,
 	},
 	medium: {
 		width: 300,
-		height: 300
+		height: 300,
 	},
 	large: {
 		width: 1024,
-		height: 1024
-	}
+		height: 1024,
+	},
 };
+
+export const VideoPressFileTypes = [
+	'ogv',
+	'mp4',
+	'm4v',
+	'mov',
+	'wmv',
+	'avi',
+	'mpg',
+	'3gp',
+	'3g2',
+];
 
 export const GalleryColumnedTypes = [ 'default', 'circle', 'square' ];
 export const GallerySizeableTypes = [ 'default' ];
@@ -39,7 +58,7 @@ export const GalleryDefaultAttrs = {
 	columns: 3,
 	orderBy: 'menu_order',
 	link: '',
-	size: 'thumbnail'
+	size: 'thumbnail',
 };
 
 /**
@@ -180,3 +199,7 @@ export const MimeTypes = {
 	numbers: 'application/vnd.apple.numbers',
 	pages: 'application/vnd.apple.pages',
 };
+
+export const MEDIA_IMAGE_THUMBNAIL = 'MEDIA_IMAGE_THUMBNAIL';
+export const MEDIA_IMAGE_PHOTON = 'MEDIA_IMAGE_PHOTON';
+export const MEDIA_IMAGE_RESIZER = 'MEDIA_IMAGE_RESIZER';

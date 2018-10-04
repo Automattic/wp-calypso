@@ -1,4 +1,7 @@
 @import 'shared/colors';
 @import 'shared/typography';
+@import 'shared/mixins/breakpoints';
 
 @import 'components/tinymce/iframe';
+@import 'components/tinymce/plugins/media/style';
+@import 'components/tinymce/plugins/wpcom-view/views/simple-payments/style';

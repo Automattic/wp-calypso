@@ -14,7 +14,8 @@
 	input[type="email"],
 	input[type="password"],
 	input[type="url"],
-	input[type="text"] {
+	input[type="text"],
+	input[type="number"] {
 		flex-grow: 1;
 
 		&:focus {
@@ -22,6 +23,14 @@
 			// cut off when this input has a suffix, or is stuck to another element that has a higher stacking order
 			// (fix found at http://stackoverflow.com/a/24728957)
 			transform: scale( 1 );
+		}
+
+		&:disabled {
+			border-right-width: 0;
+
+			& + .form-text-input-with-affixes__suffix {
+				border-left: 1px solid $gray-lighten-20;
+			}
 		}
 	}
 }
@@ -40,11 +49,15 @@
 
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
-	background: lighten( $gray, 30% );
-	border: 1px solid lighten( $gray, 20% );
-	color: $gray-dark;
+	position: relative;
+	background: $gray-light;
+	border: 1px solid $gray-lighten-20;
+	color: $gray-darken-20;
 	padding: 8px 14px;
 	white-space: nowrap;
+	flex: 1 0 auto;
+	font-size: 16px;
+	line-height: 1.5;
 }
 
 .form-text-input-with-affixes__prefix {
@@ -63,6 +76,17 @@
 
 	@include breakpoint( ">480px" ) {
 		@include no-prefix-wrap();
+	}
+
+	& + input[type="email"],
+	& + input[type="password"],
+	& + input[type="url"],
+	& + input[type="text"],
+	& + input[type="number"] {
+		&:disabled {
+			border-left-color: $gray-lighten-20;
+			border-right-width: 1px;
+		}
 	}
 }
 

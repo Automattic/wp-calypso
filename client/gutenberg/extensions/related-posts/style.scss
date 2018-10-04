@@ -1,0 +1,34 @@
+.wp-block-a8c-related-posts {
+	&.alignfull {
+		padding: 0 20px;
+	}
+
+	&.aligncenter {
+		.wp-block-a8c-related-posts__preview-post-link {
+			text-align: center;
+		}
+	}
+}
+
+.wp-block-a8c-related-posts__preview-items {
+	.is-grid & {
+		display: flex;
+		margin: 0 -10px;
+	}
+}
+
+.wp-block-a8c-related-posts__preview-post {
+	.is-grid & {
+		flex-grow: 1;
+		flex-basis: 0;
+		margin: 0 10px;
+	}
+
+	.wp-block-a8c-related-posts__preview-post-link {
+		font-size: inherit;
+	}
+
+	.wp-block-a8c-related-posts__preview-post-date {
+		font-style: italic;
+	}
+}

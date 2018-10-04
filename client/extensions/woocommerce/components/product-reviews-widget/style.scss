@@ -1,0 +1,24 @@
+.product-reviews-widget {
+	margin-top: 16px;
+
+	.product-reviews-widget__container {
+		display: flex;
+	}
+
+	.product-reviews-widget__label {
+		color: $gray-dark;
+		display: block;
+		font-size: 14px;
+		font-weight: 600;
+		margin-bottom: 4px;
+	}
+
+	.rating {
+		margin-right: 6px;
+	}
+
+	a {
+		font-size: 13px;
+		line-height: 1.25;
+	}
+}

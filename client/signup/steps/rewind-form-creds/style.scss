@@ -1,0 +1,50 @@
+.rewind-form-creds__header {
+	text-align: center;
+	margin-top: 16px;
+
+	.rewind-switch__description {
+		max-width: 100%;
+	}
+}
+
+.rewind-form-creds__card {
+	margin-top: 16px;
+	padding: 0;
+
+	.rewind-form-creds__legend {
+		margin: 0 0 24px;
+		width: 100%;
+		text-align: left;
+	}
+
+	img {
+		max-width: 200px;
+		display: block;
+		margin: rem( 20px ) auto;
+	}
+
+	.rewind-credentials-form {
+		text-align: left;
+		width: 90%;
+
+		.rewind-credentials-form__user-pass {
+			display: block;
+		}
+	}
+
+	.button.is-primary {
+		float: right;
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+
+	.button.is-primary.rewind-credentials-form__advanced-button {
+		float: none;
+		padding: 8px 0;
+	}
+
+	.credentials-setup-flow__footer {
+		width: 100%;
+		text-align: left;
+	}
+}

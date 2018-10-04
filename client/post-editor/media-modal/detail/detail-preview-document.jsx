@@ -1,21 +1,28 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
+import PropTypes from 'prop-types';
 import React from 'react';
+import Gridicon from 'gridicons';
+import classNames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import Gridicon from 'components/gridicon';
+export default class extends React.Component {
+	static displayName = 'EditorMediaModalDetailPreviewDocument';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewDocument',
+	static propTypes = {
+		className: PropTypes.string,
+	};
 
 	render() {
+		const classes = classNames( this.props.className, 'is-document' );
+
 		return (
-			<div className="editor-media-modal-detail__preview is-document">
+			<div className={ classes }>
 				<Gridicon icon="pages" size={ 120 } />
 			</div>
 		);
 	}
-} );
+}

@@ -1,0 +1,15 @@
+.tab-content,
+.stats-comments__tab-content {
+	display: none;
+
+	&.is-active {
+		display: block;
+	}
+}
+
+.tab-email-followers .tab-content.email-followers,
+.tab-wpcom-followers .tab-content.wpcom-followers,
+.tab-top-authors .tab-content.top-authors,
+.tab-top-content .tab-content.top-content {
+	display: block;
+}

@@ -1,60 +1,66 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SimpleNotice from 'notices/simple-notice';
-import GalleryShortcode from 'components/gallery-shortcode';
+import Notice from 'components/notice';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import markup from '../markup';
 import EditorMediaModalGalleryEdit from './edit';
+import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
+import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryPreview',
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
-	propTypes: {
+class EditorMediaModalGalleryPreview extends Component {
+	static propTypes = {
 		site: PropTypes.object,
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,
 		invalidItemDropped: PropTypes.bool,
-		onDismissInvalidItemDropped: PropTypes.func
-	},
+		onDismissInvalidItemDropped: PropTypes.func,
+	};
 
-	getInitialState() {
-		return {
-			isOrdering: false
-		};
-	},
+	static defaultProps = {
+		settings: Object.freeze( {} ),
+		onUpdateSetting: noop,
+		invalidItemDropped: false,
+		onDismissInvalidItemDropped: noop,
+	};
 
-	getDefaultProps() {
-		return {
-			settings: Object.freeze( {} ),
-			onUpdateSetting: () => {},
-			invalidItemDropped: false,
-			onDismissInvalidItemDropped: () => {}
-		};
-	},
+	state = {
+		isEditing: false,
+	};
 
 	renderPreviewModeToggle() {
+		const { translate } = this.props;
+
 		return (
-			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
+			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact>
 				<SegmentedControlItem
-					selected={ ! this.state.isOrdering }
-					onClick={ () => this.setState( { isOrdering: false } ) }>
-					{ this.translate( 'Preview' ) }
+					selected={ ! this.state.isEditing }
+					onClick={ () => this.setState( { isEditing: false } ) }
+				>
+					{ translate( 'Preview' ) }
 				</SegmentedControlItem>
 				<SegmentedControlItem
-					selected={ this.state.isOrdering }
-					onClick={ () => this.setState( { isOrdering: true } ) }>
-					{ this.translate( 'Edit' ) }
+					selected={ this.state.isEditing }
+					onClick={ () => this.setState( { isEditing: true } ) }
+				>
+					{ translate( 'Edit' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
 		);
-	},
+	}
 
 	renderPreview() {
 		const { site, settings, onUpdateSetting } = this.props;
@@ -63,60 +69,46 @@ export default React.createClass( {
 			return;
 		}
 
-		if ( this.state.isOrdering ) {
+		if ( this.state.isEditing ) {
 			return (
 				<EditorMediaModalGalleryEdit
 					site={ site }
 					settings={ settings }
-					onUpdateSetting={ onUpdateSetting } />
+					onUpdateSetting={ onUpdateSetting }
+				/>
 			);
 		}
 
-		if ( settings && 'individual' === settings.type ) {
-			return (
-				<div className="editor-media-modal-gallery__preview-individual">
-					<div className="editor-media-modal-gallery__preview-individual-content">
-						{ settings.items.map( ( item ) => {
-							const caption = markup.caption( item );
-
-							if ( null === caption ) {
-								return <div key={ item.ID } dangerouslySetInnerHTML={ { __html: markup.get( item ) } } />;
-							}
-
-							return React.cloneElement( caption, { key: item.ID } );
-						} ) }
-					</div>
-				</div>
-			);
+		if ( 'individual' === settings.type ) {
+			return <EditorMediaModalGalleryPreviewIndividual items={ settings.items } />;
 		}
 
-		return (
-			<GalleryShortcode
-				siteId={ site.ID }
-				items={ settings.items }
-				type={ settings.type }
-				columns={ settings.columns }
-				orderBy={ settings.orderBy }
-				link={ settings.link }
-				size={ settings.size }
-				className="editor-media-modal-gallery__preview-iframe" />
-		);
-	},
+		return <EditorMediaModalGalleryPreviewShortcode siteId={ site.ID } settings={ settings } />;
+	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<div className="editor-media-modal-gallery__preview">
 				{ this.props.invalidItemDropped && (
-					<SimpleNotice status="is-warning" onClick={ this.props.onDismissInvalidItemDropped } isCompact>
-						{ this.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
-					</SimpleNotice>
+					<Notice
+						status="is-warning"
+						onDismissClick={ this.props.onDismissInvalidItemDropped }
+						isCompact
+					>
+						{ translate(
+							'Galleries can only include images. All other uploads will be added to your media library.'
+						) }
+					</Notice>
 				) }
-				<div className="editor-media-modal-gallery__preview-wrapper">
-					{ this.renderPreview() }
-				</div>
+				<div className="editor-media-modal-gallery__preview-wrapper">{ this.renderPreview() }</div>
 				{ this.renderPreviewModeToggle() }
 			</div>
 		);
 	}
-} );
+}
 
+EditorMediaModalGalleryPreview.displayName = 'EditorMediaModalGalleryPreview';
+
+export default localize( EditorMediaModalGalleryPreview );

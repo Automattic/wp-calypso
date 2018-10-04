@@ -1,35 +1,47 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import { times } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var PluginBrowserItem = require( 'my-sites/plugins/plugins-browser-item' ),
-	Gridicon = require( 'components/gridicon' );
+import PluginBrowserItem from 'my-sites/plugins/plugins-browser-item';
+import Card from 'components/card';
+import Gridicon from 'gridicons';
+import SectionHeader from 'components/section-header';
 
-module.exports = React.createClass( {
+const DEFAULT_PLACEHOLDER_NUMBER = 6;
 
-	displayName: 'PluginsBrowserList',
+class PluginsBrowserList extends Component {
+	static displayName = 'PluginsBrowserList';
 
-	_DEFAULT_PLACEHOLDER_NUMBER: 6,
+	renderPluginsViewList() {
+		let emptyCounter = 0;
 
-	getPluginsViewList: function() {
-		var pluginsViewsList,
-			emptyCounter = 0;
-
-		pluginsViewsList = this.props.plugins.map( function( plugin, n ) {
-			return <PluginBrowserItem site={ this.props.site } key={ plugin.slug + n } plugin={ plugin } currentSites={ this.props.currentSites } />;
-		}, this );
+		let pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
+			return (
+				<PluginBrowserItem
+					site={ this.props.site }
+					key={ plugin.slug + n }
+					plugin={ plugin }
+					currentSites={ this.props.currentSites }
+				/>
+			);
+		} );
 
 		if ( this.props.showPlaceholders ) {
-			pluginsViewsList = pluginsViewsList.concat( this.getPlaceholdersViews() );
+			pluginsViewsList = pluginsViewsList.concat( this.renderPlaceholdersViews() );
 		}
 
 		// We need to complete the list with empty elements to keep the grid drawn.
 		while ( pluginsViewsList.length % 3 !== 0 || pluginsViewsList.length % 2 !== 0 ) {
-			pluginsViewsList.push( <div className="plugins-browser-item is-empty" key={ 'empty-item-' + emptyCounter++ }></div> );
+			pluginsViewsList.push(
+				<div className="plugins-browser-item is-empty" key={ 'empty-item-' + emptyCounter++ } />
+			);
 		}
 
 		if ( this.props.size ) {
@@ -37,44 +49,44 @@ module.exports = React.createClass( {
 		}
 
 		return pluginsViewsList;
-	},
+	}
 
-	getPlaceholdersViews: function() {
-		return Array.apply( null, Array( this.props.size || this._DEFAULT_PLACEHOLDER_NUMBER ) ).map( function( item, i ) {
-			return <PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />;
-		} );
-	},
+	renderPlaceholdersViews() {
+		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, i => (
+			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
+		) );
+	}
 
-	getViews: function() {
+	renderViews() {
 		if ( this.props.plugins.length ) {
-			return this.getPluginsViewList();
+			return this.renderPluginsViewList();
 		} else if ( this.props.showPlaceholders ) {
-			return this.getPlaceholdersViews();
+			return this.renderPlaceholdersViews();
 		}
-	},
+	}
 
-	getLink: function() {
+	renderLink() {
 		if ( this.props.expandedListLink ) {
-			return <a className="button is-link plugins-browser-list__select-all" href={ this.props.expandedListLink + ( this.props.site || '' ) }>
-				{ this.translate( 'See All' ) }
-				<Gridicon icon="chevron-right" size={ 12 } />
-			</a>;
+			return (
+				<a
+					className="button is-link plugins-browser-list__select-all"
+					href={ this.props.expandedListLink + ( this.props.site || '' ) }
+				>
+					{ this.props.translate( 'See All' ) }
+					<Gridicon icon="chevron-right" size={ 18 } />
+				</a>
+			);
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div className="plugins-browser-list">
-				<div className="plugins-browser-list__header">
-					<h2 className="plugins-browser-list__title">
-						{ this.props.title }
-					</h2>
-					{ this.getLink() }
-				</div>
-				<div className="plugins-browser-list__elements">
-					{ this.getViews() }
-				</div>
+				<SectionHeader label={ this.props.title }>{ this.renderLink() }</SectionHeader>
+				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( PluginsBrowserList );

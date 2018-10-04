@@ -1,52 +1,47 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:sidebar-gravatar' );
+
+import React, { Component } from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var Gravatar = require( 'components/gravatar' ),
-	formatting = require( 'lib/formatting' ),
-	eventRecorder = require( 'me/event-recorder' );
+import Animate from 'components/animate';
+import Gravatar from 'components/gravatar';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
+class ProfileGravatar extends Component {
+	recordGravatarMisclick = () => {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Unclickable Gravatar Image in Sidebar' );
+	};
 
-	displayName: 'ProfileGravatar',
-
-	mixins: [ eventRecorder ],
-
-	componentDidMount: function() {
-		debug( 'The ProfileGravatar component is mounted.' );
-	},
-
-	render: function() {
-		var profileURL = '//gravatar.com/' + this.props.user.username;
+	render() {
+		// use imgSize = 400 for caching
+		// it's the popular value for large Gravatars in Calypso
+		const GRAVATAR_IMG_SIZE = 400;
 
 		return (
 			<div className="profile-gravatar">
-				<a
-					href="https://secure.gravatar.com/site/wpcom?wpcc-no-close"
-					target="_blank"
-					className="profile-gravatar__edit"
-					onClick={ this.recordClickEvent( 'Gravatar Update Profile Photo in Sidebar' ) } >
-
-					<Gravatar user={ this.props.user } size={ 150 } imgSize={ 400 } />
-
-					<span className="profile-gravatar__edit-label-wrap">
-						<span className="profile-gravatar__edit-label">
-							{ this.translate( 'Update Profile Photo' ) }
-						</span>
-					</span>
-				</a>
-
-				<h2 className="profile-gravatar__user-display-name">{ formatting.decodeEntities( this.props.user.display_name ) }</h2>
-
-				<div className="profile-gravatar__user-secondary-info">
-					<a href={ profileURL }>@{ this.props.user.username }</a>
+				<div onClick={ this.recordGravatarMisclick }>
+					<Animate type="appear">
+						<Gravatar user={ this.props.user } size={ 150 } imgSize={ GRAVATAR_IMG_SIZE } />
+					</Animate>
 				</div>
+				<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
+				<div className="profile-gravatar__user-secondary-info">@{ this.props.user.username }</div>
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{
+		recordGoogleEvent,
+	}
+)( localize( ProfileGravatar ) );

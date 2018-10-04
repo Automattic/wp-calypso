@@ -1,89 +1,101 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	findWhere = require( 'lodash/collection/findWhere' ),
-	filter = require( 'lodash/collection/filter' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	map = require( 'lodash/collection/map' ),
-	result = require( 'lodash/object/result' ),
-	classNames = require( 'classnames' );
+
+import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { filter, find, findIndex, map, result } from 'lodash';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var DropdownItem = require( 'components/select-dropdown/item' ),
-	DropdownSeparator = require( 'components/select-dropdown/separator' ),
-	Count = require( 'components/count' );
-
-var noop = () => {};
-
-/**
- * Internal variables
- */
-var _instance = 1;
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownSeparator from 'components/select-dropdown/separator';
+import DropdownLabel from 'components/select-dropdown/label';
+import Count from 'components/count';
+import TranslatableString from 'components/translatable/proptype';
 
 /**
  * SelectDropdown
  */
-var SelectDropdown = React.createClass( {
-
-	propTypes: {
-		selectedText: React.PropTypes.string,
-		selectedCount: React.PropTypes.number,
-		initialSelected: React.PropTypes.string,
-		className: React.PropTypes.string,
-		style: React.PropTypes.object,
-		onSelect: React.PropTypes.func,
-		onToggle: React.PropTypes.func,
-		focusSibling: React.PropTypes.func,
-		tabIndex: React.PropTypes.number,
-		options: React.PropTypes.arrayOf(
-			React.PropTypes.shape( {
-				value: React.PropTypes.string.isRequired,
-				label: React.PropTypes.string.isRequired,
-				path: React.PropTypes.string
+class SelectDropdown extends Component {
+	static propTypes = {
+		selectedText: TranslatableString,
+		selectedIcon: PropTypes.element,
+		selectedCount: PropTypes.number,
+		initialSelected: PropTypes.string,
+		className: PropTypes.string,
+		style: PropTypes.object,
+		onSelect: PropTypes.func,
+		onToggle: PropTypes.func,
+		focusSibling: PropTypes.func,
+		tabIndex: PropTypes.number,
+		options: PropTypes.arrayOf(
+			PropTypes.shape( {
+				value: PropTypes.string.isRequired,
+				label: TranslatableString.isRequired,
+				path: PropTypes.string,
+				icon: PropTypes.element,
 			} )
-		)
-	},
+		),
+	};
 
-	getDefaultProps: function() {
-		return {
-			onSelect: noop,
-			onToggle: noop,
-			style: {}
-		};
-	},
+	static defaultProps = {
+		options: [],
+		onSelect: () => {},
+		onToggle: () => {},
+		style: {},
+	};
 
-	getInitialState: function() {
-		var initialState = {
-			isOpen: false
-		};
+	static instances = 0;
 
-		if ( this.props.options ) {
-			initialState.selected = this.props.initialSelected ||
-				this.props.options[ 0 ].value;
+	constructor( props ) {
+		super( props );
+
+		// bounds
+		this.navigateItem = this.navigateItem.bind( this );
+		this.toggleDropdown = this.toggleDropdown.bind( this );
+		this.handleOutsideClick = this.handleOutsideClick.bind( this );
+
+		// state
+		const initialState = { isOpen: false };
+
+		if ( props.options.length ) {
+			initialState.selected = this.getInitialSelectedItem( props );
 		}
 
-		return initialState;
-	},
+		this.state = initialState;
+	}
 
-	componentWillMount: function() {
-		this.id = _instance;
-		_instance++;
-	},
+	componentWillMount() {
+		this.setState( {
+			instanceId: ++SelectDropdown.instances,
+		} );
+	}
 
-	componentWillReceiveProps: function() {
+	componentWillReceiveProps( nextProps ) {
 		if ( this.state.isOpen ) {
 			this.closeDropdown();
 		}
-	},
 
-	componentWillUnmount: function() {
+		if (
+			typeof this.state.selected !== 'undefined' &&
+			this.props.initialSelected !== nextProps.initialSelected
+		) {
+			this.setState( { selected: nextProps.initialSelected } );
+		}
+	}
+
+	componentWillUnmount() {
 		window.removeEventListener( 'click', this.handleOutsideClick );
-	},
+	}
 
-	componentDidUpdate: function( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isOpen ) {
 			window.addEventListener( 'click', this.handleOutsideClick );
 		} else {
@@ -93,55 +105,111 @@ var SelectDropdown = React.createClass( {
 		if ( this.state.isOpen !== prevState.isOpen ) {
 			this.props.onToggle( {
 				target: this,
-				open: this.state.isOpen
+				open: this.state.isOpen,
 			} );
 		}
-	},
+	}
 
-	dropdownOptions: function() {
-		var refIndex = 0;
+	getInitialSelectedItem( props ) {
+		props = props || this.props;
+
+		if ( props.initialSelected ) {
+			return props.initialSelected;
+		}
+
+		if ( ! props.options.length ) {
+			return;
+		}
+
+		const selectedItem = find( props.options, value => ! value.isLabel );
+		return selectedItem && selectedItem.value;
+	}
+
+	getSelectedText() {
+		const { options, selectedText } = this.props;
+		const { selected } = this.state;
+
+		if ( selectedText ) {
+			return selectedText;
+		}
+
+		// return currently selected text
+		const selectedValue = selected || this.getInitialSelectedItem( this.props );
+		return result( find( options, { value: selectedValue } ), 'label' );
+	}
+
+	getSelectedIcon() {
+		const { options, selectedIcon } = this.props;
+		const { selected } = this.state;
+
+		if ( selectedIcon ) {
+			return selectedIcon;
+		}
+
+		// return currently selected icon
+		const selectedValue = selected || this.getInitialSelectedItem( this.props );
+		return result( find( options, { value: selectedValue } ), 'icon' );
+	}
+
+	dropdownOptions() {
+		let refIndex = 0;
+		const self = this;
+
 		if ( this.props.children ) {
 			// add keys and refs to children
-			return React.Children.map( this.props.children, function( child, index ) {
-				if ( ! child ) {
-					return null;
-				}
+			return React.Children.map(
+				this.props.children,
+				function( child, index ) {
+					if ( ! child ) {
+						return null;
+					}
 
-				let newChild = React.cloneElement( child, {
-					ref: ( child.type === DropdownItem ) ? 'item-' + refIndex : null,
-					key: 'item-' + index,
-					onClick: function( event ) {
-						this.refs.dropdownContainer.getDOMNode().focus();
-						if ( typeof child.props.onClick === 'function' ) {
-							child.props.onClick( event );
-						}
-					}.bind( this )
-				} );
+					const newChild = React.cloneElement( child, {
+						ref: child.type === DropdownItem ? 'item-' + refIndex : null,
+						key: 'item-' + index,
+						isDropdownOpen: this.state.isOpen,
+						onClick: function( event ) {
+							self.refs.dropdownContainer.focus();
+							if ( typeof child.props.onClick === 'function' ) {
+								child.props.onClick( event );
+							}
+						},
+					} );
 
-				if ( child.type === DropdownItem ) {
-					refIndex++;
-				}
+					if ( child.type === DropdownItem ) {
+						refIndex++;
+					}
 
-				return newChild;
-			}, this );
+					return newChild;
+				},
+				this
+			);
 		}
 
 		return this.props.options.map( function( item, index ) {
 			if ( ! item ) {
 				return (
-					<DropdownSeparator
-						key={ 'dropdown-separator-' + this.id + '-' + index }
-					/>
+					<DropdownSeparator key={ 'dropdown-separator-' + this.state.instanceId + '-' + index } />
 				);
 			}
 
-			let dropdownItem = (
+			if ( item.isLabel ) {
+				return (
+					<DropdownLabel key={ 'dropdown-label-' + this.state.instanceId + '-' + index }>
+						{ item.label }
+					</DropdownLabel>
+				);
+			}
+
+			const dropdownItem = (
 				<DropdownItem
-					key={ 'dropdown-item-' + this.id + '-' + item.value }
+					key={ 'dropdown-item-' + this.state.instanceId + '-' + item.value }
 					ref={ 'item-' + refIndex }
+					isDropdownOpen={ this.state.isOpen }
 					selected={ this.state.selected === item.value }
-					onClick={ this.selectItem.bind( this, item ) }
+					onClick={ this.onSelectItem( item ) }
 					path={ item.path }
+					icon={ item.icon }
 				>
 					{ item.label }
 				</DropdownItem>
@@ -151,26 +219,18 @@ var SelectDropdown = React.createClass( {
 
 			return dropdownItem;
 		}, this );
-	},
+	}
 
-	render: function() {
-		const dropdownClasses = {
+	render() {
+		const dropdownClassName = classNames( this.props.className, {
 			'select-dropdown': true,
-			'is-open': this.state.isOpen
-		};
+			'is-compact': this.props.compact,
+			'is-open': this.state.isOpen,
+			'has-count': 'number' === typeof this.props.selectedCount,
+		} );
 
-		if ( this.props.className ) {
-			this.props.className.split( ' ' ).forEach( function( className ) {
-				dropdownClasses[ className ] = true;
-			} );
-		}
-
-		let dropdownClassName = classNames( dropdownClasses );
-		let selectedText = this.props.selectedText
-			? this.props.selectedText
-			: result( findWhere(
-				this.props.options, { value: this.state.selected }
-			), 'label' );
+		const selectedText = this.getSelectedText();
+		const selectedIcon = this.getSelectedIcon();
 
 		return (
 			<div style={ this.props.style } className={ dropdownClassName }>
@@ -180,29 +240,31 @@ var SelectDropdown = React.createClass( {
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
 					aria-haspopup="true"
-					aria-owns={ 'select-submenu-' + this.id }
-					aria-controls={ 'select-submenu-' + this.id }
+					aria-owns={ 'select-submenu-' + this.state.instanceId }
+					aria-controls={ 'select-submenu-' + this.state.instanceId }
 					aria-expanded={ this.state.isOpen }
+					data-tip-target={ this.props.tipTarget }
 					onClick={ this.toggleDropdown }
 				>
 					<div
-						id={ 'select-dropdown-' + this.id }
+						id={ 'select-dropdown-' + this.state.instanceId }
 						className="select-dropdown__header"
 					>
 						<span className="select-dropdown__header-text">
+							{ selectedIcon && selectedIcon.type === Gridicon ? selectedIcon : null }
 							{ selectedText }
-							{
-								'number' === typeof this.props.selectedCount &&
-								<Count count={ this.props.selectedCount } />
-							}
 						</span>
+						{ 'number' === typeof this.props.selectedCount && (
+							<Count count={ this.props.selectedCount } />
+						) }
+						<Gridicon icon="chevron-down" size={ 18 } />
 					</div>
 
 					<ul
-						id={ 'select-submenu-' + this.id }
+						id={ 'select-submenu-' + this.state.instanceId }
 						className="select-dropdown__options"
 						role="menu"
-						aria-labelledby={ 'select-dropdown-' + this.id }
+						aria-labelledby={ 'select-dropdown-' + this.state.instanceId }
 						aria-expanded={ this.state.isOpen }
 					>
 						{ this.dropdownOptions() }
@@ -210,30 +272,34 @@ var SelectDropdown = React.createClass( {
 				</div>
 			</div>
 		);
-	},
+	}
 
-	toggleDropdown: function() {
+	toggleDropdown() {
 		this.setState( {
-			isOpen: ! this.state.isOpen
+			isOpen: ! this.state.isOpen,
 		} );
-	},
+	}
 
-	openDropdown: function() {
+	openDropdown() {
 		this.setState( {
-			isOpen: true
+			isOpen: true,
 		} );
-	},
+	}
 
-	closeDropdown: function() {
+	closeDropdown() {
 		if ( this.state.isOpen ) {
 			delete this.focused;
 			this.setState( {
-				isOpen: false
+				isOpen: false,
 			} );
 		}
-	},
+	}
 
-	selectItem: function( option ) {
+	onSelectItem( option ) {
+		return this.selectItem.bind( this, option );
+	}
+
+	selectItem( option ) {
 		if ( ! option ) {
 			return;
 		}
@@ -243,13 +309,13 @@ var SelectDropdown = React.createClass( {
 		}
 
 		this.setState( {
-			selected: option.value
+			selected: option.value,
 		} );
 
-		this.refs.dropdownContainer.getDOMNode().focus();
-	},
+		this.refs.dropdownContainer.focus();
+	}
 
-	navigateItem: function( event ) {
+	navigateItem( event ) {
 		switch ( event.keyCode ) {
 			case 9: //tab
 				this.navigateItemByTabKey( event );
@@ -272,68 +338,76 @@ var SelectDropdown = React.createClass( {
 			case 27: // escape
 				event.preventDefault();
 				this.closeDropdown();
-				this.refs.dropdownContainer.getDOMNode().focus();
+				this.refs.dropdownContainer.focus();
 				break;
 		}
-	},
+	}
 
-	navigateItemByTabKey: function( event ) {
-		var direction;
+	navigateItemByTabKey( event ) {
 		if ( ! this.state.isOpen ) {
 			return;
 		}
-		event.preventDefault();
-		direction = ( event.shiftKey ) ? 'previous' : 'next';
-		this.focusSibling( direction );
-	},
 
-	activateItem: function() {
+		event.preventDefault();
+
+		const direction = event.shiftKey ? 'previous' : 'next';
+		this.focusSibling( direction );
+	}
+
+	activateItem() {
 		if ( ! this.state.isOpen ) {
 			return this.openDropdown();
 		}
 		document.activeElement.click();
-	},
+	}
 
-	focusSibling: function( direction ) {
-		var increment, items, focusedIndex, newIndex;
-
+	focusSibling( direction ) {
 		// the initial up-arrow/down-arrow should only open the menu
 		if ( ! this.state.isOpen ) {
 			return;
 		}
 
-		if ( this.props.options ) {
-			items = filter( map( this.props.options, 'value' ), Boolean );
-			focusedIndex = typeof this.focused === 'number'
-				? this.focused
-				: items.indexOf( this.state.selected );
+		let items, focusedIndex;
+
+		if ( this.props.options.length ) {
+			items = map(
+				filter( this.props.options, item => {
+					return item && ! item.isLabel;
+				} ),
+				'value'
+			);
+
+			focusedIndex =
+				typeof this.focused === 'number' ? this.focused : items.indexOf( this.state.selected );
 		} else {
 			items = filter( this.props.children, function( item ) {
 				return item.type === DropdownItem;
 			} );
-			focusedIndex = typeof this.focused === 'number'
-				? this.focused
-				: findIndex( items, function( item ) {
-					return item.props.selected;
-				} );
+
+			focusedIndex =
+				typeof this.focused === 'number'
+					? this.focused
+					: findIndex( items, function( item ) {
+							return item.props.selected;
+					  } );
 		}
 
-		increment = ( direction === 'previous' ) ? -1 : 1;
-		newIndex = focusedIndex + increment;
+		const increment = direction === 'previous' ? -1 : 1;
+		const newIndex = focusedIndex + increment;
 
 		if ( newIndex >= items.length || newIndex < 0 ) {
 			return;
 		}
 
-		this.refs[ 'item-' + newIndex ].refs.itemLink.getDOMNode().focus();
+		ReactDom.findDOMNode( this.refs[ 'item-' + newIndex ].refs.itemLink ).focus();
 		this.focused = newIndex;
-	},
+	}
 
-	handleOutsideClick: function( event ) {
-		if ( ! React.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
+	handleOutsideClick( event ) {
+		if ( ! ReactDom.findDOMNode( this.refs.dropdownContainer ).contains( event.target ) ) {
 			this.closeDropdown();
 		}
-	},
-} );
+	}
+}
 
-module.exports = SelectDropdown;
+export default SelectDropdown;

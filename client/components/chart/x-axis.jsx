@@ -1,107 +1,94 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:module-chart:x-axis' ),
-	throttle = require( 'lodash/function/throttle' );
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import { numberFormat } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Label = require( './label' );
+import afterLayoutFlush from 'lib/after-layout-flush';
+import Label from './label';
 
-module.exports = React.createClass( {
-	displayName: 'ModuleChartXAxis',
+export default class ModuleChartXAxis extends PureComponent {
+	static displayName = 'ModuleChartXAxis';
 
-	propTypes: {
-		labelWidth: React.PropTypes.number.isRequired,
-		data: React.PropTypes.array.isRequired
-	},
+	static propTypes = {
+		labelWidth: PropTypes.number.isRequired,
+		data: PropTypes.array.isRequired,
+		isRtl: PropTypes.bool,
+	};
 
-	getInitialState: function() {
-		return {
-			divisor: 1,
-			spacing: this.props.labelWidth
-		};
-	},
+	axisRef = React.createRef();
+	axisSpacerRef = React.createRef();
+
+	state = {
+		divisor: 1,
+		spacing: this.props.labelWidth,
+	};
 
 	// Add listener for window resize
-	componentDidMount: function() {
-		this.resizeThrottled = throttle( this.resize, 400 );
-		window.addEventListener( 'resize', this.resizeThrottled );
+	componentDidMount() {
+		this.resize = afterLayoutFlush( this.resize );
+		window.addEventListener( 'resize', this.resize );
 		this.resize();
-	},
+	}
 
 	// Remove listener
-	componentWillUnmount: function() {
-		if( this.resizeThrottled.cancel ) {
-			this.resizeThrottled.cancel();
+	componentWillUnmount() {
+		if ( this.resize.cancel ) {
+			this.resize.cancel();
 		}
-		window.removeEventListener( 'resize', this.resizeThrottled );
-	},
+		window.removeEventListener( 'resize', this.resize );
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		this.resize( nextProps );
-	},
+	componentDidUpdate() {
+		this.resize();
+	}
 
-	resize: function( nextProps ) {
-		if ( this.isMounted() ) {
-			var node,
-				props = this.props,
-				width,
-				dataCount,
-				spacing,
-				labelWidth,
-				divisor;
+	resize = () => {
+		const width = this.axisRef.current.clientWidth - this.axisSpacerRef.current.clientWidth;
+		const dataCount = this.props.data.length || 1;
+		const spacing = width / dataCount;
+		const labelWidth = this.props.labelWidth;
+		const divisor = Math.ceil( labelWidth / spacing );
 
-			node = this.getDOMNode();
+		this.setState( { divisor, spacing } );
+	};
 
-			if ( nextProps && ! ( nextProps instanceof Event ) ) {
-				props = nextProps;
-			}
+	render() {
+		const data = this.props.data;
 
-			/**
-			 * Overflow needs to be hidden to calculate the desired width,
-			 * but visible to display each labels' overflow :/
-			 */
-
-			node.style.overflow = 'hidden';
-			width = node.clientWidth;
-			node.style.overflow = 'visible';
-
-			dataCount = props.data.length || 1;
-			spacing = width / dataCount;
-			labelWidth = props.labelWidth;
-			divisor = Math.ceil( labelWidth / spacing );
-
-			this.setState( {
-				divisor: divisor,
-				spacing: spacing
-			} );
-		}
-	},
-
-	render: function() {
-		debug( 'Rendering chart x-axis', this.props.data );
-
-		var labels,
-			data = this.props.data;
-
-		labels = data.map( function ( item, index ) {
-			var x = ( index * this.state.spacing ) + ( ( this.state.spacing - this.props.labelWidth ) / 2 ),
-				rightIndex = data.length - index - 1,
-				label;
+		const labels = data.map( function( item, index ) {
+			const x = index * this.state.spacing + ( this.state.spacing - this.props.labelWidth ) / 2,
+				rightIndex = data.length - index - 1;
+			let label;
 
 			if ( rightIndex % this.state.divisor === 0 ) {
-				label = <Label key={ index } label={ item.label } width={ this.props.labelWidth } x={ x } />;
+				label = (
+					<Label
+						isRtl={ this.props.isRtl }
+						key={ index }
+						label={ item.label }
+						width={ this.props.labelWidth }
+						x={ x }
+					/>
+				);
 			}
 
 			return label;
 		}, this );
 
 		return (
-			<div className="chart__x-axis">{ labels }</div>
+			<div ref={ this.axisRef } className="chart__x-axis">
+				{ labels }
+				<div ref={ this.axisSpacerRef } className="chart__x-axis-label chart__x-axis-width-spacer">
+					{ numberFormat( 100000 ) }
+				</div>
+			</div>
 		);
 	}
-} );
-
+}

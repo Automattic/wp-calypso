@@ -1,0 +1,26 @@
+/** @format */
+
+@import './stored-card';
+
+div.credit-card {
+	background-color: $white;
+	border: 1px solid $gray-lighten-30;
+	border-top: none;
+	padding-left: 2px;
+	min-height: 50px;
+
+	&:first-of-type {
+		border-top: 1px solid $gray-lighten-30;
+	}
+
+	&.is-selectable:not( .is-selected ) {
+		cursor: pointer;
+	}
+
+	&.is-selected {
+		cursor: default;
+		border-left: 3px solid $alert-green;
+		background-color: #fafdf6;
+		padding-left: 0;
+	}
+}

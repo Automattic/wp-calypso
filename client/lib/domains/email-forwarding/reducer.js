@@ -1,19 +1,26 @@
+/** @format */
 /**
  * External dependencies
  */
-import React from 'react/addons';
-import sortBy from 'lodash/collection/sortBy';
+import { findIndex, sortBy } from 'lodash';
+import update from 'immutability-helper';
 
 /**
  * Internal dependencies
  */
-import { action as UpgradesActionTypes } from 'lib/upgrades/constants';
+import {
+	EMAIL_FORWARDING_ADD_COMPLETED,
+	EMAIL_FORWARDING_DELETE_COMPLETED,
+	EMAIL_FORWARDING_FETCH,
+	EMAIL_FORWARDING_FETCH_COMPLETED,
+	EMAIL_FORWARDING_FETCH_FAILED,
+} from 'lib/upgrades/action-types';
 
 const initialDomainState = {
 	hasLoadedFromServer: false,
 	isFetching: false,
 	list: null,
-	needsUpdate: true
+	needsUpdate: true,
 };
 
 /**
@@ -27,11 +34,11 @@ const initialDomainState = {
 function updateDomainState( state, domainName, data ) {
 	const command = {
 		[ domainName ]: {
-			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data )
-		}
+			$set: Object.assign( {}, state[ domainName ] || initialDomainState, data ),
+		},
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 /**
@@ -43,16 +50,20 @@ function updateDomainState( state, domainName, data ) {
  * @return {Object} New state
  */
 function deleteTemporaryMailbox( state, domainName, mailbox ) {
+	const index = findIndex( state[ domainName ].list, { mailbox } );
+
+	if ( index === -1 ) {
+		return state;
+	}
+
 	const command = {
 		[ domainName ]: {
-			list: {
-				$apply: list => list.filter( item => item.mailbox !== mailbox )
-			},
-			needsUpdate: { $set: true }
-		}
+			list: { $splice: [ [ index, 1 ] ] },
+			needsUpdate: { $set: true },
+		},
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 /**
@@ -67,50 +78,50 @@ function addTemporaryMailbox( state, domainName, mailboxData ) {
 	const command = {
 		[ domainName ]: {
 			list: {
-				$apply: oldList => sortBy( oldList.concat( [ mailboxData ] ), 'mailbox' )
+				$apply: oldList => sortBy( oldList.concat( [ mailboxData ] ), 'mailbox' ),
 			},
-			needsUpdate: { $set: true }
-		}
+			needsUpdate: { $set: true },
+		},
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 function reducer( state, payload ) {
 	const { action } = payload;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH:
+		case EMAIL_FORWARDING_FETCH:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: true,
-				needsUpdate: false
+				needsUpdate: false,
 			} );
 			break;
-		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH_FAILED:
+		case EMAIL_FORWARDING_FETCH_FAILED:
 			state = updateDomainState( state, action.domainName, {
 				isFetching: false,
-				needsUpdate: true
+				needsUpdate: true,
 			} );
 			break;
-		case UpgradesActionTypes.EMAIL_FORWARDING_FETCH_COMPLETED:
+		case EMAIL_FORWARDING_FETCH_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				hasLoadedFromServer: true,
 				isFetching: false,
 				list: action.forwards || [],
-				needsUpdate: false
+				needsUpdate: false,
 			} );
 			break;
-		case UpgradesActionTypes.EMAIL_FORWARDING_ADD_COMPLETED:
+		case EMAIL_FORWARDING_ADD_COMPLETED:
 			state = addTemporaryMailbox( state, action.domainName, {
 				active: true,
 				domain: action.domainName,
 				email: `${ action.mailbox }@${ action.domainName }`,
 				mailbox: action.mailbox,
 				forward_address: action.destination,
-				temporary: true
+				temporary: true,
 			} );
 			break;
-		case UpgradesActionTypes.EMAIL_FORWARDING_DELETE_COMPLETED:
+		case EMAIL_FORWARDING_DELETE_COMPLETED:
 			state = deleteTemporaryMailbox( state, action.domainName, action.mailbox );
 			break;
 	}
@@ -118,7 +129,4 @@ function reducer( state, payload ) {
 	return state;
 }
 
-export {
-	initialDomainState,
-	reducer
-};
+export { initialDomainState, reducer };

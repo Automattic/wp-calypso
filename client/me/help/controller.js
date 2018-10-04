@@ -1,32 +1,64 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import { login } from 'lib/paths';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import config from 'config';
+import HelpComponent from './main';
+import CoursesComponent from './help-courses';
+import ContactComponent from './help-contact';
+import { CONTACT, SUPPORT_ROOT } from 'lib/url/support';
+import userUtils from 'lib/user/utils';
 
-module.exports = {
-	help: function() {
-		var Help = require( './main' );
-
-		titleActions.setTitle( i18n.translate( 'Help', { textOnly: true } ) );
-
-		React.render(
-			React.createElement( Help ),
-			document.getElementById( 'primary' )
-		);
-	},
-
-	contact: function() {
-		var ContactComponent = require( './help-contact' );
-
-		React.render(
-			<ContactComponent />,
-			document.getElementById( 'primary' )
-		);
+export function loggedOut( context, next ) {
+	if ( userUtils.isLoggedIn() ) {
+		return next();
 	}
-};
+
+	let url;
+	switch ( context.path ) {
+		case '/help':
+			url = SUPPORT_ROOT;
+			break;
+		case '/help/contact':
+			url = CONTACT;
+			break;
+		default:
+			url = login( { redirectTo: window.location.href } );
+	}
+
+	// Not using the page library here since this is an external URL
+	window.location.href = url;
+}
+
+export function help( context, next ) {
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
+
+	context.primary = <HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />;
+	next();
+}
+
+export function courses( context, next ) {
+	context.primary = <CoursesComponent />;
+	next();
+}
+
+export function contact( context, next ) {
+	// Scroll to the top
+	if ( typeof window !== 'undefined' ) {
+		window.scrollTo( 0, 0 );
+	}
+
+	context.primary = <ContactComponent clientSlug={ config( 'client_slug' ) } />;
+	next();
+}

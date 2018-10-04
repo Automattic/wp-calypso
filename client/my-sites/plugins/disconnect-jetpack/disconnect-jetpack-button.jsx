@@ -1,73 +1,108 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React from 'react';
-import assign from 'lodash/object/assign';
-import classNames from 'classnames';
+
+import React, { Component } from 'react';
+import { pick } from 'lodash';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
-import analytics from 'analytics';
+import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/dialog';
+import QuerySitePlans from 'components/data/query-site-plans';
+import {
+	recordGoogleEvent as recordGoogleEventAction,
+	recordTracksEvent as recordTracksEventAction,
+} from 'state/analytics/actions';
 
-export default React.createClass( {
+class DisconnectJetpackButton extends Component {
+	state = { dialogVisible: false };
 
-	displayName: 'DisconnectJetpackButton',
+	handleClick = () => {
+		const { isMock, recordGoogleEvent, recordTracksEvent } = this.props;
 
-	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		redirect: React.PropTypes.string.isRequired,
-		disabled: React.PropTypes.bool,
-		linkDisplay: React.PropTypes.bool,
-		text: React.PropTypes.string
-	},
+		if ( isMock ) {
+			return;
+		}
+		this.setState( { dialogVisible: true } );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
+		recordTracksEvent( 'calypso_jetpack_disconnect_start' );
+	};
 
-	getDefaultProps() {
-		return {
-			linkDisplay: true
-		};
-	},
+	hideDialog = () => {
+		const { recordGoogleEvent } = this.props;
+		this.setState( { dialogVisible: false } );
+		recordGoogleEvent( 'Jetpack', 'Clicked To Cancel Disconnect Jetpack Dialog' );
+	};
 
 	render() {
-		const { site, redirect, linkDisplay } = this.props;
-		const buttonElement = linkDisplay ? 'button' : Button;
+		const { linkDisplay, site, text, translate } = this.props;
+		const buttonPropsList = [
+			'borderless',
+			'busy',
+			'compact',
+			'disabled',
+			'href',
+			'primary',
+			'rel',
+			'scary',
+			'target',
+			'type',
+		];
 
-		const buttonClasses = classNames( {
-			button: true,
-			'disconnect-jetpack-button': true,
-			'is-link': linkDisplay
-		} );
-
-		const buttonProps = assign( {}, this.props, {
-			id: `disconnect-jetpack-${ site.ID }`,
-			className: buttonClasses,
-			compact: true,
-			scary: true,
-			onClick: ( event ) => {
-				event.preventDefault();
-				this.refs.dialog.open();
-				analytics.ga.recordEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
-			}
-		} );
-
-		let { text } = this.props;
-		let buttonChildren;
-
-		if ( ! text ) {
-			text = this.translate( 'Disconnect', {
-				context: 'Jetpack: Action user takes to disconnect Jetpack site from .com'
-			} );
-		}
-
-		buttonChildren = (
-			<div>
-				{ text }
-				<DisconnectJetpackDialog site={ site } ref="dialog" redirect={ redirect } />
-			</div>
+		return (
+			<Button
+				{ ...pick( this.props, buttonPropsList ) }
+				borderless={ linkDisplay }
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				className="disconnect-jetpack-button"
+				compact
+				id={ `disconnect-jetpack-${ site.ID }` }
+				onClick={ this.handleClick }
+				scary
+			>
+				{ text ||
+					translate( 'Disconnect', {
+						context: 'Jetpack: Action user takes to disconnect Jetpack site from .com',
+					} ) }
+				<QuerySitePlans siteId={ site.ID } />
+				<DisconnectJetpackDialog
+					isVisible={ this.state.dialogVisible }
+					onClose={ this.hideDialog }
+					isBroken
+					siteId={ site.ID }
+					disconnectHref={ this.props.redirect }
+				/>
+			</Button>
 		);
-
-		return React.createElement( buttonElement, buttonProps, buttonChildren );
 	}
-} );
+}
+
+DisconnectJetpackButton.propTypes = {
+	site: PropTypes.object.isRequired,
+	redirect: PropTypes.string.isRequired,
+	disabled: PropTypes.bool,
+	linkDisplay: PropTypes.bool,
+	isMock: PropTypes.bool,
+	text: PropTypes.string,
+	recordGoogleEvent: PropTypes.func.isRequired,
+	recordTracksEvent: PropTypes.func.isRequired,
+};
+
+DisconnectJetpackButton.defaultProps = {
+	linkDisplay: true,
+};
+
+export default connect(
+	null,
+	{
+		recordGoogleEvent: recordGoogleEventAction,
+		recordTracksEvent: recordTracksEventAction,
+	}
+)( localize( DisconnectJetpackButton ) );

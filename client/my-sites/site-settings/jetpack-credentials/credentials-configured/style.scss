@@ -1,0 +1,55 @@
+.credentials-configured {
+	margin-bottom: 0;
+}
+
+.credentials-configured__info {
+	align-items: center;
+	display: flex;
+}
+
+.credentials-configured__info-gridicon {
+	display: inline-block;
+	flex-shrink: 0;
+	margin-right: 10px;
+}
+
+.credentials-configured__info-text {
+	display: inline-block;
+}
+
+.credentials-configured__info-gridicon {
+	color: $alert-green;
+}
+
+.credentials-configured__info-protocol {
+	font-weight: bold;
+	font-size: rem( 15px );
+}
+
+.credentials-configured__info-description {
+	color: $gray;
+	font-size: rem( 13px );
+}
+
+.credentials-configured__revoke-actions {
+	text-align: right;
+}
+
+.credentials-configured__revoke-icon {
+	color: $alert-red;
+	margin-right: rem( 5px );
+}
+
+.credentials-configured__revoke-button.is-borderless {
+	margin-right: rem( 20px );
+	position: relative;
+	top: -5px;
+
+	&:hover .credentials-configured__revoke-icon {
+		color: darken( $alert-red, 20% );
+	}
+
+	&:disabled .credentials-configured__revoke-icon {
+		color: lighten( $alert-red, 30% );
+	}
+}

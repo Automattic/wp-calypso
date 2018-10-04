@@ -1,81 +1,103 @@
+/** @format */
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( './controller' ),
-	config = require( 'config' );
-
-var lastRoute = null;
-
-function saveLastRoute( context, next ) {
-	lastRoute = context.path;
-	next();
-}
-
-function setLastRoute( context, next ) {
-	if ( lastRoute ) {
-		context.lastRoute = lastRoute;
-	}
-	next();
-}
+import {
+	blogListing,
+	feedDiscovery,
+	feedListing,
+	following,
+	incompleteUrlRedirects,
+	initAbTests,
+	legacyRedirects,
+	preloadReaderBundle,
+	prettyRedirects,
+	readA8C,
+	sidebar,
+	updateLastRoute,
+} from './controller';
+import config from 'config';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
 
 function forceTeamA8C( context, next ) {
 	context.params.team = 'a8c';
 	next();
 }
 
-module.exports = function() {
+export default function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/', controller.loadSubscriptions );
-		page( '/read/*', controller.loadSubscriptions );
+		page(
+			'/',
+			preloadReaderBundle,
+			initAbTests,
+			updateLastRoute,
+			sidebar,
+			following,
+			makeLayout,
+			clientRender
+		);
 
-		page( '/', saveLastRoute, controller.removePost, controller.sidebar, controller.following );
+		// Old and incomplete paths that should be redirected to /
+		page( '/read/following', '/' );
+		page( '/read', '/' );
+		page( '/read/blogs', '/' );
+		page( '/read/feeds', '/' );
+		page( '/read/blog', '/' );
+		page( '/read/post', '/' );
+		page( '/read/feed', '/' );
 
-		page( '/read/blog/feed/:feed_id', saveLastRoute, controller.removePost, controller.sidebar, controller.feedListing );
-		page.exit( '/read/blog/feed/:feed_id', controller.resetTitle );
+		// Feed stream
+		page( '/read/*', preloadReaderBundle, initAbTests );
+		page( '/read/blog/feed/:feed_id', legacyRedirects );
+		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
+		page(
+			'/read/feeds/:feed_id',
+			redirectLoggedOut,
+			updateLastRoute,
+			prettyRedirects,
+			sidebar,
+			feedDiscovery,
+			feedListing,
+			makeLayout,
+			clientRender
+		);
 
-		page( '/read/post/feed/:feed/:post', setLastRoute, controller.feedPost );
-		page.exit( '/read/post/feed/:feed/:post', controller.resetTitle );
+		// Blog stream
+		page( '/read/blog/id/:blog_id', legacyRedirects );
+		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
+		page(
+			'/read/blogs/:blog_id',
+			redirectLoggedOut,
+			updateLastRoute,
+			prettyRedirects,
+			sidebar,
+			blogListing,
+			makeLayout,
+			clientRender
+		);
 
-		page( '/read/blog/id/:blog_id', saveLastRoute, controller.removePost, controller.sidebar, controller.blogListing );
-		page( '/read/post/id/:blog/:post', setLastRoute, controller.blogPost );
-		page.exit( '/read/post/id/:blog/:post', controller.resetTitle );
+		// Old full post view
+		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
+		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 
-		page( '/tag/:tag', saveLastRoute, controller.removePost, controller.sidebar, controller.tagListing );
+		// old recommendations page
+		page( '/recommendations', '/read/search' );
 	}
 
-	if ( config.isEnabled( 'reader/teams' ) ) {
-		page( '/read/a8c', saveLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
-	}
-
-	if ( config.isEnabled( 'reader/lists' ) ) {
-		page( '/read/list/:user/:list', saveLastRoute, controller.removePost, controller.sidebar, controller.listListing );
-	}
-
-	if ( config.isEnabled( 'reader/list-management' ) ) {
-		page( '/read/list/:user/:list/edit', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementContents );
-		page( '/read/list/:user/:list/description/edit', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementDescriptionEdit );
-		page( '/read/list/:user/:list/followers', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementFollowers );
-	}
-
-	if ( config.isEnabled( 'reader/activities' ) ) {
-		page( '/activities/likes', controller.loadSubscriptions, saveLastRoute, controller.removePost, controller.sidebar, controller.likes );
-	}
-
-	if ( config.isEnabled( 'reader/following-edit' ) ) {
-		page( '/following/edit', controller.loadSubscriptions, saveLastRoute, controller.removePost, controller.sidebar, controller.followingEdit );
-	}
-
-	if ( config.isEnabled( 'reader/recommendations' ) ) {
-		page( '/recommendations', controller.loadSubscriptions, saveLastRoute, controller.removePost, controller.sidebar, controller.recommendedForYou );
-		page( '/tags', controller.loadSubscriptions, saveLastRoute, controller.removePost, controller.sidebar, controller.recommendedTags );
-	}
-
-	if ( config.isEnabled( 'reader/discover' ) ) {
-		page( '/discover', setLastRoute, controller.removePost, controller.sidebar, controller.discover );
-	}
-};
+	// Automattic Employee Posts
+	page(
+		'/read/a8c',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		forceTeamA8C,
+		readA8C,
+		makeLayout,
+		clientRender
+	);
+}

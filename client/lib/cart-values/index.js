@@ -1,27 +1,120 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	extend = require( 'lodash/object/extend' );
+import url from 'url';
+import { extend, isArray } from 'lodash';
+import update from 'immutability-helper';
+import i18n from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-var cartItems = require( './cart-items' ),
-	productsValues = require( 'lib/products-values' );
+import cartItems from './cart-items';
+import productsValues from 'lib/products-values';
+import { requestGeoLocation } from 'state/data-getters';
 
-function emptyCart( siteID ) {
-	return { blog_id: siteID, products: [] };
+/**
+ * Preprocesses cart for server.
+ *
+ * @param {Object} cart Cart object.
+ * @returns {Object} A new cart object.
+ */
+function preprocessCartForServer( {
+	coupon,
+	is_coupon_applied,
+	is_coupon_removed,
+	currency,
+	temporary,
+	extra,
+	products,
+} ) {
+	const needsUrlCoupon = ! (
+		coupon ||
+		is_coupon_applied ||
+		is_coupon_removed ||
+		typeof document === 'undefined'
+	);
+	const urlCoupon = needsUrlCoupon ? url.parse( document.URL, true ).query.coupon : '';
+
+	return Object.assign(
+		{
+			coupon,
+			is_coupon_applied,
+			is_coupon_removed,
+			currency,
+			temporary,
+			extra,
+			products: products.map(
+				( { product_id, meta, free_trial, volume, extra: productExtra } ) => ( {
+					product_id,
+					meta,
+					free_trial,
+					volume,
+					extra: productExtra,
+				} )
+			),
+		},
+		needsUrlCoupon &&
+			urlCoupon && {
+				coupon: urlCoupon,
+				is_coupon_applied: false,
+			}
+	);
+}
+
+/**
+ * Create a new empty cart.
+ *
+ * A cart has at least a `blog_id` and an empty list of `products`
+ * We can give additional attributes and build new types of empty carts.
+ * For instance you may want to create a temporary this way:
+ * `emptyCart( 123456, { temporary: true } )`
+ *
+ * @param {int} [siteId] The Site Id the cart will be associated with
+ * @param {Object} [attributes] Additional attributes for the cart (optional)
+ * @returns {cart} [emptyCart] The new empty cart created
+ */
+function emptyCart( siteId, attributes ) {
+	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
 
 function applyCoupon( coupon ) {
 	return function( cart ) {
-		return React.addons.update( cart, {
+		return update( cart, {
 			coupon: { $set: coupon },
-			is_coupon_applied: { $set: false }
+			is_coupon_applied: { $set: false },
+			$unset: [ 'is_coupon_removed' ],
 		} );
 	};
+}
+
+function removeCoupon() {
+	return function( cart ) {
+		return update( cart, {
+			coupon: { $set: '' },
+			is_coupon_applied: { $set: false },
+			$merge: { is_coupon_removed: true },
+		} );
+	};
+}
+
+function canRemoveFromCart( cart, cartItem ) {
+	if ( productsValues.isCredits( cartItem ) ) {
+		return false;
+	}
+
+	if (
+		cartItems.hasRenewalItem( cart ) &&
+		( productsValues.isPrivacyProtection( cartItem ) ||
+			productsValues.isDomainRedemption( cartItem ) )
+	) {
+		return false;
+	}
+
+	return true;
 }
 
 /**
@@ -35,13 +128,17 @@ function applyCoupon( coupon ) {
  * @returns {array} [nextCartMessages] - an array of messages about the state of the cart
  */
 function getNewMessages( previousCartValue, nextCartValue ) {
-	var previousDate, nextDate, hasNewServerData, nextCartMessages;
+	let previousDate, nextDate, hasNewServerData, nextCartMessages;
 	previousCartValue = previousCartValue || {};
 	nextCartValue = nextCartValue || {};
 	nextCartMessages = nextCartValue.messages || [];
 
 	// If there is no previous cart then just return the messages for the new cart
-	if ( ! previousCartValue || ! previousCartValue.client_metadata || ! nextCartValue.client_metadata ) {
+	if (
+		! previousCartValue ||
+		! previousCartValue.client_metadata ||
+		! nextCartValue.client_metadata
+	) {
 		return nextCartMessages;
 	}
 
@@ -66,19 +163,19 @@ function isFree( cart ) {
 }
 
 function fillInAllCartItemAttributes( cart, products ) {
-	return React.addons.update( cart, {
+	return update( cart, {
 		products: {
 			$apply: function( items ) {
 				return items.map( function( cartItem ) {
 					return fillInSingleCartItemAttributes( cartItem, products );
 				} );
-			}
-		}
+			},
+		},
 	} );
 }
 
 function fillInSingleCartItemAttributes( cartItem, products ) {
-	var product = products[ cartItem.product_slug ],
+	let product = products[ cartItem.product_slug ],
 		attributes = productsValues.whitelistAttributes( product );
 
 	return extend( {}, cartItem, attributes );
@@ -106,14 +203,124 @@ function getRefundPolicy( cart ) {
 	return 'genericRefund';
 }
 
-module.exports = {
-	emptyCart: emptyCart,
-	applyCoupon: applyCoupon,
-	getNewMessages: getNewMessages,
-	cartItems: cartItems,
-	isPaidForFullyInCredits: isPaidForFullyInCredits,
-	isFree: isFree,
-	fillInAllCartItemAttributes: fillInAllCartItemAttributes,
-	fillInSingleCartItemAttributes: fillInSingleCartItemAttributes,
-	getRefundPolicy: getRefundPolicy
+/**
+ * Return a string that represents the WPCOM class name for a payment method
+ *
+ * @param {string} method - payment method
+ * @returns {string} the wpcom class name
+ */
+function paymentMethodClassName( method ) {
+	const paymentMethodsClassNames = {
+		alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
+		bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
+		'credit-card': 'WPCOM_Billing_MoneyPress_Paygate',
+		ebanx: 'WPCOM_Billing_Ebanx',
+		'emergent-paywall': 'WPCOM_Billing_Emergent_Paywall',
+		eps: 'WPCOM_Billing_Stripe_Source_Eps',
+		giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
+		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
+		paypal: 'WPCOM_Billing_PayPal_Express',
+		p24: 'WPCOM_Billing_Stripe_Source_P24',
+		'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
+		wechat: 'WPCOM_Billing_Stripe_Source_Wechat',
+	};
+
+	return paymentMethodsClassNames[ method ] || '';
+}
+
+/**
+ * Return a string that represents the User facing name for payment method
+ *
+ * @param {string} method - payment method
+ * @returns {string} the title
+ */
+function paymentMethodName( method ) {
+	const paymentMethodsNames = {
+		alipay: 'Alipay',
+		bancontact: 'Bancontact',
+		'credit-card': i18n.translate( 'Credit or debit card' ),
+		'emergent-paywall': 'Net Banking / Paytm / Debit Card',
+		eps: 'EPS',
+		giropay: 'Giropay',
+		ideal: 'iDEAL',
+		paypal: 'PayPal',
+		p24: 'Przelewy24',
+		'brazil-tef': 'Transferência bancária',
+		'wechat': i18n.translate( 'WeChat Pay', { comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/' } ),
+	};
+
+	// Temporarily override 'credit or debit' with just 'credit' for india
+	// while debit cards are served by the paywall
+	if ( method === 'credit-card' ) {
+		const userCountryCode = requestGeoLocation().data;
+		if ( 'IN' === userCountryCode ) {
+			return i18n.translate( 'Credit Card' );
+		}
+	}
+
+	return paymentMethodsNames[ method ] || method;
+}
+
+function isPaymentMethodEnabled( cart, method ) {
+	const redirectPaymentMethods = [
+		'alipay',
+		'bancontact',
+		'eps',
+		'emergent-paywall',
+		'giropay',
+		'ideal',
+		'paypal',
+		'p24',
+		'brazil-tef',
+		'wechat',
+	];
+	const methodClassName = paymentMethodClassName( method );
+
+	if ( '' === methodClassName ) {
+		return false;
+	}
+
+	// Redirect payments might not be possible in some cases - for example in the desktop app
+	if (
+		redirectPaymentMethods.indexOf( method ) >= 0 &&
+		! config.isEnabled( 'upgrades/redirect-payments' )
+	) {
+		return false;
+	}
+
+	return (
+		isArray( cart.allowed_payment_methods ) &&
+		cart.allowed_payment_methods.indexOf( methodClassName ) >= 0
+	);
+}
+
+function getLocationOrigin( l ) {
+	return l.protocol + '//' + l.hostname + ( l.port ? ':' + l.port : '' );
+}
+
+export {
+	applyCoupon,
+	removeCoupon,
+	canRemoveFromCart,
+	cartItems,
+	emptyCart,
+	preprocessCartForServer,
+	fillInAllCartItemAttributes,
+	fillInSingleCartItemAttributes,
+	getNewMessages,
+	getRefundPolicy,
+	isFree,
+	isPaidForFullyInCredits,
+	isPaymentMethodEnabled,
+	paymentMethodClassName,
+	paymentMethodName,
+	getLocationOrigin,
+};
+
+export default {
+	applyCoupon,
+	removeCoupon,
+	cartItems,
+	emptyCart,
+	isPaymentMethodEnabled,
 };

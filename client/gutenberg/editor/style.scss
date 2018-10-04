@@ -1,0 +1,115 @@
+.is-group-gutenberg::before {
+	content: '';
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: $white;
+	pointer-events: none;
+	z-index: z-index( 'root', '.is-group-gutenberg::before' );
+}
+
+.gutenberg {
+	background: none;
+}
+
+// OVERRIDES
+
+.is-section-gutenberg-editor {
+	.layout__content {
+		padding-left: 32px;
+		padding-top: 0;
+
+		@include breakpoint( '<960px' ) {
+			padding-left: 24px;
+		}
+		@include breakpoint( '<660px' ) {
+			padding-left: 0px;
+		}
+	}
+
+	.edit-post-header {
+		padding: 0 10px 0 0;
+		left: 0;
+		top: 0;
+	}
+
+	@media (min-width: 600px) {
+		.edit-post-sidebar {
+			top: 57px;
+		}
+	}
+
+	.editor-inserter__menu {
+		.editor-inserter__search {
+			width: auto;
+		}
+		.editor-block-types-list__list-item {
+			box-sizing: border-box;
+		}
+	}
+
+	.edit-post-sidebar {
+		.components-panel__body {
+			&:first-child {
+				margin-top: 0;
+			}
+			&:last-child {
+				margin-bottom: 0;
+			}
+			&.editor-block-inspector__advanced {
+				margin-bottom: -16px;
+			}
+		}
+
+		.editor-block-inspector__card {
+			margin-bottom: 0;
+		}
+
+		.editor-post-last-revision__title {
+			width: auto;
+		}
+	}
+
+	// @see https://make.wordpress.org/accessibility/handbook/markup/the-css-class-screen-reader-text/
+	.screen-reader-text {
+		border: 0;
+		clip: rect(1px, 1px, 1px, 1px);
+		clip-path: inset(50%);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		padding: 0;
+		position: absolute !important;
+		width: 1px;
+		word-wrap: normal !important;
+		&:focus {
+			background-color: #eee;
+			clip: auto !important;
+			clip-path: none;
+			color: #444;
+			display: block;
+			font-size: 1em;
+			height: auto;
+			left: 5px;
+			line-height: normal;
+			padding: 15px 23px 14px;
+			text-decoration: none;
+			top: 5px;
+			width: auto;
+			z-index: 100000; /* Above WP toolbar. */
+		}
+	}
+}
+
+//needed for oembed iframes to appear
+.wp-block-embed__wrapper > iframe {
+	width: 100%;
+}
+
+//block icons sizing
+.components-toolbar__control.components-button > svg,
+.editor-block-settings-menu__content {
+	box-sizing: border-box;
+}

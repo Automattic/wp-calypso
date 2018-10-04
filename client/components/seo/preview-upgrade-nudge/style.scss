@@ -1,0 +1,62 @@
+.preview-upgrade-nudge {
+	display: flex;
+	flex-direction: column;
+
+	.preview-upgrade-nudge__banner {
+		margin: 24px;
+		text-decoration: none;
+	}
+
+	.preview-upgrade-nudge__features {
+		padding: 0 24px 16px;
+
+		@include breakpoint( ">660px" ) {
+			display: flex;
+		}
+
+
+		.feature-example {
+			margin: 0 0 16px 0;
+
+			@include breakpoint( ">660px" ) {
+				width: 50%;
+				margin: 0 16px 0 0;
+			}
+		}
+	}
+
+	.preview-upgrade-nudge__features-details {
+
+		@include breakpoint( ">660px" ) {
+			width: 50%;
+		}
+	}
+
+	.preview-upgrade-nudge__features-title {
+		margin-bottom: 10px;
+	}
+
+	.preview-upgrade-nudge__features-list {
+		list-style: none;
+		margin: 0;
+	}
+
+	.preview-upgrade-nudge__features-list-item {
+		display: flex;
+		margin-bottom: 15px;
+	}
+
+	.preview-upgrade-nudge__features-list-item-checkmark {
+		color: $blue-wordpress;
+		flex: 0 0 auto;
+		margin-right: 5px;
+	}
+
+	.preview-upgrade-nudge__feature-comparison {
+		margin: 0;
+	}
+
+	.feature-example__gradient {
+		background: linear-gradient( to bottom, rgba(243, 246, 248, 0), rgba( 243, 246, 248, 1) );
+	}
+}

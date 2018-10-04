@@ -1,17 +1,27 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	pick = require( 'lodash/object/pick' );
+
+import { get, identity, noop, pick } from 'lodash';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var EditorFieldset = require( 'post-editor/editor-fieldset' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	PostActions = require( 'lib/posts/actions' ),
-	InfoPopover = require( 'components/info-popover' ),
-	stats = require( 'lib/posts/stats' );
+import EditorFieldset from 'post-editor/editor-fieldset';
+import FormCheckbox from 'components/forms/form-checkbox';
+import InfoPopover from 'components/info-popover';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
+import { editPost } from 'state/posts/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
+import { getSite } from 'state/sites/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
 function booleanToStatus( bool ) {
 	return bool ? 'open' : 'closed';
@@ -21,77 +31,96 @@ function statusToBoolean( status ) {
 	return 'open' === status;
 }
 
-module.exports = React.createClass( {
-	displayName: 'EditorDiscussion',
+export class EditorDiscussion extends React.Component {
+	static propTypes = {
+		isNew: PropTypes.bool,
+		post: PropTypes.object,
+		site: PropTypes.object,
+		translate: PropTypes.func.isRequired,
+		recordEditorStat: PropTypes.func.isRequired,
+		recordEditorEvent: PropTypes.func.isRequired,
+	};
 
-	propTypes: {
-		isNew: React.PropTypes.bool,
-		post: React.PropTypes.object,
-		site: React.PropTypes.object
-	},
+	static defaultProps = {
+		isNew: false,
+		translate: identity,
+		recordEditorStat: noop,
+		recordEditorEvent: noop,
+	};
 
-	getDefaultProps: function() {
-		return {
-			isNew: false
-		};
-	},
-
-	getDiscussionSetting: function() {
+	getDiscussionSetting() {
 		if ( this.props.post && this.props.post.discussion ) {
 			return this.props.post.discussion;
 		}
 
-		if ( this.props.site && this.props.isNew ) {
+		if ( this.props.site && this.props.isNew && this.props.post ) {
+			const { site } = this.props;
+			const isPage = this.props.post.type === 'page';
+			const defaultCommentStatus = get( site, 'options.default_comment_status', false );
+			const defaultPingStatus = get( site, 'options.default_ping_status', false );
+
 			return {
-				comment_status: booleanToStatus( this.props.site.options.default_comment_status ),
-				ping_status: booleanToStatus( this.props.site.options.default_ping_status )
+				comment_status: isPage ? 'closed' : booleanToStatus( defaultCommentStatus ),
+				ping_status: isPage ? 'closed' : booleanToStatus( defaultPingStatus ),
 			};
 		}
 
 		return {};
-	},
+	}
 
-	onChange: function( event ) {
-		var discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' ),
-			newStatus = booleanToStatus( event.target.checked ),
-			discussionType = event.target.name,
-			statName,
-			gaEvent;
+	onChange = event => {
+		const discussion = pick( this.getDiscussionSetting(), 'comment_status', 'ping_status' );
+		const newStatus = booleanToStatus( event.target.checked );
+		const discussionType = event.target.name;
+		let statName, gaEvent;
 
 		discussion[ discussionType ] = newStatus;
 
-		// There are other ways to construct these strings, but keeping them exactly as they are displayed in mc/ga aids in discovery via grok
+		// There are other ways to construct these strings, but keeping them exactly as they are
+		// displayed in mc/ga aids in discovery via grok
 		if ( 'comment_status' === discussionType ) {
-			statName = event.target.checked ? 'advanced_comments_open_enabled' : 'advanced_comments_open_disabled';
+			statName = event.target.checked
+				? 'advanced_comments_open_enabled'
+				: 'advanced_comments_open_disabled';
 			gaEvent = 'Comment status changed';
 		} else {
-			statName = event.target.checked ? 'advanced_pings_open_enabled' : 'advanced_pings_open_disabled';
+			statName = event.target.checked
+				? 'advanced_pings_open_enabled'
+				: 'advanced_pings_open_disabled';
 			gaEvent = 'Trackback status changed';
 		}
 
-		stats.recordStat( statName );
-		stats.recordEvent( gaEvent, newStatus );
+		this.props.recordEditorStat( statName );
+		this.props.recordEditorEvent( gaEvent, newStatus );
 
-		PostActions.edit( {
-			discussion: discussion
-		} );
-	},
+		const siteId = get( this.props.site, 'ID', null );
+		const postId = get( this.props.post, 'ID', null );
+		this.props.editPost( siteId, postId, { discussion } );
+	};
 
-	render: function() {
-		var discussion = this.getDiscussionSetting();
+	render() {
+		const discussion = this.getDiscussionSetting();
 
 		return (
-			<EditorFieldset legend={ this.translate( 'Discussion' ) }>
+			<EditorFieldset legend={ this.props.translate( 'Discussion' ) }>
 				<label>
 					<FormCheckbox
 						name="comment_status"
 						checked={ statusToBoolean( discussion.comment_status ) }
 						disabled={ ! this.props.post }
-						onChange={ this.onChange } />
+						onChange={ this.onChange }
+					/>
 					<span>
-						{ this.translate( 'Allow comments' ) }
-						<InfoPopover position="top right" className="editor-comment_status__info" gaEventCategory="Editor" popoverName="CommentStatus">
-							{ this.translate( 'Provide a comment section to give readers the ability to respond.' ) }
+						{ this.props.translate( 'Allow comments' ) }
+						<InfoPopover
+							position="top right"
+							className="editor-comment_status__info"
+							gaEventCategory="Editor"
+							popoverName="CommentStatus"
+						>
+							{ this.props.translate(
+								'Provide a comment section to give readers the ability to respond.'
+							) }
 						</InfoPopover>
 					</span>
 				</label>
@@ -100,10 +129,24 @@ module.exports = React.createClass( {
 						name="ping_status"
 						checked={ statusToBoolean( discussion.ping_status ) }
 						disabled={ ! this.props.post }
-						onChange={ this.onChange } />
-					{ this.translate( 'Allow Pingbacks & Trackbacks' ) }
+						onChange={ this.onChange }
+					/>
+					<span>{ this.props.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
 				</label>
 			</EditorFieldset>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const isNew = isEditorNewPost( state );
+		const site = getSite( state, siteId );
+		const post = getEditedPost( state, siteId, postId );
+
+		return { site, post, isNew };
+	},
+	{ editPost, recordEditorStat, recordEditorEvent }
+)( localize( EditorDiscussion ) );

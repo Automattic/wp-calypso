@@ -1,189 +1,273 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	config = require( 'config' ),
-	classNames = require( 'classnames' );
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import config from 'config';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var ProgressIndicator = require( 'components/progress-indicator' ),
-	DisconnectJetpackButton = require( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button' ),
-	analytics = require( 'analytics' );
+import Animate from 'components/animate';
+import Button from 'components/button';
+import ExternalLink from 'components/external-link';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
+import { getUpdatesBySiteId, isJetpackSite } from 'state/sites/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
+import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
+import isRequestingSiteConnectionStatus from 'state/selectors/is-requesting-site-connection-status';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
-module.exports = React.createClass( {
-	displayName: 'SiteIndicator',
+const WPAdminLink = props => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
 
-	getInitialState: function() {
-		return { expand: false };
-	},
+class SiteIndicator extends Component {
+	static propTypes = {
+		site: PropTypes.object,
 
-	hasUpdate: function() {
-		return this.props.site.update && ! this.hasError() && this.props.site.update.total > 0;
-	},
+		// connected props
+		siteIsJetpack: PropTypes.bool,
+		siteUpdates: PropTypes.object,
+		siteIsConnected: PropTypes.bool,
+		requestingConnectionStatus: PropTypes.bool,
+		recordGoogleEvent: PropTypes.func,
+		recordTracksEvent: PropTypes.func,
+	};
 
-	hasError: function() {
-		var site = this.props.site;
-		if ( site.unreachable ) {
-			return true;
-		}
-		if ( site.hasMinimumJetpackVersion && site.update === 'error' ) {
-			return true;
-		}
-		return false;
-	},
+	state = { expand: false };
 
-	hasWarning: function() {
-		var site = this.props.site;
+	hasUpdate() {
+		const { siteUpdates } = this.props;
+		return siteUpdates && ! this.hasError() && siteUpdates.total > 0;
+	}
 
-		if ( site.jetpack && ! site.hasMinimumJetpackVersion ) {
-			if ( site.callingHome ) {
-				return false;
-			} else if ( typeof site.unreachable === 'undefined' ) {
-				site.callHome();
+	hasError() {
+		return this.props.siteIsConnected === false;
+	}
+
+	hasWarning() {
+		const { requestingConnectionStatus, site, siteIsConnected, siteIsJetpack } = this.props;
+
+		if ( siteIsJetpack && ! site.hasMinimumJetpackVersion ) {
+			if ( requestingConnectionStatus ) {
 				return false;
 			}
-			return true;
+
+			return siteIsConnected;
 		}
+
 		return false;
-	},
+	}
 
-	showIndicator: function() {
+	showIndicator() {
+		const { siteIsAutomatedTransfer, siteIsJetpack, userCanManage } = this.props;
+
 		// Until WP.com sites have indicators (upgrades expiring, etc) we only show them for Jetpack sites
-		return this.props.site.user_can_manage && this.props.site.jetpack && ( this.hasUpdate() || this.hasError() || this.hasWarning() || this.state.updateError );
-	},
+		return (
+			userCanManage &&
+			siteIsJetpack &&
+			! siteIsAutomatedTransfer &&
+			( this.hasUpdate() || this.hasError() || this.hasWarning() )
+		);
+	}
 
-	toggleExpand: function() {
+	toggleExpand = () => {
 		this.setState( {
-			updateError: false,
-			updateSucceed: false,
-			expand: ! this.state.expand
+			expand: ! this.state.expand,
 		} );
 
-		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked to ' + ( ! this.state.expand ? 'Expand' : 'Collapse' ) + ' the Site Indicator' );
-	},
+		const action = ! this.state.expand ? 'Expand' : 'Collapse';
+		this.props.recordGoogleEvent( 'Site-Indicator', `Clicked to ${ action } the Site Indicator` );
+	};
 
-	updatesAvailable: function() {
-		if ( config.isEnabled( 'jetpack_core_inline_update' ) && this.props.site.update.wordpress && this.props.site.update.wp_update_version ) {
+	updatesAvailable() {
+		const { site, siteUpdates, translate } = this.props;
+		const activityLogPath = '/activity-log/' + site.slug;
+
+		if ( siteUpdates.wordpress === siteUpdates.total && site.canUpdateFiles ) {
 			return (
 				<span>
-					{
-						this.translate( 'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}', {
+					{ translate(
+						'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}',
+						{
 							components: {
-								link: <button className="button is-link" onClick={ this.handleUpdate } />
+								link: <a href={ activityLogPath } onClick={ this.handleCoreUpdate } />,
 							},
 							args: {
-								version: this.props.site.update.wp_update_version
-							}
-						} )
-					}
+								version: siteUpdates.wp_update_version,
+							},
+						}
+					) }
 				</span>
 			);
 		}
 
-		if ( this.props.site.update.plugins === this.props.site.update.total && this.props.site.canUpdateFiles ) {
+		if ( siteUpdates.plugins === siteUpdates.total && site.canUpdateFiles ) {
 			return (
 				<span>
-					<a
-						onClick={ this.handlePluginsUpdate }
-						href={ '/plugins/updates/' + this.props.site.slug } >
-						{ this.translate( 'There is a plugin update available.', 'There are plugin updates available.', { count: this.props.site.update.total } ) }
+					<a onClick={ this.handlePluginsUpdate } href={ activityLogPath }>
+						{ translate(
+							'There is a plugin update available.',
+							'There are plugin updates available.',
+							{
+								count: siteUpdates.total,
+							}
+						) }
 					</a>
 				</span>
 			);
 		}
+
+		if ( siteUpdates.themes === siteUpdates.total && site.canUpdateFiles ) {
+			return (
+				<span>
+					<a onClick={ this.handleThemesUpdate } href={ activityLogPath }>
+						{ translate(
+							'There is a theme update available.',
+							'There are theme updates available.',
+							{
+								count: siteUpdates.total,
+							}
+						) }
+					</a>
+				</span>
+			);
+		}
+		// Everything else expect for translations since they are not supported
+		if (
+			siteUpdates.themes + siteUpdates.plugins + siteUpdates.wordpress === siteUpdates.total &&
+			site.canUpdateFiles
+		) {
+			return (
+				<span>
+					<a onClick={ this.handleMultipleUpdate } href={ activityLogPath }>
+						{ translate( 'There are updates available.' ) }
+					</a>
+				</span>
+			);
+		}
+
 		return (
 			<span>
-				<a
-					onClick={ analytics.ga.recordEvent.bind( analytics, 'Site-Indicator', 'Clicked updates available link to wp-admin updates', 'Total Updates', this.props.site.update && this.props.site.update.total ) }
-					href={ this.props.site.options.admin_url + 'update-core.php' } >
-					{ this.translate( 'There is an update available.', 'There are updates available.', { count: this.props.site.update.total } ) }
-				</a>
+				<WPAdminLink
+					onClick={ this.handleGenericUpdate }
+					href={ site.options.admin_url + 'update-core.php' }
+				>
+					{ translate( 'There is an update available.', 'There are updates available.', {
+						count: siteUpdates.total,
+					} ) }
+				</WPAdminLink>
 			</span>
 		);
-	},
+	}
 
-	onUpdateError: function() {
-		this.setState( {
-			expand: true,
-			updating: false,
-			updateError: true
-		} );
-	},
-
-	onUpdateSuccess: function() {
-		this.setState( {
-			updating: false,
-			updateSucceed: true
-		} );
-		this.timer = setTimeout( function() {
-			this.setState( { updateSucceed: false } );
-			this.timer = null;
-		}.bind( this ), 15000 );
-	},
-
-	handlePluginsUpdate: function() {
+	recordEvent( event, total ) {
 		window.scrollTo( 0, 0 );
-		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked updates available link to plugins updates', 'Total Updates', this.props.site.update && this.props.site.update.total );
-	},
+		this.setState( { expand: false } );
+		this.props.recordGoogleEvent( 'Site-Indicator', event, 'Total Updates', total );
+	}
 
-	handleUpdate: function() {
-		this.setState( {
-			updating: true,
-			expand: false
-		} );
-		this.timer != null ? clearTimeout( this.timer ) : null;
-		this.props.site.updateWordPress( this.onUpdateError, this.onUpdateSuccess );
+	handlePluginsUpdate = () => {
+		const { siteUpdates } = this.props;
+		this.recordEvent(
+			'Clicked updates available link to plugins updates',
+			siteUpdates && siteUpdates.total
+		);
+	};
 
-		analytics.ga.recordEvent( 'site-indicator', 'Triggered Update WordPress Core Version From Calypso' );
-	},
+	handleThemesUpdate = () => {
+		const { siteUpdates } = this.props;
+		this.recordEvent(
+			'Clicked updates available link to theme updates',
+			siteUpdates && siteUpdates.total
+		);
+	};
 
-	unsupportedJetpackVersion: function() {
+	handleCoreUpdate = () => {
+		this.recordEvent( 'Clicked updates available link to WordPress updates', 1 );
+	};
+
+	handleMultipleUpdate = () => {
+		const { siteUpdates } = this.props;
+		this.recordEvent(
+			'Clicked updates available link for multiple updates',
+			siteUpdates && siteUpdates.total
+		);
+	};
+
+	// General case with updates of multiple types (plugins, themes, translations, ...) available
+	handleGenericUpdate = () => {
+		const { siteUpdates } = this.props;
+		this.props.recordGoogleEvent(
+			'Site-Indicator',
+			'Clicked updates available link to wp-admin updates',
+			'Total Updates',
+			siteUpdates && siteUpdates.total
+		);
+	};
+
+	handleJetpackUpdate = () => {
+		this.props.recordGoogleEvent( 'Site-Indicator', 'Clicked Update Jetpack Now Link' );
+	};
+
+	unsupportedJetpackVersion() {
+		const { translate } = this.props;
 		return (
 			<span>
-				{ this.translate( 'Jetpack %(version)s is required', { args: { version: config( 'jetpack_min_version' ) } } ) }.
-				<a
-					onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update Jetpack Now Link' ) }
-					href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
-					>{ this.translate( 'Update now' ) }
-				</a>.
-			</span> );
-	},
+				{ translate( 'Jetpack %(version)s is required. {{link}}Update now{{/link}}', {
+					args: {
+						version: config( 'jetpack_min_version' ),
+					},
+					components: {
+						link: (
+							<WPAdminLink
+								onClick={ this.handleJetpackUpdate }
+								href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
+							/>
+						),
+					},
+				} ) }
+			</span>
+		);
+	}
 
-	makeAnalyticsRecordEventHandler: function( action ) {
-		return function() {
-			analytics.ga.recordEvent( 'Site-Indicator', action );
-		};
-	},
-
-	errorAccessing: function() {
+	errorAccessing() {
+		const { site, translate } = this.props;
 		let accessFailedMessage;
 
 		// Don't show the button if the site is not defined.
-		if ( this.props.site ) {
-			accessFailedMessage = <span>{ this.translate( 'This site cannot be accessed.' ) } <DisconnectJetpackButton site={ this.props.site } text={ this.translate( 'Disconnect Site' ) } redirect="/sites" /></span>;
+		if ( site ) {
+			accessFailedMessage = (
+				<span>
+					{ translate( 'This site cannot be accessed.' ) }
+					<Button
+						borderless
+						compact
+						scary
+						href={ `/settings/disconnect-site/${ site.slug }` }
+						onClick={ this.props.trackSiteDisconnect }
+					>
+						{ translate( 'Remove Site' ) }
+					</Button>
+				</span>
+			);
 		} else {
-			accessFailedMessage = <span>{ this.translate( 'This site cannot be accessed.' ) }</span>;
+			accessFailedMessage = <span>{ translate( 'This site cannot be accessed.' ) }</span>;
 		}
+
 		return accessFailedMessage;
-	},
+	}
 
-	errorUpdating: function() {
-		return ( <span>
-			{ this.translate( 'There was a problem updating. {{link}}Update on site{{/link}}.',
-				{
-					components: {
-						link: <a href={ this.props.site.options.admin_url + 'update-core.php' } onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update On Site Link' ) } />
-					}
-				}
-			) }
-		</span> );
-	},
-
-	getText: function() {
-		if ( this.state.updateError ) {
-			return this.errorUpdating();
+	getText() {
+		if ( this.hasWarning() ) {
+			return this.unsupportedJetpackVersion();
 		}
 
 		if ( this.hasUpdate() ) {
@@ -194,56 +278,92 @@ module.exports = React.createClass( {
 			return this.errorAccessing();
 		}
 
-		if ( this.hasWarning() ) {
-			return this.unsupportedJetpackVersion();
-		}
-
 		return null;
-	},
+	}
 
-	render: function() {
-		var indicatorClass, textClass, progressStatus;
-
-		if ( ! this.showIndicator() ) {
-			return null;
+	getIcon() {
+		if ( this.hasWarning() ) {
+			return 'notice';
 		}
 
-		if ( this.state.updating || this.state.updateSucceed ) {
-			if ( this.state.updating ) {
-				progressStatus = 'processing';
-			}
-			if ( this.state.updateSucceed ) {
-				progressStatus = 'success';
-			}
-			return <ProgressIndicator key="update-progress" status={ progressStatus } className="site-indicator__progress-indicator" />;
+		if ( this.hasUpdate() ) {
+			return 'sync';
 		}
 
-		indicatorClass = classNames( {
+		if ( this.hasError() ) {
+			return 'notice';
+		}
+	}
+
+	renderIndicator() {
+		const indicatorClass = classNames( {
 			'is-expanded': this.state.expand,
 			'is-update': this.hasUpdate(),
 			'is-warning': this.hasWarning(),
 			'is-error': this.hasError(),
 			'is-action': true,
-			'site-indicator': true
-		} );
-
-		textClass = classNames( {
-			'is-updating': this.state.updating,
-			'is-updated': this.state.updateSucceed,
-			'site-indicator__action': true
+			'site-indicator__main': true,
 		} );
 
 		return (
 			<div className={ indicatorClass }>
-				<button className="site-indicator__button" onClick={ this.toggleExpand } />
-				{ this.state.expand ?
+				{ ! this.state.expand && (
+					<Animate type="appear">
+						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							<Gridicon icon={ this.getIcon() } size={ 16 } />
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+						</button>
+					</Animate>
+				) }
+				{ this.state.expand && (
 					<div className="site-indicator__message">
-						<div className={ textClass }>
-							{ this.getText() }
-						</div>
+						<div className="site-indicator__action">{ this.getText() }</div>
+						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+							<Animate type="appear">
+								<Gridicon icon="cross" size={ 18 } />
+							</Animate>
+						</button>
 					</div>
-				: null }
+				) }
 			</div>
 		);
 	}
-} );
+
+	render() {
+		const { site, siteIsJetpack } = this.props;
+
+		return (
+			<div className="site-indicator__wrapper">
+				{ siteIsJetpack && <QuerySiteConnectionStatus siteId={ site.ID } /> }
+
+				{ this.showIndicator() && this.renderIndicator() }
+			</div>
+		);
+	}
+}
+
+export default connect(
+	( state, { site } ) => {
+		return {
+			requestingConnectionStatus: site && isRequestingSiteConnectionStatus( state, site.ID ),
+			siteIsConnected: site && getSiteConnectionStatus( state, site.ID ),
+			siteIsJetpack: site && isJetpackSite( state, site.ID ),
+			siteIsAutomatedTransfer: site && isSiteAutomatedTransfer( state, site.ID ),
+			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
+			userCanManage: site && canCurrentUser( state, site.ID, 'manage_options' ),
+		};
+	},
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+		trackSiteDisconnect: () =>
+			composeAnalytics(
+				recordGoogleEvent(
+					'Jetpack',
+					'Clicked in site indicator to start Jetpack Disconnect flow'
+				),
+				recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
+			),
+	}
+)( localize( SiteIndicator ) );

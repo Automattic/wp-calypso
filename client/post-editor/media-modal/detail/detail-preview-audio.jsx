@@ -1,26 +1,29 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var MediaUtils = require( 'lib/media/utils' );
+import { url } from 'lib/media/utils';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailPreviewAudio',
+export default class extends React.Component {
+	static displayName = 'EditorMediaModalDetailPreviewAudio';
 
-	propTypes: {
-		item: React.PropTypes.object.isRequired
-	},
+	static propTypes = {
+		className: PropTypes.string,
+		item: PropTypes.object.isRequired,
+	};
 
-	render: function() {
-		return (
-			<audio
-				src={ MediaUtils.url( this.props.item ) }
-				controls
-				className="editor-media-modal-detail__preview is-audio" />
-		);
+	render() {
+		const classes = classNames( this.props.className, 'is-audio' );
+
+		return <audio src={ url( this.props.item ) } controls className={ classes } />;
 	}
-} );
+}

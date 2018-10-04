@@ -1,0 +1,84 @@
+$post-like-padding: 3px;
+$post-like-width: 24px + $post-like-padding * 2;
+$post-likes-per-popover-row: 12;
+
+.post-likes {
+	font-size: 13px;
+
+	.post-likes__item {
+		display: inline-block;
+		vertical-align: top;
+		text-decoration: none;
+		padding: $post-like-padding;
+
+		.gravatar {
+			display: block;
+		}
+	}
+
+	&.has-display-names {
+		max-height: 340px;
+		overflow-y: auto;
+
+		.post-likes__item {
+			display: block;
+			position: relative;
+			padding: 4px 8px;
+			border-bottom: 1px solid $gray-light;
+
+			&:last-child {
+				border-bottom-width: 0;
+			}
+			
+			.gravatar {
+				position: absolute;
+			}
+		}
+
+		.post-likes__display-name {
+			display: block;
+			line-height: 24px;
+			padding-left: 32px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.post-likes__count:not( .is-loading ) {
+			margin: 12px 16px 12px 32px;
+		}
+	}
+
+	.post-likes__count {
+		vertical-align: top;
+		margin: 6px 8px 4px 4px;
+		line-height: 14px;
+		border-radius: 12px;
+		display: inline-block;
+		border: solid 1px $gray;
+		color: $gray-text-min;
+		padding: 1px 6px;
+		font-weight: 600;
+		font-size: 11px;
+
+		&.is-loading {
+			border-color: transparent;
+			@include placeholder();
+			margin: 5px;
+		}
+	}
+}
+
+.post-likes-popover {
+	.post-likes {
+		padding: $post-like-padding;
+		max-width: $post-like-width * $post-likes-per-popover-row;
+		max-height: 400px;
+		text-align: left;
+
+		&.has-display-names {
+			max-width: 250px;
+			max-height: 340px;
+		}
+	}
+}

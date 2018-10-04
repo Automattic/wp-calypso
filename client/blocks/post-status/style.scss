@@ -1,0 +1,14 @@
+.post-status,
+.post-status__icon,
+.post-status__text {
+	display: inline-block;
+}
+
+.post-status__icon {
+	margin-right: 8px;
+	vertical-align: text-top;
+}
+
+.post-status.is-pending {
+	color: $alert-yellow;
+}

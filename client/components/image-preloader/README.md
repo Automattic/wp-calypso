@@ -8,18 +8,19 @@ http://codepen.io/aduth/pen/doqovP?editors=001
 ## Usage
 
 ```jsx
-var React = require( 'react' ),
-	ImagePreloader = require( 'components/image-preloader' );
+import React from 'react';
+import ImagePreloader from 'components/image-preloader';
 
-React.createClass( {
-	render: function() {
+export default class extends React.Component {
+	render() {
 		return (
 			<ImagePreloader
 				placeholder={ <div>Loading...</div> }
-				src="http://lorempixel.com/200/200" />
+				src="http://lorempixel.com/200/200" 
+			/>
 		);
 	}
-} );
+}
 ```
 
 ## Props
@@ -39,3 +40,17 @@ A React element to render while the image `src` is being loaded.
 - __Required:__ No
 
 If a child is passed, it will be used as substitute content in the case that the image fails to load.
+
+### `onLoad`
+
+- __Type:__ function
+- __Required:__ No
+
+A custom function to call when the image loading is complete.
+
+### `onError`
+
+- __Type:__ function
+- __Required:__ No
+
+A custom function to call if the image loading fails.

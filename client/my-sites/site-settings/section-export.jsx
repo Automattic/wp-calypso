@@ -1,88 +1,56 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
-import Immutable from 'immutable';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import CompactCard from 'components/card/compact';
-import Gridicon from 'components/gridicon';
-import Button from 'components/forms/form-button';
-import AdvancedOptions from 'my-sites/exporter/advanced-options';
+import EmptyContent from 'components/empty-content';
+import ExporterContainer from 'my-sites/exporter';
+import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import Main from 'components/main';
+import HeaderCake from 'components/header-cake';
+import Placeholder from 'my-sites/site-settings/placeholder';
 
-const defaults = {
-	advancedSettings: {
-		isVisible: false,
-		posts: {
-			isEnabled: true
-		},
-		pages: {
-			isEnabled: true
-		},
-		feedback: {
-			isEnabled: true
-		}
+const SiteSettingsExport = ( { isJetpack, site, siteSlug, translate } ) => {
+	if ( ! site ) {
+		return <Placeholder />;
 	}
-}
 
-export default React.createClass( {
-	displayName: 'SiteSettingsExport',
+	return (
+		<Main>
+			<HeaderCake backHref={ '/settings/general/' + siteSlug }>
+				<h1>{ translate( 'Export' ) }</h1>
+			</HeaderCake>
+			{ isJetpack && (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+					title={ translate( 'Want to export your site?' ) }
+					line={ translate( "Visit your site's wp-admin for all your import and export needs." ) }
+					action={ translate( 'Export %(siteTitle)s', { args: { siteTitle: site.title } } ) }
+					actionURL={ site.options.admin_url + 'export.php' }
+					actionTarget="_blank"
+				/>
+			) }
+			{ isJetpack === false && <ExporterContainer /> }
+		</Main>
+	);
+};
 
-	getInitialState() {
-		this.data = Immutable.fromJS( defaults );
-		return this.data.toJS();
-	},
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
 
-	toggleAdvancedSettings() {
-		this.data = this.data.updateIn(
-			[ 'advancedSettings', 'isVisible' ],
-			( wasVisible ) => !wasVisible
-		);
-		this.setState( this.data.toJS() );
-	},
-
-	toggleFieldset( fieldset ) {
-		this.data = this.data.updateIn(
-			[ 'advancedSettings', fieldset, 'isEnabled' ],
-			( wasEnabled ) => !wasEnabled
-		);
-		this.setState( this.data.toJS() );
-	},
-
-	render: function() {
-		return (
-			<div className="section-export">
-				<CompactCard>
-					<header>
-						<Button
-							className="exporter__export-button"
-							disabled={ false }
-							isPrimary={ true }
-						>
-							{ this.translate( 'Export' ) }
-						</Button>
-						<h1 className="exporter__title">
-							{ this.translate( 'Download an Export File' ) }
-						</h1>
-					</header>
-					<a href="#" onClick={ this.toggleAdvancedSettings }>
-						<Gridicon
-							icon={ this.state.advancedSettings.visible ? 'chevron-up' : 'chevron-down' }
-							size={ 16 } />
-						{ this.translate( 'Advanced Export Settings' ) }
-					</a>
-				</CompactCard>
-
-				{
-					this.state.advancedSettings.isVisible &&
-					<AdvancedOptions
-						{ ...this.state.advancedSettings }
-						onToggleFieldset={ this.toggleFieldset }
-					/>
-				}
-			</div>
-		);
-	}
-} );
+	return {
+		isJetpack: selectedSiteId && isJetpackSite( state, selectedSiteId ),
+		site,
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( SiteSettingsExport ) );

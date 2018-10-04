@@ -1,65 +1,64 @@
-Segmented Control
-=================
+<!-- @format -->
 
-React component used to display a "segmented control".
+# Segmented Control
 
-![Segmented Control example](https://cldup.com/5q6rA4FtMz.png)
+Segmented Control manipulates the content shown following an exclusive or “either/or” pattern.
 
-It can be utilized via two different techniques: children components or an options array. These techniques are available because certain use cases prefer the "selection" logic to be built into `SegmentedControl`, while others prefer to explicitly define that logic elsewhere.
+## Usage
 
----
+It can be utilized via two different techniques: **child components** or an **options array**. These techniques are available because certain use cases prefer the "selection" logic to be built into `SegmentedControl`, while others prefer to explicitly define that logic elsewhere.
 
-## Using Children
+### Child components
 
 The children technique is appropriate when you'd like to define the "selection" logic at the same point where `<SegmentedControl>` is implemented.
 
 A good example for this case is navigation. Sometimes the option that is selected is defined by the route, other times it's a state value, external prop, etc.
 
-```js
-var SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' );
+```jsx
+import React from 'react';
+import SegmentedControl from 'components/segmented-control';
+import SegmentedControlItem from 'components/segmented-control/item';
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
 
-	render: function() {
+	render() {
 		return (
 			<SegmentedControl>
-				<ControlItem
+				<SegmentedControlItem
 					selected={ this.state.selected === 'all' }
 					onClick={ this.handleFilterClick( 'all' ) }
 				>
 					All
-				</ControlItem>
-				
-				<ControlItem
+				</SegmentedControlItem>
+
+				<SegmentedControlItem
 					selected={ this.state.selected === 'unread' }
 					onClick={ this.handleFilterClick( 'unread' ) }
 				>
 					Unread
-				</ControlItem>
-				
-				<ControlItem
+				</SegmentedControlItem>
+
+				<SegmentedControlItem
 					selected={ this.state.selected === 'comments' }
 					onClick={ this.handleFilterClick( 'comments' ) }
 				>
 					Comments
-				</ControlItem>
-				
-				<ControlItem
+				</SegmentedControlItem>
+
+				<SegmentedControlItem
 					selected={ this.state.selected === 'follows' }
 					onClick={ this.handleFilterClick( 'follows' ) }
 				>
 					Follows
-				</ControlItem>
-				
-				<ControlItem
+				</SegmentedControlItem>
+
+				<SegmentedControlItem
 					selected={ this.state.selected === 'likes' }
 					onClick={ this.handleFilterClick( 'likes' ) }
 				>
 					Likes
-				</ControlItem>
+				</SegmentedControlItem>
 			</SegmentedControl>
 		);
 	},
@@ -75,55 +74,42 @@ module.exports = React.createClass( {
 			} );
 		}.bind( this );
 	}
-} );
+}
 ```
 
-The key here is that it's up to the parent component to explicitly define things like: which item is selected, and potentially `onClick` callbacks, etc.
+The key here is that it's up to the parent component to explicitly define things such as the selected item, potential `onClick` callbacks, etc.
 
-### Props
+#### Props
 
-#### Segmented Control
+##### Segmented Control
 
-`className`
+| Name        | Type     | Default | Description                               |
+| ----------- | -------- | ------- | ----------------------------------------- |
+| `className` | `string` | `0`     | Class(es) applied to `.segmented-control` |
+| `style`     | `string` | `0`     | Inline styles applied to the main element |
+| `compact`   | `bool`   | `false` | Decreases the size                        |
 
-Optional extra class(es) to be applied to the `.segmented-control`.
+##### Control Item
 
-`style`
+| Name         | Type     | Default | Description                                             |
+| ------------ | -------- | ------- | ------------------------------------------------------- |
+| `selected`\* | `bool`   | `false` | Determines the selected item                            |
+| `path`       | `string` | `null`  | URL to navigate to when item is clicked                 |
+| `title`      | `string` | `null`  | Title to show when hovering over item                   |
+| `onClick`    |          | `null`  | Callback applied when `SegmentedControlItem` is clicked |
 
-Optional extra styles to be applied to the main element. See React's [documentation](https://facebook.github.io/react/tips/inline-styles.html) on inline styles for reference.
+### Options array
 
-`compact`
-
-Optional variant of a more visually compact segmented control.
-
-#### Control Item
-
-`selected`
-
-Boolean representing the selected visual state. `selected={ true }` creates a blue background on the selected item.
-
-![selected example screenshot](https://cldup.com/c6RXnmdkHe.png)
-
-`path`
-
-Optional URL to navigate to when option is clicked.
-
-`onClick`
-
-Optional callback that will be applied when a `ControlItem` has been clicked. This could be used for updating a parent's state, tracking analytics, etc.
-
----
-
-## Using options array
-
-`SegmentedControl` can also be used by passing in an `options` array as a prop. This technique is great for situations where you don't want to explicitly define things like what happens when an item is clicked or which item is currently selected, etc.
+We also provide `SimplifiedSegmentedControl` which uses an `options` array as a prop. This technique is great for situations where you don't want to explicitly define things like what happens when an item is clicked or which item is currently selected, etc.
 
 A good example for this case is a form element. You don't want to have to write the logic for updating the component when a new selection is made, but you might want to hook into certain events like: when a new selection is made, what was the option?
 
-> **NOTE** - there is still more work here in order to be fully functional as a form element, not recommended use case... yet.
+**NOTE**: _there is still more work here in order to be fully functional as a form element. This is currently experimental._
 
-```js
-var SegmentedControl = require( 'components/segmented-control' );
+```jsx
+import React from 'react';
+import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+
 var options = [
 	{ value: 'all', label: 'All' },
 	{ value: 'unread', label: 'Unread' },
@@ -132,30 +118,32 @@ var options = [
 	{ value: 'likes', label: 'Likes' }
 ];
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
 
-	render: function() {
-		return (
-			<SegmentedControl options={ options } onSelect={ this.handleOnSelect } />
-		);
-	},
-
-	handleOnSelect: function( option ) {
+	handleOnSelect = ( option ) => {
 		console.log( 'selected option:', option ); // full object of selected option
 	}
 
-} );
+	render() {
+		return (
+			<SimplifiedSegmentedControl options={ options } onSelect={ this.handleOnSelect } />
+		);
+	},
+}
 ```
 
-Note that all the "selection" logic will be applied in `SegmentedControl` itself using a simple `selected` value comparison in state. It will update itself when an option has been clicked.
+Note that all the "selection" logic will be applied in `SimplifiedSegmentedControl` itself using a simple `selected` value comparison in state. It will update itself when an option has been clicked.
 
-### Props
+#### Props
 
-`options`
+| Name              | Type     | Default | Description                                      |
+| ----------------- | -------- | ------- | ------------------------------------------------ |
+| `options`\*       | `array`  | `null`  | The main data set for rendering options          |
+| `initialSelected` | `string` | `null`  | Represents the initial selected option's `value` |
+| `onSelect`        |          | `null`  | Callback whenever a new item has been clicked    |
 
-The main data set for rendering out the various options.
+##### `options` prop example
 
 ```js
 var options = [
@@ -168,10 +156,15 @@ var options = [
 ];
 ```
 
-`initialSelected`
+### General guidelines
 
-Optional string representing the initial selected option's `value`. Default will be the first option's `value`.
+- There are two states: selected and non-selected. There must always be only one selected state, no more, no less.
+- The primary style is preferred. Use your best judgement if you want to use the non-primary style to remove visual conflict with another primary elements in the view.
+- Text should be concise and specific. Use no more than two words.
+- A default selection is required. The default selection is the first option in the segmented control.
 
-`onSelect`
+## Related components
 
-Optional callback that will be run whenever a new selection has been clicked.
+- To group buttons together, use the [ButtonGroup](./button-group) component.
+- To navigate between multiple pages of items, use the [Pagination](./pagination) component.
+- To alternate among related views within the same context with _tabs_, use the [SectionNav](./section-nav) component.

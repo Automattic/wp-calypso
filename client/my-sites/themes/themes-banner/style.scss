@@ -1,0 +1,98 @@
+.themes-banner {
+	$image_max_width: 410px;
+
+	display: none;
+	position: relative;
+	background: no-repeat $blue-medium;
+	color: white !important;
+	padding: 0.8em;
+	overflow: hidden;
+	user-select: none;
+
+	&:hover, &:focus, &:visited {
+		color: white !important;
+	}
+
+	&:before {
+		position: absolute;
+		display: block;
+		content: "\020";
+		background: rgba(black, 0.13);
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		z-index: 1;
+	}
+
+	h1, p, .button.themes-banner__cta {
+		position: relative;
+		color: inherit;
+		z-index: 2;
+	}
+
+	h1 {
+		font-weight: bold;
+		font-size: 1.6em;
+		font-weight: 500;
+		letter-spacing: 0.01em;
+		text-shadow: 0 1px 1px rgba(black, 0.5);
+		margin: -0.1em 0;
+		line-height: 1.3;
+
+		+ p {
+			margin-top: 0.6em;
+		}
+	}
+
+	p {
+		margin: 0;
+		text-shadow: 0 1px 1px rgba(black, 0.4);
+	}
+
+	img {
+		position: absolute;
+		transform-origin: top right;
+		max-width: $image_max_width;
+		transition: opacity 400ms ease-in-out;
+		user-select: none;
+		top: 0;
+		right: 0;
+
+		@include breakpoint( '<1400px' ) {
+			opacity: 0.5;
+		}
+	}
+
+	.button.themes-banner__cta {
+		margin-top: 1em;
+	}
+
+	.button.themes-banner__close {
+		display: block;
+		position: absolute;
+		background: rgba( white, 0.66 );
+		border-radius: 0;
+		border: none;
+		padding: 1px 0;
+		width: 1.7em;
+		line-height: 0.9;
+		z-index: 4;
+		top: 0;
+		right: 0;
+
+		&:hover {
+			cursor: pointer;
+		}
+
+		.gridicons-cross-small {
+			position: relative;
+			fill: black;
+			top: 2px;
+		}
+	}
+
+	@media(min-width:769px) {
+		display: block;
+	}
+}

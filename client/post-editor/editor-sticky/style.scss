@@ -1,0 +1,20 @@
+.editor-sticky.button {
+	transition: opacity 200ms;
+
+	&, &:hover, &:focus {
+		color: $gray-lighten-20;
+	}
+
+	&.is-sticky {
+		color: $orange-jazzy;
+	}
+}
+
+.editor-sticky__explanation {
+	display: block;
+	font-size: 11px;
+}
+
+.editor-sticky__tooltip .popover__inner {
+	white-space: nowrap;
+}

@@ -6,17 +6,34 @@ This is a directory of shared form components.
 ### Settings Form Fields
 The following form components were created as an effort to minimize duplication between site settings and me settings.
 
+- clipboard-button
+- counted-textarea
 - form-button
 - form-buttons-bar
 - form-checkbox
+- form-country-select
+- form-currency-input
 - form-fieldset
+- form-input-validation
 - form-label
 - form-legend
+- form-password-input
+- form-phone-input
+- form-phone-media-input
 - form-radio
+- form-range
+- form-section-heading
 - form-select
 - form-setting-explanation
+- form-tel-input
 - form-text-input
+- form-text-input-with-action
+- form-text-input-with-affixes
 - form-textarea
+- form-toggle
+- multi-checkbox
+- range
+- sortable-list
 
 The component jsx files are wrappers that ensure our classes are added to each form field. Each form field component also contains a `style.scss` file in its directory for styling. These stylesheets are included in `/assets/stylesheets/_components.scss`.
 
@@ -26,18 +43,20 @@ The `FormSectionHeading` component allows you to add a section header to your se
 ### FormInputValidation
 The `FormInputValidation` component is used to display a validation notice to the user. You can use it like this:
 
+```jsx
 <FormInputValidation isError={ true } text="Usernames can only contain lowercase letters (a-z) and numbers." />
 <FormInputValidation text="That username is valid." />
+```
 
 ### MultiCheckbox
 
-[See README.md for MultiCheckbox](multi-checkbox/README.md)
+[See README.md for MultiCheckbox](./multi-checkbox/README.md)
 
 ### SelectOptGroups
 `SelectOptGroups` allows you to pass structured data to render a select element with `<option>` elements nested inside `<optgroup>` separators. You can use it like this:
 
-```
-var options = [
+```jsx
+const options = [
 	{
 		label: 'Group 1',
 		options: [
@@ -72,7 +91,7 @@ initialSelected = 3;
 
 And this would render:
 
-```
+```html
 <select name="example">
 	<optgroup label="Group 1">
 		<option value="1">Option 1</option>

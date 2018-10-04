@@ -1,26 +1,31 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	classNames = require( 'classnames' );
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var MediaUtils = require( 'lib/media/utils' );
+import { playtime } from 'lib/media/utils';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailFileInfo',
+class EditorMediaModalDetailFileInfo extends React.Component {
+	static displayName = 'EditorMediaModalDetailFileInfo';
 
-	propTypes: {
-		item: React.PropTypes.object
-	},
+	static propTypes = {
+		item: PropTypes.object,
+	};
 
-	getItemValue( attribute ) {
+	getItemValue = attribute => {
 		let value;
 
 		if ( ! this.props.item ) {
-			return this.translate( 'Loading…' );
+			return this.props.translate( 'Loading…' );
 		}
 
 		switch ( attribute ) {
@@ -29,19 +34,23 @@ module.exports = React.createClass( {
 				break;
 
 			case 'dimensions':
-				value = React.addons.createFragment( {
-					width: <abbr title={ this.translate( 'Width in pixels' ) }>{ this.props.item.width }</abbr>,
-					separator: ' ✕ ',
-					height: <abbr title={ this.translate( 'Height in pixels' ) }>{ this.props.item.height }</abbr>
-				} );
+				value = [
+					<abbr key="width" title={ this.props.translate( 'Width in pixels' ) }>
+						{ this.props.item.width }
+					</abbr>,
+					' ✕ ',
+					<abbr key="height" title={ this.props.translate( 'Height in pixels' ) }>
+						{ this.props.item.height }
+					</abbr>,
+				];
 				break;
 
 			case 'date':
-				value = this.moment( this.props.item[ attribute ] ).format( 'D MMMM YYYY' );
+				value = this.props.moment( this.props.item[ attribute ] ).format( 'D MMMM YYYY' );
 				break;
 
 			case 'length':
-				value = MediaUtils.playtime( this.props.item[ attribute ] );
+				value = playtime( this.props.item[ attribute ] );
 				break;
 
 			default:
@@ -49,58 +58,62 @@ module.exports = React.createClass( {
 		}
 
 		return value;
-	},
+	};
 
-	renderDimensions() {
+	renderDimensions = () => {
 		if ( ! this.props.item || ( ! this.props.item.width && ! this.props.item.height ) ) {
 			return;
 		}
 
 		return (
 			<tr>
-				<th>{ this.translate( 'Dimensions' ) }</th>
+				<th>{ this.props.translate( 'Dimensions' ) }</th>
 				<td>{ this.getItemValue( 'dimensions' ) }</td>
 			</tr>
 		);
-	},
+	};
 
-	renderDuration() {
+	renderDuration = () => {
 		if ( ! this.props.item || ! this.props.item.length ) {
 			return;
 		}
 
 		return (
 			<tr>
-				<th>{ this.translate( 'Duration' ) }</th>
+				<th>{ this.props.translate( 'Duration' ) }</th>
 				<td>{ this.getItemValue( 'length' ) }</td>
 			</tr>
 		);
-	},
+	};
 
 	render() {
-		let classes = classNames( 'editor-media-modal-detail__file-info', {
-			'is-loading': ! this.props.item
+		const classes = classNames( 'editor-media-modal-detail__file-info', {
+			'is-loading': ! this.props.item,
 		} );
 
 		return (
 			<table className={ classes }>
 				<tbody>
 					<tr>
-						<th>{ this.translate( 'File Name' ) }</th>
-						<td title={ this.getItemValue( 'file' ) }>{ this.getItemValue( 'file' ) }</td>
+						<th>{ this.props.translate( 'File Name' ) }</th>
+						<td title={ this.getItemValue( 'file' ) }>
+							<span>{ this.getItemValue( 'file' ) }</span>
+						</td>
 					</tr>
 					<tr>
-						<th>{ this.translate( 'File Type' ) }</th>
+						<th>{ this.props.translate( 'File Type' ) }</th>
 						<td>{ this.getItemValue( 'extension' ) }</td>
 					</tr>
 					{ this.renderDimensions() }
 					{ this.renderDuration() }
 					<tr>
-						<th>{ this.translate( 'Upload Date' ) }</th>
+						<th>{ this.props.translate( 'Upload Date' ) }</th>
 						<td>{ this.getItemValue( 'date' ) }</td>
 					</tr>
 				</tbody>
 			</table>
 		);
 	}
-} );
+}
+
+export default localize( EditorMediaModalDetailFileInfo );

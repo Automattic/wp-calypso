@@ -1,73 +1,89 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import isNaN from 'lodash/lang/isNaN';
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import AccordionSection from 'components/accordion/section';
 import TextInput from 'components/forms/form-text-input';
-import postActions from 'lib/posts/actions';
-import { recordEvent, recordStat } from 'lib/posts/stats';
+import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { editPost } from 'state/posts/actions';
 
-export default React.createClass( {
-	displayName: 'EditorPageOrder',
+class EditorPageOrder extends Component {
+	static propTypes = {
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		menuOrder: PropTypes.number,
+	};
 
-	mixins: [ React.addons.PureRenderMixin ],
+	static defaultProps = {
+		menuOrder: 0,
+	};
 
-	propTypes: {
-		menuOrder: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string
-		] )
-	},
+	constructor() {
+		super( ...arguments );
 
-	getDefaultProps() {
-		return {
-			menuOrder: 0
-		};
-	},
+		this.editMenuOrder = this.editMenuOrder.bind( this );
+		this.statTracked = false;
+	}
 
-	updateMenuOrder( event ) {
-		let newOrder = parseInt( event.target.value );
-
-		if ( isNaN( newOrder ) ) {
-			newOrder = '';
+	editMenuOrder( event ) {
+		const { menuOrder, siteId, postId } = this.props;
+		const newOrder = parseInt( event.target.value, 10 ) || 0;
+		if ( newOrder === menuOrder ) {
+			return;
 		}
 
-		this.editMenuOrder( newOrder );
-	},
-
-	validateMenuOrder( event ) {
-		let newOrder = parseInt( event.target.value );
-
-		if ( isNaN( newOrder ) ) {
-			newOrder = 0;
+		if ( ! this.statTracked ) {
+			this.statTracked = true;
+			this.props.recordEditorStat( 'advanced_menu_order_changed' );
+			this.props.recordEditorEvent( 'Changed page menu order' );
 		}
 
-		this.editMenuOrder( newOrder );
-	},
-
-	editMenuOrder( newOrder ) {
-		if ( newOrder !== this.props.menuOrder ) {
-			recordStat( 'advanced_menu_order_changed' );
-			recordEvent( 'Changed page menu order' );
-
-			postActions.edit( {
-				menu_order: newOrder
-			} );
-		}
-	},
+		this.props.editPost( siteId, postId, { menu_order: newOrder } );
+	}
 
 	render() {
+		const { translate, menuOrder } = this.props;
+
 		return (
-			<div className="editor-page-order">
+			<AccordionSection className="editor-page-order">
 				<label>
-					<span className="editor-page-order__label-text">{ this.translate( 'Order', { context: 'Editor: Field label for page menu order.' } ) }</span>
-					<TextInput value={ this.props.menuOrder } onChange={ this.updateMenuOrder } onBlur={ this.validateMenuOrder } />
+					<span className="editor-page-order__label-text">
+						{ translate( 'Order', { context: 'Editor: Field label for menu order.' } ) }
+					</span>
+					<TextInput
+						type="number"
+						value={ menuOrder }
+						pattern="[0-9]*"
+						onChange={ this.editMenuOrder }
+						onBlur={ this.editMenuOrder }
+						className="editor-page-order__input"
+					/>
 				</label>
-			</div>
+			</AccordionSection>
 		);
 	}
-} );
+}
+
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const menuOrder = getEditedPostValue( state, siteId, postId, 'menu_order' );
+
+		return { siteId, postId, menuOrder };
+	},
+	{ editPost, recordEditorStat, recordEditorEvent }
+)( localize( EditorPageOrder ) );

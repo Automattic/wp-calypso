@@ -1,5 +1,23 @@
 .help-contact__placeholder {
-	@include placeholder();
-	height: 237px;
-	width: 100%;
+	color: transparent;
+
+	.help-contact__header {
+		@include placeholder();
+		background-color: $gray-lighten-30;
+		height: 18px;
+		margin-bottom: 2px;
+		width: 150px;
+	}
+	.help-contact__textarea {
+		@include placeholder();
+		background-color: $gray-lighten-30;
+		height: 50px;
+		margin-bottom: 32px;
+	}
+}
+
+// we add margin here, so `overflow:hidden` of .wp-content
+// won't cut bottom of SitesDropdown in this form when it is opened
+.help-contact__form {
+	margin-bottom: 70px;
 }

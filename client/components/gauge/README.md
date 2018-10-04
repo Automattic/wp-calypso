@@ -6,9 +6,9 @@ This component renders a simple gauge using a `<canvas/>` element that shows a p
 #### How to use:
 
 ```js
-var Gauge = require( 'components/gauge' );
+import Gauge from 'components/gauge';
 
-render: function() {
+render() {
     return (
   		<Gauge percentage={ 40 } metric={ 'Visits' } />
     );

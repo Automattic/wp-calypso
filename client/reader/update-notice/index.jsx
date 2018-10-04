@@ -1,59 +1,84 @@
+/** @format */
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' ),
-	noop = require( 'lodash/utility/noop' ),
-	classnames = require( 'classnames' );
+import PropTypes from 'prop-types';
+import React from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { noop, filter, get, flatMap } from 'lodash';
+import classnames from 'classnames';
+import Gridicon from 'gridicons';
 
-var titleActions = require( 'lib/screen-title/actions' ),
-	Gridicon = require( 'components/gridicon' );
+/**
+ * Internal dependencies
+ */
+import DocumentHead from 'components/data/document-head';
+import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
+import { getCommentById } from 'state/comments/selectors';
+import getStream from 'state/selectors/get-reader-stream';
 
-var UpdateNotice = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+class UpdateNotice extends React.PureComponent {
+	static propTypes = {
+		streamKey: PropTypes.string,
+		onClick: PropTypes.func,
+		cappedUnreadCount: PropTypes.string,
+	};
 
-	propTypes: {
-		count: React.PropTypes.number.isRequired,
-		onClick: React.PropTypes.func
-	},
+	static defaultProps = { onClick: noop };
 
-	getDefaultProps: function() {
-		return { onClick: noop };
-	},
+	render() {
+		const { count, cappedUnreadCount, translate } = this.props;
 
-	componentDidMount: function() {
-		this.setCount();
-	},
-
-	componentDidUpdate: function() {
-		this.setCount();
-	},
-
-	setCount: function() {
-		titleActions.setCount( this.props.count ? this.countString() : false );
-	},
-
-	countString: function() {
-		return this.props.count >= 40 ? '40+' : ( '' + this.props.count );
-	},
-
-	render: function() {
-		var counterClasses = classnames( {
+		const counterClasses = classnames( {
 			'reader-update-notice': true,
-			'is-active': this.props.count > 0
+			'is-active': count > 0,
 		} );
 
 		return (
-			<div className={ counterClasses } onTouchTap={ this.handleClick } >
+			<button className={ counterClasses } onClick={ this.handleClick }>
+				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
-				{ this.translate( '%s new post', '%s new posts', { args: [ this.countString() ], count: this.props.count } ) }
-			</div>
+				{ translate( '%s new post', '%s new posts', {
+					args: [ cappedUnreadCount ],
+					count,
+				} ) }
+			</button>
 		);
-	},
+	}
 
-	handleClick: function( event ) {
+	handleClick = event => {
 		event.preventDefault();
 		this.props.onClick();
-	}
-} );
+	};
+}
 
-module.exports = UpdateNotice;
+const countNewComments = ( state, postKeys ) => {
+	const newComments = flatMap( postKeys, postKey => {
+		return filter( postKey.comments, commentId => {
+			return ! getCommentById( {
+				state,
+				siteId: postKey.blogId,
+				commentId: commentId,
+			} );
+		} );
+	} );
+	return newComments.length;
+};
+
+const mapStateToProps = ( state, ownProps ) => {
+	const stream = getStream( state, ownProps.streamKey );
+	const pendingItems = stream.pendingItems.items;
+	const updateCount = stream.pendingItems.items.length;
+
+	// ugly hack for convos
+	const isConversations = !! get( pendingItems, [ 0, 'comments' ] );
+	const count = isConversations ? countNewComments( state, pendingItems ) : updateCount;
+
+	return {
+		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state ),
+		count,
+	};
+};
+
+export default connect( mapStateToProps )( localize( UpdateNotice ) );

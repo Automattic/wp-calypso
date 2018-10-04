@@ -1,26 +1,27 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
 
-module.exports = React.createClass( {
-	displayName: 'EditorFieldset',
+import PropTypes from 'prop-types';
+import React from 'react';
+import classNames from 'classnames';
 
-	propTypes: {
-		legend: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.element
-		] ).isRequired
-	},
+export default class extends React.Component {
+	static displayName = 'EditorFieldset';
 
-	renderChildren: function() {
+	static propTypes = {
+		legend: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+	};
+
+	renderChildren = () => {
 		return React.Children.map( this.props.children, function( child ) {
 			return <div className="editor-fieldset__option">{ child }</div>;
 		} );
-	},
+	};
 
-	render: function() {
+	render() {
 		return (
 			<fieldset className={ classNames( 'editor-fieldset', this.props.className ) }>
 				<legend className="editor-fieldset__legend">{ this.props.legend }</legend>
@@ -28,4 +29,4 @@ module.exports = React.createClass( {
 			</fieldset>
 		);
 	}
-} );
+}

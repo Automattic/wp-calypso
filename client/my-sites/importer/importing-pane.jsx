@@ -1,120 +1,247 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { numberFormat, translate, localize } from 'i18n-calypso';
+import { has, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { mapAuthor, startImporting } from 'lib/importer/actions';
-import { appStates } from 'lib/importer/constants';
+import { appStates } from 'state/imports/constants';
+import { connectDispatcher } from './dispatcher-converter';
 import ProgressBar from 'components/progress-bar';
-import MappingPane from './author-mapping-pane';
+import AuthorMappingPane from './author-mapping-pane';
+import Spinner from 'components/spinner';
+import { loadTrackingTool } from 'state/analytics/actions';
 
-export default React.createClass( {
-	displayName: 'SiteSettingsImportingPane',
+const sum = ( a, b ) => a + b;
 
-	mixins: [ React.addons.PureRenderMixin ],
+/*
+ * The progress object comes from the API and can
+ * contain different object counts.
+ *
+ * The attachments will lead the progress because
+ * they take the longest in almost all circumstances.
+ *
+ * progressObect ~= {
+ *     post: { completed: 3, total: 12 },
+ *     comment: { completed: 0, total: 3 },
+ *     …
+ * }
+ */
+const calculateProgress = progress => {
+	const { attachment = {} } = progress;
 
-	propTypes: {
+	if ( attachment.total > 0 && attachment.completed >= 0 ) {
+		// return a weight of 80% attachment, 20% other objects
+		return (
+			( 80 * attachment.completed ) / attachment.total +
+			0.2 * calculateProgress( omit( progress, [ 'attachment' ] ) )
+		);
+	}
+
+	const percentages = Object.keys( progress )
+		.map( k => progress[ k ] ) // get the inner objects themselves
+		.filter( ( { total } ) => total > 0 ) // skip ones with no objects to import
+		.map( ( { completed, total } ) => completed / total ); // compute the individual percentages
+
+	return ( 100 * percentages.reduce( sum, 0 ) ) / percentages.length;
+};
+
+const resourcesRemaining = progress =>
+	Object.keys( progress )
+		.map( k => progress[ k ] )
+		.map( ( { completed, total } ) => total - completed )
+		.reduce( sum, 0 );
+
+const hasProgressInfo = progress => {
+	if ( ! progress ) {
+		return false;
+	}
+
+	const types = Object.keys( progress )
+		.map( k => progress[ k ] )
+		.filter( ( { total } ) => total > 0 );
+
+	if ( ! types.length ) {
+		return false;
+	}
+
+	const firstType = types.shift();
+	if ( ! has( firstType, 'completed' ) ) {
+		return false;
+	}
+
+	return true;
+};
+
+class ImportingPane extends React.PureComponent {
+	static displayName = 'SiteSettingsImportingPane';
+
+	static propTypes = {
 		importerStatus: PropTypes.shape( {
 			counts: PropTypes.shape( {
 				comments: PropTypes.number,
 				pages: PropTypes.number,
-				posts: PropTypes.number
-			} ),
-			errorData: PropTypes.shape( {
-				description: PropTypes.string.isRequired,
-				type: PropTypes.string.isRequired
+				posts: PropTypes.number,
 			} ),
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			site: PropTypes.shape( {
-				slug: PropTypes.string.isRequired
+				slug: PropTypes.string.isRequired,
 			} ),
-			statusMessage: PropTypes.string
+			statusMessage: PropTypes.string,
 		} ),
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
-			single_user_site: PropTypes.bool.isRequired
-		} ).isRequired
-	},
+			single_user_site: PropTypes.bool.isRequired,
+		} ).isRequired,
+		sourceType: PropTypes.string.isRequired,
+	};
 
-	getHeadingText: function() {
-		return this.translate(
-			'Importing may take a while, but you can ' +
-			'safely navigate away from this page if you need ' +
-			'to. If you {{b}}stop the import{{/b}}, your site ' +
-			'will be {{b2}}partially imported{{/b2}}.', {
-				components: {
-					b: <strong />,
-					b2: <strong />
-				}
-			}
+	getErrorMessage = ( { description } ) => {
+		if ( ! description ) {
+			return translate( 'An unspecified error occured during the import.' );
+		}
+
+		return description;
+	};
+
+	getHeadingText = () => {
+		return translate(
+			'Importing may take a while if your site has a lot of media, but ' +
+				"you can safely navigate away from this page if you need to: we'll send you a notification when it's done."
 		);
-	},
+	};
 
-	getSuccessText: function() {
-		const { site: { slug }, counts: { pages, posts } } = this.props.importerStatus,
+	getHeadingTextProcessing = () => {
+		return translate( 'Processing your file. Please wait a few moments.' );
+	};
+
+	getSuccessText = () => {
+		const {
+				site: { slug },
+				progress: { page, post },
+			} = this.props.importerStatus,
 			pageLink = <a href={ '/pages/' + slug } />,
-			pageText = this.translate( 'Pages', { context: 'noun' } ),
+			pageText = translate( 'Pages', { context: 'noun' } ),
 			postLink = <a href={ '/posts/' + slug } />,
-			postText = this.translate( 'Posts', { context: 'noun' } );
+			postText = translate( 'Posts', { context: 'noun' } );
 
-		if ( pages && posts ) {
-			return this.translate(
-				'All done! Check out {{a}}Posts{{/a}} or ' +
-				'{{b}}Pages{{/b}} to see your imported content.', {
+		const pageCount = page.total;
+		const postCount = post.total;
+
+		if ( pageCount && postCount ) {
+			return this.props.translate(
+				'All done! Check out {{a}}Posts{{/a}} and ' +
+					'{{b}}Pages{{/b}} to see your imported content.',
+				{
 					components: {
 						a: postLink,
-						b: pageLink
-					}
+						b: pageLink,
+					},
 				}
 			);
 		}
 
-		if ( pages || posts ) {
-			return this.translate(
-				'All done! Check out {{a}}%(articles)s{{/a}} ' +
-				'to see your imported content.', {
-					components: { a: pages ? pageLink : postLink },
-					args: { articles: pages ? pageText : postText }
+		if ( pageCount || postCount ) {
+			return this.props.translate(
+				'All done! Check out {{a}}%(articles)s{{/a}} ' + 'to see your imported content.',
+				{
+					components: { a: pageCount ? pageLink : postLink },
+					args: { articles: pageCount ? pageText : postText },
 				}
 			);
 		}
 
-		return this.translate( 'Import complete!' );
-	},
+		return translate( 'Import complete!' );
+	};
 
-	isError: function() {
+	getImportMessage = numResources => {
+		if ( 0 === numResources ) {
+			return translate( 'Finishing up the import' );
+		}
+
+		return translate(
+			'Waiting on %(numResources)s resource to import',
+			'Waiting on %(numResources)s resources to import',
+			{
+				count: numResources,
+				args: { numResources: numberFormat( numResources ) },
+			}
+		);
+	};
+
+	isError = () => {
 		return this.isInState( appStates.IMPORT_FAILURE );
-	},
+	};
 
-	isFinished: function() {
+	isFinished = () => {
 		return this.isInState( appStates.IMPORT_SUCCESS );
-	},
+	};
 
-	isImporting: function() {
+	isImporting = () => {
 		return this.isInState( appStates.IMPORTING );
-	},
+	};
 
-	isInState: function( state ) {
+	isProcessing = () => {
+		return this.isInState( appStates.UPLOAD_PROCESSING );
+	};
+
+	isInState = state => {
 		return state === this.props.importerStatus.importerState;
-	},
+	};
 
-	isMapping: function() {
+	isMapping = () => {
 		return this.isInState( appStates.MAP_AUTHORS );
-	},
+	};
 
-	render: function() {
-		const { site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor } } = this.props;
-		const { importerId, errorData, customData } = this.props.importerStatus;
-		const progressClasses = classNames( 'importer__import-progress', { 'is-complete': this.isFinished() } );
-		let { percentComplete = 0, statusMessage } = this.props.importerStatus;
+	maybeLoadHotJar = () => {
+		if ( this.hjLoaded || ! this.isImporting() ) {
+			return;
+		}
+
+		this.hjLoaded = true;
+
+		this.props.loadTrackingTool( 'HotJar' );
+	};
+
+	componentDidMount() {
+		this.maybeLoadHotJar();
+	}
+
+	componentDidUpdate() {
+		this.maybeLoadHotJar();
+	}
+
+	render() {
+		const {
+			importerStatus: { importerId, customData },
+			mapAuthorFor,
+			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
+			sourceType,
+		} = this.props;
+
+		const progressClasses = classNames( 'importer__import-progress', {
+			'is-complete': this.isFinished(),
+		} );
+
+		let { percentComplete, progress, statusMessage } = this.props.importerStatus;
+		let blockingMessage;
 
 		if ( this.isError() ) {
-			statusMessage = errorData.description;
+			/**
+			 * TODO: This is for the status message that appears at the bottom
+			 * of the import section. This shouldn't be used for Error reporting.
+			 */
+			statusMessage = '';
 		}
 
 		if ( this.isFinished() ) {
@@ -122,28 +249,54 @@ export default React.createClass( {
 			statusMessage = this.getSuccessText();
 		}
 
+		if ( this.isImporting() && hasProgressInfo( progress ) ) {
+			const remainingResources = resourcesRemaining( progress );
+			percentComplete = calculateProgress( progress );
+			blockingMessage = this.getImportMessage( remainingResources );
+		}
+
 		return (
 			<div className="importer__importing-pane">
-				{ ( this.isError() || this.isImporting() ) ?
-					<p>{ this.getHeadingText() }</p>
-				: null }
-				{ this.isMapping() ?
-					<MappingPane
+				{ this.isImporting() && <p>{ this.getHeadingText() }</p> }
+				{ this.isProcessing() && <p>{ this.getHeadingTextProcessing() }</p> }
+				{ this.isMapping() && (
+					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
-						onMap={ ( source, target ) => mapAuthor( importerId, source, target ) }
+						onMap={ mapAuthorFor( importerId ) }
 						onStartImport={ () => startImporting( this.props.importerStatus ) }
-						{ ...{ siteId } }
+						siteId={ siteId }
+						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }
-						sourceTitle={ customData.siteTitle || this.translate( 'Original Site' ) }
+						sourceTitle={ customData.siteTitle || translate( 'Original Site' ) }
 						targetTitle={ siteName }
 					/>
-				:
-					<div>
+				) }
+				{ ( this.isImporting() || this.isProcessing() ) &&
+					( percentComplete >= 0 ? (
 						<ProgressBar className={ progressClasses } value={ percentComplete } />
-						<p className="importer__status-message">{ statusMessage }</p>
-					</div>
-				}
+					) : (
+						<div>
+							<Spinner className="importer__import-spinner" />
+							<br />
+						</div>
+					) ) }
+				{ blockingMessage && <div>{ blockingMessage }</div> }
+				<div>
+					<p className="importer__status-message">{ statusMessage }</p>
+				</div>
 			</div>
 		);
 	}
+}
+
+const mapFluxDispatchToProps = dispatch => ( {
+	mapAuthorFor: importerId => ( source, target ) =>
+		setTimeout( () => {
+			dispatch( mapAuthor( importerId, source, target ) );
+		}, 0 ),
 } );
+
+export default connect(
+	null,
+	{ loadTrackingTool }
+)( connectDispatcher( null, mapFluxDispatchToProps )( localize( ImportingPane ) ) );

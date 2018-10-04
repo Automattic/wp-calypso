@@ -1,50 +1,72 @@
+/** @format */
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React from 'react';
+import classNames from 'classnames';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Count from 'components/count';
-import Gridicon from 'components/gridicon';
 
-export default React.createClass( {
+export class BulkSelect extends React.Component {
+	static displayName = 'BulkSelect';
 
-	displayName: 'BulkSelect',
+	static propTypes = {
+		id: PropTypes.string,
+		totalElements: PropTypes.number.isRequired,
+		selectedElements: PropTypes.number.isRequired,
+		onToggle: PropTypes.func.isRequired,
+	};
 
-	propTypes: {
-		totalElements: React.PropTypes.number.isRequired,
-		selectedElements: React.PropTypes.number.isRequired,
-		onToggle: React.PropTypes.func.isRequired
-	},
-
-	getStateIcon() {
+	getStateIcon = () => {
 		if ( this.hasSomeElementsSelected() ) {
-			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={ 18 }/>;
+			return <Gridicon className="bulk-select__some-checked-icon" icon="minus-small" size={ 18 } />;
 		}
-	},
+	};
 
-	hasAllElementsSelected() {
+	hasAllElementsSelected = () => {
 		return this.props.selectedElements && this.props.selectedElements === this.props.totalElements;
-	},
+	};
 
-	hasSomeElementsSelected() {
+	hasSomeElementsSelected = () => {
 		return this.props.selectedElements && this.props.selectedElements < this.props.totalElements;
-	},
+	};
 
-	handleToggleAll() {
+	handleToggleAll = () => {
 		const newCheckedState = ! ( this.hasSomeElementsSelected() || this.hasAllElementsSelected() );
 		this.props.onToggle( newCheckedState );
-	},
+	};
 
 	render() {
+		const { translate, ariaLabel = translate( 'Select All' ) } = this.props;
+		const isChecked = this.hasAllElementsSelected();
+		const inputClasses = classNames( 'bulk-select__box', {
+			// We need to add this CSS class to be able to test if the input if checked,
+			// since Enzyme still doesn't support :checked pseudoselector.
+			'is-checked': isChecked,
+		} );
+
 		return (
-			<div className="bulk-select" onClick={ this.handleToggleAll }>
-				<input type="checkbox" className="bulk-select__box" checked={ this.hasAllElementsSelected() } readOnly />
-				<Count count={ this.props.selectedElements } />
-				{ this.getStateIcon() }
-			</div>
+			<span className="bulk-select">
+				<label className="bulk-select__container">
+					<input
+						type="checkbox"
+						className={ inputClasses }
+						checked={ isChecked }
+						onChange={ this.handleToggleAll }
+						aria-label={ ariaLabel }
+					/>
+					<Count count={ this.props.selectedElements } />
+					{ this.getStateIcon() }
+				</label>
+			</span>
 		);
 	}
-} );
+}
+
+export default localize( BulkSelect );

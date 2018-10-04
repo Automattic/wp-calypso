@@ -1,0 +1,66 @@
+.plan-price {
+	margin: 0;
+	font-size: 28px;
+	line-height: 1.5;
+	color: $gray-dark;
+
+	&.is-placeholder {
+		@include placeholder( 23% );
+		width: 60px;
+		margin: 10px 0;
+		height: 21px;
+	}
+
+	@include breakpoint( "<960px" ) {
+		font-size: 24px;
+	}
+}
+
+.plan-price.is-original {
+	color: $gray;
+}
+
+.plan-price.is-discounted {
+	color: $alert-green;
+}
+
+.plan-price.is-discounted,
+.plan-price.is-original {
+	position: relative;
+	align-items: stretch;
+	margin-right: 8px;
+}
+
+.plan-price.is-original:before {
+	position: absolute;
+	content: "";
+	left: 0;
+	top: 50%;
+	right: 0;
+	border-top: 2px solid $orange-fire;
+	transform: rotate( -16deg );
+	opacity: .9;
+}
+
+.plan-price__currency-symbol,
+.plan-price__fraction {
+	vertical-align: super;
+	font-size: 12px;
+}
+
+.plan-price.is-discounted .plan-price__currency-symbol {
+	color: $alert-green;
+}
+
+.plan-price__currency-symbol {
+	color: $gray;
+}
+
+.plan-price__integer {
+	margin: 0 1px;
+	font-weight: 400;
+}
+
+.plan-price__fraction {
+	font-weight: 500;
+}

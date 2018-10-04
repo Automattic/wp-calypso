@@ -1,30 +1,30 @@
+/** @format */
 /**
  * Module dependencies
  */
-var os = require( 'os' ),
-	path = require( 'path' ),
+
+var path = require( 'path' ),
 	spawn = require( 'child_process' ).spawn,
 	debug = require( 'debug' )( 'build' );
 
 /**
- * Returns a "build middleware", which runs `make build-css` upon each HTTP
+ * Returns a "build middleware", which runs `npm run build-css` upon each HTTP
  * request. Meant for use in "development" env.
  *
  * @return {Function} build middleware function
  * @public
  */
 function setup() {
-
 	var build = null,
-		cores = os.cpus().length,
 		errors = '',
 		rootdir = path.resolve( __dirname, '..', '..' );
 
 	function spawnMake() {
-		debug( 'spawning %o', 'make build-css --jobs ' + cores );
-		build = spawn( 'make', [ 'build-css', '--jobs', cores ], {
+		debug( 'spawning %o', 'npm run build-css' );
+		build = spawn( 'npm', [ 'run', 'build-css' ], {
+			shell: true,
 			cwd: rootdir,
-			stdio: [ 'ignore', 'pipe', 'pipe']
+			stdio: [ 'ignore', 'pipe', 'pipe' ],
 		} );
 		errors = '';
 		build.once( 'exit', onexit );
@@ -48,8 +48,7 @@ function setup() {
 		errors += stderr.toString( 'utf8' );
 	}
 
-	return function ( req, res, next ) {
-
+	return function( req, res, next ) {
 		if ( ! build ) {
 			spawnMake();
 		}
@@ -60,7 +59,7 @@ function setup() {
 				next();
 			} else {
 				// `make` failed
-				res.send( '<pre>`make build-css` failed \n\n' + errors + '</pre>' );
+				res.send( '<pre>`npm run build-css` failed \n\n' + errors + '</pre>' );
 			}
 		} );
 	};

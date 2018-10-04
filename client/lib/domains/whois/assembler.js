@@ -1,10 +1,25 @@
+/** @format */
+
 /**
  * External dependencies
  */
-const find = require( 'lodash/collection/find' );
 
-function createDomainObject( dataTransferObject ) {
-	const contactInformation = find( dataTransferObject, 'type', 'registrant' ) || {};
+import { find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { whoisType } from './constants';
+
+function createDomainWhois( dataTransferObject ) {
+	const registrantWhois = createWhois( dataTransferObject, whoisType.REGISTRANT ),
+		privacyServiceWhois = createWhois( dataTransferObject, whoisType.PRIVACY_SERVICE );
+
+	return [ registrantWhois, privacyServiceWhois ];
+}
+
+function createWhois( dataTransferObject, type ) {
+	const contactInformation = find( dataTransferObject, { type } ) || {};
 
 	return {
 		firstName: contactInformation.fname || '',
@@ -20,10 +35,11 @@ function createDomainObject( dataTransferObject ) {
 		countryName: contactInformation.cc || '',
 		email: contactInformation.email || '',
 		phone: contactInformation.phone || '',
-		fax: contactInformation.fax || ''
+		fax: contactInformation.fax || '',
+		type,
 	};
 }
 
-module.exports = {
-	createDomainObject
+export default {
+	createDomainWhois,
 };

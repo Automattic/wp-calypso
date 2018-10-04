@@ -1,0 +1,210 @@
+//Mostly copied from Seo Preview
+.facebook-share-preview {
+	border: 1px solid;
+	border-color: #e9ebee #e9ebee #d1d1d1;
+	display: flex;
+	overflow-x: auto;
+	max-width: 527px;
+	margin: 0 auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.facebook-share-preview__content {
+	display: flex;
+}
+
+.facebook-share-preview__body {
+	display: flex;
+	flex-direction: column;
+	margin: 10px 12px;
+}
+
+.facebook-share-preview__title {
+	color: #1d2129;
+	font-family: Georgia, serif;
+	font-size: 18px;
+	font-weight: 500;
+	line-height: 22px;
+	max-height: 100px;
+	transition: color 0.1s ease-in-out;
+}
+
+.facebook-share-preview__description {
+	color: #4b4f56;
+	flex-grow: 1;
+	font-family: helvetica, arial, sans-serif;
+	font-size: 12px;
+	line-height: 16px;
+	overflow-y: hidden;
+}
+
+.facebook-share-preview__url {
+	color: #90949c;
+	font-family: helvetica, arial, sans-serif;
+	font-size: 11px;
+	line-height: 11px;
+	text-transform: uppercase;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.facebook-share-preview__article {
+	.facebook-share-preview__content {
+		flex-direction: column;
+		min-width: 100%;
+	}
+
+	.facebook-share-preview__image {
+		max-height: 250px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow-y: hidden;
+
+		& img {
+			height: auto;
+			width: 100%;
+			max-width: 527px;
+		}
+	}
+
+	.facebook-share-preview__body {
+		height: auto;
+		max-height: 100px;
+	}
+
+	.facebook-share-preview__title {
+		margin-bottom: 5px;
+	}
+
+	.facebook-share-preview__url {
+		margin-top: 9px;
+	}
+}
+
+.facebook-share-preview__website {
+	max-height: 158px;
+
+	.facebook-share-preview__image {
+		flex-shrink: 0;
+		height: 100%;
+		width: 158px;
+
+		& img {
+			display: block;
+			font-size: 14px;
+			height: auto;
+			width: 100%;
+		}
+	}
+
+	.facebook-share-preview__body {
+		width: 100%;
+	}
+
+	.facebook-share-preview__title {
+		margin-bottom: 5px;
+		max-height: 110px;
+	}
+
+	.facebook-share-preview__url {
+		margin-top: auto;
+		margin-bottom: 5px;
+	}
+}
+
+
+.twitter-share-preview {
+	width: inherit;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	margin: 20px;
+}
+
+.twitter-share-preview__summary {
+	width: 506px;
+	height: 125px;
+	margin: 0 auto;
+	overflow: hidden;
+	border: 1px solid #E1E8ED;
+	border-radius: 0.42857em;
+}
+
+.twitter-share-preview__large_image_summary {
+	width: 506px;
+	height: auto;
+	margin: 0 auto;
+	overflow: hidden;
+	border: 1px solid #E1E8ED;
+	border-radius: 0.42857em;
+}
+
+.twitter-share-preview__image {
+	background-size: cover;
+	background-position: center;
+}
+
+.twitter-share-preview__summary
+.twitter-share-preview__image {
+	float: left;
+	width: 125px;
+	height: 125px;
+}
+
+.twitter-share-preview__large_image_summary
+.twitter-share-preview__image {
+	width: 506px;
+	height: 254px;
+	border-bottom: 1px solid #E1E8ED;
+}
+
+.twitter-share-preview__body {
+	padding: .75em;
+	text-decoration: none;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	color: black;
+	text-align: left;
+	line-height: 1.3em;
+	overflow: hidden;
+}
+
+.twitter-share-preview__summary
+.twitter-share-preview__body {
+	margin-left: 125px;
+	border-left: 1px solid #E1E8ED;
+	height: 100%;
+}
+
+.twitter-share-preview__large_image_summary
+.twitter-share-preview__body {
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+.twitter-share-preview__title {
+	max-height: 1.3em;
+	white-space: nowrap;
+	font-weight: bold;
+	font-size: 1em;
+	margin: 0 0 .15em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.twitter-share-preview__description {
+	margin-top: 0.32333em;
+	max-height: 3.9em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.twitter-share-preview__url {
+	text-transform: lowercase;
+	color: #8899A6;
+	max-height: 1.3em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-top: 0.32333em;
+}

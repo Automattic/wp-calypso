@@ -1,0 +1,31 @@
+.post-action-counts {
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+}
+
+.post-action-counts li {
+	display: inline;
+
+	&::after {
+		margin: 0 4px;
+		content: "•";
+	}
+
+	&:last-child {
+		&::after {
+			content: "";
+		}
+	}
+}
+
+.post-action-counts li a,
+.post-action-counts li a:active,
+.post-action-counts li a:visited
+ {
+	color: $gray-text-min;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}

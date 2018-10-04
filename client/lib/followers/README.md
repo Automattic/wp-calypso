@@ -26,59 +26,49 @@ Fetches followers in batches of 100 starting from the given page, which defaults
 
 ###Example Component Code
 
-```
+```es6
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var FollowersStore = require( 'lib/followers/wpcom-followers-store' ),
-	FollowersActions = require( 'lib/followers/actions' );
+import FollowersStore from 'lib/followers/wpcom-followers-store';
+import FollowersActions from 'lib/followers/actions';
 
-module.exports = React.createClass( { 
+export default class extends React.Component {
+	static displayName = 'yourComponent';
 
-	displayName: 'yourComponent',
+	state = this.getFollowers();
 	
 	fetchOptions: {
 	    siteId: this.props.siteId,
 	    type: 'email'
-	},
+	}
 	
-	componentDidMount: function() {
+	componentDidMount() {
 		FollowersActions.fetchFollowers( this.fetchOptions );
 		FollowersStore.on( 'change', this.refreshFollowers );
-	},
+	}
 	
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		FollowersStore.removeListener( 'change', this.refreshFollowers );
-	},
-
-	getInitialState: function() {
-		return this.getFollowers();
-	},
+	} 
 	
-	getFollowers: function() {
+	getFollowers = () => {
 		return {
 			followers: FollowersStore.getFollowers( this.props.fetchOptions )
 		};
 	},
 
-	refreshFollowers: function() {
+	refreshFollowers = () => {
 		this.setState( this.getFollowers() );
-	},
-	
-	render: function() {
-		
 	}
 	
-} );
-
+	render() {
+		
+	} 
+} 
 ```
-
-###Testing
-
-To run tests go to 
-```cd client/lib/followers/ && make test```

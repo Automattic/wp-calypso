@@ -1,248 +1,264 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	notices = require( 'notices' ),
-	classNames = require( 'classnames' ),
-	debug = require( 'debug' )( 'calypso:my-sites:ads-earnings' );
+
+import React, { Component } from 'react';
+import notices from 'notices';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' ),
-	WordadsActions = require( 'lib/ads/actions' ),
-	EarningsStore = require( 'lib/ads/earnings-store' );
+import PropTypes from 'prop-types';
+import Card from 'components/card';
+import Gridicon from 'gridicons';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getWordAdsEarnings } from 'state/wordads/earnings/selectors';
+import QueryWordadsEarnings from 'components/data/query-wordads-earnings';
 
-module.exports = React.createClass( {
+class AdsFormEarnings extends Component {
+	static propTypes = {
+		siteId: PropTypes.number,
+		earnings: PropTypes.object,
+	};
 
-	displayName: 'AdsFormEarnings',
+	state = {
+		showEarningsNotice: false,
+		showWordadsInfo: false,
+		showSponsoredInfo: false,
+		showAdjustmentInfo: false,
+	};
 
-	componentWillMount: function() {
-		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
-		EarningsStore.on( 'change', this.updateSettings );
-		this._fetchIfEmpty();
-	},
-
-	componentWillUnmount: function() {
-		EarningsStore.removeListener( 'change', this.updateSettings );
-	},
-
-	updateSettings: function() {
-		this.setState( this.getSettingsFromStore() );
-	},
-
-	componentDidUpdate: function() {
-		if ( this.state.error ) {
+	componentDidUpdate() {
+		if ( this.state.error && this.state.error.message ) {
 			notices.error( this.state.error.message );
 		} else {
 			notices.clearNotices( 'notices' );
 		}
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		if ( ! EarningsStore.getById( nextProps.site.ID ).earnings ) {
-			this.resetState();
-		}
-
-		if ( this.props.site.ID !== nextProps.site.ID ) {
-			this._fetchIfEmpty( nextProps.site );
-			this.setState( this.getSettingsFromStore( nextProps.site ) );
-		}
-	},
-
-	getInitialState: function() {
-		return this.getSettingsFromStore();
-	},
-
-	getSettingsFromStore: function( siteInstance ) {
-		var site = siteInstance || this.props.site,
-			store = EarningsStore.getById( site.ID ) || {};
-
-		store.showEarningsNotice = false;
-		store.showWordadsInfo = false;
-		store.showSponsoredInfo = false;
-		store.showAdjustmentInfo = false;
-
-		return store;
-	},
-
-	resetState: function() {
-		this.replaceState( {
-			earnings: {
-				adjustment: {},
-				sponsored: {},
-				wordads: {},
-				total_amount_owed: '0.00',
-				total_earnings: '0.00',
-			},
-			isLoading: false,
-			error: {},
-			showEarningsNotice: false,
-			showWordadsInfo: false,
-			showSponsoredInfo: false,
-			showAdjustmentInfo: false
-		} );
-	},
-
-	_fetchIfEmpty: function( site ) {
-		var site = site || this.props.site;
-		if ( ! site || ! site.ID ) {
-			return;
-		}
-
-		if ( EarningsStore.getById( site.ID ).earnings ) {
-			debug( 'initial fetch not necessary' );
-			return;
-		}
-
-		// defer fetch requests to avoid dispatcher conflicts
-		setTimeout( function() {
-			WordadsActions.fetchEarnings( site )
-		}, 0 );
-	},
-
-	toggleEarningsNotice: function( event ) {
+	handleEarningsNoticeToggle = event => {
 		event.preventDefault();
-		this.setState( { showEarningsNotice: ! this.state.showEarningsNotice } );
-	},
+		this.setState( {
+			showEarningsNotice: ! this.state.showEarningsNotice,
+		} );
+	};
 
-	toggleInfo: function( type, event ) {
+	handleInfoToggle = type => event => {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
-				this.setState( { showWordadsInfo: ! this.state.showWordadsInfo } );
+				this.setState( {
+					showWordadsInfo: ! this.state.showWordadsInfo,
+				} );
 				break;
 			case 'sponsored':
-				this.setState( { showSponsoredInfo: ! this.state.showSponsoredInfo } );
+				this.setState( {
+					showSponsoredInfo: ! this.state.showSponsoredInfo,
+				} );
 				break;
 			case 'adjustment':
-				this.setState( { showAdjustmentInfo: ! this.state.showAdjustmentInfo } );
+				this.setState( {
+					showAdjustmentInfo: ! this.state.showAdjustmentInfo,
+				} );
 				break;
 		}
-	},
+	};
 
-	getInfoToggle: function( type ) {
-		var types = {
+	getInfoToggle( type ) {
+		const types = {
 			wordads: this.state.showWordadsInfo,
 			sponsored: this.state.showSponsoredInfo,
 			adjustment: this.state.showAdjustmentInfo,
-		}
+		};
 
 		return types[ type ] ? types[ type ] : false;
-	},
+	}
 
-	checkSize: function( obj ) {
+	checkSize( obj ) {
 		if ( ! obj ) {
 			return 0;
 		}
 
 		return Object.keys( obj ).length;
-	},
+	}
 
-	swapYearMonth: function( date ) {
-		var splits = date.split( '-' );
-		return splits[1] + '-' + splits[0];
-	},
+	swapYearMonth( date ) {
+		const splits = date.split( '-' );
+		return splits[ 1 ] + '-' + splits[ 0 ];
+	}
 
-	getStatus: function( status ) {
-		var statuses = {
-			0: this.translate( 'Unpaid' ),
-			1: this.translate( 'Paid' ),
-			2: this.translate( 'a8c-only' ),
-			3: this.translate( 'Pending (Missing Tax Info)' ),
-			4: this.translate( 'Pending (Invalid PayPal)' )
-		}
+	getStatus( status ) {
+		const { translate } = this.props;
+		const statuses = {
+			0: {
+				name: translate( 'Unpaid' ),
+				tooltip: translate( 'Payment is on hold until the end of the current month.' ),
+			},
+			1: {
+				name: translate( 'Paid' ),
+				tooltip: translate( 'Payment has been processed through PayPal.' ),
+			},
+			2: {
+				name: translate( 'a8c-only' ),
+			},
+			3: {
+				name: translate( 'Pending (Missing Tax Info)' ),
+				tooltip: translate(
+					'Payment is pending due to missing information. ' +
+						'You can provide tax information in the settings screen.'
+				),
+			},
+			4: {
+				name: translate( 'Pending (Invalid PayPal)' ),
+				tooltip: translate(
+					'Payment processing has failed due to invalid PayPal address. ' +
+						'You can correct the PayPal address in the settings screen.'
+				),
+			},
+		};
 
-		return statuses[ status ] ? statuses[ status ] : '?';
-	},
+		return (
+			<span title={ statuses[ status ].tooltip ? statuses[ status ].tooltip : '' }>
+				{ statuses[ status ] ? statuses[ status ].name : '?' }
+			</span>
+		);
+	}
 
-	payoutNotice: function() {
-		var owed = this.state.earnings && this.state.earnings.total_amount_owed ? this.state.earnings.total_amount_owed : '0.00',
-			notice = this.translate(
-				'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. Payment will be made as soon as the total outstanding amount has reached $100.',
+	payoutNotice() {
+		const { earnings, numberFormat, translate } = this.props;
+		const owed =
+				earnings && earnings.total_amount_owed
+					? numberFormat( earnings.total_amount_owed, 2 )
+					: '0.00',
+			notice = translate(
+				'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
+					'Payment will be made as soon as the total outstanding amount has reached $100.',
 				{
 					comment: 'Insufficient balance for payout.',
-					args: { amountOwed: owed }
+					args: { amountOwed: owed },
 				}
 			),
-			payout = this.translate(
+			payout = translate(
 				'Outstanding amount of $%(amountOwed)s will be paid by the last business day of the month.',
 				{
 					comment: 'Payout will proceed.',
-					args: { amountOwed: owed }
+					args: { amountOwed: owed },
 				}
 			);
 
 		return (
-			<div className="module-content-text module-content-text-info">
+			<div className="ads__module-content-text module-content-text module-content-text-info">
 				<p>{ owed < 100 ? notice : payout }</p>
 			</div>
 		);
-	},
+	}
 
-	infoNotice: function() {
+	infoNotice() {
+		const { translate } = this.props;
+
 		return (
-			<div className="module-content-text module-content-text-info">
-				<p>{ this.translate( 'Payments can have the following statuses:' ) }</p>
-				<ul className="earnings_history__statuses-list">
-					<li className="earnings_history__status"><strong>{ this.translate( 'Unpaid:' ) } </strong>
-						{ this.translate( 'Payment is on hold until the end of the current month.' ) }
+			<div className="ads__module-content-text module-content-text module-content-text-info">
+				<p>
+					{ translate(
+						'{{strong}}Ads Served{{/strong}} is the number of ads we attempted to display on your site ' +
+							'(page impressions x available ad slots).',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'Not every ad served will result in a paid impression. This can happen when:'
+					) }
+				</p>
+
+				<ul className="ads__earnings-history-info-list">
+					<li className="ads__earnings-history-info">
+						{ translate( 'A visitor is using an ad blocker, preventing ads from showing.' ) }
 					</li>
-					<li className="earnings_history__status"><strong>{ this.translate( 'Paid:' ) } </strong>
-						{ this.translate( 'Payment has been processed through PayPal.' ) }
+					<li className="ads__earnings-history-info">
+						{ translate(
+							'A visitor leaves your site before ads can fully load in their browser.'
+						) }
 					</li>
-					<li className="earnings_history__status"><strong>{ this.translate( 'Pending (Missing Tax Info):' ) } </strong>
-						{ this.translate( 'Payment is pending due to missing information. You can provide tax information in the settings screen.' ) }
-					</li>
-					<li className="earnings_history__status"><strong>{ this.translate( 'Pending (Invalid PayPal):' ) } </strong>
-						{ this.translate( 'Payment processing has failed due to invalid PayPal address. You can correct the PayPal address in the settings screen.' ) }
+					<li className="ads__earnings-history-info">
+						{ translate(
+							'There were no advertisers who bid higher than the minimum price required to display their ad.'
+						) }
 					</li>
 				</ul>
+
+				<hr />
+
+				<p>
+					<em>
+						{ translate( 'Earnings fluctuate based on real-time bidding from advertisers.' ) }
+					</em>
+				</p>
 			</div>
 		);
-	},
+	}
 
-	earningsBreakdown: function() {
-		var earnings = this.state.earnings && this.state.earnings.total_earnings ? Number( this.state.earnings.total_earnings ) : 0,
-			owed = this.state.earnings && this.state.earnings.total_amount_owed ? Number( this.state.earnings.total_amount_owed ) : 0,
-			paid = this.state.earnings && this.state.earnings.total_earnings && this.state.earnings.total_amount_owed ?
-				( this.state.earnings.total_earnings - this.state.earnings.total_amount_owed ) : 0;
+	earningsBreakdown() {
+		const { earnings, numberFormat, translate } = this.props;
+		const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0,
+			owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0,
+			paid =
+				earnings && earnings.total_earnings && earnings.total_amount_owed
+					? earnings.total_earnings - earnings.total_amount_owed
+					: 0;
 
 		return (
-			<ul className="earnings_breakdown__list" >
-				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">{ this.translate( 'Total earnings', { context: 'Sum of earnings' } ) }</span>
-					<span className="earnings_breakdown__value">${ this.numberFormat( earnings, 2 ) }</span>
+			<ul className="ads__earnings-breakdown-list">
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
+						{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
+					</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( total, 2 ) }</span>
 				</li>
-				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">{ this.translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }</span>
-					<span className="earnings_breakdown__value">${ this.numberFormat( paid, 2 ) }</span>
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
+						{ translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }
+					</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( paid, 2 ) }</span>
 				</li>
-				<li className="earnings_breakdown__item">
-					<span className="earnings_breakdown__label">{ this.translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }</span>
-					<span className="earnings_breakdown__value">${ this.numberFormat( owed, 2 ) }</span>
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
+						{ translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }
+					</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( owed, 2 ) }</span>
 				</li>
 			</ul>
 		);
-	},
+	}
 
-	earningsTable: function( earnings, header_text, type ) {
-		var period,
-			rows = [],
+	earningsTable( earnings, header_text, type ) {
+		const { numberFormat, translate } = this.props;
+		const rows = [],
 			infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline',
 			classes = classNames( 'earnings_history', {
-				'is-showing-info': this.getInfoToggle( type )
+				'is-showing-info': this.getInfoToggle( type ),
 			} );
 
-		for ( period in earnings ) {
+		for ( const period in earnings ) {
 			if ( earnings.hasOwnProperty( period ) ) {
 				rows.push(
 					<tr key={ type + '-' + period }>
-						<td className="earnings-history__value">{ this.swapYearMonth( period ) }</td>
-						<td className="earnings-history__value">${ this.numberFormat( earnings[period].amount, 2 ) }</td>
-						<td className="earnings-history__value">{ earnings[period].pageviews }</td>
-						<td className="earnings-history__value">{ this.getStatus( earnings[period].status ) }</td>
+						<td className="ads__earnings-history-value">{ this.swapYearMonth( period ) }</td>
+						<td className="ads__earnings-history-value">
+							${ numberFormat( earnings[ period ].amount, 2 ) }
+						</td>
+						<td className="ads__earnings-history-value">
+							{ numberFormat( earnings[ period ].pageviews ) }
+						</td>
+						<td className="ads__earnings-history-value">
+							{ this.getStatus( earnings[ period ].status ) }
+						</td>
 					</tr>
 				);
 			}
@@ -250,81 +266,102 @@ module.exports = React.createClass( {
 
 		return (
 			<Card className={ classes }>
-				<div className="module-header">
-					<h1 className="module-header-title">{ header_text }</h1>
-					<ul className="module-header-actions">
-						<li className="module-header-action toggle-info">
-							<a href="#"
-								className="module-header-action-link"
-								aria-label={ this.translate( 'Show or hide panel information' ) }
-								title={ this.translate( 'Show or hide panel information' ) }
-								onClick={ this.toggleInfo.bind( this, type ) }>
+				<div className="ads__module-header module-header">
+					<h1 className="ads__module-header-title module-header-title">{ header_text }</h1>
+					<ul className="ads__module-header-actions module-header-actions">
+						<li className="ads__module-header-action module-header-action toggle-info">
+							<a
+								href="#"
+								className="ads__module-header-action-link module-header-action-link"
+								aria-label={ translate( 'Show or hide panel information' ) }
+								title={ translate( 'Show or hide panel information' ) }
+								onClick={ this.handleInfoToggle( type ) }
+							>
 								<Gridicon icon={ infoIcon } />
 							</a>
 						</li>
 					</ul>
 				</div>
-				<div className="module-content">
+				<div className="ads__module-content module-content">
 					{ this.infoNotice() }
 					<table>
 						<thead>
 							<tr>
-								<th className="earnings-history__header">{ this.translate( 'Period' ) }</th>
-								<th className="earnings-history__header">{ this.translate( 'Earnings' ) }</th>
-								<th className="earnings-history__header">{ this.translate( 'Ad Impressions' ) }</th>
-								<th className="earnings-history__header">{ this.translate( 'Status' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Period' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Earnings' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Ads Served' ) }</th>
+								<th className="ads__earnings-history-header">{ translate( 'Status' ) }</th>
 							</tr>
 						</thead>
-						<tbody>
-							{ rows }
-						</tbody>
+						<tbody>{ rows }</tbody>
 					</table>
 				</div>
 			</Card>
 		);
-	},
+	}
 
-	render: function() {
-		var infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline',
+	render() {
+		const { siteId, earnings, translate } = this.props;
+		const infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline',
 			classes = classNames( 'earnings_breakdown', {
-				'is-showing-info': this.state.showEarningsNotice
+				'is-showing-info': this.state.showEarningsNotice,
 			} );
 
 		return (
 			<div>
+				<QueryWordadsEarnings siteId={ siteId } />
+
 				<Card className={ classes }>
-					<div className="module-header">
-						<h1 className="module-header-title">{ this.translate( 'Totals' ) }</h1>
-						<ul className="module-header-actions">
-							<li className="module-header-action toggle-info">
-								<a href="#"
-									className="module-header-action-link"
-									aria-label={ this.translate( 'Show or hide panel information' ) }
-									title={ this.translate( 'Show or hide panel information' ) }
-									onClick={ this.toggleEarningsNotice } >
+					<div className="ads__module-header module-header">
+						<h1 className="ads__module-header-title module-header-title">
+							{ translate( 'Totals' ) }
+						</h1>
+						<ul className="ads__module-header-actions module-header-actions">
+							<li className="ads__module-header-action module-header-action toggle-info">
+								<a
+									href="#"
+									className="ads__module-header-action-link module-header-action-link"
+									aria-label={ translate( 'Show or hide panel information' ) }
+									title={ translate( 'Show or hide panel information' ) }
+									onClick={ this.handleEarningsNoticeToggle }
+								>
 									<Gridicon icon={ infoIcon } />
 								</a>
 							</li>
 						</ul>
 					</div>
-					<div className="module-content">
+					<div className="ads__module-content module-content">
 						{ this.payoutNotice() }
 						{ this.earningsBreakdown() }
 					</div>
 				</Card>
-				{ this.state.earnings && this.checkSize( this.state.earnings.wordads ) ?
-					this.earningsTable( this.state.earnings.wordads, this.translate( 'Earnings History' ), 'wordads' ) :
-					null
-				}
-				{ this.state.earnings && this.checkSize( this.state.earnings.sponsored ) ?
-					this.earningsTable( this.state.earnings.sponsored, this.translate( 'Sponsored Content History' ), 'sponsored' ) :
-					null
-				}
-				{ this.state.earnings && this.checkSize( this.state.earnings.adjustment ) ?
-					this.earningsTable( this.state.earnings.adjustment, this.translate( 'Adjustments History' ), 'adjustment' ) :
-					null
-				}
+				{ earnings && this.checkSize( earnings.wordads )
+					? this.earningsTable( earnings.wordads, translate( 'Earnings History' ), 'wordads' )
+					: null }
+				{ earnings && this.checkSize( earnings.sponsored )
+					? this.earningsTable(
+							earnings.sponsored,
+							translate( 'Sponsored Content History' ),
+							'sponsored'
+					  )
+					: null }
+				{ earnings && this.checkSize( earnings.adjustment )
+					? this.earningsTable(
+							earnings.adjustment,
+							translate( 'Adjustments History' ),
+							'adjustment'
+					  )
+					: null }
 			</div>
 		);
 	}
-} );
+}
+
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		siteId,
+		earnings: getWordAdsEarnings( state, siteId ),
+	};
+} )( localize( AdsFormEarnings ) );

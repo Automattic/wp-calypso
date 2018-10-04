@@ -1,19 +1,22 @@
+/** @format */
+
 /**
  * Encode single characters with backslashes.
+ *
  * @param {string} charStr single-character string.
  * @return {string} backslash escaped character.
- *
  * @copyright (c) 2013, GoInstant Inc., a salesforce.com company.
  * @license See CREDITS.md.
  * @see https://github.com/goinstant/secure-filters/blob/master/lib/secure-filters.js
- *
  * @private
- **/
+ */
+
 function jsSlashEncoder( charStr ) {
-	var code = charStr.charCodeAt( 0 ),
+	const code = charStr.charCodeAt( 0 ),
 		hex = code.toString( 16 ).toUpperCase();
 
-	if ( code < 0x80 ) { // ASCII
+	if ( code < 0x80 ) {
+		// ASCII
 		if ( hex.length === 1 ) {
 			return '\\x0' + hex;
 		}
@@ -43,11 +46,13 @@ function jsSlashEncoder( charStr ) {
  * @return {string} JSON serialized string
  **/
 exports.jsonStringifyForHtml = function( value ) {
-	var jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;
-	var cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
-	return JSON.stringify( value )
-		.replace( jsonInHtmlBlacklist, jsSlashEncoder )
-		// prevent breaking out of CDATA context.  Escaping < below is sufficient
-		// to prevent opening a CDATA context.
-		.replace( cdataClose, '\\x5D\\x5D\\x3E' );
+	const jsonInHtmlBlacklist = /[^\x22,\-\.0-9:A-Z\[\x5C\]_a-z{}]/g;
+	const cdataClose = /\]\](?:>|\\x3E|\\u003E)/gi;
+	return (
+		JSON.stringify( value )
+			.replace( jsonInHtmlBlacklist, jsSlashEncoder )
+			// prevent breaking out of CDATA context.  Escaping < below is sufficient
+			// to prevent opening a CDATA context.
+			.replace( cdataClose, '\\x5D\\x5D\\x3E' )
+	);
 };

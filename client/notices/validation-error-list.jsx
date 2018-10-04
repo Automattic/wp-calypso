@@ -1,34 +1,41 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	map = require( 'lodash/collection/map' );
 
-module.exports = React.createClass( {
-	displayName: 'ValidationErrorList',
+import { map } from 'lodash';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
 
-	propTypes: {
-		messages: React.PropTypes.array.isRequired
-	},
+class ValidationErrorList extends React.Component {
+	static displayName = 'ValidationErrorList';
 
-	render: function() {
+	static propTypes = {
+		messages: PropTypes.array.isRequired,
+	};
+
+	render() {
 		return (
 			<div>
 				<p>
-					{ this.translate(
+					{ this.props.translate(
 						'Please correct the issue below and try again.',
 						'Please correct the issues listed below and try again.',
 						{
-							count: this.props.messages.length
+							count: this.props.messages.length,
 						}
 					) }
 				</p>
 				<ul>
 					{ map( this.props.messages, function( message, index ) {
-						return ( <li key={ index }>{ message }</li> );
+						return <li key={ index }>{ message }</li>;
 					} ) }
 				</ul>
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( ValidationErrorList );

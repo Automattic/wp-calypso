@@ -1,19 +1,41 @@
-.reader__content {
-	a {
-		color: $blue-medium;
+.is-reader-page .layout__content {
+	padding-top: 47px;
+}
 
-		&:hover {
-			color: $blue-light;
-		}
+.is-group-reader .async-load {
+	margin: 30px auto;
+	width: 50%
+}
+
+.is-reader-page .reader__content,
+.is-reader-page .reader-start {
+	margin-top: 0;
+}
+
+.is-reader-page .recommended-for-you.main,
+.is-reader-page .following.main {
+
+	@include breakpoint( ">660px" ) {
+		margin: 30px auto;
+	}
+}
+
+.is-reader-page .reader-full-post__story-content {
+	margin-top: 0;
+}
+
+.reader__content {
+	sup, sub {
+		position: relative;
+		font-size: 0.83em;
 	}
 
-	img.emoji, img.wp-smiley {
-		display: inline;
-		height: 1em;
-		width: 1em;
-		margin: 0;
-		padding: 0 0.2em;
-		vertical-align: -0.1em;
+	sup {
+		top: -0.5em;
+	}
+
+	sub {
+		bottom: -0.5em;
 	}
 }
 
@@ -42,21 +64,6 @@
 	}
 }
 
-.reader__post-time {
-	color: lighten( $gray, 10 );
-	font-size: 12px;
-	line-height: 1;
-	white-space: nowrap;
-
-	@include breakpoint( "<480px" ) {
-		font-size: 11px;
-	}
-}
-
-.reader__post-time a {
-	color: inherit;
-}
-
 .reader__post-title {
 	clear: none;
 	font-family: $serif;
@@ -81,6 +88,48 @@
 	}
 }
 
+// Back button in Reader FeedHeader
+.is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
+
+	@include breakpoint( "<660px" ) {
+		right: 0;
+	}
+
+	// Drops Follow count in FeedHeader if Back button exists
+	.reader-feed-header__follow-count {
+
+		@include breakpoint( "<960px" ) {
+			display: none;
+		}
+	}
+}
+
+.is-reader-page .is-site-stream .reader-feed-header__back-and-follow {
+
+	.card.header-cake {
+		background: none;
+		box-shadow: none;
+		flex: 1;
+		margin-right: 100px;
+		position: relative;
+			top: 4px;
+		z-index: z-index( '.reader-feed-header__back-and-follow', '.card.header-cake' );
+
+		@include breakpoint( "<960px" ) {
+			margin-top: 0;
+		}
+
+		@include breakpoint( "<660px" ) {
+			left: 0;
+		}
+	}
+
+	.button.header-cake__back {
+		overflow: visible;
+		padding: 0;
+		position: relative;
+	}
+}
 
 // WPcom Reblogs
 .wpcom-reblog-snapshot {
@@ -122,7 +171,7 @@
 		font-family: $sans;
 		font-size: 15px;
 		padding-top: 5px;
-		border-top: 1px solid lighten( $gray, 30 );
+		border-top: 1px solid $gray-lighten-20;
 
 		a {
 			padding: 5px 10px;
@@ -136,7 +185,6 @@
 	}
 }
 
-
 // Post Card Footer
 // Where things like reading time, embed counts,
 // tags, likes, and comments live.
@@ -148,6 +196,7 @@
 	font-size: 14px;
 	color: $gray;
 	display: flex;
+	align-items: center;
 
 	li {
 		margin-right: 8px;
@@ -161,14 +210,23 @@
 		}
 	}
 
-	// This creates the space that pushes the like and comment
-	// buttons off to the right.
-	.post-permalink {
-		margin-right: auto;
-	}
-
 	a {
 		text-decoration: none;
+	}
+}
+
+// Custom breakpoints that drop action labels text
+// to prevent Likes text from breaking onto a new line
+.is-group-reader .post-edit-button__label,
+.is-group-reader .reader-share__button-label,
+.is-group-reader .comment-button__label-status,
+.is-group-reader .like-button__label-status {
+	@media( max-width: 530px ) {
+		display: none;
+	}
+
+	@media( min-width: 661px ) and ( max-width: 790px ) {
+		display: none;
 	}
 }
 
@@ -178,7 +236,6 @@
 	background: $gray-light;
 }
 
-
 /* Tiled Gallery Default Styles
  * Mostly copied from Atlas -Shaun
 -------------------------------------------------------------- */
@@ -187,7 +244,7 @@
 	clear: both;
 	overflow: hidden;
 	margin: 0 auto 20px auto;
-	max-width: 500px;
+	max-width: 100%;
 }
 .tiled-gallery img {
 	margin: 2px !important; /* Ensure that this value isn't overridden by themes that give content images blanket margins */
@@ -222,21 +279,25 @@
 	padding: 0;
 	vertical-align: middle;
 }
+
 .tiled-gallery-caption { /* Captions */
-	background: #eee;
-	background: rgba( 255,255,255,0.8 );
-	color: #333;
-	font-size: 13px;
+	box-sizing: border-box; /* to make width: 100% work */
+	background: #222;
+	background: rgba( 0,0,0,0.3 );
+	background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2) 73%, rgba( 0,0,0,.5) 100%);
+	color: $white;
+	font-family: $sans;
+	font-size: 14px;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
 	font-weight: 400;
 	overflow: hidden;
-	padding: 10px 0;
+	padding: 10px 20px;
 	position: absolute;
-		bottom: 0;
-	text-indent: 10px;
-	text-overflow: ellipsis;
-	width: 100%;
-	white-space: nowrap;
+		bottom: 2px;
+		left: 2px;
+		right: 2px;
 }
+
 .tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
 	font-size: 11px;
 }
@@ -275,51 +336,32 @@
 	opacity: 0;
 }
 
-.is-section-reader .main .empty-content {
-	margin-top: -120px;
+.is-group-reader .main .empty-content,
+.is-reader-page .main .empty-content {
+
 	padding-top: 0;
 
-	@include breakpoint( "<480px" ) {
-		margin-top: -72px;
+	.empty-content__title {
+		margin-top: -10px;
+	}
+
+	&.stream__empty{
+		margin-top: 25px;
 	}
 }
 
-.is-section-reader .empty-content__action {
+.is-group-reader .empty-content__action,
+.is-reader-page .empty-content__action {
 	@include breakpoint( "<480px" ) {
 		margin-bottom: 10px;
 	}
 }
 
-/* = Foldable card (toggle arrow is opposite side in Reader)
--------------------------------------------------------------- */
-.following-edit {
-	.foldable-card__action {
-		width: 45px;
-		height: 100%;
-		padding: 0;
-		position: absolute;
-			left: 0;
-			top: 0;
-	}
-
-	.foldable-card.is-expanded {
-		margin-bottom: 0;
-		border-top: 0;
-
-		.foldable-card__content {
-			padding: 0;
-		}
-	}
-
-	.foldable-card__expand .gridicon {
-		transform: rotate(-90deg);
-	    position: absolute;
-	    	top: 24px;
-	    	left: 0;
-	}
-}
-// Make sure it rotates in the right direction
-.following-edit .foldable-card.is-expanded .gridicon {
-	transform: rotate(0deg);
+// No Results in new Search
+.is-reader-page .search-stream .empty-content {
+	margin-top: 135px;
 }
 
+.is-reader-page .search-stream__single-column-results .empty-content {
+	margin-top: 0;
+}

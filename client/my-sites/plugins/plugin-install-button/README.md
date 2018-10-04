@@ -6,15 +6,14 @@ This component is used to display a button that launch a install action when cli
 #### How to use:
 
 ```js
-var PluginInstallButton = require( 'my-sites/plugins/plugin-install-button' );
+import PluginInstallButton 'my-sites/plugins/plugin-install-button';
 
-render: function() {
+render() {
     return <PluginInstallButton
             plugin={ plugin }
             selectedSite={ site }
             isInstalling={ false }
             isEmbed={ false }
-            notices={ notices }
         />;
 }
 ```
@@ -25,4 +24,3 @@ render: function() {
 * `selectedSite`: a site object.
 * `isInstalling`: an optional boolean indicating if there's a install action for this plugin and site already going on.
 * `isEmbed`: an optional boolean indicating if the button is going to be rendered embed inside a plugin-site component.
-* `notices` : (object) Object of errored, inProgress, and completed actions.

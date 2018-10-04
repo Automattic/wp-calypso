@@ -1,26 +1,28 @@
+/** @format */
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import ReactDom from 'react-dom';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 /**
- * Internal dependecies
+ * Internal dependencies
  */
-import shortcodeUtils from 'lib/shortcode';
+import { next } from 'lib/shortcode';
 import GalleryShortcode from 'components/gallery-shortcode';
 
 class GalleryView extends Component {
-
 	static match( content ) {
-		const match = shortcodeUtils.next( 'gallery', content );
+		const nextMatch = next( 'gallery', content );
 
-		if ( match ) {
+		if ( nextMatch ) {
 			return {
-				index: match.index,
-				content: match.content,
+				index: nextMatch.index,
+				content: nextMatch.content,
 				options: {
-					shortcode: match.shortcode
-				}
+					shortcode: nextMatch.shortcode,
+				},
 			};
 		}
 	}
@@ -37,21 +39,21 @@ class GalleryView extends Component {
 		super( props );
 
 		this.state = {
-			wrapper: null
+			wrapper: null,
 		};
 	}
 
 	componentDidMount() {
 		this.setState( {
-			wrapper: React.findDOMNode( this.refs.view )
+			wrapper: ReactDom.findDOMNode( this.refs.view ),
 		} );
 
 		if ( window.MutationObserver ) {
 			this.observer = new MutationObserver( this.props.onResize );
-			this.observer.observe( React.findDOMNode( this.refs.view ), {
+			this.observer.observe( ReactDom.findDOMNode( this.refs.view ), {
 				attributes: true,
 				childList: true,
-				subtree: true
+				subtree: true,
 			} );
 		}
 	}
@@ -81,17 +83,16 @@ class GalleryView extends Component {
 			</div>
 		);
 	}
-
 }
 
 GalleryView.propTypes = {
 	siteId: PropTypes.number,
 	content: PropTypes.string,
-	onResize: PropTypes.func
+	onResize: PropTypes.func,
 };
 
 GalleryView.defaultProps = {
-	onResize: () => {}
+	onResize: () => {},
 };
 
 export default GalleryView;

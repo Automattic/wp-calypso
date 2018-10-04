@@ -1,60 +1,59 @@
-/**
- * External dependencies
- */
-var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
-	classnames = require( 'classnames' ),
-	uniqueId = require( 'lodash/utility/uniqueId' );
+/** @format */
 
 /**
  * External dependencies
  */
-var FormRange = require( 'components/forms/form-range' );
 
-module.exports = React.createClass( {
-	displayName: 'Range',
+import React from 'react';
+import PropTypes from 'prop-types';
+import { omit, uniqueId } from 'lodash';
+import classnames from 'classnames';
 
-	propTypes: {
-		minContent: React.PropTypes.oneOfType( [ React.PropTypes.element, React.PropTypes.string ] ),
-		maxContent: React.PropTypes.oneOfType( [ React.PropTypes.element, React.PropTypes.string ] ),
-		min: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.number ] ),
-		max: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.number ] ),
-		value: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.number ] ),
-		showValueLabel: React.PropTypes.bool
-	},
+/**
+ * Internal dependencies
+ */
+import FormRange from 'components/forms/form-range';
 
-	getInitialState: function() {
-		return {
-			id: uniqueId( 'range' )
-		};
-	},
+export default class extends React.Component {
+	static displayName = 'Range';
 
-	getDefaultProps: function() {
-		return {
-			min: 0,
-			max: 10,
-			value: 0,
-			showValueLabel: false
-		};
-	},
+	static propTypes = {
+		minContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
+		maxContent: PropTypes.oneOfType( [ PropTypes.element, PropTypes.string ] ),
+		min: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		max: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
+		showValueLabel: PropTypes.bool,
+	};
 
-	getMinContentElement: function() {
+	static defaultProps = {
+		min: 0,
+		max: 10,
+		value: 0,
+		showValueLabel: false,
+	};
+
+	state = {
+		id: uniqueId( 'range' ),
+	};
+
+	getMinContentElement = () => {
 		if ( this.props.minContent ) {
 			return <span className="range__content is-min">{ this.props.minContent }</span>;
 		}
-	},
+	};
 
-	getMaxContentElement: function() {
+	getMaxContentElement = () => {
 		if ( this.props.maxContent ) {
 			return <span className="range__content is-max">{ this.props.maxContent }</span>;
 		}
-	},
+	};
 
-	getValueLabelElement: function() {
-		var left, offset;
+	getValueLabelElement = () => {
+		let left, offset;
 
 		if ( this.props.showValueLabel ) {
-			left = 100 * ( this.props.value - this.props.min ) / ( this.props.max - this.props.min );
+			left = ( 100 * ( this.props.value - this.props.min ) ) / ( this.props.max - this.props.min );
 
 			// The center of the slider thumb is not aligned to the same
 			// percentage stops as an absolute positioned element will be.
@@ -74,25 +73,35 @@ module.exports = React.createClass( {
 
 			return (
 				<span className="range__label" style={ { left: ( left || 0 ) + '%', marginLeft: offset } }>
-					<output className="range__label-inner" htmlFor={ this.state.id } value={ this.props.value }>{ this.props.value }</output>
+					<output
+						className="range__label-inner"
+						htmlFor={ this.state.id }
+						value={ this.props.value }
+					>
+						{ this.props.value }
+					</output>
 				</span>
 			);
 		}
-	},
+	};
 
-	render: function() {
-		var classes = classnames( this.props.className, 'range', {
+	render() {
+		const classes = classnames( this.props.className, 'range', {
 			'has-min-content': !! this.props.minContent,
-			'has-max-content': !! this.props.maxContent
+			'has-max-content': !! this.props.maxContent,
 		} );
 
 		return (
 			<div className={ classes }>
 				{ this.getMinContentElement() }
-				<FormRange id={ this.state.id } className="range__input" { ...omit( this.props, 'minContent', 'maxContent', 'showValueLabel', 'className' ) } />
+				<FormRange
+					id={ this.state.id }
+					className="range__input"
+					{ ...omit( this.props, 'minContent', 'maxContent', 'showValueLabel', 'className' ) }
+				/>
 				{ this.getMaxContentElement() }
 				{ this.getValueLabelElement() }
 			</div>
 		);
 	}
-} );
+}

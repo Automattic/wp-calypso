@@ -1,53 +1,60 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Dialog = require( 'components/dialog' );
+import Dialog from 'components/dialog';
 
-module.exports = React.createClass( {
-	displayName: 'AcceptDialog',
+class AcceptDialog extends Component {
+	static displayName = 'AcceptDialog';
 
-	propTypes: {
-		message: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.element
-		] ).isRequired,
-		onClose: React.PropTypes.func.isRequired,
-		confirmButtonText: React.PropTypes.string,
-		cancelButtonText: React.PropTypes.string,
-	},
+	static propTypes = {
+		translate: PropTypes.func,
+		message: PropTypes.node,
+		onClose: PropTypes.func.isRequired,
+		confirmButtonText: PropTypes.node,
+		cancelButtonText: PropTypes.node,
+		options: PropTypes.object,
+	};
 
-	getInitialState: function() {
-		return { isVisible: true };
-	},
+	state = { isVisible: true };
 
-	onClose: function( action ) {
+	onClose = action => {
+		this.setState( { isVisible: false } );
 		this.props.onClose( 'accept' === action );
+	};
 
-		if ( this.isMounted() ) {
-			this.setState( { isVisible: false } );
-		}
-	},
-
-	getActionButtons: function() {
+	getActionButtons = () => {
+		const { options } = this.props;
+		const isScary = options && options.isScary;
+		const additionalClassNames = classnames( { 'is-scary': isScary } );
 		return [
 			{
 				action: 'cancel',
-				label: this.props.cancelButtonText ? this.props.cancelButtonText : this.translate( 'Cancel' ),
+				label: this.props.cancelButtonText
+					? this.props.cancelButtonText
+					: this.props.translate( 'Cancel' ),
+				additionalClassNames: 'is-cancel',
 			},
 			{
 				action: 'accept',
-				label: this.props.confirmButtonText ? this.props.confirmButtonText : this.translate( 'OK' ),
-				isPrimary: true
-			}
+				label: this.props.confirmButtonText
+					? this.props.confirmButtonText
+					: this.props.translate( 'OK' ),
+				isPrimary: true,
+				additionalClassNames,
+			},
 		];
-	},
+	};
 
-	render: function() {
+	render() {
 		if ( ! this.state.isVisible ) {
 			return null;
 		}
@@ -57,9 +64,12 @@ module.exports = React.createClass( {
 				buttons={ this.getActionButtons() }
 				onClose={ this.onClose }
 				className="accept-dialog"
-				isVisible>
+				isVisible
+			>
 				{ this.props.message }
 			</Dialog>
 		);
 	}
-} );
+}
+
+export default localize( AcceptDialog );

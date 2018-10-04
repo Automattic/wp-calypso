@@ -1,0 +1,18 @@
+.post-type-site-info {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.post-type-site-info .site-icon {
+	margin-right: 6px;
+}
+
+.post-type-site-info__title {
+	display: inline;
+	margin-right: 15px;
+	padding-bottom: 2px;
+	line-height: 16px;
+	vertical-align: middle;
+	font-size: 13px;
+	color: $gray-dark;
+}

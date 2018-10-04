@@ -1,19 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import classnames from 'classnames';
 
-	displayName: 'FormSectionHeading',
+const FormSectionHeading = ( { className, children, ...otherProps } ) => (
+	<h3 { ...otherProps } className={ classnames( className, 'form-section-heading' ) }>
+		{ children }
+	</h3>
+);
 
-	render: function() {
-		return (
-			<h3 { ...omit( this.props, 'className' ) } className={ joinClasses( this.props.className, 'form-section-heading' ) } >
-				{ this.props.children }
-			</h3>
-		);
-	}
-} );
+export default FormSectionHeading;

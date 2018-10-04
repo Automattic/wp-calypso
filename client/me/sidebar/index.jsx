@@ -1,46 +1,89 @@
+/** @format */
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:sidebar' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { flow } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var MenuItem = require( './sidebar-item' ),
-	config = require( 'config' ),
-	ProfileGravatar = require( 'me/profile-gravatar' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	FormButton = require( 'components/forms/form-button' ),
-	userUtilities = require( 'lib/user/utils' );
+import Button from 'components/button';
+import config from 'config';
+import ProfileGravatar from 'me/profile-gravatar';
+import { addCreditCard, billingHistory, purchasesRoot } from 'me/purchases/paths';
+import Sidebar from 'layout/sidebar';
+import SidebarFooter from 'layout/sidebar/footer';
+import SidebarHeading from 'layout/sidebar/heading';
+import SidebarItem from 'layout/sidebar/item';
+import SidebarMenu from 'layout/sidebar/menu';
+import SidebarRegion from 'layout/sidebar/region';
+import userFactory from 'lib/user';
+import userUtilities from 'lib/user/utils';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { logoutUser } from 'state/login/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-module.exports = React.createClass( {
+/**
+ * Module variables
+ */
+const user = userFactory();
 
-	displayName: 'MeSidebar',
+class MeSidebar extends React.Component {
+	onNavigate = () => {
+		this.props.setNextLayoutFocus( 'content' );
+		window.scrollTo( 0, 0 );
+	};
 
-	mixins: [ eventRecorder, observe( 'user' ) ],
+	onSignOut = () => {
+		const currentUser = this.props.currentUser;
 
-	componentDidMount: function() {
-		debug( 'The MeSidebar React component is mounted.' );
-	},
+		// If user is using en locale, redirect to app promo page on sign out
+		const isEnLocale = currentUser && currentUser.localeSlug === 'en';
 
-	render: function() {
-		var context = this.props.context,
-			filterMap = {
-				'/me': 'profile',
-				'/me/security/two-step': 'security',
-				'/me/security/connected-applications': 'security',
-				'/me/security/checkup': 'security',
-				'/me/notifications/comments': 'notifications',
-				'/me/notifications/updates': 'notifications',
-				'/me/notifications/subscriptions': 'notifications',
-				'/help/contact': 'help',
-				'/purchases': 'billing',
-				'/me/billing': 'billing'
-			},
-			filteredPath = context.path.replace( /\/\d+$/, '' ), // Remove ID from end of path
-			selected;
+		let redirectTo = null;
+
+		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
+			redirectTo = '/?apppromo';
+		}
+
+		if ( config.isEnabled( 'login/wp-login' ) ) {
+			this.props.logoutUser( redirectTo ).then(
+				( { redirect_to } ) => user.clear( () => ( location.href = redirect_to || '/' ) ),
+				// The logout endpoint might fail if the nonce has expired.
+				// In this case, redirect to wp-login.php?action=logout to get a new nonce generated
+				() => userUtilities.logout( redirectTo )
+			);
+		} else {
+			userUtilities.logout( redirectTo );
+		}
+
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Sidebar Sign Out Link' );
+	};
+
+	render() {
+		const { context, translate } = this.props;
+		const filterMap = {
+			'/me': 'profile',
+			'/me/security/account-recovery': 'security',
+			'/me/security/connected-applications': 'security',
+			'/me/security/social-login': 'security',
+			'/me/security/two-step': 'security',
+			'me/privacy': 'privacy',
+			'/me/notifications/comments': 'notifications',
+			'/me/notifications/updates': 'notifications',
+			'/me/notifications/subscriptions': 'notifications',
+			'/help/contact': 'help',
+			[ purchasesRoot ]: 'purchases',
+			[ billingHistory ]: 'purchases',
+			[ addCreditCard ]: 'purchases',
+			'/me/chat': 'happychat',
+		};
+		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
+		let selected;
 
 		/*
 		 * Determine currently-active path to use for 'selected' menu highlight
@@ -55,97 +98,118 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="me-sidebar__menu">
-				<ul className="wpcom-sidebar sidebar">
+			<Sidebar>
+				<SidebarRegion>
+					<ProfileGravatar user={ this.props.currentUser } />
 
-					<ProfileGravatar user={ this.props.user.get() } />
+					<div className="sidebar__me-signout">
+						<Button
+							compact
+							className="sidebar__me-signout-button"
+							onClick={ this.onSignOut }
+							title={ translate( 'Log out of WordPress.com' ) }
+						>
+							{ translate( 'Log Out' ) }
+						</Button>
+					</div>
 
-					<FormButton
-						className="me-sidebar__menu__signout"
-						isPrimary={false}
-						onClick={ this.recordClickEvent( 'Sidebar Sign Out Link', userUtilities.logout ) }
-						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
-					>
-						{ this.translate( 'Sign Out' ) }
-					</FormButton>
-
-					<li className="sidebar-menu me-profile">
-						<h2 className="sidebar-heading">{ this.translate( 'Profile' ) }</h2>
+					<SidebarMenu>
+						<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
 						<ul>
-							<MenuItem
+							<SidebarItem
 								selected={ selected === 'profile' }
-								href={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
-								label={ this.translate( 'My Profile' ) }
+								link={
+									config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
+								}
+								label={ translate( 'My Profile' ) }
 								icon="user"
+								onNavigate={ this.onNavigate }
 							/>
 
-							<MenuItem
+							<SidebarItem
 								selected={ selected === 'account' }
-								href={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
-								label={ this.translate( 'Account Settings' ) }
+								link={
+									config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
+								}
+								label={ translate( 'Account Settings' ) }
 								icon="cog"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="account"
 							/>
 
-							{ config.isEnabled( 'upgrades/purchases/list' )
-								? <MenuItem
-									selected={ selected === 'billing' }
-									href="/purchases"
-									label={ this.translate( 'Manage Purchases' ) }
-									icon="credit-card"
-								/>
-								: <MenuItem
-									selected={ selected === 'billing' }
-									href={ config.isEnabled( 'me/billing-history' ) ? '/me/billing' : '//wordpress.com/me/billing' }
-									label={ this.translate( 'Billing History' ) }
-									icon="credit-card"
-								/>
-							}
+							<SidebarItem
+								selected={ selected === 'purchases' }
+								link={ purchasesRoot }
+								label={ translate( 'Manage Purchases' ) }
+								icon="credit-card"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="purchases"
+							/>
 
-							<MenuItem
+							<SidebarItem
 								selected={ selected === 'security' }
-								href={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
-								label={ this.translate( 'Security' ) }
+								link={ '/me/security' }
+								label={ translate( 'Security' ) }
 								icon="lock"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="security"
 							/>
 
-							<MenuItem
+							<SidebarItem
+								selected={ selected === 'privacy' }
+								link={ '/me/privacy' }
+								label={ translate( 'Privacy' ) }
+								icon="visible"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="privacy"
+							/>
+
+							<SidebarItem
 								selected={ selected === 'notifications' }
-								href={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
-								label={ this.translate( 'Notifications' ) }
+								link={
+									config.isEnabled( 'me/notifications' )
+										? '/me/notifications'
+										: '//wordpress.com/me/notifications'
+								}
+								label={ translate( 'Notification Settings' ) }
 								icon="bell"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="notification-settings"
 							/>
-
 						</ul>
-					</li>
-					<li className="sidebar-menu me-extras">
-						<h2 className="sidebar-heading">{ this.translate( 'Special' ) }</h2>
+					</SidebarMenu>
+
+					<SidebarMenu>
+						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
 						<ul>
-							{ this.renderNextStepsItem( selected ) }
-							<MenuItem
-								selected={ selected === 'help' }
-								href={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
-								label={ this.translate( 'Help' ) }
-								external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
-								icon="help-outline"
+							<SidebarItem
+								selected={ selected === 'get-apps' }
+								link={ '/me/get-apps' }
+								label={ translate( 'Get Apps' ) }
+								icon="my-sites"
+								onNavigate={ this.onNavigate }
 							/>
 						</ul>
-					</li>
-				</ul>
-			</div>
+					</SidebarMenu>
+				</SidebarRegion>
+				<SidebarFooter />
+			</Sidebar>
 		);
-	},
-
-	renderNextStepsItem: function( selected ) {
-		var currentUser = this.props.user.get();
-		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
-			return (
-				<MenuItem
-					selected={ selected === 'next' }
-					href="/me/next"
-					label={ this.translate( 'Next Steps' ) }
-					icon="list-checkmark"
-				/>
-			);
-		}
 	}
-} );
+}
+
+const enhance = flow(
+	localize,
+	connect(
+		state => ( {
+			currentUser: getCurrentUser( state ),
+		} ),
+		{
+			logoutUser,
+			recordGoogleEvent,
+			setNextLayoutFocus,
+		}
+	)
+);
+
+export default enhance( MeSidebar );

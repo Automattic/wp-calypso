@@ -1,74 +1,93 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	merge = require( 'lodash/object/merge' );
+
+import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	EmptyContent = require( 'components/empty-content' );
+import analytics from 'lib/analytics';
+import EmptyContent from 'components/empty-content';
+import FeatureExample from 'components/feature-example';
+import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
 
-module.exports = React.createClass( {
-
-	displayName: 'JetpackManageErrorPage',
-
-	mixins: [ 'pluginsData' ],
-
-	actionCallbacks: {
+class JetpackManageErrorPage extends PureComponent {
+	static actionCallbacks = {
 		updateJetpack: 'actionCallbackUpdate',
-		optInManage: 'actionCallbackActivate'
-	},
+		optInManage: 'actionCallbackActivate',
+	};
 
-	actionCallbackActivate: function() {
-		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.site ? this.props.site.ID : null );
-	},
+	actionCallbackActivate = () => {
+		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.siteId );
+	};
 
-	actionCallbackUpdate: function() {
-		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.site ? this.props.site.ID : null );
-	},
+	actionCallbackUpdate = () => {
+		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.siteId );
+	};
 
-	getSettings: function() {
-		var version = this.props.version || '3.4', defaults;
-		defaults = {
+	getSettings() {
+		const { remoteManagementUrl, section, siteSlug, template, translate } = this.props;
+		const version = this.props.version || '3.4';
+		const defaults = {
 			updateJetpack: {
-				title: this.translate( 'Your version of Jetpack is out of date.' ),
-				line: this.translate( 'Jetpack %(version)s or higher is required to see this page.', { args: { version: version } } ),
-				action: this.translate( 'Update Jetpack' ),
+				title: translate( 'Your version of Jetpack is out of date.' ),
+				line: translate( 'Jetpack %(version)s or higher is required to see this page.', {
+					args: { version },
+				} ),
+				action: translate( 'Update Jetpack' ),
 				illustration: null,
-				actionURL: ( this.props.site && this.props.site.jetpack ) ?
-				'../../plugins/jetpack/' + this.props.site.slug :
-					false,
-				version: version
+				actionURL: '../../plugins/jetpack/' + siteSlug,
+				version,
 			},
 			optInManage: {
-				line: this.translate( 'Remote management is required to see this page.' ),
-				title: null,
-				illustration: null,
-				action: this.translate( 'Turn on remote management' ),
-				actionURL: ( this.props.site && this.props.site.jetpack ) ?
-					this.props.site.getRemoteManagementURL() :
-					false,
-				actionTarget: '_blank'
+				title: translate( 'Looking to manage this site from WordPress.com?' ),
+				line: translate(
+					'We need you to enable the Manage feature in the Jetpack plugin on your remote site'
+				),
+				illustration: '/calypso/images/jetpack/jetpack-manage.svg',
+				action: translate( 'Enable Jetpack Manage' ),
+				actionURL: remoteManagementUrl + ( section ? '&section=' + section : '' ),
+				actionTarget: '_blank',
 			},
 			noDomainsOnJetpack: {
-				title: this.translate( 'Domains are not available for this site.' ),
-				line: this.translate( 'You can only purchase domains for sites hosted on WordPress.com at this time.' ),
-				action: this.translate( 'View Plans' ),
-				actionURL: '/plans/' + ( this.props.site ? this.props.site.slug : '' )
+				title: translate( 'Domains are not available for this site.' ),
+				line: translate(
+					'You can only purchase domains for sites hosted on WordPress.com at this time.'
+				),
+				action: translate( 'View Plans' ),
+				actionURL: '/plans/' + ( siteSlug || '' ),
 			},
-			default: {}
+			default: {},
 		};
-		return merge( defaults[ this.props.template ] || defaults.default, this.props );
-	},
-
-	render: function() {
-		var settings = this.getSettings();
-		if ( this.actionCallbacks[ this.props.template ] ) {
-			settings.actionCallback = this[ this.actionCallbacks[ this.props.template ] ];
-		}
-		return React.createElement( EmptyContent, settings );
+		return Object.assign( {}, defaults[ template ] || defaults.default, this.props );
 	}
 
-} );
+	render() {
+		const settings = this.getSettings();
+		if ( JetpackManageErrorPage.actionCallbacks[ this.props.template ] ) {
+			settings.actionCallback = this[
+				JetpackManageErrorPage.actionCallbacks[ this.props.template ]
+			];
+		}
+		const featureExample = this.props.featureExample ? (
+			<FeatureExample>{ this.props.featureExample }</FeatureExample>
+		) : null;
+
+		return (
+			<div>
+				<EmptyContent { ...settings } />
+				{ featureExample }
+			</div>
+		);
+	}
+}
+
+export default connect( ( state, { siteId } ) => ( {
+	siteSlug: getSiteSlug( state, siteId ),
+	remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
+} ) )( localize( JetpackManageErrorPage ) );

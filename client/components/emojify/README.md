@@ -5,34 +5,23 @@ This module includes functionality for converting strings that could possibly co
 
 This is desirable since implementations are inconsistent or non-existant.
 
-# Usage
+## Usage
 ```js
 // require the module
-var Emojify = require( 'components/emojify' ),
-	textToEmojify = 'This will be converted 🙈🙉🙊';
+import Emojify from 'components/emojify';
 
-React.render( <div><p>This text will be unaffected</p><Emojify size="72">{ textToEmojify }</Emojify></div> );
+const textToEmojify = 'This will be converted 🙈🙉🙊';
 
-```
-
-CSS
-```css
-// Emoji!!
-.emojified__emoji {
-	height: 18px;
-	width: 18px;
-	vertical-align: middle;
-}
+	// more component stuff
+	// ...
+	render( <div><p>This text will be unaffected</p><Emojify>{ textToEmojify }</Emojify></div> );
 
 ```
 
-* The `<Emojify>` component requires exactly one child and it must be a text node.
-* The `size` property is optional:
-	* It defaults to `'36x36'`
-	* Available options are determined by your CDN
+## Props
 
-# Requires
-### [punycode](https://github.com/bestiejs/punycode.js/) -- built into node since v0.6.2
-
-# Attributions
-The parsing code was adapted from [this gist](https://gist.github.com/thomasboyt/b5ef9ed8606ce6d93982)
+| property       | type             | required | default            | comment |
+| -------------- | ---------------- | -------- | ------------------ | ------- |
+| `children`     | Text\|Components | yes      | none               | Typically a string that you want to search for UTF emoji |
+| `imgClassName` | String           | no       | `"emojify__emoji"` | classname applied to the image |
+| `tagName`      | String           | no       | `div`              | Tag name used for the wrapper element |

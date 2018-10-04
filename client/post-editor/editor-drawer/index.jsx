@@ -1,275 +1,340 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	find = require( 'lodash/collection/find' );
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import { flow, overSome } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Accordion = require( 'components/accordion' ),
-	AccordionSection = require( 'components/accordion/section' ),
-	Gridicon = require( 'components/gridicon' ),
-	TaxonomiesAccordion = require( 'post-editor/editor-taxonomies/accordion' ),
-	CategoryListData = require( 'components/data/category-list-data' ),
-	TagListData = require( 'components/data/tag-list-data' ),
-	FeaturedImage = require( 'post-editor/editor-featured-image' ),
-	EditorSharingContainer = require( 'post-editor/editor-sharing/container' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	PostFormatsData = require( 'components/data/post-formats-data' ),
-	PostFormatsAccordion = require( 'post-editor/editor-post-formats/accordion' ),
-	Location = require( 'post-editor/editor-location' ),
-	Discussion = require( 'post-editor/editor-discussion' ),
-	PageParent = require( 'post-editor/editor-page-parent' ),
-	EditorMoreOptionsSlug = require( 'post-editor/editor-more-options/slug' ),
-	InfoPopover = require( 'components/info-popover' ),
-	PageTemplatesData = require( 'components/data/page-templates-data' ),
-	PageTemplates = require( 'post-editor/editor-page-templates' ),
-	PageOrder = require( 'post-editor/editor-page-order' ),
-	PostMetadata = require( 'lib/post-metadata' ),
-	TrackInputChanges = require( 'components/track-input-changes' ),
-	actions = require( 'lib/posts/actions' ),
-	stats = require( 'lib/posts/stats' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	siteUtils = require( 'lib/site/utils' );
+import Accordion from 'components/accordion';
+import AccordionSection from 'components/accordion/section';
+import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
+import AsyncLoad from 'components/async-load';
+import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
+import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import QueryPostTypes from 'components/data/query-post-types';
+import QuerySiteSettings from 'components/data/query-site-settings';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getPostType } from 'state/post-types/selectors';
+import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
+import {
+	isJetpackMinimumVersion,
+	isJetpackModuleActive,
+	isJetpackSite,
+} from 'state/sites/selectors';
+import config from 'config';
+import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
+import EditorDrawerTaxonomies from './taxonomies';
+import EditorDrawerPageOptions from './page-options';
+import EditorDrawerLabel from './label';
+import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
+import EditPostStatus from 'post-editor/edit-post-status';
+import EditorExcerpt from 'post-editor/editor-excerpt';
+import { getFirstConflictingPlugin } from 'lib/seo';
 
-var EditorDrawer = React.createClass( {
+/**
+ * Constants
+ */
+const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
 
-	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		postTypes: React.PropTypes.object,
-		isNew: React.PropTypes.bool
+/**
+ * A mapping of post type to hard-coded post types support. These values are
+ * used as fallbacks if the REST API type entity has not been retrieved, and
+ * prevent the post type query component from being rendered.
+ *
+ * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/post-types/
+ * @type {Object}
+ */
+const POST_TYPE_SUPPORTS = {
+	post: {
+		thumbnail: true,
+		excerpt: true,
+		'post-formats': true,
+		'geo-location': true,
+		tags: true,
+		comments: true,
 	},
-
-	mixins: [
-		observe( 'postTypes' ),
-	],
-
-	onExcerptChange: function( event ) {
-		actions.edit( { excerpt: event.target.value } );
+	page: {
+		thumbnail: true,
+		'page-attributes': true,
+		'geo-location': true,
+		excerpt: true,
+		comments: true,
 	},
+};
 
-	currentPostTypeSupports: function( feature ) {
-		if ( ! this.props.site ) {
-			return false;
+class EditorDrawer extends Component {
+	static propTypes = {
+		site: PropTypes.object,
+		canJetpackUseTaxonomies: PropTypes.bool,
+		typeObject: PropTypes.object,
+		type: PropTypes.string,
+		setPostDate: PropTypes.func,
+		onSave: PropTypes.func,
+		confirmationSidebarStatus: PropTypes.string,
+	};
+
+	currentPostTypeSupports( feature ) {
+		const { typeObject, type } = this.props;
+
+		if ( typeObject && typeObject.supports ) {
+			return !! typeObject.supports[ feature ];
 		}
 
-		const types = this.props.postTypes.get( this.props.site.ID );
-		const currentType = find( types, { name: this.props.type } );
-
-		// assume positively if we can't determine support
-		if ( ! currentType || ! currentType.supports ) {
-			return true;
+		// Fall back to hard-coded settings if known for type
+		if ( POST_TYPE_SUPPORTS.hasOwnProperty( type ) ) {
+			return !! POST_TYPE_SUPPORTS[ type ][ feature ];
 		}
 
-		return currentType.supports[ feature ];
-	},
+		// Default to true until post types are known
+		return true;
+	}
 
-	recordExcerptChangeStats: function() {
-		stats.recordStat( 'excerpt_changed' );
-		stats.recordEvent( 'Changed Excerpt' );
-	},
+	// Categories & Tags
+	renderCategories() {
+		const { type } = this.props;
 
-	renderTaxonomies: function() {
-		var element;
+		// Compatibility: Allow Tags for pages when supported prior to launch
+		// of custom post types feature (#6934). [TODO]: Remove after launch.
+		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
+		const typeSupportsTags = ! isCustomTypesEnabled && this.currentPostTypeSupports( 'tags' );
 
-		if ( 'post' !== this.props.type && ! this.currentPostTypeSupports( 'tags' ) ) {
+		if ( 'post' === type || typeSupportsTags ) {
+			return <CategoriesTagsAccordion />;
+		}
+	}
+
+	// Custom Taxonomies
+	renderTaxonomies() {
+		const { canJetpackUseTaxonomies } = this.props;
+		const isCustomTypesEnabled = config.isEnabled( 'manage/custom-post-types' );
+
+		if ( isCustomTypesEnabled && false !== canJetpackUseTaxonomies ) {
+			return <EditorDrawerTaxonomies />;
+		}
+	}
+
+	renderPostFormats() {
+		if ( ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
 
-		element = (
-			<TaxonomiesAccordion
-				site={ this.props.site }
-				post={ this.props.post } />
-		);
+		return <AsyncLoad require="post-editor/editor-post-formats/accordion" />;
+	}
 
-		if ( this.props.site ) {
-			element = (
-				<CategoryListData siteId={ this.props.site.ID }>
-					<TagListData siteId={ this.props.site.ID }>
-						{ element }
-					</TagListData>
-				</CategoryListData>
-			);
-		}
+	renderSharing() {
+		return <AsyncLoad require="post-editor/editor-sharing/accordion" />;
+	}
 
-		return element;
-	},
-
-	renderPostFormats: function() {
-		if ( ! this.props.site || ! this.props.post ) {
+	renderFeaturedImage() {
+		if ( ! this.currentPostTypeSupports( 'thumbnail' ) ) {
 			return;
 		}
 
-		return (
-			<PostFormatsData siteId={ this.props.site.ID }>
-				<PostFormatsAccordion
-					site={ this.props.site }
-					post={ this.props.post }
-					className="editor-drawer__accordion" />
-			</PostFormatsData>
-		);
-	},
+		return <AsyncLoad require="./featured-image" />;
+	}
 
-	renderSharing: function() {
-		return (
-			<EditorSharingContainer site={ this.props.site } />
-		);
-	},
+	renderExcerpt() {
+		const { translate } = this.props;
 
-	renderFeaturedImage: function() {
-		return (
-			<Accordion
-				title={ this.translate( 'Featured Image' ) }
-				icon={ <Gridicon icon="image" /> }
-			>
-				<FeaturedImage
-					editable={ true }
-					site={ this.props.site }
-					post={ this.props.post } />
-			</Accordion>
-		);
-	},
-
-	renderExcerpt: function() {
-		var excerpt;
-
-		if ( 'post' !== this.props.type && ! this.currentPostTypeSupports( 'excerpt' ) ) {
-			return;
-		}
-
-		if ( this.props.post ) {
-			excerpt = this.props.post.excerpt;
-		}
-
-		return (
-			<AccordionSection>
-				<span className="editor-drawer__label-text">
-					{ this.translate( 'Excerpt' ) }
-					<InfoPopover position="top left">
-						{ this.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
-					</InfoPopover>
-				</span>
-				<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
-					<FormTextarea
-						id="excerpt"
-						name="excerpt"
-						onChange={ this.onExcerptChange }
-						value={ excerpt }
-						placeholder={ this.translate( 'Write an excerpt…' ) }
-						aria-label={ this.translate( 'Write an excerpt…' ) }
-					/>
-				</TrackInputChanges>
-			</AccordionSection>
-		);
-	},
-
-	renderLocation: function() {
-		if ( ! this.props.site || this.props.site.jetpack ) {
-			return;
-		}
-
-		if ( 'post' !== this.props.type && ! this.currentPostTypeSupports( 'geo-location' ) ) {
+		if ( ! this.currentPostTypeSupports( 'excerpt' ) ) {
 			return;
 		}
 
 		return (
 			<AccordionSection>
-				<span className="editor-drawer__label-text">{ this.translate( 'Location' ) }</span>
-				<Location coordinates={ PostMetadata.geoCoordinates( this.props.post ) } />
+				<EditorDrawerLabel
+					labelText={ translate( 'Excerpt' ) }
+					helpText={ translate(
+						'An excerpt is a short summary you can add to your posts. ' +
+							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
+					) }
+				>
+					<EditorExcerpt />
+				</EditorDrawerLabel>
 			</AccordionSection>
 		);
-	},
+	}
 
-	renderDiscussion: function() {
-		if ( 'post' !== this.props.type && ! this.currentPostTypeSupports( 'comments' ) ) {
+	renderLocation() {
+		const { translate } = this.props;
+
+		if (
+			! this.props.site ||
+			( this.props.isJetpack && ! this.props.jetpackVersionSupportsLocation )
+		) {
 			return;
 		}
 
-		return(
-			<AccordionSection>
-				<Discussion
-					site={ this.props.site }
-					post={ this.props.post }
-					isNew={ this.props.isNew }
-				/>
-			</AccordionSection>
-		)
-	},
+		if ( ! this.currentPostTypeSupports( 'geo-location' ) ) {
+			return;
+		}
 
-	renderMoreOptions: function() {
-		if ( 'post' !== this.props.type &&
+		return (
+			<AccordionSection>
+				<EditorDrawerLabel labelText={ translate( 'Location' ) } />
+				<AsyncLoad require="post-editor/editor-location" />
+			</AccordionSection>
+		);
+	}
+
+	renderDiscussion() {
+		if ( ! this.currentPostTypeSupports( 'comments' ) ) {
+			return;
+		}
+
+		return (
+			<AccordionSection>
+				<AsyncLoad require="post-editor/editor-discussion" />
+			</AccordionSection>
+		);
+	}
+
+	renderSeo() {
+		const {
+			hasConflictingSeoPlugins,
+			isSeoToolsModuleActive,
+			isJetpack,
+			jetpackVersionSupportsSeo,
+			isRequestingPlugins,
+			site,
+		} = this.props;
+
+		if ( ! site ) {
+			return;
+		}
+
+		if ( isJetpack ) {
+			if (
+				isRequestingPlugins ||
+				! isSeoToolsModuleActive ||
+				! jetpackVersionSupportsSeo ||
+				// Hide SEO accordion if this setting is managed by another SEO plugin.
+				hasConflictingSeoPlugins
+			) {
+				return;
+			}
+		}
+
+		if ( ! hasSupportingPlan( site.plan ) ) {
+			return;
+		}
+
+		return <AsyncLoad require="post-editor/editor-seo-accordion" />;
+	}
+
+	renderCopyPost() {
+		const { type } = this.props;
+		if ( 'post' !== type && 'page' !== type ) {
+			return;
+		}
+
+		return <EditorMoreOptionsCopyPost />;
+	}
+
+	renderMoreOptions() {
+		const { isPermalinkEditable, translate } = this.props;
+
+		if (
 			! this.currentPostTypeSupports( 'excerpt' ) &&
 			! this.currentPostTypeSupports( 'geo-location' ) &&
 			! this.currentPostTypeSupports( 'comments' ) &&
-			! siteUtils.isPermalinkEditable( this.props.site ) ) {
+			! isPermalinkEditable
+		) {
 			return;
 		}
 
 		return (
 			<Accordion
-				title={ this.translate( 'More Options' ) }
-				icon={ <Gridicon icon="ellipsis" /> }
+				title={ translate( 'More Options' ) }
 				className="editor-drawer__more-options"
+				e2eTitle="more-options"
 			>
-				{ siteUtils.isPermalinkEditable( this.props.site ) && (
-					<EditorMoreOptionsSlug
-						slug={ this.props.post ? this.props.post.slug : null }
-						type={ this.props.type } />
-				) }
+				{ isPermalinkEditable && <EditorMoreOptionsSlug /> }
 				{ this.renderExcerpt() }
 				{ this.renderLocation() }
 				{ this.renderDiscussion() }
+				{ this.renderCopyPost() }
 			</Accordion>
 		);
-	},
+	}
 
-	renderPageDrawer: function() {
+	renderPageOptions() {
+		if ( ! this.currentPostTypeSupports( 'page-attributes' ) ) {
+			return;
+		}
+
+		return <EditorDrawerPageOptions />;
+	}
+
+	renderStatus() {
+		const { translate } = this.props;
+
 		return (
-			<div className="editor-drawer">
-				{ this.renderTaxonomies() }
-				{ this.renderFeaturedImage() }
-				<Accordion
-					title={ this.translate( 'Page Options' ) }
-					icon={ <Gridicon icon="pages" /> }>
-					{ this.props.site && this.props.post ?
-						<div>
-							<PageParent siteId={ this.props.site.ID }
-								postId={ this.props.post.ID }
-								parent={ this.props.post.parent_id ? this.props.post.parent_id : 0 }
-							/>
-							<PageTemplatesData siteId={ this.props.site.ID } >
-								<PageTemplates post={ this.props.post } />
-							</PageTemplatesData>
-						</div>
-					: null }
-					<PageOrder menuOrder={ this.props.post ? this.props.post.menu_order : 0 } />
-				</Accordion>
-				{ this.renderSharing() }
-				{ this.renderMoreOptions() }
-			</div>
+			<Accordion title={ translate( 'Status' ) } e2eTitle="status">
+				<EditPostStatus
+					onSave={ this.props.onSave }
+					onPrivatePublish={ this.props.onPrivatePublish }
+					setPostDate={ this.props.setPostDate }
+					confirmationSidebarStatus={ this.props.confirmationSidebarStatus }
+				/>
+			</Accordion>
 		);
-	},
+	}
 
-	renderPostDrawer: function() {
+	render() {
+		const { site } = this.props;
+
 		return (
 			<div className="editor-drawer">
+				{ site && <QueryPostTypes siteId={ site.ID } /> }
+				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
+				{ this.renderStatus() }
+				{ this.renderCategories() }
 				{ this.renderTaxonomies() }
 				{ this.renderFeaturedImage() }
+				{ this.renderPageOptions() }
 				{ this.renderSharing() }
 				{ this.renderPostFormats() }
+				{ this.renderSeo() }
 				{ this.renderMoreOptions() }
 			</div>
 		);
-	},
-
-	render: function() {
-		if ( this.props.type === 'page' ) {
-			return this.renderPageDrawer();
-		}
-		return this.renderPostDrawer();
 	}
-} );
+}
 
-module.exports = EditorDrawer;
+EditorDrawer.displayName = 'EditorDrawer';
+
+const enhance = flow(
+	localize,
+	connect( state => {
+		const siteId = getSelectedSiteId( state );
+		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
+		const activePlugins = getPlugins( state, [ siteId ], 'active' );
+
+		return {
+			hasConflictingSeoPlugins: !! getFirstConflictingPlugin( activePlugins ),
+			isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
+			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
+			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+			jetpackVersionSupportsLocation: isJetpackMinimumVersion( state, siteId, '6.3-beta' ),
+			isRequestingPlugins: isRequesting( state, siteId ),
+			type,
+			typeObject: getPostType( state, siteId, type ),
+		};
+	} )
+);
+
+export default enhance( EditorDrawer );

@@ -1,20 +1,25 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/forms/form-button';
 import AuthorMapping from './author-mapping-item';
+import SiteUsersFetcher from 'components/site-users-fetcher';
+import UsersStore from 'lib/users/store';
 
-export default React.createClass( {
-	displayName: 'ImporterMappingPane',
+class AuthorMappingPane extends React.PureComponent {
+	static displayName = 'AuthorMappingPane';
 
-	mixins: [ React.addons.PureRenderMixin ],
-
-	propTypes: {
+	static propTypes = {
 		hasSingleAuthor: PropTypes.bool.isRequired,
 		onMap: PropTypes.func,
 		onStartImport: PropTypes.func,
@@ -22,19 +27,123 @@ export default React.createClass( {
 		sourceAuthors: PropTypes.arrayOf(
 			PropTypes.shape( {
 				id: PropTypes.string.isRequired,
-				name: PropTypes.string.isRequired
+				name: PropTypes.string.isRequired,
 			} ).isRequired
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,
-		targetTitle: PropTypes.string.isRequired
-	},
+		targetTitle: PropTypes.string.isRequired,
+		sourceType: PropTypes.string,
+	};
 
-	render: function() {
-		const { hasSingleAuthor, sourceAuthors, sourceTitle, targetTitle, onMap, onStartImport, siteId } = this.props;
+	getFetchOptions = ( options = {} ) => {
+		return Object.assign(
+			{
+				number: 50,
+				order: 'ASC',
+				order_by: 'display_name',
+				siteId: this.props.siteId,
+			},
+			options
+		);
+	};
+
+	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle, sourceType ) => {
+		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
+			return this.props.translate(
+				'We found one author on your %(sourceType)s site. ' +
+					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
+					'all imported content will be assigned to you. ' +
+					'Click Start Import to proceed.',
+				{
+					args: {
+						sourceType: sourceType,
+						destinationSiteTitle: targetTitle,
+					},
+					components: {
+						b: <strong />,
+					},
+				}
+			);
+		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
+			return this.props.translate(
+				'We found multiple authors on your %(sourceType)s site. ' +
+					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
+					'all imported content will be assigned to you. ' +
+					'Click Start Import to proceed.',
+				{
+					args: {
+						sourceType: sourceType,
+						destinationSiteTitle: targetTitle,
+					},
+					components: {
+						b: <strong />,
+					},
+				}
+			);
+		} else if ( numTargetUsers > 1 && numSourceUsers === 1 ) {
+			return this.props.translate(
+				'We found multiple authors on {{b}}%(destinationSiteTitle)s{{/b}}. ' +
+					'Please reassign the authors of the imported items to an existing ' +
+					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.',
+				{
+					args: {
+						sourceType: 'WordPress',
+						destinationSiteTitle: targetTitle,
+					},
+					components: {
+						b: <strong />,
+					},
+				}
+			);
+		} else if ( numTargetUsers > 1 && numSourceUsers > 1 ) {
+			return this.props.translate(
+				'We found multiple authors on your %(sourceType)s site. ' +
+					'Please reassign the authors of the imported items to an existing ' +
+					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click Start Import.',
+				{
+					args: {
+						sourceType: 'WordPress',
+						destinationSiteTitle: targetTitle,
+					},
+					components: {
+						b: <strong />,
+					},
+				}
+			);
+		}
+	};
+
+	getUserCount = () => {
+		const fetchOptions = this.getFetchOptions( 50 );
+		const { totalUsers } = UsersStore.getPaginationData( fetchOptions );
+
+		return totalUsers;
+	};
+
+	render() {
+		const {
+			hasSingleAuthor,
+			sourceAuthors,
+			sourceTitle,
+			targetTitle,
+			onMap,
+			onStartImport,
+			siteId,
+			sourceType,
+		} = this.props;
 		const canStartImport = hasSingleAuthor || sourceAuthors.some( author => author.mappedTo );
+		const targetUserCount = this.getUserCount();
+		const mappingDescription = this.getMappingDescription(
+			sourceAuthors.length,
+			targetUserCount,
+			targetTitle,
+			sourceType
+		);
 
 		return (
 			<div className="importer__mapping-pane">
+				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) } />
+				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
 					<span className="importer__mapping-target-title">{ targetTitle }</span>
@@ -51,9 +160,11 @@ export default React.createClass( {
 					);
 				} ) }
 				<Button disabled={ ! canStartImport } onClick={ onStartImport }>
-					{ this.translate( 'Start Import' ) }
+					{ this.props.translate( 'Start Import' ) }
 				</Button>
 			</div>
 		);
 	}
-} );
+}
+
+export default localize( AuthorMappingPane );

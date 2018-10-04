@@ -1,107 +1,115 @@
+/** @format */
+
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { geocode } from 'lib/geocoding';
-import * as stats from 'lib/posts/stats';
+import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import SearchCard from 'components/search-card';
 import EditorLocationSearchResult from './search-result';
 
-export default React.createClass( {
-	displayName: 'EditorLocationSearch',
-
-	propTypes: {
+class EditorLocationSearch extends React.Component {
+	static propTypes = {
 		onError: PropTypes.func,
-		onSelect: PropTypes.func
-	},
+		onSelect: PropTypes.func,
+		value: PropTypes.string,
+	};
 
-	getDefaultProps() {
-		return {
-			onError: () => {},
-			onSelect: () => {}
-		};
-	},
+	static defaultProps = {
+		onError: () => {},
+		onSelect: () => {},
+	};
 
-	getInitialState() {
-		return {
-			results: [],
-			isSearching: false
-		};
-	},
+	state = {
+		results: [],
+		isSearching: false,
+	};
 
 	componentDidMount() {
 		this.mounted = true;
 		this.hasTrackedStats = false;
-	},
+	}
 
 	componentWillUnmount() {
 		this.mounted = false;
-	},
+	}
 
-	geocode( address ) {
+	geocode = address => {
 		const { onError } = this.props;
 
 		if ( ! this.hasTrackedStats ) {
-			stats.recordStat( 'location_search' );
-			stats.recordEvent( 'Location Searched' );
+			this.props.recordEditorStat( 'location_search' );
+			this.props.recordEditorEvent( 'Location Searched' );
 			this.hasTrackedStats = true;
 		}
 
-		if ( ! address ) {
+		// If the address query matches value in props, we want to just display, not search, so we return
+		// no results in that case.
+		if ( ! address || address === this.props.value ) {
 			this.setState( {
-				results: []
+				results: [],
 			} );
 
 			return;
 		}
 
-		geocode( address ).then( ( results ) => {
-			if ( ! this.mounted ) {
-				return;
-			}
+		geocode( address )
+			.then( results => {
+				if ( ! this.mounted ) {
+					return;
+				}
 
-			this.setState( { results } );
-		} ).catch( onError ).then( () => {
-			if ( ! this.mounted ) {
-				return;
-			}
+				this.setState( { results } );
+			} )
+			.catch( onError )
+			.then( () => {
+				if ( ! this.mounted ) {
+					return;
+				}
 
-			this.setState( {
-				isSearching: false
+				this.setState( {
+					isSearching: false,
+				} );
 			} );
-		} );
 
 		this.setState( {
-			isSearching: true
+			isSearching: true,
 		} );
-	},
-
-	onSelect( result ) {
-		this.refs.search.clear();
-		this.props.onSelect( result );
-	},
+	};
 
 	render() {
 		const { results, isSearching } = this.state;
 
+		// Cast undefined "value" to empty string because Search treats the two
+		// differently in componentWillReceiveProps().
+		const value = this.props.value || '';
+
 		return (
 			<div className="editor-location__search">
 				<SearchCard
-					ref="search"
 					onSearch={ this.geocode }
 					searching={ isSearching }
-					delaySearch />
+					delaySearch
+					compact
+					value={ value }
+					initialValue={ value }
+				/>
 				<ul className="editor-location__search-results">
-					{ results.map( ( result ) => {
+					{ results.map( result => {
 						return (
 							<li key={ result.formatted_address }>
 								<EditorLocationSearchResult
 									result={ result }
-									onClick={ this.onSelect.bind( null, result ) } />
+									onClick={ this.props.onSelect.bind( null, result ) }
+								/>
 							</li>
 						);
 					} ) }
@@ -109,4 +117,9 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{ recordEditorStat, recordEditorEvent }
+)( EditorLocationSearch );

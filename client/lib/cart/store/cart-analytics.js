@@ -1,26 +1,35 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
+
+import { difference, each, omit } from 'lodash';
+
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	difference = require( 'lodash/array/difference' );
+import analytics from 'lib/analytics';
+import { cartItems } from 'lib/cart-values';
+import { recordAddToCart } from 'lib/analytics/ad-tracking';
 
-function recordEvents( previousCart, nextCart ) {
-	var previousItems = cartItems.getAll( previousCart ),
+export function recordEvents( previousCart, nextCart ) {
+	const previousItems = cartItems.getAll( previousCart ),
 		nextItems = cartItems.getAll( nextCart );
 
-	difference( nextItems, previousItems ).forEach( recordAddEvent );
-	difference( previousItems, nextItems ).forEach( recordRemoveEvent );
+	each( difference( nextItems, previousItems ), recordAddEvent );
+	each( difference( previousItems, nextItems ), recordRemoveEvent );
+}
+
+export function removeNestedProperties( cartItem ) {
+	return omit( cartItem, [ 'extra' ] );
 }
 
 function recordAddEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_add', cartItem );
+	analytics.tracks.recordEvent( 'calypso_cart_product_add', removeNestedProperties( cartItem ) );
+	recordAddToCart( cartItem );
 }
 
 function recordRemoveEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_remove', cartItem );
+	analytics.tracks.recordEvent( 'calypso_cart_product_remove', removeNestedProperties( cartItem ) );
 }
-
-module.exports = {
-	recordEvents: recordEvents
-};

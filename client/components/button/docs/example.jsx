@@ -1,105 +1,202 @@
+/** @format */
+
 /**
-* External dependencies
-*/
-var React = require( 'react' );
+ * External dependencies
+ */
+
+import React from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-var Button = require( 'components/button' ),
-	Gridicon = require( 'components/gridicon' ),
-	Card = require( 'components/card' );
+import Button from 'components/button';
+import Card from 'components/card';
+import config from 'config';
+import DocsExample from 'devdocs/docs-example';
 
-var Buttons = React.createClass( {
-	displayName: 'Buttons',
+Button.displayName = 'Button';
 
-	mixins: [ React.addons.PureRenderMixin ],
+class Buttons extends React.PureComponent {
+	static displayName = 'Button';
 
-	getInitialState: function() {
-		return {
-			compactButtons: false
-		};
-	},
+	static defaultProps = {
+		exampleCode: (
+			<Card>
+				<div className="docs__design-button-row">
+					<Button>Button</Button>
+					<Button>
+						<Gridicon icon="heart" />
+						<span>Icon button</span>
+					</Button>
+					<Button>
+						<Gridicon icon="plugins" />
+					</Button>
+					<Button disabled>Disabled button</Button>
+				</div>
+				<div className="docs__design-button-row">
+					<Button scary>Scary button</Button>
+					<Button scary>
+						<Gridicon icon="globe" />
+						<span>Scary icon button</span>
+					</Button>
+					<Button scary>
+						<Gridicon icon="pencil" />
+					</Button>
+					<Button scary disabled>
+						Scary disabled button
+					</Button>
+				</div>
+				<div className="docs__design-button-row">
+					<Button primary>Primary button</Button>
+					<Button primary>
+						<Gridicon icon="camera" />
+						<span>Primary icon button</span>
+					</Button>
+					<Button primary>
+						<Gridicon icon="time" />
+					</Button>
+					<Button primary disabled>
+						Primary disabled button
+					</Button>
+				</div>
+				<div className="docs__design-button-row">
+					<Button primary scary>
+						Primary scary button
+					</Button>
+					<Button primary scary>
+						<Gridicon icon="user-circle" />
+						<span>Primary scary icon button</span>
+					</Button>
+					<Button primary scary>
+						<Gridicon icon="cart" />
+					</Button>
+					<Button primary scary disabled>
+						Primary scary disabled button
+					</Button>
+				</div>
+				<div className="docs__design-button-row">
+					<Button borderless>
+						<Gridicon icon="cross" />
+						<span>Remove</span>
+					</Button>
+					<Button borderless>
+						<Gridicon icon="trash" />
+						<span>Trash</span>
+					</Button>
+					<Button borderless>
+						<Gridicon icon="link-break" />
+						<span>Disconnect</span>
+					</Button>
+					<Button borderless>
+						<Gridicon icon="trash" />
+					</Button>
+					<Button borderless disabled>
+						<Gridicon icon="cross" />
+						<span>Remove</span>
+					</Button>
+				</div>
+				<div className="docs__design-button-row">
+					<Button borderless primary>
+						<Gridicon icon="cross" />
+						<span>Remove</span>
+					</Button>
+					<Button borderless primary>
+						<Gridicon icon="trash" />
+						<span>Trash</span>
+					</Button>
+					<Button borderless primary>
+						<Gridicon icon="link-break" />
+						<span>Disconnect</span>
+					</Button>
+					<Button borderless primary>
+						<Gridicon icon="trash" />
+					</Button>
+					<Button borderless primary disabled>
+						<Gridicon icon="cross" />
+						<span>Remove</span>
+					</Button>
+				</div>
+				<div className="docs__design-button-row">
+					<Button borderless scary>
+						<Gridicon icon="cross" />
+						<span>Remove</span>
+					</Button>
+					<Button borderless scary>
+						<Gridicon icon="trash" />
+						<span>Trash</span>
+					</Button>
+					<Button borderless scary>
+						<Gridicon icon="link-break" />
+						<span>Disconnect</span>
+					</Button>
+					<Button borderless scary>
+						<Gridicon icon="trash" />
+					</Button>
+					<Button borderless scary disabled>
+						<Gridicon icon="cross" />
+						<span>Remove</span>
+					</Button>
+				</div>
+				<div className="docs__design-button-row">
+					<Button compact>
+						<Gridicon icon="cross" />
+						<span>Remove</span>
+					</Button>
+					<Button compact>
+						<Gridicon icon="trash" />
+						<span>Trash</span>
+					</Button>
+					<Button compact>
+						<Gridicon icon="link-break" />
+						<span>Disconnect</span>
+					</Button>
+					<Button compact>
+						<Gridicon icon="trash" />
+					</Button>
+					<Button compact disabled>
+						<Gridicon icon="cross" />
+						<span>Remove</span>
+					</Button>
+				</div>
+				<div className="docs__design-button-row">
+					<Button busy>Busy button</Button>
+					<Button primary busy>
+						<Gridicon icon="time" />
+					</Button>
+					<Button primary busy>
+						Primary busy button
+					</Button>
+					<Button primary scary busy>
+						<Gridicon icon="trash" />
+						<span>Primary scary busy button</span>
+					</Button>
+				</div>
+			</Card>
+		),
+	};
 
-	render: function() {
-		var toggleButtonsText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
-
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/buttons">Button</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
-				</h2>
-				{ this.renderButtons() }
-			</div>
-		);
-	},
-
-	renderButtons: function() {
-		if ( ! this.state.compactButtons ) {
-			return (
-				<Card>
-					<div className="design-assets__button-row">
-						<Button>Button</Button>
-						<Button icon><Gridicon icon="heart" /> Icon button</Button>
-						<Button icon><Gridicon icon="plugins" /></Button>
-						<Button disabled >Disabled button</Button>
-					</div>
-					<div className="design-assets__button-row">
-						<Button scary >Scary button</Button>
-						<Button scary icon><Gridicon icon="globe" /> Scary icon button</Button>
-						<Button scary icon><Gridicon icon="pencil" /></Button>
-						<Button scary disabled >Scary disabled button</Button>
-					</div>
-					<div className="design-assets__button-row">
-						<Button primary >Primary button</Button>
-						<Button primary icon ><Gridicon icon="camera" /> Primary icon button</Button>
-						<Button primary icon ><Gridicon icon="time" /></Button>
-						<Button primary disabled >Primary disabled button</Button>
-					</div>
-					<div className="design-assets__button-row">
-						<Button primary scary >Primary scary button</Button>
-						<Button primary scary icon ><Gridicon icon="user-circle" /> Primary scary icon button</Button>
-						<Button primary scary icon ><Gridicon icon="cart" /></Button>
-						<Button primary scary disabled >Primary scary disabled button</Button>
-					</div>
-				</Card>
-			);
-		} else {
-			return (
-				<Card>
-					<div className="design-assets__button-row">
-						<Button compact >Compact button</Button>
-						<Button compact icon><Gridicon icon="heart" /> Compact icon button</Button>
-						<Button compact icon><Gridicon icon="plugins" /></Button>
-						<Button compact disabled >Compact disabled button</Button>
-					</div>
-					<div className="design-assets__button-row">
-						<Button compact scary >Compact scary button</Button>
-						<Button compact scary icon><Gridicon icon="globe" /> Compact scary icon button</Button>
-						<Button compact scary icon><Gridicon icon="pencil" /></Button>
-						<Button compact scary disabled >Compact scary disabled button</Button>
-					</div>
-					<div className="design-assets__button-row">
-						<Button compact primary >Compact primary button</Button>
-						<Button compact primary icon ><Gridicon icon="camera" /> Compact primary icon button</Button>
-						<Button compact primary icon ><Gridicon icon="time" /></Button>
-						<Button compact primary disabled >Compact primary disabled button</Button>
-					</div>
-					<div className="design-assets__button-row">
-						<Button compact primary scary >Compact primary scary button</Button>
-						<Button compact primary scary icon ><Gridicon icon="user-circle" /> Compact primary scary icon button</Button>
-						<Button compact primary scary icon ><Gridicon icon="cart" /></Button>
-						<Button compact primary scary disabled >Compact primary scary disabled button</Button>
-					</div>
-				</Card>
-			);
-		}
-	},
-
-	toggleButtons: function() {
-		this.setState( { compactButtons: ! this.state.compactButtons } );
+	render() {
+		return config.isEnabled( 'devdocs/components-usage-stats' )
+			? this.renderDocsExampleWithUsageStats()
+			: this.renderDocsExample();
 	}
-} );
 
-module.exports = Buttons;
+	renderDocsExample = () => {
+		return <DocsExample>{ this.renderButtons() }</DocsExample>;
+	};
+
+	renderDocsExampleWithUsageStats = () => {
+		return (
+			<DocsExample componentUsageStats={ this.props.componentUsageStats }>
+				{ this.renderButtons() }
+			</DocsExample>
+		);
+	};
+
+	renderButtons = () => {
+		return this.props.exampleCode;
+	};
+}
+
+export default Buttons;

@@ -1,54 +1,53 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	PureRenderMixin = React.addons.PureRenderMixin;
 
-module.exports = React.createClass( {
-	displayName: 'Gauge',
+import PropTypes from 'prop-types';
+import React from 'react';
 
-	mixins: [ PureRenderMixin ],
+export default class extends React.PureComponent {
+	static displayName = 'Gauge';
 
-	propTypes: {
-		percentage: React.PropTypes.number.isRequired,
-		width: React.PropTypes.number,
-		height: React.PropTypes.number,
-		colors: React.PropTypes.array,
-		lineWidth: React.PropTypes.number,
-		metric: React.PropTypes.string.isRequired
-	},
+	static propTypes = {
+		percentage: PropTypes.number.isRequired,
+		width: PropTypes.number,
+		height: PropTypes.number,
+		colors: PropTypes.array,
+		lineWidth: PropTypes.number,
+		metric: PropTypes.string.isRequired,
+	};
 
-	getDefaultProps: function() {
-		return {
-			width: 118,
-			height: 118,
-			lineWidth: 9,
-			labelSize: 32,
-			colors: [ '#e9eff3', '#00aadc' ]
-		};
-	},
+	static defaultProps = {
+		width: 118,
+		height: 118,
+		lineWidth: 9,
+		labelSize: 32,
+		colors: [ '#e9eff3', '#00aadc' ],
+	};
 
-	componentDidUpdate: function() {
-		var canvas = this.refs.canvas.getDOMNode(),
+	componentDidUpdate() {
+		let canvas = this.refs.canvas,
 			ctx = canvas.getContext( '2d' );
 
 		ctx.clearRect( 0, 0, this.props.width, this.props.height );
 		this.drawArcs();
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.drawArcs();
-	},
+	}
 
-	drawArcs: function() {
-		var canvas = this.refs.canvas.getDOMNode(),
-			x = ( this.props.width / 2 ),
-			y = ( this.props.height / 2 ),
+	drawArcs = () => {
+		let canvas = this.refs.canvas,
+			x = this.props.width / 2,
+			y = this.props.height / 2,
 			ctx = canvas.getContext( '2d' ),
-			startAngle = ( 0.8 * Math.PI ),
-			endAngle = ( 2.2 * Math.PI ),
-			valueEndAngle = ( 0.8 + ( 1.4 * ( this.props.percentage / 100 ) ) ) * Math.PI,
-			radius = x - ( this.props.lineWidth / 2 ),
+			startAngle = 0.8 * Math.PI,
+			endAngle = 2.2 * Math.PI,
+			valueEndAngle = ( 0.8 + 1.4 * ( this.props.percentage / 100 ) ) * Math.PI,
+			radius = x - this.props.lineWidth / 2,
 			angleData = [ endAngle, valueEndAngle ];
 
 		angleData.forEach( function( angle, idx ) {
@@ -59,23 +58,23 @@ module.exports = React.createClass( {
 			ctx.lineCap = 'round';
 			ctx.stroke();
 		}, this );
-	},
+	};
 
-	render: function() {
-		var wrapperStyles = {
+	render() {
+		let wrapperStyles = {
 				width: this.props.width,
-				height: this.props.height
+				height: this.props.height,
 			},
 			labelStyles = {
 				color: this.props.colors[ 1 ],
-				fontSize: this.props.labelSize + 'px'
+				fontSize: this.props.labelSize + 'px',
 			},
 			labelTop,
 			label = this.props.percentage + '%';
 
 		// style the label
 		labelStyles.color = this.props.colors[ 1 ];
-		labelTop = ( this.props.height / 2 ) + this.props.labelSize;
+		labelTop = this.props.height / 2 + this.props.labelSize;
 		labelStyles.top = '-' + labelTop + 'px';
 
 		return (
@@ -88,4 +87,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}

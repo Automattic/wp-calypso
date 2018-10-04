@@ -1,0 +1,27 @@
+.jetpack-colophon {
+	margin-top: 40px;
+	text-align: center;
+	color: $gray-text-min;
+
+	.jetpack-logo {
+		display: inline-block;
+		fill: currentColor;
+	}
+	.jetpack-logo__icon-circle {
+		fill: currentColor;
+	}
+	@include breakpoint( "<660px" ) {
+		margin-bottom: 24px;
+	}
+}
+
+.jetpack-colophon__power {
+	display: inline-block;
+	vertical-align: top;
+
+	.jetpack-logo {
+		vertical-align: inherit;
+		margin-top: -5px;
+		margin-left: 4px;
+	}
+}

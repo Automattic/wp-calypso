@@ -1,57 +1,68 @@
 /**
- * External dependencies
+ * @format
+ * @jest-environment jsdom
  */
-var expect = require( 'chai' ).expect,
-	rewire = require( 'rewire' ),
-	assign = require( 'lodash/object/assign' ),
-	sinon = require( 'sinon' );
 
 /**
- * Internal dependencies
+ * External dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	MediaStore = require( '../store' );
+import { expect } from 'chai';
+import { assign } from 'lodash';
+import sinon from 'sinon';
 
-var DUMMY_SITE_ID = 1,
+jest.mock( 'lib/user', () => () => {} );
+
+const DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
-		100: { ID: 100, title: 'Image' },
-		'media-1': { ID: 100, title: 'Image' },
-		200: { ID: 200, title: 'Video' }
+		100: { ID: 100, title: 'Image', guid: 'https://example.files.wordpress.com/2017/05/g1001.png' },
+		'media-1': {
+			ID: 100,
+			title: 'Image',
+			guid: 'https://example.files.wordpress.com/2017/05/g1001.png',
+		},
+		200: { ID: 200, title: 'Video', guid: 'https://example.files.wordpress.com/2017/05/g1002.mov' },
 	},
 	DUMMY_MEDIA_OBJECT = DUMMY_OBJECTS[ 100 ],
 	DUMMY_TRANSIENT_MEDIA_OBJECT = DUMMY_OBJECTS[ 'media-1' ];
 
-describe( 'MediaLibrarySelectedStore', function() {
-	var sandbox, MediaLibrarySelectedStore, handler;
+describe( 'MediaLibrarySelectedStore', () => {
+	let Dispatcher, sandbox, MediaLibrarySelectedStore, handler, MediaStore;
 
-	before( function() {
-		sandbox = sinon.sandbox.create();
+	beforeAll( function() {
+		sandbox = sinon.createSandbox();
+		Dispatcher = require( 'dispatcher' );
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
-		sandbox.stub( MediaStore, 'get', function( siteId, itemId ) {
+
+		MediaStore = require( '../store' );
+		sandbox.stub( MediaStore, 'get' ).callsFake( function( siteId, itemId ) {
 			if ( siteId === DUMMY_SITE_ID ) {
 				return DUMMY_OBJECTS[ itemId ];
 			}
 		} );
-		MediaLibrarySelectedStore = rewire( '../library-selected-store' );
+
+		MediaLibrarySelectedStore = require( '../library-selected-store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
-	beforeEach( function() {
-		MediaLibrarySelectedStore.__set__( '_media', {} );
+	beforeEach( () => {
+		MediaLibrarySelectedStore._media = {};
 	} );
 
-	after( function() {
+	afterAll( function() {
 		sandbox.restore();
 	} );
 
 	function dispatchSetLibrarySelectedItems( action ) {
 		handler( {
-			action: assign( {
-				type: 'SET_MEDIA_LIBRARY_SELECTED_ITEMS',
-				siteId: DUMMY_SITE_ID,
-				data: [ DUMMY_TRANSIENT_MEDIA_OBJECT ]
-			}, action )
+			action: assign(
+				{
+					type: 'SET_MEDIA_LIBRARY_SELECTED_ITEMS',
+					siteId: DUMMY_SITE_ID,
+					data: [ DUMMY_TRANSIENT_MEDIA_OBJECT ],
+				},
+				action
+			),
 		} );
 	}
 
@@ -61,8 +72,8 @@ describe( 'MediaLibrarySelectedStore', function() {
 				type: 'RECEIVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
 				data: DUMMY_MEDIA_OBJECT,
-				id: DUMMY_TRANSIENT_MEDIA_OBJECT.ID
-			}
+				id: DUMMY_TRANSIENT_MEDIA_OBJECT.ID,
+			},
 		} );
 	}
 
@@ -72,64 +83,82 @@ describe( 'MediaLibrarySelectedStore', function() {
 				error: error,
 				type: 'REMOVE_MEDIA_ITEM',
 				siteId: DUMMY_SITE_ID,
-				data: DUMMY_TRANSIENT_MEDIA_OBJECT
-			}
+				data: DUMMY_TRANSIENT_MEDIA_OBJECT,
+			},
 		} );
 	}
 
-	describe( '#get()', function() {
-		it( 'should return a single value', function() {
+	describe( '#get()', () => {
+		test( 'should return a single value', () => {
 			dispatchSetLibrarySelectedItems();
 
-			expect( MediaLibrarySelectedStore.get( DUMMY_SITE_ID, DUMMY_TRANSIENT_MEDIA_OBJECT.ID ) ).to.eql( DUMMY_TRANSIENT_MEDIA_OBJECT );
+			expect(
+				MediaLibrarySelectedStore.get( DUMMY_SITE_ID, DUMMY_TRANSIENT_MEDIA_OBJECT.ID )
+			).to.eql( DUMMY_TRANSIENT_MEDIA_OBJECT );
 		} );
 
-		it( 'should return undefined for an item that does not exist', function() {
-			expect( MediaLibrarySelectedStore.get( DUMMY_SITE_ID, DUMMY_TRANSIENT_MEDIA_OBJECT.ID + 1 ) ).to.be.undefined;
+		test( 'should return undefined for an item that does not exist', () => {
+			expect( MediaLibrarySelectedStore.get( DUMMY_SITE_ID, DUMMY_TRANSIENT_MEDIA_OBJECT.ID + 1 ) )
+				.to.be.undefined;
 		} );
 	} );
 
-	describe( '#getAll()', function() {
-		it( 'should return all selected media', function() {
+	describe( '#getAll()', () => {
+		test( 'should return all selected media', () => {
 			dispatchSetLibrarySelectedItems();
 
-			expect( MediaLibrarySelectedStore.getAll( DUMMY_SITE_ID ) ).to.eql( [ DUMMY_TRANSIENT_MEDIA_OBJECT ] );
+			expect( MediaLibrarySelectedStore.getAll( DUMMY_SITE_ID ) ).to.eql( [
+				DUMMY_TRANSIENT_MEDIA_OBJECT,
+			] );
 		} );
 
-		it( 'should return an empty array for a site with no selected items', function() {
+		test( 'should return an empty array for a site with no selected items', () => {
 			expect( MediaLibrarySelectedStore.getAll( DUMMY_SITE_ID ) ).to.eql( [] );
 		} );
 	} );
 
-	describe( '.dispatchToken', function() {
-		it( 'should expose its dispatcher ID', function() {
+	describe( '.dispatchToken', () => {
+		test( 'should expose its dispatcher ID', () => {
 			expect( MediaLibrarySelectedStore.dispatchToken ).to.not.be.undefined;
 		} );
 
-		it( 'should emit a change event when library items have been set', function( done ) {
+		test( 'should emit a change event when library items have been set', done => {
 			MediaLibrarySelectedStore.once( 'change', done );
 
 			dispatchSetLibrarySelectedItems();
 		} );
 
-		it( 'should emit a change event when receiving updates', function( done ) {
+		test( 'should emit a change event when receiving updates', done => {
 			MediaLibrarySelectedStore.once( 'change', done );
 
 			dispatchReceiveMediaItem();
 		} );
 
-		it( 'should replace an item when its ID has changed', function() {
+		test( 'should replace an item when its ID has changed', () => {
 			dispatchSetLibrarySelectedItems();
 			dispatchReceiveMediaItem();
 
 			expect( MediaLibrarySelectedStore.getAll( DUMMY_SITE_ID ) ).to.eql( [ DUMMY_MEDIA_OBJECT ] );
 		} );
 
-		it( 'should remove an item when REMOVE_MEDIA_ITEM is dispatched', function() {
+		test( 'should remove an item when REMOVE_MEDIA_ITEM is dispatched', () => {
 			dispatchSetLibrarySelectedItems();
 			dispatchRemoveMediaItem();
 
-			expect( MediaLibrarySelectedStore.__get__( '_media' )[ DUMMY_SITE_ID ] ).to.be.empty;
+			expect( MediaLibrarySelectedStore._media[ DUMMY_SITE_ID ] ).to.be.empty;
+		} );
+
+		test( 'should clear selected items when CHANGE_MEDIA_SOURCE is dispatched', () => {
+			dispatchSetLibrarySelectedItems();
+
+			handler( {
+				action: {
+					type: 'CHANGE_MEDIA_SOURCE',
+					siteId: DUMMY_SITE_ID,
+				},
+			} );
+
+			expect( MediaLibrarySelectedStore._media[ DUMMY_SITE_ID ] ).to.be.empty;
 		} );
 	} );
 } );

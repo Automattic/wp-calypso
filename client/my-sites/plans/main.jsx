@@ -1,83 +1,126 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	PlanList = require( 'components/plans/plan-list' ),
-	siteSpecificPlansDetailsMixin = require( 'components/plans/site-specific-plan-details-mixin' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
+import DocumentHead from 'components/data/document-head';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PlansFeaturesMain from 'my-sites/plans-features-main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import PlansNavigation from 'my-sites/plans/navigation';
+import isSiteAutomatedTransferSelector from 'state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'state/sites/selectors';
+import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 
-module.exports = React.createClass( {
-	displayName: 'Plans',
+class Plans extends React.Component {
+	static propTypes = {
+		cart: PropTypes.object.isRequired,
+		context: PropTypes.object.isRequired,
+		displayJetpackPlans: PropTypes.bool,
+		intervalType: PropTypes.string,
+		selectedFeature: PropTypes.string,
+		selectedSite: PropTypes.object,
+	};
 
-	mixins: [ siteSpecificPlansDetailsMixin, observe( 'sites', 'plans', 'siteSpecificPlansDetailsList' ) ],
+	static defaultProps = {
+		displayJetpackPlans: false,
+		intervalType: 'yearly',
+	};
 
-	getInitialState: function() {
-		return { openPlan: '' };
-	},
+	componentDidMount() {
+		this.redirectIfNonJetpackMonthly();
 
-	openPlan: function( planId ) {
-		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
-	},
-
-	recordComparePlansClick: function() {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Compare Plans Link' );
-	},
-
-	comparePlansLink: function() {
-		var url = '/plans/compare',
-			selectedSite = this.props.sites.getSelectedSite();
-
-		if ( this.props.plans.get().length <= 0 ) {
-			return '';
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
 		}
+	}
 
-		if ( selectedSite ) {
-			url += '/' + selectedSite.slug;
+	componentDidUpdate() {
+		this.redirectIfNonJetpackMonthly();
+	}
+
+	isNonJetpackMonthly() {
+		const { displayJetpackPlans, intervalType, selectedSite } = this.props;
+		return selectedSite && ! displayJetpackPlans && intervalType === 'monthly';
+	}
+
+	redirectIfNonJetpackMonthly() {
+		const { selectedSite } = this.props;
+
+		if ( this.isNonJetpackMonthly() ) {
+			page.redirect( '/plans/' + selectedSite.slug );
 		}
+	}
 
-		return <a href={ url } className="compare-plans-link" onClick={ this.recordComparePlansClick }>{ this.translate( 'Compare Plans' ) }</a>;
-	},
-
-	sidebarNavigation: function() {
-		return <SidebarNavigation />;
-	},
-
-	render: function() {
-		var classNames = 'main main-column ',
-			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
-				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain );
-
+	renderPlaceholder = () => {
 		return (
-			<div className={ classNames } role="main">
-				{ this.sidebarNavigation() }
-				<div id="plans" className="plans has-sidebar">
-					{ this.sectionNavigation() }
-					<PlanList
-						sites={ this.props.sites }
-						plans={ this.props.plans.get() }
-						siteSpecificPlansDetailsList={ this.props.siteSpecificPlansDetailsList }
-						onOpen={ this.openPlan }
-						onSelectPlan={ this.props.onSelectPlan }
-						cart={ this.props.cart } />
-					{ ! hasJpphpBundle && this.comparePlansLink() }
-				</div>
+			<div>
+				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
+				<Main wideLayout={ true }>
+					<SidebarNavigation />
+
+					<div id="plans" className="plans has-sidebar" />
+				</Main>
 			</div>
 		);
-	},
+	};
 
-	sectionNavigation: function() {
+	render() {
+		const { selectedSite, translate, displayJetpackPlans } = this.props;
+
+		if ( ! selectedSite || this.isNonJetpackMonthly() ) {
+			return this.renderPlaceholder();
+		}
+
 		return (
-			<UpgradesNavigation
-				path={ this.props.context.path }
-				cart={ this.props.cart }
-				selectedSite={ this.props.sites.getSelectedSite() } />
+			<div>
+				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				<PageViewTracker path="/plans/:site" title="Plans" />
+				<QueryContactDetailsCache />
+				<TrackComponentView eventName="calypso_plans_view" />
+				<Main wideLayout={ true }>
+					<SidebarNavigation />
+
+					<div id="plans" className="plans has-sidebar">
+						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+						<PlansFeaturesMain
+							displayJetpackPlans={ displayJetpackPlans }
+							hideFreePlan={ true }
+							intervalType={ this.props.intervalType }
+							selectedFeature={ this.props.selectedFeature }
+							selectedPlan={ this.props.selectedPlan }
+							withDiscount={ this.props.withDiscount }
+							site={ selectedSite }
+						/>
+					</div>
+				</Main>
+			</div>
 		);
 	}
-} );
+}
+
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+
+	const jetpackSite = isJetpackSite( state, selectedSiteId );
+	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
+
+	return {
+		selectedSite: getSelectedSite( state ),
+		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
+	};
+} )( localize( Plans ) );

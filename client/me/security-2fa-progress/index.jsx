@@ -1,60 +1,60 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-progress' ),
-	ProgressItem = require( './progress-item' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-progress' );
+import ProgressItem from './progress-item';
 
-	displayName: 'Security2faProgress',
+class Security2faProgress extends React.Component {
+	static displayName = 'Security2faProgress';
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	stepClass: function( step ) {
-		var currentStep = parseInt( this.props.step, 10 );
+	stepClass = step => {
+		const currentStep = parseInt( this.props.step, 10 );
 
-		return ( {
+		return {
 			isHighlighted: step === currentStep,
-			isCompleted: step < currentStep
-		} );
-	},
+			isCompleted: step < currentStep,
+		};
+	};
 
-	render: function() {
+	render() {
 		return (
-
 			<div className="security-2fa-progress__container">
-
 				<div className="security-2fa-progress__inner-container">
-
 					<ProgressItem
-						label={ this.translate( 'Enter Phone Number' ) }
+						label={ this.props.translate( 'Enter Phone Number' ) }
 						icon="phone"
 						step={ this.stepClass( 1 ) }
 					/>
 
 					<ProgressItem
-						label={ this.translate( 'Verify Code' ) }
-						icon="send-to-phone"
+						label={ this.props.translate( 'Verify Code' ) }
+						icon="lock"
 						step={ this.stepClass( 2 ) }
 					/>
 
 					<ProgressItem
-						label={ this.translate( 'Generate Backup Codes' ) }
-						icon="refresh"
+						label={ this.props.translate( 'Generate Backup Codes' ) }
+						icon="sync"
 						step={ this.stepClass( 3 ) }
 					/>
-
 				</div>
-
 			</div>
-
 		);
 	}
-} );
+}
+
+export default localize( Security2faProgress );

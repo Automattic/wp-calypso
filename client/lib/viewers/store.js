@@ -1,31 +1,34 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:viewers:store' ),
-	_assign = require( 'lodash/object/assign' ),
-	_values = require( 'lodash/object/values' );
+
+import { assign, values } from 'lodash';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:viewers:store' );
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+import Dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
-var _fetchingViewers = {},
+let _fetchingViewers = {},
 	_viewersBySite = {},
 	_totalViewers = {},
 	_numViewersFetched = {},
 	_viewersCurrentPage = {},
 	_removingFromSite = {};
 
-var ViewersStore = {
+const ViewersStore = {
 	// This data may help with infinite scrolling
 	getPaginationData: function( siteId ) {
 		return {
 			totalViewers: _totalViewers[ siteId ] || 0,
 			fetchingViewers: _fetchingViewers[ siteId ],
 			currentViewersPage: _viewersCurrentPage[ siteId ],
-			numViewersFetched: _numViewersFetched[ siteId ]
+			numViewersFetched: _numViewersFetched[ siteId ],
 		};
 	},
 
@@ -34,7 +37,7 @@ var ViewersStore = {
 			return false;
 		}
 
-		return _values( _viewersBySite[ siteId ] );
+		return values( _viewersBySite[ siteId ] );
 	},
 
 	isRemoving: function( siteId ) {
@@ -43,7 +46,7 @@ var ViewersStore = {
 
 	emitChange: function() {
 		this.emit( 'change' );
-	}
+	},
 };
 
 function updateViewer( siteId, id, viewer ) {
@@ -54,7 +57,7 @@ function updateViewer( siteId, id, viewer ) {
 		_viewersBySite[ siteId ][ id ] = {};
 	}
 
-	_viewersBySite[ siteId ][ id ] = _assign( {}, _viewersBySite[ siteId ][ id ], viewer );
+	_viewersBySite[ siteId ][ id ] = assign( {}, _viewersBySite[ siteId ][ id ], viewer );
 
 	debug( 'Updating viewer:', _viewersBySite[ siteId ][ id ] );
 }
@@ -96,7 +99,7 @@ function removeViewerFromSite( siteId, viewerId ) {
 }
 
 ViewersStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 	debug( 'register event Type', action.type, payload );
 
 	switch ( action.type ) {
@@ -132,4 +135,4 @@ ViewersStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 emitter( ViewersStore );
 
-module.exports = ViewersStore;
+export default ViewersStore;

@@ -1,15 +1,20 @@
+/** @format */
+
 /**
  * External dependencies
  */
+
 import React from 'react';
 import debugModule from 'debug';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
-import { isFieldDisabled } from '../';
+import FormStateStore from '../';
 import createFormStore from '../store';
+
+const { isFieldDisabled } = FormStateStore;
 
 const debug = debugModule( 'calypso:lib:form-state:examples:async-initialize' );
 
@@ -19,7 +24,7 @@ function loadFromServer( onComplete ) {
 	setTimeout( () => {
 		onComplete( null, {
 			firstName: 'Foo',
-			lastName: 'Bar'
+			lastName: 'Bar',
 		} );
 	}, 1000 );
 }
@@ -29,8 +34,8 @@ class AsyncInitialize extends React.Component {
 		this.formStore = createFormStore( {
 			asyncInitialize: {
 				fieldNames: [ 'firstName', 'lastName' ],
-				loadFunction: loadFromServer
-			}
+				loadFunction: loadFromServer,
+			},
 		} );
 		this.formStore.on( 'change', this.updateFormState.bind( this ) );
 		this.updateFormState();
@@ -44,17 +49,21 @@ class AsyncInitialize extends React.Component {
 		return (
 			<div>
 				<form onSubmit={ this.handleSubmit.bind( this ) }>
-					<input name="firstName"
+					<input
+						name="firstName"
 						type="text"
 						placeholder={ i18n.translate( 'First Name' ) }
 						onChange={ this.handleFieldChange.bind( this ) }
-						disabled={ isFieldDisabled( this.state.form, 'firstName' ) } />
+						disabled={ isFieldDisabled( this.state.form, 'firstName' ) }
+					/>
 
-					<input name="lastName"
+					<input
+						name="lastName"
 						type="text"
 						placeholder={ i18n.translate( 'Last Name' ) }
 						onChange={ this.handleFieldChange.bind( this ) }
-						disabled={ isFieldDisabled( this.state.form, 'lastName' ) } />
+						disabled={ isFieldDisabled( this.state.form, 'lastName' ) }
+					/>
 
 					<button type="submit" className="button is-primary">
 						Submit
@@ -71,7 +80,7 @@ class AsyncInitialize extends React.Component {
 
 		this.formStore.handleFieldChange( {
 			name: event.target.name,
-			value: event.target.value
+			value: event.target.value,
 		} );
 	}
 

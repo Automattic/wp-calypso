@@ -1,207 +1,391 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	debug = require( 'debug' )( 'calypso:my-sites:site-settings' ),
-	page = require( 'page' );
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import page from 'page';
+import { some } from 'lodash';
+import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var HeaderCake = require( 'components/header-cake' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
-	ActionPanel = require( 'my-sites/site-settings/action-panel' ),
-	ActionPanelTitle = require( 'my-sites/site-settings/action-panel/title' ),
-	ActionPanelBody = require( 'my-sites/site-settings/action-panel/body' ),
-	ActionPanelFigure = require( 'my-sites/site-settings/action-panel/figure' ),
-	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' ),
-	Dialog = require( 'components/dialog' ),
-	config = require( 'config' ),
-	SiteListActions = require( 'lib/sites-list/actions' );
+import HeaderCake from 'components/header-cake';
+import ActionPanel from 'components/action-panel';
+import ActionPanelTitle from 'components/action-panel/title';
+import ActionPanelBody from 'components/action-panel/body';
+import ActionPanelFigure from 'components/action-panel/figure';
+import ActionPanelFooter from 'components/action-panel/footer';
+import Button from 'components/button';
+import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
+import Dialog from 'components/dialog';
+import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSite, getSiteDomain } from 'state/sites/selectors';
+import Notice from 'components/notice';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import { deleteSite } from 'state/sites/actions';
+import { setSelectedSiteId } from 'state/ui/actions';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import FormLabel from 'components/forms/form-label';
 
-module.exports = React.createClass( {
+class DeleteSite extends Component {
+	static propTypes = {
+		deleteSite: PropTypes.func.isRequired,
+		hasLoadedSitePurchasesFromServer: PropTypes.bool,
+		siteDomain: PropTypes.string,
+		siteExists: PropTypes.bool,
+		siteId: PropTypes.number,
+		sitePurchases: PropTypes.array,
+		siteSlug: PropTypes.string,
+		translate: PropTypes.func.isRequired,
+	};
 
-	displayName: 'DeleteSite',
+	state = {
+		confirmDomain: '',
+		showConfirmDialog: false,
+		showWarningDialog: false,
+	};
 
-	mixins: [ React.addons.LinkedStateMixin ],
+	renderNotice() {
+		const { siteDomain, translate } = this.props;
 
-	getInitialState: function() {
-		return {
-			showDialog: false,
-			confirmDomain: '',
-			site: this.props.sites.getSelectedSite()
-		};
-	},
+		if ( ! siteDomain ) {
+			return null;
+		}
 
-	componentWillMount: function() {
-		debug( 'Mounting DeleteSite React component.' );
-		this.props.sites.on( 'change', this._updateSite );
-	},
+		return (
+			<Notice status="is-warning" showDismiss={ false }>
+				{ translate( '{{strong}}%(siteDomain)s{{/strong}} will be unavailable in the future.', {
+					components: {
+						strong: <strong />,
+					},
+					args: {
+						siteDomain,
+					},
+				} ) }
+			</Notice>
+		);
+	}
 
-	componentWillUnmount: function() {
-		this.props.sites.off( 'change', this._updateSite );
-	},
+	handleDeleteSiteClick = event => {
+		event.preventDefault();
 
-	render: function() {
-		var site = this.state.site,
-			adminURL = site.options && site.options.admin_url ? site.options.admin_url : '',
-			exportLink = config.isEnabled( 'manage/export' ) ? '/settings/export/' + site.slug : adminURL + 'export.php',
-			exportTarget = config.isEnabled( 'manage/export' ) ? undefined : '_blank',
-			deleteDisabled = ( typeof this.state.confirmDomain !== 'string' || this.state.confirmDomain.replace( /\s/g, '' ) !== site.domain ),
-			deleteButtons, strings;
+		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
+			return;
+		}
 
-		deleteButtons = [
-			<button
-				className="button"
-				onClick={ this._closeDialog }>{
-					this.translate( 'Cancel' )
-			}</button>,
-			<button
-				className="button is-destructive"
-				disabled={ deleteDisabled }
-				onClick={ this._deleteSite }>{
-					this.translate( 'Delete this Site' )
-			}</button>
+		const hasActiveSubscriptions = some( this.props.sitePurchases, 'active' );
+
+		if ( hasActiveSubscriptions ) {
+			this.setState( { showWarningDialog: true } );
+		} else {
+			this.setState( { showConfirmDialog: true } );
+		}
+	};
+
+	closeConfirmDialog = () => {
+		this.setState( { showConfirmDialog: false } );
+	};
+
+	closeWarningDialog = () => {
+		this.setState( { showWarningDialog: false } );
+	};
+
+	_goBack = () => {
+		const { siteSlug } = this.props;
+		page( '/settings/general/' + siteSlug );
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		const { siteId, siteExists } = this.props;
+
+		if ( siteId && siteExists && ! nextProps.siteExists ) {
+			this.props.setSelectedSiteId( null );
+			page.redirect( '/stats' );
+		}
+	}
+
+	_deleteSite = () => {
+		const { siteId } = this.props;
+
+		this.setState( { showConfirmDialog: false } );
+
+		this.props.deleteSite( siteId );
+	};
+
+	_checkSiteLoaded = event => {
+		const { siteId } = this.props;
+		if ( ! siteId ) {
+			event.preventDefault();
+		}
+	};
+
+	onConfirmDomainChange = event => {
+		this.setState( {
+			confirmDomain: event.target.value,
+		} );
+	};
+
+	render() {
+		const { isAtomic, siteDomain, siteId, siteSlug, translate } = this.props;
+		const exportLink = '/settings/export/' + siteSlug;
+		const deleteDisabled =
+			typeof this.state.confirmDomain !== 'string' ||
+			this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== siteDomain;
+
+		const deleteButtons = [
+			<Button onClick={ this.closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
+			<Button primary scary disabled={ deleteDisabled } onClick={ this._deleteSite }>
+				{ translate( 'Delete this Site' ) }
+			</Button>,
 		];
 
-		strings = {
-			deleteSite: this.translate( 'Delete Site' ),
-			confirmDeleteSite: this.translate( 'Confirm Delete Site' ),
-			exportContentFirst: this.translate( 'Export Content First' ),
-			exportContent: this.translate( 'Export Content' ),
-			contactSupport: this.translate( 'Contact Support' )
+		const strings = {
+			confirmDeleteSite: translate( 'Confirm Delete Site' ),
+			contactSupport: translate( 'Contact Support' ),
+			deleteSite: translate( 'Delete Site' ),
+			exportContent: translate( 'Export Content' ),
+			exportContentFirst: translate( 'Export Content First' ),
 		};
 
 		return (
-			<div className="main main-column" role="main">
-				<HeaderCake onClick={ this._goBack }><h1>{ strings.deleteSite }</h1></HeaderCake>
+			<div className="delete-site main main-column" role="main">
+				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
+				<HeaderCake onClick={ this._goBack }>
+					<h1>{ strings.deleteSite }</h1>
+				</HeaderCake>
 				<ActionPanel>
 					<ActionPanelBody>
-						<ActionPanelFigure><img src="/calypso/images/delete-site/export-content.png" /></ActionPanelFigure>
+						<ActionPanelFigure>
+							<svg
+								width="158"
+								height="174"
+								viewBox="0 0 158 174"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<title>{ strings.exportContent }</title>
+								<g transform="translate(0 -5)" fill="none" fillRule="evenodd">
+									<rect fill="#D5E5EB" x="57" y="157" width="45" height="22" rx="4" />
+									<text fontFamily="Open Sans" fontSize="11" fontWeight="526" fill="#FFF">
+										<tspan x="69.736" y="172">
+											.ZIP
+										</tspan>
+									</text>
+									<path
+										d="M89.5 131.5h-6v-9h-9v9h-6L79 142l10.5-10.5zm-21 13.5v3h21v-3h-21z"
+										fill="#D5E5EB"
+									/>
+									<path d="M61 118h36v36H61v-36z" />
+									<path
+										d="M.03 40.992l54.486-29.92 25.18 13.238-54.62 29.734L.032 40.992z"
+										fill="#D5E5EB"
+									/>
+									<path
+										d="M157.9 40.992l-54.484-29.92-25.18 13.238 54.62 29.734L157.9 40.992z"
+										fill="#D5E5EB"
+									/>
+									<path
+										d="M118.9 43.846c0 21.098-17.186 38.266-38.304 38.266-21.118 0-38.303-17.168-38.303-38.266S59.478 5.58 80.596 5.58 118.9 22.748 118.9 43.846zM65.55 74.81L49.132 29.837a34.013 34.013 0 0 0-2.992 14.008c0 13.624 7.952 25.367 19.41 30.963zM101.2 53.24c1.495-4.783 2.65-8.2 2.65-11.147 0-4.23-1.54-7.175-2.864-9.48-1.71-2.82-3.378-5.21-3.378-8.072 0-3.16 2.394-6.108 5.772-6.108l.47.042c-6.114-5.594-14.278-9.052-23.256-9.052-12.012 0-22.614 6.19-28.77 15.502l2.223.042c3.59 0 9.148-.427 9.148-.427 1.88-.086 2.094 2.605.256 2.86 0 0-1.88.214-3.976.3l12.568 37.284 7.525-22.593-5.344-14.692c-1.88-.085-3.633-.298-3.633-.298-1.84-.128-1.625-2.947.214-2.86 0 0 5.685.425 9.063.425 3.633 0 9.19-.427 9.19-.427 1.838-.086 2.094 2.605.215 2.86 0 0-1.84.214-3.934.3l12.44 36.985 3.422-11.446zM92.01 76.304c-.085-.172-.17-.3-.213-.47l-10.603-29L70.85 76.86c3.12.895 6.37 1.365 9.746 1.365 4.02 0 7.865-.683 11.414-1.92zm19.024-45.44c0 3.5-.643 7.43-2.608 12.342L97.91 73.57c10.216-5.936 17.098-17.04 17.098-29.724 0-5.98-1.495-11.616-4.188-16.528a31.01 31.01 0 0 1 .214 3.546z"
+										fill="#A8BECE"
+									/>
+									<path
+										d="M133.263 53.938v37.715L79 113.728V76.014l54.263-22.076zM24.737 53.938v37.715L79 113.728V76.014L24.737 53.938z"
+										fill="#D5E5EB"
+									/>
+									<path
+										d="M155.74 70.355L102.527 92.48 78.125 75.12l55.24-21.407 22.374 16.642z"
+										stroke="#FFF"
+										strokeWidth="2.4"
+										fill="#D5E5EB"
+									/>
+									<path
+										d="M2.08 70.355L55.294 92.48l24.402-17.36-54.582-21.297L2.08 70.355z"
+										stroke="#FFF"
+										strokeWidth="2.4"
+										fill="#D5E5EB"
+									/>
+								</g>
+							</svg>
+						</ActionPanelFigure>
 						<ActionPanelTitle>{ strings.exportContentFirst }</ActionPanelTitle>
-						<p>{
-							this.translate( 'Before deleting your site, please take the time to export your content now. ' +
-								'All your posts, pages, and settings will be packaged into a .zip file that you can use in ' +
-								'the future to resume where you left off.' )
-						}
+						<p>
+							{ translate(
+								'Before deleting your site, take a moment to export your content. ' +
+									'This will package the content of all your posts and pages, ' +
+									"along with your site's settings, into a .zip file. " +
+									"If you ever want to re-create your site, you'll be able to import the .zip file to a new site."
+							) }
 						</p>
-						<p>{
-							this.translate( 'Keep in mind that this content {{strong}}can not{{/strong}} be recovered in the future.', {
-								components: {
-									strong: <strong />
+						<p>
+							{ translate(
+								'This content {{strong}}can not{{/strong}} be recovered once your delete this site.',
+								{
+									components: {
+										strong: <strong />,
+									},
 								}
-							} )
-						}</p>
+							) }
+						</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						<a
-							className="button"
-							disabled={ ! this.state.site }
+						<Button
+							className="delete-site__export-button action-panel__export-button"
+							disabled={ ! siteId }
 							onClick={ this._checkSiteLoaded }
 							href={ exportLink }
-							target={ exportTarget }>
+						>
 							{ strings.exportContent }
-							<span className="noticon noticon-external settings-action-panel__footer-button-icon"></span>
-						</a>
+							<Gridicon icon="external" />
+						</Button>
 					</ActionPanelFooter>
 				</ActionPanel>
 				<ActionPanel>
 					<ActionPanelTitle>{ strings.deleteSite }</ActionPanelTitle>
 					<ActionPanelBody>
-						<SimpleNotice status="is-warning" showDismiss={ false }>
-							{ this.translate( '{{strong}}%(domain)s{{/strong}} will be unavailable in the future.', {
-								components: {
-									strong: <strong />
-								},
-								args: {
-									domain: site.domain
-								}
-							} ) }
-						</SimpleNotice>
+						{ this.renderNotice() }
 						<ActionPanelFigure>
-							<h3 className="delete-site__content-list-header">{ this.translate( 'These items will be deleted' ) }</h3>
+							<h3 className="delete-site__content-list-header">
+								{ translate( 'These items will be deleted' ) }
+							</h3>
 							<ul className="delete-site__content-list">
-								<li className="delete-site__content-list-item">{ this.translate( 'Posts' ) }</li>
-								<li className="delete-site__content-list-item">{ this.translate( 'Pages' ) }</li>
-								<li className="delete-site__content-list-item">{ this.translate( 'Media' ) }</li>
-								<li className="delete-site__content-list-item">{ this.translate( 'Users & Authors' ) }</li>
-								<li className="delete-site__content-list-item">{ this.translate( 'Domains' ) }</li>
-								<li className="delete-site__content-list-item">{ this.translate( 'Purchased Upgrades' ) }</li>
+								<li className="delete-site__content-list-item">{ translate( 'Posts' ) }</li>
+								<li className="delete-site__content-list-item">{ translate( 'Pages' ) }</li>
+								<li className="delete-site__content-list-item">{ translate( 'Media' ) }</li>
+								<li className="delete-site__content-list-item">
+									{ translate( 'Users & Authors' ) }
+								</li>
+								<li className="delete-site__content-list-item">{ translate( 'Domains' ) }</li>
+								<li className="delete-site__content-list-item">
+									{ translate( 'Purchased Upgrades' ) }
+								</li>
 							</ul>
 						</ActionPanelFigure>
-						<p>{
-							this.translate( 'This action {{strong}}can not{{/strong}} be undone. Deleting the site will remove all content, ' +
-								'contributors, domains, and upgrades from the site.', {
-									components: {
-										strong: <strong />
-									}
-								} )
-						}</p>
-						<p>{
-							this.translate( 'If you\'re unsure about what will be deleted or need any help, not to worry, our support team ' +
-								'is here to answer any questions you might have.' )
-						}</p>
-						<p><a className="settings-action-panel__body-text-link" href="https://en.support.wordpress.com/contact" target="_blank">{ strings.contactSupport }</a></p>
+						{ ! isAtomic && (
+							<div>
+								<p>
+									{ translate(
+										'Deletion {{strong}}can not{{/strong}} be undone, ' +
+											'and will remove all content, contributors, domains, and upgrades from this site.',
+										{
+											components: {
+												strong: <strong />,
+											},
+										}
+									) }
+								</p>
+								<p>
+									{ translate(
+										"If you're unsure about what deletion means or have any other questions, " +
+											'please chat with someone from our support team before proceeding.'
+									) }
+								</p>
+								<p>
+									<a
+										className="delete-site__body-text-link action-panel__body-text-link"
+										href="/help/contact"
+									>
+										{ strings.contactSupport }
+									</a>
+								</p>
+							</div>
+						) }
+						{ isAtomic && (
+							<div>
+								<p>
+									{ translate(
+										"To delete this site, you'll need to contact our support team. Deletion can not be undone, " +
+											'and will remove all content, contributors, domains, and upgrades from this site.'
+									) }
+								</p>
+								<p>
+									{ translate(
+										"If you're unsure about what deletion means or have any other questions, " +
+											"you'll have a chance to chat with someone from our support team before anything happens."
+									) }
+								</p>
+							</div>
+						) }
 					</ActionPanelBody>
 					<ActionPanelFooter>
-						<button
-							className="button is-dangerous"
-							disabled={ ! this.state.site }
-							onClick={ this._showDialog }>
-							<span className="noticon noticon-trash settings-action-panel__footer-button-icon"></span>
-							{ strings.deleteSite }
-						</button>
+						{ ! isAtomic && (
+							<Button
+								scary
+								disabled={ ! siteId || ! this.props.hasLoadedSitePurchasesFromServer }
+								onClick={ this.handleDeleteSiteClick }
+							>
+								<Gridicon icon="trash" />
+								{ strings.deleteSite }
+							</Button>
+						) }
+						{ isAtomic && (
+							<Button primary href="/help/contact">
+								{ strings.contactSupport }
+							</Button>
+						) }
 					</ActionPanelFooter>
-
-					<Dialog isVisible={ this.state.showDialog } buttons={ deleteButtons } className="delete-site__confirm-dialog">
+					<DeleteSiteWarningDialog
+						isVisible={ this.state.showWarningDialog }
+						onClose={ this.closeWarningDialog }
+					/>
+					<Dialog
+						isVisible={ this.state.showConfirmDialog }
+						buttons={ deleteButtons }
+						className="delete-site__confirm-dialog"
+					>
 						<h1 className="delete-site__confirm-header">{ strings.confirmDeleteSite }</h1>
-						<p className="delete-site__confirm-paragraph">{
-							this.translate( 'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. Your site will then be gone forever.', {
-								components: {
-									warn: <span className="delete-site__target-domain"/>
-								},
-								args: {
-									siteAddress: site.domain
+						<FormLabel htmlFor="confirmDomainChangeInput" className="delete-site__confirm-label">
+							{ translate(
+								'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
+									'Your site will then be gone forever.',
+								{
+									components: {
+										warn: <span className="delete-site__target-domain" />,
+									},
+									args: {
+										siteAddress: siteId && siteDomain,
+									},
 								}
-							} )
-						}</p>
-					<input className="delete-site__confirm-input" type="text" valueLink={ this.linkState( 'confirmDomain' ) }/>
+							) }
+						</FormLabel>
+
+						<input
+							autoCapitalize="off"
+							className="delete-site__confirm-input"
+							type="text"
+							onChange={ this.onConfirmDomainChange }
+							value={ this.state.confirmDomain }
+							aria-required="true"
+							id="confirmDomainChangeInput"
+						/>
 					</Dialog>
 				</ActionPanel>
 			</div>
 		);
-	},
-
-	_showDialog: function() {
-		this.setState( { showDialog: true } );
-	},
-
-	_closeDialog: function() {
-		this.setState( { showDialog: false } );
-	},
-
-	_goBack: function() {
-		var site = this.state.site;
-		page( '/settings/general/' + site.slug );
-	},
-
-	_deleteSite: function() {
-		var site = this.state.site;
-		SiteListActions.deleteSite( site );
-		window.scrollTo( 0, 0 );
-		page( '/stats' );
-	},
-
-	_updateSite: function() {
-		this.setState( {
-			site: this.props.sites.getSelectedSite()
-		} );
-	},
-
-	_checkSiteLoaded: function( event ) {
-		if ( ! this.state.site ) {
-			event.preventDefault();
-		}
 	}
+}
 
-} );
+export default connect(
+	state => {
+		const siteId = getSelectedSiteId( state );
+		const siteDomain = getSiteDomain( state, siteId );
+		const siteSlug = getSelectedSiteSlug( state );
+		return {
+			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
+			isAtomic: isSiteAutomatedTransfer( state, siteId ),
+			siteDomain,
+			siteId,
+			sitePurchases: getSitePurchases( state, siteId ),
+			siteSlug,
+			siteExists: !! getSite( state, siteId ),
+		};
+	},
+	{
+		deleteSite,
+		setSelectedSiteId,
+	}
+)( localize( DeleteSite ) );

@@ -1,49 +1,62 @@
+/** @format */
+
 /**
- * External Dependencies
+ * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' );
+
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-var Card = require( 'components/card' ),
-	CompactCard = require( 'components/card/compact' ),
-	Gridicon = require( 'components/gridicon' );
+import Card from 'components/card';
+import CompactCard from 'components/card/compact';
+import Gridicon from 'gridicons';
+import ScreenReaderText from 'components/screen-reader-text';
 
-var FoldableCard = React.createClass( {
+class FoldableCard extends Component {
+	static displayName = 'FoldableCard';
 
-	propTypes: {
-		actionButton: React.PropTypes.element,
-		actionButtonExpanded: React.PropTypes.element,
-		cardKey: React.PropTypes.string,
-		compact: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		expandedSummary: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] ),
-		expanded: React.PropTypes.bool,
-		onClick: React.PropTypes.func,
-		onClose: React.PropTypes.func,
-		onOpen: React.PropTypes.func,
-		summary: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] )
-	},
+	static propTypes = {
+		actionButton: PropTypes.element,
+		actionButtonExpanded: PropTypes.element,
+		cardKey: PropTypes.string,
+		compact: PropTypes.bool,
+		disabled: PropTypes.bool,
+		expandedSummary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		expanded: PropTypes.bool,
+		icon: PropTypes.string,
+		onClick: PropTypes.func,
+		onClose: PropTypes.func,
+		onOpen: PropTypes.func,
+		screenReaderText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		summary: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	};
 
-	getInitialState: function() {
-		return {
-			expanded: this.props.expanded
-		};
-	},
+	static defaultProps = {
+		onOpen: noop,
+		onClose: noop,
+		cardKey: '',
+		icon: 'chevron-down',
+		expanded: false,
+		screenReaderText: false,
+	};
 
-	getDefaultProps: function() {
-		return {
-			onOpen: noop,
-			onClose: noop,
-			cardKey: '',
-			isExpanded: false
-		};
-	},
+	state = {
+		expanded: this.props.expanded,
+	};
 
-	onClick: function() {
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.expanded !== this.props.expanded ) {
+			this.setState( { expanded: nextProps.expanded } );
+		}
+	}
+
+	onClick = () => {
 		if ( this.props.children ) {
 			this.setState( { expanded: ! this.state.expanded } );
 		}
@@ -57,57 +70,64 @@ var FoldableCard = React.createClass( {
 		} else {
 			this.props.onOpen( this.props.cardKey );
 		}
-	},
+	};
 
-	getClickAction: function() {
+	getClickAction() {
 		if ( this.props.disabled ) {
 			return;
 		}
 		return this.onClick;
-	},
+	}
 
-	getActionButton: function() {
+	getActionButton() {
 		if ( this.state.expanded ) {
 			return this.props.actionButtonExpanded || this.props.actionButton;
 		}
 		return this.props.actionButton;
-	},
+	}
 
-	renderActionButton: function() {
+	renderActionButton() {
 		const clickAction = ! this.props.clickableHeader ? this.getClickAction() : null;
 		if ( this.props.actionButton ) {
 			return (
 				<div className="foldable-card__action" onClick={ clickAction }>
-				{ this.getActionButton() }
+					{ this.getActionButton() }
 				</div>
 			);
 		}
 		if ( this.props.children ) {
-			let iconSize = 24;
+			const iconSize = 24;
+			const screenReaderText = this.props.screenReaderText || this.props.translate( 'More' );
 			return (
-				<button disabled={ this.props.disabled } className="foldable-card__action foldable-card__expand" onClick={ clickAction }>
-					<span className="screen-reader-text">{ this.translate( 'More' ) }</span>
-					<Gridicon icon="chevron-down" size={ iconSize } />
+				<button
+					disabled={ this.props.disabled }
+					type="button"
+					className="foldable-card__action foldable-card__expand"
+					onClick={ clickAction }
+				>
+					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
+					<Gridicon icon={ this.props.icon } size={ iconSize } />
 				</button>
 			);
 		}
-	},
+	}
 
-	renderContent: function() {
-		return (
-			<div className="foldable-card__content">
-				{ this.props.children }
-			</div>
-		);
-	},
+	renderContent() {
+		return <div className="foldable-card__content">{ this.props.children }</div>;
+	}
 
-	renderHeader: function() {
-		var summary = this.props.summary ? <span className="foldable-card__summary">{ this.props.summary } </span> : null,
-			expandedSummary = this.props.expandedSummary ? <span className="foldable-card__summary_expanded">{ this.props.expandedSummary } </span> : null,
-			headerClickAction = this.props.clickableHeader ? this.getClickAction() : null,
-			headerClasses = classNames( 'foldable-card__header', {
-				'is-clickable': !! this.props.clickableHeader
-			} );
+	renderHeader() {
+		const summary = this.props.summary ? (
+			<span className="foldable-card__summary">{ this.props.summary } </span>
+		) : null;
+		const expandedSummary = this.props.expandedSummary ? (
+			<span className="foldable-card__summary-expanded">{ this.props.expandedSummary } </span>
+		) : null;
+		const headerClickAction = this.props.clickableHeader ? this.getClickAction() : null;
+		const headerClasses = classNames( 'foldable-card__header', {
+			'is-clickable': !! this.props.clickableHeader,
+			'has-border': !! this.props.summary,
+		} );
 		return (
 			<div className={ headerClasses } onClick={ headerClickAction }>
 				<span className="foldable-card__main">{ this.props.header } </span>
@@ -118,27 +138,23 @@ var FoldableCard = React.createClass( {
 				</span>
 			</div>
 		);
-	},
+	}
 
-	render: function() {
-		var Container = this.props.compact ? CompactCard : Card,
-			itemSiteClasses = classNames(
-				'foldable-card',
-				this.props.className,
-				{
-					'is-disabled': !! this.props.disabled,
-					'is-expanded': !! this.state.expanded,
-					'has-expanded-summary': !! this.props.expandedSummary
-				}
-			);
+	render() {
+		const Container = this.props.compact ? CompactCard : Card;
+		const itemSiteClasses = classNames( 'foldable-card', this.props.className, {
+			'is-disabled': !! this.props.disabled,
+			'is-expanded': !! this.state.expanded,
+			'has-expanded-summary': !! this.props.expandedSummary,
+		} );
 
 		return (
 			<Container className={ itemSiteClasses }>
 				{ this.renderHeader() }
-				{ this.renderContent() }
+				{ this.state.expanded && this.renderContent() }
 			</Container>
 		);
 	}
-} );
+}
 
-module.exports = FoldableCard;
+export default localize( FoldableCard );

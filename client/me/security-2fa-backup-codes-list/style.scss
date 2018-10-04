@@ -20,6 +20,16 @@
 	}
 }
 
+@include breakpoint( '<480px' ) {
+	.security-2fa-backup-codes-list__btn-group .button {
+		display: inline-block;
+	}
+}
+
+.security-2fa-backup-codes-list__btn-group {
+	float: right;
+}
+
 .security-2fa-backup-codes-list__generate {
 	margin-top: 20px;
 }
@@ -46,7 +56,7 @@ button.security-2fa-backups-codes-list__generate-button {
 
 	&.is-placeholder span {
 		color: transparent;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 
 		&:before {
@@ -57,7 +67,7 @@ button.security-2fa-backups-codes-list__generate-button {
 	}
 
 	&:before {
-		color: lighten( $gray, 20% );
+		color: $gray-lighten-20;
 		display: inline-block;
 		font-weight: normal;
 		margin-right: 10px;
@@ -109,9 +119,10 @@ button.security-2fa-backups-codes-list__generate-button {
 .security-2fa-backup-codes-list__warning {
 	font-size: 75%;
 
-	.noticon {
-		color: $alert-red;
+	.gridicon {
+		fill: $alert-red;
 		margin-right: 8px;
+		vertical-align: middle;
 
 		&:before {
 			position: relative;

@@ -1,0 +1,22 @@
+.clipboard-button-input {
+	position: relative;
+}
+
+.clipboard-button-input .clipboard-button {
+	position: absolute;
+		top: 50%;
+		right: 4px;
+	transform: translateY( -50% );
+	overflow: visible;
+
+	&:not( :disabled )::before {
+		@include long-content-fade( $size: 16px );
+		right: auto;
+		left: -17px;
+	}
+
+	&:focus::before {
+		right: auto;
+		left: -19px;
+	}
+}

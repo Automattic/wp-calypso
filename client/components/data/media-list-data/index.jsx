@@ -1,60 +1,63 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+
+import { assign, isEqual } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var MediaActions = require( 'lib/media/actions' ),
-	MediaListStore = require( 'lib/media/list-store' ),
-	passToChildren = require( 'lib/react-pass-to-children' ),
-	utils = require( './utils' );
+import MediaActions from 'lib/media/actions';
+import MediaListStore from 'lib/media/list-store';
+import passToChildren from 'lib/react-pass-to-children';
+import utils from './utils';
 
 function getStateData( siteId ) {
 	return {
 		media: MediaListStore.getAll( siteId ),
 		mediaHasNextPage: MediaListStore.hasNextPage( siteId ),
-		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId )
+		mediaFetchingNextPage: MediaListStore.isFetchingNextPage( siteId ),
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'MediaListData',
+export default class extends React.Component {
+	static displayName = 'MediaListData';
 
-	propTypes: {
-		siteId: React.PropTypes.number.isRequired,
-		filter: React.PropTypes.string,
-		search: React.PropTypes.string
-	},
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+		source: PropTypes.string,
+		postId: PropTypes.number,
+		filter: PropTypes.string,
+		search: PropTypes.string,
+	};
 
-	getInitialState: function() {
-		return getStateData( this.props.siteId );
-	},
+	state = getStateData( this.props.siteId );
 
-	componentWillMount: function() {
+	componentWillMount() {
 		MediaActions.setQuery( this.props.siteId, this.getQuery() );
 		MediaListStore.on( 'change', this.updateStateData );
 		this.updateStateData();
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		MediaListStore.off( 'change', this.updateStateData );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
-		var nextQuery = this.getQuery( nextProps );
+	componentWillReceiveProps( nextProps ) {
+		const nextQuery = this.getQuery( nextProps );
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
 			MediaActions.setQuery( nextProps.siteId, nextQuery );
 			this.setState( getStateData( nextProps.siteId ) );
 		}
-	},
+	}
 
-	getQuery: function( props ) {
-		var query = {};
+	getQuery = props => {
+		const query = {};
 
 		props = props || this.props;
 
@@ -62,24 +65,38 @@ module.exports = React.createClass( {
 			query.search = props.search;
 		}
 
-		if ( props.filter ) {
-			query.mime_type = utils.getMimeBaseTypeFromFilter( props.filter );
+		if ( props.filter && ! props.source ) {
+			if ( props.filter === 'this-post' ) {
+				if ( props.postId ) {
+					query.post_ID = props.postId;
+				}
+			} else {
+				query.mime_type = utils.getMimeBaseTypeFromFilter( props.filter );
+			}
+		}
+
+		if ( props.source ) {
+			query.source = props.source;
+			query.path = 'recent';
 		}
 
 		return query;
-	},
+	};
 
-	fetchData: function() {
+	fetchData = () => {
 		MediaActions.fetchNextPage( this.props.siteId );
-	},
+	};
 
-	updateStateData: function() {
+	updateStateData = () => {
 		this.setState( getStateData( this.props.siteId ) );
-	},
+	};
 
-	render: function() {
-		return passToChildren( this, assign( {}, this.state, {
-			mediaOnFetchNextPage: this.fetchData
-		} ) );
+	render() {
+		return passToChildren(
+			this,
+			assign( {}, this.state, {
+				mediaOnFetchNextPage: this.fetchData,
+			} )
+		);
 	}
-} );
+}

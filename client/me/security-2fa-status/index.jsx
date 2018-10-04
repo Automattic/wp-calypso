@@ -1,46 +1,50 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:security:2fa-status' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:me:security:2fa-status' );
 
-	displayName: 'Security2faStatus',
+class Security2faStatus extends React.Component {
+	static displayName = 'Security2faStatus';
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		debug( this.constructor.displayName + ' React component will unmount.' );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<p>
-				{
-					this.props.twoStepEnabled
-					? this.translate(
-						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
-						{
-							components: {
-								status: <span className="security-2fa-status__heading"/>,
-								onOff: <span className="security-2fa-status__on"/>
+				{ this.props.twoStepEnabled
+					? this.props.translate(
+							'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}on{{/onOff}}.',
+							{
+								components: {
+									status: <span className="security-2fa-status__heading" />,
+									onOff: <span className="security-2fa-status__on" />,
+								},
 							}
-						}
-					)
-					: this.translate(
-						'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
-						{
-							components: {
-								status: <span className="security-2fa-status__heading"/>,
-								onOff: <span className="security-2fa-status__off"/>
+					  )
+					: this.props.translate(
+							'{{status}}Status:{{/status}} Two-Step Authentication is currently {{onOff}}off{{/onOff}}.',
+							{
+								components: {
+									status: <span className="security-2fa-status__heading" />,
+									onOff: <span className="security-2fa-status__off" />,
+								},
 							}
-						}
-					)
-				}
+					  ) }
 			</p>
 		);
 	}
-} );
+}
+
+export default localize( Security2faStatus );

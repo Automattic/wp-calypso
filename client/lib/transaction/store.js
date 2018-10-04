@@ -1,27 +1,36 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var cloneDeep = require( 'lodash/lang/cloneDeep' ),
-	mergeDeep = require( 'lodash/object/merge' ),
-	extend = require( 'lodash/object/assign' ),
-	React = require( 'react/addons' );
+
+import { assign, cloneDeep, merge } from 'lodash';
+import update from 'immutability-helper';
 
 /**
  * Internal dependencies
  */
-var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	CartStore = require( 'lib/cart/store' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	Dispatcher = require( 'dispatcher' ),
-	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails;
+import {
+	CART_ITEM_REMOVE,
+	TRANSACTION_DOMAIN_DETAILS_SET,
+	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
+	TRANSACTION_PAYMENT_SET,
+	TRANSACTION_RESET,
+	TRANSACTION_STEP_SET,
+} from 'lib/upgrades/action-types';
+import { cartItems } from 'lib/cart-values';
+import CartStore from 'lib/cart/store';
+import Emitter from 'lib/mixins/emitter';
+import Dispatcher from 'dispatcher';
+import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
+import { hasDomainDetails } from 'lib/store-transactions';
 
-var _transaction = createInitialTransaction();
+let _transaction = createInitialTransaction();
 
-var TransactionStore = {
+const TransactionStore = {
 	get: function() {
 		return _transaction;
-	}
+	},
 };
 
 Emitter( TransactionStore );
@@ -35,8 +44,9 @@ function createInitialTransaction() {
 	return {
 		errors: {},
 		newCardFormFields: {},
-		step: { name: 'before-submit' },
-		domainDetails: null
+		newCardRawDetails: {},
+		step: { name: BEFORE_SUBMIT },
+		domainDetails: null,
 	};
 }
 
@@ -45,68 +55,83 @@ function reset() {
 }
 
 function setDomainDetails( domainDetails ) {
-	replaceData( mergeDeep( _transaction, { domainDetails: domainDetails } ) );
+	replaceData( merge( _transaction, { domainDetails: domainDetails } ) );
 }
 
 function setPayment( payment ) {
-	replaceData( extend( {}, _transaction, { payment: payment } ) );
+	replaceData( assign( {}, _transaction, { payment: payment } ) );
 }
 
 function setStep( step ) {
-	replaceData( extend( {}, _transaction, {
-		step: step,
-		errors: ( step.error ? step.error.message : {} )
-	} ) );
+	replaceData(
+		assign( {}, _transaction, {
+			step: step,
+			errors: step.error ? step.error.message : {},
+		} )
+	);
 }
 
 function setNewCreditCardDetails( options ) {
-	if ( ! _transaction.payment.newCardDetails ) {
-		return;
+	// Store the card details on the transaction object. These can be used to
+	// repopulate the new credit card form and payment object with the correct
+	// default values if the credit card form ever needs to be built again.
+	const transactionUpdates = {
+		newCardFormFields: { $merge: options.maskedDetails },
+		newCardRawDetails: { $merge: options.rawDetails },
+	};
+
+	// If the new card is the active payment method, populate the payment
+	// object now. (If it isn't, any code which later switches to this payment
+	// method is responsible for using the above data to populate the payment
+	// object correctly, e.g. by calling newCardPayment() and passing in the
+	// transaction.newCardRawDetails object from above.)
+	if ( _transaction.payment.newCardDetails ) {
+		transactionUpdates.payment = { newCardDetails: { $merge: options.rawDetails } };
 	}
 
-	var newTransaction = React.addons.update( _transaction, {
-		payment: { newCardDetails: { $merge: options.rawDetails } },
-		newCardFormFields: { $merge: options.maskedDetails }
-	} );
+	const newTransaction = update( _transaction, transactionUpdates );
 
 	replaceData( newTransaction );
 }
 
 TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.SET_TRANSACTION_DOMAIN_DETAILS:
+		case TRANSACTION_DOMAIN_DETAILS_SET:
 			setDomainDetails( action.domainDetails );
 			break;
 
-		case UpgradesActionTypes.SET_TRANSACTION_PAYMENT:
+		case TRANSACTION_PAYMENT_SET:
 			setPayment( action.payment );
 			break;
 
-		case UpgradesActionTypes.SET_TRANSACTION_NEW_CREDIT_CARD_DETAILS:
+		case TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			setNewCreditCardDetails( {
 				rawDetails: action.rawDetails,
-				maskedDetails: action.maskedDetails
+				maskedDetails: action.maskedDetails,
 			} );
 			break;
 
-		case UpgradesActionTypes.TRANSACTION_STEP:
+		case TRANSACTION_STEP_SET:
 			setStep( action.step );
 			break;
 
-		case UpgradesActionTypes.RESET_TRANSACTION:
+		case TRANSACTION_RESET:
 			reset();
 			break;
 
-		case UpgradesActionTypes.REMOVE_CART_ITEM:
+		case CART_ITEM_REMOVE:
 			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
 
-			if ( ! cartItems.hasDomainRegistration( CartStore.get() ) && hasDomainDetails( TransactionStore.get() ) ) {
+			if (
+				! cartItems.hasDomainRegistration( CartStore.get() ) &&
+				hasDomainDetails( TransactionStore.get() )
+			) {
 				setDomainDetails( null );
 			}
 			break;
 	}
 } );
 
-module.exports = TransactionStore;
+export default TransactionStore;

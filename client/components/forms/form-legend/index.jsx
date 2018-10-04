@@ -1,19 +1,16 @@
+/** @format */
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' );
 
-module.exports = React.createClass( {
+import React from 'react';
+import classnames from 'classnames';
 
-	displayName: 'FormLegend',
+const FormLegend = ( { className, children, ...otherProps } ) => (
+	<legend { ...otherProps } className={ classnames( className, 'form-legend' ) }>
+		{ children }
+	</legend>
+);
 
-	render: function() {
-		return (
-			<legend { ...omit( this.props, 'className' ) } className={ joinClasses( this.props.className, 'form-legend' ) } >
-				{ this.props.children }
-			</legend>
-		);
-	}
-} );
+export default FormLegend;

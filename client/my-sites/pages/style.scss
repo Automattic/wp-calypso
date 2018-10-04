@@ -1,110 +1,194 @@
+/** @format */
+
 // Page list
 
-.page-list {
+.pages__page-list {
 	margin: 0;
 	width: 100%;
 
 	.placeholder-text {
 		color: transparent;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-
-	.is-placeholder {
-		.noticon {
-			color: transparent;
-			background-color: lighten( $gray, 30% );
-			animation: loading-fade 1.6s ease-in-out infinite;
-			opacity: 0.3;
-		}
 	}
 }
 
-.page-list__header {
+.pages__page-list-header {
 	background: $gray-light;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
 	color: $gray;
 	font-size: 11px;
 	padding: 6px 11px;
 	text-transform: uppercase;
 
-	.noticon-time:before {
+	.gridicons-time {
 		color: $gray;
 		margin-right: 4px;
+		vertical-align: text-top;
 	}
 }
 
 // <Page> component
 .page {
+	align-items: center;
+	display: flex;
 
 	.site-icon {
 		display: none;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			display: block;
-			float: left;
 			margin-right: 10px;
+			min-width: 34px;
 		}
 	}
 
+	&.is-indented {
+		padding-left: 136px;
+
+		&.is-indented-level-1 {
+			padding-left: 40px;
+		}
+
+		&.is-indented-level-2 {
+			padding-left: 56px;
+		}
+
+		&.is-indented-level-3 {
+			padding-left: 70px;
+		}
+
+		&.is-indented-level-4 {
+			padding-left: 88px;
+		}
+
+		&.is-indented-level-5 {
+			padding-left: 104px;
+		}
+
+		&.is-indented-level-6 {
+			padding-left: 120px;
+		}
+
+		&.is-indented-level-7 {
+			padding-left: 136px;
+		}
+	}
+}
+
+.page__hierarchy-indent {
+	background: $gray-light;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ), 0 1px 2px $gray-lighten-30;
+
+	&.is-indented {
+		width: 112px;
+
+		&.is-indented-level-1 {
+			width: 16px;
+		}
+
+		&.is-indented-level-2 {
+			width: 32px;
+		}
+
+		&.is-indented-level-3 {
+			width: 48px;
+		}
+
+		&.is-indented-level-4 {
+			width: 64px;
+		}
+
+		&.is-indented-level-5 {
+			width: 80px;
+		}
+
+		&.is-indented-level-6 {
+			width: 96px;
+		}
+
+		&.is-indented-level-7 {
+			width: 112px;
+		}
+	}
+}
+
+.page__main {
+	flex-grow: 1;
 }
 
 .page__title,
 .page__title:visited {
-	display: inline;
+	@extend %content-font;
 	color: $gray-dark;
-	font-weight: 500;
-	font-family: $serif;
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 1.2;
+
+	display: inline;
 	margin-right: 33px;
 
-	.noticon-home:before {
+	.gridicon {
 		color: $gray;
-		font-size: 24px;
-		margin-left: -3px;
-		margin-right: 4px;
+		margin: 2px 8px -2px 0;
 	}
 }
-
-.page__site-url {
+.page.is-untitled .page__title {
 	color: $gray;
-	display: block;
-	font-size: 12px;
 	font-style: italic;
-	margin-top: -3px;
 }
 
 .page__actions-toggle {
-	color: $gray;
-	cursor: pointer;
-	font-size: 24px;
-	margin: 17px 24px;
-	position: absolute;
-	right: 0;
-	top: 0;
+	margin-left: 24px;
 }
 
 .page__popover-more-info {
 	color: $gray;
 	padding: 4px 16px 8px;
 	font-size: 12px;
-	max-width: 200px;
+	max-width: 150px;
 	text-align: left;
 }
 
-.page__trash-item.popover__menu-item {
+.page__delete-item.popover__menu-item {
 	&:hover,
 	&:focus {
 		background-color: $alert-red;
 		border: 0;
 		box-shadow: none;
-		color: white;
+		color: $white;
 	}
 }
 
-.page .updated-confirmation .conf-alert {
-	width: auto;
-	.undo {
-		display: inline;
+.page__shadow-notice-cover {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: z-index( 'root', '.page__shadow-notice-cover' );
+	background-color: rgba( $gray-light, 0.8 );
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+}
+
+@keyframes shadow-notice-appear {
+	0% {
+		transform: translateX( 50px );
+	}
+
+	100% {
+		transform: translateX( 0 );
 	}
 }
 
+.notice.is-compact.page__shadow-notice {
+	margin-left: auto;
+	margin-right: 24px;
+	animation: shadow-notice-appear 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ); // http://easings.net/#easeOutBack
+}
