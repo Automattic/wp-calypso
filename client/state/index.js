@@ -209,7 +209,10 @@ const reducers = {
 if ( config.isEnabled( 'memberships' ) ) {
 	reducers.memberships = memberships;
 }
-reducers.mailchimp = mailchimp;
+if ( config.isEnabled( 'mailchimp' ) ) {
+	reducers.mailchimp = mailchimp;
+}
+
 export const reducer = combineReducers( reducers );
 
 /**

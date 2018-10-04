@@ -36,7 +36,7 @@ registerHandlers(
 		config.isEnabled( 'jitms' ) ? jitm : null,
 		media,
 		config.isEnabled( 'memberships' ) ? memberships : null,
-		mailchimp,
+		config.isEnabled( 'mailchimp' ) ? mailchimp : null,
 		planTransfer,
 		plugins,
 		postTypes,

@@ -45,6 +45,7 @@ import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
 import requestExternalAccess from 'lib/sharing';
 import MailchimpSettings from './mailchimp-settings';
+import config from 'config';
 
 export class SharingService extends Component {
 	static propTypes = {
@@ -480,7 +481,8 @@ export class SharingService extends Component {
 							) ) }
 						</ServiceConnectedAccounts>
 						<ServiceTip service={ this.props.service } />
-						{ connectionStatus === 'connected' &&
+						{ config.isEnabled( 'mailchimp' ) &&
+							connectionStatus === 'connected' &&
 							get( this, 'props.service.ID' ) === 'mailchimp' && (
 								<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
 							) }
