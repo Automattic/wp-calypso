@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-class Security2faKey extends React.Component {
+class SecurityU2fKey extends React.Component {
 	getClickHandler = ( action, callback ) => {
 		return event => {
 			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
@@ -48,4 +48,4 @@ class Security2faKey extends React.Component {
 	}
 }
 
-export default localize( Security2faKey );
+export default localize( SecurityU2fKey );
