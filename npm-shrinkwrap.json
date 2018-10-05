@@ -6286,9 +6286,9 @@
       }
     },
     "enzyme-adapter-react-16": {
-      "version": "1.5.0",
-      "resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.5.0.tgz",
-      "integrity": "sha512-R2LcVvMB2UwPH763d5jDtVedAIcEj+uZjOnq0nd1sOUs6z8TDbyHDvt8VwfrS4wMt7CawoyPmH0XzC8MtEqqDw==",
+      "version": "1.6.0",
+      "resolved": "https://registry.npmjs.org/enzyme-adapter-react-16/-/enzyme-adapter-react-16-1.6.0.tgz",
+      "integrity": "sha512-ay9eGFpChyUDnjTFMMJHzrb681LF3hPWJLEA7RoLFG9jSWAdAm2V50pGmFV9dYGJgh5HfdiqM+MNvle41Yf/PA==",
       "dev": true,
       "requires": {
         "enzyme-adapter-utils": "^1.8.0",
@@ -6296,14 +6296,14 @@
         "object.assign": "^4.1.0",
         "object.values": "^1.0.4",
         "prop-types": "^15.6.2",
-        "react-is": "^16.4.2",
+        "react-is": "^16.5.2",
         "react-test-renderer": "^16.0.0-0"
       }
     },
     "enzyme-adapter-utils": {
-      "version": "1.8.0",
-      "resolved": "https://registry.npmjs.org/enzyme-adapter-utils/-/enzyme-adapter-utils-1.8.0.tgz",
-      "integrity": "sha512-K9U2RGr1pvWPGEAIRQRVH4UdlqzpfLsKonuHyAK6lxu46yfGsMDVlO3+YvQwQpVjVw8eviEVIOmlFAnMbIhv/w==",
+      "version": "1.8.1",
+      "resolved": "https://registry.npmjs.org/enzyme-adapter-utils/-/enzyme-adapter-utils-1.8.1.tgz",
+      "integrity": "sha512-s3QB3xQAowaDS2sHhmEqrT13GJC4+n5bG015ZkLv60n9k5vhxxHTQRIneZmQ4hmdCZEBrvUJ89PG6fRI5OEeuQ==",
       "dev": true,
       "requires": {
         "function.prototype.name": "^1.1.0",
