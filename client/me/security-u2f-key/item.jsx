@@ -17,6 +17,7 @@ import U2FDeleteButton from './delete-item-button';
 
 class SecurityU2fKeyItem extends Component {
 	static propTypes = {
+		onDelete: PropTypes.func.isRequired,
 		securityKey: PropTypes.object.isRequired,
 	};
 
@@ -27,7 +28,10 @@ class SecurityU2fKeyItem extends Component {
 					<div className="security-u2f-key__item-information">
 						<h2 className="security-u2f-key__item-title">{ this.props.securityKey.registered }</h2>
 					</div>
-					<U2FDeleteButton securityKey={ this.props.securityKey } />
+					<U2FDeleteButton
+						securityKey={ this.props.securityKey }
+						onDelete={ this.props.onDelete }
+					/>
 				</div>
 			</CompactCard>
 		);

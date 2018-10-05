@@ -56,9 +56,14 @@ class SecurityU2fKey extends React.Component {
 
 	addKeyRegister = keyData => {
 		console.log( 'Register key: ', keyData ); //eslint-disable-line
+		wpcom.req.post( '/me/two-step/security-key/verify', keyData, this.getKeysFromServer );
+	};
+
+	deleteKeyRegister = keyData => {
+		console.log( 'Register key: ', keyData ); //eslint-disable-line
 		wpcom.req.post(
-			'/me/two-step/security-key/registration_challenge',
-			keyData,
+			'/me/two-step/security-key/delete',
+			{ handle: keyData.handle },
 			this.getKeysFromServer
 		);
 	};
@@ -80,7 +85,7 @@ class SecurityU2fKey extends React.Component {
 	};
 
 	getKeysFromServer = () => {
-		wpcom.req.get( '/me/two-step/security-key/registration_challenge', {}, this.keysFromServer );
+		wpcom.req.get( '/me/two-step/security-key/get', {}, this.keysFromServer );
 	};
 
 	render() {
@@ -124,7 +129,12 @@ class SecurityU2fKey extends React.Component {
 						</Card>
 					) }
 				{ ! addingKey &&
-					!! u2fKeys.length && <SecurityU2fKeyList securityKeys={ this.props.u2fKeys } /> }
+					!! u2fKeys.length && (
+						<SecurityU2fKeyList
+							securityKeys={ this.props.u2fKeys }
+							onDelete={ this.deleteKeyRegister }
+						/>
+					) }
 			</Fragment>
 		);
 	}

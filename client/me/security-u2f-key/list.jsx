@@ -19,6 +19,7 @@ import './style.scss';
 class SecurityU2fKeyList extends React.Component {
 	static propTypes = {
 		securityKeys: PropTypes.array.isRequired,
+		onDelete: PropTypes.func.isRequired,
 	};
 
 	render() {
@@ -27,7 +28,7 @@ class SecurityU2fKeyList extends React.Component {
 				<ul className="security-u2f-key__list">
 					{ this.props.securityKeys.map( securityKey => (
 						<li key={ securityKey.id } className="security-u2f-key__list-item">
-							<U2FItem securityKey={ securityKey } />
+							<U2FItem securityKey={ securityKey } onDelete={ this.props.onDelete } />
 						</li>
 					) ) }
 				</ul>
