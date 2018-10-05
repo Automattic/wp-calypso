@@ -126,6 +126,7 @@
 		"signup/atomic-store-flow": true,
 		"signup/wpcc": true,
 		"support-user": true,
+		"u2f/keys-support": true,
 		"ui/first-view": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,

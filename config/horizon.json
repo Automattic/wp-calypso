@@ -111,6 +111,7 @@
 		"signup/wpcc": true,
 		"memberships": false,
 		"support-user": true,
+		"u2f/keys-support": false,
 		"ui/first-view": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,

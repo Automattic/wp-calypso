@@ -25,6 +25,7 @@ import SecuritySectionNav from 'me/security-section-nav';
 import SecurityU2fKey from 'me/security-u2f-key';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:me:two-step' );
 
@@ -173,7 +174,7 @@ class TwoStep extends Component {
 
 				{ this.renderBackupCodes() }
 				{ this.renderApplicationPasswords() }
-				{ this.renderU2fKey() }
+				{ config.isEnabled( 'u2f/keys-support' ) && this.renderU2fKey() }
 			</Main>
 		);
 	}

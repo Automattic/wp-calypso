@@ -149,6 +149,7 @@
 		"try/preconnect": true,
 		"try/preload": true,
 		"try/single-cdn": true,
+		"u2f/keys-support": false,
 		"ui/first-view": true,
 		"ui/first-view/reset-route": true,
 		"upgrades/checkout": true,
