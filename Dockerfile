@@ -25,7 +25,7 @@ RUN        bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY       . /calypso/
-RUN        npm ci --only=production
+RUN        npm ci --only=production --unsafe-perm
 
 # Build the final layer
 #
