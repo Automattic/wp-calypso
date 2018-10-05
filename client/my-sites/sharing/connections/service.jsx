@@ -404,7 +404,12 @@ export class SharingService extends Component {
 			/>
 		);
 	}
-
+	isMailchimpService = connectionStatus => {
+		if ( ! config.isEnabled( 'mailchimp' ) ) {
+			return false;
+		}
+		return connectionStatus === 'connected' && get( this, 'props.service.ID' ) === 'mailchimp';
+	};
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
@@ -462,30 +467,30 @@ export class SharingService extends Component {
 						} ) }
 					>
 						<ServiceExamples service={ this.props.service } />
-						<ServiceConnectedAccounts
-							connect={ this.connectAnother }
-							service={ this.props.service }
-						>
-							{ connections.map( connection => (
-								<Connection
-									key={ connection.keyring_connection_ID }
-									connection={ connection }
-									isDisconnecting={ this.state.isDisconnecting }
-									isRefreshing={ this.state.isRefreshing }
-									onDisconnect={ this.removeConnection }
-									onRefresh={ this.refresh }
-									onToggleSitewideConnection={ this.toggleSitewideConnection }
-									service={ this.props.service }
-									showDisconnect={ connections.length > 1 || 'broken' === connection.status }
-								/>
-							) ) }
-						</ServiceConnectedAccounts>
+						{ ! this.isMailchimpService( connectionStatus ) && (
+							<ServiceConnectedAccounts
+								connect={ this.connectAnother }
+								service={ this.props.service }
+							>
+								{ connections.map( connection => (
+									<Connection
+										key={ connection.keyring_connection_ID }
+										connection={ connection }
+										isDisconnecting={ this.state.isDisconnecting }
+										isRefreshing={ this.state.isRefreshing }
+										onDisconnect={ this.removeConnection }
+										onRefresh={ this.refresh }
+										onToggleSitewideConnection={ this.toggleSitewideConnection }
+										service={ this.props.service }
+										showDisconnect={ connections.length > 1 || 'broken' === connection.status }
+									/>
+								) ) }
+							</ServiceConnectedAccounts>
+						) }
 						<ServiceTip service={ this.props.service } />
-						{ config.isEnabled( 'mailchimp' ) &&
-							connectionStatus === 'connected' &&
-							get( this, 'props.service.ID' ) === 'mailchimp' && (
-								<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
-							) }
+						{ this.isMailchimpService( connectionStatus ) && (
+							<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
+						) }
 					</div>
 				</FoldableCard>
 			</li>
