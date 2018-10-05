@@ -68,7 +68,7 @@ function middleware( app ) {
 		}
 
 		console.info(
-			'Compiling assets... Wait until you see Ready! and then try http://calypso.localhost:3000/ again.'
+			`Compiling assets... Wait until you see Ready! and then try ${ protocol }://${ host }:${ port }/ again.`
 		);
 
 		// a special message for newcomers, because seeing a blank page is confusing
