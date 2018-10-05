@@ -27,12 +27,16 @@ class SecurityU2fKeyAdd extends React.Component {
 	};
 
 	registerKey = () => {
-		const appId = this.props.registerRequests.appId;
+		// const appId = this.props.registerRequests.appId;
 		delete this.props.registerRequests.appId;
-		u2f.register( appId, [ this.props.registerRequests ], [], this.keyRegistered );
+		// u2f.register( appId, [ this.props.registerRequests ], [], this.keyRegistered );
+		u2f.register(
+			'https://calypso.localhost:3000',
+			[ this.props.registerRequests ],
+			[],
+			this.keyRegistered
+		);
 	};
-
-	keySentToServer = () => {};
 
 	keyRegistered = data => {
 		this.props.onRegister( data );
