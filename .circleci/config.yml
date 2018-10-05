@@ -321,6 +321,7 @@ jobs:
     steps:
       - setup
       - run:
+          name: Build Stats and Notify ICFY
           environment:
             NODE_ENV: "production"
             CALYPSO_CLIENT: "true"
