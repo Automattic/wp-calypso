@@ -123,3 +123,7 @@ $gutenberg-theme-toggle: #11a0d2;
 .editor-block-settings-menu__content {
 	box-sizing: border-box;
 }
+
+.components-panel__header.edit-post-sidebar-header.edit-post-sidebar__panel-tabs {
+	border-bottom: 0;
+}
