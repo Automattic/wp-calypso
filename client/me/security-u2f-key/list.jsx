@@ -22,9 +22,9 @@ class SecurityU2fKeyList extends React.Component {
 			<div className="security-u2f-key__active-keys">
 				<FormSectionHeading>{ this.props.translate( 'Active keys' ) }</FormSectionHeading>
 				<ul className="security-u2f-key__list">
-					{ this.props.keys.map( key => (
-						<li key={ key } className="security-u2f-key__list-item">
-							<U2FItem key={ key } />
+					{ this.props.securityKeys.map( securityKey => (
+						<li key={ securityKey } className="security-u2f-key__list-item">
+							<U2FItem securityKey={ securityKey } />
 						</li>
 					) ) }
 				</ul>
