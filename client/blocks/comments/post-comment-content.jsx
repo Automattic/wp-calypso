@@ -48,6 +48,7 @@ class PostCommentContent extends React.Component {
 					<Emojify>
 						<div
 							className="comments__comment-content"
+							data-e2e-comment={ this.props.content.slice( 3, this.props.content.length - 5 ) }
 							ref={ this.props.setWithDimensionsRef }
 							dangerouslySetInnerHTML={ { __html: this.props.content } }
 						/>
