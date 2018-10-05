@@ -126,20 +126,13 @@ references:
     environment: *shared-environment
 
 commands:
-  setup:
-    description: "Basic Setup"
+  prepare:
+    description: "Prepare Job"
     steps:
-      # repo
-      - restore_cache: *restore-git-cache
-      - checkout
-      - run: *update-git-master
-      - save_cache: *save-git-cache
-      # npm dependencies
-      - restore_cache: *restore-node-modules-cache
-      - run: *npm-install
-      - save_cache: *save-node-modules-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
+      - attach_workspace:
+          at: '~'
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -151,11 +144,28 @@ commands:
           path: /tmp/artifacts
 
 jobs:
+  setup:
+    <<: *defaults
+    steps:
+      # repo
+      - restore_cache: *restore-git-cache
+      - checkout
+      - run: *update-git-master
+      - save_cache: *save-git-cache
+      # npm dependencies
+      - restore_cache: *restore-node-modules-cache
+      - run: *npm-install
+      - save_cache: *save-node-modules-cache
+      - persist_to_workspace:
+          root: '~'
+          paths:
+            - wp-calypso
+
   build-jetpack-blocks:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - run:
           name: Build Jetpack Blocks
           command: |
@@ -169,7 +179,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - run:
           name: Lint Config Keys
           when: always
@@ -239,7 +249,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - run:
           name: Build Notifications Panel
           command: |
@@ -250,7 +260,7 @@ jobs:
     <<: *defaults
     parallelism: 6
     steps:
-      - setup
+      - prepare
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Client Tests
@@ -283,7 +293,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Integration Tests
@@ -304,7 +314,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Server Tests
@@ -325,8 +335,7 @@ jobs:
   danger:
     <<: *defaults
     steps:
-      - restore_cache: *restore-git-cache
-      - checkout
+      - prepare
       - run:
           name: Danger.js
           command: npx danger ci
@@ -334,7 +343,7 @@ jobs:
   icfy-stats:
     <<: *defaults
     steps:
-      - setup
+      - prepare
       - restore_cache: *restore-babel-client-cache
       - run:
           name: Build Stats and Notify ICFY
@@ -372,22 +381,44 @@ workflows:
   version: 2
   calypso:
     jobs:
+      - setup
       - danger:
+          requires:
+            - setup
           filters:
             branches:
               ignore: master
-      - build-jetpack-blocks
-      - build-notifications
-      - icfy-stats
-      - lint-and-translate
-      - test-client
-      - test-server
+      - build-jetpack-blocks:
+          requires:
+            - setup
+      - build-notifications:
+          requires:
+            - setup
+      - icfy-stats:
+          requires:
+            - setup
+      - lint-and-translate:
+          requires:
+            - setup
+      - test-client:
+          requires:
+            - setup
+      - test-server:
+          requires:
+            - setup
 
   calypso-nightly:
     jobs:
-      - test-client
-      - test-integration
-      - test-server
+      - setup
+      - test-client:
+          requires:
+            - setup
+      - test-integration:
+          requires:
+            - setup
+      - test-server:
+          requires:
+            - setup
     triggers:
       - schedule:
           cron: "0 4 * * *"
