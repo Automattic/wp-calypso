@@ -6771,9 +6771,9 @@
       "dev": true
     },
     "eslint-plugin-jsx-a11y": {
-      "version": "6.1.1",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.1.1.tgz",
-      "integrity": "sha512-JsxNKqa3TwmPypeXNnI75FntkUktGzI1wSa1LgNZdSOMI+B4sxnr1lSF8m8lPiz4mKiC+14ysZQM4scewUrP7A==",
+      "version": "6.1.2",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.1.2.tgz",
+      "integrity": "sha512-7gSSmwb3A+fQwtw0arguwMdOdzmKUgnUcbSNlo+GjKLAQFuC2EZxWqG9XHRI8VscBJD5a8raz3RuxQNFW+XJbw==",
       "dev": true,
       "requires": {
         "aria-query": "^3.0.0",

@@ -285,7 +285,7 @@
     "eslint-eslines": "1.0.0",
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-jest": "21.24.1",
-    "eslint-plugin-jsx-a11y": "6.1.1",
+    "eslint-plugin-jsx-a11y": "6.1.2",
     "eslint-plugin-react": "7.11.1",
     "eslint-plugin-wpcalypso": "4.0.2",
     "fs-extra": "7.0.0",
