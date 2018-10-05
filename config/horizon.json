@@ -52,6 +52,7 @@
 		"keyboard-shortcuts": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,
+		"mailchimp": false,
 		"manage/comments": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,

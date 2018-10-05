@@ -64,6 +64,7 @@
 		"login/native-login-links": false,
 		"login/wp-login": false,
 		"happychat": false,
+		"mailchimp": true,
 		"manage/comments": true,
 		"manage/customize": true,
 		"manage/custom-post-types": true,
