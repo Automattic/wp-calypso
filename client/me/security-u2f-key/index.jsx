@@ -38,9 +38,17 @@ class SecurityU2fKey extends React.Component {
 		};
 	};
 
-	toggleAddNewU2fKey = event => {
+	addKeyStart = event => {
 		event.preventDefault();
-		this.setState( { addingKey: ! this.state.addingKey } );
+		this.setState( { addingKey: true } );
+	};
+
+	addKeyRegister = keyData => {
+		console.log( 'Register key: ', keyData ); //eslint-disable-line
+	};
+
+	addKeyCancel = () => {
+		this.setState( { addingKey: false } );
 	};
 
 	render() {
@@ -49,25 +57,25 @@ class SecurityU2fKey extends React.Component {
 		return (
 			<Fragment>
 				<SectionHeader label={ translate( 'Security Key' ) }>
-					{ ! addingKey &&
-						! u2fKeys.length && (
-							<Button
-								compact
-								onClick={ this.getClickHandler(
-									'Register New Key Button',
-									this.toggleAddNewU2fKey
-								) }
-							>
-								{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-								<Gridicon icon="plus-small" size={ 16 } />
-								{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-								{ translate( 'Register Key' ) }
-							</Button>
-						) }
+					{ ! addingKey && (
+						//! u2fKeys.length &&
+						<Button
+							compact
+							onClick={ this.getClickHandler( 'Register New Key Button', this.addKeyStart ) }
+						>
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							<Gridicon icon="plus-small" size={ 16 } />
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+							{ translate( 'Register Key' ) }
+						</Button>
+					) }
 				</SectionHeader>
 				<Card>
-					{ !! u2fKeys.length && <SecurityU2fKeyList securityKeys={ this.props.u2fKeys } /> }
-					{ addingKey && <SecurityU2fKeyAdd /> }
+					{ ! addingKey &&
+						!! u2fKeys.length && <SecurityU2fKeyList securityKeys={ this.props.u2fKeys } /> }
+					{ addingKey && (
+						<SecurityU2fKeyAdd onRegister={ this.addKeyRegister } onCancel={ this.addKeyCancel } />
+					) }
 					{ ! addingKey &&
 						! u2fKeys.length && <p>Use a Universal 2nd Factor security key to sign in.</p> }
 				</Card>
