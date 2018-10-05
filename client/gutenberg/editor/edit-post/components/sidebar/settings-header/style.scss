@@ -4,26 +4,3 @@
 	padding-right: $panel-padding / 2;
 	border-top: 0;
 }
-
-.edit-post-sidebar__panel-tab {
-	background: transparent;
-	border: none;
-	border-radius: 0;
-	cursor: pointer;
-	height: 50px;
-	padding: 3px 15px; // Use padding to offset the is-active border, this benefits Windows High Contrast mode
-	margin-left: 0;
-	font-weight: 400;
-	color: $dark-gray-900;
-	@include square-style__neutral;
-
-	&.is-active {
-		padding-bottom: 0;
-		border-bottom: 3px solid theme(primary);
-		font-weight: 600;
-	}
-
-	&:focus {
-		@include square-style__focus;
-	}
-}
