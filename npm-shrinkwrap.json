@@ -20596,6 +20596,11 @@
         }
       }
     },
+    "u2f-api": {
+      "version": "1.0.6",
+      "resolved": "https://registry.npmjs.org/u2f-api/-/u2f-api-1.0.6.tgz",
+      "integrity": "sha512-CDvSoiHLdB4I7ArzAngsSattj7lIRBmih/NAD9VUKVuMBoQHuhDdIkEM80Fu2vAMUQO9WQc/kjF8Akp5JvVfQw=="
+    },
     "ua-parser-js": {
       "version": "0.7.18",
       "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.18.tgz",
