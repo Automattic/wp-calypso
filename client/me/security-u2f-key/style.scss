@@ -18,7 +18,8 @@
 		flex-shrink: 0;
 
 		.security-u2f-key__item-subtitle {
-			color: #989898;
+			color: $gray-darken-10;
+			font-size: 0.9em;
 		}
 	}
 
