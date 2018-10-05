@@ -44,7 +44,7 @@ import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
 import requestExternalAccess from 'lib/sharing';
-import MailchimpSettings from './mailchimp-settings';
+import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
 import config from 'config';
 
 export class SharingService extends Component {
@@ -404,11 +404,12 @@ export class SharingService extends Component {
 			/>
 		);
 	}
-	isMailchimpService = connectionStatus => {
+
+	isMailchimpService = () => {
 		if ( ! config.isEnabled( 'mailchimp' ) ) {
 			return false;
 		}
-		return connectionStatus === 'connected' && get( this, 'props.service.ID' ) === 'mailchimp';
+		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 	render() {
 		const connections = this.getConnections();
@@ -420,7 +421,8 @@ export class SharingService extends Component {
 
 		const header = (
 			<div>
-				{ this.renderLogo() }
+				{ ! this.isMailchimpService( connectionStatus ) && this.renderLogo() }
+				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
 
 				<div className="sharing-service__name">
 					<h2>{ this.props.service.label }</h2>
@@ -488,9 +490,10 @@ export class SharingService extends Component {
 							</ServiceConnectedAccounts>
 						) }
 						<ServiceTip service={ this.props.service } />
-						{ this.isMailchimpService( connectionStatus ) && (
-							<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
-						) }
+						{ this.isMailchimpService( connectionStatus ) &&
+							connectionStatus === 'connected' && (
+								<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
+							) }
 					</div>
 				</FoldableCard>
 			</li>
