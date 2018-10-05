@@ -39,16 +39,17 @@ const MailchimpSettings = ( {
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
 			<FormFieldset>
-				{ mailchimpLists.map( list => (
-					<FormLabel key={ list.id }>
-						<FormRadio
-							value={ list.id }
-							checked={ list.id === mailchimpListId }
-							onChange={ () => chooseMailchimpList( list.id ) }
-						/>
-						<span>{ list.name }</span>
-					</FormLabel>
-				) ) }
+				{ mailchimpLists &&
+					mailchimpLists.map( list => (
+						<FormLabel key={ list.id }>
+							<FormRadio
+								value={ list.id }
+								checked={ list.id === mailchimpListId }
+								onChange={ () => chooseMailchimpList( list.id ) }
+							/>
+							<span>{ list.name }</span>
+						</FormLabel>
+					) ) }
 			</FormFieldset>
 		</div>
 	);
@@ -59,7 +60,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		return {
 			siteId: siteId,
-			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], [] ),
+			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
 			mailchimpListId: get(
 				state,
 				[ 'mailchimp', 'settings', 'items', siteId, 'follower_list_id' ],
