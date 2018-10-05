@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 
 /**
@@ -16,6 +17,9 @@ import Dialog from 'components/dialog'
 
 
 class U2FKeyDeleteButton extends React.Component {
+	static propTypes = {
+		securityKey: PropTypes.object.isRequired,
+	};
 
 	state = {
 		showDialog: false
@@ -52,11 +56,12 @@ class U2FKeyDeleteButton extends React.Component {
 		return (
 			<div>
 				<Button
-					borderless
+					compact
 					className="security-u2f-key__delete-key"
 					onClick={this.handleRemoveKeyButtonClick}
+
 				>
-					<Gridicon icon="cross"/>
+					<Gridicon icon="trash"/>
 				</Button>
 				{ this.state.showDialog &&
 					<Dialog
