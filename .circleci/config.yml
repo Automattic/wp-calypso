@@ -332,7 +332,10 @@ jobs:
       - run:
           name: Notify ICFY
           command: |
-            curl -X POST "https://sirreal.eu.ngrok.io?secret=$ICFY_SECRET" \
+            #
+            # This is followed by `|| true` to ensure this step cannot fail.
+            #
+            curl -X POST "http://api.iscalypsofastyet.com:5000/submit-stats/?secret=$ICFY_SECRET" \
               -H 'Cache-Control: no-cache' \
               -H 'Content-Type: application/json' \
               -d '{
@@ -341,7 +344,8 @@ jobs:
                       "build_num": '"$CIRCLE_BUILD_NUM"',
                       "sha": "'"$CIRCLE_SHA1"'"
                     }
-                  }'
+                  }' \
+            || true # ensure this step passes
 
 workflows:
   version: 2
