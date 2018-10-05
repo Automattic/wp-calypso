@@ -5,6 +5,7 @@
  */
 import Card from 'components/card';
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -13,6 +14,11 @@ import Button from 'components/button';
 import u2f from './u2f-api';
 
 class SecurityU2fKeyAdd extends React.Component {
+	static propTypes = {
+		onRegister: PropTypes.func.isRequired,
+		onCancel: PropTypes.func.isRequired,
+	};
+
 	registerKey = () => {
 		const registerRequests = [
 			{ version: 'U2F_V2', challenge: this.createChallenge(), attestation: 'direct' },
@@ -25,9 +31,9 @@ class SecurityU2fKeyAdd extends React.Component {
 		);
 	};
 
-	keyRegistered( data ) {
-		console.log( JSON.stringify( data ) ); // eslint-disable-line
-	}
+	keyRegistered = data => {
+		this.props.onRegister( data );
+	};
 
 	createChallenge() {
 		return 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'.replace( /[xy]/g, function( c ) {
@@ -45,6 +51,9 @@ class SecurityU2fKeyAdd extends React.Component {
 					<Card>
 						<Button compact onClick={ this.registerKey }>
 							Register Key
+						</Button>
+						<Button compact onClick={ this.props.onCancel }>
+							Cancel
 						</Button>
 					</Card>
 				) }
