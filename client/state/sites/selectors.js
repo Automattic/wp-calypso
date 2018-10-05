@@ -317,10 +317,6 @@ export function getSiteUrl( state, siteId ) {
  * @return {?Boolean}        Whether site is previewable
  */
 export function isSitePreviewable( state, siteId ) {
-	if ( ! config.isEnabled( 'preview-layout' ) ) {
-		return false;
-	}
-
 	const site = getRawSite( state, siteId );
 	if ( ! site ) {
 		return null;

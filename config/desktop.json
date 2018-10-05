@@ -88,7 +88,6 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"press-this": false,
-		"preview-layout": true,
 		"reader": true,
 		"reader/following-intro": true,
 		"reader/full-errors": false,
