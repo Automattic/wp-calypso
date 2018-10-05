@@ -54,6 +54,7 @@ class SecurityU2fKey extends React.Component {
 	render() {
 		const { translate, u2fKeys } = this.props;
 		const { addingKey } = this.state;
+		// const u2fKeys = [];
 		return (
 			<Fragment>
 				<SectionHeader label={ translate( 'Security Key' ) }>
@@ -70,15 +71,17 @@ class SecurityU2fKey extends React.Component {
 						</Button>
 					) }
 				</SectionHeader>
-				<Card>
-					{ ! addingKey &&
-						!! u2fKeys.length && <SecurityU2fKeyList securityKeys={ this.props.u2fKeys } /> }
-					{ addingKey && (
-						<SecurityU2fKeyAdd onRegister={ this.addKeyRegister } onCancel={ this.addKeyCancel } />
+				{ addingKey && (
+					<SecurityU2fKeyAdd onRegister={ this.addKeyRegister } onCancel={ this.addKeyCancel } />
+				) }
+				{ ! addingKey &&
+					! u2fKeys.length && (
+						<Card>
+							<p>Use a Universal 2nd Factor security key to sign in.</p>
+						</Card>
 					) }
-					{ ! addingKey &&
-						! u2fKeys.length && <p>Use a Universal 2nd Factor security key to sign in.</p> }
-				</Card>
+				{ ! addingKey &&
+					!! u2fKeys.length && <SecurityU2fKeyList securityKeys={ this.props.u2fKeys } /> }
 			</Fragment>
 		);
 	}

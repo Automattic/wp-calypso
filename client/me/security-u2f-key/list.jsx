@@ -11,7 +11,6 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordGoogleEvent } from '../../state/analytics/actions';
 import U2FItem from './item';
 
@@ -25,7 +24,6 @@ class SecurityU2fKeyList extends React.Component {
 	render() {
 		return (
 			<div className="security-u2f-key__active-keys">
-				<FormSectionHeading>{ this.props.translate( 'Active keys' ) }</FormSectionHeading>
 				<ul className="security-u2f-key__list">
 					{ this.props.securityKeys.map( securityKey => (
 						<li key={ securityKey.id } className="security-u2f-key__list-item">
