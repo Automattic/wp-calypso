@@ -66,7 +66,7 @@ class SecurityU2fKey extends React.Component {
 						) }
 				</SectionHeader>
 				<Card>
-					{ !! u2fKeys.length && <SecurityU2fKeyList keys={ this.props.u2fKeys } /> }
+					{ !! u2fKeys.length && <SecurityU2fKeyList securityKeys={ this.props.u2fKeys } /> }
 					{ addingKey && <SecurityU2fKeyAdd /> }
 					{ ! addingKey &&
 						! u2fKeys.length && <p>Use a Universal 2nd Factor security key to sign in.</p> }
