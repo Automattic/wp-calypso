@@ -39,6 +39,8 @@ import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
 import SocialConnectPrompt from './social-connect-prompt';
+import WaitingU2fAuthentication from './two-factor-authentication/waiting-u2f-authentication';
+import U2fAuthenticationPoller from './two-factor-authentication/u2f-authentication-poller';
 
 const user = userFactory();
 
@@ -248,6 +250,10 @@ class Login extends Component {
 			poller = <PushNotificationApprovalPoller onSuccess={ this.rebootAfterLogin } />;
 		}
 
+		if ( twoFactorEnabled && 'u2f' === twoFactorAuthType ) {
+			poller = <U2fAuthenticationPoller onSuccess={ this.rebootAfterLogin } />;
+		}
+
 		if ( twoFactorEnabled && includes( [ 'authenticator', 'sms', 'backup' ], twoFactorAuthType ) ) {
 			return (
 				<div>
@@ -256,6 +262,15 @@ class Login extends Component {
 						onSuccess={ this.handleValid2FACode }
 						twoFactorAuthType={ twoFactorAuthType }
 					/>
+				</div>
+			);
+		}
+
+		if ( twoFactorEnabled && twoFactorAuthType === 'u2f' ) {
+			return (
+				<div>
+					{ poller }
+					<WaitingU2fAuthentication />
 				</div>
 			);
 		}

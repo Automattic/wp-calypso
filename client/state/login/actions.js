@@ -41,6 +41,12 @@ import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
+	TWO_FACTOR_AUTHENTICATION_U2F_CHALLENGE_REQUEST,
+	TWO_FACTOR_AUTHENTICATION_U2F_CHALLENGE_REQUEST_FAILURE,
+	TWO_FACTOR_AUTHENTICATION_U2F_CHALLENGE_REQUEST_SUCCESS,
+	TWO_FACTOR_AUTHENTICATION_U2F_POLL_START,
+	TWO_FACTOR_AUTHENTICATION_U2F_POLL_STOP,
+	TWO_FACTOR_AUTHENTICATION_U2F_POLL_COMPLETED,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
@@ -603,3 +609,43 @@ export const receivedTwoFactorPushNotificationApproved = tokenLinks => dispatch 
 		dispatch( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED } )
 	);
 };
+
+/**
+ * Sends a two factor authentication recovery code to a user.
+ *
+ * @return {Function} A thunk that can be dispatched
+ */
+export const getU2fChallenge = () => ( dispatch, getState ) => {
+	dispatch( { type: TWO_FACTOR_AUTHENTICATION_U2F_CHALLENGE_REQUEST } );
+
+	return request
+		.post( 'https://wordpress.com/wp-login.php?action=u2f-challenge-endpoint' )
+		.set( 'Content-Type', 'application/x-www-form-urlencoded' )
+		.accept( 'application/json' )
+		.send( {
+			user_id: getTwoFactorUserId( getState() ),
+			two_step_nonce: getTwoFactorAuthNonce( getState(), 'u2f' ),
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} )
+		.then( response => {
+			const message = getU2fChannelgeFromResponse( response );
+
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_U2F_CHALLENGE_REQUEST_SUCCESS,
+				twoStepNonce: get( response, 'body.data.two_step_nonce' ),
+			} );
+		} )
+		.catch( httpError => {
+			const error = getErrorFromHTTPError( httpError );
+
+			dispatch( {
+				type: TWO_FACTOR_AUTHENTICATION_U2F_CHALLENGE_REQUEST_FAILURE,
+				error,
+				twoStepNonce: get( httpError, 'response.body.data.two_step_nonce' ),
+			} );
+		} );
+};
+
+export const startPollAppU2fAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_U2F_POLL_START } );
+export const stopPollAppU2fAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_U2F_POLL_STOP } );

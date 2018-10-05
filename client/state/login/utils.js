@@ -22,6 +22,10 @@ export function getSMSMessageFromResponse( response ) {
 	} );
 }
 
+export function getU2fChallengeFromResponse( response ) {
+	console.log( response );
+}
+
 const errorFields = {
 	empty_password: 'password',
 	empty_two_step_code: 'twoStepCode',

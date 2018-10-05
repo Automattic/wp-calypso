@@ -23,6 +23,7 @@ class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSmsSupported: PropTypes.bool.isRequired,
+		isU2fSupported: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -47,14 +48,29 @@ class TwoFactorActions extends Component {
 		page( login( { isNative: true, twoFactorAuthType: 'authenticator' } ) );
 	};
 
+	useU2fKey = event => {
+		event.preventDefault();
+
+		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_u2f_link_click' );
+
+		page( login( { isNative: true, twoFactorAuthType: 'u2f' } ) );
+	};
+
 	render() {
-		const { isAuthenticatorSupported, isSmsSupported, translate, twoFactorAuthType } = this.props;
+		const {
+			isAuthenticatorSupported,
+			isSmsSupported,
+			isU2fSupported,
+			translate,
+			twoFactorAuthType,
+		} = this.props;
 
 		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
 		const isAuthenticatorAvailable =
 			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
+		const isU2fAvailable = isU2fSupported && twoFactorAuthType !== 'u2f';
 
-		if ( ! isSmsAvailable && ! isAuthenticatorAvailable ) {
+		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isU2fAvailable ) {
 			return null;
 		}
 
@@ -77,6 +93,14 @@ class TwoFactorActions extends Component {
 						</button>
 					</p>
 				) }
+
+				{ isU2fAvailable && (
+					<p>
+						<button data-e2e-link="2fa-u2f-link" onClick={ this.useU2fKey }>
+							{ translate( 'Your universal 2nd factor key' ) }
+						</button>
+					</p>
+				) }
 			</Card>
 		);
 	}
@@ -86,6 +110,7 @@ export default connect(
 	state => ( {
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
+		isU2fSupported: isTwoFactorAuthTypeSupported( state, 'u2f' ),
 	} ),
 	{
 		recordTracksEvent,

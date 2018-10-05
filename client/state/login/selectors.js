@@ -106,6 +106,7 @@ export const getTwoFactorAuthRequestError = state => {
  * @return {?Array}          The supported auth types (of `authenticator`, `sms`, `push` ).
  */
 export const getTwoFactorSupportedAuthTypes = state => {
+	console.log( state );
 	return get( state, 'login.twoFactorAuth.two_step_supported_auth_types', null );
 };
 
@@ -119,6 +120,7 @@ export const getTwoFactorSupportedAuthTypes = state => {
  */
 export const isTwoFactorAuthTypeSupported = ( state, type ) => {
 	const supportedAuthTypes = getTwoFactorSupportedAuthTypes( state );
+	console.log( supportedAuthTypes );
 	return supportedAuthTypes && supportedAuthTypes.indexOf( type ) >= 0;
 };
 
