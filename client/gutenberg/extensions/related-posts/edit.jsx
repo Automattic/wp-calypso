@@ -34,13 +34,14 @@ class RelatedPostsEdit extends Component {
 
 		apiFetch( {
 			path: '/jetpack/v4/site/posts/related?http_envelope=1&post_id=' + postId,
-		} ).then( posts => {
-			this.setState( { posts } );
+		} ).then( response => {
+			this.setState( { posts: response.posts } );
 		} );
 	}
 
 	render() {
 		const { attributes, className, setAttributes } = this.props;
+		const { posts } = this.state;
 		const {
 			align,
 			displayContext,
@@ -65,7 +66,8 @@ class RelatedPostsEdit extends Component {
 			},
 		];
 
-		const displayPosts = DEFAULT_POSTS.slice( 0, postsToShow );
+		const postsToDisplay = posts.length ? posts : DEFAULT_POSTS;
+		const displayPosts = postsToDisplay.slice( 0, postsToShow );
 
 		return (
 			<Fragment>
@@ -119,11 +121,13 @@ class RelatedPostsEdit extends Component {
 					<div className={ `${ className }__preview-items` }>
 						{ displayPosts.map( ( post, i ) => (
 							<div className={ `${ className }__preview-post` } key={ i }>
-								{ displayThumbnails && (
-									<Button className={ `${ className }__preview-post-link` } isLink>
-										<img src={ post.image } alt={ post.title } />
-									</Button>
-								) }
+								{ displayThumbnails &&
+									post.img &&
+									post.img.src && (
+										<Button className={ `${ className }__preview-post-link` } isLink>
+											<img src={ post.img.src } alt={ post.title } />
+										</Button>
+									) }
 								<h4>
 									<Button className={ `${ className }__preview-post-link` } isLink>
 										{ post.title }
