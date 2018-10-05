@@ -337,7 +337,7 @@ jobs:
             mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"
             curl                                                                       \
               -X POST                                                                  \
-              "http://api.iscalypsofastyet.com:5000/submit-stats/?secret=$ICFY_SECRET" \
+              "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET"  \
               -H 'Cache-Control: no-cache'                                             \
               -H 'Content-Type: application/json'                                      \
               -d '{
