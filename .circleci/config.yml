@@ -110,13 +110,13 @@ references:
   restore-babel-client-cache: &restore-babel-client-cache
     name: Restore Babel Client Cache
     keys:
-      - v0-babel-client-{{ .Branch }}-{{ .Revision }}
-      - v0-babel-client-{{ .Branch }}
-      - v0-babel-client-master
-      - v0-babel-client
+      - v1-babel-client-{{ .Branch }}-{{ .Revision }}
+      - v1-babel-client-{{ .Branch }}
+      - v1-babel-client-master
+      - v1-babel-client
   save-babel-client-cache: &save-babel-client-cache
     name: Save Babel Client Cache
-    key: v0-babel-client-{{ .Branch }}-{{ .Revision }}
+    key: v1-babel-client-{{ .Branch }}-{{ .Revision }}
     paths:
       - "build/.babel-client-cache"
 
@@ -362,7 +362,8 @@ jobs:
                         "build_num": '"$CIRCLE_BUILD_NUM"',
                         "sha": "'"$CIRCLE_SHA1"'"
                       }
-                    }'
+                    }'                                                                  \
+            || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
             exit 0
       - save_cache: *save-babel-client-cache
       - store-artifacts-and-test-results
