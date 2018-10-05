@@ -320,32 +320,34 @@ jobs:
     <<: *defaults
     steps:
       - setup
-      - run: npm run build-css
       - run:
           environment:
             NODE_ENV: "production"
             CALYPSO_CLIENT: "true"
-          command: npm run preanalyze-bundles
-      - run: node bin/icfy-analyze.js
-      - run: mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"
-      - store-artifacts-and-test-results
-      - run:
-          name: Notify ICFY
           command: |
             #
-            # This is followed by `|| true` to ensure this step cannot fail.
+            # This block should not cause a test failure and block PRs.
+            # The shell should never error and exit 0 to indicate success.
             #
-            curl -X POST "http://api.iscalypsofastyet.com:5000/submit-stats/?secret=$ICFY_SECRET" \
-              -H 'Cache-Control: no-cache' \
-              -H 'Content-Type: application/json' \
+            set +o errexit
+            npm run build-css
+            npm run preanalyze-bundles
+            node bin/icfy-analyze.js
+            mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"
+            curl                                                                       \
+              -X POST                                                                  \
+              "http://api.iscalypsofastyet.com:5000/submit-stats/?secret=$ICFY_SECRET" \
+              -H 'Cache-Control: no-cache'                                             \
+              -H 'Content-Type: application/json'                                      \
               -d '{
                     "payload": {
                       "branch": "'"$CIRCLE_BRANCH"'",
                       "build_num": '"$CIRCLE_BUILD_NUM"',
                       "sha": "'"$CIRCLE_SHA1"'"
                     }
-                  }' \
-            || true # ensure this step passes
+                  }'
+            exit 0
+      - store-artifacts-and-test-results
 
 workflows:
   version: 2
