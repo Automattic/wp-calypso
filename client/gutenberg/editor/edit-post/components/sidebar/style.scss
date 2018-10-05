@@ -153,11 +153,12 @@
 	padding: 3px 15px; // Use padding to offset the is-active border, this benefits Windows High Contrast mode
 	margin-left: 0;
 	font-weight: 400;
+	color: $dark-gray-900;
 	@include square-style__neutral;
 
 	&.is-active {
 		padding-bottom: 0;
-		border-bottom: 3px solid theme(primary);
+		border-bottom: 3px solid $gutenberg-theme-primary;
 		font-weight: 600;
 	}
 
