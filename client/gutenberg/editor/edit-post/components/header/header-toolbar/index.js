@@ -77,7 +77,7 @@ function HeaderToolbar( {
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
 function getCloseButtonPath( routeHistory, site ) {
-	const editorPathRegex = /^\/gutenberg\/(post|page|(edit\/[^\/]+))\/[^\/]+(\/\d+)?$/i;
+	const editorPathRegex = /^\/gutenberg\/(post|page|edit)($|\/)/i;
 	const lastEditorPath = routeHistory[ routeHistory.length - 1 ].path;
 
 	// @see post-editor/editor-ground-control/index.jsx
