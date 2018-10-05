@@ -55,7 +55,7 @@ class SecurityU2fKey extends React.Component {
 	render() {
 		const { translate } = this.props;
 		const { addingKey } = this.state;
-		const u2fKeys = this.props.u2fKeys;
+		const u2fKeys = [];
 		return (
 			<Fragment>
 				<SectionHeader label={ translate( 'Security Key' ) }>
