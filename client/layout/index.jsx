@@ -60,12 +60,6 @@ class Layout extends Component {
 		colorSchemePreference: PropTypes.string,
 	};
 
-	renderPreview() {
-		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
-			return <SitePreview />;
-		}
-	}
-
 	render() {
 		const sectionClass = classnames(
 				'layout',
@@ -122,7 +116,7 @@ class Layout extends Component {
 				) : (
 					<TranslatorLauncher />
 				) }
-				{ this.renderPreview() }
+				{ this.props.section.group === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 				{ 'development' === process.env.NODE_ENV && (

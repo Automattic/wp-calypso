@@ -126,7 +126,6 @@
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
 		"nps-survey/notice": true,
-		"preview-layout": true,
 		"network-connection": true,
 		"oauth": false,
 		"onboarding-checklist": true,
