@@ -3,15 +3,16 @@
 /**
  * External dependencies
  */
-import Card from 'components/card';
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import u2f from './u2f-api';
+import Spinner from 'components/spinner';
 
 class SecurityU2fKeyAdd extends React.Component {
 	static propTypes = {
@@ -48,18 +49,29 @@ class SecurityU2fKeyAdd extends React.Component {
 		return (
 			<Fragment>
 				{ !! u2f && (
-					<Card>
-						<Button compact onClick={ this.registerKey }>
-							Register Key
-						</Button>
-						<Button compact onClick={ this.props.onCancel }>
-							Cancel
-						</Button>
-					</Card>
+					<Fragment>
+						<div className="security-u2f-key__add-wait-for-key">
+							<Spinner />
+							<p>{ this.props.translate( 'Insert your USB key into your USB port.' ) }</p>
+							<p>
+								{ this.props.translate(
+									'Then tap the button or gold disk on the security device'
+								) }
+							</p>
+						</div>
+						<div className="security-u2f-key__add-button-container">
+							<Button compact onClick={ this.registerKey }>
+								Register Key
+							</Button>
+							<Button compact onClick={ this.props.onCancel }>
+								Cancel
+							</Button>
+						</div>
+					</Fragment>
 				) }
 			</Fragment>
 		);
 	}
 }
 
-export default SecurityU2fKeyAdd;
+export default localize( SecurityU2fKeyAdd );
