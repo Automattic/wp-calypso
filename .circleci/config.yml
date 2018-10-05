@@ -329,7 +329,19 @@ jobs:
       - run: node bin/icfy-analyze.js
       - run: mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"
       - store-artifacts-and-test-results
-
+      - run:
+          name: Notify ICFY
+          command: |
+            curl -X POST "https://sirreal.eu.ngrok.io?secret=$ICFY_SECRET" \
+              -H 'Cache-Control: no-cache' \
+              -H 'Content-Type: application/json' \
+              -d '{
+                    "payload": {
+                      "branch": "'"$CIRCLE_BRANCH"'",
+                      "build_num": '"$CIRCLE_BUILD_NUM"',
+                      "sha": "'"$CIRCLE_SHA1"'"
+                    }
+                  }'
 
 workflows:
   version: 2
