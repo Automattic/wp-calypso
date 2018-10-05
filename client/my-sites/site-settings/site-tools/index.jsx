@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { find, some } from 'lodash';
 
@@ -17,6 +17,7 @@ import { tracks } from 'lib/analytics';
 import { localize } from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
 import SiteToolsLink from './link';
+import Stage from './stage';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isJetpackSite, getSiteAdminUrl } from 'state/sites/selectors';
@@ -119,7 +120,10 @@ class SiteTools extends Component {
 				<SiteToolsLink href={ exportUrl } title={ exportTitle } description={ exportText } />
 				{ showClone &&
 					config.isEnabled( 'rewind/clone-site' ) && (
-						<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
+						<Fragment>
+							<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
+							<Stage siteId={ siteId } />
+						</Fragment>
 					) }
 				{ showThemeSetup && (
 					<SiteToolsLink
