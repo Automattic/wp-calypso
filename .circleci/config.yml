@@ -348,21 +348,21 @@ jobs:
             #
             set +o errexit
             npm run build-css
-            npm run preanalyze-bundles
-            node bin/icfy-analyze.js
-            mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"
-            curl                                                                       \
-              -X POST                                                                  \
-              "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET"  \
-              -H 'Cache-Control: no-cache'                                             \
-              -H 'Content-Type: application/json'                                      \
-              -d '{
-                    "payload": {
-                      "branch": "'"$CIRCLE_BRANCH"'",
-                      "build_num": '"$CIRCLE_BUILD_NUM"',
-                      "sha": "'"$CIRCLE_SHA1"'"
-                    }
-                  }'
+            && npm run preanalyze-bundles                                               \
+            && node bin/icfy-analyze.js                                                 \
+            && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"                        \
+            && curl                                                                     \
+                -X POST                                                                 \
+                "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
+                -H 'Cache-Control: no-cache'                                            \
+                -H 'Content-Type: application/json'                                     \
+                -d '{
+                      "payload": {
+                        "branch": "'"$CIRCLE_BRANCH"'",
+                        "build_num": '"$CIRCLE_BUILD_NUM"',
+                        "sha": "'"$CIRCLE_SHA1"'"
+                      }
+                    }'
             exit 0
       - save_cache: *save-babel-client-cache
       - store-artifacts-and-test-results
