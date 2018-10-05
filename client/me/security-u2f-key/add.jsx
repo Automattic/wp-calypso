@@ -21,6 +21,10 @@ class SecurityU2fKeyAdd extends React.Component {
 		onCancel: PropTypes.func.isRequired,
 	};
 
+	componentDidMount = () => {
+		this.registerKey();
+	};
+
 	registerKey = () => {
 		const registerRequests = [
 			{ version: 'U2F_V2', challenge: this.createChallenge(), attestation: 'direct' },
@@ -61,7 +65,6 @@ class SecurityU2fKeyAdd extends React.Component {
 							</p>
 						</div>
 						<div className="security-u2f-key__add-button-container">
-							<Button onClick={ this.registerKey }>Register Key</Button>
 							<Button onClick={ this.props.onCancel }>Cancel</Button>
 						</div>
 					</Fragment>
