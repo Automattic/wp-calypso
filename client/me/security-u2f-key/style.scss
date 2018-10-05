@@ -1,6 +1,21 @@
 /** @format */
 
-.security-u2f-key__active-keys {
+.security-u2f-key__add-wait-for-key {
+	text-align: center;
+
+	.spinner {
+		margin-bottom: 1em;
+	}
+
+	p {
+		margin-bottom: 0.5em;
+	}
+}
+
+.security-u2f-key__add-button-container {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 2em;
 }
 
 .security-u2f-key__list {
@@ -10,12 +25,17 @@
 
 .security-u2f-key__item {
 	display: flex;
-	align-items: center;
-	margin-bottom: 10px;
+	vertical-align: middle;
+
+	&:hover {
+		// TODO probably remove
+		background: #ebebeb;
+	}
 
 	.security-u2f-key__item-information {
 		flex-grow: 1;
 		flex-shrink: 0;
+		align-self: flex-start;
 
 		.security-u2f-key__item-subtitle {
 			color: $gray-darken-10;
@@ -27,13 +47,6 @@
 	.security-u2f-key__delete-key {
 		flex-grow: 0;
 		flex-shrink: 0;
+		align-self: flex-end;
 	}
-}
-
-.security-u2f-key__add-wait-for-key {
-	text-align: center;
-}
-
-.security-u2f-key__add-button-container {
-	text-align: right;
 }

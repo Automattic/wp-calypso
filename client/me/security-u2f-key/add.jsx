@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import u2f from './u2f-api';
 import Spinner from 'components/spinner';
 
@@ -18,6 +19,10 @@ class SecurityU2fKeyAdd extends React.Component {
 	static propTypes = {
 		onRegister: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
+	};
+
+	componentDidMount = () => {
+		this.registerKey();
 	};
 
 	registerKey = () => {
@@ -47,7 +52,7 @@ class SecurityU2fKeyAdd extends React.Component {
 	render() {
 		window.u2f = u2f;
 		return (
-			<Fragment>
+			<Card>
 				{ !! u2f && (
 					<Fragment>
 						<div className="security-u2f-key__add-wait-for-key">
@@ -60,16 +65,11 @@ class SecurityU2fKeyAdd extends React.Component {
 							</p>
 						</div>
 						<div className="security-u2f-key__add-button-container">
-							<Button compact onClick={ this.registerKey }>
-								Register Key
-							</Button>
-							<Button compact onClick={ this.props.onCancel }>
-								Cancel
-							</Button>
+							<Button onClick={ this.props.onCancel }>Cancel</Button>
 						</div>
 					</Fragment>
 				) }
-			</Fragment>
+			</Card>
 		);
 	}
 }

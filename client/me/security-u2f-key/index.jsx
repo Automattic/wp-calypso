@@ -7,6 +7,7 @@ import Gridicon from 'gridicons';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { isSupported } from 'u2f-api';
 
 /**
  * Internal dependencies
@@ -52,8 +53,9 @@ class SecurityU2fKey extends React.Component {
 	};
 
 	render() {
-		const { translate, u2fKeys } = this.props;
+		const { translate } = this.props;
 		const { addingKey } = this.state;
+		const u2fKeys = [];
 		return (
 			<Fragment>
 				<SectionHeader label={ translate( 'Security Key' ) }>
@@ -70,15 +72,23 @@ class SecurityU2fKey extends React.Component {
 						</Button>
 					) }
 				</SectionHeader>
-				<Card>
-					{ ! addingKey &&
-						!! u2fKeys.length && <SecurityU2fKeyList securityKeys={ this.props.u2fKeys } /> }
-					{ addingKey && (
-						<SecurityU2fKeyAdd onRegister={ this.addKeyRegister } onCancel={ this.addKeyCancel } />
+				{ addingKey && (
+					<SecurityU2fKeyAdd onRegister={ this.addKeyRegister } onCancel={ this.addKeyCancel } />
+				) }
+				{ ! addingKey &&
+					! u2fKeys.length && (
+						<Card>
+							<p>Use a Universal 2nd Factor security key to sign in.</p>
+							{ ! isSupported() && (
+								<p>
+									Looks like you browser doesn't support the FIDO U2F standard yet. Read more about
+									the requirements for adding a key to your account.
+								</p>
+							) }
+						</Card>
 					) }
-					{ ! addingKey &&
-						! u2fKeys.length && <p>Use a Universal 2nd Factor security key to sign in.</p> }
-				</Card>
+				{ ! addingKey &&
+					!! u2fKeys.length && <SecurityU2fKeyList securityKeys={ this.props.u2fKeys } /> }
 			</Fragment>
 		);
 	}
