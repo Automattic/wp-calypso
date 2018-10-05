@@ -20,22 +20,38 @@ import { ALIGNMENT_OPTIONS, DEFAULT_POSTS, MAX_POSTS_TO_SHOW } from './constants
 class RelatedPostsEdit extends Component {
 	state = {
 		posts: [],
+		fetchingPosts: false,
 	};
 
 	componentDidMount() {
 		this.fetchPosts();
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.isSaving && ! this.props.isSaving ) {
+			this.fetchPosts();
+		}
+	}
+
 	fetchPosts() {
 		const { postId } = this.props;
-		if ( ! postId ) {
+		const { fetchingPosts } = this.state;
+
+		if ( ! postId || fetchingPosts ) {
 			return;
 		}
+
+		this.setState( {
+			fetchingPosts: true,
+		} );
 
 		apiFetch( {
 			path: '/jetpack/v4/site/posts/related?http_envelope=1&post_id=' + postId,
 		} ).then( response => {
-			this.setState( { posts: response.posts } );
+			this.setState( {
+				posts: response.posts,
+				fetchingPosts: false,
+			} );
 		} );
 	}
 
@@ -154,8 +170,10 @@ class RelatedPostsEdit extends Component {
 }
 
 export default withSelect( select => {
-	const { getCurrentPostId } = select( 'core/editor' );
+	const { getCurrentPostId, isSavingPost } = select( 'core/editor' );
+
 	return {
+		isSaving: !! isSavingPost(),
 		postId: getCurrentPostId(),
 	};
 } )( RelatedPostsEdit );
