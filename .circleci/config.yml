@@ -108,14 +108,14 @@ references:
   # Babel cache
   # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
   restore-babel-client-cache: &restore-babel-client-cache
-    name: Restore babel cache
+    name: Restore Babel Client Cache
     keys:
       - v0-babel-client-{{ .Branch }}-{{ .Revision }}
       - v0-babel-client-{{ .Branch }}
       - v0-babel-client-master
       - v0-babel-client
   save-babel-client-cache: &save-babel-client-cache
-    name: Save git cache
+    name: Save Babel Client Cache
     key: v0-babel-client-{{ .Branch }}-{{ .Revision }}
     paths:
       - "build/.babel-client-cache"
