@@ -23,10 +23,10 @@ class SecurityU2fKeyItem extends Component {
 		return (
 			<div className="security-u2f-key__item">
 				<div className="security-u2f-key__item-information">
-					<div className="security-u2f-key__item-title">
+					<h2 className="security-u2f-key__item-title">
 						Foo { this.props.securityKey.registered }
-					</div>
-					<div className="security-u2f-key__item-subtitle">Bar { this.props.securityKey.id }</div>
+					</h2>
+					<p className="security-u2f-key__item-subtitle">Bar { this.props.securityKey.id }</p>
 				</div>
 				<U2FDeleteButton securityKey={ this.props.securityKey } />
 			</div>
