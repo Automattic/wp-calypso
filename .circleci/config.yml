@@ -359,11 +359,29 @@ workflows:
             branches:
               ignore: master
       - build-jetpack-blocks
+          filters:
+            branches:
+              ignore: origin/add/icfy-circleci
       - build-notifications
+          filters:
+            branches:
+              ignore: origin/add/icfy-circleci
       - icfy-stats
+          filters:
+            branches:
+              only: origin/add/icfy-circleci
       - lint-and-translate
+          filters:
+            branches:
+              ignore: origin/add/icfy-circleci
       - test-client
+          filters:
+            branches:
+              ignore: origin/add/icfy-circleci
       - test-server
+          filters:
+            branches:
+              ignore: origin/add/icfy-circleci
 
   calypso-nightly:
     jobs:
