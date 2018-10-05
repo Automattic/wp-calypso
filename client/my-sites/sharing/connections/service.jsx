@@ -390,6 +390,7 @@ export class SharingService extends Component {
 			} );
 			this.setState( { isConnecting: false } );
 		}
+		this.setState( { justConnected: true } );
 
 		return externalAccounts.length && hasAnyConnectionOptions;
 	}
@@ -459,6 +460,8 @@ export class SharingService extends Component {
 					className={ classNames }
 					header={ header }
 					clickableHeader
+					//For Mailchimp we want to open settings, because in other services we have the popup.
+					expanded={ this.isMailchimpService() && this.state.justConnected }
 					compact
 					summary={ action }
 					expandedSummary={ action }

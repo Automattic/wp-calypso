@@ -32,12 +32,13 @@ const MailchimpSettings = ( {
 		} );
 	};
 
+	/* eslint-disable jsx-a11y/no-onchange */
 	return (
 		<div>
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
 			<p>{ translate( 'What MailChimp list should we sync follower emails to for this site?' ) }</p>
-			<select value={ mailchimpListId } onBlur={ chooseMailchimpList }>
+			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
 				{ mailchimpLists &&
 					mailchimpLists.map( list => (
 						<option key={ list.id } value={ list.id }>
@@ -47,6 +48,7 @@ const MailchimpSettings = ( {
 			</select>
 		</div>
 	);
+	/* eslint-enable jsx-a11y/no-onchange */
 };
 
 export const renderMailchimpLogo = () => (
