@@ -347,7 +347,7 @@ jobs:
             # The shell should never error and exit 0 to indicate success.
             #
             set +o errexit
-            npm run build-css
+            npm run build-css                                                           \
             && npm run preanalyze-bundles                                               \
             && node bin/icfy-analyze.js                                                 \
             && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"                        \
