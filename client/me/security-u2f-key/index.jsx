@@ -14,20 +14,24 @@ import { isSupported } from 'u2f-api';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import getU2fKeys from 'state/selectors/get-u2f-keys';
-import getNewU2fKey from 'state/selectors/get-new-u2f-key';
 import SectionHeader from 'components/section-header';
-
 import SecurityU2fKeyAdd from './add';
 import SecurityU2fKeyList from './list';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import wpcom from 'lib/wp';
 
 class SecurityU2fKey extends React.Component {
 	static initialState = Object.freeze( {
 		addingKey: false,
+		u2fChallenge: {},
+		u2fKeys: [],
 	} );
 
 	state = this.constructor.initialState;
+
+	componentDidMount = () => {
+		this.getChallenge();
+	};
 
 	getClickHandler = ( action, callback ) => {
 		return event => {
@@ -46,10 +50,31 @@ class SecurityU2fKey extends React.Component {
 
 	addKeyRegister = keyData => {
 		console.log( 'Register key: ', keyData ); //eslint-disable-line
+		wpcom.req.post(
+			'/me/two-step/security-key/registration_challenge',
+			keyData,
+			this.getKeysFromServer
+		);
 	};
 
 	addKeyCancel = () => {
 		this.setState( { addingKey: false } );
+	};
+
+	keysFromServer = data => {
+		this.setState( { u2fKeys: data } );
+	};
+
+	getChallenge = () => {
+		wpcom.req.get( '/me/two-step/security-key/registration_challenge', {}, this.setChallenge );
+	};
+
+	setChallenge = ( error, data ) => {
+		this.setState( { u2fChallenge: data.regRequest } );
+	};
+
+	getKeysFromServer = () => {
+		wpcom.req.get( '/me/two-step/security-key/registration_challenge', {}, this.keysFromServer );
 	};
 
 	render() {
@@ -72,9 +97,14 @@ class SecurityU2fKey extends React.Component {
 						</Button>
 					) }
 				</SectionHeader>
-				{ addingKey && (
-					<SecurityU2fKeyAdd onRegister={ this.addKeyRegister } onCancel={ this.addKeyCancel } />
-				) }
+				{ addingKey &&
+					this.state.u2fChallenge && (
+						<SecurityU2fKeyAdd
+							onRegister={ this.addKeyRegister }
+							onCancel={ this.addKeyCancel }
+							registerRequests={ this.state.u2fChallenge }
+						/>
+					) }
 				{ ! addingKey &&
 					! u2fKeys.length && (
 						<Card>
@@ -95,10 +125,7 @@ class SecurityU2fKey extends React.Component {
 }
 
 export default connect(
-	state => ( {
-		u2fKeys: getU2fKeys( state ),
-		newU2fKey: getNewU2fKey( state ),
-	} ),
+	null,
 	{
 		recordGoogleEvent,
 	}

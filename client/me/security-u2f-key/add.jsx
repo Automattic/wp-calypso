@@ -19,6 +19,7 @@ class SecurityU2fKeyAdd extends React.Component {
 	static propTypes = {
 		onRegister: PropTypes.func.isRequired,
 		onCancel: PropTypes.func.isRequired,
+		registerRequests: PropTypes.object.isRequired,
 	};
 
 	componentDidMount = () => {
@@ -26,16 +27,12 @@ class SecurityU2fKeyAdd extends React.Component {
 	};
 
 	registerKey = () => {
-		const registerRequests = [
-			{ version: 'U2F_V2', challenge: this.createChallenge(), attestation: 'direct' },
-		];
-		u2f.register(
-			window.location.protocol + '//' + window.location.host,
-			registerRequests,
-			[],
-			this.keyRegistered
-		);
+		const appId = this.props.registerRequests.appId;
+		delete this.props.registerRequests.appId;
+		u2f.register( appId, this.props.registerRequests, [], this.keyRegistered );
 	};
+
+	keySentToServer = () => {};
 
 	keyRegistered = data => {
 		this.props.onRegister( data );
