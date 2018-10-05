@@ -16,7 +16,7 @@
     "url": "git+https://github.com/Automattic/wp-calypso.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "clean": "node ../../bin/clean-package.js"
   },
   "bugs": {
     "url": "https://github.com/Automattic/wp-calypso/issues"
