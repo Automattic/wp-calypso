@@ -7,7 +7,7 @@ import getFilterName from '../state/selectors/get-filter-name';
 import noteHasFilteredRead from '../state/selectors/note-has-filtered-read';
 import { bumpStat } from '../rest-client/bump-stat';
 
-var debug = require('debug')('notifications:filterbarcontroller');
+const debug = require('debug')('notifications:filterbarcontroller');
 
 function FilterBarController(refreshFunction) {
   if (!(this instanceof FilterBarController)) {

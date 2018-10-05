@@ -46,7 +46,7 @@ describe( 'index', () => {
 			getSitePosts( reduxState, 2916284 );
 			getSitePosts( reduxState, 2916284 );
 
-			expect( selector.mock.calls.length ).toBe( 1 );
+			expect( selector.mock.calls ).toHaveLength( 1 );
 		} );
 
 		test( 'should cache the result of a selector function that has multiple dependents', () => {
@@ -76,7 +76,7 @@ describe( 'index', () => {
 			expect( results[ 0 ] ).toBe( Object.values( reduxState.posts )[ 0 ] );
 			expect( results[ 1 ] ).toBe( Object.values( reduxState.sites )[ 0 ] );
 
-			expect( takeOne.mock.calls.length ).toBe( 1 );
+			expect( takeOne.mock.calls ).toHaveLength( 1 );
 		} );
 
 		test( 'should throw an error if getDependents is missing', () => {
@@ -140,7 +140,7 @@ describe( 'index', () => {
 
 			expect( sitePosts1 ).toEqual( [ post1 ] );
 			expect( sitePosts3 ).toEqual( [ post3 ] );
-			expect( selector.mock.calls.length ).toBe( 2 );
+			expect( selector.mock.calls ).toHaveLength( 2 );
 		} );
 
 		test( 'should bust the cache when watched state changes', () => {
@@ -159,7 +159,7 @@ describe( 'index', () => {
 			};
 
 			expect( getSitePosts( nextState, post1.siteId ) ).toEqual( [ { ...post1, modified: true } ] );
-			expect( selector.mock.calls.length ).toBe( 2 );
+			expect( selector.mock.calls ).toHaveLength( 2 );
 		} );
 
 		test( 'should maintain the cache for unique dependents simultaneously', () => {
@@ -186,7 +186,7 @@ describe( 'index', () => {
 			getPostByIdWithData( state, post2.id ); // dependents is [ post2 ]
 			getPostByIdWithData( state, post1.id ); // dependents is [ post1 ]. should use cache
 
-			expect( getPostByIdWithDataSpy.mock.calls.length ).toBe( 2 );
+			expect( getPostByIdWithDataSpy.mock.calls ).toHaveLength( 2 );
 		} );
 
 		test( 'should call dependant state getter with dependents and arguments', () => {

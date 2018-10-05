@@ -58,12 +58,12 @@ describe( 'formatting', () => {
 		test( 'should return a document fragment if we pass in a string', function() {
 			const fragment = parseHtml( 'hello' );
 			expect( typeof fragment.querySelector ).toBe( 'function' );
-			expect( fragment.querySelectorAll( '*' ).length ).toBe( 0 );
+			expect( fragment.querySelectorAll( '*' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should return a document fragment if we pass in a HTML string', function() {
 			const fragment = parseHtml( '<div>hello</div>' );
-			expect( fragment.querySelectorAll( 'div' ).length ).toBe( 1 );
+			expect( fragment.querySelectorAll( 'div' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should parseHtml and return document fragment that can be queried', function() {

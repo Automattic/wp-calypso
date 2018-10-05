@@ -197,7 +197,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 3 );
-			expect( result.transactions.length ).toEqual( 3 );
+			expect( result.transactions ).toHaveLength( 3 );
 			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 2 );
 			expect( result.transactions[ 1 ].date.getMonth() ).toEqual( 2 );
 			expect( result.transactions[ 2 ].date.getMonth() ).toEqual( 2 );
@@ -210,7 +210,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 2 );
-			expect( result.transactions.length ).toEqual( 2 );
+			expect( result.transactions ).toHaveLength( 2 );
 			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 10 );
 			expect( result.transactions[ 1 ].date.getMonth() ).toEqual( 0 );
 		} );
@@ -238,7 +238,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 5 );
-			expect( result.transactions.length ).toEqual( 5 );
+			expect( result.transactions ).toHaveLength( 5 );
 			result.transactions.forEach( transaction => {
 				expect( transaction.service ).toEqual( 'Store Services' );
 			} );
@@ -267,7 +267,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 4 );
-			expect( result.transactions.length ).toEqual( 4 );
+			expect( result.transactions ).toHaveLength( 4 );
 			result.transactions.forEach( transaction => {
 				expect( transaction.cc_type ).toEqual( 'mastercard' );
 			} );
@@ -280,7 +280,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 3 );
-			expect( result.transactions.length ).toEqual( 3 );
+			expect( result.transactions ).toHaveLength( 3 );
 			expect( result.transactions[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
 			expect( result.transactions[ 1 ].items ).toMatchObject( [
 				{ amount: '$3.50' },
@@ -299,7 +299,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 2 );
-			expect( result.transactions.length ).toEqual( 2 );
+			expect( result.transactions ).toHaveLength( 2 );
 			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 2 );
 			expect( result.transactions[ 0 ].service ).toEqual( 'Store Services' );
 			expect( result.transactions[ 1 ].date.getMonth() ).toEqual( 2 );
@@ -314,7 +314,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 1 );
-			expect( result.transactions.length ).toEqual( 1 );
+			expect( result.transactions ).toHaveLength( 1 );
 			expect( result.transactions[ 0 ].items ).toMatchObject( [
 				{ amount: '$3.50' },
 				{ amount: '$5.00' },
@@ -330,7 +330,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 1 );
-			expect( result.transactions.length ).toEqual( 1 );
+			expect( result.transactions ).toHaveLength( 1 );
 			expect( result.transactions[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
 			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 4 );
 		} );
@@ -344,7 +344,7 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			};
 			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
 			expect( result.total ).toEqual( 1 );
-			expect( result.transactions.length ).toEqual( 1 );
+			expect( result.transactions ).toHaveLength( 1 );
 			expect( result.transactions[ 0 ].cc_type ).toEqual( 'visa' );
 			expect( result.transactions[ 0 ].date.getMonth() ).toEqual( 2 );
 			expect( result.transactions[ 0 ].service ).toEqual( 'WordPress.com' );

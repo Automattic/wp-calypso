@@ -180,7 +180,7 @@ describe( 'selectors', () => {
 
 			const result = getSitePurchases( state, 1234 );
 
-			expect( result.length ).toBe( 2 );
+			expect( result ).toHaveLength( 2 );
 			expect( result[ 0 ].siteId ).toBe( 1234 );
 			expect( result[ 1 ].siteId ).toBe( 1234 );
 		} );
