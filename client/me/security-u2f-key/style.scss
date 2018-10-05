@@ -25,17 +25,12 @@
 
 .security-u2f-key__item {
 	display: flex;
-	vertical-align: middle;
-
-	&:hover {
-		// TODO probably remove
-		background: #ebebeb;
-	}
+	align-items: center;
+	margin-bottom: 10px;
 
 	.security-u2f-key__item-information {
 		flex-grow: 1;
 		flex-shrink: 0;
-		align-self: flex-start;
 
 		.security-u2f-key__item-subtitle {
 			color: $gray-darken-10;
@@ -47,6 +42,5 @@
 	.security-u2f-key__delete-key {
 		flex-grow: 0;
 		flex-shrink: 0;
-		align-self: flex-end;
 	}
 }
