@@ -23,6 +23,7 @@ import wpcom from 'lib/wp';
 class SecurityU2fKey extends React.Component {
 	static initialState = Object.freeze( {
 		addingKey: false,
+		isBrowserSupported: true,
 		u2fChallenge: {},
 		u2fKeys: [],
 	} );
@@ -31,6 +32,7 @@ class SecurityU2fKey extends React.Component {
 
 	componentDidMount = () => {
 		this.getChallenge();
+		isSupported().then( this.setSupported );
 	};
 
 	getClickHandler = ( action, callback ) => {
@@ -41,6 +43,10 @@ class SecurityU2fKey extends React.Component {
 				callback( event );
 			}
 		};
+	};
+
+	setSupported = supported => {
+		this.setState( { isBrowserSupported: supported } );
 	};
 
 	addKeyStart = event => {
@@ -79,7 +85,7 @@ class SecurityU2fKey extends React.Component {
 
 	render() {
 		const { translate } = this.props;
-		const { addingKey } = this.state;
+		const { addingKey, isBrowserSupported } = this.state;
 		const u2fKeys = [];
 		return (
 			<Fragment>
@@ -109,7 +115,7 @@ class SecurityU2fKey extends React.Component {
 					! u2fKeys.length && (
 						<Card>
 							<p>Use a Universal 2nd Factor security key to sign in.</p>
-							{ ! isSupported() && (
+							{ ! isBrowserSupported && (
 								<p>
 									Looks like you browser doesn't support the FIDO U2F standard yet. Read more about
 									the requirements for adding a key to your account.
