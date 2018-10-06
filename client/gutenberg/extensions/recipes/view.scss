@@ -1,0 +1,36 @@
+.jetpack-recipe {
+	border: 1px solid #f2f2f2;
+	border-radius: 1px;
+	clear: both;
+	margin: 1.5em 1%;
+	padding: 1% 2%;
+}
+.jetpack-recipe-title {
+	border-bottom: 1px solid #ccc;
+	margin: .25em 0;
+	padding: .25em 0;
+}
+.jetpack-recipe .jetpack-recipe-meta {
+	display: block;
+	font-size: .9em;
+	list-style-type: none;
+	margin-right: 0;
+	margin-left: 0;
+	padding: 0;
+	overflow: hidden;
+	width: 100%;
+}
+.jetpack-recipe .jetpack-recipe-meta li {
+	float: left;
+	list-style-type: none;
+	margin: 0;
+	padding: 0 5% 0 0;
+}
+.jetpack-recipe-meta li.jetpack-recipe-print {
+	float: right;
+	padding-right: 0;
+	text-align: right;
+}
+.jetpack-recipe-notes {
+	font-style: italic;
+}
