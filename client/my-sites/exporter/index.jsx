@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import config from 'config';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
 import Notices from './notices';
 import ExportCard from './export-card';
@@ -22,7 +23,7 @@ import InProgressCard from './guided-transfer-card/in-progress';
 
 class Exporter extends Component {
 	render() {
-		const { siteId, isTransferInProgress } = this.props;
+		const { siteId, isJetpack, isTransferInProgress } = this.props;
 		const showGuidedTransferOptions = config.isEnabled( 'manage/export/guided-transfer' );
 
 		return (
@@ -32,15 +33,17 @@ class Exporter extends Component {
 				<Notices />
 				{ showGuidedTransferOptions && isTransferInProgress && <InProgressCard /> }
 				<ExportCard siteId={ siteId } />
-				{ config.isEnabled( 'export-media' ) && <ExportMediaCard siteId={ siteId } /> }
+				{ config.isEnabled( 'export-media' ) &&
+					! isJetpack && <ExportMediaCard siteId={ siteId } /> }
 				{ showGuidedTransferOptions && ! isTransferInProgress && <GuidedTransferCard /> }
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state, { siteId } ) => ( {
 	siteId: getSelectedSiteId( state ),
+	isJetpack: isJetpackSite( state, siteId ),
 	isTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
 } );
 
