@@ -5,6 +5,7 @@
 import FrontendManagement from 'gutenberg/extensions/shared/atavist/frontend-management.js';
 import { map } from 'gutenberg/extensions/map-block/view';
 import { navigationFlag } from 'gutenberg/extensions/navigation-flag/view';
+import 'gutenberg/extensions/title-design/view';
 
 const blocks = [
 	{
