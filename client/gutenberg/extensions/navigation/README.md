@@ -1,1 +1,0 @@
-This block will be an adaptation of an Atavist Navigation Type, which is a wrapper around the contents of an article/story/post/page. Navigation Types are responsible for rendering global elements such as headers, footers, and tables of contents.
