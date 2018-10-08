@@ -1,0 +1,364 @@
+$primaryBackgroundColor: white;
+$primaryTextColor: black;
+$topNavLightBackgroundColor: white;
+$topNavBarHeight: 55px;
+$mediumPlusBreakpoint: 736px !default;
+$alternateTextColor: white;
+$topNavContainerLinkColor: rgba($alternateTextColor,0.75) !default;
+$alternateBackgroundColor: darken($primaryTextColor, 10%) !default;
+$topNavContainerBackgroundColor: rgba($alternateBackgroundColor,0.9) !default;
+$centeredBlockWidthHomesite: 60rem !default;
+$topNavBarHeight: 30px;
+
+.wp-block-atavist-navigation-flag {
+	.logged-in.admin-bar & {
+		nav {
+			top: 32px;
+		}
+	}
+	.atavist-search {
+		input[type=text] {
+			border-bottom: 1px solid $primaryTextColor;
+			color: $primaryTextColor;
+			.mobile & {
+				width: 200px;
+				border-bottom: 1px solid $primaryBackgroundColor !important;
+				color: $primaryBackgroundColor;
+			}
+		}
+		svg path {
+			stroke: $primaryTextColor;
+			.mobile & {
+				stroke: $primaryBackgroundColor;
+			}
+		}
+		.mobile & .search-icon {
+			margin-top: 4px;
+		}
+	}
+	.atavist-menu {
+		ul {
+			padding: 0;
+			margin: 0;
+			display: block;
+		}
+		.mobile & ul {
+			position: relative;
+			list-style-type: none;
+			display: flex;
+			align-items: center;
+				background: none;
+				display: block;
+				margin: 0;
+				top: auto;
+				padding: 0 0 0 1rem;
+				li {
+					white-space: normal;
+				}
+		}
+		li {
+			display: inline-block;
+				margin: 0;
+				padding: 0 1rem;
+				position: relative;
+				a:hover {
+					text-decoration: underline;
+			}
+			ul {
+				position: absolute;
+					z-index: 5;
+					padding-top: 23px;
+					margin-right: -1rem;
+					font-size: 0.9rem;
+					top: 1rem;
+					color: inherit;
+					background-color: transparent;
+					li {
+					display: block;
+					overflow: hidden;
+					height: 0;
+					transition: height 200ms ease-in;
+					background-color: $primaryBackgroundColor;
+						padding: 0 3rem 0 1rem;
+						white-space: nowrap;
+					}
+			}
+			&:hover ul li {
+					height: 36px;
+			}
+		}
+		.mobile & li {
+			height: auto;
+				font-size: 1.8rem;
+				display: block;
+				//@include top-nav-section-links;
+				margin: 0.5rem 0 0.5rem 1rem;
+				padding: 0;
+				&:last-of-type {
+					padding-bottom: 0;
+				}
+				background: none;
+				&:hover ul li {
+					height: auto;
+				}
+			ul {
+				display: none;
+			}
+			&.submenu-revealed ul {
+				display: block;
+			}
+			&[data-submenu] {
+					& > a:after {
+						content: ' ';
+						background-image: url('/static/bower_components/navigation-banner/images/chevron-down.svg');
+						background-size: contain;
+						background-repeat: no-repeat;
+						margin-left: 1rem;
+						width: 1rem;
+						height: 1rem;
+						display: inline-block;
+					}
+					&.submenu-revealed > a:after {
+						background-image: url('/static/bower_components/navigation-banner/images/chevron-up.svg');
+					}
+				}
+		}
+	}
+	/* Mobile Nav Button */
+	.nav-menu-button {
+		z-index: 12;
+		display: none;
+		@media screen and (max-width: $mediumPlusBreakpoint) {
+			display: block;
+		}
+		.menu-button {
+			.nav-revealed & {
+				display: none;
+			}
+		}
+		.menu-close-button {
+			display: none;
+			.nav-revealed & {
+				display: block;
+			}
+		}
+		rect,
+		.no-touch &:hover rect {
+			fill: none;
+		}
+	}
+	nav {
+		-webkit-font-smoothing: antialiased;
+		font-size: 1em;
+		text-transform: uppercase;
+		width: 100%;
+		margin: 0;
+		position: fixed;
+		top: 0;
+		z-index: 10;
+		background-color: $topNavLightBackgroundColor;
+		.bar {
+			max-width: 1018px;
+			margin: 1rem auto;
+			@media screen and (min-width: $mediumPlusBreakpoint) {
+				.homesite & {
+					margin: 2rem auto;
+				}
+			}
+			height: $topNavBarHeight;
+			display: flex;
+			@media screen and (max-width: 1030px) {
+				max-width: calc(100% - 2rem);
+			}
+		}
+		.container {
+			display: flex;
+			height: 100%;
+			padding: 0 1rem;
+			align-items: center;
+			flex-direction: row;
+			flex-grow: 0;
+			justify-content: flex-end;
+			&.logo-container {
+				justify-content: flex-start;
+				max-width: 50%;
+				padding-left: 0;
+				a {
+					display: flex;
+					align-items: center;
+				}
+				a, img {
+					height: 100%;
+					width: auto;
+					max-width: 100%;
+					border: none;
+				}
+				img {
+					width: initial;
+					height: initial;
+					max-height: 100%;
+				}
+				&.needs-height img {
+					height: 100%;
+				}
+				h1 {
+					max-width: none;
+					margin: 0;
+					padding: 0;
+					font-size: 1.4rem;
+					text-transform: none;
+					@media screen and (max-width: $mediumPlusBreakpoint) {
+						font-size: 2rem;
+					}
+				}
+			}
+			&.menu-container {
+				flex-grow: 1;
+				z-index: 6;
+			}
+			&.nav-container {
+				padding-right: 0;
+				.atavist-logo {
+					margin-bottom: 0;
+				}
+				img.white-label-logo {
+					width: initial;
+					max-width: 2rem;
+					max-height: 2rem;
+				}
+			}
+			&.mobile-nav-button {
+				@media screen and (min-width: $mediumPlusBreakpoint) {
+					display: none;
+				}
+				padding-right: 0;
+				justify-content: flex-end;
+				flex-grow: 1;
+				z-index: 12;
+			}
+			@media screen and (max-width: $mediumPlusBreakpoint) {
+				& {
+					flex: 1;
+					max-width: none;
+				}
+				&.logo-container  {
+					justify-content: center;
+					flex-grow: 4;
+					.one-page-down & {
+						display: none;
+					}
+					h1 {
+						font-size: 1.4rem;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+					}
+				}
+				&.menu-container,
+				&.search-container {
+					display: none;
+				}
+			}
+		}
+		&.mobile {
+			@media screen and (min-width: $mediumPlusBreakpoint) {
+				display: none;
+			}
+			//@include transform(translateY(-100%));
+			//@include transition-delay(0ms);
+			color: $topNavContainerLinkColor;
+			background-color: $topNavContainerBackgroundColor;
+			position: fixed;
+			margin: 0;
+			top: 0;
+			left: 0;
+			max-width: none;
+			width: 100%;
+			height: 100%;
+			z-index: 11;
+			overflow-y: scroll;
+			-webkit-overflow-scrolling: touch;
+			-ms-overflow-style: -ms-autohiding-scrollbar;
+			text-transform: none;
+			.search-container,
+			.menu-container {
+				display: block;
+				height: auto;
+			}
+			.search-container {
+				padding: 2rem;
+			}
+			.nav-revealed & {
+				//@include transition-delay($defaultTransitionDuration);
+				//@include transition-delay(0ms);
+				//@include transform(translateY(0));
+			}
+		}
+	}
+	/* Nav Icons - Social + Atavist Logo */
+	.horizontal-nav-icons {
+		story-icons > * {
+			margin-left: 0.5rem;
+			margin-right: 0.5rem;
+			@media screen and (max-width: $mediumPlusBreakpoint) {
+				margin-right: 0;
+			}
+		}
+		.facebook-share-link,
+		.twitter-share-link,
+		.other-share-link {
+			@media screen and (max-width: $mediumPlusBreakpoint) {
+				display: none;
+				.one-page-down & {
+					display: inline;
+				}
+			}
+		}
+		.white-label-logo-link {
+			float: right;
+		}
+	}
+	.has-menu div.menu-container {
+		border-right: 1px solid #e5e5e5;
+	}
+	&.homesite .nav-wrapper {
+		padding-top: calc(#{$topNavBarHeight} + 4rem);
+		@media screen and (max-width: $mediumPlusBreakpoint) {
+			padding-top: calc(#{$topNavBarHeight} + 2rem);
+		}
+	}
+	footer.publication-footer {
+		padding-bottom: 100px;
+		text-align: center;
+		font-size: 0.8em;
+		.suppress-creatavist-footer & {
+			padding-bottom: 1rem;
+		}
+	}
+	.homesite-title {
+		width: 100%;
+		height: 70px;
+		background-color: #f6f6f6;
+		display: block;
+		h1 {
+			width: $centeredBlockWidthHomesite;
+			max-width: 1018px;
+			@media screen and (max-width: 1030px) {
+				max-width: calc(100% - 2rem);
+			}
+			margin: 0 auto;
+				font-size: 0.9375em;
+				font-weight: 500;
+				line-height: 70px;
+		}
+	}
+	.search-open .menu-container .atavist-menu {
+		display: none;
+	}
+	.search-open.has-menu div.menu-container {
+		border-right: none;
+	}
+	body[data-has_subscriptions="1"] .atavist-menu li[data-type="subscribe"] {
+		display: none;
+	}
+}
