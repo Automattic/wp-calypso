@@ -256,13 +256,13 @@ function find_largest_range(rs) {
 }
 
 function recurse_convert(text, ranges, options) {
-  let container = document.createDocumentFragment(),
-    ranges_copy = JSON.parse(JSON.stringify(ranges)), // clone through serialization
-    t = [], // Holds the range information for each position in the text
-    i,
-    id,
-    n,
-    range_len;
+  const container = document.createDocumentFragment();
+  const ranges_copy = JSON.parse(JSON.stringify(ranges)); // clone through serialization
+  const t = []; // Holds the range information for each position in the text
+  let i;
+  let id;
+  let n;
+  let range_len;
 
   // Create a representation of the string as an array of
   // positions, each holding a list of ranges that apply to that
