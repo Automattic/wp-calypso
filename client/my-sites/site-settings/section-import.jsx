@@ -9,8 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, flow, get } from 'lodash';
-import debugFactory from 'debug';
+import { filter, flow, get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,8 +38,6 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
-
-const debug = debugFactory( 'calypso:section-import' );
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -89,17 +86,17 @@ class SiteSettingsImport extends Component {
 	state = getImporterState();
 
 	componentDidMount() {
-		const { fromSite, engine, site } = this.props;
-
 		ImporterStore.on( 'change', this.updateState );
-
-		debug( { fromSite, engine, site } );
-		if ( 'wix' === engine && site && site.ID ) {
-			// @TODO check if there's already an import
-			this.props.startImport( site.ID, 'importer-type-site-importer' );
-			debug( 'kick it off' );
-		}
 		this.updateFromAPI();
+	}
+
+	componentDidUpdate() {
+		const { engine, site } = this.props;
+		const { importers: imports } = this.state;
+
+		if ( isEmpty( imports ) && 'wix' === engine && site && site.ID ) {
+			this.props.startImport( site.ID, 'importer-type-site-importer' );
+		}
 	}
 
 	componentWillUnmount() {
