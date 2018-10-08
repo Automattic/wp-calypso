@@ -26,6 +26,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import isVipSite from 'state/selectors/is-vip-site';
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 import { setSection } from 'state/ui/actions';
+import { setNuxUrlInputValue } from 'state/importer-nux/actions';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -93,12 +94,13 @@ const controller = {
 			return;
 		}
 
+		const engine = get( context, 'params.engine' );
+		const fromSite = get( context, 'state.fromSite' );
+
+		context.store.dispatch( setNuxUrlInputValue( fromSite ) );
+
 		context.primary = (
-			<AsyncLoad
-				require="my-sites/site-settings/section-import"
-				engine={ get( context, 'params.engine' ) }
-				fromSite={ get( context, 'state.fromSite' ) }
-			/>
+			<AsyncLoad require="my-sites/site-settings/section-import" engine={ engine } />
 		);
 		next();
 	},
