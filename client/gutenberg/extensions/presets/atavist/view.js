@@ -3,6 +3,7 @@
  */
 
 import FrontendManagement from 'gutenberg/extensions/shared/atavist/frontend-management.js';
+import 'gutenberg/extensions/title-design/view';
 
 const navigationTypes = [];
 const blocks = [];
