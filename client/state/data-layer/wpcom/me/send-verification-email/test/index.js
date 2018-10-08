@@ -11,7 +11,7 @@ describe( 'send-email-verification', () => {
 	describe( '#requestEmailVerification', () => {
 		const dummyAction = { type: 'DUMMY' };
 
-		test( 'should dispatch HTTP request to plans endpoint', () => {
+		test( 'should dispatch HTTP request to me/send-verification-email endpoint', () => {
 			expect( requestEmailVerification( dummyAction ) ).toEqual(
 				expect.objectContaining(
 					http(
