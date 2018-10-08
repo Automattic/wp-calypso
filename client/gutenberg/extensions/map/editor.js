@@ -21,14 +21,15 @@ import classnames from 'classnames';
 import './style.scss';
 import './editor.scss';
 import MapComponent from './map-component.js';
-import config from './config.js';
+import { CONFIG } from './config.js';
 
-const { name, title, icon, category, keywords, attributes, map_styleOptions, baseClasses } = config;
+const { name, title, icon, category, keywords, attributes, map_styleOptions, baseClasses } = CONFIG;
+
 registerBlockType( name, {
-	title: __( title ),
+	title: title,
 	icon: icon,
 	category: category,
-	keywords: keywords.map( keyword => __( keyword ) ),
+	keywords: keywords,
 	attributes: attributes,
 	edit: function( { attributes, setAttributes, className } ) {
 		const { map_style } = attributes;
@@ -49,7 +50,9 @@ registerBlockType( name, {
 		return (
 			<Fragment>
 				{ inspectorControls }
-				<div className={ classes }>
+				<div
+					className={ classes }
+				>
 					<MapComponent
 						map_style={ map_style }
 					/>
@@ -60,11 +63,12 @@ registerBlockType( name, {
 	save: function( { attributes, className } ) {
 		const { map_style } = attributes;
 		const classes = classnames(
-			config.baseClasses,
+			CONFIG.baseClasses,
 			className
 		);
 		return (
-			<div className={ classes }
+			<div
+				className={ classes }
 				data-map_style={ map_style }
 			/>
 		);

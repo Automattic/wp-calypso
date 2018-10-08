@@ -12,34 +12,27 @@ import { createElement, render } from '@wordpress/element';
  * Internal dependencies
  */
 
- import { toArray } from 'lodash';
-
 export class FrontendManagement {
+
 	blockIterator( rootNode, blocks ) {
 		blocks.forEach( block => {
 			this.initializeFrontendReactBlocks(
-				block,
+				block.component,
+				block.options,
 				rootNode
 			)
 		} )
 	}
-	initializeFrontendReactBlocks( block, rootNode ) {
-		const { component, config, options } = block;
-		const { name, attributes } = config;
+
+	initializeFrontendReactBlocks( component, options = {}, rootNode ) {
+		const { name, attributes } = options.config;
 		const { selector } = options;
-		const blockClass = [ '.wp-block', name.replace('/', '-') ].join( '-' )
+		const blockClass = [ '.wp-block', name.replace('/', '-') ].join( '-' );
 		rootNode
 			.querySelectorAll( blockClass )
 			.forEach( node => {
-				const data = this.extractAttributesFromContainer( node.dataset, attributes )
-				let children;
-				if ( node.childNodes.length > 0 ) {
-					const innerBlocksContainerAttributes = {
-						dangerouslySetInnerHTML: { __html: node.innerHTML },
-						className: 'inner-blocks-container'
-					}
-					children = createElement( 'div', innerBlocksContainerAttributes );
-				}
+				const data = this.extractAttributesFromContainer( node.dataset, attributes );
+				const children = this.extractChildrenFromContainer( node );
 				const el = createElement( component, data, children );
 				render( el, selector ? node.querySelector( selector ) : node );
 			} )
@@ -47,7 +40,7 @@ export class FrontendManagement {
 
 	extractAttributesFromContainer( dataset, attributes ) {
 		const data = {};
-		for ( const name in attributes) {
+		for ( const name in attributes ) {
 			const attribute = attributes[ name ];
 			data[ name ] = dataset[ name ];
 			if ( attribute.type === 'array' || attribute.type === 'object' ) {
@@ -63,6 +56,23 @@ export class FrontendManagement {
 		}
 		return data;
 	}
+
+	extractChildrenFromContainer( node ) {
+    	const children = [];
+    	node.childNodes.forEach( childNode => children.push( childNode ) );
+    	return children.map( child => {
+      		const attr = {};
+      		for ( const i = 0; i < child.attributes.length; i++ ) {
+	        	const attribute = child.attributes[ i ];
+	          	attr[ attribute.nodeName ] = attribute.nodeValue
+	      	}
+	      	attr.dangerouslySetInnerHTML = {
+	        	__html: child.innerHTML
+	      	};
+	      	return createElement( child.tagName.toLowerCase(), attr );
+    	} );
+  	}
+
 }
 
 export default FrontendManagement;

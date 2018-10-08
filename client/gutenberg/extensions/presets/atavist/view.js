@@ -3,27 +3,23 @@
  */
 
 import FrontendManagement from 'gutenberg/extensions/shared/atavist/frontend-management.js';
-
-import 'gutenberg/extensions/map/style.scss';
-import MapComponent from 'gutenberg/extensions/map/map-component.js';
-import MapConfig from 'gutenberg/extensions/map/config.js';
-
-import 'gutenberg/extensions/navigation/style.scss';
-import Navigation from 'gutenberg/extensions/navigation/navigation.js';
-import NavigationConfig from 'gutenberg/extensions/navigation/config.js';
+import { map } from 'gutenberg/extensions/map/view';
+import { navigation } from 'gutenberg/extensions/navigation/view';
 
 const navigationTypes = [
 	{
-		component: Navigation,
-		config: NavigationConfig,
-		options: {}
+		component: navigation.component,
+		options: {
+			config: navigation.CONFIG,
+		}
 	}
 ];
 const blocks = [
 	{
-		component: MapComponent,
-		config: MapConfig,
-		options: {}
+		component: map.component,
+		options: {
+			config: map.CONFIG
+		}
 	}
 ];
 

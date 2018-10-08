@@ -19,14 +19,15 @@ import classnames from 'classnames';
 import './style.scss';
 import './editor.scss';
 import Navigation from './navigation.js';
-import config from './config.js';
+import { CONFIG } from './config.js';
 
-const { name, title, icon, category, keywords, attributes, baseClasses } = config;
+const { name, title, icon, category, keywords, attributes, baseClasses } = CONFIG;
+
 registerBlockType( name, {
-	title: __( title ),
+	title: title,
 	icon: icon,
 	category: category,
-	keywords: keywords.map( keyword => __( keyword ) ),
+	keywords: keywords,
 	attributes: attributes,
 	edit: function( { attributes, className } ) {
 		const classes = classnames(
@@ -45,7 +46,7 @@ registerBlockType( name, {
 	},
 	save: function( { attributes, className } ) {
 		const classes = classnames(
-			config.baseClasses,
+			CONFIG.baseClasses,
 			className
 		);
 		return (
