@@ -93,7 +93,7 @@ class ActivityLogItem extends Component {
 				<div className="activity-log-item__description">
 					<div
 						className="activity-log-item__description-content"
-						data-e2e-activity={ this.getPLainTextActivityDescription() }
+						data-e2e-activity={ this.getPlainTextActivityDescription() }
 					>
 						{ this.getActivityDescription() }
 					</div>
@@ -154,7 +154,7 @@ class ActivityLogItem extends Component {
 		} );
 	}
 
-	getPLainTextActivityDescription() {
+	getPlainTextActivityDescription() {
 		const {
 			activity: { activityName, activityDescription, activityMeta },
 			translate,
