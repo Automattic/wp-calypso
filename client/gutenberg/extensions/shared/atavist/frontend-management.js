@@ -62,7 +62,7 @@ export class FrontendManagement {
     	node.childNodes.forEach( childNode => children.push( childNode ) );
     	return children.map( child => {
       		const attr = {};
-      		for ( const i = 0; i < child.attributes.length; i++ ) {
+      		for ( let i = 0; i < child.attributes.length; i++ ) {
 	        	const attribute = child.attributes[ i ];
 	          	attr[ attribute.nodeName ] = attribute.nodeValue
 	      	}
