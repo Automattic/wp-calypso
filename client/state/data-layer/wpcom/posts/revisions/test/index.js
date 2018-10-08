@@ -1,11 +1,4 @@
 /** @format */
-
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
 /**
  * Internal dependencies
  */
@@ -13,7 +6,6 @@ import { fetchPostRevisionsDiffs, receiveSuccess, receiveError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	receivePostRevisions,
-	receivePostRevisionsSuccess,
 	receivePostRevisionsFailure,
 	requestPostRevisions,
 } from 'state/posts/revisions/actions';
@@ -75,12 +67,8 @@ const successfulPostRevisionsDiffsResponse = {
 describe( '#fetchPostRevisionsDiffs', () => {
 	test( 'should dispatch HTTP request to post revisions diffs endpoint', () => {
 		const action = requestPostRevisions( 12345678, 10, 'post' );
-		const dispatch = sinon.spy();
 
-		fetchPostRevisionsDiffs( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
 			http(
 				{
 					apiVersion: '1.1',
@@ -97,12 +85,8 @@ describe( '#fetchPostRevisionsDiffs', () => {
 
 	test( 'should dispatch HTTP request to page diffs endpoint for pages', () => {
 		const action = requestPostRevisions( 12345678, 10, 'page' );
-		const dispatch = sinon.spy();
 
-		fetchPostRevisionsDiffs( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
 			http(
 				{
 					apiVersion: '1.1',
@@ -119,12 +103,8 @@ describe( '#fetchPostRevisionsDiffs', () => {
 
 	test( 'should dispatch HTTP request to post diffs endpoint for other post types', () => {
 		const action = requestPostRevisions( 12345678, 10, 'jetpack-portfolio' );
-		const dispatch = sinon.spy();
 
-		fetchPostRevisionsDiffs( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( fetchPostRevisionsDiffs( action ) ).toMatchObject(
 			http(
 				{
 					apiVersion: '1.1',
@@ -143,13 +123,8 @@ describe( '#fetchPostRevisionsDiffs', () => {
 describe( '#receiveSuccess', () => {
 	test( 'should dispatch `receivePostRevisions` and `receivePostRevisionsSuccess`', () => {
 		const action = requestPostRevisions( 12345678, 10, 'post' );
-		const dispatch = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, successfulPostRevisionsDiffsResponse );
-
-		expect( dispatch ).to.have.callCount( 2 );
-		expect( dispatch ).to.have.been.calledWith( receivePostRevisionsSuccess( 12345678, 10 ) );
-		expect( dispatch ).to.have.been.calledWith(
+		expect( receiveSuccess( action, successfulPostRevisionsDiffsResponse ) ).toContainEqual(
 			receivePostRevisions( {
 				siteId: 12345678,
 				postId: 10,
@@ -162,13 +137,9 @@ describe( '#receiveSuccess', () => {
 describe( '#receiveError', () => {
 	test( 'should dispatch `receivePostRevisionsFailure`', () => {
 		const action = requestPostRevisions( 12345678, 10 );
-		const dispatch = sinon.spy();
 		const rawError = new Error( 'Foo Bar' );
 
-		receiveError( { dispatch }, action, rawError );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( receiveError( action, rawError ) ).toMatchObject(
 			receivePostRevisionsFailure( 12345678, 10, rawError )
 		);
 	} );
