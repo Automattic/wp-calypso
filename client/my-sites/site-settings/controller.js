@@ -85,11 +85,19 @@ const controller = {
 	},
 
 	importSite( context, next ) {
+		// Pull supported query arguments into state & discard the rest
+		if ( context.querystring ) {
+			page.replace( context.pathname, {
+				fromSite: get( context, 'query.from-site' ),
+			} );
+			return;
+		}
+
 		context.primary = (
 			<AsyncLoad
 				require="my-sites/site-settings/section-import"
-				fromSite={ get( context, 'query.from-site' ) }
 				engine={ get( context, 'params.engine' ) }
+				fromSite={ get( context, 'state.fromSite' ) }
 			/>
 		);
 		next();
