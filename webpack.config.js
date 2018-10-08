@@ -243,6 +243,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
 					store: 'store/dist/store.modern',
+					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
 				},
 				getAliasesForExtensions()
 			),
@@ -284,7 +285,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 						children: true,
 						modules: true,
 						source: false,
-						reasons: false,
+						reasons: true,
 						issuer: false,
 						timings: true,
 					},

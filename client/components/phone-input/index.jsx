@@ -22,6 +22,11 @@ import {
 import CountryFlag from 'components/phone-input/country-flag';
 import { countries } from 'components/phone-input/data';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class PhoneInput extends React.PureComponent {
 	static propTypes = {
 		onChange: PropTypes.func.isRequired,

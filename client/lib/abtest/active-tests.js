@@ -83,8 +83,8 @@ export default {
 	gSuiteDiscountV2: {
 		datestamp: '20180822',
 		variations: {
-			control: 0,
-			discount: 100,
+			control: 100,
+			discount: 0,
 		},
 		defaultVariation: 'control',
 	},
@@ -97,13 +97,13 @@ export default {
 		},
 		defaultVariation: 'justSearch',
 	},
-	domainManagementSuggestion: {
-		datestamp: '20180918',
+	domainManagementSuggestionV2: {
+		datestamp: '20181001',
 		variations: {
-			domainsbot: 80,
-			group_7: 20,
+			domainsbot_front: 80,
+			variation_front: 20,
 		},
-		defaultVariation: 'domainsbot',
+		defaultVariation: 'domainsbot_front',
 		assignmentMethod: 'userId',
 		allowExistingUsers: true,
 	},
@@ -115,5 +115,14 @@ export default {
 		},
 		defaultVariation: 'default',
 		allowExistingUsers: false,
+	},
+	dotBlogSuggestions: {
+		datestamp: '20181001',
+		variations: {
+			simple: 50,
+			complex: 50,
+		},
+		defaultVariation: 'simple',
+		allowExistingUsers: true,
 	},
 };

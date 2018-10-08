@@ -92,10 +92,6 @@ class ImportingPane extends React.PureComponent {
 				pages: PropTypes.number,
 				posts: PropTypes.number,
 			} ),
-			errorData: PropTypes.shape( {
-				description: PropTypes.string.isRequired,
-				type: PropTypes.string.isRequired,
-			} ),
 			importerState: PropTypes.string.isRequired,
 			percentComplete: PropTypes.number,
 			site: PropTypes.shape( {
@@ -123,6 +119,10 @@ class ImportingPane extends React.PureComponent {
 			'Importing may take a while if your site has a lot of media, but ' +
 				"you can safely navigate away from this page if you need to: we'll send you a notification when it's done."
 		);
+	};
+
+	getHeadingTextProcessing = () => {
+		return translate( 'Processing your file. Please wait a few moments.' );
 	};
 
 	getSuccessText = () => {
@@ -191,6 +191,10 @@ class ImportingPane extends React.PureComponent {
 		return this.isInState( appStates.IMPORTING );
 	};
 
+	isProcessing = () => {
+		return this.isInState( appStates.UPLOAD_PROCESSING );
+	};
+
 	isInState = state => {
 		return state === this.props.importerStatus.importerState;
 	};
@@ -219,7 +223,7 @@ class ImportingPane extends React.PureComponent {
 
 	render() {
 		const {
-			importerStatus: { importerId, errorData = {}, customData },
+			importerStatus: { importerId, customData },
 			mapAuthorFor,
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 			sourceType,
@@ -233,7 +237,11 @@ class ImportingPane extends React.PureComponent {
 		let blockingMessage;
 
 		if ( this.isError() ) {
-			statusMessage = this.getErrorMessage( errorData );
+			/**
+			 * TODO: This is for the status message that appears at the bottom
+			 * of the import section. This shouldn't be used for Error reporting.
+			 */
+			statusMessage = '';
 		}
 
 		if ( this.isFinished() ) {
@@ -250,6 +258,7 @@ class ImportingPane extends React.PureComponent {
 		return (
 			<div className="importer__importing-pane">
 				{ this.isImporting() && <p>{ this.getHeadingText() }</p> }
+				{ this.isProcessing() && <p>{ this.getHeadingTextProcessing() }</p> }
 				{ this.isMapping() && (
 					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
@@ -262,7 +271,7 @@ class ImportingPane extends React.PureComponent {
 						targetTitle={ siteName }
 					/>
 				) }
-				{ this.isImporting() &&
+				{ ( this.isImporting() || this.isProcessing() ) &&
 					( percentComplete >= 0 ? (
 						<ProgressBar className={ progressClasses } value={ percentComplete } />
 					) : (

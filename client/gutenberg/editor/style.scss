@@ -16,6 +16,16 @@
 
 // OVERRIDES
 
+//======================================================
+//static post css values: theme(primary), theme(toggle)
+//https://github.com/WordPress/gutenberg/pull/6739
+//We don't need to worry about wp-admin skins, so let's use a static value here.
+//when updating `edit-post`, search for theme( and replace with static values
+$gutenberg-theme-primary: #0085ba;
+$gutenberg-theme-toggle: #11a0d2;
+//end static post css values
+//========================================================
+
 .is-section-gutenberg-editor {
 	.layout__content {
 		padding-left: 32px;
@@ -40,4 +50,80 @@
 			top: 57px;
 		}
 	}
+
+	.editor-inserter__menu {
+		.editor-inserter__search {
+			width: auto;
+		}
+		.editor-block-types-list__list-item {
+			box-sizing: border-box;
+		}
+	}
+
+	.edit-post-sidebar {
+		.components-panel__body {
+			&:first-child {
+				margin-top: 0;
+			}
+			&:last-child {
+				margin-bottom: 0;
+			}
+			&.editor-block-inspector__advanced {
+				margin-bottom: -16px;
+			}
+		}
+
+		.editor-block-inspector__card {
+			margin-bottom: 0;
+		}
+
+		.editor-post-last-revision__title {
+			width: auto;
+		}
+	}
+
+	// @see https://make.wordpress.org/accessibility/handbook/markup/the-css-class-screen-reader-text/
+	.screen-reader-text {
+		border: 0;
+		clip: rect(1px, 1px, 1px, 1px);
+		clip-path: inset(50%);
+		height: 1px;
+		margin: -1px;
+		overflow: hidden;
+		padding: 0;
+		position: absolute !important;
+		width: 1px;
+		word-wrap: normal !important;
+		&:focus {
+			background-color: #eee;
+			clip: auto !important;
+			clip-path: none;
+			color: #444;
+			display: block;
+			font-size: 1em;
+			height: auto;
+			left: 5px;
+			line-height: normal;
+			padding: 15px 23px 14px;
+			text-decoration: none;
+			top: 5px;
+			width: auto;
+			z-index: 100000; /* Above WP toolbar. */
+		}
+	}
+}
+
+//needed for oembed iframes to appear
+.wp-block-embed__wrapper > iframe {
+	width: 100%;
+}
+
+//block icons sizing
+.components-toolbar__control.components-button > svg,
+.editor-block-settings-menu__content {
+	box-sizing: border-box;
+}
+
+.components-panel__header.edit-post-sidebar-header.edit-post-sidebar__panel-tabs {
+	border-bottom: 0;
 }

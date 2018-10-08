@@ -15,6 +15,11 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SplitButton extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,

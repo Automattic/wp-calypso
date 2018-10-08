@@ -2,15 +2,16 @@
 /**
  * External dependencies
  */
-import { omit } from 'lodash';
+import { omit, reduce } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
 	READER_SITE_BLOCK,
-	READER_SITE_UNBLOCK,
+	READER_SITE_BLOCKS_RECEIVE,
 	READER_SITE_REQUEST_SUCCESS,
+	READER_SITE_UNBLOCK,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 
@@ -38,6 +39,25 @@ export const items = createReducer(
 			return {
 				...state,
 				[ action.payload.ID ]: true,
+			};
+		},
+		[ READER_SITE_BLOCKS_RECEIVE ]: ( state, action ) => {
+			if ( ! action.payload || ! action.payload.sites ) {
+				return state;
+			}
+
+			const newBlocks = reduce(
+				action.payload.sites,
+				( obj, site ) => {
+					obj[ site.ID ] = true;
+					return obj;
+				},
+				{}
+			);
+
+			return {
+				...state,
+				...newBlocks,
 			};
 		},
 	}

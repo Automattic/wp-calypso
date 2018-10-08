@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Version extends Component {
 	static displayName = 'Version';
 

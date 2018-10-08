@@ -33,6 +33,11 @@ import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant'
 import { setUnseenCount } from 'state/notifications';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Returns whether or not the browser session
  * is currently visible to the user
  *
@@ -170,7 +175,16 @@ export class Notifications extends Component {
 					this.props.setUnseenCount( newNoteCount );
 				},
 			],
-			OPEN_LINK: [ ( store, { href } ) => window.open( href, '_blank' ) ],
+			OPEN_LINK: [
+				( store, { href, tracksEvent } ) => {
+					if ( tracksEvent ) {
+						this.props.recordTracksEvent( 'calypso_notifications_' + tracksEvent, {
+							link: href,
+						} );
+					}
+					window.open( href, '_blank' );
+				},
+			],
 			OPEN_POST: [
 				( store, { siteId, postId } ) => {
 					this.props.checkToggle();

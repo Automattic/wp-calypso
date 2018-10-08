@@ -65,6 +65,22 @@ class DomainsStep extends React.Component {
 	constructor( props ) {
 		super( props );
 
+		const { flowName, signupDependencies } = props;
+		const importUrl = get( signupDependencies, 'importUrl' );
+
+		if ( flowName === 'import' && importUrl ) {
+			this.skipRender = true;
+
+			SignupActions.submitSignupStep( {
+				flowName,
+				siteUrl: importUrl,
+				stepName: props.stepName,
+				stepSectionName: props.stepSectionName,
+			} );
+			props.goToNextStep();
+			return;
+		}
+
 		this.skipRender = false;
 
 		const domain = get( props, 'queryObject.new', false );

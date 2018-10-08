@@ -9,6 +9,11 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import autosize from 'autosize';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class TextareaAutosize extends Component {
 	static propTypes = {
 		className: PropTypes.string,

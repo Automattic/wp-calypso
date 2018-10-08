@@ -19,7 +19,7 @@ import Gravatar from 'components/gravatar';
 import config from 'config';
 import { preload } from 'sections-helper';
 import ResumeEditing from 'my-sites/resume-editing';
-import { getCurrentUserSiteCount } from 'state/current-user/selectors';
+import { getCurrentUserSiteCount, getCurrentUser } from 'state/current-user/selectors';
 import { isSupportUserSession } from 'lib/user/support-user-interop';
 import AsyncLoad from 'components/async-load';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
@@ -33,8 +33,8 @@ import { domainManagementList } from 'my-sites/domains/paths';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
+		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
-		user: PropTypes.object,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
@@ -149,13 +149,12 @@ class MasterbarLoggedIn extends React.Component {
 					tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 					preloadSection={ this.preloadMe }
 				>
-					<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
+					<Gravatar user={ this.props.user } alt="Me" size={ 18 } />
 					<span className="masterbar__item-me-label">
 						{ translate( 'Me', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
 					</span>
 				</Item>
 				<Notifications
-					user={ this.props.user }
 					isShowing={ this.props.isNotificationsShowing }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
@@ -181,6 +180,7 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
+			user: getCurrentUser( state ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent }

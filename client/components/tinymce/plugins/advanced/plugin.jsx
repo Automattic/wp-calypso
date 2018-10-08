@@ -8,7 +8,7 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import tinymce from 'tinymce/tinymce';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import GridiconEllipsis from 'gridicons/dist/ellipsis';
 
 /**
  * Internal dependencies
@@ -74,7 +74,7 @@ function advanced( editor ) {
 				ReactDomServer.renderToStaticMarkup(
 					<button type="button" role="presentation" tabIndex="-1">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						<Gridicon icon="ellipsis" size={ 28 } />
+						<GridiconEllipsis size={ 28 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</button>
 				)

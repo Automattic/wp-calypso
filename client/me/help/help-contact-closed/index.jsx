@@ -26,19 +26,40 @@ const BusinessPlanMessage = ( { compact, translate } ) => {
 	if ( i18n.moment() < gm2018ClosureStartsAt ) {
 		message.push(
 			translate(
-				'{{p}}Live chat support will be closed from Saturday, September 29th through Sunday, October 7th, ' +
-					'with the exception of limited hours October 1-3*. Email support will be open during that time, ' +
-					'and we will reopen live chat on Monday, October 8th.{{/p}}',
-				{ components: { p: <p /> } }
+				'{{p}}Live chat will be available on October 1, 2, and 3 during the following hours:{{/p}}' +
+					'{{ul}}' +
+					'{{li}} October 1 - 2:30PM-6:30PM EDT {{/li}}' +
+					'{{li}} October 2 - 10:00AM-12:30PM EDT and 2:30PM-5:00PM EDT {{/li}}' +
+					'{{li}} October 3 - 1:30PM-6:30PM EDT {{/li}}' +
+					'{{/ul}}' +
+					'{{p}}Email support will be open during that time, and we will reopen live chat on Monday, October 8th.{{/p}}',
+				{
+					components: {
+						p: <p />,
+						ul: <ul />,
+						li: <li />,
+					},
+				}
 			)
 		);
 	} else {
 		message.push(
 			translate(
 				'{{p}}Live chat support will be closed through Sunday, October 7th, ' +
-					'with the exception of limited hours October 1-3*. Email support will be open during that time, ' +
-					'and we will reopen live chat on Monday, October 8th.{{/p}}',
-				{ components: { p: <p /> } }
+					'with the exception of the following hours:{{/p}}' +
+					'{{ul}}' +
+					'{{li}} October 1 - 2:30PM-6:30PM EDT {{/li}}' +
+					'{{li}} October 2 - 10:00AM-12:30PM EDT and 2:30PM-5:00PM EDT {{/li}}' +
+					'{{li}} October 3 - 1:30PM-6:30PM EDT {{/li}}' +
+					'{{/ul}}' +
+					'{{p}}Email support will be open during that time, and we will reopen live chat on Monday, October 8th.{{/p}}',
+				{
+					components: {
+						p: <p />,
+						ul: <ul />,
+						li: <li />,
+					},
+				}
 			)
 		);
 	}

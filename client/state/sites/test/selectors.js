@@ -61,7 +61,6 @@ import {
 } from '../selectors';
 import config from 'config';
 import { userState } from 'state/selectors/test/fixtures/user-state';
-import { setFeatureFlag } from 'test/helpers/config';
 
 describe( 'selectors', () => {
 	const createStateWithItems = items =>
@@ -80,8 +79,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSite()', () => {
-		setFeatureFlag( 'preview-layout', true );
-
 		test( 'should return null if the site is not known', () => {
 			const site = getSite(
 				{
@@ -833,128 +830,99 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isSitePreviewable()', () => {
-		describe( 'config disabled', () => {
-			setFeatureFlag( 'preview-layout', false );
-
-			test( 'should return false', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'https://example.com',
-									options: {
-										unmapped_url: 'https://example.wordpress.com',
-									},
-								},
-							},
-						},
+		test( 'should return null if the site is not known', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {},
 					},
-					77203199
-				);
+				},
+				77203199
+			);
 
-				chaiExpect( isPreviewable ).to.be.false;
-			} );
+			chaiExpect( isPreviewable ).to.be.null;
 		} );
 
-		describe( 'config enabled', () => {
-			setFeatureFlag( 'preview-layout', true );
-
-			test( 'should return null if the site is not known', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {},
-						},
-					},
-					77203199
-				);
-
-				chaiExpect( isPreviewable ).to.be.null;
-			} );
-
-			test( 'should return false if the site is VIP', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'https://example.com',
-									is_vip: true,
-									options: {
-										unmapped_url: 'https://example.wordpress.com',
-									},
+		test( 'should return false if the site is VIP', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								is_vip: true,
+								options: {
+									unmapped_url: 'https://example.wordpress.com',
 								},
 							},
 						},
 					},
-					77203199
-				);
+				},
+				77203199
+			);
 
-				chaiExpect( isPreviewable ).to.be.false;
-			} );
+			chaiExpect( isPreviewable ).to.be.false;
+		} );
 
-			test( 'should return false if the site unmapped URL is unknown', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'https://example.com',
+		test( 'should return false if the site unmapped URL is unknown', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+							},
+						},
+					},
+				},
+				77203199
+			);
+
+			chaiExpect( isPreviewable ).to.be.false;
+		} );
+
+		test( 'should return false if the site unmapped URL is non-HTTPS', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'http://example.com',
+								options: {
+									unmapped_url: 'http://example.com',
 								},
 							},
 						},
 					},
-					77203199
-				);
+				},
+				77203199
+			);
 
-				chaiExpect( isPreviewable ).to.be.false;
-			} );
+			chaiExpect( isPreviewable ).to.be.false;
+		} );
 
-			test( 'should return false if the site unmapped URL is non-HTTPS', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'http://example.com',
-									options: {
-										unmapped_url: 'http://example.com',
-									},
+		test( 'should return true if the site unmapped URL is HTTPS', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								options: {
+									unmapped_url: 'https://example.wordpress.com',
 								},
 							},
 						},
 					},
-					77203199
-				);
+				},
+				77203199
+			);
 
-				chaiExpect( isPreviewable ).to.be.false;
-			} );
-
-			test( 'should return true if the site unmapped URL is HTTPS', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'https://example.com',
-									options: {
-										unmapped_url: 'https://example.wordpress.com',
-									},
-								},
-							},
-						},
-					},
-					77203199
-				);
-
-				chaiExpect( isPreviewable ).to.be.true;
-			} );
+			chaiExpect( isPreviewable ).to.be.true;
 		} );
 	} );
 
@@ -3946,7 +3914,7 @@ describe( 'selectors', () => {
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
-				is_previewable: false,
+				is_previewable: true,
 				is_customizable: false,
 				hasConflict: true,
 				domain: 'unmapped-url.wordpress.com',

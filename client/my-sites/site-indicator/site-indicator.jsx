@@ -112,7 +112,7 @@ class SiteIndicator extends Component {
 		if ( siteUpdates.plugins === siteUpdates.total && site.canUpdateFiles ) {
 			return (
 				<span>
-					<a onClick={ this.handlePluginsUpdate } href={ '/plugins/updates/' + site.slug }>
+					<a onClick={ this.handlePluginsUpdate } href={ activityLogPath }>
 						{ translate(
 							'There is a plugin update available.',
 							'There are plugin updates available.',

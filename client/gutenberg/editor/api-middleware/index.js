@@ -3,17 +3,25 @@
 /**
  * External dependencies
  */
-import wpcomProxyRequest from 'wpcom-proxy-request';
+import url from 'url';
+import { stringify } from 'qs';
+import { toPairs, identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import debugFactory from 'debug';
+import wpcom from 'lib/wp';
 
 const debug = debugFactory( 'calypso:gutenberg' );
 
 export const debugMiddleware = ( options, next ) => {
-	debug( 'Sending API request to: ', options.url );
+	const { path, apiNamespace = 'wp/v2', apiVersion } = options;
+	if ( apiVersion ) {
+		debug( 'Sending API request to: ', `/rest/v${ apiVersion }${ path }` );
+	} else {
+		debug( 'Sending API request to: ', `/${ apiNamespace }${ path }` );
+	}
 
 	return next( options );
 };
@@ -34,26 +42,93 @@ export const pathRewriteMiddleware = ( options, next, siteSlug ) => {
 	return next( { ...options, path: wpcomPath } );
 };
 
+const wpcomRequest = method => {
+	if ( method !== 'GET' ) {
+		return wpcom.req.post.bind( wpcom.req );
+	}
+	return wpcom.req.get.bind( wpcom.req );
+};
+
 export const wpcomProxyMiddleware = parameters => {
 	// Make authenticated calls using the WordPress.com REST Proxy
 	// bypassing the apiFetch call that uses window.fetch.
 	// This intentionally breaks the middleware chain.
+	const {
+		path,
+		body = {},
+		data,
+		method: rawMethod,
+		apiVersion,
+		apiNamespace = 'wp/v2',
+		onError = identity,
+		fromApi = identity,
+	} = parameters;
+
+	const method = rawMethod ? rawMethod.toUpperCase() : 'GET';
+
+	const payload = {};
+	if ( body.constructor.name === 'FormData' && body.has( 'file' ) ) {
+		// options.body is a FormData object which we need to convert to a plain old object
+		// Due to error below using Chrome and Safari using the wpcom proxy
+		// Error: Uncaught DOMException: Failed to execute 'postMessage' on 'Window': FormData object could not be cloned.
+		payload.data = toPairs( Array.from( body.entries() ) );
+		payload.formData = [ [ 'file', body.get( 'file' ) ] ];
+	} else if ( data || body ) {
+		payload.body = data || body;
+	}
+
 	return new Promise( ( resolve, reject ) => {
-		const { body, data, ...options } = parameters;
-
-		wpcomProxyRequest(
+		wpcomRequest( method )(
 			{
-				...options,
-				...( ( body || data ) && { body: body || data } ),
-				apiNamespace: 'wp/v2',
+				path,
+				method,
+				...( !! apiVersion && { apiVersion } ),
+				...( ! apiVersion && { apiNamespace } ),
+				...payload,
 			},
-			( error, bodyOrData ) => {
-				if ( error ) {
-					return reject( error );
+			//error, data, headers
+			( error, dataResponse ) => {
+				if ( error || dataResponse.error ) {
+					return reject( onError( error || dataResponse.error ) );
 				}
-
-				return resolve( bodyOrData );
+				return resolve( fromApi( dataResponse ) );
 			}
 		);
 	} );
+};
+
+/**
+ * Error handling for an oembed error
+ * @param   {String}  embedUrl the fallback embed url
+ * @returns {Object}  transformed response
+ */
+const handleOembedError = embedUrl => errorResponse => {
+	debug( 'oembed failed with error: ', errorResponse );
+	// we've tried to embed a URL that can't be embedded. Emulate core's fallback link here.
+	return {
+		html: `<a href="${ embedUrl }">${ embedUrl }</a>`,
+		type: 'rich',
+		provider_name: 'Embed',
+	};
+};
+
+export const oembedMiddleware = ( options, next, siteSlug ) => {
+	// Updates https://public-api.wordpress.com/oembed/1.0/proxy?url=<source URL> to
+	// https://public-api.wordpress.com/oembed/1.0/sites/<site ID>/proxy?url=<source URL>&force=wpcom
+	if ( /oembed\/1.0\/proxy/.test( options.url ) ) {
+		const urlObject = url.parse( options.url, { parseQueryString: true } );
+		const embedUrl = urlObject.query.url;
+		const query = {
+			force: 'wpcom',
+			url: embedUrl,
+		};
+		const oembedPath = `/sites/${ siteSlug }/proxy?${ stringify( query ) }`;
+		return next( {
+			...options,
+			path: oembedPath,
+			apiNamespace: 'oembed/1.0',
+			onError: handleOembedError( embedUrl ),
+		} );
+	}
+	return next( options );
 };

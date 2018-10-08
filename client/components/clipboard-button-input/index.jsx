@@ -19,6 +19,11 @@ import ClipboardButton from 'components/forms/clipboard-button';
 import FormTextInput from 'components/forms/form-text-input';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ClipboardButtonInputExport extends React.Component {
 	constructor( props ) {
 		super( props );
