@@ -32,7 +32,6 @@ import { clone } from 'lodash';
 
 import './style.scss';
 import './editor.scss';
-import AddPoint from './add-point';
 import Locations from './locations';
 import Map from './map-component.js';
 import { CONFIG } from './config.js';
@@ -53,11 +52,6 @@ registerBlockType( CONFIG.name, {
 	edit: function( { attributes, setAttributes, className } ) {
 		const { the_caption, map_style, points, zoom, map_center, focus_mode, marker_color, align } = attributes;
 		const updateAlignment = ( value ) => setAttributes( { align: value } );
-		const addPoint = ( value ) => {
-			const newPoints = clone( points );
-			newPoints.push( value );
-			setAttributes( { points: newPoints } );
-		}
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -102,10 +96,10 @@ registerBlockType( CONFIG.name, {
 						onSetZoom={ ( value ) => { setAttributes( { zoom: value } ) } }
 						api_key={ CONFIG.GOOGLE_MAPS_API_KEY }
 						admin={ true }
-						onSetPoints={ ( value ) => { setAttributes( { points: value } ) } }
-					>
-						<AddPoint onAddPoint={ addPoint } />
-					</Map>
+						onSetPoints={ ( value ) => {
+							setAttributes( { points: value } )
+						} }
+					/>
 					<RichText
 						tagName='p'
 						className="atavist-caption"

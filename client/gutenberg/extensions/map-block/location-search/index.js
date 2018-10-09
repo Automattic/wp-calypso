@@ -48,7 +48,7 @@ export class LocationSearch extends Component {
 		placesService.getDetails( { placeId: option.place_id }, function( place ) {
 			const point = {
 				place_title: option.description,
-				title: '',
+				title: option.description,
 				caption: '',
 				id: option.place_id,
 				viewport: place.geometry.viewport,

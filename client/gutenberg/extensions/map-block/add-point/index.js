@@ -26,7 +26,8 @@ export class AddPoint extends Component {
 	constructor() {
 		super( ...arguments )
 		this.state = {
-			popoverVisible: false
+			popoverVisible: false,
+			isVisible: true
 		};
 		this.onAddPoint = this.onAddPoint.bind( this );
 		this.showPopover = this.showPopover.bind( this );
@@ -51,7 +52,11 @@ export class AddPoint extends Component {
 
 	render() {
 		const { popoverVisible } = this.state;
+		const { isVisible } = this.props;
 		const { showPopover, hidePopover, onAddPoint } = this;
+		if ( ! isVisible ) {
+			return null;
+		}
 		return (
 			<Button
 				className='map__add_btn'
@@ -78,7 +83,8 @@ export class AddPoint extends Component {
 }
 
 AddPoint.defaultProps = {
-	onAddPoint: () => {}
+	onAddPoint: () => {},
+	isVisible: true
 }
 
 export default AddPoint;
