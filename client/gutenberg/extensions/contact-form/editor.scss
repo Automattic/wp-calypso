@@ -1,0 +1,56 @@
+
+
+.grunion-field-label.grunion-field-label.grunion-field-label {
+    border-color: #fff;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 2px;
+    padding-left: 1px;
+    width: calc( 100% - 100px );
+}
+
+.grunion-field-label.grunion-field-label.grunion-field-label:focus,
+.grunion-field-label.grunion-field-label.grunion-field-label:hover {
+    border-color: #8d96a0;
+}
+
+.grunion-field input:disabled,
+.grunion-field textarea:disabled {
+    border-color: #8d96a0;
+    padding: 10px 8px;
+}
+
+.grunion-form .components-base-control * {
+    margin: 0;
+}
+
+span.required {
+    float: right;
+}
+
+.editor-block-list__block[data-type="grunion/field-checkbox-multiple"] ol,
+.editor-block-list__block[data-type="grunion/field-radio"] ol,
+.editor-block-list__block[data-type="grunion/field-select"] ol {
+    list-style-type: none;
+}
+.editor-block-list__block input.option {
+    border-color: #fff;
+}
+.editor-block-list__block input.option:focus,
+.editor-block-list__block input.option:hover {
+    border-color: #8d96a0;
+}
+
+
+.editor-block-list__block[data-type="grunion/field-checkbox-multiple"] ol li:before {
+    content: '☐ ';
+}
+.editor-block-list__block[data-type="grunion/field-radio"] ol li:before {
+    content: '🔘 ';
+}
+.editor-block-list__block[data-type="grunion/field-select"] ol {
+    border: 1px solid #8d96a0;
+    border-radius: 4px;
+    padding: 4px;
+    display: table; /* so it's not full width */
+}
