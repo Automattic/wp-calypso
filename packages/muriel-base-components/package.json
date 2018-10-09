@@ -5,10 +5,12 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "dependencies": {
-	  "react": "^16.5.0"
+      "react": "^16.5.0"
   },
   "scripts": {
-	  "clean": "node ../../bin/clean-package.js"
+      "prepare": "npm run build",
+      "build": "node ../../bin/build-package.js",
+      "clean": "node ../../bin/clean-package.js"
   },
   "keywords": [],
   "author": "Ben Lowery <ben.lowery@automattic.com> (https://automattic.com)",

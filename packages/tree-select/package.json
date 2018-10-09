@@ -16,6 +16,8 @@
     "url": "git+https://github.com/Automattic/wp-calypso.git"
   },
   "scripts": {
+	"prepare": "npm run build",
+	"build": "node ../../bin/build-package.js",
     "clean": "node ../../bin/clean-package.js"
   },
   "bugs": {
