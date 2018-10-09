@@ -12,6 +12,7 @@ $text-editor-font-size: inherit;
 	pointer-events: none;
 }
 
+// @TODO: Remove all these specific styles when related Gutenberg core styles become more generic
 .editor-block-list__block {
 	.wp-block-a8c-markdown__preview {
 		min-height: 1.8em;
