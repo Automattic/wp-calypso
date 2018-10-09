@@ -28,13 +28,13 @@ export default ( { attributes, className, setAttributes } ) => {
 	const layoutControls = [
 		{
 			icon: 'grid-view',
-			title: __( 'Grid View' ),
+			title: __( 'Grid View', 'jetpack' ),
 			onClick: () => setAttributes( { postLayout: 'grid' } ),
 			isActive: postLayout === 'grid',
 		},
 		{
 			icon: 'list-view',
-			title: __( 'List View' ),
+			title: __( 'List View', 'jetpack' ),
 			onClick: () => setAttributes( { postLayout: 'list' } ),
 			isActive: postLayout === 'list',
 		},
@@ -45,24 +45,24 @@ export default ( { attributes, className, setAttributes } ) => {
 	return (
 		<Fragment>
 			<InspectorControls>
-				<PanelBody title={ __( 'Related Posts Settings' ) }>
+				<PanelBody title={ __( 'Related Posts Settings', 'jetpack' ) }>
 					<ToggleControl
-						label={ __( 'Display thumbnails' ) }
+						label={ __( 'Display thumbnails', 'jetpack' ) }
 						checked={ displayThumbnails }
 						onChange={ value => setAttributes( { displayThumbnails: value } ) }
 					/>
 					<ToggleControl
-						label={ __( 'Display date' ) }
+						label={ __( 'Display date', 'jetpack' ) }
 						checked={ displayDate }
 						onChange={ value => setAttributes( { displayDate: value } ) }
 					/>
 					<ToggleControl
-						label={ __( 'Display context (category or tag)' ) }
+						label={ __( 'Display context (category or tag)', 'jetpack' ) }
 						checked={ displayContext }
 						onChange={ value => setAttributes( { displayContext: value } ) }
 					/>
 					<RangeControl
-						label={ __( 'Number of posts' ) }
+						label={ __( 'Number of posts', 'jetpack' ) }
 						value={ postsToShow }
 						onChange={ value =>
 							setAttributes( { postsToShow: Math.min( value, MAX_POSTS_TO_SHOW ) } )

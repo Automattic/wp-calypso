@@ -15,7 +15,7 @@ import edit from './edit';
 import { ALIGNMENT_OPTIONS, MAX_POSTS_TO_SHOW } from './constants';
 
 registerBlockType( 'a8c/related-posts', {
-	title: __( 'Related Posts' ),
+	title: __( 'Related Posts', 'jetpack' ),
 
 	icon: (
 		<svg xmlns="http://www.w3.org/2000/svg">
@@ -38,7 +38,7 @@ registerBlockType( 'a8c/related-posts', {
 
 	category: 'layout',
 
-	keywords: [ __( 'similar' ), __( 'linked' ), __( 'connected' ) ],
+	keywords: [ __( 'similar', 'jetpack' ), __( 'linked', 'jetpack' ), __( 'connected', 'jetpack' ) ],
 
 	attributes: {
 		align: {
