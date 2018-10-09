@@ -770,15 +770,17 @@ class RegisterDomainStep extends React.Component {
 
 		domains
 			.suggestions( subdomainQuery )
-			.then( this.handleSubdomainSuggestions( domain, timestamp ) )
+			.then( this.handleSubdomainSuggestions( domain, subdomainQuery.vendor, timestamp ) )
 			.catch( this.handleSubdomainSuggestionsFailure( domain, timestamp ) );
 	};
 
-	handleSubdomainSuggestions = ( domain, timestamp ) => subdomainSuggestions => {
+	handleSubdomainSuggestions = ( domain, vendor, timestamp ) => subdomainSuggestions => {
 		subdomainSuggestions = subdomainSuggestions.map( suggestion => {
 			suggestion.fetch_algo = endsWith( suggestion.domain_name, '.wordpress.com' )
 				? '/domains/search/wpcom'
 				: '/domains/search/dotblogsub';
+			suggestion.vendor = vendor;
+
 			return suggestion;
 		} );
 
