@@ -4,6 +4,7 @@
 
 import { Autocomplete } from '@wordpress/editor';
 import { Component, createRef } from '@wordpress/element';
+import { BaseControl } from '@wordpress/components';
 
 /**
  * External dependencies
@@ -25,7 +26,7 @@ export class LocationSearch extends Component {
 		this.testRef = createRef()
 		this.state = {
 			isEmpty: true
-		}
+		};
 		this.autocompleters = [
 			{
 				name: 'placeSearch',
@@ -43,7 +44,6 @@ export class LocationSearch extends Component {
 
 	getOptionCompletion( option ) {
 		const placesService = new window.google.maps.places.PlacesService( this.testRef.current );
-		this.textRef.current.innerHTML = '';
 		this.textRef.current.focus();
 		placesService.getDetails( { placeId: option.place_id }, function( place ) {
 			const point = {
@@ -58,7 +58,6 @@ export class LocationSearch extends Component {
 				}
 			}
 			this.props.onAddPoint( point );
-			this.textRef.current.innerHTML = '';
 		}.bind(this));
 		return option.description;
 	}
@@ -85,13 +84,14 @@ export class LocationSearch extends Component {
 	}
 
 	render() {
+		const { label } = this.props;
 		const classes = classnames(
 			'input-control',
 			'component-location_search__search-field',
 			this.state.isEmpty ? 'is-empty' : null
 		);
 		return (
-			<div className='components-location-search'>
+			<BaseControl label={ label } className='components-location-search'>
 				<Autocomplete onfindmatch={ this.findMatch } completers={ this.autocompleters }>
 					{ ( { isExpanded, listBoxId } ) => (
 						<div
@@ -107,7 +107,7 @@ export class LocationSearch extends Component {
 					) }
 				</Autocomplete>
 				<div ref={ this.testRef }></div>
-			</div>
+			</BaseControl>
 		);
 	}
 }
