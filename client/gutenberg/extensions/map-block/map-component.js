@@ -4,17 +4,23 @@
  * Wordpress dependencies
  */
 
-import { Component, createRef, Fragment } from '@wordpress/element';
+import { Component, createRef, Fragment, Children } from '@wordpress/element';
+import { TextControl, Button } from '@wordpress/components';
 
 /**
  * External dependencies
  */
+
+import { get, clone, assign } from 'lodash';
 
 /**
  * Internal dependencies
  */
 
 import { CONFIG } from './config.js';
+import MapMarker from './map-marker/';
+import InfoWindow from './info-window/';
+import AddPoint from './add-point';
 
 const $ = window.jQuery;
 
@@ -28,17 +34,114 @@ export class Map extends Component {
 			fit_to_bounds: false,
 			markers: [],
 			infowindow: null,
+			loaded: false
 		};
 		this.mapStyles = CONFIG.styles;
 		this.sizeMap = this.sizeMap.bind( this );
+		this.onMarkerClick = this.onMarkerClick.bind( this );
+		this.deleteActiveMarker = this.deleteActiveMarker.bind( this );
+		this.updateActiveMarker = this.updateActiveMarker.bind( this );
+		this.addPoint = this.addPoint.bind( this );
+		this.onMapClick = this.onMapClick.bind( this );
+		this.setBoundsByMarkers = this.setBoundsByMarkers.bind( this );
+	}
+
+	onMarkerClick( marker ) {
+		this.setState( { activeMarker: marker } );
+	}
+
+	onMapClick() {
+		this.setState( { activeMarker: null } );
+	}
+
+	addPoint( point ) {
+		const { points } = this.props;
+		const newPoints = clone( points );
+		newPoints.push( point );
+		this.props.onSetPoints( newPoints );
+	}
+
+	deleteActiveMarker() {
+		const { points } = this.props;
+		const { activeMarker } = this.state;
+		const { index } = activeMarker.props;
+		const newPoints = clone( points );
+		newPoints.splice( index, 1 );
+		this.props.onSetPoints( newPoints );
+	}
+
+	updateActiveMarker( updates) {
+		const { points } = this.props;
+		const { activeMarker } = this.state;
+		const { index } = activeMarker.props;
+		const newPoints = clone( points );
+		assign( newPoints[ index ], updates );
+		this.props.onSetPoints( newPoints );
 	}
 
 	render() {
-		const { children } = this.props;
+		const { children, points, admin } = this.props;
+		const { map, activeMarker } = this.state;
+		const { onMarkerClick, deleteActiveMarker, updateActiveMarker, addPoint } = this;
+		const mapMarkers = points.map( ( point, index ) => {
+			if ( window.google ) {
+				return (
+					<MapMarker
+						point={ point }
+						index={ index }
+						map={ map }
+						google={ window.google.maps }
+						icon={ this.getMarkerIcon() }
+						onClick={ onMarkerClick }
+					/>
+				);
+			}
+		});
+		const point = get( activeMarker, 'props.point' ) || {};
+		const { title, caption } = point;
+		const infoWindow = window.google ?
+			(
+				<InfoWindow
+					activeMarker={ activeMarker }
+					map={ map }
+					google={ window.google.maps }
+				>
+					{ activeMarker && admin &&
+						<Fragment>
+							<TextControl
+								label="Marker Title"
+								value={ point.title }
+								onChange={ ( title ) => updateActiveMarker( { title } ) }
+							/>
+							<TextControl
+								label="Marker Caption"
+								value={ point.caption }
+								onChange={ ( caption ) => updateActiveMarker( { caption } ) }
+							/>
+							<Button
+								onClick={ deleteActiveMarker }
+							>Delete Point</Button>
+						</Fragment>
+					}
+
+					{ activeMarker && ! admin &&
+						<Fragment>
+							<h3>{ point.title }</h3>
+							<p>{ point.caption }</p>
+						</Fragment>
+					}
+
+				</InfoWindow>
+			) : null;
 		return (
 			<Fragment>
-				<div className="map__map-container" ref={ this.mapRef } />
-				{ children }
+				<div className="map__map-container" ref={ this.mapRef }>
+					{ mapMarkers }
+				</div>
+				{ infoWindow }
+				{ admin &&
+					<AddPoint onAddPoint={ addPoint } isVisible={ activeMarker ? false : true } />
+				}
 			</Fragment>
 		);
 	}
@@ -61,6 +164,10 @@ export class Map extends Component {
 		}
 	}
 
+	pointsChanged() {
+		this.setBoundsByMarkers();
+	}
+
 	map_styleChanged() {
 		const { map } = this.state;
 		if ( ! map ) {
@@ -72,78 +179,23 @@ export class Map extends Component {
 		} );
 	}
 
-	marker_colorChanged() {
-		const { points } = this.props;
-		this.pointsChanged( points );
-	}
-
-	infoWindowFromPoint( point ) {
-		const els = [];
-		if ( point.title.replace( ' ', '' ).length > 0 ) {
-			els.push( '<h3>' + point.title + '</h3>' );
-		}
-		if ( point.caption.replace( ' ', '' ).length > 0 ) {
-			els.push( '<p>' + point.caption + '</caption>' );
-		}
-		return els.join( '' );
-	}
-
-	pointsChanged( points ) {
-		const markers = [];
-		const { map } = this.state;
-		if ( typeof google === 'undefined' || typeof map === 'undefined' ) {
-			return;
-		}
-		this.state.markers.forEach( marker => marker.setMap( null ) );
-		const icon = this.getMarkerIcon();
-		points.forEach( point => {
-			const position = new window.google.maps.LatLng(
-				point.coordinates.latitude,
-				point.coordinates.longitude
-			);
-			const infowindow = new window.google.maps.InfoWindow( {
-				content: this.infoWindowFromPoint( point ),
-				maxWidth: 200,
-			} );
-			const marker = new window.google.maps.Marker( { position, map, icon, infowindow } );
-			window.google.maps.event.addListener(
-				marker,
-				'click',
-				function() {
-					if ( this.state.infowindow ) {
-						this.state.infowindow.close();
-					}
-					if ( infowindow.getContent().replace( ' ', '' ).length > 0 ) {
-						infowindow.open( map, marker );
-						this.setState( { infowindow } );
-					}
-				}.bind( this )
-			);
-
-			marker._infowindow = infowindow;
-			markers.push( marker );
-		} );
-
-		this.setState( { markers }, this.setBoundsByMarkers );
-	}
-
 	setBoundsByMarkers() {
-		const { focus_mode, zoom } = this.props;
+		const { focus_mode, zoom, points } = this.props;
 		const { map, markers } = this.state;
-		if ( ! map || focus_mode.type !== 'fit_markers' || markers.length === 0 ) {
+		if ( ! map || focus_mode.type !== 'fit_markers' || points.length === 0 ) {
 			return;
 		}
 
 		const bounds = new window.google.maps.LatLngBounds();
-		markers.forEach( marker => {
+		points.forEach( point => {
 			bounds.extend(
-				new window.google.maps.LatLng( marker.position.lat(), marker.position.lng() )
+				new window.google.maps.LatLng( point.coordinates.latitude, point.coordinates.longitude )
 			);
 		} );
 
 		map.setCenter( bounds.getCenter() );
 		map.fitBounds( bounds );
-		if ( markers.length > 1 ) {
+		if ( points.length > 1 ) {
 			this.setState( { fit_to_bounds: true } );
 			map.setOptions( { zoomControl: false } );
 		} else {
@@ -185,6 +237,7 @@ export class Map extends Component {
 		atavistGoogleMapsLoaded.done(
 			function() {
 				this.init();
+				this.setState( { loaded: true } );
 			}.bind( this )
 		);
 	}
@@ -232,6 +285,7 @@ export class Map extends Component {
 				this.props.onSetZoom( map.getZoom() );
 			}.bind( this )
 		);
+		map.addListener( 'click', this.onMapClick );
 		this.setState( { map } );
 
 		setTimeout(
@@ -241,16 +295,7 @@ export class Map extends Component {
 				window.addEventListener( 'resize', this.sizeMap );
 				window.google.maps.event.trigger( map, 'resize' );
 				map.setCenter( new window.google.maps.LatLng( map_center.latitude, map_center.longitude ) );
-				this.pointsChanged( points );
-
-				// TODO: This won't work as written!
-				$( this ).on(
-					'alignmentChanged afterSectionChange',
-					function() {
-						window.google.maps.event.trigger( map, 'resize' );
-						this.pointsChanged( points );
-					}.bind( this )
-				);
+				this.setBoundsByMarkers();
 			}.bind( this ),
 			1000
 		);
