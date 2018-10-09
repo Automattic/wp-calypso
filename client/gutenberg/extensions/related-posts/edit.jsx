@@ -8,14 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { Fragment } from '@wordpress/element';
 import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
 import { moment } from '@wordpress/date';
-import {
-	Button,
-	PanelBody,
-	RangeControl,
-	TextControl,
-	ToggleControl,
-	Toolbar,
-} from '@wordpress/components';
+import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -28,7 +21,6 @@ export default ( { attributes, className, setAttributes } ) => {
 		displayContext,
 		displayDate,
 		displayThumbnails,
-		headline,
 		postLayout,
 		postsToShow,
 	} = attributes;
@@ -54,11 +46,6 @@ export default ( { attributes, className, setAttributes } ) => {
 		<Fragment>
 			<InspectorControls>
 				<PanelBody title={ __( 'Related Posts Settings' ) }>
-					<TextControl
-						label={ __( 'Headline' ) }
-						value={ headline }
-						onChange={ value => setAttributes( { headline: value } ) }
-					/>
 					<ToggleControl
 						label={ __( 'Display thumbnails' ) }
 						checked={ displayThumbnails }
@@ -104,8 +91,6 @@ export default ( { attributes, className, setAttributes } ) => {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
-				{ headline.length ? <h3>{ headline }</h3> : null }
-
 				<div className={ `${ className }__preview-items` }>
 					{ displayPosts.map( ( post, i ) => (
 						<div className={ `${ className }__preview-post` } key={ i }>
@@ -122,7 +107,7 @@ export default ( { attributes, className, setAttributes } ) => {
 							{ displayDate && (
 								<time
 									dateTime={ moment( post.date ).toISOString() }
-									className={ `${ className }__preview-post-date` }
+									className={ `${ className }__preview-post-date has-small-font-size` }
 								>
 									{ moment( post.date )
 										.local()

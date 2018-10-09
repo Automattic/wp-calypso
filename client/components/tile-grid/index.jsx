@@ -7,6 +7,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.PureComponent {
 	static propTypes = {
 		className: PropTypes.string,

@@ -18,6 +18,11 @@ import { noop } from 'lodash';
 import FacebookIcon from 'components/social-icons/facebook';
 import { isFormDisabled } from 'state/login/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class FacebookLoginButton extends Component {
 	// See: https://developers.facebook.com/docs/javascript/reference/FB.init/v2.8
 	static propTypes = {

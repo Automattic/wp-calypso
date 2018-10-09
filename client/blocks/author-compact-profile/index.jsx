@@ -21,6 +21,11 @@ import { getStreamUrl } from 'reader/route';
 import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
 import AuthorCompactProfilePlaceholder from './placeholder';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class AuthorCompactProfile extends React.Component {
 	static propTypes = {
 		author: PropTypes.object,

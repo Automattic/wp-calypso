@@ -43,7 +43,20 @@ export default class Accordion extends Component {
 
 		this.state = {
 			isExpanded: props.initialExpanded,
+			hasExpanded: false,
 		};
+	}
+
+	static getDerivedStateFromProps( props, state ) {
+		// in order to improve the performance, hasExpanded determines if the
+		// accordion content should be rendered or not. the content has to
+		// be rendered as soon as the accordion is expanded manually
+		// (isExpanded) or forced (forceExpand) or if it has been previously
+		// expanded
+		if ( state.isExpanded || props.forceExpand ) {
+			return { hasExpanded: true };
+		}
+		return null;
 	}
 
 	toggleExpanded = () => {
@@ -55,20 +68,16 @@ export default class Accordion extends Component {
 		this.props.onToggle( isExpanded );
 	};
 
-	_mountChildren = false;
-
 	render() {
 		const { className, icon, title, subtitle, status, children, e2eTitle } = this.props;
 		const isExpanded = this.state.isExpanded || this.props.forceExpand;
+		const { hasExpanded } = this.state;
 		const classes = classNames( 'accordion', className, {
 			'is-expanded': isExpanded,
 			'has-icon': !! icon,
 			'has-subtitle': !! subtitle,
 			'has-status': !! status,
 		} );
-
-		// Keep children off the render tree until it's first expanded.
-		this._mountChildren = this._mountChildren || isExpanded;
 
 		return (
 			<div
@@ -87,7 +96,7 @@ export default class Accordion extends Component {
 					</button>
 					{ status && <AccordionStatus { ...status } /> }
 				</header>
-				{ this._mountChildren && (
+				{ hasExpanded && (
 					<div className="accordion__content">
 						<div className="accordion__content-wrap">{ children }</div>
 					</div>

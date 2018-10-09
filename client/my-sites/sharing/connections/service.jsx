@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, isEqual, find, replace, some, isFunction } from 'lodash';
+import { identity, isEqual, find, replace, some, isFunction, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -44,6 +44,8 @@ import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
 import requestExternalAccess from 'lib/sharing';
+import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
+import config from 'config';
 
 export class SharingService extends Component {
 	static propTypes = {
@@ -388,6 +390,7 @@ export class SharingService extends Component {
 			} );
 			this.setState( { isConnecting: false } );
 		}
+		this.setState( { justConnected: true } );
 
 		return externalAccounts.length && hasAnyConnectionOptions;
 	}
@@ -403,6 +406,12 @@ export class SharingService extends Component {
 		);
 	}
 
+	isMailchimpService = () => {
+		if ( ! config.isEnabled( 'mailchimp' ) ) {
+			return false;
+		}
+		return get( this, 'props.service.ID' ) === 'mailchimp';
+	};
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
@@ -413,7 +422,8 @@ export class SharingService extends Component {
 
 		const header = (
 			<div>
-				{ this.renderLogo() }
+				{ ! this.isMailchimpService( connectionStatus ) && this.renderLogo() }
+				{ this.isMailchimpService( connectionStatus ) && renderMailchimpLogo() }
 
 				<div className="sharing-service__name">
 					<h2>{ this.props.service.label }</h2>
@@ -450,6 +460,8 @@ export class SharingService extends Component {
 					className={ classNames }
 					header={ header }
 					clickableHeader
+					//For Mailchimp we want to open settings, because in other services we have the popup.
+					expanded={ this.isMailchimpService() && this.state.justConnected }
 					compact
 					summary={ action }
 					expandedSummary={ action }
@@ -460,25 +472,31 @@ export class SharingService extends Component {
 						} ) }
 					>
 						<ServiceExamples service={ this.props.service } />
-						<ServiceConnectedAccounts
-							connect={ this.connectAnother }
-							service={ this.props.service }
-						>
-							{ connections.map( connection => (
-								<Connection
-									key={ connection.keyring_connection_ID }
-									connection={ connection }
-									isDisconnecting={ this.state.isDisconnecting }
-									isRefreshing={ this.state.isRefreshing }
-									onDisconnect={ this.removeConnection }
-									onRefresh={ this.refresh }
-									onToggleSitewideConnection={ this.toggleSitewideConnection }
-									service={ this.props.service }
-									showDisconnect={ connections.length > 1 || 'broken' === connection.status }
-								/>
-							) ) }
-						</ServiceConnectedAccounts>
+						{ ! this.isMailchimpService( connectionStatus ) && (
+							<ServiceConnectedAccounts
+								connect={ this.connectAnother }
+								service={ this.props.service }
+							>
+								{ connections.map( connection => (
+									<Connection
+										key={ connection.keyring_connection_ID }
+										connection={ connection }
+										isDisconnecting={ this.state.isDisconnecting }
+										isRefreshing={ this.state.isRefreshing }
+										onDisconnect={ this.removeConnection }
+										onRefresh={ this.refresh }
+										onToggleSitewideConnection={ this.toggleSitewideConnection }
+										service={ this.props.service }
+										showDisconnect={ connections.length > 1 || 'broken' === connection.status }
+									/>
+								) ) }
+							</ServiceConnectedAccounts>
+						) }
 						<ServiceTip service={ this.props.service } />
+						{ this.isMailchimpService( connectionStatus ) &&
+							connectionStatus === 'connected' && (
+								<MailchimpSettings keyringConnections={ this.props.keyringConnections } />
+							) }
 					</div>
 				</FoldableCard>
 			</li>
