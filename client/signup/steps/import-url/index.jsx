@@ -26,11 +26,6 @@ import {
 } from 'state/importer-nux/temp-selectors';
 import { validateImportUrl } from '../../../my-sites/importer/site-importer/url-validation';
 
-// const normalizeUrlForImportSource = url => {
-// 	// @TODO sanitize? Prepend https:// ..?
-// 	return url;
-// };
-
 class ImportURLStepComponent extends Component {
 	state = {
 		// Url message could be client-side validation or server-side error.
@@ -55,14 +50,6 @@ class ImportURLStepComponent extends Component {
 			this.focusInput();
 		}
 
-<<<<<<< HEAD
-		// goToNextStep = () => {
-		// 	const { urlInputValue } = this.props;
-		// 	SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], {
-		// 		importUrl: urlInputValue,
-		// 		themeSlugWithRepo: 'pub/radcliffe-2',
-		// 	} );
-=======
 		// We have a verified, importable site url.
 		if ( ! isEqual( prevProps.siteDetails, siteDetails ) && siteDetails ) {
 			SignupActions.submitSignupStep( { stepName }, [], {
@@ -72,7 +59,6 @@ class ImportURLStepComponent extends Component {
 
 			goToNextStep();
 		}
->>>>>>> Focus input on validation or is-site-importable error
 	}
 
 	handleInputChange = event => {
@@ -178,7 +164,9 @@ class ImportURLStepComponent extends Component {
 
 	render() {
 		const { flowName, isLoading, positionInFlow, signupProgress, stepName, translate } = this.props;
-		const noticeText = translate( "Please wait, we're checking this URL." );
+		const noticeText = translate(
+			"Please wait, we're checking to see if we can import this site."
+		);
 
 		return (
 			<div>
