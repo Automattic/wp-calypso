@@ -7,6 +7,7 @@ import Gridicon from 'gridicons';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -26,6 +27,7 @@ import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
+import SelfHostedInstructions from '../../auth/self-hosted-instructions';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -38,6 +40,10 @@ export class LoginLinks extends React.Component {
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+	};
+
+	state = {
+		showAddSelfHostedInstructions: false,
 	};
 
 	recordBackToWpcomLinkClick = () => {
@@ -74,11 +80,19 @@ export class LoginLinks extends React.Component {
 		page( login( loginParameters ) );
 	};
 
+	handleSelfHostedInstructionsToggle = () => {
+		this.setState({ showAddSelfHostedInstructions: !this.state.showAddSelfHostedInstructions });
+	};
+
 	recordResetPasswordLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
 
 	renderBackLink() {
+		if ( isEnabled( 'desktop' ) ) {
+			return null;
+		}
+
 		const redirectTo = get( this.props, [ 'query', 'redirect_to' ] );
 		if ( redirectTo ) {
 			const { pathname, query: redirectToQuery } = parseUrl( redirectTo, true );
@@ -190,9 +204,15 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
+		// TODO: @adlk: In desktop config, `config.login_url` only contains `/log-in` instead of `https://wordpress.com/wp-login.php`. Is there a better solution to do this?
+		let url = addQueryArgs({ action: 'lostpassword' }, login({ locale: this.props.locale }));
+		if (isEnabled('desktop')) {
+			url = `https://wordpress.com/wp-login.php${url}`;
+		}
+
 		return (
 			<a
-				href={ addQueryArgs( { action: 'lostpassword' }, login( { locale: this.props.locale } ) ) }
+				href={ url }
 				key="lost-password-link"
 				onClick={ this.recordResetPasswordLinkClick }
 				rel="external"
@@ -202,14 +222,35 @@ export class LoginLinks extends React.Component {
 		);
 	}
 
+	renderAddSelfHostedInstructionsLink() {
+		if (!isEnabled('desktop')) {
+			return null;
+		}
+
+		return (
+			<button
+				href="#"
+				key="self-hosted-site-link"
+				onClick={this.handleSelfHostedInstructionsToggle}
+				rel="external"
+			>
+				{this.props.translate('Add self-hosted site')}
+			</button>
+		);
+	}
+
 	render() {
 		return (
 			<div className="wp-login__links">
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
+				{ this.renderAddSelfHostedInstructionsLink() }
 				{ this.renderResetPasswordLink() }
 				{ this.renderBackLink() }
+				{ this.state.showAddSelfHostedInstructions && (
+					ReactDOM.createPortal(<SelfHostedInstructions onClickClose={this.handleSelfHostedInstructionsToggle} />, document.querySelector('.wp-login__self-hosted-instructions'))
+				)}
 			</div>
 		);
 	}

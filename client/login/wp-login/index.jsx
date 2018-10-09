@@ -21,6 +21,7 @@ import LoginBlock from 'blocks/login';
 import LoginLinks from './login-links';
 import Main from 'components/main';
 import PrivateSite from './private-site';
+import { isEnabled } from 'config';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -209,6 +210,7 @@ export class Login extends React.Component {
 							/>
 						) }
 						{ isLoginView && <TranslatorInvite path={ path } /> }
+						{ isEnabled('desktop') && (<div className="wp-login__self-hosted-instructions" />) }
 					</div>
 				</Main>
 
