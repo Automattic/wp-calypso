@@ -20043,9 +20043,9 @@
       }
     },
     "terminal-kit": {
-      "version": "1.26.2",
-      "resolved": "https://registry.npmjs.org/terminal-kit/-/terminal-kit-1.26.2.tgz",
-      "integrity": "sha512-MQgU3EHQPNLD/45lXz0qqaVDnlVs++cKO8x8eVjdXNGEWmuFgms3OFbSJiUW2i7UgdmweqeiOBwl9VWHAMyaeA==",
+      "version": "1.26.3",
+      "resolved": "https://registry.npmjs.org/terminal-kit/-/terminal-kit-1.26.3.tgz",
+      "integrity": "sha512-1iVYF0yTrKtlRUYjnw0xplCJkhbECt45dIFqRCahJeiD/416tPBFqJ3NkM498gDKwyKILGPrBRJZRlUAHChzVw==",
       "dev": true,
       "requires": {
         "@cronvel/get-pixels": "^3.3.1",
