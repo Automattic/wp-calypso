@@ -18,6 +18,11 @@ import Notice from 'components/notice';
 import isRtlSelector from 'state/selectors/is-rtl';
 import BarContainer from './bar-container';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class Chart extends React.Component {
 	state = {
 		data: [],
