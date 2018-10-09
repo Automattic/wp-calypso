@@ -33,7 +33,7 @@
 	"definitions": {
 		"item": {
 			"type": "object",
-			"required": [ "activity_id", "is_rewindable", "name", "published", "summary" ],
+			"required": [ "activity_id", "is_rewindable", "name", "summary" ],
 			"properties": {
 				"activity_id": { "type": "string" },
 				"actor": {
@@ -57,18 +57,21 @@
 					}
 				},
 				"content": { "type": "object" },
+				"first_published": { "type": "string" },
 				"formatted_content": {
 					"name": { "type": "string" },
 					"content": { "type": "object" }
 				},
 				"generator": { "type": "object" },
 				"gridicon": { "type": "string" },
+				"is_aggregate": { "type": "boolean" },
 				"is_rewindable": { "type": "boolean" },
+				"is_discarded": { "type": "boolean" },
+				"itemCount": { "type": "integer" },
+				"streams_have_same_actor": { "type": "boolean" },
+				"last_published": { "type": "string" },
 				"rewind_id": { "type": [ "null", "string" ] },
-				"items": {
-					"type": "array",
-					"items": { "type": "object" }
-				},
+				"items": { "type": "array" },
 				"name": { "type": "string" },
 				"object": { "type": "object" },
 				"published": { "type": "string" },
