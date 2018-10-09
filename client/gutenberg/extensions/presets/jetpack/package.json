@@ -26,5 +26,5 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues?q=issue+label%3AJetpack+label%3A%22%5BGoal%5D+Gutenberg%22+is%3Aopen"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso#readme"
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/client/gutenberg/extensions/presets/jetpack#readme"
 }
