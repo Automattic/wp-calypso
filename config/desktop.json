@@ -97,7 +97,7 @@
 		"rubberband-scroll-disable": false,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
-		"signup/social": false,
+		"signup/social": true,
 		"signup/social-management": true,
 		"signup/wpcc": true,
 		"ui/first-view": false,
