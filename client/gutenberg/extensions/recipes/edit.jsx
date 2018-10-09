@@ -27,7 +27,7 @@ class RecipeEdit extends Component {
 		const imageInnerBlockTemplate = [
 			'core/image',
 			{
-				placeholder: __( 'Upload an image.' ),
+				placeholder: __( 'Upload an image.', 'jetpack' ),
 			},
 		];
 
@@ -35,7 +35,7 @@ class RecipeEdit extends Component {
 			<div className="hrecipe jetpack-recipe" itemscope itemtype="https://schema.org/Recipe">
 				<InspectorControls>
 					<RangeControl
-						label={ __( 'Servings' ) }
+						label={ __( 'Servings', 'jetpack' ) }
 						value={ servings }
 						initialPosition={ 2 }
 						onChange={ value => setAttributes( { servings: value } ) }
@@ -43,26 +43,26 @@ class RecipeEdit extends Component {
 						max={ 100 }
 					/>
 					<TextControl
-						label={ __( 'Time' ) }
-						placeholder={ __( 'How long does it take?' ) }
+						label={ __( 'Time', 'jetpack' ) }
+						placeholder={ __( 'How long does it take?', 'jetpack' ) }
 						value={ time }
 						onChange={ value => setAttributes( { time: value } ) }
 					/>
 					<TextControl
-						label={ __( 'Difficulty' ) }
-						placeholder={ __( 'How hard is this to make?' ) }
+						label={ __( 'Difficulty', 'jetpack' ) }
+						placeholder={ __( 'How hard is this to make?', 'jetpack' ) }
 						value={ difficulty }
 						onChange={ value => setAttributes( { difficulty: value } ) }
 					/>
 					<CheckboxControl
-						heading={ __( 'Display Print button' ) }
-						label={ __( 'Display Print' ) }
+						heading={ __( 'Display Print button', 'jetpack' ) }
+						label={ __( 'Display Print', 'jetpack' ) }
 						checked={ print }
 						onChange={ value => setAttributes( { print: value } ) }
 					/>
 					<TextControl
-						label={ __( 'Source' ) }
-						placeholder={ __( 'Link to the source of your recipe' ) }
+						label={ __( 'Source', 'jetpack' ) }
+						placeholder={ __( 'Link to the source of your recipe', 'jetpack' ) }
 						value={ sourceurl }
 						onChange={ value => setAttributes( { sourceurl: value } ) }
 					/>
@@ -71,27 +71,27 @@ class RecipeEdit extends Component {
 					tagName={ 'h3' }
 					value={ title }
 					onChange={ value => setAttributes( { title: value } ) }
-					placeholder={ __( 'Enter the title of your recipe.' ) }
+					placeholder={ __( 'Enter the title of your recipe.', 'jetpack' ) }
 					className={ 'jetpack-recipe-title' }
 				/>
 				<ul class="jetpack-recipe-meta">
 					{ servings && (
 						<li class="jetpack-recipe-servings" itemprop="recipeYield">
-							<strong>{ __( 'Servings' ) }: </strong>
+							<strong>{ __( 'Servings', 'jetpack' ) }: </strong>
 							{ servings }
 						</li>
 					) }
 					{ time && (
 						<li class="jetpack-recipe-time">
 							<time itemprop="totalTime" datetime={ time }>
-								<strong>{ __( 'Duration' ) }: </strong>
+								<strong>{ __( 'Duration', 'jetpack' ) }: </strong>
 								{ time }
 							</time>
 						</li>
 					) }
 					{ difficulty && (
 						<li class="jetpack-recipe-difficulty">
-							<strong>{ __( 'Difficulty' ) }: </strong>
+							<strong>{ __( 'Difficulty', 'jetpack' ) }: </strong>
 							{ difficulty }
 						</li>
 					) }
@@ -105,7 +105,7 @@ class RecipeEdit extends Component {
 					) }
 					{ print && (
 						<li class="jetpack-recipe-print">
-							<a href="#">{ __( 'Print' ) }</a>
+							<a href="#">{ __( 'Print', 'jetpack' ) }</a>
 						</li>
 					) }
 				</ul>
@@ -114,32 +114,32 @@ class RecipeEdit extends Component {
 					tagName={ 'p' }
 					value={ description }
 					onChange={ value => setAttributes( { description: value } ) }
-					placeholder={ __( 'A quick description / summary about your recipe.' ) }
+					placeholder={ __( 'A quick description / summary about your recipe.', 'jetpack' ) }
 					className={ 'jetpack-recipe-description' }
 					formattingControls={ [] }
 				/>
 				<div class="jetpack-recipe-content">
-					<h4 class="jetpack-recipe-notes-title">{ __( 'Notes' ) }</h4>
+					<h4 class="jetpack-recipe-notes-title">{ __( 'Notes', 'jetpack' ) }</h4>
 					<RichText
 						value={ notes }
 						onChange={ value => setAttributes( { notes: value } ) }
-						placeholder={ __( 'Add notes to your recipe.' ) }
+						placeholder={ __( 'Add notes to your recipe.', 'jetpack' ) }
 						multiline="p"
 					/>
-					<h4 class="jetpack-recipe-ingredients-title">{ __( 'Ingredients' ) }</h4>
+					<h4 class="jetpack-recipe-ingredients-title">{ __( 'Ingredients', 'jetpack' ) }</h4>
 					<RichText
 						tagName={ 'ul' }
 						value={ ingredients }
 						onChange={ value => setAttributes( { ingredients: value } ) }
-						placeholder={ __( 'Add a list of all the ingredients needed.' ) }
+						placeholder={ __( 'Add a list of all the ingredients needed.', 'jetpack' ) }
 						multiline={ 'li' }
 					/>
-					<h4 class="jetpack-recipe-directions-title">{ __( 'Directions' ) }</h4>
+					<h4 class="jetpack-recipe-directions-title">{ __( 'Directions', 'jetpack' ) }</h4>
 					<RichText
 						tagName={ 'ol' }
 						value={ directions }
 						onChange={ value => setAttributes( { directions: value } ) }
-						placeholder={ __( 'Add some directions.' ) }
+						placeholder={ __( 'Add some directions.', 'jetpack' ) }
 						multiline={ 'li' }
 					/>
 				</div>

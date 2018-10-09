@@ -25,7 +25,7 @@ class RecipeSave extends Component {
 		const imageInnerBlockTemplate = [
 			'core/image',
 			{
-				placeholder: __( 'Upload an image.' ),
+				placeholder: __( 'Upload an image.', 'jetpack' ),
 			},
 		];
 
@@ -35,27 +35,27 @@ class RecipeSave extends Component {
 				<ul class="jetpack-recipe-meta">
 					{ servings && (
 						<li class="jetpack-recipe-servings" itemprop="recipeYield">
-							<strong>{ __( 'Servings' ) }: </strong>
+							<strong>{ __( 'Servings', 'jetpack' ) }: </strong>
 							{ servings }
 						</li>
 					) }
 					{ time && (
 						<li class="jetpack-recipe-time">
 							<time itemprop="totalTime" datetime={ time }>
-								<strong>{ __( 'Duration' ) }: </strong>
+								<strong>{ __( 'Duration', 'jetpack' ) }: </strong>
 								{ time }
 							</time>
 						</li>
 					) }
 					{ difficulty && (
 						<li class="jetpack-recipe-difficulty">
-							<strong>{ __( 'Difficulty' ) }: </strong>
+							<strong>{ __( 'Difficulty', 'jetpack' ) }: </strong>
 							{ difficulty }
 						</li>
 					) }
 					{ print && (
 						<li class="jetpack-recipe-print">
-							<a href="#">{ __( 'Print' ) }</a>
+							<a href="#">{ __( 'Print', 'jetpack' ) }</a>
 						</li>
 					) }
 					{ sourceurl && (
@@ -73,19 +73,19 @@ class RecipeSave extends Component {
 				<div class="jetpack-recipe-content">
 					{ notes && (
 						<div class="jetpack-recipe-notes">
-							<h4 class="jetpack-recipe-notes-title">{ __( 'Notes' ) }</h4>
+							<h4 class="jetpack-recipe-notes-title">{ __( 'Notes', 'jetpack' ) }</h4>
 							<RichText.Content value={ notes } />
 						</div>
 					) }
 					{ ingredients && (
 						<div class="jetpack-recipe-ingredients">
-							<h4 class="jetpack-recipe-ingredients-title">{ __( 'Ingredients' ) }</h4>
+							<h4 class="jetpack-recipe-ingredients-title">{ __( 'Ingredients', 'jetpack' ) }</h4>
 							<RichText.Content tagName={ 'ul' } value={ ingredients } />
 						</div>
 					) }
 					{ directions && (
 						<div class="jetpack-recipe-directions">
-							<h4 class="jetpack-recipe-directions-title">{ __( 'Directions' ) }</h4>
+							<h4 class="jetpack-recipe-directions-title">{ __( 'Directions', 'jetpack' ) }</h4>
 							<RichText.Content tagName={ 'ol' } value={ directions } />
 						</div>
 					) }

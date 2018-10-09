@@ -14,13 +14,14 @@ import RecipeSave from './save.jsx';
 
 const blockType = 'a8c/recipes';
 const blockSettings = {
-	title: __( 'Recipe' ),
+	title: __( 'Recipe', 'jetpack' ),
 	description: __(
-		'Embed a recipe with consistent formatting, basic metadata, and an option to print.'
+		'Embed a recipe with consistent formatting, basic metadata, and an option to print.',
+		'jetpack'
 	),
 	icon: 'carrot',
 	category: 'common',
-	keywords: [ __( 'recipes' ), __( 'food' ) ],
+	keywords: [ __( 'recipes', 'jetpack' ), __( 'food', 'jetpack' ) ],
 	attributes: {
 		title: {
 			type: 'string',
@@ -39,7 +40,7 @@ const blockSettings = {
 		},
 		source: {
 			type: 'string',
-			default: __( 'Source' ),
+			default: __( 'Source', 'jetpack' ),
 		},
 		sourceurl: {
 			type: 'string',
