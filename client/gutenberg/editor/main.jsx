@@ -16,7 +16,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import Editor from './edit-post/editor.js';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import QueryPostTypes from 'components/data/query-post-types';
-import { requestGutenbergDraftPost as createAutoDraft, requestSitePost } from 'state/data-getters';
+import { createAutoDraft, requestSitePost } from 'state/data-getters';
 import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';

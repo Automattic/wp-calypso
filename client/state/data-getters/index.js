@@ -142,7 +142,7 @@ export const requestSiteAlerts = siteId => {
 	);
 };
 
-export const requestGutenbergDraftPost = ( siteId, draftId ) =>
+export const createAutoDraft = ( siteId, draftId ) =>
 	requestHttpData(
 		draftId,
 		http(
