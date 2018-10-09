@@ -10,7 +10,6 @@ import { Component } from '@wordpress/element';
  */
 
 import './style.scss';
-import LocationSearch from '../location-search';
 
 /**
  * External dependencies
@@ -22,16 +21,10 @@ export class Locations extends Component {
 
 	constructor() {
 		super( ...arguments );
-		this.onAddPoint = this.onAddPoint.bind(this);
 		this.onDeletePoint = this.onDeletePoint.bind(this);
 		this.state = {
 			selectedCell: null
 		};
-	}
-
-	onAddPoint( point ) {
-		const { points, onChange } = this.props;
-		onChange( concat( points, point ) );
 	}
 
 	onDeletePoint( e ) {
@@ -71,7 +64,6 @@ export class Locations extends Component {
 		);
 		return (
 			<div className='components-locations'>
-				<LocationSearch onAddPoint={ this.onAddPoint } />
 				<Panel className='components-locations__panel'>
 					{ rows }
 				</Panel>

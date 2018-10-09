@@ -4,8 +4,19 @@
 
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
-import { PanelBody, SelectControl } from '@wordpress/components';
-import { RichText, InspectorControls, BlockControls, BlockAlignmentToolbar } from '@wordpress/editor';
+
+import {
+	PanelBody,
+	SelectControl
+} from '@wordpress/components';
+
+import {
+	RichText,
+	InspectorControls,
+	BlockControls,
+	BlockAlignmentToolbar
+} from '@wordpress/editor';
+
 import { Fragment } from '@wordpress/element';
 
 /**
@@ -13,6 +24,7 @@ import { Fragment } from '@wordpress/element';
  */
 
 import classnames from 'classnames';
+import { clone } from 'lodash';
 
  /**
  * Internal dependencies
@@ -20,8 +32,9 @@ import classnames from 'classnames';
 
 import './style.scss';
 import './editor.scss';
-import Map from './map-component.js';
+import AddPoint from './add-point';
 import Locations from './locations';
+import Map from './map-component.js';
 import { CONFIG } from './config.js';
 
 registerBlockType( CONFIG.name, {
@@ -40,6 +53,11 @@ registerBlockType( CONFIG.name, {
 	edit: function( { attributes, setAttributes, className } ) {
 		const { the_caption, map_style, points, zoom, map_center, focus_mode, marker_color, align } = attributes;
 		const updateAlignment = ( value ) => setAttributes( { align: value } );
+		const addPoint = ( value ) => {
+			const newPoints = clone( points );
+			newPoints.push( value );
+			setAttributes( { points: newPoints } );
+		}
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -63,8 +81,8 @@ registerBlockType( CONFIG.name, {
 						<SelectControl
 							label={ __( 'Marker Color' ) }
 							value={ marker_color }
-						onChange={ ( value ) => { setAttributes( { marker_color: value } ) } }
-						options={ CONFIG.marker_colorOptions }
+							onChange={ ( value ) => { setAttributes( { marker_color: value } ) } }
+							options={ CONFIG.marker_colorOptions }
 						/>
 					</PanelBody>
 				</InspectorControls>
@@ -83,7 +101,11 @@ registerBlockType( CONFIG.name, {
 						marker_color={ marker_color }
 						onSetZoom={ ( value ) => { setAttributes( { zoom: value } ) } }
 						api_key={ CONFIG.GOOGLE_MAPS_API_KEY }
-					/>
+						admin={ true }
+						onSetPoints={ ( value ) => { setAttributes( { points: value } ) } }
+					>
+						<AddPoint onAddPoint={ addPoint } />
+					</Map>
 					<RichText
 						tagName='p'
 						className="atavist-caption"

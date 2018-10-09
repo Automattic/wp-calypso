@@ -1,0 +1,42 @@
+.map__add_btn {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	z-index: 1;
+	width: 32px;
+	height: 38px;
+	margin-top: -19px;
+	margin-left: -16px;
+	background-image: url( ./oval.svg );
+	background-repeat: no-repeat;
+	text-indent: -9999px;
+	box-shadow: none;
+	background-color: transparent;
+	&.components-button:not(:disabled):not([aria-disabled=true]):focus {
+		background-color: transparent;
+		box-shadow: none;
+	}
+	&:focus, &:active {
+		background-color: transparent;
+		box-shadow: none;
+	}
+}
+.map__popover {
+	.components-button:not(:disabled):not([aria-disabled=true]):focus {
+		background-color: transparent;
+		box-shadow: none;
+	}
+	.components-popover__content {
+		padding: 1rem;
+	}
+}
+.map__popover_close {
+	margin: 0;
+	padding: 0;
+	border: none;
+	box-shadow: none;
+	float: right;
+	path {
+		color: #aaa;
+	}
+}

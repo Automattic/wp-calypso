@@ -4,7 +4,7 @@
  * Wordpress dependencies
  */
 
-import { Component, createRef } from '@wordpress/element';
+import { Component, createRef, Fragment } from '@wordpress/element';
 
 /**
  * External dependencies
@@ -34,7 +34,13 @@ export class Map extends Component {
 	}
 
 	render() {
-		return <div className="map__map-container" ref={ this.mapRef } />;
+		const { children } = this.props;
+		return (
+			<Fragment>
+				<div className="map__map-container" ref={ this.mapRef } />
+				{ children }
+			</Fragment>
+		);
 	}
 
 	componentDidMount() {
