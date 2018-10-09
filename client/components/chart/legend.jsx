@@ -12,7 +12,7 @@ import { find, noop } from 'lodash';
  */
 import ChartLegendItem from './legend-item';
 
-export default class ChartLegend extends React.PureComponent {
+export default class ChartLegend extends React.Component {
 	static propTypes = {
 		activeCharts: PropTypes.array,
 		activeTab: PropTypes.object.isRequired,
