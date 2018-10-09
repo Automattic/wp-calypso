@@ -21,10 +21,10 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { toggleNotificationsPanel } from 'state/ui/actions';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import TranslatableString from 'components/translatable/proptype';
+import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
 
 class MasterbarItemNotifications extends Component {
 	static propTypes = {
-		user: PropTypes.object.isRequired,
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
 		tooltip: TranslatableString,
@@ -37,9 +37,8 @@ class MasterbarItemNotifications extends Component {
 	};
 
 	componentWillMount() {
-		this.user = this.props.user.get();
 		this.setState( {
-			newNote: this.user && this.user.has_unseen_notes,
+			newNote: this.props.hasUnseenNotifications,
 		} );
 	}
 
@@ -155,6 +154,7 @@ class MasterbarItemNotifications extends Component {
 const mapStateToProps = state => {
 	return {
 		isNotificationsOpen: isNotificationsOpen( state ),
+		hasUnseenNotifications: hasUnseenNotifications( state ),
 	};
 };
 const mapDispatchToProps = {

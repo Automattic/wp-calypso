@@ -7,6 +7,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const Animate = ( { type, children } ) => (
 	<div className={ `animate__${ type }` }>{ children }</div>
 );

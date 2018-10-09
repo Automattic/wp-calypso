@@ -23,6 +23,11 @@ import getSiteIconUrl from 'state/selectors/get-site-icon-url';
 import isTransientMedia from 'state/selectors/is-transient-media';
 import resizeImageUrl from 'lib/resize-image-url';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize );
 

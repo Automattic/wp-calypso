@@ -81,7 +81,7 @@ yargs
 					'(for editor and frontend view modes, respectively)',
 				type: 'string',
 				required: true,
-				coerce: value => path.resolve( __dirname, '../', value ),
+				coerce: path.resolve,
 			})
 			.options( {
 				'output-dir': {
