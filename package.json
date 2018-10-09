@@ -189,6 +189,7 @@
     "uuid": "3.3.2",
     "valid-url": "1.0.9",
     "webpack": "4.20.2",
+    "webpack-bundle-analyzer": "3.0.2",
     "webpack-cli": "3.1.2",
     "webpack-dev-middleware": "3.4.0",
     "webpack-rtl-plugin": "1.7.0",
@@ -311,7 +312,6 @@
     "stylelint": "9.6.0",
     "supertest": "3.3.0",
     "terminal-kit": "1.26.2",
-    "webpack-bundle-analyzer": "3.0.2",
     "webpack-hot-middleware": "2.24.2",
     "whybundled": "1.4.2"
   },
