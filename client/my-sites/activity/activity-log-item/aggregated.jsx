@@ -5,13 +5,13 @@
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import React, { Component } from 'react';
-
+import React, { Component, Fragment } from 'react';
 /**
  * Internal dependencies
  */
 import ActivityDescription from './activity-description';
 import ActivityIcon from './activity-icon';
+import ActivityLogItem from '../activity-log-item';
 import { adjustMoment } from '../activity-log/utils';
 import FoldableCard from 'components/foldable-card';
 import { getSite } from 'state/sites/selectors';
@@ -20,7 +20,16 @@ import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 
 class ActivityLogAggregatedItem extends Component {
 	render() {
-		const { activity, gmtOffset, moment, timezone } = this.props;
+		const {
+			activity,
+			disableBackup,
+			disableRestore,
+			gmtOffset,
+			moment,
+			rewindState,
+			siteId,
+			timezone,
+		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
 		const adjustedTime = adjustMoment( { gmtOffset, moment: moment.utc( activityTs ), timezone } );
 		const classes = classNames( 'activity-log-item', 'is-aggregated' );
@@ -36,7 +45,18 @@ class ActivityLogAggregatedItem extends Component {
 					className="activity-log-item__card"
 					header={ <ActivityDescription activity={ activity } /> }
 				>
-					<p>Inner Stuff</p>
+					{ activity.items.map( log => (
+						<Fragment key={ log.activityId }>
+							<ActivityLogItem
+								key={ log.activityId }
+								activity={ log }
+								disableRestore={ disableRestore }
+								disableBackup={ disableBackup }
+								hideRestore={ 'active' !== rewindState }
+								siteId={ siteId }
+							/>
+						</Fragment>
+					) ) }
 				</FoldableCard>
 			</div>
 		);

@@ -462,7 +462,11 @@ class ActivityLog extends Component {
 											<ActivityLogAggregatedItem
 												key={ log.activityId }
 												activity={ log }
+												disableRestore={ disableRestore }
+												disableBackup={ disableBackup }
+												hideRestore={ 'active' !== rewindState.state }
 												siteId={ siteId }
+												rewindState={ rewindState.state }
 											/>
 										</Fragment>
 									) : (
