@@ -19,7 +19,7 @@ import {
 	receiveCommentError,
 	receiveCommentSuccess,
 } from '../';
-import { COMMENTS_EDIT, NOTICE_REMOVE } from 'state/action-types';
+import { COMMENTS_EDIT, NOTICE_REMOVE, COMMENTS_RECEIVE } from 'state/action-types';
 import {
 	requestComment as requestCommentAction,
 	editComment as editCommentAction,
@@ -38,15 +38,8 @@ const query = {
 };
 
 describe( '#addComments', () => {
-	let dispatch;
-
-	beforeEach( () => ( dispatch = spy() ) );
-
 	test( 'should dispatch a tree initialization action for no comments', () => {
-		addComments( { dispatch }, { query }, { comments: [] } );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch.lastCall ).to.have.been.calledWith( {
+		expect( addComments( { query }, { comments: [] } )[ 1 ] ).to.eql( {
 			type: 'COMMENTS_TREE_SITE_ADD',
 			siteId: query.siteId,
 			status: query.status,
@@ -57,10 +50,9 @@ describe( '#addComments', () => {
 	test( 'should dispatch to add received comments into state', () => {
 		const comments = [ { ID: 5, post: { ID: 1 } }, { ID: 6, post: { ID: 1 } } ];
 
-		addComments( { dispatch }, { query }, { comments } );
+		const result = addComments( { query }, { comments } );
 
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch.lastCall ).to.have.been.calledWith(
+		expect( result[ 1 ] ).to.eql(
 			receiveCommentsAction( {
 				siteId: query.siteId,
 				postId: 1,
@@ -76,16 +68,20 @@ describe( '#addComments', () => {
 			{ ID: 2, post: { ID: 1 } },
 		];
 
-		addComments( { dispatch }, { query }, { comments } );
+		const result = addComments( { query }, { comments } );
 
-		expect( dispatch ).to.have.been.calledThrice;
-
-		expect( dispatch ).to.have.been.calledWithMatch( {
+		expect( result[ 1 ] ).to.eql( {
+			siteId: query.siteId,
+			commentById: false,
+			type: COMMENTS_RECEIVE,
 			postId: 1,
 			comments: [ comments[ 0 ], comments[ 2 ] ],
 		} );
 
-		expect( dispatch ).to.have.been.calledWithMatch( {
+		expect( result[ 2 ] ).to.eql( {
+			siteId: query.siteId,
+			commentById: false,
+			type: COMMENTS_RECEIVE,
 			postId: 2,
 			comments: [ comments[ 1 ] ],
 		} );
@@ -98,19 +94,19 @@ describe( '#fetchCommentList', () => {
 	beforeEach( () => ( dispatch = spy() ) );
 
 	test( 'should do nothing if no listType provided', () => {
-		fetchCommentsList( { dispatch }, { query } );
+		fetchCommentsList( { query } )( dispatch );
 
 		expect( dispatch ).to.have.not.been.called;
 	} );
 
 	test( 'should do nothing if invalid listType provided', () => {
-		fetchCommentsList( { dispatch }, { query: { ...query, listType: 'Calypso' } } );
+		fetchCommentsList( { query: { ...query, listType: 'Calypso' } } )( dispatch );
 
 		expect( dispatch ).to.have.not.been.called;
 	} );
 
 	test( 'should dispatch HTTP request for site comments', () => {
-		fetchCommentsList( { dispatch }, { query: { ...query, listType: 'site' } } );
+		fetchCommentsList( { query: { ...query, listType: 'site' } } )( dispatch );
 
 		expect( dispatch ).to.have.been.calledWithMatch( {
 			type: 'WPCOM_HTTP_REQUEST',
@@ -119,13 +115,13 @@ describe( '#fetchCommentList', () => {
 	} );
 
 	test( 'should default to fetch pending comments', () => {
-		fetchCommentsList( { dispatch }, { query: { listType: 'site', siteId: 1337 } } );
+		fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } )( dispatch );
 
 		expect( dispatch ).to.have.been.calledWithMatch( { query: { status: 'unapproved' } } );
 	} );
 
 	test( 'should default to fetch comment-type comments', () => {
-		fetchCommentsList( { dispatch }, { query: { listType: 'site', siteId: 1337 } } );
+		fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } )( dispatch );
 
 		expect( dispatch ).to.have.been.calledWithMatch( { query: { type: 'comment' } } );
 	} );
