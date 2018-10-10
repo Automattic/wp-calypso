@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -39,7 +37,7 @@ const query = {
 
 describe( '#addComments', () => {
 	test( 'should dispatch a tree initialization action for no comments', () => {
-		expect( addComments( { query }, { comments: [] } )[ 1 ] ).to.eql( {
+		expect( addComments( { query }, { comments: [] } )[ 1 ] ).toEqual( {
 			type: 'COMMENTS_TREE_SITE_ADD',
 			siteId: query.siteId,
 			status: query.status,
@@ -52,7 +50,7 @@ describe( '#addComments', () => {
 
 		const result = addComments( { query }, { comments } );
 
-		expect( result[ 1 ] ).to.eql(
+		expect( result[ 1 ] ).toEqual(
 			receiveCommentsAction( {
 				siteId: query.siteId,
 				postId: 1,
@@ -70,7 +68,7 @@ describe( '#addComments', () => {
 
 		const result = addComments( { query }, { comments } );
 
-		expect( result[ 1 ] ).to.eql( {
+		expect( result[ 1 ] ).toEqual( {
 			siteId: query.siteId,
 			commentById: false,
 			type: COMMENTS_RECEIVE,
@@ -78,7 +76,7 @@ describe( '#addComments', () => {
 			comments: [ comments[ 0 ], comments[ 2 ] ],
 		} );
 
-		expect( result[ 2 ] ).to.eql( {
+		expect( result[ 2 ] ).toEqual( {
 			siteId: query.siteId,
 			commentById: false,
 			type: COMMENTS_RECEIVE,
@@ -89,41 +87,42 @@ describe( '#addComments', () => {
 } );
 
 describe( '#fetchCommentList', () => {
-	let dispatch;
-
-	beforeEach( () => ( dispatch = spy() ) );
-
 	test( 'should do nothing if no listType provided', () => {
+		const dispatch = jest.fn();
 		fetchCommentsList( { query } )( dispatch );
 
-		expect( dispatch ).to.have.not.been.called;
+		expect( dispatch ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should do nothing if invalid listType provided', () => {
+		const dispatch = jest.fn();
 		fetchCommentsList( { query: { ...query, listType: 'Calypso' } } )( dispatch );
 
-		expect( dispatch ).to.have.not.been.called;
+		expect( dispatch ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should dispatch HTTP request for site comments', () => {
+		const dispatch = jest.fn();
 		fetchCommentsList( { query: { ...query, listType: 'site' } } )( dispatch );
 
-		expect( dispatch ).to.have.been.calledWithMatch( {
+		expect( dispatch.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 			type: 'WPCOM_HTTP_REQUEST',
 			path: '/sites/1337/comments',
 		} );
 	} );
 
 	test( 'should default to fetch pending comments', () => {
+		const dispatch = jest.fn();
 		fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } )( dispatch );
 
-		expect( dispatch ).to.have.been.calledWithMatch( { query: { status: 'unapproved' } } );
+		expect( dispatch.mock.calls[ 0 ][ 0 ] ).toMatchObject( { query: { status: 'unapproved' } } );
 	} );
 
 	test( 'should default to fetch comment-type comments', () => {
+		const dispatch = jest.fn();
 		fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } )( dispatch );
 
-		expect( dispatch ).to.have.been.calledWithMatch( { query: { type: 'comment' } } );
+		expect( dispatch.mock.calls[ 0 ][ 0 ] ).toMatchObject( { query: { type: 'comment' } } );
 	} );
 } );
 
@@ -133,7 +132,7 @@ describe( '#requestComment', () => {
 		const commentId = '579';
 		const action = requestCommentAction( { siteId, commentId } );
 
-		expect( requestComment( action ) ).eql(
+		expect( requestComment( action ) ).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -150,7 +149,7 @@ describe( '#requestComment', () => {
 		const commentId = '579';
 		const action = requestCommentAction( { siteId, commentId, query: { force: 'wpcom' } } );
 
-		expect( requestComment( action ) ).eql(
+		expect( requestComment( action ) ).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -173,7 +172,7 @@ describe( '#receiveCommentSuccess', () => {
 		const requestAction = requestCommentAction( { siteId, commentId } );
 
 		const dispatchedAction = receiveCommentSuccess( requestAction, response );
-		expect( dispatchedAction ).eql(
+		expect( dispatchedAction ).toEqual(
 			receiveCommentsAction( {
 				siteId,
 				postId: response.post.ID,
@@ -191,7 +190,7 @@ describe( '#receiveCommentError', () => {
 		const response = { post: { ID: 1 } };
 		const action = requestCommentAction( { siteId, commentId } );
 
-		expect( receiveCommentError( action, response ) ).eql(
+		expect( receiveCommentError( action, response ) ).toEqual(
 			receiveCommentsErrorAction( {
 				siteId,
 				commentId,
@@ -205,7 +204,7 @@ describe( '#receiveCommentError', () => {
 		const response = { post: { ID: 1 } };
 		const action = requestCommentAction( { siteId, commentId, query: { force: 'wpcom' } } );
 
-		expect( receiveCommentError( action, response ) ).eql(
+		expect( receiveCommentError( action, response ) ).toEqual(
 			requestCommentAction( {
 				siteId,
 				commentId,
@@ -215,11 +214,8 @@ describe( '#receiveCommentError', () => {
 } );
 
 describe( '#editComment', () => {
-	let dispatch;
-
-	beforeEach( () => ( dispatch = spy() ) );
-
 	test( 'should dispatch a http action', () => {
+		const dispatch = jest.fn();
 		const originalComment = { ID: 123, text: 'lorem ipsum' };
 		const newComment = { ID: 123, text: 'lorem ipsum dolor' };
 		const action = editCommentAction( 1, 1, 123, newComment );
@@ -233,7 +229,7 @@ describe( '#editComment', () => {
 
 		editComment( { dispatch, getState }, action );
 
-		expect( dispatch ).calledWith(
+		expect( dispatch ).toHaveBeenCalledWith(
 			http(
 				{
 					method: 'POST',
@@ -256,12 +252,12 @@ describe( '#announceEditFailure', () => {
 	const newComment = { ID: 123, text: 'lorem ipsum dolor' };
 	const action = editCommentAction( 1, 1, 123, newComment );
 
-	beforeEach( () => ( dispatch = spy() ) );
+	beforeEach( () => ( dispatch = jest.fn() ) );
 
 	test( 'should dispatch a local comment edit action', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
-		expect( dispatch ).to.have.been.calledWith(
+		expect( dispatch ).toHaveBeenCalledWith(
 			bypassDataLayer( {
 				type: COMMENTS_EDIT,
 				siteId: 1,
@@ -275,13 +271,13 @@ describe( '#announceEditFailure', () => {
 	test( 'should dispatch a remove notice action', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
-		expect( dispatch ).to.have.been.calledWith( removeNotice( 'comment-notice-123' ) );
+		expect( dispatch ).toHaveBeenCalledWith( removeNotice( 'comment-notice-123' ) );
 	} );
 
 	test( 'should dispatch an error notice', () => {
 		announceEditFailure( { dispatch }, { ...action, originalComment } );
 
-		expect( dispatch ).to.have.been.calledWith(
+		expect( dispatch ).toHaveBeenCalledWith(
 			errorNotice( "We couldn't update this comment.", {
 				id: `comment-notice-error-${ action.commentId }`,
 			} )
@@ -292,7 +288,7 @@ describe( '#announceEditFailure', () => {
 describe( '#handleChangeCommentStatusSuccess', () => {
 	test( 'should remove the error notice', () => {
 		const output = handleChangeCommentStatusSuccess( { commentId: 1234 } );
-		expect( output ).to.eql( [
+		expect( output ).toEqual( [
 			{
 				type: NOTICE_REMOVE,
 				noticeId: 'comment-notice-error-1234',
@@ -312,7 +308,7 @@ describe( '#handleChangeCommentStatusSuccess', () => {
 				type: 'any',
 			},
 		} );
-		expect( output ).to.eql( [
+		expect( output ).toEqual( [
 			{
 				type: NOTICE_REMOVE,
 				noticeId: 'comment-notice-error-1234',
