@@ -3,8 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import sinon, { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -19,7 +17,7 @@ describe( 'comments-tree', () => {
 	describe( 'fetchCommentsTreeForSite()', () => {
 		test( 'should dispatch HTTP request to comments-tree endpoint', () => {
 			fetchCommentsTreeForSite( action );
-			expect( fetchCommentsTreeForSite( action ) ).to.eql(
+			expect( fetchCommentsTreeForSite( action ) ).toEqual(
 				http(
 					{
 						method: 'GET',
@@ -40,7 +38,7 @@ describe( 'comments-tree', () => {
 				pingbacks_tree: { 1: [ [ 3 ], [] ] },
 				trackbacks_tree: { 1: [ [ 4 ], [] ] },
 			} );
-			expect( result ).to.eql( {
+			expect( result ).toEqual( {
 				type: COMMENTS_TREE_SITE_ADD,
 				siteId: 77203074,
 				status: 'approved',
@@ -73,12 +71,12 @@ describe( 'comments-tree', () => {
 
 	describe( 'announceFailure', () => {
 		test( 'should dispatch an error notice', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const getState = () => ( { sites: { items: [] } } );
 			announceFailure( action )( dispatch, getState );
 
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith( sinon.match( { type: NOTICE_CREATE } ) );
+			expect( dispatch ).toHaveBeenCalledTimes( 1 );
+			expect( dispatch ).toHaveBeenCalledWith( expect.objectContaining( { type: NOTICE_CREATE } ) );
 		} );
 	} );
 } );
