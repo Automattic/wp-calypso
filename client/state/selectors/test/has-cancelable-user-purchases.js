@@ -12,7 +12,7 @@ import hasCancelableUserPurchases from 'state/selectors/has-cancelable-user-purc
 
 describe( 'hasCancelableUserPurchases', () => {
 	const targetUserId = 123;
-	const examplePurchases = deepFreeze( [
+	const examplePurchases = [
 		{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId },
 		{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId },
 		{
@@ -22,10 +22,10 @@ describe( 'hasCancelableUserPurchases', () => {
 			blog_id: 1337,
 			user_id: targetUserId,
 		},
-	] );
+	];
 
 	test( 'should return false because there are no purchases', () => {
-		const state = {
+		const state = deepFreeze( {
 			purchases: {
 				data: [],
 				error: null,
@@ -34,13 +34,13 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		};
+		} );
 
 		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( false );
 	} );
 
 	test( 'should return true because there are purchases from the target user', () => {
-		const state = {
+		const state = deepFreeze( {
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -49,13 +49,13 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		};
+		} );
 
 		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( true );
 	} );
 
 	test( 'should return false because there are no purchases from this user', () => {
-		const state = {
+		const state = deepFreeze( {
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -64,13 +64,13 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true,
 			},
-		};
+		} );
 
 		expect( hasCancelableUserPurchases( state, 65535 ) ).toBe( false );
 	} );
 
 	test( 'should return false because the data is not ready', () => {
-		const state = {
+		const state = deepFreeze( {
 			purchases: {
 				data: examplePurchases,
 				error: null,
@@ -79,15 +79,15 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: false,
 			},
-		};
+		} );
 
 		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( false );
 	} );
 
 	test( 'should return false because all of the purchases are themes', () => {
-		const state = {
+		const state = deepFreeze( {
 			purchases: {
-				data: deepFreeze( [
+				data: [
 					{
 						ID: 3,
 						product_name: 'premium theme',
@@ -95,14 +95,14 @@ describe( 'hasCancelableUserPurchases', () => {
 						blog_id: 1337,
 						user_id: targetUserId,
 					},
-				] ),
+				],
 				error: null,
 				isFetchingSitePurchases: false,
 				isFetchingUserPurchases: false,
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: false,
 			},
-		};
+		} );
 
 		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( false );
 	} );
