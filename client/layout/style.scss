@@ -18,8 +18,8 @@
 
 // If things take a bit to load...
 .layout__loader {
-	background: var( --masterbar-background );
-	border-bottom: 1px solid var( --masterbar-border-color );
+	background: transparent;
+	border-bottom: 1px solid transparent;
 	height: 46px;
 	margin-left: -10%;
 	position: absolute;

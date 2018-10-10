@@ -6,19 +6,19 @@ export const DEFAULT_POSTS = [
 	{
 		title: 'Big iPhone/iPad Update Now Available',
 		image: 'https://wordpress.com/calypso/images/related-posts/cat-blog.png',
-		date: 'August 3, 2018',
+		date: '2018-08-03',
 		context: 'In "Mobile"',
 	},
 	{
 		title: 'The WordPress for Android App Gets a Big Facelift',
 		image: 'https://wordpress.com/calypso/images/related-posts/devices.jpg',
-		date: 'August 2, 2018',
+		date: '2018-08-02',
 		context: 'In "Mobile"',
 	},
 	{
 		title: 'Upgrade Focus: VideoPress For Weddings',
 		image: 'https://wordpress.com/calypso/images/related-posts/mobile-wedding.jpg',
-		date: 'August 5, 2018',
+		date: '2018-08-05',
 		context: 'In "Upgrade"',
 	},
 ];

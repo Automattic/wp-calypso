@@ -84,12 +84,12 @@ describe( 'CheckoutThankYou', () => {
 	describe( 'Basic tests', () => {
 		test( 'should not blow up and have proper CSS class', () => {
 			const comp = shallow( <CheckoutThankYou { ...defaultProps } /> );
-			expect( comp.find( '.checkout-thank-you' ).length ).toBe( 1 );
+			expect( comp.find( '.checkout-thank-you' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'Show WordPressLogo when there are no purchase but a receipt is present', () => {
 			const comp = shallow( <CheckoutThankYou { ...defaultProps } receiptId={ 12 } /> );
-			expect( comp.find( 'WordPressLogo' ).length ).toBe( 1 );
+			expect( comp.find( 'WordPressLogo' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -110,7 +110,7 @@ describe( 'CheckoutThankYou', () => {
 					},
 				};
 				const comp = shallow( <CheckoutThankYou { ...props } /> );
-				expect( comp.find( 'component--RebrandCitiesThankYou' ).length ).toBe( 1 );
+				expect( comp.find( 'component--RebrandCitiesThankYou' ) ).toHaveLength( 1 );
 			} );
 		} );
 
@@ -126,7 +126,7 @@ describe( 'CheckoutThankYou', () => {
 					},
 				};
 				const comp = shallow( <CheckoutThankYou { ...props } /> );
-				expect( comp.find( 'component--RebrandCitiesThankYou' ).length ).toBe( 0 );
+				expect( comp.find( 'component--RebrandCitiesThankYou' ) ).toHaveLength( 0 );
 			} );
 		} );
 
@@ -155,7 +155,7 @@ describe( 'CheckoutThankYou', () => {
 					},
 				};
 				const comp = shallow( <CheckoutThankYou { ...props } /> );
-				expect( comp.find( 'component--RebrandCitiesThankYou' ).length ).toBe( 0 );
+				expect( comp.find( 'component--RebrandCitiesThankYou' ) ).toHaveLength( 0 );
 			} );
 		} );
 	} );
@@ -186,25 +186,25 @@ describe( 'CheckoutThankYou', () => {
 			productValues.isDotComPlan.mockImplementation( () => true );
 			let comp;
 			comp = shallow( <CheckoutThankYou { ...props } isAtomicSite={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ).length ).toBe( 1 );
+			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 1 );
 
 			comp = shallow( <CheckoutThankYou { ...props } hasPendingAT={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ).length ).toBe( 1 );
+			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'Should not be there for AT', () => {
 			productValues.isDotComPlan.mockImplementation( () => false );
 			let comp;
 			comp = shallow( <CheckoutThankYou { ...props } isAtomicSite={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ).length ).toBe( 0 );
+			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
 
 			comp = shallow( <CheckoutThankYou { ...props } hasPendingAT={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ).length ).toBe( 0 );
+			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
 
 			productValues.isDotComPlan.mockImplementation( () => true );
 
 			comp = shallow( <CheckoutThankYou { ...props } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ).length ).toBe( 0 );
+			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
 		} );
 	} );
 

@@ -4,20 +4,24 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'gridicons';
 
-export default class ModuleChartBar extends Component {
+/**
+ * Internal dependencies
+ */
+import ChartBarTooltip from './bar-tooltip';
+
+export default class ChartBar extends React.PureComponent {
 	static propTypes = {
-		isTouch: PropTypes.bool,
-		tooltipPosition: PropTypes.string,
 		className: PropTypes.string,
 		clickHandler: PropTypes.func,
-		data: PropTypes.object.isRequired,
-		max: PropTypes.number,
 		count: PropTypes.number,
+		data: PropTypes.object.isRequired,
 		isRtl: PropTypes.bool,
+		isTouch: PropTypes.bool,
+		max: PropTypes.number,
+		tooltipPosition: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -64,29 +68,13 @@ export default class ModuleChartBar extends Component {
 	};
 
 	getTooltipData() {
-		const { tooltipData } = this.props.data;
-
-		return tooltipData.map( function( options, i ) {
-			return (
-				<li key={ i } className={ classNames( 'module-content-list-item', options.className ) }>
-					<span className="chart__tooltip-wrapper wrapper">
-						<span className="chart__tooltip-value value">{ options.value }</span>
-						<span className="chart__tooltip-label label">
-							{ options.icon && <Gridicon icon={ options.icon } size={ 18 } /> }
-							{ options.label }
-						</span>
-					</span>
-				</li>
-			);
+		return this.props.data.tooltipData.map( function( options, i ) {
+			return <ChartBarTooltip key={ i } { ...options } />;
 		} );
 	}
 
 	getPercentage() {
-		const {
-			data: { value },
-			max,
-		} = this.props;
-		return Math.ceil( ( value / max ) * 10000 ) / 100;
+		return Math.ceil( ( this.props.data.value / this.props.max ) * 10000 ) / 100;
 	}
 
 	getNestedPercentage() {
