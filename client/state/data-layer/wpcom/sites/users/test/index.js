@@ -10,7 +10,8 @@ import { chunk, times } from 'lodash';
  */
 import { DEFAULT_PER_PAGE, fetchUsers, normalizeUser, receiveSuccess } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveUser, requestUsers } from 'state/users/actions';
+import { receiveUsers, requestUsers } from 'state/users/actions';
+import { USERS_RECEIVE } from 'state/action-types';
 
 describe( '#normalizeRevision', () => {
 	test( 'should rename `id`, `name` and `slug`', () => {
@@ -83,17 +84,15 @@ describe( '#fetchUsers', () => {
 } );
 
 describe( '#receiveSuccess', () => {
-	test( 'should normalize the users and dispatch `receiveUser` for each one', () => {
-		const action = requestUsers( 12345678, [ 10, 11 ] );
+	test( 'should normalize the users and dispatch `receiveUsers` with their list', () => {
+		const requestAction = requestUsers( 12345678, [ 10, 11 ] );
+		const successAction = receiveSuccess( requestAction, [ { id: 10 }, { id: 11 } ] );
 
-		expect( receiveSuccess( action, [ { id: 10 }, { id: 11 } ] ) ).toEqual( [
-			receiveUser( {
-				ID: 10,
-			} ),
-			receiveUser( {
-				ID: 11,
-			} ),
-		] );
+		const dispatch = jest.fn();
+		successAction( dispatch );
+
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith( receiveUsers( [ { ID: 10 }, { ID: 11 } ] ) );
 	} );
 
 	test( 'should fetch another page if it receives a full page of users (default per page)', () => {
@@ -102,24 +101,32 @@ describe( '#receiveSuccess', () => {
 		const users = times( nbUsers, id => ( { id } ) );
 		const usersChunks = chunk( users, DEFAULT_PER_PAGE );
 
-		const action = requestUsers( 12345678, ids );
-
-		expect(
-			receiveSuccess(
-				{
-					...action,
-					meta: {
-						dataLayer: {
-							headers: {
-								'X-WP-Total': nbUsers,
-								'X-WP-TotalPages': Math.ceil( nbUsers / DEFAULT_PER_PAGE ),
-							},
+		const requestAction = requestUsers( 12345678, ids );
+		const successAction = receiveSuccess(
+			{
+				...requestAction,
+				meta: {
+					dataLayer: {
+						headers: {
+							'X-WP-Total': nbUsers,
+							'X-WP-TotalPages': Math.ceil( nbUsers / DEFAULT_PER_PAGE ),
 						},
 					},
 				},
-				usersChunks[ 0 ]
-			)
-		).toEqual(
+			},
+			usersChunks[ 0 ]
+		);
+
+		const dispatch = jest.fn();
+		successAction( dispatch );
+
+		expect( dispatch ).toHaveBeenCalledTimes( 2 );
+		expect( dispatch ).toHaveBeenNthCalledWith(
+			1,
+			expect.objectContaining( { type: USERS_RECEIVE } )
+		);
+		expect( dispatch ).toHaveBeenNthCalledWith(
+			2,
 			http(
 				{
 					method: 'GET',
@@ -132,7 +139,7 @@ describe( '#receiveSuccess', () => {
 					},
 				},
 				{
-					...action,
+					...requestAction,
 					page: 2,
 					perPage: DEFAULT_PER_PAGE,
 				}
@@ -147,27 +154,32 @@ describe( '#receiveSuccess', () => {
 		const users = times( nbUsers, id => ( { id } ) );
 		const usersChunks = chunk( users, perPage );
 
-		const action = {
-			...requestUsers( 12345678, ids ),
-			perPage: perPage,
-		};
-
-		expect(
-			receiveSuccess(
-				{
-					...action,
-					meta: {
-						dataLayer: {
-							headers: {
-								'X-WP-Total': nbUsers,
-								'X-WP-TotalPages': Math.ceil( nbUsers / perPage ),
-							},
+		const requestAction = { ...requestUsers( 12345678, ids ), perPage };
+		const successAction = receiveSuccess(
+			{
+				...requestAction,
+				meta: {
+					dataLayer: {
+						headers: {
+							'X-WP-Total': nbUsers,
+							'X-WP-TotalPages': Math.ceil( nbUsers / perPage ),
 						},
 					},
 				},
-				usersChunks[ 0 ]
-			)
-		).toEqual(
+			},
+			usersChunks[ 0 ]
+		);
+
+		const dispatch = jest.fn();
+		successAction( dispatch );
+
+		expect( dispatch ).toHaveBeenCalledTimes( 2 );
+		expect( dispatch ).toHaveBeenNthCalledWith(
+			1,
+			expect.objectContaining( { type: USERS_RECEIVE } )
+		);
+		expect( dispatch ).toHaveBeenNthCalledWith(
+			2,
 			http(
 				{
 					method: 'GET',
@@ -180,9 +192,9 @@ describe( '#receiveSuccess', () => {
 					},
 				},
 				{
-					...action,
+					...requestAction,
 					page: 2,
-					perPage: perPage,
+					perPage,
 				}
 			)
 		);
