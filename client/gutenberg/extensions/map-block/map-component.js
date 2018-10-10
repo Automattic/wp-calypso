@@ -195,8 +195,12 @@ export class Map extends Component {
 
 	setBoundsByMarkers() {
 		const { focus_mode, zoom, points } = this.props;
-		const { map, markers } = this.state;
+		const { map, markers, activeMarker } = this.state;
 		if ( ! map || focus_mode.type !== 'fit_markers' || points.length === 0 ) {
+			return;
+		}
+
+		if ( activeMarker ) {
 			return;
 		}
 
