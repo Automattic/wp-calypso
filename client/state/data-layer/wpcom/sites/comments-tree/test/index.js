@@ -18,10 +18,8 @@ describe( 'comments-tree', () => {
 
 	describe( 'fetchCommentsTreeForSite()', () => {
 		test( 'should dispatch HTTP request to comments-tree endpoint', () => {
-			const dispatch = spy();
-			fetchCommentsTreeForSite( { dispatch }, action );
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith(
+			fetchCommentsTreeForSite( action );
+			expect( fetchCommentsTreeForSite( action ) ).to.eql(
 				http(
 					{
 						method: 'GET',
@@ -37,14 +35,12 @@ describe( 'comments-tree', () => {
 
 	describe( 'addCommentsTree', () => {
 		test( 'should dispatch comment tree updates', () => {
-			const dispatch = spy();
-			addCommentsTree( { dispatch }, action, {
+			const result = addCommentsTree( action, {
 				comments_tree: { 1: [ [ 2 ], [] ] },
 				pingbacks_tree: { 1: [ [ 3 ], [] ] },
 				trackbacks_tree: { 1: [ [ 4 ], [] ] },
 			} );
-			expect( dispatch ).to.have.been.calledOnce;
-			expect( dispatch ).to.have.been.calledWith( {
+			expect( result ).to.eql( {
 				type: COMMENTS_TREE_SITE_ADD,
 				siteId: 77203074,
 				status: 'approved',
@@ -78,7 +74,9 @@ describe( 'comments-tree', () => {
 	describe( 'announceFailure', () => {
 		test( 'should dispatch an error notice', () => {
 			const dispatch = spy();
-			announceFailure( { dispatch, getState: () => ( { sites: { items: [] } } ) }, action );
+			const getState = () => ( { sites: { items: [] } } );
+			announceFailure( action )( dispatch, getState );
+
 			expect( dispatch ).to.have.been.calledOnce;
 			expect( dispatch ).to.have.been.calledWith( sinon.match( { type: NOTICE_CREATE } ) );
 		} );
