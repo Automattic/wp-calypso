@@ -2,16 +2,26 @@
  * Wordpress dependencies
  */
 
-import { __ } from '@wordpress/i18n';
-import { registerBlockType } from '@wordpress/blocks';
+import {
+	__
+} from '@wordpress/i18n';
+
+import {
+	registerBlockType
+} from '@wordpress/blocks';
 
 import {
 	Button,
+	ColorPalette,
 	IconButton,
 	PanelBody,
 	SelectControl,
 	Toolbar
 } from '@wordpress/components';
+
+import {
+	withState
+} from '@wordpress/compose';
 
 import {
 	RichText,
@@ -20,7 +30,10 @@ import {
 	BlockAlignmentToolbar
 } from '@wordpress/editor';
 
-import { Fragment, createRef } from '@wordpress/element';
+import {
+	Fragment,
+	createRef
+} from '@wordpress/element';
 
 /**
  * External dependencies
@@ -37,6 +50,7 @@ import './style.scss';
 import './editor.scss';
 import Locations from './locations';
 import Map from './map-component.js';
+import MapThemePicker from './map-theme-picker';
 import { CONFIG } from './config.js';
 
 registerBlockType( CONFIG.name, {
@@ -57,6 +71,17 @@ registerBlockType( CONFIG.name, {
 		const updateAlignment = ( value ) => setAttributes( { align: value } );
 		const markerIcon = <svg width='14' height='20' viewBox='0 0 14 20' xmlns='http://www.w3.org/2000/svg'><g id='Page-1' fill='none' fillRule='evenodd'><g id='outline-add_location-24px' transform='translate(-5 -2)'><polygon id='Shape' points='0 0 24 0 24 24 0 24' /><path d='M12,2 C8.14,2 5,5.14 5,9 C5,14.25 12,22 12,22 C12,22 19,14.25 19,9 C19,5.14 15.86,2 12,2 Z M7,9 C7,6.24 9.24,4 12,4 C14.76,4 17,6.24 17,9 C17,11.88 14.12,16.19 12,18.88 C9.92,16.21 7,11.85 7,9 Z M13,6 L11,6 L11,8 L9,8 L9,10 L11,10 L11,12 L13,12 L13,10 L15,10 L15,8 L13,8 L13,6 Z' id='Shape' fill='#000' fillRule='nonzero' /></g></g></svg>;
 		const mapRef = createRef();
+		const MarkerColorPalette = withState( {
+		    color: '#f00',
+		} )( ( { color, setState } ) => {
+		    return (
+		        <ColorPalette
+		            colors={ CONFIG.marker_colorOptions }
+		            value={ marker_color }
+		            onChange={ ( marker_color ) => setState( { marker_color } ) }
+		        />
+		    )
+		} );
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
@@ -78,18 +103,18 @@ registerBlockType( CONFIG.name, {
 							points={ points }
 							onChange={ ( value ) => { setAttributes( { points: value } ) } }
 						/>
-						<SelectControl
+						<MapThemePicker
 							label={ __( 'Map Theme' ) }
 							value={ map_style }
 							onChange={ ( value ) => { setAttributes( { map_style: value } ) } }
 							options={ CONFIG.map_styleOptions }
 						/>
-						<SelectControl
-							label={ __( 'Marker Color' ) }
-							value={ marker_color }
-							onChange={ ( value ) => { setAttributes( { marker_color: value } ) } }
-							options={ CONFIG.marker_colorOptions }
-						/>
+						<label className="components-base-control__label">{ __("Marker Color") }</label>
+				        <ColorPalette
+				            colors={ CONFIG.marker_colorOptions }
+				            value={ marker_color }
+				            onChange={ ( marker_color ) => setAttributes( { marker_color } ) }
+				        />
 					</PanelBody>
 				</InspectorControls>
 			</Fragment>

@@ -259,7 +259,7 @@ export class Map extends Component {
 		const svgPath = {
 		    path: 'M16,38 C16,38 32,26.692424 32,16 C32,5.307576 24.836556,0 16,0 C7.163444,0 0,5.307576 0,16 C0,26.692424 16,38 16,38 Z',
 		    fillColor: marker_color,
-		    fillOpacity: 0.6,
+		    fillOpacity: 0.8,
 		    scale: 1,
 		    strokeWeight: 0
 		  };

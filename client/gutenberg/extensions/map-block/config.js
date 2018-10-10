@@ -333,30 +333,12 @@ export const CONFIG = {
 		}
 	],
 	marker_colorOptions: [
-		{
-			value: 'red',
-			label: 'Red'
-		},
-		{
-			value: 'blue',
-			label: 'Blue'
-		},
-		{
-			value: 'yellow',
-			label: 'Yellow'
-		},
-		{
-			value: 'green',
-			label: 'Green'
-		},
-		{
-			value: 'purple',
-			label: 'Purple'
-		},
-		{
-			value: 'black',
-			label: 'Black'
-		}
+		{ name: 'red', color: 'red' },
+		{ name: 'blue', color: 'blue' },
+		{ name: 'yellow', color: 'yellow' },
+		{ name: 'green', color: 'green' },
+		{ name: 'purple', color: 'purple' },
+		{ name: 'black', color: 'black' }
 	],
 	GOOGLE_MAPS_API_KEY: 'AIzaSyDaj7klnWKpzGx0W5PonA73Dgr68Me8cyg',
 	baseClasses: [
