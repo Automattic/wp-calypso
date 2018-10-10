@@ -14,10 +14,11 @@ const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
 const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
-const StatsWriter = require( './server/bundler/stats-writer' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
+const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -119,7 +120,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 		bail: ! isDevelopment,
 		context: __dirname,
 		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
-		profile: shouldEmitStats,
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
@@ -269,6 +269,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),
 			} ),
+			new DuplicatePackageCheckerPlugin(),
 			shouldCheckForCycles &&
 				new CircularDependencyPlugin( {
 					exclude: /node_modules/,
@@ -277,17 +278,12 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					cwd: process.cwd(),
 				} ),
 			shouldEmitStats &&
-				new StatsWriter( {
-					filename: 'stats.json',
-					path: __dirname,
-					stats: {
-						assets: true,
-						children: true,
-						modules: true,
+				new BundleAnalyzerPlugin( {
+					analyzerMode: 'disabled', // just write the stats.json file
+					generateStatsFile: true,
+					statsFilename: path.join( __dirname, 'stats.json' ),
+					statsOptions: {
 						source: false,
-						reasons: true,
-						issuer: false,
-						timings: true,
 					},
 				} ),
 		] ),

@@ -142,27 +142,37 @@ export const requestSiteAlerts = siteId => {
 	);
 };
 
-export const requestGutenbergDraftPost = ( siteId, draftId ) =>
+export const createAutoDraft = ( siteId, draftKey, postType ) =>
 	requestHttpData(
-		draftId,
+		draftKey,
 		http(
 			{
-				path: `/sites/${ siteId }/posts/auto-draft`,
+				path: `/sites/${ siteId }/posts/new`,
 				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				body: {}, //this is for a POST verb.
+				apiVersion: '1.2',
+				body: {
+					status: 'auto-draft',
+					type: postType,
+					content: ' ', //endpoint only creates this with non-empty content ¯\_(ツ)_/¯
+				},
 			},
 			{}
 		),
-		{ fromApi: () => data => [ [ draftId, data ] ] }
+		{ fromApi: () => data => [ [ draftKey, data ] ] }
 	);
 
-export const requestSitePost = ( siteId, postId ) =>
-	requestHttpData(
+export const requestSitePost = ( siteId, postId, postType ) => {
+	//post and page types are plural except for custom post types
+	//eg /sites/<siteId>/posts/1234 vs /sites/<siteId>/jetpack-testimonial/4
+	const path =
+		postType === 'page' || postType === 'post'
+			? `/sites/${ siteId }/${ postType }s/${ postId }?context=edit`
+			: `/sites/${ siteId }/${ postType }/${ postId }?context=edit`;
+	return requestHttpData(
 		`gutenberg-site-${ siteId }-post-${ postId }`,
 		http(
 			{
-				path: `/sites/${ siteId }/posts/${ postId }?context=edit`,
+				path,
 				method: 'GET',
 				apiNamespace: 'wp/v2',
 			},
@@ -170,3 +180,4 @@ export const requestSitePost = ( siteId, postId ) =>
 		),
 		{ fromApi: () => post => [ [ `gutenberg-site-${ siteId }-post-${ postId }`, post ] ] }
 	);
+};

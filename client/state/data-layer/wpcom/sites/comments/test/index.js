@@ -295,35 +295,19 @@ describe( '#announceEditFailure', () => {
 
 describe( '#handleChangeCommentStatusSuccess', () => {
 	test( 'should remove the error notice', () => {
-		const dispatch = spy();
-		handleChangeCommentStatusSuccess( { dispatch }, { commentId: 1234 } );
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			type: NOTICE_REMOVE,
-			noticeId: 'comment-notice-error-1234',
-		} );
+		const output = handleChangeCommentStatusSuccess( { commentId: 1234 } );
+		expect( output ).to.eql( [
+			{
+				type: NOTICE_REMOVE,
+				noticeId: 'comment-notice-error-1234',
+			},
+		] );
 	} );
 
 	test( 'should request a fresh copy of a comments page when the query object is filled', () => {
-		const dispatch = spy();
-		handleChangeCommentStatusSuccess(
-			{ dispatch },
-			{
-				commentId: 1234,
-				refreshCommentListQuery: {
-					listType: 'site',
-					number: 20,
-					page: 1,
-					siteId: 12345678,
-					status: 'all',
-					type: 'any',
-				},
-			}
-		);
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch.lastCall ).to.have.been.calledWithExactly( {
-			type: 'COMMENTS_LIST_REQUEST',
-			query: {
+		const output = handleChangeCommentStatusSuccess( {
+			commentId: 1234,
+			refreshCommentListQuery: {
 				listType: 'site',
 				number: 20,
 				page: 1,
@@ -332,5 +316,22 @@ describe( '#handleChangeCommentStatusSuccess', () => {
 				type: 'any',
 			},
 		} );
+		expect( output ).to.eql( [
+			{
+				type: NOTICE_REMOVE,
+				noticeId: 'comment-notice-error-1234',
+			},
+			{
+				type: 'COMMENTS_LIST_REQUEST',
+				query: {
+					listType: 'site',
+					number: 20,
+					page: 1,
+					siteId: 12345678,
+					status: 'all',
+					type: 'any',
+				},
+			},
+		] );
 	} );
 } );

@@ -187,8 +187,8 @@ body.gutenberg-editor-page {
 		}
 
 		&:checked {
-			background: theme(toggle);
-			border-color: theme(toggle);
+			background: $gutenberg-theme-toggle;
+			border-color: $gutenberg-theme-toggle;
 		}
 
 		&:checked:focus {

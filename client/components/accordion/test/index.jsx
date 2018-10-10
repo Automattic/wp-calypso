@@ -29,6 +29,7 @@ describe( 'Accordion', () => {
 		expect( wrapper.find( '.accordion__title' ).text() ).toBe( 'Section' );
 		expect( wrapper.find( '.accordion__subtitle' ) ).toHaveLength( 0 );
 		expect( wrapper.find( '.accordion__icon' ) ).toHaveLength( 0 );
+		expect( wrapper.state( 'hasExpanded' ) ).toBe( false );
 		expect( wrapper.find( '.accordion__content' ) ).toHaveLength( 0 );
 	} );
 
@@ -83,6 +84,8 @@ describe( 'Accordion', () => {
 			simulateClick( wrapper );
 
 			expect( wrapper.state( 'isExpanded' ) ).toBe( true );
+			expect( wrapper.state( 'hasExpanded' ) ).toBe( true );
+			expect( wrapper.find( '.accordion__content' ).text() ).toBe( 'Content' );
 		} );
 
 		test( 'should accept an onToggle function handler to be invoked when toggled', () => {
@@ -121,6 +124,20 @@ describe( 'Accordion', () => {
 					Content
 				</Accordion>
 			);
+			expect( wrapper.state( 'isExpanded' ) ).toBe( true );
+			expect( wrapper.state( 'hasExpanded' ) ).toBe( true );
+			expect( wrapper.find( '.accordion__content' ).text() ).toBe( 'Content' );
+		} );
+
+		test( 'should render content when forced', () => {
+			const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
+			expect( wrapper.state( 'isExpanded' ) ).toBe( false );
+			expect( wrapper.state( 'hasExpanded' ) ).toBe( false );
+			expect( wrapper.find( '.accordion__content' ) ).toHaveLength( 0 );
+
+			wrapper.setProps( { forceExpand: true } );
+			expect( wrapper.state( 'isExpanded' ) ).toBe( false );
+			expect( wrapper.state( 'hasExpanded' ) ).toBe( true );
 			expect( wrapper.find( '.accordion__content' ).text() ).toBe( 'Content' );
 		} );
 	} );

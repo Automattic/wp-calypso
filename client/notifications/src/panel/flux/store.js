@@ -25,7 +25,7 @@ function emitChange() {
 }
 
 function reduce(state, action) {
-  var newState;
+  let newState;
 
   switch (action.type) {
     case actions.SET_GLOBAL_DATA:
@@ -47,7 +47,7 @@ function reduce(state, action) {
 
 export default {
   dispatch(action) {
-    var oldState = state;
+    const oldState = state;
 
     state = reduce(state, action);
 
