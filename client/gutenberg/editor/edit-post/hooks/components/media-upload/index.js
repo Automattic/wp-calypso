@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -37,12 +36,12 @@ export class MediaUpload extends Component {
 	};
 
 	render() {
-		const { siteId } = this.props;
+		const { render, siteId } = this.props;
 		const { isModalVisible } = this.state;
 
 		return (
 			<Fragment>
-				<Button onClick={ this.openModal }>TEST</Button>
+				{ render( { open: this.openModal } ) }
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<MediaModal onClose={ this.onCloseModal } visible={ isModalVisible } source="" />
 				</MediaLibrarySelectedData>
