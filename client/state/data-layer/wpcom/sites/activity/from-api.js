@@ -34,8 +34,8 @@ export function transformer( apiResponse ) {
  * @return {object}       Processed Activity item ready for use in UI
  */
 export function processItem( item ) {
-	const { actor, object, published, first_published } = item;
-	const activityDate = first_published ? first_published : published;
+	const { actor, object, published, last_published } = item;
+	const activityDate = last_published ? last_published : published;
 	const activityMeta = {};
 	switch ( item.name ) {
 		case 'rewind__backup_error':
