@@ -44,5 +44,3 @@ registerHandlers( 'state/data-layer/wpcom/me/transactions/order/index.js', {
 		} ),
 	],
 } );
-
-export default {};

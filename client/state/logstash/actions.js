@@ -5,6 +5,8 @@
  */
 import { LOGSTASH } from 'state/action-types';
 
+import 'state/data-layer/wpcom/logstash';
+
 /**
  * Log to logstash. This method is inefficient because
  * the data goes over the REST API, so use sparingly.

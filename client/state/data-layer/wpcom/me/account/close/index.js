@@ -58,5 +58,3 @@ registerHandlers( 'state/data-layer/wpcom/me/account/close/index.js', {
 		} ),
 	],
 } );
-
-export default {};

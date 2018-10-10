@@ -27,6 +27,11 @@ import {
 	REWIND_BACKUP_DISMISS_PROGRESS,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/activity-log/activate';
+import 'state/data-layer/wpcom/activity-log/deactivate';
+import 'state/data-layer/wpcom/activity-log/rewind/downloads';
+import 'state/data-layer/wpcom/activity-log/rewind/restore-status';
+import 'state/data-layer/wpcom/activity-log/rewind/to';
 import 'state/data-layer/wpcom/sites/rewind/downloads';
 
 /**

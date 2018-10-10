@@ -112,5 +112,3 @@ registerHandlers( 'state/data-layer/wpcom/login-2fa/index.js', {
 		},
 	],
 } );
-
-export default {};

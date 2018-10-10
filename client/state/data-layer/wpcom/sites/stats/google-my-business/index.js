@@ -67,5 +67,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/stats/google-my-business/index.j
 		dispatchRequest( fetchStats, receiveStats, receiveStatsError ),
 	],
 } );
-
-export default {};

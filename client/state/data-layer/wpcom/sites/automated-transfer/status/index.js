@@ -72,5 +72,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/status/index.
 		dispatchRequest( requestStatus, receiveStatus, requestingStatusFailure ),
 	],
 } );
-
-export default {};

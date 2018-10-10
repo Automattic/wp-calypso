@@ -15,6 +15,8 @@ import {
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/concierge';
+
 export const requestConciergeAppointmentDetails = ( scheduleId, appointmentId ) => ( {
 	type: CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 	scheduleId,

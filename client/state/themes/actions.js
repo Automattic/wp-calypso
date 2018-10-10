@@ -74,6 +74,8 @@ import prependThemeFilterKeys from 'state/selectors/prepend-theme-filter-keys';
 import i18n from 'i18n-calypso';
 import accept from 'lib/accept';
 
+import 'state/data-layer/wpcom/theme-filters';
+
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 
 // Set destination for 'back' button on theme sheet

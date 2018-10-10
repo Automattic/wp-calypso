@@ -12,6 +12,8 @@ import {
 	POST_UNLIKE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/posts/likes';
+
 /**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve post likes for a post.

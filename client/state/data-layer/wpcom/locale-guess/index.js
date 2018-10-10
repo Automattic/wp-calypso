@@ -53,5 +53,3 @@ export const dispatchPlansRequest = dispatchRequestEx( {
 registerHandlers( 'state/data-layer/wpcom/locale-guess/index.js', {
 	[ I18N_LOCALE_SUGGESTIONS_REQUEST ]: [ dispatchPlansRequest ],
 } );
-
-export default {};

@@ -92,5 +92,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 		} ),
 	],
 } );
-
-export default {};

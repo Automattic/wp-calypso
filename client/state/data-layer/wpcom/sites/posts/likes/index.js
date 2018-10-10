@@ -48,5 +48,3 @@ registerHandlers(
 		],
 	} )
 );
-
-export default {};

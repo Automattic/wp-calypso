@@ -15,6 +15,11 @@ import SiteUsersFetcher from 'components/site-users-fetcher';
 import SwitcherShell from './switcher-shell';
 
 /**
+ * Style dependencies
+ */
+import './style.scss';
+
+/**
  * Module variables
  */
 const debug = debugModule( 'calypso:author-selector' );

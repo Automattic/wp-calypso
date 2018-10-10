@@ -14,6 +14,8 @@ import {
 	READER_SITE_UPDATE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/read/sites';
+
 export function requestSite( blogId ) {
 	return {
 		type: READER_SITE_REQUEST,

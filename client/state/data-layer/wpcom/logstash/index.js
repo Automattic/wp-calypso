@@ -24,5 +24,3 @@ const logToLogstash = action =>
 registerHandlers( 'state/data-layer/wpcom/logstash/index.js', {
 	[ LOGSTASH ]: [ dispatchRequestEx( { fetch: logToLogstash, onSuccess: noop, onError: noop } ) ],
 } );
-
-export default {};

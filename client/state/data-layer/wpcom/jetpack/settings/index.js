@@ -195,5 +195,3 @@ registerHandlers( 'state/data-layer/wpcom/jetpack/settings/index.js', {
 		dispatchRequest( saveJetpackSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
 	],
 } );
-
-export default {};

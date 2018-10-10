@@ -69,5 +69,3 @@ const getAuthAccountTypeRequest = dispatchRequestEx( {
 registerHandlers( 'state/data-layer/wpcom/users/auth-options/index.js', {
 	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING ]: [ getAuthAccountTypeRequest ],
 } );
-
-export default {};

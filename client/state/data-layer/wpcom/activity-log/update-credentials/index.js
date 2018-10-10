@@ -230,5 +230,3 @@ registerHandlers( 'state/data-layer/wpcom/activity-log/update-credentials/index.
 		} ),
 	],
 } );
-
-export default {};

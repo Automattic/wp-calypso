@@ -10,6 +10,8 @@ import {
 	JETPACK_SETTINGS_UPDATE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/jetpack/settings';
+
 export const requestJetpackSettings = ( siteId, query ) => ( {
 	type: JETPACK_SETTINGS_REQUEST,
 	siteId,

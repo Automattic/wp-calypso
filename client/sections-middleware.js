@@ -12,7 +12,6 @@ import { activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { bumpStat } from 'state/analytics/actions';
 import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
-import { restoreLastSession } from 'lib/restore-last-path';
 import { pathToRegExp } from './utils';
 import { receiveSections, preload } from './sections-helper';
 
@@ -43,9 +42,6 @@ function createPageDefinition( path, sectionDefinition ) {
 
 		if ( _loadedSections[ sectionDefinition.module ] ) {
 			return activateSection( sectionDefinition, context, next );
-		}
-		if ( config.isEnabled( 'restore-last-location' ) && restoreLastSession( context.path ) ) {
-			return;
 		}
 		dispatch( { type: 'SECTION_SET', isLoading: true } );
 

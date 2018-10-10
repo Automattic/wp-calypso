@@ -68,5 +68,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/blog-stickers/remove/index.js', 
 		} ),
 	],
 } );
-
-export default {};
