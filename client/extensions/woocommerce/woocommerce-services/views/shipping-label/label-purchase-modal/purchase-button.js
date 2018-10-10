@@ -4,9 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -27,11 +25,6 @@ import {
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class PurchaseButton extends React.Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		orderId: PropTypes.number.isRequired,
-	};
-
 	getPurchaseButtonLabel = () => {
 		const { form, ratesTotal, translate } = this.props;
 
@@ -60,14 +53,6 @@ class PurchaseButton extends React.Component {
 		return translate( 'Buy & Print' );
 	};
 
-	getPurchaseButtonAction = () => {
-		const { form, orderId, siteId } = this.props;
-		if ( form.needsPrintConfirmation ) {
-			return () => this.props.confirmPrintLabel( orderId, siteId );
-		}
-		return () => this.props.purchaseLabel( orderId, siteId );
-	};
-
 	render() {
 		const { form } = this.props;
 		return (
@@ -75,7 +60,9 @@ class PurchaseButton extends React.Component {
 				disabled={
 					! form.needsPrintConfirmation && ( ! this.props.canPurchase || form.isSubmitting )
 				}
-				onClick={ this.getPurchaseButtonAction() }
+				onClick={
+					form.needsPrintConfirmation ? this.props.confirmPrintLabel : this.props.purchaseLabel
+				}
 				primary
 				busy={ form.isSubmitting && ! form.needsPrintConfirmation }
 			>
@@ -97,9 +84,10 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
-	return bindActionCreators( { confirmPrintLabel, purchaseLabel }, dispatch );
-};
+const mapDispatchToProps = ( dispatch, { orderId, siteId } ) => ( {
+	confirmPrintLabel: () => dispatch( confirmPrintLabel( orderId, siteId ) ),
+	purchaseLabel: () => dispatch( purchaseLabel( orderId, siteId ) ),
+} );
 
 export default connect(
 	mapStateToProps,
