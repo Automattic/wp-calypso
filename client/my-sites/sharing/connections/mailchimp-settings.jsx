@@ -16,6 +16,8 @@ import { requestSettingsUpdate } from 'state/mailchimp/settings/actions';
 import QueryMailchimpLists from 'components/data/query-mailchimp-lists';
 import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 const MailchimpSettings = ( {
 	siteId,
@@ -46,6 +48,18 @@ const MailchimpSettings = ( {
 			<QueryMailchimpLists siteId={ siteId } />
 			<QueryMailchimpSettings siteId={ siteId } />
 			<p>{ translate( 'What MailChimp list should we sync follower emails to for this site?' ) }</p>
+			{ mailchimpLists &&
+				mailchimpLists.length === 0 && (
+					<Notice
+						status="is-info"
+						text={ translate(
+							"Looks like you've not set up any MailChimp lists yet. Head to your MailChimp admin to add a list."
+						) }
+						showDismiss={ false }
+					>
+						<NoticeAction href="https://login.mailchimp.com" external={ true } />
+					</Notice>
+				) }
 			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
 				<option key="none" value={ 0 }>
 					{ translate( 'Do not sync follower emails for this site' ) }
