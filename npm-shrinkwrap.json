@@ -21415,9 +21415,9 @@
       }
     },
     "webpack-hot-middleware": {
-      "version": "2.24.2",
-      "resolved": "https://registry.npmjs.org/webpack-hot-middleware/-/webpack-hot-middleware-2.24.2.tgz",
-      "integrity": "sha512-VsBGNMC5JDnab5hbReMjmIYtnvDMT+odLSP49EbLZHwuAoJJDNOi0YLhTe40vvP7u7Be+Ww1mYHjwwelqdnaKA==",
+      "version": "2.24.3",
+      "resolved": "https://registry.npmjs.org/webpack-hot-middleware/-/webpack-hot-middleware-2.24.3.tgz",
+      "integrity": "sha512-pPlmcdoR2Fn6UhYjAhp1g/IJy1Yc9hD+T6O9mjRcWV2pFbBjIFoJXhP0CoD0xPOhWJuWXuZXGBga9ybbOdzXpg==",
       "dev": true,
       "requires": {
         "ansi-html": "0.0.7",
