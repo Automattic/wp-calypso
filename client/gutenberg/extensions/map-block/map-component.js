@@ -72,6 +72,7 @@ export class Map extends Component {
 		const newPoints = clone( points );
 		newPoints.splice( index, 1 );
 		this.props.onSetPoints( newPoints );
+		this.setState( { activeMarker: null } );
 	}
 
 	updateActiveMarker( updates) {
