@@ -19,6 +19,11 @@ import BlogStickersList from 'blocks/blog-stickers/list';
 import InfoPopover from 'components/info-popover';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const BlogStickers = ( { blogId, teams, stickers } ) => {
 	const isTeamMember = isAutomatticTeamMember( teams );
 	if ( teams && ! isTeamMember ) {
