@@ -3,12 +3,16 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import EditorMediaModal from 'post-editor/editor-media-modal';
 import Button from 'components/button';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
+import MediaModal from 'post-editor/media-modal';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { mediaCalypsoToGutenberg } from './utils';
 
 export class MediaUpload extends Component {
 	state = {
@@ -19,21 +23,36 @@ export class MediaUpload extends Component {
 
 	openModal = () => this.setState( { isModalVisible: true } );
 
+	insertMedia = media => {
+		const { onSelect } = this.props;
+		const formattedMedia = mediaCalypsoToGutenberg( media.items[ 0 ] );
+		onSelect( formattedMedia );
+	};
+
+	onCloseModal = media => {
+		if ( media ) {
+			this.insertMedia( media );
+		}
+		this.closeModal();
+	};
+
 	render() {
+		const { siteId } = this.props;
 		const { isModalVisible } = this.state;
 
 		return (
 			<Fragment>
 				<Button onClick={ this.openModal }>TEST</Button>
-				<EditorMediaModal
-					onClose={ this.closeModal }
-					onInsertMedia={ this.closeModal }
-					visible={ isModalVisible }
-					source=""
-				/>
+				<MediaLibrarySelectedData siteId={ siteId }>
+					<MediaModal onClose={ this.onCloseModal } visible={ isModalVisible } source="" />
+				</MediaLibrarySelectedData>
 			</Fragment>
 		);
 	}
 }
 
-export default MediaUpload;
+const mapStateToProps = state => ( {
+	siteId: getSelectedSiteId( state ),
+} );
+
+export default connect( mapStateToProps )( MediaUpload );
