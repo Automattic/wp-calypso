@@ -38,7 +38,8 @@ export const normalizeUser = user =>
 /**
  * Dispatches a request to fetch post revisions users
  *
- * @param {Object} action Redux action
+ * @param {Object} action The `USERS_REQUEST` action used to trigger the fetch
+ * @returns {Object} The low-level action used to execute the fetch
  */
 export const fetchUsers = action => {
 	const { siteId, ids, page = 1, perPage = DEFAULT_PER_PAGE } = action;
@@ -60,8 +61,9 @@ export const fetchUsers = action => {
 /**
  * Dispatches returned users
  *
- * @param {Object} action Redux action
+ * @param {Object} action The `USERS_REQUEST` action with response data as meta
  * @param {Array} users raw data from post revisions API
+ * @returns {Object|Function} Action or action thunk that handles the response
  */
 export const receiveSuccess = ( action, users ) => dispatch => {
 	// receive users from response into Redux state
