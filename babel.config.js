@@ -15,9 +15,6 @@ const config = {
 			'@babel/env',
 			{
 				modules,
-				targets: {
-					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'ie >= 11' ],
-				},
 				exclude: [ 'transform-classes', 'transform-template-literals' ], // transform-classes is added manually later.
 				useBuiltIns: 'entry',
 				shippedProposals: true, // allows es7 features like Promise.prototype.finally
