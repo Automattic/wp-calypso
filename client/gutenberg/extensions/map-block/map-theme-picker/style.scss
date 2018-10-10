@@ -9,6 +9,11 @@
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: contain;
+	transform: scale(1);
+	transition: transform .2s ease;
+	&:hover {
+		transform: scale(1.1);
+	}
 	&.isSelected {
 		border-color: black;
 	}
