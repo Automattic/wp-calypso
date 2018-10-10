@@ -2,8 +2,11 @@
  * Wordpress dependencies
  */
 
-import { Component, renderToString, render, Fragment, createPortal } from '@wordpress/element';
-import ReactDOM from 'react-dom';
+import {
+	Component,
+	Fragment,
+	createPortal
+} from '@wordpress/element';
 
 /**
  * External dependencies
