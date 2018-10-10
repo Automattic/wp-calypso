@@ -23,6 +23,7 @@ describe( 'reducer', () => {
 			'guidedTour',
 			'gutenbergOptInDialog',
 			'hasSidebar',
+			'importers',
 			'isLoading',
 			'isNotificationsOpen',
 			'isPreviewShowing',

@@ -17,6 +17,7 @@ import Button from 'components/forms/form-button';
 import { appStates } from 'state/imports/constants';
 import { cancelImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { deselectImporterOption } from 'state/ui/importers/actions';
 
 export class CloseButton extends React.PureComponent {
 	static displayName = 'CloseButton';
@@ -40,6 +41,7 @@ export class CloseButton extends React.PureComponent {
 		} = this.props;
 		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
+		this.props.deselectImporterOption();
 		cancelImport( siteId, importerId );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_cancel_clicked', {
@@ -75,7 +77,10 @@ export class CloseButton extends React.PureComponent {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{
+			deselectImporterOption,
+			recordTracksEvent,
+		}
 	),
 	localize
 )( CloseButton );

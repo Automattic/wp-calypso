@@ -15,6 +15,7 @@ import Button from 'components/forms/form-button';
 import { startImport } from 'lib/importer/actions';
 import { connectDispatcher } from 'my-sites/importer/dispatcher-converter';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { selectImporterOption } from 'state/ui/importers/actions';
 
 class StartButton extends React.PureComponent {
 	static displayName = 'StartButton';
@@ -36,6 +37,7 @@ class StartButton extends React.PureComponent {
 		} = this.props;
 		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
+		this.props.selectImporterOption( type );
 		startImportFn( siteId, type );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
@@ -65,7 +67,10 @@ const mapDispatchToProps = dispatch => ( {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{
+			recordTracksEvent,
+			selectImporterOption,
+		}
 	),
 	connectDispatcher( null, mapDispatchToProps ),
 	localize
