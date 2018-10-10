@@ -8,12 +8,10 @@ import { getHandlers, registerHandlers } from 'state/data-layer/handler-registry
 import wpcomHttpHandlers from './wpcom-http';
 import httpData from './http-data';
 import httpHandlers from 'state/http';
-import wpcomHandlers from './wpcom';
 
-registerHandlers( 'httpData', httpData );
-registerHandlers( 'httpHandlers', httpHandlers );
-registerHandlers( 'wpcomHttpHandlers', wpcomHttpHandlers );
-registerHandlers( 'wpcomHandlers', wpcomHandlers );
+registerHandlers( 'declarative resource loader', httpData );
+registerHandlers( 'raw HTTP request loader', httpHandlers );
+registerHandlers( 'WordPress API request loader', wpcomHttpHandlers );
 
 const shouldNext = action => {
 	const meta = action.meta;

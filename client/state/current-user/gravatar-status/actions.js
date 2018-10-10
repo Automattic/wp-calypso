@@ -12,6 +12,8 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 
+import 'state/data-layer/wpcom/gravatar-upload';
+
 export function uploadGravatar( file, email ) {
 	return withAnalytics( recordTracksEvent( 'calypso_edit_gravatar_upload_start' ), {
 		type: GRAVATAR_UPLOAD_REQUEST,

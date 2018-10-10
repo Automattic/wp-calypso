@@ -9,6 +9,8 @@ import {
 	SITE_CHECKLIST_TASK_UPDATE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/checklist';
+
 /**
  * Action creator function: SITE_CHECKLIST_RECEIVE
  *

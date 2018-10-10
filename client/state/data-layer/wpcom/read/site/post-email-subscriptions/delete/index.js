@@ -56,5 +56,3 @@ registerHandlers( 'state/data-layer/wpcom/read/site/post-email-subscriptions/del
 		),
 	],
 } );
-
-export default {};

@@ -14,6 +14,11 @@ import { get, keys, last, map, omit, reduce, slice } from 'lodash';
 import InfiniteList from 'components/infinite-list';
 import Label from './label';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class SortedGrid extends PureComponent {
 	static propTypes = {
 		getGroupLabel: PropTypes.func.isRequired,

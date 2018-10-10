@@ -58,5 +58,3 @@ registerHandlers( 'state/data-layer/wpcom/me/notification/settings/index.js', {
 		} ),
 	],
 } );
-
-export default {};

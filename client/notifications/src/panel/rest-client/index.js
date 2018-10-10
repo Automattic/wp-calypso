@@ -30,7 +30,7 @@ export function Client() {
   this.isShowing = false;
   this.lastSeenTime = 0;
   this.hasNewNoteData = false;
-  this.noteRequestLimit = settings['initial_limit'];
+  this.noteRequestLimit = settings.initial_limit;
   this.retries = 0;
   this.subscribeTry = 0;
   this.subscribeTries = 3;
@@ -52,7 +52,7 @@ function main() {
       this.subscribing = true;
       subscribeToNoteStream(pinghubCallback.bind(this));
     } else if (this.subscribeTry === this.subscribeTries) {
-      var sub_retry_ms = 120000;
+      const sub_retry_ms = 120000;
       debug('main: polling until next subscribe attempt', 'sub_retry_ms =', sub_retry_ms);
       setTimeout(
         function() {
@@ -79,7 +79,7 @@ function main() {
   }
 
   if (this.inbox.length === 1 && this.inbox[0].action && this.inbox[0].action === 'push') {
-    var note_id = this.inbox[0].note_id;
+    const note_id = this.inbox[0].note_id;
     debug('main: have one push message with note_id, calling getNote(%d)', note_id, this.inbox);
     this.inbox = [];
     this.getNote(note_id);
@@ -98,7 +98,7 @@ function main() {
 
 function reschedule(refresh_ms) {
   if (!refresh_ms) {
-    refresh_ms = settings['refresh_ms'];
+    refresh_ms = settings.refresh_ms;
   }
   if (this.timeout) {
     clearTimeout(this.timeout);
@@ -200,8 +200,8 @@ function getNotes() {
 			 */
       this.retries = this.retries + 1;
       const backoff_ms = Math.min(
-        settings['refresh_ms'] * (this.retries + 1),
-        settings['max_refresh_ms']
+        settings.refresh_ms * (this.retries + 1),
+        settings.max_refresh_ms
       );
       debug('getNotes error, using backoff_ms=%d', backoff_ms);
       this.noteList = [];
@@ -263,8 +263,8 @@ function getNotesList() {
     if (error) {
       this.retries = this.retries + 1;
       const backoff_ms = Math.min(
-        settings['refresh_ms'] * (this.retries + 1),
-        settings['max_refresh_ms']
+        settings.refresh_ms * (this.retries + 1),
+        settings.max_refresh_ms
       );
       debug('getNotesList error, using backoff_ms=%d', backoff_ms);
       return this.reschedule(backoff_ms);
@@ -365,8 +365,8 @@ function cleanupLocalCache() {
  * @returns {Boolean} whether or not we will update our lastSeenTime value
  */
 function updateLastSeenTime(proposedTime, fromStorage) {
-  var fromNote = false;
-  var mostRecentNoteTime = 0;
+  let fromNote = false;
+  let mostRecentNoteTime = 0;
 
   // Make sure we aren't getting milliseconds
   // The check time is Aug 8, 2005 in ms
@@ -473,12 +473,12 @@ function loadMore() {
     // we're already attempting to load more notes
     return;
   }
-  if (this.noteRequestLimit >= settings['max_limit']) {
+  if (this.noteRequestLimit >= settings.max_limit) {
     return;
   }
-  this.noteRequestLimit = this.noteRequestLimit + settings['increment_limit'];
-  if (this.noteRequestLimit > settings['max_limit']) {
-    this.noteRequestLimit = settings['max_limit'];
+  this.noteRequestLimit = this.noteRequestLimit + settings.increment_limit;
+  if (this.noteRequestLimit > settings.max_limit) {
+    this.noteRequestLimit = settings.max_limit;
   }
 
   this.getNotes();

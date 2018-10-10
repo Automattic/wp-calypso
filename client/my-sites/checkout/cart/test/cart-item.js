@@ -80,7 +80,7 @@ const props = {
 describe( 'cart-item', () => {
 	test( 'Does not blow up', () => {
 		const comp = shallow( <CartItem { ...props } /> );
-		expect( comp.find( '.cart-item' ).length ).toBe( 1 );
+		expect( comp.find( '.cart-item' ) ).toHaveLength( 1 );
 	} );
 
 	describe( 'monthlyPrice', () => {

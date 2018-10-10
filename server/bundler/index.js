@@ -109,7 +109,7 @@ function middleware( app ) {
 				reasons: false,
 				source: false,
 				errorDetails: true,
-				entrypoints: true,
+				entrypoints: false,
 			},
 		} )
 	);

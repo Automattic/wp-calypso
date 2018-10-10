@@ -13,6 +13,11 @@ import PropTypes from 'prop-types';
 import Card from 'components/card';
 import Button from 'components/button';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const ActionCard = ( {
 	headerText,
 	mainText,
@@ -23,7 +28,8 @@ const ActionCard = ( {
 	buttonHref,
 	buttonOnClick,
 	children,
-	compact = true,
+	compact,
+	buttonDisabled,
 	illustration,
 } ) => (
 	<Card className="action-card" compact={ compact }>
@@ -45,6 +51,7 @@ const ActionCard = ( {
 					href={ buttonHref }
 					target={ buttonTarget }
 					onClick={ buttonOnClick }
+					disabled={ buttonDisabled }
 				>
 					{ buttonText } { buttonIcon && <Gridicon icon={ buttonIcon } /> }
 				</Button>
@@ -62,9 +69,15 @@ ActionCard.propTypes = {
 	buttonOnClick: PropTypes.func,
 	buttonHref: PropTypes.string,
 	buttonTarget: PropTypes.string,
+	buttonDisabled: PropTypes.bool,
 	children: PropTypes.any,
 	compact: PropTypes.bool,
 	illustration: PropTypes.string,
+};
+
+ActionCard.defaultProps = {
+	compact: true,
+	buttonDisabled: false,
 };
 
 export default ActionCard;

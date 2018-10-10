@@ -9,6 +9,8 @@ import {
 	JETPACK_REMOTE_INSTALL_SUCCESS,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/jetpack-install';
+
 /**
  * Install the jetpack plugin on a remote .org site.
  *

@@ -328,7 +328,6 @@ sections.push( {
 	module: 'reader/full-post',
 	secondary: false,
 	group: 'reader',
-	css: 'reader-full-post',
 	enableLoggedOut: true,
 } );
 

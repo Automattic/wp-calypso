@@ -8,13 +8,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import deleteHandler from './delete';
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import schema from './schema';
 import { CONNECTED_APPLICATIONS_REQUEST } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveConnectedApplications } from 'state/connected-applications/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -46,7 +44,7 @@ export const requestConnectedApplications = action =>
  */
 export const handleRequestSuccess = ( action, apps ) => receiveConnectedApplications( apps );
 
-const requestHandler = {
+registerHandlers( 'state/data-layer/wpcom/me/connected-applications/index.js', {
 	[ CONNECTED_APPLICATIONS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestConnectedApplications,
@@ -55,11 +53,4 @@ const requestHandler = {
 			fromApi: makeJsonSchemaParser( schema, apiTransformer, {} ),
 		} ),
 	],
-};
-
-registerHandlers(
-	'state/data-layer/wpcom/me/connected-applications/index.js',
-	mergeHandlers( requestHandler, deleteHandler )
-);
-
-export default {};
+} );

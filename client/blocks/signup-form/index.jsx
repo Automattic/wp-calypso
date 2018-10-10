@@ -43,6 +43,11 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { abtest } from 'lib/abtest';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
 

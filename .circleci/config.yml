@@ -12,6 +12,7 @@ references:
     name: Create Directories for Results and Artifacts
     command: |
       mkdir -p                                  \
+        "$CIRCLE_ARTIFACTS/icfy"                \
         "$CIRCLE_ARTIFACTS/notifications-panel" \
         "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_TEST_REPORTS/client"           \
@@ -104,26 +105,34 @@ references:
     paths:
       - node_modules
 
+  # Babel cache
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
+  restore-babel-client-cache: &restore-babel-client-cache
+    name: Restore Babel Client Cache
+    keys:
+      - v1-babel-client-{{ .Branch }}-{{ .Revision }}
+      - v1-babel-client-{{ .Branch }}
+      - v1-babel-client-master
+      - v1-babel-client
+  save-babel-client-cache: &save-babel-client-cache
+    name: Save Babel Client Cache
+    key: v1-babel-client-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - "build/.babel-client-cache"
+
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker: *docker-image
     environment: *shared-environment
 
 commands:
-  setup:
-    description: "Basic Setup"
+  prepare:
+    description: "Prepare Job"
     steps:
-      # repo
-      - restore_cache: *restore-git-cache
-      - checkout
-      - run: *update-git-master
-      - save_cache: *save-git-cache
-      # npm dependencies
-      - restore_cache: *restore-node-modules-cache
-      - run: *npm-install
-      - save_cache: *save-node-modules-cache
       # folders to collect results
       - run: *setup-results-and-artifacts
+      - attach_workspace:
+          at: '~'
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -135,11 +144,28 @@ commands:
           path: /tmp/artifacts
 
 jobs:
+  setup:
+    <<: *defaults
+    steps:
+      # repo
+      - restore_cache: *restore-git-cache
+      - checkout
+      - run: *update-git-master
+      - save_cache: *save-git-cache
+      # npm dependencies
+      - restore_cache: *restore-node-modules-cache
+      - run: *npm-install
+      - save_cache: *save-node-modules-cache
+      - persist_to_workspace:
+          root: '~'
+          paths:
+            - wp-calypso
+
   build-jetpack-blocks:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - run:
           name: Build Jetpack Blocks
           command: |
@@ -153,7 +179,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - run:
           name: Lint Config Keys
           when: always
@@ -223,7 +249,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - run:
           name: Build Notifications Panel
           command: |
@@ -234,7 +260,7 @@ jobs:
     <<: *defaults
     parallelism: 6
     steps:
-      - setup
+      - prepare
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Client Tests
@@ -267,7 +293,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Integration Tests
@@ -288,7 +314,7 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - setup
+      - prepare
       - restore_cache: *restore-jest-cache
       - run:
           name: Run Server Tests
@@ -309,31 +335,92 @@ jobs:
   danger:
     <<: *defaults
     steps:
-      - restore_cache: *restore-git-cache
-      - checkout
+      - prepare
       - run:
           name: Danger.js
           command: npx danger ci
+
+  icfy-stats:
+    <<: *defaults
+    steps:
+      - prepare
+      - restore_cache: *restore-babel-client-cache
+      - run:
+          name: Build Stats and Notify ICFY
+          environment:
+            NODE_ENV: "production"
+            CALYPSO_CLIENT: "true"
+          command: |
+            #
+            # This block should not cause a test failure and block PRs.
+            # The shell should never error and exit 0 to indicate success.
+            #
+            set +o errexit
+            ANCESTOR_SHA1=$(git merge-base HEAD master)
+            npm run build-css                                                           \
+            && npm run preanalyze-bundles                                               \
+            && node bin/icfy-analyze.js                                                 \
+            && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"                        \
+            && curl                                                                     \
+                -X POST                                                                 \
+                "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
+                -H 'Cache-Control: no-cache'                                            \
+                -H 'Content-Type: application/json'                                     \
+                -d '{
+                      "payload": {
+                        "branch": "'"$CIRCLE_BRANCH"'",
+                        "build_num": '"$CIRCLE_BUILD_NUM"',
+                        "sha": "'"$CIRCLE_SHA1"'",
+                        "ancestor": "'"$ANCESTOR_SHA1"'"
+                      }
+                    }'                                                                  \
+            || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
+            exit 0
+      - save_cache: *save-babel-client-cache
+      - store-artifacts-and-test-results
 
 workflows:
   version: 2
   calypso:
     jobs:
+      - setup
       - danger:
+          requires:
+            - setup
           filters:
             branches:
               ignore: master
-      - build-jetpack-blocks
-      - build-notifications
-      - lint-and-translate
-      - test-client
-      - test-server
+      - build-jetpack-blocks:
+          requires:
+            - setup
+      - build-notifications:
+          requires:
+            - setup
+      - icfy-stats:
+          requires:
+            - setup
+      - lint-and-translate:
+          requires:
+            - setup
+      - test-client:
+          requires:
+            - setup
+      - test-server:
+          requires:
+            - setup
 
   calypso-nightly:
     jobs:
-      - test-client
-      - test-integration
-      - test-server
+      - setup
+      - test-client:
+          requires:
+            - setup
+      - test-integration:
+          requires:
+            - setup
+      - test-server:
+          requires:
+            - setup
     triggers:
       - schedule:
           cron: "0 4 * * *"

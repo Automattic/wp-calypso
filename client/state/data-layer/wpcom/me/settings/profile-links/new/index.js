@@ -78,5 +78,3 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/new/index.js
 		} ),
 	],
 } );
-
-export default {};

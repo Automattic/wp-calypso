@@ -24,6 +24,11 @@ import Clock from './clock';
 import Header from './header';
 import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const noop = () => {};
 
 class PostSchedule extends Component {

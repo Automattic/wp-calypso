@@ -19,6 +19,11 @@ import Count from 'components/count';
 import getSites from 'state/selectors/get-sites';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class AllSites extends Component {
 	static defaultProps = {
 		onSelect: noop,

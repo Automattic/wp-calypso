@@ -69,5 +69,3 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 		} ),
 	],
 } );
-
-export default {};

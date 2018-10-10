@@ -14,6 +14,11 @@ import { noop } from 'lodash';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class VerticalNavItem extends Component {
 	static propTypes = {
 		external: PropTypes.bool,

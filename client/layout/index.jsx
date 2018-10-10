@@ -4,9 +4,7 @@
  * External dependencies
  */
 
-import { property, sortBy } from 'lodash';
-import React from 'react';
-import createReactClass from 'create-react-class';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -15,10 +13,6 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-/* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import TranslatorLauncher from './community-translator/launcher';
@@ -51,17 +45,11 @@ import SupportUser from 'support/support-user';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 import { isE2ETest } from 'lib/e2e';
 
-/* eslint-disable react/no-deprecated */
-const Layout = createReactClass( {
-	/* eslint-enable react/no-deprecated */
-	displayName: 'Layout',
-
-	mixins: [ observe( 'user' ) ],
-
-	propTypes: {
+class Layout extends Component {
+	static displayName = 'Layout';
+	static propTypes = {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
-		user: PropTypes.object,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
@@ -70,34 +58,9 @@ const Layout = createReactClass( {
 		section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		isOffline: PropTypes.bool,
 		colorSchemePreference: PropTypes.string,
-	},
+	};
 
-	newestSite: function() {
-		return sortBy( this.props.sites, property( 'ID' ) ).pop();
-	},
-
-	renderMasterbar: function() {
-		if ( ! this.props.user || /^\/start\/user-continue\//.test( this.props.currentRoute ) ) {
-			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
-		}
-
-		return (
-			<MasterbarLoggedIn
-				user={ this.props.user }
-				section={ this.props.section.group }
-				sites={ this.props.sites }
-				compact={ this.props.section.name === 'checkout' }
-			/>
-		);
-	},
-
-	renderPreview() {
-		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
-			return <SitePreview />;
-		}
-	},
-
-	render: function() {
+	render() {
 		const sectionClass = classnames(
 				'layout',
 				'color-scheme',
@@ -124,10 +87,13 @@ const Layout = createReactClass( {
 				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				{ config.isEnabled( 'nps-survey/notice' ) && ! isE2ETest() && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				{ this.renderMasterbar() }
+				<MasterbarLoggedIn
+					section={ this.props.section.group }
+					compact={ this.props.section.name === 'checkout' }
+				/>
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<div className={ loadingClass }>
-					<PulsingDot active={ this.props.isLoading } />
+					{ this.props.isLoading && <PulsingDot delay={ 400 } active /> }
 				</div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
@@ -150,7 +116,7 @@ const Layout = createReactClass( {
 				) : (
 					<TranslatorLauncher />
 				) }
-				{ this.renderPreview() }
+				{ this.props.section.group === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 				{ 'development' === process.env.NODE_ENV && (
@@ -164,8 +130,8 @@ const Layout = createReactClass( {
 				{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect( state => {
 	const { isLoading, section } = state.ui;

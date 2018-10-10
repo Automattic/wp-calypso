@@ -17,13 +17,13 @@ import noticon2gridicon from '../utils/noticon2gridicon';
  */
 function render_range(new_sub_text, new_sub_range, range_info, range_data, options) {
   // Its time to build the outer shell of the range we're recursing into.
-  var new_container = null,
+  let new_container = null,
     new_classes = [],
     type_mappings;
 
-  var range_info_type = range_info.type;
+  let range_info_type = range_info.type;
 
-  if (typeof range_info.type != 'undefined') {
+  if (typeof range_info.type !== 'undefined') {
     type_mappings = {
       b: 'strong', // be strong, my friend
       i: 'em', // I am, don't worry
@@ -144,7 +144,7 @@ function render_range(new_sub_text, new_sub_range, range_info, range_data, optio
  * @param {object} options
  */
 function build_chunks(sub_text, sub_ranges, range_data, container, options) {
-  var text_start = null,
+  let text_start = null,
     text_stop = null,
     i,
     remove_r_id,
@@ -232,7 +232,7 @@ function build_chunks(sub_text, sub_ranges, range_data, container, options) {
  * @returns {Number|null} Index in the range array with the longest span between indices or null if no valid ranges
  */
 function find_largest_range(rs) {
-  var r_id = -1,
+  let r_id = -1,
     r_size = 0,
     i;
 
@@ -256,13 +256,13 @@ function find_largest_range(rs) {
 }
 
 function recurse_convert(text, ranges, options) {
-  var container = document.createDocumentFragment(),
-    ranges_copy = JSON.parse(JSON.stringify(ranges)), // clone through serialization
-    t = [], // Holds the range information for each position in the text
-    i,
-    id,
-    n,
-    range_len;
+  const container = document.createDocumentFragment();
+  const ranges_copy = JSON.parse(JSON.stringify(ranges)); // clone through serialization
+  const t = []; // Holds the range information for each position in the text
+  let i;
+  let id;
+  let n;
+  let range_len;
 
   // Create a representation of the string as an array of
   // positions, each holding a list of ranges that apply to that
@@ -311,7 +311,7 @@ function recurse_convert(text, ranges, options) {
 }
 
 export function convert(blob, options) {
-  var ranges = new Array();
+  let ranges = new Array();
   options = options || {};
   options.links = 'undefined' === typeof options.links ? true : options.links;
   ranges = ranges.concat(blob.ranges || []);
@@ -320,7 +320,7 @@ export function convert(blob, options) {
 }
 
 export function html(blob, options) {
-  var div = document.createElement('div');
+  const div = document.createElement('div');
   div.appendChild(convert(blob, options));
   return div.innerHTML;
 }

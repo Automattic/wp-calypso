@@ -15,6 +15,8 @@ import {
 	POST_REVISIONS_SELECT,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/posts/revisions';
+
 /**
  * Action creator function: POST_REVISIONS_REQUEST
  *
