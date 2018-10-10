@@ -45,7 +45,7 @@ export class Locations extends Component {
 	render() {
 		const { points } = this.props;
 		const rows = points.map( ( point, index ) =>
-			<PanelBody title={ point.place_title } key={ point.place_id } initialOpen={ false }>
+			<PanelBody title={ point.place_title } key={ point.place_id } initialOpen={ false } key={ index }>
 				<TextControl
 					label="Marker Title"
 					value={ point.title }

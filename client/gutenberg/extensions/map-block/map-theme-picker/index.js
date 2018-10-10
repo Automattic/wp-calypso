@@ -30,7 +30,7 @@ export class MapThemePicker extends Component {
 
 	render() {
 		const { options, value, onChange, label } = this.props;
-		const buttons = options.map( ( option ) => {
+		const buttons = options.map( ( option, index ) => {
 			const classes = classnames(
 				'component_map-theme-picker__button',
 				option.value,
@@ -39,6 +39,7 @@ export class MapThemePicker extends Component {
 			return (
 				<Button
 					className={ classes }
+					key={ index }
 					onClick={ ( value ) => onChange( option.value ) }
 				>
 					{ option.label }

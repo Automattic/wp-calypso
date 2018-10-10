@@ -27,6 +27,7 @@ const $ = window.jQuery;
 export class Map extends Component {
 
 	constructor() {
+		console.log("HELLO!")
 		super( ...arguments );
 		this.mapRef = createRef();
 		this.state = {
@@ -101,6 +102,7 @@ export class Map extends Component {
 			if ( window.google ) {
 				return (
 					<MapMarker
+						key={ index }
 						point={ point }
 						index={ index }
 						map={ map }
