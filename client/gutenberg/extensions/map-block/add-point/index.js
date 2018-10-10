@@ -30,6 +30,7 @@ export class AddPoint extends Component {
 		};
 		this.onAddPoint = this.onAddPoint.bind( this );
 		this.hidePopover = this.hidePopover.bind( this );
+		this.hideSelf = this.hideSelf.bind( this );
 	}
 
 	hidePopover( e ){
@@ -39,6 +40,10 @@ export class AddPoint extends Component {
 		}
 	}
 
+	hideSelf() {
+		this.setState( { isVisible: false } );
+	}
+
 	onAddPoint( point ) {
 		this.props.onAddPoint( point );
 		this.hidePopover();
@@ -46,7 +51,7 @@ export class AddPoint extends Component {
 
 	render() {
 		const { isVisible } = this.state;
-		const { showPopover, hidePopover, onAddPoint } = this;
+		const { showPopover, hidePopover, onAddPoint, setState, hideSelf } = this;
 		if ( ! isVisible ) {
 			return null;
 		}
@@ -59,9 +64,9 @@ export class AddPoint extends Component {
 				<Popover className='map__popover'>
 					<Button
 						className='map__popover_close'
-						onClick={ hidePopover }
+						onClick={ hideSelf }
 					>
-
+						<Dashicon icon="no" />
 					</Button>
 					<LocationSearch
 						onAddPoint={ onAddPoint }
