@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { flow, get, isUndefined, map, noop, omit, omitBy } from 'lodash';
+import { get, isUndefined, map, noop, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ import { flow, get, isUndefined, map, noop, omit, omitBy } from 'lodash';
 import { USERS_REQUEST } from 'state/action-types';
 import { dispatchRequestEx, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveUser } from 'state/users/actions';
+import { receiveUsers } from 'state/users/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -63,19 +63,22 @@ export const fetchUsers = action => {
  * @param {Object} action Redux action
  * @param {Array} users raw data from post revisions API
  */
-export const receiveSuccess = ( action, users ) => {
-	const { page = 1, perPage = DEFAULT_PER_PAGE } = action;
+export const receiveSuccess = ( action, users ) => dispatch => {
+	// receive users from response into Redux state
 	const normalizedUsers = map( users, normalizeUser );
+	dispatch( receiveUsers( normalizedUsers ) );
 
+	// issue request for next page if needed
+	const { page = 1, perPage = DEFAULT_PER_PAGE } = action;
 	if ( get( getHeaders( action ), 'X-WP-TotalPages', 0 ) > page ) {
-		fetchUsers( {
-			...omit( action, 'meta' ),
-			page: page + 1,
-			perPage,
-		} );
+		dispatch(
+			fetchUsers( {
+				...omit( action, 'meta' ),
+				page: page + 1,
+				perPage,
+			} )
+		);
 	}
-
-	return map( normalizedUsers, flow( receiveUser ) );
 };
 
 const dispatchUsersRequest = dispatchRequestEx( {
