@@ -18,6 +18,7 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
+const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -268,6 +269,7 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),
 			} ),
+			new DuplicatePackageCheckerPlugin(),
 			shouldCheckForCycles &&
 				new CircularDependencyPlugin( {
 					exclude: /node_modules/,

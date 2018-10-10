@@ -84,11 +84,11 @@ const props = {
 describe( 'PluginMeta basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = shallow( <PluginMeta { ...props } /> );
-		expect( comp.find( '.plugin-meta' ).length ).toBe( 1 );
+		expect( comp.find( '.plugin-meta' ) ).toHaveLength( 1 );
 	} );
 	test( 'should show upgrade nudge when appropriate', () => {
 		const comp = shallow( <PluginMeta { ...props } selectedSiteId={ 12 } /> );
-		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ).length ).toBe(
+		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(
 			1
 		);
 	} );
@@ -101,7 +101,7 @@ describe( 'PluginMeta basic tests', () => {
 				hasBusinessPlan={ false }
 			/>
 		);
-		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ).length ).toBe(
+		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(
 			0
 		);
 	} );
@@ -109,7 +109,7 @@ describe( 'PluginMeta basic tests', () => {
 		const comp = shallow(
 			<PluginMeta { ...props } selectedSite={ { ...selectedSite, jetpack: true } } />
 		);
-		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ).length ).toBe(
+		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(
 			0
 		);
 	} );
@@ -120,7 +120,7 @@ describe( 'PluginMeta basic tests', () => {
 				selectedSite={ { ...selectedSite, plan: { product_slug: PLAN_BUSINESS } } }
 			/>
 		);
-		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ).length ).toBe(
+		expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ) ).toHaveLength(
 			0
 		);
 	} );
@@ -145,9 +145,9 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 					} }
 				/>
 			);
-			expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ).length ).toBe(
-				1
-			);
+			expect(
+				comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' )
+			).toHaveLength( 1 );
 			expect(
 				comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ).props().plan
 			).toBe( PLAN_BUSINESS );
@@ -165,9 +165,9 @@ describe( 'Upsell Banner should get appropriate plan constant', () => {
 					} }
 				/>
 			);
-			expect( comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ).length ).toBe(
-				1
-			);
+			expect(
+				comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' )
+			).toHaveLength( 1 );
 			expect(
 				comp.find( 'Banner[event="calypso_plugin_detail_page_upgrade_nudge"]' ).props().plan
 			).toBe( PLAN_BUSINESS_2_YEARS );

@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { numberFormat } from 'i18n-calypso';
 
 /**
@@ -13,13 +13,13 @@ import { numberFormat } from 'i18n-calypso';
 import afterLayoutFlush from 'lib/after-layout-flush';
 import Label from './label';
 
-export default class ModuleChartXAxis extends PureComponent {
+export default class ChartXAxis extends React.PureComponent {
 	static displayName = 'ModuleChartXAxis';
 
 	static propTypes = {
-		labelWidth: PropTypes.number.isRequired,
 		data: PropTypes.array.isRequired,
 		isRtl: PropTypes.bool,
+		labelWidth: PropTypes.number.isRequired,
 	};
 
 	axisRef = React.createRef();
