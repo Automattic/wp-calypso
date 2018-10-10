@@ -1,13 +1,17 @@
-import { includes, some } from 'lodash';
+/**
+ * External dependencies
+ */
+import { some } from 'lodash';
 
-import Filters from './filters';
-import { store } from '../state';
+/**
+ * Internal dependencies
+ */
 import actions from '../state/actions';
+import Filters from './filters';
 import getFilterName from '../state/selectors/get-filter-name';
 import noteHasFilteredRead from '../state/selectors/note-has-filtered-read';
 import { bumpStat } from '../rest-client/bump-stat';
-
-var debug = require('debug')('notifications:filterbarcontroller');
+import { store } from '../state';
 
 function FilterBarController(refreshFunction) {
   if (!(this instanceof FilterBarController)) {

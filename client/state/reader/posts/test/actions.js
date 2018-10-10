@@ -187,7 +187,7 @@ describe( 'actions', () => {
 			const post = null;
 			see( post )( dispatch );
 
-			expect( dispatch.mock.calls.length ).toBe( 0 );
+			expect( dispatch.mock.calls ).toHaveLength( 0 );
 		} );
 
 		test( 'should not dispatch if post has already been seen', () => {
@@ -195,7 +195,7 @@ describe( 'actions', () => {
 			const state = { reader: { posts: { seen: { 1: true } } } };
 			see( post )( dispatch, () => state );
 
-			expect( dispatch.mock.calls.length ).toBe( 0 );
+			expect( dispatch.mock.calls ).toHaveLength( 0 );
 		} );
 
 		test( 'should dispatch POST_SEEN and send pageviews for unseen posts with sites', () => {

@@ -1,5 +1,4 @@
-// Featured Posts Area
-
+// Featured Posts
 .reader__featured-card {
 	padding: 16px 24px 0;
 	margin-bottom: 24px;
@@ -34,9 +33,11 @@
 }
 
 .reader__featured-post {
+	border: 0;
+	box-sizing: content-box;
 	position: relative;
-	min-height: 52px;
-	padding: 32px 24px;
+	margin: 0;
+	min-height: 118px;
 	background-color: $gray-dark;
 	transition: all 0.1s ease-in-out;
 	cursor: pointer;
@@ -45,7 +46,7 @@
 	// Break into 3 columns on larger screens
 	@include breakpoint( ">960px" ) {
 		flex: 1;
-		min-height: 152px;
+		min-height: 216px;
 
 		&:hover {
 			background-color: $gray-darken-30;
@@ -65,10 +66,18 @@
 }
 
 .reader__featured-post-title {
+	color: $white;
 	position: relative;
+	padding: 0 24px;
 	font-family: $serif;
 	font-weight: 700;
 	font-size: 18px;
-	color: $white;
+	line-height: 1.5;
+	text-align: left;
 	z-index: z-index( 'root', '.reader__featured-post-title' );
+
+	@include breakpoint( ">960px" ) {
+		position: absolute;
+		top: 32px;
+	}
 }

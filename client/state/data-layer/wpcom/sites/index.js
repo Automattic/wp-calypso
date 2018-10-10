@@ -14,6 +14,7 @@ import commentsTree from './comments-tree';
 import jitm from './jitm';
 import media from './media';
 import memberships from './memberships';
+import mailchimp from './mailchimp';
 import planTransfer from './plan-transfer';
 import plugins from './plugins';
 import postTypes from './post-types';
@@ -35,6 +36,7 @@ registerHandlers(
 		config.isEnabled( 'jitms' ) ? jitm : null,
 		media,
 		config.isEnabled( 'memberships' ) ? memberships : null,
+		config.isEnabled( 'mailchimp' ) ? mailchimp : null,
 		planTransfer,
 		plugins,
 		postTypes,

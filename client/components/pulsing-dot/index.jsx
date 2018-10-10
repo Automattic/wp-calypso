@@ -18,10 +18,6 @@ class PulsingDot extends React.Component {
 	componentDidMount() {
 		const { delay } = this.props;
 
-		if ( ! delay ) {
-			return;
-		}
-
 		this.timeout = setTimeout( () => {
 			this.setState( { show: true } );
 		}, delay );

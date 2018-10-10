@@ -16,7 +16,7 @@ import { registerCoreBlocks } from '@wordpress/block-library';
 import Editor from './edit-post/editor.js';
 import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
 import QueryPostTypes from 'components/data/query-post-types';
-import { requestGutenbergDraftPost as createAutoDraft, requestSitePost } from 'state/data-getters';
+import { createAutoDraft, requestSitePost } from 'state/data-getters';
 import { getHttpData } from 'state/data-layer/http-data';
 import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
@@ -28,9 +28,9 @@ class GutenbergEditor extends Component {
 		// Prevent Guided tour from showing when editor loads.
 		dispatch( 'core/nux' ).disableTips();
 
-		const { siteId, postId, uniqueDraftKey } = this.props;
+		const { siteId, postId, uniqueDraftKey, postType } = this.props;
 		if ( ! postId ) {
-			createAutoDraft( siteId, uniqueDraftKey );
+			createAutoDraft( siteId, uniqueDraftKey, postType );
 		}
 	}
 
@@ -60,18 +60,18 @@ class GutenbergEditor extends Component {
 	}
 }
 
-const getPost = ( siteId, postId ) => {
-	if ( siteId && postId ) {
-		const requestSitePostData = requestSitePost( siteId, postId );
+const getPost = ( siteId, postId, postType ) => {
+	if ( siteId && postId && postType ) {
+		const requestSitePostData = requestSitePost( siteId, postId, postType );
 		return get( requestSitePostData, 'data', null );
 	}
 
 	return null;
 };
 
-const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey } ) => {
+const mapStateToProps = ( state, { siteId, postId, uniqueDraftKey, postType } ) => {
 	const draftPostId = get( getHttpData( uniqueDraftKey ), 'data.ID', null );
-	const post = getPost( siteId, postId || draftPostId );
+	const post = getPost( siteId, postId || draftPostId, postType );
 	const isAutoDraft = 'auto-draft' === get( post, 'status', null );
 	const overridePost = isAutoDraft ? { title: '' } : null;
 

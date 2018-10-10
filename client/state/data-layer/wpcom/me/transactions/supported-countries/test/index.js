@@ -1,10 +1,3 @@
-/** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import { spy } from 'sinon';
-
 /**
  * Internal dependencies
  */
@@ -21,19 +14,17 @@ describe( 'wpcom-api', () => {
 		describe( '#fetchCountriesTransactions', () => {
 			test( 'should dispatch HTTP request to plans endpoint', () => {
 				const action = { type: 'DUMMY' };
-				const dispatch = spy();
 
-				fetchCountriesTransactions( { dispatch }, action );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith(
-					http(
-						{
-							apiVersion: '1.1',
-							method: 'GET',
-							path: '/me/transactions/supported-countries/',
-						},
-						action
+				expect( fetchCountriesTransactions( action ) ).toEqual(
+					expect.objectContaining(
+						http(
+							{
+								apiVersion: '1.1',
+								method: 'GET',
+								path: '/me/transactions/supported-countries/',
+							},
+							action
+						)
 					)
 				);
 			} );
@@ -42,33 +33,27 @@ describe( 'wpcom-api', () => {
 		describe( '#updateCountriesTransactions', () => {
 			test( 'should dispatch updated action', () => {
 				const action = { type: 'DUMMY' };
-				const dispatch = spy();
 				const data = [ 'BG', 'US', 'UK' ];
 
-				updateCountriesTransactions( { dispatch }, action, data );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWith( {
-					type: COUNTRIES_PAYMENTS_UPDATED,
-					countries: data,
-				} );
+				expect( updateCountriesTransactions( action, data ) ).toEqual(
+					expect.objectContaining( {
+						type: COUNTRIES_PAYMENTS_UPDATED,
+						countries: data,
+					} )
+				);
 			} );
 		} );
 
 		describe( '#showCountriesTransactionsLoadingError', () => {
 			test( 'should dispatch error notice', () => {
-				const dispatch = spy();
-
-				showCountriesTransactionsLoadingError( { dispatch } );
-
-				expect( dispatch ).to.have.been.calledOnce;
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-						text: "We couldn't load the countries list.",
-					},
-				} );
+				expect( showCountriesTransactionsLoadingError() ).toMatchObject(
+					{
+						type: NOTICE_CREATE,
+						notice: {
+							text: "We couldn't load the countries list."
+						}
+					}
+				);
 			} );
 		} );
 	} );

@@ -8,14 +8,14 @@ import { wpcom } from '../rest-client/wpcom';
 import store from './store';
 import { bumpStat as rawBumpStat } from '../rest-client/bump-stat';
 
-var { recordTracksEvent } = require('../helpers/stats');
+const { recordTracksEvent } = require('../helpers/stats');
 
 function bumpStat(name) {
   rawBumpStat('notes-click-action', name);
 }
 
 function updateNote(id) {
-  var globalClient = store.get('global').client;
+  const globalClient = store.get('global').client;
 
   return () => globalClient.getNote(id);
 }
@@ -48,7 +48,7 @@ export const setLikeStatus = function(noteId, siteId, postId, commentId, isLiked
 };
 
 export const spamNote = function(note) {
-  var global = store.get('global');
+  const global = store.get('global');
 
   bumpStat('spam-comment');
   recordTracksEvent('calypso_notification_note_spam', {
@@ -60,7 +60,7 @@ export const spamNote = function(note) {
 };
 
 export const trashNote = function(note) {
-  var global = store.get('global');
+  const global = store.get('global');
 
   bumpStat('trash-comment');
   recordTracksEvent('calypso_notification_note_trash', {
