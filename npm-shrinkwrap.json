@@ -6850,9 +6850,9 @@
       "dev": true
     },
     "eslint-plugin-jsx-a11y": {
-      "version": "6.1.1",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.1.1.tgz",
-      "integrity": "sha512-JsxNKqa3TwmPypeXNnI75FntkUktGzI1wSa1LgNZdSOMI+B4sxnr1lSF8m8lPiz4mKiC+14ysZQM4scewUrP7A==",
+      "version": "6.1.2",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.1.2.tgz",
+      "integrity": "sha512-7gSSmwb3A+fQwtw0arguwMdOdzmKUgnUcbSNlo+GjKLAQFuC2EZxWqG9XHRI8VscBJD5a8raz3RuxQNFW+XJbw==",
       "dev": true,
       "requires": {
         "aria-query": "^3.0.0",
@@ -12794,13 +12794,13 @@
       }
     },
     "nock": {
-      "version": "10.0.0",
-      "resolved": "https://registry.npmjs.org/nock/-/nock-10.0.0.tgz",
-      "integrity": "sha512-hE0O9Uhrg7uOpAqnA6ZfnvCS/TZy0HJgMslJ829E7ZuRytcS86/LllupHDD6Tl8fFKQ24kWe1ikX3MCrKkwaaQ==",
+      "version": "10.0.1",
+      "resolved": "https://registry.npmjs.org/nock/-/nock-10.0.1.tgz",
+      "integrity": "sha512-M0aL9IDbUFURmokoXqejZQybZk8EtlYjUBjaoICVbW62uOlyPRsnEsceyOlUik4spCOt50ptwM4BTPt20ITtcQ==",
       "dev": true,
       "requires": {
         "chai": "^4.1.2",
-        "debug": "^3.1.0",
+        "debug": "^4.1.0",
         "deep-equal": "^1.0.0",
         "json-stringify-safe": "^5.0.1",
         "lodash": "^4.17.5",
@@ -12808,6 +12808,17 @@
         "propagate": "^1.0.0",
         "qs": "^6.5.1",
         "semver": "^5.5.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "4.1.0",
+          "resolved": "https://registry.npmjs.org/debug/-/debug-4.1.0.tgz",
+          "integrity": "sha512-heNPJUJIqC+xB6ayLAMHaIrmN9HKa7aQO8MGqKpvCA+uJYVcvR6l5kgdrhRuwPFHU7P5/A1w0BjByPHwpfTDKg==",
+          "dev": true,
+          "requires": {
+            "ms": "^2.1.1"
+          }
+        }
       }
     },
     "node-bitmap": {
@@ -20043,9 +20054,9 @@
       }
     },
     "terminal-kit": {
-      "version": "1.26.2",
-      "resolved": "https://registry.npmjs.org/terminal-kit/-/terminal-kit-1.26.2.tgz",
-      "integrity": "sha512-MQgU3EHQPNLD/45lXz0qqaVDnlVs++cKO8x8eVjdXNGEWmuFgms3OFbSJiUW2i7UgdmweqeiOBwl9VWHAMyaeA==",
+      "version": "1.26.3",
+      "resolved": "https://registry.npmjs.org/terminal-kit/-/terminal-kit-1.26.3.tgz",
+      "integrity": "sha512-1iVYF0yTrKtlRUYjnw0xplCJkhbECt45dIFqRCahJeiD/416tPBFqJ3NkM498gDKwyKILGPrBRJZRlUAHChzVw==",
       "dev": true,
       "requires": {
         "@cronvel/get-pixels": "^3.3.1",
