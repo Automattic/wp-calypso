@@ -12,8 +12,6 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import './draft-js-polyfills';
-// draft-js needs to be loaded *after* the polyfills
 import {
 	CompositeDecorator,
 	Editor,
