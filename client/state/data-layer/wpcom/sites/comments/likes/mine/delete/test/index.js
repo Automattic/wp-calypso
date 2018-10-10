@@ -3,11 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-
-/**
- * Internal dependencies
- */
 import { unlikeComment, updateCommentLikes, handleUnlikeFailure } from '../';
 import { COMMENTS_UNLIKE, COMMENTS_LIKE, NOTICE_CREATE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
@@ -25,7 +20,7 @@ describe( '#unlikeComment()', () => {
 	};
 
 	test( 'should dispatch a http action to remove a comment like', () => {
-		expect( unlikeComment( action ) ).to.eql(
+		expect( unlikeComment( action ) ).toEqual(
 			http(
 				{
 					apiVersion: '1.1',
@@ -47,7 +42,7 @@ describe( '#updateCommentLikes()', () => {
 			}
 		);
 
-		expect( result ).to.eql(
+		expect( result ).toEqual(
 			bypassDataLayer( {
 				type: COMMENTS_UNLIKE,
 				siteId: SITE_ID,
@@ -63,7 +58,7 @@ describe( '#handleUnlikeFailure()', () => {
 	test( 'should dispatch an like action to rollback optimistic update', () => {
 		const result = handleUnlikeFailure( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
-		expect( result[ 0 ] ).to.eql(
+		expect( result[ 0 ] ).toEqual(
 			bypassDataLayer( {
 				type: COMMENTS_LIKE,
 				siteId: SITE_ID,
@@ -76,8 +71,14 @@ describe( '#handleUnlikeFailure()', () => {
 	test( 'should dispatch an error notice', () => {
 		const result = handleUnlikeFailure( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
-		expect( result[ 1 ].type ).to.eql( NOTICE_CREATE );
-		expect( result[ 1 ].notice.status ).to.eql( 'is-error' );
-		expect( result[ 1 ].notice.text ).to.eql( 'Could not unlike this comment' );
+		expect( result[ 1 ] ).toEqual(
+			expect.objectContaining( {
+				type: NOTICE_CREATE,
+				notice: expect.objectContaining( {
+					status: 'is-error',
+					text: 'Could not unlike this comment',
+				} ),
+			} )
+		);
 	} );
 } );
