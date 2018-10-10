@@ -155,7 +155,6 @@
 		"reader/user-mention-suggestions": true,
 		"resume-editing": true,
 		"republicize": true,
-		"restore-last-location": false,
 		"rewind-alerts": true,
 		"rewind/clone-site": true,
 		"rubberband-scroll-disable": false,
