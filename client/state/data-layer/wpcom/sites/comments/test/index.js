@@ -88,24 +88,15 @@ describe( '#addComments', () => {
 
 describe( '#fetchCommentList', () => {
 	test( 'should do nothing if no listType provided', () => {
-		const dispatch = jest.fn();
-		fetchCommentsList( { query } )( dispatch );
-
-		expect( dispatch ).not.toHaveBeenCalled();
+		expect( fetchCommentsList( { query } ) ).not.toBeDefined();
 	} );
 
 	test( 'should do nothing if invalid listType provided', () => {
-		const dispatch = jest.fn();
-		fetchCommentsList( { query: { ...query, listType: 'Calypso' } } )( dispatch );
-
-		expect( dispatch ).not.toHaveBeenCalled();
+		expect( fetchCommentsList( { query: { ...query, listType: 'Calypso' } } ) ).not.toBeDefined();
 	} );
 
 	test( 'should dispatch HTTP request for site comments', () => {
-		const dispatch = jest.fn();
-		fetchCommentsList( { query: { ...query, listType: 'site' } } )( dispatch );
-
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( fetchCommentsList( { query: { ...query, listType: 'site' } } ) ).toEqual(
 			expect.objectContaining( {
 				type: 'WPCOM_HTTP_REQUEST',
 				path: '/sites/1337/comments',
@@ -114,19 +105,13 @@ describe( '#fetchCommentList', () => {
 	} );
 
 	test( 'should default to fetch pending comments', () => {
-		const dispatch = jest.fn();
-		fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } )( dispatch );
-
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } ) ).toEqual(
 			expect.objectContaining( { query: expect.objectContaining( { status: 'unapproved' } ) } )
 		);
 	} );
 
 	test( 'should default to fetch comment-type comments', () => {
-		const dispatch = jest.fn();
-		fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } )( dispatch );
-
-		expect( dispatch ).toHaveBeenCalledWith(
+		expect( fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } ) ).toEqual(
 			expect.objectContaining( { query: expect.objectContaining( { type: 'comment' } ) } )
 		);
 	} );

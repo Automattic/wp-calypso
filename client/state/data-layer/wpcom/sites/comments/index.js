@@ -132,7 +132,7 @@ export const receiveCommentError = ( { siteId, commentId, query = {} } ) => {
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
-export const fetchCommentsList = action => dispatch => {
+export const fetchCommentsList = action => {
 	if ( 'site' !== get( action, 'query.listType' ) ) {
 		return;
 	}
@@ -149,7 +149,7 @@ export const fetchCommentsList = action => dispatch => {
 		type,
 	};
 
-	const a = http(
+	return http(
 		{
 			method: 'GET',
 			path,
@@ -158,8 +158,6 @@ export const fetchCommentsList = action => dispatch => {
 		},
 		action
 	);
-
-	dispatch( a );
 };
 
 export const addComments = ( { query }, { comments } ) => {
