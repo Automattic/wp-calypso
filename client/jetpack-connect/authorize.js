@@ -23,6 +23,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Gravatar from 'components/gravatar';
 import HelpButton from './help-button';
+import isVipSite from 'state/selectors/is-vip-site';
 import JetpackConnectHappychatButton from './happychat-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
@@ -133,7 +134,8 @@ export class JetpackAuthorize extends Component {
 			this.isSso( nextProps ) ||
 			this.isWoo( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
-			this.shouldRedirectJetpackStart( nextProps )
+			this.shouldRedirectJetpackStart( nextProps ) ||
+			this.props.isVip
 		) {
 			if ( authorizeSuccess ) {
 				return this.externalRedirectOnce( redirectAfterAuth );
@@ -660,6 +662,7 @@ export default connect(
 			isFetchingAuthorizationSite: isRequestingSite( state, authQuery.clientId ),
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
+			isVip: isVipSite( state, authQuery.clientId ),
 			mobileAppRedirect,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
