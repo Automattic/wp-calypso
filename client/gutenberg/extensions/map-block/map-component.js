@@ -244,17 +244,14 @@ export class Map extends Component {
 
 	getMarkerIcon() {
 		const { marker_color } = this.props;
-		const url =
-			'https://atavist-static.s3.amazonaws.com/prototype_assets/map_marker_2x_' +
-			marker_color +
-			'.png';
-		return new window.google.maps.MarkerImage(
-			url,
-			null,
-			null,
-			null,
-			new window.google.maps.Size( 32, 40 )
-		);
+		const svgPath = {
+		    path: 'M16,38 C16,38 32,26.692424 32,16 C32,5.307576 24.836556,0 16,0 C7.163444,0 0,5.307576 0,16 C0,26.692424 16,38 16,38 Z',
+		    fillColor: marker_color,
+		    fillOpacity: 0.6,
+		    scale: 1,
+		    strokeWeight: 0
+		  };
+	    return svgPath;
 	}
 
 	sizeMap() {
