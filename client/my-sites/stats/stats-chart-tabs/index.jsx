@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, flowRight } from 'lodash';
+import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -31,6 +31,22 @@ import { formatDate, getQueryDate } from './utility';
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
+		activeLegend: PropTypes.arrayOf( PropTypes.string ),
+		activeTab: PropTypes.shape( {
+			attr: PropTypes.string,
+			gridicon: PropTypes.string,
+			label: PropTypes.string,
+			legendOptions: PropTypes.arrayOf( PropTypes.string ),
+		} ),
+		availableLegend: PropTypes.arrayOf( PropTypes.string ),
+		charts: PropTypes.arrayOf(
+			PropTypes.shape( {
+				attr: PropTypes.string,
+				gridicon: PropTypes.string,
+				label: PropTypes.string,
+				legendOptions: PropTypes.arrayOf( PropTypes.string ),
+			} )
+		),
 		data: PropTypes.arrayOf(
 			PropTypes.shape( {
 				comments: PropTypes.number,
@@ -43,26 +59,8 @@ class StatModuleChartTabs extends Component {
 			} )
 		),
 		isActiveTabLoading: PropTypes.bool,
+		onChangeLegend: PropTypes.func.isRequired,
 	};
-
-	state = {
-		activeLegendCharts: null,
-		activeTab: null,
-	};
-
-	static getDerivedStateFromProps( props, state ) {
-		const activeTab = StatModuleChartTabs.getActiveTab( props );
-		const activeLegendCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
-
-		if ( activeTab !== state.activeTab ) {
-			return { activeLegendCharts, activeTab };
-		}
-		return null;
-	}
-
-	static getActiveTab( props ) {
-		return find( props.charts, { attr: props.chartTab } ) || props.charts[ 0 ];
-	}
 
 	buildTooltipData( item ) {
 		const tooltipData = [];
@@ -148,23 +146,21 @@ class StatModuleChartTabs extends Component {
 	}
 
 	onLegendClick = chartItem => {
-		const activeLegendCharts = this.state.activeLegendCharts;
-		const chartIndex = activeLegendCharts.indexOf( chartItem );
+		const activeLegend = this.props.activeLegend.slice();
+		const chartIndex = activeLegend.indexOf( chartItem );
 		let gaEventAction;
 		if ( -1 === chartIndex ) {
-			activeLegendCharts.push( chartItem );
+			activeLegend.push( chartItem );
 			gaEventAction = ' on';
 		} else {
-			activeLegendCharts.splice( chartIndex );
+			activeLegend.splice( chartIndex );
 			gaEventAction = ' off';
 		}
 		this.props.recordGoogleEvent(
 			'Stats',
 			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
 		);
-		this.setState( {
-			activeLegendCharts,
-		} );
+		this.props.onChangeLegend( activeLegend );
 	};
 
 	buildChartData() {
@@ -173,7 +169,6 @@ class StatModuleChartTabs extends Component {
 			return [];
 		}
 
-		const activeTab = this.props.chartTab;
 		const labelKey =
 			'label' +
 			this.props.period.period.charAt( 0 ).toUpperCase() +
@@ -184,9 +179,10 @@ class StatModuleChartTabs extends Component {
 				recordClassName = record.classNames.join( ' ' );
 			}
 
+			const { activeLegend } = this.props;
 			let nestedValue;
-			if ( this.state.activeLegendCharts.length ) {
-				nestedValue = record[ this.state.activeLegendCharts[ 0 ] ];
+			if ( activeLegend.length ) {
+				nestedValue = record[ activeLegend[ 0 ] ];
 			}
 
 			const className = classNames( recordClassName, {
@@ -195,7 +191,7 @@ class StatModuleChartTabs extends Component {
 
 			const item = {
 				label: record[ labelKey ],
-				value: record[ activeTab ],
+				value: record[ this.props.chartTab ],
 				data: record,
 				nestedValue,
 				className,
@@ -220,9 +216,9 @@ class StatModuleChartTabs extends Component {
 				) }
 				<Card className={ classNames( ...classes ) }>
 					<Legend
-						activeCharts={ this.state.activeLegendCharts }
-						activeTab={ this.state.activeTab }
-						availableCharts={ this.state.activeLegendCharts }
+						activeCharts={ this.props.activeLegend }
+						activeTab={ this.props.activeTab }
+						availableCharts={ this.props.availableLegend }
 						clickHandler={ this.onLegendClick }
 						tabs={ this.props.charts }
 					/>
@@ -295,7 +291,9 @@ const connectComponent = connect(
 	{ recordGoogleEvent },
 	null,
 	{
-		areStatePropsEqual: compareProps( { deep: [ 'quickQuery', 'fullQuery' ] } ),
+		areStatePropsEqual: compareProps( {
+			deep: [ 'activeTab', 'fullQuery', 'quickQuery' ],
+		} ),
 	}
 );
 
