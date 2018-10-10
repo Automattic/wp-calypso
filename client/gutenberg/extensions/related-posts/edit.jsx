@@ -8,7 +8,6 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { Component, Fragment } from '@wordpress/element';
 import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
-import { moment } from '@wordpress/date';
 import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 
@@ -150,14 +149,9 @@ class RelatedPostsEdit extends Component {
 									</Button>
 								</h4>
 								{ displayDate && (
-									<time
-										dateTime={ moment( post.date ).toISOString() }
-										className={ `${ className }__preview-post-date has-small-font-size` }
-									>
-										{ moment( post.date )
-											.local()
-											.format( 'MMMM DD, Y' ) }
-									</time>
+									<span className={ `${ className }__preview-post-date has-small-font-size` }>
+										{ post.date }
+									</span>
 								) }
 								{ displayContext && <p>{ post.context }</p> }
 							</div>
