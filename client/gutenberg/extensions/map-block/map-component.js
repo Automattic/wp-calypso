@@ -44,10 +44,13 @@ export class Map extends Component {
 		this.addPoint = this.addPoint.bind( this );
 		this.onMapClick = this.onMapClick.bind( this );
 		this.setBoundsByMarkers = this.setBoundsByMarkers.bind( this );
+
+		this.addPointRef = React.createRef();
 	}
 
 	onMarkerClick( marker ) {
 		this.setState( { activeMarker: marker } );
+		this.setAddPointVisibility( false );
 	}
 
 	onMapClick() {
@@ -55,6 +58,7 @@ export class Map extends Component {
 	}
 
 	addPoint( point ) {
+		this.setAddPointVisibility( false );
 		const { points } = this.props;
 		const newPoints = clone( points );
 		newPoints.push( point );
@@ -77,6 +81,13 @@ export class Map extends Component {
 		const newPoints = clone( points );
 		assign( newPoints[ index ], updates );
 		this.props.onSetPoints( newPoints );
+	}
+
+	setAddPointVisibility( visible = true ) {
+		this.addPointRef.current.setState( { isVisible: visible } );
+		if ( visible ) {
+			this.setState( { activeMarker: null } );
+		}
 	}
 
 	render() {
@@ -140,7 +151,7 @@ export class Map extends Component {
 				</div>
 				{ infoWindow }
 				{ admin &&
-					<AddPoint onAddPoint={ addPoint } isVisible={ activeMarker ? false : true } />
+					<AddPoint onAddPoint={ addPoint } isVisible={ activeMarker ? false : true } ref={ this.addPointRef } />
 				}
 			</Fragment>
 		);
@@ -293,6 +304,7 @@ export class Map extends Component {
 				window.google.maps.event.trigger( map, 'resize' );
 				map.setCenter( new window.google.maps.LatLng( map_center.latitude, map_center.longitude ) );
 				this.setBoundsByMarkers();
+				this.setAddPointVisibility( true );
 			}.bind( this ),
 			1000
 		);
