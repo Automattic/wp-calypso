@@ -105,24 +105,30 @@ describe( '#fetchCommentList', () => {
 		const dispatch = jest.fn();
 		fetchCommentsList( { query: { ...query, listType: 'site' } } )( dispatch );
 
-		expect( dispatch.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
-			type: 'WPCOM_HTTP_REQUEST',
-			path: '/sites/1337/comments',
-		} );
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'WPCOM_HTTP_REQUEST',
+				path: '/sites/1337/comments',
+			} )
+		);
 	} );
 
 	test( 'should default to fetch pending comments', () => {
 		const dispatch = jest.fn();
 		fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } )( dispatch );
 
-		expect( dispatch.mock.calls[ 0 ][ 0 ] ).toMatchObject( { query: { status: 'unapproved' } } );
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( { query: expect.objectContaining( { status: 'unapproved' } ) } )
+		);
 	} );
 
 	test( 'should default to fetch comment-type comments', () => {
 		const dispatch = jest.fn();
 		fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } )( dispatch );
 
-		expect( dispatch.mock.calls[ 0 ][ 0 ] ).toMatchObject( { query: { type: 'comment' } } );
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( { query: expect.objectContaining( { type: 'comment' } ) } )
+		);
 	} );
 } );
 
