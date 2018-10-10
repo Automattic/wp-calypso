@@ -9,6 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { items } from '../reducer';
+import { receiveUsers } from '../actions';
 import { USER_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -56,6 +57,25 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				73705554: { ID: 73705554, login: 'testtwosites2014' },
+			} );
+		} );
+
+		test( 'should receive list of users', () => {
+			const original = Object.freeze( {
+				73705554: { ID: 73705554, login: 'testonesite2014' },
+			} );
+
+			const state = items(
+				original,
+				receiveUsers( [
+					{ ID: 73705554, login: 'testtwosites2014' },
+					{ ID: 73705672, login: 'testthreesites2018' },
+				] )
+			);
+
+			expect( state ).to.eql( {
+				73705554: { ID: 73705554, login: 'testtwosites2014' },
+				73705672: { ID: 73705672, login: 'testthreesites2018' },
 			} );
 		} );
 	} );
