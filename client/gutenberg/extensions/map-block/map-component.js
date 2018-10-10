@@ -85,7 +85,9 @@ export class Map extends Component {
 	}
 
 	setAddPointVisibility( visible = true ) {
-		this.addPointRef.current.setState( { isVisible: visible } );
+		if ( this.addPointRef.current ) {
+			this.addPointRef.current.setState( { isVisible: visible } );
+		}
 		if ( visible ) {
 			this.setState( { activeMarker: null } );
 		}
