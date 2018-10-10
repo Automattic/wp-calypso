@@ -4,7 +4,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -26,11 +25,7 @@ describe( '#unlikeComment()', () => {
 	};
 
 	test( 'should dispatch a http action to remove a comment like', () => {
-		const dispatch = spy();
-		unlikeComment( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( unlikeComment( action ) ).to.eql(
 			http(
 				{
 					apiVersion: '1.1',
@@ -45,18 +40,14 @@ describe( '#unlikeComment()', () => {
 
 describe( '#updateCommentLikes()', () => {
 	test( 'should dispatch a comment like update action', () => {
-		const dispatch = spy();
-
-		updateCommentLikes(
-			{ dispatch },
+		const result = updateCommentLikes(
 			{ siteId: SITE_ID, postId: POST_ID, commentId: 1 },
 			{
 				like_count: 4,
 			}
 		);
 
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( result ).to.eql(
 			bypassDataLayer( {
 				type: COMMENTS_UNLIKE,
 				siteId: SITE_ID,
@@ -70,12 +61,9 @@ describe( '#updateCommentLikes()', () => {
 
 describe( '#handleUnlikeFailure()', () => {
 	test( 'should dispatch an like action to rollback optimistic update', () => {
-		const dispatch = spy();
+		const result = handleUnlikeFailure( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
-		handleUnlikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith(
+		expect( result[ 0 ] ).to.eql(
 			bypassDataLayer( {
 				type: COMMENTS_LIKE,
 				siteId: SITE_ID,
@@ -86,17 +74,10 @@ describe( '#handleUnlikeFailure()', () => {
 	} );
 
 	test( 'should dispatch an error notice', () => {
-		const dispatch = spy();
+		const result = handleUnlikeFailure( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
-		handleUnlikeFailure( { dispatch }, { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
-
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWithMatch( {
-			type: NOTICE_CREATE,
-			notice: {
-				status: 'is-error',
-				text: 'Could not unlike this comment',
-			},
-		} );
+		expect( result[ 1 ].type ).to.eql( NOTICE_CREATE );
+		expect( result[ 1 ].notice.status ).to.eql( 'is-error' );
+		expect( result[ 1 ].notice.text ).to.eql( 'Could not unlike this comment' );
 	} );
 } );
