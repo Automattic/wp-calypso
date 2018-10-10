@@ -66,17 +66,17 @@
 
 .formatted-header__title {
 	font-family: $signup-sans;
-	font-size: 48px;
+	font-size: 2.953em;
 	font-weight: 700;
 	line-height: 1.2;
 }
 
 @include breakpoint( '>1040px' ) {
  	.formatted-header__title {
-		font-size: 60px;
+		font-size: 3.375em;
 	}
 
  	.formatted-header__subtitle {
-		font-size: 18px;
+		font-size: 1.313em;
 	}
 } 
