@@ -72,7 +72,7 @@ export function processItem( item ) {
 		item.status && { activityStatus: item.status },
 		object && object.target_ts && { activityTargetTs: object.target_ts },
 		item.is_aggregate && { isAggregate: item.is_aggregate },
-		item.items && { items: item.items.map( processItem ) }
+		item.streams && { streams: item.streams.map( processItem ) }
 	);
 }
 

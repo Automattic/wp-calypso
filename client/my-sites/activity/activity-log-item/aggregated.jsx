@@ -45,7 +45,7 @@ class ActivityLogAggregatedItem extends Component {
 					className="activity-log-item__card"
 					header={ <ActivityDescription activity={ activity } /> }
 				>
-					{ activity.items.map( log => (
+					{ activity.streams.map( log => (
 						<Fragment key={ log.activityId }>
 							<ActivityLogItem
 								key={ log.activityId }
