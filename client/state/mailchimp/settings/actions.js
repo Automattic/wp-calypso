@@ -38,11 +38,11 @@ export const requestSettingsUpdate = ( siteId, settings ) => {
 
 		return wpcom.req
 			.post( `/sites/${ siteId }/mailchimp/settings`, settings )
-			.then( () => {
+			.then( data => {
 				dispatch( {
 					type: MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 					siteId,
-					settings,
+					settings: data,
 				} );
 			} )
 			.catch( error => {
