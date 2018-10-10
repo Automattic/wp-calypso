@@ -11,3 +11,4 @@ import 'gutenberg/extensions/publicize/editor';
 import 'gutenberg/extensions/related-posts/editor';
 import 'gutenberg/extensions/simple-payments/editor';
 import 'gutenberg/extensions/tiled-gallery/editor';
+import 'gutenberg/extensions/map-block';
