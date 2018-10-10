@@ -17,6 +17,11 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const getRandomPromo = () => {
 	const promoOptions = [
 		{
