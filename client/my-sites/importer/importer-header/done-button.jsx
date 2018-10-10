@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import Button from 'components/forms/form-button';
 import { resetImport } from 'lib/importer/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { deselectImporterOption } from 'state/ui/importers/actions';
 
 export class DoneButton extends React.PureComponent {
 	static displayName = 'DoneButton';
@@ -35,6 +36,7 @@ export class DoneButton extends React.PureComponent {
 		} = this.props;
 		const tracksType = type.endsWith( 'site-importer' ) ? type + '-wix' : type;
 
+		this.props.deselectImporterOption();
 		resetImport( siteId, importerId );
 
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
@@ -57,7 +59,10 @@ export class DoneButton extends React.PureComponent {
 export default flow(
 	connect(
 		null,
-		{ recordTracksEvent }
+		{
+			deselectImporterOption,
+			recordTracksEvent,
+		}
 	),
 	localize
 )( DoneButton );

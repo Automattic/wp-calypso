@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, get } from 'lodash';
+import { filter, first, get, includes, isEmpty, keyBy, keys, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,6 +37,7 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
+import { getImporterOption } from 'state/ui/importers/selectors';
 
 /**
  * Configuration for each of the importers to be rendered in this section. If
@@ -72,6 +73,10 @@ const importers = [
 		component: SquarespaceImporter,
 	},
 ];
+
+const importersDataObject = keyBy( importers, 'type' );
+const enabledImportersData = pickBy( importersDataObject, 'isImporterEnabled' );
+const enabledImporterTypes = keys( enabledImportersData );
 
 const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, importItem => importItem.site.ID === siteID );
@@ -142,30 +147,30 @@ class SiteSettingsImport extends Component {
 	}
 
 	/**
-	 * Receives import jobs data (`importsForSite`) and maps this to return a
-	 * list of importer elements for active import jobs
+	 * Receives import jobs data (`importsForSite`) and maps this to return an
+	 * importer element for the first valid active import job
 	 *
 	 * @param {Array} importsForSite The list of active import jobs
-	 * @returns {Array} Importer react elements for the active import jobs
+	 * @returns {Component||null} Importer Component for the active import job
 	 */
-	renderActiveImporters( importsForSite ) {
-		return importers.map( importer => {
-			const { type, isImporterEnabled, component: ImporterComponent } = importer;
+	renderImporterScreen( importsForSite ) {
+		const { importerOption } = this.props;
+		const enabledImports = filter( importsForSite, importer =>
+			includes( enabledImporterTypes, importer.type )
+		);
+		const activeImporter = first( enabledImports );
 
-			if ( ! isImporterEnabled ) {
-				return;
-			}
+		if ( ! activeImporter ) {
+			return null;
+		}
 
-			return importsForSite
-				.filter( importItem => importItem.type === type )
-				.map( ( importItem, idx ) => (
-					<ImporterComponent
-						key={ type + idx }
-						site={ importItem.site }
-						importerStatus={ importItem }
-					/>
-				) );
-		} );
+		const ImporterComponent = get( importersDataObject, [ importerOption, 'component' ] );
+
+		if ( ! ImporterComponent ) {
+			return null;
+		}
+
+		return <ImporterComponent site={ activeImporter.site } importerStatus={ activeImporter } />;
 	}
 
 	/**
@@ -190,11 +195,11 @@ class SiteSettingsImport extends Component {
 			// Add in the 'site' and 'siteTitle' properties to the import objects.
 			.map( item => Object.assign( {}, item, { site, siteTitle } ) );
 
-		if ( 0 === importsForSite.length ) {
+		if ( isEmpty( importsForSite ) ) {
 			return this.renderIdleImporters( site, siteTitle, appStates.INACTIVE );
 		}
 
-		return this.renderActiveImporters( importsForSite );
+		return this.renderImporterScreen( importsForSite );
 	}
 
 	updateFromAPI = () => {
@@ -208,6 +213,7 @@ class SiteSettingsImport extends Component {
 
 	render() {
 		const { site, siteSlug, translate } = this.props;
+
 		if ( ! site ) {
 			return <Placeholder />;
 		}
@@ -271,4 +277,5 @@ class SiteSettingsImport extends Component {
 export default connect( state => ( {
 	site: getSelectedSite( state ),
 	siteSlug: getSelectedSiteSlug( state ),
+	importerOption: getImporterOption( state ),
 } ) )( localize( SiteSettingsImport ) );
