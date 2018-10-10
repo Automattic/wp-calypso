@@ -18,6 +18,8 @@ import { getSite } from 'state/sites/selectors';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 
+const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
+
 class ActivityLogAggregatedItem extends Component {
 	render() {
 		const {
@@ -29,8 +31,9 @@ class ActivityLogAggregatedItem extends Component {
 			rewindState,
 			siteId,
 			timezone,
+			translate,
 		} = this.props;
-		const { activityIcon, activityStatus, activityTs } = activity;
+		const { activityIcon, activityStatus, activityTs, streamCount } = activity;
 		const adjustedTime = adjustMoment( { gmtOffset, moment: moment.utc( activityTs ), timezone } );
 		const classes = classNames( 'activity-log-item', 'is-aggregated' );
 		return (
@@ -57,6 +60,15 @@ class ActivityLogAggregatedItem extends Component {
 							/>
 						</Fragment>
 					) ) }
+					{ streamCount > MAX_STREAM_ITEMS_IN_AGGREGATE && (
+						<div className="activity-log-item__footer">
+							<p>
+								{ translate( 'Showing %(number)d of %(total)d activities', {
+									args: { number: MAX_STREAM_ITEMS_IN_AGGREGATE, total: streamCount },
+								} ) }
+							</p>
+						</div>
+					) }
 				</FoldableCard>
 			</div>
 		);
