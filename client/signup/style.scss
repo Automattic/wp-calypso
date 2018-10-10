@@ -61,3 +61,22 @@
 .is-section-signup .layout__content {
 	overflow: visible;
 }
+
+/* New Signup Styles */
+
+.formatted-header__title {
+	font-family: $signup-sans;
+	font-size: 48px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+@include breakpoint( '>1040px' ) {
+ 	.formatted-header__title {
+		font-size: 60px;
+	}
+
+ 	.formatted-header__subtitle {
+		font-size: 18px;
+	}
+} 
