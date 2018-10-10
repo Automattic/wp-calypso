@@ -70,7 +70,10 @@
 				"streams_have_same_actor": { "type": "boolean" },
 				"last_published": { "type": "string" },
 				"rewind_id": { "type": [ "null", "string" ] },
-				"items": { "type": "array" },
+				"items": {
+					"type": "array",
+					"items": { "type": "object" }
+				},
 				"name": { "type": "string" },
 				"object": { "type": "object" },
 				"published": { "type": "string" },

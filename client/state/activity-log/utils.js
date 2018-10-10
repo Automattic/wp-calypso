@@ -1,8 +1,25 @@
 /** @format */
 
-export const filterStateToApiQuery = filter =>
-	Object.assign(
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+
+export const filterStateToApiQuery = filter => {
+	let aggregate;
+	if ( config.isEnabled( 'activity-log-aggregated-events' ) ) {
+		if ( filter.aggregate ) {
+			aggregate = filter.aggregate;
+		} else {
+			aggregate = true;
+		}
+	} else {
+		aggregate = false;
+	}
+
+	return Object.assign(
 		{},
+		{ aggregate },
 		filter.action && { action: filter.action },
 		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
@@ -12,14 +29,15 @@ export const filterStateToApiQuery = filter =>
 		filter.group && { group: filter.group },
 		filter.notGroup && { not_group: filter.notGroup },
 		filter.name && { name: filter.name },
-		{ number: 1000 },
-		{ aggregate: true }
+		{ number: 1000 }
 	);
+};
 
 export const filterStateToQuery = filter =>
 	Object.assign(
 		{},
 		filter.action && { action: filter.action.join( ',' ) },
+		filter.aggregate && { aggregate: filter.aggregate },
 		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
 		filter.before && { before: filter.before },
@@ -35,6 +53,7 @@ export const queryToFilterState = query =>
 	Object.assign(
 		{},
 		query.action && { action: decodeURI( query.action ).split( ',' ) },
+		query.aggregate && { aggregate: query.aggregate },
 		query.on && { on: query.on },
 		query.after && { after: query.after },
 		query.before && { before: query.before },
