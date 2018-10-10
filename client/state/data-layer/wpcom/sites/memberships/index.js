@@ -10,10 +10,8 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { MEMBERSHIPS_PRODUCTS_RECEIVE, MEMBERSHIPS_PRODUCTS_LIST } from 'state/action-types';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
-import subscriptionsHandlers from './subscriptions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
@@ -53,14 +51,6 @@ export const handleMembershipProductsList = dispatchRequestEx( {
 	onError: noop,
 } );
 
-registerHandlers(
-	'state/data-layer/wpcom/sites/memberships/index.js',
-	mergeHandlers(
-		{
-			[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
-		},
-		subscriptionsHandlers
-	)
-);
-
-export default {};
+registerHandlers( 'state/data-layer/wpcom/sites/memberships/index.js', {
+	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
+} );

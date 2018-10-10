@@ -51,5 +51,3 @@ export const dispatchPosterRequest = dispatchRequestEx( {
 registerHandlers( 'state/data-layer/wpcom/videos/poster/index.js', {
 	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchPosterRequest ],
 } );
-
-export default {};

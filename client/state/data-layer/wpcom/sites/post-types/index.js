@@ -31,5 +31,3 @@ const handlePostTypesRequest = dispatchRequestEx( {
 registerHandlers( 'state/data-layer/wpcom/sites/post-types/index.js', {
 	[ POST_TYPES_REQUEST ]: [ handlePostTypesRequest ],
 } );
-
-export default {};

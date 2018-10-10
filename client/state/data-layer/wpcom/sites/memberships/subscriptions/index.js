@@ -39,5 +39,3 @@ export const handleSubscribedMembershipsList = dispatchRequestEx( {
 registerHandlers( 'state/data-layer/wpcom/sites/memberships/subscriptions/index.js', {
 	[ MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST ]: [ handleSubscribedMembershipsList ],
 } );
-
-export default {};

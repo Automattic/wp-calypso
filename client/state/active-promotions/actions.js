@@ -11,6 +11,8 @@ import {
 	ACTIVE_PROMOTIONS_REQUEST_FAILURE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/active-promotions';
+
 /**
  * Action creator function: RECEIVE
  *

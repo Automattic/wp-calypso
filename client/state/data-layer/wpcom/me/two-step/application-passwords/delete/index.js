@@ -63,5 +63,3 @@ registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/dele
 		} ),
 	],
 } );
-
-export default {};

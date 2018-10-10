@@ -85,5 +85,3 @@ registerHandlers( 'state/data-layer/wpcom/activity-log/rewind/to/index.js', {
 		} ),
 	],
 } );
-
-export default {};

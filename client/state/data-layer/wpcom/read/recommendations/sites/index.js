@@ -63,5 +63,3 @@ registerHandlers( 'state/data-layer/wpcom/read/recommendations/sites/index.js', 
 		dispatchRequest( requestRecommendedSites, receiveRecommendedSitesResponse, noop ),
 	],
 } );
-
-export default {};

@@ -9,6 +9,8 @@ import {
 	HELP_LINKS_REQUEST,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/help/search';
+
 export const selectSiteId = siteId => ( {
 	type: HELP_CONTACT_FORM_SITE_SELECT,
 	siteId,

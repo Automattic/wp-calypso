@@ -13,6 +13,8 @@ import {
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
+import 'state/data-layer/wpcom/sites/mailchimp';
+
 export const requestSettings = siteId => ( {
 	siteId,
 	type: MAILCHIMP_SETTINGS_LIST,

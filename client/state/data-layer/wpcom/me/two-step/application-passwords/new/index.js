@@ -79,5 +79,3 @@ registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/new/
 		} ),
 	],
 } );
-
-export default {};

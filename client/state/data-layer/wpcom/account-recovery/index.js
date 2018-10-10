@@ -16,5 +16,3 @@ registerHandlers(
 	'state/data-layer/wpcom/account-recovery/index.js',
 	mergeHandlers( lookup, requestReset, reset, validate )
 );
-
-export default {};
