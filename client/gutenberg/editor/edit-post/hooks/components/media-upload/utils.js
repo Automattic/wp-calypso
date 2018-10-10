@@ -5,6 +5,11 @@
 import { get, reduce } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import { parseWithAttributeSchema } from '@wordpress/blocks';
+
+/**
  * Convert the Calypso Media Modal output to the format expected by Gutenberg
  * @param {Object} media Calypso media modal output
  *
@@ -15,7 +20,10 @@ export const mediaCalypsoToGutenberg = media => {
 		id: get( media, 'ID' ),
 		url: get( media, 'URL' ),
 		alt: get( media, 'alt' ),
-		caption: get( media, 'caption' ),
+		// TODO: replace with `{ source: 'rich-text' }` after updating Gutenberg
+		caption: !! media.caption
+			? parseWithAttributeSchema( media.caption, { source: 'children' } )
+			: '',
 		description: get( media, 'description' ),
 		filename: get( media, 'file' ),
 		height: get( media, 'height' ),
