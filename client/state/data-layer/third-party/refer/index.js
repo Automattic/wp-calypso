@@ -14,7 +14,7 @@ import { http } from 'state/http/actions';
 import { AFFILIATE_REFERRAL } from 'state/action-types';
 
 const trackAffiliatePageLoad = action => {
-	const { affiliateId, campaignId, urlPath } = action;
+	const { affiliateId, campaignId, subId, urlPath } = action;
 
 	if ( ! affiliateId || isNaN( affiliateId ) ) {
 		return null;
@@ -28,6 +28,7 @@ const trackAffiliatePageLoad = action => {
 			body: {
 				affiliate_id: affiliateId,
 				campaign_id: campaignId || '',
+				sub_id: subId || '',
 				referrer: urlPath,
 			},
 			// Needed to check and set the 'wp-affiliate-tracker' cookie
