@@ -31,6 +31,11 @@ import { connect } from 'react-redux';
  */
 import config from 'config';
 
+/**
+ * Stylesheet dependencies
+ */
+import './style.scss';
+
 // Components
 import DocumentHead from 'components/data/document-head';
 import LocaleSuggestions from 'components/locale-suggestions';
