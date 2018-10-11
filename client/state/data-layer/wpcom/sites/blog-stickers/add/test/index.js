@@ -33,7 +33,7 @@ describe( 'blog-sticker-add', () => {
 	} );
 
 	describe( 'receiveBlogStickerAdd', () => {
-		test( 'should dispatch a success notice', () => {
+		test( 'should dispatch a success notice by default', () => {
 			const output = receiveBlogStickerAdd( {
 				payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: true },
 			} );
@@ -44,6 +44,13 @@ describe( 'blog-sticker-add', () => {
 					} ),
 				} )
 			);
+		} );
+
+		test( 'should not dispatch a success notice if withNotice is false', () => {
+			const output = receiveBlogStickerAdd( {
+				payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: false },
+			} );
+			expect( output ).toBeUndefined();
 		} );
 	} );
 
@@ -59,6 +66,15 @@ describe( 'blog-sticker-add', () => {
 			expect( output[ 0 ] ).toEqual(
 				bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) )
 			);
+		} );
+
+		test( 'should dispatch an error notice by default', () => {
+			const output = receiveBlogStickerAddError(
+				{ payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: true } },
+				{
+					success: false,
+				}
+			);
 
 			expect( output[ 1 ] ).toEqual(
 				expect.objectContaining( {
@@ -67,6 +83,17 @@ describe( 'blog-sticker-add', () => {
 					} ),
 				} )
 			);
+		} );
+
+		test( 'should not dispatch an error notice if withNotice is false', () => {
+			const output = receiveBlogStickerAddError(
+				{ payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: false } },
+				{
+					success: false,
+				}
+			);
+
+			expect( output[ 1 ] ).toBeUndefined();
 		} );
 	} );
 
