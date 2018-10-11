@@ -54,7 +54,14 @@ export class AddPoint extends Component {
 
 	render() {
 		const { isVisible } = this.state;
-		const { showPopover, hidePopover, onAddPoint, setState, hideSelf } = this;
+		const {
+			showPopover,
+			hidePopover,
+			onAddPoint,
+			setState,
+			hideSelf
+		} = this;
+
 		if ( ! isVisible ) {
 			return null;
 		}

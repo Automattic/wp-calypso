@@ -44,8 +44,8 @@ export const CONFIG = {
 		map_center: {
 			type: 'object',
 			default: {
-				latitude: 40.7022937,
-				longitude: -73.9863515
+				latitude: 37.7749295,
+				longitude: -122.41941550000001
 			}
 		},
 		focus_mode: {

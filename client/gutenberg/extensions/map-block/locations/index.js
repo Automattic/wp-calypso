@@ -37,14 +37,22 @@ export class Locations extends Component {
 
 	onDeletePoint( e ) {
 		const index = parseInt( e.target.getAttribute( 'data-id' ) );
-		const { points, onChange } = this.props;
+		const {
+			points,
+			onChange
+		} = this.props;
+
 		let newPoints = clone( points );
 		newPoints.splice( index, 1 );
 		onChange( newPoints );
 	}
 
 	setMarkerField( field, value, index ) {
-		const { points, onChange } = this.props;
+		const {
+			points,
+			onChange
+		} = this.props;
+
 		let newPoints = clone( points );
 		newPoints[index][field] = value;
 		onChange( newPoints );
