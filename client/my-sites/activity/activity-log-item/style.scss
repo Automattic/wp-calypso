@@ -15,6 +15,10 @@
 	white-space: pre;
 }
 
+.activity-log-item.activity-log-item__restore-confirm .card {
+	white-space: normal;
+}
+
 .activity-log-item .foldable-card {
 	.foldable-card__expand .gridicon {
 		transform: none;
