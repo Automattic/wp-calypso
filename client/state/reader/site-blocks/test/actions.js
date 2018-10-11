@@ -33,10 +33,10 @@ describe( 'actions', () => {
 
 	describe( '#requestSiteBlocks', () => {
 		test( 'should return an action when site blocks are requested', () => {
-			const action = requestSiteBlocks();
+			const action = requestSiteBlocks( { page: 4 } );
 			expect( action ).toEqual( {
 				type: READER_SITE_BLOCKS_REQUEST,
-				payload: {},
+				payload: { page: 4 },
 			} );
 		} );
 	} );

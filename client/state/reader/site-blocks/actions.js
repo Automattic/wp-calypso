@@ -33,7 +33,7 @@ export function unblockSite( siteId ) {
 	};
 }
 
-export function requestSiteBlocks( { page } ) {
+export function requestSiteBlocks( { page } = {} ) {
 	return {
 		type: READER_SITE_BLOCKS_REQUEST,
 		payload: {
