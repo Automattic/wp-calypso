@@ -43,6 +43,7 @@ export const filterStateToQuery = filter =>
 		{},
 		filter.action && { action: filter.action.join( ',' ) },
 		! isUndefined( filter.aggregate ) && { aggregate: filter.aggregate },
+		filter.backButton && { back_button: true },
 		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
 		filter.before && { before: filter.before },
@@ -67,5 +68,6 @@ export const queryToFilterState = query =>
 		query.name && { name: decodeURI( query.name ).split( ',' ) },
 		query.group && { group: decodeURI( query.group ).split( ',' ) },
 		query.not_group && { notGroup: decodeURI( query.not_group ).split( ',' ) },
-		query.page && query.page > 0 && { page: query.page }
+		query.page && query.page > 0 && { page: query.page },
+		query.back_button && { backButton: true }
 	);

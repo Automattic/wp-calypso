@@ -34,6 +34,7 @@ class ActivityLogAggregatedItem extends Component {
 			before: firstPublishedDate,
 			after: lastPublishedDate,
 			aggregate: false,
+			backButton: true,
 		} );
 		const query = filterStateToQuery( newFilter );
 
