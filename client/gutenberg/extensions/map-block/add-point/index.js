@@ -3,7 +3,9 @@
  */
 
 import { __ } from '@wordpress/i18n';
+
 import { Component } from '@wordpress/element';
+
 import {
 	Button,
 	Dashicon,
@@ -19,6 +21,7 @@ import {
  */
 
 import LocationSearch from '../location-search';
+
 import './style.scss';
 
 export class AddPoint extends Component {
