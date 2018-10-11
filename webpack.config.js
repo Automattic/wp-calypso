@@ -284,6 +284,9 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					statsFilename: path.join( __dirname, 'stats.json' ),
 					statsOptions: {
 						source: false,
+						reasons: false,
+						optimizationBailout: false,
+						chunkOrigins: false,
 					},
 				} ),
 		] ),
