@@ -35,9 +35,13 @@ export class MediaUpload extends Component {
 	openModal = () => this.setState( { isModalVisible: true } );
 
 	insertMedia = media => {
-		const { onSelect } = this.props;
-		const formattedMedia = mediaCalypsoToGutenberg( media.items[ 0 ] );
-		onSelect( formattedMedia );
+		const { multiple, onSelect } = this.props;
+		const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
+		if ( multiple ) {
+			onSelect( formattedMedia );
+		} else {
+			onSelect( formattedMedia[ 0 ] );
+		}
 	};
 
 	onCloseModal = media => {
@@ -80,6 +84,7 @@ export class MediaUpload extends Component {
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<MediaModal
 						enabledFilters={ [ this.getFilter() ] }
+						galleryViewEnabled={ false }
 						onClose={ this.onCloseModal }
 						single={ ! multiple }
 						source=""
