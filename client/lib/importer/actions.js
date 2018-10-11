@@ -5,7 +5,7 @@
  */
 
 import Dispatcher from 'dispatcher';
-import { flowRight, includes, partial } from 'lodash';
+import { includes, partial } from 'lodash';
 import wpLib from 'lib/wp';
 const wpcom = wpLib.undocumented();
 
@@ -32,6 +32,7 @@ import {
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
+import { reduxDispatch } from 'lib/redux-bridge';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -230,39 +231,41 @@ export const startUpload = ( importerStatus, file ) => dispatch => {
 		site: { ID: siteId },
 	} = importerStatus;
 
+	const startUploadAction = {
+		type: IMPORTS_UPLOAD_START,
+		filename: file.name,
+		importerId,
+	};
+	dispatch( startUploadAction );
+	reduxDispatch( startUploadAction );
+
 	wpcom
 		.uploadExportFile( siteId, {
 			importStatus: toApi( importerStatus ),
 			file,
+			onprogress: event => {
+				const uploadProgressAction = setUploadProgress( importerId, {
+					uploadLoaded: event.loaded,
+					uploadTotal: event.total,
+				} );
 
-			onprogress: event =>
-				dispatch(
-					setUploadProgress( importerId, {
-						uploadLoaded: event.loaded,
-						uploadTotal: event.total,
-					} )
-				),
-
+				dispatch( uploadProgressAction );
+				reduxDispatch( uploadProgressAction );
+			},
 			onabort: () => cancelImport( siteId, importerId ),
 		} )
 		.then( data => Object.assign( data, { siteId } ) )
 		.then( fromApi )
-		.then(
-			flowRight(
-				dispatch,
-				finishUpload( importerId )
-			)
-		)
-		.catch(
-			flowRight(
-				dispatch,
-				failUpload( importerId )
-			)
-		);
+		.then( importerData => {
+			const finishUploadAction = finishUpload( importerId )( importerData );
 
-	dispatch( {
-		type: IMPORTS_UPLOAD_START,
-		filename: file.name,
-		importerId,
-	} );
+			dispatch( finishUploadAction );
+			reduxDispatch( finishUploadAction );
+		} )
+		.catch( error => {
+			const failUploadAction = failUpload( importerId )( error );
+
+			dispatch( failUploadAction );
+			reduxDispatch( failUploadAction );
+		} );
 };
