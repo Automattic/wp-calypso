@@ -35,7 +35,7 @@ describe( 'blog-sticker-add', () => {
 	describe( 'receiveBlogStickerAdd', () => {
 		test( 'should dispatch a success notice', () => {
 			const output = receiveBlogStickerAdd( {
-				payload: { blogId: 123, stickerName: 'broken-in-reader' },
+				payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: true },
 			} );
 			expect( output ).toEqual(
 				expect.objectContaining( {
@@ -50,21 +50,22 @@ describe( 'blog-sticker-add', () => {
 	describe( 'receiveBlogStickerAddError', () => {
 		test( 'should revert to the previous state', () => {
 			const output = receiveBlogStickerAddError(
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
+				{ payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: true } },
 				{
 					success: false,
 				}
 			);
 
 			expect( output[ 0 ] ).toEqual(
+				bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) )
+			);
+
+			expect( output[ 1 ] ).toEqual(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
 						status: 'is-error',
 					} ),
 				} )
-			);
-			expect( output[ 1 ] ).toEqual(
-				bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) )
 			);
 		} );
 	} );
