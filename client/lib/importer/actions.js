@@ -32,6 +32,7 @@ import {
 } from 'state/action-types';
 import { appStates } from 'state/imports/constants';
 import { fromApi, toApi } from './common';
+import { reduxDispatch } from 'lib/redux-bridge';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -226,37 +227,45 @@ export const startUpload = ( importerStatus, file ) => {
 		site: { ID: siteId },
 	} = importerStatus;
 
+	const startUploadAction = {
+		type: IMPORTS_UPLOAD_START,
+		filename: file.name,
+		importerId,
+	};
+	Dispatcher.handleViewAction( startUploadAction );
+	reduxDispatch( startUploadAction );
+
 	wpcom
 		.uploadExportFile( siteId, {
 			importStatus: toApi( importerStatus ),
 			file,
+			onprogress: event => {
+				const uploadProgressAction = setUploadProgress( importerId, {
+					uploadLoaded: event.loaded,
+					uploadTotal: event.total,
+				} );
 
-			onprogress: event =>
-				Dispatcher.handleViewAction(
-					setUploadProgress( importerId, {
-						uploadLoaded: event.loaded,
-						uploadTotal: event.total,
-					} )
-				),
-
+				Dispatcher.handleViewAction( uploadProgressAction );
+				reduxDispatch( uploadProgressAction );
+			},
 			onabort: () => cancelImport( siteId, importerId ),
 		} )
 		.then( data => Object.assign( data, { siteId } ) )
 		.then( fromApi )
-		.then( importerData =>
-			Dispatcher.handleViewAction( createFinishUploadAction( importerId, importerData ) )
-		)
-		.catch( error =>
-			Dispatcher.handleViewAction( {
+		.then( importerData => {
+			const finishUploadAction = createFinishUploadAction( importerId, importerData );
+
+			Dispatcher.handleViewAction( finishUploadAction );
+			reduxDispatch( finishUploadAction );
+		} )
+		.catch( error => {
+			const failUploadAction = {
 				type: IMPORTS_UPLOAD_FAILED,
 				importerId,
 				error: error.message,
-			} )
-		);
+			};
 
-	Dispatcher.handleViewAction( {
-		type: IMPORTS_UPLOAD_START,
-		filename: file.name,
-		importerId,
-	} );
+			Dispatcher.handleViewAction( failUploadAction );
+			reduxDispatch( failUploadAction );
+		} );
 };
