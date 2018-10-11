@@ -45,6 +45,8 @@
 	flex-grow: 0;
 
 	.foldable-card__summary {
+		display: flex;
+		align-items: center;
 		margin-right: 0;
 	}
 }
