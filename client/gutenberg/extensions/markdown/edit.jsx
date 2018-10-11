@@ -67,7 +67,7 @@ class MarkdownEdit extends Component {
 					</div>
 				</BlockControls>
 
-				{ activePanel === PANEL_PREVIEW ? (
+				{ activePanel === PANEL_PREVIEW || ! isSelected ? (
 					<MarkdownRenderer className={ `${ className }__preview` } source={ source } />
 				) : (
 					<PlainText
