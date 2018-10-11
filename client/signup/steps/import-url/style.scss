@@ -1,0 +1,76 @@
+/** @format */
+
+.signup {
+	&.is-import {
+		margin-top: 69px;
+
+		@include breakpoint( '>660px' ) {
+			margin-top: 45px;
+		}
+
+		@include breakpoint( '>960px' ) {
+			margin-top: 37px;
+		}
+	}
+
+	&__step.is-from-url {
+		overflow: visible;
+	}
+}
+
+.import-url {
+	position: relative;
+
+	&__notice {
+		position: absolute;
+		top: -88px;
+		right: 0;
+
+		@include breakpoint( '>660px' ) {
+			top: -78px;
+		}
+	}
+
+	&__form {
+		display: flex;
+	}
+
+	&__url-input {
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+
+	&__submit-button {
+		flex-grow: 0;
+		flex-shrink: 0;
+	}
+
+	&__example {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: center;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	&__example-urls {
+		color: $gray-darken-20;
+		padding-top: 15px;
+
+		ul {
+			list-style: none;
+			margin: 0;
+			padding-top: 8px;
+		}
+	}
+
+	&__example-url {
+		font-family: monospace;
+		font-size: 14px;
+		color: $blue-medium;
+	}
+
+	&__example-browser {
+		margin-left: 40px;
+	}
+}
