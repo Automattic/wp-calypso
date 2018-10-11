@@ -54,6 +54,14 @@ function getDimensions( node, isSticky ) {
 	};
 }
 
+function getDimensionUpdates( node, previous ) {
+	const newDimensions = getDimensions( node, previous.isSticky );
+	return previous.spacerHeight !== newDimensions.spacerHeight ||
+		previous.blockWidth !== newDimensions.blockWidth
+		? newDimensions
+		: null;
+}
+
 function renderStickyPanel( props, state ) {
 	const classes = classNames( 'sticky-panel', props.className, {
 		'is-sticky': state.isSticky,
@@ -158,14 +166,12 @@ class StickyPanelWithScrollEvent extends React.Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( prevState => getDimensions( this, prevState.isSticky ) ),
+		() => this.setState( prevState => getDimensionUpdates( prevState ) ),
 		RESIZE_RATE_IN_MS
 	);
 
 	componentDidMount() {
-		this.deferredTimer = defer( () => {
-			this.onWindowScroll();
-		} );
+		this.onWindowScroll();
 
 		window.addEventListener( 'scroll', this.onWindowScroll );
 		window.addEventListener( 'resize', this.throttleOnResize );
@@ -174,7 +180,6 @@ class StickyPanelWithScrollEvent extends React.Component {
 	componentWillUnmount() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
 		window.removeEventListener( 'resize', this.throttleOnResize );
-		window.clearTimeout( this.deferredTimer );
 		this.onWindowScroll.cancel();
 	}
 
