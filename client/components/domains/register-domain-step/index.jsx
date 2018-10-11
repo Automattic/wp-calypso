@@ -761,7 +761,7 @@ class RegisterDomainStep extends React.Component {
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor:
-				this.props.includeDotBlogSubdomain && abtest( 'dotBlogSuggestions' ) === 'complex'
+				this.props.includeDotBlogSubdomain && abtest( 'dotBlogSuggestionsv2' ) === 'complex'
 					? 'complex'
 					: 'wpcom',
 			vertical: this.props.surveyVertical,

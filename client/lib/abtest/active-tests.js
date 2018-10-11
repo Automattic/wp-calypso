@@ -116,8 +116,8 @@ export default {
 		defaultVariation: 'default',
 		allowExistingUsers: false,
 	},
-	dotBlogSuggestions: {
-		datestamp: '20181001',
+	dotBlogSuggestionsv2: {
+		datestamp: '20181012',
 		variations: {
 			simple: 50,
 			complex: 50,
