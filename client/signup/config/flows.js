@@ -286,8 +286,7 @@ const Flows = {
 };
 
 export const isAutocontinueFlow = memoize( flowName => {
-	const flow = Flows.getFlow( flowName );
-	return !! get( flow, 'autoContinue' );
+	return !! get( flows, [ flowName, 'autoContinue' ] );
 } );
 
 export default Flows;
