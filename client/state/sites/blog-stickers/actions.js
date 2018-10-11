@@ -15,12 +15,13 @@ import 'state/data-layer/wpcom/sites/blog-stickers';
 import 'state/data-layer/wpcom/sites/blog-stickers/add';
 import 'state/data-layer/wpcom/sites/blog-stickers/remove';
 
-export function addBlogSticker( blogId, stickerName ) {
+export function addBlogSticker( blogId, stickerName, withNotice = true ) {
 	return {
 		type: SITES_BLOG_STICKER_ADD,
 		payload: {
 			blogId,
 			stickerName,
+			withNotice,
 		},
 	};
 }

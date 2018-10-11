@@ -15,6 +15,8 @@ import Gridicon from 'gridicons';
  */
 import isGutenbergOptInDialogShowing from 'state/selectors/is-gutenberg-opt-in-dialog-showing';
 import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { addBlogSticker } from 'state/sites/blog-stickers/actions';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
@@ -35,16 +37,23 @@ class EditorGutenbergOptInDialog extends Component {
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
 		optOut: PropTypes.func,
+		siteId: PropTypes.number,
 	};
 
 	onCloseDialog = () => {
 		this.props.hideDialog();
 	};
 
+	optInToGutenberg = () => {
+		const { hideDialog, optIn, siteId } = this.props;
+		hideDialog();
+		optIn( siteId );
+	};
+
 	render() {
-		const { translate, gutenbergURL, isDialogVisible, optIn, optOut } = this.props;
+		const { translate, gutenbergURL, isDialogVisible, optOut } = this.props;
 		const buttons = [
-			<Button key="gutenberg" href={ gutenbergURL } onClick={ optIn } primary>
+			<Button key="gutenberg" href={ gutenbergURL } onClick={ this.optInToGutenberg } primary>
 				{ translate( 'Try the new editor' ) }
 			</Button>,
 			{
@@ -87,7 +96,7 @@ class EditorGutenbergOptInDialog extends Component {
 }
 
 const mapDispatchToProps = dispatch => ( {
-	optIn: () => {
+	optIn: siteId => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -102,7 +111,7 @@ const mapDispatchToProps = dispatch => ( {
 					} ),
 					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
 				),
-				hideGutenbergOptInDialog()
+				addBlogSticker( siteId, 'enable-gutenberg', false )
 			)
 		);
 	},
@@ -132,9 +141,11 @@ export default connect(
 	state => {
 		const currentRoute = getCurrentRoute( state );
 		const isDialogVisible = isGutenbergOptInDialogShowing( state );
+		const siteId = getSelectedSiteId( state );
 		return {
 			gutenbergURL: `/gutenberg${ currentRoute }`,
 			isDialogVisible,
+			siteId,
 		};
 	},
 	mapDispatchToProps
