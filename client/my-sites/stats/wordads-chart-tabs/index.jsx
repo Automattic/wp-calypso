@@ -19,8 +19,10 @@ import Legend from 'components/chart/legend';
 import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import Card from 'components/card';
+import QuerySiteStats from 'components/data/query-site-stats';
 import QuerySiteWordAdsStats from 'components/data/query-site-wordads-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getWordAdsStats } from 'state/wordads/stats/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -41,6 +43,7 @@ class WordAdsChartTabs extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
+		// @TODO update
 		const activeTab = this.getActiveTab( nextProps );
 		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
 		if ( activeTab !== this.state.activeTab ) {
@@ -54,7 +57,6 @@ class WordAdsChartTabs extends Component {
 	buildTooltipData( item ) {
 		const tooltipData = [];
 		const date = this.props.moment( item.data.period );
-
 		let dateLabel;
 		switch ( this.props.period.period ) {
 			case 'day':
@@ -77,73 +79,51 @@ class WordAdsChartTabs extends Component {
 			value: null,
 		} );
 
+		// @TODO update these tooltips
 		switch ( this.props.chartTab ) {
-			case 'comments':
+			case 'impressions':
 				tooltipData.push( {
-					label: this.props.translate( 'Comments' ),
+					label: this.props.translate( 'Ads Served' ),
 					value: this.props.numberFormat( item.value ),
-					className: 'is-comments',
-					icon: 'comment',
+					className: 'is-impressions',
+					icon: 'visible',
 				} );
 				break;
-
-			case 'likes':
+			case 'revenue':
 				tooltipData.push( {
-					label: this.props.translate( 'Likes' ),
-					value: this.props.numberFormat( item.value ),
-					className: 'is-likes',
-					icon: 'star',
+					label: this.props.translate( 'Revenue' ),
+					value: '$ ' + this.props.numberFormat( item.value, { decimals: 2 } ),
+					className: 'is-revenue',
+					icon: 'visible',
 				} );
 				break;
-
+			case 'cpm':
+				tooltipData.push( {
+					label: this.props.translate( 'Avg. CPM' ),
+					value: '$ ' + this.props.numberFormat( item.value, { decimals: 2 } ),
+					className: 'is-cpm',
+					icon: 'visible',
+				} );
+				break;
 			default:
 				tooltipData.push( {
-					label: this.props.translate( 'Views' ),
-					value: this.props.numberFormat( item.data.views ),
-					className: 'is-views',
+					label: this.props.translate( 'Impressions' ),
+					value: this.props.numberFormat( item.data.impressions ),
+					className: 'is-impressions',
 					icon: 'visible',
 				} );
 				tooltipData.push( {
-					label: this.props.translate( 'Visitors' ),
-					value: this.props.numberFormat( item.data.visitors ),
-					className: 'is-visitors',
-					icon: 'user',
+					label: this.props.translate( 'Revenue' ),
+					value: this.props.numberFormat( item.data.revenue, { decimals: 2 } ),
+					className: 'is-revenue',
+					icon: 'visible',
 				} );
 				tooltipData.push( {
-					label: this.props.translate( 'Views Per Visitor' ),
-					value: this.props.numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
-					className: 'is-views-per-visitor',
-					icon: 'chevron-right',
+					label: this.props.translate( 'CPM' ),
+					value: this.props.numberFormat( item.data.impressions / item.data.revenue ),
+					className: 'is-cpm',
+					icon: 'visible',
 				} );
-
-				if ( item.data.post_titles && item.data.post_titles.length ) {
-					// only show two post titles
-					if ( item.data.post_titles.length > 2 ) {
-						tooltipData.push( {
-							label: this.props.translate( 'Posts Published' ),
-							value: this.props.numberFormat( item.data.post_titles.length ),
-							className: 'is-published-nolist',
-							icon: 'posts',
-						} );
-					} else {
-						tooltipData.push( {
-							label:
-								this.props.translate( 'Post Published', 'Posts Published', {
-									textOnly: true,
-									count: item.data.post_titles.length,
-								} ) + ':',
-							className: 'is-published',
-							icon: 'posts',
-							value: '',
-						} );
-						item.data.post_titles.forEach( post_title => {
-							tooltipData.push( {
-								className: 'is-published-item',
-								label: post_title,
-							} );
-						} );
-					}
-				}
 				break;
 		}
 
@@ -162,7 +142,7 @@ class WordAdsChartTabs extends Component {
 			gaEventAction = ' off';
 		}
 		this.props.recordGoogleEvent(
-			'Stats',
+			'WordAds Stats',
 			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
 		);
 		this.setState( {
@@ -176,8 +156,8 @@ class WordAdsChartTabs extends Component {
 	}
 
 	getLoadedData() {
-		const { quickQueryData, fullQueryData, fullQueryRequesting } = this.props;
-		return fullQueryRequesting ? quickQueryData : fullQueryData;
+		const { fullQueryData, fullQueryRequesting } = this.props;
+		return fullQueryData;
 	}
 
 	buildChartData() {
@@ -197,11 +177,6 @@ class WordAdsChartTabs extends Component {
 				recordClassName = record.classNames.join( ' ' );
 			}
 
-			let nestedValue;
-			if ( this.state.activeLegendCharts.length ) {
-				nestedValue = record[ this.state.activeLegendCharts[ 0 ] ];
-			}
-
 			const className = classNames( recordClassName, {
 				'is-selected': record.period === this.props.queryDate,
 			} );
@@ -210,7 +185,6 @@ class WordAdsChartTabs extends Component {
 				label: record[ labelKey ],
 				value: record[ activeTab ],
 				data: record,
-				nestedValue,
 				className,
 			};
 			item.tooltipData = this.buildTooltipData( item );
@@ -220,13 +194,12 @@ class WordAdsChartTabs extends Component {
 	}
 
 	render() {
-		const { fullQuery, quickQuery, quickQueryRequesting, fullQueryRequesting, siteId } = this.props;
+		const { query, fullQuery, fullQueryRequesting, siteId } = this.props;
 		const chartData = this.buildChartData();
 		const activeTab = this.getActiveTab();
-		let availableCharts = [];
 		const data = this.getLoadedData();
-		const activeTabLoading =
-			quickQueryRequesting && fullQueryRequesting && ! ( data && data.length );
+
+		const activeTabLoading = fullQueryRequesting && ! ( data && data.length );
 		const classes = [
 			'stats-module',
 			'is-chart-tabs',
@@ -234,24 +207,18 @@ class WordAdsChartTabs extends Component {
 				'is-loading': activeTabLoading,
 			},
 		];
-		if ( activeTab.legendOptions ) {
-			availableCharts = activeTab.legendOptions;
-		}
 
 		return (
 			<div>
-				{ siteId && (
-					<QuerySiteWordAdsStats statType="statsVisits" siteId={ siteId } query={ quickQuery } />
-				) }
-				{ siteId && (
-					<QuerySiteWordAdsStats statType="statsVisits" siteId={ siteId } query={ fullQuery } />
-				) }
+				{ /* siteId && (
+					<QuerySiteWordAdsStats statType="statsAds" siteId={ siteId } query={ query } />
+				) */ }
+				{ siteId && <QuerySiteStats statType="statsAds" siteId={ siteId } query={ query } /> }
 
 				<Card className={ classNames( ...classes ) }>
 					<Legend
 						tabs={ this.props.charts }
 						activeTab={ activeTab }
-						availableCharts={ availableCharts }
 						activeCharts={ this.state.activeLegendCharts }
 						clickHandler={ this.onLegendClick }
 					/>
@@ -296,46 +263,26 @@ const connectComponent = connect(
 				.format( 'YYYY-MM-DD' );
 		}
 
-		let quickQueryFields = chartTab;
-		// If we are on the default Tab, grab visitors too
-		if ( 'ads-shown' === quickQueryFields ) {
-			quickQueryFields = 'ads-shown';
-		}
-
 		const query = {
 			unit: period,
 			date,
 			quantity,
 		};
-		const quickQuery = {
-			...query,
-			stat_fields: quickQueryFields,
-		};
 		const fullQuery = {
 			...query,
-			stat_fields: 'ads-shown, ads-per-page, cpm, revenue',
+			stat_fields: 'impressions, revenue, cpm',
 		};
 
+		const statsData = getSiteStatsNormalizedData( state, siteId, 'statsAds', query );
+
 		return {
-			quickQueryRequesting: isRequestingSiteStatsForQuery(
-				state,
-				siteId,
-				'statsVisits',
-				quickQuery
-			),
-			quickQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', quickQuery ),
-			fullQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', fullQuery ),
-			fullQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', fullQuery ),
-			quickQuery,
-			fullQuery,
+			query: query,
+			fullQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsAds', query ),
+			fullQueryData: getSiteStatsNormalizedData( state, siteId, 'statsAds', query ), // getWordAdsStats( state, siteId ),
 			siteId,
 		};
 	},
-	{ recordGoogleEvent },
-	null,
-	{
-		areStatePropsEqual: compareProps( { deep: [ 'quickQuery', 'fullQuery' ] } ),
-	}
+	{ recordGoogleEvent }
 );
 
 export default flowRight(

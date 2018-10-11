@@ -255,7 +255,6 @@ export function parseChartData( payload, nullAttributes = [] ) {
 	if ( ! payload || ! payload.data ) {
 		return [];
 	}
-
 	return payload.data.map( function( record ) {
 		// Initialize data
 		const dataRecord = nullAttributes.reduce( ( memo, attribute ) => {
@@ -910,6 +909,10 @@ export const normalizers = {
 			return [];
 		}
 		return payload.data;
+	},
+
+	statsAds( payload ) {
+		return parseChartData( payload, [ 'impressions', 'revenue', 'cpm' ] );
 	},
 
 	/*

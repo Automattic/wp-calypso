@@ -453,7 +453,7 @@ export default {
 			<WordAds
 				path={ context.pathname }
 				date={ date }
-				chartTab={ queryOptions.tab || 'ads-shown' }
+				chartTab={ queryOptions.tab || 'impressions' }
 				context={ context }
 				period={ rangeOfPeriod( activeFilter.period, date ) }
 			/>
