@@ -35,6 +35,7 @@
     "@babel/runtime": "7.1.2",
     "@wordpress/a11y": "2.0.2",
     "@wordpress/api-fetch": "2.0.2",
+    "@wordpress/api-fetch": "2.0.2",
     "@wordpress/block-library": "2.1.0",
     "@wordpress/block-serialization-spec-parser": "1.0.3",
     "@wordpress/blocks": "4.0.1",
