@@ -30,9 +30,19 @@ export class MediaUpload extends Component {
 		}
 	}
 
-	closeModal = () => this.setState( { isModalVisible: false } );
+	closeModal = () => {
+		const { onClose } = this.props;
+		this.setState( { isModalVisible: false } );
+		if ( onClose ) {
+			onClose();
+		}
+	};
 
-	openModal = () => this.setState( { isModalVisible: true } );
+	openModal = () => {
+		if ( ! this.state.isModalVisible ) {
+			this.setState( { isModalVisible: true } );
+		}
+	};
 
 	insertMedia = media => {
 		const { multiple, onSelect } = this.props;
