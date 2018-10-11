@@ -84,7 +84,7 @@ describe( 'hasCancelableUserPurchases', () => {
 		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( false );
 	} );
 
-	test( 'should return false because all of the purchases are themes', () => {
+	test( 'should return false because the only purchase is a non-refundable theme', () => {
 		const state = deepFreeze( {
 			purchases: {
 				data: [
@@ -94,16 +94,41 @@ describe( 'hasCancelableUserPurchases', () => {
 						product_slug: 'premium_theme',
 						blog_id: 1337,
 						user_id: targetUserId,
+						is_refundable: false,
 					},
 				],
 				error: null,
 				isFetchingSitePurchases: false,
 				isFetchingUserPurchases: false,
 				hasLoadedSitePurchasesFromServer: false,
-				hasLoadedUserPurchasesFromServer: false,
+				hasLoadedUserPurchasesFromServer: true,
 			},
 		} );
 
 		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( false );
+	} );
+
+	test( 'should return true because one of the purchases is a refundable theme', () => {
+		const state = deepFreeze( {
+			purchases: {
+				data: [
+					{
+						ID: 3,
+						product_name: 'premium theme',
+						product_slug: 'premium_theme',
+						blog_id: 1337,
+						user_id: targetUserId,
+						is_refundable: true,
+					},
+				],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: false,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		} );
+
+		expect( hasCancelableUserPurchases( state, targetUserId ) ).toBe( true );
 	} );
 } );
