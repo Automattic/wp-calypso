@@ -2,7 +2,12 @@
  * Wordpress dependencies
  */
 
-import { Panel, PanelBody, TextControl } from '@wordpress/components';
+import {
+	Panel,
+	PanelBody,
+	TextControl
+} from '@wordpress/components';
+
 import { Component } from '@wordpress/element';
 
 /**
@@ -15,7 +20,10 @@ import './style.scss';
  * External dependencies
  */
 
-import { clone, concat } from 'lodash';
+import {
+	clone,
+	concat
+} from 'lodash';
 
 export class Locations extends Component {
 

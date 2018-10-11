@@ -3,7 +3,12 @@
  */
 
 import { Autocomplete } from '@wordpress/editor';
-import { Component, createRef } from '@wordpress/element';
+
+import {
+	Component,
+	createRef
+} from '@wordpress/element';
+
 import { BaseControl } from '@wordpress/components';
 
 /**

@@ -4,14 +4,26 @@
  * Wordpress dependencies
  */
 
-import { Component, createRef, Fragment, Children } from '@wordpress/element';
-import { TextControl, Button } from '@wordpress/components';
+import {
+	Component,
+	createRef,
+	Fragment
+} from '@wordpress/element';
+
+import {
+	TextControl,
+	Button
+} from '@wordpress/components';
 
 /**
  * External dependencies
  */
 
-import { get, clone, assign } from 'lodash';
+import {
+	get,
+	clone,
+	assign
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +46,6 @@ export class Map extends Component {
 			fit_to_bounds: false,
 			loaded: false
 		};
-		this.mapStyles = CONFIG.styles;
 		this.sizeMap = this.sizeMap.bind( this );
 		this.onMarkerClick = this.onMarkerClick.bind( this );
 		this.deleteActiveMarker = this.deleteActiveMarker.bind( this );
@@ -223,11 +234,11 @@ export class Map extends Component {
 	}
 
 	getMapStyle() {
-		return this.mapStyles[ this.props.map_style ].styles;
+		return CONFIG.styles[ this.props.map_style ].styles;
 	}
 
 	getMapType() {
-		return this.mapStyles[ this.props.map_style ].map_type;
+		return CONFIG.styles[ this.props.map_style ].map_type;
 	}
 
 	loadMapLibraries() {
