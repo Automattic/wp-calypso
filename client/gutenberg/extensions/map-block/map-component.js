@@ -119,7 +119,6 @@ export class Map extends Component {
 			updateActiveMarker,
 			addPoint
 		} = this;
-
 		const mapMarkers = points.map( ( point, index ) => {
 			if ( window.google ) {
 				return (
@@ -270,6 +269,10 @@ export class Map extends Component {
 	}
 
 	loadMapLibraries() {
+		const {
+			map_center,
+			points
+		} = this.props;
 		let atavistGoogleMapsLoaded = window.atavistGoogleMapsLoaded;
 		window.atavistGoogleMapInit = function() {
 			atavistGoogleMapsLoaded.resolve();
@@ -292,10 +295,28 @@ export class Map extends Component {
 
 		atavistGoogleMapsLoaded.done(
 			function() {
-				this.init();
-				this.setState( { loaded: true } );
+				if ( points.length > 0 ) {
+					this.init( map_center );
+					return;
+				}
+				this.getMapCenter()
+					.then( ( position ) => {
+						this.init( {
+							latitude: position.coords.latitude,
+							longitude: position.coords.longitude
+						} );
+					})
+					.catch( ( err ) => {
+				    	this.init( map_center );
+				    } );
 			}.bind( this )
 		);
+	}
+
+	getMapCenter = function ( options ) {
+		return new Promise(function (resolve, reject) {
+			navigator.geolocation.getCurrentPosition(resolve, reject, options)
+		})
 	}
 
 	getMarkerIcon() {
@@ -317,11 +338,10 @@ export class Map extends Component {
 		this.mapRef.current.style.height = blockHeight + 'px';
 	}
 
-	init() {
+	init( map_center ) {
 		const {
 			points,
-			zoom,
-			map_center
+			zoom
 		} = this.props;
 
 		const mapOptions = {
@@ -357,6 +377,7 @@ export class Map extends Component {
 			map.setCenter( new window.google.maps.LatLng( map_center.latitude, map_center.longitude ) );
 			this.setBoundsByMarkers();
 			this.setAddPointVisibility( true );
+			this.setState( { loaded: true } );
 		});
 	}
 }
