@@ -34,7 +34,9 @@ module.exports = function( i18n ) {
 			},
 
 			render: function() {
-				var props = assign( {}, this.props, i18nProps );
+				var props = assign( {
+					locale: i18n.getLocaleSlug()
+				}, this.props, i18nProps );
 				return React.createElement( ComposedComponent, props );
 			}
 		} );

@@ -11,6 +11,7 @@ var React = require( 'react' ),
  */
 var localize = require( '..' ).localize,
 	emptyRender = function() { return null; };
+	i18n = require( '..' );
 
 describe( 'localize()', function() {
 	setupEnzymeAdapter();
@@ -44,7 +45,7 @@ describe( 'localize()', function() {
 		expect( LocalizedComponent.displayName ).to.equal( 'Localized(MyComponent)' );
 	} );
 
-	it( 'should provide translate, moment, and numberFormat props to rendered child', function() {
+	it( 'should provide translate, moment, locale and numberFormat props to rendered child', function() {
 		var MyComponent = () => emptyRender();
 		var LocalizedComponent = localize( MyComponent );
 
@@ -54,5 +55,6 @@ describe( 'localize()', function() {
 		expect( props.translate ).to.be.a( 'function' );
 		expect( props.moment ).to.be.a( 'function' );
 		expect( props.numberFormat ).to.be.a( 'function' );
+		expect( props.locale ).to.equal( i18n.getLocaleSlug() );
 	} );
 } );
