@@ -73,7 +73,9 @@ export function processItem( item ) {
 		object && object.target_ts && { activityTargetTs: object.target_ts },
 		item.is_aggregate && { isAggregate: item.is_aggregate },
 		item.streams && { streams: item.streams.map( processItem ) },
-		item.stream_count && { streamCount: item.stream_count }
+		item.stream_count && { streamCount: item.stream_count },
+		item.first_published && { firstPublishedDate: item.first_published },
+		item.last_published && { lastPublishedDate: item.last_published }
 	);
 }
 

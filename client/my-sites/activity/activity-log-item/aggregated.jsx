@@ -17,10 +17,29 @@ import FoldableCard from 'components/foldable-card';
 import { getSite } from 'state/sites/selectors';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import Button from '../../../components/button';
+import { getActivityLogFilter } from 'state/selectors/get-activity-log-filter';
+import { filterStateToQuery } from 'state/activity-log/utils';
+import { addQueryArgs } from 'lib/url';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
 
 class ActivityLogAggregatedItem extends Component {
+	getViewAllUrl() {
+		const {
+			activity: { firstPublishedDate, lastPublishedDate },
+			filter,
+		} = this.props;
+		const newFilter = Object.assign( {}, filter, {
+			before: firstPublishedDate,
+			after: lastPublishedDate,
+			aggregate: false,
+		} );
+		const query = filterStateToQuery( newFilter );
+
+		return addQueryArgs( query, window.location.pathname + window.location.hash );
+	}
+
 	render() {
 		const {
 			activity,
@@ -67,6 +86,7 @@ class ActivityLogAggregatedItem extends Component {
 									args: { number: MAX_STREAM_ITEMS_IN_AGGREGATE, total: streamCount },
 								} ) }
 							</p>
+							<Button href={ this.getViewAllUrl() }>{ translate( 'View All' ) }</Button>
 						</div>
 					) }
 				</FoldableCard>
@@ -84,6 +104,7 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 		timezone: getSiteTimezoneValue( state, siteId ),
 		siteSlug: site.slug,
 		site,
+		filter: getActivityLogFilter( state, siteId ),
 	};
 };
 
