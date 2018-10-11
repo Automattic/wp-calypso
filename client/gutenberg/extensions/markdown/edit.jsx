@@ -53,7 +53,7 @@ class MarkdownEdit extends Component {
 		if ( ! isSelected && this.isEmpty() ) {
 			return (
 				<p className={ `${ className }__placeholder` }>
-					{ __( 'Write your _Markdown_ **here**...' ) }
+					{ __( 'Write your _Markdown_ **here**...', 'jetpack' ) }
 				</p>
 			);
 		}
@@ -62,8 +62,8 @@ class MarkdownEdit extends Component {
 			<div className={ className }>
 				<BlockControls>
 					<div className="components-toolbar">
-						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Markdown' ) ) }
-						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview' ) ) }
+						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Markdown', 'jetpack' ) ) }
+						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview', 'jetpack' ) ) }
 					</div>
 				</BlockControls>
 
@@ -73,7 +73,7 @@ class MarkdownEdit extends Component {
 					<PlainText
 						className={ `${ className }__editor` }
 						onChange={ this.updateSource }
-						aria-label={ __( 'Markdown' ) }
+						aria-label={ __( 'Markdown', 'jetpack' ) }
 						value={ source }
 					/>
 				) }
