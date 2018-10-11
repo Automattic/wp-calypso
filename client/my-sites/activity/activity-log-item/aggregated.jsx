@@ -29,10 +29,16 @@ class ActivityLogAggregatedItem extends Component {
 		const {
 			activity: { firstPublishedDate, lastPublishedDate },
 			filter,
+			moment,
+			timezone,
 		} = this.props;
 		const newFilter = Object.assign( {}, filter, {
-			before: firstPublishedDate,
-			after: lastPublishedDate,
+			before: adjustMoment( { timezone, moment: moment( firstPublishedDate ) } )
+				.add( 1, 'second' )
+				.format(),
+			after: adjustMoment( { timezone, moment: moment( lastPublishedDate ) } )
+				.subtract( 1, 'second' )
+				.format(),
 			aggregate: false,
 			backButton: true,
 		} );
