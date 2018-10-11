@@ -22,6 +22,11 @@ export const setValidationMessage = message => ( {
 	message,
 } );
 
+export const setImportOriginSiteDetails = response => ( {
+	type: IMPORT_IS_SITE_IMPORTABLE_RECEIVE,
+	...response,
+} );
+
 export const fetchIsSiteImportable = site_url => dispatch => {
 	dispatch( {
 		type: IMPORT_IS_SITE_IMPORTABLE_START_FETCH,
@@ -29,6 +34,15 @@ export const fetchIsSiteImportable = site_url => dispatch => {
 
 	return wpcom
 		.isSiteImportable( site_url )
-		.then( response => dispatch( { type: IMPORT_IS_SITE_IMPORTABLE_RECEIVE, response } ) )
+		.then( ( { engine, favicon, site_title: siteTitle, site_url: siteUrl } ) =>
+			dispatch(
+				setImportOriginSiteDetails( {
+					engine,
+					favicon,
+					siteTitle,
+					siteUrl,
+				} )
+			)
+		)
 		.catch( error => dispatch( { type: IMPORT_IS_SITE_IMPORTABLE_ERROR, error } ) );
 };

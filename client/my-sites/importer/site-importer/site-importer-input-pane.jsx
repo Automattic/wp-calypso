@@ -194,6 +194,10 @@ class SiteImporterInputPane extends React.Component {
 			siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
 		);
 
+		if ( ! hostname ) {
+			return;
+		}
+
 		let errorMessage;
 		if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
 			errorMessage = this.props.translate(
