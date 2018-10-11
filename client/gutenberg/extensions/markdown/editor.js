@@ -22,7 +22,7 @@ registerBlockType( 'a8c/markdown', {
 		<Fragment>
 			<p>
 				{ __(
-					'Compose posts with links, lists, and other styles using regular characters and punctuation marks.',
+					'Use regular characters and punctuation to style text, links, and lists.',
 					'jetpack'
 				) }
 			</p>
