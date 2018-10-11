@@ -20,7 +20,12 @@ registerBlockType( 'a8c/markdown', {
 
 	description: (
 		<Fragment>
-			<p>{ __( 'Activate this module to use the advanced SEO tools.', 'jetpack' ) }</p>
+			<p>
+				{ __(
+					'Compose posts with links, lists, and other styles using regular characters and punctuation marks.',
+					'jetpack'
+				) }
+			</p>
 			<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
 				{ __( 'Support reference', 'jetpack' ) }
 			</ExternalLink>
