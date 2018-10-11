@@ -182,7 +182,7 @@ class ImportURLStepComponent extends Component {
 				<div className="import-url__example">
 					<p className="import-url__example-urls">
 						{ translate( 'Example URLs', {
-							context: 'Title for list of example urls, such as "example.com"',
+							comment: 'Title for list of example urls, such as "example.com"',
 						} ) }
 						<ul>
 							<li className="import-url__example-url">example.com</li>
