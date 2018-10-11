@@ -3,9 +3,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { flow, get, indexOf, inRange } from 'lodash';
+import { flow, get, indexOf, inRange, trim, isString } from 'lodash';
 import { isWebUri } from 'valid-url';
 import { parse as parseURL } from 'url';
 
@@ -25,18 +25,35 @@ import {
 	isUrlInputDisabled,
 } from 'state/importer-nux/temp-selectors';
 
-const normalizeUrlForImportSource = url => {
-	// @TODO sanitize? Prepend https:// ..?
-	return url;
+const normalizeUrlForImportSource = ( url = '' ) => {
+	url = trim( url );
+	const { protocol } = parseURL( url );
+	return protocol ? url : 'http://' + url;
 };
 
-const isValidUrl = ( value = '' ) => {
-	const { protocol } = parseURL( value );
-	const withProtocol = protocol ? value : 'http://' + value;
-	const { hostname } = parseURL( withProtocol );
-	const hasDot = inRange( indexOf( hostname, '.' ), 1, hostname.length - 2 );
+const getValidationMessageForUrl = ( value = '' ) => {
+	const url = normalizeUrlForImportSource( value );
+	const { hostname, pathname } = parseURL( url );
+	const hasDot =
+		isString( hostname ) && inRange( indexOf( hostname, '.' ), 1, hostname.length - 2 );
 
-	return isWebUri( withProtocol ) && hasDot;
+	if ( ! isWebUri( url ) || ! hasDot ) {
+		return translate( 'Please enter a full URL.' );
+	} else if ( hostname === 'editor.wix.com' || hostname === 'www.wix.com' ) {
+		return translate(
+			"You've entered the URL for the Wix editor, which only you can access. Please enter your site's public URL. It should look like one of the examples below."
+		);
+	} else if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
+		return translate(
+			"You haven't entered the full URL. Please include the part of the URL that comes after wixsite.com. See below for an example."
+		);
+	} else if ( hostname.indexOf( 'wordpress.com' ) > -1 ) {
+		return translate(
+			'You have entered a URL of WordPress.com site. Please enter a URL of a Wix site to start the import.'
+		);
+	}
+
+	return null;
 };
 
 class ImportURLStepComponent extends Component {
@@ -55,13 +72,20 @@ class ImportURLStepComponent extends Component {
 
 	handleAction = () => {
 		if ( this.props.urlInputValidationMessage ) {
-			return this.setState( {
-				showValidation: true,
-			} );
+			return this.setState(
+				{
+					showValidation: true,
+				},
+				this.focusInput
+			);
 		}
 
 		this.goToNextStep( {} );
 	};
+
+	handleInputRef = el => ( this.inputRef = el );
+
+	focusInput = () => this.inputRef && this.inputRef.focus();
 
 	goToNextStep = () => {
 		const { urlInputValue } = this.props;
@@ -74,9 +98,7 @@ class ImportURLStepComponent extends Component {
 	};
 
 	handleInputChange = value => {
-		const validationMessage = isValidUrl( value )
-			? ''
-			: this.props.translate( 'Please enter a valid URL.' );
+		const validationMessage = getValidationMessageForUrl( value );
 
 		this.setState( {
 			showValidation: false,
@@ -91,15 +113,6 @@ class ImportURLStepComponent extends Component {
 			showValidation: true,
 		} );
 	};
-
-	checkValidation( value ) {
-		const { translate } = this.props;
-		const message = isValidUrl( value )
-			? ''
-			: translate( 'Please enter the full URL of your site.' );
-
-		this.props.setValidationMessage( message );
-	}
 
 	renderContent = () => {
 		const { isInputDisabled, urlInputValidationMessage, urlInputValue, translate } = this.props;
@@ -116,6 +129,7 @@ class ImportURLStepComponent extends Component {
 					defaultValue={ urlInputValue }
 					disabled={ isInputDisabled }
 					onBlur={ this.handleInputBlur }
+					inputRef={ this.handleInputRef }
 				/>
 				{ showValidation ? (
 					<FormInputValidation
