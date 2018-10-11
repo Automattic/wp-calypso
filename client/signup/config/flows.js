@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assign, includes, reject } from 'lodash';
+import { assign, get, includes, memoize, reject } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -284,5 +284,10 @@ const Flows = {
 		};
 	},
 };
+
+export const isAutocontinueFlow = memoize( flowName => {
+	const flow = Flows.getFlow( flowName );
+	return !! get( flow, 'autoContinue' );
+} );
 
 export default Flows;
