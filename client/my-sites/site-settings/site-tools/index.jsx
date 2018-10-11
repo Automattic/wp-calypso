@@ -122,7 +122,7 @@ class SiteTools extends Component {
 					config.isEnabled( 'rewind/clone-site' ) && (
 						<Fragment>
 							<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
-							<Stage siteId={ siteId } />
+							<Stage siteId={ siteId } credentials={ this.props.stagingSite } />
 						</Fragment>
 					) }
 				{ showThemeSetup && (
@@ -223,5 +223,6 @@ export default connect( state => {
 		showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 		showManageConnection: isJetpack && ! isAtomic,
 		siteId,
+		stagingSite: find( rewindState.credentials, { role: 'staging' } ),
 	};
 } )( localize( SiteTools ) );

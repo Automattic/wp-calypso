@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import { requestStage } from 'state/stage/actions';
+import ExternalLink from 'components/external-link';
 
 class Stage extends Component {
 	onClick = () => this.props.requestStage( this.props.siteId );
@@ -19,7 +20,23 @@ class Stage extends Component {
 	render() {
 		const { translate } = this.props;
 
-		return (
+		return 'undefined' !== typeof this.props.credentials ? (
+			<CompactCard>
+				<p className="site-tools__section-title">{ translate( 'Staging Site' ) }</p>
+				<ExternalLink href={ 'https://' + this.props.credentials.host } target="_blank">
+					{ 'https://' + this.props.credentials.host }
+				</ExternalLink>
+				<p className="site-tools__section-desc">
+					{ this.props.credentials.type +
+						' -P ' +
+						this.props.credentials.port +
+						' ' +
+						this.props.credentials.user +
+						'@' +
+						this.props.credentials.host }
+				</p>
+			</CompactCard>
+		) : (
 			<CompactCard>
 				<p className="site-tools__section-title">{ translate( 'Staging Site' ) }</p>
 				<p className="site-tools__section-desc">
