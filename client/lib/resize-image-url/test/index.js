@@ -109,9 +109,9 @@ describe( 'resizeImageUrl()', () => {
 		describe( 'external', () => {
 			test( 'should return a Photonized (safe) resized image with width', () => {
 				const original = 'https://example.com/foo.png';
-				const resized = resizeImageUrl( original, 40 );
 				const expected = 'https://i0.wp.com/example.com/foo.png?ssl=1&w=40';
-				expect( resized ).to.equal( expected );
+				expect( resizeImageUrl( original, 40 ) ).to.equal( expected );
+				expect( resizeImageUrl( original, { w: 40 } ) ).to.equal( expected );
 			} );
 
 			test( 'should return a Photonized (safe) resized image with width and height', () => {
@@ -125,6 +125,14 @@ describe( 'resizeImageUrl()', () => {
 				const original = 'https://example.com/foo.png?bar=baz';
 				const resized = resizeImageUrl( original, 40, 20 );
 				expect( resized ).to.be.null;
+			} );
+
+			test( 'should treat external wp-content urls as external', () => {
+				const original = 'https://blacktacho.com/wp-content/uploads/2018/10/Divo07.jpg';
+				const resized = resizeImageUrl( original, 450 );
+				expect( resized ).to.equal(
+					'https://i2.wp.com/blacktacho.com/wp-content/uploads/2018/10/Divo07.jpg?ssl=1&w=450'
+				);
 			} );
 		} );
 	} );

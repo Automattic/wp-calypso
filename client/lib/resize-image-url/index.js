@@ -85,6 +85,14 @@ export default function resizeImageUrl( imageUrl, resize, height ) {
 
 	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
 
+	const specialResizeKeys =
+		typeof resize === 'object' &&
+		Object.keys( resize ).filter( k => k !== 'w' && k !== 'h' ).length > 0;
+	if ( 'object' === typeof resize && ! specialResizeKeys ) {
+		height = +resize.h || 0;
+		resize = +resize.w;
+	}
+
 	if ( 'number' === typeof resize ) {
 		const service = findKey(
 			SERVICE_HOSTNAME_PATTERNS,
