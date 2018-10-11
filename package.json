@@ -100,7 +100,7 @@
     "escape-string-regexp": "1.0.5",
     "events": "3.0.0",
     "exports-loader": "0.7.0",
-    "express": "4.16.3",
+    "express": "4.16.4",
     "express-useragent": "1.0.12",
     "file-loader": "2.0.0",
     "filesize": "3.6.1",
