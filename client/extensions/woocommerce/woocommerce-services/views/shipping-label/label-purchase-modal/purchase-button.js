@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -64,6 +65,11 @@ const PurchaseButton = props => {
 			{ getPurchaseButtonLabel( props ) }
 		</Button>
 	);
+};
+
+PurchaseButton.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	orderId: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = ( state, { orderId, siteId } ) => {
