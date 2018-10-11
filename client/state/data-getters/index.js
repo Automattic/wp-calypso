@@ -50,8 +50,9 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 	const before = filter && filter.before ? filter.before : '';
 	const after = filter && filter.after ? filter.after : '';
 	const on = filter && filter.on ? filter.on : '';
+	const aggregate = filter && filter.aggregate ? filter.aggregate : '';
 
-	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }`;
+	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
 	return requestHttpData(
 		id,
 		http(
