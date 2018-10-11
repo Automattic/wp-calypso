@@ -25,6 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
+import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -252,5 +253,13 @@ export default {
 
 		page.redirect( redirectWithParams );
 		return false;
+	},
+
+	gutenberg: function( context, next ) {
+		const siteId = getSelectedSiteId( context.store.getState() );
+		context.store.dispatch( listBlogStickers( siteId ) );
+		// wait until we have the site's blog stickers;
+		// if opted in, redirect; else, move on
+		next();
 	},
 };
