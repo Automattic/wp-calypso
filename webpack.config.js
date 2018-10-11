@@ -35,7 +35,8 @@ const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
-const shouldEmitStats = process.env.EMIT_STATS === 'true';
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 
@@ -284,6 +285,9 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 					statsFilename: path.join( __dirname, 'stats.json' ),
 					statsOptions: {
 						source: false,
+						reasons: shouldEmitStatsWithReasons,
+						optimizationBailout: false,
+						chunkOrigins: false,
 					},
 				} ),
 		] ),
