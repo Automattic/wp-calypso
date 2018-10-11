@@ -16,6 +16,7 @@ import Main from 'components/main';
 import SectionHeader from 'components/section-header';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QuerySiteBlocks from 'components/data/query-site-blocks';
 
 class SiteBlockList extends Component {
 	render() {
@@ -26,6 +27,7 @@ class SiteBlockList extends Component {
 
 		return (
 			<Main className={ containerClasses }>
+				<QuerySiteBlocks />
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />
 				<MeSidebarNavigation />

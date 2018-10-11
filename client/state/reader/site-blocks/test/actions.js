@@ -3,8 +3,12 @@
 /**
  * Internal dependencies
  */
-import { READER_SITE_BLOCK, READER_SITE_UNBLOCK } from 'state/action-types';
-import { blockSite, unblockSite } from 'state/reader/site-blocks/actions';
+import {
+	READER_SITE_BLOCK,
+	READER_SITE_BLOCKS_REQUEST,
+	READER_SITE_UNBLOCK,
+} from 'state/action-types';
+import { blockSite, requestSiteBlocks, unblockSite } from 'state/reader/site-blocks/actions';
 
 describe( 'actions', () => {
 	describe( '#blockSite', () => {
@@ -23,6 +27,16 @@ describe( 'actions', () => {
 			expect( action ).toEqual( {
 				type: READER_SITE_UNBLOCK,
 				payload: { siteId: 123 },
+			} );
+		} );
+	} );
+
+	describe( '#requestSiteBlocks', () => {
+		test( 'should return an action when site blocks are requested', () => {
+			const action = requestSiteBlocks();
+			expect( action ).toEqual( {
+				type: READER_SITE_BLOCKS_REQUEST,
+				payload: {},
 			} );
 		} );
 	} );

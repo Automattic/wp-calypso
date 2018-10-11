@@ -5,10 +5,15 @@
 /**
  * Internal dependencies
  */
-import { READER_SITE_BLOCK, READER_SITE_UNBLOCK } from 'state/action-types';
+import {
+	READER_SITE_BLOCK,
+	READER_SITE_BLOCKS_REQUEST,
+	READER_SITE_UNBLOCK,
+} from 'state/action-types';
 
 import 'state/data-layer/wpcom/me/block/sites/delete';
 import 'state/data-layer/wpcom/me/block/sites/new';
+import 'state/data-layer/wpcom/me/blocks/sites';
 
 export function blockSite( siteId ) {
 	return {
@@ -24,6 +29,15 @@ export function unblockSite( siteId ) {
 		type: READER_SITE_UNBLOCK,
 		payload: {
 			siteId,
+		},
+	};
+}
+
+export function requestSiteBlocks( { page } ) {
+	return {
+		type: READER_SITE_BLOCKS_REQUEST,
+		payload: {
+			page,
 		},
 	};
 }
