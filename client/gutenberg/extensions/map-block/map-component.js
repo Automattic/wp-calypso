@@ -27,14 +27,11 @@ const $ = window.jQuery;
 export class Map extends Component {
 
 	constructor() {
-		console.log("HELLO!")
 		super( ...arguments );
 		this.mapRef = createRef();
 		this.state = {
 			map: null,
 			fit_to_bounds: false,
-			markers: [],
-			infowindow: null,
 			loaded: false
 		};
 		this.mapStyles = CONFIG.styles;
@@ -197,7 +194,7 @@ export class Map extends Component {
 
 	setBoundsByMarkers() {
 		const { focus_mode, zoom, points } = this.props;
-		const { map, markers, activeMarker } = this.state;
+		const { map, activeMarker } = this.state;
 		if ( ! map || focus_mode.type !== 'fit_markers' || points.length === 0 ) {
 			return;
 		}
