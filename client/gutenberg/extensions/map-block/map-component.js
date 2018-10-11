@@ -11,8 +11,9 @@ import {
 } from '@wordpress/element';
 
 import {
-	TextControl,
-	Button
+	Button,
+	Dashicon,
+	TextControl
 } from '@wordpress/components';
 
 /**
@@ -156,13 +157,17 @@ export class Map extends Component {
 								onChange={ ( title ) => updateActiveMarker( { title } ) }
 							/>
 							<TextControl
+								className='wp-block-atavist-maps__marker-caption'
 								label="Marker Caption"
 								value={ point.caption }
 								onChange={ ( caption ) => updateActiveMarker( { caption } ) }
 							/>
 							<Button
 								onClick={ deleteActiveMarker }
-							>Delete Point</Button>
+								className='wp-block-atavist-maps__delete-btn'
+							>
+								<Dashicon icon='trash' size='15' /> Delete Marker
+							</Button>
 						</Fragment>
 					}
 
@@ -249,8 +254,8 @@ export class Map extends Component {
 		} );
 
 		map.setCenter( bounds.getCenter() );
-		map.fitBounds( bounds );
 		if ( points.length > 1 ) {
+			map.fitBounds( bounds );
 			this.setState( { fit_to_bounds: true } );
 			map.setOptions( { zoomControl: false } );
 		} else {
