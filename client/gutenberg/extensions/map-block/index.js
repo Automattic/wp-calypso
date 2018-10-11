@@ -59,7 +59,6 @@ registerBlockType( CONFIG.name, {
 	category: CONFIG.category,
 	keywords: CONFIG.keywords,
 	attributes: CONFIG.attributes,
-	/* TODO: Research why this doesn't work? */
 	getEditWrapperProps( attributes ) {
 		const { align } = attributes;
 		if ( -1 !== CONFIG.validAlignments.indexOf( align ) ) {
