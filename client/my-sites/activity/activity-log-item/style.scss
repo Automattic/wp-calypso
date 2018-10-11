@@ -66,6 +66,14 @@
 	}
 }
 
+.activity-log-item.is-aggregated {
+	.foldable-card__content {
+		.activity-log-item__type {
+			background: $white;
+		}
+	}
+}
+
 .activity-log-item__time {
 	font-size: 11px;
 	color: $gray-text-min;
