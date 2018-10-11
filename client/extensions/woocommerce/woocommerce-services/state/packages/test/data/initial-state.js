@@ -10,16 +10,16 @@ export default {
 		service: {
 			priority: {
 				definitions: [
-					{ id: 'box', name: 'bBox' },
-					{ id: 'box1', name: 'aBox' },
-					{ id: 'box2', name: 'cBox' },
+					{ id: 'box', name: 'bBox', can_ship_international: true },
+					{ id: 'box1', name: 'aBox', can_ship_international: false },
+					{ id: 'box2', name: 'cBox', can_ship_international: true },
 				],
 				title: 'Priority',
 			},
 		},
 		otherService: {
 			express: {
-				definitions: [ { id: 'envelope', name: 'envelope' } ],
+				definitions: [ { id: 'envelope', name: 'envelope', can_ship_international: false } ],
 				title: 'Express',
 			},
 		},
