@@ -59,7 +59,7 @@ export class WechatPaymentBox extends Component {
 
 		if ( isEmpty( this.state.name ) || this.state.name.length < 3 ) {
 			return this.setState( {
-				errorMessage: translate( 'You Name must contain at least 3 characters' ),
+				errorMessage: translate( 'Your Name must contain at least 3 characters' ),
 			} );
 		}
 
