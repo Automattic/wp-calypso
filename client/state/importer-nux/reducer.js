@@ -34,11 +34,11 @@ export const isUrlInputDisabled = createReducer( false, {
 export const siteDetails = createReducer(
 	{},
 	{
-		[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: ( state, { response = {} } ) => ( {
-			engine: response.engine,
-			favicon: response.favicon,
-			siteTitle: response.site_title,
-			siteUrl: response.site_url,
+		[ IMPORT_IS_SITE_IMPORTABLE_RECEIVE ]: ( state, { engine, favicon, siteTitle, siteUrl } ) => ( {
+			engine,
+			favicon,
+			siteTitle,
+			siteUrl,
 		} ),
 		[ IMPORT_IS_SITE_IMPORTABLE_ERROR ]: () => ( {} ),
 		[ 'FLUX_IMPORTS_IMPORT_CANCEL' ]: () => ( {} ),

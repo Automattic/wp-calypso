@@ -35,7 +35,7 @@ import {
 } from 'state/imports/constants';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import { getSelectedImportEngine, doingImportFromSiteUrl } from 'state/importer-nux/temp-selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
@@ -287,7 +287,8 @@ export default flow(
 		startImport: ( siteId, engine ) => dispatch( startImport( siteId, engine ) ),
 	} ) ),
 	connect( state => ( {
-		fromSite: getNuxUrlInputValue( state ),
+		engine: getSelectedImportEngine( state ),
+		fromSite: doingImportFromSiteUrl( state ),
 		site: getSelectedSite( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ) )
