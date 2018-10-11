@@ -87,7 +87,9 @@ class ActivityLogAggregatedItem extends Component {
 									args: { number: MAX_STREAM_ITEMS_IN_AGGREGATE, total: streamCount },
 								} ) }
 							</p>
-							<Button href={ this.getViewAllUrl() }>{ translate( 'View All' ) }</Button>
+							<Button href={ this.getViewAllUrl() } compact borderless>
+								{ translate( 'View All' ) }
+							</Button>
 						</div>
 					) }
 				</FoldableCard>
