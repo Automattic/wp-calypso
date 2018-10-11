@@ -23,6 +23,8 @@ import {
 
 import { prepareExportRequest } from './selectors';
 
+import 'state/data-layer/wpcom/sites/exports/media';
+
 /**
  * Sets the post type to export.
  *

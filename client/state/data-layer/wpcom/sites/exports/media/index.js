@@ -49,5 +49,3 @@ registerHandlers( 'state/data-layer/wpcom/sites/exports/media/index.js', {
 		} ),
 	],
 } );
-
-export default {};
