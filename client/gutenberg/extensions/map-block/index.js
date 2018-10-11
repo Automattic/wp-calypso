@@ -77,18 +77,14 @@ registerBlockType( CONFIG.name, {
 					</Toolbar>
 				</BlockControls>
 				<InspectorControls>
-					<PanelBody title={ __( 'Map Options' ) }>
-						<Locations
-							points={ points }
-							onChange={ ( value ) => { setAttributes( { points: value } ) } }
-						/>
+					<PanelBody title={ __( 'Map Theme' ) }>
 						<MapThemePicker
-							label={ __( 'Map Theme' ) }
 							value={ map_style }
 							onChange={ ( value ) => { setAttributes( { map_style: value } ) } }
 							options={ CONFIG.map_styleOptions }
 						/>
-						<label className="components-base-control__label">{ __("Marker Color") }</label>
+					</PanelBody>
+					<PanelBody title={ __( 'Marker Color' ) }>
 				        <ColorPalette
 				            colors={ CONFIG.marker_colorOptions }
 				            value={ marker_color }
