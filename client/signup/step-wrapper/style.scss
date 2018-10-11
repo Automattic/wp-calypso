@@ -3,13 +3,10 @@
 }
 
 .step-wrapper__buttons .button.is-borderless {
-	color: darken( $gray, 20 );
+	color: $white;
 
 	&:hover {
-		color: $gray-dark;
+		color: $white;
+		opacity: 0.5;
 	}
-}
-
-.step-wrapper__content .themes-list {
-	padding: 0 20px;
 }

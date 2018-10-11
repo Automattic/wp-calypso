@@ -111,6 +111,7 @@ class ThemeSelectionStep extends Component {
 			<StepWrapper
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ subHeaderText }
+				className="step-wrapper__two-columns"
 				subHeaderText={ subHeaderText }
 				stepContent={ this.renderThemesList() }
 				defaultDependencies={ defaultDependencies }

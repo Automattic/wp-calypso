@@ -7,12 +7,15 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { indexOf } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import FlowProgressIndicator from 'signup/flow-progress-indicator';
+import flows from 'signup/config/flows';
 
 class StepWrapper extends Component {
 	static propTypes = {
@@ -92,14 +95,74 @@ class StepWrapper extends Component {
 		}
 	}
 
+	testimonial() {
+		const { translate } = this.props;
+
+		return (
+			<div className="step-wrapper__testimonial">
+				<div className="step-wrapper__testimonial-image">
+					<img src="/calypso/images/signup/debperlman.jpg" alt="" />
+				</div>
+				<div className="step-wrapper__testimonial-content">
+					{ translate(
+						'“I love having a place where I can share what I’m working on in an immediate way and have a conversation with people who are equally excited about it.”'
+					) }
+				</div>
+				<div className="step-wrapper__testimonial-author">
+					{ translate(
+						'{{spanName}}Deb Perlman{{/spanName}}, {{spanSite}}smittenkitchen.com{{/spanSite}}',
+						{
+							components: {
+								spanName: <span className="step-wrapper__testimonial-name" />,
+								spanSite: <span className="step-wrapper__testimonial-site" />,
+							},
+							comment: 'Customer name with comma, followed by domain name',
+						}
+					) }
+				</div>
+			</div>
+		);
+	}
+
+	getPositionInFlow( fakedForTwoPartFlows = false ) {
+		let position = indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		if ( fakedForTwoPartFlows && this.props.flowName === 'user-continue' ) {
+			position++;
+		}
+		return position;
+	}
+
+	getFlowLength() {
+		// fake it for our two-step flow
+		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
+			return 4;
+		}
+		return flows.getFlow( this.props.flowName ).steps.length;
+	}
+
 	render() {
-		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
+		const {
+			stepContent,
+			headerButton,
+			hideFormattedHeader,
+			hideBack,
+			hideSkip,
+			stepName,
+		} = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
+		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<div className={ classes }>
+				{ showProgressIndicator && (
+					<FlowProgressIndicator
+						positionInFlow={ this.getPositionInFlow( true ) }
+						flowLength={ this.getFlowLength() }
+						flowName={ this.props.flowName }
+					/>
+				) }
 				{ ! hideFormattedHeader && (
 					<FormattedHeader
 						id={ 'step-header' }
@@ -118,6 +181,10 @@ class StepWrapper extends Component {
 						{ ! hideSkip && this.renderSkip() }
 					</div>
 				</div>
+
+				{ 'domains' === stepName || 'rebrand-cities-welcome' === stepName
+					? null
+					: this.testimonial() }
 			</div>
 		);
 	}

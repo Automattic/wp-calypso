@@ -1,29 +1,7 @@
-.plans-step {
-	margin: 0 auto;
-	max-width: 700px;
-
-	&.is-wide-layout {
-		margin: auto;
-		max-width: 1200px;
-	}
-
-	&.is-store-flow {
-		max-width: 500px;
-
-		.plan-features--signup {
-			width: auto;
-		}
-	}
-
-	.formatted-header.is-without-subhead {
-		margin-bottom: 15px;
-	}
-
-	.step-wrapper {
-		&.is-wide-layout {
-			max-width: 1200px;
-		}
-	}
+.atomic-store__wrapper {
+	background: $white;
+	box-shadow: 0 30px 50px 0 transparentize( $black-signup, 0.87 );
+	padding-bottom: 6px;
 }
 
 .plans-step__compare-plans-link {
@@ -39,3 +17,38 @@
 	}
 }
 
+.plans-step.is-store-flow {
+	.plan-features--signup .plan-features__table tbody {
+		display: -ms-grid;
+		display: grid;
+		-ms-grid-columns: 60% 40%;
+		grid-template-columns: 60% 40%;
+
+		& > tr:first-of-type {
+			display: -ms-grid;
+			display: grid;
+			-ms-grid-rows: 1fr;
+			grid-template-rows: 1fr;
+		}
+
+		& > tr:nth-of-type(2) {
+			display: -ms-grid;
+			display: grid;
+			-ms-grid-rows: 1fr;
+			grid-template-rows: 1fr;
+
+			.plan-features__table-item {
+				border-top: 1px solid $gray-lighten-30;
+			}
+
+			& > td:first-of-type {
+				border-top: 0;
+				padding-top: 24px;
+			}
+
+			& > td:last-of-type {
+				border-bottom: 1px solid $gray-lighten-30;
+			}
+		}
+	}
+}

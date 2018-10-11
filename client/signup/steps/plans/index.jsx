@@ -88,7 +88,7 @@ class PlansStep extends Component {
 		const { hideFreePlan, isDomainOnly, selectedSite } = this.props;
 
 		return (
-			<div>
+			<div className="plans__wrapper">
 				<QueryPlans />
 
 				<PlansFeaturesMain
@@ -115,13 +115,16 @@ class PlansStep extends Component {
 		const { flowName, stepName, positionInFlow, signupProgress, translate } = this.props;
 
 		const headerText = translate( "Pick a plan that's right for you." );
+		const subHeaderText = translate( 'Based on your needs, we recommend the Business plan.' );
 
 		return (
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
+				className="step-wrapper__two-columns"
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
+				subHeaderText={ subHeaderText }
 				fallbackHeaderText={ headerText }
 				signupProgress={ signupProgress }
 				isWideLayout={ true }

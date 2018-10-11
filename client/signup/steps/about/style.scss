@@ -1,5 +1,32 @@
 .about__wrapper {
 	position: relative;
+	background: $white;
+	box-shadow: 0 30px 50px 0 transparentize( $black-signup, 0.87 );
+	padding-bottom: 6px;
+}
+
+.about__wrapper .card {
+	box-shadow: none;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.about__wrapper h3 {
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.1;
+	margin-bottom: 18px;
+}
+
+@include breakpoint( '>480px' ) {
+	.about__wrapper h3 {
+		font-size: 34px;
+	}
+}
+
+.about__wrapper .form-label,
+.about__wrapper .form-legend {
+	font-weight: 400;
 }
 
 .about__pressable-wrapper {
@@ -12,8 +39,6 @@
 }
 
 .about__form-wrapper {
-	max-width: 500px;
-	margin: 0 auto;
 	filter: blur( 0 );
 	transform: translateZ( 0 ) translateX( 0 );
 	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
@@ -94,8 +119,8 @@
 
 .about__submit-wrapper {
 	text-align: center;
-	margin-bottom: 20px;
-	padding: 0 15px;
+	margin-bottom: 36px;
+	padding: 0 24px;
 }
 
 .about__submit-wrapper .button {
@@ -104,6 +129,7 @@
 	}
 }
 
-.about__last-fieldset {
-	margin-bottom: 0;
+.about__section .step-wrapper__content label,
+.about__section .step-wrapper__content .form-legend {
+	font-weight: 400;
 }
