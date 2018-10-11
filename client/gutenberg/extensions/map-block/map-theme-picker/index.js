@@ -29,7 +29,13 @@ import './style.scss';
 export class MapThemePicker extends Component {
 
 	render() {
-		const { options, value, onChange, label } = this.props;
+		const {
+			options,
+			value,
+			onChange,
+			label
+		} = this.props;
+
 		const buttons = options.map( ( option, index ) => {
 			const classes = classnames(
 				'component_map-theme-picker__button',

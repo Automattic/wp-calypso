@@ -103,9 +103,23 @@ export class Map extends Component {
 	}
 
 	render() {
-		const { children, points, admin } = this.props;
-		const { map, activeMarker } = this.state;
-		const { onMarkerClick, deleteActiveMarker, updateActiveMarker, addPoint } = this;
+		const {
+			points,
+			admin
+		} = this.props;
+
+		const {
+			map,
+			activeMarker
+		} = this.state;
+
+		const {
+			onMarkerClick,
+			deleteActiveMarker,
+			updateActiveMarker,
+			addPoint
+		} = this;
+
 		const mapMarkers = points.map( ( point, index ) => {
 			if ( window.google ) {
 				return (
@@ -122,7 +136,12 @@ export class Map extends Component {
 			}
 		});
 		const point = get( activeMarker, 'props.point' ) || {};
-		const { title, caption } = point;
+
+		const {
+			title,
+			caption
+		} = point;
+
 		const infoWindow = window.google ?
 			(
 				<InfoWindow
@@ -204,8 +223,17 @@ export class Map extends Component {
 	}
 
 	setBoundsByMarkers() {
-		const { focus_mode, zoom, points } = this.props;
-		const { map, activeMarker } = this.state;
+		const {
+			focus_mode,
+			zoom,
+			points
+		} = this.props;
+
+		const {
+			map,
+			activeMarker
+		} = this.state;
+
 		if ( ! map || focus_mode.type !== 'fit_markers' || points.length === 0 ) {
 			return;
 		}
@@ -290,7 +318,12 @@ export class Map extends Component {
 	}
 
 	init() {
-		const { points, zoom, map_center } = this.props;
+		const {
+			points,
+			zoom,
+			map_center
+		} = this.props;
+
 		const mapOptions = {
 			streetViewControl: false,
 			mapTypeControl: false,
@@ -303,7 +336,12 @@ export class Map extends Component {
 			mapTypeId: window.google.maps.MapTypeId[ this.getMapType() ],
 			zoom: parseInt( zoom, 10 ),
 		};
-		const map = new window.google.maps.Map( this.mapRef.current, mapOptions );
+
+		const map = new window.google.maps.Map(
+			this.mapRef.current,
+			mapOptions
+		);
+
 		map.addListener(
 			'zoom_changed',
 			function() {
@@ -311,20 +349,15 @@ export class Map extends Component {
 			}.bind( this )
 		);
 		map.addListener( 'click', this.onMapClick );
-		this.setState( { map } );
-
-		setTimeout(
-			function() {
-				this.sizeMap();
-				this.mapRef.current.addEventListener( 'alignmentChanged', this.sizeMap );
-				window.addEventListener( 'resize', this.sizeMap );
-				window.google.maps.event.trigger( map, 'resize' );
-				map.setCenter( new window.google.maps.LatLng( map_center.latitude, map_center.longitude ) );
-				this.setBoundsByMarkers();
-				this.setAddPointVisibility( true );
-			}.bind( this ),
-			1000
-		);
+		this.setState( { map }, () => {
+			this.sizeMap();
+			this.mapRef.current.addEventListener( 'alignmentChanged', this.sizeMap );
+			window.addEventListener( 'resize', this.sizeMap );
+			window.google.maps.event.trigger( map, 'resize' );
+			map.setCenter( new window.google.maps.LatLng( map_center.latitude, map_center.longitude ) );
+			this.setBoundsByMarkers();
+			this.setAddPointVisibility( true );
+		});
 	}
 }
 
@@ -334,8 +367,8 @@ Map.defaultProps = {
 	zoom: 13,
 	onSetZoom: () => {},
 	map_center: {
-		latitude: 40.7022937,
-		longitude: -73.9863515,
+		latitude: 37.7749295,
+		longitude: -122.41941550000001
 	},
 	focus_mode: {
 		type: 'fit_markers',
