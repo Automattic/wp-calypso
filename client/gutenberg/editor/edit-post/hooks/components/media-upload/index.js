@@ -51,16 +51,20 @@ export class MediaUpload extends Component {
 		this.closeModal();
 	};
 
-	getFilter = () => {
+	getEnabledFilters = () => {
 		// TODO: Replace with `allowedTypes` (array) after updating Gutenberg
 		const { type } = this.props;
-		if ( 'image' === type ) {
-			return 'images';
+		switch ( type ) {
+			case 'image':
+				return [ 'images' ];
+			case 'audio':
+				return [ 'audio' ];
+			case 'video':
+				return [ 'videos' ];
+			case 'document':
+				return [ 'documents' ];
 		}
-		if ( 'video' === type ) {
-			return 'videos';
-		}
-		return type;
+		return undefined;
 	};
 
 	getSelectedItems = () => {
@@ -83,7 +87,7 @@ export class MediaUpload extends Component {
 				{ render( { open: this.openModal } ) }
 				<MediaLibrarySelectedData siteId={ siteId }>
 					<MediaModal
-						enabledFilters={ [ this.getFilter() ] }
+						enabledFilters={ this.getEnabledFilters() }
 						galleryViewEnabled={ false }
 						onClose={ this.onCloseModal }
 						single={ ! multiple }
