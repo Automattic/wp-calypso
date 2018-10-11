@@ -24,53 +24,47 @@ import {
 	canPurchase,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-class PurchaseButton extends React.Component {
-	getPurchaseButtonLabel = () => {
-		const { form, ratesTotal, translate } = this.props;
+const getPurchaseButtonLabel = props => {
+	const { form, ratesTotal, translate } = props;
 
-		if ( form.needsPrintConfirmation ) {
-			return translate( 'Print' );
-		}
-
-		if ( form.isSubmitting ) {
-			return translate( 'Purchasing…' );
-		}
-
-		const noNativePDFSupport = 'addon' === getPDFSupport();
-
-		if ( this.props.canPurchase ) {
-			if ( noNativePDFSupport ) {
-				return translate( 'Buy (%s)', { args: [ formatCurrency( ratesTotal, 'USD' ) ] } );
-			}
-
-			return translate( 'Buy & Print (%s)', { args: [ formatCurrency( ratesTotal, 'USD' ) ] } );
-		}
-
-		if ( noNativePDFSupport ) {
-			return translate( 'Buy' );
-		}
-
-		return translate( 'Buy & Print' );
-	};
-
-	render() {
-		const { form } = this.props;
-		return (
-			<Button
-				disabled={
-					! form.needsPrintConfirmation && ( ! this.props.canPurchase || form.isSubmitting )
-				}
-				onClick={
-					form.needsPrintConfirmation ? this.props.confirmPrintLabel : this.props.purchaseLabel
-				}
-				primary
-				busy={ form.isSubmitting && ! form.needsPrintConfirmation }
-			>
-				{ this.getPurchaseButtonLabel() }
-			</Button>
-		);
+	if ( form.needsPrintConfirmation ) {
+		return translate( 'Print' );
 	}
-}
+
+	if ( form.isSubmitting ) {
+		return translate( 'Purchasing…' );
+	}
+
+	const noNativePDFSupport = 'addon' === getPDFSupport();
+
+	if ( props.canPurchase ) {
+		if ( noNativePDFSupport ) {
+			return translate( 'Buy (%s)', { args: [ formatCurrency( ratesTotal, 'USD' ) ] } );
+		}
+
+		return translate( 'Buy & Print (%s)', { args: [ formatCurrency( ratesTotal, 'USD' ) ] } );
+	}
+
+	if ( noNativePDFSupport ) {
+		return translate( 'Buy' );
+	}
+
+	return translate( 'Buy & Print' );
+};
+
+const PurchaseButton = props => {
+	const { form } = props;
+	return (
+		<Button
+			disabled={ ! form.needsPrintConfirmation && ( ! props.canPurchase || form.isSubmitting ) }
+			onClick={ form.needsPrintConfirmation ? props.confirmPrintLabel : props.purchaseLabel }
+			primary
+			busy={ form.isSubmitting && ! form.needsPrintConfirmation }
+		>
+			{ getPurchaseButtonLabel( props ) }
+		</Button>
+	);
+};
 
 const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
