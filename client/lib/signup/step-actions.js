@@ -29,7 +29,7 @@ import { getUserExperience } from 'state/signup/steps/user-experience/selectors'
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
 import { getProductsList } from 'state/products-list/selectors';
-import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { promisify } from '../../utils';
 
@@ -337,6 +337,9 @@ export function createAccount(
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
 	const userExperience = getUserExperience( reduxStore.getState() );
+	const importEngine =
+		'import' === flowName ? getSelectedImportEngine( reduxStore.getState() ) : '';
+	const importFromUrl = 'import' === flowName ? getNuxUrlInputValue( reduxStore.getState() ) : '';
 
 	if ( service ) {
 		// We're creating a new social account
@@ -373,6 +376,8 @@ export function createAccount(
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: surveyVertical,
 					nux_q_question_experience: userExperience || undefined,
+					import_engine: importEngine,
+					import_from_url: importFromUrl,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 				},
