@@ -15,8 +15,8 @@ export default class ActivityActorIcon extends PureComponent {
 		const { icon } = this.props;
 
 		return (
-			<div className="activity-log-item__activity-actor-icon">
-				<Gridicon icon={ icon } size={ 24 } />
+			<div className="activity-log-item__activity-actor">
+				<Gridicon icon={ icon } size={ 18 } />
 			</div>
 		);
 	}

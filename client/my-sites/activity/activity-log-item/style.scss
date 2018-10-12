@@ -101,8 +101,7 @@
 	}
 }
 
-.activity-log-item__activity-icon,
-.activity-log-item__activity-actor-icon {
+.activity-log-item__activity-icon {
 	// General notice
 	background: $gray;
 	color: $white;
@@ -239,6 +238,32 @@
 
 	.jetpack-logo__icon-circle {
 		fill: $gray-darken-10;
+	}
+
+	.gridicon {
+		width: 24px;
+		height: 24px;
+		background: $gray;
+		color: $white;
+		display: flex;
+		padding: 8px;
+		border-radius: 50%;
+		margin-right: 14px;
+		margin-top: 2px;
+		fill: $white;
+
+		@include breakpoint( '<480px' ) {
+			padding: 7px;
+			box-sizing: border-box;
+			width: 32px;
+			height: 32px;
+			display: inline-block;
+
+			.gridicon {
+				width: 18px;
+				height: 18px;
+			}
+		}
 	}
 }
 

@@ -50,9 +50,17 @@ class ActivityLogAggregatedItem extends Component {
 
 	renderHeader() {
 		const { activity } = this.props;
+		const { actorAvatarUrl, actorName, actorRole, actorType, multipleActors } = activity;
+		let actor;
+		if ( multipleActors ) {
+			actor = <ActivityActor actorType="Multiple" />;
+		} else {
+			actor = <ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />;
+		}
+
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor actorType="Multiple" />
+				{ actor }
 				<ActivityDescription activity={ activity } />
 			</div>
 		);
