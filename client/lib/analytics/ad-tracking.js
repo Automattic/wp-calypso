@@ -1134,6 +1134,28 @@ export function recordAliasInFloodlight() {
 	recordParamsInFloodlight( params );
 }
 
+function recordSignupStartInDonutsGtag() {
+	if ( ! isAdTrackingAllowed() || ! isDonutsGtagEnabled ) {
+		return;
+	}
+
+	debug( 'Donuts Gtag: Recording sign up start' );
+
+	recordParamsInDonutsGtag( 'conversion', 'DC-8907854/visit0/wpresslp+unique' );
+}
+
+function recordParamsInDonutsGtag( event_type, send_to, order_summary = false ) {
+	initDonutsGtag();
+	const params = {
+		'allow_custom_scripts': false,
+		'u1': document.referrer,
+		'u2': document.location.href,
+		'send_to': send_to,
+		...( order_summary && { 'u90': order_summary } ),
+	};
+	window.gtag('event', event_type, params);
+}
+
 /**
  * Record that a user started sign up in DCM Floodlight
  *
@@ -1590,6 +1612,7 @@ function initFacebookAdvancedMatching() {
  */
 export function recordSignupStart() {
 	recordSignupStartInFloodlight();
+	recordSignupStartInDonutsGtag();
 }
 
 /**
