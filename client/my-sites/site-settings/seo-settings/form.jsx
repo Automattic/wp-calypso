@@ -59,6 +59,11 @@ import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actio
 import WebPreview from 'components/web-preview';
 import { getFirstConflictingPlugin } from 'lib/seo';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
