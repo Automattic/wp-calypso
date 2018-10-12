@@ -33,7 +33,9 @@ class ExportMediaCard extends Component {
 				<ActionCard
 					className="export-media-card__content export-card"
 					headerText={ translate( 'Export media library' ) }
-					mainText={ translate( 'Click the button to download your entire media library.' ) }
+					mainText={ translate(
+						'Download your entire media library (images, videos, audios …) of your site.'
+					) }
 					buttonText={ translate( 'Download' ) }
 					buttonHref={ mediaExportUrl }
 					buttonDisabled={ ! mediaExportUrl }
