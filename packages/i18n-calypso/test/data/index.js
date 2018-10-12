@@ -11,33 +11,26 @@ var locale = {
 		'Project-Id-Version': 'WordPress.com'
 	},
 	'test1': [
-		null,
 		'translation1'
 	],
 	'test2': null,
 	'thecontext\u0004test3': [
-		null,
 		'translation3'
 	],
 	'test4': [
-		null,
 		'translation4'
 	],
 	'test-will-overwrite': [
-		null,
 		'translation1'
 	],
 	'Featured': [
-		null,
 		'translation-without-context'
 	],
 	'plural-test': [
-		'plural-test',
 		'plural-test singular translation',
 		'plural-test multiple translation'
 	],
 	'plural-test new syntax': [
-		'plural-test new syntax',
 		'plural-test new syntax translated, single',
 		'plural-test new syntax translated, plural'
 	],
@@ -60,27 +53,21 @@ var locale = {
 	'verb\u0004Update': null,
 	'Author byline\u0004By': null,
 	'Visit Plugin Site': [
-		null,
 		''
 	],
 	'Activate': [
-		null,
 		'Aktivieren'
 	],
 	'Search...': [
-		null,
 		'Suchen...'
 	],
 	'Select None': [
-		null,
 		''
 	],
 	'Select All': [
-		null,
 		'Alle auswählen'
 	],
 	'All sites selected': [
-		null,
 		''
 	],
 	'%(numberTotal)s site total': [
@@ -89,51 +76,39 @@ var locale = {
 		''
 	],
 	'No sites found': [
-		null,
 		'Keine Websites gefunden'
 	],
 	'Pages': [
-		null,
 		'Seiten'
 	],
 	'Stats': [
-		null,
 		'Statistik'
 	],
 	'Sharing': [
-		null,
 		'Sharing'
 	],
 	'Settings': [
-		null,
 		'Einstellungen'
 	],
 	'Manage': [
-		null,
 		'Verwalten'
 	],
 	'Customize': [
-		null,
 		'Anpassen'
 	],
 	'Domains': [
-		null,
 		'Domains'
 	],
 	'Upgrade': [
-		null,
 		'Aktualisierung'
 	],
 	'Posts': [
-		null,
 		'Beiträge'
 	],
 	'Theme': [
-		null,
 		'Theme'
 	],
 	'Open site in a new tab': [
-		null,
 		''
 	],
 	'Filter Label\u0004All Sites': null,
@@ -141,47 +116,36 @@ var locale = {
 	'Filter label for site list\u0004Private': null,
 	'future time\u0004in %s': null,
 	'a few seconds': [
-		null,
 		'einige Sekunden'
 	],
 	'a minute': [
-		null,
 		'eine Minute'
 	],
 	'%d minutes': [
-		null,
 		'%d Minuten'
 	],
 	'%d hours': [
-		null,
 		'%d Stunden'
 	],
 	'%d days': [
-		null,
 		'%d Tage'
 	],
 	'a month': [
-		null,
 		'ein Monat'
 	],
 	'%d months': [
-		null,
 		'%d Monaten'
 	],
 	'a year': [
-		null,
 		'ein Jahr'
 	],
 	'%d years': [
-		null,
 		'%d Jahre'
 	],
 	'number_format_thousands_sep': [
-		null,
 		'.'
 	],
 	'number_format_decimals': [
-		null,
 		','
 	]
 };

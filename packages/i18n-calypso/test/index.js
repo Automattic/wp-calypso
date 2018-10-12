@@ -39,15 +39,12 @@ describe( 'I18n', function() {
 				i18n.setLocale( {
 					'': data.locale[''],
 					'test1': [
-						null,
 						'translation1-1'
 					],
 					'test2': [
-						null,
 						'translation2'
 					],
 					'new translation': [
-						null,
 						'Neue Übersetzung'
 					]
 				} );
@@ -73,15 +70,12 @@ describe( 'I18n', function() {
 						'Plural-Forms': 'nplurals=2; plural=n > 1;'
 					} ),
 					'test1': [
-						null,
 						'traduction1'
 					],
 					'test2': [
-						null,
 						'traduction2'
 					],
 					'new translation': [
-						null,
 						'nouvelle traduction'
 					]
 				} );
@@ -248,7 +242,6 @@ describe( 'I18n', function() {
 			it( 'should find a new translation after it has been added', function() {
 				i18n.addTranslations( {
 					'test-does-not-exist': [
-						null,
 						'translation3'
 					]
 				} );
@@ -258,7 +251,6 @@ describe( 'I18n', function() {
 			it( 'should return the new translation if it has been overwritten', function() {
 				i18n.addTranslations( {
 					'test-will-overwrite': [
-						null,
 						'not-translation1'
 					]
 				} );
@@ -337,7 +329,6 @@ describe( 'I18n', function() {
 					'key-hash': 'sha1'
 				},
 				'0f7d0d088b6ea936fb25b477722d734706fe8b40': [
-					null,
 					'implesa'
 				]
 			});
@@ -351,7 +342,6 @@ describe( 'I18n', function() {
 					'key-hash': 'sha1-1'
 				},
 				'0': [
-					null,
 					'implesa'
 				]
 			});
@@ -364,9 +354,9 @@ describe( 'I18n', function() {
 					localeSlug: 'xx-pig-latin',
 					'key-hash': 'sha1-1-2'
 				},
-				'0': [ null,'implesa' ],
-				'78': [ null, 'edra' ],  // red has a sha1 of 78988010b890ce6f4d2136481f392787ec6d6106
-				'7d': [ null, 'reyga' ] // grey has a sha1 of 7d1f8f911da92c0ea535cad461fd773281a79638
+				'0': [ 'implesa' ],
+				'78': [ 'edra' ],  // red has a sha1 of 78988010b890ce6f4d2136481f392787ec6d6106
+				'7d': [ 'reyga' ] // grey has a sha1 of 7d1f8f911da92c0ea535cad461fd773281a79638
 			});
 			assert.equal( i18n.translate( 'simple' ), 'implesa' );
 			assert.equal( i18n.translate( 'red' ), 'edra' );

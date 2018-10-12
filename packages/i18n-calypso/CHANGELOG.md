@@ -1,3 +1,8 @@
+3.0.0
+------
+
+* Update Jed dependency to v1.1.1. This is a breaking change, since as of Jed v1.1, the format of Jed translation files has changed. Refer to https://github.com/messageformat/Jed/pull/33 for details.
+
 2.0.2
 ------
 
