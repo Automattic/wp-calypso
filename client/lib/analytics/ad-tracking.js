@@ -33,6 +33,7 @@ const isAdwordsEnabled = true;
 const isFacebookEnabled = true;
 const isBingEnabled = true;
 const isGeminiEnabled = true;
+const isDonutsGtagEnabled = true;
 const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
 const isAolEnabled = true;
@@ -61,6 +62,7 @@ let lastFloodlightPageViewTime = 0;
  */
 const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js',
 	GOOGLE_TRACKING_SCRIPT_URL = 'https://www.googleadservices.com/pagead/conversion_async.js',
+	DONUTS_GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=DC-8907854',
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	ADWORDS_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
@@ -309,6 +311,10 @@ async function loadTrackingScripts( callback ) {
 
 	if ( isAdwordsEnabled ) {
 		scripts.push( GOOGLE_TRACKING_SCRIPT_URL );
+	}
+
+	if ( isDonutsGtagEnabled ) {
+		scripts.push( DONUTS_GOOGLE_GTAG_SCRIPT_URL );
 	}
 
 	if ( isBingEnabled ) {
