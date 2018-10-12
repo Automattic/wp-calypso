@@ -23,7 +23,7 @@ class SubscriptionText extends React.Component {
 			let informative_text = '';
 
 			if ( isBiennially( product ) ) {
-				informative_text = translate( 'renews biennially', {
+				informative_text = translate( 'renews every two years', {
 					context: 'Informative text for renewals in /checkout',
 				} );
 			} else if ( isYearly( product ) ) {
