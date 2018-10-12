@@ -27,7 +27,7 @@ describe( 'actions', () => {
 			const action = addBlogSticker( 123, 'broken-in-reader' );
 			expect( action ).to.deep.equal( {
 				type: SITES_BLOG_STICKER_ADD,
-				payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: true },
+				payload: { blogId: 123, stickerName: 'broken-in-reader' },
 			} );
 		} );
 	} );

@@ -30,22 +30,12 @@ export const requestBlogStickerAdd = action =>
 		action
 	);
 
-export const receiveBlogStickerAddError = action => {
-	const onError = [
-		bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ),
-	];
-	if ( action.payload.withNotice ) {
-		onError.push(
-			errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) )
-		);
-	}
-	return onError;
-};
+export const receiveBlogStickerAddError = action => [
+	errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
+	bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ),
+];
 
 export const receiveBlogStickerAdd = action => {
-	if ( ! action.payload.withNotice ) {
-		return;
-	}
 	return successNotice(
 		translate( 'The sticker {{i}}%s{{/i}} has been successfully added.', {
 			args: action.payload.stickerName,

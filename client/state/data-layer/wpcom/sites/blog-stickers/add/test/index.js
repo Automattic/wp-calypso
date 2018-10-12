@@ -33,9 +33,9 @@ describe( 'blog-sticker-add', () => {
 	} );
 
 	describe( 'receiveBlogStickerAdd', () => {
-		test( 'should dispatch a success notice by default', () => {
+		test( 'should dispatch a success notice', () => {
 			const output = receiveBlogStickerAdd( {
-				payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: true },
+				payload: { blogId: 123, stickerName: 'broken-in-reader' },
 			} );
 			expect( output ).toEqual(
 				expect.objectContaining( {
@@ -45,55 +45,27 @@ describe( 'blog-sticker-add', () => {
 				} )
 			);
 		} );
-
-		test( 'should not dispatch a success notice if withNotice is false', () => {
-			const output = receiveBlogStickerAdd( {
-				payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: false },
-			} );
-			expect( output ).toBeUndefined();
-		} );
 	} );
 
 	describe( 'receiveBlogStickerAddError', () => {
 		test( 'should revert to the previous state', () => {
 			const output = receiveBlogStickerAddError(
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: true } },
+				{ payload: { blogId: 123, stickerName: 'broken-in-reader' } },
 				{
 					success: false,
 				}
 			);
 
 			expect( output[ 0 ] ).toEqual(
-				bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) )
-			);
-		} );
-
-		test( 'should dispatch an error notice by default', () => {
-			const output = receiveBlogStickerAddError(
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: true } },
-				{
-					success: false,
-				}
-			);
-
-			expect( output[ 1 ] ).toEqual(
 				expect.objectContaining( {
 					notice: expect.objectContaining( {
 						status: 'is-error',
 					} ),
 				} )
 			);
-		} );
-
-		test( 'should not dispatch an error notice if withNotice is false', () => {
-			const output = receiveBlogStickerAddError(
-				{ payload: { blogId: 123, stickerName: 'broken-in-reader', withNotice: false } },
-				{
-					success: false,
-				}
+			expect( output[ 1 ] ).toEqual(
+				bypassDataLayer( removeBlogSticker( 123, 'broken-in-reader' ) )
 			);
-
-			expect( output[ 1 ] ).toBeUndefined();
 		} );
 	} );
 
