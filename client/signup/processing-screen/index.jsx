@@ -21,7 +21,6 @@ import analytics from 'lib/analytics';
 import { showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { isAutocontinueFlow } from 'signup/config/flows';
 
 export class SignupProcessingScreen extends Component {
 	static propTypes = {
@@ -312,8 +311,8 @@ export class SignupProcessingScreen extends Component {
 	renderActionButton() {
 		const { flowName, loginHandler, translate } = this.props;
 
-		if ( isAutocontinueFlow( flowName ) ) {
-			return false;
+		if ( flowName === 'import' ) {
+			return null;
 		}
 
 		if ( ! loginHandler ) {
