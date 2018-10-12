@@ -41,7 +41,14 @@ export class MapMarker extends Component {
 
 	renderMarker() {
 
-		const { map, point, google, icon, onClick } = this.props;
+		const {
+			map,
+			point,
+			google,
+			icon,
+			onClick
+		} = this.props;
+
 		const { handleClick } = this;
 
 		const position = new google.LatLng(
