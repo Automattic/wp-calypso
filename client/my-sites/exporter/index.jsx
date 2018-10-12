@@ -33,8 +33,7 @@ class Exporter extends Component {
 				<Notices />
 				{ showGuidedTransferOptions && isTransferInProgress && <InProgressCard /> }
 				<ExportCard siteId={ siteId } />
-				{ config.isEnabled( 'export-media' ) &&
-					! isJetpack && <ExportMediaCard siteId={ siteId } /> }
+				{ ! isJetpack && <ExportMediaCard siteId={ siteId } /> }
 				{ showGuidedTransferOptions && ! isTransferInProgress && <GuidedTransferCard /> }
 			</div>
 		);
