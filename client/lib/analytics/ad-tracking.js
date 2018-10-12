@@ -1524,6 +1524,9 @@ function isSupportedCurrency( currency ) {
 }
 
 function initDonutsGtag() {
+	if ( window.dataLayer && window.gtag ) {
+		return;
+	}
 	window.dataLayer = window.dataLayer || [];
 	window.gtag = function() {
 		window.dataLayer.push( arguments );
