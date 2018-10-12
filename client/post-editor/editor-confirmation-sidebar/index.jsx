@@ -46,7 +46,19 @@ class EditorConfirmationSidebar extends Component {
 		status: PropTypes.string,
 	};
 
-	mountSidebar = false;
+	state = {
+		hasUnclosed: false,
+	};
+
+	static getDerivedStateFromProps( props ) {
+		// In order to improve performance, `hasUnclosed` determines whether the
+		// sidebar should be rendered or not. The content has to be rendered
+		// the first time the sidebar is not in a 'closed' status.
+		if ( props.status !== 'closed' ) {
+			return { hasUnclosed: true };
+		}
+		return null;
+	}
 
 	getCloseOverlayHandler = context => () => this.props.setStatus( { status: 'closed', context } );
 
@@ -151,10 +163,8 @@ class EditorConfirmationSidebar extends Component {
 		const isSidebarActive = this.props.status === 'open';
 		const isOverlayActive = this.props.status !== 'closed';
 
-		this.mountSidebar = this.mountSidebar || isOverlayActive;
-
 		return (
-			this.mountSidebar && (
+			this.state.hasUnclosed && (
 				<div
 					className={ classnames( {
 						'editor-confirmation-sidebar': true,
