@@ -1,15 +1,13 @@
 {
-  "extends": [
-	"config:base",
-	"default:pinDigestsDisabled"
-  ],
-  "statusCheckVerify": true,
-  "ignoreDeps": [
-    "jquery"
-  ],
-  "labels": [
-	"Framework",
-	"[Type] Task",
-	"[Status] Needs Review"
-  ]
+	"extends": [ "config:base", "default:pinDigestsDisabled" ],
+	"packageRules": [
+		{
+			"paths": [ "packages/**" ],
+			"groupName": "calypso-packages",
+			"rangeStrategy": "replace"
+		}
+	],
+	"statusCheckVerify": true,
+	"ignoreDeps": [ "jquery" ],
+	"labels": [ "Framework", "[Type] Task", "[Status] Needs Review" ]
 }

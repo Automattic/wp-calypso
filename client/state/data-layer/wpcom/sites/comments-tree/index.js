@@ -11,11 +11,12 @@ import { flatMap, flatten, isArray, map } from 'lodash';
  * Internal dependencies
  */
 import { COMMENTS_TREE_SITE_ADD, COMMENTS_TREE_SITE_REQUEST } from 'state/action-types';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import getRawSite from 'state/selectors/get-raw-site';
+
+import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const fetchCommentsTreeForSite = ( { dispatch }, action ) => {
 	const { siteId, status = 'unapproved' } = action.query;
@@ -86,10 +87,8 @@ export const announceFailure = ( { dispatch, getState }, { query } ) => {
 	dispatch( errorNotice( error ) );
 };
 
-const treeHandlers = {
+registerHandlers( 'state/data-layer/wpcom/sites/comments-tree/index.js', {
 	[ COMMENTS_TREE_SITE_REQUEST ]: [
 		dispatchRequest( fetchCommentsTreeForSite, addCommentsTree, announceFailure ),
 	],
-};
-
-export default mergeHandlers( treeHandlers );
+} );

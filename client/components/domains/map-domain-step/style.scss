@@ -31,6 +31,10 @@
 	.domain-search-results__domain-availability {
 		margin-top: 30px;
 	}
+
+	.domain-suggestion.card {
+		border-left: 3px solid $alert-green;
+	}
 }
 
 .map-domain-step__domain-heading {
@@ -54,6 +58,11 @@
 	}
 }
 
+.map-domain-step__domain-text {
+	font-size: 0.9em;
+	margin-top: 20px;
+}
+
 .map-domain-step__add-domain .form-text-input-with-affixes__prefix {
 	flex: inherit;
 }
@@ -61,6 +70,11 @@
 input.map-domain-step__external-domain {
 	flex-grow: 1;
 	width: auto;
+}
+
+.map-domain-step__domain-text {
+	font-size: 0.9em;
+	margin-top: 20px;
 }
 
 .map-domain-step__go {

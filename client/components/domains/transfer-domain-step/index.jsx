@@ -26,9 +26,11 @@ import {
 } from 'lib/domains';
 import { getProductsList } from 'state/products-list/selectors';
 import { domainAvailability } from 'lib/domains/constants';
+import { PLAN_PERSONAL } from 'lib/plans/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import Banner from 'components/banner';
 import Notice from 'components/notice';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -43,7 +45,11 @@ import { domainManagementTransferIn } from 'my-sites/domains/paths';
 import { errorNotice } from 'state/notices/actions';
 import QueryProducts from 'components/data/query-products-list';
 import { isPlan } from 'lib/products-values';
-import { isDomainBundledWithPlan, isNextDomainFree } from 'lib/cart-values/cart-items';
+import {
+	isDomainBundledWithPlan,
+	isNextDomainFree,
+	hasToUpgradeToPayForADomain,
+} from 'lib/cart-values/cart-items';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -229,7 +235,7 @@ class TransferDomainStep extends React.Component {
 						{ translate(
 							'Transfer your domain away from your current provider to WordPress.com so you can update settings, ' +
 								"renew your domain, and more \u2013 right in your dashboard. We'll renew it for another year " +
-								'when the transfer is successful. {{a}}Learn more{{/a}}',
+								'when the transfer is successful. {{a}}Learn more about domain transfers.{{/a}}',
 							{
 								components: {
 									a: (
@@ -346,13 +352,21 @@ class TransferDomainStep extends React.Component {
 	render() {
 		let content;
 		const { precheck } = this.state;
-		const { isSignupStep } = this.props;
+		const { isSignupStep, translate, cart, selectedSite } = this.props;
 		const transferIsRestricted = this.transferIsRestricted();
 
 		if ( transferIsRestricted ) {
 			content = this.getTransferRestrictionMessage();
 		} else if ( precheck && ! isSignupStep ) {
 			content = this.getTransferDomainPrecheck();
+		} else if ( hasToUpgradeToPayForADomain( selectedSite, cart ) ) {
+			content = (
+				<Banner
+					description={ translate( 'To transfer your own domain, upgrade to a personal plan.' ) }
+					plan={ PLAN_PERSONAL }
+					title={ translate( 'Personal plan required' ) }
+				/>
+			);
 		} else {
 			content = this.addTransfer();
 		}
@@ -380,11 +394,6 @@ class TransferDomainStep extends React.Component {
 
 		return (
 			<div className={ 'transfer-domain-step__domain-availability' }>
-				<Notice status="is-success" showDismiss={ false }>
-					{ this.props.translate( '%(domain)s is available!', {
-						args: { domain: suggestion.domain_name },
-					} ) }
-				</Notice>
 				<DomainRegistrationSuggestion
 					cart={ this.props.cart }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }

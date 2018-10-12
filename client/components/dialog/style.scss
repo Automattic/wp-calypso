@@ -90,7 +90,7 @@
 	margin: 0;
 	text-align: right;
 	flex-shrink: 0;
-
+	background-color: rgba( 255, 255, 255, 1 );
 	@include breakpoint( '>480px' ) {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -135,4 +135,8 @@
 
 .dialog__action-buttons .is-left-aligned {
 	float: left;
+}
+
+.ReactModal__Body--open {
+	overflow: hidden;
 }

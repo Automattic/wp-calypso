@@ -77,8 +77,8 @@ const defaultLanguageSlug = config( 'i18n_default_locale_slug' );
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
-const startShowingEaster2018ClosureNoticeAt = i18n.moment( 'Thu, 29 Mar 2018 00:00:00 +0000' );
-const stopShowingEaster2018ClosureNoticeAt = i18n.moment( 'Mon, 2 Apr 2018 00:00:00 +0000' );
+const startShowingGM2018ClosureNoticeAt = i18n.moment( 'Mon, 24 Sep 2018 00:00:00 +0000' );
+const stopShowingGM2018ClosureNoticeAt = i18n.moment( 'Mon, 8 Oct 2018 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
 	static propTypes = {
@@ -529,8 +529,8 @@ class HelpContact extends React.Component {
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
 		const isClosureNoticeInEffect = currentDate.isBetween(
-			startShowingEaster2018ClosureNoticeAt,
-			stopShowingEaster2018ClosureNoticeAt
+			startShowingGM2018ClosureNoticeAt,
+			stopShowingGM2018ClosureNoticeAt
 		);
 
 		const shouldShowClosureNotice = isUserAffectedByLiveChatClosure && isClosureNoticeInEffect;

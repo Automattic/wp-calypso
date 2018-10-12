@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey, escapeRegExp } from 'lodash';
+import { invoke, noop, findKey } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -26,6 +26,7 @@ import { getThemeForSiteGoals, getSiteTypeForSiteGoals } from 'signup/utils';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
@@ -48,12 +49,16 @@ class AboutStep extends Component {
 	constructor( props ) {
 		super( props );
 		this._isMounted = false;
+		const hasPrepopulatedVertical =
+			isValidLandingPageVertical( props.siteTopic ) &&
+			props.queryObject.vertical === props.siteTopic;
 		this.state = {
 			query: '',
 			siteTopicValue: this.props.siteTopic,
 			userExperience: this.props.userExperience,
 			showStore: false,
 			pendingStoreClick: false,
+			hasPrepopulatedVertical,
 		};
 	}
 
@@ -100,11 +105,8 @@ class AboutStep extends Component {
 	};
 
 	handleSuggestionChangeEvent = ( { target: { name, value } } ) => {
-		this.setState( { query: value } );
-		this.setState( { siteTopicValue: value } );
-
+		this.setState( { query: value, siteTopicValue: value } );
 		this.props.recordTracksEvent( 'calypso_signup_actions_select_site_topic', { value } );
-
 		this.formStateController.handleFieldChange( { name, value } );
 	};
 
@@ -172,19 +174,13 @@ class AboutStep extends Component {
 	};
 
 	getSuggestions() {
-		const query = this.state.query && escapeRegExp( this.state.query ).toLowerCase();
-		const regex = new RegExp( query, 'i' );
+		if ( ! this.state.query ) {
+			return [];
+		}
 
-		// Prioritize suggestions starting with query input first
-		const sortFunction = ( a, b ) =>
-			abtest( 'aboutSuggestionMatches' ) === 'enhancedSort'
-				? a.localeCompare( b ) -
-				  2 * ( b.toLowerCase().indexOf( query ) - a.toLowerCase().indexOf( query ) )
-				: a.localeCompare( b );
-
+		const query = this.state.query.trim().toLocaleLowerCase();
 		return Object.values( hints )
-			.filter( hint => query && hint.match( regex ) )
-			.sort( sortFunction )
+			.filter( hint => hint.toLocaleLowerCase().includes( query ) )
 			.map( hint => ( { label: hint } ) );
 	}
 
@@ -283,8 +279,9 @@ class AboutStep extends Component {
 		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
-		const englishSiteTopicInput =
-			findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
+		const englishSiteTopicInput = this.state.hasPrepopulatedVertical
+			? this.state.siteTopicValue
+			: findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
 		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_topic', {
@@ -299,7 +296,9 @@ class AboutStep extends Component {
 
 		//Site Goals
 		this.props.setSiteGoals( siteGoalsInput );
-		themeRepo = getThemeForSiteGoals( siteGoalsInput );
+		themeRepo = this.state.hasPrepopulatedVertical
+			? 'pub/radcliffe-2'
+			: getThemeForSiteGoals( siteGoalsInput );
 		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
 
 		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
@@ -557,30 +556,34 @@ class AboutStep extends Component {
 								/>
 							</FormFieldset>
 
-							<FormFieldset>
-								<FormLabel htmlFor="siteTopic">
-									{ translate( 'What will your site be about?' ) }
-									<InfoPopover className="about__info-popover" position="top">
-										{ translate( "We'll use this to personalize your site and experience." ) }
-									</InfoPopover>
-								</FormLabel>
-								<FormTextInput
-									id="siteTopic"
-									name="siteTopic"
-									placeholder={ translate( 'e.g. Fashion, travel, design, plumber, electrician' ) }
-									value={ this.state.siteTopicValue }
-									onChange={ this.handleSuggestionChangeEvent }
-									onBlur={ this.hideSuggestions }
-									onKeyDown={ this.handleSuggestionKeyDown }
-									autoComplete="off"
-								/>
-								<Suggestions
-									ref={ this.setSuggestionsRef }
-									query={ this.state.query }
-									suggestions={ this.getSuggestions() }
-									suggest={ this.handleSuggestionMouseDown }
-								/>
-							</FormFieldset>
+							{ ! this.state.hasPrepopulatedVertical && (
+								<FormFieldset>
+									<FormLabel htmlFor="siteTopic">
+										{ translate( 'What will your site be about?' ) }
+										<InfoPopover className="about__info-popover" position="top">
+											{ translate( "We'll use this to personalize your site and experience." ) }
+										</InfoPopover>
+									</FormLabel>
+									<FormTextInput
+										id="siteTopic"
+										name="siteTopic"
+										placeholder={ translate(
+											'e.g. Fashion, travel, design, plumber, electrician'
+										) }
+										value={ this.state.siteTopicValue }
+										onChange={ this.handleSuggestionChangeEvent }
+										onBlur={ this.hideSuggestions }
+										onKeyDown={ this.handleSuggestionKeyDown }
+										autoComplete="off"
+									/>
+									<Suggestions
+										ref={ this.setSuggestionsRef }
+										query={ this.state.query }
+										suggestions={ this.getSuggestions() }
+										suggest={ this.handleSuggestionMouseDown }
+									/>
+								</FormFieldset>
+							) }
 
 							<FormFieldset>
 								<FormLegend>

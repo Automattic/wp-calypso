@@ -16,6 +16,11 @@ import { getPreference } from 'state/preferences/selectors';
 import getColorSchemesData from './constants';
 import FormRadiosBar from 'components/forms/form-radios-bar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class ColorSchemePicker extends PureComponent {
 	static propTypes = {
 		temporarySelection: PropTypes.bool,

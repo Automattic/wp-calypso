@@ -120,6 +120,23 @@ const webpackConfig = {
 					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
 				},
 			},
+			{
+				test: /\.(svg)$/,
+				use: [
+					{
+						loader: 'file-loader',
+						options: {
+							emitFile: false, // On the server side, don't actually copy files
+							name: '[name].[ext]',
+							outputPath: 'images/',
+						},
+					},
+				],
+			},
+			{
+				test: /\.(sc|sa|c)ss$/,
+				loader: 'ignore-loader',
+			},
 		],
 	},
 	resolve: {

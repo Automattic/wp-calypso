@@ -4,11 +4,11 @@ div.wpnc__user {
   text-align: left;
 
   img {
-    height: $icon-size-detail;
-    width: $icon-size-detail;
+    height: $wpnc__icon-size-detail;
+    width: $wpnc__icon-size-detail;
     float: left;
-    margin: $user-margin-adjustment $padding-medium 0 0;
-    border-radius: $icon-size-detail/2;
+    margin: $wpnc__user-margin-adjustment $wpnc__padding-medium 0 0;
+    border-radius: $wpnc__icon-size-detail/2;
   }
 
   p {
@@ -16,7 +16,7 @@ div.wpnc__user {
     margin: 0;
   }
 
-  padding: ($padding-large - $user-margin-adjustment) $padding-medium $padding-small;
+  padding: ($wpnc__padding-large - $wpnc__user-margin-adjustment) $wpnc__padding-medium $wpnc__padding-small;
 
   .follow-link {
     margin-top: -0.1em;
@@ -69,7 +69,7 @@ div.wpnc__user {
 .wpnc__like .wpnc__body div.wpnc__user img,
 .wpnc__comment_like .wpnc__body div.wpnc__user img,
 .wpnc__reblog .wpnc__body div.wpnc__user img {
-  height: $icon-size;
-  width: $icon-size;
-  border-radius: $icon-size/2;
+  height: $wpnc__icon-size;
+  width: $wpnc__icon-size;
+  border-radius: $wpnc__icon-size/2;
 }

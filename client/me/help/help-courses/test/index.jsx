@@ -12,6 +12,8 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -66,6 +68,8 @@ import purchasesSelectors from 'state/purchases/selectors';
 describe( 'mapStateToProps should return correct value for isBusinessPlanUser', () => {
 	[
 		PLAN_FREE,
+		PLAN_BLOGGER,
+		PLAN_BLOGGER_2_YEARS,
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
 		PLAN_PREMIUM,

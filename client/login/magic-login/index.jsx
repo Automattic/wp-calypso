@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import page from 'page';
 
 /**
@@ -17,6 +18,7 @@ import notices from 'notices';
 import { login } from 'lib/paths';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import LocaleSuggestions from 'components/locale-suggestions';
@@ -31,6 +33,11 @@ import RequestLoginEmailForm from './request-login-email-form';
 import GlobalNotices from 'components/global-notices';
 import Gridicon from 'gridicons';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class MagicLogin extends React.Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
@@ -42,6 +49,7 @@ class MagicLogin extends React.Component {
 
 		// mapped to state
 		locale: PropTypes.string.isRequired,
+		query: PropTypes.object,
 		showCheckYourEmail: PropTypes.bool.isRequired,
 
 		// From `localize`
@@ -57,7 +65,15 @@ class MagicLogin extends React.Component {
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
 
-		page( login( { isNative: true, locale: this.props.locale } ) );
+		const loginParameters = {
+			isNative: true,
+			locale: this.props.locale,
+		};
+		const emailAddress = get( this.props, [ 'query', 'email_address' ] );
+		if ( emailAddress ) {
+			loginParameters.emailAddress = emailAddress;
+		}
+		page( login( loginParameters ) );
 	};
 
 	renderLinks() {
@@ -67,12 +83,18 @@ class MagicLogin extends React.Component {
 			return null;
 		}
 
+		// The email address from the URL (if present) is added to the login
+		// parameters in this.onClickEnterPasswordInstead(). But it's left out
+		// here deliberately, to ensure that if someone copies this link to
+		// paste somewhere else, their email address isn't included in it.
+		const loginParameters = {
+			isNative: true,
+			locale: locale,
+		};
+
 		return (
 			<div className="magic-login__footer">
-				<a
-					href={ login( { isNative: true, locale: locale } ) }
-					onClick={ this.onClickEnterPasswordInstead }
-				>
+				<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
 					<Gridicon icon="arrow-left" size={ 18 } />
 					{ translate( 'Enter a password instead' ) }
 				</a>
@@ -107,6 +129,7 @@ class MagicLogin extends React.Component {
 
 const mapState = state => ( {
 	locale: getCurrentLocaleSlug( state ),
+	query: getCurrentQueryArguments( state ),
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 } );
 

@@ -6,10 +6,10 @@
  * Module dependencies.
  */
 
-var debug = require('debug')('notifications:note');
+const debug = require('debug')('notifications:note');
 
 function getItem(key) {
-  var item;
+  let item;
   try {
     item = localStorage.getItem(key);
     return JSON.parse(item);
@@ -56,15 +56,15 @@ function removeItem(key) {
  * @returns {undefined}
  */
 function cleanupRepliesCache() {
-  var keysToRemove = [];
+  const keysToRemove = [];
 
   try {
-    for (var i = 0; i < localStorage.length; i++) {
-      var storedReplyKey = localStorage.key(i);
+    for (let i = 0; i < localStorage.length; i++) {
+      const storedReplyKey = localStorage.key(i);
 
       // cleanup caches replies older than a day
       if ('reply_' == localStorage.key(i).substring(0, 6)) {
-        var storedReply = getItem(storedReplyKey);
+        const storedReply = getItem(storedReplyKey);
 
         if (storedReply && Date.now() - storedReply[1] >= 24 * 60 * 60 * 1000) {
           keysToRemove.push(storedReplyKey);

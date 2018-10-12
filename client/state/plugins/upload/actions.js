@@ -12,6 +12,8 @@ import {
 	PLUGIN_UPLOAD_PROGRESS,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/plugins/new';
+
 /**
  * Upload a plugin to a site.
  *

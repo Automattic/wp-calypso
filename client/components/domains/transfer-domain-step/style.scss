@@ -37,6 +37,10 @@
 	.transfer-domain-step__domain-availability {
 		margin-top: 30px;
 	}
+
+	.domain-suggestion.card {
+		border-left: 3px solid $alert-green;
+	}
 }
 
 .transfer-domain-step__title {

@@ -50,7 +50,6 @@ import PostStatus from 'blocks/post-status/docs/example';
 import PostTime from 'blocks/post-time/docs/example';
 import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
-import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
@@ -62,6 +61,7 @@ import PostComment from 'blocks/comments/docs/post-comment-example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import SubscriptionLengthPicker from 'blocks/subscription-length-picker/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
+import ImageSelector from 'blocks/image-selector/docs/example';
 import VideoEditor from 'blocks/video-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
 import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
@@ -164,7 +164,6 @@ export default class AppComponents extends React.Component {
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
-					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
 					<ReaderCombinedCard />
@@ -195,6 +194,7 @@ export default class AppComponents extends React.Component {
 						<UserMentions readmeFilePath="user-mentions" />
 					) }
 					<SupportArticleDialog />
+					<ImageSelector readmeFilePath="image-selector" />
 				</Collection>
 			</Main>
 		);

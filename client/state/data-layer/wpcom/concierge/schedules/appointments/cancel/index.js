@@ -16,6 +16,8 @@ import {
 import fromApi from './from-api';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const cancelConciergeAppointment = action => {
 	return [
 		updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING ),
@@ -49,8 +51,10 @@ export const onError = () => {
 	];
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/concierge/schedules/appointments/cancel/index.js', {
 	[ CONCIERGE_APPOINTMENT_CANCEL ]: [
 		dispatchRequestEx( { fetch: cancelConciergeAppointment, onSuccess, onError, fromApi } ),
 	],
-};
+} );
+
+export default {};

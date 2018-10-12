@@ -35,10 +35,10 @@ const SERVICES_WHITELIST = [
 	'google_my_business',
 	'instagram',
 	'linkedin',
-	'path',
 	'tumblr',
 	'twitter',
 	'google_photos',
+	'mailchimp',
 ];
 
 class SharingServiceExamples extends Component {
@@ -280,25 +280,6 @@ class SharingServiceExamples extends Component {
 		];
 	}
 
-	path() {
-		return [
-			{
-				image: {
-					src: '/calypso/images/sharing/path-publicize.png',
-					alt: this.props.translate( 'Share posts to your Path timeline', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts to your Path timeline.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-		];
-	}
-
 	tumblr() {
 		return [
 			{
@@ -361,6 +342,18 @@ class SharingServiceExamples extends Component {
 						},
 					}
 				),
+			},
+		];
+	}
+
+	mailchimp() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/sharing/mailchimp-screenshot.png',
+					alt: this.props.translate( 'Add subscribers to MailChimp', { textOnly: true } ),
+				},
+				label: this.props.translate( 'Automatically add blog subscribers to your MailChimp list.' ),
 			},
 		];
 	}

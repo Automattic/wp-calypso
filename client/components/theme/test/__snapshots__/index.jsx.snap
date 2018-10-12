@@ -12,17 +12,16 @@ exports[`Theme rendering with default display buttonContents should match snapsh
   >
     <a
       aria-label="Twenty Seventeen"
-      className="theme__active-focus"
-      href="#"
+      className="theme__thumbnail"
+      href="javascript:;"
       onClick={[Function]}
     >
-      <span />
-    </a>
-    <a>
+      <div
+        className="theme__thumbnail-label"
+      />
       <img
         className="theme__img"
         id={null}
-        onClick={[Function]}
         src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
         srcSet="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
       />

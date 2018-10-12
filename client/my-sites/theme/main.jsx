@@ -12,17 +12,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import titlecase from 'to-title-case';
 import Gridicon from 'gridicons';
 import { head, split } from 'lodash';
 import photon from 'photon';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
@@ -58,7 +58,6 @@ import {
 	getThemeForumUrl,
 } from 'state/themes/selectors';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
-import { abtest } from 'lib/abtest';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
@@ -68,6 +67,7 @@ import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 
 class ThemeSheet extends React.Component {
 	static displayName = 'ThemeSheet';
@@ -577,9 +577,27 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
+	goBack = () => {
+		const { previousRoute, backPath } = this.props;
+		if ( previousRoute ) {
+			page.back( previousRoute );
+		} else {
+			page( backPath );
+		}
+	};
+
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
-		const { id, siteId, retired, isPremium, isJetpack, hasUnlimitedPremiumThemes } = this.props;
+		const {
+			id,
+			siteId,
+			retired,
+			isPremium,
+			isJetpack,
+			translate,
+			hasUnlimitedPremiumThemes,
+			previousRoute,
+		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
 			siteId ? '/:site' : ''
@@ -619,25 +637,18 @@ class ThemeSheet extends React.Component {
 		}
 
 		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner =
-			! isJetpack &&
-			isPremium &&
-			! hasUnlimitedPremiumThemes &&
-			config.isEnabled( 'upsell/nudge-a-palooza' ) &&
-			abtest( 'nudgeAPalooza' ) === 'themesNudgesUpdates';
+		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes;
 		if ( hasUpsellBanner ) {
-			// This is just for US-english audience and is not translated, remember to add translate() calls before
-			// removing a/b test check and enabling it for everyone
 			pageUpsellBanner = (
 				<Banner
 					plan={ PLAN_PREMIUM }
 					className="is-particular-theme-banner" // eslint-disable-line wpcalypso/jsx-classname-namespace
-					title={ 'Access this theme for FREE with a Premium or Business plan!' }
-					description={
+					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
+					description={ translate(
 						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
-					}
+					) }
 					event="themes_plan_particular_free_with_plan"
-					callToAction={ 'View plans' }
+					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
 				/>
 			);
@@ -665,8 +676,8 @@ class ThemeSheet extends React.Component {
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
-					backHref={ this.props.backPath }
-					backText={ i18n.translate( 'All Themes' ) }
+					backText={ previousRoute ? i18n.translate( 'Back' ) : i18n.translate( 'All Themes' ) }
+					onClick={ this.goBack }
 				>
 					{ ! retired && this.renderButton() }
 				</HeaderCake>
@@ -769,10 +780,11 @@ export default connect(
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
+			previousRoute: getPreviousRoute( state ),
 		};
 	},
 	{
 		setThemePreviewOptions,
 		recordTracksEvent,
 	}
-)( ThemeSheetWithOptions );
+)( localize( ThemeSheetWithOptions ) );

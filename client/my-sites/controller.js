@@ -15,7 +15,6 @@ import userFactory from 'lib/user';
 import { receiveSite, requestSite } from 'state/sites/actions';
 import {
 	getSite,
-	getSiteSlug,
 	getSiteAdminUrl,
 	isJetpackModuleActive,
 	isJetpackSite,
@@ -34,7 +33,7 @@ import config from 'config';
 import analytics from 'lib/analytics';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
 import getSiteId from 'state/selectors/get-site-id';
 import getSites from 'state/selectors/get-sites';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
@@ -289,12 +288,6 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 export function noSite( context, next ) {
 	context.store.dispatch( setSelectedSiteId( null ) );
 	return next();
-}
-
-// Helper selector to retrieve the primary site slug
-function getPrimarySiteSlug( state ) {
-	const primarySiteId = getPrimarySiteId( state );
-	return getSiteSlug( state, primarySiteId );
 }
 
 /*

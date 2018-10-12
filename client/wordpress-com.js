@@ -41,11 +41,19 @@ const sections = [
 		secondary: true,
 	},
 	{
+		name: 'activity',
+		paths: [ '/activity-log' ],
+		module: 'my-sites/activity',
+		secondary: true,
+		group: 'sites',
+	},
+	{
 		name: 'security',
 		paths: [ '/me/security' ],
 		module: 'me/security',
 		group: 'me',
 		secondary: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'privacy',
@@ -320,7 +328,6 @@ sections.push( {
 	module: 'reader/full-post',
 	secondary: false,
 	group: 'reader',
-	css: 'reader-full-post',
 	enableLoggedOut: true,
 } );
 
@@ -403,7 +410,6 @@ sections.push( {
 	enableLoggedOut: true,
 	secondary: false,
 	isomorphic: true,
-	css: 'login',
 } );
 
 sections.push( {
@@ -460,9 +466,9 @@ sections.push( {
 	name: 'gutenberg-editor',
 	paths: [ '/gutenberg' ],
 	module: 'gutenberg/editor',
-	group: 'editor',
+	group: 'gutenberg',
 	css: 'gutenberg-editor',
-	secondary: true,
+	secondary: false,
 } );
 
 module.exports = sections;

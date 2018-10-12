@@ -36,7 +36,7 @@ describe( 'cart-coupon', () => {
 	describe( 'General behavior', () => {
 		test( 'Should not blow up', () => {
 			const component = shallow( <CartCoupon { ...props } cart={ cart } /> );
-			expect( component.find( '.cart__coupon' ).length ).toBe( 1 );
+			expect( component.find( '.cart__coupon' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'Should render only coupon code link when there is no coupon', () => {
@@ -50,8 +50,8 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
-			expect( component.find( '.cart__form' ).length ).toBe( 0 );
+			expect( component.find( '.cart__toggle-link' ) ).toHaveLength( 1 );
+			expect( component.find( '.cart__form' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'Should show coupon form when toggle link is clicked', () => {
@@ -66,8 +66,8 @@ describe( 'cart-coupon', () => {
 				/>
 			);
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
-			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
-			expect( component.find( '.cart__form' ).length ).toBe( 1 );
+			expect( component.find( '.cart__toggle-link' ) ).toHaveLength( 1 );
+			expect( component.find( '.cart__form' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'Should hide coupon form when toggle link is clicked twice', () => {
@@ -83,8 +83,8 @@ describe( 'cart-coupon', () => {
 			);
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
 			component.find( '.cart__toggle-link' ).simulate( 'click', event );
-			expect( component.find( '.cart__toggle-link' ).length ).toBe( 1 );
-			expect( component.find( '.cart__form' ).length ).toBe( 0 );
+			expect( component.find( '.cart__toggle-link' ) ).toHaveLength( 1 );
+			expect( component.find( '.cart__form' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'Should apply a coupon when form is submitted', () => {
@@ -149,10 +149,10 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			expect( component.find( '.cart__toggle-link' ).length ).toBe( 0 );
-			expect( component.find( '.cart__form' ).length ).toBe( 0 );
-			expect( component.find( '.cart__details' ).length ).toBe( 1 );
-			expect( component.find( '.cart__remove-link' ).length ).toBe( 1 );
+			expect( component.find( '.cart__toggle-link' ) ).toHaveLength( 0 );
+			expect( component.find( '.cart__form' ) ).toHaveLength( 0 );
+			expect( component.find( '.cart__details' ) ).toHaveLength( 1 );
+			expect( component.find( '.cart__remove-link' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'Should remove a coupon when "remove" link is clicked', () => {
@@ -182,8 +182,8 @@ describe( 'cart-coupon', () => {
 					} }
 				/>
 			);
-			expect( component.children().length ).toBe( 0 );
-			expect( component.find( 'cart__coupon' ).length ).toBe( 0 );
+			expect( component.children() ).toHaveLength( 0 );
+			expect( component.find( 'cart__coupon' ) ).toHaveLength( 0 );
 		} );
 	} );
 

@@ -12,7 +12,6 @@ import { activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { bumpStat } from 'state/analytics/actions';
 import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
-import { restoreLastSession } from 'lib/restore-last-path';
 import { pathToRegExp } from './utils';
 import { receiveSections, preload } from './sections-helper';
 
@@ -20,7 +19,6 @@ import sections from './sections';
 receiveSections( sections );
 
 const _loadedSections = {};
-let _lastSectionName = '';
 
 function activateSection( sectionDefinition, context, next ) {
 	const dispatch = context.store.dispatch;
@@ -38,17 +36,12 @@ function createPageDefinition( path, sectionDefinition ) {
 		const envId = sectionDefinition.envId;
 		const dispatch = context.store.dispatch;
 
-		_lastSectionName = sectionDefinition.name;
-
 		if ( envId && envId.indexOf( config( 'env_id' ) ) === -1 ) {
 			return next();
 		}
 
 		if ( _loadedSections[ sectionDefinition.module ] ) {
 			return activateSection( sectionDefinition, context, next );
-		}
-		if ( config.isEnabled( 'restore-last-location' ) && restoreLastSession( context.path ) ) {
-			return;
 		}
 		dispatch( { type: 'SECTION_SET', isLoading: true } );
 
@@ -64,9 +57,7 @@ function createPageDefinition( path, sectionDefinition ) {
 					requiredModules.forEach( mod => mod.default( controller.clientRouter ) );
 					_loadedSections[ sectionDefinition.module ] = true;
 				}
-				return _lastSectionName === sectionDefinition.name
-					? activateSection( sectionDefinition, context, next )
-					: Promise.resolve();
+				return activateSection( sectionDefinition, context, next );
 			} )
 			.catch( error => {
 				console.error( error ); // eslint-disable-line

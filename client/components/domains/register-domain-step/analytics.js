@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { flow, mapKeys, mapValues, snakeCase } from 'lodash';
+import { flow, mapKeys, mapValues, snakeCase, startsWith, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -139,5 +139,56 @@ export function recordFiltersSubmit( filters, section ) {
 			section,
 			...processFiltersForAnalytics( filters ),
 		} )
+	);
+}
+
+let searchQueue = [];
+let searchStackTimer = null;
+let lastSearchTimestamp = null;
+let searchCount = 0;
+let recordSearchFormSubmitWithDispatch = noop;
+
+export function resetSearchCount() {
+	searchCount = 0;
+}
+
+export function enqueueSearchStatReport( search, recordFunction ) {
+	recordSearchFormSubmitWithDispatch = recordFunction;
+	searchQueue.push( Object.assign( {}, search, { timestamp: Date.now() } ) );
+	if ( searchStackTimer ) {
+		window.clearTimeout( searchStackTimer );
+	}
+	searchStackTimer = window.setTimeout( processSearchStatQueue, 10000 );
+}
+
+function processSearchStatQueue() {
+	const queue = searchQueue.slice();
+	window.clearTimeout( searchStackTimer );
+	searchStackTimer = null;
+	searchQueue = [];
+
+	outerLoop: for ( let i = 0; i < queue.length; i++ ) {
+		for ( let k = i + 1; k < queue.length; k++ ) {
+			if ( startsWith( queue[ k ].query, queue[ i ].query ) ) {
+				continue outerLoop;
+			}
+		}
+		reportSearchStats( queue[ i ] );
+	}
+}
+
+function reportSearchStats( { query, section, timestamp, vendor } ) {
+	let timeDiffFromLastSearchInSeconds = 0;
+	if ( lastSearchTimestamp ) {
+		timeDiffFromLastSearchInSeconds = Math.floor( ( timestamp - lastSearchTimestamp ) / 1000 );
+	}
+	lastSearchTimestamp = timestamp;
+	searchCount++;
+	recordSearchFormSubmitWithDispatch(
+		query,
+		section,
+		timeDiffFromLastSearchInSeconds,
+		searchCount,
+		vendor
 	);
 }

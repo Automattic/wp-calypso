@@ -29,7 +29,7 @@ class CloneCloningStep extends Component {
 	goToActivityLog = () => {
 		const { originSiteSlug } = this.props;
 
-		page.redirect( `/stats/activity/${ originSiteSlug }` );
+		page.redirect( `/activity-log/${ originSiteSlug }` );
 	};
 
 	renderStepContent = () => {

@@ -23,6 +23,12 @@ import {
 } from 'state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
+import 'state/data-layer/wpcom/comments';
+import 'state/data-layer/wpcom/sites/comment-counts';
+import 'state/data-layer/wpcom/sites/comments-tree';
+import 'state/data-layer/wpcom/sites/comments';
+import 'state/data-layer/wpcom/sites/posts/replies';
+
 /**
  * Creates an action that requests a single comment for a given site.
  * @param {Number} siteId Site identifier

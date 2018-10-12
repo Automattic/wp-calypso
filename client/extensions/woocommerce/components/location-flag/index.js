@@ -3,10 +3,14 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+import { flagUrl } from 'lib/flags';
 
 class LocationFlag extends Component {
 	constructor( props ) {
@@ -30,7 +34,7 @@ class LocationFlag extends Component {
 				onError={ onError }
 				className={ classNames( 'location-flag', className ) }
 				style={ style }
-				src={ `/calypso/images/flags/${ code.toLowerCase() }.svg` }
+				src={ flagUrl( code.toLowerCase() ) }
 				alt=""
 			/>
 		);

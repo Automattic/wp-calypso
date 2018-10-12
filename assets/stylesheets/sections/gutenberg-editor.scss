@@ -15,6 +15,12 @@
 @import '../../../node_modules/@wordpress/block-library/build-style/editor';
 @import '../../../node_modules/@wordpress/block-library/build-style/theme';
 
+// Components
+@import '../../../node_modules/@wordpress/components/build-style/style';
+
+// NUX
+@import '../../../node_modules/@wordpress/nux/build-style/style';
+
 // Calypso specific Gutenberg editor styles
 @import 'gutenberg/editor/style';
 
@@ -26,7 +32,6 @@
 @import 'gutenberg/editor/edit-post/assets/stylesheets/animations';
 @import 'gutenberg/editor/edit-post/assets/stylesheets/z-index';
 @import 'gutenberg/editor/edit-post/assets/stylesheets/main';
-@import 'gutenberg/editor/edit-post/components/meta-boxes/meta-boxes-area/style';
 @import 'gutenberg/editor/edit-post/components/text-editor/style';
 @import 'gutenberg/editor/edit-post/components/layout/style';
 @import 'gutenberg/editor/edit-post/components/sidebar/last-revision/style';

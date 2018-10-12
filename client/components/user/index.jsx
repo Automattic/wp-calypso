@@ -12,6 +12,11 @@ import PropTypes from 'prop-types';
  */
 import Gravatar from 'components/gravatar';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class User extends Component {
 	static displayName = 'User';
 

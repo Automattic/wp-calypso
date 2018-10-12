@@ -23,7 +23,7 @@
 	}
 }
 
-// `transition` here is applied with less specificity to avoid overwriting ReactCSSTransitionGroup's animation.
+// `transition` here is applied with less specificity to avoid overwriting CSSTransition's animation.
 .comment {
 	transition: margin 0.15s linear;
 }

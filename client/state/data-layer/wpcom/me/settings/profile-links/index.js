@@ -10,11 +10,10 @@ import { noop } from 'lodash';
  */
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { USER_PROFILE_LINKS_REQUEST } from 'state/action-types';
 import { receiveUserProfileLinks } from 'state/profile-links/actions';
-import newHandler from './new';
-import deleteHandler from './delete';
+
+import { registerHandlers } from 'state/data-layer/handler-registry';
 
 /**
  * Dispatches a request to fetch profile links of the current user
@@ -42,7 +41,7 @@ export const requestUserProfileLinks = action =>
 export const handleRequestSuccess = ( action, { profile_links } ) =>
 	receiveUserProfileLinks( profile_links );
 
-const requestHandler = {
+registerHandlers( 'state/data-layer/wpcom/me/settings/profile-links/index.js', {
 	[ USER_PROFILE_LINKS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestUserProfileLinks,
@@ -50,6 +49,4 @@ const requestHandler = {
 			onError: noop,
 		} ),
 	],
-};
-
-export default mergeHandlers( requestHandler, newHandler, deleteHandler );
+} );

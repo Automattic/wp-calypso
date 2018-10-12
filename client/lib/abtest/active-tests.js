@@ -1,13 +1,10 @@
 /** @format */
 export default {
-	nudgeAPalooza: {
-		datestamp: '20180806',
+	cartNudgeUpdateToPremium: {
+		datestamp: '20180917',
 		variations: {
-			sidebarUpsells: 20,
-			themesNudgesUpdates: 20,
-			customPluginAndThemeLandingPages: 20,
-			plansBannerUpsells: 20,
-			control: 20,
+			test: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -75,27 +72,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSuggestionKrakenV323: {
-		datestamp: '20180815',
-		variations: {
-			domainsbot: 0,
-			group_1: 22700,
-			group_3: 22700,
-			group_4: 22700,
-			group_6: 0,
-			group_7: 0,
-			group_8: 22700,
-		},
-		defaultVariation: 'domainsbot',
-	},
-	aboutSuggestionMatches: {
-		datestamp: '20180704',
-		variations: {
-			control: 50,
-			enhancedSort: 50,
-		},
-		defaultVariation: 'control',
-	},
 	includeDotBlogSubdomainV2: {
 		datestamp: '20180813',
 		variations: {
@@ -104,12 +80,40 @@ export default {
 		},
 		defaultVariation: 'no',
 	},
-	gSuiteDiscount: {
-		datestamp: '20180803',
+	gSuiteDiscountV2: {
+		datestamp: '20180822',
 		variations: {
-			control: 50,
-			discount: 50,
+			control: 100,
+			discount: 0,
 		},
 		defaultVariation: 'control',
+	},
+	domainManagementSuggestionV2: {
+		datestamp: '20181001',
+		variations: {
+			domainsbot_front: 80,
+			variation_front: 20,
+		},
+		defaultVariation: 'domainsbot_front',
+		assignmentMethod: 'userId',
+		allowExistingUsers: true,
+	},
+	userFirstSignup: {
+		datestamp: '20180913',
+		variations: {
+			default: 1,
+			userFirst: 1,
+		},
+		defaultVariation: 'default',
+		allowExistingUsers: false,
+	},
+	dotBlogSuggestionsv2: {
+		datestamp: '20181012',
+		variations: {
+			simple: 50,
+			complex: 50,
+		},
+		defaultVariation: 'simple',
+		allowExistingUsers: true,
 	},
 };

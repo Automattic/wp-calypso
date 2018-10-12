@@ -13,7 +13,7 @@ import SocialLogo from 'social-logos';
 import SiteImporterLogo from './site-importer/logo';
 
 const ImporterLogo = ( { icon } ) => {
-	if ( includes( [ 'wordpress', 'medium', 'blogger-alt' ], icon ) ) {
+	if ( includes( [ 'wordpress', 'medium', 'blogger-alt', 'squarespace' ], icon ) ) {
 		return <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />;
 	}
 

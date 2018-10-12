@@ -239,9 +239,50 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features__header-price-group {
+.plan-features__header-price-group,
+.plan-features__header-price-group-prices {
 	display: flex;
 	flex-flow: row wrap;
+	align-items: center;
+}
+
+.plan-features__header-price-group {
+	width: calc( 100% + 20px );
+	@include breakpoint( '<960px' ) {
+		width: calc( 100% + 10px );
+	}
+}
+
+.plan-features__header-price-group-prices {
+	max-width: calc( 100% - 20px );
+	@include breakpoint( '<960px' ) {
+		max-width: calc( 100% - 10px );
+	}
+
+	.plan-price.is-discounted {
+		@include breakpoint( '>960px' ) {
+			margin-right: 0;
+		}
+	}
+}
+
+.plan-features__header-credit-label {
+	font-size: 11px;
+	line-height: 20px;
+	height: 20px;
+	border-radius: 10px;
+	color: $white;
+	background: $alert-green;
+	font-weight: normal;
+	vertical-align: middle;
+	padding: 0 8px;
+	margin-bottom: 4px;
+	@include breakpoint( '>960px' ) {
+		margin-left: 4px;
+	}
+	@include breakpoint( '>1280px' ) {
+		margin-left: 8px;
+	}
 }
 
 .plan-features__header-timeframe {
@@ -577,5 +618,9 @@ $plan-features-sidebar-width: 272px;
 		@include breakpoint( '<660px' ) {
 			padding-top: 0;
 		}
+	}
+
+	.plan-features__header-price-group-prices {
+		display: inline;
 	}
 }

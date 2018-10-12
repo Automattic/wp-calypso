@@ -56,17 +56,6 @@
 @include editor-left(".components-notice-list");
 @include editor-right(".components-notice-list");
 
-.edit-post-layout__metaboxes:not(:empty) {
-	border-top: $border-width solid $light-gray-500;
-	margin-top: 10px;
-	padding: 10px 0 10px;
-	clear: both;
-
-	.edit-post-meta-boxes-area {
-		margin: auto 20px;
-	}
-}
-
 .edit-post-layout__content {
 	position: relative;
 	display: flex;
@@ -87,10 +76,6 @@
 
 	.edit-post-visual-editor {
 		flex-basis: 100%;
-	}
-
-	.edit-post-layout__metaboxes {
-		flex-shrink: 0;
 	}
 }
 

@@ -14,7 +14,6 @@ function AssetsWriter( options ) {
 		},
 		options
 	);
-	this.createOutputStream();
 }
 
 Object.assign( AssetsWriter.prototype, {
@@ -25,7 +24,8 @@ Object.assign( AssetsWriter.prototype, {
 	apply: function( compiler ) {
 		const self = this;
 
-		compiler.hooks.afterEmit.tap( 'AssetsWriter', compilation => {
+		compiler.hooks.afterEmit.tapAsync( 'AssetsWriter', ( compilation, callback ) => {
+			this.createOutputStream();
 			const stats = compilation.getStats().toJson( {
 				hash: true,
 				publicPath: true,
@@ -85,7 +85,7 @@ Object.assign( AssetsWriter.prototype, {
 				} )
 			);
 
-			self.outputStream.write( JSON.stringify( statsToOutput, null, '\t' ) );
+			self.outputStream.end( JSON.stringify( statsToOutput, null, '\t' ), callback );
 		} );
 	},
 } );

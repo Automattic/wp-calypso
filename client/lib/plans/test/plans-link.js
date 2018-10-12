@@ -13,6 +13,15 @@ describe( 'plansLink', () => {
 		expect( plansLink( '/plans', undefined, 'monthly' ) ).toBe( '/plans/monthly' );
 	} );
 
+	test( 'should append intervalType to URL when forceInterval is true', () => {
+		expect( plansLink( '/plans', 'example.com', 'monthly', true ) ).toBe(
+			'/plans/monthly/example.com'
+		);
+		expect( plansLink( '/plans', 'example.com', 'yearly', true ) ).toBe(
+			'/plans/yearly/example.com'
+		);
+	} );
+
 	test( 'should append site slug if provided', () => {
 		expect( plansLink( '/plans', 'example.com' ) ).toBe( '/plans/example.com' );
 	} );

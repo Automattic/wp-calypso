@@ -118,7 +118,12 @@ export function generateSteps( {
 
 		about: {
 			stepName: 'about',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
+			providesDependencies: [
+				'designType',
+				'themeSlugWithRepo',
+				'siteTitle',
+				'surveyQuestion',
+			],
 		},
 
 		user: {
@@ -166,6 +171,14 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'domain-only': {
+			stepName: 'domain-only',
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			props: {
+				isDomainOnly: true,
+			},
+		},
+
 		'domains-store': {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
@@ -205,7 +218,12 @@ export function generateSteps( {
 				oauth2Signup: true,
 			},
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+			],
 		},
 
 		'get-dot-blog-plans': {
@@ -335,6 +353,17 @@ export function generateSteps( {
 
 		'clone-cloning': {
 			stepName: 'clone-cloning',
+			providesDependencies: [],
+		},
+
+		/* Imports */
+		'from-url': {
+			stepName: 'from-url',
+			providesDependencies: [ 'importUrl', 'themeSlugWithRepo' ],
+		},
+
+		'reader-landing': {
+			stepName: 'reader-landing',
 			providesDependencies: [],
 		},
 	};

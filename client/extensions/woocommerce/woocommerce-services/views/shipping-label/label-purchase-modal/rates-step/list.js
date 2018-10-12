@@ -43,7 +43,6 @@ export const ShippingRates = ( {
 } ) => {
 	const packageNames = getPackageDescriptions( selectedPackages, allPackages, true );
 	const hasSinglePackage = 1 === Object.keys( selectedPackages ).length;
-	const hasMultiplePackages = 1 < Object.keys( selectedPackages ).length;
 
 	const getTitle = ( pckg, pckgId ) => {
 		if ( hasSinglePackage ) {
@@ -56,8 +55,7 @@ export const ShippingRates = ( {
 		const selectedRate = selectedRates[ pckgId ] || '';
 		const packageRates = get( availableRates, [ pckgId, 'rates' ], [] );
 		const valuesMap = { '': translate( 'Select one…' ) };
-		const serverErrors = errors.server && errors.server[ pckgId ];
-		const formError = errors.form && errors.form[ pckgId ];
+		const packageErrors = errors[ pckgId ] || [];
 
 		packageRates.forEach( rateObject => {
 			valuesMap[ rateObject.service_id ] =
@@ -67,25 +65,19 @@ export const ShippingRates = ( {
 		const onRateUpdate = value => updateRate( pckgId, value );
 		return (
 			<div key={ pckgId } className="rates-step__package-container">
-				{ serverErrors &&
-					isEmpty( packageRates ) &&
-					hasMultiplePackages && (
-						<p className="rates-step__package-heading">{ packageNames[ pckgId ] }</p>
-					) }
-				{ ! isEmpty( packageRates ) && (
-					<Dropdown
-						id={ id + '_' + pckgId }
-						valuesMap={ valuesMap }
-						title={ getTitle( pckg, pckgId ) }
-						value={ selectedRate }
-						updateValue={ onRateUpdate }
-						error={ formError }
-					/>
-				) }
-				{ serverErrors &&
-					serverErrors.map( ( serverError, index ) => {
-						return <FieldError type="server-error" key={ index } text={ serverError } />;
-					} ) }
+				<Dropdown
+					id={ id + '_' + pckgId }
+					valuesMap={ valuesMap }
+					title={ getTitle( pckg, pckgId ) }
+					value={ selectedRate }
+					updateValue={ onRateUpdate }
+					disabled={ isEmpty( packageRates ) }
+					error={ packageErrors[ 0 ] }
+				/>
+				{ packageErrors.slice( 1 ).map( ( error, index ) => {
+					// Print the rest of the errors (if any) below the dropdown
+					return <FieldError type="server-error" key={ index } text={ error } />;
+				} ) }
 			</div>
 		);
 	};

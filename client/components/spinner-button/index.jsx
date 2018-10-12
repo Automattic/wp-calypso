@@ -14,6 +14,11 @@ import { omit } from 'lodash';
 import Button from 'components/forms/form-button';
 import Spinner from 'components/spinner';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class extends React.Component {
 	static displayName = 'SpinnerButton';
 

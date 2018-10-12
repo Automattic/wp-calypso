@@ -55,6 +55,11 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	renderConfirmationNotice() {
+		// we want the user-first flow to stay focused, don't try to send them to their inbox
+		if ( this.props.flowName === 'user-first' ) {
+			return null;
+		}
+
 		if ( this.props.user && this.props.user.email_verified ) {
 			return;
 		}
@@ -284,6 +289,10 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showChecklistAfterLogin = () => {
+		analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+			site: this.state.siteSlug,
+			plan: 'free',
+		} );
 		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }` } );
 	};
 
@@ -294,8 +303,8 @@ export class SignupProcessingScreen extends Component {
 
 		return (
 			config.isEnabled( 'onboarding-checklist' ) &&
-			'blog' === designType &&
-			[ 'personal', 'premium', 'business' ].indexOf( this.props.flowName ) === -1
+			'store' !== designType &&
+			[ 'main', 'desktop', 'subdomain', 'user-continue' ].includes( this.props.flowName )
 		);
 	}
 

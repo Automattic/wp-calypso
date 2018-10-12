@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -11,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import classNames from 'classnames';
-import { endsWith, get, includes, times, first } from 'lodash';
+import { get, includes, times, first } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +35,7 @@ class DomainSearchResults extends React.Component {
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
-		products: PropTypes.object.isRequired,
+		products: PropTypes.object,
 		selectedSite: PropTypes.object,
 		availableDomain: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		suggestions: PropTypes.array,
@@ -52,7 +51,7 @@ class DomainSearchResults extends React.Component {
 		onClickTransfer: PropTypes.func,
 		onClickUseYourDomain: PropTypes.func,
 		isSignupStep: PropTypes.bool,
-		railcarSeed: PropTypes.string,
+		railcarId: PropTypes.string,
 		fetchAlgo: PropTypes.string,
 	};
 
@@ -96,7 +95,7 @@ class DomainSearchResults extends React.Component {
 				],
 				lastDomainStatus
 			) &&
-			this.props.products.domain_map
+			get( this.props, 'products.domain_map', false )
 		) {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
@@ -230,7 +229,7 @@ class DomainSearchResults extends React.Component {
 					onButtonClick={ this.props.onClickResult }
 					primarySuggestion={ first( bestMatchSuggestions ) }
 					query={ this.props.lastDomainSearched }
-					railcarSeed={ this.props.railcarSeed }
+					railcarId={ this.props.railcarId }
 					secondarySuggestion={ first( bestAlternativeSuggestions ) }
 					selectedSite={ this.props.selectedSite }
 				/>
@@ -249,11 +248,9 @@ class DomainSearchResults extends React.Component {
 						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						railcarId={ `${ this.props.railcarSeed }-registration-suggestion-${ i + 2 }` }
+						railcarId={ this.props.railcarId }
 						uiPosition={ i + 2 }
-						fetchAlgo={
-							endsWith( suggestion.domain_name, '.wordpress.com' ) ? 'wpcom' : this.props.fetchAlgo
-						}
+						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult }
 					/>

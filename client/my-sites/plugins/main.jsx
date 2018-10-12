@@ -26,7 +26,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/act
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginsList from './plugins-list';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
@@ -429,6 +429,7 @@ export class PluginsMain extends Component {
 	}
 
 	handleUploadPluginButtonClick = () => {
+		this.props.recordTracksEvent( 'calypso_click_plugin_upload' );
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	};
 
@@ -552,6 +553,6 @@ export default flow(
 					: canCurrentUserManagePlugins( state ),
 			};
 		},
-		{ wporgFetchPluginData, recordGoogleEvent }
+		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
 	)
 )( PluginsMain );

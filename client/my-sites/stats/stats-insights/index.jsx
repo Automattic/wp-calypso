@@ -27,6 +27,7 @@ import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { abtest } from 'lib/abtest';
 import StatsFirstView from '../stats-first-view';
 import SectionHeader from 'components/section-header';
 import StatsViews from '../stats-views';
@@ -64,7 +65,13 @@ const StatsInsights = props => {
 				<PostingActivity />
 				<SectionHeader label={ translate( 'All Time Views' ) } />
 				<StatsViews />
-				{ siteId && <DomainTip siteId={ siteId } event="stats_insights_domain" /> }
+				{ siteId && (
+					<DomainTip
+						siteId={ siteId }
+						event="stats_insights_domain"
+						vendor={ abtest( 'domainManagementSuggestionV2' ) }
+					/>
+				) }
 				<div className="stats-insights__nonperiodic has-recent">
 					<div className="stats__module-list">
 						<div className="stats__module-column">

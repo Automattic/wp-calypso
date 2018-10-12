@@ -17,7 +17,7 @@ import CartAd from './cart-ad';
 import { cartItems } from 'lib/cart-values';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
-import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { isBlogger, isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { shouldFetchSitePlans } from 'lib/plans';
 
 class CartPlanDiscountAd extends Component {
@@ -41,6 +41,10 @@ class CartPlanDiscountAd extends Component {
 			! cartItems.hasPlan( cart )
 		) {
 			return null;
+		}
+
+		if ( cartItems.getAll( cart ).some( isBlogger ) ) {
+			plan = find( sitePlans.data, isBlogger );
 		}
 
 		if ( cartItems.getAll( cart ).some( isPersonal ) ) {

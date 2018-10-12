@@ -19,14 +19,10 @@ import Task from 'components/checklist/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
-import { loadTrackingTool, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
 class JetpackChecklist extends PureComponent {
-	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
-	}
-
 	isComplete( taskId ) {
 		return get( this.props.taskStatuses, [ taskId, 'completed' ], false );
 	}
@@ -75,7 +71,7 @@ class JetpackChecklist extends PureComponent {
 						duration={ translate( '%d minute', '%d minutes', { count: 2, args: [ 2 ] } ) }
 						onClick={ this.handleTaskStart( {
 							taskId: 'jetpack_backups',
-							url: `/stats/activity/${ siteSlug }`,
+							url: `/activity-log/${ siteSlug }`,
 						} ) }
 						title={ translate( 'Backups & Scanning' ) }
 					/>
@@ -141,7 +137,6 @@ export default connect(
 		};
 	},
 	{
-		loadTrackingTool,
 		recordTracksEvent,
 		requestGuidedTour,
 	}

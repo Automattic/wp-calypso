@@ -6,7 +6,8 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -56,36 +57,32 @@ class FirstView extends React.PureComponent {
 
 		return (
 			<RootChild className={ classes }>
-				<ReactCSSTransitionGroup
-					transitionName="first-view-transition"
-					component={ TransitionGroupComponent }
-					transitionEnter={ false }
-					transitionEnterTimeout={ 0 }
-					transitionLeaveTimeout={ 250 }
-				>
+				<TransitionGroup component={ TransitionGroupComponent }>
 					{ this.props.isVisible && (
-						<Card key="content" className={ firstViewContentClasses }>
-							{ this.props.children }
+						<CSSTransition classNames="first-view-transition" enter={ false } timeout={ 250 }>
+							<Card key="content" className={ firstViewContentClasses }>
+								{ this.props.children }
 
-							<Button primary onClick={ this.hide }>
-								{ this.props.translate( 'Got It!', {
-									context: 'Button that dismisses the introduction overlay.',
-								} ) }
-							</Button>
+								<Button primary onClick={ this.hide }>
+									{ this.props.translate( 'Got It!', {
+										context: 'Button that dismisses the introduction overlay.',
+									} ) }
+								</Button>
 
-							<div className={ firstViewHidePreferenceClasses }>
-								<label>
-									<input
-										type="checkbox"
-										checked={ ! this.state.isEnabled }
-										onChange={ this.enableOrDisableNextTime }
-									/>
-									{ this.props.translate( "Don't show this again" ) }
-								</label>
-							</div>
-						</Card>
+								<div className={ firstViewHidePreferenceClasses }>
+									<label>
+										<input
+											type="checkbox"
+											checked={ ! this.state.isEnabled }
+											onChange={ this.enableOrDisableNextTime }
+										/>
+										{ this.props.translate( "Don't show this again" ) }
+									</label>
+								</div>
+							</Card>
+						</CSSTransition>
 					) }
-				</ReactCSSTransitionGroup>
+				</TransitionGroup>
 			</RootChild>
 		);
 	}

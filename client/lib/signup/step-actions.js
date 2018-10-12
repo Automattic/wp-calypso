@@ -6,7 +6,6 @@
 import debugFactory from 'debug';
 import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import { parse as parseURL } from 'url';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -30,6 +29,8 @@ import { getUserExperience } from 'state/signup/steps/user-experience/selectors'
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
 import { getProductsList } from 'state/products-list/selectors';
+import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
+import { normalizeImportUrl } from 'state/importer-nux/utils';
 import { promisify } from '../../utils';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -75,7 +76,6 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
 			error => {
 				callback( error, providedDependencies );
-				page.redirect( `/checkout/${ siteSlug }` );
 			}
 		);
 	} else {
@@ -107,6 +107,7 @@ export function createSiteWithCart(
 	{
 		cartItem,
 		domainItem,
+		flowName,
 		googleAppsCartItem,
 		isPurchasingItem,
 		siteUrl,
@@ -119,10 +120,12 @@ export function createSiteWithCart(
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const siteGoals = getSiteGoals( reduxStore.getState() ).trim();
+	const importingFromUrl =
+		'import' === flowName ? normalizeImportUrl( getNuxUrlInputValue( reduxStore.getState() ) ) : '';
 
 	wpcom.undocumented().sitesNew(
 		{
-			blog_name: siteUrl,
+			blog_name: importingFromUrl || siteUrl,
 			blog_title: siteTitle,
 			options: {
 				designType: designType || undefined,
@@ -134,7 +137,7 @@ export function createSiteWithCart(
 				siteGoals: siteGoals || undefined,
 			},
 			validate: false,
-			find_available_url: isPurchasingItem,
+			find_available_url: !! ( isPurchasingItem || importingFromUrl ),
 		},
 		function( error, response ) {
 			if ( error ) {

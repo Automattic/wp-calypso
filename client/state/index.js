@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { reducer as form } from 'redux-form';
@@ -12,19 +10,34 @@ import { mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
+import extensionsModule from 'extensions';
 import { combineReducers } from 'state/utils';
-import account from './account/reducer';
+
+/**
+ * Store enhancers
+ */
 import actionLogger from './action-log';
+import consoleDispatcher from './console-dispatch';
+import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
+
+/**
+ * Redux middleware
+ */
+import navigationMiddleware from './navigation/middleware';
+import noticesMiddleware from './notices/middleware';
+import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
+
+/**
+ * Reducers
+ */
+import account from './account/reducer';
+import accountRecovery from './account-recovery/reducer';
 import activePromotions from './active-promotions/reducer';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
-import applicationPasswords from './application-passwords/reducer';
-import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
-import navigationMiddleware from './navigation/middleware';
-import noticesMiddleware from './notices/middleware';
-import extensionsModule from 'extensions';
 import application from './application/reducer';
-import accountRecovery from './account-recovery/reducer';
+import applicationPasswords from './application-passwords/reducer';
 import automatedTransfer from './automated-transfer/reducer';
 import billingTransactions from './billing-transactions/reducer';
 import checklist from './checklist/reducer';
@@ -32,7 +45,6 @@ import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import concierge from './concierge/reducer';
 import connectedApplications from './connected-applications/reducer';
-import consoleDispatcher from './console-dispatch';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
@@ -41,23 +53,24 @@ import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import googleMyBusiness from './google-my-business/reducer';
+import happinessEngineers from './happiness-engineers/reducer';
+import happychat from './happychat/reducer';
 import help from './help/reducer';
-import { enhancer as httpDataEnhancer, reducer as httpData } from 'state/data-layer/http-data';
 import i18n from './i18n/reducer';
-import invites from './invites/reducer';
 import immediateLogin from './immediate-login/reducer';
+import importerNux from './importer-nux/reducer';
 import inlineHelpSearchResults from './inline-help/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
-import jetpackConnect from './jetpack-connect/reducer';
+import invites from './invites/reducer';
 import jetpack from './jetpack/reducer';
+import jetpackConnect from './jetpack-connect/reducer';
 import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
-import happinessEngineers from './happiness-engineers/reducer';
-import happychat from './happychat/reducer';
 import login from './login/reducer';
 import media from './media/reducer';
 import memberships from './memberships/reducer';
+import mailchimp from './mailchimp/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import npsSurvey from './nps-survey/reducer';
@@ -67,13 +80,12 @@ import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import postFormats from './post-formats/reducer';
-import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
+import posts from './posts/reducer';
 import preferences from './preferences/reducer';
-import privacyPolicy from './privacy-policy/reducer';
 import productsList from './products-list/reducer';
-import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
+import pushNotifications from './push-notifications/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
 import { rewindReducer as rewind } from './rewind';
@@ -81,24 +93,23 @@ import sharing from './sharing/reducer';
 import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
 import simplePayments from './simple-payments/reducer';
-import sites from './sites/reducer';
+import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
-import siteAddressChange from './site-address-change/reducer';
 import siteSettings from './site-settings/reducer';
+import sites from './sites/reducer';
 import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import terms from './terms/reducer';
-import timezones from './timezones/reducer';
 import themes from './themes/reducer';
+import timezones from './timezones/reducer';
 import ui from './ui/reducer';
-import users from './users/reducer';
 import userDevices from './user-devices/reducer';
 import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
+import users from './users/reducer';
 import wordads from './wordads/reducer';
-import config from 'config';
 
 /**
  * Module variables
@@ -114,10 +125,10 @@ const extensions = combineReducers(
 
 const reducers = {
 	account,
-	analyticsTracking,
 	accountRecovery,
 	activePromotions,
 	activityLog,
+	analyticsTracking,
 	application,
 	applicationPasswords,
 	automatedTransfer,
@@ -143,11 +154,12 @@ const reducers = {
 	httpData,
 	i18n,
 	immediateLogin,
+	importerNux,
 	inlineHelpSearchResults,
 	inlineSupportArticle,
 	invites,
-	jetpackConnect,
 	jetpack,
+	jetpackConnect,
 	jetpackRemoteInstall,
 	jetpackSync,
 	jitm,
@@ -159,13 +171,12 @@ const reducers = {
 	oauth2Clients,
 	orderTransactions,
 	pageTemplates,
-	plugins,
 	plans,
+	plugins,
 	postFormats,
-	posts,
 	postTypes,
+	posts,
 	preferences,
-	privacyPolicy,
 	productsList,
 	purchases,
 	pushNotifications,
@@ -175,29 +186,33 @@ const reducers = {
 	sharing,
 	shortcodes,
 	signup,
-	sites,
+	simplePayments,
+	siteAddressChange,
 	siteKeyrings,
 	siteRoles,
-	siteAddressChange,
 	siteSettings,
-	simplePayments,
+	sites,
 	stats,
 	storedCards,
 	support,
 	terms,
-	timezones,
 	themes,
+	timezones,
 	ui,
-	users,
 	userDevices,
 	userProfileLinks,
 	userSettings,
+	users,
 	wordads,
 };
 
 if ( config.isEnabled( 'memberships' ) ) {
 	reducers.memberships = memberships;
 }
+if ( config.isEnabled( 'mailchimp' ) ) {
+	reducers.mailchimp = mailchimp;
+}
+
 export const reducer = combineReducers( reducers );
 
 /**
@@ -230,9 +245,6 @@ export function createReduxStore( initialState = {} ) {
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
-		isBrowser &&
-			config.isEnabled( 'restore-last-location' ) &&
-			require( './routing/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		navigationMiddleware,
 		isBrowser && require( './comments/middleware.js' ).default,

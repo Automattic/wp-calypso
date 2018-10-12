@@ -19,6 +19,7 @@
 		"is_coupon_applied": { "type": "boolean" },
 		"has_bundle_credit": { "type": "boolean" },
 		"next_domain_is_free": { "type": "boolean" },
+		"next_domain_condition": { "type": "string" },
 		"messages": {
 			"errors": "array",
 			"success": "array"

@@ -24,7 +24,7 @@
 }
 
 .signup__step-enter.signup__step-enter-active,
-.signup__step-leave.signup__step-leave-active {
+.signup__step-exit.signup__step-exit-active {
 	pointer-events: none;
 }
 
@@ -40,7 +40,7 @@
 	}
 }
 
-.signup__step-leave {
+.signup__step-exit {
 	opacity: 1;
 
 	.is-animated-content {
@@ -48,7 +48,7 @@
 	}
 }
 
-.signup__step-leave.signup__step-leave-active {
+.signup__step-exit.signup__step-exit-active {
 	opacity: 0.01;
 	transition: .2s ease-in-out;
 
@@ -61,3 +61,23 @@
 .is-section-signup .layout__content {
 	overflow: visible;
 }
+
+/* New Signup Styles */
+
+.formatted-header__title {
+	font-family: $signup-sans;
+	font-size: 2.953em;
+	font-weight: 700;
+	line-height: 1.2;
+	margin-top: 1em;
+}
+
+@include breakpoint( '>1040px' ) {
+ 	.formatted-header__title {
+		font-size: 3.375em;
+	}
+
+ 	.formatted-header__subtitle {
+		font-size: 1.313em;
+	}
+} 

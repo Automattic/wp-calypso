@@ -9,9 +9,10 @@ import { mapValues } from 'lodash';
  * Internal dependencies
  */
 import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'state/action-types';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+
+import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const fetchCommentCounts = action => {
 	const { siteId, postId } = action;
@@ -55,7 +56,7 @@ export const updateCommentCounts = ( action, response ) => {
 	};
 };
 
-const countHandlers = {
+registerHandlers( 'state/data-layer/wpcom/sites/comment-counts/index.js', {
 	[ COMMENT_COUNTS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: fetchCommentCounts,
@@ -63,6 +64,4 @@ const countHandlers = {
 			onError: () => {},
 		} ),
 	],
-};
-
-export default mergeHandlers( countHandlers );
+} );

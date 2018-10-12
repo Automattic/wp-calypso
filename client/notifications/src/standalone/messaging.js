@@ -5,7 +5,7 @@
  */
 import debugFactory from 'debug';
 
-import { parseJson } from '../src/utils/parse-json';
+import { parseJson } from '../panel/utils/parse-json';
 
 const debug = debugFactory('notifications:messaging');
 

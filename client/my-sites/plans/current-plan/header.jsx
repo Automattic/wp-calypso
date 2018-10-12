@@ -14,30 +14,28 @@ import { invoke } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import PlanIcon from 'components/plans/plan-icon';
-import { PLANS_LIST, TYPE_FREE, GROUP_JETPACK } from 'lib/plans/constants';
-import { planMatches } from 'lib/plans';
+import { isFreeJetpackPlan } from 'lib/products-values';
 import { managePurchase } from 'me/purchases/paths';
 
 export class CurrentPlanHeader extends Component {
 	static propTypes = {
-		selectedSite: PropTypes.object,
+		siteSlug: PropTypes.string,
 		title: PropTypes.string,
 		tagLine: PropTypes.string,
 		isPlaceholder: PropTypes.bool,
-		currentPlanSlug: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 		currentPlan: PropTypes.object,
 		isExpiring: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
 	renderPurchaseInfo() {
-		const { currentPlan, selectedSite, isExpiring, translate } = this.props;
+		const { currentPlan, siteSlug, isExpiring, translate } = this.props;
 
-		if ( ! currentPlan || this.isJetpackFreePlan() ) {
+		if ( ! currentPlan || isFreeJetpackPlan( currentPlan ) ) {
 			return null;
 		}
 
-		const hasAutoRenew = currentPlan.autoRenew;
+		const hasAutoRenew = !! currentPlan.autoRenew;
 		const classes = classNames( 'current-plan__header-purchase-info', {
 			'is-expiring': isExpiring,
 		} );
@@ -54,26 +52,22 @@ export class CurrentPlanHeader extends Component {
 									args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ),
 							  } ) }
 					</span>
-					{ currentPlan.userIsOwner && (
-						<Button compact href={ managePurchase( selectedSite.slug, currentPlan.id ) }>
-							{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
-						</Button>
-					) }
+					{ currentPlan.userIsOwner &&
+						Boolean( currentPlan.id ) &&
+						siteSlug && (
+							<Button compact href={ managePurchase( siteSlug, currentPlan.id ) }>
+								{ hasAutoRenew ? translate( 'Manage Payment' ) : translate( 'Renew Now' ) }
+							</Button>
+						) }
 				</div>
 			</Card>
 		);
 	}
 
 	render() {
-		const {
-			currentPlanSlug,
-			includePlansLink,
-			isPlaceholder,
-			title,
-			tagLine,
-			translate,
-			selectedSite,
-		} = this.props;
+		const { currentPlan, isPlaceholder, siteSlug, tagLine, title, translate } = this.props;
+
+		const currentPlanSlug = currentPlan && currentPlan.productSlug;
 
 		return (
 			<div className="current-plan__header">
@@ -101,20 +95,16 @@ export class CurrentPlanHeader extends Component {
 						</div>
 					</div>
 					{ this.renderPurchaseInfo() }
-					{ includePlansLink && (
-						<div className="current-plan__compare-plans">
-							<Button href={ '/plans/' + selectedSite.slug }>
-								{ translate( 'Compare Plans' ) }
-							</Button>
-						</div>
-					) }
+					{ currentPlan &&
+						isFreeJetpackPlan( currentPlan ) &&
+						siteSlug && (
+							<div className="current-plan__compare-plans">
+								<Button href={ `/plans/${ siteSlug }` }>{ translate( 'Compare Plans' ) }</Button>
+							</div>
+						) }
 				</div>
 			</div>
 		);
-	}
-
-	isJetpackFreePlan() {
-		return planMatches( this.props.currentPlanSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
 	}
 }
 

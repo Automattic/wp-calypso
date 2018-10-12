@@ -144,7 +144,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 			dispatch( {} );
 
 			const args = store.dispatch.mock.calls[ 0 ];
-			expect( args.length ).toBe( 1 );
+			expect( args ).toHaveLength( 1 );
 			expect( args[ 0 ] ).toMatchObject( { meta: { dataLayer: {} } } );
 		} );
 	} );
@@ -341,7 +341,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 
 			const args = dispatch.mock.calls[ 0 ];
 
-			expect( args.length ).toBe( 1 );
+			expect( args ).toHaveLength( 1 );
 			expect( args[ 0 ] ).toMatchObject( { type: 'FAILURE' } );
 		} );
 

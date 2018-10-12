@@ -16,6 +16,8 @@ import { CONCIERGE_APPOINTMENT_DETAILS_REQUEST } from 'state/action-types';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import fromApi from './from-api';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const fetchAppointmentDetails = action => {
 	const { appointmentId, scheduleId } = action;
 
@@ -36,8 +38,10 @@ export const onSuccess = ( { appointmentId }, appointmentDetails ) =>
 export const onError = () =>
 	errorNotice( translate( 'We could not find your appointment. Please try again later.' ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/concierge/schedules/appointments/detail/index.js', {
 	[ CONCIERGE_APPOINTMENT_DETAILS_REQUEST ]: [
 		dispatchRequestEx( { fetch: fetchAppointmentDetails, onSuccess, onError, fromApi } ),
 	],
-};
+} );
+
+export default {};

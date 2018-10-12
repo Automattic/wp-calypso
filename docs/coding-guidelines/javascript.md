@@ -594,7 +594,7 @@ We encourage you to make use of these methods in favor of traditional `for` and 
 - [`Array#some`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some)
 - [`Array#every`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
 
-While ES2015 and beyond include many more Array prototype methods, these cannot be used due to complications with polyfills. Instead, you are encouraged to use their [Lodash](https://lodash.com/) equivalents, among many other Lodash methods:
+Calypso [includes polyfills](https://github.com/Automattic/wp-calypso/pull/25419) for many more Array prototype methods that were added in ES2015 and beyond. You can safely use them without fear of breaking older browsers. If it's more convenient you can also use their [Lodash](https://lodash.com/) equivalents. For example:
 
 - [`_.find`](https://lodash.com/docs/#find) ([`Array#find`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find))
 - [`_.findIndex`](https://lodash.com/docs/#findIndex) ([`Array#findIndex`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex))

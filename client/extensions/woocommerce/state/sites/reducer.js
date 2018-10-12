@@ -24,6 +24,7 @@ import shippingZoneMethods from './shipping-zone-methods/reducer';
 import shippingZones from './shipping-zones/reducer';
 import settings from './settings/reducer';
 import status from './status/reducer';
+import shippingClasses from './shipping-classes/reducers';
 
 const reducer = combineReducers( {
 	coupons,
@@ -40,6 +41,7 @@ const reducer = combineReducers( {
 	reviewReplies,
 	setupChoices,
 	settings,
+	shippingClasses,
 	shippingMethods,
 	shippingZoneLocations,
 	shippingZoneMethods,

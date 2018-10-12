@@ -8,15 +8,14 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import deleteHandler from './delete';
 import makeJsonSchemaParser from 'lib/make-json-schema-parser';
-import newHandler from './new';
 import schema from './schema';
 import { APPLICATION_PASSWORDS_REQUEST } from 'state/action-types';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveApplicationPasswords } from 'state/application-passwords/actions';
+
+import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const apiTransformer = data => data.application_passwords;
 
@@ -46,7 +45,7 @@ export const requestApplicationPasswords = action =>
 export const handleRequestSuccess = ( action, appPasswords ) =>
 	receiveApplicationPasswords( appPasswords );
 
-const requestHandler = {
+registerHandlers( 'state/data-layer/wpcom/me/two-step/application-passwords/index.js', {
 	[ APPLICATION_PASSWORDS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestApplicationPasswords,
@@ -55,6 +54,4 @@ const requestHandler = {
 			fromApi: makeJsonSchemaParser( schema, apiTransformer ),
 		} ),
 	],
-};
-
-export default mergeHandlers( requestHandler, newHandler, deleteHandler );
+} );

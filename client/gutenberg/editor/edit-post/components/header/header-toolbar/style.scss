@@ -76,3 +76,36 @@
 		display: block;
 	}
 }
+
+.edit-post-header-toolbar__back.is-borderless {
+	border-right: 1px solid lighten( $gray, 25% );
+	border-radius: 0;
+	color: $blue-wordpress;
+	height: 100%;
+	min-width: 80px;
+	padding: 6px 16px;
+	&:hover {
+		color: $blue-medium;
+	}
+	@include breakpoint( '>960px' ) {
+		padding: 6px 32px;
+	}
+}
+
+.edit-post-header-toolbar .site {
+	border-right: 1px solid lighten( $gray, 25% );
+	margin-right: 10px;
+
+	.site__info {
+		width: auto;
+	}
+	.site__title::after {
+		width: 0;
+	}
+	&.is-compact .site__title {
+		line-height: 56px;
+	}
+	@include breakpoint( '<800px' ) {
+		display: none;
+	}
+}

@@ -30,6 +30,11 @@ import {
 } from 'state/analytics/actions';
 import { withEnhancers } from 'state/utils';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class Login extends React.Component {
 	static propTypes = {
 		clientId: PropTypes.string,

@@ -26,7 +26,7 @@ export const ActivityLogTour = makeTour(
 	<Tour
 		name="activityLogTour"
 		version="20171025"
-		path={ [ '/stats/activity/' ] }
+		path={ [ '/activity-log/' ] }
 		when={ and( isDesktop, isNotNewUser ) }
 	>
 		<Step name="init" style={ { animationDelay: '5s' } }>

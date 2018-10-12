@@ -89,7 +89,7 @@ const validate = ( values, props ) => {
 
 	if ( ! values.price || parseFloat( values.price ) === 0 ) {
 		errors.price = translate( 'Everything comes with a price tag these days. Add yours here.' );
-	} else if ( parseFloat( values.price ) === NaN ) {
+	} else if ( Number.isNaN( parseFloat( values.price ) ) ) {
 		errors.price = translate( 'Invalid price' );
 	} else if ( parseFloat( values.price ) < 0 ) {
 		errors.price = translate( "Your price is negative — now that doesn't sound right, does it?" );

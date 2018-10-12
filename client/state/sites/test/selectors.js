@@ -61,7 +61,6 @@ import {
 } from '../selectors';
 import config from 'config';
 import { userState } from 'state/selectors/test/fixtures/user-state';
-import { setFeatureFlag } from 'test/helpers/config';
 
 describe( 'selectors', () => {
 	const createStateWithItems = items =>
@@ -80,8 +79,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSite()', () => {
-		setFeatureFlag( 'preview-layout', true );
-
 		test( 'should return null if the site is not known', () => {
 			const site = getSite(
 				{
@@ -833,128 +830,99 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isSitePreviewable()', () => {
-		describe( 'config disabled', () => {
-			setFeatureFlag( 'preview-layout', false );
-
-			test( 'should return false', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'https://example.com',
-									options: {
-										unmapped_url: 'https://example.wordpress.com',
-									},
-								},
-							},
-						},
+		test( 'should return null if the site is not known', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {},
 					},
-					77203199
-				);
+				},
+				77203199
+			);
 
-				chaiExpect( isPreviewable ).to.be.false;
-			} );
+			chaiExpect( isPreviewable ).to.be.null;
 		} );
 
-		describe( 'config enabled', () => {
-			setFeatureFlag( 'preview-layout', true );
-
-			test( 'should return null if the site is not known', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {},
-						},
-					},
-					77203199
-				);
-
-				chaiExpect( isPreviewable ).to.be.null;
-			} );
-
-			test( 'should return false if the site is VIP', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'https://example.com',
-									is_vip: true,
-									options: {
-										unmapped_url: 'https://example.wordpress.com',
-									},
+		test( 'should return false if the site is VIP', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								is_vip: true,
+								options: {
+									unmapped_url: 'https://example.wordpress.com',
 								},
 							},
 						},
 					},
-					77203199
-				);
+				},
+				77203199
+			);
 
-				chaiExpect( isPreviewable ).to.be.false;
-			} );
+			chaiExpect( isPreviewable ).to.be.false;
+		} );
 
-			test( 'should return false if the site unmapped URL is unknown', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'https://example.com',
+		test( 'should return false if the site unmapped URL is unknown', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+							},
+						},
+					},
+				},
+				77203199
+			);
+
+			chaiExpect( isPreviewable ).to.be.false;
+		} );
+
+		test( 'should return false if the site unmapped URL is non-HTTPS', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'http://example.com',
+								options: {
+									unmapped_url: 'http://example.com',
 								},
 							},
 						},
 					},
-					77203199
-				);
+				},
+				77203199
+			);
 
-				chaiExpect( isPreviewable ).to.be.false;
-			} );
+			chaiExpect( isPreviewable ).to.be.false;
+		} );
 
-			test( 'should return false if the site unmapped URL is non-HTTPS', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'http://example.com',
-									options: {
-										unmapped_url: 'http://example.com',
-									},
+		test( 'should return true if the site unmapped URL is HTTPS', () => {
+			const isPreviewable = isSitePreviewable(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								options: {
+									unmapped_url: 'https://example.wordpress.com',
 								},
 							},
 						},
 					},
-					77203199
-				);
+				},
+				77203199
+			);
 
-				chaiExpect( isPreviewable ).to.be.false;
-			} );
-
-			test( 'should return true if the site unmapped URL is HTTPS', () => {
-				const isPreviewable = isSitePreviewable(
-					{
-						sites: {
-							items: {
-								77203199: {
-									ID: 77203199,
-									URL: 'https://example.com',
-									options: {
-										unmapped_url: 'https://example.wordpress.com',
-									},
-								},
-							},
-						},
-					},
-					77203199
-				);
-
-				chaiExpect( isPreviewable ).to.be.true;
-			} );
+			chaiExpect( isPreviewable ).to.be.true;
 		} );
 	} );
 
@@ -3946,7 +3914,7 @@ describe( 'selectors', () => {
 			const computedAttributes = getSiteComputedAttributes( state, 2916288 );
 			expect( computedAttributes ).toEqual( {
 				title: 'WordPress.com Example Blog',
-				is_previewable: false,
+				is_previewable: true,
 				is_customizable: false,
 				hasConflict: true,
 				domain: 'unmapped-url.wordpress.com',
@@ -4011,7 +3979,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'canCurrentUserUseAds()', () => {
-		const createState = ( manage_options, wordads ) => ( {
+		const createState = ( manage_options, wordads, product_slug, activate_wordads = false ) => ( {
 			ui: {
 				selectedSiteId: 1,
 			},
@@ -4019,14 +3987,22 @@ describe( 'selectors', () => {
 				capabilities: {
 					1: {
 						manage_options,
+						activate_wordads: false,
 					},
 				},
 			},
 			sites: {
 				items: {
 					1: {
+						plan: {
+							product_slug,
+						},
 						options: {
 							wordads,
+						},
+						capabilities: {
+							manage_options,
+							activate_wordads,
 						},
 					},
 				},
@@ -4034,19 +4010,29 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return true if site has WordAds user can manage it', () => {
-			expect( canCurrentUserUseAds( createState( true, true ) ) ).toBe( true );
+			expect( canCurrentUserUseAds( createState( true, true, 'free_plan' ) ) ).toBe( true );
+		} );
+
+		test( 'should return true if site does not have WordAds, but is premium and user can activate them', () => {
+			expect( canCurrentUserUseAds( createState( true, false, 'value_bundle', true ) ) ).toBe(
+				true
+			);
+		} );
+
+		test( 'should return false if site does not have WordAds, is free, but user can activate them', () => {
+			expect( canCurrentUserUseAds( createState( true, false, 'free_plan', true ) ) ).toBe( false );
 		} );
 
 		test( "should return false if site doesn't have WordAds and user can manage it", () => {
-			expect( canCurrentUserUseAds( createState( true, false ) ) ).toBe( false );
+			expect( canCurrentUserUseAds( createState( true, false, 'free_plan' ) ) ).toBe( false );
 		} );
 
 		test( 'should return false if site has WordAds user can not manage it', () => {
-			expect( canCurrentUserUseAds( createState( false, true ) ) ).toBe( false );
+			expect( canCurrentUserUseAds( createState( false, true, 'free_plan' ) ) ).toBe( false );
 		} );
 
-		test( 'should return false if site doesn\t have WordAds and user can not manage it', () => {
-			expect( canCurrentUserUseAds( createState( false, false ) ) ).toBe( false );
+		test( "should return false if site doesn't have WordAds and user can not manage it", () => {
+			expect( canCurrentUserUseAds( createState( false, false, 'free_plan' ) ) ).toBe( false );
 		} );
 	} );
 } );

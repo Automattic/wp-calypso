@@ -117,7 +117,7 @@ class MasterbarDrafts extends Component {
 		}
 
 		return (
-			<div>
+			<div className="masterbar__drafts">
 				<QueryPostCounts siteId={ this.props.selectedSiteId } type="post" />
 				{ this.renderButton() }
 				{ this.renderPopover() }

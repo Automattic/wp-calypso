@@ -26,6 +26,7 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import QueryKeyringServices from 'components/data/query-keyring-services';
 import {
 	connectGoogleMyBusinessLocation,
 	connectGoogleMyBusinessAccount,
@@ -93,6 +94,7 @@ class GoogleMyBusinessSelectLocation extends Component {
 
 				<DocumentHead title={ translate( 'Google My Business' ) } />
 
+				<QueryKeyringServices />
 				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections />
 

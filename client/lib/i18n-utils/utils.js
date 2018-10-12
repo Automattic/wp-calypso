@@ -20,7 +20,7 @@ import config from 'config';
  */
 const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
 
-function getPathParts( path ) {
+export function getPathParts( path ) {
 	// Remove trailing slash then split. If there is a trailing slash,
 	// then the end of the array could contain an empty string.
 	return path.replace( /\/$/, '' ).split( '/' );

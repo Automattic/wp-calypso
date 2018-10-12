@@ -57,23 +57,24 @@ import { GROUP_WPCOM } from 'lib/plans/constants';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
-import { isNewSite } from 'state/sites/selectors';
+import { isJetpackSite, isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canAddGoogleApps } from 'lib/domains';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
-import { loadTrackingTool } from 'state/analytics/actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { isRequestingPlans } from 'state/plans/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 export class Checkout extends React.Component {
 	static propTypes = {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
+		isJetpackNotAtomic: PropTypes.bool,
 		selectedFeature: PropTypes.string,
 	};
 
@@ -101,7 +102,6 @@ export class Checkout extends React.Component {
 		}
 
 		window.scrollTo( 0, 0 );
-		this.props.loadTrackingTool( 'HotJar' );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -338,7 +338,11 @@ export class Checkout extends React.Component {
 			const hasGoogleAppsInCart = cartItems.hasGoogleApps( cart );
 
 			// The onboarding checklist currently supports the blog type only.
-			if ( hasGoogleAppsInCart && domainReceiptId && 'blog' === siteDesignType ) {
+			if ( hasGoogleAppsInCart && domainReceiptId && 'store' !== siteDesignType ) {
+				analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+					site: selectedSiteSlug,
+					plan: 'paid',
+				} );
 				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
 			}
 
@@ -354,8 +358,22 @@ export class Checkout extends React.Component {
 		}
 
 		if ( this.props.isEligibleForCheckoutToChecklist && receipt ) {
+			analytics.tracks.recordEvent( 'calypso_checklist_assign', {
+				site: selectedSiteSlug,
+				plan: 'paid',
+			} );
 			return `/checklist/${ selectedSiteSlug }`;
 		}
+
+		/**
+		 * @TODO Enable when plan setup is completed on the My Plan page
+		 *
+		 * This route skips the checkout thank you page where plan setup currently
+		 * occurs. That's undesireable until the plans can be set up correctly on My Plan.
+		 */
+		// if ( this.props.isJetpackNotAtomic && isEnabled( 'jetpack/checklist' ) ) {
+		// 	return `/plans/my-plan/${ selectedSiteSlug }?thank-you`;
+		// }
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
 			? `/checkout/thank-you/features/${
@@ -659,6 +677,8 @@ export default connect(
 			isPlansListFetching: isRequestingPlans( state ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
+			isJetpackNotAtomic:
+				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 		};
 	},
 	{
@@ -667,6 +687,5 @@ export default connect(
 		fetchReceiptCompleted,
 		recordApplePayStatus,
 		requestSite,
-		loadTrackingTool,
 	}
 )( localize( Checkout ) );

@@ -16,6 +16,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
 import isGoogleMyBusinessLocationConnected from 'state/selectors/is-google-my-business-location-connected';
 import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
+import { requestKeyringServices } from 'state/sharing/services/actions';
 import { requestSiteKeyrings } from 'state/site-keyrings/actions';
 import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -25,6 +26,7 @@ const loadKeyringsMiddleware = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	Promise.all( [
+		context.store.dispatch( requestKeyringServices() ),
 		context.store.dispatch( requestKeyringConnections() ),
 		context.store.dispatch( requestSiteKeyrings( siteId ) ),
 	] ).then( next );

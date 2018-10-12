@@ -9,6 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	compact,
+	endsWith,
 	find,
 	flatten,
 	get,
@@ -20,10 +21,10 @@ import {
 	pickBy,
 	reject,
 	snakeCase,
-	startsWith,
 	times,
 } from 'lodash';
 import page from 'page';
+import { v4 as uuid } from 'uuid';
 import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -75,6 +76,8 @@ import {
 	recordShowMoreResults,
 	recordTransferDomainButtonClick,
 	recordUseYourDomainButtonClick,
+	resetSearchCount,
+	enqueueSearchStatReport,
 } from 'components/domains/register-domain-step/analytics';
 import Spinner from 'components/spinner';
 
@@ -90,15 +93,9 @@ const INITIAL_SUGGESTION_QUANTITY = 2;
 const PAGE_SIZE = 10;
 const MAX_PAGES = 3;
 const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
+const MIN_QUERY_LENGTH = 2;
 
 const FEATURED_SUGGESTIONS_AT_TOP = [ 'group_7', 'group_8' ];
-let searchVendor = 'domainsbot';
-
-let searchQueue = [];
-let searchStackTimer = null;
-let lastSearchTimestamp = null;
-let searchCount = 0;
-let recordSearchFormSubmitWithDispatch;
 
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
@@ -108,57 +105,17 @@ function getQueryObject( props ) {
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
-		vendor: searchVendor,
+		vendor: props.vendor,
 		includeSubdomain: props.includeWordPressDotCom || props.includeDotBlogSubdomain,
 		surveyVertical: props.surveyVertical,
 	};
-}
-
-function processSearchStatQueue() {
-	const queue = searchQueue.slice();
-	window.clearTimeout( searchStackTimer );
-	searchStackTimer = null;
-	searchQueue = [];
-
-	outerLoop: for ( let i = 0; i < queue.length; i++ ) {
-		for ( let k = i + 1; k < queue.length; k++ ) {
-			if ( startsWith( queue[ k ].query, queue[ i ].query ) ) {
-				continue outerLoop;
-			}
-		}
-		reportSearchStats( queue[ i ] );
-	}
-}
-
-function reportSearchStats( { query, section, timestamp } ) {
-	let timeDiffFromLastSearchInSeconds = 0;
-	if ( lastSearchTimestamp ) {
-		timeDiffFromLastSearchInSeconds = Math.floor( ( timestamp - lastSearchTimestamp ) / 1000 );
-	}
-	lastSearchTimestamp = timestamp;
-	searchCount++;
-	recordSearchFormSubmitWithDispatch(
-		query,
-		section,
-		timeDiffFromLastSearchInSeconds,
-		searchCount,
-		searchVendor
-	);
-}
-
-function enqueueSearchStatReport( search ) {
-	searchQueue.push( Object.assign( {}, search, { timestamp: Date.now() } ) );
-	if ( searchStackTimer ) {
-		window.clearTimeout( searchStackTimer );
-	}
-	searchStackTimer = window.setTimeout( processSearchStatQueue, 10000 );
 }
 
 class RegisterDomainStep extends React.Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		onDomainsAvailabilityChange: PropTypes.func,
-		products: PropTypes.object.isRequired,
+		products: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		basePath: PropTypes.string.isRequired,
 		suggestion: PropTypes.string,
@@ -178,19 +135,57 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	static defaultProps = {
-		onDomainsAvailabilityChange: noop,
 		analyticsSection: 'domains',
-		onSave: noop,
-		onAddMapping: noop,
 		onAddDomain: noop,
+		onAddMapping: noop,
+		onDomainsAvailabilityChange: noop,
+		onSave: noop,
+		vendor: 'domainsbot',
 	};
 
 	constructor( props ) {
 		super( props );
 
-		this.state = this.getState();
+		resetSearchCount();
 
-		recordSearchFormSubmitWithDispatch = this.props.recordSearchFormSubmit;
+		this._isMounted = false;
+		this.state = this.getState();
+		if ( props.initialState ) {
+			this.state = { ...this.state, ...props.initialState };
+
+			if (
+				this.state.lastSurveyVertical &&
+				this.state.lastSurveyVertical !== props.surveyVertical
+			) {
+				this.state.loadingResults = true;
+
+				if ( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) {
+					this.state.loadingSubdomainResults = true;
+				}
+
+				delete this.state.lastSurveyVertical;
+			}
+
+			if ( props.suggestion ) {
+				this.state.lastQuery = props.suggestion;
+			}
+
+			if ( props.initialState.searchResults ) {
+				this.state.loadingResults = false;
+				this.state.searchResults = props.initialState.searchResults;
+			}
+
+			if ( props.initialState.subdomainSearchResults ) {
+				this.state.loadingSubdomainResults = false;
+				this.state.subdomainSearchResults = props.initialState.subdomainSearchResults;
+			}
+
+			if ( this.state.searchResults || this.state.subdomainSearchResults ) {
+				this.state.lastQuery = props.initialState.lastQuery;
+			} else {
+				this.state.railcarId = this.getNewRailcarId();
+			}
+		}
 	}
 
 	getState() {
@@ -226,13 +221,6 @@ class RegisterDomainStep extends React.Component {
 			exactSldMatchesOnly: false,
 			tlds: [],
 		};
-	}
-
-	getNewRailcarSeed() {
-		// Generate a 7 character random hash on base16. E.g. ac618a3
-		return Math.floor( ( 1 + Math.random() ) * 0x10000000 )
-			.toString( 16 )
-			.substring( 1 );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -272,47 +260,22 @@ class RegisterDomainStep extends React.Component {
 		}
 	}
 
-	UNSAFE_componentWillMount() {
-		searchCount = 0; // reset the counter
-
-		if ( this.props.initialState ) {
-			const state = { ...this.props.initialState, railcarSeed: this.getNewRailcarSeed() };
-
-			if ( state.lastSurveyVertical && state.lastSurveyVertical !== this.props.surveyVertical ) {
-				state.loadingResults = true;
-
-				if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
-					state.loadingSubdomainResults = true;
-				}
-
-				delete state.lastSurveyVertical;
-			}
-
-			if ( this.props.suggestion ) {
-				state.lastQuery = this.props.suggestion;
-				state.loadingResults = true;
-			}
-
-			this.setState( state );
-		}
-
-		this._isMounted = false;
-	}
-
 	componentWillUnmount() {
 		this._isMounted = false;
 	}
 
 	componentDidMount() {
-		if ( this.state.lastQuery ) {
+		if (
+			this.state.lastQuery &&
+			! this.state.searchResults &&
+			! this.state.subdomainSearchResults
+		) {
 			this.onSearch( this.state.lastQuery );
 		} else {
 			this.getAvailableTlds();
 		}
-
-		this.props.recordSearchFormView( this.props.analyticsSection );
-
 		this._isMounted = true;
+		this.props.recordSearchFormView( this.props.analyticsSection );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -322,6 +285,10 @@ class RegisterDomainStep extends React.Component {
 		) {
 			this.focusSearchCard();
 		}
+	}
+
+	getNewRailcarId() {
+		return `${ uuid().replace( /-/g, '' ) }-domain-suggestion`;
 	}
 
 	focusSearchCard = () => {
@@ -376,6 +343,7 @@ class RegisterDomainStep extends React.Component {
 							describedBy={ 'step-header' }
 							dir="ltr"
 							initialValue={ this.state.lastQuery }
+							minLength={ MIN_QUERY_LENGTH }
 							maxLength={ 60 }
 							onBlur={ this.save }
 							onSearch={ this.onSearch }
@@ -586,14 +554,19 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		const loadingResults = Boolean( getFixedDomainSearch( searchQuery ) );
+		let cleanedQuery = getFixedDomainSearch( searchQuery );
+		if ( cleanedQuery.length < MIN_QUERY_LENGTH ) {
+			cleanedQuery = '';
+		}
+
+		const loadingResults = Boolean( cleanedQuery );
 
 		this.setState(
 			{
 				error: null,
 				errorData: null,
 				exactMatchDomain: null,
-				lastQuery: searchQuery,
+				lastQuery: cleanedQuery,
 				lastDomainSearched: null,
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
@@ -693,8 +666,11 @@ class RegisterDomainStep extends React.Component {
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
-			vendor: searchVendor,
+			vendor: this.props.vendor,
 			vertical: this.props.surveyVertical,
+			recommendation_context: get( this.props, 'selectedSite.name', '' )
+				.replace( ' ', ',' )
+				.toLocaleLowerCase(),
 			...this.getActiveFiltersForAPI(),
 		};
 
@@ -765,7 +741,7 @@ class RegisterDomainStep extends React.Component {
 			suggestions,
 			this.state.exactMatchDomain,
 			getStrippedDomainBase( domain ),
-			includes( FEATURED_SUGGESTIONS_AT_TOP, searchVendor )
+			includes( FEATURED_SUGGESTIONS_AT_TOP, this.props.vendor )
 		);
 
 		this.setState(
@@ -784,18 +760,30 @@ class RegisterDomainStep extends React.Component {
 			include_wordpressdotcom: ! this.props.includeDotBlogSubdomain,
 			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
-			vendor: 'wpcom',
+			vendor:
+				this.props.includeDotBlogSubdomain && abtest( 'dotBlogSuggestionsv2' ) === 'complex'
+					? 'complex'
+					: 'wpcom',
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
 		};
 
 		domains
 			.suggestions( subdomainQuery )
-			.then( this.handleSubdomainSuggestions( domain, timestamp ) )
+			.then( this.handleSubdomainSuggestions( domain, subdomainQuery.vendor, timestamp ) )
 			.catch( this.handleSubdomainSuggestionsFailure( domain, timestamp ) );
 	};
 
-	handleSubdomainSuggestions = ( domain, timestamp ) => subdomainSuggestions => {
+	handleSubdomainSuggestions = ( domain, vendor, timestamp ) => subdomainSuggestions => {
+		subdomainSuggestions = subdomainSuggestions.map( suggestion => {
+			suggestion.fetch_algo = endsWith( suggestion.domain_name, '.wordpress.com' )
+				? '/domains/search/wpcom'
+				: '/domains/search/dotblogsub';
+			suggestion.vendor = vendor;
+
+			return suggestion;
+		} );
+
 		this.props.onDomainsAvailabilityChange( true );
 		const timeDiff = Date.now() - timestamp;
 		const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
@@ -843,7 +831,11 @@ class RegisterDomainStep extends React.Component {
 
 	onSearch = ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
-		const domain = getFixedDomainSearch( searchQuery );
+
+		let domain = getFixedDomainSearch( searchQuery );
+		if ( domain.length < MIN_QUERY_LENGTH ) {
+			domain = '';
+		}
 
 		this.setState(
 			{
@@ -859,35 +851,31 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		if ( this.props.isSignupStep ) {
-			searchVendor = abtest( 'domainSuggestionKrakenV323' );
-		}
+		enqueueSearchStatReport(
+			{ query: searchQuery, section: this.props.analyticsSection, vendor: this.props.vendor },
+			this.props.recordSearchFormSubmit
+		);
 
-		enqueueSearchStatReport( { query: searchQuery, section: this.props.analyticsSection } );
+		this.setState( { lastDomainSearched: domain, railcarId: this.getNewRailcarId() }, () => {
+			const timestamp = Date.now();
 
-		this.setState( {
-			lastDomainSearched: domain,
-			railcarSeed: this.getNewRailcarSeed(),
+			this.getAvailableTlds( domain, this.props.vendor );
+			const domainSuggestions = Promise.all( [
+				this.checkDomainAvailability( domain, timestamp ),
+				this.getDomainsSuggestions( domain, timestamp ),
+			] );
+
+			domainSuggestions
+				.catch( () => [] ) // handle the error and return an empty list
+				.then( this.handleDomainSuggestions( domain ) );
+
+			if (
+				shouldQuerySubdomains &&
+				( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
+			) {
+				this.getSubdomainSuggestions( domain, timestamp );
+			}
 		} );
-
-		const timestamp = Date.now();
-
-		this.getAvailableTlds( domain, searchVendor );
-		const domainSuggestions = Promise.all( [
-			this.checkDomainAvailability( domain, timestamp ),
-			this.getDomainsSuggestions( domain, timestamp ),
-		] );
-
-		domainSuggestions
-			.catch( () => [] ) // handle the error and return an empty list
-			.then( this.handleDomainSuggestions( domain ) );
-
-		if (
-			shouldQuerySubdomains &&
-			( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain )
-		) {
-			this.getSubdomainSuggestions( domain, timestamp );
-		}
 	};
 
 	showNextPage = () => {
@@ -998,6 +986,8 @@ class RegisterDomainStep extends React.Component {
 				this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
 
+		const isSignup = this.props.isSignupStep ? '/signup' : '/domains';
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1020,8 +1010,8 @@ class RegisterDomainStep extends React.Component {
 				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
-				railcarSeed={ this.state.railcarSeed }
-				fetchAlgo={ searchVendor + '/v1' }
+				railcarId={ this.state.railcarId }
+				fetchAlgo={ '/domains/search/' + this.props.vendor + isSignup }
 				cart={ this.props.cart }
 			>
 				{ showTldFilterBar && (

@@ -48,9 +48,10 @@ const config = {
 		[
 			'@babel/transform-runtime',
 			{
+				corejs: false, // we polyfill so we don't need core-js
 				helpers: true,
-				polyfill: false,
 				regenerator: false,
+				useESModules: false,
 			},
 		],
 		isCalypsoClient && './inline-imports.js',

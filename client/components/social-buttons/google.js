@@ -21,6 +21,11 @@ import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { isFormDisabled } from 'state/login/selectors';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class GoogleLoginButton extends Component {
 	static propTypes = {
 		isFormDisabled: PropTypes.bool,

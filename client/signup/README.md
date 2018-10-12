@@ -40,7 +40,7 @@ You can add a new step to Modular Signup from `/client/signup/config/steps-pure.
 - (optional) `providesDependencies` is an array that lets the signup framework know what dependencies the step is expected to provide. If the step does not provide all of these, or if it provides more than it says, an error will be thrown.
 - (optional) `delayApiRequestUntilComplete` is a boolean that, when true, causes the step's `apiRequestFunction` to be called only after the user has submitted every step in the signup flow. This is useful for steps that the user should be able to go back and change at any point in signup.
 
-You will also need to define which React component implements your step, but in in `/client/signup/config/step-components.js`. Make sure to require the component as an internal dependency in `step-components.js`.
+You will also need to define which React component implements your step in `/client/signup/config/step-components.js`. Make sure to require the component as an internal dependency in `step-components.js`.
 
 ### Implementing a step
 
@@ -156,7 +156,7 @@ hello: { // This will be the slug for the flow, i.e.: wordpress.com/start/hello
 }
 ```
 
-7 - open https://calypso.localhost:3000/start/hello in an incognito window. You will be redirected to 
+7 - open https://calypso.localhost:3000/start/hello in an incognito window. You will be redirected to
 the first step of the flow at `/start/hello/hello-world`, where you should see your new React component.
 
 8 - now we need a way for users to move to the next step of the flow. Let's add a button and a form to the step's `render` method:

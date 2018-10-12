@@ -10,7 +10,12 @@ import { merge } from 'lodash';
  * Internal dependencies
  */
 import { UpgradeNudge } from '../index';
-import { FEATURE_CUSTOM_DOMAIN, PLAN_PERSONAL, PLAN_FREE } from '../../../lib/plans/constants';
+import {
+	FEATURE_CUSTOM_DOMAIN,
+	PLAN_PERSONAL,
+	PLAN_BLOGGER,
+	PLAN_FREE,
+} from '../../../lib/plans/constants';
 
 describe( 'UpgradeNudge', () => {
 	const createProps = ( overrideProps = {} ) => {
@@ -42,11 +47,25 @@ describe( 'UpgradeNudge', () => {
 			expect( wrapper.instance().shouldDisplay() ).toBe( false );
 		} );
 
-		test( 'should not display for paid plans without feature prop', () => {
+		test( 'should not display for paid plans without feature prop (personal)', () => {
 			const props = createProps( {
 				site: {
 					plan: {
 						product_slug: PLAN_PERSONAL,
+					},
+				},
+			} );
+			delete props.feature;
+			const wrapper = shallow( <UpgradeNudge { ...props } /> );
+
+			expect( wrapper.instance().shouldDisplay() ).toBe( false );
+		} );
+
+		test( 'should not display for paid plans without feature prop (blogger)', () => {
+			const props = createProps( {
+				site: {
+					plan: {
+						product_slug: PLAN_BLOGGER,
 					},
 				},
 			} );

@@ -2,18 +2,26 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop, throttle } from 'lodash';
+import { noop } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import BarContainer from './bar-container';
+import afterLayoutFlush from 'lib/after-layout-flush';
 import { hasTouch } from 'lib/touch-detect';
 import Tooltip from 'components/tooltip';
 import Notice from 'components/notice';
+import isRtlSelector from 'state/selectors/is-rtl';
+import BarContainer from './bar-container';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class Chart extends React.Component {
 	state = {
@@ -26,29 +34,38 @@ class Chart extends React.Component {
 	};
 
 	static propTypes = {
-		loading: PropTypes.bool,
-		data: PropTypes.array,
-		minTouchBarWidth: PropTypes.number,
-		minBarWidth: PropTypes.number,
 		barClick: PropTypes.func,
-		translate: PropTypes.func,
+		data: PropTypes.array,
+		isRtl: PropTypes.bool,
+		loading: PropTypes.bool,
+		minBarWidth: PropTypes.number,
+		minTouchBarWidth: PropTypes.number,
 		numberFormat: PropTypes.func,
+		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
-		minTouchBarWidth: 42,
-		minBarWidth: 15,
 		barClick: noop,
+		minBarWidth: 15,
+		minTouchBarWidth: 42,
 	};
 
 	componentDidMount() {
-		this.resize = throttle( this.resize, 400 );
+		this.resize = afterLayoutFlush( this.resize );
 		window.addEventListener( 'resize', this.resize );
 
-		const { data, loading } = this.props;
+		if ( this.props.data && this.props.data.length && ! this.props.loading ) {
+			this.resize();
+		}
+	}
 
-		if ( data && data.length && ! loading ) {
-			this.resize( this.props );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.loading && ! this.props.loading ) {
+			return this.resize();
+		}
+
+		if ( prevProps.data !== this.props.data ) {
+			this.updateData( this.props );
 		}
 	}
 
@@ -56,17 +73,7 @@ class Chart extends React.Component {
 		window.removeEventListener( 'resize', this.resize );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.loading && ! nextProps.loading ) {
-			return this.resize( nextProps );
-		}
-
-		if ( nextProps.data !== this.props.data ) {
-			this.updateData( nextProps );
-		}
-	}
-
-	resize = props => {
+	resize = ( props = this.props ) => {
 		if ( ! this.chart ) {
 			return;
 		}
@@ -157,11 +164,12 @@ class Chart extends React.Component {
 				</div>
 				<BarContainer
 					barClick={ barClick }
-					data={ data }
-					yAxisMax={ yMax }
-					isTouch={ hasTouch() }
 					chartWidth={ width }
+					data={ data }
+					isRtl={ this.props.isRtl }
+					isTouch={ hasTouch() }
 					setTooltip={ this.setTooltip }
+					yAxisMax={ yMax }
 				/>
 				{ isTooltipVisible && (
 					<Tooltip
@@ -179,4 +187,6 @@ class Chart extends React.Component {
 	}
 }
 
-export default localize( Chart );
+export default connect( state => ( {
+	isRtl: isRtlSelector( state ),
+} ) )( localize( Chart ) );

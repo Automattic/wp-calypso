@@ -14,6 +14,8 @@ import {
 	READER_FEED_UPDATE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/read/feed';
+
 export function requestFeed( feedId ) {
 	return {
 		type: READER_FEED_REQUEST,

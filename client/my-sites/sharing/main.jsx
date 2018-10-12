@@ -26,6 +26,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
 export const Sharing = ( {
 	contentComponent,
@@ -79,7 +80,7 @@ export const Sharing = ( {
 			) }
 			<UpgradeNudge
 				event="sharing_no_ads"
-				feature="no-adverts"
+				feature={ FEATURE_NO_ADS }
 				message={ translate( 'Prevent ads from showing on your site.' ) }
 				title={ translate( 'No Ads with WordPress.com Premium' ) }
 			/>

@@ -65,7 +65,9 @@ const Collection = ( {
 		}
 
 		const exampleName = getComponentName( example );
-		const exampleLink = `/devdocs/${ section }/${ camelCaseToSlug( exampleName ) }`;
+		const exampleLink = `/devdocs/${ section }/${ encodeURIComponent(
+			camelCaseToSlug( exampleName )
+		) }`;
 		const readmeFilePath = getReadmeFilePath( section, example );
 		const showEditLink = shouldShowEditLink( section );
 

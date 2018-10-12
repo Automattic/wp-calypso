@@ -49,6 +49,7 @@ $devdocs-max-width: 720px;
 // Block and Component examples
 .main.devdocs.devdocs__blocks,
 .main.devdocs.devdocs__components,
+.main.devdocs.devdocs__gutenberg-blocks,
 .main.devdocs.devdocs__gutenberg-components {
 	// Make way for showing big components and multiple columns
 	max-width: 100%;
@@ -478,11 +479,4 @@ a.devdocs__doc-edit-link {
 	text-decoration: underline;
 	float: right;
 	position: relative;
-}
-
-.docs__gutenberg-components-button {
-	.components-button {
-		margin-right: 16px;
-		margin-bottom: 16px;
-	}
 }

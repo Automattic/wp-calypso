@@ -20,6 +20,7 @@ render() {
 			buttonHref="https://wordpress.com"
 			buttonTarget="_blank"
 			buttonOnClick={ noop }
+			buttonDisabled={ false }
 		/>;
 	);
 }
@@ -87,6 +88,13 @@ Button target, to use in conjunction with `buttonHref`
 - **Default:** `undefined`
 
 Button onClick handler
+
+### `buttonDisabled`
+  - **Type:** `Boolean`
+  - **Required:** `no`
+  - **Default:** `false`
+
+Make the button disabled.
 
 ### `compact`
 

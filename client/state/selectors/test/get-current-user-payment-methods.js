@@ -12,112 +12,29 @@ import { update } from 'state/data-layer/http-data';
 import getCurrentUserPaymentMethods from 'state/selectors/get-current-user-payment-methods';
 
 describe( 'getCurrentUserPaymentMethods()', () => {
-	const enLangUsCountryState = {
-		users: {
-			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'en' },
+	function countryStateFromLocale(slug) {
+		return {
+			users: {
+				items: {
+					73705554: {
+						ID: 73705554,
+						login: 'testonesite2014',
+						localeSlug: slug
+					},
+				},
 			},
-		},
 
-		currentUser: {
-			id: 73705554,
-		},
-	};
-
-	const enLangDeCountryState = {
-		users: {
-			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'en' },
+			currentUser: {
+				id: 73705554,
 			},
-		},
+		};
+	}
 
-		currentUser: {
-			id: 73705554,
-		},
-	};
-
-	const deLangDeCountryState = {
-		users: {
-			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'de' },
-			},
-		},
-
-		currentUser: {
-			id: 73705554,
-		},
-	};
-
-	const deLangAtCountryState = {
-		users: {
-			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'de' },
-			},
-		},
-
-		currentUser: {
-			id: 73705554,
-		},
-	};
-
-	const nlCountryState = {
-		users: {
-			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'nl' },
-			},
-		},
-
-		currentUser: {
-			id: 73705554,
-		},
-	};
-
-	const PlCountryState = {
-		users: {
-			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'pl' },
-			},
-		},
-
-		currentUser: {
-			id: 73705554,
-		},
-	};
-
-	const frLangFRCountryState = {
-		users: {
-			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'fr' },
-			},
-		},
-
-		currentUser: {
-			id: 73705554,
-		},
-	};
-
-	const ptBrBRCountryState = {
-		geo: {
-			geo: {
-				country_short: 'BR',
-			},
-		},
-
-		users: {
-			items: {
-				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'pt-br' },
-			},
-		},
-
-		currentUser: {
-			id: 73705554,
-		},
-	};
 
 	test( 'en-US should return credit card primary, PayPal secondary', () => {
 		update( 'geo', 'success', 'US' );
 
-		expect( getCurrentUserPaymentMethods( enLangUsCountryState ) ).to.eql( [
+		expect( getCurrentUserPaymentMethods( countryStateFromLocale('en') ) ).to.eql( [
 			'credit-card',
 			'paypal',
 		] );
@@ -126,7 +43,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'en-DE should return CC, GiroPay, Paypal', () => {
 		update( 'geo', 'success', 'DE' );
 
-		expect( getCurrentUserPaymentMethods( enLangDeCountryState ) ).to.eql( [
+		expect( getCurrentUserPaymentMethods( countryStateFromLocale('en') ) ).to.eql( [
 			'credit-card',
 			'giropay',
 			'paypal',
@@ -136,7 +53,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'de-DE should return CC, Giropay, Paypal', () => {
 		update( 'geo', 'success', 'DE' );
 
-		expect( getCurrentUserPaymentMethods( deLangDeCountryState ) ).to.eql( [
+		expect( getCurrentUserPaymentMethods( countryStateFromLocale('de') ) ).to.eql( [
 			'credit-card',
 			'giropay',
 			'paypal',
@@ -146,7 +63,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'de-AT should return CC, EPS, Paypal', () => {
 		update( 'geo', 'success', 'AT' );
 
-		expect( getCurrentUserPaymentMethods( deLangAtCountryState ) ).to.eql( [
+		expect( getCurrentUserPaymentMethods( countryStateFromLocale('de') ) ).to.eql( [
 			'credit-card',
 			'eps',
 			'paypal',
@@ -156,7 +73,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'nl-NL should return credit card, iDEAL, PayPal ', () => {
 		update( 'geo', 'success', 'NL' );
 
-		expect( getCurrentUserPaymentMethods( nlCountryState ) ).to.eql( [
+		expect( getCurrentUserPaymentMethods( countryStateFromLocale('nl') ) ).to.eql( [
 			'credit-card',
 			'ideal',
 			'paypal',
@@ -166,7 +83,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'pl-PL should return credit card, p24, PayPal ', () => {
 		update( 'geo', 'success', 'PL' );
 
-		expect( getCurrentUserPaymentMethods( PlCountryState ) ).to.eql( [
+		expect( getCurrentUserPaymentMethods( countryStateFromLocale('pl') ) ).to.eql( [
 			'credit-card',
 			'p24',
 			'paypal',
@@ -176,7 +93,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'fr-FR should return credit card primary, PayPal secondary', () => {
 		update( 'geo', 'success', 'FR' );
 
-		expect( getCurrentUserPaymentMethods( frLangFRCountryState ) ).to.eql( [
+		expect( getCurrentUserPaymentMethods( countryStateFromLocale('fr') ) ).to.eql( [
 			'credit-card',
 			'paypal',
 		] );
@@ -184,10 +101,28 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 
 	test( 'BR should return credit card primary, tef, and PayPal secondary', () => {
 		update( 'geo', 'success', 'BR' );
-		expect( getCurrentUserPaymentMethods( ptBrBRCountryState ) ).to.eql( [
+
+		const countryState = countryStateFromLocale('pt-br');
+
+		countryState.geo = {
+			geo: {
+				country_short: 'BR',
+			},
+		};
+
+		expect( getCurrentUserPaymentMethods( countryState ) ).to.eql( [
 			'credit-card',
 			'brazil-tef',
 			'paypal',
 		] );
 	} );
+
+	test( 'zh-CN should return CC, Alipay, WeChat, PayPal', () => {
+		update( 'geo', 'success', 'CN' );
+
+		expect( getCurrentUserPaymentMethods( countryStateFromLocale('cn') ) ).to.eql( [
+			'credit-card', 'alipay', 'wechat', 'paypal'
+		] );
+	} );
+
 } );

@@ -22,6 +22,10 @@ import getStylesheet from './utils/stylesheet';
 import WordPressLogo from 'components/wordpress-logo';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 
+const cssChunkLink = asset => (
+	<link key={ asset } rel="stylesheet" type="text/css" data-webpack={ true } href={ asset } />
+);
+
 class Document extends React.Component {
 	render() {
 		const {
@@ -57,6 +61,8 @@ class Document extends React.Component {
 			inlineScriptNonce,
 		} = this.props;
 
+		const csskey = isRTL ? 'css.rtl' : 'css.ltr';
+
 		const inlineScript =
 			`COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
@@ -72,7 +78,12 @@ class Document extends React.Component {
 				dir={ isRTL ? 'rtl' : 'ltr' }
 				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
 			>
-				<Head title={ head.title } faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
+				<Head
+					title={ head.title }
+					faviconURL={ faviconURL }
+					cdn={ '//s1.wp.com' }
+					branchName={ branchName }
+				>
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }
@@ -88,6 +99,8 @@ class Document extends React.Component {
 						}
 						type="text/css"
 					/>
+					{ entrypoint[ csskey ].map( cssChunkLink ) }
+					{ chunkFiles[ csskey ].map( cssChunkLink ) }
 					{ sectionCss && (
 						<link
 							rel="stylesheet"
@@ -166,10 +179,10 @@ class Document extends React.Component {
 							} }
 						/>
 					) }
-					{ entrypoint.map( asset => (
+					{ entrypoint.js.map( asset => (
 						<script key={ asset } src={ asset } />
 					) ) }
-					{ chunkFiles.map( chunk => (
+					{ chunkFiles.js.map( chunk => (
 						<script key={ chunk } src={ chunk } />
 					) ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">
@@ -191,6 +204,17 @@ class Document extends React.Component {
 								);
 							}
 						})();
+						 `,
+						} }
+					/>
+					<script
+						nonce={ inlineScriptNonce }
+						type="text/javascript"
+						dangerouslySetInnerHTML={ {
+							__html: `
+							if ( 'serviceWorker' in navigator ) {
+								navigator.serviceWorker.register( '/service-worker.js' );
+							}
 						 `,
 						} }
 					/>

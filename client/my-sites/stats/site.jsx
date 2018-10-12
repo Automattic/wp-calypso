@@ -3,12 +3,12 @@
 /**
  * External dependencies
  */
-
 import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
+import { find, memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,7 +33,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
-import ChecklistBanner from './checklist-banner';
+import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
@@ -46,6 +46,22 @@ function updateQueryString( query = {} ) {
 	};
 }
 
+const CHARTS = [
+	{
+		attr: 'views',
+		legendOptions: [ 'visitors' ],
+		gridicon: 'visible',
+		label: translate( 'Views', { context: 'noun' } ),
+	},
+	{ attr: 'visitors', gridicon: 'user', label: translate( 'Visitors', { context: 'noun' } ) },
+	{ attr: 'likes', gridicon: 'star', label: translate( 'Likes', { context: 'noun' } ) },
+	{
+		attr: 'comments',
+		gridicon: 'comment',
+		label: translate( 'Comments', { context: 'noun' } ),
+	},
+];
+
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -53,6 +69,17 @@ class StatsSite extends Component {
 
 	constructor( props ) {
 		super( props );
+		const activeTab = this.getActiveTab( this.props.chartTab );
+		this.state = {
+			activeLegend: activeTab.legendOptions ? activeTab.legendOptions.slice() : [],
+		};
+	}
+
+	getActiveTab = memoize( chartTab => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ] );
+
+	getAvailableLegend() {
+		const activeTab = this.getActiveTab( this.props.chartTab );
+		return activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
 	}
 
 	barClick = bar => {
@@ -61,11 +88,17 @@ class StatsSite extends Component {
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 
+	onChangeLegend = activeLegend => this.setState( { activeLegend } );
+
 	switchChart = tab => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
-			const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
-			page.show( `${ window.location.pathname }?${ updatedQs }` );
+			const originalTab = find( CHARTS, { attr: tab.attr } );
+			const activeLegend = originalTab.legendOptions ? originalTab.legendOptions.slice() : [];
+			this.setState( { activeLegend }, () => {
+				const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
+				page.show( `${ window.location.pathname }?${ updatedQs }` );
+			} );
 		}
 	};
 
@@ -77,24 +110,8 @@ class StatsSite extends Component {
 			isJetpack,
 			siteId,
 			slug,
-			translate,
 		} = this.props;
 
-		const charts = [
-			{
-				attr: 'views',
-				legendOptions: [ 'visitors' ],
-				gridicon: 'visible',
-				label: translate( 'Views', { context: 'noun' } ),
-			},
-			{ attr: 'visitors', gridicon: 'user', label: translate( 'Visitors', { context: 'noun' } ) },
-			{ attr: 'likes', gridicon: 'star', label: translate( 'Likes', { context: 'noun' } ) },
-			{
-				attr: 'comments',
-				gridicon: 'comment',
-				label: translate( 'Comments', { context: 'noun' } ),
-			},
-		];
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
@@ -151,7 +168,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				<div id="my-stats-content">
-					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
+					{ config.isEnabled( 'onboarding-checklist' ) && <WpcomChecklist viewMode="banner" /> }
 					{ config.isEnabled( 'google-my-business' ) &&
 						siteId && (
 							<GoogleMyBusinessStatsNudge
@@ -161,9 +178,13 @@ class StatsSite extends Component {
 							/>
 						) }
 					<ChartTabs
+						activeLegend={ this.state.activeLegend }
+						activeTab={ this.getActiveTab( this.props.chartTab ) }
+						availableLegend={ this.getAvailableLegend() }
+						onChangeLegend={ this.onChangeLegend }
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
-						charts={ charts }
+						charts={ CHARTS }
 						queryDate={ queryDate }
 						period={ this.props.period }
 						chartTab={ this.props.chartTab }
@@ -251,6 +272,7 @@ export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+
 		return {
 			isJetpack,
 			hasPodcasts:

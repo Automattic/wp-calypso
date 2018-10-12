@@ -11,6 +11,9 @@ import {
 	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/read/sites/posts/follow';
+import 'state/data-layer/wpcom/read/sites/posts/mute';
+
 export function followConversation( { siteId, postId } ) {
 	return {
 		type: READER_CONVERSATION_FOLLOW,

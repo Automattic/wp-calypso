@@ -24,7 +24,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/business/' + dependencies.siteSlug;
 			},
-			description: 'Create an account and a blog and then add the business plan to the users cart.',
+			description:
+				'Create an account and a blog and then add the business plan to the users cart.',
 			lastModified: '2018-01-24',
 			meta: {
 				skipBundlingPlan: true,
@@ -36,7 +37,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/premium/' + dependencies.siteSlug;
 			},
-			description: 'Create an account and a blog and then add the premium plan to the users cart.',
+			description:
+				'Create an account and a blog and then add the premium plan to the users cart.',
 			lastModified: '2018-01-24',
 			meta: {
 				skipBundlingPlan: true,
@@ -48,7 +50,8 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			destination: function( dependencies ) {
 				return '/plans/select/personal/' + dependencies.siteSlug;
 			},
-			description: 'Create an account and a blog and then add the personal plan to the users cart.',
+			description:
+				'Create an account and a blog and then add the personal plan to the users cart.',
 			lastModified: '2018-01-24',
 		},
 
@@ -113,6 +116,21 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			lastModified: '2018-01-24',
 		},
 
+		'user-first': {
+			steps: [ 'user' ],
+			destination: '/start/user-continue/about',
+			description: 'User-first signup flow.',
+			lastModified: '2018-09-13',
+			autoContinue: true,
+		},
+
+		'user-continue': {
+			steps: [ 'about', 'domains', 'plans' ],
+			destination: getSiteDestination,
+			description: 'Second phase for user-first',
+			lastModified: '2018-09-13',
+		},
+
 		'delta-discover': {
 			steps: [ 'user' ],
 			destination: '/',
@@ -169,7 +187,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		'rewind-switch': {
 			steps: [ 'rewind-migrate', 'rewind-were-backing' ],
 			destination: () => {
-				return '/stats/activity';
+				return '/activity-log';
 			},
 			description:
 				'Allows users with Jetpack plan with VaultPress credentials to migrate credentials',
@@ -182,7 +200,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		'rewind-setup': {
 			steps: [ 'rewind-add-creds', 'rewind-form-creds', 'rewind-were-backing' ],
 			destination: () => {
-				return '/stats/activity';
+				return '/activity-log';
 			},
 			description: 'Allows users with Jetpack plan to setup credentials',
 			lastModified: '2018-01-27',
@@ -194,7 +212,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		'rewind-auto-config': {
 			steps: [ 'creds-permission', 'creds-confirm', 'rewind-were-backing' ],
 			destination: () => {
-				return '/stats/activity';
+				return '/activity-log';
 			},
 			description:
 				'Allow users of sites that can auto-config to grant permission to server credentials',
@@ -216,7 +234,7 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 				'clone-cloning',
 			],
 			destination: () => {
-				return '/stats/activity';
+				return '/activity-log';
 			},
 			description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
 			lastModified: '2018-05-28',
@@ -253,21 +271,45 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 		};
 	}
 
-	if ( config.isEnabled( 'signup/domain-first-flow' ) ) {
-		flows[ 'domain-first' ] = {
-			steps: [ 'site-or-domain', 'site-picker', 'themes', 'plans-site-selected', 'user' ],
-			destination: getSiteDestination,
-			description: 'An experimental approach for WordPress.com/domains',
-			disallowResume: true,
-			lastModified: '2017-05-09',
-		};
+	flows.domain = {
+		steps: [
+			'domain-only',
+			'site-or-domain',
+			'site-picker',
+			'themes',
+			'plans-site-selected',
+			'user',
+		],
+		destination: getSiteDestination,
+		description: 'An experimental approach for WordPress.com/domains',
+		disallowResume: true,
+		lastModified: '2017-05-09',
+	};
 
-		flows[ 'site-selected' ] = {
-			steps: [ 'themes-site-selected', 'plans-site-selected' ],
-			destination: getSiteDestination,
-			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
-			description: 'A flow to test updating an existing site with `Signup`',
-			lastModified: '2017-01-19',
+	flows[ 'site-selected' ] = {
+		steps: [ 'themes-site-selected', 'plans-site-selected' ],
+		destination: getSiteDestination,
+		providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
+		description: 'A flow to test updating an existing site with `Signup`',
+		lastModified: '2017-01-19',
+	};
+
+	if ( config.isEnabled( 'signup/import-landing-handler' ) ) {
+		flows.import = {
+			steps: [ 'from-url', 'user', 'domains' ],
+			destination: ( { siteSlug } ) => `/settings/import/${ siteSlug }`,
+			description: 'A flow to kick off an import during signup',
+			disallowResume: true,
+			lastModified: '2018-09-12',
+		};
+	}
+
+	if ( config.isEnabled( 'signup/reader' ) ) {
+		flows.reader = {
+			steps: [ 'reader-landing', 'user' ],
+			destination: '/',
+			description: 'Signup for an account and migrate email subs to the reader.',
+			lastModified: '2018-09-04',
 		};
 	}
 

@@ -34,6 +34,7 @@ $z-layers: (
 	'root': (
 		'.NuxWelcome:before': -1,
 		'.is-group-editor::before': -1,
+		'.is-group-gutenberg::before': -1,
 		'.site-icon.is-blank .gridicon': 0,
 		'.chart__bar-section.is-spacer': 0,
 		'.reader__featured-post': 0,
@@ -69,7 +70,7 @@ $z-layers: (
 		'.module-content-table::after': 1,
 		'.stats-popular__empty': 1,
 		'.people-list-item__label': 1,
-		'.is-actionable .theme__active-focus': 1,
+		'.is-actionable .theme__thumbnail-label': 1,
 		'.is-section-themes.focus-sidebar #secondary': 1,
 		'.is-section-themes.focus-sites #secondary': 1,
 		'.accessible-focus .current-theme__button:focus': 1,
@@ -156,7 +157,6 @@ $z-layers: (
 		'.sortable-list__item.is-draggable.is-active': 1000,
 		'.chart__tooltip': 1000,
 		'.drop-zone__content': 1010,
-		'.dropdown-menu': 9999,
 		'.main.customize.is-iframe': 9999,
 		'.fullscreen-overlay': 100005,
 		'#wp_editbtns': 100020,
@@ -180,6 +180,8 @@ $z-layers: (
 		'.wpcom-site__global-noscript': 300000, // JS off always visible
 		'.is-section-woocommerce .global-notices': 999999, //render notices on top of dialogs
 		'.webpack-build-monitor': 99999999,
+		'.image-selector__item.is-transient::after': 1,
+		'.image-selector__item .spinner': 2,
 	),
 	'.ribbon': (
 		'.ribbon__title::before': -1,

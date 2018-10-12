@@ -17,6 +17,11 @@ import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const getRandomPromo = () => {
 	const promoOptions = [
 		{
@@ -105,10 +110,14 @@ export class AppPromo extends React.Component {
 
 		return (
 			<div className="app-promo">
-				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss }>
+				<button
+					tabIndex="0"
+					className="app-promo__dismiss"
+					onClick={ this.dismiss }
+					aria-label={ translate( 'Dismiss' ) }
+				>
 					<Gridicon icon="cross" size={ 24 } />
-					<span className="app-promo__screen-reader-text">{ translate( 'Dismiss' ) }</span>
-				</span>
+				</button>
 				<a
 					onClick={ this.recordClickEvent }
 					className="app-promo__link"

@@ -7,7 +7,8 @@ import debugModule from 'debug';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import url from 'url';
 import {
 	assign,
@@ -52,6 +53,7 @@ import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { setSurvey } from 'state/signup/steps/survey/actions';
+import { isValidLandingPageVertical } from 'lib/signup/verticals';
 
 // Current directory dependencies
 import steps from './config/steps';
@@ -203,7 +205,6 @@ class Signup extends React.Component {
 			ref: this.props.refParameter,
 		} );
 		this.recordReferralVisit();
-		this.props.loadTrackingTool( 'HotJar' );
 		recordSignupStart();
 	}
 
@@ -212,9 +213,10 @@ class Signup extends React.Component {
 		const parsedUrl = url.parse( urlPath, true );
 		const affiliateId = parsedUrl.query.aff;
 		const campaignId = parsedUrl.query.cid;
+		const subId = parsedUrl.query.sid;
 
 		if ( affiliateId && ! isNaN( affiliateId ) ) {
-			this.props.trackAffiliateReferral( { affiliateId, campaignId, urlPath } );
+			this.props.trackAffiliateReferral( { affiliateId, campaignId, subId, urlPath } );
 			// Record the referral in Tracks
 			analytics.tracks.recordEvent( 'calypso_refer_visit', {
 				flow: this.props.flowName,
@@ -262,6 +264,13 @@ class Signup extends React.Component {
 				surveySiteType: 'blog',
 				surveyQuestion: vertical,
 			} );
+			// Track our landing page verticals
+			if ( isValidLandingPageVertical( vertical ) ) {
+				analytics.tracks.recordEvent( 'calypso_signup_vertical_landing_page', {
+					vertical,
+					flow: this.props.flowName,
+				} );
+			}
 		}
 	};
 
@@ -288,8 +297,22 @@ class Signup extends React.Component {
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
-		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
-		recordSignupCompletion();
+		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewSite = !! ( dependencies && dependencies.siteSlug );
+		const hasCartItems = !! (
+			dependencies &&
+			( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+		);
+		const isNewUserOnFreePlan = isNewUser && isNewSite && ! hasCartItems;
+
+		analytics.tracks.recordEvent( 'calypso_signup_complete', {
+			flow: this.props.flowName,
+			is_new_user: isNewUser,
+			is_new_site: isNewSite,
+			has_cart_items: hasCartItems,
+			is_new_user_on_free_plan: isNewUserOnFreePlan,
+		} );
+		recordSignupCompletion( { isNewUser, isNewSite, hasCartItems, isNewUserOnFreePlan } );
 
 		if (
 			dependencies.cartItem ||
@@ -461,8 +484,20 @@ class Signup extends React.Component {
 		return flowSteps.length === completedSteps.length;
 	};
 
-	getPositionInFlow() {
-		return indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+	getPositionInFlow( fakedForTwoPartFlows = false ) {
+		let position = indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		if ( fakedForTwoPartFlows && this.props.flowName === 'user-continue' ) {
+			position++;
+		}
+		return position;
+	}
+
+	getFlowLength() {
+		// fake it for our two-step flow
+		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
+			return 4;
+		}
+		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
 	renderCurrentStep() {
@@ -482,40 +517,42 @@ class Signup extends React.Component {
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		return (
-			<div className="signup__step" key={ stepKey }>
-				{ shouldRenderLocaleSuggestions && (
-					<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-				) }
-				{ this.state.loadingScreenStartTime ? (
-					<SignupProcessingScreen
-						hasCartItems={ this.state.hasCartItems }
-						steps={ this.props.progress }
-						loginHandler={ this.state.loginHandler }
-						signupDependencies={ this.props.signupDependencies }
-						flowName={ this.props.flowName }
-						flowSteps={ flow.steps }
-					/>
-				) : (
-					<CurrentComponent
-						path={ this.props.path }
-						step={ currentStepProgress }
-						initialContext={ this.props.initialContext }
-						steps={ flow.steps }
-						stepName={ this.props.stepName }
-						meta={ flow.meta || {} }
-						goToNextStep={ this.goToNextStep }
-						goToStep={ this.goToStep }
-						previousFlowName={ this.state.previousFlowName }
-						flowName={ this.props.flowName }
-						signupProgress={ this.props.progress }
-						signupDependencies={ this.props.signupDependencies }
-						stepSectionName={ this.props.stepSectionName }
-						positionInFlow={ this.getPositionInFlow() }
-						hideFreePlan={ hideFreePlan }
-						{ ...propsFromConfig }
-					/>
-				) }
-			</div>
+			<CSSTransition classNames="signup__step" timeout={ 400 } key={ stepKey }>
+				<div className="signup__step">
+					{ shouldRenderLocaleSuggestions && (
+						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+					) }
+					{ this.state.loadingScreenStartTime ? (
+						<SignupProcessingScreen
+							hasCartItems={ this.state.hasCartItems }
+							steps={ this.props.progress }
+							loginHandler={ this.state.loginHandler }
+							signupDependencies={ this.props.signupDependencies }
+							flowName={ this.props.flowName }
+							flowSteps={ flow.steps }
+						/>
+					) : (
+						<CurrentComponent
+							path={ this.props.path }
+							step={ currentStepProgress }
+							initialContext={ this.props.initialContext }
+							steps={ flow.steps }
+							stepName={ this.props.stepName }
+							meta={ flow.meta || {} }
+							goToNextStep={ this.goToNextStep }
+							goToStep={ this.goToStep }
+							previousFlowName={ this.state.previousFlowName }
+							flowName={ this.props.flowName }
+							signupProgress={ this.props.progress }
+							signupDependencies={ this.props.signupDependencies }
+							stepSectionName={ this.props.stepSectionName }
+							positionInFlow={ this.getPositionInFlow() }
+							hideFreePlan={ hideFreePlan }
+							{ ...propsFromConfig }
+						/>
+					) }
+				</div>
+			</CSSTransition>
 		);
 	}
 
@@ -528,13 +565,11 @@ class Signup extends React.Component {
 			return null;
 		}
 
-		const flow = flows.getFlow( this.props.flowName );
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
-
 		const pageTitle =
 			this.props.flowName === 'account'
 				? translate( 'Create an account' )
 				: translate( 'Create a site' );
+		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<span>
@@ -542,20 +577,14 @@ class Signup extends React.Component {
 				{ ! this.state.loadingScreenStartTime &&
 					showProgressIndicator && (
 						<FlowProgressIndicator
-							positionInFlow={ this.getPositionInFlow() }
-							flowLength={ flow.steps.length }
+							positionInFlow={ this.getPositionInFlow( true ) }
+							flowLength={ this.getFlowLength() }
 							flowName={ this.props.flowName }
 						/>
 					) }
-				<ReactCSSTransitionGroup
-					component="div"
-					className="signup__steps"
-					transitionName="signup__step"
-					transitionEnterTimeout={ 400 }
-					transitionLeaveTimeout={ 400 }
-				>
+				<TransitionGroup component="div" className="signup__steps">
 					{ this.renderCurrentStep() }
-				</ReactCSSTransitionGroup>
+				</TransitionGroup>
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }

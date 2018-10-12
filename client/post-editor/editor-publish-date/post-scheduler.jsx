@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -81,7 +81,7 @@ export default class PostScheduler extends PureComponent {
 		};
 
 		return (
-			<div>
+			<Fragment>
 				{ ! postUtils.isPage( post ) && (
 					<QueryPosts siteId={ get( site, 'ID' ) } query={ query } />
 				) }
@@ -92,7 +92,7 @@ export default class PostScheduler extends PureComponent {
 					selectedDay={ get( post, 'date' ) }
 					site={ site }
 				/>
-			</div>
+			</Fragment>
 		);
 	}
 }

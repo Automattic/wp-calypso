@@ -10,21 +10,11 @@ import page from 'page';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { getStatsDefaultSitePage } from 'lib/route';
 import statsController from './controller';
+import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/stats/activity', siteSelection, sites, makeLayout, clientRender );
-
-	page(
-		'/stats/activity/:site',
-		siteSelection,
-		navigation,
-		statsController.activityLog,
-		makeLayout,
-		clientRender
-	);
-
 	if ( config.isEnabled( 'manage/stats' ) ) {
 		// Redirect this to default /stats/day/ view in order to keep
 		// the paths and page view reporting consistent.
@@ -196,6 +186,17 @@ export default function() {
 			siteSelection,
 			navigation,
 			statsController.follows,
+			makeLayout,
+			clientRender
+		);
+
+		page( '/stats/activity', siteSelection, sites, redirectToAcivity, makeLayout, clientRender );
+
+		page(
+			'/stats/activity/:site',
+			siteSelection,
+			navigation,
+			redirectToAcivity,
 			makeLayout,
 			clientRender
 		);

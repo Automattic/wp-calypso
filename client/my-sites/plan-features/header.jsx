@@ -174,11 +174,11 @@ export class PlanFeaturesHeader extends Component {
 
 	getPlanFeaturesPrices() {
 		const {
-			currencyCode,
-			discountPrice,
+			availableForPurchase,
 			isInSignup,
 			isPlaceholder,
 			isJetpack,
+			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
 		} = this.props;
@@ -192,47 +192,76 @@ export class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( relatedMonthlyPlan ) {
-			const originalPrice = relatedMonthlyPlan.raw_price * 12;
-			return (
-				<span className="plan-features__header-price-group">
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ originalPrice }
-						isInSignup={ isInSignup }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ rawPrice }
-						isInSignup={ isInSignup }
-						discounted
-					/>
-				</span>
-			);
+		if ( availableForPurchase ) {
+			if ( relatedMonthlyPlan ) {
+				return this.renderPriceGroup(
+					relatedMonthlyPlan.raw_price * 12,
+					discountPrice || rawPrice
+				);
+			} else if ( discountPrice ) {
+				return this.renderPriceGroup( rawPrice, discountPrice );
+			}
 		}
 
-		if ( discountPrice ) {
+		return this.renderPriceGroup( rawPrice );
+	}
+
+	renderPriceGroup( fullPrice, discountedPrice = null ) {
+		const { currencyCode, isInSignup } = this.props;
+
+		if ( fullPrice && discountedPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ rawPrice }
-						isInSignup={ isInSignup }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ discountPrice }
-						isInSignup={ isInSignup }
-						discounted
-					/>
+					<div className="plan-features__header-price-group-prices">
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ fullPrice }
+							isInSignup={ isInSignup }
+							original
+						/>
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ discountedPrice }
+							isInSignup={ isInSignup }
+							discounted
+						/>
+					</div>
+					{ this.renderCreditLabel() }
 				</span>
 			);
 		}
 
 		return (
-			<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } isInSignup={ isInSignup } />
+			<PlanPrice currencyCode={ currencyCode } rawPrice={ fullPrice } isInSignup={ isInSignup } />
+		);
+	}
+
+	renderCreditLabel() {
+		const {
+			availableForPurchase,
+			currentSitePlan,
+			discountPrice,
+			isJetpack,
+			planType,
+			rawPrice,
+			showPlanCreditsApplied,
+			translate,
+		} = this.props;
+
+		if (
+			! showPlanCreditsApplied ||
+			! availableForPurchase ||
+			planMatches( planType, { type: TYPE_FREE } ) ||
+			planType === currentSitePlan.productSlug ||
+			isJetpack ||
+			! discountPrice ||
+			discountPrice >= rawPrice
+		) {
+			return null;
+		}
+
+		return (
+			<span className="plan-features__header-credit-label">{ translate( 'Credit applied' ) }</span>
 		);
 	}
 
@@ -272,6 +301,7 @@ export class PlanFeaturesHeader extends Component {
 }
 
 PlanFeaturesHeader.propTypes = {
+	availableForPurchase: PropTypes.bool,
 	bestValue: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
 	currencyCode: PropTypes.string,
@@ -287,6 +317,7 @@ PlanFeaturesHeader.propTypes = {
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
 	relatedMonthlyPlan: PropTypes.object,
+	showPlanCreditsApplied: PropTypes.bool,
 	siteSlug: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
@@ -298,6 +329,7 @@ PlanFeaturesHeader.propTypes = {
 };
 
 PlanFeaturesHeader.defaultProps = {
+	availableForPurchase: true,
 	basePlansPath: null,
 	bestValue: false,
 	current: false,
@@ -309,6 +341,7 @@ PlanFeaturesHeader.defaultProps = {
 	newPlan: false,
 	onClick: noop,
 	popular: false,
+	showPlanCreditsApplied: false,
 	siteSlug: '',
 };
 

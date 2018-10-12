@@ -22,6 +22,8 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
 	PLAN_FREE,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
@@ -95,8 +97,8 @@ describe( 'Credit Card Payment Box', () => {
 		} );
 		jest.runOnlyPendingTimers();
 		expect( wrapper.instance().timer ).not.toBe( null );
-		expect( tickSpy.mock.calls.length ).toBe( 1 );
-		expect( setInterval.mock.calls.length ).toBe( 1 );
+		expect( tickSpy.mock.calls ).toHaveLength( 1 );
+		expect( setInterval.mock.calls ).toHaveLength( 1 );
 		setInterval.mockClear();
 	} );
 
@@ -113,8 +115,8 @@ describe( 'Credit Card Payment Box', () => {
 		} );
 		jest.runOnlyPendingTimers();
 		expect( wrapper.instance().timer ).toBe( null );
-		expect( tickSpy.mock.calls.length ).toBe( 0 );
-		expect( setInterval.mock.calls.length ).toBe( 0 );
+		expect( tickSpy.mock.calls ).toHaveLength( 0 );
+		expect( setInterval.mock.calls ).toHaveLength( 0 );
 		setInterval.mockClear();
 	} );
 
@@ -130,8 +132,8 @@ describe( 'Credit Card Payment Box', () => {
 		} );
 		jest.runOnlyPendingTimers();
 		expect( wrapper.instance().timer ).not.toBe( null );
-		expect( tickSpy.mock.calls.length ).toBe( 1 );
-		expect( setInterval.mock.calls.length ).toBe( 1 );
+		expect( tickSpy.mock.calls ).toHaveLength( 1 );
+		expect( setInterval.mock.calls ).toHaveLength( 1 );
 		wrapper.setProps( {
 			transactionStep: {
 				name: INPUT_VALIDATION,
@@ -140,8 +142,8 @@ describe( 'Credit Card Payment Box', () => {
 		} );
 		jest.runOnlyPendingTimers();
 		expect( wrapper.instance().timer ).toBe( null );
-		expect( tickSpy.mock.calls.length ).toBe( 1 );
-		expect( setInterval.mock.calls.length ).toBe( 1 );
+		expect( tickSpy.mock.calls ).toHaveLength( 1 );
+		expect( setInterval.mock.calls ).toHaveLength( 1 );
 		setInterval.mockClear();
 	} );
 } );
@@ -187,6 +189,8 @@ describe( 'Credit Card Payment Box - PaymentChatButton', () => {
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
+		PLAN_BLOGGER,
+		PLAN_BLOGGER_2_YEARS,
 		PLAN_FREE,
 		PLAN_JETPACK_FREE,
 		PLAN_JETPACK_PERSONAL,

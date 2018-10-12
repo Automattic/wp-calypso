@@ -16,8 +16,8 @@ import AuthorMapping from './author-mapping-item';
 import SiteUsersFetcher from 'components/site-users-fetcher';
 import UsersStore from 'lib/users/store';
 
-class ImporterMappingPane extends React.PureComponent {
-	static displayName = 'ImporterMappingPane';
+class AuthorMappingPane extends React.PureComponent {
+	static displayName = 'AuthorMappingPane';
 
 	static propTypes = {
 		hasSingleAuthor: PropTypes.bool.isRequired,
@@ -142,9 +142,8 @@ class ImporterMappingPane extends React.PureComponent {
 
 		return (
 			<div className="importer__mapping-pane">
-				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) }>
-					<div className="importer__mapping-description">{ mappingDescription }</div>
-				</SiteUsersFetcher>
+				<SiteUsersFetcher fetchOptions={ this.getFetchOptions( { number: 50 } ) } />
+				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ sourceTitle }</span>
 					<span className="importer__mapping-target-title">{ targetTitle }</span>
@@ -168,4 +167,4 @@ class ImporterMappingPane extends React.PureComponent {
 	}
 }
 
-export default localize( ImporterMappingPane );
+export default localize( AuthorMappingPane );

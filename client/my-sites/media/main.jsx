@@ -14,10 +14,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import MediaLibrary from 'my-sites/media-library';
+import QueryMedia from 'components/data/query-media';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Dialog from 'components/dialog';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaActions from 'lib/media/actions';
@@ -34,6 +37,7 @@ class Media extends Component {
 		filter: PropTypes.string,
 		search: PropTypes.string,
 		source: PropTypes.string,
+		mediaId: PropTypes.number,
 	};
 
 	state = {
@@ -92,14 +96,26 @@ class Media extends Component {
 			currentDetail: null,
 			selectedItems: [],
 		} );
+		this.maybeRedirectToAll();
+	};
+
+	maybeRedirectToAll = () => {
+		const { selectedSite, mediaId, previousRoute } = this.props;
+		if ( mediaId && selectedSite && selectedSite.slug ) {
+			if ( previousRoute ) {
+				page( previousRoute );
+				return;
+			}
+			page( '/media/' + selectedSite.slug );
+		}
 	};
 
 	editImage = () => {
-		this.setState( { currentDetail: null, editedImageItem: this.state.currentDetail } );
+		this.setState( { currentDetail: null, editedImageItem: this.getSelectedIndex() } );
 	};
 
 	editVideo = () => {
-		this.setState( { currentDetail: null, editedVideoItem: this.state.currentDetail } );
+		this.setState( { currentDetail: null, editedVideoItem: this.getSelectedIndex() } );
 	};
 
 	onImageEditorCancel = imageEditorProps => {
@@ -132,6 +148,7 @@ class Media extends Component {
 		MediaActions.update( site.ID, item, true );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
+		this.maybeRedirectToAll();
 	};
 
 	getModalButtons() {
@@ -183,14 +200,17 @@ class Media extends Component {
 		}
 
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
+		this.maybeRedirectToAll();
 	};
 
 	restoreOriginalMedia = ( siteId, item ) => {
 		if ( ! siteId || ! item ) {
 			return;
 		}
+
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
+		this.maybeRedirectToAll();
 	};
 
 	setDetailSelectedIndex = index => {
@@ -262,10 +282,11 @@ class Media extends Component {
 		if ( ! site ) {
 			return;
 		}
+		const selectedItems = this.getSelectedItems();
 
 		const selected =
-			this.state.selectedItems && this.state.selectedItems.length
-				? this.state.selectedItems
+			selectedItems && selectedItems.length
+				? selectedItems
 				: MediaLibrarySelectedStore.getAll( site.ID );
 
 		MediaActions.delete( site.ID, selected );
@@ -281,27 +302,74 @@ class Media extends Component {
 		return '/media/:site';
 	};
 
+	getSelectedItems = () => {
+		const { media } = this.props;
+		if ( media ) {
+			return [ media ];
+		}
+		return this.state.selectedItems;
+	};
+
+	getSelectedItem = defaultMediaItem => {
+		const { media } = this.props;
+		if ( media ) {
+			return media;
+		}
+		return this.state.selectedItems[ defaultMediaItem ];
+	};
+
+	getSelectedIndex = () => {
+		if ( this.props.media ) {
+			return 0;
+		}
+		return this.state.currentDetail;
+	};
+
+	showDialog = ( typeOfDialog = null ) => {
+		if ( typeOfDialog === 'detail' ) {
+			if (
+				this.props.media &&
+				this.state.editedImageItem === null &&
+				this.state.editedVideoItem === null
+			) {
+				return true;
+			}
+			return this.state.currentDetail !== null;
+		}
+
+		if ( this.props.media ) {
+			return true;
+		}
+		return (
+			this.state.editedImageItem !== null ||
+			this.state.editedVideoItem !== null ||
+			this.state.currentDetail !== null
+		);
+	};
+
 	render() {
-		const site = this.props.selectedSite;
+		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
 		return (
 			<div ref="container" className="main main-column media" role="main">
+				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<SidebarNavigation />
-				{ ( this.state.editedImageItem !== null ||
-					this.state.editedVideoItem !== null ||
-					this.state.currentDetail !== null ) && (
+				{ this.showDialog() && (
 					<Dialog
 						isVisible={ true }
 						additionalClassNames="editor-media-modal media__item-dialog"
 						buttons={ this.getModalButtons() }
 						onClose={ this.closeDetailsModal }
 					>
-						{ this.state.currentDetail !== null && (
+						{ this.showDialog( 'detail' ) && (
 							<EditorMediaModalDetail
 								site={ site }
-								items={ this.state.selectedItems }
-								selectedIndex={ this.state.currentDetail }
+								items={ this.getSelectedItems() }
+								selectedIndex={ this.getSelectedIndex() }
 								onReturnToList={ this.closeDetailsModal }
+								backButtonText={
+									previousRoute ? translate( 'Back' ) : translate( 'Media Library' )
+								}
 								onEditImageItem={ this.editImage }
 								onEditVideoItem={ this.editVideo }
 								onRestoreItem={ this.restoreOriginalMedia }
@@ -311,14 +379,14 @@ class Media extends Component {
 						{ this.state.editedImageItem !== null && (
 							<ImageEditor
 								siteId={ site && site.ID }
-								media={ this.state.selectedItems[ this.state.editedImageItem ] }
+								media={ this.getSelectedItem( this.state.editedImageItem ) }
 								onDone={ this.onImageEditorDone }
 								onCancel={ this.onImageEditorCancel }
 							/>
 						) }
 						{ this.state.editedVideoItem !== null && (
 							<VideoEditor
-								media={ this.state.selectedItems[ this.state.editedVideoItem ] }
+								media={ this.getSelectedItem( this.state.editedVideoItem ) }
 								onCancel={ this.onVideoEditorCancel }
 								onUpdatePoster={ this.onVideoEditorUpdatePoster }
 							/>
@@ -350,8 +418,10 @@ class Media extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state, { mediaId } ) => ( {
 	selectedSite: getSelectedSite( state ),
+	previousRoute: getPreviousRoute( state ),
+	media: getMediaItem( state, getSelectedSiteId( state ), mediaId ),
 } );
 
 export default connect( mapStateToProps )( localize( Media ) );

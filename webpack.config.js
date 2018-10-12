@@ -8,17 +8,17 @@
  * External dependencies
  */
 const _ = require( 'lodash' );
-const CopyWebpackPlugin = require( './server/bundler/copy-webpack-plugin' );
 const fs = require( 'fs' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
-const StatsWriter = require( './server/bundler/stats-writer' );
-const prism = require( 'prismjs' );
+const MiniCssExtractPluginWithRTL = require( 'mini-css-extract-plugin-with-rtl' );
+const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const os = require( 'os' );
+const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 
 /**
  * Internal dependencies
@@ -35,7 +35,8 @@ const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
-const shouldEmitStats = process.env.EMIT_STATS === 'true';
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const codeSplit = config.isEnabled( 'code-splitting' );
 
@@ -108,17 +109,18 @@ const wordpressExternals = ( context, request, callback ) =>
  *
  * @param {object}  env                              additional config options
  * @param {boolean} env.externalizeWordPressPackages whether to bundle or extern the `@wordpress/` packages
- * @param {object}  argv                             given by webpack?
  *
  * @return {object}                                  webpack config
  */
-// eslint-disable-next-line no-unused-vars
-function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv ) {
+function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false } = {} ) {
+	cssFilename =
+		cssFilename ||
+		( isDevelopment || calypsoEnv === 'desktop' ? '[name].css' : '[name].[chunkhash].css' );
+
 	const webpackConfig = {
 		bail: ! isDevelopment,
 		context: __dirname,
 		entry: { build: [ path.join( __dirname, 'client', 'boot', 'app' ) ] },
-		profile: shouldEmitStats,
 		mode: isDevelopment ? 'development' : 'production',
 		devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 		output: {
@@ -158,7 +160,7 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			rules: [
 				{
 					test: /\.jsx?$/,
-					exclude: /node_modules[\/\\](?!notifications-panel)/,
+					exclude: /node_modules\//,
 					use: [
 						{
 							loader: 'thread-loader',
@@ -179,8 +181,8 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 				},
 				{
 					test: /\.(sc|sa|c)ss$/,
-					use: _.compact( [
-						MiniCssExtractPlugin.loader,
+					use: [
+						MiniCssExtractPluginWithRTL.loader,
 						'css-loader',
 						{
 							loader: 'postcss-loader',
@@ -192,9 +194,13 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 							loader: 'sass-loader',
 							options: {
 								includePaths: [ path.join( __dirname, 'client' ) ],
+								data: `@import '${ path.join(
+									__dirname,
+									'assets/stylesheets/shared/_utils.scss'
+								) }';`,
 							},
 						},
-					] ),
+					],
 				},
 				{
 					test: /extensions[\/\\]index/,
@@ -210,28 +216,21 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					loader: 'html-loader',
 				},
 				{
+					test: /\.(svg)$/,
+					use: [
+						{
+							loader: 'file-loader',
+							options: { name: '[name].[ext]', outputPath: 'images/' },
+						},
+					],
+				},
+				{
 					include: require.resolve( 'tinymce/tinymce' ),
 					use: 'exports-loader?window=tinymce',
 				},
 				{
 					test: /node_modules[\/\\]tinymce/,
 					use: 'imports-loader?this=>window',
-				},
-				{
-					test: /README\.md$/,
-					use: [
-						{ loader: 'html-loader' },
-						{
-							loader: 'markdown-loader',
-							options: {
-								sanitize: true,
-								highlight: function( code, language ) {
-									const syntax = prism.languages[ language ];
-									return syntax ? prism.highlight( code, syntax ) : code;
-								},
-							},
-						},
-					],
 				},
 			],
 		},
@@ -244,6 +243,8 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					'react-virtualized': 'react-virtualized/dist/commonjs',
 					'social-logos/example': 'social-logos/build/example',
 					debug: path.resolve( __dirname, 'node_modules/debug' ),
+					store: 'store/dist/store.modern',
+					gridicons$: path.resolve( __dirname, 'client/components/async-gridicons' ),
 				},
 				getAliasesForExtensions()
 			),
@@ -258,14 +259,18 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 			} ),
 			new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 			new webpack.IgnorePlugin( /^props$/ ),
-			new CopyWebpackPlugin( [
-				{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
-			] ),
-			new MiniCssExtractPlugin(),
+			new MiniCssExtractPluginWithRTL( {
+				filename: cssFilename,
+				rtlEnabled: true,
+			} ),
+			new WebpackRTLPlugin( {
+				minify: ! isDevelopment,
+			} ),
 			new AssetsWriter( {
 				filename: 'assets.json',
 				path: path.join( __dirname, 'server', 'bundler' ),
 			} ),
+			new DuplicatePackageCheckerPlugin(),
 			shouldCheckForCycles &&
 				new CircularDependencyPlugin( {
 					exclude: /node_modules/,
@@ -274,17 +279,15 @@ function getWebpackConfig( { externalizeWordPressPackages = false } = {}, argv )
 					cwd: process.cwd(),
 				} ),
 			shouldEmitStats &&
-				new StatsWriter( {
-					filename: 'stats.json',
-					path: __dirname,
-					stats: {
-						assets: true,
-						children: true,
-						modules: true,
+				new BundleAnalyzerPlugin( {
+					analyzerMode: 'disabled', // just write the stats.json file
+					generateStatsFile: true,
+					statsFilename: path.join( __dirname, 'stats.json' ),
+					statsOptions: {
 						source: false,
-						reasons: false,
-						issuer: false,
-						timings: true,
+						reasons: shouldEmitStatsWithReasons,
+						optimizationBailout: false,
+						chunkOrigins: false,
 					},
 				} ),
 		] ),

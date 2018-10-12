@@ -1,101 +1,141 @@
-version: 2
-jobs:
-  build:
-    parallelism: 6
+version: 2.1
+
+references:
+  shared-environment: &shared-environment
+    CIRCLE_ARTIFACTS: /tmp/artifacts
+    CIRCLE_TEST_REPORTS: /tmp/test_results
+
+  docker-image: &docker-image
+    - image: circleci/node:10.11.0-browsers
+
+  setup-results-and-artifacts: &setup-results-and-artifacts
+    name: Create Directories for Results and Artifacts
+    command: |
+      mkdir -p                                  \
+        "$CIRCLE_ARTIFACTS/icfy"                \
+        "$CIRCLE_ARTIFACTS/notifications-panel" \
+        "$CIRCLE_ARTIFACTS/translate"           \
+        "$CIRCLE_TEST_REPORTS/client"           \
+        "$CIRCLE_TEST_REPORTS/eslint"           \
+        "$CIRCLE_TEST_REPORTS/integration"      \
+        "$CIRCLE_TEST_REPORTS/server"           \
+        "$HOME/jest-cache"
+
+  # Jest cache caching
+  #
+  # Jest uses a cache to speed up builds. If we persist this cache across builds,
+  # we can improve the speed of subsequent builds.
+  #
+  # Circle caches never overwritten, so we must ensure that Jest caches from different jobs
+  # do not collide or we'll only cache 1 job.
+  #
+  # We also need to ensure that different nodes and different total nodes do not collide.
+  # When we split tests, different nodes will receive a different set of tests so each node's
+  # cache should be unique.
+  #
+  # Finally, we cache on the branch and revision, falling back to master. This should give us
+  # pretty good "nearest neighbor" primer for the Jest cache.
+  #
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
+  restore-jest-cache: &restore-jest-cache
+    name: Restore Jest cache
+    keys:
+      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}
+      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-master
+      - v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}
+  save-jest-cache: &save-jest-cache
+    name: Save Jest cache
+    key: v7-jest-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_NODE_INDEX }}/{{ .Environment.CIRCLE_NODE_TOTAL }}-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/jest-cache
+
+  # Git cache
+  #
+  # Calypso is a big repository with a lot of history. It can take a long time to do a full checkout.
+  # By including the `.git` directory in the cache, we can speed things up by only needing to update
+  # the local repository.
+  #
+  # We cache on the branch and revision, falling back to master, or any recent cache.
+  #
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
+  restore-git-cache: &restore-git-cache
+    name: Restore git cache
+    keys:
+      - v2-git-{{ .Branch }}-{{ .Revision }}
+      - v2-git-{{ .Branch }}
+      - v2-git-master
+      - v2-git
+  update-git-master: &update-git-master
+    name: Update master branch
+    command: git fetch --force origin master
+  save-git-cache: &save-git-cache
+    name: Save git cache
+    key: v2-git-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ".git"
+
+  # node_modules cache
+  #
+  # We'll cache node_modules to save ourselves npm installation during build. Any cache hit
+  # for identical `.nvmrc` and `npm-shrinkwrap.json` should produce identical node_modules,
+  # so the checksum for these files builds our cache.
+  #
+  # We only match this cache identically with no fallbacks. This allows us to skip any npm
+  # installation if a cache hits and we find node_modules. Otherwise, cache misses and we'll
+  # need to do an npm install.
+  #
+  # Some prior art:
+  #   - https://github.com/Automattic/wp-calypso/pull/25431
+  #   - https://github.com/Automattic/wp-calypso/pull/25487
+  #
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
+  restore-node-modules-cache: &restore-node-modules-cache
+    name: "Restore node_modules cache"
+    key: v1-node-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+  npm-install: &npm-install
+    name: Install npm dependencies
+    command: |
+      if [ ! -d node_modules ]; then
+        npm ci
+      fi
+  save-node-modules-cache: &save-node-modules-cache
+    name: "Save node_modules cache"
+    key: v1-node-modules-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
+    paths:
+      - node_modules
+
+  # Babel cache
+  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
+  restore-babel-client-cache: &restore-babel-client-cache
+    name: Restore Babel Client Cache
+    keys:
+      - v1-babel-client-{{ .Branch }}-{{ .Revision }}
+      - v1-babel-client-{{ .Branch }}
+      - v1-babel-client-master
+      - v1-babel-client
+  save-babel-client-cache: &save-babel-client-cache
+    name: Save Babel Client Cache
+    key: v1-babel-client-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - "build/.babel-client-cache"
+
+  defaults: &defaults
     working_directory: ~/wp-calypso
-    docker:
-      - image: circleci/node:10.9.0-browsers
-        environment:
-          CIRCLE_ARTIFACTS: /tmp/artifacts
-          CIRCLE_TEST_REPORTS: /tmp/test_results
+    docker: *docker-image
+    environment: *shared-environment
 
+commands:
+  prepare:
+    description: "Prepare Job"
     steps:
-      - restore_cache:
-          name: Restore git cache
-          key: v1-20180524-git
-
-      - checkout
-
-    # Update origin/master so we can diff against it later
-      - run:
-          name: Update master branch
-          command: git fetch --force origin master
-
-      - save_cache:
-          name: Save git cache
-          key: v1-20180524-git
-          paths:
-            - ".git"
-
-      - run:
-          name: Create Directories for Results and Artifacts
-          command: |
-            mkdir -p $CIRCLE_ARTIFACTS
-            mkdir -p $CIRCLE_TEST_REPORTS
-
-      - restore_cache:
-          name: "Restoring npm cache"
-          keys:
-             - v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-             - v1-npmcache-{{ checksum ".nvmrc" }}
-
-      - run: npm ci
-
-      - save_cache:
-          name: "Saving npm cache"
-          key: v1-npmcache-{{ checksum ".nvmrc" }}-{{ checksum "npm-shrinkwrap.json" }}
-          paths:
-            - ~/.npm
-
-      - run:
-          name: Build Server
-          environment:
-              NODE_ENV: test
-          command: npm run build-server
-
-      - run:
-          name: Build calypso-strings.pot
-          command: |
-            npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
-            mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
-
-      - run:
-          name: Build New Strings .pot
-          command: |
-            git clone https://github.com/Automattic/gp-localci-client.git
-            bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
-            rm -rf gp-localci-client
-
-      - run:
-          name: Run Integration Tests
-          command: |
-            bin/run-integration $(circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings)
-
-      - run:
-          name: Lint Config Keys
-          command: npm run lint:config-defaults
-
-      - run:
-          name: Lint Client and Server
-          command: |
-            ./node_modules/.bin/eslint-eslines $(git diff --name-only origin/master... | grep -E '^(client|server)' | grep -E '\.jsx?$' | circleci tests split)
-
-      - run:
-          name: Run Client Tests
-          command: |
-              npm run test-client:ci $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
-
-      - run:
-          name: Run Server Tests
-          command: |
-              npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
-
-      - run:
-          name: Gather Test Results
-          command: |
-            find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
-          when: always
-
+      # folders to collect results
+      - run: *setup-results-and-artifacts
+      - attach_workspace:
+          at: '~'
+  store-artifacts-and-test-results:
+    description: Stores artifacts and test results
+    steps:
       - store_test_results:
           path: /tmp/test_results
       - store_artifacts:
@@ -103,9 +143,290 @@ jobs:
       - store_artifacts:
           path: /tmp/artifacts
 
-# We need to work around this bit because
-# the notification system in 2.0 is a bit flakey
-# and is not yet working as expected.
-notify:
-  webhooks:
-    - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
+jobs:
+  setup:
+    <<: *defaults
+    steps:
+      # repo
+      - restore_cache: *restore-git-cache
+      - checkout
+      - run: *update-git-master
+      - save_cache: *save-git-cache
+      # npm dependencies
+      - restore_cache: *restore-node-modules-cache
+      - run: *npm-install
+      - save_cache: *save-node-modules-cache
+      - persist_to_workspace:
+          root: '~'
+          paths:
+            - wp-calypso
+
+  build-jetpack-blocks:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Build Jetpack Blocks
+          command: |
+            NODE_ENV=production npm run sdk --              \
+              gutenberg                                     \
+              client/gutenberg/extensions/presets/jetpack   \
+              --output-dir=$CIRCLE_ARTIFACTS/jetpack-blocks
+      - store-artifacts-and-test-results
+
+  lint-and-translate:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Lint Config Keys
+          when: always
+          command: npm run lint:config-defaults
+      - run:
+          name: Lint Client and Server
+          when: always
+          command: |
+            # We'll use failure code to do some additional processing and report failure manually
+            set +o errexit
+            ./node_modules/.bin/eslint-eslines                        \
+              $(                                                      \
+                git diff --name-only --diff-filter=d origin/master... \
+                | grep -E '^(client|server)'                          \
+                | grep -E '\.jsx?$'                                   \
+              )                                                       \
+              -- --format junit                                       \
+              > ~/eslint-results.xml
+            # Ensure we don't upload empty reports.
+            # Eslint would not produce a malformed empty xml using the --format and -o options.
+            # However, with eslint-eslines and the redirected > output, we may get an empty file.
+            # We only put the file into the reports directory if the status code informs us that
+            # lint issues have been encountered.
+            ESLINT_RESULT="$?"
+            if [ "$ESLINT_RESULT" -ne 0 ]; then
+              mv ~/eslint-results.xml "$CIRCLE_TEST_REPORTS/eslint/results.xml"
+              exit "$ESLINT_RESULT"
+            fi
+      - run:
+          name: Build calypso-strings.pot
+          when: always
+          command: |
+            npm run translate
+            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
+      - run:
+          name: Build New Strings .pot
+          when: always
+          command: |
+            git clone https://github.com/Automattic/gp-localci-client.git
+            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            rm -rf gp-localci-client
+      - store-artifacts-and-test-results
+      - run:
+          name: Notify GlotPress translations are ready
+          when: always
+          command: |
+            curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
+              -H 'Cache-Control: no-cache' \
+              -H 'Content-Type: application/json' \
+              -d '{
+                    "payload": {
+                      "branch": "'"$CIRCLE_BRANCH"'",
+                      "build_num": '"$CIRCLE_BUILD_NUM"',
+                      "pull_requests": [
+                        {
+                          "url": "'"$CIRCLE_PULL_REQUEST"'"
+                        }
+                      ],
+                      "reponame": "'"$CIRCLE_PROJECT_REPONAME"'",
+                      "username": "'"$CIRCLE_PROJECT_USERNAME"'",
+                      "vcs_revision": "'"$CIRCLE_SHA1"'",
+                      "vcs_type": "github"
+                    }
+                  }'
+
+  build-notifications:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - run:
+          name: Build Notifications Panel
+          command: |
+            NODE_ENV=production npm run sdk -- notifications --output-dir=$CIRCLE_ARTIFACTS/notifications-panel
+      - store-artifacts-and-test-results
+
+  test-client:
+    <<: *defaults
+    parallelism: 6
+    steps:
+      - prepare
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Client Tests
+          no_output_timeout: 2m
+          command: |
+            # Use Jest to list tests to run via config
+            ./node_modules/.bin/jest              \
+              --listTests                         \
+              --config=test/client/jest.config.js \
+              > ~/jest-tests
+
+            # Run jest on the CircleCI split for parallelization across containers
+            # Avoid using `--split-by=timings` here so that per-node Jest caches
+            # receive a stable sub-set of tests for optimal cache usage.
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/client/results.xml" \
+              ./node_modules/.bin/jest                                  \
+                --cacheDirectory="$HOME/jest-cache"                     \
+                --ci                                                    \
+                --maxWorkers=2                                          \
+                --reporters=default                                     \
+                --reporters=jest-junit                                  \
+                --runTestsByPath                                        \
+                --silent                                                \
+                --config=test/client/jest.config.js                     \
+                $( circleci tests split < ~/jest-tests )
+      - save_cache: *save-jest-cache
+      - store-artifacts-and-test-results
+
+  test-integration:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Integration Tests
+          command: |
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/integration/results.xml" \
+              ./node_modules/.bin/jest                     \
+                --cacheDirectory="$HOME/jest-cache"        \
+                --ci                                       \
+                --maxWorkers=2                             \
+                --reporters=default                        \
+                --reporters=jest-junit                     \
+                --silent                                   \
+                --config=test/integration/jest.config.js
+      - save_cache: *save-jest-cache
+      - store-artifacts-and-test-results
+
+  test-server:
+    <<: *defaults
+    parallelism: 1
+    steps:
+      - prepare
+      - restore_cache: *restore-jest-cache
+      - run:
+          name: Run Server Tests
+          no_output_timeout: 2m
+          command: |
+            JEST_JUNIT_OUTPUT="$CIRCLE_TEST_REPORTS/server/results.xml" \
+              ./node_modules/.bin/jest                                  \
+                --cacheDirectory="$HOME/jest-cache"                     \
+                --ci                                                    \
+                --maxWorkers=2                                          \
+                --reporters=default                                     \
+                --reporters=jest-junit                                  \
+                --silent                                                \
+                --config=test/server/jest.config.js
+      - save_cache: *save-jest-cache
+      - store-artifacts-and-test-results
+
+  danger:
+    <<: *defaults
+    steps:
+      - prepare
+      - run:
+          name: Danger.js
+          command: npx danger ci
+
+  icfy-stats:
+    <<: *defaults
+    steps:
+      - prepare
+      - restore_cache: *restore-babel-client-cache
+      - run:
+          name: Build Stats and Notify ICFY
+          environment:
+            NODE_ENV: "production"
+            CALYPSO_CLIENT: "true"
+          command: |
+            #
+            # This block should not cause a test failure and block PRs.
+            # The shell should never error and exit 0 to indicate success.
+            #
+            set +o errexit
+            ANCESTOR_SHA1=$(git merge-base HEAD master)
+            npm run build-css                                                           \
+            && npm run preanalyze-bundles                                               \
+            && node bin/icfy-analyze.js                                                 \
+            && mv stats.json chart.json "$CIRCLE_ARTIFACTS/icfy"                        \
+            && curl                                                                     \
+                -X POST                                                                 \
+                "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
+                -H 'Cache-Control: no-cache'                                            \
+                -H 'Content-Type: application/json'                                     \
+                -d '{
+                      "payload": {
+                        "branch": "'"$CIRCLE_BRANCH"'",
+                        "build_num": '"$CIRCLE_BUILD_NUM"',
+                        "sha": "'"$CIRCLE_SHA1"'",
+                        "ancestor": "'"$ANCESTOR_SHA1"'"
+                      }
+                    }'                                                                  \
+            || rm -fr build/.babel-client-cache # In case of failure do not save a potentially bad cache
+            exit 0
+      - save_cache: *save-babel-client-cache
+      - store-artifacts-and-test-results
+
+workflows:
+  version: 2
+  calypso:
+    jobs:
+      - setup
+      - danger:
+          requires:
+            - setup
+          filters:
+            branches:
+              ignore: master
+      - build-jetpack-blocks:
+          requires:
+            - setup
+      - build-notifications:
+          requires:
+            - setup
+      - icfy-stats:
+          requires:
+            - setup
+      - lint-and-translate:
+          requires:
+            - setup
+      - test-client:
+          requires:
+            - setup
+      - test-server:
+          requires:
+            - setup
+
+  calypso-nightly:
+    jobs:
+      - setup
+      - test-client:
+          requires:
+            - setup
+      - test-integration:
+          requires:
+            - setup
+      - test-server:
+          requires:
+            - setup
+    triggers:
+      - schedule:
+          cron: "0 4 * * *"
+          filters:
+            branches:
+              only:
+                - master
+
+# vi: sts=2 ts=2 sw=2 et

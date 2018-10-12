@@ -16,28 +16,29 @@ import SitesPopover from 'components/sites-popover';
 import { newPost } from 'lib/paths';
 import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-helper';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
+import getPrimarySiteSlug from 'state/selectors/get-primary-site-slug';
+import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 import MasterbarDrafts from './drafts';
 import isRtlSelector from 'state/selectors/is-rtl';
 import TranslatableString from 'components/translatable/proptype';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
-		user: PropTypes.object,
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
 		tooltip: TranslatableString,
 		// connected props
-		selectedSite: PropTypes.object,
+		currentSiteSlug: PropTypes.string,
+		hasMoreThanOneVisibleSite: PropTypes.bool,
+		isRtl: PropTypes.bool,
 	};
 
 	state = {
 		isShowingPopover: false,
 	};
 
-	setPostButtonRef = component => {
-		this.postButtonRef = component;
-	};
+	postButtonRef = React.createRef();
 
 	toggleSitesPopover = () => {
 		this.setState( state => ( {
@@ -50,10 +51,8 @@ class MasterbarItemNew extends React.Component {
 	};
 
 	onClick = event => {
-		const visibleSiteCount = this.props.user.get().visible_site_count;
-
-		// if multi-site and editor enabled, show site-selector
-		if ( visibleSiteCount > 1 ) {
+		// if the user has multiple sites, show site selector
+		if ( this.props.hasMoreThanOneVisibleSite ) {
 			this.toggleSitesPopover();
 			event.preventDefault();
 			return;
@@ -76,6 +75,11 @@ class MasterbarItemNew extends React.Component {
 		return 'bottom left';
 	}
 
+	onSiteSelect = () => {
+		this.props.recordTracksEvent( 'calypso_masterbar_write_button_clicked' );
+		return false; // handledByHost = false, continue handling by navigating to /post/:site
+	};
+
 	renderPopover() {
 		if ( ! this.state.isShowingPopover ) {
 			return null;
@@ -86,9 +90,9 @@ class MasterbarItemNew extends React.Component {
 				id="popover__sites-popover-masterbar"
 				visible
 				groups
-				context={ this.postButtonRef }
+				context={ this.postButtonRef.current }
 				onClose={ this.closeSitesPopover }
-				onSiteSelect={ this.props.siteSelected }
+				onSiteSelect={ this.onSiteSelect }
 				position={ this.getPopoverPosition() }
 			/>
 		);
@@ -96,13 +100,12 @@ class MasterbarItemNew extends React.Component {
 
 	render() {
 		const classes = classNames( this.props.className );
-		const currentSite = this.props.selectedSite || this.props.user.get().primarySiteSlug;
-		const newPostPath = newPost( currentSite );
+		const newPostPath = newPost( this.props.currentSiteSlug );
 
 		return (
 			<div className="masterbar__publish">
 				<MasterbarItem
-					ref={ this.setPostButtonRef }
+					ref={ this.postButtonRef }
 					url={ newPostPath }
 					icon="create"
 					onClick={ this.onClick }
@@ -122,16 +125,13 @@ class MasterbarItemNew extends React.Component {
 
 const mapStateToProps = state => {
 	return {
-		selectedSite: getSelectedSite( state ),
+		currentSiteSlug: getSelectedSiteSlug( state ) || getPrimarySiteSlug( state ),
+		hasMoreThanOneVisibleSite: getCurrentUserVisibleSiteCount( state ) > 1,
 		isRtl: isRtlSelector( state ),
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
-	siteSelected: () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_write_button_clicked' ) );
-	},
-} );
+const mapDispatchToProps = { recordTracksEvent };
 
 export default connect(
 	mapStateToProps,

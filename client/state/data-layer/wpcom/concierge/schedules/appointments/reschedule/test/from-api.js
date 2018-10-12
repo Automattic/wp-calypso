@@ -4,7 +4,6 @@
  * Internal dependencies
  */
 import fromApi from '../from-api';
-import { SchemaError } from 'lib/make-json-schema-parser';
 
 describe( 'fromApi()', () => {
 	test( 'should validate and transform the data successfully.', () => {
@@ -21,6 +20,6 @@ describe( 'fromApi()', () => {
 			fromApi( invalidFieldTypes );
 		};
 
-		expect( invalidateCall ).toThrowError( SchemaError );
+		expect( invalidateCall ).toThrow( Error, 'Failed to validate with JSON schema' );
 	} );
 } );

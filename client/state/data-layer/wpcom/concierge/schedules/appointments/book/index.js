@@ -24,6 +24,8 @@ import fromApi from './from-api';
 import toApi from './to-api';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export const bookConciergeAppointment = action => {
 	return [
 		updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ),
@@ -79,8 +81,10 @@ export const onError = ( { type }, error ) => {
 	];
 };
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/concierge/schedules/appointments/book/index.js', {
 	[ CONCIERGE_APPOINTMENT_CREATE ]: [
 		dispatchRequestEx( { fetch: bookConciergeAppointment, onSuccess, onError, fromApi } ),
 	],
-};
+} );
+
+export default {};

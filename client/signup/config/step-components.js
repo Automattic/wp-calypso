@@ -16,6 +16,7 @@ import CredsPermissionComponent from 'signup/steps/creds-permission';
 import DesignTypeComponent from 'signup/steps/design-type';
 import DesignTypeWithAtomicStoreComponent from 'signup/steps/design-type-with-atomic-store';
 import DomainsStepComponent from 'signup/steps/domains';
+import ImportURLStepComponent from 'signup/steps/import-url';
 import PlansStepComponent from 'signup/steps/plans';
 import SiteComponent from 'signup/steps/site';
 import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
@@ -31,6 +32,7 @@ import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
 import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
+import ReaderLandingStepComponent from 'signup/steps/reader-landing';
 
 export default {
 	about: AboutStepComponent,
@@ -50,6 +52,7 @@ export default {
 	'domains-store': DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
+	'from-url': ImportURLStepComponent,
 	plans: PlansStepComponent,
 	'plans-store-nux': PlansAtomicStoreComponent,
 	'plans-site-selected': PlansStepWithoutFreePlan,
@@ -74,4 +77,5 @@ export default {
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
 	'oauth2-user': UserSignupComponent,
+	'reader-landing': ReaderLandingStepComponent,
 };

@@ -8,9 +8,6 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
-import followingNew from './new';
-import followingDelete from './delete';
 import {
 	READER_FOLLOW,
 	READER_FOLLOWS_SYNC_START,
@@ -21,6 +18,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { isValidApiResponse, subscriptionsFromApi } from './utils';
+
+import { registerHandlers } from 'state/data-layer/handler-registry';
 
 const ITEMS_PER_PAGE = 200;
 const MAX_ITEMS = 2000;
@@ -118,10 +117,8 @@ export function receiveError( store ) {
 	);
 }
 
-const followingMine = {
+registerHandlers( 'state/data-layer/wpcom/read/following/mine/index.js', {
 	[ READER_FOLLOWS_SYNC_START ]: [ syncReaderFollows ],
 	[ READER_FOLLOWS_SYNC_PAGE ]: [ dispatchRequest( requestPage, receivePage, receiveError ) ],
 	[ READER_FOLLOW ]: [ updateSeenOnFollow ],
-};
-
-export default mergeHandlers( followingMine, followingNew, followingDelete );
+} );

@@ -103,7 +103,6 @@ class ManageMenu extends PureComponent {
 				label: translate( 'Media' ),
 				capability: 'upload_files',
 				queryable: true,
-				config: 'manage/media',
 				link: '/media',
 				buttonLink: '/media/' + siteSlug,
 				wpAdminLink: 'upload.php',
@@ -124,7 +123,8 @@ class ManageMenu extends PureComponent {
 	}
 
 	getPluginItem() {
-		const { isAtomicSite, translate } = this.props;
+		const { isAtomicSite, siteSlug, translate } = this.props;
+		const buttonLink = siteSlug ? `/plugins/manage/${ siteSlug }` : '/plugins/manage';
 
 		return {
 			name: 'plugins',
@@ -136,7 +136,7 @@ class ManageMenu extends PureComponent {
 			paths: [ '/extensions', '/plugins' ],
 			wpAdminLink: 'plugin-install.php?calypsoify=1',
 			showOnAllMySites: true,
-			buttonLink: ! isAtomicSite ? `/plugins/manage/${ this.props.siteSlug }` : '',
+			buttonLink: ! isAtomicSite ? buttonLink : '',
 			buttonText: translate( 'Manage' ),
 			extraIcon: isAtomicSite ? 'chevron-right' : null,
 			customClassName: isAtomicSite ? 'sidebar__plugins-item' : '',
@@ -185,7 +185,7 @@ class ManageMenu extends PureComponent {
 
 		// Hide the sidebar link for multiple site view if it's not in calypso, or
 		// if it opts not to be shown.
-		const isEnabled = config.isEnabled( menuItem.config );
+		const isEnabled = ! menuItem.config || config.isEnabled( menuItem.config );
 		if ( ! siteId && ( ! isEnabled || ! menuItem.showOnAllMySites ) ) {
 			return null;
 		}

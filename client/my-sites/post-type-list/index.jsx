@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { isEqual, range, throttle } from 'lodash';
+import { isEqual, range, throttle, difference, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
  */
 import afterLayoutFlush from 'lib/after-layout-flush';
 import QueryPosts from 'components/data/query-posts';
+import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -29,6 +30,7 @@ import PostItem from 'blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
+import { FEATURE_NO_ADS } from 'lib/plans/constants';
 
 /**
  * Constants
@@ -65,6 +67,8 @@ class PostTypeList extends Component {
 		const maxRequestedPage = this.estimatePageCountFromPosts( this.props.posts );
 		this.state = {
 			maxRequestedPage,
+			// Request recent views for posts loaded from hydrated state.
+			recentViewIds: this.postIdsFromPosts( this.props.posts ),
 		};
 	}
 
@@ -73,7 +77,7 @@ class PostTypeList extends Component {
 		window.addEventListener( 'scroll', this.maybeLoadNextPageThrottled );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! isEqual( this.props.query, nextProps.query ) ||
 			! isEqual( this.props.siteId, nextProps.siteId )
@@ -81,6 +85,16 @@ class PostTypeList extends Component {
 			const maxRequestedPage = this.estimatePageCountFromPosts( nextProps.posts );
 			this.setState( {
 				maxRequestedPage,
+			} );
+		}
+
+		if ( ! isEqual( this.props.posts, nextProps.posts ) ) {
+			const postIds = this.postIdsFromPosts( this.props.posts );
+			const nextPostIds = this.postIdsFromPosts( nextProps.posts );
+
+			// Request updated recent view counts for posts added to list.
+			this.setState( {
+				recentViewIds: difference( nextPostIds, postIds ),
 			} );
 		}
 	}
@@ -116,6 +130,10 @@ class PostTypeList extends Component {
 
 		// Avoid making more than 5 concurrent requests on page load.
 		return Math.min( pageCount, 5 );
+	}
+
+	postIdsFromPosts( posts ) {
+		return ! isEmpty( posts ) ? posts.map( post => post.ID ) : [];
 	}
 
 	getPostsPerPageCount() {
@@ -167,7 +185,8 @@ class PostTypeList extends Component {
 	}
 
 	renderListEnd() {
-		return <ListEnd />;
+		const posts = this.props.posts || [];
+		return this.hasListFullyLoaded() && posts.length > 0 ? <ListEnd /> : null;
 	}
 
 	renderMaxPagesNotice() {
@@ -187,7 +206,7 @@ class PostTypeList extends Component {
 	}
 
 	renderPlaceholder() {
-		return <PostItem key="placeholder" />;
+		return this.props.isRequestingPosts ? <PostItem key="placeholder" /> : null;
 	}
 
 	renderPost( post ) {
@@ -205,7 +224,7 @@ class PostTypeList extends Component {
 
 	render() {
 		const { query, siteId, isRequestingPosts, translate } = this.props;
-		const { maxRequestedPage } = this.state;
+		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
 		const isLoadedAndEmpty = query && ! posts.length && ! isRequestingPosts;
 		const classes = classnames( 'post-type-list', {
@@ -224,12 +243,15 @@ class PostTypeList extends Component {
 					range( 1, maxRequestedPage + 1 ).map( page => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
+				{ recentViewIds.length > 0 && (
+					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
+				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
 					<UpgradeNudge
 						title={ translate( 'No Ads with WordPress.com Premium' ) }
 						message={ translate( 'Prevent ads from showing on your site.' ) }
-						feature="no-adverts"
+						feature={ FEATURE_NO_ADS }
 						event="published_posts_no_ads"
 					/>
 				) }
@@ -238,7 +260,8 @@ class PostTypeList extends Component {
 					<PostTypeListEmptyContent type={ query.type } status={ query.status } />
 				) }
 				{ this.renderMaxPagesNotice() }
-				{ this.hasListFullyLoaded() ? this.renderListEnd() : this.renderPlaceholder() }
+				{ this.renderPlaceholder() }
+				{ this.renderListEnd() }
 			</div>
 		);
 	}

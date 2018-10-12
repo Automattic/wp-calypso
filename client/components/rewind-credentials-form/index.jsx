@@ -45,10 +45,6 @@ export class RewindCredentialsForm extends Component {
 		requirePath: PropTypes.bool,
 	};
 
-	static defaultProps = {
-		requirePath: false,
-	};
-
 	state = {
 		showPrivateKeyField: false,
 		form: {

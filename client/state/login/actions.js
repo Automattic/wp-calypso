@@ -53,6 +53,9 @@ import wpcom from 'lib/wp';
 import { addLocaleToWpcomUrl, getLocaleSlug } from 'lib/i18n-utils';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
+import 'state/data-layer/wpcom/login-2fa';
+import 'state/data-layer/wpcom/users/auth-options';
+
 /**
  * Creates a promise that will be rejected after a given timeout
  *

@@ -14,7 +14,6 @@ import {
 	UnsavedChangesWarning,
 	EditorNotices,
 	PostPublishPanel,
-	DocumentTitle,
 	PreserveScrollInReorder,
 } from '@wordpress/editor';
 import { withDispatch, withSelect } from '@wordpress/data';
@@ -26,14 +25,13 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import BrowserURL from '../browser-url';
+import BrowserURL from 'gutenberg/editor/browser-url';
 import BlockSidebar from '../sidebar/block-sidebar';
 import DocumentSidebar from '../sidebar/document-sidebar';
 import Header from '../header';
 import TextEditor from '../text-editor';
 import VisualEditor from '../visual-editor';
 import EditorModeKeyboardShortcuts from '../keyboard-shortcuts';
-import MetaBoxes from '../meta-boxes';
 import Sidebar from '../sidebar';
 import PluginPostPublishPanel from '../sidebar/plugin-post-publish-panel';
 import PluginPrePublishPanel from '../sidebar/plugin-pre-publish-panel';
@@ -46,8 +44,6 @@ function Layout( {
 	hasFixedToolbar,
 	closePublishSidebar,
 	togglePublishSidebar,
-	hasActiveMetaboxes,
-	isSaving,
 	isMobileViewport,
 } ) {
 	const sidebarIsOpened = editorSidebarOpened || pluginSidebarOpened || publishSidebarOpened;
@@ -66,7 +62,6 @@ function Layout( {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div className={ className }>
-			<DocumentTitle />
 			<BrowserURL />
 			<UnsavedChangesWarning/>
 			<AutosaveMonitor />
@@ -83,19 +78,11 @@ function Layout( {
 				<EditorModeKeyboardShortcuts />
 				{ mode === 'text' && <TextEditor /> }
 				{ mode === 'visual' && <VisualEditor /> }
-				<div className="edit-post-layout__metaboxes">
-					<MetaBoxes location="normal" />
-				</div>
-				<div className="edit-post-layout__metaboxes">
-					<MetaBoxes location="advanced" />
-				</div>
 			</div>
 			{ publishSidebarOpened ? (
 				<PostPublishPanel
 					{ ...publishLandmarkProps }
 					onClose={ closePublishSidebar }
-					forceIsDirty={ hasActiveMetaboxes }
-					forceIsSaving={ isSaving }
 					PrePublishExtension={ PluginPrePublishPanel.Slot }
 					PostPublishExtension={ PluginPostPublishPanel.Slot }
 				/>
@@ -134,9 +121,6 @@ export default compose(
 		pluginSidebarOpened: select( 'core/edit-post' ).isPluginSidebarOpened(),
 		publishSidebarOpened: select( 'core/edit-post' ).isPublishSidebarOpened(),
 		hasFixedToolbar: select( 'core/edit-post' ).isFeatureActive( 'fixedToolbar' ),
-		metaBoxes: select( 'core/edit-post' ).getMetaBoxes(),
-		hasActiveMetaboxes: select( 'core/edit-post' ).hasMetaBoxes(),
-		isSaving: select( 'core/edit-post' ).isSavingMetaBoxes(),
 	} ) ),
 	withDispatch( ( dispatch ) => {
 		const { closePublishSidebar, togglePublishSidebar } = dispatch( 'core/edit-post' );

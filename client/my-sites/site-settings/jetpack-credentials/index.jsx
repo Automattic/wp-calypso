@@ -45,7 +45,7 @@ class JetpackCredentials extends Component {
 					<CredentialsSetupFlow siteId={ siteId } />
 				) }
 				{ hasCredentials && (
-					<CompactCard href={ `/stats/activity/${ siteSlug }` }>
+					<CompactCard href={ `/activity-log/${ siteSlug }` }>
 						{ translate( "View your site's backups and activity" ) }
 					</CompactCard>
 				) }

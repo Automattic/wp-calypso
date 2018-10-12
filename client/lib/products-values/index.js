@@ -26,7 +26,13 @@ import {
 	GROUP_JETPACK,
 } from 'lib/plans/constants';
 
-import { planMatches, isBusinessPlan, isPremiumPlan, isPersonalPlan } from 'lib/plans';
+import {
+	planMatches,
+	isBusinessPlan,
+	isPremiumPlan,
+	isPersonalPlan,
+	isBloggerPlan,
+} from 'lib/plans';
 import { domainProductSlugs } from 'lib/domains/constants';
 import schema from './schema.json';
 
@@ -125,6 +131,13 @@ export function isPersonal( product ) {
 	return isPersonalPlan( product.product_slug );
 }
 
+export function isBlogger( product ) {
+	product = formatProduct( product );
+	assertValidProduct( product );
+
+	return isBloggerPlan( product.product_slug );
+}
+
 export function isPremium( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -211,6 +224,7 @@ export function isPlan( product ) {
 	assertValidProduct( product );
 
 	return (
+		isBlogger( product ) ||
 		isPersonal( product ) ||
 		isPremium( product ) ||
 		isBusiness( product ) ||

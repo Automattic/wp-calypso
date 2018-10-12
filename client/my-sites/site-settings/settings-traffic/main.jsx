@@ -60,15 +60,6 @@ const SiteSettingsTraffic = ( {
 			<SiteSettingsNavigation site={ site } section="traffic" />
 
 			{ jetpackSettingsUiSupported && (
-				<JetpackSiteStats
-					handleAutosavingToggle={ handleAutosavingToggle }
-					setFieldValue={ setFieldValue }
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-				/>
-			) }
-			{ jetpackSettingsUiSupported && (
 				<JetpackAds
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
@@ -76,6 +67,14 @@ const SiteSettingsTraffic = ( {
 					fields={ fields }
 				/>
 			) }
+			<Search
+				handleAutosavingToggle={ handleAutosavingToggle }
+				isSavingSettings={ isSavingSettings }
+				isRequestingSettings={ isRequestingSettings }
+				fields={ fields }
+			/>
+			<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
+			<SeoSettingsMain />
 			<RelatedPosts
 				onSubmitForm={ handleSubmitForm }
 				handleAutosavingToggle={ handleAutosavingToggle }
@@ -95,8 +94,15 @@ const SiteSettingsTraffic = ( {
 					fields={ fields }
 				/>
 			) }
-			<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
-			<SeoSettingsMain />
+			{ jetpackSettingsUiSupported && (
+				<JetpackSiteStats
+					handleAutosavingToggle={ handleAutosavingToggle }
+					setFieldValue={ setFieldValue }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			) }
 			<AnalyticsSettings />
 			<Sitemaps
 				isSavingSettings={ isSavingSettings }
@@ -104,11 +110,6 @@ const SiteSettingsTraffic = ( {
 				fields={ fields }
 			/>
 			{ site && <SiteVerification /> }
-			<Search
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-			/>
 		</Main>
 	);
 };
@@ -137,6 +138,8 @@ const getFormSettings = partialRight( pick, [
 	'jetpack_relatedposts_enabled',
 	'jetpack_relatedposts_show_headline',
 	'jetpack_relatedposts_show_thumbnails',
+	'jetpack_search_enabled',
+	'jetpack_search_supported',
 	'amp_is_supported',
 	'amp_is_enabled',
 	'blog_public',

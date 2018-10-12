@@ -8,8 +8,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
-/** Internal Dependencies */
+/**
+ * Internal Dependencies
+ */
 import Spinner from 'components/spinner';
+import { flagUrl } from 'lib/flags';
 
 export default class extends React.Component {
 	static displayName = 'PhoneInputCountryFlag';
@@ -45,14 +48,16 @@ export default class extends React.Component {
 
 	renderFlag = () => {
 		const style = this.state.ready ? {} : { visibility: 'hidden' };
+		const { countryCode } = this.props;
 
-		if ( this.props.countryCode ) {
+		if ( countryCode ) {
 			if ( ! this.state.error ) {
 				return (
 					<img
+						alt=""
 						onLoad={ this.handleImageLoad }
 						onError={ this.handleImageError }
-						src={ `/calypso/images/flags/${ this.props.countryCode }.svg` }
+						src={ flagUrl( countryCode ) }
 						className="phone-input__flag-icon"
 						style={ style }
 					/>

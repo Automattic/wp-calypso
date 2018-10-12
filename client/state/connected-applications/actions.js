@@ -10,6 +10,9 @@ import {
 	CONNECTED_APPLICATIONS_REQUEST,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/me/connected-applications';
+import 'state/data-layer/wpcom/me/connected-applications/delete';
+
 /**
  * Returns an action object to signal the request of the user's connected applications.
  *

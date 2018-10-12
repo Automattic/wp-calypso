@@ -13,6 +13,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_UNLIKE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
+import { registerHandlers } from 'state/data-layer/handler-registry';
+
 export function fromApi( response ) {
 	if ( ! response.success ) {
 		throw new Error( 'Unsuccessful unlike API request' );
@@ -46,7 +48,7 @@ export const onSuccess = ( { siteId, postId }, { likeCount, liker } ) =>
 
 export const onError = ( { siteId, postId } ) => bypassDataLayer( like( siteId, postId ) );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/sites/posts/likes/mine/delete/index.js', {
 	[ POST_UNLIKE ]: [
 		dispatchRequestEx( {
 			fetch,
@@ -55,4 +57,6 @@ export default {
 			fromApi,
 		} ),
 	],
-};
+} );
+
+export default {};

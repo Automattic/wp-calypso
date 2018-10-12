@@ -15,6 +15,10 @@ import {
 	READER_FOLLOW_TAG_REQUEST,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/read/tags';
+import 'state/data-layer/wpcom/read/tags/mine/delete';
+import 'state/data-layer/wpcom/read/tags/mine/new';
+
 /**
  * Helper function. Turns a tag name into a tag "slug" for use with the API.
  *
@@ -30,14 +34,13 @@ export const slugify = tag =>
 	);
 
 export const requestTags = tag => {
-	const type = READER_TAGS_REQUEST;
 	if ( ! tag ) {
-		return { type };
+		return { type: READER_TAGS_REQUEST };
 	}
 
 	const slug = slugify( tag );
 	return {
-		type,
+		type: READER_TAGS_REQUEST,
 		payload: { tag, slug },
 	};
 };

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { find, get, isEmpty } from 'lodash';
+import { find, get, isEmpty, mapValues, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +36,10 @@ import Notice from 'components/notice';
 const ratesSummary = ( selectedRates, availableRates, total, packagesSaved, translate ) => {
 	if ( ! packagesSaved ) {
 		return translate( 'Unsaved changes made to packages' );
+	}
+
+	if ( some( mapValues( availableRates, rateObject => isEmpty( rateObject.rates ) ) ) ) {
+		return translate( 'No rates found' );
 	}
 
 	if ( ! total ) {

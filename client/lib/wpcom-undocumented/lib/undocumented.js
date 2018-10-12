@@ -4,7 +4,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies.
@@ -1251,55 +1251,9 @@ function addReaderContentWidth( params ) {
 	}
 }
 
-Undocumented.prototype.readFollowing = function( query, fn ) {
-	debug( '/read/following' );
-	query.apiVersion = '1.2';
-	addReaderContentWidth( query );
-	return this.wpcom.req.get( '/read/following', query, fn );
-};
-
-Undocumented.prototype.readA8C = function( query, fn ) {
-	debug( '/read/a8c' );
-	query.apiVersion = '1.2';
-	addReaderContentWidth( query );
-	return this.wpcom.req.get( '/read/a8c', query, fn );
-};
-
-Undocumented.prototype.readConversations = function( query, fn ) {
-	debug( '/read/conversations' );
-	const params = {
-		...query,
-		apiVersion: '1.2',
-	};
-	return this.wpcom.req.get( '/read/conversations', params, fn );
-};
-
-Undocumented.prototype.readA8cConversations = function( query, fn ) {
-	debug( '/read/conversations' );
-	const params = {
-		...query,
-		index: 'a8c',
-		apiVersion: '1.2',
-	};
-	return this.wpcom.req.get( '/read/conversations', params, fn );
-};
-
 Undocumented.prototype.discoverFeed = function( query, fn ) {
 	debug( '/read/feed' );
 	return this.wpcom.req.get( '/read/feed/', query, fn );
-};
-
-Undocumented.prototype.readFeedPosts = function( query, fn ) {
-	const params = omit( query, 'ID' );
-	debug( '/read/feed/' + query.ID + '/posts' );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-
-	return this.wpcom.req.get(
-		'/read/feed/' + encodeURIComponent( query.ID ) + '/posts',
-		params,
-		fn
-	);
 };
 
 Undocumented.prototype.readFeedPost = function( query, fn ) {
@@ -1318,26 +1272,6 @@ Undocumented.prototype.readFeedPost = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readSearch = function( query, fn ) {
-	debug( '/read/search', query );
-	const params = Object.assign( { apiVersion: '1.2' }, query );
-	addReaderContentWidth( params );
-	return this.wpcom.req.get( '/read/search', params, fn );
-};
-
-Undocumented.prototype.readTagPosts = function( query, fn ) {
-	const params = omit( query, 'tag' );
-	debug( '/read/tags/' + query.tag + '/posts' );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-
-	return this.wpcom.req.get(
-		'/read/tags/' + encodeURIComponent( query.tag ) + '/posts',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readTagImages = function( query, fn ) {
 	const params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/images' );
@@ -1349,21 +1283,6 @@ Undocumented.prototype.readTagImages = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
-	debug( '/recommendations/posts' );
-	query.apiVersion = '1.2';
-	addReaderContentWidth( query );
-	return this.wpcom.req.get( '/read/recommendations/posts', query, fn );
-};
-
-Undocumented.prototype.readLiked = function( query, fn ) {
-	const params = clone( query );
-	debug( '/read/liked' );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-	return this.wpcom.req.get( '/read/liked', params, fn );
-};
-
 Undocumented.prototype.readList = function( query, fn ) {
 	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/list' );
@@ -1371,26 +1290,9 @@ Undocumented.prototype.readList = function( query, fn ) {
 	return this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
 };
 
-Undocumented.prototype.readListPosts = function( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/list/:list/posts' );
-	params.apiVersion = '1.2';
-	addReaderContentWidth( params );
-	return this.wpcom.req.get(
-		'/read/list/' + query.owner + '/' + query.slug + '/posts',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readLists = function( fn ) {
 	debug( '/read/lists' );
 	return this.wpcom.req.get( '/read/lists', { apiVersion: '1.2' }, fn );
-};
-
-Undocumented.prototype.readListsNew = function( title, fn ) {
-	debug( '/read/lists/new' );
-	return this.wpcom.req.post( '/read/lists/new', { apiVersion: '1.2' }, { title: title }, fn );
 };
 
 Undocumented.prototype.readListsUpdate = function( query, fn ) {
@@ -1436,19 +1338,6 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 		params,
 		fn
 	);
-};
-
-Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
-	const params = omit( query, [ 'before', 'after' ] );
-	debug( '/read/sites/:site/featured' );
-	return this.wpcom.req.get( '/read/sites/' + siteId + '/featured', params, fn );
-};
-
-Undocumented.prototype.readSitePosts = function( query, fn ) {
-	const params = omit( query, 'site' );
-	debug( '/read/sites/:site/posts' );
-	addReaderContentWidth( params );
-	return this.wpcom.req.get( '/read/sites/' + query.site + '/posts', params, fn );
 };
 
 Undocumented.prototype.readSitePost = function( query, fn ) {
@@ -2028,6 +1917,15 @@ Undocumented.prototype.googleAppsFilterByDomain = function( domainName, fn ) {
 Undocumented.prototype.googleAppsFilterBySiteId = function( siteId, fn ) {
 	debug( '/sites/:siteId/google-apps' );
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/google-apps' }, fn );
+};
+
+Undocumented.prototype.isSiteImportable = function( site_url ) {
+	debug( `/wpcom/v2/site-importer-global/is-site-importable?${ site_url }` );
+
+	return this.wpcom.req.get(
+		{ path: '/site-importer-global/is-site-importable', apiNamespace: 'wpcom/v2' },
+		{ site_url }
+	);
 };
 
 Undocumented.prototype.fetchImporterState = function( siteId ) {

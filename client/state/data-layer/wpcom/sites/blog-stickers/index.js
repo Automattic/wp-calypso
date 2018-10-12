@@ -14,10 +14,9 @@ import { SITES_BLOG_STICKER_LIST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
-import addBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/add';
-import removeBlogStickerHandler from 'state/data-layer/wpcom/sites/blog-stickers/remove';
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
+
+import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const requestBlogStickerList = action =>
 	http(
@@ -38,7 +37,7 @@ export const receiveBlogStickerList = ( action, response ) =>
 		? receiveBlogStickerListError( action )
 		: receiveBlogStickers( action.payload.blogId, response );
 
-const listBlogStickersHandler = {
+registerHandlers( 'state/data-layer/wpcom/sites/blog-stickers/index.js', {
 	[ SITES_BLOG_STICKER_LIST ]: [
 		dispatchRequestEx( {
 			fetch: requestBlogStickerList,
@@ -46,10 +45,4 @@ const listBlogStickersHandler = {
 			onError: receiveBlogStickerListError,
 		} ),
 	],
-};
-
-export default mergeHandlers(
-	listBlogStickersHandler,
-	addBlogStickerHandler,
-	removeBlogStickerHandler
-);
+} );

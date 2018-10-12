@@ -14,11 +14,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
+import { getValidFeatureKeys, isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
 import { addQueryArgs } from 'lib/url';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getValidFeatureKeys } from 'lib/plans';
 import Button from 'components/button';
 import Card from 'components/card';
 import DismissibleCard from 'blocks/dismissible-card';
@@ -30,7 +29,7 @@ export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
-		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		description: PropTypes.node,
 		forceHref: PropTypes.bool,
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
@@ -237,7 +236,7 @@ export class Banner extends Component {
 			<Card
 				className={ classes }
 				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
-				onClick={ callToAction && ! forceHref ? noop : this.handleClick }
+				onClick={ callToAction && ! forceHref ? null : this.handleClick }
 			>
 				{ this.getIcon() }
 				{ this.getContent() }

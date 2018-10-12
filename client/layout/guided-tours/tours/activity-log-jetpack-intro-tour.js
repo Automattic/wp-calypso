@@ -10,30 +10,37 @@ import { overEvery as and } from 'lodash';
 /**
  * Internal dependencies
  */
+import ActivityLogDocumentationLink from 'my-sites/activity/activity-log/activity-log-documentation-link';
 import { makeTour, Tour, Step, ButtonRow, Quit } from 'layout/guided-tours/config-elements';
-import { isSelectedSiteJetpack, isSelectedSitePlanFree } from 'state/ui/guided-tours/contexts';
+import { isSelectedSiteJetpack } from 'state/ui/guided-tours/contexts';
 
 export const ActivityLogJetpackIntroTour = makeTour(
 	<Tour
 		name="activityLogJetpackIntroTour"
 		version="20180808"
-		path="/stats/activity/"
-		when={ and( isSelectedSiteJetpack, isSelectedSitePlanFree ) }
+		path="/activity-log/"
+		when={ and( isSelectedSiteJetpack ) }
 	>
 		<Step
 			name="init"
 			arrow="top-left"
-			target=".stats-navigation__activity"
+			target="activity"
 			placement="below"
-			scrollContainer=".section-nav__mobile-header"
+			scrollContainer=".sidebar__region"
 		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<p>
 						{ translate(
 							"Keep tabs on all your site's activity — plugin and theme updates, user logins, " +
-								'setting modifications, and more. {{a}}Learn more{{/a}}',
-							{ components: { a: <a href="https://jetpack.com/support/activity-log/" /> } }
+								'setting modifications, and more. {{DocumentationLink/}}',
+							{
+								components: {
+									DocumentationLink: (
+										<ActivityLogDocumentationLink source="activityLogJetpackIntroTour" />
+									),
+								},
+							}
 						) }
 					</p>
 					<ButtonRow>

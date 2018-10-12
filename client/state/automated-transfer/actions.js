@@ -13,6 +13,10 @@ import {
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/sites/automated-transfer/eligibility';
+import 'state/data-layer/wpcom/sites/automated-transfer/initiate';
+import 'state/data-layer/wpcom/sites/automated-transfer/status';
+
 /**
  * Initiate a transfer to an Atomic site.
  *
