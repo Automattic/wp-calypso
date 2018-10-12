@@ -62,7 +62,7 @@ export default data => {
 					description: description || defaultDescription,
 					weight,
 					value,
-					tariffNumber: hs_tariff_number || '',
+					tariffNumber: hs_tariff_number,
 					originCountry: origin_country || formData.origin.country,
 				};
 			}
@@ -114,12 +114,7 @@ export default data => {
 			},
 			customs: {
 				items: customsItemsData,
-				// Ignore validation in all the tariff number fields that are empty so the user doesn't see everything red from the start
-				ignoreTariffNumberValidation: mapValues(
-					customsItemsData,
-					( { tariffNumber } ) => ! tariffNumber
-				),
-				// Same for all the empty weight and value fields
+				// Ignore validation in the weight and value fields that are empty so the user doesn't see everything red from the start
 				ignoreWeightValidation: mapValues(
 					customsItemsData,
 					( { weight } ) => ! weight || ! parseFloat( weight )
