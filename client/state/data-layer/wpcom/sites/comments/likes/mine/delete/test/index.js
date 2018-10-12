@@ -71,14 +71,12 @@ describe( '#handleUnlikeFailure()', () => {
 	test( 'should dispatch an error notice', () => {
 		const result = handleUnlikeFailure( { siteId: SITE_ID, postId: POST_ID, commentId: 1 } );
 
-		expect( result[ 1 ] ).toEqual(
-			expect.objectContaining( {
-				type: NOTICE_CREATE,
-				notice: expect.objectContaining( {
-					status: 'is-error',
-					text: 'Could not unlike this comment',
-				} ),
-			} )
-		);
+		expect( result[ 1 ] ).toMatchObject( {
+			type: NOTICE_CREATE,
+			notice: {
+				status: 'is-error',
+				text: 'Could not unlike this comment',
+			},
+		} );
 	} );
 } );

@@ -17,8 +17,8 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const unlikeComment = action => {
-	return http(
+export const unlikeComment = action =>
+	http(
 		{
 			method: 'POST',
 			apiVersion: '1.1',
@@ -26,7 +26,6 @@ export const unlikeComment = action => {
 		},
 		action
 	);
-};
 
 export const updateCommentLikes = ( { siteId, postId, commentId }, { like_count } ) =>
 	bypassDataLayer( {
@@ -37,14 +36,12 @@ export const updateCommentLikes = ( { siteId, postId, commentId }, { like_count 
 		like_count,
 	} );
 
-export const handleUnlikeFailure = ( { siteId, postId, commentId } ) => {
-	return [
-		// revert optimistic update on error
-		bypassDataLayer( { type: COMMENTS_LIKE, siteId, postId, commentId } ),
-		// dispatch a error notice
-		errorNotice( translate( 'Could not unlike this comment' ) ),
-	];
-};
+export const handleUnlikeFailure = ( { siteId, postId, commentId } ) => [
+	// revert optimistic update on error
+	bypassDataLayer( { type: COMMENTS_LIKE, siteId, postId, commentId } ),
+	// dispatch a error notice
+	errorNotice( translate( 'Could not unlike this comment' ) ),
+];
 
 registerHandlers( 'state/data-layer/wpcom/sites/comments/likes/mine/delete/index.js', {
 	[ COMMENTS_UNLIKE ]: [
