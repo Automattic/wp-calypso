@@ -57,9 +57,17 @@ registerBlockType( CONFIG.name, {
 		}
 	},
 	edit: function( { attributes, setAttributes, className } ) {
-		const { the_caption, map_style, points, zoom, map_center, focus_mode, marker_color, align } = attributes;
+		const {
+			the_caption,
+			map_style,
+			points,
+			zoom,
+			map_center,
+			marker_color,
+			align
+		} = attributes;
 		const updateAlignment = ( value ) => setAttributes( { align: value } );
-		const markerIcon = <svg width='14' height='20' viewBox='0 0 14 20' xmlns='http://www.w3.org/2000/svg'><g id='Page-1' fill='none' fillRule='evenodd'><g id='outline-add_location-24px' transform='translate(-5 -2)'><polygon id='Shape' points='0 0 24 0 24 24 0 24' /><path d='M12,2 C8.14,2 5,5.14 5,9 C5,14.25 12,22 12,22 C12,22 19,14.25 19,9 C19,5.14 15.86,2 12,2 Z M7,9 C7,6.24 9.24,4 12,4 C14.76,4 17,6.24 17,9 C17,11.88 14.12,16.19 12,18.88 C9.92,16.21 7,11.85 7,9 Z M13,6 L11,6 L11,8 L9,8 L9,10 L11,10 L11,12 L13,12 L13,10 L15,10 L15,8 L13,8 L13,6 Z' id='Shape' fill='#000' fillRule='nonzero' /></g></g></svg>;
+		const markerIcon = CONFIG.markerIcon;
 		const mapRef = createRef();
 		const inspectorControls = (
 			<Fragment>
@@ -104,7 +112,6 @@ registerBlockType( CONFIG.name, {
 						points={ points }
 						zoom={ zoom }
 						map_center={ map_center }
-						focus_mode={ focus_mode }
 						marker_color={ marker_color }
 						onSetZoom={ ( value ) => { setAttributes( { zoom: value } ) } }
 						api_key={ CONFIG.GOOGLE_MAPS_API_KEY }
@@ -125,7 +132,7 @@ registerBlockType( CONFIG.name, {
 		);
 	},
 	save: function( { attributes, className } ) {
-		const { the_caption, map_style, points, zoom, map_center, focus_mode, marker_color, align } = attributes;
+		const { the_caption, map_style, points, zoom, map_center, marker_color, align } = attributes;
 		const atavistAlignClass = ( value ) => {
 			switch ( value ) {
 				case 'left':
@@ -148,7 +155,6 @@ registerBlockType( CONFIG.name, {
 				data-points={ JSON.stringify( points ) }
 				data-zoom={ zoom }
 				data-map_center={ JSON.stringify( map_center ) }
-				data-focus_mode={ JSON.stringify( focus_mode ) }
 				data-marker_color={ marker_color }
 				data-api_key={ CONFIG.GOOGLE_MAPS_API_KEY }
 			>

@@ -29,6 +29,7 @@ import './style.scss';
 export class MapThemePicker extends Component {
 
 	render() {
+
 		const {
 			options,
 			value,
@@ -60,6 +61,7 @@ export class MapThemePicker extends Component {
 				</ButtonGroup>
 			</Fragment>
 		);
+
 	}
 
 }

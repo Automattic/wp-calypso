@@ -27,6 +27,7 @@ import './style.scss';
 export class AddPoint extends Component {
 
 	constructor() {
+
 		super( ...arguments )
 		this.state = {
 			isVisible: false
@@ -34,26 +35,33 @@ export class AddPoint extends Component {
 		this.onAddPoint = this.onAddPoint.bind( this );
 		this.hidePopover = this.hidePopover.bind( this );
 		this.hideSelf = this.hideSelf.bind( this );
+
 	}
 
 	hidePopover( e ){
+
 		this.setState( { popoverVisible: false } );
 		if ( e ) {
 			e.stopPropagation();
 		}
+
 	}
 
 	hideSelf() {
+
 		this.setState( { isVisible: false } );
+
 	}
 
 	onAddPoint( point ) {
+
 		this.props.onAddPoint( point );
 		this.hidePopover();
+
 	}
 
 	render() {
-		const { isVisible } = this.state;
+
 		const {
 			showPopover,
 			hidePopover,
@@ -61,6 +69,7 @@ export class AddPoint extends Component {
 			setState,
 			hideSelf
 		} = this;
+		const { isVisible } = this.state;
 
 		if ( ! isVisible ) {
 			return null;

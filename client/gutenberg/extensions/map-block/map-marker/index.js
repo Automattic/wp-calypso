@@ -15,12 +15,16 @@ import { Component } from '@wordpress/element';
 export class MapMarker extends Component {
 
 	constructor() {
+
 		super( ...arguments );
 		this.handleClick = this.handleClick.bind( this );
+
 	}
 
 	componentDidMount() {
+
 		this.renderMarker();
+
 	}
 
 	componentWillUnmount() {
@@ -31,12 +35,16 @@ export class MapMarker extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+
 		this.renderMarker();
+
 	}
 
 	handleClick( e ) {
+
 		const { onClick, point } = this.props;
 		onClick( this );
+
 	}
 
 	renderMarker() {
@@ -67,7 +75,9 @@ export class MapMarker extends Component {
 	}
 
 	render() {
+
 		return null;
+
 	}
 }
 

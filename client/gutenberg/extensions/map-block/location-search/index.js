@@ -26,9 +26,11 @@ import './style.scss';
 export class LocationSearch extends Component {
 
 	constructor() {
-		super( ...arguments )
-		this.textRef = createRef()
-		this.testRef = createRef()
+
+		super( ...arguments );
+
+		this.textRef = createRef();
+		this.testRef = createRef();
 		this.state = {
 			isEmpty: true
 		};
@@ -45,11 +47,12 @@ export class LocationSearch extends Component {
 				getOptionCompletion: this.getOptionCompletion.bind(this)
 			}
 		];
+
 	}
 
 	getOptionCompletion( option ) {
+
 		const placesService = new window.google.maps.places.PlacesService( this.testRef.current );
-		this.textRef.current.focus();
 		placesService.getDetails( { placeId: option.place_id }, function( place ) {
 			const point = {
 				place_title: option.description,
@@ -65,9 +68,11 @@ export class LocationSearch extends Component {
 			this.props.onAddPoint( point );
 		}.bind(this));
 		return option.description;
+
 	}
 
 	search() {
+
 		const searchText = this.textRef.current.innerText;
 		const placeSearch = new window.google.maps.places.AutocompleteService()
 		if ( searchText.length < 2 ) return
@@ -82,13 +87,17 @@ export class LocationSearch extends Component {
 				}
 			});
 		});
+
 	}
 
 	searchChanged( e ) {
+
 		this.setState( { isEmpty: e.target.innerText.length < 1 } );
+
 	}
 
 	render() {
+
 		const { label } = this.props;
 		const classes = classnames(
 			'input-control',
@@ -114,6 +123,7 @@ export class LocationSearch extends Component {
 				<div ref={ this.testRef }></div>
 			</BaseControl>
 		);
+
 	}
 }
 
