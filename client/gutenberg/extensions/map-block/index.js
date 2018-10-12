@@ -99,6 +99,12 @@ registerBlockType( CONFIG.name, {
 				            onChange={ ( marker_color ) => setAttributes( { marker_color } ) }
 				        />
 					</PanelBody>
+					<PanelBody title={ __( 'Markers' ) }>
+						<Locations
+							points={ points }
+							onChange={ ( value ) => { setAttributes( { points: value } ) } }
+						/>
+					</PanelBody>
 				</InspectorControls>
 			</Fragment>
 		);

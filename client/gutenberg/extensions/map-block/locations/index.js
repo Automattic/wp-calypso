@@ -3,8 +3,11 @@
  */
 
 import {
+	Button,
+	Dashicon,
 	Panel,
 	PanelBody,
+	TextareaControl,
 	TextControl
 } from '@wordpress/components';
 
@@ -67,15 +70,18 @@ export class Locations extends Component {
 					value={ point.title }
 					onChange={ ( title ) => this.setMarkerField( 'title', title, index ) }
 				/>
-				<TextControl
+				<TextareaControl
 					label="Marker Caption"
 					value={ point.caption }
+					rows='3'
 					onChange={ ( caption ) => this.setMarkerField( 'caption', caption, index ) }
 				/>
-				<button
+				<Button
 					data-id={ index }
 					onClick={ this.onDeletePoint }
-				>Delete Point</button>
+				>
+					<Dashicon icon='trash' size='15' /> Delete Marker
+				</Button>
 			</PanelBody>
 		);
 		return (
