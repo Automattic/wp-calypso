@@ -48,7 +48,12 @@ import { disableCart } from 'lib/upgrades/actions';
 // State actions and selectors
 import { loadTrackingTool } from 'state/analytics/actions';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser, isUserLoggedIn } from 'state/current-user/selectors';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	isUserLoggedIn,
+	getCurrentUserVisibleSiteCount,
+} from 'state/current-user/selectors';
 import { affiliateReferral } from 'state/refer/actions';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
@@ -485,19 +490,21 @@ class Signup extends React.Component {
 	};
 
 	getPositionInFlow( fakedForTwoPartFlows = false ) {
-		let position = indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
-		if ( fakedForTwoPartFlows && this.props.flowName === 'user-continue' ) {
+		const { flowName, stepName, userSiteCount } = this.props;
+		let position = indexOf( flows.getFlow( flowName ).steps, stepName );
+		if ( fakedForTwoPartFlows && flowName === 'main' && userSiteCount === 0 ) {
 			position++;
 		}
 		return position;
 	}
 
 	getFlowLength() {
+		const { flowName, userSiteCount } = this.props;
 		// fake it for our two-step flow
-		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
+		if ( flowName === 'user-first' || ( flowName === 'main' && userSiteCount === 0 ) ) {
 			return 4;
 		}
-		return flows.getFlow( this.props.flowName ).steps.length;
+		return flows.getFlow( flowName ).steps.length;
 	}
 
 	renderCurrentStep() {
@@ -605,6 +612,7 @@ export default connect(
 		progress: getSignupProgress( state ),
 		signupDependencies: getSignupDependencyStore( state ),
 		isLoggedIn: isUserLoggedIn( state ),
+		userSiteCount: getCurrentUserVisibleSiteCount( state ),
 	} ),
 	{ setSurvey, loadTrackingTool, trackAffiliateReferral: affiliateReferral },
 	undefined,

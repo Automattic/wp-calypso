@@ -88,15 +88,6 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
-	userFirstSignup: {
-		datestamp: '20180913',
-		variations: {
-			default: 1,
-			userFirst: 1,
-		},
-		defaultVariation: 'default',
-		allowExistingUsers: false,
-	},
 	dotBlogSuggestionsv2: {
 		datestamp: '20181012',
 		variations: {

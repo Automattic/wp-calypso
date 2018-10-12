@@ -17,7 +17,7 @@ import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
-import { isUserLoggedIn } from 'state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 
@@ -30,9 +30,10 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 	const state = store.getState();
 	const currentRoute = getCurrentRoute( state );
 	const userLoggedIn = isUserLoggedIn( state );
+	const userSiteCount = getCurrentUserVisibleSiteCount( state );
 	let layout = <Layout primary={ primary } secondary={ secondary } />;
 
-	if ( ! userLoggedIn || startsWith( currentRoute, '/start/user-continue/' ) ) {
+	if ( ! userLoggedIn || ( startsWith( currentRoute, '/start/' ) && userSiteCount === 0 ) ) {
 		layout = (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 		);
