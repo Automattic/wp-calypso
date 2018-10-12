@@ -5,11 +5,7 @@
 	animation-fill-mode: backwards;
 
 	.formatted-header__title {
-		font-family: $serif;
-		color: $gray-dark;
-		font-size: 34px;
-		font-weight: bold;
-		line-height: 1.2em;
+		margin-top: 0;
 		margin-bottom: 0.2em;
 	}
 
@@ -23,7 +19,7 @@
 .rebrand-cities-welcome__site-title-field {
 	max-width: 500px;
 	padding: 0 20px;
-	margin: 0 auto;
+	margin: 0 auto 2em;
 }
 
 .rebrand-cities-welcome__illustration-wrapper {
@@ -33,7 +29,7 @@
 }
 
 .rebrand-cities-welcome__illustration {
-	background: url( '/calypso/images/illustrations/rebrand-cities-welcome.svg' ) no-repeat 50% 0;
+	background: url( '/calypso/images/illustrations/rebrand-cities-welcome.svg' ) no-repeat 50% -50px;
 	background-size: 100%;
 	padding-top: 53%; /* percentage ratio of height to width */
 	width: 100%;
