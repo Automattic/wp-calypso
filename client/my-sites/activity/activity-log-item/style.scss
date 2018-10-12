@@ -12,7 +12,12 @@
 	flex: 1;
 	margin-top: 8px;
 	margin-bottom: 16px;
-	white-space: pre;
+}
+
+.activity-log-item.is-aggregated {
+	.foldable-card__main {
+		white-space: pre;
+	}
 }
 
 .activity-log-item .foldable-card {
