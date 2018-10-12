@@ -20,15 +20,20 @@ class SubscriptionText extends React.Component {
 
 		if ( cartItems.hasRenewalItem( cart ) ) {
 			const product = cart.products[ 0 ];
-			const context = 'Informative text for renewals in /checkout';
 			let informative_text = '';
 
 			if ( isBiennially( product ) ) {
-				informative_text = translate( 'renews biennially', { context } );
+				informative_text = translate( 'renews biennially', {
+					context: 'Informative text for renewals in /checkout',
+				} );
 			} else if ( isYearly( product ) ) {
-				informative_text = translate( 'renews annually', { context } );
+				informative_text = translate( 'renews annually', {
+					context: 'Informative text for renewals in /checkout',
+				} );
 			} else if ( isMonthly( product ) ) {
-				informative_text = translate( 'renews monthly', { context } );
+				informative_text = translate( 'renews monthly', {
+					context: 'Informative text for renewals in /checkout',
+				} );
 			}
 
 			return <span className="subscription-text">{ informative_text }</span>;
