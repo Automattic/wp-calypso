@@ -21,7 +21,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MobileSelectPortal from './mobile-select-portal';
 import { isWithinBreakpoint } from 'lib/viewport';
 
-const DATE_FORMAT = 'YYYY-MM-DD';
+const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 export class DateRangeSelector extends Component {
 	state = {
@@ -47,7 +47,13 @@ export class DateRangeSelector extends Component {
 		} );
 
 		const formattedFromDate = fromDate && moment( fromDate ).format( DATE_FORMAT );
-		const formattedToDate = toDate && moment( toDate ).format( DATE_FORMAT );
+		const formattedToDate =
+			toDate &&
+			moment( toDate )
+				.add( 23, 'hours' )
+				.add( 59, 'minutes' )
+				.add( 59, 'seconds' )
+				.format( DATE_FORMAT );
 		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
 			selectDateRange( siteId, formattedFromDate, formattedToDate );
 			onClose();
