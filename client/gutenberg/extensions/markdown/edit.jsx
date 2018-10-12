@@ -62,7 +62,7 @@ class MarkdownEdit extends Component {
 			<div className={ className }>
 				<BlockControls>
 					<div className="components-toolbar">
-						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Markdown', 'jetpack' ) ) }
+						{ this.renderToolbarButton( PANEL_EDITOR, __( 'Source', 'jetpack' ) ) }
 						{ this.renderToolbarButton( PANEL_PREVIEW, __( 'Preview', 'jetpack' ) ) }
 					</div>
 				</BlockControls>
@@ -73,7 +73,7 @@ class MarkdownEdit extends Component {
 					<PlainText
 						className={ `${ className }__editor` }
 						onChange={ this.updateSource }
-						aria-label={ __( 'Markdown', 'jetpack' ) }
+						aria-label={ __( 'Source', 'jetpack' ) }
 						value={ source }
 					/>
 				) }
