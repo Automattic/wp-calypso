@@ -21,6 +21,7 @@ import Button from '../../../components/button';
 import { getActivityLogFilter } from 'state/selectors/get-activity-log-filter';
 import { filterStateToQuery } from 'state/activity-log/utils';
 import { addQueryArgs } from 'lib/url';
+import ActivityActor from './activity-actor';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
 
@@ -47,6 +48,24 @@ class ActivityLogAggregatedItem extends Component {
 		return addQueryArgs( query, window.location.pathname + window.location.hash );
 	}
 
+	renderHeader() {
+		const { activity } = this.props;
+		const { actorAvatarUrl, actorName, actorRole, actorType, multipleActors } = activity;
+		let actor;
+		if ( multipleActors ) {
+			actor = <ActivityActor actorType="Multiple" />;
+		} else {
+			actor = <ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />;
+		}
+
+		return (
+			<div className="activity-log-item__card-header">
+				{ actor }
+				<ActivityDescription activity={ activity } />
+			</div>
+		);
+	}
+
 	render() {
 		const {
 			activity,
@@ -70,10 +89,7 @@ class ActivityLogAggregatedItem extends Component {
 					</div>
 					<ActivityIcon activityIcon={ activityIcon } activityStatus={ activityStatus } />
 				</div>
-				<FoldableCard
-					className="activity-log-item__card"
-					header={ <ActivityDescription activity={ activity } /> }
-				>
+				<FoldableCard className="activity-log-item__card" header={ this.renderHeader() }>
 					{ activity.streams.map( log => (
 						<Fragment key={ log.activityId }>
 							<ActivityLogItem

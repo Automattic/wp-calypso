@@ -11,6 +11,8 @@ import PropTypes from 'prop-types';
 import Gravatar from 'components/gravatar';
 import JetpackLogo from 'components/jetpack-logo';
 import SocialLogo from 'social-logos';
+import { translate } from 'i18n-calypso';
+import ActivityActorIcon from './activity-actor-icon';
 
 /**
  * Module constants
@@ -42,6 +44,15 @@ const WORDPRESS_ACTOR = (
 	</div>
 );
 
+const MULTIPLE_ACTORS = (
+	<div className="activity-log-item__actor">
+		<ActivityActorIcon icon="multiple-users" />
+		<div className="activity-log-item__actor-info">
+			<div className="activity-log-item__actor-name">{ translate( 'Multiple users' ) }</div>
+		</div>
+	</div>
+);
+
 export default class ActivityActor extends PureComponent {
 	static propTypes = {
 		actor: PropTypes.shape( {
@@ -60,9 +71,11 @@ export default class ActivityActor extends PureComponent {
 		if ( actorName === 'Jetpack' && actorType === 'Application' ) {
 			return JETPACK_ACTOR;
 		}
-
 		if ( actorName === 'Happiness Engineer' && actorType === 'Happiness Engineer' ) {
 			return HAPPINESS_ACTOR;
+		}
+		if ( actorType === 'Multiple' ) {
+			return MULTIPLE_ACTORS;
 		}
 
 		return (
