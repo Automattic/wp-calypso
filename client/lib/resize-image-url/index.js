@@ -42,7 +42,7 @@ const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
  * @type {Object}
  */
 const SERVICE_HOSTNAME_PATTERNS = {
-	photon: /(^i\d\.wp\.com|(^|\.)wordpress\.com)$/,
+	photon: /(^[is]\d\.wp\.com|(^|\.)wordpress\.com)$/,
 	gravatar: /(^|\.)gravatar\.com$/,
 };
 
@@ -67,9 +67,10 @@ const scaleByFactor = value => value * IMAGE_SCALE_FACTOR;
  * @param   {(Number|Object)} resize   Resize pixel width, or object of query
  *                                     arguments (assuming Photon or Gravatar)
  * @param   {?Number}         height   Pixel height if specifying resize width
+ * @param   {?Boolean}        makeSafe Should we make sure this is on a safe host?
  * @returns {?String}                  Resized image URL, or `null` if unable to resize
  */
-export default function resizeImageUrl( imageUrl, resize, height ) {
+export default function resizeImageUrl( imageUrl, resize, height, makeSafe = true ) {
 	if ( 'string' !== typeof imageUrl ) {
 		return imageUrl;
 	}
@@ -85,22 +86,23 @@ export default function resizeImageUrl( imageUrl, resize, height ) {
 
 	parsedUrl.query = omit( parsedUrl.query, SIZE_PARAMS );
 
+	const service = findKey(
+		SERVICE_HOSTNAME_PATTERNS,
+		String.prototype.match.bind( parsedUrl.hostname )
+	);
+
 	if ( 'number' === typeof resize ) {
-		const service = findKey(
-			SERVICE_HOSTNAME_PATTERNS,
-			String.prototype.match.bind( parsedUrl.hostname )
-		);
 		if ( 'gravatar' === service ) {
 			resize = { s: resize };
 		} else {
 			resize = height > 0 ? { fit: [ resize, height ].join() } : { w: resize };
-
-			// External URLs are made "safe" (i.e. passed through Photon), so
-			// recurse with an assumed set of query arguments for Photon
-			if ( ! service ) {
-				return resizeImageUrl( safeImageUrl( imageUrl ), resize );
-			}
 		}
+	}
+
+	// External URLs are made "safe" (i.e. passed through Photon), so
+	// recurse with an assumed set of query arguments for Photon
+	if ( ! service && makeSafe ) {
+		return resizeImageUrl( safeImageUrl( imageUrl ), resize, null, false );
 	}
 
 	// Map sizing parameters, multiplying their values by the scale factor
