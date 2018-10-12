@@ -12,7 +12,12 @@
 	flex: 1;
 	margin-top: 8px;
 	margin-bottom: 16px;
-	white-space: pre;
+}
+
+.activity-log-item.is-aggregated {
+	.foldable-card__main {
+		white-space: pre;
+	}
 }
 
 .activity-log-item .foldable-card {
@@ -63,6 +68,14 @@
 
 	.is-loading & {
 		align-self: center;
+	}
+}
+
+.activity-log-item.is-aggregated {
+	.foldable-card__content {
+		.activity-log-item__type {
+			background: $white;
+		}
 	}
 }
 
@@ -363,6 +376,18 @@
 		&.is-desktop {
 			display: inline-block;
 		}
+	}
+}
+
+.activity-log-item__footer {
+	display: flex;
+	justify-content: space-between;
+	padding: 16px 0 0;
+	margin: 0;
+	border-top: 1px solid $gray-light;
+
+	p {
+		margin-bottom: 0;
 	}
 }
 
