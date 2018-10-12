@@ -13,6 +13,7 @@ import {
 import {
 	Button,
 	Dashicon,
+	TextareaControl,
 	TextControl
 } from '@wordpress/components';
 
@@ -120,13 +121,15 @@ export class Map extends Component {
 						<Fragment>
 							<TextControl
 								label="Marker Title"
-								value={ point.title }
+								value={ title }
 								onChange={ ( title ) => updateActiveMarker( { title } ) }
 							/>
-							<TextControl
+							<TextareaControl
 								className='wp-block-atavist-maps__marker-caption'
 								label="Marker Caption"
-								value={ point.caption }
+								value={ caption }
+								rows='3'
+								tag='textarea'
 								onChange={ ( caption ) => updateActiveMarker( { caption } ) }
 							/>
 							<Button
@@ -140,8 +143,8 @@ export class Map extends Component {
 
 					{ activeMarker && ! admin &&
 						<Fragment>
-							<h3>{ point.title }</h3>
-							<p>{ point.caption }</p>
+							<h3>{ title }</h3>
+							<p>{ caption }</p>
 						</Fragment>
 					}
 
