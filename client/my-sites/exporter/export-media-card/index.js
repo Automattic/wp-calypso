@@ -25,7 +25,7 @@ class ExportMediaCard extends Component {
 	};
 
 	render() {
-		const { mediaExportUrl, siteId, translate } = this.props;
+		const { mediaExportUrl, siteId, translate, recordMediaExportClick } = this.props;
 
 		return (
 			<div className="export-media-card">
@@ -37,7 +37,7 @@ class ExportMediaCard extends Component {
 					buttonText={ translate( 'Download' ) }
 					buttonHref={ mediaExportUrl }
 					buttonDisabled={ ! mediaExportUrl }
-					buttonOnClick={ this.props.recordMediaExportClick }
+					buttonOnClick={ recordMediaExportClick }
 					compact={ false }
 					buttonPrimary
 				/>
@@ -50,8 +50,7 @@ export default connect(
 	state => ( {
 		mediaExportUrl: getMediaExportUrl( state ),
 	} ),
-	dispatch => ( {
-		recordMediaExportClick: () =>
-			dispatch( recordTracksEvent( 'calypso_export_media_download_button_click' ) ),
-	} )
+	{
+		recordMediaExportClick: () => recordTracksEvent( 'calypso_export_media_download_button_click' ),
+	}
 )( localize( ExportMediaCard ) );
