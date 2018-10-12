@@ -22,6 +22,8 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { WithAPIMiddleware } from './api-middleware/utils';
 import { translate } from 'i18n-calypso';
 
+import './hooks';
+
 class GutenbergEditor extends Component {
 	componentDidMount() {
 		registerCoreBlocks();
