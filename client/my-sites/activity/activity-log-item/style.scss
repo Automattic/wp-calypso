@@ -20,6 +20,10 @@
 	}
 }
 
+.activity-log-item.activity-log-item__restore-confirm .card {
+	white-space: normal;
+}
+
 .activity-log-item .foldable-card {
 	.foldable-card__expand .gridicon {
 		transform: none;
@@ -50,6 +54,8 @@
 	flex-grow: 0;
 
 	.foldable-card__summary {
+		display: flex;
+		align-items: center;
 		margin-right: 0;
 	}
 }

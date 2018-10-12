@@ -17,12 +17,13 @@ import ActivityDescription from './activity-description';
 import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import EllipsisMenu from 'components/ellipsis-menu';
 import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
 import Button from 'components/button';
-import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
 import {
 	rewindBackup,
 	rewindBackupDismiss,
@@ -151,15 +152,13 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				<SplitButton
-					icon="history"
-					label={ translate( 'Rewind' ) }
-					onClick={ createRewind }
-					disableMain={ disableRestore }
-					disabled={ disableRestore && disableBackup }
-					compact
-					primary={ ! disableRestore }
-				>
+				<EllipsisMenu>
+					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
+						{ translate( 'Rewind to this point' ) }
+					</PopoverMenuItem>
+
+					<PopoverMenuSeparator />
+
 					<PopoverMenuItem
 						disabled={ disableBackup }
 						icon="cloud-download"
@@ -167,7 +166,7 @@ class ActivityLogItem extends Component {
 					>
 						{ translate( 'Download backup' ) }
 					</PopoverMenuItem>
-				</SplitButton>
+				</EllipsisMenu>
 			</div>
 		);
 	}
