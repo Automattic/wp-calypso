@@ -88,32 +88,30 @@ describe( '#addComments', () => {
 
 describe( '#fetchCommentList', () => {
 	test( 'should do nothing if no listType provided', () => {
-		expect( fetchCommentsList( { query } ) ).not.toBeDefined();
+		expect( fetchCommentsList( { query } ) ).toBeUndefined();
 	} );
 
 	test( 'should do nothing if invalid listType provided', () => {
-		expect( fetchCommentsList( { query: { ...query, listType: 'Calypso' } } ) ).not.toBeDefined();
+		expect( fetchCommentsList( { query: { ...query, listType: 'Calypso' } } ) ).toBeUndefined();
 	} );
 
 	test( 'should dispatch HTTP request for site comments', () => {
-		expect( fetchCommentsList( { query: { ...query, listType: 'site' } } ) ).toEqual(
-			expect.objectContaining( {
-				type: 'WPCOM_HTTP_REQUEST',
-				path: '/sites/1337/comments',
-			} )
-		);
+		expect( fetchCommentsList( { query: { ...query, listType: 'site' } } ) ).toMatchObject( {
+			type: 'WPCOM_HTTP_REQUEST',
+			path: '/sites/1337/comments',
+		} );
 	} );
 
 	test( 'should default to fetch pending comments', () => {
-		expect( fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } ) ).toEqual(
-			expect.objectContaining( { query: expect.objectContaining( { status: 'unapproved' } ) } )
-		);
+		expect( fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } ) ).toMatchObject( {
+			query: { status: 'unapproved' },
+		} );
 	} );
 
 	test( 'should default to fetch comment-type comments', () => {
-		expect( fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } ) ).toEqual(
-			expect.objectContaining( { query: expect.objectContaining( { type: 'comment' } ) } )
-		);
+		expect( fetchCommentsList( { query: { listType: 'site', siteId: 1337 } } ) ).toMatchObject( {
+			query: { type: 'comment' },
+		} );
 	} );
 } );
 
