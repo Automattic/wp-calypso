@@ -36,14 +36,12 @@ export const updateCommentLikes = ( { siteId, postId, commentId }, { like_count 
 		like_count,
 	} );
 
-export const handleLikeFailure = ( { siteId, postId, commentId } ) => {
-	return [
-		// revert optimistic updated on error
-		bypassDataLayer( { type: COMMENTS_UNLIKE, siteId, postId, commentId } ),
-		// dispatch a error notice
-		errorNotice( translate( 'Could not like this comment' ) ),
-	];
-};
+export const handleLikeFailure = ( { siteId, postId, commentId } ) => [
+	// revert optimistic updated on error
+	bypassDataLayer( { type: COMMENTS_UNLIKE, siteId, postId, commentId } ),
+	// dispatch a error notice
+	errorNotice( translate( 'Could not like this comment' ) ),
+];
 
 registerHandlers( 'state/data-layer/wpcom/sites/comments/likes/new/index.js', {
 	[ COMMENTS_LIKE ]: [
