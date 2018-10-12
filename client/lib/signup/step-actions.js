@@ -339,7 +339,7 @@ export function createAccount(
 	const userExperience = getUserExperience( reduxStore.getState() );
 	const importEngine =
 		'import' === flowName ? getSelectedImportEngine( reduxStore.getState() ) : '';
-	const importFromUrl = 'import' === flowName ? getNuxUrlInputValue( reduxStore.getState() ) : '';
+	const importFromSite = 'import' === flowName ? getNuxUrlInputValue( reduxStore.getState() ) : '';
 
 	if ( service ) {
 		// We're creating a new social account
@@ -377,7 +377,7 @@ export function createAccount(
 					nux_q_question_primary: surveyVertical,
 					nux_q_question_experience: userExperience || undefined,
 					import_engine: importEngine,
-					import_from_url: importFromUrl,
+					import_from_site: importFromSite,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 				},
