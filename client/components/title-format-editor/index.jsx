@@ -27,6 +27,11 @@ import { buildSeoTitle } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
 
 export class TitleFormatEditor extends Component {
