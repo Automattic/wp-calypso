@@ -20,8 +20,8 @@ class ExportMediaCard extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		mediaExportUrl: PropTypes.string,
-		recordMediaExportClick: PropTypes.func,
-		translate: PropTypes.func,
+		recordMediaExportClick: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
