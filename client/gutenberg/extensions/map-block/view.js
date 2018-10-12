@@ -10,7 +10,8 @@ import { CONFIG } from './config.js';
 import FrontendManagement from 'gutenberg/extensions/shared/atavist/frontend-management.js';
 
 window.addEventListener( 'load', function() {
-	if ( document.body.classList.contains( 'gutenberg-editor-page' ) ) {
+	// Do not initialize in editor.
+	if ( window.wp.editor ) {
 		return;
 	}
 	const frontendManagement = new FrontendManagement();
