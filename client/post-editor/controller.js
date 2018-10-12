@@ -20,12 +20,11 @@ import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/acti
 import { addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
+import { startEditingNewPost, stopEditingPost, getSelectedEditor } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
-import { listBlogStickers } from 'state/sites/blog-stickers/actions';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -255,11 +254,13 @@ export default {
 		return false;
 	},
 
-	gutenberg: function( context, next ) {
-		const siteId = getSelectedSiteId( context.store.getState() );
-		context.store.dispatch( listBlogStickers( siteId ) );
-		// wait until we have the site's blog stickers;
-		// if opted in, redirect; else, move on
+	gutenberg: async function( context, next ) {
+		const siteId = await getSelectedSiteId( context.store.getState() );
+		const editor = await getSelectedEditor( siteId );
+		if ( 'gutenberg' === editor ) {
+			page.redirect( `/gutenberg${ context.path }` );
+			return false;
+		}
 		next();
 	},
 };
