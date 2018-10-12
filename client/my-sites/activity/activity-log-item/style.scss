@@ -18,6 +18,11 @@
 	.foldable-card__main {
 		white-space: pre;
 	}
+	.foldable-card__content {
+		.foldable-card__main {
+			white-space: unset;
+		}
+	}
 }
 
 .activity-log-item .foldable-card {
