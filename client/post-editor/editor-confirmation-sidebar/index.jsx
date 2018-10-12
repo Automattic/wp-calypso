@@ -163,6 +163,14 @@ class EditorConfirmationSidebar extends Component {
 		const isSidebarActive = this.props.status === 'open';
 		const isOverlayActive = this.props.status !== 'closed';
 
+		if ( ! this.state.hasUnclosed ) {
+			return (
+				<div className="editor-confirmation-sidebar">
+					<div key="sidebar" className="editor-confirmation-sidebar__sidebar" />
+				</div>
+			);
+		}
+
 		return (
 			this.state.hasUnclosed && (
 				<div
@@ -174,6 +182,7 @@ class EditorConfirmationSidebar extends Component {
 					{ this.renderPublishingBusyButton() }
 
 					<div
+						key="sidebar"
 						className={ classnames( {
 							'editor-confirmation-sidebar__sidebar': true,
 							'is-active': isSidebarActive,
