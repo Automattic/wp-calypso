@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
@@ -13,6 +14,10 @@ import { requestMediaExport } from 'state/site-settings/exporter/actions';
 import getMediaExportUrl from 'state/selectors/get-media-export-url';
 
 class QueryMediaExport extends Component {
+	static propTypes = {
+		mediaExportUrl: PropTypes.string.isRequired,
+	};
+
 	componentDidMount() {
 		if ( this.props.mediaExportUrl ) {
 			return;
