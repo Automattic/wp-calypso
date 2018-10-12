@@ -123,7 +123,7 @@ export class Map extends Component {
 			addPoint
 		} = this;
 
-		const mapMarkers = points.map( ( point, index ) => {
+		const mapMarkers = ( map ) && points.map( ( point, index ) => {
 			if ( window.google ) {
 				return (
 					<MapMarker
