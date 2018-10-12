@@ -762,6 +762,7 @@ export function recordOrder( cart, orderId ) {
 	recordOrderInFloodlight( cart, orderId );
 	recordOrderInFacebook( cart, orderId );
 	recordOrderInNanigans( cart, orderId );
+	recordOrderInDonutsGtag( cart, orderId );
 
 	// This has to come before we add the items to the Google Analytics cart
 	recordOrderInGoogleAnalytics( cart, orderId );
@@ -1054,6 +1055,23 @@ function recordOrderInNanigans( cart, orderId ) {
 	window.NaN_api.push( eventStruct ); // NaN api is either an array that supports push, either the real Nanigans API
 }
 
+function recordOrderInDonutsGtag( cart, orderId ) {
+	debug( 'recordOrderInDonutsGtag', cart, orderId );
+	if ( ! isAdTrackingAllowed() || ! isDonutsGtagEnabled ) {
+		return;
+	}
+
+	if ( cart.is_free_signup ) {
+		return;
+	}
+
+	recordParamsInDonutsGtag(
+		'purchase',
+		'DC-8907854/purch0/wpress+transactions',
+		cartToDonutsOrderSummary( cart )
+	);
+}
+
 /**
  * Records an order in Facebook (a single event for the entire order)
  *
@@ -1153,13 +1171,13 @@ function recordParamsInDonutsGtag( event_type, send_to, order_summary = false ) 
 	// types of products to record: domain registration, renewal, transfer, whois_privacy
 	initDonutsGtag();
 	const params = {
-		'allow_custom_scripts': false,
-		'u1': document.referrer,
-		'u2': document.location.href,
-		'send_to': send_to,
-		...( order_summary && { 'u90': order_summary } ),
+		allow_custom_scripts: false,
+		u1: document.referrer,
+		u2: document.location.href,
+		send_to: send_to,
+		...( order_summary && { u90: order_summary } ),
 	};
-	window.gtag('event', event_type, params);
+	window.gtag( 'event', event_type, params );
 }
 
 /**
@@ -1416,7 +1434,11 @@ function recordViewCheckoutInDonutsGtag( cart ) {
 		return;
 	}
 
-	recordParamsInDonutsGtag( 'conversion', 'DC-8907854/cartd0/wpress+unique', cartToDonutsOrderSummary( cart ) );
+	recordParamsInDonutsGtag(
+		'conversion',
+		'DC-8907854/cartd0/wpress+unique',
+		cartToDonutsOrderSummary( cart )
+	);
 }
 
 /**
@@ -1426,7 +1448,7 @@ function recordViewCheckoutInDonutsGtag( cart ) {
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 function cartToDonutsOrderSummary( cart ) {
-	console.log( 'cartToDonutsOrderSummary - cart: ', cart );
+	debug( 'cartToDonutsOrderSummary - cart: ', cart );
 	// TODO
 	return [];
 }
