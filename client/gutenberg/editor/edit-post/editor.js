@@ -18,7 +18,6 @@ import { StrictMode } from '@wordpress/element';
  */
 import Layout from './components/layout';
 import './store';
-import './hooks';
 
 function Editor( { settings, hasFixedToolbar, post, overridePost, onError, ...props } ) {
 	if ( ! post ) {
