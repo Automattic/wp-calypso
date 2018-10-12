@@ -48,7 +48,7 @@ const MULTIPLE_ACTORS = (
 	<div className="activity-log-item__actor">
 		<ActivityActorIcon icon="multiple-users" />
 		<div className="activity-log-item__actor-info">
-			<div className="activity-log-item__actor-name">{ translate( 'Multiple Users' ) }</div>
+			<div className="activity-log-item__actor-name">{ translate( 'Multiple users' ) }</div>
 		</div>
 	</div>
 );
