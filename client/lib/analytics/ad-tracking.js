@@ -1166,9 +1166,6 @@ function recordSignupStartInDonutsGtag() {
 }
 
 function recordParamsInDonutsGtag( event_type, send_to, order_summary = false ) {
-	// for each domain: if domain ending is in list of donuts domain endings, add to u99 string
-	// format: [{"domain_name":"upstartauction.uk","duration":"1","price":"9.99","tld":"uk","type":"registrat ion"},{"domain_name":"upstart.auction","duration":"1","price":"9.99","tld":"auction","type":"r egistration"},{"domain_name":"upstart.auction","duration":"1","price":"4.99","tld":"auction","t ype":"whois_privacy"},,{"domain_name":"upstart.solutions","duration":"1","price":"9.99","tld": "solutions","type":"registration"}]
-	// types of products to record: domain registration, renewal, transfer, whois_privacy
 	initDonutsGtag();
 	const params = {
 		allow_custom_scripts: false,
@@ -1448,6 +1445,9 @@ function recordViewCheckoutInDonutsGtag( cart ) {
  * @returns {Array} - An array of items to include in the Criteo tracking call
  */
 function cartToDonutsOrderSummary( cart ) {
+	// for each domain: if domain ending is in list of donuts domain endings, add to u99 string
+	// format: [{"domain_name":"upstartauction.uk","duration":"1","price":"9.99","tld":"uk","type":"registrat ion"},{"domain_name":"upstart.auction","duration":"1","price":"9.99","tld":"auction","type":"r egistration"},{"domain_name":"upstart.auction","duration":"1","price":"4.99","tld":"auction","t ype":"whois_privacy"},,{"domain_name":"upstart.solutions","duration":"1","price":"9.99","tld": "solutions","type":"registration"}]
+	// types of products to record: domain registration, renewal, transfer, whois_privacy
 	debug( 'cartToDonutsOrderSummary - cart: ', cart );
 	// TODO
 	return [];
