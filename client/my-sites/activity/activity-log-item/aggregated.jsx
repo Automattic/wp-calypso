@@ -5,6 +5,7 @@
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { omit } from 'lodash';
 import React, { Component, Fragment } from 'react';
 /**
  * Internal dependencies
@@ -32,7 +33,7 @@ class ActivityLogAggregatedItem extends Component {
 			moment,
 			timezone,
 		} = this.props;
-		const newFilter = Object.assign( {}, filter, {
+		const newFilter = Object.assign( {}, omit( filter, [ 'dateRange', 'on' ] ), {
 			before: adjustMoment( { timezone, moment: moment( firstPublishedDate ) } )
 				.add( 1, 'second' )
 				.format(),
