@@ -21,7 +21,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MobileSelectPortal from './mobile-select-portal';
 import { isWithinBreakpoint } from 'lib/viewport';
 
-const DATE_FORMAT = 'YYYY-MM-DD';
+const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 export class DateRangeSelector extends Component {
 	state = {
@@ -47,7 +47,11 @@ export class DateRangeSelector extends Component {
 		} );
 
 		const formattedFromDate = fromDate && moment( fromDate ).format( DATE_FORMAT );
-		const formattedToDate = toDate && moment( toDate ).format( DATE_FORMAT );
+		const formattedToDate =
+			toDate &&
+			moment( toDate )
+				.endOf( 'day' )
+				.format( DATE_FORMAT );
 		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
 			selectDateRange( siteId, formattedFromDate, formattedToDate );
 			onClose();
@@ -125,7 +129,7 @@ export class DateRangeSelector extends Component {
 		selectDateRange( siteId, null, null );
 	};
 
-	getFormatedFromDate = ( from, to ) => {
+	getFormattedFromDate = ( from, to ) => {
 		if ( ! from ) {
 			return null;
 		}
@@ -150,7 +154,7 @@ export class DateRangeSelector extends Component {
 		return from.format( 'll' );
 	};
 
-	getFormatedToDate = ( from, to ) => {
+	getFormattedToDate = ( from, to ) => {
 		if ( ! to ) {
 			return null;
 		}
@@ -165,12 +169,12 @@ export class DateRangeSelector extends Component {
 		return to.format( 'll' );
 	};
 
-	getFromatedDate = ( from, to ) => {
+	getFormattedDate = ( from, to ) => {
 		const { translate } = this.props;
 		const fromMoment = from ? moment( from ) : null;
 		const toMoment = to ? moment( to ) : null;
-		const fromFormated = this.getFormatedFromDate( fromMoment, toMoment );
-		const toFormated = this.getFormatedToDate( fromMoment, toMoment );
+		const fromFormated = this.getFormattedFromDate( fromMoment, toMoment );
+		const toFormated = this.getFormattedToDate( fromMoment, toMoment );
 
 		if ( fromFormated && ! toFormated ) {
 			return fromFormated;
@@ -300,7 +304,7 @@ export class DateRangeSelector extends Component {
 					onClick={ this.handleButtonClick }
 					ref={ this.dateRangeButton }
 				>
-					{ this.getFromatedDate( from, to ) }
+					{ this.getFormattedDate( from, to ) }
 				</Button>
 				{ ( from || to ) && (
 					<Button
