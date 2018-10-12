@@ -304,15 +304,6 @@ function getWebpackConfig( { cssFilename, externalizeWordPressPackages = false }
 		webpackConfig.output.chunkFilename = '[name].js';
 	}
 
-	// jquery is only needed in the build for the desktop app
-	// see electron bug: https://github.com/atom/electron/issues/254
-	if ( calypsoEnv !== 'desktop' && ! config.isEnabled( 'gutenberg' ) ) {
-		// TODO: PostLockedModal from Gutenberg editor package depends on jQuery
-		// This will be removed in version 4.1 so we should clean this up then,
-		// and definitely before we enable the gutenberg feature flag in production.
-		webpackConfig.externals.push( 'jquery' );
-	}
-
 	if ( isDevelopment ) {
 		// we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 		// also we don't minify so dont name them .min.js
