@@ -63,7 +63,7 @@ class ExportCard extends Component {
 							<h1 className="export-card__title">{ translate( 'Export your content' ) }</h1>
 							<h2 className="export-card__subtitle">
 								{ translate(
-									'Or select specific content items to export.' +
+									'Or click here to select specific content items to export. ' +
 										'Please note this does not include your media library, but only text content like posts and pages.'
 								) }
 							</h2>
@@ -71,6 +71,7 @@ class ExportCard extends Component {
 					}
 					summary={ exportButton }
 					expandedSummary={ exportButton }
+					clickableHeader={ true }
 				>
 					<AdvancedSettings
 						postType={ this.props.postType }
