@@ -10,6 +10,9 @@ import { CONFIG } from './config.js';
 import FrontendManagement from 'gutenberg/extensions/shared/atavist/frontend-management.js';
 
 window.addEventListener( 'load', function() {
+	if ( document.body.classList.contains( 'gutenberg-editor-page' ) ) {
+		return;
+	}
 	const frontendManagement = new FrontendManagement();
 	frontendManagement.blockIterator(
 		document,
