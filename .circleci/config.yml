@@ -356,7 +356,6 @@ jobs:
             # The shell should never error and exit 0 to indicate success.
             #
             set +o errexit
-            ANCESTOR_SHA1=$(git merge-base HEAD master)
             npm run build-css                                      \
               && npm run preanalyze-bundles                        \
               && node bin/icfy-analyze.js                          \
@@ -374,6 +373,7 @@ jobs:
             #
             set +o errexit
             if [ -e "$CIRCLE_ARTIFACTS/icfy/stats.json" ] && [ -e "$CIRCLE_ARTIFACTS/icfy/chart.json" ]; then
+              ANCESTOR_SHA1=$(git merge-base HEAD master)
               curl                                                                      \
                 -X POST                                                                 \
                 "http://api.iscalypsofastyet.com:5000/submit-stats?secret=$ICFY_SECRET" \
