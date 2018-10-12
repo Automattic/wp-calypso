@@ -376,6 +376,10 @@ async function loadTrackingScripts( callback ) {
 		initFacebook();
 	}
 
+	if ( isDonutsGtagEnabled ) {
+		initDonutsGtag();
+	}
+
 	// init Bing
 	if ( isBingEnabled ) {
 		const bingConfig = {
@@ -1517,6 +1521,15 @@ function costToUSD( cost, currency ) {
  */
 function isSupportedCurrency( currency ) {
 	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
+}
+
+function initDonutsGtag() {
+	window.dataLayer = window.dataLayer || [];
+	window.gtag = function() {
+		window.dataLayer.push( arguments );
+	};
+	window.gtag( 'js', new Date() );
+	window.gtag( 'config', 'DC-8907854' );
 }
 
 /**
