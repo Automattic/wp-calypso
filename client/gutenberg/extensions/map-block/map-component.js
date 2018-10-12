@@ -35,7 +35,8 @@ import MapMarker from './map-marker/';
 import InfoWindow from './info-window/';
 import AddPoint from './add-point';
 
-const $ = window.jQuery;
+import { loadScript } from './load-script';
+// import { loadScript } from 'lib/load-script';
 
 export class Map extends Component {
 
@@ -54,6 +55,7 @@ export class Map extends Component {
 		this.addPoint = this.addPoint.bind( this );
 		this.onMapClick = this.onMapClick.bind( this );
 		this.setBoundsByMarkers = this.setBoundsByMarkers.bind( this );
+		this.scriptsLoaded = this.scriptsLoaded.bind( this );
 
 		this.addPointRef = React.createRef();
 	}
@@ -120,6 +122,7 @@ export class Map extends Component {
 			updateActiveMarker,
 			addPoint
 		} = this;
+
 		const mapMarkers = points.map( ( point, index ) => {
 			if ( window.google ) {
 				return (
@@ -273,49 +276,44 @@ export class Map extends Component {
 		return CONFIG.styles[ this.props.map_style ].map_type;
 	}
 
-	loadMapLibraries() {
+	scriptsLoaded() {
 		const {
 			map_center,
 			points
 		} = this.props;
-		let atavistGoogleMapsLoaded = window.atavistGoogleMapsLoaded;
-		window.atavistGoogleMapInit = function() {
-			atavistGoogleMapsLoaded.resolve();
-		};
-		const scriptsToLoad = [];
-		if ( ! window.atavistGoogleMapsLoaded ) {
-			atavistGoogleMapsLoaded = $.Deferred();
-			if ( typeof google === 'undefined' ) {
-				scriptsToLoad.push(
-					window.jQuery.getScript(
-						'https://maps.googleapis.com/maps/api/js?key=' +
-							this.props.api_key +
-							'&libraries=places&callback=atavistGoogleMapInit'
-					)
-				);
-			} else {
-				atavistGoogleMapsLoaded.resolve();
-			}
-		}
 
-		atavistGoogleMapsLoaded.done(
-			function() {
-				if ( points.length > 0 ) {
-					this.init( map_center );
-					return;
-				}
-				this.getMapCenter()
-					.then( ( position ) => {
-						this.init( {
-							latitude: position.coords.latitude,
-							longitude: position.coords.longitude
-						} );
-					})
-					.catch( ( err ) => {
-				    	this.init( map_center );
-				    } );
-			}.bind( this )
-		);
+		this.setState({ loaded: true });
+		if ( points.length > 0 ) {
+			this.init( map_center );
+			return;
+		}
+		this.getMapCenter()
+			.then( ( position ) => {
+				this.init( {
+					latitude: position.coords.latitude,
+					longitude: position.coords.longitude
+				} );
+			})
+			.catch( ( err ) => {
+		    	this.init( map_center );
+		    } );
+	}
+
+	loadMapLibraries() {
+		const { api_key } = this.props;
+
+		const src = [
+			'https://maps.googleapis.com/maps/api/js?key=',
+			api_key,
+			'&libraries=places' ].join( '' );
+
+		loadScript( src, ( error ) => {
+			if ( error ) {
+				console.log( 'Script ' + error.src + ' failed to load.' );
+				return;
+			}
+			this.scriptsLoaded();
+		} );
 	}
 
 	getMapCenter = function ( options ) {
@@ -337,10 +335,11 @@ export class Map extends Component {
 	}
 
 	sizeMap() {
-		const blockWidth = $( this.mapRef.current ).width();
+		const mapEl = this.mapRef.current;
+		const blockWidth = mapEl.offsetWidth;
 		const maxHeight = window.innerHeight * 0.8;
 		const blockHeight = Math.min( blockWidth * ( 3 / 4 ), maxHeight );
-		this.mapRef.current.style.height = blockHeight + 'px';
+		mapEl.style.height = blockHeight + 'px';
 	}
 
 	init( map_center ) {
