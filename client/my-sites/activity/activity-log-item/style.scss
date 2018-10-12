@@ -101,7 +101,8 @@
 	}
 }
 
-.activity-log-item__activity-icon {
+.activity-log-item__activity-icon,
+.activity-log-item__activity-actor-icon {
 	// General notice
 	background: $gray;
 	color: $white;
