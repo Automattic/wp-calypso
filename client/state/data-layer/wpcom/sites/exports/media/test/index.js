@@ -8,11 +8,6 @@ import { NOTICE_CREATE } from 'state/action-types';
 import { setMediaExportData } from 'state/site-settings/exporter/actions';
 import { fetch, onSuccess, onError, fromApi } from '../';
 
-// we are mocking impure-lodash here, so that conciergeInitialFetchError() will contain the expected id in the tests
-jest.mock( 'lib/impure-lodash', () => ( {
-	uniqueId: () => 'mock-unique-id',
-} ) );
-
 describe( 'fetch()', () => {
 	test( 'should dispatch the expected http action.', () => {
 		const action = {
