@@ -3,10 +3,10 @@
 }
 
 .step-wrapper__buttons .button.is-borderless {
-	color: darken( $gray, 20 );
+	color: $white;
 
 	&:hover {
-		color: $gray-dark;
+		color: $white;
 	}
 }
 
