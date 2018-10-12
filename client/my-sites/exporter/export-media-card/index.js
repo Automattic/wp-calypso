@@ -35,11 +35,11 @@ class ExportMediaCard extends Component {
 					headerText={ translate( 'Export media library' ) }
 					mainText={ translate( 'Click the button to download your entire media library.' ) }
 					buttonText={ translate( 'Download' ) }
-					buttonPrimary={ true }
 					buttonHref={ mediaExportUrl }
 					buttonDisabled={ ! mediaExportUrl }
 					buttonOnClick={ this.props.recordMediaExportClick }
 					compact={ false }
+					buttonPrimary
 				/>
 			</div>
 		);
