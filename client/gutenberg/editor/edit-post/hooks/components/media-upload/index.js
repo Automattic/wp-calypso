@@ -4,7 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { isArray, map } from 'lodash';
+import { debounce, isArray, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +12,7 @@ import { isArray, map } from 'lodash';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
+import MediaStore from 'lib/media/store';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { mediaCalypsoToGutenberg } from './utils';
 
@@ -21,6 +22,7 @@ export class MediaUpload extends Component {
 	};
 
 	componentDidMount() {
+		MediaStore.on( 'change', this.updateMedia );
 		MediaActions.setLibrarySelectedItems( this.props.siteId, this.getSelectedItems() );
 	}
 
@@ -53,6 +55,19 @@ export class MediaUpload extends Component {
 			onSelect( formattedMedia[ 0 ] );
 		}
 	};
+
+	updateMedia = debounce( () => {
+		const { multiple, siteId, value } = this.props;
+		if ( ! value ) {
+			return;
+		}
+		const media = {
+			items: multiple
+				? map( value, id => MediaStore.get( siteId, id ) )
+				: [ MediaStore.get( siteId, value ) ],
+		};
+		this.insertMedia( media );
+	} );
 
 	onCloseModal = media => {
 		if ( media ) {
