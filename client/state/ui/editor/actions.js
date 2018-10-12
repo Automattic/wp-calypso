@@ -25,6 +25,7 @@ import {
 	EDITOR_EDIT_RAW_CONTENT,
 	EDITOR_RESET_RAW_CONTENT,
 	EDITOR_INIT_RAW_CONTENT,
+	EDITOR_SET_GUTENBERG,
 } from 'state/action-types';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setMediaModalView } from 'state/ui/media-modal/actions';
@@ -254,4 +255,9 @@ export const editorSave = ( siteId, postId, saveMarker ) => ( {
 	siteId,
 	postId,
 	saveMarker,
+} );
+
+export const setGutenbergEditor = siteId => ( {
+	type: EDITOR_SET_GUTENBERG,
+	siteId,
 } );

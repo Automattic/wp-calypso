@@ -16,7 +16,7 @@ import Gridicon from 'gridicons';
 import isGutenbergOptInDialogShowing from 'state/selectors/is-gutenberg-opt-in-dialog-showing';
 import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { addBlogSticker } from 'state/sites/blog-stickers/actions';
+import { setGutenbergEditor } from 'state/ui/editor/actions';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
@@ -111,7 +111,7 @@ const mapDispatchToProps = dispatch => ( {
 					} ),
 					bumpStat( 'gutenberg-opt-in', 'Calypso Dialog Opt In' )
 				),
-				addBlogSticker( siteId, 'enable-gutenberg', false )
+				setGutenbergEditor( siteId )
 			)
 		);
 	},
