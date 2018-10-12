@@ -16,6 +16,8 @@ import getMediaExportUrl from 'state/selectors/get-media-export-url';
 class QueryMediaExport extends Component {
 	static propTypes = {
 		mediaExportUrl: PropTypes.string.isRequired,
+		requestMediaExport: PropTypes.func.isRequired,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	componentDidMount() {
