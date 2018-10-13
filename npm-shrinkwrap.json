@@ -17754,11 +17754,11 @@
       }
     },
     "redux": {
-      "version": "4.0.0",
-      "resolved": "https://registry.npmjs.org/redux/-/redux-4.0.0.tgz",
-      "integrity": "sha512-NnnHF0h0WVE/hXyrB6OlX67LYRuaf/rJcbWvnHHEPCF/Xa/AZpwhs/20WyqzQae5x4SD2F9nPObgBh2rxAgLiA==",
+      "version": "4.0.1",
+      "resolved": "https://registry.npmjs.org/redux/-/redux-4.0.1.tgz",
+      "integrity": "sha512-R7bAtSkk7nY6O/OYMVR9RiBI+XghjF9rlbl5806HJbQph0LJVHZrU5oaO4q70eUKiqMRqm4y07KLTlMZ2BlVmg==",
       "requires": {
-        "loose-envify": "^1.1.0",
+        "loose-envify": "^1.4.0",
         "symbol-observable": "^1.2.0"
       }
     },
