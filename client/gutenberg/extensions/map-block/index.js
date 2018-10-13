@@ -65,9 +65,13 @@ registerBlockType( CONFIG.name, {
 			marker_color,
 			align
 		} = attributes;
-		const updateAlignment = ( value ) => setAttributes( { align: value } );
-		const markerIcon = CONFIG.markerIcon;
 		const mapRef = createRef();
+		const updateAlignment = ( value ) => {
+			setAttributes( { align: value } )
+			// Allow one cycle for alignment change to take effect
+			setTimeout( mapRef.current.sizeMap, 0);
+		};
+		const markerIcon = CONFIG.markerIcon;
 		const inspectorControls = (
 			<Fragment>
 				<BlockControls>
