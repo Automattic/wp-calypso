@@ -15,6 +15,8 @@ import { localize } from 'i18n-calypso';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import StatsNavigation from 'blocks/stats-navigation';
+import StatsPeriodNavigation from '../stats-period-navigation';
+import DatePicker from '../stats-date-picker';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import titlecase from 'to-title-case';
@@ -100,7 +102,7 @@ class WordAds extends Component {
 			'-' +
 			( '0' + currentDate.getDate() ).slice( -2 );
 
-		const tomorrow =
+		const yesterday =
 			( '0' + currentDate.getFullYear() ).slice( -4 ) +
 			'-' +
 			( '0' + ( currentDate.getMonth() + 1 ) ).slice( -2 ) +
@@ -109,13 +111,12 @@ class WordAds extends Component {
 
 		const queryDate =
 			today === date.format( 'YYYY-MM-DD' ) && 'day' === period
-				? tomorrow
+				? yesterday
 				: date.format( 'YYYY-MM-DD' );
 
 		const query = {
-			// @TODO unused
 			period: period,
-			date: endOf.format( 'YYYY-MM-DD' ),
+			date: queryDate,
 		};
 
 		return (
@@ -146,10 +147,27 @@ class WordAds extends Component {
 						period={ this.props.period }
 						chartTab={ this.state.chartTab }
 					/>
+					<StickyPanel className="stats__sticky-navigation">
+						<StatsPeriodNavigation
+							date={ queryDate }
+							hideNextArrow={ yesterday === queryDate }
+							period={ period }
+							url={ `/stats/wordads/${ period }/${ slug }` }
+						>
+							<DatePicker
+								period={ period }
+								date={ queryDate }
+								query={ query }
+								statsType="statsTopPosts"
+								showQueryDate
+							/>
+						</StatsPeriodNavigation>
+					</StickyPanel>
 					<div className="stats__module-list">
 						<WordAdsEarnings site={ site } />
 					</div>
 				</div>
+
 				<JetpackColophon />
 			</Main>
 		);
