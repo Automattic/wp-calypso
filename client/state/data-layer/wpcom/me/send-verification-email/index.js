@@ -43,5 +43,3 @@ registerHandlers( 'state/data-layer/wpcom/me/send-verification-email/index.js', 
 		dispatchRequest( requestEmailVerification, handleSuccess, handleError ),
 	],
 } );
-
-export default {};

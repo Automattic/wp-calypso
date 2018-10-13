@@ -69,5 +69,3 @@ registerHandlers( 'state/data-layer/wpcom/domains/validation-schemas/index.js', 
 		} ),
 	],
 } );
-
-export default {};

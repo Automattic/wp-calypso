@@ -1,8 +1,30 @@
 /** @format */
 
-export const filterStateToApiQuery = filter =>
-	Object.assign(
+/**
+ * External Dependencies
+ */
+import { isUndefined } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+
+export const filterStateToApiQuery = filter => {
+	let aggregate;
+	if ( config.isEnabled( 'activity-log-aggregated-events' ) ) {
+		if ( ! isUndefined( filter.aggregate ) ) {
+			aggregate = filter.aggregate;
+		} else {
+			aggregate = true;
+		}
+	} else {
+		aggregate = false;
+	}
+
+	return Object.assign(
 		{},
+		{ aggregate },
 		filter.action && { action: filter.action },
 		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
@@ -14,11 +36,14 @@ export const filterStateToApiQuery = filter =>
 		filter.name && { name: filter.name },
 		{ number: 1000 }
 	);
+};
 
 export const filterStateToQuery = filter =>
 	Object.assign(
 		{},
 		filter.action && { action: filter.action.join( ',' ) },
+		! isUndefined( filter.aggregate ) && { aggregate: filter.aggregate },
+		filter.backButton && { back_button: true },
 		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },
 		filter.before && { before: filter.before },
@@ -34,6 +59,7 @@ export const queryToFilterState = query =>
 	Object.assign(
 		{},
 		query.action && { action: decodeURI( query.action ).split( ',' ) },
+		! isUndefined( query.aggregate ) && { aggregate: query.aggregate },
 		query.on && { on: query.on },
 		query.after && { after: query.after },
 		query.before && { before: query.before },
@@ -42,5 +68,6 @@ export const queryToFilterState = query =>
 		query.name && { name: decodeURI( query.name ).split( ',' ) },
 		query.group && { group: decodeURI( query.group ).split( ',' ) },
 		query.not_group && { notGroup: decodeURI( query.not_group ).split( ',' ) },
-		query.page && query.page > 0 && { page: query.page }
+		query.page && query.page > 0 && { page: query.page },
+		query.back_button && { backButton: true }
 	);

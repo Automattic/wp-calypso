@@ -9,6 +9,8 @@ $serif: "Noto Serif", $serif-fallback;
 $sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 $sans-rtl: Tahoma, $sans;
 
+$signup-sans: "Noto Sans", $sans;
+
 %content-font {
 	font-family: $serif;
 	font-weight: 400;

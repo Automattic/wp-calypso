@@ -88,5 +88,3 @@ registerHandlers( 'state/data-layer/wpcom/read/sites/posts/mute/index.js', {
 		),
 	],
 } );
-
-export default {};

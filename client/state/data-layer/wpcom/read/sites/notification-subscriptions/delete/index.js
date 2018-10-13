@@ -61,5 +61,3 @@ registerHandlers( 'state/data-layer/wpcom/read/sites/notification-subscriptions/
 		} ),
 	],
 } );
-
-export default {};

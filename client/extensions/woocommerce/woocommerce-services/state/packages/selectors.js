@@ -10,6 +10,9 @@ import { translate } from 'i18n-calypso';
  */
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { ACCEPTED_USPS_ORIGIN_COUNTRIES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
+import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
+import { getForm } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 export const getPackagesForm = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -89,11 +92,18 @@ export const getAllSelectedPackages = createSelector(
  * @returns {Object} packages grouped by services
  */
 export const getPackageGroupsForLabelPurchase = createSelector(
-	( state, siteId = getSelectedSiteId( state ) ) => {
+	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 		const form = getPackagesForm( state, siteId );
 		if ( ! form || ! form.predefinedSchema || ! form.packages ) {
 			return null;
 		}
+
+		const shippingLabelForm = getForm( state, orderId, siteId );
+		const originCountryCode = getAddressValues( shippingLabelForm.origin ).country;
+		const destinationCountryCode = getAddressValues( shippingLabelForm.destination ).country;
+		const isInternationalOrder =
+			ACCEPTED_USPS_ORIGIN_COUNTRIES.includes( originCountryCode ) &&
+			! ACCEPTED_USPS_ORIGIN_COUNTRIES.includes( destinationCountryCode );
 
 		const result = {
 			custom: { title: translate( 'Custom Packages' ), definitions: form.packages.custom },
@@ -107,6 +117,10 @@ export const getPackageGroupsForLabelPurchase = createSelector(
 				const resultGroup = { title: group.title, definitions: [] };
 
 				forEach( definitions, pckg => {
+					if ( isInternationalOrder && false === pckg.can_ship_international ) {
+						return;
+					}
+
 					if ( ! pckg.is_flat_rate && ! includes( serviceSelectedIds, pckg.id ) ) {
 						return;
 					}
@@ -122,16 +136,22 @@ export const getPackageGroupsForLabelPurchase = createSelector(
 
 		return result;
 	},
-	( state, siteId = getSelectedSiteId( state ) ) => {
+	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 		const form = getPackagesForm( state, siteId );
 		if ( ! form || ! form.packages ) {
 			return [];
 		}
 
 		const serviceIds = getPredefinedPackageServices( form );
+
+		const shippingLabelForm = getForm( state, orderId, siteId );
+		const originCountryCode = getAddressValues( shippingLabelForm.origin ).country;
+		const destinationCountryCode = getAddressValues( shippingLabelForm.destination ).country;
 		return [
 			...( form.packages.custom || [] ),
 			...serviceIds.map( serviceId => ( form.packages.predefined || {} )[ serviceId ] ),
+			originCountryCode,
+			destinationCountryCode,
 		];
 	}
 );

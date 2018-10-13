@@ -72,5 +72,3 @@ const dispatchPostRevisionsDiffsRequest = dispatchRequest(
 registerHandlers( 'state/data-layer/wpcom/posts/revisions/index.js', {
 	[ POST_REVISIONS_REQUEST ]: [ dispatchPostRevisionsDiffsRequest ],
 } );
-
-export default {};

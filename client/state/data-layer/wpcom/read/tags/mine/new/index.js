@@ -70,5 +70,3 @@ registerHandlers( 'state/data-layer/wpcom/read/tags/mine/new/index.js', {
 		} ),
 	],
 } );
-
-export default {};

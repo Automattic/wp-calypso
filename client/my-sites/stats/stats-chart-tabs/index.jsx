@@ -3,10 +3,10 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { find, flowRight } from 'lodash';
+import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import compareProps from 'lib/compare-props';
-import ElementChart from 'components/chart';
+import Chart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatTabs from '../stats-tabs';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -26,51 +26,46 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { rangeOfPeriod } from 'state/stats/lists/utils';
 import { getSiteOption } from 'state/sites/selectors';
+import { formatDate, getQueryDate } from './utility';
 
 class StatModuleChartTabs extends Component {
-	constructor( props ) {
-		super( props );
-		const activeTab = this.getActiveTab();
-		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
-		this.state = {
-			activeLegendCharts: activeCharts,
-			activeTab: activeTab,
-		};
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		const activeTab = this.getActiveTab( nextProps );
-		const activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
-		if ( activeTab !== this.state.activeTab ) {
-			this.setState( {
-				activeLegendCharts: activeCharts,
-				activeTab: activeTab,
-			} );
-		}
-	}
+	static propTypes = {
+		activeLegend: PropTypes.arrayOf( PropTypes.string ),
+		activeTab: PropTypes.shape( {
+			attr: PropTypes.string,
+			gridicon: PropTypes.string,
+			label: PropTypes.string,
+			legendOptions: PropTypes.arrayOf( PropTypes.string ),
+		} ),
+		availableLegend: PropTypes.arrayOf( PropTypes.string ),
+		charts: PropTypes.arrayOf(
+			PropTypes.shape( {
+				attr: PropTypes.string,
+				gridicon: PropTypes.string,
+				label: PropTypes.string,
+				legendOptions: PropTypes.arrayOf( PropTypes.string ),
+			} )
+		),
+		data: PropTypes.arrayOf(
+			PropTypes.shape( {
+				comments: PropTypes.number,
+				labelDay: PropTypes.string,
+				likes: PropTypes.number,
+				period: PropTypes.string,
+				posts: PropTypes.number,
+				visitors: PropTypes.number,
+				visits: PropTypes.number,
+			} )
+		),
+		isActiveTabLoading: PropTypes.bool,
+		onChangeLegend: PropTypes.func.isRequired,
+	};
 
 	buildTooltipData( item ) {
 		const tooltipData = [];
-		const date = this.props.moment( item.data.period );
 
-		let dateLabel;
-		switch ( this.props.period.period ) {
-			case 'day':
-				dateLabel = date.format( 'LL' );
-				break;
-			case 'week':
-				dateLabel = date.format( 'L' ) + ' - ' + date.add( 6, 'days' ).format( 'L' );
-				break;
-			case 'month':
-				dateLabel = date.format( 'MMMM YYYY' );
-				break;
-			case 'year':
-				dateLabel = date.format( 'YYYY' );
-				break;
-		}
-
+		const dateLabel = formatDate( item.data.period, this.props.period.period );
 		tooltipData.push( {
 			label: dateLabel,
 			className: 'is-date-label',
@@ -151,42 +146,29 @@ class StatModuleChartTabs extends Component {
 	}
 
 	onLegendClick = chartItem => {
-		const activeLegendCharts = this.state.activeLegendCharts;
-		const chartIndex = activeLegendCharts.indexOf( chartItem );
+		const activeLegend = this.props.activeLegend.slice();
+		const chartIndex = activeLegend.indexOf( chartItem );
 		let gaEventAction;
 		if ( -1 === chartIndex ) {
-			activeLegendCharts.push( chartItem );
+			activeLegend.push( chartItem );
 			gaEventAction = ' on';
 		} else {
-			activeLegendCharts.splice( chartIndex );
+			activeLegend.splice( chartIndex );
 			gaEventAction = ' off';
 		}
 		this.props.recordGoogleEvent(
 			'Stats',
 			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
 		);
-		this.setState( {
-			activeLegendCharts,
-		} );
+		this.props.onChangeLegend( activeLegend );
 	};
 
-	getActiveTab( nextProps ) {
-		const props = nextProps || this.props;
-		return find( props.charts, { attr: props.chartTab } ) || props.charts[ 0 ];
-	}
-
-	getLoadedData() {
-		const { quickQueryData, fullQueryData, fullQueryRequesting } = this.props;
-		return fullQueryRequesting ? quickQueryData : fullQueryData;
-	}
-
 	buildChartData() {
-		const data = this.getLoadedData();
+		const { data } = this.props;
 		if ( ! data ) {
 			return [];
 		}
 
-		const activeTab = this.props.chartTab;
 		const labelKey =
 			'label' +
 			this.props.period.period.charAt( 0 ).toUpperCase() +
@@ -197,9 +179,10 @@ class StatModuleChartTabs extends Component {
 				recordClassName = record.classNames.join( ' ' );
 			}
 
+			const { activeLegend } = this.props;
 			let nestedValue;
-			if ( this.state.activeLegendCharts.length ) {
-				nestedValue = record[ this.state.activeLegendCharts[ 0 ] ];
+			if ( activeLegend.length ) {
+				nestedValue = record[ activeLegend[ 0 ] ];
 			}
 
 			const className = classNames( recordClassName, {
@@ -208,7 +191,7 @@ class StatModuleChartTabs extends Component {
 
 			const item = {
 				label: record[ labelKey ],
-				value: record[ activeTab ],
+				value: record[ this.props.chartTab ],
 				data: record,
 				nestedValue,
 				className,
@@ -220,23 +203,8 @@ class StatModuleChartTabs extends Component {
 	}
 
 	render() {
-		const { fullQuery, quickQuery, quickQueryRequesting, fullQueryRequesting, siteId } = this.props;
-		const chartData = this.buildChartData();
-		const activeTab = this.getActiveTab();
-		let availableCharts = [];
-		const data = this.getLoadedData();
-		const activeTabLoading =
-			quickQueryRequesting && fullQueryRequesting && ! ( data && data.length );
-		const classes = [
-			'stats-module',
-			'is-chart-tabs',
-			{
-				'is-loading': activeTabLoading,
-			},
-		];
-		if ( activeTab.legendOptions ) {
-			availableCharts = activeTab.legendOptions;
-		}
+		const { isActiveTabLoading, siteId, quickQuery, fullQuery } = this.props;
+		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
 
 		return (
 			<div>
@@ -248,20 +216,21 @@ class StatModuleChartTabs extends Component {
 				) }
 				<Card className={ classNames( ...classes ) }>
 					<Legend
-						tabs={ this.props.charts }
-						activeTab={ activeTab }
-						availableCharts={ availableCharts }
-						activeCharts={ this.state.activeLegendCharts }
+						activeCharts={ this.props.activeLegend }
+						activeTab={ this.props.activeTab }
+						availableCharts={ this.props.availableLegend }
 						clickHandler={ this.onLegendClick }
+						tabs={ this.props.charts }
 					/>
-					<StatsModulePlaceholder className="is-chart" isLoading={ activeTabLoading } />
-					<ElementChart
-						loading={ activeTabLoading }
-						data={ chartData }
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+					<Chart
 						barClick={ this.props.barClick }
+						data={ this.buildChartData() }
+						loading={ isActiveTabLoading }
 					/>
 					<StatTabs
-						data={ data }
+						data={ this.props.data }
 						tabs={ this.props.charts }
 						switchTab={ this.props.switchTab }
 						selectedTab={ this.props.chartTab }
@@ -274,66 +243,62 @@ class StatModuleChartTabs extends Component {
 	}
 }
 
+const NO_SITE_STATE = {
+	siteId: null,
+	data: [],
+};
+
 const connectComponent = connect(
-	( state, { moment, period: periodObject, chartTab, queryDate } ) => {
+	( state, { period: { period }, chartTab, queryDate } ) => {
 		const siteId = getSelectedSiteId( state );
-		const { period } = periodObject;
+		if ( ! siteId ) {
+			return NO_SITE_STATE;
+		}
+
+		const quantity = 'year' === period ? 10 : 30;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const momentSiteZone = moment().utcOffset( timezoneOffset );
-		let date = rangeOfPeriod( period, momentSiteZone.locale( 'en' ) ).endOf;
+		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 
-		let quantity = 30;
-		switch ( period ) {
-			case 'year':
-				quantity = 10;
-				break;
-		}
-		const periodDifference = moment( date ).diff( moment( queryDate ), period );
-		if ( periodDifference >= quantity ) {
-			date = moment( date )
-				.subtract( Math.floor( periodDifference / quantity ) * quantity, period )
-				.format( 'YYYY-MM-DD' );
-		}
-
-		let quickQueryFields = chartTab;
 		// If we are on the default Tab, grab visitors too
-		if ( 'views' === quickQueryFields ) {
-			quickQueryFields = 'views,visitors';
-		}
+		const quickQueryFields = 'views' === chartTab ? 'views,visitors' : chartTab;
 
-		const query = {
-			unit: period,
-			date,
-			quantity,
-		};
-		const quickQuery = {
-			...query,
-			stat_fields: quickQueryFields,
-		};
-		const fullQuery = {
-			...query,
-			stat_fields: 'views,visitors,likes,comments,post_titles',
-		};
+		const query = { unit: period, date, quantity };
+		const quickQuery = { ...query, stat_fields: quickQueryFields };
+		const fullQuery = { ...query, stat_fields: 'views,visitors,likes,comments,post_titles' };
+
+		const quickQueryRequesting = isRequestingSiteStatsForQuery(
+			state,
+			siteId,
+			'statsVisits',
+			quickQuery
+		);
+		const fullQueryRequesting = isRequestingSiteStatsForQuery(
+			state,
+			siteId,
+			'statsVisits',
+			fullQuery
+		);
+
+		const quickQueryData = getSiteStatsNormalizedData( state, siteId, 'statsVisits', quickQuery );
+		const fullQueryData = getSiteStatsNormalizedData( state, siteId, 'statsVisits', fullQuery );
+		const data = fullQueryRequesting ? quickQueryData : fullQueryData;
 
 		return {
-			quickQueryRequesting: isRequestingSiteStatsForQuery(
-				state,
-				siteId,
-				'statsVisits',
-				quickQuery
-			),
-			quickQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', quickQuery ),
-			fullQueryRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVisits', fullQuery ),
-			fullQueryData: getSiteStatsNormalizedData( state, siteId, 'statsVisits', fullQuery ),
-			quickQuery,
+			data,
 			fullQuery,
+			fullQueryRequesting,
+			isActiveTabLoading: quickQueryRequesting && fullQueryRequesting && ! ( data && data.length ),
+			quickQuery,
+			quickQueryRequesting,
 			siteId,
 		};
 	},
 	{ recordGoogleEvent },
 	null,
 	{
-		areStatePropsEqual: compareProps( { deep: [ 'quickQuery', 'fullQuery' ] } ),
+		areStatePropsEqual: compareProps( {
+			deep: [ 'activeTab', 'fullQuery', 'quickQuery' ],
+		} ),
 	}
 );
 

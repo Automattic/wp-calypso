@@ -112,6 +112,7 @@ class CalendarButton extends Component {
 				isVisible={ showPopover }
 				position={ this.props.popoverPosition }
 				onClose={ this.closePopover }
+				placeholder={ null }
 			/>
 		);
 	}

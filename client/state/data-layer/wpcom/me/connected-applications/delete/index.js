@@ -69,5 +69,3 @@ registerHandlers( 'state/data-layer/wpcom/me/connected-applications/delete/index
 		} ),
 	],
 } );
-
-export default {};

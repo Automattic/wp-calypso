@@ -13,17 +13,17 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityActor from './activity-actor';
+import ActivityDescription from './activity-description';
 import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
-import analytics from 'lib/analytics';
+import EllipsisMenu from 'components/ellipsis-menu';
 import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
 import Button from 'components/button';
-import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
-import FormattedBlock from 'components/notes-formatted-block';
 import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
 import {
 	rewindBackup,
 	rewindBackupDismiss,
@@ -56,15 +56,6 @@ class ActivityLogItem extends Component {
 
 	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
 
-	trackContentLinkClick = ( {
-		target: {
-			dataset: { activity, section, intent },
-		},
-	} ) => {
-		const params = { activity, section, intent };
-		analytics.tracks.recordEvent( 'calypso_activitylog_item_click', params );
-	};
-
 	renderHeader() {
 		const {
 			activityTitle,
@@ -92,7 +83,10 @@ class ActivityLogItem extends Component {
 				) }
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
-						{ this.getActivityDescription() }
+						<ActivityDescription
+							activity={ this.props.activity }
+							rewindIsActive={ this.props.rewindIsActive }
+						/>
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
@@ -107,48 +101,6 @@ class ActivityLogItem extends Component {
 				) }
 			</div>
 		);
-	}
-
-	/**
-	 * Returns formatted activity descriptions straight from ActivityStream or with updates performed here.
-	 * Since after logging an event in ActivityStream it's impossible to change it,
-	 * this updates the text for some specific events whose status might have changed after they were logged.
-	 * In this way we're not showing to the user incorrect facts that might be different now.
-	 *
-	 * @returns {object|string} Activity description, possibly with inserted markup.
-	 */
-	getActivityDescription() {
-		const {
-			activity: { activityName, activityDescription, activityMeta },
-			translate,
-			rewindIsActive,
-		} = this.props;
-
-		// If backup failed due to invalid credentials but Rewind is now active means it was fixed.
-		if (
-			'rewind__backup_error' === activityName &&
-			'bad_credentials' === activityMeta.errorCode &&
-			rewindIsActive
-		) {
-			return translate(
-				'Jetpack had some trouble connecting to your site, but that problem has been resolved.'
-			);
-		}
-
-		/* There is no great way to generate a more valid React key here
-		 * but the index is probably sufficient because these sub-items
-		 * shouldn't be changing. */
-		return activityDescription.map( ( part, i ) => {
-			const { intent, section } = part;
-			return (
-				<FormattedBlock
-					key={ i }
-					content={ part }
-					onClick={ this.trackContentLinkClick }
-					meta={ { activity: activityName, intent, section } }
-				/>
-			);
-		} );
 	}
 
 	renderItemAction() {
@@ -200,15 +152,13 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				<SplitButton
-					icon="history"
-					label={ translate( 'Rewind' ) }
-					onClick={ createRewind }
-					disableMain={ disableRestore }
-					disabled={ disableRestore && disableBackup }
-					compact
-					primary={ ! disableRestore }
-				>
+				<EllipsisMenu>
+					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
+						{ translate( 'Rewind to this point' ) }
+					</PopoverMenuItem>
+
+					<PopoverMenuSeparator />
+
 					<PopoverMenuItem
 						disabled={ disableBackup }
 						icon="cloud-download"
@@ -216,7 +166,7 @@ class ActivityLogItem extends Component {
 					>
 						{ translate( 'Download backup' ) }
 					</PopoverMenuItem>
-				</SplitButton>
+				</EllipsisMenu>
 			</div>
 		);
 	}

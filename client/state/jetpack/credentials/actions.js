@@ -8,6 +8,10 @@ import {
 	JETPACK_CREDENTIALS_UPDATE,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/activity-log/delete-credentials';
+import 'state/data-layer/wpcom/activity-log/rewind/activate';
+import 'state/data-layer/wpcom/activity-log/update-credentials';
+
 export const updateCredentials = ( siteId, credentials ) => ( {
 	type: JETPACK_CREDENTIALS_UPDATE,
 	siteId,

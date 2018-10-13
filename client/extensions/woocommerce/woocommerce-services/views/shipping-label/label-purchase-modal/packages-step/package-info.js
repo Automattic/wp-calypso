@@ -264,7 +264,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 		selected: shippingLabel.form.packages.selected,
 		dimensionUnit: storeOptions.dimension_unit,
 		weightUnit: storeOptions.weight_unit,
-		packageGroups: getPackageGroupsForLabelPurchase( state, siteId ),
+		packageGroups: getPackageGroupsForLabelPurchase( state, orderId, siteId ),
 	};
 };
 

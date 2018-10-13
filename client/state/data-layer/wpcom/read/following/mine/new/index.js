@@ -67,5 +67,3 @@ export function followError( { dispatch }, action, response ) {
 registerHandlers( 'state/data-layer/wpcom/read/following/mine/new/index.js', {
 	[ READER_FOLLOW ]: [ dispatchRequest( requestFollow, receiveFollow, followError ) ],
 } );
-
-export default {};

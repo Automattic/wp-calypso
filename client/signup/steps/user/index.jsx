@@ -124,7 +124,7 @@ export class UserStep extends Component {
 			}
 		} else if ( 1 === getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
-			subHeaderText = translate( 'Welcome to the wonderful WordPress.com community' );
+			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
 		this.setState( { subHeaderText } );

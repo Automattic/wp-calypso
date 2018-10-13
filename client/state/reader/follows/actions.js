@@ -25,6 +25,17 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 } from 'state/action-types';
 
+import 'state/data-layer/wpcom/read/following/mine';
+import 'state/data-layer/wpcom/read/following/mine/delete';
+import 'state/data-layer/wpcom/read/following/mine/new';
+import 'state/data-layer/wpcom/read/site/comment-email-subscriptions/delete';
+import 'state/data-layer/wpcom/read/site/comment-email-subscriptions/new';
+import 'state/data-layer/wpcom/read/site/post-email-subscriptions/delete';
+import 'state/data-layer/wpcom/read/site/post-email-subscriptions/new';
+import 'state/data-layer/wpcom/read/site/post-email-subscriptions/update';
+import 'state/data-layer/wpcom/read/sites/notification-subscriptions/delete';
+import 'state/data-layer/wpcom/read/sites/notification-subscriptions/new';
+
 /**
  * Module variables
  */

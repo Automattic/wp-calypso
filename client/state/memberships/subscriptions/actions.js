@@ -12,6 +12,8 @@ import {
 } from 'state/action-types';
 import wpcom from 'lib/wp';
 
+import 'state/data-layer/wpcom/sites/memberships/subscriptions';
+
 export const requestSubscriptionsList = () => ( {
 	type: MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,
 } );

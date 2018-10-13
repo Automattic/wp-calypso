@@ -39,5 +39,3 @@ registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 		} ),
 	],
 } );
-
-export default {};

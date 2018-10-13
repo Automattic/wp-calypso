@@ -37,9 +37,9 @@ import TiledGallerySave from './save.jsx';
  */
 const MAX_COLUMNS = 8;
 const linkOptions = [
-	{ value: 'attachment', label: __( 'Attachment Page' ) },
-	{ value: 'media', label: __( 'Media File' ) },
-	{ value: 'none', label: __( 'None' ) },
+	{ value: 'attachment', label: __( 'Attachment Page', 'jetpack' ) },
+	{ value: 'media', label: __( 'Media File', 'jetpack' ) },
+	{ value: 'none', label: __( 'None', 'jetpack' ) },
 ];
 
 class TiledGalleryEdit extends Component {
@@ -148,7 +148,7 @@ class TiledGalleryEdit extends Component {
 							render={ ( { open } ) => (
 								<IconButton
 									className="components-toolbar__control"
-									label={ __( 'Edit Gallery' ) }
+									label={ __( 'Edit Gallery', 'jetpack' ) }
 									icon="edit"
 									onClick={ open }
 								/>
@@ -169,8 +169,8 @@ class TiledGalleryEdit extends Component {
 						className={ className }
 						icon="format-gallery"
 						labels={ {
-							title: __( 'Tiled Gallery' ),
-							name: __( 'images' ),
+							title: __( 'Tiled Gallery', 'jetpack' ),
+							name: __( 'images', 'jetpack' ),
 						} }
 						onSelect={ this.onSelectImages }
 						notices={ noticeUI }
@@ -200,10 +200,10 @@ class TiledGalleryEdit extends Component {
 				{ controls }
 				{ isSelected && (
 					<InspectorControls key="inspector">
-						<PanelBody title={ __( 'Tiled Gallery Settings' ) }>
+						<PanelBody title={ __( 'Tiled Gallery Settings', 'jetpack' ) }>
 							{ images.length > 1 && (
 								<RangeControl
-									label={ __( 'Columns' ) }
+									label={ __( 'Columns', 'jetpack' ) }
 									value={ columns }
 									onChange={ this.setColumnsNumber }
 									min={ 1 }
@@ -211,7 +211,7 @@ class TiledGalleryEdit extends Component {
 								/>
 							) }
 							<SelectControl
-								label={ __( 'Link to' ) }
+								label={ __( 'Link to', 'jetpack' ) }
 								value={ linkTo }
 								onChange={ this.setLinkTo }
 								options={ linkOptions }

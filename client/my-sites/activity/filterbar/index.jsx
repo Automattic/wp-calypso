@@ -6,20 +6,32 @@ import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import page from 'page';
 /**
  * Internal dependencies
  */
+import BackButton from 'components/back-button';
 import Button from 'components/button';
 import DateRangeSelector from './date-range-selector';
 import ActionTypeSelector from './action-type-selector';
 import { updateFilter } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
+import getPreviousRoute from 'state/selectors/get-previous-route';
 
 export class Filterbar extends Component {
 	state = {
 		showActivityTypes: false,
 		showActivityDates: false,
+	};
+
+	goBack = () => {
+		const { previousRoute } = this.props;
+		if ( previousRoute ) {
+			page.back( previousRoute );
+			return;
+		}
+		page.back( 'activity-log' );
 	};
 
 	toggleDateRangeSelector = () => {
@@ -98,6 +110,16 @@ export class Filterbar extends Component {
 			return null;
 		}
 
+		if ( filter.backButton ) {
+			return (
+				<div className="filterbar" id="filterbar">
+					<div className="filterbar__wrap card">
+						<BackButton onClick={ this.goBack } />
+					</div>
+				</div>
+			);
+		}
+
 		return (
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
@@ -124,6 +146,10 @@ export class Filterbar extends Component {
 	}
 }
 
+const mapStateToProps = state => ( {
+	previousRoute: getPreviousRoute( state ),
+} );
+
 const mapDispatchToProps = dispatch => ( {
 	resetFilters: sideId =>
 		dispatch(
@@ -135,6 +161,6 @@ const mapDispatchToProps = dispatch => ( {
 } );
 
 export default connect(
-	null,
+	mapStateToProps,
 	mapDispatchToProps
 )( localize( Filterbar ) );

@@ -15,6 +15,8 @@ import {
 } from 'state/site-keyrings/actions';
 import { getSiteKeyringsForService, getSiteKeyringConnection } from 'state/site-keyrings/selectors';
 
+import 'state/data-layer/wpcom/sites/stats/google-my-business';
+
 export const disconnectGoogleMyBusinessAccount = ( siteId, keyringId ) => dispatch =>
 	dispatch( deleteSiteKeyring( siteId, keyringId ) );
 

@@ -8,14 +8,7 @@ import { __ } from '@wordpress/i18n';
 import { Fragment } from '@wordpress/element';
 import { BlockAlignmentToolbar, BlockControls, InspectorControls } from '@wordpress/editor';
 import { moment } from '@wordpress/date';
-import {
-	Button,
-	PanelBody,
-	RangeControl,
-	TextControl,
-	ToggleControl,
-	Toolbar,
-} from '@wordpress/components';
+import { Button, PanelBody, RangeControl, ToggleControl, Toolbar } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -28,7 +21,6 @@ export default ( { attributes, className, setAttributes } ) => {
 		displayContext,
 		displayDate,
 		displayThumbnails,
-		headline,
 		postLayout,
 		postsToShow,
 	} = attributes;
@@ -36,13 +28,13 @@ export default ( { attributes, className, setAttributes } ) => {
 	const layoutControls = [
 		{
 			icon: 'grid-view',
-			title: __( 'Grid View' ),
+			title: __( 'Grid View', 'jetpack' ),
 			onClick: () => setAttributes( { postLayout: 'grid' } ),
 			isActive: postLayout === 'grid',
 		},
 		{
 			icon: 'list-view',
-			title: __( 'List View' ),
+			title: __( 'List View', 'jetpack' ),
 			onClick: () => setAttributes( { postLayout: 'list' } ),
 			isActive: postLayout === 'list',
 		},
@@ -53,29 +45,24 @@ export default ( { attributes, className, setAttributes } ) => {
 	return (
 		<Fragment>
 			<InspectorControls>
-				<PanelBody title={ __( 'Related Posts Settings' ) }>
-					<TextControl
-						label={ __( 'Headline' ) }
-						value={ headline }
-						onChange={ value => setAttributes( { headline: value } ) }
-					/>
+				<PanelBody title={ __( 'Related Posts Settings', 'jetpack' ) }>
 					<ToggleControl
-						label={ __( 'Display thumbnails' ) }
+						label={ __( 'Display thumbnails', 'jetpack' ) }
 						checked={ displayThumbnails }
 						onChange={ value => setAttributes( { displayThumbnails: value } ) }
 					/>
 					<ToggleControl
-						label={ __( 'Display date' ) }
+						label={ __( 'Display date', 'jetpack' ) }
 						checked={ displayDate }
 						onChange={ value => setAttributes( { displayDate: value } ) }
 					/>
 					<ToggleControl
-						label={ __( 'Display context (category or tag)' ) }
+						label={ __( 'Display context (category or tag)', 'jetpack' ) }
 						checked={ displayContext }
 						onChange={ value => setAttributes( { displayContext: value } ) }
 					/>
 					<RangeControl
-						label={ __( 'Number of posts' ) }
+						label={ __( 'Number of posts', 'jetpack' ) }
 						value={ postsToShow }
 						onChange={ value =>
 							setAttributes( { postsToShow: Math.min( value, MAX_POSTS_TO_SHOW ) } )
@@ -104,8 +91,6 @@ export default ( { attributes, className, setAttributes } ) => {
 					[ `align${ align }` ]: align,
 				} ) }
 			>
-				{ headline.length ? <h3>{ headline }</h3> : null }
-
 				<div className={ `${ className }__preview-items` }>
 					{ displayPosts.map( ( post, i ) => (
 						<div className={ `${ className }__preview-post` } key={ i }>
@@ -122,7 +107,7 @@ export default ( { attributes, className, setAttributes } ) => {
 							{ displayDate && (
 								<time
 									dateTime={ moment( post.date ).toISOString() }
-									className={ `${ className }__preview-post-date` }
+									className={ `${ className }__preview-post-date has-small-font-size` }
 								>
 									{ moment( post.date )
 										.local()

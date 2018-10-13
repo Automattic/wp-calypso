@@ -145,7 +145,7 @@ describe( 'markup', () => {
 					siteWithLargeSize,
 					{
 						ID: 1,
-						URL: 'http://example.com/image.png',
+						URL: 'http://example.wordpress.com/image.png',
 						thumbnails: {},
 						width: 5000,
 						height: 2000,
@@ -154,7 +154,7 @@ describe( 'markup', () => {
 				);
 
 				expect( value ).to.equal(
-					'<img src="http://example.com/image.png?w=1024" width="1024" height="410" class="alignnone size-large wp-image-1"/>'
+					'<img src="http://example.wordpress.com/image.png?w=1024" width="1024" height="410" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
 
@@ -170,7 +170,7 @@ describe( 'markup', () => {
 					siteWithLargeSize,
 					{
 						ID: 1,
-						URL: 'http://example.com/image.png',
+						URL: 'http://example.wordpress.com/image.png',
 						thumbnails: {},
 						width: 2000,
 						height: 5000,
@@ -179,7 +179,7 @@ describe( 'markup', () => {
 				);
 
 				expect( value ).to.equal(
-					'<img src="http://example.com/image.png?w=410" width="410" height="1024" class="alignnone size-large wp-image-1"/>'
+					'<img src="http://example.wordpress.com/image.png?w=410" width="410" height="1024" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
 

@@ -109,5 +109,3 @@ registerHandlers( 'state/data-layer/wpcom/read/feed/index.js', {
 		} ),
 	],
 } );
-
-export default {};

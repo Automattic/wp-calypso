@@ -245,9 +245,6 @@ export function createReduxStore( initialState = {} ) {
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
-		isBrowser &&
-			config.isEnabled( 'restore-last-location' ) &&
-			require( './routing/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		navigationMiddleware,
 		isBrowser && require( './comments/middleware.js' ).default,

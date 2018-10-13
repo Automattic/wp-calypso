@@ -88,15 +88,6 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
-	readerSearchPlaceholder: {
-		datestamp: '20180830',
-		variations: {
-			justSearch: 34,
-			nextGreatRead: 33,
-			newFavorite: 33,
-		},
-		defaultVariation: 'justSearch',
-	},
 	domainManagementSuggestionV2: {
 		datestamp: '20181001',
 		variations: {
@@ -116,8 +107,8 @@ export default {
 		defaultVariation: 'default',
 		allowExistingUsers: false,
 	},
-	dotBlogSuggestions: {
-		datestamp: '20181001',
+	dotBlogSuggestionsv2: {
+		datestamp: '20181012',
 		variations: {
 			simple: 50,
 			complex: 50,

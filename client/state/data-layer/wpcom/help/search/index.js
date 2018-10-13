@@ -12,6 +12,7 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { HELP_LINKS_REQUEST } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveHelpLinks } from 'state/help/actions';
+import { registerHandlers } from 'state/data-layer/handler-registry';
 
 /**
  * Dispatches a request to fetch help links that match a certain search query
@@ -42,7 +43,7 @@ export const requestHelpLinks = action =>
  */
 export const handleRequestSuccess = ( action, helpLinks ) => receiveHelpLinks( helpLinks );
 
-export default {
+registerHandlers( 'state/data-layer/wpcom/help/search/index.js', {
 	[ HELP_LINKS_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestHelpLinks,
@@ -50,4 +51,4 @@ export default {
 			onError: noop,
 		} ),
 	],
-};
+} );

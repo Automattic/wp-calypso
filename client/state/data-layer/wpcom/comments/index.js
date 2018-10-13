@@ -219,5 +219,3 @@ registerHandlers( 'state/data-layer/wpcom/comments/index.js', {
 		} ),
 	],
 } );
-
-export default {};

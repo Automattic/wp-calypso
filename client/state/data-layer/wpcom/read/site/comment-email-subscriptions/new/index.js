@@ -52,5 +52,3 @@ registerHandlers( 'state/data-layer/wpcom/read/site/comment-email-subscriptions/
 		),
 	],
 } );
-
-export default {};

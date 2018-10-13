@@ -951,7 +951,7 @@ const videosForSection = {
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/embed/07Nf8FkjO4o',
 			title: 'Change Your Account Email Address',
-			description: 'Find out how to change your account email address WordPress.com.',
+			description: 'Find out how to change your account email address on WordPress.com.',
 		},
 	],
 	customizer: [
