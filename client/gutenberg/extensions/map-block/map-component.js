@@ -50,7 +50,8 @@ export class Map extends Component {
 		this.state = {
 			map: null,
 			fit_to_bounds: false,
-			loaded: false
+			loaded: false,
+			google: null
 		};
 
 		// Event Handlers as methods
@@ -77,7 +78,8 @@ export class Map extends Component {
 
 		const {
 			map,
-			activeMarker
+			activeMarker,
+			google,
 		} = this.state;
 
 		const {
@@ -87,7 +89,7 @@ export class Map extends Component {
 			addPoint
 		} = this;
 
-		const mapMarkers = ( map && window.google ) && points.map( ( point, index ) => {
+		const mapMarkers = ( map && google ) && points.map( ( point, index ) => {
 
 			return (
 				<MapMarker
@@ -95,7 +97,7 @@ export class Map extends Component {
 					point={ point }
 					index={ index }
 					map={ map }
-					google={ window.google.maps }
+					google={ google.maps }
 					icon={ this.getMarkerIcon() }
 					onClick={ onMarkerClick }
 				/>
@@ -110,12 +112,13 @@ export class Map extends Component {
 			caption
 		} = currentPoint;
 
-		const infoWindow = ( window.google ) &&
+		const infoWindow = ( google ) &&
 			(
 				<InfoWindow
 					activeMarker={ activeMarker }
 					map={ map }
-					google={ window.google.maps }
+					google={ google.maps }
+					unsetActiveMarker={ () => this.setState( { activeMarker: null } ) }
 				>
 					{ activeMarker && admin &&
 						<Fragment>
@@ -194,10 +197,14 @@ export class Map extends Component {
 
 	map_styleChanged() {
 
-		const { map } = this.state;
+		const {
+			map,
+			google
+		} = this.state;
+
 		map.setOptions( {
 			styles: this.getMapStyle(),
-			mapTypeId: window.google.maps.MapTypeId[ this.getMapType() ],
+			mapTypeId: google.maps.MapTypeId[ this.getMapType() ],
 		} );
 
 	}
@@ -284,10 +291,11 @@ export class Map extends Component {
 
 		const {
 			map,
-			activeMarker
+			activeMarker,
+			google
 		} = this.state;
 
-		const bounds = new window.google.maps.LatLngBounds();
+		const bounds = new google.maps.LatLngBounds();
 
 		if ( ! map || ! points.length || activeMarker ) {
 			return;
@@ -295,7 +303,7 @@ export class Map extends Component {
 
 		points.forEach( point => {
 			bounds.extend(
-				new window.google.maps.LatLng( point.coordinates.latitude, point.coordinates.longitude )
+				new google.maps.LatLng( point.coordinates.latitude, point.coordinates.longitude )
 			);
 		} );
 
@@ -390,18 +398,25 @@ export class Map extends Component {
 			api_key,
 			'&libraries=places' ].join( '' );
 
+		if ( window.google ) {
+			this.setState( { google: window.google }, this.scriptsLoaded );
+			return;
+		}
+
 		loadScript( src, ( error ) => {
 			if ( error ) {
 				console.log( 'Script ' + error.src + ' failed to load.' );
 				return;
 			}
-			this.scriptsLoaded();
+			this.setState( { google: window.google }, this.scriptsLoaded );
 		} );
 
 	}
 
 	// Create the map object.
 	initMap( map_center ) {
+
+		const { google } = this.state;
 
 		const {
 			points,
@@ -417,11 +432,11 @@ export class Map extends Component {
 				style: 'SMALL',
 			},
 			styles: this.getMapStyle(),
-			mapTypeId: window.google.maps.MapTypeId[ this.getMapType() ],
+			mapTypeId: google.maps.MapTypeId[ this.getMapType() ],
 			zoom: parseInt( zoom, 10 ),
 		};
 
-		const map = new window.google.maps.Map(
+		const map = new google.maps.Map(
 			this.mapRef.current,
 			mapOptions
 		);
@@ -439,8 +454,8 @@ export class Map extends Component {
 			this.sizeMap();
 			this.mapRef.current.addEventListener( 'alignmentChanged', this.sizeMap );
 			window.addEventListener( 'resize', this.sizeMap );
-			window.google.maps.event.trigger( map, 'resize' );
-			map.setCenter( new window.google.maps.LatLng( map_center.latitude, map_center.longitude ) );
+			google.maps.event.trigger( map, 'resize' );
+			map.setCenter( new google.maps.LatLng( map_center.latitude, map_center.longitude ) );
 			this.setBoundsByMarkers();
 			this.setAddPointVisibility( true );
 			this.setState( { loaded: true } );
