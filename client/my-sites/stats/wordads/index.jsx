@@ -7,7 +7,7 @@
 import page from 'page';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, numberFormat } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -69,6 +69,10 @@ class WordAds extends Component {
 		}
 	};
 
+	formatCurrency = value => {
+		return '$' + numberFormat( value, 2 );
+	}
+
 	render() {
 		const { date, site, siteId, slug, translate } = this.props;
 
@@ -83,11 +87,13 @@ class WordAds extends Component {
 				attr: 'cpm',
 				gridicon: 'stats-alt',
 				label: translate( 'Average CPM', { context: 'noun' } ),
+				format: this.formatCurrency,
 			},
 			{
 				attr: 'revenue',
 				gridicon: 'money',
 				label: translate( 'Revenue', { context: 'noun' } ),
+				format: this.formatCurrency,
 			},
 		];
 
