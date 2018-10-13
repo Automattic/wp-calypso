@@ -7,7 +7,6 @@ import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 
 import {
-	ColorPalette,
 	IconButton,
 	PanelBody,
 	Toolbar
@@ -17,7 +16,8 @@ import {
 	RichText,
 	InspectorControls,
 	BlockControls,
-	BlockAlignmentToolbar
+	BlockAlignmentToolbar,
+	PanelColorSettings
 } from '@wordpress/editor';
 
 import {
@@ -91,13 +91,15 @@ registerBlockType( CONFIG.name, {
 							options={ CONFIG.map_styleOptions }
 						/>
 					</PanelBody>
-					<PanelBody title={ __( 'Marker Color' ) }>
-				        <ColorPalette
-				            colors={ CONFIG.marker_colorOptions }
-				            value={ marker_color }
-				            onChange={ ( value ) => setAttributes( { marker_color: value } ) }
-				        />
-					</PanelBody>
+					<PanelColorSettings
+						title={ __( 'Colors' ) }
+						initialOpen={ true }
+						colorSettings={ [ {
+							value: marker_color,
+							onChange: ( value ) => setAttributes( { marker_color: value } ),
+							label: 'Marker Color'
+						} ] }
+					/>
 					<PanelBody title={ __( 'Markers' ) }>
 						<Locations
 							points={ points }
