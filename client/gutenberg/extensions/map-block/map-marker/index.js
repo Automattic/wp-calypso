@@ -34,15 +34,15 @@ export class MapMarker extends Component {
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate() {
 
 		this.renderMarker();
 
 	}
 
-	handleClick( e ) {
+	handleClick() {
 
-		const { onClick, point } = this.props;
+		const { onClick } = this.props;
 		onClick( this );
 
 	}
@@ -53,8 +53,7 @@ export class MapMarker extends Component {
 			map,
 			point,
 			google,
-			icon,
-			onClick
+			icon
 		} = this.props;
 
 		const { handleClick } = this;

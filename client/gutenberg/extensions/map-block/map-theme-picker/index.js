@@ -2,8 +2,6 @@
  * Wordpress dependencies
  */
 
-import { __ } from '@wordpress/i18n';
-
 import {
 	Component,
 	Fragment
@@ -47,7 +45,7 @@ export class MapThemePicker extends Component {
 				<Button
 					className={ classes }
 					key={ index }
-					onClick={ ( value ) => onChange( option.value ) }
+					onClick={ () => onChange( option.value ) }
 				>
 					{ option.label }
 				</Button>

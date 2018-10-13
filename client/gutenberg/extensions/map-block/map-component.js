@@ -66,7 +66,7 @@ export class Map extends Component {
 
 		// Refs
 		this.mapRef = createRef();
-		this.addPointRef = React.createRef();
+		this.addPointRef = createRef();
 
 	}
 
@@ -117,7 +117,7 @@ export class Map extends Component {
 				<InfoWindow
 					activeMarker={ activeMarker }
 					map={ map }
-					google={ google.maps }
+					google={ google }
 					unsetActiveMarker={ () => this.setState( { activeMarker: null } ) }
 				>
 					{ activeMarker && admin &&
@@ -125,7 +125,7 @@ export class Map extends Component {
 							<TextControl
 								label="Marker Title"
 								value={ title }
-								onChange={ ( title ) => updateActiveMarker( { title } ) }
+								onChange={ ( value ) => updateActiveMarker( { title: value } ) }
 							/>
 							<TextareaControl
 								className='wp-block-atavist-maps__marker-caption'
@@ -133,7 +133,7 @@ export class Map extends Component {
 								value={ caption }
 								rows='3'
 								tag='textarea'
-								onChange={ ( caption ) => updateActiveMarker( { caption } ) }
+								onChange={ ( value ) => updateActiveMarker( { caption: value } ) }
 							/>
 							<Button
 								onClick={ deleteActiveMarker }
@@ -284,7 +284,6 @@ export class Map extends Component {
 	setBoundsByMarkers() {
 
 		const {
-			focus_mode,
 			zoom,
 			points
 		} = this.props;
@@ -384,7 +383,7 @@ export class Map extends Component {
 					longitude: position.coords.longitude
 				} );
 			})
-			.catch( ( err ) => {
+			.catch( () => {
 		    	this.initMap( map_center );
 		    } );
 	}
@@ -416,12 +415,7 @@ export class Map extends Component {
 	initMap( map_center ) {
 
 		const { google } = this.state;
-
-		const {
-			points,
-			zoom
-		} = this.props;
-
+		const { zoom } = this.props;
 		const mapOptions = {
 			streetViewControl: false,
 			mapTypeControl: false,
