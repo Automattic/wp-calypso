@@ -18,12 +18,20 @@ import {
 
 export class InfoWindow extends Component {
 
+	constructor() {
+
+		super( ...arguments );
+		this.closeClick = this.closeClick.bind( this );
+
+	}
+
 	componentDidMount() {
 
 		this.el = document.createElement( 'DIV' );
 		this.infowindow = new google.maps.InfoWindow( {
       		content: this.el
     	} );
+    	google.maps.event.addListener( this.infowindow,'closeclick', this.closeClick );
 
 	}
 
@@ -48,6 +56,12 @@ export class InfoWindow extends Component {
 
 	}
 
+	closeClick() {
+
+		this.props.unsetActiveMarker();
+
+	}
+
 	openWindow() {
 
 		this.infowindow
@@ -63,6 +77,7 @@ export class InfoWindow extends Component {
 }
 
 InfoWindow.defaultProps = {
+	unsetActiveMarker: () => {},
 	activeMarker: null,
 	map: null
 }
