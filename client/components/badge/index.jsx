@@ -7,6 +7,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export default class Badge extends React.Component {
 	static propTypes = {
 		type: PropTypes.oneOf( [ 'warning', 'success' ] ).isRequired,

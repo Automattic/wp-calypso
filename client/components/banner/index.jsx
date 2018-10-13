@@ -25,6 +25,11 @@ import PlanIcon from 'components/plans/plan-icon';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
