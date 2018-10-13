@@ -405,7 +405,6 @@ export class Map extends Component {
 
 		loadScript( src, ( error ) => {
 			if ( error ) {
-				console.log( 'Script ' + error.src + ' failed to load.' );
 				return;
 			}
 			this.setState( { google: window.google }, this.scriptsLoaded );
