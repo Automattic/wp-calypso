@@ -22,6 +22,11 @@ import { fetchResetOptionsByLogin } from 'state/account-recovery/reset/actions';
 import getAccountRecoveryResetOptionsError from 'state/selectors/get-account-recovery-reset-options-error';
 import isRequestingAccountRecoveryResetOptions from 'state/selectors/is-requesting-account-recovery-reset-options';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class LostPasswordFormComponent extends Component {
 	constructor( props ) {
 		super( props );

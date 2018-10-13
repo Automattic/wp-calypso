@@ -25,6 +25,11 @@ import getAccountRecoveryResetRequestError from 'state/selectors/get-account-rec
 import getAccountRecoveryResetUserData from 'state/selectors/get-account-recovery-reset-user-data';
 import isRequestingAccountRecoveryReset from 'state/selectors/is-requesting-account-recovery-reset';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ResetPasswordFormComponent extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
