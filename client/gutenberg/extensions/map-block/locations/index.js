@@ -53,7 +53,7 @@ export class Locations extends Component {
 			onChange
 		} = this.props;
 
-		const newPoints = clone( points );
+		let newPoints = clone( points );
 		newPoints[index][field] = value;
 		onChange( newPoints );
 	}
@@ -61,7 +61,7 @@ export class Locations extends Component {
 	render() {
 		const { points } = this.props;
 		const rows = points.map( ( point, index ) =>
-			<PanelBody title={ point.place_title } key={ point.place_id } initialOpen={ false } key={ index }>
+			<PanelBody title={ point.place_title } key={ point.place_id } initialOpen={ false }>
 				<TextControl
 					label="Marker Title"
 					value={ point.title }
