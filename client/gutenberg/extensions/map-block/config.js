@@ -326,14 +326,6 @@ export const CONFIG = {
 			label: 'Terrain (with features)'
 		}
 	],
-	marker_colorOptions: [
-		{ name: 'red', color: 'red' },
-		{ name: 'blue', color: 'blue' },
-		{ name: 'yellow', color: 'yellow' },
-		{ name: 'green', color: 'green' },
-		{ name: 'purple', color: 'purple' },
-		{ name: 'black', color: 'black' }
-	],
 	GOOGLE_MAPS_API_KEY: 'AIzaSyDaj7klnWKpzGx0W5PonA73Dgr68Me8cyg',
 	baseClasses: [
 		'atavist-block',
