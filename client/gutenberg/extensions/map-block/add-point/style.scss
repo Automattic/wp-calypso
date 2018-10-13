@@ -25,7 +25,7 @@
 	// Default z-index for components-popover places it above Edit Post Header and Notices
 	&.components-popover,
 	&.components-popover:not(.is-mobile).is-bottom {
-		z-index: 1;
+		z-index: 20;
 	}
 	.components-button:not(:disabled):not([aria-disabled=true]):focus {
 		background-color: transparent;

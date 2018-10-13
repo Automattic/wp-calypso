@@ -59,7 +59,6 @@ export class AddPoint extends Component {
 	render() {
 
 		const {
-			showPopover,
 			onAddPoint,
 			hideSelf
 		} = this;
@@ -71,7 +70,6 @@ export class AddPoint extends Component {
 		return (
 			<Button
 				className='map__add_btn'
-				onClick={ showPopover }
 			>
 				Add point
 				<Popover className='map__popover'>
