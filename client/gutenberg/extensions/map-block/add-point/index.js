@@ -33,17 +33,13 @@ export class AddPoint extends Component {
 			isVisible: false
 		};
 		this.onAddPoint = this.onAddPoint.bind( this );
-		this.hidePopover = this.hidePopover.bind( this );
 		this.hideSelf = this.hideSelf.bind( this );
 
 	}
 
-	hidePopover( e ){
+	hidePopover() {
 
 		this.setState( { popoverVisible: false } );
-		if ( e ) {
-			e.stopPropagation();
-		}
 
 	}
 
@@ -64,9 +60,7 @@ export class AddPoint extends Component {
 
 		const {
 			showPopover,
-			hidePopover,
 			onAddPoint,
-			setState,
 			hideSelf
 		} = this;
 		const { isVisible } = this.state;

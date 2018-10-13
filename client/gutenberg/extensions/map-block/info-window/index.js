@@ -4,7 +4,6 @@
 
 import {
 	Component,
-	Fragment,
 	createPortal
 } from '@wordpress/element';
 
@@ -27,6 +26,7 @@ export class InfoWindow extends Component {
 
 	componentDidMount() {
 
+		const { google } = this.props;
 		this.el = document.createElement( 'DIV' );
 		this.infowindow = new google.maps.InfoWindow( {
       		content: this.el
@@ -79,7 +79,8 @@ export class InfoWindow extends Component {
 InfoWindow.defaultProps = {
 	unsetActiveMarker: () => {},
 	activeMarker: null,
-	map: null
+	map: null,
+	google: null
 }
 
 export default InfoWindow;

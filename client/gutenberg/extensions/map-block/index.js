@@ -30,7 +30,6 @@ import {
  */
 
 import classnames from 'classnames';
-import { clone } from 'lodash';
 
  /**
  * Internal dependencies
@@ -96,7 +95,7 @@ registerBlockType( CONFIG.name, {
 				        <ColorPalette
 				            colors={ CONFIG.marker_colorOptions }
 				            value={ marker_color }
-				            onChange={ ( marker_color ) => setAttributes( { marker_color } ) }
+				            onChange={ ( value ) => setAttributes( { marker_color: value } ) }
 				        />
 					</PanelBody>
 					<PanelBody title={ __( 'Markers' ) }>
