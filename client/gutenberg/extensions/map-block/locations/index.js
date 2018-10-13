@@ -53,7 +53,7 @@ export class Locations extends Component {
 			onChange
 		} = this.props;
 
-		let newPoints = clone( points );
+		const newPoints = clone( points );
 		newPoints[index][field] = value;
 		onChange( newPoints );
 	}
