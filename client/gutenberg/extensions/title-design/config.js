@@ -37,11 +37,18 @@ export const CONFIG = {
 			source: 'text',
 			selector: '.cover-byline'
 		},
+		id: {
+			type: 'number',
+		},
 		url: {
 			type: 'string',
 		},
-		id: {
-			type: 'number',
+		dimensions: {
+			type: 'object',
+			default: {
+				height: 0,
+				width: 0
+			}
 		},
 		type: {
 			type: 'string',
@@ -57,6 +64,13 @@ export const CONFIG = {
 		shimOpacityRatio: {
 			type: 'number',
 			default: 50,
+		},
+		focalPoint: {
+			type: 'object',
+			default: {
+				x: 0.5,
+				y: 0.5
+			}
 		}
 	},
 	titlePositionOptions: [

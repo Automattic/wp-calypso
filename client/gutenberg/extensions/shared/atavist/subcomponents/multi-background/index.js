@@ -18,9 +18,13 @@ import { Component, Fragment } from '@wordpress/element';
 export class MultiBackground extends Component {
 
 	render() {
-		const { shimColor, mediaURL, mediaType, shimOpacity } = this.props;
+		const { shimColor, mediaURL, mediaType, shimOpacity, focalPoint } = this.props;
 		const shimStyle = { opacity: shimOpacity / 100, 'background-color': shimColor };
-		const imageStyle = { backgroundImage: `url(${ mediaURL })` };
+		const left = focalPoint ? focalPoint.x * 100 : 50;
+		const top = focalPoint ? focalPoint.y * 100 : 50;
+		const imageStyle = {
+			backgroundImage: `url(${ mediaURL })`,
+			backgroundPosition: `${ left }% ${ top }%` };
 		let mediaMarkup;
 		if ( mediaType === 'image' ) {
 			mediaMarkup =

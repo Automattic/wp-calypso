@@ -1,0 +1,42 @@
+.component-focal-point-picker {
+
+	background-color: transparent;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	border: 1px solid lightgray;
+	cursor: pointer;
+	display: block;
+	height: 200px;
+	position: relative;
+	width: 100%;
+
+}
+
+.component-focal-point-picker__target {
+
+	background-color: transparent;
+	cursor: -webkit-grab;
+	height: 30px;
+	opacity: 0.5;
+	position: absolute;
+	width: 30px;
+	z-index: 10000;
+
+	&.is-dragging {
+		cursor: -webkit-grabbing;
+	}
+}
+
+.component-focal-point-picker__icon {
+
+	background: url('./focal-point-dot.svg');
+	background-size: 100%;
+	display: block;
+	height: 100%;
+	left: -15px;
+	position: absolute;
+	top: -15px;
+	width: 100%;
+
+}
