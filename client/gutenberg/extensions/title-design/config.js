@@ -43,6 +43,9 @@ export const CONFIG = {
 		id: {
 			type: 'number',
 		},
+		type: {
+			type: 'string',
+		},
 		titlePosition: {
 			type: 'string',
 			default: 'center-middle'

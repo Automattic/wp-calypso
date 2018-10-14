@@ -12,19 +12,39 @@ import { Component, Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 
+ import './style.scss';
+
 
 export class MultiBackground extends Component {
 
 	render() {
-		const { shimColor, imageURL, shimOpacity } = this.props;
+		const { shimColor, mediaURL, mediaType, shimOpacity } = this.props;
 		const shimStyle = { opacity: shimOpacity / 100, 'background-color': shimColor };
-		const imageStyle = { backgroundImage: `url(${ imageURL })` };
+		const imageStyle = { backgroundImage: `url(${ mediaURL })` };
+		let mediaMarkup;
+		if ( mediaType === 'image' ) {
+			mediaMarkup =
+				<div
+					className="atavist-image"
+					style={ imageStyle }
+				/>;
+		} else if ( mediaType === 'video' ) {
+			mediaMarkup =
+				<video
+					autoplay='true'
+					loop='true'
+					muted='true'
+				>
+					<source src={ mediaURL } type="video/mp4" />
+				</video>;
+		}
 		return (
 			<Fragment>
 				<div class="atavist-multi-background">
 					<div class="atavist-background-image-with-shim">
-						<div class="atavist-image" style={ imageStyle } />
+						{ mediaMarkup }
 						<div class="atavist-background-image-with-shim-shim" style={ shimStyle } />
+						}
 					</div>
 				</div>
 			</Fragment>
@@ -35,7 +55,7 @@ export class MultiBackground extends Component {
 
 MultiBackground.defaultProps = {
 	shimColor: '#000',
-	imageURL: '',
+	mediaURL: '',
 	shimOpacity: 50
 }
 

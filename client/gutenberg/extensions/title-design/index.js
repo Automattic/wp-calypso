@@ -12,6 +12,7 @@ import {
 	MediaUpload,
 	RichText,
 	MediaPlaceholder,
+	PanelColorSettings,
 } from '@wordpress/editor';
 
 import {
@@ -21,7 +22,6 @@ import {
 	PanelBody,
 	withNotices,
 	RangeControl,
-	ColorPalette,
 } from '@wordpress/components';
 import { Fragment } from '@wordpress/element';
 
@@ -57,6 +57,7 @@ registerBlockType( CONFIG.name, {
 			subtitle,
 			byline,
 			id,
+			type,
 			titlePosition,
 			shimOpacityRatio,
 			shimColor,
@@ -66,7 +67,11 @@ registerBlockType( CONFIG.name, {
 				setAttributes( { url: undefined, id: undefined } );
 				return;
 			}
-			setAttributes( { url: media.url, id: media.id } );
+			setAttributes( {
+				url: media.url,
+				id: media.id,
+				type: media.type,
+			} );
 		};
 		const onChangeTitle = value => {
 			setAttributes( { title: value } );
@@ -79,7 +84,7 @@ registerBlockType( CONFIG.name, {
 					<Toolbar>
 						<MediaUpload
 							onSelect={ onSelectImage }
-							type="image"
+							type="image,video"
 							value={ id }
 							render={ ( { open } ) => (
 								<IconButton
@@ -106,18 +111,26 @@ registerBlockType( CONFIG.name, {
 						} }
 						options={ CONFIG.titlePositionOptions }
 					/>
-					<ColorPalette
-						value={ shimColor }
-						onChange={ value => setAttributes( { shimColor: value } ) }
-					/>
-					<RangeControl
-						label={ __( 'Shim Opacity' ) }
-						value={ shimOpacityRatio }
-						onChange={ setShimOpacityRatio }
-						min={ 0 }
-						max={ 100 }
-						step={ 1 }
-					/>
+					<PanelColorSettings
+						title={ __( 'Overlay' ) }
+						initialOpen={ true }
+						colorSettings={ [
+							{
+								value: shimColor,
+								onChange: value => setAttributes( { shimColor: value } ),
+								label: __( 'Overlay Color' ),
+							},
+						] }
+					>
+						<RangeControl
+							label={ __( 'Shim Opacity' ) }
+							value={ shimOpacityRatio }
+							onChange={ setShimOpacityRatio }
+							min={ 0 }
+							max={ 100 }
+							step={ 1 }
+						/>
+					</PanelColorSettings>
 				</PanelBody>
 			</InspectorControls>
 		);
@@ -163,7 +176,8 @@ registerBlockType( CONFIG.name, {
 					<MultiBackground
 						shimColor={ shimColor }
 						shimOpacity={ shimOpacityRatio }
-						imageURL={ url }
+						mediaURL={ url }
+						mediaType={ type }
 					/>
 					<div
 						class="cover-text-outside-wrapper atavist-cover-left-gutter-padding-left atavist-cover-right-gutter-padding-right"
@@ -199,14 +213,24 @@ registerBlockType( CONFIG.name, {
 	} ),
 
 	save: function( { attributes, className } ) {
-		const { url, title, subtitle, byline, titlePosition, shimOpacityRatio, shimColor } = attributes;
+		const {
+			url,
+			type,
+			title,
+			subtitle,
+			byline,
+			titlePosition,
+			shimOpacityRatio,
+			shimColor,
+		} = attributes;
 		const classes = classnames( className );
 		return (
 			<div data-atavist_title_design="1" className={ classes }>
 				<MultiBackground
 					shimColor={ shimColor }
 					shimOpacity={ shimOpacityRatio }
-					imageURL={ url }
+					mediaType={ type }
+					mediaURL={ url }
 				/>
 				<div
 					class="cover-text-outside-wrapper atavist-cover-left-gutter-padding-left atavist-cover-right-gutter-padding-right"
@@ -224,5 +248,5 @@ registerBlockType( CONFIG.name, {
 				</div>
 			</div>
 		);
-	}
+	},
 } );
