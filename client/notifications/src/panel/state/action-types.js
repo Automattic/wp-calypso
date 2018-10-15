@@ -1,3 +1,4 @@
+/** @format */
 export const APPROVE_NOTE = 'APPROVE_NOTE';
 export const CLOSE_PANEL = 'CLOSE_PANEL';
 export const LIKE_NOTE = 'LIKE_NOTE';

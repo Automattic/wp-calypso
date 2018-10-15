@@ -1,3 +1,4 @@
+/** @format */
 import React, { Component } from 'react';
 
 import { bumpStat } from '../rest-client/bump-stat';

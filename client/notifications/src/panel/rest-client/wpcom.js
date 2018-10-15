@@ -1,3 +1,4 @@
+/** @format */
 let wpcomInstance;
 
 export const wpcom = () => wpcomInstance;

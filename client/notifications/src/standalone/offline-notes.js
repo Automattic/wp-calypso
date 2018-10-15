@@ -1,3 +1,4 @@
+/** @format */
 export const response = {
     code: 200,
     headers: [{ name: 'Content-Type', value: 'application\/json' }],

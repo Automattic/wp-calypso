@@ -1,3 +1,4 @@
+/** @format */
 // freeze the local changes to mitigate races with note updates
 // from the server which occurred before the action
 

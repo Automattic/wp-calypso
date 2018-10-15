@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @module templates/index
  */

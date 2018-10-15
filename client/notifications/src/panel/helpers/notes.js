@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Returns last block in list of blocks with 'actions' property
  */

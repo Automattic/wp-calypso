@@ -1,3 +1,4 @@
+/** @format */
 import getNotes from './get-notes';
 
 import { getActions } from '../../helpers/notes';

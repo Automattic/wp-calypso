@@ -1,3 +1,4 @@
+/** @format */
 import React from 'react';
 
 import { html as toHtml } from '../indices-to-html';

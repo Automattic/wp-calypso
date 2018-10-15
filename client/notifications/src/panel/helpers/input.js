@@ -1,3 +1,4 @@
+/** @format */
 import store from '../flux/store';
 
 export const keys = {

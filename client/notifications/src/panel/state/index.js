@@ -1,3 +1,4 @@
+/** @format */
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 
 import actionMiddleware from './action-middleware';

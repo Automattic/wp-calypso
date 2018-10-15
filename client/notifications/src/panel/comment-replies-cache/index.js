@@ -1,3 +1,4 @@
+/** @format */
 /**
  * @module comment-replies-cache/index
  */

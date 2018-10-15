@@ -1,3 +1,4 @@
+/** @format */
 import * as types from '../../action-types';
 
 import getIsNoteRead from '../../selectors/get-is-note-read';

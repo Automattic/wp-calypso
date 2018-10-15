@@ -1,3 +1,4 @@
+/** @format */
 import getUI from './get-ui';
 
 export const getSelectedNoteId = uiState => uiState.selectedNoteId;

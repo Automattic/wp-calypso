@@ -1,3 +1,4 @@
+/** @format */
 import getUI from './get-ui';
 
 const getFilterName = uiState => uiState.filterName;

@@ -1,3 +1,4 @@
+/** @format */
 import { actions } from './constants';
 
 export default (state, action) => {

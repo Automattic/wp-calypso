@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Attempts to parse a string as JSON
  *

@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Provides functions to communicate with parent frame
  *

@@ -1,3 +1,4 @@
+/** @format */
 import React from 'react';
 import { response } from './offline-notes';
 

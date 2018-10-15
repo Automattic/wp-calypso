@@ -1,3 +1,4 @@
+/** @format */
 import React from 'react';
 
 import Gridicon from './gridicons';

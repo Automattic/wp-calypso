@@ -1,3 +1,4 @@
+/** @format */
 import React from 'react';
 
 var getRegExpFor = function(type, textToHighlight) {

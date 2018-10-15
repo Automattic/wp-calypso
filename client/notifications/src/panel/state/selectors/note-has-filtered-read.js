@@ -1,3 +1,4 @@
+/** @format */
 import { includes } from 'lodash';
 
 import getNotes from './get-notes';

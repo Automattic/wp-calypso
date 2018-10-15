@@ -1,3 +1,4 @@
+/** @format */
 import { sortBy, values } from 'lodash';
 
 import getNotes from './get-notes';

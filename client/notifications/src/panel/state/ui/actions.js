@@ -1,3 +1,4 @@
+/** @format */
 import {
   CLOSE_PANEL,
   EDIT_COMMENT,

@@ -1,3 +1,4 @@
+/** @format */
 import { store } from '../state';
 
 const openLink = (href, tracksEvent) => ({ type: 'OPEN_LINK', href, tracksEvent });

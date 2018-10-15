@@ -1,3 +1,4 @@
+/** @format */
 export const bumpStat = (group, name) => {
   let uriComponent = '';
 

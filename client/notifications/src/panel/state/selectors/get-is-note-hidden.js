@@ -1,3 +1,4 @@
+/** @format */
 import getNotes from './get-notes';
 
 export const getIsNoteHidden = (notesState, noteId) => true === notesState.hiddenNoteIds[noteId];
