@@ -6,14 +6,33 @@
 	color: darken( $gray, 20 );
 	font-size: 14px;
 	font-weight: 300;
-	margin-bottom: -10px;
+	margin: 0 18px -10px;
+	padding-top: 24px;
 	text-align: center;
 
 	@include breakpoint( '<660px' ) {
 		padding-top: 10px;
 	}
+
+	@include breakpoint( '>1040px' ) {
+		margin-left: 0;
+		margin-right: 0;
+	}
 }
 
 .flow-progress-indicator__rebrand-cities {
 	display: none;
+}
+
+.step-wrapper__two-columns .flow-progress-indicator {
+	-ms-grid-column: 1;
+	grid-column-start: 1;
+	-ms-grid-column-span: 5;
+	grid-column-end: span 5;
+	-ms-grid-row: 2;
+	grid-row-start: 2;
+	align-self: end;
+	justify-content: start;
+	text-align: left;
+	margin-top: 84px;
 }

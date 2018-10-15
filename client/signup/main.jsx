@@ -59,7 +59,6 @@ import { isValidLandingPageVertical } from 'lib/signup/verticals';
 import steps from './config/steps';
 import flows from './config/flows';
 import stepComponents from './config/step-components';
-import FlowProgressIndicator from './flow-progress-indicator';
 import {
 	canResumeFlow,
 	getCompletedSteps,
@@ -492,14 +491,6 @@ class Signup extends React.Component {
 		return position;
 	}
 
-	getFlowLength() {
-		// fake it for our two-step flow
-		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
-			return 4;
-		}
-		return flows.getFlow( this.props.flowName ).steps.length;
-	}
-
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } ),
@@ -569,19 +560,10 @@ class Signup extends React.Component {
 			this.props.flowName === 'account'
 				? translate( 'Create an account' )
 				: translate( 'Create a site' );
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
 
 		return (
 			<span>
 				<DocumentHead title={ pageTitle } />
-				{ ! this.state.loadingScreenStartTime &&
-					showProgressIndicator && (
-						<FlowProgressIndicator
-							positionInFlow={ this.getPositionInFlow( true ) }
-							flowLength={ this.getFlowLength() }
-							flowName={ this.props.flowName }
-						/>
-					) }
 				<TransitionGroup component="div" className="signup__steps">
 					{ this.renderCurrentStep() }
 				</TransitionGroup>

@@ -7,12 +7,15 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { indexOf } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
 import NavigationLink from 'signup/navigation-link';
+import FlowProgressIndicator from 'signup/flow-progress-indicator';
+import flows from 'signup/config/flows';
 
 class StepWrapper extends Component {
 	static propTypes = {
@@ -92,14 +95,39 @@ class StepWrapper extends Component {
 		}
 	}
 
+	getPositionInFlow( fakedForTwoPartFlows = false ) {
+		let position = indexOf( flows.getFlow( this.props.flowName ).steps, this.props.stepName );
+		if ( fakedForTwoPartFlows && this.props.flowName === 'user-continue' ) {
+			position++;
+		}
+		return position;
+	}
+
+	getFlowLength() {
+		// fake it for our two-step flow
+		if ( [ 'user-first', 'user-continue' ].includes( this.props.flowName ) ) {
+			return 4;
+		}
+		return flows.getFlow( this.props.flowName ).steps.length;
+	}
+
 	render() {
 		const { stepContent, headerButton, hideFormattedHeader, hideBack, hideSkip } = this.props;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-wide-layout': this.props.isWideLayout,
 		} );
 
+		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
+
 		return (
 			<div className={ classes }>
+				{ showProgressIndicator && (
+					<FlowProgressIndicator
+						positionInFlow={ this.getPositionInFlow( true ) }
+						flowLength={ this.getFlowLength() }
+						flowName={ this.props.flowName }
+					/>
+				) }
 				{ ! hideFormattedHeader && (
 					<FormattedHeader
 						id={ 'step-header' }
