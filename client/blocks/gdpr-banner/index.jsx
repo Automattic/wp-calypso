@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import { localizeUrl } from 'lib/i18n-utils';
 import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { isCurrentUserMaybeInGdprZone } from 'lib/analytics/ad-tracking';
@@ -68,7 +69,7 @@ class GdprBanner extends Component {
 				'{{a}}Learn more{{/a}}, including how to control cookies.',
 			{
 				components: {
-					a: <a href="https://automattic.com/cookies" />,
+					a: <a href={ localizeUrl( 'https://automattic.com/cookies' ) } />,
 				},
 			}
 		);
