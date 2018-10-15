@@ -83,8 +83,8 @@ export default {
 	gSuiteDiscountV2: {
 		datestamp: '20180822',
 		variations: {
-			control: 100,
-			discount: 0,
+			control: 0,
+			discount: 100,
 		},
 		defaultVariation: 'control',
 	},
