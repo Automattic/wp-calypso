@@ -1,15 +1,13 @@
-/** @format */
-
 .domain-suggestion {
 	box-sizing: border-box;
 
 	@include clear-fix;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( ">660px" ) {
 		padding: 15px 20px;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint( ">480px" ) {
 		display: flex;
 		align-items: center;
 	}
@@ -42,7 +40,7 @@
 	width: 100%;
 	min-height: 32px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( ">660px" ) {
 		display: flex;
 	}
 
@@ -78,7 +76,7 @@
 		min-height: 44px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( ">660px" ) {
 		.is-placeholder & {
 			margin-right: 50%;
 			min-height: 22px;
@@ -96,7 +94,7 @@
 	> h3 {
 		word-break: break-all;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint( ">660px" ) {
 			width: 75%;
 		}
 
@@ -109,7 +107,7 @@
 .domain-product-price__price {
 	font-size: 1.2em;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint( ">480px" ) {
 		font-size: 1em;
 	}
 }
@@ -117,7 +115,7 @@
 .domain-registration-suggestion__title {
 	font-size: 1.3em;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint( ">480px" ) {
 		align-self: center;
 		padding-right: 2em;
 		font-size: 1em;
@@ -142,7 +140,7 @@
 			border-color: darken( $blue-medium, 4% );
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint( ">480px" ) {
 			margin-left: 1em;
 			margin-top: 0;
 		}
@@ -158,7 +156,7 @@
 		min-height: 26px;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint( ">480px" ) {
 		flex: 1 0 auto;
 		float: none;
 	}

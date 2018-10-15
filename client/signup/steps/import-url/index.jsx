@@ -17,8 +17,9 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
-import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { fetchIsSiteImportable, setNuxUrlInputValue } from 'state/importer-nux/actions';
 import {
 	getNuxUrlError,
 	getNuxUrlInputValue,
@@ -63,16 +64,11 @@ class ImportURLStepComponent extends Component {
 	}
 
 	handleInputChange = event => {
-		// Hide validation if user is updating input.
-		this.setState( {
-			showUrlMessage: false,
-		} );
-
 		this.props.setNuxUrlInputValue( event.target.value );
 	};
 
-	handleInputBlur = () => {
-		this.validateUrl();
+	handleInputBlur = event => {
+		if ( event.target.value ) this.validateUrl();
 	};
 
 	handleInputRef = el => ( this.inputRef = el );
@@ -138,23 +134,9 @@ class ImportURLStepComponent extends Component {
 		const { isLoading, urlInputValue, translate } = this.props;
 		const { showUrlMessage } = this.state;
 		const urlMessage = this.getUrlMessage();
-		const noticeText = translate(
-			"Please wait, we're checking to see if we can import this site."
-		);
 
 		return (
 			<Fragment>
-				{ isLoading && (
-					<Notice
-						className="import-url__notice"
-						status="is-info"
-						icon="info"
-						isLoading={ true }
-						text={ noticeText }
-						showDismiss={ false }
-						isCompact={ true }
-					/>
-				) }
 				<Card className="import-url__card" tagName="div">
 					<form className="import-url__form" onSubmit={ this.handleSubmit }>
 						<FormTextInput
@@ -165,6 +147,7 @@ class ImportURLStepComponent extends Component {
 							onChange={ this.handleInputChange }
 							onBlur={ this.handleInputBlur }
 							inputRef={ this.handleInputRef }
+							isError={ !! urlMessage }
 						/>
 						<FormButton
 							className="import-url__submit-button"
@@ -172,24 +155,31 @@ class ImportURLStepComponent extends Component {
 							busy={ isLoading }
 							type="submit"
 						>
-							{ translate( 'Continue' ) }
+							{ isLoading ? translate( 'Checking&hellip;' ) : translate( 'Continue' ) }
 						</FormButton>
 					</form>
-					{ showUrlMessage &&
-						urlMessage && <FormInputValidation text={ urlMessage } isError={ !! urlMessage } /> }
+					{ showUrlMessage && urlMessage ? (
+						<FormInputValidation
+							className="import-url__url-input-message"
+							text={ urlMessage }
+							isError={ !! urlMessage }
+						/>
+					) : (
+						<FormSettingExplanation className="import-url__url-input-message">
+							{ translate( 'Please enter the full URL of your site.' ) }
+						</FormSettingExplanation>
+					) }
 				</Card>
 
 				<div className="import-url__example">
-					<p className="import-url__example-urls">
+					<ul className="import-url__example-urls">
 						{ translate( 'Example URLs', {
 							comment: 'Title for list of example urls, such as "example.com"',
 						} ) }
-						<ul>
-							<li className="import-url__example-url">example.com</li>
+						<li className="import-url__example-url">example.com</li>
 
-							<li className="import-url__example-url">account.wixsite.com/my-site</li>
-						</ul>
-					</p>
+						<li className="import-url__example-url">account.wixsite.com/my-site</li>
+					</ul>
 					<ExampleDomainBrowser className="import-url__example-browser" />
 				</div>
 			</Fragment>
@@ -197,21 +187,35 @@ class ImportURLStepComponent extends Component {
 	};
 
 	render() {
-		const { flowName, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const { flowName, isLoading, positionInFlow, signupProgress, stepName, translate } = this.props;
+		const noticeText = translate(
+			"Please wait, we're checking to see if we can import this site."
+		);
 
 		return (
-			<StepWrapper
-				className="import-url"
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Where can we find your old site?' ) }
-				subHeaderText={ translate(
-					"Enter your Wix site's URL, sometimes called a domain name or site address."
+			<div className="import-url">
+				{ isLoading && (
+					<Notice
+						className="import-url__notice"
+						status="is-info"
+						icon="info"
+						isLoading={ true }
+						text={ noticeText }
+						showDismiss={ false }
+					/>
 				) }
-				signupProgress={ signupProgress }
-				stepContent={ this.renderContent() }
-			/>
+				<StepWrapper
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
+					headerText={ translate( 'Where can we find your old site?' ) }
+					subHeaderText={ translate(
+						"Enter your Wix site's URL, sometimes called a domain name or site address."
+					) }
+					signupProgress={ signupProgress }
+					stepContent={ this.renderContent() }
+				/>
+			</div>
 		);
 	}
 }
