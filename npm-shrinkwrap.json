@@ -5260,6 +5260,15 @@
         "object-assign": "^4.1.1"
       }
     },
+    "create-react-context": {
+      "version": "0.2.3",
+      "resolved": "https://registry.npmjs.org/create-react-context/-/create-react-context-0.2.3.tgz",
+      "integrity": "sha512-CQBmD0+QGgTaxDL3OX1IDXYqjkp2It4RIbcb99jS6AEg27Ga+a9G3JtK6SIu0HBwPLZlmwt9F7UwWA4Bn92Rag==",
+      "requires": {
+        "fbjs": "^0.8.0",
+        "gud": "^1.0.0"
+      }
+    },
     "creditcards": {
       "version": "3.0.1",
       "resolved": "https://registry.npmjs.org/creditcards/-/creditcards-3.0.1.tgz",
@@ -8888,6 +8897,11 @@
       "resolved": "https://registry.npmjs.org/growly/-/growly-1.3.0.tgz",
       "integrity": "sha1-8QdIy+dq+WS3yWyTxrzCivEgwIE=",
       "dev": true
+    },
+    "gud": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/gud/-/gud-1.0.0.tgz",
+      "integrity": "sha512-zGEOVKFM5sVPPrYs7J5/hYEw2Pof8KCyOwyhG8sAF26mCAeUFAcYPu1mwB7hhpIP29zOIBaDqwuHdLp0jvZXjw=="
     },
     "gzip-size": {
       "version": "5.0.0",
@@ -17430,12 +17444,13 @@
       "integrity": "sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA=="
     },
     "react-live": {
-      "version": "1.11.0",
-      "resolved": "https://registry.npmjs.org/react-live/-/react-live-1.11.0.tgz",
-      "integrity": "sha512-Lx2SnR4Dj3hgPcoHPuOB7pUDp8yjxajyl38uJ3FbZ+8Pfa1Y7gqW3PMQuAUIzjsHACEPqjm4RrXPP0rzrlUKXg==",
+      "version": "1.12.0",
+      "resolved": "https://registry.npmjs.org/react-live/-/react-live-1.12.0.tgz",
+      "integrity": "sha512-zFEpY01fJORF0IiyONqvjwPLBBDp155Ive6tU8ZmetmT2p4XWUKHstnlu4Cayia+n7iu58Owytztu43yvSin8g==",
       "requires": {
         "buble": "^0.19.3",
         "core-js": "^2.4.1",
+        "create-react-context": "^0.2.3",
         "dom-iterator": "^1.0.0",
         "prismjs": "1.6",
         "prop-types": "^15.5.8",
