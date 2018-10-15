@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -15,7 +15,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-export class JetpackConnectHelpButton extends Component {
+export class JetpackConnectHelpButton extends PureComponent {
 	static propTypes = { label: PropTypes.string };
 
 	recordClick = () => void this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
