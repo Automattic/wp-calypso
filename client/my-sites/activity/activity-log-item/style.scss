@@ -14,13 +14,6 @@
 	margin-bottom: 16px;
 }
 
-.activity-log-item.is-aggregated {
-	.foldable-card__main {
-		white-space: pre;
-	}
-	.foldable-card__content {
-		.foldable-card__main {
-			white-space: unset;
 		}
 	}
 }
