@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
 import classNames from 'classnames';
-import { get, isEqual, debounce, startsWith, isBoolean } from 'lodash';
+import { get, noop, startsWith, isBoolean } from 'lodash';
 import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import debug from 'debug';
@@ -15,16 +15,19 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
 import TermsOfService from './terms-of-service';
-import wp from 'lib/wp';
+import { convertToSnakeCase } from 'state/data-layer/utils';
 import { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { CALYPSO_CONTACT } from 'lib/url/support';
+import { errorNotice, removeNotice as removeNoticeAction } from 'state/notices/actions';
+import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
+import { http } from 'state/data-layer/wpcom-http/actions';
 
-const wpcom = wp.undocumented();
 const log = debug( 'calypso:checkout:payment:emergent-payall' );
+const emergentPaywallIframeConfigLookupKey = 'emergent-paywall-iframe-config';
+const emergentPaywallOrderLookupKey = 'emergent-paywall-prepare-order';
 
 export class EmergentPaywallBox extends Component {
 	static propTypes = {
@@ -35,6 +38,21 @@ export class EmergentPaywallBox extends Component {
 
 	static defaultProps = {
 		selectedSite: {},
+		iframeConfig: {
+			chargeId: '',
+			payload: '',
+			paywallUrl: '',
+			signature: '',
+		},
+		isIframeRequesting: false,
+		iframeRequestFailed: false,
+		iframeRequestSuccess: false,
+		userCountryCode: '',
+		orderId: null,
+		orderErrorMessage: '',
+		orderRequestFailed: false,
+		orderRequestSuccess: false,
+		translate: noop,
 	};
 
 	constructor( props ) {
@@ -42,11 +60,20 @@ export class EmergentPaywallBox extends Component {
 		this.state = this.getInitialState();
 		this.iframeRef = React.createRef();
 		this.formRef = React.createRef();
-		this.fetchIframeConfiguration = debounce( this.fetchIframeConfiguration, 500 );
+	}
+
+	getInitialState() {
+		return {
+			paymentMethod: paymentMethodClassName( 'emergent-paywall' ),
+			iframeHeight: 600,
+			iframeWidth: 750,
+			purchaseStatus: '',
+			siteSlug: this.props.selectedSite ? this.props.selectedSite.slug : 'no-site',
+		};
 	}
 
 	componentDidMount() {
-		this.fetchIframeConfiguration();
+		this.props.fetchIframeConfig( this.props.userCountryCode );
 		window.addEventListener( 'message', this.onMessageReceiveHandler, false );
 	}
 
@@ -55,37 +82,70 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( ! isEqual( prevProps.cart.total_cost, this.props.cart.total_cost ) ) {
-			this.fetchIframeConfiguration();
+		// The cart's contents have changed. We fetch the iframe again.
+		if (
+			this.props.cart.products.length &&
+			( prevProps.cart.total_cost !== this.props.cart.total_cost ||
+				prevProps.cart.products.length !== this.props.cart.products.length )
+		) {
+			return this.fetchIframeConfiguration();
+		}
+
+		// We have successfully fetched the iframe config. We can load the iframe via the form.
+		if (
+			this.props.iframeRequestSuccess &&
+			prevProps.iframeConfig.signature !== this.props.iframeConfig.signature
+		) {
+			return this.formRef.current.submit();
+		}
+
+		if ( this.props.iframeRequestFailed ) {
+			log( 'Error fetching Paywall iframe: ', this.props.iframeConfigError );
+			return this.handleTransactionError();
+		}
+
+		// We have successfully created an order.
+		if (
+			this.props.orderRequestSuccess &&
+			this.props.orderId &&
+			this.state.purchaseStatus === 'success'
+		) {
+			log( 'Paywall Order created. Order ID is: ' + this.props.orderId );
+			return this.props.onOrderCreated( {
+				orderId: this.props.orderId,
+				paymentMethod: this.state.paymentMethod,
+				siteSlug: this.state.siteSlug,
+			} );
+		}
+
+		if ( this.props.orderRequestFailed ) {
+			log( 'Error creating Paywall order: ', this.props.orderError );
+			return this.handleTransactionError();
 		}
 	}
 
-	getInitialState() {
-		return {
-			paywall_url: '',
-			paymentMethod: paymentMethodClassName( 'emergent-paywall' ),
-			payload: '',
-			charge_id: '',
-			signature: '',
-			iframeHeight: 600,
-			iframeWidth: 750,
-			hasConfigLoaded: false,
-			redirectTo: '',
-			pendingOrder: false,
-			siteSlug: this.props.selectedSite ? this.props.selectedSite.slug : 'no-site',
-		};
+	fetchIframeConfiguration() {
+		if ( ! this.props.isIframeRequesting ) {
+			this.props.removeNotice( emergentPaywallIframeConfigLookupKey );
+			this.props.fetchIframeConfig( this.props.userCountryCode );
+		}
 	}
 
-	errorMessage = () => {
+	handleTransactionError() {
 		const contactLink = <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
-
-		return translate(
-			'Oops! Something went wrong and your request could not be ' +
-				'processed. Please try again or {{contactLink}}Contact Support{{/contactLink}} if ' +
-				'you continue to have trouble.',
-			{ components: { contactLink } }
+		this.props.showErrorNotice(
+			translate(
+				'Oops! Something went wrong and your request could not be ' +
+					'processed. Please try again or {{contactLink}}Contact Support{{/contactLink}} if ' +
+					'you continue to have trouble.',
+				{ components: { contactLink } }
+			),
+			{
+				id: emergentPaywallIframeConfigLookupKey,
+			}
 		);
-	};
+		return this.fetchIframeConfiguration();
+	}
 
 	/**
 	 * Determines what to do after a `PURCHASE_STATUS` message
@@ -95,32 +155,40 @@ export class EmergentPaywallBox extends Component {
 	 */
 	handlePurchaseStatusMessage( purchaseStatus ) {
 		if ( isBoolean( purchaseStatus.submitted ) ) {
-			log( 'Setting state.pendingOrder to the prepareOrder promise' );
-			return this.setState( { pendingOrder: this.prepareOrder() } );
+			log( 'Preparing Paywall Order' );
+			this.setState( {
+				purchaseStatus: 'submitted',
+			} );
+			return this.props.fetchOrder( {
+				paymentMethod: this.state.paymentMethod,
+				paymentKey: this.props.iframeConfig.chargeId,
+			} );
 		}
 
-		if ( isBoolean( purchaseStatus.success ) ) {
-			if ( true === purchaseStatus.success ) {
-				log( 'Paywall purchase success' );
-				return this.handlePaywallSuccess();
-			}
+		if ( true === purchaseStatus.success ) {
+			log( 'Paywall purchase success' );
+			this.setState( {
+				purchaseStatus: 'success',
+			} );
 		}
 
 		if ( isBoolean( purchaseStatus.close ) ) {
-			log( 'User has closed the iframe' );
+			log( 'User has closed the Paywall iframe' );
 
 			// Resize the iframe to prevent Emergent's error message from showing.
 			this.setState( {
 				iframeHeight: 1,
 				iframeWidth: 1,
+				purchaseStatus: 'close',
 			} );
+
 			// Reload the iframe contents
 			this.formRef.current.submit();
 		}
 	}
 
 	onMessageReceiveHandler = event => {
-		if ( event && startsWith( this.state.paywall_url, event.origin ) ) {
+		if ( event && startsWith( this.props.iframeConfig.paywallUrl, event.origin ) ) {
 			const message = get( JSON.parse( event.data ), 'message', {} );
 			log( 'Received event from Emergent Paywall:', message );
 			switch ( message.name ) {
@@ -139,69 +207,6 @@ export class EmergentPaywallBox extends Component {
 		}
 	};
 
-	handlePaywallSuccess() {
-		this.state.pendingOrder
-			.then( result => {
-				if ( result.order_id ) {
-					log( 'Order created. Order ID is: ' + result.order_id );
-					this.props.onOrderCreated( {
-						orderId: result.order_id,
-						paymentMethod: this.state.paymentMethod,
-						siteSlug: this.state.siteSlug,
-					} );
-				}
-			} )
-			.catch( error => {
-				log( 'Error creating order: ', error, error.message || '' );
-
-				notices.error( this.errorMessage() );
-				this.fetchIframeConfiguration();
-			} );
-	}
-
-	prepareOrder() {
-		const dataForApi = {
-			payment: {
-				paymentMethod: this.state.paymentMethod,
-				paymentKey: this.state.charge_id,
-			},
-			cart: this.props.cart,
-			domainDetails: this.props.transaction.domainDetails,
-		};
-
-		log( 'Preparing Order' );
-
-		// get the order ID from rest endpoint
-		return wpcom.transactions( 'POST', dataForApi );
-	}
-
-	fetchIframeConfiguration = () => {
-		wpcom.emergentPaywallConfiguration(
-			this.props.userCountryCode,
-			this.props.cart,
-			this.props.transaction.domainDetails,
-			this.loadIframe
-		);
-	};
-
-	loadIframe = ( error, iframeConfig ) => {
-		if ( error ) {
-			notices.error( this.errorMessage() );
-			this.setState( this.getInitialState() );
-			return;
-		}
-
-		this.setState(
-			{
-				hasConfigLoaded: true,
-				...iframeConfig,
-			},
-			() => {
-				this.formRef.current.submit();
-			}
-		);
-	};
-
 	renderLoadingBlock() {
 		return (
 			<div className="checkout__emergent-paywall-loading loading-placeholder">
@@ -215,16 +220,21 @@ export class EmergentPaywallBox extends Component {
 	}
 
 	render() {
-		const { payload, paywall_url, signature, iframeHeight, hasConfigLoaded } = this.state;
+		const {
+			iframeConfig: { payload, signature, paywallUrl },
+			iframeRequestSuccess,
+		} = this.props;
+		const { iframeHeight } = this.state;
 		const iframeContainerClasses = classNames( 'checkout__emergent-paywall-frame-container', {
-			'iframe-loaded': hasConfigLoaded,
+			'is-iframe-loaded': iframeRequestSuccess,
 		} );
+
 		return (
 			<div>
 				<TermsOfService />
 				<div className="checkout__payment-box-sections">
 					<div className="checkout__payment-box-section">{ this.props.children }</div>
-					{ ! hasConfigLoaded && this.renderLoadingBlock() }
+					{ ! iframeRequestSuccess && this.renderLoadingBlock() }
 					<div className={ iframeContainerClasses }>
 						<form
 							className="checkout__emergent-paywall-form"
@@ -232,7 +242,7 @@ export class EmergentPaywallBox extends Component {
 							ref={ this.formRef }
 							name="emergent-paywall-get-iframe-contents"
 							target="emergent-paywall-iframe"
-							action={ paywall_url }
+							action={ paywallUrl }
 							method="POST"
 						>
 							<input type="hidden" name="payload" value={ payload } />
@@ -257,16 +267,103 @@ export class EmergentPaywallBox extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
+/**
+ * POST emergent paywall iframe client configuration
+ *
+ * @param {object} postData  { cart, domainDetails, country }
+ * @return {*} Stored data container for request.
+ */
+export const requestEmergentPaywallIframeConfiguration = postData => {
+	const body = convertToSnakeCase( postData );
+	return requestHttpData(
+		emergentPaywallIframeConfigLookupKey,
+		http( {
+			apiVersion: '1.1',
+			body,
+			method: 'POST',
+			path: '/me/emergent-paywall-configuration',
+		} ),
+		{
+			fromApi: () => ( { charge_id, payload, paywall_url, signature } ) => [
+				[
+					emergentPaywallIframeConfigLookupKey,
+					{ chargeId: charge_id, payload, paywallUrl: paywall_url, signature },
+				],
+			],
+			freshness: -Infinity,
+		}
+	);
+};
+
+/**
+ * POST emergent paywall transaction order
+ *
+ * @param {object} postData  { cart, domainDetails, payment }
+ * @return {*} Stored data container for request.
+ */
+export const requestEmergentPaywallOrder = postData => {
+	const body = convertToSnakeCase( postData );
+	const id = `${ emergentPaywallOrderLookupKey }-${ postData.payment.paymentKey }`;
+	return requestHttpData(
+		`${ emergentPaywallOrderLookupKey }-${ postData.payment.paymentKey }`,
+		http( {
+			path: '/me/transactions',
+			apiVersion: '1.1',
+			method: 'POST',
+			body,
+		} ),
+		{
+			fromApi: () => ( { order_id } ) => [ [ id, { orderId: order_id } ] ],
+			freshness: -Infinity,
+		}
+	);
+};
+
+const mapStateToProps = state => {
+	const iframeConfig = getHttpData( emergentPaywallIframeConfigLookupKey ) || {};
+	const order =
+		getHttpData(
+			`${ emergentPaywallOrderLookupKey }-${ get( iframeConfig, 'data.chargeId', '' ) }`
+		) || {};
+
+	return {
+		iframeConfig: iframeConfig.data,
+		iframeConfigError: iframeConfig.error,
+		isIframeRequesting: 'pending' === iframeConfig.state,
+		iframeRequestFailed: 'failure' === iframeConfig.state,
+		iframeRequestSuccess: 'success' === iframeConfig.state,
+		orderError: order.error,
+		orderId: get( order, 'data.orderId', null ),
+		orderRequestFailed: 'failure' === order.state,
+		orderRequestSuccess: 'success' === order.state,
 		userCountryCode: getCurrentUserCountryCode( state ),
-	} ),
-	dispatch => ( {
-		onOrderCreated: ( { orderId, paymentMethod, siteSlug } ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_checkout_form_submit', { payment_method: paymentMethod } )
-			);
-			page.redirect( `/checkout/thank-you/${ siteSlug }/pending/${ orderId }` );
-		},
-	} )
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { cart, transaction } ) => ( {
+	fetchIframeConfig: country =>
+		requestEmergentPaywallIframeConfiguration( {
+			cart,
+			domainDetails: transaction.domainDetails,
+			country,
+		} ),
+	fetchOrder: payment =>
+		requestEmergentPaywallOrder( {
+			cart,
+			domainDetails: transaction.domainDetails,
+			payment,
+		} ),
+	onOrderCreated: ( { orderId, paymentMethod, siteSlug } ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_checkout_form_submit', { payment_method: paymentMethod } )
+		);
+		page.redirect( `/checkout/thank-you/${ siteSlug }/pending/${ orderId }` );
+	},
+	showErrorNotice: ( error, options ) => dispatch( errorNotice( error, options ) ),
+	removeNotice: noticeId => dispatch( removeNoticeAction( noticeId ) ),
+} );
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
 )( localize( EmergentPaywallBox ) );
