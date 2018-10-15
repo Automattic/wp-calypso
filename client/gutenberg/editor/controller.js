@@ -3,12 +3,14 @@
  * External dependencies
  */
 import React from 'react';
+import { plugins, use } from '@wordpress/data';
 import { has, uniqueId } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import GutenbergEditor from 'gutenberg/editor/main';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 function determinePostType( context ) {
@@ -32,6 +34,16 @@ function getPostID( context ) {
 	return parseInt( context.params.post, 10 );
 }
 
+// Trying to follow the initialization steps from https://github.com/WordPress/gutenberg/blob/de2fab7b8d66eea6c1aeb4a51308d47225fc5df8/lib/client-assets.php#L260
+function registerDataPlugins( userId ) {
+	const storageKey = 'WP_DATA_USER_' + userId;
+
+	// Load data package plugins
+	use( plugins.persistence, { storageKey: storageKey } );
+	use( plugins.asyncGenerator );
+	use( plugins.controls );
+}
+
 export const post = ( context, next ) => {
 	//see post-editor/controller.js for reference
 
@@ -43,12 +55,19 @@ export const post = ( context, next ) => {
 	const unsubscribe = context.store.subscribe( () => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
+		const userId = getCurrentUserId( state );
 
 		if ( ! siteId ) {
 			return;
 		}
 
 		unsubscribe();
+
+		if ( ! userId ) {
+			return;
+		}
+
+		registerDataPlugins( userId );
 
 		context.primary = (
 			<GutenbergEditor { ...{ siteId, postId, postType, uniqueDraftKey, isDemoContent } } />
