@@ -89,7 +89,7 @@ export function getSectionGroup( state ) {
  * @return {Boolean}       Whether current section is site-specific
  */
 export function isSiteSection( state ) {
-	return includes( [ 'sites', 'editor' ], getSectionGroup( state ) );
+	return includes( [ 'sites', 'editor', 'gutenberg' ], getSectionGroup( state ) );
 }
 
 /**
