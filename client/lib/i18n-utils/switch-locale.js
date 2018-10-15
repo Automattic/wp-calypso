@@ -6,7 +6,7 @@
 import request from 'superagent';
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
-import { map } from 'lodash';
+import { map, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,10 +15,38 @@ import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
-function languageFileUrl( localeSlug ) {
+/**
+ * Get the protocol, domain, and path part of the language file URL.
+ * Normally it should only serve as a helper function for `getLanguageFileUrl`,
+ * but we export it here still in help with the test suite.
+ *
+ * @return {String} The path URL to the language files.
+ */
+export function getLanguageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
 
-	return `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
+	return `${ protocol }widgets.wp.com/languages/calypso/`;
+}
+
+/**
+ * Get the language file URL for the given locale and file type, js or json.
+ * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
+ *
+ * @param {String} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {String} fileType The desired file type, js or json. Default to json.
+ * @param {Object} languageRevisions An optional language revisions map. If it exists, the function will append the revision within as cache buster.
+ *
+ * @return {String} A language file URL.
+ */
+export function getLanguageFileUrl( localeSlug, fileType = 'json', languageRevisions = {} ) {
+	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+		fileType = 'json';
+	}
+
+	const revision = languageRevisions[ localeSlug ];
+	const fileUrl = `${ getLanguageFilePathUrl() }${ localeSlug }.${ fileType }`;
+
+	return revision ? fileUrl + `?v=${ revision }` : fileUrl;
 }
 
 function setLocaleInDOM( localeSlug, isRTL ) {
@@ -60,7 +88,7 @@ export default function switchLocale( localeSlug ) {
 		i18n.configure( { defaultLocaleSlug: targetLocaleSlug } );
 		setLocaleInDOM( domLocaleSlug, !! language.rtl );
 	} else {
-		request.get( languageFileUrl( targetLocaleSlug ) ).end( function( error, response ) {
+		request.get( getLanguageFileUrl( targetLocaleSlug ) ).end( function( error, response ) {
 			if ( error ) {
 				debug(
 					'Encountered an error loading locale file for ' +

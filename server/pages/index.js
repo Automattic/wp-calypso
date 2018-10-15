@@ -24,6 +24,7 @@ import {
 	split,
 } from 'lodash';
 import bodyParser from 'body-parser';
+import superagent from 'superagent';
 
 /**
  * Internal dependencies
@@ -322,6 +323,24 @@ function setUpLoggedInRoute( req, res, next ) {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
 
+	const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
+	const langPromise = superagent
+		.get( LANG_REVISION_FILE_URL )
+		.then( response => {
+			const languageRevisions = response.body;
+
+			req.context.languageRevisions = languageRevisions;
+
+			return languageRevisions;
+		} )
+		.catch( error => {
+			console.error( 'Failed to fetch the language revision files.', error );
+
+			throw error;
+		} );
+
+	const setupRequests = [ langPromise ];
+
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
@@ -345,7 +364,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		debug( 'Issuing API call to fetch user object' );
 
-		user( req.cookies.wordpress_logged_in, geoCountry )
+		const userPromise = user( req.cookies.wordpress_logged_in, geoCountry )
 			.then( data => {
 				const end = new Date().getTime() - start;
 
@@ -388,8 +407,6 @@ function setUpLoggedInRoute( req, res, next ) {
 						return;
 					}
 				}
-
-				next();
 			} )
 			.catch( error => {
 				if ( error.error === 'authorization_required' ) {
@@ -410,15 +427,17 @@ function setUpLoggedInRoute( req, res, next ) {
 					}
 
 					console.error( 'API Error: ' + errorMessage );
-
-					next( error );
 				}
 
-				return;
+				throw error;
 			} );
-	} else {
-		next();
+
+		setupRequests.push( userPromise );
 	}
+
+	Promise.all( setupRequests )
+		.then( () => next() )
+		.catch( error => next( error ) );
 }
 
 /**
