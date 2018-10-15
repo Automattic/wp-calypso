@@ -162,6 +162,20 @@ export const createAutoDraft = ( siteId, draftKey, postType ) =>
 		{ fromApi: () => data => [ [ draftKey, data ] ] }
 	);
 
+export const requestGutenbergDemoContent = () =>
+	requestHttpData(
+		'gutenberg-demo-content',
+		http(
+			{
+				path: `/gutenberg/demo-content`,
+				method: 'GET',
+				apiNamespace: 'wpcom/v2',
+			},
+			{}
+		),
+		{ fromApi: () => data => [ [ 'gutenberg-demo-content', data ] ] }
+	);
+
 export const requestSitePost = ( siteId, postId, postType ) => {
 	//post and page types are plural except for custom post types
 	//eg /sites/<siteId>/posts/1234 vs /sites/<siteId>/jetpack-testimonial/4
