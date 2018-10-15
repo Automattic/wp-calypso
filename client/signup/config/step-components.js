@@ -34,6 +34,12 @@ import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
 import ReaderLandingStepComponent from 'signup/steps/reader-landing';
 
+/* Improved Onboarding */
+import SiteTypeComponent from 'signup/steps/site-type';
+import BusinessTypeComponent from 'signup/steps/business-type';
+import BusinessNeedsComponent from 'signup/steps/business-needs';
+import BusinessInformationComponent from 'signup/steps/business-information';
+
 export default {
 	about: AboutStepComponent,
 	'clone-start': CloneStartComponent,
@@ -78,4 +84,9 @@ export default {
 	user: UserSignupComponent,
 	'oauth2-user': UserSignupComponent,
 	'reader-landing': ReaderLandingStepComponent,
+	/* Improved Onboarding */
+	'site-type': SiteTypeComponent,
+	'business-type': BusinessTypeComponent,
+	'business-needs': BusinessNeedsComponent,
+	'business-information': BusinessInformationComponent,
 };

@@ -9,6 +9,13 @@
 @import 'signup/navigation-link/style';
 @import 'signup/processing-screen/style';
 @import 'signup/step-wrapper/style';
+
+/* Improved onboarding */
+@import 'signup/steps/site-type/style';
+@import 'signup/steps/business-type/style';
+@import 'signup/steps/business-needs/style';
+@import 'signup/steps/business-information/style';
+
 @import 'signup/steps/about/style';
 @import 'signup/steps/clone-start/style';
 @import 'signup/steps/clone-destination/style';

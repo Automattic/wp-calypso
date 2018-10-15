@@ -1,0 +1,86 @@
+.site-type__wrapper {
+	position: relative;
+
+	strong {
+		color: rgb( 51, 69, 82 );
+		font-size: 1.2em;
+		display: block;
+	}
+
+	.form-label {
+		margin-bottom: 20px;
+	}
+
+	.form-radio {
+		margin-top: 15px;
+		margin-right: 15px;
+	}
+}
+
+.site-type__form-wrapper {
+	max-width: 500px;
+	margin: 0 auto;
+	filter: blur( 0 );
+	transform: translateZ( 0 ) translateX( 0 );
+	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
+}
+
+.site-type__wrapper-is-hidden {
+	pointer-events: none;
+	transform: translateZ( 0 ) translateX( 25% );
+	opacity: 0;
+}
+
+.site-type__segmented-control-wrapper {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.site-type__segmented-control {
+	flex-grow: 1;
+}
+
+.site-type__segment-label {
+	color: $gray-darken-20;
+
+	&:hover {
+		cursor: pointer;
+	}
+}
+
+.site-type__min-label {
+	padding-right: 15px;
+}
+
+.site-type__max-label {
+	padding-left: 15px;
+}
+
+.site-type__submit-wrapper {
+	text-align: center;
+	margin-bottom: 0;
+	padding: 0 15px;
+}
+
+.site-type__submit-wrapper .button {
+	@include breakpoint( '<480px' ) {
+		width: 100%;
+	}
+}
+
+.site-type__last-fieldset {
+	margin-bottom: 0;
+}
+
+h3 {
+	font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+	font-size: 1.5em;
+	font-weight: 700;
+	line-height: 1.2;
+	color: rgb( 51, 69, 82 );
+}
+.form-fieldset {
+	margin-top: 25px;
+	color: rgb( 93, 115, 138 );
+}
