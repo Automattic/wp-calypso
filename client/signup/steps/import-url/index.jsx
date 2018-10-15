@@ -155,7 +155,7 @@ class ImportURLStepComponent extends Component {
 							busy={ isLoading }
 							type="submit"
 						>
-							{ isLoading ? translate( 'Checking&hellip;' ) : translate( 'Continue' ) }
+							{ isLoading ? translate( 'Checking' ) + '...' : translate( 'Continue' ) }
 						</FormButton>
 					</form>
 					{ showUrlMessage && urlMessage ? (
