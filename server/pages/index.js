@@ -43,7 +43,7 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -327,7 +327,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	const langPromise = superagent
 		.get( LANG_REVISION_FILE_URL )
 		.then( response => {
-			const languageRevisions = response.body;
+			const languageRevisions = filterLanguageRevisions( response.body );
 
 			req.context.languageRevisions = languageRevisions;
 

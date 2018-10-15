@@ -54,4 +54,10 @@ describe( 'getLanguageFileUrl()', () => {
 
 		expect( getLanguageFileUrl( 'kr', 'js', { xd: 222 } ) ).toEqual( expected );
 	} );
+
+	test( 'should not use a non-number revision', () => {
+		const expected = getLanguageFilePathUrl() + 'zh.js';
+
+		expect( getLanguageFileUrl( 'zh', 'js', { zh: 'what-is-this?' } ) ).toEqual( expected );
+	} );
 } );

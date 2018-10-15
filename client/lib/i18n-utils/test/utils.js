@@ -18,6 +18,7 @@ import {
 	getSupportSiteLocale,
 	getForumUrl,
 	getPathParts,
+	filterLanguageRevisions,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -322,6 +323,34 @@ describe( 'utils', () => {
 				'the',
 				'money',
 			] );
+		} );
+	} );
+	describe( 'filterLanguageRevisions()', () => {
+		const valid = {
+			en: 123,
+			ja: 456,
+		};
+
+		test( 'should leave a valid object as it is', () => {
+			expect( filterLanguageRevisions( valid ) ).toEqual( valid );
+		} );
+
+		test( 'should filter out unexpected keys.', () => {
+			const invalid = {
+				hahahaha: 999,
+				...valid,
+			};
+
+			expect( filterLanguageRevisions( invalid ) ).toEqual( valid );
+		} );
+
+		test( 'should filter out unexpected values.', () => {
+			const invalid = {
+				es: 'to crash or not to crash, that is the problem.',
+				...valid,
+			};
+
+			expect( filterLanguageRevisions( invalid ) ).toEqual( valid );
 		} );
 	} );
 } );
