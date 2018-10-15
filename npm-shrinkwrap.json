@@ -2958,16 +2958,46 @@
       "integrity": "sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg=="
     },
     "autoprefixer": {
-      "version": "9.1.5",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.1.5.tgz",
-      "integrity": "sha512-kk4Zb6RUc58ld7gdosERHMF3DzIYJc2fp5sX46qEsGXQQy5bXsu8qyLjoxuY1NuQ/cJuCYnx99BfjwnRggrYIw==",
+      "version": "9.2.0",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-9.2.0.tgz",
+      "integrity": "sha512-OuxUyTvzRe9EvKyouPqfr8QUkQ0pH400NOFzI1LFINO8zwgJr7ZTybLql03P//LjR0iWile2lCoy2vRTRSFpMw==",
       "requires": {
-        "browserslist": "^4.1.0",
-        "caniuse-lite": "^1.0.30000884",
+        "browserslist": "^4.2.1",
+        "caniuse-lite": "^1.0.30000890",
         "normalize-range": "^0.1.2",
         "num2fraction": "^1.2.2",
-        "postcss": "^7.0.2",
-        "postcss-value-parser": "^3.2.3"
+        "postcss": "^7.0.5",
+        "postcss-value-parser": "^3.3.1"
+      },
+      "dependencies": {
+        "browserslist": {
+          "version": "4.2.1",
+          "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.2.1.tgz",
+          "integrity": "sha512-1oO0c7Zhejwd+LXihS89WqtKionSbz298rJZKJgfrHIZhrV8AC15gw553VcB0lcEugja7IhWD7iAlrsamfYVPA==",
+          "requires": {
+            "caniuse-lite": "^1.0.30000890",
+            "electron-to-chromium": "^1.3.79",
+            "node-releases": "^1.0.0-alpha.14"
+          }
+        },
+        "electron-to-chromium": {
+          "version": "1.3.79",
+          "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.3.79.tgz",
+          "integrity": "sha512-LQdY3j4PxuUl6xfxiFruTSlCniTrTrzAd8/HfsLEMi0PUpaQ0Iy+Pr4N4VllDYjs0Hyu2lkTbvzqlG+PX9NsNw=="
+        },
+        "node-releases": {
+          "version": "1.0.0-alpha.14",
+          "resolved": "https://registry.npmjs.org/node-releases/-/node-releases-1.0.0-alpha.14.tgz",
+          "integrity": "sha512-G8nnF9cP9QPP/jUmYWw/uUUhumHmkm+X/EarCugYFjYm2uXRMFeOD6CVT3RLdoyCvDUNy51nirGfUItKWs/S1g==",
+          "requires": {
+            "semver": "^5.3.0"
+          }
+        },
+        "postcss-value-parser": {
+          "version": "3.3.1",
+          "resolved": "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-3.3.1.tgz",
+          "integrity": "sha512-pISE66AbVkp4fDQ7VHBwRNXzAAKJjw4Vw7nWI/+Q3vuly7SNfgYXvm6i5IgFylHGK5sP/xHAbB7N49OS4gWNyQ=="
+        }
       }
     },
     "autosize": {
