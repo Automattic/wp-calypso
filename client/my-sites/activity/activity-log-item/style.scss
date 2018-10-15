@@ -6,14 +6,14 @@
 	@include breakpoint( '<480px' ) {
 		margin-left: 8px;
 	}
-}
 
-.activity-log-item .card {
-	flex: 1;
-	margin-top: 8px;
-	margin-bottom: 16px;
-}
+	.card {
+		flex: 1;
+		margin-top: 8px;
+		margin-bottom: 16px;
 
+		.is-expanded & {
+			margin-bottom: 8px;
 		}
 	}
 }
@@ -76,14 +76,8 @@
 
 	.activity-log-item__card.is-expanded & {
 		margin-left: 0px;
-	}
-}
-
-.activity-log-item.is-aggregated {
-	.foldable-card__content {
-		.activity-log-item__type {
-			background: $white;
-		}
+		margin-right: 16px;
+		background: $white;
 	}
 }
 
