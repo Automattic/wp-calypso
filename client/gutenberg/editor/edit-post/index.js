@@ -16,6 +16,8 @@ import deprecated from '@wordpress/deprecated';
 import './hooks';
 import Editor from './editor';
 
+import 'gutenberg/extensions/presets/jetpack';
+
 /**
  * Reinitializes the editor after the user chooses to reboot the editor after
  * an unhandled error occurs, replacing previously mounted editor element using
