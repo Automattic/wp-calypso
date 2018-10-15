@@ -123,9 +123,7 @@ class WpcomChecklist extends PureComponent {
 		}
 
 		if ( this.state.emailSent ) {
-			return translate( 'Email sent', {
-				args: { email: this.props.userEmail },
-			} );
+			return translate( 'Email sent' );
 		}
 
 		return translate( 'Resend email' );
@@ -357,7 +355,7 @@ export default connect(
 			siteSlug,
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 			taskUrls,
-			userEmail: user && user.email,
+			userEmail: ( user && user.email ) || '',
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 		};
 	},
