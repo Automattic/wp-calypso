@@ -210,7 +210,7 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
  *    as is the case in 99.999% of React component contexts
  *
  * @example:
- * withData( {
+ * waitForData( {
  *     geo: () => requestGeoLocation(),
  *     splines: () => requestSplines( siteId ),
  * } ).then( ( { geo, splines } ) => {
@@ -223,7 +223,7 @@ export const requestHttpData = ( requestId, fetchAction, { fromApi, freshness = 
  * @param {int} timeout how many ms to wait until giving up on requests
  * @return {Promise<object>} fulfilled data of request (or partial if could not fulfill)
  */
-export const withData = ( query, { timeout = 5000 } = {} ) =>
+export const waitForData = ( query, { timeout } = {} ) =>
 	new Promise( ( resolve, reject ) => {
 		let unsubscribe = () => {};
 		let timer = null;
@@ -231,16 +231,26 @@ export const withData = ( query, { timeout = 5000 } = {} ) =>
 
 		const getValues = () =>
 			names.reduce(
-				( [ values, allGood ], name ) => {
+				( [ values, allGood, allBad ], name ) => {
 					const value = query[ name ]();
 
-					return [ { ...values, [ name ]: value }, allGood && value.state === 'success' ];
+					return [
+						{ ...values, [ name ]: value },
+						allGood && value.state === 'success',
+						allBad && value.state === 'failure',
+					];
 				},
-				[ {}, true ]
+				[ {}, true, true ]
 			);
 
 		const listener = () => {
-			const [ values, allGood ] = getValues();
+			const [ values, allGood, allBad ] = getValues();
+
+			if ( allBad ) {
+				clearTimeout( timer );
+				unsubscribe();
+				reject( values );
+			}
 
 			if ( allGood ) {
 				clearTimeout( timer );
@@ -249,12 +259,14 @@ export const withData = ( query, { timeout = 5000 } = {} ) =>
 			}
 		};
 
-		timer = setTimeout( () => {
-			const [ values ] = getValues();
+		if ( timeout ) {
+			timer = setTimeout( () => {
+				const [ values ] = getValues();
 
-			unsubscribe();
-			reject( values );
-		}, timeout );
+				unsubscribe();
+				reject( values );
+			}, timeout );
+		}
 
 		unsubscribe = subscribe( listener );
 		listener();
@@ -264,5 +276,5 @@ if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
 	window.httpData = httpData;
 	window.requestHttpData = requestHttpData;
-	window.withData = withData;
+	window.waitForData = waitForData;
 }
