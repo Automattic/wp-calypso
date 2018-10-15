@@ -80,6 +80,10 @@
 	.is-loading & {
 		align-self: center;
 	}
+
+	.activity-log-item__card.is-expanded & {
+		margin-left: 0px;
+	}
 }
 
 .activity-log-item.is-aggregated {
@@ -168,7 +172,6 @@
 	.foldable-card__content {
 		padding: 16px;
 		font-size: 14px;
-		color: $gray-darken-20;
 	}
 
 	.is-loading & {
@@ -179,12 +182,10 @@
 
 .activity-log-item__card-header {
 	display: flex;
-	flex-wrap: wrap;
-	margin-right: 32px;
-	padding-left: 56px;
 	align-items: center;
-	min-width: 0;
 	width: 100%;
+	min-width: 0;
+	padding-left: 56px;
 
 	@include breakpoint( '<960px' ) {
 		flex-direction: column;
@@ -317,6 +318,10 @@
 
 .activity-log-item__description-content {
 	margin-bottom: 8px;
+
+	.activity-log-item.is-aggregated & {
+		margin-bottom: 0;
+	}
 }
 
 .activity-log-item__action {
