@@ -132,7 +132,7 @@ export const receiveCommentError = ( { siteId, commentId, query = {} } ) => {
 };
 
 // @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
-export const fetchCommentsList = ( { dispatch }, action ) => {
+export const fetchCommentsList = action => {
 	if ( 'site' !== get( action, 'query.listType' ) ) {
 		return;
 	}
@@ -149,42 +149,41 @@ export const fetchCommentsList = ( { dispatch }, action ) => {
 		type,
 	};
 
-	dispatch(
-		http(
-			{
-				method: 'GET',
-				path,
-				apiVersion: '1.1',
-				query,
-			},
-			action
-		)
+	return http(
+		{
+			method: 'GET',
+			path,
+			apiVersion: '1.1',
+			query,
+		},
+		action
 	);
 };
 
-export const addComments = ( { dispatch }, { query }, { comments } ) => {
+export const addComments = ( { query }, { comments } ) => {
 	const { siteId, status } = query;
 	// Initialize the comments tree to let CommentList know if a tree is actually loaded and empty.
 	// This is needed as a workaround for Jetpack sites populating their comments trees
 	// via `fetchCommentsList` instead of `fetchCommentsTreeForSite`.
 	// @see https://github.com/Automattic/wp-calypso/pull/16997#discussion_r132161699
 	if ( 0 === comments.length ) {
-		dispatch( updateCommentsQuery( siteId, [], query ) );
-		dispatch( {
-			type: COMMENTS_TREE_SITE_ADD,
-			siteId,
-			status,
-			tree: [],
-		} );
-		return;
+		return [
+			updateCommentsQuery( siteId, [], query ),
+			{
+				type: COMMENTS_TREE_SITE_ADD,
+				siteId,
+				status,
+				tree: [],
+			},
+		];
 	}
 
-	dispatch( updateCommentsQuery( siteId, comments, query ) );
+	const actions = [ updateCommentsQuery( siteId, comments, query ) ];
 
 	const byPost = groupBy( comments, ( { post: { ID } } ) => ID );
 
 	forEach( byPost, ( postComments, post ) =>
-		dispatch(
+		actions.push(
 			receiveComments( {
 				siteId,
 				postId: parseInt( post, 10 ), // keyBy => object property names are strings
@@ -192,9 +191,11 @@ export const addComments = ( { dispatch }, { query }, { comments } ) => {
 			} )
 		)
 	);
+
+	return actions;
 };
 
-const announceFailure = ( { dispatch, getState }, { query: { siteId } } ) => {
+const announceFailure = ( { query: { siteId } } ) => ( dispatch, getState ) => {
 	const site = getRawSite( getState(), siteId );
 	const error =
 		site && site.name
@@ -273,7 +274,13 @@ export const fetchHandler = {
 			onError: announceStatusChangeFailure,
 		} ),
 	],
-	[ COMMENTS_LIST_REQUEST ]: [ dispatchRequest( fetchCommentsList, addComments, announceFailure ) ],
+	[ COMMENTS_LIST_REQUEST ]: [
+		dispatchRequestEx( {
+			fetch: fetchCommentsList,
+			onSuccess: addComments,
+			onError: announceFailure,
+		} ),
+	],
 	[ COMMENT_REQUEST ]: [
 		dispatchRequestEx( {
 			fetch: requestComment,
