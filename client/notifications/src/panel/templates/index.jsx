@@ -101,7 +101,7 @@ class Layout extends React.Component {
 		this.props.global.client = this.props.client;
 		this.props.global.toggleNavigation = this.toggleNavigation;
 
-		if ( 'undefined' == typeof this.props.global.navigation ) {
+		if ( 'undefined' === typeof this.props.global.navigation ) {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */

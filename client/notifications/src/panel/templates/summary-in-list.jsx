@@ -12,8 +12,8 @@ import ImagePreloader from './image-loader';
 
 import { html } from '../indices-to-html';
 
-var debug = require( 'debug' )( 'notifications:summary-in-list' );
-var { recordTracksEvent } = require( '../helpers/stats' );
+const debug = require( 'debug' )( 'notifications:summary-in-list' );
+const { recordTracksEvent } = require( '../helpers/stats' );
 
 export class SummaryInList extends React.Component {
 	handleClick = event => {
@@ -22,23 +22,21 @@ export class SummaryInList extends React.Component {
 
 		if ( event.metaKey || event.shiftKey ) {
 			window.open( this.props.note.url, '_blank' );
+		} else if ( this.props.currentNote == this.props.note.id ) {
+			this.props.unselectNote();
 		} else {
-			if ( this.props.currentNote == this.props.note.id ) {
-				this.props.unselectNote();
-			} else {
-				recordTracksEvent( 'calypso_notification_note_open', {
-					note_type: this.props.note.type,
-				} );
-				this.props.selectNote( this.props.note.id );
-			}
+			recordTracksEvent( 'calypso_notification_note_open', {
+				note_type: this.props.note.type,
+			} );
+			this.props.selectNote( this.props.note.id );
 		}
 	};
 
 	render() {
-		var subject = html( this.props.note.subject[ 0 ], {
+		const subject = html( this.props.note.subject[ 0 ], {
 			links: false,
 		} );
-		var excerpt = null;
+		let excerpt = null;
 
 		if ( 1 < this.props.note.subject.length ) {
 			excerpt = <div className="wpnc__excerpt">{ this.props.note.subject[ 1 ].text }</div>;

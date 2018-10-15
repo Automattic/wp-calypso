@@ -177,8 +177,8 @@ export function getSignature( blocks, note ) {
 	}
 
 	return blocks.map( function( block ) {
-		var type = 'text';
-		var id = null;
+		let type = 'text';
+		let id = null;
 
 		if ( 'undefined' !== typeof block.type ) {
 			type = block.type;
@@ -219,16 +219,16 @@ export function getSignature( blocks, note ) {
 }
 
 export function formatString() {
-	var args = [].slice.apply( arguments );
-	var str = args.shift();
+	const args = [].slice.apply( arguments );
+	const str = args.shift();
 
 	return str.replace( /{(\d+)}/g, function( match, number ) {
-		return typeof args[ number ] != 'undefined' ? args[ number ] : match;
+		return typeof args[ number ] !== 'undefined' ? args[ number ] : match;
 	} );
 }
 
 export function zipWithSignature( blocks, note ) {
-	var signature = getSignature( blocks, note );
+	const signature = getSignature( blocks, note );
 
 	return blocks.map( function( block, i ) {
 		return {

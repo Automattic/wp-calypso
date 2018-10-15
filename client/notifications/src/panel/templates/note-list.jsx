@@ -22,10 +22,10 @@ import Spinner from './spinner';
 import StatusBar from './status-bar';
 import UndoListItem from './undo-list-item';
 
-var DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
+const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
 // from $wpnc__title-bar-height in boot/sizes.scss
-var TITLE_OFFSET = 38;
+const TITLE_OFFSET = 38;
 
 const getDOMNodeOrElse = ref => {
 	try {
@@ -154,7 +154,7 @@ export class NoteList extends React.Component {
 	};
 
 	ensureSelectedNoteVisibility = () => {
-		var scrollTarget = null,
+		let scrollTarget = null,
 			selectedNote = this.props.selectedNote,
 			noteElement = getDOMNodeOrElse( ( this.notes || {} )[ selectedNote ] ),
 			listElement = null,
@@ -167,7 +167,7 @@ export class NoteList extends React.Component {
 			listElement = this.noteList;
 			topPadding = listElement.offsetTop + TITLE_OFFSET;
 
-			var yOffset = listElement.parentNode.scrollTop;
+			const yOffset = listElement.parentNode.scrollTop;
 
 			if ( noteElement.offsetTop - yOffset <= topPadding ) {
 				/* Scroll up if note is above viewport */
@@ -297,8 +297,8 @@ export class NoteList extends React.Component {
 
 		const emptyNoteList = 0 === notes.length;
 
-		var filter = Filters[ this.props.filterName ]();
-		var loadingIndicatorVisibility = { opacity: 0 };
+		const filter = Filters[ this.props.filterName ]();
+		const loadingIndicatorVisibility = { opacity: 0 };
 		if ( this.props.isLoading ) {
 			loadingIndicatorVisibility.opacity = 1;
 			if ( emptyNoteList ) {
