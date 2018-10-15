@@ -180,7 +180,11 @@ export function serverRender( req, res ) {
 
 	context.head = { title, metas, links };
 	context.clientData = config.clientData;
-	context.buildTimestamp = BUILD_TIMESTAMP;
+	try {
+		context.buildTimestamp = BUILD_TIMESTAMP;
+	} catch ( e ) {
+		console.error( e );
+	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.send( renderJsx( 'desktop', context ) );
