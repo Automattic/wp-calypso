@@ -9,7 +9,7 @@ import pick from 'lodash/pick';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { Component, Fragment } from '@wordpress/element';
+import { Component } from '@wordpress/element';
 import {
 	BlockControls,
 	InspectorControls,
@@ -161,7 +161,7 @@ class TiledGalleryEdit extends Component {
 
 		if ( images.length === 0 ) {
 			return (
-				<Fragment>
+				<>
 					{ controls }
 					{ noticeUI }
 					<MediaPlaceholder
@@ -179,7 +179,7 @@ class TiledGalleryEdit extends Component {
 						type="image"
 						multiple
 					/>
-				</Fragment>
+				</>
 			);
 		}
 
@@ -196,7 +196,7 @@ class TiledGalleryEdit extends Component {
 		);
 
 		return (
-			<Fragment>
+			<>
 				{ controls }
 				{ isSelected && (
 					<InspectorControls key="inspector">
@@ -222,7 +222,7 @@ class TiledGalleryEdit extends Component {
 				{ dropZone }
 				{ noticeUI }
 				{ imageTiles }
-			</Fragment>
+			</>
 		);
 	}
 }

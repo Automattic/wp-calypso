@@ -5,7 +5,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { ExternalLink } from '@wordpress/components';
-import { Fragment } from '@wordpress/element';
 import { registerBlockType } from '@wordpress/blocks';
 
 /**
@@ -19,7 +18,7 @@ registerBlockType( 'a8c/markdown', {
 	title: __( 'Markdown', 'jetpack' ),
 
 	description: (
-		<Fragment>
+		<>
 			<p>
 				{ __(
 					'Use regular characters and punctuation to style text, links, and lists.',
@@ -29,7 +28,7 @@ registerBlockType( 'a8c/markdown', {
 			<ExternalLink href="https://en.support.wordpress.com/markdown-quick-reference/">
 				{ __( 'Support reference', 'jetpack' ) }
 			</ExternalLink>
-		</Fragment>
+		</>
 	),
 
 	icon: (

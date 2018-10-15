@@ -13,7 +13,6 @@
  */
 import wp from 'wp';
 import { __ } from '@wordpress/i18n';
-import { Fragment } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { registerStore } from '@wordpress/data';
 
@@ -34,7 +33,7 @@ const {
 } = wp.editPost;
 
 const PluginRender = () => (
-	<Fragment>
+	<>
 		<PluginSidebarMoreMenuItem
 			target="jetpack"
 			icon={ <JetpackLogo size={ 24 } /> }
@@ -51,7 +50,7 @@ const PluginRender = () => (
 		<PluginPrePublishPanel>
 			<PublicizePanel />
 		</PluginPrePublishPanel>
-	</Fragment>
+	</>
 );
 
 registerPlugin( 'a8c-publicize', {
