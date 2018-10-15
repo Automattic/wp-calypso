@@ -64,7 +64,7 @@ class ImportURLStepComponent extends Component {
 			} );
 		}
 
-		this.props.fetchIsSiteImportable( this.props.urlInputValue ).then( () => this.goToNextStep() );
+		this.props.fetchIsSiteImportable( this.props.urlInputValue ).then( this.goToNextStep );
 	};
 
 	goToNextStep = () => {
