@@ -62,7 +62,11 @@ class ActivityLogAggregatedItem extends Component {
 		return (
 			<div className="activity-log-item__card-header">
 				{ actor }
-				<ActivityDescription activity={ activity } />
+				<div className="activity-log-item__description">
+					<div className="activity-log-item__description-content">
+						<ActivityDescription activity={ activity } />
+					</div>
+				</div>
 			</div>
 		);
 	}
