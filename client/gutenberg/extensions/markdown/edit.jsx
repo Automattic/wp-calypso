@@ -23,6 +23,16 @@ class MarkdownEdit extends Component {
 		activePanel: PANEL_EDITOR,
 	};
 
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.isSelected &&
+			! this.props.isSelected &&
+			this.state.activePanel === PANEL_PREVIEW
+		) {
+			this.toggleMode( PANEL_EDITOR )();
+		}
+	}
+
 	isEmpty() {
 		const source = this.props.attributes.source;
 		return ! source || source.trim() === '';
@@ -67,7 +77,7 @@ class MarkdownEdit extends Component {
 					</div>
 				</BlockControls>
 
-				{ activePanel === PANEL_PREVIEW ? (
+				{ activePanel === PANEL_PREVIEW || ! isSelected ? (
 					<MarkdownRenderer className={ `${ className }__preview` } source={ source } />
 				) : (
 					<PlainText
