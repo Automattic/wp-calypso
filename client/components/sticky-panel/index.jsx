@@ -166,7 +166,7 @@ class StickyPanelWithScrollEvent extends React.Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( prevState => getDimensionUpdates( prevState ) ),
+		() => this.setState( prevState => getDimensionUpdates( this, prevState ) ),
 		RESIZE_RATE_IN_MS
 	);
 
