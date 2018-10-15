@@ -88,6 +88,15 @@ class ActivityLogAggregatedItem extends Component {
 						<ActivityDescription activity={ activity } />
 					</div>
 				</div>
+				{ activityMedia && (
+					<ActivityMedia
+						className="activity-log-item__activity-media is-mobile"
+						icon={ false }
+						name={ activityMedia.available && activityMedia.name }
+						thumbnail={ false }
+						fullImage={ activityMedia.available && activityMedia.medium_url }
+					/>
+				) }
 			</div>
 		);
 	}
