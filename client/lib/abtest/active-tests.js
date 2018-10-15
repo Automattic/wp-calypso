@@ -88,16 +88,6 @@ export default {
 		},
 		defaultVariation: 'control',
 	},
-	domainManagementSuggestionV2: {
-		datestamp: '20181001',
-		variations: {
-			domainsbot_front: 80,
-			variation_front: 20,
-		},
-		defaultVariation: 'domainsbot_front',
-		assignmentMethod: 'userId',
-		allowExistingUsers: true,
-	},
 	userFirstSignup: {
 		datestamp: '20180913',
 		variations: {
@@ -114,6 +104,17 @@ export default {
 			complex: 50,
 		},
 		defaultVariation: 'simple',
+		allowExistingUsers: true,
+	},
+	krackenRebootM327: {
+		datestamp: '20181015',
+		variations: {
+			domainsbot_front: 25,
+			variation1_front: 25,
+			variation2_front: 25,
+			variation3_front: 25,
+		},
+		defaultVariation: 'domainsbot_front',
 		allowExistingUsers: true,
 	},
 };
