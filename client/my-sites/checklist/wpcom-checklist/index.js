@@ -27,6 +27,10 @@ import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import userFactory from 'lib/user';
+
+const userLib = userFactory();
 
 const query = { type: 'any', number: 10, order_by: 'ID', order: 'ASC' };
 
@@ -45,6 +49,12 @@ class WpcomChecklist extends PureComponent {
 
 	static defaultProps = {
 		viewMode: 'checklist',
+	};
+
+	state = {
+		pendingRequest: false,
+		emailSent: false,
+		error: null,
 	};
 
 	isComplete( taskId ) {
@@ -82,6 +92,43 @@ class WpcomChecklist extends PureComponent {
 		}
 	};
 
+	handleSendVerificationEmail = e => {
+		e.preventDefault();
+
+		if ( this.state.pendingRequest ) {
+			return;
+		}
+
+		this.setState( {
+			pendingRequest: true,
+		} );
+
+		userLib.sendVerificationEmail( ( error, response ) => {
+			this.setState( {
+				emailSent: response && response.success,
+				error: error,
+				pendingRequest: false,
+			} );
+		} );
+	};
+
+	verificationTaskButtonText() {
+		const { translate } = this.props;
+		if ( this.state.pendingRequest ) {
+			return translate( 'Sending…' );
+		}
+
+		if ( this.state.error ) {
+			return translate( 'Error' );
+		}
+
+		if ( this.state.emailSent ) {
+			return translate( 'Email sent' );
+		}
+
+		return translate( 'Resend email' );
+	}
+
 	render() {
 		const {
 			designType,
@@ -104,6 +151,29 @@ class WpcomChecklist extends PureComponent {
 					isPlaceholder={ ! taskStatuses }
 					updateCompletion={ this.props.updateCompletion }
 				>
+					<TaskComponent
+						bannerImageSrc="/calypso/images/illustrations/checkEmailsDesktop.svg"
+						completed={ this.isComplete( 'email_verified' ) }
+						completedTitle={ translate( 'You validated your email address' ) }
+						description={ translate(
+							'Please click the link in the email we sent to %(email)s.{{br /}}' +
+								'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
+							{
+								args: {
+									email: this.props.userEmail,
+								},
+								components: {
+									br: <br />,
+									changeButton: <a href="/me/account" />,
+								},
+							}
+						) }
+						duration={ translate( '%d minute', '%d minutes', { count: 1, args: [ 1 ] } ) }
+						onClick={ this.handleSendVerificationEmail }
+						siteSlug={ siteSlug }
+						title={ translate( 'Confirm your email address' ) }
+						buttonText={ this.verificationTaskButtonText() }
+					/>
 					<TaskComponent
 						completed
 						completedTitle={ translate( 'You created your site' ) }
@@ -272,6 +342,8 @@ export default connect(
 		const firstPost = find( posts, { type: 'post' } );
 		const contactPage = getContactPage( posts );
 
+		const user = getCurrentUser( state );
+
 		const taskUrls = {
 			post_published: compact( [ '/post', siteSlug, get( firstPost, [ 'ID' ] ) ] ).join( '/' ),
 			contact_page_updated: [ '/page', siteSlug, get( contactPage, [ 'ID' ], 2 ) ].join( '/' ),
@@ -283,6 +355,8 @@ export default connect(
 			siteSlug,
 			taskStatuses: get( getSiteChecklist( state, siteId ), [ 'tasks' ] ),
 			taskUrls,
+			userEmail: ( user && user.email ) || '',
+			needsVerification: ! isCurrentUserEmailVerified( state ),
 		};
 	},
 	{
