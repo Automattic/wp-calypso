@@ -20,6 +20,7 @@ export {
 	getSupportSiteLocale,
 	isDefaultLocale,
 	isLocaleVariant,
+	localizeUrl,
 	canBeTranslated,
 	removeLocaleFromPath,
 	getPathParts,

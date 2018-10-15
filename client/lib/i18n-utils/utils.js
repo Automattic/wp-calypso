@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { find, isString, map, pickBy, includes } from 'lodash';
-import { parse } from 'url';
+import url from 'url';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -94,7 +94,7 @@ export function getLanguage( langSlug ) {
  * @return {string|undefined} The locale slug if present or undefined
  */
 export function getLocaleFromPath( path ) {
-	const urlParts = parse( path );
+	const urlParts = url.parse( path );
 	const locale = getPathParts( urlParts.pathname ).pop();
 
 	return 'undefined' === typeof getLanguage( locale ) ? undefined : locale;
@@ -110,18 +110,161 @@ export function getLocaleFromPath( path ) {
  * @returns {string} original path with new locale slug
  */
 export function addLocaleToPath( path, locale ) {
-	const urlParts = parse( path );
+	const urlParts = url.parse( path );
 	const queryString = urlParts.search || '';
 
 	return removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
 }
 
-export function addLocaleToWpcomUrl( url, locale ) {
-	if ( locale && locale !== 'en' ) {
-		return url.replace( 'https://wordpress.com', 'https://' + locale + '.wordpress.com' );
+const localesToSubdomains = {
+	'pt-br': 'br',
+	br: 'bre',
+	zh: 'zh-cn',
+	'zh-hk': 'zh-tw',
+	'zh-sg': 'zh-cn',
+	kr: 'ko',
+};
+
+const magnificentNonEnLocales = [
+	'es',
+	'pt-br',
+	'de',
+	'fr',
+	'he',
+	'ja',
+	'it',
+	'nl',
+	'ru',
+	'tr',
+	'id',
+	'zh-cn',
+	'zh-tw',
+	'ko',
+	'ar',
+	'sv',
+];
+
+const localesWithBlog = [ 'en', 'ja', 'es', 'pt', 'fr', 'pt-br' ];
+const localesForJetpackCom = [
+	'en',
+	'ar',
+	'de',
+	'es',
+	'fr',
+	'he',
+	'id',
+	'it',
+	'ja',
+	'ko',
+	'nl',
+	'pt-br',
+	'ro',
+	'ru',
+	'sv',
+	'tr',
+	'zh-cn',
+	'zh-tw',
+];
+const localesWithTranslatedSupport = [ 'ja', 'de', 'ru', 'pt-br', 'es' ];
+const localesWithPrivacyPolicy = [ 'en', 'fr', 'de' ];
+const localesWithCookiePolicy = [ 'en', 'fr', 'de' ];
+
+const urlLocalizationMapping = {
+	'wordpress.com': ( urlParts, localeSlug ) => {
+		if ( magnificentNonEnLocales.includes( localeSlug ) ) {
+			if ( localeSlug in localesToSubdomains ) {
+				urlParts.host = localesToSubdomains[ localeSlug ] + '.wordpress.com';
+			} else {
+				urlParts.host = localeSlug + '.wordpress.com';
+			}
+		}
+		return urlParts;
+	},
+	'jetpack.com': ( urlParts, localeSlug ) => {
+		if ( localesForJetpackCom.includes( localeSlug ) ) {
+			if ( localeSlug in localesToSubdomains ) {
+				urlParts.host = localesToSubdomains[ localeSlug ] + '.jetpack.com';
+			} else {
+				urlParts.host = localeSlug + '.jetpack.com';
+			}
+		}
+		return urlParts;
+	},
+	'en.support.wordpress.com': ( urlParts, localeSlug ) => {
+		if ( localesWithTranslatedSupport.includes( localeSlug ) ) {
+			if ( localeSlug in localesToSubdomains ) {
+				urlParts.host = localesToSubdomains[ localeSlug ] + '.support.wordpress.com';
+			} else {
+				urlParts.host = localeSlug + '.support.wordpress.com';
+			}
+		}
+		return urlParts;
+	},
+	'en.blog.wordpress.com': ( urlParts, localeSlug ) => {
+		if ( localesWithBlog.includes( localeSlug ) ) {
+			if ( localeSlug in localesToSubdomains ) {
+				urlParts.host = localesToSubdomains[ localeSlug ] + '.blog.wordpress.com';
+			} else {
+				urlParts.host = localeSlug + '.blog.wordpress.com';
+			}
+		}
+		return urlParts;
+	},
+	'en.forums.wordpress.com': ( urlParts, localeSlug ) => {
+		if ( config( 'forum_locales' ).includes( localeSlug ) ) {
+			if ( localeSlug in localesToSubdomains ) {
+				urlParts.host = localesToSubdomains[ localeSlug ] + '.forums.wordpress.com';
+			} else {
+				urlParts.host = localeSlug + '.forums.wordpress.com';
+			}
+		}
+		return urlParts;
+	},
+	'automattic.com/privacy/': ( urlParts, localeSlug ) => {
+		if ( localesWithPrivacyPolicy.includes( localeSlug ) ) {
+			urlParts.pathname = localeSlug + urlParts.pathname;
+		}
+		return urlParts;
+	},
+	'automattic.com/cookies/': ( urlParts, localeSlug ) => {
+		if ( localesWithCookiePolicy.includes( localeSlug ) ) {
+			urlParts.pathname = localeSlug + urlParts.pathname;
+		}
+		return urlParts;
+	},
+};
+
+export function localizeUrl( fullUrl ) {
+	const localeSlug = getLocaleSlug();
+	// Let's trailingslashit() the URL
+	const urlParts = url.parse( fullUrl.replace( /\/+$/, '/' ) );
+	urlParts.protocol = 'https';
+
+	if ( ! localeSlug || 'en' === localeSlug ) {
+		if ( 'en.wordpress.com' === urlParts.hostname ) {
+			urlParts.host = 'wordpress.com';
+			return url.format( urlParts );
+		}
+		return fullUrl;
 	}
 
-	return url;
+	const lookup = [ urlParts.hostname, urlParts.hostname + urlParts.pathname ];
+
+	for ( let i = lookup.length; i >= 0; i-- ) {
+		if ( lookup[ i ] in urlLocalizationMapping ) {
+			return url.format( urlLocalizationMapping[ lookup[ i ] ]( urlParts, localeSlug ) );
+		}
+	}
+
+	return fullUrl;
+}
+
+export function addLocaleToWpcomUrl( fullUrl, locale ) {
+	if ( locale && locale !== 'en' ) {
+		return fullUrl.replace( 'https://wordpress.com', 'https://' + locale + '.wordpress.com' );
+	}
+
+	return fullUrl;
 }
 
 /**
@@ -131,7 +274,7 @@ export function addLocaleToWpcomUrl( url, locale ) {
  * @returns {string} original path minus locale slug
  */
 export function removeLocaleFromPath( path ) {
-	const urlParts = parse( path );
+	const urlParts = url.parse( path );
 	const queryString = urlParts.search || '';
 	const parts = getPathParts( urlParts.pathname );
 	const locale = parts.pop();
