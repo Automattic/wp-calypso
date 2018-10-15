@@ -11,7 +11,11 @@ In the following example, the tours `gdocsIntegrationTour` and `editorInsertMenu
 
 ![Tour seen](./img/tour-seen.png)
 
-Currently, there is no systematic way of clearing a user's history for debugging. One way you can clear it is by applying the [`clean-history.patch`](./patch/clean-history.patch) to your working tree, load the page to clean the history, and remove it again.
+Currently, there is no systematic way of clearing a user's history for debugging. One way you can clear it is by applying the [`clean-history.patch`](./patch/clean-history.patch) to your working tree.
+
+To do this, run `git apply client/layout/guided-tours/docs/patch/clean-history.patch` from the application root directory.
+
+Reload the page to clean the history, then remove the patch again.
 
 ## My tour is only shown when called via the query arg
 
