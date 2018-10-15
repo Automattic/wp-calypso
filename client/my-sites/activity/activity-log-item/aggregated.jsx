@@ -23,6 +23,7 @@ import { getActivityLogFilter } from 'state/selectors/get-activity-log-filter';
 import { filterStateToQuery } from 'state/activity-log/utils';
 import { addQueryArgs } from 'lib/url';
 import ActivityActor from './activity-actor';
+import ActivityMedia from './activity-media';
 
 const MAX_STREAM_ITEMS_IN_AGGREGATE = 10;
 
@@ -51,7 +52,14 @@ class ActivityLogAggregatedItem extends Component {
 
 	renderHeader() {
 		const { activity } = this.props;
-		const { actorAvatarUrl, actorName, actorRole, actorType, multipleActors } = activity;
+		const {
+			actorAvatarUrl,
+			actorName,
+			actorRole,
+			actorType,
+			multipleActors,
+			activityMedia,
+		} = activity;
 		let actor;
 		if ( multipleActors ) {
 			actor = <ActivityActor actorType="Multiple" />;
@@ -62,11 +70,33 @@ class ActivityLogAggregatedItem extends Component {
 		return (
 			<div className="activity-log-item__card-header">
 				{ actor }
+				{ activityMedia && (
+					<ActivityMedia
+						className={ classNames( {
+							'activity-log-item__activity-media': true,
+							'is-desktop': true,
+							'has-gridicon': ! activityMedia.available,
+						} ) }
+						icon={ ! activityMedia.available && activityMedia.gridicon }
+						name={ activityMedia.available && activityMedia.name }
+						thumbnail={ activityMedia.available && activityMedia.thumbnail_url }
+						fullImage={ false }
+					/>
+				) }
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
 						<ActivityDescription activity={ activity } />
 					</div>
 				</div>
+				{ activityMedia && (
+					<ActivityMedia
+						className="activity-log-item__activity-media is-mobile"
+						icon={ false }
+						name={ activityMedia.available && activityMedia.name }
+						thumbnail={ false }
+						fullImage={ activityMedia.available && activityMedia.medium_url }
+					/>
+				) }
 			</div>
 		);
 	}
