@@ -6572,24 +6572,6 @@
         }
       }
     },
-    "eslines": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/eslines/-/eslines-1.1.0.tgz",
-      "integrity": "sha1-eA3YIE5bluBb3I8BUCzVJ1q/xGQ=",
-      "dev": true,
-      "requires": {
-        "jest-docblock": "20.0.3",
-        "optionator": "0.8.1"
-      },
-      "dependencies": {
-        "jest-docblock": {
-          "version": "20.0.3",
-          "resolved": "https://registry.npmjs.org/jest-docblock/-/jest-docblock-20.0.3.tgz",
-          "integrity": "sha1-F76phDQswz2DxQ++FUXqDvqkRxI=",
-          "dev": true
-        }
-      }
-    },
     "eslint": {
       "version": "5.7.0",
       "resolved": "https://registry.npmjs.org/eslint/-/eslint-5.7.0.tgz",
@@ -6713,12 +6695,6 @@
       "version": "4.0.1",
       "resolved": "https://registry.npmjs.org/eslint-config-wpcalypso/-/eslint-config-wpcalypso-4.0.1.tgz",
       "integrity": "sha512-/MdCPOQusYRJI57/GFNi523CW75CUIoqKEY+8XhDtkz0iSeFXl12c2hW2l4ezE0cDbhMUwSslI07YpSPW7nRgA==",
-      "dev": true
-    },
-    "eslint-eslines": {
-      "version": "1.0.0",
-      "resolved": "https://registry.npmjs.org/eslint-eslines/-/eslint-eslines-1.0.0.tgz",
-      "integrity": "sha1-nOGpWjO6E/8rOTwFu6wlmMdFNVg=",
       "dev": true
     },
     "eslint-import-resolver-node": {
