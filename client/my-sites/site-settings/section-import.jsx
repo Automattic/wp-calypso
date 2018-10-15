@@ -24,7 +24,6 @@ import BloggerImporter from 'my-sites/importer/importer-blogger';
 import SiteImporter from 'my-sites/importer/importer-site-importer';
 import SquarespaceImporter from 'my-sites/importer/importer-squarespace';
 import { fetchState, startImport } from 'lib/importer/actions';
-import { connectDispatcher } from 'my-sites/importer/dispatcher-converter';
 import {
 	appStates,
 	WORDPRESS,
@@ -282,14 +281,15 @@ class SiteSettingsImport extends Component {
 
 export default flow(
 	localize,
-	connectDispatcher( null, dispatch => ( {
-		// @TODO Flux -> redux
-		startImport: ( siteId, engine ) => dispatch( startImport( siteId, engine ) ),
-	} ) ),
-	connect( state => ( {
-		engine: getSelectedImportEngine( state ),
-		fromSite: getImporterSiteUrl( state ),
-		site: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-	} ) )
+	connect(
+		state => ( {
+			engine: getSelectedImportEngine( state ),
+			fromSite: getImporterSiteUrl( state ),
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+		} ),
+		{
+			startImport,
+		}
+	)
 )( SiteSettingsImport );

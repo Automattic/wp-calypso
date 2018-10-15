@@ -191,14 +191,18 @@ export const setUploadProgress = ( importerId, data ) => ( {
 	importerId,
 } );
 
-export const startImport = ( siteId, importerType ) =>
-	Dispatcher.handleViewAction( {
+export const startImport = ( siteId, importerType ) => {
+	const action = {
 		type: IMPORTS_IMPORT_START,
 		// Use a fake ID until the server returns the real one
 		importerId: `${ ID_GENERATOR_PREFIX }${ Math.round( Math.random() * 10000 ) }`,
 		importerType,
 		siteId,
-	} );
+	};
+
+	Dispatcher.handleViewAction( action );
+	return action;
+};
 
 export function startImporting( importerStatus ) {
 	const {
