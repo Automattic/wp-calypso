@@ -56,3 +56,9 @@
 		top: 3px;
 	}
 }
+
+.is-section-signup .logged-out-form,
+.is-section-signup .signup-form__social,
+.is-section-signup .signup-form__notice.notice {
+	max-width: 100%;
+}

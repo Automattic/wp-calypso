@@ -612,6 +612,7 @@ class AboutStep extends Component {
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
+				className={ classNames( 'step-wrapper__two-columns' ) }
 				positionInFlow={ positionInFlow }
 				headerText={ translate( 'Let’s create a site.' ) }
 				subHeaderText={ translate(

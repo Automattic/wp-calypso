@@ -64,6 +64,10 @@
 
 /* New Signup Styles */
 
+.formatted-header {
+	text-align: center;
+}
+
 .formatted-header__title {
 	font-family: $signup-sans;
 	font-size: 2.953em;
@@ -79,5 +83,46 @@
 
  	.formatted-header__subtitle {
 		font-size: 1.313em;
+	}
+
+	.step-wrapper__two-columns.step-wrapper {
+		display: -ms-grid;
+		display: grid;
+		-ms-grid-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+		grid-template-columns: repeat(12,1fr);
+		grid-column-gap: 24px;
+		-ms-grid-rows: auto auto auto auto auto;
+		grid-template-rows: repeat(5,auto);
+		grid-row-gap: 24px;
+		width: 100%;
+	}
+
+ 	.step-wrapper__two-columns .formatted-header {
+		-ms-grid-column: 1;
+		grid-column-start: 1;
+		-ms-grid-column-span: 5;
+		grid-column-end: span 5;
+		-ms-grid-row: 3;
+		grid-row-start: 3;
+		-ms-grid-row-span: 2;
+		grid-row-end: span 2;
+		margin: 0;
+		text-align: left;
+	}
+
+	.step-wrapper__two-columns .formatted-header__title {
+		margin-top: 0;
+	}
+
+ 	.step-wrapper__two-columns .step-wrapper__content {
+		-ms-grid-column: 7;
+		grid-column-start: 7;
+		-ms-grid-column-span: 6;
+		grid-column-end: span 6;
+		-ms-grid-row: 2;
+		grid-row-start: 2;
+		-ms-grid-row-span: 4;
+		grid-row-end: span 4;
+		align-self: start;
 	}
 } 

@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, isEmpty, omit, get } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -295,6 +296,7 @@ export class UserStep extends Component {
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
+				className={ classNames( 'step-wrapper__two-columns' ) }
 				headerText={ this.getHeaderText() }
 				subHeaderText={ this.state.subHeaderText }
 				positionInFlow={ this.props.positionInFlow }
