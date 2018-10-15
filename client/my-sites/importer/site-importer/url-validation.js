@@ -19,7 +19,9 @@ const isValidUrl = function( parsedUrl ) {
 	const { hostname } = parsedUrl;
 
 	// `isWebUri` considers `http://a` valid, so check for a top level domain name as well.
-	const hasTld = inRange( hostname.lastIndexOf( '.' ), 1, hostname.length - 2 );
+	// Min length of hostname with TLD is 4 characters.
+	const hasTld =
+		hostname.length > 3 && inRange( hostname.lastIndexOf( '.' ), 1, hostname.length - 2 );
 
 	return isWebUri( url.format( parsedUrl ) ) && hasTld;
 };
