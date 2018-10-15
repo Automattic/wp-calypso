@@ -30,6 +30,7 @@ import {
 	isUrlInputDisabled,
 } from 'state/importer-nux/temp-selectors';
 import { validateImportUrl } from '../../../my-sites/importer/site-importer/url-validation';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ImportURLStepComponent extends Component {
 	state = {
@@ -133,10 +134,28 @@ class ImportURLStepComponent extends Component {
 		return translate( 'There was an error with the importer, please try again.' );
 	};
 
+	exitFlow = target => {
+		this.props.recordTracksEvent( 'calypso_signup_flow_exit', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+			target,
+		} );
+		page.show( target );
+	};
+
+	recordHelpView = helpPage => {
+		this.props.recordTracksEvent( 'calypso_signup_help_view', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+			page: helpPage,
+		} );
+	};
+
 	renderContent = () => {
 		const { isLoading, urlInputValue, translate } = this.props;
 		const { showUrlMessage } = this.state;
 		const urlMessage = this.getUrlMessage();
+		const helpPage = 'https://en.support.wordpress.com/import/';
 
 		return (
 			<Fragment>
@@ -191,12 +210,18 @@ class ImportURLStepComponent extends Component {
 						"Don't have a Wix site? We also support importing from {{a}}other sources{{/a}}.",
 						{
 							components: {
-								a: <ExternalLink href="https://en.support.wordpress.com/import/" target="_blank" />,
+								a: (
+									<ExternalLink
+										href={ helpPage }
+										target="_blank"
+										onClick={ () => this.recordHelpView( helpPage ) }
+									/>
+								),
 							},
 						}
 					) }
 					&nbsp;
-					<Button compact onClick={ () => page.show( '/start' ) }>
+					<Button compact onClick={ () => this.exitFlow( '/start' ) }>
 						{ translate( 'Sign up' ) }
 					</Button>
 				</div>
@@ -249,6 +274,7 @@ export default flow(
 		{
 			fetchIsSiteImportable,
 			setNuxUrlInputValue,
+			recordTracksEvent,
 		}
 	),
 	localize
