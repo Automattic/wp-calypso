@@ -296,7 +296,6 @@ class ActivityLogItem extends Component {
 					</div>
 					<FoldableCard
 						className="activity-log-item__card"
-						expandedSummary={ this.renderItemAction() }
 						header={ this.renderHeader() }
 						summary={ this.renderItemAction() }
 					/>
