@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEnabled } from 'config';
-import { filter, flow, get, isEmpty } from 'lodash';
+import { filter, flow, get, isEmpty, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -85,6 +85,10 @@ class SiteSettingsImport extends Component {
 
 	state = getImporterState();
 
+	onceAutoStartImport = once( ( siteId, importerType ) =>
+		this.props.startImport( siteId, importerType )
+	);
+
 	componentDidMount() {
 		ImporterStore.on( 'change', this.updateState );
 		this.updateFromAPI();
@@ -95,7 +99,7 @@ class SiteSettingsImport extends Component {
 		const { importers: imports } = this.state;
 
 		if ( isEmpty( imports ) && 'wix' === engine && site && site.ID ) {
-			this.props.startImport( site.ID, 'importer-type-site-importer' );
+			this.onceAutoStartImport( site.ID, 'importer-type-site-importer' );
 		}
 	}
 
