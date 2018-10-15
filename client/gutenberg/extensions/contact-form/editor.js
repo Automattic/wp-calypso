@@ -1,4 +1,4 @@
-/*global jQuery _ wp*/
+/*global wp*/
 /** @jsx wp.element.createElement */
 /** @format */
 
@@ -10,7 +10,8 @@ import {
 	TextControl,
 	TextareaControl,
 	CheckboxControl,
-	ToggleControl
+	ToggleControl,
+	IconButton
 } from '@wordpress/components';
 
 import {
@@ -32,13 +33,30 @@ import {
 	__
 } from '@wordpress/i18n';
 
-
-
 /**
  * Components:
  */
 
 class GrunionForm extends Component {
+	constructor( ...args ) {
+		super( ...args );
+		this.onChangeSubject = this.onChangeSubject.bind( this );
+		this.onChangeTo = this.onChangeTo.bind( this );
+		this.onChangeSubmit = this.onChangeSubmit.bind( this );
+	}
+
+	onChangeSubject( x ) {
+		this.props.setAttributes( { subject: x } );
+	}
+
+	onChangeTo( x ) {
+		this.props.setAttributes( { to: x } );
+	}
+
+	onChangeSubmit( x ) {
+		this.props.setAttributes( { submit_button_text: x } );
+	}
+
 	render() {
 		return (
 			<Fragment>
@@ -47,22 +65,28 @@ class GrunionForm extends Component {
 						<TextControl
 							label={ __( 'What would you like the subject of the email to be?' ) }
 							value={ this.props.subject }
-							onChange={ this.props.onSubjectChange }
+							onChange={ this.onChangeSubject }
 						/>
 						<TextControl
 							label={ __( 'Which email address should we send the submissions to?' ) }
 							value={ this.props.to }
-							onChange={ this.props.onToChange }
+							onChange={ this.onChangeTo }
+						/>
+						<TextControl
+							label={ __( 'What should the label on the form’s submit button say?' ) }
+							value={ this.props.submit_button_text }
+							placeholder={ __( 'Submit »' ) }
+							onChange={ this.onChangeSubmit }
 						/>
 					</PanelBody>
 				</InspectorControls>
 				<div className="grunion-form">
 					{this.props.children}
-					<input
-						type="text"
-						className="button button-primary button-default"
-						value={ this.props.submit ? this.props.submit : __( 'Submit' ) }
-						onChange={ this.props.onSubmitChange }
+					<TextControl
+						className="button button-primary button-default grunion-submit-button"
+						value={ this.props.submit_button_text }
+						placeholder={ __( 'Submit »' ) }
+						onChange={ this.onChangeSubmit }
 					/>
 				</div>
 			</Fragment>
@@ -70,26 +94,33 @@ class GrunionForm extends Component {
 	}
 }
 
-class GrunionFieldRequiredToggle extends Component {
-	render() {
-		return (
-			<ToggleControl
-				label={ __( 'Required' ) }
-				checked={this.props.required}
-				onChange={this.props.onChange}
-			/>
-		);
-	}
+function GrunionFieldRequiredToggle( props ) {
+	return (
+		<ToggleControl
+			label={ __( 'Required' ) }
+			checked={ props.required }
+			onChange={ props.onChange }
+		/>
+	);
 }
 
 class GrunionFieldSettings extends Component {
+	constructor( ...args ) {
+		super( ...args );
+		this.onChangeRequired = this.onChangeRequired.bind( this );
+	}
+
+	onChangeRequired( x ) {
+		this.props.setAttributes( { required: x } );
+	}
+
 	render() {
 		return (
 			<InspectorControls>
 				<PanelBody title={ __( 'Field Settings', 'jetpack' ) }>
 					<GrunionFieldRequiredToggle
-						required={this.props.required}
-						onChange={this.props.onRequiredChange}
+						required={ this.props.required }
+						onChange={ this.onChangeRequired }
 					/>
 				</PanelBody>
 			</InspectorControls>
@@ -98,152 +129,236 @@ class GrunionFieldSettings extends Component {
 }
 
 class GrunionFieldLabel extends Component {
+	constructor( ...args ) {
+		super( ...args );
+		this.onChangeLabel = this.onChangeLabel.bind( this );
+	}
+
+	onChangeLabel( x ) {
+		this.props.setAttributes( { label: x.target.value } );
+	}
+
 	render() {
 		return (
 			<Fragment>
 				<input
 					type='text'
-					value={this.props.label}
+					value={ this.props.label }
 					className='grunion-field-label'
-					onChange={ this.props.onLabelChange }
+					onChange={ this.onChangeLabel }
 				/>
-				{this.props.required && <span className='required'>{ __( '(required)' ) }</span>}
+				{ this.props.required && <span className="required">{ __( '(required)' ) }</span> }
 			</Fragment>
 		);
 	}
 }
 
-class GrunionField extends Component {
-	render() {
-		return (
-			<Fragment>
-				<GrunionFieldSettings
-					required={this.props.required}
-					onRequiredChange={this.props.onRequiredChange}
+function GrunionField( props ) {
+	return (
+		<Fragment>
+			<GrunionFieldSettings
+				required={ props.required }
+				setAttributes={ props.setAttributes }
+			/>
+			<div className="grunion-field">
+				<TextControl
+					type={ props.type }
+					label={ <GrunionFieldLabel
+						required={ props.required }
+						label={ props.label }
+						setAttributes={ props.setAttributes }
+					/> }
+					disabled={ true }
 				/>
-				<div className="grunion-field">
-					<TextControl
-						type={this.props.type}
-						label={<GrunionFieldLabel
-							required={this.props.required}
-							label={this.props.label}
-							onLabelChange={this.props.onLabelChange}
-						/>}
-						disabled={true}
-					/>
-				</div>
-			</Fragment>
-		);
-	}
+			</div>
+		</Fragment>
+	);
 }
 
-class GrunionFieldTextarea extends Component {
-	render() {
-		return (
-			<Fragment>
-				<GrunionFieldSettings
-					required={this.props.required}
-					onRequiredChange={this.props.onRequiredChange}
+function GrunionFieldTextarea( props ) {
+	return (
+		<Fragment>
+			<GrunionFieldSettings
+				required={ props.required }
+				setAttributes={ props.setAttributes }
+			/>
+			<div className="grunion-field">
+				<TextareaControl
+					label={ <GrunionFieldLabel
+						required={ props.required }
+						label={ props.label }
+						setAttributes={ props.setAttributes }
+					/> }
+					disabled={ true }
 				/>
-				<div className="grunion-field">
-					<TextareaControl
-						label={<GrunionFieldLabel
-							required={this.props.required}
-							label={this.props.label}
-							onLabelChange={this.props.onLabelChange}
-						/>}
-						disabled={true}
-					/>
-				</div>
-			</Fragment>
-		);
-	}
+			</div>
+		</Fragment>
+	);
 }
 
-class GrunionFieldCheckbox extends Component {
-	render() {
-		return (
-			<Fragment>
-				<GrunionFieldSettings
-					required={this.props.required}
-					onRequiredChange={this.props.onRequiredChange}
+function GrunionFieldCheckbox( props ) {
+	return (
+		<Fragment>
+			<GrunionFieldSettings
+				required={ props.required }
+				setAttributes={ props.setAttributes }
+			/>
+			<div className="grunion-field">
+				<CheckboxControl
+					label={ <GrunionFieldLabel
+						required={ props.required }
+						label={ props.label }
+						setAttributes={ props.setAttributes }
+					/> }
+					disabled={ true }
 				/>
-				<div className="grunion-field">
-					<CheckboxControl
-						label={<GrunionFieldLabel
-							required={this.props.required}
-							label={this.props.label}
-							onLabelChange={this.props.onLabelChange}
-						/>}
-						disabled={true}
-					/>
-				</div>
-			</Fragment>
-		);
-	}
+			</div>
+		</Fragment>
+	);
 }
 
 class GrunionFieldMultiple extends Component {
+	constructor( ...args ) {
+		super( ...args );
+		this.onChangeOption = this.onChangeOption.bind( this );
+	}
+
+	onChangeOption( key = null, option = null ) {
+		const newOptions = this.props.options.slice( 0 );
+		if ( 'object' === typeof key ) {
+			newOptions.push( '' );
+		} else if ( null === option ) {
+			newOptions.splice( key, 1 );
+		} else {
+			newOptions.splice( key, 1, option );
+		}
+		this.props.setAttributes( { options: newOptions } );
+	}
+
 	render() {
 		return (
 			<Fragment>
 				<GrunionFieldSettings
 					required={ this.props.required }
-					onRequiredChange={ this.props.onRequiredChange }
+					setAttributes={ this.props.setAttributes }
 				/>
 				<div className="grunion-field">
 					<GrunionFieldLabel
 						required={ this.props.required }
 						label={ this.props.label }
-						onLabelChange={  this.props.onLabelChange }
+						setAttributes={ this.props.setAttributes }
 					/>
 					<ol>
-						{ _.map( this.props.options, ( option )=>( <li><input
-							type='text'
-							className='option'
-							value={option}
-							onChange={ function( x ) {
-								const $options = jQuery( x.target ).closest( 'ol' ).find( 'input.option' );
-								this.props.setAttributes({
-									options : _.pluck( $options.toArray(), 'value' )
-								});
-							}.bind( this ) }
-						/></li>))}
+						{ this.props.options.map( ( option, index )=>(
+							<GrunionOption
+								key={ index }
+								option={ option }
+								index={ index }
+								onChangeOption={ this.onChangeOption }
+							/>
+						) ) }
 					</ol>
-					<button onClick={ function() {
-						this.props.setAttributes( { options: this.props.options.concat( [ '' ] ) } );
-					} }>{ __( 'Add New' ) }</button>
+					<IconButton
+						icon="insert"
+						label={ __( 'Insert option' ) }
+						onClick={ this.onChangeOption }
+					> { __( 'Add' ) }</IconButton>
 				</div>
 			</Fragment>
 		)
 	}
 }
 
+class GrunionOption extends Component {
+	constructor( ...args ) {
+		super( ...args );
+		this.onChangeOption = this.onChangeOption.bind( this );
+		this.onDeleteOption = this.onDeleteOption.bind( this );
+	}
+
+	onChangeOption( x ) {
+		this.props.onChangeOption( this.props.index, x.target.value );
+	}
+
+	onDeleteOption() {
+		this.props.onChangeOption( this.props.index );
+	}
+
+	render() {
+		return (
+			<li>
+				<input
+					type="text"
+					className="option"
+					value={ this.props.option }
+					placeholder={ __( 'Enter your option value here…' ) }
+					onChange={ this.onChangeOption }
+				/>
+				<IconButton
+					icon="no"
+					label={ __( 'Remove option' ) }
+					onClick={ this.onDeleteOption }
+				/>
+			</li>
+		);
+	}
+}
 
 /**
  * Block Registrations:
  */
 
 registerBlockType( 'grunion/form', {
-	title       : __( 'Contact Form', 'jetpack' ),
-	icon        : 'feedback',
-	category    : 'widgets',
-	supports    : {
-		html : false
+	title: __( 'Contact Form', 'jetpack' ),
+	icon: 'feedback',
+	category: 'widgets',
+	supports: {
+		html: false
 	},
+	/* // not yet ready for prime time.
+	transforms: {
+		from: [
+			{
+				type: 'shortcode',
+				tag: 'contact-form',
+				attributes: {
+					subject: {
+						type: 'string',
+						shortcode: function( named ) {
+							return named.subject;
+						},
+					},
+					to: {
+						type: 'string',
+						shortcode: function( named ) {
+							return named.to;
+						},
+					},
+					submit_button_text: {
+						type: 'string',
+						shortcode: function( named ) {
+							return named.submit_button_text;
+						},
+					},
+				}
 
-	attributes : {
-		subject : {
-			type    : 'string',
-			default : null
+			}
+		]
+	},
+	*/
+
+	attributes: {
+		subject: {
+			type: 'string',
+			'default': null
 		},
-		to : {
-			type    : 'string',
-			default : null
+		to: {
+			type: 'string',
+			'default': null
 		},
-		submit : {
-			type    : 'string',
-			default : __( 'Submit' )
+		submit_button_text: {
+			type: 'string',
+			'default': __( 'Submit »' )
 		}
 	},
 
@@ -251,22 +366,20 @@ registerBlockType( 'grunion/form', {
 		return (
 			<GrunionForm
 				key="grunion/form"
-				className={props.className}
-				subject={props.attributes.subject}
-				onSubjectChange={ (x)=>props.setAttributes({subject:x}) }
-				to={props.attributes.to}
-				onToChange={ (x)=>props.setAttributes({to:x}) }
-				submit={props.attributes.submit}
-				onSubmitChange={ (x)=>props.setAttributes({submit:x.target.value}) }
+				className={ props.className }
+				subject={ props.attributes.subject }
+				to={ props.attributes.to }
+				submit_button_text={ props.attributes.submit_button_text }
+				setAttributes={ props.setAttributes }
 			>
 				<InnerBlocks
 					allowedBlocks={ [] }
 					templateLock={false}
 					template={ [
-						[ 'grunion/field-name',     { label : __( 'Name' ) } ],
-						[ 'grunion/field-email',    { label : __( 'Email' ) } ],
-						[ 'grunion/field-text',     { label : __( 'Subject' ) } ],
-						[ 'grunion/field-textarea', { label : __( 'Message' ) } ]
+						[ 'grunion/field-name', { label: __( 'Name' ) } ],
+						[ 'grunion/field-email', { label: __( 'Email' ) } ],
+						[ 'grunion/field-text', { label: __( 'Subject' ) } ],
+						[ 'grunion/field-textarea', { label: __( 'Message' ) } ]
 					] }
 				/>
 			</GrunionForm>
@@ -281,34 +394,96 @@ registerBlockType( 'grunion/form', {
 } );
 
 const FieldDefaults = {
-	icon        : 'feedback',
-	category    : 'common',
-	parent      : [ 'grunion/form' ],
-	supports    : {
-		html : false
+	icon: 'feedback',
+	category: 'common',
+	parent: [ 'grunion/form' ],
+	supports: {
+		html: false
 	},
-	attributes  : {
-		label : {
-			type : 'string',
-			default : __( 'Type here...' )
+	attributes: {
+		label: {
+			type: 'string',
+			'default': __( 'Type here...' )
 		},
-		required : {
-			type : 'boolean',
-			default : false
+		required: {
+			type: 'boolean',
+			'default': false
 		},
-		options : {
-			type : 'array',
-			default : []
+		options: {
+			type: 'array',
+			'default': []
 		}
 	},
-	transforms : {
-		to : [
+
+	transforms: {
+		to: [
 			{
-				type      : 'block',
-				blocks    : [ 'grunion/field-text' ],
-				transform : ( attributes ) => {
-					return createBlock( 'grunion/field-text', attributes );
-				}
+				type: 'block',
+				blocks: [ 'grunion/field-text' ],
+				isMatch: ( { options } ) => ! options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-text', attributes )
+			},
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-name' ],
+				isMatch: ( { options } ) => ! options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-name', attributes )
+			},
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-email' ],
+				isMatch: ( { options } ) => ! options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-email', attributes )
+			},
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-url' ],
+				isMatch: ( { options } ) => ! options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-url', attributes )
+			},
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-date' ],
+				isMatch: ( { options } ) => ! options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-date', attributes )
+			},
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-telephone' ],
+				isMatch: ( { options } ) => ! options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-telephone', attributes )
+			},
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-textarea' ],
+				isMatch: ( { options } ) => ! options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-textarea', attributes )
+			},
+			/* // not yet ready for prime time.
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-checkbox' ],
+				isMatch: ( { options } ) => 1 === options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-checkbox', attributes )
+			},
+			*/
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-checkbox-multiple' ],
+				isMatch: ( { options } ) => 1 <= options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-checkbox-multiple', attributes )
+			},
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-radio' ],
+				isMatch: ( { options } ) => 1 <= options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-radio', attributes )
+			},
+			{
+				type: 'block',
+				blocks: [ 'grunion/field-select' ],
+				isMatch: ( { options } ) => 1 <= options.length,
+				transform: ( attributes )=>createBlock( 'grunion/field-select', attributes )
 			}
 		]
 	},
@@ -317,152 +492,138 @@ const FieldDefaults = {
 	}
 };
 
-registerBlockType( 'grunion/field-text', _.defaults({
+registerBlockType( 'grunion/field-text', Object.assign( {
 	title       : __( 'Text', 'jetpack' ),
 	edit: function( props ) {
 		return ( <GrunionField
 			label={ props.attributes.label }
-			onLabelChange={ (x)=>props.setAttributes({label:x.target.value}) }
 			required={ props.attributes.required }
-			onRequiredChange={ (x)=>props.setAttributes({required:x}) }
+			setAttributes={ props.setAttributes }
 		/> );
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-name', _.defaults({
+registerBlockType( 'grunion/field-name', Object.assign( {
 	title       : __( 'Name', 'jetpack' ),
 	icon        : 'admin-users',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="text"
 			label={ props.attributes.label }
-			onLabelChange={ (x)=>props.setAttributes({label:x.target.value}) }
 			required={ props.attributes.required }
-			onRequiredChange={ (x)=>props.setAttributes({required:x}) }
+			setAttributes={ props.setAttributes }
 		/> );
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-email', _.defaults({
+registerBlockType( 'grunion/field-email', Object.assign( {
 	title       : __( 'Email', 'jetpack' ),
 	icon        : 'email',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="email"
 			label={ props.attributes.label }
-			onLabelChange={ (x)=>props.setAttributes({label:x.target.value}) }
 			required={ props.attributes.required }
-			onRequiredChange={ (x)=>props.setAttributes({required:x}) }
+			setAttributes={ props.setAttributes }
 		/> );
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-url', _.defaults({
+registerBlockType( 'grunion/field-url', Object.assign( {
 	title       : __( 'URL', 'jetpack' ),
 	icon        : 'share-alt2',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="url"
 			label={ props.attributes.label }
-			onLabelChange={ (x)=>props.setAttributes({label:x.target.value}) }
 			required={ props.attributes.required }
-			onRequiredChange={ (x)=>props.setAttributes({required:x}) }
+			setAttributes={ props.setAttributes }
 		/> );
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-date', _.defaults({
+registerBlockType( 'grunion/field-date', Object.assign( {
 	title       : __( 'Date', 'jetpack' ),
 	icon        : 'calendar-alt',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="text"
 			label={ props.attributes.label }
-			onLabelChange={ (x)=>props.setAttributes({label:x.target.value}) }
 			required={ props.attributes.required }
-			onRequiredChange={ (x)=>props.setAttributes({required:x}) }
+			setAttributes={ props.setAttributes }
 		/> );
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-telephone', _.defaults({
+registerBlockType( 'grunion/field-telephone', Object.assign( {
 	title       : __( 'Telephone', 'jetpack' ),
 	icon        : 'phone',
 	edit: function( props ) {
 		return ( <GrunionField
 			type="tel"
 			label={ props.attributes.label }
-			onLabelChange={ (x)=>props.setAttributes({label:x.target.value}) }
 			required={ props.attributes.required }
-			onRequiredChange={ (x)=>props.setAttributes({required:x}) }
+			setAttributes={ props.setAttributes }
 		/> );
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-textarea', _.defaults({
+registerBlockType( 'grunion/field-textarea', Object.assign( {
 	title       : __( 'Textarea', 'jetpack' ),
 	edit: function( props ) {
 		return ( <GrunionFieldTextarea
 			label={ props.attributes.label }
-			onLabelChange={ (x)=>props.setAttributes({label:x.target.value}) }
 			required={ props.attributes.required }
-			onRequiredChange={ (x)=>props.setAttributes({required:x}) }
+			setAttributes={ props.setAttributes }
 		/> );
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-checkbox', _.defaults({
+registerBlockType( 'grunion/field-checkbox', Object.assign( {
 	title       : __( 'Checkbox', 'jetpack' ),
 	icon        : 'forms',
 	edit: function( props ) {
 		return ( <GrunionFieldCheckbox
 			label={ props.attributes.label }
-			onLabelChange={ (x)=>props.setAttributes({label:x.target.value}) }
 			required={ props.attributes.required }
-			onRequiredChange={ (x)=>props.setAttributes({required:x}) }
+			setAttributes={ props.setAttributes }
 		/> );
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-checkbox-multiple', _.defaults({
+registerBlockType( 'grunion/field-checkbox-multiple', Object.assign( {
 	title       : __( 'Checkbox Multiple', 'jetpack' ),
 	icon        : 'forms',
 	edit: function( props ) {
 		return (<GrunionFieldMultiple
-			required={props.attributes.required}
-			onRequiredChange={(x)=>props.setAttributes({required:x})}
-			label={props.attributes.label}
-			onLabelChange={(x)=>props.setAttributes({label:x.target.value})}
-			options={props.attributes.options}
-			setAttributes={props.setAttributes}
+			required={ props.attributes.required }
+			label={ props.attributes.label }
+			options={ props.attributes.options }
+			setAttributes={ props.setAttributes }
 		/>);
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-radio', _.defaults({
+registerBlockType( 'grunion/field-radio', Object.assign( {
 	title       : __( 'Radio', 'jetpack' ),
 	edit: function( props ) {
 		return (<GrunionFieldMultiple
-			required={props.attributes.required}
-			onRequiredChange={(x)=>props.setAttributes({required:x})}
-			label={props.attributes.label}
-			onLabelChange={(x)=>props.setAttributes({label:x.target.value})}
-			options={props.attributes.options}
-			setAttributes={props.setAttributes}
+			required={ props.attributes.required }
+			label={ props.attributes.label }
+			options={ props.attributes.options }
+			setAttributes={ props.setAttributes }
 		/>);
 	}
 }, FieldDefaults ) );
 
-registerBlockType( 'grunion/field-select', _.defaults({
+registerBlockType( 'grunion/field-select', Object.assign( {
 	title       : __( 'Select', 'jetpack' ),
 	edit: function( props ) {
 		return (<GrunionFieldMultiple
-			required={props.attributes.required}
-			onRequiredChange={(x)=>props.setAttributes({required:x})}
-			label={props.attributes.label}
-			onLabelChange={(x)=>props.setAttributes({label:x.target.value})}
-			options={props.attributes.options}
-			setAttributes={props.setAttributes}
+			required={ props.attributes.required }
+			label={ props.attributes.label }
+			options={ props.attributes.options }
+			setAttributes={ props.setAttributes }
 		/>);
 	}
 }, FieldDefaults ) );
