@@ -11,7 +11,7 @@ export const getSiteDetails = state => get( state, 'importerNux.siteDetails' );
 
 export const getSelectedImportEngine = state => get( getSiteDetails( state ), 'engine' );
 
-export const doingImportFromSiteUrl = state => get( getSiteDetails( state ), 'siteUrl' );
+export const getImporterSiteUrl = state => get( getSiteDetails( state ), 'siteUrl' );
 
 export const isUrlInputDisabled = state => get( state, 'importerNux.isUrlInputDisabled' );
 
